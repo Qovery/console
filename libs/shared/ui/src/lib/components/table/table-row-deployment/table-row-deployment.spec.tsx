@@ -50,7 +50,7 @@ describe('TableRowDeployment', () => {
       },
       {
         title: 'Version',
-        className: 'px-4 py-2 border-b-element-light-lighter-400 border-l h-full bg-white',
+        className: 'px-4 py-2 border-b-zinc-200 border-l h-full bg-white',
       },
     ],
   }

@@ -27,7 +27,7 @@
   &.btn--active {
     color: theme('colors.brand.500');
     border-color: theme('colors.brand.500');
-    background-color: theme('colors.element.light.lighter.400');
+    background-color: theme('colors.zinc.200');
   }
 }
 
@@ -36,7 +36,7 @@
 }
 
 .btn--alt {
-  @apply bg-transparent text-zinc-350 hover:bg-element-light-lighter-400 hover:text-brand-500;
+  @apply bg-transparent text-zinc-350 hover:bg-zinc-200 hover:text-brand-500;
 }
 
 .dark {
@@ -100,7 +100,7 @@
 }
 
 .btn-login--default {
-  @apply bg-zinc-150 text-zinc-400 border border-element-light-lighter-500 hover:bg-element-light-lighter-400;
+  @apply bg-zinc-150 text-zinc-400 border border-element-light-lighter-500 hover:bg-zinc-200;
 }
 
 // icon
@@ -120,7 +120,7 @@
   }
   &.btn.is-active,
   &:hover {
-    @apply bg-element-light-lighter-400 text-brand-500 dark:bg-brand-500 dark:text-zinc-50;
+    @apply bg-zinc-200 text-brand-500 dark:bg-brand-500 dark:text-zinc-50;
   }
 
   &.btn-icon--small {
@@ -139,7 +139,7 @@
 }
 
 .btn-icon--stroked {
-  @apply bg-white hover:bg-element-light-lighter-400 border-solid border-x border-y border-element-light-lighter-500 text-zinc-400 dark:border-0 dark:bg-zinc-550 dark:hover:bg-zinc-650 dark:text-zinc-50;
+  @apply bg-white hover:bg-zinc-200 border-solid border-x border-y border-element-light-lighter-500 text-zinc-400 dark:border-0 dark:bg-zinc-550 dark:hover:bg-zinc-650 dark:text-zinc-50;
 
   &.bg-transparent {
     background-color: transparent;
@@ -162,7 +162,7 @@
 }
 
 .btn-icon--alt {
-  @apply bg-transparent text-zinc-350 hover:bg-element-light-lighter-400 hover:text-brand-500;
+  @apply bg-transparent text-zinc-350 hover:bg-zinc-200 hover:text-brand-500;
 }
 
 .btn-icon--dark {
@@ -197,9 +197,9 @@
 }
 
 .btn-icon--circle {
-  @apply w-6 h-6 rounded-full flex items-center justify-center text-element-light-lighter-800 hover:text-element-light-lighter-800 hover:bg-element-light-lighter-400 dark:hover:bg-zinc-500;
+  @apply w-6 h-6 rounded-full flex items-center justify-center text-element-light-lighter-800 hover:text-element-light-lighter-800 hover:bg-zinc-200 dark:hover:bg-zinc-500;
 
   &.btn.is-active {
-    @apply text-element-light-lighter-800 hover:text-element-light-lighter-800 hover:bg-element-light-lighter-400 dark:bg-zinc-500;
+    @apply text-element-light-lighter-800 hover:text-element-light-lighter-800 hover:bg-zinc-200 dark:bg-zinc-500;
   }
 }

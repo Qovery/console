@@ -77,7 +77,7 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
               <span className="text-sm text-zinc-400 font-medium pl-1.5">Secret</span>
             </div>
 
-            <div className="flex items-center bg-element-light-lighter-400 rounded justify-between px-4 py-2 mb-3">
+            <div className="flex items-center bg-zinc-200 rounded justify-between px-4 py-2 mb-3">
               <p className="font-medium text-zinc-400 text-ssm">Apply for all</p>
               <div className="flex gap-4">
                 <InputSelectSmall

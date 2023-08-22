@@ -83,7 +83,7 @@ export function StepPersonalize(props: StepPersonalizeProps) {
             />
           )}
         />
-        <div className="mt-10 pt-5 flex justify-between border-t border-element-light-lighter-400">
+        <div className="mt-10 pt-5 flex justify-between border-t border-zinc-200">
           <Button
             onClick={() => authLogout()}
             size={ButtonSize.XLARGE}

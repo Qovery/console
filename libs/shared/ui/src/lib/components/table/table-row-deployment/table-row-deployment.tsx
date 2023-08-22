@@ -165,7 +165,7 @@ export function TableRowDeployment({
           </Skeleton>
         </div>
         {!noCommit && (
-          <div className="flex items-center px-4 gap-2 border-element-light-lighter-400 border-l h-full">
+          <div className="flex items-center px-4 gap-2 border-zinc-200 border-l h-full">
             {(data as DeploymentService | DeploymentHistoryApplication)?.commit && (
               <TagCommit commitId={(data as DeploymentService | DeploymentHistoryApplication)?.commit?.git_commit_id} />
             )}

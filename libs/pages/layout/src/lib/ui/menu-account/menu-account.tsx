@@ -28,7 +28,7 @@ export function MenuAccount(props: MenuAccountProps) {
         {organization.logo_url ? (
           <img className="p-1" src={organization.logo_url} alt="Organization logo" />
         ) : (
-          <span className="w-full h-full font-medium text-xs text-zinc-350 bg-element-light-lighter-400 flex items-center justify-center uppercase rounded">
+          <span className="w-full h-full font-medium text-xs text-zinc-350 bg-zinc-200 flex items-center justify-center uppercase rounded">
             {organization.name.charAt(0)}
           </span>
         )}

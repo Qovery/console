@@ -166,9 +166,7 @@ export function groupBy<T>(
         />
       ),
       contentRight: (
-        <span className="px-1 bg-element-light-lighter-400 text-zinc-350 text-xs font-bold rounded-sm">
-          {dataByKeys[key].length}
-        </span>
+        <span className="px-1 bg-zinc-200 text-zinc-350 text-xs font-bold rounded-sm">{dataByKeys[key].length}</span>
       ),
       // set custom content hide name, contentLeft and contentRight (keep only the onClick)
       itemContentCustom:

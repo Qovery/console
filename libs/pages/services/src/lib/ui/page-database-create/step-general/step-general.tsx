@@ -123,7 +123,7 @@ export function StepGeneral(props: StepGeneralProps) {
           </div>
         </BlockContent>
 
-        <div className="h-[1px] bg-element-light-lighter-400 w-full my-6"></div>
+        <div className="h-[1px] bg-zinc-200 w-full my-6"></div>
 
         <Controller
           name="type"

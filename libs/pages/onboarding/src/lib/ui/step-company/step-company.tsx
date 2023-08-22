@@ -69,7 +69,7 @@ export function StepCompany(props: StepCompanyProps) {
             />
           )}
         />
-        <div className="mt-10 pt-5 flex justify-between border-t border-element-light-lighter-400">
+        <div className="mt-10 pt-5 flex justify-between border-t border-zinc-200">
           <Button
             onClick={() => setStepCompany(false)}
             size={ButtonSize.XLARGE}

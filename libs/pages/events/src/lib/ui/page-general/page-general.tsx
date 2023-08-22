@@ -99,7 +99,7 @@ export function PageGeneral({
           data={events}
           filter={filter}
           setFilter={setFilter}
-          className="border border-element-light-lighter-400 rounded"
+          className="border border-zinc-200 rounded"
           classNameHead="rounded-t"
           columnsWidth={columnsWidth}
         >

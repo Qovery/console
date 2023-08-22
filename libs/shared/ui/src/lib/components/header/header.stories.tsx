@@ -21,7 +21,7 @@ const buttons = (
 const actions = (
   <>
     <Tag className="bg-brand-50 text-brand-500">PROD</Tag>
-    <div className="border border-element-light-lighter-400 bg-white h-6 px-2 rounded text-xs items-center inline-flex font-medium gap-2">
+    <div className="border border-zinc-200 bg-white h-6 px-2 rounded text-xs items-center inline-flex font-medium gap-2">
       <Icon name={IconEnum.AWS} width="16" />
       <p className="max-w-[54px] truncate">community-test</p>
     </div>

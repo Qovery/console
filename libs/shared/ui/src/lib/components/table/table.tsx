@@ -67,7 +67,7 @@ export function Table<T>({
     <div className={className}>
       <div
         data-testid="table-container"
-        className={`grid items-center border-b-element-light-lighter-400 border-b sticky top-0 bg-white z-10 h-10 ${classNameHead}`}
+        className={`grid items-center border-b-zinc-200 border-b sticky top-0 bg-white z-10 h-10 ${classNameHead}`}
         style={{ gridTemplateColumns: columnsWidth }}
       >
         {dataHead.map(

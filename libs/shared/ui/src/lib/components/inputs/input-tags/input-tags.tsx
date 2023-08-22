@@ -81,7 +81,7 @@ export function InputTags(props: InputTagsProps) {
             <div
               data-testid={`input-tags-remove-${index}`}
               onClick={() => removeTag(index)}
-              className="flex items-center justify-center w-4 h-4 rounded-full absolute top-[6px] right-1 text-xs cursor-pointer hover:bg-element-light-lighter-400 transition-background ease-out duration-200 "
+              className="flex items-center justify-center w-4 h-4 rounded-full absolute top-[6px] right-1 text-xs cursor-pointer hover:bg-zinc-200 transition-background ease-out duration-200 "
             >
               <Icon name={IconAwesomeEnum.XMARK} />
             </div>

@@ -57,7 +57,7 @@ export function InvoicesList(props: InvoicesListProps) {
         columnsWidth={columnWidth}
         setFilter={setFilter}
         filter={filter}
-        className="border border-element-light-lighter-400 rounded overflow-hidden"
+        className="border border-zinc-200 rounded overflow-hidden"
       >
         <div>
           {props.invoicesLoading && (

@@ -85,7 +85,7 @@ export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
             </div>
           </Skeleton>
         </div>
-        <div className="flex items-center px-4 border-b-element-light-lighter-400 border-l h-full">
+        <div className="flex items-center px-4 border-b-zinc-200 border-l h-full">
           <Skeleton show={isLoading} width={30} height={16}>
             <TagMode status={data.mode} />
           </Skeleton>

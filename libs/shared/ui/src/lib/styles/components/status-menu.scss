@@ -28,7 +28,7 @@
 
   &.status-menu--open {
     .status-menu__trigger {
-      @apply bg-element-light-lighter-400;
+      @apply bg-zinc-200;
     }
   }
 }

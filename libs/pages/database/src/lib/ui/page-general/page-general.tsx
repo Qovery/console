@@ -56,8 +56,8 @@ export function PageGeneral(props: PageGeneralProps) {
               Metrics for Managed Databases can be found directly on your cloud provider dashboard
             </p>
           )}
-          <div className="flex border border-element-light-lighter-400 mb-4">
-            <div className="flex-1 border-r border-element-light-lighter-400 p-5">
+          <div className="flex border border-zinc-200 mb-4">
+            <div className="flex-1 border-r border-zinc-200 p-5">
               <Skeleton height={16} width={48} show={false}>
                 <div className="text-zinc-400 font-bold">
                   {database?.mode === DatabaseModeEnum.MANAGED
@@ -79,7 +79,7 @@ export function PageGeneral(props: PageGeneralProps) {
         </div>
         <HelpSection description="Need help? You may find these links useful" links={listHelpfulLinks}></HelpSection>
       </div>
-      <div className="w-right-help-sidebar py-10 border-l border-element-light-lighter-400">
+      <div className="w-right-help-sidebar py-10 border-l border-zinc-200">
         <About
           description={database?.description}
           type={database?.type}

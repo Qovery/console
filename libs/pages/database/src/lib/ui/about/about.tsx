@@ -24,7 +24,7 @@ export function About(props: AboutProps) {
   }
 
   return (
-    <div className="pt-2 pb-8 px-8 flex flex-col items-start border-b border-element-light-lighter-400">
+    <div className="pt-2 pb-8 px-8 flex flex-col items-start border-b border-zinc-200">
       <div className="text-subtitle mb-3 text-zinc-400">About</div>
       <p className="text-zinc-400 mb-5">{description ? description : 'No description provided yet'}</p>
       <Skeleton height={24} width={120} show={!loadingStatus || loadingStatus === 'loading'} className="mb-5">

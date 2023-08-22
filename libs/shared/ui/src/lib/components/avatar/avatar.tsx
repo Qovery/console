@@ -37,7 +37,7 @@ export function Avatar(props: AvatarProps) {
     noTooltip = false,
   } = props
 
-  const defineClass = `${style === AvatarStyle.STROKED ? 'border border-element-light-lighter-400' : ''} ${
+  const defineClass = `${style === AvatarStyle.STROKED ? 'border border-zinc-200' : ''} ${
     onClick ? 'cursor-pointer' : ''
   }`
 
@@ -51,7 +51,7 @@ export function Avatar(props: AvatarProps) {
       {url ? (
         <img src={url} alt={alt} className="w-full h-full rounded-full" />
       ) : (
-        <div className="w-full h-full rounded-full bg-element-light-lighter-400 text-center flex justify-center items-center">
+        <div className="w-full h-full rounded-full bg-zinc-200 text-center flex justify-center items-center">
           <span className="text-xs text-zinc-400 font-medium relative">
             {firstName && firstName.charAt(0).toUpperCase()}
             {lastName && lastName.charAt(0).toUpperCase()}

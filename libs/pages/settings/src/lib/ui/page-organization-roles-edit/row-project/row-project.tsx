@@ -73,10 +73,7 @@ export function RowProject(props: RowProjectProps) {
 
   return (
     <>
-      <div
-        data-testid="project-head"
-        className="flex items-center h-10 bg-zinc-150 border-element-light-lighter-400 border-b"
-      >
+      <div data-testid="project-head" className="flex items-center h-10 bg-zinc-150 border-zinc-200 border-b">
         <div className="flex-auto flex items-center h-full px-4 w-1/4 border-r border-element-light-lighter-500 font-medium">
           {project.project_name}
         </div>

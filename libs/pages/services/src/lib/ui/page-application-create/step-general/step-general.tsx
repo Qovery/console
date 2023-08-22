@@ -95,7 +95,7 @@ export function StepGeneral(props: StepGeneralProps) {
           )}
         />
 
-        <div className="border-b border-b-element-light-lighter-400 mb-6"></div>
+        <div className="border-b border-b-zinc-200 mb-6"></div>
         {isApplication(watchServiceType) && <CreateGeneralGitApplication />}
 
         {isContainer(watchServiceType) && <GeneralContainerSettings organization={props.organization} />}

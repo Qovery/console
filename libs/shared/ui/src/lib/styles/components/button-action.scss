@@ -40,14 +40,14 @@
 
   .btn-action__trigger,
   .btn-action__content {
-    @apply bg-zinc-150 hover:bg-element-light-lighter-400 text-zinc-400;
+    @apply bg-zinc-150 hover:bg-zinc-200 text-zinc-400;
   }
 
   .btn-action__trigger {
     @apply border-element-light-lighter-500;
 
     &.btn-action__trigger--open {
-      @apply bg-element-light-lighter-400;
+      @apply bg-zinc-200;
     }
   }
 }

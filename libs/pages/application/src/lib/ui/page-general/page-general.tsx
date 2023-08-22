@@ -28,8 +28,8 @@ export function PageGeneral(props: PageGeneralProps) {
         <div className="py-7 px-10 flex-grow overflow-y-auto min-h-0">
           {!isJob(application) ? (
             <>
-              <div className="flex border border-element-light-lighter-400 mb-4">
-                <div className="flex-1 border-r border-element-light-lighter-400 p-5">
+              <div className="flex border border-zinc-200 mb-4">
+                <div className="flex-1 border-r border-zinc-200 p-5">
                   <Skeleton height={24} width={48} show={application?.instances?.loadingStatus === 'loading'}>
                     <span className="text-zinc-400 font-bold">
                       {application?.instances?.items?.length || '–'}/{application?.max_running_instances || '-'}
@@ -77,7 +77,7 @@ export function PageGeneral(props: PageGeneralProps) {
           <HelpSection description="Need help? You may find these links useful" links={listHelpfulLinks} />
         </div>
       </div>
-      <div className="w-right-help-sidebar py-10 border-l border-element-light-lighter-400">
+      <div className="w-right-help-sidebar py-10 border-l border-zinc-200">
         <About description={application?.description || ''} />
 
         {application &&

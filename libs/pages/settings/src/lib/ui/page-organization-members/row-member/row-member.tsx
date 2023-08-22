@@ -218,10 +218,10 @@ export function RowMember(props: RowMemberProps) {
   return (
     <TableRowFilter data={member} filter={filter}>
       <div
-        className="grid grid-cols-4 border-b border-element-light-lighter-400 last:border-0"
+        className="grid grid-cols-4 border-b border-zinc-200 last:border-0"
         style={{ gridTemplateColumns: columnsWidth }}
       >
-        <div className="flex items-center justify-between pr-4 border-r border-element-light-lighter-400 h-full">
+        <div className="flex items-center justify-between pr-4 border-r border-zinc-200 h-full">
           <div className="flex items-center px-4 py-3">
             {name && (
               <Skeleton className="shrink-0" show={loading} width={32} height={32} rounded>

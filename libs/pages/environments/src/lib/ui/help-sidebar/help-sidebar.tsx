@@ -7,9 +7,9 @@ export function HelpSidebar() {
   ]
 
   return (
-    <div className="w-right-help-sidebar border-l border-element-light-lighter-400 relative">
+    <div className="w-right-help-sidebar border-l border-zinc-200 relative">
       <div className="sticky top-14">
-        <div className="p-10 border-b border-element-light-lighter-400">
+        <div className="p-10 border-b border-zinc-200">
           <span className="flex justify-center items-center rounded bg-purple-500 w-7 h-7 text-sm text-white">
             <Icon name="icon-solid-lightbulb" />
           </span>

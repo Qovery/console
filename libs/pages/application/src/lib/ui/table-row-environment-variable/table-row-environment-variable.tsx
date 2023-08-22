@@ -135,7 +135,7 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
               </div>
             </Skeleton>
           </div>
-          <div className="flex items-center px-4 border-b-element-light-lighter-400 border-l h-full max-w-3xl">
+          <div className="flex items-center px-4 border-b-zinc-200 border-l h-full max-w-3xl">
             <Skeleton show={isLoading} width={30} height={16} className="w-full">
               <div className="text-xs text-zinc-400 w-full">
                 {environmentVariableFile(variable) ? (

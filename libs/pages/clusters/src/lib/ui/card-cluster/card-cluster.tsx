@@ -37,7 +37,7 @@ export function CardCluster(props: CardClusterProps) {
   const statusLoading = !!cluster.extendedStatus?.status?.status
 
   return (
-    <div data-testid={`cluster-list-${cluster.id}`} className="border border-element-light-lighter-400 rounded p-5">
+    <div data-testid={`cluster-list-${cluster.id}`} className="border border-zinc-200 rounded p-5">
       <div className="flex justify-between mb-5">
         <div className="flex items-center">
           <Icon className="mr-3" name={cluster.cloud_provider} />

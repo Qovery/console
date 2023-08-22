@@ -21,15 +21,15 @@ const FunnelFlowContent = (props: FunnelFlowProps) => {
           <div className="pr-4">
             <img className="w-[90px] shrink-0" src="assets/logos/logo-black.svg" alt="Qovery logo black" />
           </div>
-          <div className="flex h-full items-center gap-4 pl-4 border-l border-l-element-light-lighter-400">
-            <div className="h-5 px-1 bg-element-light-lighter-400 font-medium rounded-sm text-zinc-350 text-xs flex items-center">
+          <div className="flex h-full items-center gap-4 pl-4 border-l border-l-zinc-200">
+            <div className="h-5 px-1 bg-zinc-200 font-medium rounded-sm text-zinc-350 text-xs flex items-center">
               {props.currentStep}/{props.totalSteps}
             </div>
             <h4 className="text-zinc-400 text-sm font-medium">{props.currentTitle}</h4>
           </div>
         </div>
         {props.onExit && (
-          <div className="border-l border-l-element-light-lighter-400 pl-5 h-full flex items-center">
+          <div className="border-l border-l-zinc-200 pl-5 h-full flex items-center">
             <Button onClick={props.onExit} style={ButtonStyle.STROKED} className="btn--no-min-w">
               Close <Icon name={IconAwesomeEnum.XMARK} className="ml-2" />
             </Button>

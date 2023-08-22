@@ -113,7 +113,7 @@ export function FlowCreatePort({
                   <div>
                     {onEdit && (
                       <ButtonIcon
-                        className="mr-2 !bg-transparent hover:!bg-element-light-lighter-400"
+                        className="mr-2 !bg-transparent hover:!bg-zinc-200"
                         style={ButtonIconStyle.STROKED}
                         size={ButtonSize.REGULAR}
                         onClick={() => onEdit(customPort)}
@@ -123,7 +123,7 @@ export function FlowCreatePort({
                     )}
                     {onRemovePort && (
                       <ButtonIcon
-                        className="!bg-transparent hover:!bg-element-light-lighter-400"
+                        className="!bg-transparent hover:!bg-zinc-200"
                         style={ButtonIconStyle.STROKED}
                         size={ButtonSize.REGULAR}
                         onClick={() =>

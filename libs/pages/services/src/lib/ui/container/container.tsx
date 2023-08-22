@@ -79,7 +79,7 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
               status={environmentStatus}
               hasServices={Boolean(applicationsByEnv?.length || databasesByEnv?.length)}
             />
-            <span className="ml-4 mr-1 mt-2 h-4 w-[1px] bg-element-light-lighter-400"></span>
+            <span className="ml-4 mr-1 mt-2 h-4 w-[1px] bg-zinc-200"></span>
           </>
         ) : (
           <div />
@@ -91,7 +91,7 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
         </Skeleton>
       )}
       <Skeleton width={120} height={32} show={!cluster}>
-        <div className="border border-element-light-lighter-400 bg-white h-8 px-3 rounded text-xs items-center inline-flex font-medium gap-2">
+        <div className="border border-zinc-200 bg-white h-8 px-3 rounded text-xs items-center inline-flex font-medium gap-2">
           <Icon name={environment?.cloud_provider.provider as IconEnum} width="16" />
           <p className="max-w-[120px] truncate">{cluster?.name}</p>
         </div>
@@ -171,7 +171,7 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
   ]
 
   const contentTabs = !matchSettingsRoute && (
-    <div className="flex justify-center items-center px-5 border-l h-14 border-element-light-lighter-400">
+    <div className="flex justify-center items-center px-5 border-l h-14 border-zinc-200">
       <Skeleton width={154} height={40} show={!environmentStatus}>
         {environmentStatus ? (
           <Menu

@@ -59,14 +59,14 @@ export function PageSettingsDomains(props: PageSettingsDomainsProps) {
                     disabled
                   />
                   <ButtonIcon
-                    className="!bg-transparent hover:!bg-element-light-lighter-400 !w-[52px] !h-[52px]"
+                    className="!bg-transparent hover:!bg-zinc-200 !w-[52px] !h-[52px]"
                     onClick={() => props.onEdit(customDomain)}
                     dataTestId="edit-button"
                     icon={IconAwesomeEnum.WHEEL}
                     style={ButtonIconStyle.STROKED}
                   />
                   <ButtonIcon
-                    className="!bg-transparent hover:!bg-element-light-lighter-400 !w-[52px] !h-[52px]"
+                    className="!bg-transparent hover:!bg-zinc-200 !w-[52px] !h-[52px]"
                     onClick={() => props.onDelete(customDomain)}
                     dataTestId="delete-button"
                     icon={IconAwesomeEnum.TRASH}

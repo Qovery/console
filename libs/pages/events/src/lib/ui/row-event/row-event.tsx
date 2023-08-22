@@ -100,7 +100,7 @@ export function RowEvent(props: RowEventProps) {
     <>
       <div
         data-testid="row-event"
-        className="grid h-11 py-2.5 items-center text-xs text-zinc-400 font-medium border-b-element-light-lighter-400 border-b hover:bg-zinc-100 last:border-b-0"
+        className="grid h-11 py-2.5 items-center text-xs text-zinc-400 font-medium border-b-zinc-200 border-b hover:bg-zinc-100 last:border-b-0"
         style={{ gridTemplateColumns: columnsWidth }}
         onClick={() => setExpanded(!expanded)}
       >

@@ -35,7 +35,7 @@ export function StepPricing(props: StepPricingProps) {
             <PlanCard key={plan.name} onClick={() => onSubmit(plan.name)} loading={loading} {...plan} />
           ))}
         </div>
-        <div className="mt-10 pt-5 flex justify-between border-t border-element-light-lighter-400">
+        <div className="mt-10 pt-5 flex justify-between border-t border-zinc-200">
           <Button
             link={`${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`}
             size={ButtonSize.XLARGE}

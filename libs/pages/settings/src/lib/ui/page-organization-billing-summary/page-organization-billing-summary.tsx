@@ -35,7 +35,7 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
         </div>
 
         <div className="flex w-full gap-2 mb-3">
-          <div className="flex-1  h-[114px]  border  p-5 border-element-light-lighter-400 rounded">
+          <div className="flex-1  h-[114px]  border  p-5 border-zinc-200 rounded">
             <div className="text-zinc-350 text-xs mb-1 font-medium">Current plan</div>
             <div className="text-zinc-400 font-bold text-sm mb-1">
               <Skeleton height={20} width={100} show={!props.organization?.currentCost?.value?.plan}>
@@ -50,7 +50,7 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
               linkLabel="See details"
             />
           </div>
-          <div className="flex-1  h-[114px]  border  p-5 border-element-light-lighter-400 rounded">
+          <div className="flex-1  h-[114px]  border  p-5 border-zinc-200 rounded">
             <div className="text-zinc-350 text-xs mb-1 font-medium">Current monthly bill</div>
             <div className="mb-2">
               <Skeleton height={20} width={100} show={!props.organization?.currentCost?.value?.plan}>
@@ -77,7 +77,7 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
           </div>
 
           {props.organization?.currentCost?.value && props.organization.currentCost.value.plan !== PlanEnum.FREE && (
-            <div className="flex-1  h-[114px]  border  p-5 border-element-light-lighter-400 rounded">
+            <div className="flex-1  h-[114px]  border  p-5 border-zinc-200 rounded">
               <div className="text-zinc-350 text-xs mb-3 font-medium">Payment method</div>
               <div className="mb-2">
                 <Skeleton height={20} width={100} show={props.creditCardLoading}>
@@ -102,7 +102,7 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
           )}
         </div>
 
-        <div className="flex w-full border gap-2 mb-8 border-element-light-lighter-400 rounded">
+        <div className="flex w-full border gap-2 mb-8 border-zinc-200 rounded">
           <div className="flex-1 p-5 h-[114px]">
             <div className="text-zinc-350 text-xs mb-1 font-medium">Seats</div>
             <div className="text-zinc-400 font-bold text-sm mb-1">N/A</div>

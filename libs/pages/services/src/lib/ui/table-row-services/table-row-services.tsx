@@ -122,7 +122,7 @@ export function TableRowServices<T>(props: TableRowServicesProps<T>) {
             </div>
           </Skeleton>
         </div>
-        <div className="flex items-center px-4 border-b-element-light-lighter-400 border-l h-full">
+        <div className="flex items-center px-4 border-b-zinc-200 border-l h-full">
           <Skeleton className="w-full" show={isLoading} width={160} height={16}>
             <div className="w-full flex gap-2 items-center -mt-[1px]">
               {isApplication(type) && <TagCommit commitId={dataApplication.git_repository?.deployed_commit_id} />}

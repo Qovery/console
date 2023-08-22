@@ -49,7 +49,7 @@ export function StepThanks(props: StepThanksProps) {
         progress with our tool.
       </p>
       <form>
-        <div className="mt-10 pt-5 flex justify-between border-t border-element-light-lighter-400">
+        <div className="mt-10 pt-5 flex justify-between border-t border-zinc-200">
           <Button
             link={`${ONBOARDING_URL}${ONBOARDING_MORE_URL}`}
             size={ButtonSize.XLARGE}

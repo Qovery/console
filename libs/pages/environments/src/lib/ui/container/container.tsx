@@ -41,7 +41,7 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
   ]
 
   const contentTabs = (
-    <div className="flex justify-center items-center px-5 border-l h-14 border-element-light-lighter-400">
+    <div className="flex justify-center items-center px-5 border-l h-14 border-zinc-200">
       <Button
         size={ButtonSize.LARGE}
         iconRight={IconAwesomeEnum.CIRCLE_PLUS}

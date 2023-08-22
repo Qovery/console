@@ -15,15 +15,15 @@ export function Table(props: TableProps) {
   const { children, title, headArray, className = '' } = props
 
   return (
-    <div className={`border border-element-light-lighter-400 border-b-0 rounded text-xs text-zinc-400 ${className}`}>
-      <div className="flex h-10 sticky bg-white top-0 z-10 rounded border-element-light-lighter-400 border-b">
-        <div className="flex items-center w-1/4 h-full flex-auto px-4 font-medium border-r border-element-light-lighter-400">
+    <div className={`border border-zinc-200 border-b-0 rounded text-xs text-zinc-400 ${className}`}>
+      <div className="flex h-10 sticky bg-white top-0 z-10 rounded border-zinc-200 border-b">
+        <div className="flex items-center w-1/4 h-full flex-auto px-4 font-medium border-r border-zinc-200">
           {title}
         </div>
         {headArray.map((head) => (
           <div
             key={head.label}
-            className="flex items-center justify-center h-full flex-1 px-4 font-medium border-r border-element-light-lighter-400 last:border-0"
+            className="flex items-center justify-center h-full flex-1 px-4 font-medium border-r border-zinc-200 last:border-0"
           >
             {head.label}
             <Tooltip align="center" content={head.tooltip}>

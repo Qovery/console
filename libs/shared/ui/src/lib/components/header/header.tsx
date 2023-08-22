@@ -18,7 +18,7 @@ export function Header(props: HeaderProps) {
   const { title, icon, buttons, actions, iconClassName = '' } = props
 
   return (
-    <div className="flex h-32 border-b border-element-light-lighter-400 items-center justify-between bg-white rounded-t p-5 shrink-0">
+    <div className="flex h-32 border-b border-zinc-200 items-center justify-between bg-white rounded-t p-5 shrink-0">
       <div className="flex gap-4 ml-2 items-center">
         {icon && <Icon name={icon} className={`w-16 ${iconClassName}`} />}
         <div className="flex flex-col gap-3">
