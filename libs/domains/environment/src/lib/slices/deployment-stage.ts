@@ -115,43 +115,16 @@ export const useCreateEnvironmentDeploymentStage = (
       return response.data
     },
     {
-      onMutate: async (variables) => {
-        // Cancel current queries for the deploymentStageList
-        await queryClient.cancelQueries({ queryKey: ['environments', environmentId, 'deploymentStageList'] })
-
-        // Create optimistic deployment stage
-        const optimisticDeploymentStage = { id: 'optimistic-id', ...variables.data }
-
-        // Add optimistic deployment stage to deployment stage list
-        queryClient.setQueryData<DeploymentStageRequest[] | undefined>(
-          ['environments', environmentId, 'deploymentStageList'],
-          (old: DeploymentStageRequest[] | undefined) => [...(old || []), optimisticDeploymentStage]
-        )
-
-        // Return context with the optimistic deploymentStage
-        return { optimisticDeploymentStage }
-      },
-      onSuccess: (result, _, context) => {
-        // Replace optimistic deployment stage in the deployment stage list with the result
+      onSuccess: (result) => {
         queryClient.setQueryData<DeploymentStageResponse[] | undefined>(
           ['environments', environmentId, 'deploymentStageList'],
-          (old) =>
-            old?.map((deploymentStage) =>
-              deploymentStage.id === context?.optimisticDeploymentStage.id ? result : deploymentStage
-            )
+          (old) => (old ? [...old, result] : [result])
         )
 
         toast(ToastEnum.SUCCESS, 'Your stage has been successfully created')
         onSuccessCallback()
       },
-      onError: (err, _, context) => {
-        // Remove optimistic deployment stage from the deployment stage list
-        queryClient.setQueryData<DeploymentStageResponse[] | undefined>(
-          ['environments', environmentId, 'deploymentStageList'],
-          (old) => old?.filter((deploymentStage) => deploymentStage.id !== context?.optimisticDeploymentStage.id)
-        )
-        toastError(err as Error)
-      },
+      onError: (err) => toastError(err as Error),
       onSettled: () => onSettledCallback(),
     }
   )
