@@ -40,7 +40,7 @@
 
   .btn-action__trigger,
   .btn-action__content {
-    @apply bg-element-light-lighter-300 hover:bg-element-light-lighter-400 text-zinc-400;
+    @apply bg-zinc-150 hover:bg-element-light-lighter-400 text-zinc-400;
   }
 
   .btn-action__trigger {
@@ -77,6 +77,6 @@
 
   &.is-active,
   &:hover {
-    @apply bg-element-light-lighter-300 text-brand-400;
+    @apply bg-zinc-150 text-brand-400;
   }
 }

@@ -54,7 +54,7 @@
   min-height: theme('space.9');
   height: theme('space.9');
   padding: theme('space.2');
-  background-color: theme('colors.element.light.lighter.300');
+  background-color: theme('colors.zinc.150');
   padding-top: 0;
   border-color: transparent;
 
@@ -77,7 +77,7 @@
 }
 
 .input--disabled {
-  @apply bg-element-light-lighter-200 border-element-light-lighter-500 pointer-events-none;
+  @apply bg-zinc-100 border-element-light-lighter-500 pointer-events-none;
   box-shadow: none !important;
 
   label {
@@ -134,12 +134,12 @@
 }
 
 .input__item {
-  @apply text-sm text-zinc-400 cursor-pointer font-medium px-3 py-2 rounded hover:bg-element-light-lighter-300 hover:text-zinc-400 select-none mb-1 last:mb-0;
+  @apply text-sm text-zinc-400 cursor-pointer font-medium px-3 py-2 rounded hover:bg-zinc-150 hover:text-zinc-400 select-none mb-1 last:mb-0;
 
   &.is-active,
   &[data-current-selected],
   &[data-current-nav] {
-    @apply bg-element-light-lighter-300 text-zinc-400;
+    @apply bg-zinc-150 text-zinc-400;
   }
 }
 
@@ -148,7 +148,7 @@
 }
 
 .input__select--small {
-  @apply pl-2 pr-6 pt-2 pb-2 bg-element-light-lighter-200 border border-element-light-lighter-500 text-zinc-400 rounded text-sm appearance-none w-full min-h-0;
+  @apply pl-2 pr-6 pt-2 pb-2 bg-zinc-100 border border-element-light-lighter-500 text-zinc-400 rounded text-sm appearance-none w-full min-h-0;
 
   @apply focus:outline-brand-500 focus:border-transparent focus:outline-2;
 }

@@ -19,9 +19,7 @@ export function TableRow(props: PropsWithChildren<TableRowProps>) {
   const [highlighted, setHighlighted] = useState(false)
 
   const rowClasses = `grid items-center h-14 border-b-element-light-lighter-400 border-b ${
-    highlighted
-      ? 'bg-element-light-lighter-300 hover:bg-element-light-lighter-400'
-      : 'hover:bg-element-light-lighter-200'
+    highlighted ? 'bg-zinc-150 hover:bg-element-light-lighter-400' : 'hover:bg-zinc-100'
   } ${className} ${disabled ? 'pointer-events-none' : ''}`
 
   useEffect(() => {

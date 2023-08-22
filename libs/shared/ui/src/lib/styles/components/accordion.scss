@@ -22,7 +22,7 @@
   }
 
   &[data-state='closed'] {
-    @apply bg-element-light-lighter-200;
+    @apply bg-zinc-100;
 
     .accordion__arrow {
       @apply -rotate-180;

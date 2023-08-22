@@ -54,7 +54,7 @@ export function StepSummary(props: StepSummaryProps) {
             type={BannerBoxEnum.WARNING}
           />
         )}
-        <div className="flex p-4 w-full border rounded border-element-light-lighter-500 bg-element-light-lighter-200 mb-2">
+        <div className="flex p-4 w-full border rounded border-element-light-lighter-500 bg-zinc-100 mb-2">
           <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
           <div className="flex-grow mr-2">
             <div className="text-sm text-zinc-400 font-bold mb-2">General information</div>
@@ -88,7 +88,7 @@ export function StepSummary(props: StepSummaryProps) {
           />
         </div>
 
-        <div className="flex p-4 w-full border rounded border-element-light-lighter-500 bg-element-light-lighter-200 mb-10">
+        <div className="flex p-4 w-full border rounded border-element-light-lighter-500 bg-zinc-100 mb-10">
           <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
           <div className="flex-grow mr-2">
             <div className="text-sm text-zinc-400 font-bold mb-2">Resources</div>

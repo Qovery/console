@@ -36,7 +36,7 @@ export function BannerBox(props: BannerBoxProps) {
     [BannerBoxEnum.DEFAULT]: 'bg-sky-50 border-sky-500',
     [BannerBoxEnum.WARNING]: 'bg-yellow-50 border-yellow-500',
     [BannerBoxEnum.ERROR]: 'bg-red-50 border-red-500',
-    [BannerBoxEnum.INFO]: 'bg-element-light-lighter-200 border-element-light-lighter-600',
+    [BannerBoxEnum.INFO]: 'bg-zinc-100 border-element-light-lighter-600',
   }
 
   const iconClasses = {

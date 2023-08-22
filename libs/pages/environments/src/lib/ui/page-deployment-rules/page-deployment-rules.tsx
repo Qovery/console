@@ -73,9 +73,9 @@ export function PageDeploymentRules(props: PageDeploymentRulesProps) {
             </Button>
           </div>
 
-          <div className={`w-[640px] bg-element-light-lighter-200 rounded ${listRules?.length === 0 ? 'hidden' : ''}`}>
+          <div className={`w-[640px] bg-zinc-100 rounded ${listRules?.length === 0 ? 'hidden' : ''}`}>
             <div className="border-t border-l border-r rounded-t border-element-light-lighter-500">
-              <h2 className="text-sm text-zinc-400 font-medium py-2 px-4 border-b border-element-light-lighter-500 bg-element-light-lighter-200 rounded-t">
+              <h2 className="text-sm text-zinc-400 font-medium py-2 px-4 border-b border-element-light-lighter-500 bg-zinc-100 rounded-t">
                 Deployment Rules
               </h2>
             </div>

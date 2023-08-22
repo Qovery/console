@@ -60,7 +60,7 @@ describe('RowMember', () => {
 
     const input = getByTestId('input')
 
-    expect(input).toHaveClass('bg-element-light-lighter-200 border-element-light-lighter-500 text-zinc-350')
+    expect(input).toHaveClass('bg-zinc-100 border-element-light-lighter-500 text-zinc-350')
   })
 
   it('should have loading input', () => {

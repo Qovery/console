@@ -732,7 +732,7 @@ export function ApplicationSettingsHealthchecks({ ports, jobPort, isJob }: Appli
   return (
     <TableEdition
       key={`${typeLiveness}.${typeReadiness}`}
-      className="bg-element-light-lighter-200 font-medium text-ssm mb-5"
+      className="bg-zinc-100 font-medium text-ssm mb-5"
       tableBody={table}
     />
   )

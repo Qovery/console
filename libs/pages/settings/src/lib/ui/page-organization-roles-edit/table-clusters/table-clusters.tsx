@@ -38,7 +38,7 @@ export function TableClusters(props: TableClustersProps) {
         },
       ]}
     >
-      <div className="flex items-center h-10 bg-element-light-lighter-300 border-element-light-lighter-400 border-b">
+      <div className="flex items-center h-10 bg-zinc-150 border-element-light-lighter-400 border-b">
         <div className="flex-auto flex items-center h-full px-4 w-1/4 border-r border-element-light-lighter-500 font-medium">
           Clusters
         </div>

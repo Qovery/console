@@ -73,7 +73,7 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
                     data-testid={`role-${role.id}`}
                     key={role.id}
                     className={`flex justify-between items-center px-5 py-4 border-b border-element-light-lighter-500 last:border-0 ${
-                      isDefaultRole(role.name) ? 'bg-element-light-lighter-300' : ''
+                      isDefaultRole(role.name) ? 'bg-zinc-150' : ''
                     }`}
                   >
                     <div className="flex">

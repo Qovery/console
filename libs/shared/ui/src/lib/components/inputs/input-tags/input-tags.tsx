@@ -75,7 +75,7 @@ export function InputTags(props: InputTagsProps) {
           <div
             data-testid={`input-tags-${index}`}
             key={index}
-            className="relative select-none inline-flex items-center rounded-[33px] bg-element-light-lighter-200 border border-element-light-lighter-600 pl-3 pr-7 h-7 mr-1 mt-1 text-sm text-zinc-400"
+            className="relative select-none inline-flex items-center rounded-[33px] bg-zinc-100 border border-element-light-lighter-600 pl-3 pr-7 h-7 mr-1 mt-1 text-sm text-zinc-400"
           >
             <span className="text">{tag}</span>
             <div

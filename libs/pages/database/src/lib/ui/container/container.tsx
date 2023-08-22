@@ -60,7 +60,7 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
           <p className="max-w-[120px] truncate">{cluster?.name}</p>
         </div>
       </Skeleton>
-      <Tag className="bg-element-light-lighter-300 gap-2 hidden">
+      <Tag className="bg-zinc-150 gap-2 hidden">
         <span className="w-2 h-2 rounded-lg bg-orange-300"></span>
         <span className="w-2 h-2 rounded-lg bg-teal-500"></span>
       </Tag>

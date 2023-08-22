@@ -36,7 +36,7 @@ export function EnableBox(props: EnableBoxProps) {
 
   const checkedClasses = currentChecked
     ? 'bg-brand-50 border border-brand-500'
-    : ' bg-element-light-lighter-200  border-element-light-lighter-500'
+    : ' bg-zinc-100  border-element-light-lighter-500'
 
   return (
     <div

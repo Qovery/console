@@ -42,7 +42,7 @@
 }
 
 .input-select--disabled {
-  @apply bg-element-light-lighter-200 border-element-light-lighter-500 pointer-events-none;
+  @apply bg-zinc-100 border-element-light-lighter-500 pointer-events-none;
 
   & > label {
     @apply text-zinc-350;

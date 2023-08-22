@@ -54,7 +54,7 @@ export function Login(props: ILoginProps) {
           </button>
         </div>
       </div>
-      <div className="hidden xl:block flex-[1_1_0%] bg-element-light-lighter-300 px-20 before:absolute before:top-0 before:w-full before:h-full before:bg-element-light-lighter-300">
+      <div className="hidden xl:block flex-[1_1_0%] bg-zinc-150 px-20 before:absolute before:top-0 before:w-full before:h-full before:bg-zinc-150">
         <div className="max-w-md relative z-10">
           <h2 className="h1 text-zinc-400 mt-44 mb-6">Deliver Self-Service Infrastructure, Faster!</h2>
           <p className="text-zinc-400 mb-6 text-sm">Built for DevOps, Loved by Developers ✨</p>

@@ -34,9 +34,7 @@ export function StageOrderModal(props: StageOrderModalProps) {
 
   const classNameItem = (isDragging: boolean) =>
     `flex items-center w-full text-zinc-400 text-ssm font-medium rounded p-4 border ${
-      isDragging
-        ? 'border-2 border-green-500 bg-zinc-50'
-        : 'border-element-light-lighter-500 bg-element-light-lighter-200'
+      isDragging ? 'border-2 border-green-500 bg-zinc-50' : 'border-element-light-lighter-500 bg-zinc-100'
     }`
 
   return (

@@ -83,7 +83,7 @@ export function StepSummary(props: StepSummaryProps) {
         />
         <div
           data-testid="summary-general"
-          className="flex p-4 w-full border rounded border-element-light-lighter-500 bg-element-light-lighter-200 mb-2"
+          className="flex p-4 w-full border rounded border-element-light-lighter-500 bg-zinc-100 mb-2"
         >
           <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
           <div className="flex-grow mr-2">
@@ -119,7 +119,7 @@ export function StepSummary(props: StepSummaryProps) {
 
         <div
           data-testid="summary-resources"
-          className="flex p-4 w-full border rounded border-element-light-lighter-500 bg-element-light-lighter-200 mb-2"
+          className="flex p-4 w-full border rounded border-element-light-lighter-500 bg-zinc-100 mb-2"
         >
           <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
           <div className="flex-grow mr-2">
@@ -157,7 +157,7 @@ export function StepSummary(props: StepSummaryProps) {
         {props.remoteData && props.remoteData.ssh_key.length > 0 && (
           <div
             data-testid="summary-remote"
-            className="flex p-4 w-full border rounded border-element-light-lighter-500 bg-element-light-lighter-200 mb-2"
+            className="flex p-4 w-full border rounded border-element-light-lighter-500 bg-zinc-100 mb-2"
           >
             <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
             <div className="flex-grow mr-2">
@@ -180,7 +180,7 @@ export function StepSummary(props: StepSummaryProps) {
         {props.featuresData && checkIfFeaturesAvailable() && (
           <div
             data-testid="summary-features"
-            className="flex p-4 w-full border rounded border-element-light-lighter-500 bg-element-light-lighter-200 mb-2"
+            className="flex p-4 w-full border rounded border-element-light-lighter-500 bg-zinc-100 mb-2"
           >
             <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
             <div className="flex-grow mr-2">

@@ -113,7 +113,7 @@ export function InputSelect({
             data-testid="input-menu-list-button"
             type="button"
             tabIndex={-1}
-            className="input-select__button w-full mt-4 relative before:content-[''] before:w-full before:h-[1px] before:block before:bg-element-light-lighter-300 before:absolute before:-top-2 before:left-0"
+            className="input-select__button w-full mt-4 relative before:content-[''] before:w-full before:h-[1px] before:block before:bg-zinc-150 before:absolute before:-top-2 before:left-0"
             onClick={menuListButton.onClick}
           >
             <div className="w-4 h-full flex items-center justify-center">{menuListButton.icon}</div>
@@ -179,7 +179,7 @@ export function InputSelect({
     hasFocus && !disabled
       ? '!border-brand-500 !shadow-[0_2px_2px_rgba(0, 0, 0, 0.05)] input--focused'
       : disabled
-      ? '!bg-element-light-lighter-200 !border-element-light-lighter-500 !pointer-events-none'
+      ? '!bg-zinc-100 !border-element-light-lighter-500 !pointer-events-none'
       : hasError
       ? 'input--error'
       : ''
@@ -194,7 +194,7 @@ export function InputSelect({
     <div className={className}>
       <div
         className={`input input--select ${hasIcon ? 'input--has-icon' : ''} ${inputActions} ${
-          disabled ? '!bg-element-light-lighter-200 !border-element-light-lighter-500' : ''
+          disabled ? '!bg-zinc-100 !border-element-light-lighter-500' : ''
         } ${isFilter ? 'input--filter' : ''}`}
         data-testid={dataTestId || 'select'}
       >

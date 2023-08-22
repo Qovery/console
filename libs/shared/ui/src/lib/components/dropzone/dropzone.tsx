@@ -11,7 +11,7 @@ export function Dropzone(props: DropzoneProps) {
 
   return (
     <div
-      className={`flex w-full items-center justify-center min-h-[144px] rounded bg-element-light-lighter-300 border border-element-light-lighter-600 hover:border-element-light-lighter-700 transition-all ease-in-out duration-150 cursor-pointer text-zinc-350 text-xs ${classNamesDragIsActive} ${
+      className={`flex w-full items-center justify-center min-h-[144px] rounded bg-zinc-150 border border-element-light-lighter-600 hover:border-element-light-lighter-700 transition-all ease-in-out duration-150 cursor-pointer text-zinc-350 text-xs ${classNamesDragIsActive} ${
         props.className || ''
       }`}
     >

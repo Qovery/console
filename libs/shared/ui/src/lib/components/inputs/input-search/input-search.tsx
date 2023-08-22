@@ -52,7 +52,7 @@ export function InputSearch(props: InputSearchProps) {
           data-testid="input-search"
           ref={ref}
           autoFocus={autofocus}
-          className={`w-full rounded border border-element-light-lighter-500 dark:border-element-light-lighter-800 bg-element-light-lighter-300 dark:bg-zinc-700 text-zinc-400 dark:text-zinc-350 placeholder:text-zinc-350 pl-8 pr-6 leading-none focus:outline-none focus:border-brand-400 focus:transition-[border-color] ${customSize}`}
+          className={`w-full rounded border border-element-light-lighter-500 dark:border-element-light-lighter-800 bg-zinc-150 dark:bg-zinc-700 text-zinc-400 dark:text-zinc-350 placeholder:text-zinc-350 pl-8 pr-6 leading-none focus:outline-none focus:border-brand-400 focus:transition-[border-color] ${customSize}`}
           type="text"
           placeholder={placeholder}
           disabled={false}

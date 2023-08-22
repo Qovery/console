@@ -77,7 +77,7 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
 
   return (
     <div className="w-[calc(100vw-368px)]">
-      <div className="flex flex-col w-full h-[calc(100%-128px)] bg-element-light-lighter-200 rounded-tr-sm">
+      <div className="flex flex-col w-full h-[calc(100%-128px)] bg-zinc-100 rounded-tr-sm">
         <div className="flex justify-between items-center px-5 my-5">
           <p className="text-xs text-zinc-400">
             Stages allow to define deployment order within the deployment pipeline of your environment. Default stages
@@ -122,7 +122,7 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
                       </svg>
                     )}
                     <div className="w-60 shrink-0 rounded">
-                      <div className="h-11 flex justify-between items-center bg-element-light-lighter-200 px-3 py-2 border border-element-light-lighter-500 rounded-t">
+                      <div className="h-11 flex justify-between items-center bg-zinc-100 px-3 py-2 border border-element-light-lighter-500 rounded-t">
                         <div className="flex items-center">
                           <BadgeDeploymentOrder order={stage.deployment_order} />
                           <span className="block truncate text-zinc-400 text-2xs font-bold">
