@@ -101,30 +101,30 @@ export const services = createQueryKeys('services', {
   }),
 })
 
-type CloneServiceProps =
+type CloneServiceRequest =
   | {
       serviceId: string
       serviceType: ApplicationType
-      cloneRequest: CloneApplicationRequest
+      payload: CloneApplicationRequest
     }
   | {
       serviceId: string
       serviceType: ContainerType
-      cloneRequest: CloneContainerRequest
+      payload: CloneContainerRequest
     }
   | {
       serviceId: string
       serviceType: DatabaseType
-      cloneRequest: CloneDatabaseRequest
+      payload: CloneDatabaseRequest
     }
   | {
       serviceId: string
       serviceType: JobType
-      cloneRequest: CloneJobRequest
+      payload: CloneJobRequest
     }
 
 export const mutations = {
-  async cloneService({ serviceId, serviceType, cloneRequest }: CloneServiceProps) {
+  async cloneService({ serviceId, serviceType, payload }: CloneServiceRequest) {
     const mapper = {
       APPLICATION: applicationsApi.cloneApplication.bind(applicationsApi),
       CONTAINER: containersApi.cloneContainer.bind(containersApi),
@@ -134,7 +134,7 @@ export const mutations = {
       LIFECYCLE_JOB: jobsApi.cloneJob.bind(jobsApi),
     } as const
     const mutation = mapper[serviceType]
-    const response = await mutation(serviceId, cloneRequest)
+    const response = await mutation(serviceId, payload)
     return response.data
   },
 }
