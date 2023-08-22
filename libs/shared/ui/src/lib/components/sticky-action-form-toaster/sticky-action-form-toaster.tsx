@@ -41,7 +41,7 @@ export function StickyActionFormToaster(props: StickyActionFormToasterProps) {
     <div className={`sticky bottom-4 flex justify-center ${className} ${!visibleState ? 'mb-[52px]' : ''}`}>
       <div
         data-testid={'sticky-action-form-toaster'}
-        className={`rounded bg-element-light-darker-100 shadow-xl text-white inline-flex items-center pl-4 p-2 gap-10 ${
+        className={`rounded bg-zinc-500 shadow-xl text-white inline-flex items-center pl-4 p-2 gap-10 ${
           visible ? 'animate-action-bar-fade-in' : 'animate-action-bar-fade-out'
         } ${visibleState ? 'visible' : 'hidden'}`}
       >

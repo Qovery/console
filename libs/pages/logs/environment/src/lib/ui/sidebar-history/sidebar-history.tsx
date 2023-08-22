@@ -44,7 +44,7 @@ export function SidebarHistory({ data, serviceId, versionId, pathLogs }: Sidebar
   const currentIndex = data?.findIndex((item) => item.id === versionId)
 
   return (
-    <div className="flex justify-center border-b border-element-light-darker-100 px-4 py-3">
+    <div className="flex justify-center border-b border-zinc-500 px-4 py-3">
       <div>
         <Menu
           width={300}

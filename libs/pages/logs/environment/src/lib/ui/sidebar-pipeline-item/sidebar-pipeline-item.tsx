@@ -61,7 +61,7 @@ export function SidebarPipelineItem({ currentStage, index, serviceId, versionId,
             servicesStages.map((service, index) => (
               <div
                 key={index}
-                className={`relative pl-[31px] before:bg-element-light-darker-100 before:block before:content-[''] before:w-[1px] before:h-full before:absolute before:left-[9px] before:top-0 ${
+                className={`relative pl-[31px] before:bg-zinc-500 before:block before:content-[''] before:w-[1px] before:h-full before:absolute before:left-[9px] before:top-0 ${
                   serviceId === service.id ? 'before:bg-brand-500 before:w-[3px]' : ''
                 }`}
               >
@@ -74,7 +74,7 @@ export function SidebarPipelineItem({ currentStage, index, serviceId, versionId,
                     }
                     className={`flex justify-between items-center w-full text-ssm transition-all font-medium py-1.5 px-2.5 hover:text-zinc-50 rounded-[3px] ${
                       serviceId === service.id
-                        ? 'bg-element-light-darker-100 !text-zinc-50'
+                        ? 'bg-zinc-500 !text-zinc-50'
                         : 'text-zinc-100 hover:bg-element-light-darker-300'
                     } ${service.is_part_last_deployment ? '!text-brand-400' : ''}`}
                   >

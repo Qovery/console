@@ -53,7 +53,7 @@
 
 .btn--dark {
   color: theme('colors.zinc.200');
-  background-color: theme('colors.element.light.darker.100');
+  background-color: theme('colors.zinc.500');
   border: 1px solid theme('colors.element.light.lighter.800');
 
   &.is-active,
@@ -166,7 +166,7 @@
 }
 
 .btn-icon--dark {
-  @apply bg-element-light-darker-100 text-zinc-300 hover:text-zinc-50 hover:bg-element-light-darker-200;
+  @apply bg-zinc-500 text-zinc-300 hover:text-zinc-50 hover:bg-element-light-darker-200;
 }
 
 // size
@@ -197,9 +197,9 @@
 }
 
 .btn-icon--circle {
-  @apply w-6 h-6 rounded-full flex items-center justify-center text-element-light-lighter-800 hover:text-element-light-lighter-800 hover:bg-element-light-lighter-400 dark:hover:bg-element-light-darker-100;
+  @apply w-6 h-6 rounded-full flex items-center justify-center text-element-light-lighter-800 hover:text-element-light-lighter-800 hover:bg-element-light-lighter-400 dark:hover:bg-zinc-500;
 
   &.btn.is-active {
-    @apply text-element-light-lighter-800 hover:text-element-light-lighter-800 hover:bg-element-light-lighter-400 dark:bg-element-light-darker-100;
+    @apply text-element-light-lighter-800 hover:text-element-light-lighter-800 hover:bg-element-light-lighter-400 dark:bg-zinc-500;
   }
 }

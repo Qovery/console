@@ -32,7 +32,7 @@ export function Sidebar({
 
   return (
     <div
-      className={`flex shrink-0 border-x border-element-light-darker-100 bg-element-light-darker-400 
+      className={`flex shrink-0 border-x border-zinc-500 bg-element-light-darker-400 
       ${clusterBanner ? 'h-[calc(100vh-8rem)]' : 'h-[calc(100vh-4rem)]'} ${openSidebar ? 'w-[340px]' : 'w-5'}`}
     >
       <div data-testid="sidebar" className={`w-full h-full overflow-x-scroll ${!openSidebar ? 'hidden' : ''}`}>
@@ -43,7 +43,7 @@ export function Sidebar({
       <div
         data-testid="sidebar-resize-button"
         onClick={() => setOpenSidebar(!openSidebar)}
-        className={`border-element-light-darker-100 flex justify-center items-center w-5 text-zinc-350 hover:bg-element-light-darker-300 cursor-pointer transition-all ease-in-out duration-150 ${
+        className={`border-zinc-500 flex justify-center items-center w-5 text-zinc-350 hover:bg-element-light-darker-300 cursor-pointer transition-all ease-in-out duration-150 ${
           openSidebar ? 'border-l' : ''
         } `}
       >

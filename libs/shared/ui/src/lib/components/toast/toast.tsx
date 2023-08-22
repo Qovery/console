@@ -71,7 +71,7 @@ export const ToastContent = (
         </div>
         {!labelAction && options && callback && (
           <div
-            className="flex justify-end items-center px-4 rounded-r border-l border-element-light-darker-100 transition ease-in-out duration-150 hover:bg-element-light-darker-500"
+            className="flex justify-end items-center px-4 rounded-r border-l border-zinc-500 transition ease-in-out duration-150 hover:bg-element-light-darker-500"
             onClick={() => {
               toastAction.dismiss(options.id)
               callback()

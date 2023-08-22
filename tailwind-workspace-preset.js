@@ -211,7 +211,6 @@ module.exports = {
         element: {
           light: {
             darker: {
-              100: '#2A3041',
               200: '#212738',
               300: '#1A2031',
               400: '#151B2B',

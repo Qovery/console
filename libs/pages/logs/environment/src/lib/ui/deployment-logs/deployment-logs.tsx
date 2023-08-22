@@ -74,10 +74,8 @@ export function DeploymentLogs({
                 Below the list of executions where this service was deployed.
               </p>
             </div>
-            <div className="bg-element-light-darker-500 border border-element-light-darker-100 rounded-lg overflow-hidden w-[484px]">
-              <div className="py-3 bg-element-light-darker-300 border-b border-element-light-darker-100">
-                Last deployment logs
-              </div>
+            <div className="bg-element-light-darker-500 border border-zinc-500 rounded-lg overflow-hidden w-[484px]">
+              <div className="py-3 bg-element-light-darker-300 border-b border-zinc-500">Last deployment logs</div>
               <div className="overflow-y-auto max-h-96 p-2">
                 {deploymentsByServiceId?.map((deploymentHistory: DeploymentService) => (
                   <div key={deploymentHistory.execution_id} className="flex items-center pb-2 last:pb-0">
@@ -99,7 +97,7 @@ export function DeploymentLogs({
                   </div>
                 ))}
               </div>
-              <div className="flex items-center justify-center bg-element-light-darker-300 h-9 border-t border-element-light-darker-100">
+              <div className="flex items-center justify-center bg-element-light-darker-300 h-9 border-t border-zinc-500">
                 <p className="text-zinc-350 text-xs font-normal">
                   Only the last 20 deployments of the environment over the last 30 days are available.
                 </p>

@@ -85,7 +85,7 @@ export function RowPod(props: RowPodProps) {
           style={{ color: getColorByPod(data.pod_name) }}
         >
           {data.pod_name && data.pod_name && (
-            <span className="h-5 flex justify-center items-center px-2 bg-element-light-darker-100 rounded-[40px] gap-1">
+            <span className="h-5 flex justify-center items-center px-2 bg-zinc-500 rounded-[40px] gap-1">
               {data.pod_name && data.pod_name.length > 23
                 ? `${data.pod_name?.substring(0, 10)}...${data.pod_name?.slice(-10)}`
                 : data.pod_name}

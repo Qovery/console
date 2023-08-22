@@ -10,7 +10,7 @@ export function SidebarStatus(props: SidebarStatusProps) {
   const { environmentStatus } = props
 
   return (
-    <div className="border-b border-element-light-darker-100 p-5">
+    <div className="border-b border-zinc-500 p-5">
       <div className="flex items-center justify-between text-zinc-300 text-xs mb-2">
         Deployment status:
         <StatusChip status={environmentStatus?.last_deployment_state || environmentStatus?.state} />
