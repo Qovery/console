@@ -39,10 +39,7 @@ export function PageGeneral(props: PageGeneralProps) {
                     Running instances{' '}
                     <Tooltip side="right" content="Number of running instances">
                       <div className="flex items-center">
-                        <Icon
-                          className="cursor-pointer ml-1 text-xs text-element-light-lighter-700"
-                          name="icon-solid-circle-info"
-                        />
+                        <Icon className="cursor-pointer ml-1 text-xs text-zinc-350" name="icon-solid-circle-info" />
                       </div>
                     </Tooltip>
                   </span>
@@ -56,10 +53,7 @@ export function PageGeneral(props: PageGeneralProps) {
                       content="Number of application instance restarts since the last deployment due to application errors"
                     >
                       <div className="flex items-center">
-                        <Icon
-                          className="cursor-pointer ml-1 text-xs text-element-light-lighter-700"
-                          name="icon-solid-circle-info"
-                        />
+                        <Icon className="cursor-pointer ml-1 text-xs text-zinc-350" name="icon-solid-circle-info" />
                       </div>
                     </Tooltip>
                   </span>

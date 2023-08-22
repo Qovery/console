@@ -43,7 +43,7 @@ export function BannerBox(props: BannerBoxProps) {
     [BannerBoxEnum.DEFAULT]: 'text-sky-600',
     [BannerBoxEnum.WARNING]: 'text-yellow-600',
     [BannerBoxEnum.ERROR]: 'text-red-600',
-    [BannerBoxEnum.INFO]: 'text-element-light-lighter-700',
+    [BannerBoxEnum.INFO]: 'text-zinc-350',
   }
 
   const circleIconWrapperClasses = 'rounded-full overflow-hidden w-12 h-12 bg-white items-center justify-center flex'

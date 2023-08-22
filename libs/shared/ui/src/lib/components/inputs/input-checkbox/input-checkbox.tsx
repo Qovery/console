@@ -59,7 +59,7 @@ export function InputCheckbox(props: InputCheckboxProps) {
         disabled={disabled}
         onChange={(e) => inputChange(e.currentTarget.checked, e)}
         className={`input-checkbox relative font-icons w-0 h-0 appearance-none before:absolute before:flex before:justify-center before:items-center before:text-white before:top-0 before:left-0 before:-translate-y-1/2 before:rounded-sm before:bg-white dark:before:bg-zinc-500 ${bigClasses} ${
-          disabled ? 'before:border-zinc-250' : 'before:border-element-light-lighter-700 cursor-pointer'
+          disabled ? 'before:border-zinc-250' : 'before:border-zinc-350 cursor-pointer'
         } before:border-2 before:font-black before:text-xs before:leading-none before:content-[''] before:transition-all`}
       />
       {label && (

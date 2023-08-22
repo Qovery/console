@@ -20,10 +20,10 @@
 }
 
 .status-menu--stop {
-  @apply bg-zinc-150 border-element-light-lighter-700 text-zinc-350;
+  @apply bg-zinc-150 border-zinc-350 text-zinc-350;
 
   .status-menu__trigger {
-    @apply border-element-light-lighter-700;
+    @apply border-zinc-350;
   }
 
   &.status-menu--open {

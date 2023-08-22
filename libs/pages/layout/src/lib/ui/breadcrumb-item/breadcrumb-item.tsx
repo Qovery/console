@@ -33,7 +33,7 @@ export function BreadcrumbItem(props: BreadcrumbItemProps) {
               trigger={
                 <ButtonIcon
                   className="btn-icon--circle"
-                  iconClassName="text-element-light-lighter-700 dark:text-zinc-300"
+                  iconClassName="text-zinc-350 dark:text-zinc-300"
                   icon="icon-solid-angle-down"
                   style={ButtonIconStyle.FLAT}
                 />

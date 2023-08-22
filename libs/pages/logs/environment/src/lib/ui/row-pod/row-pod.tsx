@@ -78,7 +78,7 @@ export function RowPod(props: RowPodProps) {
         </div>
         <div
           data-testid="cell-pod-name"
-          className="px-4 text-element-light-lighter-700 whitespace-nowrap min-w-[225px]"
+          className="px-4 text-zinc-350 whitespace-nowrap min-w-[225px]"
           style={{ color: getColorByPod(data.pod_name) }}
         >
           {data.pod_name && data.pod_name && (
@@ -101,7 +101,7 @@ export function RowPod(props: RowPodProps) {
             </span>
           )}
         </div>
-        <div data-testid="cell-date" className="px-4 pt-0.5 text-element-light-lighter-700 whitespace-nowrap">
+        <div data-testid="cell-date" className="px-4 pt-0.5 text-zinc-350 whitespace-nowrap">
           {dateFullFormat(data.created_at, utc ? 'UTC' : undefined, 'dd MMM, HH:mm:ss:SS')}
         </div>
         <div data-testid="cell-msg" className="select-text pr-6 pt-0.5 text-zinc-50 relative w-full">

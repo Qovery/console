@@ -56,7 +56,7 @@ describe('BannerBox', () => {
 
     expect(box.classList.contains('border-zinc-300')).toBe(true)
     expect(box.classList.contains('bg-zinc-100')).toBe(true)
-    expect(icon?.classList.contains('text-element-light-lighter-700')).toBe(true)
+    expect(icon?.classList.contains('text-zinc-350')).toBe(true)
   })
 
   it('should display the icon inside a white circle', () => {

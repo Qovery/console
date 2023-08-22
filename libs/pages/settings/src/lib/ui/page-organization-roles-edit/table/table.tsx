@@ -28,10 +28,7 @@ export function Table(props: TableProps) {
             {head.label}
             <Tooltip align="center" content={head.tooltip}>
               <div className="flex items-center">
-                <Icon
-                  className="cursor-pointer text-xs ml-1 text-element-light-lighter-700"
-                  name="icon-solid-circle-info"
-                />
+                <Icon className="cursor-pointer text-xs ml-1 text-zinc-350" name="icon-solid-circle-info" />
               </div>
             </Tooltip>
           </div>
