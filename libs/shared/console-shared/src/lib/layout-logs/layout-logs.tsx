@@ -158,7 +158,7 @@ export function LayoutLogs(props: PropsWithChildren<LayoutLogsProps>) {
                 </p>
               )}
               {setEnabledNginx && (
-                <Tooltip open={pauseLogs} content="To active the nginx logs button, unpause the logs" side="right">
+                <Tooltip open={pauseLogs} content="To activate the nginx logs button, unpause the logs" side="right">
                   <div key={serviceId} className="flex items-center shrink-0 text-neutral-300 text-xs font-medium">
                     <InputCheckbox
                       dataTestId="checkbox-debug"
