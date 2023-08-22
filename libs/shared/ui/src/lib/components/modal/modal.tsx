@@ -82,7 +82,7 @@ export const Modal = (props: ModalProps) => {
               setExternalOpen ? setExternalOpen(false) : setOpen(false)
             }
           }}
-          className="modal__overlay flex fixed top-0 left-0 bg-element-light-darker-500/20 w-full h-screen z-30"
+          className="modal__overlay flex fixed top-0 left-0 bg-zinc-700/20 w-full h-screen z-30"
         />
         <Dialog.Content
           onPointerDownOutside={(event) => {

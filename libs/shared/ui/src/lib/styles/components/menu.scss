@@ -90,7 +90,7 @@ $menuTiming: 0.6s;
 .dark {
   .menu__container,
   .szh-menu__arrow {
-    background: theme('colors.element.light.darker.500');
+    background: theme('colors.zinc.700');
   }
   .menu-item {
     &.szh-menu__item--hover:not(.text-red-600),

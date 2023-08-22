@@ -86,7 +86,7 @@ export function TabsClusterLogs(props: TabsClusterLogsProps) {
                     </div>
                   </div>
                   <div
-                    className={`bg-element-light-darker-500 mt-4 p-2 rounded ml-8 ${
+                    className={`bg-zinc-700 mt-4 p-2 rounded ml-8 ${
                       (currentError.underlying_error?.message || '').length > 240
                         ? 'cursor-pointer select-none hover:bg-zinc-650 transition-all ease-in-out duration-150'
                         : ''

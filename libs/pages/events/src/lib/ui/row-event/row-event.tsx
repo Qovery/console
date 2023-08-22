@@ -172,10 +172,7 @@ export function RowEvent(props: RowEventProps) {
         </div>
       </div>
       {expanded && (
-        <div
-          className="relative bg-element-light-darker-500 max-h-[388px] overflow-y-auto"
-          data-testid="expanded-panel"
-        >
+        <div className="relative bg-zinc-700 max-h-[388px] overflow-y-auto" data-testid="expanded-panel">
           <div className="sticky top-[0px] flex items-center h-7 px-4 bg-zinc-550 text-zinc-100 text-xs z-[1]">
             Object Status after request (here you can find the JSON returned by our API)
           </div>

@@ -84,7 +84,7 @@ export function LayoutLogs(props: PropsWithChildren<LayoutLogsProps>) {
     return (
       <Link
         data-testid="nav"
-        className={`flex items-center h-full px-6 text-sm font-medium text-zinc-50 transition-colors transition-timing duration-250 hover:bg-element-light-darker-500 rounded-t ${
+        className={`flex items-center h-full px-6 text-sm font-medium text-zinc-50 transition-colors transition-timing duration-250 hover:bg-zinc-700 rounded-t ${
           isActive ? 'bg-zinc-650' : ''
         }`}
         to={link}
@@ -201,9 +201,9 @@ export function LayoutLogs(props: PropsWithChildren<LayoutLogsProps>) {
           <div
             ref={refScrollSection}
             onWheel={(event) => !pauseLogs && setPauseLogs && event.deltaY < 0 && setPauseLogs(true)}
-            className={`overflow-y-auto w-full h-[calc(100%-20px)] bg-element-light-darker-500 pb-16 mb-5 ${
+            className={`overflow-y-auto w-full h-[calc(100%-20px)] bg-zinc-700 pb-16 mb-5 ${
               lineNumbers
-                ? 'before:bg-element-light-darker-500 before:absolute before:left-1 before:top-9 before:w-10 before:h-full'
+                ? 'before:bg-zinc-700 before:absolute before:left-1 before:top-9 before:w-10 before:h-full'
                 : ''
             } ${withLogsNavigation ? 'mt-[88px]' : 'mt-11'}`}
           >

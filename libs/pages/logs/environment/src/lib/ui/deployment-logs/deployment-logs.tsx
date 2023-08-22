@@ -74,7 +74,7 @@ export function DeploymentLogs({
                 Below the list of executions where this service was deployed.
               </p>
             </div>
-            <div className="bg-element-light-darker-500 border border-zinc-500 rounded-lg overflow-hidden w-[484px]">
+            <div className="bg-zinc-700 border border-zinc-500 rounded-lg overflow-hidden w-[484px]">
               <div className="py-3 bg-zinc-600 border-b border-zinc-500">Last deployment logs</div>
               <div className="overflow-y-auto max-h-96 p-2">
                 {deploymentsByServiceId?.map((deploymentHistory: DeploymentService) => (
