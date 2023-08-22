@@ -55,12 +55,9 @@ export function Layout(props: PropsWithChildren<LayoutProps>) {
         }
       })
       .catch((error) => console.error(error))
-
-    dispatch(fetchUserSignUp())
   }, [dispatch, organizationId])
 
   useEffect(() => {
-    dispatch(fetchOrganization())
     dispatch(fetchUserSignUp())
   }, [dispatch])
 
