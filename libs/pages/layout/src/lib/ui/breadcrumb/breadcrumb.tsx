@@ -241,7 +241,7 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
         )}
         {environmentId && (
           <>
-            <div className="w-4 h-auto text-element-light-lighter-600 text-center mx-3 mt-3">/</div>
+            <div className="w-4 h-auto text-zinc-300 text-center mx-3 mt-3">/</div>
             <div className="flex items-center">
               {environmentId && (
                 <>
@@ -255,7 +255,7 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
                   />
                   {(applicationId || databaseId) && (
                     <>
-                      <div className="w-4 h-auto text-element-light-lighter-600 text-center mx-3 mt-3">/</div>
+                      <div className="w-4 h-auto text-zinc-300 text-center mx-3 mt-3">/</div>
                       <div className="flex items-center">
                         <BreadcrumbItem
                           isLast={true}

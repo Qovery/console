@@ -65,9 +65,7 @@ export function InputToggle(props: InputToggleProps) {
           className={`${toggleSizeBg} flex items-center rounded-full p-0.5 ${
             animateEnabled ? 'duration-300 ease-in-out' : ''
           } ${
-            toggleActive
-              ? `${small ? 'bg-brand-500' : 'bg-brand-500'}`
-              : `${small ? 'bg-element-light-lighter-600' : 'bg-gray-300'}`
+            toggleActive ? `${small ? 'bg-brand-500' : 'bg-brand-500'}` : `${small ? 'bg-zinc-300' : 'bg-gray-300'}`
           }`}
         >
           <div

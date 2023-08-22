@@ -49,7 +49,7 @@ export function InputFile(props: InputFileProps) {
     <label
       data-testid={dataTestId}
       htmlFor="dropzone-file"
-      className={`relative flex items-center justify-center w-[72px] h-[72px] rounded bg-zinc-50 border border-element-light-lighter-600 ease-out duration-150 border-dashed cursor-pointer ${
+      className={`relative flex items-center justify-center w-[72px] h-[72px] rounded bg-zinc-50 border border-zinc-300 ease-out duration-150 border-dashed cursor-pointer ${
         !selectedImage ? 'hover:bg-zinc-150' : 'bg-zinc-50'
       } ${className}`}
     >
