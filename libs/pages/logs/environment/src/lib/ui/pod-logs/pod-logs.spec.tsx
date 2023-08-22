@@ -1,4 +1,5 @@
 import { render, waitFor } from '__tests__/utils/setup-jest'
+import { applicationFactoryMock } from '@qovery/shared/factories'
 import PodLogs, { PodLogsProps } from './pod-logs'
 
 window.HTMLElement.prototype.scroll = function () {}
@@ -24,6 +25,7 @@ describe('PodLogs', () => {
     loadingStatus: 'loaded',
     pauseStatusLogs: false,
     setPauseStatusLogs: jest.fn(),
+    service: applicationFactoryMock(1)[0],
   }
 
   it('should render successfully', () => {
