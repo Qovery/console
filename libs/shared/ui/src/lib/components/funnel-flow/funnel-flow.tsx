@@ -22,10 +22,10 @@ const FunnelFlowContent = (props: FunnelFlowProps) => {
             <img className="w-[90px] shrink-0" src="assets/logos/logo-black.svg" alt="Qovery logo black" />
           </div>
           <div className="flex h-full items-center gap-4 pl-4 border-l border-l-element-light-lighter-400">
-            <div className="h-5 px-1 bg-element-light-lighter-400 font-medium rounded-sm text-text-400 text-xs flex items-center">
+            <div className="h-5 px-1 bg-element-light-lighter-400 font-medium rounded-sm text-zinc-350 text-xs flex items-center">
               {props.currentStep}/{props.totalSteps}
             </div>
-            <h4 className="text-text-600 text-sm font-medium">{props.currentTitle}</h4>
+            <h4 className="text-zinc-400 text-sm font-medium">{props.currentTitle}</h4>
           </div>
         </div>
         {props.onExit && (

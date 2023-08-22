@@ -23,8 +23,8 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
   return (
     <div className="flex flex-col justify-between w-full">
       <div className="p-8 max-w-content-with-navigation-left">
-        <h2 className="h5 text-text-700 mb-2">Resources</h2>
-        <p className="text-sm text-text-500 max-w-content-with-navigation-left mb-8">
+        <h2 className="h5 text-zinc-400 mb-2">Resources</h2>
+        <p className="text-sm text-zinc-400 max-w-content-with-navigation-left mb-8">
           Manage the resources assigned to the service.
         </p>
         <form onSubmit={onSubmit}>

@@ -46,7 +46,7 @@ export function TabsClusterLogs(props: TabsClusterLogsProps) {
         <p className="font-medium text-sm">
           Error{' '}
           {errors && errors.length > 0 && (
-            <span className="relative -top-px text-xs ml-2 px-1 h-4 bg-red-500 text-text-100 rounded-sm">1</span>
+            <span className="relative -top-px text-xs ml-2 px-1 h-4 bg-red-500 text-zinc-50 rounded-sm">1</span>
           )}
         </p>
       ),
@@ -74,15 +74,15 @@ export function TabsClusterLogs(props: TabsClusterLogsProps) {
                 <>
                   <div className="flex items-center">
                     <div className="flex items-center justify-center shrink-0 w-8 h-8 rounded-full bg-red-500 mr-3">
-                      <Icon name="icon-solid-triangle-exclamation" className="text-text-100" />
+                      <Icon name="icon-solid-triangle-exclamation" className="text-zinc-50" />
                     </div>
                     <div>
                       <Tooltip content={currentError.tag || ''}>
-                        <p className="text-text-100 font-medium">
+                        <p className="text-zinc-50 font-medium">
                           <Truncate text={currentError.tag || ''} truncateLimit={28} />
                         </p>
                       </Tooltip>
-                      <span data-testid="error-line" className="text-text-400 text-xs">
+                      <span data-testid="error-line" className="text-zinc-350 text-xs">
                         Line {errors[errors.length - 1].index} - After {errors[errors.length - 1].timeAgo} minute
                         {parseInt(errors[errors.length - 1].timeAgo || '', 10) > 1 ? 's' : ''}
                       </span>
@@ -110,14 +110,14 @@ export function TabsClusterLogs(props: TabsClusterLogsProps) {
                           <Icon name="icon-solid-arrow-circle-right" className="cursor-pointer" />
                         </p>
                         <CopyToClipboard
-                          className="text-text-300 hover:text-text-100"
+                          className="text-zinc-300 hover:text-zinc-50"
                           content={`Transmitter: ${
                             (errors[0].error as ClusterLogsError).event_details?.transmitter?.name
                           } - ${errors[0].error?.underlying_error?.message}`}
                         />
                       </div>
                     </div>
-                    <p data-testid="error-msg" className="relative text-text-200 text-xs">
+                    <p data-testid="error-msg" className="relative text-zinc-100 text-xs">
                       Transmitter: {(currentError as ClusterLogsError).event_details?.transmitter?.name} -{' '}
                       {truncateErrorMessage}
                       {!displayFullError && (currentError.underlying_error?.message || '').length > 240 && (
@@ -131,7 +131,7 @@ export function TabsClusterLogs(props: TabsClusterLogsProps) {
                   {currentError.hint_message && (
                     <div className="bg-element-light-darker-300 mt-3 p-2 rounded ml-8">
                       <p className="text-xs text-sky-400 font-medium mb-1">Solution</p>
-                      <p data-testid="solution-msg" className="text-text-100 text-xs mb-2">
+                      <p data-testid="solution-msg" className="text-zinc-50 text-xs mb-2">
                         {currentError.hint_message}
                       </p>
                       <Button
@@ -160,8 +160,8 @@ export function TabsClusterLogs(props: TabsClusterLogsProps) {
                 </>
               ) : (
                 <div data-testid="no-error-screen" className="text-center px-3 py-6">
-                  <Icon name="icon-solid-wave-pulse" className="text-text-400" />
-                  <p className="text-text-400 font-medium text-xs mt-1">No error available</p>
+                  <Icon name="icon-solid-wave-pulse" className="text-zinc-350" />
+                  <p className="text-zinc-350 font-medium text-xs mt-1">No error available</p>
                 </div>
               )}
             </div>
@@ -170,7 +170,7 @@ export function TabsClusterLogs(props: TabsClusterLogsProps) {
       </div>
       {section === TabsClusterLogsSection.ERROR && (
         <div className="px-5 py-6 border-t border-element-light-darker-200 mt-5">
-          <p className="text-text-400 text-sm mb-3">Need more help?</p>
+          <p className="text-zinc-350 text-sm mb-3">Need more help?</p>
           <Link
             className="font-medium"
             link="https://discuss.qovery.com"

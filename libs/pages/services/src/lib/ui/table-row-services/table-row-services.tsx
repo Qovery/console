@@ -85,17 +85,17 @@ export function TableRowServices<T>(props: TableRowServicesProps<T>) {
             </Skeleton>
           </div>
           <Skeleton show={isLoading} width={400} height={16} truncate>
-            <span className="text-sm text-text-500 font-medium truncate">{data.name}</span>
+            <span className="text-sm text-zinc-400 font-medium truncate">{data.name}</span>
           </Skeleton>
         </div>
         <div className="flex justify-end justify-items-center px-3">
           <Skeleton show={isLoading} width={200} height={16}>
             <div className="flex items-center gap-3">
-              <p className="flex items-center gap-3 leading-7 text-text-400 text-sm">
+              <p className="flex items-center gap-3 leading-7 text-zinc-350 text-sm">
                 {data.status && data.status.state && <StatusLabel status={data.status && data.status.state} />}
                 {data.status?.last_deployment_date && (
                   <Tooltip content={dateFullFormat(data.status.last_deployment_date)}>
-                    <span className="text-xs text-text-300 font-medium">
+                    <span className="text-xs text-zinc-300 font-medium">
                       {timeAgo(new Date(data.status.last_deployment_date))} ago
                     </span>
                   </Tooltip>
@@ -130,7 +130,7 @@ export function TableRowServices<T>(props: TableRowServicesProps<T>) {
                 <TagCommit commitId={dataJobs.source?.docker?.git_repository?.deployed_commit_id} />
               )}
               {(isContainer(type) || dataJobs.source?.image) && (
-                <Tag className="truncate border border-element-light-lighter-500 text-text-400 font-medium h-7">
+                <Tag className="truncate border border-element-light-lighter-500 text-zinc-350 font-medium h-7">
                   <div className="block truncate">
                     {dataContainer.image_name && (
                       <Tooltip content={`${dataContainer.image_name}:${dataContainer.tag}`}>
@@ -150,7 +150,7 @@ export function TableRowServices<T>(props: TableRowServicesProps<T>) {
                 </Tag>
               )}
               {isDatabase(type) && (
-                <span className="block text-xs ml-2 text-text-600 font-medium">{dataDatabase.version}</span>
+                <span className="block text-xs ml-2 text-zinc-400 font-medium">{dataDatabase.version}</span>
               )}
             </div>
           </Skeleton>

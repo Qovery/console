@@ -199,15 +199,15 @@ export function RowMember(props: RowMemberProps) {
         data-testid="input"
         className={`flex relative px-3 py-2 border rounded select-none w-44 ${
           role?.toUpperCase() === MemberRoleEnum.OWNER || !(member as Member).last_activity_at
-            ? 'bg-element-light-lighter-200 border-element-light-lighter-500 text-text-400'
-            : 'border-element-light-ligther-600 text-text-600 cursor-pointer'
+            ? 'bg-element-light-lighter-200 border-element-light-lighter-500 text-zinc-350'
+            : 'border-element-light-ligther-600 text-zinc-400 cursor-pointer'
         }`}
       >
         <span className="text-sm block max-w-[130px] truncate">{upperCaseFirstLetter(role)}</span>
         {!loadingUpdateRole && role?.toUpperCase() !== MemberRoleEnum.OWNER && (member as Member).last_activity_at && (
           <Icon
             name={IconAwesomeEnum.ANGLE_DOWN}
-            className="absolute top-2.5 right-4 text-sm text-text-500 leading-3 translate-y-0.5 pointer-events-none"
+            className="absolute top-2.5 right-4 text-sm text-zinc-400 leading-3 translate-y-0.5 pointer-events-none"
           />
         )}
         {loadingUpdateRole && <LoaderSpinner className="w-4 h-4 absolute top-2.5 right-4" />}
@@ -230,10 +230,10 @@ export function RowMember(props: RowMemberProps) {
             )}
             <div className="ml-3 text-xs truncate">
               <Skeleton className="mb-1" show={loading} width={120} height={16}>
-                <p className="text-text-600 font-medium truncate">{(member as Member).name}</p>
+                <p className="text-zinc-400 font-medium truncate">{(member as Member).name}</p>
               </Skeleton>
               <Skeleton show={loading} width={100} height={16}>
-                <span className="text-text-500 truncate">{member.email}</span>
+                <span className="text-zinc-400 truncate">{member.email}</span>
               </Skeleton>
             </div>
           </div>
@@ -254,7 +254,7 @@ export function RowMember(props: RowMemberProps) {
             input(member.role_name)
           )}
         </div>
-        <div className="flex items-center px-4 text-text-500 text-xs font-medium">
+        <div className="flex items-center px-4 text-zinc-400 text-xs font-medium">
           <Skeleton className="shrink-0" show={loading} width={64} height={16}>
             {(member as Member).last_activity_at ? (
               <span data-testid="last-activity">
@@ -265,7 +265,7 @@ export function RowMember(props: RowMemberProps) {
             )}
           </Skeleton>
         </div>
-        <div className="flex items-center px-4 text-text-500 text-xs font-medium">
+        <div className="flex items-center px-4 text-zinc-400 text-xs font-medium">
           <Skeleton className="shrink-0" show={loading} width={64} height={16}>
             <span data-testid="created-at">
               {dateYearMonthDayHourMinuteSecond(new Date(member.created_at || ''), false)}

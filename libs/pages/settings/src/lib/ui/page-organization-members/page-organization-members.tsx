@@ -117,8 +117,8 @@ export function PageOrganizationMembers(props: PageOrganizationMembersProps) {
       <div className="p-8">
         <div className="flex justify-between mb-8">
           <div>
-            <h1 className="h5 text-text-700 mb-2">Manage your team</h1>
-            <p className="text-text-500 text-xs max-w-content-with-navigation-left">
+            <h1 className="h5 text-zinc-400 mb-2">Manage your team</h1>
+            <p className="text-zinc-400 text-xs max-w-content-with-navigation-left">
               This section allows you to manage the members of your organization (add / remove) and as well assign a
               role to each of them. You can invite someone to join your organization via email.
             </p>

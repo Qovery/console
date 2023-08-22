@@ -45,7 +45,7 @@ export function CrudModal(props: CrudModalProps) {
       />
       {(props.customDomain?.validation_domain || props.link) && (
         <div className="w-full rounded-[3px] overflow-hidden">
-          <div className="flex items-center h-7 text-xs text-text-200 bg-neutral-darken-500 px-3">
+          <div className="flex items-center h-7 text-xs text-zinc-100 bg-neutral-darken-500 px-3">
             CNAME configuration
           </div>
           <div className={`font-code bg-neutral-darken-400 px-3 pt-1.5 ${hideDomain ? 'pb-3' : 'pb-1'}`}>

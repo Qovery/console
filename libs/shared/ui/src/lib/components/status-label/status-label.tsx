@@ -70,7 +70,7 @@ export function StatusLabel(props: StatusLabelProps) {
 
   return (
     <span
-      className={`flex items-center px-3 h-8 border border-element-lighter-500 rounded-full text-text-500 text-xs font-medium truncate ${className}`}
+      className={`flex items-center px-3 h-8 border border-element-lighter-500 rounded-full text-zinc-400 text-xs font-medium truncate ${className}`}
       data-testid="status-label"
     >
       {showProgressIcon() && (

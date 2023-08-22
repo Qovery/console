@@ -43,10 +43,10 @@ export function FlowCreatePort({
       <div className="flex justify-between mb-10">
         <div>
           <div className="flex justify-between mb-2 items-center">
-            <h3 className="text-text-700 text-lg">{isSetting ? 'Port' : 'Set port'}</h3>
+            <h3 className="text-zinc-400 text-lg">{isSetting ? 'Port' : 'Set port'}</h3>
           </div>
 
-          <p className={isSetting ? 'text-sm text-text-500 max-w-lg' : 'text-xs text-text-500'}>
+          <p className={isSetting ? 'text-sm text-zinc-400 max-w-lg' : 'text-xs text-zinc-400'}>
             Declare TCP/UDP ports used by your application. Declared ports are accessible from other applications within
             the same environment. You can also expose them on the internet by making them public. Declared ports are
             also used to check the liveness/readiness of your application
@@ -86,11 +86,11 @@ export function FlowCreatePort({
                         <div className="w-9"></div>
                       ))}
                     <div className="text-xs">
-                      <span className="text-text-600 font-medium">
+                      <span className="text-zinc-400 font-medium">
                         Application Port:{' '}
                         {(customPort as PortData).application_port || (customPort as ServicePort).internal_port}
                       </span>
-                      <p className="flex gap-3 text-text-400 mt-1">
+                      <p className="flex gap-3 text-zinc-350 mt-1">
                         <span>
                           Public:{' '}
                           {(customPort as PortData).is_public || (customPort as ServicePort).publicly_accessible

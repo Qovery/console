@@ -53,7 +53,7 @@ export function EntrypointCmdInputs({
           />
         )}
       />
-      <p className="text-xs ml-4 mt-1 mb-3 text-text-400">Expected format: entrypoint.sh</p>
+      <p className="text-xs ml-4 mt-1 mb-3 text-zinc-350">Expected format: entrypoint.sh</p>
       <Controller
         name={cmdArgumentsFieldName}
         control={control}
@@ -71,8 +71,8 @@ export function EntrypointCmdInputs({
           />
         )}
       />
-      <p className="text-xs ml-4 mt-1 text-text-400">Expected format: ["-h", "0.0.0.0", "-p", "8080", "string"]</p>
-      <p className="text-xs mt-1 text-text-400">
+      <p className="text-xs ml-4 mt-1 text-zinc-350">Expected format: ["-h", "0.0.0.0", "-p", "8080", "string"]</p>
+      <p className="text-xs mt-1 text-zinc-350">
         {watch(imageEntryPointFieldName) && (
           <span className="block mt-2">
             i.e: docker run --entrypoint {watch(imageEntryPointFieldName)} {watch('image_name')}{' '}

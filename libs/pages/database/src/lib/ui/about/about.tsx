@@ -25,10 +25,10 @@ export function About(props: AboutProps) {
 
   return (
     <div className="pt-2 pb-8 px-8 flex flex-col items-start border-b border-element-light-lighter-400">
-      <div className="text-subtitle mb-3 text-text-600">About</div>
-      <p className="text-text-500 mb-5">{description ? description : 'No description provided yet'}</p>
+      <div className="text-subtitle mb-3 text-zinc-400">About</div>
+      <p className="text-zinc-400 mb-5">{description ? description : 'No description provided yet'}</p>
       <Skeleton height={24} width={120} show={!loadingStatus || loadingStatus === 'loading'} className="mb-5">
-        <div className="flex gap-2 items-center px-2 h-6 capitalize border leading-0 rounded border-element-light-lighter-500 text-text-500 text-sm font-medium">
+        <div className="flex gap-2 items-center px-2 h-6 capitalize border leading-0 rounded border-element-light-lighter-500 text-zinc-400 text-sm font-medium">
           <Icon name={type || ''} className="w-4" />
           {type && type} v{version && version}
         </div>
@@ -36,14 +36,14 @@ export function About(props: AboutProps) {
 
       <Skeleton height={24} width={120} show={!loadingStatus || loadingStatus === 'loading'} className="mb-2">
         <div className="flex">
-          <p className="text-text-500">Mode : </p>
-          <p className="text-text-500 ml-1 font-medium">{upperCaseFirstLetter(mode?.toLowerCase())}</p>
+          <p className="text-zinc-400">Mode : </p>
+          <p className="text-zinc-400 ml-1 font-medium">{upperCaseFirstLetter(mode?.toLowerCase())}</p>
         </div>
       </Skeleton>
       <Skeleton height={24} width={120} show={!loadingStatus || loadingStatus === 'loading'} className="mb-5">
         <div className="flex">
-          <p className="text-text-500">Accessibility : </p>
-          <p className="text-text-500 ml-1 font-medium">{upperCaseFirstLetter(accessibility?.toLowerCase())}</p>
+          <p className="text-zinc-400">Accessibility : </p>
+          <p className="text-zinc-400 ml-1 font-medium">{upperCaseFirstLetter(accessibility?.toLowerCase())}</p>
         </div>
       </Skeleton>
 

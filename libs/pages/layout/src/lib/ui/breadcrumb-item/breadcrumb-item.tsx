@@ -22,7 +22,7 @@ export function BreadcrumbItem(props: BreadcrumbItemProps) {
   return (
     <div className="flex items-center justify-center">
       <div className="flex flex-col">
-        {label && <span className="text-xs text-text-400 dark:text-text-300 font-medium ml-2">{label}</span>}
+        {label && <span className="text-xs text-zinc-350 dark:text-zinc-300 font-medium ml-2">{label}</span>}
         <div className="flex gap-1 items-center">
           <BreadcrumbItemValue link={link} active={isLast} name={currentName ?? ''} logo={logo} />
           {menuItems.length > 0 && (

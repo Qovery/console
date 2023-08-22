@@ -18,7 +18,7 @@ export function StepResources({ maximumInstances, onSubmit, onBack, environmentM
   return (
     <>
       <div className="mb-10">
-        <h3 className="text-text-700 text-lg mb-2">Set resources</h3>
+        <h3 className="text-zinc-400 text-lg mb-2">Set resources</h3>
       </div>
 
       <form onSubmit={onSubmit}>

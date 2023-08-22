@@ -26,8 +26,8 @@ export function PageSettingsNetwork(props: PageSettingsNetworkProps) {
       <div className="p-8  max-w-content-with-navigation-left">
         <div className="flex justify-between mb-8">
           <div>
-            <h1 className="h5 text-text-700 mb-2">Network</h1>
-            <p className="text-sm text-text-500 max-w-lg">
+            <h1 className="h5 text-zinc-400 mb-2">Network</h1>
+            <p className="text-sm text-zinc-400 max-w-lg">
               The Network tab in your cluster settings allows you to update your Qovery VPC route table so that you can
               perform VPC peering.
             </p>
@@ -55,11 +55,11 @@ export function PageSettingsNetwork(props: PageSettingsNetworkProps) {
                   data-testid="form-row"
                 >
                   <div className="flex flex-col	">
-                    <p data-testid="form-row-target" className="text-xs text-text-400 mb-1">
-                      Target: <span className="text-text-600 font-medium">{currentRoute.target}</span>
+                    <p data-testid="form-row-target" className="text-xs text-zinc-350 mb-1">
+                      Target: <span className="text-zinc-400 font-medium">{currentRoute.target}</span>
                     </p>
-                    <p data-testid="form-row-destination" className="text-xs text-text-400">
-                      Destination: <span className="text-text-600 font-medium">{currentRoute.destination}</span>
+                    <p data-testid="form-row-destination" className="text-xs text-zinc-350">
+                      Destination: <span className="text-zinc-400 font-medium">{currentRoute.destination}</span>
                     </p>
                   </div>
                   <div className="flex items-center">
@@ -67,7 +67,7 @@ export function PageSettingsNetwork(props: PageSettingsNetworkProps) {
                       <Tooltip side="top" content={currentRoute.description}>
                         <div className="flex items-center">
                           <ButtonIcon
-                            className="text-text-500 hover:text-text-700"
+                            className="text-zinc-400 hover:text-zinc-400"
                             style={ButtonIconStyle.FLAT}
                             icon={IconAwesomeEnum.CIRCLE_INFO}
                           />
@@ -75,14 +75,14 @@ export function PageSettingsNetwork(props: PageSettingsNetworkProps) {
                       </Tooltip>
                     )}
                     <ButtonIcon
-                      className="text-text-500 hover:text-text-700"
+                      className="text-zinc-400 hover:text-zinc-400"
                       style={ButtonIconStyle.FLAT}
                       onClick={() => props.onEdit(currentRoute)}
                       dataTestId="edit-button"
                       icon={IconAwesomeEnum.WHEEL}
                     />
                     <ButtonIcon
-                      className="text-text-500"
+                      className="text-zinc-400"
                       onClick={() => props.onDelete(currentRoute)}
                       dataTestId="delete-button"
                       icon={IconAwesomeEnum.TRASH}

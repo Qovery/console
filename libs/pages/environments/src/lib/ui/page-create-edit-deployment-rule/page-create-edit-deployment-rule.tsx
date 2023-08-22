@@ -76,10 +76,10 @@ export function PageCreateEditDeploymentRule(props: PageCreateEditDeploymentRule
                 Back
               </Button>
 
-              <h1 className="font-bold text-xl text-text-700 mb-2">{title}</h1>
+              <h1 className="font-bold text-xl text-zinc-400 mb-2">{title}</h1>
 
               <div className="mb-10">
-                <p className="text-text-500 text-xs leading-5">
+                <p className="text-zinc-400 text-xs leading-5">
                   Declaring deployment rules at the project level allows you to apply defaults rule to all newly created
                   environments.
                 </p>
@@ -131,7 +131,7 @@ export function PageCreateEditDeploymentRule(props: PageCreateEditDeploymentRule
                     )}
                   />
 
-                  <p className="text-xs text-text-400">
+                  <p className="text-xs text-zinc-350">
                     Use wildcards to specify just part of the name of the target environment (ex: [PR] Dev-*).
                   </p>
                 </BlockContent>

@@ -61,7 +61,7 @@ export function RowEvent(props: RowEventProps) {
     const { event_type, target_name, project_id, environment_id, target_id } = event
 
     const customLink = (url: string, content = target_name) => (
-      <Link className="truncate cursor-pointer hover:text-text-400 transition" to={url}>
+      <Link className="truncate cursor-pointer hover:text-zinc-350 transition" to={url}>
         {content}
       </Link>
     )
@@ -100,7 +100,7 @@ export function RowEvent(props: RowEventProps) {
     <>
       <div
         data-testid="row-event"
-        className="grid h-11 py-2.5 items-center text-xs text-text-500 font-medium border-b-element-light-lighter-400 border-b hover:bg-element-light-lighter-200 last:border-b-0"
+        className="grid h-11 py-2.5 items-center text-xs text-zinc-400 font-medium border-b-element-light-lighter-400 border-b hover:bg-element-light-lighter-200 last:border-b-0"
         style={{ gridTemplateColumns: columnsWidth }}
         onClick={() => setExpanded(!expanded)}
       >
@@ -165,7 +165,7 @@ export function RowEvent(props: RowEventProps) {
         <div className="px-4">
           <Skeleton height={16} width={80} show={isPlaceholder}>
             <div className="truncate">
-              <span className="inline-block text-text-500 mr-1.5">{getSourceIcon(event.origin)}</span>
+              <span className="inline-block text-zinc-400 mr-1.5">{getSourceIcon(event.origin)}</span>
               {upperCaseFirstLetter(event.origin)?.replace('_', ' ')}
             </div>
           </Skeleton>
@@ -176,7 +176,7 @@ export function RowEvent(props: RowEventProps) {
           className="relative bg-element-light-darker-500 max-h-[388px] overflow-y-auto"
           data-testid="expanded-panel"
         >
-          <div className="sticky top-[0px] flex items-center h-7 px-4 bg-element-light-darker-200 text-text-200 text-xs z-[1]">
+          <div className="sticky top-[0px] flex items-center h-7 px-4 bg-element-light-darker-200 text-zinc-100 text-xs z-[1]">
             Object Status after request (here you can find the JSON returned by our API)
           </div>
           <div className="flex justify-end sticky top-9 z-[1]">

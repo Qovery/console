@@ -55,7 +55,7 @@ export function DeploymentLogs({
             <p className="mb-1">
               No logs on this execution for <span className="text-brand-400">{serviceName}</span>.
             </p>
-            <p className="text-text-300 font-normal text-sm">
+            <p className="text-zinc-300 font-normal text-sm">
               This service was deployed more than 30 days and thus no deployment logs are available.
             </p>
           </div>
@@ -70,7 +70,7 @@ export function DeploymentLogs({
                 <span className="text-brand-400">{serviceName}</span> service was not deployed within this deployment
                 execution.
               </p>
-              <p className="text-text-300 font-normal text-sm mb-10">
+              <p className="text-zinc-300 font-normal text-sm mb-10">
                 Below the list of executions where this service was deployed.
               </p>
             </div>
@@ -94,13 +94,13 @@ export function DeploymentLogs({
                         <StatusChip className="mr-3 relative top-[2px]" status={deploymentHistory.status} />
                         <span className="text-brand-300 text-ssm">{trimId(deploymentHistory.execution_id || '')}</span>
                       </span>
-                      <span className="text-text-300 text-ssm">{dateFullFormat(deploymentHistory.created_at)}</span>
+                      <span className="text-zinc-300 text-ssm">{dateFullFormat(deploymentHistory.created_at)}</span>
                     </Link>
                   </div>
                 ))}
               </div>
               <div className="flex items-center justify-center bg-element-light-darker-300 h-9 border-t border-element-light-darker-100">
-                <p className="text-text-400 text-xs font-normal">
+                <p className="text-zinc-350 text-xs font-normal">
                   Only the last 20 deployments of the environment over the last 30 days are available.
                 </p>
               </div>

@@ -75,7 +75,7 @@ export function InputTags(props: InputTagsProps) {
           <div
             data-testid={`input-tags-${index}`}
             key={index}
-            className="relative select-none inline-flex items-center rounded-[33px] bg-element-light-lighter-200 border border-element-light-lighter-600 pl-3 pr-7 h-7 mr-1 mt-1 text-sm text-text-600"
+            className="relative select-none inline-flex items-center rounded-[33px] bg-element-light-lighter-200 border border-element-light-lighter-600 pl-3 pr-7 h-7 mr-1 mt-1 text-sm text-zinc-400"
           >
             <span className="text">{tag}</span>
             <div
@@ -94,7 +94,7 @@ export function InputTags(props: InputTagsProps) {
           type="text"
           className={`${!focused ? 'text-transparent' : ''} ${
             focused || currentTags?.length > 0 || inputValue.length > 0
-              ? 'inline-flex text-text-600 text-ssm'
+              ? 'inline-flex text-zinc-400 text-ssm'
               : 'absolute top-0 left-0 w-full h-full bg-transparent'
           }`}
           placeholder={currentTags?.length > 0 ? placeholder : ''}

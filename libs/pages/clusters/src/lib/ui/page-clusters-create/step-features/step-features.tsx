@@ -18,8 +18,8 @@ export function StepFeatures(props: StepFeaturesProps) {
   return (
     <div>
       <div className="mb-10">
-        <h3 className="text-text-700 text-lg mb-2">Features</h3>
-        <p className="text-text-500 text-sm mb-2">Additional features available on your cluster.</p>
+        <h3 className="text-zinc-400 text-lg mb-2">Features</h3>
+        <p className="text-zinc-400 text-sm mb-2">Additional features available on your cluster.</p>
       </div>
 
       <form onSubmit={onSubmit}>

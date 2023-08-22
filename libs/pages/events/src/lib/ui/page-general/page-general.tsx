@@ -88,7 +88,7 @@ export function PageGeneral({
     <>
       <div className="px-5">
         <div className="py-6 flex justify-between">
-          <h2 className="h5 text-text-700">Audit Logs</h2>
+          <h2 className="h5 text-zinc-400">Audit Logs</h2>
         </div>
         <div className="flex items-center mb-4 h-9">
           <CustomFilterFeature handleClearFilter={handleClearFilter} />
@@ -111,8 +111,8 @@ export function PageGeneral({
             ) : events && events.length === 0 ? (
               <div className="flex items-center justify-center text-center py-4 px-5 h-[30vh]">
                 <div>
-                  <Icon name={IconAwesomeEnum.WAVE_PULSE} className="text-text-400" />
-                  <p className="text-text-400 font-medium text-xs mt-1" data-testid="empty-result">
+                  <Icon name={IconAwesomeEnum.WAVE_PULSE} className="text-zinc-350" />
+                  <p className="text-zinc-350 font-medium text-xs mt-1" data-testid="empty-result">
                     No events found, we retain logs for a maximum of 30 days <br /> Try to change your filters.
                   </p>
                 </div>

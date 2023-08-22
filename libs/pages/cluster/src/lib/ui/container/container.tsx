@@ -40,24 +40,24 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
       )}
       <Skeleton width={120} height={32} show={!cluster}>
         <TagClusterType
-          className="text-text-500 border-element-light-lighter-400"
+          className="text-zinc-400 border-element-light-lighter-400"
           size={TagSize.BIG}
           cloudProvider={cluster?.cloud_provider}
           kubernetes={cluster?.kubernetes}
         />
       </Skeleton>
       <Skeleton width={120} height={32} show={!cluster}>
-        <Tag size={TagSize.BIG} className="text-text-500 border border-element-light-lighter-400 truncate">
+        <Tag size={TagSize.BIG} className="text-zinc-400 border border-element-light-lighter-400 truncate">
           {cluster?.region}
         </Tag>
       </Skeleton>
       <Skeleton width={120} height={32} show={!cluster}>
-        <Tag size={TagSize.BIG} className="text-text-500 border border-element-light-lighter-400 truncate">
+        <Tag size={TagSize.BIG} className="text-zinc-400 border border-element-light-lighter-400 truncate">
           {cluster?.version}
         </Tag>
       </Skeleton>
       <Skeleton width={120} height={32} show={!cluster}>
-        <Tag size={TagSize.BIG} className="text-text-500 border border-element-light-lighter-400 truncate">
+        <Tag size={TagSize.BIG} className="text-zinc-400 border border-element-light-lighter-400 truncate">
           {cluster?.instance_type?.toLowerCase().replace('_', '.')}
         </Tag>
       </Skeleton>

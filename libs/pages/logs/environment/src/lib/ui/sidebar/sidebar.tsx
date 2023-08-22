@@ -43,7 +43,7 @@ export function Sidebar({
       <div
         data-testid="sidebar-resize-button"
         onClick={() => setOpenSidebar(!openSidebar)}
-        className={`border-element-light-darker-100 flex justify-center items-center w-5 text-text-400 hover:bg-element-light-darker-300 cursor-pointer transition-all ease-in-out duration-150 ${
+        className={`border-element-light-darker-100 flex justify-center items-center w-5 text-zinc-350 hover:bg-element-light-darker-300 cursor-pointer transition-all ease-in-out duration-150 ${
           openSidebar ? 'border-l' : ''
         } `}
       >

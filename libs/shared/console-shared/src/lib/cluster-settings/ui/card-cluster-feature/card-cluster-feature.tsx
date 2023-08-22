@@ -57,13 +57,13 @@ export function CardClusterFeature(props: CardClusterFeatureProps) {
           <InputToggle disabled small className="relative top-[2px]" value={getValue(feature?.value || false)} />
         )}
         <div className="basis-full">
-          <h4 className="flex justify-between text-ssm text-text-600 mb-1 font-medium">
+          <h4 className="flex justify-between text-ssm text-zinc-400 mb-1 font-medium">
             <span>{feature.title}</span>
-            <span className="text-ssm text-text-600 font-medium">
+            <span className="text-ssm text-zinc-400 font-medium">
               {feature.cost_per_month !== 0 ? `$${feature.cost_per_month}/month billed by ${cloudProvider}` : 'Free'}
             </span>
           </h4>
-          <p className="text-xs text-text-400 max-w-lg">{feature.description}</p>
+          <p className="text-xs text-zinc-350 max-w-lg">{feature.description}</p>
           {typeof feature.value === 'string' && (
             <div onClick={(e) => e.stopPropagation()}>
               {control ? (

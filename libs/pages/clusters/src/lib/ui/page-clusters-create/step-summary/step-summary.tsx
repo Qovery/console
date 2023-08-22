@@ -54,9 +54,9 @@ export function StepSummary(props: StepSummaryProps) {
     <div>
       <div className="mb-10">
         <div className="flex justify-between mb-2 items-center">
-          <h3 className="text-text-700 text-lg">Ready to install your cluster</h3>
+          <h3 className="text-zinc-400 text-lg">Ready to install your cluster</h3>
         </div>
-        <p className="text-xs text-text-500 mb-2">
+        <p className="text-xs text-zinc-400 mb-2">
           Here is what we will deploy, this action can take up to 30 minutes.
         </p>
       </div>
@@ -87,8 +87,8 @@ export function StepSummary(props: StepSummaryProps) {
         >
           <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
           <div className="flex-grow mr-2">
-            <div className="text-sm text-text-600 font-bold mb-2">General information</div>
-            <ul className="text-text-400 text-sm list-none">
+            <div className="text-sm text-zinc-400 font-bold mb-2">General information</div>
+            <ul className="text-zinc-350 text-sm list-none">
               <li>
                 Cluster name: <strong className="font-medium">{props.generalData.name}</strong>
               </li>
@@ -113,7 +113,7 @@ export function StepSummary(props: StepSummaryProps) {
             onClick={props.goToGeneral}
             icon={IconAwesomeEnum.WHEEL}
             style={ButtonIconStyle.FLAT}
-            className="text-text-500 hover:text-text-700"
+            className="text-zinc-400 hover:text-zinc-400"
           />
         </div>
 
@@ -123,8 +123,8 @@ export function StepSummary(props: StepSummaryProps) {
         >
           <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
           <div className="flex-grow mr-2">
-            <div className="text-sm text-text-600 font-bold mb-2">Resources</div>
-            <ul className="text-text-400 text-sm list-none">
+            <div className="text-sm text-zinc-400 font-bold mb-2">Resources</div>
+            <ul className="text-zinc-350 text-sm list-none">
               <li>
                 Cluster type: <strong className="font-medium">{props.resourcesData.cluster_type}</strong>
               </li>
@@ -150,7 +150,7 @@ export function StepSummary(props: StepSummaryProps) {
             onClick={props.goToResources}
             icon={IconAwesomeEnum.WHEEL}
             style={ButtonIconStyle.FLAT}
-            className="text-text-500 hover:text-text-700"
+            className="text-zinc-400 hover:text-zinc-400"
           />
         </div>
 
@@ -161,8 +161,8 @@ export function StepSummary(props: StepSummaryProps) {
           >
             <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
             <div className="flex-grow mr-2">
-              <div className="text-sm text-text-600 font-bold mb-2">Remote access</div>
-              <ul className="text-text-400 text-sm list-none">
+              <div className="text-sm text-zinc-400 font-bold mb-2">Remote access</div>
+              <ul className="text-zinc-350 text-sm list-none">
                 <li>
                   SSH key: <strong className="font-medium">{trimId(props.remoteData.ssh_key, 'both')}</strong>
                 </li>
@@ -172,7 +172,7 @@ export function StepSummary(props: StepSummaryProps) {
               onClick={props.goToRemote}
               icon={IconAwesomeEnum.WHEEL}
               style={ButtonIconStyle.FLAT}
-              className="text-text-500 hover:text-text-700"
+              className="text-zinc-400 hover:text-zinc-400"
             />
           </div>
         )}
@@ -184,8 +184,8 @@ export function StepSummary(props: StepSummaryProps) {
           >
             <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
             <div className="flex-grow mr-2">
-              <div className="text-sm text-text-600 font-bold mb-2">Features</div>
-              <ul className="text-text-400 text-sm list-none">
+              <div className="text-sm text-zinc-400 font-bold mb-2">Features</div>
+              <ul className="text-zinc-350 text-sm list-none">
                 {Object.keys(props.featuresData).map((id: string) => {
                   const currentFeature = props.featuresData && props.featuresData[id]
 
@@ -206,7 +206,7 @@ export function StepSummary(props: StepSummaryProps) {
               onClick={props.goToFeatures}
               icon={IconAwesomeEnum.WHEEL}
               style={ButtonIconStyle.FLAT}
-              className="text-text-500 hover:text-text-700"
+              className="text-zinc-400 hover:text-zinc-400"
             />
           </div>
         )}

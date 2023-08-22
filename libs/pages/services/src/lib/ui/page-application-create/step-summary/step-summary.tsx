@@ -35,9 +35,9 @@ export function StepSummary({
     <div>
       <div className="mb-10">
         <div className="flex justify-between mb-2 items-center">
-          <h3 className="text-text-700 text-lg">Ready to install your Application</h3>
+          <h3 className="text-zinc-400 text-lg">Ready to install your Application</h3>
         </div>
-        <p className="text-xs text-text-500 mb-2">
+        <p className="text-xs text-zinc-400 mb-2">
           The basic application setup is done, you can now deploy your application or move forward with some advanced
           setup.
         </p>
@@ -47,8 +47,8 @@ export function StepSummary({
         <div className="flex p-4 w-full border rounded border-element-light-lighter-500 bg-element-light-lighter-200 mb-2">
           <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
           <div className="flex-grow mr-2">
-            <div className="text-sm text-text-600 font-bold mb-2">General information</div>
-            <ul className="text-text-400 text-sm list-none">
+            <div className="text-sm text-zinc-400 font-bold mb-2">General information</div>
+            <ul className="text-zinc-350 text-sm list-none">
               <li>
                 Name: <strong className="font-medium">{generalData.name}</strong>
               </li>
@@ -104,15 +104,15 @@ export function StepSummary({
             onClick={gotoGlobalInformation}
             icon={IconAwesomeEnum.WHEEL}
             style={ButtonIconStyle.FLAT}
-            className="text-text-500 hover:text-text-700"
+            className="text-zinc-400 hover:text-zinc-400"
           />
         </div>
 
         <div className="flex p-4 w-full border rounded border-element-light-lighter-500 bg-element-light-lighter-200 mb-2">
           <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
           <div className="flex-grow mr-2">
-            <div className="text-sm text-text-600 font-bold mb-2">Resources</div>
-            <ul className="text-text-400 text-sm list-none">
+            <div className="text-sm text-zinc-400 font-bold mb-2">Resources</div>
+            <ul className="text-zinc-350 text-sm list-none">
               <li>
                 CPU: <strong className="font-medium">{resourcesData['cpu']}</strong>
               </li>
@@ -132,15 +132,15 @@ export function StepSummary({
             onClick={gotoResources}
             icon={IconAwesomeEnum.WHEEL}
             style={ButtonIconStyle.FLAT}
-            className="text-text-500 hover:text-text-700"
+            className="text-zinc-400 hover:text-zinc-400"
           />
         </div>
 
         <div className="flex p-4 w-full border rounded border-element-light-lighter-500 bg-element-light-lighter-200 mb-2">
           <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
           <div className="flex-grow mr-2">
-            <div className="text-sm text-text-600 font-bold mb-2">Ports</div>
-            <ul className="text-text-400 text-sm">
+            <div className="text-sm text-zinc-400 font-bold mb-2">Ports</div>
+            <ul className="text-zinc-350 text-sm">
               {portsData.ports && portsData.ports.length > 0 ? (
                 <>
                   {portsData.ports?.map((port, index) => (
@@ -165,7 +165,7 @@ export function StepSummary({
                       {portsData.healthchecks.item.liveness_probe &&
                         portsData.healthchecks.typeLiveness !== ProbeTypeEnum.NONE && (
                           <li className="flex flex-col mt-1">
-                            <span className="font-bold text-text-600">Liveness</span>
+                            <span className="font-bold text-zinc-400">Liveness</span>
                             <ul className="relative border-l border-element-light-lighter-500 mt-2 mb-1">
                               <li className="pl-5">
                                 Type: <strong className="font-medium">{portsData.healthchecks.typeLiveness}</strong>
@@ -206,7 +206,7 @@ export function StepSummary({
                       {portsData.healthchecks.item.readiness_probe &&
                         portsData.healthchecks.typeReadiness !== ProbeTypeEnum.NONE && (
                           <li className="flex flex-col mt-1">
-                            <span className="font-bold text-text-600">Readiness</span>
+                            <span className="font-bold text-zinc-400">Readiness</span>
                             <ul className="relative border-l border-element-light-lighter-500 mt-2 mb-1">
                               <li className="pl-5">
                                 Type: <strong className="font-medium">{portsData.healthchecks.typeReadiness}</strong>
@@ -257,7 +257,7 @@ export function StepSummary({
             onClick={gotoPorts}
             icon={IconAwesomeEnum.WHEEL}
             style={ButtonIconStyle.FLAT}
-            className="text-text-500 hover:text-text-700"
+            className="text-zinc-400 hover:text-zinc-400"
           />
         </div>
       </div>

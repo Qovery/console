@@ -33,7 +33,7 @@ export function StageOrderModal(props: StageOrderModalProps) {
   }
 
   const classNameItem = (isDragging: boolean) =>
-    `flex items-center w-full text-text-500 text-ssm font-medium rounded p-4 border ${
+    `flex items-center w-full text-zinc-400 text-ssm font-medium rounded p-4 border ${
       isDragging
         ? 'border-2 border-green-500 bg-element-light-lighter-100'
         : 'border-element-light-lighter-500 bg-element-light-lighter-200'
@@ -42,8 +42,8 @@ export function StageOrderModal(props: StageOrderModalProps) {
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <div className="p-6">
-        <h2 className="h4 text-text-600 max-w-sm truncate mb-1">Edit execution order</h2>
-        <p className="mb-6 text-text-400 text-sm">You can drag and drop stages to modify their order.</p>
+        <h2 className="h4 text-zinc-400 max-w-sm truncate mb-1">Edit execution order</h2>
+        <p className="mb-6 text-zinc-350 text-sm">You can drag and drop stages to modify their order.</p>
         <ScrollShadowWrapper className="max-h-[500px]">
           <Droppable droppableId="0">
             {(provided) => (
@@ -58,7 +58,7 @@ export function StageOrderModal(props: StageOrderModalProps) {
                         className="!top-[auto] !left-[auto] flex items-center mb-1"
                       >
                         <div
-                          className={`text-center w-5 h-5 text-sm text-text-500 mr-3 ${
+                          className={`text-center w-5 h-5 text-sm text-zinc-400 mr-3 ${
                             snapshot.isDragging ? 'opacity-0' : ''
                           }`}
                         >

@@ -29,7 +29,7 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
       <div className="p-8  max-w-content-with-navigation-left">
         <div className="flex justify-between mb-8">
           <div>
-            <h2 className="h5 text-text-700 mb-2">General</h2>
+            <h2 className="h5 text-zinc-400 mb-2">General</h2>
           </div>
         </div>
         <form onSubmit={onSubmit}>
@@ -80,7 +80,7 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
                 />
               )}
             />
-            <p className="text-xs text-text-400 ml-4">
+            <p className="text-xs text-zinc-350 ml-4">
               Cluster cannot be changed. Clone the environment to deploy the same applications on another cluster.
             </p>
           </BlockContent>

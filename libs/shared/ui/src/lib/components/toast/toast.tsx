@@ -53,7 +53,7 @@ export const ToastContent = (
           {description && (
             <span
               data-testid="toast-description"
-              className={`block text-sm text-text-300 font-medium ${!labelAction ? 'mb-1' : ''}`}
+              className={`block text-sm text-zinc-300 font-medium ${!labelAction ? 'mb-1' : ''}`}
             >
               {description}
             </span>

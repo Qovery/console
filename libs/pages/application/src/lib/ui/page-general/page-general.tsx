@@ -31,11 +31,11 @@ export function PageGeneral(props: PageGeneralProps) {
               <div className="flex border border-element-light-lighter-400 mb-4">
                 <div className="flex-1 border-r border-element-light-lighter-400 p-5">
                   <Skeleton height={24} width={48} show={application?.instances?.loadingStatus === 'loading'}>
-                    <span className="text-text-600 font-bold">
+                    <span className="text-zinc-400 font-bold">
                       {application?.instances?.items?.length || '–'}/{application?.max_running_instances || '-'}
                     </span>
                   </Skeleton>
-                  <span className="flex text-xs text-text-400 font-medium">
+                  <span className="flex text-xs text-zinc-350 font-medium">
                     Running instances{' '}
                     <Tooltip side="right" content="Number of running instances">
                       <div className="flex items-center">
@@ -48,8 +48,8 @@ export function PageGeneral(props: PageGeneralProps) {
                   </span>
                 </div>
                 <div className="flex-1 p-5">
-                  <div className="text-text-600 font-bold mb-1">{serviceStability}</div>
-                  <span className="flex text-xs text-text-400 font-medium">
+                  <div className="text-zinc-400 font-bold mb-1">{serviceStability}</div>
+                  <span className="flex text-xs text-zinc-350 font-medium">
                     Service stability
                     <Tooltip
                       side="right"

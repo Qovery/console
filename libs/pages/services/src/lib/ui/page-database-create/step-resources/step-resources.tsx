@@ -18,8 +18,8 @@ export function StepResources({ onSubmit, isManaged, onBack, databaseType }: Ste
   return (
     <>
       <div className="mb-10">
-        <h3 className="text-text-700 text-lg mb-2">Set resources</h3>
-        <p className="text-sm text-text-500 max-w-content-with-navigation-left">
+        <h3 className="text-zinc-400 text-lg mb-2">Set resources</h3>
+        <p className="text-sm text-zinc-400 max-w-content-with-navigation-left">
           You can customize some of the resources assigned to the database.
         </p>
       </div>

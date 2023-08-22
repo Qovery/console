@@ -23,12 +23,12 @@ export function ForceRunModal(props: ForceRunModalProps) {
       <>
         {scheduleEvent.entrypoint && (
           <p>
-            Entrypoint: <strong className="font-normal text-text-600">{scheduleEvent.entrypoint?.toString()}</strong>
+            Entrypoint: <strong className="font-normal text-zinc-400">{scheduleEvent.entrypoint?.toString()}</strong>
           </p>
         )}
         {scheduleEvent.arguments && scheduleEvent.arguments && scheduleEvent.arguments.length > 0 && (
           <p>
-            CMD Arguments: <strong className="font-normal text-text-600">{scheduleEvent.arguments.toString()}</strong>
+            CMD Arguments: <strong className="font-normal text-zinc-400">{scheduleEvent.arguments.toString()}</strong>
           </p>
         )}
       </>

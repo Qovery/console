@@ -13,7 +13,7 @@ export function PromoCodeModal(props: PromoCodeModalProps) {
 
   return (
     <div className="p-6">
-      <h2 className="h4 text-text-600 mb-4 max-w-sm">Promo code</h2>
+      <h2 className="h4 text-zinc-400 mb-4 max-w-sm">Promo code</h2>
       <form onSubmit={props.onSubmit}>
         <Controller
           name="code"

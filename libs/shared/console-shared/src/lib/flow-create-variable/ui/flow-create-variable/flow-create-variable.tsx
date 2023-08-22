@@ -22,22 +22,22 @@ export function FlowCreateVariable(props: FlowCreateVariableProps) {
     <div>
       <div className="mb-10">
         <div className="flex justify-between mb-2 items-center">
-          <h3 className="text-text-700 text-lg">Set environment variables</h3>
+          <h3 className="text-zinc-400 text-lg">Set environment variables</h3>
           <Button size={ButtonSize.TINY} className="btn--no-min-w" onClick={props.onAdd}>
             Add variable
           </Button>
         </div>
 
-        <p className="text-xs text-text-500">Define here the variables required by your job</p>
+        <p className="text-xs text-zinc-400">Define here the variables required by your job</p>
       </div>
 
       <form onSubmit={props.onSubmit}>
         {props.variables?.length > 0 && (
           <div className="grid mb-3" style={{ gridTemplateColumns }}>
-            <span className="text-sm text-text-600 font-medium">Variable</span>
-            <span className="text-sm text-text-600 font-medium">Value</span>
-            <span className="text-sm text-text-600 font-medium">Scope</span>
-            <span className="text-sm text-text-600 font-medium pl-1.5">Secret</span>
+            <span className="text-sm text-zinc-400 font-medium">Variable</span>
+            <span className="text-sm text-zinc-400 font-medium">Value</span>
+            <span className="text-sm text-zinc-400 font-medium">Scope</span>
+            <span className="text-sm text-zinc-400 font-medium pl-1.5">Secret</span>
             <span></span>
           </div>
         )}

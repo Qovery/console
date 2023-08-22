@@ -48,12 +48,12 @@ export function SidebarPipelineItem({ currentStage, index, serviceId, versionId,
     <div className="mb-1.5">
       <div
         data-testid="toggle-stage"
-        className="cursor-pointer inline-flex items-center text-text-200 text-ssm font-medium mb-1.5 select-none"
+        className="cursor-pointer inline-flex items-center text-zinc-100 text-ssm font-medium mb-1.5 select-none"
         onClick={() => setOpenStage(!openStage)}
       >
         <BadgeDeploymentOrder className="mr-3" order={index} />
         {currentStage?.stage?.name}
-        <Icon name={IconAwesomeEnum.CARET_DOWN} className={`ml-3 text-text-400 ${!openStage ? '-rotate-90' : ''}`} />
+        <Icon name={IconAwesomeEnum.CARET_DOWN} className={`ml-3 text-zinc-350 ${!openStage ? '-rotate-90' : ''}`} />
       </div>
       {openStage && (
         <div>
@@ -72,10 +72,10 @@ export function SidebarPipelineItem({ currentStage, index, serviceId, versionId,
                       ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
                       DEPLOYMENT_LOGS_VERSION_URL(service.id, versionId ? versionId : '')
                     }
-                    className={`flex justify-between items-center w-full text-ssm transition-all font-medium py-1.5 px-2.5 hover:text-text-100 rounded-[3px] ${
+                    className={`flex justify-between items-center w-full text-ssm transition-all font-medium py-1.5 px-2.5 hover:text-zinc-50 rounded-[3px] ${
                       serviceId === service.id
-                        ? 'bg-element-light-darker-100 !text-text-100'
-                        : 'text-text-200 hover:bg-element-light-darker-300'
+                        ? 'bg-element-light-darker-100 !text-zinc-50'
+                        : 'text-zinc-100 hover:bg-element-light-darker-300'
                     } ${service.is_part_last_deployment ? '!text-brand-400' : ''}`}
                   >
                     <span className="flex">
@@ -96,8 +96,8 @@ export function SidebarPipelineItem({ currentStage, index, serviceId, versionId,
             ))
           ) : (
             <div className="text-center pt-1 pb-3">
-              <Icon name={IconAwesomeEnum.WAVE_PULSE} className="text-text-400" />
-              <p className="text-text-400 font-medium text-xs mt-1">No service for this stage</p>
+              <Icon name={IconAwesomeEnum.WAVE_PULSE} className="text-zinc-350" />
+              <p className="text-zinc-350 font-medium text-xs mt-1">No service for this stage</p>
             </div>
           )}
         </div>

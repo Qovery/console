@@ -36,13 +36,13 @@ export function UpdateAllModal(props: UpdateAllModalProps) {
 
   return (
     <div className="p-6">
-      <h2 className={`h4 text-text-600 max-w-sm truncate mb-1`}>Deploy latest version for..</h2>
-      <p className="mb-4 text-text-400 text-sm">Select the services you want to update to the latest version</p>
+      <h2 className={`h4 text-zinc-400 max-w-sm truncate mb-1`}>Deploy latest version for..</h2>
+      <p className="mb-4 text-zinc-350 text-sm">Select the services you want to update to the latest version</p>
 
-      <div className="text-text-500 text-sm mb-4 flex justify-between items-center">
+      <div className="text-zinc-400 text-sm mb-4 flex justify-between items-center">
         <p>
           For{' '}
-          <strong className="text-text-600 font-medium">
+          <strong className="text-zinc-400 font-medium">
             <Truncate truncateLimit={60} text={props.environment?.name || ''} />
           </strong>
         </p>
@@ -85,7 +85,7 @@ export function UpdateAllModal(props: UpdateAllModalProps) {
                   isChecked(application.id) ? `bg-brand-50 border border-brand-500` : 'border-element-light-lighter-500'
                 } ${props.applications && isChecked(props.applications[index - 1]?.id) && 'border-t-brand-500'}`}
               >
-                <div className="text-text-600 font-medium flex">
+                <div className="text-zinc-400 font-medium flex">
                   <InputCheckbox
                     name={application.id}
                     value={application.id}
@@ -112,7 +112,7 @@ export function UpdateAllModal(props: UpdateAllModalProps) {
                     />
                     <TagCommit withBackground commitId={application.git_repository?.deployed_commit_id} />
                   </div>
-                  <Icon name={IconAwesomeEnum.ARROW_LEFT} className="-scale-100 text-text-500 mx-2" />
+                  <Icon name={IconAwesomeEnum.ARROW_LEFT} className="-scale-100 text-zinc-400 mx-2" />
                   {application.commits?.items && (
                     <div
                       data-testid="last-commit-block"
@@ -136,8 +136,8 @@ export function UpdateAllModal(props: UpdateAllModalProps) {
         </ScrollShadowWrapper>
       ) : (
         <div className="text-center px-3 py-6" data-testid="empty-state">
-          <Icon name={IconAwesomeEnum.WAVE_PULSE} className="text-text-400" />
-          <p className="text-text-400 font-medium text-xs mt-1">No outdated services found</p>
+          <Icon name={IconAwesomeEnum.WAVE_PULSE} className="text-zinc-350" />
+          <p className="text-zinc-350 font-medium text-xs mt-1">No outdated services found</p>
         </div>
       )}
 

@@ -43,20 +43,20 @@ export function TableRowInvoice(props: TableRowInvoiceProps) {
       className={`border-b last-of-type:border-b-0 bg-white`}
     >
       <>
-        <div className="px-4 text-xs text-text-500 font-medium">{dateToFormat(data.created_at, 'MMM dd, Y')}</div>
-        <div className="px-4 text-xs text-text-500 font-medium">
+        <div className="px-4 text-xs text-zinc-400 font-medium">{dateToFormat(data.created_at, 'MMM dd, Y')}</div>
+        <div className="px-4 text-xs text-zinc-400 font-medium">
           <Tag className={`border  ${statusBadgeClassNames[data.status]}`} size={TagSize.SMALL}>
             {data.status.replace('_', ' ')}
           </Tag>
         </div>
-        <div className="px-4 text-xs text-text-500 font-medium">
+        <div className="px-4 text-xs text-zinc-400 font-medium">
           {costToHuman(data.total_in_cents / 100, data.currency_code)}
         </div>
-        <div className="px-4 text-xs text-text-500 font-medium">
+        <div className="px-4 text-xs text-zinc-400 font-medium">
           <ButtonIcon
             dataTestId="download-invoice-btn"
             className="bg-transparent !w-9 !h-8"
-            iconClassName="text-text-500"
+            iconClassName="text-zinc-400"
             external
             loading={props.isLoading}
             onClick={() => {

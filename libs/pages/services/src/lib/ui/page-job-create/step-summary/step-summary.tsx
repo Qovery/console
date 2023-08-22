@@ -25,11 +25,11 @@ export function StepSummary(props: StepSummaryProps) {
     <div>
       <div className="mb-10">
         <div className="flex justify-between mb-2 items-center">
-          <h3 className="text-text-700 text-lg">
+          <h3 className="text-zinc-400 text-lg">
             Ready to create your {isCronJob(props.jobType) ? 'Cron' : 'Lifecycle'} job
           </h3>
         </div>
-        <p className="text-xs text-text-500 mb-2">
+        <p className="text-xs text-zinc-400 mb-2">
           The basic application setup is done, you can now deploy your application or move forward with some advanced
           setup.
         </p>
@@ -39,11 +39,11 @@ export function StepSummary(props: StepSummaryProps) {
         <div className="flex p-4 w-full border rounded border-element-light-lighter-500 bg-element-light-lighter-200 mb-2">
           <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
           <div className="flex-grow mr-2">
-            <div className="text-sm text-text-600 font-bold mb-5">General information</div>
+            <div className="text-sm text-zinc-400 font-bold mb-5">General information</div>
 
-            <div className="text-text-600 text-ssm mb-2 font-medium">General</div>
+            <div className="text-zinc-400 text-ssm mb-2 font-medium">General</div>
 
-            <ul className="text-text-400 text-sm list-none">
+            <ul className="text-zinc-350 text-sm list-none">
               <li>
                 <span className="font-medium">Name:</span> {props.generalData.name}
               </li>
@@ -55,7 +55,7 @@ export function StepSummary(props: StepSummaryProps) {
             <div className="my-4 border-b border-element-light-lighter-500 border-dashed" />
 
             {props.generalData.serviceType === ServiceTypeEnum.APPLICATION && (
-              <ul className="text-text-400 text-sm list-none">
+              <ul className="text-zinc-350 text-sm list-none">
                 <li>
                   <span className="font-medium">Repository:</span> {props.generalData.repository}
                 </li>
@@ -73,7 +73,7 @@ export function StepSummary(props: StepSummaryProps) {
               </ul>
             )}
             {props.generalData.serviceType === ServiceTypeEnum.CONTAINER && (
-              <ul className="text-text-400 text-sm list-none">
+              <ul className="text-zinc-350 text-sm list-none">
                 <li>
                   <span className="font-medium">Registry:</span> {props.selectedRegistryName}
                 </li>
@@ -97,22 +97,22 @@ export function StepSummary(props: StepSummaryProps) {
             onClick={props.gotoGlobalInformation}
             icon={IconAwesomeEnum.WHEEL}
             style={ButtonIconStyle.FLAT}
-            className="text-text-500 hover:text-text-700"
+            className="text-zinc-400 hover:text-zinc-400"
           />
         </div>
 
         <div className="flex p-4 w-full border rounded border-element-light-lighter-500 bg-element-light-lighter-200 mb-2">
           <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
           <div className="flex-grow mr-2">
-            <div className="text-sm text-text-600 font-bold mb-5">Configure job</div>
+            <div className="text-sm text-zinc-400 font-bold mb-5">Configure job</div>
 
             {props.jobType === ServiceTypeEnum.LIFECYCLE_JOB && (
               <>
                 {props.configureData.on_start?.enabled && (
                   <>
-                    <ul className="text-text-400 text-sm list-none">
+                    <ul className="text-zinc-350 text-sm list-none">
                       <li>
-                        <div className="font-medium text-ssm text-text-600">
+                        <div className="font-medium text-ssm text-zinc-400">
                           <span className="mr-2 inline-block">Events</span>Environment Start
                         </div>
                       </li>
@@ -130,9 +130,9 @@ export function StepSummary(props: StepSummaryProps) {
                 )}
                 {props.configureData.on_stop?.enabled && (
                   <>
-                    <ul className="text-text-400 text-sm list-none">
+                    <ul className="text-zinc-350 text-sm list-none">
                       <li>
-                        <div className="font-medium text-ssm text-text-600">
+                        <div className="font-medium text-ssm text-zinc-400">
                           <span className="mr-2 inline-block">Events</span>Environment Stop
                         </div>
                       </li>
@@ -150,9 +150,9 @@ export function StepSummary(props: StepSummaryProps) {
                 )}
                 {props.configureData.on_delete?.enabled && (
                   <>
-                    <ul className="text-text-400 text-sm list-none">
+                    <ul className="text-zinc-350 text-sm list-none">
                       <li>
-                        <div className="font-medium text-ssm text-text-600">
+                        <div className="font-medium text-ssm text-zinc-400">
                           <span className="mr-2 inline-block">Events</span>Environment Delete
                         </div>
                       </li>
@@ -173,7 +173,7 @@ export function StepSummary(props: StepSummaryProps) {
 
             {props.jobType === ServiceTypeEnum.CRON_JOB && (
               <>
-                <ul className="text-text-400 text-sm list-none">
+                <ul className="text-zinc-350 text-sm list-none">
                   <li>
                     <span className="font-medium">Scheduled at:</span> {props.configureData.schedule}
                   </li>
@@ -192,9 +192,9 @@ export function StepSummary(props: StepSummaryProps) {
               </>
             )}
 
-            <div className="text-text-600 text-ssm mb-2 font-medium">Parameters</div>
+            <div className="text-zinc-400 text-ssm mb-2 font-medium">Parameters</div>
 
-            <ul className="text-text-400 text-sm list-none">
+            <ul className="text-zinc-350 text-sm list-none">
               <li>
                 <span className="font-medium">Max restarts:</span> {props.configureData.nb_restarts}
               </li>
@@ -211,17 +211,17 @@ export function StepSummary(props: StepSummaryProps) {
             onClick={props.gotoConfigureJob}
             icon={IconAwesomeEnum.WHEEL}
             style={ButtonIconStyle.FLAT}
-            className="text-text-500 hover:text-text-700"
+            className="text-zinc-400 hover:text-zinc-400"
           />
         </div>
 
         <div className="flex p-4 w-full border rounded border-element-light-lighter-500 bg-element-light-lighter-200 mb-2">
           <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
           <div className="flex-grow mr-2">
-            <div className="text-sm text-text-600 font-bold mb-5">Resources</div>
+            <div className="text-sm text-zinc-400 font-bold mb-5">Resources</div>
 
-            <div className="text-text-600 text-ssm mb-2 font-medium">Parameters</div>
-            <ul className="text-text-400 text-sm list-none">
+            <div className="text-zinc-400 text-ssm mb-2 font-medium">Parameters</div>
+            <ul className="text-zinc-350 text-sm list-none">
               <li>
                 <span className="font-medium">CPU:</span> {props.resourcesData['cpu']}
               </li>
@@ -235,22 +235,22 @@ export function StepSummary(props: StepSummaryProps) {
             onClick={props.gotoResources}
             icon={IconAwesomeEnum.WHEEL}
             style={ButtonIconStyle.FLAT}
-            className="text-text-500 hover:text-text-700"
+            className="text-zinc-400 hover:text-zinc-400"
           />
         </div>
 
         <div className="flex p-4 w-full border rounded border-element-light-lighter-500 bg-element-light-lighter-200 mb-2">
           <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
           <div className="flex-grow mr-2">
-            <div className="text-sm text-text-600 font-bold mb-5">Environment variables</div>
+            <div className="text-sm text-zinc-400 font-bold mb-5">Environment variables</div>
 
-            <div className="text-text-600 text-ssm mb-2 font-medium">
+            <div className="text-zinc-400 text-ssm mb-2 font-medium">
               Parameters{' '}
               {props.variableData.variables && props.variableData.variables.length
                 ? `(${props.variableData.variables.length})`
                 : ''}
             </div>
-            <ul className="text-text-400 text-sm">
+            <ul className="text-zinc-350 text-sm">
               {props.variableData.variables && props.variableData.variables.length > 0 ? (
                 props.variableData.variables?.map((variable, index) => (
                   <li key={index}>
@@ -269,7 +269,7 @@ export function StepSummary(props: StepSummaryProps) {
             onClick={props.gotoVariables}
             icon={IconAwesomeEnum.WHEEL}
             style={ButtonIconStyle.FLAT}
-            className="text-text-500 hover:text-text-700"
+            className="text-zinc-400 hover:text-zinc-400"
           />
         </div>
       </div>

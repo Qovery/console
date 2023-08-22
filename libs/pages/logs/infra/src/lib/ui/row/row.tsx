@@ -21,10 +21,10 @@ export function Row(props: RowProps) {
 
   const indexClassName = `${
     type === LogsType.ERROR && realError
-      ? 'bg-red-500 text-text-800 group-hover:bg-red-600'
+      ? 'bg-red-500 text-zinc-800 group-hover:bg-red-600'
       : success
-      ? 'bg-green-500 text-text-800 group-hover:bg-green-600'
-      : 'bg-element-light-darker-300 text-text-400 group-hover:bg-element-light-darker-200'
+      ? 'bg-green-500 text-zinc-800 group-hover:bg-green-600'
+      : 'bg-element-light-darker-300 text-zinc-350 group-hover:bg-element-light-darker-200'
   }`
 
   const colorsCellClassName = (white?: boolean) =>
@@ -35,7 +35,7 @@ export function Row(props: RowProps) {
         ? 'text-yellow-500'
         : success
         ? 'text-green-500'
-        : `${white ? 'text-text-200' : 'text-element-light-lighter-700'}`
+        : `${white ? 'text-zinc-100' : 'text-element-light-lighter-700'}`
     }`
 
   return (

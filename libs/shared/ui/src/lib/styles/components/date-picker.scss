@@ -26,7 +26,7 @@
     width: theme('spacing.7');
     margin-right: theme('spacing.1');
     font-size: theme('fontSize.xs');
-    color: theme('colors.text.700');
+    color: theme('colors.zinc.400');
 
     &:last-child {
       margin-right: 0;
@@ -50,7 +50,7 @@
   .react-datepicker__day--range-start,
   .react-datepicker__day--range-end {
     background-color: theme('colors.brand.500') !important;
-    color: theme('colors.text.100') !important;
+    color: theme('colors.zinc.100') !important;
   }
 
   .react-datepicker__day--range-start,

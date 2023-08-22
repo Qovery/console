@@ -52,7 +52,7 @@ export function Avatar(props: AvatarProps) {
         <img src={url} alt={alt} className="w-full h-full rounded-full" />
       ) : (
         <div className="w-full h-full rounded-full bg-element-light-lighter-400 text-center flex justify-center items-center">
-          <span className="text-xs text-text-500 font-medium relative">
+          <span className="text-xs text-zinc-400 font-medium relative">
             {firstName && firstName.charAt(0).toUpperCase()}
             {lastName && lastName.charAt(0).toUpperCase()}
           </span>
@@ -71,7 +71,7 @@ export function Avatar(props: AvatarProps) {
               <img src={logoUrl} alt="Logo Organization" />
             </span>
           ) : (
-            <span className="w-full h-full text-2xs text-text-400 bg-element-light-lighter-300 border border-element-light-lighter-100 rounded-full flex items-center justify-center uppercase">
+            <span className="w-full h-full text-2xs text-zinc-350 bg-element-light-lighter-300 border border-element-light-lighter-100 rounded-full flex items-center justify-center uppercase">
               {logoText}
             </span>
           )}

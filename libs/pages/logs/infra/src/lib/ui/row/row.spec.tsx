@@ -25,7 +25,7 @@ describe('Row', () => {
 
     const index = screen.getByTestId('index')
 
-    expect(index).toHaveClass('bg-element-light-darker-300 text-text-400 group-hover:bg-element-light-darker-200')
+    expect(index).toHaveClass('bg-element-light-darker-300 text-zinc-350 group-hover:bg-element-light-darker-200')
   })
 
   it('should have error index color', () => {
@@ -37,7 +37,7 @@ describe('Row', () => {
 
     const index = screen.getByTestId('index')
 
-    expect(index).toHaveClass('bg-element-light-darker-300 text-text-400 group-hover:bg-element-light-darker-200')
+    expect(index).toHaveClass('bg-element-light-darker-300 text-zinc-350 group-hover:bg-element-light-darker-200')
   })
 
   it('should have real error index color', () => {
@@ -50,7 +50,7 @@ describe('Row', () => {
 
     const index = screen.getByTestId('index')
 
-    expect(index).toHaveClass('bg-red-500 text-text-800 group-hover:bg-red-600')
+    expect(index).toHaveClass('bg-red-500 text-zinc-800 group-hover:bg-red-600')
   })
 
   it('should have success index color', () => {
@@ -62,7 +62,7 @@ describe('Row', () => {
 
     const index = screen.getByTestId('index')
 
-    expect(index).toHaveClass('bg-green-500 text-text-800 group-hover:bg-green-600')
+    expect(index).toHaveClass('bg-green-500 text-zinc-800 group-hover:bg-green-600')
   })
 
   it('should have warning cell date color', () => {

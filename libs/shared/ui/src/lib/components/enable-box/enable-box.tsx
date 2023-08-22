@@ -55,7 +55,7 @@ export function EnableBox(props: EnableBoxProps) {
         isChecked={currentChecked}
         big
       />
-      {description && <p className="ml-8 text-text-500 text-sm">{description}</p>}
+      {description && <p className="ml-8 text-zinc-400 text-sm">{description}</p>}
 
       {currentChecked && children}
     </div>

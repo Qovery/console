@@ -35,7 +35,7 @@ export function TagCommit(props: TagCommitProps) {
       className={`border font-medium flex items-center justify-center ${withBackground ? 'bg-white' : ''} ${
         commitDeltaCount
           ? 'border-orange-500 text-orange-500'
-          : 'border-element-light-lighter-500 text-text-400 hover:bg-element-light-lighter-400 w-[90px]'
+          : 'border-element-light-lighter-500 text-zinc-350 hover:bg-element-light-lighter-400 w-[90px]'
       }`}
     >
       {!hover ? (
