@@ -1,29 +1,29 @@
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useDispatch, useSelector } from 'react-redux'
-import { postUserSignUp, selectUser, selectUserSignUp } from '@qovery/domains/user'
+import { useSelector } from 'react-redux'
+import { selectUser } from '@qovery/domains/user/data-access'
+import { useUserAccount } from '@qovery/domains/user/feature'
 import { type IconEnum } from '@qovery/shared/enums'
-import { ToastEnum } from '@qovery/shared/toast'
-import { Icon, toast } from '@qovery/shared/ui'
+import { Icon } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import { type AppDispatch } from '@qovery/state/store'
 import PageUserGeneral from '../../ui/page-user-general/page-user-general'
 
 export function PageUserGeneralFeature() {
   useDocumentTitle('General - Account settings')
 
   const userToken = useSelector(selectUser)
-  const user = useSelector(selectUserSignUp)
+  const { data: user } = useUserAccount()
 
   const [loading, setLoading] = useState(false)
-  const dispatch = useDispatch<AppDispatch>()
+
+  console.log(user)
 
   const methods = useForm({
     mode: 'onChange',
     defaultValues: {
-      firstName: user.first_name,
-      lastName: user.last_name,
-      email: user.user_email ?? userToken.email,
+      firstName: user?.first_name,
+      lastName: user?.last_name,
+      email: userToken.email,
       account: userToken.sub,
     },
   })
@@ -32,17 +32,15 @@ export function PageUserGeneralFeature() {
     if (data) {
       setLoading(true)
 
-      dispatch(
-        postUserSignUp({
-          ...user,
-          first_name: data['firstName'],
-          last_name: data['lastName'],
-          user_email: data['email'],
-        })
-      )
-        .unwrap()
-        .then(() => toast(ToastEnum.SUCCESS, 'User updated'))
-        .finally(() => setLoading(false))
+      // dispatch(
+      //   postUserSignUp({
+      //     ...user,
+      //     user_email: 'test',
+      //   })
+      // )
+      //   .unwrap()
+      //   .then(() => toast(ToastEnum.SUCCESS, 'User updated'))
+      //   .finally(() => setLoading(false))
     }
   })
 

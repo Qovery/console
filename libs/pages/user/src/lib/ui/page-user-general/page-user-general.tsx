@@ -43,6 +43,7 @@ export function PageUserGeneral({ onSubmit, loading, picture, accountOptions }: 
                     value={field.value}
                     label="First name"
                     error={error?.message}
+                    disabled
                   />
                 )}
               />
@@ -58,6 +59,7 @@ export function PageUserGeneral({ onSubmit, loading, picture, accountOptions }: 
                     value={field.value}
                     label="Last name"
                     error={error?.message}
+                    disabled
                   />
                 )}
               />

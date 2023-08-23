@@ -1,12 +1,12 @@
-import * as storeUser from '@qovery/domains/user'
+import * as storeUser from '@qovery/domains/user/data-access'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import PageUserGeneralFeature from './page-user-general-feature'
 
 import SpyInstance = jest.SpyInstance
 
-jest.mock('@qovery/domains/user', () => {
+jest.mock('@qovery/domains/user/data-access', () => {
   return {
-    ...jest.requireActual('@qovery/domains/user'),
+    ...jest.requireActual('@qovery/domains/user/data-access'),
     postUserSignUp: jest.fn(),
     selectUser: () => {
       return {
@@ -47,14 +47,6 @@ describe('PageUserGeneral', () => {
 
     const { userEvent } = renderWithProviders(<PageUserGeneralFeature />)
 
-    const inputFirstName = screen.getByLabelText('First name')
-    await userEvent.clear(inputFirstName)
-    await userEvent.type(inputFirstName, 'john')
-
-    const inputLastName = screen.getByLabelText('Last name')
-    await userEvent.clear(inputLastName)
-    await userEvent.type(inputLastName, 'doe')
-
     const inputEmail = screen.getByLabelText('Communication email')
     await userEvent.clear(inputEmail)
     await userEvent.type(inputEmail, 'test2@test.com')
@@ -65,8 +57,6 @@ describe('PageUserGeneral', () => {
     await userEvent.click(submitButton)
 
     expect(postUserSignUpSpy.mock.calls[0][0]).toStrictEqual({
-      first_name: 'john',
-      last_name: 'doe',
       user_email: 'test2@test.com',
     })
   })

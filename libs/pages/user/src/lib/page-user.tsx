@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux'
 import { Navigate, Route, Routes } from 'react-router-dom'
-import { selectUser, selectUserSignUp } from '@qovery/domains/user'
+import { selectUser, selectUserSignUp } from '@qovery/domains/user/data-access'
 import { USER_GENERAL_URL, USER_URL } from '@qovery/shared/routes'
 import { IconAwesomeEnum } from '@qovery/shared/ui'
 import { ROUTER_USER } from './router/router'
