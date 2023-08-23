@@ -43,6 +43,8 @@ export function SidebarHistory({ data, serviceId, versionId, pathLogs }: Sidebar
 
   const currentIndex = data?.findIndex((item) => item.id === versionId)
 
+  if (data.length === 0) return null
+
   return (
     <div className="flex justify-center border-b border-neutral-500 px-4 py-3">
       <div>

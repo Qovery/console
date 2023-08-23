@@ -55,9 +55,11 @@ export function DeploymentLogs({
             <p className="mb-1">
               No logs on this execution for <span className="text-brand-400">{serviceName}</span>.
             </p>
-            <p className="text-neutral-300 font-normal text-sm">
-              This service was deployed more than 30 days and thus no deployment logs are available.
-            </p>
+            {serviceDeploymentStatus !== ServiceDeploymentStatusEnum.NEVER_DEPLOYED && (
+              <p className="text-neutral-300 font-normal text-sm">
+                This service was deployed more than 30 days and thus no deployment logs are available.
+              </p>
+            )}
           </div>
         )
       } else if (logs.length === 0 && loadingStatus !== 'not loaded' && !serviceDeploymentStatus) {
