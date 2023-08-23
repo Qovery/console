@@ -40,7 +40,7 @@ export function SidebarStatus(props: SidebarStatusProps) {
           4{' '}
           <Tooltip side="right" content="Number of services deployed in parallel on each pipeline stage">
             <span className="flex items-center">
-              <Icon className="cursor-pointer ml-1 text-xs text-text-zinc-300" name="icon-solid-circle-info" />
+              <Icon className="cursor-pointer ml-1 text-xs text-zinc-300" name="icon-solid-circle-info" />
             </span>
           </Tooltip>
         </span>
