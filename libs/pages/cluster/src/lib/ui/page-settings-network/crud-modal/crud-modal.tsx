@@ -61,13 +61,16 @@ export function CrudModal(props: CrudModalProps) {
       <Controller
         name="description"
         control={control}
+        rules={{
+          required: 'Please enter an description.',
+        }}
         render={({ field, fieldState: { error } }) => (
           <InputTextArea
             className="mb-3"
             name={field.name}
             onChange={field.onChange}
             value={field.value}
-            label="Description (optionnal)"
+            label="Description"
             error={error?.message}
           />
         )}
