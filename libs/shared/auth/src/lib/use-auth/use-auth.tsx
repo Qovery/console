@@ -35,6 +35,7 @@ export function useAuth() {
 
   /**
    * Get current user with auth0
+   * @deprecated This should be migrated to the new `use-user-account` hook
    */
   const getCurrentUser = useCallback(async () => {
     try {

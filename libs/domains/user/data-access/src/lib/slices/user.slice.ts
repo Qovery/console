@@ -61,4 +61,8 @@ export const userActions = userSlice.actions
 
 export const getUserState = (rootState: RootState): UserInterface => rootState[USER_KEY]
 
+/**
+ *
+ * @deprecated This should be migrated to the new `use-user-account` hook
+ */
 export const selectUser = createSelector(getUserState, (state) => state)
