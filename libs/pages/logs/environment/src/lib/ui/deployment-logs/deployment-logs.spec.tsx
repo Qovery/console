@@ -45,7 +45,7 @@ describe('DeploymentLogs', () => {
   it('should render a placeholder message when logs are hidden', () => {
     props.hideDeploymentLogs = true
     props.serviceName = 'my-app'
-    props.serviceDeploymentStatus = ServiceDeploymentStatusEnum.NEVER_DEPLOYED
+    props.serviceDeploymentStatus = ServiceDeploymentStatusEnum.OUT_OF_DATE
 
     render(<DeploymentLogs {...props} />)
 
