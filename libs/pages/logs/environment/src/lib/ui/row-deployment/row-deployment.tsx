@@ -15,6 +15,8 @@ export function RowDeployment(props: RowDeploymentProps) {
 
   const { utc } = useContext(UpdateTimeContext)
 
+  if (!data) return null
+
   const type = (data as EnvironmentLogs).type
   const step = (data as EnvironmentLogs).details?.stage?.step
 
@@ -32,9 +34,11 @@ export function RowDeployment(props: RowDeploymentProps) {
   const colorsCellClassName = (date?: boolean) =>
     `${error ? 'text-red-500' : success ? 'text-green-500' : `${date ? 'text-zinc-100' : 'text-zinc-350'}`}`
 
+  return <div>{data.message?.safe_message}</div>
+
   return (
     <div
-      className={`group flex min-h-6 text-xs select-none ${
+      className={`relative top-0 group flex min-h-6 text-xs select-none ${
         error || success
           ? ' bg-element-light-darker-200 hover:bg-element-light-darker-300'
           : 'bg-element-light-darker-500 hover:bg-element-light-darker-400'

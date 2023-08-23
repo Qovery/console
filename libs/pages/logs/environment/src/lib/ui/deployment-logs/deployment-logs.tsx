@@ -1,5 +1,6 @@
+import { useVirtualizer } from '@tanstack/react-virtual'
 import { DeploymentHistoryEnvironment, EnvironmentLogs, ServiceDeploymentStatusEnum } from 'qovery-typescript-axios'
-import { useMemo } from 'react'
+import { useMemo, useRef } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { ErrorLogsProps, LayoutLogs } from '@qovery/shared/console-shared'
 import { DeploymentService, LoadingStatus, ServiceRunningStatus } from '@qovery/shared/interfaces'
@@ -35,8 +36,67 @@ export function DeploymentLogs({
 }: DeploymentLogsProps) {
   const { organizationId = '', projectId = '', environmentId = '', serviceId = '', versionId = '' } = useParams()
 
+  // The scrollable element for your list
+  const parentRef = useRef<any>()
+
+  // The virtualizer
+  const rowVirtualizer = useVirtualizer({
+    count: 10000,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 35,
+  })
+
+  // const memoRow = useMemo(() => {
+  //   return (
+  //     <>
+  //       {rowVirtualizer.getVirtualItems().map((virtualItem) => {
+  //         console.log(virtualItem)
+  //         return (
+  // <div
+  //   key={virtualItem.key}
+  //   style={{
+  //     position: 'absolute',
+  //     top: 0,
+  //     left: 0,
+  //     width: '100%',
+  //     height: `${virtualItem.size}px`,
+  //     transform: `translateY(${virtualItem.start}px)`,
+  //   }}
+  // >
+  //             {virtualItem.index}
+  //             <RowDeployment index={virtualItem.index} data={logs[virtualItem.index]} />
+  //           </div>
+  //         )
+  //       })}
+  //     </>
+  //   )
+  //   // return logs?.map((log: EnvironmentLogs, index: number) => <RowDeployment key={index} index={index} data={log} />)
+  // }, [logs])
+
   const memoRow = useMemo(
-    () => logs?.map((log: EnvironmentLogs, index: number) => <RowDeployment key={index} index={index} data={log} />),
+    () => (
+      <>
+        {logs.length > 0 &&
+          rowVirtualizer.getVirtualItems().map((virtualItem, index) => {
+            console.log(logs[virtualItem.index])
+            return (
+              <div
+                key={virtualItem.key}
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: `${virtualItem.size}px`,
+                  transform: `translateY(${virtualItem.start}px)`,
+                }}
+              >
+                <RowDeployment index={index} data={logs[virtualItem.index]} />
+              </div>
+            )
+          })}
+      </>
+    ),
     [logs]
   )
 
@@ -127,7 +187,9 @@ export function DeploymentLogs({
       withLogsNavigation
       lineNumbers
     >
-      <div className="pb-8">{memoRow}</div>
+      <div ref={parentRef} className="pb-8">
+        <div style={{ height: `${rowVirtualizer.getTotalSize()}px` }}>{memoRow}</div>
+      </div>
     </LayoutLogs>
   )
 }
