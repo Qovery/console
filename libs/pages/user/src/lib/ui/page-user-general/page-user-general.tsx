@@ -83,7 +83,6 @@ export function PageUserGeneral({ onSubmit, loading, picture, accountOptions }: 
               name="email"
               control={control}
               rules={{
-                required: 'Please enter a email.',
                 pattern: {
                   value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
                   message: 'Please enter a valid email.',

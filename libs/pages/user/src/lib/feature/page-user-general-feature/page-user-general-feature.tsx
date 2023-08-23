@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useSelector } from 'react-redux'
 import { selectUser } from '@qovery/domains/user/data-access'
-import { useUserAccount } from '@qovery/domains/user/feature'
+import { useUserAccount, useUserEditAccount } from '@qovery/domains/user/feature'
 import { type IconEnum } from '@qovery/shared/enums'
 import { Icon } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
@@ -13,17 +13,16 @@ export function PageUserGeneralFeature() {
 
   const userToken = useSelector(selectUser)
   const { data: user } = useUserAccount()
+  const { mutateAsync } = useUserEditAccount()
 
   const [loading, setLoading] = useState(false)
-
-  console.log(user)
 
   const methods = useForm({
     mode: 'onChange',
     defaultValues: {
       firstName: user?.first_name,
       lastName: user?.last_name,
-      email: userToken.email,
+      email: user?.communication_email ?? '',
       account: userToken.sub,
     },
   })
@@ -32,15 +31,10 @@ export function PageUserGeneralFeature() {
     if (data) {
       setLoading(true)
 
-      // dispatch(
-      //   postUserSignUp({
-      //     ...user,
-      //     user_email: 'test',
-      //   })
-      // )
-      //   .unwrap()
-      //   .then(() => toast(ToastEnum.SUCCESS, 'User updated'))
-      //   .finally(() => setLoading(false))
+      mutateAsync({
+        ...user,
+        communication_email: data.email,
+      }).finally(() => setLoading(false))
     }
   })
 
@@ -59,7 +53,7 @@ export function PageUserGeneralFeature() {
       <PageUserGeneral
         onSubmit={onSubmit}
         loading={loading}
-        picture={userToken.picture as string}
+        picture={user?.profile_picture_url as string}
         accountOptions={accountOptions}
       />
     </FormProvider>
