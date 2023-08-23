@@ -16,6 +16,19 @@ const colorsZinc = {
   900: '#000000',
 }
 
+const colorsPurple = {
+  50: '#f2f3fe',
+  100: '#e0ddfc',
+  200: '#c2bcfa',
+  300: '#a097f2',
+  400: '#847ae6',
+  500: '#5b50d6',
+  600: '#433ab8',
+  700: '#2f289a',
+  800: '#1f197c',
+  900: '#130f66',
+}
+
 // tailwind-workspace-preset.js
 module.exports = {
   darkMode: 'class',
@@ -96,30 +109,8 @@ module.exports = {
           'radial-gradient(farthest-side at 50% 0,rgba(0,0,0,.13),transparent),linear-gradient(180deg,hsla(0,0%,100%,0) 40%,hsla(0,0%,100%,0))',
       },
       colors: {
-        brand: {
-          50: '#f2f3fe',
-          100: '#e0ddfc',
-          200: '#c2bcfa',
-          300: '#a097f2',
-          400: '#847ae6',
-          500: '#5b50d6',
-          600: '#433ab8',
-          700: '#2f289a',
-          800: '#1f197c',
-          900: '#130f66',
-        },
-        purple: {
-          50: '#FCF4FF',
-          100: '#F7DFFE',
-          200: '#EDC0FD',
-          300: '#DDA0FA',
-          400: '#CB87F6',
-          500: '#B160F0',
-          600: '#8B46CE',
-          700: '#6830AC',
-          800: '#491E8B',
-          900: '#331273',
-        },
+        brand: colorsPurple,
+        purple: colorsPurple,
         sky: {
           50: '#ECFBFE',
           100: '#CAF5FD',
