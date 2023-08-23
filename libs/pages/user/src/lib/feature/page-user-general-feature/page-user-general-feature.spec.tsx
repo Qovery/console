@@ -1,8 +1,9 @@
-import * as storeUser from '@qovery/domains/user/data-access'
+import * as domainUserFeature from '@qovery/domains/user/feature'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import PageUserGeneralFeature from './page-user-general-feature'
 
-import SpyInstance = jest.SpyInstance
+const useEditUserAccountMockSpy = jest.spyOn(domainUserFeature, 'useEditUserAccount') as jest.Mock
+const useUserAccountMockSky = jest.spyOn(domainUserFeature, 'useUserAccount') as jest.Mock
 
 jest.mock('@qovery/domains/user/data-access', () => {
   return {
@@ -11,40 +12,31 @@ jest.mock('@qovery/domains/user/data-access', () => {
     selectUser: () => {
       return {
         sub: 'github|123456',
-        email: 'test@test.com',
-      }
-    },
-    selectUserSignUp: () => {
-      return {
-        first_name: 'firstname',
-        last_name: 'lastname',
-        user_email: 'test-2@test.com',
       }
     },
   }
 })
 
-const mockDispatch = jest.fn()
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useDispatch: () => mockDispatch,
-}))
-
 describe('PageUserGeneral', () => {
+  beforeEach(() => {
+    useEditUserAccountMockSpy.mockReturnValue({
+      mutateAsync: jest.fn(),
+    })
+    useUserAccountMockSky.mockReturnValue({
+      data: {
+        first_name: 'test',
+        last_name: 'test',
+        communication_email: '',
+      },
+    })
+  })
+
   it('should render successfully', () => {
     const { baseElement } = renderWithProviders(<PageUserGeneralFeature />)
     expect(baseElement).toBeTruthy()
   })
 
   it('should dispatch postUserSignUp if form is submitted', async () => {
-    const postUserSignUpSpy: SpyInstance = jest.spyOn(storeUser, 'postUserSignUp')
-    mockDispatch.mockImplementation(() => ({
-      unwrap: () =>
-        Promise.resolve({
-          data: {},
-        }),
-    }))
-
     const { userEvent } = renderWithProviders(<PageUserGeneralFeature />)
 
     const inputEmail = screen.getByLabelText('Communication email')
@@ -56,8 +48,10 @@ describe('PageUserGeneral', () => {
 
     await userEvent.click(submitButton)
 
-    expect(postUserSignUpSpy.mock.calls[0][0]).toStrictEqual({
-      user_email: 'test2@test.com',
+    expect(useEditUserAccountMockSpy().mutateAsync).toHaveBeenCalledWith({
+      first_name: 'test',
+      last_name: 'test',
+      communication_email: 'test2@test.com',
     })
   })
 })

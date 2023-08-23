@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useSelector } from 'react-redux'
 import { selectUser } from '@qovery/domains/user/data-access'
-import { useUserAccount, useUserEditAccount } from '@qovery/domains/user/feature'
+import { useEditUserAccount, useUserAccount } from '@qovery/domains/user/feature'
 import { type IconEnum } from '@qovery/shared/enums'
 import { Icon } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
@@ -13,7 +13,7 @@ export function PageUserGeneralFeature() {
 
   const userToken = useSelector(selectUser)
   const { data: user } = useUserAccount()
-  const { mutateAsync } = useUserEditAccount()
+  const { mutateAsync } = useEditUserAccount()
 
   const [loading, setLoading] = useState(false)
 
@@ -27,14 +27,16 @@ export function PageUserGeneralFeature() {
     },
   })
 
-  const onSubmit = methods.handleSubmit((data) => {
+  const onSubmit = methods.handleSubmit(async (data) => {
     if (data) {
       setLoading(true)
 
-      mutateAsync({
+      await mutateAsync({
         ...user,
         communication_email: data.email,
-      }).finally(() => setLoading(false))
+      })
+
+      setLoading(false)
     }
   })
 

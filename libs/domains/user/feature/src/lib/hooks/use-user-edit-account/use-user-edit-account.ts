@@ -1,9 +1,9 @@
 import { useMutation } from '@tanstack/react-query'
-import { AccountInfo } from 'qovery-typescript-axios'
+import { type AccountInfo } from 'qovery-typescript-axios'
 import { mutations } from '@qovery/domains/user/data-access'
 import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
 
-export const useUserEditAccount = () => {
+export const useEditUserAccount = () => {
   return useMutation(
     async (accountInfo: AccountInfo) => {
       const data = await mutations.editAccount(accountInfo)

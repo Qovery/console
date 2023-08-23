@@ -1,5 +1,5 @@
 import { createQueryKeys } from '@lukemorales/query-key-factory'
-import { AccountInfo, AccountInfoApi } from 'qovery-typescript-axios'
+import { type AccountInfo, AccountInfoApi } from 'qovery-typescript-axios'
 
 const accountApi = new AccountInfoApi()
 
