@@ -100,6 +100,7 @@ export function useAuth() {
   }, [])
 
   return {
+    user,
     authLogin,
     authLogout,
     getCurrentUser,

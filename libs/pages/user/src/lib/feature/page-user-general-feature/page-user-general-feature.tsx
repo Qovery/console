@@ -1,8 +1,7 @@
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useSelector } from 'react-redux'
-import { selectUser } from '@qovery/domains/user/data-access'
 import { useEditUserAccount, useUserAccount } from '@qovery/domains/user/feature'
+import { useAuth } from '@qovery/shared/auth'
 import { type IconEnum } from '@qovery/shared/enums'
 import { Icon } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
@@ -11,7 +10,7 @@ import PageUserGeneral from '../../ui/page-user-general/page-user-general'
 export function PageUserGeneralFeature() {
   useDocumentTitle('General - Account settings')
 
-  const userToken = useSelector(selectUser)
+  const { user: userToken } = useAuth()
   const { data: user } = useUserAccount()
   const { mutateAsync } = useEditUserAccount()
 
@@ -23,7 +22,7 @@ export function PageUserGeneralFeature() {
       firstName: user?.first_name,
       lastName: user?.last_name,
       email: user?.communication_email ?? '',
-      account: userToken.sub,
+      account: userToken?.sub,
     },
   })
 
@@ -40,12 +39,12 @@ export function PageUserGeneralFeature() {
     }
   })
 
-  const userGitProvider = userToken.sub?.includes('Gitlab') ? 'gitlab' : userToken.sub?.split('|')[0]
+  const userGitProvider = userToken?.sub?.includes('Gitlab') ? 'gitlab' : userToken?.sub?.split('|')[0]
 
   const accountOptions = [
     {
-      label: `${userToken.email} (${userGitProvider})`,
-      value: userToken.sub || '',
+      label: `${userToken?.email} (${userGitProvider})`,
+      value: userToken?.sub || '',
       icon: <Icon name={userGitProvider?.toUpperCase() as IconEnum} className="w-4" />,
     },
   ]
