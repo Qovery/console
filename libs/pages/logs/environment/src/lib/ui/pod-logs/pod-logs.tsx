@@ -29,6 +29,7 @@ export function PodLogs(props: PodLogsProps) {
   } = props
 
   const [filter, setFilter] = useState<TableFilterProps[]>([])
+  const publiclyExposedPort = Boolean((service as ApplicationEntity).ports?.find((port) => port.publicly_accessible))
 
   const tableHead: TableHeadProps<Log>[] = [
     {
@@ -110,7 +111,7 @@ export function PodLogs(props: PodLogsProps) {
       setPauseLogs={setPauseStatusLogs}
       serviceRunningStatus={service?.running_status}
       enabledNginx={enabledNginx}
-      setEnabledNginx={setEnabledNginx}
+      setEnabledNginx={publiclyExposedPort ? setEnabledNginx : undefined}
       countNginx={countNginx}
       withLogsNavigation
       lineNumbers

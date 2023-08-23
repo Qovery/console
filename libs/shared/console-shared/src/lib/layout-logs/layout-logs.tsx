@@ -158,27 +158,30 @@ export function LayoutLogs(props: PropsWithChildren<LayoutLogsProps>) {
                 </p>
               )}
               {setEnabledNginx && (
-                <div key={serviceId} className="flex items-center shrink-0 text-neutral-300 text-xs font-medium">
-                  <InputCheckbox
-                    dataTestId="checkbox-debug"
-                    name="checkbox-debug"
-                    value={(enabledNginx || false).toString()}
-                    onChange={() => setEnabledNginx(!enabledNginx)}
-                    label="NGINX logs"
-                    className="-ml-1"
-                  />
-                  {enabledNginx && countNginx !== undefined ? <span className="block ml-1">({countNginx})</span> : ''}
-                  <Tooltip content="Documentation about NGINX formats">
-                    <a
-                      className="relative top-[1px] ml-2"
-                      rel="noreferrer"
-                      href="https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/log-format/"
-                      target="_blank"
-                    >
-                      <IconFa name={IconAwesomeEnum.CIRCLE_INFO} />
-                    </a>
-                  </Tooltip>
-                </div>
+                <Tooltip open={pauseLogs} content="To activate the nginx logs button, unpause the logs" side="right">
+                  <div key={serviceId} className="flex items-center shrink-0 text-neutral-300 text-xs font-medium">
+                    <InputCheckbox
+                      dataTestId="checkbox-debug"
+                      name="checkbox-debug"
+                      value={(enabledNginx || false).toString()}
+                      onChange={() => setEnabledNginx(!enabledNginx)}
+                      label="NGINX logs"
+                      className="-ml-1"
+                      disabled={pauseLogs}
+                    />
+                    {enabledNginx && countNginx !== undefined ? <span className="block ml-1">({countNginx})</span> : ''}
+                    <Tooltip content="Display the logs of the Kubernetes ingress controller (NGINX)">
+                      <a
+                        className="relative top-[1px] ml-2"
+                        rel="noreferrer"
+                        href="https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/log-format/"
+                        target="_blank"
+                      >
+                        <IconFa name={IconAwesomeEnum.CIRCLE_INFO} />
+                      </a>
+                    </Tooltip>
+                  </div>
+                </Tooltip>
               )}
             </div>
             <div className="flex">
