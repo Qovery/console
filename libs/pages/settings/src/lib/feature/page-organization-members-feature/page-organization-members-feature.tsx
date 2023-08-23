@@ -13,7 +13,7 @@ import {
   selectOrganizationById,
   transferOwnershipMemberRole,
 } from '@qovery/domains/organization'
-import { selectUser } from '@qovery/domains/user'
+import { selectUser } from '@qovery/domains/user/data-access'
 import { membersMock } from '@qovery/shared/factories'
 import { ToastEnum, toast, useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'

@@ -55,7 +55,7 @@ export const userSlice = createSlice({
   },
 })
 
-export const user = userSlice.reducer
+export const userReducer = userSlice.reducer
 
 export const userActions = userSlice.actions
 
