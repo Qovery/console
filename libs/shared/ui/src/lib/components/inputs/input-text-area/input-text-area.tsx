@@ -29,7 +29,7 @@ export function InputTextArea(props: InputTextAreaProps) {
   const hasError = error && error.length > 0 ? 'input--error' : ''
   const inputActions = hasFocus ? 'input--focused' : ''
 
-  const isDisabled = props.disabled ? 'input--disabled !border-element-light-lighter-500' : ''
+  const isDisabled = props.disabled ? 'input--disabled !border-neutral-250' : ''
 
   return (
     <div
@@ -48,7 +48,7 @@ export function InputTextArea(props: InputTextAreaProps) {
         <textarea
           name={name}
           id={label}
-          className="w-full min-h-[52px] mt-5 pr-3 bg-transparent appearance-none text-sm text-zinc-400 outline-0"
+          className="w-full min-h-[52px] mt-5 pr-3 bg-transparent appearance-none text-sm text-neutral-400 outline-0"
           value={currentValue}
           onChange={(e) => {
             if (onChange) onChange(e)

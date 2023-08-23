@@ -7,10 +7,7 @@ export interface LoaderSpinnerProps {
 
 export function LoaderSpinner(props: LoaderSpinnerProps) {
   const { className = '', classWidth = 'w-4', classBorder = 'border-2', theme = 'light' } = props
-  const themeClasses =
-    theme === 'dark'
-      ? 'border-element-light-lighter-700 border-r-element-light-lighter-100'
-      : 'border-r-element-light-darker-100'
+  const themeClasses = theme === 'dark' ? 'border-neutral-350 border-r-neutral-50' : 'border-r-neutral-500'
 
   return (
     <div

@@ -166,7 +166,7 @@ export function groupBy<T>(
         />
       ),
       contentRight: (
-        <span className="px-1 bg-element-light-lighter-400 text-zinc-350 text-xs font-bold rounded-sm">
+        <span className="px-1 bg-neutral-200 text-neutral-350 text-xs font-bold rounded-sm">
           {dataByKeys[key].length}
         </span>
       ),
@@ -267,7 +267,7 @@ export function TableHeadFilter<T>({ title, dataHead, defaultData, filter, setFi
       {hasFilter && (
         <span
           role="button"
-          className="flex items-center h-6 px-2 relative -left-6 text-zinc-50 text-xs cursor-pointer"
+          className="flex items-center h-6 px-2 relative -left-6 text-neutral-50 text-xs cursor-pointer"
           onClick={(event) => cleanFilter(event)}
         >
           <Icon name={IconAwesomeEnum.XMARK} />

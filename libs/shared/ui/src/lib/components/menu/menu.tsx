@@ -188,7 +188,7 @@ export function Menu(props: MenuProps) {
         className="menu z-30"
         menuClassName={`rounded-md shadow-[0_0_32px_rgba(0,0,0,0.08)] p-0 menu__container menu__container--${direction} menu__container--${
           isOpen ? 'open' : 'closed'
-        } menu__container--${arrowAlign} dark:bg-element-light-darker-500`}
+        } menu__container--${arrowAlign} dark:bg-neutral-700`}
         portal
       >
         {children}

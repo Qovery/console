@@ -21,10 +21,10 @@ export function Row(props: RowProps) {
 
   const indexClassName = `${
     type === LogsType.ERROR && realError
-      ? 'bg-red-500 text-zinc-800 group-hover:bg-red-600'
+      ? 'bg-red-500 text-neutral-800 group-hover:bg-red-600'
       : success
-      ? 'bg-green-500 text-zinc-800 group-hover:bg-green-600'
-      : 'bg-element-light-darker-300 text-zinc-350 group-hover:bg-element-light-darker-200'
+      ? 'bg-green-500 text-neutral-800 group-hover:bg-green-600'
+      : 'bg-neutral-600 text-neutral-350 group-hover:bg-neutral-550'
   }`
 
   const colorsCellClassName = (white?: boolean) =>
@@ -35,13 +35,13 @@ export function Row(props: RowProps) {
         ? 'text-yellow-500'
         : success
         ? 'text-green-500'
-        : `${white ? 'text-zinc-100' : 'text-element-light-lighter-700'}`
+        : `${white ? 'text-neutral-100' : 'text-neutral-350'}`
     }`
 
   return (
     <div
-      className={`group flex justify-between min-h-6 font-code text-xs hover:bg-element-light-darker-400 select-none ${
-        realError || success ? 'bg-element-light-darker-300' : ''
+      className={`group flex justify-between min-h-6 font-code text-xs hover:bg-neutral-650 select-none ${
+        realError || success ? 'bg-neutral-600' : ''
       } ${realError ? 'row-error' : ''}`}
     >
       <div className="flex">

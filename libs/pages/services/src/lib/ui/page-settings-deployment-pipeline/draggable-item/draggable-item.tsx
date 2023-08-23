@@ -27,15 +27,15 @@ export function DraggableItem(props: DraggableItemProps) {
   const serviceType = getServiceType(service)
 
   const classNameItem = (isDragging: boolean) =>
-    `flex items-center bg-element-light-lighter-100 rounded px-2 py-3 border ${
-      isDragging ? 'border-2 border-green-500' : 'border-element-light-lighter-400'
+    `flex items-center bg-neutral-50 rounded px-2 py-3 border ${
+      isDragging ? 'border-2 border-green-500' : 'border-neutral-200'
     }`
 
   const contentWithParams = serviceType === ServiceTypeEnum.DATABASE
 
   const content = (name = '', type = '', mode = '') => {
     return (
-      <div className={`text-zinc-400 font-medium ${contentWithParams ? 'text-xs' : 'text-ssm'}`}>
+      <div className={`text-neutral-400 font-medium ${contentWithParams ? 'text-xs' : 'text-ssm'}`}>
         <Truncate truncateLimit={contentWithParams ? 32 : 27} text={name || ''} />
         {contentWithParams && (
           <div data-testid="draggable-item-subtitle" className="text-2xs font-normal">

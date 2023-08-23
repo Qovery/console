@@ -8,7 +8,7 @@ export interface ValueModalProps {
 export function ValueModal(props: ValueModalProps) {
   return (
     <div className="p-6">
-      <h2 className="h4 text-zinc-400 max-w-sm truncate mb-6">You new API Token!</h2>
+      <h2 className="h4 text-neutral-400 max-w-sm truncate mb-6">You new API Token!</h2>
 
       <InputText
         name="token"
@@ -16,10 +16,10 @@ export function ValueModal(props: ValueModalProps) {
         value={props.token}
         disabled
         className="mb-1"
-        rightElement={<CopyToClipboard className="text-zinc-400 text-sm" content={props.token} />}
+        rightElement={<CopyToClipboard className="text-neutral-400 text-sm" content={props.token} />}
       />
-      <p className="ml-4 text-xs text-zinc-350">
-        <strong className="text-zinc-400">Please keep this key safe</strong>, you will not be able to retrieve it
+      <p className="ml-4 text-xs text-neutral-350">
+        <strong className="text-neutral-400">Please keep this key safe</strong>, you will not be able to retrieve it
         after...
       </p>
 

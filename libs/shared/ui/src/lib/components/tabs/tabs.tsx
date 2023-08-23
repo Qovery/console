@@ -32,13 +32,13 @@ export function Tabs(props: TabsProps) {
     )
   }
 
-  const btnClassName = `h-14 border-b-2 px-4 flex gap-3 items-center group transition ease-in-out duration-200 ${classNameBtn} dark:hover:border-zinc-50 dark:hover:text-zinc-50 hover:border-brand-500 hover:text-brand-500`
+  const btnClassName = `h-14 border-b-2 px-4 flex gap-3 items-center group transition ease-in-out duration-200 ${classNameBtn} dark:hover:border-neutral-50 dark:hover:text-neutral-50 hover:border-brand-500 hover:text-brand-500`
 
   const btnClassNameActive = (item: TabsItem) =>
     `${
       item?.active
         ? `dark:text-brand-50 dark:border-brand-50 text-brand-500 border-brand-500`
-        : `dark:text-zinc-400 dark:border-zinc-400 text-zinc-350 border-element-light-lighter-500`
+        : `dark:text-neutral-400 dark:border-neutral-400 text-neutral-350 border-neutral-250`
     }`
 
   const contentTab = (item: TabsItem, index: number) => {

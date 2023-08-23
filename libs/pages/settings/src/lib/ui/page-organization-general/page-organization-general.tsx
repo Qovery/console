@@ -25,7 +25,7 @@ export function PageOrganizationGeneral(props: PageOrganizationGeneralProps) {
   return (
     <div className="flex flex-col justify-between w-full">
       <div className="p-8 max-w-content-with-navigation-left">
-        <h1 className="h5 mb-10 text-zinc-400">General</h1>
+        <h1 className="h5 mb-10 text-neutral-400">General</h1>
         <form onSubmit={onSubmit}>
           <BlockContent title="Organization profile">
             <div className="flex items-center">
@@ -37,11 +37,11 @@ export function PageOrganizationGeneral(props: PageOrganizationGeneralProps) {
                 )}
               />
               <div className="ml-3">
-                <p className="text-zinc-400 font-medium mb-1">{watch('name')}</p>
-                <span className="block text-xs text-zinc-350">Created since {created_at.split('T')[0]}</span>
+                <p className="text-neutral-400 font-medium mb-1">{watch('name')}</p>
+                <span className="block text-xs text-neutral-350">Created since {created_at.split('T')[0]}</span>
               </div>
             </div>
-            <hr className="my-5 border-0 border-b border-element-light-lighter-500 relative -left-5 w-[calc(100%+41px)]" />
+            <hr className="my-5 border-0 border-b border-neutral-250 relative -left-5 w-[calc(100%+41px)]" />
             <Controller
               name="name"
               control={control}
@@ -107,7 +107,7 @@ export function PageOrganizationGeneral(props: PageOrganizationGeneralProps) {
                 />
               )}
             />
-            <p className="text-zinc-350 text-xs ml-4 mt-1">
+            <p className="text-neutral-350 text-xs ml-4 mt-1">
               Indicate emails where you want to receive important communications from Qovery. (E.g. cluster upgrade,
               downtime...)
             </p>

@@ -289,7 +289,7 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
       triggerTooltip: 'Manage deployment',
       iconLeft: <Icon name={IconAwesomeEnum.PLAY} className="px-0.5" />,
       iconRight: <Icon name={IconAwesomeEnum.ANGLE_DOWN} className="px-0.5" />,
-      menusClassName: 'border-r border-r-element-light-lighter-500',
+      menusClassName: 'border-r border-r-neutral-250',
       menus: buttonStatusActions,
     },
     {

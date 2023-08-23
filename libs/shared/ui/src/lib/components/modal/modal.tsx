@@ -82,7 +82,7 @@ export const Modal = (props: ModalProps) => {
               setExternalOpen ? setExternalOpen(false) : setOpen(false)
             }
           }}
-          className="modal__overlay flex fixed top-0 left-0 bg-element-light-darker-500/20 w-full h-screen z-30"
+          className="modal__overlay flex fixed top-0 left-0 bg-neutral-700/20 w-full h-screen z-30"
         />
         <Dialog.Content
           onPointerDownOutside={(event) => {
@@ -97,7 +97,7 @@ export const Modal = (props: ModalProps) => {
             })}
             {buttonClose && (
               <Dialog.Close className="absolute top-4 right-4">
-                <span className="flex w-7 h-7 items-center justify-center bg-element-light-lighter-400 text-zinc-350 hover:text-zinc-400 hover:bg-element-light-lighter-500 ease-out duration-300 rounded-full">
+                <span className="flex w-7 h-7 items-center justify-center bg-neutral-200 text-neutral-350 hover:text-neutral-400 hover:bg-neutral-250 ease-out duration-300 rounded-full">
                   <Icon name="icon-solid-xmark" />
                 </span>
               </Dialog.Close>

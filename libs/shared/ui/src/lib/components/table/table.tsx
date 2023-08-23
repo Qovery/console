@@ -67,11 +67,14 @@ export function Table<T>({
     <div className={className}>
       <div
         data-testid="table-container"
-        className={`grid items-center border-b-element-light-lighter-400 border-b sticky top-0 bg-white z-10 h-10 ${classNameHead}`}
+        className={`grid items-center border-b-neutral-200 border-b sticky top-0 bg-white z-10 h-10 ${classNameHead}`}
         style={{ gridTemplateColumns: columnsWidth }}
       >
         {dataHead.map(
-          ({ title, className = 'px-4 py-2', classNameTitle = 'text-zinc-400 ', filter: hasFilter, sort }, index) => (
+          (
+            { title, className = 'px-4 py-2', classNameTitle = 'text-neutral-400 ', filter: hasFilter, sort },
+            index
+          ) => (
             <div key={index} className={className}>
               {!sort && !hasFilter && (
                 <span data-testid="table-head-title" className={`text-xs font-medium ${classNameTitle}`}>

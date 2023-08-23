@@ -53,7 +53,7 @@ export const ToastContent = (
           {description && (
             <span
               data-testid="toast-description"
-              className={`block text-sm text-zinc-300 font-medium ${!labelAction ? 'mb-1' : ''}`}
+              className={`block text-sm text-neutral-300 font-medium ${!labelAction ? 'mb-1' : ''}`}
             >
               {description}
             </span>
@@ -71,7 +71,7 @@ export const ToastContent = (
         </div>
         {!labelAction && options && callback && (
           <div
-            className="flex justify-end items-center px-4 rounded-r border-l border-element-light-darker-100 transition ease-in-out duration-150 hover:bg-element-light-darker-500"
+            className="flex justify-end items-center px-4 rounded-r border-l border-neutral-500 transition ease-in-out duration-150 hover:bg-neutral-700"
             onClick={() => {
               toastAction.dismiss(options.id)
               callback()

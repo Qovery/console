@@ -23,8 +23,8 @@ export function AboutGit(props: AboutGitProps) {
   }, [application])
 
   return (
-    <div className="p-8 flex flex-col items-start border-b border-element-light-lighter-400 text-zinc-400">
-      <div className="font-bold mb-3 text-zinc-400">Source</div>
+    <div className="p-8 flex flex-col items-start border-b border-neutral-200 text-neutral-400">
+      <div className="font-bold mb-3 text-neutral-400">Source</div>
 
       <div className="mb-3 flex items-center gap-3">
         Commit: <LastCommitFeature />

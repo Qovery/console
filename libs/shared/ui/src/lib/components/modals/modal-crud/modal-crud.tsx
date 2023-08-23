@@ -40,13 +40,13 @@ export function ModalCrud(props: ModalCrudProps) {
 
   return (
     <div className="p-6">
-      <h2 className={`h4 text-zinc-400 max-w-sm truncate ${description ? 'mb-1' : 'mb-6'}`}>{title}</h2>
-      {description && <p className="mb-6 text-zinc-350 text-sm">{description}</p>}
+      <h2 className={`h4 text-neutral-400 max-w-sm truncate ${description ? 'mb-1' : 'mb-6'}`}>{title}</h2>
+      {description && <p className="mb-6 text-neutral-350 text-sm">{description}</p>}
       {forService && (
-        <div className={`text-zinc-400 text-sm mb-6 flex justify-between items-center -mt-2`}>
+        <div className={`text-neutral-400 text-sm mb-6 flex justify-between items-center -mt-2`}>
           <p>
             For{' '}
-            <strong className="text-zinc-400 font-medium">
+            <strong className="text-neutral-400 font-medium">
               <Truncate truncateLimit={60} text={forService.name || ''} />
             </strong>
           </p>

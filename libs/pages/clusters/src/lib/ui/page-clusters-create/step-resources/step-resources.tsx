@@ -21,7 +21,7 @@ export function StepResources(props: StepResourcesProps) {
   return (
     <div>
       <div className="mb-10">
-        <h3 className="text-zinc-400 text-lg mb-2">Set resources</h3>
+        <h3 className="text-neutral-400 text-lg mb-2">Set resources</h3>
       </div>
 
       <form onSubmit={props.onSubmit}>

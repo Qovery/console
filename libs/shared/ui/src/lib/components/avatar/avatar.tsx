@@ -37,7 +37,7 @@ export function Avatar(props: AvatarProps) {
     noTooltip = false,
   } = props
 
-  const defineClass = `${style === AvatarStyle.STROKED ? 'border border-element-light-lighter-400' : ''} ${
+  const defineClass = `${style === AvatarStyle.STROKED ? 'border border-neutral-200' : ''} ${
     onClick ? 'cursor-pointer' : ''
   }`
 
@@ -51,8 +51,8 @@ export function Avatar(props: AvatarProps) {
       {url ? (
         <img src={url} alt={alt} className="w-full h-full rounded-full" />
       ) : (
-        <div className="w-full h-full rounded-full bg-element-light-lighter-400 text-center flex justify-center items-center">
-          <span className="text-xs text-zinc-400 font-medium relative">
+        <div className="w-full h-full rounded-full bg-neutral-200 text-center flex justify-center items-center">
+          <span className="text-xs text-neutral-400 font-medium relative">
             {firstName && firstName.charAt(0).toUpperCase()}
             {lastName && lastName.charAt(0).toUpperCase()}
           </span>
@@ -67,11 +67,11 @@ export function Avatar(props: AvatarProps) {
           className="flex items-center text-sm font-medium w-[18px] h-[18px] rounded-full absolute top-[24px] -right-[2px]"
         >
           {logoUrl ? (
-            <span className="flex items-center justify-center w-full h-full bg-element-light-lighter-100 rounded-full p-[2px]">
+            <span className="flex items-center justify-center w-full h-full bg-neutral-50 rounded-full p-[2px]">
               <img src={logoUrl} alt="Logo Organization" />
             </span>
           ) : (
-            <span className="w-full h-full text-2xs text-zinc-350 bg-element-light-lighter-300 border border-element-light-lighter-100 rounded-full flex items-center justify-center uppercase">
+            <span className="w-full h-full text-2xs text-neutral-350 bg-neutral-150 border border-neutral-50 rounded-full flex items-center justify-center uppercase">
               {logoText}
             </span>
           )}

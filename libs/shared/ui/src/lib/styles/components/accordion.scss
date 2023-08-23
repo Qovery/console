@@ -1,5 +1,5 @@
 .accordion__content {
-  @apply overflow-hidden border-t border-element-light-lighter-400;
+  @apply overflow-hidden border-t border-neutral-200;
 
   &[data-state='open'] {
     animation: openAccordion 300ms cubic-bezier(0.87, 0, 0.13, 1) 0s 1 normal forwards running;
@@ -11,7 +11,7 @@
 }
 
 .accordion__arrow {
-  @apply transition-transform ease-out duration-300 text-sm text-zinc-350 shrink-0;
+  @apply transition-transform ease-out duration-300 text-sm text-neutral-350 shrink-0;
 }
 
 .accordion__header {
@@ -22,7 +22,7 @@
   }
 
   &[data-state='closed'] {
-    @apply bg-element-light-lighter-200;
+    @apply bg-neutral-100;
 
     .accordion__arrow {
       @apply -rotate-180;

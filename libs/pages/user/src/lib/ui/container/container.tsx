@@ -11,7 +11,7 @@ export function Container(props: ContainerProps) {
 
   return (
     <div className="bg-white flex rounded-t">
-      <div className="w-72 border-r border-element-light-lighter-400 relative shrink-0 min-h-[calc(100vh-10px)] pb-10">
+      <div className="w-72 border-r border-neutral-200 relative shrink-0 min-h-[calc(100vh-10px)] pb-10">
         <div className="sticky top-7">
           <NavigationLeft title="Account" links={userLinks} className="py-6" />
         </div>

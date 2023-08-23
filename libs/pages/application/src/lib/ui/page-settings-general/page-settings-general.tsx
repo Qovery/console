@@ -46,7 +46,7 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
   return (
     <div className="flex flex-col justify-between w-full">
       <div className="p-8 max-w-content-with-navigation-left">
-        <h2 className="h5 mb-8 text-zinc-400">General settings</h2>
+        <h2 className="h5 mb-8 text-neutral-400">General settings</h2>
         <form onSubmit={onSubmit}>
           <BlockContent title="General information">
             <Controller

@@ -84,7 +84,7 @@ export function PageSettingsAdvanced(props: PageSettingsAdvancedProps) {
                       <div className="inline whitespace-nowrap overflow-hidden text-ellipsis">{displayValue}</div>
                     </Tooltip>
                     <CopyToClipboard
-                      className="ml-2 text-zinc-300 invisible group-hover:visible"
+                      className="ml-2 text-neutral-300 invisible group-hover:visible"
                       content={
                         (props.defaultAdvancedSettings &&
                           props.defaultAdvancedSettings[key as keyof ClusterAdvancedSettings]?.toString()) ||
@@ -138,8 +138,8 @@ export function PageSettingsAdvanced(props: PageSettingsAdvancedProps) {
       <div className="p-8 ">
         <div className="flex justify-between mb-4">
           <div>
-            <h1 className="h5 text-zinc-400 mb-2">Advanced Settings</h1>
-            <p className="text-sm text-zinc-400 max-w-content-with-navigation-left">
+            <h1 className="h5 text-neutral-400 mb-2">Advanced Settings</h1>
+            <p className="text-sm text-neutral-400 max-w-content-with-navigation-left">
               Any change to this section will be applied after triggering a cluster update.
             </p>
           </div>

@@ -20,8 +20,8 @@ export function PageClustersGeneral(props: PageClustersGeneralProps) {
       <div className="p-8">
         <div className="flex justify-between mb-8">
           <div>
-            <h1 className="h5 text-zinc-400 mb-2">Manage your clusters</h1>
-            <p className="text-zinc-400 text-xs">Manage your infrastructure across different Cloud providers.</p>
+            <h1 className="h5 text-neutral-400 mb-2">Manage your clusters</h1>
+            <p className="text-neutral-400 text-xs">Manage your infrastructure across different Cloud providers.</p>
           </div>
           <Button iconRight={IconAwesomeEnum.CIRCLE_PLUS} link={goToCreateCluster}>
             Add Cluster

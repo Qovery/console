@@ -71,21 +71,18 @@ export function RowPod(props: RowPodProps) {
     <TableRowFilter data={data} filter={filter}>
       <div
         data-testid="pod-log-row"
-        className="group flex justify-between font-code text-xs hover:bg-element-light-darker-400 w-full mb-[2px] select-none"
+        className="group flex justify-between font-code text-xs hover:bg-neutral-650 w-full mb-[2px] select-none"
       >
-        <div
-          data-testid="index"
-          className="bg-element-light-darker-500 text-zinc-400 group-hover:bg-element-light-darker-200"
-        >
+        <div data-testid="index" className="bg-neutral-700 text-neutral-400 group-hover:bg-neutral-550">
           <div className="text-right w-10 h-5 px-2 pt-0.5 font-code">{index + 1}</div>
         </div>
         <div
           data-testid="cell-pod-name"
-          className="px-4 text-element-light-lighter-700 whitespace-nowrap min-w-[225px]"
+          className="px-4 text-neutral-350 whitespace-nowrap min-w-[225px]"
           style={{ color: getColorByPod(data.pod_name) }}
         >
           {data.pod_name && data.pod_name && (
-            <span className="h-5 flex justify-center items-center px-2 bg-element-light-darker-100 rounded-[40px] gap-1">
+            <span className="h-5 flex justify-center items-center px-2 bg-neutral-500 rounded-[40px] gap-1">
               {data.pod_name && data.pod_name.length > 23
                 ? `${data.pod_name?.substring(0, 10)}...${data.pod_name?.slice(-10)}`
                 : data.pod_name}
@@ -95,7 +92,7 @@ export function RowPod(props: RowPodProps) {
           {!data.pod_name && !data.message.includes('No pods found' || '') && <span className="block">NGINX</span>}
           {!data.pod_name && data.message.includes('No pods found' || '') && <span className="block">undefined</span>}
         </div>
-        <div data-testid="cell-version" className="pt-0.5 flex whitespace-nowrap text-zinc-50 min-w-[85px]">
+        <div data-testid="cell-version" className="pt-0.5 flex whitespace-nowrap text-neutral-50 min-w-[85px]">
           {data.version && (
             <span className="group/version">
               <Icon name={IconAwesomeEnum.CODE_COMMIT} className="mr-1" />
@@ -104,10 +101,10 @@ export function RowPod(props: RowPodProps) {
             </span>
           )}
         </div>
-        <div data-testid="cell-date" className="px-4 pt-0.5 text-element-light-lighter-700 whitespace-nowrap">
+        <div data-testid="cell-date" className="px-4 pt-0.5 text-neutral-350 whitespace-nowrap">
           {dateFullFormat(data.created_at, utc ? 'UTC' : undefined, 'dd MMM, HH:mm:ss:SS')}
         </div>
-        <div data-testid="cell-msg" className="select-text pr-6 pt-0.5 text-zinc-50 relative w-full">
+        <div data-testid="cell-msg" className="select-text pr-6 pt-0.5 text-neutral-50 relative w-full">
           <span className="whitespace-pre-wrap break-all">{convertToAnsi(data.message)}</span>
         </div>
       </div>

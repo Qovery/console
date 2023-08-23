@@ -18,10 +18,8 @@ export function TableRow(props: PropsWithChildren<TableRowProps>) {
   const { children, link, className = '', columnsWidth, disabled, data, filter, isNew } = props
   const [highlighted, setHighlighted] = useState(false)
 
-  const rowClasses = `grid items-center h-14 border-b-element-light-lighter-400 border-b ${
-    highlighted
-      ? 'bg-element-light-lighter-300 hover:bg-element-light-lighter-400'
-      : 'hover:bg-element-light-lighter-200'
+  const rowClasses = `grid items-center h-14 border-b-neutral-200 border-b ${
+    highlighted ? 'bg-neutral-150 hover:bg-neutral-200' : 'hover:bg-neutral-100'
   } ${className} ${disabled ? 'pointer-events-none' : ''}`
 
   useEffect(() => {

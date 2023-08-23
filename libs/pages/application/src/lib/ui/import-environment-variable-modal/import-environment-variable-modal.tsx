@@ -49,7 +49,7 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
 
   return (
     <div className="p-6">
-      <h2 className="h4 text-zinc-400 mb-6 max-w-sm">Import variables from .env file</h2>
+      <h2 className="h4 text-neutral-400 mb-6 max-w-sm">Import variables from .env file</h2>
 
       {props.showDropzone ? (
         <div {...props.dropzoneGetRootProps({ className: 'dropzone' })}>
@@ -71,14 +71,14 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
 
           <form onSubmit={props.onSubmit}>
             <div className="grid mb-3" style={{ gridTemplateColumns: '6fr 6fr 204px 2fr 1fr' }}>
-              <span className="text-sm text-zinc-400 font-medium">Variable</span>
-              <span className="text-sm text-zinc-400 font-medium">Value</span>
-              <span className="text-sm text-zinc-400 font-medium">Scope</span>
-              <span className="text-sm text-zinc-400 font-medium pl-1.5">Secret</span>
+              <span className="text-sm text-neutral-400 font-medium">Variable</span>
+              <span className="text-sm text-neutral-400 font-medium">Value</span>
+              <span className="text-sm text-neutral-400 font-medium">Scope</span>
+              <span className="text-sm text-neutral-400 font-medium pl-1.5">Secret</span>
             </div>
 
-            <div className="flex items-center bg-element-light-lighter-400 rounded justify-between px-4 py-2 mb-3">
-              <p className="font-medium text-zinc-400 text-ssm">Apply for all</p>
+            <div className="flex items-center bg-neutral-200 rounded justify-between px-4 py-2 mb-3">
+              <p className="font-medium text-neutral-400 text-ssm">Apply for all</p>
               <div className="flex gap-4">
                 <InputSelectSmall
                   className="w-32"
@@ -194,7 +194,7 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
                     style={ButtonIconStyle.STROKED}
                     size={ButtonSize.TINY}
                     onClick={() => props.deleteKey(key)}
-                    className="text-zinc-350 hover:text-zinc-400 !w-8 !h-8"
+                    className="text-neutral-350 hover:text-neutral-400 !w-8 !h-8"
                     iconClassName="!text-xs"
                   />
                 </div>

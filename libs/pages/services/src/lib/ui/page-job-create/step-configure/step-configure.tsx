@@ -24,8 +24,10 @@ export function StepConfigure(props: StepConfigureProps) {
   return (
     <div>
       <div className="mb-10">
-        <h3 className="text-zinc-400 text-lg mb-2">Job configuration</h3>
-        <p className="text-zinc-400 text-sm mb-2">Job configuration allows you to control the behaviour of your job</p>
+        <h3 className="text-neutral-400 text-lg mb-2">Job configuration</h3>
+        <p className="text-neutral-400 text-sm mb-2">
+          Job configuration allows you to control the behaviour of your job
+        </p>
       </div>
 
       <JobConfigureSettings jobType={props.jobType} />

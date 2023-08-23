@@ -22,12 +22,12 @@
 }
 
 .btn--stroked {
-  @apply bg-element-light-lighter-200 hover:bg-element-light-lighter-300 border-solid border-x border-y border-element-light-lighter-500 text-zinc-400;
+  @apply bg-neutral-100 hover:bg-neutral-150 border-solid border-x border-y border-neutral-250 text-neutral-400;
 
   &.btn--active {
     color: theme('colors.brand.500');
     border-color: theme('colors.brand.500');
-    background-color: theme('colors.element.light.lighter.400');
+    background-color: theme('colors.neutral.200');
   }
 }
 
@@ -36,35 +36,35 @@
 }
 
 .btn--alt {
-  @apply bg-transparent text-zinc-350 hover:bg-element-light-lighter-400 hover:text-brand-500;
+  @apply bg-transparent text-neutral-350 hover:bg-neutral-200 hover:text-brand-500;
 }
 
 .dark {
   .btn--dark {
-    color: theme('colors.zinc.300');
+    color: theme('colors.neutral.300');
 
     &.is-active,
     &:hover {
       background-color: theme('colors.brand.500');
-      color: theme('colors.zinc.100');
+      color: theme('colors.neutral.100');
     }
   }
 }
 
 .btn--dark {
-  color: theme('colors.zinc.200');
-  background-color: theme('colors.element.light.darker.100');
-  border: 1px solid theme('colors.element.light.lighter.800');
+  color: theme('colors.neutral.200');
+  background-color: theme('colors.neutral.500');
+  border: 1px solid theme('colors.neutral.400');
 
   &.is-active,
   &:hover {
-    color: theme('colors.zinc.100');
-    background-color: theme('colors.element.light.darker.200');
+    color: theme('colors.neutral.100');
+    background-color: theme('colors.neutral.550');
   }
 }
 
 .btn--error {
-  color: theme('colors.zinc.100');
+  color: theme('colors.neutral.100');
   background-color: theme('colors.red.600');
   &:hover {
     background-color: theme('colors.red.700');
@@ -72,7 +72,7 @@
 }
 
 .btn--confirm {
-  color: theme('colors.zinc.100');
+  color: theme('colors.neutral.100');
   background-color: theme('colors.green.600');
   &:hover {
     background-color: theme('colors.green.700');
@@ -96,11 +96,11 @@
 }
 
 .btn-login--github {
-  @apply bg-black text-white hover:bg-element-light-darker-400;
+  @apply bg-black text-white hover:bg-neutral-650;
 }
 
 .btn-login--default {
-  @apply bg-element-light-lighter-300 text-zinc-400 border border-element-light-lighter-500 hover:bg-element-light-lighter-400;
+  @apply bg-neutral-150 text-neutral-400 border border-neutral-250 hover:bg-neutral-200;
 }
 
 // icon
@@ -120,7 +120,7 @@
   }
   &.btn.is-active,
   &:hover {
-    @apply bg-element-light-lighter-400 text-brand-500 dark:bg-brand-500 dark:text-zinc-50;
+    @apply bg-neutral-200 text-brand-500 dark:bg-brand-500 dark:text-neutral-50;
   }
 
   &.btn-icon--small {
@@ -130,7 +130,7 @@
   }
 
   &.btn--disabled {
-    color: theme('colors.element.light.lighter.500');
+    color: theme('colors.neutral.250');
   }
 }
 
@@ -139,12 +139,12 @@
 }
 
 .btn-icon--stroked {
-  @apply bg-white hover:bg-element-light-lighter-400 border-solid border-x border-y border-element-light-lighter-500 text-zinc-400 dark:border-0 dark:bg-element-light-darker-200 dark:hover:bg-element-light-darker-400 dark:text-zinc-50;
+  @apply bg-white hover:bg-neutral-200 border-solid border-x border-y border-neutral-250 text-neutral-400 dark:border-0 dark:bg-neutral-550 dark:hover:bg-neutral-650 dark:text-neutral-50;
 
   &.bg-transparent {
     background-color: transparent;
     &:hover {
-      color: theme('colors.zinc.400');
+      color: theme('colors.neutral.400');
       background-color: theme('colors.white');
     }
   }
@@ -153,20 +153,20 @@
 .btn-icon--flat {
   @apply bg-transparent text-brand-500 hover:bg-transparent hover:text-brand-700;
 
-  &.text-zinc-400 {
-    color: theme('colors.zinc.400');
+  &.text-neutral-400 {
+    color: theme('colors.neutral.400');
     &:hover {
-      color: theme('colors.zinc.400');
+      color: theme('colors.neutral.400');
     }
   }
 }
 
 .btn-icon--alt {
-  @apply bg-transparent text-zinc-350 hover:bg-element-light-lighter-400 hover:text-brand-500;
+  @apply bg-transparent text-neutral-350 hover:bg-neutral-200 hover:text-brand-500;
 }
 
 .btn-icon--dark {
-  @apply bg-element-light-darker-100 text-zinc-300 hover:text-zinc-50 hover:bg-element-light-darker-200;
+  @apply bg-neutral-500 text-neutral-300 hover:text-neutral-50 hover:bg-neutral-550;
 }
 
 // size
@@ -197,9 +197,9 @@
 }
 
 .btn-icon--circle {
-  @apply w-6 h-6 rounded-full flex items-center justify-center text-element-light-lighter-800 hover:text-element-light-lighter-800 hover:bg-element-light-lighter-400 dark:hover:bg-element-light-darker-100;
+  @apply w-6 h-6 rounded-full flex items-center justify-center text-neutral-400 hover:text-neutral-400 hover:bg-neutral-200 dark:hover:bg-neutral-500;
 
   &.btn.is-active {
-    @apply text-element-light-lighter-800 hover:text-element-light-lighter-800 hover:bg-element-light-lighter-400 dark:bg-element-light-darker-100;
+    @apply text-neutral-400 hover:text-neutral-400 hover:bg-neutral-200 dark:bg-neutral-500;
   }
 }

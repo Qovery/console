@@ -75,7 +75,7 @@ describe('InputSelect', () => {
     props.disabled = true
     render(<InputSelect {...props} />)
     const select = screen.getByTestId('select')
-    expect(select.classList.contains('!bg-element-light-lighter-200')).toBeTruthy()
+    expect(select.classList.contains('!bg-neutral-100')).toBeTruthy()
   })
 
   it('should have a edit button when option is selected', async () => {

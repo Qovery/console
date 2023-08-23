@@ -30,8 +30,8 @@ export function PageOrganizationGithubRepositoryAccess(props: PageOrganizationGi
       <div className="p-8 max-w-content-with-navigation-left">
         <div className="flex justify-between mb-8">
           <div>
-            <h1 className="h5 text-zinc-400 mb-2">Github Repository Access</h1>
-            <p className="text-zinc-400 text-xs">
+            <h1 className="h5 text-neutral-400 mb-2">Github Repository Access</h1>
+            <p className="text-neutral-400 text-xs">
               By default Qovery has access to all your repositories. If you are using Github, you can restrict the
               Qovery accesses by installing the Qovery Github application on your GitHub organization
             </p>
@@ -45,11 +45,11 @@ export function PageOrganizationGithubRepositoryAccess(props: PageOrganizationGi
           ) : (
             <div className="flex items-center justify-between">
               <div className="flex gap-5">
-                <Icon name={IconEnum.GITHUB} className="text-zinc-400" />
+                <Icon name={IconEnum.GITHUB} className="text-neutral-400" />
                 {props.githubAuthProvider?.use_bot ? (
-                  <span className="text-zinc-400 text-sm font-medium">Github App Installed</span>
+                  <span className="text-neutral-400 text-sm font-medium">Github App Installed</span>
                 ) : (
-                  <span className="text-zinc-400 text-sm font-medium">Not installed</span>
+                  <span className="text-neutral-400 text-sm font-medium">Not installed</span>
                 )}
               </div>
               {!props.githubAuthProvider?.use_bot ? (
@@ -93,7 +93,7 @@ export function PageOrganizationGithubRepositoryAccess(props: PageOrganizationGi
                 {props.repositories.map((repository: RepositoryEntity) => (
                   <li key={repository.id} className="flex items-center justify-between">
                     <div className="flex gap-3">
-                      <Icon name={IconEnum.GITHUB} className="text-zinc-400 w-4" />
+                      <Icon name={IconEnum.GITHUB} className="text-neutral-400 w-4" />
                       <Link link={repository.url} linkLabel={repository.name} external></Link>
                     </div>
                   </li>

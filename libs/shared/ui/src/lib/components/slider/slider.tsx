@@ -24,7 +24,7 @@ export function Slider(props: SliderProps) {
       {label && (
         <div className="flex justify-between items-center mb-2">
           {label && (
-            <p data-testid="label" className="text-zinc-400 text-sm">
+            <p data-testid="label" className="text-neutral-400 text-sm">
               {label}
             </p>
           )}
@@ -38,13 +38,13 @@ export function Slider(props: SliderProps) {
       )}
       <Root
         onValueChange={(value) => handleChange(value)}
-        className="relative flex w-full h-1 bg-element-light-lighter-600 rounded cursor-pointer"
+        className="relative flex w-full h-1 bg-neutral-300 rounded cursor-pointer"
         value={value}
         min={min}
         max={max}
         step={step}
       >
-        <Track className="relative flex flex-grow h-1 bg-element-light-lighter-600 rounded-full">
+        <Track className="relative flex flex-grow h-1 bg-neutral-300 rounded-full">
           <Range className="absolute bg-brand-500 rounded-full h-full" />
         </Track>
         {value?.map((v, index) => (

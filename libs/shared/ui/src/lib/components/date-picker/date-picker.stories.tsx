@@ -25,7 +25,7 @@ const Template: Story = () => {
           Open date-picker
         </Button>
       </DatePicker>
-      <p className="mt-1 text-zinc-400 font-medium">
+      <p className="mt-1 text-neutral-400 font-medium">
         {date && dateFullFormat(date[0].toString())} - {date && dateFullFormat(date[1].toString())}
       </p>
     </>

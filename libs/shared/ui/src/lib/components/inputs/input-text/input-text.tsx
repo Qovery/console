@@ -48,7 +48,7 @@ export function InputText(props: InputTextProps) {
 
   const inputActions = hasFocus ? 'input--focused' : disabled ? 'input--disabled' : ''
 
-  const isDisabled = disabled ? 'input--disabled !border-element-light-lighter-500' : ''
+  const isDisabled = disabled ? 'input--disabled !border-neutral-250' : ''
 
   const displayPicker = () => {
     const input = inputRef.current?.querySelector('input')
@@ -91,12 +91,12 @@ export function InputText(props: InputTextProps) {
             />
             {isInputDate && (
               <div className="absolute top-1/2 -translate-y-1/2 right-4">
-                <Icon name={IconAwesomeEnum.ANGLE_DOWN} className="text-sm text-zinc-400" />
+                <Icon name={IconAwesomeEnum.ANGLE_DOWN} className="text-sm text-neutral-400" />
               </div>
             )}
             {(currentValue as string)?.length > 0 && type === 'password' && (
               <div
-                className="absolute top-1/2 -translate-y-1/2 right-4 transition-colors text-zinc-400 hover:text-zinc-400"
+                className="absolute top-1/2 -translate-y-1/2 right-4 transition-colors text-neutral-400 hover:text-neutral-400"
                 onClick={() => (currentType === 'password' ? setCurrentType('text') : setCurrentType('password'))}
               >
                 {currentType === 'password' && <Icon name={IconAwesomeEnum.EYE} className="text-sm" />}

@@ -112,7 +112,7 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
                 environmentMode={environment.mode}
                 clusterId={environment.cluster_id}
               />
-              <span className="ml-4 mr-1 mt-2 h-4 w-[1px] bg-element-light-lighter-400"></span>
+              <span className="ml-4 mr-1 mt-2 h-4 w-[1px] bg-neutral-200"></span>
             </>
           )}
         </div>
@@ -123,17 +123,17 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
         </Skeleton>
       )}
       <Skeleton width={40} height={32} show={!environment?.cloud_provider}>
-        <div className="border border-element-light-lighter-400 bg-white h-8 px-3 rounded text-xs items-center inline-flex font-medium gap-2">
+        <div className="border border-neutral-200 bg-white h-8 px-3 rounded text-xs items-center inline-flex font-medium gap-2">
           {application && <Icon name={getServiceType(application)} width="16" height="16" />}
         </div>
       </Skeleton>
       <Skeleton width={120} height={32} show={!cluster}>
-        <div className="border border-element-light-lighter-400 bg-white h-8 px-3 rounded text-xs items-center inline-flex font-medium gap-2">
+        <div className="border border-neutral-200 bg-white h-8 px-3 rounded text-xs items-center inline-flex font-medium gap-2">
           <Icon name={environment?.cloud_provider.provider as IconEnum} width="16" />
           <p className="max-w-[120px] truncate">{cluster?.name}</p>
         </div>
       </Skeleton>
-      <Tag className="bg-element-light-lighter-300 gap-2 hidden">
+      <Tag className="bg-neutral-150 gap-2 hidden">
         <span className="w-2 h-2 rounded-lg bg-orange-300"></span>
         <span className="w-2 h-2 rounded-lg bg-teal-500"></span>
       </Tag>

@@ -16,24 +16,20 @@ export function PageUserGeneral({ onSubmit, loading, picture, accountOptions }: 
   return (
     <div className="flex flex-col justify-between w-full">
       <div className="p-8 max-w-content-with-navigation-left">
-        <h1 className="h5 mb-10 text-zinc-400">General account settings</h1>
+        <h1 className="h5 mb-10 text-neutral-400">General account settings</h1>
         <form onSubmit={onSubmit}>
           <BlockContent title="User profile">
             <div className="flex items-center">
               <div>
-                <img
-                  className="rounded-full w-16 h-16 border border-element-light-lighter-100"
-                  src={picture}
-                  alt="User profile"
-                />
+                <img className="rounded-full w-16 h-16 border border-neutral-50" src={picture} alt="User profile" />
               </div>
               <div className="ml-5">
-                <p className="text-zinc-400 font-medium ml-5">
+                <p className="text-neutral-400 font-medium ml-5">
                   {watch('firstName')} {watch('lastName')}
                 </p>
               </div>
             </div>
-            <hr className="my-5 border-0 border-b border-element-light-lighter-500 relative -left-5 w-[calc(100%+41px)]" />
+            <hr className="my-5 border-0 border-b border-neutral-250 relative -left-5 w-[calc(100%+41px)]" />
             <div className="flex mb-3">
               <Controller
                 name="firstName"

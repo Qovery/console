@@ -26,10 +26,7 @@ export function TagEvent(props: TagEventProps) {
         )
       case OrganizationEventType.DELETE:
         return (
-          <Tag
-            fontWeight="font-medium"
-            className="bg-element-light-lighter-200 text-element-light-lighter-700 border border-element-light-lighter-500 !h-6"
-          >
+          <Tag fontWeight="font-medium" className="bg-neutral-100 text-neutral-350 border border-neutral-250 !h-6">
             Delete <Icon name={IconAwesomeEnum.ERASER} className="ml-1" />
           </Tag>
         )
@@ -41,10 +38,7 @@ export function TagEvent(props: TagEventProps) {
         )
       case OrganizationEventType.TRIGGER_CANCEL:
         return (
-          <Tag
-            fontWeight="font-medium"
-            className="bg-element-light-lighter-200 text-element-light-lighter-700 border border-element-light-lighter-500 !h-6"
-          >
+          <Tag fontWeight="font-medium" className="bg-neutral-100 text-neutral-350 border border-neutral-250 !h-6">
             Trigger Cancel <Icon name={IconAwesomeEnum.XMARK} className="ml-1" />
           </Tag>
         )
@@ -52,7 +46,7 @@ export function TagEvent(props: TagEventProps) {
         return (
           <Tag
             fontWeight="font-medium"
-            className="bg-element-light-lighter-200 text-element-light-lighter-700 border border-element-light-lighter-500 !h-6 truncate"
+            className="bg-neutral-100 text-neutral-350 border border-neutral-250 !h-6 truncate"
           >
             Trigger Delete <Icon name={IconAwesomeEnum.ERASER} className="ml-1" />
           </Tag>
@@ -61,7 +55,7 @@ export function TagEvent(props: TagEventProps) {
         return (
           <Tag
             fontWeight="font-medium"
-            className="bg-element-light-lighter-200 text-element-light-lighter-700 border border-element-light-lighter-500 !h-6 truncate"
+            className="bg-neutral-100 text-neutral-350 border border-neutral-250 !h-6 truncate"
           >
             Trigger Deploy <Icon name={IconAwesomeEnum.CHECK} className="ml-1" />
           </Tag>
@@ -70,7 +64,7 @@ export function TagEvent(props: TagEventProps) {
         return (
           <Tag
             fontWeight="font-medium"
-            className="bg-element-light-lighter-200 text-element-light-lighter-700 border border-element-light-lighter-500 !h-6 truncate"
+            className="bg-neutral-100 text-neutral-350 border border-neutral-250 !h-6 truncate"
           >
             Trigger Redeploy <Icon name={IconAwesomeEnum.CHECK} className="ml-1" />
           </Tag>

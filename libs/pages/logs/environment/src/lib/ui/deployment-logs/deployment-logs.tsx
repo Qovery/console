@@ -55,7 +55,7 @@ export function DeploymentLogs({
             <p className="mb-1">
               No logs on this execution for <span className="text-brand-400">{serviceName}</span>.
             </p>
-            <p className="text-zinc-300 font-normal text-sm">
+            <p className="text-neutral-300 font-normal text-sm">
               This service was deployed more than 30 days and thus no deployment logs are available.
             </p>
           </div>
@@ -70,20 +70,18 @@ export function DeploymentLogs({
                 <span className="text-brand-400">{serviceName}</span> service was not deployed within this deployment
                 execution.
               </p>
-              <p className="text-zinc-300 font-normal text-sm mb-10">
+              <p className="text-neutral-300 font-normal text-sm mb-10">
                 Below the list of executions where this service was deployed.
               </p>
             </div>
-            <div className="bg-element-light-darker-500 border border-element-light-darker-100 rounded-lg overflow-hidden w-[484px]">
-              <div className="py-3 bg-element-light-darker-300 border-b border-element-light-darker-100">
-                Last deployment logs
-              </div>
+            <div className="bg-neutral-700 border border-neutral-500 rounded-lg overflow-hidden w-[484px]">
+              <div className="py-3 bg-neutral-600 border-b border-neutral-500">Last deployment logs</div>
               <div className="overflow-y-auto max-h-96 p-2">
                 {deploymentsByServiceId?.map((deploymentHistory: DeploymentService) => (
                   <div key={deploymentHistory.execution_id} className="flex items-center pb-2 last:pb-0">
                     <Link
-                      className={`flex justify-between transition bg-element-light-darker-200 hover:bg-element-light-darker-300 w-full p-3 rounded ${
-                        versionId === deploymentHistory.execution_id ? 'bg-element-light-darker-300' : ''
+                      className={`flex justify-between transition bg-neutral-550 hover:bg-neutral-600 w-full p-3 rounded ${
+                        versionId === deploymentHistory.execution_id ? 'bg-neutral-600' : ''
                       }`}
                       to={
                         ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
@@ -94,13 +92,13 @@ export function DeploymentLogs({
                         <StatusChip className="mr-3 relative top-[2px]" status={deploymentHistory.status} />
                         <span className="text-brand-300 text-ssm">{trimId(deploymentHistory.execution_id || '')}</span>
                       </span>
-                      <span className="text-zinc-300 text-ssm">{dateFullFormat(deploymentHistory.created_at)}</span>
+                      <span className="text-neutral-300 text-ssm">{dateFullFormat(deploymentHistory.created_at)}</span>
                     </Link>
                   </div>
                 ))}
               </div>
-              <div className="flex items-center justify-center bg-element-light-darker-300 h-9 border-t border-element-light-darker-100">
-                <p className="text-zinc-350 text-xs font-normal">
+              <div className="flex items-center justify-center bg-neutral-600 h-9 border-t border-neutral-500">
+                <p className="text-neutral-350 text-xs font-normal">
                   Only the last 20 deployments of the environment over the last 30 days are available.
                 </p>
               </div>

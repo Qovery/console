@@ -12,7 +12,7 @@ export interface SidebarPipelineProps {
 export function SidebarPipeline({ services, versionId, serviceId, statusStages }: SidebarPipelineProps) {
   return (
     <div className="p-5">
-      <p className="text-zinc-50 text-xs mb-4 font-medium">Pipeline</p>
+      <p className="text-neutral-50 text-xs mb-4 font-medium">Pipeline</p>
       {statusStages?.map((currentStage: DeploymentStageWithServicesStatuses, index: number) => (
         <SidebarPipelineItem
           key={index}

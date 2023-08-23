@@ -34,7 +34,7 @@ describe('RowDeployment', () => {
 
     const index = screen.getByTestId('index')
 
-    expect(index).toHaveClass('text-green-500 bg-element-light-darker-200 group-hover:bg-element-light-darker-400')
+    expect(index).toHaveClass('text-green-500 bg-neutral-550 group-hover:bg-neutral-650')
   })
 
   it('should have error index color', () => {
@@ -52,7 +52,7 @@ describe('RowDeployment', () => {
 
     const index = screen.getByTestId('index')
 
-    expect(index).toHaveClass('text-red-500 bg-element-light-darker-200 group-hover:bg-element-light-darker-400')
+    expect(index).toHaveClass('text-red-500 bg-neutral-550 group-hover:bg-neutral-650')
   })
 
   it('should have error cell date color', () => {

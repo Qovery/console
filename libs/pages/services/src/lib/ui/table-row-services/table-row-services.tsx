@@ -85,17 +85,17 @@ export function TableRowServices<T>(props: TableRowServicesProps<T>) {
             </Skeleton>
           </div>
           <Skeleton show={isLoading} width={400} height={16} truncate>
-            <span className="text-sm text-zinc-400 font-medium truncate">{data.name}</span>
+            <span className="text-sm text-neutral-400 font-medium truncate">{data.name}</span>
           </Skeleton>
         </div>
         <div className="flex justify-end justify-items-center px-3">
           <Skeleton show={isLoading} width={200} height={16}>
             <div className="flex items-center gap-3">
-              <p className="flex items-center gap-3 leading-7 text-zinc-350 text-sm">
+              <p className="flex items-center gap-3 leading-7 text-neutral-350 text-sm">
                 {data.status && data.status.state && <StatusLabel status={data.status && data.status.state} />}
                 {data.status?.last_deployment_date && (
                   <Tooltip content={dateFullFormat(data.status.last_deployment_date)}>
-                    <span className="text-xs text-zinc-300 font-medium">
+                    <span className="text-xs text-neutral-300 font-medium">
                       {timeAgo(new Date(data.status.last_deployment_date))} ago
                     </span>
                   </Tooltip>
@@ -122,7 +122,7 @@ export function TableRowServices<T>(props: TableRowServicesProps<T>) {
             </div>
           </Skeleton>
         </div>
-        <div className="flex items-center px-4 border-b-element-light-lighter-400 border-l h-full">
+        <div className="flex items-center px-4 border-b-neutral-200 border-l h-full">
           <Skeleton className="w-full" show={isLoading} width={160} height={16}>
             <div className="w-full flex gap-2 items-center -mt-[1px]">
               {isApplication(type) && <TagCommit commitId={dataApplication.git_repository?.deployed_commit_id} />}
@@ -130,7 +130,7 @@ export function TableRowServices<T>(props: TableRowServicesProps<T>) {
                 <TagCommit commitId={dataJobs.source?.docker?.git_repository?.deployed_commit_id} />
               )}
               {(isContainer(type) || dataJobs.source?.image) && (
-                <Tag className="truncate border border-element-light-lighter-500 text-zinc-350 font-medium h-7">
+                <Tag className="truncate border border-neutral-250 text-neutral-350 font-medium h-7">
                   <div className="block truncate">
                     {dataContainer.image_name && (
                       <Tooltip content={`${dataContainer.image_name}:${dataContainer.tag}`}>
@@ -150,7 +150,7 @@ export function TableRowServices<T>(props: TableRowServicesProps<T>) {
                 </Tag>
               )}
               {isDatabase(type) && (
-                <span className="block text-xs ml-2 text-zinc-400 font-medium">{dataDatabase.version}</span>
+                <span className="block text-xs ml-2 text-neutral-400 font-medium">{dataDatabase.version}</span>
               )}
             </div>
           </Skeleton>

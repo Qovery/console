@@ -34,8 +34,8 @@ export function CardClusterFeature(props: CardClusterFeatureProps) {
     <div
       data-testid="feature"
       className={`flex justify-between px-4 py-3 ${
-        control ? 'rounded border bg-element-light-lighter-200' : 'border-b last:border-0'
-      } border-element-light-lighter-500 mb-3 last:mb-0`}
+        control ? 'rounded border bg-neutral-100' : 'border-b last:border-0'
+      } border-neutral-250 mb-3 last:mb-0`}
       onClick={() => {
         if (feature.id && !disabled && getValues && setValue && control) {
           const active = getValues()[feature.id].value
@@ -57,13 +57,13 @@ export function CardClusterFeature(props: CardClusterFeatureProps) {
           <InputToggle disabled small className="relative top-[2px]" value={getValue(feature?.value || false)} />
         )}
         <div className="basis-full">
-          <h4 className="flex justify-between text-ssm text-zinc-400 mb-1 font-medium">
+          <h4 className="flex justify-between text-ssm text-neutral-400 mb-1 font-medium">
             <span>{feature.title}</span>
-            <span className="text-ssm text-zinc-400 font-medium">
+            <span className="text-ssm text-neutral-400 font-medium">
               {feature.cost_per_month !== 0 ? `$${feature.cost_per_month}/month billed by ${cloudProvider}` : 'Free'}
             </span>
           </h4>
-          <p className="text-xs text-zinc-350 max-w-lg">{feature.description}</p>
+          <p className="text-xs text-neutral-350 max-w-lg">{feature.description}</p>
           {typeof feature.value === 'string' && (
             <div onClick={(e) => e.stopPropagation()}>
               {control ? (

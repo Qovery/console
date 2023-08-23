@@ -45,7 +45,7 @@ export function BadgeService(props: BadgeServiceProps) {
   return (
     <div
       className={`flex items-center justify-center shrink-0 
-      ${!notRounded ? 'border border-element-light-lighter-400 rounded-full' : ''} 
+      ${!notRounded ? 'border border-neutral-200 rounded-full' : ''} 
       ${className} `}
       style={{
         width: `${size}px`,

@@ -48,8 +48,8 @@ export function PageSettingsHealthchecks({
             type={BannerBoxEnum.WARNING}
           />
         )}
-        <h2 className="h5 text-zinc-400 mb-2">Health checks</h2>
-        <p className="text-xs text-zinc-400 mb-8">
+        <h2 className="h5 text-neutral-400 mb-2">Health checks</h2>
+        <p className="text-xs text-neutral-400 mb-8">
           Health checks are automatic ways for Kubernetes to check the status of your application and decide if it can
           receive traffic or needs to be restarted (during the deployment and run phases). These checks are managed by
           two probes: Liveness and Readiness. If your application has special processing requirements (long start-up

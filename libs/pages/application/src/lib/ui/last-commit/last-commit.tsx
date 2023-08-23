@@ -17,14 +17,14 @@ export function LastCommit(props: LastCommitProps) {
         {(commit as Commit)?.author_name ? (
           <Avatar
             size={28}
-            className="border-2 border-element-light-lighter-400"
+            className="border-2 border-neutral-200"
             firstName={(commit as Commit)?.author_name.split(' ')[0] || ''}
             lastName={(commit as Commit)?.author_name.split(' ')[1] || ''}
             url={(commit as Commit)?.author_avatar_url}
           />
         ) : (
           <Avatar
-            className="border-2 border-element-light-lighter-400"
+            className="border-2 border-neutral-200"
             size={28}
             firstName={(commit as ApplicationGitRepository)?.owner || ''}
           />

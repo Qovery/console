@@ -36,14 +36,14 @@ export function BannerBox(props: BannerBoxProps) {
     [BannerBoxEnum.DEFAULT]: 'bg-sky-50 border-sky-500',
     [BannerBoxEnum.WARNING]: 'bg-yellow-50 border-yellow-500',
     [BannerBoxEnum.ERROR]: 'bg-red-50 border-red-500',
-    [BannerBoxEnum.INFO]: 'bg-element-light-lighter-200 border-element-light-lighter-600',
+    [BannerBoxEnum.INFO]: 'bg-neutral-100 border-neutral-300',
   }
 
   const iconClasses = {
     [BannerBoxEnum.DEFAULT]: 'text-sky-600',
     [BannerBoxEnum.WARNING]: 'text-yellow-600',
     [BannerBoxEnum.ERROR]: 'text-red-600',
-    [BannerBoxEnum.INFO]: 'text-element-light-lighter-700',
+    [BannerBoxEnum.INFO]: 'text-neutral-350',
   }
 
   const circleIconWrapperClasses = 'rounded-full overflow-hidden w-12 h-12 bg-white items-center justify-center flex'
@@ -61,8 +61,8 @@ export function BannerBox(props: BannerBoxProps) {
       </div>
 
       <div className="flex flex-col justify-center">
-        {title && <h3 className="text-zinc-400 font-semibold text-sm mb-1">{title}</h3>}
-        <div className="text-xs text-zinc-400">{message}</div>
+        {title && <h3 className="text-neutral-400 font-semibold text-sm mb-1">{title}</h3>}
+        <div className="text-xs text-neutral-400">{message}</div>
       </div>
     </div>
   )

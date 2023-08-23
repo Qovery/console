@@ -35,11 +35,11 @@ const Template: Story<TableProps> = (args) => {
           {data.map((currentData, index) => (
             <TableRow key={index} filter={filter} columnsWidth={args.columnsWidth} data={currentData} link="/">
               <>
-                <div className="px-2 text-sm text-zinc-400">
+                <div className="px-2 text-sm text-neutral-400">
                   {currentData.name} - {currentData.status?.state}
                 </div>
-                <div className="px-2 text-xs text-zinc-400 truncate">{currentData.created_at}</div>
-                <div className="px-2 text-sm text-zinc-400">{currentData.mode}</div>
+                <div className="px-2 text-xs text-neutral-400 truncate">{currentData.created_at}</div>
+                <div className="px-2 text-sm text-neutral-400">{currentData.mode}</div>
               </>
             </TableRow>
           ))}
@@ -123,11 +123,11 @@ const TemplateExpand: Story<TableProps> = (args) => {
             <TableRow key={index} columnsWidth={args.columnsWidth} data={currentData} filter={filter} link="/">
               <>
                 <button onClick={() => toggleExpandedRow(currentData.id)}>Expand</button>
-                <div className="px-2 text-sm text-zinc-400">
+                <div className="px-2 text-sm text-neutral-400">
                   {currentData.name} - {currentData.status?.state}
                 </div>
-                <div className="px-2 text-xs text-zinc-400 truncate">{currentData.created_at}</div>
-                <div className="px-2 text-sm text-zinc-400">{currentData.mode}</div>
+                <div className="px-2 text-xs text-neutral-400 truncate">{currentData.created_at}</div>
+                <div className="px-2 text-sm text-neutral-400">{currentData.mode}</div>
 
                 <div
                   className={`px-2 bg-brand-100 col-span-3 ${expandedRow === currentData.id ? 'visible' : 'hidden'}`}

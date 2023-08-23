@@ -27,8 +27,8 @@ export function PageSettingsDomains(props: PageSettingsDomainsProps) {
       <div className="p-8  max-w-content-with-navigation-left">
         <div className="flex justify-between mb-8">
           <div>
-            <h1 className="h5 text-zinc-400 mb-2">Domain</h1>
-            <p className="text-sm text-zinc-400">Add custom domains to your application.</p>
+            <h1 className="h5 text-neutral-400 mb-2">Domain</h1>
+            <p className="text-sm text-neutral-400">Add custom domains to your application.</p>
           </div>
 
           <Button onClick={() => props.onAddDomain()} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>
@@ -59,14 +59,14 @@ export function PageSettingsDomains(props: PageSettingsDomainsProps) {
                     disabled
                   />
                   <ButtonIcon
-                    className="!bg-transparent hover:!bg-element-light-lighter-400 !w-[52px] !h-[52px]"
+                    className="!bg-transparent hover:!bg-neutral-200 !w-[52px] !h-[52px]"
                     onClick={() => props.onEdit(customDomain)}
                     dataTestId="edit-button"
                     icon={IconAwesomeEnum.WHEEL}
                     style={ButtonIconStyle.STROKED}
                   />
                   <ButtonIcon
-                    className="!bg-transparent hover:!bg-element-light-lighter-400 !w-[52px] !h-[52px]"
+                    className="!bg-transparent hover:!bg-neutral-200 !w-[52px] !h-[52px]"
                     onClick={() => props.onDelete(customDomain)}
                     dataTestId="delete-button"
                     icon={IconAwesomeEnum.TRASH}
