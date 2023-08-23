@@ -19,7 +19,7 @@ export function TagMode(props: TagModeProps) {
         )
       case EnvironmentModeEnum.DEVELOPMENT:
         return (
-          <Tag size={size} className="bg-zinc-150 text-zinc-350 border border-zinc-350">
+          <Tag size={size} className="bg-neutral-150 text-neutral-350 border border-neutral-350">
             DEV
           </Tag>
         )
@@ -31,7 +31,7 @@ export function TagMode(props: TagModeProps) {
         )
       case EnvironmentModeEnum.STAGING:
         return (
-          <Tag size={size} className="bg-zinc-150 text-zinc-350 border border-zinc-350">
+          <Tag size={size} className="bg-neutral-150 text-neutral-350 border border-neutral-350">
             STAGING
           </Tag>
         )

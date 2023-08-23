@@ -22,7 +22,7 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
         {cluster ? (
           <>
             <ClusterButtonsActions cluster={cluster} noSettings />
-            <span className="ml-4 mr-1 mt-2 h-4 w-[1px] bg-zinc-200"></span>
+            <span className="ml-4 mr-1 mt-2 h-4 w-[1px] bg-neutral-200"></span>
           </>
         ) : (
           <div />
@@ -40,24 +40,24 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
       )}
       <Skeleton width={120} height={32} show={!cluster}>
         <TagClusterType
-          className="text-zinc-400 border-zinc-200"
+          className="text-neutral-400 border-neutral-200"
           size={TagSize.BIG}
           cloudProvider={cluster?.cloud_provider}
           kubernetes={cluster?.kubernetes}
         />
       </Skeleton>
       <Skeleton width={120} height={32} show={!cluster}>
-        <Tag size={TagSize.BIG} className="text-zinc-400 border border-zinc-200 truncate">
+        <Tag size={TagSize.BIG} className="text-neutral-400 border border-neutral-200 truncate">
           {cluster?.region}
         </Tag>
       </Skeleton>
       <Skeleton width={120} height={32} show={!cluster}>
-        <Tag size={TagSize.BIG} className="text-zinc-400 border border-zinc-200 truncate">
+        <Tag size={TagSize.BIG} className="text-neutral-400 border border-neutral-200 truncate">
           {cluster?.version}
         </Tag>
       </Skeleton>
       <Skeleton width={120} height={32} show={!cluster}>
-        <Tag size={TagSize.BIG} className="text-zinc-400 border border-zinc-200 truncate">
+        <Tag size={TagSize.BIG} className="text-neutral-400 border border-neutral-200 truncate">
           {cluster?.instance_type?.toLowerCase().replace('_', '.')}
         </Tag>
       </Skeleton>

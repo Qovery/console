@@ -60,7 +60,7 @@ export function InputSizeUnit(props: InputSizeUnitProps) {
           }
         />
         {showConsumption && (
-          <p data-testid="current-consumption" className="text-zinc-350 text-xs mt-1 ml-4">
+          <p data-testid="current-consumption" className="text-neutral-350 text-xs mt-1 ml-4">
             Current consumption:{' '}
             {currentSize < 1024 ? currentSize + ` ${MemorySizeEnum.MB}` : currentSize / 1024 + ` ${MemorySizeEnum.GB}`}
           </p>

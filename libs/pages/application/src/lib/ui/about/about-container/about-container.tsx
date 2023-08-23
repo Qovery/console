@@ -27,15 +27,15 @@ export function AboutContainer(props: AboutContainerProps) {
   }, [props.container])
 
   return (
-    <div className="p-8 flex flex-col items-start border-b border-zinc-200 text-zinc-400">
-      <div className="font-bold mb-3 text-zinc-400">Source</div>
+    <div className="p-8 flex flex-col items-start border-b border-neutral-200 text-neutral-400">
+      <div className="font-bold mb-3 text-neutral-400">Source</div>
 
       <div className="mb-3 flex gap-3">
-        Image name: <strong className="font-medium text-zinc-400">{getContainer()?.image_name}</strong>
+        Image name: <strong className="font-medium text-neutral-400">{getContainer()?.image_name}</strong>
       </div>
       <div className="mb-3 flex gap-3">
         Image tag:{' '}
-        <strong className="font-medium text-zinc-400">
+        <strong className="font-medium text-neutral-400">
           <Truncate truncateLimit={20} text={getContainer()?.tag || ''} />
         </strong>
       </div>

@@ -10,12 +10,12 @@ export function SidebarStatus(props: SidebarStatusProps) {
   const { environmentStatus } = props
 
   return (
-    <div className="border-b border-zinc-500 p-5">
-      <div className="flex items-center justify-between text-zinc-300 text-xs mb-2">
+    <div className="border-b border-neutral-500 p-5">
+      <div className="flex items-center justify-between text-neutral-300 text-xs mb-2">
         Deployment status:
         <StatusChip status={environmentStatus?.last_deployment_state || environmentStatus?.state} />
       </div>
-      <div className="flex items-center justify-between text-zinc-300 text-xs mb-2">
+      <div className="flex items-center justify-between text-neutral-300 text-xs mb-2">
         Deployment Execution id:
         <Tooltip content={environmentStatus?.last_deployment_id || ''}>
           <span className="text-brand-400">
@@ -29,18 +29,18 @@ export function SidebarStatus(props: SidebarStatusProps) {
         </Tooltip>
       </div>
       {environmentStatus?.last_deployment_date && (
-        <p className="flex items-center justify-between text-zinc-300 text-xs">
+        <p className="flex items-center justify-between text-neutral-300 text-xs">
           Deployment start time:
-          <span className="text-zinc-50">{dateFullFormat(environmentStatus?.last_deployment_date || '')}</span>
+          <span className="text-neutral-50">{dateFullFormat(environmentStatus?.last_deployment_date || '')}</span>
         </p>
       )}
-      <p className="flex items-center justify-between text-zinc-300 text-xs mt-2">
+      <p className="flex items-center justify-between text-neutral-300 text-xs mt-2">
         Parallel Deployment:
-        <span className="flex text-zinc-50">
+        <span className="flex text-neutral-50">
           4{' '}
           <Tooltip side="right" content="Number of services deployed in parallel on each pipeline stage">
             <span className="flex items-center">
-              <Icon className="cursor-pointer ml-1 text-xs text-zinc-300" name="icon-solid-circle-info" />
+              <Icon className="cursor-pointer ml-1 text-xs text-neutral-300" name="icon-solid-circle-info" />
             </span>
           </Tooltip>
         </span>

@@ -61,11 +61,11 @@ export function JobConfigureSettings(props: JobConfigureSettingsProps) {
             )}
           />
           <div className="mb-3 flex justify-between">
-            <p className="text-zinc-400 text-xs">{cronDescription}</p>
+            <p className="text-neutral-400 text-xs">{cronDescription}</p>
             <Link
               external
               link="https://crontab.guru/"
-              className="text-zinc-350 !text-xs"
+              className="text-neutral-350 !text-xs"
               linkLabel="CRON expression builder"
             />
           </div>
@@ -74,7 +74,7 @@ export function JobConfigureSettings(props: JobConfigureSettingsProps) {
       ) : (
         <div className="mb-10">
           <h3 className="text-sm font-semibold mb-1">Event</h3>
-          <p className="text-zinc-400 text-sm mb-3">
+          <p className="text-neutral-400 text-sm mb-3">
             Select one or more environment event where the job should be executed
           </p>
 
@@ -162,7 +162,7 @@ export function JobConfigureSettings(props: JobConfigureSettingsProps) {
           />
         )}
       />
-      <p className="text-zinc-350 text-xs mb-3">
+      <p className="text-neutral-350 text-xs mb-3">
         Maximum number of restarts allowed in case of job failure (0 means no failure)
       </p>
 
@@ -185,7 +185,7 @@ export function JobConfigureSettings(props: JobConfigureSettingsProps) {
         )}
       />
 
-      <p className="text-zinc-350 text-xs mb-3">
+      <p className="text-neutral-350 text-xs mb-3">
         Maximum duration allowed for the job to run before killing it and mark it as failed
       </p>
 
@@ -205,7 +205,7 @@ export function JobConfigureSettings(props: JobConfigureSettingsProps) {
         )}
       />
 
-      <p className="text-zinc-350 text-xs mb-3">
+      <p className="text-neutral-350 text-xs mb-3">
         Port where to run readiness and liveliness probes checks. The port will not be exposed externally
       </p>
     </div>

@@ -59,7 +59,7 @@ export function PageDeploymentRules(props: PageDeploymentRulesProps) {
       {listRules.length >= 1 && isLoading === 'loaded' && (
         <div className="py-7 px-10 flex-grow overflow-y-auto min-h-0">
           <div className="flex justify-between items-center mb-8 w-[640px]">
-            <p className="text-zinc-400 text-xs">
+            <p className="text-neutral-400 text-xs">
               Configure your default deployment rules. Drag & drop rules to prioritize them.
             </p>
 
@@ -73,9 +73,9 @@ export function PageDeploymentRules(props: PageDeploymentRulesProps) {
             </Button>
           </div>
 
-          <div className={`w-[640px] bg-zinc-100 rounded ${listRules?.length === 0 ? 'hidden' : ''}`}>
-            <div className="border-t border-l border-r rounded-t border-zinc-250">
-              <h2 className="text-sm text-zinc-400 font-medium py-2 px-4 border-b border-zinc-250 bg-zinc-100 rounded-t">
+          <div className={`w-[640px] bg-neutral-100 rounded ${listRules?.length === 0 ? 'hidden' : ''}`}>
+            <div className="border-t border-l border-r rounded-t border-neutral-250">
+              <h2 className="text-sm text-neutral-400 font-medium py-2 px-4 border-b border-neutral-250 bg-neutral-100 rounded-t">
                 Deployment Rules
               </h2>
             </div>

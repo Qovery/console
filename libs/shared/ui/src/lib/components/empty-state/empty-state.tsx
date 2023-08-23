@@ -21,9 +21,9 @@ export function EmptyState(props: EmptyStateProps) {
           src="/assets/images/event-placeholder-light.svg"
           alt="Event placeholder"
         />
-        <p className="text-zinc-400 font-medium">{props.title}</p>
+        <p className="text-neutral-400 font-medium">{props.title}</p>
         {props.description && (
-          <p data-testid="placeholder-settings-description" className="text-sm text-zinc-350 mt-1">
+          <p data-testid="placeholder-settings-description" className="text-sm text-neutral-350 mt-1">
             {props.description}
           </p>
         )}

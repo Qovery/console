@@ -52,26 +52,26 @@ export function PageGeneral(props: PageGeneralProps) {
       <div className="flex h-full flex-col flex-grow">
         <div className="py-7 px-10 flex-grow overflow-auto">
           {database?.mode && database?.mode === DatabaseModeEnum.MANAGED && (
-            <p className="text-sm text-zinc-400 font-medium mb-4">
+            <p className="text-sm text-neutral-400 font-medium mb-4">
               Metrics for Managed Databases can be found directly on your cloud provider dashboard
             </p>
           )}
-          <div className="flex border border-zinc-200 mb-4">
-            <div className="flex-1 border-r border-zinc-200 p-5">
+          <div className="flex border border-neutral-200 mb-4">
+            <div className="flex-1 border-r border-neutral-200 p-5">
               <Skeleton height={16} width={48} show={false}>
-                <div className="text-zinc-400 font-bold">
+                <div className="text-neutral-400 font-bold">
                   {database?.mode === DatabaseModeEnum.MANAGED
                     ? 'N / A'
                     : `${database?.status?.state === StateEnum.DEPLOYED ? 1 : 0} / 1`}
                 </div>
               </Skeleton>
-              <span className="text-xs text-zinc-350 font-medium">Running instances</span>
+              <span className="text-xs text-neutral-350 font-medium">Running instances</span>
             </div>
             <div className="flex-1 p-5">
-              <div className="text-zinc-400 font-bold">
+              <div className="text-neutral-400 font-bold">
                 {database?.mode === DatabaseModeEnum.MANAGED ? 'N / A' : '-' /** TODO: implem real metrics **/}
               </div>
-              <span className="text-xs text-zinc-350 font-medium">Service restart</span>
+              <span className="text-xs text-neutral-350 font-medium">Service restart</span>
             </div>
           </div>
 
@@ -79,7 +79,7 @@ export function PageGeneral(props: PageGeneralProps) {
         </div>
         <HelpSection description="Need help? You may find these links useful" links={listHelpfulLinks}></HelpSection>
       </div>
-      <div className="w-right-help-sidebar py-10 border-l border-zinc-200">
+      <div className="w-right-help-sidebar py-10 border-l border-neutral-200">
         <About
           description={database?.description}
           type={database?.type}

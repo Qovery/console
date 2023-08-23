@@ -66,11 +66,11 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
           <div className="flex items-center px-4">
             <div className="mx-3 w-full">
               <Skeleton show={isLoading} width={250} height={16}>
-                <div className="cursor-pointer w-full mt-0.5 text-zinc-400 text-ssm font-medium flex items-center">
+                <div className="cursor-pointer w-full mt-0.5 text-neutral-400 text-ssm font-medium flex items-center">
                   {variable.owned_by === ExternalServiceEnum.DOPPLER && (
                     <span
                       data-testid="doppler-tag"
-                      className="bg-[#3391FB] font-bold rounded-sm text-2xs text-zinc-50 px-1 inline-flex items-center h-4 mr-2"
+                      className="bg-[#3391FB] font-bold rounded-sm text-2xs text-neutral-50 px-1 inline-flex items-center h-4 mr-2"
                     >
                       {variable.owned_by}
                     </span>
@@ -79,7 +79,7 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
                   (variable as SecretEnvironmentVariableEntity).aliased_secret ? (
                     <>
                       <Icon name={IconEnum.CHILDREN_ARROW} className="mr-2 ml-1" />
-                      <span className="bg-teal-500 font-bold rounded-sm text-2xs text-zinc-50 px-1 inline-flex items-center h-4 mr-2">
+                      <span className="bg-teal-500 font-bold rounded-sm text-2xs text-neutral-50 px-1 inline-flex items-center h-4 mr-2">
                         ALIAS
                       </span>
                     </>
@@ -87,7 +87,7 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
                     (variable as SecretEnvironmentVariableEntity).overridden_secret ? (
                     <>
                       <Icon name={IconEnum.CHILDREN_ARROW} className="mr-2 ml-1" />
-                      <span className="bg-brand-500 font-bold rounded-sm text-2xs text-zinc-50 px-1 inline-flex items-center h-4 mr-2">
+                      <span className="bg-brand-500 font-bold rounded-sm text-2xs text-neutral-50 px-1 inline-flex items-center h-4 mr-2">
                         OVERRIDE
                       </span>
                     </>
@@ -95,7 +95,7 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
                     ''
                   )}
                   {(variable as EnvironmentVariableEntity).mount_path ? (
-                    <span className="bg-purple-500 font-bold rounded-sm text-2xs text-zinc-50 px-1 inline-flex items-center h-4 mr-2">
+                    <span className="bg-purple-500 font-bold rounded-sm text-2xs text-neutral-50 px-1 inline-flex items-center h-4 mr-2">
                       FILE
                     </span>
                   ) : (
@@ -118,7 +118,7 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
           <div className="flex justify-end justify-items-center px-3">
             <Skeleton show={isLoading} width={200} height={16}>
               <div className="flex items-center">
-                <p className="flex items-center leading-7 text-zinc-350 text-sm">
+                <p className="flex items-center leading-7 text-neutral-350 text-sm">
                   <Tooltip
                     content={
                       variable.updated_at
@@ -126,7 +126,7 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
                         : dateYearMonthDayHourMinuteSecond(new Date(variable.created_at))
                     }
                   >
-                    <span className="text-xs text-zinc-300 mx-3 font-medium">
+                    <span className="text-xs text-neutral-300 mx-3 font-medium">
                       {timeAgo(variable.updated_at ? new Date(variable.updated_at) : new Date(variable.created_at))} ago
                     </span>
                   </Tooltip>
@@ -135,9 +135,9 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
               </div>
             </Skeleton>
           </div>
-          <div className="flex items-center px-4 border-b-zinc-200 border-l h-full max-w-3xl">
+          <div className="flex items-center px-4 border-b-neutral-200 border-l h-full max-w-3xl">
             <Skeleton show={isLoading} width={30} height={16} className="w-full">
-              <div className="text-xs text-zinc-400 w-full">
+              <div className="text-xs text-neutral-400 w-full">
                 {environmentVariableFile(variable) ? (
                   <div
                     className="flex items-center gap-3"
@@ -146,11 +146,11 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
                     }}
                   >
                     {variable.variable_kind === 'public' ? (
-                      <Icon className="ml-0.5 text-zinc-400" name={IconAwesomeEnum.FILE_LINES} />
+                      <Icon className="ml-0.5 text-neutral-400" name={IconAwesomeEnum.FILE_LINES} />
                     ) : (
                       /* todo put FILE_LOCK back when we managed to update font awesome to the pro version */
-                      // <Icon className="ml-0.5 text-zinc-400" name={IconAwesomeEnum.FILE_LOCK} />
-                      <Icon className="ml-0.5 text-zinc-400" name={IconAwesomeEnum.FILE_LINES} />
+                      // <Icon className="ml-0.5 text-neutral-400" name={IconAwesomeEnum.FILE_LOCK} />
+                      <Icon className="ml-0.5 text-neutral-400" name={IconAwesomeEnum.FILE_LINES} />
                     )}
                     <span className="text-sky-500 hover:underline cursor-pointer">
                       {getEnvironmentVariableFileMountPath(variable)}
@@ -168,7 +168,7 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
               </div>
             </Skeleton>
           </div>
-          <div className="text-zinc-400 text-ssm font-medium px-4">
+          <div className="text-neutral-400 text-ssm font-medium px-4">
             {variable.service_name && variable.service_type && variable.service_id ? (
               <NavLink
                 className="flex gap-2 items-center"
@@ -188,7 +188,7 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
               ''
             )}
           </div>
-          <div className="text-zinc-400 text-ssm capitalize font-medium px-4 ">{variable.scope.toLowerCase()}</div>
+          <div className="text-neutral-400 text-ssm capitalize font-medium px-4 ">{variable.scope.toLowerCase()}</div>
         </>
       </TableRow>
     </>

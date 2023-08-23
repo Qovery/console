@@ -28,32 +28,32 @@ export function PageGeneral(props: PageGeneralProps) {
         <div className="py-7 px-10 flex-grow overflow-y-auto min-h-0">
           {!isJob(application) ? (
             <>
-              <div className="flex border border-zinc-200 mb-4">
-                <div className="flex-1 border-r border-zinc-200 p-5">
+              <div className="flex border border-neutral-200 mb-4">
+                <div className="flex-1 border-r border-neutral-200 p-5">
                   <Skeleton height={24} width={48} show={application?.instances?.loadingStatus === 'loading'}>
-                    <span className="text-zinc-400 font-bold">
+                    <span className="text-neutral-400 font-bold">
                       {application?.instances?.items?.length || '–'}/{application?.max_running_instances || '-'}
                     </span>
                   </Skeleton>
-                  <span className="flex text-xs text-zinc-350 font-medium">
+                  <span className="flex text-xs text-neutral-350 font-medium">
                     Running instances{' '}
                     <Tooltip side="right" content="Number of running instances">
                       <div className="flex items-center">
-                        <Icon className="cursor-pointer ml-1 text-xs text-zinc-350" name="icon-solid-circle-info" />
+                        <Icon className="cursor-pointer ml-1 text-xs text-neutral-350" name="icon-solid-circle-info" />
                       </div>
                     </Tooltip>
                   </span>
                 </div>
                 <div className="flex-1 p-5">
-                  <div className="text-zinc-400 font-bold mb-1">{serviceStability}</div>
-                  <span className="flex text-xs text-zinc-350 font-medium">
+                  <div className="text-neutral-400 font-bold mb-1">{serviceStability}</div>
+                  <span className="flex text-xs text-neutral-350 font-medium">
                     Service stability
                     <Tooltip
                       side="right"
                       content="Number of application instance restarts since the last deployment due to application errors"
                     >
                       <div className="flex items-center">
-                        <Icon className="cursor-pointer ml-1 text-xs text-zinc-350" name="icon-solid-circle-info" />
+                        <Icon className="cursor-pointer ml-1 text-xs text-neutral-350" name="icon-solid-circle-info" />
                       </div>
                     </Tooltip>
                   </span>
@@ -71,7 +71,7 @@ export function PageGeneral(props: PageGeneralProps) {
           <HelpSection description="Need help? You may find these links useful" links={listHelpfulLinks} />
         </div>
       </div>
-      <div className="w-right-help-sidebar py-10 border-l border-zinc-200">
+      <div className="w-right-help-sidebar py-10 border-l border-neutral-200">
         <About description={application?.description || ''} />
 
         {application &&

@@ -16,8 +16,8 @@ export function StepHealthchecks({ ports, onSubmit, onBack }: StepHealthchecksPr
   return (
     <>
       <div className="mb-10">
-        <h3 className="text-zinc-400 text-lg mb-2">Health checks</h3>
-        <p className="text-zinc-400 text-xs">
+        <h3 className="text-neutral-400 text-lg mb-2">Health checks</h3>
+        <p className="text-neutral-400 text-xs">
           Health checks are automatic ways for Kubernetes to check the status of your application and decide if it can
           receive traffic or needs to be restarted (during the deployment and run phases). These checks are managed by
           two probes: Liveness and Readiness. If your application has special processing requirements (long start-up

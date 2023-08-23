@@ -34,7 +34,7 @@ export function EnableBox(props: EnableBoxProps) {
     if (currentChecked !== checked) setChecked(currentChecked)
   }, [currentChecked, setChecked, checked])
 
-  const checkedClasses = currentChecked ? 'bg-brand-50 border border-brand-500' : ' bg-zinc-100  border-zinc-250'
+  const checkedClasses = currentChecked ? 'bg-brand-50 border border-brand-500' : ' bg-neutral-100  border-neutral-250'
 
   return (
     <div
@@ -53,7 +53,7 @@ export function EnableBox(props: EnableBoxProps) {
         isChecked={currentChecked}
         big
       />
-      {description && <p className="ml-8 text-zinc-400 text-sm">{description}</p>}
+      {description && <p className="ml-8 text-neutral-400 text-sm">{description}</p>}
 
       {currentChecked && children}
     </div>

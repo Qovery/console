@@ -113,7 +113,7 @@ export function InputSelect({
             data-testid="input-menu-list-button"
             type="button"
             tabIndex={-1}
-            className="input-select__button w-full mt-4 relative before:content-[''] before:w-full before:h-[1px] before:block before:bg-zinc-150 before:absolute before:-top-2 before:left-0"
+            className="input-select__button w-full mt-4 relative before:content-[''] before:w-full before:h-[1px] before:block before:bg-neutral-150 before:absolute before:-top-2 before:left-0"
             onClick={menuListButton.onClick}
           >
             <div className="w-4 h-full flex items-center justify-center">{menuListButton.icon}</div>
@@ -151,22 +151,22 @@ export function InputSelect({
   }
 
   const MultiValue = (props: MultiValueProps<Value, true, GroupBase<Value>>) => (
-    <span className="text-sm text-zinc-400 mr-1">
+    <span className="text-sm text-neutral-400 mr-1">
       {props.data.label}
       {props.index + 1 !== (selectedItems as MultiValue<Value>).length && ', '}
     </span>
   )
 
   const SingleValue = (props: SingleValueProps<Value>) => (
-    <span className="text-sm text-zinc-400 mr-1">{props.data.label}</span>
+    <span className="text-sm text-neutral-400 mr-1">{props.data.label}</span>
   )
 
   const NoOptionsMessage = (props: NoticeProps<Value>) => {
     return (
       <components.NoOptionsMessage {...props}>
         <div className="text-center px-3 py-6">
-          <Icon name={IconAwesomeEnum.WAVE_PULSE} className="text-zinc-350" />
-          <p className="text-zinc-350 font-medium text-xs mt-1">No result for this search</p>
+          <Icon name={IconAwesomeEnum.WAVE_PULSE} className="text-neutral-350" />
+          <p className="text-neutral-350 font-medium text-xs mt-1">No result for this search</p>
         </div>{' '}
       </components.NoOptionsMessage>
     )
@@ -179,7 +179,7 @@ export function InputSelect({
     hasFocus && !disabled
       ? '!border-brand-500 !shadow-[0_2px_2px_rgba(0, 0, 0, 0.05)] input--focused'
       : disabled
-      ? '!bg-zinc-100 !border-zinc-250 !pointer-events-none'
+      ? '!bg-neutral-100 !border-neutral-250 !pointer-events-none'
       : hasError
       ? 'input--error'
       : ''
@@ -194,7 +194,7 @@ export function InputSelect({
     <div className={className}>
       <div
         className={`input input--select ${hasIcon ? 'input--has-icon' : ''} ${inputActions} ${
-          disabled ? '!bg-zinc-100 !border-zinc-250' : ''
+          disabled ? '!bg-neutral-100 !border-neutral-250' : ''
         } ${isFilter ? 'input--filter' : ''}`}
         data-testid={dataTestId || 'select'}
       >
@@ -221,7 +221,7 @@ export function InputSelect({
         {currentIcon?.onClickEditable && (
           <div
             data-testid="selected-edit-icon"
-            className="cursor-pointer flex items-center justify-center text-sm text-zinc-400 hover:text-brand-500 w-8 h-8 absolute z-10 right-8 top-[10px]"
+            className="cursor-pointer flex items-center justify-center text-sm text-neutral-400 hover:text-brand-500 w-8 h-8 absolute z-10 right-8 top-[10px]"
             onClick={(event) => {
               event.stopPropagation()
               currentIcon.onClickEditable && currentIcon.onClickEditable()
@@ -265,7 +265,7 @@ export function InputSelect({
         <input type="hidden" name={label} value={selectedValue} />
         {!isFilter && (
           <div className="absolute top-1/2 -translate-y-1/2 right-4 pointer-events-none">
-            <Icon name="icon-solid-angle-down" className="text-sm text-zinc-400" />
+            <Icon name="icon-solid-angle-down" className="text-sm text-neutral-400" />
           </div>
         )}
       </div>

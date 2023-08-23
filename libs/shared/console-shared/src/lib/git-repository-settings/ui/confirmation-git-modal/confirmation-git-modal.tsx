@@ -10,7 +10,7 @@ export interface ConfirmationGitModalProps {
 export function ConfirmationGitModal(props: ConfirmationGitModalProps) {
   return (
     <div className="p-6">
-      <h2 className="h4 text-zinc-400 max-w-sm truncate mb-6">Change repository</h2>
+      <h2 className="h4 text-neutral-400 max-w-sm truncate mb-6">Change repository</h2>
       <BannerBox
         className="mb-5"
         type={BannerBoxEnum.WARNING}
@@ -21,10 +21,10 @@ export function ConfirmationGitModal(props: ConfirmationGitModalProps) {
       <div className="relative flex w-full h-[52px] px-4 py-2 border rounded">
         <Icon name={GitProviderEnum.GITHUB} className="mr-3 w-4 h-4 mt-[10px]" width="16px" height="16px" />
         <div className="relative -top-[6px]">
-          <span data-testid="auth-provider-name" className="text-xs text-zinc-400">
+          <span data-testid="auth-provider-name" className="text-xs text-neutral-400">
             {props.currentAuthProvider?.split(' ')[0]}
           </span>
-          <p data-testid="auth-provider-owner" className="text-sm text-zinc-400 relative -top-1">
+          <p data-testid="auth-provider-owner" className="text-sm text-neutral-400 relative -top-1">
             {props.currentAuthProvider?.split(' ')[1].replace('(', '').replace(')', '')}
           </p>
         </div>

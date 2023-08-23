@@ -31,8 +31,8 @@ export function PageOrganizationApi(props: PageOrganizationApiProps) {
       <div className="p-8 max-w-content-with-navigation-left">
         <div className="flex justify-between mb-8">
           <div>
-            <h1 className="h5 text-zinc-400 mb-2">API Token</h1>
-            <p className="text-zinc-400 text-xs">
+            <h1 className="h5 text-neutral-400 mb-2">API Token</h1>
+            <p className="text-neutral-400 text-xs">
               API token allows third-party applications or script to access your organization via the Qovery API (CI/CD,
               Terraform script, Pulumi etc..)
             </p>
@@ -51,21 +51,21 @@ export function PageOrganizationApi(props: PageOrganizationApiProps) {
               <div
                 data-testid={`token-list-${token.id}`}
                 key={token.id}
-                className="flex justify-between items-center px-5 py-4 border-b border-zinc-250 last:border-0"
+                className="flex justify-between items-center px-5 py-4 border-b border-neutral-250 last:border-0"
               >
                 <div className="flex">
                   <div className="">
-                    <h2 className="flex text-xs text-zinc-400 font-medium mb-1">
+                    <h2 className="flex text-xs text-neutral-400 font-medium mb-1">
                       <Truncate truncateLimit={60} text={token.name || ''} />
                       {token.description && (
                         <Tooltip content={token.description}>
                           <div className="ml-1 cursor-pointer">
-                            <Icon name={IconAwesomeEnum.CIRCLE_INFO} className="text-zinc-350" />
+                            <Icon name={IconAwesomeEnum.CIRCLE_INFO} className="text-neutral-350" />
                           </div>
                         </Tooltip>
                       )}
                     </h2>
-                    <p className="text-xs text-zinc-350">
+                    <p className="text-xs text-neutral-350">
                       <span className="inline-block">
                         Created since {dateYearMonthDayHourMinuteSecond(new Date(token.created_at || ''), false)}
                       </span>
@@ -78,7 +78,7 @@ export function PageOrganizationApi(props: PageOrganizationApiProps) {
                     style={ButtonIconStyle.STROKED}
                     size={ButtonSize.TINY}
                     onClick={() => onDelete(token)}
-                    className="text-zinc-350 hover:text-zinc-400 bg-transparent !w-9 !h-8"
+                    className="text-neutral-350 hover:text-neutral-400 bg-transparent !w-9 !h-8"
                     iconClassName="!text-xs"
                     dataTestId="delete-token"
                   />

@@ -73,8 +73,8 @@ export function RowProject(props: RowProjectProps) {
 
   return (
     <>
-      <div data-testid="project-head" className="flex items-center h-10 bg-zinc-150 border-zinc-200 border-b">
-        <div className="flex-auto flex items-center h-full px-4 w-1/4 border-r border-zinc-250 font-medium">
+      <div data-testid="project-head" className="flex items-center h-10 bg-neutral-150 border-neutral-200 border-b">
+        <div className="flex-auto flex items-center h-full px-4 w-1/4 border-r border-neutral-250 font-medium">
           {project.project_name}
         </div>
         {Object.keys(OrganizationCustomRoleProjectPermissionAdmin)
@@ -82,7 +82,7 @@ export function RowProject(props: RowProjectProps) {
           .map((permission) => (
             <div
               key={permission}
-              className="flex-1 flex items-center justify-center h-full px-4 border-r border-zinc-250 last:border-0"
+              className="flex-1 flex items-center justify-center h-full px-4 border-r border-neutral-250 last:border-0"
             >
               <InputCheckbox
                 dataTestId={`project.${permission}`}
@@ -105,15 +105,15 @@ export function RowProject(props: RowProjectProps) {
           ) => (
             <div
               key={`${project.project_id}-${permission.environment_type}`}
-              className="flex h-10 border-zinc-250 border-b"
+              className="flex h-10 border-neutral-250 border-b"
             >
-              <div className="flex-auto flex items-center h-full px-4 w-1/4 border-r border-zinc-250 font-medium">
+              <div className="flex-auto flex items-center h-full px-4 w-1/4 border-r border-neutral-250 font-medium">
                 <svg xmlns="http://www.w3.org/2000/svg" width="7" height="8" fill="none" viewBox="0 0 7 8">
                   <path fill="#C6D3E7" fillRule="evenodd" d="M2 0H.5v8h6V6.5H2V0z" clipRule="evenodd" />
                 </svg>
                 <span className="inline-block ml-3">{upperCaseFirstLetter(permission.environment_type)}</span>
               </div>
-              <div className="flex-1 flex items-center justify-center h-full px-4 border-r border-zinc-250">
+              <div className="flex-1 flex items-center justify-center h-full px-4 border-r border-neutral-250">
                 <InputCheckbox
                   dataTestId="admin-checkbox"
                   name={`${project.project_id}.${permission.environment_type}`}
@@ -129,7 +129,7 @@ export function RowProject(props: RowProjectProps) {
                 .map((currentPermission) => (
                   <div
                     key={currentPermission}
-                    className="flex-1 flex items-center justify-center h-full px-4 border-r border-zinc-250 last:border-0"
+                    className="flex-1 flex items-center justify-center h-full px-4 border-r border-neutral-250 last:border-0"
                   >
                     <Controller
                       name={`project_permissions.${project.project_id}.${permission.environment_type}`}

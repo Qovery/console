@@ -65,7 +65,7 @@ export function InputToggle(props: InputToggleProps) {
           className={`${toggleSizeBg} flex items-center rounded-full p-0.5 ${
             animateEnabled ? 'duration-300 ease-in-out' : ''
           } ${
-            toggleActive ? `${small ? 'bg-brand-500' : 'bg-brand-500'}` : `${small ? 'bg-zinc-300' : 'bg-gray-300'}`
+            toggleActive ? `${small ? 'bg-brand-500' : 'bg-brand-500'}` : `${small ? 'bg-neutral-300' : 'bg-gray-300'}`
           }`}
         >
           <div
@@ -80,8 +80,8 @@ export function InputToggle(props: InputToggleProps) {
         onClick={changeToggle}
         className={`${description && forceAlignTop ? 'relative -top-1' : ''} ml-3 ${!disabled ? 'cursor-pointer' : ''}`}
       >
-        {title && <p className="text-zinc-400 text-ssm font-medium">{title}</p>}
-        {description && <div className="text-xs text-zinc-350">{description}</div>}
+        {title && <p className="text-neutral-400 text-ssm font-medium">{title}</p>}
+        {description && <div className="text-xs text-neutral-350">{description}</div>}
       </div>
     </div>
   )

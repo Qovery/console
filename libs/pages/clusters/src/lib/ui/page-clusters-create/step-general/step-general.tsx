@@ -49,17 +49,17 @@ export function StepGeneral(props: StepGeneralProps) {
   return (
     <div>
       <div className="mb-10">
-        <h3 className="text-zinc-400 text-lg mb-2">General information</h3>
-        <p className="text-zinc-400 text-sm mb-2">Provide here some general information for your cluster.</p>
+        <h3 className="text-neutral-400 text-lg mb-2">General information</h3>
+        <p className="text-neutral-400 text-sm mb-2">Provide here some general information for your cluster.</p>
       </div>
 
       <form onSubmit={onSubmit}>
         <div className="mb-10">
-          <h4 className="mb-4 text-zinc-400 text-sm">General</h4>
+          <h4 className="mb-4 text-neutral-400 text-sm">General</h4>
           <ClusterGeneralSettings />
         </div>
         <div className="mb-10">
-          <h4 className="mb-3 text-zinc-400 text-sm">Provider credentials</h4>
+          <h4 className="mb-3 text-neutral-400 text-sm">Provider credentials</h4>
           {cloudProviders.length > 0 ? (
             <>
               <Controller

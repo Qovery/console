@@ -40,7 +40,7 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
   return (
     <>
       <WarningScreenMobile />
-      <main className="dark:bg-zinc-900 dark:h-full bg-zinc-200">
+      <main className="dark:bg-neutral-900 dark:h-full bg-neutral-200">
         <div className="flex">
           <div className="h-full sticky top-0 z-30">
             <Navigation defaultOrganizationId={defaultOrganizationId} />

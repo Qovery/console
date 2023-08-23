@@ -46,7 +46,7 @@ export function TabsClusterLogs(props: TabsClusterLogsProps) {
         <p className="font-medium text-sm">
           Error{' '}
           {errors && errors.length > 0 && (
-            <span className="relative -top-px text-xs ml-2 px-1 h-4 bg-red-500 text-zinc-50 rounded-sm">1</span>
+            <span className="relative -top-px text-xs ml-2 px-1 h-4 bg-red-500 text-neutral-50 rounded-sm">1</span>
           )}
         </p>
       ),
@@ -60,7 +60,7 @@ export function TabsClusterLogs(props: TabsClusterLogsProps) {
     currentError && currentError.underlying_error?.message?.slice(0, !displayFullError ? 240 : Infinity)
 
   return (
-    <div data-testid="tabs-logs" className="w-[360px] h-[calc(100%+0.5rem)] shrink-0 bg-zinc-650 relative z-20">
+    <div data-testid="tabs-logs" className="w-[360px] h-[calc(100%+0.5rem)] shrink-0 bg-neutral-650 relative z-20">
       <div className="py-2 px-5">
         <Tabs className="bg-transparent" classNameBtn="grow justify-center" items={items} fullWidth />
         <div data-testid="sections" className="mt-6">
@@ -71,24 +71,24 @@ export function TabsClusterLogs(props: TabsClusterLogsProps) {
                 <>
                   <div className="flex items-center">
                     <div className="flex items-center justify-center shrink-0 w-8 h-8 rounded-full bg-red-500 mr-3">
-                      <Icon name="icon-solid-triangle-exclamation" className="text-zinc-50" />
+                      <Icon name="icon-solid-triangle-exclamation" className="text-neutral-50" />
                     </div>
                     <div>
                       <Tooltip content={currentError.tag || ''}>
-                        <p className="text-zinc-50 font-medium">
+                        <p className="text-neutral-50 font-medium">
                           <Truncate text={currentError.tag || ''} truncateLimit={28} />
                         </p>
                       </Tooltip>
-                      <span data-testid="error-line" className="text-zinc-350 text-xs">
+                      <span data-testid="error-line" className="text-neutral-350 text-xs">
                         Line {errors[errors.length - 1].index} - After {errors[errors.length - 1].timeAgo} minute
                         {parseInt(errors[errors.length - 1].timeAgo || '', 10) > 1 ? 's' : ''}
                       </span>
                     </div>
                   </div>
                   <div
-                    className={`bg-zinc-700 mt-4 p-2 rounded ml-8 ${
+                    className={`bg-neutral-700 mt-4 p-2 rounded ml-8 ${
                       (currentError.underlying_error?.message || '').length > 240
-                        ? 'cursor-pointer select-none hover:bg-zinc-650 transition-all ease-in-out duration-150'
+                        ? 'cursor-pointer select-none hover:bg-neutral-650 transition-all ease-in-out duration-150'
                         : ''
                     }`}
                     onClick={() =>
@@ -107,14 +107,14 @@ export function TabsClusterLogs(props: TabsClusterLogsProps) {
                           <Icon name="icon-solid-arrow-circle-right" className="cursor-pointer" />
                         </p>
                         <CopyToClipboard
-                          className="text-zinc-300 hover:text-zinc-50"
+                          className="text-neutral-300 hover:text-neutral-50"
                           content={`Transmitter: ${
                             (errors[0].error as ClusterLogsError).event_details?.transmitter?.name
                           } - ${errors[0].error?.underlying_error?.message}`}
                         />
                       </div>
                     </div>
-                    <p data-testid="error-msg" className="relative text-zinc-100 text-xs">
+                    <p data-testid="error-msg" className="relative text-neutral-100 text-xs">
                       Transmitter: {(currentError as ClusterLogsError).event_details?.transmitter?.name} -{' '}
                       {truncateErrorMessage}
                       {!displayFullError && (currentError.underlying_error?.message || '').length > 240 && (
@@ -126,9 +126,9 @@ export function TabsClusterLogs(props: TabsClusterLogsProps) {
                     </p>
                   </div>
                   {currentError.hint_message && (
-                    <div className="bg-zinc-600 mt-3 p-2 rounded ml-8">
+                    <div className="bg-neutral-600 mt-3 p-2 rounded ml-8">
                       <p className="text-xs text-sky-400 font-medium mb-1">Solution</p>
-                      <p data-testid="solution-msg" className="text-zinc-50 text-xs mb-2">
+                      <p data-testid="solution-msg" className="text-neutral-50 text-xs mb-2">
                         {currentError.hint_message}
                       </p>
                       <Button
@@ -157,8 +157,8 @@ export function TabsClusterLogs(props: TabsClusterLogsProps) {
                 </>
               ) : (
                 <div data-testid="no-error-screen" className="text-center px-3 py-6">
-                  <Icon name="icon-solid-wave-pulse" className="text-zinc-350" />
-                  <p className="text-zinc-350 font-medium text-xs mt-1">No error available</p>
+                  <Icon name="icon-solid-wave-pulse" className="text-neutral-350" />
+                  <p className="text-neutral-350 font-medium text-xs mt-1">No error available</p>
                 </div>
               )}
             </div>
@@ -166,8 +166,8 @@ export function TabsClusterLogs(props: TabsClusterLogsProps) {
         </div>
       </div>
       {section === TabsClusterLogsSection.ERROR && (
-        <div className="px-5 py-6 border-t border-zinc-550 mt-5">
-          <p className="text-zinc-350 text-sm mb-3">Need more help?</p>
+        <div className="px-5 py-6 border-t border-neutral-550 mt-5">
+          <p className="text-neutral-350 text-sm mb-3">Need more help?</p>
           <Link
             className="font-medium"
             link="https://discuss.qovery.com"

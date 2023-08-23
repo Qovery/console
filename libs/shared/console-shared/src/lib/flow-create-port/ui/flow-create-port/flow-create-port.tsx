@@ -43,10 +43,10 @@ export function FlowCreatePort({
       <div className="flex justify-between mb-10">
         <div>
           <div className="flex justify-between mb-2 items-center">
-            <h3 className="text-zinc-400 text-lg">{isSetting ? 'Port' : 'Set port'}</h3>
+            <h3 className="text-neutral-400 text-lg">{isSetting ? 'Port' : 'Set port'}</h3>
           </div>
 
-          <p className={isSetting ? 'text-sm text-zinc-400 max-w-lg' : 'text-xs text-zinc-400'}>
+          <p className={isSetting ? 'text-sm text-neutral-400 max-w-lg' : 'text-xs text-neutral-400'}>
             Declare TCP/UDP ports used by your application. Declared ports are accessible from other applications within
             the same environment. You can also expose them on the internet by making them public. Declared ports are
             also used to check the liveness/readiness of your application
@@ -67,7 +67,7 @@ export function FlowCreatePort({
               ports.map((customPort, i) => (
                 <div
                   key={i}
-                  className="flex justify-between w-full items-center gap-3 px-5 py-4 border-b border-zinc-250 last:border-0"
+                  className="flex justify-between w-full items-center gap-3 px-5 py-4 border-b border-neutral-250 last:border-0"
                   data-testid="form-row"
                 >
                   <div className="flex flex-row">
@@ -86,11 +86,11 @@ export function FlowCreatePort({
                         <div className="w-9"></div>
                       ))}
                     <div className="text-xs">
-                      <span className="text-zinc-400 font-medium">
+                      <span className="text-neutral-400 font-medium">
                         Application Port:{' '}
                         {(customPort as PortData).application_port || (customPort as ServicePort).internal_port}
                       </span>
-                      <p className="flex gap-3 text-zinc-350 mt-1">
+                      <p className="flex gap-3 text-neutral-350 mt-1">
                         <span>
                           Public:{' '}
                           {(customPort as PortData).is_public || (customPort as ServicePort).publicly_accessible
@@ -113,7 +113,7 @@ export function FlowCreatePort({
                   <div>
                     {onEdit && (
                       <ButtonIcon
-                        className="mr-2 !bg-transparent hover:!bg-zinc-200"
+                        className="mr-2 !bg-transparent hover:!bg-neutral-200"
                         style={ButtonIconStyle.STROKED}
                         size={ButtonSize.REGULAR}
                         onClick={() => onEdit(customPort)}
@@ -123,7 +123,7 @@ export function FlowCreatePort({
                     )}
                     {onRemovePort && (
                       <ButtonIcon
-                        className="!bg-transparent hover:!bg-zinc-200"
+                        className="!bg-transparent hover:!bg-neutral-200"
                         style={ButtonIconStyle.STROKED}
                         size={ButtonSize.REGULAR}
                         onClick={() =>

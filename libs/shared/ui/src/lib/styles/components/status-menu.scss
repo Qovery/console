@@ -20,15 +20,15 @@
 }
 
 .status-menu--stop {
-  @apply bg-zinc-150 border-zinc-350 text-zinc-350;
+  @apply bg-neutral-150 border-neutral-350 text-neutral-350;
 
   .status-menu__trigger {
-    @apply border-zinc-350;
+    @apply border-neutral-350;
   }
 
   &.status-menu--open {
     .status-menu__trigger {
-      @apply bg-zinc-200;
+      @apply bg-neutral-200;
     }
   }
 }

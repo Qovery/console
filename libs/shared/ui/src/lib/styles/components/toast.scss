@@ -1,5 +1,5 @@
 .toast {
-  @apply relative bg-zinc-900 rounded cursor-pointer;
+  @apply relative bg-neutral-900 rounded cursor-pointer;
   box-shadow: 0 16px 24px rgba(0, 0, 0, 0.12);
 
   &:hover {
@@ -22,5 +22,5 @@
 }
 
 .toast__close {
-  @apply opacity-0 w-6 h-6 flex justify-center items-center absolute top-[-8px] left-[-8px] hover:bg-zinc-700 text-white ease-out duration-150 bg-zinc-600 border border-zinc-400 rounded-full;
+  @apply opacity-0 w-6 h-6 flex justify-center items-center absolute top-[-8px] left-[-8px] hover:bg-neutral-700 text-white ease-out duration-150 bg-neutral-600 border border-neutral-400 rounded-full;
 }

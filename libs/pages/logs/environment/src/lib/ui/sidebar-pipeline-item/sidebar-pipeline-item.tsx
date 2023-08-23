@@ -48,12 +48,12 @@ export function SidebarPipelineItem({ currentStage, index, serviceId, versionId,
     <div className="mb-1.5">
       <div
         data-testid="toggle-stage"
-        className="cursor-pointer inline-flex items-center text-zinc-100 text-ssm font-medium mb-1.5 select-none"
+        className="cursor-pointer inline-flex items-center text-neutral-100 text-ssm font-medium mb-1.5 select-none"
         onClick={() => setOpenStage(!openStage)}
       >
         <BadgeDeploymentOrder className="mr-3" order={index} />
         {currentStage?.stage?.name}
-        <Icon name={IconAwesomeEnum.CARET_DOWN} className={`ml-3 text-zinc-350 ${!openStage ? '-rotate-90' : ''}`} />
+        <Icon name={IconAwesomeEnum.CARET_DOWN} className={`ml-3 text-neutral-350 ${!openStage ? '-rotate-90' : ''}`} />
       </div>
       {openStage && (
         <div>
@@ -61,7 +61,7 @@ export function SidebarPipelineItem({ currentStage, index, serviceId, versionId,
             servicesStages.map((service, index) => (
               <div
                 key={index}
-                className={`relative pl-[31px] before:bg-zinc-500 before:block before:content-[''] before:w-[1px] before:h-full before:absolute before:left-[9px] before:top-0 ${
+                className={`relative pl-[31px] before:bg-neutral-500 before:block before:content-[''] before:w-[1px] before:h-full before:absolute before:left-[9px] before:top-0 ${
                   serviceId === service.id ? 'before:bg-brand-500 before:w-[3px]' : ''
                 }`}
               >
@@ -72,8 +72,10 @@ export function SidebarPipelineItem({ currentStage, index, serviceId, versionId,
                       ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
                       DEPLOYMENT_LOGS_VERSION_URL(service.id, versionId ? versionId : '')
                     }
-                    className={`flex justify-between items-center w-full text-ssm transition-all font-medium py-1.5 px-2.5 hover:text-zinc-50 rounded-[3px] ${
-                      serviceId === service.id ? 'bg-zinc-500 !text-zinc-50' : 'text-zinc-100 hover:bg-zinc-600'
+                    className={`flex justify-between items-center w-full text-ssm transition-all font-medium py-1.5 px-2.5 hover:text-neutral-50 rounded-[3px] ${
+                      serviceId === service.id
+                        ? 'bg-neutral-500 !text-neutral-50'
+                        : 'text-neutral-100 hover:bg-neutral-600'
                     } ${service.is_part_last_deployment ? '!text-brand-400' : ''}`}
                   >
                     <span className="flex">
@@ -94,8 +96,8 @@ export function SidebarPipelineItem({ currentStage, index, serviceId, versionId,
             ))
           ) : (
             <div className="text-center pt-1 pb-3">
-              <Icon name={IconAwesomeEnum.WAVE_PULSE} className="text-zinc-350" />
-              <p className="text-zinc-350 font-medium text-xs mt-1">No service for this stage</p>
+              <Icon name={IconAwesomeEnum.WAVE_PULSE} className="text-neutral-350" />
+              <p className="text-neutral-350 font-medium text-xs mt-1">No service for this stage</p>
             </div>
           )}
         </div>

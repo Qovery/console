@@ -46,13 +46,13 @@ export function InputSearch(props: InputSearchProps) {
       <div className={`relative w-full ${className}`}>
         <Icon
           name="icon-solid-magnifying-glass"
-          className="absolute left-3 top-1/2 -translate-y-1/2 block text-xs text-zinc-350 leading-none"
+          className="absolute left-3 top-1/2 -translate-y-1/2 block text-xs text-neutral-350 leading-none"
         />
         <input
           data-testid="input-search"
           ref={ref}
           autoFocus={autofocus}
-          className={`w-full rounded border border-zinc-250 dark:border-zinc-400 bg-zinc-150 dark:bg-zinc-700 text-zinc-400 dark:text-zinc-350 placeholder:text-zinc-350 pl-8 pr-6 leading-none focus:outline-none focus:border-brand-400 focus:transition-[border-color] ${customSize}`}
+          className={`w-full rounded border border-neutral-250 dark:border-neutral-400 bg-neutral-150 dark:bg-neutral-700 text-neutral-400 dark:text-neutral-350 placeholder:text-neutral-350 pl-8 pr-6 leading-none focus:outline-none focus:border-brand-400 focus:transition-[border-color] ${customSize}`}
           type="text"
           placeholder={placeholder}
           disabled={false}
@@ -61,7 +61,7 @@ export function InputSearch(props: InputSearchProps) {
         />
         {toggleDelete && (
           <button className="absolute right-3 top-1/2 -translate-y-1/2" onClick={deleteValue}>
-            <Icon className="text-zinc-350 text-sm" name={IconAwesomeEnum.CIRCLE_XMARK} />
+            <Icon className="text-neutral-350 text-sm" name={IconAwesomeEnum.CIRCLE_XMARK} />
           </button>
         )}
       </div>
@@ -71,8 +71,8 @@ export function InputSearch(props: InputSearchProps) {
             emptyContent
           ) : (
             <div className="text-center px-3 py-6">
-              <Icon name={IconAwesomeEnum.WAVE_PULSE} className="text-zinc-350" />
-              <p className="text-zinc-350 font-medium text-xs mt-1">No result for this search</p>
+              <Icon name={IconAwesomeEnum.WAVE_PULSE} className="text-neutral-350" />
+              <p className="text-neutral-350 font-medium text-xs mt-1">No result for this search</p>
             </div>
           )}
         </div>

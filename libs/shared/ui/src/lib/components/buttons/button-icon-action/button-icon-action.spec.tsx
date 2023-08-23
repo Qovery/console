@@ -27,7 +27,7 @@ describe('ButtonIconAction', () => {
               ],
             },
           ],
-          menusClassName: 'border-r border-r-zinc-250',
+          menusClassName: 'border-r border-r-neutral-250',
         },
       ],
     }

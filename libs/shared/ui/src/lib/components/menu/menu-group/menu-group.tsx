@@ -66,7 +66,7 @@ export function MenuGroup(props: MenuGroupProps) {
       {!isFilter && menu?.title && (
         <div className="flex justify-between items-center" style={headPaddingStyle}>
           {menu?.title && (
-            <p data-testid="title" className="text-sm text-zinc-350">
+            <p data-testid="title" className="text-sm text-neutral-350">
               {menu?.title}
             </p>
           )}
@@ -93,7 +93,7 @@ export function MenuGroup(props: MenuGroupProps) {
         </div>
       )}
       {isFilter && menu?.title && filteredItems.length !== 0 && (
-        <p className="text-sm text-zinc-350 ml-2" style={headPaddingStyle}>
+        <p className="text-sm text-neutral-350 ml-2" style={headPaddingStyle}>
           {menu?.title}
         </p>
       )}
@@ -110,7 +110,7 @@ export function MenuGroup(props: MenuGroupProps) {
         </div>
       )}
       {!isFilter && !isLast && filteredItems.length > 0 && (
-        <MenuDivider className="bg-zinc-200 dark:bg-element-dark-400 m-0 mx-3" />
+        <MenuDivider className="bg-neutral-200 dark:bg-element-dark-400 m-0 mx-3" />
       )}
     </div>
   )

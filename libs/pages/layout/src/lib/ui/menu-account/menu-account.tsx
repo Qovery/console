@@ -28,12 +28,12 @@ export function MenuAccount(props: MenuAccountProps) {
         {organization.logo_url ? (
           <img className="p-1" src={organization.logo_url} alt="Organization logo" />
         ) : (
-          <span className="w-full h-full font-medium text-xs text-zinc-350 bg-zinc-200 flex items-center justify-center uppercase rounded">
+          <span className="w-full h-full font-medium text-xs text-neutral-350 bg-neutral-200 flex items-center justify-center uppercase rounded">
             {organization.name.charAt(0)}
           </span>
         )}
       </span>
-      <span className="text-zinc-400 dark:text-zinc-100 text-sm font-medium">{organization.name}</span>
+      <span className="text-neutral-400 dark:text-neutral-100 text-sm font-medium">{organization.name}</span>
     </div>
   )
 
@@ -67,10 +67,10 @@ export function MenuAccount(props: MenuAccountProps) {
                   noTooltip
                 />
                 <div>
-                  <p className="text-zinc-400 dark:text-zinc-100 text-sm font-medium">
+                  <p className="text-neutral-400 dark:text-neutral-100 text-sm font-medium">
                     {user?.firstName} {user?.lastName}
                   </p>
-                  <span className="text-zinc-350 text-xs">{user.email}</span>
+                  <span className="text-neutral-350 text-xs">{user.email}</span>
                 </div>
               </div>
             </div>
@@ -84,7 +84,7 @@ export function MenuAccount(props: MenuAccountProps) {
       items: [
         {
           itemContentCustom: (
-            <div className="text-zinc-400 dark:text-zinc-100 text-ssm font-medium">
+            <div className="text-neutral-400 dark:text-neutral-100 text-ssm font-medium">
               <Icon name={IconAwesomeEnum.ARROW_RIGHT_FROM_BRACKET} className="text-brand-500 mr-3" />
               Logout
             </div>

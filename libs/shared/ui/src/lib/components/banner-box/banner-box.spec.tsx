@@ -54,9 +54,9 @@ describe('BannerBox', () => {
     const box = getByTestId('banner-box')
     const icon = queryByRole('img')
 
-    expect(box.classList.contains('border-zinc-300')).toBe(true)
-    expect(box.classList.contains('bg-zinc-100')).toBe(true)
-    expect(icon?.classList.contains('text-zinc-350')).toBe(true)
+    expect(box.classList.contains('border-neutral-300')).toBe(true)
+    expect(box.classList.contains('bg-neutral-100')).toBe(true)
+    expect(icon?.classList.contains('text-neutral-350')).toBe(true)
   })
 
   it('should display the icon inside a white circle', () => {

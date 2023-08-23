@@ -32,7 +32,7 @@ export function CreateGeneralGitApplication(props: PageSettingsGeneralProps) {
         <GitRepositorySettingsFeature withBlockWrapper={false} />
       </div>
 
-      <div className="border-b border-b-zinc-200 mb-6"></div>
+      <div className="border-b border-b-neutral-200 mb-6"></div>
 
       <div className="mb-6">
         <Controller

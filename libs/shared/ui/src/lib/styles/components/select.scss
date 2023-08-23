@@ -1,7 +1,7 @@
 .input-select__control .input-select__input-container {
   @apply text-sm;
   margin: 0;
-  color: theme('colors.zinc.400');
+  color: theme('colors.neutral.400');
 }
 
 .input-select__control {
@@ -42,10 +42,10 @@
 }
 
 .input-select--disabled {
-  @apply bg-zinc-100 border-zinc-250 pointer-events-none;
+  @apply bg-neutral-100 border-neutral-250 pointer-events-none;
 
   & > label {
-    @apply text-zinc-350;
+    @apply text-neutral-350;
   }
 }
 
@@ -77,11 +77,11 @@
   @apply items-center gap-2 rounded-sm;
 
   label {
-    @apply static translate-y-0 font-medium text-ssm text-zinc-400;
+    @apply static translate-y-0 font-medium text-ssm text-neutral-400;
   }
 
   .input-select__checkbox {
-    @apply bg-white border-2 border-zinc-350 rounded-sm w-4 h-4 flex items-center justify-center shrink-0;
+    @apply bg-white border-2 border-neutral-350 rounded-sm w-4 h-4 flex items-center justify-center shrink-0;
   }
 
   &:hover {
@@ -93,7 +93,7 @@
   background: theme('colors.white');
 
   label {
-    @apply text-zinc-400;
+    @apply text-neutral-400;
   }
 
   .input-select__checkbox {

@@ -14,8 +14,8 @@ export function BreadcrumbItemValue(props: BreadcrumbItemValueProps) {
   const { className = '', name, logo, active, link } = props
 
   const notActiveClass = active
-    ? 'text-zinc-400 dark:text-zinc-50'
-    : 'text-zinc-400 dark:text-zinc-350 dark:hover:text-zinc-50 hover:bg-zinc-150 active:bg-zinc-200 dark:hover:text-zinc-300 dark:hover:bg-zinc-500'
+    ? 'text-neutral-400 dark:text-neutral-50'
+    : 'text-neutral-400 dark:text-neutral-350 dark:hover:text-neutral-50 hover:bg-neutral-150 active:bg-neutral-200 dark:hover:text-neutral-300 dark:hover:bg-neutral-500'
 
   const limit = 50
   const truncatedName = name?.length > limit ? <Truncate delayDuration={400} truncateLimit={50} text={name} /> : name

@@ -14,9 +14,9 @@ export function DeployOtherTagModal(props: DeployOtherTagModalProps) {
 
   return (
     <div className="p-6">
-      <h2 className="h4 text-zinc-400 max-w-sm truncate mb-1">Deploy another version</h2>
-      <p className="mb-2 text-zinc-350 text-sm">Select the tag you want to deploy.</p>
-      <p className="mb-6 text-zinc-400 text-sm">
+      <h2 className="h4 text-neutral-400 max-w-sm truncate mb-1">Deploy another version</h2>
+      <p className="mb-2 text-neutral-350 text-sm">Select the tag you want to deploy.</p>
+      <p className="mb-6 text-neutral-400 text-sm">
         For <strong className="font-medium">{serviceName}</strong>
       </p>
 

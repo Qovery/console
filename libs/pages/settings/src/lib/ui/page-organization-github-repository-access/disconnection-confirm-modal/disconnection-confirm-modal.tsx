@@ -8,7 +8,7 @@ export interface DisconnectionConfirmModalProps {
 export function DisconnectionConfirmModal(props: DisconnectionConfirmModalProps) {
   return (
     <div className="p-6">
-      <h2 className="h4 text-zinc-400 max-w-sm truncate mb-6">Disconnect the Qovery Github App</h2>
+      <h2 className="h4 text-neutral-400 max-w-sm truncate mb-6">Disconnect the Qovery Github App</h2>
       <BannerBox
         className="mb-5"
         type={BannerBoxEnum.WARNING}

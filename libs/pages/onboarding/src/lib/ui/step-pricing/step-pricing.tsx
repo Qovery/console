@@ -16,8 +16,8 @@ export function StepPricing(props: StepPricingProps) {
 
   return (
     <div className="pb-10">
-      <h1 className="h3 text-zinc-400 mb-3 text-center">Simple, transparent pricing</h1>
-      <p className="text-sm mb-10 text-zinc-400 text-center">
+      <h1 className="h3 text-neutral-400 mb-3 text-center">Simple, transparent pricing</h1>
+      <p className="text-sm mb-10 text-neutral-400 text-center">
         14 days trial with no credit card required for all paid plans
         <a
           href="https://qovery.com/pricing"
@@ -35,7 +35,7 @@ export function StepPricing(props: StepPricingProps) {
             <PlanCard key={plan.name} onClick={() => onSubmit(plan.name)} loading={loading} {...plan} />
           ))}
         </div>
-        <div className="mt-10 pt-5 flex justify-between border-t border-zinc-200">
+        <div className="mt-10 pt-5 flex justify-between border-t border-neutral-200">
           <Button
             link={`${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`}
             size={ButtonSize.XLARGE}

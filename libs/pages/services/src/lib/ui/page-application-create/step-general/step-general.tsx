@@ -28,8 +28,8 @@ export function StepGeneral(props: StepGeneralProps) {
   return (
     <div>
       <div className="mb-10">
-        <h3 className="text-zinc-400 text-lg mb-2">General information</h3>
-        <p className="text-zinc-400 text-sm mb-2">
+        <h3 className="text-neutral-400 text-lg mb-2">General information</h3>
+        <p className="text-neutral-400 text-sm mb-2">
           General settings allow you to set up your application name, git repository or container settings.
         </p>
       </div>
@@ -95,7 +95,7 @@ export function StepGeneral(props: StepGeneralProps) {
           )}
         />
 
-        <div className="border-b border-b-zinc-200 mb-6"></div>
+        <div className="border-b border-b-neutral-200 mb-6"></div>
         {isApplication(watchServiceType) && <CreateGeneralGitApplication />}
 
         {isContainer(watchServiceType) && <GeneralContainerSettings organization={props.organization} />}

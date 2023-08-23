@@ -23,19 +23,19 @@ export function RowDeployment(props: RowDeploymentProps) {
 
   const indexClassName = `${
     error
-      ? 'text-red-500 bg-zinc-550 group-hover:bg-zinc-650'
+      ? 'text-red-500 bg-neutral-550 group-hover:bg-neutral-650'
       : success
-      ? 'text-green-500 bg-zinc-550 group-hover:bg-zinc-650'
-      : 'bg-zinc-700 text-zinc-400 group-hover:bg-zinc-550'
+      ? 'text-green-500 bg-neutral-550 group-hover:bg-neutral-650'
+      : 'bg-neutral-700 text-neutral-400 group-hover:bg-neutral-550'
   }`
 
   const colorsCellClassName = (date?: boolean) =>
-    `${error ? 'text-red-500' : success ? 'text-green-500' : `${date ? 'text-zinc-100' : 'text-zinc-350'}`}`
+    `${error ? 'text-red-500' : success ? 'text-green-500' : `${date ? 'text-neutral-100' : 'text-neutral-350'}`}`
 
   return (
     <div
       className={`group flex min-h-6 text-xs select-none ${
-        error || success ? ' bg-zinc-550 hover:bg-zinc-600' : 'bg-zinc-700 hover:bg-zinc-650'
+        error || success ? ' bg-neutral-550 hover:bg-neutral-600' : 'bg-neutral-700 hover:bg-neutral-650'
       } ${error ? 'row-error' : ''}`}
     >
       <div data-testid="index" className={indexClassName}>

@@ -135,7 +135,7 @@ export function TabsFeature() {
                   href="https://hub.qovery.com/docs/using-qovery/integration/secret-manager/doppler/"
                   target="_blank"
                 >
-                  <IconFa name={IconAwesomeEnum.CIRCLE_INFO} className="text-zinc-400 text-sm" />
+                  <IconFa name={IconAwesomeEnum.CIRCLE_INFO} className="text-neutral-400 text-sm" />
                 </a>
               </Tooltip>
             ),

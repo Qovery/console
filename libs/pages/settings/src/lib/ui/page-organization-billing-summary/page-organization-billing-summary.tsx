@@ -22,7 +22,7 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
       <div className="p-8">
         <div className="flex justify-between mb-8">
           <div>
-            <h1 className="h5 text-zinc-400 mb-2">Plan details</h1>
+            <h1 className="h5 text-neutral-400 mb-2">Plan details</h1>
           </div>
           <div className="flex gap-3">
             <Button style={ButtonStyle.STROKED} dataTestId="promo-code-button" onClick={props.onPromoCodeClick}>
@@ -35,9 +35,9 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
         </div>
 
         <div className="flex w-full gap-2 mb-3">
-          <div className="flex-1  h-[114px]  border  p-5 border-zinc-200 rounded">
-            <div className="text-zinc-350 text-xs mb-1 font-medium">Current plan</div>
-            <div className="text-zinc-400 font-bold text-sm mb-1">
+          <div className="flex-1  h-[114px]  border  p-5 border-neutral-200 rounded">
+            <div className="text-neutral-350 text-xs mb-1 font-medium">Current plan</div>
+            <div className="text-neutral-400 font-bold text-sm mb-1">
               <Skeleton height={20} width={100} show={!props.organization?.currentCost?.value?.plan}>
                 <div className="h-5">
                   {upperCaseFirstLetter(props.organization?.currentCost?.value?.plan?.toString()) || 'N/A'} plan
@@ -50,25 +50,25 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
               linkLabel="See details"
             />
           </div>
-          <div className="flex-1  h-[114px]  border  p-5 border-zinc-200 rounded">
-            <div className="text-zinc-350 text-xs mb-1 font-medium">Current monthly bill</div>
+          <div className="flex-1  h-[114px]  border  p-5 border-neutral-200 rounded">
+            <div className="text-neutral-350 text-xs mb-1 font-medium">Current monthly bill</div>
             <div className="mb-2">
               <Skeleton height={20} width={100} show={!props.organization?.currentCost?.value?.plan}>
                 <div className="h-5">
-                  <strong className="text-zinc-400 font-bold text-sm">
+                  <strong className="text-neutral-400 font-bold text-sm">
                     {costToHuman(
                       props.organization?.currentCost?.value?.cost?.total || 0,
                       props.organization?.currentCost?.value?.cost?.currency_code || 'USD'
                     )}
                   </strong>{' '}
-                  <span className="text-zinc-350 text-xs">/ m</span>
+                  <span className="text-neutral-350 text-xs">/ m</span>
                 </div>
               </Skeleton>
             </div>
             {props.organization?.currentCost?.value?.plan !== PlanEnum.FREE && (
-              <p className="text-zinc-350 text-xs font-medium">
+              <p className="text-neutral-350 text-xs font-medium">
                 Next invoice{' '}
-                <strong className="text-zinc-400">
+                <strong className="text-neutral-400">
                   {props.organization?.currentCost?.value?.paid_usage?.renewal_at &&
                     dateToFormat(props.organization.currentCost.value.paid_usage.renewal_at, 'MMM dd, Y')}
                 </strong>
@@ -77,18 +77,20 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
           </div>
 
           {props.organization?.currentCost?.value && props.organization.currentCost.value.plan !== PlanEnum.FREE && (
-            <div className="flex-1  h-[114px]  border  p-5 border-zinc-200 rounded">
-              <div className="text-zinc-350 text-xs mb-3 font-medium">Payment method</div>
+            <div className="flex-1  h-[114px]  border  p-5 border-neutral-200 rounded">
+              <div className="text-neutral-350 text-xs mb-3 font-medium">Payment method</div>
               <div className="mb-2">
                 <Skeleton height={20} width={100} show={props.creditCardLoading}>
                   <div className="flex gap-3">
                     {props.creditCard ? (
                       <>
                         <svg className="w-6" children={imagesCreditCart[props.creditCard.brand as keyof CardImages]} />
-                        <span className="zinc-400 font-bold text-xs flex-1">**** {props.creditCard?.last_digit}</span>
+                        <span className="neutral-400 font-bold text-xs flex-1">
+                          **** {props.creditCard?.last_digit}
+                        </span>
                       </>
                     ) : (
-                      <span className="text-xs text-zinc-400 font-bold">No credit card provided</span>
+                      <span className="text-xs text-neutral-400 font-bold">No credit card provided</span>
                     )}
                   </div>
                 </Skeleton>
@@ -102,23 +104,23 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
           )}
         </div>
 
-        <div className="flex w-full border gap-2 mb-8 border-zinc-200 rounded">
+        <div className="flex w-full border gap-2 mb-8 border-neutral-200 rounded">
           <div className="flex-1 p-5 h-[114px]">
-            <div className="text-zinc-350 text-xs mb-1 font-medium">Seats</div>
-            <div className="text-zinc-400 font-bold text-sm mb-1">N/A</div>
+            <div className="text-neutral-350 text-xs mb-1 font-medium">Seats</div>
+            <div className="text-neutral-400 font-bold text-sm mb-1">N/A</div>
           </div>
           <div className="flex-1 p-5 h-[114px]">
-            <div className="text-zinc-350 text-xs mb-1 font-medium">Cluster</div>
+            <div className="text-neutral-350 text-xs mb-1 font-medium">Cluster</div>
             <div className="mb-1">
               <Skeleton height={20} width={100} show={!props.numberOfClusters === undefined}>
                 <div className="h-5">
                   {props.numberOfClusters !== undefined && props.numberOfClusters > 0 ? (
                     <>
-                      <strong className="text-zinc-400 font-bold text-sm">{props.numberOfRunningClusters}</strong>{' '}
-                      <span className="text-zinc-350 text-xs">/ {props.numberOfClusters}</span>
+                      <strong className="text-neutral-400 font-bold text-sm">{props.numberOfRunningClusters}</strong>{' '}
+                      <span className="text-neutral-350 text-xs">/ {props.numberOfClusters}</span>
                     </>
                   ) : (
-                    <strong className="text-zinc-400 font-medium text-sm">No cluster found</strong>
+                    <strong className="text-neutral-400 font-medium text-sm">No cluster found</strong>
                   )}
                 </div>
               </Skeleton>
@@ -130,13 +132,13 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
             />
           </div>
           <div className="flex-1 p-5  h-[114px]">
-            <div className="text-zinc-350 text-xs mb-1 font-medium">Deployments</div>
+            <div className="text-neutral-350 text-xs mb-1 font-medium">Deployments</div>
             <Skeleton height={20} width={100} show={!props.organization?.currentCost?.value?.plan}>
               <div className="h-5">
-                <strong className="text-zinc-400 font-bold text-sm">
+                <strong className="text-neutral-400 font-bold text-sm">
                   {props.organization?.currentCost?.value?.paid_usage?.consumed_deployments}
                 </strong>{' '}
-                <span className="text-zinc-350 text-xs">
+                <span className="text-neutral-350 text-xs">
                   / {props.organization?.currentCost?.value?.paid_usage?.max_deployments_per_month}
                 </span>
               </div>

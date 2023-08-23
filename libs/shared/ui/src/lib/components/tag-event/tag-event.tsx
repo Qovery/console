@@ -26,7 +26,7 @@ export function TagEvent(props: TagEventProps) {
         )
       case OrganizationEventType.DELETE:
         return (
-          <Tag fontWeight="font-medium" className="bg-zinc-100 text-zinc-350 border border-zinc-250 !h-6">
+          <Tag fontWeight="font-medium" className="bg-neutral-100 text-neutral-350 border border-neutral-250 !h-6">
             Delete <Icon name={IconAwesomeEnum.ERASER} className="ml-1" />
           </Tag>
         )
@@ -38,25 +38,34 @@ export function TagEvent(props: TagEventProps) {
         )
       case OrganizationEventType.TRIGGER_CANCEL:
         return (
-          <Tag fontWeight="font-medium" className="bg-zinc-100 text-zinc-350 border border-zinc-250 !h-6">
+          <Tag fontWeight="font-medium" className="bg-neutral-100 text-neutral-350 border border-neutral-250 !h-6">
             Trigger Cancel <Icon name={IconAwesomeEnum.XMARK} className="ml-1" />
           </Tag>
         )
       case OrganizationEventType.TRIGGER_DELETE:
         return (
-          <Tag fontWeight="font-medium" className="bg-zinc-100 text-zinc-350 border border-zinc-250 !h-6 truncate">
+          <Tag
+            fontWeight="font-medium"
+            className="bg-neutral-100 text-neutral-350 border border-neutral-250 !h-6 truncate"
+          >
             Trigger Delete <Icon name={IconAwesomeEnum.ERASER} className="ml-1" />
           </Tag>
         )
       case OrganizationEventType.TRIGGER_DEPLOY:
         return (
-          <Tag fontWeight="font-medium" className="bg-zinc-100 text-zinc-350 border border-zinc-250 !h-6 truncate">
+          <Tag
+            fontWeight="font-medium"
+            className="bg-neutral-100 text-neutral-350 border border-neutral-250 !h-6 truncate"
+          >
             Trigger Deploy <Icon name={IconAwesomeEnum.CHECK} className="ml-1" />
           </Tag>
         )
       case OrganizationEventType.TRIGGER_REDEPLOY:
         return (
-          <Tag fontWeight="font-medium" className="bg-zinc-100 text-zinc-350 border border-zinc-250 !h-6 truncate">
+          <Tag
+            fontWeight="font-medium"
+            className="bg-neutral-100 text-neutral-350 border border-neutral-250 !h-6 truncate"
+          >
             Trigger Redeploy <Icon name={IconAwesomeEnum.CHECK} className="ml-1" />
           </Tag>
         )

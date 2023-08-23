@@ -37,8 +37,8 @@ export function CrudEnvironmentVariableModal(props: CrudEnvironmentVariableModal
 
   return (
     <div className="p-6">
-      <h2 className="h4 text-zinc-400 mb-2 max-w-sm">{props.title}</h2>
-      <p className="text-zinc-350 text-sm mb-6">{props.description}</p>
+      <h2 className="h4 text-neutral-400 mb-2 max-w-sm">{props.title}</h2>
+      <p className="text-neutral-350 text-sm mb-6">{props.description}</p>
       <form onSubmit={props.onSubmit}>
         {props.type === EnvironmentVariableType.ALIAS || props.type === EnvironmentVariableType.OVERRIDE ? (
           <InputText className="mb-3" name="Variable" value={props.parentVariableName} label="Variable" disabled />
@@ -92,7 +92,7 @@ export function CrudEnvironmentVariableModal(props: CrudEnvironmentVariableModal
           <div>
             <div className="flex items-center mb-3">
               <Icon name={IconEnum.CHILDREN_ARROW} className="mr-2 ml-1" />
-              <span className="bg-teal-500 font-bold rounded-sm text-2xs text-zinc-50 px-1 inline-flex items-center h-4 mr-3">
+              <span className="bg-teal-500 font-bold rounded-sm text-2xs text-neutral-50 px-1 inline-flex items-center h-4 mr-3">
                 ALIAS
               </span>
             </div>
@@ -121,7 +121,7 @@ export function CrudEnvironmentVariableModal(props: CrudEnvironmentVariableModal
         {props.type === EnvironmentVariableType.OVERRIDE && (
           <div className="flex items-center mb-3">
             <Icon name={IconEnum.CHILDREN_ARROW} className="mr-2 ml-1" />
-            <span className="bg-brand-500 font-bold rounded-sm text-2xs text-zinc-50 px-1 inline-flex items-center h-4 mr-3">
+            <span className="bg-brand-500 font-bold rounded-sm text-2xs text-neutral-50 px-1 inline-flex items-center h-4 mr-3">
               OVERRIDE
             </span>
           </div>
@@ -161,7 +161,7 @@ export function CrudEnvironmentVariableModal(props: CrudEnvironmentVariableModal
                 rightElement={
                   <Tooltip content="Scope can’t be changed. Re-create the var with the right scope." side="left">
                     <div>
-                      <Icon name={IconAwesomeEnum.CIRCLE_INFO} className="text-zinc-350 text-sm" />
+                      <Icon name={IconAwesomeEnum.CIRCLE_INFO} className="text-neutral-350 text-sm" />
                     </div>
                   </Tooltip>
                 }

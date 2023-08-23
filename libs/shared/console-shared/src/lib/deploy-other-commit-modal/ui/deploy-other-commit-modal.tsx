@@ -46,9 +46,9 @@ export function DeployOtherCommitModal(props: DeployOtherCommitModalProps) {
 
   return (
     <div className="p-6">
-      <h2 className="h4 text-zinc-400 max-w-sm truncate mb-1">Deploy another version</h2>
-      <p className="mb-2 text-zinc-350 text-sm">Select the commit you want to deploy.</p>
-      <p className="mb-6 text-zinc-400 text-sm">
+      <h2 className="h4 text-neutral-400 max-w-sm truncate mb-1">Deploy another version</h2>
+      <p className="mb-2 text-neutral-350 text-sm">Select the commit you want to deploy.</p>
+      <p className="mb-6 text-neutral-400 text-sm">
         For <strong className="font-medium">{serviceName}</strong>
       </p>
 
@@ -66,19 +66,22 @@ export function DeployOtherCommitModal(props: DeployOtherCommitModalProps) {
         <ScrollShadowWrapper className="max-h-[440px]">
           {Object.keys(commitsByDay).map((date) => (
             <div key={date} className="pl-2">
-              <h3 data-testid="commit-date" className="text-sm pl-5 text-zinc-350 font-medium relative">
-                <Icon name={IconAwesomeEnum.CODE_COMMIT} className="absolute left-0 text-zinc-300 -translate-x-1/2" />
+              <h3 data-testid="commit-date" className="text-sm pl-5 text-neutral-350 font-medium relative">
+                <Icon
+                  name={IconAwesomeEnum.CODE_COMMIT}
+                  className="absolute left-0 text-neutral-300 -translate-x-1/2"
+                />
                 Commit{commitsByDay[date].length > 1 ? 's' : ''} on {dateToFormat(date, 'MMM dd, yyyy')}
               </h3>
-              <div className="border-l border-zinc-250 pt-2">
+              <div className="border-l border-neutral-250 pt-2">
                 <div className="pl-5 pb-4">
-                  <div className="flex flex-col rounded-md border border-zinc-250">
+                  <div className="flex flex-col rounded-md border border-neutral-250">
                     {commitsByDay[date].map((commit, index) => (
                       <div
                         data-testid="commit-box"
                         key={commit.git_commit_id}
                         onClick={() => setSelectedCommitId(commit.git_commit_id)}
-                        className={`h-[5.5rem] flex items-center transition-all justify-between cursor-pointer px-5 border-zinc-250 ${
+                        className={`h-[5.5rem] flex items-center transition-all justify-between cursor-pointer px-5 border-neutral-250 ${
                           currentCommitId !== commit.git_commit_id && selectedCommitId === commit.git_commit_id
                             ? 'bg-brand-50 outline-brand-500 outline'
                             : ''
@@ -92,7 +95,7 @@ export function DeployOtherCommitModal(props: DeployOtherCommitModalProps) {
                       >
                         <div className="w-full">
                           <div className="flex justify-between w-full">
-                            <p className="text-zinc-400 font-medium mb-1.5">
+                            <p className="text-neutral-400 font-medium mb-1.5">
                               <a
                                 href={commit.commit_page_url}
                                 target="_blank"
@@ -115,7 +118,7 @@ export function DeployOtherCommitModal(props: DeployOtherCommitModalProps) {
                           </div>
 
                           <div className="flex justify-between w-full">
-                            <p className="text-zinc-350">committed {timeAgo(new Date(commit.created_at))} ago</p>
+                            <p className="text-neutral-350">committed {timeAgo(new Date(commit.created_at))} ago</p>
                             <p>
                               {currentCommitId !== commit.git_commit_id &&
                                 selectedCommitId === commit.git_commit_id && (
@@ -139,8 +142,8 @@ export function DeployOtherCommitModal(props: DeployOtherCommitModalProps) {
 
       {!isLoading && Object.keys(commitsByDay).length === 0 && (
         <div className="text-center px-3 py-6">
-          <Icon name={IconAwesomeEnum.WAVE_PULSE} className="text-zinc-350" />
-          <p className="text-zinc-350 font-medium text-xs mt-1">No result for this search</p>
+          <Icon name={IconAwesomeEnum.WAVE_PULSE} className="text-neutral-350" />
+          <p className="text-neutral-350 font-medium text-xs mt-1">No result for this search</p>
         </div>
       )}
 

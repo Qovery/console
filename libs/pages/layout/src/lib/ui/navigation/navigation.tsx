@@ -80,10 +80,10 @@ export function Navigation({ defaultOrganizationId }: NavigationProps) {
   ]
 
   return (
-    <div className="w-16 h-screen dark:bg-zinc-650 bg-white flex flex-col">
+    <div className="w-16 h-screen dark:bg-neutral-650 bg-white flex flex-col">
       <Link
         to={matchLogInfraRoute ? INFRA_LOGS_URL(organizationId, clusterId) : ORGANIZATION_URL(organizationId)}
-        className="flex w-16 h-16 items-center justify-center border-b z-10 dark:border-zinc-500 border-zinc-200"
+        className="flex w-16 h-16 items-center justify-center border-b z-10 dark:border-neutral-500 border-neutral-200"
       >
         <img className="w-[28px]" src="/assets/logos/logo-icon.svg" alt="Qovery logo" />
       </Link>
@@ -157,7 +157,7 @@ export function Navigation({ defaultOrganizationId }: NavigationProps) {
         </div>
       </div>
 
-      <div className="flex w-16 h-16 mb-5 items-center justify-center border-t dark:border-zinc-500 border-zinc-200">
+      <div className="flex w-16 h-16 mb-5 items-center justify-center border-t dark:border-neutral-500 border-neutral-200">
         <MenuAccountFeature />
       </div>
     </div>

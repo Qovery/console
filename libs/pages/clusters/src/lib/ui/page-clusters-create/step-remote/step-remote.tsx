@@ -19,8 +19,8 @@ export function StepRemote(props: StepRemoteProps) {
   return (
     <div>
       <div className="mb-10">
-        <h3 className="text-zinc-400 text-lg mb-2">Set SSH Key</h3>
-        <p className="text-zinc-400 text-sm mb-2">
+        <h3 className="text-neutral-400 text-lg mb-2">Set SSH Key</h3>
+        <p className="text-neutral-400 text-sm mb-2">
           Specify an SSH key to access your EC2 instance remotely. You can also do this later in the cluster settings,
           but we recommend doing it now to avoid downtime.
         </p>

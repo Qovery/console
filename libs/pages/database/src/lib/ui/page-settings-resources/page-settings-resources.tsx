@@ -24,8 +24,10 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
   return (
     <div className="flex flex-col justify-between w-full">
       <div className="p-8 max-w-content-with-navigation-left">
-        <h2 className="h5 text-zinc-400 mb-2">Resources</h2>
-        <p className="text-sm text-zinc-400 max-w-content-with-navigation-left mb-8">Manage the database's resources</p>
+        <h2 className="h5 text-neutral-400 mb-2">Resources</h2>
+        <p className="text-sm text-neutral-400 max-w-content-with-navigation-left mb-8">
+          Manage the database's resources
+        </p>
         <form onSubmit={onSubmit}>
           {database.mode === DatabaseModeEnum.MANAGED && (
             <BannerBox

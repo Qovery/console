@@ -80,8 +80,8 @@ export function TableRowDeployment({
                 onClick={handleCopy}
                 onMouseEnter={() => setHoverId(true)}
                 onMouseLeave={() => !copy && setHoverId(false)}
-                className={`text-2xs font-bold text-zinc-400 py-0.5 w-16 px-1 inline-flex gap-1 text-center rounded-sm cursor-pointer ${
-                  copy ? 'bg-green-500 text-white' : 'bg-zinc-150'
+                className={`text-2xs font-bold text-neutral-400 py-0.5 w-16 px-1 inline-flex gap-1 text-center rounded-sm cursor-pointer ${
+                  copy ? 'bg-green-500 text-white' : 'bg-neutral-150'
                 }`}
               >
                 {hoverId && !copy && (
@@ -112,7 +112,7 @@ export function TableRowDeployment({
             <StatusChip status={data?.status} />
           </Skeleton>
           <Skeleton show={isLoading} width={80} height={20}>
-            <p className="text-xs text-zinc-350 font-medium">
+            <p className="text-xs text-neutral-350 font-medium">
               {upperCaseFirstLetter(data?.status?.replace('_', ' ').toLowerCase())}
             </p>
           </Skeleton>
@@ -131,7 +131,7 @@ export function TableRowDeployment({
                   <div className="w-8 text-center">
                     <Icon name={(data as DeploymentService)?.type || ServiceTypeEnum.APPLICATION} className="w-5 h-5" />
                   </div>
-                  <p className="text-xs text-zinc-400 font-medium">{data?.name}</p>
+                  <p className="text-xs text-neutral-400 font-medium">{data?.name}</p>
                 </div>
               </Link>
             </Skeleton>
@@ -140,8 +140,8 @@ export function TableRowDeployment({
         <div className="flex justify-start items-center px-1 gap-2">
           <Skeleton show={isLoading} width={80} height={20}>
             <>
-              <p className="flex items-center leading-7 text-zinc-350 text-sm">
-                <span className="text-xs text-zinc-300 mx-3 font-medium">
+              <p className="flex items-center leading-7 text-neutral-350 text-sm">
+                <span className="text-xs text-neutral-300 mx-3 font-medium">
                   {timeAgo(data?.updated_at ? new Date(data?.updated_at) : new Date(data?.created_at || ''))} ago
                 </span>
               </p>
@@ -165,12 +165,12 @@ export function TableRowDeployment({
           </Skeleton>
         </div>
         {!noCommit && (
-          <div className="flex items-center px-4 gap-2 border-zinc-200 border-l h-full">
+          <div className="flex items-center px-4 gap-2 border-neutral-200 border-l h-full">
             {(data as DeploymentService | DeploymentHistoryApplication)?.commit && (
               <TagCommit commitId={(data as DeploymentService | DeploymentHistoryApplication)?.commit?.git_commit_id} />
             )}
             {(data as ContainerApplicationEntity).image_name && (
-              <Tag className="truncate border border-zinc-250 text-zinc-350 font-medium h-7">
+              <Tag className="truncate border border-neutral-250 text-neutral-350 font-medium h-7">
                 <span className="block truncate">
                   <Tooltip
                     side="left"

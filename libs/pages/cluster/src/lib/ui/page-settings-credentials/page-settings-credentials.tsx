@@ -17,7 +17,7 @@ export function PageSettingsCredentials(props: PageSettingsCredentialsProps) {
   return (
     <div className="flex flex-col justify-between w-full">
       <div className="p-8 max-w-content-with-navigation-left">
-        <h2 className="h5 mb-8 text-zinc-400">Credentials</h2>
+        <h2 className="h5 mb-8 text-neutral-400">Credentials</h2>
         <form onSubmit={onSubmit}>
           <BlockContent title="Configured credentials">
             <ClusterCredentialsSettingsFeature cloudProvider={cloudProvider} />

@@ -21,10 +21,10 @@ export function BlockContent(props: PropsWithChildren<BlockContentProps>) {
   return (
     <div
       data-testid={dataTestId}
-      className={`border border-zinc-250 bg-zinc-100 rounded mb-5 ${className} ${customWidth}`}
+      className={`border border-neutral-250 bg-neutral-100 rounded mb-5 ${className} ${customWidth}`}
     >
-      <div className="flex items-center justify-between h-9 px-4 border-b border-zinc-250">
-        <h2 className="font-medium text-zinc-400 text-ssm">{title}</h2>
+      <div className="flex items-center justify-between h-9 px-4 border-b border-neutral-250">
+        <h2 className="font-medium text-neutral-400 text-ssm">{title}</h2>
       </div>
       <div className={classNameContent}>{children}</div>
     </div>

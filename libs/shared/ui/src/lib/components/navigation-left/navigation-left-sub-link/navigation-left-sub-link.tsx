@@ -28,7 +28,7 @@ export function NavigationLeftSubLink(props: NavigationLeftSubLinkProps) {
     return (
       <span
         data-testid="sub-link-badge"
-        className="bg-brand-500 text-zinc-50 rounded-xs text-3xs rounded-sm px-1 uppercase"
+        className="bg-brand-500 text-neutral-50 rounded-xs text-3xs rounded-sm px-1 uppercase"
       >
         {text}
       </span>

@@ -52,8 +52,8 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
       <div className="p-8">
         <div className="flex justify-between mb-8">
           <div>
-            <h1 className="h5 text-zinc-400 mb-2">Manage your roles</h1>
-            <p className="text-zinc-400 text-xs">Manage the existing custom roles or create a new one.</p>
+            <h1 className="h5 text-neutral-400 mb-2">Manage your roles</h1>
+            <p className="text-neutral-400 text-xs">Manage the existing custom roles or create a new one.</p>
           </div>
           <Button onClick={onAddRole} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>
             Add new role
@@ -72,8 +72,8 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
                   <div
                     data-testid={`role-${role.id}`}
                     key={role.id}
-                    className={`flex justify-between items-center px-5 py-4 border-b border-zinc-250 last:border-0 ${
-                      isDefaultRole(role.name) ? 'bg-zinc-150' : ''
+                    className={`flex justify-between items-center px-5 py-4 border-b border-neutral-250 last:border-0 ${
+                      isDefaultRole(role.name) ? 'bg-neutral-150' : ''
                     }`}
                   >
                     <div className="flex">
@@ -84,10 +84,10 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
                         className="text-brand-500"
                       />
                       <div className="ml-4">
-                        <h2 className="flex text-xs text-zinc-400 font-medium">
+                        <h2 className="flex text-xs text-neutral-400 font-medium">
                           {isDefaultRole(role.name) ? upperCaseFirstLetter(role.name) : role.name}
                         </h2>
-                        <p className="text-xs text-zinc-350 mt-1">
+                        <p className="text-xs text-neutral-350 mt-1">
                           {isDefaultRole(role.name) ? 'Basic Role' : 'Custom Role'}
                         </p>
                       </div>
@@ -99,7 +99,7 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
                           style={ButtonIconStyle.STROKED}
                           size={ButtonSize.TINY}
                           onClick={() => navigate(`${SETTINGS_URL(organizationId)}${SETTINGS_ROLES_EDIT_URL(role.id)}`)}
-                          className="text-zinc-350 hover:text-zinc-400 bg-transparent !w-9 !h-8 mr-2"
+                          className="text-neutral-350 hover:text-neutral-400 bg-transparent !w-9 !h-8 mr-2"
                           iconClassName="!text-xs"
                         />
                         <ButtonIcon
@@ -107,7 +107,7 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
                           style={ButtonIconStyle.STROKED}
                           size={ButtonSize.TINY}
                           onClick={() => onDeleteRole(role)}
-                          className="text-zinc-350 hover:text-zinc-400 bg-transparent !w-9 !h-8"
+                          className="text-neutral-350 hover:text-neutral-400 bg-transparent !w-9 !h-8"
                           iconClassName="!text-xs"
                         />
                       </div>
@@ -117,7 +117,7 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
                           icon={IconAwesomeEnum.BOOK}
                           style={ButtonIconStyle.STROKED}
                           size={ButtonSize.TINY}
-                          className="text-zinc-350 hover:text-zinc-400 bg-transparent !w-9 !h-8"
+                          className="text-neutral-350 hover:text-neutral-400 bg-transparent !w-9 !h-8"
                           iconClassName="!text-xs"
                           link="https://hub.qovery.com/docs/using-qovery/configuration/organization/#roles-based-access-control-rbac"
                           external

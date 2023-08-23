@@ -20,7 +20,7 @@ export function Accordion(props: PropsWithChildren<AccordionProps>) {
       collapsible
       className={className}
     >
-      <AccordionComponent.Item value="accordion" className="accordion rounded border border-zinc-200">
+      <AccordionComponent.Item value="accordion" className="accordion rounded border border-neutral-200">
         <AccordionComponent.Header className="accordion__header">
           <AccordionComponent.Trigger className="w-full h-full flex justify-between items-center px-4 gap-4">
             {header}

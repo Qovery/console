@@ -39,12 +39,12 @@ export function BlockContentDelete(props: BlockContentDeleteProps) {
   return (
     <div className={`border border-red-300 bg-red-50 rounded ${className} ${customWidth}`}>
       <div className="flex items-center justify-between h-9 px-4 border-b border-red-300">
-        <h2 className="font-medium text-zinc-400 text-ssm">{title}</h2>
+        <h2 className="font-medium text-neutral-400 text-ssm">{title}</h2>
       </div>
       <div className="p-5">
-        <p className="mb-5 text-sm text-zinc-400">{description}</p>
+        <p className="mb-5 text-sm text-neutral-400">{description}</p>
         {list?.map((element, index) => (
-          <p key={index} data-testid={element.text} className="text-zinc-400 font-medium text-sm mb-2">
+          <p key={index} data-testid={element.text} className="text-neutral-400 font-medium text-sm mb-2">
             <Icon name={element.icon || 'icon-solid-trash'} className="mr-3 text-red-500" />
             {element.text}
           </p>

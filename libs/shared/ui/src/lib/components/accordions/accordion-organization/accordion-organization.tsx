@@ -21,9 +21,11 @@ export function AccordionOrganization(props: AccordionOrganizationProps) {
               className="w-5 h-auto shrink-0"
               src={logo ? logo : 'https://console.qovery.com/assets/img/logos/logo.svg'}
             />
-            <h4 className="font-medium text-sm text-zinc-400">{name}</h4>
+            <h4 className="font-medium text-sm text-neutral-400">{name}</h4>
           </div>
-          <span className="text-xs text-zinc-400">{/*projects.length} project{projects.length <= 1 ? '' : 's'*/}</span>
+          <span className="text-xs text-neutral-400">
+            {/*projects.length} project{projects.length <= 1 ? '' : 's'*/}
+          </span>
         </div>
       }
     >

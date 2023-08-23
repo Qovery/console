@@ -37,13 +37,13 @@ export function CardCluster(props: CardClusterProps) {
   const statusLoading = !!cluster.extendedStatus?.status?.status
 
   return (
-    <div data-testid={`cluster-list-${cluster.id}`} className="border border-zinc-200 rounded p-5">
+    <div data-testid={`cluster-list-${cluster.id}`} className="border border-neutral-200 rounded p-5">
       <div className="flex justify-between mb-5">
         <div className="flex items-center">
           <Icon className="mr-3" name={cluster.cloud_provider} />
           <div className="flex flex-col">
             <div className="flex">
-              <h2 className="flex items-center text-xs text-zinc-400 font-medium">
+              <h2 className="flex items-center text-xs text-neutral-400 font-medium">
                 <span className="block mr-2">{cluster.name}</span>
                 <StatusChip status={cluster.extendedStatus?.status?.status} />
               </h2>
@@ -77,17 +77,17 @@ export function CardCluster(props: CardClusterProps) {
           </Tag>
         )}
         <TagClusterType
-          className="text-zinc-350 border-zinc-250 mr-2"
+          className="text-neutral-350 border-neutral-250 mr-2"
           cloudProvider={cluster?.cloud_provider}
           kubernetes={cluster?.kubernetes}
         />
-        <Tag dataTestId="tag-region" className="text-zinc-350 border border-zinc-250 truncate mr-2">
+        <Tag dataTestId="tag-region" className="text-neutral-350 border border-neutral-250 truncate mr-2">
           {cluster.region}
         </Tag>
-        <Tag dataTestId="tag-version" className="text-zinc-350 border border-zinc-250 truncate mr-2">
+        <Tag dataTestId="tag-version" className="text-neutral-350 border border-neutral-250 truncate mr-2">
           {cluster.version}
         </Tag>
-        <Tag dataTestId="tag-instance" className="text-zinc-350 border border-zinc-250 truncate">
+        <Tag dataTestId="tag-instance" className="text-neutral-350 border border-neutral-250 truncate">
           {cluster.instance_type?.replace('_', '.').toLowerCase()}
         </Tag>
       </div>

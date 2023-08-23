@@ -19,7 +19,7 @@ describe('InputRadioBox', () => {
   it('should render with nothing selected', () => {
     const { baseElement } = render(<InputRadioBox {...props} />)
     const radioBox = getByTestId(baseElement, 'input-radio-box')
-    expect(radioBox).toHaveClass('bg-zinc-100 border-zinc-250')
+    expect(radioBox).toHaveClass('bg-neutral-100 border-neutral-250')
   })
 
   it('should select on click', async () => {

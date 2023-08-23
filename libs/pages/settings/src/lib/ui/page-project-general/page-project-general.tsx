@@ -14,7 +14,7 @@ export function PageProjectGeneral(props: PageProjectGeneralProps) {
   return (
     <div key={getValues().toString()} className="flex flex-col justify-between w-full">
       <div className="p-8 max-w-content-with-navigation-left">
-        <h1 className="h5 mb-10 text-zinc-400">General</h1>
+        <h1 className="h5 mb-10 text-neutral-400">General</h1>
         <form onSubmit={onSubmit}>
           <BlockContent title="Project settings">
             <Controller

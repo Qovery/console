@@ -178,7 +178,7 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
 
   const squareContent = (text: string | undefined, margin = 'mr-2 mt-0.5') => (
     <div
-      className={`w-4 h-4.5 flex items-center justify-center text-xs text-zinc-350 text-center bg-zinc-200 rounded-sm font-bold uppercase ${margin}`}
+      className={`w-4 h-4.5 flex items-center justify-center text-xs text-neutral-350 text-center bg-neutral-200 rounded-sm font-bold uppercase ${margin}`}
     >
       {text}
     </div>
@@ -241,7 +241,7 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
         )}
         {environmentId && (
           <>
-            <div className="w-4 h-auto text-zinc-300 text-center mx-3 mt-3">/</div>
+            <div className="w-4 h-auto text-neutral-300 text-center mx-3 mt-3">/</div>
             <div className="flex items-center">
               {environmentId && (
                 <>
@@ -255,7 +255,7 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
                   />
                   {(applicationId || databaseId) && (
                     <>
-                      <div className="w-4 h-auto text-zinc-300 text-center mx-3 mt-3">/</div>
+                      <div className="w-4 h-auto text-neutral-300 text-center mx-3 mt-3">/</div>
                       <div className="flex items-center">
                         <BreadcrumbItem
                           isLast={true}

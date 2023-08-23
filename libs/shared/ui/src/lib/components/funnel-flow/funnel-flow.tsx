@@ -15,28 +15,28 @@ export interface FunnelFlowProps extends PropsWithChildren {
 
 const FunnelFlowContent = (props: FunnelFlowProps) => {
   return (
-    <div className="absolute top-0 left-0 inset-0 bg-zinc-150 scroll-auto flex flex-col min-h-0 z-30">
+    <div className="absolute top-0 left-0 inset-0 bg-neutral-150 scroll-auto flex flex-col min-h-0 z-30">
       <header className="h-16 px-5 bg-white flex shrink-0 items-center justify-between">
         <div className="flex items-center h-full">
           <div className="pr-4">
             <img className="w-[90px] shrink-0" src="assets/logos/logo-black.svg" alt="Qovery logo black" />
           </div>
-          <div className="flex h-full items-center gap-4 pl-4 border-l border-l-zinc-200">
-            <div className="h-5 px-1 bg-zinc-200 font-medium rounded-sm text-zinc-350 text-xs flex items-center">
+          <div className="flex h-full items-center gap-4 pl-4 border-l border-l-neutral-200">
+            <div className="h-5 px-1 bg-neutral-200 font-medium rounded-sm text-neutral-350 text-xs flex items-center">
               {props.currentStep}/{props.totalSteps}
             </div>
-            <h4 className="text-zinc-400 text-sm font-medium">{props.currentTitle}</h4>
+            <h4 className="text-neutral-400 text-sm font-medium">{props.currentTitle}</h4>
           </div>
         </div>
         {props.onExit && (
-          <div className="border-l border-l-zinc-200 pl-5 h-full flex items-center">
+          <div className="border-l border-l-neutral-200 pl-5 h-full flex items-center">
             <Button onClick={props.onExit} style={ButtonStyle.STROKED} className="btn--no-min-w">
               Close <Icon name={IconAwesomeEnum.XMARK} className="ml-2" />
             </Button>
           </div>
         )}
       </header>
-      <div data-testid="progress-bar-wrapper" className="h-[6px] bg-zinc-250 relative shrink-0">
+      <div data-testid="progress-bar-wrapper" className="h-[6px] bg-neutral-250 relative shrink-0">
         <div
           data-testid="progress-bar"
           style={{ transform: `scaleX(${props.currentStep / props.totalSteps})` }}

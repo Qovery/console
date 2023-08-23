@@ -192,7 +192,7 @@ module.exports = {
           800: '#93141A',
           900: '#7A0C1A',
         },
-        zinc: colorsZinc,
+        zink: colorsZinc,
         neutral: colorsZinc,
         element: {
           dark: {

@@ -71,13 +71,15 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
   }
 
   const classNameGroup = (isDraggingOver: boolean) =>
-    `grid gap-1 p-1 border border-zinc-250 border-t-0 rounded-b ${isDraggingOver ? 'bg-green-100' : 'bg-zinc-200'}`
+    `grid gap-1 p-1 border border-neutral-250 border-t-0 rounded-b ${
+      isDraggingOver ? 'bg-green-100' : 'bg-neutral-200'
+    }`
 
   return (
     <div className="w-[calc(100vw-368px)]">
-      <div className="flex flex-col w-full h-[calc(100%-128px)] bg-zinc-100 rounded-tr-sm">
+      <div className="flex flex-col w-full h-[calc(100%-128px)] bg-neutral-100 rounded-tr-sm">
         <div className="flex justify-between items-center px-5 my-5">
-          <p className="text-xs text-zinc-400">
+          <p className="text-xs text-neutral-400">
             Stages allow to define deployment order within the deployment pipeline of your environment. Default stages
             are available based on the service type, you can edit/remove them based on your need.
             <span className="block text-2xs mt-1">
@@ -120,10 +122,10 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
                       </svg>
                     )}
                     <div className="w-60 shrink-0 rounded">
-                      <div className="h-11 flex justify-between items-center bg-zinc-100 px-3 py-2 border border-zinc-250 rounded-t">
+                      <div className="h-11 flex justify-between items-center bg-neutral-100 px-3 py-2 border border-neutral-250 rounded-t">
                         <div className="flex items-center">
                           <BadgeDeploymentOrder order={stage.deployment_order} />
-                          <span className="block truncate text-zinc-400 text-2xs font-bold">
+                          <span className="block truncate text-neutral-400 text-2xs font-bold">
                             <Truncate truncateLimit={28} text={stage.name || ''} />
                           </span>
                           {stage.description && (
@@ -131,7 +133,7 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
                               <div>
                                 <Icon
                                   name={IconAwesomeEnum.CIRCLE_INFO}
-                                  className="text-zinc-350 text-xs ml-1 relative -top-[2px]"
+                                  className="text-neutral-350 text-xs ml-1 relative -top-[2px]"
                                 />
                               </div>
                             </Tooltip>
@@ -141,7 +143,7 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
                           width={256}
                           trigger={
                             <ButtonIcon
-                              className="text-zinc-400 !px-1 !w-7"
+                              className="text-neutral-400 !px-1 !w-7"
                               style={ButtonIconStyle.FLAT}
                               icon={IconAwesomeEnum.ELLIPSIS}
                               size={ButtonSize.TINY}
@@ -179,8 +181,8 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
                             {provided.placeholder}
                             {stage.services?.length === 0 && !snapshot.isDraggingOver && (
                               <div data-testid="placeholder-stage" className="text-center px-3 py-6">
-                                <Icon name={IconAwesomeEnum.WAVE_PULSE} className="text-zinc-350" />
-                                <p className="text-zinc-350 font-medium text-xs mt-1">
+                                <Icon name={IconAwesomeEnum.WAVE_PULSE} className="text-neutral-350" />
+                                <p className="text-neutral-350 font-medium text-xs mt-1">
                                   No service for this stage. <br /> Please drag and drop a service.
                                 </p>
                               </div>

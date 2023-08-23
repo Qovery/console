@@ -33,8 +33,8 @@ export function PodLogs(props: PodLogsProps) {
   const tableHead: TableHeadProps<Log>[] = [
     {
       title: 'Pod name',
-      className: 'ml-14 pr-4 py-2 h-full text-zinc-300 w-[208px]',
-      classNameTitle: 'text-zinc-300',
+      className: 'ml-14 pr-4 py-2 h-full text-neutral-300 w-[208px]',
+      classNameTitle: 'text-neutral-300',
       menuWidth: 360,
       filter: [
         {
@@ -46,17 +46,17 @@ export function PodLogs(props: PodLogsProps) {
             return (
               <div
                 className={`group flex items-center w-[calc(100%+24px)] rounded-sm px-3 -mx-3 h-full ${
-                  isActive ? 'bg-zinc-800' : ''
+                  isActive ? 'bg-neutral-800' : ''
                 }`}
               >
                 <div className="w-4 mr-2.5">
                   <StatusChip status={currentPod?.state} />
                 </div>
-                <p className="text-xs font-medium text-zinc-100 mr-5 truncate">{data.pod_name}</p>
-                <span className="block text-2xs text-zinc-350 mr-2">
+                <p className="text-xs font-medium text-neutral-100 mr-5 truncate">{data.pod_name}</p>
+                <span className="block text-2xs text-neutral-350 mr-2">
                   {data.version && (
                     <>
-                      <Icon name={IconAwesomeEnum.CODE_COMMIT} className="mr-2 text-zinc-50" />
+                      <Icon name={IconAwesomeEnum.CODE_COMMIT} className="mr-2 text-neutral-50" />
                       {data.version?.substring(0, 6)}
                     </>
                   )}
@@ -64,7 +64,7 @@ export function PodLogs(props: PodLogsProps) {
                 {
                   <Icon
                     name={IconAwesomeEnum.FILTER}
-                    className={`text-ssm group-hover:text-zinc-50 ml-auto ${
+                    className={`text-ssm group-hover:text-neutral-50 ml-auto ${
                       isActive ? 'text-yellow-500' : 'text-transparent'
                     }`}
                   />
@@ -78,17 +78,17 @@ export function PodLogs(props: PodLogsProps) {
     {
       title: 'Version',
       className: 'pr-10 text-right',
-      classNameTitle: 'text-zinc-300',
+      classNameTitle: 'text-neutral-300',
     },
     {
       title: 'Time',
       className: 'pl-5 pr-4 w-[156px]',
-      classNameTitle: 'text-zinc-300',
+      classNameTitle: 'text-neutral-300',
     },
     {
       title: 'Message',
       className: 'px-4',
-      classNameTitle: 'text-zinc-300',
+      classNameTitle: 'text-neutral-300',
     },
   ]
 
@@ -117,7 +117,7 @@ export function PodLogs(props: PodLogsProps) {
     >
       <Table
         className="bg-transparent"
-        classNameHead="!flex !bg-zinc-650 !border-transparent"
+        classNameHead="!flex !bg-neutral-650 !border-transparent"
         dataHead={tableHead}
         data={logs}
         setFilter={setFilter}

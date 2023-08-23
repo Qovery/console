@@ -50,7 +50,7 @@ export function DatabaseSettingsResources({
               )}
             />
             {database && (
-              <p className="text-zinc-350 text-xs mt-3">
+              <p className="text-neutral-350 text-xs mt-3">
                 Minimum value is 10 milli vCPU. Maximum value allowed based on the selected cluster instance type:{' '}
                 {database?.maximum_cpu} mili vCPU.{' '}
                 {clusterId && (
@@ -89,7 +89,7 @@ export function DatabaseSettingsResources({
               )}
             />
             {database && (
-              <p className="text-zinc-350 text-xs mt-3">
+              <p className="text-neutral-350 text-xs mt-3">
                 Minimum value is 1 MB. Maximum value allowed based on the selected cluster instance type:{' '}
                 {database?.maximum_memory} MB.{' '}
                 {clusterId && (

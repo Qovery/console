@@ -49,8 +49,8 @@ export function InputFile(props: InputFileProps) {
     <label
       data-testid={dataTestId}
       htmlFor="dropzone-file"
-      className={`relative flex items-center justify-center w-[72px] h-[72px] rounded bg-zinc-50 border border-zinc-300 ease-out duration-150 border-dashed cursor-pointer ${
-        !selectedImage ? 'hover:bg-zinc-150' : 'bg-zinc-50'
+      className={`relative flex items-center justify-center w-[72px] h-[72px] rounded bg-neutral-50 border border-neutral-300 ease-out duration-150 border-dashed cursor-pointer ${
+        !selectedImage ? 'hover:bg-neutral-150' : 'bg-neutral-50'
       } ${className}`}
     >
       <input
@@ -76,7 +76,7 @@ export function InputFile(props: InputFileProps) {
               setSelectedImage(undefined)
               onChange && onChange(undefined)
             }}
-            className="w-5 h-5 flex justify-center items-center absolute z-30 -top-2 -right-2 bg-brand-50 hover:bg-brand-100 text-zinc-350 hover:text-brand-500 ease-out duration-150 rounded-full"
+            className="w-5 h-5 flex justify-center items-center absolute z-30 -top-2 -right-2 bg-brand-50 hover:bg-brand-100 text-neutral-350 hover:text-brand-500 ease-out duration-150 rounded-full"
           >
             <Icon name={IconAwesomeEnum.XMARK} className="text-xs" />
           </span>

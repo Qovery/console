@@ -31,8 +31,8 @@ export function PageOrganizationWebhooks(props: PageOrganizationWebhooksProps) {
       <div className="p-8 max-w-content-with-navigation-left">
         <div className="flex justify-between mb-8 gap-3">
           <div>
-            <h1 className="h5 text-zinc-400 mb-2">Webhook</h1>
-            <p className="text-zinc-400 text-xs">
+            <h1 className="h5 text-neutral-400 mb-2">Webhook</h1>
+            <p className="text-neutral-400 text-xs">
               Qovery allows you to create webhooks at organization-level so that, when an event happens on an
               environment within your organization, you can get notified on external applications (for instance, Slack).
             </p>
@@ -57,20 +57,20 @@ export function PageOrganizationWebhooks(props: PageOrganizationWebhooksProps) {
                 <li
                   key={webhook.id}
                   data-testid="webhook-row"
-                  className="flex items-center justify-between border-b border-zinc-250 py-4 px-5 last:border-0"
+                  className="flex items-center justify-between border-b border-neutral-250 py-4 px-5 last:border-0"
                 >
                   <div className="flex flex-col">
-                    <p className="flex text-zinc-400 font-medium text-xs mb-1">
+                    <p className="flex text-neutral-400 font-medium text-xs mb-1">
                       <Truncate truncateLimit={60} text={webhook.target_url || ''} />
                       {webhook.description && (
                         <Tooltip content={webhook.description}>
                           <div className="ml-1 cursor-pointer">
-                            <Icon name={IconAwesomeEnum.CIRCLE_INFO} className="text-zinc-350" />
+                            <Icon name={IconAwesomeEnum.CIRCLE_INFO} className="text-neutral-350" />
                           </div>
                         </Tooltip>
                       )}
                     </p>
-                    <div className="text-xs text-zinc-350 flex gap-3">
+                    <div className="text-xs text-neutral-350 flex gap-3">
                       <span className="flex gap-2">
                         <Icon
                           name={
@@ -97,7 +97,7 @@ export function PageOrganizationWebhooks(props: PageOrganizationWebhooksProps) {
                       style={ButtonIconStyle.STROKED}
                       size={ButtonSize.TINY}
                       onClick={() => props.openEdit(webhook)}
-                      className="text-zinc-350 hover:text-zinc-400 bg-transparent !w-9 !h-8 mr-2"
+                      className="text-neutral-350 hover:text-neutral-400 bg-transparent !w-9 !h-8 mr-2"
                       iconClassName="!text-xs"
                       dataTestId="edit-webhook"
                     />
@@ -107,7 +107,7 @@ export function PageOrganizationWebhooks(props: PageOrganizationWebhooksProps) {
                       size={ButtonSize.TINY}
                       onClick={() => props.onDelete(webhook)}
                       dataTestId="delete-webhook"
-                      className="text-zinc-350 hover:text-zinc-400 bg-transparent !w-9 !h-8"
+                      className="text-neutral-350 hover:text-neutral-400 bg-transparent !w-9 !h-8"
                       iconClassName="!text-xs"
                     />
                   </div>
@@ -116,8 +116,8 @@ export function PageOrganizationWebhooks(props: PageOrganizationWebhooksProps) {
             </ul>
           ) : (
             <div className="text-center py-4 px-5">
-              <Icon name={IconAwesomeEnum.WAVE_PULSE} className="text-zinc-350" />
-              <p className="text-zinc-350 font-medium text-xs mt-1" data-testid="empty-webhook">
+              <Icon name={IconAwesomeEnum.WAVE_PULSE} className="text-neutral-350" />
+              <p className="text-neutral-350 font-medium text-xs mt-1" data-testid="empty-webhook">
                 No webhook found. <br /> Please add one.
               </p>
             </div>

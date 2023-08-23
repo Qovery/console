@@ -33,7 +33,7 @@ export function MenuItem(props: MenuItemProps) {
     copy,
     copyTooltip,
     isActive = false,
-    textClassName = 'text-zinc-400 dark:text-zinc-100',
+    textClassName = 'text-neutral-400 dark:text-neutral-100',
     className = '',
     containerClassName = '',
     truncateLimit = 34,
@@ -55,7 +55,7 @@ export function MenuItem(props: MenuItemProps) {
             <CopyToClipboard
               content={copy}
               tooltipContent={copyTooltip}
-              className="mr-4 text-zinc-400 dark:text-zinc-100"
+              className="mr-4 text-neutral-400 dark:text-neutral-100"
             />
           </div>
         )}

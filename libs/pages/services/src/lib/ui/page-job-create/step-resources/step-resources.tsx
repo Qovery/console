@@ -17,8 +17,8 @@ export function StepResources({ onBack, environmentMode, onSubmit }: StepResourc
   return (
     <>
       <div className="mb-10">
-        <h3 className="text-zinc-400 text-lg mb-2">Set resources</h3>
-        <p className="text-xs text-zinc-400">Configure the resources required to run your job</p>
+        <h3 className="text-neutral-400 text-lg mb-2">Set resources</h3>
+        <p className="text-xs text-neutral-400">Configure the resources required to run your job</p>
       </div>
 
       <form onSubmit={onSubmit}>

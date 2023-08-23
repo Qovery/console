@@ -18,13 +18,13 @@ export function StepProject(props: StepProjectProps) {
 
   return (
     <div className="pb-10">
-      <h1 className="h3 text-zinc-400 mb-3">
+      <h1 className="h3 text-neutral-400 mb-3">
         Create your Organization
         <span className="ml-2" role="img" aria-label="star">
           ✨
         </span>
       </h1>
-      <p className="text-sm mb-10 text-zinc-400">
+      <p className="text-sm mb-10 text-neutral-400">
         You will now create your Organization and a first project within it. Both the Organization and Project name can
         be edited afterwards.
       </p>
@@ -59,7 +59,7 @@ export function StepProject(props: StepProjectProps) {
             />
           )}
         />
-        <div className="mt-10 pt-5 flex justify-between border-t border-zinc-200">
+        <div className="mt-10 pt-5 flex justify-between border-t border-neutral-200">
           {!backButton ? (
             <Button
               onClick={() => authLogout()}

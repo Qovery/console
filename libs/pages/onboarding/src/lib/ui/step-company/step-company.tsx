@@ -21,8 +21,8 @@ export function StepCompany(props: StepCompanyProps) {
 
   return (
     <div className="pb-10">
-      <h1 className="h3 text-zinc-400 mb-3">About your company</h1>
-      <p className="text-sm mb-10 text-zinc-400">We need some information to proceed with your account creation.</p>
+      <h1 className="h3 text-neutral-400 mb-3">About your company</h1>
+      <p className="text-sm mb-10 text-neutral-400">We need some information to proceed with your account creation.</p>
       <form onSubmit={onSubmit}>
         <Controller
           name="company_name"
@@ -69,7 +69,7 @@ export function StepCompany(props: StepCompanyProps) {
             />
           )}
         />
-        <div className="mt-10 pt-5 flex justify-between border-t border-zinc-200">
+        <div className="mt-10 pt-5 flex justify-between border-t border-neutral-200">
           <Button
             onClick={() => setStepCompany(false)}
             size={ButtonSize.XLARGE}

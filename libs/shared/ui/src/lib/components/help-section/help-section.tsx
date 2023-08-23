@@ -10,8 +10,8 @@ export function HelpSection(props: HelpSectionProps) {
   const { description, links, className = '' } = props
 
   return (
-    <div data-testid="help-section" className={`py-8 px-10 border-t border-zinc-200 ${className}`}>
-      <p className="text-zinc-400 text-sm mb-5">{description}</p>
+    <div data-testid="help-section" className={`py-8 px-10 border-t border-neutral-200 ${className}`}>
+      <p className="text-neutral-400 text-sm mb-5">{description}</p>
       {links &&
         links.map((link, i, row) => (
           <Link

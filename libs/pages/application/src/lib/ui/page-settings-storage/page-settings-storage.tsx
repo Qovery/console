@@ -23,8 +23,8 @@ export function PageSettingsStorage(props: PageSettingsStorageProps) {
       <div className="p-8 max-w-content-with-navigation-left">
         <div className="flex justify-between mb-8">
           <div>
-            <h1 className="h5 text-zinc-400 mb-2">Storage</h1>
-            <p className="text-sm text-zinc-400">Add persistent local storage for your application.</p>
+            <h1 className="h5 text-neutral-400 mb-2">Storage</h1>
+            <p className="text-sm text-neutral-400">Add persistent local storage for your application.</p>
           </div>
 
           <Button onClick={() => props.onAddStorage()} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>
@@ -65,14 +65,14 @@ export function PageSettingsStorage(props: PageSettingsStorageProps) {
                   disabled
                 />
                 <ButtonIcon
-                  className="text-zinc-400"
+                  className="text-neutral-400"
                   style={ButtonIconStyle.FLAT}
                   onClick={() => props.onEdit(storage)}
                   dataTestId="edit"
                   icon={IconAwesomeEnum.WHEEL}
                 />
                 <ButtonIcon
-                  className="text-zinc-400"
+                  className="text-neutral-400"
                   onClick={() => props.onRemove(storage)}
                   dataTestId="remove"
                   icon={IconAwesomeEnum.TRASH}

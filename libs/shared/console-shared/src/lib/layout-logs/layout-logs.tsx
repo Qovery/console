@@ -84,8 +84,8 @@ export function LayoutLogs(props: PropsWithChildren<LayoutLogsProps>) {
     return (
       <Link
         data-testid="nav"
-        className={`flex items-center h-full px-6 text-sm font-medium text-zinc-50 transition-colors transition-timing duration-250 hover:bg-zinc-700 rounded-t ${
-          isActive ? 'bg-zinc-650' : ''
+        className={`flex items-center h-full px-6 text-sm font-medium text-neutral-50 transition-colors transition-timing duration-250 hover:bg-neutral-700 rounded-t ${
+          isActive ? 'bg-neutral-650' : ''
         }`}
         to={link}
       >
@@ -113,7 +113,7 @@ export function LayoutLogs(props: PropsWithChildren<LayoutLogsProps>) {
       }`}
     >
       {withLogsNavigation && (
-        <div className="absolute z-20 overflow-y-auto left-1 flex items-center w-[calc(100%-8px)] h-11 border-b border-zinc-550 bg-zinc-900">
+        <div className="absolute z-20 overflow-y-auto left-1 flex items-center w-[calc(100%-8px)] h-11 border-b border-neutral-550 bg-neutral-900">
           {LinkNavigation(
             'Deployment logs',
             ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
@@ -134,14 +134,14 @@ export function LayoutLogs(props: PropsWithChildren<LayoutLogsProps>) {
             <LoaderSpinner className="w-6 h-6" theme="dark" />
           ) : (
             <div className="flex flex-col items-center">
-              <div className="text-zinc-50 font-medium text-center">{placeholderDescription}</div>
+              <div className="text-neutral-50 font-medium text-center">{placeholderDescription}</div>
             </div>
           )}
         </div>
       ) : (
         <>
           <div
-            className={`absolute left-1 z-20 flex justify-end items-center h-11 bg-zinc-650 px-5 border-b border-zinc-550 ${
+            className={`absolute left-1 z-20 flex justify-end items-center h-11 bg-neutral-650 px-5 border-b border-neutral-550 ${
               tabInformation ? 'w-[calc(100%-360px)]' : 'w-[calc(100%-8px)]'
             } ${withLogsNavigation ? 'top-12' : ''}`}
           >
@@ -150,7 +150,7 @@ export function LayoutLogs(props: PropsWithChildren<LayoutLogsProps>) {
                 <p
                   data-testid="error-layout-line"
                   onClick={() => scrollToError()}
-                  className="flex items-center w-full ml-1 text-xs font-bold transition-colors text-zinc-100 hover:text-zinc-300 cursor-pointer mr-5"
+                  className="flex items-center w-full ml-1 text-xs font-bold transition-colors text-neutral-100 hover:text-neutral-300 cursor-pointer mr-5"
                 >
                   <Icon name="icon-solid-circle-exclamation" className="text-red-500 mr-3" />
                   An error occured line {errors[errors.length - 1]?.index}
@@ -158,7 +158,7 @@ export function LayoutLogs(props: PropsWithChildren<LayoutLogsProps>) {
                 </p>
               )}
               {setEnabledNginx && (
-                <div key={serviceId} className="flex items-center shrink-0 text-zinc-300 text-xs font-medium">
+                <div key={serviceId} className="flex items-center shrink-0 text-neutral-300 text-xs font-medium">
                   <InputCheckbox
                     dataTestId="checkbox-debug"
                     name="checkbox-debug"
@@ -201,9 +201,9 @@ export function LayoutLogs(props: PropsWithChildren<LayoutLogsProps>) {
           <div
             ref={refScrollSection}
             onWheel={(event) => !pauseLogs && setPauseLogs && event.deltaY < 0 && setPauseLogs(true)}
-            className={`overflow-y-auto w-full h-[calc(100%-20px)] bg-zinc-700 pb-16 mb-5 ${
+            className={`overflow-y-auto w-full h-[calc(100%-20px)] bg-neutral-700 pb-16 mb-5 ${
               lineNumbers
-                ? 'before:bg-zinc-700 before:absolute before:left-1 before:top-9 before:w-10 before:h-full'
+                ? 'before:bg-neutral-700 before:absolute before:left-1 before:top-9 before:w-10 before:h-full'
                 : ''
             } ${withLogsNavigation ? 'mt-[88px]' : 'mt-11'}`}
           >

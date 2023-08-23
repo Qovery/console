@@ -20,6 +20,6 @@ describe('Navbar', () => {
 
     const progressContainer = screen.getByLabelText('progress-container')
 
-    expect(progressContainer.className).toContain('bg-zinc-250')
+    expect(progressContainer.className).toContain('bg-neutral-250')
   })
 })
