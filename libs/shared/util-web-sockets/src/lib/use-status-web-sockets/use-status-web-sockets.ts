@@ -1,6 +1,4 @@
 import { type EnvironmentStatus, type Status } from 'qovery-typescript-axios'
-import { useParams } from 'react-router-dom'
-import { useEnvironment } from '@qovery/domains/environments/feature'
 import { type RunningState } from '@qovery/shared/enums'
 import { type ServiceRunningStatus } from '@qovery/shared/interfaces'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
@@ -27,16 +25,27 @@ interface WSServiceStatus {
   }[]
 }
 
-export function useStatusWebSockets() {
-  const { organizationId = '', projectId = '', environmentId = '', versionId = '' } = useParams()
-  const { data: environment } = useEnvironment({ environmentId })
+export interface UseStatusWebSocketsProps {
+  organizationId: string
+  clusterId: string
+  projectId?: string
+  environmentId?: string
+  versionId?: string
+}
 
+export function useStatusWebSockets({
+  organizationId,
+  clusterId,
+  projectId,
+  environmentId,
+  versionId,
+}: UseStatusWebSocketsProps) {
   useReactQueryWsSubscription({
     url: 'wss://ws.qovery.com/deployment/status',
     urlSearchParams: {
       organization: organizationId,
-      environment: environment?.id,
-      cluster: environment?.cluster_id,
+      environment: environmentId,
+      cluster: clusterId,
       project: projectId,
       version: versionId,
     },
@@ -60,8 +69,8 @@ export function useStatusWebSockets() {
     url: 'wss://ws.qovery.com/service/status',
     urlSearchParams: {
       organization: organizationId,
-      environment: environment?.id,
-      cluster: environment?.cluster_id,
+      environment: environmentId,
+      cluster: clusterId,
       project: projectId,
     },
     enabled: Boolean(organizationId) && Boolean(clusterId),

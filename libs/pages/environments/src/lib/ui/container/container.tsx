@@ -27,7 +27,7 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
 
   const tabsItems = [
     {
-      icon: <Icon name={IconEnum.SUCCESS} viewBox="0 0 16 16" className="w-4 mt-0.5" />,
+      icon: <Icon name={IconAwesomeEnum.LAYER_GROUP} />,
       name: 'Environments',
       active: pathname === `${ENVIRONMENTS_URL(organizationId, projectId)}/general`,
       link: `${ENVIRONMENTS_URL(organizationId, projectId)}/general`,
