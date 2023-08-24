@@ -55,10 +55,14 @@ export const userSlice = createSlice({
   },
 })
 
-export const user = userSlice.reducer
+export const userReducer = userSlice.reducer
 
 export const userActions = userSlice.actions
 
 export const getUserState = (rootState: RootState): UserInterface => rootState[USER_KEY]
 
+/**
+ *
+ * @deprecated This should be migrated to the new `use-user-account` hook
+ */
 export const selectUser = createSelector(getUserState, (state) => state)

@@ -1,11 +1,11 @@
 /* eslint-disable */
 export default {
-  displayName: 'domains-user',
-  preset: '../../../jest.preset.js',
+  displayName: 'shared-iam-feature',
+  preset: '../../../../jest.preset.js',
   transform: {
     '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)': '@nx/react/plugins/jest',
     '^.+\\.[tj]sx?$': ['babel-jest', { presets: ['@nx/react/babel'] }],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../../coverage/libs/domains/user',
+  coverageDirectory: '../../../../coverage/libs/shared/iam/feature',
 }

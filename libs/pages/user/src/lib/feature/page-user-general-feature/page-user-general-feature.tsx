@@ -1,57 +1,43 @@
-import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useDispatch, useSelector } from 'react-redux'
-import { postUserSignUp, selectUser, selectUserSignUp } from '@qovery/domains/user'
+import { useAuth } from '@qovery/shared/auth'
 import { type IconEnum } from '@qovery/shared/enums'
-import { ToastEnum } from '@qovery/shared/toast'
-import { Icon, toast } from '@qovery/shared/ui'
+import { useEditUserAccount, useUserAccount } from '@qovery/shared/iam/feature'
+import { Icon } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import { type AppDispatch } from '@qovery/state/store'
 import PageUserGeneral from '../../ui/page-user-general/page-user-general'
 
 export function PageUserGeneralFeature() {
   useDocumentTitle('General - Account settings')
 
-  const userToken = useSelector(selectUser)
-  const user = useSelector(selectUserSignUp)
-
-  const [loading, setLoading] = useState(false)
-  const dispatch = useDispatch<AppDispatch>()
+  const { user: userToken } = useAuth()
+  const { data: user } = useUserAccount()
+  const { mutateAsync, isLoading: loading } = useEditUserAccount()
 
   const methods = useForm({
     mode: 'onChange',
     defaultValues: {
-      firstName: user.first_name,
-      lastName: user.last_name,
-      email: user.user_email ?? userToken.email,
-      account: userToken.sub,
+      firstName: user?.first_name,
+      lastName: user?.last_name,
+      email: user?.communication_email ?? '',
+      account: userToken?.sub,
     },
   })
 
-  const onSubmit = methods.handleSubmit((data) => {
+  const onSubmit = methods.handleSubmit(async (data) => {
     if (data) {
-      setLoading(true)
-
-      dispatch(
-        postUserSignUp({
-          ...user,
-          first_name: data['firstName'],
-          last_name: data['lastName'],
-          user_email: data['email'],
-        })
-      )
-        .unwrap()
-        .then(() => toast(ToastEnum.SUCCESS, 'User updated'))
-        .finally(() => setLoading(false))
+      await mutateAsync({
+        ...user,
+        communication_email: data.email,
+      })
     }
   })
 
-  const userGitProvider = userToken.sub?.includes('Gitlab') ? 'gitlab' : userToken.sub?.split('|')[0]
+  const userGitProvider = userToken?.sub?.includes('Gitlab') ? 'gitlab' : userToken?.sub?.split('|')[0]
 
   const accountOptions = [
     {
-      label: `${userToken.email} (${userGitProvider})`,
-      value: userToken.sub || '',
+      label: `${userToken?.email} (${userGitProvider})`,
+      value: userToken?.sub || '',
       icon: <Icon name={userGitProvider?.toUpperCase() as IconEnum} className="w-4" />,
     },
   ]
@@ -61,7 +47,7 @@ export function PageUserGeneralFeature() {
       <PageUserGeneral
         onSubmit={onSubmit}
         loading={loading}
-        picture={userToken.picture as string}
+        picture={user?.profile_picture_url as string}
         accountOptions={accountOptions}
       />
     </FormProvider>

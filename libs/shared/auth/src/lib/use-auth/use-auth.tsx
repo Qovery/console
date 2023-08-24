@@ -1,7 +1,7 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import { useCallback } from 'react'
 import { useDispatch } from 'react-redux'
-import { type UserInterface, userActions } from '@qovery/domains/user'
+import { type UserInterface, userActions } from '@qovery/domains/users/data-access'
 
 export function useAuth() {
   const { loginWithRedirect, logout, user, getAccessTokenSilently, isAuthenticated, isLoading } = useAuth0()
@@ -35,6 +35,7 @@ export function useAuth() {
 
   /**
    * Get current user with auth0
+   * @deprecated This should be migrated to the new `use-user-account` hook or you need to use `user` directly from `useAuth()`
    */
   const getCurrentUser = useCallback(async () => {
     try {
@@ -99,6 +100,7 @@ export function useAuth() {
   }, [])
 
   return {
+    user,
     authLogin,
     authLogout,
     getCurrentUser,

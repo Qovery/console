@@ -1,5 +1,5 @@
-import { initialUserSignUpState } from './user-sign-up.slice'
 import { TypeOfUseEnum } from 'qovery-typescript-axios'
+import { initialUserSignUpState } from './user-sign-up.slice'
 
 describe('user reducer', () => {
   it('should handle initial state', () => {

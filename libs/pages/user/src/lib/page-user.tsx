@@ -1,6 +1,5 @@
-import { useSelector } from 'react-redux'
 import { Navigate, Route, Routes } from 'react-router-dom'
-import { selectUser, selectUserSignUp } from '@qovery/domains/user'
+import { useUserAccount } from '@qovery/shared/iam/feature'
 import { USER_GENERAL_URL, USER_URL } from '@qovery/shared/routes'
 import { IconAwesomeEnum } from '@qovery/shared/ui'
 import { ROUTER_USER } from './router/router'
@@ -15,11 +14,10 @@ export function PageUser() {
     },
   ]
 
-  const userToken = useSelector(selectUser)
-  const user = useSelector(selectUserSignUp)
+  const { isFetched } = useUserAccount()
 
   // Return null if user informations has not been loaded
-  if (userToken.token === '' || user.id === '') return null
+  if (!isFetched) return null
 
   return (
     <Container userLinks={userLinks}>
