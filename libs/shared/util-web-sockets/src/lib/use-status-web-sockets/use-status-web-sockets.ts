@@ -40,6 +40,7 @@ export function useStatusWebSockets() {
       project: projectId,
       version: versionId,
     },
+    enabled: Boolean(organizationId) && Boolean(clusterId) && Boolean(projectId) && Boolean(environmentId),
     onMessage(queryClient, message: WSDeploymentStatus) {
       const environmentId = message.environment.id
       queryClient.setQueryData(queries.environments.deploymentStatus(environmentId).queryKey, () => message.environment)
@@ -63,6 +64,7 @@ export function useStatusWebSockets() {
       cluster: environment?.cluster_id,
       project: projectId,
     },
+    enabled: Boolean(organizationId) && Boolean(clusterId),
     onMessage(queryClient, message: WSServiceStatus) {
       for (const env of message.environments) {
         queryClient.setQueryData(queries.environments.runningStatus(env.id).queryKey, () => ({
