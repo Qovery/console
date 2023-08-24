@@ -1,6 +1,6 @@
 import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import StepResources, { StepResourcesProps } from './step-resources'
+import StepResources, { type StepResourcesProps } from './step-resources'
 
 const props: StepResourcesProps = {
   onSubmit: jest.fn(),

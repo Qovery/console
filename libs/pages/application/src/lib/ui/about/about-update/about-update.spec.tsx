@@ -1,7 +1,7 @@
 import { getByText, render } from '__tests__/utils/setup-jest'
 import { containerFactoryMock } from '@qovery/shared/factories'
 import { dateFullFormat, timeAgo } from '@qovery/shared/utils'
-import AboutUpdate, { AboutUpdateProps } from './about-update'
+import AboutUpdate, { type AboutUpdateProps } from './about-update'
 
 const mockContainer = containerFactoryMock(1)[0]
 const props: AboutUpdateProps = {

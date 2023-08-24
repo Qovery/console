@@ -1,6 +1,6 @@
 import { StateEnum } from 'qovery-typescript-axios'
 import { ClusterButtonsActions } from '@qovery/shared/console-shared'
-import { ClusterEntity } from '@qovery/shared/interfaces'
+import { type ClusterEntity } from '@qovery/shared/interfaces'
 import { Icon, Skeleton, StatusChip, Tag, TagClusterType } from '@qovery/shared/ui'
 import { getStatusClusterMessage } from '@qovery/shared/utils'
 

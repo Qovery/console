@@ -1,5 +1,5 @@
-import { Meta, Story } from '@storybook/react'
-import IconFlag, { IconFlagProps } from './icon-flag'
+import { type Meta, type Story } from '@storybook/react'
+import IconFlag, { type IconFlagProps } from './icon-flag'
 
 export default {
   component: IconFlag,

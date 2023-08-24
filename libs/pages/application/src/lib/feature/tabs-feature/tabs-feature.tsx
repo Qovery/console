@@ -1,11 +1,11 @@
-import { ClickEvent } from '@szhsin/react-menu'
+import { type ClickEvent } from '@szhsin/react-menu'
 import { type ReactNode, useContext } from 'react'
 import { useSelector } from 'react-redux'
 import { matchPath, useLocation, useParams } from 'react-router-dom'
 import { getApplicationsState } from '@qovery/domains/application'
 import { ServiceStateChip } from '@qovery/domains/services/feature'
 import { getServiceType } from '@qovery/shared/enums'
-import { ApplicationEntity } from '@qovery/shared/interfaces'
+import { type ApplicationEntity } from '@qovery/shared/interfaces'
 import {
   APPLICATION_DEPLOYMENTS_URL,
   APPLICATION_GENERAL_URL,
@@ -20,13 +20,13 @@ import {
   Icon,
   IconAwesomeEnum,
   IconFa,
-  MenuData,
+  type MenuData,
   Tabs,
-  TabsItem,
+  type TabsItem,
   Tooltip,
   useModal,
 } from '@qovery/shared/ui'
-import { RootState } from '@qovery/state/store'
+import { type RootState } from '@qovery/state/store'
 import { ApplicationContext } from '../../ui/container/container'
 import CrudEnvironmentVariableModalFeature, {
   EnvironmentVariableCrudMode,

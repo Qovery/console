@@ -1,4 +1,4 @@
-import { BuildModeEnum, CloudProviderEnum } from 'qovery-typescript-axios'
+import { BuildModeEnum, type CloudProviderEnum } from 'qovery-typescript-axios'
 import { IconEnum, ServiceTypeEnum } from '@qovery/shared/enums'
 import Icon from '../icon/icon'
 

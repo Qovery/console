@@ -1,6 +1,6 @@
 import { queryByTestId, render, waitFor } from '__tests__/utils/setup-jest'
 import { AuthEnum } from '@qovery/shared/auth'
-import Login, { ILoginProps } from './login'
+import Login, { type ILoginProps } from './login'
 
 describe('Login', () => {
   const props: ILoginProps = {

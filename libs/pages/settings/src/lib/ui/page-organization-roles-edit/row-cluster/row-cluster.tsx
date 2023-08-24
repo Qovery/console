@@ -1,6 +1,6 @@
 import {
   OrganizationCustomRoleClusterPermission,
-  OrganizationCustomRoleClusterPermissions,
+  type OrganizationCustomRoleClusterPermissions,
 } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { InputCheckbox } from '@qovery/shared/ui'

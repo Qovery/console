@@ -1,15 +1,15 @@
 import {
-  ClusterLogs,
-  ClusterLogsError,
-  ClusterLogsStepEnum,
-  EnvironmentLogs,
-  EnvironmentLogsError,
-  Log,
+  type ClusterLogs,
+  type ClusterLogsError,
+  type ClusterLogsStepEnum,
+  type EnvironmentLogs,
+  type EnvironmentLogsError,
+  type Log,
 } from 'qovery-typescript-axios'
 import { type PropsWithChildren, type ReactNode, useRef, useState } from 'react'
 import { Link, useLocation, useParams } from 'react-router-dom'
 import { ServiceStateChip } from '@qovery/domains/services/feature'
-import { LoadingStatus } from '@qovery/shared/interfaces'
+import { type LoadingStatus } from '@qovery/shared/interfaces'
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
 import { Icon, IconAwesomeEnum, IconFa, InputCheckbox, LoaderSpinner, Tooltip } from '@qovery/shared/ui'

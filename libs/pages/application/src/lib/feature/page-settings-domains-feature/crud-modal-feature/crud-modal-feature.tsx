@@ -1,4 +1,4 @@
-import { CustomDomain } from 'qovery-typescript-axios'
+import { type CustomDomain } from 'qovery-typescript-axios'
 import { useEffect, useMemo } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
@@ -10,9 +10,9 @@ import {
   postApplicationActionsRedeploy,
 } from '@qovery/domains/application'
 import { getServiceType } from '@qovery/shared/enums'
-import { ApplicationEntity, LoadingStatus } from '@qovery/shared/interfaces'
+import { type ApplicationEntity, type LoadingStatus } from '@qovery/shared/interfaces'
 import { useModal } from '@qovery/shared/ui'
-import { AppDispatch, RootState } from '@qovery/state/store'
+import { type AppDispatch, type RootState } from '@qovery/state/store'
 import CrudModal from '../../../ui/page-settings-domains/crud-modal/crud-modal'
 
 export interface CrudModalFeatureProps {

@@ -2,7 +2,7 @@ import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { DatabaseTypeEnum } from 'qovery-typescript-axios'
 import { databaseFactoryMock } from '@qovery/shared/factories'
-import DatabaseSettingsResources, { DatabaseSettingsResourcesProps } from './database-settings-resources'
+import DatabaseSettingsResources, { type DatabaseSettingsResourcesProps } from './database-settings-resources'
 
 const props: DatabaseSettingsResourcesProps = {
   database: databaseFactoryMock(1)[0],

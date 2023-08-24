@@ -1,7 +1,6 @@
+import { render, screen } from '__tests__/utils/setup-jest'
 import { StateEnum } from 'qovery-typescript-axios'
-import { screen, render } from '__tests__/utils/setup-jest'
-
-import StatusLabel, { StatusLabelProps } from './status-label'
+import StatusLabel, { type StatusLabelProps } from './status-label'
 
 describe('StatusLabel', () => {
   let props: StatusLabelProps

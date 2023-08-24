@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import ModalCrud, { ModalCrudProps } from './modal-crud'
+import ModalCrud, { type ModalCrudProps } from './modal-crud'
 
 describe('ModalCrud', () => {
   let props: ModalCrudProps

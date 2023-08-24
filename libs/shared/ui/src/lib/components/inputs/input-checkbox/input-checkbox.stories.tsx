@@ -1,5 +1,5 @@
-import { Meta, Story } from '@storybook/react'
-import { InputCheckbox, InputCheckboxProps } from './input-checkbox'
+import { type Meta, type Story } from '@storybook/react'
+import { InputCheckbox, type InputCheckboxProps } from './input-checkbox'
 
 export default {
   component: InputCheckbox,

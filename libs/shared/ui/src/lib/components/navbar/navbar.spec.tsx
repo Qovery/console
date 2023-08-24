@@ -1,5 +1,5 @@
 import { render, screen } from '__tests__/utils/setup-jest'
-import Navbar, { NavbarProps } from './navbar'
+import Navbar, { type NavbarProps } from './navbar'
 
 describe('Navbar', () => {
   let props: NavbarProps

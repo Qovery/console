@@ -1,6 +1,6 @@
-import { ContainerRegistryKindEnum, ContainerRegistryResponse } from 'qovery-typescript-axios'
+import { ContainerRegistryKindEnum, type ContainerRegistryResponse } from 'qovery-typescript-axios'
 import { IconEnum } from '@qovery/shared/enums'
-import { LoadingStatus } from '@qovery/shared/interfaces'
+import { type LoadingStatus } from '@qovery/shared/interfaces'
 import {
   BlockContent,
   Button,

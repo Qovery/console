@@ -1,5 +1,5 @@
 import { type ReactNode } from 'react'
-import { NavigationLeft, NavigationLeftLinkProps } from '@qovery/shared/ui'
+import { NavigationLeft, type NavigationLeftLinkProps } from '@qovery/shared/ui'
 
 export interface ContainerProps {
   userLinks: NavigationLeftLinkProps[]

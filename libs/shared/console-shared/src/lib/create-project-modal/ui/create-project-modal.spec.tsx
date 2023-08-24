@@ -1,6 +1,6 @@
 import { act, fireEvent, render, waitFor } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import CreateProjectModal, { CreateProjectModalProps } from './create-project-modal'
+import CreateProjectModal, { type CreateProjectModalProps } from './create-project-modal'
 
 describe('CreateProjectModal', () => {
   const props: CreateProjectModalProps = {

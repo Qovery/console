@@ -12,12 +12,12 @@ import {
   fetchEnvironmentVariables,
   fetchSecretEnvironmentVariables,
 } from '@qovery/domains/environment-variable'
-import { ServiceTypeEnum } from '@qovery/shared/enums'
-import { SecretEnvironmentVariableEntity } from '@qovery/shared/interfaces'
+import { type ServiceTypeEnum } from '@qovery/shared/enums'
+import { type SecretEnvironmentVariableEntity } from '@qovery/shared/interfaces'
 import { type AppDispatch } from '@qovery/state/store'
 import {
-  CrudEnvironmentVariableModalFeatureProps,
-  DataFormEnvironmentVariableInterface,
+  type CrudEnvironmentVariableModalFeatureProps,
+  type DataFormEnvironmentVariableInterface,
   EnvironmentVariableCrudMode,
   EnvironmentVariableType,
 } from '../crud-environment-variable-modal-feature'

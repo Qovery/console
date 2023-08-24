@@ -1,5 +1,5 @@
 import { render, screen } from '__tests__/utils/setup-jest'
-import Tag, { TagProps, TagSize } from './tag'
+import Tag, { type TagProps, TagSize } from './tag'
 
 let props: TagProps
 

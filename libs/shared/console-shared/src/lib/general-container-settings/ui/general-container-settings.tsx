@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { OrganizationEntity, Value } from '@qovery/shared/interfaces'
+import { type OrganizationEntity, type Value } from '@qovery/shared/interfaces'
 import { SETTINGS_CONTAINER_REGISTRIES_URL, SETTINGS_URL } from '@qovery/shared/routes'
 import { InputSelect, InputText, Link } from '@qovery/shared/ui'
 

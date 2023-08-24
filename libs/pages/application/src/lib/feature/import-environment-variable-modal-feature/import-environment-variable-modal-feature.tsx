@@ -1,4 +1,4 @@
-import { APIVariableScopeEnum } from 'qovery-typescript-axios'
+import { type APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { useCallback, useEffect, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { FormProvider, useForm } from 'react-hook-form'
@@ -8,16 +8,16 @@ import {
   selectEnvironmentVariablesByApplicationId,
   selectSecretEnvironmentVariablesByApplicationId,
 } from '@qovery/domains/environment-variable'
-import { ServiceTypeEnum } from '@qovery/shared/enums'
+import { type ServiceTypeEnum } from '@qovery/shared/enums'
 import {
-  EnvironmentVariableEntity,
-  EnvironmentVariableSecretOrPublic,
-  LoadingStatus,
-  SecretEnvironmentVariableEntity,
+  type EnvironmentVariableEntity,
+  type EnvironmentVariableSecretOrPublic,
+  type LoadingStatus,
+  type SecretEnvironmentVariableEntity,
 } from '@qovery/shared/interfaces'
 import { useModal } from '@qovery/shared/ui'
 import { computeAvailableScope, parseEnvText } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/state/store'
+import { type AppDispatch, type RootState } from '@qovery/state/store'
 import ImportEnvironmentVariableModal from '../../ui/import-environment-variable-modal/import-environment-variable-modal'
 import { changeScopeForAll } from './utils/change-scope-all'
 import { deleteEntry } from './utils/delete-entry'

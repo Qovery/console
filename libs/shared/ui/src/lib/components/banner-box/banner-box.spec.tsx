@@ -1,5 +1,5 @@
 import { getByRole, render } from '__tests__/utils/setup-jest'
-import BannerBox, { BannerBoxEnum, BannerBoxProps } from './banner-box'
+import BannerBox, { BannerBoxEnum, type BannerBoxProps } from './banner-box'
 
 describe('BannerBox', () => {
   const props: BannerBoxProps = {

@@ -1,6 +1,6 @@
 import { mockUseQueryResult } from '__tests__/utils/mock-use-query-result'
 import { act, render } from '__tests__/utils/setup-jest'
-import { EnvironmentDeploymentRule, WeekdayEnum } from 'qovery-typescript-axios'
+import { type EnvironmentDeploymentRule, WeekdayEnum } from 'qovery-typescript-axios'
 import * as redux from 'react-redux'
 import * as environmentDomain from '@qovery/domains/environment'
 import { environmentFactoryMock } from '@qovery/shared/factories'

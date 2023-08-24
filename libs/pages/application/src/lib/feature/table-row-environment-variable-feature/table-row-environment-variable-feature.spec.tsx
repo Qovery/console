@@ -1,7 +1,7 @@
 import { render } from '__tests__/utils/setup-jest'
 import { mockSecretEnvironmentVariable } from '@qovery/shared/factories'
 import TableRowEnvironmentVariableFeature, {
-  TableRowEnvironmentVariableFeatureProps,
+  type TableRowEnvironmentVariableFeatureProps,
 } from './table-row-environment-variable-feature'
 
 const props: TableRowEnvironmentVariableFeatureProps = {

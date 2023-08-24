@@ -1,7 +1,7 @@
 import { type ReactNode } from 'react'
 import { useParams } from 'react-router-dom'
 import { CreateProjectModalFeature } from '@qovery/shared/console-shared'
-import { NavigationLeft, NavigationLeftLinkProps, useModal } from '@qovery/shared/ui'
+import { NavigationLeft, type NavigationLeftLinkProps, useModal } from '@qovery/shared/ui'
 
 export interface ContainerProps {
   organizationLinks: NavigationLeftLinkProps[]

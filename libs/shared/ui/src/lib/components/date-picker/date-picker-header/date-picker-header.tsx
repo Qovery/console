@@ -1,5 +1,5 @@
 import { getMonth, getYear } from 'date-fns'
-import { ReactDatePickerCustomHeaderProps } from 'react-datepicker'
+import { type ReactDatePickerCustomHeaderProps } from 'react-datepicker'
 import IconFa from '../../icon-fa/icon-fa'
 import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
 

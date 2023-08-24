@@ -1,7 +1,7 @@
 import { render } from '__tests__/utils/setup-jest'
 import { createElement } from 'react'
 import { setCurrentOrganizationIdOnStorage, setCurrentProjectIdOnStorage } from '../../utils/utils'
-import Layout, { LayoutProps } from './layout'
+import Layout, { type LayoutProps } from './layout'
 
 jest.mock('../../utils/utils')
 

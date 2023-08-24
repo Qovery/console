@@ -1,6 +1,6 @@
 import { act, render, screen } from '__tests__/utils/setup-jest'
 import { createElement } from 'react'
-import DetectClickOutside, { UseDetectOutsideProps } from './use-detect-click-outside'
+import DetectClickOutside, { type UseDetectOutsideProps } from './use-detect-click-outside'
 
 describe('UseDetectOutside', () => {
   let props: UseDetectOutsideProps

@@ -1,13 +1,13 @@
-import { BillingInfoRequest } from 'qovery-typescript-axios'
+import { type BillingInfoRequest } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { editBillingInfo, fetchBillingInfo, selectOrganizationById } from '@qovery/domains/organization'
-import { LoadingStatus, OrganizationEntity, Value } from '@qovery/shared/interfaces'
+import { type LoadingStatus, type OrganizationEntity, type Value } from '@qovery/shared/interfaces'
 import { IconFlag } from '@qovery/shared/ui'
 import { countries } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/state/store'
+import { type AppDispatch, type RootState } from '@qovery/state/store'
 import BillingDetails from '../../../ui/page-organization-billing/billing-details/billing-details'
 
 export function BillingDetailsFeature() {

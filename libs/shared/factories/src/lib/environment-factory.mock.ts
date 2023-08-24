@@ -1,7 +1,7 @@
 import { Chance } from 'chance'
 import {
-  DeploymentHistoryEnvironment,
-  Environment,
+  type DeploymentHistoryEnvironment,
+  type Environment,
   EnvironmentModeEnum,
   ServiceDeploymentStatusEnum,
   StateEnum,

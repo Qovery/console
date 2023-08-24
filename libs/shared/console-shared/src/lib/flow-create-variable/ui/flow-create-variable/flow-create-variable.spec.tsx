@@ -1,8 +1,8 @@
 import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { APIVariableScopeEnum } from 'qovery-typescript-axios'
-import { FlowVariableData } from '@qovery/shared/interfaces'
-import FlowCreateVariable, { FlowCreateVariableProps } from './flow-create-variable'
+import { type FlowVariableData } from '@qovery/shared/interfaces'
+import FlowCreateVariable, { type FlowCreateVariableProps } from './flow-create-variable'
 
 const props: FlowCreateVariableProps = {
   onBack: jest.fn(),

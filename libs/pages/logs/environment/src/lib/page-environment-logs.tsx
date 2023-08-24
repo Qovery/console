@@ -1,5 +1,5 @@
 import equal from 'fast-deep-equal'
-import { DeploymentStageWithServicesStatuses, EnvironmentStatus } from 'qovery-typescript-axios'
+import { type DeploymentStageWithServicesStatuses, type EnvironmentStatus } from 'qovery-typescript-axios'
 import { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Route, Routes, matchPath, useLocation, useParams } from 'react-router-dom'
@@ -8,7 +8,7 @@ import { fetchApplicationsStatus, selectApplicationsEntitiesByEnvId } from '@qov
 import { fetchDatabasesStatus, selectDatabasesEntitiesByEnvId } from '@qovery/domains/database'
 import { useFetchEnvironment } from '@qovery/domains/environment'
 import { useAuth } from '@qovery/shared/auth'
-import { ApplicationEntity, DatabaseEntity } from '@qovery/shared/interfaces'
+import { type ApplicationEntity, type DatabaseEntity } from '@qovery/shared/interfaces'
 import {
   DEPLOYMENT_LOGS_URL,
   DEPLOYMENT_LOGS_VERSION_URL,
@@ -17,7 +17,7 @@ import {
 } from '@qovery/shared/routes'
 import { Icon, IconAwesomeEnum } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/state/store'
+import { type AppDispatch, type RootState } from '@qovery/state/store'
 import DeploymentLogsFeature from './feature/deployment-logs-feature/deployment-logs-feature'
 import PodLogsFeature from './feature/pod-logs-feature/pod-logs-feature'
 import { ServiceStageIdsProvider } from './feature/service-stage-ids-context/service-stage-ids-context'

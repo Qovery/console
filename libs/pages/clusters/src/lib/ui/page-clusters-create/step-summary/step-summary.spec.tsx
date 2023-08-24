@@ -1,7 +1,7 @@
 import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { CloudProviderEnum } from 'qovery-typescript-axios'
-import StepSummary, { StepSummaryProps } from './step-summary'
+import StepSummary, { type StepSummaryProps } from './step-summary'
 
 const STATIC_IP = 'STATIC_IP'
 

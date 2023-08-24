@@ -1,4 +1,4 @@
-import { DatabaseAccessibilityEnum, DatabaseModeEnum, DatabaseTypeEnum } from 'qovery-typescript-axios'
+import { type DatabaseAccessibilityEnum, type DatabaseModeEnum, type DatabaseTypeEnum } from 'qovery-typescript-axios'
 
 export interface GeneralData {
   name: string

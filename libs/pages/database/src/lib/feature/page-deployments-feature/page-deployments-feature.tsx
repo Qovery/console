@@ -3,10 +3,10 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { databasesLoadingStatus, fetchDatabaseDeployments, getDatabasesState } from '@qovery/domains/database'
 import { databaseDeploymentsFactoryMock } from '@qovery/shared/factories'
-import { DatabaseEntity } from '@qovery/shared/interfaces'
-import { BaseLink } from '@qovery/shared/ui'
+import { type DatabaseEntity } from '@qovery/shared/interfaces'
+import { type BaseLink } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/state/store'
+import { type AppDispatch, type RootState } from '@qovery/state/store'
 import { PageDeployments } from '../../ui/page-deployments/page-deployments'
 
 export function PageDeploymentsFeature() {

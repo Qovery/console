@@ -1,4 +1,4 @@
-import { Environment } from 'qovery-typescript-axios'
+import { type Environment } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { CreateCloneEnvironmentModalFeature } from '@qovery/shared/console-shared'
@@ -10,14 +10,14 @@ import {
   SERVICES_URL,
 } from '@qovery/shared/routes'
 import {
-  BaseLink,
+  type BaseLink,
   Button,
   ButtonSize,
   EmptyState,
   HelpSection,
   IconAwesomeEnum,
   Table,
-  TableFilterProps,
+  type TableFilterProps,
   useModal,
 } from '@qovery/shared/ui'
 import TableRowEnvironments from '../table-row-environments/table-row-environments'

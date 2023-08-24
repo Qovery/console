@@ -1,5 +1,5 @@
-import { Meta, Story } from '@storybook/react'
-import { InputRadio, InputRadioProps } from './input-radio'
+import { type Meta, type Story } from '@storybook/react'
+import { InputRadio, type InputRadioProps } from './input-radio'
 
 export default {
   component: InputRadio,

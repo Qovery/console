@@ -1,4 +1,13 @@
-import { Button, ButtonSize, ButtonStyle, Icon, IconAwesomeEnum, Menu, MenuAlign, MenuData } from '@qovery/shared/ui'
+import {
+  Button,
+  ButtonSize,
+  ButtonStyle,
+  Icon,
+  IconAwesomeEnum,
+  Menu,
+  MenuAlign,
+  type MenuData,
+} from '@qovery/shared/ui'
 
 export interface MenuTimeFormatProps {
   updateTimeContextValue: { utc: boolean }

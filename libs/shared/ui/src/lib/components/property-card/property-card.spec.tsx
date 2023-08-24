@@ -1,5 +1,5 @@
 import { act, render } from '__tests__/utils/setup-jest'
-import PropertyCard, { PropertyCardProps } from './property-card'
+import PropertyCard, { type PropertyCardProps } from './property-card'
 
 const props: PropertyCardProps = {
   value: 'Every minute',

@@ -1,4 +1,4 @@
-import { ContainerRegistryRequest, ContainerRegistryResponse } from 'qovery-typescript-axios'
+import { type ContainerRegistryRequest, type ContainerRegistryResponse } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
@@ -9,7 +9,7 @@ import {
   selectAvailableContainerRegistry,
   selectAvailableContainerRegistryLoadingStatus,
 } from '@qovery/domains/organization'
-import { AppDispatch, RootState } from '@qovery/state/store'
+import { type AppDispatch, type RootState } from '@qovery/state/store'
 import CrudModal from '../../../ui/page-organization-container-registries/crud-modal/crud-modal'
 
 export interface CrudModalFeatureProps {

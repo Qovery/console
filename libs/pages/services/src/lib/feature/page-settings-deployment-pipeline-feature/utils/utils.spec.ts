@@ -1,4 +1,4 @@
-import { DeploymentStageResponse } from 'qovery-typescript-axios'
+import { type DeploymentStageResponse } from 'qovery-typescript-axios'
 import { move, reorderService, reorderStage } from './utils'
 
 describe('PageSettingsDeploymentPipeline/utils', () => {

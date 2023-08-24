@@ -1,4 +1,4 @@
-import { Toast, toast as toastAction } from 'react-hot-toast'
+import { type Toast, toast as toastAction } from 'react-hot-toast'
 import { ToastContent } from '../components/toast/toast'
 
 export enum ToastEnum {

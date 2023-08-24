@@ -1,4 +1,4 @@
-import { ApplicationGitRepository } from 'qovery-typescript-axios'
+import { type ApplicationGitRepository } from 'qovery-typescript-axios'
 import { urlCodeEditor } from './url-code-editor'
 
 const gitRepository: ApplicationGitRepository = {

@@ -1,4 +1,4 @@
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { type ComponentMeta, type ComponentStory } from '@storybook/react'
 import FunnelFlowBody from '../funnel-flow-body/funnel-flow-body'
 import FunnelFlowHelpCard from '../funnel-flow-help-card/funnel-flow-help-card'
 import InputSelect from '../inputs/input-select/input-select'

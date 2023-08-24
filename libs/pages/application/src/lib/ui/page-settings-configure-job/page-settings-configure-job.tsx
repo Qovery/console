@@ -1,7 +1,7 @@
 import { useFormContext } from 'react-hook-form'
 import { JobConfigureSettings } from '@qovery/shared/console-shared'
 import { ServiceTypeEnum, isCronJob } from '@qovery/shared/enums'
-import { ApplicationEntity } from '@qovery/shared/interfaces'
+import { type ApplicationEntity } from '@qovery/shared/interfaces'
 import { BlockContent, Button, ButtonSize, ButtonStyle, HelpSection } from '@qovery/shared/ui'
 
 export interface PageSettingsConfigureJobProps {

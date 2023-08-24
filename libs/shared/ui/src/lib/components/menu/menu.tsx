@@ -1,8 +1,8 @@
-import { ControlledMenu, MenuCloseEvent } from '@szhsin/react-menu'
+import { ControlledMenu, type MenuCloseEvent } from '@szhsin/react-menu'
 import { type MouseEvent, type ReactNode, useEffect, useMemo, useRef, useState } from 'react'
 import Tooltip from '../tooltip/tooltip'
 import MenuGroup from './menu-group/menu-group'
-import { MenuItemProps } from './menu-item/menu-item'
+import { type MenuItemProps } from './menu-item/menu-item'
 
 export enum MenuDirection {
   TOP = 'top',

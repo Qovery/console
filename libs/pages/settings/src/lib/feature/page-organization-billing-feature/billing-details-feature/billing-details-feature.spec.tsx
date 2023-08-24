@@ -1,5 +1,5 @@
 import { getByLabelText, getByTestId, render, waitFor } from '__tests__/utils/setup-jest'
-import { BillingInfo } from 'qovery-typescript-axios'
+import { type BillingInfo } from 'qovery-typescript-axios'
 import * as storeOrganization from '@qovery/domains/organization'
 import { organizationFactoryMock } from '@qovery/shared/factories'
 import { act, fireEvent } from '../../../../../../../../__tests__/utils/setup-jest'

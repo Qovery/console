@@ -1,11 +1,16 @@
-import { ApplicationRequest, BuildModeEnum, BuildPackLanguageEnum, ContainerRequest } from 'qovery-typescript-axios'
+import {
+  type ApplicationRequest,
+  BuildModeEnum,
+  type BuildPackLanguageEnum,
+  type ContainerRequest,
+} from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { createApplication, postApplicationActionsDeploy } from '@qovery/domains/application'
 import { selectAllRepository, selectOrganizationById } from '@qovery/domains/organization'
 import { ServiceTypeEnum, isApplication } from '@qovery/shared/enums'
-import { OrganizationEntity } from '@qovery/shared/interfaces'
+import { type OrganizationEntity } from '@qovery/shared/interfaces'
 import {
   SERVICES_APPLICATION_CREATION_URL,
   SERVICES_CREATION_GENERAL_URL,
@@ -16,7 +21,7 @@ import {
 } from '@qovery/shared/routes'
 import { FunnelFlowBody } from '@qovery/shared/ui'
 import { buildGitRepoUrl, useDocumentTitle } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/state/store'
+import { type AppDispatch, type RootState } from '@qovery/state/store'
 import StepSummary from '../../../ui/page-application-create/step-summary/step-summary'
 import { steps, useApplicationContainerCreateContext } from '../page-application-create-feature'
 

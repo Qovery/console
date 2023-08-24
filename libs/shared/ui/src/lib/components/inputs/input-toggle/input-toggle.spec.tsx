@@ -1,5 +1,5 @@
 import { act, render, screen } from '__tests__/utils/setup-jest'
-import InputToggle, { InputToggleProps } from './input-toggle'
+import InputToggle, { type InputToggleProps } from './input-toggle'
 
 describe('InputToggle', () => {
   let props: InputToggleProps

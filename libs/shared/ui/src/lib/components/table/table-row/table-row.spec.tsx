@@ -1,5 +1,5 @@
 import { render, screen } from '__tests__/utils/setup-jest'
-import TableRow, { TableRowProps } from './table-row'
+import TableRow, { type TableRowProps } from './table-row'
 
 describe('TableRow', () => {
   let props: TableRowProps

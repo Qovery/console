@@ -11,7 +11,9 @@ import {
 import * as storeApplication from '@qovery/domains/application'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { applicationFactoryMock } from '@qovery/shared/factories'
-import DeployOtherCommitModalFeature, { DeployOtherCommitModalFeatureProps } from './deploy-other-commit-modal-feature'
+import DeployOtherCommitModalFeature, {
+  type DeployOtherCommitModalFeatureProps,
+} from './deploy-other-commit-modal-feature'
 
 import SpyInstance = jest.SpyInstance
 

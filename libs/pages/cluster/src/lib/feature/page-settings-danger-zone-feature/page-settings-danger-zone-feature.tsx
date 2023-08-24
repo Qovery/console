@@ -1,9 +1,9 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { deleteClusterAction, selectClusterById } from '@qovery/domains/organization'
-import { ClusterEntity } from '@qovery/shared/interfaces'
+import { type ClusterEntity } from '@qovery/shared/interfaces'
 import { CLUSTERS_GENERAL_URL, CLUSTERS_URL } from '@qovery/shared/routes'
-import { AppDispatch, RootState } from '@qovery/state/store'
+import { type AppDispatch, type RootState } from '@qovery/state/store'
 import PageSettingsDangerZone from '../../ui/page-settings-danger-zone/page-settings-danger-zone'
 
 export function PageSettingsDangerZoneFeature() {

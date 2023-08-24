@@ -1,5 +1,5 @@
-import { OrganizationCustomRole, OrganizationCustomRoleProjectPermissions } from 'qovery-typescript-axios'
-import { FormEventHandler } from 'react'
+import { type OrganizationCustomRole, type OrganizationCustomRoleProjectPermissions } from 'qovery-typescript-axios'
+import { type FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { SETTINGS_ROLES_URL, SETTINGS_URL } from '@qovery/shared/routes'

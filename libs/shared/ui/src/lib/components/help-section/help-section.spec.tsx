@@ -1,5 +1,5 @@
 import { render } from '__tests__/utils/setup-jest'
-import HelpSection, { HelpSectionProps } from './help-section'
+import HelpSection, { type HelpSectionProps } from './help-section'
 
 describe('HelpSection', () => {
   let props: HelpSectionProps

@@ -1,5 +1,5 @@
-import PageGeneral, { PageGeneralProps } from './page-general'
 import { render } from '__tests__/utils/setup-jest'
+import PageGeneral, { type PageGeneralProps } from './page-general'
 
 let props: PageGeneralProps
 

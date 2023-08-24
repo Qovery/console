@@ -1,6 +1,6 @@
 import { render, screen } from '__tests__/utils/setup-jest'
 import Icon from '../../icon/icon'
-import ButtonAction, { ButtonActionProps } from './button-action'
+import ButtonAction, { type ButtonActionProps } from './button-action'
 
 let props: ButtonActionProps
 

@@ -1,6 +1,6 @@
 import { render } from '__tests__/utils/setup-jest'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
-import { StepSummary, StepSummaryProps } from './step-summary'
+import { StepSummary, type StepSummaryProps } from './step-summary'
 
 const props: StepSummaryProps = {
   variableData: {

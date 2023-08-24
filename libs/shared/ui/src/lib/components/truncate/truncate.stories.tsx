@@ -1,5 +1,5 @@
-import { Truncate, TruncateProps } from './truncate'
-import { Meta, Story } from '@storybook/react'
+import { type Meta, type Story } from '@storybook/react'
+import { Truncate, type TruncateProps } from './truncate'
 
 export default {
   component: Truncate,

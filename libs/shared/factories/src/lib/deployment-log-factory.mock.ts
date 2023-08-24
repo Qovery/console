@@ -1,5 +1,5 @@
 import { Chance } from 'chance'
-import { EnvironmentLogs } from 'qovery-typescript-axios'
+import { type EnvironmentLogs } from 'qovery-typescript-axios'
 import { LogsType } from '@qovery/shared/enums'
 
 const chance = new Chance('123')

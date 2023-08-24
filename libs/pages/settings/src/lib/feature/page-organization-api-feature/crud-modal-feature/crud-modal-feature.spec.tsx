@@ -1,6 +1,6 @@
 import { act, fireEvent, getAllByRole, getByTestId, render } from '__tests__/utils/setup-jest'
 import * as storeOrganization from '@qovery/domains/organization'
-import { CrudModalFeature, CrudModalFeatureProps } from './crud-modal-feature'
+import { CrudModalFeature, type CrudModalFeatureProps } from './crud-modal-feature'
 
 import SpyInstance = jest.SpyInstance
 

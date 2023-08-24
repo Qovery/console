@@ -1,4 +1,4 @@
-import { Environment, Link, ServiceDeploymentStatusEnum } from 'qovery-typescript-axios'
+import { type Environment, type Link, ServiceDeploymentStatusEnum } from 'qovery-typescript-axios'
 import { type PropsWithChildren, createContext, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -7,7 +7,7 @@ import { selectClusterById } from '@qovery/domains/organization'
 import { useDeploymentStatus } from '@qovery/domains/services/feature'
 import { ApplicationButtonsActions, NeedRedeployFlag } from '@qovery/shared/console-shared'
 import { IconEnum, getServiceType, isCronJob, isLifeCycleJob } from '@qovery/shared/enums'
-import { ApplicationEntity, ClusterEntity } from '@qovery/shared/interfaces'
+import { type ApplicationEntity, type ClusterEntity } from '@qovery/shared/interfaces'
 import {
   Button,
   ButtonSize,
@@ -15,14 +15,14 @@ import {
   Header,
   Icon,
   Menu,
-  MenuData,
-  MenuItemProps,
+  type MenuData,
+  type MenuItemProps,
   Skeleton,
   Tag,
   TagMode,
   TagSize,
 } from '@qovery/shared/ui'
-import { AppDispatch, RootState } from '@qovery/state/store'
+import { type AppDispatch, type RootState } from '@qovery/state/store'
 import TabsFeature from '../../feature/tabs-feature/tabs-feature'
 
 export const ApplicationContext = createContext<{

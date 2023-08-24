@@ -1,7 +1,7 @@
 import { render, waitFor } from '__tests__/utils/setup-jest'
 import {
   EnvironmentModeEnum,
-  OrganizationCustomRole,
+  type OrganizationCustomRole,
   OrganizationCustomRoleClusterPermission,
   OrganizationCustomRoleProjectPermission,
 } from 'qovery-typescript-axios'

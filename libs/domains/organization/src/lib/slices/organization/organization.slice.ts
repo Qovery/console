@@ -1,6 +1,6 @@
 import {
-  PayloadAction,
-  Update,
+  type PayloadAction,
+  type Update,
   createAsyncThunk,
   createEntityAdapter,
   createSelector,
@@ -8,29 +8,29 @@ import {
 } from '@reduxjs/toolkit'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
-  AvailableContainerRegistryResponse,
+  type AvailableContainerRegistryResponse,
   ContainerRegistriesApi,
-  ContainerRegistryRequest,
-  ContainerRegistryResponse,
-  Environment,
-  InviteMember,
-  InviteMemberRequest,
+  type ContainerRegistryRequest,
+  type ContainerRegistryResponse,
+  type Environment,
+  type InviteMember,
+  type InviteMemberRequest,
   MembersApi,
-  OrganizationCustomRole,
+  type OrganizationCustomRole,
   OrganizationCustomRoleApi,
-  OrganizationCustomRoleCreateRequest,
-  OrganizationCustomRoleUpdateRequest,
-  OrganizationEditRequest,
+  type OrganizationCustomRoleCreateRequest,
+  type OrganizationCustomRoleUpdateRequest,
+  type OrganizationEditRequest,
   OrganizationMainCallsApi,
-  OrganizationRequest,
+  type OrganizationRequest,
   OrganizationWebhookApi,
-  OrganizationWebhookCreateRequest,
-  OrganizationWebhookResponse,
+  type OrganizationWebhookCreateRequest,
+  type OrganizationWebhookResponse,
 } from 'qovery-typescript-axios'
-import { OrganizationEntity, OrganizationState } from '@qovery/shared/interfaces'
+import { type OrganizationEntity, type OrganizationState } from '@qovery/shared/interfaces'
 import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
 import { refactoOrganizationCustomRolePayload, refactoOrganizationPayload } from '@qovery/shared/utils'
-import { RootState } from '@qovery/state/store'
+import { type RootState } from '@qovery/state/store'
 import { billingInfoExtraReducers } from '../billing/billing-info'
 import { apiTokenExtraReducers } from './api-token'
 import { credentialsExtraReducers } from './credentials'

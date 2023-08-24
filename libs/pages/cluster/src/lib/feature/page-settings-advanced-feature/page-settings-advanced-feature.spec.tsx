@@ -1,10 +1,10 @@
 import { act, fireEvent, render } from '__tests__/utils/setup-jest'
-import { ClusterAdvancedSettings } from 'qovery-typescript-axios'
+import { type ClusterAdvancedSettings } from 'qovery-typescript-axios'
 // eslint-disable-next-line @typescript-eslint/no-restricted-imports
 import React from 'react'
 import * as storeOrganization from '@qovery/domains/organization'
 import { clusterFactoryMock } from '@qovery/shared/factories'
-import { ClusterEntity } from '@qovery/shared/interfaces'
+import { type ClusterEntity } from '@qovery/shared/interfaces'
 import * as InitFormValues from './init-form-values/init-form-values'
 import PageSettingsAdvancedFeature from './page-settings-advanced-feature'
 

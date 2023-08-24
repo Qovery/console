@@ -1,8 +1,8 @@
 import {
   CloudProviderEnum,
-  ClusterInstanceTypeResponseListResults,
-  ClusterRequest,
-  ClusterRequestFeatures,
+  type ClusterInstanceTypeResponseListResults,
+  type ClusterRequest,
+  type ClusterRequestFeatures,
   KubernetesEnum,
 } from 'qovery-typescript-axios'
 import { useCallback, useEffect, useState } from 'react'
@@ -24,7 +24,7 @@ import {
 } from '@qovery/shared/routes'
 import { FunnelFlowBody } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/state/store'
+import { type AppDispatch, type RootState } from '@qovery/state/store'
 import StepSummary from '../../../ui/page-clusters-create/step-summary/step-summary'
 import { steps, useClusterContainerCreateContext } from '../page-clusters-create-feature'
 

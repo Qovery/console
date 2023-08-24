@@ -1,5 +1,5 @@
-import { Meta, Story } from '@storybook/react'
-import { InputToggle, InputToggleProps } from './input-toggle'
+import { type Meta, type Story } from '@storybook/react'
+import { InputToggle, type InputToggleProps } from './input-toggle'
 
 export default {
   component: InputToggle,

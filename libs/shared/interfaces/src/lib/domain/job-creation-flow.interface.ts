@@ -1,5 +1,5 @@
 // eslint-disable-next-line @nx/enforce-module-boundaries
-import { ServiceTypeEnum } from '@qovery/shared/enums'
+import { type ServiceTypeEnum } from '@qovery/shared/enums'
 
 export interface JobGeneralData {
   name: string

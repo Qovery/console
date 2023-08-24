@@ -7,7 +7,7 @@ import {
 } from 'qovery-typescript-axios'
 import { customRolesMock } from '@qovery/shared/factories'
 import { resetForm } from '../../feature/page-organization-roles-edit-feature/page-organization-roles-edit-feature'
-import PageOrganizationRolesEdit, { PageOrganizationRolesEditProps } from './page-organization-roles-edit'
+import PageOrganizationRolesEdit, { type PageOrganizationRolesEditProps } from './page-organization-roles-edit'
 
 const mockedUsedNavigate = jest.fn()
 jest.mock('react-router-dom', () => ({

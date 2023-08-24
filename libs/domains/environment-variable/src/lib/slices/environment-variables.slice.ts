@@ -1,23 +1,29 @@
-import { PayloadAction, createAsyncThunk, createEntityAdapter, createSelector, createSlice } from '@reduxjs/toolkit'
+import {
+  type PayloadAction,
+  createAsyncThunk,
+  createEntityAdapter,
+  createSelector,
+  createSlice,
+} from '@reduxjs/toolkit'
 import {
   APIVariableScopeEnum,
   ApplicationEnvironmentVariableApi,
   ContainerEnvironmentVariableApi,
-  EnvironmentVariable,
+  type EnvironmentVariable,
   EnvironmentVariableApi,
   JobEnvironmentVariableApi,
   ProjectEnvironmentVariableApi,
-  SecretRequest,
-  Value,
-  VariableImport,
-  VariableImportRequestVars,
+  type SecretRequest,
+  type Value,
+  type VariableImport,
+  type VariableImportRequestVars,
 } from 'qovery-typescript-axios'
-import { Key } from 'qovery-typescript-axios/api'
-import { ServiceTypeEnum, isContainer, isJob } from '@qovery/shared/enums'
-import { EnvironmentVariableEntity, EnvironmentVariablesState } from '@qovery/shared/interfaces'
+import { type Key } from 'qovery-typescript-axios/api'
+import { type ServiceTypeEnum, isContainer, isJob } from '@qovery/shared/enums'
+import { type EnvironmentVariableEntity, type EnvironmentVariablesState } from '@qovery/shared/interfaces'
 import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
 import { addOneToManyRelation, getEntitiesByIds, removeOneToManyRelation } from '@qovery/shared/utils'
-import { RootState } from '@qovery/state/store'
+import { type RootState } from '@qovery/state/store'
 
 export const ENVIRONMENT_VARIABLES_FEATURE_KEY = 'public'
 export const environmentVariablesAdapter = createEntityAdapter<EnvironmentVariableEntity>()

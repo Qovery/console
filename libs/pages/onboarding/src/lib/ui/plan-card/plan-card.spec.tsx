@@ -1,6 +1,6 @@
 import { render } from '__tests__/utils/setup-jest'
 import { PlanEnum } from 'qovery-typescript-axios'
-import PlanCard, { PlanCardProps } from './plan-card'
+import PlanCard, { type PlanCardProps } from './plan-card'
 
 describe('PlanCard', () => {
   let props: PlanCardProps

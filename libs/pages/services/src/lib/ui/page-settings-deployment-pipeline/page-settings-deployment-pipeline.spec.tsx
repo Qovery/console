@@ -1,8 +1,8 @@
 import { act, render } from '__tests__/utils/setup-jest'
-import { CloudProviderEnum, DeploymentStageResponse } from 'qovery-typescript-axios'
-import { ApplicationEntity, DatabaseEntity } from '@qovery/shared/interfaces'
+import { CloudProviderEnum, type DeploymentStageResponse } from 'qovery-typescript-axios'
+import { type ApplicationEntity, type DatabaseEntity } from '@qovery/shared/interfaces'
 import PageSettingsDeploymentPipeline, {
-  PageSettingsDeploymentPipelineProps,
+  type PageSettingsDeploymentPipelineProps,
 } from './page-settings-deployment-pipeline'
 
 const onSubmit = jest.fn()

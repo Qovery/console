@@ -1,7 +1,7 @@
 import { render } from '__tests__/utils/setup-jest'
 import { containerRegistriesMock } from '@qovery/shared/factories'
 import PageOrganizationContainerRegistries, {
-  PageOrganizationContainerRegistriesProps,
+  type PageOrganizationContainerRegistriesProps,
 } from './page-organization-container-registries'
 
 describe('PageOrganizationContainerRegistries', () => {

@@ -1,12 +1,12 @@
-import { UserInterface } from './user.interface'
-import { UserSignUpState } from './user-sign-up.interface'
-import { OrganizationState } from './organizations.interface'
-import { ProjectsState } from './projects.interface'
-import { EnvironmentsState } from './environments.interface'
-import { ApplicationsState } from './applications.interface'
-import { DeploymentRuleState } from './deployment-rules.interface'
-import { EnvironmentVariablesState } from './environment-variables.interface'
-import { SecretEnvironmentVariablesState } from './secret-environment-variables.interface'
+import { type ApplicationsState } from './applications.interface'
+import { type DeploymentRuleState } from './deployment-rules.interface'
+import { type EnvironmentVariablesState } from './environment-variables.interface'
+import { type EnvironmentsState } from './environments.interface'
+import { type OrganizationState } from './organizations.interface'
+import { type ProjectsState } from './projects.interface'
+import { type SecretEnvironmentVariablesState } from './secret-environment-variables.interface'
+import { type UserSignUpState } from './user-sign-up.interface'
+import { type UserInterface } from './user.interface'
 
 export type RootState = {
   ui: {

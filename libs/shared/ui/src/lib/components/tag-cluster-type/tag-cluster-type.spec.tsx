@@ -1,6 +1,6 @@
 import { render } from '__tests__/utils/setup-jest'
 import { CloudProviderEnum, KubernetesEnum } from 'qovery-typescript-axios'
-import TagClusterType, { TagClusterTypeProps } from './tag-cluster-type'
+import TagClusterType, { type TagClusterTypeProps } from './tag-cluster-type'
 
 describe('TagClusterType', () => {
   let props: TagClusterTypeProps = {

@@ -1,6 +1,6 @@
 import {
   OrganizationEventOrigin,
-  OrganizationEventResponse,
+  type OrganizationEventResponse,
   OrganizationEventTargetType,
   OrganizationEventType,
 } from 'qovery-typescript-axios'

@@ -2,7 +2,7 @@ import { render, screen } from '__tests__/utils/setup-jest'
 import selectEvent from 'react-select-event'
 import { IconEnum } from '@qovery/shared/enums'
 import Icon from '../../icon/icon'
-import InputSelect, { InputSelectProps } from './input-select'
+import InputSelect, { type InputSelectProps } from './input-select'
 
 let props: InputSelectProps
 

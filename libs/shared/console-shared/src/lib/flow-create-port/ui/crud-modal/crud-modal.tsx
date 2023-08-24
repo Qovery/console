@@ -1,5 +1,5 @@
 import { CloudProviderEnum, PortProtocolEnum } from 'qovery-typescript-axios'
-import { FormEvent } from 'react'
+import { type FormEvent } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import {
   BannerBox,

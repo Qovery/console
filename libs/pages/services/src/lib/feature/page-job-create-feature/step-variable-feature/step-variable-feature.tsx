@@ -4,7 +4,7 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { FlowCreateVariable } from '@qovery/shared/console-shared'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
-import { FlowVariableData, VariableData } from '@qovery/shared/interfaces'
+import { type FlowVariableData, type VariableData } from '@qovery/shared/interfaces'
 import {
   SERVICES_JOB_CREATION_GENERAL_URL,
   SERVICES_JOB_CREATION_POST_URL,

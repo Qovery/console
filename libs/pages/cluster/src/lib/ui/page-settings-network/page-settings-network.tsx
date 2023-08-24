@@ -1,5 +1,5 @@
-import { ClusterRoutingTableResults } from 'qovery-typescript-axios'
-import { LoadingStatus } from '@qovery/shared/interfaces'
+import { type ClusterRoutingTableResults } from 'qovery-typescript-axios'
+import { type LoadingStatus } from '@qovery/shared/interfaces'
 import {
   BlockContent,
   Button,

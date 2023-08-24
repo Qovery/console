@@ -1,5 +1,5 @@
-import { Meta, Story } from '@storybook/react'
-import { Accordion, AccordionProps } from './accordion'
+import { type Meta, type Story } from '@storybook/react'
+import { Accordion, type AccordionProps } from './accordion'
 
 export default {
   component: Accordion,

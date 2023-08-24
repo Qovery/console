@@ -1,4 +1,4 @@
-import { CustomDomain } from 'qovery-typescript-axios'
+import { type CustomDomain } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { BannerBox, BannerBoxEnum, IconAwesomeEnum, InputText, Link, ModalCrud } from '@qovery/shared/ui'
 

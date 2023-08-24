@@ -18,7 +18,7 @@ import {
   SETTINGS_WEBHOOKS,
 } from '@qovery/shared/routes'
 import { IconAwesomeEnum } from '@qovery/shared/ui'
-import { RootState } from '@qovery/state/store'
+import { type RootState } from '@qovery/state/store'
 import { ROUTER_SETTINGS } from './router/router'
 import { Container } from './ui/container/container'
 

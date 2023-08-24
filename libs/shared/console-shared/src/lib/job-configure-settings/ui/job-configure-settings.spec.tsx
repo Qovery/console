@@ -9,8 +9,8 @@ import {
 } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
-import { JobConfigureData } from '@qovery/shared/interfaces'
-import JobConfigureSettings, { JobConfigureSettingsProps } from './job-configure-settings'
+import { type JobConfigureData } from '@qovery/shared/interfaces'
+import JobConfigureSettings, { type JobConfigureSettingsProps } from './job-configure-settings'
 
 const props: JobConfigureSettingsProps = {
   jobType: ServiceTypeEnum.CRON_JOB,

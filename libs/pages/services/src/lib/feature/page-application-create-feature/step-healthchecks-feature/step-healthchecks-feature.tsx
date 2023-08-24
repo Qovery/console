@@ -3,7 +3,7 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { defaultLivenessProbe, defaultReadinessProbe, probeFormatted } from '@qovery/shared/console-shared'
 import { ProbeTypeEnum } from '@qovery/shared/enums'
-import { HealthcheckData, ProbeExtended } from '@qovery/shared/interfaces'
+import { type HealthcheckData, type ProbeExtended } from '@qovery/shared/interfaces'
 import {
   SERVICES_APPLICATION_CREATION_URL,
   SERVICES_CREATION_GENERAL_URL,

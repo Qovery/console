@@ -1,7 +1,6 @@
 import { render } from '__tests__/utils/setup-jest'
 import Icon from '../icon/icon'
-
-import Tabs, { TabsProps } from './tabs'
+import Tabs, { type TabsProps } from './tabs'
 
 let props: TabsProps
 

@@ -1,6 +1,6 @@
-import { Meta, Story } from '@storybook/react'
+import { type Meta, type Story } from '@storybook/react'
 import Button from '../buttons/button/button'
-import Modal, { ModalContentProps, ModalProps } from './modal'
+import Modal, { type ModalContentProps, type ModalProps } from './modal'
 
 export default {
   component: Modal,

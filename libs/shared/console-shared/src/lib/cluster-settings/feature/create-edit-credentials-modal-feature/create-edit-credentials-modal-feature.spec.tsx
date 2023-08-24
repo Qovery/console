@@ -2,9 +2,9 @@ import { act, fireEvent, render } from '__tests__/utils/setup-jest'
 import { CloudProviderEnum } from 'qovery-typescript-axios'
 import * as storeOrganization from '@qovery/domains/organization'
 import { organizationFactoryMock } from '@qovery/shared/factories'
-import { OrganizationEntity } from '@qovery/shared/interfaces'
+import { type OrganizationEntity } from '@qovery/shared/interfaces'
 import CreateEditCredentialsModalFeature, {
-  CreateEditCredentialsModalFeatureProps,
+  type CreateEditCredentialsModalFeatureProps,
   handleSubmit,
 } from './create-edit-credentials-modal-feature'
 

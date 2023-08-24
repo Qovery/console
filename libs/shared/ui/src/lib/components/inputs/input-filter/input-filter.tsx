@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Value } from '@qovery/shared/interfaces'
+import { type Value } from '@qovery/shared/interfaces'
 import Button, { ButtonSize, ButtonStyle } from '../../buttons/button/button'
 import Icon from '../../icon/icon'
 import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'

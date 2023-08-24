@@ -1,6 +1,6 @@
-import { DeploymentHistoryDatabase } from 'qovery-typescript-axios'
+import { type DeploymentHistoryDatabase } from 'qovery-typescript-axios'
 import { memo, useEffect, useState } from 'react'
-import { BaseLink, HelpSection, Table, TableFilterProps, TableRowDeployment } from '@qovery/shared/ui'
+import { type BaseLink, HelpSection, Table, type TableFilterProps, TableRowDeployment } from '@qovery/shared/ui'
 
 export interface PageDeploymentsProps {
   deployments?: DeploymentHistoryDatabase[]

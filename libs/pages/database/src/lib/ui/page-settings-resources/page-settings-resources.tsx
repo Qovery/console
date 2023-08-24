@@ -1,8 +1,8 @@
 import { DatabaseModeEnum } from 'qovery-typescript-axios'
-import { FormEventHandler } from 'react'
+import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { DatabaseSettingsResources } from '@qovery/shared/console-shared'
-import { DatabaseEntity } from '@qovery/shared/interfaces'
+import { type DatabaseEntity } from '@qovery/shared/interfaces'
 import { BannerBox, BannerBoxEnum, Button, ButtonSize, ButtonStyle, HelpSection } from '@qovery/shared/ui'
 
 export interface PageSettingsResourcesProps {

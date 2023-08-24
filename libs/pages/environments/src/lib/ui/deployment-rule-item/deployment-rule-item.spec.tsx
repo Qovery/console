@@ -1,6 +1,5 @@
-import { screen, render } from '__tests__/utils/setup-jest'
-
-import DeploymentRuleItem, { DeploymentRuleItemProps } from './deployment-rule-item'
+import { render, screen } from '__tests__/utils/setup-jest'
+import DeploymentRuleItem, { type DeploymentRuleItemProps } from './deployment-rule-item'
 
 let props: DeploymentRuleItemProps
 

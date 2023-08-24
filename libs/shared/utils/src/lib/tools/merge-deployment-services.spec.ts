@@ -1,4 +1,4 @@
-import { DeploymentHistoryEnvironment } from 'qovery-typescript-axios'
+import { type DeploymentHistoryEnvironment } from 'qovery-typescript-axios'
 import { mergeDeploymentServices } from './merge-deployment-services'
 
 describe('mergeDeploymentServices', () => {

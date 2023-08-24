@@ -1,6 +1,6 @@
 import { Controller, useFormContext } from 'react-hook-form'
 import { IconEnum } from '@qovery/shared/enums'
-import { ApplicationEntity } from '@qovery/shared/interfaces'
+import { type ApplicationEntity } from '@qovery/shared/interfaces'
 import { BlockContent, Button, ButtonSize, ButtonStyle, HelpSection, Icon, InputToggle } from '@qovery/shared/ui'
 
 export interface PageSettingsPreviewEnvironmentsProps {

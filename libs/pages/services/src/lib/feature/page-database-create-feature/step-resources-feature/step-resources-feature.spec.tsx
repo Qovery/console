@@ -1,11 +1,11 @@
 import { mockUseQueryResult } from '__tests__/utils/mock-use-query-result'
 import { act, getByTestId, render, waitFor } from '__tests__/utils/setup-jest'
 import {
-  CloudProviderEnum,
+  type CloudProviderEnum,
   DatabaseAccessibilityEnum,
   DatabaseModeEnum,
   DatabaseTypeEnum,
-  ManagedDatabaseInstanceTypeResponse,
+  type ManagedDatabaseInstanceTypeResponse,
 } from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
 import selectEvent from 'react-select-event'

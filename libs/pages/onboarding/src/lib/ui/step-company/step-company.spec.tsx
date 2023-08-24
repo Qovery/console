@@ -1,7 +1,7 @@
 import { render } from '__tests__/utils/setup-jest'
-import { CompanySizeEnum } from 'qovery-typescript-axios'
+import { type CompanySizeEnum } from 'qovery-typescript-axios'
 import { useForm } from 'react-hook-form'
-import StepCompany, { StepCompanyProps } from './step-company'
+import StepCompany, { type StepCompanyProps } from './step-company'
 
 describe('StepCompany', () => {
   let props: Partial<StepCompanyProps>

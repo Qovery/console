@@ -1,7 +1,7 @@
-import { Meta, Story } from '@storybook/react'
+import { type Meta, type Story } from '@storybook/react'
 import { ToastEnum, toast } from '../../utils/toast'
 import { Button } from '../buttons/button/button'
-import { ToastBehavior, ToastProps } from './toast'
+import { ToastBehavior, type ToastProps } from './toast'
 
 export default {
   component: ToastBehavior,

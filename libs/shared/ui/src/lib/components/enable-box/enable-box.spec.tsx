@@ -1,5 +1,5 @@
 import { act, getByTestId, getByText, queryByText, render } from '__tests__/utils/setup-jest'
-import EnableBox, { EnableBoxProps } from './enable-box'
+import EnableBox, { type EnableBoxProps } from './enable-box'
 
 const props: EnableBoxProps = {
   checked: false,

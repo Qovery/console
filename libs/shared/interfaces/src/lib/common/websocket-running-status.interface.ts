@@ -1,6 +1,6 @@
 // eslint-disable-next-line @nx/enforce-module-boundaries
-import { RunningState } from '@qovery/shared/enums'
-import { ServiceRunningStatus } from '../domain/service-running-status.interface'
+import { type RunningState } from '@qovery/shared/enums'
+import { type ServiceRunningStatus } from '../domain/service-running-status.interface'
 
 export interface WebsocketRunningStatusInterface {
   applications?: ServiceRunningStatus[]

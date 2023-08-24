@@ -2,8 +2,8 @@ import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { selectAllOrganization, selectOrganizationById } from '@qovery/domains/organization'
 import { selectUser, selectUserSignUp } from '@qovery/domains/user'
-import { OrganizationEntity } from '@qovery/shared/interfaces'
-import { RootState } from '@qovery/state/store'
+import { type OrganizationEntity } from '@qovery/shared/interfaces'
+import { type RootState } from '@qovery/state/store'
 import MenuAccount from '../../ui/menu-account/menu-account'
 
 export function MenuAccountFeature() {

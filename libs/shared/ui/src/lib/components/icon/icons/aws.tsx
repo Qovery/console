@@ -1,4 +1,4 @@
-import { IconProps } from '../icon'
+import { type IconProps } from '../icon'
 
 export function AWSIcon(props: IconProps) {
   return (

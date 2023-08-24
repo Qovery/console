@@ -1,11 +1,11 @@
 import {
   EnvironmentModeEnum,
   OrganizationCustomRoleProjectPermission,
-  OrganizationCustomRoleProjectPermissions,
-  OrganizationCustomRoleUpdateRequestPermissions,
+  type OrganizationCustomRoleProjectPermissions,
+  type OrganizationCustomRoleUpdateRequestPermissions,
 } from 'qovery-typescript-axios'
 import { useState } from 'react'
-import { Controller, FieldValues, UseFormSetValue, useFormContext } from 'react-hook-form'
+import { Controller, type FieldValues, type UseFormSetValue, useFormContext } from 'react-hook-form'
 import { InputCheckbox } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/utils'
 import { defaultProjectPermission } from '../../../feature/page-organization-roles-edit-feature/page-organization-roles-edit-feature'

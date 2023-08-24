@@ -1,6 +1,6 @@
 import { act, fireEvent, getAllByTestId, getByRole, getByTestId, render } from '__tests__/utils/setup-jest'
-import { Invoice, InvoiceStatusEnum } from 'qovery-typescript-axios'
-import InvoicesList, { InvoicesListProps } from './invoices-list'
+import { type Invoice, InvoiceStatusEnum } from 'qovery-typescript-axios'
+import InvoicesList, { type InvoicesListProps } from './invoices-list'
 
 const invoices: Invoice[] = [
   {

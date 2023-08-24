@@ -1,4 +1,4 @@
-import { DeploymentStageResponse } from 'qovery-typescript-axios'
+import { type DeploymentStageResponse } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { useMoveDeploymentStageRequested } from '@qovery/domains/environment'
 import StageOrderModal from '../../../ui/page-settings-deployment-pipeline/stage-order-modal/stage-order-modal'

@@ -1,4 +1,4 @@
-import { APIVariableScopeEnum } from 'qovery-typescript-axios'
+import { type APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { IconEnum } from '@qovery/shared/enums'
 import {
@@ -14,7 +14,7 @@ import {
 } from '@qovery/shared/ui'
 import { generateScopeLabel } from '@qovery/shared/utils'
 import {
-  DataFormEnvironmentVariableInterface,
+  type DataFormEnvironmentVariableInterface,
   EnvironmentVariableCrudMode,
   EnvironmentVariableType,
 } from '../../feature/crud-environment-variable-modal-feature/crud-environment-variable-modal-feature'

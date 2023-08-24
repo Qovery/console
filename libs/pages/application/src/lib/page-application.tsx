@@ -11,10 +11,10 @@ import {
 } from '@qovery/domains/application'
 import { useFetchEnvironment } from '@qovery/domains/environment'
 import { getServiceType, isApplication, isGitJob } from '@qovery/shared/enums'
-import { ApplicationEntity, LoadingStatus } from '@qovery/shared/interfaces'
+import { type ApplicationEntity, type LoadingStatus } from '@qovery/shared/interfaces'
 import { APPLICATION_GENERAL_URL, APPLICATION_URL } from '@qovery/shared/routes'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/state/store'
+import { type AppDispatch, type RootState } from '@qovery/state/store'
 import { ROUTER_APPLICATION } from './router/router'
 import Container from './ui/container/container'
 

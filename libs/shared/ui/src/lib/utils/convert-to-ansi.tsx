@@ -1,5 +1,5 @@
 import Ansi from 'ansi-to-react'
-import { ReactNode } from 'react'
+import { type ReactNode } from 'react'
 
 export const convertToAnsi = (content = ''): ReactNode => {
   return (

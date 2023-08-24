@@ -1,4 +1,4 @@
-import { DatabaseModeEnum, DatabaseRequest } from 'qovery-typescript-axios'
+import { DatabaseModeEnum, type DatabaseRequest } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -11,7 +11,7 @@ import {
 } from '@qovery/shared/routes'
 import { FunnelFlowBody } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import { AppDispatch } from '@qovery/state/store'
+import { type AppDispatch } from '@qovery/state/store'
 import StepSummary from '../../../ui/page-database-create/step-summary/step-summary'
 import { useDatabaseCreateContext } from '../page-database-create-feature'
 

@@ -1,5 +1,5 @@
 import { type PropsWithChildren } from 'react'
-import { TableFilterProps } from '../table'
+import { type TableFilterProps } from '../table'
 import { ALL } from '../table-head-filter/table-head-filter'
 
 export interface TableRowFilterProps {

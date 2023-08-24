@@ -1,9 +1,9 @@
-import { CloudProviderEnum, PortProtocolEnum, ServicePort } from 'qovery-typescript-axios'
+import { type CloudProviderEnum, PortProtocolEnum, type ServicePort } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useFetchEnvironment } from '@qovery/domains/environment'
 import { CrudModal } from '@qovery/shared/console-shared'
-import { FlowPortData, PortData } from '@qovery/shared/interfaces'
+import { type FlowPortData, type PortData } from '@qovery/shared/interfaces'
 import { ToastEnum, toast, useModal } from '@qovery/shared/ui'
 
 export interface CrudModalFeatureProps {

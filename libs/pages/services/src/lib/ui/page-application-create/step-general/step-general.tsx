@@ -1,5 +1,5 @@
 import { BuildModeEnum } from 'qovery-typescript-axios'
-import { FormEventHandler } from 'react'
+import { type FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import {
@@ -8,7 +8,7 @@ import {
   GeneralContainerSettings,
 } from '@qovery/shared/console-shared'
 import { IconEnum, ServiceTypeEnum, isApplication, isContainer } from '@qovery/shared/enums'
-import { ApplicationGeneralData, OrganizationEntity } from '@qovery/shared/interfaces'
+import { type ApplicationGeneralData, type OrganizationEntity } from '@qovery/shared/interfaces'
 import { SERVICES_URL } from '@qovery/shared/routes'
 import { Button, ButtonSize, ButtonStyle, Icon, InputSelect, InputText, InputTextArea } from '@qovery/shared/ui'
 

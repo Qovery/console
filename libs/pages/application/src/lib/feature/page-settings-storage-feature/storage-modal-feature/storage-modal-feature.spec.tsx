@@ -1,8 +1,8 @@
 import { render } from '__tests__/utils/setup-jest'
 import { StorageTypeEnum } from 'qovery-typescript-axios'
 import { applicationFactoryMock } from '@qovery/shared/factories'
-import { ApplicationEntity } from '@qovery/shared/interfaces'
-import StorageModalFeature, { StorageModalFeatureProps, handleSubmit } from './storage-modal-feature'
+import { type ApplicationEntity } from '@qovery/shared/interfaces'
+import StorageModalFeature, { type StorageModalFeatureProps, handleSubmit } from './storage-modal-feature'
 
 const props: StorageModalFeatureProps = {
   onClose: jest.fn(),

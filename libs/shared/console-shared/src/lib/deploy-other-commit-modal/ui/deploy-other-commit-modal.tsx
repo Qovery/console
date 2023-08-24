@@ -1,4 +1,4 @@
-import { Commit } from 'qovery-typescript-axios'
+import { type Commit } from 'qovery-typescript-axios'
 import {
   Avatar,
   AvatarStyle,

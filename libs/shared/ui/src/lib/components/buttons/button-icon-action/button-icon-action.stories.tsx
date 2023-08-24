@@ -1,6 +1,6 @@
-import { Meta, Story } from '@storybook/react'
+import { type Meta, type Story } from '@storybook/react'
 import Icon from '../../icon/icon'
-import { ButtonIconAction, ButtonIconActionProps } from './button-icon-action'
+import { ButtonIconAction, type ButtonIconActionProps } from './button-icon-action'
 
 export default {
   component: ButtonIconAction,

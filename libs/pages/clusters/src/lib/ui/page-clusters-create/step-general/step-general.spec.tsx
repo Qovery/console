@@ -1,7 +1,7 @@
 import { act, fireEvent, render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { CloudProviderEnum } from 'qovery-typescript-axios'
-import StepGeneral, { StepGeneralProps } from './step-general'
+import StepGeneral, { type StepGeneralProps } from './step-general'
 
 const currentCloudProviders = {
   short_name: CloudProviderEnum.AWS,

@@ -1,5 +1,5 @@
-import { Meta, Story } from '@storybook/react'
-import { InputTextArea, InputTextAreaProps } from './input-text-area'
+import { type Meta, type Story } from '@storybook/react'
+import { InputTextArea, type InputTextAreaProps } from './input-text-area'
 
 export default {
   component: InputTextArea,

@@ -1,4 +1,4 @@
-import { CloudProviderEnum } from 'qovery-typescript-axios'
+import { type CloudProviderEnum } from 'qovery-typescript-axios'
 
 export interface ClusterGeneralData {
   name: string

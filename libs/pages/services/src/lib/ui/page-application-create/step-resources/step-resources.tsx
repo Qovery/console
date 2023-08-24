@@ -1,8 +1,8 @@
-import { EnvironmentModeEnum } from 'qovery-typescript-axios'
-import { FormEventHandler } from 'react'
+import { type EnvironmentModeEnum } from 'qovery-typescript-axios'
+import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { ApplicationSettingsResources } from '@qovery/shared/console-shared'
-import { ApplicationResourcesData } from '@qovery/shared/interfaces'
+import { type ApplicationResourcesData } from '@qovery/shared/interfaces'
 import { Button, ButtonSize, ButtonStyle } from '@qovery/shared/ui'
 
 export interface StepResourcesProps {

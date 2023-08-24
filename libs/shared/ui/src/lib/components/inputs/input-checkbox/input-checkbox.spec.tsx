@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from '__tests__/utils/setup-jest'
-import InputCheckbox, { InputCheckboxProps } from './input-checkbox'
+import InputCheckbox, { type InputCheckboxProps } from './input-checkbox'
 
 const props: InputCheckboxProps = {
   name: 'test',

@@ -1,6 +1,6 @@
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import TerraformExportModal, { TerraformExportModalProps } from './terraform-export-modal'
+import TerraformExportModal, { type TerraformExportModalProps } from './terraform-export-modal'
 
 const props: TerraformExportModalProps = {
   closeModal: jest.fn(),

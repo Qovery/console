@@ -1,4 +1,4 @@
-import { ServiceTypeEnum } from '@qovery/shared/enums'
+import { type ServiceTypeEnum } from '@qovery/shared/enums'
 
 export interface AboutProps {
   description: string

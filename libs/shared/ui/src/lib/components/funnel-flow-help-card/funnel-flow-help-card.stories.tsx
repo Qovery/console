@@ -1,4 +1,4 @@
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { type ComponentMeta, type ComponentStory } from '@storybook/react'
 import { FunnelFlowHelpCard } from './funnel-flow-help-card'
 
 export default {

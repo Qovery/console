@@ -4,7 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { deleteProject, selectProjectById } from '@qovery/domains/projects'
 import { SETTINGS_URL } from '@qovery/shared/routes'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/state/store'
+import { type AppDispatch, type RootState } from '@qovery/state/store'
 import PageProjectDangerZone from '../../ui/page-project-danger-zone/page-project-danger-zone'
 
 export function PageProjectDangerZoneFeature() {

@@ -5,9 +5,9 @@ import { getDatabasesState, selectDatabasesEntitiesByEnvId } from '@qovery/domai
 import { useFetchEnvironment } from '@qovery/domains/environment'
 import { useListStatuses } from '@qovery/domains/services/feature'
 import { applicationFactoryMock } from '@qovery/shared/factories'
-import { ApplicationEntity, DatabaseEntity, LoadingStatus } from '@qovery/shared/interfaces'
-import { BaseLink } from '@qovery/shared/ui'
-import { RootState } from '@qovery/state/store'
+import { type ApplicationEntity, type DatabaseEntity, type LoadingStatus } from '@qovery/shared/interfaces'
+import { type BaseLink } from '@qovery/shared/ui'
+import { type RootState } from '@qovery/state/store'
 import { PageGeneral } from '../../ui/page-general/page-general'
 
 export function PageGeneralFeature() {

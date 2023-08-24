@@ -1,6 +1,6 @@
-import { MouseEvent, RefObject, useEffect } from 'react'
+import { type MouseEvent, type RefObject, useEffect } from 'react'
 import { ButtonIcon, ButtonIconStyle, ButtonSize, Icon, IconAwesomeEnum, Tooltip } from '@qovery/shared/ui'
-import { LayoutLogsDataProps } from '../layout-logs'
+import { type LayoutLogsDataProps } from '../layout-logs'
 
 export interface ButtonsActionsLogsProps {
   refScrollSection: RefObject<HTMLDivElement>

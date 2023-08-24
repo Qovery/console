@@ -2,7 +2,7 @@ import { render, screen } from '__tests__/utils/setup-jest'
 import { ClusterLogsStepEnum, ServiceDeploymentStatusEnum } from 'qovery-typescript-axios'
 import { deploymentLogFactoryMock } from '@qovery/shared/factories'
 import { dateFullFormat, trimId } from '@qovery/shared/utils'
-import DeploymentLogs, { DeploymentLogsProps } from './deployment-logs'
+import DeploymentLogs, { type DeploymentLogsProps } from './deployment-logs'
 
 const mockLogs = deploymentLogFactoryMock(1)
 

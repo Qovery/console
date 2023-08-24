@@ -1,8 +1,8 @@
 import { getByLabelText, getByTestId, getByText, queryByTestId, render, waitFor } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { CloudProviderEnum } from 'qovery-typescript-axios'
-import { ClusterResourcesData } from '@qovery/shared/interfaces'
-import ClusterResourcesSettings, { ClusterResourcesSettingsProps } from './cluster-resources-settings'
+import { type ClusterResourcesData } from '@qovery/shared/interfaces'
+import ClusterResourcesSettings, { type ClusterResourcesSettingsProps } from './cluster-resources-settings'
 
 describe('ClusterResourcesSettings', () => {
   let defaultValues: ClusterResourcesData

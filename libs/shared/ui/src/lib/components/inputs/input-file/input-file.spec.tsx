@@ -1,5 +1,5 @@
 import { act, fireEvent, render, waitFor } from '__tests__/utils/setup-jest'
-import InputFile, { InputFileProps } from './input-file'
+import InputFile, { type InputFileProps } from './input-file'
 
 describe('InputFile', () => {
   const props: InputFileProps = {

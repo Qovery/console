@@ -1,4 +1,4 @@
-import { OrganizationAvailableRole, OrganizationCustomRole } from 'qovery-typescript-axios'
+import { type OrganizationAvailableRole, type OrganizationCustomRole } from 'qovery-typescript-axios'
 import { useNavigate, useParams } from 'react-router-dom'
 import { MemberRoleEnum } from '@qovery/shared/enums'
 import { SETTINGS_ROLES_EDIT_URL, SETTINGS_URL } from '@qovery/shared/routes'

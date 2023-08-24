@@ -1,6 +1,6 @@
 import { type PropsWithChildren, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { TableFilterProps } from '../table'
+import { type TableFilterProps } from '../table'
 import TableRowFilter from '../table-row-filter/table-row-filter'
 
 export interface TableRowProps {

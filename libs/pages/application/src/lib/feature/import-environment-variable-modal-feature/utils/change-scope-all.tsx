@@ -1,5 +1,5 @@
-import { APIVariableScopeEnum } from 'qovery-typescript-axios'
-import { UseFormSetValue } from 'react-hook-form'
+import { type APIVariableScopeEnum } from 'qovery-typescript-axios'
+import { type UseFormSetValue } from 'react-hook-form'
 
 export function changeScopeForAll(
   value: APIVariableScopeEnum,

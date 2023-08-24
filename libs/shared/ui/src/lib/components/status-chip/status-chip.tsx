@@ -1,4 +1,4 @@
-import { DeploymentHistoryStatusEnum, StateEnum } from 'qovery-typescript-axios'
+import { type DeploymentHistoryStatusEnum, StateEnum } from 'qovery-typescript-axios'
 import { IconEnum, RunningState } from '@qovery/shared/enums'
 import { upperCaseFirstLetter } from '@qovery/shared/utils'
 import Icon from '../icon/icon'

@@ -1,11 +1,11 @@
-import { Invoice, InvoiceStatusEnum } from 'qovery-typescript-axios'
+import { type Invoice, InvoiceStatusEnum } from 'qovery-typescript-axios'
 import {
   ButtonIcon,
   ButtonIconStyle,
   ButtonSize,
   IconAwesomeEnum,
-  TableFilterProps,
-  TableHeadProps,
+  type TableFilterProps,
+  type TableHeadProps,
   TableRow,
   Tag,
   TagSize,

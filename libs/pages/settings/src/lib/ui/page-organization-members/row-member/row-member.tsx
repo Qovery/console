@@ -1,4 +1,9 @@
-import { InviteMember, InviteMemberRequest, Member, OrganizationAvailableRole } from 'qovery-typescript-axios'
+import {
+  type InviteMember,
+  type InviteMemberRequest,
+  type Member,
+  type OrganizationAvailableRole,
+} from 'qovery-typescript-axios'
 import { useNavigate, useParams } from 'react-router-dom'
 import { MemberRoleEnum } from '@qovery/shared/enums'
 import { SETTINGS_ROLES_URL, SETTINGS_URL } from '@qovery/shared/routes'
@@ -9,10 +14,10 @@ import {
   IconAwesomeEnum,
   LoaderSpinner,
   Menu,
-  MenuData,
-  MenuItemProps,
+  type MenuData,
+  type MenuItemProps,
   Skeleton,
-  TableFilterProps,
+  type TableFilterProps,
   TableRowFilter,
   ToastEnum,
   toast,

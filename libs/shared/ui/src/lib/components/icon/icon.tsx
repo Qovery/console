@@ -1,6 +1,6 @@
 import { IconEnum } from '@qovery/shared/enums'
 import IconFa from '../icon-fa/icon-fa'
-import { IconAwesomeEnum } from './icon-awesome.enum'
+import { type IconAwesomeEnum } from './icon-awesome.enum'
 import BitbucketIcon from './icons-git/bitbucket'
 import { GithubIcon, GithubWhiteIcon } from './icons-git/github'
 import GitlabIcon from './icons-git/gitlab'

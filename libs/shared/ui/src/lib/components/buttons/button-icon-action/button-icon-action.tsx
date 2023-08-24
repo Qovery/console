@@ -1,5 +1,5 @@
 import ButtonIconActionElement, {
-  ButtonIconActionElementProps,
+  type ButtonIconActionElementProps,
 } from './button-icon-action-element/button-icon-action-element'
 
 export interface ButtonIconActionProps {

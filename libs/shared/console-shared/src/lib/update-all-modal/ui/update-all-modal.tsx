@@ -1,5 +1,5 @@
-import { Environment } from 'qovery-typescript-axios'
-import { ApplicationEntity } from '@qovery/shared/interfaces'
+import { type Environment } from 'qovery-typescript-axios'
+import { type ApplicationEntity } from '@qovery/shared/interfaces'
 import {
   Avatar,
   AvatarStyle,

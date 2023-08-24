@@ -10,9 +10,9 @@ import {
   postClusterActionsDeploy,
   selectClusterById,
 } from '@qovery/domains/organization'
-import { AdvancedSettings, ClusterEntity, LoadingStatus } from '@qovery/shared/interfaces'
+import { type AdvancedSettings, type ClusterEntity, type LoadingStatus } from '@qovery/shared/interfaces'
 import { objectFlattener } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/state/store'
+import { type AppDispatch, type RootState } from '@qovery/state/store'
 import PageSettingsAdvanced from '../../ui/page-settings-advanced/page-settings-advanced'
 import { initFormValues } from './init-form-values/init-form-values'
 

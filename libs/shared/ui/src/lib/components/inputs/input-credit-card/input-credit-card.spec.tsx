@@ -1,5 +1,5 @@
 import { act, fireEvent, getByDisplayValue, getByTestId, render, screen } from '__tests__/utils/setup-jest'
-import InputCreditCard, { InputCreditCardProps } from './input-credit-card'
+import InputCreditCard, { type InputCreditCardProps } from './input-credit-card'
 
 describe('InputCreditCard', () => {
   let props: InputCreditCardProps

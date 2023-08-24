@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { editProject, selectProjectById } from '@qovery/domains/projects'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/state/store'
+import { type AppDispatch, type RootState } from '@qovery/state/store'
 import PageProjectGeneral from '../../ui/page-project-general/page-project-general'
 
 export function PageProjectGeneralFeature() {

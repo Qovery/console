@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from '__tests__/utils/setup-jest'
-import InputText, { InputTextProps } from './input-text'
+import InputText, { type InputTextProps } from './input-text'
 
 describe('InputText', () => {
   let props: InputTextProps

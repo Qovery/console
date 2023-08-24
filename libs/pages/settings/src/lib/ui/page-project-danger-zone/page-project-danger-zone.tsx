@@ -1,4 +1,4 @@
-import { EnvironmentModeEnum, Project } from 'qovery-typescript-axios'
+import { EnvironmentModeEnum, type Project } from 'qovery-typescript-axios'
 import { BlockContentDelete, HelpSection, IconAwesomeEnum } from '@qovery/shared/ui'
 
 export interface PageProjectDangerZoneProps {

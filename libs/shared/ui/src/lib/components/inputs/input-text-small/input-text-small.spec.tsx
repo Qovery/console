@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from '__tests__/utils/setup-jest'
-import InputTextSmall, { InputTextSmallProps } from './input-text-small'
+import InputTextSmall, { type InputTextSmallProps } from './input-text-small'
 
 describe('InputTextSmall', () => {
   let props: InputTextSmallProps

@@ -2,11 +2,11 @@ import { act, fireEvent, getByLabelText, getByText, render } from '__tests__/uti
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import {
   EnvironmentModeEnum,
-  OrganizationWebhookCreateRequest,
+  type OrganizationWebhookCreateRequest,
   OrganizationWebhookEventEnum,
   OrganizationWebhookKindEnum,
 } from 'qovery-typescript-axios'
-import WebhookCrudModal, { WebhookCrudModalProps } from './webhook-crud-modal'
+import WebhookCrudModal, { type WebhookCrudModalProps } from './webhook-crud-modal'
 
 const props: WebhookCrudModalProps = {
   onSubmit: jest.fn((e) => e.preventDefault()),

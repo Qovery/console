@@ -1,6 +1,6 @@
 import { render } from '__tests__/utils/setup-jest'
 import { createElement } from 'react'
-import Container, { ContainerProps } from './container'
+import Container, { type ContainerProps } from './container'
 
 describe('Container', () => {
   let props: ContainerProps

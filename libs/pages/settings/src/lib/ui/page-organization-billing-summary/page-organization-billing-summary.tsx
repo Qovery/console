@@ -1,6 +1,6 @@
 import { PlanEnum } from 'qovery-typescript-axios'
-import { CardImages } from 'react-payment-inputs/images'
-import { CreditCard, OrganizationEntity } from '@qovery/shared/interfaces'
+import { type CardImages } from 'react-payment-inputs/images'
+import { type CreditCard, type OrganizationEntity } from '@qovery/shared/interfaces'
 import { CLUSTERS_URL, SETTINGS_BILLING_URL, SETTINGS_URL } from '@qovery/shared/routes'
 import { Button, ButtonStyle, HelpSection, Link, Skeleton, imagesCreditCart } from '@qovery/shared/ui'
 import { costToHuman, dateToFormat, upperCaseFirstLetter } from '@qovery/shared/utils'

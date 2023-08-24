@@ -1,6 +1,6 @@
-import { Cluster } from 'qovery-typescript-axios'
+import { type Cluster } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
-import { Value } from '@qovery/shared/interfaces'
+import { type Value } from '@qovery/shared/interfaces'
 import { BlockContent, Button, ButtonSize, ButtonStyle, HelpSection, InputSelect, InputText } from '@qovery/shared/ui'
 import { environmentModeValues } from '@qovery/shared/utils'
 

@@ -1,4 +1,4 @@
-import { Project } from 'qovery-typescript-axios'
+import { type Project } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Navigate, useParams } from 'react-router-dom'
@@ -6,7 +6,7 @@ import { fetchOrganization, selectAllOrganization } from '@qovery/domains/organi
 import { fetchProjects } from '@qovery/domains/projects'
 import { OVERVIEW_URL, SETTINGS_GENERAL_URL, SETTINGS_URL } from '@qovery/shared/routes'
 import { LoadingScreen, ToastEnum, toast } from '@qovery/shared/ui'
-import { AppDispatch } from '@qovery/state/store'
+import { type AppDispatch } from '@qovery/state/store'
 
 export function RedirectOverview() {
   const { organizationId = '' } = useParams()

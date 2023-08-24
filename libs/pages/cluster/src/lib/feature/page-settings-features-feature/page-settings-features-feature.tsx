@@ -1,8 +1,8 @@
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { selectClusterById, selectClustersLoadingStatus } from '@qovery/domains/organization'
-import { ClusterEntity } from '@qovery/shared/interfaces'
-import { RootState } from '@qovery/state/store'
+import { type ClusterEntity } from '@qovery/shared/interfaces'
+import { type RootState } from '@qovery/state/store'
 import PageSettingsFeatures from '../../ui/page-settings-features/page-settings-features'
 
 export function PageSettingsFeaturesFeature() {

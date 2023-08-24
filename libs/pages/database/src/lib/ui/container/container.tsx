@@ -1,4 +1,4 @@
-import { Environment, ServiceDeploymentStatusEnum } from 'qovery-typescript-axios'
+import { type Environment, ServiceDeploymentStatusEnum } from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useLocation, useParams } from 'react-router-dom'
@@ -7,7 +7,7 @@ import { selectClusterById } from '@qovery/domains/organization'
 import { ServiceStateChip, useDeploymentStatus } from '@qovery/domains/services/feature'
 import { DatabaseButtonsActions, NeedRedeployFlag } from '@qovery/shared/console-shared'
 import { IconEnum } from '@qovery/shared/enums'
-import { ClusterEntity, DatabaseEntity } from '@qovery/shared/interfaces'
+import { type ClusterEntity, type DatabaseEntity } from '@qovery/shared/interfaces'
 import {
   DATABASE_DEPLOYMENTS_URL,
   DATABASE_GENERAL_URL,
@@ -15,7 +15,7 @@ import {
   DATABASE_URL,
 } from '@qovery/shared/routes'
 import { Header, Icon, Skeleton, Tabs, Tag, TagMode, TagSize } from '@qovery/shared/ui'
-import { AppDispatch, RootState } from '@qovery/state/store'
+import { type AppDispatch, type RootState } from '@qovery/state/store'
 
 export interface ContainerProps {
   database?: DatabaseEntity

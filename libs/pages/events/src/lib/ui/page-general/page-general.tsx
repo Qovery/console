@@ -1,13 +1,13 @@
-import { OrganizationEventOrigin, OrganizationEventResponse, OrganizationEventType } from 'qovery-typescript-axios'
-import { Dispatch, SetStateAction } from 'react'
+import { OrganizationEventOrigin, type OrganizationEventResponse, OrganizationEventType } from 'qovery-typescript-axios'
+import { type Dispatch, type SetStateAction } from 'react'
 import {
   HelpSection,
   Icon,
   IconAwesomeEnum,
   Pagination,
   Table,
-  TableFilterProps,
-  TableHeadProps,
+  type TableFilterProps,
+  type TableHeadProps,
 } from '@qovery/shared/ui'
 import CustomFilterFeature from '../../feature/custom-filter-feature/custom-filter-feature'
 import RowEventFeature from '../../feature/row-event-feature/row-event-feature'

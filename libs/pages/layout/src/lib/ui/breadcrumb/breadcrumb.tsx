@@ -1,11 +1,11 @@
 import equal from 'fast-deep-equal'
-import { Cluster, Database, Environment, Organization, Project } from 'qovery-typescript-axios'
+import { type Cluster, type Database, type Environment, type Organization, type Project } from 'qovery-typescript-axios'
 import { memo, useEffect } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { EnvironmentStateChip } from '@qovery/domains/environments/feature'
 import { ServiceStateChip } from '@qovery/domains/services/feature'
 import { IconEnum } from '@qovery/shared/enums'
-import { ApplicationEntity, ClusterEntity, DatabaseEntity } from '@qovery/shared/interfaces'
+import { type ApplicationEntity, type ClusterEntity, type DatabaseEntity } from '@qovery/shared/interfaces'
 import {
   APPLICATION_GENERAL_URL,
   APPLICATION_URL,
@@ -28,7 +28,7 @@ import {
   Icon,
   IconAwesomeEnum,
   type MenuData,
-  MenuItemProps,
+  type MenuItemProps,
   Tooltip,
 } from '@qovery/shared/ui'
 import BreadcrumbItem from '../breadcrumb-item/breadcrumb-item'

@@ -1,4 +1,4 @@
-import { PortProtocolEnum, Probe } from 'qovery-typescript-axios'
+import { type PortProtocolEnum, type Probe } from 'qovery-typescript-axios'
 
 export interface PortData {
   application_port?: number

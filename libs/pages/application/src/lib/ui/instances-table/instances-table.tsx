@@ -1,4 +1,4 @@
-import { Instance } from 'qovery-typescript-axios'
+import { type Instance } from 'qovery-typescript-axios'
 
 export interface InstancesTableProps {
   instances?: Instance[]

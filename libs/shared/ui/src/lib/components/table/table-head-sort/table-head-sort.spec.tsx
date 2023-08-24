@@ -1,7 +1,7 @@
 import { act, fireEvent, render, screen } from '__tests__/utils/setup-jest'
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { environmentFactoryMock } from '@qovery/shared/factories'
-import TableHeadSort, { TableHeadSortProps, sortTable } from './table-head-sort'
+import TableHeadSort, { type TableHeadSortProps, sortTable } from './table-head-sort'
 
 describe('TableHeadSort', () => {
   let props: TableHeadSortProps

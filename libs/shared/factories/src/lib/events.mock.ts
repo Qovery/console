@@ -1,7 +1,7 @@
 import { Chance } from 'chance'
 import {
   OrganizationEventOrigin,
-  OrganizationEventResponse,
+  type OrganizationEventResponse,
   OrganizationEventSubTargetType,
   OrganizationEventTargetType,
   OrganizationEventType,

@@ -1,4 +1,4 @@
-import { Dictionary } from '@reduxjs/toolkit'
+import { type Dictionary } from '@reduxjs/toolkit'
 import { addOneToManyRelation, getEntitiesByIds, removeOneToManyRelation } from './one-to-many-redux-helpers'
 
 describe('add a one-to-many relation to a collection', () => {

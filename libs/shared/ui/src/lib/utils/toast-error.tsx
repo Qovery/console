@@ -1,4 +1,4 @@
-import { SerializedError } from '@reduxjs/toolkit'
+import { type SerializedError } from '@reduxjs/toolkit'
 import toast, { ToastEnum } from './toast'
 
 export function toastError(error: SerializedError | Error, title?: string, message?: string): void {

@@ -3,8 +3,8 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
 import { addCreditCard } from '@qovery/domains/organization'
 import { useModal } from '@qovery/shared/ui'
-import { AppDispatch } from '@qovery/state/store'
-import { CreditCardFormValues } from '../../credit-card-form/ui/credit-card-form'
+import { type AppDispatch } from '@qovery/state/store'
+import { type CreditCardFormValues } from '../../credit-card-form/ui/credit-card-form'
 import AddCreditCardModal from '../ui/add-credit-card-modal'
 
 export interface AddCreditCardModalFeatureProps {

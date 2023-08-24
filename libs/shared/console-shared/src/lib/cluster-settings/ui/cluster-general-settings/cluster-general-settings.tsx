@@ -1,5 +1,5 @@
 import { Controller, useFormContext } from 'react-hook-form'
-import { ClusterGeneralData } from '@qovery/shared/interfaces'
+import { type ClusterGeneralData } from '@qovery/shared/interfaces'
 import { InputText, InputTextArea, InputToggle } from '@qovery/shared/ui'
 
 export interface ClusterGeneralSettingsProps {

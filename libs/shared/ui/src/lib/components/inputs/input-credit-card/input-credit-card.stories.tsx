@@ -1,5 +1,5 @@
-import { Meta, Story } from '@storybook/react'
-import InputCreditCard, { InputCreditCardProps } from './input-credit-card'
+import { type Meta, type Story } from '@storybook/react'
+import InputCreditCard, { type InputCreditCardProps } from './input-credit-card'
 
 export default {
   component: InputCreditCard,

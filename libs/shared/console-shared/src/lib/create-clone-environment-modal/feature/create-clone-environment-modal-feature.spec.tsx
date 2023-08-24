@@ -4,7 +4,7 @@ import selectEvent from 'react-select-event'
 import * as environmentDomains from '@qovery/domains/environment'
 import { clusterFactoryMock, environmentFactoryMock } from '@qovery/shared/factories'
 import CreateCloneEnvironmentModalFeature, {
-  CreateCloneEnvironmentModalFeatureProps,
+  type CreateCloneEnvironmentModalFeatureProps,
 } from './create-clone-environment-modal-feature'
 
 let props: CreateCloneEnvironmentModalFeatureProps

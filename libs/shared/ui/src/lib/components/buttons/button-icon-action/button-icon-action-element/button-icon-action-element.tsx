@@ -1,5 +1,5 @@
 import { type ReactNode, useState } from 'react'
-import { Menu, MenuAlign, MenuData } from '../../../menu/menu'
+import { Menu, MenuAlign, type MenuData } from '../../../menu/menu'
 import Tooltip from '../../../tooltip/tooltip'
 
 export interface ButtonIconActionElementProps {

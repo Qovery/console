@@ -1,5 +1,5 @@
 import { Chance } from 'chance'
-import { ServiceDeploymentStatusEnum, StateEnum, Status } from 'qovery-typescript-axios'
+import { ServiceDeploymentStatusEnum, StateEnum, type Status } from 'qovery-typescript-axios'
 
 const chance = new Chance('123')
 

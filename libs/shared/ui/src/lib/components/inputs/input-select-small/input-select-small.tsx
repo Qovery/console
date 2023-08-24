@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Value } from '@qovery/shared/interfaces'
+import { type Value } from '@qovery/shared/interfaces'
 import Icon from '../../icon/icon'
 
 export interface InputSelectSmallProps {

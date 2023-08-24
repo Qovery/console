@@ -1,11 +1,11 @@
-import { InviteMember } from 'qovery-typescript-axios'
+import { type InviteMember } from 'qovery-typescript-axios'
 import { useCallback, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { fetchOrganization } from '@qovery/domains/organization'
 import { acceptMembershipInvitation, fetchMemberInvitation } from '@qovery/domains/user'
 import { ACCEPT_INVITATION_URL, LOGIN_URL, LOGOUT_URL } from '@qovery/shared/routes'
-import { AppDispatch } from '@qovery/state/store'
+import { type AppDispatch } from '@qovery/state/store'
 import useAuth from '../use-auth/use-auth'
 
 export function useInviteMember() {

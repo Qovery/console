@@ -3,7 +3,7 @@ import { DatabaseModeEnum, ServiceDeploymentStatusEnum, StateEnum } from 'qovery
 import * as domainsServicesFeature from '@qovery/domains/services/feature'
 import { RunningState } from '@qovery/shared/enums'
 import { databaseFactoryMock } from '@qovery/shared/factories'
-import { DatabaseButtonsActions, DatabaseButtonsActionsProps } from './database-buttons-actions'
+import { DatabaseButtonsActions, type DatabaseButtonsActionsProps } from './database-buttons-actions'
 
 const mockDatabase = databaseFactoryMock(1)[0]
 const props: DatabaseButtonsActionsProps = {

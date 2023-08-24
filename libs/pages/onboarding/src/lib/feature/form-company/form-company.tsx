@@ -1,12 +1,12 @@
-import { CompanySizeEnum } from 'qovery-typescript-axios'
-import { Dispatch, SetStateAction, useEffect } from 'react'
+import { type CompanySizeEnum } from 'qovery-typescript-axios'
+import { type Dispatch, type SetStateAction, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { postUserSignUp, selectUserSignUp } from '@qovery/domains/user'
-import { Value } from '@qovery/shared/interfaces'
+import { type Value } from '@qovery/shared/interfaces'
 import { ONBOARDING_MORE_URL, ONBOARDING_URL } from '@qovery/shared/routes'
-import { AppDispatch } from '@qovery/state/store'
+import { type AppDispatch } from '@qovery/state/store'
 import { StepCompany } from '../../ui/step-company/step-company'
 
 const dataSize: Value[] = [

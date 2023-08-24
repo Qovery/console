@@ -1,7 +1,7 @@
 import { act, render } from '__tests__/utils/setup-jest'
 import { CustomDomainStatusEnum } from 'qovery-typescript-axios'
 import { applicationFactoryMock } from '@qovery/shared/factories'
-import CrudModalFeature, { CrudModalFeatureProps } from './crud-modal-feature'
+import CrudModalFeature, { type CrudModalFeatureProps } from './crud-modal-feature'
 
 const props: CrudModalFeatureProps = {
   customDomain: {

@@ -1,7 +1,7 @@
 import { getByDisplayValue, render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import { ClusterRemoteData } from '@qovery/shared/interfaces'
-import ClusterRemoteSettings, { ClusterRemoteSettingsProps } from './cluster-remote-settings'
+import { type ClusterRemoteData } from '@qovery/shared/interfaces'
+import ClusterRemoteSettings, { type ClusterRemoteSettingsProps } from './cluster-remote-settings'
 
 describe('ClusterRemoteSettings', () => {
   let defaultValues: ClusterRemoteData

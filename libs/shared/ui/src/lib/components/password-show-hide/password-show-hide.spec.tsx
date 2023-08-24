@@ -1,5 +1,5 @@
 import { act, render, screen } from '__tests__/utils/setup-jest'
-import PasswordShowHide, { PasswordShowHideProps } from './password-show-hide'
+import PasswordShowHide, { type PasswordShowHideProps } from './password-show-hide'
 
 const defaultProps: PasswordShowHideProps = {
   value: 'test value',

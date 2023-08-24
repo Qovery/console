@@ -6,7 +6,7 @@ import {
   CLUSTERS_CREATION_SUMMARY_URL,
   CLUSTERS_CREATION_URL,
   CLUSTERS_GENERAL_URL,
-  Route,
+  type Route,
 } from '@qovery/shared/routes'
 import { PageClusterCreateFeature } from '../feature/page-clusters-create-feature/page-clusters-create-feature'
 import StepFeaturesFeature from '../feature/page-clusters-create-feature/step-features-feature/step-features-feature'

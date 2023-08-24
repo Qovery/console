@@ -1,11 +1,11 @@
-import { OrganizationCustomRole } from 'qovery-typescript-axios'
+import { type OrganizationCustomRole } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { deleteCustomRole, fetchAvailableRoles, selectOrganizationById } from '@qovery/domains/organization'
 import { useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/state/store'
+import { type AppDispatch, type RootState } from '@qovery/state/store'
 import PageOrganizationRoles from '../../ui/page-organization-roles/page-organization-roles'
 import CreateModalFeature from './create-modal-feature/create-modal-feature'
 

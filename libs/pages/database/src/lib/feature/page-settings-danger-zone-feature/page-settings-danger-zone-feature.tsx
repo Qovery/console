@@ -2,9 +2,9 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { deleteDatabaseAction, selectDatabaseById } from '@qovery/domains/database'
 import { useFetchEnvironment } from '@qovery/domains/environment'
-import { DatabaseEntity } from '@qovery/shared/interfaces'
+import { type DatabaseEntity } from '@qovery/shared/interfaces'
 import { SERVICES_GENERAL_URL, SERVICES_URL } from '@qovery/shared/routes'
-import { AppDispatch, RootState } from '@qovery/state/store'
+import { type AppDispatch, type RootState } from '@qovery/state/store'
 import PageSettingsDangerZone from '../../ui/page-settings-danger-zone/page-settings-danger-zone'
 
 export function PageSettingsDangerZoneFeature() {

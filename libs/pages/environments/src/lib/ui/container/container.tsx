@@ -1,4 +1,4 @@
-import { Project } from 'qovery-typescript-axios'
+import { type Project } from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
 import { CreateCloneEnvironmentModalFeature } from '@qovery/shared/console-shared'

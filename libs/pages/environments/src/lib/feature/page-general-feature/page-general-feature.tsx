@@ -1,13 +1,13 @@
-import { Cluster, type Environment } from 'qovery-typescript-axios'
+import { type Cluster, type Environment } from 'qovery-typescript-axios'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { useFetchEnvironments } from '@qovery/domains/environment'
 import { useListStatuses } from '@qovery/domains/environments/feature'
 import { selectClustersEntitiesByOrganizationId } from '@qovery/domains/organization'
 import { environmentFactoryMock } from '@qovery/shared/factories'
-import { BaseLink } from '@qovery/shared/ui'
+import { type BaseLink } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import { RootState } from '@qovery/state/store'
+import { type RootState } from '@qovery/state/store'
 import { PageGeneral } from '../../ui/page-general/page-general'
 
 export function PageGeneralFeature() {

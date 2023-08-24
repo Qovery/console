@@ -1,6 +1,6 @@
 import { getByLabelText, render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import CreditCardForm, { CreditCardFormValues } from './credit-card-form'
+import CreditCardForm, { type CreditCardFormValues } from './credit-card-form'
 
 describe('CreditCardForm', () => {
   it('should render successfully', () => {

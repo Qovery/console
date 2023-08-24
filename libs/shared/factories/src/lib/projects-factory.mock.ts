@@ -1,5 +1,5 @@
 import { Chance } from 'chance'
-import { Project } from 'qovery-typescript-axios'
+import { type Project } from 'qovery-typescript-axios'
 
 const chance = new Chance('123')
 

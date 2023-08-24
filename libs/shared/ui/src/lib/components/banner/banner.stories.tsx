@@ -1,4 +1,4 @@
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { type ComponentMeta, type ComponentStory } from '@storybook/react'
 import { IconAwesomeEnum } from '../icon/icon-awesome.enum'
 import { Banner, BannerStyle } from './banner'
 

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { FieldError } from 'react-hook-form'
+import { type FieldError } from 'react-hook-form'
 import { MemorySizeEnum } from '@qovery/shared/enums'
 import { convertMemory } from '@qovery/shared/utils'
 import InputSelect from '../input-select/input-select'

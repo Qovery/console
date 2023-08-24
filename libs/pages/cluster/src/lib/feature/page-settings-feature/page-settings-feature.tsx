@@ -2,7 +2,7 @@ import { CloudProviderEnum, KubernetesEnum } from 'qovery-typescript-axios'
 import { useSelector } from 'react-redux'
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
 import { selectClusterById } from '@qovery/domains/organization'
-import { ClusterEntity } from '@qovery/shared/interfaces'
+import { type ClusterEntity } from '@qovery/shared/interfaces'
 import {
   CLUSTER_SETTINGS_ADVANCED_SETTINGS_URL,
   CLUSTER_SETTINGS_CREDENTIALS_URL,
@@ -17,7 +17,7 @@ import {
 } from '@qovery/shared/routes'
 import { IconAwesomeEnum } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import { RootState } from '@qovery/state/store'
+import { type RootState } from '@qovery/state/store'
 import { ROUTER_CLUSTER_SETTINGS } from '../../router/router'
 import PageSettings from '../../ui/page-settings/page-settings'
 

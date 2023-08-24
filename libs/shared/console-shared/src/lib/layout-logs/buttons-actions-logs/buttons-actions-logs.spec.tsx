@@ -1,6 +1,6 @@
 import { act, render } from '__tests__/utils/setup-jest'
-import { RefObject } from 'react'
-import ButtonsActionsLogs, { ButtonsActionsLogsProps } from './buttons-actions-logs'
+import { type RefObject } from 'react'
+import ButtonsActionsLogs, { type ButtonsActionsLogsProps } from './buttons-actions-logs'
 
 window.HTMLElement.prototype.scroll = function () {}
 

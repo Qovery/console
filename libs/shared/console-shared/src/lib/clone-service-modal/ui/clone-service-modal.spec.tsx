@@ -6,7 +6,7 @@ import {
   projectsFactoryMock,
 } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import CloneEnvironmentModal, { CloneServiceModalProps } from './clone-service-modal'
+import CloneEnvironmentModal, { type CloneServiceModalProps } from './clone-service-modal'
 
 const mockProjects = projectsFactoryMock(3)
 const mockEnvironments = environmentFactoryMock(3)

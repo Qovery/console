@@ -11,7 +11,7 @@ import {
 import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import StepResources from '../../../ui/page-database-create/step-resources/step-resources'
-import { ResourcesData } from '../database-creation-flow.interface'
+import { type ResourcesData } from '../database-creation-flow.interface'
 import { useDatabaseCreateContext } from '../page-database-create-feature'
 
 export function StepResourcesFeature() {

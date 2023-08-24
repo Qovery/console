@@ -1,6 +1,11 @@
 import { BuildModeEnum } from 'qovery-typescript-axios'
-import { JobType, ServiceTypeEnum, isCronJob } from '@qovery/shared/enums'
-import { FlowVariableData, JobConfigureData, JobGeneralData, JobResourcesData } from '@qovery/shared/interfaces'
+import { type JobType, ServiceTypeEnum, isCronJob } from '@qovery/shared/enums'
+import {
+  type FlowVariableData,
+  type JobConfigureData,
+  type JobGeneralData,
+  type JobResourcesData,
+} from '@qovery/shared/interfaces'
 import { Button, ButtonIcon, ButtonIconStyle, ButtonSize, ButtonStyle, Icon, IconAwesomeEnum } from '@qovery/shared/ui'
 
 export interface StepSummaryProps {

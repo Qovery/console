@@ -1,7 +1,7 @@
-import { DeploymentHistoryEnvironment } from 'qovery-typescript-axios'
+import { type DeploymentHistoryEnvironment } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { DEPLOYMENT_LOGS_VERSION_URL } from '@qovery/shared/routes'
-import { Icon, IconAwesomeEnum, Menu, MenuAlign, MenuData, StatusChip, Tooltip } from '@qovery/shared/ui'
+import { Icon, IconAwesomeEnum, Menu, MenuAlign, type MenuData, StatusChip, Tooltip } from '@qovery/shared/ui'
 import { dateFullFormat, trimId } from '@qovery/shared/utils'
 
 export interface SidebarHistoryProps {

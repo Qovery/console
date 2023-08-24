@@ -1,10 +1,10 @@
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import {
-  ApplicationEntity,
-  ContainerApplicationEntity,
-  DatabaseEntity,
-  GitApplicationEntity,
-  JobApplicationEntity,
+  type ApplicationEntity,
+  type ContainerApplicationEntity,
+  type DatabaseEntity,
+  type GitApplicationEntity,
+  type JobApplicationEntity,
 } from '@qovery/shared/interfaces'
 import { ServiceTypeEnum } from '../service-type.enum'
 

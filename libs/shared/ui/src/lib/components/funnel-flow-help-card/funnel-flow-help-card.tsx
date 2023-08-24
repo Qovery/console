@@ -1,5 +1,5 @@
 import { IconEnum } from '@qovery/shared/enums'
-import { HelpSection, HelpSectionProps } from '../help-section/help-section'
+import { HelpSection, type HelpSectionProps } from '../help-section/help-section'
 import Icon from '../icon/icon'
 
 export interface FunnelFlowHelpCardProps {

@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from '__tests__/utils/setup-jest'
-import InputSearch, { InputSearchProps } from './input-search'
+import InputSearch, { type InputSearchProps } from './input-search'
 
 let props: InputSearchProps
 

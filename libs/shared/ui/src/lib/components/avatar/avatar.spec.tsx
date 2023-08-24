@@ -1,6 +1,6 @@
 import { render, screen } from '__tests__/utils/setup-jest'
 import { IconEnum } from '@qovery/shared/enums'
-import { Avatar, AvatarProps } from './avatar'
+import { Avatar, type AvatarProps } from './avatar'
 
 let props: AvatarProps
 

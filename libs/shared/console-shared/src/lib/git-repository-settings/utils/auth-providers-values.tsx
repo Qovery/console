@@ -1,4 +1,4 @@
-import { GitAuthProvider } from 'qovery-typescript-axios'
+import { type GitAuthProvider } from 'qovery-typescript-axios'
 import { Icon } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/utils'
 

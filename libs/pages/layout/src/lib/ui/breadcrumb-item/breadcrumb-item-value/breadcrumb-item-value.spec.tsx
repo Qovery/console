@@ -1,5 +1,5 @@
 import { getByTestId, getByText, render } from '__tests__/utils/setup-jest'
-import BreadcrumbItemValue, { BreadcrumbItemValueProps } from './breadcrumb-item-value'
+import BreadcrumbItemValue, { type BreadcrumbItemValueProps } from './breadcrumb-item-value'
 
 const props: BreadcrumbItemValueProps = {
   name: 'Test',

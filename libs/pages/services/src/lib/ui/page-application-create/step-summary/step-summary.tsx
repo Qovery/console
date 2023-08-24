@@ -1,6 +1,10 @@
 import { BuildModeEnum } from 'qovery-typescript-axios'
 import { ProbeTypeEnum, isApplication, isContainer } from '@qovery/shared/enums'
-import { ApplicationGeneralData, ApplicationResourcesData, FlowPortData } from '@qovery/shared/interfaces'
+import {
+  type ApplicationGeneralData,
+  type ApplicationResourcesData,
+  type FlowPortData,
+} from '@qovery/shared/interfaces'
 import { Button, ButtonIcon, ButtonIconStyle, ButtonSize, ButtonStyle, Icon, IconAwesomeEnum } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/utils'
 

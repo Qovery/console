@@ -1,7 +1,7 @@
-import { CompanySizeEnum } from 'qovery-typescript-axios'
-import { Dispatch, SetStateAction } from 'react'
-import { Control, Controller } from 'react-hook-form'
-import { Value } from '@qovery/shared/interfaces'
+import { type CompanySizeEnum } from 'qovery-typescript-axios'
+import { type Dispatch, type SetStateAction } from 'react'
+import { type Control, Controller } from 'react-hook-form'
+import { type Value } from '@qovery/shared/interfaces'
 import { Button, ButtonSize, ButtonStyle, InputSelect, InputText } from '@qovery/shared/ui'
 
 export interface StepCompanyProps {

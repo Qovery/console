@@ -1,23 +1,23 @@
 import {
-  ApplicationEditRequest,
-  ApplicationGitRepositoryRequest,
+  type ApplicationEditRequest,
+  type ApplicationGitRepositoryRequest,
   CloudProviderEnum,
-  ClusterRequest,
-  DatabaseEditRequest,
+  type ClusterRequest,
+  type DatabaseEditRequest,
   DatabaseModeEnum,
-  JobRequest,
-  Organization,
-  OrganizationCustomRole,
-  OrganizationCustomRoleUpdateRequest,
-  OrganizationEditRequest,
-  ServiceStorageStorage,
+  type JobRequest,
+  type Organization,
+  type OrganizationCustomRole,
+  type OrganizationCustomRoleUpdateRequest,
+  type OrganizationEditRequest,
+  type ServiceStorageStorage,
 } from 'qovery-typescript-axios'
 import {
-  ClusterEntity,
-  ContainerApplicationEntity,
-  DatabaseEntity,
-  GitApplicationEntity,
-  JobApplicationEntity,
+  type ClusterEntity,
+  type ContainerApplicationEntity,
+  type DatabaseEntity,
+  type GitApplicationEntity,
+  type JobApplicationEntity,
 } from '@qovery/shared/interfaces'
 
 export function refactoPayload<T extends { id?: string; created_at?: string; updated_at?: string }>(

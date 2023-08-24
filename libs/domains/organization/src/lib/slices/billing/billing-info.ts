@@ -1,6 +1,6 @@
-import { ActionReducerMapBuilder, Update, createAsyncThunk } from '@reduxjs/toolkit'
-import { BillingApi, BillingInfoRequest } from 'qovery-typescript-axios'
-import { OrganizationEntity, OrganizationState } from '@qovery/shared/interfaces'
+import { type ActionReducerMapBuilder, type Update, createAsyncThunk } from '@reduxjs/toolkit'
+import { BillingApi, type BillingInfoRequest } from 'qovery-typescript-axios'
+import { type OrganizationEntity, type OrganizationState } from '@qovery/shared/interfaces'
 import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
 import { organizationAdapter } from '../organization/organization.slice'
 

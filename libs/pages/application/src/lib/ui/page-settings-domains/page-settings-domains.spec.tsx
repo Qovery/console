@@ -9,7 +9,7 @@ import {
 } from '__tests__/utils/setup-jest'
 import { CustomDomainStatusEnum } from 'qovery-typescript-axios'
 import { applicationFactoryMock } from '@qovery/shared/factories'
-import { PageSettingsDomains, PageSettingsDomainsProps } from './page-settings-domains'
+import { PageSettingsDomains, type PageSettingsDomainsProps } from './page-settings-domains'
 
 let props: PageSettingsDomainsProps
 

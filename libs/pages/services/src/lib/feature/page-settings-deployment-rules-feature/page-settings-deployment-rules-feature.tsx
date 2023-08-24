@@ -1,6 +1,6 @@
-import { EnvironmentDeploymentRule } from 'qovery-typescript-axios'
+import { type EnvironmentDeploymentRule } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
-import { FieldValues, FormProvider, useForm } from 'react-hook-form'
+import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { useEditEnvironmentDeploymentRule, useFetchEnvironmentDeploymentRule } from '@qovery/domains/environment'
 import { dateToHours } from '@qovery/shared/utils'

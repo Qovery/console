@@ -1,6 +1,6 @@
-import { Environment, Project } from 'qovery-typescript-axios'
+import { type Environment, type Project } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
-import { ApplicationEntity, DatabaseEntity } from '@qovery/shared/interfaces'
+import { type ApplicationEntity, type DatabaseEntity } from '@qovery/shared/interfaces'
 import { InputSelect, InputText, LoaderSpinner, ModalCrud } from '@qovery/shared/ui'
 
 export interface CloneServiceModalProps {

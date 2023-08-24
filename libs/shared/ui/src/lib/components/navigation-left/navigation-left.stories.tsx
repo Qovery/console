@@ -1,5 +1,5 @@
-import { Meta, Story } from '@storybook/react'
-import { NavigationLeft, NavigationLeftProps } from './navigation-left'
+import { type Meta, type Story } from '@storybook/react'
+import { NavigationLeft, type NavigationLeftProps } from './navigation-left'
 
 export default {
   component: NavigationLeft,

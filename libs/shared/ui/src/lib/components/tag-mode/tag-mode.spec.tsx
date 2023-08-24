@@ -1,7 +1,6 @@
-import { EnvironmentModeEnum } from 'qovery-typescript-axios'
 import { render } from '__tests__/utils/setup-jest'
-
-import TagMode, { TagModeProps } from './tag-mode'
+import { EnvironmentModeEnum } from 'qovery-typescript-axios'
+import TagMode, { type TagModeProps } from './tag-mode'
 
 describe('TagMode', () => {
   const props: TagModeProps = {

@@ -1,5 +1,5 @@
 import { APIVariableScopeEnum } from 'qovery-typescript-axios'
-import { EnvironmentVariableEntity, EnvironmentVariableSecretOrPublic } from '@qovery/shared/interfaces'
+import { type EnvironmentVariableEntity, type EnvironmentVariableSecretOrPublic } from '@qovery/shared/interfaces'
 
 export function sortVariable(
   variables: EnvironmentVariableSecretOrPublic[],

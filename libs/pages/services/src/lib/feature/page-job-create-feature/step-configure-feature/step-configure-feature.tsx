@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
-import { JobConfigureData } from '@qovery/shared/interfaces'
+import { type JobConfigureData } from '@qovery/shared/interfaces'
 import {
   SERVICES_JOB_CREATION_GENERAL_URL,
   SERVICES_JOB_CREATION_RESOURCES_URL,

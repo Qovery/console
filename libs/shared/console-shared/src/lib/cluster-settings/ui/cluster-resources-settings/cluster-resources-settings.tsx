@@ -2,7 +2,7 @@ import { CloudProviderEnum, KubernetesEnum } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { IconEnum } from '@qovery/shared/enums'
-import { ClusterResourcesData, Value } from '@qovery/shared/interfaces'
+import { type ClusterResourcesData, type Value } from '@qovery/shared/interfaces'
 import {
   BannerBox,
   BannerBoxEnum,

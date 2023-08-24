@@ -1,9 +1,9 @@
 import { act, getAllByTestId, getByTestId, getByText, queryByTestId, render } from '__tests__/utils/setup-jest'
-import { OrganizationEventResponse } from 'qovery-typescript-axios'
+import { type OrganizationEventResponse } from 'qovery-typescript-axios'
 import { eventsFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { dateYearMonthDayHourMinuteSecond, upperCaseFirstLetter } from '@qovery/shared/utils'
-import RowEvent, { RowEventProps } from './row-event'
+import RowEvent, { type RowEventProps } from './row-event'
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),

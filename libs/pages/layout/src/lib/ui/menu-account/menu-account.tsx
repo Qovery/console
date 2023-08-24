@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom'
-import { OrganizationEntity } from '@qovery/shared/interfaces'
+import { type OrganizationEntity } from '@qovery/shared/interfaces'
 import { LOGOUT_URL, ONBOARDING_PROJECT_URL, ONBOARDING_URL, ORGANIZATION_URL, USER_URL } from '@qovery/shared/routes'
-import { Avatar, Icon, IconAwesomeEnum, Menu, MenuAlign, MenuData, MenuDirection } from '@qovery/shared/ui'
+import { Avatar, Icon, IconAwesomeEnum, Menu, MenuAlign, type MenuData, MenuDirection } from '@qovery/shared/ui'
 
 export interface MenuAccountProps {
   organizations: OrganizationEntity[]

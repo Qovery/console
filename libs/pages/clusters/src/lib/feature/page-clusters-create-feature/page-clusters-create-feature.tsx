@@ -2,10 +2,10 @@ import { CloudProviderEnum, KubernetesEnum } from 'qovery-typescript-axios'
 import { createContext, useContext, useState } from 'react'
 import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
 import {
-  ClusterFeaturesData,
-  ClusterGeneralData,
-  ClusterRemoteData,
-  ClusterResourcesData,
+  type ClusterFeaturesData,
+  type ClusterGeneralData,
+  type ClusterRemoteData,
+  type ClusterResourcesData,
 } from '@qovery/shared/interfaces'
 import { CLUSTERS_CREATION_GENERAL_URL, CLUSTERS_CREATION_URL, CLUSTERS_URL } from '@qovery/shared/routes'
 import { FunnelFlow } from '@qovery/shared/ui'

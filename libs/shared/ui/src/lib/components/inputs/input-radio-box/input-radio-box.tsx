@@ -1,4 +1,4 @@
-import { FormEvent, type ReactNode } from 'react'
+import { type FormEvent, type ReactNode } from 'react'
 import InputRadio from '../input-radio/input-radio'
 
 export interface InputRadioBoxProps {

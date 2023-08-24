@@ -1,7 +1,7 @@
-import { PlanEnum } from 'qovery-typescript-axios'
+import { type PlanEnum } from 'qovery-typescript-axios'
 import { ONBOARDING_PROJECT_URL, ONBOARDING_URL } from '@qovery/shared/routes'
 import { Button, ButtonSize, ButtonStyle, Icon } from '@qovery/shared/ui'
-import { OrganizationPlan } from '../../feature/onboarding-pricing/onboarding-pricing'
+import { type OrganizationPlan } from '../../feature/onboarding-pricing/onboarding-pricing'
 import PlanCard from '../plan-card/plan-card'
 
 export interface StepPricingProps {

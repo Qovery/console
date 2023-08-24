@@ -1,12 +1,12 @@
 import {
-  Credentials,
-  Database,
-  DatabaseCurrentMetric,
-  DeploymentHistoryDatabase,
-  Status,
+  type Credentials,
+  type Database,
+  type DatabaseCurrentMetric,
+  type DeploymentHistoryDatabase,
+  type Status,
 } from 'qovery-typescript-axios'
-import { LoadingStatus } from '../types/loading-status.type'
-import { ServiceRunningStatus } from './service-running-status.interface'
+import { type LoadingStatus } from '../types/loading-status.type'
+import { type ServiceRunningStatus } from './service-running-status.interface'
 
 /* @TODO Deletes this when API doc is updated */
 export interface DatabaseCredentials extends Credentials {

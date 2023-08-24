@@ -1,7 +1,12 @@
-import { InviteMember, InviteMemberRequest, Member, OrganizationAvailableRole } from 'qovery-typescript-axios'
-import { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import {
+  type InviteMember,
+  type InviteMemberRequest,
+  type Member,
+  type OrganizationAvailableRole,
+} from 'qovery-typescript-axios'
+import { type Dispatch, type SetStateAction, useEffect, useState } from 'react'
 import { MemberRoleEnum } from '@qovery/shared/enums'
-import { Button, HelpSection, IconAwesomeEnum, Table, TableFilterProps } from '@qovery/shared/ui'
+import { Button, HelpSection, IconAwesomeEnum, Table, type TableFilterProps } from '@qovery/shared/ui'
 import RowMember from './row-member/row-member'
 
 export interface PageOrganizationMembersProps {

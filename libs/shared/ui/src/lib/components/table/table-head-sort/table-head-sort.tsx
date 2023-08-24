@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState } from 'react'
+import { type Dispatch, type SetStateAction, useState } from 'react'
 import Icon from '../../icon/icon'
 
 export interface TableHeadSortProps<T> {

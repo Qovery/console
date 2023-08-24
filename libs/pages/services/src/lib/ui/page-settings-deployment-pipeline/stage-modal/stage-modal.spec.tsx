@@ -1,6 +1,6 @@
 import { render, waitFor } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import StageModal, { StageModalProps } from './stage-modal'
+import StageModal, { type StageModalProps } from './stage-modal'
 
 const props: StageModalProps = {
   onClose: jest.fn(),

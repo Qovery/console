@@ -1,4 +1,9 @@
-import { DeploymentStageWithServicesStatuses, Environment, EnvironmentLogs, Status } from 'qovery-typescript-axios'
+import {
+  type DeploymentStageWithServicesStatuses,
+  type Environment,
+  type EnvironmentLogs,
+  type Status,
+} from 'qovery-typescript-axios'
 import { memo, useCallback, useContext, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -7,9 +12,9 @@ import { selectApplicationById } from '@qovery/domains/application'
 import { selectDatabaseById } from '@qovery/domains/database'
 import { useEnvironmentDeploymentHistory } from '@qovery/domains/environment'
 import { useAuth } from '@qovery/shared/auth'
-import { ApplicationEntity, DatabaseEntity, LoadingStatus } from '@qovery/shared/interfaces'
+import { type ApplicationEntity, type DatabaseEntity, type LoadingStatus } from '@qovery/shared/interfaces'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import { RootState } from '@qovery/state/store'
+import { type RootState } from '@qovery/state/store'
 import _DeploymentLogs from '../../ui/deployment-logs/deployment-logs'
 import { ServiceStageIdsContext } from '../service-stage-ids-context/service-stage-ids-context'
 

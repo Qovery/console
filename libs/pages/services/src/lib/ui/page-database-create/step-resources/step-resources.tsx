@@ -1,9 +1,9 @@
-import { DatabaseTypeEnum } from 'qovery-typescript-axios'
-import { FormEventHandler } from 'react'
+import { type DatabaseTypeEnum } from 'qovery-typescript-axios'
+import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { DatabaseSettingsResources } from '@qovery/shared/console-shared'
 import { Button, ButtonSize, ButtonStyle } from '@qovery/shared/ui'
-import { ResourcesData } from '../../../feature/page-database-create-feature/database-creation-flow.interface'
+import { type ResourcesData } from '../../../feature/page-database-create-feature/database-creation-flow.interface'
 
 export interface StepResourcesProps {
   onBack: () => void

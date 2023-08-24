@@ -1,5 +1,5 @@
 import { render } from '__tests__/utils/setup-jest'
-import TableHeadFilter, { TableHeadFilterProps, createFilter } from './table-head-filter'
+import TableHeadFilter, { type TableHeadFilterProps, createFilter } from './table-head-filter'
 
 describe('TableHeadFilter', () => {
   const props: TableHeadFilterProps = {

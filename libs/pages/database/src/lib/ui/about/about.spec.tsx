@@ -1,6 +1,6 @@
 import { render } from '__tests__/utils/setup-jest'
 import { DatabaseAccessibilityEnum, DatabaseModeEnum, DatabaseTypeEnum } from 'qovery-typescript-axios'
-import { LoadingStatus } from '@qovery/shared/interfaces'
+import { type LoadingStatus } from '@qovery/shared/interfaces'
 import About from './about'
 
 describe('About', () => {

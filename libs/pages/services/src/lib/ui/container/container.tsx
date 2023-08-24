@@ -1,4 +1,4 @@
-import { Environment } from 'qovery-typescript-axios'
+import { type Environment } from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
 import { useSelector } from 'react-redux'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
@@ -9,7 +9,7 @@ import { selectClusterById } from '@qovery/domains/organization'
 import { useDeploymentStatus } from '@qovery/domains/services/feature'
 import { EnvironmentButtonsActions } from '@qovery/shared/console-shared'
 import { IconEnum } from '@qovery/shared/enums'
-import { ApplicationEntity, ClusterEntity, DatabaseEntity } from '@qovery/shared/interfaces'
+import { type ApplicationEntity, type ClusterEntity, type DatabaseEntity } from '@qovery/shared/interfaces'
 import {
   SERVICES_APPLICATION_CREATION_URL,
   SERVICES_CRONJOB_CREATION_URL,
@@ -28,14 +28,14 @@ import {
   IconAwesomeEnum,
   Menu,
   MenuAlign,
-  MenuData,
+  type MenuData,
   Skeleton,
   Tabs,
   Tag,
   TagMode,
   TagSize,
 } from '@qovery/shared/ui'
-import { RootState } from '@qovery/state/store'
+import { type RootState } from '@qovery/state/store'
 
 export interface ContainerProps {
   environment?: Environment

@@ -1,16 +1,16 @@
 import { type ReactNode, useEffect, useId, useState } from 'react'
 import Select, {
-  GroupBase,
-  MenuListProps,
-  MultiValue,
-  MultiValueProps,
-  NoticeProps,
-  OptionProps,
-  SingleValue,
-  SingleValueProps,
+  type GroupBase,
+  type MenuListProps,
+  type MultiValue,
+  type MultiValueProps,
+  type NoticeProps,
+  type OptionProps,
+  type SingleValue,
+  type SingleValueProps,
   components,
 } from 'react-select'
-import { Value } from '@qovery/shared/interfaces'
+import { type Value } from '@qovery/shared/interfaces'
 import IconFa from '../../icon-fa/icon-fa'
 import Icon from '../../icon/icon'
 import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'

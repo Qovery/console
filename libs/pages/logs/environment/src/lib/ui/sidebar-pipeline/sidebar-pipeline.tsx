@@ -1,5 +1,5 @@
-import { DeploymentStageWithServicesStatuses } from 'qovery-typescript-axios'
-import { ApplicationEntity, DatabaseEntity } from '@qovery/shared/interfaces'
+import { type DeploymentStageWithServicesStatuses } from 'qovery-typescript-axios'
+import { type ApplicationEntity, type DatabaseEntity } from '@qovery/shared/interfaces'
 import SidebarPipelineItem from '../sidebar-pipeline-item/sidebar-pipeline-item'
 
 export interface SidebarPipelineProps {

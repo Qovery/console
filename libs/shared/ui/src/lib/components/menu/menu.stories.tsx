@@ -1,7 +1,7 @@
-import { Meta, StoryObj } from '@storybook/react'
+import { type Meta, type StoryObj } from '@storybook/react'
 import Button from '../buttons/button/button'
 import Icon from '../icon/icon'
-import { Menu, MenuAlign, MenuData, MenuDirection } from './menu'
+import { Menu, MenuAlign, type MenuData, MenuDirection } from './menu'
 
 const meta: Meta<typeof Menu> = {
   component: Menu,

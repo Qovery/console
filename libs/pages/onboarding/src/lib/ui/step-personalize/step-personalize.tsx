@@ -1,6 +1,6 @@
 import { type TypeOfUseEnum } from 'qovery-typescript-axios'
 import { type Control, Controller } from 'react-hook-form'
-import { Value } from '@qovery/shared/interfaces'
+import { type Value } from '@qovery/shared/interfaces'
 import { Button, ButtonSize, ButtonStyle, InputSelect, InputText } from '@qovery/shared/ui'
 
 export interface StepPersonalizeProps {

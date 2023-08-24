@@ -1,4 +1,4 @@
-import { ClusterLogsError } from 'qovery-typescript-axios'
+import { type ClusterLogsError } from 'qovery-typescript-axios'
 import { type ReactNode, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import {
@@ -12,7 +12,7 @@ import {
   Tooltip,
   Truncate,
 } from '@qovery/shared/ui'
-import { ErrorLogsProps } from '../layout-logs'
+import { type ErrorLogsProps } from '../layout-logs'
 
 export const enum TabsClusterLogsSection {
   INFORMATION = 'INFORMATION',

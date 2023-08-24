@@ -1,5 +1,5 @@
-import { CloudProviderEnum, ClusterFeature } from 'qovery-typescript-axios'
-import { FormEventHandler } from 'react'
+import { type CloudProviderEnum, type ClusterFeature } from 'qovery-typescript-axios'
+import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { CardClusterFeature } from '@qovery/shared/console-shared'
 import { BannerBox, BannerBoxEnum, Button, ButtonSize, ButtonStyle, LoaderSpinner } from '@qovery/shared/ui'

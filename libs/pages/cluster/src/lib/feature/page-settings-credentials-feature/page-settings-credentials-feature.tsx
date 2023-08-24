@@ -1,6 +1,6 @@
-import { ClusterCloudProviderInfo, ClusterCloudProviderInfoRequest } from 'qovery-typescript-axios'
+import { type ClusterCloudProviderInfo, type ClusterCloudProviderInfoRequest } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
-import { FieldValues, FormProvider, useForm } from 'react-hook-form'
+import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import {
@@ -11,9 +11,9 @@ import {
   selectClustersLoadingStatus,
   selectOrganizationById,
 } from '@qovery/domains/organization'
-import { ClusterCredentialsEntity, ClusterEntity } from '@qovery/shared/interfaces'
+import { type ClusterCredentialsEntity, type ClusterEntity } from '@qovery/shared/interfaces'
 import { ToastEnum, toast } from '@qovery/shared/toast'
-import { AppDispatch, RootState } from '@qovery/state/store'
+import { type AppDispatch, type RootState } from '@qovery/state/store'
 import PageSettingsCredentials from '../../ui/page-settings-credentials/page-settings-credentials'
 
 export const handleSubmit = (data: FieldValues, credentials?: ClusterCredentialsEntity[], cluster?: ClusterEntity) => {

@@ -1,9 +1,9 @@
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { databasesLoadingStatus, getDatabasesState } from '@qovery/domains/database'
-import { DatabaseEntity, LoadingStatus } from '@qovery/shared/interfaces'
-import { BaseLink } from '@qovery/shared/ui'
-import { RootState } from '@qovery/state/store'
+import { type DatabaseEntity, type LoadingStatus } from '@qovery/shared/interfaces'
+import { type BaseLink } from '@qovery/shared/ui'
+import { type RootState } from '@qovery/state/store'
 import PageGeneral from '../../ui/page-general/page-general'
 
 export function PageGeneralFeature() {

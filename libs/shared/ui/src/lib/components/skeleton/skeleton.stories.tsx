@@ -1,6 +1,6 @@
-import { Meta, Story } from '@storybook/react'
-import { Skeleton, SkeletonProps } from './skeleton'
+import { type Meta, type Story } from '@storybook/react'
 import Button from '../buttons/button/button'
+import { Skeleton, type SkeletonProps } from './skeleton'
 
 export default {
   component: Skeleton,

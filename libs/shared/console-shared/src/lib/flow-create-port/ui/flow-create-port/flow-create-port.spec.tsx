@@ -1,7 +1,7 @@
 import { fireEvent, render, waitFor } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { PortProtocolEnum, type ServicePort } from 'qovery-typescript-axios'
-import FlowCreatePort, { FlowCreatePortProps } from './flow-create-port'
+import FlowCreatePort, { type FlowCreatePortProps } from './flow-create-port'
 
 const ports: ServicePort[] = [
   {

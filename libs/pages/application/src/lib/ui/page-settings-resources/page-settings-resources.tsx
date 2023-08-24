@@ -1,8 +1,8 @@
-import { EnvironmentModeEnum } from 'qovery-typescript-axios'
-import { FormEventHandler } from 'react'
+import { type EnvironmentModeEnum } from 'qovery-typescript-axios'
+import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { ApplicationSettingsResources } from '@qovery/shared/console-shared'
-import { ApplicationEntity } from '@qovery/shared/interfaces'
+import { type ApplicationEntity } from '@qovery/shared/interfaces'
 import { Button, ButtonSize, ButtonStyle, HelpSection } from '@qovery/shared/ui'
 
 export interface PageSettingsResourcesProps {

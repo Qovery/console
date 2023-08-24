@@ -1,10 +1,10 @@
-import { ClusterFeature, KubernetesEnum } from 'qovery-typescript-axios'
+import { type ClusterFeature, KubernetesEnum } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { fetchClusterFeatures } from '@qovery/domains/organization'
-import { ClusterFeaturesData } from '@qovery/shared/interfaces'
+import { type ClusterFeaturesData } from '@qovery/shared/interfaces'
 import {
   CLUSTERS_CREATION_GENERAL_URL,
   CLUSTERS_CREATION_REMOTE_URL,
@@ -15,7 +15,7 @@ import {
 } from '@qovery/shared/routes'
 import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import { AppDispatch } from '@qovery/state/store'
+import { type AppDispatch } from '@qovery/state/store'
 import StepFeatures from '../../../ui/page-clusters-create/step-features/step-features'
 import { steps, useClusterContainerCreateContext } from '../page-clusters-create-feature'
 

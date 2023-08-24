@@ -1,4 +1,4 @@
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { type ComponentMeta, type ComponentStory } from '@storybook/react'
 import { StateEnum } from 'qovery-typescript-axios'
 import { RunningState } from '@qovery/shared/enums'
 import { StatusChip } from './status-chip'

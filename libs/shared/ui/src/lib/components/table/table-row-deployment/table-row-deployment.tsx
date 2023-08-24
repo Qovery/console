@@ -1,8 +1,8 @@
-import { DeploymentHistoryApplication, DeploymentHistoryDatabase } from 'qovery-typescript-axios'
+import { type DeploymentHistoryApplication, type DeploymentHistoryDatabase } from 'qovery-typescript-axios'
 import { type MouseEvent, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
-import { ContainerApplicationEntity, DeploymentService } from '@qovery/shared/interfaces'
+import { type ContainerApplicationEntity, type DeploymentService } from '@qovery/shared/interfaces'
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import {
   APPLICATION_GENERAL_URL,
@@ -23,7 +23,7 @@ import StatusChip from '../../status-chip/status-chip'
 import TagCommit from '../../tag-commit/tag-commit'
 import Tag from '../../tag/tag'
 import Tooltip from '../../tooltip/tooltip'
-import { TableFilterProps, TableHeadProps } from '../table'
+import { type TableFilterProps, type TableHeadProps } from '../table'
 import TableRow from '../table-row/table-row'
 
 export interface TableRowDeploymentProps {

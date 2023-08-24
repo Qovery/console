@@ -4,9 +4,9 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { forceRunJob, selectApplicationById } from '@qovery/domains/application'
 import { isCronJob } from '@qovery/shared/enums'
-import { ApplicationEntity } from '@qovery/shared/interfaces'
+import { type ApplicationEntity } from '@qovery/shared/interfaces'
 import { useModal } from '@qovery/shared/ui'
-import { AppDispatch, RootState } from '@qovery/state/store'
+import { type AppDispatch, type RootState } from '@qovery/state/store'
 import ForceRunModal from '../ui/force-run-modal'
 
 export interface ForceRunModalFeatureProps {

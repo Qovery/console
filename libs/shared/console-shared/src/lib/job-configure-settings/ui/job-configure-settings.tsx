@@ -1,8 +1,8 @@
 import cronstrue from 'cronstrue'
 import { useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { JobType, ServiceTypeEnum } from '@qovery/shared/enums'
-import { JobConfigureData } from '@qovery/shared/interfaces'
+import { type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
+import { type JobConfigureData } from '@qovery/shared/interfaces'
 import { EnableBox, InputText, Link, LoaderSpinner } from '@qovery/shared/ui'
 import EntrypointCmdInputs from '../../entrypoint-cmd-inputs/ui/entrypoint-cmd-inputs'
 

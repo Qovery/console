@@ -1,4 +1,4 @@
-import { User } from '@auth0/auth0-spa-js'
+import { type User } from '@auth0/auth0-spa-js'
 
 export interface UserInterface extends User {
   name?: string

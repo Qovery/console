@@ -1,5 +1,5 @@
 import { findByTestId, render, screen, waitFor } from '__tests__/utils/setup-jest'
-import ConfirmationGitModal, { ConfirmationGitModalProps } from './confirmation-git-modal'
+import ConfirmationGitModal, { type ConfirmationGitModalProps } from './confirmation-git-modal'
 
 const props: ConfirmationGitModalProps = {
   currentAuthProvider: 'Github (RemiBonnet)',

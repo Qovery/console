@@ -1,6 +1,12 @@
-import { CloudProviderEnum, ClusterFeature } from 'qovery-typescript-axios'
+import { type CloudProviderEnum, type ClusterFeature } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
-import { Control, Controller, FieldValues, UseFormGetValues, UseFormSetValue } from 'react-hook-form'
+import {
+  type Control,
+  Controller,
+  type FieldValues,
+  type UseFormGetValues,
+  type UseFormSetValue,
+} from 'react-hook-form'
 import { IconAwesomeEnum, InputSelect, InputToggle, Link } from '@qovery/shared/ui'
 
 export interface CardClusterFeatureProps {

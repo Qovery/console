@@ -1,7 +1,7 @@
 import { type PropsWithChildren } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
 import { ClusterButtonsActions } from '@qovery/shared/console-shared'
-import { ClusterEntity } from '@qovery/shared/interfaces'
+import { type ClusterEntity } from '@qovery/shared/interfaces'
 import { CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
 import { Header, Icon, IconAwesomeEnum, Skeleton, Tabs, Tag, TagClusterType, TagSize } from '@qovery/shared/ui'
 

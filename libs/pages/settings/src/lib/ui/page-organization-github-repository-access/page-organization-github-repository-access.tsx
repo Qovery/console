@@ -1,6 +1,6 @@
-import { GitAuthProvider } from 'qovery-typescript-axios'
+import { type GitAuthProvider } from 'qovery-typescript-axios'
 import { IconEnum } from '@qovery/shared/enums'
-import { RepositoryEntity } from '@qovery/shared/interfaces'
+import { type RepositoryEntity } from '@qovery/shared/interfaces'
 import {
   BlockContent,
   Button,

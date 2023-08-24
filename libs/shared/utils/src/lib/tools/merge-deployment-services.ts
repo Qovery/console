@@ -1,6 +1,6 @@
-import { DeploymentHistoryEnvironment, JobScheduleEvent } from 'qovery-typescript-axios'
+import { type DeploymentHistoryEnvironment, JobScheduleEvent } from 'qovery-typescript-axios'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
-import { DeploymentService } from '@qovery/shared/interfaces'
+import { type DeploymentService } from '@qovery/shared/interfaces'
 
 export const mergeDeploymentServices = (deploymentHistory?: DeploymentHistoryEnvironment[]) => {
   const merged: DeploymentService[] = []

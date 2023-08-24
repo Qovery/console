@@ -1,8 +1,8 @@
 import { type PropsWithChildren, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { IconEnum } from '@qovery/shared/enums'
+import { type IconEnum } from '@qovery/shared/enums'
 import Icon from '../../icon/icon'
-import Menu, { MenuAlign, MenuData } from '../../menu/menu'
+import Menu, { MenuAlign, type MenuData } from '../../menu/menu'
 import { ButtonSize } from '../button/button'
 
 export enum ButtonActionStyle {

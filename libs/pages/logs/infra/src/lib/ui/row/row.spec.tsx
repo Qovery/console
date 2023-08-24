@@ -2,7 +2,7 @@ import { render, screen } from '__tests__/utils/setup-jest'
 import { ClusterLogsStepEnum } from 'qovery-typescript-axios'
 import { LogsType } from '@qovery/shared/enums'
 import { clusterLogFactoryMock } from '@qovery/shared/factories'
-import Row, { RowProps } from './row'
+import Row, { type RowProps } from './row'
 
 describe('Row', () => {
   const props: RowProps = {

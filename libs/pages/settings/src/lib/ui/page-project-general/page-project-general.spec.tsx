@@ -1,6 +1,6 @@
 import { act, fireEvent, render, waitFor } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import PageProjectGeneral, { PageProjectGeneralProps } from './page-project-general'
+import PageProjectGeneral, { type PageProjectGeneralProps } from './page-project-general'
 
 describe('PageProjectGeneral', () => {
   const props: PageProjectGeneralProps = {

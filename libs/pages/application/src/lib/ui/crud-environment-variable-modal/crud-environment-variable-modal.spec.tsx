@@ -12,11 +12,11 @@ import {
 import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { FormProvider, useForm } from 'react-hook-form'
 import {
-  DataFormEnvironmentVariableInterface,
+  type DataFormEnvironmentVariableInterface,
   EnvironmentVariableCrudMode,
   EnvironmentVariableType,
 } from '../../feature/crud-environment-variable-modal-feature/crud-environment-variable-modal-feature'
-import CrudEnvironmentVariableModal, { CrudEnvironmentVariableModalProps } from './crud-environment-variable-modal'
+import CrudEnvironmentVariableModal, { type CrudEnvironmentVariableModalProps } from './crud-environment-variable-modal'
 
 const props: CrudEnvironmentVariableModalProps = {
   mode: EnvironmentVariableCrudMode.CREATION,

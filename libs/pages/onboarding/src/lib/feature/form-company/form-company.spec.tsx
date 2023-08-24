@@ -1,6 +1,5 @@
 import { render } from '__tests__/utils/setup-jest'
-
-import FormCompany, { FormCompanyProps } from './form-company'
+import FormCompany, { type FormCompanyProps } from './form-company'
 
 describe('FormCompany', () => {
   let props: FormCompanyProps

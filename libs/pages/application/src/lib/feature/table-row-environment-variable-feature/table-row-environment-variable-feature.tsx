@@ -3,24 +3,24 @@ import { useContext } from 'react'
 import { useDispatch } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { deleteEnvironmentVariable, deleteSecret } from '@qovery/domains/environment-variable'
-import { ExternalServiceEnum, ServiceTypeEnum } from '@qovery/shared/enums'
+import { ExternalServiceEnum, type ServiceTypeEnum } from '@qovery/shared/enums'
 import {
-  EnvironmentVariableEntity,
-  EnvironmentVariableSecretOrPublic,
-  SecretEnvironmentVariableEntity,
+  type EnvironmentVariableEntity,
+  type EnvironmentVariableSecretOrPublic,
+  type SecretEnvironmentVariableEntity,
 } from '@qovery/shared/interfaces'
 import {
-  ButtonIconActionElementProps,
+  type ButtonIconActionElementProps,
   Icon,
   IconAwesomeEnum,
-  MenuItemProps,
-  TableFilterProps,
-  TableHeadProps,
+  type MenuItemProps,
+  type TableFilterProps,
+  type TableHeadProps,
   useModal,
   useModalConfirmation,
 } from '@qovery/shared/ui'
 import { environmentVariableFile } from '@qovery/shared/utils'
-import { AppDispatch } from '@qovery/state/store'
+import { type AppDispatch } from '@qovery/state/store'
 import { ApplicationContext } from '../../ui/container/container'
 import TableRowEnvironmentVariable from '../../ui/table-row-environment-variable/table-row-environment-variable'
 import CrudEnvironmentVariableModalFeature, {

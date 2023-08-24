@@ -8,7 +8,7 @@ import {
   CLUSTER_SETTINGS_REMOTE_ACCESS_URL,
   CLUSTER_SETTINGS_RESOURCES_URL,
   CLUSTER_SETTINGS_URL,
-  Route,
+  type Route,
 } from '@qovery/shared/routes'
 import PageSettingsAdvancedFeature from '../feature/page-settings-advanced-feature/page-settings-advanced-feature'
 import PageSettingsCredentialsFeature from '../feature/page-settings-credentials-feature/page-settings-credentials-feature'

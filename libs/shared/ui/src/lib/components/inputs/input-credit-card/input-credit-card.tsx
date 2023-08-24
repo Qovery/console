@@ -9,7 +9,7 @@ import {
   useState,
 } from 'react'
 import { usePaymentInputs } from 'react-payment-inputs'
-import { CardImages } from 'react-payment-inputs/images'
+import { type CardImages } from 'react-payment-inputs/images'
 import {
   amexCrediCard,
   dinersclubCreditCard,

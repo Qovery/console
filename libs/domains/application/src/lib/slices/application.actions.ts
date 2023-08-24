@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
-import { ApplicationActionsApi, ContainerActionsApi, JobActionsApi, JobForceEvent } from 'qovery-typescript-axios'
-import { ServiceTypeEnum, isApplication, isContainer, isJob } from '@qovery/shared/enums'
+import { ApplicationActionsApi, ContainerActionsApi, JobActionsApi, type JobForceEvent } from 'qovery-typescript-axios'
+import { type ServiceTypeEnum, isApplication, isContainer, isJob } from '@qovery/shared/enums'
 import { ToastEnum, toast } from '@qovery/shared/ui'
 import { fetchApplicationDeployments, fetchApplicationsStatus } from './applications.slice'
 

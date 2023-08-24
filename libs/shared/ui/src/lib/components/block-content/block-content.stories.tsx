@@ -1,6 +1,6 @@
-import { BlockContent, BlockContentProps } from './block-content'
-import { Meta, Story } from '@storybook/react'
+import { type Meta, type Story } from '@storybook/react'
 import ModalProvider from '../modal/modal-root'
+import { BlockContent, type BlockContentProps } from './block-content'
 
 export default {
   component: BlockContent,

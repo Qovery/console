@@ -3,7 +3,7 @@ import { CloudProviderEnum } from 'qovery-typescript-axios'
 import selectEvent from 'react-select-event'
 import * as storeOrganization from '@qovery/domains/organization'
 import { clusterFactoryMock, credentialsMock, organizationFactoryMock } from '@qovery/shared/factories'
-import { ClusterCredentialsEntity, ClusterEntity, OrganizationEntity } from '@qovery/shared/interfaces'
+import { type ClusterCredentialsEntity, type ClusterEntity, type OrganizationEntity } from '@qovery/shared/interfaces'
 import PageSettingsCredentialsFeature, { handleSubmit } from './page-settings-credentials-feature'
 
 import SpyInstance = jest.SpyInstance

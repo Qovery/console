@@ -1,5 +1,5 @@
 import { Chance } from 'chance'
-import { SignUp, TypeOfUseEnum } from 'qovery-typescript-axios'
+import { type SignUp, TypeOfUseEnum } from 'qovery-typescript-axios'
 
 const chance = new Chance('123')
 

@@ -1,5 +1,5 @@
 import { act, fireEvent, render, waitFor } from '__tests__/utils/setup-jest'
-import PageSettingsNetwork, { PageSettingsNetworkProps } from './page-settings-network'
+import PageSettingsNetwork, { type PageSettingsNetworkProps } from './page-settings-network'
 
 let props: PageSettingsNetworkProps
 

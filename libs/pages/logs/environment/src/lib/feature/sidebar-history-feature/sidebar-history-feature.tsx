@@ -3,7 +3,7 @@ import { useLocation, useParams } from 'react-router-dom'
 import { selectApplicationsEntitiesByEnvId } from '@qovery/domains/application'
 import { useEnvironmentDeploymentHistory } from '@qovery/domains/environment'
 import { ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
-import { RootState } from '@qovery/state/store'
+import { type RootState } from '@qovery/state/store'
 import SidebarHistory from '../../ui/sidebar-history/sidebar-history'
 
 export interface SidebarHistoryFeatureProps {

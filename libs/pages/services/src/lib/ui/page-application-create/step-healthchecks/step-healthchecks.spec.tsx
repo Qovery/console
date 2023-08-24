@@ -2,7 +2,7 @@ import { act, render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { defaultLivenessProbe, defaultReadinessProbe } from '@qovery/shared/console-shared'
 import { ProbeTypeEnum } from '@qovery/shared/enums'
-import StepHealthchecks, { StepHealthchecksProps } from './step-healthchecks'
+import StepHealthchecks, { type StepHealthchecksProps } from './step-healthchecks'
 
 const props: StepHealthchecksProps = {
   onBack: jest.fn(),

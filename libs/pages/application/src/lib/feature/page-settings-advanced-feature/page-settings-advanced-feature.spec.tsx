@@ -1,10 +1,10 @@
 import { act, fireEvent, render } from '__tests__/utils/setup-jest'
-import { JobAdvancedSettings } from 'qovery-typescript-axios'
+import { type JobAdvancedSettings } from 'qovery-typescript-axios'
 // eslint-disable-next-line @typescript-eslint/no-restricted-imports
 import React from 'react'
 import * as storeApplication from '@qovery/domains/application'
 import { cronjobFactoryMock } from '@qovery/shared/factories'
-import { JobApplicationEntity } from '@qovery/shared/interfaces'
+import { type JobApplicationEntity } from '@qovery/shared/interfaces'
 import * as InitFormValues from './init-form-values/init-form-values'
 import PageSettingsAdvancedFeature from './page-settings-advanced-feature'
 

@@ -1,7 +1,7 @@
 import { act, renderHook } from '__tests__/utils/setup-jest'
 import { EnvironmentModeEnum } from 'qovery-typescript-axios'
 import ModalProvider from '../../../modal/modal-root'
-import useModalConfirmation, { UseModalConfirmationProps } from './use-modal-confirmation'
+import useModalConfirmation, { type UseModalConfirmationProps } from './use-modal-confirmation'
 
 const mockSetOpenModal = jest.fn()
 const mockSetContentModal = jest.fn()

@@ -1,7 +1,7 @@
 import { StateEnum } from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
-import { ClusterEntity, OrganizationEntity } from '@qovery/shared/interfaces'
+import { type ClusterEntity, type OrganizationEntity } from '@qovery/shared/interfaces'
 import { INFRA_LOGS_URL } from '@qovery/shared/routes'
 import { Banner, BannerStyle, WarningScreenMobile } from '@qovery/shared/ui'
 import Navigation from '../navigation/navigation'

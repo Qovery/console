@@ -1,6 +1,5 @@
 import { render } from '__tests__/utils/setup-jest'
-
-import PlaceholderNoRules, { PlaceholderNoRulesProps } from './placeholder-no-rules'
+import PlaceholderNoRules, { type PlaceholderNoRulesProps } from './placeholder-no-rules'
 
 describe('PlaceholderNoRules', () => {
   const props: PlaceholderNoRulesProps = {

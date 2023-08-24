@@ -1,4 +1,4 @@
-import { IconProps } from '../icon'
+import { type IconProps } from '../icon'
 
 function MongoDBIcon(props: IconProps) {
   return (

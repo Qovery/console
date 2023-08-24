@@ -1,4 +1,4 @@
-import { OrganizationEventTargetType } from 'qovery-typescript-axios'
+import { type OrganizationEventTargetType } from 'qovery-typescript-axios'
 
 export const AUDIT_LOGS_URL = (organizationId = ':organizationId') => `/organization/${organizationId}/audit-logs`
 export const AUDIT_LOGS_GENERAL_URL = '/general'

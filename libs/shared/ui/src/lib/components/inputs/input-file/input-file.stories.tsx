@@ -1,5 +1,5 @@
-import { Meta, Story } from '@storybook/react'
-import { InputFile, InputFileProps } from './input-file'
+import { type Meta, type Story } from '@storybook/react'
+import { InputFile, type InputFileProps } from './input-file'
 
 export default {
   component: InputFile,

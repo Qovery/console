@@ -3,7 +3,7 @@ import { addMonths } from 'date-fns'
 import { OrganizationEventTargetType } from 'qovery-typescript-axios'
 import { environmentFactoryMock, projectsFactoryMock } from '@qovery/shared/factories'
 import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/utils'
-import CustomFilter, { CustomFilterProps } from './custom-filter'
+import CustomFilter, { type CustomFilterProps } from './custom-filter'
 
 const mockProjects = projectsFactoryMock(2)
 const mockEnvironments = environmentFactoryMock(2)

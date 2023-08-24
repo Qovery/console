@@ -1,5 +1,5 @@
 import { act, render } from '__tests__/utils/setup-jest'
-import StickyActionFormToaster, { StickyActionFormToasterProps } from './sticky-action-form-toaster'
+import StickyActionFormToaster, { type StickyActionFormToasterProps } from './sticky-action-form-toaster'
 
 const props: StickyActionFormToasterProps = {
   onReset: jest.fn(),

@@ -1,22 +1,22 @@
-import { QueryClient, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { type QueryClient, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import download from 'downloadjs'
 import {
-  CloneRequest,
-  CreateEnvironmentRequest,
-  DatabaseConfiguration,
+  type CloneRequest,
+  type CreateEnvironmentRequest,
+  type DatabaseConfiguration,
   DatabasesApi,
-  DeploymentHistoryEnvironment,
-  Environment,
+  type DeploymentHistoryEnvironment,
+  type Environment,
   EnvironmentActionsApi,
   EnvironmentDeploymentHistoryApi,
-  EnvironmentDeploymentRule,
+  type EnvironmentDeploymentRule,
   EnvironmentDeploymentRuleApi,
-  EnvironmentEditRequest,
+  type EnvironmentEditRequest,
   EnvironmentExportApi,
   EnvironmentMainCallsApi,
   EnvironmentsApi,
 } from 'qovery-typescript-axios'
-import { WebsocketRunningStatusInterface } from '@qovery/shared/interfaces'
+import { type WebsocketRunningStatusInterface } from '@qovery/shared/interfaces'
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
 import { refactoPayload } from '@qovery/shared/utils'

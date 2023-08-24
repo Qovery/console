@@ -1,6 +1,6 @@
 import { act, render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import CrudModal, { CrudModalProps } from './crud-modal'
+import CrudModal, { type CrudModalProps } from './crud-modal'
 
 const props: CrudModalProps = {
   loading: false,

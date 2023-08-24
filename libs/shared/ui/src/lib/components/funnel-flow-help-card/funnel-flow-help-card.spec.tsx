@@ -1,5 +1,5 @@
 import { render } from '__tests__/utils/setup-jest'
-import FunnelFlowHelpCard, { FunnelFlowHelpCardProps } from './funnel-flow-help-card'
+import FunnelFlowHelpCard, { type FunnelFlowHelpCardProps } from './funnel-flow-help-card'
 
 const props: FunnelFlowHelpCardProps = {
   title: 'Title',

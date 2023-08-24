@@ -1,4 +1,4 @@
-import { GitAuthProvider, GitProviderEnum } from 'qovery-typescript-axios'
+import { type GitAuthProvider, type GitProviderEnum } from 'qovery-typescript-axios'
 import { useCallback, useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
@@ -14,10 +14,10 @@ import {
   selectRepositoriesByProvider,
 } from '@qovery/domains/organization'
 import { isJob } from '@qovery/shared/enums'
-import { ApplicationEntity, LoadingStatus, RepositoryEntity } from '@qovery/shared/interfaces'
+import { type ApplicationEntity, type LoadingStatus, type RepositoryEntity } from '@qovery/shared/interfaces'
 import { Icon } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/state/store'
+import { type AppDispatch, type RootState } from '@qovery/state/store'
 import GitRepositorySettings from '../../ui/git-repository-settings/git-repository-settings'
 import { authProvidersValues } from '../../utils/auth-providers-values'
 

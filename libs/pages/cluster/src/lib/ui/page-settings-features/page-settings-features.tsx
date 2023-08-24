@@ -1,6 +1,6 @@
-import { CloudProviderEnum, ClusterFeature } from 'qovery-typescript-axios'
+import { type CloudProviderEnum, type ClusterFeature } from 'qovery-typescript-axios'
 import { CardClusterFeature } from '@qovery/shared/console-shared'
-import { LoadingStatus } from '@qovery/shared/interfaces'
+import { type LoadingStatus } from '@qovery/shared/interfaces'
 import { BlockContent, HelpSection, LoaderSpinner } from '@qovery/shared/ui'
 
 export interface PageSettingsFeaturesProps {

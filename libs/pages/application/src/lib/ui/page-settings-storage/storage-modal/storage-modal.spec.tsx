@@ -1,7 +1,7 @@
 import { findByLabelText, findByTestId, render, waitFor } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { StorageTypeEnum } from 'qovery-typescript-axios'
-import StorageModal, { StorageModalProps } from './storage-modal'
+import StorageModal, { type StorageModalProps } from './storage-modal'
 
 const props: StorageModalProps = {
   onClose: jest.fn(),

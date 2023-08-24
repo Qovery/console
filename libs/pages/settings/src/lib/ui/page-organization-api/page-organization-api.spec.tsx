@@ -1,6 +1,6 @@
 import { act, getByRole, getByTestId, getByText, render } from '__tests__/utils/setup-jest'
 import { OrganizationApiTokenScope } from 'qovery-typescript-axios'
-import { PageOrganizationApi, PageOrganizationApiProps } from './page-organization-api'
+import { PageOrganizationApi, type PageOrganizationApiProps } from './page-organization-api'
 
 describe('PageOrganizationApi', () => {
   const props: PageOrganizationApiProps = {

@@ -2,7 +2,7 @@ import { act, fireEvent, getByLabelText, getByTestId, render } from '__tests__/u
 import * as storeApplication from '@qovery/domains/application'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { applicationFactoryMock } from '@qovery/shared/factories'
-import DeployOtherTagModalFeature, { DeployOtherTagModalFeatureProps } from './deploy-other-tag-modal-feature'
+import DeployOtherTagModalFeature, { type DeployOtherTagModalFeatureProps } from './deploy-other-tag-modal-feature'
 
 import SpyInstance = jest.SpyInstance
 

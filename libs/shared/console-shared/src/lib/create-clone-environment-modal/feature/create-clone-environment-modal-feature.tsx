@@ -1,9 +1,9 @@
 import {
-  CloneRequest,
-  CreateEnvironmentModeEnum,
-  CreateEnvironmentRequest,
-  Environment,
-  EnvironmentModeEnum,
+  type CloneRequest,
+  type CreateEnvironmentModeEnum,
+  type CreateEnvironmentRequest,
+  type Environment,
+  type EnvironmentModeEnum,
 } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
@@ -11,10 +11,10 @@ import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { useCloneEnvironment, useCreateEnvironment } from '@qovery/domains/environment'
 import { selectClustersEntitiesByOrganizationId } from '@qovery/domains/organization'
-import { ClusterEntity } from '@qovery/shared/interfaces'
+import { type ClusterEntity } from '@qovery/shared/interfaces'
 import { SERVICES_GENERAL_URL, SERVICES_URL } from '@qovery/shared/routes'
 import { useModal } from '@qovery/shared/ui'
-import { RootState } from '@qovery/state/store'
+import { type RootState } from '@qovery/state/store'
 import CreateCloneEnvironmentModal from '../ui/create-clone-environment-modal'
 
 export interface CreateCloneEnvironmentModalFeatureProps {

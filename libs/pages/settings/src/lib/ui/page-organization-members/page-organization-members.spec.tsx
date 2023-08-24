@@ -1,6 +1,6 @@
 import { render } from '__tests__/utils/setup-jest'
 import { membersMock } from '@qovery/shared/factories'
-import PageOrganizationMembers, { PageOrganizationMembersProps } from './page-organization-members'
+import PageOrganizationMembers, { type PageOrganizationMembersProps } from './page-organization-members'
 
 describe('PageOrganizationMembers', () => {
   const props: PageOrganizationMembersProps = {

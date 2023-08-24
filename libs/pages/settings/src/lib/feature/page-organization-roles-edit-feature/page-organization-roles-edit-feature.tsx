@@ -1,21 +1,21 @@
 import {
   EnvironmentModeEnum,
-  OrganizationCustomRole,
-  OrganizationCustomRoleClusterPermissions,
+  type OrganizationCustomRole,
+  type OrganizationCustomRoleClusterPermissions,
   OrganizationCustomRoleProjectPermission,
-  OrganizationCustomRoleProjectPermissions,
-  OrganizationCustomRoleUpdateRequest,
-  OrganizationCustomRoleUpdateRequestPermissions,
+  type OrganizationCustomRoleProjectPermissions,
+  type OrganizationCustomRoleUpdateRequest,
+  type OrganizationCustomRoleUpdateRequestPermissions,
 } from 'qovery-typescript-axios'
 import { useCallback, useEffect, useState } from 'react'
-import { FieldValues, FormProvider, useForm } from 'react-hook-form'
+import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { deleteCustomRole, editCustomRole, fetchCustomRole, selectOrganizationById } from '@qovery/domains/organization'
 import { SETTINGS_ROLES_URL, SETTINGS_URL } from '@qovery/shared/routes'
 import { useModalConfirmation } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/state/store'
+import { type AppDispatch, type RootState } from '@qovery/state/store'
 import PageOrganizationRolesEdit from '../../ui/page-organization-roles-edit/page-organization-roles-edit'
 
 export const defaultProjectPermission = (permission: string) => {

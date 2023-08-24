@@ -1,14 +1,14 @@
 import { mockUseQueryResult } from '__tests__/utils/mock-use-query-result'
 import {
-  CloudProviderEnum,
+  type CloudProviderEnum,
   DatabaseModeEnum,
-  DatabaseTypeEnum,
-  ManagedDatabaseInstanceTypeResponse,
+  type DatabaseTypeEnum,
+  type ManagedDatabaseInstanceTypeResponse,
 } from 'qovery-typescript-axios'
 import selectEvent from 'react-select-event'
 import * as storeDatabase from '@qovery/domains/database'
 import { databaseFactoryMock } from '@qovery/shared/factories'
-import { DatabaseEntity } from '@qovery/shared/interfaces'
+import { type DatabaseEntity } from '@qovery/shared/interfaces'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import PageSettingsResourcesFeature, { handleSubmit } from './page-settings-resources-feature'
 

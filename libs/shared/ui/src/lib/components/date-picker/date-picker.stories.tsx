@@ -1,4 +1,4 @@
-import { Meta, Story } from '@storybook/react'
+import { type Meta, type Story } from '@storybook/react'
 import { useState } from 'react'
 import { dateFullFormat } from '@qovery/shared/utils'
 import Button from '../buttons/button/button'

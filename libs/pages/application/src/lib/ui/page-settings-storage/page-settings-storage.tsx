@@ -1,4 +1,4 @@
-import { ServiceStorageStorage } from 'qovery-typescript-axios'
+import { type ServiceStorageStorage } from 'qovery-typescript-axios'
 import {
   BlockContent,
   Button,

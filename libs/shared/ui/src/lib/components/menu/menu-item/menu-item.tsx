@@ -1,4 +1,4 @@
-import { ClickEvent, MenuItem as Item } from '@szhsin/react-menu'
+import { type ClickEvent, MenuItem as Item } from '@szhsin/react-menu'
 import { type ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { CopyToClipboard } from '../../copy-to-clipboard/copy-to-clipboard'

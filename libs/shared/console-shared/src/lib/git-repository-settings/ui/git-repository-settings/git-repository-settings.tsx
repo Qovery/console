@@ -1,5 +1,5 @@
 import { Controller, useFormContext } from 'react-hook-form'
-import { LoadingStatus, Value } from '@qovery/shared/interfaces'
+import { type LoadingStatus, type Value } from '@qovery/shared/interfaces'
 import {
   BlockContent,
   Button,

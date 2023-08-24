@@ -1,11 +1,11 @@
 import { useGTMDispatch } from '@elgorditosalsero/react-gtm-hook'
-import { Organization, Project } from 'qovery-typescript-axios'
+import { type Organization, type Project } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { fetchOrganization } from '@qovery/domains/organization'
 import { fetchProjects } from '@qovery/domains/projects'
-import { UserInterface, selectUserSignUp } from '@qovery/domains/user'
+import { type UserInterface, selectUserSignUp } from '@qovery/domains/user'
 import { useAuth } from '@qovery/shared/auth'
 import {
   ONBOARDING_PERSONALIZE_URL,
@@ -14,7 +14,7 @@ import {
   ORGANIZATION_URL,
   OVERVIEW_URL,
 } from '@qovery/shared/routes'
-import { AppDispatch } from '@qovery/state/store'
+import { type AppDispatch } from '@qovery/state/store'
 import {
   getCurrentOrganizationIdFromStorage,
   getCurrentProjectIdFromStorage,

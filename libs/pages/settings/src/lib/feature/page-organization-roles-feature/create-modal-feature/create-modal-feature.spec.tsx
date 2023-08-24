@@ -1,6 +1,6 @@
 import { act, fireEvent, render } from '__tests__/utils/setup-jest'
 import * as storeOrganization from '@qovery/domains/organization'
-import CreateModalFeature, { CreateModalFeatureProps } from './create-modal-feature'
+import CreateModalFeature, { type CreateModalFeatureProps } from './create-modal-feature'
 
 import SpyInstance = jest.SpyInstance
 

@@ -1,4 +1,4 @@
-import { CreditCard } from 'qovery-typescript-axios'
+import { type CreditCard } from 'qovery-typescript-axios'
 
 export const creditCardsFactoryMock = (howMany: number): CreditCard[] =>
   Array.from({ length: howMany }).map((_, index) => ({

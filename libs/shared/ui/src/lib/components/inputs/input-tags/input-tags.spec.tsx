@@ -1,5 +1,5 @@
 import { act, fireEvent, render } from '__tests__/utils/setup-jest'
-import InputTags, { InputTagsProps } from './input-tags'
+import InputTags, { type InputTagsProps } from './input-tags'
 
 describe('InputTags', () => {
   const props: InputTagsProps = {

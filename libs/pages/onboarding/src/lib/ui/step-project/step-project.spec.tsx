@@ -1,6 +1,6 @@
 import { render } from '__tests__/utils/setup-jest'
 import { useForm } from 'react-hook-form'
-import StepProject, { StepProjectProps } from './step-project'
+import StepProject, { type StepProjectProps } from './step-project'
 
 const Wrapper = (props: Omit<StepProjectProps, 'control'>) => {
   const { control } = useForm<{

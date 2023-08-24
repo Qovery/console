@@ -1,6 +1,6 @@
 import { render } from '__tests__/utils/setup-jest'
 import { Route, Routes } from 'react-router-dom'
-import PodLogsFeature, { PodLogsFeatureProps } from './pod-logs-feature'
+import PodLogsFeature, { type PodLogsFeatureProps } from './pod-logs-feature'
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),

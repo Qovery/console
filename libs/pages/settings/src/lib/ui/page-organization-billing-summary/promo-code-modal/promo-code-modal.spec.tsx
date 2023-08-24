@@ -1,6 +1,6 @@
 import { act, getByTestId, render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import PromoCodeModal, { PromoCodeModalProps } from './promo-code-modal'
+import PromoCodeModal, { type PromoCodeModalProps } from './promo-code-modal'
 
 const props: PromoCodeModalProps = {
   isSubmitting: false,

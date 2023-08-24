@@ -1,6 +1,6 @@
 import { render } from '__tests__/utils/setup-jest'
 import { PlanEnum } from 'qovery-typescript-axios'
-import StepPricing, { StepPricingProps } from './step-pricing'
+import StepPricing, { type StepPricingProps } from './step-pricing'
 
 describe('StepPricing', () => {
   let props: StepPricingProps

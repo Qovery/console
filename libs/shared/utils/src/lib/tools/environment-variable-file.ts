@@ -1,5 +1,5 @@
 import { APIVariableTypeEnum } from 'qovery-typescript-axios'
-import { EnvironmentVariableSecretOrPublic } from '@qovery/shared/interfaces'
+import { type EnvironmentVariableSecretOrPublic } from '@qovery/shared/interfaces'
 
 export const environmentVariableFile = (variable: EnvironmentVariableSecretOrPublic): boolean => {
   if (variable.variable_type === APIVariableTypeEnum.ALIAS) {

@@ -1,7 +1,7 @@
-import { Meta, Story } from '@storybook/react'
+import { type Meta, type Story } from '@storybook/react'
 import { CloudProviderEnum } from 'qovery-typescript-axios'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
-import { BadgeService, BadgeServiceProps } from './badge-service'
+import { BadgeService, type BadgeServiceProps } from './badge-service'
 
 export default {
   component: BadgeService,

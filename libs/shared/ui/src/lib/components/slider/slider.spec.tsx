@@ -1,5 +1,5 @@
 import { act, render, screen } from '__tests__/utils/setup-jest'
-import { Slider, SliderProps } from './slider'
+import { Slider, type SliderProps } from './slider'
 
 describe('Slider', () => {
   let props: SliderProps

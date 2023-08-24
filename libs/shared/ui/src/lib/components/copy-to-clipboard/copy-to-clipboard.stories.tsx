@@ -1,5 +1,5 @@
-import { Meta, Story } from '@storybook/react'
-import { CopyToClipboardProps, CopyToClipboard } from './copy-to-clipboard'
+import { type Meta, type Story } from '@storybook/react'
+import { CopyToClipboard, type CopyToClipboardProps } from './copy-to-clipboard'
 
 export default {
   component: CopyToClipboard,

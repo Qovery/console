@@ -1,4 +1,4 @@
-import { FormEventHandler, useEffect } from 'react'
+import { type FormEventHandler, useEffect } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { InputText, InputTextArea, ModalCrud, useModal } from '@qovery/shared/ui'
 

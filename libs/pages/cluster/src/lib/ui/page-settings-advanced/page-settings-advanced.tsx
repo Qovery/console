@@ -1,7 +1,7 @@
-import { ClusterAdvancedSettings } from 'qovery-typescript-axios'
+import { type ClusterAdvancedSettings } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { AdvancedSettings, LoadingStatus } from '@qovery/shared/interfaces'
+import { type AdvancedSettings, type LoadingStatus } from '@qovery/shared/interfaces'
 import {
   CopyToClipboard,
   HelpSection,
@@ -10,7 +10,7 @@ import {
   LoaderSpinner,
   StickyActionFormToaster,
   TableEdition,
-  TableEditionRow,
+  type TableEditionRow,
   Tooltip,
 } from '@qovery/shared/ui'
 

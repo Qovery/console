@@ -6,7 +6,7 @@ import {
   DATABASE_SETTINGS_RESOURCES_URL,
   DATABASE_SETTINGS_URL,
   DATABASE_VARIABLES_URL,
-  Route,
+  type Route,
 } from '@qovery/shared/routes'
 import PageDeploymentsFeature from '../feature/page-deployments-feature/page-deployments-feature'
 import PageGeneralFeature from '../feature/page-general-feature/page-general-feature'

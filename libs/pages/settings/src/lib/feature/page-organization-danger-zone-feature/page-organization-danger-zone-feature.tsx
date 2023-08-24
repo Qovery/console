@@ -1,10 +1,10 @@
-import { Organization } from 'qovery-typescript-axios'
+import { type Organization } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { deleteOrganization, selectOrganizationById } from '@qovery/domains/organization'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/state/store'
+import { type AppDispatch, type RootState } from '@qovery/state/store'
 import PageOrganizationDangerZone from '../../ui/page-organization-danger-zone/page-organization-danger-zone'
 
 export function PageOrganizationDangerZoneFeature() {

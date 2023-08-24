@@ -1,4 +1,4 @@
-import { CloudProviderEnum, PortProtocolEnum, type Probe, type ServicePort } from 'qovery-typescript-axios'
+import { type CloudProviderEnum, PortProtocolEnum, type Probe, type ServicePort } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
@@ -6,9 +6,9 @@ import { editApplication, postApplicationActionsRedeploy } from '@qovery/domains
 import { useFetchEnvironment } from '@qovery/domains/environment'
 import { CrudModal, defaultLivenessProbe, isMatchingHealthCheck } from '@qovery/shared/console-shared'
 import { ProbeTypeEnum, getServiceType } from '@qovery/shared/enums'
-import { ApplicationEntity } from '@qovery/shared/interfaces'
+import { type ApplicationEntity } from '@qovery/shared/interfaces'
 import { useModal } from '@qovery/shared/ui'
-import { AppDispatch } from '@qovery/state/store'
+import { type AppDispatch } from '@qovery/state/store'
 
 export interface CrudModalFeatureProps {
   onClose: () => void

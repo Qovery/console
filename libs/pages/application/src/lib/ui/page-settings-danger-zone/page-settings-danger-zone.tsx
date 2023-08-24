@@ -1,5 +1,5 @@
-import { EnvironmentModeEnum } from 'qovery-typescript-axios'
-import { ApplicationEntity } from '@qovery/shared/interfaces'
+import { type EnvironmentModeEnum } from 'qovery-typescript-axios'
+import { type ApplicationEntity } from '@qovery/shared/interfaces'
 import { BlockContentDelete, HelpSection } from '@qovery/shared/ui'
 
 export interface PageSettingsDangerZoneProps {

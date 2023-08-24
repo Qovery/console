@@ -1,4 +1,4 @@
-import { EnvironmentStatus } from 'qovery-typescript-axios'
+import { type EnvironmentStatus } from 'qovery-typescript-axios'
 import { Icon, StatusChip, Tooltip } from '@qovery/shared/ui'
 import { dateFullFormat } from '@qovery/shared/utils'
 

@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useFetchEnvironment } from '@qovery/domains/environment'
 import { selectClusterById } from '@qovery/domains/organization'
-import { ApplicationResourcesData, ClusterEntity } from '@qovery/shared/interfaces'
+import { type ApplicationResourcesData, type ClusterEntity } from '@qovery/shared/interfaces'
 import {
   SERVICES_APPLICATION_CREATION_URL,
   SERVICES_CREATION_GENERAL_URL,
@@ -14,7 +14,7 @@ import {
 } from '@qovery/shared/routes'
 import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import { RootState } from '@qovery/state/store'
+import { type RootState } from '@qovery/state/store'
 import StepResources from '../../../ui/page-application-create/step-resources/step-resources'
 import { useApplicationContainerCreateContext } from '../page-application-create-feature'
 

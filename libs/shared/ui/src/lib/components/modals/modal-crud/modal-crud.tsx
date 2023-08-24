@@ -1,6 +1,6 @@
-import { FormEventHandler, type ReactNode, useEffect } from 'react'
+import { type FormEventHandler, type ReactNode, useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { ApplicationEntity } from '@qovery/shared/interfaces'
+import { type ApplicationEntity } from '@qovery/shared/interfaces'
 import { Button, ButtonSize, ButtonStyle } from '../../buttons/button/button'
 import Truncate from '../../truncate/truncate'
 

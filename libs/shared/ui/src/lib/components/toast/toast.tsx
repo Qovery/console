@@ -1,5 +1,5 @@
 import { type MouseEvent } from 'react'
-import { Toast, Toaster, toast as toastAction } from 'react-hot-toast'
+import { type Toast, Toaster, toast as toastAction } from 'react-hot-toast'
 import { ToastEnum } from '../../utils/toast'
 import { Icon } from '../icon/icon'
 

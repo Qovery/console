@@ -1,13 +1,19 @@
-import { PayloadAction, createAsyncThunk, createEntityAdapter, createSelector, createSlice } from '@reduxjs/toolkit'
 import {
-  GitAuthProvider,
+  type PayloadAction,
+  createAsyncThunk,
+  createEntityAdapter,
+  createSelector,
+  createSlice,
+} from '@reduxjs/toolkit'
+import {
+  type GitAuthProvider,
   GithubAppApi,
   OrganizationAccountGitRepositoriesApi,
-  OrganizationGithubAppConnectRequest,
+  type OrganizationGithubAppConnectRequest,
 } from 'qovery-typescript-axios'
-import { AuthProviderState, LoadingStatus } from '@qovery/shared/interfaces'
+import { type AuthProviderState, type LoadingStatus } from '@qovery/shared/interfaces'
 import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
-import { RootState } from '@qovery/state/store'
+import { type RootState } from '@qovery/state/store'
 
 export const AUTH_PROVIDER_FEATURE_KEY = 'authProvider'
 
