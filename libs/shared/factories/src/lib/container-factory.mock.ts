@@ -17,7 +17,7 @@ export const containerFactoryMock = (howMany: number): ContainerApplicationEntit
     maximum_cpu: 10,
     maximum_memory: 10,
     image_name: chance.word({ length: 10 }),
-    updated_at: new Date().toString(),
+    updated_at: '2022-08-10T14:55:21.382762Z',
     storage: [
       {
         id: chance.guid(),
@@ -40,7 +40,7 @@ export const containerFactoryMock = (howMany: number): ContainerApplicationEntit
     environment: {
       id: chance.guid(),
     },
-    created_at: new Date().toString(),
+    created_at: '2022-06-10T14:55:21.382761Z',
     links: {
       loadingStatus: 'loaded',
       items: [],
