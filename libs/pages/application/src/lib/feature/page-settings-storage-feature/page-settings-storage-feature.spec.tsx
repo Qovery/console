@@ -9,7 +9,7 @@ jest.mock('react-redux', () => ({
   useDispatch: () => mockDispatch,
 }))
 
-describe('PageSettingsDomainsFeature', () => {
+describe('PageSettingsStorageFeature', () => {
   it('should render successfully', async () => {
     const { baseElement } = render(<PageSettingsStorageFeature />)
 
