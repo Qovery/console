@@ -1,5 +1,5 @@
 import { type Cluster } from 'qovery-typescript-axios'
-import { type PropsWithChildren, useEffect } from 'react'
+import { type PropsWithChildren, memo, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { redirect, useParams } from 'react-router-dom'
 import { fetchApplications } from '@qovery/domains/application'
@@ -25,6 +25,23 @@ import { setCurrentOrganizationIdOnStorage, setCurrentProjectIdOnStorage } from 
 export interface LayoutProps {
   topBar?: boolean
 }
+
+function WebSocketListener({ clusterId, organizationId }: { clusterId: string; organizationId: string }) {
+  const { projectId = '', environmentId = '', versionId = '' } = useParams()
+  useStatusWebSockets({
+    organizationId,
+    clusterId,
+    projectId,
+    environmentId,
+    versionId,
+  })
+
+  return null
+}
+
+// XXX: There is currently continuous re-render due to cluster mutation (related to legacy way to retrieve statuses)
+// We use memo to prevent web-socket invalidations
+const WebSocketListenerMemo = memo(WebSocketListener)
 
 export function Layout(props: PropsWithChildren<LayoutProps>) {
   const { children, topBar } = props
@@ -82,11 +99,19 @@ export function Layout(props: PropsWithChildren<LayoutProps>) {
     setCurrentProjectIdOnStorage(projectId)
   }, [organizationId, projectId])
 
-  useStatusWebSockets()
-
   return (
     <LayoutPage topBar={topBar} cluster={clusters[0]} defaultOrganizationId={organizations[0]?.id}>
       <>
+        {
+          /**
+           * XXX: Here we are limited by the websocket API which requires a clusterId
+           * We need to instantiate one hook per clusterId to get the complete environment statuses of the page
+           */
+          clusters.map(
+            ({ id }) =>
+              organizationId && <WebSocketListenerMemo key={id} organizationId={organizationId} clusterId={id} />
+          )
+        }
         <WebsocketContainer />
         {children}
       </>
