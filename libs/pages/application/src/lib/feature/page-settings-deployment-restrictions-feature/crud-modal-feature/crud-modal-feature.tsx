@@ -1,5 +1,5 @@
 import {
-  ApplicationDeploymentRestriction,
+  type ApplicationDeploymentRestriction,
   type ApplicationDeploymentRestrictionRequest,
   DeploymentRestrictionModeEnum,
   DeploymentRestrictionTypeEnum,
