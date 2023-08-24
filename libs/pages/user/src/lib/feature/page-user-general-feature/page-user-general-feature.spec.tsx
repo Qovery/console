@@ -1,4 +1,4 @@
-import * as domainUserFeature from '@qovery/domains/users/feature'
+import * as domainUserFeature from '@qovery/shared/iam/feature'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import PageUserGeneralFeature from './page-user-general-feature'
 
