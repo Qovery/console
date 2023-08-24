@@ -8,6 +8,9 @@ export interface TableRowFilterProps {
   filter?: TableFilterProps[]
 }
 
+/**
+ * @deprecated Prefer TablePrimitives + tanstack-table for type-safety and documentation
+ */
 export function TableRowFilter({ children, data, filter }: PropsWithChildren<TableRowFilterProps>) {
   const shouldFilter =
     filter &&

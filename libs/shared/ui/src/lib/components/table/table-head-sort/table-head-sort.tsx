@@ -13,6 +13,9 @@ export function sortTable<T>(data: T[], key: string) {
   return [...data].sort((a, b) => +new Date(b[key as keyof T] as string) - +new Date(a[key as keyof T] as string))
 }
 
+/**
+ * @deprecated Prefer TablePrimitives + tanstack-table for type-safety and documentation
+ */
 export function TableHeadSort<T>(props: TableHeadSortProps<T>) {
   const { title, data, setData, currentKey, setIsSorted } = props
   const [isSort, setIsSort] = useState(false)
