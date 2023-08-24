@@ -40,9 +40,9 @@ const TableBody = forwardRef<ElementRef<'tbody'>, TableBodyProps>(function Table
 
 interface TableRowProps extends ComponentPropsWithoutRef<'tr'> {}
 
-const TableRow = forwardRef<ElementRef<'tr'>, TableRowProps>(function TableRow({ children, className, ...rest }, ref) {
+const TableRow = forwardRef<ElementRef<'tr'>, TableRowProps>(function TableRow({ children, ...rest }, ref) {
   return (
-    <tr ref={ref} className={twMerge('hover:bg-neutral-100', className)} {...rest}>
+    <tr ref={ref} {...rest}>
       {children}
     </tr>
   )
