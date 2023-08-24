@@ -13,6 +13,7 @@ export interface UseReactQueryWsSubscriptionProps {
   /** WebSocket onmessage will be automatically handled if they are aligned with the expected format (https://tkdodo.eu/blog/using-web-sockets-with-react-query#consuming-data) otherwise you should provide an handler */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onMessage?: (queryClient: QueryClient, data: any) => void
+  enabled?: boolean
 }
 
 interface InvalidateOperation {
@@ -29,6 +30,7 @@ export function useReactQueryWsSubscription({
   url,
   urlSearchParams,
   onMessage = (_, data) => console.error('Unhandled websocket onmessage, data:', data),
+  enabled = true,
 }: UseReactQueryWsSubscriptionProps) {
   const queryClient = useQueryClient()
   const { getAccessTokenSilently } = useAuth0()
@@ -50,6 +52,9 @@ export function useReactQueryWsSubscription({
   const searchParams = new URLSearchParams(_urlSearchParams)
 
   useEffect(() => {
+    if (!enabled) {
+      return
+    }
     let websocket: WebSocket | undefined
 
       // XXX: This sounds ugly but its recommended by Auth0 ¯\_(ツ)_/¯
@@ -76,7 +81,7 @@ export function useReactQueryWsSubscription({
         websocket.close()
       }
     }
-  }, [queryClient, getAccessTokenSilently, onMessage, url, searchParams.toString()])
+  }, [queryClient, getAccessTokenSilently, onMessage, url, searchParams.toString(), enabled])
 }
 
 export default useReactQueryWsSubscription
