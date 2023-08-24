@@ -28,6 +28,7 @@ export interface LayoutProps {
 
 function WebSocketListener({ clusterId, organizationId }: { clusterId: string; organizationId: string }) {
   const { projectId = '', environmentId = '', versionId = '' } = useParams()
+
   useStatusWebSockets({
     organizationId,
     clusterId,
