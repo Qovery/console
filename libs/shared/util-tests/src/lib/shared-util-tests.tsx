@@ -9,7 +9,7 @@ import { type PreloadedState } from '@reduxjs/toolkit'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import '@testing-library/jest-dom'
 // eslint-disable-next-line @typescript-eslint/no-restricted-imports
-import { type RenderOptions, queries, render, within } from '@testing-library/react'
+import { type RenderOptions, queries, render, screen, within } from '@testing-library/react'
 // eslint-disable-next-line @typescript-eslint/no-restricted-imports
 import userEvent from '@testing-library/user-event'
 import { type PropsWithChildren, type ReactElement } from 'react'
@@ -25,7 +25,7 @@ const allQueries = {
   // TODO: add custom queries here
 }
 
-const customScreen = within(document.body, allQueries)
+const customScreen = { ...screen, ...within(document.body, allQueries) }
 const customWithin = (element: Parameters<typeof within>[0]) => within(element, allQueries)
 
 // This type interface extends the default options for render from RTL, as well
