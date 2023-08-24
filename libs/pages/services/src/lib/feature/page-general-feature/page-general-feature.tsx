@@ -1,24 +1,19 @@
-import { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import {
-  fetchApplicationsStatus,
-  getApplicationsState,
-  selectApplicationsEntitiesByEnvId,
-} from '@qovery/domains/application'
-import { fetchDatabasesStatus, getDatabasesState, selectDatabasesEntitiesByEnvId } from '@qovery/domains/database'
+import { getApplicationsState, selectApplicationsEntitiesByEnvId } from '@qovery/domains/application'
+import { getDatabasesState, selectDatabasesEntitiesByEnvId } from '@qovery/domains/database'
 import { useFetchEnvironment } from '@qovery/domains/environment'
+import { useListStatuses } from '@qovery/domains/services/feature'
 import { applicationFactoryMock } from '@qovery/shared/factories'
 import { ApplicationEntity, DatabaseEntity, LoadingStatus } from '@qovery/shared/interfaces'
 import { BaseLink } from '@qovery/shared/ui'
-import { AppDispatch, RootState } from '@qovery/state/store'
+import { RootState } from '@qovery/state/store'
 import { PageGeneral } from '../../ui/page-general/page-general'
 
 export function PageGeneralFeature() {
   const { projectId = '', environmentId = '' } = useParams()
 
   const loadingServices = applicationFactoryMock(3)
-  const dispatch: AppDispatch = useDispatch<AppDispatch>()
 
   const applicationsByEnv = useSelector<RootState, ApplicationEntity[]>((state: RootState) =>
     selectApplicationsEntitiesByEnvId(state, environmentId)
@@ -37,14 +32,6 @@ export function PageGeneralFeature() {
     (state) => getDatabasesState(state).loadingStatus
   )
 
-  useEffect(() => {
-    const fetchServicesStatusByInterval = setInterval(() => {
-      if (applicationsByEnv.length > 0) dispatch(fetchApplicationsStatus({ environmentId }))
-      if (databasesByEnv.length > 0) dispatch(fetchDatabasesStatus({ environmentId }))
-    }, 3000)
-    return () => clearInterval(fetchServicesStatusByInterval)
-  }, [dispatch, environmentId, applicationsByEnv.length, databasesByEnv.length])
-
   const listHelpfulLinks: BaseLink[] = [
     {
       link: 'https://hub.qovery.com/docs/using-qovery/configuration/environment/',
@@ -53,6 +40,20 @@ export function PageGeneralFeature() {
     },
   ]
 
+  let services = [...applicationsByEnv, ...databasesByEnv]
+
+  const { data: statuses } = useListStatuses({ environmentId })
+  const servicesStatuses = [
+    ...(statuses?.applications ?? []),
+    ...(statuses?.containers ?? []),
+    ...(statuses?.databases ?? []),
+    ...(statuses?.jobs ?? []),
+  ]
+  services = services.map((service) => ({
+    ...service,
+    status: servicesStatuses.find((status) => status.id === service.id),
+  })) as (ApplicationEntity | DatabaseEntity)[]
+
   function isLoading() {
     // if the two collections are loaded, we remove the loading state
     return !(applicationsLoadingStatus === 'loaded' && databasesLoadingStatus === 'loaded')
@@ -60,7 +61,7 @@ export function PageGeneralFeature() {
 
   return (
     <PageGeneral
-      services={isLoading() ? loadingServices : [...applicationsByEnv, ...databasesByEnv]}
+      services={isLoading() ? loadingServices : services}
       environmentMode={environment?.mode || ''}
       listHelpfulLinks={listHelpfulLinks}
       isLoading={isLoading()}

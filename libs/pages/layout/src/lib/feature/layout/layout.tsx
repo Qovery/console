@@ -16,6 +16,7 @@ import { fetchProjects } from '@qovery/domains/projects'
 import { fetchUserSignUp } from '@qovery/domains/user'
 import { OrganizationEntity } from '@qovery/shared/interfaces'
 import { ORGANIZATION_URL } from '@qovery/shared/routes'
+import { useStatusWebSockets } from '@qovery/shared/util-web-sockets'
 import { WebsocketContainer } from '@qovery/shared/websockets'
 import { AppDispatch, RootState } from '@qovery/state/store'
 import LayoutPage from '../../ui/layout-page/layout-page'
@@ -80,6 +81,8 @@ export function Layout(props: PropsWithChildren<LayoutProps>) {
     setCurrentOrganizationIdOnStorage(organizationId)
     setCurrentProjectIdOnStorage(projectId)
   }, [organizationId, projectId])
+
+  useStatusWebSockets()
 
   return (
     <LayoutPage topBar={topBar} cluster={clusters[0]} defaultOrganizationId={organizations[0]?.id}>

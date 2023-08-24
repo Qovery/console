@@ -2,8 +2,6 @@ import {
   CloudProviderEnum,
   DatabaseAccessibilityEnum,
   OrganizationCustomRoleClusterPermission,
-  ServiceDeploymentStatusEnum,
-  StateEnum,
   StorageTypeEnum,
 } from 'qovery-typescript-axios'
 import { databaseFactoryMock } from '@qovery/shared/factories'
@@ -36,11 +34,6 @@ describe('testing payload refactoring', () => {
       id: '1',
       created_at: '',
       updated_at: '',
-      status: {
-        id: '',
-        state: StateEnum.BUILDING,
-        service_deployment_status: ServiceDeploymentStatusEnum.NEVER_DEPLOYED,
-      },
       storage: [
         {
           id: '1',

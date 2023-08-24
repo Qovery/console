@@ -7,6 +7,9 @@ export interface RunningStatusWebsocketProps {
 
 const baseUrl = 'wss://ws.qovery.com/service/status'
 
+/**
+ * @deprecated This should be migrated to the new `use-status-web-sockets` hook
+ */
 export function useRunningStatusWebsocket(props: RunningStatusWebsocketProps) {
   const { getAccessTokenSilently } = props
   const [websockets, setWebsockets] = useState<string[]>([])

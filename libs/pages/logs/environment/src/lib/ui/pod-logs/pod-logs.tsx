@@ -1,5 +1,6 @@
 import { Log } from 'qovery-typescript-axios'
 import { useMemo, useState } from 'react'
+import { useRunningStatus } from '@qovery/domains/services/feature'
 import { LayoutLogs } from '@qovery/shared/console-shared'
 import { ApplicationEntity, DatabaseEntity, LoadingStatus } from '@qovery/shared/interfaces'
 import { Icon, IconAwesomeEnum, StatusChip, Table, TableFilterProps, TableHeadProps } from '@qovery/shared/ui'
@@ -30,6 +31,10 @@ export function PodLogs(props: PodLogsProps) {
 
   const [filter, setFilter] = useState<TableFilterProps[]>([])
   const publiclyExposedPort = Boolean((service as ApplicationEntity).ports?.find((port) => port.publicly_accessible))
+  const { data: serviceRunningStatus } = useRunningStatus({
+    environmentId: service?.environment?.id,
+    serviceId: service?.id,
+  })
 
   const tableHead: TableHeadProps<Log>[] = [
     {
@@ -43,7 +48,7 @@ export function PodLogs(props: PodLogsProps) {
           key: 'pod_name',
           itemContentCustom: (data: Log, currentFilter: string) => {
             const isActive = data.pod_name === currentFilter
-            const currentPod = service?.running_status?.pods.filter((pod) => pod.name === data.pod_name)[0]
+            const currentPod = serviceRunningStatus?.pods.filter((pod) => pod.name === data.pod_name)[0]
             return (
               <div
                 className={`group flex items-center w-[calc(100%+24px)] rounded-sm px-3 -mx-3 h-full ${
@@ -109,7 +114,6 @@ export function PodLogs(props: PodLogsProps) {
       }}
       pauseLogs={pauseStatusLogs}
       setPauseLogs={setPauseStatusLogs}
-      serviceRunningStatus={service?.running_status}
       enabledNginx={enabledNginx}
       setEnabledNginx={publiclyExposedPort ? setEnabledNginx : undefined}
       countNginx={countNginx}

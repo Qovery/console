@@ -4,8 +4,9 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useLocation, useParams } from 'react-router-dom'
 import { postDatabaseActionsDeploy, postDatabaseActionsRedeploy } from '@qovery/domains/database'
 import { selectClusterById } from '@qovery/domains/organization'
+import { ServiceStateChip, useDeploymentStatus } from '@qovery/domains/services/feature'
 import { DatabaseButtonsActions, NeedRedeployFlag } from '@qovery/shared/console-shared'
-import { IconEnum, RunningState } from '@qovery/shared/enums'
+import { IconEnum } from '@qovery/shared/enums'
 import { ClusterEntity, DatabaseEntity } from '@qovery/shared/interfaces'
 import {
   DATABASE_DEPLOYMENTS_URL,
@@ -13,7 +14,7 @@ import {
   DATABASE_SETTINGS_URL,
   DATABASE_URL,
 } from '@qovery/shared/routes'
-import { Header, Icon, Skeleton, StatusChip, Tabs, Tag, TagMode, TagSize } from '@qovery/shared/ui'
+import { Header, Icon, Skeleton, Tabs, Tag, TagMode, TagSize } from '@qovery/shared/ui'
 import { AppDispatch, RootState } from '@qovery/state/store'
 
 export interface ContainerProps {
@@ -32,12 +33,16 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
   )
 
   const dispatch = useDispatch<AppDispatch>()
+  const { data: serviceDeploymentStatus, isLoading: isLoadingServiceDeploymentStatus } = useDeploymentStatus({
+    environmentId: database?.environment?.id,
+    serviceId: database?.id,
+  })
 
   const headerActions = (
     <>
-      <Skeleton width={150} height={32} show={!database?.status}>
+      <Skeleton width={150} height={32} show={isLoadingServiceDeploymentStatus}>
         <div className="flex">
-          {environment && database && database?.status && (
+          {environment && database && (
             <>
               <DatabaseButtonsActions
                 database={database}
@@ -69,20 +74,14 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
 
   const tabsItems = [
     {
-      icon: (
-        <StatusChip status={(database?.running_status && database?.running_status.state) || RunningState.STOPPED} />
-      ),
+      icon: <ServiceStateChip mode="running" environmentId={database?.environment?.id} serviceId={database?.id} />,
       name: 'Overview',
       active:
         location.pathname === DATABASE_URL(organizationId, projectId, environmentId, databaseId) + DATABASE_GENERAL_URL,
       link: DATABASE_URL(organizationId, projectId, environmentId, databaseId) + DATABASE_GENERAL_URL,
     },
     {
-      icon: (
-        <Skeleton width={16} height={16} rounded show={!database?.status}>
-          <StatusChip status={database?.status && database?.status.state} />
-        </Skeleton>
-      ),
+      icon: <ServiceStateChip mode="deployment" environmentId={database?.environment?.id} serviceId={database?.id} />,
       name: 'Deployments',
       active:
         location.pathname ===
@@ -101,7 +100,7 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
 
   const redeployDatabase = () => {
     if (database) {
-      if (database?.status?.service_deployment_status === ServiceDeploymentStatusEnum.NEVER_DEPLOYED) {
+      if (serviceDeploymentStatus?.service_deployment_status === ServiceDeploymentStatusEnum.NEVER_DEPLOYED) {
         dispatch(postDatabaseActionsDeploy({ environmentId, databaseId }))
       } else {
         dispatch(postDatabaseActionsRedeploy({ environmentId, databaseId }))
@@ -113,11 +112,9 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
     <>
       <Header title={database?.name} icon={IconEnum.DATABASE} actions={headerActions} />
       <Tabs items={tabsItems} />
-      {database &&
-        database.status &&
-        database.status.service_deployment_status !== ServiceDeploymentStatusEnum.UP_TO_DATE && (
-          <NeedRedeployFlag service={database} onClickCTA={redeployDatabase} />
-        )}
+      {database && serviceDeploymentStatus?.service_deployment_status !== ServiceDeploymentStatusEnum.UP_TO_DATE && (
+        <NeedRedeployFlag service={database} onClickCTA={redeployDatabase} />
+      )}
       {children}
     </>
   )

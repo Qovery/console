@@ -16,7 +16,13 @@ export interface DatabaseCredentials extends Credentials {
 
 export interface DatabaseEntity extends Database {
   description?: string
+  /**
+   * @deprecated This should be not be used, use dedicated hooks instead `useDeploymentStatus`
+   */
   status?: Status
+  /**
+   * @deprecated This should be not be used, use dedicated hooks instead `useRunningStatus`
+   */
   running_status?: ServiceRunningStatus
   metrics?: {
     loadingStatus: LoadingStatus

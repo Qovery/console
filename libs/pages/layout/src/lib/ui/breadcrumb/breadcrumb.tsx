@@ -2,7 +2,8 @@ import equal from 'fast-deep-equal'
 import { Cluster, Database, Environment, Organization, Project } from 'qovery-typescript-axios'
 import { memo, useEffect } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
-import { getEnvironmentStatusById, useFetchEnvironmentsStatus } from '@qovery/domains/environment'
+import { EnvironmentStateChip } from '@qovery/domains/environments/feature'
+import { ServiceStateChip } from '@qovery/domains/services/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import { ApplicationEntity, ClusterEntity, DatabaseEntity } from '@qovery/shared/interfaces'
 import {
@@ -28,7 +29,6 @@ import {
   IconAwesomeEnum,
   type MenuData,
   MenuItemProps,
-  StatusChip,
   Tooltip,
 } from '@qovery/shared/ui'
 import BreadcrumbItem from '../breadcrumb-item/breadcrumb-item'
@@ -64,8 +64,6 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
     location.pathname.includes(INFRA_LOGS_URL(organizationId, clusterId)) ||
     locationIsApplicationLogs ||
     locationIsDeploymentLogs
-
-  const { data: environmentStatuses } = useFetchEnvironmentsStatus(projectId || '')
 
   const clustersMenu: MenuData = [
     {
@@ -134,7 +132,7 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
             },
             contentLeft: (
               <div className="flex items-center">
-                <StatusChip status={getEnvironmentStatusById(environment.id, environmentStatuses)?.state} />
+                <EnvironmentStateChip mode="deployment" environmentId={environment.id} />
                 <div className="ml-3 mt-0.5">
                   {environment.cloud_provider.provider && <Icon name={`${environment.cloud_provider.provider}_GRAY`} />}
                 </div>
@@ -164,7 +162,7 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
             },
             contentLeft: (
               <div className="flex items-center">
-                <StatusChip status={service.status?.state} />
+                <ServiceStateChip mode="deployment" environmentId={service.environment?.id} serviceId={service.id} />
                 <div className="ml-3 mt-[1px]">
                   <Icon name={(service as DatabaseEntity).type ? IconEnum.DATABASE : IconEnum.APPLICATION} width="16" />
                 </div>

@@ -1,5 +1,6 @@
 import { act, fireEvent, getByRole, render } from '__tests__/utils/setup-jest'
 import { ServiceDeploymentStatusEnum, StateEnum } from 'qovery-typescript-axios'
+import * as domainsServicesFeature from '@qovery/domains/services/feature'
 import { applicationFactoryMock } from '@qovery/shared/factories'
 import { ApplicationEntity } from '@qovery/shared/interfaces'
 import NeedRedeployFlag from './need-redeploy-flag'
@@ -13,30 +14,39 @@ describe('NeedRedeployFlag', () => {
   })
 
   it('should render button with Deploy now', () => {
-    mockApplication.status = {
-      state: StateEnum.DEPLOYED,
-      service_deployment_status: ServiceDeploymentStatusEnum.NEVER_DEPLOYED,
-    }
+    jest.spyOn(domainsServicesFeature, 'useDeploymentStatus').mockReturnValue({
+      data: {
+        state: StateEnum.DEPLOYED,
+        id: 'id',
+        service_deployment_status: ServiceDeploymentStatusEnum.NEVER_DEPLOYED,
+      },
+    })
     const { baseElement } = render(<NeedRedeployFlag service={mockApplication} />)
 
     getByRole(baseElement, 'button', { name: 'Deploy now' })
   })
 
   it('should render button with Redeploy now', () => {
-    mockApplication.status = {
-      state: StateEnum.DEPLOYED,
-      service_deployment_status: ServiceDeploymentStatusEnum.OUT_OF_DATE,
-    }
+    jest.spyOn(domainsServicesFeature, 'useDeploymentStatus').mockReturnValue({
+      data: {
+        state: StateEnum.DEPLOYED,
+        id: 'id',
+        service_deployment_status: ServiceDeploymentStatusEnum.OUT_OF_DATE,
+      },
+    })
     const { baseElement } = render(<NeedRedeployFlag service={mockApplication} />)
 
     getByRole(baseElement, 'button', { name: 'Redeploy now' })
   })
 
   it('should call the onSubmit function on button click', async () => {
-    mockApplication.status = {
-      state: StateEnum.DEPLOYED,
-      service_deployment_status: ServiceDeploymentStatusEnum.OUT_OF_DATE,
-    }
+    jest.spyOn(domainsServicesFeature, 'useDeploymentStatus').mockReturnValue({
+      data: {
+        state: StateEnum.DEPLOYED,
+        id: 'id',
+        service_deployment_status: ServiceDeploymentStatusEnum.OUT_OF_DATE,
+      },
+    })
     const spy = jest.fn()
     const { baseElement } = render(<NeedRedeployFlag service={mockApplication} onClickCTA={spy} />)
 

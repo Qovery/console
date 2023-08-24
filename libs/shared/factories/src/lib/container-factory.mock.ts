@@ -1,5 +1,5 @@
 import { Chance } from 'chance'
-import { PortProtocolEnum, ServiceDeploymentStatusEnum, StateEnum, StorageTypeEnum } from 'qovery-typescript-axios'
+import { PortProtocolEnum, StorageTypeEnum } from 'qovery-typescript-axios'
 import { ContainerApplicationEntity } from '@qovery/shared/interfaces'
 
 const chance = new Chance('123')
@@ -56,12 +56,5 @@ export const containerFactoryMock = (howMany: number): ContainerApplicationEntit
     instances: {
       loadingStatus: 'loaded',
       items: [],
-    },
-    status: {
-      id: chance.guid(),
-      state: StateEnum.DEPLOYED,
-      message: '',
-      service_deployment_status: ServiceDeploymentStatusEnum.UP_TO_DATE,
-      last_deployment_date: new Date().toString(),
     },
   }))

@@ -5,6 +5,7 @@ import {
   DatabaseModeEnum,
   StateEnum,
 } from 'qovery-typescript-axios'
+import { useDeploymentStatus } from '@qovery/domains/services/feature'
 import { DatabaseEntity, LoadingStatus } from '@qovery/shared/interfaces'
 import { BaseLink, HelpSection, Skeleton } from '@qovery/shared/ui'
 import About from '../about/about'
@@ -47,6 +48,11 @@ export function PageGeneral(props: PageGeneralProps) {
     ]
   }
 
+  const { data: deploymentStatus } = useDeploymentStatus({
+    environmentId: database?.environment?.id,
+    serviceId: database?.id,
+  })
+
   return (
     <div className="mt-2 bg-white rounded flex flex-grow min-h-0">
       <div className="flex h-full flex-col flex-grow">
@@ -62,7 +68,7 @@ export function PageGeneral(props: PageGeneralProps) {
                 <div className="text-neutral-400 font-bold">
                   {database?.mode === DatabaseModeEnum.MANAGED
                     ? 'N / A'
-                    : `${database?.status?.state === StateEnum.DEPLOYED ? 1 : 0} / 1`}
+                    : `${deploymentStatus?.state === StateEnum.DEPLOYED ? 1 : 0} / 1`}
                 </div>
               </Skeleton>
               <span className="text-xs text-neutral-350 font-medium">Running instances</span>

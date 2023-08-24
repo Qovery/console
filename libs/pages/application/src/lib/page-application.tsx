@@ -7,7 +7,6 @@ import {
   fetchApplicationCommits,
   fetchApplicationInstances,
   fetchApplicationLinks,
-  fetchApplicationStatus,
   selectApplicationById,
 } from '@qovery/domains/application'
 import { useFetchEnvironment } from '@qovery/domains/environment'
@@ -43,12 +42,6 @@ export function PageApplication() {
       if (application?.commits?.loadingStatus !== 'loaded' && (isApplication(application) || isGitJob(application)))
         dispatch(fetchApplicationCommits({ applicationId, serviceType: getServiceType(application) }))
     }
-    const fetchApplicationStatusByInterval = setInterval(
-      () =>
-        application && dispatch(fetchApplicationStatus({ applicationId, serviceType: getServiceType(application) })),
-      3000
-    )
-    return () => clearInterval(fetchApplicationStatusByInterval)
   }, [applicationId, loadingStatus, dispatch])
 
   return (

@@ -1,7 +1,6 @@
-import { Environment, EnvironmentStatus } from 'qovery-typescript-axios'
+import { Environment } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { getEnvironmentStatusById } from '@qovery/domains/environment'
 import { CreateCloneEnvironmentModalFeature } from '@qovery/shared/console-shared'
 import {
   CLUSTERS_CREATION_GENERAL_URL,
@@ -25,14 +24,13 @@ import TableRowEnvironments from '../table-row-environments/table-row-environmen
 
 export interface PageGeneralProps {
   environments: Environment[]
-  environmentsStatus?: EnvironmentStatus[]
   listHelpfulLinks: BaseLink[]
   isLoading?: boolean
   clusterAvailable?: boolean
 }
 
 export function PageGeneral(props: PageGeneralProps) {
-  const { environments, environmentsStatus, listHelpfulLinks, clusterAvailable, isLoading } = props
+  const { listHelpfulLinks, clusterAvailable, environments, isLoading } = props
   const { organizationId = '', projectId = '' } = useParams()
 
   const { openModal, closeModal } = useModal()
@@ -101,7 +99,6 @@ export function PageGeneral(props: PageGeneralProps) {
               <TableRowEnvironments
                 key={currentData.id}
                 data={currentData}
-                status={getEnvironmentStatusById(currentData.id, environmentsStatus)}
                 filter={filter}
                 dataHead={tableHead}
                 link={`${SERVICES_URL(organizationId, projectId, currentData.id)}${SERVICES_GENERAL_URL}`}

@@ -105,6 +105,9 @@ export const fetchApplications = createAsyncThunk<
   ] as ApplicationEntity[]
 })
 
+/**
+ * @deprecated This should be migrated to the new `use-status-web-sockets` hook
+ */
 export const fetchApplicationsStatus = createAsyncThunk<Status[], { environmentId: string }>(
   'applications-status/fetch',
   async (data) => {
@@ -240,6 +243,9 @@ export const fetchApplicationDeployments = createAsyncThunk<
   return response.data.results as DeploymentHistory[]
 })
 
+/**
+ * @deprecated This should be migrated to the new `use-status-web-sockets` hook
+ */
 export const fetchApplicationStatus = createAsyncThunk<
   Status,
   { applicationId: string; serviceType?: ServiceTypeEnum }
@@ -367,6 +373,9 @@ export const applicationsSlice = createSlice({
   reducers: {
     add: applicationsAdapter.addOne,
     remove: applicationsAdapter.removeOne,
+    /**
+     * @deprecated This should be migrated to the new `use-status-web-sockets` hook
+     */
     updateApplicationsRunningStatus: (
       state,
       action: PayloadAction<{ servicesRunningStatus: ServiceRunningStatus[]; listEnvironmentIdFromCluster: string[] }>

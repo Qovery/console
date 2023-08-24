@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { applicationsLoadingStatus, getApplicationsState } from '@qovery/domains/application'
 import { fetchOrganizationContainerRegistries, selectOrganizationById } from '@qovery/domains/organization'
+import { useRunningStatus } from '@qovery/domains/services/feature'
 import { isContainer, isContainerJob } from '@qovery/shared/enums'
 import { ApplicationEntity, LoadingStatus, OrganizationEntity } from '@qovery/shared/interfaces'
 import { BaseLink } from '@qovery/shared/ui'
@@ -31,11 +32,15 @@ export function PageGeneralFeature() {
     (state) => state.organization.organizations.loadingStatus
   )
   const [currentRegistry, setCurrentRegistry] = useState<ContainerRegistryResponse | undefined>(undefined)
+  const { data: runningStatus } = useRunningStatus({
+    environmentId: application?.environment?.id,
+    serviceId: application?.id,
+  })
 
   const computeStability = (): number => {
     let c = 0
 
-    application?.running_status?.pods.forEach((pod) => {
+    runningStatus?.pods.forEach((pod) => {
       c += pod.restart_count
     })
 

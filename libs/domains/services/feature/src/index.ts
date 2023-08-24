@@ -1,3 +1,6 @@
+export * from './lib/hooks/use-deployment-status/use-deployment-status'
+export * from './lib/hooks/use-list-statuses/use-list-statuses'
+export * from './lib/hooks/use-running-status/use-running-status'
 export * from './lib/hooks/use-service-statuses/use-service-statuses'
 export * from './lib/hooks/use-services/use-services'
 export * from './lib/service-deployment-status-label/service-deployment-status-label'

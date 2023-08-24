@@ -14,7 +14,6 @@ import {
   EnvironmentEditRequest,
   EnvironmentExportApi,
   EnvironmentMainCallsApi,
-  EnvironmentStatus,
   EnvironmentsApi,
 } from 'qovery-typescript-axios'
 import { WebsocketRunningStatusInterface } from '@qovery/shared/interfaces'
@@ -61,29 +60,9 @@ export const useFetchEnvironment = (projectId: string, environmentId: string) =>
     environments.find((environment) => environment.id === environmentId)
   )
 
-export const useFetchEnvironmentsStatus = (projectId: string, refetchInterval = 3000) => {
-  return useQuery<EnvironmentStatus[], Error>(
-    ['environmentsStatus', projectId],
-    async () => {
-      const response = await environmentsApi.getProjectEnvironmentsStatus(projectId)
-      return response.data.results as EnvironmentStatus[]
-    },
-    {
-      onError: (err) => toastError(err),
-      enabled: projectId !== '',
-      refetchInterval: refetchInterval,
-      staleTime: 60000,
-    }
-  )
-}
-
-export const getEnvironmentStatusById = (
-  environmentId: string,
-  status?: EnvironmentStatus[]
-): EnvironmentStatus | undefined => {
-  return status?.find((environment) => environment.id === environmentId)
-}
-
+/**
+ * @deprecated This should be migrated to the new `use-status-web-sockets` hook
+ */
 export const updateEnvironmentsRunningStatus = async (
   queryClient: QueryClient,
   environments: WebsocketRunningStatusInterface[]
@@ -94,21 +73,6 @@ export const updateEnvironmentsRunningStatus = async (
     queryClient.invalidateQueries({ queryKey })
     queryClient.setQueryData(queryKey, environment)
   }
-}
-
-export const useEnvironmentRunningStatus = (environmentId: string) => {
-  const queryClient = useQueryClient()
-
-  const queryKey = ['environments-running-status', environmentId]
-  const environmentsRunningStatusById: WebsocketRunningStatusInterface | undefined = queryClient.getQueryData(queryKey)
-  return environmentsRunningStatusById
-}
-
-export const useGetEnvironmentRunningStatusById = (environmentId: string, isLoading: boolean) => {
-  return useQuery<WebsocketRunningStatusInterface, Error>(['environments-running-status', environmentId], {
-    // removed error when we use mock id
-    enabled: !isLoading,
-  })
 }
 
 export const useEditEnvironment = (projectId: string, onSettledCallback: () => void) => {

@@ -11,6 +11,7 @@ import {
   postApplicationActionsStop,
 } from '@qovery/domains/application'
 import { useActionCancelEnvironment } from '@qovery/domains/environment'
+import { useDeploymentStatus, useRunningStatus } from '@qovery/domains/services/feature'
 import {
   ServiceTypeEnum,
   getServiceType,
@@ -97,6 +98,9 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
     location.pathname === SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_DEPLOYMENTS_URL
   )
 
+  const { data: runningSatus } = useRunningStatus({ environmentId, serviceId: application.id })
+  const { data: deploymentStatus } = useDeploymentStatus({ environmentId, serviceId: application.id })
+
   const removeService = (id: string, name?: string, force = false) => {
     openModalConfirmation({
       title: `Delete application`,
@@ -123,8 +127,8 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
         ),
     }
 
-    const state = application.status?.state
-    const runningState = application.running_status?.state
+    const state = deploymentStatus?.state
+    const runningState = runningSatus?.state
     const topItems: MenuItemProps[] = []
     const bottomItems: MenuItemProps[] = []
 
@@ -279,9 +283,11 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
     openModal,
     openModalConfirmation,
     serviceType,
+    runningSatus?.state,
+    deploymentStatus?.state,
   ])
 
-  const canDelete = application.status && isDeleteAvailable(application.status.state)
+  const canDelete = deploymentStatus && isDeleteAvailable(deploymentStatus.state)
   const copyContent = `Cluster ID: ${clusterId}\nOrganization ID: ${organizationId}\nProject ID: ${projectId}\nEnvironment ID: ${environmentId}\nService ID: ${application.id}`
 
   const buttonActionsDefault: ButtonIconActionElementProps[] = [
@@ -386,7 +392,7 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
                       removeService(
                         application.id,
                         application.name,
-                        application.status?.state && application.status.state === StateEnum.READY
+                        deploymentStatus?.state && deploymentStatus.state === StateEnum.READY
                       ),
                   },
                 ],

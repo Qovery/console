@@ -67,6 +67,9 @@ export const createDatabase = createAsyncThunk<Database, { environmentId: string
   }
 )
 
+/**
+ * @deprecated This should be migrated to the new `use-status-web-sockets` hook
+ */
 export const fetchDatabasesStatus = createAsyncThunk<Status[], { environmentId: string }>(
   'databases-status/fetch',
   async (data) => {
@@ -173,6 +176,9 @@ export const databasesSlice = createSlice({
   reducers: {
     add: databasesAdapter.addOne,
     remove: databasesAdapter.removeOne,
+    /**
+     * @deprecated This should be migrated to the new `use-status-web-sockets` hook
+     */
     updateDatabasesRunningStatus: (
       state,
       action: PayloadAction<{ servicesRunningStatus: ServiceRunningStatus[]; listEnvironmentIdFromCluster: string[] }>

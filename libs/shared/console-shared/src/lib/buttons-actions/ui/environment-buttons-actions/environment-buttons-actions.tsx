@@ -1,5 +1,5 @@
 import { ClickEvent } from '@szhsin/react-menu'
-import { Environment, EnvironmentStatus, OrganizationEventTargetType, StateEnum } from 'qovery-typescript-axios'
+import { Environment, OrganizationEventTargetType, StateEnum } from 'qovery-typescript-axios'
 import { useMemo } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import {
@@ -9,6 +9,7 @@ import {
   useActionStopEnvironment,
   useDeleteEnvironment,
 } from '@qovery/domains/environment'
+import { useDeploymentStatus } from '@qovery/domains/environments/feature'
 import {
   AUDIT_LOGS_PARAMS_URL,
   ENVIRONMENTS_GENERAL_URL,
@@ -39,12 +40,11 @@ import UpdateAllModalFeature from '../../../update-all-modal/feature/update-all-
 
 export interface EnvironmentButtonsActionsProps {
   environment: Environment
-  status?: EnvironmentStatus
   hasServices?: boolean
 }
 
 export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps) {
-  const { environment, status, hasServices = false } = props
+  const { environment, hasServices = false } = props
   const { organizationId = '', projectId = '' } = useParams()
   const location = useLocation()
   const navigate = useNavigate()
@@ -52,6 +52,7 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
 
   const { openModalConfirmation } = useModalConfirmation()
 
+  const { data: deploymentStatus } = useDeploymentStatus({ environmentId: environment.id })
   const copyContent = `Cluster ID: ${environment.cluster_id}\nOrganization ID: ${organizationId}\nProject ID: ${projectId}\nEnvironment ID: ${environment.id}`
 
   const { mutate: actionRedeployEnvironmentMutate } = useActionRedeployEnvironment(
@@ -85,7 +86,7 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
       onClick: () => actionDeployEnvironmentMutate(),
     }
 
-    const state = status?.state
+    const state = deploymentStatus?.state
     const topItems: MenuItemProps[] = []
     const bottomItems: MenuItemProps[] = []
 
@@ -175,7 +176,7 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
     openModalConfirmation,
     projectId,
     openModal,
-    status?.state,
+    deploymentStatus?.state,
     actionCancelEnvironmentMutate,
     actionDeployEnvironmentMutate,
     actionRedeployEnvironmentMutate,
@@ -186,7 +187,7 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
     projectId,
     environment.id,
     () => navigate(ENVIRONMENTS_URL(organizationId, projectId) + ENVIRONMENTS_GENERAL_URL),
-    status?.state && status.state === StateEnum.READY
+    deploymentStatus?.state === StateEnum.READY
   )
 
   const removeEnvironment = async () => {
@@ -198,7 +199,7 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
     })
   }
 
-  const canDelete = status?.state && isDeleteAvailable(status.state)
+  const canDelete = deploymentStatus?.state && isDeleteAvailable(deploymentStatus.state)
 
   const buttonActionsDefault = [
     ...(hasServices

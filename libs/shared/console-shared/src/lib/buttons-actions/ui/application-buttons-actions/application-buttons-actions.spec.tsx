@@ -1,5 +1,6 @@
 import { getByText, queryByText, render } from '__tests__/utils/setup-jest'
 import { ServiceDeploymentStatusEnum, StateEnum } from 'qovery-typescript-axios'
+import * as domainsServicesFeature from '@qovery/domains/services/feature'
 import { RunningState } from '@qovery/shared/enums'
 import { applicationFactoryMock, lifecycleJobFactoryMock } from '@qovery/shared/factories'
 import { ApplicationButtonsActions, ApplicationButtonsActionsProps } from './application-buttons-actions'
@@ -13,17 +14,20 @@ const props: ApplicationButtonsActionsProps = {
 
 describe('ApplicationButtonsActionsFeature', () => {
   beforeEach(() => {
-    mockApplication.status = {
-      state: StateEnum.STOPPED,
-      id: 'id',
-      message: 'message',
-      service_deployment_status: ServiceDeploymentStatusEnum.UP_TO_DATE,
-    }
-    mockApplication.running_status = {
-      state: RunningState.DEPLOYED,
-      id: 'id',
-      pods: [],
-    }
+    jest.spyOn(domainsServicesFeature, 'useDeploymentStatus').mockReturnValue({
+      data: {
+        state: StateEnum.STOPPED,
+        id: 'id',
+        service_deployment_status: ServiceDeploymentStatusEnum.UP_TO_DATE,
+      },
+    })
+    jest.spyOn(domainsServicesFeature, 'useRunningStatus').mockReturnValue({
+      data: {
+        state: RunningState.DEPLOYED,
+        id: 'id',
+        pods: [],
+      },
+    })
   })
 
   it('should render successfully', () => {
@@ -32,7 +36,13 @@ describe('ApplicationButtonsActionsFeature', () => {
   })
 
   it('should render actions for DEPLOYED status', async () => {
-    mockApplication.status.state = StateEnum.DEPLOYED
+    jest.spyOn(domainsServicesFeature, 'useDeploymentStatus').mockReturnValueOnce({
+      data: {
+        state: StateEnum.DEPLOYED,
+        id: 'id',
+        service_deployment_status: ServiceDeploymentStatusEnum.UP_TO_DATE,
+      },
+    })
     const { baseElement } = render(<ApplicationButtonsActions {...props} />)
 
     getByText(baseElement, 'Redeploy')
@@ -49,7 +59,13 @@ describe('ApplicationButtonsActionsFeature', () => {
   })
 
   it('should render actions for STOPPED status', async () => {
-    mockApplication.status.state = StateEnum.STOPPED
+    jest.spyOn(domainsServicesFeature, 'useDeploymentStatus').mockReturnValueOnce({
+      data: {
+        state: StateEnum.STOPPED,
+        id: 'id',
+        service_deployment_status: ServiceDeploymentStatusEnum.UP_TO_DATE,
+      },
+    })
     const { baseElement } = render(<ApplicationButtonsActions {...props} />)
 
     getByText(baseElement, 'Deploy')
@@ -63,7 +79,13 @@ describe('ApplicationButtonsActionsFeature', () => {
   })
 
   it('should render actions for DELETING status', async () => {
-    mockApplication.status.state = StateEnum.DELETING
+    jest.spyOn(domainsServicesFeature, 'useDeploymentStatus').mockReturnValue({
+      data: {
+        state: StateEnum.DELETING,
+        id: 'id',
+        service_deployment_status: ServiceDeploymentStatusEnum.UP_TO_DATE,
+      },
+    })
     const { baseElement } = render(<ApplicationButtonsActions {...props} />)
 
     getByText(baseElement, 'Edit code')
@@ -76,9 +98,13 @@ describe('ApplicationButtonsActionsFeature', () => {
   })
 
   it('should not render Restart Service if running status is not running', async () => {
-    if (mockApplication.running_status) {
-      mockApplication.running_status.state = RunningState.STOPPED
-    }
+    jest.spyOn(domainsServicesFeature, 'useRunningStatus').mockReturnValue({
+      data: {
+        state: RunningState.STOPPED,
+        id: 'id',
+        pods: [],
+      },
+    })
 
     const { baseElement } = render(<ApplicationButtonsActions {...props} />)
 
@@ -87,17 +113,6 @@ describe('ApplicationButtonsActionsFeature', () => {
 
   it('should not render Restart Service if application is a job', async () => {
     const mockJob = lifecycleJobFactoryMock(1)[0]
-    mockJob.status = {
-      state: StateEnum.STOPPED,
-      id: 'id',
-      message: 'message',
-      service_deployment_status: ServiceDeploymentStatusEnum.UP_TO_DATE,
-    }
-    mockJob.running_status = {
-      state: RunningState.DEPLOYED,
-      id: 'id',
-      pods: [],
-    }
 
     const { baseElement } = render(<ApplicationButtonsActions {...props} application={mockJob} />)
 

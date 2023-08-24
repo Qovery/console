@@ -1,7 +1,8 @@
 import { createQueryKeys, type inferQueryKeys } from '@lukemorales/query-key-factory'
-import { EnvironmentMainCallsApi } from 'qovery-typescript-axios'
+import { EnvironmentMainCallsApi, EnvironmentsApi } from 'qovery-typescript-axios'
 import { type RunningState } from '@qovery/shared/enums'
 
+const environmentsApi = new EnvironmentsApi()
 const environmentMainCallsApi = new EnvironmentMainCallsApi()
 
 export const environments = createQueryKeys('environments', {
@@ -25,6 +26,13 @@ export const environments = createQueryKeys('environments', {
     async queryFn() {
       const result = await environmentMainCallsApi.getEnvironment(environmentId)
       return result.data
+    },
+  }),
+  listStatuses: (projectId: string) => ({
+    queryKey: [projectId],
+    async queryFn() {
+      const result = await environmentsApi.getProjectEnvironmentsStatus(projectId)
+      return result.data.results ?? []
     },
   }),
 })

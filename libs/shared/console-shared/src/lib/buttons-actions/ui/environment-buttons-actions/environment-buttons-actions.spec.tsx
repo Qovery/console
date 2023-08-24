@@ -1,5 +1,6 @@
 import { getByText, render } from '__tests__/utils/setup-jest'
-import { ServiceDeploymentStatusEnum, StateEnum, Status } from 'qovery-typescript-axios'
+import { StateEnum } from 'qovery-typescript-axios'
+import * as domainsEnvironmentsFeature from '@qovery/domains/environments/feature'
 import { environmentFactoryMock } from '@qovery/shared/factories'
 import EnvironmentButtonsActions, { EnvironmentButtonsActionsProps } from './environment-buttons-actions'
 
@@ -10,18 +11,15 @@ const props: EnvironmentButtonsActionsProps = {
 }
 
 describe('EnvironmentButtonsActions', () => {
-  let status: Status
-
   beforeEach(() => {
-    status = {
-      message: 'message',
-      service_deployment_status: ServiceDeploymentStatusEnum.UP_TO_DATE,
-      state: StateEnum.STOPPED,
-      last_deployment_date: '2021-05-20T09:00:00.000Z',
-      id: 'id',
-    }
-
-    props.status = status
+    jest.spyOn(domainsEnvironmentsFeature, 'useDeploymentStatus').mockReturnValue({
+      data: {
+        state: StateEnum.STOPPED,
+        last_deployment_date: '2021-05-20T09:00:00.000Z',
+        last_deployment_state: StateEnum.STOPPED,
+        id: 'id',
+      },
+    })
   })
 
   it('should render successfully', () => {
@@ -30,7 +28,6 @@ describe('EnvironmentButtonsActions', () => {
   })
 
   it('should render buttons with Stopped status', () => {
-    props.status!.state = StateEnum.STOPPED
     const { baseElement } = render(<EnvironmentButtonsActions {...props} />)
     expect(baseElement).toBeTruthy()
 
@@ -44,7 +41,14 @@ describe('EnvironmentButtonsActions', () => {
   })
 
   it('should render buttons with Running status', () => {
-    props.status!.state = StateEnum.DEPLOYED
+    jest.spyOn(domainsEnvironmentsFeature, 'useDeploymentStatus').mockReturnValue({
+      data: {
+        state: StateEnum.DEPLOYED,
+        last_deployment_date: '2021-05-20T09:00:00.000Z',
+        last_deployment_state: StateEnum.STOPPED,
+        id: 'id',
+      },
+    })
     const { baseElement } = render(<EnvironmentButtonsActions {...props} />)
     expect(baseElement).toBeTruthy()
 
@@ -58,7 +62,14 @@ describe('EnvironmentButtonsActions', () => {
   })
 
   it('should render actions for DELETING status', async () => {
-    status.state = StateEnum.DELETING
+    jest.spyOn(domainsEnvironmentsFeature, 'useDeploymentStatus').mockReturnValue({
+      data: {
+        state: StateEnum.DELETING,
+        last_deployment_date: '2021-05-20T09:00:00.000Z',
+        last_deployment_state: StateEnum.STOPPED,
+        id: 'id',
+      },
+    })
     const { baseElement } = render(<EnvironmentButtonsActions {...props} />)
 
     getByText(baseElement, 'Logs')

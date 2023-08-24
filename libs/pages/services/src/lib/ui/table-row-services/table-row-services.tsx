@@ -1,14 +1,7 @@
 import { BuildModeEnum, DatabaseModeEnum } from 'qovery-typescript-axios'
+import { ServiceDeploymentStatusLabel, ServiceStateChip } from '@qovery/domains/services/feature'
 import { ApplicationButtonsActions, DatabaseButtonsActions } from '@qovery/shared/console-shared'
-import {
-  IconEnum,
-  RunningState,
-  ServiceTypeEnum,
-  isApplication,
-  isContainer,
-  isDatabase,
-  isJob,
-} from '@qovery/shared/enums'
+import { IconEnum, ServiceTypeEnum, isApplication, isContainer, isDatabase, isJob } from '@qovery/shared/enums'
 import {
   ApplicationEntity,
   ContainerApplicationEntity,
@@ -16,19 +9,8 @@ import {
   GitApplicationEntity,
   JobApplicationEntity,
 } from '@qovery/shared/interfaces'
-import {
-  Icon,
-  Skeleton,
-  StatusChip,
-  StatusLabel,
-  TableFilterProps,
-  TableHeadProps,
-  TableRow,
-  Tag,
-  TagCommit,
-  Tooltip,
-} from '@qovery/shared/ui'
-import { dateFullFormat, timeAgo, upperCaseFirstLetter } from '@qovery/shared/utils'
+import { Icon, Skeleton, TableFilterProps, TableHeadProps, TableRow, Tag, TagCommit, Tooltip } from '@qovery/shared/ui'
+import { upperCaseFirstLetter } from '@qovery/shared/utils'
 
 export interface TableRowServicesProps<T> {
   data: ApplicationEntity | DatabaseEntity
@@ -66,18 +48,9 @@ export function TableRowServices<T>(props: TableRowServicesProps<T>) {
       <>
         <div className="flex items-center px-4 gap-1">
           {dataDatabase.mode === DatabaseModeEnum.MANAGED ? (
-            <Skeleton show={isLoading} width={16} height={16} rounded={true}>
-              <StatusChip status={data.status?.state || RunningState.STOPPED} />
-            </Skeleton>
+            <ServiceStateChip mode="deployment" environmentId={data.environment?.id} serviceId={data.id} />
           ) : (
-            <Skeleton className="shrink-0" show={isLoading} width={16} height={16}>
-              <StatusChip
-                status={data.running_status?.state || RunningState.STOPPED}
-                appendTooltipMessage={
-                  data?.running_status?.state === RunningState.ERROR ? data.running_status.pods[0]?.state_message : ''
-                }
-              />
-            </Skeleton>
+            <ServiceStateChip mode="running" environmentId={data.environment?.id} serviceId={data.id} />
           )}
           <div className="ml-2 mr-2">
             <Skeleton className="shrink-0" show={isLoading} width={16} height={16}>
@@ -91,16 +64,7 @@ export function TableRowServices<T>(props: TableRowServicesProps<T>) {
         <div className="flex justify-end justify-items-center px-3">
           <Skeleton show={isLoading} width={200} height={16}>
             <div className="flex items-center gap-3">
-              <p className="flex items-center gap-3 leading-7 text-neutral-350 text-sm">
-                {data.status && data.status.state && <StatusLabel status={data.status && data.status.state} />}
-                {data.status?.last_deployment_date && (
-                  <Tooltip content={dateFullFormat(data.status.last_deployment_date)}>
-                    <span className="text-xs text-neutral-300 font-medium">
-                      {timeAgo(new Date(data.status.last_deployment_date))} ago
-                    </span>
-                  </Tooltip>
-                )}
-              </p>
+              <ServiceDeploymentStatusLabel environmentId={data.environment?.id} serviceId={data.id} />
               {data.name && (
                 <>
                   {(isApplication(type) || isContainer(type) || isJob(type)) && (
