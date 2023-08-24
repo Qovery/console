@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { useIntercom } from 'react-use-intercom'
-import { selectUser, selectUserSignUp } from '@qovery/domains/user/data-access'
+import { selectUser, selectUserSignUp } from '@qovery/domains/users/data-access'
 import { StepThanks } from '../../ui/step-thanks/step-thanks'
 
 export function OnboardingThanks() {

@@ -36,7 +36,7 @@ import {
   projects,
 } from '@qovery/domains/projects'
 // eslint-disable-next-line @nx/enforce-module-boundaries
-import { initialUserSignUpState, initialUserState, userReducer, userSignUp } from '@qovery/domains/user/data-access'
+import { initialUserSignUpState, initialUserState, userReducer, userSignUp } from '@qovery/domains/users/data-access'
 
 export const organizationReducer = combineReducers({
   organizations: organization,

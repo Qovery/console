@@ -1,13 +1,13 @@
-import * as domainUserFeature from '@qovery/domains/user/feature'
+import * as domainUserFeature from '@qovery/domains/users/feature'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import PageUserGeneralFeature from './page-user-general-feature'
 
 const useEditUserAccountMockSpy = jest.spyOn(domainUserFeature, 'useEditUserAccount') as jest.Mock
 const useUserAccountMockSky = jest.spyOn(domainUserFeature, 'useUserAccount') as jest.Mock
 
-jest.mock('@qovery/domains/user/data-access', () => {
+jest.mock('@qovery/domains/users/data-access', () => {
   return {
-    ...jest.requireActual('@qovery/domains/user/data-access'),
+    ...jest.requireActual('@qovery/domains/users/data-access'),
     postUserSignUp: jest.fn(),
     selectUser: () => {
       return {

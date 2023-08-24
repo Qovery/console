@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { selectAllOrganization, selectOrganizationById } from '@qovery/domains/organization'
-import { useUserAccount } from '@qovery/domains/user/feature'
+import { useUserAccount } from '@qovery/domains/users/feature'
 import { useAuth } from '@qovery/shared/auth'
 import { type OrganizationEntity } from '@qovery/shared/interfaces'
 import { type RootState } from '@qovery/state/store'

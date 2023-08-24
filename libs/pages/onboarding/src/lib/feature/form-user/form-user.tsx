@@ -3,7 +3,7 @@ import { type Dispatch, type SetStateAction, useContext, useEffect } from 'react
 import { useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { postUserSignUp, selectUser, selectUserSignUp } from '@qovery/domains/user/data-access'
+import { postUserSignUp, selectUser, selectUserSignUp } from '@qovery/domains/users/data-access'
 import { useAuth } from '@qovery/shared/auth'
 import { ONBOARDING_MORE_URL, ONBOARDING_URL } from '@qovery/shared/routes'
 import { type AppDispatch } from '@qovery/state/store'

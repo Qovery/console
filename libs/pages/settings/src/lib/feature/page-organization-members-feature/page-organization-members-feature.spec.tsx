@@ -15,9 +15,9 @@ jest.mock('@qovery/domains/organization', () => {
   }
 })
 
-jest.mock('@qovery/domains/user/data-access', () => {
+jest.mock('@qovery/domains/users/data-access', () => {
   return {
-    ...jest.requireActual('@qovery/domains/user/data-access'),
+    ...jest.requireActual('@qovery/domains/users/data-access'),
     selectUser: () => ({
       sub: '0',
     }),

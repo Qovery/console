@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useEditUserAccount, useUserAccount } from '@qovery/domains/user/feature'
+import { useEditUserAccount, useUserAccount } from '@qovery/domains/users/feature'
 import { useAuth } from '@qovery/shared/auth'
 import { type IconEnum } from '@qovery/shared/enums'
 import { Icon } from '@qovery/shared/ui'
