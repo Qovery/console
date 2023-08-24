@@ -100,13 +100,11 @@ describe('useReactQueryWsSubscription', () => {
       useReactQueryWsSubscription({ url: 'ws://localhost:1234', onMessage, enabled: false })
     )
     const queryClient = useQueryClient()
-    const connection = await server.connected
 
     server.send({ foo: 'bar' })
 
     expect(queryClient.invalidateQueries).not.toHaveBeenCalled()
     expect(onMessage).not.toHaveBeenCalled()
-    connection.close()
     unmount()
   })
 
