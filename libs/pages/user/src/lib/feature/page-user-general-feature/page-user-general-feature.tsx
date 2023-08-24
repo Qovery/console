@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useAuth } from '@qovery/shared/auth'
 import { type IconEnum } from '@qovery/shared/enums'
@@ -12,9 +11,7 @@ export function PageUserGeneralFeature() {
 
   const { user: userToken } = useAuth()
   const { data: user } = useUserAccount()
-  const { mutateAsync } = useEditUserAccount()
-
-  const [loading, setLoading] = useState(false)
+  const { mutateAsync, isLoading: loading } = useEditUserAccount()
 
   const methods = useForm({
     mode: 'onChange',
@@ -28,14 +25,10 @@ export function PageUserGeneralFeature() {
 
   const onSubmit = methods.handleSubmit(async (data) => {
     if (data) {
-      setLoading(true)
-
       await mutateAsync({
         ...user,
         communication_email: data.email,
       })
-
-      setLoading(false)
     }
   })
 

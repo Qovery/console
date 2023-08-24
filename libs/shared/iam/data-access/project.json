@@ -3,7 +3,7 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/shared/iam/data-access/src",
   "projectType": "library",
-  "tags": [],
+  "tags": ["scope:shared", "type:data-access"],
   "targets": {
     "lint": {
       "executor": "@nx/linter:eslint",

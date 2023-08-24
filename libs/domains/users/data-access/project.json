@@ -3,7 +3,7 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/domains/users/data-access/src",
   "projectType": "library",
-  "tags": [],
+  "tags": ["scope:domain", "type:data-access", "slice:users"],
   "targets": {
     "lint": {
       "executor": "@nx/linter:eslint",
