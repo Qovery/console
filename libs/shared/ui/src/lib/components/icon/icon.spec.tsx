@@ -1,5 +1,5 @@
 import { render, screen } from '__tests__/utils/setup-jest'
-import Icon, { IconProps } from './icon'
+import Icon, { type IconProps } from './icon'
 
 describe('Icon', () => {
   let props: IconProps

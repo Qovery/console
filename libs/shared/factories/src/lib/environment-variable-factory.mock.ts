@@ -1,6 +1,6 @@
 import { Chance } from 'chance'
 import { APIVariableScopeEnum, APIVariableTypeEnum } from 'qovery-typescript-axios'
-import { EnvironmentVariableEntity, SecretEnvironmentVariableEntity } from '@qovery/shared/interfaces'
+import { type EnvironmentVariableEntity, type SecretEnvironmentVariableEntity } from '@qovery/shared/interfaces'
 
 const chance = new Chance('123')
 

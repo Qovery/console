@@ -1,4 +1,4 @@
-import { IconProps } from '../icon'
+import { type IconProps } from '../icon'
 
 export function CronJobStrokeIcon(props: IconProps) {
   return (

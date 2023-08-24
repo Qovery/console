@@ -1,5 +1,5 @@
 import { act, fireEvent, render } from '__tests__/utils/setup-jest'
-import { Project } from 'qovery-typescript-axios'
+import { type Project } from 'qovery-typescript-axios'
 import * as storeProjects from '@qovery/domains/projects'
 import { projectsFactoryMock } from '@qovery/shared/factories'
 import PageProjectGeneralFeature from './page-project-general-feature'

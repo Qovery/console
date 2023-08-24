@@ -1,11 +1,11 @@
-import { Meta, Story } from '@storybook/react'
-import { Environment } from 'qovery-typescript-axios'
+import { type Meta, type Story } from '@storybook/react'
+import { type Environment } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { environmentFactoryMock } from '@qovery/shared/factories'
 import Button from '../buttons/button/button'
 import Icon from '../icon/icon'
 import { IconAwesomeEnum } from '../icon/icon-awesome.enum'
-import { Table, TableFilterProps, TableProps } from './table'
+import { Table, type TableFilterProps, type TableProps } from './table'
 import { TableRow } from './table-row/table-row'
 
 export default {

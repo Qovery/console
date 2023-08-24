@@ -1,5 +1,5 @@
-import { ClusterAdvancedSettings } from 'qovery-typescript-axios'
-import { ClusterEntity } from '@qovery/shared/interfaces'
+import { type ClusterAdvancedSettings } from 'qovery-typescript-axios'
+import { type ClusterEntity } from '@qovery/shared/interfaces'
 
 export function initFormValues(keys: string[], cluster: ClusterEntity): { [key: string]: string } {
   const values: { [key: string]: string } = {}

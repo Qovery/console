@@ -11,7 +11,7 @@ import {
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { EnvironmentModeEnum } from 'qovery-typescript-axios'
 import { clusterFactoryMock, environmentFactoryMock } from '@qovery/shared/factories'
-import CreateCloneEnvironmentModal, { CreateCloneEnvironmentModalProps } from './create-clone-environment-modal'
+import CreateCloneEnvironmentModal, { type CreateCloneEnvironmentModalProps } from './create-clone-environment-modal'
 
 const mockClusters = clusterFactoryMock(3)
 const props: CreateCloneEnvironmentModalProps = {

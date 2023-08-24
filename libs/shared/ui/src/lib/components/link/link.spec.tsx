@@ -1,5 +1,5 @@
 import { render } from '__tests__/utils/setup-jest'
-import Link, { LinkProps } from './link'
+import Link, { type LinkProps } from './link'
 
 const props: LinkProps = {
   linkLabel: 'link-label',

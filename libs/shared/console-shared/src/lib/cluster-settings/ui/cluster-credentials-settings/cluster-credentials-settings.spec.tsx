@@ -2,8 +2,8 @@ import { render, waitFor } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import selectEvent from 'react-select-event'
 import { organizationFactoryMock } from '@qovery/shared/factories'
-import { OrganizationEntity } from '@qovery/shared/interfaces'
-import ClusterCredentialsSettings, { ClusterCredentialsSettingsProps } from './cluster-credentials-settings'
+import { type OrganizationEntity } from '@qovery/shared/interfaces'
+import ClusterCredentialsSettings, { type ClusterCredentialsSettingsProps } from './cluster-credentials-settings'
 
 const mockOrganization: OrganizationEntity = organizationFactoryMock(1)[0]
 

@@ -1,4 +1,4 @@
-import { OrganizationWebhookResponse } from 'qovery-typescript-axios'
+import { type OrganizationWebhookResponse } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
 import { useDeleteWebhook, useEditWebhook, useFetchWebhooks } from '@qovery/domains/organization'
 import { useModal, useModalConfirmation } from '@qovery/shared/ui'

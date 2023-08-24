@@ -1,5 +1,5 @@
-import { ClusterInstanceTypeResponseListResults } from 'qovery-typescript-axios'
-import { Value } from '@qovery/shared/interfaces'
+import { type ClusterInstanceTypeResponseListResults } from 'qovery-typescript-axios'
+import { type Value } from '@qovery/shared/interfaces'
 
 export function listInstanceTypeFormatter(list: ClusterInstanceTypeResponseListResults[]): Value[] {
   const cloneList = [...list]

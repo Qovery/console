@@ -1,5 +1,5 @@
 import { act, getByTestId, render, waitFor } from '__tests__/utils/setup-jest'
-import InputRadioBox, { InputRadioBoxProps } from './input-radio-box'
+import InputRadioBox, { type InputRadioBoxProps } from './input-radio-box'
 
 const props: InputRadioBoxProps = {
   fieldValue: '',

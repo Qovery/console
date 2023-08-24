@@ -1,7 +1,7 @@
 import { render } from '__tests__/utils/setup-jest'
 import { type ReactNode } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import PageSettingsGeneral, { PageSettingsGeneralProps } from './page-settings-general'
+import PageSettingsGeneral, { type PageSettingsGeneralProps } from './page-settings-general'
 
 describe('PageSettingsGeneral', () => {
   let props: PageSettingsGeneralProps

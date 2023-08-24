@@ -1,8 +1,8 @@
 import { act, fireEvent, render } from '__tests__/utils/setup-jest'
-import { DeploymentStageResponse } from 'qovery-typescript-axios'
+import { type DeploymentStageResponse } from 'qovery-typescript-axios'
 import * as environmentDomains from '@qovery/domains/environment'
 import { deploymentStagesFactoryMock } from '@qovery/shared/factories'
-import { StageModalFeature, StageModalFeatureProps } from './stage-modal-feature'
+import { StageModalFeature, type StageModalFeatureProps } from './stage-modal-feature'
 
 const useCreateEnvironmentDeploymentStageMockSpy = jest.spyOn(
   environmentDomains,

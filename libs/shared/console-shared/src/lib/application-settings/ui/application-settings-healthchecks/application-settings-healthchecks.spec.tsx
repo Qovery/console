@@ -1,5 +1,5 @@
 import { fireEvent, render, waitFor } from '__tests__/utils/setup-jest'
-import { ReactNode } from 'react'
+import { type ReactNode } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { ProbeTypeEnum } from '@qovery/shared/enums'
 import ApplicationSettingsHealthchecks, {

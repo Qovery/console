@@ -1,14 +1,14 @@
 import {
-  OrganizationEventOrigin,
-  OrganizationEventSubTargetType,
+  type OrganizationEventOrigin,
+  type OrganizationEventSubTargetType,
   OrganizationEventTargetType,
-  OrganizationEventType,
+  type OrganizationEventType,
 } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useLocation, useParams, useSearchParams } from 'react-router-dom'
-import { EventQueryParams, useFetchEvents } from '@qovery/domains/event'
+import { type EventQueryParams, useFetchEvents } from '@qovery/domains/event'
 import { eventsFactoryMock } from '@qovery/shared/factories'
-import { ALL, TableFilterProps } from '@qovery/shared/ui'
+import { ALL, type TableFilterProps } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import PageGeneral from '../../ui/page-general/page-general'
 

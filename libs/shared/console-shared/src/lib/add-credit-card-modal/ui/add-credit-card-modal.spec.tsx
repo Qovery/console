@@ -1,6 +1,6 @@
 import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import { CreditCardFormValues } from '../../credit-card-form/ui/credit-card-form'
+import { type CreditCardFormValues } from '../../credit-card-form/ui/credit-card-form'
 import AddCreditCardModal from './add-credit-card-modal'
 
 describe('AddCreditCardModal', () => {

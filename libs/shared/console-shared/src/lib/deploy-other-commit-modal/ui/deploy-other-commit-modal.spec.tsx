@@ -1,5 +1,5 @@
 import { getAllByTestId, getByTestId, getByText, render } from '__tests__/utils/setup-jest'
-import DeployOtherCommitModal, { DeployOtherCommitModalProps } from './deploy-other-commit-modal'
+import DeployOtherCommitModal, { type DeployOtherCommitModalProps } from './deploy-other-commit-modal'
 
 const props: DeployOtherCommitModalProps = {
   currentCommitId: '1',

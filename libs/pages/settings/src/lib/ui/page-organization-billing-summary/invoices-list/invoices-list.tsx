@@ -1,7 +1,7 @@
-import { Invoice } from 'qovery-typescript-axios'
+import { type Invoice } from 'qovery-typescript-axios'
 import { useState } from 'react'
-import { Value } from '@qovery/shared/interfaces'
-import { InputSelectSmall, LoaderSpinner, Table, TableFilterProps, TableHeadProps } from '@qovery/shared/ui'
+import { type Value } from '@qovery/shared/interfaces'
+import { InputSelectSmall, LoaderSpinner, Table, type TableFilterProps, type TableHeadProps } from '@qovery/shared/ui'
 import TableRowInvoice from './table-row-invoice/table-row-invoice'
 
 export interface InvoicesListProps {

@@ -1,6 +1,6 @@
-import { ClusterAdvancedSettings } from 'qovery-typescript-axios'
+import { type ClusterAdvancedSettings } from 'qovery-typescript-axios'
 import { applicationFactoryMock } from '@qovery/shared/factories'
-import { ApplicationEntity, ClusterEntity } from '@qovery/shared/interfaces'
+import { type ApplicationEntity, type ClusterEntity } from '@qovery/shared/interfaces'
 import { initFormValues } from './init-form-values'
 
 const mockCluster: ApplicationEntity = applicationFactoryMock(1)[0]

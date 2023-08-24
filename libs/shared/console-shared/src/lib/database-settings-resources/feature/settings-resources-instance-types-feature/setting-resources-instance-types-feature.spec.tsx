@@ -2,7 +2,7 @@ import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { DatabaseTypeEnum } from 'qovery-typescript-axios'
 import SettingsResourcesInstanceTypesFeature, {
-  SettingsResourcesInstanceTypesFeatureProps,
+  type SettingsResourcesInstanceTypesFeatureProps,
 } from './setting-resources-instance-types-feature'
 
 const props: SettingsResourcesInstanceTypesFeatureProps = {

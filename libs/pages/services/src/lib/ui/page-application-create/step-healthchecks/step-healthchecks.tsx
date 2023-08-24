@@ -1,7 +1,7 @@
-import { FormEventHandler } from 'react'
+import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { ApplicationSettingsHealthchecks } from '@qovery/shared/console-shared'
-import { PortData } from '@qovery/shared/interfaces'
+import { type PortData } from '@qovery/shared/interfaces'
 import { Button, ButtonSize, ButtonStyle } from '@qovery/shared/ui'
 
 export interface StepHealthchecksProps {

@@ -1,5 +1,5 @@
 import { APIVariableScopeEnum } from 'qovery-typescript-axios'
-import { ServiceTypeEnum, isContainer, isJob } from '@qovery/shared/enums'
+import { type ServiceTypeEnum, isContainer, isJob } from '@qovery/shared/enums'
 import { upperCaseFirstLetter } from './uppercase-first-letter'
 
 const environmentScopes = (serviceType?: ServiceTypeEnum) => [

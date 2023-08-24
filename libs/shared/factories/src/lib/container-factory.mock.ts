@@ -1,6 +1,6 @@
 import { Chance } from 'chance'
 import { PortProtocolEnum, StorageTypeEnum } from 'qovery-typescript-axios'
-import { ContainerApplicationEntity } from '@qovery/shared/interfaces'
+import { type ContainerApplicationEntity } from '@qovery/shared/interfaces'
 
 const chance = new Chance('123')
 

@@ -1,9 +1,9 @@
 import { createAsyncThunk, createEntityAdapter, createSelector, createSlice } from '@reduxjs/toolkit'
-import { BillingApi, CreditCardRequest } from 'qovery-typescript-axios'
-import { CreditCard, CreditCardsState } from '@qovery/shared/interfaces'
+import { BillingApi, type CreditCardRequest } from 'qovery-typescript-axios'
+import { type CreditCard, type CreditCardsState } from '@qovery/shared/interfaces'
 import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
 import { addOneToManyRelation, getEntitiesByIds, removeOneToManyRelation } from '@qovery/shared/utils'
-import { RootState } from '@qovery/state/store'
+import { type RootState } from '@qovery/state/store'
 
 export const CREDIT_CARDS_FEATURE_KEY = 'creditCards'
 

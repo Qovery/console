@@ -1,8 +1,12 @@
-import { Update, createAsyncThunk, createEntityAdapter, createSelector, createSlice } from '@reduxjs/toolkit'
-import { GitProviderEnum, GitRepositoryBranch, OrganizationAccountGitRepositoriesApi } from 'qovery-typescript-axios'
-import { LoadingStatus, RepositoryEntity, RepositoryState } from '@qovery/shared/interfaces'
+import { type Update, createAsyncThunk, createEntityAdapter, createSelector, createSlice } from '@reduxjs/toolkit'
+import {
+  GitProviderEnum,
+  type GitRepositoryBranch,
+  OrganizationAccountGitRepositoriesApi,
+} from 'qovery-typescript-axios'
+import { type LoadingStatus, type RepositoryEntity, type RepositoryState } from '@qovery/shared/interfaces'
 import { toastError } from '@qovery/shared/ui'
-import { RootState } from '@qovery/state/store'
+import { type RootState } from '@qovery/state/store'
 
 export const REPOSITORY_FEATURE_KEY = 'repository'
 

@@ -3,7 +3,7 @@ import { ServiceDeploymentStatusEnum, StateEnum } from 'qovery-typescript-axios'
 import * as domainsServicesFeature from '@qovery/domains/services/feature'
 import { RunningState } from '@qovery/shared/enums'
 import { applicationFactoryMock, lifecycleJobFactoryMock } from '@qovery/shared/factories'
-import { ApplicationButtonsActions, ApplicationButtonsActionsProps } from './application-buttons-actions'
+import { ApplicationButtonsActions, type ApplicationButtonsActionsProps } from './application-buttons-actions'
 
 const mockApplication = applicationFactoryMock(1)[0]
 

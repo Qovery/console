@@ -1,10 +1,10 @@
 import {
-  AvailableContainerRegistryResponse,
+  type AvailableContainerRegistryResponse,
   ContainerRegistryKindEnum,
-  ContainerRegistryResponse,
+  type ContainerRegistryResponse,
 } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
-import { Value } from '@qovery/shared/interfaces'
+import { type Value } from '@qovery/shared/interfaces'
 import { Icon, IconAwesomeEnum, InputSelect, InputText, InputTextArea, Link, ModalCrud } from '@qovery/shared/ui'
 import { logoByRegistryKind } from '../page-organization-container-registries'
 

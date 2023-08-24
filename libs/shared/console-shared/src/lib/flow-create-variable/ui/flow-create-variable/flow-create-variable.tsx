@@ -1,7 +1,7 @@
-import { APIVariableScopeEnum } from 'qovery-typescript-axios'
-import { FormEventHandler } from 'react'
+import { type APIVariableScopeEnum } from 'qovery-typescript-axios'
+import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { FlowVariableData, VariableData } from '@qovery/shared/interfaces'
+import { type FlowVariableData, type VariableData } from '@qovery/shared/interfaces'
 import { Button, ButtonSize, ButtonStyle } from '@qovery/shared/ui'
 import VariableRow from '../variable-row/variable-row'
 

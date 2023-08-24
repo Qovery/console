@@ -1,5 +1,5 @@
 import { render } from '__tests__/utils/setup-jest'
-import IconFlag, { IconFlagProps } from './icon-flag'
+import IconFlag, { type IconFlagProps } from './icon-flag'
 
 describe('IconFlag', () => {
   let props: IconFlagProps

@@ -1,6 +1,6 @@
-import { Meta, Story } from '@storybook/react'
+import { type Meta, type Story } from '@storybook/react'
 import Icon from '../icon/icon'
-import { Tabs, TabsProps } from './tabs'
+import { Tabs, type TabsProps } from './tabs'
 
 export default {
   component: Tabs,

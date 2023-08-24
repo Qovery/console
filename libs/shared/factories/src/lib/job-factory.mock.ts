@@ -1,6 +1,6 @@
 import { Chance } from 'chance'
 import { GitProviderEnum, StorageTypeEnum } from 'qovery-typescript-axios'
-import { JobApplicationEntity } from '@qovery/shared/interfaces'
+import { type JobApplicationEntity } from '@qovery/shared/interfaces'
 
 const chance = new Chance('123')
 

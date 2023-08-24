@@ -1,4 +1,10 @@
-import { PayloadAction, createAsyncThunk, createEntityAdapter, createSelector, createSlice } from '@reduxjs/toolkit'
+import {
+  type PayloadAction,
+  createAsyncThunk,
+  createEntityAdapter,
+  createSelector,
+  createSlice,
+} from '@reduxjs/toolkit'
 import {
   APIVariableScopeEnum,
   ApplicationSecretApi,
@@ -6,16 +12,16 @@ import {
   EnvironmentSecretApi,
   JobSecretApi,
   ProjectSecretApi,
-  Secret,
-  SecretRequest,
-  Value,
+  type Secret,
+  type SecretRequest,
+  type Value,
 } from 'qovery-typescript-axios'
-import { Key } from 'qovery-typescript-axios/api'
-import { ServiceTypeEnum, isContainer, isJob } from '@qovery/shared/enums'
-import { SecretEnvironmentVariableEntity, SecretEnvironmentVariablesState } from '@qovery/shared/interfaces'
+import { type Key } from 'qovery-typescript-axios/api'
+import { type ServiceTypeEnum, isContainer, isJob } from '@qovery/shared/enums'
+import { type SecretEnvironmentVariableEntity, type SecretEnvironmentVariablesState } from '@qovery/shared/interfaces'
 import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
 import { addOneToManyRelation, getEntitiesByIds } from '@qovery/shared/utils'
-import { RootState } from '@qovery/state/store'
+import { type RootState } from '@qovery/state/store'
 
 export const SECRET_ENVIRONMENT_VARIABLES_FEATURE_KEY = 'secret'
 

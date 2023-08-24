@@ -1,7 +1,7 @@
-import { ContainerRegistryResponse } from 'qovery-typescript-axios'
+import { type ContainerRegistryResponse } from 'qovery-typescript-axios'
 import { useCallback } from 'react'
 import { IconEnum, isContainerJob } from '@qovery/shared/enums'
-import { ApplicationEntity, LoadingStatus } from '@qovery/shared/interfaces'
+import { type ApplicationEntity, type LoadingStatus } from '@qovery/shared/interfaces'
 import { Button, ButtonStyle, Skeleton, Truncate } from '@qovery/shared/ui'
 
 export interface AboutContainerProps {

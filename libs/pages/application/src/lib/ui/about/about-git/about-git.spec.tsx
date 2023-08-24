@@ -1,6 +1,6 @@
 import { getByText, render } from '__tests__/utils/setup-jest'
 import { applicationFactoryMock } from '@qovery/shared/factories'
-import AboutGit, { AboutGitProps } from './about-git'
+import AboutGit, { type AboutGitProps } from './about-git'
 
 const mockApplication = applicationFactoryMock(1)[0]
 

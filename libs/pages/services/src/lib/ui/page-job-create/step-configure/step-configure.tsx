@@ -1,8 +1,8 @@
-import { FormEventHandler, useState } from 'react'
+import { type FormEventHandler, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { JobConfigureSettings } from '@qovery/shared/console-shared'
-import { JobType, ServiceTypeEnum } from '@qovery/shared/enums'
-import { JobConfigureData } from '@qovery/shared/interfaces'
+import { type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
+import { type JobConfigureData } from '@qovery/shared/interfaces'
 import { Button, ButtonSize, ButtonStyle } from '@qovery/shared/ui'
 
 export interface StepConfigureProps {

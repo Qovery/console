@@ -1,14 +1,14 @@
 import { useQuery } from '@tanstack/react-query'
 import {
   OrganizationEventApi,
-  OrganizationEventResponseList,
-  OrganizationEventTargetResponseList,
+  type OrganizationEventResponseList,
+  type OrganizationEventTargetResponseList,
 } from 'qovery-typescript-axios'
 import {
-  OrganizationEventOrigin,
-  OrganizationEventSubTargetType,
-  OrganizationEventTargetType,
-  OrganizationEventType,
+  type OrganizationEventOrigin,
+  type OrganizationEventSubTargetType,
+  type OrganizationEventTargetType,
+  type OrganizationEventType,
 } from 'qovery-typescript-axios/api'
 import { toastError } from '@qovery/shared/ui'
 

@@ -1,6 +1,6 @@
 import { render } from '__tests__/utils/setup-jest'
 import { environmentFactoryMock } from '@qovery/shared/factories'
-import TableRowEnvironments, { TableRowEnvironmentsProps } from './table-row-environments'
+import TableRowEnvironments, { type TableRowEnvironmentsProps } from './table-row-environments'
 
 describe('TableRowEnvironments', () => {
   let props: TableRowEnvironmentsProps

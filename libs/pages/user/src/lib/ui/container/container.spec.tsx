@@ -1,5 +1,5 @@
 import { renderWithProviders } from '@qovery/shared/util-tests'
-import Container, { ContainerProps } from './container'
+import Container, { type ContainerProps } from './container'
 
 describe('Container', () => {
   const props: ContainerProps = {

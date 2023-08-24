@@ -1,5 +1,5 @@
 import { APIVariableScopeEnum, APIVariableTypeEnum } from 'qovery-typescript-axios'
-import { EnvironmentVariableSecretOrPublic } from '@qovery/shared/interfaces'
+import { type EnvironmentVariableSecretOrPublic } from '@qovery/shared/interfaces'
 import { environmentVariableFile, getEnvironmentVariableFileMountPath } from './environment-variable-file'
 
 describe('isEnvironmentVariableFile', () => {

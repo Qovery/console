@@ -1,7 +1,7 @@
 import { act, render, screen, waitFor } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { databaseFactoryMock } from '@qovery/shared/factories'
-import PageSettingsResources, { PageSettingsResourcesProps } from './page-settings-resources'
+import PageSettingsResources, { type PageSettingsResourcesProps } from './page-settings-resources'
 
 const database = databaseFactoryMock(1)[0]
 

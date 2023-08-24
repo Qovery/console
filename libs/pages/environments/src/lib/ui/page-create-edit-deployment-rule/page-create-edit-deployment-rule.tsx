@@ -1,11 +1,11 @@
-import { Cluster } from 'qovery-typescript-axios'
+import { type Cluster } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
-import { Control, Controller, FieldValues } from 'react-hook-form'
+import { type Control, Controller, type FieldValues } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
-import { Value } from '@qovery/shared/interfaces'
+import { type Value } from '@qovery/shared/interfaces'
 import { ENVIRONMENTS_DEPLOYMENT_RULES_URL, ENVIRONMENTS_URL } from '@qovery/shared/routes'
 import {
-  BaseLink,
+  type BaseLink,
   BlockContent,
   Button,
   ButtonSize,

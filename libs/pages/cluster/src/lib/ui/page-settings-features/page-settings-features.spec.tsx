@@ -1,8 +1,8 @@
 import { render } from '__tests__/utils/setup-jest'
 import { CloudProviderEnum } from 'qovery-typescript-axios'
 import { clusterFactoryMock } from '@qovery/shared/factories'
-import { ClusterEntity } from '@qovery/shared/interfaces'
-import PageSettingsFeatures, { PageSettingsFeaturesProps } from './page-settings-features'
+import { type ClusterEntity } from '@qovery/shared/interfaces'
+import PageSettingsFeatures, { type PageSettingsFeaturesProps } from './page-settings-features'
 
 const cluster: ClusterEntity = clusterFactoryMock(1)[0]
 

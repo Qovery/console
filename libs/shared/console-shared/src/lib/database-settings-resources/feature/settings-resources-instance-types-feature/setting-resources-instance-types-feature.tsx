@@ -1,12 +1,12 @@
-import { DatabaseTypeEnum, ManagedDatabaseInstanceTypeResponse } from 'qovery-typescript-axios'
+import { type DatabaseTypeEnum, type ManagedDatabaseInstanceTypeResponse } from 'qovery-typescript-axios'
 import { useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { useFetchDatabaseInstanceTypes } from '@qovery/domains/database'
 import { useFetchEnvironment } from '@qovery/domains/environment'
 import { selectClusterById } from '@qovery/domains/organization'
-import { ClusterEntity } from '@qovery/shared/interfaces'
-import { RootState } from '@qovery/state/store'
+import { type ClusterEntity } from '@qovery/shared/interfaces'
+import { type RootState } from '@qovery/state/store'
 import SettingsResourcesInstanceTypes from '../../ui/settings-resources-instance-types/setting-resources-instance-types'
 
 export interface SettingsResourcesInstanceTypesFeatureProps {

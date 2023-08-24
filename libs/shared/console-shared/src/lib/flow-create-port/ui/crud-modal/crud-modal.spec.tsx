@@ -3,7 +3,7 @@ import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form
 import { CloudProviderEnum, PortProtocolEnum } from 'qovery-typescript-axios'
 import selectEvent from 'react-select-event'
 import { renderWithProviders } from '@qovery/shared/util-tests'
-import CrudModal, { CrudModalProps } from './crud-modal'
+import CrudModal, { type CrudModalProps } from './crud-modal'
 
 const props: CrudModalProps = {
   loading: false,

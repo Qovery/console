@@ -1,7 +1,7 @@
 import { type PropsWithChildren } from 'react'
-import { IconEnum } from '@qovery/shared/enums'
+import { type IconEnum } from '@qovery/shared/enums'
 import Button, { ButtonSize, ButtonStyle } from '../buttons/button/button'
-import { IconAwesomeEnum } from '../icon/icon-awesome.enum'
+import { type IconAwesomeEnum } from '../icon/icon-awesome.enum'
 
 export interface BannerProps {
   bannerStyle?: BannerStyle

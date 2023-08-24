@@ -1,5 +1,5 @@
 import { render } from '__tests__/utils/setup-jest'
-import SidebarHistoryFeature, { SidebarHistoryFeatureProps } from './sidebar-history-feature'
+import SidebarHistoryFeature, { type SidebarHistoryFeatureProps } from './sidebar-history-feature'
 
 describe('SidebarHistoryFeature', () => {
   const props: SidebarHistoryFeatureProps = {

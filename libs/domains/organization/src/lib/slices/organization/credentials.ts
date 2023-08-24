@@ -1,13 +1,13 @@
-import { ActionReducerMapBuilder, Update, createAsyncThunk } from '@reduxjs/toolkit'
+import { type ActionReducerMapBuilder, type Update, createAsyncThunk } from '@reduxjs/toolkit'
 import {
-  AwsCredentialsRequest,
+  type AwsCredentialsRequest,
   CloudProviderCredentialsApi,
   CloudProviderEnum,
-  ClusterCredentials,
-  DoCredentialsRequest,
-  ScalewayCredentialsRequest,
+  type ClusterCredentials,
+  type DoCredentialsRequest,
+  type ScalewayCredentialsRequest,
 } from 'qovery-typescript-axios'
-import { OrganizationEntity, OrganizationState } from '@qovery/shared/interfaces'
+import { type OrganizationEntity, type OrganizationState } from '@qovery/shared/interfaces'
 import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
 import { organizationAdapter } from './organization.slice'
 

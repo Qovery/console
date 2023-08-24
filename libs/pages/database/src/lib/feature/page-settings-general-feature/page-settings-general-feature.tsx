@@ -1,14 +1,14 @@
 import equal from 'fast-deep-equal'
 import { DatabaseModeEnum, KubernetesEnum } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
-import { FieldValues, FormProvider, useForm } from 'react-hook-form'
+import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { editDatabase, postDatabaseActionsRedeploy, selectDatabaseById } from '@qovery/domains/database'
 import { useFetchDatabaseConfiguration, useFetchEnvironment } from '@qovery/domains/environment'
 import { selectClusterById } from '@qovery/domains/organization'
-import { ClusterEntity, DatabaseEntity } from '@qovery/shared/interfaces'
-import { AppDispatch, RootState } from '@qovery/state/store'
+import { type ClusterEntity, type DatabaseEntity } from '@qovery/shared/interfaces'
+import { type AppDispatch, type RootState } from '@qovery/state/store'
 import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-general'
 
 export const handleSubmit = (data: FieldValues, database: DatabaseEntity) => {

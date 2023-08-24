@@ -1,6 +1,6 @@
-import { DeploymentStageResponse } from 'qovery-typescript-axios'
-import { Dispatch, SetStateAction } from 'react'
-import { DragDropContext, Draggable, DropResult, Droppable } from 'react-beautiful-dnd'
+import { type DeploymentStageResponse } from 'qovery-typescript-axios'
+import { type Dispatch, type SetStateAction } from 'react'
+import { DragDropContext, Draggable, type DropResult, Droppable } from 'react-beautiful-dnd'
 import { BadgeDeploymentOrder, Button, ButtonSize, ButtonStyle, ScrollShadowWrapper } from '@qovery/shared/ui'
 import { reorderStage } from '../../../feature/page-settings-deployment-pipeline-feature/utils/utils'
 

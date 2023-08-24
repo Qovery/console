@@ -1,5 +1,5 @@
 import { Chance } from 'chance'
-import { DeploymentStageResponse } from 'qovery-typescript-axios'
+import { type DeploymentStageResponse } from 'qovery-typescript-axios'
 
 const chance = new Chance('123')
 

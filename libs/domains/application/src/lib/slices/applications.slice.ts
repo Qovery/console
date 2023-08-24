@@ -1,51 +1,51 @@
 import {
-  PayloadAction,
-  Update,
+  type PayloadAction,
+  type Update,
   createAsyncThunk,
   createEntityAdapter,
   createSelector,
   createSlice,
 } from '@reduxjs/toolkit'
-import { AxiosResponse } from 'axios'
+import { type AxiosResponse } from 'axios'
 import {
-  ApplicationAdvancedSettings,
+  type ApplicationAdvancedSettings,
   ApplicationConfigurationApi,
   ApplicationDeploymentHistoryApi,
-  ApplicationEditRequest,
+  type ApplicationEditRequest,
   ApplicationMainCallsApi,
   ApplicationMetricsApi,
-  ApplicationRequest,
+  type ApplicationRequest,
   ApplicationsApi,
-  Commit,
-  ContainerAdvancedSettings,
+  type Commit,
+  type ContainerAdvancedSettings,
   ContainerConfigurationApi,
   ContainerDeploymentHistoryApi,
   ContainerMainCallsApi,
   ContainerMetricsApi,
-  ContainerRequest,
+  type ContainerRequest,
   ContainersApi,
-  DeploymentHistory,
-  DeploymentHistoryPaginatedResponseList,
-  Instance,
-  JobAdvancedSettings,
+  type DeploymentHistory,
+  type DeploymentHistoryPaginatedResponseList,
+  type Instance,
+  type JobAdvancedSettings,
   JobConfigurationApi,
   JobDeploymentHistoryApi,
   JobMainCallsApi,
-  JobRequest,
+  type JobRequest,
   JobsApi,
-  Link,
-  Status,
+  type Link,
+  type Status,
 } from 'qovery-typescript-axios'
-import { ServiceTypeEnum, isApplication, isContainer, isJob } from '@qovery/shared/enums'
+import { type ServiceTypeEnum, isApplication, isContainer, isJob } from '@qovery/shared/enums'
 import {
-  AdvancedSettings,
-  ApplicationEntity,
-  ApplicationsState,
-  ContainerApplicationEntity,
-  GitApplicationEntity,
-  JobApplicationEntity,
-  LoadingStatus,
-  ServiceRunningStatus,
+  type AdvancedSettings,
+  type ApplicationEntity,
+  type ApplicationsState,
+  type ContainerApplicationEntity,
+  type GitApplicationEntity,
+  type JobApplicationEntity,
+  type LoadingStatus,
+  type ServiceRunningStatus,
 } from '@qovery/shared/interfaces'
 import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
 import {
@@ -58,7 +58,7 @@ import {
   shortToLongId,
   sortByKey,
 } from '@qovery/shared/utils'
-import { RootState } from '@qovery/state/store'
+import { type RootState } from '@qovery/state/store'
 
 export const APPLICATIONS_FEATURE_KEY = 'applications'
 

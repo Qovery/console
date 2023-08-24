@@ -1,4 +1,4 @@
-import { GetTokenSilentlyOptions } from '@auth0/auth0-react'
+import { type GetTokenSilentlyOptions } from '@auth0/auth0-react'
 import { useCallback, useState } from 'react'
 
 export interface RunningStatusWebsocketProps {

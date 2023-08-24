@@ -3,8 +3,8 @@ import { ContainerRegistryKindEnum } from 'qovery-typescript-axios'
 import selectEvent from 'react-select-event'
 import * as storeOrganization from '@qovery/domains/organization'
 import { containerRegistriesByOrganizationIdMock, organizationFactoryMock } from '@qovery/shared/factories'
-import { OrganizationEntity } from '@qovery/shared/interfaces'
-import CrudModalFeature, { CrudModalFeatureProps } from './crud-modal-feature'
+import { type OrganizationEntity } from '@qovery/shared/interfaces'
+import CrudModalFeature, { type CrudModalFeatureProps } from './crud-modal-feature'
 
 import SpyInstance = jest.SpyInstance
 

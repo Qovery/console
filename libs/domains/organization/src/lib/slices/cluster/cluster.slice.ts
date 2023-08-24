@@ -1,35 +1,35 @@
 import {
-  PayloadAction,
-  Update,
+  type PayloadAction,
+  type Update,
   createAsyncThunk,
   createEntityAdapter,
   createSelector,
   createSlice,
 } from '@reduxjs/toolkit'
-import { AxiosResponse } from 'axios'
+import { type AxiosResponse } from 'axios'
 import {
-  CloudProvider,
+  type CloudProvider,
   CloudProviderApi,
   CloudProviderEnum,
-  Cluster,
-  ClusterAdvancedSettings,
-  ClusterCloudProviderInfo,
-  ClusterCloudProviderInfoRequest,
-  ClusterFeatureResponseList,
-  ClusterInstanceTypeResponseList,
-  ClusterLogs,
-  ClusterRequest,
-  ClusterRoutingTableRequest,
-  ClusterRoutingTableResults,
-  ClusterStatus,
+  type Cluster,
+  type ClusterAdvancedSettings,
+  type ClusterCloudProviderInfo,
+  type ClusterCloudProviderInfoRequest,
+  type ClusterFeatureResponseList,
+  type ClusterInstanceTypeResponseList,
+  type ClusterLogs,
+  type ClusterRequest,
+  type ClusterRoutingTableRequest,
+  type ClusterRoutingTableResults,
+  type ClusterStatus,
   ClustersApi,
   KubernetesEnum,
 } from 'qovery-typescript-axios'
-import { ClusterInstanceTypeResponseListResults } from 'qovery-typescript-axios/api'
-import { AdvancedSettings, ClusterEntity, ClustersState } from '@qovery/shared/interfaces'
+import { type ClusterInstanceTypeResponseListResults } from 'qovery-typescript-axios/api'
+import { type AdvancedSettings, type ClusterEntity, type ClustersState } from '@qovery/shared/interfaces'
 import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
 import { addOneToManyRelation, getEntitiesByIds, refactoClusterPayload, sortByKey } from '@qovery/shared/utils'
-import { RootState } from '@qovery/state/store'
+import { type RootState } from '@qovery/state/store'
 
 export const CLUSTER_FEATURE_KEY = 'cluster'
 

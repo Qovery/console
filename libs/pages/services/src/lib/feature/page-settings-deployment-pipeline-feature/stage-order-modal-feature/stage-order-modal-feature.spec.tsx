@@ -1,6 +1,6 @@
 import { render } from '__tests__/utils/setup-jest'
 import { deploymentStagesFactoryMock } from '@qovery/shared/factories'
-import StageOrderModalFeature, { StageOrderModalFeatureProps } from './stage-order-modal-feature'
+import StageOrderModalFeature, { type StageOrderModalFeatureProps } from './stage-order-modal-feature'
 
 const mockDispatch = jest.fn()
 jest.mock('react-redux', () => ({

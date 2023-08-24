@@ -1,5 +1,5 @@
 import { Chance } from 'chance'
-import { EnvironmentModeEnum, ProjectDeploymentRule } from 'qovery-typescript-axios'
+import { EnvironmentModeEnum, type ProjectDeploymentRule } from 'qovery-typescript-axios'
 
 const chance = new Chance('123')
 

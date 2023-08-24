@@ -1,5 +1,5 @@
 import { render } from '__tests__/utils/setup-jest'
-import BreadcrumbItem, { BreadcrumbItemProps } from './breadcrumb-item'
+import BreadcrumbItem, { type BreadcrumbItemProps } from './breadcrumb-item'
 
 describe('BreadcrumbItem', () => {
   const props: BreadcrumbItemProps = {

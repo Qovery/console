@@ -6,7 +6,7 @@ import {
   organizationFactoryMock,
   projectsFactoryMock,
 } from '@qovery/shared/factories'
-import { BreadcrumbMemo, BreadcrumbProps } from './breadcrumb'
+import { BreadcrumbMemo, type BreadcrumbProps } from './breadcrumb'
 
 describe('Breadcrumb', () => {
   const props: BreadcrumbProps = {

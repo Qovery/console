@@ -2,7 +2,7 @@ import { act, fireEvent, render, screen, waitFor } from '__tests__/utils/setup-j
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { applicationFactoryMock } from '@qovery/shared/factories'
 import PageSettingsPreviewEnvironments, {
-  PageSettingsPreviewEnvironmentsProps,
+  type PageSettingsPreviewEnvironmentsProps,
 } from './page-settings-preview-environments'
 
 const props: PageSettingsPreviewEnvironmentsProps = {

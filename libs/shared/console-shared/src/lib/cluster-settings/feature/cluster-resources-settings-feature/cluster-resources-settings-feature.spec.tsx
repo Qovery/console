@@ -2,7 +2,7 @@ import { act, getByLabelText, getByText, render } from '__tests__/utils/setup-je
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { CloudProviderEnum, KubernetesEnum } from 'qovery-typescript-axios'
 import * as storeOrganization from '@qovery/domains/organization'
-import { ClusterResourcesData } from '@qovery/shared/interfaces'
+import { type ClusterResourcesData } from '@qovery/shared/interfaces'
 import ClusterResourcesSettingsFeature from './cluster-resources-settings-feature'
 
 import SpyInstance = jest.SpyInstance

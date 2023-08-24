@@ -1,5 +1,5 @@
-import { Meta, Story } from '@storybook/react'
-import { EnableBox, EnableBoxProps } from './enable-box'
+import { type Meta, type Story } from '@storybook/react'
+import { EnableBox, type EnableBoxProps } from './enable-box'
 
 export default {
   component: EnableBox,

@@ -2,7 +2,7 @@ import { act, fireEvent, render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { OrganizationCustomRoleClusterPermission } from 'qovery-typescript-axios'
 import { customRolesMock } from '@qovery/shared/factories'
-import TableClusters, { TableClustersProps } from './table-clusters'
+import TableClusters, { type TableClustersProps } from './table-clusters'
 
 const clusters = customRolesMock(1)[0].cluster_permissions || []
 

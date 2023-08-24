@@ -1,6 +1,6 @@
 import { act, fireEvent, getByLabelText, getByTestId, render } from '__tests__/utils/setup-jest'
 import * as organizationDomains from '@qovery/domains/organization'
-import PromoCodeModalFeature, { PromocodeModalFeatureProps } from './promo-code-modal-feature'
+import PromoCodeModalFeature, { type PromocodeModalFeatureProps } from './promo-code-modal-feature'
 
 const props: PromocodeModalFeatureProps = {
   closeModal: jest.fn(),

@@ -2,7 +2,7 @@ import { getByText, render } from '__tests__/utils/setup-jest'
 import { StateEnum } from 'qovery-typescript-axios'
 import * as domainsEnvironmentsFeature from '@qovery/domains/environments/feature'
 import { environmentFactoryMock } from '@qovery/shared/factories'
-import EnvironmentButtonsActions, { EnvironmentButtonsActionsProps } from './environment-buttons-actions'
+import EnvironmentButtonsActions, { type EnvironmentButtonsActionsProps } from './environment-buttons-actions'
 
 const mockEnvironment = environmentFactoryMock(1)[0]
 const props: EnvironmentButtonsActionsProps = {

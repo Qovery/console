@@ -1,7 +1,7 @@
-import { Meta, Story } from '@storybook/react'
+import { type Meta, type Story } from '@storybook/react'
 import { Button } from '../../buttons/button/button'
 import Modal from '../../modal/modal'
-import { ModalConfirmation, ModalConfirmationProps } from '../modal-confirmation/modal-confirmation'
+import { ModalConfirmation, type ModalConfirmationProps } from '../modal-confirmation/modal-confirmation'
 
 export default {
   component: Modal,

@@ -1,4 +1,4 @@
-import { FormEventHandler } from 'react'
+import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { ClusterGeneralSettings } from '@qovery/shared/console-shared'
 import { BlockContent, Button, ButtonSize, ButtonStyle, HelpSection } from '@qovery/shared/ui'

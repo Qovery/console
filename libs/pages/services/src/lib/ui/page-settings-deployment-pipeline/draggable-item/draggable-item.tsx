@@ -1,7 +1,7 @@
-import { CloudProviderEnum, ServiceTypeEnum } from 'qovery-typescript-axios'
-import { DraggableProvided, DraggableStateSnapshot } from 'react-beautiful-dnd'
+import { type CloudProviderEnum, ServiceTypeEnum } from 'qovery-typescript-axios'
+import { type DraggableProvided, type DraggableStateSnapshot } from 'react-beautiful-dnd'
 import { getServiceType } from '@qovery/shared/enums'
-import { ApplicationEntity, DatabaseEntity } from '@qovery/shared/interfaces'
+import { type ApplicationEntity, type DatabaseEntity } from '@qovery/shared/interfaces'
 import { BadgeService, Truncate } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/utils'
 

@@ -1,6 +1,8 @@
 import { render, screen } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import SettingsResourcesInstanceTypes, { SettingsResourcesInstanceTypesProps } from './setting-resources-instance-types'
+import SettingsResourcesInstanceTypes, {
+  type SettingsResourcesInstanceTypesProps,
+} from './setting-resources-instance-types'
 
 const props: SettingsResourcesInstanceTypesProps = {
   databaseInstanceTypes: [

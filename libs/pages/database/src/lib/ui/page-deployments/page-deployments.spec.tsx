@@ -1,5 +1,5 @@
 import { render } from '__tests__/utils/setup-jest'
-import { PageDeployments, PageDeploymentsProps } from './page-deployments'
+import { PageDeployments, type PageDeploymentsProps } from './page-deployments'
 
 let props: PageDeploymentsProps
 

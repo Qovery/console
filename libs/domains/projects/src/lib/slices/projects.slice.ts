@@ -1,16 +1,16 @@
 import {
-  PayloadAction,
-  Update,
+  type PayloadAction,
+  type Update,
   createAsyncThunk,
   createEntityAdapter,
   createSelector,
   createSlice,
 } from '@reduxjs/toolkit'
-import { Project, ProjectMainCallsApi, ProjectRequest, ProjectsApi } from 'qovery-typescript-axios'
-import { ProjectsState } from '@qovery/shared/interfaces'
+import { type Project, ProjectMainCallsApi, type ProjectRequest, ProjectsApi } from 'qovery-typescript-axios'
+import { type ProjectsState } from '@qovery/shared/interfaces'
 import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
 import { addOneToManyRelation, getEntitiesByIds, sortByKey } from '@qovery/shared/utils'
-import { RootState } from '@qovery/state/store'
+import { type RootState } from '@qovery/state/store'
 
 export const PROJECTS_FEATURE_KEY = 'projects'
 

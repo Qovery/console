@@ -1,18 +1,18 @@
 import {
-  BillingInfo,
-  CloudProviderEnum,
-  ClusterCredentials,
-  ContainerRegistryResponse,
-  InviteMember,
-  Invoice,
-  Member,
-  Organization,
-  OrganizationApiToken,
-  OrganizationAvailableRole,
-  OrganizationCurrentCost,
-  OrganizationCustomRole,
+  type BillingInfo,
+  type CloudProviderEnum,
+  type ClusterCredentials,
+  type ContainerRegistryResponse,
+  type InviteMember,
+  type Invoice,
+  type Member,
+  type Organization,
+  type OrganizationApiToken,
+  type OrganizationAvailableRole,
+  type OrganizationCurrentCost,
+  type OrganizationCustomRole,
 } from 'qovery-typescript-axios'
-import { LoadingStatus } from '../types/loading-status.type'
+import { type LoadingStatus } from '../types/loading-status.type'
 
 export interface ClusterCredentialsEntity extends ClusterCredentials {
   cloudProvider: CloudProviderEnum

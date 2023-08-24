@@ -1,5 +1,5 @@
 import { BuildModeEnum, BuildPackLanguageEnum } from 'qovery-typescript-axios'
-import { FormEventHandler } from 'react'
+import { type FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import {
   EditGitRepositorySettingsFeature,
@@ -8,7 +8,7 @@ import {
   JobGeneralSettings,
 } from '@qovery/shared/console-shared'
 import { ServiceTypeEnum, isApplication, isContainer, isCronJob, isJob } from '@qovery/shared/enums'
-import { OrganizationEntity } from '@qovery/shared/interfaces'
+import { type OrganizationEntity } from '@qovery/shared/interfaces'
 import {
   BlockContent,
   Button,

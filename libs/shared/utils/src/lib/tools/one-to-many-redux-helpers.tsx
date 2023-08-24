@@ -1,4 +1,4 @@
-import { Dictionary } from '@reduxjs/toolkit'
+import { type Dictionary } from '@reduxjs/toolkit'
 
 export const addOneToManyRelation = (
   parentId: string | undefined,

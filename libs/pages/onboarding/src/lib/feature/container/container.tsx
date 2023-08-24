@@ -1,6 +1,6 @@
 import { type PropsWithChildren, createContext, useEffect, useState } from 'react'
-import { Params, useNavigate } from 'react-router-dom'
-import { ONBOARDING_PRICING_URL, ONBOARDING_PROJECT_URL, Route } from '@qovery/shared/routes'
+import { type Params, useNavigate } from 'react-router-dom'
+import { ONBOARDING_PRICING_URL, ONBOARDING_PROJECT_URL, type Route } from '@qovery/shared/routes'
 import { FunnelFlow, FunnelFlowBody } from '@qovery/shared/ui'
 import { ROUTER_ONBOARDING_STEP_1, ROUTER_ONBOARDING_STEP_2 } from '../../router/router'
 import OnboardingRightContent from '../../ui/onboarding-right-content/onboarding-right-content'

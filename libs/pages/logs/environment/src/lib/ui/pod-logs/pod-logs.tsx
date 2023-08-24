@@ -1,9 +1,9 @@
-import { Log } from 'qovery-typescript-axios'
+import { type Log } from 'qovery-typescript-axios'
 import { useMemo, useState } from 'react'
 import { useRunningStatus } from '@qovery/domains/services/feature'
 import { LayoutLogs } from '@qovery/shared/console-shared'
-import { ApplicationEntity, DatabaseEntity, LoadingStatus } from '@qovery/shared/interfaces'
-import { Icon, IconAwesomeEnum, StatusChip, Table, TableFilterProps, TableHeadProps } from '@qovery/shared/ui'
+import { type ApplicationEntity, type DatabaseEntity, type LoadingStatus } from '@qovery/shared/interfaces'
+import { Icon, IconAwesomeEnum, StatusChip, Table, type TableFilterProps, type TableHeadProps } from '@qovery/shared/ui'
 import RowPod from '../row-pod/row-pod'
 
 export interface PodLogsProps {

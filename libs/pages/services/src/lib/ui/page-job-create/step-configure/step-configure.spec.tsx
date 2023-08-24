@@ -1,8 +1,8 @@
 import { act, getByLabelText, getByTestId, render, waitFor } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
-import { JobConfigureData } from '@qovery/shared/interfaces'
-import { StepConfigure, StepConfigureProps } from './step-configure'
+import { type JobConfigureData } from '@qovery/shared/interfaces'
+import { StepConfigure, type StepConfigureProps } from './step-configure'
 
 const props: StepConfigureProps = {
   jobType: ServiceTypeEnum.CRON_JOB,

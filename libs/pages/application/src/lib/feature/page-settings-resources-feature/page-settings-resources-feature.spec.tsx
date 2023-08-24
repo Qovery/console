@@ -1,7 +1,7 @@
 import { act, fireEvent, render } from '__tests__/utils/setup-jest'
 import * as storeApplication from '@qovery/domains/application'
 import { applicationFactoryMock } from '@qovery/shared/factories'
-import { ApplicationEntity } from '@qovery/shared/interfaces'
+import { type ApplicationEntity } from '@qovery/shared/interfaces'
 import PageSettingsResourcesFeature, { handleSubmit } from './page-settings-resources-feature'
 
 import SpyInstance = jest.SpyInstance

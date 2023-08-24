@@ -1,4 +1,4 @@
-import { Commit } from 'qovery-typescript-axios'
+import { type Commit } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {
@@ -8,9 +8,9 @@ import {
   selectApplicationById,
 } from '@qovery/domains/application'
 import { getServiceType } from '@qovery/shared/enums'
-import { ApplicationEntity } from '@qovery/shared/interfaces'
+import { type ApplicationEntity } from '@qovery/shared/interfaces'
 import { useModal } from '@qovery/shared/ui'
-import { AppDispatch, RootState } from '@qovery/state/store'
+import { type AppDispatch, type RootState } from '@qovery/state/store'
 import DeployOtherCommitModal from '../ui/deploy-other-commit-modal'
 
 export interface DeployOtherCommitModalFeatureProps {

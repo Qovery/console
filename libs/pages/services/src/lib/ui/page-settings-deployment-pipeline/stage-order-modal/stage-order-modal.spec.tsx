@@ -1,6 +1,6 @@
 import { render } from '__tests__/utils/setup-jest'
 import { deploymentStagesFactoryMock } from '@qovery/shared/factories'
-import StageOrderModal, { StageOrderModalProps } from './stage-order-modal'
+import StageOrderModal, { type StageOrderModalProps } from './stage-order-modal'
 
 const stages = deploymentStagesFactoryMock(3)
 

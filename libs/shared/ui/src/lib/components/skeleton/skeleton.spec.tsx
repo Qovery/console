@@ -1,5 +1,5 @@
 import { render, screen } from '__tests__/utils/setup-jest'
-import Skeleton, { SkeletonProps } from './skeleton'
+import Skeleton, { type SkeletonProps } from './skeleton'
 
 describe('Skeleton', () => {
   let props: SkeletonProps

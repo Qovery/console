@@ -1,6 +1,6 @@
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import PageUserGeneral, { PageUserGeneralProps } from './page-user-general'
+import PageUserGeneral, { type PageUserGeneralProps } from './page-user-general'
 
 const mockSubmit = jest.fn().mockImplementation((e) => e.preventDefault())
 

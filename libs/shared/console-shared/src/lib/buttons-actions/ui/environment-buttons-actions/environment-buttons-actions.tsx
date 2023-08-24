@@ -1,5 +1,5 @@
-import { ClickEvent } from '@szhsin/react-menu'
-import { Environment, OrganizationEventTargetType, StateEnum } from 'qovery-typescript-axios'
+import { type ClickEvent } from '@szhsin/react-menu'
+import { type Environment, OrganizationEventTargetType, StateEnum } from 'qovery-typescript-axios'
 import { useMemo } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import {
@@ -22,7 +22,7 @@ import {
   ButtonIconAction,
   Icon,
   IconAwesomeEnum,
-  MenuItemProps,
+  type MenuItemProps,
   useModal,
   useModalConfirmation,
 } from '@qovery/shared/ui'

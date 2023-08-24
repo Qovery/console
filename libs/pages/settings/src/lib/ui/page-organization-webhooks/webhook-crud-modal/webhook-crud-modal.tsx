@@ -1,10 +1,10 @@
 import {
   EnvironmentModeEnum,
-  OrganizationWebhookCreateRequest,
+  type OrganizationWebhookCreateRequest,
   OrganizationWebhookEventEnum,
   OrganizationWebhookKindEnum,
 } from 'qovery-typescript-axios'
-import { FormEventHandler } from 'react'
+import { type FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { IconEnum } from '@qovery/shared/enums'
 import { Icon, InputSelect, InputTags, InputText, InputTextArea, ModalCrud } from '@qovery/shared/ui'

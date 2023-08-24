@@ -1,6 +1,6 @@
-import { Healthcheck, ServicePort } from 'qovery-typescript-axios'
+import { type Healthcheck, type ServicePort } from 'qovery-typescript-axios'
 import { FlowCreatePort } from '@qovery/shared/console-shared'
-import { PortData } from '@qovery/shared/interfaces'
+import { type PortData } from '@qovery/shared/interfaces'
 import { HelpSection } from '@qovery/shared/ui'
 
 export interface PageSettingsPortsProps {

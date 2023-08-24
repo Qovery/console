@@ -1,7 +1,7 @@
 import { render, waitFor } from '__tests__/utils/setup-jest'
 import { ServiceDeploymentStatusEnum, StateEnum } from 'qovery-typescript-axios'
 import { applicationFactoryMock } from '@qovery/shared/factories'
-import SidebarPipelineItem, { SidebarPipelineItemProps } from './sidebar-pipeline-item'
+import SidebarPipelineItem, { type SidebarPipelineItemProps } from './sidebar-pipeline-item'
 
 const applications = applicationFactoryMock(2)
 

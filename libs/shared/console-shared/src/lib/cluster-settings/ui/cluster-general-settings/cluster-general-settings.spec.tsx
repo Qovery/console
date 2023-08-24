@@ -1,7 +1,7 @@
 import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import { ClusterGeneralData } from '@qovery/shared/interfaces'
-import ClusterGeneralSettings, { ClusterGeneralSettingsProps } from './cluster-general-settings'
+import { type ClusterGeneralData } from '@qovery/shared/interfaces'
+import ClusterGeneralSettings, { type ClusterGeneralSettingsProps } from './cluster-general-settings'
 
 describe('ClusterGeneralSettings', () => {
   const props: ClusterGeneralSettingsProps = {

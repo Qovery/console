@@ -1,6 +1,6 @@
 import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import ApplicationSettingsResources, { ApplicationSettingsResourcesProps } from './application-settings-resources'
+import ApplicationSettingsResources, { type ApplicationSettingsResourcesProps } from './application-settings-resources'
 
 const props: ApplicationSettingsResourcesProps = {
   application: undefined,

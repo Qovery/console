@@ -3,7 +3,7 @@ import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form
 import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { jsonToForm } from '../../feature/import-environment-variable-modal-feature/utils/file-to-form'
 import ImportEnvironmentVariableModal, {
-  ImportEnvironmentVariableModalProps,
+  type ImportEnvironmentVariableModalProps,
 } from './import-environment-variable-modal'
 
 describe('ImportEnvironmentVariableModal', () => {

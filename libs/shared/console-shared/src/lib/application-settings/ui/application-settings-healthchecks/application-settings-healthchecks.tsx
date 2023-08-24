@@ -6,7 +6,7 @@ import {
   InputSelectSmall,
   InputTextSmall,
   TableEdition,
-  TableEditionRow,
+  type TableEditionRow,
   Tooltip,
 } from '@qovery/shared/ui'
 

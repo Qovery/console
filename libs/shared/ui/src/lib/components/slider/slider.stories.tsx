@@ -1,5 +1,5 @@
-import { Meta, Story } from '@storybook/react'
-import { Slider, SliderProps } from './slider'
+import { type Meta, type Story } from '@storybook/react'
+import { Slider, type SliderProps } from './slider'
 
 export default {
   component: Slider,

@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react'
+import { type Meta, type StoryObj } from '@storybook/react'
 import { CloudProviderEnum, KubernetesEnum } from 'qovery-typescript-axios'
 import { TagClusterType } from './tag-cluster-type'
 

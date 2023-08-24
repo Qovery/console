@@ -1,5 +1,5 @@
 import { act, fireEvent, render } from '__tests__/utils/setup-jest'
-import { Organization } from 'qovery-typescript-axios'
+import { type Organization } from 'qovery-typescript-axios'
 import * as storeOrganization from '@qovery/domains/organization'
 import { organizationFactoryMock } from '@qovery/shared/factories'
 import PageOrganizationGeneralFeature, { handleSubmit } from './page-organization-general-feature'

@@ -1,7 +1,7 @@
 import { render } from '__tests__/utils/setup-jest'
-import { TypeOfUseEnum } from 'qovery-typescript-axios'
+import { type TypeOfUseEnum } from 'qovery-typescript-axios'
 import { useForm } from 'react-hook-form'
-import StepPersonalize, { StepPersonalizeProps } from './step-personalize'
+import StepPersonalize, { type StepPersonalizeProps } from './step-personalize'
 
 describe('StepPersonalize', () => {
   let props: Partial<StepPersonalizeProps>

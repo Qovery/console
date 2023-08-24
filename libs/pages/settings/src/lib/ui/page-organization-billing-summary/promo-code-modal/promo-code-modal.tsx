@@ -1,4 +1,4 @@
-import { FormEventHandler } from 'react'
+import { type FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { Button, ButtonStyle, InputText } from '@qovery/shared/ui'
 

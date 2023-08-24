@@ -1,5 +1,5 @@
 import { act, getByTestId, render, waitFor } from '__tests__/utils/setup-jest'
-import { GitAuthProvider } from 'qovery-typescript-axios'
+import { type GitAuthProvider } from 'qovery-typescript-axios'
 import { repositorySlice } from '@qovery/domains/organization'
 import PageOrganizationGithubRepositoryAccessFeature from './page-organization-github-repository-access-feature'
 

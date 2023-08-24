@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from '__tests__/utils/setup-jest'
-import InputTextArea, { InputTextAreaProps } from './input-text-area'
+import InputTextArea, { type InputTextAreaProps } from './input-text-area'
 
 describe('InputTextAreaArea', () => {
   let props: InputTextAreaProps

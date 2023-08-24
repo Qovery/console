@@ -2,7 +2,7 @@ import { act, fireEvent, render } from '__tests__/utils/setup-jest'
 import { DatabaseAccessibilityEnum } from 'qovery-typescript-axios'
 import * as storeDatabase from '@qovery/domains/database'
 import { databaseFactoryMock } from '@qovery/shared/factories'
-import { DatabaseEntity } from '@qovery/shared/interfaces'
+import { type DatabaseEntity } from '@qovery/shared/interfaces'
 import PageSettingsGeneralFeature, { handleSubmit } from './page-settings-general-feature'
 
 import SpyInstance = jest.SpyInstance

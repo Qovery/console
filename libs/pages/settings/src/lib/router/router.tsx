@@ -1,5 +1,5 @@
 import {
-  Route,
+  type Route,
   SETTINGS_API_URL,
   SETTINGS_BILLING_SUMMARY_URL,
   SETTINGS_BILLING_URL,

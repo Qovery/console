@@ -2,7 +2,7 @@ import { act, fireEvent, render } from '__tests__/utils/setup-jest'
 import { CloudProviderEnum } from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
 import { organizationFactoryMock } from '@qovery/shared/factories'
-import { OrganizationEntity } from '@qovery/shared/interfaces'
+import { type OrganizationEntity } from '@qovery/shared/interfaces'
 import { ClusterContainerCreateContext } from '../page-clusters-create-feature'
 import StepGeneralFeature from './step-general-feature'
 

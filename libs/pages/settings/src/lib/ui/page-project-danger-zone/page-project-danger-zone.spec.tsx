@@ -1,5 +1,5 @@
 import { render } from '__tests__/utils/setup-jest'
-import PageProjectDangerZone, { PageProjectDangerZoneProps } from './page-project-danger-zone'
+import PageProjectDangerZone, { type PageProjectDangerZoneProps } from './page-project-danger-zone'
 
 const props: PageProjectDangerZoneProps = {
   deleteProject: jest.fn(),

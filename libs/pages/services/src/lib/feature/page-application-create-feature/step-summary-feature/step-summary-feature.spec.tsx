@@ -2,10 +2,10 @@ import { act, getByTestId, render } from '__tests__/utils/setup-jest'
 import { GitProviderEnum, PortProtocolEnum } from 'qovery-typescript-axios'
 import * as storeApplication from '@qovery/domains/application'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
-import { RepositoryEntity } from '@qovery/shared/interfaces'
+import { type RepositoryEntity } from '@qovery/shared/interfaces'
 import {
   ApplicationContainerCreateContext,
-  ApplicationContainerCreateContextInterface,
+  type ApplicationContainerCreateContextInterface,
 } from '../page-application-create-feature'
 import StepSummaryFeature from './step-summary-feature'
 

@@ -2,18 +2,18 @@ import { Chance } from 'chance'
 import {
   CloudProviderEnum,
   ContainerRegistryKindEnum,
-  ContainerRegistryResponse,
+  type ContainerRegistryResponse,
   EnvironmentModeEnum,
-  InviteMember,
+  type InviteMember,
   InviteMemberRoleEnum,
   InviteStatusEnum,
-  Member,
-  OrganizationCustomRole,
+  type Member,
+  type OrganizationCustomRole,
   OrganizationCustomRoleClusterPermission,
   OrganizationCustomRoleProjectPermission,
   PlanEnum,
 } from 'qovery-typescript-axios'
-import { ClusterCredentialsEntity, OrganizationEntity } from '@qovery/shared/interfaces'
+import { type ClusterCredentialsEntity, type OrganizationEntity } from '@qovery/shared/interfaces'
 
 const chance = new Chance('123')
 

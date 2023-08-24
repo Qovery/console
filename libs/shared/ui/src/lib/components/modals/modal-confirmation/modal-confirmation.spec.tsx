@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from '__tests__/utils/setup-jest'
-import ModalConfirmation, { ModalConfirmationProps } from './modal-confirmation'
+import ModalConfirmation, { type ModalConfirmationProps } from './modal-confirmation'
 
 describe('ModalConfirmation', () => {
   let props: ModalConfirmationProps

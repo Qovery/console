@@ -1,17 +1,17 @@
-import { ClickEvent } from '@szhsin/react-menu'
+import { type ClickEvent } from '@szhsin/react-menu'
 import { EnvironmentModeEnum, OrganizationEventTargetType } from 'qovery-typescript-axios'
 import { useMemo } from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { deleteClusterAction, postClusterActionsDeploy, postClusterActionsStop } from '@qovery/domains/organization'
-import { ClusterEntity } from '@qovery/shared/interfaces'
+import { type ClusterEntity } from '@qovery/shared/interfaces'
 import { AUDIT_LOGS_PARAMS_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL, INFRA_LOGS_URL } from '@qovery/shared/routes'
 import {
   ButtonIconAction,
-  ButtonIconActionElementProps,
+  type ButtonIconActionElementProps,
   Icon,
   IconAwesomeEnum,
-  MenuItemProps,
+  type MenuItemProps,
   useModalConfirmation,
 } from '@qovery/shared/ui'
 import {
@@ -22,7 +22,7 @@ import {
   isStopAvailable,
   isUpdateAvailable,
 } from '@qovery/shared/utils'
-import { AppDispatch } from '@qovery/state/store'
+import { type AppDispatch } from '@qovery/state/store'
 
 export interface ClusterButtonsActionsProps {
   cluster: ClusterEntity

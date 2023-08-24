@@ -1,6 +1,6 @@
 import { render } from '__tests__/utils/setup-jest'
 import { deploymentRulesFactoryMock } from '@qovery/shared/factories'
-import PageDeploymentRules, { PageDeploymentRulesProps } from './page-deployment-rules'
+import PageDeploymentRules, { type PageDeploymentRulesProps } from './page-deployment-rules'
 
 let props: PageDeploymentRulesProps
 

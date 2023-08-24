@@ -1,5 +1,5 @@
 import { type ReactNode } from 'react'
-import { IconEnum } from '@qovery/shared/enums'
+import { type IconEnum } from '@qovery/shared/enums'
 import Icon from '../icon/icon'
 import Skeleton from '../skeleton/skeleton'
 import Truncate from '../truncate/truncate'

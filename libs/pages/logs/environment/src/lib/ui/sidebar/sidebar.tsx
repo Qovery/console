@@ -1,10 +1,10 @@
 import {
-  DeploymentHistoryEnvironment,
-  DeploymentStageWithServicesStatuses,
-  EnvironmentStatus,
+  type DeploymentHistoryEnvironment,
+  type DeploymentStageWithServicesStatuses,
+  type EnvironmentStatus,
 } from 'qovery-typescript-axios'
 import { useState } from 'react'
-import { ApplicationEntity, DatabaseEntity } from '@qovery/shared/interfaces'
+import { type ApplicationEntity, type DatabaseEntity } from '@qovery/shared/interfaces'
 import { Icon, IconAwesomeEnum } from '@qovery/shared/ui'
 import SidebarHistoryFeature from '../../feature/sidebar-history-feature/sidebar-history-feature'
 import SidebarPipeline from '../sidebar-pipeline/sidebar-pipeline'

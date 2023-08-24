@@ -1,6 +1,6 @@
 import { render } from '__tests__/utils/setup-jest'
 import { clusterFactoryMock } from '@qovery/shared/factories'
-import { ClusterEntity } from '@qovery/shared/interfaces'
+import { type ClusterEntity } from '@qovery/shared/interfaces'
 import PageSettingsFeaturesFeature from './page-settings-features-feature'
 
 const mockCluster: ClusterEntity = clusterFactoryMock(1)[0]

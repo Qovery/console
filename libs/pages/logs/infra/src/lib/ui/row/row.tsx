@@ -1,4 +1,4 @@
-import { ClusterLogs, ClusterLogsStepEnum } from 'qovery-typescript-axios'
+import { type ClusterLogs, ClusterLogsStepEnum } from 'qovery-typescript-axios'
 import { LogsType } from '@qovery/shared/enums'
 import { CopyToClipboard } from '@qovery/shared/ui'
 import { dateDifference } from '@qovery/shared/utils'

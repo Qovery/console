@@ -1,5 +1,5 @@
 import { render } from '__tests__/utils/setup-jest'
-import TableEdition, { TableEditionProps } from './table-edition'
+import TableEdition, { type TableEditionProps } from './table-edition'
 
 const props: TableEditionProps = {
   tableBody: [

@@ -1,5 +1,5 @@
 import { EnvironmentModeEnum } from 'qovery-typescript-axios'
-import { OrganizationEntity } from '@qovery/shared/interfaces'
+import { type OrganizationEntity } from '@qovery/shared/interfaces'
 import { BlockContentDelete, HelpSection, IconAwesomeEnum } from '@qovery/shared/ui'
 
 export interface PageOrganizationDangerZoneProps {

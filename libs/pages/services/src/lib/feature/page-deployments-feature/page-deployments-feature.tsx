@@ -1,8 +1,8 @@
 import { useParams } from 'react-router-dom'
 import { useEnvironmentDeploymentHistory } from '@qovery/domains/environment'
 import { deploymentMock } from '@qovery/shared/factories'
-import { DeploymentService } from '@qovery/shared/interfaces'
-import { BaseLink } from '@qovery/shared/ui'
+import { type DeploymentService } from '@qovery/shared/interfaces'
+import { type BaseLink } from '@qovery/shared/ui'
 import { mergeDeploymentServices } from '@qovery/shared/utils'
 import PageDeployments from '../../ui/page-deployments/page-deployments'
 

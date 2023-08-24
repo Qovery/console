@@ -1,4 +1,4 @@
-import { ProjectDeploymentRule } from 'qovery-typescript-axios'
+import { type ProjectDeploymentRule } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -10,9 +10,9 @@ import {
   updateDeploymentRuleOrder,
 } from '@qovery/domains/projects'
 import { ENVIRONMENTS_DEPLOYMENT_RULES_CREATE_URL, ENVIRONMENTS_URL } from '@qovery/shared/routes'
-import { BaseLink } from '@qovery/shared/ui'
+import { type BaseLink } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/state/store'
+import { type AppDispatch, type RootState } from '@qovery/state/store'
 import PageDeploymentRules from '../../ui/page-deployment-rules/page-deployment-rules'
 
 export function PageDeploymentRulesFeature() {

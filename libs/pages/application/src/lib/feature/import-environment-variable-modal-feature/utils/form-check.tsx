@@ -1,6 +1,6 @@
-import { APIVariableScopeEnum } from 'qovery-typescript-axios'
-import { ServiceTypeEnum } from '@qovery/shared/enums'
-import { EnvironmentVariableSecretOrPublic } from '@qovery/shared/interfaces'
+import { type APIVariableScopeEnum } from 'qovery-typescript-axios'
+import { type ServiceTypeEnum } from '@qovery/shared/enums'
+import { type EnvironmentVariableSecretOrPublic } from '@qovery/shared/interfaces'
 import { getScopeHierarchy } from '@qovery/shared/utils'
 
 export const validateKey = (

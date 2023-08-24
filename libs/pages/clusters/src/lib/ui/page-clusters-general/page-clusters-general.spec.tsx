@@ -1,6 +1,6 @@
 import { render } from '__tests__/utils/setup-jest'
 import { clusterFactoryMock } from '@qovery/shared/factories'
-import PageClustersGeneral, { PageClustersGeneralProps } from './page-clusters-general'
+import PageClustersGeneral, { type PageClustersGeneralProps } from './page-clusters-general'
 
 describe('PageClustersGeneral', () => {
   const props: PageClustersGeneralProps = {

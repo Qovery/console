@@ -1,4 +1,4 @@
-import { UseFormSetValue } from 'react-hook-form'
+import { type UseFormSetValue } from 'react-hook-form'
 
 export function triggerToggleAll(
   value: boolean,

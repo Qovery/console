@@ -1,6 +1,6 @@
 import { render } from '__tests__/utils/setup-jest'
 import { applicationFactoryMock } from '@qovery/shared/factories'
-import TableRowServicesFeature, { TableRowServicesFeatureProps } from './table-row-services-feature'
+import TableRowServicesFeature, { type TableRowServicesFeatureProps } from './table-row-services-feature'
 
 const props: TableRowServicesFeatureProps = {
   data: applicationFactoryMock(1)[0],

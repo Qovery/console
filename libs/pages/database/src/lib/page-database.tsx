@@ -11,9 +11,9 @@ import {
 } from '@qovery/domains/database'
 import { useFetchEnvironment } from '@qovery/domains/environment'
 import { useDeploymentStatus } from '@qovery/domains/services/feature'
-import { DatabaseEntity, LoadingStatus } from '@qovery/shared/interfaces'
+import { type DatabaseEntity, type LoadingStatus } from '@qovery/shared/interfaces'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/state/store'
+import { type AppDispatch, type RootState } from '@qovery/state/store'
 import { ROUTER_DATABASE } from './router/router'
 import Container from './ui/container/container'
 

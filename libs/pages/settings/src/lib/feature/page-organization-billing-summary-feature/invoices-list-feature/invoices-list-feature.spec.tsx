@@ -1,5 +1,5 @@
 import { act, getAllByTestId, render } from '__tests__/utils/setup-jest'
-import { Invoice, InvoiceStatusEnum } from 'qovery-typescript-axios'
+import { type Invoice, InvoiceStatusEnum } from 'qovery-typescript-axios'
 import * as storeOrganization from '@qovery/domains/organization'
 import { organizationFactoryMock } from '@qovery/shared/factories'
 import InvoicesListFeature, { getListOfYears } from './invoices-list-feature'

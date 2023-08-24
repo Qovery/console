@@ -1,7 +1,7 @@
 import { act, fireEvent, render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { CloudProviderEnum } from 'qovery-typescript-axios'
-import CreateEditCredentialsModal, { CreateEditCredentialsModalProps } from './create-edit-credentials-modal'
+import CreateEditCredentialsModal, { type CreateEditCredentialsModalProps } from './create-edit-credentials-modal'
 
 let props: CreateEditCredentialsModalProps
 

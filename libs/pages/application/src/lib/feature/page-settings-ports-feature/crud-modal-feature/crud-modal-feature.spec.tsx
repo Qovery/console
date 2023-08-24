@@ -2,7 +2,7 @@ import { render } from '__tests__/utils/setup-jest'
 import { PortProtocolEnum } from 'qovery-typescript-axios'
 import { isMatchingHealthCheck } from '@qovery/shared/console-shared'
 import { applicationFactoryMock } from '@qovery/shared/factories'
-import CrudModalFeature, { CrudModalFeatureProps, handleSubmit } from './crud-modal-feature'
+import CrudModalFeature, { type CrudModalFeatureProps, handleSubmit } from './crud-modal-feature'
 
 const mockedIsMatchingHealthCheck = jest.mocked(isMatchingHealthCheck)
 

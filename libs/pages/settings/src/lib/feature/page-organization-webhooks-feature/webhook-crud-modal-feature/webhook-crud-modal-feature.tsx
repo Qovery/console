@@ -1,4 +1,4 @@
-import { OrganizationWebhookCreateRequest, OrganizationWebhookResponse } from 'qovery-typescript-axios'
+import { type OrganizationWebhookCreateRequest, type OrganizationWebhookResponse } from 'qovery-typescript-axios'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useCreateWebhook, useEditWebhook } from '@qovery/domains/organization'
 import WebhookCrudModal from '../../../ui/page-organization-webhooks/webhook-crud-modal/webhook-crud-modal'

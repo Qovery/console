@@ -1,5 +1,5 @@
-import { DeploymentStageResponse, DeploymentStageServiceResponse } from 'qovery-typescript-axios'
-import { DraggableLocation } from 'react-beautiful-dnd'
+import { type DeploymentStageResponse, type DeploymentStageServiceResponse } from 'qovery-typescript-axios'
+import { type DraggableLocation } from 'react-beautiful-dnd'
 
 export const reorderService = (
   stages: DeploymentStageResponse[],

@@ -1,7 +1,7 @@
 import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { CloudProviderEnum } from 'qovery-typescript-axios'
-import CardClusterFeature, { CardClusterFeatureProps } from './card-cluster-feature'
+import CardClusterFeature, { type CardClusterFeatureProps } from './card-cluster-feature'
 
 const STATIC_IP = 'STATIC_IP'
 

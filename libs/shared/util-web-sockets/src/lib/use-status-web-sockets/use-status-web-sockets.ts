@@ -2,7 +2,7 @@ import { type EnvironmentStatus, type Status } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { type RunningState } from '@qovery/shared/enums'
-import { ServiceRunningStatus } from '@qovery/shared/interfaces'
+import { type ServiceRunningStatus } from '@qovery/shared/interfaces'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
 import { queries } from '@qovery/state/util-queries'
 

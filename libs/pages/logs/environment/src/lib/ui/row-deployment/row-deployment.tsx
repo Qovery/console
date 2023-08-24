@@ -1,4 +1,4 @@
-import { EnvironmentLogs } from 'qovery-typescript-axios'
+import { type EnvironmentLogs } from 'qovery-typescript-axios'
 import { useContext } from 'react'
 import { UpdateTimeContext } from '@qovery/shared/console-shared'
 import { LogsType } from '@qovery/shared/enums'

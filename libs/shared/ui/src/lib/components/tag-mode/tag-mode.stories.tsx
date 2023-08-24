@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react'
+import { type Meta, type StoryObj } from '@storybook/react'
 import { EnvironmentModeEnum } from 'qovery-typescript-axios'
 import { TagMode } from './tag-mode'
 

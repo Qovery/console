@@ -1,6 +1,6 @@
 import { act, renderHook } from '__tests__/utils/setup-jest'
 import ModalProvider from '../../modal/modal-root'
-import useModal, { UseModalProps } from './use-modal'
+import useModal, { type UseModalProps } from './use-modal'
 
 const mockSetOpenModal = jest.fn()
 const mockSetContentModal = jest.fn()

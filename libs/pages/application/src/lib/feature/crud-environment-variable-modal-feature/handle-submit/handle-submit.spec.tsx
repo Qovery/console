@@ -2,8 +2,8 @@ import { waitFor } from '__tests__/utils/setup-jest'
 import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { mockEnvironmentVariable } from '@qovery/shared/factories'
 import {
-  CrudEnvironmentVariableModalFeatureProps,
-  DataFormEnvironmentVariableInterface,
+  type CrudEnvironmentVariableModalFeatureProps,
+  type DataFormEnvironmentVariableInterface,
   EnvironmentVariableCrudMode,
   EnvironmentVariableType,
 } from '../crud-environment-variable-modal-feature'

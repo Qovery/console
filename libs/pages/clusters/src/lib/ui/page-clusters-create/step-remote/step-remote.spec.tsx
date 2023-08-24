@@ -1,7 +1,7 @@
 import { getByDisplayValue, getByTestId, render, waitFor } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import { ClusterRemoteData } from '@qovery/shared/interfaces'
-import StepRemote, { StepRemoteProps } from './step-remote'
+import { type ClusterRemoteData } from '@qovery/shared/interfaces'
+import StepRemote, { type StepRemoteProps } from './step-remote'
 
 const props: StepRemoteProps = {
   onSubmit: jest.fn((e) => e.preventDefault()),

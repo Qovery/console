@@ -1,6 +1,6 @@
-import { APIVariableScopeEnum } from 'qovery-typescript-axios'
-import { EnvironmentVariableEntity } from '../domain/environment-variable.entity'
-import { SecretEnvironmentVariableEntity } from '../domain/secret-environment-variable.entity'
+import { type APIVariableScopeEnum } from 'qovery-typescript-axios'
+import { type EnvironmentVariableEntity } from '../domain/environment-variable.entity'
+import { type SecretEnvironmentVariableEntity } from '../domain/secret-environment-variable.entity'
 
 export interface EnvironmentVariableSecretOrPublic
   extends Partial<EnvironmentVariableEntity>,

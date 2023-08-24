@@ -1,4 +1,4 @@
-import { ApplicationEntity } from '@qovery/shared/interfaces'
+import { type ApplicationEntity } from '@qovery/shared/interfaces'
 import { Tooltip } from '@qovery/shared/ui'
 import { dateFullFormat, timeAgo } from '@qovery/shared/utils'
 

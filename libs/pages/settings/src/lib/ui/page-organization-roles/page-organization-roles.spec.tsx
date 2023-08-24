@@ -1,6 +1,10 @@
 import { render } from '__tests__/utils/setup-jest'
 import { availableRolesMock, customRolesMock } from '@qovery/shared/factories'
-import PageOrganizationRoles, { PageOrganizationRolesProps, isDefaultRole, rolesSort } from './page-organization-roles'
+import PageOrganizationRoles, {
+  type PageOrganizationRolesProps,
+  isDefaultRole,
+  rolesSort,
+} from './page-organization-roles'
 
 const mockedUsedNavigate = jest.fn()
 jest.mock('react-router-dom', () => ({

@@ -10,18 +10,18 @@ import {
   selectEnvironmentVariablesByApplicationId,
   selectSecretEnvironmentVariablesByApplicationId,
 } from '@qovery/domains/environment-variable'
-import { ServiceTypeEnum, getServiceType } from '@qovery/shared/enums'
+import { type ServiceTypeEnum, getServiceType } from '@qovery/shared/enums'
 import { environmentVariableFactoryMock } from '@qovery/shared/factories'
 import {
-  ApplicationEntity,
-  EnvironmentVariableEntity,
-  EnvironmentVariableSecretOrPublic,
-  LoadingStatus,
-  SecretEnvironmentVariableEntity,
+  type ApplicationEntity,
+  type EnvironmentVariableEntity,
+  type EnvironmentVariableSecretOrPublic,
+  type LoadingStatus,
+  type SecretEnvironmentVariableEntity,
 } from '@qovery/shared/interfaces'
-import { TableHeadProps } from '@qovery/shared/ui'
+import { type TableHeadProps } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/state/store'
+import { type AppDispatch, type RootState } from '@qovery/state/store'
 import { ApplicationContext } from '../../ui/container/container'
 import PageVariables from '../../ui/page-variables/page-variables'
 import { sortVariable } from './utils/sort-variable'

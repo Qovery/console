@@ -1,8 +1,15 @@
 import { render } from '__tests__/utils/setup-jest'
-import { DeploymentStageWithServicesStatuses, ServiceDeploymentStatusEnum, StateEnum } from 'qovery-typescript-axios'
+import {
+  type DeploymentStageWithServicesStatuses,
+  ServiceDeploymentStatusEnum,
+  StateEnum,
+} from 'qovery-typescript-axios'
 import { Route, Routes } from 'react-router-dom'
 import { LogsType } from '@qovery/shared/enums'
-import DeploymentLogsFeature, { DeploymentLogsFeatureProps, getServiceStatuesById } from './deployment-logs-feature'
+import DeploymentLogsFeature, {
+  type DeploymentLogsFeatureProps,
+  getServiceStatuesById,
+} from './deployment-logs-feature'
 
 const services: DeploymentStageWithServicesStatuses[] = [
   {

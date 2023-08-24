@@ -1,7 +1,7 @@
 import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { DatabaseAccessibilityEnum, DatabaseModeEnum, DatabaseTypeEnum } from 'qovery-typescript-axios'
-import StepSummary, { StepSummaryProps } from './step-summary'
+import StepSummary, { type StepSummaryProps } from './step-summary'
 
 const props: StepSummaryProps = {
   generalData: {

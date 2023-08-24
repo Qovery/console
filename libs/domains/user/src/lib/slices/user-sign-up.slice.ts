@@ -1,6 +1,6 @@
-import { PayloadAction, createAsyncThunk, createSelector, createSlice } from '@reduxjs/toolkit'
-import { SignUp, SignUpRequest, TypeOfUseEnum, UserSignUpApi } from 'qovery-typescript-axios'
-import { UserSignUpState } from '@qovery/shared/interfaces'
+import { type PayloadAction, createAsyncThunk, createSelector, createSlice } from '@reduxjs/toolkit'
+import { type SignUp, type SignUpRequest, TypeOfUseEnum, UserSignUpApi } from 'qovery-typescript-axios'
+import { type UserSignUpState } from '@qovery/shared/interfaces'
 import { type RootState } from '@qovery/state/store'
 
 export const USER_SIGNUP_KEY = 'userSignUp'

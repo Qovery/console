@@ -1,7 +1,7 @@
 import { render } from '__tests__/utils/setup-jest'
 import { ServiceDeploymentStatusEnum, StateEnum } from 'qovery-typescript-axios'
 import { environmentFactoryMock } from '@qovery/shared/factories'
-import { PageGeneral, PageGeneralProps } from './page-general'
+import { PageGeneral, type PageGeneralProps } from './page-general'
 
 let props: PageGeneralProps
 

@@ -1,6 +1,6 @@
-import { ClusterCredentials } from 'qovery-typescript-axios'
+import { type ClusterCredentials } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
-import { ClusterCredentialsEntity, LoadingStatus } from '@qovery/shared/interfaces'
+import { type ClusterCredentialsEntity, type LoadingStatus } from '@qovery/shared/interfaces'
 import { IconAwesomeEnum, IconFa, InputSelect, LoaderSpinner } from '@qovery/shared/ui'
 
 export interface ClusterCredentialsSettingsProps {

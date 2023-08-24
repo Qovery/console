@@ -1,7 +1,7 @@
 import { act, fireEvent, getAllByTestId, getByTestId, render } from '__tests__/utils/setup-jest'
 import { OrganizationEventOrigin, OrganizationEventType } from 'qovery-typescript-axios'
 import { eventsFactoryMock } from '@qovery/shared/factories'
-import PageGeneral, { PageGeneralProps } from './page-general'
+import PageGeneral, { type PageGeneralProps } from './page-general'
 
 const props: PageGeneralProps = {
   placeholderEvents: eventsFactoryMock(5),

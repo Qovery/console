@@ -1,5 +1,5 @@
 import { render, screen, waitFor } from '__tests__/utils/setup-jest'
-import Table, { TableProps } from './table'
+import Table, { type TableProps } from './table'
 
 describe('Table', () => {
   let props: TableProps

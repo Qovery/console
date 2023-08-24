@@ -1,10 +1,10 @@
 import { act, render } from '__tests__/utils/setup-jest'
-import { SignUp } from 'qovery-typescript-axios'
+import { type SignUp } from 'qovery-typescript-axios'
 import { organizationFactoryMock, userSignUpFactoryMock } from '@qovery/shared/factories'
-import { OrganizationEntity } from '@qovery/shared/interfaces'
+import { type OrganizationEntity } from '@qovery/shared/interfaces'
 import { LOGOUT_URL, ORGANIZATION_URL } from '@qovery/shared/routes'
 import { sortByKey } from '@qovery/shared/utils'
-import MenuAccount, { MenuAccountProps } from './menu-account'
+import MenuAccount, { type MenuAccountProps } from './menu-account'
 
 const mockNavigate = jest.fn()
 const mockOrganizations: OrganizationEntity[] = organizationFactoryMock(2)

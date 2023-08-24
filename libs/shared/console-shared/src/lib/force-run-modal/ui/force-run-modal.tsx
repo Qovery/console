@@ -1,6 +1,6 @@
-import { JobRequestAllOfScheduleOnStart, JobResponseAllOfSchedule } from 'qovery-typescript-axios/api'
+import { type JobRequestAllOfScheduleOnStart, type JobResponseAllOfSchedule } from 'qovery-typescript-axios/api'
 import { Controller, useFormContext } from 'react-hook-form'
-import { ApplicationEntity } from '@qovery/shared/interfaces'
+import { type ApplicationEntity } from '@qovery/shared/interfaces'
 import { InputRadioBox, ModalCrud } from '@qovery/shared/ui'
 
 export interface ForceRunModalProps {

@@ -1,4 +1,4 @@
-import { PreloadedState, combineReducers, configureStore } from '@reduxjs/toolkit'
+import { type PreloadedState, combineReducers, configureStore } from '@reduxjs/toolkit'
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import {
   applications,

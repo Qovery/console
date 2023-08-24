@@ -2,7 +2,7 @@ import { act, fireEvent, getByLabelText, getByTestId, render, waitFor } from '__
 import selectEvent from 'react-select-event'
 import * as organizationDomain from '@qovery/domains/organization'
 import { webhookFactoryMock } from '@qovery/shared/factories'
-import WebhookCrudModalFeature, { WebhookCrudModalFeatureProps } from './webhook-crud-modal-feature'
+import WebhookCrudModalFeature, { type WebhookCrudModalFeatureProps } from './webhook-crud-modal-feature'
 
 const mockWebhook = webhookFactoryMock(1)[0]
 const props: WebhookCrudModalFeatureProps = {

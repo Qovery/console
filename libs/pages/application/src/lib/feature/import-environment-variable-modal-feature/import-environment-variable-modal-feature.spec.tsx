@@ -1,6 +1,6 @@
 import { act, findAllByTestId, fireEvent, render, screen, waitFor } from '__tests__/utils/setup-jest'
 import ImportEnvironmentVariableModalFeature, {
-  ImportEnvironmentVariableModalFeatureProps,
+  type ImportEnvironmentVariableModalFeatureProps,
 } from './import-environment-variable-modal-feature'
 
 const envText = `

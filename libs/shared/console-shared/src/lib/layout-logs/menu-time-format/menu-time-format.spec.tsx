@@ -1,5 +1,5 @@
 import { act, render } from '__tests__/utils/setup-jest'
-import MenuTimeFormat, { MenuTimeFormatProps } from './menu-time-format'
+import MenuTimeFormat, { type MenuTimeFormatProps } from './menu-time-format'
 
 describe('MenuTimeFormat', () => {
   const props: MenuTimeFormatProps = {

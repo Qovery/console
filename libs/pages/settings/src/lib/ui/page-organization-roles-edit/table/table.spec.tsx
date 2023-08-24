@@ -1,5 +1,5 @@
 import { render } from '__tests__/utils/setup-jest'
-import Table, { TableProps } from './table'
+import Table, { type TableProps } from './table'
 
 const props: TableProps = {
   title: 'test',

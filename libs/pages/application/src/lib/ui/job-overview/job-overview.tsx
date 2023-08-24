@@ -1,7 +1,7 @@
 import cronstrue from 'cronstrue'
 import { useNavigate, useParams } from 'react-router-dom'
 import { isCronJob, isLifeCycleJob } from '@qovery/shared/enums'
-import { JobApplicationEntity } from '@qovery/shared/interfaces'
+import { type JobApplicationEntity } from '@qovery/shared/interfaces'
 import {
   APPLICATION_SETTINGS_CONFIGURE_URL,
   APPLICATION_SETTINGS_RESOURCES_URL,

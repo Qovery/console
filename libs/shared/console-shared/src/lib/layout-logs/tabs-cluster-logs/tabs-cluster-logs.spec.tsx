@@ -1,6 +1,6 @@
 import { render, screen } from '__tests__/utils/setup-jest'
 import { ClusterLogsStepEnum } from 'qovery-typescript-axios'
-import TabsClusterLogs, { TabsClusterLogsProps, TabsClusterLogsSection } from './tabs-cluster-logs'
+import TabsClusterLogs, { type TabsClusterLogsProps, TabsClusterLogsSection } from './tabs-cluster-logs'
 
 describe('TabsClusterLogs', () => {
   const props: TabsClusterLogsProps = {

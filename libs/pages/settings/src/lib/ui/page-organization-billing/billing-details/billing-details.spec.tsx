@@ -1,7 +1,7 @@
 import { getByDisplayValue, getByTestId, render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import { BillingInfo } from 'qovery-typescript-axios'
-import BillingDetails, { BillingDetailsProps } from './billing-details'
+import { type BillingInfo } from 'qovery-typescript-axios'
+import BillingDetails, { type BillingDetailsProps } from './billing-details'
 
 const props: BillingDetailsProps = {
   onSubmit: jest.fn(),

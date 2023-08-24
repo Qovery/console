@@ -1,6 +1,6 @@
 import { render } from '__tests__/utils/setup-jest'
 import { applicationFactoryMock } from '@qovery/shared/factories'
-import SidebarPipeline, { SidebarPipelineProps } from './sidebar-pipeline'
+import SidebarPipeline, { type SidebarPipelineProps } from './sidebar-pipeline'
 
 describe('SidebarPipeline', () => {
   const props: SidebarPipelineProps = {

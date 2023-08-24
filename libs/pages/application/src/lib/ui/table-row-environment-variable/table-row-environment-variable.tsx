@@ -1,24 +1,24 @@
-import { ClickEvent } from '@szhsin/react-menu'
+import { type ClickEvent } from '@szhsin/react-menu'
 import { LinkedServiceTypeEnum } from 'qovery-typescript-axios'
 import { useMemo } from 'react'
 import { NavLink, useParams } from 'react-router-dom'
 import { ExternalServiceEnum, IconEnum } from '@qovery/shared/enums'
 import {
-  EnvironmentVariableEntity,
-  EnvironmentVariableSecretOrPublic,
-  SecretEnvironmentVariableEntity,
+  type EnvironmentVariableEntity,
+  type EnvironmentVariableSecretOrPublic,
+  type SecretEnvironmentVariableEntity,
 } from '@qovery/shared/interfaces'
 import { APPLICATION_GENERAL_URL, APPLICATION_URL, DATABASE_GENERAL_URL, DATABASE_URL } from '@qovery/shared/routes'
 import {
   ButtonIconAction,
-  ButtonIconActionElementProps,
+  type ButtonIconActionElementProps,
   Icon,
   IconAwesomeEnum,
   PasswordShowHide,
   ScrollIntoView,
   Skeleton,
-  TableFilterProps,
-  TableHeadProps,
+  type TableFilterProps,
+  type TableHeadProps,
   TableRow,
   Tooltip,
 } from '@qovery/shared/ui'

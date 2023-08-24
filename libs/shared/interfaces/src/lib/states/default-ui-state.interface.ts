@@ -1,4 +1,4 @@
-import { LoadingStatus } from '../types/loading-status.type'
+import { type LoadingStatus } from '../types/loading-status.type'
 
 export interface DefaultUiState {
   loadingStatus: LoadingStatus

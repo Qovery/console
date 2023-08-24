@@ -2,7 +2,7 @@ import { act, getByTestId, render, screen, waitFor } from '__tests__/utils/setup
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { BuildModeEnum, BuildPackLanguageEnum, GitProviderEnum } from 'qovery-typescript-axios'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
-import PageSettingsGeneral, { PageSettingsGeneralProps } from './page-settings-general'
+import PageSettingsGeneral, { type PageSettingsGeneralProps } from './page-settings-general'
 
 describe('PageSettingsGeneral', () => {
   const props: PageSettingsGeneralProps = {

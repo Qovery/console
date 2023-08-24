@@ -1,5 +1,5 @@
-import { Meta, Story } from '@storybook/react'
-import { InputTags, InputTagsProps } from './input-tags'
+import { type Meta, type Story } from '@storybook/react'
+import { InputTags, type InputTagsProps } from './input-tags'
 
 export default {
   component: InputTags,

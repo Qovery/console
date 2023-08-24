@@ -1,4 +1,4 @@
-import { OrganizationEventResponse } from 'qovery-typescript-axios'
+import { type OrganizationEventResponse } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import RowEvent from '../../ui/row-event/row-event'
 

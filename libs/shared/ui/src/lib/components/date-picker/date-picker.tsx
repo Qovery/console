@@ -1,8 +1,8 @@
-import { PropsWithChildren, useRef, useState } from 'react'
+import { type PropsWithChildren, useRef, useState } from 'react'
 import DatePickerLib, {
   CalendarContainer,
-  CalendarContainerProps,
-  ReactDatePickerCustomHeaderProps,
+  type CalendarContainerProps,
+  type ReactDatePickerCustomHeaderProps,
 } from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 import Button from '../buttons/button/button'

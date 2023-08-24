@@ -3,7 +3,7 @@ import {
   EnvironmentModeEnum,
   OrganizationWebhookEventEnum,
   OrganizationWebhookKindEnum,
-  OrganizationWebhookResponse,
+  type OrganizationWebhookResponse,
 } from 'qovery-typescript-axios'
 
 const chance = new Chance('123')

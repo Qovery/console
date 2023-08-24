@@ -1,7 +1,6 @@
+import { render, screen } from '__tests__/utils/setup-jest'
 import { StateEnum } from 'qovery-typescript-axios'
-import { screen, render } from '__tests__/utils/setup-jest'
-
-import StatusChip, { StatusChipProps } from './status-chip'
+import StatusChip, { type StatusChipProps } from './status-chip'
 
 describe('StatusChip', () => {
   let props: StatusChipProps

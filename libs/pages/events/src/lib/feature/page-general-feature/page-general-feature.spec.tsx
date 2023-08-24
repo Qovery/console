@@ -1,7 +1,7 @@
 import { mockUseQueryResult } from '__tests__/utils/mock-use-query-result'
 import { act, fireEvent, getByTestId, render, waitFor } from '__tests__/utils/setup-jest'
-import { OrganizationEventResponseList } from 'qovery-typescript-axios'
-import { EventQueryParams } from '@qovery/domains/event'
+import { type OrganizationEventResponseList } from 'qovery-typescript-axios'
+import { type EventQueryParams } from '@qovery/domains/event'
 import { eventsFactoryMock } from '@qovery/shared/factories'
 import PageGeneralFeature from './page-general-feature'
 

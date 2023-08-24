@@ -1,4 +1,4 @@
-import { ReactElement } from 'react'
+import { type ReactElement } from 'react'
 import { PageApplication } from '@qovery/pages/application'
 import { PagesCluster } from '@qovery/pages/cluster'
 import { PageClusters } from '@qovery/pages/clusters'

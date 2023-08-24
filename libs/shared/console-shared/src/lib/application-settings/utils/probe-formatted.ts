@@ -1,5 +1,5 @@
-import { Probe } from 'qovery-typescript-axios'
-import { FieldValues } from 'react-hook-form'
+import { type Probe } from 'qovery-typescript-axios'
+import { type FieldValues } from 'react-hook-form'
 import { ProbeTypeEnum } from '@qovery/shared/enums'
 
 export function probeFormatted(currentData: FieldValues, defaultPort: number | null | undefined): Probe | undefined {

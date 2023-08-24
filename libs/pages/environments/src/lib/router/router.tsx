@@ -3,7 +3,7 @@ import {
   ENVIRONMENTS_DEPLOYMENT_RULES_EDIT_URL,
   ENVIRONMENTS_DEPLOYMENT_RULES_URL,
   ENVIRONMENTS_GENERAL_URL,
-  Route,
+  type Route,
 } from '@qovery/shared/routes'
 import PageCreateDeploymentRuleFeature from '../feature/page-create-deployment-rule-feature/page-create-deployment-rule-feature'
 import PageDeploymentRulesFeature from '../feature/page-deployment-rules-feature/page-deployment-rules-feature'

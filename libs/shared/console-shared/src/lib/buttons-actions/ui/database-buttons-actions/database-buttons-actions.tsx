@@ -1,4 +1,4 @@
-import { ClickEvent } from '@szhsin/react-menu'
+import { type ClickEvent } from '@szhsin/react-menu'
 import { DatabaseModeEnum, OrganizationEventTargetType, StateEnum } from 'qovery-typescript-axios'
 import { useMemo } from 'react'
 import { useDispatch } from 'react-redux'
@@ -12,7 +12,7 @@ import {
 } from '@qovery/domains/database'
 import { useActionCancelEnvironment } from '@qovery/domains/environment'
 import { useDeploymentStatus, useRunningStatus } from '@qovery/domains/services/feature'
-import { DatabaseEntity } from '@qovery/shared/interfaces'
+import { type DatabaseEntity } from '@qovery/shared/interfaces'
 import {
   AUDIT_LOGS_PARAMS_URL,
   ENVIRONMENT_LOGS_URL,
@@ -23,10 +23,10 @@ import {
 } from '@qovery/shared/routes'
 import {
   ButtonIconAction,
-  ButtonIconActionElementProps,
+  type ButtonIconActionElementProps,
   Icon,
   IconAwesomeEnum,
-  MenuItemProps,
+  type MenuItemProps,
   useModal,
   useModalConfirmation,
 } from '@qovery/shared/ui'
@@ -39,7 +39,7 @@ import {
   isRestartAvailable,
   isStopAvailable,
 } from '@qovery/shared/utils'
-import { AppDispatch } from '@qovery/state/store'
+import { type AppDispatch } from '@qovery/state/store'
 import CloneServiceModalFeature from '../../../clone-service-modal/feature/clone-service-modal-feature'
 
 export interface DatabaseButtonsActionsProps {

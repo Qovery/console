@@ -1,7 +1,7 @@
 import { act, getAllByTestId, getByTestId, render } from '__tests__/utils/setup-jest'
-import { Commit } from 'qovery-typescript-axios'
+import { type Commit } from 'qovery-typescript-axios'
 import { applicationFactoryMock, environmentFactoryMock } from '@qovery/shared/factories'
-import UpdateAllModal, { UpdateAllModalProps } from './update-all-modal'
+import UpdateAllModal, { type UpdateAllModalProps } from './update-all-modal'
 
 const defaultProps: UpdateAllModalProps = {
   listLoading: false,

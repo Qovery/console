@@ -1,5 +1,5 @@
 import { render } from '__tests__/utils/setup-jest'
-import InputSelectSmall, { InputSelectSmallProps } from './input-select-small'
+import InputSelectSmall, { type InputSelectSmallProps } from './input-select-small'
 
 describe('InputSelectSmall', () => {
   let props: InputSelectSmallProps

@@ -1,5 +1,5 @@
 import { StorageTypeEnum } from 'qovery-typescript-axios'
-import { FormEventHandler, useEffect } from 'react'
+import { type FormEventHandler, useEffect } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { InputSelect, InputText, ModalCrud, useModal } from '@qovery/shared/ui'
 

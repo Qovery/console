@@ -1,5 +1,5 @@
 import { render } from '__tests__/utils/setup-jest'
-import { EnvironmentStatus } from 'qovery-typescript-axios'
+import { type EnvironmentStatus } from 'qovery-typescript-axios'
 import * as domainsEnvironmentsFeature from '@qovery/domains/environments/feature'
 import PageGeneralFeature from './page-general-feature'
 

@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom'
-import { IconEnum } from '@qovery/shared/enums'
+import { type IconEnum } from '@qovery/shared/enums'
 import Icon from '../icon/icon'
 
 export interface BaseLink {

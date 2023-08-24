@@ -1,6 +1,6 @@
 import { mockUseQueryResult } from '__tests__/utils/mock-use-query-result'
 import { act, fireEvent, getAllByTestId, getByLabelText, getByTestId, render } from '__tests__/utils/setup-jest'
-import { OrganizationWebhookResponse } from 'qovery-typescript-axios'
+import { type OrganizationWebhookResponse } from 'qovery-typescript-axios'
 import * as organizationDomain from '@qovery/domains/organization'
 import { webhookFactoryMock } from '@qovery/shared/factories'
 import PageOrganizationWebhooksFeature from './page-organization-webhooks-feature'

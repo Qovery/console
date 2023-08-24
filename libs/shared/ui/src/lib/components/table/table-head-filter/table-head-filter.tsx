@@ -1,11 +1,11 @@
-import { Dispatch, MouseEvent, SetStateAction, useEffect, useState } from 'react'
+import { type Dispatch, type MouseEvent, type SetStateAction, useEffect, useState } from 'react'
 import { upperCaseFirstLetter } from '@qovery/shared/utils'
 import Button, { ButtonSize, ButtonStyle } from '../../buttons/button/button'
 import Icon from '../../icon/icon'
 import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
 import Menu from '../../menu/menu'
-import { MenuItemProps } from '../../menu/menu-item/menu-item'
-import { TableFilterProps, TableHeadCustomFilterProps, TableHeadProps } from '../table'
+import { type MenuItemProps } from '../../menu/menu-item/menu-item'
+import { type TableFilterProps, type TableHeadCustomFilterProps, type TableHeadProps } from '../table'
 
 export interface TableHeadFilterProps<T> {
   title: string

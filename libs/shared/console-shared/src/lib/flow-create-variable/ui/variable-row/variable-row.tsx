@@ -1,6 +1,6 @@
-import { APIVariableScopeEnum } from 'qovery-typescript-axios'
+import { type APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
-import { FlowVariableData } from '@qovery/shared/interfaces'
+import { type FlowVariableData } from '@qovery/shared/interfaces'
 import {
   ButtonIcon,
   ButtonIconStyle,

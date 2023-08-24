@@ -1,8 +1,8 @@
 import { act, getAllByTestId, render } from '__tests__/utils/setup-jest'
-import { CustomDomain, CustomDomainStatusEnum } from 'qovery-typescript-axios'
+import { type CustomDomain, CustomDomainStatusEnum } from 'qovery-typescript-axios'
 import * as redux from 'react-redux'
 import { applicationFactoryMock } from '@qovery/shared/factories'
-import { ApplicationEntity } from '@qovery/shared/interfaces'
+import { type ApplicationEntity } from '@qovery/shared/interfaces'
 import PageSettingsDomainsFeature from './page-settings-domains-feature'
 
 import SpyInstance = jest.SpyInstance

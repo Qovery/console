@@ -1,5 +1,5 @@
-import { CustomDomain } from 'qovery-typescript-axios'
-import { ApplicationEntity, LoadingStatus } from '@qovery/shared/interfaces'
+import { type CustomDomain } from 'qovery-typescript-axios'
+import { type ApplicationEntity, type LoadingStatus } from '@qovery/shared/interfaces'
 import {
   BlockContent,
   Button,

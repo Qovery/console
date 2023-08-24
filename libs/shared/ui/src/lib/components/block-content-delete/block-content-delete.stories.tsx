@@ -1,7 +1,7 @@
-import { BlockContentDelete, BlockContentDeleteProps } from './block-content-delete'
-import { Meta, Story } from '@storybook/react'
+import { type Meta, type Story } from '@storybook/react'
 import { EnvironmentModeEnum } from 'qovery-typescript-axios'
 import ModalProvider from '../modal/modal-root'
+import { BlockContentDelete, type BlockContentDeleteProps } from './block-content-delete'
 
 export default {
   component: BlockContentDelete,

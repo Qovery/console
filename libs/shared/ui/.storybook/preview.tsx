@@ -1,4 +1,4 @@
-import { Preview } from '@storybook/react'
+import { type Preview } from '@storybook/react'
 import { MemoryRouter } from 'react-router-dom'
 import '../src/lib/styles/main.scss'
 

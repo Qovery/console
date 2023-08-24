@@ -1,4 +1,4 @@
-import { DeploymentStageRequest, DeploymentStageResponse } from 'qovery-typescript-axios'
+import { type DeploymentStageRequest, type DeploymentStageResponse } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useCreateEnvironmentDeploymentStage, useEditEnvironmentDeploymentStage } from '@qovery/domains/environment'

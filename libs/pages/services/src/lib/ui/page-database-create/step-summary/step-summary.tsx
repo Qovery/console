@@ -11,8 +11,8 @@ import {
   IconAwesomeEnum,
 } from '@qovery/shared/ui'
 import {
-  GeneralData,
-  ResourcesData,
+  type GeneralData,
+  type ResourcesData,
 } from '../../../feature/page-database-create-feature/database-creation-flow.interface'
 
 export interface StepSummaryProps {

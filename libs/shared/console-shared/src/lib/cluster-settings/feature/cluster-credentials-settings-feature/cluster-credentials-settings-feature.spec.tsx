@@ -3,9 +3,9 @@ import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form
 import { CloudProviderEnum } from 'qovery-typescript-axios'
 import selectEvent from 'react-select-event'
 import { organizationFactoryMock } from '@qovery/shared/factories'
-import { OrganizationEntity } from '@qovery/shared/interfaces'
+import { type OrganizationEntity } from '@qovery/shared/interfaces'
 import ClusterCredentialsSettingsFeature, {
-  ClusterCredentialsSettingsFeatureProps,
+  type ClusterCredentialsSettingsFeatureProps,
 } from './cluster-credentials-settings-feature'
 
 const mockOrganization: OrganizationEntity = organizationFactoryMock(1)[0]

@@ -5,7 +5,7 @@ import {
   StorageTypeEnum,
 } from 'qovery-typescript-axios'
 import { databaseFactoryMock } from '@qovery/shared/factories'
-import { ContainerApplicationEntity } from '@qovery/shared/interfaces'
+import { type ContainerApplicationEntity } from '@qovery/shared/interfaces'
 import {
   refactoClusterPayload,
   refactoContainerApplicationPayload,

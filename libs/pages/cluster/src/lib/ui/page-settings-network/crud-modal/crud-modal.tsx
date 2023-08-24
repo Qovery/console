@@ -1,4 +1,4 @@
-import { ClusterRoutingTableResults } from 'qovery-typescript-axios'
+import { type ClusterRoutingTableResults } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { InputText, InputTextArea, ModalCrud } from '@qovery/shared/ui'
 

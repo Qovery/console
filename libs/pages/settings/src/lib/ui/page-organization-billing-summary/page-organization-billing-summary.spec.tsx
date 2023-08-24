@@ -2,7 +2,7 @@ import { act, getByTestId, getByText, queryByText, render } from '__tests__/util
 import { PlanEnum } from 'qovery-typescript-axios'
 import { creditCardsFactoryMock, organizationFactoryMock } from '@qovery/shared/factories'
 import PageOrganizationBillingSummary, {
-  PageOrganizationBillingSummaryProps,
+  type PageOrganizationBillingSummaryProps,
 } from './page-organization-billing-summary'
 
 const mockOrganization = organizationFactoryMock(1)[0]

@@ -1,15 +1,24 @@
 import { BuildModeEnum, DatabaseModeEnum } from 'qovery-typescript-axios'
 import { ServiceDeploymentStatusLabel, ServiceStateChip } from '@qovery/domains/services/feature'
 import { ApplicationButtonsActions, DatabaseButtonsActions } from '@qovery/shared/console-shared'
-import { IconEnum, ServiceTypeEnum, isApplication, isContainer, isDatabase, isJob } from '@qovery/shared/enums'
+import { IconEnum, type ServiceTypeEnum, isApplication, isContainer, isDatabase, isJob } from '@qovery/shared/enums'
 import {
-  ApplicationEntity,
-  ContainerApplicationEntity,
-  DatabaseEntity,
-  GitApplicationEntity,
-  JobApplicationEntity,
+  type ApplicationEntity,
+  type ContainerApplicationEntity,
+  type DatabaseEntity,
+  type GitApplicationEntity,
+  type JobApplicationEntity,
 } from '@qovery/shared/interfaces'
-import { Icon, Skeleton, TableFilterProps, TableHeadProps, TableRow, Tag, TagCommit, Tooltip } from '@qovery/shared/ui'
+import {
+  Icon,
+  Skeleton,
+  type TableFilterProps,
+  type TableHeadProps,
+  TableRow,
+  Tag,
+  TagCommit,
+  Tooltip,
+} from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/utils'
 
 export interface TableRowServicesProps<T> {

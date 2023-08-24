@@ -1,6 +1,6 @@
 import { act, render, screen } from '__tests__/utils/setup-jest'
 import { ToastEnum } from '../../utils/toast'
-import ToastBehavior, { ToastContent, ToastProps } from './toast'
+import ToastBehavior, { ToastContent, type ToastProps } from './toast'
 
 const props: ToastProps = {
   status: ToastEnum.SUCCESS,

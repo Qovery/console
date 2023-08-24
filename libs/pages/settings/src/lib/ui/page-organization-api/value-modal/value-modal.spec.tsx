@@ -1,6 +1,6 @@
 import { getByDisplayValue, getByTestId, render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import { ValueModal, ValueModalProps } from './value-modal'
+import { ValueModal, type ValueModalProps } from './value-modal'
 
 const props: ValueModalProps = {
   onClose: jest.fn(),

@@ -1,7 +1,7 @@
-import { Healthcheck } from 'qovery-typescript-axios'
+import { type Healthcheck } from 'qovery-typescript-axios'
 import * as storeApplication from '@qovery/domains/application'
 import { applicationFactoryMock } from '@qovery/shared/factories'
-import { ApplicationEntity } from '@qovery/shared/interfaces'
+import { type ApplicationEntity } from '@qovery/shared/interfaces'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import PageSettingsHealthchecksFeature from './page-settings-healthchecks-feature'
 

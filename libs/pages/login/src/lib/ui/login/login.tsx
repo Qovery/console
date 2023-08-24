@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { AuthEnum, useInviteMember } from '@qovery/shared/auth'
+import { type AuthEnum, useInviteMember } from '@qovery/shared/auth'
 import { InviteDetailsFeature } from '@qovery/shared/console-shared'
 import { IconEnum } from '@qovery/shared/enums'
 import { Icon } from '@qovery/shared/ui'

@@ -1,10 +1,10 @@
 import { useMutation } from '@tanstack/react-query'
 import {
   ApplicationsApi,
-  CloneApplicationRequest,
-  CloneContainerRequest,
-  CloneDatabaseRequest,
-  CloneJobRequest,
+  type CloneApplicationRequest,
+  type CloneContainerRequest,
+  type CloneDatabaseRequest,
+  type CloneJobRequest,
   ContainersApi,
   DatabasesApi,
   JobsApi,

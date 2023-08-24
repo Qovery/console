@@ -1,5 +1,5 @@
-import { Tooltip, TooltipProps } from './tooltip'
-import { Meta, Story } from '@storybook/react'
+import { type Meta, type Story } from '@storybook/react'
+import { Tooltip, type TooltipProps } from './tooltip'
 
 export default {
   component: Tooltip,

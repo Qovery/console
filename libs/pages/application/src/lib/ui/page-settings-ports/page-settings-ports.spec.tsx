@@ -1,6 +1,6 @@
 import { act, findByText, fireEvent, render, waitFor } from '__tests__/utils/setup-jest'
 import { PortProtocolEnum } from 'qovery-typescript-axios'
-import PageSettingsPorts, { PageSettingsPortsProps } from './page-settings-ports'
+import PageSettingsPorts, { type PageSettingsPortsProps } from './page-settings-ports'
 
 let props: PageSettingsPortsProps
 

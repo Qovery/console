@@ -1,8 +1,8 @@
 import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { CloudProviderEnum } from 'qovery-typescript-axios'
-import { ClusterResourcesData } from '@qovery/shared/interfaces'
-import PageSettingsResources, { PageSettingsResourcesProps } from './page-settings-resources'
+import { type ClusterResourcesData } from '@qovery/shared/interfaces'
+import PageSettingsResources, { type PageSettingsResourcesProps } from './page-settings-resources'
 
 const props: PageSettingsResourcesProps = {
   loading: false,

@@ -1,9 +1,9 @@
 import { act, render, screen, waitFor } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { applicationFactoryMock } from '@qovery/shared/factories'
-import { ApplicationResourcesData } from '@qovery/shared/interfaces'
+import { type ApplicationResourcesData } from '@qovery/shared/interfaces'
 import { IconAwesomeEnum } from '@qovery/shared/ui'
-import PageSettingsResources, { PageSettingsResourcesProps } from './page-settings-resources'
+import PageSettingsResources, { type PageSettingsResourcesProps } from './page-settings-resources'
 
 const application = applicationFactoryMock(1)[0]
 

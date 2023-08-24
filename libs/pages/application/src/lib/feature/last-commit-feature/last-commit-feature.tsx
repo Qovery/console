@@ -1,10 +1,10 @@
-import { Commit } from 'qovery-typescript-axios'
+import { type Commit } from 'qovery-typescript-axios'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { getApplicationsState, getCountNewCommitsToDeploy } from '@qovery/domains/application'
 import { isJob } from '@qovery/shared/enums'
-import { ApplicationEntity, LoadingStatus } from '@qovery/shared/interfaces'
-import { RootState } from '@qovery/state/store'
+import { type ApplicationEntity, type LoadingStatus } from '@qovery/shared/interfaces'
+import { type RootState } from '@qovery/state/store'
 import LastCommit from '../../ui/last-commit/last-commit'
 
 export function LastCommitFeature() {

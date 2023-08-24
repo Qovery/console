@@ -1,5 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query'
-import { Environment } from 'qovery-typescript-axios'
+import { type Environment } from 'qovery-typescript-axios'
 import { useCallback, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -7,8 +7,8 @@ import useWebSocket from 'react-use-websocket'
 import { applicationsActions, applicationsLoadingStatus } from '@qovery/domains/application'
 import { databasesActions, databasesLoadingStatus } from '@qovery/domains/database'
 import { updateEnvironmentsRunningStatus, useFetchEnvironments } from '@qovery/domains/environment'
-import { ServiceRunningStatus, WebsocketRunningStatusInterface } from '@qovery/shared/interfaces'
-import { AppDispatch } from '@qovery/state/store'
+import { type ServiceRunningStatus, type WebsocketRunningStatusInterface } from '@qovery/shared/interfaces'
+import { type AppDispatch } from '@qovery/state/store'
 
 export interface ClusterWebSocketProps {
   url: string

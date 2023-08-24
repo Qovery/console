@@ -8,7 +8,7 @@ import {
   render,
 } from '__tests__/utils/setup-jest'
 import { webhookFactoryMock } from '@qovery/shared/factories'
-import PageOrganizationWebhooks, { PageOrganizationWebhooksProps } from './page-organization-webhooks'
+import PageOrganizationWebhooks, { type PageOrganizationWebhooksProps } from './page-organization-webhooks'
 
 const mockWebhooks = webhookFactoryMock(3)
 const props: PageOrganizationWebhooksProps = {

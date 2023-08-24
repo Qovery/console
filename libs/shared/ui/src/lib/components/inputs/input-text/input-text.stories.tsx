@@ -1,6 +1,6 @@
-import { Meta, Story } from '@storybook/react'
+import { type Meta, type Story } from '@storybook/react'
 import CopyToClipboard from '../../copy-to-clipboard/copy-to-clipboard'
-import { InputText, InputTextProps } from './input-text'
+import { InputText, type InputTextProps } from './input-text'
 
 export default {
   component: InputText,

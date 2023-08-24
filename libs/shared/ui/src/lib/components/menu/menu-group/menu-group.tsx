@@ -2,7 +2,7 @@ import { MenuDivider } from '@szhsin/react-menu'
 import { type ReactNode, useEffect, useState } from 'react'
 import { sortByKey } from '@qovery/shared/utils'
 import InputSearch from '../../inputs/input-search/input-search'
-import { MenuItem, MenuItemProps } from '../menu-item/menu-item'
+import { MenuItem, type MenuItemProps } from '../menu-item/menu-item'
 
 export interface MenuGroupProps {
   menu: {

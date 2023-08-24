@@ -1,9 +1,9 @@
 import { addMonths } from 'date-fns'
 import {
-  ClusterCloudProviderInfoCredentials,
-  Environment,
+  type ClusterCloudProviderInfoCredentials,
+  type Environment,
   OrganizationEventTargetType,
-  Project,
+  type Project,
 } from 'qovery-typescript-axios'
 import { useSearchParams } from 'react-router-dom'
 import { Button, ButtonSize, ButtonStyle, DatePicker, Icon, IconAwesomeEnum, InputFilter } from '@qovery/shared/ui'

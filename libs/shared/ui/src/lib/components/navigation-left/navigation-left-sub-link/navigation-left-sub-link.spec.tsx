@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from '__tests__/utils/setup-jest'
-import NavigationLeftSubLink, { NavigationLeftSubLinkProps } from './navigation-left-sub-link'
+import NavigationLeftSubLink, { type NavigationLeftSubLinkProps } from './navigation-left-sub-link'
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),

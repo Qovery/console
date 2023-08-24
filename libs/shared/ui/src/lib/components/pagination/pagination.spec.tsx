@@ -1,5 +1,5 @@
 import { act, fireEvent, getByTestId, render } from '__tests__/utils/setup-jest'
-import Pagination, { PaginationProps } from './pagination'
+import Pagination, { type PaginationProps } from './pagination'
 
 const props: PaginationProps = {
   onNext: jest.fn(),

@@ -1,7 +1,7 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import { useCallback } from 'react'
 import { useDispatch } from 'react-redux'
-import { UserInterface, userActions } from '@qovery/domains/user'
+import { type UserInterface, userActions } from '@qovery/domains/user'
 
 export function useAuth() {
   const { loginWithRedirect, logout, user, getAccessTokenSilently, isAuthenticated, isLoading } = useAuth0()

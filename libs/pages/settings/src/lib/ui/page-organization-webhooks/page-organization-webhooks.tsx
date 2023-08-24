@@ -1,4 +1,4 @@
-import { OrganizationWebhookKindEnum, OrganizationWebhookResponse } from 'qovery-typescript-axios'
+import { OrganizationWebhookKindEnum, type OrganizationWebhookResponse } from 'qovery-typescript-axios'
 import { IconEnum } from '@qovery/shared/enums'
 import {
   BlockContent,

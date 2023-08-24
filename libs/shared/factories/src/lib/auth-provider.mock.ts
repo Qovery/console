@@ -1,5 +1,5 @@
 import { Chance } from 'chance'
-import { GitAuthProvider, GitProviderEnum } from 'qovery-typescript-axios'
+import { type GitAuthProvider, GitProviderEnum } from 'qovery-typescript-axios'
 
 const chance = new Chance('123')
 

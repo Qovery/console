@@ -1,8 +1,8 @@
 import { act, render } from '__tests__/utils/setup-jest'
-import { InviteMember } from 'qovery-typescript-axios'
+import { type InviteMember } from 'qovery-typescript-axios'
 import { inviteMembersMock, membersMock } from '@qovery/shared/factories'
 import { dateYearMonthDayHourMinuteSecond, timeAgo } from '@qovery/shared/utils'
-import RowMember, { RowMemberProps } from './row-member'
+import RowMember, { type RowMemberProps } from './row-member'
 
 const originalClipboard = { ...global.navigator.clipboard }
 

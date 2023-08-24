@@ -1,7 +1,14 @@
-import { Application, Commit, DeploymentHistoryApplication, Instance, Link, Status } from 'qovery-typescript-axios'
-import { LoadingStatus } from '../types/loading-status.type'
-import { AdvancedSettings } from './advanced-settings.interface'
-import { ServiceRunningStatus } from './service-running-status.interface'
+import {
+  type Application,
+  type Commit,
+  type DeploymentHistoryApplication,
+  type Instance,
+  type Link,
+  type Status,
+} from 'qovery-typescript-axios'
+import { type LoadingStatus } from '../types/loading-status.type'
+import { type AdvancedSettings } from './advanced-settings.interface'
+import { type ServiceRunningStatus } from './service-running-status.interface'
 
 export interface GitApplicationEntity extends Application {
   /**

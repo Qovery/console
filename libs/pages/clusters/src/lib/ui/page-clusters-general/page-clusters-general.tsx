@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom'
-import { ClusterEntity, LoadingStatus } from '@qovery/shared/interfaces'
+import { type ClusterEntity, type LoadingStatus } from '@qovery/shared/interfaces'
 import { CLUSTERS_CREATION_GENERAL_URL, CLUSTERS_CREATION_URL, CLUSTERS_URL } from '@qovery/shared/routes'
 import { Button, EmptyState, HelpSection, IconAwesomeEnum, LoaderSpinner } from '@qovery/shared/ui'
 import CardCluster from '../card-cluster/card-cluster'

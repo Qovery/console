@@ -1,9 +1,9 @@
 import { act, getAllByTestId, getByTestId, render } from '__tests__/utils/setup-jest'
-import { Commit } from 'qovery-typescript-axios'
+import { type Commit } from 'qovery-typescript-axios'
 import * as environmentDomains from '@qovery/domains/environment'
 import { applicationFactoryMock } from '@qovery/shared/factories'
-import { ApplicationEntity } from '@qovery/shared/interfaces'
-import UpdateAllModalFeature, { UpdateAllModalFeatureProps } from './update-all-modal-feature'
+import { type ApplicationEntity } from '@qovery/shared/interfaces'
+import UpdateAllModalFeature, { type UpdateAllModalFeatureProps } from './update-all-modal-feature'
 
 const useActionDeployAllEnvironmentSpy = jest.spyOn(environmentDomains, 'useActionDeployAllEnvironment') as jest.Mock
 

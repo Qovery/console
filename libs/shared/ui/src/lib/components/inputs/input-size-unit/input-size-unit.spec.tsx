@@ -1,6 +1,6 @@
 import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import InputSizeUnit, { InputSizeUnitProps } from './input-size-unit'
+import InputSizeUnit, { type InputSizeUnitProps } from './input-size-unit'
 
 const props: InputSizeUnitProps = {
   name: 'memory',

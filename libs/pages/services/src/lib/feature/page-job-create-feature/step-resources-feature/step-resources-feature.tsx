@@ -3,7 +3,7 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useFetchEnvironment } from '@qovery/domains/environment'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
-import { ApplicationResourcesData } from '@qovery/shared/interfaces'
+import { type ApplicationResourcesData } from '@qovery/shared/interfaces'
 import {
   SERVICES_JOB_CREATION_CONFIGURE_URL,
   SERVICES_JOB_CREATION_GENERAL_URL,

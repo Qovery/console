@@ -1,29 +1,34 @@
 import {
-  PayloadAction,
-  Update,
+  type PayloadAction,
+  type Update,
   createAsyncThunk,
   createEntityAdapter,
   createSelector,
   createSlice,
 } from '@reduxjs/toolkit'
-import { AxiosResponse } from 'axios'
+import { type AxiosResponse } from 'axios'
 import {
   CloudProviderApi,
   CloudProviderEnum,
-  Credentials,
-  Database,
-  DatabaseCurrentMetric,
+  type Credentials,
+  type Database,
+  type DatabaseCurrentMetric,
   DatabaseDeploymentHistoryApi,
   DatabaseMainCallsApi,
   DatabaseMetricsApi,
-  DatabaseRequest,
-  DatabaseTypeEnum,
+  type DatabaseRequest,
+  type DatabaseTypeEnum,
   DatabasesApi,
-  DeploymentHistoryDatabase,
-  ManagedDatabaseInstanceTypeResponseList,
-  Status,
+  type DeploymentHistoryDatabase,
+  type ManagedDatabaseInstanceTypeResponseList,
+  type Status,
 } from 'qovery-typescript-axios'
-import { DatabaseEntity, DatabasesState, LoadingStatus, ServiceRunningStatus } from '@qovery/shared/interfaces'
+import {
+  type DatabaseEntity,
+  type DatabasesState,
+  type LoadingStatus,
+  type ServiceRunningStatus,
+} from '@qovery/shared/interfaces'
 import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
 import {
   addOneToManyRelation,
@@ -33,7 +38,7 @@ import {
   shortToLongId,
   sortByKey,
 } from '@qovery/shared/utils'
-import { RootState } from '@qovery/state/store'
+import { type RootState } from '@qovery/state/store'
 
 export const DATABASES_FEATURE_KEY = 'databases'
 

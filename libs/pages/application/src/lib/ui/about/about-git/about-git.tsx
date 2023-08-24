@@ -1,7 +1,7 @@
-import { ApplicationGitRepository } from 'qovery-typescript-axios'
+import { type ApplicationGitRepository } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { IconEnum, isApplication, isJob } from '@qovery/shared/enums'
-import { ApplicationEntity } from '@qovery/shared/interfaces'
+import { type ApplicationEntity } from '@qovery/shared/interfaces'
 import { Button, ButtonStyle, Icon, IconAwesomeEnum, Truncate } from '@qovery/shared/ui'
 import LastCommitFeature from '../../../feature/last-commit-feature/last-commit-feature'
 

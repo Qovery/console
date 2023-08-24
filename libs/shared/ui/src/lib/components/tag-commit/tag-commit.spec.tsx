@@ -1,5 +1,5 @@
 import { render } from '__tests__/utils/setup-jest'
-import TagCommit, { TagCommitProps } from './tag-commit'
+import TagCommit, { type TagCommitProps } from './tag-commit'
 
 let props: TagCommitProps
 

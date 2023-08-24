@@ -1,4 +1,4 @@
-import { APIVariableScopeEnum } from 'qovery-typescript-axios'
+import { type APIVariableScopeEnum } from 'qovery-typescript-axios'
 
 export interface VariableData {
   variable?: string

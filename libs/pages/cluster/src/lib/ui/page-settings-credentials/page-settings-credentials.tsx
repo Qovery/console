@@ -1,5 +1,5 @@
-import { CloudProviderEnum } from 'qovery-typescript-axios'
-import { FormEventHandler } from 'react'
+import { type CloudProviderEnum } from 'qovery-typescript-axios'
+import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { ClusterCredentialsSettingsFeature } from '@qovery/shared/console-shared'
 import { BlockContent, Button, ButtonSize, ButtonStyle, HelpSection } from '@qovery/shared/ui'

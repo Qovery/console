@@ -1,6 +1,6 @@
 import { getByText, render } from '__tests__/utils/setup-jest'
 import { containerFactoryMock, containerRegistriesMock } from '@qovery/shared/factories'
-import AboutContainer, { AboutContainerProps } from './about-container'
+import AboutContainer, { type AboutContainerProps } from './about-container'
 
 const mockContainerRegistry = containerRegistriesMock(1)[0]
 const mockContainer = containerFactoryMock(1)[0]

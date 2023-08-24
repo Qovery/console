@@ -1,4 +1,4 @@
-import { ClickEvent } from '@szhsin/react-menu'
+import { type ClickEvent } from '@szhsin/react-menu'
 import { OrganizationEventTargetType, StateEnum } from 'qovery-typescript-axios'
 import { useMemo } from 'react'
 import { useDispatch } from 'react-redux'
@@ -21,7 +21,7 @@ import {
   isGitJob,
   isJob,
 } from '@qovery/shared/enums'
-import { ApplicationEntity, GitApplicationEntity, JobApplicationEntity } from '@qovery/shared/interfaces'
+import { type ApplicationEntity, type GitApplicationEntity, type JobApplicationEntity } from '@qovery/shared/interfaces'
 import {
   APPLICATION_SETTINGS_GENERAL_URL,
   APPLICATION_SETTINGS_URL,
@@ -35,10 +35,10 @@ import {
 } from '@qovery/shared/routes'
 import {
   ButtonIconAction,
-  ButtonIconActionElementProps,
+  type ButtonIconActionElementProps,
   Icon,
   IconAwesomeEnum,
-  MenuItemProps,
+  type MenuItemProps,
   useModal,
   useModalConfirmation,
 } from '@qovery/shared/ui'
@@ -52,7 +52,7 @@ import {
   isStopAvailable,
   urlCodeEditor,
 } from '@qovery/shared/utils'
-import { AppDispatch } from '@qovery/state/store'
+import { type AppDispatch } from '@qovery/state/store'
 import CloneServiceModalFeature from '../../../clone-service-modal/feature/clone-service-modal-feature'
 import DeployOtherCommitModalFeature from '../../../deploy-other-commit-modal/feature/deploy-other-commit-modal-feature'
 import DeployOtherTagModalFeature from '../../../deploy-other-tag-modal/feature/deploy-other-tag-modal-feature'

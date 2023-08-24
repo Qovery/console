@@ -1,6 +1,6 @@
 import { BuildModeEnum, BuildPackLanguageEnum } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
-import { ApplicationGeneralData } from '@qovery/shared/interfaces'
+import { type ApplicationGeneralData } from '@qovery/shared/interfaces'
 import { Icon, InputSelect, InputText } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/utils'
 import GitRepositorySettingsFeature from '../../git-repository-settings/feature/git-repository-settings-feature/git-repository-settings-feature'

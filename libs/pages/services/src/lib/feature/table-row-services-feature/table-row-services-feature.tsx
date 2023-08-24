@@ -1,8 +1,8 @@
 import { useParams } from 'react-router-dom'
 import { getServiceType, isDatabase } from '@qovery/shared/enums'
-import { ApplicationEntity, DatabaseEntity } from '@qovery/shared/interfaces'
+import { type ApplicationEntity, type DatabaseEntity } from '@qovery/shared/interfaces'
 import { APPLICATION_URL, DATABASE_GENERAL_URL, DATABASE_URL, SERVICES_GENERAL_URL } from '@qovery/shared/routes'
-import { TableFilterProps, TableHeadProps } from '@qovery/shared/ui'
+import { type TableFilterProps, type TableHeadProps } from '@qovery/shared/ui'
 import TableRowServices from '../../ui/table-row-services/table-row-services'
 
 export interface TableRowServicesFeatureProps<T> {

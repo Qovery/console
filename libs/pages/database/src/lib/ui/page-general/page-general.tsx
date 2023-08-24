@@ -6,8 +6,8 @@ import {
   StateEnum,
 } from 'qovery-typescript-axios'
 import { useDeploymentStatus } from '@qovery/domains/services/feature'
-import { DatabaseEntity, LoadingStatus } from '@qovery/shared/interfaces'
-import { BaseLink, HelpSection, Skeleton } from '@qovery/shared/ui'
+import { type DatabaseEntity, type LoadingStatus } from '@qovery/shared/interfaces'
+import { type BaseLink, HelpSection, Skeleton } from '@qovery/shared/ui'
 import About from '../about/about'
 import InstancesTable from '../instances-table/instances-table'
 

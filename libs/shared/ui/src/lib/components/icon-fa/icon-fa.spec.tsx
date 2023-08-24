@@ -1,5 +1,5 @@
 import { render } from '__tests__/utils/setup-jest'
-import IconFa, { IconFaProps } from './icon-fa'
+import IconFa, { type IconFaProps } from './icon-fa'
 
 describe('IconFa', () => {
   let props: IconFaProps

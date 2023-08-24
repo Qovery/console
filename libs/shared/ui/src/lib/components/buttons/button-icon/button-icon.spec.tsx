@@ -1,7 +1,7 @@
 import { render, screen } from '__tests__/utils/setup-jest'
 import { Chance } from 'chance'
 import { ButtonSize } from '../button/button'
-import { ButtonIcon, ButtonIconProps, ButtonIconStyle } from './button-icon'
+import { ButtonIcon, type ButtonIconProps, ButtonIconStyle } from './button-icon'
 
 const props: ButtonIconProps = {
   icon: 'icon-solid-star',

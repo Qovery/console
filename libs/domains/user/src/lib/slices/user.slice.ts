@@ -1,8 +1,8 @@
 import { createAsyncThunk, createSelector, createSlice } from '@reduxjs/toolkit'
 import { MembersApi } from 'qovery-typescript-axios'
 import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
-import { RootState } from '@qovery/state/store'
-import { UserInterface } from '../interfaces'
+import { type RootState } from '@qovery/state/store'
+import { type UserInterface } from '../interfaces'
 
 export const USER_KEY = 'user'
 

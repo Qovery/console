@@ -3,7 +3,7 @@ import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form
 import { GitProviderEnum } from 'qovery-typescript-axios'
 import { authProviderFactoryMock } from '@qovery/shared/factories'
 import { authProvidersValues } from '../../utils/auth-providers-values'
-import GitRepositorySettings, { GitRepositorySettingsProps } from './git-repository-settings'
+import GitRepositorySettings, { type GitRepositorySettingsProps } from './git-repository-settings'
 
 const mockOpenModal = jest.fn()
 jest.mock('@qovery/shared/ui', () => ({

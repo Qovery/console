@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from '__tests__/utils/setup-jest'
 import Button from '../buttons/button/button'
-import Modal, { ModalProps } from './modal'
+import Modal, { type ModalProps } from './modal'
 
 describe('Modal', () => {
   let props: ModalProps

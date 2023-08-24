@@ -1,6 +1,6 @@
-import { ApplicationAdvancedSettings, JobAdvancedSettings } from 'qovery-typescript-axios'
-import { ServiceTypeEnum, isApplication, isContainer, isJob } from '@qovery/shared/enums'
-import { ApplicationEntity, GitApplicationEntity } from '@qovery/shared/interfaces'
+import { type ApplicationAdvancedSettings, type JobAdvancedSettings } from 'qovery-typescript-axios'
+import { type ServiceTypeEnum, isApplication, isContainer, isJob } from '@qovery/shared/enums'
+import { type ApplicationEntity, type GitApplicationEntity } from '@qovery/shared/interfaces'
 
 export function initFormValues(
   keys: string[],

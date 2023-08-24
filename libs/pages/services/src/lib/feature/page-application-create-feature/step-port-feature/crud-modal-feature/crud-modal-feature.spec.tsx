@@ -1,7 +1,7 @@
 import { act, fireEvent, render, waitFor } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { PortProtocolEnum } from 'qovery-typescript-axios'
-import CrudModalFeature, { CrudModalFeatureProps } from './crud-modal-feature'
+import CrudModalFeature, { type CrudModalFeatureProps } from './crud-modal-feature'
 
 const props: CrudModalFeatureProps = {
   port: {

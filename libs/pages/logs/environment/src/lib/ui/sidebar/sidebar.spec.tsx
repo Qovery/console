@@ -1,6 +1,6 @@
 import { render } from '__tests__/utils/setup-jest'
 import { applicationFactoryMock } from '@qovery/shared/factories'
-import Sidebar, { SidebarProps } from './sidebar'
+import Sidebar, { type SidebarProps } from './sidebar'
 
 describe('Sidebar', () => {
   const props: SidebarProps = {

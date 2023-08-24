@@ -1,4 +1,4 @@
-import { CreditCard } from '@qovery/shared/interfaces'
+import { type CreditCard } from '@qovery/shared/interfaces'
 import {
   BlockContent,
   Button,

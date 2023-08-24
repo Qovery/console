@@ -1,10 +1,10 @@
-import { Meta, Story } from '@storybook/react'
+import { type Meta, type Story } from '@storybook/react'
 import { IconEnum } from '@qovery/shared/enums'
-import { Value } from '@qovery/shared/interfaces'
+import { type Value } from '@qovery/shared/interfaces'
 import IconFa from '../../icon-fa/icon-fa'
 import Icon from '../../icon/icon'
 import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
-import { InputSelect, InputSelectProps } from './input-select'
+import { InputSelect, type InputSelectProps } from './input-select'
 
 export default {
   component: InputSelect,

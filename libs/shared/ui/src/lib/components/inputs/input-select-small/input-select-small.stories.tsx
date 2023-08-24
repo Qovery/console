@@ -1,5 +1,5 @@
-import { Meta, Story } from '@storybook/react'
-import { InputSelectSmall, InputSelectSmallProps } from './input-select-small'
+import { type Meta, type Story } from '@storybook/react'
+import { InputSelectSmall, type InputSelectSmallProps } from './input-select-small'
 
 export default {
   component: InputSelectSmall,

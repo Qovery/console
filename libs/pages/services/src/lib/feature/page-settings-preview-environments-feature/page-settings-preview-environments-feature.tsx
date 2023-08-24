@@ -1,4 +1,4 @@
-import { EnvironmentDeploymentRule } from 'qovery-typescript-axios'
+import { type EnvironmentDeploymentRule } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
@@ -6,8 +6,8 @@ import { useParams } from 'react-router-dom'
 import { editApplication, selectApplicationsEntitiesByEnvId } from '@qovery/domains/application'
 import { useEditEnvironmentDeploymentRule, useFetchEnvironmentDeploymentRule } from '@qovery/domains/environment'
 import { getServiceType } from '@qovery/shared/enums'
-import { ApplicationEntity } from '@qovery/shared/interfaces'
-import { AppDispatch, RootState } from '@qovery/state/store'
+import { type ApplicationEntity } from '@qovery/shared/interfaces'
+import { type AppDispatch, type RootState } from '@qovery/state/store'
 import { PageSettingsPreviewEnvironments } from '../../ui/page-settings-preview-environments/page-settings-preview-environments'
 
 export function PageSettingsPreviewEnvironmentsFeature() {

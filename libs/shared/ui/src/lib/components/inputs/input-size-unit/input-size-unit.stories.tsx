@@ -1,5 +1,5 @@
-import { Meta, Story } from '@storybook/react'
-import { InputSizeUnit, InputSizeUnitProps } from './input-size-unit'
+import { type Meta, type Story } from '@storybook/react'
+import { InputSizeUnit, type InputSizeUnitProps } from './input-size-unit'
 
 export default {
   component: InputSizeUnit,

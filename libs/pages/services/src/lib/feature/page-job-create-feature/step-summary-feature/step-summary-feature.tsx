@@ -1,18 +1,18 @@
-import { APIVariableScopeEnum, JobRequest, VariableImportRequest } from 'qovery-typescript-axios'
+import { APIVariableScopeEnum, type JobRequest, type VariableImportRequest } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { createApplication, postApplicationActionsDeploy } from '@qovery/domains/application'
 import { importEnvironmentVariables } from '@qovery/domains/environment-variable'
 import { selectAllRepository, selectOrganizationById } from '@qovery/domains/organization'
-import { JobType, ServiceTypeEnum } from '@qovery/shared/enums'
+import { type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
 import {
-  FlowVariableData,
-  JobConfigureData,
-  JobGeneralData,
-  JobResourcesData,
-  OrganizationEntity,
-  RepositoryEntity,
+  type FlowVariableData,
+  type JobConfigureData,
+  type JobGeneralData,
+  type JobResourcesData,
+  type OrganizationEntity,
+  type RepositoryEntity,
 } from '@qovery/shared/interfaces'
 import {
   SERVICES_JOB_CREATION_CONFIGURE_URL,
@@ -23,7 +23,7 @@ import {
 } from '@qovery/shared/routes'
 import { FunnelFlowBody } from '@qovery/shared/ui'
 import { buildGitRepoUrl, useDocumentTitle } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/state/store'
+import { type AppDispatch, type RootState } from '@qovery/state/store'
 import StepSummary from '../../../ui/page-job-create/step-summary/step-summary'
 import { useJobContainerCreateContext } from '../page-job-create-feature'
 

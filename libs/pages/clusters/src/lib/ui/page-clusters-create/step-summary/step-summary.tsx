@@ -1,9 +1,9 @@
-import { ClusterInstanceTypeResponseListResults } from 'qovery-typescript-axios'
+import { type ClusterInstanceTypeResponseListResults } from 'qovery-typescript-axios'
 import {
-  ClusterFeaturesData,
-  ClusterGeneralData,
-  ClusterRemoteData,
-  ClusterResourcesData,
+  type ClusterFeaturesData,
+  type ClusterGeneralData,
+  type ClusterRemoteData,
+  type ClusterResourcesData,
 } from '@qovery/shared/interfaces'
 import {
   BannerBox,

@@ -1,10 +1,10 @@
-import { Cluster, Project } from 'qovery-typescript-axios'
+import { type Cluster, type Project } from 'qovery-typescript-axios'
 import { useSelector } from 'react-redux'
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
 import { selectClustersEntitiesByOrganizationId } from '@qovery/domains/organization'
 import { getProjectsState } from '@qovery/domains/projects'
 import { ENVIRONMENTS_GENERAL_URL, ENVIRONMENTS_URL } from '@qovery/shared/routes'
-import { RootState } from '@qovery/state/store'
+import { type RootState } from '@qovery/state/store'
 import { ROUTER_ENVIRONMENTS } from './router/router'
 import Container from './ui/container/container'
 

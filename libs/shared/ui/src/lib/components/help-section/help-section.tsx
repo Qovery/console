@@ -1,4 +1,4 @@
-import { BaseLink, Link } from '../link/link'
+import { type BaseLink, Link } from '../link/link'
 
 export interface HelpSectionProps {
   description: string

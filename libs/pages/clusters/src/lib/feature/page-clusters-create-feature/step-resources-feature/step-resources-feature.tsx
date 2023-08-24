@@ -2,7 +2,7 @@ import { CloudProviderEnum, KubernetesEnum } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
-import { ClusterResourcesData } from '@qovery/shared/interfaces'
+import { type ClusterResourcesData } from '@qovery/shared/interfaces'
 import {
   CLUSTERS_CREATION_FEATURES_URL,
   CLUSTERS_CREATION_REMOTE_URL,

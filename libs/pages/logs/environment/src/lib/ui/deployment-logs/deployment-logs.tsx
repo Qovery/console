@@ -1,8 +1,12 @@
-import { DeploymentHistoryEnvironment, EnvironmentLogs, ServiceDeploymentStatusEnum } from 'qovery-typescript-axios'
+import {
+  type DeploymentHistoryEnvironment,
+  type EnvironmentLogs,
+  ServiceDeploymentStatusEnum,
+} from 'qovery-typescript-axios'
 import { useMemo } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { ErrorLogsProps, LayoutLogs } from '@qovery/shared/console-shared'
-import { DeploymentService, LoadingStatus } from '@qovery/shared/interfaces'
+import { type ErrorLogsProps, LayoutLogs } from '@qovery/shared/console-shared'
+import { type DeploymentService, type LoadingStatus } from '@qovery/shared/interfaces'
 import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { LoaderSpinner, StatusChip } from '@qovery/shared/ui'
 import { dateFullFormat, mergeDeploymentServices, trimId } from '@qovery/shared/utils'

@@ -4,7 +4,7 @@ import { Navigate, Route, Routes, useLocation, useNavigate, useParams } from 're
 import { useFetchEnvironment } from '@qovery/domains/environment'
 import { APPLICATION_GENERAL_URL, SERVICES_GENERAL_URL, SERVICES_URL } from '@qovery/shared/routes'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import { AppDispatch } from '@qovery/state/store'
+import { type AppDispatch } from '@qovery/state/store'
 import { ROUTER_SERVICES } from './router/router'
 import Container from './ui/container/container'
 

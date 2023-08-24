@@ -1,4 +1,4 @@
-import { EnvironmentModeEnum, ServicePort } from 'qovery-typescript-axios'
+import { EnvironmentModeEnum, type ServicePort } from 'qovery-typescript-axios'
 import { useFormContext } from 'react-hook-form'
 import { ApplicationSettingsHealthchecks } from '@qovery/shared/console-shared'
 import { BannerBox, BannerBoxEnum, Button, ButtonSize, ButtonStyle, HelpSection, Link } from '@qovery/shared/ui'

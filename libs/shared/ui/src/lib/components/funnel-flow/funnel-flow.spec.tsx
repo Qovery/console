@@ -1,5 +1,5 @@
 import { render } from '__tests__/utils/setup-jest'
-import FunnelFlow, { FunnelFlowProps } from './funnel-flow'
+import FunnelFlow, { type FunnelFlowProps } from './funnel-flow'
 
 const props: FunnelFlowProps = {
   onExit: jest.fn(),

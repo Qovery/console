@@ -1,5 +1,5 @@
-import { Meta, Story } from '@storybook/react'
-import TagCommit, { TagCommitProps } from './tag-commit'
+import { type Meta, type Story } from '@storybook/react'
+import TagCommit, { type TagCommitProps } from './tag-commit'
 
 export default {
   component: TagCommit,

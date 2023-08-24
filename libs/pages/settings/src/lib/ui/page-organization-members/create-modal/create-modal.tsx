@@ -1,4 +1,4 @@
-import { OrganizationAvailableRole } from 'qovery-typescript-axios'
+import { type OrganizationAvailableRole } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { InputSelect, InputText, ModalCrud } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/utils'

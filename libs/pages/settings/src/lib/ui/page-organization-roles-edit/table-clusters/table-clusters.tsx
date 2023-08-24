@@ -1,6 +1,6 @@
 import {
   OrganizationCustomRoleClusterPermission,
-  OrganizationCustomRoleClusterPermissions,
+  type OrganizationCustomRoleClusterPermissions,
 } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { useFormContext } from 'react-hook-form'

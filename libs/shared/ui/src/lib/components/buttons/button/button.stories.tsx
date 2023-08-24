@@ -1,5 +1,5 @@
-import { Meta, Story } from '@storybook/react'
-import { Button, ButtonProps, ButtonSize, ButtonStyle } from './button'
+import { type Meta, type Story } from '@storybook/react'
+import { Button, type ButtonProps, ButtonSize, ButtonStyle } from './button'
 
 export default {
   component: Button,

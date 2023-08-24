@@ -1,7 +1,7 @@
 import { getAllByTestId, queryAllByTestId, render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { lifecycleJobFactoryMock } from '@qovery/shared/factories'
-import ForceRunModal, { ForceRunModalProps } from './force-run-modal'
+import ForceRunModal, { type ForceRunModalProps } from './force-run-modal'
 
 const props: ForceRunModalProps = {
   application: lifecycleJobFactoryMock(1)[0],

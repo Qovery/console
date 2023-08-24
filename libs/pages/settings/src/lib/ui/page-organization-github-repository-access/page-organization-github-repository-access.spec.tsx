@@ -1,7 +1,7 @@
 import { act, getByTestId, getByText, render } from '__tests__/utils/setup-jest'
 import { GitProviderEnum } from 'qovery-typescript-axios'
 import PageOrganizationGithubRepositoryAccess, {
-  PageOrganizationGithubRepositoryAccessProps,
+  type PageOrganizationGithubRepositoryAccessProps,
 } from './page-organization-github-repository-access'
 
 const props: PageOrganizationGithubRepositoryAccessProps = {

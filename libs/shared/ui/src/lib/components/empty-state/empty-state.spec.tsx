@@ -1,5 +1,5 @@
 import { findByText, queryByTestId, queryByText, render } from '__tests__/utils/setup-jest'
-import EmptyState, { EmptyStateProps } from './empty-state'
+import EmptyState, { type EmptyStateProps } from './empty-state'
 
 const props: EmptyStateProps = {
   title: 'No Storage are set',

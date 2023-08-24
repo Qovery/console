@@ -1,5 +1,5 @@
 import { act, fireEvent, getByTestId, getByText, render, waitFor } from '__tests__/utils/setup-jest'
-import ScrollShadowWrapper, { ScrollShadowWrapperProps } from './scroll-shadow-wrapper'
+import ScrollShadowWrapper, { type ScrollShadowWrapperProps } from './scroll-shadow-wrapper'
 
 const props: ScrollShadowWrapperProps = {
   children: <div>test</div>,

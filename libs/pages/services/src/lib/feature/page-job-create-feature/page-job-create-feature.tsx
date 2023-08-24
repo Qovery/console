@@ -1,7 +1,12 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { Navigate, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom'
-import { JobType, ServiceTypeEnum } from '@qovery/shared/enums'
-import { FlowVariableData, JobConfigureData, JobGeneralData, JobResourcesData } from '@qovery/shared/interfaces'
+import { type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
+import {
+  type FlowVariableData,
+  type JobConfigureData,
+  type JobGeneralData,
+  type JobResourcesData,
+} from '@qovery/shared/interfaces'
 import {
   SERVICES_CRONJOB_CREATION_URL,
   SERVICES_JOB_CREATION_GENERAL_URL,

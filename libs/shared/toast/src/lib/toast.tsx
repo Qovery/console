@@ -1,4 +1,4 @@
-import { Toast, toast as toastAction } from 'react-hot-toast'
+import { type Toast, toast as toastAction } from 'react-hot-toast'
 import { ToastContent } from '@qovery/shared/ui'
 
 export enum ToastEnum {

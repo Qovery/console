@@ -3,7 +3,7 @@ import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form
 import { BuildModeEnum, GitProviderEnum } from 'qovery-typescript-axios'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { cronjobFactoryMock } from '@qovery/shared/factories'
-import { JobGeneralData } from '@qovery/shared/interfaces'
+import { type JobGeneralData } from '@qovery/shared/interfaces'
 import JobGeneralSettings from './job-general-settings'
 
 const mockJobApplication = cronjobFactoryMock(1)[0]

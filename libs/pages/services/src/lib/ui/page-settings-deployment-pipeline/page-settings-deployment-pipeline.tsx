@@ -1,7 +1,11 @@
-import { CloudProviderEnum, DeploymentStageResponse, DeploymentStageServiceResponse } from 'qovery-typescript-axios'
-import { Dispatch, Fragment, SetStateAction } from 'react'
-import { DragDropContext, Draggable, DropResult, Droppable } from 'react-beautiful-dnd'
-import { ApplicationEntity, DatabaseEntity } from '@qovery/shared/interfaces'
+import {
+  type CloudProviderEnum,
+  type DeploymentStageResponse,
+  type DeploymentStageServiceResponse,
+} from 'qovery-typescript-axios'
+import { type Dispatch, Fragment, type SetStateAction } from 'react'
+import { DragDropContext, Draggable, type DropResult, Droppable } from 'react-beautiful-dnd'
+import { type ApplicationEntity, type DatabaseEntity } from '@qovery/shared/interfaces'
 import {
   BadgeDeploymentOrder,
   Button,
@@ -14,11 +18,11 @@ import {
   LoaderSpinner,
   Menu,
   MenuAlign,
-  MenuData,
+  type MenuData,
   Tooltip,
   Truncate,
 } from '@qovery/shared/ui'
-import { StageRequest } from '../../feature/page-settings-deployment-pipeline-feature/page-settings-deployment-pipeline-feature'
+import { type StageRequest } from '../../feature/page-settings-deployment-pipeline-feature/page-settings-deployment-pipeline-feature'
 import { move, reorderService } from '../../feature/page-settings-deployment-pipeline-feature/utils/utils'
 import DraggableItem from './draggable-item/draggable-item'
 

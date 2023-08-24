@@ -1,4 +1,4 @@
-import { Environment } from 'qovery-typescript-axios'
+import { type Environment } from 'qovery-typescript-axios'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
@@ -8,10 +8,10 @@ import { useFetchEnvironments } from '@qovery/domains/environment'
 import { selectProjectsEntitiesByOrgId } from '@qovery/domains/projects'
 import { useCloneService } from '@qovery/domains/services/feature'
 import { ServiceTypeEnum, getServiceType } from '@qovery/shared/enums'
-import { ApplicationEntity, DatabaseEntity } from '@qovery/shared/interfaces'
+import { type ApplicationEntity, type DatabaseEntity } from '@qovery/shared/interfaces'
 import { APPLICATION_GENERAL_URL, APPLICATION_URL, DATABASE_GENERAL_URL, DATABASE_URL } from '@qovery/shared/routes'
 import { useModal } from '@qovery/shared/ui'
-import { AppDispatch, RootState } from '@qovery/state/store'
+import { type AppDispatch, type RootState } from '@qovery/state/store'
 import CloneServiceModal from '../ui/clone-service-modal'
 
 export interface CloneServiceModalFeatureProps {

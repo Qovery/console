@@ -1,8 +1,8 @@
-import { ServicePort } from 'qovery-typescript-axios'
+import { type ServicePort } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { FlowCreatePort } from '@qovery/shared/console-shared'
-import { PortData } from '@qovery/shared/interfaces'
+import { type PortData } from '@qovery/shared/interfaces'
 import {
   SERVICES_APPLICATION_CREATION_URL,
   SERVICES_CREATION_GENERAL_URL,

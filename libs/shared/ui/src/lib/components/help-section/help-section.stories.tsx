@@ -1,5 +1,5 @@
-import { Meta, Story } from '@storybook/react'
-import { HelpSection, HelpSectionProps } from './help-section'
+import { type Meta, type Story } from '@storybook/react'
+import { HelpSection, type HelpSectionProps } from './help-section'
 
 export default {
   component: HelpSection,

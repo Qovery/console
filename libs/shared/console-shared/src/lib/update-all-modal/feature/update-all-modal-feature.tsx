@@ -1,4 +1,4 @@
-import { Commit, DeployAllRequest } from 'qovery-typescript-axios'
+import { type Commit, type DeployAllRequest } from 'qovery-typescript-axios'
 import { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {
@@ -9,9 +9,9 @@ import {
 } from '@qovery/domains/application'
 import { useActionDeployAllEnvironment, useFetchEnvironment } from '@qovery/domains/environment'
 import { getServiceType, isApplication, isGitJob, isJob } from '@qovery/shared/enums'
-import { ApplicationEntity, LoadingStatus } from '@qovery/shared/interfaces'
+import { type ApplicationEntity, type LoadingStatus } from '@qovery/shared/interfaces'
 import { useModal } from '@qovery/shared/ui'
-import { AppDispatch, RootState } from '@qovery/state/store'
+import { type AppDispatch, type RootState } from '@qovery/state/store'
 import UpdateAllModal from '../ui/update-all-modal'
 
 export interface UpdateAllModalFeatureProps {

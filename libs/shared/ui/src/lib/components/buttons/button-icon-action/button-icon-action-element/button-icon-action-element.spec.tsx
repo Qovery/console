@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from '__tests__/utils/setup-jest'
 import Icon from '../../../icon/icon'
-import ButtonIconActionElement, { ButtonIconActionElementProps } from './button-icon-action-element'
+import ButtonIconActionElement, { type ButtonIconActionElementProps } from './button-icon-action-element'
 
 describe('ButtonIconActionElement', () => {
   let props: ButtonIconActionElementProps

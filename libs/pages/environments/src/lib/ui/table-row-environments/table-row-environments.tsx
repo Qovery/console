@@ -1,7 +1,15 @@
-import { Environment } from 'qovery-typescript-axios'
+import { type Environment } from 'qovery-typescript-axios'
 import { EnvironmentDeploymentStatusLabel, EnvironmentStateChip } from '@qovery/domains/environments/feature'
 import { EnvironmentButtonsActions } from '@qovery/shared/console-shared'
-import { Icon, Skeleton, TableFilterProps, TableHeadProps, TableRow, TagMode, Tooltip } from '@qovery/shared/ui'
+import {
+  Icon,
+  Skeleton,
+  type TableFilterProps,
+  type TableHeadProps,
+  TableRow,
+  TagMode,
+  Tooltip,
+} from '@qovery/shared/ui'
 
 export interface TableRowEnvironmentsProps {
   data: Environment

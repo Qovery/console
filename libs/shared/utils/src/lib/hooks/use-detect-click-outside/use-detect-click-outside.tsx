@@ -1,4 +1,4 @@
-import { type ReactNode, RefObject, useEffect, useRef } from 'react'
+import { type ReactNode, type RefObject, useEffect, useRef } from 'react'
 
 export interface UseDetectOutsideProps {
   callback: () => void

@@ -1,9 +1,9 @@
 import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { useState } from 'react'
-import { DropzoneRootProps } from 'react-dropzone'
+import { type DropzoneRootProps } from 'react-dropzone'
 import { Controller, useFormContext } from 'react-hook-form'
-import { ServiceTypeEnum } from '@qovery/shared/enums'
-import { EnvironmentVariableSecretOrPublic } from '@qovery/shared/interfaces'
+import { type ServiceTypeEnum } from '@qovery/shared/enums'
+import { type EnvironmentVariableSecretOrPublic } from '@qovery/shared/interfaces'
 import {
   Button,
   ButtonIcon,

@@ -1,4 +1,4 @@
-import { ContainerRegistryResponse } from 'qovery-typescript-axios'
+import { type ContainerRegistryResponse } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -6,9 +6,9 @@ import { applicationsLoadingStatus, getApplicationsState } from '@qovery/domains
 import { fetchOrganizationContainerRegistries, selectOrganizationById } from '@qovery/domains/organization'
 import { useRunningStatus } from '@qovery/domains/services/feature'
 import { isContainer, isContainerJob } from '@qovery/shared/enums'
-import { ApplicationEntity, LoadingStatus, OrganizationEntity } from '@qovery/shared/interfaces'
-import { BaseLink } from '@qovery/shared/ui'
-import { AppDispatch, RootState } from '@qovery/state/store'
+import { type ApplicationEntity, type LoadingStatus, type OrganizationEntity } from '@qovery/shared/interfaces'
+import { type BaseLink } from '@qovery/shared/ui'
+import { type AppDispatch, type RootState } from '@qovery/state/store'
 import PageGeneral from '../../ui/page-general/page-general'
 
 export function PageGeneralFeature() {

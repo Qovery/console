@@ -1,11 +1,11 @@
-import { Log } from 'qovery-typescript-axios'
+import { type Log } from 'qovery-typescript-axios'
 import { useContext } from 'react'
 import { UpdateTimeContext } from '@qovery/shared/console-shared'
 import {
   CopyToClipboard,
   Icon,
   IconAwesomeEnum,
-  TableFilterProps,
+  type TableFilterProps,
   TableRowFilter,
   Tooltip,
   convertToAnsi,

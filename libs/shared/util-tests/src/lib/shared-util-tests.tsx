@@ -18,7 +18,7 @@ import { Provider as ReduxProvider } from 'react-redux'
 import { MemoryRouter } from 'react-router-dom'
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { ModalProvider } from '@qovery/shared/ui'
-import { AppStore, type RootState, setupStore } from '@qovery/state/store'
+import { type AppStore, type RootState, setupStore } from '@qovery/state/store'
 
 const allQueries = {
   ...queries,

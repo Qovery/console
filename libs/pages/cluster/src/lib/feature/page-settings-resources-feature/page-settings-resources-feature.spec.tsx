@@ -11,7 +11,7 @@ import {
 import { KubernetesEnum } from 'qovery-typescript-axios'
 import * as storeOrganization from '@qovery/domains/organization'
 import { clusterFactoryMock } from '@qovery/shared/factories'
-import { ClusterEntity } from '@qovery/shared/interfaces'
+import { type ClusterEntity } from '@qovery/shared/interfaces'
 import PageSettingsResourcesFeature, { handleSubmit } from './page-settings-resources-feature'
 
 import SpyInstance = jest.SpyInstance

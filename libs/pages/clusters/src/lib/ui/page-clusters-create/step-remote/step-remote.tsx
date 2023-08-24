@@ -1,8 +1,8 @@
-import { FormEventHandler } from 'react'
+import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { ClusterRemoteSettings } from '@qovery/shared/console-shared'
-import { ClusterGeneralData } from '@qovery/shared/interfaces'
+import { type ClusterGeneralData } from '@qovery/shared/interfaces'
 import { CLUSTERS_CREATION_RESOURCES_URL, CLUSTERS_CREATION_URL, CLUSTERS_URL } from '@qovery/shared/routes'
 import { Button, ButtonSize, ButtonStyle, IconAwesomeEnum, Link } from '@qovery/shared/ui'
 

@@ -1,6 +1,6 @@
 import { render } from '__tests__/utils/setup-jest'
 import { organizationFactoryMock, userSignUpFactoryMock } from '@qovery/shared/factories'
-import { OrganizationEntity } from '@qovery/shared/interfaces'
+import { type OrganizationEntity } from '@qovery/shared/interfaces'
 import MenuAccountFeature from './menu-account-feature'
 
 const mockOrganizations = organizationFactoryMock(2)

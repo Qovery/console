@@ -1,7 +1,7 @@
 import { render } from '__tests__/utils/setup-jest'
 import { mockEnvironmentVariable } from '@qovery/shared/factories'
 import CrudEnvironmentVariableModalFeature, {
-  CrudEnvironmentVariableModalFeatureProps,
+  type CrudEnvironmentVariableModalFeatureProps,
   EnvironmentVariableCrudMode,
   EnvironmentVariableType,
 } from './crud-environment-variable-modal-feature'

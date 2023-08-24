@@ -1,4 +1,4 @@
-import { Control, Controller } from 'react-hook-form'
+import { type Control, Controller } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { Button, ButtonSize, ButtonStyle, IconAwesomeEnum, InputText } from '@qovery/shared/ui'
 

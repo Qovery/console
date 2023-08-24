@@ -9,7 +9,7 @@ import {
   waitFor,
 } from '__tests__/utils/setup-jest'
 import { StorageTypeEnum } from 'qovery-typescript-axios'
-import { PageSettingsStorage, PageSettingsStorageProps } from './page-settings-storage'
+import { PageSettingsStorage, type PageSettingsStorageProps } from './page-settings-storage'
 
 const props: PageSettingsStorageProps = {
   storages: [
