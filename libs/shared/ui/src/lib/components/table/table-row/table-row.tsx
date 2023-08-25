@@ -14,6 +14,9 @@ export interface TableRowProps {
   isNew?: boolean
 }
 
+/**
+ * @deprecated Prefer TablePrimitives + tanstack-table for type-safety and documentation
+ */
 export function TableRow(props: PropsWithChildren<TableRowProps>) {
   const { children, link, className = '', columnsWidth, disabled, data, filter, isNew } = props
   const [highlighted, setHighlighted] = useState(false)

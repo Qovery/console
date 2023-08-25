@@ -40,6 +40,9 @@ export interface TableHeadCustomFilterProps<T> {
   hideFilterNumber?: boolean
 }
 
+/**
+ * @deprecated Prefer TablePrimitives + tanstack-table for type-safety and documentation
+ */
 export function Table<T>({
   dataHead,
   className = 'bg-white rounded-sm',

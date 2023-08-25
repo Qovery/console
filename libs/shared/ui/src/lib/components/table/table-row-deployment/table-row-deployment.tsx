@@ -37,6 +37,9 @@ export interface TableRowDeploymentProps {
   fromService?: boolean
 }
 
+/**
+ * @deprecated Prefer TablePrimitives + tanstack-table for type-safety and documentation
+ */
 export function TableRowDeployment({
   dataHead,
   columnsWidth = `repeat(${dataHead.length},minmax(0,1fr))`,

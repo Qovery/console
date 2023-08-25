@@ -201,6 +201,9 @@ export function groupBy<T>(
   }
 }
 
+/**
+ * @deprecated Prefer TablePrimitives + tanstack-table for type-safety and documentation
+ */
 export function TableHeadFilter<T>({ title, dataHead, defaultData, filter, setFilter }: TableHeadFilterProps<T>) {
   const [currentFilter, setCurrentFilter] = useState(ALL)
   const [dataFilterNumber, setDataFilterNumber] = useState(0)
