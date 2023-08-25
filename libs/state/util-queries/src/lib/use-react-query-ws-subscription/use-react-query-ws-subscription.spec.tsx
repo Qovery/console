@@ -94,6 +94,20 @@ describe('useReactQueryWsSubscription', () => {
     unmount()
   })
 
+  it('should do nothing when not enabled', async () => {
+    const onMessage = jest.fn()
+    const { unmount } = renderHook(() =>
+      useReactQueryWsSubscription({ url: 'ws://localhost:1234', onMessage, enabled: false })
+    )
+    const queryClient = useQueryClient()
+
+    server.send({ foo: 'bar' })
+
+    expect(queryClient.invalidateQueries).not.toHaveBeenCalled()
+    expect(onMessage).not.toHaveBeenCalled()
+    unmount()
+  })
+
   it('should close connection on unmount', async () => {
     const onMessage = jest.fn()
     const { unmount } = renderHook(() => useReactQueryWsSubscription({ url: 'ws://localhost:1234', onMessage }))
