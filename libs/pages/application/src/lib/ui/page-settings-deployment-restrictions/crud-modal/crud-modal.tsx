@@ -7,9 +7,10 @@ export interface CrudModalProps {
   onClose: () => void
   onSubmit: FormEventHandler<HTMLFormElement>
   isEdit: boolean
+  isLoading: boolean
 }
 
-export function CrudModal({ onClose, onSubmit, isEdit }: CrudModalProps) {
+export function CrudModal({ onClose, onSubmit, isEdit, isLoading }: CrudModalProps) {
   const { control, formState } = useFormContext()
   const { enableAlertClickOutside } = useModal()
 
@@ -21,6 +22,7 @@ export function CrudModal({ onClose, onSubmit, isEdit }: CrudModalProps) {
     <ModalCrud
       title={isEdit ? 'Edit restriction' : 'Create restriction'}
       isEdit={isEdit}
+      loading={isLoading}
       onSubmit={onSubmit}
       onClose={onClose}
     >

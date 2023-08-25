@@ -11,8 +11,9 @@ export interface CrudModalFeatureProps {
   deploymentRestriction?: ApplicationDeploymentRestriction
   onClose: () => void
   onSubmit: (payload: ApplicationDeploymentRestrictionRequest) => void
+  isLoading: boolean
 }
-export function CrudModalFeature({ deploymentRestriction, onClose, onSubmit }: CrudModalFeatureProps) {
+export function CrudModalFeature({ deploymentRestriction, onClose, onSubmit, isLoading }: CrudModalFeatureProps) {
   const methods = useForm({
     defaultValues: {
       mode: deploymentRestriction?.mode ?? DeploymentRestrictionModeEnum.EXCLUDE,
@@ -26,7 +27,7 @@ export function CrudModalFeature({ deploymentRestriction, onClose, onSubmit }: C
 
   return (
     <FormProvider {...methods}>
-      <CrudModal onClose={onClose} onSubmit={handleSubmit} isEdit={!!deploymentRestriction} />
+      <CrudModal onClose={onClose} onSubmit={handleSubmit} isEdit={!!deploymentRestriction} isLoading={isLoading} />
     </FormProvider>
   )
 }
