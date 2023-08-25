@@ -13,7 +13,6 @@ import {
   selectClustersEntitiesByOrganizationId,
 } from '@qovery/domains/organization'
 import { fetchProjects } from '@qovery/domains/projects'
-import { fetchUserSignUp } from '@qovery/domains/users/data-access'
 import { type OrganizationEntity } from '@qovery/shared/interfaces'
 import { ORGANIZATION_URL } from '@qovery/shared/routes'
 import { useStatusWebSockets } from '@qovery/shared/util-web-sockets'
@@ -85,10 +84,6 @@ export function Layout(props: PropsWithChildren<LayoutProps>) {
       })
       .catch((error) => console.error(error))
   }, [dispatch, organizationId])
-
-  useEffect(() => {
-    dispatch(fetchUserSignUp())
-  }, [dispatch])
 
   useEffect(() => {
     if (environmentId) {

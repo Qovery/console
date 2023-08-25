@@ -1,11 +1,11 @@
 import { useGTMDispatch } from '@elgorditosalsero/react-gtm-hook'
 import { type Organization, type Project } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { fetchOrganization } from '@qovery/domains/organization'
 import { fetchProjects } from '@qovery/domains/projects'
-import { type UserInterface, selectUserSignUp } from '@qovery/domains/users/data-access'
+import { type UserInterface, fetchUserSignUp } from '@qovery/domains/users/data-access'
 import { useAuth } from '@qovery/shared/auth'
 import {
   ONBOARDING_PERSONALIZE_URL,
@@ -23,9 +23,8 @@ import {
 
 export function useRedirectIfLogged() {
   const navigate = useNavigate()
-  const { createAuthCookies, checkIsAuthenticated, getCurrentUser } = useAuth()
+  const { createAuthCookies, checkIsAuthenticated, user } = useAuth()
   const dispatch = useDispatch<AppDispatch>()
-  const userSignUp = useSelector(selectUserSignUp)
   const sendDataToGTM = useGTMDispatch()
 
   useEffect(() => {
@@ -46,12 +45,11 @@ export function useRedirectIfLogged() {
         if (projects.length > 0) navigate(OVERVIEW_URL(organizationId, projects[0].id))
         else navigate(ORGANIZATION_URL(organizationId))
       } else {
+        const userSignUp = await dispatch(fetchUserSignUp()).unwrap()
         if (userSignUp.dx_auth) {
           navigate(ONBOARDING_URL + ONBOARDING_PROJECT_URL)
         } else {
-          const user = await getCurrentUser()
           sendDataToGTM({ event: 'new_signup', value: (user as UserInterface).email })
-
           navigate(ONBOARDING_URL + ONBOARDING_PERSONALIZE_URL)
         }
       }
@@ -75,7 +73,7 @@ export function useRedirectIfLogged() {
 
       fetchData()
     }
-  }, [navigate, checkIsAuthenticated, createAuthCookies, dispatch, userSignUp.dx_auth])
+  }, [navigate, checkIsAuthenticated, createAuthCookies, dispatch, sendDataToGTM, user])
 }
 
 export default useRedirectIfLogged
