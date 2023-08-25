@@ -21,6 +21,7 @@ export function CrudModal({ onClose, onSubmit, isEdit, isLoading }: CrudModalPro
   return (
     <ModalCrud
       title={isEdit ? 'Edit restriction' : 'Create restriction'}
+      description="Specify which changes in your repository should trigger or not an auto-deploy of your application."
       isEdit={isEdit}
       loading={isLoading}
       onSubmit={onSubmit}
