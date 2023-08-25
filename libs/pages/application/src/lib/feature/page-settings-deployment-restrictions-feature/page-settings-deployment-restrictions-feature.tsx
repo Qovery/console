@@ -30,8 +30,9 @@ export function PageSettingsDeploymentRestrictionsFeature() {
     serviceType: 'APPLICATION' as const,
   }
   const { data: deploymentRestrictions = [] } = useDeploymentRestrictions(serviceParams)
-  const { mutate: createRestriction } = useCreateDeploymentRestriction(serviceParams)
-  const { mutate: editRestriction } = useEditDeploymentRestriction(serviceParams)
+  const { mutate: createRestriction, isLoading: isCreateRestrictionLoading } =
+    useCreateDeploymentRestriction(serviceParams)
+  const { mutate: editRestriction, isLoading: isEditRestrictionLoading } = useEditDeploymentRestriction(serviceParams)
   const { mutate: deleteRestriction } = useDeleteDeploymentRestriction(serviceParams)
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
@@ -48,6 +49,7 @@ export function PageSettingsDeploymentRestrictionsFeature() {
             })
             closeModal()
           }}
+          isLoading={isCreateRestrictionLoading}
         />
       ),
     })
@@ -67,6 +69,7 @@ export function PageSettingsDeploymentRestrictionsFeature() {
             })
             closeModal()
           }}
+          isLoading={isEditRestrictionLoading}
         />
       ),
     })
