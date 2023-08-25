@@ -197,13 +197,6 @@ module.exports = {
         },
         zink: colorsZinc,
         neutral: colorsZinc,
-        element: {
-          dark: {
-            400: '#23243C',
-            500: '#292B46',
-            600: '#1D1D31',
-          },
-        },
       },
       animation: {
         'action-bar-fade-in': '0.35s cubic-bezier(0.21, 1.02, 0.73, 1) 0s 1 normal forwards actionBarFadeIn',
