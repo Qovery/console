@@ -30,7 +30,7 @@ export function PodLogs(props: PodLogsProps) {
   } = props
 
   const [filter, setFilter] = useState<TableFilterProps[]>([])
-  const publiclyExposedPort = Boolean((service as ApplicationEntity).ports?.find((port) => port.publicly_accessible))
+  const publiclyExposedPort = Boolean((service as ApplicationEntity)?.ports?.find((port) => port.publicly_accessible))
   const { data: serviceRunningStatus } = useRunningStatus({
     environmentId: service?.environment?.id,
     serviceId: service?.id,
