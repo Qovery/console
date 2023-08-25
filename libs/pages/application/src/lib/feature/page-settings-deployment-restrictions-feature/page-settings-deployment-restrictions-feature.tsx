@@ -3,6 +3,7 @@ import {
   type ApplicationDeploymentRestrictionRequest,
 } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
+import { useFetchEnvironmentDeploymentRule } from '@qovery/domains/environment'
 import {
   useCreateDeploymentRestriction,
   useDeleteDeploymentRestriction,
@@ -10,6 +11,7 @@ import {
   useEditDeploymentRestriction,
 } from '@qovery/domains/services/feature'
 import {
+  BannerBox,
   BlockContent,
   Button,
   ButtonIcon,
@@ -24,7 +26,7 @@ import {
 import CrudModalFeature from './crud-modal-feature/crud-modal-feature'
 
 export function PageSettingsDeploymentRestrictionsFeature() {
-  const { applicationId = '' } = useParams()
+  const { projectId = '', environmentId = '', applicationId = '' } = useParams()
   const serviceParams = {
     serviceId: applicationId,
     serviceType: 'APPLICATION' as const,
@@ -36,6 +38,8 @@ export function PageSettingsDeploymentRestrictionsFeature() {
   const { mutate: deleteRestriction } = useDeleteDeploymentRestriction(serviceParams)
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
+  const { data: environmentDeploymentRules } = useFetchEnvironmentDeploymentRule(projectId, environmentId)
+  const isAutoDeployActive = environmentDeploymentRules?.auto_deploy
 
   const handleCreate = () => {
     openModal({
@@ -93,7 +97,7 @@ export function PageSettingsDeploymentRestrictionsFeature() {
   return (
     <div className="flex flex-col justify-between w-full">
       <div className="p-8 max-w-content-with-navigation-left">
-        <div className="flex justify-between mb-10">
+        <div className="flex justify-between mb-8">
           <div>
             <div className="flex justify-between mb-2 items-center">
               <h3 className="text-neutral-400 text-lg">Deployment Restrictions</h3>
@@ -107,6 +111,15 @@ export function PageSettingsDeploymentRestrictionsFeature() {
             New Restriction
           </Button>
         </div>
+
+        {!isAutoDeployActive && (
+          <BannerBox
+            className="mb-5"
+            title="Auto deploy is not active"
+            message="These rules are applied only if the auto-deploy feature is activated. Activate it first on the “General” settings of your environment"
+          />
+        )}
+
         {deploymentRestrictions?.length > 0 ? (
           <BlockContent title="Deployment restrictions">
             <div className="flex flex-col gap-3">
