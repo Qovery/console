@@ -75,7 +75,7 @@ export function PageSettingsDeploymentRestrictionsFeature() {
   const handleDelete = (deploymentRestriction: ApplicationDeploymentRestriction) => {
     openModalConfirmation({
       title: 'Delete Restriction',
-      name: deploymentRestriction.id,
+      name: `${deploymentRestriction.mode}/${deploymentRestriction.type}/${deploymentRestriction.value}`,
       isDelete: true,
       action() {
         deleteRestriction({
