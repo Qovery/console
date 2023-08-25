@@ -65,18 +65,18 @@ export function PageSettingsStorage(props: PageSettingsStorageProps) {
                   disabled
                 />
                 <ButtonIcon
-                  className="text-neutral-400"
-                  style={ButtonIconStyle.FLAT}
+                  className="!bg-transparent hover:!bg-neutral-200 !w-[52px] !h-[52px]"
+                  style={ButtonIconStyle.STROKED}
                   onClick={() => props.onEdit(storage)}
                   dataTestId="edit"
                   icon={IconAwesomeEnum.WHEEL}
                 />
                 <ButtonIcon
-                  className="text-neutral-400"
+                  className="!bg-transparent hover:!bg-neutral-200 !w-[52px] !h-[52px]"
                   onClick={() => props.onRemove(storage)}
                   dataTestId="remove"
                   icon={IconAwesomeEnum.TRASH}
-                  style={ButtonIconStyle.FLAT}
+                  style={ButtonIconStyle.STROKED}
                 />
               </div>
             ))}

@@ -133,18 +133,18 @@ export function PageSettingsDeploymentRestrictionsFeature() {
                       disabled
                     />
                     <ButtonIcon
-                      className="text-neutral-400"
-                      style={ButtonIconStyle.FLAT}
+                      className="!bg-transparent hover:!bg-neutral-200 !w-[52px] !h-[52px]"
+                      style={ButtonIconStyle.STROKED}
                       onClick={() => handleEdit(deploymentRestriction)}
                       dataTestId="edit"
                       icon={IconAwesomeEnum.WHEEL}
                     />
                     <ButtonIcon
-                      className="text-neutral-400"
+                      className="!bg-transparent hover:!bg-neutral-200 !w-[52px] !h-[52px]"
                       onClick={() => handleDelete(deploymentRestriction)}
                       dataTestId="remove"
                       icon={IconAwesomeEnum.TRASH}
-                      style={ButtonIconStyle.FLAT}
+                      style={ButtonIconStyle.STROKED}
                     />
                   </div>
                 )
