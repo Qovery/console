@@ -143,8 +143,8 @@ export function PageSettingsDeploymentRestrictionsFeature() {
         description="Need help? You may find these links useful"
         links={[
           {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/environment/#deployment-rule',
-            linkLabel: 'How to configure my application',
+            link: 'https://hub.qovery.com/docs/using-qovery/configuration/environment/#auto-deploy',
+            linkLabel: 'How to configure the deployment restrictions',
             external: true,
           },
         ]}
