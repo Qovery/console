@@ -93,10 +93,10 @@ export function PageSettingsDeploymentRestrictionsFeature() {
         <div className="flex justify-between mb-10">
           <div>
             <div className="flex justify-between mb-2 items-center">
-              <h3 className="text-text-700 text-lg">Deployment Restrictions</h3>
+              <h3 className="text-neutral-400 text-lg">Deployment Restrictions</h3>
             </div>
 
-            <p className="text-sm text-text-500 max-w-lg">
+            <p className="text-sm text-neutral-400 max-w-lg">
               Specify which changes in your repository should trigger or not an auto-deploy of your application
             </p>
           </div>
