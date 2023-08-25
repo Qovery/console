@@ -26,9 +26,19 @@ export interface LayoutProps {
   topBar?: boolean
 }
 
-function WebSocketListener({ clusterId, organizationId }: { clusterId: string; organizationId: string }) {
-  const { projectId = '', environmentId = '', versionId = '' } = useParams()
-
+function WebSocketListener({
+  clusterId,
+  organizationId,
+  projectId,
+  environmentId,
+  versionId,
+}: {
+  clusterId: string
+  organizationId: string
+  projectId?: string
+  environmentId?: string
+  versionId?: string
+}) {
   useStatusWebSockets({
     organizationId,
     clusterId,
@@ -46,7 +56,7 @@ const WebSocketListenerMemo = memo(WebSocketListener)
 
 export function Layout(props: PropsWithChildren<LayoutProps>) {
   const { children, topBar } = props
-  const { organizationId = '', projectId = '', environmentId = '' } = useParams()
+  const { organizationId = '', projectId = '', environmentId = '', versionId } = useParams()
 
   const dispatch = useDispatch<AppDispatch>()
 
@@ -110,7 +120,16 @@ export function Layout(props: PropsWithChildren<LayoutProps>) {
            */
           clusters.map(
             ({ id }) =>
-              organizationId && <WebSocketListenerMemo key={id} organizationId={organizationId} clusterId={id} />
+              organizationId && (
+                <WebSocketListenerMemo
+                  key={id}
+                  organizationId={organizationId}
+                  clusterId={id}
+                  projectId={projectId}
+                  environmentId={environmentId}
+                  versionId={versionId}
+                />
+              )
           )
         }
         <WebsocketContainer />
