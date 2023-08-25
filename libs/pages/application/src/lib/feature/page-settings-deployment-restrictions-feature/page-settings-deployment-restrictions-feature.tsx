@@ -88,7 +88,7 @@ export function PageSettingsDeploymentRestrictionsFeature() {
         {deploymentRestrictions?.length > 0 ? (
           <BlockContent title="Deployment restrictions">
             <div className="flex flex-col gap-3">
-              {deploymentRestrictions.map((deploymentRestriction, i) => {
+              {deploymentRestrictions.map((deploymentRestriction) => {
                 const { id, type, mode, value } = deploymentRestriction
                 return (
                   <div key={id} className="flex justify-between w-full items-center gap-3">
