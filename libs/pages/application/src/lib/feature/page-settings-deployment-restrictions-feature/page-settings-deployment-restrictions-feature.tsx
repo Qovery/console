@@ -81,7 +81,9 @@ export function PageSettingsDeploymentRestrictionsFeature() {
         </div>
 
         {isLoadingEnvironmentDeploymentRule || isLoadingDeploymentRestrictions ? (
-          <LoaderSpinner className="w-6" />
+          <div className="flex justify-center">
+            <LoaderSpinner className="w-6" />
+          </div>
         ) : (
           <>
             {!isAutoDeployActive && (
