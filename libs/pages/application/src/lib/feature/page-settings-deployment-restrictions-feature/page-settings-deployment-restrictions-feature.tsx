@@ -1,15 +1,7 @@
-import {
-  type ApplicationDeploymentRestriction,
-  type ApplicationDeploymentRestrictionRequest,
-} from 'qovery-typescript-axios'
+import { type ApplicationDeploymentRestriction } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
 import { useFetchEnvironmentDeploymentRule } from '@qovery/domains/environment'
-import {
-  useCreateDeploymentRestriction,
-  useDeleteDeploymentRestriction,
-  useDeploymentRestrictions,
-  useEditDeploymentRestriction,
-} from '@qovery/domains/services/feature'
+import { useDeleteDeploymentRestriction, useDeploymentRestrictions } from '@qovery/domains/services/feature'
 import {
   BannerBox,
   BlockContent,
@@ -32,9 +24,6 @@ export function PageSettingsDeploymentRestrictionsFeature() {
     serviceType: 'APPLICATION' as const,
   }
   const { data: deploymentRestrictions = [] } = useDeploymentRestrictions(serviceParams)
-  const { mutate: createRestriction, isLoading: isCreateRestrictionLoading } =
-    useCreateDeploymentRestriction(serviceParams)
-  const { mutate: editRestriction, isLoading: isEditRestrictionLoading } = useEditDeploymentRestriction(serviceParams)
   const { mutate: deleteRestriction } = useDeleteDeploymentRestriction(serviceParams)
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
@@ -43,38 +32,14 @@ export function PageSettingsDeploymentRestrictionsFeature() {
 
   const handleCreate = () => {
     openModal({
-      content: (
-        <CrudModalFeature
-          onClose={closeModal}
-          onSubmit={(payload: ApplicationDeploymentRestrictionRequest) => {
-            createRestriction({
-              ...serviceParams,
-              payload,
-            })
-            closeModal()
-          }}
-          isLoading={isCreateRestrictionLoading}
-        />
-      ),
+      content: <CrudModalFeature onClose={closeModal} {...serviceParams} />,
     })
   }
 
   const handleEdit = (deploymentRestriction: ApplicationDeploymentRestriction) => {
     openModal({
       content: (
-        <CrudModalFeature
-          onClose={closeModal}
-          deploymentRestriction={deploymentRestriction}
-          onSubmit={(payload: ApplicationDeploymentRestrictionRequest) => {
-            editRestriction({
-              ...serviceParams,
-              deploymentRestrictionId: deploymentRestriction.id,
-              payload,
-            })
-            closeModal()
-          }}
-          isLoading={isEditRestrictionLoading}
-        />
+        <CrudModalFeature onClose={closeModal} deploymentRestriction={deploymentRestriction} {...serviceParams} />
       ),
     })
   }

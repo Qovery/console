@@ -1,11 +1,13 @@
 import { DeploymentRestrictionModeEnum, DeploymentRestrictionTypeEnum } from 'qovery-typescript-axios'
 import selectEvent from 'react-select-event'
+import * as servicesDomains from '@qovery/domains/services/feature'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { CrudModalFeature } from './crud-modal-feature'
 
 const createProps = {
   onClose: jest.fn(),
-  onSubmit: jest.fn(),
+  serviceId: '1',
+  serviceType: 'APPLICATION' as const,
 }
 
 const editProps = {
@@ -17,11 +19,18 @@ const editProps = {
     value: 'foobar',
   },
   onClose: jest.fn(),
-  onSubmit: jest.fn(),
+  serviceId: '1',
+  serviceType: 'APPLICATION' as const,
 }
 
 describe('CrudModalFeature', () => {
   it('should create deployment restriction', async () => {
+    const mutate = jest.fn()
+    jest.spyOn(servicesDomains, 'useCreateDeploymentRestriction').mockReturnValue({
+      data: editProps.deploymentRestriction,
+      mutate,
+      isError: false,
+    })
     const { userEvent } = renderWithProviders(<CrudModalFeature {...createProps} />)
 
     const submitButton = await screen.findByRole('button', { name: /create/i })
@@ -39,14 +48,24 @@ describe('CrudModalFeature', () => {
     expect(submitButton).not.toBeDisabled()
 
     await userEvent.click(submitButton)
-    expect(createProps.onSubmit).toHaveBeenCalledWith({
-      mode: 'MATCH',
-      type: 'PATH',
-      value: 'baz',
+    expect(mutate).toHaveBeenCalledWith({
+      payload: {
+        mode: 'MATCH',
+        type: 'PATH',
+        value: 'baz',
+      },
+      serviceId: '1',
+      serviceType: 'APPLICATION',
     })
   })
 
   it('should edit deployment restriction', async () => {
+    const mutate = jest.fn()
+    jest.spyOn(servicesDomains, 'useEditDeploymentRestriction').mockReturnValue({
+      data: editProps.deploymentRestriction,
+      mutate,
+      isError: false,
+    })
     const { userEvent } = renderWithProviders(<CrudModalFeature {...editProps} />)
 
     const submitButton = await screen.findByRole('button', { name: /confirm/i })
@@ -66,10 +85,15 @@ describe('CrudModalFeature', () => {
     expect(submitButton).not.toBeDisabled()
 
     await userEvent.click(submitButton)
-    expect(editProps.onSubmit).toHaveBeenCalledWith({
-      mode: 'MATCH',
-      type: 'PATH',
-      value: 'baz',
+    expect(mutate).toHaveBeenCalledWith({
+      payload: {
+        mode: 'MATCH',
+        type: 'PATH',
+        value: 'baz',
+      },
+      deploymentRestrictionId: '3',
+      serviceId: '1',
+      serviceType: 'APPLICATION',
     })
   })
 })
