@@ -1,7 +1,15 @@
 import { DeploymentRestrictionModeEnum, DeploymentRestrictionTypeEnum } from 'qovery-typescript-axios'
 import { type FormEventHandler, useEffect } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { InputSelect, InputText, ModalCrud, useModal } from '@qovery/shared/ui'
+import {
+  BannerBox,
+  BannerBoxEnum,
+  IconAwesomeEnum,
+  InputSelect,
+  InputText,
+  ModalCrud,
+  useModal,
+} from '@qovery/shared/ui'
 
 export interface CrudModalProps {
   onClose: () => void
@@ -78,6 +86,22 @@ export function CrudModal({ onClose, onSubmit, isEdit, isLoading }: CrudModalPro
             label="Value"
           />
         )}
+      />
+      <BannerBox
+        className="mt-7"
+        title="How it works"
+        message={
+          <>
+            Two modes can be selected:
+            <ul className="list-disc ml-4">
+              <li>EXCLUDE: commits on the file or folder defined in the "Value" field will be ignored</li>
+              <li>MATCH: only commits on the file or folder defined in the "Value" field will trigger a deployment</li>
+            </ul>
+            Wildcards are not supported in the "Value" field
+          </>
+        }
+        icon={IconAwesomeEnum.CIRCLE_INFO}
+        type={BannerBoxEnum.INFO}
       />
     </ModalCrud>
   )
