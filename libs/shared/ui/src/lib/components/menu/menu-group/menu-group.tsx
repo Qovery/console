@@ -110,7 +110,7 @@ export function MenuGroup(props: MenuGroupProps) {
         </div>
       )}
       {!isFilter && !isLast && filteredItems.length > 0 && (
-        <MenuDivider className="bg-neutral-200 dark:bg-element-dark-400 m-0 mx-3" />
+        <MenuDivider className="bg-neutral-200 dark:bg-neutral-600 m-0 mx-3" />
       )}
     </div>
   )

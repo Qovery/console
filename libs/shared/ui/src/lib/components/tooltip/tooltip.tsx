@@ -37,14 +37,14 @@ export function Tooltip(props: PropsWithChildren<TooltipProps>) {
           {children}
         </TooltipPrimitive.Trigger>
         <TooltipPrimitive.Content
-          className="bg-element-dark-400 text-neutral-50 dark:bg-neutral-100 dark:text-neutral-400 rounded-sm px-2 py-1 text-xs font-medium z-[100]"
+          className="bg-neutral-600 text-neutral-50 dark:bg-neutral-100 dark:text-neutral-400 rounded-sm px-2 py-1 text-xs font-medium z-[100]"
           side={side}
           sideOffset={6}
           align={align}
         >
           {content}
           <TooltipPrimitive.Arrow
-            className="fill-element-dark-400 dark:fill-neutral-100"
+            className="fill-neutral-600 dark:fill-neutral-100"
             offset={10}
             width={11}
             height={5}
