@@ -17,6 +17,7 @@ import {
   JobsApi,
   type Status,
 } from 'qovery-typescript-axios'
+import { type ServiceMetricsDto } from 'qovery-ws-typescript-axios'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { type ServiceRunningStatus } from '@qovery/shared/interfaces'
 
@@ -55,6 +56,13 @@ export const services = createQueryKeys('services', {
     // NOTE: Value is set by WebSocket
     queryFn() {
       return new Promise<ServiceRunningStatus | null>(() => {})
+    },
+  }),
+  metrics: (environmentId: string, serviceId: string) => ({
+    queryKey: [environmentId, serviceId],
+    // NOTE: Value is set by WebSocket
+    queryFn() {
+      return new Promise<Array<ServiceMetricsDto> | null>(() => {})
     },
   }),
   listStatuses: (environmentId: string) => ({
