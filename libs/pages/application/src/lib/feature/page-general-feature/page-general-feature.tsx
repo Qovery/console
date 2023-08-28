@@ -5,45 +5,16 @@ import { useParams } from 'react-router-dom'
 import { applicationsLoadingStatus, getApplicationsState } from '@qovery/domains/application'
 import { useFetchEnvironment } from '@qovery/domains/environment'
 import { fetchOrganizationContainerRegistries, selectOrganizationById } from '@qovery/domains/organization'
-import { ServiceType } from '@qovery/domains/services/data-access'
 import { useRunningStatus } from '@qovery/domains/services/feature'
 import { isContainer, isContainerJob, isJob } from '@qovery/shared/enums'
 import { type ApplicationEntity, type LoadingStatus, type OrganizationEntity } from '@qovery/shared/interfaces'
 import { type BaseLink } from '@qovery/shared/ui'
-import { useMetricsWebSocket } from '@qovery/shared/util-web-sockets'
+import { MetricsWebSocketListener } from '@qovery/shared/util-web-sockets'
 import { type AppDispatch, type RootState } from '@qovery/state/store'
 import PageGeneral from '../../ui/page-general/page-general'
 
-function WebSocketListener({
-  organizationId,
-  clusterId,
-  projectId,
-  environmentId,
-  serviceId,
-  serviceType,
-}: {
-  clusterId: string
-  organizationId: string
-  projectId: string
-  environmentId: string
-  serviceId: string
-  serviceType: Omit<ServiceType, 'LIFECYCLE_JOB' | 'CRON_JOB'>
-}) {
-  useMetricsWebSocket({
-    organizationId,
-    clusterId,
-    projectId,
-    environmentId,
-    serviceId,
-    serviceType,
-  })
-
-  return null
-}
-
-// XXX: There is currently continuous re-render due to cluster mutation (related to legacy way to retrieve statuses)
-// We use memo to prevent web-socket invalidations
-const WebSocketListenerMemo = memo(WebSocketListener)
+// XXX: Prevent web-socket invalidations when re-rendering
+const WebSocketListenerMemo = memo(MetricsWebSocketListener)
 
 export function PageGeneralFeature() {
   const { applicationId = '', organizationId = '', projectId = '', environmentId = '' } = useParams()
