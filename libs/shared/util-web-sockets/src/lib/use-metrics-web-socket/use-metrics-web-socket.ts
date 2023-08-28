@@ -40,6 +40,11 @@ export function useMetricsWebSocket({
     onMessage(queryClient, message: Array<ServiceMetricsDto>) {
       queryClient.setQueryData(queries.services.metrics(environmentId, serviceId).queryKey, () => message)
     },
+    onError(queryClient) {
+      if (environmentId && serviceId) {
+        queryClient.setQueryData(queries.services.metrics(environmentId, serviceId).queryKey, () => null)
+      }
+    },
   })
 }
 
