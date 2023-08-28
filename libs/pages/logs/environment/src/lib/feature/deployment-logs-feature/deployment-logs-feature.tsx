@@ -92,6 +92,7 @@ export function DeploymentLogsFeature({ environment, statusStages }: DeploymentL
   const deploymentLogsUrl: () => Promise<string> = useCallback(async () => {
     // reset current Logs
     setLogs([])
+    setLoadingStatusDeploymentLogs('not loaded')
 
     const url = `wss://ws.qovery.com/deployment/logs?organization=${organizationId}&cluster=${environment?.cluster_id}&project=${projectId}&environment=${environmentId}&version=${versionId}`
     const token = await getAccessTokenSilently()
@@ -144,6 +145,7 @@ export function DeploymentLogsFeature({ environment, statusStages }: DeploymentL
 
   // deployment logs by serviceId and stageId
   // display when name is delete or stageId is empty
+  // filter by same transmitter id and environment type
   const logsByServiceId = logs.filter(
     (currentData: EnvironmentLogs) =>
       (currentData.details.stage?.id === stageId ||
@@ -162,13 +164,12 @@ export function DeploymentLogsFeature({ environment, statusStages }: DeploymentL
   return (
     <DeploymentLogs
       loadingStatus={loadingStatusDeploymentLogs}
-      // filter by same transmitter id and environment type
       logs={logsByServiceId}
       errors={errors}
       pauseStatusLogs={pauseStatusLogs}
       setPauseStatusLogs={setPauseStatusLogs}
       serviceDeploymentStatus={(getServiceStatuesById(statusStages, serviceId) as Status)?.service_deployment_status}
-      serviceName={application?.name || database?.name}
+      service={application || database}
       hideDeploymentLogs={hideDeploymentLogsBoolean}
       dataDeploymentHistory={dataDeploymentHistory}
     />
