@@ -1,15 +1,9 @@
-import {
-  type DatabaseCurrentMetricCpu,
-  type DatabaseCurrentMetricMemory,
-  type DatabaseCurrentMetricStorage,
-  DatabaseModeEnum,
-  StateEnum,
-} from 'qovery-typescript-axios'
+import { DatabaseModeEnum, StateEnum } from 'qovery-typescript-axios'
+import { PodsMetrics } from '@qovery/domains/services/feature'
 import { useDeploymentStatus } from '@qovery/domains/services/feature'
 import { type DatabaseEntity, type LoadingStatus } from '@qovery/shared/interfaces'
 import { type BaseLink, HelpSection, Skeleton } from '@qovery/shared/ui'
 import About from '../about/about'
-import InstancesTable from '../instances-table/instances-table'
 
 export interface PageGeneralProps {
   database?: DatabaseEntity
@@ -19,34 +13,6 @@ export interface PageGeneralProps {
 
 export function PageGeneral(props: PageGeneralProps) {
   const { database, listHelpfulLinks, loadingStatus } = props
-
-  let items: {
-    created_at?: string
-    name: string
-    cpu?: DatabaseCurrentMetricCpu
-    memory?: DatabaseCurrentMetricMemory
-    storage?: DatabaseCurrentMetricStorage
-  }[]
-
-  if (database?.mode === DatabaseModeEnum.MANAGED) {
-    items = [
-      {
-        created_at: '',
-        name: '',
-        cpu: {},
-        memory: {},
-      },
-    ]
-  } else {
-    items = [
-      {
-        name: '-',
-        cpu: database?.metrics?.data?.cpu,
-        memory: database?.metrics?.data?.memory,
-        storage: database?.metrics?.data?.storage,
-      },
-    ]
-  }
 
   const { data: deploymentStatus } = useDeploymentStatus({
     environmentId: database?.environment?.id,
@@ -81,7 +47,9 @@ export function PageGeneral(props: PageGeneralProps) {
             </div>
           </div>
 
-          <InstancesTable mode={database?.mode} instances={items} />
+          {database && database.environment && (
+            <PodsMetrics environmentId={database.environment.id} serviceId={database.id} />
+          )}
         </div>
         <HelpSection description="Need help? You may find these links useful" links={listHelpfulLinks}></HelpSection>
       </div>
