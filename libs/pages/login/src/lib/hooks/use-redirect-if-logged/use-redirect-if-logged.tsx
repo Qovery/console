@@ -49,7 +49,7 @@ export function useRedirectIfLogged() {
         if (userSignUp.dx_auth) {
           navigate(ONBOARDING_URL + ONBOARDING_PROJECT_URL)
         } else {
-          sendDataToGTM({ event: 'new_signup', value: (user as UserInterface).email })
+          sendDataToGTM({ event: 'new_signup', value: user?.email })
           navigate(ONBOARDING_URL + ONBOARDING_PERSONALIZE_URL)
         }
       }
@@ -73,7 +73,7 @@ export function useRedirectIfLogged() {
 
       fetchData()
     }
-  }, [navigate, checkIsAuthenticated, createAuthCookies, dispatch, sendDataToGTM, user])
+  }, [navigate, checkIsAuthenticated, createAuthCookies, dispatch, sendDataToGTM, user?.email])
 }
 
 export default useRedirectIfLogged
