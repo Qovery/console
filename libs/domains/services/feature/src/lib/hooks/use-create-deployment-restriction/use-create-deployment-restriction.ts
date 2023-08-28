@@ -1,6 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { type ApplicationType, mutations } from '@qovery/domains/services/data-access'
-import { toastError } from '@qovery/shared/ui'
 import { queries } from '@qovery/state/util-queries'
 
 export interface UseCreateDeploymentRestrictionProps {
@@ -16,7 +15,12 @@ export function useCreateDeploymentRestriction({ serviceId, serviceType }: UseCr
         queryKey: queries.services.deploymentRestrictions({ serviceId, serviceType }).queryKey,
       })
     },
-    onError: (error: Error) => toastError(error),
+    meta: {
+      notifyOnSuccess: {
+        title: 'Deployment restriction created',
+      },
+      notifyOnError: true,
+    },
   })
 }
 
