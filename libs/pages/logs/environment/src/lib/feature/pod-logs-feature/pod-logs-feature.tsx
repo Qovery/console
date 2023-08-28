@@ -1,4 +1,4 @@
-import { type Log } from 'qovery-typescript-axios'
+import { DatabaseModeEnum, type Log } from 'qovery-typescript-axios'
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -37,9 +37,10 @@ export function PodLogsFeature(props: PodLogsFeatureProps) {
   )
   const database = useSelector<RootState, DatabaseEntity | undefined>((state) => selectDatabaseById(state, serviceId))
 
-  useDocumentTitle(`Live logs ${application ? `- ${application?.name || database?.name}` : '- Loading...'}`)
+  useDocumentTitle(`Live logs ${application || database ? `- ${application?.name || database?.name}` : '- Loading...'}`)
 
   const { getAccessTokenSilently } = useAuth()
+  const disabledLogs = database?.mode !== DatabaseModeEnum.MANAGED
 
   const applicationLogsUrl: () => Promise<string> = useCallback(async () => {
     const token = await getAccessTokenSilently()
@@ -76,9 +77,13 @@ export function PodLogsFeature(props: PodLogsFeatureProps) {
       }
     })
   }, [])
-  useWebSocket(applicationLogsUrl, {
-    onMessage: onMessageHandler,
-  })
+  useWebSocket(
+    applicationLogsUrl,
+    {
+      onMessage: onMessageHandler,
+    },
+    disabledLogs
+  )
 
   useWebSocket(
     nginxLogsUrl,
