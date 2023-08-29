@@ -3,11 +3,20 @@ import { StatusChip, type StatusChipProps } from '@qovery/shared/ui'
 import { useDeploymentStatus } from '../hooks/use-deployment-status/use-deployment-status'
 import { useRunningStatus } from '../hooks/use-running-status/use-running-status'
 
-export interface ServiceStateChipProps extends Omit<StatusChipProps, 'status'> {
-  environmentId?: string
-  serviceId?: string
-  mode: 'deployment' | 'running'
-}
+export type ServiceStateChipProps = Omit<StatusChipProps, 'status'> &
+  (
+    | {
+        environmentId?: string
+        serviceId?: string
+        mode: 'deployment'
+      }
+    | {
+        environmentId?: string
+        serviceId?: string
+        mode: 'running'
+        withDeploymentFallback?: boolean
+      }
+  )
 
 type DeploymentStateChipProps = Omit<ServiceStateChipProps, 'mode'>
 
@@ -16,10 +25,21 @@ function DeploymentStateChip({ environmentId, serviceId, ...props }: DeploymentS
   return <StatusChip status={deploymentStatus?.state ?? 'STOPPED'} {...props} />
 }
 
-type RunningStateChipProps = Omit<ServiceStateChipProps, 'mode'>
+interface RunningStateChipProps extends Omit<ServiceStateChipProps, 'mode'> {
+  withDeploymentFallback?: boolean
+}
 
-function RunningStateChip({ environmentId, serviceId, ...props }: RunningStateChipProps) {
+function RunningStateChip({
+  environmentId,
+  serviceId,
+  withDeploymentFallback = false,
+  ...props
+}: RunningStateChipProps) {
   const { data: runningStatus } = useRunningStatus({ environmentId, serviceId })
+  // NOTE: Some services don't have a live/running status like managed DB, we must fallback on the deployment status
+  if (withDeploymentFallback && !runningStatus?.state) {
+    return <DeploymentStateChip environmentId={environmentId} serviceId={serviceId} {...props} />
+  }
   return (
     <StatusChip
       status={runningStatus?.state ?? 'STOPPED'}
