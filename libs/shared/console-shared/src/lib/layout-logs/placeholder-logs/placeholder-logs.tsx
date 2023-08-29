@@ -49,7 +49,7 @@ export function PlaceholderLogs({
           <div>
             {!customPlaceholder && outOfDateOrUpToDate ? (
               <>
-                {/* Display message about no logs */}
+                {/* Display message about no logs available */}
                 <p className="text-neutral-50 font-medium mb-1">
                   No logs on this execution for <span className="text-brand-400">{serviceName}</span>.
                 </p>

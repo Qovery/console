@@ -132,7 +132,8 @@ export function LayoutLogs({
             'Live logs',
             ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + SERVICE_LOGS_URL(serviceId),
             environmentId,
-            serviceId
+            serviceId,
+            (service as DatabaseEntity)?.mode === DatabaseModeEnum.MANAGED ? false : true
           )}
         </div>
       )}
