@@ -1,11 +1,11 @@
 import equal from 'fast-deep-equal'
 import { type DeploymentStageWithServicesStatuses, type EnvironmentStatus } from 'qovery-typescript-axios'
-import { useCallback, useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useCallback, useState } from 'react'
+import { useSelector } from 'react-redux'
 import { Route, Routes, matchPath, useLocation, useParams } from 'react-router-dom'
 import useWebSocket from 'react-use-websocket'
-import { fetchApplicationsStatus, selectApplicationsEntitiesByEnvId } from '@qovery/domains/application'
-import { fetchDatabasesStatus, selectDatabasesEntitiesByEnvId } from '@qovery/domains/database'
+import { selectApplicationsEntitiesByEnvId } from '@qovery/domains/application'
+import { selectDatabasesEntitiesByEnvId } from '@qovery/domains/database'
 import { useFetchEnvironment } from '@qovery/domains/environment'
 import { useAuth } from '@qovery/shared/auth'
 import { type ApplicationEntity, type DatabaseEntity } from '@qovery/shared/interfaces'
@@ -17,7 +17,7 @@ import {
 } from '@qovery/shared/routes'
 import { Icon, IconAwesomeEnum } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import { type AppDispatch, type RootState } from '@qovery/state/store'
+import { type RootState } from '@qovery/state/store'
 import DeploymentLogsFeature from './feature/deployment-logs-feature/deployment-logs-feature'
 import PodLogsFeature from './feature/pod-logs-feature/pod-logs-feature'
 import { ServiceStageIdsProvider } from './feature/service-stage-ids-context/service-stage-ids-context'
@@ -26,7 +26,6 @@ import Sidebar from './ui/sidebar/sidebar'
 export function PageEnvironmentLogs() {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
 
-  const dispatch = useDispatch<AppDispatch>()
   const { data: environment } = useFetchEnvironment(projectId, environmentId)
 
   useDocumentTitle(`Environment logs ${environment ? `- ${environment?.name}` : '- Loading...'}`)
@@ -59,17 +58,6 @@ export function PageEnvironmentLogs() {
     (state) => selectDatabasesEntitiesByEnvId(state, environmentId),
     equal
   )
-
-  useEffect(() => {
-    /**
-     * @deprecated This should be migrated to the new `use-status-web-sockets` hook
-     */
-    const fetchServicesStatusByInterval = setInterval(() => {
-      if (applications.length > 0) dispatch(fetchApplicationsStatus({ environmentId }))
-      if (databases.length > 0) dispatch(fetchDatabasesStatus({ environmentId }))
-    }, 10000)
-    return () => clearInterval(fetchServicesStatusByInterval)
-  }, [dispatch, environmentId, applications.length, databases.length])
 
   const [statusStages, setStatusStages] = useState<DeploymentStageWithServicesStatuses[]>()
   const [environmentStatus, setEnvironmentStatus] = useState<EnvironmentStatus>()

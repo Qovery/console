@@ -34,7 +34,6 @@ import {
   type JobRequest,
   JobsApi,
   type Link,
-  type Status,
 } from 'qovery-typescript-axios'
 import { type ServiceTypeEnum, isApplication, isContainer, isJob } from '@qovery/shared/enums'
 import {
@@ -45,7 +44,6 @@ import {
   type GitApplicationEntity,
   type JobApplicationEntity,
   type LoadingStatus,
-  type ServiceRunningStatus,
 } from '@qovery/shared/interfaces'
 import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
 import {
@@ -55,7 +53,6 @@ import {
   refactoGitApplicationPayload,
   refactoJobPayload,
   removeOneToManyRelation,
-  shortToLongId,
   sortByKey,
 } from '@qovery/shared/utils'
 import { type RootState } from '@qovery/state/store'
@@ -81,50 +78,23 @@ const jobMainCallsApi = new JobMainCallsApi()
 const jobDeploymentsApi = new JobDeploymentHistoryApi()
 const jobConfigurationApi = new JobConfigurationApi()
 
-export const fetchApplications = createAsyncThunk<
-  ApplicationEntity[],
-  { environmentId: string; withoutStatus?: boolean }
->('applications/fetch', async (data, thunkApi) => {
-  const result = await Promise.all([
-    // fetch Git applications
-    applicationsApi.listApplication(data.environmentId),
-    // fetch Container applications
-    containersApi.listContainer(data.environmentId),
-    // fetch Jobs applications
-    jobsApi.listJobs(data.environmentId),
-  ])
-
-  if (!data.withoutStatus) {
-    thunkApi.dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
-  }
-
-  return [
-    ...(result[0].data.results as GitApplicationEntity[]),
-    ...(result[1].data.results as ContainerApplicationEntity[]),
-    ...(result[2].data.results as JobApplicationEntity[]),
-  ] as ApplicationEntity[]
-})
-
-/**
- * @deprecated This should be migrated to the new `use-status-web-sockets` hook
- */
-export const fetchApplicationsStatus = createAsyncThunk<Status[], { environmentId: string }>(
-  'applications-status/fetch',
+export const fetchApplications = createAsyncThunk<ApplicationEntity[], { environmentId: string }>(
+  'applications/fetch',
   async (data) => {
     const result = await Promise.all([
-      // fetch status Git applications
-      applicationsApi.getEnvironmentApplicationStatus(data.environmentId),
-      // fetch status Container applications
-      containersApi.getEnvironmentContainerStatus(data.environmentId),
-      // fetch status Jobs applications
-      jobsApi.getEnvironmentJobStatus(data.environmentId),
+      // fetch Git applications
+      applicationsApi.listApplication(data.environmentId),
+      // fetch Container applications
+      containersApi.listContainer(data.environmentId),
+      // fetch Jobs applications
+      jobsApi.listJobs(data.environmentId),
     ])
 
     return [
-      ...(result[0].data.results as Status[]),
-      ...(result[1].data.results as Status[]),
-      ...(result[2].data.results as Status[]),
-    ]
+      ...(result[0].data.results as GitApplicationEntity[]),
+      ...(result[1].data.results as ContainerApplicationEntity[]),
+      ...(result[2].data.results as JobApplicationEntity[]),
+    ] as ApplicationEntity[]
   }
 )
 
@@ -243,25 +213,6 @@ export const fetchApplicationDeployments = createAsyncThunk<
   return response.data.results as DeploymentHistory[]
 })
 
-/**
- * @deprecated This should be migrated to the new `use-status-web-sockets` hook
- */
-export const fetchApplicationStatus = createAsyncThunk<
-  Status,
-  { applicationId: string; serviceType?: ServiceTypeEnum }
->('application/status', async (data) => {
-  let response
-  if (isContainer(data.serviceType)) {
-    response = await containerMainCallsApi.getContainerStatus(data.applicationId)
-  } else if (isJob(data.serviceType)) {
-    response = await jobMainCallsApi.getJobStatus(data.applicationId)
-  } else {
-    response = await applicationMainCallsApi.getApplicationStatus(data.applicationId)
-  }
-
-  return response.data as Status
-})
-
 export const fetchApplicationAdvancedSettings = createAsyncThunk<
   ApplicationAdvancedSettings,
   { applicationId: string; serviceType: ServiceTypeEnum }
@@ -341,8 +292,6 @@ export const deleteApplicationAction = createAsyncThunk(
       }
 
       if (response.status === 204) {
-        // refetch status after update
-        await dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
         // success message
         toast(ToastEnum.SUCCESS, 'Your application is being deleted')
       }
@@ -373,47 +322,6 @@ export const applicationsSlice = createSlice({
   reducers: {
     add: applicationsAdapter.addOne,
     remove: applicationsAdapter.removeOne,
-    /**
-     * @deprecated This should be migrated to the new `use-status-web-sockets` hook
-     */
-    updateApplicationsRunningStatus: (
-      state,
-      action: PayloadAction<{ servicesRunningStatus: ServiceRunningStatus[]; listEnvironmentIdFromCluster: string[] }>
-    ) => {
-      // we have to force this reset change because of the way the socket works.
-      // You can have information about an application (eg. if it's stopping)
-      // But you can also lose the information about this application (eg. it it's stopped it won't appear in the socket result)
-      const resetChanges: Update<ApplicationEntity>[] = state.ids.map((id) => {
-        // as we can have this dispatch from different websocket, we don't want to reset
-        // and override all the application but only the ones associated to the cluster the websocket is
-        // coming from, more generally from all the environments that are contained in this cluster
-        const envId = state.entities[id]?.environment?.id
-
-        const runningStatusChanges =
-          envId && action.payload.listEnvironmentIdFromCluster.includes(envId)
-            ? undefined
-            : state.entities[id]?.running_status
-        return {
-          id,
-          changes: {
-            running_status: runningStatusChanges,
-          },
-        }
-      })
-      applicationsAdapter.updateMany(state, resetChanges)
-
-      const changes: Update<ApplicationEntity>[] = action.payload.servicesRunningStatus.map((runningStatus) => {
-        const realId = shortToLongId(runningStatus.id, state.ids as string[])
-        return {
-          id: realId,
-          changes: {
-            running_status: runningStatus,
-          },
-        }
-      })
-
-      applicationsAdapter.updateMany(state, changes)
-    },
   },
   extraReducers: (builder) => {
     builder
@@ -488,26 +396,6 @@ export const applicationsSlice = createSlice({
       .addCase(createApplication.rejected, (state: ApplicationsState, action) => {
         state.loadingStatus = 'error'
         toastError(action.error)
-        state.error = action.error.message
-      })
-      // get applications status
-      .addCase(fetchApplicationsStatus.pending, (state: ApplicationsState) => {
-        state.statusLoadingStatus = 'loading'
-      })
-      .addCase(fetchApplicationsStatus.fulfilled, (state: ApplicationsState, action: PayloadAction<Status[]>) => {
-        const update: { id: string | undefined; changes: { status: Status } }[] = action.payload.map(
-          (status: Status) => ({
-            id: status.id,
-            changes: {
-              status: status,
-            },
-          })
-        )
-        applicationsAdapter.updateMany(state, update as Update<ApplicationEntity>[])
-        state.statusLoadingStatus = 'loaded'
-      })
-      .addCase(fetchApplicationsStatus.rejected, (state: ApplicationsState, action) => {
-        state.statusLoadingStatus = 'error'
         state.error = action.error.message
       })
       .addCase(fetchApplicationLinks.pending, (state: ApplicationsState, action) => {
@@ -742,31 +630,6 @@ export const applicationsSlice = createSlice({
           },
         }
         applicationsAdapter.updateOne(state, update as Update<ApplicationEntity>)
-      })
-      // get application status
-      .addCase(fetchApplicationStatus.pending, (state: ApplicationsState, action) => {
-        const update = {
-          id: action.meta.arg.applicationId,
-          changes: {
-            status: {
-              ...state.entities[action.meta.arg.applicationId]?.status,
-            },
-          },
-        }
-        applicationsAdapter.updateOne(state, update as Update<ApplicationEntity>)
-      })
-      .addCase(fetchApplicationStatus.fulfilled, (state: ApplicationsState, action) => {
-        const update = {
-          id: action.meta.arg.applicationId,
-          changes: {
-            status: action.payload,
-          },
-        }
-        applicationsAdapter.updateOne(state, update as Update<ApplicationEntity>)
-        state.statusLoadingStatus = 'loaded'
-      })
-      .addCase(fetchApplicationStatus.rejected, (state: ApplicationsState, action) => {
-        state.statusLoadingStatus = 'error'
       })
       .addCase(fetchDefaultApplicationAdvancedSettings.pending, (state: ApplicationsState, action) => {
         state.defaultApplicationAdvancedSettings.settings = action.payload
