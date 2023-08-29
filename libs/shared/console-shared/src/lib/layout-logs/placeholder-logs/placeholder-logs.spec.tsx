@@ -33,9 +33,7 @@ describe('PlaceholderLogs', () => {
     props.loadingStatus = 'loaded'
     props.customPlaceholder = undefined
     props.serviceDeploymentStatus = ServiceDeploymentStatusEnum.NEVER_DEPLOYED
-    const { debug } = renderWithProviders(<PlaceholderLogs {...props} />)
-
-    debug()
+    renderWithProviders(<PlaceholderLogs {...props} />)
 
     screen.getByText(props.serviceName as string)
     screen.getByText(/No logs on this execution for/i)
