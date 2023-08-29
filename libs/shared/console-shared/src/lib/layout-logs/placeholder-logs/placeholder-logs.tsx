@@ -36,44 +36,43 @@ export function PlaceholderLogs({
       serviceDeploymentStatus === ServiceDeploymentStatusEnum.NEVER_DEPLOYED ||
       serviceDeploymentStatus === ServiceDeploymentStatusEnum.UP_TO_DATE
 
-    const noLogsPlaceholder = (
-      <p className="text-neutral-50 font-medium mb-1">
-        No logs on this execution for <span className="text-brand-400">{serviceName}</span>.
-      </p>
-    )
+    const displaySpinner = loadingStatus !== 'loaded' && itemsLength === 0 && !hideLogs && !serviceDeploymentStatus
 
-    return (
-      <>
-        {/* Display spinner, if no data loader */}
-        {loadingStatus !== 'loaded' && itemsLength === 0 && defaultLoader}
+    const displayPlaceholders = loadingStatus === 'loaded' && hideLogs
 
-        {/* Display no logs placeholder, if we don't have deployment history and the service is out of date */}
-        {!customPlaceholder && serviceDeploymentStatus === ServiceDeploymentStatusEnum.OUT_OF_DATE && noLogsPlaceholder}
-
-        {hideLogs && loadingStatus === 'loaded' && (
-          <>
-            {/* Display custom placeholder, if data loaded and hideLogs flag  */}
-            {customPlaceholder && customPlaceholder}
-
-            {!customPlaceholder && (outOfDateOrUpToDate || itemsLength === 0) && (
+    if (displaySpinner) {
+      // Display loader spinner
+      return defaultLoader
+    } else {
+      if (displayPlaceholders) {
+        return (
+          <div>
+            {!customPlaceholder && outOfDateOrUpToDate ? (
               <>
-                {noLogsPlaceholder}
-                <p className="text-neutral-300 font-normal text-sm">
-                  This service was deployed more than 30 days ago and thus no deployment logs are available.
+                {/* Display message about no logs */}
+                <p className="text-neutral-50 font-medium mb-1">
+                  No logs on this execution for <span className="text-brand-400">{serviceName}</span>.
                 </p>
+                {serviceDeploymentStatus !== ServiceDeploymentStatusEnum.NEVER_DEPLOYED && (
+                  <p className="text-neutral-300 font-normal text-sm">
+                    This service was deployed more than 30 days ago and thus no deployment logs are available.
+                  </p>
+                )}
               </>
+            ) : (
+              // Display custom placeholder with list of history deployments
+              customPlaceholder
             )}
-          </>
-        )}
-
-        {/* Display default spinner, if data not displayed */}
-        {!hideLogs && loadingStatus === 'loaded' && defaultLoader}
-      </>
-    )
+          </div>
+        )
+      }
+      // Return the default loader spinner
+      return defaultLoader
+    }
   }
 
   return (
-    <div data-testid="loading-screen" className="w-full h-full pt-[88px] bg-neutral-650 text-center">
+    <div data-testid="placeholder-screen" className="w-full h-full pt-[88px] bg-neutral-650 text-center">
       {type === 'deployment' && deploymentPlaceholder()}
 
       {type === 'live' && (

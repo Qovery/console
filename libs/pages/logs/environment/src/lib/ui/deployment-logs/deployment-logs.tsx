@@ -51,7 +51,7 @@ export function DeploymentLogs({
     (deploymentHistory) => deploymentHistory.id === serviceId
   )
 
-  const placeholderDeploymentHistory = deploymentsByServiceId.length > 0 && (
+  const placeholderDeploymentHistory = deploymentsByServiceId.length !== 0 && (
     <div className="flex items-center flex-col text-center">
       <div>
         <p className="mb-1 text-neutral-50 font-text-neutral-50 font-medium">

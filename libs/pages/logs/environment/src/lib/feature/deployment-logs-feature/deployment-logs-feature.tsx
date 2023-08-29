@@ -92,7 +92,6 @@ export function DeploymentLogsFeature({ environment, statusStages }: DeploymentL
   const deploymentLogsUrl: () => Promise<string> = useCallback(async () => {
     // reset current Logs
     setLogs([])
-    setLoadingStatusDeploymentLogs('not loaded')
 
     const url = `wss://ws.qovery.com/deployment/logs?organization=${organizationId}&cluster=${environment?.cluster_id}&project=${projectId}&environment=${environmentId}&version=${versionId}`
     const token = await getAccessTokenSilently()
