@@ -2,29 +2,37 @@ import {
   type ClusterLogs,
   type ClusterLogsError,
   type ClusterLogsStepEnum,
+  DatabaseModeEnum,
   type EnvironmentLogs,
   type EnvironmentLogsError,
   type Log,
+  type ServiceDeploymentStatusEnum,
 } from 'qovery-typescript-axios'
 import { type PropsWithChildren, type ReactNode, useRef, useState } from 'react'
 import { Link, useLocation, useParams } from 'react-router-dom'
 import { ServiceStateChip } from '@qovery/domains/services/feature'
-import { type LoadingStatus } from '@qovery/shared/interfaces'
+import { type ApplicationEntity, type DatabaseEntity, type LoadingStatus } from '@qovery/shared/interfaces'
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
-import { Icon, IconAwesomeEnum, IconFa, InputCheckbox, LoaderSpinner, Tooltip } from '@qovery/shared/ui'
+import { Icon, IconAwesomeEnum, IconFa, InputCheckbox, Tooltip } from '@qovery/shared/ui'
 import { scrollParentToChild } from '@qovery/shared/utils'
 import ButtonsActionsLogs from './buttons-actions-logs/buttons-actions-logs'
 import MenuTimeFormat from './menu-time-format/menu-time-format'
+import { PlaceholderLogs } from './placeholder-logs/placeholder-logs'
 import TabsClusterLogs from './tabs-cluster-logs/tabs-cluster-logs'
 import { UpdateTimeContext, defaultUpdateTimeContext } from './update-time-context/update-time-context'
 
 export interface LayoutLogsDataProps {
   loadingStatus: LoadingStatus
+  hideLogs?: boolean
   items?: ClusterLogs[] | (EnvironmentLogs | Log)[]
 }
 
+export type logsType = 'infra' | 'live' | 'deployment'
+
 export interface LayoutLogsProps {
+  type: logsType
+  service?: ApplicationEntity | DatabaseEntity
   data?: LayoutLogsDataProps
   errors?: ErrorLogsProps[]
   tabInformation?: ReactNode
@@ -36,7 +44,8 @@ export interface LayoutLogsProps {
   setEnabledNginx?: (debugMode: boolean) => void
   clusterBanner?: boolean
   countNginx?: number
-  placeholderDescription?: string | ReactNode
+  customPlaceholder?: string | ReactNode
+  serviceDeploymentStatus?: ServiceDeploymentStatusEnum
 }
 
 export interface ErrorLogsProps {
@@ -46,23 +55,24 @@ export interface ErrorLogsProps {
   step?: ClusterLogsStepEnum
 }
 
-export function LayoutLogs(props: PropsWithChildren<LayoutLogsProps>) {
-  const {
-    data,
-    tabInformation,
-    children,
-    errors,
-    withLogsNavigation,
-    pauseLogs,
-    setPauseLogs,
-    lineNumbers,
-    enabledNginx,
-    setEnabledNginx,
-    clusterBanner,
-    countNginx,
-    placeholderDescription = 'Logs not available',
-  } = props
-
+export function LayoutLogs({
+  type,
+  data,
+  tabInformation,
+  children,
+  errors,
+  withLogsNavigation,
+  pauseLogs,
+  setPauseLogs,
+  lineNumbers,
+  enabledNginx,
+  setEnabledNginx,
+  clusterBanner,
+  countNginx,
+  customPlaceholder,
+  service,
+  serviceDeploymentStatus,
+}: PropsWithChildren<LayoutLogsProps>) {
   const location = useLocation()
   const refScrollSection = useRef<HTMLDivElement>(null)
   const [updateTimeContextValue, setUpdateTimeContext] = useState(defaultUpdateTimeContext)
@@ -105,11 +115,11 @@ export function LayoutLogs(props: PropsWithChildren<LayoutLogsProps>) {
   return (
     <div
       className={`overflow-hidden flex relative w-full p-1 ${
-        clusterBanner ? 'h-[calc(100vh-8rem)]' : 'h-[calc(100vh-4.25rem)]'
+        clusterBanner ? 'h-[calc(100vh-8rem)]' : 'h-[calc(100vh-4rem)]'
       }`}
     >
       {withLogsNavigation && (
-        <div className="absolute z-20 overflow-y-auto left-1 flex items-center w-[calc(100%-8px)] h-11 border-b border-neutral-550 bg-neutral-900">
+        <div className="absolute z-20 overflow-y-auto left-1 flex items-center w-[calc(100%-8px)] h-11 bg-neutral-900">
           {LinkNavigation(
             'Deployment logs',
             ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
@@ -122,24 +132,27 @@ export function LayoutLogs(props: PropsWithChildren<LayoutLogsProps>) {
             'Live logs',
             ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + SERVICE_LOGS_URL(serviceId),
             environmentId,
-            serviceId
+            serviceId,
+            (service as DatabaseEntity)?.mode !== DatabaseModeEnum.MANAGED
           )}
         </div>
       )}
-      {!data || data.items?.length === 0 || data?.loadingStatus === 'not loaded' ? (
-        <div data-testid="loading-screen" className="mt-[88px] w-full flex justify-center text-center">
-          {data?.loadingStatus === 'not loaded' || !data ? (
-            <LoaderSpinner className="w-6 h-6" theme="dark" />
-          ) : (
-            <div className="flex flex-col items-center">
-              <div className="text-neutral-50 font-medium text-center">{placeholderDescription}</div>
-            </div>
-          )}
-        </div>
+
+      {!data || data?.items?.length === 0 || data?.hideLogs ? (
+        <PlaceholderLogs
+          type={type}
+          serviceDeploymentStatus={serviceDeploymentStatus}
+          serviceName={service?.name}
+          databaseMode={(service as DatabaseEntity)?.mode}
+          loadingStatus={data?.loadingStatus}
+          itemsLength={data?.items?.length}
+          customPlaceholder={customPlaceholder}
+          hideLogs={data?.hideLogs}
+        />
       ) : (
         <>
           <div
-            className={`absolute left-1 z-20 flex justify-end items-center h-11 bg-neutral-650 px-5 border-b border-neutral-550 ${
+            className={`absolute left-1 z-20 flex justify-end items-center h-11 bg-neutral-650 px-5 border-y border-neutral-550  ${
               tabInformation ? 'w-[calc(100%-360px)]' : 'w-[calc(100%-8px)]'
             } ${withLogsNavigation ? 'top-12' : ''}`}
           >

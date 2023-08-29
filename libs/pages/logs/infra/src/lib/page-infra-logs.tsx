@@ -66,6 +66,7 @@ export function PageInfraLogs() {
 
   return (
     <LayoutLogs
+      type="infra"
       data={cluster?.logs}
       tabInformation={<CardClusterFeature />}
       errors={realErrors}

@@ -1,6 +1,6 @@
-import { render, screen } from '__tests__/utils/setup-jest'
 import { ClusterLogsStepEnum, StateEnum } from 'qovery-typescript-axios'
 import { clusterLogFactoryMock } from '@qovery/shared/factories'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { LayoutLogs, type LayoutLogsProps } from './layout-logs'
 
 describe('LayoutLogs', () => {
@@ -19,7 +19,7 @@ describe('LayoutLogs', () => {
   })
 
   it('should render successfully', () => {
-    const { baseElement } = render(<LayoutLogs {...props} />)
+    const { baseElement } = renderWithProviders(<LayoutLogs {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
@@ -29,22 +29,21 @@ describe('LayoutLogs', () => {
       items: [],
     }
 
-    const { getByTestId } = render(<LayoutLogs {...props} />)
+    renderWithProviders(<LayoutLogs {...props} />)
 
-    expect(getByTestId('spinner'))
+    screen.getByTestId('placeholder-screen')
   })
 
   it('should have screen when data is empty', () => {
     props.data = {
       loadingStatus: 'loaded',
+      hideLogs: true,
       items: [],
     }
 
-    render(<LayoutLogs {...props} />)
+    renderWithProviders(<LayoutLogs {...props} />)
 
-    const loadingScreen = screen.getByTestId('loading-screen')
-
-    expect(loadingScreen.querySelector('div')?.textContent).toBe('Logs not available')
+    screen.getByTestId('placeholder-screen')
   })
 
   it('should have text with error line', () => {
@@ -67,7 +66,7 @@ describe('LayoutLogs', () => {
       },
     ]
 
-    render(<LayoutLogs {...props} />)
+    renderWithProviders(<LayoutLogs {...props} />)
 
     const errorLine = screen.getByTestId('error-layout-line')
 
@@ -84,7 +83,7 @@ describe('LayoutLogs', () => {
       ],
     }
 
-    render(<LayoutLogs {...props} />)
+    renderWithProviders(<LayoutLogs {...props} />)
 
     const tabsLogs = screen.getByTestId('tabs-logs')
 
@@ -106,7 +105,7 @@ describe('LayoutLogs', () => {
     }
     props.withLogsNavigation = true
 
-    const { getByText } = render(<LayoutLogs {...props} />)
+    const { getByText } = renderWithProviders(<LayoutLogs {...props} />)
 
     getByText('Deployment logs')
     getByText('Live logs')
@@ -134,7 +133,7 @@ describe('LayoutLogs', () => {
     props.enabledNginx = true
     props.setEnabledNginx = jest.fn()
 
-    render(<LayoutLogs {...props} />)
+    renderWithProviders(<LayoutLogs {...props} />)
 
     const checkboxDebug = screen.getByTestId('checkbox-debug')
     expect(checkboxDebug)

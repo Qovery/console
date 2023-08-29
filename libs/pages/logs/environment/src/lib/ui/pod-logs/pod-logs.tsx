@@ -106,8 +106,11 @@ export function PodLogs(props: PodLogsProps) {
     [logs, filter]
   )
 
+  if (!service) return null
+
   return (
     <LayoutLogs
+      type="live"
       data={{
         items: logs,
         loadingStatus: loadingStatus,
@@ -119,6 +122,7 @@ export function PodLogs(props: PodLogsProps) {
       countNginx={countNginx}
       withLogsNavigation
       lineNumbers
+      service={service}
     >
       <Table
         className="bg-transparent"
