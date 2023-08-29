@@ -168,9 +168,9 @@ export function LayoutLogs(props: PropsWithChildren<LayoutLogsProps>) {
                       disabled={pauseLogs}
                     />
                     {enabledNginx && countNginx !== undefined ? <span className="block ml-1">({countNginx})</span> : ''}
-                    <Tooltip content="Display the logs of the Kubernetes ingress controller (NGINX)">
+                    <Tooltip content="Display the logs of the Kubernetes ingress controller (NGINX). Click here to know the log format.">
                       <a
-                        className="relative top-[1px] ml-2"
+                        className="relative top-[1px] ml-2 hover:text-neutral-100"
                         rel="noreferrer"
                         href="https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/log-format/"
                         target="_blank"
