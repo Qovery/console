@@ -1,4 +1,4 @@
-import { type Environment, ServiceDeploymentStatusEnum } from 'qovery-typescript-axios'
+import { DatabaseModeEnum, type Environment, ServiceDeploymentStatusEnum } from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useLocation, useParams } from 'react-router-dom'
@@ -74,7 +74,14 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
 
   const tabsItems = [
     {
-      icon: <ServiceStateChip mode="running" environmentId={database?.environment?.id} serviceId={database?.id} />,
+      icon: (
+        <ServiceStateChip
+          mode="running"
+          environmentId={database?.environment?.id}
+          serviceId={database?.id}
+          withDeploymentFallback={database?.mode === DatabaseModeEnum.MANAGED}
+        />
+      ),
       name: 'Overview',
       active:
         location.pathname === DATABASE_URL(organizationId, projectId, environmentId, databaseId) + DATABASE_GENERAL_URL,

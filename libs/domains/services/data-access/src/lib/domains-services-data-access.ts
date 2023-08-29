@@ -46,15 +46,15 @@ export const services = createQueryKeys('services', {
   deploymentStatus: (environmentId: string, serviceId: string) => ({
     queryKey: [environmentId, serviceId],
     // NOTE: Value is set by WebSocket
-    queryFn(): Status | null {
-      return null
+    queryFn() {
+      return new Promise<Status | null>(() => {})
     },
   }),
   runningStatus: (environmentId: string, serviceId: string) => ({
     queryKey: [environmentId, serviceId],
     // NOTE: Value is set by WebSocket
-    queryFn(): ServiceRunningStatus | null {
-      return null
+    queryFn() {
+      return new Promise<ServiceRunningStatus | null>(() => {})
     },
   }),
   listStatuses: (environmentId: string) => ({

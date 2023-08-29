@@ -79,6 +79,10 @@ export function useStatusWebSockets({
         queryClient.setQueryData(queries.environments.runningStatus(env.id).queryKey, () => ({
           state: env.state,
         }))
+        // NOTE: we have to force this reset change because of the way the socket works.
+        // You can have information about an application (eg. if it's stopping)
+        // But you can also lose the information about this application (eg. it it's stopped it won't appear in the socket result)
+        queryClient.resetQueries([...queries.services.runningStatus._def, env.id])
         const services = [...env.applications, ...env.containers, ...env.databases, ...env.jobs]
         for (const serviceRunningStatus of services) {
           queryClient.setQueryData(

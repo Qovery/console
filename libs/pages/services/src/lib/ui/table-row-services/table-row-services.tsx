@@ -56,11 +56,12 @@ export function TableRowServices<T>(props: TableRowServicesProps<T>) {
     <TableRow data={data} filter={filter} columnsWidth={columnsWidth} link={link}>
       <>
         <div className="flex items-center px-4 gap-1">
-          {dataDatabase.mode === DatabaseModeEnum.MANAGED ? (
-            <ServiceStateChip mode="deployment" environmentId={data.environment?.id} serviceId={data.id} />
-          ) : (
-            <ServiceStateChip mode="running" environmentId={data.environment?.id} serviceId={data.id} />
-          )}
+          <ServiceStateChip
+            mode="running"
+            environmentId={data.environment?.id}
+            serviceId={data.id}
+            withDeploymentFallback={dataDatabase.mode === DatabaseModeEnum.MANAGED}
+          />
           <div className="ml-2 mr-2">
             <Skeleton className="shrink-0" show={isLoading} width={16} height={16}>
               <Icon name={isApplication(type) || isContainer(type) ? IconEnum.APPLICATION : type} width="20" />

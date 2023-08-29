@@ -15,7 +15,7 @@ import {
 import { fetchProjects } from '@qovery/domains/projects'
 import { type OrganizationEntity } from '@qovery/shared/interfaces'
 import { ORGANIZATION_URL } from '@qovery/shared/routes'
-import { useStatusWebSockets } from '@qovery/shared/util-web-sockets'
+import { StatusWebSocketListener } from '@qovery/shared/util-web-sockets'
 import { WebsocketContainer } from '@qovery/shared/websockets'
 import { type AppDispatch, type RootState } from '@qovery/state/store'
 import LayoutPage from '../../ui/layout-page/layout-page'
@@ -25,33 +25,8 @@ export interface LayoutProps {
   topBar?: boolean
 }
 
-function WebSocketListener({
-  clusterId,
-  organizationId,
-  projectId,
-  environmentId,
-  versionId,
-}: {
-  clusterId: string
-  organizationId: string
-  projectId?: string
-  environmentId?: string
-  versionId?: string
-}) {
-  useStatusWebSockets({
-    organizationId,
-    clusterId,
-    projectId,
-    environmentId,
-    versionId,
-  })
-
-  return null
-}
-
-// XXX: There is currently continuous re-render due to cluster mutation (related to legacy way to retrieve statuses)
-// We use memo to prevent web-socket invalidations
-const WebSocketListenerMemo = memo(WebSocketListener)
+// XXX: Prevent web-socket invalidations when re-rendering
+const StatusWebSocketListenerMemo = memo(StatusWebSocketListener)
 
 export function Layout(props: PropsWithChildren<LayoutProps>) {
   const { children, topBar } = props
@@ -116,7 +91,7 @@ export function Layout(props: PropsWithChildren<LayoutProps>) {
           clusters.map(
             ({ id }) =>
               organizationId && (
-                <WebSocketListenerMemo
+                <StatusWebSocketListenerMemo
                   key={id}
                   organizationId={organizationId}
                   clusterId={id}

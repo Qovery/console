@@ -17,8 +17,8 @@ export const environments = createQueryKeys('environments', {
   // NOTE: Value is set by WebSocket
   runningStatus: (environmentId: string) => ({
     queryKey: [environmentId],
-    queryFn(): { state: RunningState } | null {
-      return null
+    queryFn() {
+      return new Promise<{ state: RunningState } | null>(() => {})
     },
   }),
   detail: (environmentId: string) => ({

@@ -3,12 +3,13 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/shared/util-web-sockets/src",
   "projectType": "library",
+  "tags": [],
   "targets": {
     "lint": {
       "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["libs/shared/util-web-sockets/**/*.ts"]
+        "lintFilePatterns": ["libs/shared/util-web-sockets/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
@@ -25,6 +26,5 @@
         }
       }
     }
-  },
-  "tags": []
+  }
 }
