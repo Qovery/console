@@ -1,6 +1,6 @@
 import { type Meta, type Story } from '@storybook/react'
 import { useState } from 'react'
-import { dateFullFormat } from '@qovery/shared/utils'
+import { dateFullFormat } from '@qovery/shared/util-dates'
 import Button from '../buttons/button/button'
 import { DatePicker } from './date-picker'
 

@@ -1,6 +1,6 @@
 import { type ApplicationEntity } from '@qovery/shared/interfaces'
 import { Tooltip } from '@qovery/shared/ui'
-import { dateFullFormat, timeAgo } from '@qovery/shared/utils'
+import { dateFullFormat, timeAgo } from '@qovery/shared/util-dates'
 
 export interface AboutUpdateProps {
   application?: ApplicationEntity

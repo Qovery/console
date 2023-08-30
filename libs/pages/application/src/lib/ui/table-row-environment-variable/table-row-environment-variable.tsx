@@ -22,12 +22,8 @@ import {
   TableRow,
   Tooltip,
 } from '@qovery/shared/ui'
-import {
-  dateYearMonthDayHourMinuteSecond,
-  environmentVariableFile,
-  getEnvironmentVariableFileMountPath,
-  timeAgo,
-} from '@qovery/shared/utils'
+import { dateYearMonthDayHourMinuteSecond, timeAgo } from '@qovery/shared/util-dates'
+import { environmentVariableFile, getEnvironmentVariableFileMountPath } from '@qovery/shared/utils'
 
 export interface TableRowEnvironmentVariableProps {
   variable: EnvironmentVariableSecretOrPublic

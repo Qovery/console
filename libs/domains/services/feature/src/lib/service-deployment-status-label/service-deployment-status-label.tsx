@@ -1,5 +1,5 @@
 import { StatusLabel, type StatusLabelProps, Tooltip } from '@qovery/shared/ui'
-import { dateFullFormat, timeAgo } from '@qovery/shared/utils'
+import { dateFullFormat, timeAgo } from '@qovery/shared/util-dates'
 import { useDeploymentStatus } from '../hooks/use-deployment-status/use-deployment-status'
 
 export interface ServiceDeploymentStatusLabelProps extends Omit<StatusLabelProps, 'status'> {

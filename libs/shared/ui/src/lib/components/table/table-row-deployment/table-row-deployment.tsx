@@ -13,7 +13,8 @@ import {
   ENVIRONMENT_LOGS_URL,
   SERVICE_LOGS_URL,
 } from '@qovery/shared/routes'
-import { timeAgo, trimId, upperCaseFirstLetter } from '@qovery/shared/utils'
+import { timeAgo } from '@qovery/shared/util-dates'
+import { trimId, upperCaseFirstLetter } from '@qovery/shared/utils'
 import ButtonIcon, { ButtonIconStyle } from '../../buttons/button-icon/button-icon'
 import { ButtonSize } from '../../buttons/button/button'
 import Icon from '../../icon/icon'

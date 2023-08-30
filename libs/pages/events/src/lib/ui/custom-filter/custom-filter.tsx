@@ -7,7 +7,8 @@ import {
 } from 'qovery-typescript-axios'
 import { useSearchParams } from 'react-router-dom'
 import { Button, ButtonSize, ButtonStyle, DatePicker, Icon, IconAwesomeEnum, InputFilter } from '@qovery/shared/ui'
-import { dateYearMonthDayHourMinuteSecond, upperCaseFirstLetter } from '@qovery/shared/utils'
+import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
+import { upperCaseFirstLetter } from '@qovery/shared/utils'
 import { hasEnvironment } from '../../feature/page-general-feature/page-general-feature'
 
 export interface CustomFilterProps {

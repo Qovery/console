@@ -14,7 +14,7 @@ import {
   Tooltip,
   Truncate,
 } from '@qovery/shared/ui'
-import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/utils'
+import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
 
 export interface PageOrganizationApiProps {
   onAddToken: () => void

@@ -2,7 +2,7 @@ import { fireEvent, render, screen } from '__tests__/utils/setup-jest'
 import { addMonths } from 'date-fns'
 import { OrganizationEventTargetType } from 'qovery-typescript-axios'
 import { environmentFactoryMock, projectsFactoryMock } from '@qovery/shared/factories'
-import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/utils'
+import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
 import CustomFilter, { type CustomFilterProps } from './custom-filter'
 
 const mockProjects = projectsFactoryMock(2)

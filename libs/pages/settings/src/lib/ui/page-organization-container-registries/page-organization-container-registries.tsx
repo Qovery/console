@@ -15,7 +15,7 @@ import {
   Tooltip,
   Truncate,
 } from '@qovery/shared/ui'
-import { dateYearMonthDayHourMinuteSecond, timeAgo } from '@qovery/shared/utils'
+import { dateYearMonthDayHourMinuteSecond, timeAgo } from '@qovery/shared/util-dates'
 
 export interface PageOrganizationContainerRegistriesProps {
   onAddRegistry: () => void

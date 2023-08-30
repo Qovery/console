@@ -1,5 +1,5 @@
 import { render, screen } from '__tests__/utils/setup-jest'
-import { dateFullFormat } from '@qovery/shared/utils'
+import { dateFullFormat } from '@qovery/shared/util-dates'
 import RowPod, { type RowPodProps, formatVersion, getColorByPod } from './row-pod'
 
 jest.mock('date-fns-tz', () => ({

@@ -23,7 +23,8 @@ import {
   toast,
   useModalConfirmation,
 } from '@qovery/shared/ui'
-import { copyToClipboard, dateYearMonthDayHourMinuteSecond, timeAgo, upperCaseFirstLetter } from '@qovery/shared/utils'
+import { dateYearMonthDayHourMinuteSecond, timeAgo } from '@qovery/shared/util-dates'
+import { copyToClipboard, upperCaseFirstLetter } from '@qovery/shared/utils'
 
 export interface RowMemberProps {
   member: Member | InviteMember

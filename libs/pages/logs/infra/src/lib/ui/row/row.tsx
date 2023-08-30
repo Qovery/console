@@ -1,7 +1,7 @@
 import { type ClusterLogs, ClusterLogsStepEnum } from 'qovery-typescript-axios'
 import { LogsType } from '@qovery/shared/enums'
 import { CopyToClipboard } from '@qovery/shared/ui'
-import { dateDifference } from '@qovery/shared/utils'
+import { dateDifference } from '@qovery/shared/util-dates'
 
 export interface RowProps {
   data: ClusterLogs
