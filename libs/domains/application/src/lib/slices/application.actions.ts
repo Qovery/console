@@ -2,7 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit'
 import { ApplicationActionsApi, ContainerActionsApi, JobActionsApi, type JobForceEvent } from 'qovery-typescript-axios'
 import { type ServiceTypeEnum, isApplication, isContainer, isJob } from '@qovery/shared/enums'
 import { ToastEnum, toast } from '@qovery/shared/ui'
-import { fetchApplicationDeployments, fetchApplicationsStatus } from './applications.slice'
+import { fetchApplicationDeployments } from './applications.slice'
 
 const applicationActionApi = new ApplicationActionsApi()
 const containerActionApi = new ContainerActionsApi()
@@ -25,8 +25,6 @@ export const postApplicationActionsRedeploy = createAsyncThunk(
       }
 
       if (response.status === 202) {
-        // refetch status after update
-        await dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
         // refetch deployments after update
         if (data.withDeployments)
           await dispatch(
@@ -63,8 +61,6 @@ export const postApplicationActionsReboot = createAsyncThunk(
       }
 
       if (response.status === 202) {
-        // refetch status after update
-        await dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
         // refetch deployments after update
         if (data.withDeployments)
           await dispatch(
@@ -103,8 +99,6 @@ export const postApplicationActionsDeploy = createAsyncThunk(
       }
 
       if (response.status === 202) {
-        // refetch status after update
-        await dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
         // refetch deployments after update
         if (data.withDeployments)
           await dispatch(
@@ -146,8 +140,6 @@ export const postApplicationActionsDeployByCommitId = createAsyncThunk(
       }
 
       if (response.status === 202) {
-        // refetch status after update
-        await dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
         toast(ToastEnum.SUCCESS, 'Your application is deploying')
       }
 
@@ -179,8 +171,6 @@ export const postApplicationActionsDeployByTag = createAsyncThunk(
       }
 
       if (response.status === 202) {
-        // refetch status after update
-        await dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
         toast(ToastEnum.SUCCESS, `Your ${isJob(data.serviceType) ? 'job' : 'application'} is deploying`)
       }
 
@@ -209,8 +199,6 @@ export const postApplicationActionsStop = createAsyncThunk(
       }
 
       if (response.status === 202) {
-        // refetch status after update
-        await dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
         // refetch deployments after update
         if (data.withDeployments)
           await dispatch(

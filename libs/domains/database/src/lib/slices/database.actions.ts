@@ -1,18 +1,15 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import { DatabaseActionsApi } from 'qovery-typescript-axios'
 import { ToastEnum, toast } from '@qovery/shared/ui'
-import { fetchDatabasesStatus } from './databases.slice'
 
 const databaseActionApi = new DatabaseActionsApi()
 
 export const postDatabaseActionsRedeploy = createAsyncThunk(
   'databaseActions/redeploy',
-  async (data: { environmentId: string; databaseId: string }, { dispatch }) => {
+  async (data: { environmentId: string; databaseId: string }) => {
     try {
       const response = await databaseActionApi.redeployDatabase(data.databaseId)
       if (response.status === 202 || response.status === 200) {
-        // refetch status after update
-        await dispatch(fetchDatabasesStatus({ environmentId: data.environmentId }))
         // success message
         toast(ToastEnum.SUCCESS, 'Your database is redeploying')
       }
@@ -27,12 +24,10 @@ export const postDatabaseActionsRedeploy = createAsyncThunk(
 
 export const postDatabaseActionsReboot = createAsyncThunk(
   'databaseActions/reboot',
-  async (data: { environmentId: string; databaseId: string }, { dispatch }) => {
+  async (data: { environmentId: string; databaseId: string }) => {
     try {
       const response = await databaseActionApi.rebootDatabase(data.databaseId)
       if (response.status === 202 || response.status === 200) {
-        // refetch status after update
-        await dispatch(fetchDatabasesStatus({ environmentId: data.environmentId }))
         // success message
         toast(ToastEnum.SUCCESS, 'Your database is restarting')
       }
@@ -47,13 +42,9 @@ export const postDatabaseActionsReboot = createAsyncThunk(
 
 export const postDatabaseActionsDeploy = createAsyncThunk(
   'databaseActions/deploy',
-  async (data: { environmentId: string; databaseId: string }, { dispatch }) => {
+  async (data: { environmentId: string; databaseId: string }) => {
     try {
       const response = await databaseActionApi.deployDatabase(data.databaseId)
-      if (response.status === 202 || response.status === 200) {
-        // refetch status after update
-        await dispatch(fetchDatabasesStatus({ environmentId: data.environmentId }))
-      }
       // success message
       toast(ToastEnum.SUCCESS, 'Your database is deploying')
 
@@ -67,12 +58,10 @@ export const postDatabaseActionsDeploy = createAsyncThunk(
 
 export const postDatabaseActionsStop = createAsyncThunk(
   'databaseActions/stop',
-  async (data: { environmentId: string; databaseId: string }, { dispatch }) => {
+  async (data: { environmentId: string; databaseId: string }) => {
     try {
       const response = await databaseActionApi.stopDatabase(data.databaseId)
       if (response.status === 202 || response.status === 200) {
-        // refetch status after update
-        await dispatch(fetchDatabasesStatus({ environmentId: data.environmentId }))
         // success message
         toast(ToastEnum.SUCCESS, 'Your database is stopping')
       }

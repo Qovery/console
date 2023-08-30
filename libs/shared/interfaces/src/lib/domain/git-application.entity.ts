@@ -4,17 +4,11 @@ import {
   type DeploymentHistoryApplication,
   type Instance,
   type Link,
-  type Status,
 } from 'qovery-typescript-axios'
 import { type LoadingStatus } from '../types/loading-status.type'
 import { type AdvancedSettings } from './advanced-settings.interface'
-import { type ServiceRunningStatus } from './service-running-status.interface'
 
 export interface GitApplicationEntity extends Application {
-  /**
-   * @deprecated This should be not be used, use dedicated hooks instead `useDeploymentStatus`
-   */
-  status?: Status
   links?: {
     loadingStatus: LoadingStatus
     items?: Link[]
@@ -27,10 +21,6 @@ export interface GitApplicationEntity extends Application {
     loadingStatus: LoadingStatus
     items?: Commit[]
   }
-  /**
-   * @deprecated This should be not be used, use dedicated hooks instead `useRunningStatus`
-   */
-  running_status?: ServiceRunningStatus
   deployments?: {
     loadingStatus: LoadingStatus
     items: DeploymentHistoryApplication[]

@@ -16,7 +16,6 @@ import { fetchProjects } from '@qovery/domains/projects'
 import { type OrganizationEntity } from '@qovery/shared/interfaces'
 import { ORGANIZATION_URL } from '@qovery/shared/routes'
 import { StatusWebSocketListener } from '@qovery/shared/util-web-sockets'
-import { WebsocketContainer } from '@qovery/shared/websockets'
 import { type AppDispatch, type RootState } from '@qovery/state/store'
 import LayoutPage from '../../ui/layout-page/layout-page'
 import { setCurrentOrganizationIdOnStorage, setCurrentProjectIdOnStorage } from '../../utils/utils'
@@ -102,7 +101,6 @@ export function Layout(props: PropsWithChildren<LayoutProps>) {
               )
           )
         }
-        <WebsocketContainer />
         {children}
       </>
     </LayoutPage>

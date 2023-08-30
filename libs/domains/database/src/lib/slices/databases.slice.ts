@@ -21,21 +21,14 @@ import {
   DatabasesApi,
   type DeploymentHistoryDatabase,
   type ManagedDatabaseInstanceTypeResponseList,
-  type Status,
 } from 'qovery-typescript-axios'
-import {
-  type DatabaseEntity,
-  type DatabasesState,
-  type LoadingStatus,
-  type ServiceRunningStatus,
-} from '@qovery/shared/interfaces'
+import { type DatabaseEntity, type DatabasesState, type LoadingStatus } from '@qovery/shared/interfaces'
 import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
 import {
   addOneToManyRelation,
   getEntitiesByIds,
   refactoDatabasePayload,
   removeOneToManyRelation,
-  shortToLongId,
   sortByKey,
 } from '@qovery/shared/utils'
 import { type RootState } from '@qovery/state/store'
@@ -50,14 +43,10 @@ const databaseDeploymentsApi = new DatabaseDeploymentHistoryApi()
 const databaseMetricsApi = new DatabaseMetricsApi()
 const cloudProviderApi = new CloudProviderApi()
 
-export const fetchDatabases = createAsyncThunk<Database[], { environmentId: string; withoutStatus?: boolean }>(
+export const fetchDatabases = createAsyncThunk<Database[], { environmentId: string }>(
   'databases/fetch',
-  async (data, thunkApi) => {
+  async (data) => {
     const response = await databasesApi.listDatabase(data.environmentId)
-
-    if (!data.withoutStatus) {
-      thunkApi.dispatch(fetchDatabasesStatus({ environmentId: data.environmentId }))
-    }
 
     return response.data.results as Database[]
   }
@@ -69,18 +58,6 @@ export const createDatabase = createAsyncThunk<Database, { environmentId: string
     const response = await databasesApi.createDatabase(data.environmentId, data.databaseRequest)
 
     return response.data as DatabaseEntity
-  }
-)
-
-/**
- * @deprecated This should be migrated to the new `use-status-web-sockets` hook
- */
-export const fetchDatabasesStatus = createAsyncThunk<Status[], { environmentId: string }>(
-  'databases-status/fetch',
-  async (data) => {
-    const response = await databasesApi.getEnvironmentDatabaseStatus(data.environmentId)
-
-    return response.data.results as Status[]
   }
 )
 
@@ -131,12 +108,10 @@ export const fetchDatabaseMasterCredentials = createAsyncThunk<Credentials, { da
 
 export const deleteDatabaseAction = createAsyncThunk(
   'databaseActions/delete',
-  async (data: { environmentId: string; databaseId: string; force?: boolean }, { dispatch }) => {
+  async (data: { environmentId: string; databaseId: string; force?: boolean }) => {
     try {
       const response = await databaseMainCallsApi.deleteDatabase(data.databaseId)
       if (response.status === 204 || response.status === 200) {
-        // refetch status after update
-        await dispatch(fetchDatabasesStatus({ environmentId: data.environmentId }))
         // success message
         toast(ToastEnum.SUCCESS, 'Your database is being deleted')
       }
@@ -181,47 +156,6 @@ export const databasesSlice = createSlice({
   reducers: {
     add: databasesAdapter.addOne,
     remove: databasesAdapter.removeOne,
-    /**
-     * @deprecated This should be migrated to the new `use-status-web-sockets` hook
-     */
-    updateDatabasesRunningStatus: (
-      state,
-      action: PayloadAction<{ servicesRunningStatus: ServiceRunningStatus[]; listEnvironmentIdFromCluster: string[] }>
-    ) => {
-      // we have to force this reset change because of the way the socket works.
-      // You can have information about an database (eg. if it's stopping)
-      // But you can also lose the information about this database (eg. it it's stopped it won't appear in the socket result)
-      const resetChanges: Update<DatabaseEntity>[] = state.ids.map((id) => {
-        // as we can have this dispatch from different websocket, we don't want to reset
-        // and override all the database but only the ones associated to the cluster the websocket is
-        // coming from, more generally from all the environments that are contained in this cluster
-        const envId = state.entities[id]?.environment?.id
-
-        const runningStatusChanges =
-          envId && action.payload.listEnvironmentIdFromCluster.includes(envId)
-            ? undefined
-            : state.entities[id]?.running_status
-        return {
-          id,
-          changes: {
-            running_status: runningStatusChanges,
-          },
-        }
-      })
-      databasesAdapter.updateMany(state, resetChanges)
-
-      const changes: Update<DatabaseEntity>[] = action.payload.servicesRunningStatus.map((runningStatus) => {
-        const realId = shortToLongId(runningStatus.id, state.ids as string[])
-        return {
-          id: realId,
-          changes: {
-            running_status: runningStatus,
-          },
-        }
-      })
-
-      databasesAdapter.updateMany(state, changes)
-    },
   },
   extraReducers: (builder) => {
     builder
@@ -308,26 +242,6 @@ export const databasesSlice = createSlice({
       .addCase(editDatabase.rejected, (state: DatabasesState, action) => {
         state.loadingStatus = 'error'
         toastError(action.error)
-        state.error = action.error.message
-      })
-      // get environments status
-      .addCase(fetchDatabasesStatus.pending, (state: DatabasesState) => {
-        state.statusLoadingStatus = 'loading'
-      })
-      .addCase(fetchDatabasesStatus.fulfilled, (state: DatabasesState, action: PayloadAction<Status[]>) => {
-        const update: { id: string | undefined; changes: { status: Status } }[] = action.payload.map(
-          (status: Status) => ({
-            id: status.id,
-            changes: {
-              status: status,
-            },
-          })
-        )
-        databasesAdapter.updateMany(state, update as Update<Database>[])
-        state.statusLoadingStatus = 'loaded'
-      })
-      .addCase(fetchDatabasesStatus.rejected, (state: DatabasesState, action) => {
-        state.statusLoadingStatus = 'error'
         state.error = action.error.message
       })
       .addCase(fetchDatabaseMetrics.pending, (state: DatabasesState, action) => {
