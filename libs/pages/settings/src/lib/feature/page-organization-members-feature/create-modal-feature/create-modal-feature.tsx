@@ -21,7 +21,7 @@ export function CreateModalFeature(props: CreateModalFeatureProps) {
     mode: 'onChange',
     defaultValues: {
       // default value with admin id
-      role_id: availableRoles[0].id,
+      role_id: availableRoles[0]?.id,
     },
   })
 
