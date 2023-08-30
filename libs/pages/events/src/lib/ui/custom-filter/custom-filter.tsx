@@ -9,7 +9,7 @@ import { useSearchParams } from 'react-router-dom'
 import { Button, ButtonSize, ButtonStyle, DatePicker, Icon, IconAwesomeEnum, InputFilter } from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
 import { upperCaseFirstLetter } from '@qovery/shared/utils'
-import { hasEnvironment } from '../../feature/page-general-feature/page-general-feature'
+import { hasEnvironment, hasProject } from '../../feature/page-general-feature/page-general-feature'
 
 export interface CustomFilterProps {
   onChangeTimestamp: (startDate: Date, endDate: Date) => void
@@ -110,7 +110,7 @@ export function CustomFilter({
             onChange={onChangeType}
             defaultValue={targetType as string}
           />
-          {projects && hasEnvironment(targetType as string) && (
+          {projects && hasProject(targetType as string) && (
             <InputFilter
               name="Project"
               nameKey="projectId"
@@ -134,7 +134,7 @@ export function CustomFilter({
               defaultValue={environmentId as string}
             />
           )}
-          {displayEventTargets && eventsTargetsData && (
+          {eventsTargetsData && displayEventTargets && (
             <InputFilter
               name="Target"
               nameKey="targetId"

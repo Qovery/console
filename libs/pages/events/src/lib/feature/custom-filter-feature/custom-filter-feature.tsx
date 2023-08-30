@@ -1,3 +1,4 @@
+import { OrganizationEventTargetType } from 'qovery-typescript-axios'
 import { memo, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useLocation, useParams, useSearchParams } from 'react-router-dom'
@@ -26,8 +27,12 @@ export function CustomFilterFeature({ handleClearFilter }: CustomFilterFeaturePr
   const projects = useSelector((state: RootState) => selectProjectsEntitiesByOrgId(state, organizationId))
   const { data: environments } = useFetchEnvironments(projectId || '')
 
+  // NOTE: - ENVIRONMENT: we don't display target input if no project selected
   const displayEventTargets: boolean = Boolean(
-    targetType && (!hasEnvironment(targetType) || (projectId && environmentId))
+    targetType &&
+      (targetType === OrganizationEventTargetType.ENVIRONMENT
+        ? !!projectId
+        : !hasEnvironment(targetType) || (projectId && environmentId))
   )
 
   const { data: eventsTargetsData, isLoading: isLoadingEventsTargetsData } = useFetchEventTargets(

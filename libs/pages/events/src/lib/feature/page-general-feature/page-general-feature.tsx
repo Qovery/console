@@ -47,6 +47,9 @@ export const hasEnvironment = (targetType?: string) =>
   targetType === OrganizationEventTargetType.DATABASE ||
   targetType === OrganizationEventTargetType.JOB
 
+export const hasProject = (targetType?: string) =>
+  targetType === OrganizationEventTargetType.ENVIRONMENT || hasEnvironment(targetType)
+
 export function PageGeneralFeature() {
   useDocumentTitle('Audit Logs - Qovery')
   const { organizationId = '' } = useParams()
