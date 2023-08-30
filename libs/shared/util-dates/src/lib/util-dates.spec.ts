@@ -13,6 +13,11 @@ describe('util-dates', () => {
   const now = new Date('2023-08-30T12:00:00Z')
   const pastDate = new Date('2023-08-30T11:55:00Z')
 
+  beforeAll(() => {
+    jest.useFakeTimers()
+    jest.setSystemTime(now)
+  })
+
   it('dateDifferenceMinutes', () => {
     const result = dateDifferenceMinutes(now, pastDate)
     expect(result).toBe(5)
