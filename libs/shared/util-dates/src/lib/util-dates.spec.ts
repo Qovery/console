@@ -34,8 +34,8 @@ describe('util-dates', () => {
   })
 
   it('dateYearMonthDayHourMinuteSecond', () => {
-    const result = dateYearMonthDayHourMinuteSecond(now)
-    expect(result).toBe('2023-08-30 14:00:00')
+    const result = dateYearMonthDayHourMinuteSecond(now, false)
+    expect(result).toBe('2023-08-30')
   })
 
   it('dateFullFormat', () => {
