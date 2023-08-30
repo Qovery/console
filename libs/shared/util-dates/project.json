@@ -4,16 +4,6 @@
   "sourceRoot": "libs/shared/util-dates/src",
   "projectType": "library",
   "targets": {
-    "build": {
-      "executor": "@nx/js:tsc",
-      "outputs": ["{options.outputPath}"],
-      "options": {
-        "outputPath": "dist/libs/shared/util-dates",
-        "main": "libs/shared/util-dates/src/index.ts",
-        "tsConfig": "libs/shared/util-dates/tsconfig.lib.json",
-        "assets": ["libs/shared/util-dates/*.md"]
-      }
-    },
     "lint": {
       "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
@@ -36,5 +26,5 @@
       }
     }
   },
-  "tags": ["type:util"]
+  "tags": []
 }

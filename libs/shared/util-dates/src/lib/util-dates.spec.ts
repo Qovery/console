@@ -1,5 +1,5 @@
 import * as formatModule from 'date-fns-tz'
-import { dateFullFormat } from './util-datas-dates'
+import { dateFullFormat } from './util-dates'
 
 describe('date', () => {
   it('dateFullFormat', () => {
