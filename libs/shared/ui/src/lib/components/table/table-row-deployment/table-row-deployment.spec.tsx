@@ -67,7 +67,7 @@ describe('TableRowDeployment', () => {
     const btnLogs = screen.getByTestId('btn-logs')
     await userEvent.click(btnLogs)
 
-    expect(mockNavigate).toHaveBeenCalledWith('/organization/0/project/1/environment/2/logs/0/live-logs')
+    expect(mockNavigate).toHaveBeenCalledWith('/organization/0/project/1/environment/2/logs/3/live-logs')
   })
 
   it('should have link to deployment logs with version', async () => {
