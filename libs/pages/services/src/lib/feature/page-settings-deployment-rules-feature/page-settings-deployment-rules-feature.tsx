@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { useEditEnvironmentDeploymentRule, useFetchEnvironmentDeploymentRule } from '@qovery/domains/environment'
-import { dateToHours } from '@qovery/shared/utils'
+import { dateToHours } from '@qovery/shared/util-dates'
 import PageSettingsDeployment from '../../ui/page-settings-deployment-rules/page-settings-deployment-rules'
 
 export const handleSubmit = (data: FieldValues, environmentDeploymentRules?: EnvironmentDeploymentRule) => {

@@ -1,5 +1,5 @@
 import { type ApplicationEntity } from '@qovery/shared/interfaces'
-import { timeAgo } from '@qovery/shared/utils'
+import { timeAgo } from '@qovery/shared/util-dates'
 
 export interface AboutContentContainerProps {
   application: ApplicationEntity

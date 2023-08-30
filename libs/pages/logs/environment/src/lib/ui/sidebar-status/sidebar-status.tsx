@@ -1,6 +1,6 @@
 import { type EnvironmentStatus } from 'qovery-typescript-axios'
 import { Icon, StatusChip, Tooltip } from '@qovery/shared/ui'
-import { dateFullFormat } from '@qovery/shared/utils'
+import { dateFullFormat } from '@qovery/shared/util-dates'
 
 export interface SidebarStatusProps {
   environmentStatus?: EnvironmentStatus

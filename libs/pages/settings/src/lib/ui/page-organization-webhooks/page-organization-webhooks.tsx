@@ -14,7 +14,8 @@ import {
   Tooltip,
   Truncate,
 } from '@qovery/shared/ui'
-import { timeAgo, upperCaseFirstLetter } from '@qovery/shared/utils'
+import { timeAgo } from '@qovery/shared/util-dates'
+import { upperCaseFirstLetter } from '@qovery/shared/utils'
 
 export interface PageOrganizationWebhooksProps {
   webhookLoading: boolean

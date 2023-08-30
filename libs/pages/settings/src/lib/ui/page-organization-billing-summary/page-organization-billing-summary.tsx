@@ -3,7 +3,8 @@ import { type CardImages } from 'react-payment-inputs/images'
 import { type CreditCard, type OrganizationEntity } from '@qovery/shared/interfaces'
 import { CLUSTERS_URL, SETTINGS_BILLING_URL, SETTINGS_URL } from '@qovery/shared/routes'
 import { Button, ButtonStyle, HelpSection, Link, Skeleton, imagesCreditCart } from '@qovery/shared/ui'
-import { costToHuman, dateToFormat, upperCaseFirstLetter } from '@qovery/shared/utils'
+import { dateToFormat } from '@qovery/shared/util-dates'
+import { costToHuman, upperCaseFirstLetter } from '@qovery/shared/utils'
 import InvoicesListFeature from '../../feature/page-organization-billing-summary-feature/invoices-list-feature/invoices-list-feature'
 
 export interface PageOrganizationBillingSummaryProps {

@@ -3,7 +3,7 @@ import { useContext } from 'react'
 import { UpdateTimeContext } from '@qovery/shared/console-shared'
 import { LogsType } from '@qovery/shared/enums'
 import { CopyToClipboard, convertToAnsi } from '@qovery/shared/ui'
-import { dateFullFormat } from '@qovery/shared/utils'
+import { dateFullFormat } from '@qovery/shared/util-dates'
 
 export interface RowDeploymentProps {
   data: EnvironmentLogs

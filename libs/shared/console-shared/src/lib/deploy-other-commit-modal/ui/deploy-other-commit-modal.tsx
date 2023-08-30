@@ -14,7 +14,7 @@ import {
   Truncate,
   useModal,
 } from '@qovery/shared/ui'
-import { dateToFormat, timeAgo } from '@qovery/shared/utils'
+import { dateToFormat, timeAgo } from '@qovery/shared/util-dates'
 
 export interface DeployOtherCommitModalProps {
   commitsByDay: Record<string, Commit[]>

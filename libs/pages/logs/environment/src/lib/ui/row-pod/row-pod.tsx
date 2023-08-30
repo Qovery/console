@@ -10,7 +10,7 @@ import {
   Tooltip,
   convertToAnsi,
 } from '@qovery/shared/ui'
-import { dateFullFormat } from '@qovery/shared/utils'
+import { dateFullFormat } from '@qovery/shared/util-dates'
 
 const COLORS = [
   '#7EFFF5',

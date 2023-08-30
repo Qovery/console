@@ -1,6 +1,6 @@
 import { getByTestId, getByText, render } from '__tests__/utils/setup-jest'
 import { InvoiceStatusEnum } from 'qovery-typescript-axios'
-import { dateToFormat } from '@qovery/shared/utils'
+import { dateToFormat } from '@qovery/shared/util-dates'
 import { TableRowInvoice, type TableRowInvoiceProps } from './table-row-invoice'
 
 let props: TableRowInvoiceProps
