@@ -72,7 +72,7 @@ export const ROUTER: RouterProps[] = [
     path: ORGANIZATION_URL(),
     component: <RedirectOverview />,
     protected: true,
-    layout: false,
+    layout: true,
   },
   {
     path: `${AUDIT_LOGS_URL()}/*`,

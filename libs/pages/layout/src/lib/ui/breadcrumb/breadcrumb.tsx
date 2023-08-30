@@ -202,7 +202,7 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
   return (
     <div className="flex justify-between w-full">
       <div className="flex h-full items-center">
-        {organizationId && (
+        {organizationId && (projectId || clusterId) && (
           <Tooltip content={currentOrganization?.name || ''}>
             <div className="mr-2">
               {currentOrganization?.logo_url ? (
