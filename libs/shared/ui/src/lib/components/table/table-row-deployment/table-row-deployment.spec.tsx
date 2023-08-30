@@ -9,7 +9,7 @@ const mockNavigate = jest.fn()
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
-  useParams: () => ({ organizationId: '0', projectId: '1', environmentId: '2' }),
+  useParams: () => ({ organizationId: '0', projectId: '1', environmentId: '2', applicationId: '3', databaseId: '4' }),
   useNavigate: () => mockNavigate,
 }))
 
@@ -67,7 +67,7 @@ describe('TableRowDeployment', () => {
     const btnLogs = screen.getByTestId('btn-logs')
     await userEvent.click(btnLogs)
 
-    expect(mockNavigate).toHaveBeenCalledWith('/organization/0/project/1/environment/2/logs/0/live-logs')
+    expect(mockNavigate).toHaveBeenCalledWith('/organization/0/project/1/environment/2/logs/3/live-logs')
   })
 
   it('should have link to deployment logs with version', async () => {
@@ -88,7 +88,7 @@ describe('TableRowDeployment', () => {
     await userEvent.click(btnLogs)
 
     expect(mockNavigate).toHaveBeenCalledWith(
-      '/organization/0/project/1/environment/2/logs/5/deployment-logs/execution-id'
+      '/organization/0/project/1/environment/2/logs/3/deployment-logs/execution-id'
     )
   })
 })

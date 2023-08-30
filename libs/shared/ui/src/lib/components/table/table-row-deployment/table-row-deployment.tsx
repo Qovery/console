@@ -52,7 +52,7 @@ export function TableRowDeployment({
 }: TableRowDeploymentProps) {
   const [copy, setCopy] = useState(false)
   const [hoverId, setHoverId] = useState(false)
-  const { organizationId, projectId, environmentId } = useParams()
+  const { organizationId, projectId, environmentId, applicationId, databaseId } = useParams()
   const navigate = useNavigate()
 
   const pathEnvironmentLogs = ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId)
@@ -67,6 +67,8 @@ export function TableRowDeployment({
       setHoverId(false)
     }, 2000)
   }
+
+  const serviceId = applicationId || databaseId
 
   return (
     <TableRow
@@ -156,9 +158,9 @@ export function TableRowDeployment({
                 onClick={() =>
                   navigate(
                     fromService
-                      ? pathEnvironmentLogs + SERVICE_LOGS_URL(data?.id)
+                      ? pathEnvironmentLogs + SERVICE_LOGS_URL(serviceId)
                       : pathEnvironmentLogs +
-                          DEPLOYMENT_LOGS_VERSION_URL(data?.id, (data as DeploymentService).execution_id)
+                          DEPLOYMENT_LOGS_VERSION_URL(serviceId, (data as DeploymentService).execution_id)
                   )
                 }
                 className="!w-7 !h-7 !border-r btn-icon-action__element"
