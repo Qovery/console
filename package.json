@@ -41,6 +41,7 @@
     "logrocket": "^3.0.1",
     "posthog-js": "^1.24.0",
     "qovery-typescript-axios": "^1.1.185",
+    "qovery-ws-typescript-axios": "^0.1.7",
     "react": "18.2.0",
     "react-beautiful-dnd": "^13.1.0",
     "react-country-flag": "^3.0.2",
