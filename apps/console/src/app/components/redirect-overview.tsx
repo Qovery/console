@@ -1,11 +1,11 @@
 import { type Project } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Navigate, useParams } from 'react-router-dom'
+import { Navigate, useNavigate, useParams } from 'react-router-dom'
 import { fetchOrganization, selectAllOrganization } from '@qovery/domains/organization'
 import { fetchProjects } from '@qovery/domains/projects'
-import { OVERVIEW_URL, SETTINGS_GENERAL_URL, SETTINGS_URL } from '@qovery/shared/routes'
-import { LoadingScreen, ToastEnum, toast } from '@qovery/shared/ui'
+import { ENVIRONMENTS_GENERAL_URL, ENVIRONMENTS_URL, SETTINGS_GENERAL_URL, SETTINGS_URL } from '@qovery/shared/routes'
+import { LoaderSpinner, ToastEnum, toast } from '@qovery/shared/ui'
 import { type AppDispatch } from '@qovery/state/store'
 
 export function RedirectOverview() {
@@ -13,6 +13,7 @@ export function RedirectOverview() {
   const dispatch = useDispatch<AppDispatch>()
   const [noProject, setNoProject] = useState(false)
   const organizations = useSelector(selectAllOrganization)
+  const navigate = useNavigate()
 
   useEffect(() => {
     async function fetchCurrentOrganizationAndProjects() {
@@ -21,16 +22,21 @@ export function RedirectOverview() {
       }
       const projects: Project[] = await dispatch(fetchProjects({ organizationId })).unwrap()
       if (projects.length > 0) {
-        window.location.href = OVERVIEW_URL(organizationId, projects[0].id)
+        const filterByAlphabeticOrder = projects.sort((a, b) => a.name.localeCompare(b.name))
+        navigate(ENVIRONMENTS_URL(organizationId, filterByAlphabeticOrder[0]?.id) + ENVIRONMENTS_GENERAL_URL)
       } else {
         setNoProject(true)
       }
     }
     fetchCurrentOrganizationAndProjects()
-  }, [organizationId, dispatch, organizations])
+  }, [organizationId, dispatch, organizations, navigate])
 
   if (!noProject) {
-    return <LoadingScreen />
+    return (
+      <div className="bg-neutral-50 flex items-center justify-center rounded-t min-h-page-container">
+        <LoaderSpinner />
+      </div>
+    )
   } else {
     toast(
       ToastEnum.ERROR,
