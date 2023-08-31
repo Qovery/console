@@ -7,6 +7,7 @@ import {
   ORGANIZATION_AUDIT_LOGS_URL,
   ORGANIZATION_PROJECT_URL,
   ORGANIZATION_URL,
+  OVERVIEW_URL,
   SETTINGS_URL,
 } from '@qovery/shared/routes'
 import {
@@ -27,7 +28,7 @@ export interface NavigationProps {
 }
 
 export function Navigation({ defaultOrganizationId }: NavigationProps) {
-  const { organizationId = defaultOrganizationId, clusterId = '' } = useParams()
+  const { organizationId = defaultOrganizationId, clusterId = '', projectId } = useParams()
   const { pathname } = useLocation()
 
   const matchLogInfraRoute = pathname.includes(INFRA_LOGS_URL(organizationId, clusterId))
@@ -97,7 +98,7 @@ export function Navigation({ defaultOrganizationId }: NavigationProps) {
                 icon={IconAwesomeEnum.LAYER_GROUP}
                 style={ButtonIconStyle.ALT}
                 size={ButtonSize.XLARGE}
-                link={ORGANIZATION_URL(organizationId)}
+                link={projectId ? OVERVIEW_URL(organizationId, projectId) : ORGANIZATION_URL(organizationId)}
               />
             </div>
           </Tooltip>
