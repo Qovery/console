@@ -12,7 +12,7 @@ import {
   SERVICES_URL,
 } from '@qovery/shared/routes'
 import { FunnelFlowBody, FunnelFlowHelpCard, useModal } from '@qovery/shared/ui'
-import { useDocumentTitle } from '@qovery/shared/utils'
+import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { useApplicationContainerCreateContext } from '../page-application-create-feature'
 import CrudModalFeature from './crud-modal-feature/crud-modal-feature'
 

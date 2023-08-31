@@ -6,7 +6,7 @@ import {
   DATABASE_SETTINGS_URL,
   DATABASE_URL,
 } from '@qovery/shared/routes'
-import { useDocumentTitle } from '@qovery/shared/utils'
+import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { ROUTER_DATABASE_SETTINGS } from '../../router/router'
 import PageSettings from '../../ui/page-settings/page-settings'
 

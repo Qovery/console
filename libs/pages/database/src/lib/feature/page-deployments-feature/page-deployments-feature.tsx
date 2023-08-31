@@ -5,7 +5,7 @@ import { databasesLoadingStatus, fetchDatabaseDeployments, getDatabasesState } f
 import { databaseDeploymentsFactoryMock } from '@qovery/shared/factories'
 import { type DatabaseEntity } from '@qovery/shared/interfaces'
 import { type BaseLink } from '@qovery/shared/ui'
-import { useDocumentTitle } from '@qovery/shared/utils'
+import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { type AppDispatch, type RootState } from '@qovery/state/store'
 import { PageDeployments } from '../../ui/page-deployments/page-deployments'
 

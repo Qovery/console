@@ -9,7 +9,7 @@ import {
   SERVICES_URL,
 } from '@qovery/shared/routes'
 import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
-import { useDocumentTitle } from '@qovery/shared/utils'
+import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import StepResources from '../../../ui/page-database-create/step-resources/step-resources'
 import { type ResourcesData } from '../database-creation-flow.interface'
 import { useDatabaseCreateContext } from '../page-database-create-feature'

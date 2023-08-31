@@ -23,7 +23,7 @@ import {
   CLUSTERS_URL,
 } from '@qovery/shared/routes'
 import { FunnelFlowBody } from '@qovery/shared/ui'
-import { useDocumentTitle } from '@qovery/shared/utils'
+import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { type AppDispatch, type RootState } from '@qovery/state/store'
 import StepSummary from '../../../ui/page-clusters-create/step-summary/step-summary'
 import { steps, useClusterContainerCreateContext } from '../page-clusters-create-feature'

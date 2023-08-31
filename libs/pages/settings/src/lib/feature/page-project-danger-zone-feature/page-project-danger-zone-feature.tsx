@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { deleteProject, selectProjectById } from '@qovery/domains/projects'
 import { SETTINGS_URL } from '@qovery/shared/routes'
-import { useDocumentTitle } from '@qovery/shared/utils'
+import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { type AppDispatch, type RootState } from '@qovery/state/store'
 import PageProjectDangerZone from '../../ui/page-project-danger-zone/page-project-danger-zone'
 

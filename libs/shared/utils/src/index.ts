@@ -1,9 +1,5 @@
 // http
 export * from './lib/http/interceptors/auth-interceptor/auth-interceptor'
-// hooks
-export * from './lib/hooks/use-document-title/use-document-title'
-export * from './lib/hooks/use-detect-click-outside/use-detect-click-outside'
-export * from './lib/hooks/use-running-status-websocket/use-running-status-websocket'
 // tools
 export * from './lib/tools/uppercase-first-letter'
 export * from './lib/tools/status-actions-available'

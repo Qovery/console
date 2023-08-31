@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { useEditEnvironment, useFetchEnvironment } from '@qovery/domains/environment'
 import { fetchClusters, selectClustersEntitiesByOrganizationId } from '@qovery/domains/organization'
-import { useDocumentTitle } from '@qovery/shared/utils'
+import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { type AppDispatch, type RootState } from '@qovery/state/store'
 import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-general'
 

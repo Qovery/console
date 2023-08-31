@@ -2,7 +2,7 @@ import { type OrganizationWebhookResponse } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
 import { useDeleteWebhook, useEditWebhook, useFetchWebhooks } from '@qovery/domains/organization'
 import { useModal, useModalConfirmation } from '@qovery/shared/ui'
-import { useDocumentTitle } from '@qovery/shared/utils'
+import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import PageOrganizationWebhooks from '../../ui/page-organization-webhooks/page-organization-webhooks'
 import WebhookCrudModalFeature from './webhook-crud-modal-feature/webhook-crud-modal-feature'
 

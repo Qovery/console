@@ -6589,6 +6589,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@uidotdev/usehooks@npm:^2.2.0":
+  version: 2.2.0
+  resolution: "@uidotdev/usehooks@npm:2.2.0"
+  peerDependencies:
+    react: ">=18.0.0"
+    react-dom: ">=18.0.0"
+  checksum: cd5946d77622abe23bc86d8782f9af0a52ff7139f31964e1db3d70e1a78114fd3835dd6cc092100b71164ce49e08466238b3aa674027cbbcb5a40fcc5e61ec8f
+  languageName: node
+  linkType: hard
+
 "@vue/compiler-core@npm:3.2.47":
   version: 3.2.47
   resolution: "@vue/compiler-core@npm:3.2.47"
@@ -17798,6 +17808,7 @@ __metadata:
     "@types/redux-mock-store": ^1.0.3
     "@typescript-eslint/eslint-plugin": ^6.2.0
     "@typescript-eslint/parser": ^6.2.0
+    "@uidotdev/usehooks": ^2.2.0
     ansi-to-react: ^6.1.6
     autoprefixer: 10.4.13
     axios: ^0.27.2

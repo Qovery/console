@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useDocumentTitle } from '@qovery/shared/utils'
+import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import FormCompany from '../form-company/form-company'
 import FormUser from '../form-user/form-user'
 

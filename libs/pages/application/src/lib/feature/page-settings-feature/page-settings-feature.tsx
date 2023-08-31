@@ -20,7 +20,7 @@ import {
   APPLICATION_URL,
 } from '@qovery/shared/routes'
 import { IconAwesomeEnum } from '@qovery/shared/ui'
-import { useDocumentTitle } from '@qovery/shared/utils'
+import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { type RootState } from '@qovery/state/store'
 import { ROUTER_APPLICATION_SETTINGS } from '../../router/router'
 import PageSettings from '../../ui/page-settings/page-settings'

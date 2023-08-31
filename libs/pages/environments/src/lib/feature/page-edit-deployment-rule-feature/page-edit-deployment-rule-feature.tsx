@@ -7,7 +7,7 @@ import { fetchClusters, selectClustersEntitiesByOrganizationId } from '@qovery/d
 import { fetchDeploymentRule, selectDeploymentRuleById, updateDeploymentRule } from '@qovery/domains/projects'
 import { ENVIRONMENTS_DEPLOYMENT_RULES_URL, ENVIRONMENTS_URL } from '@qovery/shared/routes'
 import { dateToHours } from '@qovery/shared/util-dates'
-import { useDocumentTitle } from '@qovery/shared/utils'
+import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { type AppDispatch, type RootState } from '@qovery/state/store'
 import PageCreateEditDeploymentRule from '../../ui/page-create-edit-deployment-rule/page-create-edit-deployment-rule'
 

@@ -14,7 +14,7 @@ import {
   selectOrganizationById,
 } from '@qovery/domains/organization'
 import { useModal } from '@qovery/shared/ui'
-import { useDocumentTitle } from '@qovery/shared/utils'
+import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { type AppDispatch, type RootState } from '@qovery/state/store'
 import PageOrganizationBillingSummary from '../../ui/page-organization-billing-summary/page-organization-billing-summary'
 import PromoCodeModalFeature from './promo-code-modal-feature/promo-code-modal-feature'

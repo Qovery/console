@@ -3,7 +3,7 @@ import { useAuth } from '@qovery/shared/auth'
 import { type IconEnum } from '@qovery/shared/enums'
 import { useEditUserAccount, useUserAccount } from '@qovery/shared/iam/feature'
 import { Icon } from '@qovery/shared/ui'
-import { useDocumentTitle } from '@qovery/shared/utils'
+import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import PageUserGeneral from '../../ui/page-user-general/page-user-general'
 
 export function PageUserGeneralFeature() {

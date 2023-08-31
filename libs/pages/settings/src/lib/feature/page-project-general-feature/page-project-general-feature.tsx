@@ -3,7 +3,7 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { editProject, selectProjectById } from '@qovery/domains/projects'
-import { useDocumentTitle } from '@qovery/shared/utils'
+import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { type AppDispatch, type RootState } from '@qovery/state/store'
 import PageProjectGeneral from '../../ui/page-project-general/page-project-general'
 

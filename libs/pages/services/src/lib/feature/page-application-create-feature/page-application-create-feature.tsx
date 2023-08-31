@@ -7,7 +7,7 @@ import {
 } from '@qovery/shared/interfaces'
 import { SERVICES_APPLICATION_CREATION_URL, SERVICES_CREATION_GENERAL_URL, SERVICES_URL } from '@qovery/shared/routes'
 import { FunnelFlow } from '@qovery/shared/ui'
-import { useDocumentTitle } from '@qovery/shared/utils'
+import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { ROUTER_SERVICE_CREATION } from '../../router/router'
 
 export interface ApplicationContainerCreateContextInterface {

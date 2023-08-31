@@ -6,7 +6,7 @@ import {
   SERVICES_URL,
 } from '@qovery/shared/routes'
 import { FunnelFlow } from '@qovery/shared/ui'
-import { useDocumentTitle } from '@qovery/shared/utils'
+import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { ROUTER_SERVICE_DATABASE_CREATION } from '../../router/router'
 import { type GeneralData, type ResourcesData } from './database-creation-flow.interface'
 
