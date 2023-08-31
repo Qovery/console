@@ -35,7 +35,7 @@ export function PodsMetrics({ environmentId, serviceId }: PodsMetricsProps) {
       </Table.Header>
       <Table.Body>
         {data?.length ? (
-          data?.map((podMetrics) => (
+          data.map((podMetrics) => (
             <Table.Row key={podMetrics.pod_name}>
               <Table.Cell>{podMetrics.pod_name}</Table.Cell>
               <Table.Cell>{podMetrics.memory.current_percent}%</Table.Cell>
