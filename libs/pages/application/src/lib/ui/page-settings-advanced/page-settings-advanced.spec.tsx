@@ -49,7 +49,7 @@ describe('PageSettingsAdvanced', () => {
     const { getAllByTestId } = render(
       wrapWithReactHookForm(<PageSettingsAdvanced {...props} />, { defaultValues: defaultValues })
     )
-    expect(getAllByTestId('input').length).toBe(4)
+    expect(getAllByTestId('input').length).toBe(5)
   })
 
   it('should show the sticky action bar if form dirty', async () => {
