@@ -68,7 +68,7 @@ export function PageSettingsAdvanced(props: PageSettingsAdvancedProps) {
                   <div>{key}</div>
                 </Tooltip>
               ),
-              className: 'font-medium vis',
+              className: 'font-medium',
             },
             {
               content: () => {

@@ -3,20 +3,20 @@ import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form
 import PageSettingsAdvanced, { type PageSettingsAdvancedProps } from './page-settings-advanced'
 
 const keys = [
-  'liveness_probe.http_get.path',
+  'load_balancer.size',
   'cronjob.success_jobs_history_limit',
   'test_empty',
   'job.delete_ttl_seconds_after_finished',
 ]
 const defaultValues: { [key: string]: string | number | null } = {
-  'liveness_probe.http_get.path': '/',
+  'load_balancer.size': '/',
   'cronjob.success_jobs_history_limit': 3,
   test_empty: '',
   'job.delete_ttl_seconds_after_finished': 3,
 }
 
 const defaultAdvancedSetting: { [key: string]: string | number | null } = {
-  'liveness_probe.http_get.path': '/',
+  'load_balancer.size': '/',
   'cronjob.success_jobs_history_limit': 1,
   test_empty: '',
   'job.delete_ttl_seconds_after_finished': null,
@@ -52,7 +52,7 @@ describe('PageSettingsAdvanced', () => {
     )
 
     await act(() => {
-      const input = getByLabelText('liveness_probe.http_get.path')
+      const input = getByLabelText('load_balancer.size')
       fireEvent.input(input, { target: { value: 'hello' } })
     })
 
@@ -65,7 +65,7 @@ describe('PageSettingsAdvanced', () => {
     )
 
     await act(() => {
-      const input = getByLabelText('liveness_probe.http_get.path')
+      const input = getByLabelText('load_balancer.size')
       fireEvent.input(input, { target: { value: '79' } })
       fireEvent.input(input, { target: { value: '' } })
     })
@@ -91,7 +91,7 @@ describe('PageSettingsAdvanced', () => {
     props.advancedSettings = {
       'build.timeout_max_sec': 60,
       'deployment.custom_domain_check_enabled': true,
-      'liveness_probe.http_get.path': '/',
+      'load_balancer.size': '/',
     }
     const { getByTestId, getAllByTestId } = render(
       wrapWithReactHookForm(<PageSettingsAdvanced {...props} />, { defaultValues: defaultValues })
@@ -108,6 +108,6 @@ describe('PageSettingsAdvanced', () => {
       }
     })
 
-    expect(count).toBe(2)
+    expect(count).toBe(1)
   })
 })

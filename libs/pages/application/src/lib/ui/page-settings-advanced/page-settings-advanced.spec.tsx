@@ -3,23 +3,29 @@ import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form
 import PageSettingsAdvanced, { type PageSettingsAdvancedProps } from './page-settings-advanced'
 
 const keys = [
-  'liveness_probe.http_get.path',
+  'deployment.affinity.node.required',
   'cronjob.success_jobs_history_limit',
   'test_empty',
   'job.delete_ttl_seconds_after_finished',
+  'deployment.custom_domain_check_enabled',
 ]
-const defaultValues: { [key: string]: string | number | null } = {
-  'liveness_probe.http_get.path': '/',
+
+type AdvancedSettingsType = string | number | object | boolean | null
+
+const defaultValues: { [key: string]: AdvancedSettingsType } = {
+  'deployment.affinity.node.required': {},
   'cronjob.success_jobs_history_limit': 3,
+  'deployment.custom_domain_check_enabled': true,
   test_empty: '',
   'job.delete_ttl_seconds_after_finished': 3,
 }
 
-const defaultAdvancedSetting: { [key: string]: string | number | null } = {
-  'liveness_probe.http_get.path': '/',
+const defaultAdvancedSetting: { [key: string]: AdvancedSettingsType } = {
+  'deployment.affinity.node.required': { key: 'value' },
   'cronjob.success_jobs_history_limit': 1,
+  'deployment.custom_domain_check_enabled': true,
   test_empty: '',
-  'job.delete_ttl_seconds_after_finished': null,
+  'job.delete_ttl_seconds_after_finished': 3,
 }
 
 const props: PageSettingsAdvancedProps = {
@@ -52,7 +58,7 @@ describe('PageSettingsAdvanced', () => {
     )
 
     await act(() => {
-      const input = getByLabelText('liveness_probe.http_get.path')
+      const input = getByLabelText('deployment.affinity.node.required')
       fireEvent.input(input, { target: { value: 'hello' } })
     })
 
@@ -65,7 +71,7 @@ describe('PageSettingsAdvanced', () => {
     )
 
     await act(() => {
-      const input = getByLabelText('liveness_probe.http_get.path')
+      const input = getByLabelText('deployment.affinity.node.required')
       fireEvent.input(input, { target: { value: '79' } })
       fireEvent.input(input, { target: { value: '' } })
     })
@@ -89,9 +95,9 @@ describe('PageSettingsAdvanced', () => {
 
   it('should display only overridden settings', async () => {
     props.advancedSettings = {
-      'build.timeout_max_sec': 60,
+      'cronjob.success_jobs_history_limit': 3,
       'deployment.custom_domain_check_enabled': true,
-      'liveness_probe.http_get.path': '/',
+      'deployment.affinity.node.required': { key: 'value' },
     }
     const { getByTestId, getAllByTestId } = render(
       wrapWithReactHookForm(<PageSettingsAdvanced {...props} />, { defaultValues: defaultValues })
