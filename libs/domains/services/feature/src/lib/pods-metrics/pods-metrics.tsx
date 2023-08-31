@@ -1,4 +1,4 @@
-import { LoaderSpinner, TablePrimitives } from '@qovery/shared/ui'
+import { Skeleton, TablePrimitives } from '@qovery/shared/ui'
 import { useMetrics } from '../hooks/use-metrics/use-metrics'
 
 const { Table } = TablePrimitives
@@ -10,14 +10,6 @@ export interface PodsMetricsProps {
 
 export function PodsMetrics({ environmentId, serviceId }: PodsMetricsProps) {
   const { data = [], isLoading } = useMetrics({ environmentId, serviceId })
-
-  if (isLoading) {
-    return (
-      <div className="w-full flex items-center justify-center">
-        <LoaderSpinner className="w-6" />
-      </div>
-    )
-  }
 
   if (data === null) {
     return null
@@ -34,7 +26,22 @@ export function PodsMetrics({ environmentId, serviceId }: PodsMetricsProps) {
         </Table.Row>
       </Table.Header>
       <Table.Body>
-        {data?.length ? (
+        {isLoading ? (
+          <Table.Row>
+            <Table.Cell>
+              <Skeleton height={18} width={200} />
+            </Table.Cell>
+            <Table.Cell>
+              <Skeleton height={18} width={20} />
+            </Table.Cell>
+            <Table.Cell>
+              <Skeleton height={18} width={20} />
+            </Table.Cell>
+            <Table.Cell>
+              <Skeleton height={18} width={20} />
+            </Table.Cell>
+          </Table.Row>
+        ) : data?.length ? (
           data.map((podMetrics) => (
             <Table.Row key={podMetrics.pod_name}>
               <Table.Cell>{podMetrics.pod_name}</Table.Cell>
