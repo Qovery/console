@@ -214,7 +214,14 @@ export function LayoutLogs({
           </div>
           <div
             ref={refScrollSection}
-            onWheel={(event) => !pauseLogs && setPauseLogs && event.deltaY < 0 && setPauseLogs(true)}
+            onWheel={(event) =>
+              !pauseLogs &&
+              setPauseLogs &&
+              refScrollSection.current &&
+              refScrollSection.current.clientHeight !== refScrollSection.current.scrollHeight &&
+              event.deltaY < 0 &&
+              setPauseLogs(true)
+            }
             className={`overflow-y-auto w-full h-[calc(100%-20px)] bg-neutral-700 pb-16 mb-5 ${
               lineNumbers
                 ? 'before:bg-neutral-700 before:absolute before:left-1 before:top-9 before:w-10 before:h-full'
