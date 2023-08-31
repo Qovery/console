@@ -22,7 +22,8 @@ export function RedirectOverview() {
       }
       const projects: Project[] = await dispatch(fetchProjects({ organizationId })).unwrap()
       if (projects.length > 0) {
-        navigate(ENVIRONMENTS_URL(organizationId, projects[0]?.id) + ENVIRONMENTS_GENERAL_URL)
+        const filterByAlphabeticOrder = projects.sort((a, b) => a.name.localeCompare(b.name))
+        navigate(ENVIRONMENTS_URL(organizationId, filterByAlphabeticOrder[0]?.id) + ENVIRONMENTS_GENERAL_URL)
       } else {
         setNoProject(true)
       }
