@@ -18,7 +18,6 @@ enum ProjectPermissionAdmin {
   ADMIN = 'ADMIN',
 }
 
-type OrganizationCustomRoleProjectPermissionAdmin = OrganizationCustomRoleProjectPermission | ProjectPermissionAdmin
 export const OrganizationCustomRoleProjectPermissionAdmin = {
   ...OrganizationCustomRoleProjectPermission,
   ...ProjectPermissionAdmin,
