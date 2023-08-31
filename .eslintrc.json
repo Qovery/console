@@ -63,6 +63,10 @@
                 "name": "@testing-library/user-event",
                 "importNames": ["default"],
                 "message": "Destructure `userEvent` exposed by the `renderWithProviders` function from the `@qovery/shared/util-tests` package."
+              },
+              {
+                "name": "@uidotdev/usehooks",
+                "message": "Use imports from `@qovery/shared/util-hooks` instead of direct imports from `@uidotdev/usehooks`."
               }
             ]
           }
