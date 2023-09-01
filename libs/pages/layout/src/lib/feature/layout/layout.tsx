@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { redirect, useParams } from 'react-router-dom'
 import { fetchApplications } from '@qovery/domains/application'
 import { fetchDatabases } from '@qovery/domains/database'
+import { useEnvironment } from '@qovery/domains/environments/feature'
 import {
   fetchClusters,
   fetchClustersStatus,
@@ -37,6 +38,7 @@ export function Layout(props: PropsWithChildren<LayoutProps>) {
     selectClustersEntitiesByOrganizationId(state, organizationId)
   )
   const organizations = useSelector(selectAllOrganization)
+  const { data: environment } = useEnvironment({ environmentId })
 
   useEffect(() => {
     dispatch(fetchOrganization())
@@ -87,7 +89,7 @@ export function Layout(props: PropsWithChildren<LayoutProps>) {
            * XXX: Here we are limited by the websocket API which requires a clusterId
            * We need to instantiate one hook per clusterId to get the complete environment statuses of the page
            */
-          clusters.map(
+          (environment ? [{ id: environment.cluster_id }] : clusters).map(
             ({ id }) =>
               organizationId && (
                 <StatusWebSocketListenerMemo
