@@ -28,14 +28,12 @@ export function CrudModal({ onClose, onSubmit, isEdit, isLoading }: CrudModalPro
       onClose={onClose}
       howItWorks={
         <>
-          <p>
-            Two modes can be selected:
-            <ul className="list-disc ml-4">
-              <li>EXCLUDE: commits on the file or folder defined in the "Value" field will be ignored</li>
-              <li>MATCH: only commits on the file or folder defined in the "Value" field will trigger a deployment</li>
-            </ul>
-            Wildcards are not supported in the "Value" field
-          </p>
+          <p>Two modes can be selected:</p>
+          <ul className="list-disc ml-4">
+            <li>EXCLUDE: commits on the file or folder defined in the "Value" field will be ignored</li>
+            <li>MATCH: only commits on the file or folder defined in the "Value" field will trigger a deployment</li>
+          </ul>
+          <p>Wildcards are not supported in the "Value" field</p>
           <Link
             className="mt-2"
             link="https://hub.qovery.com/docs/using-qovery/configuration/environment/#auto-deploy"

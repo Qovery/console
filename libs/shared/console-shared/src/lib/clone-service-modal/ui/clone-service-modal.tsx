@@ -50,13 +50,15 @@ export function CloneServiceModal({
             The service will be cloned within the target environment.
             <br />
             All the configurations will be copied into the new service with a few exceptions:
-            <ul className="list-disc list-outside ml-4">
-              <li>target environment is the current environment: custom domains</li>
-              <li>
-                target environment is NOT the current environment: custom domains, pipeline deployment stages,
-                environment variables with environment/project scope (including aliases/overrides).
-              </li>
-            </ul>
+          </p>
+          <ul className="list-disc list-outside ml-4">
+            <li>target environment is the current environment: custom domains</li>
+            <li>
+              target environment is NOT the current environment: custom domains, pipeline deployment stages, environment
+              variables with environment/project scope (including aliases/overrides).
+            </li>
+          </ul>
+          <p>
             Once cloned, check the service setup.
             <br />
           </p>
