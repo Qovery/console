@@ -1,3 +1,4 @@
+import equal from 'fast-deep-equal'
 import { type ApplicationAdvancedSettings, type JobAdvancedSettings } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
@@ -52,12 +53,13 @@ export function PageSettingsAdvanced(props: PageSettingsAdvancedProps) {
             showOverriddenOnly &&
             props.defaultAdvancedSettings &&
             props.advancedSettings &&
-            props.defaultAdvancedSettings[
-              key as keyof (ApplicationAdvancedSettings | JobAdvancedSettings)
-            ]?.toString() ===
-              props.advancedSettings[key as keyof (ApplicationAdvancedSettings | JobAdvancedSettings)]?.toString()
+            equal(
+              props.defaultAdvancedSettings[key as keyof (ApplicationAdvancedSettings | JobAdvancedSettings)],
+              props.advancedSettings[key as keyof (ApplicationAdvancedSettings | JobAdvancedSettings)]
+            )
               ? 'hidden'
               : ''
+          }
           }`,
           cells: [
             {
@@ -66,7 +68,7 @@ export function PageSettingsAdvanced(props: PageSettingsAdvancedProps) {
                   <div>{key}</div>
                 </Tooltip>
               ),
-              className: 'font-medium vis',
+              className: 'font-medium',
             },
             {
               content: () => {

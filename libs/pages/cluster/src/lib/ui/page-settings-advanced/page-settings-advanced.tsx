@@ -1,3 +1,4 @@
+import equal from 'fast-deep-equal'
 import { type ClusterAdvancedSettings } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
@@ -52,8 +53,10 @@ export function PageSettingsAdvanced(props: PageSettingsAdvancedProps) {
             showOverriddenOnly &&
             props.defaultAdvancedSettings &&
             props.advancedSettings &&
-            props.defaultAdvancedSettings[key as keyof ClusterAdvancedSettings]?.toString() ===
-              props.advancedSettings[key as keyof ClusterAdvancedSettings]?.toString()
+            equal(
+              props.defaultAdvancedSettings[key as keyof ClusterAdvancedSettings],
+              props.advancedSettings[key as keyof ClusterAdvancedSettings]
+            )
               ? 'hidden'
               : ''
           }`,
@@ -64,7 +67,7 @@ export function PageSettingsAdvanced(props: PageSettingsAdvancedProps) {
                   <div>{key}</div>
                 </Tooltip>
               ),
-              className: 'font-medium vis',
+              className: 'font-medium',
             },
             {
               content: () => {
