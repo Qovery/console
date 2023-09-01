@@ -1,18 +1,23 @@
 import { type ContainerRegistryResponse } from 'qovery-typescript-axios'
-import { useEffect, useState } from 'react'
+import { memo, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { applicationsLoadingStatus, getApplicationsState } from '@qovery/domains/application'
+import { useFetchEnvironment } from '@qovery/domains/environment'
 import { fetchOrganizationContainerRegistries, selectOrganizationById } from '@qovery/domains/organization'
 import { useRunningStatus } from '@qovery/domains/services/feature'
-import { isContainer, isContainerJob } from '@qovery/shared/enums'
+import { isContainer, isContainerJob, isJob } from '@qovery/shared/enums'
 import { type ApplicationEntity, type LoadingStatus, type OrganizationEntity } from '@qovery/shared/interfaces'
 import { type BaseLink } from '@qovery/shared/ui'
+import { MetricsWebSocketListener } from '@qovery/shared/util-web-sockets'
 import { type AppDispatch, type RootState } from '@qovery/state/store'
 import PageGeneral from '../../ui/page-general/page-general'
 
+// XXX: Prevent web-socket invalidations when re-rendering
+const WebSocketListenerMemo = memo(MetricsWebSocketListener)
+
 export function PageGeneralFeature() {
-  const { applicationId = '', organizationId = '' } = useParams()
+  const { applicationId = '', organizationId = '', projectId = '', environmentId = '' } = useParams()
   const application = useSelector<RootState, ApplicationEntity | undefined>(
     (state) => getApplicationsState(state).entities[applicationId]
   )
@@ -77,14 +82,26 @@ export function PageGeneralFeature() {
     }
   }, [organization?.containerRegistries?.items, application])
 
+  const { data: environment } = useFetchEnvironment(projectId, environmentId)
+
   return (
-    <PageGeneral
-      application={application}
-      listHelpfulLinks={listHelpfulLinks}
-      loadingStatus={loadingStatus}
-      serviceStability={computeStability()}
-      currentRegistry={currentRegistry}
-    />
+    <>
+      <PageGeneral
+        application={application}
+        listHelpfulLinks={listHelpfulLinks}
+        loadingStatus={loadingStatus}
+        serviceStability={computeStability()}
+        currentRegistry={currentRegistry}
+      />
+      <WebSocketListenerMemo
+        organizationId={organizationId}
+        clusterId={environment?.cluster_id ?? ''}
+        projectId={projectId}
+        environmentId={environmentId}
+        serviceId={applicationId}
+        serviceType={isJob(application) ? 'JOB' : isContainer(application) ? 'CONTAINER' : 'APPLICATION'}
+      />
+    </>
   )
 }
 

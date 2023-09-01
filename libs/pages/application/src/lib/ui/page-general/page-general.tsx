@@ -1,5 +1,6 @@
 import { type ContainerRegistryResponse } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
+import { PodsMetrics } from '@qovery/domains/services/feature'
 import { isApplication, isGitJob, isJob } from '@qovery/shared/enums'
 import { type ApplicationEntity, type JobApplicationEntity, type LoadingStatus } from '@qovery/shared/interfaces'
 import { type BaseLink, HelpSection, Icon, Skeleton, Tooltip } from '@qovery/shared/ui'
@@ -7,7 +8,6 @@ import About from '../about/about'
 import AboutContainer from '../about/about-container/about-container'
 import AboutGit from '../about/about-git/about-git'
 import AboutUpdate from '../about/about-update/about-update'
-import InstancesTable from '../instances-table/instances-table'
 import JobOverview from '../job-overview/job-overview'
 
 export interface PageGeneralProps {
@@ -59,8 +59,8 @@ export function PageGeneral(props: PageGeneralProps) {
                   </span>
                 </div>
               </div>
-              {application?.instances?.items && application.instances.items.length > 0 && (
-                <InstancesTable instances={application?.instances.items} />
+              {application && application.environment && (
+                <PodsMetrics environmentId={application.environment.id} serviceId={application.id} />
               )}
             </>
           ) : (
@@ -71,7 +71,7 @@ export function PageGeneral(props: PageGeneralProps) {
           <HelpSection description="Need help? You may find these links useful" links={listHelpfulLinks} />
         </div>
       </div>
-      <div className="w-right-help-sidebar py-10 border-l border-neutral-200">
+      <div className="w-right-help-sidebar shrink-0 py-10 border-l border-neutral-200">
         <About description={application?.description || ''} />
 
         {application &&
