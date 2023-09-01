@@ -53,7 +53,7 @@ export function PageGeneral(props: PageGeneralProps) {
         </div>
         <HelpSection description="Need help? You may find these links useful" links={listHelpfulLinks}></HelpSection>
       </div>
-      <div className="w-right-help-sidebar py-10 border-l border-neutral-200">
+      <div className="w-right-help-sidebar shrink-0 py-10 border-l border-neutral-200">
         <About
           description={database?.description}
           type={database?.type}
