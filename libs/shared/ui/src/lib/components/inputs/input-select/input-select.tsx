@@ -258,7 +258,13 @@ export function InputSelect({
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
           styles={{
-            menuPortal: (base) => ({ ...base, zIndex: 50, pointerEvents: 'auto' }),
+            menuPortal: (base) => ({
+              ...base,
+              zIndex: 50,
+              pointerEvents: 'auto',
+              // Prevent misplacement with intercom banner
+              marginTop: `-${document.body.style.marginTop ? document.body.style.marginTop : 0}`,
+            }),
           }}
           menuIsOpen={isFilter ? true : undefined}
         />
