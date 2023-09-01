@@ -9,7 +9,7 @@ import {
 } from '@qovery/shared/interfaces'
 import { CLUSTERS_CREATION_GENERAL_URL, CLUSTERS_CREATION_URL, CLUSTERS_URL } from '@qovery/shared/routes'
 import { FunnelFlow } from '@qovery/shared/ui'
-import { useDocumentTitle } from '@qovery/shared/utils'
+import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { ROUTER_CLUSTER_CREATION } from '../../router/router'
 
 export interface ClusterContainerCreateContextInterface {

@@ -11,7 +11,7 @@ import {
   CLUSTERS_URL,
 } from '@qovery/shared/routes'
 import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
-import { useDocumentTitle } from '@qovery/shared/utils'
+import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import StepResources from '../../../ui/page-clusters-create/step-resources/step-resources'
 import { steps, useClusterContainerCreateContext } from '../page-clusters-create-feature'
 

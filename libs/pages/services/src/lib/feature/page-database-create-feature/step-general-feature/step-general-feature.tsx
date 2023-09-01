@@ -12,7 +12,7 @@ import {
   SERVICES_URL,
 } from '@qovery/shared/routes'
 import { FunnelFlowBody, FunnelFlowHelpCard, Icon } from '@qovery/shared/ui'
-import { useDocumentTitle } from '@qovery/shared/utils'
+import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { type RootState } from '@qovery/state/store'
 import StepGeneral from '../../../ui/page-database-create/step-general/step-general'
 import { type GeneralData } from '../database-creation-flow.interface'

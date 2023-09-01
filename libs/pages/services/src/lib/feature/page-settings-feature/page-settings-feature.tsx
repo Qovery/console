@@ -9,7 +9,7 @@ import {
   SERVICES_URL,
 } from '@qovery/shared/routes'
 import { IconAwesomeEnum } from '@qovery/shared/ui'
-import { useDocumentTitle } from '@qovery/shared/utils'
+import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { ROUTER_ENVIRONMENTS_SETTINGS } from '../../router/router'
 import PageSettings from '../../ui/page-settings/page-settings'
 

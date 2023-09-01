@@ -8,7 +8,7 @@ import {
   selectOrganizationById,
 } from '@qovery/domains/organization'
 import { useModal, useModalConfirmation } from '@qovery/shared/ui'
-import { useDocumentTitle } from '@qovery/shared/utils'
+import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { type AppDispatch, type RootState } from '@qovery/state/store'
 import PageOrganizationContainerRegistries from '../../ui/page-organization-container-registries/page-organization-container-registries'
 import CrudModalFeature from './crud-modal-feature/crud-modal-feature'

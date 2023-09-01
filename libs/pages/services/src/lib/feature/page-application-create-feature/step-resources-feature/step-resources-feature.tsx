@@ -13,7 +13,7 @@ import {
   SERVICES_URL,
 } from '@qovery/shared/routes'
 import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
-import { useDocumentTitle } from '@qovery/shared/utils'
+import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { type RootState } from '@qovery/state/store'
 import StepResources from '../../../ui/page-application-create/step-resources/step-resources'
 import { useApplicationContainerCreateContext } from '../page-application-create-feature'

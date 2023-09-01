@@ -12,7 +12,8 @@ import {
   SERVICES_URL,
 } from '@qovery/shared/routes'
 import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
-import { computeAvailableScope, useDocumentTitle } from '@qovery/shared/utils'
+import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { computeAvailableScope } from '@qovery/shared/utils'
 import { useJobContainerCreateContext } from '../page-job-create-feature'
 
 export function StepVariableFeature() {

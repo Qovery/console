@@ -6,7 +6,7 @@ import { useListStatuses } from '@qovery/domains/environments/feature'
 import { selectClustersEntitiesByOrganizationId } from '@qovery/domains/organization'
 import { environmentFactoryMock } from '@qovery/shared/factories'
 import { type BaseLink } from '@qovery/shared/ui'
-import { useDocumentTitle } from '@qovery/shared/utils'
+import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { type RootState } from '@qovery/state/store'
 import { PageGeneral } from '../../ui/page-general/page-general'
 

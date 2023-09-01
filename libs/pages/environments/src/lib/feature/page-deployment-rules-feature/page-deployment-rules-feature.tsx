@@ -11,7 +11,7 @@ import {
 } from '@qovery/domains/projects'
 import { ENVIRONMENTS_DEPLOYMENT_RULES_CREATE_URL, ENVIRONMENTS_URL } from '@qovery/shared/routes'
 import { type BaseLink } from '@qovery/shared/ui'
-import { useDocumentTitle } from '@qovery/shared/utils'
+import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { type AppDispatch, type RootState } from '@qovery/state/store'
 import PageDeploymentRules from '../../ui/page-deployment-rules/page-deployment-rules'
 

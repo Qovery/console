@@ -9,7 +9,7 @@ import {
   SERVICES_URL,
 } from '@qovery/shared/routes'
 import { FunnelFlowBody, FunnelFlowHelpCard, toastError } from '@qovery/shared/ui'
-import { useDocumentTitle } from '@qovery/shared/utils'
+import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import StepConfigure from '../../../ui/page-job-create/step-configure/step-configure'
 import { useJobContainerCreateContext } from '../page-job-create-feature'
 

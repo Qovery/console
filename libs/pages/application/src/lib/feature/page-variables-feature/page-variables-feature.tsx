@@ -20,7 +20,7 @@ import {
   type SecretEnvironmentVariableEntity,
 } from '@qovery/shared/interfaces'
 import { type TableHeadProps } from '@qovery/shared/ui'
-import { useDocumentTitle } from '@qovery/shared/utils'
+import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { type AppDispatch, type RootState } from '@qovery/state/store'
 import { ApplicationContext } from '../../ui/container/container'
 import PageVariables from '../../ui/page-variables/page-variables'

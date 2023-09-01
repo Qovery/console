@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom'
 import { fetchUserSignUp, postUserSignUp, selectUserSignUp } from '@qovery/domains/users/data-access'
 import { type Value } from '@qovery/shared/interfaces'
 import { ONBOARDING_PROJECT_URL, ONBOARDING_THANKS_URL, ONBOARDING_URL } from '@qovery/shared/routes'
-import { useDocumentTitle } from '@qovery/shared/utils'
+import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { type AppDispatch } from '@qovery/state/store'
 import { StepMore } from '../../ui/step-more/step-more'
 

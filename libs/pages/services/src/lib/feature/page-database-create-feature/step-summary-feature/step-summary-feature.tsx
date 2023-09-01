@@ -10,7 +10,7 @@ import {
   SERVICES_URL,
 } from '@qovery/shared/routes'
 import { FunnelFlowBody } from '@qovery/shared/ui'
-import { useDocumentTitle } from '@qovery/shared/utils'
+import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { type AppDispatch } from '@qovery/state/store'
 import StepSummary from '../../../ui/page-database-create/step-summary/step-summary'
 import { useDatabaseCreateContext } from '../page-database-create-feature'

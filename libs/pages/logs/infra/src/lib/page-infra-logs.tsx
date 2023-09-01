@@ -6,7 +6,7 @@ import { fetchClusterInfraLogs, selectClusterById } from '@qovery/domains/organi
 import { displayClusterBanner } from '@qovery/pages/layout'
 import { type ErrorLogsProps, LayoutLogs } from '@qovery/shared/console-shared'
 import { dateDifferenceMinutes } from '@qovery/shared/util-dates'
-import { useDocumentTitle } from '@qovery/shared/utils'
+import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { type AppDispatch, type RootState } from '@qovery/state/store'
 import CardClusterFeature from './feature/card-cluster-feature/card-cluster-feature'
 import Row from './ui/row/row'
