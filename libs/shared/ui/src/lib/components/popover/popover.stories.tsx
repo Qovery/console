@@ -18,7 +18,10 @@ export const Primary = {
       <Popover.Trigger>
         <span>Click Me</span>
       </Popover.Trigger>
-      <Popover.Content style={{ width: 360 }}>
+      <Popover.Content
+        className="data-[state=open]:data-[side=top]:animate-popoverSlideDownAndFade data-[state=open]:data-[side=right]:animate-popoverSlideLeftAndFade data-[state=open]:data-[side=bottom]:animate-popoverSlideUpAndFade data-[state=open]:data-[side=left]:animate-popoverSlideRightAndFade"
+        style={{ width: 360 }}
+      >
         <p>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
           magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo

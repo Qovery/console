@@ -1,6 +1,6 @@
 import { type CustomDomain } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
-import { InputText, Link, ModalCrud } from '@qovery/shared/ui'
+import { IconAwesomeEnum, InputText, Link, ModalCrud } from '@qovery/shared/ui'
 
 export interface CrudModalProps {
   customDomain?: CustomDomain
@@ -39,11 +39,11 @@ export function CrudModal(props: CrudModalProps) {
             </li>
           </ol>
           <Link
-            className="mt-2"
+            className="mt-2 font-medium"
             link="https://hub.qovery.com/guides/getting-started/setting-custom-domain"
             linkLabel="Documentation"
             external
-            iconRight="icon-solid-arrow-up-right-from-square"
+            iconRight={IconAwesomeEnum.ARROW_UP_RIGHT_FROM_SQUARE}
           />
         </>
       }

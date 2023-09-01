@@ -201,15 +201,35 @@ module.exports = {
       animation: {
         'action-bar-fade-in': '0.35s cubic-bezier(0.21, 1.02, 0.73, 1) 0s 1 normal forwards actionBarFadeIn',
         'action-bar-fade-out': '0.2s cubic-bezier(0.06, 0.71, 0.55, 1) 0s 1 normal forwards actionBarFadeOut',
+        popoverSlideUpAndFade: 'popoverSlideUpAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1)',
+        popoverSlideRightAndFade: 'popoverSlideRightAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1)',
+        popoverSlideDownAndFade: 'popoverSlideDownAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1)',
+        popoverSlideLeftAndFade: 'popoverSlideLeftAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1)',
       },
       keyframes: {
         actionBarFadeIn: {
-          '0%': { transform: 'translate3d(0,50%,0) scale(.6)', opacity: '.5' },
+          '0%': { transform: 'translate3d(0,50%,0) scale(.6)', opacity: '0.5' },
           '100%': { transform: 'translate3d(0,0,0) scale(1)', opacity: '1' },
         },
         actionBarFadeOut: {
           '0%': { transform: 'translate3d(0,0,-1px) scale(1)', opacity: '1' },
           '100%': { transform: 'translate3d(0,50%,-1px) scale(.8)', opacity: '0' },
+        },
+        popoverSlideUpAndFade: {
+          from: { opacity: 0, transform: 'translateY(4px)' },
+          to: { opacity: 1, transform: 'translateY(0)' },
+        },
+        popoverSlideRightAndFade: {
+          from: { opacity: 0, transform: 'translateX(-4px)' },
+          to: { opacity: 1, transform: 'translateX(0)' },
+        },
+        popoverSlideDownAndFade: {
+          from: { opacity: 0, transform: 'translateY(-4px)' },
+          to: { opacity: 1, transform: 'translateY(0)' },
+        },
+        popoverSlideLeftAndFade: {
+          from: { opacity: 0, transform: 'translateX(4px)' },
+          to: { opacity: 1, transform: 'translateX(0)' },
         },
       },
     },

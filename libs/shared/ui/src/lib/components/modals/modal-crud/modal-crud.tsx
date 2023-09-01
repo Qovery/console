@@ -60,11 +60,15 @@ export function ModalCrud(props: ModalCrudProps) {
       {howItWorks && (
         <Popover.Root>
           <Popover.Trigger>
-            <span className="text-sm text-brand-500 font-medium">
+            <span className="text-sm cursor-pointer text-brand-500 hover:text-brand-600 transition font-medium">
               Show how it works <Icon name={IconAwesomeEnum.CIRCLE_QUESTION} />
             </span>
           </Popover.Trigger>
-          <Popover.Content side="left" className="z-50 text-neutral-350 text-sm" style={{ width: 440 }}>
+          <Popover.Content
+            side="left"
+            className="z-50 text-neutral-350 text-sm data-[state=open]:data-[side=right]:animate-popoverSlideLeftAndFade data-[state=open]:data-[side=left]:animate-popoverSlideRightAndFade"
+            style={{ width: 440 }}
+          >
             <h6 className="text-neutral-400 font-medium mb-2">How it works</h6>
             {howItWorks}
           </Popover.Content>

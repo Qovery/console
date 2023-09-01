@@ -1,7 +1,7 @@
 import { DeploymentRestrictionModeEnum, DeploymentRestrictionTypeEnum } from 'qovery-typescript-axios'
 import { type FormEventHandler, useEffect } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { InputSelect, InputText, Link, ModalCrud, useModal } from '@qovery/shared/ui'
+import { IconAwesomeEnum, InputSelect, InputText, Link, ModalCrud, useModal } from '@qovery/shared/ui'
 
 export interface CrudModalProps {
   onClose: () => void
@@ -35,11 +35,11 @@ export function CrudModal({ onClose, onSubmit, isEdit, isLoading }: CrudModalPro
           </ul>
           <p>Wildcards are not supported in the "Value" field</p>
           <Link
-            className="mt-2"
+            className="mt-2 font-medium"
             link="https://hub.qovery.com/docs/using-qovery/configuration/environment/#auto-deploy"
             linkLabel="Documentation"
             external
-            iconRight="icon-solid-arrow-up-right-from-square"
+            iconRight={IconAwesomeEnum.ARROW_UP_RIGHT_FROM_SQUARE}
           />
         </>
       }
