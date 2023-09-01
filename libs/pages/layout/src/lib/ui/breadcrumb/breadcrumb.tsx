@@ -2,7 +2,6 @@ import equal from 'fast-deep-equal'
 import { type Cluster, type Database, type Environment, type Organization, type Project } from 'qovery-typescript-axios'
 import { memo, useEffect } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
-import { EnvironmentStateChip } from '@qovery/domains/environments/feature'
 import { ServiceStateChip } from '@qovery/domains/services/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import { type ApplicationEntity, type ClusterEntity, type DatabaseEntity } from '@qovery/shared/interfaces'
@@ -130,13 +129,8 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
             link: {
               url: `${SERVICES_URL(organizationId, projectId, environment.id)}${SERVICES_GENERAL_URL}`,
             },
-            contentLeft: (
-              <div className="flex items-center">
-                <EnvironmentStateChip mode="deployment" environmentId={environment.id} />
-                <div className="ml-3 mt-0.5">
-                  {environment.cloud_provider.provider && <Icon name={`${environment.cloud_provider.provider}_GRAY`} />}
-                </div>
-              </div>
+            contentLeft: environment.cloud_provider.provider && (
+              <Icon className="mt-0.5" name={`${environment.cloud_provider.provider}_GRAY`} />
             ),
             isActive: environmentId === environment.id,
           }))
