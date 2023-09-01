@@ -58,10 +58,7 @@ export function ModalCrud(props: ModalCrudProps) {
         </div>
       )}
       {howItWorks && (
-        // XXX: modal prop should not be necessary but it's workaround to:
-        // https://github.com/radix-ui/primitives/issues/2348
-        // https://github.com/radix-ui/primitives/issues/2180
-        <Popover.Root modal={true}>
+        <Popover.Root>
           <Popover.Trigger>
             <span className="text-sm text-brand-500 font-medium">
               Show how it works <Icon name={IconAwesomeEnum.CIRCLE_QUESTION} />

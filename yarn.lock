@@ -3746,29 +3746,36 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@radix-ui/react-dialog@npm:^1.0.2":
-  version: 1.0.2
-  resolution: "@radix-ui/react-dialog@npm:1.0.2"
+"@radix-ui/react-dialog@npm:^1.0.4":
+  version: 1.0.4
+  resolution: "@radix-ui/react-dialog@npm:1.0.4"
   dependencies:
     "@babel/runtime": ^7.13.10
-    "@radix-ui/primitive": 1.0.0
-    "@radix-ui/react-compose-refs": 1.0.0
-    "@radix-ui/react-context": 1.0.0
-    "@radix-ui/react-dismissable-layer": 1.0.2
-    "@radix-ui/react-focus-guards": 1.0.0
-    "@radix-ui/react-focus-scope": 1.0.1
-    "@radix-ui/react-id": 1.0.0
-    "@radix-ui/react-portal": 1.0.1
-    "@radix-ui/react-presence": 1.0.0
-    "@radix-ui/react-primitive": 1.0.1
-    "@radix-ui/react-slot": 1.0.1
-    "@radix-ui/react-use-controllable-state": 1.0.0
+    "@radix-ui/primitive": 1.0.1
+    "@radix-ui/react-compose-refs": 1.0.1
+    "@radix-ui/react-context": 1.0.1
+    "@radix-ui/react-dismissable-layer": 1.0.4
+    "@radix-ui/react-focus-guards": 1.0.1
+    "@radix-ui/react-focus-scope": 1.0.3
+    "@radix-ui/react-id": 1.0.1
+    "@radix-ui/react-portal": 1.0.3
+    "@radix-ui/react-presence": 1.0.1
+    "@radix-ui/react-primitive": 1.0.3
+    "@radix-ui/react-slot": 1.0.2
+    "@radix-ui/react-use-controllable-state": 1.0.1
     aria-hidden: ^1.1.1
     react-remove-scroll: 2.5.5
   peerDependencies:
+    "@types/react": "*"
+    "@types/react-dom": "*"
     react: ^16.8 || ^17.0 || ^18.0
     react-dom: ^16.8 || ^17.0 || ^18.0
-  checksum: 5cc0dd6599c91064aab8ab3ec6d4fff1b53cf45607b219449e8984ad57ad6492a9e3fd00bacd612e447920d7da387eb5e1356a70da8a0485ea989b696315f0bb
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+    "@types/react-dom":
+      optional: true
+  checksum: 01ad549a3685e221628950e6fbec306494170aa3b92cbe00732b1531c16e1cf681138cd4a79d658f4f97d4096676a40d08642090fdea1675d0b7dc78df66d962
   languageName: node
   linkType: hard
 
@@ -3824,17 +3831,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@radix-ui/react-focus-guards@npm:1.0.0":
-  version: 1.0.0
-  resolution: "@radix-ui/react-focus-guards@npm:1.0.0"
-  dependencies:
-    "@babel/runtime": ^7.13.10
-  peerDependencies:
-    react: ^16.8 || ^17.0 || ^18.0
-  checksum: 8c714e8caa6032f5402eecb0323addd7456d3496946dbad1b9ee8ebf5845943876945e7af9bca179e9f8ffe5100e61cb4ba54a185873949125c310c406be5aa4
-  languageName: node
-  linkType: hard
-
 "@radix-ui/react-focus-guards@npm:1.0.1":
   version: 1.0.1
   resolution: "@radix-ui/react-focus-guards@npm:1.0.1"
@@ -3847,21 +3843,6 @@ __metadata:
     "@types/react":
       optional: true
   checksum: 1f8ca8f83b884b3612788d0742f3f054e327856d90a39841a47897dbed95e114ee512362ae314177de226d05310047cabbf66b686ae86ad1b65b6b295be24ef7
-  languageName: node
-  linkType: hard
-
-"@radix-ui/react-focus-scope@npm:1.0.1":
-  version: 1.0.1
-  resolution: "@radix-ui/react-focus-scope@npm:1.0.1"
-  dependencies:
-    "@babel/runtime": ^7.13.10
-    "@radix-ui/react-compose-refs": 1.0.0
-    "@radix-ui/react-primitive": 1.0.1
-    "@radix-ui/react-use-callback-ref": 1.0.0
-  peerDependencies:
-    react: ^16.8 || ^17.0 || ^18.0
-    react-dom: ^16.8 || ^17.0 || ^18.0
-  checksum: cc68bd757ddf4d012aca6b92fee30878f6db83107a7b17f23a092358920f988ebf04b7051dcf866e2b9378ffbf88761e13b3b2d1cfacb9494d7ee8ca800a29bf
   languageName: node
   linkType: hard
 
@@ -18190,7 +18171,7 @@ __metadata:
     "@nx/workspace": 16.4.0
     "@pmmmwh/react-refresh-webpack-plugin": ^0.5.7
     "@radix-ui/react-accordion": ^0.1.6
-    "@radix-ui/react-dialog": ^1.0.2
+    "@radix-ui/react-dialog": ^1.0.4
     "@radix-ui/react-popover": ^1.0.6
     "@radix-ui/react-slider": ^1.0.0
     "@radix-ui/react-tooltip": ^1.0.4
