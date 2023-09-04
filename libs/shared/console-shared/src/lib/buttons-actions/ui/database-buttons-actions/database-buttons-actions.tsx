@@ -30,8 +30,8 @@ import {
   useModal,
   useModalConfirmation,
 } from '@qovery/shared/ui'
+import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import {
-  copyToClipboard,
   isCancelBuildAvailable,
   isDeleteAvailable,
   isDeployAvailable,
@@ -53,6 +53,7 @@ export function DatabaseButtonsActions(props: DatabaseButtonsActionsProps) {
   const { openModal, closeModal } = useModal()
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const navigate = useNavigate()
+  const [, copyToClipboard] = useCopyToClipboard()
 
   const { openModalConfirmation } = useModalConfirmation()
   const dispatch = useDispatch<AppDispatch>()

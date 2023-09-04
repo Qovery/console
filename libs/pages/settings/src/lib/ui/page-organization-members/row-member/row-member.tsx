@@ -24,7 +24,8 @@ import {
   useModalConfirmation,
 } from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond, timeAgo } from '@qovery/shared/util-dates'
-import { copyToClipboard, upperCaseFirstLetter } from '@qovery/shared/util-js'
+import { useCopyToClipboard } from '@qovery/shared/util-hooks'
+import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
 export interface RowMemberProps {
   member: Member | InviteMember
@@ -64,6 +65,7 @@ export function RowMember(props: RowMemberProps) {
     filter,
   } = props
 
+  const [, copyToClipboard] = useCopyToClipboard()
   const { organizationId = '' } = useParams()
   const navigate = useNavigate()
   const { openModalConfirmation } = useModalConfirmation()

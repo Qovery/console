@@ -42,8 +42,8 @@ import {
   useModal,
   useModalConfirmation,
 } from '@qovery/shared/ui'
+import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import {
-  copyToClipboard,
   isCancelBuildAvailable,
   isDeleteAvailable,
   isDeployAvailable,
@@ -72,6 +72,7 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
   const location = useLocation()
+  const [, copyToClipboard] = useCopyToClipboard()
 
   const serviceType = getServiceType(application)
 

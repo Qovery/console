@@ -14,8 +14,8 @@ import {
   type MenuItemProps,
   useModalConfirmation,
 } from '@qovery/shared/ui'
+import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import {
-  copyToClipboard,
   isDeleteAvailable,
   isDeployAvailable,
   isRedeployAvailable,
@@ -33,6 +33,7 @@ export function ClusterButtonsActions(props: ClusterButtonsActionsProps) {
   const { cluster, noSettings } = props
   const { organizationId = '' } = useParams()
   const navigate = useNavigate()
+  const [, copyToClipboard] = useCopyToClipboard()
 
   const { openModalConfirmation } = useModalConfirmation()
 

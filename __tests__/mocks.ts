@@ -19,4 +19,5 @@ jest.mock('@auth0/auth0-react', () => ({
 jest.mock('@uidotdev/usehooks', () => ({
   useDocumentTitle: jest.fn(),
   useClickAway: jest.fn(),
+  useCopyToClipboard: () => [jest.fn(), jest.fn()],
 }))

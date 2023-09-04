@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Button, ButtonSize, ButtonStyle, IconAwesomeEnum, IconFa } from '@qovery/shared/ui'
-import { copyToClipboard } from '@qovery/shared/util-js'
+import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 
 export interface CopyButtonProps {
   content: string
@@ -9,6 +9,7 @@ export interface CopyButtonProps {
 
 export function CopyButton({ content, className = '' }: CopyButtonProps) {
   const [icon, setIcon] = useState(IconAwesomeEnum.COPY)
+  const [, copyToClipboard] = useCopyToClipboard()
 
   const onClickCopyToClipboard = (content: string) => {
     copyToClipboard(content)

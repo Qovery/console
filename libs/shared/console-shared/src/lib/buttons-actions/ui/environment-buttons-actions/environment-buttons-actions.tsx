@@ -26,8 +26,8 @@ import {
   useModal,
   useModalConfirmation,
 } from '@qovery/shared/ui'
+import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import {
-  copyToClipboard,
   isCancelBuildAvailable,
   isDeleteAvailable,
   isDeployAvailable,
@@ -49,6 +49,7 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
   const location = useLocation()
   const navigate = useNavigate()
   const { openModal, closeModal } = useModal()
+  const [, copyToClipboard] = useCopyToClipboard()
 
   const { openModalConfirmation } = useModalConfirmation()
 
