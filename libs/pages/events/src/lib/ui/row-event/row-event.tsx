@@ -24,7 +24,7 @@ import {
 } from '@qovery/shared/routes'
 import { Icon, IconAwesomeEnum, Skeleton, TagEvent, Tooltip } from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
-import { upperCaseFirstLetter } from '@qovery/shared/utils'
+import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import CopyButton from '../copy-button/copy-button'
 
 export interface RowEventProps {

@@ -42,8 +42,8 @@ import {
   useModal,
   useModalConfirmation,
 } from '@qovery/shared/ui'
+import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import {
-  copyToClipboard,
   isCancelBuildAvailable,
   isDeleteAvailable,
   isDeployAvailable,
@@ -51,7 +51,7 @@ import {
   isRestartAvailable,
   isStopAvailable,
   urlCodeEditor,
-} from '@qovery/shared/utils'
+} from '@qovery/shared/util-js'
 import { type AppDispatch } from '@qovery/state/store'
 import CloneServiceModalFeature from '../../../clone-service-modal/feature/clone-service-modal-feature'
 import DeployOtherCommitModalFeature from '../../../deploy-other-commit-modal/feature/deploy-other-commit-modal-feature'
@@ -72,6 +72,7 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
   const location = useLocation()
+  const [, copyToClipboard] = useCopyToClipboard()
 
   const serviceType = getServiceType(application)
 

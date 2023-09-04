@@ -15,7 +15,7 @@ import {
   Truncate,
 } from '@qovery/shared/ui'
 import { timeAgo } from '@qovery/shared/util-dates'
-import { upperCaseFirstLetter } from '@qovery/shared/utils'
+import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
 export interface PageOrganizationWebhooksProps {
   webhookLoading: boolean

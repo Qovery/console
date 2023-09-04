@@ -1,4 +1,5 @@
 import { Controller, useFormContext } from 'react-hook-form'
+import { timezoneValues, weekdaysValues } from '@qovery/shared/enums'
 import {
   BlockContent,
   Button,
@@ -9,7 +10,6 @@ import {
   InputText,
   InputToggle,
 } from '@qovery/shared/ui'
-import { timezoneValues, weekdaysValues } from '@qovery/shared/utils'
 
 export interface PageSettingsDeploymentRulesProps {
   onSubmit: () => void

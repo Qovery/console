@@ -30,15 +30,15 @@ import {
   useModal,
   useModalConfirmation,
 } from '@qovery/shared/ui'
+import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import {
-  copyToClipboard,
   isCancelBuildAvailable,
   isDeleteAvailable,
   isDeployAvailable,
   isRedeployAvailable,
   isRestartAvailable,
   isStopAvailable,
-} from '@qovery/shared/utils'
+} from '@qovery/shared/util-js'
 import { type AppDispatch } from '@qovery/state/store'
 import CloneServiceModalFeature from '../../../clone-service-modal/feature/clone-service-modal-feature'
 
@@ -53,6 +53,7 @@ export function DatabaseButtonsActions(props: DatabaseButtonsActionsProps) {
   const { openModal, closeModal } = useModal()
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const navigate = useNavigate()
+  const [, copyToClipboard] = useCopyToClipboard()
 
   const { openModalConfirmation } = useModalConfirmation()
   const dispatch = useDispatch<AppDispatch>()

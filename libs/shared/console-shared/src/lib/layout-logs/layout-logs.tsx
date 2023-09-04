@@ -15,7 +15,7 @@ import { type ApplicationEntity, type DatabaseEntity, type LoadingStatus } from 
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
 import { Icon, IconAwesomeEnum, IconFa, InputCheckbox, Tooltip } from '@qovery/shared/ui'
-import { scrollParentToChild } from '@qovery/shared/utils'
+import { scrollParentToChild } from '@qovery/shared/util-js'
 import ButtonsActionsLogs from './buttons-actions-logs/buttons-actions-logs'
 import MenuTimeFormat from './menu-time-format/menu-time-format'
 import { PlaceholderLogs } from './placeholder-logs/placeholder-logs'

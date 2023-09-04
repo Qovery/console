@@ -3,7 +3,7 @@ import { type DraggableProvided, type DraggableStateSnapshot } from 'react-beaut
 import { getServiceType } from '@qovery/shared/enums'
 import { type ApplicationEntity, type DatabaseEntity } from '@qovery/shared/interfaces'
 import { BadgeService, Truncate } from '@qovery/shared/ui'
-import { upperCaseFirstLetter } from '@qovery/shared/utils'
+import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
 export interface DraggableItemProps {
   services: (DatabaseEntity | ApplicationEntity)[]

@@ -9,7 +9,7 @@ import {
 import { type Project, ProjectMainCallsApi, type ProjectRequest, ProjectsApi } from 'qovery-typescript-axios'
 import { type ProjectsState } from '@qovery/shared/interfaces'
 import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
-import { addOneToManyRelation, getEntitiesByIds, sortByKey } from '@qovery/shared/utils'
+import { addOneToManyRelation, getEntitiesByIds, sortByKey } from '@qovery/shared/util-js'
 import { type RootState } from '@qovery/state/store'
 
 export const PROJECTS_FEATURE_KEY = 'projects'

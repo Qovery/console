@@ -26,14 +26,14 @@ import {
   useModal,
   useModalConfirmation,
 } from '@qovery/shared/ui'
+import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import {
-  copyToClipboard,
   isCancelBuildAvailable,
   isDeleteAvailable,
   isDeployAvailable,
   isRedeployAvailable,
   isStopAvailable,
-} from '@qovery/shared/utils'
+} from '@qovery/shared/util-js'
 import CreateCloneEnvironmentModalFeature from '../../../create-clone-environment-modal/feature/create-clone-environment-modal-feature'
 import { TerraformExportModalFeature } from '../../../terraform-export-modal/feature/terraform-export-modal-feature'
 import UpdateAllModalFeature from '../../../update-all-modal/feature/update-all-modal-feature'
@@ -49,6 +49,7 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
   const location = useLocation()
   const navigate = useNavigate()
   const { openModal, closeModal } = useModal()
+  const [, copyToClipboard] = useCopyToClipboard()
 
   const { openModalConfirmation } = useModalConfirmation()
 

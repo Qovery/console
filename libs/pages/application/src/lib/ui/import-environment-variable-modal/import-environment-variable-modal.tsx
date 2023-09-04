@@ -16,7 +16,7 @@ import {
   InputTextSmall,
   InputToggle,
 } from '@qovery/shared/ui'
-import { computeAvailableScope, generateScopeLabel } from '@qovery/shared/utils'
+import { computeAvailableScope, generateScopeLabel } from '@qovery/shared/util-js'
 import { validateKey, warningMessage } from '../../feature/import-environment-variable-modal-feature/utils/form-check'
 
 export interface ImportEnvironmentVariableModalProps {

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { copyToClipboard as copyToClipboardUtil } from '@qovery/shared/utils'
+import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import Icon from '../icon/icon'
 import { IconAwesomeEnum } from '../icon/icon-awesome.enum'
 import Tooltip from '../tooltip/tooltip'
@@ -15,9 +15,10 @@ export function CopyToClipboard(props: CopyToClipboardProps) {
   const { content, className = '', iconClassName = '', tooltipContent = 'Copy' } = props
 
   const [icon, setIcon] = useState(IconAwesomeEnum.COPY)
+  const [, copyToClipboard] = useCopyToClipboard()
 
-  const copyToClipboard = () => {
-    copyToClipboardUtil(content)
+  const onClickCopyToClipboard = () => {
+    copyToClipboard(content)
     setIcon(IconAwesomeEnum.CHECK)
     setTimeout(() => {
       setIcon(IconAwesomeEnum.COPY)
@@ -27,7 +28,7 @@ export function CopyToClipboard(props: CopyToClipboardProps) {
   return (
     <Tooltip content={tooltipContent}>
       <span
-        onClick={copyToClipboard}
+        onClick={onClickCopyToClipboard}
         className={`bigger-click-zone cursor-pointer ${className}`}
         data-testid="copy-container"
       >

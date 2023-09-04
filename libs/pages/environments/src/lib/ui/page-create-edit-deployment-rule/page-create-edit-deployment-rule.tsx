@@ -2,6 +2,7 @@ import { type Cluster } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { type Control, Controller, type FieldValues } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
+import { environmentModeValues, timezoneValues, weekdaysValues } from '@qovery/shared/enums'
 import { type Value } from '@qovery/shared/interfaces'
 import { ENVIRONMENTS_DEPLOYMENT_RULES_URL, ENVIRONMENTS_URL } from '@qovery/shared/routes'
 import {
@@ -17,7 +18,6 @@ import {
   InputTextArea,
   InputToggle,
 } from '@qovery/shared/ui'
-import { environmentModeValues, timezoneValues, weekdaysValues } from '@qovery/shared/utils'
 import HelpSidebar from '../help-sidebar/help-sidebar'
 
 export interface PageCreateEditDeploymentRuleProps {

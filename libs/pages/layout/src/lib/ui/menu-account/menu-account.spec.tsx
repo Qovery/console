@@ -3,7 +3,7 @@ import { type SignUp } from 'qovery-typescript-axios'
 import { organizationFactoryMock, userSignUpFactoryMock } from '@qovery/shared/factories'
 import { type OrganizationEntity } from '@qovery/shared/interfaces'
 import { LOGOUT_URL, ORGANIZATION_URL } from '@qovery/shared/routes'
-import { sortByKey } from '@qovery/shared/utils'
+import { sortByKey } from '@qovery/shared/util-js'
 import MenuAccount, { type MenuAccountProps } from './menu-account'
 
 const mockNavigate = jest.fn()

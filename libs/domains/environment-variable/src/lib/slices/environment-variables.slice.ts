@@ -22,7 +22,7 @@ import { type Key } from 'qovery-typescript-axios/api'
 import { type ServiceTypeEnum, isContainer, isJob } from '@qovery/shared/enums'
 import { type EnvironmentVariableEntity, type EnvironmentVariablesState } from '@qovery/shared/interfaces'
 import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
-import { addOneToManyRelation, getEntitiesByIds, removeOneToManyRelation } from '@qovery/shared/utils'
+import { addOneToManyRelation, getEntitiesByIds, removeOneToManyRelation } from '@qovery/shared/util-js'
 import { type RootState } from '@qovery/state/store'
 
 export const ENVIRONMENT_VARIABLES_FEATURE_KEY = 'public'

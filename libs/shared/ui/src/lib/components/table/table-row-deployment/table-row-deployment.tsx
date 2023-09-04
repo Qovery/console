@@ -14,7 +14,7 @@ import {
   SERVICE_LOGS_URL,
 } from '@qovery/shared/routes'
 import { timeAgo } from '@qovery/shared/util-dates'
-import { trimId, upperCaseFirstLetter } from '@qovery/shared/utils'
+import { trimId, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import ButtonIcon, { ButtonIconStyle } from '../../buttons/button-icon/button-icon'
 import { ButtonSize } from '../../buttons/button/button'
 import Icon from '../../icon/icon'

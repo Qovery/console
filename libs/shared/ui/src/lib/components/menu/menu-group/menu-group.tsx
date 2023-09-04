@@ -1,6 +1,6 @@
 import { MenuDivider } from '@szhsin/react-menu'
 import { type ReactNode, useEffect, useState } from 'react'
-import { sortByKey } from '@qovery/shared/utils'
+import { sortByKey } from '@qovery/shared/util-js'
 import InputSearch from '../../inputs/input-search/input-search'
 import { MenuItem, type MenuItemProps } from '../menu-item/menu-item'
 

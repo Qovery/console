@@ -3,7 +3,7 @@ import { ContainerCustomDomainApi, type CustomDomain, CustomDomainApi } from 'qo
 import { type ServiceTypeEnum, isContainer } from '@qovery/shared/enums'
 import { type CustomDomainsState } from '@qovery/shared/interfaces'
 import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
-import { addOneToManyRelation, getEntitiesByIds, removeOneToManyRelation } from '@qovery/shared/utils'
+import { addOneToManyRelation, getEntitiesByIds, removeOneToManyRelation } from '@qovery/shared/util-js'
 import { type RootState } from '@qovery/state/store'
 
 export const CUSTOM_DOMAIN_FEATURE_KEY = 'customDomains'

@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { DEPLOYMENT_LOGS_VERSION_URL } from '@qovery/shared/routes'
 import { Icon, IconAwesomeEnum, Menu, MenuAlign, type MenuData, StatusChip, Tooltip } from '@qovery/shared/ui'
 import { dateFullFormat } from '@qovery/shared/util-dates'
-import { trimId } from '@qovery/shared/utils'
+import { trimId } from '@qovery/shared/util-js'
 
 export interface SidebarHistoryProps {
   data: DeploymentHistoryEnvironment[]

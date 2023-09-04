@@ -3,7 +3,7 @@ import { useEnvironmentDeploymentHistory } from '@qovery/domains/environment'
 import { deploymentMock } from '@qovery/shared/factories'
 import { type DeploymentService } from '@qovery/shared/interfaces'
 import { type BaseLink } from '@qovery/shared/ui'
-import { mergeDeploymentServices } from '@qovery/shared/utils'
+import { mergeDeploymentServices } from '@qovery/shared/util-js'
 import PageDeployments from '../../ui/page-deployments/page-deployments'
 
 export function PageDeploymentsFeature() {

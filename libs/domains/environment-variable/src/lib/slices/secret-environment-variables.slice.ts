@@ -20,7 +20,7 @@ import { type Key } from 'qovery-typescript-axios/api'
 import { type ServiceTypeEnum, isContainer, isJob } from '@qovery/shared/enums'
 import { type SecretEnvironmentVariableEntity, type SecretEnvironmentVariablesState } from '@qovery/shared/interfaces'
 import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
-import { addOneToManyRelation, getEntitiesByIds } from '@qovery/shared/utils'
+import { addOneToManyRelation, getEntitiesByIds } from '@qovery/shared/util-js'
 import { type RootState } from '@qovery/state/store'
 
 export const SECRET_ENVIRONMENT_VARIABLES_FEATURE_KEY = 'secret'

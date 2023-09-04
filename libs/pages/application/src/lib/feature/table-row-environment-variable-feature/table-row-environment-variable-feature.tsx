@@ -19,7 +19,7 @@ import {
   useModal,
   useModalConfirmation,
 } from '@qovery/shared/ui'
-import { environmentVariableFile } from '@qovery/shared/utils'
+import { environmentVariableFile } from '@qovery/shared/util-js'
 import { type AppDispatch } from '@qovery/state/store'
 import { ApplicationContext } from '../../ui/container/container'
 import TableRowEnvironmentVariable from '../../ui/table-row-environment-variable/table-row-environment-variable'

@@ -8,7 +8,7 @@ import { fetchOrganizationContainerRegistries, selectOrganizationById } from '@q
 import { ServiceTypeEnum, getServiceType, isApplication, isContainer, isJob } from '@qovery/shared/enums'
 import { type ApplicationEntity, type OrganizationEntity } from '@qovery/shared/interfaces'
 import { toastError } from '@qovery/shared/ui'
-import { buildGitRepoUrl } from '@qovery/shared/utils'
+import { buildGitRepoUrl } from '@qovery/shared/util-js'
 import { type AppDispatch, type RootState } from '@qovery/state/store'
 import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-general'
 

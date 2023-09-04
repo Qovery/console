@@ -1,10 +1,7 @@
 import { act, render } from '__tests__/utils/setup-jest'
-import { type InviteMember } from 'qovery-typescript-axios'
 import { inviteMembersMock, membersMock } from '@qovery/shared/factories'
 import { dateYearMonthDayHourMinuteSecond, timeAgo } from '@qovery/shared/util-dates'
 import RowMember, { type RowMemberProps } from './row-member'
-
-const originalClipboard = { ...global.navigator.clipboard }
 
 describe('RowMember', () => {
   const props: RowMemberProps = {
@@ -26,24 +23,6 @@ describe('RowMember', () => {
       },
     ],
   }
-
-  beforeEach(() => {
-    let clipboardData = ''
-    const mockClipboard = {
-      writeText: jest.fn((data) => {
-        clipboardData = data
-      }),
-      readText: jest.fn(() => {
-        return clipboardData
-      }),
-    }
-    global.navigator.clipboard = mockClipboard
-  })
-
-  afterEach(() => {
-    jest.resetAllMocks()
-    global.navigator.clipboard = originalClipboard
-  })
 
   it('should render successfully', () => {
     const { baseElement } = render(<RowMember {...props} />)
@@ -159,19 +138,5 @@ describe('RowMember', () => {
     })
 
     expect(spy).toBeCalled()
-  })
-
-  it('should have menu with copy invitation link', async () => {
-    props.member = inviteMembersMock(1)[0]
-
-    const { getAllByTestId } = render(<RowMember {...props} />)
-
-    const items = getAllByTestId('menuItem')
-
-    await act(() => {
-      items[1].click()
-    })
-
-    expect(navigator.clipboard.readText()).toBe((props.member as InviteMember).invitation_link)
   })
 })

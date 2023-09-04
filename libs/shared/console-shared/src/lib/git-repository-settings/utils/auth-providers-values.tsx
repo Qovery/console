@@ -1,6 +1,6 @@
 import { type GitAuthProvider } from 'qovery-typescript-axios'
 import { Icon } from '@qovery/shared/ui'
-import { upperCaseFirstLetter } from '@qovery/shared/utils'
+import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
 export const authProvidersValues = (authProviders: GitAuthProvider[]) => {
   return authProviders.map((provider: GitAuthProvider) => ({

@@ -7,7 +7,7 @@ import {
 import { useState } from 'react'
 import { Controller, type FieldValues, type UseFormSetValue, useFormContext } from 'react-hook-form'
 import { InputCheckbox } from '@qovery/shared/ui'
-import { upperCaseFirstLetter } from '@qovery/shared/utils'
+import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { defaultProjectPermission } from '../../../feature/page-organization-roles-edit-feature/page-organization-roles-edit-feature'
 
 export interface RowProjectProps {
