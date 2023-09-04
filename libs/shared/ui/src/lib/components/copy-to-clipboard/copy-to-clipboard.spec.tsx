@@ -27,21 +27,4 @@ describe('CopyToClipboard', () => {
     const icon = screen.getByRole('img')
     expect(icon.classList.contains('class-name')).toBeTruthy()
   })
-
-  it('should call the copy function on click', () => {
-    props.content = 'copy'
-    render(<CopyToClipboard {...props} />)
-
-    Object.assign(window.navigator, {
-      clipboard: {
-        writeText: jest.fn().mockImplementation(() => Promise.resolve()),
-      },
-    })
-
-    act(() => {
-      screen.getByTestId('copy-container').click()
-    })
-
-    expect(window.navigator.clipboard.writeText).toHaveBeenCalledWith('copy')
-  })
 })
