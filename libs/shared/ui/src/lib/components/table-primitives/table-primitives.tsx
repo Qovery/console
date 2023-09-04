@@ -1,6 +1,8 @@
 import { type ComponentPropsWithoutRef, type ElementRef, forwardRef } from 'react'
 import { twMerge } from 'tailwind-merge'
 
+// Inspired by https://github.com/radix-ui/themes/blob/a63bd6920370d824be1db26f717147dc4a2501f1/packages/radix-ui-themes/src/components/table.tsx
+
 interface TableRootProps extends ComponentPropsWithoutRef<'table'> {}
 
 const TableRoot = forwardRef<ElementRef<'table'>, TableRootProps>(function TableRoot(

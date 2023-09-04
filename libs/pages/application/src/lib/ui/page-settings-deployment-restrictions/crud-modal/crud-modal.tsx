@@ -1,15 +1,7 @@
 import { DeploymentRestrictionModeEnum, DeploymentRestrictionTypeEnum } from 'qovery-typescript-axios'
 import { type FormEventHandler, useEffect } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import {
-  BannerBox,
-  BannerBoxEnum,
-  IconAwesomeEnum,
-  InputSelect,
-  InputText,
-  ModalCrud,
-  useModal,
-} from '@qovery/shared/ui'
+import { IconAwesomeEnum, InputSelect, InputText, Link, ModalCrud, useModal } from '@qovery/shared/ui'
 
 export interface CrudModalProps {
   onClose: () => void
@@ -34,6 +26,23 @@ export function CrudModal({ onClose, onSubmit, isEdit, isLoading }: CrudModalPro
       loading={isLoading}
       onSubmit={onSubmit}
       onClose={onClose}
+      howItWorks={
+        <>
+          <p>Two modes can be selected:</p>
+          <ul className="list-disc ml-4">
+            <li>EXCLUDE: commits on the file or folder defined in the "Value" field will be ignored</li>
+            <li>MATCH: only commits on the file or folder defined in the "Value" field will trigger a deployment</li>
+          </ul>
+          <p>Wildcards are not supported in the "Value" field</p>
+          <Link
+            className="mt-2 font-medium"
+            link="https://hub.qovery.com/docs/using-qovery/configuration/environment/#auto-deploy"
+            linkLabel="Documentation"
+            external
+            iconRight={IconAwesomeEnum.ARROW_UP_RIGHT_FROM_SQUARE}
+          />
+        </>
+      }
     >
       <Controller
         name="mode"
@@ -86,22 +95,6 @@ export function CrudModal({ onClose, onSubmit, isEdit, isLoading }: CrudModalPro
             label="Value"
           />
         )}
-      />
-      <BannerBox
-        className="mt-7"
-        title="How it works"
-        message={
-          <>
-            Two modes can be selected:
-            <ul className="list-disc ml-4">
-              <li>EXCLUDE: commits on the file or folder defined in the "Value" field will be ignored</li>
-              <li>MATCH: only commits on the file or folder defined in the "Value" field will trigger a deployment</li>
-            </ul>
-            Wildcards are not supported in the "Value" field
-          </>
-        }
-        icon={IconAwesomeEnum.CIRCLE_INFO}
-        type={BannerBoxEnum.INFO}
       />
     </ModalCrud>
   )

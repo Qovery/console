@@ -1,3 +1,4 @@
+import { IconAwesomeEnum } from '../icon/icon-awesome.enum'
 import { type BaseLink, Link } from '../link/link'
 
 export interface HelpSectionProps {
@@ -20,7 +21,7 @@ export function HelpSection(props: HelpSectionProps) {
             link={link.link}
             linkLabel={link.linkLabel || link.link}
             external={link.external}
-            iconRight="icon-solid-arrow-up-right-from-square"
+            iconRight={IconAwesomeEnum.ARROW_UP_RIGHT_FROM_SQUARE}
           />
         ))}
     </div>

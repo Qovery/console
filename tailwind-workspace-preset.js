@@ -29,6 +29,61 @@ const colorsIndigo = {
   900: '#130F66',
 }
 
+const slideEntrances = () => {
+  const genSlide = (suffix, offset) => ({
+    [`slidein-up-${suffix}`]: {
+      from: { transform: `translateY(${offset})` },
+      to: { transform: 'translateY(0)' },
+    },
+    [`slidein-left-${suffix}`]: {
+      from: { transform: `translateX(-${offset})` },
+      to: { transform: 'translateX(0)' },
+    },
+    [`slidein-right-${suffix}`]: {
+      from: { transform: `translateX(${offset})` },
+      to: { transform: 'translateX(0)' },
+    },
+    [`slidein-down-${suffix}`]: {
+      from: { transform: `translateY(-${offset})` },
+      to: { transform: 'translateY(0)' },
+    },
+  })
+  return {
+    ...genSlide('sm', '4px'),
+  }
+}
+
+const slideExits = () => {
+  const genSlide = (suffix, offset) => ({
+    [`slideout-up-${suffix}`]: {
+      from: { transform: 'translateY(0)' },
+      to: { transform: `translateY(-${offset})` },
+    },
+    [`slideout-left-${suffix}`]: {
+      from: { transform: 'translateX(0)' },
+      to: { transform: `translateX(-${offset})` },
+    },
+    [`slideout-right-${suffix}`]: {
+      from: { transform: 'translateX(0)' },
+      to: { transform: `translateX(${offset})` },
+    },
+    [`slideout-down-${suffix}`]: {
+      from: { transform: 'translateY(0)' },
+      to: { transform: `translateY(${offset})` },
+    },
+  })
+  return {
+    ...genSlide('sm', '4px'),
+  }
+}
+
+const easingFunctions = {
+  // https://gist.github.com/argyleink/36e1c0153d2a783d513bd29c9f25aaf2
+  'ease-in-quad': 'cubic-bezier(0.55, 0.085, 0.68, 0.53)',
+  'ease-out-quad': 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+  'ease-out-quart': 'cubic-bezier(0.165, 0.84, 0.44, 1)',
+}
+
 // tailwind-workspace-preset.js
 module.exports = {
   darkMode: 'class',
@@ -201,16 +256,33 @@ module.exports = {
       animation: {
         'action-bar-fade-in': '0.35s cubic-bezier(0.21, 1.02, 0.73, 1) 0s 1 normal forwards actionBarFadeIn',
         'action-bar-fade-out': '0.2s cubic-bezier(0.06, 0.71, 0.55, 1) 0s 1 normal forwards actionBarFadeOut',
+
+        'slidein-up-sm-faded': `400ms ${easingFunctions['ease-out-quart']} 0s slidein-up-sm, 200ms ${easingFunctions['ease-out-quart']} 0s fadein`,
+        'slidein-right-sm-faded': `400ms ${easingFunctions['ease-out-quart']} 0s slidein-right-sm, 200ms ${easingFunctions['ease-out-quart']} 0s fadein`,
+        'slidein-down-sm-faded': `400ms ${easingFunctions['ease-out-quart']} 0s slidein-down-sm, 200ms ${easingFunctions['ease-out-quart']} 0s fadein`,
+        'slidein-left-sm-faded': `400ms ${easingFunctions['ease-out-quart']} 0s slidein-left-sm, 200ms ${easingFunctions['ease-out-quart']} 0s fadein`,
+        fadein: `0.35s ${easingFunctions['ease-in-quad']} 0s fadein both`,
+        fadeout: `0.2s ${easingFunctions['ease-out-quad']} 0s fadeout both`,
       },
       keyframes: {
         actionBarFadeIn: {
-          '0%': { transform: 'translate3d(0,50%,0) scale(.6)', opacity: '.5' },
+          '0%': { transform: 'translate3d(0,50%,0) scale(.6)', opacity: '0.5' },
           '100%': { transform: 'translate3d(0,0,0) scale(1)', opacity: '1' },
         },
         actionBarFadeOut: {
           '0%': { transform: 'translate3d(0,0,-1px) scale(1)', opacity: '1' },
           '100%': { transform: 'translate3d(0,50%,-1px) scale(.8)', opacity: '0' },
         },
+        fadein: {
+          from: { opacity: 0 },
+          to: { opacity: 1 },
+        },
+        fadeout: {
+          from: { opacity: 1 },
+          to: { opacity: 0 },
+        },
+        ...slideEntrances(),
+        ...slideExits(),
       },
     },
   },

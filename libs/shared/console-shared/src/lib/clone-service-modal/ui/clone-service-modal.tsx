@@ -1,7 +1,8 @@
 import { type Environment, type Project } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
+import { type ServiceType } from '@qovery/domains/services/data-access'
 import { type ApplicationEntity, type DatabaseEntity } from '@qovery/shared/interfaces'
-import { InputSelect, InputText, LoaderSpinner, ModalCrud } from '@qovery/shared/ui'
+import { IconAwesomeEnum, InputSelect, InputText, Link, LoaderSpinner, ModalCrud } from '@qovery/shared/ui'
 
 export interface CloneServiceModalProps {
   closeModal: () => void
@@ -11,6 +12,7 @@ export interface CloneServiceModalProps {
   onSubmit: () => void
   projects: Project[]
   serviceToClone: ApplicationEntity | DatabaseEntity
+  serviceType: ServiceType
 }
 
 export function CloneServiceModal({
@@ -21,8 +23,18 @@ export function CloneServiceModal({
   onSubmit,
   projects,
   serviceToClone,
+  serviceType,
 }: CloneServiceModalProps) {
   const { control, setValue } = useFormContext()
+
+  const documentationLink = {
+    APPLICATION: 'https://hub.qovery.com/docs/using-qovery/configuration/application/#clone',
+    DATABASE: 'https://hub.qovery.com/docs/using-qovery/configuration/database/#clone',
+    CONTAINER: 'https://hub.qovery.com/docs/using-qovery/configuration/application/#clone',
+    JOB: 'https://hub.qovery.com/docs/using-qovery/configuration/cronjob/#clone',
+    CRON_JOB: 'https://hub.qovery.com/docs/using-qovery/configuration/cronjob/#clone',
+    LIFECYCLE_JOB: 'https://hub.qovery.com/docs/using-qovery/configuration/lifecylejob/#clone',
+  }[serviceType]
 
   return (
     <ModalCrud
@@ -32,6 +44,33 @@ export function CloneServiceModal({
       onSubmit={onSubmit}
       loading={loading}
       submitLabel="Clone"
+      howItWorks={
+        <>
+          <p>
+            The service will be cloned within the target environment.
+            <br />
+            All the configurations will be copied into the new service with a few exceptions:
+          </p>
+          <ul className="list-disc list-outside ml-4">
+            <li>target environment is the current environment: custom domains</li>
+            <li>
+              target environment is NOT the current environment: custom domains, pipeline deployment stages, environment
+              variables with environment/project scope (including aliases/overrides).
+            </li>
+          </ul>
+          <p>
+            Once cloned, check the service setup.
+            <br />
+          </p>
+          <Link
+            className="mt-2 font-medium"
+            link={documentationLink}
+            linkLabel="Documentation"
+            external
+            iconRight={IconAwesomeEnum.ARROW_UP_RIGHT_FROM_SQUARE}
+          />
+        </>
+      }
     >
       <InputText className="mb-6" name="clone" value={serviceToClone.name} label="Service to clone" disabled={true} />
 

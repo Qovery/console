@@ -1,6 +1,6 @@
 import { type CustomDomain } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
-import { BannerBox, BannerBoxEnum, IconAwesomeEnum, InputText, Link, ModalCrud } from '@qovery/shared/ui'
+import { IconAwesomeEnum, InputText, Link, ModalCrud } from '@qovery/shared/ui'
 
 export interface CrudModalProps {
   customDomain?: CustomDomain
@@ -25,6 +25,28 @@ export function CrudModal(props: CrudModalProps) {
       onClose={props.onClose}
       loading={props.loading}
       isEdit={props.isEdit}
+      howItWorks={
+        <>
+          <ol className="list-decimal ml-3">
+            <li className="mb-2">
+              You need to configure within your DNS two CNAME records pointing to the domain provided by Qovery, as
+              shown above. Qovery will handle TLS/SSL certificate creation and renewal. If “*” is not supported by your
+              DNS provider, you will have to configure each subdomain manually.
+            </li>
+            <li>
+              If the service needs to expose more than one port publicly, you can define a dedicated subdomain to
+              redirect the traffic to each port by setting the “Port Name” value within the port settings.
+            </li>
+          </ol>
+          <Link
+            className="mt-2 font-medium"
+            link="https://hub.qovery.com/guides/getting-started/setting-custom-domain"
+            linkLabel="Documentation"
+            external
+            iconRight={IconAwesomeEnum.ARROW_UP_RIGHT_FROM_SQUARE}
+          />
+        </>
+      }
     >
       <Controller
         name="domain"
@@ -64,36 +86,6 @@ export function CrudModal(props: CrudModalProps) {
           </div>
         </div>
       )}
-      <BannerBox
-        className="mt-7"
-        title="How to config"
-        message={
-          <div>
-            <ol className="list-decimal ml-3">
-              <li className="mb-2">
-                You need to configure within your DNS two CNAME records pointing to the domain provided by Qovery, as
-                shown above. Qovery will handle TLS/SSL certificate creation and renewal. If “*” is not supported by
-                your DNS provider, you will have to configure each subdomain manually.
-              </li>
-              <li>
-                If the service needs to expose more than one port publicly, you can define a dedicated subdomain to
-                redirect the traffic to each port by setting the “Port Name” value within the port settings.
-              </li>
-            </ol>
-            <Link
-              external
-              className="font-medium mt-1"
-              size="text-xs"
-              link="https://hub.qovery.com/guides/getting-started/setting-custom-domain"
-              linkLabel="Documentation"
-              iconRight={IconAwesomeEnum.ARROW_UP_RIGHT_FROM_SQUARE}
-              iconRightClassName="text-2xs relative top-[1px]"
-            />
-          </div>
-        }
-        icon={IconAwesomeEnum.CIRCLE_INFO}
-        type={BannerBoxEnum.INFO}
-      />
     </ModalCrud>
   )
 }

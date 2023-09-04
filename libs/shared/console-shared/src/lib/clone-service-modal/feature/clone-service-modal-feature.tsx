@@ -51,14 +51,13 @@ export function CloneServiceModalFeature({
   environments.push(...data)
 
   const navigate = useNavigate()
+  const serviceType = getServiceType(serviceToClone)
 
   const onSubmit = methods.handleSubmit(async ({ name, environment: environmentId, project: projectId }) => {
     const cloneRequest = {
       name,
       environment_id: environmentId,
     }
-
-    const serviceType = getServiceType(serviceToClone)
 
     const result = await mutateAsync({
       serviceId: serviceToClone.id,
@@ -85,11 +84,12 @@ export function CloneServiceModalFeature({
       <CloneServiceModal
         closeModal={onClose}
         environments={environments}
-        loading={isCloneServiceLoading}
         isFetchEnvironmentsLoading={isFetchEnvironmentsLoading}
+        loading={isCloneServiceLoading}
         onSubmit={onSubmit}
         projects={projects}
         serviceToClone={serviceToClone}
+        serviceType={serviceType}
       />
     </FormProvider>
   )
