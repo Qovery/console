@@ -1,4 +1,4 @@
-import { type Log } from 'qovery-typescript-axios'
+import { type ServiceLogResponseDto } from 'qovery-ws-typescript-axios'
 import { useContext } from 'react'
 import { UpdateTimeContext } from '@qovery/shared/console-shared'
 import {
@@ -58,7 +58,7 @@ export const formatVersion = (version: string) => {
 }
 
 export interface RowPodProps {
-  data: Log
+  data: ServiceLogResponseDto
   index: number
   filter?: TableFilterProps[]
 }

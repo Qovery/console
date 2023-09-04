@@ -1,4 +1,4 @@
-import { type Log } from 'qovery-typescript-axios'
+import { type ServiceLogResponseDto } from 'qovery-ws-typescript-axios'
 import { useMemo, useState } from 'react'
 import { useRunningStatus } from '@qovery/domains/services/feature'
 import { LayoutLogs } from '@qovery/shared/console-shared'
@@ -8,7 +8,7 @@ import RowPod from '../row-pod/row-pod'
 
 export interface PodLogsProps {
   loadingStatus: LoadingStatus
-  logs: Log[]
+  logs: Array<ServiceLogResponseDto & { id: number }>
   pauseStatusLogs: boolean
   setPauseStatusLogs: (pause: boolean) => void
   service?: ApplicationEntity | DatabaseEntity
@@ -36,7 +36,7 @@ export function PodLogs(props: PodLogsProps) {
     serviceId: service?.id,
   })
 
-  const tableHead: TableHeadProps<Log>[] = [
+  const tableHead: TableHeadProps<ServiceLogResponseDto>[] = [
     {
       title: 'Pod name',
       className: 'ml-14 pr-4 py-2 h-full text-neutral-300 w-[208px]',
@@ -46,7 +46,7 @@ export function PodLogs(props: PodLogsProps) {
         {
           title: 'Filter by pod name',
           key: 'pod_name',
-          itemContentCustom: (data: Log, currentFilter: string) => {
+          itemContentCustom: (data: ServiceLogResponseDto, currentFilter: string) => {
             const isActive = data.pod_name === currentFilter
             const currentPod = serviceRunningStatus?.pods.filter((pod) => pod.name === data.pod_name)[0]
             return (
@@ -100,7 +100,7 @@ export function PodLogs(props: PodLogsProps) {
 
   const memoRow = useMemo(
     () =>
-      logs?.map((log: Log, index: number) => {
+      logs?.map((log, index) => {
         return <RowPod key={log.id} index={index} data={log} filter={filter} />
       }),
     [logs, filter]
