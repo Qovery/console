@@ -1,4 +1,4 @@
-import { currencyDictionary } from '../constants/currency-dictionary'
+import { currencyDictionary } from '@qovery/shared/enums'
 
 export const costToHuman = (value = 0, currency = 'USD'): string => {
   // prepend or append the currency symbol to the value and split the value per 3 digits
