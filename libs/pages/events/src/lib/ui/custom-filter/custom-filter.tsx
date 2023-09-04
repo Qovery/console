@@ -8,7 +8,7 @@ import {
 import { useSearchParams } from 'react-router-dom'
 import { Button, ButtonSize, ButtonStyle, DatePicker, Icon, IconAwesomeEnum, InputFilter } from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
-import { upperCaseFirstLetter } from '@qovery/shared/utils'
+import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { hasEnvironment, hasProject } from '../../feature/page-general-feature/page-general-feature'
 
 export interface CustomFilterProps {

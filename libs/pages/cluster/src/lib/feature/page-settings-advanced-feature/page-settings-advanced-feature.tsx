@@ -11,7 +11,7 @@ import {
   selectClusterById,
 } from '@qovery/domains/organization'
 import { type AdvancedSettings, type ClusterEntity, type LoadingStatus } from '@qovery/shared/interfaces'
-import { objectFlattener } from '@qovery/shared/utils'
+import { objectFlattener } from '@qovery/shared/util-js'
 import { type AppDispatch, type RootState } from '@qovery/state/store'
 import PageSettingsAdvanced from '../../ui/page-settings-advanced/page-settings-advanced'
 import { initFormValues } from './init-form-values/init-form-values'

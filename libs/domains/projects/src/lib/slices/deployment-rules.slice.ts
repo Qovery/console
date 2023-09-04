@@ -6,7 +6,7 @@ import {
 } from 'qovery-typescript-axios'
 import { type DeploymentRuleState, type LoadingStatus } from '@qovery/shared/interfaces'
 import { ToastEnum, toast } from '@qovery/shared/ui'
-import { addOneToManyRelation, getEntitiesByIds } from '@qovery/shared/utils'
+import { addOneToManyRelation, getEntitiesByIds } from '@qovery/shared/util-js'
 import { type RootState } from '@qovery/state/store'
 
 export const DEPLOYMENT_RULES_FEATURE_KEY = 'deploymentRules'

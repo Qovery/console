@@ -1,7 +1,7 @@
 import { act, render } from '__tests__/utils/setup-jest'
 import { StateEnum } from 'qovery-typescript-axios'
 import { clusterFactoryMock } from '@qovery/shared/factories'
-import { getStatusClusterMessage } from '@qovery/shared/utils'
+import { getStatusClusterMessage } from '@qovery/shared/util-js'
 import CardCluster, { type CardClusterProps, getColorForStatus } from './card-cluster'
 
 describe('CardCluster', () => {

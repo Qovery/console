@@ -1,5 +1,5 @@
 import { type Dispatch, type MouseEvent, type SetStateAction, useEffect, useState } from 'react'
-import { upperCaseFirstLetter } from '@qovery/shared/utils'
+import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import Button, { ButtonSize, ButtonStyle } from '../../buttons/button/button'
 import Icon from '../../icon/icon'
 import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'

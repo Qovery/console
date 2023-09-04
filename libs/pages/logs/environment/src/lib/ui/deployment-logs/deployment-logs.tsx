@@ -15,7 +15,7 @@ import {
 import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { StatusChip } from '@qovery/shared/ui'
 import { dateFullFormat } from '@qovery/shared/util-dates'
-import { mergeDeploymentServices, trimId } from '@qovery/shared/utils'
+import { mergeDeploymentServices, trimId } from '@qovery/shared/util-js'
 import RowDeployment from '../row-deployment/row-deployment'
 
 export interface DeploymentLogsProps {

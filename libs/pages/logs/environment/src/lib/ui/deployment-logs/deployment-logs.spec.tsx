@@ -1,8 +1,8 @@
 import { ClusterLogsStepEnum, ServiceDeploymentStatusEnum } from 'qovery-typescript-axios'
 import { applicationFactoryMock, deploymentLogFactoryMock } from '@qovery/shared/factories'
 import { dateFullFormat } from '@qovery/shared/util-dates'
+import { trimId } from '@qovery/shared/util-js'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import { trimId } from '@qovery/shared/utils'
 import DeploymentLogs, { type DeploymentLogsProps } from './deployment-logs'
 
 const mockLogs = deploymentLogFactoryMock(1)

@@ -1,8 +1,8 @@
 import { render, screen } from '__tests__/utils/setup-jest'
 import { ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { dateFullFormat } from '@qovery/shared/util-dates'
+import { trimId } from '@qovery/shared/util-js'
 import { renderWithProviders } from '@qovery/shared/util-tests'
-import { trimId } from '@qovery/shared/utils'
 import SidebarHistory, { type SidebarHistoryProps } from './sidebar-history'
 
 const currentDate = new Date().toString()

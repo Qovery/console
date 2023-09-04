@@ -1,7 +1,7 @@
 import { render } from '__tests__/utils/setup-jest'
 import { CloudProviderEnum } from 'qovery-typescript-axios'
 import { applicationFactoryMock, databaseFactoryMock } from '@qovery/shared/factories'
-import { upperCaseFirstLetter } from '@qovery/shared/utils'
+import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import DraggableItem, { type DraggableItemProps } from './draggable-item'
 
 const applications = applicationFactoryMock(1)

@@ -19,7 +19,7 @@ import {
 import { type WebsocketRunningStatusInterface } from '@qovery/shared/interfaces'
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
-import { refactoPayload } from '@qovery/shared/utils'
+import { refactoPayload } from '@qovery/shared/util-js'
 
 export const ENVIRONMENTS_FEATURE_KEY = 'environments'
 

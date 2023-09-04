@@ -33,7 +33,7 @@ import {
   isDeployAvailable,
   isRedeployAvailable,
   isStopAvailable,
-} from '@qovery/shared/utils'
+} from '@qovery/shared/util-js'
 import CreateCloneEnvironmentModalFeature from '../../../create-clone-environment-modal/feature/create-clone-environment-modal-feature'
 import { TerraformExportModalFeature } from '../../../terraform-export-modal/feature/terraform-export-modal-feature'
 import UpdateAllModalFeature from '../../../update-all-modal/feature/update-all-modal-feature'

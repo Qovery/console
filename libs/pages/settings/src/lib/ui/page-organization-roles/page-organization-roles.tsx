@@ -13,7 +13,7 @@ import {
   IconAwesomeEnum,
   LoaderSpinner,
 } from '@qovery/shared/ui'
-import { upperCaseFirstLetter } from '@qovery/shared/utils'
+import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { RolesIcons } from '../page-organization-members/row-member/row-member'
 
 export interface PageOrganizationRolesProps {

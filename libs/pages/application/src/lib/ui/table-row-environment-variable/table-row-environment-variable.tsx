@@ -23,7 +23,7 @@ import {
   Tooltip,
 } from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond, timeAgo } from '@qovery/shared/util-dates'
-import { environmentVariableFile, getEnvironmentVariableFileMountPath } from '@qovery/shared/utils'
+import { environmentVariableFile, getEnvironmentVariableFileMountPath } from '@qovery/shared/util-js'
 
 export interface TableRowEnvironmentVariableProps {
   variable: EnvironmentVariableSecretOrPublic

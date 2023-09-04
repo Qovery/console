@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { copyToClipboard as copyToClipboardUtil } from '@qovery/shared/utils'
+import { copyToClipboard as copyToClipboardUtil } from '@qovery/shared/util-js'
 import Icon from '../icon/icon'
 import { IconAwesomeEnum } from '../icon/icon-awesome.enum'
 import Tooltip from '../tooltip/tooltip'

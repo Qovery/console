@@ -21,7 +21,7 @@ import {
   isRedeployAvailable,
   isStopAvailable,
   isUpdateAvailable,
-} from '@qovery/shared/utils'
+} from '@qovery/shared/util-js'
 import { type AppDispatch } from '@qovery/state/store'
 
 export interface ClusterButtonsActionsProps {

@@ -2,8 +2,8 @@ import { act, getAllByTestId, getByTestId, getByText, queryByTestId, render } fr
 import { type OrganizationEventResponse } from 'qovery-typescript-axios'
 import { eventsFactoryMock } from '@qovery/shared/factories'
 import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
+import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import { upperCaseFirstLetter } from '@qovery/shared/utils'
 import RowEvent, { type RowEventProps } from './row-event'
 
 jest.mock('react-router-dom', () => ({

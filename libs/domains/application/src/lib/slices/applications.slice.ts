@@ -54,7 +54,7 @@ import {
   refactoJobPayload,
   removeOneToManyRelation,
   sortByKey,
-} from '@qovery/shared/utils'
+} from '@qovery/shared/util-js'
 import { type RootState } from '@qovery/state/store'
 
 export const APPLICATIONS_FEATURE_KEY = 'applications'

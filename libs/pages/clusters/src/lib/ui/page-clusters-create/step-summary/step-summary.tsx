@@ -17,7 +17,7 @@ import {
   IconAwesomeEnum,
   Link,
 } from '@qovery/shared/ui'
-import { trimId } from '@qovery/shared/utils'
+import { trimId } from '@qovery/shared/util-js'
 
 export interface StepSummaryProps {
   onSubmit: (withDeploy: boolean) => void

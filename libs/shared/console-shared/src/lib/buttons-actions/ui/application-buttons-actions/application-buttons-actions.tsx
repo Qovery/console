@@ -51,7 +51,7 @@ import {
   isRestartAvailable,
   isStopAvailable,
   urlCodeEditor,
-} from '@qovery/shared/utils'
+} from '@qovery/shared/util-js'
 import { type AppDispatch } from '@qovery/state/store'
 import CloneServiceModalFeature from '../../../clone-service-modal/feature/clone-service-modal-feature'
 import DeployOtherCommitModalFeature from '../../../deploy-other-commit-modal/feature/deploy-other-commit-modal-feature'

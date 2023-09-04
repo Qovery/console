@@ -2,7 +2,7 @@ import { StateEnum } from 'qovery-typescript-axios'
 import { ClusterButtonsActions } from '@qovery/shared/console-shared'
 import { type ClusterEntity } from '@qovery/shared/interfaces'
 import { Icon, Skeleton, StatusChip, Tag, TagClusterType } from '@qovery/shared/ui'
-import { getStatusClusterMessage } from '@qovery/shared/utils'
+import { getStatusClusterMessage } from '@qovery/shared/util-js'
 
 export interface CardClusterProps {
   cluster: ClusterEntity

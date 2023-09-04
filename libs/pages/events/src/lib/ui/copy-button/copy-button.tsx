@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Button, ButtonSize, ButtonStyle, IconAwesomeEnum, IconFa } from '@qovery/shared/ui'
-import { copyToClipboard } from '@qovery/shared/utils'
+import { copyToClipboard } from '@qovery/shared/util-js'
 
 export interface CopyButtonProps {
   content: string

@@ -11,7 +11,7 @@ import {
   TagSize,
 } from '@qovery/shared/ui'
 import { dateToFormat } from '@qovery/shared/util-dates'
-import { costToHuman } from '@qovery/shared/utils'
+import { costToHuman } from '@qovery/shared/util-js'
 
 export interface TableRowInvoiceProps {
   dataHead: TableHeadProps<Invoice>[]

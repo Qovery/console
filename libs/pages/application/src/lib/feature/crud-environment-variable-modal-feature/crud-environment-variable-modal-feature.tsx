@@ -7,7 +7,7 @@ import { getEnvironmentVariablesState } from '@qovery/domains/environment-variab
 import { type ServiceTypeEnum } from '@qovery/shared/enums'
 import { type EnvironmentVariableEntity, type EnvironmentVariableSecretOrPublic } from '@qovery/shared/interfaces'
 import { useModal } from '@qovery/shared/ui'
-import { computeAvailableScope, getEnvironmentVariableFileMountPath } from '@qovery/shared/utils'
+import { computeAvailableScope, getEnvironmentVariableFileMountPath } from '@qovery/shared/util-js'
 import { type AppDispatch, type RootState } from '@qovery/state/store'
 import CrudEnvironmentVariableModal from '../../ui/crud-environment-variable-modal/crud-environment-variable-modal'
 import { handleSubmitForEnvSecretCreation } from './handle-submit/handle-submit'

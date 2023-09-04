@@ -38,7 +38,7 @@ import {
   isRedeployAvailable,
   isRestartAvailable,
   isStopAvailable,
-} from '@qovery/shared/utils'
+} from '@qovery/shared/util-js'
 import { type AppDispatch } from '@qovery/state/store'
 import CloneServiceModalFeature from '../../../clone-service-modal/feature/clone-service-modal-feature'
 

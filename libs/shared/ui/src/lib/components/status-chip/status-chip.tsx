@@ -1,6 +1,6 @@
 import { type DeploymentHistoryStatusEnum, StateEnum } from 'qovery-typescript-axios'
 import { IconEnum, RunningState } from '@qovery/shared/enums'
-import { upperCaseFirstLetter } from '@qovery/shared/utils'
+import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import Icon from '../icon/icon'
 import Tooltip from '../tooltip/tooltip'
 

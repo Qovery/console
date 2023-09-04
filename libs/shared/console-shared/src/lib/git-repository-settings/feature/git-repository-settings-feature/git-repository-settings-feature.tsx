@@ -13,7 +13,7 @@ import {
   selectRepositoriesByProvider,
 } from '@qovery/domains/organization'
 import { type LoadingStatus, type RepositoryEntity } from '@qovery/shared/interfaces'
-import { upperCaseFirstLetter } from '@qovery/shared/utils'
+import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { type AppDispatch, type RootState } from '@qovery/state/store'
 import GitRepositorySettings from '../../ui/git-repository-settings/git-repository-settings'
 import { authProvidersValues } from '../../utils/auth-providers-values'

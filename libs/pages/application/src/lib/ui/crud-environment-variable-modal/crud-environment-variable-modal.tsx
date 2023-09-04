@@ -12,7 +12,7 @@ import {
   InputToggle,
   Tooltip,
 } from '@qovery/shared/ui'
-import { generateScopeLabel } from '@qovery/shared/utils'
+import { generateScopeLabel } from '@qovery/shared/util-js'
 import {
   type DataFormEnvironmentVariableInterface,
   EnvironmentVariableCrudMode,
