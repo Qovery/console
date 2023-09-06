@@ -105,7 +105,9 @@ export enum IconAwesomeEnum {
   ERASER = 'icon-solid-eraser',
   CHEVRON_LEFT = 'icon-solid-chevron-left',
   CHEVRON_RIGHT = 'icon-solid-chevron-right',
+  CHEVRONS_RIGHT = 'icon-solid-chevrons-right',
   CLOCK = 'icon-regular-clock',
   SHIELD_CHECK = 'icon-solid-shield-check',
+  HOUSE = 'icon-solid-house',
   // schema: favicons name
 }

@@ -1,7 +1,20 @@
 import { type DeploymentHistoryEnvironment } from 'qovery-typescript-axios'
 import { useState } from 'react'
-import { DEPLOYMENT_LOGS_VERSION_URL } from '@qovery/shared/routes'
-import { Icon, IconAwesomeEnum, Menu, MenuAlign, type MenuData, StatusChip, Tooltip } from '@qovery/shared/ui'
+import { useParams } from 'react-router-dom'
+import { DEPLOYMENT_LOGS_URL, DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
+import {
+  Button,
+  ButtonSize,
+  ButtonStyle,
+  Icon,
+  IconAwesomeEnum,
+  Menu,
+  MenuAlign,
+  type MenuData,
+  StatusChip,
+  Tag,
+  Tooltip,
+} from '@qovery/shared/ui'
 import { dateFullFormat } from '@qovery/shared/util-dates'
 import { trimId } from '@qovery/shared/util-js'
 
@@ -13,6 +26,7 @@ export interface SidebarHistoryProps {
 }
 
 export function SidebarHistory({ data, serviceId, versionId, pathLogs }: SidebarHistoryProps) {
+  const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const [open, setOpen] = useState(false)
 
   const menuHistory: MenuData = [
@@ -42,32 +56,59 @@ export function SidebarHistory({ data, serviceId, versionId, pathLogs }: Sidebar
     },
   ]
 
-  const currentIndex = data?.findIndex((item) => item.id === versionId)
+  function findPositionById(list: DeploymentHistoryEnvironment[], searchId = '') {
+    const index = list.findIndex((item) => item.id === searchId)
+    return index !== -1 ? index : -1
+  }
 
   if (data.length === 0) return null
 
   return (
-    <div className="flex justify-center border-b border-neutral-500 px-4 py-3">
-      <div>
+    <div className="flex border-b border-neutral-500 px-4 py-3">
+      <div className="flex">
+        <Button
+          className="!border-r-0 !rounded-r-none"
+          style={ButtonStyle.DARK}
+          size={ButtonSize.TINY}
+          link={ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId)}
+        >
+          <Icon name={IconAwesomeEnum.HOUSE} />
+        </Button>
         <Menu
           width={300}
           menus={menuHistory}
           arrowAlign={MenuAlign.CENTER}
           onOpen={(isOpen) => setOpen(isOpen)}
           trigger={
-            <div
-              role="button"
-              className={`text-xs font-medium hover:text-brand-400 transition ${
-                open ? 'text-brand-400' : 'text-neutral-50'
-              }`}
+            <Button
+              className="!rounded-l-none w-[199px] mr-1.5"
+              style={ButtonStyle.DARK}
+              size={ButtonSize.TINY}
+              iconRight={IconAwesomeEnum.ANGLE_DOWN}
             >
-              <span className="inline-block mr-1">
-                Deployment - {dateFullFormat(data?.[currentIndex === -1 ? 0 : currentIndex]?.created_at)}
-              </span>
-              <Icon name={IconAwesomeEnum.ANGLE_DOWN} />
-            </div>
+              Deployment log history
+            </Button>
           }
         />
+        {findPositionById(data, versionId) <= 0 && (
+          <Tag className="text-neutral-350 border border-neutral-350" fontWeight="font-medium">
+            Latest
+          </Tag>
+        )}
+        {findPositionById(data, versionId) > 0 && (
+          <Button
+            className="w-[51px]"
+            style={ButtonStyle.DARK}
+            size={ButtonSize.TINY}
+            iconRight={IconAwesomeEnum.CHEVRONS_RIGHT}
+            link={
+              ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
+              DEPLOYMENT_LOGS_VERSION_URL(serviceId, '')
+            }
+          >
+            {findPositionById(data, versionId)}
+          </Button>
+        )}
       </div>
     </div>
   )
