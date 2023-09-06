@@ -1,4 +1,5 @@
 import { Auth0Provider } from '@auth0/auth0-react'
+import { Provider as TooltipProvider } from '@radix-ui/react-tooltip'
 import { MutationCache, QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import posthog from 'posthog-js'
 import { createRoot } from 'react-dom/client'
@@ -95,10 +96,12 @@ root.render(
       <QueryClientProvider client={queryClient}>
         <Provider store={store}>
           <BrowserRouter>
-            <ModalProvider>
-              <App />
-              <ToastBehavior />
-            </ModalProvider>
+            <TooltipProvider>
+              <ModalProvider>
+                <App />
+                <ToastBehavior />
+              </ModalProvider>
+            </TooltipProvider>
           </BrowserRouter>
         </Provider>
         {/* <ReactQueryDevtools initialIsOpen={false} /> */}

@@ -5,6 +5,7 @@
  */
 import { Auth0Provider } from '@auth0/auth0-react'
 import { ResizeObserver } from '@juggle/resize-observer'
+import { Provider as TooltipProvider } from '@radix-ui/react-tooltip'
 import { type PreloadedState } from '@reduxjs/toolkit'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import '@testing-library/jest-dom'
@@ -54,6 +55,7 @@ function renderWithProviders(
       .add(Auth0Provider, { clientId: '__test_client_id__', domain: '__test_domain__' })
       .add(QueryClientProvider, { client: queryClient })
       .add(ReduxProvider, { store })
+      .add(TooltipProvider)
       .add(ModalProvider)
       .add(MemoryRouter)
       .make()
