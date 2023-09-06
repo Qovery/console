@@ -1,3 +1,4 @@
+import Ansi from 'ansi-to-react'
 import { type ServiceLogResponseDto } from 'qovery-ws-typescript-axios'
 import { useContext } from 'react'
 import { UpdateTimeContext } from '@qovery/shared/console-shared'
@@ -8,7 +9,6 @@ import {
   type TableFilterProps,
   TableRowFilter,
   Tooltip,
-  convertToAnsi,
 } from '@qovery/shared/ui'
 import { dateFullFormat } from '@qovery/shared/util-dates'
 
@@ -73,8 +73,11 @@ export function RowPod(props: RowPodProps) {
         data-testid="pod-log-row"
         className="group flex justify-between font-code text-xs hover:bg-neutral-650 w-full mb-[2px] select-none"
       >
-        <div data-testid="index" className="bg-neutral-700 text-neutral-400 group-hover:bg-neutral-550">
-          <div className="text-right w-10 h-5 px-2 pt-0.5 font-code">{index + 1}</div>
+        <div
+          data-testid="index"
+          className="bg-neutral-700 text-neutral-400 group-hover:bg-neutral-550 px-2 pt-0.5 font-code min-w-[40px] max-w-[40px] text-right box-border"
+        >
+          {index + 1}
         </div>
         <div
           data-testid="cell-pod-name"
@@ -104,9 +107,13 @@ export function RowPod(props: RowPodProps) {
         <div data-testid="cell-date" className="px-4 pt-0.5 text-neutral-350 whitespace-nowrap">
           {dateFullFormat(data.created_at, utc ? 'UTC' : undefined, 'dd MMM, HH:mm:ss:SS')}
         </div>
-        <div data-testid="cell-msg" className="select-text pr-6 pt-0.5 text-neutral-50 relative w-full">
-          <span className="whitespace-pre-wrap break-all">{convertToAnsi(data.message)}</span>
-        </div>
+        <Ansi
+          data-testid="cell-msg"
+          className="select-text pr-6 pt-0.5 text-neutral-50 relative w-full whitespace-pre-wrap break-all code-ansi"
+          linkify
+        >
+          {data.message}
+        </Ansi>
       </div>
     </TableRowFilter>
   )
