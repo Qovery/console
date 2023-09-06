@@ -20,4 +20,5 @@ jest.mock('@uidotdev/usehooks', () => ({
   useDocumentTitle: jest.fn(),
   useClickAway: jest.fn(),
   useCopyToClipboard: () => [jest.fn(), jest.fn()],
+  useDebounce: () => [jest.fn(), jest.fn()],
 }))
