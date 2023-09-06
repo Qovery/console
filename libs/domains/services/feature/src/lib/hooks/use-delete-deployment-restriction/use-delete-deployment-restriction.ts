@@ -1,10 +1,10 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { type ApplicationType, mutations } from '@qovery/domains/services/data-access'
+import { type ApplicationType, type JobType, mutations } from '@qovery/domains/services/data-access'
 import { queries } from '@qovery/state/util-queries'
 
 export interface UseDeleteDeploymentRestrictionProps {
   serviceId: string
-  serviceType: ApplicationType
+  serviceType: ApplicationType | JobType
 }
 
 export function useDeleteDeploymentRestriction({ serviceId, serviceType }: UseDeleteDeploymentRestrictionProps) {

@@ -1,7 +1,12 @@
 import { type ApplicationDeploymentRestriction } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
 import { useFetchEnvironmentDeploymentRule } from '@qovery/domains/environment'
-import { useDeleteDeploymentRestriction, useDeploymentRestrictions } from '@qovery/domains/services/feature'
+import { type ApplicationType, type JobType, isApplicationType, isJobType } from '@qovery/domains/services/data-access'
+import {
+  useDeleteDeploymentRestriction,
+  useDeploymentRestrictions,
+  useServiceType,
+} from '@qovery/domains/services/feature'
 import {
   BannerBox,
   BlockContent,
@@ -19,10 +24,43 @@ import {
 import CrudModalFeature from './crud-modal-feature/crud-modal-feature'
 
 export function PageSettingsDeploymentRestrictionsFeature() {
-  const { projectId = '', environmentId = '', applicationId = '' } = useParams()
+  const { projectId, environmentId, applicationId } = useParams()
+  const { data: serviceType } = useServiceType({ environmentId, serviceId: applicationId })
+  if (
+    !projectId ||
+    !environmentId ||
+    !applicationId ||
+    !serviceType ||
+    !(isApplicationType(serviceType) || isJobType(serviceType))
+  ) {
+    return null
+  }
+  return (
+    <PageSettingsDeploymentRestrictionsFeatureInner
+      projectId={projectId}
+      environmentId={environmentId}
+      serviceId={applicationId}
+      serviceType={serviceType}
+    />
+  )
+}
+
+interface PageSettingsDeploymentRestrictionsFeatureInnerProps {
+  projectId: string
+  environmentId: string
+  serviceId: string
+  serviceType: ApplicationType | JobType
+}
+
+function PageSettingsDeploymentRestrictionsFeatureInner({
+  projectId,
+  environmentId,
+  serviceId,
+  serviceType,
+}: PageSettingsDeploymentRestrictionsFeatureInnerProps) {
   const serviceParams = {
-    serviceId: applicationId,
-    serviceType: 'APPLICATION' as const,
+    serviceId,
+    serviceType,
   }
   const { data: deploymentRestrictions = [], isLoading: isLoadingDeploymentRestrictions } =
     useDeploymentRestrictions(serviceParams)
@@ -54,8 +92,8 @@ export function PageSettingsDeploymentRestrictionsFeature() {
       isDelete: true,
       action() {
         deleteRestriction({
-          serviceId: applicationId,
-          serviceType: 'APPLICATION',
+          serviceId,
+          serviceType,
           deploymentRestrictionId: deploymentRestriction.id,
         })
       },

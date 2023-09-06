@@ -13,6 +13,8 @@ import {
   DatabaseMainCallsApi,
   DatabasesApi,
   EnvironmentMainCallsApi,
+  JobDeploymentRestrictionApi,
+  type JobDeploymentRestrictionRequest,
   JobMainCallsApi,
   JobsApi,
   type Status,
@@ -33,6 +35,7 @@ const environmentMainCallsApi = new EnvironmentMainCallsApi()
 const jobMainCallsApi = new JobMainCallsApi()
 
 const applicationDeploymentApi = new ApplicationDeploymentRestrictionApi()
+const jobDeploymentApi = new JobDeploymentRestrictionApi()
 
 // Use this type in param instead of ServiceTypeEnum
 // to suppport string AND enum as param
@@ -131,10 +134,10 @@ export const services = createQueryKeys('services', {
     queryKey: [serviceId],
     async queryFn() {
       const mapper = {
-        APPLICATION: applicationDeploymentApi.getApplicationDeploymentRestrictions.bind(applicationMainCallsApi),
+        APPLICATION: applicationDeploymentApi.getApplicationDeploymentRestrictions.bind(applicationDeploymentApi),
         CONTAINER: null,
         DATABASE: null,
-        JOB: null, // Waiting on https://qovery.atlassian.net/browse/COR-573
+        JOB: jobDeploymentApi.getJobDeploymentRestrictions.bind(jobDeploymentApi),
         CRON_JOB: null,
         LIFECYCLE_JOB: null,
       } as const
@@ -186,12 +189,19 @@ type CloneServiceRequest =
       payload: CloneJobRequest
     }
 
-type DeploymentRestrictionRequest = {
-  serviceId: string
-  serviceType: ApplicationType
-  deploymentRestrictionId: string
-  payload: ApplicationDeploymentRestrictionRequest
-}
+type DeploymentRestrictionRequest =
+  | {
+      serviceId: string
+      serviceType: ApplicationType
+      deploymentRestrictionId: string
+      payload: ApplicationDeploymentRestrictionRequest
+    }
+  | {
+      serviceId: string
+      serviceType: JobType
+      deploymentRestrictionId: string
+      payload: JobDeploymentRestrictionRequest
+    }
 
 export const mutations = {
   async cloneService({ serviceId, serviceType, payload }: CloneServiceRequest) {
@@ -215,6 +225,9 @@ export const mutations = {
   }: DeploymentRestrictionRequest) {
     const mapper = {
       APPLICATION: applicationDeploymentApi.editApplicationDeploymentRestriction.bind(applicationDeploymentApi),
+      JOB: jobDeploymentApi.editJobDeploymentRestriction.bind(jobDeploymentApi),
+      CRON_JOB: jobDeploymentApi.editJobDeploymentRestriction.bind(jobDeploymentApi),
+      LIFECYCLE_JOB: jobDeploymentApi.editJobDeploymentRestriction.bind(jobDeploymentApi),
     } as const
     const mutation = mapper[serviceType]
     if (!mutation) {
@@ -230,6 +243,9 @@ export const mutations = {
   }: Omit<DeploymentRestrictionRequest, 'deploymentRestrictionId'>) {
     const mapper = {
       APPLICATION: applicationDeploymentApi.createApplicationDeploymentRestriction.bind(applicationDeploymentApi),
+      JOB: jobDeploymentApi.createJobDeploymentRestriction.bind(jobDeploymentApi),
+      CRON_JOB: jobDeploymentApi.createJobDeploymentRestriction.bind(jobDeploymentApi),
+      LIFECYCLE_JOB: jobDeploymentApi.createJobDeploymentRestriction.bind(jobDeploymentApi),
     } as const
     const mutation = mapper[serviceType]
     if (!mutation) {
@@ -245,6 +261,9 @@ export const mutations = {
   }: Omit<DeploymentRestrictionRequest, 'payload'>) {
     const mapper = {
       APPLICATION: applicationDeploymentApi.deleteApplicationDeploymentRestriction.bind(applicationDeploymentApi),
+      JOB: jobDeploymentApi.deleteJobDeploymentRestriction.bind(jobDeploymentApi),
+      CRON_JOB: jobDeploymentApi.deleteJobDeploymentRestriction.bind(jobDeploymentApi),
+      LIFECYCLE_JOB: jobDeploymentApi.deleteJobDeploymentRestriction.bind(jobDeploymentApi),
     } as const
     const mutation = mapper[serviceType]
     if (!mutation) {
