@@ -1,7 +1,6 @@
-import { type DeploymentHistoryEnvironment } from 'qovery-typescript-axios'
-import { useState } from 'react'
+import { type DeploymentHistoryEnvironment, StateEnum } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
-import { DEPLOYMENT_LOGS_URL, DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
+import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import {
   Button,
   ButtonSize,
@@ -23,11 +22,11 @@ export interface SidebarHistoryProps {
   pathLogs: string
   serviceId: string
   versionId?: string
+  environmentState?: StateEnum
 }
 
-export function SidebarHistory({ data, serviceId, versionId, pathLogs }: SidebarHistoryProps) {
+export function SidebarHistory({ data, serviceId, versionId, pathLogs, environmentState }: SidebarHistoryProps) {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
-  const [open, setOpen] = useState(false)
 
   const menuHistory: MenuData = [
     {
@@ -56,12 +55,31 @@ export function SidebarHistory({ data, serviceId, versionId, pathLogs }: Sidebar
     },
   ]
 
-  function findPositionById(list: DeploymentHistoryEnvironment[], searchId = '') {
-    const index = list.findIndex((item) => item.id === searchId)
-    return index !== -1 ? index : -1
+  function findPositionById(data: DeploymentHistoryEnvironment[], versionId = '') {
+    const index = data.findIndex((item) => item.id === versionId)
+    return index !== -1 ? index : 0
+  }
+
+  function showNewTag(status?: StateEnum): boolean {
+    switch (status) {
+      case StateEnum.DEPLOYING:
+      case StateEnum.DELETING:
+      case StateEnum.RESTARTING:
+      case StateEnum.BUILDING:
+      case StateEnum.STOP_QUEUED:
+      case StateEnum.CANCELING:
+      case StateEnum.QUEUED:
+      case StateEnum.DELETE_QUEUED:
+      case StateEnum.DEPLOYMENT_QUEUED:
+        return true
+      default:
+        return false
+    }
   }
 
   if (data.length === 0) return null
+
+  const currentPosition = findPositionById(data, versionId)
 
   return (
     <div className="flex border-b border-neutral-500 px-4 py-3">
@@ -78,7 +96,6 @@ export function SidebarHistory({ data, serviceId, versionId, pathLogs }: Sidebar
           width={300}
           menus={menuHistory}
           arrowAlign={MenuAlign.CENTER}
-          onOpen={(isOpen) => setOpen(isOpen)}
           trigger={
             <Button
               className="!rounded-l-none w-[199px] mr-1.5"
@@ -90,12 +107,26 @@ export function SidebarHistory({ data, serviceId, versionId, pathLogs }: Sidebar
             </Button>
           }
         />
-        {findPositionById(data, versionId) <= 0 && (
+        {showNewTag(environmentState) && (
+          <Button
+            className="!text-orange-500 !border-orange-500 !hover:bg-orange-500 w-[51px]"
+            style={ButtonStyle.DARK}
+            size={ButtonSize.TINY}
+            link={
+              ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
+              DEPLOYMENT_LOGS_VERSION_URL(serviceId, '')
+            }
+          >
+            New
+            <span className="inline-flex ml-1 w-1.5 h-1.5 bg-orange-500 border-2 border-orange-500/30 rounded-full"></span>
+          </Button>
+        )}
+        {currentPosition === 0 && !showNewTag(environmentState) && (
           <Tag className="text-neutral-350 border border-neutral-350" fontWeight="font-medium">
             Latest
           </Tag>
         )}
-        {findPositionById(data, versionId) > 0 && (
+        {currentPosition > 0 && !showNewTag(environmentState) && (
           <Button
             className="w-[51px]"
             style={ButtonStyle.DARK}
@@ -106,7 +137,7 @@ export function SidebarHistory({ data, serviceId, versionId, pathLogs }: Sidebar
               DEPLOYMENT_LOGS_VERSION_URL(serviceId, '')
             }
           >
-            {findPositionById(data, versionId)}
+            {currentPosition}
           </Button>
         )}
       </div>
