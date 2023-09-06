@@ -1,5 +1,5 @@
-import { act, fireEvent, getAllByRole, getByTestId, render } from '__tests__/utils/setup-jest'
 import * as storeOrganization from '@qovery/domains/organization'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { CrudModalFeature, type CrudModalFeatureProps } from './crud-modal-feature'
 
 import SpyInstance = jest.SpyInstance
@@ -17,15 +17,13 @@ describe('CrudModalFeature', () => {
   }
 
   it('should render successfully', async () => {
-    const { baseElement } = render(<CrudModalFeature {...props} />)
-    await act(() => {
-      expect(baseElement).toBeTruthy()
-    })
+    const { baseElement } = renderWithProviders(<CrudModalFeature {...props} />)
+    expect(baseElement).toBeTruthy()
   })
 
   it('should render 2 inputs', async () => {
-    const { baseElement } = render(<CrudModalFeature {...props} />)
-    expect(getAllByRole(baseElement, 'textbox')).toHaveLength(2)
+    renderWithProviders(<CrudModalFeature {...props} />)
+    expect(screen.getAllByRole('textbox')).toHaveLength(2)
   })
 
   it('should render submit and call good api endpoint', async () => {
@@ -39,20 +37,16 @@ describe('CrudModalFeature', () => {
     }))
 
     const postApiTokenSpy: SpyInstance = jest.spyOn(storeOrganization, 'postApiToken')
-    const { baseElement } = render(<CrudModalFeature {...props} />)
-    const inputs = getAllByRole(baseElement, 'textbox')
+    const { userEvent } = renderWithProviders(<CrudModalFeature {...props} />)
+    const inputs = screen.getAllByRole('textbox')
 
-    await act(() => {
-      fireEvent.change(inputs[0], { target: { value: 'test' } })
-      fireEvent.change(inputs[1], { target: { value: 'description' } })
-    })
+    await userEvent.type(inputs[0], 'test')
+    await userEvent.type(inputs[1], 'description')
 
-    const button = getByTestId(baseElement, 'submit-button')
+    const button = screen.getByTestId('submit-button')
 
     expect(button).not.toBeDisabled()
-    await act(() => {
-      button.click()
-    })
+    await userEvent.click(button)
 
     expect(postApiTokenSpy).toHaveBeenCalledWith({
       organizationId: props.organizationId,

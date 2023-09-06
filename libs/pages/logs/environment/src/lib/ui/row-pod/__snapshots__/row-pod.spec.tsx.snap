@@ -1,0 +1,78 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`RowPod should match snapshot 1`] = `
+<div>
+  <div
+    class="group flex justify-between font-code text-xs hover:bg-neutral-650 w-full mb-[2px] select-none"
+    data-testid="pod-log-row"
+  >
+    <div
+      class="bg-neutral-700 text-neutral-400 group-hover:bg-neutral-550 px-2 pt-0.5 font-code min-w-[40px] max-w-[40px] text-right box-border"
+      data-testid="index"
+    >
+      2
+    </div>
+    <div
+      class="px-4 text-neutral-350 whitespace-nowrap min-w-[225px]"
+      data-testid="cell-pod-name"
+      style="color: rgb(153, 128, 250);"
+    >
+      <span
+        class="h-5 flex justify-center items-center px-2 bg-neutral-500 rounded-[40px] gap-1"
+      >
+        app-z9d11e...77b6-k9sl7
+        <span
+          class="bigger-click-zone cursor-pointer opacity-50"
+          data-state="closed"
+          data-testid="copy-container"
+        >
+          <span
+            class="icon-solid-copy shrink-0 "
+            role="img"
+          />
+        </span>
+      </span>
+    </div>
+    <div
+      class="pt-0.5 flex whitespace-nowrap text-neutral-50 min-w-[85px]"
+      data-testid="cell-version"
+    >
+      <span
+        class="group/version"
+      >
+        <span
+          class="icon-solid-code-commit shrink-0 mr-1"
+          role="img"
+        />
+        <span
+          class=""
+          data-state="closed"
+        >
+          53deb16
+        </span>
+        <span
+          class="bigger-click-zone cursor-pointer opacity-0 ml-1 group-hover/version:opacity-80"
+          data-state="closed"
+          data-testid="copy-container"
+        >
+          <span
+            class="icon-solid-copy shrink-0 "
+            role="img"
+          />
+        </span>
+      </span>
+    </div>
+    <div
+      class="px-4 pt-0.5 text-neutral-350 whitespace-nowrap"
+      data-testid="cell-date"
+    />
+    <code
+      class="select-text pr-6 pt-0.5 text-neutral-50 relative w-full whitespace-pre-wrap break-all code-ansi"
+    >
+      <span>
+        message
+      </span>
+    </code>
+  </div>
+</div>
+`;
