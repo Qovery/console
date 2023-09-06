@@ -24,6 +24,8 @@ export const formatVersion = (version: string) => {
   }
 }
 
+const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
+
 export interface RowPodProps {
   data: ServiceLogResponseDto
   index: number
@@ -72,7 +74,7 @@ export function RowPod({ data, filter, index, podNameToColor }: RowPodProps) {
           )}
         </div>
         <div data-testid="cell-date" className="px-4 pt-0.5 text-neutral-350 whitespace-nowrap">
-          {dateFullFormat(data.created_at, utc ? 'UTC' : undefined, 'dd MMM, HH:mm:ss:SS')}
+          {dateFullFormat(data.created_at, utc ? 'UTC' : timeZone, 'dd MMM, HH:mm:ss:SS')}
         </div>
         <Ansi
           data-testid="cell-msg"
