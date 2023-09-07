@@ -1,7 +1,7 @@
-import { render, screen } from '__tests__/utils/setup-jest'
 import { ClusterLogsStepEnum } from 'qovery-typescript-axios'
 import { LogsType } from '@qovery/shared/enums'
 import { clusterLogFactoryMock } from '@qovery/shared/factories'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import Row, { type RowProps } from './row'
 
 describe('Row', () => {
@@ -12,7 +12,7 @@ describe('Row', () => {
   }
 
   it('should render successfully', () => {
-    const { baseElement } = render(<Row {...props} />)
+    const { baseElement } = renderWithProviders(<Row {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
@@ -21,7 +21,7 @@ describe('Row', () => {
       type: LogsType.WARNING,
     }
 
-    render(<Row {...props} />)
+    renderWithProviders(<Row {...props} />)
 
     const index = screen.getByTestId('index')
 
@@ -33,7 +33,7 @@ describe('Row', () => {
       type: LogsType.ERROR,
     }
 
-    render(<Row {...props} />)
+    renderWithProviders(<Row {...props} />)
 
     const index = screen.getByTestId('index')
 
@@ -46,7 +46,7 @@ describe('Row', () => {
       step: ClusterLogsStepEnum.DELETE_ERROR,
     }
 
-    render(<Row {...props} />)
+    renderWithProviders(<Row {...props} />)
 
     const index = screen.getByTestId('index')
 
@@ -58,7 +58,7 @@ describe('Row', () => {
       step: ClusterLogsStepEnum.CREATED,
     }
 
-    render(<Row {...props} />)
+    renderWithProviders(<Row {...props} />)
 
     const index = screen.getByTestId('index')
 
@@ -70,7 +70,7 @@ describe('Row', () => {
       type: LogsType.WARNING,
     }
 
-    render(<Row {...props} />)
+    renderWithProviders(<Row {...props} />)
 
     const cellDate = screen.getByTestId('cell-date')
 
@@ -82,7 +82,7 @@ describe('Row', () => {
       type: LogsType.ERROR,
     }
 
-    render(<Row {...props} />)
+    renderWithProviders(<Row {...props} />)
 
     const cellDate = screen.getByTestId('cell-date')
 
@@ -94,7 +94,7 @@ describe('Row', () => {
       step: ClusterLogsStepEnum.CREATED,
     }
 
-    render(<Row {...props} />)
+    renderWithProviders(<Row {...props} />)
 
     const cellDate = screen.getByTestId('cell-date')
 
@@ -109,11 +109,8 @@ describe('Row', () => {
       },
     }
 
-    render(<Row {...props} />)
-
-    const cellMsg = screen.getByTestId('cell-msg')
-
-    expect(cellMsg?.textContent).toBe(`${ClusterLogsStepEnum.CREATED} - hello world`)
+    const { container } = renderWithProviders(<Row {...props} />)
+    expect(container).toMatchSnapshot()
   })
 
   it('should have cell error message', () => {
@@ -125,10 +122,7 @@ describe('Row', () => {
       },
     }
 
-    render(<Row {...props} />)
-
-    const cellMsg = screen.getByTestId('cell-msg')
-
-    expect(cellMsg?.textContent).toBe(`${ClusterLogsStepEnum.DELETE_ERROR} - error message`)
+    const { container } = renderWithProviders(<Row {...props} />)
+    expect(container).toMatchSnapshot()
   })
 })

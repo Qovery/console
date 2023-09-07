@@ -1,14 +1,15 @@
-import { DatabaseModeEnum, type Log } from 'qovery-typescript-axios'
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { type QueryClient } from '@tanstack/react-query'
+import { DatabaseModeEnum } from 'qovery-typescript-axios'
+import { type ServiceInfraLogResponseDto, type ServiceLogResponseDto } from 'qovery-ws-typescript-axios'
+import { memo, useCallback, useMemo, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import useWebSocket from 'react-use-websocket'
 import { selectApplicationById } from '@qovery/domains/application'
 import { selectDatabaseById } from '@qovery/domains/database'
-import { useAuth } from '@qovery/shared/auth'
-import { type ApplicationEntity, type DatabaseEntity, type LoadingStatus } from '@qovery/shared/interfaces'
-import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { type ApplicationEntity, type DatabaseEntity } from '@qovery/shared/interfaces'
+import { useDebounce, useDocumentTitle } from '@qovery/shared/util-hooks'
 import { type RootState } from '@qovery/state/store'
+import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
 import _PodLogs from '../../ui/pod-logs/pod-logs'
 
 export interface PodLogsFeatureProps {
@@ -21,16 +22,25 @@ export function PodLogsFeature(props: PodLogsFeatureProps) {
   const { clusterId } = props
   const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams()
 
-  const [loadingStatus, setLoadingStatus] = useState<LoadingStatus>('not loaded')
-  const [messageChunks, setMessageChunks] = useState<Log[][]>([])
-  const [messageNGINXChunks, setMessageNGINXChunks] = useState<Log[][]>([])
-  const [logs, setLogs] = useState<Log[]>([])
-  const [nginxLogs, setNginxLogs] = useState<Log[]>([])
+  const debounceTime = 400
   const [pauseStatusLogs, setPauseStatusLogs] = useState<boolean>(false)
   const [enabledNginx, setEnabledNginx] = useState<boolean>(false)
-  const chunkSize = 500
-  const [debounceTime] = useState(500)
+  const [serviceMessages, setServiceMessages] = useState<Array<ServiceLogResponseDto & { id: number }>>([])
+  const debouncedServiceMessages = useDebounce(serviceMessages, debounceTime)
+  const [infraMessages, setInfraMessages] = useState<Array<ServiceInfraLogResponseDto & { id: number }>>([])
+  const debouncedInfraMessages = useDebounce(infraMessages, debounceTime)
   const logCounter = useRef(0)
+  const logs = useMemo(
+    () =>
+      debouncedServiceMessages
+        .concat(
+          enabledNginx ? debouncedInfraMessages.map((message) => ({ ...message, version: '', pod_name: '' })) : []
+        )
+        .sort((a, b) => (a.created_at && b.created_at ? a.created_at - b.created_at : 0)),
+    [debouncedServiceMessages, debouncedInfraMessages, enabledNginx]
+  )
+  const debouncedLogs = useDebounce(logs, debounceTime)
+  const pausedLogs = useMemo(() => debouncedLogs, [pauseStatusLogs])
 
   const application = useSelector<RootState, ApplicationEntity | undefined>((state) =>
     selectApplicationById(state, serviceId)
@@ -39,116 +49,72 @@ export function PodLogsFeature(props: PodLogsFeatureProps) {
 
   useDocumentTitle(`Live logs ${application || database ? `- ${application?.name || database?.name}` : '- Loading...'}`)
 
-  const { getAccessTokenSilently } = useAuth()
-  const disabledLogs = database?.mode !== DatabaseModeEnum.MANAGED
+  const disabledLogs = database && database.mode !== DatabaseModeEnum.MANAGED
 
-  const applicationLogsUrl: () => Promise<string> = useCallback(async () => {
-    const token = await getAccessTokenSilently()
-    const url = `wss://ws.qovery.com/service/logs?organization=${organizationId}&cluster=${clusterId}&project=${projectId}&environment=${environmentId}&service=${serviceId}&bearer_token=${token}`
-
-    return Promise.resolve(url)
-  }, [organizationId, clusterId, projectId, environmentId, serviceId, getAccessTokenSilently])
-
-  const nginxLogsUrl: () => Promise<string> = useCallback(async () => {
-    const token = await getAccessTokenSilently()
-    const url = `wss://ws.qovery.com/infra/logs?organization=${organizationId}&cluster=${clusterId}&project=${projectId}&environment=${environmentId}&service=${serviceId}&infra_component_type=NGINX&bearer_token=${token}`
-
-    return Promise.resolve(url)
-  }, [organizationId, clusterId, projectId, environmentId, serviceId, getAccessTokenSilently])
-
-  const onMessageHandler = useCallback((message: MessageEvent) => {
-    setMessageChunks((prevChunks) => {
-      const lastChunk = prevChunks[prevChunks.length - 1] || []
-      if (lastChunk.length < chunkSize) {
-        return [...prevChunks.slice(0, -1), [...lastChunk, { ...JSON.parse(message?.data), id: logCounter.current++ }]]
-      } else {
-        return [...prevChunks, [{ ...JSON.parse(message?.data), id: logCounter.current++ }]]
-      }
-    })
-  }, [])
-
-  const onNginxMessageHandler = useCallback((message: MessageEvent) => {
-    setMessageNGINXChunks((prevChunks) => {
-      const lastChunk = prevChunks[prevChunks.length - 1] || []
-      if (lastChunk.length < chunkSize) {
-        return [...prevChunks.slice(0, -1), [...lastChunk, { ...JSON.parse(message?.data), id: logCounter.current++ }]]
-      } else {
-        return [...prevChunks, [{ ...JSON.parse(message?.data), id: logCounter.current++ }]]
-      }
-    })
-  }, [])
-  useWebSocket(
-    applicationLogsUrl,
-    {
-      onMessage: onMessageHandler,
+  const serviceMessageHandler = useCallback(
+    (_: QueryClient, message: ServiceLogResponseDto) => {
+      setServiceMessages((prevMessages) => [...prevMessages, { ...message, id: logCounter.current++ }])
     },
-    disabledLogs
+    [setServiceMessages]
   )
 
-  useWebSocket(
-    nginxLogsUrl,
-    {
-      onMessage: onNginxMessageHandler,
+  useReactQueryWsSubscription({
+    url: 'wss://ws.qovery.com/service/logs',
+    urlSearchParams: {
+      organization: organizationId,
+      cluster: clusterId,
+      project: projectId,
+      environment: environmentId,
+      service: serviceId,
     },
-    enabledNginx
+    enabled:
+      Boolean(organizationId) &&
+      Boolean(clusterId) &&
+      Boolean(projectId) &&
+      Boolean(environmentId) &&
+      Boolean(serviceId) &&
+      !disabledLogs,
+    onMessage: serviceMessageHandler,
+  })
+
+  const infraMessageHandler = useCallback(
+    (_: QueryClient, message: ServiceInfraLogResponseDto) => {
+      setInfraMessages((prevMessages) => [...prevMessages, { ...message, id: logCounter.current++ }])
+    },
+    [setInfraMessages]
   )
 
-  useEffect(() => {
-    if (messageChunks.length === 0 || pauseStatusLogs) return
-    const timerId = setTimeout(() => {
-      setLoadingStatus('loaded')
-      if (!pauseStatusLogs) {
-        setMessageChunks((prevChunks) => prevChunks.slice(1))
-        setLogs((prevLogs) => [...prevLogs, ...messageChunks[0]])
-      }
-    }, debounceTime)
-
-    return () => {
-      clearTimeout(timerId)
-    }
-  }, [messageChunks, pauseStatusLogs, debounceTime])
-
-  useEffect(() => {
-    if (messageNGINXChunks.length === 0 || pauseStatusLogs) return
-    const timerId = setTimeout(() => {
-      if (!pauseStatusLogs) {
-        setMessageNGINXChunks((prevChunks) => prevChunks.slice(1))
-        setNginxLogs((prevLogs) => [...prevLogs, ...messageNGINXChunks[0]])
-      }
-    }, debounceTime)
-
-    return () => {
-      clearTimeout(timerId)
-    }
-  }, [messageNGINXChunks, pauseStatusLogs, debounceTime])
-
-  // reset pod logs
-  useEffect(() => {
-    setLogs([])
-    setMessageChunks([])
-    setPauseStatusLogs(false)
-    setLoadingStatus('not loaded')
-    setNginxLogs([])
-    setMessageNGINXChunks([])
-    setEnabledNginx && setEnabledNginx(false)
-  }, [serviceId, setEnabledNginx])
-
-  const logsSorted = useMemo<Log[]>(() => {
-    return enabledNginx && nginxLogs
-      ? [...logs, ...nginxLogs].sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
-      : logs
-  }, [enabledNginx, nginxLogs, logs])
+  useReactQueryWsSubscription({
+    url: 'wss://ws.qovery.com/infra/logs',
+    urlSearchParams: {
+      organization: organizationId,
+      cluster: clusterId,
+      project: projectId,
+      environment: environmentId,
+      service: serviceId,
+      infra_component_type: 'NGINX',
+    },
+    enabled:
+      Boolean(organizationId) &&
+      Boolean(clusterId) &&
+      Boolean(projectId) &&
+      Boolean(environmentId) &&
+      Boolean(serviceId) &&
+      !disabledLogs &&
+      enabledNginx,
+    onMessage: infraMessageHandler,
+  })
 
   return (
     <PodLogs
       service={application || database}
-      loadingStatus={loadingStatus}
-      logs={logsSorted as Log[]}
+      loadingStatus={debouncedLogs.length !== 0 ? 'loaded' : 'loading'}
+      logs={pauseStatusLogs ? pausedLogs : debouncedLogs}
       pauseStatusLogs={pauseStatusLogs}
       setPauseStatusLogs={setPauseStatusLogs}
       enabledNginx={enabledNginx}
       setEnabledNginx={setEnabledNginx}
-      countNginx={nginxLogs?.length}
+      countNginx={infraMessages.length}
     />
   )
 }

@@ -5,9 +5,9 @@ import {
   DatabaseModeEnum,
   type EnvironmentLogs,
   type EnvironmentLogsError,
-  type Log,
   type ServiceDeploymentStatusEnum,
 } from 'qovery-typescript-axios'
+import { type ServiceLogResponseDto } from 'qovery-ws-typescript-axios'
 import { type PropsWithChildren, type ReactNode, useRef, useState } from 'react'
 import { Link, useLocation, useParams } from 'react-router-dom'
 import { ServiceStateChip } from '@qovery/domains/services/feature'
@@ -25,7 +25,7 @@ import { UpdateTimeContext, defaultUpdateTimeContext } from './update-time-conte
 export interface LayoutLogsDataProps {
   loadingStatus: LoadingStatus
   hideLogs?: boolean
-  items?: ClusterLogs[] | (EnvironmentLogs | Log)[]
+  items?: ClusterLogs[] | EnvironmentLogs[] | ServiceLogResponseDto[]
 }
 
 export type logsType = 'infra' | 'live' | 'deployment'

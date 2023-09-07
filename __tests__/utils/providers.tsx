@@ -1,4 +1,5 @@
 import { Auth0Provider } from '@auth0/auth0-react'
+import { Provider as TooltipProvider } from '@radix-ui/react-tooltip'
 import { configureStore } from '@reduxjs/toolkit'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { type ComponentType, type ReactNode } from 'react'
@@ -34,9 +35,11 @@ export const Wrapper = ({ children, reduxState = initialRootState(), route = '/'
     <Auth0Provider clientId="__test_client_id__" domain="__test_domain__">
       <QueryClientProvider client={queryClient}>
         <Provider store={store}>
-          <ModalProvider>
-            <MemoryRouter>{children}</MemoryRouter>
-          </ModalProvider>
+          <TooltipProvider>
+            <ModalProvider>
+              <MemoryRouter>{children}</MemoryRouter>
+            </ModalProvider>
+          </TooltipProvider>
         </Provider>
       </QueryClientProvider>
     </Auth0Provider>

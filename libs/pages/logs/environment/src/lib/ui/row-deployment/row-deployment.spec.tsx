@@ -1,6 +1,6 @@
-import { render, screen } from '__tests__/utils/setup-jest'
 import { LogsType } from '@qovery/shared/enums'
 import { deploymentLogFactoryMock } from '@qovery/shared/factories'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import RowDeployment, { type RowDeploymentProps } from './row-deployment'
 
 jest.mock('date-fns-tz', () => ({
@@ -15,7 +15,7 @@ describe('RowDeployment', () => {
   }
 
   it('should render successfully', () => {
-    const { baseElement } = render(<RowDeployment {...props} />)
+    const { baseElement } = renderWithProviders(<RowDeployment {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
@@ -30,7 +30,7 @@ describe('RowDeployment', () => {
       },
     }
 
-    render(<RowDeployment {...props} />)
+    renderWithProviders(<RowDeployment {...props} />)
 
     const index = screen.getByTestId('index')
 
@@ -48,7 +48,7 @@ describe('RowDeployment', () => {
       },
     }
 
-    render(<RowDeployment {...props} />)
+    renderWithProviders(<RowDeployment {...props} />)
 
     const index = screen.getByTestId('index')
 
@@ -66,7 +66,7 @@ describe('RowDeployment', () => {
       },
     }
 
-    render(<RowDeployment {...props} />)
+    renderWithProviders(<RowDeployment {...props} />)
 
     const cellDate = screen.getByTestId('cell-date')
 
@@ -84,7 +84,7 @@ describe('RowDeployment', () => {
       },
     }
 
-    render(<RowDeployment {...props} />)
+    renderWithProviders(<RowDeployment {...props} />)
 
     const cellDate = screen.getByTestId('cell-date')
 
@@ -108,12 +108,8 @@ describe('RowDeployment', () => {
       },
     }
 
-    render(<RowDeployment {...props} />)
-
-    const cellMsg = screen.getByTestId('cell-msg')
-
-    expect(cellMsg).toHaveClass('py-1 pr-6 font-code relative w-full overflow-hidden text-green-500')
-    expect(cellMsg?.textContent).toBe(props.data.message?.safe_message)
+    const { container } = renderWithProviders(<RowDeployment {...props} />)
+    expect(container).toMatchSnapshot()
   })
 
   it('should have cell error message', () => {
@@ -130,12 +126,8 @@ describe('RowDeployment', () => {
       },
     }
 
-    render(<RowDeployment {...props} />)
-
-    const cellMsg = screen.getByTestId('cell-msg')
-
-    expect(cellMsg).toHaveClass('py-1 pr-6 font-code relative w-full overflow-hidden text-red-500')
-    expect(cellMsg?.textContent).toBe(props.data.error?.user_log_message)
+    const { container } = renderWithProviders(<RowDeployment {...props} />)
+    expect(container).toMatchSnapshot()
   })
 
   it('should have cell message with ANSI colors and links', () => {
@@ -155,14 +147,7 @@ describe('RowDeployment', () => {
       },
     }
 
-    render(<RowDeployment {...props} />)
-
-    const cellMsg = screen.getByTestId('cell-msg')
-
-    expect(cellMsg?.textContent).toBe('my message https://qovery.com')
-    expect(cellMsg.innerHTML.toString()).toContain('style="color: rgb(187, 0, 0);"')
-    expect(cellMsg.innerHTML.toString()).toContain(
-      '<a href="https://qovery.com" target="_blank">https://qovery.com</a>'
-    )
+    const { container } = renderWithProviders(<RowDeployment {...props} />)
+    expect(container).toMatchSnapshot()
   })
 })

@@ -67,6 +67,12 @@
               {
                 "name": "@uidotdev/usehooks",
                 "message": "Use imports from `@qovery/shared/util-hooks` instead of direct imports from `@uidotdev/usehooks`."
+              },
+              {
+                "name": "ansi-to-react'",
+                "importNames": ["default"],
+                "message": "Use `Ansi` from the `@qovery/shared/ui` package.",
+                "allowTypeImports": false
               }
             ]
           }

@@ -10,7 +10,6 @@ jest.mock('react-router-dom', () => ({
 describe('PodLogsFeature', () => {
   const props: PodLogsFeatureProps = {
     clusterId: '1',
-    setServiceId: jest.fn(),
   }
 
   it('should render successfully', () => {

@@ -1,0 +1,156 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`RowDeployment should have cell error message 1`] = `
+<div>
+  <div
+    class="group flex min-h-6 text-xs select-none  bg-neutral-550 hover:bg-neutral-600 row-error"
+  >
+    <div
+      class="text-red-500 bg-neutral-550 group-hover:bg-neutral-650"
+      data-testid="index"
+    >
+      <div
+        class="text-right w-10 h-6 py-1 px-2 font-code"
+      >
+        2
+      </div>
+    </div>
+    <div
+      class="py-1 pl-2 pr-3 font-code shrink-0 w-[158px] text-red-500"
+      data-testid="cell-date"
+    />
+    <div
+      class="select-text py-1 pr-6 font-code relative w-full overflow-hidden text-red-500"
+      data-testid="cell-msg"
+    >
+      <span
+        class="whitespace-pre-wrap truncate break-all"
+      >
+        <code
+          class="code-ansi"
+        >
+          <span>
+            error message
+          </span>
+        </code>
+      </span>
+      <span
+        class="bigger-click-zone cursor-pointer opacity-0 group-hover:opacity-100 text-white !absolute right-2 top-1"
+        data-state="closed"
+        data-testid="copy-container"
+      >
+        <span
+          class="icon-solid-copy shrink-0 "
+          role="img"
+        />
+      </span>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`RowDeployment should have cell message with ANSI colors and links 1`] = `
+<div>
+  <div
+    class="group flex min-h-6 text-xs select-none  bg-neutral-550 hover:bg-neutral-600 "
+  >
+    <div
+      class="text-green-500 bg-neutral-550 group-hover:bg-neutral-650"
+      data-testid="index"
+    >
+      <div
+        class="text-right w-10 h-6 py-1 px-2 font-code"
+      >
+        2
+      </div>
+    </div>
+    <div
+      class="py-1 pl-2 pr-3 font-code shrink-0 w-[158px] text-green-500"
+      data-testid="cell-date"
+    />
+    <div
+      class="select-text py-1 pr-6 font-code relative w-full overflow-hidden text-green-500"
+      data-testid="cell-msg"
+    >
+      <span
+        class="whitespace-pre-wrap truncate break-all"
+      >
+        <code
+          class="code-ansi"
+        >
+          <span
+            style="color: rgb(187, 0, 0);"
+          >
+            my message 
+            <a
+              href="https://qovery.com"
+              target="_blank"
+            >
+              https://qovery.com
+            </a>
+          </span>
+        </code>
+      </span>
+      <span
+        class="bigger-click-zone cursor-pointer opacity-0 group-hover:opacity-100 text-white !absolute right-2 top-1"
+        data-state="closed"
+        data-testid="copy-container"
+      >
+        <span
+          class="icon-solid-copy shrink-0 "
+          role="img"
+        />
+      </span>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`RowDeployment should have cell success message 1`] = `
+<div>
+  <div
+    class="group flex min-h-6 text-xs select-none  bg-neutral-550 hover:bg-neutral-600 "
+  >
+    <div
+      class="text-green-500 bg-neutral-550 group-hover:bg-neutral-650"
+      data-testid="index"
+    >
+      <div
+        class="text-right w-10 h-6 py-1 px-2 font-code"
+      >
+        2
+      </div>
+    </div>
+    <div
+      class="py-1 pl-2 pr-3 font-code shrink-0 w-[158px] text-green-500"
+      data-testid="cell-date"
+    />
+    <div
+      class="select-text py-1 pr-6 font-code relative w-full overflow-hidden text-green-500"
+      data-testid="cell-msg"
+    >
+      <span
+        class="whitespace-pre-wrap truncate break-all"
+      >
+        <code
+          class="code-ansi"
+        >
+          <span>
+            message
+          </span>
+        </code>
+      </span>
+      <span
+        class="bigger-click-zone cursor-pointer opacity-0 group-hover:opacity-100 text-white !absolute right-2 top-1"
+        data-state="closed"
+        data-testid="copy-container"
+      >
+        <span
+          class="icon-solid-copy shrink-0 "
+          role="img"
+        />
+      </span>
+    </div>
+  </div>
+</div>
+`;

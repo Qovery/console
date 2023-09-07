@@ -1,6 +1,7 @@
-import { type Log } from 'qovery-typescript-axios'
+import { type ServiceLogResponseDto } from 'qovery-ws-typescript-axios'
 import { useContext } from 'react'
 import { UpdateTimeContext } from '@qovery/shared/console-shared'
+import { Ansi } from '@qovery/shared/ui'
 import {
   CopyToClipboard,
   Icon,
@@ -8,42 +9,8 @@ import {
   type TableFilterProps,
   TableRowFilter,
   Tooltip,
-  convertToAnsi,
 } from '@qovery/shared/ui'
 import { dateFullFormat } from '@qovery/shared/util-dates'
-
-const COLORS = [
-  '#7EFFF5',
-  '#FFC312',
-  '#06ADF6',
-  '#17C0EB',
-  '#12CBC4',
-  '#D980FA',
-  '#FDA7DF',
-  '#B53471',
-  '#9980FA',
-  '#C4E538',
-  '#FFB8B8',
-]
-
-export const getColorByPod = (pod?: string) => {
-  if (!pod) return COLORS[0]
-
-  const hashString = (string: string) => {
-    let hash = 0
-    if (string.length === 0) return hash
-    for (let i = 0; i < string.length; i++) {
-      const char = string.charCodeAt(i)
-      hash = (hash << 5) - hash + char
-      hash = hash & hash // Convert to 32bit integer
-    }
-    return hash
-  }
-
-  const stringToColor = (string: string) => COLORS[Math.abs(hashString(string) % COLORS.length)]
-
-  return stringToColor(pod)
-}
 
 export const formatVersion = (version: string) => {
   if (version.length < 6) {
@@ -57,14 +24,16 @@ export const formatVersion = (version: string) => {
   }
 }
 
+const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
+
 export interface RowPodProps {
-  data: Log
+  data: ServiceLogResponseDto
   index: number
   filter?: TableFilterProps[]
+  podNameToColor: Map<string, string>
 }
 
-export function RowPod(props: RowPodProps) {
-  const { data, filter, index } = props
+export function RowPod({ data, filter, index, podNameToColor }: RowPodProps) {
   const { utc } = useContext(UpdateTimeContext)
 
   return (
@@ -73,13 +42,16 @@ export function RowPod(props: RowPodProps) {
         data-testid="pod-log-row"
         className="group flex justify-between font-code text-xs hover:bg-neutral-650 w-full mb-[2px] select-none"
       >
-        <div data-testid="index" className="bg-neutral-700 text-neutral-400 group-hover:bg-neutral-550">
-          <div className="text-right w-10 h-5 px-2 pt-0.5 font-code">{index + 1}</div>
+        <div
+          data-testid="index"
+          className="bg-neutral-700 text-neutral-400 group-hover:bg-neutral-550 px-2 pt-0.5 font-code min-w-[40px] max-w-[40px] text-right box-border"
+        >
+          {index + 1}
         </div>
         <div
           data-testid="cell-pod-name"
           className="px-4 text-neutral-350 whitespace-nowrap min-w-[225px]"
-          style={{ color: getColorByPod(data.pod_name) }}
+          style={{ color: podNameToColor.get(data.pod_name) }}
         >
           {data.pod_name && data.pod_name && (
             <span className="h-5 flex justify-center items-center px-2 bg-neutral-500 rounded-[40px] gap-1">
@@ -102,11 +74,14 @@ export function RowPod(props: RowPodProps) {
           )}
         </div>
         <div data-testid="cell-date" className="px-4 pt-0.5 text-neutral-350 whitespace-nowrap">
-          {dateFullFormat(data.created_at, utc ? 'UTC' : undefined, 'dd MMM, HH:mm:ss:SS')}
+          {dateFullFormat(data.created_at, utc ? 'UTC' : timeZone, 'dd MMM, HH:mm:ss:SS')}
         </div>
-        <div data-testid="cell-msg" className="select-text pr-6 pt-0.5 text-neutral-50 relative w-full">
-          <span className="whitespace-pre-wrap break-all">{convertToAnsi(data.message)}</span>
-        </div>
+        <Ansi
+          data-testid="cell-msg"
+          className="select-text pr-6 pt-0.5 text-neutral-50 relative w-full whitespace-pre-wrap break-all"
+        >
+          {data.message}
+        </Ansi>
       </div>
     </TableRowFilter>
   )

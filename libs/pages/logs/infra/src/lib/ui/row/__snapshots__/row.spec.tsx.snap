@@ -1,0 +1,119 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Row should have cell error message 1`] = `
+<div>
+  <div
+    class="group flex justify-between min-h-6 font-code text-xs hover:bg-neutral-650 select-none bg-neutral-600 row-error"
+  >
+    <div
+      class="flex"
+    >
+      <div
+        class="bg-red-500 text-neutral-800 group-hover:bg-red-600"
+        data-testid="index"
+      >
+        <div
+          class="text-right w-10 min-w-[40px] h-6 py-1 px-2"
+        >
+          2
+        </div>
+      </div>
+      <div
+        class="py-1 px-2 text-red-500"
+        data-testid="cell-date"
+      >
+        NaN:NaN:NaN
+      </div>
+      <div
+        class="py-1 w-11/12 select-text text-red-500"
+        data-testid="cell-msg"
+      >
+        <span
+          class="font-bold"
+        >
+          DeleteError
+           - 
+        </span>
+        <span
+          class="whitespace-pre-wrap"
+        >
+          error message
+        </span>
+      </div>
+    </div>
+    <div
+      class="flex whitespace-nowrap py-1 px-2 text-red-500"
+    >
+      <span
+        class="bigger-click-zone cursor-pointer opacity-0 group-hover:opacity-100 mr-4 text-white"
+        data-state="closed"
+        data-testid="copy-container"
+      >
+        <span
+          class="icon-solid-copy shrink-0 "
+          role="img"
+        />
+      </span>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Row should have cell message 1`] = `
+<div>
+  <div
+    class="group flex justify-between min-h-6 font-code text-xs hover:bg-neutral-650 select-none bg-neutral-600 "
+  >
+    <div
+      class="flex"
+    >
+      <div
+        class="bg-green-500 text-neutral-800 group-hover:bg-green-600"
+        data-testid="index"
+      >
+        <div
+          class="text-right w-10 min-w-[40px] h-6 py-1 px-2"
+        >
+          2
+        </div>
+      </div>
+      <div
+        class="py-1 px-2 text-green-500"
+        data-testid="cell-date"
+      >
+        NaN:NaN:NaN
+      </div>
+      <div
+        class="py-1 w-11/12 select-text text-green-500"
+        data-testid="cell-msg"
+      >
+        <span
+          class="font-bold"
+        >
+          Created
+           - 
+        </span>
+        <span
+          class="whitespace-pre-wrap"
+        >
+          hello world
+        </span>
+      </div>
+    </div>
+    <div
+      class="flex whitespace-nowrap py-1 px-2 text-green-500"
+    >
+      <span
+        class="bigger-click-zone cursor-pointer opacity-0 group-hover:opacity-100 mr-4 text-white"
+        data-state="closed"
+        data-testid="copy-container"
+      >
+        <span
+          class="icon-solid-copy shrink-0 "
+          role="img"
+        />
+      </span>
+    </div>
+  </div>
+</div>
+`;
