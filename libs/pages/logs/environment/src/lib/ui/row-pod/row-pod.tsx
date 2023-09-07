@@ -1,7 +1,7 @@
-import Ansi from 'ansi-to-react'
 import { type ServiceLogResponseDto } from 'qovery-ws-typescript-axios'
 import { useContext } from 'react'
 import { UpdateTimeContext } from '@qovery/shared/console-shared'
+import { Ansi } from '@qovery/shared/ui'
 import {
   CopyToClipboard,
   Icon,
@@ -79,7 +79,6 @@ export function RowPod({ data, filter, index, podNameToColor }: RowPodProps) {
         <Ansi
           data-testid="cell-msg"
           className="select-text pr-6 pt-0.5 text-neutral-50 relative w-full whitespace-pre-wrap break-all code-ansi"
-          linkify
         >
           {data.message}
         </Ansi>

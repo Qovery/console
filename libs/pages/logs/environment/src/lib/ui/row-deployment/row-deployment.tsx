@@ -2,7 +2,7 @@ import { type EnvironmentLogs } from 'qovery-typescript-axios'
 import { useContext } from 'react'
 import { UpdateTimeContext } from '@qovery/shared/console-shared'
 import { LogsType } from '@qovery/shared/enums'
-import { CopyToClipboard, convertToAnsi } from '@qovery/shared/ui'
+import { Ansi, CopyToClipboard } from '@qovery/shared/ui'
 import { dateFullFormat } from '@qovery/shared/util-dates'
 
 export interface RowDeploymentProps {
@@ -49,9 +49,11 @@ export function RowDeployment(props: RowDeploymentProps) {
         className={`select-text py-1 pr-6 font-code relative w-full overflow-hidden ${colorsCellClassName(true)}`}
       >
         <span className="whitespace-pre-wrap truncate break-all">
-          {type === LogsType.ERROR
-            ? convertToAnsi(data.error?.user_log_message)
-            : convertToAnsi(data.message?.safe_message)}
+          {type === LogsType.ERROR ? (
+            <Ansi>{data.error?.user_log_message}</Ansi>
+          ) : (
+            <Ansi>{data.message?.safe_message}</Ansi>
+          )}
         </span>
         <CopyToClipboard
           className="opacity-0 group-hover:opacity-100 text-white !absolute right-2 top-1"
