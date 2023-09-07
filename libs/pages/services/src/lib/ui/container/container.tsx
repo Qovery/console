@@ -90,7 +90,7 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
       <Skeleton width={120} height={32} show={!cluster}>
         <div className="border border-neutral-200 bg-white h-8 px-3 rounded text-xs items-center inline-flex font-medium gap-2">
           <Icon name={environment?.cloud_provider.provider as IconEnum} width="16" />
-          <p className="max-w-[120px] truncate">{cluster?.name}</p>
+          {cluster?.name}
         </div>
       </Skeleton>
       <Tag className="bg-neutral-150 gap-2 hidden">
