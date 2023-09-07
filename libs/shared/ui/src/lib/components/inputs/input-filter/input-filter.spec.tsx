@@ -1,4 +1,4 @@
-import { fireEvent, render } from '__tests__/utils/setup-jest'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import InputFilter from './input-filter'
 
 describe('InputFilter', () => {
@@ -9,56 +9,58 @@ describe('InputFilter', () => {
   ]
 
   it('renders the button with the provided name', () => {
-    const { getByText } = render(<InputFilter name="Filter" nameKey="filter" options={options} onChange={() => {}} />)
+    renderWithProviders(<InputFilter name="Filter" nameKey="filter" options={options} onChange={() => {}} />)
 
-    expect(getByText('Filter')).toBeInTheDocument()
+    expect(screen.getByText('Filter')).toBeInTheDocument()
   })
 
-  it('opens the select input on button click', () => {
-    const { getByText } = render(<InputFilter name="Filter" nameKey="filter" options={options} onChange={() => {}} />)
+  it('opens the select input on button click', async () => {
+    const { userEvent } = renderWithProviders(
+      <InputFilter name="Filter" nameKey="filter" options={options} onChange={() => {}} />
+    )
 
-    const button = getByText('Filter')
-    fireEvent.click(button)
+    const button = screen.getByText('Filter')
+    await userEvent.click(button)
 
-    expect(getByText('Filter')).toBeInTheDocument()
+    expect(screen.getByText('Filter')).toBeInTheDocument()
   })
 
   it('selects an option and triggers onChange callback', async () => {
     const handleChange = jest.fn()
-    const { getByText, getByTestId } = render(
+    const { userEvent } = renderWithProviders(
       <InputFilter name="Filter" nameKey="filter" options={options} onChange={handleChange} />
     )
 
-    const button = getByText('Filter')
-    fireEvent.click(button)
+    const button = screen.getByText('Filter')
+    await userEvent.click(button)
 
-    const option2 = getByText('Option 2')
-    fireEvent.click(option2)
+    const option2 = screen.getByText('Option 2')
+    await userEvent.click(option2)
 
     expect(handleChange).toHaveBeenCalledWith('filter', 'option2')
-    expect(getByTestId('clear-btn')).toBeInTheDocument()
+    expect(screen.getByTestId('clear-btn')).toBeInTheDocument()
   })
 
-  it('clears the selection on clear button click', () => {
+  it('clears the selection on clear button click', async () => {
     const handleChange = jest.fn()
-    const { getByText, getByTestId, queryByTestId } = render(
+    const { userEvent } = renderWithProviders(
       <InputFilter name="Filter" nameKey="filter" options={options} onChange={handleChange} defaultValue="option1" />
     )
 
-    const button = getByText('Option 1')
-    fireEvent.click(button)
+    const button = screen.getByText('Option 1')
+    await userEvent.click(button)
 
-    const clearButton = getByTestId('clear-btn')
-    fireEvent.click(clearButton)
+    const clearButton = screen.getByTestId('clear-btn')
+    await userEvent.click(clearButton)
 
     expect(handleChange).toHaveBeenCalledWith('filter', undefined)
-    expect(queryByTestId('clear-btn')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('clear-btn')).not.toBeInTheDocument()
   })
 
   it('should match input filter without value', () => {
     const handleChange = jest.fn()
 
-    const { container } = render(
+    const { container } = renderWithProviders(
       <InputFilter name="Filter" nameKey="filter" options={options} onChange={handleChange} />
     )
 
@@ -68,7 +70,7 @@ describe('InputFilter', () => {
   it('should match input filter with value', () => {
     const handleChange = jest.fn()
 
-    const { container } = render(
+    const { container } = renderWithProviders(
       <InputFilter name="Filter" nameKey="filter" options={options} onChange={handleChange} defaultValue="option1" />
     )
 
@@ -78,7 +80,7 @@ describe('InputFilter', () => {
   it('should match input filter with loading', () => {
     const handleChange = jest.fn()
 
-    const { container } = render(
+    const { container } = renderWithProviders(
       <InputFilter
         name="Filter"
         nameKey="filter"
