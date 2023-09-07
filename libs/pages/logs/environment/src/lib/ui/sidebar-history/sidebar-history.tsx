@@ -1,6 +1,5 @@
 import { type DeploymentHistoryEnvironment, StateEnum } from 'qovery-typescript-axios'
-import { useParams } from 'react-router-dom'
-import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
+import { DEPLOYMENT_LOGS_VERSION_URL } from '@qovery/shared/routes'
 import {
   Button,
   ButtonSize,
@@ -26,8 +25,6 @@ export interface SidebarHistoryProps {
 }
 
 export function SidebarHistory({ data, serviceId, versionId, pathLogs, environmentState }: SidebarHistoryProps) {
-  const { organizationId = '', projectId = '', environmentId = '' } = useParams()
-
   const menuHistory: MenuData = [
     {
       items:
@@ -85,10 +82,11 @@ export function SidebarHistory({ data, serviceId, versionId, pathLogs, environme
     <div className="flex border-b border-neutral-500 px-4 py-3">
       <div className="flex">
         <Button
+          dataTestId="btn-back-logs"
           className="!border-r-0 !rounded-r-none"
           style={ButtonStyle.DARK}
           size={ButtonSize.TINY}
-          link={ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId)}
+          link={pathLogs}
         >
           <Icon name={IconAwesomeEnum.HOUSE} />
         </Button>
@@ -98,7 +96,7 @@ export function SidebarHistory({ data, serviceId, versionId, pathLogs, environme
           arrowAlign={MenuAlign.CENTER}
           trigger={
             <Button
-              className="!rounded-l-none w-[199px] mr-1.5"
+              className="!rounded-l-none w-[200px] mr-1.5"
               style={ButtonStyle.DARK}
               size={ButtonSize.TINY}
               iconRight={IconAwesomeEnum.ANGLE_DOWN}
@@ -109,16 +107,15 @@ export function SidebarHistory({ data, serviceId, versionId, pathLogs, environme
         />
         {showNewTag() && (
           <Button
-            className="!text-orange-500 !border-orange-500 !hover:bg-orange-500 w-[51px]"
+            className="!text-orange-500 !border-orange-500 !bg-neutral-500 w-[50px]"
             style={ButtonStyle.DARK}
             size={ButtonSize.TINY}
-            link={
-              ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
-              DEPLOYMENT_LOGS_VERSION_URL(serviceId, '')
-            }
+            link={pathLogs + DEPLOYMENT_LOGS_VERSION_URL(serviceId, '')}
           >
-            New
-            <span className="inline-flex ml-1 w-1.5 h-1.5 bg-orange-500 border-2 border-orange-500/30 rounded-full"></span>
+            <span className="inline-flex items-center">
+              New
+              <i className="relative top-[1px] block ml-1 w-2 h-2 before:block before:absolute before:top-0.5 before:left-0.5 before:bg-orange-500 before:w-1 before:h-1 before:rounded-full after:motion-safe:animate-pulse after:block after:bg-orange-500/30 after:w-2 after:h-2 after:rounded-full" />
+            </span>
           </Button>
         )}
         {currentPosition === 0 && !showNewTag() && (
@@ -128,14 +125,11 @@ export function SidebarHistory({ data, serviceId, versionId, pathLogs, environme
         )}
         {currentPosition > 0 && !showNewTag() && (
           <Button
-            className="w-[51px]"
+            className="w-[50px]"
             style={ButtonStyle.DARK}
             size={ButtonSize.TINY}
             iconRight={IconAwesomeEnum.CHEVRONS_RIGHT}
-            link={
-              ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
-              DEPLOYMENT_LOGS_VERSION_URL(serviceId, '')
-            }
+            link={pathLogs + DEPLOYMENT_LOGS_VERSION_URL(serviceId, '')}
           >
             {currentPosition}
           </Button>
