@@ -43,6 +43,22 @@ export type ContainerType = Extract<ServiceType, 'CONTAINER'>
 export type DatabaseType = Extract<ServiceType, 'Database'>
 export type JobType = Extract<ServiceType, 'JOB' | 'LIFECYCLE_JOB' | 'CRON_JOB'>
 
+export function isApplicationType(serviceType: ServiceType): serviceType is ApplicationType {
+  return serviceType === 'APPLICATION'
+}
+
+export function isContainerType(serviceType: ServiceType): serviceType is ContainerType {
+  return serviceType === 'CONTAINER'
+}
+
+export function isDatabaseType(serviceType: ServiceType): serviceType is DatabaseType {
+  return serviceType === 'DATABASE'
+}
+
+export function isJobType(serviceType: ServiceType): serviceType is JobType {
+  return serviceType === 'JOB' || serviceType === 'CRON_JOB' || serviceType === 'LIFECYCLE_JOB'
+}
+
 export const services = createQueryKeys('services', {
   deploymentStatus: (environmentId: string, serviceId: string) => ({
     queryKey: [environmentId, serviceId],
