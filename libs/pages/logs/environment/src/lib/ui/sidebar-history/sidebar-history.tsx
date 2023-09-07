@@ -106,17 +106,21 @@ export function SidebarHistory({ data, serviceId, versionId, pathLogs, environme
           }
         />
         {showNewTag() && (
-          <Button
-            className="!text-orange-500 !border-orange-500 !bg-neutral-500 w-[50px]"
-            style={ButtonStyle.DARK}
-            size={ButtonSize.TINY}
-            link={pathLogs + DEPLOYMENT_LOGS_VERSION_URL(serviceId, '')}
-          >
-            <span className="inline-flex items-center">
-              New
-              <i className="relative top-[1px] block ml-1 w-2 h-2 before:block before:absolute before:top-0.5 before:left-0.5 before:bg-orange-500 before:w-1 before:h-1 before:rounded-full after:motion-safe:animate-pulse after:block after:bg-orange-500/30 after:w-2 after:h-2 after:rounded-full" />
-            </span>
-          </Button>
+          <Tooltip content="New deployment available!" side="right" intent="orange">
+            <div>
+              <Button
+                className="!text-orange-500 !border-orange-500 !bg-neutral-500 w-[50px]"
+                style={ButtonStyle.DARK}
+                size={ButtonSize.TINY}
+                link={pathLogs + DEPLOYMENT_LOGS_VERSION_URL(serviceId, '')}
+              >
+                <span className="inline-flex items-center">
+                  New
+                  <i className="relative top-[1px] block ml-1 w-2 h-2 before:block before:absolute before:top-0.5 before:left-0.5 before:bg-orange-500 before:w-1 before:h-1 before:rounded-full after:motion-safe:animate-pulse after:block after:bg-orange-500/30 after:w-2 after:h-2 after:rounded-full" />
+                </span>
+              </Button>
+            </div>
+          </Tooltip>
         )}
         {currentPosition === 0 && !showNewTag() && (
           <Tag className="text-neutral-350 border border-neutral-350" fontWeight="font-medium">
