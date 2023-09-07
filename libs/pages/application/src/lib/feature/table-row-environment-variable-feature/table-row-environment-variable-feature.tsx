@@ -68,13 +68,15 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
     contentLeft: <Icon name="icon-solid-pen" className="text-sm text-brand-500" />,
   })
 
+  const disableOverride = [
+    APIVariableScopeEnum.APPLICATION,
+    APIVariableScopeEnum.CONTAINER,
+    APIVariableScopeEnum.JOB,
+  ].includes(variable.scope)
   const createOverride = {
     name: 'Create override',
-    disabled: variable.scope === APIVariableScopeEnum.APPLICATION,
-    tooltip:
-      variable.scope === APIVariableScopeEnum.APPLICATION
-        ? 'You can’t override variables on the application scope'
-        : undefined,
+    disabled: disableOverride,
+    tooltip: disableOverride ? 'You can’t override variables on the application scope' : undefined,
     onClick: () => {
       openModal({
         content: (
