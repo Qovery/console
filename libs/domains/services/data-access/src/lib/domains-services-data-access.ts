@@ -130,6 +130,22 @@ export const services = createQueryKeys('services', {
       return response.data.results
     },
   }),
+  details: ({ serviceId, serviceType }: { serviceId: string; serviceType: ServiceType }) => ({
+    queryKey: [serviceId],
+    async queryFn() {
+      const mapper = {
+        APPLICATION: applicationMainCallsApi.getApplication.bind(applicationMainCallsApi),
+        CONTAINER: containerMainCallsApi.getContainer.bind(containerMainCallsApi),
+        DATABASE: databaseMainCallsApi.getDatabase.bind(databaseMainCallsApi),
+        JOB: jobMainCallsApi.getJob.bind(jobMainCallsApi),
+        CRON_JOB: jobMainCallsApi.getJob.bind(jobMainCallsApi),
+        LIFECYCLE_JOB: jobMainCallsApi.getJob.bind(jobMainCallsApi),
+      } as const
+      const fn = mapper[serviceType]
+      const response = await fn(serviceId)
+      return response.data
+    },
+  }),
 })
 
 type CloneServiceRequest =
