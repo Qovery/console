@@ -78,7 +78,7 @@ export function RowPod({ data, filter, index, podNameToColor }: RowPodProps) {
         </div>
         <Ansi
           data-testid="cell-msg"
-          className="select-text pr-6 pt-0.5 text-neutral-50 relative w-full whitespace-pre-wrap break-all code-ansi"
+          className="select-text pr-6 pt-0.5 text-neutral-50 relative w-full whitespace-pre-wrap break-all"
         >
           {data.message}
         </Ansi>

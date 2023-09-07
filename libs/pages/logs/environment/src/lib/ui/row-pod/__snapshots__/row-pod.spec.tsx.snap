@@ -67,7 +67,7 @@ exports[`RowPod should match snapshot 1`] = `
       data-testid="cell-date"
     />
     <code
-      class="select-text pr-6 pt-0.5 text-neutral-50 relative w-full whitespace-pre-wrap break-all code-ansi"
+      class="code-ansi select-text pr-6 pt-0.5 text-neutral-50 relative w-full whitespace-pre-wrap break-all"
     >
       <span>
         message
