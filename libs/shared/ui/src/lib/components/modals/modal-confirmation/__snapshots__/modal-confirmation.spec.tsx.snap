@@ -54,7 +54,6 @@ exports[`ModalConfirmation should match confirm mode with description 1`] = `
       >
         <button
           class="btn btn--regular btn--stroked btn--no-min-w "
-          data-testid=""
           type="button"
         >
           <span>
@@ -63,7 +62,6 @@ exports[`ModalConfirmation should match confirm mode with description 1`] = `
         </button>
         <button
           class="btn btn--regular btn--basic btn--no-min-w "
-          data-testid=""
           type="submit"
         >
           <span>
@@ -118,7 +116,6 @@ exports[`ModalConfirmation should match delete mode with description 1`] = `
       >
         <button
           class="btn btn--regular btn--stroked btn--no-min-w "
-          data-testid=""
           type="button"
         >
           <span>
@@ -127,7 +124,6 @@ exports[`ModalConfirmation should match delete mode with description 1`] = `
         </button>
         <button
           class="btn btn--regular btn--error btn--no-min-w "
-          data-testid=""
           type="submit"
         >
           <span>
@@ -186,7 +182,6 @@ exports[`ModalConfirmation should match delete mode without description 1`] = `
       >
         <button
           class="btn btn--regular btn--stroked btn--no-min-w "
-          data-testid=""
           type="button"
         >
           <span>
@@ -195,7 +190,6 @@ exports[`ModalConfirmation should match delete mode without description 1`] = `
         </button>
         <button
           class="btn btn--regular btn--error btn--no-min-w "
-          data-testid=""
           type="submit"
         >
           <span>
