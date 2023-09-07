@@ -40,7 +40,7 @@ export type ServiceType = keyof typeof ServiceTypeEnum
 
 export type ApplicationType = Extract<keyof typeof ServiceTypeEnum, 'APPLICATION'>
 export type ContainerType = Extract<ServiceType, 'CONTAINER'>
-export type DatabaseType = Extract<ServiceType, 'Database'>
+export type DatabaseType = Extract<ServiceType, 'DATABASE'>
 export type JobType = Extract<ServiceType, 'JOB' | 'LIFECYCLE_JOB' | 'CRON_JOB'>
 
 export function isApplicationType(serviceType: ServiceType): serviceType is ApplicationType {
