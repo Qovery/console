@@ -60,8 +60,8 @@ export function SidebarHistory({ data, serviceId, versionId, pathLogs, environme
     return index !== -1 ? index : 0
   }
 
-  function showNewTag(status?: StateEnum): boolean {
-    switch (status) {
+  function showNewTag(): boolean {
+    switch (environmentState) {
       case StateEnum.DEPLOYING:
       case StateEnum.DELETING:
       case StateEnum.RESTARTING:
@@ -107,7 +107,7 @@ export function SidebarHistory({ data, serviceId, versionId, pathLogs, environme
             </Button>
           }
         />
-        {showNewTag(environmentState) && (
+        {showNewTag() && (
           <Button
             className="!text-orange-500 !border-orange-500 !hover:bg-orange-500 w-[51px]"
             style={ButtonStyle.DARK}
@@ -121,12 +121,12 @@ export function SidebarHistory({ data, serviceId, versionId, pathLogs, environme
             <span className="inline-flex ml-1 w-1.5 h-1.5 bg-orange-500 border-2 border-orange-500/30 rounded-full"></span>
           </Button>
         )}
-        {currentPosition === 0 && !showNewTag(environmentState) && (
+        {currentPosition === 0 && !showNewTag() && (
           <Tag className="text-neutral-350 border border-neutral-350" fontWeight="font-medium">
             Latest
           </Tag>
         )}
-        {currentPosition > 0 && !showNewTag(environmentState) && (
+        {currentPosition > 0 && !showNewTag() && (
           <Button
             className="w-[51px]"
             style={ButtonStyle.DARK}
