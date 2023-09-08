@@ -25,9 +25,10 @@ import MenuAccountFeature from '../../feature/menu-account-feature/menu-account-
 
 export interface NavigationProps {
   defaultOrganizationId: string
+  clusterNotification: boolean
 }
 
-export function Navigation({ defaultOrganizationId }: NavigationProps) {
+export function Navigation({ defaultOrganizationId, clusterNotification }: NavigationProps) {
   const { organizationId = defaultOrganizationId, clusterId = '', projectId } = useParams()
   const { pathname } = useLocation()
 
@@ -110,6 +111,7 @@ export function Navigation({ defaultOrganizationId }: NavigationProps) {
                 style={ButtonIconStyle.ALT}
                 size={ButtonSize.XLARGE}
                 link={CLUSTERS_URL(organizationId)}
+                notification={clusterNotification}
               />
             </div>
           </Tooltip>
