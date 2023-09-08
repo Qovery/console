@@ -21,6 +21,7 @@ import {
   Tag,
   TagMode,
   TagSize,
+  Tooltip,
 } from '@qovery/shared/ui'
 import { type AppDispatch, type RootState } from '@qovery/state/store'
 import TabsFeature from '../../feature/tabs-feature/tabs-feature'
@@ -133,10 +134,12 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
         </div>
       </Skeleton>
       <Skeleton width={120} height={32} show={!cluster}>
-        <div className="border border-neutral-200 bg-white h-8 px-3 rounded text-xs items-center inline-flex font-medium gap-2">
-          <Icon name={environment?.cloud_provider.provider as IconEnum} width="16" />
-          {cluster?.name}
-        </div>
+        <Tooltip content={cluster?.name ?? ''}>
+          <div className="border border-neutral-200 bg-white h-8 px-3 rounded text-xs items-center inline-flex font-medium gap-2">
+            <Icon name={environment?.cloud_provider.provider as IconEnum} width="16" />
+            <p className="max-w-[200px] truncate">{cluster?.name}</p>
+          </div>
+        </Tooltip>
       </Skeleton>
       <Tag className="bg-neutral-150 gap-2 hidden">
         <span className="w-2 h-2 rounded-lg bg-orange-300"></span>
