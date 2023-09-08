@@ -1,7 +1,18 @@
-import { type DeploymentHistoryEnvironment } from 'qovery-typescript-axios'
-import { useState } from 'react'
+import { type DeploymentHistoryEnvironment, StateEnum } from 'qovery-typescript-axios'
 import { DEPLOYMENT_LOGS_VERSION_URL } from '@qovery/shared/routes'
-import { Icon, IconAwesomeEnum, Menu, MenuAlign, type MenuData, StatusChip, Tooltip } from '@qovery/shared/ui'
+import {
+  Button,
+  ButtonSize,
+  ButtonStyle,
+  Icon,
+  IconAwesomeEnum,
+  Menu,
+  MenuAlign,
+  type MenuData,
+  StatusChip,
+  Tag,
+  Tooltip,
+} from '@qovery/shared/ui'
 import { dateFullFormat } from '@qovery/shared/util-dates'
 import { trimId } from '@qovery/shared/util-js'
 
@@ -10,11 +21,10 @@ export interface SidebarHistoryProps {
   pathLogs: string
   serviceId: string
   versionId?: string
+  environmentState?: StateEnum
 }
 
-export function SidebarHistory({ data, serviceId, versionId, pathLogs }: SidebarHistoryProps) {
-  const [open, setOpen] = useState(false)
-
+export function SidebarHistory({ data, serviceId, versionId, pathLogs, environmentState }: SidebarHistoryProps) {
   const menuHistory: MenuData = [
     {
       items:
@@ -42,32 +52,87 @@ export function SidebarHistory({ data, serviceId, versionId, pathLogs }: Sidebar
     },
   ]
 
-  const currentIndex = data?.findIndex((item) => item.id === versionId)
+  function findPositionById(data: DeploymentHistoryEnvironment[], versionId = '') {
+    const index = data.findIndex((item) => item.id === versionId)
+    return index !== -1 ? index : 0
+  }
+
+  const showNewTag = [
+    StateEnum.DEPLOYING,
+    StateEnum.DELETING,
+    StateEnum.RESTARTING,
+    StateEnum.BUILDING,
+    StateEnum.STOP_QUEUED,
+    StateEnum.CANCELING,
+    StateEnum.QUEUED,
+    StateEnum.DELETE_QUEUED,
+    StateEnum.DEPLOYMENT_QUEUED,
+  ].includes(environmentState as StateEnum)
 
   if (data.length === 0) return null
 
+  const currentPosition = findPositionById(data, versionId)
+
   return (
-    <div className="flex justify-center border-b border-neutral-500 px-4 py-3">
-      <div>
+    <div className="flex border-b border-neutral-500 px-4 py-3">
+      <div className="flex">
+        <Button
+          dataTestId="btn-back-logs"
+          className="!border-r-0 !rounded-r-none"
+          style={ButtonStyle.DARK}
+          size={ButtonSize.TINY}
+          link={pathLogs}
+        >
+          <Icon name={IconAwesomeEnum.HOUSE} />
+        </Button>
         <Menu
           width={300}
           menus={menuHistory}
           arrowAlign={MenuAlign.CENTER}
-          onOpen={(isOpen) => setOpen(isOpen)}
           trigger={
-            <div
-              role="button"
-              className={`text-xs font-medium hover:text-brand-400 transition ${
-                open ? 'text-brand-400' : 'text-neutral-50'
-              }`}
+            <Button
+              className="!rounded-l-none w-[200px] mr-1.5"
+              style={ButtonStyle.DARK}
+              size={ButtonSize.TINY}
+              iconRight={IconAwesomeEnum.ANGLE_DOWN}
             >
-              <span className="inline-block mr-1">
-                Deployment - {dateFullFormat(data?.[currentIndex === -1 ? 0 : currentIndex]?.created_at)}
-              </span>
-              <Icon name={IconAwesomeEnum.ANGLE_DOWN} />
-            </div>
+              Deployment log history
+            </Button>
           }
         />
+        {showNewTag && (
+          <Tooltip content="New deployment available!" side="right" color="orange">
+            <div>
+              <Button
+                className="!text-orange-500 !border-orange-500 !bg-neutral-500 w-[50px]"
+                style={ButtonStyle.DARK}
+                size={ButtonSize.TINY}
+                link={pathLogs + DEPLOYMENT_LOGS_VERSION_URL(serviceId, '')}
+              >
+                <span className="inline-flex items-center">
+                  New
+                  <i className="relative top-[1px] block ml-1 w-2 h-2 before:block before:absolute before:top-0.5 before:left-0.5 before:bg-orange-500 before:w-1 before:h-1 before:rounded-full after:motion-safe:animate-pulse after:block after:bg-orange-500/30 after:w-2 after:h-2 after:rounded-full" />
+                </span>
+              </Button>
+            </div>
+          </Tooltip>
+        )}
+        {currentPosition === 0 && !showNewTag && (
+          <Tag className="text-neutral-350 border border-neutral-350" fontWeight="font-medium">
+            Latest
+          </Tag>
+        )}
+        {currentPosition > 0 && !showNewTag && (
+          <Button
+            className="w-[50px]"
+            style={ButtonStyle.DARK}
+            size={ButtonSize.TINY}
+            iconRight={IconAwesomeEnum.CHEVRONS_RIGHT}
+            link={pathLogs + DEPLOYMENT_LOGS_VERSION_URL(serviceId, '')}
+          >
+            {currentPosition}
+          </Button>
+        )}
       </div>
     </div>
   )

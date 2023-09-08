@@ -55,6 +55,7 @@ export function Button(props: PropsWithChildren<ButtonProps>) {
     loading = false,
     iconRightClassName = '',
     iconLeftClassName = '',
+    dataTestId,
   } = props
 
   function content() {
@@ -75,25 +76,19 @@ export function Button(props: PropsWithChildren<ButtonProps>) {
 
   if (!link) {
     return (
-      <button
-        data-testid={props.dataTestId || ''}
-        className={defineClass}
-        onClick={onClick}
-        type={type}
-        disabled={disabled}
-      >
+      <button data-testid={dataTestId} className={defineClass} onClick={onClick} type={type} disabled={disabled}>
         {content()}
       </button>
     )
   } else if (link && external) {
     return (
-      <a className={defineClass} href={link} target="_blank" rel="noreferrer" data-testid={props.dataTestId || ''}>
+      <a className={defineClass} href={link} target="_blank" rel="noreferrer" data-testid={dataTestId}>
         {content()}
       </a>
     )
   } else {
     return (
-      <Link to={link} className={defineClass} onClick={onClick}>
+      <Link to={link} className={defineClass} onClick={onClick} data-testid={dataTestId}>
         {content()}
       </Link>
     )

@@ -36,7 +36,11 @@ export function Sidebar({
       ${clusterBanner ? 'h-[calc(100vh-8rem)]' : 'h-[calc(100vh-4rem)]'} ${openSidebar ? 'w-[340px]' : 'w-5'}`}
     >
       <div data-testid="sidebar" className={`w-full h-full overflow-x-scroll ${!openSidebar ? 'hidden' : ''}`}>
-        <SidebarHistoryFeature serviceId={serviceId} versionId={versionId} />
+        <SidebarHistoryFeature
+          environmentState={environmentStatus?.state}
+          serviceId={serviceId}
+          versionId={versionId}
+        />
         <SidebarStatus environmentStatus={environmentStatus} />
         <SidebarPipeline services={services} versionId={versionId} serviceId={serviceId} statusStages={statusStages} />
       </div>

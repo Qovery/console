@@ -31,6 +31,9 @@ export interface ButtonIconProps {
   type?: 'button' | 'submit' | 'reset'
 }
 
+/**
+ * @deprecated This should be migrated to the <Button /> component
+ */
 export function ButtonIcon(props: ButtonIconProps) {
   const {
     icon,

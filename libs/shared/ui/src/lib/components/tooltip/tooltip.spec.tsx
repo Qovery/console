@@ -1,9 +1,13 @@
-import { render } from '__tests__/utils/setup-jest'
-import Tooltip from './tooltip'
+import { renderWithProviders } from '@qovery/shared/util-tests'
+import Tooltip, { type TooltipProps } from './tooltip'
+
+const props: TooltipProps = {
+  content: <p>hello</p>,
+}
 
 describe('Tooltip', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<Tooltip />)
+    const { baseElement } = renderWithProviders(<Tooltip {...props} />)
     expect(baseElement).toBeTruthy()
   })
 })

@@ -5,7 +5,6 @@ exports[`InputFilter should match input filter with loading 1`] = `
   <div>
     <button
       class="btn btn--tiny btn--basic "
-      data-testid=""
       type="button"
     >
       <span>
@@ -28,7 +27,6 @@ exports[`InputFilter should match input filter with value 1`] = `
   <div>
     <button
       class="btn btn--tiny btn--basic "
-      data-testid=""
       type="button"
     >
       <span>
@@ -54,7 +52,6 @@ exports[`InputFilter should match input filter without value 1`] = `
   <div>
     <button
       class="btn btn--tiny btn--stroked "
-      data-testid=""
       type="button"
     >
       <span>
