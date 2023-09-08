@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
-import { type ApplicationType } from '@qovery/domains/services/data-access'
+import { type ApplicationType, type JobType } from '@qovery/domains/services/data-access'
 import { queries } from '@qovery/state/util-queries'
 
 export interface UseDeploymentRestrictionsProps {
   serviceId: string
-  serviceType: ApplicationType
+  serviceType: ApplicationType | JobType
 }
 
 export function useDeploymentRestrictions({ serviceId, serviceType }: UseDeploymentRestrictionsProps) {

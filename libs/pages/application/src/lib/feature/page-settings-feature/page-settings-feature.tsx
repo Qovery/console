@@ -90,7 +90,7 @@ export function PageSettingsFeature() {
       )
     }
 
-    if (isApplication(application)) {
+    if (isApplication(application) || isJob(application)) {
       links.push({
         title: 'Deployment restrictions',
         icon: IconAwesomeEnum.CART_FLATBED,

@@ -4,7 +4,7 @@ import {
   DeploymentRestrictionTypeEnum,
 } from 'qovery-typescript-axios'
 import { FormProvider, useForm } from 'react-hook-form'
-import { type ApplicationType } from '@qovery/domains/services/data-access'
+import { type ApplicationType, type JobType } from '@qovery/domains/services/data-access'
 import { useCreateDeploymentRestriction, useEditDeploymentRestriction } from '@qovery/domains/services/feature'
 import CrudModal from '../../../ui/page-settings-deployment-restrictions/crud-modal/crud-modal'
 
@@ -12,7 +12,7 @@ export interface CrudModalFeatureProps {
   deploymentRestriction?: ApplicationDeploymentRestriction
   onClose: () => void
   serviceId: string
-  serviceType: ApplicationType
+  serviceType: ApplicationType | JobType
 }
 export function CrudModalFeature({ deploymentRestriction, serviceId, serviceType, onClose }: CrudModalFeatureProps) {
   const serviceParams = {

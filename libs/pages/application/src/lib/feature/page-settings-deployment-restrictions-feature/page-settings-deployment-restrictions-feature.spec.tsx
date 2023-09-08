@@ -1,8 +1,14 @@
 import { DeploymentRestrictionModeEnum, DeploymentRestrictionTypeEnum, WeekdayEnum } from 'qovery-typescript-axios'
 import * as environmentDomain from '@qovery/domains/environment'
 import * as servicesDomains from '@qovery/domains/services/feature'
+import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { PageSettingsDeploymentRestrictionsFeature } from './page-settings-deployment-restrictions-feature'
+
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useParams: () => ({ projectId: '0', environmentId: '0', applicationId: '0' }),
+}))
 
 const deploymentRestrictionsMocks = [
   {
@@ -23,6 +29,11 @@ const deploymentRestrictionsMocks = [
 
 describe('PageSettingsDeploymentRestrictionsFeature', () => {
   beforeEach(() => {
+    jest.spyOn(servicesDomains, 'useServiceType').mockReturnValue({
+      data: ServiceTypeEnum.APPLICATION,
+      isLoading: false,
+      error: {},
+    })
     jest.spyOn(environmentDomain, 'useFetchEnvironmentDeploymentRule').mockReturnValue({
       data: {
         auto_deploy: true,
