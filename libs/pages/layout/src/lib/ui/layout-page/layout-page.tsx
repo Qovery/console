@@ -37,7 +37,7 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
 
   const clusterBanner = !matchLogInfraRoute && cluster && displayClusterBanner(cluster.status) && !clusterIsDeployed
 
-  const clusterNotification = StateEnum.DEPLOYMENT_ERROR === (cluster?.status as StateEnum)
+  const clusterNotification = StateEnum.DEPLOYMENT_ERROR === cluster?.status
 
   return (
     <>
