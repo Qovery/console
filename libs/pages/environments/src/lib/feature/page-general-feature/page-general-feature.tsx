@@ -23,6 +23,8 @@ export function PageGeneralFeature() {
   let { data: environments = [] } = res
   const { isLoading } = res
 
+  // XXX: This is needed for the table status filter
+  // We need to consolidate data ahead
   const { data: statuses = [] } = useListStatuses({ projectId })
   environments = environments.map((environment) => ({
     ...environment,
