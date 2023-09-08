@@ -8,7 +8,7 @@ export default {
 
 const Template: Story<TooltipProps> = (args) => (
   <Tooltip {...args}>
-    <span>Hover me!</span>
+    <span>hello</span>
   </Tooltip>
 )
 

@@ -57,22 +57,17 @@ export function SidebarHistory({ data, serviceId, versionId, pathLogs, environme
     return index !== -1 ? index : 0
   }
 
-  function showNewTag(): boolean {
-    switch (environmentState) {
-      case StateEnum.DEPLOYING:
-      case StateEnum.DELETING:
-      case StateEnum.RESTARTING:
-      case StateEnum.BUILDING:
-      case StateEnum.STOP_QUEUED:
-      case StateEnum.CANCELING:
-      case StateEnum.QUEUED:
-      case StateEnum.DELETE_QUEUED:
-      case StateEnum.DEPLOYMENT_QUEUED:
-        return true
-      default:
-        return false
-    }
-  }
+  const showNewTag = [
+    StateEnum.DEPLOYING,
+    StateEnum.DELETING,
+    StateEnum.RESTARTING,
+    StateEnum.BUILDING,
+    StateEnum.STOP_QUEUED,
+    StateEnum.CANCELING,
+    StateEnum.QUEUED,
+    StateEnum.DELETE_QUEUED,
+    StateEnum.DEPLOYMENT_QUEUED,
+  ].includes(environmentState as StateEnum)
 
   if (data.length === 0) return null
 
@@ -105,8 +100,8 @@ export function SidebarHistory({ data, serviceId, versionId, pathLogs, environme
             </Button>
           }
         />
-        {showNewTag() && (
-          <Tooltip content="New deployment available!" side="right" intent="orange">
+        {showNewTag && (
+          <Tooltip content="New deployment available!" side="right" color="orange">
             <div>
               <Button
                 className="!text-orange-500 !border-orange-500 !bg-neutral-500 w-[50px]"
@@ -122,12 +117,12 @@ export function SidebarHistory({ data, serviceId, versionId, pathLogs, environme
             </div>
           </Tooltip>
         )}
-        {currentPosition === 0 && !showNewTag() && (
+        {currentPosition === 0 && !showNewTag && (
           <Tag className="text-neutral-350 border border-neutral-350" fontWeight="font-medium">
             Latest
           </Tag>
         )}
-        {currentPosition > 0 && !showNewTag() && (
+        {currentPosition > 0 && !showNewTag && (
           <Button
             className="w-[50px]"
             style={ButtonStyle.DARK}
