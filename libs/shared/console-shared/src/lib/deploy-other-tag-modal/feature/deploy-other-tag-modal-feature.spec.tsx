@@ -64,6 +64,7 @@ describe('DeployOtherTagModalFeature', () => {
       tag: 'v1',
       environmentId: 'environmentId',
       serviceType: ServiceTypeEnum.APPLICATION,
+      callback: expect.any(Function),
     })
   })
 })
