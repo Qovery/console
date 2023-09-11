@@ -15,6 +15,8 @@ import {
   type RepositoryEntity,
 } from '@qovery/shared/interfaces'
 import {
+  DEPLOYMENT_LOGS_URL,
+  ENVIRONMENT_LOGS_URL,
   SERVICES_JOB_CREATION_CONFIGURE_URL,
   SERVICES_JOB_CREATION_GENERAL_URL,
   SERVICES_JOB_CREATION_RESOURCES_URL,
@@ -205,6 +207,10 @@ export function StepSummaryFeature() {
                       environmentId,
                       applicationId: app.id,
                       serviceType: ServiceTypeEnum.JOB,
+                      callback: () =>
+                        navigate(
+                          ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(app.id)
+                        ),
                     })
                   )
                 }
@@ -217,6 +223,10 @@ export function StepSummaryFeature() {
                   environmentId,
                   applicationId: app.id,
                   serviceType: ServiceTypeEnum.JOB,
+                  callback: () =>
+                    navigate(
+                      ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(app.id)
+                    ),
                 })
               )
             }

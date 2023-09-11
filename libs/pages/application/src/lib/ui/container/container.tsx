@@ -60,7 +60,15 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
     if (application) {
       if (serviceDeploymentStatus?.service_deployment_status === ServiceDeploymentStatusEnum.NEVER_DEPLOYED) {
         dispatch(
-          postApplicationActionsDeploy({ environmentId, applicationId, serviceType: getServiceType(application) })
+          postApplicationActionsDeploy({
+            environmentId,
+            applicationId,
+            serviceType: getServiceType(application),
+            callback: () =>
+              navigate(
+                ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(applicationId)
+              ),
+          })
         )
       } else {
         dispatch(

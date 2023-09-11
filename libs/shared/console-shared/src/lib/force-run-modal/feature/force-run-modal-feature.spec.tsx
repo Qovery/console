@@ -2,7 +2,7 @@ import { act, getAllByTestId, getByLabelText, getByTestId, queryAllByTestId, ren
 import { JobForceEvent } from 'qovery-typescript-axios'
 import * as storeApplication from '@qovery/domains/application'
 import { cronjobFactoryMock, lifecycleJobFactoryMock } from '@qovery/shared/factories'
-import ForceRunModalFeature from './force-run-modal-feature'
+import ForceRunModalFeature, { type ForceRunModalFeatureProps } from './force-run-modal-feature'
 
 import SpyInstance = jest.SpyInstance
 
@@ -18,11 +18,18 @@ jest.mock('react-redux', () => ({
     ),
 }))
 
+const props: ForceRunModalFeatureProps = {
+  organizationId: '1',
+  projectId: '2',
+  environmentId: '3',
+  applicationId: '4',
+}
+
 describe('ForceRunModalFeature', () => {
   it('should render 3 radio box if it is a lifecycle', () => {
     const selectApplicationByIdSpy: SpyInstance = jest.spyOn(storeApplication, 'selectApplicationById')
     selectApplicationByIdSpy.mockReturnValue(mockLifecycle)
-    const { baseElement } = render(<ForceRunModalFeature applicationId="123" />)
+    const { baseElement } = render(<ForceRunModalFeature {...props} />)
     expect(getAllByTestId(baseElement, 'input-radio-box')).toHaveLength(3)
 
     expect(baseElement).toBeTruthy()
@@ -31,7 +38,7 @@ describe('ForceRunModalFeature', () => {
   it('should render no radio box if it is a cron', () => {
     const selectApplicationByIdSpy: SpyInstance = jest.spyOn(storeApplication, 'selectApplicationById')
     selectApplicationByIdSpy.mockReturnValue(cronjobFactoryMock(1)[0])
-    const { baseElement } = render(<ForceRunModalFeature applicationId="123" />)
+    const { baseElement } = render(<ForceRunModalFeature {...props} />)
     expect(queryAllByTestId(baseElement, 'input-radio-box')).toHaveLength(0)
 
     expect(baseElement).toBeTruthy()
@@ -44,7 +51,7 @@ describe('ForceRunModalFeature', () => {
     selectApplicationByIdSpy.mockReturnValue(lifecycle)
 
     const forceRunJobSpy: SpyInstance = jest.spyOn(storeApplication, 'forceRunJob')
-    const { baseElement } = render(<ForceRunModalFeature applicationId="123" />)
+    const { baseElement } = render(<ForceRunModalFeature {...props} />)
 
     const radioBoxe = getByLabelText(baseElement, 'Start')
     await act(() => {
@@ -61,8 +68,9 @@ describe('ForceRunModalFeature', () => {
     expect(forceRunJobSpy).toHaveBeenCalled()
 
     expect(forceRunJobSpy).toHaveBeenCalledWith({
-      applicationId: '123',
+      applicationId: '4',
       jobForceEvent: JobForceEvent.START,
+      callback: expect.any(Function),
     })
   })
 })

@@ -13,7 +13,7 @@ import { Link, useLocation, useParams } from 'react-router-dom'
 import { ServiceStateChip } from '@qovery/domains/services/feature'
 import { type ApplicationEntity, type DatabaseEntity, type LoadingStatus } from '@qovery/shared/interfaces'
 // eslint-disable-next-line @nx/enforce-module-boundaries
-import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
+import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
 import { Icon, IconAwesomeEnum, IconFa, InputCheckbox, Tooltip } from '@qovery/shared/ui'
 import { scrollParentToChild } from '@qovery/shared/util-js'
 import ButtonsActionsLogs from './buttons-actions-logs/buttons-actions-logs'
@@ -122,8 +122,7 @@ export function LayoutLogs({
         <div className="absolute z-20 overflow-y-auto left-1 flex items-center w-[calc(100%-8px)] h-11 bg-neutral-900">
           {LinkNavigation(
             'Deployment logs',
-            ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
-              DEPLOYMENT_LOGS_VERSION_URL(serviceId, versionId),
+            ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(serviceId),
             undefined,
             undefined,
             false

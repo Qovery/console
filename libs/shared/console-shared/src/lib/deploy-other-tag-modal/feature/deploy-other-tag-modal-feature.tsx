@@ -1,25 +1,34 @@
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import { postApplicationActionsDeployByTag, selectApplicationById } from '@qovery/domains/application'
 import { getServiceType } from '@qovery/shared/enums'
 import { type ApplicationEntity } from '@qovery/shared/interfaces'
+import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { useModal } from '@qovery/shared/ui'
 import { type AppDispatch, type RootState } from '@qovery/state/store'
 import DeployOtherTagModal from '../ui/deploy-other-tag-modal'
 
 export interface DeployOtherTagModalFeatureProps {
-  applicationId: string
+  organizationId: string
+  projectId: string
   environmentId: string
+  applicationId: string
 }
 
-export function DeployOtherTagModalFeature(props: DeployOtherTagModalFeatureProps) {
-  const { applicationId, environmentId } = props
+export function DeployOtherTagModalFeature({
+  organizationId,
+  projectId,
+  environmentId,
+  applicationId,
+}: DeployOtherTagModalFeatureProps) {
   const methods = useForm<{ tag: string }>({ mode: 'onChange', defaultValues: { tag: '' } })
   const application = useSelector<RootState, ApplicationEntity | undefined>((state) =>
     selectApplicationById(state, applicationId)
   )
   const dispatch = useDispatch<AppDispatch>()
+  const navigate = useNavigate()
   const [deployLoading, setDeployLoading] = useState(false)
   const { closeModal } = useModal()
 
@@ -32,6 +41,10 @@ export function DeployOtherTagModalFeature(props: DeployOtherTagModalFeatureProp
           tag: data.tag,
           environmentId: environmentId,
           serviceType: getServiceType(application),
+          callback: () =>
+            navigate(
+              ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(applicationId)
+            ),
         })
       ).then(() => {
         closeModal()

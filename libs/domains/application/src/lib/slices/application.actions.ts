@@ -16,7 +16,7 @@ export const postApplicationActionsRedeploy = createAsyncThunk(
       applicationId: string
       serviceType?: ServiceTypeEnum
       withDeployments?: boolean
-      callback?: () => void
+      callback: () => void
     },
     { dispatch }
   ) => {
@@ -62,7 +62,13 @@ export const postApplicationActionsRedeploy = createAsyncThunk(
 export const postApplicationActionsReboot = createAsyncThunk(
   'applicationActions/reboot',
   async (
-    data: { environmentId: string; applicationId: string; serviceType?: ServiceTypeEnum; withDeployments?: boolean },
+    data: {
+      environmentId: string
+      applicationId: string
+      serviceType?: ServiceTypeEnum
+      withDeployments?: boolean
+      callback: () => void
+    },
     { dispatch }
   ) => {
     try {
@@ -84,7 +90,14 @@ export const postApplicationActionsReboot = createAsyncThunk(
             })
           )
         // success message
-        toast(ToastEnum.SUCCESS, 'Your application is restarting')
+        toast(
+          ToastEnum.SUCCESS,
+          'Your application is restarting',
+          undefined,
+          () => data.callback && data.callback(),
+          undefined,
+          'See Deployment Logs'
+        )
       }
 
       return response
@@ -98,7 +111,13 @@ export const postApplicationActionsReboot = createAsyncThunk(
 export const postApplicationActionsDeploy = createAsyncThunk(
   'applicationActions/deploy',
   async (
-    data: { environmentId: string; applicationId: string; serviceType?: ServiceTypeEnum; withDeployments?: boolean },
+    data: {
+      environmentId: string
+      applicationId: string
+      serviceType?: ServiceTypeEnum
+      withDeployments?: boolean
+      callback: () => void
+    },
     { dispatch }
   ) => {
     try {
@@ -122,7 +141,14 @@ export const postApplicationActionsDeploy = createAsyncThunk(
             })
           )
         // success message
-        toast(ToastEnum.SUCCESS, 'Your application is deploying')
+        toast(
+          ToastEnum.SUCCESS,
+          'Your application is deploying',
+          undefined,
+          () => data.callback && data.callback(),
+          undefined,
+          'See Deployment Logs'
+        )
       }
 
       return response
@@ -136,7 +162,13 @@ export const postApplicationActionsDeploy = createAsyncThunk(
 export const postApplicationActionsDeployByCommitId = createAsyncThunk(
   'applicationActions/deploy',
   async (
-    data: { environmentId: string; applicationId: string; git_commit_id: string; serviceType: ServiceTypeEnum },
+    data: {
+      environmentId: string
+      applicationId: string
+      git_commit_id: string
+      serviceType: ServiceTypeEnum
+      callback: () => void
+    },
     { dispatch }
   ) => {
     try {
@@ -153,7 +185,14 @@ export const postApplicationActionsDeployByCommitId = createAsyncThunk(
       }
 
       if (response.status === 202) {
-        toast(ToastEnum.SUCCESS, 'Your application is deploying')
+        toast(
+          ToastEnum.SUCCESS,
+          'Your application is deploying',
+          undefined,
+          () => data.callback && data.callback(),
+          undefined,
+          'See Deployment Logs'
+        )
       }
 
       return response
@@ -167,7 +206,13 @@ export const postApplicationActionsDeployByCommitId = createAsyncThunk(
 export const postApplicationActionsDeployByTag = createAsyncThunk(
   'applicationActions/deploy',
   async (
-    data: { environmentId: string; applicationId: string; tag: string; serviceType: ServiceTypeEnum },
+    data: {
+      environmentId: string
+      applicationId: string
+      tag: string
+      serviceType: ServiceTypeEnum
+      callback: () => void
+    },
     { dispatch }
   ) => {
     try {
@@ -184,7 +229,14 @@ export const postApplicationActionsDeployByTag = createAsyncThunk(
       }
 
       if (response.status === 202) {
-        toast(ToastEnum.SUCCESS, `Your ${isJob(data.serviceType) ? 'job' : 'application'} is deploying`)
+        toast(
+          ToastEnum.SUCCESS,
+          `Your ${isJob(data.serviceType) ? 'job' : 'application'} is deploying`,
+          undefined,
+          () => data.callback && data.callback(),
+          undefined,
+          'See Deployment Logs'
+        )
       }
 
       return response
@@ -198,7 +250,13 @@ export const postApplicationActionsDeployByTag = createAsyncThunk(
 export const postApplicationActionsStop = createAsyncThunk(
   'applicationActions/stop',
   async (
-    data: { environmentId: string; applicationId: string; serviceType?: ServiceTypeEnum; withDeployments?: boolean },
+    data: {
+      environmentId: string
+      applicationId: string
+      serviceType?: ServiceTypeEnum
+      withDeployments?: boolean
+      callback: () => void
+    },
     { dispatch }
   ) => {
     try {
@@ -222,7 +280,14 @@ export const postApplicationActionsStop = createAsyncThunk(
             })
           )
         // success message
-        toast(ToastEnum.SUCCESS, 'Your application is stopping')
+        toast(
+          ToastEnum.SUCCESS,
+          'Your application is stopping',
+          undefined,
+          () => data.callback && data.callback(),
+          undefined,
+          'See Deployment Logs'
+        )
       }
 
       return response
@@ -235,13 +300,20 @@ export const postApplicationActionsStop = createAsyncThunk(
 
 export const forceRunJob = createAsyncThunk(
   'applicationActions/delete',
-  async (data: { applicationId: string; jobForceEvent: JobForceEvent }, { dispatch }) => {
+  async (data: { applicationId: string; jobForceEvent: JobForceEvent; callback: () => void }) => {
     try {
       const response = await jobActionApi.deployJob(data.applicationId, data.jobForceEvent)
 
       if (response.status === 202) {
         // success message
-        toast(ToastEnum.SUCCESS, 'Your job is being run')
+        toast(
+          ToastEnum.SUCCESS,
+          'Your job is being run',
+          undefined,
+          () => data.callback && data.callback(),
+          undefined,
+          'See Deployment Logs'
+        )
       }
 
       return response

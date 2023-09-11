@@ -2,24 +2,35 @@ import { JobForceEvent } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import { forceRunJob, selectApplicationById } from '@qovery/domains/application'
 import { isCronJob } from '@qovery/shared/enums'
 import { type ApplicationEntity } from '@qovery/shared/interfaces'
+import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { useModal } from '@qovery/shared/ui'
 import { type AppDispatch, type RootState } from '@qovery/state/store'
 import ForceRunModal from '../ui/force-run-modal'
 
 export interface ForceRunModalFeatureProps {
+  organizationId: string
+  projectId: string
+  environmentId: string
   applicationId: string
 }
 
-export function ForceRunModalFeature(props: ForceRunModalFeatureProps) {
+export function ForceRunModalFeature({
+  organizationId,
+  projectId,
+  environmentId,
+  applicationId,
+}: ForceRunModalFeatureProps) {
   const application = useSelector<RootState, ApplicationEntity | undefined>((state: RootState) =>
-    selectApplicationById(state, props.applicationId)
+    selectApplicationById(state, applicationId)
   )
   const { closeModal } = useModal()
   const [isLoading, setIsLoading] = useState(false)
   const dispatch = useDispatch<AppDispatch>()
+  const navigate = useNavigate()
 
   const methods = useForm({
     mode: 'all',
@@ -52,7 +63,16 @@ export function ForceRunModalFeature(props: ForceRunModalFeatureProps) {
 
     if (data.selected) {
       setIsLoading(true)
-      dispatch(forceRunJob({ applicationId: props.applicationId, jobForceEvent: event })).then(() => {
+      dispatch(
+        forceRunJob({
+          applicationId,
+          jobForceEvent: event,
+          callback: () =>
+            navigate(
+              ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(applicationId)
+            ),
+        })
+      ).then(() => {
         closeModal()
       })
     }

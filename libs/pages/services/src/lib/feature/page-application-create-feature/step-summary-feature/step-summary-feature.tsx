@@ -12,6 +12,8 @@ import { selectAllRepository, selectOrganizationById } from '@qovery/domains/org
 import { ServiceTypeEnum, isApplication } from '@qovery/shared/enums'
 import { type OrganizationEntity } from '@qovery/shared/interfaces'
 import {
+  DEPLOYMENT_LOGS_URL,
+  ENVIRONMENT_LOGS_URL,
   SERVICES_APPLICATION_CREATION_URL,
   SERVICES_CREATION_GENERAL_URL,
   SERVICES_CREATION_HEALTHCHECKS_URL,
@@ -123,6 +125,10 @@ export function StepSummaryFeature() {
                   environmentId,
                   applicationId: app.id,
                   serviceType: ServiceTypeEnum.APPLICATION,
+                  callback: () =>
+                    navigate(
+                      ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(app.id)
+                    ),
                 })
               )
             }
@@ -172,6 +178,10 @@ export function StepSummaryFeature() {
                   environmentId,
                   applicationId: app.id,
                   serviceType: ServiceTypeEnum.CONTAINER,
+                  callback: () =>
+                    navigate(
+                      ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(app.id)
+                    ),
                 })
               )
             }
