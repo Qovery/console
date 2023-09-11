@@ -106,6 +106,7 @@ describe('DeployOtherCommitModalFeature', () => {
       git_commit_id: '2',
       environmentId: 'environmentId',
       serviceType: ServiceTypeEnum.APPLICATION,
+      callback: expect.any(Function),
     })
   })
 
