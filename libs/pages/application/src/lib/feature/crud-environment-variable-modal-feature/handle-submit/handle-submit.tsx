@@ -29,7 +29,8 @@ export function handleSubmitForEnvSecretCreation(
   dispatch: AppDispatch,
   setClosing: (b: boolean) => void,
   serviceType: ServiceTypeEnum,
-  actionRedeployEnvironment: () => void
+  actionRedeployEnvironment: () => void,
+  callback: () => void
 ): void {
   if (data) {
     let entityId
@@ -58,6 +59,7 @@ export function handleSubmitForEnvSecretCreation(
             applicationId: props.applicationId,
             environmentId: props.environmentId,
             serviceType: serviceType,
+            callback: () => callback(),
           })
         )
       } else {

@@ -2,17 +2,19 @@ import { type JobResponseAllOfSchedule } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { editApplication, postApplicationActionsRedeploy, selectApplicationById } from '@qovery/domains/application'
 import { ServiceTypeEnum, getServiceType, isCronJob, isLifeCycleJob } from '@qovery/shared/enums'
 import { type ApplicationEntity, type JobConfigureData } from '@qovery/shared/interfaces'
+import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { toastError } from '@qovery/shared/ui'
 import { type AppDispatch, type RootState } from '@qovery/state/store'
 import PageSettingsConfigureJob from '../../ui/page-settings-configure-job/page-settings-configure-job'
 
 export function PageSettingsConfigureJobFeature() {
-  const { applicationId = '', environmentId = '' } = useParams()
+  const { organizationId = '', projectId = '', applicationId = '', environmentId = '' } = useParams()
   const methods = useForm<JobConfigureData>({ mode: 'onChange' })
+  const navigate = useNavigate()
 
   const application: ApplicationEntity | undefined = useSelector<RootState, ApplicationEntity | undefined>(
     (state) => selectApplicationById(state, applicationId),
@@ -28,7 +30,15 @@ export function PageSettingsConfigureJobFeature() {
   const toasterCallback = () => {
     if (application) {
       dispatch(
-        postApplicationActionsRedeploy({ applicationId, environmentId, serviceType: getServiceType(application) })
+        postApplicationActionsRedeploy({
+          applicationId,
+          environmentId,
+          serviceType: getServiceType(application),
+          callback: () =>
+            navigate(
+              ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(applicationId)
+            ),
+        })
       )
     }
   }

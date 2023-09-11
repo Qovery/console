@@ -1,13 +1,14 @@
 import { type Environment, type Link, ServiceDeploymentStatusEnum } from 'qovery-typescript-axios'
 import { type PropsWithChildren, createContext, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { postApplicationActionsDeploy, postApplicationActionsRedeploy } from '@qovery/domains/application'
 import { selectClusterById } from '@qovery/domains/organization'
 import { useDeploymentStatus } from '@qovery/domains/services/feature'
 import { ApplicationButtonsActions, NeedRedeployFlag } from '@qovery/shared/console-shared'
 import { IconEnum, getServiceType, isCronJob, isLifeCycleJob } from '@qovery/shared/enums'
 import { type ApplicationEntity, type ClusterEntity } from '@qovery/shared/interfaces'
+import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import {
   Button,
   ButtonSize,
@@ -41,7 +42,7 @@ export interface ContainerProps {
 
 export function Container(props: PropsWithChildren<ContainerProps>) {
   const { application, environment, children } = props
-  const { environmentId = '', applicationId = '' } = useParams()
+  const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
   const [showHideAllEnvironmentVariablesValues, setShowHideAllEnvironmentVariablesValues] = useState<boolean>(false)
 
   const cluster = useSelector<RootState, ClusterEntity | undefined>((state: RootState) =>
@@ -49,6 +50,7 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
   )
 
   const dispatch = useDispatch<AppDispatch>()
+  const navigate = useNavigate()
   const { data: serviceDeploymentStatus, isLoading: isLoadingServiceDeploymentStatus } = useDeploymentStatus({
     environmentId: application?.environment?.id,
     serviceId: application?.id,
@@ -62,7 +64,15 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
         )
       } else {
         dispatch(
-          postApplicationActionsRedeploy({ environmentId, applicationId, serviceType: getServiceType(application) })
+          postApplicationActionsRedeploy({
+            environmentId,
+            applicationId,
+            serviceType: getServiceType(application),
+            callback: () =>
+              navigate(
+                ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(applicationId)
+              ),
+          })
         )
       }
     }

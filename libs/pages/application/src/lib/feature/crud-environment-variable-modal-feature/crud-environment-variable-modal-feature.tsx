@@ -2,10 +2,12 @@ import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import { useActionRedeployEnvironment } from '@qovery/domains/environment'
 import { getEnvironmentVariablesState } from '@qovery/domains/environment-variable'
 import { type ServiceTypeEnum } from '@qovery/shared/enums'
 import { type EnvironmentVariableEntity, type EnvironmentVariableSecretOrPublic } from '@qovery/shared/interfaces'
+import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { useModal } from '@qovery/shared/ui'
 import { computeAvailableScope, getEnvironmentVariableFileMountPath } from '@qovery/shared/util-js'
 import { type AppDispatch, type RootState } from '@qovery/state/store'
@@ -17,6 +19,7 @@ export interface CrudEnvironmentVariableModalFeatureProps {
   mode: EnvironmentVariableCrudMode
   type?: EnvironmentVariableType
   closeModal: () => void
+  organizationId: string
   applicationId: string
   environmentId: string
   projectId: string
@@ -52,6 +55,7 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
   const [closing, setClosing] = useState(false)
   const [loading, setLoading] = useState(false)
   const { enableAlertClickOutside } = useModal()
+  const navigate = useNavigate()
 
   const actionRedeployEnvironment = useActionRedeployEnvironment(props.projectId, props.environmentId)
 
@@ -94,8 +98,19 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
       if (!isFile) {
         delete cloneData.mountPath
       }
-      handleSubmitForEnvSecretCreation(cloneData, setLoading, props, dispatch, setClosing, props.serviceType, () =>
-        actionRedeployEnvironment.mutate()
+      handleSubmitForEnvSecretCreation(
+        cloneData,
+        setLoading,
+        props,
+        dispatch,
+        setClosing,
+        props.serviceType,
+        () => actionRedeployEnvironment.mutate(),
+        () =>
+          navigate(
+            ENVIRONMENT_LOGS_URL(props.organizationId, props.projectId, props.environmentId) +
+              DEPLOYMENT_LOGS_URL(props.applicationId)
+          )
       )
     }
   })

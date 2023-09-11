@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import {
   editApplicationAdvancedSettings,
   fetchApplicationAdvancedSettings,
@@ -12,13 +12,14 @@ import {
 } from '@qovery/domains/application'
 import { type ServiceTypeEnum, getServiceType } from '@qovery/shared/enums'
 import { type AdvancedSettings, type ApplicationEntity } from '@qovery/shared/interfaces'
+import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { objectFlattener } from '@qovery/shared/util-js'
 import { type AppDispatch, type RootState } from '@qovery/state/store'
 import PageSettingsAdvanced from '../../ui/page-settings-advanced/page-settings-advanced'
 import { initFormValues } from './init-form-values/init-form-values'
 
 export function PageSettingsAdvancedFeature() {
-  const { applicationId = '', environmentId = '' } = useParams()
+  const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
 
   const application = useSelector<RootState, ApplicationEntity | undefined>(
     (state) => selectApplicationById(state, applicationId),
@@ -33,6 +34,7 @@ export function PageSettingsAdvancedFeature() {
 
   const dispatch = useDispatch<AppDispatch>()
   const methods = useForm({ mode: 'onChange' })
+  const navigate = useNavigate()
   const [serviceType, setServiceType] = useState<ServiceTypeEnum>()
 
   useEffect(() => {
@@ -73,7 +75,15 @@ export function PageSettingsAdvancedFeature() {
   const toasterCallback = () => {
     if (application) {
       dispatch(
-        postApplicationActionsRedeploy({ applicationId, environmentId, serviceType: getServiceType(application) })
+        postApplicationActionsRedeploy({
+          applicationId,
+          environmentId,
+          serviceType: getServiceType(application),
+          callback: () =>
+            navigate(
+              ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(applicationId)
+            ),
+        })
       )
     }
   }

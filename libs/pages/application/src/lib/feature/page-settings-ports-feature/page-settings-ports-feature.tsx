@@ -1,9 +1,10 @@
 import { type Probe, type ProbeType, type ServicePort } from 'qovery-typescript-axios'
 import { useDispatch, useSelector } from 'react-redux'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { editApplication, postApplicationActionsRedeploy, selectApplicationById } from '@qovery/domains/application'
 import { ProbeTypeEnum, getServiceType } from '@qovery/shared/enums'
 import { type ApplicationEntity, type PortData } from '@qovery/shared/interfaces'
+import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { type AppDispatch, type RootState } from '@qovery/state/store'
 import PageSettingsPorts from '../../ui/page-settings-ports/page-settings-ports'
@@ -61,13 +62,14 @@ export const deletePort = (application?: ApplicationEntity, portId?: string) => 
 export function PageSettingsPortsFeature() {
   const dispatch = useDispatch<AppDispatch>()
 
-  const { projectId = '', applicationId = '', environmentId = '' } = useParams()
+  const { organizationId = '', projectId = '', applicationId = '', environmentId = '' } = useParams()
 
   const application = useSelector<RootState, ApplicationEntity | undefined>(
     (state) => selectApplicationById(state, applicationId),
     (a, b) => JSON.stringify(a?.ports) === JSON.stringify(b?.ports)
   )
 
+  const navigate = useNavigate()
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
 
@@ -78,6 +80,10 @@ export function PageSettingsPortsFeature() {
           applicationId: applicationId,
           environmentId: environmentId,
           serviceType: getServiceType(application),
+          callback: () =>
+            navigate(
+              ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(applicationId)
+            ),
         })
       )
     }
@@ -89,7 +95,14 @@ export function PageSettingsPortsFeature() {
       healthchecks={application?.healthchecks}
       onAddPort={() => {
         openModal({
-          content: <CrudModalFeature onClose={closeModal} application={application} projectId={projectId} />,
+          content: (
+            <CrudModalFeature
+              onClose={closeModal}
+              application={application}
+              organizationId={organizationId}
+              projectId={projectId}
+            />
+          ),
         })
       }}
       onEdit={(port: PortData | ServicePort) => {
@@ -99,6 +112,7 @@ export function PageSettingsPortsFeature() {
               onClose={closeModal}
               application={application}
               port={port as ServicePort}
+              organizationId={organizationId}
               projectId={projectId}
             />
           ),

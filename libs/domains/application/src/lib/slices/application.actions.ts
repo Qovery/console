@@ -11,7 +11,13 @@ const jobActionApi = new JobActionsApi()
 export const postApplicationActionsRedeploy = createAsyncThunk(
   'applicationActions/redeploy',
   async (
-    data: { environmentId: string; applicationId: string; serviceType?: ServiceTypeEnum; withDeployments?: boolean },
+    data: {
+      environmentId: string
+      applicationId: string
+      serviceType?: ServiceTypeEnum
+      withDeployments?: boolean
+      callback?: () => void
+    },
     { dispatch }
   ) => {
     try {
@@ -35,7 +41,14 @@ export const postApplicationActionsRedeploy = createAsyncThunk(
             })
           )
         // success message
-        toast(ToastEnum.SUCCESS, 'Your application is redeploying')
+        toast(
+          ToastEnum.SUCCESS,
+          'Your application is redeploying',
+          undefined,
+          () => data.callback && data.callback(),
+          undefined,
+          'See Deployment Logs'
+        )
       }
 
       return response

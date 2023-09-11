@@ -1,6 +1,6 @@
 import { type ServiceStorageStorage } from 'qovery-typescript-axios'
 import { useDispatch, useSelector } from 'react-redux'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import {
   editApplication,
   getApplicationsState,
@@ -9,6 +9,7 @@ import {
 } from '@qovery/domains/application'
 import { getServiceType } from '@qovery/shared/enums'
 import { type ApplicationEntity } from '@qovery/shared/interfaces'
+import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { type AppDispatch, type RootState } from '@qovery/state/store'
 import PageSettingsStorage from '../../ui/page-settings-storage/page-settings-storage'
@@ -21,8 +22,9 @@ export const removeStorage = (storage: ServiceStorageStorage, application: Appli
 }
 
 export function PageSettingsStorageFeature() {
-  const { applicationId = '', environmentId = '' } = useParams()
+  const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
   const dispatch = useDispatch<AppDispatch>()
+  const navigate = useNavigate()
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
   const error = useSelector((state: RootState) => getApplicationsState(state).error)
@@ -35,7 +37,15 @@ export function PageSettingsStorageFeature() {
   const toasterCallback = () => {
     if (application) {
       dispatch(
-        postApplicationActionsRedeploy({ applicationId, environmentId, serviceType: getServiceType(application) })
+        postApplicationActionsRedeploy({
+          applicationId,
+          environmentId,
+          serviceType: getServiceType(application),
+          callback: () =>
+            navigate(
+              ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(applicationId)
+            ),
+        })
       )
     }
   }
@@ -70,6 +80,8 @@ export function PageSettingsStorageFeature() {
         openModal({
           content: (
             <StorageModalFeature
+              organizationId={organizationId}
+              projectId={projectId}
               onClose={closeModal}
               storage={storage}
               applicationId={applicationId}
@@ -80,7 +92,15 @@ export function PageSettingsStorageFeature() {
       }}
       onAddStorage={() => {
         openModal({
-          content: <StorageModalFeature onClose={closeModal} applicationId={applicationId} application={application} />,
+          content: (
+            <StorageModalFeature
+              organizationId={organizationId}
+              projectId={projectId}
+              onClose={closeModal}
+              applicationId={applicationId}
+              application={application}
+            />
+          ),
         })
       }}
     />

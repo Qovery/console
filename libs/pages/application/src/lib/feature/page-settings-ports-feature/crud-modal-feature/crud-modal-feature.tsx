@@ -2,16 +2,19 @@ import { type CloudProviderEnum, PortProtocolEnum, type Probe, type ServicePort 
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import { editApplication, postApplicationActionsRedeploy } from '@qovery/domains/application'
 import { useFetchEnvironment } from '@qovery/domains/environment'
 import { CrudModal, defaultLivenessProbe, isMatchingHealthCheck } from '@qovery/shared/console-shared'
 import { ProbeTypeEnum, getServiceType } from '@qovery/shared/enums'
 import { type ApplicationEntity } from '@qovery/shared/interfaces'
+import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { useModal } from '@qovery/shared/ui'
 import { type AppDispatch } from '@qovery/state/store'
 
 export interface CrudModalFeatureProps {
   onClose: () => void
+  organizationId: string
   projectId: string
   application?: ApplicationEntity
   port?: ServicePort
@@ -114,9 +117,10 @@ export const handleSubmit = (
   return cloneApplication
 }
 
-export function CrudModalFeature({ application, onClose, projectId, port }: CrudModalFeatureProps) {
+export function CrudModalFeature({ application, onClose, port, organizationId, projectId }: CrudModalFeatureProps) {
   const [loading, setLoading] = useState(false)
   const { enableAlertClickOutside } = useModal()
+  const navigate = useNavigate()
   const { data: environment } = useFetchEnvironment(projectId, application?.environment?.id || '')
   const livenessType = application?.healthchecks?.liveness_probe?.type
   const readinessType = application?.healthchecks?.readiness_probe?.type
@@ -140,6 +144,11 @@ export function CrudModalFeature({ application, onClose, projectId, port }: Crud
           applicationId: application?.id || '',
           environmentId: application?.environment?.id || '',
           serviceType: getServiceType(application),
+          callback: () =>
+            navigate(
+              ENVIRONMENT_LOGS_URL(organizationId, projectId, application?.environment?.id) +
+                DEPLOYMENT_LOGS_URL(application?.id)
+            ),
         })
       )
     }
