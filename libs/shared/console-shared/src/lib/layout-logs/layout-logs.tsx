@@ -77,7 +77,7 @@ export function LayoutLogs({
   const refScrollSection = useRef<HTMLDivElement>(null)
   const [updateTimeContextValue, setUpdateTimeContext] = useState(defaultUpdateTimeContext)
 
-  const { organizationId = '', projectId = '', environmentId = '', serviceId = '', versionId = '' } = useParams()
+  const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams()
 
   const scrollToError = () => {
     const section = refScrollSection.current
