@@ -15,7 +15,16 @@ import App from './app/app'
 import { environment } from './environments/environment'
 
 interface Meta {
-  notifyOnSuccess?: boolean | { title: string; description?: string }
+  notifyOnSuccess?:
+    | boolean
+    | {
+        title: string
+        description?: string
+        callback?: () => void
+        iconAction?: string
+        labelAction?: string
+        externalLink?: string
+      }
   notifyOnError?: boolean | { title: string; description?: string }
 }
 
@@ -44,7 +53,15 @@ const queryClient = new QueryClient({
         if (mutation.meta.notifyOnSuccess === true) {
           toast(ToastEnum.SUCCESS, JSON.stringify(data))
         } else {
-          toast(ToastEnum.SUCCESS, mutation.meta.notifyOnSuccess.title, mutation.meta.notifyOnSuccess.description)
+          toast(
+            ToastEnum.SUCCESS,
+            mutation.meta.notifyOnSuccess.title,
+            mutation.meta.notifyOnSuccess.description,
+            mutation.meta.notifyOnSuccess.callback,
+            mutation.meta.notifyOnSuccess.iconAction,
+            mutation.meta.notifyOnSuccess.labelAction,
+            mutation.meta.notifyOnSuccess.externalLink
+          )
         }
       }
     },
@@ -64,7 +81,15 @@ const queryClient = new QueryClient({
         if (query.meta.notifyOnSuccess === true) {
           toast(ToastEnum.SUCCESS, JSON.stringify(data))
         } else {
-          toast(ToastEnum.SUCCESS, query.meta.notifyOnSuccess.title, query.meta.notifyOnSuccess.description)
+          toast(
+            ToastEnum.SUCCESS,
+            query.meta.notifyOnSuccess.title,
+            query.meta.notifyOnSuccess.description,
+            query.meta.notifyOnSuccess.callback,
+            query.meta.notifyOnSuccess.iconAction,
+            query.meta.notifyOnSuccess.labelAction,
+            query.meta.notifyOnSuccess.externalLink
+          )
         }
       }
     },

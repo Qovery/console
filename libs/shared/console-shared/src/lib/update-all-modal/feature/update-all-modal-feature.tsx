@@ -1,6 +1,7 @@
 import { type Commit, type DeployAllRequest } from 'qovery-typescript-axios'
 import { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import {
   applicationsLoadingStatus,
   fetchApplicationCommits,
@@ -10,21 +11,24 @@ import {
 import { useActionDeployAllEnvironment, useFetchEnvironment } from '@qovery/domains/environment'
 import { getServiceType, isApplication, isGitJob, isJob } from '@qovery/shared/enums'
 import { type ApplicationEntity, type LoadingStatus } from '@qovery/shared/interfaces'
+import { ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { useModal } from '@qovery/shared/ui'
 import { type AppDispatch, type RootState } from '@qovery/state/store'
 import UpdateAllModal from '../ui/update-all-modal'
 
 export interface UpdateAllModalFeatureProps {
+  organizationId: string
   environmentId: string
   projectId: string
 }
 
 export function UpdateAllModalFeature(props: UpdateAllModalFeatureProps) {
-  const { environmentId, projectId } = props
+  const { organizationId, environmentId, projectId } = props
 
   const { data: environment } = useFetchEnvironment(projectId, environmentId)
 
   const { closeModal } = useModal()
+  const navigate = useNavigate()
   const dispatch: AppDispatch = useDispatch()
   const applications = useSelector<RootState, ApplicationEntity[] | undefined>(
     (state: RootState) => selectApplicationsEntitiesByEnvId(state, environmentId),
@@ -44,9 +48,13 @@ export function UpdateAllModalFeature(props: UpdateAllModalFeatureProps) {
   const [listLoading, setListLoading] = useState<boolean>(true)
   const [submitButtonLoading, setSubmitButtonLoading] = useState<boolean>(false)
 
-  const actionDeployAllEnvironments = useActionDeployAllEnvironment(environmentId, () => {
-    closeModal()
-  })
+  const actionDeployAllEnvironments = useActionDeployAllEnvironment(
+    environmentId,
+    () => {
+      closeModal()
+    },
+    () => navigate(ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId))
+  )
 
   const checkService = (serviceId: string) => {
     if (selectedServiceIds.includes(serviceId)) {
