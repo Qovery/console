@@ -37,13 +37,15 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
 
   const clusterBanner = !matchLogInfraRoute && cluster && displayClusterBanner(cluster.status) && !clusterIsDeployed
 
+  const clusterNotification = StateEnum.DEPLOYMENT_ERROR === cluster?.status
+
   return (
     <>
       <WarningScreenMobile />
       <main className="dark:bg-neutral-900 dark:h-full bg-neutral-200">
         <div className="flex">
           <div className="h-full sticky top-0 z-30">
-            <Navigation defaultOrganizationId={defaultOrganizationId} />
+            <Navigation defaultOrganizationId={defaultOrganizationId} clusterNotification={clusterNotification} />
           </div>
           <div className="w-full">
             {topBar && <TopBar />}
