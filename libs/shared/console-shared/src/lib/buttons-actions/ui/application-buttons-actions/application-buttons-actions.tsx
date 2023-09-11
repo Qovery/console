@@ -27,6 +27,7 @@ import {
   APPLICATION_SETTINGS_URL,
   APPLICATION_URL,
   AUDIT_LOGS_PARAMS_URL,
+  DEPLOYMENT_LOGS_URL,
   ENVIRONMENT_LOGS_URL,
   SERVICES_DEPLOYMENTS_URL,
   SERVICES_GENERAL_URL,
@@ -96,7 +97,9 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
   const actionCancelEnvironment = useActionCancelEnvironment(
     projectId,
     environmentId,
-    location.pathname === SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_DEPLOYMENTS_URL
+    location.pathname === SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_DEPLOYMENTS_URL,
+    undefined,
+    () => navigate(ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId))
   )
 
   const { data: runningSatus } = useRunningStatus({ environmentId, serviceId: application.id })
@@ -124,6 +127,10 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
             environmentId,
             applicationId: application.id,
             serviceType: serviceType,
+            callback: () =>
+              navigate(
+                ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(application.id)
+              ),
           })
         ),
     }
@@ -150,6 +157,10 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
                 environmentId,
                 applicationId: application.id,
                 serviceType: serviceType,
+                callback: () =>
+                  navigate(
+                    ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(application.id)
+                  ),
               })
             )
           },
@@ -168,6 +179,10 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
             environmentId,
             applicationId: application.id,
             serviceType: serviceType,
+            callback: () =>
+              navigate(
+                ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(application.id)
+              ),
           })
         )
       },
@@ -179,7 +194,16 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
       onClick: (e: ClickEvent) => {
         e.syntheticEvent.preventDefault()
 
-        openModal({ content: <ForceRunModalFeature applicationId={application.id} /> })
+        openModal({
+          content: (
+            <ForceRunModalFeature
+              organizationId={organizationId}
+              projectId={projectId}
+              environmentId={environmentId}
+              applicationId={application.id}
+            />
+          ),
+        })
       },
     }
 
@@ -197,6 +221,10 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
                 environmentId,
                 applicationId: application.id,
                 serviceType: serviceType,
+                callback: () =>
+                  navigate(
+                    ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(application.id)
+                  ),
               })
             )
           },
@@ -248,7 +276,12 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
           onClick: () => {
             openModal({
               content: (
-                <DeployOtherCommitModalFeature applicationId={application.id} environmentId={environmentId || ''} />
+                <DeployOtherCommitModalFeature
+                  organizationId={organizationId}
+                  projectId={projectId}
+                  environmentId={environmentId || ''}
+                  applicationId={application.id}
+                />
               ),
               options: { width: 596 },
             })
@@ -264,7 +297,12 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
           onClick: () => {
             openModal({
               content: (
-                <DeployOtherTagModalFeature applicationId={application.id} environmentId={environmentId || ''} />
+                <DeployOtherTagModalFeature
+                  organizationId={organizationId}
+                  projectId={projectId}
+                  environmentId={environmentId || ''}
+                  applicationId={application.id}
+                />
               ),
               options: { width: 596 },
             })
@@ -286,6 +324,9 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
     serviceType,
     runningSatus?.state,
     deploymentStatus?.state,
+    navigate,
+    projectId,
+    organizationId,
   ])
 
   const canDelete = deploymentStatus && isDeleteAvailable(deploymentStatus.state)

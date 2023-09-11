@@ -59,25 +59,33 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
   const { mutate: actionRedeployEnvironmentMutate } = useActionRedeployEnvironment(
     projectId,
     environment.id,
-    location.pathname === SERVICES_URL(organizationId, projectId, environment.id) + SERVICES_DEPLOYMENTS_URL
+    location.pathname === SERVICES_URL(organizationId, projectId, environment.id) + SERVICES_DEPLOYMENTS_URL,
+    undefined,
+    () => navigate(ENVIRONMENT_LOGS_URL(organizationId, projectId, environment.id))
   )
 
   const { mutate: actionDeployEnvironmentMutate } = useActionDeployEnvironment(
     projectId,
     environment.id,
-    location.pathname === SERVICES_URL(organizationId, projectId, environment.id) + SERVICES_DEPLOYMENTS_URL
+    location.pathname === SERVICES_URL(organizationId, projectId, environment.id) + SERVICES_DEPLOYMENTS_URL,
+    undefined,
+    () => navigate(ENVIRONMENT_LOGS_URL(organizationId, projectId, environment.id))
   )
 
   const { mutate: actionStopEnvironmentMutate } = useActionStopEnvironment(
     projectId,
     environment.id,
-    location.pathname === SERVICES_URL(organizationId, projectId, environment.id) + SERVICES_DEPLOYMENTS_URL
+    location.pathname === SERVICES_URL(organizationId, projectId, environment.id) + SERVICES_DEPLOYMENTS_URL,
+    undefined,
+    () => navigate(ENVIRONMENT_LOGS_URL(organizationId, projectId, environment.id))
   )
 
   const { mutate: actionCancelEnvironmentMutate } = useActionCancelEnvironment(
     projectId,
     environment.id,
-    location.pathname === SERVICES_URL(organizationId, projectId, environment.id) + SERVICES_DEPLOYMENTS_URL
+    location.pathname === SERVICES_URL(organizationId, projectId, environment.id) + SERVICES_DEPLOYMENTS_URL,
+    undefined,
+    () => navigate(ENVIRONMENT_LOGS_URL(organizationId, projectId, environment.id))
   )
 
   const buttonStatusActions = useMemo(() => {
@@ -161,7 +169,13 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
           e.syntheticEvent.preventDefault()
 
           openModal({
-            content: <UpdateAllModalFeature environmentId={environment.id} projectId={projectId} />,
+            content: (
+              <UpdateAllModalFeature
+                organizationId={organizationId}
+                environmentId={environment.id}
+                projectId={projectId}
+              />
+            ),
             options: {
               width: 676,
             },
@@ -175,6 +189,7 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
   }, [
     environment,
     openModalConfirmation,
+    organizationId,
     projectId,
     openModal,
     deploymentStatus?.state,
@@ -188,7 +203,8 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
     projectId,
     environment.id,
     () => navigate(ENVIRONMENTS_URL(organizationId, projectId) + ENVIRONMENTS_GENERAL_URL),
-    deploymentStatus?.state === StateEnum.READY
+    deploymentStatus?.state === StateEnum.READY,
+    () => navigate(ENVIRONMENT_LOGS_URL(organizationId, projectId, environment.id))
   )
 
   const removeEnvironment = async () => {

@@ -1,15 +1,19 @@
 import { type ServiceStorageStorage, StorageTypeEnum } from 'qovery-typescript-axios'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import { editApplication, getApplicationsState, postApplicationActionsRedeploy } from '@qovery/domains/application'
 import { getServiceType } from '@qovery/shared/enums'
 import { type ApplicationEntity } from '@qovery/shared/interfaces'
+import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { type AppDispatch, type RootState } from '@qovery/state/store'
 import StorageModal from '../../../ui/page-settings-storage/storage-modal/storage-modal'
 
 export interface StorageModalFeatureProps {
   storage?: ServiceStorageStorage
   application?: ApplicationEntity
+  organizationId: string
+  projectId: string
   applicationId: string
   onClose: () => void
 }
@@ -43,6 +47,7 @@ export function StorageModalFeature(props: StorageModalFeatureProps) {
     },
     mode: 'onChange',
   })
+  const navigate = useNavigate()
 
   const toasterCallback = () => {
     if (props.application) {
@@ -51,6 +56,11 @@ export function StorageModalFeature(props: StorageModalFeatureProps) {
           applicationId: props.application.id,
           environmentId: props.application.environment?.id || '',
           serviceType: getServiceType(props.application),
+          callback: () =>
+            navigate(
+              ENVIRONMENT_LOGS_URL(props.organizationId, props.projectId, props.application?.environment?.id) +
+                DEPLOYMENT_LOGS_URL(props.application?.id)
+            ),
         })
       )
     }

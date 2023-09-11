@@ -1,6 +1,7 @@
 import { type Commit } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import {
   fetchApplicationCommits,
   getCommitsGroupedByDate,
@@ -9,18 +10,26 @@ import {
 } from '@qovery/domains/application'
 import { getServiceType } from '@qovery/shared/enums'
 import { type ApplicationEntity } from '@qovery/shared/interfaces'
+import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { useModal } from '@qovery/shared/ui'
 import { type AppDispatch, type RootState } from '@qovery/state/store'
 import DeployOtherCommitModal from '../ui/deploy-other-commit-modal'
 
 export interface DeployOtherCommitModalFeatureProps {
-  applicationId: string
+  organizationId: string
+  projectId: string
   environmentId: string
+  applicationId: string
 }
 
-export function DeployOtherCommitModalFeature(props: DeployOtherCommitModalFeatureProps) {
-  const { applicationId } = props
+export function DeployOtherCommitModalFeature({
+  organizationId,
+  projectId,
+  environmentId,
+  applicationId,
+}: DeployOtherCommitModalFeatureProps) {
   const dispatch = useDispatch<AppDispatch>()
+  const navigate = useNavigate()
   const { closeModal } = useModal()
 
   const [selectedCommitId, setSelectedCommitId] = useState<string | null>(null)
@@ -46,7 +55,7 @@ export function DeployOtherCommitModalFeature(props: DeployOtherCommitModalFeatu
     if (application && (!application?.commits || application?.commits?.loadingStatus === 'not loaded')) {
       dispatch(fetchApplicationCommits({ applicationId, serviceType: getServiceType(application) }))
     }
-  }, [props.applicationId, application, applicationId, dispatch])
+  }, [application, applicationId, dispatch])
 
   const handleDeploy = () => {
     if (selectedCommitId && application) {
@@ -55,8 +64,12 @@ export function DeployOtherCommitModalFeature(props: DeployOtherCommitModalFeatu
         postApplicationActionsDeployByCommitId({
           applicationId,
           git_commit_id: selectedCommitId,
-          environmentId: props.environmentId,
+          environmentId: environmentId,
           serviceType: getServiceType(application),
+          callback: () =>
+            navigate(
+              ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(applicationId)
+            ),
         })
       ).then(() => {
         closeModal()

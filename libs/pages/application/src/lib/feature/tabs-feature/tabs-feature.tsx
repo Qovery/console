@@ -35,7 +35,7 @@ import CrudEnvironmentVariableModalFeature, {
 import ImportEnvironmentVariableModalFeature from '../import-environment-variable-modal-feature/import-environment-variable-modal-feature'
 
 export function TabsFeature() {
-  const { organizationId, projectId = '', environmentId = '', applicationId = '' } = useParams()
+  const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
   const application = useSelector<RootState, ApplicationEntity | undefined>(
     (state) => getApplicationsState(state).entities[applicationId]
   )
@@ -151,6 +151,7 @@ export function TabsFeature() {
                   closeModal={closeModal}
                   type={EnvironmentVariableType.NORMAL}
                   mode={EnvironmentVariableCrudMode.CREATION}
+                  organizationId={organizationId}
                   applicationId={applicationId}
                   environmentId={environmentId}
                   projectId={projectId}
@@ -170,6 +171,7 @@ export function TabsFeature() {
                   closeModal={closeModal}
                   type={EnvironmentVariableType.NORMAL}
                   mode={EnvironmentVariableCrudMode.CREATION}
+                  organizationId={organizationId}
                   applicationId={applicationId}
                   environmentId={environmentId}
                   projectId={projectId}

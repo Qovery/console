@@ -3,13 +3,19 @@ import { type Probe, type ProbeType } from 'qovery-typescript-axios'
 import { useEffect, useMemo, useState } from 'react'
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { editApplication, getApplicationsState, postApplicationActionsRedeploy } from '@qovery/domains/application'
 import { useFetchEnvironment } from '@qovery/domains/environment'
 import { defaultLivenessProbe, defaultReadinessProbe, probeFormatted } from '@qovery/shared/console-shared'
 import { ProbeTypeEnum, getServiceType, isJob } from '@qovery/shared/enums'
 import { type ApplicationEntity, type HealthcheckData } from '@qovery/shared/interfaces'
-import { APPLICATION_SETTINGS_RESOURCES_URL, APPLICATION_SETTINGS_URL, APPLICATION_URL } from '@qovery/shared/routes'
+import {
+  APPLICATION_SETTINGS_RESOURCES_URL,
+  APPLICATION_SETTINGS_URL,
+  APPLICATION_URL,
+  DEPLOYMENT_LOGS_URL,
+  ENVIRONMENT_LOGS_URL,
+} from '@qovery/shared/routes'
 import { type AppDispatch, type RootState } from '@qovery/state/store'
 import PageSettingsHealthchecks from '../../ui/page-settings-healthchecks/page-settings-healthchecks'
 
@@ -37,6 +43,7 @@ export function PageSettingsHealthchecksFeature() {
   const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
 
   const dispatch = useDispatch<AppDispatch>()
+  const navigate = useNavigate()
   const { data: environment } = useFetchEnvironment(projectId, environmentId)
 
   const application = useSelector<RootState, ApplicationEntity | undefined>(
@@ -47,7 +54,15 @@ export function PageSettingsHealthchecksFeature() {
   const toasterCallback = () => {
     if (application) {
       dispatch(
-        postApplicationActionsRedeploy({ applicationId, environmentId, serviceType: getServiceType(application) })
+        postApplicationActionsRedeploy({
+          applicationId,
+          environmentId,
+          serviceType: getServiceType(application),
+          callback: () =>
+            navigate(
+              ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(applicationId)
+            ),
+        })
       )
     }
   }

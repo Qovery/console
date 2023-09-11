@@ -40,7 +40,7 @@ export interface TableRowEnvironmentVariableFeatureProps {
 export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVariableFeatureProps) {
   const { variable, filter, dataHead, columnsWidth = '30% 10% 30% 15% 15%' } = props
   const { openModal, closeModal } = useModal()
-  const { applicationId = '', projectId = '', environmentId = '' } = useParams()
+  const { organizationId = '', applicationId = '', projectId = '', environmentId = '' } = useParams()
   const { openModalConfirmation } = useModalConfirmation()
   const { showHideAllEnvironmentVariablesValues: defaultShowHideValue } = useContext(ApplicationContext)
 
@@ -55,6 +55,7 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
             closeModal={closeModal}
             variable={variable}
             mode={EnvironmentVariableCrudMode.EDITION}
+            organizationId={organizationId}
             applicationId={applicationId}
             projectId={projectId}
             environmentId={environmentId}
@@ -85,6 +86,7 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
             variable={variable}
             type={EnvironmentVariableType.OVERRIDE}
             mode={EnvironmentVariableCrudMode.CREATION}
+            organizationId={organizationId}
             applicationId={applicationId}
             projectId={projectId}
             environmentId={environmentId}
@@ -107,6 +109,7 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
             variable={variable}
             type={EnvironmentVariableType.ALIAS}
             mode={EnvironmentVariableCrudMode.CREATION}
+            organizationId={organizationId}
             applicationId={applicationId}
             projectId={projectId}
             environmentId={environmentId}

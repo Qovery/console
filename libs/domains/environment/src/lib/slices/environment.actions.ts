@@ -5,8 +5,6 @@ import {
   EnvironmentActionsApi,
   EnvironmentMainCallsApi,
 } from 'qovery-typescript-axios'
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
 
 const environmentActionApi = new EnvironmentActionsApi()
 const environmentMainCallsApi = new EnvironmentMainCallsApi()
@@ -15,7 +13,8 @@ export const useActionRedeployEnvironment = (
   projectId: string,
   environmentId: string,
   withDeployments?: boolean,
-  onSettledCallback?: () => void
+  onSettledCallback?: () => void,
+  callback?: () => void
 ) => {
   const queryClient = useQueryClient()
 
@@ -31,11 +30,16 @@ export const useActionRedeployEnvironment = (
 
         if (withDeployments)
           queryClient.invalidateQueries(['project', projectId, 'environments', environmentId, 'deploymentHistory'])
-
-        toast(ToastEnum.SUCCESS, 'Your environment is redeploying')
       },
-      onError: (err) => toastError(err as Error),
       onSettled: () => onSettledCallback && onSettledCallback(),
+      meta: {
+        notifyOnSuccess: {
+          title: 'Your environment is redeploying',
+          labelAction: 'See Deployment Logs',
+          callback: () => callback && callback(),
+        },
+        notifyOnError: true,
+      },
     }
   )
 }
@@ -44,7 +48,8 @@ export const useActionDeployEnvironment = (
   projectId: string,
   environmentId: string,
   withDeployments?: boolean,
-  onSettledCallback?: () => void
+  onSettledCallback?: () => void,
+  callback?: () => void
 ) => {
   const queryClient = useQueryClient()
 
@@ -60,16 +65,25 @@ export const useActionDeployEnvironment = (
 
         if (withDeployments)
           queryClient.invalidateQueries(['project', projectId, 'environments', environmentId, 'deploymentHistory'])
-
-        toast(ToastEnum.SUCCESS, 'Your environment is deploying')
       },
-      onError: (err) => toastError(err as Error),
       onSettled: () => onSettledCallback && onSettledCallback(),
+      meta: {
+        notifyOnSuccess: {
+          title: 'Your environment is deploying',
+          labelAction: 'See Deployment Logs',
+          callback: () => callback && callback(),
+        },
+        notifyOnError: true,
+      },
     }
   )
 }
 
-export const useActionDeployAllEnvironment = (environmentId: string, onSuccessCallback?: () => void) => {
+export const useActionDeployAllEnvironment = (
+  environmentId: string,
+  onSuccessCallback?: () => void,
+  callback?: () => void
+) => {
   return useMutation(
     async (deployRequest?: DeployAllRequest) => {
       const response = await environmentActionApi.deployAllServices(environmentId, deployRequest)
@@ -78,9 +92,15 @@ export const useActionDeployAllEnvironment = (environmentId: string, onSuccessCa
     {
       onSuccess: () => {
         onSuccessCallback && onSuccessCallback()
-        toast(ToastEnum.SUCCESS, 'Your environment are being updated')
       },
-      onError: (err) => toastError(err as Error),
+      meta: {
+        notifyOnSuccess: {
+          title: 'Your environment are being updated',
+          labelAction: 'See Deployment Logs',
+          callback: () => callback && callback(),
+        },
+        notifyOnError: true,
+      },
     }
   )
 }
@@ -89,7 +109,8 @@ export const useActionStopEnvironment = (
   projectId: string,
   environmentId: string,
   withDeployments?: boolean,
-  onSettledCallback?: () => void
+  onSettledCallback?: () => void,
+  callback?: () => void
 ) => {
   const queryClient = useQueryClient()
 
@@ -105,11 +126,16 @@ export const useActionStopEnvironment = (
 
         if (withDeployments)
           queryClient.invalidateQueries(['project', projectId, 'environments', environmentId, 'deploymentHistory'])
-
-        toast(ToastEnum.SUCCESS, 'Your environment is stopping')
       },
-      onError: (err) => toastError(err as Error),
       onSettled: () => onSettledCallback && onSettledCallback(),
+      meta: {
+        notifyOnSuccess: {
+          title: 'Your environment is stopping',
+          labelAction: 'See Deployment Logs',
+          callback: () => callback && callback(),
+        },
+        notifyOnError: true,
+      },
     }
   )
 }
@@ -118,7 +144,8 @@ export const useActionCancelEnvironment = (
   projectId: string,
   environmentId: string,
   withDeployments?: boolean,
-  onSettledCallback?: () => void
+  onSettledCallback?: () => void,
+  callback?: () => void
 ) => {
   const queryClient = useQueryClient()
 
@@ -134,11 +161,16 @@ export const useActionCancelEnvironment = (
 
         if (withDeployments)
           queryClient.invalidateQueries(['project', projectId, 'environments', environmentId, 'deploymentHistory'])
-
-        toast(ToastEnum.SUCCESS, 'Your environment deployment is cancelling')
       },
-      onError: (err) => toastError(err as Error),
       onSettled: () => onSettledCallback && onSettledCallback(),
+      meta: {
+        notifyOnSuccess: {
+          title: 'Your environment deployment is cancelling',
+          labelAction: 'See Deployment Logs',
+          callback: () => callback && callback(),
+        },
+        notifyOnError: true,
+      },
     }
   )
 }
@@ -147,7 +179,8 @@ export const useDeleteEnvironment = (
   projectId: string,
   environmentId: string,
   onSettledCallback?: () => void,
-  force?: boolean
+  force?: boolean,
+  callback?: () => void
 ) => {
   const queryClient = useQueryClient()
 
@@ -163,11 +196,16 @@ export const useDeleteEnvironment = (
             return old?.filter((environment) => environment.id !== environmentId)
           })
         }
-
-        toast(ToastEnum.SUCCESS, 'Your environment is being deleted')
       },
-      onError: (err) => toastError(err as Error),
       onSettled: () => onSettledCallback && onSettledCallback(),
+      meta: {
+        notifyOnSuccess: {
+          title: 'Your environment is being deleted',
+          labelAction: 'See Deployment Logs',
+          callback: () => callback && callback(),
+        },
+        notifyOnError: true,
+      },
     }
   )
 }

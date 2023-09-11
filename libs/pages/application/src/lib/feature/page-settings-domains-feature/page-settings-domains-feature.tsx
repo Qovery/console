@@ -20,7 +20,7 @@ import CrudModalFeature from './crud-modal-feature/crud-modal-feature'
 export function PageSettingsDomainsFeature() {
   const dispatch = useDispatch<AppDispatch>()
 
-  const { applicationId = '' } = useParams()
+  const { organizationId = '', projectId = '', applicationId = '' } = useParams()
 
   const application = useSelector<RootState, ApplicationEntity | undefined>(
     (state) => getApplicationsState(state).entities[applicationId],
@@ -49,11 +49,28 @@ export function PageSettingsDomainsFeature() {
       domains={customDomains}
       loading={customDomainsLoadingStatus}
       onAddDomain={() => {
-        openModal({ content: <CrudModalFeature onClose={closeModal} application={application} /> })
+        openModal({
+          content: (
+            <CrudModalFeature
+              organizationId={organizationId}
+              projectId={projectId}
+              onClose={closeModal}
+              application={application}
+            />
+          ),
+        })
       }}
       onEdit={(customDomain) => {
         openModal({
-          content: <CrudModalFeature onClose={closeModal} application={application} customDomain={customDomain} />,
+          content: (
+            <CrudModalFeature
+              organizationId={organizationId}
+              projectId={projectId}
+              onClose={closeModal}
+              application={application}
+              customDomain={customDomain}
+            />
+          ),
         })
       }}
       onDelete={(customDomain) => {

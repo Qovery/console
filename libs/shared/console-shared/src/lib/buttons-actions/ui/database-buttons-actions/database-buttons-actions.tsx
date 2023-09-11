@@ -62,7 +62,9 @@ export function DatabaseButtonsActions(props: DatabaseButtonsActionsProps) {
   const actionCancelEnvironment = useActionCancelEnvironment(
     projectId,
     environmentId,
-    location.pathname === SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_DEPLOYMENTS_URL
+    location.pathname === SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_DEPLOYMENTS_URL,
+    undefined,
+    () => navigate(ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId))
   )
 
   const { data: runningSatus } = useRunningStatus({ environmentId, serviceId: database.id })

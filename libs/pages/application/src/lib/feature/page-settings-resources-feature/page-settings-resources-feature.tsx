@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react'
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { editApplication, postApplicationActionsRedeploy, selectApplicationById } from '@qovery/domains/application'
 import { useFetchEnvironment } from '@qovery/domains/environment'
 import { getServiceType, isJob } from '@qovery/shared/enums'
 import { type ApplicationEntity } from '@qovery/shared/interfaces'
+import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { type AppDispatch, type RootState } from '@qovery/state/store'
 import PageSettingsResources from '../../ui/page-settings-resources/page-settings-resources'
 
@@ -23,10 +24,11 @@ export const handleSubmit = (data: FieldValues, application: ApplicationEntity) 
 }
 
 export function PageSettingsResourcesFeature() {
-  const { applicationId = '', environmentId = '', projectId = '' } = useParams()
+  const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
 
   const [loading, setLoading] = useState(false)
   const dispatch = useDispatch<AppDispatch>()
+  const navigate = useNavigate()
 
   const application = useSelector<RootState, ApplicationEntity | undefined>(
     (state) => selectApplicationById(state, applicationId),
@@ -60,7 +62,15 @@ export function PageSettingsResourcesFeature() {
   const toasterCallback = () => {
     if (application) {
       dispatch(
-        postApplicationActionsRedeploy({ applicationId, environmentId, serviceType: getServiceType(application) })
+        postApplicationActionsRedeploy({
+          applicationId,
+          environmentId,
+          serviceType: getServiceType(application),
+          callback: () =>
+            navigate(
+              ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(applicationId)
+            ),
+        })
       )
     }
   }

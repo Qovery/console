@@ -2,6 +2,7 @@ import { type CustomDomain } from 'qovery-typescript-axios'
 import { useEffect, useMemo } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import {
   createCustomDomain,
   editCustomDomain,
@@ -11,11 +12,14 @@ import {
 } from '@qovery/domains/application'
 import { getServiceType } from '@qovery/shared/enums'
 import { type ApplicationEntity, type LoadingStatus } from '@qovery/shared/interfaces'
+import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { useModal } from '@qovery/shared/ui'
 import { type AppDispatch, type RootState } from '@qovery/state/store'
 import CrudModal from '../../../ui/page-settings-domains/crud-modal/crud-modal'
 
 export interface CrudModalFeatureProps {
+  organizationId: string
+  projectId: string
   customDomain?: CustomDomain
   application?: ApplicationEntity
   onClose: () => void
@@ -26,6 +30,7 @@ export function CrudModalFeature(props: CrudModalFeatureProps) {
     defaultValues: { domain: props.customDomain ? props.customDomain.domain : '' },
     mode: 'onChange',
   })
+  const navigate = useNavigate()
   const dispatch = useDispatch<AppDispatch>()
   const loadingStatus = useSelector<RootState, LoadingStatus>((state) => getCustomDomainsState(state).loadingStatus)
   const { enableAlertClickOutside } = useModal()
@@ -37,6 +42,11 @@ export function CrudModalFeature(props: CrudModalFeatureProps) {
           applicationId: props.application.id,
           environmentId: props.application.environment?.id || '',
           serviceType: getServiceType(props.application),
+          callback: () =>
+            navigate(
+              ENVIRONMENT_LOGS_URL(props.organizationId, props.projectId, props.application?.environment?.id) +
+                DEPLOYMENT_LOGS_URL(props.application?.id)
+            ),
         })
       )
     }
