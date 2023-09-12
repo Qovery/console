@@ -142,16 +142,22 @@ export function DeploymentLogsFeature({ environment, statusStages }: DeploymentL
 
   const hideDeploymentLogsBoolean = !(getServiceStatuesById(statusStages, serviceId) as Status)?.is_part_last_deployment
 
-  // deployment logs by serviceId and stageId
-  // display when name is delete or stageId is empty
-  // filter by same transmitter id and environment type
-  const logsByServiceId = logs.filter(
-    (currentData: EnvironmentLogs) =>
-      (currentData.details.stage?.id === stageId ||
-        !currentData.details.stage?.id ||
-        currentData.details.stage.name === 'delete') &&
-      (currentData.details.transmitter?.type === 'Environment' || currentData.details.transmitter?.id === serviceId)
-  )
+  // Filter deployment logs by serviceId and stageId
+  // Display entries when the name is "delete" or stageId is empty
+  // Filter by the same transmitter ID and "Environment" or "TaskManager" type
+  const logsByServiceId = logs.filter((currentData: EnvironmentLogs) => {
+    const { stage, transmitter } = currentData.details
+    const isDeleteStage = stage?.name === 'delete'
+    const isEmptyStageId = !stage?.id
+    const isMatchingTransmitter =
+      transmitter?.type === 'Environment' || transmitter?.id === serviceId || transmitter?.type === 'TaskManager'
+
+    // Include the entry if any of the following conditions are true:
+    // 1. The stage name is "delete".
+    // 2. stageId is empty.
+    // 3. The transmitter matches serviceId and has a type of "Environment" or "TaskManager".
+    return isDeleteStage || isEmptyStageId || isMatchingTransmitter
+  })
 
   const errors = logsByServiceId
     .map((log: EnvironmentLogs, index: number) => ({
