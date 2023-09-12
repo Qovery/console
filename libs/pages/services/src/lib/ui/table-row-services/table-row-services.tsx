@@ -10,7 +10,7 @@ import {
   type JobApplicationEntity,
 } from '@qovery/shared/interfaces'
 import {
-  Icon,
+  Icon, IconAwesomeEnum,
   Skeleton,
   type TableFilterProps,
   type TableHeadProps,
@@ -102,13 +102,15 @@ export function TableRowServices<T>(props: TableRowServicesProps<T>) {
               {isApplication(type) && (
                 <div className="flex items-center">
                   <TagCommit commitId={dataApplication.git_repository?.deployed_commit_id} />
-                  <span className="ml-2 text-xs text-neutral-300 font-medium">{dataApplication.git_repository?.branch}</span>
+                  <Icon name={IconAwesomeEnum.CODE_BRANCH} className="ml-2 mr-1 text-neutral-300 text-ssm" />
+                  <span className="text-xs text-neutral-300 font-medium">{dataApplication.git_repository?.branch}</span>
                 </div>
               )}
               {dataJobs.source?.docker && (
                 <div className="flex items-center">
                   <TagCommit commitId={dataJobs.source?.docker?.git_repository?.deployed_commit_id} />
-                  <span className="ml-2 text-xs text-neutral-300 font-medium">{dataJobs.source?.docker?.git_repository?.branch}</span>
+                  <Icon name={IconAwesomeEnum.CODE_BRANCH} className="ml-2 mr-1 text-neutral-300 text-ssm" />
+                  <span className="text-xs text-neutral-300 font-medium">{dataJobs.source?.docker?.git_repository?.branch}</span>
                 </div>
               )}
               {(isContainer(type) || dataJobs.source?.image) && (
