@@ -100,7 +100,7 @@ export function SidebarHistory({ data, serviceId, versionId, pathLogs, environme
             </Button>
           }
         />
-        {showNewTag && (
+        {currentPosition > 0 && showNewTag && (
           <Tooltip content="New deployment available!" side="right" color="orange">
             <div>
               <Button
@@ -117,7 +117,7 @@ export function SidebarHistory({ data, serviceId, versionId, pathLogs, environme
             </div>
           </Tooltip>
         )}
-        {currentPosition === 0 && !showNewTag && (
+        {currentPosition === 0 && (
           <Tag className="text-neutral-350 border border-neutral-350" fontWeight="font-medium">
             Latest
           </Tag>
