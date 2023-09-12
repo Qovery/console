@@ -173,6 +173,9 @@ export function CrudModal(props: CrudModalProps) {
           <Controller
             name="config.username"
             control={control}
+            rules={{
+              required: watch('kind') === ContainerRegistryKindEnum.DOCKER_HUB ? false : 'Please enter a username.',
+            }}
             render={({ field, fieldState: { error } }) => (
               <InputText
                 dataTestId="input-username"
@@ -189,6 +192,9 @@ export function CrudModal(props: CrudModalProps) {
           <Controller
             name="config.password"
             control={control}
+            rules={{
+              required: watch('kind') === ContainerRegistryKindEnum.DOCKER_HUB ? false : 'Please enter a password.',
+            }}
             render={({ field, fieldState: { error } }) => (
               <InputText
                 dataTestId="input-password"
