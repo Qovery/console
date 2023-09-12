@@ -148,7 +148,7 @@ export function DeploymentLogsFeature({ environment, statusStages }: DeploymentL
   const logsByServiceId = logs.filter((currentData: EnvironmentLogs) => {
     const { stage, transmitter } = currentData.details
     const isDeleteStage = stage?.name === 'delete'
-    const isEmptyStageId = !stage?.id || stage?.id === stageId
+    const isEmptyOrEqualStageId = !stage?.id || stage?.id === stageId
     const isMatchingTransmitter =
       transmitter?.type === 'Environment' || transmitter?.id === serviceId || transmitter?.type === 'TaskManager'
 
@@ -156,7 +156,7 @@ export function DeploymentLogsFeature({ environment, statusStages }: DeploymentL
     // 1. The stage name is "delete".
     // 2. stageId is empty or equal with current stageId.
     // 3. The transmitter matches serviceId and has a type of "Environment" or "TaskManager".
-    return isDeleteStage || isEmptyStageId || isMatchingTransmitter
+    return isDeleteStage || isEmptyOrEqualStageId || isMatchingTransmitter
   })
 
   const errors = logsByServiceId
