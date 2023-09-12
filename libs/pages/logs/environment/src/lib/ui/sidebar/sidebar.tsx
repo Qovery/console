@@ -2,6 +2,7 @@ import {
   type DeploymentHistoryEnvironment,
   type DeploymentStageWithServicesStatuses,
   type EnvironmentStatus,
+  type StateEnum,
 } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { type ApplicationEntity, type DatabaseEntity } from '@qovery/shared/interfaces'
@@ -14,6 +15,7 @@ export interface SidebarProps {
   services: Array<ApplicationEntity | DatabaseEntity>
   statusStages?: DeploymentStageWithServicesStatuses[]
   environmentStatus?: EnvironmentStatus
+  currentEnvironmentState?: StateEnum
   environmentDeploymentHistory?: DeploymentHistoryEnvironment
   clusterBanner?: boolean
   versionId?: string
@@ -24,6 +26,7 @@ export function Sidebar({
   services,
   statusStages,
   environmentStatus,
+  currentEnvironmentState,
   clusterBanner,
   versionId,
   serviceId,
@@ -36,11 +39,7 @@ export function Sidebar({
       ${clusterBanner ? 'h-[calc(100vh-8rem)]' : 'h-[calc(100vh-4rem)]'} ${openSidebar ? 'w-[340px]' : 'w-5'}`}
     >
       <div data-testid="sidebar" className={`w-full h-full overflow-x-scroll ${!openSidebar ? 'hidden' : ''}`}>
-        <SidebarHistoryFeature
-          environmentState={environmentStatus?.state}
-          serviceId={serviceId}
-          versionId={versionId}
-        />
+        <SidebarHistoryFeature environmentState={currentEnvironmentState} serviceId={serviceId} versionId={versionId} />
         <SidebarStatus environmentStatus={environmentStatus} />
         <SidebarPipeline services={services} versionId={versionId} serviceId={serviceId} statusStages={statusStages} />
       </div>

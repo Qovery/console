@@ -150,7 +150,7 @@ export function DeploymentLogsFeature({ environment, statusStages }: DeploymentL
     const isDeleteStage = stage?.name === 'delete'
     const isEmptyOrEqualStageId = !stage?.id || stage?.id === stageId
     const isMatchingTransmitter =
-      transmitter?.type === 'Environment' || transmitter?.id === serviceId || transmitter?.type === 'TaskManager'
+      transmitter?.type === 'Environment' || transmitter?.type === 'TaskManager' || transmitter?.id === serviceId
 
     // Include the entry if any of the following conditions are true:
     // 1. The stage name is "delete".
