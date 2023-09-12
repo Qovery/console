@@ -39,8 +39,9 @@ export function CrudModal(props: CrudModalProps) {
   const { control, watch, setValue } = useFormContext()
 
   const defaultRegistryUrls = {
-    [ContainerRegistryKindEnum.GITLAB_CR]: 'https://registry.gitlab.com/',
+    [ContainerRegistryKindEnum.GITLAB_CR]: 'https://registry.gitlab.com',
     [ContainerRegistryKindEnum.GITHUB_CR]: 'https://ghcr.io',
+    [ContainerRegistryKindEnum.DOCKER_HUB]: 'https://docker.io',
     [ContainerRegistryKindEnum.GENERIC_CR]: '',
     [ContainerRegistryKindEnum.ECR]: '',
     [ContainerRegistryKindEnum.SCALEWAY_CR]: '',
@@ -139,7 +140,7 @@ export function CrudModal(props: CrudModalProps) {
           </div>
         )}
       />
-      {watch('kind') && watch('kind') !== ContainerRegistryKindEnum.DOCKER_HUB && (
+      {watch('kind') && (
         <Controller
           name="url"
           control={control}
@@ -157,11 +158,17 @@ export function CrudModal(props: CrudModalProps) {
               value={field.value}
               label="Registry url"
               error={error?.message}
+              disabled={watch('kind') === ContainerRegistryKindEnum.DOCKER_HUB}
             />
           )}
         />
       )}
-      {watch('kind') === ContainerRegistryKindEnum.DOCKER_HUB && (
+      {[
+        ContainerRegistryKindEnum.DOCKER_HUB,
+        ContainerRegistryKindEnum.GITHUB_CR,
+        ContainerRegistryKindEnum.GITLAB_CR,
+        ContainerRegistryKindEnum.GENERIC_CR,
+      ].includes(watch('kind')) && (
         <>
           <Controller
             name="config.username"
@@ -174,7 +181,7 @@ export function CrudModal(props: CrudModalProps) {
                 name={field.name}
                 onChange={field.onChange}
                 value={field.value}
-                label="Username (optional)"
+                label={`Username ${watch('kind') === ContainerRegistryKindEnum.DOCKER_HUB ? '(optional)' : ''}`}
                 error={error?.message}
               />
             )}
@@ -190,7 +197,7 @@ export function CrudModal(props: CrudModalProps) {
                 name={field.name}
                 onChange={field.onChange}
                 value={field.value}
-                label="Password (optional)"
+                label={`Password ${watch('kind') === ContainerRegistryKindEnum.DOCKER_HUB ? '(optional)' : ''}`}
                 error={error?.message}
               />
             )}
@@ -290,52 +297,6 @@ export function CrudModal(props: CrudModalProps) {
                 onChange={field.onChange}
                 value={field.value}
                 label="Secret key"
-                error={error?.message}
-              />
-            )}
-          />
-        </>
-      )}
-      {[
-        ContainerRegistryKindEnum.GITHUB_CR,
-        ContainerRegistryKindEnum.GITLAB_CR,
-        ContainerRegistryKindEnum.GENERIC_CR,
-      ].includes(watch('kind')) && (
-        <>
-          <Controller
-            name="config.username"
-            control={control}
-            rules={{
-              required: 'Please enter a user name.',
-            }}
-            render={({ field, fieldState: { error } }) => (
-              <InputText
-                dataTestId="input-username"
-                className="mb-5"
-                type="text"
-                name={field.name}
-                onChange={field.onChange}
-                value={field.value}
-                label="Username"
-                error={error?.message}
-              />
-            )}
-          />
-          <Controller
-            name="config.password"
-            control={control}
-            rules={{
-              required: 'Please enter a password.',
-            }}
-            render={({ field, fieldState: { error } }) => (
-              <InputText
-                dataTestId="input-password"
-                className="mb-5"
-                type="password"
-                name={field.name}
-                onChange={field.onChange}
-                value={field.value}
-                label="Password"
                 error={error?.message}
               />
             )}
