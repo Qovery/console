@@ -150,7 +150,7 @@ describe('CrudModalFeature', () => {
         name: 'my-registry',
         kind: mockContainerRegistriesConfig.kind,
         description: undefined,
-        url: undefined,
+        url: 'https://docker.io',
         config: {
           username: 'hello',
           password: 'password',

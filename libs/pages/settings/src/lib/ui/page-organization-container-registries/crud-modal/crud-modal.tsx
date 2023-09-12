@@ -22,13 +22,7 @@ export const getOptionsContainerRegistry = (containerRegistry: AvailableContaine
     const options = containerRegistry
       .map(
         (containerRegistry: AvailableContainerRegistryResponse) =>
-          containerRegistry.kind &&
-          ![
-            ContainerRegistryKindEnum.DOCR,
-            ContainerRegistryKindEnum.GENERIC_CR,
-            ContainerRegistryKindEnum.GITHUB_CR,
-            ContainerRegistryKindEnum.GITLAB_CR,
-          ].includes(containerRegistry.kind) && {
+          ![ContainerRegistryKindEnum.DOCR].includes(containerRegistry.kind as ContainerRegistryKindEnum) && {
             label: containerRegistry.kind || '',
             value: containerRegistry.kind || '',
             icon: <Icon name={logoByRegistryKind(containerRegistry.kind)} width="16px" height="16px" />,
@@ -42,7 +36,17 @@ export const getOptionsContainerRegistry = (containerRegistry: AvailableContaine
 }
 
 export function CrudModal(props: CrudModalProps) {
-  const { control, watch } = useFormContext()
+  const { control, watch, setValue } = useFormContext()
+
+  const defaultRegistryUrls = {
+    [ContainerRegistryKindEnum.GITLAB_CR]: 'https://registry.gitlab.com',
+    [ContainerRegistryKindEnum.GITHUB_CR]: 'https://ghcr.io',
+    [ContainerRegistryKindEnum.DOCKER_HUB]: 'https://docker.io',
+    [ContainerRegistryKindEnum.GENERIC_CR]: '',
+    [ContainerRegistryKindEnum.ECR]: '',
+    [ContainerRegistryKindEnum.SCALEWAY_CR]: '',
+    [ContainerRegistryKindEnum.PUBLIC_ECR]: '',
+  }
 
   return (
     <ModalCrud
@@ -51,6 +55,22 @@ export function CrudModal(props: CrudModalProps) {
       onClose={props.onClose}
       loading={props.loading}
       isEdit={props.isEdit}
+      howItWorks={
+        <>
+          <p>
+            Connect your private container registry to directly deploy your images. You can also access public container
+            registries like DockerHub or AWS ECR. If the registry you need is not in the list and it supports the docker
+            login format you can use the “Generic” registry.
+          </p>
+          <Link
+            className="mt-2 font-medium"
+            link="https://hub.qovery.com/docs/using-qovery/configuration/organization/container-registry/"
+            linkLabel="More information here"
+            external
+            iconRight={IconAwesomeEnum.ARROW_UP_RIGHT_FROM_SQUARE}
+          />
+        </>
+      }
     >
       <Controller
         name="name"
@@ -93,7 +113,10 @@ export function CrudModal(props: CrudModalProps) {
         render={({ field, fieldState: { error } }) => (
           <div className="mb-5">
             <InputSelect
-              onChange={field.onChange}
+              onChange={(value) => {
+                setValue('url', defaultRegistryUrls[value as keyof typeof defaultRegistryUrls])
+                field.onChange(value)
+              }}
               value={field.value}
               label="Type"
               error={error?.message}
@@ -117,7 +140,7 @@ export function CrudModal(props: CrudModalProps) {
           </div>
         )}
       />
-      {watch('kind') && watch('kind') !== ContainerRegistryKindEnum.DOCKER_HUB && (
+      {watch('kind') && (
         <Controller
           name="url"
           control={control}
@@ -135,15 +158,24 @@ export function CrudModal(props: CrudModalProps) {
               value={field.value}
               label="Registry url"
               error={error?.message}
+              disabled={watch('kind') === ContainerRegistryKindEnum.DOCKER_HUB}
             />
           )}
         />
       )}
-      {watch('kind') === ContainerRegistryKindEnum.DOCKER_HUB && (
+      {[
+        ContainerRegistryKindEnum.DOCKER_HUB,
+        ContainerRegistryKindEnum.GITHUB_CR,
+        ContainerRegistryKindEnum.GITLAB_CR,
+        ContainerRegistryKindEnum.GENERIC_CR,
+      ].includes(watch('kind')) && (
         <>
           <Controller
             name="config.username"
             control={control}
+            rules={{
+              required: watch('kind') === ContainerRegistryKindEnum.DOCKER_HUB ? false : 'Please enter a username.',
+            }}
             render={({ field, fieldState: { error } }) => (
               <InputText
                 dataTestId="input-username"
@@ -152,7 +184,7 @@ export function CrudModal(props: CrudModalProps) {
                 name={field.name}
                 onChange={field.onChange}
                 value={field.value}
-                label="Username (optional)"
+                label={`Username ${watch('kind') === ContainerRegistryKindEnum.DOCKER_HUB ? '(optional)' : ''}`}
                 error={error?.message}
               />
             )}
@@ -160,6 +192,9 @@ export function CrudModal(props: CrudModalProps) {
           <Controller
             name="config.password"
             control={control}
+            rules={{
+              required: watch('kind') === ContainerRegistryKindEnum.DOCKER_HUB ? false : 'Please enter a password.',
+            }}
             render={({ field, fieldState: { error } }) => (
               <InputText
                 dataTestId="input-password"
@@ -168,7 +203,7 @@ export function CrudModal(props: CrudModalProps) {
                 name={field.name}
                 onChange={field.onChange}
                 value={field.value}
-                label="Password (optional)"
+                label={`Password ${watch('kind') === ContainerRegistryKindEnum.DOCKER_HUB ? '(optional)' : ''}`}
                 error={error?.message}
               />
             )}

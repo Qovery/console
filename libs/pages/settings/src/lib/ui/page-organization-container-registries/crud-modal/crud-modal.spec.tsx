@@ -1,6 +1,7 @@
-import { act, render, waitFor } from '__tests__/utils/setup-jest'
+import { waitFor } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { ContainerRegistryKindEnum } from 'qovery-typescript-axios'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import CrudModal, { type CrudModalProps, getOptionsContainerRegistry } from './crud-modal'
 
 const props: CrudModalProps = {
@@ -16,16 +17,17 @@ const props: CrudModalProps = {
 
 describe('CrudModal', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(wrapWithReactHookForm(<CrudModal {...props} />))
+    const { baseElement } = renderWithProviders(wrapWithReactHookForm(<CrudModal {...props} />))
     expect(baseElement).toBeTruthy()
   })
 
-  it('should render the form with Docker', async () => {
-    const { getByDisplayValue } = render(
+  it('should render the form with DOCKER_HUB', async () => {
+    renderWithProviders(
       wrapWithReactHookForm(<CrudModal {...props} />, {
         defaultValues: {
           name: 'hello',
           description: 'description',
+          url: 'https://docker.io',
           kind: ContainerRegistryKindEnum.DOCKER_HUB,
           config: {
             username: 'test',
@@ -34,16 +36,15 @@ describe('CrudModal', () => {
         },
       })
     )
-    await act(() => {
-      getByDisplayValue('hello')
-      getByDisplayValue('description')
-      getByDisplayValue('test')
-      getByDisplayValue('password')
-    })
+    screen.getByDisplayValue('hello')
+    screen.getByDisplayValue('description')
+    screen.getByDisplayValue('https://docker.io')
+    screen.getByDisplayValue('test')
+    screen.getByDisplayValue('password')
   })
 
   it('should render the form with ECR', async () => {
-    const { getByDisplayValue } = render(
+    renderWithProviders(
       wrapWithReactHookForm(<CrudModal {...props} />, {
         defaultValues: {
           name: 'hello',
@@ -57,17 +58,15 @@ describe('CrudModal', () => {
         },
       })
     )
-    await act(() => {
-      getByDisplayValue('hello')
-      getByDisplayValue('https://qovery.com')
-      getByDisplayValue('region')
-      getByDisplayValue('test')
-      getByDisplayValue('key')
-    })
+    screen.getByDisplayValue('hello')
+    screen.getByDisplayValue('https://qovery.com')
+    screen.getByDisplayValue('region')
+    screen.getByDisplayValue('test')
+    screen.getByDisplayValue('key')
   })
 
   it('should render the form with PUBLIC_ECR', async () => {
-    const { getByDisplayValue } = render(
+    renderWithProviders(
       wrapWithReactHookForm(<CrudModal {...props} />, {
         defaultValues: {
           name: 'hello',
@@ -77,14 +76,12 @@ describe('CrudModal', () => {
         },
       })
     )
-    await act(() => {
-      getByDisplayValue('hello')
-      getByDisplayValue('https://qovery.com')
-    })
+    screen.getByDisplayValue('hello')
+    screen.getByDisplayValue('https://qovery.com')
   })
 
   it('should render the form with SCALEWAY_CR', async () => {
-    const { getByDisplayValue } = render(
+    renderWithProviders(
       wrapWithReactHookForm(<CrudModal {...props} />, {
         defaultValues: {
           name: 'hello',
@@ -98,12 +95,73 @@ describe('CrudModal', () => {
         },
       })
     )
-    await act(() => {
-      getByDisplayValue('hello')
-      getByDisplayValue('https://qovery.com')
-      getByDisplayValue('test')
-      getByDisplayValue('key')
-    })
+    screen.getByDisplayValue('hello')
+    screen.getByDisplayValue('https://qovery.com')
+    screen.getByDisplayValue('test')
+    screen.getByDisplayValue('key')
+  })
+  it('should render the form with GITHUB_CR', async () => {
+    renderWithProviders(
+      wrapWithReactHookForm(<CrudModal {...props} />, {
+        defaultValues: {
+          name: 'hello',
+          description: 'description',
+          url: 'https://ghcr.io',
+          kind: ContainerRegistryKindEnum.GITHUB_CR,
+          config: {
+            username: 'test',
+            password: 'password',
+          },
+        },
+      })
+    )
+    screen.getByDisplayValue('hello')
+    screen.getByDisplayValue('description')
+    screen.getByDisplayValue('https://ghcr.io')
+    screen.getByDisplayValue('test')
+    screen.getByDisplayValue('password')
+  })
+
+  it('should render the form with GITLAB_CR', async () => {
+    renderWithProviders(
+      wrapWithReactHookForm(<CrudModal {...props} />, {
+        defaultValues: {
+          name: 'hello',
+          description: 'description',
+          url: 'https://registry.gitlab.com',
+          kind: ContainerRegistryKindEnum.GITLAB_CR,
+          config: {
+            username: 'test',
+            password: 'password',
+          },
+        },
+      })
+    )
+    screen.getByDisplayValue('hello')
+    screen.getByDisplayValue('description')
+    screen.getByDisplayValue('https://registry.gitlab.com')
+    screen.getByDisplayValue('test')
+    screen.getByDisplayValue('password')
+  })
+
+  it('should render the form with GENERIC_CR', async () => {
+    renderWithProviders(
+      wrapWithReactHookForm(<CrudModal {...props} />, {
+        defaultValues: {
+          name: 'hello',
+          description: 'description',
+          kind: ContainerRegistryKindEnum.GENERIC_CR,
+          config: {
+            username: 'test',
+            password: 'password',
+          },
+        },
+      })
+    )
+    screen.getByDisplayValue('hello')
+    screen.getByDisplayValue('description')
+    screen.getByDisplayValue('test')
+    screen.getByDisplayValue('password')
   })
 
   it('should have an array of container registry', async () => {
@@ -122,7 +180,7 @@ describe('CrudModal', () => {
   it('should submit the form', async () => {
     const spy = jest.fn().mockImplementation((e) => e.preventDefault())
     props.onSubmit = spy
-    const { findByTestId } = render(
+    renderWithProviders(
       wrapWithReactHookForm(<CrudModal {...props} />, {
         defaultValues: {
           name: 'hello',
@@ -137,7 +195,7 @@ describe('CrudModal', () => {
       })
     )
 
-    const button = await findByTestId('submit-button')
+    const button = await screen.findByTestId('submit-button')
 
     await waitFor(() => {
       button.click()
