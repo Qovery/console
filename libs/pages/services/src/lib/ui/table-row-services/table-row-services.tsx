@@ -10,14 +10,16 @@ import {
   type JobApplicationEntity,
 } from '@qovery/shared/interfaces'
 import {
-  Icon, IconAwesomeEnum,
+  Icon,
+  IconAwesomeEnum,
   Skeleton,
   type TableFilterProps,
   type TableHeadProps,
   TableRow,
   Tag,
   TagCommit,
-  Tooltip, Truncate,
+  Tooltip,
+  Truncate,
 } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
@@ -103,14 +105,18 @@ export function TableRowServices<T>(props: TableRowServicesProps<T>) {
                 <div className="flex items-center">
                   <TagCommit commitId={dataApplication.git_repository?.deployed_commit_id} />
                   <Icon name={IconAwesomeEnum.CODE_BRANCH} className="ml-2 mr-1 text-neutral-300 text-ssm" />
-                  <span className="text-xs text-neutral-300 font-medium"><Truncate truncateLimit={20} text={dataApplication.git_repository?.branch || ''}/></span>
+                  <span className="text-xs text-neutral-300 font-medium">
+                    <Truncate truncateLimit={20} text={dataApplication.git_repository?.branch || ''} />
+                  </span>
                 </div>
               )}
               {dataJobs.source?.docker && (
                 <div className="flex items-center">
                   <TagCommit commitId={dataJobs.source?.docker?.git_repository?.deployed_commit_id} />
                   <Icon name={IconAwesomeEnum.CODE_BRANCH} className="ml-2 mr-1 text-neutral-300 text-ssm" />
-                  <span className="text-xs text-neutral-300 font-medium"><Truncate truncateLimit={20} text={dataJobs.source?.docker?.git_repository?.branch || ''}/></span>
+                  <span className="text-xs text-neutral-300 font-medium">
+                    <Truncate truncateLimit={20} text={dataJobs.source?.docker?.git_repository?.branch || ''} />
+                  </span>
                 </div>
               )}
               {(isContainer(type) || dataJobs.source?.image) && (
