@@ -22,7 +22,13 @@ export const getOptionsContainerRegistry = (containerRegistry: AvailableContaine
     const options = containerRegistry
       .map(
         (containerRegistry: AvailableContainerRegistryResponse) =>
-          containerRegistry.kind !== ContainerRegistryKindEnum.DOCR && {
+          containerRegistry.kind &&
+          ![
+            ContainerRegistryKindEnum.DOCR,
+            ContainerRegistryKindEnum.GENERIC_CR,
+            ContainerRegistryKindEnum.GITHUB_CR,
+            ContainerRegistryKindEnum.GITLAB_CR,
+          ].includes(containerRegistry.kind) && {
             label: containerRegistry.kind || '',
             value: containerRegistry.kind || '',
             icon: <Icon name={logoByRegistryKind(containerRegistry.kind)} width="16px" height="16px" />,

@@ -33,6 +33,12 @@ export const logoByRegistryKind = (kind?: ContainerRegistryKindEnum) => {
       return IconEnum.DOCKER
     case ContainerRegistryKindEnum.SCALEWAY_CR:
       return IconEnum.SCW
+    case ContainerRegistryKindEnum.GITHUB_CR:
+      return IconEnum.GITHUB
+    case ContainerRegistryKindEnum.GITLAB_CR:
+      return IconEnum.GITLAB
+    case ContainerRegistryKindEnum.GENERIC_CR:
+      return ''
     default:
       return IconEnum.AWS
   }
