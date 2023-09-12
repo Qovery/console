@@ -88,6 +88,8 @@ describe('SidebarHistory', () => {
 
   it('should have new label if deployment is in progress', async () => {
     props.environmentState = StateEnum.CANCELING
+    props.versionId = '3'
+    props.serviceId = '1'
 
     renderWithProviders(<SidebarHistory {...props} />)
     screen.getByText('New')
