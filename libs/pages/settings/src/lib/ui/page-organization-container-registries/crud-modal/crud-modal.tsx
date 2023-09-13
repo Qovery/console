@@ -123,20 +123,6 @@ export function CrudModal(props: CrudModalProps) {
               options={getOptionsContainerRegistry(props.availableContainerRegistry)}
               portal
             />
-            {watch('kind') === ContainerRegistryKindEnum.DOCKER_HUB && (
-              <p className="text-xs text-neutral-350 my-1">
-                We encourage you to set credentials for Docker Hub due to the limits on the pull rate.
-                <Link
-                  className="font-medium text-sky-500 block ml-1"
-                  size="text-xs"
-                  link="https://www.docker.com/increase-rate-limits"
-                  linkLabel="See here"
-                  iconRightClassName="text-2xs relative top-[1px]"
-                  iconRight={IconAwesomeEnum.ARROW_UP_RIGHT_FROM_SQUARE}
-                  external
-                />
-              </p>
-            )}
           </div>
         )}
       />
@@ -177,9 +163,6 @@ export function CrudModal(props: CrudModalProps) {
           <Controller
             name="config.username"
             control={control}
-            rules={{
-              required: watch('kind') === ContainerRegistryKindEnum.DOCKER_HUB ? false : 'Please enter a username.',
-            }}
             render={({ field, fieldState: { error } }) => (
               <InputText
                 dataTestId="input-username"
@@ -188,7 +171,7 @@ export function CrudModal(props: CrudModalProps) {
                 name={field.name}
                 onChange={field.onChange}
                 value={field.value}
-                label={`Username ${watch('kind') === ContainerRegistryKindEnum.DOCKER_HUB ? '(optional)' : ''}`}
+                label={`Username (optional)`}
                 error={error?.message}
               />
             )}
@@ -196,20 +179,33 @@ export function CrudModal(props: CrudModalProps) {
           <Controller
             name="config.password"
             control={control}
-            rules={{
-              required: watch('kind') === ContainerRegistryKindEnum.DOCKER_HUB ? false : 'Please enter a password.',
-            }}
             render={({ field, fieldState: { error } }) => (
-              <InputText
-                dataTestId="input-password"
-                className="mb-5"
-                type="password"
-                name={field.name}
-                onChange={field.onChange}
-                value={field.value}
-                label={`Password ${watch('kind') === ContainerRegistryKindEnum.DOCKER_HUB ? '(optional)' : ''}`}
-                error={error?.message}
-              />
+              <div className="mb-5">
+                <InputText
+                  dataTestId="input-password"
+                  className="mb-5"
+                  type="password"
+                  name={field.name}
+                  onChange={field.onChange}
+                  value={field.value}
+                  label={`Password (optional)`}
+                  error={error?.message}
+                />
+                {watch('kind') === ContainerRegistryKindEnum.DOCKER_HUB && (
+                  <p className="text-xs text-neutral-350 my-1">
+                    We encourage you to set credentials for Docker Hub due to the limits on the pull rate.
+                    <Link
+                      className="font-medium text-sky-500 block ml-1"
+                      size="text-xs"
+                      link="https://www.docker.com/increase-rate-limits"
+                      linkLabel="See here"
+                      iconRightClassName="text-2xs relative top-[1px]"
+                      iconRight={IconAwesomeEnum.ARROW_UP_RIGHT_FROM_SQUARE}
+                      external
+                    />
+                  </p>
+                )}
+              </div>
             )}
           />
         </>
