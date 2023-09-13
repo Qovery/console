@@ -12,6 +12,8 @@ interface WSDeploymentStatus {
     databases: Status[]
     jobs: Status[]
   }[]
+  // WS return results if we didn't set an environmentId
+  results?: EnvironmentStatus[]
 }
 
 interface WSServiceStatus {
@@ -49,17 +51,28 @@ export function useStatusWebSockets({
       project: projectId,
       version: versionId,
     },
-    enabled: Boolean(organizationId) && Boolean(clusterId) && Boolean(projectId) && Boolean(environmentId),
+    enabled: Boolean(organizationId) && Boolean(clusterId) && Boolean(projectId),
     onMessage(queryClient, message: WSDeploymentStatus) {
-      const environmentId = message.environment.id
-      queryClient.setQueryData(queries.environments.deploymentStatus(environmentId).queryKey, () => message.environment)
-      for (const stage of message.stages ?? []) {
-        const services = [...stage.applications, ...stage.containers, ...stage.databases, ...stage.jobs]
-        for (const serviceDeploymentStatus of services) {
-          queryClient.setQueryData(
-            queries.services.deploymentStatus(environmentId, serviceDeploymentStatus.id).queryKey,
-            () => serviceDeploymentStatus
-          )
+      if (environmentId) {
+        const environmentId = message.environment.id
+        queryClient.setQueryData(
+          queries.environments.deploymentStatus(environmentId).queryKey,
+          () => message.environment
+        )
+        for (const stage of message.stages ?? []) {
+          const services = [...stage.applications, ...stage.containers, ...stage.databases, ...stage.jobs]
+          for (const serviceDeploymentStatus of services) {
+            queryClient.setQueryData(
+              queries.services.deploymentStatus(environmentId, serviceDeploymentStatus.id).queryKey,
+              () => serviceDeploymentStatus
+            )
+          }
+        }
+      } else {
+        // NOTE: set deploymentStatus data if we didn't have environmentId (organizationId + clusterId + projectId are required)
+        for (const environment of message.results ?? []) {
+          const environmentId = environment.id
+          queryClient.setQueryData(queries.environments.deploymentStatus(environmentId).queryKey, () => environment)
         }
       }
     },
