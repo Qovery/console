@@ -38,12 +38,8 @@ import ScalewayGrayIcon from './icons/scaleway-gray'
 import SlackIcon from './icons/slack'
 import TerraformIcon from './icons/terraform'
 
-export interface IconProps {
+export interface IconProps extends React.SVGAttributes<SVGElement> {
   name: IconEnum | IconAwesomeEnum | string
-  width?: string
-  height?: string
-  viewBox?: string
-  className?: string
   pathColor?: string
 }
 
