@@ -61,7 +61,6 @@ export function PageEnvironmentLogs() {
 
   const [statusStages, setStatusStages] = useState<DeploymentStageWithServicesStatuses[]>()
   const [environmentStatus, setEnvironmentStatus] = useState<EnvironmentStatus>()
-  const [currentEnvironmentStatus, setCurrentEnvironmentStatus] = useState<EnvironmentStatus | undefined>()
 
   const { getAccessTokenSilently } = useAuth()
 
@@ -74,29 +73,12 @@ export function PageEnvironmentLogs() {
     return new Promise((resolve) => environment?.cluster_id && resolve(url + `&bearer_token=${token}`))
   }, [organizationId, environment?.cluster_id, projectId, environmentId, getAccessTokenSilently, versionId])
 
-  const deploymentStatusUrl: () => Promise<string> = useCallback(async () => {
-    const url = `wss://ws.qovery.com/deployment/status?organization=${organizationId}&cluster=${environment?.cluster_id}&project=${projectId}&environment=${environmentId}`
-    const token = await getAccessTokenSilently()
-
-    return new Promise((resolve) => environment?.cluster_id && resolve(url + `&bearer_token=${token}`))
-  }, [organizationId, environment?.cluster_id, projectId, environmentId, getAccessTokenSilently])
-
   useWebSocket(deploymentStatusWithVersionIdUrl, {
     onMessage: (message) => {
       setStatusStages(JSON.parse(message?.data).stages)
       setEnvironmentStatus(JSON.parse(message?.data).environment)
-      if (!versionId) setCurrentEnvironmentStatus(undefined)
     },
   })
-
-  // Get current environment status when versionId is defined
-  useWebSocket(
-    deploymentStatusUrl,
-    {
-      onMessage: (message) => setCurrentEnvironmentStatus(JSON.parse(message?.data).environment),
-    },
-    Boolean(versionId)
-  )
 
   if (!environment) return
 
@@ -106,7 +88,6 @@ export function PageEnvironmentLogs() {
         <Sidebar
           services={[...applications, ...databases]}
           statusStages={statusStages}
-          currentEnvironmentState={currentEnvironmentStatus?.state}
           environmentStatus={environmentStatus}
           versionId={versionId}
           serviceId={serviceId}

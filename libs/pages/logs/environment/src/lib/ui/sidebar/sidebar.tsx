@@ -21,14 +21,7 @@ export interface SidebarProps {
   serviceId?: string
 }
 
-export function Sidebar({
-  services,
-  statusStages,
-  environmentStatus,
-  currentEnvironmentState,
-  versionId,
-  serviceId,
-}: SidebarProps) {
+export function Sidebar({ services, statusStages, environmentStatus, versionId, serviceId }: SidebarProps) {
   const [openSidebar, setOpenSidebar] = useState(true)
 
   return (
@@ -38,7 +31,7 @@ export function Sidebar({
       }`}
     >
       <div data-testid="sidebar" className={`w-full h-full overflow-x-scroll ${!openSidebar ? 'hidden' : ''}`}>
-        <SidebarHistoryFeature environmentState={currentEnvironmentState} serviceId={serviceId} versionId={versionId} />
+        <SidebarHistoryFeature serviceId={serviceId} versionId={versionId} />
         <SidebarStatus environmentStatus={environmentStatus} />
         <SidebarPipeline services={services} versionId={versionId} serviceId={serviceId} statusStages={statusStages} />
       </div>

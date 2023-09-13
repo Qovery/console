@@ -122,7 +122,7 @@ export function SidebarHistory({ data, serviceId, versionId, pathLogs, environme
             Latest
           </Tag>
         )}
-        {currentPosition > 0 && !showNewTag && (
+        {environmentState && currentPosition > 0 && !showNewTag && (
           <Button
             className="w-[50px]"
             style={ButtonStyle.DARK}
