@@ -11,6 +11,7 @@ import {
 } from '@qovery/shared/interfaces'
 import {
   Icon,
+  IconAwesomeEnum,
   Skeleton,
   type TableFilterProps,
   type TableHeadProps,
@@ -18,6 +19,7 @@ import {
   Tag,
   TagCommit,
   Tooltip,
+  Truncate,
 } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
@@ -99,9 +101,23 @@ export function TableRowServices<T>(props: TableRowServicesProps<T>) {
         <div className="flex items-center px-4 border-b-neutral-200 border-l h-full">
           <Skeleton className="w-full" show={isLoading} width={160} height={16}>
             <div className="w-full flex gap-2 items-center -mt-[1px]">
-              {isApplication(type) && <TagCommit commitId={dataApplication.git_repository?.deployed_commit_id} />}
+              {isApplication(type) && (
+                <div className="flex items-center">
+                  <TagCommit commitId={dataApplication.git_repository?.deployed_commit_id} />
+                  <Icon name={IconAwesomeEnum.CODE_BRANCH} className="ml-2 mr-1 text-neutral-300 text-ssm" />
+                  <span className="text-xs text-neutral-300 font-medium">
+                    <Truncate truncateLimit={20} text={dataApplication.git_repository?.branch || ''} />
+                  </span>
+                </div>
+              )}
               {dataJobs.source?.docker && (
-                <TagCommit commitId={dataJobs.source?.docker?.git_repository?.deployed_commit_id} />
+                <div className="flex items-center">
+                  <TagCommit commitId={dataJobs.source?.docker?.git_repository?.deployed_commit_id} />
+                  <Icon name={IconAwesomeEnum.CODE_BRANCH} className="ml-2 mr-1 text-neutral-300 text-ssm" />
+                  <span className="text-xs text-neutral-300 font-medium">
+                    <Truncate truncateLimit={20} text={dataJobs.source?.docker?.git_repository?.branch || ''} />
+                  </span>
+                </div>
               )}
               {(isContainer(type) || dataJobs.source?.image) && (
                 <Tag className="truncate border border-neutral-250 text-neutral-350 font-medium h-7">
