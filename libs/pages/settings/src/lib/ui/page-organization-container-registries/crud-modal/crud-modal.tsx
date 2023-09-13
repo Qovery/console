@@ -158,7 +158,11 @@ export function CrudModal(props: CrudModalProps) {
               value={field.value}
               label="Registry url"
               error={error?.message}
-              disabled={watch('kind') === ContainerRegistryKindEnum.DOCKER_HUB}
+              disabled={[
+                ContainerRegistryKindEnum.DOCKER_HUB,
+                ContainerRegistryKindEnum.GITHUB_CR,
+                ContainerRegistryKindEnum.GITLAB_CR,
+              ].includes(watch('kind'))}
             />
           )}
         />
