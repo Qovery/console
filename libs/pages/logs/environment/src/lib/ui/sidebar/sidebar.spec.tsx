@@ -6,6 +6,7 @@ describe('Sidebar', () => {
   const props: SidebarProps = {
     services: applicationFactoryMock(2),
     serviceId: '1',
+    versionId: '2',
   }
 
   it('should render successfully', () => {

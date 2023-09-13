@@ -17,7 +17,6 @@ export interface SidebarProps {
   environmentStatus?: EnvironmentStatus
   currentEnvironmentState?: StateEnum
   environmentDeploymentHistory?: DeploymentHistoryEnvironment
-  clusterBanner?: boolean
   versionId?: string
   serviceId?: string
 }
@@ -27,7 +26,6 @@ export function Sidebar({
   statusStages,
   environmentStatus,
   currentEnvironmentState,
-  clusterBanner,
   versionId,
   serviceId,
 }: SidebarProps) {
@@ -35,8 +33,9 @@ export function Sidebar({
 
   return (
     <div
-      className={`flex shrink-0 border-x border-neutral-500 bg-neutral-650 
-      ${clusterBanner ? 'h-[calc(100vh-8rem)]' : 'h-[calc(100vh-4rem)]'} ${openSidebar ? 'w-[340px]' : 'w-5'}`}
+      className={`flex shrink-0 border-x border-neutral-500 bg-neutral-650 h-[calc(100vh-4rem)] ${
+        openSidebar ? 'w-[340px]' : 'w-5'
+      }`}
     >
       <div data-testid="sidebar" className={`w-full h-full overflow-x-scroll ${!openSidebar ? 'hidden' : ''}`}>
         <SidebarHistoryFeature environmentState={currentEnvironmentState} serviceId={serviceId} versionId={versionId} />
