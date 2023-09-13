@@ -171,7 +171,7 @@ export function CrudModal(props: CrudModalProps) {
                 name={field.name}
                 onChange={field.onChange}
                 value={field.value}
-                label={`Username (optional)`}
+                label="Username (optional)"
                 error={error?.message}
               />
             )}
@@ -188,7 +188,7 @@ export function CrudModal(props: CrudModalProps) {
                   name={field.name}
                   onChange={field.onChange}
                   value={field.value}
-                  label={`Password (optional)`}
+                  label="Password (optional)"
                   error={error?.message}
                 />
                 {watch('kind') === ContainerRegistryKindEnum.DOCKER_HUB && (
