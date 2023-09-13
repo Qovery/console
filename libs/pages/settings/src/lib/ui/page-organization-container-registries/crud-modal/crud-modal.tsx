@@ -177,9 +177,6 @@ export function CrudModal(props: CrudModalProps) {
           <Controller
             name="config.username"
             control={control}
-            rules={{
-              required: watch('kind') === ContainerRegistryKindEnum.DOCKER_HUB ? false : 'Please enter a username.',
-            }}
             render={({ field, fieldState: { error } }) => (
               <InputText
                 dataTestId="input-username"
@@ -188,7 +185,7 @@ export function CrudModal(props: CrudModalProps) {
                 name={field.name}
                 onChange={field.onChange}
                 value={field.value}
-                label={`Username ${watch('kind') === ContainerRegistryKindEnum.DOCKER_HUB ? '(optional)' : ''}`}
+                label="Username (optional)"
                 error={error?.message}
               />
             )}
@@ -196,9 +193,6 @@ export function CrudModal(props: CrudModalProps) {
           <Controller
             name="config.password"
             control={control}
-            rules={{
-              required: watch('kind') === ContainerRegistryKindEnum.DOCKER_HUB ? false : 'Please enter a password.',
-            }}
             render={({ field, fieldState: { error } }) => (
               <InputText
                 dataTestId="input-password"
@@ -207,7 +201,7 @@ export function CrudModal(props: CrudModalProps) {
                 name={field.name}
                 onChange={field.onChange}
                 value={field.value}
-                label={`Password ${watch('kind') === ContainerRegistryKindEnum.DOCKER_HUB ? '(optional)' : ''}`}
+                label="Password (optional)"
                 error={error?.message}
               />
             )}
