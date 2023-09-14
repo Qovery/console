@@ -2,7 +2,22 @@ import { type Meta, type StoryObj } from '@storybook/react'
 import { IconEnum } from '@qovery/shared/enums'
 import Icon from './icon'
 import { IconAwesomeEnum } from './icon-awesome.enum'
-import SpinnerIcon from './icons-status/spinner'
+import BuildErrorIcon from './icons-status/build-error'
+import BuildingIcon from './icons-status/building'
+import CanceledIcon from './icons-status/canceled'
+import CancelingIcon from './icons-status/canceling'
+import DeletedIcon from './icons-status/deleted'
+import DeletingIcon from './icons-status/deleting'
+import DeployedIcon from './icons-status/deployed'
+import DeployingIcon from './icons-status/deploying'
+import ErrorIcon from './icons-status/error'
+import QueuedIcon from './icons-status/queued'
+import RestartedIcon from './icons-status/restarted'
+import RestartingIcon from './icons-status/restarting'
+import StoppedIcon from './icons-status/stopped'
+import StoppingIcon from './icons-status/stopping'
+import UnknowIcon from './icons-status/unknow'
+import WarningIcon from './icons-status/warning'
 
 const meta: Meta<typeof Icon> = {
   component: Icon,
@@ -23,7 +38,7 @@ function copyName(name: string) {
 export const ManyItems: Story = {
   render: (args) => (
     <div className="text-center">
-      <div className="max-w-[500px] w-full p-3 rounded bg-neutral-150 border-solid border-x border-y border-neutral-250 flex flex-wrap gap-x-2 justify-center mb-6 mx-auto">
+      <div className="max-w-[550px] w-full p-3 rounded bg-neutral-150 border-solid border-x border-y border-neutral-250 flex flex-wrap gap-x-2 justify-center mb-6 mx-auto">
         <h2 className="w-full mb-2">SVG Icons</h2>
         <button onClick={() => copyName(IconEnum.GITHUB)}>
           <Icon name={IconEnum.GITHUB} />
@@ -116,7 +131,7 @@ export const ManyItems: Story = {
           <Icon name={IconEnum.CHILDREN_ARROW} />
         </button>
       </div>
-      <div className="max-w-[500px] w-full p-3 rounded bg-neutral-150 border-solid border-x border-y border-neutral-250 flex flex-wrap gap-x-2 justify-center mb-6 mx-auto">
+      <div className="max-w-[550px] w-full p-3 rounded bg-neutral-150 border-solid border-x border-y border-neutral-250 flex flex-wrap gap-x-2 justify-center mb-6 mx-auto">
         <h2 className="w-full mb-2">FontAwesome Icons</h2>
         {awesomeIconEnumNames.map((item) => (
           <button key={item.enumName} onClick={() => copyName(item.enumName)}>
@@ -124,9 +139,24 @@ export const ManyItems: Story = {
           </button>
         ))}
       </div>
-      <div className="max-w-[500px] w-full p-3 rounded bg-neutral-150 border-solid border-x border-y border-neutral-250 flex flex-wrap gap-x-2 justify-center mb-6 mx-auto">
-        <h2 className="w-full mb-2">Deployment Status Icons</h2>
-        <SpinnerIcon name="spinner" />
+      <div className="max-w-[550px] w-full p-3 rounded bg-neutral-150 border-solid border-x border-y border-neutral-250 flex flex-wrap gap-x-2 justify-center mb-6 mx-auto">
+        <h2 className="w-full mb-2">Status Icons</h2>
+        <DeployedIcon />
+        <RestartedIcon />
+        <QueuedIcon />
+        <BuildingIcon />
+        <CancelingIcon />
+        <RestartingIcon />
+        <DeployingIcon />
+        <DeletingIcon />
+        <StoppingIcon />
+        <StoppedIcon />
+        <CanceledIcon />
+        <DeletedIcon />
+        <UnknowIcon />
+        <WarningIcon />
+        <BuildErrorIcon />
+        <ErrorIcon />
       </div>
     </div>
   ),

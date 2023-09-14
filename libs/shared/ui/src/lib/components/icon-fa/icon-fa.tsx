@@ -1,5 +1,5 @@
 export interface IconFaProps {
-  name: string
+  name?: string
   className?: string
 }
 

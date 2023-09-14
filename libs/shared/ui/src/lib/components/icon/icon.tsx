@@ -39,8 +39,14 @@ import SlackIcon from './icons/slack'
 import TerraformIcon from './icons/terraform'
 
 export interface IconProps extends React.SVGAttributes<SVGElement> {
-  name: IconEnum | IconAwesomeEnum | string
+  name?: IconEnum | IconAwesomeEnum | string
   pathColor?: string
+}
+
+export interface IconStatusProps {
+  className?: string
+  width?: number | string
+  height?: number | string
 }
 
 export function Icon(props: IconProps) {
