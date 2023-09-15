@@ -101,7 +101,7 @@ export function StepSummaryFeature() {
           },
           arguments: generalData.cmd,
           entrypoint: generalData.image_entry_point || '',
-          healthchecks: portData.healthchecks?.item,
+          healthchecks: portData.healthchecks?.item || {},
         }
 
         if (generalData.build_mode === BuildModeEnum.DOCKER) {
@@ -160,7 +160,7 @@ export function StepSummaryFeature() {
           arguments: generalData.cmd,
           entrypoint: generalData.image_entry_point || '',
           registry_id: generalData.registry || '',
-          healthchecks: portData.healthchecks?.item,
+          healthchecks: portData.healthchecks?.item || {},
         }
 
         dispatch(

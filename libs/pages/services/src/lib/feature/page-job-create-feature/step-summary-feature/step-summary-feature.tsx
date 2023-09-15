@@ -49,6 +49,7 @@ function prepareJobRequest(
     max_nb_restart: Number(configureData.nb_restarts) || 0,
     max_duration_seconds: Number(configureData.max_duration) || 0,
     auto_preview: true,
+    healthchecks: {},
   }
 
   if (jobType === ServiceTypeEnum.CRON_JOB) {
