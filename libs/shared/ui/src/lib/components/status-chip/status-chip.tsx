@@ -32,8 +32,10 @@ export function StatusChip(props: StatusChipProps) {
 
   if (!status)
     return (
-      <Tooltip content="Unknow status">
-        <UnknowIcon className={className} />
+      <Tooltip content="Status not available">
+        <div className={className}>
+          <UnknowIcon />
+        </div>
       </Tooltip>
     )
 
@@ -42,9 +44,21 @@ export function StatusChip(props: StatusChipProps) {
   }
 
   const stateMap = {
-    showDeployed: [StateEnum.DEPLOYED, RunningState.RUNNING, RunningState.COMPLETED],
-    showError: [StateEnum.DEPLOYMENT_ERROR, StateEnum.STOP_ERROR, StateEnum.DELETE_ERROR, StateEnum.RESTART_ERROR],
-    showQueued: [StateEnum.QUEUED, StateEnum.DELETE_QUEUED, StateEnum.DEPLOYMENT_QUEUED],
+    showDeployed: [StateEnum.DEPLOYED, RunningState.RUNNING, StateEnum.READY, RunningState.COMPLETED],
+    showError: [
+      StateEnum.DEPLOYMENT_ERROR,
+      StateEnum.STOP_ERROR,
+      StateEnum.DELETE_ERROR,
+      StateEnum.RESTART_ERROR,
+      RunningState.ERROR,
+    ],
+    showQueued: [
+      StateEnum.QUEUED,
+      StateEnum.DELETE_QUEUED,
+      StateEnum.DEPLOYMENT_QUEUED,
+      StateEnum.RESTART_QUEUED,
+      StateEnum.STOP_QUEUED,
+    ],
     showDeploying: [StateEnum.DEPLOYING, RunningState.STARTING],
     showRestarted: [StateEnum.RESTARTED],
     showBuilding: [StateEnum.BUILDING],
@@ -60,8 +74,10 @@ export function StatusChip(props: StatusChipProps) {
     showWarning: [RunningState.WARNING],
   }
 
+  // success
   const showDeployed: boolean = shouldShowStatus(status as StateEnum, stateMap.showDeployed)
   const showRestarted: boolean = shouldShowStatus(status as StateEnum, stateMap.showRestarted)
+  // spinner
   const showQueued: boolean = shouldShowStatus(status as StateEnum, stateMap.showQueued)
   const showBuilding: boolean = shouldShowStatus(status as StateEnum, stateMap.showBuilding)
   const showDeploying: boolean = shouldShowStatus(status as StateEnum, stateMap.showDeploying)
@@ -69,9 +85,11 @@ export function StatusChip(props: StatusChipProps) {
   const showStopping: boolean = shouldShowStatus(status as StateEnum, stateMap.showStopping)
   const showCanceling: boolean = shouldShowStatus(status as StateEnum, stateMap.showCanceling)
   const showDeleting: boolean = shouldShowStatus(status as StateEnum, stateMap.showDeleting)
+  // stopped
   const showStopped: boolean = shouldShowStatus(status as StateEnum, stateMap.showStopped)
   const showCanceled: boolean = shouldShowStatus(status as StateEnum, stateMap.showCanceled)
   const showDeleted: boolean = shouldShowStatus(status as StateEnum, stateMap.showDeleted)
+  // unknow / error / warning
   const showUnknow: boolean = shouldShowStatus(status as StateEnum, stateMap.showUnknow)
   const showBuildError: boolean = shouldShowStatus(status as StateEnum, stateMap.showBuildError)
   const showError: boolean = shouldShowStatus(status as StateEnum, stateMap.showError)

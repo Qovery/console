@@ -1,26 +1,33 @@
-import { type ComponentMeta, type ComponentStory } from '@storybook/react'
+import type { Meta } from '@storybook/react'
 import { StateEnum } from 'qovery-typescript-axios'
 import { RunningState } from '@qovery/shared/enums'
-import { StatusChip } from './status-chip'
+import { StatusChip, type StatusChipProps } from './status-chip'
 
 const AllStatus = [...Object.values(RunningState), ...Object.values(StateEnum)]
 
-export default {
+const Story: Meta<typeof StatusChip> = {
   component: StatusChip,
   title: 'StatusChip',
   argTypes: {
     status: {
       options: AllStatus,
+      defaultValue: StateEnum.DEPLOYED,
       control: { type: 'select' },
     },
   },
-} as ComponentMeta<typeof StatusChip>
-
-const Template: ComponentStory<typeof StatusChip> = (args) => <StatusChip {...args} />
-
-export const Primary = Template.bind({})
-Primary.args = {
-  status: RunningState.ERROR,
-  appendTooltipMessage: '',
-  className: '',
+  decorators: [
+    (Story) => (
+      <div style={{ background: 'white', padding: '3em' }}>
+        <div style={{ width: 16, height: 16 }}>
+          <Story />
+        </div>
+      </div>
+    ),
+  ],
 }
+
+export const Primary = {
+  render: (props: StatusChipProps) => <StatusChip {...props} />,
+}
+
+export default Story

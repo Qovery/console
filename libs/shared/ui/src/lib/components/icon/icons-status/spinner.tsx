@@ -7,7 +7,7 @@ type IconSpinnerProps = IconProps & {
 }
 
 export const SpinnerIcon = forwardRef<SVGSVGElement, IconSpinnerProps>(
-  ({ color = 'currentColor', className = '', children, width = 24, height = 24, ...props }, forwardedRef) => {
+  ({ color = 'currentColor', className = '', children, width = 16, height = 16, ...props }, forwardedRef) => {
     return (
       <div className={twMerge('relative', className)}>
         <svg

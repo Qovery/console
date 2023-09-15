@@ -9,10 +9,10 @@ export const DeployingIcon = forwardRef<ElementRef<'div'>, IconStatusProps>(
       <div className={twMerge('text-brand-500', className)} ref={forwardedRef}>
         <SpinnerIcon width={width} height={height}>
           <svg
-            className="relative left-[1px]"
+            className="relative left-[1px] mx-auto"
             xmlns="http://www.w3.org/2000/svg"
-            width="8"
-            height="10"
+            width="70%"
+            height="70%"
             fill="none"
             viewBox="0 0 8 10"
           >

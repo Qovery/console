@@ -1,5 +1,4 @@
 import { StateEnum } from 'qovery-typescript-axios'
-import { IconEnum } from '@qovery/shared/enums'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import StatusChip from '../status-chip/status-chip'
 
