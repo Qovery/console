@@ -130,6 +130,7 @@ describe('PageApplicationPostFeature', () => {
         build_mode: 'BUILDPACKS',
         git_repository: { url: 'https://github.com/Qovery/test_http_server.git', root_path: '/', branch: 'master' },
         buildpack_language: 'JAVA',
+        healthchecks: {},
       },
       serviceType: 'APPLICATION',
     })
@@ -188,6 +189,7 @@ describe('PageApplicationPostFeature', () => {
         image_name: '456',
         tag: '789',
         entrypoint: '/',
+        healthchecks: {},
       },
       serviceType: 'CONTAINER',
     })
