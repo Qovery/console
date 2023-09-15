@@ -6,7 +6,7 @@ exports[`ServiceDeploymentStatusLabel should match snapshot 1`] = `
     class="flex items-center gap-3 leading-7 text-neutral-350 text-sm"
   >
     <span
-      class="flex items-center px-3 h-8 border border-neutral-250 rounded-full text-neutral-400 text-xs font-medium truncate "
+      class="shrink-0 flex items-center px-3 h-8 border border-neutral-250 rounded-full text-neutral-400 text-xs font-medium truncate"
       data-testid="status-label"
     >
       <div
