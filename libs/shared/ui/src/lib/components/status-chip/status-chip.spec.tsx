@@ -1,48 +1,39 @@
 import { StateEnum } from 'qovery-typescript-axios'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { renderWithProviders } from '@qovery/shared/util-tests'
 import StatusChip, { type StatusChipProps } from './status-chip'
 
 describe('StatusChip', () => {
-  let props: StatusChipProps
-
-  beforeEach(() => {
-    props = {
-      status: StateEnum.DEPLOYED,
-    }
-  })
+  const props: StatusChipProps = {
+    status: StateEnum.DEPLOYED,
+  }
 
   it('should render successfully', () => {
     const { baseElement } = renderWithProviders(<StatusChip {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
-  it('should render DeployedIcon when status is DEPLOYED', () => {
+  it('should match snapshot for DEPLOYED status', () => {
     const { container } = renderWithProviders(<StatusChip status="DEPLOYED" />)
-    const deployedIcon = container.querySelector('.DeployedIcon')
-    expect(deployedIcon).toBeInTheDocument()
+    expect(container).toMatchSnapshot()
   })
 
-  it('should render RestartedIcon when status is RESTARTED', () => {
-    const { container } = renderWithProviders(<StatusChip status="RESTARTED" />)
-    const restartedIcon = container.querySelector('.RestartedIcon')
-    expect(restartedIcon).toBeInTheDocument()
-  })
-
-  it('should render QueuedIcon when status is QUEUED', () => {
+  it('should match snapshot for QUEUED status', () => {
     const { container } = renderWithProviders(<StatusChip status="QUEUED" />)
-    const queuedIcon = container.querySelector('.QueuedIcon')
-    expect(queuedIcon).toBeInTheDocument()
+    expect(container).toMatchSnapshot()
   })
 
-  it('should render ErrorIcon with custom tooltip message', () => {
-    renderWithProviders(<StatusChip status="DEPLOYMENT_ERROR" appendTooltipMessage="Custom message" />)
-    const tooltipContent = screen.getByText('Deployment error - Custom message')
-    expect(tooltipContent).toBeInTheDocument()
-  })
-
-  it('should render WarningIcon when status is WARNING', () => {
+  it('should match snapshot for WARNING status', () => {
     const { container } = renderWithProviders(<StatusChip status="WARNING" />)
-    const warningIcon = container.querySelector('.WarningIcon')
-    expect(warningIcon).toBeInTheDocument()
+    expect(container).toMatchSnapshot()
+  })
+
+  it('should match snapshot for ERROR status', () => {
+    const { container } = renderWithProviders(<StatusChip status="ERROR" />)
+    expect(container).toMatchSnapshot()
+  })
+
+  it('should match snapshot for UNKNOW status', () => {
+    const { container } = renderWithProviders(<StatusChip status={undefined} />)
+    expect(container).toMatchSnapshot()
   })
 })

@@ -1,0 +1,175 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`StatusLabel should match snapshot for BUILD_ERROR status 1`] = `
+<div>
+  <span
+    class="flex items-center px-3 h-8 border border-neutral-250 rounded-full text-neutral-400 text-xs font-medium truncate "
+    data-testid="status-label"
+  >
+    <div
+      class="mr-2"
+      data-state="closed"
+    >
+      <div
+        class="text-red-500"
+      >
+        <svg
+          fill="none"
+          height="16"
+          viewBox="0 0 24 24"
+          width="16"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <g
+            clip-path="url(#clip0_5424_5942)"
+          >
+            <path
+              d="M12 24a12 12 0 100-24 12 12 0 000 24z"
+              fill="currentColor"
+            />
+            <path
+              d="M10.483 6.182l-1.205.73 2.333 1.173V9.26L14.333 12l.584-.587.583.587-.583.587 1.166 1.175L19 10.825 17.833 9.65l-.583.588-.583-.588.583-.587-2.394-2.41a3.103 3.103 0 00-2.2-.917h-.57c-.565 0-1.119.154-1.603.445zM5 15.914l2.333 2.35 5.705-6.46-1.621-1.632L5 15.914z"
+              fill="#fff"
+            />
+          </g>
+          <defs>
+            <clippath
+              id="clip0_5424_5942"
+            >
+              <path
+                d="M0 0H24V24H0z"
+                fill="#fff"
+              />
+            </clippath>
+          </defs>
+        </svg>
+      </div>
+    </div>
+    Build error
+  </span>
+</div>
+`;
+
+exports[`StatusLabel should match snapshot for DEPLOYED status 1`] = `<div />`;
+
+exports[`StatusLabel should match snapshot for ERROR status 1`] = `
+<div>
+  <span
+    class="flex items-center px-3 h-8 border border-neutral-250 rounded-full text-neutral-400 text-xs font-medium truncate "
+    data-testid="status-label"
+  >
+    <div
+      class="mr-2"
+      data-state="closed"
+    >
+      <div
+        class="text-red-500"
+      >
+        <svg
+          fill="none"
+          height="16"
+          viewBox="0 0 24 24"
+          width="16"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M12 24a12 12 0 100-24 12 12 0 000 24zm1.125-18v7.5h-2.25V6h2.25zm-2.25 11.25V15h2.25v2.25h-2.25z"
+            fill="currentColor"
+          />
+        </svg>
+      </div>
+    </div>
+    Error
+  </span>
+</div>
+`;
+
+exports[`StatusLabel should match snapshot for QUEUED status 1`] = `
+<div>
+  <span
+    class="flex items-center px-3 h-8 border border-neutral-250 rounded-full text-neutral-400 text-xs font-medium truncate "
+    data-testid="status-label"
+  >
+    <div
+      class="mr-2"
+      data-state="closed"
+    >
+      <div
+        class="text-brand-500"
+      >
+        <div
+          class="relative"
+        >
+          <svg
+            class="animate-spin"
+            fill="none"
+            height="16"
+            viewBox="0 0 24 24"
+            width="16"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M12 0A12 12 0 111.28 6.607l2.006 1.01A9.755 9.755 0 1012 2.244V0z"
+              fill="currentColor"
+            />
+          </svg>
+          <div
+            class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+          />
+        </div>
+      </div>
+    </div>
+    Queued
+  </span>
+</div>
+`;
+
+exports[`StatusLabel should match snapshot for UNDEFINED status 1`] = `<div />`;
+
+exports[`StatusLabel should match snapshot for UNKNOW status 1`] = `<div />`;
+
+exports[`StatusLabel should match snapshot for WARNING status 1`] = `
+<div>
+  <span
+    class="flex items-center px-3 h-8 border border-neutral-250 rounded-full text-neutral-400 text-xs font-medium truncate "
+    data-testid="status-label"
+  >
+    <div
+      class="mr-2"
+      data-state="closed"
+    >
+      <div
+        class="text-yellow-600"
+      >
+        <svg
+          fill="none"
+          height="16"
+          viewBox="0 0 24 24"
+          width="16"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <g
+            clip-path="url(#clip0_5949_100629)"
+          >
+            <path
+              d="M12 2.25a9.75 9.75 0 110 19.5 9.75 9.75 0 010-19.5zM12 24a12 12 0 100-24 12 12 0 000 24zm1.125-18h-2.25v7.5h2.25V6zm-2.25 11.25h2.25V15h-2.25v2.25z"
+              fill="currentColor"
+            />
+          </g>
+          <defs>
+            <clippath
+              id="clip0_5949_100629"
+            >
+              <path
+                d="M0 0H24V24H0z"
+                fill="#fff"
+              />
+            </clippath>
+          </defs>
+        </svg>
+      </div>
+    </div>
+    Warning
+  </span>
+</div>
+`;

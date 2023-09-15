@@ -1,28 +1,34 @@
-import { render, screen } from '__tests__/utils/setup-jest'
 import { StateEnum } from 'qovery-typescript-axios'
+import { renderWithProviders } from '@qovery/shared/util-tests'
 import StatusLabel, { type StatusLabelProps } from './status-label'
 
 describe('StatusLabel', () => {
-  let props: StatusLabelProps
-
-  beforeEach(() => {
-    props = {
-      status: StateEnum.DEPLOYED,
-    }
-  })
+  const props: StatusLabelProps = {
+    status: StateEnum.DEPLOYED,
+  }
 
   it('should render successfully', () => {
-    const { baseElement } = render(<StatusLabel {...props} />)
+    const { baseElement } = renderWithProviders(<StatusLabel {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
-  it('should have an error icon', () => {
-    props.status = StateEnum.DEPLOYMENT_ERROR
+  it('should match snapshot for DEPLOYED status', () => {
+    const { container } = renderWithProviders(<StatusLabel status={StateEnum.DEPLOYED} />)
+    expect(container).toMatchSnapshot()
+  })
 
-    render(<StatusLabel {...props} />)
+  it('should match snapshot for QUEUED status', () => {
+    const { container } = renderWithProviders(<StatusLabel status={StateEnum.QUEUED} />)
+    expect(container).toMatchSnapshot()
+  })
 
-    const status = screen.queryByTestId('status-label')
+  it('should match snapshot for BUILD_ERROR status', () => {
+    const { container } = renderWithProviders(<StatusLabel status={StateEnum.BUILD_ERROR} />)
+    expect(container).toMatchSnapshot()
+  })
 
-    expect(status?.querySelector('svg')).toHaveAttribute('name', 'ERROR')
+  it('should match snapshot for UNDEFINED status', () => {
+    const { container } = renderWithProviders(<StatusLabel status={undefined} />)
+    expect(container).toMatchSnapshot()
   })
 })

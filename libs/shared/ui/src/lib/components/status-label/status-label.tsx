@@ -20,7 +20,7 @@ export function StatusLabel(props: StatusLabelProps) {
       data-testid="status-label"
     >
       <StatusChip className="mr-2" status={status} />
-      {upperCaseFirstLetter(status?.replace('_', ' ').toLowerCase())}
+      {upperCaseFirstLetter(status?.replace('_', ' '))}
     </span>
   )
 }
