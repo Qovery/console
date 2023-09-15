@@ -2,22 +2,24 @@ import { type Meta, type StoryObj } from '@storybook/react'
 import { IconEnum } from '@qovery/shared/enums'
 import Icon from './icon'
 import { IconAwesomeEnum } from './icon-awesome.enum'
-import BuildErrorIcon from './icons-status/build-error'
-import BuildingIcon from './icons-status/building'
-import CanceledIcon from './icons-status/canceled'
-import CancelingIcon from './icons-status/canceling'
-import DeletedIcon from './icons-status/deleted'
-import DeletingIcon from './icons-status/deleting'
-import DeployedIcon from './icons-status/deployed'
-import DeployingIcon from './icons-status/deploying'
-import ErrorIcon from './icons-status/error'
-import QueuedIcon from './icons-status/queued'
-import RestartedIcon from './icons-status/restarted'
-import RestartingIcon from './icons-status/restarting'
-import StoppedIcon from './icons-status/stopped'
-import StoppingIcon from './icons-status/stopping'
-import UnknowIcon from './icons-status/unknow'
-import WarningIcon from './icons-status/warning'
+import {
+  BuildErrorIcon,
+  BuildingIcon,
+  CanceledIcon,
+  CancelingIcon,
+  DeletedIcon,
+  DeletingIcon,
+  DeployedIcon,
+  DeployingIcon,
+  ErrorIcon,
+  QueuedIcon,
+  RestartedIcon,
+  RestartingIcon,
+  StoppedIcon,
+  StoppingIcon,
+  UnknowIcon,
+  WarningIcon,
+} from './icons-status'
 
 const meta: Meta<typeof Icon> = {
   component: Icon,
