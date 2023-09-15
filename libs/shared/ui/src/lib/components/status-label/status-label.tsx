@@ -1,4 +1,5 @@
 import { StateEnum } from 'qovery-typescript-axios'
+import { twMerge } from 'tailwind-merge'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import StatusChip from '../status-chip/status-chip'
 
@@ -16,7 +17,10 @@ export function StatusLabel(props: StatusLabelProps) {
 
   return (
     <span
-      className={`flex items-center px-3 h-8 border border-neutral-250 rounded-full text-neutral-400 text-xs font-medium truncate ${className}`}
+      className={twMerge(
+        'shrink-0 flex items-center px-3 h-8 border border-neutral-250 rounded-full text-neutral-400 text-xs font-medium truncate',
+        className
+      )}
       data-testid="status-label"
     >
       <StatusChip className="mr-2" status={status} />
