@@ -221,7 +221,7 @@ export function LayoutLogs({
               event.deltaY < 0 &&
               setPauseLogs(true)
             }
-            className={`overflow-y-auto w-full h-[calc(100%-20px)] bg-neutral-700 pb-16 mb-5 ${
+            className={`overflow-y-auto flex justify-between flex-col w-full h-[calc(100%-20px)] bg-neutral-700 pb-16 mb-5 ${
               lineNumbers
                 ? 'before:bg-neutral-700 before:absolute before:left-1 before:top-9 before:w-10 before:h-full'
                 : ''
@@ -234,6 +234,29 @@ export function LayoutLogs({
               }}
             >
               <div className="relative z-20">{children}</div>
+              <div className="flex mb-1 ml-4">
+                <div
+                  className="animate-pulse w-2 h-2 bg-yellow-500 mr-1"
+                  style={{
+                    animationDuration: '1.5s',
+                  }}
+                />
+                <div
+                  className="animate-pulse w-2 h-2 bg-yellow-500 mr-1"
+                  style={{
+                    animationDelay: '300ms',
+                    animationDuration: '1.5s',
+                  }}
+                />
+                <div
+                  className="animate-pulse w-2 h-2 bg-yellow-500"
+                  style={{
+                    animationDelay: '600ms',
+                    animationDuration: '1.5s',
+                  }}
+                />
+              </div>
+              -{' '}
             </UpdateTimeContext.Provider>
           </div>
           {tabInformation && (
