@@ -4,7 +4,7 @@ import { type IconStatusProps } from '../icon'
 import SpinnerIcon from './spinner'
 
 export const BuildingIcon = forwardRef<ElementRef<'div'>, IconStatusProps>(
-  ({ className = '', width = 24, height = 24 }, forwardedRef) => {
+  ({ className = '', width = 16, height = 16 }, forwardedRef) => {
     return (
       <div className={twMerge('text-brand-500', className)} ref={forwardedRef}>
         <SpinnerIcon width={width} height={height}>

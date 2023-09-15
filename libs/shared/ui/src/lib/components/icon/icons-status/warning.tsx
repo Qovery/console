@@ -3,7 +3,7 @@ import { twMerge } from 'tailwind-merge'
 import { type IconStatusProps } from '../icon'
 
 export const WarningIcon = forwardRef<ElementRef<'div'>, IconStatusProps>(
-  ({ className = '', width = 24, height = 24 }, forwardedRef) => {
+  ({ className = '', width = 16, height = 16 }, forwardedRef) => {
     return (
       <div className={twMerge('text-yellow-600', className)} ref={forwardedRef}>
         <svg xmlns="http://www.w3.org/2000/svg" width={width} height={height} fill="none" viewBox="0 0 24 24">
