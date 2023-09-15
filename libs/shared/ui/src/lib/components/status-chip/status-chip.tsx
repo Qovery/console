@@ -30,6 +30,8 @@ export interface StatusChipProps {
 export function StatusChip(props: StatusChipProps) {
   const { status, className = '', appendTooltipMessage = '' } = props
 
+  console.log('status', status)
+
   if (!status)
     return (
       <Tooltip content="Status not available">
