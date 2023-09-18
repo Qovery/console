@@ -11,6 +11,7 @@ import {
   refactoContainerApplicationPayload,
   refactoDatabasePayload,
   refactoGitApplicationPayload,
+  refactoJobPayload,
   refactoOrganizationCustomRolePayload,
   refactoOrganizationPayload,
   refactoPayload,
@@ -234,6 +235,65 @@ describe('testing payload refactoring', () => {
       region: 'est',
       cloud_provider: CloudProviderEnum.AWS,
       production: false,
+    })
+  })
+
+  it('should remove useless job values', () => {
+    const job = {
+      name: 'my-job',
+      description: '',
+      cpu: 500,
+      memory: 512,
+      auto_preview: true,
+      max_duration_seconds: 300,
+      port: null,
+      max_nb_restart: 0,
+      source: {
+        docker: {
+          dockerfile_path: 'Dockerfile',
+          git_repository: {
+            url: 'https://github.com',
+            branch: 'master',
+            root_path: '/',
+          },
+        },
+      },
+      schedule: {
+        cronjob: {
+          arguments: [],
+          scheduled_at: '5 4 * * *',
+        },
+      },
+    }
+
+    const result = refactoJobPayload(job)
+
+    expect(result).toEqual({
+      name: 'my-job',
+      description: '',
+      cpu: 500,
+      memory: 512,
+      auto_preview: true,
+      max_duration_seconds: 300,
+      port: null,
+      max_nb_restart: 0,
+      healthchecks: {},
+      source: {
+        docker: {
+          dockerfile_path: 'Dockerfile',
+          git_repository: {
+            url: 'https://github.com',
+            branch: 'master',
+            root_path: '/',
+          },
+        },
+      },
+      schedule: {
+        cronjob: {
+          arguments: [],
+          scheduled_at: '5 4 * * *',
+        },
+      },
     })
   })
 })

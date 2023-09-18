@@ -108,7 +108,7 @@ export function refactoJobPayload(job: Partial<JobApplicationEntity>): JobReques
     max_duration_seconds: job.max_duration_seconds,
     port: job.port,
     max_nb_restart: job.max_nb_restart,
-    healthchecks: job.healthchecks,
+    healthchecks: job.healthchecks ?? {},
   }
 
   if (job.source?.docker) {
