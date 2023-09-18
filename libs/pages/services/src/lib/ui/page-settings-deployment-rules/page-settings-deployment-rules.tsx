@@ -30,23 +30,6 @@ export function PageSettingsDeploymentRules(props: PageSettingsDeploymentRulesPr
           </div>
         </div>
         <form onSubmit={onSubmit}>
-          <BlockContent title="Global settings">
-            <Controller
-              name="auto_deploy"
-              control={control}
-              render={({ field }) => (
-                <InputToggle
-                  dataTestId="auto-deploy"
-                  value={field.value}
-                  onChange={field.onChange}
-                  title="Auto-deploy"
-                  description="The services from the environment will be automatically updated when they are updated."
-                  forceAlignTop
-                  small
-                />
-              )}
-            />
-          </BlockContent>
           <BlockContent title="Start & stop">
             <div className="flex items-center gap-3">
               <Controller

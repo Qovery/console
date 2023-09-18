@@ -57,7 +57,6 @@ export function PageEditDeploymentRuleFeature() {
     setValue('start_time', startTime)
     setValue('stop_time', stopTime)
     setValue('mode', deploymentRule?.mode)
-    setValue('auto_deploy', deploymentRule?.auto_deploy)
     setValue('auto_stop', deploymentRule?.auto_stop)
     setValue('weekdays', deploymentRule?.weekdays)
     setValue('wildcard', deploymentRule?.wildcard)

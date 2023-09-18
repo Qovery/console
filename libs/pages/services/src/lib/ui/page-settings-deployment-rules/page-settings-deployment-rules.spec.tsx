@@ -12,7 +12,6 @@ describe('PageSettingsDeploymentRules', () => {
   }
 
   const defaultValues = {
-    auto_deploy: true,
     auto_stop: true,
     weekdays: [WeekdayEnum.MONDAY, WeekdayEnum.FRIDAY],
     timezone: timezoneValues[0].value,
@@ -34,7 +33,6 @@ describe('PageSettingsDeploymentRules', () => {
       })
     )
 
-    expect(queryByTestId('auto-deploy')).toBeVisible()
     expect(queryByTestId('auto-stop')).toBeVisible()
     expect(queryByTestId('weekdays')).not.toBeInTheDocument()
     expect(queryByTestId('timezone')).not.toBeInTheDocument()
@@ -51,7 +49,6 @@ describe('PageSettingsDeploymentRules', () => {
       })
     )
 
-    expect(queryByTestId('auto-deploy')).toBeVisible()
     expect(queryByTestId('auto-stop')).toBeVisible()
     expect(queryByTestId('weekdays')).toBeVisible()
     expect(queryByTestId('timezone')).toBeVisible()

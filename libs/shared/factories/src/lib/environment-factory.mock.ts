@@ -39,7 +39,6 @@ const deploymentRules = {
   id: chance.guid(),
   created_at: chance.date().toString(),
   updated_at: chance.date().toString(),
-  auto_deploy: true,
   auto_stop: true,
   auto_preview: true,
   timezone: 'UTC',

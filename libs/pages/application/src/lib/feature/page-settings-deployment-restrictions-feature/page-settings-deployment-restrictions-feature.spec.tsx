@@ -36,7 +36,6 @@ describe('PageSettingsDeploymentRestrictionsFeature', () => {
     })
     jest.spyOn(environmentDomain, 'useFetchEnvironmentDeploymentRule').mockReturnValue({
       data: {
-        auto_deploy: true,
         auto_stop: true,
         auto_preview: true,
         created_at: '2020-01-01T00:00:00Z',

@@ -1,6 +1,5 @@
 import { type ApplicationDeploymentRestriction } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
-import { useFetchEnvironmentDeploymentRule } from '@qovery/domains/environment'
 import { type ApplicationType, type JobType, isApplicationType, isJobType } from '@qovery/domains/services/data-access'
 import {
   useDeleteDeploymentRestriction,
@@ -8,7 +7,6 @@ import {
   useServiceType,
 } from '@qovery/domains/services/feature'
 import {
-  BannerBox,
   BlockContent,
   Button,
   ButtonIcon,
@@ -68,12 +66,7 @@ export function PageSettingsDeploymentRestrictionsFeature() {
         </div>
 
         {!isLoadingServiceType && isValidServiceType ? (
-          <PageSettingsDeploymentRestrictionsFeatureInner
-            projectId={projectId}
-            environmentId={environmentId}
-            serviceId={serviceId}
-            serviceType={serviceType}
-          />
+          <PageSettingsDeploymentRestrictionsFeatureInner serviceId={serviceId} serviceType={serviceType} />
         ) : (
           <div className="flex justify-center">
             <LoaderSpinner className="w-6" />
@@ -95,15 +88,11 @@ export function PageSettingsDeploymentRestrictionsFeature() {
 }
 
 interface PageSettingsDeploymentRestrictionsFeatureInnerProps {
-  projectId: string
-  environmentId: string
   serviceId: string
   serviceType: ApplicationType | JobType
 }
 
 function PageSettingsDeploymentRestrictionsFeatureInner({
-  projectId,
-  environmentId,
   serviceId,
   serviceType,
 }: PageSettingsDeploymentRestrictionsFeatureInnerProps) {
@@ -116,10 +105,6 @@ function PageSettingsDeploymentRestrictionsFeatureInner({
   const { mutate: deleteRestriction } = useDeleteDeploymentRestriction(serviceParams)
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
-  const { data: environmentDeploymentRules, isLoading: isLoadingEnvironmentDeploymentRule } =
-    useFetchEnvironmentDeploymentRule(projectId, environmentId)
-  const isAutoDeployActive = environmentDeploymentRules?.auto_deploy
-
   const handleEdit = (deploymentRestriction: ApplicationDeploymentRestriction) => {
     openModal({
       content: (
@@ -145,20 +130,12 @@ function PageSettingsDeploymentRestrictionsFeatureInner({
 
   return (
     <>
-      {isLoadingEnvironmentDeploymentRule || isLoadingDeploymentRestrictions ? (
+      {isLoadingDeploymentRestrictions ? (
         <div className="flex justify-center">
           <LoaderSpinner className="w-6" />
         </div>
       ) : (
         <>
-          {!isAutoDeployActive && (
-            <BannerBox
-              className="mb-5"
-              title="Auto deploy is not active"
-              message="These rules are applied only if the auto-deploy feature is activated. Activate it first on the “General” settings of your environment"
-            />
-          )}
-
           {deploymentRestrictions?.length > 0 ? (
             <BlockContent title="Deployment restrictions">
               <div className="flex flex-col gap-3">
