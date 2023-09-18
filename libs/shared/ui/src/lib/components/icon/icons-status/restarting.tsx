@@ -6,7 +6,7 @@ import SpinnerIcon from './spinner'
 export const RestartingIcon = forwardRef<ElementRef<'div'>, IconStatusProps>(
   ({ className = '', width = 16, height = 16 }, forwardedRef) => {
     return (
-      <div className={twMerge('text-brand-500', className)} ref={forwardedRef}>
+      <div className={twMerge('text-brand-500 dark:text-brand-400', className)} ref={forwardedRef}>
         <SpinnerIcon width={width} height={height}>
           <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" fill="none" viewBox="0 0 12 12">
             <path
