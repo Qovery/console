@@ -14,7 +14,7 @@ exports[`EnvironmentDeploymentStatusLabel should match snapshot 1`] = `
         data-state="closed"
       >
         <div
-          class="text-brand-500"
+          class="text-brand-500 dark:text-brand-400"
         >
           <div
             class="relative"
