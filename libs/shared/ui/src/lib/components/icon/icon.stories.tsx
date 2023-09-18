@@ -93,21 +93,6 @@ export const ManyItems: Story = {
         <button onClick={() => copyName(IconEnum.DO_GRAY)}>
           <Icon name={IconEnum.DO_GRAY} />
         </button>
-        <button onClick={() => copyName(IconEnum.SUCCESS)}>
-          <Icon name={IconEnum.SUCCESS} />
-        </button>
-        <button onClick={() => copyName(IconEnum.ERROR)}>
-          <Icon name={IconEnum.ERROR} />
-        </button>
-        <button onClick={() => copyName(IconEnum.PAUSE)}>
-          <Icon name={IconEnum.PAUSE} />
-        </button>
-        <button onClick={() => copyName(IconEnum.DELETE)}>
-          <Icon name={IconEnum.DELETE} />
-        </button>
-        <button onClick={() => copyName(IconEnum.PROGRESS)}>
-          <Icon name={IconEnum.PROGRESS} />
-        </button>
         <button onClick={() => copyName(IconEnum.DOCKER)}>
           <Icon name={IconEnum.DOCKER} width="24" />
         </button>
