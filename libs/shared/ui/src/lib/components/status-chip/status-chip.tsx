@@ -1,4 +1,4 @@
-import { type DeploymentHistoryStatusEnum, StateEnum } from 'qovery-typescript-axios'
+import { StateEnum } from 'qovery-typescript-axios'
 import { RunningState } from '@qovery/shared/enums'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import {
@@ -22,7 +22,7 @@ import {
 import Tooltip from '../tooltip/tooltip'
 
 export interface StatusChipProps {
-  status: keyof typeof StateEnum | keyof typeof RunningState | keyof typeof DeploymentHistoryStatusEnum | undefined
+  status: keyof typeof StateEnum | keyof typeof RunningState | undefined
   appendTooltipMessage?: string
   className?: string
 }
