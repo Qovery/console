@@ -89,7 +89,7 @@ export function UpdateAllModalFeature(props: UpdateAllModalFeatureProps) {
       applications.forEach((application) => {
         if (
           (isApplication(application) || isGitJob(application)) &&
-          (!application.commits || application.commits.loadingStatus !== 'loaded')
+          (!application.commits || !['loaded', 'error'].includes(application.commits.loadingStatus ?? ''))
         ) {
           loading = true
         }
