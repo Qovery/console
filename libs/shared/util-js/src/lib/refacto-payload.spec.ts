@@ -68,6 +68,7 @@ describe('testing payload refactoring', () => {
         branch: '',
         root_path: '',
       },
+      healthchecks: {},
       name: 'hello-2',
     })
   })

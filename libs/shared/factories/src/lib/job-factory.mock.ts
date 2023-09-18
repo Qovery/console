@@ -61,6 +61,7 @@ export const cronjobFactoryMock = (howMany: number, withContainer = false): JobA
       cpu: 1000,
       memory: 1024,
       auto_preview: false,
+      healthchecks: {},
       source,
       schedule: {
         cronjob: {
@@ -132,6 +133,7 @@ export const lifecycleJobFactoryMock = (howMany: number, withContainer = false):
       cpu: 1000,
       memory: 1024,
       auto_preview: false,
+      healthchecks: {},
       source,
       schedule: {
         on_start: {
