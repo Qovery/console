@@ -12,9 +12,9 @@ export const StoppingIcon = forwardRef<ElementRef<'div'>, IconStatusProps>(funct
       <SpinnerIcon width={width} height={height}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          className="mx-auto"
-          width="90%"
-          height="90%"
+          className="mx-auto scale-90"
+          width="100%"
+          height="100%"
           fill="none"
           viewBox="0 0 10 10"
         >
