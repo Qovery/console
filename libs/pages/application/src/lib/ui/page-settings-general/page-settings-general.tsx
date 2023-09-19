@@ -39,8 +39,13 @@ const languageItems = Object.values(BuildPackLanguageEnum).map((value) => ({
   value: value,
 }))
 
-export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
-  const { onSubmit, watchBuildMode, type, loading } = props
+export function PageSettingsGeneral({
+  onSubmit,
+  watchBuildMode,
+  type,
+  loading,
+  organization,
+}: PageSettingsGeneralProps) {
   const { control, formState } = useFormContext()
 
   return (
@@ -77,7 +82,7 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
             <JobGeneralSettings
               isEdition={true}
               jobType={isCronJob(type) ? ServiceTypeEnum.CRON_JOB : ServiceTypeEnum.LIFECYCLE_JOB}
-              organization={props.organization}
+              organization={organization}
             />
           )}
           {isApplication(type) && (
@@ -148,7 +153,7 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
           {isContainer(type) && (
             <>
               <BlockContent title="Container Settings">
-                <GeneralContainerSettings organization={props.organization} />
+                <GeneralContainerSettings organization={organization} />
               </BlockContent>
               <BlockContent title="Entrypoint and arguments">
                 <EntrypointCmdInputs />
