@@ -42,7 +42,7 @@ function RunningStateChip({
   }
   return (
     <StatusChip
-      status={runningStatus?.state}
+      status={runningStatus?.state ?? 'STOPPED'}
       appendTooltipMessage={runningStatus?.state === RunningState.ERROR ? runningStatus?.pods[0]?.state_message : ''}
       {...props}
     />
