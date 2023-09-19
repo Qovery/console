@@ -88,7 +88,7 @@ export function PageSettingsGeneral({
           {isApplication(type) && (
             <>
               <EditGitRepositorySettingsFeature />
-              <BlockContent title="Build mode">
+              <BlockContent title="Build & deploy">
                 <Controller
                   name="build_mode"
                   control={control}
