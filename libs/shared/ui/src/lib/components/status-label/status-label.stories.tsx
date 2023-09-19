@@ -1,13 +1,12 @@
 import type { Meta } from '@storybook/react'
 import { StateEnum } from 'qovery-typescript-axios'
-import { RunningState } from '@qovery/shared/enums'
-import { StatusChip, type StatusChipProps } from './status-chip'
+import { StatusLabel, type StatusLabelProps } from './status-label'
 
-const AllStatus = [...Object.values(RunningState), ...Object.values(StateEnum)]
+const AllStatus = [...Object.values(StateEnum)]
 
-const Story: Meta<typeof StatusChip> = {
-  component: StatusChip,
-  title: 'StatusChip',
+const Story: Meta<typeof StatusLabel> = {
+  component: StatusLabel,
+  title: 'StatusLabel',
   argTypes: {
     status: {
       options: AllStatus,
@@ -27,7 +26,7 @@ const Story: Meta<typeof StatusChip> = {
 }
 
 export const Primary = {
-  render: (props: StatusChipProps) => <StatusChip {...props} />,
+  render: (props: StatusLabelProps) => <StatusLabel {...props} />,
 }
 
 export default Story

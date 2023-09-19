@@ -1,0 +1,152 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`StatusChip should match snapshot for DEPLOYED status 1`] = `
+<div>
+  <div
+    class=""
+    data-state="closed"
+  >
+    <svg
+      class="text-green-500"
+      fill="none"
+      height="16"
+      viewBox="0 0 24 24"
+      width="16"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <g
+        clip-path="url(#clip0_5424_5921)"
+      >
+        <path
+          d="M12 2.25a9.75 9.75 0 110 19.5 9.75 9.75 0 010-19.5zM12 24a12 12 0 100-24 12 12 0 000 24zm5.297-14.203L18.094 9 16.5 7.41l-.797.798L10.5 13.41l-2.203-2.203-.797-.797L5.91 12l.798.797 3 3 .797.797.797-.797 5.995-6z"
+          fill="currentColor"
+        />
+      </g>
+      <defs>
+        <clippath
+          id="clip0_5424_5921"
+        >
+          <path
+            d="M0 0H24V24H0z"
+            fill="#fff"
+          />
+        </clippath>
+      </defs>
+    </svg>
+  </div>
+</div>
+`;
+
+exports[`StatusChip should match snapshot for ERROR status 1`] = `
+<div>
+  <div
+    class=""
+    data-state="closed"
+  >
+    <svg
+      class="text-red-500"
+      fill="none"
+      height="16"
+      viewBox="0 0 24 24"
+      width="16"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M12 24a12 12 0 100-24 12 12 0 000 24zm1.125-18v7.5h-2.25V6h2.25zm-2.25 11.25V15h2.25v2.25h-2.25z"
+        fill="currentColor"
+      />
+    </svg>
+  </div>
+</div>
+`;
+
+exports[`StatusChip should match snapshot for QUEUED status 1`] = `
+<div>
+  <div
+    class=""
+    data-state="closed"
+  >
+    <div
+      class="relative flex items-center justify-center w-4 h-4 text-brand-500 dark:text-brand-300"
+    >
+      <div
+        class="animate-spin absolute top-0 left-0 w-full h-full rounded-full border-[1.5px] border-current border-r-transparent"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`StatusChip should match snapshot for UNKNOW status 1`] = `
+<div>
+  <div
+    class=""
+    data-state="closed"
+  >
+    <svg
+      class="text-neutral-300"
+      fill="none"
+      height="16"
+      viewBox="0 0 24 24"
+      width="16"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <g
+        clip-path="url(#clip0_5424_5935)"
+      >
+        <path
+          d="M21.75 12a9.75 9.75 0 10-19.5 0 9.75 9.75 0 0019.5 0zM0 12a12 12 0 1124 0 12 12 0 01-24 0zm16.5-4.5v9h-9v-9h9z"
+          fill="currentColor"
+        />
+      </g>
+      <defs>
+        <clippath
+          id="clip0_5424_5935"
+        >
+          <path
+            d="M0 0H24V24H0z"
+            fill="#fff"
+          />
+        </clippath>
+      </defs>
+    </svg>
+  </div>
+</div>
+`;
+
+exports[`StatusChip should match snapshot for WARNING status 1`] = `
+<div>
+  <div
+    class=""
+    data-state="closed"
+  >
+    <svg
+      class="text-yellow-600"
+      fill="none"
+      height="16"
+      viewBox="0 0 24 24"
+      width="16"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <g
+        clip-path="url(#clip0_5949_100629)"
+      >
+        <path
+          d="M12 2.25a9.75 9.75 0 110 19.5 9.75 9.75 0 010-19.5zM12 24a12 12 0 100-24 12 12 0 000 24zm1.125-18h-2.25v7.5h2.25V6zm-2.25 11.25h2.25V15h-2.25v2.25z"
+          fill="currentColor"
+        />
+      </g>
+      <defs>
+        <clippath
+          id="clip0_5949_100629"
+        >
+          <path
+            d="M0 0H24V24H0z"
+            fill="#fff"
+          />
+        </clippath>
+      </defs>
+    </svg>
+  </div>
+</div>
+`;

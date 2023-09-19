@@ -1,28 +1,39 @@
-import { render, screen } from '__tests__/utils/setup-jest'
 import { StateEnum } from 'qovery-typescript-axios'
+import { renderWithProviders } from '@qovery/shared/util-tests'
 import StatusChip, { type StatusChipProps } from './status-chip'
 
 describe('StatusChip', () => {
-  let props: StatusChipProps
-
-  beforeEach(() => {
-    props = {
-      status: StateEnum.DEPLOYED,
-    }
-  })
+  const props: StatusChipProps = {
+    status: StateEnum.DEPLOYED,
+  }
 
   it('should render successfully', () => {
-    const { baseElement } = render(<StatusChip {...props} />)
+    const { baseElement } = renderWithProviders(<StatusChip {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
-  it('should have an error icon', () => {
-    props.status = StateEnum.STOP_ERROR
+  it('should match snapshot for DEPLOYED status', () => {
+    const { container } = renderWithProviders(<StatusChip status="DEPLOYED" />)
+    expect(container).toMatchSnapshot()
+  })
 
-    render(<StatusChip {...props} />)
+  it('should match snapshot for QUEUED status', () => {
+    const { container } = renderWithProviders(<StatusChip status="QUEUED" />)
+    expect(container).toMatchSnapshot()
+  })
 
-    const status = screen.queryByTestId('status-chip')
+  it('should match snapshot for WARNING status', () => {
+    const { container } = renderWithProviders(<StatusChip status="WARNING" />)
+    expect(container).toMatchSnapshot()
+  })
 
-    expect(status?.querySelector('svg')).toHaveAttribute('name', 'ERROR')
+  it('should match snapshot for ERROR status', () => {
+    const { container } = renderWithProviders(<StatusChip status="ERROR" />)
+    expect(container).toMatchSnapshot()
+  })
+
+  it('should match snapshot for UNKNOW status', () => {
+    const { container } = renderWithProviders(<StatusChip status={undefined} />)
+    expect(container).toMatchSnapshot()
   })
 })

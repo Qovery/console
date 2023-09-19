@@ -1,7 +1,7 @@
-import { render, screen } from '__tests__/utils/setup-jest'
 import { CloudProviderEnum, StateEnum } from 'qovery-typescript-axios'
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { clusterFactoryMock, organizationFactoryMock } from '@qovery/shared/factories'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import CardCluster, { type CardClusterProps, splitId } from './card-cluster'
 
 describe('CardCluster', () => {
@@ -14,11 +14,11 @@ describe('CardCluster', () => {
   }
 
   it('should render successfully', () => {
-    const { baseElement } = render(<CardCluster {...props} />)
+    const { baseElement } = renderWithProviders(<CardCluster {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
-  it('should have a status chip', () => {
+  it('should match snapshot', () => {
     props.cluster = {
       id: 'fff-fff-fff-fff',
       created_at: '',
@@ -33,12 +33,8 @@ describe('CardCluster', () => {
       },
     }
 
-    render(<CardCluster {...props} />)
-
-    const status = screen.getByTestId('status')
-    const svg = status.querySelector('svg')
-
-    expect(svg?.getAttribute('name')).toBe('PAUSE')
+    const { container } = renderWithProviders(<CardCluster {...props} />)
+    expect(container).toMatchSnapshot()
   })
 
   it('should have a icon for cloud provider', () => {
@@ -50,7 +46,7 @@ describe('CardCluster', () => {
       cloud_provider: CloudProviderEnum.AWS,
     }
 
-    render(<CardCluster {...props} />)
+    renderWithProviders(<CardCluster {...props} />)
 
     const icon = screen.getByTestId('icon')
 
@@ -66,10 +62,10 @@ describe('CardCluster', () => {
       cloud_provider: CloudProviderEnum.AWS,
     }
 
-    render(<CardCluster {...props} />)
+    renderWithProviders(<CardCluster {...props} />)
 
     expect(splitId(props.cluster.id)).toBe('fff[...]fff')
   })
 
-  render(<CardCluster {...props} />)
+  renderWithProviders(<CardCluster {...props} />)
 })

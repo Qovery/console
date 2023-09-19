@@ -1,14 +1,10 @@
+import { type SVGAttributes } from 'react'
 import { IconEnum } from '@qovery/shared/enums'
 import IconFa from '../icon-fa/icon-fa'
 import { type IconAwesomeEnum } from './icon-awesome.enum'
 import BitbucketIcon from './icons-git/bitbucket'
 import { GithubIcon, GithubWhiteIcon } from './icons-git/github'
 import GitlabIcon from './icons-git/gitlab'
-import DeleteIcon from './icons-status/delete'
-import ErrorIcon from './icons-status/error'
-import PauseIcon from './icons-status/pause'
-import ProgressIcon from './icons-status/progress'
-import SuccessIcon from './icons-status/success'
 import ApplicationIcon from './icons/application'
 import AWSIcon from './icons/aws'
 import AWSGrayIcon from './icons/aws-gray'
@@ -24,27 +20,26 @@ import DockerIcon from './icons/docker'
 import DopplerIcon from './icons/doppler'
 import EnvironmentIcon from './icons/environment'
 import GitIcon from './icons/git'
-import HammerIcon from './icons/hammer'
 import InformationIcon from './icons/information'
 import LifecycleJobIcon from './icons/lifecycle-job'
 import LifecycleJobStrokeIcon from './icons/lifecycle-job-stroke-icon'
 import MongoDBIcon from './icons/mongodb'
 import MysqlIcon from './icons/mysql'
 import PostgresqlIcon from './icons/postgresql'
-import { QoveryIcon } from './icons/qovery'
+import QoveryIcon from './icons/qovery'
 import RedisIcon from './icons/redis'
 import ScalewayIcon from './icons/scaleway'
 import ScalewayGrayIcon from './icons/scaleway-gray'
 import SlackIcon from './icons/slack'
 import TerraformIcon from './icons/terraform'
 
-export interface IconProps {
-  name: IconEnum | IconAwesomeEnum | string
-  width?: string
-  height?: string
-  viewBox?: string
-  className?: string
+export interface IconProps extends SVGAttributes<SVGElement> {
+  name?: IconEnum | IconAwesomeEnum | string
   pathColor?: string
+}
+
+export interface IconSVGProps extends SVGAttributes<SVGElement> {
+  children?: never
 }
 
 export function Icon(props: IconProps) {
@@ -85,20 +80,10 @@ export function Icon(props: IconProps) {
       return <DatabaseIcon {...formattedProps} />
     case IconEnum.CONTAINER:
       return <ContainerIcon {...formattedProps} />
-    case IconEnum.SUCCESS:
-      return <SuccessIcon {...formattedProps} />
-    case IconEnum.ERROR:
-      return <ErrorIcon {...formattedProps} />
     case IconEnum.QOVERY:
       return <QoveryIcon {...formattedProps} />
     case IconEnum.SLACK:
       return <SlackIcon {...formattedProps} />
-    case IconEnum.PAUSE:
-      return <PauseIcon {...formattedProps} />
-    case IconEnum.DELETE:
-      return <DeleteIcon {...formattedProps} />
-    case IconEnum.PROGRESS:
-      return <ProgressIcon {...formattedProps} />
     case IconEnum.DOCKER:
       return <DockerIcon {...formattedProps} />
     case IconEnum.POSTGRESQL:
@@ -123,8 +108,6 @@ export function Icon(props: IconProps) {
       return <LifecycleJobIcon {...formattedProps} />
     case IconEnum.LIFECYCLE_JOB_STROKE:
       return <LifecycleJobStrokeIcon {...formattedProps} />
-    case IconEnum.HAMMER:
-      return <HammerIcon {...formattedProps} />
     case IconEnum.DOPPLER:
       return <DopplerIcon {...formattedProps} />
     case IconEnum.TERRAFORM:

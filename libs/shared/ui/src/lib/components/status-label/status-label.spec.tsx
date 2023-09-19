@@ -1,28 +1,14 @@
-import { render, screen } from '__tests__/utils/setup-jest'
 import { StateEnum } from 'qovery-typescript-axios'
+import { renderWithProviders } from '@qovery/shared/util-tests'
 import StatusLabel, { type StatusLabelProps } from './status-label'
 
 describe('StatusLabel', () => {
-  let props: StatusLabelProps
-
-  beforeEach(() => {
-    props = {
-      status: StateEnum.DEPLOYED,
-    }
-  })
+  const props: StatusLabelProps = {
+    status: StateEnum.QUEUED,
+  }
 
   it('should render successfully', () => {
-    const { baseElement } = render(<StatusLabel {...props} />)
+    const { baseElement } = renderWithProviders(<StatusLabel {...props} />)
     expect(baseElement).toBeTruthy()
-  })
-
-  it('should have an error icon', () => {
-    props.status = StateEnum.DEPLOYMENT_ERROR
-
-    render(<StatusLabel {...props} />)
-
-    const status = screen.queryByTestId('status-label')
-
-    expect(status?.querySelector('svg')).toHaveAttribute('name', 'ERROR')
   })
 })
