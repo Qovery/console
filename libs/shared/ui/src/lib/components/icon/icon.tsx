@@ -39,8 +39,6 @@ export interface IconProps extends React.SVGAttributes<SVGElement> {
 
 export interface IconStatusProps {
   className?: string
-  width?: number | string
-  height?: number | string
 }
 
 export function Icon(props: IconProps) {

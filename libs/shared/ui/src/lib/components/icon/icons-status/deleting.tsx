@@ -4,12 +4,12 @@ import { type IconStatusProps } from '../icon'
 import SpinnerIcon from './spinner'
 
 export const DeletingIcon = forwardRef<ElementRef<'div'>, IconStatusProps>(function DeletingIcon(
-  { className = '', width = 16, height = 16 },
+  { className = '' },
   forwardedRef
 ) {
   return (
     <div className={twMerge('text-brand-500 dark:text-brand-400', className)} ref={forwardedRef}>
-      <SpinnerIcon width={width} height={height}>
+      <SpinnerIcon>
         <svg className="mx-auto scale-90" xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 448 512">
           <path
             fill="currentColor"

@@ -4,12 +4,12 @@ import { type IconStatusProps } from '../icon'
 import SpinnerIcon from './spinner'
 
 export const RestartingIcon = forwardRef<ElementRef<'div'>, IconStatusProps>(function RestartingIcon(
-  { className = '', width = 16, height = 16 },
+  { className = '' },
   forwardedRef
 ) {
   return (
     <div className={twMerge('text-brand-500 dark:text-brand-400', className)} ref={forwardedRef}>
-      <SpinnerIcon width={width} height={height}>
+      <SpinnerIcon>
         <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" fill="none" viewBox="0 0 12 12">
           <path
             fill="currentColor"

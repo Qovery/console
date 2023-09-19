@@ -4,12 +4,12 @@ import { type IconStatusProps } from '../icon'
 import SpinnerIcon from './spinner'
 
 export const QueuedIcon = forwardRef<ElementRef<'div'>, IconStatusProps>(function QueuedIcon(
-  { className = '', width = 16, height = 16 },
+  { className = '' },
   forwardedRef
 ) {
   return (
     <div className={twMerge('text-brand-500 dark:text-brand-400', className)} ref={forwardedRef}>
-      <SpinnerIcon width={width} height={height} />
+      <SpinnerIcon />
     </div>
   )
 })

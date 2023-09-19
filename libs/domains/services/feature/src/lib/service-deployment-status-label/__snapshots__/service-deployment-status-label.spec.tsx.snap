@@ -17,8 +17,7 @@ exports[`ServiceDeploymentStatusLabel should match snapshot 1`] = `
           class="text-brand-500 dark:text-brand-400"
         >
           <div
-            class="relative flex items-center justify-center"
-            style="width: 16px; height: 16px;"
+            class="relative flex items-center justify-center w-4 h-4"
           >
             <div
               class="animate-spin absolute top-0 left-0 w-full h-full rounded-full border-[1.5px] border-current border-r-transparent"

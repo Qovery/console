@@ -4,12 +4,12 @@ import { type IconStatusProps } from '../icon'
 import SpinnerIcon from './spinner'
 
 export const DeployingIcon = forwardRef<ElementRef<'div'>, IconStatusProps>(function DeployingIcon(
-  { className = '', width = 16, height = 16 },
+  { className = '' },
   forwardedRef
 ) {
   return (
     <div className={twMerge('text-brand-500 dark:text-brand-400', className)} ref={forwardedRef}>
-      <SpinnerIcon width={width} height={height}>
+      <SpinnerIcon>
         <svg
           className="relative left-[1px] mx-auto scale-75"
           xmlns="http://www.w3.org/2000/svg"
