@@ -17,23 +17,14 @@ exports[`EnvironmentDeploymentStatusLabel should match snapshot 1`] = `
           class="text-brand-500 dark:text-brand-400"
         >
           <div
-            class="relative"
+            class="relative flex items-center justify-center"
+            style="width: 16px; height: 16px;"
           >
-            <svg
-              class="animate-spin"
-              fill="none"
-              height="16"
-              viewBox="0 0 24 24"
-              width="16"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M12 0A12 12 0 111.28 6.607l2.006 1.01A9.755 9.755 0 1012 2.244V0z"
-                fill="currentColor"
-              />
-            </svg>
             <div
-              class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+              class="animate-spin absolute top-0 left-0 w-full h-full rounded-full border-[1.5px] border-current border-r-transparent"
+            />
+            <div
+              class="p-1"
             >
               <svg
                 fill="none"
