@@ -3,7 +3,7 @@ import { twMerge } from 'tailwind-merge'
 
 export interface SpinnerIconProps extends PropsWithChildren, SVGAttributes<SVGElement> {}
 
-export const SpinnerIcon = forwardRef<ElementRef<typeof SpinnerIcon>, SpinnerIconProps>(function SpinnerIcon(
+export const SpinnerIcon = forwardRef<ElementRef<'div'>, SpinnerIconProps>(function SpinnerIcon(
   { children, className = '' },
   forwardedRef
 ) {
