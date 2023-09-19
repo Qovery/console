@@ -13,36 +13,33 @@ exports[`CardCluster should match snapshot 1`] = `
         class="mr-4"
         data-state="closed"
       >
-        <div
+        <svg
           class="text-neutral-300"
+          fill="none"
+          height="16"
+          viewBox="0 0 24 24"
+          width="16"
+          xmlns="http://www.w3.org/2000/svg"
         >
-          <svg
-            fill="none"
-            height="16"
-            viewBox="0 0 24 24"
-            width="16"
-            xmlns="http://www.w3.org/2000/svg"
+          <g
+            clip-path="url(#clip0_5424_5935)"
           >
-            <g
-              clip-path="url(#clip0_5424_5935)"
+            <path
+              d="M21.75 12a9.75 9.75 0 10-19.5 0 9.75 9.75 0 0019.5 0zM0 12a12 12 0 1124 0 12 12 0 01-24 0zm16.5-4.5v9h-9v-9h9z"
+              fill="currentColor"
+            />
+          </g>
+          <defs>
+            <clippath
+              id="clip0_5424_5935"
             >
               <path
-                d="M21.75 12a9.75 9.75 0 10-19.5 0 9.75 9.75 0 0019.5 0zM0 12a12 12 0 1124 0 12 12 0 01-24 0zm16.5-4.5v9h-9v-9h9z"
-                fill="currentColor"
+                d="M0 0H24V24H0z"
+                fill="#fff"
               />
-            </g>
-            <defs>
-              <clippath
-                id="clip0_5424_5935"
-              >
-                <path
-                  d="M0 0H24V24H0z"
-                  fill="#fff"
-                />
-              </clippath>
-            </defs>
-          </svg>
-        </div>
+            </clippath>
+          </defs>
+        </svg>
       </div>
        Cluster infra logs
     </div>
