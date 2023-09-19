@@ -64,7 +64,7 @@ export function refactoGitApplicationPayload(application: Partial<GitApplication
     auto_preview: application.auto_preview,
     ports: application.ports,
     dockerfile_path: application.dockerfile_path || undefined,
-    healthchecks: application.healthchecks,
+    healthchecks: application.healthchecks ?? {},
     buildpack_language: application.buildpack_language,
     max_running_instances: application.max_running_instances,
     min_running_instances: application.min_running_instances,

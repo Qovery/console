@@ -18,6 +18,7 @@ export const containerFactoryMock = (howMany: number): ContainerApplicationEntit
     maximum_memory: 10,
     image_name: chance.word({ length: 10 }),
     updated_at: '2022-08-10T14:55:21.382762Z',
+    healthchecks: {},
     storage: [
       {
         id: chance.guid(),
