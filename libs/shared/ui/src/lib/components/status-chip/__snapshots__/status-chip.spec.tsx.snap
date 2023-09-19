@@ -67,15 +67,11 @@ exports[`StatusChip should match snapshot for QUEUED status 1`] = `
     data-state="closed"
   >
     <div
-      class="text-brand-500 dark:text-brand-400"
+      class="relative flex items-center justify-center w-4 h-4 text-brand-500 dark:text-brand-400"
     >
       <div
-        class="relative flex items-center justify-center w-4 h-4"
-      >
-        <div
-          class="animate-spin absolute top-0 left-0 w-full h-full rounded-full border-[1.5px] border-current border-r-transparent"
-        />
-      </div>
+        class="animate-spin absolute top-0 left-0 w-full h-full rounded-full border-[1.5px] border-current border-r-transparent"
+      />
     </div>
   </div>
 </div>

@@ -1,27 +1,26 @@
 import { type ElementRef, forwardRef } from 'react'
 import { twMerge } from 'tailwind-merge'
-import { type IconStatusProps } from '../icon'
+import { type IconSVGProps } from '../icon'
 import SpinnerIcon from './spinner'
 
-export const DeployingIcon = forwardRef<ElementRef<'div'>, IconStatusProps>(function DeployingIcon(
-  { className = '' },
+export const DeployingIcon = forwardRef<ElementRef<'div'>, IconSVGProps>(function DeployingIcon(
+  { className = '', ...props },
   forwardedRef
 ) {
   return (
-    <div className={twMerge('text-brand-500 dark:text-brand-400', className)} ref={forwardedRef}>
-      <SpinnerIcon>
-        <svg
-          className="relative left-[1px] mx-auto scale-75"
-          xmlns="http://www.w3.org/2000/svg"
-          width="100%"
-          height="100%"
-          fill="none"
-          viewBox="0 0 8 10"
-        >
-          <path fill="currentColor" d="M8 5l-8 5V0l8 5z"></path>
-        </svg>
-      </SpinnerIcon>
-    </div>
+    <SpinnerIcon className={twMerge('text-brand-500 dark:text-brand-400', className)} ref={forwardedRef}>
+      <svg
+        className="relative left-[1px] mx-auto scale-75"
+        xmlns="http://www.w3.org/2000/svg"
+        width="100%"
+        height="100%"
+        fill="none"
+        viewBox="0 0 8 10"
+        {...props}
+      >
+        <path fill="currentColor" d="M8 5l-8 5V0l8 5z"></path>
+      </svg>
+    </SpinnerIcon>
   )
 })
 

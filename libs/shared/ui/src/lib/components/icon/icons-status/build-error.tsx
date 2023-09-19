@@ -1,9 +1,9 @@
 import { forwardRef } from 'react'
 import { twMerge } from 'tailwind-merge'
-import { type IconStatusProps } from '../icon'
+import { type IconSVGProps } from '../icon'
 
-export const BuildErrorIcon = forwardRef<SVGSVGElement, IconStatusProps>(function BuildErrorIcon(
-  { className = '' },
+export const BuildErrorIcon = forwardRef<SVGSVGElement, IconSVGProps>(function BuildErrorIcon(
+  { className = '', ...props },
   forwardedRef
 ) {
   return (
@@ -15,6 +15,7 @@ export const BuildErrorIcon = forwardRef<SVGSVGElement, IconStatusProps>(functio
       fill="none"
       viewBox="0 0 24 24"
       ref={forwardedRef}
+      {...props}
     >
       <g clipPath="url(#clip0_5424_5942)">
         <path fill="currentColor" d="M12 24a12 12 0 100-24 12 12 0 000 24z"></path>

@@ -1,9 +1,9 @@
 import { forwardRef } from 'react'
 import { twMerge } from 'tailwind-merge'
-import { type IconStatusProps } from '../icon'
+import { type IconSVGProps } from '../icon'
 
-export const RestartedIcon = forwardRef<SVGSVGElement, IconStatusProps>(function RestartedIcon(
-  { className = '' },
+export const RestartedIcon = forwardRef<SVGSVGElement, IconSVGProps>(function RestartedIcon(
+  { className = '', ...props },
   forwardedRef
 ) {
   return (
@@ -15,6 +15,7 @@ export const RestartedIcon = forwardRef<SVGSVGElement, IconStatusProps>(function
       fill="none"
       viewBox="0 0 24 24"
       ref={forwardedRef}
+      {...props}
     >
       <g fill="currentColor" clipPath="url(#clip0_5424_5933)">
         <path d="M6 11.172V6.207h1.655V8.36l.455-.455a5.792 5.792 0 018.193 0 5.792 5.792 0 010 8.192 5.792 5.792 0 01-8.193 0l1.172-1.171a4.138 4.138 0 100-5.852l-.445.444h2.128v1.655H6z"></path>

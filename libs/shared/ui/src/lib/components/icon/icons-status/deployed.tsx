@@ -1,8 +1,8 @@
 import { forwardRef } from 'react'
 import { twMerge } from 'tailwind-merge'
-import { type IconStatusProps } from '../icon'
+import { type IconSVGProps } from '../icon'
 
-export const DeployedIcon = forwardRef<SVGSVGElement, IconStatusProps>(({ className = '' }, forwardedRef) => {
+export const DeployedIcon = forwardRef<SVGSVGElement, IconSVGProps>(({ className = '', ...props }, forwardedRef) => {
   return (
     <svg
       className={twMerge('text-green-500', className)}
@@ -12,6 +12,7 @@ export const DeployedIcon = forwardRef<SVGSVGElement, IconStatusProps>(({ classN
       fill="none"
       viewBox="0 0 24 24"
       ref={forwardedRef}
+      {...props}
     >
       <g clipPath="url(#clip0_5424_5921)">
         <path

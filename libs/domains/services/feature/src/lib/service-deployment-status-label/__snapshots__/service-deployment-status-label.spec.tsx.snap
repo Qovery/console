@@ -14,30 +14,26 @@ exports[`ServiceDeploymentStatusLabel should match snapshot 1`] = `
         data-state="closed"
       >
         <div
-          class="text-brand-500 dark:text-brand-400"
+          class="relative flex items-center justify-center w-4 h-4 text-brand-500 dark:text-brand-400"
         >
           <div
-            class="relative flex items-center justify-center w-4 h-4"
+            class="animate-spin absolute top-0 left-0 w-full h-full rounded-full border-[1.5px] border-current border-r-transparent"
+          />
+          <div
+            class="p-1"
           >
-            <div
-              class="animate-spin absolute top-0 left-0 w-full h-full rounded-full border-[1.5px] border-current border-r-transparent"
-            />
-            <div
-              class="p-1"
+            <svg
+              fill="none"
+              height="100%"
+              viewBox="0 0 14 14"
+              width="100%"
+              xmlns="http://www.w3.org/2000/svg"
             >
-              <svg
-                fill="none"
-                height="100%"
-                viewBox="0 0 14 14"
-                width="100%"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M5.48333 1.18209L4.27778 1.91116L6.61111 3.0855V4.25984L9.33333 6.99997L9.91667 6.4128L10.5 6.99997L9.91667 7.58714L11.0833 8.76149L14 5.82563L12.8333 4.65129L12.25 5.23846L11.6667 4.65129L12.25 4.06412L9.8559 1.65427C9.27257 1.0671 8.48021 0.736816 7.65625 0.736816H7.08507C6.52118 0.736816 5.96701 0.890949 5.48333 1.18209ZM0 10.9144L2.33333 13.2631L8.03785 6.80425L6.41667 5.1724L0 10.9144Z"
-                  fill="currentColor"
-                />
-              </svg>
-            </div>
+              <path
+                d="M5.48333 1.18209L4.27778 1.91116L6.61111 3.0855V4.25984L9.33333 6.99997L9.91667 6.4128L10.5 6.99997L9.91667 7.58714L11.0833 8.76149L14 5.82563L12.8333 4.65129L12.25 5.23846L11.6667 4.65129L12.25 4.06412L9.8559 1.65427C9.27257 1.0671 8.48021 0.736816 7.65625 0.736816H7.08507C6.52118 0.736816 5.96701 0.890949 5.48333 1.18209ZM0 10.9144L2.33333 13.2631L8.03785 6.80425L6.41667 5.1724L0 10.9144Z"
+                fill="currentColor"
+              />
+            </svg>
           </div>
         </div>
       </div>

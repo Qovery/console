@@ -1,3 +1,4 @@
+import { type SVGAttributes } from 'react'
 import { IconEnum } from '@qovery/shared/enums'
 import IconFa from '../icon-fa/icon-fa'
 import { type IconAwesomeEnum } from './icon-awesome.enum'
@@ -32,12 +33,13 @@ import ScalewayGrayIcon from './icons/scaleway-gray'
 import SlackIcon from './icons/slack'
 import TerraformIcon from './icons/terraform'
 
-export interface IconProps extends React.SVGAttributes<SVGElement> {
+export interface IconProps extends SVGAttributes<SVGElement> {
   name?: IconEnum | IconAwesomeEnum | string
   pathColor?: string
 }
 
-export interface IconStatusProps {
+export interface IconSVGProps extends SVGAttributes<SVGElement> {
+  children?: never
   className?: string
 }
 
