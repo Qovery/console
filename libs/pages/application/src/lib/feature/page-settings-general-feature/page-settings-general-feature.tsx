@@ -17,6 +17,7 @@ export const handleGitApplicationSubmit = (data: FieldValues, application: Appli
   let cloneApplication = Object.assign({}, application)
   cloneApplication.name = data['name']
   cloneApplication.description = data['description']
+  cloneApplication.auto_deploy = data['auto_deploy']
 
   if ('build_mode' in cloneApplication) {
     cloneApplication.build_mode = data['build_mode']
@@ -52,6 +53,7 @@ export const handleContainerSubmit = (data: FieldValues, application: Applicatio
     ...application,
     name: data['name'],
     description: data['description'] || '',
+    ['auto_deploy']: data['auto_deploy'],
     tag: data['image_tag'] || '',
     image_name: data['image_name'] || '',
     arguments: (data['cmd_arguments'] && data['cmd_arguments'].length && eval(data['cmd_arguments'])) || [],
@@ -72,6 +74,7 @@ export const handleJobSubmit = (data: FieldValues, application: ApplicationEntit
       ...application,
       name: data['name'],
       description: data['description'],
+      ['auto_deploy']: data['auto_deploy'],
       source: {
         docker: {
           git_repository,
@@ -84,6 +87,7 @@ export const handleJobSubmit = (data: FieldValues, application: ApplicationEntit
       ...application,
       name: data['name'],
       description: data['description'],
+      ['auto_deploy']: data['auto_deploy'],
       source: {
         image: {
           tag: data['image_tag'] || '',
@@ -181,6 +185,7 @@ export function PageSettingsGeneralFeature() {
   useEffect(() => {
     methods.setValue('name', application?.name)
     methods.setValue('description', application?.description)
+    methods.setValue('auto_deploy', application?.auto_deploy)
 
     if (application) {
       if (isApplication(application)) {

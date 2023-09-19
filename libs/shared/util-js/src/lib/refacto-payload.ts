@@ -62,6 +62,7 @@ export function refactoGitApplicationPayload(application: Partial<GitApplication
     description: application.description || undefined,
     memory: application.memory,
     auto_preview: application.auto_preview,
+    auto_deploy: application.auto_deploy,
     ports: application.ports,
     dockerfile_path: application.dockerfile_path || undefined,
     healthchecks: application.healthchecks ?? {},
@@ -92,6 +93,7 @@ export function refactoContainerApplicationPayload(application: Partial<Containe
     arguments: application.arguments,
     entrypoint: application.entrypoint,
     auto_preview: application.auto_preview,
+    auto_deploy: application.auto_deploy,
     healthchecks: application.healthchecks,
   }
 
@@ -105,6 +107,7 @@ export function refactoJobPayload(job: Partial<JobApplicationEntity>): JobReques
     cpu: job.cpu,
     memory: job.memory,
     auto_preview: job.auto_preview,
+    auto_deploy: job.auto_deploy,
     max_duration_seconds: job.max_duration_seconds,
     port: job.port,
     max_nb_restart: job.max_nb_restart,
