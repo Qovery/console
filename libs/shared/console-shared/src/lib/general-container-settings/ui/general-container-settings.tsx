@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
+import { twMerge } from 'tailwind-merge'
 import { type OrganizationEntity, type Value } from '@qovery/shared/interfaces'
 import { SETTINGS_CONTAINER_REGISTRIES_URL, SETTINGS_URL } from '@qovery/shared/routes'
 import { InputSelect, InputText, Link } from '@qovery/shared/ui'
@@ -10,7 +11,7 @@ export interface GeneralContainerSettingsProps {
 }
 
 export function GeneralContainerSettings(props: GeneralContainerSettingsProps) {
-  const { organization, className = 'mb-6' } = props
+  const { organization, className } = props
   const { control } = useFormContext<{
     registry?: string
     image_name?: string
@@ -30,7 +31,7 @@ export function GeneralContainerSettings(props: GeneralContainerSettingsProps) {
   }, [organization])
 
   return (
-    <div className={className}>
+    <div className={twMerge('mb-6 flex flex-col gap-3', className)}>
       <Controller
         name="registry"
         control={control}
@@ -49,7 +50,7 @@ export function GeneralContainerSettings(props: GeneralContainerSettingsProps) {
           />
         )}
       />
-      <p className="mb-3  text-right">
+      <p className="text-right">
         <Link
           className="font-medium text-ssm"
           link={`${SETTINGS_URL(organization?.id)}${SETTINGS_CONTAINER_REGISTRIES_URL}`}
@@ -67,7 +68,6 @@ export function GeneralContainerSettings(props: GeneralContainerSettingsProps) {
           <InputText
             dataTestId="input-text-image-name"
             name="image_name"
-            className="mb-3"
             onChange={field.onChange}
             value={field.value}
             label="Image name"
@@ -85,7 +85,6 @@ export function GeneralContainerSettings(props: GeneralContainerSettingsProps) {
           <InputText
             dataTestId="input-text-image-tag"
             name="image_tag"
-            className="mb-3"
             onChange={field.onChange}
             value={field.value}
             label="Image tag"

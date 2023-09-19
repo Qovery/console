@@ -1,4 +1,5 @@
 import { type PropsWithChildren } from 'react'
+import { twMerge } from 'tailwind-merge'
 
 export interface BlockContentProps {
   title: string
@@ -14,7 +15,7 @@ export function BlockContent(props: PropsWithChildren<BlockContentProps>) {
     className = '',
     title,
     customWidth = 'w-full',
-    classNameContent = 'p-5',
+    classNameContent,
     dataTestId = 'block-content',
   } = props
 
@@ -26,7 +27,7 @@ export function BlockContent(props: PropsWithChildren<BlockContentProps>) {
       <div className="flex items-center justify-between h-9 px-4 border-b border-neutral-250">
         <h2 className="font-medium text-neutral-400 text-ssm">{title}</h2>
       </div>
-      <div className={classNameContent}>{children}</div>
+      <div className={twMerge('p-5', classNameContent)}>{children}</div>
     </div>
   )
 }

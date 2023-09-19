@@ -88,7 +88,7 @@ export function PageSettingsGeneral({
           {isApplication(type) && (
             <>
               <EditGitRepositorySettingsFeature />
-              <BlockContent title="Build & deploy">
+              <BlockContent classNameContent="gap-3 flex flex-col" title="Build & deploy">
                 <Controller
                   name="build_mode"
                   control={control}
@@ -96,7 +96,6 @@ export function PageSettingsGeneral({
                     <InputSelect
                       dataTestId="input-select-mode"
                       label="Mode"
-                      className="mb-3"
                       options={buildModeItems}
                       onChange={field.onChange}
                       value={field.value}
