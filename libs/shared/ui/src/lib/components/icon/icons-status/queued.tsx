@@ -6,7 +6,7 @@ export const QueuedIcon = forwardRef<ElementRef<'div'>, { className?: string }>(
   { className = '' },
   forwardedRef
 ) {
-  return <SpinnerIcon className={twMerge('text-brand-500 dark:text-brand-400', className)} ref={forwardedRef} />
+  return <SpinnerIcon className={twMerge('text-brand-500 dark:text-brand-300', className)} ref={forwardedRef} />
 })
 
 export default QueuedIcon

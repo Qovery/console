@@ -8,7 +8,7 @@ export const RestartingIcon = forwardRef<ElementRef<'div'>, IconSVGProps>(functi
   forwardedRef
 ) {
   return (
-    <SpinnerIcon className={twMerge('text-brand-500 dark:text-brand-400', className)} ref={forwardedRef}>
+    <SpinnerIcon className={twMerge('text-brand-500 dark:text-brand-300', className)} ref={forwardedRef}>
       <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" fill="none" viewBox="0 0 12 12" {...props}>
         <path
           fill="currentColor"

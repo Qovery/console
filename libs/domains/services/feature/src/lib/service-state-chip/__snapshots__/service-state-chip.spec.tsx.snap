@@ -7,7 +7,7 @@ exports[`ServiceStateChip should match snapshot with deployment status 1`] = `
     data-state="closed"
   >
     <div
-      class="relative flex items-center justify-center w-4 h-4 text-brand-500 dark:text-brand-400"
+      class="relative flex items-center justify-center w-4 h-4 text-brand-500 dark:text-brand-300"
     >
       <div
         class="animate-spin absolute top-0 left-0 w-full h-full rounded-full border-[1.5px] border-current border-r-transparent"
@@ -40,7 +40,7 @@ exports[`ServiceStateChip should match snapshot with running status 1`] = `
     data-state="closed"
   >
     <div
-      class="relative flex items-center justify-center w-4 h-4 text-brand-500 dark:text-brand-400"
+      class="relative flex items-center justify-center w-4 h-4 text-brand-500 dark:text-brand-300"
     >
       <div
         class="animate-spin absolute top-0 left-0 w-full h-full rounded-full border-[1.5px] border-current border-r-transparent"

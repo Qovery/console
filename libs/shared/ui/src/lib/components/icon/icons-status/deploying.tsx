@@ -8,7 +8,7 @@ export const DeployingIcon = forwardRef<ElementRef<'div'>, IconSVGProps>(functio
   forwardedRef
 ) {
   return (
-    <SpinnerIcon className={twMerge('text-brand-500 dark:text-brand-400', className)} ref={forwardedRef}>
+    <SpinnerIcon className={twMerge('text-brand-500 dark:text-brand-300', className)} ref={forwardedRef}>
       <svg
         className="relative left-[1px] mx-auto scale-75"
         xmlns="http://www.w3.org/2000/svg"
