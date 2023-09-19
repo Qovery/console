@@ -1,8 +1,7 @@
-import { type ElementRef, type ReactNode, forwardRef } from 'react'
+import { type ElementRef, type PropsWithChildren, forwardRef } from 'react'
 import { twMerge } from 'tailwind-merge'
 
-export interface SpinnerIconProps {
-  children?: ReactNode
+export interface SpinnerIconProps extends PropsWithChildren {
   className?: string
 }
 
