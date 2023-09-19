@@ -2,7 +2,7 @@ import { forwardRef } from 'react'
 import { twMerge } from 'tailwind-merge'
 import { type IconSVGProps } from '../icon'
 
-export const UnknowIcon = forwardRef<SVGSVGElement, IconSVGProps>(function UnknowIcon(
+export const UnknownIcon = forwardRef<SVGSVGElement, IconSVGProps>(function UnknownIcon(
   { className = '', ...props },
   forwardedRef
 ) {
@@ -32,4 +32,4 @@ export const UnknowIcon = forwardRef<SVGSVGElement, IconSVGProps>(function Unkno
   )
 })
 
-export default UnknowIcon
+export default UnknownIcon

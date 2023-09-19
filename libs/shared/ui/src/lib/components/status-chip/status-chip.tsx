@@ -17,7 +17,7 @@ import {
   RestartingIcon,
   StoppedIcon,
   StoppingIcon,
-  UnknowIcon,
+  UnknownIcon,
   WarningIcon,
 } from '../icon/icons-status'
 import Tooltip from '../tooltip/tooltip'
@@ -61,7 +61,7 @@ export function StatusChip(props: StatusChipProps) {
     .with('CANCELED', () => <CanceledIcon />)
     .with('DELETED', () => <DeletedIcon />)
     // unknow / error / warning
-    .with('UNKNOWN', () => <UnknowIcon />)
+    .with('UNKNOWN', () => <UnknownIcon />)
     .with('BUILD_ERROR', () => <BuildErrorIcon />)
     .with('WARNING', () => <WarningIcon />)
     .with('DEPLOYMENT_ERROR', 'STOP_ERROR', 'DELETE_ERROR', 'RESTART_ERROR', 'ERROR', () => <ErrorIcon />)

@@ -17,7 +17,7 @@ import {
   RestartingIcon,
   StoppedIcon,
   StoppingIcon,
-  UnknowIcon,
+  UnknownIcon,
   WarningIcon,
 } from './icons-status'
 
@@ -140,7 +140,7 @@ export const ManyItems: Story = {
         <StoppedIcon />
         <CanceledIcon />
         <DeletedIcon />
-        <UnknowIcon />
+        <UnknownIcon />
         <WarningIcon />
         <BuildErrorIcon />
         <ErrorIcon />

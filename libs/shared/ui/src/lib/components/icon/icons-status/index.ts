@@ -12,7 +12,7 @@ import RestartedIcon from './restarted'
 import RestartingIcon from './restarting'
 import StoppedIcon from './stopped'
 import StoppingIcon from './stopping'
-import UnknowIcon from './unknow'
+import UnknownIcon from './unknown'
 import WarningIcon from './warning'
 
 export {
@@ -30,6 +30,6 @@ export {
   RestartingIcon,
   StoppedIcon,
   StoppingIcon,
-  UnknowIcon,
+  UnknownIcon,
   WarningIcon,
 }
