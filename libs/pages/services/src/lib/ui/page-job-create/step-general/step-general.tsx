@@ -5,7 +5,7 @@ import { JobGeneralSettings } from '@qovery/shared/console-shared'
 import { type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
 import { type JobGeneralData, type OrganizationEntity } from '@qovery/shared/interfaces'
 import { SERVICES_URL } from '@qovery/shared/routes'
-import { Button, ButtonSize, ButtonStyle, InputText, InputTextArea } from '@qovery/shared/ui'
+import { Button, ButtonSize, ButtonStyle, InputText, InputTextArea, InputToggle } from '@qovery/shared/ui'
 
 export interface StepGeneralProps {
   onSubmit: FormEventHandler<HTMLFormElement>
@@ -16,7 +16,8 @@ export interface StepGeneralProps {
 export function StepGeneral(props: StepGeneralProps) {
   const { organizationId = '', environmentId = '', projectId = '' } = useParams()
   const navigate = useNavigate()
-  const { formState, control } = useFormContext<JobGeneralData>()
+  const { formState, control, watch } = useFormContext<JobGeneralData>()
+  const watchServiceType = watch('serviceType')
 
   return (
     <div>
@@ -68,7 +69,26 @@ export function StepGeneral(props: StepGeneralProps) {
 
         <JobGeneralSettings jobType={props.jobType} organization={props.organization} isEdition={false} />
 
-        <div className="flex justify-between">
+        <Controller
+          name="auto_deploy"
+          control={control}
+          render={({ field }) => (
+            <InputToggle
+              value={field.value}
+              onChange={field.onChange}
+              title="Auto-deploy"
+              description={
+                watchServiceType === ServiceTypeEnum.CONTAINER
+                  ? 'The service will be automatically updated if Qovery is notified on the API that a new image tag is available.'
+                  : 'The service will be automatically updated on every new commit on the branch.'
+              }
+              forceAlignTop
+              small
+            />
+          )}
+        />
+
+        <div className="flex justify-between mt-6">
           <Button
             onClick={() => navigate(SERVICES_URL(organizationId, projectId, environmentId))}
             type="button"

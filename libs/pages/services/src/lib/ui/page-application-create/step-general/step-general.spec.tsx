@@ -53,6 +53,7 @@ describe('StepGeneral', () => {
     )
 
     screen.getByTestId('input-provider')
+    screen.getByText(/The service will be automatically updated on every new commit on the branch./i)
     const registryInput = screen.queryByTestId('input-select-registry')
     expect(registryInput).toBeNull()
   })
@@ -69,6 +70,9 @@ describe('StepGeneral', () => {
     )
 
     screen.getByTestId('input-select-registry')
+    screen.getByText(
+      /The service will be automatically updated if Qovery is notified on the API that a new image tag is available./i
+    )
     const providerInput = screen.queryByTestId('input-provider')
     expect(providerInput).toBeNull()
   })

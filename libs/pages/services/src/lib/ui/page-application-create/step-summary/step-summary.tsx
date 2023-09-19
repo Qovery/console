@@ -101,6 +101,9 @@ export function StepSummary({
               <li>
                 CMD arguments: <strong>{generalData.cmd_arguments}</strong>
               </li>
+              <li>
+                Auto-deploy: <strong>{generalData.auto_deploy.toString()}</strong>
+              </li>
             </ul>
           </div>
 

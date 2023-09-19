@@ -58,6 +58,7 @@ describe('PageSettingsGeneral', () => {
     screen.getByDisplayValue('hello-world')
     screen.getByText('Docker')
     screen.getByDisplayValue('Dockerfile')
+    screen.getByText(/The service will be automatically updated on every new commit on the branch./i)
   })
 
   it('should render the form with buildpack section', async () => {
@@ -75,6 +76,7 @@ describe('PageSettingsGeneral', () => {
     screen.getByDisplayValue('hello-world')
     screen.getByText('Buildpacks')
     screen.getByText('Clojure')
+    screen.getByText(/The service will be automatically updated on every new commit on the branch./i)
   })
 
   it('should render the form with container settings', async () => {
@@ -93,6 +95,9 @@ describe('PageSettingsGeneral', () => {
     screen.getByDisplayValue('image_tag')
     screen.getByDisplayValue('image_entry_point')
     screen.getByDisplayValue('cmd_arguments')
+    screen.getByText(
+      /The service will be automatically updated if Qovery is notified on the API that a new image tag is available./i
+    )
   })
 
   it('should submit the form', async () => {

@@ -51,7 +51,7 @@ describe('JobGeneralSettings', () => {
     expect(baseElement).toBeTruthy()
   })
 
-  it('should render 2 content block if edit mode', () => {
+  it('should render 2 content block if edit mode', async () => {
     renderWithProviders(
       wrapWithReactHookForm<JobGeneralData>(
         <JobGeneralSettings jobType={ServiceTypeEnum.CRON_JOB} isEdition={true} />,
@@ -61,10 +61,15 @@ describe('JobGeneralSettings', () => {
       )
     )
 
-    expect(screen.getAllByTestId('block-content')).toHaveLength(2)
+    // https://react-hook-form.com/advanced-usage#TransformandParse
+    expect(
+      await screen.findByText(/The service will be automatically updated on every new commit on the branch./i)
+    ).toBeInTheDocument()
+
+    expect(screen.getAllByTestId('block-content')).toHaveLength(3)
   })
 
-  it('should render git related fields if service type is git', () => {
+  it('should render git related fields if service type is git', async () => {
     defaultValues.serviceType = ServiceTypeEnum.APPLICATION
     renderWithProviders(
       wrapWithReactHookForm<JobGeneralData>(
@@ -75,10 +80,15 @@ describe('JobGeneralSettings', () => {
       )
     )
 
+    // https://react-hook-form.com/advanced-usage#TransformandParse
+    expect(
+      await screen.findByText(/The service will be automatically updated on every new commit on the branch./i)
+    ).toBeInTheDocument()
+
     screen.getByTestId('git-fields')
   })
 
-  it('should render container related fields if service type is git', () => {
+  it('should render container related fields if service type is git', async () => {
     defaultValues.serviceType = ServiceTypeEnum.CONTAINER
     renderWithProviders(
       wrapWithReactHookForm<JobGeneralData>(
@@ -88,6 +98,13 @@ describe('JobGeneralSettings', () => {
         }
       )
     )
+
+    // https://react-hook-form.com/advanced-usage#TransformandParse
+    expect(
+      await screen.findByText(
+        /The service will be automatically updated if Qovery is notified on the API that a new image tag is available./i
+      )
+    ).toBeInTheDocument()
 
     screen.getByTestId('container-fields')
   })

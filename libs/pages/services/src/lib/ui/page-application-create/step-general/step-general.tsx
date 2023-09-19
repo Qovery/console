@@ -10,7 +10,16 @@ import {
 import { IconEnum, ServiceTypeEnum, isApplication, isContainer } from '@qovery/shared/enums'
 import { type ApplicationGeneralData, type OrganizationEntity } from '@qovery/shared/interfaces'
 import { SERVICES_URL } from '@qovery/shared/routes'
-import { Button, ButtonSize, ButtonStyle, Icon, InputSelect, InputText, InputTextArea } from '@qovery/shared/ui'
+import {
+  Button,
+  ButtonSize,
+  ButtonStyle,
+  Icon,
+  InputSelect,
+  InputText,
+  InputTextArea,
+  InputToggle,
+} from '@qovery/shared/ui'
 
 export interface StepGeneralProps {
   onSubmit: FormEventHandler<HTMLFormElement>
@@ -100,9 +109,26 @@ export function StepGeneral(props: StepGeneralProps) {
 
         {isContainer(watchServiceType) && <GeneralContainerSettings organization={props.organization} />}
 
-        {watchBuildMode === BuildModeEnum.DOCKER && <EntrypointCmdInputs />}
+        <Controller
+          name="auto_deploy"
+          control={control}
+          render={({ field }) => (
+            <InputToggle
+              value={field.value}
+              onChange={field.onChange}
+              title="Auto-deploy"
+              description={
+                watchServiceType === ServiceTypeEnum.CONTAINER
+                  ? 'The service will be automatically updated if Qovery is notified on the API that a new image tag is available.'
+                  : 'The service will be automatically updated on every new commit on the branch.'
+              }
+              forceAlignTop
+              small
+            />
+          )}
+        />
 
-        <div className="flex justify-between">
+        <div className="flex justify-between mt-6">
           <Button
             onClick={() => navigate(SERVICES_URL(organizationId, projectId, environmentId))}
             type="button"

@@ -75,6 +75,9 @@ export function StepSummary(props: StepSummaryProps) {
                     <span className="font-medium">Dockerfile path:</span> {props.generalData.dockerfile_path}
                   </li>
                 )}
+                <li>
+                  <span className="font-medium">Auto-deploy:</span> {props.generalData.auto_deploy.toString()}
+                </li>
               </ul>
             )}
             {props.generalData.serviceType === ServiceTypeEnum.CONTAINER && (
@@ -93,6 +96,9 @@ export function StepSummary(props: StepSummaryProps) {
                 </li>
                 <li>
                   <span className="font-medium">CMD arguments:</span> {props.configureData.cmd_arguments}
+                </li>
+                <li>
+                  <span className="font-medium">Auto-deploy:</span> {props.generalData.auto_deploy.toString()}
                 </li>
               </ul>
             )}

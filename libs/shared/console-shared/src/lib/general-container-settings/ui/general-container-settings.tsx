@@ -10,8 +10,7 @@ export interface GeneralContainerSettingsProps {
   className?: string
 }
 
-export function GeneralContainerSettings(props: GeneralContainerSettingsProps) {
-  const { organization, className } = props
+export function GeneralContainerSettings({ organization, className }: GeneralContainerSettingsProps) {
   const { control } = useFormContext<{
     registry?: string
     image_name?: string

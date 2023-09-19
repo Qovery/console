@@ -17,6 +17,7 @@ describe('General', () => {
           name: 'test',
           serviceType: ServiceTypeEnum.CONTAINER,
           description: 'Application Description',
+          auto_deploy: false,
         },
       })
     )

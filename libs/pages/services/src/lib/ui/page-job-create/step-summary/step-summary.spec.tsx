@@ -10,6 +10,7 @@ const props: StepSummaryProps = {
     name: 'test',
     description: 'test',
     serviceType: ServiceTypeEnum.CONTAINER,
+    auto_deploy: false,
   },
   configureData: {
     event: 'test',
