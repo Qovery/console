@@ -3,7 +3,7 @@ import { twMerge } from 'tailwind-merge'
 import { type IconSVGProps } from '../icon'
 import SpinnerIcon from './spinner'
 
-export const DeletingIcon = forwardRef<ElementRef<'div'>, IconSVGProps>(function DeletingIcon(
+export const DeletingIcon = forwardRef<ElementRef<typeof SpinnerIcon>, IconSVGProps>(function DeletingIcon(
   { className = '', ...props },
   forwardedRef
 ) {

@@ -2,7 +2,7 @@ import { type ElementRef, forwardRef } from 'react'
 import { twMerge } from 'tailwind-merge'
 import SpinnerIcon from './spinner'
 
-export const QueuedIcon = forwardRef<ElementRef<'div'>, { className?: string }>(function QueuedIcon(
+export const QueuedIcon = forwardRef<ElementRef<typeof SpinnerIcon>, { className?: string }>(function QueuedIcon(
   { className = '' },
   forwardedRef
 ) {
