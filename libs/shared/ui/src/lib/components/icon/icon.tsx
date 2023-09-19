@@ -38,11 +38,6 @@ export interface IconProps extends SVGAttributes<SVGElement> {
   pathColor?: string
 }
 
-export interface IconSVGProps extends SVGAttributes<SVGElement> {
-  children?: never
-  className?: string
-}
-
 export function Icon(props: IconProps) {
   const formattedProps = { ...props }
 
