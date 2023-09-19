@@ -1,7 +1,8 @@
-import { type SVGAttributes, forwardRef } from 'react'
+import { forwardRef } from 'react'
 import { twMerge } from 'tailwind-merge'
+import { type IconSVGProps } from '../icon'
 
-export const WarningIcon = forwardRef<SVGSVGElement, SVGAttributes<SVGElement>>(function WarningIcon(
+export const WarningIcon = forwardRef<SVGSVGElement, IconSVGProps>(function WarningIcon(
   { className = '', ...props },
   forwardedRef
 ) {

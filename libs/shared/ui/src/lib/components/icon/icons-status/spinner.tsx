@@ -1,9 +1,7 @@
-import { type ElementRef, type PropsWithChildren, forwardRef } from 'react'
+import { type ElementRef, type PropsWithChildren, type SVGAttributes, forwardRef } from 'react'
 import { twMerge } from 'tailwind-merge'
 
-export interface SpinnerIconProps extends PropsWithChildren {
-  className?: string
-}
+export interface SpinnerIconProps extends PropsWithChildren, SVGAttributes<SVGElement> {}
 
 export const SpinnerIcon = forwardRef<ElementRef<'div'>, SpinnerIconProps>(function SpinnerIcon(
   { children, className = '' },
