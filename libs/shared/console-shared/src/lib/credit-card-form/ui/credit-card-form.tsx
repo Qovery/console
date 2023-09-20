@@ -18,7 +18,7 @@ export function CreditCardForm(props: CreditCardFormProps) {
   return (
     <div>
       <Controller
-        name={'card_number'}
+        name="card_number"
         control={control}
         rules={{
           required: 'Please enter the card number',
@@ -37,7 +37,7 @@ export function CreditCardForm(props: CreditCardFormProps) {
       />
 
       <Controller
-        name={'expiry'}
+        name="expiry"
         control={control}
         rules={{
           required: 'Please enter the card expiry date',
@@ -56,7 +56,7 @@ export function CreditCardForm(props: CreditCardFormProps) {
       />
 
       <Controller
-        name={'cvc'}
+        name="cvc"
         control={control}
         rules={{
           required: 'Please enter the card CVC',

@@ -41,7 +41,7 @@ export function TableRowInvoice(props: TableRowInvoiceProps) {
       data={data}
       filter={filter}
       columnsWidth={columnsWidth}
-      className={`border-b last-of-type:border-b-0 bg-white`}
+      className="border-b last-of-type:border-b-0 bg-white"
     >
       <>
         <div className="px-4 text-xs text-neutral-400 font-medium">{dateToFormat(data.created_at, 'MMM dd, Y')}</div>

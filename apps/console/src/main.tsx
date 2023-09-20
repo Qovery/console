@@ -115,7 +115,7 @@ root.render(
       redirectUri={`${window.location.origin}${LOGIN_URL}${LOGIN_AUTH_REDIRECT_URL}`}
       audience={environment.oauth_audience}
       useRefreshTokens={true}
-      cacheLocation={'localstorage'}
+      cacheLocation="localstorage"
       skipRedirectCallback={window.location.pathname !== LOGIN_URL + LOGIN_AUTH_REDIRECT_URL}
     >
       <QueryClientProvider client={queryClient}>

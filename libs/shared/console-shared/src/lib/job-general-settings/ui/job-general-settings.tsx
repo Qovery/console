@@ -64,7 +64,7 @@ export function JobGeneralSettings(props: JobGeneralSettingProps) {
                     rules={{
                       required: 'Please select a mode.',
                     }}
-                    defaultValue={'DOCKER'}
+                    defaultValue="DOCKER"
                     render={({ field, fieldState: { error } }) => (
                       <InputSelect
                         dataTestId="input-select-mode"
@@ -83,7 +83,7 @@ export function JobGeneralSettings(props: JobGeneralSettingProps) {
                     data-testid="input-text-dockerfile-path"
                     key="dockerfile_path"
                     name="dockerfile_path"
-                    defaultValue={'Dockerfile'}
+                    defaultValue="Dockerfile"
                     control={control}
                     rules={{
                       required: 'Value required',

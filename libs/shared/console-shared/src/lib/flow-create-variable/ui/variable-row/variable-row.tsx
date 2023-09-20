@@ -46,7 +46,7 @@ export function VariableRow(props: VariableRowProps) {
               onChange={field.onChange}
               value={field.value}
               error={error?.message}
-              label={'Variable'}
+              label="Variable"
               errorMessagePosition="left"
             />
           )}

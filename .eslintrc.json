@@ -105,6 +105,13 @@
       "files": ["*.js", "*.jsx"],
       "extends": ["plugin:@nx/javascript"],
       "rules": {}
+    },
+    {
+      "files": ["*.tsx", "*.jsx"],
+      "extends": ["plugin:@nx/react"],
+      "rules": {
+        "react/jsx-curly-brace-presence": "error"
+      }
     }
   ]
 }

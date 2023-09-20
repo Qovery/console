@@ -73,7 +73,7 @@ export const Modal = (props: ModalProps) => {
       {trigger && <div onClick={() => setOpen(!open)}>{trigger}</div>}
       <Dialog.Portal>
         <Dialog.Overlay
-          data-testid={'overlay'}
+          data-testid="overlay"
           onClick={(event) => {
             if (alertClickOutside) {
               event.preventDefault()
