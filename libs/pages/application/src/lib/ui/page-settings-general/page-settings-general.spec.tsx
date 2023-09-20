@@ -1,7 +1,7 @@
-import { act, getByTestId, render, screen, waitFor } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { BuildModeEnum, BuildPackLanguageEnum, GitProviderEnum } from 'qovery-typescript-axios'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import PageSettingsGeneral, { type PageSettingsGeneralProps } from './page-settings-general'
 
 describe('PageSettingsGeneral', () => {
@@ -41,30 +41,36 @@ describe('PageSettingsGeneral', () => {
   })
 
   it('should render successfully', async () => {
-    const { baseElement } = render(wrapWithReactHookForm(<PageSettingsGeneral {...props} />))
+    const { baseElement } = renderWithProviders(wrapWithReactHookForm(<PageSettingsGeneral {...props} />))
     expect(baseElement).toBeTruthy()
   })
 
   it('should render the form with docker section', async () => {
-    render(
+    renderWithProviders(
       wrapWithReactHookForm(<PageSettingsGeneral {...props} />, {
         defaultValues: defaultValuesApplication(),
       })
     )
+
+    // https://react-hook-form.com/advanced-usage#TransformandParse
+    expect(await screen.findByRole('button', { name: /save/i })).toBeInTheDocument()
 
     screen.getByDisplayValue('hello-world')
     screen.getByText('Docker')
     screen.getByDisplayValue('Dockerfile')
   })
 
-  it('should render the form with buildpack section', () => {
+  it('should render the form with buildpack section', async () => {
     props.watchBuildMode = BuildModeEnum.BUILDPACKS
 
-    render(
+    renderWithProviders(
       wrapWithReactHookForm(<PageSettingsGeneral {...props} />, {
         defaultValues: defaultValuesApplication(BuildModeEnum.BUILDPACKS),
       })
     )
+
+    // https://react-hook-form.com/advanced-usage#TransformandParse
+    expect(await screen.findByRole('button', { name: /save/i })).toBeInTheDocument()
 
     screen.getByDisplayValue('hello-world')
     screen.getByText('Buildpacks')
@@ -74,36 +80,36 @@ describe('PageSettingsGeneral', () => {
   it('should render the form with container settings', async () => {
     props.type = ServiceTypeEnum.CONTAINER
 
-    render(
+    renderWithProviders(
       wrapWithReactHookForm(<PageSettingsGeneral {...props} />, {
         defaultValues: defaultValuesContainer(),
       })
     )
 
-    await act(() => {
-      screen.getByDisplayValue('hello-world')
-      screen.getByDisplayValue('image_name')
-      screen.getByDisplayValue('image_tag')
-      screen.getByDisplayValue('image_entry_point')
-      screen.getByDisplayValue('cmd_arguments')
-    })
+    // https://react-hook-form.com/advanced-usage#TransformandParse
+    expect(await screen.findByRole('button', { name: /save/i })).toBeInTheDocument()
+    screen.getByDisplayValue('hello-world')
+    screen.getByDisplayValue('image_name')
+    screen.getByDisplayValue('image_tag')
+    screen.getByDisplayValue('image_entry_point')
+    screen.getByDisplayValue('cmd_arguments')
   })
 
   it('should submit the form', async () => {
     props.type = ServiceTypeEnum.APPLICATION
     const spy = jest.fn((e) => e.preventDefault())
     props.onSubmit = spy
-    const { baseElement } = render(
+    const { userEvent } = renderWithProviders(
       wrapWithReactHookForm(<PageSettingsGeneral {...props} />, {
         defaultValues: defaultValuesApplication(),
       })
     )
 
-    const button = getByTestId(baseElement, 'submit-button')
+    // https://react-hook-form.com/advanced-usage#TransformandParse
+    expect(await screen.findByRole('button', { name: /save/i })).toBeInTheDocument()
+    const button = screen.getByTestId('submit-button')
 
-    await waitFor(() => {
-      button.click()
-      expect(spy).toHaveBeenCalled()
-    })
+    await userEvent.click(button)
+    expect(spy).toHaveBeenCalled()
   })
 })
