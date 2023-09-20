@@ -74,64 +74,66 @@ export function UpdateAllModal(props: UpdateAllModalProps) {
       ) : props.applications && props.applications.length ? (
         <ScrollShadowWrapper className="max-h-[440px]">
           <ul>
-            {props.applications.map((application, index) => (
-              <li
-                data-testid={`outdated-service-row`}
-                onClick={() => props.checkService(application.id)}
-                key={application.id}
-                className={`${index === 0 ? 'rounded-t' : ''} ${
-                  props.applications && props.applications.length - 1 === index ? 'rounded-b !border-b' : ''
-                } border border-b-0  p-4 flex justify-between ${
-                  isChecked(application.id) ? `bg-brand-50 border border-brand-500` : 'border-neutral-250'
-                } ${props.applications && isChecked(props.applications[index - 1]?.id) && 'border-t-brand-500'}`}
-              >
-                <div className="text-neutral-400 font-medium flex">
-                  <InputCheckbox
-                    name={application.id}
-                    value={application.id}
-                    isChecked={isChecked(application.id)}
-                    className="mr-4"
-                  />
-                  <Truncate truncateLimit={31} text={application.name} />
-                </div>
-                <div className="flex ml-auto">
-                  <div
-                    data-testid="current-commit-block"
-                    className={`flex items-center ${isChecked(application.id) ? 'opacity-50' : ''}`}
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    {}
-                    <Avatar
-                      size={28}
-                      className="mr-2"
-                      style={AvatarStyle.STROKED}
-                      firstName={
-                        props.getNameForCommit(application, application.git_repository?.deployed_commit_id) || 'Unknown'
-                      }
-                      url={props.getAvatarForCommit(application, application.git_repository?.deployed_commit_id)}
+            {props.applications.map((application, index) => {
+              const gitRepository = application.git_repository ?? application.source?.docker?.git_repository
+
+              return (
+                <li
+                  data-testid={`outdated-service-row`}
+                  onClick={() => props.checkService(application.id)}
+                  key={application.id}
+                  className={`${index === 0 ? 'rounded-t' : ''} ${
+                    props.applications && props.applications.length - 1 === index ? 'rounded-b !border-b' : ''
+                  } border border-b-0  p-4 flex justify-between ${
+                    isChecked(application.id) ? `bg-brand-50 border border-brand-500` : 'border-neutral-250'
+                  } ${props.applications && isChecked(props.applications[index - 1]?.id) && 'border-t-brand-500'}`}
+                >
+                  <div className="text-neutral-400 font-medium flex">
+                    <InputCheckbox
+                      name={application.id}
+                      value={application.id}
+                      isChecked={isChecked(application.id)}
+                      className="mr-4"
                     />
-                    <TagCommit withBackground commitId={application.git_repository?.deployed_commit_id} />
+                    <Truncate truncateLimit={31} text={application.name} />
                   </div>
-                  <Icon name={IconAwesomeEnum.ARROW_LEFT} className="-scale-100 text-neutral-400 mx-2" />
-                  {application.commits?.items && (
+                  <div className="flex ml-auto">
                     <div
-                      data-testid="last-commit-block"
-                      className={`flex items-center ${!isChecked(application.id) ? 'opacity-50' : ''}`}
+                      data-testid="current-commit-block"
+                      className={`flex items-center ${isChecked(application.id) ? 'opacity-50' : ''}`}
                       onClick={(e) => e.stopPropagation()}
                     >
+                      {}
                       <Avatar
                         size={28}
                         className="mr-2"
                         style={AvatarStyle.STROKED}
-                        firstName={application.commits?.items[0].author_name || ''}
-                        url={application.commits?.items[0].author_avatar_url || ''}
+                        firstName={props.getNameForCommit(application, gitRepository?.deployed_commit_id) || 'Unknown'}
+                        url={props.getAvatarForCommit(application, gitRepository?.deployed_commit_id)}
                       />
-                      <TagCommit withBackground commitId={application.commits?.items[0].git_commit_id} />
+                      <TagCommit withBackground commitId={gitRepository?.deployed_commit_id} />
                     </div>
-                  )}
-                </div>
-              </li>
-            ))}
+                    <Icon name={IconAwesomeEnum.ARROW_LEFT} className="-scale-100 text-neutral-400 mx-2" />
+                    {application.commits?.items && (
+                      <div
+                        data-testid="last-commit-block"
+                        className={`flex items-center ${!isChecked(application.id) ? 'opacity-50' : ''}`}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <Avatar
+                          size={28}
+                          className="mr-2"
+                          style={AvatarStyle.STROKED}
+                          firstName={application.commits?.items[0].author_name || ''}
+                          url={application.commits?.items[0].author_avatar_url || ''}
+                        />
+                        <TagCommit withBackground commitId={application.commits?.items[0].git_commit_id} />
+                      </div>
+                    )}
+                  </div>
+                </li>
+              )
+            })}
           </ul>
         </ScrollShadowWrapper>
       ) : (

@@ -89,7 +89,7 @@ export function UpdateAllModalFeature(props: UpdateAllModalFeatureProps) {
       applications.forEach((application) => {
         if (
           (isApplication(application) || isGitJob(application)) &&
-          (!application.commits || application.commits.loadingStatus !== 'loaded')
+          (!application.commits || !['loaded', 'error'].includes(application.commits.loadingStatus ?? ''))
         ) {
           loading = true
         }
@@ -149,10 +149,11 @@ export function UpdateAllModalFeature(props: UpdateAllModalFeatureProps) {
     // set outdated apps
     if (applications) {
       const outdatedApps = applications.filter((app) => {
-        if (!app.git_repository) return false
         if (!app.commits?.items) return false
+        const gitRepository = app.git_repository ?? app.source?.docker?.git_repository
+        if (!gitRepository) return false
 
-        return app.git_repository.deployed_commit_id !== app.commits.items[0].git_commit_id
+        return gitRepository.deployed_commit_id !== app.commits.items[0].git_commit_id
       })
       setOutdatedApps(outdatedApps)
       setSelectedServiceIds(outdatedApps.map((app) => app.id))
