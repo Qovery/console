@@ -237,7 +237,7 @@ export function LayoutLogs({
             >
               <div className="relative z-20">{children}</div>
               {isProgressing && (
-                <div className="flex mb-4 ml-4">
+                <div role="progressbar" className="flex mb-4 ml-4">
                   <div className="animate-[pulse_1s_cubic-bezier(0.4,0,0.6,1)_100ms_infinite] w-2 h-2 bg-yellow-500 mr-1" />
                   <div className="animate-[pulse_1s_cubic-bezier(0.4,0,0.6,1)_300ms_infinite] w-2 h-2 bg-yellow-500 mr-1" />
                   <div className="animate-[pulse_1s_cubic-bezier(0.4,0,0.6,1)_600ms_infinite] w-2 h-2 bg-yellow-500" />

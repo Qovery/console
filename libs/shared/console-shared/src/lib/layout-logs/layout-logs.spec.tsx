@@ -1,17 +1,16 @@
-import { ClusterLogsStepEnum, StateEnum } from 'qovery-typescript-axios'
+import { ClusterLogsStepEnum } from 'qovery-typescript-axios'
 import { clusterLogFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { LayoutLogs, type LayoutLogsProps } from './layout-logs'
 
 describe('LayoutLogs', () => {
   const props: LayoutLogsProps = {
-    children: <div>children</div>,
+    type: 'deployment',
     data: {
       loadingStatus: 'loaded',
       items: clusterLogFactoryMock(2, true),
     },
     tabInformation: <div>information</div>,
-    serviceStatus: StateEnum.BUILDING,
   }
 
   beforeEach(() => {
@@ -95,8 +94,7 @@ describe('LayoutLogs', () => {
       loadingStatus: 'loaded',
       items: [
         {
-          id: '1',
-          created_at: '1667834316521',
+          created_at: 1667834316521,
           message: 'message',
           pod_name: 'app-z9d11ee4f-7d754477b6-k9sl7',
           version: '53deb16f853aef759b8be84fbeec96e9727',
@@ -116,17 +114,16 @@ describe('LayoutLogs', () => {
       loadingStatus: 'loaded',
       items: [
         {
-          id: '1',
-          created_at: '1667834316521',
+          created_at: 1667834316521,
           message: 'message',
           pod_name: 'app-z9d11ee4f-7d754477b6-k9sl7',
           version: '53deb16f853aef759b8be84fbeec96e9727',
         },
         {
-          id: '2',
-          created_at: '1667834316521',
+          created_at: 1667834316521,
           message: 'message',
           pod_name: ' NGINX',
+          version: '53deb16f853aef759b8be84fbeec96e9722',
         },
       ],
     }
@@ -137,5 +134,10 @@ describe('LayoutLogs', () => {
 
     const checkboxDebug = screen.getByTestId('checkbox-debug')
     expect(checkboxDebug)
+  })
+
+  it('should have progressing bar', () => {
+    renderWithProviders(<LayoutLogs isProgressing={true} {...props} />)
+    screen.getByRole('progressbar')
   })
 })
