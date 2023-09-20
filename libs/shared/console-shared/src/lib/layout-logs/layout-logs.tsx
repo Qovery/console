@@ -46,6 +46,7 @@ export interface LayoutLogsProps {
   countNginx?: number
   customPlaceholder?: string | ReactNode
   serviceDeploymentStatus?: ServiceDeploymentStatusEnum
+  isProgressing?: boolean
 }
 
 export interface ErrorLogsProps {
@@ -72,6 +73,7 @@ export function LayoutLogs({
   customPlaceholder,
   service,
   serviceDeploymentStatus,
+  isProgressing,
 }: PropsWithChildren<LayoutLogsProps>) {
   const location = useLocation()
   const refScrollSection = useRef<HTMLDivElement>(null)
@@ -233,7 +235,16 @@ export function LayoutLogs({
                 setUpdateTimeContext,
               }}
             >
-              <div className="relative z-20">{children}</div>
+              <div className="relative z-20">
+                {children}
+                {isProgressing && (
+                  <div role="progressbar" className="flex ml-4 relative -top-5">
+                    <div className="animate-[pulse_1s_cubic-bezier(0.4,0,0.6,1)_100ms_infinite] w-2 h-2 bg-brand-300 mr-1" />
+                    <div className="animate-[pulse_1s_cubic-bezier(0.4,0,0.6,1)_300ms_infinite] w-2 h-2 bg-brand-300 mr-1" />
+                    <div className="animate-[pulse_1s_cubic-bezier(0.4,0,0.6,1)_600ms_infinite] w-2 h-2 bg-brand-300" />
+                  </div>
+                )}
+              </div>
             </UpdateTimeContext.Provider>
           </div>
           {tabInformation && (

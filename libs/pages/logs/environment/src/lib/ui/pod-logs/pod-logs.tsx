@@ -15,6 +15,7 @@ export interface PodLogsProps {
   enabledNginx?: boolean
   setEnabledNginx?: (debugMode: boolean) => void
   countNginx?: number
+  isDeploymentProgressing?: boolean
 }
 
 const COLORS = [
@@ -50,18 +51,17 @@ function getColorByPod(pod: string) {
   return stringToColor(pod)
 }
 
-export function PodLogs(props: PodLogsProps) {
-  const {
-    logs,
-    service,
-    pauseStatusLogs,
-    setPauseStatusLogs,
-    loadingStatus,
-    enabledNginx,
-    setEnabledNginx,
-    countNginx,
-  } = props
-
+export function PodLogs({
+  logs,
+  service,
+  pauseStatusLogs,
+  setPauseStatusLogs,
+  loadingStatus,
+  enabledNginx,
+  setEnabledNginx,
+  countNginx,
+  isDeploymentProgressing,
+}: PodLogsProps) {
   const [filter, setFilter] = useState<TableFilterProps[]>([])
   const publiclyExposedPort = Boolean((service as ApplicationEntity)?.ports?.find((port) => port.publicly_accessible))
   const { data: serviceRunningStatus } = useRunningStatus({
@@ -161,9 +161,10 @@ export function PodLogs(props: PodLogsProps) {
       enabledNginx={enabledNginx}
       setEnabledNginx={publiclyExposedPort ? setEnabledNginx : undefined}
       countNginx={countNginx}
+      service={service}
+      isProgressing={isDeploymentProgressing}
       withLogsNavigation
       lineNumbers
-      service={service}
     >
       <Table
         className="bg-transparent"

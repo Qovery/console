@@ -21,6 +21,7 @@ import { ServiceStageIdsContext } from '../service-stage-ids-context/service-sta
 export interface DeploymentLogsFeatureProps {
   environment: Environment
   statusStages?: DeploymentStageWithServicesStatuses[]
+  isDeploymentProgressing?: boolean
 }
 
 const DeploymentLogs = memo(_DeploymentLogs)
@@ -64,7 +65,11 @@ export function getServiceStatuesById(services?: DeploymentStageWithServicesStat
   return null
 }
 
-export function DeploymentLogsFeature({ environment, statusStages }: DeploymentLogsFeatureProps) {
+export function DeploymentLogsFeature({
+  environment,
+  statusStages,
+  isDeploymentProgressing,
+}: DeploymentLogsFeatureProps) {
   const { organizationId = '', projectId = '', environmentId = '', serviceId = '', versionId = '' } = useParams()
   const { stageId } = useContext(ServiceStageIdsContext)
 
@@ -177,6 +182,7 @@ export function DeploymentLogsFeature({ environment, statusStages }: DeploymentL
       service={application || database}
       hideDeploymentLogs={hideDeploymentLogsBoolean}
       dataDeploymentHistory={dataDeploymentHistory}
+      isDeploymentProgressing={isDeploymentProgressing}
     />
   )
 }
