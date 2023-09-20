@@ -19,7 +19,7 @@ export function SidebarPipeline({ services, versionId, serviceId, statusStages }
           <LoaderSpinner className="w-6" />
         </div>
       ) : (
-        statusStages?.map((currentStage: DeploymentStageWithServicesStatuses, index: number) => (
+        statusStages.map((currentStage: DeploymentStageWithServicesStatuses, index: number) => (
           <SidebarPipelineItem
             key={index}
             index={index}
