@@ -100,14 +100,12 @@ export function PodLogs(props: PodLogsProps) {
                     </>
                   )}
                 </span>
-                {
-                  <Icon
-                    name={IconAwesomeEnum.FILTER}
-                    className={`text-ssm group-hover:text-neutral-50 ml-auto ${
-                      isActive ? 'text-yellow-500' : 'text-transparent'
-                    }`}
-                  />
-                }
+                <Icon
+                  name={IconAwesomeEnum.FILTER}
+                  className={`text-ssm group-hover:text-neutral-50 ml-auto ${
+                    isActive ? 'text-yellow-500' : 'text-transparent'
+                  }`}
+                />
               </div>
             )
           },

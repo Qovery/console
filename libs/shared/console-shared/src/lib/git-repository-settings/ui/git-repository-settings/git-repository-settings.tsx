@@ -126,7 +126,7 @@ export function GitRepositorySettings(props: GitRepositorySettingsProps) {
       <Controller
         name="root_path"
         control={control}
-        defaultValue={'/'}
+        defaultValue="/"
         rules={{
           required: 'Value required',
         }}

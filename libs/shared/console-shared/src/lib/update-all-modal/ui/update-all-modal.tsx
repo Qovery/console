@@ -36,7 +36,7 @@ export function UpdateAllModal(props: UpdateAllModalProps) {
 
   return (
     <div className="p-6">
-      <h2 className={`h4 text-neutral-400 max-w-sm truncate mb-1`}>Deploy latest version for..</h2>
+      <h2 className="h4 text-neutral-400 max-w-sm truncate mb-1">Deploy latest version for..</h2>
       <p className="mb-4 text-neutral-350 text-sm">Select the services you want to update to the latest version</p>
 
       <div className="text-neutral-400 text-sm mb-4 flex justify-between items-center">
@@ -79,7 +79,7 @@ export function UpdateAllModal(props: UpdateAllModalProps) {
 
               return (
                 <li
-                  data-testid={`outdated-service-row`}
+                  data-testid="outdated-service-row"
                   onClick={() => props.checkService(application.id)}
                   key={application.id}
                   className={`${index === 0 ? 'rounded-t' : ''} ${

@@ -25,7 +25,7 @@ export function BillingDetails(props: BillingDetailsProps) {
           <div className="flex gap-3">
             <Controller
               control={control}
-              name={'first_name'}
+              name="first_name"
               rules={{ required: 'Please provide a first name' }}
               render={({ field }) => (
                 <InputText
@@ -39,7 +39,7 @@ export function BillingDetails(props: BillingDetailsProps) {
             />
             <Controller
               control={control}
-              name={'last_name'}
+              name="last_name"
               rules={{ required: 'Please provide a last name' }}
               render={({ field }) => (
                 <InputText
@@ -55,7 +55,7 @@ export function BillingDetails(props: BillingDetailsProps) {
           <div className="flex gap-3">
             <Controller
               control={control}
-              name={'company'}
+              name="company"
               render={({ field }) => (
                 <InputText
                   className="mb-3 flex-grow"
@@ -68,7 +68,7 @@ export function BillingDetails(props: BillingDetailsProps) {
             />
             <Controller
               control={control}
-              name={'vat_number'}
+              name="vat_number"
               render={({ field }) => (
                 <InputText
                   className="mb-3 flex-grow"
@@ -82,7 +82,7 @@ export function BillingDetails(props: BillingDetailsProps) {
           </div>
           <Controller
             control={control}
-            name={'email'}
+            name="email"
             rules={{ required: 'Please provide a billing email' }}
             render={({ field }) => (
               <InputText
@@ -96,7 +96,7 @@ export function BillingDetails(props: BillingDetailsProps) {
           />
           <Controller
             control={control}
-            name={'address'}
+            name="address"
             render={({ field }) => (
               <InputText
                 className="mb-3 flex-grow"
@@ -110,7 +110,7 @@ export function BillingDetails(props: BillingDetailsProps) {
           <div className="flex gap-3">
             <Controller
               control={control}
-              name={'city'}
+              name="city"
               render={({ field }) => (
                 <InputText
                   className="mb-3 flex-grow"
@@ -123,7 +123,7 @@ export function BillingDetails(props: BillingDetailsProps) {
             />
             <Controller
               control={control}
-              name={'zip'}
+              name="zip"
               render={({ field }) => (
                 <InputText
                   className="mb-3 flex-grow"
@@ -138,7 +138,7 @@ export function BillingDetails(props: BillingDetailsProps) {
           <div className="flex gap-3 mb-3">
             <Controller
               control={control}
-              name={'country_code'}
+              name="country_code"
               render={({ field }) => (
                 <InputSelect
                   className="flex-1"
@@ -151,7 +151,7 @@ export function BillingDetails(props: BillingDetailsProps) {
             />
             <Controller
               control={control}
-              name={'state'}
+              name="state"
               render={({ field }) => (
                 <InputText
                   className="flex-1"
