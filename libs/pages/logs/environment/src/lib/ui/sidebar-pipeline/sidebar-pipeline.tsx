@@ -16,7 +16,7 @@ export function SidebarPipeline({ services, versionId, serviceId, statusStages }
       <p className="text-neutral-50 text-xs mb-4 font-medium">Pipeline</p>
       {!statusStages ? (
         <div className="flex justify-center">
-          <LoaderSpinner className="w-6" />
+          <LoaderSpinner className="w-6 h-6" theme="dark" />
         </div>
       ) : (
         statusStages.map((currentStage: DeploymentStageWithServicesStatuses, index: number) => (
