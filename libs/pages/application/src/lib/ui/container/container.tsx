@@ -19,7 +19,6 @@ import {
   type MenuData,
   type MenuItemProps,
   Skeleton,
-  Tag,
   TagMode,
   TagSize,
   Tooltip,
@@ -159,10 +158,6 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
           </div>
         </Tooltip>
       </Skeleton>
-      <Tag className="bg-neutral-150 gap-2 hidden">
-        <span className="w-2 h-2 rounded-lg bg-orange-300"></span>
-        <span className="w-2 h-2 rounded-lg bg-teal-500"></span>
-      </Tag>
     </>
   )
 

@@ -14,7 +14,7 @@ import {
   DATABASE_SETTINGS_URL,
   DATABASE_URL,
 } from '@qovery/shared/routes'
-import { Header, Icon, Skeleton, Tabs, Tag, TagMode, TagSize, Tooltip } from '@qovery/shared/ui'
+import { Header, Icon, Skeleton, Tabs, TagMode, TagSize, Tooltip } from '@qovery/shared/ui'
 import { type AppDispatch, type RootState } from '@qovery/state/store'
 
 export interface ContainerProps {
@@ -67,10 +67,6 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
           </div>
         </Tooltip>
       </Skeleton>
-      <Tag className="bg-neutral-150 gap-2 hidden">
-        <span className="w-2 h-2 rounded-lg bg-orange-300"></span>
-        <span className="w-2 h-2 rounded-lg bg-teal-500"></span>
-      </Tag>
     </>
   )
 
