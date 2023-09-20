@@ -223,7 +223,7 @@ export function LayoutLogs({
               event.deltaY < 0 &&
               setPauseLogs(true)
             }
-            className={`overflow-y-auto flex justify-between flex-col w-full h-[calc(100%-20px)] bg-neutral-700 pb-16 mb-5 ${
+            className={`overflow-y-auto w-full h-[calc(100%-20px)] bg-neutral-700 pb-16 mb-5 ${
               lineNumbers
                 ? 'before:bg-neutral-700 before:absolute before:left-1 before:top-9 before:w-10 before:h-full'
                 : ''
@@ -235,14 +235,16 @@ export function LayoutLogs({
                 setUpdateTimeContext,
               }}
             >
-              <div className="relative z-20">{children}</div>
-              {isProgressing && (
-                <div role="progressbar" className="flex mb-4 ml-4">
-                  <div className="animate-[pulse_1s_cubic-bezier(0.4,0,0.6,1)_100ms_infinite] w-2 h-2 bg-yellow-500 mr-1" />
-                  <div className="animate-[pulse_1s_cubic-bezier(0.4,0,0.6,1)_300ms_infinite] w-2 h-2 bg-yellow-500 mr-1" />
-                  <div className="animate-[pulse_1s_cubic-bezier(0.4,0,0.6,1)_600ms_infinite] w-2 h-2 bg-yellow-500" />
-                </div>
-              )}
+              <div className="relative z-20">
+                {children}
+                {isProgressing && (
+                  <div role="progressbar" className="flex ml-4 relative -top-5">
+                    <div className="animate-[pulse_1s_cubic-bezier(0.4,0,0.6,1)_100ms_infinite] w-2 h-2 bg-brand-300 mr-1" />
+                    <div className="animate-[pulse_1s_cubic-bezier(0.4,0,0.6,1)_300ms_infinite] w-2 h-2 bg-brand-300 mr-1" />
+                    <div className="animate-[pulse_1s_cubic-bezier(0.4,0,0.6,1)_600ms_infinite] w-2 h-2 bg-brand-300" />
+                  </div>
+                )}
+              </div>
             </UpdateTimeContext.Provider>
           </div>
           {tabInformation && (
