@@ -14,12 +14,12 @@ import _PodLogs from '../../ui/pod-logs/pod-logs'
 
 export interface PodLogsFeatureProps {
   clusterId: string
+  isDeploymentProgressing?: boolean
 }
 
 const PodLogs = memo(_PodLogs)
 
-export function PodLogsFeature(props: PodLogsFeatureProps) {
-  const { clusterId } = props
+export function PodLogsFeature({ clusterId, isDeploymentProgressing }: PodLogsFeatureProps) {
   const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams()
 
   const debounceTime = 400
@@ -115,6 +115,7 @@ export function PodLogsFeature(props: PodLogsFeatureProps) {
       enabledNginx={enabledNginx}
       setEnabledNginx={setEnabledNginx}
       countNginx={infraMessages.length}
+      isDeploymentProgressing={isDeploymentProgressing}
     />
   )
 }

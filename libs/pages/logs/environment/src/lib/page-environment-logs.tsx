@@ -1,5 +1,5 @@
 import equal from 'fast-deep-equal'
-import { type DeploymentStageWithServicesStatuses, type EnvironmentStatus } from 'qovery-typescript-axios'
+import { type DeploymentStageWithServicesStatuses, type EnvironmentStatus, StateEnum } from 'qovery-typescript-axios'
 import { useCallback, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { Route, Routes, matchPath, useLocation, useParams } from 'react-router-dom'
@@ -82,6 +82,20 @@ export function PageEnvironmentLogs() {
 
   if (!environment) return
 
+  const isDeploymentProgressing: boolean = [
+    StateEnum.BUILDING,
+    StateEnum.DEPLOYING,
+    StateEnum.CANCELING,
+    StateEnum.DELETING,
+    StateEnum.RESTARTING,
+    StateEnum.STOPPING,
+    StateEnum.QUEUED,
+    StateEnum.DELETE_QUEUED,
+    StateEnum.RESTART_QUEUED,
+    StateEnum.STOP_QUEUED,
+    StateEnum.DEPLOYMENT_QUEUED,
+  ].includes(environmentStatus?.state as StateEnum)
+
   return (
     <div className="flex h-full">
       <ServiceStageIdsProvider>
@@ -95,13 +109,30 @@ export function PageEnvironmentLogs() {
         <Routes>
           <Route
             path={DEPLOYMENT_LOGS_URL()}
-            element={<DeploymentLogsFeature environment={environment} statusStages={statusStages} />}
+            element={
+              <DeploymentLogsFeature
+                environment={environment}
+                statusStages={statusStages}
+                isDeploymentProgressing={isDeploymentProgressing}
+              />
+            }
           />
           <Route
             path={DEPLOYMENT_LOGS_VERSION_URL()}
-            element={<DeploymentLogsFeature environment={environment} statusStages={statusStages} />}
+            element={
+              <DeploymentLogsFeature
+                environment={environment}
+                statusStages={statusStages}
+                isDeploymentProgressing={isDeploymentProgressing}
+              />
+            }
           />
-          <Route path={SERVICE_LOGS_URL()} element={<PodLogsFeature clusterId={environment?.cluster_id} />} />
+          <Route
+            path={SERVICE_LOGS_URL()}
+            element={
+              <PodLogsFeature clusterId={environment?.cluster_id} isDeploymentProgressing={isDeploymentProgressing} />
+            }
+          />
         </Routes>
       </ServiceStageIdsProvider>
       {(location.pathname === `${ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId)}/` ||

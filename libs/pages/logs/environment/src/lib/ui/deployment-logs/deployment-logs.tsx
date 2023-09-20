@@ -28,6 +28,7 @@ export interface DeploymentLogsProps {
   serviceDeploymentStatus?: ServiceDeploymentStatusEnum
   dataDeploymentHistory?: DeploymentHistoryEnvironment[]
   service?: ApplicationEntity | DatabaseEntity
+  isDeploymentProgressing?: boolean
 }
 
 export function DeploymentLogs({
@@ -40,6 +41,7 @@ export function DeploymentLogs({
   loadingStatus,
   dataDeploymentHistory,
   service,
+  isDeploymentProgressing,
 }: DeploymentLogsProps) {
   const { organizationId = '', projectId = '', environmentId = '', serviceId = '', versionId = '' } = useParams()
 
@@ -111,6 +113,7 @@ export function DeploymentLogs({
       errors={errors}
       service={service}
       serviceDeploymentStatus={serviceDeploymentStatus}
+      isProgressing={isDeploymentProgressing}
       withLogsNavigation
       lineNumbers
     >

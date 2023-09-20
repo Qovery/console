@@ -46,6 +46,7 @@ export interface LayoutLogsProps {
   countNginx?: number
   customPlaceholder?: string | ReactNode
   serviceDeploymentStatus?: ServiceDeploymentStatusEnum
+  isProgressing?: boolean
 }
 
 export interface ErrorLogsProps {
@@ -72,6 +73,7 @@ export function LayoutLogs({
   customPlaceholder,
   service,
   serviceDeploymentStatus,
+  isProgressing,
 }: PropsWithChildren<LayoutLogsProps>) {
   const location = useLocation()
   const refScrollSection = useRef<HTMLDivElement>(null)
@@ -234,29 +236,13 @@ export function LayoutLogs({
               }}
             >
               <div className="relative z-20">{children}</div>
-              <div className="flex mb-1 ml-4">
-                <div
-                  className="animate-pulse w-2 h-2 bg-yellow-500 mr-1"
-                  style={{
-                    animationDuration: '1.5s',
-                  }}
-                />
-                <div
-                  className="animate-pulse w-2 h-2 bg-yellow-500 mr-1"
-                  style={{
-                    animationDelay: '300ms',
-                    animationDuration: '1.5s',
-                  }}
-                />
-                <div
-                  className="animate-pulse w-2 h-2 bg-yellow-500"
-                  style={{
-                    animationDelay: '600ms',
-                    animationDuration: '1.5s',
-                  }}
-                />
-              </div>
-              -{' '}
+              {isProgressing && (
+                <div className="flex mb-4 ml-4">
+                  <div className="animate-[pulse_1s_cubic-bezier(0.4,0,0.6,1)_100ms_infinite] w-2 h-2 bg-yellow-500 mr-1" />
+                  <div className="animate-[pulse_1s_cubic-bezier(0.4,0,0.6,1)_300ms_infinite] w-2 h-2 bg-yellow-500 mr-1" />
+                  <div className="animate-[pulse_1s_cubic-bezier(0.4,0,0.6,1)_600ms_infinite] w-2 h-2 bg-yellow-500" />
+                </div>
+              )}
             </UpdateTimeContext.Provider>
           </div>
           {tabInformation && (
