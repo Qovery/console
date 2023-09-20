@@ -2,7 +2,7 @@ import { type CloudProviderEnum, ServiceTypeEnum } from 'qovery-typescript-axios
 import { type DraggableProvided, type DraggableStateSnapshot } from 'react-beautiful-dnd'
 import { getServiceType } from '@qovery/shared/enums'
 import { type ApplicationEntity, type DatabaseEntity } from '@qovery/shared/interfaces'
-import { BadgeService, Truncate } from '@qovery/shared/ui'
+import { ServiceIcon, Truncate } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
 export interface DraggableItemProps {
@@ -54,7 +54,7 @@ export function DraggableItem(props: DraggableItemProps) {
       style={{ ...provided?.draggableProps.style }}
       className={snapshot && classNameItem(snapshot.isDragging)}
     >
-      <BadgeService
+      <ServiceIcon
         className="mr-2"
         serviceType={serviceType}
         cloudProvider={cloudProvider}
