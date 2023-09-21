@@ -305,8 +305,8 @@ const getToasterDescription = (scope: APIVariableScopeEnum) => {
   return scope === APIVariableScopeEnum.APPLICATION ||
     scope === APIVariableScopeEnum.JOB ||
     scope === APIVariableScopeEnum.CONTAINER
-    ? 'You need to redeploy your service for your changes to be applied'
-    : 'You need to redeploy your environment for your changes to be applied'
+    ? 'You need to redeploy your service for your changes to be applied.'
+    : 'You need to redeploy your environment for your changes to be applied.'
 }
 
 export const initialSecretEnvironmentVariablesState: SecretEnvironmentVariablesState =
@@ -433,7 +433,14 @@ export const secretEnvironmentVariablesSlice = createSlice({
         }
         secretEnvironmentVariablesAdapter.removeOne(state, action.meta.arg.environmentVariableId)
         state.error = null
-        toast(ToastEnum.SUCCESS, 'Deletion success', `${name} has been deleted`)
+        toast(
+          ToastEnum.SUCCESS,
+          'Deletion success',
+          `${name} has been deleted. ` + getToasterDescription(action.meta.arg.scope),
+          action.meta.arg.toasterCallback,
+          undefined,
+          'Redeploy'
+        )
       })
       .addCase(deleteSecret.rejected, (state: SecretEnvironmentVariablesState, action) => {
         state.error = action.error.message

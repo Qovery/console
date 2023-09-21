@@ -39,6 +39,9 @@ export function TabsFeature() {
   const application = useSelector<RootState, ApplicationEntity | undefined>(
     (state) => getApplicationsState(state).entities[applicationId]
   )
+
+  const serviceType = application && getServiceType(application)
+
   const location = useLocation()
   const { openModal, closeModal } = useModal()
 
@@ -103,7 +106,7 @@ export function TabsFeature() {
                   <ImportEnvironmentVariableModalFeature
                     closeModal={closeModal}
                     applicationId={applicationId}
-                    serviceType={application && getServiceType(application)}
+                    serviceType={serviceType}
                   />
                 ),
                 options: {
@@ -155,7 +158,7 @@ export function TabsFeature() {
                   applicationId={applicationId}
                   environmentId={environmentId}
                   projectId={projectId}
-                  serviceType={application && getServiceType(application)}
+                  serviceType={serviceType}
                 />
               ),
             })
@@ -175,7 +178,7 @@ export function TabsFeature() {
                   applicationId={applicationId}
                   environmentId={environmentId}
                   projectId={projectId}
-                  serviceType={application && getServiceType(application)}
+                  serviceType={serviceType}
                   isFile
                 />
               ),
@@ -203,6 +206,8 @@ export function TabsFeature() {
       </ButtonAction>
     </>
   )
+
+  if (!serviceType) return null
 
   return <Tabs items={items} contentRight={<div className="px-5">{contentRight}</div>} />
 }

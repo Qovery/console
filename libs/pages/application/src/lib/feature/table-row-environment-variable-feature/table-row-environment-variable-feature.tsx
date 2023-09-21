@@ -1,7 +1,8 @@
 import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { useContext } from 'react'
 import { useDispatch } from 'react-redux'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
+import { useActionRedeployEnvironment } from '@qovery/domains/environment'
 import { deleteEnvironmentVariable, deleteSecret } from '@qovery/domains/environment-variable'
 import { ExternalServiceEnum, type ServiceTypeEnum } from '@qovery/shared/enums'
 import {
@@ -9,6 +10,7 @@ import {
   type EnvironmentVariableSecretOrPublic,
   type SecretEnvironmentVariableEntity,
 } from '@qovery/shared/interfaces'
+import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import {
   type ButtonIconActionElementProps,
   Icon,
@@ -43,6 +45,11 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
   const { organizationId = '', applicationId = '', projectId = '', environmentId = '' } = useParams()
   const { openModalConfirmation } = useModalConfirmation()
   const { showHideAllEnvironmentVariablesValues: defaultShowHideValue } = useContext(ApplicationContext)
+  const navigate = useNavigate()
+
+  const actionRedeployEnvironment = useActionRedeployEnvironment(projectId, environmentId, false, undefined, () =>
+    navigate(ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(applicationId))
+  )
 
   const dispatch = useDispatch<AppDispatch>()
 
@@ -217,6 +224,7 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
                         environmentVariableId: variable.id,
                         scope: variable.scope,
                         serviceType: props.serviceType,
+                        toasterCallback: () => actionRedeployEnvironment.mutate(),
                       })
                     )
                   }
@@ -228,6 +236,7 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
                         environmentVariableId: variable.id,
                         scope: variable.scope,
                         serviceType: props.serviceType,
+                        toasterCallback: () => actionRedeployEnvironment.mutate(),
                       })
                     )
                   }
