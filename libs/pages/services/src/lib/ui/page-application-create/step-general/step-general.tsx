@@ -109,6 +109,8 @@ export function StepGeneral(props: StepGeneralProps) {
 
         {isContainer(watchServiceType) && <GeneralContainerSettings organization={props.organization} />}
 
+        {watchBuildMode === BuildModeEnum.DOCKER && <EntrypointCmdInputs />}
+
         <Controller
           name="auto_deploy"
           control={control}
