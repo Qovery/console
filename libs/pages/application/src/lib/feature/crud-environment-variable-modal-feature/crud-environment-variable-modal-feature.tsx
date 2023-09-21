@@ -47,7 +47,18 @@ export interface DataFormEnvironmentVariableInterface {
 }
 
 export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariableModalFeatureProps) {
-  const { variable, mode, type, isFile = false } = props
+  const {
+    variable,
+    mode,
+    type,
+    isFile = false,
+    organizationId,
+    projectId,
+    environmentId,
+    applicationId,
+    closeModal,
+    serviceType,
+  } = props
   const dispatch = useDispatch<AppDispatch>()
   const errorEnvironmentVariable = useSelector<RootState, string | null | undefined>(
     (state) => getEnvironmentVariablesState(state).error
@@ -57,17 +68,19 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
   const { enableAlertClickOutside } = useModal()
   const navigate = useNavigate()
 
-  const actionRedeployEnvironment = useActionRedeployEnvironment(props.projectId, props.environmentId)
+  const actionRedeployEnvironment = useActionRedeployEnvironment(projectId, environmentId, false, undefined, () =>
+    navigate(ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(applicationId))
+  )
 
   useEffect(() => {
-    if (closing && !errorEnvironmentVariable) props.closeModal()
+    if (closing && !errorEnvironmentVariable) closeModal()
     setClosing(false)
-  }, [closing, errorEnvironmentVariable, props])
+  }, [closing, errorEnvironmentVariable, closeModal])
 
   const availableScopes = computeAvailableScope(
     variable?.scope,
     false,
-    props.serviceType,
+    serviceType,
     type === EnvironmentVariableType.OVERRIDE
   )
   const defaultScope =
@@ -89,7 +102,7 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
   })
 
   const onSubmit = methods.handleSubmit((data) => {
-    if (props.serviceType) {
+    if (serviceType) {
       const cloneData = { ...data }
 
       // allow empty variable value
@@ -104,13 +117,10 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
         props,
         dispatch,
         setClosing,
-        props.serviceType,
+        serviceType,
         () => actionRedeployEnvironment.mutate(),
         () =>
-          navigate(
-            ENVIRONMENT_LOGS_URL(props.organizationId, props.projectId, props.environmentId) +
-              DEPLOYMENT_LOGS_URL(props.applicationId)
-          )
+          navigate(ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(applicationId))
       )
     }
   })
@@ -139,7 +149,7 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
   }
 
   const computeDescription = (): string => {
-    switch (props.type) {
+    switch (type) {
       case EnvironmentVariableType.ALIAS:
         return 'Aliases allow you to specify a different name for a variable on a specific scope.'
       case EnvironmentVariableType.OVERRIDE:
@@ -159,8 +169,8 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
         title={computeTitle()}
         description={computeDescription()}
         onSubmit={onSubmit}
-        closeModal={props.closeModal}
-        type={props.type}
+        closeModal={closeModal}
+        type={type}
         availableScopes={availableScopes}
         loading={loading}
         parentVariableName={variable?.key}

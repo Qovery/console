@@ -361,8 +361,8 @@ const getToasterDescription = (scope: APIVariableScopeEnum) => {
   return scope === APIVariableScopeEnum.APPLICATION ||
     scope === APIVariableScopeEnum.JOB ||
     scope === APIVariableScopeEnum.CONTAINER
-    ? 'You need to redeploy your service for your changes to be applied'
-    : 'You need to redeploy your environment for your changes to be applied'
+    ? 'You need to redeploy your service for your changes to be applied.'
+    : 'You need to redeploy your environment for your changes to be applied.'
 }
 
 export const initialEnvironmentVariablesState: EnvironmentVariablesState = environmentVariablesAdapter.getInitialState({
@@ -488,7 +488,14 @@ export const environmentVariablesSlice = createSlice({
         environmentVariablesAdapter.removeOne(state, action.meta.arg.environmentVariableId)
         removeOneToManyRelation(action.meta.arg.environmentVariableId, state.joinApplicationEnvironmentVariable)
         state.error = null
-        toast(ToastEnum.SUCCESS, 'Deletion success', `${name} has been deleted`)
+        toast(
+          ToastEnum.SUCCESS,
+          'Deletion success',
+          `${name} has been deleted. ` + getToasterDescription(action.meta.arg.scope),
+          action.meta.arg.toasterCallback,
+          undefined,
+          'Redeploy'
+        )
       })
       .addCase(deleteEnvironmentVariable.rejected, (state: EnvironmentVariablesState, action) => {
         state.error = action.error.message
