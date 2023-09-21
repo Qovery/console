@@ -3,6 +3,7 @@ import { type PropsWithChildren } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useLocation, useParams } from 'react-router-dom'
 import { postDatabaseActionsDeploy, postDatabaseActionsRedeploy } from '@qovery/domains/database'
+import { EnvironmentMode } from '@qovery/domains/environments/feature'
 import { selectClusterById } from '@qovery/domains/organization'
 import { ServiceStateChip, useDeploymentStatus } from '@qovery/domains/services/feature'
 import { DatabaseButtonsActions, NeedRedeployFlag } from '@qovery/shared/console-shared'
@@ -14,7 +15,7 @@ import {
   DATABASE_SETTINGS_URL,
   DATABASE_URL,
 } from '@qovery/shared/routes'
-import { Header, Icon, Skeleton, Tabs, TagMode, TagSize, Tooltip } from '@qovery/shared/ui'
+import { Header, Icon, Skeleton, Tabs, Tooltip } from '@qovery/shared/ui'
 import { type AppDispatch, type RootState } from '@qovery/state/store'
 
 export interface ContainerProps {
@@ -56,7 +57,7 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
       </Skeleton>
       {environment && (
         <Skeleton width={80} height={32} show={!environment?.mode}>
-          <TagMode status={environment?.mode} size={TagSize.BIG} />
+          <EnvironmentMode size="sm" mode={environment.mode} />
         </Skeleton>
       )}
       <Skeleton width={120} height={32} show={!cluster}>

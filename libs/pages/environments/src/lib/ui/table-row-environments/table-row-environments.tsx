@@ -1,15 +1,11 @@
 import { type Environment } from 'qovery-typescript-axios'
-import { EnvironmentDeploymentStatusLabel, EnvironmentStateChip } from '@qovery/domains/environments/feature'
-import { EnvironmentButtonsActions } from '@qovery/shared/console-shared'
 import {
-  Icon,
-  Skeleton,
-  type TableFilterProps,
-  type TableHeadProps,
-  TableRow,
-  TagMode,
-  Tooltip,
-} from '@qovery/shared/ui'
+  EnvironmentDeploymentStatusLabel,
+  EnvironmentMode,
+  EnvironmentStateChip,
+} from '@qovery/domains/environments/feature'
+import { EnvironmentButtonsActions } from '@qovery/shared/console-shared'
+import { Icon, Skeleton, type TableFilterProps, type TableHeadProps, TableRow, Tooltip } from '@qovery/shared/ui'
 
 export interface TableRowEnvironmentsProps {
   data: Environment
@@ -67,7 +63,7 @@ export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
         </div>
         <div className="flex items-center px-4 border-b-neutral-200 border-l h-full">
           <Skeleton show={isLoading} width={30} height={16}>
-            <TagMode status={data.mode} />
+            <EnvironmentMode mode={data.mode} />
           </Skeleton>
         </div>
       </>
