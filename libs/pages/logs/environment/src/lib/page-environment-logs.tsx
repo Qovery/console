@@ -7,6 +7,7 @@ import useWebSocket from 'react-use-websocket'
 import { selectApplicationsEntitiesByEnvId } from '@qovery/domains/application'
 import { selectDatabasesEntitiesByEnvId } from '@qovery/domains/database'
 import { useFetchEnvironment } from '@qovery/domains/environment'
+import { useDeploymentStatus } from '@qovery/domains/services/feature'
 import { useAuth } from '@qovery/shared/auth'
 import { type ApplicationEntity, type DatabaseEntity } from '@qovery/shared/interfaces'
 import {
@@ -49,6 +50,8 @@ export function PageEnvironmentLogs() {
 
   const matchServiceId = matchDeploymentVersion || matchServiceLogs || matchDeployment
   const serviceId = matchServiceId?.params.serviceId !== ':serviceId' ? matchServiceId?.params.serviceId : undefined
+
+  const { data: deploymentStatus } = useDeploymentStatus({ environmentId, serviceId })
 
   const applications = useSelector<RootState, ApplicationEntity[]>(
     (state) => selectApplicationsEntitiesByEnvId(state, environmentId),
@@ -94,7 +97,7 @@ export function PageEnvironmentLogs() {
     StateEnum.RESTART_QUEUED,
     StateEnum.STOP_QUEUED,
     StateEnum.DEPLOYMENT_QUEUED,
-  ].includes(environmentStatus?.state as StateEnum)
+  ].includes(deploymentStatus?.state as StateEnum)
 
   return (
     <div className="flex h-full">
