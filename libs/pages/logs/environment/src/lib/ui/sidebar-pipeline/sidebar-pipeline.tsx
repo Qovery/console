@@ -1,5 +1,6 @@
 import { type DeploymentStageWithServicesStatuses } from 'qovery-typescript-axios'
 import { type ApplicationEntity, type DatabaseEntity } from '@qovery/shared/interfaces'
+import { LoaderSpinner } from '@qovery/shared/ui'
 import SidebarPipelineItem from '../sidebar-pipeline-item/sidebar-pipeline-item'
 
 export interface SidebarPipelineProps {
@@ -13,16 +14,23 @@ export function SidebarPipeline({ services, versionId, serviceId, statusStages }
   return (
     <div className="p-5">
       <p className="text-neutral-50 text-xs mb-4 font-medium">Pipeline</p>
-      {statusStages?.map((currentStage: DeploymentStageWithServicesStatuses, index: number) => (
-        <SidebarPipelineItem
-          key={index}
-          index={index}
-          versionId={versionId}
-          serviceId={serviceId}
-          currentStage={currentStage}
-          services={services}
-        />
-      ))}
+      {!statusStages ? (
+        <div className="flex justify-center">
+          <LoaderSpinner className="w-6 h-6" theme="dark" />
+        </div>
+      ) : (
+        statusStages.map((currentStage: DeploymentStageWithServicesStatuses, index: number) => (
+          <SidebarPipelineItem
+            // Using index key because we don't have generic ID for stages
+            key={index}
+            index={index}
+            versionId={versionId}
+            serviceId={serviceId}
+            currentStage={currentStage}
+            services={services}
+          />
+        ))
+      )}
     </div>
   )
 }
