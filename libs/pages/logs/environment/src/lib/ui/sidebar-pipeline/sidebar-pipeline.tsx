@@ -21,6 +21,7 @@ export function SidebarPipeline({ services, versionId, serviceId, statusStages }
       ) : (
         statusStages.map((currentStage: DeploymentStageWithServicesStatuses, index: number) => (
           <SidebarPipelineItem
+            // Using index key because we don't have generic ID for stages
             key={index}
             index={index}
             versionId={versionId}
