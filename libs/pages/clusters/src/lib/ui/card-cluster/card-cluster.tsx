@@ -1,7 +1,8 @@
 import { StateEnum } from 'qovery-typescript-axios'
+import { ClusterType } from '@qovery/domains/clusters/feature'
 import { ClusterButtonsActions } from '@qovery/shared/console-shared'
 import { type ClusterEntity } from '@qovery/shared/interfaces'
-import { Icon, Skeleton, StatusChip, Tag, TagClusterType } from '@qovery/shared/ui'
+import { Icon, Skeleton, StatusChip, Tag } from '@qovery/shared/ui'
 import { getStatusClusterMessage } from '@qovery/shared/util-js'
 
 export interface CardClusterProps {
@@ -65,26 +66,22 @@ export function CardCluster(props: CardClusterProps) {
           <ClusterButtonsActions cluster={cluster} />
         </Skeleton>
       </div>
-      <div className="flex">
+      <div className="flex flex-wrap gap-2">
         {cluster.production && (
-          <Tag dataTestId="tag-prod" className="text-brand-500 border border-brand-500 bg-brand-50 truncate mr-2">
+          <Tag dataTestId="tag-prod" className="text-brand-500 border border-brand-500 bg-brand-50 truncate">
             PROD
           </Tag>
         )}
         {cluster.is_default && (
-          <Tag dataTestId="tag-default" className="text-sky-500 border border-sky-500 bg-sky-50 truncate mr-2">
+          <Tag dataTestId="tag-default" className="text-sky-500 border border-sky-500 bg-sky-50 truncate">
             DEFAULT
           </Tag>
         )}
-        <TagClusterType
-          className="text-neutral-350 border-neutral-250 mr-2"
-          cloudProvider={cluster?.cloud_provider}
-          kubernetes={cluster?.kubernetes}
-        />
-        <Tag dataTestId="tag-region" className="text-neutral-350 border border-neutral-250 truncate mr-2">
+        <ClusterType cloudProvider={cluster.cloud_provider} kubernetes={cluster.kubernetes} />
+        <Tag dataTestId="tag-region" className="text-neutral-350 border border-neutral-250 truncate">
           {cluster.region}
         </Tag>
-        <Tag dataTestId="tag-version" className="text-neutral-350 border border-neutral-250 truncate mr-2">
+        <Tag dataTestId="tag-version" className="text-neutral-350 border border-neutral-250 truncate">
           {cluster.version}
         </Tag>
         <Tag dataTestId="tag-instance" className="text-neutral-350 border border-neutral-250 truncate">
