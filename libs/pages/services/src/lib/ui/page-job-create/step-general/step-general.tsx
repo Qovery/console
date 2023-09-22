@@ -1,11 +1,12 @@
 import { type FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
+import { AutoDeploySetting } from '@qovery/domains/services/feature'
 import { JobGeneralSettings } from '@qovery/shared/console-shared'
 import { type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
 import { type JobGeneralData, type OrganizationEntity } from '@qovery/shared/interfaces'
 import { SERVICES_URL } from '@qovery/shared/routes'
-import { Button, ButtonSize, ButtonStyle, InputText, InputTextArea, InputToggle } from '@qovery/shared/ui'
+import { Button, ButtonSize, ButtonStyle, InputText, InputTextArea } from '@qovery/shared/ui'
 
 export interface StepGeneralProps {
   onSubmit: FormEventHandler<HTMLFormElement>
@@ -68,25 +69,7 @@ export function StepGeneral(props: StepGeneralProps) {
         />
 
         <JobGeneralSettings jobType={props.jobType} organization={props.organization} isEdition={false} />
-
-        <Controller
-          name="auto_deploy"
-          control={control}
-          render={({ field }) => (
-            <InputToggle
-              value={field.value}
-              onChange={field.onChange}
-              title="Auto-deploy"
-              description={
-                watchServiceType === ServiceTypeEnum.CONTAINER
-                  ? 'The service will be automatically updated if Qovery is notified on the API that a new image tag is available.'
-                  : 'The service will be automatically updated on every new commit on the branch.'
-              }
-              forceAlignTop
-              small
-            />
-          )}
-        />
+        <AutoDeploySetting source={watchServiceType === ServiceTypeEnum.CONTAINER ? 'CONTAINER_REGISTRY' : 'GIT'} />
 
         <div className="flex justify-between mt-6">
           <Button

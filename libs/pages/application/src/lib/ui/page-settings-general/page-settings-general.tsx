@@ -1,6 +1,7 @@
 import { BuildModeEnum, BuildPackLanguageEnum } from 'qovery-typescript-axios'
 import { type FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
+import { AutoDeploySetting } from '@qovery/domains/services/feature'
 import {
   EditGitRepositorySettingsFeature,
   EntrypointCmdInputs,
@@ -18,7 +19,6 @@ import {
   InputSelect,
   InputText,
   InputTextArea,
-  InputToggle,
 } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
@@ -149,20 +149,7 @@ export function PageSettingsGeneral({
               )}
 
               <BlockContent title="Auto-deploy">
-                <Controller
-                  name="auto_deploy"
-                  control={control}
-                  render={({ field }) => (
-                    <InputToggle
-                      value={field.value}
-                      onChange={field.onChange}
-                      title="Auto-deploy"
-                      description="The service will be automatically updated on every new commit on the branch."
-                      forceAlignTop
-                      small
-                    />
-                  )}
-                />
+                <AutoDeploySetting source="GIT" />
               </BlockContent>
             </>
           )}
@@ -176,20 +163,7 @@ export function PageSettingsGeneral({
                 <EntrypointCmdInputs />
               </BlockContent>
               <BlockContent title="Auto-deploy">
-                <Controller
-                  name="auto_deploy"
-                  control={control}
-                  render={({ field }) => (
-                    <InputToggle
-                      value={field.value}
-                      onChange={field.onChange}
-                      title="Auto-deploy"
-                      description="The service will be automatically updated if Qovery is notified on the API that a new image tag is available."
-                      forceAlignTop
-                      small
-                    />
-                  )}
-                />
+                <AutoDeploySetting source="CONTAINER_REGISTRY" />
               </BlockContent>
             </>
           )}

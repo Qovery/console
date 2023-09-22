@@ -1,8 +1,9 @@
 import { BuildModeEnum } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
+import { AutoDeploySetting } from '@qovery/domains/services/feature'
 import { IconEnum, type JobType, ServiceTypeEnum, isApplication, isContainer } from '@qovery/shared/enums'
 import { type JobGeneralData, type OrganizationEntity } from '@qovery/shared/interfaces'
-import { BlockContent, Icon, InputSelect, InputText, InputToggle } from '@qovery/shared/ui'
+import { BlockContent, Icon, InputSelect, InputText } from '@qovery/shared/ui'
 import CreateGeneralGitApplication from '../../create-general-git-application/ui/create-general-git-application'
 import GeneralContainerSettings from '../../general-container-settings/ui/general-container-settings'
 import EditGitRepositorySettingsFeature from '../../git-repository-settings/feature/edit-git-repository-settings-feature/edit-git-repository-settings-feature'
@@ -118,24 +119,7 @@ export function JobGeneralSettings(props: JobGeneralSettingProps) {
               </div>
             ))}
           <BlockContent title="Auto-deploy">
-            <Controller
-              name="auto_deploy"
-              control={control}
-              render={({ field }) => (
-                <InputToggle
-                  value={field.value}
-                  onChange={field.onChange}
-                  title="Auto-deploy"
-                  description={
-                    watchServiceType === ServiceTypeEnum.CONTAINER
-                      ? 'The service will be automatically updated if Qovery is notified on the API that a new image tag is available.'
-                      : 'The service will be automatically updated on every new commit on the branch.'
-                  }
-                  forceAlignTop
-                  small
-                />
-              )}
-            />
+            <AutoDeploySetting source={watchServiceType === ServiceTypeEnum.CONTAINER ? 'CONTAINER_REGISTRY' : 'GIT'} />
           </BlockContent>
         </>
       )}
