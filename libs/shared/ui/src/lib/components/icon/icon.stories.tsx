@@ -130,13 +130,13 @@ export const ManyItems: Story = {
         <h2 className="w-full mb-2">Status Icons</h2>
         <DeployedIcon />
         <RestartedIcon />
-        <QueuedIcon />
         <BuildingIcon />
         <CancelingIcon />
         <RestartingIcon />
         <DeployingIcon />
         <DeletingIcon />
         <StoppingIcon />
+        <QueuedIcon />
         <StoppedIcon />
         <CanceledIcon />
         <DeletedIcon />
