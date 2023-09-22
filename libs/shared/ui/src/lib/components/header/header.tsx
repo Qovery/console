@@ -18,13 +18,13 @@ export function Header(props: HeaderProps) {
   const { title, icon, buttons, actions, iconClassName = '' } = props
 
   return (
-    <div className="flex h-32 border-b border-neutral-200 items-center justify-between bg-white rounded-t p-5 shrink-0">
+    <div className="flex border-b border-neutral-200 items-center justify-between bg-white rounded-t px-5 py-8 shrink-0">
       <div className="flex gap-4 ml-2 items-center">
         {icon && <Icon name={icon} className={`w-16 ${iconClassName}`} />}
         <div className="flex flex-col gap-3">
           <div className="flex gap-2 items-center max-w-3xl">
             <Skeleton height={36} width={150} show={!title}>
-              <h1 className="font-bold text-neutral-400 text-3xl max-w-3xl truncate">
+              <h1 className="font-bold text-neutral-400 text-2xl max-w-3xl truncate">
                 {title && <Truncate text={title} truncateLimit={50} />}
               </h1>
             </Skeleton>
