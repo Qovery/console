@@ -66,13 +66,19 @@ exports[`StatusChip should match snapshot for QUEUED status 1`] = `
     class=""
     data-state="closed"
   >
-    <div
-      class="relative flex items-center justify-center w-4 h-4 text-brand-500 dark:text-brand-300"
+    <svg
+      class="text-neutral-300"
+      fill="none"
+      height="16"
+      viewBox="0 0 16 16"
+      width="16"
+      xmlns="http://www.w3.org/2000/svg"
     >
-      <div
-        class="animate-spin absolute top-0 left-0 w-full h-full rounded-full border-[1.5px] border-current border-r-transparent"
+      <path
+        d="M8 1.5V8H1.5c0-3.59 2.91-6.5 6.5-6.5zM16 8A8 8 0 100 8a8 8 0 0016 0z"
+        fill="currentColor"
       />
-    </div>
+    </svg>
   </div>
 </div>
 `;
