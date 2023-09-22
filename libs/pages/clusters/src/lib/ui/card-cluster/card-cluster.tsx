@@ -2,7 +2,7 @@ import { StateEnum } from 'qovery-typescript-axios'
 import { ClusterType } from '@qovery/domains/clusters/feature'
 import { ClusterButtonsActions } from '@qovery/shared/console-shared'
 import { type ClusterEntity } from '@qovery/shared/interfaces'
-import { Icon, Skeleton, StatusChip, Tag } from '@qovery/shared/ui'
+import { Badge, Icon, Skeleton, StatusChip } from '@qovery/shared/ui'
 import { getStatusClusterMessage } from '@qovery/shared/util-js'
 
 export interface CardClusterProps {
@@ -68,25 +68,25 @@ export function CardCluster(props: CardClusterProps) {
       </div>
       <div className="flex flex-wrap gap-2">
         {cluster.production && (
-          <Tag dataTestId="tag-prod" className="text-brand-500 border border-brand-500 bg-brand-50 truncate">
+          <Badge color="purple" data-testid="tag-prod">
             PROD
-          </Tag>
+          </Badge>
         )}
         {cluster.is_default && (
-          <Tag dataTestId="tag-default" className="text-sky-500 border border-sky-500 bg-sky-50 truncate">
+          <Badge color="sky" variant="surface" data-testid="tag-default">
             DEFAULT
-          </Tag>
+          </Badge>
         )}
         <ClusterType cloudProvider={cluster.cloud_provider} kubernetes={cluster.kubernetes} />
-        <Tag dataTestId="tag-region" className="text-neutral-350 border border-neutral-250 truncate">
+        <Badge color="neutral" data-testid="tag-region">
           {cluster.region}
-        </Tag>
-        <Tag dataTestId="tag-version" className="text-neutral-350 border border-neutral-250 truncate">
+        </Badge>
+        <Badge color="neutral" data-testid="tag-version">
           {cluster.version}
-        </Tag>
-        <Tag dataTestId="tag-instance" className="text-neutral-350 border border-neutral-250 truncate">
+        </Badge>
+        <Badge color="neutral" data-testid="tag-instance">
           {cluster.instance_type?.replace('_', '.').toLowerCase()}
-        </Tag>
+        </Badge>
       </div>
     </div>
   )

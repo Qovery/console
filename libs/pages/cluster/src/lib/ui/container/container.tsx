@@ -4,7 +4,7 @@ import { ClusterType } from '@qovery/domains/clusters/feature'
 import { ClusterButtonsActions } from '@qovery/shared/console-shared'
 import { type ClusterEntity } from '@qovery/shared/interfaces'
 import { CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
-import { Header, Icon, IconAwesomeEnum, Skeleton, Tabs, Tag, TagSize } from '@qovery/shared/ui'
+import { Badge, Header, Icon, IconAwesomeEnum, Skeleton, Tabs } from '@qovery/shared/ui'
 
 export interface ContainerProps {
   cluster?: ClusterEntity
@@ -30,33 +30,34 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
         )}
       </Skeleton>
       {cluster?.production && (
-        <Tag size={TagSize.BIG} className="text-brand-500 border border-brand-500 bg-brand-50 truncate">
+        <Badge size="sm" color="neutral">
           PROD
-        </Tag>
+        </Badge>
       )}
       {cluster?.is_default && (
-        <Tag size={TagSize.BIG} className="text-sky-500 border border-sky-500 bg-sky-50 truncate">
+        <Badge size="sm" color="sky">
           DEFAULT
-        </Tag>
+        </Badge>
+      )}
       {cluster ? (
         <ClusterType size="sm" cloudProvider={cluster.cloud_provider} kubernetes={cluster.kubernetes} />
       ) : (
         <Skeleton width={120} height={32} show />
       )}
       <Skeleton width={120} height={32} show={!cluster}>
-        <Tag size={TagSize.BIG} className="text-neutral-400 border border-neutral-200 truncate">
+        <Badge size="sm" color="neutral">
           {cluster?.region}
-        </Tag>
+        </Badge>
       </Skeleton>
       <Skeleton width={120} height={32} show={!cluster}>
-        <Tag size={TagSize.BIG} className="text-neutral-400 border border-neutral-200 truncate">
+        <Badge size="sm" color="neutral">
           {cluster?.version}
-        </Tag>
+        </Badge>
       </Skeleton>
       <Skeleton width={120} height={32} show={!cluster}>
-        <Tag size={TagSize.BIG} className="text-neutral-400 border border-neutral-200 truncate">
+        <Badge size="sm" color="neutral">
           {cluster?.instance_type?.toLowerCase().replace('_', '.')}
-        </Tag>
+        </Badge>
       </Skeleton>
     </>
   )
