@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Heading should render successfully 1`] = `
+<body>
+  <div>
+    <section
+      class="flex flex-col text-neutral-350"
+    >
+      <h1
+        class="font-bold text-neutral-400 text-3xl"
+      >
+        Foobar
+      </h1>
+    </section>
+  </div>
+</body>
+`;

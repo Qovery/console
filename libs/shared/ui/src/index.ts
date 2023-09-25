@@ -1,3 +1,5 @@
+export * from './lib/components/heading/heading'
+export * from './lib/components/section/section'
 export * from './lib/components/popover/popover'
 export * from './lib/components/inputs/input-filter/input-filter'
 export * from './lib/components/pagination/pagination'
