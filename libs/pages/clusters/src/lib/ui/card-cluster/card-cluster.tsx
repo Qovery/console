@@ -69,12 +69,12 @@ export function CardCluster(props: CardClusterProps) {
       <div className="flex flex-wrap gap-2">
         {cluster.production && (
           <Badge size="xs" color="brand" data-testid="tag-prod">
-            PROD
+            Production
           </Badge>
         )}
         {cluster.is_default && (
           <Badge size="xs" color="sky" variant="surface" data-testid="tag-default">
-            DEFAULT
+            Default
           </Badge>
         )}
         <ClusterType cloudProvider={cluster.cloud_provider} kubernetes={cluster.kubernetes} />
