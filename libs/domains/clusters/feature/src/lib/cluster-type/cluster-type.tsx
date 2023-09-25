@@ -17,7 +17,7 @@ export function ClusterType({ cloudProvider, kubernetes, ...props }: ClusterType
     .with(['SCW', P._], () => 'Managed (Kapsule)')
     .exhaustive()
   return (
-    <Badge size="xs" color="neutral" {...props}>
+    <Badge color="neutral" {...props}>
       {clusterType}
     </Badge>
   )

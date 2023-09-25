@@ -77,7 +77,7 @@ export function CardCluster(props: CardClusterProps) {
             Default
           </Badge>
         )}
-        <ClusterType cloudProvider={cluster.cloud_provider} kubernetes={cluster.kubernetes} />
+        <ClusterType size="xs" cloudProvider={cluster.cloud_provider} kubernetes={cluster.kubernetes} />
         <Badge size="xs" color="neutral" data-testid="tag-region">
           {cluster.region}
         </Badge>
