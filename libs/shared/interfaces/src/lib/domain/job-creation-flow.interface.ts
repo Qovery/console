@@ -5,6 +5,7 @@ export interface JobGeneralData {
   name: string
   description: string
   serviceType: ServiceTypeEnum
+  auto_deploy: boolean
 
   // container
   registry?: string

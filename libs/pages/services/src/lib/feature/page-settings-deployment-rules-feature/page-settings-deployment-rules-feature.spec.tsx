@@ -30,7 +30,6 @@ describe('PageSettingsDeploymentRulesFeature', () => {
     id: '1',
     updated_at: '2020-01-01T00:00:00Z',
     created_at: '2020-01-01T00:00:00Z',
-    auto_deploy: true,
     auto_stop: true,
     auto_preview: true,
     timezone: 'UTC',
@@ -45,7 +44,6 @@ describe('PageSettingsDeploymentRulesFeature', () => {
 
     useFetchEnvironmentDeploymentRuleSpy.mockReturnValue(
       mockUseQueryResult<EnvironmentDeploymentRule>({
-        auto_deploy: true,
         auto_stop: true,
         auto_preview: true,
         created_at: '2020-01-01T00:00:00Z',
@@ -77,7 +75,6 @@ describe('PageSettingsDeploymentRulesFeature', () => {
 
     const env = handleSubmit(
       {
-        auto_deploy: true,
         auto_stop: true,
         weekdays: weekdaysValues.map((weekday) => weekday.value),
         start_time: startTime,
@@ -85,7 +82,6 @@ describe('PageSettingsDeploymentRulesFeature', () => {
       },
       environmentDeploymentRules
     )
-    expect(env.auto_deploy).toBe(true)
     expect(env.auto_stop).toBe(true)
     expect(env.weekdays).toStrictEqual([
       WeekdayEnum.MONDAY,

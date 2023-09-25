@@ -1,6 +1,7 @@
 import { type FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
+import { AutoDeploySetting } from '@qovery/domains/services/feature'
 import { JobGeneralSettings } from '@qovery/shared/console-shared'
 import { type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
 import { type JobGeneralData, type OrganizationEntity } from '@qovery/shared/interfaces'
@@ -16,7 +17,8 @@ export interface StepGeneralProps {
 export function StepGeneral(props: StepGeneralProps) {
   const { organizationId = '', environmentId = '', projectId = '' } = useParams()
   const navigate = useNavigate()
-  const { formState, control } = useFormContext<JobGeneralData>()
+  const { formState, control, watch } = useFormContext<JobGeneralData>()
+  const watchServiceType = watch('serviceType')
 
   return (
     <div>
@@ -67,8 +69,9 @@ export function StepGeneral(props: StepGeneralProps) {
         />
 
         <JobGeneralSettings jobType={props.jobType} organization={props.organization} isEdition={false} />
+        <AutoDeploySetting source={watchServiceType === ServiceTypeEnum.CONTAINER ? 'CONTAINER_REGISTRY' : 'GIT'} />
 
-        <div className="flex justify-between">
+        <div className="flex justify-between mt-6">
           <Button
             onClick={() => navigate(SERVICES_URL(organizationId, projectId, environmentId))}
             type="button"

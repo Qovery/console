@@ -42,10 +42,10 @@ jest.mock('react-redux', () => ({
   useDispatch: () => mockDispatch,
 }))
 
-const mockContext: ApplicationContainerCreateContextInterface = {
+const mockContext: Required<ApplicationContainerCreateContextInterface> = {
   currentStep: 1,
   setCurrentStep: jest.fn(),
-  generalData: { name: 'test', serviceType: ServiceTypeEnum.APPLICATION },
+  generalData: { name: 'test', serviceType: ServiceTypeEnum.APPLICATION, auto_deploy: false },
   setGeneralData: jest.fn(),
   resourcesData: {
     memory: 512,
@@ -178,7 +178,7 @@ describe('PageApplicationPostFeature', () => {
       data: {
         name: 'test',
         description: '',
-        healthchecks: undefined,
+        healthchecks: {},
         ports: [{ internal_port: 80, external_port: 443, publicly_accessible: true, protocol: 'HTTP', name: 'p80' }],
         cpu: 500,
         memory: 512,
@@ -189,7 +189,6 @@ describe('PageApplicationPostFeature', () => {
         image_name: '456',
         tag: '789',
         entrypoint: '/',
-        healthchecks: {},
       },
       serviceType: 'CONTAINER',
     })

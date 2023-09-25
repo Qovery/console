@@ -1,9 +1,9 @@
-import { getAllByTestId, getByTestId, render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { BuildModeEnum, GitProviderEnum } from 'qovery-typescript-axios'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { cronjobFactoryMock } from '@qovery/shared/factories'
 import { type JobGeneralData } from '@qovery/shared/interfaces'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import JobGeneralSettings from './job-general-settings'
 
 const mockJobApplication = cronjobFactoryMock(1)[0]
@@ -38,11 +38,12 @@ describe('JobGeneralSettings', () => {
       repository: 'test',
       provider: GitProviderEnum.GITHUB,
       serviceType: ServiceTypeEnum.APPLICATION,
+      auto_deploy: true,
     }
   })
 
   it('should render successfully', () => {
-    const { baseElement } = render(
+    const { baseElement } = renderWithProviders(
       wrapWithReactHookForm<JobGeneralData>(<JobGeneralSettings jobType={ServiceTypeEnum.CRON_JOB} />, {
         defaultValues,
       })
@@ -50,8 +51,8 @@ describe('JobGeneralSettings', () => {
     expect(baseElement).toBeTruthy()
   })
 
-  it('should render 2 content block if edit mode', () => {
-    const { baseElement } = render(
+  it('should render 2 content block if edit mode', async () => {
+    renderWithProviders(
       wrapWithReactHookForm<JobGeneralData>(
         <JobGeneralSettings jobType={ServiceTypeEnum.CRON_JOB} isEdition={true} />,
         {
@@ -60,12 +61,17 @@ describe('JobGeneralSettings', () => {
       )
     )
 
-    expect(getAllByTestId(baseElement, 'block-content')).toHaveLength(2)
+    // https://react-hook-form.com/advanced-usage#TransformandParse
+    expect(
+      await screen.findByText(/The service will be automatically updated on every new commit on the branch./i)
+    ).toBeInTheDocument()
+
+    expect(screen.getAllByTestId('block-content')).toHaveLength(3)
   })
 
-  it('should render git related fields if service type is git', () => {
+  it('should render git related fields if service type is git', async () => {
     defaultValues.serviceType = ServiceTypeEnum.APPLICATION
-    const { baseElement } = render(
+    renderWithProviders(
       wrapWithReactHookForm<JobGeneralData>(
         <JobGeneralSettings jobType={ServiceTypeEnum.CRON_JOB} isEdition={true} />,
         {
@@ -74,12 +80,17 @@ describe('JobGeneralSettings', () => {
       )
     )
 
-    getByTestId(baseElement, 'git-fields')
+    // https://react-hook-form.com/advanced-usage#TransformandParse
+    expect(
+      await screen.findByText(/The service will be automatically updated on every new commit on the branch./i)
+    ).toBeInTheDocument()
+
+    screen.getByTestId('git-fields')
   })
 
-  it('should render container related fields if service type is git', () => {
+  it('should render container related fields if service type is git', async () => {
     defaultValues.serviceType = ServiceTypeEnum.CONTAINER
-    const { baseElement } = render(
+    renderWithProviders(
       wrapWithReactHookForm<JobGeneralData>(
         <JobGeneralSettings jobType={ServiceTypeEnum.CRON_JOB} isEdition={true} />,
         {
@@ -88,6 +99,13 @@ describe('JobGeneralSettings', () => {
       )
     )
 
-    getByTestId(baseElement, 'container-fields')
+    // https://react-hook-form.com/advanced-usage#TransformandParse
+    expect(
+      await screen.findByText(
+        /The service will be automatically updated if Qovery is notified on the API that a new image tag is available./i
+      )
+    ).toBeInTheDocument()
+
+    screen.getByTestId('container-fields')
   })
 })

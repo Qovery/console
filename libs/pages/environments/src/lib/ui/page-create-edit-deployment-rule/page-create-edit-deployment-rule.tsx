@@ -167,21 +167,6 @@ export function PageCreateEditDeploymentRule(props: PageCreateEditDeploymentRule
                       />
                     )}
                   />
-                  <div className="flex items-center gap-3 mb-7">
-                    <Controller
-                      name="auto_deploy"
-                      control={control}
-                      render={({ field }) => (
-                        <InputToggle
-                          value={field.value}
-                          onChange={field.onChange}
-                          title="Auto-deploy"
-                          description="Automatically deploy every new commit on the applications within this environment (if the branch matches). Only the impacted applications will be redeployed."
-                          small
-                        />
-                      )}
-                    />
-                  </div>
                 </BlockContent>
 
                 <BlockContent title="Setup to apply - Start & stop">

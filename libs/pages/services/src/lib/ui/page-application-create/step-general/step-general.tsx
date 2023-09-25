@@ -2,6 +2,7 @@ import { BuildModeEnum } from 'qovery-typescript-axios'
 import { type FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
+import { AutoDeploySetting } from '@qovery/domains/services/feature'
 import {
   CreateGeneralGitApplication,
   EntrypointCmdInputs,
@@ -102,7 +103,9 @@ export function StepGeneral(props: StepGeneralProps) {
 
         {watchBuildMode === BuildModeEnum.DOCKER && <EntrypointCmdInputs />}
 
-        <div className="flex justify-between">
+        <AutoDeploySetting source={watchServiceType === ServiceTypeEnum.CONTAINER ? 'CONTAINER_REGISTRY' : 'GIT'} />
+
+        <div className="flex justify-between mt-6">
           <Button
             onClick={() => navigate(SERVICES_URL(organizationId, projectId, environmentId))}
             type="button"

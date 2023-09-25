@@ -24,7 +24,6 @@ describe('PageCreateEditDeploymentRule', () => {
         start_time: string
         stop_time: string
         mode: string
-        auto_deploy: boolean
         auto_stop: boolean
         description: string
         cluster_id: string

@@ -1,6 +1,7 @@
 import { BuildModeEnum, BuildPackLanguageEnum } from 'qovery-typescript-axios'
 import { type FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
+import { AutoDeploySetting } from '@qovery/domains/services/feature'
 import {
   EditGitRepositorySettingsFeature,
   EntrypointCmdInputs,
@@ -39,8 +40,13 @@ const languageItems = Object.values(BuildPackLanguageEnum).map((value) => ({
   value: value,
 }))
 
-export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
-  const { onSubmit, watchBuildMode, type, loading } = props
+export function PageSettingsGeneral({
+  onSubmit,
+  watchBuildMode,
+  type,
+  loading,
+  organization,
+}: PageSettingsGeneralProps) {
   const { control, formState } = useFormContext()
 
   return (
@@ -77,13 +83,13 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
             <JobGeneralSettings
               isEdition={true}
               jobType={isCronJob(type) ? ServiceTypeEnum.CRON_JOB : ServiceTypeEnum.LIFECYCLE_JOB}
-              organization={props.organization}
+              organization={organization}
             />
           )}
           {isApplication(type) && (
             <>
               <EditGitRepositorySettingsFeature />
-              <BlockContent title="Build mode">
+              <BlockContent classNameContent="gap-3 flex flex-col" title="Build & deploy">
                 <Controller
                   name="build_mode"
                   control={control}
@@ -91,7 +97,6 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
                     <InputSelect
                       dataTestId="input-select-mode"
                       label="Mode"
-                      className="mb-3"
                       options={buildModeItems}
                       onChange={field.onChange}
                       value={field.value}
@@ -142,16 +147,23 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
                   <EntrypointCmdInputs />
                 </BlockContent>
               )}
+
+              <BlockContent title="Auto-deploy">
+                <AutoDeploySetting source="GIT" />
+              </BlockContent>
             </>
           )}
 
           {isContainer(type) && (
             <>
               <BlockContent title="Container Settings">
-                <GeneralContainerSettings organization={props.organization} />
+                <GeneralContainerSettings organization={organization} />
               </BlockContent>
               <BlockContent title="Entrypoint and arguments">
                 <EntrypointCmdInputs />
+              </BlockContent>
+              <BlockContent title="Auto-deploy">
+                <AutoDeploySetting source="CONTAINER_REGISTRY" />
               </BlockContent>
             </>
           )}

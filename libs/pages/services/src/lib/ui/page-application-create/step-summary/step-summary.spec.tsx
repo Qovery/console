@@ -13,6 +13,7 @@ const props: StepSummaryProps = {
   generalData: {
     serviceType: ServiceTypeEnum.APPLICATION,
     name: 'test',
+    auto_deploy: false,
   },
   gotoPorts: jest.fn(),
   onPrevious: jest.fn(),
