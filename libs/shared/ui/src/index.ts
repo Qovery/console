@@ -1,3 +1,4 @@
+export * from './lib/components/description-list/description-list'
 export * from './lib/components/heading/heading'
 export * from './lib/components/section/section'
 export * from './lib/components/popover/popover'
