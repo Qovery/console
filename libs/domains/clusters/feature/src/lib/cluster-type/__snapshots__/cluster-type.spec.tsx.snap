@@ -1,0 +1,53 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ClusterType should render as DOKS 1`] = `
+<body>
+  <div>
+    <span
+      class="inline-flex items-baseline shrink-0 font-medium rounded border text-sm py-1 px-2 border-neutral-250 text-neutral-350 dark:border-neutral-350"
+      data-accent-color="neutral"
+    >
+      Managed (DOKS)
+    </span>
+  </div>
+</body>
+`;
+
+exports[`ClusterType should render as EKS 1`] = `
+<body>
+  <div>
+    <span
+      class="inline-flex items-baseline shrink-0 font-medium rounded border text-sm py-1 px-2 border-neutral-250 text-neutral-350 dark:border-neutral-350"
+      data-accent-color="neutral"
+    >
+      Managed (EKS)
+    </span>
+  </div>
+</body>
+`;
+
+exports[`ClusterType should render as K3S 1`] = `
+<body>
+  <div>
+    <span
+      class="inline-flex items-baseline shrink-0 font-medium rounded border text-sm py-1 px-2 border-neutral-250 text-neutral-350 dark:border-neutral-350"
+      data-accent-color="neutral"
+    >
+      EC2 (K3S)
+    </span>
+  </div>
+</body>
+`;
+
+exports[`ClusterType should render as SCW 1`] = `
+<body>
+  <div>
+    <span
+      class="inline-flex items-baseline shrink-0 font-medium rounded border text-sm py-1 px-2 border-neutral-250 text-neutral-350 dark:border-neutral-350"
+      data-accent-color="neutral"
+    >
+      Managed (Kapsule)
+    </span>
+  </div>
+</body>
+`;

@@ -7,6 +7,7 @@ import {
 import { Link, useParams } from 'react-router-dom'
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { dark } from 'react-syntax-highlighter/dist/cjs/styles/hljs'
+import { match } from 'ts-pattern'
 import { IconEnum } from '@qovery/shared/enums'
 import {
   APPLICATION_URL,
@@ -22,7 +23,7 @@ import {
   SETTINGS_URL,
   SETTINGS_WEBHOOKS,
 } from '@qovery/shared/routes'
-import { Icon, IconAwesomeEnum, Skeleton, TagEvent, Tooltip } from '@qovery/shared/ui'
+import { Badge, Icon, IconAwesomeEnum, Skeleton, Tooltip } from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import CopyButton from '../copy-button/copy-button'
@@ -97,6 +98,59 @@ export function RowEvent(props: RowEventProps) {
     }
   }
 
+  const badge = match(event.event_type)
+    .with(OrganizationEventType.ACCEPT, () => (
+      <Badge size="xs" color="green">
+        Accept <Icon name={IconAwesomeEnum.CHECK} className="ml-1" />
+      </Badge>
+    ))
+    .with(OrganizationEventType.CREATE, () => (
+      <Badge size="xs" color="green">
+        Create <Icon name={IconAwesomeEnum.CHECK} className="ml-1" />
+      </Badge>
+    ))
+    .with(OrganizationEventType.DELETE, () => (
+      <Badge size="xs" color="neutral">
+        Delete <Icon name={IconAwesomeEnum.ERASER} className="ml-1" />
+      </Badge>
+    ))
+    .with(OrganizationEventType.UPDATE, () => (
+      <Badge size="xs" color="sky">
+        Update <Icon name={IconAwesomeEnum.ROTATE} className="ml-1" />
+      </Badge>
+    ))
+    .with(OrganizationEventType.TRIGGER_CANCEL, () => (
+      <Badge size="xs" color="neutral">
+        Trigger Cancel <Icon name={IconAwesomeEnum.XMARK} className="ml-1" />
+      </Badge>
+    ))
+    .with(OrganizationEventType.TRIGGER_DELETE, () => (
+      <Badge size="xs" color="neutral">
+        Trigger Delete <Icon name={IconAwesomeEnum.ERASER} className="ml-1" />
+      </Badge>
+    ))
+    .with(OrganizationEventType.TRIGGER_DEPLOY, () => (
+      <Badge size="xs" color="neutral">
+        Trigger Deploy <Icon name={IconAwesomeEnum.CHECK} className="ml-1" />
+      </Badge>
+    ))
+    .with(OrganizationEventType.TRIGGER_REDEPLOY, () => (
+      <Badge size="xs" color="neutral">
+        Trigger Redeploy <Icon name={IconAwesomeEnum.CHECK} className="ml-1" />
+      </Badge>
+    ))
+    .with(OrganizationEventType.TRIGGER_STOP, () => (
+      <Badge size="xs" color="sky">
+        Trigger Stop <Icon name={IconAwesomeEnum.XMARK} className="ml-1" />
+      </Badge>
+    ))
+    .with(OrganizationEventType.TRIGGER_RESTART, () => (
+      <Badge size="xs" color="sky">
+        Trigger Restart <Icon name={IconAwesomeEnum.ROTATE_RIGHT} className="ml-1" />
+      </Badge>
+    ))
+    .otherwise(() => '-')
+
   return (
     <>
       <div
@@ -118,9 +172,9 @@ export function RowEvent(props: RowEventProps) {
             </div>
           </Skeleton>
         </div>
-        <div className="px-4">
+        <div className="px-4" data-testid="tag">
           <Skeleton height={16} width={80} show={isPlaceholder}>
-            <TagEvent eventType={event.event_type} />
+            {badge}
           </Skeleton>
         </div>
         <div className="px-4">

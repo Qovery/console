@@ -1,11 +1,11 @@
 import { type Meta, type Story } from '@storybook/react'
 import { CloudProviderEnum } from 'qovery-typescript-axios'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
-import { BadgeService, type BadgeServiceProps } from './badge-service'
+import { ServiceIcon, type ServiceIconProps } from './service-icon'
 
 export default {
-  component: BadgeService,
-  title: 'BadgeService',
+  component: ServiceIcon,
+  title: 'ServiceIcon',
   parameters: {
     backgrounds: {
       default: 'white',
@@ -20,7 +20,7 @@ export default {
   },
 } as Meta
 
-const Template: Story<BadgeServiceProps> = (args) => <BadgeService {...args} />
+const Template: Story<ServiceIconProps> = (args) => <ServiceIcon {...args} />
 
 export const Primary = Template.bind({})
 Primary.args = {

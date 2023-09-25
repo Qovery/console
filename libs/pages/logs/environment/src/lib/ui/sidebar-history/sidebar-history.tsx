@@ -1,6 +1,7 @@
 import { type DeploymentHistoryEnvironment, StateEnum } from 'qovery-typescript-axios'
 import { DEPLOYMENT_LOGS_VERSION_URL } from '@qovery/shared/routes'
 import {
+  Badge,
   Button,
   ButtonSize,
   ButtonStyle,
@@ -10,7 +11,6 @@ import {
   MenuAlign,
   type MenuData,
   StatusChip,
-  Tag,
   Tooltip,
 } from '@qovery/shared/ui'
 import { dateFullFormat } from '@qovery/shared/util-dates'
@@ -117,11 +117,7 @@ export function SidebarHistory({ data, serviceId, versionId, pathLogs, environme
             </div>
           </Tooltip>
         )}
-        {currentPosition === 0 && (
-          <Tag className="text-neutral-350 border border-neutral-350" fontWeight="font-medium">
-            Latest
-          </Tag>
-        )}
+        {currentPosition === 0 && <Badge>Latest</Badge>}
         {environmentState && currentPosition > 0 && !showNewTag && (
           <Button
             className="w-[50px]"

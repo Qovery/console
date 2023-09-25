@@ -9,6 +9,7 @@ export interface TagCommitProps {
   commitDeltaCount?: number
 }
 
+// TODO: This should be a button
 export function TagCommit(props: TagCommitProps) {
   const { commitId = '', withBackground, commitDeltaCount } = props
   const [hover, setHover] = useState(false)

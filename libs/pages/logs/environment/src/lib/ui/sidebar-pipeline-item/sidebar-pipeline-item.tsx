@@ -4,7 +4,7 @@ import { Link, useParams } from 'react-router-dom'
 import { getServiceType } from '@qovery/shared/enums'
 import { type ApplicationEntity, type DatabaseEntity } from '@qovery/shared/interfaces'
 import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
-import { BadgeDeploymentOrder, BadgeService, Icon, IconAwesomeEnum, StatusChip } from '@qovery/shared/ui'
+import { BadgeDeploymentOrder, Icon, IconAwesomeEnum, ServiceIcon, StatusChip } from '@qovery/shared/ui'
 import { ServiceStageIdsContext } from '../../feature/service-stage-ids-context/service-stage-ids-context'
 
 export function mergeServices(applications?: Status[], databases?: Status[], containers?: Status[], jobs?: Status[]) {
@@ -79,7 +79,7 @@ export function SidebarPipelineItem({ currentStage, index, serviceId, versionId,
                     } ${service.is_part_last_deployment ? '!text-brand-400' : ''}`}
                   >
                     <span className="flex">
-                      <BadgeService
+                      <ServiceIcon
                         className="mr-2.5 mt-0.5"
                         serviceType={getServiceType(currentApplication(service.id) as ApplicationEntity)}
                         buildMode={(currentApplication(service.id) as ApplicationEntity)?.build_mode}

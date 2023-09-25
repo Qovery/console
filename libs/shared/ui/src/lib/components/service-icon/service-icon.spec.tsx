@@ -2,12 +2,12 @@ import { render } from '__tests__/utils/setup-jest'
 import { BuildModeEnum, CloudProviderEnum } from 'qovery-typescript-axios'
 import { IconEnum, ServiceTypeEnum } from '@qovery/shared/enums'
 import Icon from '../icon/icon'
-import BadgeService, { iconByService } from './badge-service'
+import ServiceIcon, { iconByService } from './service-icon'
 
-describe('BadgeService', () => {
+describe('ServiceIcon', () => {
   it('renders with correct icon and size', () => {
     const { container } = render(
-      <BadgeService
+      <ServiceIcon
         serviceType={ServiceTypeEnum.APPLICATION}
         cloudProvider={CloudProviderEnum.AWS}
         buildMode={BuildModeEnum.DOCKER}

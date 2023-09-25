@@ -3,6 +3,7 @@ import { type PropsWithChildren, createContext, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { postApplicationActionsDeploy, postApplicationActionsRedeploy } from '@qovery/domains/application'
+import { EnvironmentMode } from '@qovery/domains/environments/feature'
 import { selectClusterById } from '@qovery/domains/organization'
 import { useDeploymentStatus } from '@qovery/domains/services/feature'
 import { ApplicationButtonsActions, NeedRedeployFlag } from '@qovery/shared/console-shared'
@@ -19,9 +20,6 @@ import {
   type MenuData,
   type MenuItemProps,
   Skeleton,
-  Tag,
-  TagMode,
-  TagSize,
   Tooltip,
 } from '@qovery/shared/ui'
 import { type AppDispatch, type RootState } from '@qovery/state/store'
@@ -143,7 +141,7 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
       </Skeleton>
       {environment && (
         <Skeleton width={80} height={32} show={!environment?.mode}>
-          <TagMode size={TagSize.BIG} status={environment?.mode} />
+          <EnvironmentMode size="sm" mode={environment.mode} />
         </Skeleton>
       )}
       <Skeleton width={40} height={32} show={!environment?.cloud_provider}>
@@ -159,10 +157,6 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
           </div>
         </Tooltip>
       </Skeleton>
-      <Tag className="bg-neutral-150 gap-2 hidden">
-        <span className="w-2 h-2 rounded-lg bg-orange-300"></span>
-        <span className="w-2 h-2 rounded-lg bg-teal-500"></span>
-      </Tag>
     </>
   )
 

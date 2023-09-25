@@ -13,6 +13,9 @@ export interface TagProps {
   fontWeight?: string
 }
 
+/**
+ * @deprecated Should be replaced by Badge component
+ */
 export function Tag({
   children,
   className = '',

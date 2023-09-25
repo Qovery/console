@@ -1,5 +1,7 @@
 import { type Invoice, InvoiceStatusEnum } from 'qovery-typescript-axios'
+import { match } from 'ts-pattern'
 import {
+  Badge,
   ButtonIcon,
   ButtonIconStyle,
   ButtonSize,
@@ -7,8 +9,6 @@ import {
   type TableFilterProps,
   type TableHeadProps,
   TableRow,
-  Tag,
-  TagSize,
 } from '@qovery/shared/ui'
 import { dateToFormat } from '@qovery/shared/util-dates'
 import { costToHuman } from '@qovery/shared/util-js'
@@ -26,15 +26,30 @@ export interface TableRowInvoiceProps {
 export function TableRowInvoice(props: TableRowInvoiceProps) {
   const { dataHead, columnsWidth = `repeat(${dataHead.length},minmax(0,1fr))`, data, filter, downloadInvoice } = props
 
-  const statusBadgeClassNames: Record<InvoiceStatusEnum, string> = {
-    [InvoiceStatusEnum.PAID]: 'bg-green-50 text-green-500 border-green-500',
-    [InvoiceStatusEnum.NOT_PAID]: 'bg-yellow-50 text-yellow-500 border-yellow-500',
-    [InvoiceStatusEnum.PENDING]: 'bg-yellow-50 text-yellow-500 border-yellow-500',
-    [InvoiceStatusEnum.POSTED]: 'bg-yellow-50 text-yellow-500 border-yellow-500',
-    [InvoiceStatusEnum.UNKNOWN]: 'bg-brand-50 text-brand-500 border-brand-500',
-    [InvoiceStatusEnum.PAYMENT_DUE]: 'bg-yellow-50 text-yellow-500 border-yellow-500',
-    [InvoiceStatusEnum.VOIDED]: 'bg-brand-50 text-brand-500 border-brand-500',
-  }
+  const statusLabel = data.status.replace('_', ' ')
+  const badge = match(data.status)
+    .with(InvoiceStatusEnum.PAID, () => (
+      <Badge color="green" variant="surface" size="xs">
+        {statusLabel}
+      </Badge>
+    ))
+    .with(
+      InvoiceStatusEnum.NOT_PAID,
+      InvoiceStatusEnum.PENDING,
+      InvoiceStatusEnum.POSTED,
+      InvoiceStatusEnum.PAYMENT_DUE,
+      () => (
+        <Badge color="yellow" variant="surface" size="xs">
+          {statusLabel}
+        </Badge>
+      )
+    )
+    .with(InvoiceStatusEnum.UNKNOWN, InvoiceStatusEnum.VOIDED, () => (
+      <Badge color="brand" variant="surface" size="xs">
+        {statusLabel}
+      </Badge>
+    ))
+    .exhaustive()
 
   return (
     <TableRow
@@ -45,11 +60,7 @@ export function TableRowInvoice(props: TableRowInvoiceProps) {
     >
       <>
         <div className="px-4 text-xs text-neutral-400 font-medium">{dateToFormat(data.created_at, 'MMM dd, Y')}</div>
-        <div className="px-4 text-xs text-neutral-400 font-medium">
-          <Tag className={`border  ${statusBadgeClassNames[data.status]}`} size={TagSize.SMALL}>
-            {data.status.replace('_', ' ')}
-          </Tag>
-        </div>
+        <div className="px-4 text-xs text-neutral-400 font-medium">{badge}</div>
         <div className="px-4 text-xs text-neutral-400 font-medium">
           {costToHuman(data.total_in_cents / 100, data.currency_code)}
         </div>

@@ -10,13 +10,13 @@ import {
   type JobApplicationEntity,
 } from '@qovery/shared/interfaces'
 import {
+  Badge,
   Icon,
   IconAwesomeEnum,
   Skeleton,
   type TableFilterProps,
   type TableHeadProps,
   TableRow,
-  Tag,
   TagCommit,
   Tooltip,
   Truncate,
@@ -120,7 +120,7 @@ export function TableRowServices<T>(props: TableRowServicesProps<T>) {
                 </div>
               )}
               {(isContainer(type) || dataJobs.source?.image) && (
-                <Tag className="truncate border border-neutral-250 text-neutral-350 font-medium h-7">
+                <Badge size="xs">
                   <div className="block truncate">
                     {dataContainer.image_name && (
                       <Tooltip content={`${dataContainer.image_name}:${dataContainer.tag}`}>
@@ -137,7 +137,7 @@ export function TableRowServices<T>(props: TableRowServicesProps<T>) {
                       </Tooltip>
                     )}
                   </div>
-                </Tag>
+                </Badge>
               )}
               {isDatabase(type) && (
                 <span className="block text-xs ml-2 text-neutral-400 font-medium">{dataDatabase.version}</span>

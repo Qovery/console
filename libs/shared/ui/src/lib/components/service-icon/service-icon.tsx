@@ -2,7 +2,7 @@ import { BuildModeEnum, type CloudProviderEnum } from 'qovery-typescript-axios'
 import { IconEnum, ServiceTypeEnum } from '@qovery/shared/enums'
 import Icon from '../icon/icon'
 
-export interface BadgeServiceProps {
+export interface ServiceIconProps {
   serviceType: ServiceTypeEnum
   cloudProvider?: CloudProviderEnum
   buildMode?: BuildModeEnum
@@ -39,7 +39,7 @@ export const iconByService = (
   }
 }
 
-export function BadgeService(props: BadgeServiceProps) {
+export function ServiceIcon(props: ServiceIconProps) {
   const { serviceType, buildMode, cloudProvider, notRounded, size = '28', padding = '1', className = '' } = props
 
   return (
@@ -60,4 +60,4 @@ export function BadgeService(props: BadgeServiceProps) {
   )
 }
 
-export default BadgeService
+export default ServiceIcon

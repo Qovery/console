@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { selectApplicationsEntitiesByEnvId } from '@qovery/domains/application'
 import { selectDatabasesEntitiesByEnvId } from '@qovery/domains/database'
-import { EnvironmentStateChip } from '@qovery/domains/environments/feature'
+import { EnvironmentMode, EnvironmentStateChip } from '@qovery/domains/environments/feature'
 import { selectClusterById } from '@qovery/domains/organization'
 import { useDeploymentStatus } from '@qovery/domains/services/feature'
 import { EnvironmentButtonsActions } from '@qovery/shared/console-shared'
@@ -31,9 +31,6 @@ import {
   type MenuData,
   Skeleton,
   Tabs,
-  Tag,
-  TagMode,
-  TagSize,
   Tooltip,
 } from '@qovery/shared/ui'
 import { type RootState } from '@qovery/state/store'
@@ -85,7 +82,7 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
       </Skeleton>
       {environment && (
         <Skeleton width={80} height={32} show={!environment?.mode}>
-          <TagMode size={TagSize.BIG} status={environment?.mode} />
+          <EnvironmentMode size="sm" mode={environment.mode} />
         </Skeleton>
       )}
       <Skeleton width={120} height={32} show={!cluster}>
@@ -96,10 +93,6 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
           </div>
         </Tooltip>
       </Skeleton>
-      <Tag className="bg-neutral-150 gap-2 hidden">
-        <span className="w-2 h-2 rounded-lg bg-orange-300"></span>
-        <span className="w-2 h-2 rounded-lg bg-teal-500"></span>
-      </Tag>
     </>
   )
 

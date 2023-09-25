@@ -15,6 +15,7 @@ import {
 } from '@qovery/shared/routes'
 import { timeAgo } from '@qovery/shared/util-dates'
 import { trimId, upperCaseFirstLetter } from '@qovery/shared/util-js'
+import { Badge } from '../../badge/badge'
 import ButtonIcon, { ButtonIconStyle } from '../../buttons/button-icon/button-icon'
 import { ButtonSize } from '../../buttons/button/button'
 import Icon from '../../icon/icon'
@@ -22,7 +23,6 @@ import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
 import Skeleton from '../../skeleton/skeleton'
 import StatusChip from '../../status-chip/status-chip'
 import TagCommit from '../../tag-commit/tag-commit'
-import Tag from '../../tag/tag'
 import Tooltip from '../../tooltip/tooltip'
 import { type TableFilterProps, type TableHeadProps } from '../table'
 import TableRow from '../table-row/table-row'
@@ -176,7 +176,7 @@ export function TableRowDeployment({
               <TagCommit commitId={(data as DeploymentService | DeploymentHistoryApplication)?.commit?.git_commit_id} />
             )}
             {(data as ContainerApplicationEntity).image_name && (
-              <Tag className="truncate border border-neutral-250 text-neutral-350 font-medium h-7">
+              <Badge size="xs">
                 <span className="block truncate">
                   <Tooltip
                     side="left"
@@ -189,7 +189,7 @@ export function TableRowDeployment({
                     </span>
                   </Tooltip>
                 </span>
-              </Tag>
+              </Badge>
             )}
           </div>
         )}
