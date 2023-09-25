@@ -1,0 +1,38 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Badge shoud match color snapshot 1`] = `
+<body>
+  <div>
+    <span
+      class="inline-flex items-baseline shrink-0 font-medium rounded text-green-500 border text-sm py-1 px-2 border-green-500"
+      data-accent-color="green"
+    >
+      Foobar
+    </span>
+  </div>
+</body>
+`;
+
+exports[`Badge shoud match size snapshot 1`] = `
+<body>
+  <div>
+    <span
+      class="inline-flex items-baseline shrink-0 font-medium rounded border text-xs p-1 border-neutral-250 text-neutral-350 dark:border-neutral-350"
+    >
+      Foobar
+    </span>
+  </div>
+</body>
+`;
+
+exports[`Badge shoud match variant snapshot 1`] = `
+<body>
+  <div>
+    <span
+      class="inline-flex items-baseline shrink-0 font-medium rounded border text-sm py-1 px-2 bg-neutral-100 border-neutral-200 text-neutral-400"
+    >
+      Foobar
+    </span>
+  </div>
+</body>
+`;
