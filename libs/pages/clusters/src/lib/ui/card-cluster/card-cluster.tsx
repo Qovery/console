@@ -68,23 +68,23 @@ export function CardCluster(props: CardClusterProps) {
       </div>
       <div className="flex flex-wrap gap-2">
         {cluster.production && (
-          <Badge color="purple" data-testid="tag-prod">
+          <Badge size="xs" color="brand" data-testid="tag-prod">
             PROD
           </Badge>
         )}
         {cluster.is_default && (
-          <Badge color="sky" variant="surface" data-testid="tag-default">
+          <Badge size="xs" color="sky" variant="surface" data-testid="tag-default">
             DEFAULT
           </Badge>
         )}
         <ClusterType cloudProvider={cluster.cloud_provider} kubernetes={cluster.kubernetes} />
-        <Badge color="neutral" data-testid="tag-region">
+        <Badge size="xs" color="neutral" data-testid="tag-region">
           {cluster.region}
         </Badge>
-        <Badge color="neutral" data-testid="tag-version">
+        <Badge size="xs" color="neutral" data-testid="tag-version">
           {cluster.version}
         </Badge>
-        <Badge color="neutral" data-testid="tag-instance">
+        <Badge size="xs" color="neutral" data-testid="tag-instance">
           {cluster.instance_type?.replace('_', '.').toLowerCase()}
         </Badge>
       </div>
