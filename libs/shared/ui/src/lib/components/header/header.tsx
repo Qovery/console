@@ -1,6 +1,7 @@
 import { type ReactNode } from 'react'
 import { twMerge } from 'tailwind-merge'
 import { type IconEnum } from '@qovery/shared/enums'
+import { Heading } from '../heading/heading'
 import Icon from '../icon/icon'
 import Skeleton from '../skeleton/skeleton'
 import Truncate from '../truncate/truncate'
@@ -29,9 +30,7 @@ export function Header(props: HeaderProps) {
         <div className="flex flex-col gap-3">
           <div className="flex gap-2 items-center max-w-3xl">
             <Skeleton height={36} width={150} show={!title}>
-              <h1 className="font-bold text-neutral-400 text-2xl max-w-3xl truncate">
-                {title && <Truncate text={title} truncateLimit={50} />}
-              </h1>
+              <Heading>{title && <Truncate text={title} truncateLimit={50} />}</Heading>
             </Skeleton>
           </div>
           {actions && <div className="flex gap-3 items-start">{actions}</div>}

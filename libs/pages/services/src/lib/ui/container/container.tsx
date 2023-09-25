@@ -30,6 +30,7 @@ import {
   Menu,
   MenuAlign,
   type MenuData,
+  Section,
   Skeleton,
   Tabs,
   Tooltip,
@@ -178,11 +179,11 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
   )
 
   return (
-    <>
+    <Section>
       <Header title={environment?.name} icon={IconEnum.SERVICES} actions={headerActions} />
       <Tabs items={tabsItems} contentRight={contentTabs} />
       {children}
-    </>
+    </Section>
   )
 }
 

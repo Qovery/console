@@ -20,6 +20,7 @@ import {
   Menu,
   type MenuData,
   type MenuItemProps,
+  Section,
   Skeleton,
   Tooltip,
 } from '@qovery/shared/ui'
@@ -159,23 +160,26 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
     <ApplicationContext.Provider
       value={{ showHideAllEnvironmentVariablesValues, setShowHideAllEnvironmentVariablesValues }}
     >
-      <Header
-        title={application?.name}
-        icon={
-          isCronJob(application)
-            ? IconEnum.CRON_JOB
-            : isLifeCycleJob(application)
-            ? IconEnum.LIFECYCLE_JOB
-            : IconEnum.APPLICATION
-        }
-        buttons={headerButtons}
-        actions={headerActions}
-      />
-      <TabsFeature />
-      {application && serviceDeploymentStatus?.service_deployment_status !== ServiceDeploymentStatusEnum.UP_TO_DATE && (
-        <NeedRedeployFlag service={application} onClickCTA={redeployApplication} />
-      )}
-      {children}
+      <Section>
+        <Header
+          title={application?.name}
+          icon={
+            isCronJob(application)
+              ? IconEnum.CRON_JOB
+              : isLifeCycleJob(application)
+              ? IconEnum.LIFECYCLE_JOB
+              : IconEnum.APPLICATION
+          }
+          buttons={headerButtons}
+          actions={headerActions}
+        />
+        <TabsFeature />
+        {application &&
+          serviceDeploymentStatus?.service_deployment_status !== ServiceDeploymentStatusEnum.UP_TO_DATE && (
+            <NeedRedeployFlag service={application} onClickCTA={redeployApplication} />
+          )}
+        {children}
+      </Section>
     </ApplicationContext.Provider>
   )
 }

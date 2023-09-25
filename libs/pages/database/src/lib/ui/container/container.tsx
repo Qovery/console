@@ -15,7 +15,7 @@ import {
   DATABASE_SETTINGS_URL,
   DATABASE_URL,
 } from '@qovery/shared/routes'
-import { Badge, Header, Icon, Skeleton, Tabs, Tooltip } from '@qovery/shared/ui'
+import { Badge, Header, Icon, Section, Skeleton, Tabs, Tooltip } from '@qovery/shared/ui'
 import { type AppDispatch, type RootState } from '@qovery/state/store'
 
 export interface ContainerProps {
@@ -114,14 +114,14 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
   }
 
   return (
-    <>
+    <Section>
       <Header title={database?.name} icon={IconEnum.DATABASE} actions={headerActions} />
       <Tabs items={tabsItems} />
       {database && serviceDeploymentStatus?.service_deployment_status !== ServiceDeploymentStatusEnum.UP_TO_DATE && (
         <NeedRedeployFlag service={database} onClickCTA={redeployDatabase} />
       )}
       {children}
-    </>
+    </Section>
   )
 }
 

@@ -5,7 +5,7 @@ import { ClusterType } from '@qovery/domains/clusters/feature'
 import { ClusterButtonsActions } from '@qovery/shared/console-shared'
 import { type ClusterEntity } from '@qovery/shared/interfaces'
 import { CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
-import { Badge, Header, Icon, IconAwesomeEnum, Skeleton, Tabs } from '@qovery/shared/ui'
+import { Badge, Header, Icon, IconAwesomeEnum, Section, Skeleton, Tabs } from '@qovery/shared/ui'
 import NeedRedeployFlag from '../need-redeploy-flag/need-redeploy-flag'
 
 export interface ContainerProps {
@@ -69,14 +69,14 @@ export function Container({ children, cluster, deployCluster }: PropsWithChildre
   ]
 
   return (
-    <>
+    <Section>
       <Header title={cluster?.name} icon={cluster?.cloud_provider} actions={headerActions} />
       <Tabs items={tabsItems} />
       {cluster && cluster.deployment_status !== ClusterDeploymentStatusEnum.UP_TO_DATE && (
         <NeedRedeployFlag deploymentStatus={cluster?.deployment_status} onClickButton={deployCluster} />
       )}
       <div className="flex-grow flex-col flex">{children}</div>
-    </>
+    </Section>
   )
 }
 
