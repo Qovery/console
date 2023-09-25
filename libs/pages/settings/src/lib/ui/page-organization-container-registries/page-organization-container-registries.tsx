@@ -66,7 +66,7 @@ export function PageOrganizationContainerRegistries(props: PageOrganizationConta
             <LoaderSpinner className="w-6" />
           </div>
         ) : containerRegistries && containerRegistries.length > 0 ? (
-          <BlockContent title="Container registries" classNameContent="">
+          <BlockContent title="Container registries" classNameContent="p-0">
             {containerRegistries?.map((registry: ContainerRegistryResponse) => (
               <div
                 data-testid={`registries-list-${registry.id}`}

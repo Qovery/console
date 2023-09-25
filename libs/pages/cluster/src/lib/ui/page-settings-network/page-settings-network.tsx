@@ -44,7 +44,7 @@ export function PageSettingsNetwork(props: PageSettingsNetworkProps) {
             <LoaderSpinner className="w-4" />
           </div>
         ) : props.routes && props.routes.length > 0 ? (
-          <BlockContent classNameContent="" title="Configured network">
+          <BlockContent classNameContent="p-0" title="Configured network">
             {props.routes &&
               props.routes.map((currentRoute, i) => (
                 <div

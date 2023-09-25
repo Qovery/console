@@ -46,7 +46,7 @@ export function PageOrganizationApi(props: PageOrganizationApiProps) {
             <LoaderSpinner className="w-6" />
           </div>
         ) : apiTokens && apiTokens.length > 0 ? (
-          <BlockContent title="Token List" classNameContent="">
+          <BlockContent title="Token List" classNameContent="p-0">
             {apiTokens?.map((token: OrganizationApiToken) => (
               <div
                 data-testid={`token-list-${token.id}`}

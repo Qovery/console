@@ -47,7 +47,7 @@ export function PageOrganizationWebhooks(props: PageOrganizationWebhooksProps) {
             Add new
           </Button>
         </div>
-        <BlockContent title="Webhook" classNameContent="">
+        <BlockContent title="Webhook" classNameContent="p-0">
           {props.webhookLoading ? (
             <div className="flex justify-center  py-4 px-5">
               <LoaderSpinner className="w-5" />
