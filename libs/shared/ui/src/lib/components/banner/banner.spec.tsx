@@ -8,17 +8,13 @@ describe('Banner', () => {
   })
 
   it('should render in yellow', () => {
-    renderWithProviders(<Banner color="yellow">Hello</Banner>)
-    const banner = screen.getByTestId('banner')
-    expect(banner).toHaveClass('bg-yellow-500')
-    expect(banner).toHaveClass('text-yellow-900')
+    const { baseElement } = renderWithProviders(<Banner color="yellow">Hello</Banner>)
+    expect(baseElement).toMatchSnapshot()
   })
 
   it('should render in brand color', () => {
-    renderWithProviders(<Banner color="brand">Hello</Banner>)
-    const banner = screen.getByTestId('banner')
-    expect(banner).toHaveClass('bg-brand-500')
-    expect(banner).toHaveClass('text-white')
+    const { baseElement } = renderWithProviders(<Banner color="brand">Hello</Banner>)
+    expect(baseElement).toMatchSnapshot()
   })
 
   it('should render a button and handle click', async () => {

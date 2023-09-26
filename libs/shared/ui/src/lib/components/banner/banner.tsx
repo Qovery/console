@@ -33,7 +33,7 @@ export const Banner = forwardRef<HTMLDivElement, PropsWithChildren<BannerProps>>
   forwardedRef
 ) {
   return (
-    <div data-testid="banner" className={bannerVariants({ color })}>
+    <div className={bannerVariants({ color })}>
       <div className="flex h-10 items-center justify-center font-medium text-sm" ref={forwardedRef}>
         {children}
         {buttonLabel && (
