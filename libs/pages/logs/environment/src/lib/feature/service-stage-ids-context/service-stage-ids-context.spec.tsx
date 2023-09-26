@@ -9,9 +9,9 @@ describe('ServiceStageIdsContext', () => {
       return (
         <div>
           <p data-testid="stage">{stageId}</p>
-          <button data-testid="set-stage" onClick={() => updateStageId('id')}>
+          <ButtonLegacy data-testid="set-stage" onClick={() => updateStageId('id')}>
             Set Stage
-          </button>
+          </ButtonLegacy>
         </div>
       )
     }

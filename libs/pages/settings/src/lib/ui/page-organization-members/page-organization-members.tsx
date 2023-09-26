@@ -6,7 +6,7 @@ import {
 } from 'qovery-typescript-axios'
 import { type Dispatch, type SetStateAction, useEffect, useState } from 'react'
 import { MemberRoleEnum } from '@qovery/shared/enums'
-import { Button, HelpSection, IconAwesomeEnum, Table, type TableFilterProps } from '@qovery/shared/ui'
+import { ButtonLegacy, HelpSection, IconAwesomeEnum, Table, type TableFilterProps } from '@qovery/shared/ui'
 import RowMember from './row-member/row-member'
 
 export interface PageOrganizationMembersProps {
@@ -128,9 +128,9 @@ export function PageOrganizationMembers(props: PageOrganizationMembersProps) {
               role to each of them. You can invite someone to join your organization via email.
             </p>
           </div>
-          <Button onClick={() => onAddMember && onAddMember()} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>
+          <ButtonLegacy onClick={() => onAddMember && onAddMember()} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>
             Add member
-          </Button>
+          </ButtonLegacy>
         </div>
         <Table
           className="border border-neutral-200 rounded"

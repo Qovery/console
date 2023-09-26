@@ -22,7 +22,7 @@ import {
 } from '@qovery/shared/routes'
 import {
   Badge,
-  Button,
+  ButtonLegacy,
   ButtonSize,
   Header,
   Icon,
@@ -166,9 +166,9 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
       <Skeleton width={154} height={40} show={isLoadingDeploymentStatus}>
         <Menu
           trigger={
-            <Button size={ButtonSize.LARGE} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>
+            <ButtonLegacy size={ButtonSize.LARGE} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>
               New service
-            </Button>
+            </ButtonLegacy>
           }
           menus={newServicesMenu}
           arrowAlign={MenuAlign.START}

@@ -2,7 +2,7 @@ import { type DeploymentHistoryEnvironment, StateEnum } from 'qovery-typescript-
 import { DEPLOYMENT_LOGS_VERSION_URL } from '@qovery/shared/routes'
 import {
   Badge,
-  Button,
+  ButtonLegacy,
   ButtonSize,
   ButtonStyle,
   Icon,
@@ -76,7 +76,7 @@ export function SidebarHistory({ data, serviceId, versionId, pathLogs, environme
   return (
     <div className="flex border-b border-neutral-500 px-4 py-3">
       <div className="flex">
-        <Button
+        <ButtonLegacy
           dataTestId="btn-back-logs"
           className="!border-r-0 !rounded-r-none"
           style={ButtonStyle.DARK}
@@ -84,26 +84,26 @@ export function SidebarHistory({ data, serviceId, versionId, pathLogs, environme
           link={pathLogs}
         >
           <Icon name={IconAwesomeEnum.HOUSE} />
-        </Button>
+        </ButtonLegacy>
         <Menu
           width={300}
           menus={menuHistory}
           arrowAlign={MenuAlign.CENTER}
           trigger={
-            <Button
+            <ButtonLegacy
               className="!rounded-l-none w-[200px] mr-1.5"
               style={ButtonStyle.DARK}
               size={ButtonSize.TINY}
               iconRight={IconAwesomeEnum.ANGLE_DOWN}
             >
               Deployment log history
-            </Button>
+            </ButtonLegacy>
           }
         />
         {currentPosition > 0 && showNewTag && (
           <Tooltip content="New deployment available!" side="right" color="orange">
             <div>
-              <Button
+              <ButtonLegacy
                 className="!text-orange-500 !border-orange-500 !bg-neutral-500 w-[50px]"
                 style={ButtonStyle.DARK}
                 size={ButtonSize.TINY}
@@ -113,13 +113,13 @@ export function SidebarHistory({ data, serviceId, versionId, pathLogs, environme
                   New
                   <i className="relative top-[1px] block ml-1 w-2 h-2 before:block before:absolute before:top-0.5 before:left-0.5 before:bg-orange-500 before:w-1 before:h-1 before:rounded-full after:motion-safe:animate-pulse after:block after:bg-orange-500/30 after:w-2 after:h-2 after:rounded-full" />
                 </span>
-              </Button>
+              </ButtonLegacy>
             </div>
           </Tooltip>
         )}
         {currentPosition === 0 && <Badge>Latest</Badge>}
         {environmentState && currentPosition > 0 && !showNewTag && (
-          <Button
+          <ButtonLegacy
             className="w-[50px]"
             style={ButtonStyle.DARK}
             size={ButtonSize.TINY}
@@ -127,7 +127,7 @@ export function SidebarHistory({ data, serviceId, versionId, pathLogs, environme
             link={pathLogs + DEPLOYMENT_LOGS_VERSION_URL(serviceId, '')}
           >
             {currentPosition}
-          </Button>
+          </ButtonLegacy>
         )}
       </div>
     </div>

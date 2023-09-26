@@ -8,7 +8,7 @@ import { ENVIRONMENTS_DEPLOYMENT_RULES_URL, ENVIRONMENTS_URL } from '@qovery/sha
 import {
   type BaseLink,
   BlockContent,
-  Button,
+  ButtonLegacy,
   ButtonSize,
   ButtonStyle,
   HelpSection,
@@ -64,7 +64,7 @@ export function PageCreateEditDeploymentRule(props: PageCreateEditDeploymentRule
         <div className="flex-grow overflow-y-auto">
           <div className="py-7 px-10">
             <div className="max-w-[620px]">
-              <Button
+              <ButtonLegacy
                 size={ButtonSize.TINY}
                 style={ButtonStyle.FLAT}
                 onClick={() =>
@@ -74,7 +74,7 @@ export function PageCreateEditDeploymentRule(props: PageCreateEditDeploymentRule
               >
                 <Icon name="icon-solid-arrow-left" className="mr-1 text-xs" />
                 Back
-              </Button>
+              </ButtonLegacy>
 
               <h1 className="font-bold text-xl text-neutral-400 mb-2">{title}</h1>
 
@@ -258,9 +258,9 @@ export function PageCreateEditDeploymentRule(props: PageCreateEditDeploymentRule
                   </div>
                 </BlockContent>
                 <div className="flex justify-end">
-                  <Button className="mb-14" size={ButtonSize.LARGE} style={ButtonStyle.BASIC} type="submit">
+                  <ButtonLegacy className="mb-14" size={ButtonSize.LARGE} style={ButtonStyle.BASIC} type="submit">
                     {btnLabel}
-                  </Button>
+                  </ButtonLegacy>
                 </div>
               </form>
             </div>

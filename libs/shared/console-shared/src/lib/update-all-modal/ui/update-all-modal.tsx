@@ -3,7 +3,7 @@ import { type ApplicationEntity } from '@qovery/shared/interfaces'
 import {
   Avatar,
   AvatarStyle,
-  Button,
+  ButtonLegacy,
   ButtonSize,
   ButtonStyle,
   Icon,
@@ -50,23 +50,23 @@ export function UpdateAllModal(props: UpdateAllModalProps) {
         {props.applications &&
           props.applications.length > 0 &&
           (props.selectedServiceIds.length > 0 ? (
-            <Button
+            <ButtonLegacy
               onClick={props.unselectAll}
               dataTestId="deselect-all"
               size={ButtonSize.TINY}
               style={ButtonStyle.STROKED}
             >
               Deselect All
-            </Button>
+            </ButtonLegacy>
           ) : (
-            <Button
+            <ButtonLegacy
               onClick={props.selectAll}
               dataTestId="select-all"
               size={ButtonSize.TINY}
               style={ButtonStyle.STROKED}
             >
               Select All
-            </Button>
+            </ButtonLegacy>
           ))}
       </div>
       {props.listLoading ? (
@@ -144,7 +144,7 @@ export function UpdateAllModal(props: UpdateAllModalProps) {
       )}
 
       <div className="flex gap-3 justify-end -mb-6 py-6 bg-white sticky bottom-0">
-        <Button
+        <ButtonLegacy
           dataTestId="cancel-button"
           className="btn--no-min-w"
           style={ButtonStyle.STROKED}
@@ -152,8 +152,8 @@ export function UpdateAllModal(props: UpdateAllModalProps) {
           onClick={props.closeModal}
         >
           Cancel
-        </Button>
-        <Button
+        </ButtonLegacy>
+        <ButtonLegacy
           dataTestId="submit-button"
           disabled={props.selectedServiceIds.length === 0 || props.submitDisabled}
           className="btn--no-min-w"
@@ -163,7 +163,7 @@ export function UpdateAllModal(props: UpdateAllModalProps) {
           loading={props.submitLoading}
         >
           Update {props.selectedServiceIds.length} service{props.selectedServiceIds.length > 1 ? 's' : ''}
-        </Button>
+        </ButtonLegacy>
       </div>
     </div>
   )

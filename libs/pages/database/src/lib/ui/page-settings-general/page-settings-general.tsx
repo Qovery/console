@@ -6,7 +6,7 @@ import {
   BannerBox,
   BannerBoxEnum,
   BlockContent,
-  Button,
+  ButtonLegacy,
   ButtonSize,
   ButtonStyle,
   HelpSection,
@@ -190,7 +190,7 @@ export function PageSettingsGeneral({
             />
           </BlockContent>
           <div className="flex justify-end">
-            <Button
+            <ButtonLegacy
               dataTestId="submit-button"
               className="btn--no-min-w"
               size={ButtonSize.LARGE}
@@ -200,7 +200,7 @@ export function PageSettingsGeneral({
               loading={loading}
             >
               Save
-            </Button>
+            </ButtonLegacy>
           </div>
         </form>
       </div>

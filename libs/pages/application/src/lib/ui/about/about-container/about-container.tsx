@@ -2,7 +2,7 @@ import { type ContainerRegistryResponse } from 'qovery-typescript-axios'
 import { useCallback } from 'react'
 import { IconEnum, isContainerJob } from '@qovery/shared/enums'
 import { type ApplicationEntity, type LoadingStatus } from '@qovery/shared/interfaces'
-import { Button, ButtonStyle, Skeleton, Truncate } from '@qovery/shared/ui'
+import { ButtonLegacy, ButtonStyle, Skeleton, Truncate } from '@qovery/shared/ui'
 
 export interface AboutContainerProps {
   loadingStatus?: LoadingStatus
@@ -42,9 +42,14 @@ export function AboutContainer(props: AboutContainerProps) {
       <div className="flex gap-3 items-center">
         Registry:{' '}
         <Skeleton height={36} width={100} show={!props.currentRegistry}>
-          <Button external link={props.currentRegistry?.url} style={ButtonStyle.STROKED} iconLeft={IconEnum.CONTAINER}>
+          <ButtonLegacy
+            external
+            link={props.currentRegistry?.url}
+            style={ButtonStyle.STROKED}
+            iconLeft={IconEnum.CONTAINER}
+          >
             <Truncate truncateLimit={18} text={props.currentRegistry?.name || ''} />
-          </Button>
+          </ButtonLegacy>
         </Skeleton>
       </div>
     </div>

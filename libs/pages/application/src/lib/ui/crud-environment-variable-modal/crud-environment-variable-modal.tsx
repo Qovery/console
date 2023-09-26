@@ -2,7 +2,7 @@ import { type APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { IconEnum } from '@qovery/shared/enums'
 import {
-  Button,
+  ButtonLegacy,
   ButtonStyle,
   Icon,
   IconAwesomeEnum,
@@ -198,12 +198,12 @@ export function CrudEnvironmentVariableModal(props: CrudEnvironmentVariableModal
         )}
 
         <div className="flex gap-3 justify-end">
-          <Button className="btn--no-min-w" style={ButtonStyle.STROKED} onClick={() => props.closeModal()}>
+          <ButtonLegacy className="btn--no-min-w" style={ButtonStyle.STROKED} onClick={() => props.closeModal()}>
             Cancel
-          </Button>
-          <Button className="btn--no-min-w" type="submit" disabled={!formState.isValid} loading={props.loading}>
+          </ButtonLegacy>
+          <ButtonLegacy className="btn--no-min-w" type="submit" disabled={!formState.isValid} loading={props.loading}>
             Confirm
-          </Button>
+          </ButtonLegacy>
         </div>
       </form>
     </div>

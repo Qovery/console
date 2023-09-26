@@ -1,5 +1,5 @@
 import { Controller, useFormContext } from 'react-hook-form'
-import { Button, ButtonSize, ButtonStyle, InputText, useModal } from '@qovery/shared/ui'
+import { ButtonLegacy, ButtonSize, ButtonStyle, InputText, useModal } from '@qovery/shared/ui'
 
 export interface DeployOtherTagModalProps {
   serviceName?: string
@@ -41,7 +41,7 @@ export function DeployOtherTagModal(props: DeployOtherTagModalProps) {
         />
       </form>
       <div className="flex gap-3 justify-end -mb-6 py-6 bg-white sticky bottom-0">
-        <Button
+        <ButtonLegacy
           dataTestId="cancel-button"
           className="btn--no-min-w"
           style={ButtonStyle.STROKED}
@@ -49,8 +49,8 @@ export function DeployOtherTagModal(props: DeployOtherTagModalProps) {
           onClick={() => closeModal()}
         >
           Cancel
-        </Button>
-        <Button
+        </ButtonLegacy>
+        <ButtonLegacy
           dataTestId="submit-button"
           disabled={!formState.isValid}
           className="btn--no-min-w"
@@ -60,7 +60,7 @@ export function DeployOtherTagModal(props: DeployOtherTagModalProps) {
           loading={isLoading}
         >
           Deploy
-        </Button>
+        </ButtonLegacy>
       </div>
     </div>
   )

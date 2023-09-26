@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from '__tests__/utils/setup-jest'
-import Button from '../buttons/button/button'
+import ButtonLegacy from '../buttons/button/button-legacy'
 import Modal, { type ModalProps } from './modal'
 
 describe('Modal', () => {
@@ -7,7 +7,7 @@ describe('Modal', () => {
 
   beforeEach(() => {
     props = {
-      trigger: <Button data-testid="trigger-btn">Trigger</Button>,
+      trigger: <ButtonLegacy data-testid="trigger-btn">Trigger</ButtonLegacy>,
       children: <p>contenu</p>,
     }
   })

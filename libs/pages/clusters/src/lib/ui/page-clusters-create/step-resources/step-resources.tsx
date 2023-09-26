@@ -5,7 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { ClusterResourcesSettingsFeature } from '@qovery/shared/console-shared'
 import { type ApplicationGeneralData } from '@qovery/shared/interfaces'
 import { CLUSTERS_CREATION_GENERAL_URL, CLUSTERS_CREATION_URL, CLUSTERS_URL } from '@qovery/shared/routes'
-import { Button, ButtonSize, ButtonStyle } from '@qovery/shared/ui'
+import { ButtonLegacy, ButtonSize, ButtonStyle } from '@qovery/shared/ui'
 
 export interface StepResourcesProps {
   onSubmit: FormEventHandler<HTMLFormElement>
@@ -32,7 +32,7 @@ export function StepResources(props: StepResourcesProps) {
         />
 
         <div className="flex justify-between">
-          <Button
+          <ButtonLegacy
             onClick={() =>
               navigate(`${CLUSTERS_URL(organizationId)}${CLUSTERS_CREATION_URL}${CLUSTERS_CREATION_GENERAL_URL}`)
             }
@@ -42,8 +42,8 @@ export function StepResources(props: StepResourcesProps) {
             style={ButtonStyle.STROKED}
           >
             Back
-          </Button>
-          <Button
+          </ButtonLegacy>
+          <ButtonLegacy
             dataTestId="button-submit"
             type="submit"
             disabled={!formState.isValid}
@@ -51,7 +51,7 @@ export function StepResources(props: StepResourcesProps) {
             style={ButtonStyle.BASIC}
           >
             Continue
-          </Button>
+          </ButtonLegacy>
         </div>
       </form>
     </div>

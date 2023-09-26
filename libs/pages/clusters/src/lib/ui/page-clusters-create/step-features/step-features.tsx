@@ -2,7 +2,7 @@ import { type CloudProviderEnum, type ClusterFeature } from 'qovery-typescript-a
 import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { CardClusterFeature } from '@qovery/shared/console-shared'
-import { BannerBox, BannerBoxEnum, Button, ButtonSize, ButtonStyle, LoaderSpinner } from '@qovery/shared/ui'
+import { BannerBox, BannerBoxEnum, ButtonLegacy, ButtonSize, ButtonStyle, LoaderSpinner } from '@qovery/shared/ui'
 
 export interface StepFeaturesProps {
   onSubmit: FormEventHandler<HTMLFormElement>
@@ -51,7 +51,7 @@ export function StepFeatures(props: StepFeaturesProps) {
         </div>
 
         <div className="flex justify-between">
-          <Button
+          <ButtonLegacy
             onClick={goToBack}
             type="button"
             className="btn--no-min-w"
@@ -59,8 +59,8 @@ export function StepFeatures(props: StepFeaturesProps) {
             style={ButtonStyle.STROKED}
           >
             Back
-          </Button>
-          <Button
+          </ButtonLegacy>
+          <ButtonLegacy
             dataTestId="button-submit"
             type="submit"
             disabled={!formState.isValid}
@@ -68,7 +68,7 @@ export function StepFeatures(props: StepFeaturesProps) {
             style={ButtonStyle.BASIC}
           >
             Continue
-          </Button>
+          </ButtonLegacy>
         </div>
       </form>
     </div>

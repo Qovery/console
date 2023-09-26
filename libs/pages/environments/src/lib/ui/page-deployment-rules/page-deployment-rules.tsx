@@ -8,7 +8,7 @@ import {
   Droppable,
   type DroppableProvided,
 } from 'react-beautiful-dnd'
-import { type BaseLink, Button, ButtonSize, HelpSection } from '@qovery/shared/ui'
+import { type BaseLink, ButtonLegacy, ButtonSize, HelpSection } from '@qovery/shared/ui'
 import DeploymentRuleItem from '../deployment-rule-item/deployment-rule-item'
 import PlaceholderNoRules from '../placeholder-no-rules/placeholder-no-rules'
 
@@ -63,14 +63,14 @@ export function PageDeploymentRules(props: PageDeploymentRulesProps) {
               Configure your default deployment rules. Drag & drop rules to prioritize them.
             </p>
 
-            <Button
+            <ButtonLegacy
               size={ButtonSize.REGULAR}
               className="leading-none"
               link={linkNewRule}
               iconRight="icon-solid-circle-plus"
             >
               Add rule
-            </Button>
+            </ButtonLegacy>
           </div>
 
           <div className={`w-[640px] bg-neutral-100 rounded ${listRules?.length === 0 ? 'hidden' : ''}`}>

@@ -1,6 +1,6 @@
 import { type DatabaseAccessibilityEnum, type DatabaseModeEnum, type DatabaseTypeEnum } from 'qovery-typescript-axios'
 import { type DatabaseCredentials, type LoadingStatus } from '@qovery/shared/interfaces'
-import { Button, ButtonStyle, Icon, Skeleton, ToastBehavior, ToastEnum, Tooltip, toast } from '@qovery/shared/ui'
+import { ButtonLegacy, ButtonStyle, Icon, Skeleton, ToastBehavior, ToastEnum, Tooltip, toast } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
 export interface AboutProps {
@@ -50,14 +50,14 @@ export function About(props: AboutProps) {
       <Skeleton height={36} width={70} show={!loadingStatus || loadingStatus === 'loading'}>
         <Tooltip content="Copy" side="bottom">
           <div>
-            <Button
+            <ButtonLegacy
               style={ButtonStyle.STROKED}
               iconLeft="icon-solid-key"
               className="capitalize"
               onClick={copyToClipboard}
             >
               Credentials
-            </Button>
+            </ButtonLegacy>
             <ToastBehavior />
           </div>
         </Tooltip>

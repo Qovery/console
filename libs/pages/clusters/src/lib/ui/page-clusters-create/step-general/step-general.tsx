@@ -5,7 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { ClusterCredentialsSettingsFeature, ClusterGeneralSettings } from '@qovery/shared/console-shared'
 import { type ClusterGeneralData, type ClusterResourcesData, type Value } from '@qovery/shared/interfaces'
 import { CLUSTERS_URL } from '@qovery/shared/routes'
-import { Button, ButtonSize, ButtonStyle, Icon, IconFlag, InputSelect, LoaderSpinner } from '@qovery/shared/ui'
+import { ButtonLegacy, ButtonSize, ButtonStyle, Icon, IconFlag, InputSelect, LoaderSpinner } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { defaultResourcesData } from '../../../feature/page-clusters-create-feature/page-clusters-create-feature'
 
@@ -122,7 +122,7 @@ export function StepGeneral(props: StepGeneralProps) {
         </div>
 
         <div className="flex justify-between">
-          <Button
+          <ButtonLegacy
             onClick={() => navigate(CLUSTERS_URL(organizationId))}
             type="button"
             className="btn--no-min-w"
@@ -130,8 +130,8 @@ export function StepGeneral(props: StepGeneralProps) {
             style={ButtonStyle.STROKED}
           >
             Cancel
-          </Button>
-          <Button
+          </ButtonLegacy>
+          <ButtonLegacy
             dataTestId="button-submit"
             type="submit"
             disabled={!formState.isValid}
@@ -139,7 +139,7 @@ export function StepGeneral(props: StepGeneralProps) {
             style={ButtonStyle.BASIC}
           >
             Continue
-          </Button>
+          </ButtonLegacy>
         </div>
       </form>
     </div>

@@ -1,6 +1,6 @@
 import { type Dispatch, type MouseEvent, type SetStateAction, useEffect, useState } from 'react'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
-import Button, { ButtonSize, ButtonStyle } from '../../buttons/button/button'
+import ButtonLegacy, { ButtonSize, ButtonStyle } from '../../buttons/button-legacy/button-legacy'
 import Icon from '../../icon/icon'
 import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
 import Menu from '../../menu/menu'
@@ -251,18 +251,18 @@ export function TableHeadFilter<T>({ title, dataHead, defaultData, filter, setFi
         trigger={
           <div className="flex">
             {hasFilter ? (
-              <Button className="whitespace-nowrap flex btn--active !h-6 !pr-[26px]" size={ButtonSize.TINY}>
+              <ButtonLegacy className="whitespace-nowrap flex btn--active !h-6 !pr-[26px]" size={ButtonSize.TINY}>
                 {title} {!hideFilterNumber ? `(${dataFilterNumber})` : ''}
-              </Button>
+              </ButtonLegacy>
             ) : (
-              <Button
+              <ButtonLegacy
                 className={`flex !h-6 ${isDark ? 'btn--dark' : ''}`}
                 size={ButtonSize.TINY}
                 style={ButtonStyle.STROKED}
                 iconRight={IconAwesomeEnum.ANGLE_DOWN}
               >
                 {title}
-              </Button>
+              </ButtonLegacy>
             )}
           </div>
         }

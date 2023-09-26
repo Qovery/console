@@ -1,5 +1,13 @@
 import { GitProviderEnum } from 'qovery-typescript-axios'
-import { BannerBox, BannerBoxEnum, Button, ButtonSize, ButtonStyle, Icon, IconAwesomeEnum } from '@qovery/shared/ui'
+import {
+  BannerBox,
+  BannerBoxEnum,
+  ButtonLegacy,
+  ButtonSize,
+  ButtonStyle,
+  Icon,
+  IconAwesomeEnum,
+} from '@qovery/shared/ui'
 
 export interface ConfirmationGitModalProps {
   currentAuthProvider?: string
@@ -31,7 +39,7 @@ export function ConfirmationGitModal(props: ConfirmationGitModalProps) {
         <Icon name={IconAwesomeEnum.TRIANGLE_EXCLAMATION} className="absolute top-3 right-4 text-yellow-500" />
       </div>
       <div className="flex gap-3 justify-end mt-6">
-        <Button
+        <ButtonLegacy
           dataTestId="cancel-button"
           className="btn--no-min-w"
           style={ButtonStyle.STROKED}
@@ -39,8 +47,8 @@ export function ConfirmationGitModal(props: ConfirmationGitModalProps) {
           onClick={() => props.onClose()}
         >
           Cancel
-        </Button>
-        <Button
+        </ButtonLegacy>
+        <ButtonLegacy
           dataTestId="submit-button"
           size={ButtonSize.XLARGE}
           onClick={() => {
@@ -49,7 +57,7 @@ export function ConfirmationGitModal(props: ConfirmationGitModalProps) {
           }}
         >
           I understand
-        </Button>
+        </ButtonLegacy>
       </div>
     </div>
   )

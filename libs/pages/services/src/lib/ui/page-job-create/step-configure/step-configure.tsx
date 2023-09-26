@@ -3,7 +3,7 @@ import { useFormContext } from 'react-hook-form'
 import { JobConfigureSettings } from '@qovery/shared/console-shared'
 import { type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
 import { type JobConfigureData } from '@qovery/shared/interfaces'
-import { Button, ButtonSize, ButtonStyle } from '@qovery/shared/ui'
+import { ButtonLegacy, ButtonSize, ButtonStyle } from '@qovery/shared/ui'
 
 export interface StepConfigureProps {
   onSubmit: FormEventHandler<HTMLFormElement>
@@ -34,7 +34,7 @@ export function StepConfigure(props: StepConfigureProps) {
 
       <form onSubmit={props.onSubmit}>
         <div className="flex justify-between">
-          <Button
+          <ButtonLegacy
             onClick={props.onBack}
             type="button"
             className="btn--no-min-w"
@@ -42,8 +42,8 @@ export function StepConfigure(props: StepConfigureProps) {
             style={ButtonStyle.STROKED}
           >
             Back
-          </Button>
-          <Button
+          </ButtonLegacy>
+          <ButtonLegacy
             dataTestId="button-submit"
             type="submit"
             disabled={!(formState.isValid && isValid)}
@@ -51,7 +51,7 @@ export function StepConfigure(props: StepConfigureProps) {
             style={ButtonStyle.BASIC}
           >
             Continue
-          </Button>
+          </ButtonLegacy>
         </div>
       </form>
     </div>

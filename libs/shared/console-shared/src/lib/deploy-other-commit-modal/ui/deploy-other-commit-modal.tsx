@@ -2,7 +2,7 @@ import { type Commit } from 'qovery-typescript-axios'
 import {
   Avatar,
   AvatarStyle,
-  Button,
+  ButtonLegacy,
   ButtonSize,
   ButtonStyle,
   Icon,
@@ -148,7 +148,7 @@ export function DeployOtherCommitModal(props: DeployOtherCommitModalProps) {
       )}
 
       <div className="flex gap-3 justify-end -mb-6 py-6 bg-white sticky bottom-0">
-        <Button
+        <ButtonLegacy
           dataTestId="cancel-button"
           className="btn--no-min-w"
           style={ButtonStyle.STROKED}
@@ -156,8 +156,8 @@ export function DeployOtherCommitModal(props: DeployOtherCommitModalProps) {
           onClick={() => closeModal()}
         >
           Cancel
-        </Button>
-        <Button
+        </ButtonLegacy>
+        <ButtonLegacy
           dataTestId="submit-button"
           disabled={buttonDisabled}
           className="btn--no-min-w"
@@ -167,7 +167,7 @@ export function DeployOtherCommitModal(props: DeployOtherCommitModalProps) {
           loading={deployLoading}
         >
           Deploy
-        </Button>
+        </ButtonLegacy>
       </div>
     </div>
   )

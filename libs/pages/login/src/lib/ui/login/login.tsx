@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { type AuthEnum, useInviteMember } from '@qovery/shared/auth'
 import { InviteDetailsFeature } from '@qovery/shared/console-shared'
 import { IconEnum } from '@qovery/shared/enums'
-import { Icon } from '@qovery/shared/ui'
+import { ButtonLegacy, Icon } from '@qovery/shared/ui'
 
 export interface ILoginProps {
   onClickAuthLogin: (provider: string) => void
@@ -40,18 +40,18 @@ export function Login(props: ILoginProps) {
             </a>
             .
           </p>
-          <button className="btn-login btn-login--github mb-3" onClick={() => onClickAuthLogin(githubType)}>
+          <ButtonLegacy className="btn-login btn-login--github mb-3" onClick={() => onClickAuthLogin(githubType)}>
             <Icon className="absolute left-3" width="20" name={IconEnum.GITHUB_WHITE} />
             Sign in with Github
-          </button>
-          <button className="btn-login btn-login--default mb-3" onClick={() => onClickAuthLogin(gitlabType)}>
+          </ButtonLegacy>
+          <ButtonLegacy className="btn-login btn-login--default mb-3" onClick={() => onClickAuthLogin(gitlabType)}>
             <Icon className="absolute left-3" width="20" name={IconEnum.GITLAB} />
             Sign in with Gitlab
-          </button>
-          <button className="btn-login btn-login--default mb-3" onClick={() => onClickAuthLogin(bitbucketType)}>
+          </ButtonLegacy>
+          <ButtonLegacy className="btn-login btn-login--default mb-3" onClick={() => onClickAuthLogin(bitbucketType)}>
             <Icon className="absolute left-3" width="20" name={IconEnum.BITBUCKET} />
             Sign in with Bitbucket
-          </button>
+          </ButtonLegacy>
         </div>
       </div>
       <div className="hidden xl:block flex-[1_1_0%] bg-neutral-150 px-20 before:absolute before:top-0 before:w-full before:h-full before:bg-neutral-150">

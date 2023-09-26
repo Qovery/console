@@ -2,7 +2,7 @@ import { type CloudProviderEnum } from 'qovery-typescript-axios'
 import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { ClusterCredentialsSettingsFeature } from '@qovery/shared/console-shared'
-import { BlockContent, Button, ButtonSize, ButtonStyle, HelpSection } from '@qovery/shared/ui'
+import { BlockContent, ButtonLegacy, ButtonSize, ButtonStyle, HelpSection } from '@qovery/shared/ui'
 
 export interface PageSettingsCredentialsProps {
   onSubmit: FormEventHandler<HTMLFormElement>
@@ -23,7 +23,7 @@ export function PageSettingsCredentials(props: PageSettingsCredentialsProps) {
             <ClusterCredentialsSettingsFeature cloudProvider={cloudProvider} />
           </BlockContent>
           <div className="flex justify-end">
-            <Button
+            <ButtonLegacy
               dataTestId="submit-button"
               className="btn--no-min-w"
               size={ButtonSize.LARGE}
@@ -33,7 +33,7 @@ export function PageSettingsCredentials(props: PageSettingsCredentialsProps) {
               loading={loading}
             >
               Save
-            </Button>
+            </ButtonLegacy>
           </div>
         </form>
       </div>

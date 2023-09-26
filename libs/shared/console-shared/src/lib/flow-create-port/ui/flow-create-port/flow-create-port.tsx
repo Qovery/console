@@ -2,9 +2,9 @@ import { type Healthcheck, type ServicePort } from 'qovery-typescript-axios'
 import { type PortData } from '@qovery/shared/interfaces'
 import {
   BlockContent,
-  Button,
   ButtonIcon,
   ButtonIconStyle,
+  ButtonLegacy,
   ButtonSize,
   ButtonStyle,
   EmptyState,
@@ -54,9 +54,9 @@ export function FlowCreatePort({
         </div>
 
         {isSetting && (
-          <Button dataTestId="add-button" onClick={() => onAddPort()} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>
+          <ButtonLegacy dataTestId="add-button" onClick={() => onAddPort()} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>
             Add Port
-          </Button>
+          </ButtonLegacy>
         )}
       </div>
 
@@ -144,14 +144,14 @@ export function FlowCreatePort({
               ))}
             {!isSetting && (
               <div className="flex justify-end items-center py-3 px-4">
-                <Button
+                <ButtonLegacy
                   size={ButtonSize.TINY}
                   iconRight={IconAwesomeEnum.CIRCLE_PLUS}
                   className="btn--no-min-w"
                   onClick={onAddPort}
                 >
                   Add port
-                </Button>
+                </ButtonLegacy>
               </div>
             )}
           </BlockContent>
@@ -162,7 +162,7 @@ export function FlowCreatePort({
 
       {!isSetting && (
         <div className="flex justify-between">
-          <Button
+          <ButtonLegacy
             onClick={onBack}
             className="btn--no-min-w"
             type="button"
@@ -170,10 +170,15 @@ export function FlowCreatePort({
             style={ButtonStyle.STROKED}
           >
             Back
-          </Button>
-          <Button dataTestId="button-submit" onClick={onSubmit} size={ButtonSize.XLARGE} style={ButtonStyle.BASIC}>
+          </ButtonLegacy>
+          <ButtonLegacy
+            dataTestId="button-submit"
+            onClick={onSubmit}
+            size={ButtonSize.XLARGE}
+            style={ButtonStyle.BASIC}
+          >
             Continue
-          </Button>
+          </ButtonLegacy>
         </div>
       )}
     </div>

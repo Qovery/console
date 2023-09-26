@@ -6,7 +6,7 @@ import { JobGeneralSettings } from '@qovery/shared/console-shared'
 import { type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
 import { type JobGeneralData, type OrganizationEntity } from '@qovery/shared/interfaces'
 import { SERVICES_URL } from '@qovery/shared/routes'
-import { Button, ButtonSize, ButtonStyle, InputText, InputTextArea } from '@qovery/shared/ui'
+import { ButtonLegacy, ButtonSize, ButtonStyle, InputText, InputTextArea } from '@qovery/shared/ui'
 
 export interface StepGeneralProps {
   onSubmit: FormEventHandler<HTMLFormElement>
@@ -72,7 +72,7 @@ export function StepGeneral(props: StepGeneralProps) {
         <AutoDeploySetting source={watchServiceType === ServiceTypeEnum.CONTAINER ? 'CONTAINER_REGISTRY' : 'GIT'} />
 
         <div className="flex justify-between mt-6">
-          <Button
+          <ButtonLegacy
             onClick={() => navigate(SERVICES_URL(organizationId, projectId, environmentId))}
             type="button"
             className="btn--no-min-w"
@@ -80,8 +80,8 @@ export function StepGeneral(props: StepGeneralProps) {
             style={ButtonStyle.STROKED}
           >
             Cancel
-          </Button>
-          <Button
+          </ButtonLegacy>
+          <ButtonLegacy
             dataTestId="button-submit"
             type="submit"
             disabled={!formState.isValid}
@@ -89,7 +89,7 @@ export function StepGeneral(props: StepGeneralProps) {
             style={ButtonStyle.BASIC}
           >
             Continue
-          </Button>
+          </ButtonLegacy>
         </div>
       </form>
     </div>

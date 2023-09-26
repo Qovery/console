@@ -3,7 +3,7 @@ import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { ApplicationSettingsResources } from '@qovery/shared/console-shared'
 import { type ApplicationEntity } from '@qovery/shared/interfaces'
-import { Button, ButtonSize, ButtonStyle, HelpSection } from '@qovery/shared/ui'
+import { ButtonLegacy, ButtonSize, ButtonStyle, HelpSection } from '@qovery/shared/ui'
 
 export interface PageSettingsResourcesProps {
   onSubmit: FormEventHandler<HTMLFormElement>
@@ -35,7 +35,7 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
             environmentMode={environmentMode}
           />
           <div className="flex justify-end">
-            <Button
+            <ButtonLegacy
               dataTestId="submit-button"
               className="btn--no-min-w"
               size={ButtonSize.LARGE}
@@ -45,7 +45,7 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
               loading={loading}
             >
               Save
-            </Button>
+            </ButtonLegacy>
           </div>
         </form>
       </div>

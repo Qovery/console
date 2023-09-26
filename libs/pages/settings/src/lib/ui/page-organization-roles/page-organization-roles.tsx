@@ -4,9 +4,9 @@ import { MemberRoleEnum } from '@qovery/shared/enums'
 import { SETTINGS_ROLES_EDIT_URL, SETTINGS_URL } from '@qovery/shared/routes'
 import {
   BlockContent,
-  Button,
   ButtonIcon,
   ButtonIconStyle,
+  ButtonLegacy,
   ButtonSize,
   HelpSection,
   Icon,
@@ -55,9 +55,9 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
             <h1 className="h5 text-neutral-400 mb-2">Manage your roles</h1>
             <p className="text-neutral-400 text-xs">Manage the existing custom roles or create a new one.</p>
           </div>
-          <Button onClick={onAddRole} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>
+          <ButtonLegacy onClick={onAddRole} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>
             Add new role
-          </Button>
+          </ButtonLegacy>
         </div>
         {(!roles || roles.length === 0) && loading ? (
           <div data-testid="roles-loader" className="flex justify-center mt-5">

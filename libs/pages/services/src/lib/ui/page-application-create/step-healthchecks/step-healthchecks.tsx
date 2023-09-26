@@ -2,7 +2,7 @@ import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { ApplicationSettingsHealthchecks } from '@qovery/shared/console-shared'
 import { type PortData } from '@qovery/shared/interfaces'
-import { Button, ButtonSize, ButtonStyle } from '@qovery/shared/ui'
+import { ButtonLegacy, ButtonSize, ButtonStyle } from '@qovery/shared/ui'
 
 export interface StepHealthchecksProps {
   onBack: () => void
@@ -30,7 +30,7 @@ export function StepHealthchecks({ ports, onSubmit, onBack }: StepHealthchecksPr
         <ApplicationSettingsHealthchecks ports={ports?.map((port: PortData) => port.application_port || 0)} />
 
         <div className="flex justify-between mt-10">
-          <Button
+          <ButtonLegacy
             onClick={onBack}
             className="btn--no-min-w"
             type="button"
@@ -38,8 +38,8 @@ export function StepHealthchecks({ ports, onSubmit, onBack }: StepHealthchecksPr
             style={ButtonStyle.STROKED}
           >
             Back
-          </Button>
-          <Button
+          </ButtonLegacy>
+          <ButtonLegacy
             dataTestId="button-submit"
             type="submit"
             disabled={!formState.isValid}
@@ -47,7 +47,7 @@ export function StepHealthchecks({ ports, onSubmit, onBack }: StepHealthchecksPr
             style={ButtonStyle.BASIC}
           >
             Continue
-          </Button>
+          </ButtonLegacy>
         </div>
       </form>
     </>

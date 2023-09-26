@@ -1,7 +1,7 @@
 import { type FormEventHandler, type ReactNode, useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { type ApplicationEntity } from '@qovery/shared/interfaces'
-import { Button, ButtonSize, ButtonStyle } from '../../buttons/button/button'
+import { ButtonLegacy, ButtonSize, ButtonStyle } from '../../buttons/button-legacy/button-legacy'
 import Icon from '../../icon/icon'
 import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
 import { Popover } from '../../popover/popover'
@@ -79,7 +79,7 @@ export function ModalCrud(props: ModalCrudProps) {
         {children}
         <div className="flex gap-3 justify-end mt-6">
           {isEdit && onDelete ? (
-            <Button
+            <ButtonLegacy
               dataTestId="delete-button"
               className="btn--no-min-w"
               style={ButtonStyle.ERROR}
@@ -87,9 +87,9 @@ export function ModalCrud(props: ModalCrudProps) {
               onClick={() => onDelete()}
             >
               {deleteButtonLabel || 'Delete'}
-            </Button>
+            </ButtonLegacy>
           ) : (
-            <Button
+            <ButtonLegacy
               dataTestId="cancel-button"
               className="btn--no-min-w"
               style={ButtonStyle.STROKED}
@@ -97,9 +97,9 @@ export function ModalCrud(props: ModalCrudProps) {
               onClick={() => onClose()}
             >
               Cancel
-            </Button>
+            </ButtonLegacy>
           )}
-          <Button
+          <ButtonLegacy
             dataTestId="submit-button"
             className="btn--no-min-w"
             type="submit"
@@ -108,7 +108,7 @@ export function ModalCrud(props: ModalCrudProps) {
             loading={loading}
           >
             {submitLabel || (isEdit ? 'Confirm' : 'Create')}
-          </Button>
+          </ButtonLegacy>
         </div>
       </form>
     </div>

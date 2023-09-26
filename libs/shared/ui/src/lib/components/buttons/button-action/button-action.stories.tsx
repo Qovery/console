@@ -1,7 +1,7 @@
 import { type Meta, type Story } from '@storybook/react'
 import { type ClickEvent } from '@szhsin/react-menu'
 import Icon from '../../icon/icon'
-import { ButtonSize } from '../button/button'
+import { ButtonSize } from '../button-legacy/button-legacy'
 import ButtonAction, { type ButtonActionProps, ButtonActionStyle } from './button-action'
 
 export default {

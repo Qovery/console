@@ -5,7 +5,7 @@ import DatePickerLib, {
   type ReactDatePickerCustomHeaderProps,
 } from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
-import Button from '../buttons/button/button'
+import ButtonLegacy from '../buttons/button-legacy/button-legacy'
 import InputText from '../inputs/input-text/input-text'
 import DatePickerHeader from './date-picker-header/date-picker-header'
 
@@ -82,7 +82,7 @@ export function DatePicker({
               />
             </div>
           )}
-          <Button
+          <ButtonLegacy
             className="mt-5"
             onClick={() =>
               onChange(
@@ -92,7 +92,7 @@ export function DatePicker({
             }
           >
             Apply
-          </Button>
+          </ButtonLegacy>
         </div>
       </CalendarContainer>
     )

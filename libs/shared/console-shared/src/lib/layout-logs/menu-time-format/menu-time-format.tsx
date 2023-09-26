@@ -1,5 +1,5 @@
 import {
-  Button,
+  ButtonLegacy,
   ButtonSize,
   ButtonStyle,
   Icon,
@@ -50,9 +50,14 @@ export function MenuTimeFormat(props: MenuTimeFormatProps) {
       menus={menusTimeFormat}
       arrowAlign={MenuAlign.END}
       trigger={
-        <Button className="mr-2" size={ButtonSize.TINY} style={ButtonStyle.DARK} iconRight={IconAwesomeEnum.ANGLE_DOWN}>
+        <ButtonLegacy
+          className="mr-2"
+          size={ButtonSize.TINY}
+          style={ButtonStyle.DARK}
+          iconRight={IconAwesomeEnum.ANGLE_DOWN}
+        >
           Time format
-        </Button>
+        </ButtonLegacy>
       }
     />
   )

@@ -1,4 +1,4 @@
-import { type PropsWithChildren } from 'react'
+import { MouseEvent, type PropsWithChildren } from 'react'
 import { Link } from 'react-router-dom'
 import { type IconEnum } from '@qovery/shared/enums'
 import Icon from '../../icon/icon'
@@ -32,14 +32,14 @@ export interface ButtonProps {
   link?: string
   disabled?: boolean
   className?: string
-  onClick?: () => void
+  onClick?: (e: MouseEvent<HTMLElement>) => void
   type?: 'button' | 'submit' | 'reset' | undefined
   external?: boolean
   loading?: boolean
   dataTestId?: string
 }
 
-export function Button(props: PropsWithChildren<ButtonProps>) {
+export function ButtonLegacy(props: PropsWithChildren<ButtonProps>) {
   const {
     children,
     size = ButtonSize.REGULAR,
@@ -76,9 +76,9 @@ export function Button(props: PropsWithChildren<ButtonProps>) {
 
   if (!link) {
     return (
-      <button data-testid={dataTestId} className={defineClass} onClick={onClick} type={type} disabled={disabled}>
+      <ButtonLegacy data-testid={dataTestId} className={defineClass} onClick={onClick} type={type} disabled={disabled}>
         {content()}
-      </button>
+      </ButtonLegacy>
     )
   } else if (link && external) {
     return (
@@ -95,4 +95,4 @@ export function Button(props: PropsWithChildren<ButtonProps>) {
   }
 }
 
-export default Button
+export default ButtonLegacy

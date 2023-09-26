@@ -2,9 +2,9 @@ import { DatabaseModeEnum } from 'qovery-typescript-axios'
 import {
   BannerBox,
   BannerBoxEnum,
-  Button,
   ButtonIcon,
   ButtonIconStyle,
+  ButtonLegacy,
   ButtonSize,
   ButtonStyle,
   Icon,
@@ -121,7 +121,7 @@ export function StepSummary(props: StepSummaryProps) {
         </div>
 
         <div className="flex justify-between mt-10">
-          <Button
+          <ButtonLegacy
             onClick={props.onPrevious}
             className="btn--no-min-w"
             type="button"
@@ -129,9 +129,9 @@ export function StepSummary(props: StepSummaryProps) {
             style={ButtonStyle.STROKED}
           >
             Back
-          </Button>
+          </ButtonLegacy>
           <div className="flex gap-2">
-            <Button
+            <ButtonLegacy
               dataTestId="button-create"
               loading={props.isLoadingCreate}
               onClick={() => props.onSubmit(false)}
@@ -140,8 +140,8 @@ export function StepSummary(props: StepSummaryProps) {
               className="btn--no-min-w"
             >
               Create
-            </Button>
-            <Button
+            </ButtonLegacy>
+            <ButtonLegacy
               dataTestId="button-create-deploy"
               loading={props.isLoadingCreateAndDeploy}
               onClick={() => props.onSubmit(true)}
@@ -149,7 +149,7 @@ export function StepSummary(props: StepSummaryProps) {
               style={ButtonStyle.BASIC}
             >
               Create and deploy
-            </Button>
+            </ButtonLegacy>
           </div>
         </div>
       </div>

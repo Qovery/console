@@ -1,5 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react'
-import Button from '../buttons/button/button'
+import ButtonLegacy from '../buttons/button-legacy/button-legacy'
 import Icon from '../icon/icon'
 import { Menu, MenuAlign, type MenuData, MenuDirection } from './menu'
 
@@ -51,7 +51,7 @@ export const Primary: Story = {
   args: {
     open: true,
     menus,
-    trigger: <Button>Trigger</Button>,
+    trigger: <ButtonLegacy>Trigger</ButtonLegacy>,
     direction: MenuDirection.RIGHT,
     arrowAlign: MenuAlign.CENTER,
   },

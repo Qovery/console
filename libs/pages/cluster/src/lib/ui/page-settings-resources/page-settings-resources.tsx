@@ -2,7 +2,7 @@ import { type CloudProviderEnum } from 'qovery-typescript-axios'
 import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { ClusterResourcesSettingsFeature } from '@qovery/shared/console-shared'
-import { Button, ButtonSize, ButtonStyle, HelpSection } from '@qovery/shared/ui'
+import { ButtonLegacy, ButtonSize, ButtonStyle, HelpSection } from '@qovery/shared/ui'
 
 export interface PageSettingsResourcesProps {
   loading?: boolean
@@ -25,7 +25,7 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
             clusterRegion={props.clusterRegion}
           />
           <div className="flex justify-end">
-            <Button
+            <ButtonLegacy
               dataTestId="submit-button"
               className="btn--no-min-w"
               size={ButtonSize.LARGE}
@@ -35,7 +35,7 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
               loading={loading}
             >
               Save
-            </Button>
+            </ButtonLegacy>
           </div>
         </form>
       </div>

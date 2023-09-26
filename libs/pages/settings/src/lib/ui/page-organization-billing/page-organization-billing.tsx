@@ -1,9 +1,9 @@
 import { type CreditCard } from '@qovery/shared/interfaces'
 import {
   BlockContent,
-  Button,
   ButtonIcon,
   ButtonIconStyle,
+  ButtonLegacy,
   HelpSection,
   Icon,
   IconAwesomeEnum,
@@ -28,13 +28,13 @@ export function PageOrganizationBilling(props: PageOrganizationBillingProps) {
           <div>
             <h1 className="h5 text-neutral-400 mb-2">Payment method</h1>
           </div>
-          <Button
+          <ButtonLegacy
             dataTestId="add-new-card-button"
             onClick={props.openNewCreditCardModal}
             iconRight={IconAwesomeEnum.CIRCLE_PLUS}
           >
             Add new card
-          </Button>
+          </ButtonLegacy>
         </div>
 
         <BlockContent title="Credit cards">

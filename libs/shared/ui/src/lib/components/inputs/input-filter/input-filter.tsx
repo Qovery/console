@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { type Value } from '@qovery/shared/interfaces'
-import Button, { ButtonSize, ButtonStyle } from '../../buttons/button/button'
+import ButtonLegacy, { ButtonSize, ButtonStyle } from '../../buttons/button-legacy/button-legacy'
 import Icon from '../../icon/icon'
 import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
 import LoaderSpinner from '../../loader-spinner/loader-spinner'
@@ -31,14 +31,14 @@ export function InputFilter({ name, nameKey, options, onChange, defaultValue, is
   return (
     <div>
       {!isOpen && (
-        <Button
+        <ButtonLegacy
           onClick={() => setIsOpen(true)}
           style={ButtonStyle.STROKED}
           size={ButtonSize.TINY}
           iconRight={IconAwesomeEnum.MAGNIFYING_GLASS}
         >
           {name}
-        </Button>
+        </ButtonLegacy>
       )}
       {isOpen && (
         <>
@@ -56,7 +56,7 @@ export function InputFilter({ name, nameKey, options, onChange, defaultValue, is
               }}
             />
           ) : (
-            <Button size={ButtonSize.TINY}>
+            <ButtonLegacy size={ButtonSize.TINY}>
               {isLoading ? (
                 <div className="flex justify-center w-12">
                   <LoaderSpinner theme="dark" />
@@ -79,7 +79,7 @@ export function InputFilter({ name, nameKey, options, onChange, defaultValue, is
                   </span>
                 </>
               )}
-            </Button>
+            </ButtonLegacy>
           )}
         </>
       )}
