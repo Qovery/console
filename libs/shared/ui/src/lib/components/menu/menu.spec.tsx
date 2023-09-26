@@ -1,5 +1,5 @@
 import { render, screen } from '__tests__/utils/setup-jest'
-import Button from '../buttons/button/button'
+import ButtonLegacy from '../buttons/button-legacy/button-legacy'
 import Icon from '../icon/icon'
 import { Menu, MenuDirection, type MenuProps } from './menu'
 
@@ -7,7 +7,7 @@ let props: MenuProps
 
 beforeEach(() => {
   props = {
-    trigger: <Button>Test menu</Button>,
+    trigger: <ButtonLegacy>Test menu</ButtonLegacy>,
     children: <p>Contenu du menu</p>,
     menus: [
       {

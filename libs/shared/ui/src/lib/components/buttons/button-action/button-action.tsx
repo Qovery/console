@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { type IconEnum } from '@qovery/shared/enums'
 import Icon from '../../icon/icon'
 import Menu, { MenuAlign, type MenuData } from '../../menu/menu'
-import { ButtonSize } from '../button/button'
+import { ButtonSize } from '../button-legacy/button-legacy'
 
 export enum ButtonActionStyle {
   BASIC = 'basic',

@@ -2,7 +2,7 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { type LoadingStatus, type Value } from '@qovery/shared/interfaces'
 import {
   BlockContent,
-  Button,
+  ButtonLegacy,
   ButtonSize,
   ButtonStyle,
   IconAwesomeEnum,
@@ -151,7 +151,7 @@ export function GitRepositorySettings(props: GitRepositorySettingsProps) {
       )}
       {gitDisabled && (
         <div className="flex justify-end mt-3">
-          <Button
+          <ButtonLegacy
             dataTestId="button-edit"
             className="btn--no-min-w"
             size={ButtonSize.REGULAR}
@@ -171,7 +171,7 @@ export function GitRepositorySettings(props: GitRepositorySettingsProps) {
             }
           >
             Edit
-          </Button>
+          </ButtonLegacy>
         </div>
       )}
     </>

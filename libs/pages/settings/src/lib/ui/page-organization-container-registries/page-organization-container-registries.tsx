@@ -3,9 +3,9 @@ import { IconEnum } from '@qovery/shared/enums'
 import { type LoadingStatus } from '@qovery/shared/interfaces'
 import {
   BlockContent,
-  Button,
   ButtonIcon,
   ButtonIconStyle,
+  ButtonLegacy,
   ButtonSize,
   EmptyState,
   HelpSection,
@@ -57,9 +57,9 @@ export function PageOrganizationContainerRegistries(props: PageOrganizationConta
               Define and manage the container registry to be used within your organization to deploy applications.
             </p>
           </div>
-          <Button onClick={() => onAddRegistry()} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>
+          <ButtonLegacy onClick={() => onAddRegistry()} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>
             Add registry
-          </Button>
+          </ButtonLegacy>
         </div>
         {(loading === 'not loaded' || loading === 'loading') && containerRegistries?.length === 0 ? (
           <div data-testid="registries-loader" className="flex justify-center">

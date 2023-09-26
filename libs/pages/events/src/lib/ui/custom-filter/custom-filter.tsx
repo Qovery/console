@@ -6,7 +6,15 @@ import {
   type Project,
 } from 'qovery-typescript-axios'
 import { useSearchParams } from 'react-router-dom'
-import { Button, ButtonSize, ButtonStyle, DatePicker, Icon, IconAwesomeEnum, InputFilter } from '@qovery/shared/ui'
+import {
+  ButtonLegacy,
+  ButtonSize,
+  ButtonStyle,
+  DatePicker,
+  Icon,
+  IconAwesomeEnum,
+  InputFilter,
+} from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { hasEnvironment, hasProject } from '../../feature/page-general-feature/page-general-feature'
@@ -64,7 +72,7 @@ export function CustomFilter({
           showTimeInput
         >
           {!timestamps ? (
-            <Button
+            <ButtonLegacy
               dataTestId="timeframe-button"
               className={`${isOpenTimestamp ? 'btn--active' : ''}`}
               onClick={() => setIsOpenTimestamp(!isOpenTimestamp)}
@@ -73,9 +81,9 @@ export function CustomFilter({
               iconRight={IconAwesomeEnum.CLOCK}
             >
               Timeframe
-            </Button>
+            </ButtonLegacy>
           ) : (
-            <Button
+            <ButtonLegacy
               dataTestId="timeframe-values"
               onClick={() => setIsOpenTimestamp(!isOpenTimestamp)}
               size={ButtonSize.TINY}
@@ -93,7 +101,7 @@ export function CustomFilter({
               >
                 <Icon name={IconAwesomeEnum.XMARK} />
               </span>
-            </Button>
+            </ButtonLegacy>
           )}
         </DatePicker>
       </div>

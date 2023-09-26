@@ -1,7 +1,7 @@
 import { type TypeOfUseEnum } from 'qovery-typescript-axios'
 import { type Control, Controller } from 'react-hook-form'
 import { type Value } from '@qovery/shared/interfaces'
-import { Button, ButtonSize, ButtonStyle, InputSelect, InputText } from '@qovery/shared/ui'
+import { ButtonLegacy, ButtonSize, ButtonStyle, InputSelect, InputText } from '@qovery/shared/ui'
 
 export interface StepPersonalizeProps {
   dataTypes: Array<Value>
@@ -84,17 +84,17 @@ export function StepPersonalize(props: StepPersonalizeProps) {
           )}
         />
         <div className="mt-10 pt-5 flex justify-between border-t border-neutral-200">
-          <Button
+          <ButtonLegacy
             onClick={() => authLogout()}
             size={ButtonSize.XLARGE}
             style={ButtonStyle.STROKED}
             iconLeft="icon-solid-arrow-left"
           >
             Disconnect
-          </Button>
-          <Button size={ButtonSize.XLARGE} style={ButtonStyle.BASIC} type="submit">
+          </ButtonLegacy>
+          <ButtonLegacy size={ButtonSize.XLARGE} style={ButtonStyle.BASIC} type="submit">
             Continue
-          </Button>
+          </ButtonLegacy>
         </div>
       </form>
     </div>

@@ -5,7 +5,15 @@ import {
   type ApplicationResourcesData,
   type FlowPortData,
 } from '@qovery/shared/interfaces'
-import { Button, ButtonIcon, ButtonIconStyle, ButtonSize, ButtonStyle, Icon, IconAwesomeEnum } from '@qovery/shared/ui'
+import {
+  ButtonIcon,
+  ButtonIconStyle,
+  ButtonLegacy,
+  ButtonSize,
+  ButtonStyle,
+  Icon,
+  IconAwesomeEnum,
+} from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
 export interface StepSummaryProps {
@@ -270,7 +278,7 @@ export function StepSummary({
       </div>
 
       <div className="flex justify-between">
-        <Button
+        <ButtonLegacy
           onClick={onPrevious}
           className="btn--no-min-w"
           type="button"
@@ -278,9 +286,9 @@ export function StepSummary({
           style={ButtonStyle.STROKED}
         >
           Back
-        </Button>
+        </ButtonLegacy>
         <div className="flex gap-2">
-          <Button
+          <ButtonLegacy
             dataTestId="button-create"
             loading={isLoadingCreate}
             onClick={() => onSubmit(false)}
@@ -289,8 +297,8 @@ export function StepSummary({
             className="btn--no-min-w"
           >
             Create
-          </Button>
-          <Button
+          </ButtonLegacy>
+          <ButtonLegacy
             dataTestId="button-create-deploy"
             loading={isLoadingCreateAndDeploy}
             onClick={() => onSubmit(true)}
@@ -298,7 +306,7 @@ export function StepSummary({
             style={ButtonStyle.BASIC}
           >
             Create and deploy
-          </Button>
+          </ButtonLegacy>
         </div>
       </div>
     </div>

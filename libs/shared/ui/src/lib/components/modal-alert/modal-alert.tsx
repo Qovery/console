@@ -1,6 +1,6 @@
 import * as Dialog from '@radix-ui/react-dialog'
 import { useContext } from 'react'
-import Button, { ButtonSize, ButtonStyle } from '../buttons/button/button'
+import ButtonLegacy, { ButtonSize, ButtonStyle } from '../buttons/button-legacy/button-legacy'
 import { ModalContext } from '../modal/modal-root'
 
 export interface ModalAlertProps {
@@ -23,7 +23,7 @@ export function ModalAlert(props: ModalAlertProps) {
             <p className="mb-6 text-neutral-350 text-sm">Are you sure you want to discard your changes?</p>
 
             <div className="flex gap-4 justify-end">
-              <Button
+              <ButtonLegacy
                 style={ButtonStyle.STROKED}
                 size={ButtonSize.XLARGE}
                 onClick={() => {
@@ -32,8 +32,8 @@ export function ModalAlert(props: ModalAlertProps) {
                 }}
               >
                 No
-              </Button>
-              <Button
+              </ButtonLegacy>
+              <ButtonLegacy
                 size={ButtonSize.XLARGE}
                 onClick={() => {
                   setAlertModalChoice(true)
@@ -41,7 +41,7 @@ export function ModalAlert(props: ModalAlertProps) {
                 }}
               >
                 Yes
-              </Button>
+              </ButtonLegacy>
             </div>
           </div>
         </Dialog.Content>

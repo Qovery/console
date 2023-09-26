@@ -2,9 +2,9 @@ import { type OrganizationApiToken } from 'qovery-typescript-axios'
 import { type LoadingStatus } from '@qovery/shared/interfaces'
 import {
   BlockContent,
-  Button,
   ButtonIcon,
   ButtonIconStyle,
+  ButtonLegacy,
   ButtonSize,
   EmptyState,
   HelpSection,
@@ -37,9 +37,9 @@ export function PageOrganizationApi(props: PageOrganizationApiProps) {
               Terraform script, Pulumi etc..)
             </p>
           </div>
-          <Button className="shrink-0" onClick={() => onAddToken()} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>
+          <ButtonLegacy className="shrink-0" onClick={() => onAddToken()} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>
             Add new
-          </Button>
+          </ButtonLegacy>
         </div>
         {(loading === 'not loaded' || loading === 'loading') && apiTokens?.length === 0 ? (
           <div data-testid="loader" className="flex justify-center">

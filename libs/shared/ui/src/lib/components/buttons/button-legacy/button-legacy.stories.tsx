@@ -1,8 +1,8 @@
 import { type Meta, type Story } from '@storybook/react'
-import { Button, type ButtonProps, ButtonSize, ButtonStyle } from './button'
+import { ButtonLegacy, type ButtonProps, ButtonSize, ButtonStyle } from './button-legacy'
 
 export default {
-  component: Button,
+  component: ButtonLegacy,
   title: 'Buttons/ButtonDefault',
   argTypes: {
     size: {
@@ -21,9 +21,9 @@ const ButtonContent = () => {
 }
 
 const Template: Story<ButtonProps> = (args) => (
-  <Button {...args}>
+  <ButtonLegacy {...args}>
     <ButtonContent />
-  </Button>
+  </ButtonLegacy>
 )
 
 export const Primary = Template.bind({})

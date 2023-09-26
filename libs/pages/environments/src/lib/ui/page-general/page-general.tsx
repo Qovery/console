@@ -11,7 +11,7 @@ import {
 } from '@qovery/shared/routes'
 import {
   type BaseLink,
-  Button,
+  ButtonLegacy,
   ButtonSize,
   EmptyState,
   HelpSection,
@@ -120,7 +120,7 @@ export function PageGeneral(props: PageGeneralProps) {
             }`}
             imageWidth="w-[160px]"
           >
-            <Button
+            <ButtonLegacy
               className="mt-5"
               size={ButtonSize.LARGE}
               iconRight={IconAwesomeEnum.CIRCLE_PLUS}
@@ -143,7 +143,7 @@ export function PageGeneral(props: PageGeneralProps) {
               }}
             >
               {clusterAvailable ? 'New environment' : 'Create a Cluster'}
-            </Button>
+            </ButtonLegacy>
           </EmptyState>
         )
       )}

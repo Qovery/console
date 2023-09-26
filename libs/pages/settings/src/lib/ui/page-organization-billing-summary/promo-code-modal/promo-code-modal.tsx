@@ -1,6 +1,6 @@
 import { type FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { Button, ButtonStyle, InputText } from '@qovery/shared/ui'
+import { ButtonLegacy, ButtonStyle, InputText } from '@qovery/shared/ui'
 
 export interface PromoCodeModalProps {
   onClose: () => void
@@ -34,12 +34,12 @@ export function PromoCodeModal(props: PromoCodeModalProps) {
           )}
         />
         <div className="flex gap-3 justify-end">
-          <Button className="btn--no-min-w" style={ButtonStyle.STROKED} onClick={props.onClose}>
+          <ButtonLegacy className="btn--no-min-w" style={ButtonStyle.STROKED} onClick={props.onClose}>
             Cancel
-          </Button>
-          <Button className="btn--no-min-w" dataTestId="submit-button" type="submit" loading={props.isSubmitting}>
+          </ButtonLegacy>
+          <ButtonLegacy className="btn--no-min-w" dataTestId="submit-button" type="submit" loading={props.isSubmitting}>
             Submit
-          </Button>
+          </ButtonLegacy>
         </div>
       </form>
     </div>

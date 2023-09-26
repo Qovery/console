@@ -2,9 +2,9 @@ import { type ClusterRoutingTableResults } from 'qovery-typescript-axios'
 import { type LoadingStatus } from '@qovery/shared/interfaces'
 import {
   BlockContent,
-  Button,
   ButtonIcon,
   ButtonIconStyle,
+  ButtonLegacy,
   EmptyState,
   HelpSection,
   IconAwesomeEnum,
@@ -33,9 +33,13 @@ export function PageSettingsNetwork(props: PageSettingsNetworkProps) {
             </p>
           </div>
 
-          <Button dataTestId="add-button" onClick={() => props.onAddRoute()} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>
+          <ButtonLegacy
+            dataTestId="add-button"
+            onClick={() => props.onAddRoute()}
+            iconRight={IconAwesomeEnum.CIRCLE_PLUS}
+          >
             Add Network
-          </Button>
+          </ButtonLegacy>
         </div>
 
         {((props.loading === 'not loaded' || props.loading === 'loading') && props.routes?.length === 0) ||

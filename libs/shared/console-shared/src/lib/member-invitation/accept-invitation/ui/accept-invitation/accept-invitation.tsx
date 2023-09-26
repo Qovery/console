@@ -1,4 +1,4 @@
-import { Button } from '@qovery/shared/ui'
+import { ButtonLegacy } from '@qovery/shared/ui'
 import InviteDetailsFeature from '../../../invite-details/feature/invite-details-feature'
 
 export interface AcceptInvitationProps {
@@ -15,9 +15,9 @@ export function AcceptInvitation(props: AcceptInvitationProps) {
       />
       <div className="text-center bg-white rounded-xl p-6 max-w-[568px] mx-auto">
         <InviteDetailsFeature />
-        <Button className="items-center justify-center mt-2" onClick={() => props.onSubmit()}>
+        <ButtonLegacy className="items-center justify-center mt-2" onClick={() => props.onSubmit()}>
           Accept
-        </Button>
+        </ButtonLegacy>
       </div>
     </div>
   )

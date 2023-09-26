@@ -1,6 +1,14 @@
 import { type FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { BlockContent, Button, ButtonSize, ButtonStyle, HelpSection, InputText, InputTextArea } from '@qovery/shared/ui'
+import {
+  BlockContent,
+  ButtonLegacy,
+  ButtonSize,
+  ButtonStyle,
+  HelpSection,
+  InputText,
+  InputTextArea,
+} from '@qovery/shared/ui'
 
 export interface PageProjectGeneralProps {
   onSubmit: FormEventHandler<HTMLFormElement>
@@ -48,7 +56,7 @@ export function PageProjectGeneral(props: PageProjectGeneralProps) {
             />
           </BlockContent>
           <div className="flex justify-end">
-            <Button
+            <ButtonLegacy
               dataTestId="submit-button"
               className="btn--no-min-w"
               size={ButtonSize.LARGE}
@@ -58,7 +66,7 @@ export function PageProjectGeneral(props: PageProjectGeneralProps) {
               loading={loading}
             >
               Save
-            </Button>
+            </ButtonLegacy>
           </div>
         </form>
       </div>

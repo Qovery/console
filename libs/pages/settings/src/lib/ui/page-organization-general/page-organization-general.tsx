@@ -2,7 +2,7 @@ import { type FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import {
   BlockContent,
-  Button,
+  ButtonLegacy,
   ButtonSize,
   ButtonStyle,
   HelpSection,
@@ -113,7 +113,7 @@ export function PageOrganizationGeneral(props: PageOrganizationGeneralProps) {
             </p>
           </BlockContent>
           <div className="flex justify-end">
-            <Button
+            <ButtonLegacy
               dataTestId="submit-button"
               className="btn--no-min-w"
               size={ButtonSize.LARGE}
@@ -123,7 +123,7 @@ export function PageOrganizationGeneral(props: PageOrganizationGeneralProps) {
               loading={loading}
             >
               Save
-            </Button>
+            </ButtonLegacy>
           </div>
         </form>
       </div>

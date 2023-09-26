@@ -1,6 +1,6 @@
 import { type PropsWithChildren } from 'react'
 import { type IconEnum } from '@qovery/shared/enums'
-import Button, { ButtonSize, ButtonStyle } from '../buttons/button/button'
+import ButtonLegacy, { ButtonSize, ButtonStyle } from '../buttons/button-legacy/button-legacy'
 import { type IconAwesomeEnum } from '../icon/icon-awesome.enum'
 
 export interface BannerProps {
@@ -38,7 +38,7 @@ export function Banner(props: PropsWithChildren<BannerProps>) {
       <div className="flex h-10 items-center justify-center font-medium text-sm">
         {children}
         {props.buttonLabel && (
-          <Button
+          <ButtonLegacy
             style={ButtonStyle.RAISED}
             size={ButtonSize.TINY}
             className={`ml-4 ${classNameButton || ''}`}
@@ -46,7 +46,7 @@ export function Banner(props: PropsWithChildren<BannerProps>) {
             onClick={props.onClickButton}
           >
             {props.buttonLabel}
-          </Button>
+          </ButtonLegacy>
         )}
       </div>
     </div>

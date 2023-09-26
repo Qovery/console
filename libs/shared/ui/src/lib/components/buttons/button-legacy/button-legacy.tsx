@@ -39,7 +39,7 @@ export interface ButtonProps {
   dataTestId?: string
 }
 
-export function Button(props: PropsWithChildren<ButtonProps>) {
+export function ButtonLegacy(props: PropsWithChildren<ButtonProps>) {
   const {
     children,
     size = ButtonSize.REGULAR,
@@ -95,4 +95,4 @@ export function Button(props: PropsWithChildren<ButtonProps>) {
   }
 }
 
-export default Button
+export default ButtonLegacy

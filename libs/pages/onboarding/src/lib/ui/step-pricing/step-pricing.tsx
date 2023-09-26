@@ -1,6 +1,6 @@
 import { type PlanEnum } from 'qovery-typescript-axios'
 import { ONBOARDING_PROJECT_URL, ONBOARDING_URL } from '@qovery/shared/routes'
-import { Button, ButtonSize, ButtonStyle, Icon } from '@qovery/shared/ui'
+import { ButtonLegacy, ButtonSize, ButtonStyle, Icon } from '@qovery/shared/ui'
 import { type OrganizationPlan } from '../../feature/onboarding-pricing/onboarding-pricing'
 import PlanCard from '../plan-card/plan-card'
 
@@ -36,14 +36,14 @@ export function StepPricing(props: StepPricingProps) {
           ))}
         </div>
         <div className="mt-10 pt-5 flex justify-between border-t border-neutral-200">
-          <Button
+          <ButtonLegacy
             link={`${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`}
             size={ButtonSize.XLARGE}
             style={ButtonStyle.STROKED}
             iconLeft="icon-solid-arrow-left"
           >
             Back
-          </Button>
+          </ButtonLegacy>
         </div>
       </form>
     </div>

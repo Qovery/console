@@ -1,5 +1,5 @@
 import ButtonIcon, { ButtonIconStyle } from '../buttons/button-icon/button-icon'
-import { ButtonSize } from '../buttons/button/button'
+import { ButtonSize } from '../buttons/button-legacy/button-legacy'
 import { IconAwesomeEnum } from '../icon/icon-awesome.enum'
 import InputSelectSmall from '../inputs/input-select-small/input-select-small'
 

@@ -1,4 +1,4 @@
-import { Button, ButtonSize, CopyToClipboard, InputText } from '@qovery/shared/ui'
+import { ButtonLegacy, ButtonSize, CopyToClipboard, InputText } from '@qovery/shared/ui'
 
 export interface ValueModalProps {
   onClose: () => void
@@ -24,9 +24,14 @@ export function ValueModal(props: ValueModalProps) {
       </p>
 
       <div className="flex gap-3 justify-end mt-6">
-        <Button dataTestId="submit-button" className="btn--no-min-w" onClick={props.onClose} size={ButtonSize.XLARGE}>
+        <ButtonLegacy
+          dataTestId="submit-button"
+          className="btn--no-min-w"
+          onClick={props.onClose}
+          size={ButtonSize.XLARGE}
+        >
           Close
-        </Button>
+        </ButtonLegacy>
       </div>
     </div>
   )
