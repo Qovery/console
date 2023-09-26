@@ -7,7 +7,7 @@ exports[`Heading should render successfully 1`] = `
       class="flex flex-col text-neutral-350"
     >
       <h1
-        class="font-bold text-neutral-400 text-3xl"
+        class="text-neutral-400 text-3xl font-bold"
       >
         Foobar
       </h1>
