@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import { ClustersApi } from 'qovery-typescript-axios'
 import { ToastEnum, toast } from '@qovery/shared/ui'
-import { fetchClusterStatus } from './cluster.slice'
+import { fetchClusterStatus, fetchClusters } from './cluster.slice'
 
 const clusterApi = new ClustersApi()
 
@@ -33,6 +33,8 @@ export const postClusterActionsDeploy = createAsyncThunk(
       if (response.status === 202 || response.status === 200) {
         // refetch status after update
         await dispatch(fetchClusterStatus({ organizationId: data.organizationId, clusterId: data.clusterId }))
+        // refetch list of clusters
+        await dispatch(fetchClusters({ organizationId: data.organizationId }))
       }
       // success message
       toast(ToastEnum.SUCCESS, 'Your cluster is deploying')
