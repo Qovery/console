@@ -4,7 +4,7 @@ exports[`Heading should render successfully 1`] = `
 <body>
   <div>
     <section
-      class="flex flex-col text-neutral-350"
+      class="flex flex-col"
     >
       <h1
         class="text-neutral-400 text-3xl font-bold"
