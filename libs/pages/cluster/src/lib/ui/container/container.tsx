@@ -78,7 +78,7 @@ export function Container({ children, cluster, deployCluster }: PropsWithChildre
       <Header title={cluster?.name} icon={cluster?.cloud_provider} iconClassName="w-10 mr-3" actions={headerActions} />
       <Tabs items={tabsItems} />
       {cluster?.deployment_status !== ClusterDeploymentStatusEnum.UP_TO_DATE && (
-        <NeedRedeployFlag deploymentStatus={cluster?.deployment_status} onClickCTA={deployCluster} />
+        <NeedRedeployFlag deploymentStatus={cluster?.deployment_status} onClickButton={deployCluster} />
       )}
       <div className="flex-grow flex-col flex">{children}</div>
     </>

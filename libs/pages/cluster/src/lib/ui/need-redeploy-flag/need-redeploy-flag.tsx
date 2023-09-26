@@ -3,10 +3,10 @@ import { Banner, BannerStyle, IconAwesomeEnum } from '@qovery/shared/ui'
 
 export interface NeedRedeployFlagProps {
   deploymentStatus?: ClusterDeploymentStatusEnum
-  onClickCTA?: () => void
+  onClickButton: () => void
 }
 
-export function NeedRedeployFlag({ deploymentStatus, onClickCTA }: NeedRedeployFlagProps) {
+export function NeedRedeployFlag({ deploymentStatus, onClickButton }: NeedRedeployFlagProps) {
   const buttonLabel = (deploymentStatus === ClusterDeploymentStatusEnum.OUT_OF_DATE ? 'Redeploy' : 'Deploy') + ' now'
 
   return (
@@ -14,7 +14,7 @@ export function NeedRedeployFlag({ deploymentStatus, onClickCTA }: NeedRedeployF
       bannerStyle={BannerStyle.WARNING}
       buttonIconRight={IconAwesomeEnum.ROTATE_RIGHT}
       buttonLabel={buttonLabel}
-      onClickButton={onClickCTA}
+      onClickButton={onClickButton}
     >
       <p>
         This cluster needs to be{' '}

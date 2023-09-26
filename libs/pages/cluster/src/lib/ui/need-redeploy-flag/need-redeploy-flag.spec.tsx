@@ -25,7 +25,7 @@ describe('NeedRedeployFlag', () => {
   it('should call the onSubmit function on button click', async () => {
     const spy = jest.fn()
     const { userEvent } = renderWithProviders(
-      <NeedRedeployFlag deploymentStatus={ClusterDeploymentStatusEnum.OUT_OF_DATE} onClickCTA={spy} />
+      <NeedRedeployFlag deploymentStatus={ClusterDeploymentStatusEnum.OUT_OF_DATE} onClickButton={spy} />
     )
 
     const button = screen.getByRole('button', { name: 'Redeploy now' })
