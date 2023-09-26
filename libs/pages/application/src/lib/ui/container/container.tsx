@@ -132,11 +132,6 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
             <EnvironmentMode size="xs" mode={environment.mode} />
           </Skeleton>
         )}
-        <Skeleton width={40} height={32} show={!environment?.cloud_provider}>
-          <Badge size="xs" variant="outline">
-            {application && <Icon name={getServiceType(application)} width="16" height="16" />}
-          </Badge>
-        </Skeleton>
         <Skeleton width={120} height={32} show={!cluster}>
           <Tooltip content={cluster?.name ?? ''}>
             <Badge size="xs" variant="outline">
