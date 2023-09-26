@@ -66,7 +66,7 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
         ) : (
           roles &&
           roles?.length > 0 && (
-            <BlockContent title="Roles" classNameContent="">
+            <BlockContent title="Roles" classNameContent="p-0">
               {roles &&
                 rolesSort(roles)?.map((role: OrganizationAvailableRole) => (
                   <div

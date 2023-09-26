@@ -62,7 +62,7 @@ export function FlowCreatePort({
 
       <div className="mb-10">
         {!isSetting || (ports && ports.length > 0) ? (
-          <BlockContent title="Configured ports" classNameContent="">
+          <BlockContent title="Configured ports" classNameContent="p-0">
             {ports &&
               ports.map((customPort, i) => (
                 <div
