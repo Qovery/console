@@ -39,6 +39,9 @@ export interface ButtonProps {
   dataTestId?: string
 }
 
+/**
+ * @deprecated This should be migrated to the <Button /> component but we don't have time to make it now, you can continue to use it
+ */
 export function ButtonLegacy(props: PropsWithChildren<ButtonProps>) {
   const {
     children,
