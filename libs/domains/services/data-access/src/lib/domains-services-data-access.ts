@@ -173,6 +173,25 @@ export const services = createQueryKeys('services', {
         .exhaustive()
     },
   }),
+  listCommits: ({
+    serviceId,
+    serviceType,
+  }: {
+    serviceId: string
+    serviceType: Extract<ServiceType, 'APPLICATION' | 'JOB' | 'CRON_JOB' | 'LIFECYCLE_JOB'>
+  }) => ({
+    queryKey: [serviceId],
+    async queryFn() {
+      return match(serviceType)
+        .with('APPLICATION', async () => {
+          return (await applicationMainCallsApi.listApplicationCommit(serviceId)).data.results
+        })
+        .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', async () => {
+          return (await jobMainCallsApi.listJobCommit(serviceId)).data.results
+        })
+        .exhaustive()
+    },
+  }),
 })
 
 type CloneServiceRequest =
