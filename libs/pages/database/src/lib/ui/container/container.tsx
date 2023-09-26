@@ -15,7 +15,7 @@ import {
   DATABASE_SETTINGS_URL,
   DATABASE_URL,
 } from '@qovery/shared/routes'
-import { Header, Icon, Skeleton, Tabs, Tooltip } from '@qovery/shared/ui'
+import { Badge, Header, Icon, Skeleton, Tabs, Tooltip } from '@qovery/shared/ui'
 import { type AppDispatch, type RootState } from '@qovery/state/store'
 
 export interface ContainerProps {
@@ -40,35 +40,34 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
   })
 
   const headerActions = (
-    <>
+    <div className="flex flex-col gap-3">
+      <div className="flex flex-row gap-2">
+        {environment && (
+          <Skeleton width={80} height={32} show={!environment?.mode}>
+            <EnvironmentMode size="xs" mode={environment.mode} />
+          </Skeleton>
+        )}
+        <Skeleton width={120} height={32} show={!cluster}>
+          <Tooltip content={cluster?.name ?? ''}>
+            <Badge size="xs" variant="outline">
+              <Icon name={environment?.cloud_provider.provider as IconEnum} width="16" />
+              <p className="ml-1.5 max-w-[200px] truncate">{cluster?.name}</p>
+            </Badge>
+          </Tooltip>
+        </Skeleton>
+      </div>
       <Skeleton width={150} height={32} show={isLoadingServiceDeploymentStatus}>
         <div className="flex">
           {environment && database && (
-            <>
-              <DatabaseButtonsActions
-                database={database}
-                environmentMode={environment.mode}
-                clusterId={environment.cluster_id}
-              />
-              <span className="ml-4 mr-1 mt-2 h-4 w-[1px] bg-neutral-200"></span>
-            </>
+            <DatabaseButtonsActions
+              database={database}
+              environmentMode={environment.mode}
+              clusterId={environment.cluster_id}
+            />
           )}
         </div>
       </Skeleton>
-      {environment && (
-        <Skeleton width={80} height={32} show={!environment?.mode}>
-          <EnvironmentMode size="sm" mode={environment.mode} />
-        </Skeleton>
-      )}
-      <Skeleton width={120} height={32} show={!cluster}>
-        <Tooltip content={cluster?.name ?? ''}>
-          <div className="border border-neutral-200 bg-white h-8 px-3 rounded text-xs items-center inline-flex font-medium gap-2">
-            <Icon name={environment?.cloud_provider.provider as IconEnum} width="16" />
-            <p className="max-w-[200px] truncate">{cluster?.name}</p>
-          </div>
-        </Tooltip>
-      </Skeleton>
-    </>
+    </div>
   )
 
   const tabsItems = [
