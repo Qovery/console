@@ -1,15 +1,15 @@
 import { type ComponentMeta, type ComponentStory } from '@storybook/react'
 import { IconAwesomeEnum } from '../icon/icon-awesome.enum'
-import { Banner, BannerStyle } from './banner'
+import { Banner } from './banner'
 
 export default {
   component: Banner,
   title: 'Banner',
   argTypes: {
-    bannerStyle: {
+    color: {
       control: {
         type: 'select',
-        options: BannerStyle,
+        options: ['yellow', 'brand'],
       },
     },
   },
@@ -21,7 +21,7 @@ const Template: ComponentStory<typeof Banner> = (args) => <Banner {...args} />
 export const Primary = Template.bind({})
 Primary.args = {
   children,
-  bannerStyle: BannerStyle.WARNING,
+  color: 'yellow',
   buttonLabel: 'Click me',
   buttonIconRight: IconAwesomeEnum.ROTATE_RIGHT,
 }
