@@ -5,7 +5,7 @@ module.exports = {
   collectCoverageFrom: ['<rootDir>/src/**/*.{js,jsx,ts,tsx}'],
   testPathIgnorePatterns: ['./node_modules/', './.next/', './__tests__/utils/setup-jest.tsx'],
   transformIgnorePatterns: [
-    '[/\\\\]node_modules[/\\\\].+\\.(js|jsx|mjs|cjs|ts|tsx)$',
+    '[/\\\\]node_modules[/\\\\](?!pretty-bytes).+\\.(js|jsx|mjs|cjs|ts|tsx)$',
     '^.+\\.module\\.(css|sass|scss)$',
   ],
   moduleNameMapper: {
