@@ -2,7 +2,7 @@ import { type VariantProps, cva } from 'class-variance-authority'
 import { type ComponentPropsWithoutRef, type ElementRef, forwardRef } from 'react'
 import { twMerge } from 'tailwind-merge'
 
-const badgeVariants = cva(['inline-flex', 'items-baseline', 'shrink-0', 'font-medium', 'rounded'], {
+const badgeVariants = cva(['inline-flex', 'items-center', 'shrink-0', 'font-medium', 'rounded'], {
   variants: {
     color: {
       neutral: [],
@@ -18,7 +18,7 @@ const badgeVariants = cva(['inline-flex', 'items-baseline', 'shrink-0', 'font-me
       surface: ['border'],
     },
     size: {
-      xs: ['text-xs', 'p-1'],
+      xs: ['text-xs', 'px-1', 'py-0.5'],
       sm: ['text-sm', 'py-1', 'px-2'],
       md: ['text-base', 'py-1.5', 'px-4'],
     },
