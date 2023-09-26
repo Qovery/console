@@ -22,12 +22,12 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
       <div className="flex flex-row gap-2">
         {cluster?.production && (
           <Badge size="xs" color="neutral">
-            PROD
+            Production
           </Badge>
         )}
         {cluster?.is_default && (
           <Badge size="xs" color="sky">
-            DEFAULT
+            Default
           </Badge>
         )}
         {cluster ? (
