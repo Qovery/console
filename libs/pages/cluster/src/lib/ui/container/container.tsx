@@ -1,3 +1,4 @@
+import { ClusterDeploymentStatusEnum } from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
 import { ClusterType } from '@qovery/domains/clusters/feature'
@@ -9,10 +10,10 @@ import NeedRedeployFlag from '../need-redeploy-flag/need-redeploy-flag'
 
 export interface ContainerProps {
   cluster?: ClusterEntity
+  deployCluster: () => void
 }
 
-export function Container(props: PropsWithChildren<ContainerProps>) {
-  const { children, cluster } = props
+export function Container({ children, cluster, deployCluster }: PropsWithChildren<ContainerProps>) {
   const { organizationId = '', clusterId = '' } = useParams()
   const { pathname } = useLocation()
 
@@ -76,9 +77,9 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
     <>
       <Header title={cluster?.name} icon={cluster?.cloud_provider} iconClassName="w-10 mr-3" actions={headerActions} />
       <Tabs items={tabsItems} />
-      {/* {application && serviceDeploymentStatus?.service_deployment_status !== ServiceDeploymentStatusEnum.UP_TO_DATE && ( */}
-      <NeedRedeployFlag />
-      {/* )} */}
+      {cluster?.deployment_status !== ClusterDeploymentStatusEnum.UP_TO_DATE && (
+        <NeedRedeployFlag deploymentStatus={cluster?.deployment_status} onClickCTA={deployCluster} />
+      )}
       <div className="flex-grow flex-col flex">{children}</div>
     </>
   )

@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
-import { fetchClusterStatus, selectClusterById } from '@qovery/domains/organization'
+import { fetchClusterStatus, postClusterActionsDeploy, selectClusterById } from '@qovery/domains/organization'
 import { type ClusterEntity } from '@qovery/shared/interfaces'
 import { CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
 import { type AppDispatch, type RootState } from '@qovery/state/store'
@@ -16,12 +16,21 @@ export function PagesCluster() {
     selectClusterById(state, clusterId)
   )
 
+  const deployCluster = () =>
+    cluster &&
+    dispatch(
+      postClusterActionsDeploy({
+        organizationId,
+        clusterId: cluster.id,
+      })
+    )
+
   useEffect(() => {
     if (!cluster?.extendedStatus) dispatch(fetchClusterStatus({ organizationId, clusterId }))
   }, [dispatch, organizationId, clusterId, cluster])
 
   return (
-    <Container cluster={cluster}>
+    <Container cluster={cluster} deployCluster={deployCluster}>
       <Routes>
         {ROUTER_CLUSTER.map((route) => (
           <Route key={route.path} path={route.path} element={route.component} />

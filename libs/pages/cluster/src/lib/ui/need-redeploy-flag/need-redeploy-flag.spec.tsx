@@ -1,60 +1,35 @@
-import { act, fireEvent, getByRole, render } from '__tests__/utils/setup-jest'
-import { ServiceDeploymentStatusEnum, StateEnum } from 'qovery-typescript-axios'
-import * as domainsServicesFeature from '@qovery/domains/services/feature'
-import { applicationFactoryMock } from '@qovery/shared/factories'
-import { type ApplicationEntity } from '@qovery/shared/interfaces'
+import { ClusterDeploymentStatusEnum } from 'qovery-typescript-axios'
+import { clusterFactoryMock } from '@qovery/shared/factories'
+import { type ClusterEntity } from '@qovery/shared/interfaces'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import NeedRedeployFlag from './need-redeploy-flag'
 
-const mockApplication: ApplicationEntity = applicationFactoryMock(1)[0]
+const mockCluster: ClusterEntity = clusterFactoryMock(1)[0]
 
 describe('NeedRedeployFlag', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<NeedRedeployFlag service={mockApplication} />)
+    const { baseElement } = renderWithProviders(<NeedRedeployFlag deploymentStatus={mockCluster.deployment_status} />)
     expect(baseElement).toBeTruthy()
   })
 
   it('should render button with Deploy now', () => {
-    jest.spyOn(domainsServicesFeature, 'useDeploymentStatus').mockReturnValue({
-      data: {
-        state: StateEnum.DEPLOYED,
-        id: 'id',
-        service_deployment_status: ServiceDeploymentStatusEnum.NEVER_DEPLOYED,
-      },
-    })
-    const { baseElement } = render(<NeedRedeployFlag service={mockApplication} />)
-
-    getByRole(baseElement, 'button', { name: 'Deploy now' })
+    renderWithProviders(<NeedRedeployFlag deploymentStatus={ClusterDeploymentStatusEnum.NEVER_DEPLOYED} />)
+    screen.getByRole('button', { name: 'Deploy now' })
   })
 
   it('should render button with Redeploy now', () => {
-    jest.spyOn(domainsServicesFeature, 'useDeploymentStatus').mockReturnValue({
-      data: {
-        state: StateEnum.DEPLOYED,
-        id: 'id',
-        service_deployment_status: ServiceDeploymentStatusEnum.OUT_OF_DATE,
-      },
-    })
-    const { baseElement } = render(<NeedRedeployFlag service={mockApplication} />)
-
-    getByRole(baseElement, 'button', { name: 'Redeploy now' })
+    renderWithProviders(<NeedRedeployFlag deploymentStatus={ClusterDeploymentStatusEnum.OUT_OF_DATE} />)
+    screen.getByRole('button', { name: 'Redeploy now' })
   })
 
   it('should call the onSubmit function on button click', async () => {
-    jest.spyOn(domainsServicesFeature, 'useDeploymentStatus').mockReturnValue({
-      data: {
-        state: StateEnum.DEPLOYED,
-        id: 'id',
-        service_deployment_status: ServiceDeploymentStatusEnum.OUT_OF_DATE,
-      },
-    })
     const spy = jest.fn()
-    const { baseElement } = render(<NeedRedeployFlag service={mockApplication} onClickCTA={spy} />)
+    const { userEvent } = renderWithProviders(
+      <NeedRedeployFlag deploymentStatus={ClusterDeploymentStatusEnum.OUT_OF_DATE} onClickCTA={spy} />
+    )
 
-    const button = getByRole(baseElement, 'button', { name: 'Redeploy now' })
-
-    await act(() => {
-      fireEvent.click(button)
-    })
+    const button = screen.getByRole('button', { name: 'Redeploy now' })
+    await userEvent.click(button)
 
     expect(spy).toHaveBeenCalled()
   })
