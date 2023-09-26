@@ -1,4 +1,5 @@
 import { type ReactNode } from 'react'
+import { twMerge } from 'tailwind-merge'
 import { type IconEnum } from '@qovery/shared/enums'
 import Icon from '../icon/icon'
 import Skeleton from '../skeleton/skeleton'
@@ -19,8 +20,12 @@ export function Header(props: HeaderProps) {
 
   return (
     <div className="flex border-b border-neutral-200 items-center justify-between bg-white rounded-t px-5 py-8 shrink-0">
-      <div className="flex gap-4 ml-2 items-center">
-        {icon && <Icon name={icon} className={`w-16 ${iconClassName}`} />}
+      <div className="flex gap-5 ml-4 items-center">
+        {icon && (
+          <div className="flex items-center justify-center w-16 h-16 rounded-full border border-neutral-200">
+            <Icon name={icon} className={twMerge('w-10', iconClassName)} />
+          </div>
+        )}
         <div className="flex flex-col gap-3">
           <div className="flex gap-2 items-center max-w-3xl">
             <Skeleton height={36} width={150} show={!title}>
