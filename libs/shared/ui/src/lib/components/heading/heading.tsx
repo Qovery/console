@@ -5,33 +5,37 @@ import { LevelContext } from './level-context'
 
 type HX = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
 
-const headingVariants = cva([], {
+const headingVariants = cva(['text-neutral-400'], {
   variants: {
     level: {
-      0: [],
-      // TODO: work on design system to standardize font-size
-      1: ['font-bold', 'text-neutral-400', 'text-3xl'],
-      2: ['text-base', 'text-neutral-400'],
-      3: ['text-base', 'text-neutral-400'],
-      4: ['text-base', 'text-neutral-400'],
-      5: ['text-base', 'text-neutral-400'],
-      6: ['text-base', 'text-neutral-400'],
+      0: [], // not really possible
+      1: ['text-3xl'],
+      2: ['text-2xl'],
+      3: ['text-xl'],
+      4: ['text-lg'],
+      5: ['text-base'],
+      6: ['text-sm'],
+    },
+    weight: {
+      medium: ['font-medium'],
+      bold: ['font-bold'],
     },
   },
   defaultVariants: {
     level: 1,
+    weight: 'bold',
   },
 })
 
 export interface HeadingProps extends ComponentPropsWithoutRef<HX>, VariantProps<typeof headingVariants> {}
 
 export const Heading = forwardRef<ElementRef<HX>, HeadingProps>(function Heading(
-  { className, children, level: lvl, ...props },
+  { className, children, level: lvl, weight, ...props },
   forwardedRef
 ) {
   const ctxLvl = useContext(LevelContext) as 1 | 2 | 3 | 4 | 5 | 6
   const level = lvl ?? ctxLvl
-  const _className = twMerge(headingVariants({ level }), className)
+  const _className = twMerge(headingVariants({ level, weight }), className)
   switch (level) {
     case 0:
       throw Error('Heading must be inside a Section!')
