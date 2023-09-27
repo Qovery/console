@@ -22,7 +22,7 @@ export enum ButtonLegacyStyle {
   DARK = 'dark',
 }
 
-export interface ButtonProps {
+export interface ButtonLegacyProps {
   size?: ButtonLegacySize
   style?: ButtonLegacyStyle
   iconLeft?: IconEnum | string
@@ -42,7 +42,7 @@ export interface ButtonProps {
 /**
  * @deprecated This should be migrated to the <Button /> component but we don't have time to make it now, you can continue to use it
  */
-export function ButtonLegacy(props: PropsWithChildren<ButtonProps>) {
+export function ButtonLegacy(props: PropsWithChildren<ButtonLegacyProps>) {
   const {
     children,
     size = ButtonLegacySize.REGULAR,
