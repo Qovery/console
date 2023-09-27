@@ -13,8 +13,8 @@ import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes
 import {
   Badge,
   ButtonLegacy,
-  ButtonSize,
-  ButtonStyle,
+  ButtonLegacySize,
+  ButtonLegacyStyle,
   Header,
   Icon,
   Menu,
@@ -116,7 +116,7 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
         <Menu
           menus={menuLink}
           trigger={
-            <ButtonLegacy iconRight="icon-solid-link" style={ButtonStyle.STROKED} size={ButtonSize.SMALL}>
+            <ButtonLegacy iconRight="icon-solid-link" style={ButtonLegacyStyle.STROKED} size={ButtonLegacySize.SMALL}>
               Open links
             </ButtonLegacy>
           }

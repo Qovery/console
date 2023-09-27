@@ -1,6 +1,15 @@
 import { type DatabaseAccessibilityEnum, type DatabaseModeEnum, type DatabaseTypeEnum } from 'qovery-typescript-axios'
 import { type DatabaseCredentials, type LoadingStatus } from '@qovery/shared/interfaces'
-import { ButtonLegacy, ButtonStyle, Icon, Skeleton, ToastBehavior, ToastEnum, Tooltip, toast } from '@qovery/shared/ui'
+import {
+  ButtonLegacy,
+  ButtonLegacyStyle,
+  Icon,
+  Skeleton,
+  ToastBehavior,
+  ToastEnum,
+  Tooltip,
+  toast,
+} from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
 export interface AboutProps {
@@ -51,7 +60,7 @@ export function About(props: AboutProps) {
         <Tooltip content="Copy" side="bottom">
           <div>
             <ButtonLegacy
-              style={ButtonStyle.STROKED}
+              style={ButtonLegacyStyle.STROKED}
               iconLeft="icon-solid-key"
               className="capitalize"
               onClick={copyToClipboard}

@@ -1,5 +1,5 @@
 import { type MouseEvent, type RefObject, useEffect } from 'react'
-import { ButtonIcon, ButtonIconStyle, ButtonSize, Icon, IconAwesomeEnum, Tooltip } from '@qovery/shared/ui'
+import { ButtonIcon, ButtonIconStyle, ButtonLegacySize, Icon, IconAwesomeEnum, Tooltip } from '@qovery/shared/ui'
 import { type LayoutLogsDataProps } from '../layout-logs'
 
 export interface ButtonsActionsLogsProps {
@@ -43,7 +43,7 @@ export function ButtonsActionsLogs(props: ButtonsActionsLogsProps) {
             <ButtonIcon
               dataTestId="pause-button"
               icon={!pauseLogs ? IconAwesomeEnum.PAUSE : IconAwesomeEnum.PLAY}
-              size={ButtonSize.TINY}
+              size={ButtonLegacySize.TINY}
               style={!pauseLogs ? ButtonIconStyle.DARK : ButtonIconStyle.BASIC}
               onClick={() => setPauseLogs(!pauseLogs)}
             />
@@ -54,7 +54,7 @@ export function ButtonsActionsLogs(props: ButtonsActionsLogsProps) {
         dataTestId="scroll-up-button"
         icon={IconAwesomeEnum.ARROW_UP_TO_LINE}
         className="ml-2 mr-px !rounded-tr-none !rounded-br-none"
-        size={ButtonSize.TINY}
+        size={ButtonLegacySize.TINY}
         style={ButtonIconStyle.DARK}
         onClick={() => forcedScroll()}
       />
@@ -62,7 +62,7 @@ export function ButtonsActionsLogs(props: ButtonsActionsLogsProps) {
         dataTestId="scroll-down-button"
         icon={IconAwesomeEnum.ARROW_DOWN_TO_LINE}
         className="mr-2 !rounded-tl-none !rounded-bl-none"
-        size={ButtonSize.TINY}
+        size={ButtonLegacySize.TINY}
         style={ButtonIconStyle.DARK}
         onClick={() => forcedScroll(true)}
       />

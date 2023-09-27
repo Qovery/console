@@ -1,4 +1,4 @@
-import { ButtonLegacy, ButtonSize, CopyToClipboard, InputText } from '@qovery/shared/ui'
+import { ButtonLegacy, ButtonLegacySize, CopyToClipboard, InputText } from '@qovery/shared/ui'
 
 export interface ValueModalProps {
   onClose: () => void
@@ -28,7 +28,7 @@ export function ValueModal(props: ValueModalProps) {
           dataTestId="submit-button"
           className="btn--no-min-w"
           onClick={props.onClose}
-          size={ButtonSize.XLARGE}
+          size={ButtonLegacySize.XLARGE}
         >
           Close
         </ButtonLegacy>

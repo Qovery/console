@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { type IconEnum } from '@qovery/shared/enums'
 import Icon from '../../icon/icon'
 import Menu, { MenuAlign, type MenuData } from '../../menu/menu'
-import { ButtonSize } from '../button-legacy/button-legacy'
+import { ButtonLegacySize } from '../button-legacy/button-legacy'
 
 export enum ButtonActionStyle {
   BASIC = 'basic',
@@ -22,7 +22,7 @@ export interface ButtonActionProps {
   onClick?: () => void
   menus?: MenuData
   dropdown?: MenuData
-  size?: ButtonSize
+  size?: ButtonLegacySize
 }
 
 export function ButtonAction(props: PropsWithChildren<ButtonActionProps>) {
@@ -37,7 +37,7 @@ export function ButtonAction(props: PropsWithChildren<ButtonActionProps>) {
     onClick,
     menus = [],
     dropdown = [],
-    size = ButtonSize.REGULAR,
+    size = ButtonLegacySize.REGULAR,
   } = props
 
   const [menuOpen, setMenuOpen] = useState(false)

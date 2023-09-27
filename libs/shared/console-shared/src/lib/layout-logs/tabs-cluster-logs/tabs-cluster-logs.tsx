@@ -3,8 +3,8 @@ import { type ReactNode, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import {
   ButtonLegacy,
-  ButtonSize,
-  ButtonStyle,
+  ButtonLegacySize,
+  ButtonLegacyStyle,
   CopyToClipboard,
   Icon,
   Link,
@@ -136,8 +136,8 @@ export function TabsClusterLogs(props: TabsClusterLogsProps) {
                         iconLeft="icon-solid-wheel"
                         external
                         link={`https://console.qovery.com/platform/organization/${organizationId}/settings/clusters`}
-                        style={ButtonStyle.BASIC}
-                        size={ButtonSize.TINY}
+                        style={ButtonLegacyStyle.BASIC}
+                        size={ButtonLegacySize.TINY}
                       >
                         Cluster settings
                       </ButtonLegacy>
@@ -146,8 +146,8 @@ export function TabsClusterLogs(props: TabsClusterLogsProps) {
                           iconLeft="icon-solid-book"
                           external
                           link={currentError.link}
-                          style={ButtonStyle.STROKED}
-                          size={ButtonSize.TINY}
+                          style={ButtonLegacyStyle.STROKED}
+                          size={ButtonLegacySize.TINY}
                         >
                           Documentation
                         </ButtonLegacy>

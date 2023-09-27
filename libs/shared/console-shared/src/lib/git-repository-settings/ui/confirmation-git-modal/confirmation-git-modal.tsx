@@ -3,8 +3,8 @@ import {
   BannerBox,
   BannerBoxEnum,
   ButtonLegacy,
-  ButtonSize,
-  ButtonStyle,
+  ButtonLegacySize,
+  ButtonLegacyStyle,
   Icon,
   IconAwesomeEnum,
 } from '@qovery/shared/ui'
@@ -42,15 +42,15 @@ export function ConfirmationGitModal(props: ConfirmationGitModalProps) {
         <ButtonLegacy
           dataTestId="cancel-button"
           className="btn--no-min-w"
-          style={ButtonStyle.STROKED}
-          size={ButtonSize.XLARGE}
+          style={ButtonLegacyStyle.STROKED}
+          size={ButtonLegacySize.XLARGE}
           onClick={() => props.onClose()}
         >
           Cancel
         </ButtonLegacy>
         <ButtonLegacy
           dataTestId="submit-button"
-          size={ButtonSize.XLARGE}
+          size={ButtonLegacySize.XLARGE}
           onClick={() => {
             props.onSubmit && props.onSubmit()
             props.onClose()

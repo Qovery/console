@@ -5,8 +5,8 @@ import { type Value } from '@qovery/shared/interfaces'
 import {
   BlockContent,
   ButtonLegacy,
-  ButtonSize,
-  ButtonStyle,
+  ButtonLegacySize,
+  ButtonLegacyStyle,
   HelpSection,
   InputSelect,
   InputText,
@@ -96,8 +96,8 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
             <ButtonLegacy
               className="mb-6 btn--no-min-w"
               disabled={!formState.isValid}
-              size={ButtonSize.LARGE}
-              style={ButtonStyle.BASIC}
+              size={ButtonLegacySize.LARGE}
+              style={ButtonLegacyStyle.BASIC}
               loading={loading}
               type="submit"
             >

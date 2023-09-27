@@ -3,8 +3,8 @@ import { DEPLOYMENT_LOGS_VERSION_URL } from '@qovery/shared/routes'
 import {
   Badge,
   ButtonLegacy,
-  ButtonSize,
-  ButtonStyle,
+  ButtonLegacySize,
+  ButtonLegacyStyle,
   Icon,
   IconAwesomeEnum,
   Menu,
@@ -79,8 +79,8 @@ export function SidebarHistory({ data, serviceId, versionId, pathLogs, environme
         <ButtonLegacy
           dataTestId="btn-back-logs"
           className="!border-r-0 !rounded-r-none"
-          style={ButtonStyle.DARK}
-          size={ButtonSize.TINY}
+          style={ButtonLegacyStyle.DARK}
+          size={ButtonLegacySize.TINY}
           link={pathLogs}
         >
           <Icon name={IconAwesomeEnum.HOUSE} />
@@ -92,8 +92,8 @@ export function SidebarHistory({ data, serviceId, versionId, pathLogs, environme
           trigger={
             <ButtonLegacy
               className="!rounded-l-none w-[200px] mr-1.5"
-              style={ButtonStyle.DARK}
-              size={ButtonSize.TINY}
+              style={ButtonLegacyStyle.DARK}
+              size={ButtonLegacySize.TINY}
               iconRight={IconAwesomeEnum.ANGLE_DOWN}
             >
               Deployment log history
@@ -105,8 +105,8 @@ export function SidebarHistory({ data, serviceId, versionId, pathLogs, environme
             <div>
               <ButtonLegacy
                 className="!text-orange-500 !border-orange-500 !bg-neutral-500 w-[50px]"
-                style={ButtonStyle.DARK}
-                size={ButtonSize.TINY}
+                style={ButtonLegacyStyle.DARK}
+                size={ButtonLegacySize.TINY}
                 link={pathLogs + DEPLOYMENT_LOGS_VERSION_URL(serviceId, '')}
               >
                 <span className="inline-flex items-center">
@@ -121,8 +121,8 @@ export function SidebarHistory({ data, serviceId, versionId, pathLogs, environme
         {environmentState && currentPosition > 0 && !showNewTag && (
           <ButtonLegacy
             className="w-[50px]"
-            style={ButtonStyle.DARK}
-            size={ButtonSize.TINY}
+            style={ButtonLegacyStyle.DARK}
+            size={ButtonLegacySize.TINY}
             iconRight={IconAwesomeEnum.CHEVRONS_RIGHT}
             link={pathLogs + DEPLOYMENT_LOGS_VERSION_URL(serviceId, '')}
           >

@@ -1,7 +1,7 @@
 import { type VariantProps, cva } from 'class-variance-authority'
 import { type PropsWithChildren, forwardRef } from 'react'
 import { type IconEnum } from '@qovery/shared/enums'
-import ButtonLegacy, { ButtonSize, ButtonStyle } from '../buttons/button-legacy/button-legacy'
+import ButtonLegacy, { ButtonLegacySize, ButtonLegacyStyle } from '../buttons/button-legacy/button-legacy'
 import { type IconAwesomeEnum } from '../icon/icon-awesome.enum'
 
 const bannerVariants = cva('flex h-10 items-center justify-center font-medium text-sm', {
@@ -37,8 +37,8 @@ export const Banner = forwardRef<HTMLDivElement, PropsWithChildren<BannerProps>>
       {children}
       {buttonLabel && (
         <ButtonLegacy
-          style={ButtonStyle.RAISED}
-          size={ButtonSize.TINY}
+          style={ButtonLegacyStyle.RAISED}
+          size={ButtonLegacySize.TINY}
           className={buttonVariants({ color })}
           iconRight={buttonIconRight}
           onClick={onClickButton}

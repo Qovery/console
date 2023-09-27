@@ -1,6 +1,6 @@
 import { type PropsWithChildren } from 'react'
 import { createPortal } from 'react-dom'
-import ButtonLegacy, { ButtonStyle } from '../buttons/button-legacy/button-legacy'
+import ButtonLegacy, { ButtonLegacyStyle } from '../buttons/button-legacy/button-legacy'
 import Icon from '../icon/icon'
 import { IconAwesomeEnum } from '../icon/icon-awesome.enum'
 
@@ -30,7 +30,7 @@ const FunnelFlowContent = (props: FunnelFlowProps) => {
         </div>
         {props.onExit && (
           <div className="border-l border-l-neutral-200 pl-5 h-full flex items-center">
-            <ButtonLegacy onClick={props.onExit} style={ButtonStyle.STROKED} className="btn--no-min-w">
+            <ButtonLegacy onClick={props.onExit} style={ButtonLegacyStyle.STROKED} className="btn--no-min-w">
               Close <Icon name={IconAwesomeEnum.XMARK} className="ml-2" />
             </ButtonLegacy>
           </div>

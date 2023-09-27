@@ -3,8 +3,8 @@ import { type LoadingStatus, type Value } from '@qovery/shared/interfaces'
 import {
   BlockContent,
   ButtonLegacy,
-  ButtonSize,
-  ButtonStyle,
+  ButtonLegacySize,
+  ButtonLegacyStyle,
   IconAwesomeEnum,
   InputSelect,
   InputText,
@@ -154,8 +154,8 @@ export function GitRepositorySettings(props: GitRepositorySettingsProps) {
           <ButtonLegacy
             dataTestId="button-edit"
             className="btn--no-min-w"
-            size={ButtonSize.REGULAR}
-            style={ButtonStyle.STROKED}
+            size={ButtonLegacySize.REGULAR}
+            style={ButtonLegacyStyle.STROKED}
             iconRight={IconAwesomeEnum.TRIANGLE_EXCLAMATION}
             iconRightClassName="text-yellow-500 text-sm"
             onClick={() =>

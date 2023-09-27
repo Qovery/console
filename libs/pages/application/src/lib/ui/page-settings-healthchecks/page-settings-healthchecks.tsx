@@ -1,7 +1,15 @@
 import { EnvironmentModeEnum, type ServicePort } from 'qovery-typescript-axios'
 import { useFormContext } from 'react-hook-form'
 import { ApplicationSettingsHealthchecks } from '@qovery/shared/console-shared'
-import { BannerBox, BannerBoxEnum, ButtonLegacy, ButtonSize, ButtonStyle, HelpSection, Link } from '@qovery/shared/ui'
+import {
+  BannerBox,
+  BannerBoxEnum,
+  ButtonLegacy,
+  ButtonLegacySize,
+  ButtonLegacyStyle,
+  HelpSection,
+  Link,
+} from '@qovery/shared/ui'
 
 export interface PageSettingsHealthchecksProps {
   loading: boolean
@@ -67,8 +75,8 @@ export function PageSettingsHealthchecks({
               <ButtonLegacy
                 className="mb-6 btn--no-min-w"
                 disabled={!formState.isValid}
-                size={ButtonSize.LARGE}
-                style={ButtonStyle.BASIC}
+                size={ButtonLegacySize.LARGE}
+                style={ButtonLegacyStyle.BASIC}
                 loading={loading}
                 type="submit"
               >

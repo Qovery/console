@@ -1,4 +1,11 @@
-import { BannerBox, BannerBoxEnum, ButtonLegacy, ButtonSize, ButtonStyle, IconAwesomeEnum } from '@qovery/shared/ui'
+import {
+  BannerBox,
+  BannerBoxEnum,
+  ButtonLegacy,
+  ButtonLegacySize,
+  ButtonLegacyStyle,
+  IconAwesomeEnum,
+} from '@qovery/shared/ui'
 
 export interface DisconnectionConfirmModalProps {
   onSubmit: (force: boolean) => void
@@ -20,16 +27,16 @@ export function DisconnectionConfirmModal(props: DisconnectionConfirmModalProps)
         <ButtonLegacy
           dataTestId="cancel-button"
           className="btn--no-min-w"
-          style={ButtonStyle.STROKED}
-          size={ButtonSize.XLARGE}
+          style={ButtonLegacyStyle.STROKED}
+          size={ButtonLegacySize.XLARGE}
           onClick={() => props.onClose()}
         >
           Cancel
         </ButtonLegacy>
         <ButtonLegacy
           dataTestId="submit-button"
-          size={ButtonSize.XLARGE}
-          style={ButtonStyle.ERROR}
+          size={ButtonLegacySize.XLARGE}
+          style={ButtonLegacyStyle.ERROR}
           onClick={() => {
             props.onSubmit && props.onSubmit(true)
             props.onClose()

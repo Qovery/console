@@ -3,8 +3,8 @@ import { timezoneValues, weekdaysValues } from '@qovery/shared/enums'
 import {
   BlockContent,
   ButtonLegacy,
-  ButtonSize,
-  ButtonStyle,
+  ButtonLegacySize,
+  ButtonLegacyStyle,
   HelpSection,
   InputSelect,
   InputText,
@@ -126,8 +126,8 @@ export function PageSettingsDeploymentRules(props: PageSettingsDeploymentRulesPr
             <ButtonLegacy
               className="mb-6 btn--no-min-w"
               disabled={!formState.isValid}
-              size={ButtonSize.LARGE}
-              style={ButtonStyle.BASIC}
+              size={ButtonLegacySize.LARGE}
+              style={ButtonLegacyStyle.BASIC}
               loading={loading}
               type="submit"
             >

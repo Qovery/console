@@ -8,8 +8,8 @@ import {
 import { useSearchParams } from 'react-router-dom'
 import {
   ButtonLegacy,
-  ButtonSize,
-  ButtonStyle,
+  ButtonLegacySize,
+  ButtonLegacyStyle,
   DatePicker,
   Icon,
   IconAwesomeEnum,
@@ -76,8 +76,8 @@ export function CustomFilter({
               dataTestId="timeframe-button"
               className={`${isOpenTimestamp ? 'btn--active' : ''}`}
               onClick={() => setIsOpenTimestamp(!isOpenTimestamp)}
-              style={ButtonStyle.STROKED}
-              size={ButtonSize.TINY}
+              style={ButtonLegacyStyle.STROKED}
+              size={ButtonLegacySize.TINY}
               iconRight={IconAwesomeEnum.CLOCK}
             >
               Timeframe
@@ -86,7 +86,7 @@ export function CustomFilter({
             <ButtonLegacy
               dataTestId="timeframe-values"
               onClick={() => setIsOpenTimestamp(!isOpenTimestamp)}
-              size={ButtonSize.TINY}
+              size={ButtonLegacySize.TINY}
             >
               from: {dateYearMonthDayHourMinuteSecond(timestamps[0], true, false)} - to:{' '}
               {dateYearMonthDayHourMinuteSecond(timestamps[1], true, false)}

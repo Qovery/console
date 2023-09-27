@@ -8,7 +8,16 @@ import {
   ENVIRONMENTS_DEPLOYMENT_RULES_URL,
   ENVIRONMENTS_URL,
 } from '@qovery/shared/routes'
-import { ButtonLegacy, ButtonSize, Header, Icon, IconAwesomeEnum, Section, Tabs, useModal } from '@qovery/shared/ui'
+import {
+  ButtonLegacy,
+  ButtonLegacySize,
+  Header,
+  Icon,
+  IconAwesomeEnum,
+  Section,
+  Tabs,
+  useModal,
+} from '@qovery/shared/ui'
 
 export interface ContainerProps {
   project?: Project
@@ -43,7 +52,7 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
   const contentTabs = (
     <div className="flex justify-center items-center px-5 border-l h-14 border-neutral-200">
       <ButtonLegacy
-        size={ButtonSize.LARGE}
+        size={ButtonLegacySize.LARGE}
         iconRight={IconAwesomeEnum.CIRCLE_PLUS}
         disabled={!clusterAvailable}
         onClick={() => {

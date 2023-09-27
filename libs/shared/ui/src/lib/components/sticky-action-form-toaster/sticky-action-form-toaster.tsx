@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import ButtonLegacy, { ButtonStyle } from '../buttons/button-legacy/button-legacy'
+import ButtonLegacy, { ButtonLegacyStyle } from '../buttons/button-legacy/button-legacy'
 
 export interface StickyActionFormToasterProps {
   visible?: boolean
@@ -54,7 +54,7 @@ export function StickyActionFormToaster(props: StickyActionFormToasterProps) {
           )}
           {submitLabel && onSubmit && (
             <ButtonLegacy
-              style={ButtonStyle.CONFIRM}
+              style={ButtonLegacyStyle.CONFIRM}
               onClick={() => onSubmit()}
               disabled={props.disabledValidation}
               dataTestId="submit-button"

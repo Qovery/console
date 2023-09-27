@@ -10,8 +10,8 @@ import {
   ButtonIcon,
   ButtonIconStyle,
   ButtonLegacy,
-  ButtonSize,
-  ButtonStyle,
+  ButtonLegacySize,
+  ButtonLegacyStyle,
   Icon,
   IconAwesomeEnum,
 } from '@qovery/shared/ui'
@@ -298,8 +298,8 @@ export function StepSummary(props: StepSummaryProps) {
           onClick={props.onPrevious}
           className="btn--no-min-w"
           type="button"
-          size={ButtonSize.XLARGE}
-          style={ButtonStyle.STROKED}
+          size={ButtonLegacySize.XLARGE}
+          style={ButtonLegacyStyle.STROKED}
         >
           Back
         </ButtonLegacy>
@@ -308,8 +308,8 @@ export function StepSummary(props: StepSummaryProps) {
             dataTestId="button-create"
             loading={props.isLoadingCreate}
             onClick={() => props.onSubmit(false)}
-            size={ButtonSize.XLARGE}
-            style={ButtonStyle.STROKED}
+            size={ButtonLegacySize.XLARGE}
+            style={ButtonLegacyStyle.STROKED}
             className="btn--no-min-w"
           >
             Create
@@ -318,8 +318,8 @@ export function StepSummary(props: StepSummaryProps) {
             dataTestId="button-create-deploy"
             loading={props.isLoadingCreateAndDeploy}
             onClick={() => props.onSubmit(true)}
-            size={ButtonSize.XLARGE}
-            style={ButtonStyle.BASIC}
+            size={ButtonLegacySize.XLARGE}
+            style={ButtonLegacyStyle.BASIC}
           >
             Create and deploy
           </ButtonLegacy>

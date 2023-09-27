@@ -16,7 +16,7 @@ import {
 import {
   ButtonAction,
   ButtonLegacy,
-  ButtonStyle,
+  ButtonLegacyStyle,
   Icon,
   IconAwesomeEnum,
   IconFa,
@@ -193,7 +193,7 @@ export function TabsFeature() {
     <>
       <ButtonLegacy
         className="mr-2"
-        style={ButtonStyle.FLAT}
+        style={ButtonLegacyStyle.FLAT}
         iconLeft={!globalShowHideValue ? IconAwesomeEnum.EYE : IconAwesomeEnum.EYE_SLASH}
         onClick={() => {
           setShowHideAllEnvironmentVariablesValues(!globalShowHideValue)

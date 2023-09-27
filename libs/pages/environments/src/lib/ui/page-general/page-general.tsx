@@ -12,7 +12,7 @@ import {
 import {
   type BaseLink,
   ButtonLegacy,
-  ButtonSize,
+  ButtonLegacySize,
   EmptyState,
   HelpSection,
   IconAwesomeEnum,
@@ -122,7 +122,7 @@ export function PageGeneral(props: PageGeneralProps) {
           >
             <ButtonLegacy
               className="mt-5"
-              size={ButtonSize.LARGE}
+              size={ButtonLegacySize.LARGE}
               iconRight={IconAwesomeEnum.CIRCLE_PLUS}
               link={
                 !clusterAvailable

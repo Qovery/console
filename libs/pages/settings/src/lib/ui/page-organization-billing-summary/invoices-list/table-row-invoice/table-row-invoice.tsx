@@ -4,7 +4,7 @@ import {
   Badge,
   ButtonIcon,
   ButtonIconStyle,
-  ButtonSize,
+  ButtonLegacySize,
   IconAwesomeEnum,
   type TableFilterProps,
   type TableHeadProps,
@@ -77,7 +77,7 @@ export function TableRowInvoice(props: TableRowInvoiceProps) {
             }}
             icon={IconAwesomeEnum.DOWNLOAD}
             style={ButtonIconStyle.STROKED}
-            size={ButtonSize.SMALL}
+            size={ButtonLegacySize.SMALL}
           />
         </div>
       </>

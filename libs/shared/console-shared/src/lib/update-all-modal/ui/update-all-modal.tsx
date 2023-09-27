@@ -4,8 +4,8 @@ import {
   Avatar,
   AvatarStyle,
   ButtonLegacy,
-  ButtonSize,
-  ButtonStyle,
+  ButtonLegacySize,
+  ButtonLegacyStyle,
   Icon,
   IconAwesomeEnum,
   InputCheckbox,
@@ -53,8 +53,8 @@ export function UpdateAllModal(props: UpdateAllModalProps) {
             <ButtonLegacy
               onClick={props.unselectAll}
               dataTestId="deselect-all"
-              size={ButtonSize.TINY}
-              style={ButtonStyle.STROKED}
+              size={ButtonLegacySize.TINY}
+              style={ButtonLegacyStyle.STROKED}
             >
               Deselect All
             </ButtonLegacy>
@@ -62,8 +62,8 @@ export function UpdateAllModal(props: UpdateAllModalProps) {
             <ButtonLegacy
               onClick={props.selectAll}
               dataTestId="select-all"
-              size={ButtonSize.TINY}
-              style={ButtonStyle.STROKED}
+              size={ButtonLegacySize.TINY}
+              style={ButtonLegacyStyle.STROKED}
             >
               Select All
             </ButtonLegacy>
@@ -147,8 +147,8 @@ export function UpdateAllModal(props: UpdateAllModalProps) {
         <ButtonLegacy
           dataTestId="cancel-button"
           className="btn--no-min-w"
-          style={ButtonStyle.STROKED}
-          size={ButtonSize.XLARGE}
+          style={ButtonLegacyStyle.STROKED}
+          size={ButtonLegacySize.XLARGE}
           onClick={props.closeModal}
         >
           Cancel
@@ -158,7 +158,7 @@ export function UpdateAllModal(props: UpdateAllModalProps) {
           disabled={props.selectedServiceIds.length === 0 || props.submitDisabled}
           className="btn--no-min-w"
           type="submit"
-          size={ButtonSize.XLARGE}
+          size={ButtonLegacySize.XLARGE}
           onClick={props.onSubmit}
           loading={props.submitLoading}
         >

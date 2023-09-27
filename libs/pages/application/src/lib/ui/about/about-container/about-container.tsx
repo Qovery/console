@@ -2,7 +2,7 @@ import { type ContainerRegistryResponse } from 'qovery-typescript-axios'
 import { useCallback } from 'react'
 import { IconEnum, isContainerJob } from '@qovery/shared/enums'
 import { type ApplicationEntity, type LoadingStatus } from '@qovery/shared/interfaces'
-import { ButtonLegacy, ButtonStyle, Skeleton, Truncate } from '@qovery/shared/ui'
+import { ButtonLegacy, ButtonLegacyStyle, Skeleton, Truncate } from '@qovery/shared/ui'
 
 export interface AboutContainerProps {
   loadingStatus?: LoadingStatus
@@ -45,7 +45,7 @@ export function AboutContainer(props: AboutContainerProps) {
           <ButtonLegacy
             external
             link={props.currentRegistry?.url}
-            style={ButtonStyle.STROKED}
+            style={ButtonLegacyStyle.STROKED}
             iconLeft={IconEnum.CONTAINER}
           >
             <Truncate truncateLimit={18} text={props.currentRegistry?.name || ''} />

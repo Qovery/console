@@ -5,8 +5,8 @@ import { type Value } from '@qovery/shared/interfaces'
 import {
   BlockContent,
   ButtonLegacy,
-  ButtonSize,
-  ButtonStyle,
+  ButtonLegacySize,
+  ButtonLegacyStyle,
   InputSelect,
   InputText,
   LoaderSpinner,
@@ -175,8 +175,8 @@ export function BillingDetails(props: BillingDetailsProps) {
             <ButtonLegacy
               dataTestId="submit-button"
               className="btn--no-min-w"
-              size={ButtonSize.LARGE}
-              style={ButtonStyle.BASIC}
+              size={ButtonLegacySize.LARGE}
+              style={ButtonLegacyStyle.BASIC}
               type="submit"
               disabled={!formState.isValid}
               loading={props.editInProcess}

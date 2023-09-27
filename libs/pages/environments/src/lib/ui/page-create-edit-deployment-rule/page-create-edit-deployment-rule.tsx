@@ -9,8 +9,8 @@ import {
   type BaseLink,
   BlockContent,
   ButtonLegacy,
-  ButtonSize,
-  ButtonStyle,
+  ButtonLegacySize,
+  ButtonLegacyStyle,
   HelpSection,
   Icon,
   InputSelect,
@@ -65,8 +65,8 @@ export function PageCreateEditDeploymentRule(props: PageCreateEditDeploymentRule
           <div className="py-7 px-10">
             <div className="max-w-[620px]">
               <ButtonLegacy
-                size={ButtonSize.TINY}
-                style={ButtonStyle.FLAT}
+                size={ButtonLegacySize.TINY}
+                style={ButtonLegacyStyle.FLAT}
                 onClick={() =>
                   navigate(ENVIRONMENTS_URL(organizationId, projectId) + ENVIRONMENTS_DEPLOYMENT_RULES_URL)
                 }
@@ -258,7 +258,12 @@ export function PageCreateEditDeploymentRule(props: PageCreateEditDeploymentRule
                   </div>
                 </BlockContent>
                 <div className="flex justify-end">
-                  <ButtonLegacy className="mb-14" size={ButtonSize.LARGE} style={ButtonStyle.BASIC} type="submit">
+                  <ButtonLegacy
+                    className="mb-14"
+                    size={ButtonLegacySize.LARGE}
+                    style={ButtonLegacyStyle.BASIC}
+                    type="submit"
+                  >
                     {btnLabel}
                   </ButtonLegacy>
                 </div>

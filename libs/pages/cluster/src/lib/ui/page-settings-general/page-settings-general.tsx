@@ -1,7 +1,7 @@
 import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { ClusterGeneralSettings } from '@qovery/shared/console-shared'
-import { BlockContent, ButtonLegacy, ButtonSize, ButtonStyle, HelpSection } from '@qovery/shared/ui'
+import { BlockContent, ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle, HelpSection } from '@qovery/shared/ui'
 
 export interface PageSettingsGeneralProps {
   onSubmit: FormEventHandler<HTMLFormElement>
@@ -24,8 +24,8 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
             <ButtonLegacy
               dataTestId="submit-button"
               className="btn--no-min-w"
-              size={ButtonSize.LARGE}
-              style={ButtonStyle.BASIC}
+              size={ButtonLegacySize.LARGE}
+              style={ButtonLegacyStyle.BASIC}
               type="submit"
               disabled={!formState.isValid}
               loading={loading}

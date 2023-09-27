@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ButtonLegacy, ButtonSize, ButtonStyle, IconAwesomeEnum, IconFa } from '@qovery/shared/ui'
+import { ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle, IconAwesomeEnum, IconFa } from '@qovery/shared/ui'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 
 export interface CopyButtonProps {
@@ -22,8 +22,8 @@ export function CopyButton({ content, className = '' }: CopyButtonProps) {
   return (
     <ButtonLegacy
       onClick={() => onClickCopyToClipboard(content)}
-      style={ButtonStyle.DARK}
-      size={ButtonSize.TINY}
+      style={ButtonLegacyStyle.DARK}
+      size={ButtonLegacySize.TINY}
       className={`cursor-pointer font-medium ${className}`}
     >
       Copy

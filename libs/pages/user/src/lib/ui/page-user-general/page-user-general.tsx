@@ -1,7 +1,14 @@
 import { type FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { type Value } from '@qovery/shared/interfaces'
-import { BlockContent, ButtonLegacy, ButtonSize, ButtonStyle, InputSelect, InputText } from '@qovery/shared/ui'
+import {
+  BlockContent,
+  ButtonLegacy,
+  ButtonLegacySize,
+  ButtonLegacyStyle,
+  InputSelect,
+  InputText,
+} from '@qovery/shared/ui'
 
 export interface PageUserGeneralProps {
   onSubmit: FormEventHandler<HTMLFormElement>
@@ -105,8 +112,8 @@ export function PageUserGeneral({ onSubmit, loading, picture, accountOptions }: 
             <ButtonLegacy
               dataTestId="submit-button"
               className="btn--no-min-w"
-              size={ButtonSize.LARGE}
-              style={ButtonStyle.BASIC}
+              size={ButtonLegacySize.LARGE}
+              style={ButtonLegacyStyle.BASIC}
               type="submit"
               disabled={!formState.isValid}
               loading={loading}

@@ -5,8 +5,8 @@ import {
   ButtonIcon,
   ButtonIconStyle,
   ButtonLegacy,
-  ButtonSize,
-  ButtonStyle,
+  ButtonLegacySize,
+  ButtonLegacyStyle,
   EmptyState,
   Icon,
   IconAwesomeEnum,
@@ -115,7 +115,7 @@ export function FlowCreatePort({
                       <ButtonIcon
                         className="mr-2 !bg-transparent hover:!bg-neutral-200"
                         style={ButtonIconStyle.STROKED}
-                        size={ButtonSize.REGULAR}
+                        size={ButtonLegacySize.REGULAR}
                         onClick={() => onEdit(customPort)}
                         dataTestId="edit-button"
                         icon={IconAwesomeEnum.WHEEL}
@@ -125,7 +125,7 @@ export function FlowCreatePort({
                       <ButtonIcon
                         className="!bg-transparent hover:!bg-neutral-200"
                         style={ButtonIconStyle.STROKED}
-                        size={ButtonSize.REGULAR}
+                        size={ButtonLegacySize.REGULAR}
                         onClick={() =>
                           onRemovePort(
                             customPort,
@@ -145,7 +145,7 @@ export function FlowCreatePort({
             {!isSetting && (
               <div className="flex justify-end items-center py-3 px-4">
                 <ButtonLegacy
-                  size={ButtonSize.TINY}
+                  size={ButtonLegacySize.TINY}
                   iconRight={IconAwesomeEnum.CIRCLE_PLUS}
                   className="btn--no-min-w"
                   onClick={onAddPort}
@@ -166,16 +166,16 @@ export function FlowCreatePort({
             onClick={onBack}
             className="btn--no-min-w"
             type="button"
-            size={ButtonSize.XLARGE}
-            style={ButtonStyle.STROKED}
+            size={ButtonLegacySize.XLARGE}
+            style={ButtonLegacyStyle.STROKED}
           >
             Back
           </ButtonLegacy>
           <ButtonLegacy
             dataTestId="button-submit"
             onClick={onSubmit}
-            size={ButtonSize.XLARGE}
-            style={ButtonStyle.BASIC}
+            size={ButtonLegacySize.XLARGE}
+            style={ButtonLegacyStyle.BASIC}
           >
             Continue
           </ButtonLegacy>

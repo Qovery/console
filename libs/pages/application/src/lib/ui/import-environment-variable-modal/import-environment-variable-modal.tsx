@@ -8,8 +8,8 @@ import {
   ButtonIcon,
   ButtonIconStyle,
   ButtonLegacy,
-  ButtonSize,
-  ButtonStyle,
+  ButtonLegacySize,
+  ButtonLegacyStyle,
   Dropzone,
   IconAwesomeEnum,
   InputSelectSmall,
@@ -192,7 +192,7 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
                   <ButtonIcon
                     icon={IconAwesomeEnum.XMARK}
                     style={ButtonIconStyle.STROKED}
-                    size={ButtonSize.TINY}
+                    size={ButtonLegacySize.TINY}
                     onClick={() => props.deleteKey(key)}
                     className="text-neutral-350 hover:text-neutral-400 !w-8 !h-8"
                     iconClassName="!text-xs"
@@ -204,8 +204,8 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
             <div className="flex gap-3 justify-end mt-6">
               <ButtonLegacy
                 className="btn--no-min-w"
-                style={ButtonStyle.STROKED}
-                size={ButtonSize.XLARGE}
+                style={ButtonLegacyStyle.STROKED}
+                size={ButtonLegacySize.XLARGE}
                 onClick={() => props.closeModal()}
               >
                 Cancel
@@ -214,7 +214,7 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
                 dataTestId="submit-button"
                 className="btn--no-min-w"
                 type="submit"
-                size={ButtonSize.XLARGE}
+                size={ButtonLegacySize.XLARGE}
                 disabled={!formState.isValid}
                 loading={loading}
               >
