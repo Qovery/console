@@ -20,48 +20,43 @@ export function Container({ children, cluster, deployCluster }: PropsWithChildre
   const statusLoading = !!cluster?.extendedStatus?.status?.status
 
   const headerActions = (
-    <>
-      <Skeleton width={150} height={32} show={!statusLoading}>
-        {cluster ? (
-          <>
-            <ClusterButtonsActions cluster={cluster} noSettings />
-            <span className="ml-4 mr-1 mt-2 h-4 w-[1px] bg-neutral-200"></span>
-          </>
-        ) : (
-          <div />
+    <div className="flex flex-col gap-3">
+      <div className="flex flex-row gap-2">
+        {cluster?.production && (
+          <Badge size="xs" color="neutral">
+            Production
+          </Badge>
         )}
+        {cluster?.is_default && (
+          <Badge size="xs" color="sky">
+            Default
+          </Badge>
+        )}
+        {cluster ? (
+          <ClusterType size="xs" cloudProvider={cluster.cloud_provider} kubernetes={cluster.kubernetes} />
+        ) : (
+          <Skeleton width={120} height={32} show />
+        )}
+        <Skeleton width={120} height={32} show={!cluster}>
+          <Badge size="xs" color="neutral">
+            {cluster?.region}
+          </Badge>
+        </Skeleton>
+        <Skeleton width={120} height={32} show={!cluster}>
+          <Badge size="xs" color="neutral">
+            {cluster?.version}
+          </Badge>
+        </Skeleton>
+        <Skeleton width={120} height={32} show={!cluster}>
+          <Badge size="xs" color="neutral">
+            {cluster?.instance_type?.toLowerCase().replace('_', '.')}
+          </Badge>
+        </Skeleton>
+      </div>
+      <Skeleton width={150} height={32} show={!statusLoading}>
+        {cluster ? <ClusterButtonsActions cluster={cluster} noSettings /> : <div />}
       </Skeleton>
-      {cluster?.production && (
-        <Badge size="sm" color="neutral">
-          PROD
-        </Badge>
-      )}
-      {cluster?.is_default && (
-        <Badge size="sm" color="sky">
-          DEFAULT
-        </Badge>
-      )}
-      {cluster ? (
-        <ClusterType size="sm" cloudProvider={cluster.cloud_provider} kubernetes={cluster.kubernetes} />
-      ) : (
-        <Skeleton width={120} height={32} show />
-      )}
-      <Skeleton width={120} height={32} show={!cluster}>
-        <Badge size="sm" color="neutral">
-          {cluster?.region}
-        </Badge>
-      </Skeleton>
-      <Skeleton width={120} height={32} show={!cluster}>
-        <Badge size="sm" color="neutral">
-          {cluster?.version}
-        </Badge>
-      </Skeleton>
-      <Skeleton width={120} height={32} show={!cluster}>
-        <Badge size="sm" color="neutral">
-          {cluster?.instance_type?.toLowerCase().replace('_', '.')}
-        </Badge>
-      </Skeleton>
-    </>
+    </div>
   )
 
   const tabsItems = [
@@ -75,7 +70,7 @@ export function Container({ children, cluster, deployCluster }: PropsWithChildre
 
   return (
     <>
-      <Header title={cluster?.name} icon={cluster?.cloud_provider} iconClassName="w-10 mr-3" actions={headerActions} />
+      <Header title={cluster?.name} icon={cluster?.cloud_provider} actions={headerActions} />
       <Tabs items={tabsItems} />
       {cluster && cluster.deployment_status !== ClusterDeploymentStatusEnum.UP_TO_DATE && (
         <NeedRedeployFlag deploymentStatus={cluster?.deployment_status} onClickButton={deployCluster} />
