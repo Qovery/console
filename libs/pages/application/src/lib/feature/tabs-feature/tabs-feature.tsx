@@ -1,4 +1,5 @@
 import { type ClickEvent } from '@szhsin/react-menu'
+import { Link } from 'qovery-typescript-axios'
 import { type ReactNode, useContext } from 'react'
 import { useSelector } from 'react-redux'
 import { matchPath, useLocation, useParams } from 'react-router-dom'
@@ -16,14 +17,18 @@ import {
 import {
   ButtonAction,
   ButtonLegacy,
+  ButtonLegacySize,
   ButtonLegacyStyle,
+  CopyToClipboard,
   Icon,
   IconAwesomeEnum,
   IconFa,
   type MenuData,
+  Popover,
   Tabs,
   type TabsItem,
   Tooltip,
+  Truncate,
   useModal,
 } from '@qovery/shared/ui'
 import { type RootState } from '@qovery/state/store'
@@ -90,6 +95,11 @@ export function TabsFeature() {
   const matchEnvVariableRoute = matchPath(
     location.pathname || '',
     APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_VARIABLES_URL
+  )
+
+  const matchServiceDetailRoute = matchPath(
+    location.pathname || '',
+    APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_GENERAL_URL
   )
 
   let menuForContentRight: MenuData = []
@@ -189,7 +199,7 @@ export function TabsFeature() {
     },
   ]
 
-  const contentRight: ReactNode = matchEnvVariableRoute && (
+  const contentRightEnvVariable: ReactNode = matchEnvVariableRoute && (
     <>
       <ButtonLegacy
         className="mr-2"
@@ -207,9 +217,71 @@ export function TabsFeature() {
     </>
   )
 
+  const contentRightServiceDetail: ReactNode = matchServiceDetailRoute && (
+    <Popover.Root>
+      <Popover.Trigger>
+        <div>
+          <ButtonLegacy
+            style={ButtonLegacyStyle.STROKED}
+            size={ButtonLegacySize.LARGE}
+            iconLeft={IconAwesomeEnum.ANGLE_DOWN}
+            iconRight={IconAwesomeEnum.LINK}
+          >
+            Links
+          </ButtonLegacy>
+        </div>
+      </Popover.Trigger>
+      <Popover.Content
+        side="bottom"
+        className="p-2 text-neutral-350 text-sm relative right-4 border-transparent"
+        style={{ width: 280 }}
+      >
+        <div className="p-2 flex justify-between items-center">
+          <h6 className="text-neutral-350 font-medium">
+            {(application?.links?.items?.length ?? 0) + 1} links attached
+          </h6>
+          <button className="flex justify-between items-center transition text-ssm text-brand-500 hover:text-brand-600 cursor-pointer font-medium">
+            Customize
+            <Icon name={IconAwesomeEnum.CIRCLE_PLUS} className="ml-1 text-2xs" />
+          </button>
+        </div>
+        <ul>
+          {/* remove default Qovery links */}
+          {application?.links?.items
+            ?.filter((link: Link) => !(link.is_default && link.is_qovery_domain))
+            .map((link: Link) => (
+              <li key={link.url} className="flex p-2">
+                <CopyToClipboard className="text-brand-500 hover:text-brand-600 mr-2" content={link.url ?? ''} />
+                <a
+                  className="transition flex items-center justify-between w-full text-neutral-400 hover:text-brand-500"
+                  href={link.url}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <span className="block text-ssm font-medium mr-2">
+                    <Truncate text={link.url ?? ''} truncateLimit={26} />
+                  </span>
+                  <span className="block text-xs text-neutral-350">{link.internal_port}</span>
+                </a>
+              </li>
+            ))}
+        </ul>
+      </Popover.Content>
+    </Popover.Root>
+  )
+
   if (!serviceType) return null
 
-  return <Tabs items={items} contentRight={<div className="px-5">{contentRight}</div>} />
+  return (
+    <Tabs
+      items={items}
+      contentRight={
+        <div className="px-5">
+          {contentRightEnvVariable} {contentRightServiceDetail}
+        </div>
+      }
+    />
+  )
 }
 
 export default TabsFeature

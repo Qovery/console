@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { twMerge } from 'tailwind-merge'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import Icon from '../icon/icon'
 import { IconAwesomeEnum } from '../icon/icon-awesome.enum'
@@ -29,10 +30,10 @@ export function CopyToClipboard(props: CopyToClipboardProps) {
     <Tooltip content={tooltipContent}>
       <span
         onClick={onClickCopyToClipboard}
-        className={`bigger-click-zone cursor-pointer ${className}`}
+        className={twMerge('bigger-click-zone cursor-pointer', className)}
         data-testid="copy-container"
       >
-        <Icon name={icon} className={`${iconClassName}`} />
+        <Icon name={icon} className={iconClassName} />
       </span>
     </Tooltip>
   )
