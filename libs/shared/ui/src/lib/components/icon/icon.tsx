@@ -30,6 +30,7 @@ import QoveryIcon from './icons/qovery'
 import RedisIcon from './icons/redis'
 import ScalewayIcon from './icons/scaleway'
 import ScalewayGrayIcon from './icons/scaleway-gray'
+import ServicesIcon from './icons/services'
 import SlackIcon from './icons/slack'
 import TerraformIcon from './icons/terraform'
 
@@ -112,6 +113,8 @@ export function Icon(props: IconProps) {
       return <DopplerIcon {...formattedProps} />
     case IconEnum.TERRAFORM:
       return <TerraformIcon {...formattedProps} />
+    case IconEnum.SERVICES:
+      return <ServicesIcon {...formattedProps} />
     default:
       return <IconFa {...formattedProps} />
   }

@@ -179,7 +179,7 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
 
   return (
     <>
-      <Header title={environment?.name} icon={IconEnum.APPLICATION} actions={headerActions} />
+      <Header title={environment?.name} icon={IconEnum.SERVICES} actions={headerActions} />
       <Tabs items={tabsItems} contentRight={contentTabs} />
       {children}
     </>
