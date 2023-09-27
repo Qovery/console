@@ -10,7 +10,7 @@ export const Section = forwardRef<ElementRef<'section'>, SectionProps>(function 
 ) {
   const level = useContext(LevelContext)
   return (
-    <section ref={forwardedRef} className={twMerge('flex flex-col', className)} {...props}>
+    <section ref={forwardedRef} className={twMerge('flex flex-1 flex-col', className)} {...props}>
       <LevelContext.Provider value={level + 1}>{children}</LevelContext.Provider>
     </section>
   )
