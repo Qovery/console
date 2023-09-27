@@ -1,14 +1,14 @@
 import { renderWithProviders } from '@qovery/shared/util-tests'
 import { Section } from '../section/section'
-import Header from './header'
+import { Heading } from './heading'
 
-describe('Header', () => {
+describe('Heading', () => {
   it('should render successfully', () => {
     const { baseElement } = renderWithProviders(
       <Section>
-        <Header />
+        <Heading>Foobar</Heading>
       </Section>
     )
-    expect(baseElement).toBeTruthy()
+    expect(baseElement).toMatchSnapshot()
   })
 })

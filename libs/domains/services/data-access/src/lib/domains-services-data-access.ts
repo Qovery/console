@@ -20,6 +20,7 @@ import {
   type Status,
 } from 'qovery-typescript-axios'
 import { type ServiceMetricsDto } from 'qovery-ws-typescript-axios'
+import { match } from 'ts-pattern'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { type ServiceRunningStatus } from '@qovery/shared/interfaces'
 
@@ -97,19 +98,19 @@ export const services = createQueryKeys('services', {
       return [
         ...((await applicationsApi.listApplication(environmentId)).data.results ?? []).map((entity) => ({
           ...entity,
-          serviceType: ServiceTypeEnum.APPLICATION,
+          serviceType: ServiceTypeEnum.APPLICATION as const,
         })),
         ...((await containersApi.listContainer(environmentId)).data.results ?? []).map((entity) => ({
           ...entity,
-          serviceType: ServiceTypeEnum.CONTAINER,
+          serviceType: ServiceTypeEnum.CONTAINER as const,
         })),
         ...((await databasesApi.getEnvironmentDatabaseStatus(environmentId)).data.results ?? []).map((entity) => ({
           ...entity,
-          serviceType: ServiceTypeEnum.DATABASE,
+          serviceType: ServiceTypeEnum.DATABASE as const,
         })),
         ...((await jobsApi.getEnvironmentJobStatus(environmentId)).data.results ?? []).map((entity) => ({
           ...entity,
-          serviceType: ServiceTypeEnum.JOB,
+          serviceType: ServiceTypeEnum.JOB as const,
         })),
       ]
     },
@@ -152,17 +153,24 @@ export const services = createQueryKeys('services', {
   details: ({ serviceId, serviceType }: { serviceId: string; serviceType: ServiceType }) => ({
     queryKey: [serviceId],
     async queryFn() {
-      const mapper = {
-        APPLICATION: applicationMainCallsApi.getApplication.bind(applicationMainCallsApi),
-        CONTAINER: containerMainCallsApi.getContainer.bind(containerMainCallsApi),
-        DATABASE: databaseMainCallsApi.getDatabase.bind(databaseMainCallsApi),
-        JOB: jobMainCallsApi.getJob.bind(jobMainCallsApi),
-        CRON_JOB: jobMainCallsApi.getJob.bind(jobMainCallsApi),
-        LIFECYCLE_JOB: jobMainCallsApi.getJob.bind(jobMainCallsApi),
-      } as const
-      const fn = mapper[serviceType]
-      const response = await fn(serviceId)
-      return response.data
+      return match(serviceType)
+        .with('APPLICATION', async () => ({
+          ...(await applicationMainCallsApi.getApplication(serviceId)).data,
+          serviceType: ServiceTypeEnum.APPLICATION as const,
+        }))
+        .with('CONTAINER', async () => ({
+          ...(await containerMainCallsApi.getContainer(serviceId)).data,
+          serviceType: ServiceTypeEnum.CONTAINER as const,
+        }))
+        .with('DATABASE', async () => ({
+          ...(await databaseMainCallsApi.getDatabase(serviceId)).data,
+          serviceType: ServiceTypeEnum.DATABASE as const,
+        }))
+        .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', async () => ({
+          ...(await jobMainCallsApi.getJob(serviceId)).data,
+          serviceType: ServiceTypeEnum.JOB as const,
+        }))
+        .exhaustive()
     },
   }),
 })

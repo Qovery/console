@@ -8,7 +8,7 @@ import {
   ENVIRONMENTS_DEPLOYMENT_RULES_URL,
   ENVIRONMENTS_URL,
 } from '@qovery/shared/routes'
-import { ButtonLegacy, ButtonSize, Header, Icon, IconAwesomeEnum, Tabs, useModal } from '@qovery/shared/ui'
+import { ButtonLegacy, ButtonSize, Header, Icon, IconAwesomeEnum, Section, Tabs, useModal } from '@qovery/shared/ui'
 
 export interface ContainerProps {
   project?: Project
@@ -64,11 +64,11 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
   )
 
   return (
-    <>
+    <Section>
       <Header title={project?.name} icon={IconEnum.ENVIRONMENT} iconClassName="w-16" />
       <Tabs items={tabsItems} contentRight={!isDeploymentRulesTab && contentTabs} />
       <div className="flex-grow flex-col flex">{children}</div>
-    </>
+    </Section>
   )
 }
 
