@@ -1,5 +1,6 @@
 import { type VariantProps, cva } from 'class-variance-authority'
 import { type PropsWithChildren, forwardRef } from 'react'
+import { twMerge } from 'tailwind-merge'
 import { type IconEnum } from '@qovery/shared/enums'
 import ButtonLegacy, { ButtonSize, ButtonStyle } from '../buttons/button-legacy/button-legacy'
 import { type IconAwesomeEnum } from '../icon/icon-awesome.enum'
@@ -33,21 +34,22 @@ export const Banner = forwardRef<HTMLDivElement, PropsWithChildren<BannerProps>>
   forwardedRef
 ) {
   return (
-    <div className={bannerVariants({ color })}>
-      <div className="flex h-10 items-center justify-center font-medium text-sm" ref={forwardedRef}>
-        {children}
-        {buttonLabel && (
-          <ButtonLegacy
-            style={ButtonStyle.RAISED}
-            size={ButtonSize.TINY}
-            className={buttonVariants({ color })}
-            iconRight={buttonIconRight}
-            onClick={onClickButton}
-          >
-            {buttonLabel}
-          </ButtonLegacy>
-        )}
-      </div>
+    <div
+      className={twMerge('flex h-10 items-center justify-center font-medium text-sm', bannerVariants({ color }))}
+      ref={forwardedRef}
+    >
+      {children}
+      {buttonLabel && (
+        <ButtonLegacy
+          style={ButtonStyle.RAISED}
+          size={ButtonSize.TINY}
+          className={buttonVariants({ color })}
+          iconRight={buttonIconRight}
+          onClick={onClickButton}
+        >
+          {buttonLabel}
+        </ButtonLegacy>
+      )}
     </div>
   )
 })

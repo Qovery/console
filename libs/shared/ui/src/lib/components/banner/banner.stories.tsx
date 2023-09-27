@@ -9,7 +9,6 @@ export default {
     color: {
       control: {
         type: 'select',
-        options: ['yellow', 'brand'],
       },
     },
   },
