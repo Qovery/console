@@ -3,7 +3,7 @@ import { IconEnum } from '@qovery/shared/enums'
 import { type RepositoryEntity } from '@qovery/shared/interfaces'
 import {
   BlockContent,
-  Button,
+  ButtonLegacy,
   ButtonSize,
   ButtonStyle,
   HelpSection,
@@ -53,17 +53,17 @@ export function PageOrganizationGithubRepositoryAccess(props: PageOrganizationGi
                 )}
               </div>
               {!props.githubAuthProvider?.use_bot ? (
-                <Button
+                <ButtonLegacy
                   dataTestId="install-button"
                   onClick={props.onConfigure}
                   size={ButtonSize.SMALL}
                   className="ml-2"
                 >
                   Install
-                </Button>
+                </ButtonLegacy>
               ) : (
                 <div className="flex gap-2">
-                  <Button
+                  <ButtonLegacy
                     style={ButtonStyle.STROKED}
                     size={ButtonSize.SMALL}
                     dataTestId="disconnect-button"
@@ -71,10 +71,10 @@ export function PageOrganizationGithubRepositoryAccess(props: PageOrganizationGi
                     onClick={() => props.onDisconnect && props.onDisconnect(false)}
                   >
                     Disconnect
-                  </Button>
-                  <Button dataTestId="permission-button" size={ButtonSize.SMALL} onClick={props.onConfigure}>
+                  </ButtonLegacy>
+                  <ButtonLegacy dataTestId="permission-button" size={ButtonSize.SMALL} onClick={props.onConfigure}>
                     Manage Permissions
-                  </Button>
+                  </ButtonLegacy>
                 </div>
               )}
             </div>

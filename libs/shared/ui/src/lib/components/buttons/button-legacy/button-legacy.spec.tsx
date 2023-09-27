@@ -1,7 +1,7 @@
 import { render, screen } from '__tests__/utils/setup-jest'
 import { Chance } from 'chance'
 import { createElement } from 'react'
-import Button, { type ButtonProps, ButtonSize, ButtonStyle } from './button'
+import ButtonLegacy, { type ButtonProps, ButtonSize, ButtonStyle } from './button-legacy'
 
 describe('Button', () => {
   let props: ButtonProps
@@ -15,7 +15,7 @@ describe('Button', () => {
   })
 
   it('should render successfully', () => {
-    const { baseElement } = render(<Button {...props} />)
+    const { baseElement } = render(<ButtonLegacy {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
@@ -24,7 +24,7 @@ describe('Button', () => {
     props.style = ButtonStyle.BASIC
     props.className = 'some-class-name'
 
-    render(<Button {...props} />)
+    render(<ButtonLegacy {...props} />)
 
     const button = screen.getByRole('button')
 
@@ -34,7 +34,7 @@ describe('Button', () => {
   it('should apply the disabled class', () => {
     props.disabled = true
 
-    render(<Button {...props} />)
+    render(<ButtonLegacy {...props} />)
 
     const button = screen.getByRole('button')
 
@@ -44,7 +44,7 @@ describe('Button', () => {
   it('should apply the loading class', () => {
     props.loading = true
 
-    render(<Button {...props} />)
+    render(<ButtonLegacy {...props} />)
 
     const button = screen.getByRole('button')
 
@@ -54,7 +54,7 @@ describe('Button', () => {
   it('should return a link instead of a button', () => {
     props.link = chance.url()
 
-    render(<Button {...props} />)
+    render(<ButtonLegacy {...props} />)
 
     const link = screen.getByRole('link')
 

@@ -1,7 +1,7 @@
 import { type DeploymentStageResponse } from 'qovery-typescript-axios'
 import { type Dispatch, type SetStateAction } from 'react'
 import { DragDropContext, Draggable, type DropResult, Droppable } from 'react-beautiful-dnd'
-import { BadgeDeploymentOrder, Button, ButtonSize, ButtonStyle, ScrollShadowWrapper } from '@qovery/shared/ui'
+import { BadgeDeploymentOrder, ButtonLegacy, ButtonSize, ButtonStyle, ScrollShadowWrapper } from '@qovery/shared/ui'
 import { reorderStage } from '../../../feature/page-settings-deployment-pipeline-feature/utils/utils'
 
 export interface StageOrderModalProps {
@@ -76,7 +76,7 @@ export function StageOrderModal(props: StageOrderModalProps) {
           </Droppable>
         </ScrollShadowWrapper>
         <div className="flex gap-3 justify-end mt-6">
-          <Button
+          <ButtonLegacy
             dataTestId="cancel-button"
             className="btn--no-min-w"
             style={ButtonStyle.STROKED}
@@ -84,7 +84,7 @@ export function StageOrderModal(props: StageOrderModalProps) {
             onClick={() => props.onClose()}
           >
             Cancel
-          </Button>
+          </ButtonLegacy>
         </div>
       </div>
     </DragDropContext>

@@ -21,7 +21,7 @@ import {
   SERVICES_URL,
 } from '@qovery/shared/routes'
 import {
-  Button,
+  ButtonLegacy,
   ButtonSize,
   Header,
   Icon,
@@ -164,9 +164,9 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
       <Skeleton width={154} height={40} show={isLoadingDeploymentStatus}>
         <Menu
           trigger={
-            <Button size={ButtonSize.LARGE} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>
+            <ButtonLegacy size={ButtonSize.LARGE} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>
               New service
-            </Button>
+            </ButtonLegacy>
           }
           menus={newServicesMenu}
           arrowAlign={MenuAlign.START}

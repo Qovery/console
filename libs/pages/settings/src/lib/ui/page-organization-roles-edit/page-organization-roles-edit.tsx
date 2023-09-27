@@ -5,7 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { SETTINGS_ROLES_URL, SETTINGS_URL } from '@qovery/shared/routes'
 import {
   BlockContent,
-  Button,
+  ButtonLegacy,
   ButtonSize,
   ButtonStyle,
   HelpSection,
@@ -46,7 +46,7 @@ export function PageOrganizationRolesEdit(props: PageOrganizationRolesEditProps)
             <>
               <div className="flex justify-between mb-8">
                 <div>
-                  <Button
+                  <ButtonLegacy
                     size={ButtonSize.TINY}
                     style={ButtonStyle.FLAT}
                     onClick={() => navigate(SETTINGS_URL(organizationId) + SETTINGS_ROLES_URL)}
@@ -54,7 +54,7 @@ export function PageOrganizationRolesEdit(props: PageOrganizationRolesEditProps)
                   >
                     <Icon name={IconAwesomeEnum.ARROW_LEFT} className="mr-1 text-xs" />
                     Back
-                  </Button>
+                  </ButtonLegacy>
                   <h1 className="h5 text-neutral-400 mb-2">Edit your custom role: {currentRole.name}</h1>
                   <p className="text-neutral-400 text-xs">
                     Set permissions for your custom role. Cluster level permissions allow you to define access
@@ -134,7 +134,7 @@ export function PageOrganizationRolesEdit(props: PageOrganizationRolesEditProps)
                   </Table>
                 )}
                 <div className="flex gap-3 justify-between mt-6">
-                  <Button
+                  <ButtonLegacy
                     dataTestId="delete-button"
                     className="btn--no-min-w"
                     style={ButtonStyle.ERROR}
@@ -142,8 +142,8 @@ export function PageOrganizationRolesEdit(props: PageOrganizationRolesEditProps)
                     onClick={() => onDeleteRole(currentRole)}
                   >
                     Delete role
-                  </Button>
-                  <Button
+                  </ButtonLegacy>
+                  <ButtonLegacy
                     dataTestId="submit-save-button"
                     className="btn--no-min-w"
                     type="submit"
@@ -152,7 +152,7 @@ export function PageOrganizationRolesEdit(props: PageOrganizationRolesEditProps)
                     loading={loadingForm}
                   >
                     Save
-                  </Button>
+                  </ButtonLegacy>
                 </div>
               </form>
             </>

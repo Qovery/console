@@ -1,7 +1,7 @@
 import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { ClusterRemoteSettings } from '@qovery/shared/console-shared'
-import { Button, ButtonSize, ButtonStyle, HelpSection } from '@qovery/shared/ui'
+import { ButtonLegacy, ButtonSize, ButtonStyle, HelpSection } from '@qovery/shared/ui'
 
 export interface PageSettingsRemoteProps {
   onSubmit: FormEventHandler<HTMLFormElement>
@@ -19,7 +19,7 @@ export function PageSettingsRemote(props: PageSettingsRemoteProps) {
         <form onSubmit={onSubmit}>
           <ClusterRemoteSettings fromDetail />
           <div className="flex justify-end">
-            <Button
+            <ButtonLegacy
               dataTestId="submit-button"
               className="btn--no-min-w"
               size={ButtonSize.LARGE}
@@ -29,7 +29,7 @@ export function PageSettingsRemote(props: PageSettingsRemoteProps) {
               loading={loading}
             >
               Save
-            </Button>
+            </ButtonLegacy>
           </div>
         </form>
       </div>

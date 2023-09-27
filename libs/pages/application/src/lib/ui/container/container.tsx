@@ -11,7 +11,7 @@ import { IconEnum, getServiceType, isCronJob, isLifeCycleJob } from '@qovery/sha
 import { type ApplicationEntity, type ClusterEntity } from '@qovery/shared/interfaces'
 import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import {
-  Button,
+  ButtonLegacy,
   ButtonSize,
   ButtonStyle,
   Header,
@@ -114,9 +114,9 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
         <Menu
           menus={menuLink}
           trigger={
-            <Button iconRight="icon-solid-link" style={ButtonStyle.STROKED} size={ButtonSize.SMALL}>
+            <ButtonLegacy iconRight="icon-solid-link" style={ButtonStyle.STROKED} size={ButtonSize.SMALL}>
               Open links
-            </Button>
+            </ButtonLegacy>
           }
         />
       )}

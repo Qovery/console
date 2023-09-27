@@ -6,7 +6,15 @@ import {
   type JobGeneralData,
   type JobResourcesData,
 } from '@qovery/shared/interfaces'
-import { Button, ButtonIcon, ButtonIconStyle, ButtonSize, ButtonStyle, Icon, IconAwesomeEnum } from '@qovery/shared/ui'
+import {
+  ButtonIcon,
+  ButtonIconStyle,
+  ButtonLegacy,
+  ButtonSize,
+  ButtonStyle,
+  Icon,
+  IconAwesomeEnum,
+} from '@qovery/shared/ui'
 
 export interface StepSummaryProps {
   onSubmit: (withDeploy: boolean) => void
@@ -286,7 +294,7 @@ export function StepSummary(props: StepSummaryProps) {
       </div>
 
       <div className="flex justify-between">
-        <Button
+        <ButtonLegacy
           onClick={props.onPrevious}
           className="btn--no-min-w"
           type="button"
@@ -294,9 +302,9 @@ export function StepSummary(props: StepSummaryProps) {
           style={ButtonStyle.STROKED}
         >
           Back
-        </Button>
+        </ButtonLegacy>
         <div className="flex gap-2">
-          <Button
+          <ButtonLegacy
             dataTestId="button-create"
             loading={props.isLoadingCreate}
             onClick={() => props.onSubmit(false)}
@@ -305,8 +313,8 @@ export function StepSummary(props: StepSummaryProps) {
             className="btn--no-min-w"
           >
             Create
-          </Button>
-          <Button
+          </ButtonLegacy>
+          <ButtonLegacy
             dataTestId="button-create-deploy"
             loading={props.isLoadingCreateAndDeploy}
             onClick={() => props.onSubmit(true)}
@@ -314,7 +322,7 @@ export function StepSummary(props: StepSummaryProps) {
             style={ButtonStyle.BASIC}
           >
             Create and deploy
-          </Button>
+          </ButtonLegacy>
         </div>
       </div>
     </div>

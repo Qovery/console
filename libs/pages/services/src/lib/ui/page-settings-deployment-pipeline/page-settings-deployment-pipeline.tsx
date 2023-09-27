@@ -8,9 +8,9 @@ import { DragDropContext, Draggable, type DropResult, Droppable } from 'react-be
 import { type ApplicationEntity, type DatabaseEntity } from '@qovery/shared/interfaces'
 import {
   BadgeDeploymentOrder,
-  Button,
   ButtonIcon,
   ButtonIconStyle,
+  ButtonLegacy,
   ButtonSize,
   HelpSection,
   Icon,
@@ -93,14 +93,14 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
               Tips: You can drag & drop
             </span>
           </p>
-          <Button
+          <ButtonLegacy
             dataTestId="btn-add-stage"
             className="shrink-0 ml-5"
             onClick={() => onAddStage()}
             iconRight={IconAwesomeEnum.CIRCLE_PLUS}
           >
             Add stage
-          </Button>
+          </ButtonLegacy>
         </div>
         <div className="h-full overflow-x-scroll">
           {!stages ? (

@@ -2,7 +2,7 @@ import { type APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { type FlowVariableData, type VariableData } from '@qovery/shared/interfaces'
-import { Button, ButtonSize, ButtonStyle } from '@qovery/shared/ui'
+import { ButtonLegacy, ButtonSize, ButtonStyle } from '@qovery/shared/ui'
 import VariableRow from '../variable-row/variable-row'
 
 export interface FlowCreateVariableProps {
@@ -23,9 +23,9 @@ export function FlowCreateVariable(props: FlowCreateVariableProps) {
       <div className="mb-10">
         <div className="flex justify-between mb-2 items-center">
           <h3 className="text-neutral-400 text-lg">Set environment variables</h3>
-          <Button size={ButtonSize.TINY} className="btn--no-min-w" onClick={props.onAdd}>
+          <ButtonLegacy size={ButtonSize.TINY} className="btn--no-min-w" onClick={props.onAdd}>
             Add variable
-          </Button>
+          </ButtonLegacy>
         </div>
 
         <p className="text-xs text-neutral-400">Define here the variables required by your job</p>
@@ -55,7 +55,7 @@ export function FlowCreateVariable(props: FlowCreateVariableProps) {
         </div>
 
         <div className="flex justify-between">
-          <Button
+          <ButtonLegacy
             onClick={props.onBack}
             className="btn--no-min-w"
             type="button"
@@ -63,8 +63,8 @@ export function FlowCreateVariable(props: FlowCreateVariableProps) {
             style={ButtonStyle.STROKED}
           >
             Back
-          </Button>
-          <Button
+          </ButtonLegacy>
+          <ButtonLegacy
             dataTestId="button-submit"
             type="submit"
             disabled={!formState.isValid}
@@ -72,7 +72,7 @@ export function FlowCreateVariable(props: FlowCreateVariableProps) {
             style={ButtonStyle.BASIC}
           >
             Continue
-          </Button>
+          </ButtonLegacy>
         </div>
       </form>
     </div>

@@ -5,9 +5,9 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { type ServiceTypeEnum } from '@qovery/shared/enums'
 import { type EnvironmentVariableSecretOrPublic } from '@qovery/shared/interfaces'
 import {
-  Button,
   ButtonIcon,
   ButtonIconStyle,
+  ButtonLegacy,
   ButtonSize,
   ButtonStyle,
   Dropzone,
@@ -202,15 +202,15 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
             ))}
 
             <div className="flex gap-3 justify-end mt-6">
-              <Button
+              <ButtonLegacy
                 className="btn--no-min-w"
                 style={ButtonStyle.STROKED}
                 size={ButtonSize.XLARGE}
                 onClick={() => props.closeModal()}
               >
                 Cancel
-              </Button>
-              <Button
+              </ButtonLegacy>
+              <ButtonLegacy
                 dataTestId="submit-button"
                 className="btn--no-min-w"
                 type="submit"
@@ -219,7 +219,7 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
                 loading={loading}
               >
                 Import
-              </Button>
+              </ButtonLegacy>
             </div>
           </form>
         </>

@@ -2,7 +2,7 @@ import { useFormContext } from 'react-hook-form'
 import { JobConfigureSettings } from '@qovery/shared/console-shared'
 import { ServiceTypeEnum, isCronJob } from '@qovery/shared/enums'
 import { type ApplicationEntity } from '@qovery/shared/interfaces'
-import { BlockContent, Button, ButtonSize, ButtonStyle, HelpSection } from '@qovery/shared/ui'
+import { BlockContent, ButtonLegacy, ButtonSize, ButtonStyle, HelpSection } from '@qovery/shared/ui'
 
 export interface PageSettingsConfigureJobProps {
   application?: ApplicationEntity
@@ -25,7 +25,7 @@ export function PageSettingsConfigureJob(props: PageSettingsConfigureJobProps) {
             />
           </BlockContent>
           <div className="flex justify-end">
-            <Button
+            <ButtonLegacy
               dataTestId="submit-button"
               className="btn--no-min-w"
               size={ButtonSize.LARGE}
@@ -35,7 +35,7 @@ export function PageSettingsConfigureJob(props: PageSettingsConfigureJobProps) {
               loading={loading}
             >
               Save
-            </Button>
+            </ButtonLegacy>
           </div>
         </form>
       </div>

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { type IconEnum } from '@qovery/shared/enums'
 import Icon from '../../icon/icon'
 import LoaderSpinner from '../../loader-spinner/loader-spinner'
-import { ButtonSize } from '../button/button'
+import { ButtonSize } from '../button-legacy/button-legacy'
 
 export enum ButtonIconStyle {
   BASIC = 'basic',
@@ -32,7 +32,7 @@ export interface ButtonIconProps {
 }
 
 /**
- * @deprecated This should be migrated to the <Button /> component
+ * @deprecated This should be migrated to the <ButtonLegacy /> component
  */
 export function ButtonIcon(props: ButtonIconProps) {
   const {

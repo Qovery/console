@@ -2,7 +2,7 @@ import { type ClusterLogsError } from 'qovery-typescript-axios'
 import { type ReactNode, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import {
-  Button,
+  ButtonLegacy,
   ButtonSize,
   ButtonStyle,
   CopyToClipboard,
@@ -131,7 +131,7 @@ export function TabsClusterLogs(props: TabsClusterLogsProps) {
                       <p data-testid="solution-msg" className="text-neutral-50 text-xs mb-2">
                         {currentError.hint_message}
                       </p>
-                      <Button
+                      <ButtonLegacy
                         className="mr-2"
                         iconLeft="icon-solid-wheel"
                         external
@@ -140,9 +140,9 @@ export function TabsClusterLogs(props: TabsClusterLogsProps) {
                         size={ButtonSize.TINY}
                       >
                         Cluster settings
-                      </Button>
+                      </ButtonLegacy>
                       {currentError.link && (
-                        <Button
+                        <ButtonLegacy
                           iconLeft="icon-solid-book"
                           external
                           link={currentError.link}
@@ -150,7 +150,7 @@ export function TabsClusterLogs(props: TabsClusterLogsProps) {
                           size={ButtonSize.TINY}
                         >
                           Documentation
-                        </Button>
+                        </ButtonLegacy>
                       )}
                     </div>
                   )}

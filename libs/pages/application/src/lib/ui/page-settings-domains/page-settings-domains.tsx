@@ -2,9 +2,9 @@ import { type CustomDomain } from 'qovery-typescript-axios'
 import { type ApplicationEntity, type LoadingStatus } from '@qovery/shared/interfaces'
 import {
   BlockContent,
-  Button,
   ButtonIcon,
   ButtonIconStyle,
+  ButtonLegacy,
   EmptyState,
   HelpSection,
   IconAwesomeEnum,
@@ -31,9 +31,9 @@ export function PageSettingsDomains(props: PageSettingsDomainsProps) {
             <p className="text-sm text-neutral-400">Add custom domains to your application.</p>
           </div>
 
-          <Button onClick={() => props.onAddDomain()} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>
+          <ButtonLegacy onClick={() => props.onAddDomain()} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>
             Add Domain
-          </Button>
+          </ButtonLegacy>
         </div>
 
         {(props.loading === 'not loaded' || props.loading === 'loading') && props.domains?.length === 0 ? (

@@ -1,6 +1,6 @@
 import { render, screen } from '__tests__/utils/setup-jest'
 import { Chance } from 'chance'
-import { ButtonSize } from '../button/button'
+import { ButtonSize } from '../button-legacy/button-legacy'
 import { ButtonIcon, type ButtonIconProps, ButtonIconStyle } from './button-icon'
 
 const props: ButtonIconProps = {

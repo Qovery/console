@@ -14,8 +14,8 @@ import {
   APPLICATION_VARIABLES_URL,
 } from '@qovery/shared/routes'
 import {
-  Button,
   ButtonAction,
+  ButtonLegacy,
   ButtonStyle,
   Icon,
   IconAwesomeEnum,
@@ -191,7 +191,7 @@ export function TabsFeature() {
 
   const contentRight: ReactNode = matchEnvVariableRoute && (
     <>
-      <Button
+      <ButtonLegacy
         className="mr-2"
         style={ButtonStyle.FLAT}
         iconLeft={!globalShowHideValue ? IconAwesomeEnum.EYE : IconAwesomeEnum.EYE_SLASH}
@@ -200,7 +200,7 @@ export function TabsFeature() {
         }}
       >
         {globalShowHideValue ? 'Hide all' : 'Show all'}
-      </Button>
+      </ButtonLegacy>
       <ButtonAction iconRight={IconAwesomeEnum.CIRCLE_PLUS} menus={menuForContentRight} dropdown={dropdown}>
         New variable
       </ButtonAction>

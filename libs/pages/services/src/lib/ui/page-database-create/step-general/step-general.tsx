@@ -6,7 +6,7 @@ import { type Value } from '@qovery/shared/interfaces'
 import { SERVICES_URL } from '@qovery/shared/routes'
 import {
   BlockContent,
-  Button,
+  ButtonLegacy,
   ButtonSize,
   ButtonStyle,
   InputRadio,
@@ -174,7 +174,7 @@ export function StepGeneral(props: StepGeneralProps) {
         />
 
         <div className="flex justify-between">
-          <Button
+          <ButtonLegacy
             onClick={() => navigate(SERVICES_URL(organizationId, projectId, environmentId))}
             type="button"
             className="btn--no-min-w"
@@ -182,8 +182,8 @@ export function StepGeneral(props: StepGeneralProps) {
             style={ButtonStyle.STROKED}
           >
             Cancel
-          </Button>
-          <Button
+          </ButtonLegacy>
+          <ButtonLegacy
             dataTestId="button-submit"
             type="submit"
             disabled={!formState.isValid}
@@ -191,7 +191,7 @@ export function StepGeneral(props: StepGeneralProps) {
             style={ButtonStyle.BASIC}
           >
             Continue
-          </Button>
+          </ButtonLegacy>
         </div>
       </form>
     </div>

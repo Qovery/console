@@ -2,7 +2,7 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { timezoneValues, weekdaysValues } from '@qovery/shared/enums'
 import {
   BlockContent,
-  Button,
+  ButtonLegacy,
   ButtonSize,
   ButtonStyle,
   HelpSection,
@@ -123,7 +123,7 @@ export function PageSettingsDeploymentRules(props: PageSettingsDeploymentRulesPr
             )}
           </BlockContent>
           <div className="flex justify-end">
-            <Button
+            <ButtonLegacy
               className="mb-6 btn--no-min-w"
               disabled={!formState.isValid}
               size={ButtonSize.LARGE}
@@ -132,7 +132,7 @@ export function PageSettingsDeploymentRules(props: PageSettingsDeploymentRulesPr
               type="submit"
             >
               Save
-            </Button>
+            </ButtonLegacy>
           </div>
         </form>
       </div>

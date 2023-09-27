@@ -8,9 +8,9 @@ import {
 } from '@qovery/domains/services/feature'
 import {
   BlockContent,
-  Button,
   ButtonIcon,
   ButtonIconStyle,
+  ButtonLegacy,
   EmptyState,
   HelpSection,
   IconAwesomeEnum,
@@ -51,7 +51,7 @@ export function PageSettingsDeploymentRestrictionsFeature() {
             </p>
           </div>
           {!isLoadingServiceType && isValidServiceType && (
-            <Button
+            <ButtonLegacy
               dataTestId="add-button"
               onClick={() => {
                 openModal({
@@ -61,7 +61,7 @@ export function PageSettingsDeploymentRestrictionsFeature() {
               iconRight={IconAwesomeEnum.CIRCLE_PLUS}
             >
               New Restriction
-            </Button>
+            </ButtonLegacy>
           )}
         </div>
 

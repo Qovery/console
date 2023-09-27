@@ -1,4 +1,4 @@
-import { Button } from '@qovery/shared/ui'
+import { ButtonLegacy } from '@qovery/shared/ui'
 import HelpSidebar from '../help-sidebar/help-sidebar'
 
 export interface PlaceholderNoRulesProps {
@@ -20,7 +20,7 @@ export function PlaceholderNoRules(props: PlaceholderNoRulesProps) {
           <h2 className="text-base text-neutral-400 font-medium mb-5">
             Create your first Deployment Rules <span role="img">🕹</span>
           </h2>
-          <Button link={linkNewRule}>Create Deployment Rule</Button>
+          <ButtonLegacy link={linkNewRule}>Create Deployment Rule</ButtonLegacy>
         </div>
       </div>
       <HelpSidebar />

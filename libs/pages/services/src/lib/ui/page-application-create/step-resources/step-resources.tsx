@@ -3,7 +3,7 @@ import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { ApplicationSettingsResources } from '@qovery/shared/console-shared'
 import { type ApplicationResourcesData } from '@qovery/shared/interfaces'
-import { Button, ButtonSize, ButtonStyle } from '@qovery/shared/ui'
+import { ButtonLegacy, ButtonSize, ButtonStyle } from '@qovery/shared/ui'
 
 export interface StepResourcesProps {
   onBack: () => void
@@ -29,7 +29,7 @@ export function StepResources({ maximumInstances, onSubmit, onBack, environmentM
         />
 
         <div className="flex justify-between">
-          <Button
+          <ButtonLegacy
             onClick={onBack}
             className="btn--no-min-w"
             type="button"
@@ -37,8 +37,8 @@ export function StepResources({ maximumInstances, onSubmit, onBack, environmentM
             style={ButtonStyle.STROKED}
           >
             Back
-          </Button>
-          <Button
+          </ButtonLegacy>
+          <ButtonLegacy
             dataTestId="button-submit"
             type="submit"
             disabled={!formState.isValid}
@@ -46,7 +46,7 @@ export function StepResources({ maximumInstances, onSubmit, onBack, environmentM
             style={ButtonStyle.BASIC}
           >
             Continue
-          </Button>
+          </ButtonLegacy>
         </div>
       </form>
     </>

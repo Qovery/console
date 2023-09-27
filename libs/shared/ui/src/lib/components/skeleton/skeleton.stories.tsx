@@ -1,5 +1,5 @@
 import { type Meta, type Story } from '@storybook/react'
-import Button from '../buttons/button/button'
+import ButtonLegacy from '../buttons/button-legacy/button-legacy'
 import { Skeleton, type SkeletonProps } from './skeleton'
 
 export default {
@@ -9,7 +9,7 @@ export default {
 
 const Template: Story<SkeletonProps> = (args) => (
   <Skeleton {...args}>
-    <Button>Not hidden by Skeleton</Button>
+    <ButtonLegacy>Not hidden by Skeleton</ButtonLegacy>
   </Skeleton>
 )
 
