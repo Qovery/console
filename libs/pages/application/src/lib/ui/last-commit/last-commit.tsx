@@ -8,6 +8,7 @@ export interface LastCommitProps {
   commitDeltaCount?: number
 }
 
+// @deprecated Prefer LastCommit from `@qovery/domains/services/feature`
 export function LastCommit(props: LastCommitProps) {
   const { commit, loadingStatus, commitDeltaCount } = props
 
