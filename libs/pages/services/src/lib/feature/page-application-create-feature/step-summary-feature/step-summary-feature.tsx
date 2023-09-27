@@ -102,6 +102,7 @@ export function StepSummaryFeature() {
           arguments: generalData.cmd,
           entrypoint: generalData.image_entry_point || '',
           healthchecks: portData.healthchecks?.item || {},
+          auto_deploy: generalData.auto_deploy,
         }
 
         if (generalData.build_mode === BuildModeEnum.DOCKER) {
@@ -161,6 +162,7 @@ export function StepSummaryFeature() {
           entrypoint: generalData.image_entry_point || '',
           registry_id: generalData.registry || '',
           healthchecks: portData.healthchecks?.item || {},
+          auto_deploy: generalData.auto_deploy,
         }
 
         dispatch(
