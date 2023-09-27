@@ -5,7 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { ClusterResourcesSettingsFeature } from '@qovery/shared/console-shared'
 import { type ApplicationGeneralData } from '@qovery/shared/interfaces'
 import { CLUSTERS_CREATION_GENERAL_URL, CLUSTERS_CREATION_URL, CLUSTERS_URL } from '@qovery/shared/routes'
-import { ButtonLegacy, ButtonSize, ButtonStyle } from '@qovery/shared/ui'
+import { ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle } from '@qovery/shared/ui'
 
 export interface StepResourcesProps {
   onSubmit: FormEventHandler<HTMLFormElement>
@@ -38,8 +38,8 @@ export function StepResources(props: StepResourcesProps) {
             }
             type="button"
             className="btn--no-min-w"
-            size={ButtonSize.XLARGE}
-            style={ButtonStyle.STROKED}
+            size={ButtonLegacySize.XLARGE}
+            style={ButtonLegacyStyle.STROKED}
           >
             Back
           </ButtonLegacy>
@@ -47,8 +47,8 @@ export function StepResources(props: StepResourcesProps) {
             dataTestId="button-submit"
             type="submit"
             disabled={!formState.isValid}
-            size={ButtonSize.XLARGE}
-            style={ButtonStyle.BASIC}
+            size={ButtonLegacySize.XLARGE}
+            style={ButtonLegacyStyle.BASIC}
           >
             Continue
           </ButtonLegacy>

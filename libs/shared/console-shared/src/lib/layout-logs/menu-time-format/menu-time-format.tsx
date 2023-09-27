@@ -1,7 +1,7 @@
 import {
   ButtonLegacy,
-  ButtonSize,
-  ButtonStyle,
+  ButtonLegacySize,
+  ButtonLegacyStyle,
   Icon,
   IconAwesomeEnum,
   Menu,
@@ -52,8 +52,8 @@ export function MenuTimeFormat(props: MenuTimeFormatProps) {
       trigger={
         <ButtonLegacy
           className="mr-2"
-          size={ButtonSize.TINY}
-          style={ButtonStyle.DARK}
+          size={ButtonLegacySize.TINY}
+          style={ButtonLegacyStyle.DARK}
           iconRight={IconAwesomeEnum.ANGLE_DOWN}
         >
           Time format

@@ -6,8 +6,8 @@ import { SETTINGS_ROLES_URL, SETTINGS_URL } from '@qovery/shared/routes'
 import {
   BlockContent,
   ButtonLegacy,
-  ButtonSize,
-  ButtonStyle,
+  ButtonLegacySize,
+  ButtonLegacyStyle,
   HelpSection,
   Icon,
   IconAwesomeEnum,
@@ -47,8 +47,8 @@ export function PageOrganizationRolesEdit(props: PageOrganizationRolesEditProps)
               <div className="flex justify-between mb-8">
                 <div>
                   <ButtonLegacy
-                    size={ButtonSize.TINY}
-                    style={ButtonStyle.FLAT}
+                    size={ButtonLegacySize.TINY}
+                    style={ButtonLegacyStyle.FLAT}
                     onClick={() => navigate(SETTINGS_URL(organizationId) + SETTINGS_ROLES_URL)}
                     className="!px-0 mb-1"
                   >
@@ -137,8 +137,8 @@ export function PageOrganizationRolesEdit(props: PageOrganizationRolesEditProps)
                   <ButtonLegacy
                     dataTestId="delete-button"
                     className="btn--no-min-w"
-                    style={ButtonStyle.ERROR}
-                    size={ButtonSize.XLARGE}
+                    style={ButtonLegacyStyle.ERROR}
+                    size={ButtonLegacySize.XLARGE}
                     onClick={() => onDeleteRole(currentRole)}
                   >
                     Delete role
@@ -147,7 +147,7 @@ export function PageOrganizationRolesEdit(props: PageOrganizationRolesEditProps)
                     dataTestId="submit-save-button"
                     className="btn--no-min-w"
                     type="submit"
-                    size={ButtonSize.XLARGE}
+                    size={ButtonLegacySize.XLARGE}
                     disabled={!formState.isValid}
                     loading={loadingForm}
                   >

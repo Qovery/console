@@ -4,8 +4,8 @@ import { type RepositoryEntity } from '@qovery/shared/interfaces'
 import {
   BlockContent,
   ButtonLegacy,
-  ButtonSize,
-  ButtonStyle,
+  ButtonLegacySize,
+  ButtonLegacyStyle,
   HelpSection,
   Icon,
   IconAwesomeEnum,
@@ -56,7 +56,7 @@ export function PageOrganizationGithubRepositoryAccess(props: PageOrganizationGi
                 <ButtonLegacy
                   dataTestId="install-button"
                   onClick={props.onConfigure}
-                  size={ButtonSize.SMALL}
+                  size={ButtonLegacySize.SMALL}
                   className="ml-2"
                 >
                   Install
@@ -64,15 +64,19 @@ export function PageOrganizationGithubRepositoryAccess(props: PageOrganizationGi
               ) : (
                 <div className="flex gap-2">
                   <ButtonLegacy
-                    style={ButtonStyle.STROKED}
-                    size={ButtonSize.SMALL}
+                    style={ButtonLegacyStyle.STROKED}
+                    size={ButtonLegacySize.SMALL}
                     dataTestId="disconnect-button"
                     iconRight={IconAwesomeEnum.XMARK}
                     onClick={() => props.onDisconnect && props.onDisconnect(false)}
                   >
                     Disconnect
                   </ButtonLegacy>
-                  <ButtonLegacy dataTestId="permission-button" size={ButtonSize.SMALL} onClick={props.onConfigure}>
+                  <ButtonLegacy
+                    dataTestId="permission-button"
+                    size={ButtonLegacySize.SMALL}
+                    onClick={props.onConfigure}
+                  >
                     Manage Permissions
                   </ButtonLegacy>
                 </div>

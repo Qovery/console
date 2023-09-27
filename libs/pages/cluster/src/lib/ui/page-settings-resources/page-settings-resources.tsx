@@ -2,7 +2,7 @@ import { type CloudProviderEnum } from 'qovery-typescript-axios'
 import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { ClusterResourcesSettingsFeature } from '@qovery/shared/console-shared'
-import { ButtonLegacy, ButtonSize, ButtonStyle, HelpSection } from '@qovery/shared/ui'
+import { ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle, HelpSection } from '@qovery/shared/ui'
 
 export interface PageSettingsResourcesProps {
   loading?: boolean
@@ -28,8 +28,8 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
             <ButtonLegacy
               dataTestId="submit-button"
               className="btn--no-min-w"
-              size={ButtonSize.LARGE}
-              style={ButtonStyle.BASIC}
+              size={ButtonLegacySize.LARGE}
+              style={ButtonLegacyStyle.BASIC}
               type="submit"
               disabled={!formState.isValid}
               loading={loading}

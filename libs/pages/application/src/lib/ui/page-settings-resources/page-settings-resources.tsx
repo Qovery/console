@@ -3,7 +3,7 @@ import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { ApplicationSettingsResources } from '@qovery/shared/console-shared'
 import { type ApplicationEntity } from '@qovery/shared/interfaces'
-import { ButtonLegacy, ButtonSize, ButtonStyle, HelpSection } from '@qovery/shared/ui'
+import { ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle, HelpSection } from '@qovery/shared/ui'
 
 export interface PageSettingsResourcesProps {
   onSubmit: FormEventHandler<HTMLFormElement>
@@ -38,8 +38,8 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
             <ButtonLegacy
               dataTestId="submit-button"
               className="btn--no-min-w"
-              size={ButtonSize.LARGE}
-              style={ButtonStyle.BASIC}
+              size={ButtonLegacySize.LARGE}
+              style={ButtonLegacyStyle.BASIC}
               type="submit"
               disabled={!formState.isValid}
               loading={loading}

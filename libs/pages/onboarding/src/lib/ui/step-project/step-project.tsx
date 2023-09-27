@@ -1,6 +1,6 @@
 import { type Control, Controller } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
-import { ButtonLegacy, ButtonSize, ButtonStyle, IconAwesomeEnum, InputText } from '@qovery/shared/ui'
+import { ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle, IconAwesomeEnum, InputText } from '@qovery/shared/ui'
 
 export interface StepProjectProps {
   onSubmit: () => void
@@ -63,8 +63,8 @@ export function StepProject(props: StepProjectProps) {
           {!backButton ? (
             <ButtonLegacy
               onClick={() => authLogout()}
-              size={ButtonSize.XLARGE}
-              style={ButtonStyle.STROKED}
+              size={ButtonLegacySize.XLARGE}
+              style={ButtonLegacyStyle.STROKED}
               iconLeft={IconAwesomeEnum.ARROW_LEFT}
             >
               Disconnect
@@ -72,14 +72,14 @@ export function StepProject(props: StepProjectProps) {
           ) : (
             <ButtonLegacy
               onClick={() => navigate(-1)}
-              size={ButtonSize.XLARGE}
-              style={ButtonStyle.STROKED}
+              size={ButtonLegacySize.XLARGE}
+              style={ButtonLegacyStyle.STROKED}
               iconLeft={IconAwesomeEnum.ARROW_LEFT}
             >
               Back
             </ButtonLegacy>
           )}
-          <ButtonLegacy size={ButtonSize.XLARGE} style={ButtonStyle.BASIC} type="submit">
+          <ButtonLegacy size={ButtonLegacySize.XLARGE} style={ButtonLegacyStyle.BASIC} type="submit">
             Continue
           </ButtonLegacy>
         </div>

@@ -1,7 +1,7 @@
 import { type FormEventHandler, type ReactNode, useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { type ApplicationEntity } from '@qovery/shared/interfaces'
-import { ButtonLegacy, ButtonSize, ButtonStyle } from '../../buttons/button-legacy/button-legacy'
+import { ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle } from '../../buttons/button-legacy/button-legacy'
 import Icon from '../../icon/icon'
 import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
 import { Popover } from '../../popover/popover'
@@ -82,8 +82,8 @@ export function ModalCrud(props: ModalCrudProps) {
             <ButtonLegacy
               dataTestId="delete-button"
               className="btn--no-min-w"
-              style={ButtonStyle.ERROR}
-              size={ButtonSize.XLARGE}
+              style={ButtonLegacyStyle.ERROR}
+              size={ButtonLegacySize.XLARGE}
               onClick={() => onDelete()}
             >
               {deleteButtonLabel || 'Delete'}
@@ -92,8 +92,8 @@ export function ModalCrud(props: ModalCrudProps) {
             <ButtonLegacy
               dataTestId="cancel-button"
               className="btn--no-min-w"
-              style={ButtonStyle.STROKED}
-              size={ButtonSize.XLARGE}
+              style={ButtonLegacyStyle.STROKED}
+              size={ButtonLegacySize.XLARGE}
               onClick={() => onClose()}
             >
               Cancel
@@ -103,7 +103,7 @@ export function ModalCrud(props: ModalCrudProps) {
             dataTestId="submit-button"
             className="btn--no-min-w"
             type="submit"
-            size={ButtonSize.XLARGE}
+            size={ButtonLegacySize.XLARGE}
             disabled={!formState.isValid}
             loading={loading}
           >

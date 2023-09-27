@@ -2,7 +2,7 @@ import { type DatabaseTypeEnum } from 'qovery-typescript-axios'
 import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { DatabaseSettingsResources } from '@qovery/shared/console-shared'
-import { ButtonLegacy, ButtonSize, ButtonStyle } from '@qovery/shared/ui'
+import { ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle } from '@qovery/shared/ui'
 import { type ResourcesData } from '../../../feature/page-database-create-feature/database-creation-flow.interface'
 
 export interface StepResourcesProps {
@@ -32,8 +32,8 @@ export function StepResources({ onSubmit, isManaged, onBack, databaseType }: Ste
             onClick={onBack}
             className="btn--no-min-w"
             type="button"
-            size={ButtonSize.XLARGE}
-            style={ButtonStyle.STROKED}
+            size={ButtonLegacySize.XLARGE}
+            style={ButtonLegacyStyle.STROKED}
           >
             Back
           </ButtonLegacy>
@@ -41,8 +41,8 @@ export function StepResources({ onSubmit, isManaged, onBack, databaseType }: Ste
             dataTestId="button-submit"
             type="submit"
             disabled={!formState.isValid}
-            size={ButtonSize.XLARGE}
-            style={ButtonStyle.BASIC}
+            size={ButtonLegacySize.XLARGE}
+            style={ButtonLegacyStyle.BASIC}
           >
             Continue
           </ButtonLegacy>

@@ -1,5 +1,5 @@
 import { ONBOARDING_MORE_URL, ONBOARDING_PROJECT_URL, ONBOARDING_URL } from '@qovery/shared/routes'
-import { ButtonLegacy, ButtonSize, ButtonStyle, Icon } from '@qovery/shared/ui'
+import { ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle, Icon } from '@qovery/shared/ui'
 
 interface StepThanksProps {
   firstName: string
@@ -52,8 +52,8 @@ export function StepThanks(props: StepThanksProps) {
         <div className="mt-10 pt-5 flex justify-between border-t border-neutral-200">
           <ButtonLegacy
             link={`${ONBOARDING_URL}${ONBOARDING_MORE_URL}`}
-            size={ButtonSize.XLARGE}
-            style={ButtonStyle.STROKED}
+            size={ButtonLegacySize.XLARGE}
+            style={ButtonLegacyStyle.STROKED}
             iconLeft="icon-solid-arrow-left"
           >
             Back
@@ -61,8 +61,8 @@ export function StepThanks(props: StepThanksProps) {
           {dxAuth ? (
             <ButtonLegacy
               link={`${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`}
-              size={ButtonSize.XLARGE}
-              style={ButtonStyle.BASIC}
+              size={ButtonLegacySize.XLARGE}
+              style={ButtonLegacyStyle.BASIC}
             >
               Continue
             </ButtonLegacy>
@@ -70,8 +70,8 @@ export function StepThanks(props: StepThanksProps) {
             <ButtonLegacy
               external
               link="https://www.youtube.com/watch?v=eX2qFMC8cFo"
-              size={ButtonSize.XLARGE}
-              style={ButtonStyle.BASIC}
+              size={ButtonLegacySize.XLARGE}
+              style={ButtonLegacyStyle.BASIC}
             >
               Go to Youtube{' '}
               <span role="img" aria-label="cat">

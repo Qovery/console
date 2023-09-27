@@ -7,7 +7,7 @@ import {
   ButtonIcon,
   ButtonIconStyle,
   ButtonLegacy,
-  ButtonSize,
+  ButtonLegacySize,
   HelpSection,
   Icon,
   IconAwesomeEnum,
@@ -97,7 +97,7 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
                         <ButtonIcon
                           icon={IconAwesomeEnum.WHEEL}
                           style={ButtonIconStyle.STROKED}
-                          size={ButtonSize.TINY}
+                          size={ButtonLegacySize.TINY}
                           onClick={() => navigate(`${SETTINGS_URL(organizationId)}${SETTINGS_ROLES_EDIT_URL(role.id)}`)}
                           className="text-neutral-350 hover:text-neutral-400 bg-transparent !w-9 !h-8 mr-2"
                           iconClassName="!text-xs"
@@ -105,7 +105,7 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
                         <ButtonIcon
                           icon={IconAwesomeEnum.TRASH}
                           style={ButtonIconStyle.STROKED}
-                          size={ButtonSize.TINY}
+                          size={ButtonLegacySize.TINY}
                           onClick={() => onDeleteRole(role)}
                           className="text-neutral-350 hover:text-neutral-400 bg-transparent !w-9 !h-8"
                           iconClassName="!text-xs"
@@ -116,7 +116,7 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
                         <ButtonIcon
                           icon={IconAwesomeEnum.BOOK}
                           style={ButtonIconStyle.STROKED}
-                          size={ButtonSize.TINY}
+                          size={ButtonLegacySize.TINY}
                           className="text-neutral-350 hover:text-neutral-400 bg-transparent !w-9 !h-8"
                           iconClassName="!text-xs"
                           link="https://hub.qovery.com/docs/using-qovery/configuration/organization/#roles-based-access-control-rbac"

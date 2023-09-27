@@ -1,6 +1,6 @@
 import { render, screen } from '__tests__/utils/setup-jest'
 import { Chance } from 'chance'
-import { ButtonSize } from '../button-legacy/button-legacy'
+import { ButtonLegacySize } from '../button-legacy/button-legacy'
 import { ButtonIcon, type ButtonIconProps, ButtonIconStyle } from './button-icon'
 
 const props: ButtonIconProps = {
@@ -16,7 +16,7 @@ describe('ButtonIcon', () => {
   })
 
   it('should apply the accurate classes', () => {
-    props.size = ButtonSize.REGULAR
+    props.size = ButtonLegacySize.REGULAR
     props.style = ButtonIconStyle.BASIC
     props.className = 'some-class-name'
 

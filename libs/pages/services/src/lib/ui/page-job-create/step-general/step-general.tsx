@@ -6,7 +6,7 @@ import { JobGeneralSettings } from '@qovery/shared/console-shared'
 import { type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
 import { type JobGeneralData, type OrganizationEntity } from '@qovery/shared/interfaces'
 import { SERVICES_URL } from '@qovery/shared/routes'
-import { ButtonLegacy, ButtonSize, ButtonStyle, InputText, InputTextArea } from '@qovery/shared/ui'
+import { ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle, InputText, InputTextArea } from '@qovery/shared/ui'
 
 export interface StepGeneralProps {
   onSubmit: FormEventHandler<HTMLFormElement>
@@ -78,8 +78,8 @@ export function StepGeneral(props: StepGeneralProps) {
             onClick={() => navigate(SERVICES_URL(organizationId, projectId, environmentId))}
             type="button"
             className="btn--no-min-w"
-            size={ButtonSize.XLARGE}
-            style={ButtonStyle.STROKED}
+            size={ButtonLegacySize.XLARGE}
+            style={ButtonLegacyStyle.STROKED}
           >
             Cancel
           </ButtonLegacy>
@@ -87,8 +87,8 @@ export function StepGeneral(props: StepGeneralProps) {
             dataTestId="button-submit"
             type="submit"
             disabled={!formState.isValid}
-            size={ButtonSize.XLARGE}
-            style={ButtonStyle.BASIC}
+            size={ButtonLegacySize.XLARGE}
+            style={ButtonLegacyStyle.BASIC}
           >
             Continue
           </ButtonLegacy>

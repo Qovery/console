@@ -2,7 +2,7 @@ import { PlanEnum } from 'qovery-typescript-axios'
 import { type CardImages } from 'react-payment-inputs/images'
 import { type CreditCard, type OrganizationEntity } from '@qovery/shared/interfaces'
 import { CLUSTERS_URL, SETTINGS_BILLING_URL, SETTINGS_URL } from '@qovery/shared/routes'
-import { ButtonLegacy, ButtonStyle, HelpSection, Link, Skeleton, imagesCreditCart } from '@qovery/shared/ui'
+import { ButtonLegacy, ButtonLegacyStyle, HelpSection, Link, Skeleton, imagesCreditCart } from '@qovery/shared/ui'
 import { dateToFormat } from '@qovery/shared/util-dates'
 import { costToHuman, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import InvoicesListFeature from '../../feature/page-organization-billing-summary-feature/invoices-list-feature/invoices-list-feature'
@@ -26,7 +26,11 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
             <h1 className="h5 text-neutral-400 mb-2">Plan details</h1>
           </div>
           <div className="flex gap-3">
-            <ButtonLegacy style={ButtonStyle.STROKED} dataTestId="promo-code-button" onClick={props.onPromoCodeClick}>
+            <ButtonLegacy
+              style={ButtonLegacyStyle.STROKED}
+              dataTestId="promo-code-button"
+              onClick={props.onPromoCodeClick}
+            >
               Promo code
             </ButtonLegacy>
             <ButtonLegacy dataTestId="upgrade-button" onClick={props.openIntercom}>

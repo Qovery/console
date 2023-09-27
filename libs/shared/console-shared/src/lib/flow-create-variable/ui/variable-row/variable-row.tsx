@@ -4,7 +4,7 @@ import { type FlowVariableData } from '@qovery/shared/interfaces'
 import {
   ButtonIcon,
   ButtonIconStyle,
-  ButtonSize,
+  ButtonLegacySize,
   IconAwesomeEnum,
   InputSelectSmall,
   InputTextSmall,
@@ -103,7 +103,7 @@ export function VariableRow(props: VariableRowProps) {
           <ButtonIcon
             icon={IconAwesomeEnum.TRASH}
             style={ButtonIconStyle.STROKED}
-            size={ButtonSize.TINY}
+            size={ButtonLegacySize.TINY}
             onClick={() => props.onDelete(index)}
             className="text-neutral-350 hover:text-neutral-400 !w-8 !h-8"
             iconClassName="!text-xs"

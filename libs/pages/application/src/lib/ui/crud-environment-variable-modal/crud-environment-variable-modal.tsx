@@ -3,7 +3,7 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { IconEnum } from '@qovery/shared/enums'
 import {
   ButtonLegacy,
-  ButtonStyle,
+  ButtonLegacyStyle,
   Icon,
   IconAwesomeEnum,
   InputSelect,
@@ -198,7 +198,7 @@ export function CrudEnvironmentVariableModal(props: CrudEnvironmentVariableModal
         )}
 
         <div className="flex gap-3 justify-end">
-          <ButtonLegacy className="btn--no-min-w" style={ButtonStyle.STROKED} onClick={() => props.closeModal()}>
+          <ButtonLegacy className="btn--no-min-w" style={ButtonLegacyStyle.STROKED} onClick={() => props.closeModal()}>
             Cancel
           </ButtonLegacy>
           <ButtonLegacy className="btn--no-min-w" type="submit" disabled={!formState.isValid} loading={props.loading}>

@@ -17,7 +17,7 @@ import { timeAgo } from '@qovery/shared/util-dates'
 import { trimId, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { Badge } from '../../badge/badge'
 import ButtonIcon, { ButtonIconStyle } from '../../buttons/button-icon/button-icon'
-import { ButtonSize } from '../../buttons/button-legacy/button-legacy'
+import { ButtonLegacySize } from '../../buttons/button-legacy/button-legacy'
 import Icon from '../../icon/icon'
 import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
 import Skeleton from '../../skeleton/skeleton'
@@ -155,7 +155,7 @@ export function TableRowDeployment({
                 dataTestId="btn-logs"
                 icon={IconAwesomeEnum.SCROLL}
                 style={ButtonIconStyle.STROKED}
-                size={ButtonSize.SMALL}
+                size={ButtonLegacySize.SMALL}
                 onClick={() =>
                   navigate(
                     fromService

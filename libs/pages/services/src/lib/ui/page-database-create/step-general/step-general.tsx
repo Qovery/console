@@ -7,8 +7,8 @@ import { SERVICES_URL } from '@qovery/shared/routes'
 import {
   BlockContent,
   ButtonLegacy,
-  ButtonSize,
-  ButtonStyle,
+  ButtonLegacySize,
+  ButtonLegacyStyle,
   InputRadio,
   InputSelect,
   InputText,
@@ -178,8 +178,8 @@ export function StepGeneral(props: StepGeneralProps) {
             onClick={() => navigate(SERVICES_URL(organizationId, projectId, environmentId))}
             type="button"
             className="btn--no-min-w"
-            size={ButtonSize.XLARGE}
-            style={ButtonStyle.STROKED}
+            size={ButtonLegacySize.XLARGE}
+            style={ButtonLegacyStyle.STROKED}
           >
             Cancel
           </ButtonLegacy>
@@ -187,8 +187,8 @@ export function StepGeneral(props: StepGeneralProps) {
             dataTestId="button-submit"
             type="submit"
             disabled={!formState.isValid}
-            size={ButtonSize.XLARGE}
-            style={ButtonStyle.BASIC}
+            size={ButtonLegacySize.XLARGE}
+            style={ButtonLegacyStyle.BASIC}
           >
             Continue
           </ButtonLegacy>

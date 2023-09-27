@@ -13,8 +13,8 @@ import { type OrganizationEntity } from '@qovery/shared/interfaces'
 import {
   BlockContent,
   ButtonLegacy,
-  ButtonSize,
-  ButtonStyle,
+  ButtonLegacySize,
+  ButtonLegacyStyle,
   HelpSection,
   InputSelect,
   InputText,
@@ -180,8 +180,8 @@ export function PageSettingsGeneral({
             <ButtonLegacy
               dataTestId="submit-button"
               className="btn--no-min-w"
-              size={ButtonSize.LARGE}
-              style={ButtonStyle.BASIC}
+              size={ButtonLegacySize.LARGE}
+              style={ButtonLegacyStyle.BASIC}
               type="submit"
               disabled={!formState.isValid}
               loading={loading}

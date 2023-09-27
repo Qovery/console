@@ -5,7 +5,7 @@ import {
   ButtonIcon,
   ButtonIconStyle,
   ButtonLegacy,
-  ButtonSize,
+  ButtonLegacySize,
   HelpSection,
   Icon,
   IconAwesomeEnum,
@@ -96,7 +96,7 @@ export function PageOrganizationWebhooks(props: PageOrganizationWebhooksProps) {
                     <ButtonIcon
                       icon={IconAwesomeEnum.WHEEL}
                       style={ButtonIconStyle.STROKED}
-                      size={ButtonSize.TINY}
+                      size={ButtonLegacySize.TINY}
                       onClick={() => props.openEdit(webhook)}
                       className="text-neutral-350 hover:text-neutral-400 bg-transparent !w-9 !h-8 mr-2"
                       iconClassName="!text-xs"
@@ -105,7 +105,7 @@ export function PageOrganizationWebhooks(props: PageOrganizationWebhooksProps) {
                     <ButtonIcon
                       icon={IconAwesomeEnum.TRASH}
                       style={ButtonIconStyle.STROKED}
-                      size={ButtonSize.TINY}
+                      size={ButtonLegacySize.TINY}
                       onClick={() => props.onDelete(webhook)}
                       dataTestId="delete-webhook"
                       className="text-neutral-350 hover:text-neutral-400 bg-transparent !w-9 !h-8"

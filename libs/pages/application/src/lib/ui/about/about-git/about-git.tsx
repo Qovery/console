@@ -2,7 +2,7 @@ import { type ApplicationGitRepository } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { IconEnum, isApplication, isJob } from '@qovery/shared/enums'
 import { type ApplicationEntity } from '@qovery/shared/interfaces'
-import { ButtonLegacy, ButtonStyle, Icon, IconAwesomeEnum, Truncate } from '@qovery/shared/ui'
+import { ButtonLegacy, ButtonLegacyStyle, Icon, IconAwesomeEnum, Truncate } from '@qovery/shared/ui'
 import LastCommitFeature from '../../../feature/last-commit-feature/last-commit-feature'
 
 export interface AboutGitProps {
@@ -43,7 +43,7 @@ export function AboutGit(props: AboutGitProps) {
           link={gitRepository?.url}
           iconLeft={gitRepository?.url && gitRepository.url.indexOf('github') >= 0 ? IconEnum.GITHUB : IconEnum.GITLAB}
           external
-          style={ButtonStyle.STROKED}
+          style={ButtonLegacyStyle.STROKED}
         >
           <Truncate truncateLimit={18} text={gitRepository?.name || ''} />
         </ButtonLegacy>

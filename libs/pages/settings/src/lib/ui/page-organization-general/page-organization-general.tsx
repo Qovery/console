@@ -3,8 +3,8 @@ import { Controller, useFormContext } from 'react-hook-form'
 import {
   BlockContent,
   ButtonLegacy,
-  ButtonSize,
-  ButtonStyle,
+  ButtonLegacySize,
+  ButtonLegacyStyle,
   HelpSection,
   InputFile,
   InputTags,
@@ -116,8 +116,8 @@ export function PageOrganizationGeneral(props: PageOrganizationGeneralProps) {
             <ButtonLegacy
               dataTestId="submit-button"
               className="btn--no-min-w"
-              size={ButtonSize.LARGE}
-              style={ButtonStyle.BASIC}
+              size={ButtonLegacySize.LARGE}
+              style={ButtonLegacyStyle.BASIC}
               type="submit"
               disabled={!formState.isValid}
               loading={loading}

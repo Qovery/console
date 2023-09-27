@@ -13,7 +13,7 @@ import {
 import {
   ButtonIcon,
   ButtonIconStyle,
-  ButtonSize,
+  ButtonLegacySize,
   Icon,
   IconAwesomeEnum,
   Menu,
@@ -98,7 +98,7 @@ export function Navigation({ defaultOrganizationId, clusterNotification }: Navig
                 className={matchOrganizationRoute ? 'is-active' : ''}
                 icon={IconAwesomeEnum.LAYER_GROUP}
                 style={ButtonIconStyle.ALT}
-                size={ButtonSize.XLARGE}
+                size={ButtonLegacySize.XLARGE}
                 link={projectId ? OVERVIEW_URL(organizationId, projectId) : ORGANIZATION_URL(organizationId)}
               />
             </div>
@@ -109,7 +109,7 @@ export function Navigation({ defaultOrganizationId, clusterNotification }: Navig
                 className={matchClusterRoute ? 'is-active' : ''}
                 icon={IconAwesomeEnum.CLOUD_WORD}
                 style={ButtonIconStyle.ALT}
-                size={ButtonSize.XLARGE}
+                size={ButtonLegacySize.XLARGE}
                 link={CLUSTERS_URL(organizationId)}
                 notification={clusterNotification}
               />
@@ -121,7 +121,7 @@ export function Navigation({ defaultOrganizationId, clusterNotification }: Navig
                 className={matchEventsRoute ? 'is-active' : ''}
                 icon={IconAwesomeEnum.CLOCK_ROTATE_LEFT}
                 style={ButtonIconStyle.ALT}
-                size={ButtonSize.XLARGE}
+                size={ButtonLegacySize.XLARGE}
                 link={AUDIT_LOGS_URL(organizationId)}
               />
             </div>
@@ -135,7 +135,7 @@ export function Navigation({ defaultOrganizationId, clusterNotification }: Navig
                   className={matchSettingsRoute ? 'is-active' : ''}
                   icon={IconAwesomeEnum.WHEEL}
                   style={ButtonIconStyle.ALT}
-                  size={ButtonSize.XLARGE}
+                  size={ButtonLegacySize.XLARGE}
                   link={SETTINGS_URL(organizationId)}
                 />
               </div>
@@ -147,7 +147,7 @@ export function Navigation({ defaultOrganizationId, clusterNotification }: Navig
                     <ButtonIcon
                       icon={IconAwesomeEnum.CIRCLE_INFO}
                       style={ButtonIconStyle.ALT}
-                      size={ButtonSize.XLARGE}
+                      size={ButtonLegacySize.XLARGE}
                     />
                   }
                   direction={MenuDirection.RIGHT}

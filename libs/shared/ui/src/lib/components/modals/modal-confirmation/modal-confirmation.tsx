@@ -1,6 +1,6 @@
 import { Controller, useForm } from 'react-hook-form'
 import BannerBox, { BannerBoxEnum } from '../../banner-box/banner-box'
-import ButtonLegacy, { ButtonStyle } from '../../buttons/button-legacy/button-legacy'
+import ButtonLegacy, { ButtonLegacyStyle } from '../../buttons/button-legacy/button-legacy'
 import { Icon } from '../../icon/icon'
 import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
 import InputTextSmall from '../../inputs/input-text-small/input-text-small'
@@ -102,12 +102,12 @@ export function ModalConfirmation(props: ModalConfirmationProps) {
           )}
         />
         <div className="flex gap-3 justify-end">
-          <ButtonLegacy className="btn--no-min-w" style={ButtonStyle.STROKED} onClick={() => closeModal()}>
+          <ButtonLegacy className="btn--no-min-w" style={ButtonLegacyStyle.STROKED} onClick={() => closeModal()}>
             Cancel
           </ButtonLegacy>
           <ButtonLegacy
             className="btn--no-min-w"
-            style={isDelete ? ButtonStyle.ERROR : ButtonStyle.BASIC}
+            style={isDelete ? ButtonLegacyStyle.ERROR : ButtonLegacyStyle.BASIC}
             type="submit"
           >
             {ctaButton}

@@ -1,7 +1,7 @@
 import { type Control, Controller } from 'react-hook-form'
 import { type Value } from '@qovery/shared/interfaces'
 import { ONBOARDING_PERSONALIZE_URL, ONBOARDING_URL } from '@qovery/shared/routes'
-import { ButtonLegacy, ButtonSize, ButtonStyle, InputSelect, InputTextArea } from '@qovery/shared/ui'
+import { ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle, InputSelect, InputTextArea } from '@qovery/shared/ui'
 
 export interface StepMoreProps {
   dataQuestions: Array<Value>
@@ -71,13 +71,13 @@ export function StepMore(props: StepMoreProps) {
         <div className="mt-10 pt-5 flex justify-between border-t border-neutral-200">
           <ButtonLegacy
             link={`${ONBOARDING_URL}${ONBOARDING_PERSONALIZE_URL}`}
-            size={ButtonSize.XLARGE}
-            style={ButtonStyle.STROKED}
+            size={ButtonLegacySize.XLARGE}
+            style={ButtonLegacyStyle.STROKED}
             iconLeft="icon-solid-arrow-left"
           >
             Back
           </ButtonLegacy>
-          <ButtonLegacy size={ButtonSize.XLARGE} style={ButtonStyle.BASIC} type="submit">
+          <ButtonLegacy size={ButtonLegacySize.XLARGE} style={ButtonLegacyStyle.BASIC} type="submit">
             Validate
           </ButtonLegacy>
         </div>

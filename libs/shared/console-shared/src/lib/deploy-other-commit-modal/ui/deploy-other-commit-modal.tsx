@@ -3,8 +3,8 @@ import {
   Avatar,
   AvatarStyle,
   ButtonLegacy,
-  ButtonSize,
-  ButtonStyle,
+  ButtonLegacySize,
+  ButtonLegacyStyle,
   Icon,
   IconAwesomeEnum,
   InputSearch,
@@ -151,8 +151,8 @@ export function DeployOtherCommitModal(props: DeployOtherCommitModalProps) {
         <ButtonLegacy
           dataTestId="cancel-button"
           className="btn--no-min-w"
-          style={ButtonStyle.STROKED}
-          size={ButtonSize.XLARGE}
+          style={ButtonLegacyStyle.STROKED}
+          size={ButtonLegacySize.XLARGE}
           onClick={() => closeModal()}
         >
           Cancel
@@ -162,7 +162,7 @@ export function DeployOtherCommitModal(props: DeployOtherCommitModalProps) {
           disabled={buttonDisabled}
           className="btn--no-min-w"
           type="submit"
-          size={ButtonSize.XLARGE}
+          size={ButtonLegacySize.XLARGE}
           onClick={handleDeploy}
           loading={deployLoading}
         >

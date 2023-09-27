@@ -3,7 +3,7 @@ import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { ApplicationSettingsResources } from '@qovery/shared/console-shared'
 import { type ApplicationResourcesData } from '@qovery/shared/interfaces'
-import { ButtonLegacy, ButtonSize, ButtonStyle } from '@qovery/shared/ui'
+import { ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle } from '@qovery/shared/ui'
 
 export interface StepResourcesProps {
   onBack: () => void
@@ -29,8 +29,8 @@ export function StepResources({ onBack, environmentMode, onSubmit }: StepResourc
             onClick={onBack}
             className="btn--no-min-w"
             type="button"
-            size={ButtonSize.XLARGE}
-            style={ButtonStyle.STROKED}
+            size={ButtonLegacySize.XLARGE}
+            style={ButtonLegacyStyle.STROKED}
           >
             Back
           </ButtonLegacy>
@@ -38,8 +38,8 @@ export function StepResources({ onBack, environmentMode, onSubmit }: StepResourc
             dataTestId="button-submit"
             type="submit"
             disabled={!formState.isValid}
-            size={ButtonSize.XLARGE}
-            style={ButtonStyle.BASIC}
+            size={ButtonLegacySize.XLARGE}
+            style={ButtonLegacyStyle.BASIC}
           >
             Continue
           </ButtonLegacy>

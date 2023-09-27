@@ -4,7 +4,7 @@ import { type IconEnum } from '@qovery/shared/enums'
 import Icon from '../../icon/icon'
 import LoaderSpinner from '../../loader-spinner/loader-spinner'
 
-export enum ButtonSize {
+export enum ButtonLegacySize {
   XLARGE = 'xlarge',
   LARGE = 'large',
   REGULAR = 'regular',
@@ -12,7 +12,7 @@ export enum ButtonSize {
   TINY = 'tiny',
 }
 
-export enum ButtonStyle {
+export enum ButtonLegacyStyle {
   BASIC = 'basic',
   RAISED = 'raised',
   STROKED = 'stroked',
@@ -23,8 +23,8 @@ export enum ButtonStyle {
 }
 
 export interface ButtonProps {
-  size?: ButtonSize
-  style?: ButtonStyle
+  size?: ButtonLegacySize
+  style?: ButtonLegacyStyle
   iconLeft?: IconEnum | string
   iconLeftClassName?: string
   iconRight?: IconEnum | string
@@ -45,8 +45,8 @@ export interface ButtonProps {
 export function ButtonLegacy(props: PropsWithChildren<ButtonProps>) {
   const {
     children,
-    size = ButtonSize.REGULAR,
-    style = ButtonStyle.BASIC,
+    size = ButtonLegacySize.REGULAR,
+    style = ButtonLegacyStyle.BASIC,
     iconLeft,
     iconRight,
     link,

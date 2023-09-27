@@ -1,7 +1,7 @@
 import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { ClusterRemoteSettings } from '@qovery/shared/console-shared'
-import { ButtonLegacy, ButtonSize, ButtonStyle, HelpSection } from '@qovery/shared/ui'
+import { ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle, HelpSection } from '@qovery/shared/ui'
 
 export interface PageSettingsRemoteProps {
   onSubmit: FormEventHandler<HTMLFormElement>
@@ -22,8 +22,8 @@ export function PageSettingsRemote(props: PageSettingsRemoteProps) {
             <ButtonLegacy
               dataTestId="submit-button"
               className="btn--no-min-w"
-              size={ButtonSize.LARGE}
-              style={ButtonStyle.BASIC}
+              size={ButtonLegacySize.LARGE}
+              style={ButtonLegacyStyle.BASIC}
               type="submit"
               disabled={!formState.isValid}
               loading={loading}

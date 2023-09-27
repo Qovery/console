@@ -23,7 +23,7 @@ import {
 import {
   Badge,
   ButtonLegacy,
-  ButtonSize,
+  ButtonLegacySize,
   Header,
   Icon,
   IconAwesomeEnum,
@@ -167,7 +167,7 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
       <Skeleton width={154} height={40} show={isLoadingDeploymentStatus}>
         <Menu
           trigger={
-            <ButtonLegacy size={ButtonSize.LARGE} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>
+            <ButtonLegacy size={ButtonLegacySize.LARGE} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>
               New service
             </ButtonLegacy>
           }

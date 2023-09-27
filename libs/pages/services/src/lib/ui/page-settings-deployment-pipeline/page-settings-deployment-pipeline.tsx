@@ -11,7 +11,7 @@ import {
   ButtonIcon,
   ButtonIconStyle,
   ButtonLegacy,
-  ButtonSize,
+  ButtonLegacySize,
   HelpSection,
   Icon,
   IconAwesomeEnum,
@@ -150,7 +150,7 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
                               className="text-neutral-400 !px-1 !w-7"
                               style={ButtonIconStyle.FLAT}
                               icon={IconAwesomeEnum.ELLIPSIS}
-                              size={ButtonSize.TINY}
+                              size={ButtonLegacySize.TINY}
                             />
                           }
                           menus={menuStage(stage, stages)}

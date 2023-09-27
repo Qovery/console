@@ -2,7 +2,7 @@ import { type APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { type FlowVariableData, type VariableData } from '@qovery/shared/interfaces'
-import { ButtonLegacy, ButtonSize, ButtonStyle } from '@qovery/shared/ui'
+import { ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle } from '@qovery/shared/ui'
 import VariableRow from '../variable-row/variable-row'
 
 export interface FlowCreateVariableProps {
@@ -23,7 +23,7 @@ export function FlowCreateVariable(props: FlowCreateVariableProps) {
       <div className="mb-10">
         <div className="flex justify-between mb-2 items-center">
           <h3 className="text-neutral-400 text-lg">Set environment variables</h3>
-          <ButtonLegacy size={ButtonSize.TINY} className="btn--no-min-w" onClick={props.onAdd}>
+          <ButtonLegacy size={ButtonLegacySize.TINY} className="btn--no-min-w" onClick={props.onAdd}>
             Add variable
           </ButtonLegacy>
         </div>
@@ -59,8 +59,8 @@ export function FlowCreateVariable(props: FlowCreateVariableProps) {
             onClick={props.onBack}
             className="btn--no-min-w"
             type="button"
-            size={ButtonSize.XLARGE}
-            style={ButtonStyle.STROKED}
+            size={ButtonLegacySize.XLARGE}
+            style={ButtonLegacyStyle.STROKED}
           >
             Back
           </ButtonLegacy>
@@ -68,8 +68,8 @@ export function FlowCreateVariable(props: FlowCreateVariableProps) {
             dataTestId="button-submit"
             type="submit"
             disabled={!formState.isValid}
-            size={ButtonSize.XLARGE}
-            style={ButtonStyle.BASIC}
+            size={ButtonLegacySize.XLARGE}
+            style={ButtonLegacyStyle.BASIC}
           >
             Continue
           </ButtonLegacy>

@@ -8,7 +8,7 @@ import {
   Droppable,
   type DroppableProvided,
 } from 'react-beautiful-dnd'
-import { type BaseLink, ButtonLegacy, ButtonSize, HelpSection } from '@qovery/shared/ui'
+import { type BaseLink, ButtonLegacy, ButtonLegacySize, HelpSection } from '@qovery/shared/ui'
 import DeploymentRuleItem from '../deployment-rule-item/deployment-rule-item'
 import PlaceholderNoRules from '../placeholder-no-rules/placeholder-no-rules'
 
@@ -64,7 +64,7 @@ export function PageDeploymentRules(props: PageDeploymentRulesProps) {
             </p>
 
             <ButtonLegacy
-              size={ButtonSize.REGULAR}
+              size={ButtonLegacySize.REGULAR}
               className="leading-none"
               link={linkNewRule}
               iconRight="icon-solid-circle-plus"

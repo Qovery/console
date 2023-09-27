@@ -5,7 +5,7 @@ import {
   ButtonIcon,
   ButtonIconStyle,
   ButtonLegacy,
-  ButtonSize,
+  ButtonLegacySize,
   EmptyState,
   HelpSection,
   Icon,
@@ -76,7 +76,7 @@ export function PageOrganizationApi(props: PageOrganizationApiProps) {
                   <ButtonIcon
                     icon={IconAwesomeEnum.TRASH}
                     style={ButtonIconStyle.STROKED}
-                    size={ButtonSize.TINY}
+                    size={ButtonLegacySize.TINY}
                     onClick={() => onDelete(token)}
                     className="text-neutral-350 hover:text-neutral-400 bg-transparent !w-9 !h-8"
                     iconClassName="!text-xs"

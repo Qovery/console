@@ -23,7 +23,7 @@ import {
 import {
   ButtonIcon,
   ButtonIconStyle,
-  ButtonSize,
+  ButtonLegacySize,
   Icon,
   IconAwesomeEnum,
   type MenuData,
@@ -284,7 +284,7 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
           <ButtonIcon
             icon={IconAwesomeEnum.XMARK}
             style={ButtonIconStyle.DARK}
-            size={ButtonSize.LARGE}
+            size={ButtonLegacySize.LARGE}
             link={linkToCloseLogs}
           />
         </div>

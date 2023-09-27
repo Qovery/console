@@ -1,5 +1,5 @@
 import ButtonIcon, { ButtonIconStyle } from '../buttons/button-icon/button-icon'
-import { ButtonSize } from '../buttons/button-legacy/button-legacy'
+import { ButtonLegacySize } from '../buttons/button-legacy/button-legacy'
 import { IconAwesomeEnum } from '../icon/icon-awesome.enum'
 import InputSelectSmall from '../inputs/input-select-small/input-select-small'
 
@@ -21,7 +21,7 @@ export function Pagination(props: PaginationProps) {
           dataTestId="button-previous-page"
           icon={IconAwesomeEnum.CHEVRON_LEFT}
           style={ButtonIconStyle.STROKED}
-          size={ButtonSize.SMALL}
+          size={ButtonLegacySize.SMALL}
           className="!w-8"
           disabled={props.previousDisabled}
           onClick={() => props.onPrevious()}
@@ -31,7 +31,7 @@ export function Pagination(props: PaginationProps) {
           dataTestId="button-next-page"
           icon={IconAwesomeEnum.CHEVRON_RIGHT}
           style={ButtonIconStyle.STROKED}
-          size={ButtonSize.SMALL}
+          size={ButtonLegacySize.SMALL}
           className="!w-8"
           disabled={props.nextDisabled}
           onClick={() => props.onNext()}

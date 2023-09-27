@@ -2,7 +2,14 @@ import { type CloudProviderEnum, type ClusterFeature } from 'qovery-typescript-a
 import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { CardClusterFeature } from '@qovery/shared/console-shared'
-import { BannerBox, BannerBoxEnum, ButtonLegacy, ButtonSize, ButtonStyle, LoaderSpinner } from '@qovery/shared/ui'
+import {
+  BannerBox,
+  BannerBoxEnum,
+  ButtonLegacy,
+  ButtonLegacySize,
+  ButtonLegacyStyle,
+  LoaderSpinner,
+} from '@qovery/shared/ui'
 
 export interface StepFeaturesProps {
   onSubmit: FormEventHandler<HTMLFormElement>
@@ -55,8 +62,8 @@ export function StepFeatures(props: StepFeaturesProps) {
             onClick={goToBack}
             type="button"
             className="btn--no-min-w"
-            size={ButtonSize.XLARGE}
-            style={ButtonStyle.STROKED}
+            size={ButtonLegacySize.XLARGE}
+            style={ButtonLegacyStyle.STROKED}
           >
             Back
           </ButtonLegacy>
@@ -64,8 +71,8 @@ export function StepFeatures(props: StepFeaturesProps) {
             dataTestId="button-submit"
             type="submit"
             disabled={!formState.isValid}
-            size={ButtonSize.XLARGE}
-            style={ButtonStyle.BASIC}
+            size={ButtonLegacySize.XLARGE}
+            style={ButtonLegacyStyle.BASIC}
           >
             Continue
           </ButtonLegacy>

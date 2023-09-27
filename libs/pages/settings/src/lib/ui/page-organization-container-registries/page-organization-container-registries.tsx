@@ -6,7 +6,7 @@ import {
   ButtonIcon,
   ButtonIconStyle,
   ButtonLegacy,
-  ButtonSize,
+  ButtonLegacySize,
   EmptyState,
   HelpSection,
   Icon,
@@ -101,7 +101,7 @@ export function PageOrganizationContainerRegistries(props: PageOrganizationConta
                   <ButtonIcon
                     icon={IconAwesomeEnum.WHEEL}
                     style={ButtonIconStyle.STROKED}
-                    size={ButtonSize.TINY}
+                    size={ButtonLegacySize.TINY}
                     onClick={() => onEdit(registry)}
                     className="text-neutral-350 hover:text-neutral-400 bg-transparent !w-9 !h-8 mr-2"
                     iconClassName="!text-xs"
@@ -109,7 +109,7 @@ export function PageOrganizationContainerRegistries(props: PageOrganizationConta
                   <ButtonIcon
                     icon={IconAwesomeEnum.TRASH}
                     style={ButtonIconStyle.STROKED}
-                    size={ButtonSize.TINY}
+                    size={ButtonLegacySize.TINY}
                     onClick={() => onDelete(registry)}
                     className="text-neutral-350 hover:text-neutral-400 bg-transparent !w-9 !h-8"
                     iconClassName="!text-xs"

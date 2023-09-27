@@ -1,4 +1,4 @@
-import ButtonLegacy, { ButtonStyle } from '../buttons/button-legacy/button-legacy'
+import ButtonLegacy, { ButtonLegacyStyle } from '../buttons/button-legacy/button-legacy'
 import Icon from '../icon/icon'
 import useModalConfirmation from '../modals/modal-confirmation/use-modal-confirmation/use-modal-confirmation'
 
@@ -62,7 +62,7 @@ export function BlockContentDelete(props: BlockContentDeleteProps) {
                 isDelete: true,
               })
             }}
-            style={ButtonStyle.ERROR}
+            style={ButtonLegacyStyle.ERROR}
           >
             {ctaLabel}
           </ButtonLegacy>

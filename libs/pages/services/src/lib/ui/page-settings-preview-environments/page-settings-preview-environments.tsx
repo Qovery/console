@@ -1,7 +1,15 @@
 import { Controller, useFormContext } from 'react-hook-form'
 import { IconEnum } from '@qovery/shared/enums'
 import { type ApplicationEntity } from '@qovery/shared/interfaces'
-import { BlockContent, ButtonLegacy, ButtonSize, ButtonStyle, HelpSection, Icon, InputToggle } from '@qovery/shared/ui'
+import {
+  BlockContent,
+  ButtonLegacy,
+  ButtonLegacySize,
+  ButtonLegacyStyle,
+  HelpSection,
+  Icon,
+  InputToggle,
+} from '@qovery/shared/ui'
 
 export interface PageSettingsPreviewEnvironmentsProps {
   onSubmit: () => void
@@ -96,8 +104,8 @@ export function PageSettingsPreviewEnvironments(props: PageSettingsPreviewEnviro
             <ButtonLegacy
               className="mb-6 btn--no-min-w"
               disabled={!formState.isValid}
-              size={ButtonSize.LARGE}
-              style={ButtonStyle.BASIC}
+              size={ButtonLegacySize.LARGE}
+              style={ButtonLegacyStyle.BASIC}
               loading={loading}
               type="submit"
             >
