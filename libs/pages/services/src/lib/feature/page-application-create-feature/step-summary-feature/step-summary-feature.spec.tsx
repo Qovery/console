@@ -45,7 +45,7 @@ jest.mock('react-redux', () => ({
 const mockContext: Required<ApplicationContainerCreateContextInterface> = {
   currentStep: 1,
   setCurrentStep: jest.fn(),
-  generalData: { name: 'test', serviceType: ServiceTypeEnum.APPLICATION, auto_deploy: false },
+  generalData: { name: 'test', serviceType: ServiceTypeEnum.APPLICATION, auto_deploy: true },
   setGeneralData: jest.fn(),
   resourcesData: {
     memory: 512,
@@ -131,6 +131,7 @@ describe('PageApplicationPostFeature', () => {
         git_repository: { url: 'https://github.com/Qovery/test_http_server.git', root_path: '/', branch: 'master' },
         buildpack_language: 'JAVA',
         healthchecks: {},
+        auto_deploy: true,
       },
       serviceType: 'APPLICATION',
     })
@@ -189,6 +190,7 @@ describe('PageApplicationPostFeature', () => {
         image_name: '456',
         tag: '789',
         entrypoint: '/',
+        auto_deploy: true,
       },
       serviceType: 'CONTAINER',
     })

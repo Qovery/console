@@ -1,6 +1,5 @@
 import { BuildModeEnum } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
-import { AutoDeploySetting } from '@qovery/domains/services/feature'
 import { IconEnum, type JobType, ServiceTypeEnum, isApplication, isContainer } from '@qovery/shared/enums'
 import { type JobGeneralData, type OrganizationEntity } from '@qovery/shared/interfaces'
 import { BlockContent, Icon, InputSelect, InputText } from '@qovery/shared/ui'
@@ -118,9 +117,6 @@ export function JobGeneralSettings(props: JobGeneralSettingProps) {
                 <GeneralContainerSettings organization={props.organization} />
               </div>
             ))}
-          <BlockContent title="Auto-deploy">
-            <AutoDeploySetting source={watchServiceType === ServiceTypeEnum.CONTAINER ? 'CONTAINER_REGISTRY' : 'GIT'} />
-          </BlockContent>
         </>
       )}
     </>

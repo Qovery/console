@@ -103,7 +103,9 @@ export function StepGeneral(props: StepGeneralProps) {
 
         {watchBuildMode === BuildModeEnum.DOCKER && <EntrypointCmdInputs />}
 
-        <AutoDeploySetting source={watchServiceType === ServiceTypeEnum.CONTAINER ? 'CONTAINER_REGISTRY' : 'GIT'} />
+        {watchServiceType && (
+          <AutoDeploySetting source={watchServiceType === ServiceTypeEnum.CONTAINER ? 'CONTAINER_REGISTRY' : 'GIT'} />
+        )}
 
         <div className="flex justify-between mt-6">
           <ButtonLegacy
