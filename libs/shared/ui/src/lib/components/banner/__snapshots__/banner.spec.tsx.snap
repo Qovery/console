@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Banner should render in brand color 1`] = `
+<body>
+  <div>
+    <div
+      class="flex h-10 items-center justify-center font-medium text-sm bg-brand-500 text-white"
+    >
+      Hello
+    </div>
+  </div>
+</body>
+`;
+
+exports[`Banner should render in yellow 1`] = `
+<body>
+  <div>
+    <div
+      class="flex h-10 items-center justify-center font-medium text-sm bg-yellow-500 text-yellow-900"
+    >
+      Hello
+    </div>
+  </div>
+</body>
+`;

@@ -3,7 +3,7 @@ import { type PropsWithChildren } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { type ClusterEntity, type OrganizationEntity } from '@qovery/shared/interfaces'
 import { INFRA_LOGS_URL } from '@qovery/shared/routes'
-import { Banner, BannerStyle, WarningScreenMobile } from '@qovery/shared/ui'
+import { Banner, WarningScreenMobile } from '@qovery/shared/ui'
 import Navigation from '../navigation/navigation'
 import TopBar from '../top-bar/top-bar'
 
@@ -51,7 +51,7 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
             {topBar && <TopBar />}
             {clusterBanner && (
               <Banner
-                bannerStyle={BannerStyle.PRIMARY}
+                color="brand"
                 onClickButton={() => navigate(INFRA_LOGS_URL(organizationId, cluster.id))}
                 buttonLabel="See logs"
               >
