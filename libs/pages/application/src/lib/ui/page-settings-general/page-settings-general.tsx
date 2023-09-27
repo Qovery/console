@@ -47,7 +47,8 @@ export function PageSettingsGeneral({
   loading,
   organization,
 }: PageSettingsGeneralProps) {
-  const { control, formState } = useFormContext()
+  const { control, formState, watch } = useFormContext()
+  const watchServiceType = watch('serviceType')
 
   return (
     <div className="flex flex-col justify-between w-full">
@@ -80,11 +81,18 @@ export function PageSettingsGeneral({
             />
           </BlockContent>
           {isJob(type) && (
-            <JobGeneralSettings
-              isEdition={true}
-              jobType={isCronJob(type) ? ServiceTypeEnum.CRON_JOB : ServiceTypeEnum.LIFECYCLE_JOB}
-              organization={organization}
-            />
+            <>
+              <JobGeneralSettings
+                isEdition={true}
+                jobType={isCronJob(type) ? ServiceTypeEnum.CRON_JOB : ServiceTypeEnum.LIFECYCLE_JOB}
+                organization={organization}
+              />
+              <BlockContent title="Auto-deploy">
+                <AutoDeploySetting
+                  source={watchServiceType === ServiceTypeEnum.CONTAINER ? 'CONTAINER_REGISTRY' : 'GIT'}
+                />
+              </BlockContent>
+            </>
           )}
           {isApplication(type) && (
             <>

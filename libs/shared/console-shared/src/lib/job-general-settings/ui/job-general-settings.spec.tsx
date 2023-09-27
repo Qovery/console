@@ -61,12 +61,7 @@ describe('JobGeneralSettings', () => {
       )
     )
 
-    // https://react-hook-form.com/advanced-usage#TransformandParse
-    expect(
-      await screen.findByText(/The service will be automatically updated on every new commit on the branch./i)
-    ).toBeInTheDocument()
-
-    expect(screen.getAllByTestId('block-content')).toHaveLength(3)
+    expect(screen.getAllByTestId('block-content')).toHaveLength(2)
   })
 
   it('should render git related fields if service type is git', async () => {
@@ -79,11 +74,6 @@ describe('JobGeneralSettings', () => {
         }
       )
     )
-
-    // https://react-hook-form.com/advanced-usage#TransformandParse
-    expect(
-      await screen.findByText(/The service will be automatically updated on every new commit on the branch./i)
-    ).toBeInTheDocument()
 
     screen.getByTestId('git-fields')
   })
@@ -98,13 +88,6 @@ describe('JobGeneralSettings', () => {
         }
       )
     )
-
-    // https://react-hook-form.com/advanced-usage#TransformandParse
-    expect(
-      await screen.findByText(
-        /The service will be automatically updated if Qovery is notified on the API that a new image tag is available./i
-      )
-    ).toBeInTheDocument()
 
     screen.getByTestId('container-fields')
   })
