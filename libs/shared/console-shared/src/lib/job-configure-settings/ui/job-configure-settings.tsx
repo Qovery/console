@@ -1,9 +1,9 @@
 import cronstrue from 'cronstrue'
-import { useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
 import { type JobConfigureData } from '@qovery/shared/interfaces'
 import { EnableBox, ExternalLink, InputText, LoaderSpinner } from '@qovery/shared/ui'
+import { formatCronExpression } from '@qovery/shared/util-js'
 import EntrypointCmdInputs from '../../entrypoint-cmd-inputs/ui/entrypoint-cmd-inputs'
 
 export interface JobConfigureSettingsProps {
@@ -16,19 +16,6 @@ export function JobConfigureSettings(props: JobConfigureSettingsProps) {
   const { control, watch } = useFormContext<JobConfigureData>()
 
   const watchSchedule = watch('schedule')
-  const [cronDescription, setCronDescription] = useState('')
-
-  useEffect(() => {
-    if (watchSchedule) {
-      // check if watchSchedule is a valid cron expression
-      const isValidCron = cronstrue.toString(watchSchedule, { throwExceptionOnParseError: false })
-      if (isValidCron.indexOf('An error') === -1) {
-        setCronDescription(isValidCron)
-      } else {
-        setCronDescription('')
-      }
-    }
-  }, [watchSchedule])
 
   return loading ? (
     <LoaderSpinner />
@@ -61,7 +48,7 @@ export function JobConfigureSettings(props: JobConfigureSettingsProps) {
             )}
           />
           <div className="mb-3 flex justify-between">
-            <p className="text-neutral-400 text-xs">{cronDescription}</p>
+            <p className="text-neutral-400 text-xs">{formatCronExpression(watchSchedule)}</p>
             <ExternalLink href="https://crontab.guru" size="xs" className="text-neutral-350">
               CRON expression builder
             </ExternalLink>

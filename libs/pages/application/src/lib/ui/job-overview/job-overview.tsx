@@ -1,4 +1,3 @@
-import cronstrue from 'cronstrue'
 import { useNavigate, useParams } from 'react-router-dom'
 import { isCronJob, isLifeCycleJob } from '@qovery/shared/enums'
 import { type JobApplicationEntity } from '@qovery/shared/interfaces'
@@ -9,6 +8,7 @@ import {
   APPLICATION_URL,
 } from '@qovery/shared/routes'
 import { PropertyCard } from '@qovery/shared/ui'
+import { formatCronExpression } from '@qovery/shared/util-js'
 
 export interface JobOverviewProps {
   application: JobApplicationEntity
@@ -36,7 +36,7 @@ export function JobOverview(props: JobOverviewProps) {
         {isCronJob(application) && (
           <PropertyCard
             name="Scheduling"
-            value={cronstrue.toString(application.schedule?.cronjob?.scheduled_at?.toString() || '')}
+            value={formatCronExpression(application.schedule?.cronjob?.scheduled_at) ?? ''}
             isLoading={false}
             onSettingsClick={() => navigate(`${path}${APPLICATION_SETTINGS_CONFIGURE_URL}`)}
           />
