@@ -1,10 +1,10 @@
-import { render } from '__tests__/utils/setup-jest'
+import { renderWithProviders } from '@qovery/shared/util-tests'
 import { Section } from '../section/section'
 import Header from './header'
 
 describe('Header', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(
+    const { baseElement } = renderWithProviders(
       <Section>
         <Header />
       </Section>
