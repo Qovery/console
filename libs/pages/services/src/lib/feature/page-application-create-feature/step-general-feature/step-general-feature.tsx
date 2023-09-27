@@ -47,7 +47,7 @@ export function StepGeneralFeature() {
   }, [setCurrentStep])
 
   const methods = useForm<ApplicationGeneralData>({
-    defaultValues: generalData,
+    defaultValues: { auto_deploy: true, ...generalData },
     mode: 'onChange',
   })
 
