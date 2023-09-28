@@ -1,17 +1,17 @@
 import { type Meta, type Story } from '@storybook/react'
 import { ButtonIcon, type ButtonIconProps } from '../button-icon/button-icon'
-import { ButtonSize, ButtonStyle } from '../button-legacy/button-legacy'
+import { ButtonLegacySize, ButtonLegacyStyle } from '../button-legacy/button-legacy'
 
 export default {
   component: ButtonIcon,
   title: 'Buttons/ButtonIcon',
   argTypes: {
     size: {
-      options: Object.values(ButtonSize).filter((x) => typeof x === 'string'),
+      options: Object.values(ButtonLegacySize).filter((x) => typeof x === 'string'),
       control: { type: 'select' },
     },
     style: {
-      options: Object.values(ButtonStyle).filter((x) => typeof x === 'string'),
+      options: Object.values(ButtonLegacyStyle).filter((x) => typeof x === 'string'),
       control: { type: 'select' },
     },
   },

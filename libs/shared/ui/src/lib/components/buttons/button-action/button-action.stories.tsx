@@ -1,7 +1,7 @@
 import { type Meta, type Story } from '@storybook/react'
 import { type ClickEvent } from '@szhsin/react-menu'
 import Icon from '../../icon/icon'
-import { ButtonSize } from '../button-legacy/button-legacy'
+import { ButtonLegacySize } from '../button-legacy/button-legacy'
 import ButtonAction, { type ButtonActionProps, ButtonActionStyle } from './button-action'
 
 export default {
@@ -9,7 +9,7 @@ export default {
   title: 'Buttons/ButtonAction',
   argTypes: {
     size: {
-      options: Object.values(ButtonSize).filter((x) => typeof x === 'string'),
+      options: Object.values(ButtonLegacySize).filter((x) => typeof x === 'string'),
       control: { type: 'select' },
     },
     style: {
@@ -60,7 +60,7 @@ const menusButton = [
 export const Primary = Template.bind({})
 Primary.args = {
   style: ButtonActionStyle.BASIC,
-  size: ButtonSize.LARGE,
+  size: ButtonLegacySize.LARGE,
   iconRight: 'icon-solid-plus',
   menus: menusButton,
 }

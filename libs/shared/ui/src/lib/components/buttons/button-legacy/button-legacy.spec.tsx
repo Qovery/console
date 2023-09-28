@@ -1,10 +1,10 @@
 import { render, screen } from '__tests__/utils/setup-jest'
 import { Chance } from 'chance'
 import { createElement } from 'react'
-import ButtonLegacy, { ButtonLegacySize, ButtonLegacyStyle, type ButtonProps } from './button-legacy'
+import ButtonLegacy, { type ButtonLegacyProps, ButtonLegacySize, ButtonLegacyStyle } from './button-legacy'
 
 describe('Button', () => {
-  let props: ButtonProps
+  let props: ButtonLegacyProps
 
   const chance = new Chance('123')
 

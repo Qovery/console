@@ -1,16 +1,16 @@
 import { type Meta, type Story } from '@storybook/react'
-import { ButtonLegacy, type ButtonProps, ButtonSize, ButtonStyle } from './button-legacy'
+import { ButtonLegacy, type ButtonLegacyProps, ButtonLegacySize, ButtonLegacyStyle } from './button-legacy'
 
 export default {
   component: ButtonLegacy,
   title: 'Buttons/ButtonDefault',
   argTypes: {
     size: {
-      options: Object.values(ButtonSize).filter((x) => typeof x === 'string'),
+      options: Object.values(ButtonLegacySize).filter((x) => typeof x === 'string'),
       control: { type: 'select' },
     },
     style: {
-      options: Object.values(ButtonStyle).filter((x) => typeof x === 'string'),
+      options: Object.values(ButtonLegacyStyle).filter((x) => typeof x === 'string'),
       control: { type: 'select' },
     },
   },
@@ -20,7 +20,7 @@ const ButtonContent = () => {
   return <span>Button</span>
 }
 
-const Template: Story<ButtonProps> = (args) => (
+const Template: Story<ButtonLegacyProps> = (args) => (
   <ButtonLegacy {...args}>
     <ButtonContent />
   </ButtonLegacy>
@@ -28,8 +28,8 @@ const Template: Story<ButtonProps> = (args) => (
 
 export const Primary = Template.bind({})
 Primary.args = {
-  size: ButtonSize.REGULAR,
-  style: ButtonStyle.BASIC,
+  size: ButtonLegacySize.REGULAR,
+  style: ButtonLegacyStyle.BASIC,
   iconLeft: 'icon-solid-eye',
   iconRight: 'icon-solid-eye',
 }
