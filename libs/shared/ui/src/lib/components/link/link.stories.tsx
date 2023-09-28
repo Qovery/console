@@ -6,7 +6,7 @@ export default {
   title: 'Link',
 } as Meta
 
-const Template: Story<LinkProps> = (args) => <Link {...args} />
+const Template: Story<LinkProps> = (args) => <Link />
 
 export const Primary = Template.bind({})
 Primary.args = {

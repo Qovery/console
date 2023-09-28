@@ -1,6 +1,25 @@
-import { NavLink } from 'react-router-dom'
-import { type IconEnum } from '@qovery/shared/enums'
-import Icon from '../icon/icon'
+import { type VariantProps, cva } from 'class-variance-authority'
+import { type ComponentPropsWithoutRef, type ElementRef, forwardRef } from 'react'
+import { twMerge } from 'tailwind-merge'
+
+const linkVariants = cva(['transition', 'font-medium', 'inline-flex', 'flex-center', 'gap-1', 'hover:underline'], {
+  variants: {
+    color: {
+      brand: ['text-brand-500'],
+      red: ['text-red-500'],
+      sky: ['text-sky-500'],
+    },
+    size: {
+      xs: ['text-xs'],
+      ssm: ['text-ssm'],
+      sm: ['text-sm'],
+    },
+  },
+  defaultVariants: {
+    color: 'sky',
+    size: 'sm',
+  },
+})
 
 export interface BaseLink {
   link: string
@@ -8,51 +27,19 @@ export interface BaseLink {
   external?: boolean
 }
 
-export interface LinkProps extends BaseLink {
+export interface LinkProps extends Omit<ComponentPropsWithoutRef<'div'>, 'color'>, VariantProps<typeof linkVariants> {
   className?: string
-  size?: string
-  iconRight?: IconEnum | string
-  iconRightClassName?: string
-  iconLeft?: IconEnum | string
-  iconLeftClassName?: string
 }
 
-export function Link(props: LinkProps) {
-  const {
-    link,
-    linkLabel,
-    external = false,
-    className = '',
-    size = 'text-sm',
-    iconLeft,
-    iconRight,
-    iconLeftClassName = 'text-xs leading-5',
-    iconRightClassName = 'ml-0.5 text-xs leading-5 ',
-  } = props
-
-  const currentClassName = `${className} ${size} text-sky-500 inline-flex flex-center gap-1 hover:underline`
-
-  const content = () => (
-    <>
-      {iconLeft && <Icon name={iconLeft} className={iconLeftClassName} />}
-      {linkLabel}
-      {iconRight && <Icon name={iconRight} className={iconRightClassName} />}
-    </>
+export const Link = forwardRef<ElementRef<'div'>, LinkProps>(function Link(
+  { children, color, size, className },
+  forwardedRef
+) {
+  return (
+    <div className={twMerge(linkVariants({ color, size }), className)} ref={forwardedRef}>
+      {children}
+    </div>
   )
-
-  if (external) {
-    return (
-      <a className={currentClassName} href={link} target="_blank" rel="noreferrer">
-        {content()}
-      </a>
-    )
-  } else {
-    return (
-      <NavLink className={currentClassName} to={link}>
-        {content()}
-      </NavLink>
-    )
-  }
-}
+})
 
 export default Link
