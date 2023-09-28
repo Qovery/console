@@ -34,66 +34,25 @@ const badgeVariants = cva(['inline-flex', 'items-center', 'shrink-0', 'font-medi
       color: 'neutral',
       className: ['border-neutral-250', 'text-neutral-350', 'dark:border-neutral-350'],
     },
-    {
-      variant: 'surface',
-      color: 'red',
-      className: ['bg-red-50'],
-    },
-    {
-      variant: ['surface', 'outline'],
-      color: 'red',
-      className: ['border-red-500'],
-    },
-    {
-      variant: 'surface',
-      color: 'purple',
-      className: ['bg-purple-50'],
-    },
-    {
-      variant: ['surface', 'outline'],
-      color: 'purple',
-      className: ['border-purple-500'],
-    },
-    {
-      variant: 'surface',
-      color: 'sky',
-      className: ['bg-sky-50'],
-    },
-    {
-      variant: ['surface', 'outline'],
-      color: 'sky',
-      className: ['border-sky-500'],
-    },
-    {
-      variant: 'surface',
-      color: 'green',
-      className: ['bg-green-50'],
-    },
-    {
-      variant: ['surface', 'outline'],
-      color: 'green',
-      className: ['border-green-500'],
-    },
-    {
-      variant: 'surface',
-      color: 'yellow',
-      className: ['bg-yellow-50'],
-    },
-    {
-      variant: ['surface', 'outline'],
-      color: 'yellow',
-      className: ['border-yellow-500'],
-    },
-    {
-      variant: 'surface',
-      color: 'brand',
-      className: ['bg-brand-50'],
-    },
-    {
-      variant: ['surface', 'outline'],
-      color: 'brand',
-      className: ['border-brand-500'],
-    },
+    ...[
+      'red' as const,
+      'purple' as const,
+      'sky' as const,
+      'green' as const,
+      'yellow' as const,
+      'brand' as const,
+    ].flatMap((color) => [
+      {
+        variant: 'surface' as const,
+        color,
+        className: [`bg-${color}-50`],
+      },
+      {
+        variant: ['surface' as const, 'outline' as const],
+        color,
+        className: [`border-${color}-500`],
+      },
+    ]),
   ],
   defaultVariants: {
     variant: 'outline',
