@@ -1,0 +1,45 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ActionLink should match with ActionLink component 1`] = `
+<div>
+  <span
+    class="cursor-pointer transition duration-100 font-medium inline-flex flex-center gap-1 text-sky-500 hover:text-sky-600 text-sm"
+    role="button"
+  >
+    My action link
+  </span>
+</div>
+`;
+
+exports[`ExternalLink should match with ExternalLink component 1`] = `
+<div>
+  <a
+    class="cursor-pointer transition duration-100 font-medium inline-flex flex-center gap-1 text-sky-500 hover:text-sky-600 text-sm"
+    href="https://qovery.com"
+    rel="noopener noreferrer"
+    target="_blank"
+  >
+    My external link
+    <span
+      class="icon-solid-arrow-up-right-from-square shrink-0 text-xs leading-5"
+      role="img"
+    />
+  </a>
+</div>
+`;
+
+exports[`Link should match with Link component 1`] = `
+<div>
+  <a
+    aria-current="page"
+    class="cursor-pointer transition duration-100 font-medium inline-flex flex-center gap-1 text-sky-500 hover:text-sky-600 text-sm active"
+    href="/"
+  >
+    My link
+    <span
+      class="icon-solid-circle-plus shrink-0 text-xs leading-5"
+      role="img"
+    />
+  </a>
+</div>
+`;

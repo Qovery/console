@@ -20,7 +20,7 @@ Primary.args = {
     {
       link: '#',
       linkLabel: 'How to delete my application',
-      external: true,
+      external: false,
     },
   ],
 }

@@ -1,18 +1,23 @@
-import { type Meta, type Story } from '@storybook/react'
+import type { Meta } from '@storybook/react'
+import { IconAwesomeEnum } from '../icon/icon-awesome.enum'
 import { Link, type LinkProps } from './link'
 
-export default {
+const Story: Meta<typeof Link> = {
   component: Link,
   title: 'Link',
-} as Meta
-
-const Template: Story<LinkProps> = (args) => <Link />
-
-export const Primary = Template.bind({})
-Primary.args = {
-  link: 'https://twitter.com/benjamincode',
-  linkLabel: 'Link to an handsome developer',
-  external: true,
-  iconRight: 'icon-solid-arrow-up-right-from-square',
-  iconLeft: '',
+  decorators: [
+    (Story) => (
+      <div style={{ background: 'white', padding: '3em' }}>
+        <Story />
+      </div>
+    ),
+  ],
 }
+export const Primary = {
+  render: (args: LinkProps) => (
+    <Link icon={IconAwesomeEnum.CIRCLE_PLUS} {...args}>
+      My link
+    </Link>
+  ),
+}
+export default Story
