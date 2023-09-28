@@ -19,7 +19,7 @@ export interface ServiceLinksDropdownProps {
 export function ServiceLinksDropdown({ links }: ServiceLinksDropdownProps) {
   return (
     <Popover.Root>
-      <Popover.Trigger>
+      <Popover.Trigger hidden={links?.length === 0}>
         <div>
           <Skeleton height={40} width={110} show={!links}>
             <ButtonLegacy
