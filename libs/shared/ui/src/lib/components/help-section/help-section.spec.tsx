@@ -1,4 +1,4 @@
-import { render } from '__tests__/utils/setup-jest'
+import { renderWithProviders } from '@qovery/shared/util-tests'
 import HelpSection, { type HelpSectionProps } from './help-section'
 
 describe('HelpSection', () => {
@@ -11,11 +11,11 @@ describe('HelpSection', () => {
   })
 
   it('should render successfully', () => {
-    const { baseElement } = render(<HelpSection {...props} />)
+    const { baseElement } = renderWithProviders(<HelpSection {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
-  it('should add spacing between links except the last one', () => {
+  it('should match snapshot', () => {
     const links = [
       {
         link: '#',
@@ -28,11 +28,7 @@ describe('HelpSection', () => {
         external: true,
       },
     ]
-    const { baseElement } = render(<HelpSection {...props} links={links} />)
-    const linksElement = baseElement.getElementsByTagName('a')
-    expect(linksElement[0].classList).toContain('mb-2')
-    expect(linksElement[1].classList).not.toContain('mb-2')
-
-    expect(baseElement).toBeTruthy()
+    const { baseElement } = renderWithProviders(<HelpSection links={links} {...props} />)
+    expect(baseElement).toMatchSnapshot()
   })
 })

@@ -1,0 +1,44 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`HelpSection should match snapshot 1`] = `
+<body>
+  <div>
+    <div
+      class="py-8 px-10 border-t border-neutral-200 "
+      data-testid="help-section"
+    >
+      <p
+        class="text-neutral-400 text-sm mb-5"
+      >
+        Test description
+      </p>
+      <div
+        class="flex flex-col gap-2"
+      >
+        <a
+          class="cursor-pointer transition duration-100 font-medium flex-center gap-1 text-sky-500 hover:text-sky-600 text-sm flex"
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          How to configure my application
+          <span
+            class="icon-solid-arrow-up-right-from-square shrink-0 text-xs leading-5"
+            role="img"
+          />
+        </a>
+        <a
+          class="cursor-pointer transition duration-100 font-medium flex-center gap-1 text-sky-500 hover:text-sky-600 text-sm flex"
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          How to delete my application
+          <span
+            class="icon-solid-arrow-up-right-from-square shrink-0 text-xs leading-5"
+            role="img"
+          />
+        </a>
+      </div>
+    </div>
+  </div>
+</body>
+`;
