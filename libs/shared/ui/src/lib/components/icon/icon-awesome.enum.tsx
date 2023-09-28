@@ -1,5 +1,4 @@
 export enum IconAwesomeEnum {
-  ACCESSIBLE = 'icon-brands-accessible',
   STAR = 'icon-solid-star',
   PLUS = 'icon-solid-plus',
   CIRCLE_PLUS = 'icon-solid-circle-plus',
@@ -16,7 +15,6 @@ export enum IconAwesomeEnum {
   CIRCLE_QUESTION = 'icon-regular-circle-question',
   MAGNIFYING_GLASS = 'icon-solid-magnifying-glass',
   XMARK = 'icon-solid-xmark',
-  DISCORD = 'icon-brands-discord',
   ENVELOPE = 'icon-solid-envelope',
   KEYBOARD = 'icon-solid-keyboard',
   WAVE_PULSE = 'icon-solid-wave-pulse',
@@ -79,7 +77,6 @@ export enum IconAwesomeEnum {
   CODE_BRANCH = 'icon-solid-code-branch',
   DATABASE = 'icon-solid-database',
   BOX = 'icon-solid-box',
-  SOURCETREE = 'icon-brands-sourcetree',
   USER = 'icon-solid-user',
   USER_CROWN = 'icon-solid-user-crown',
   BAN = 'icon-solid-ban',

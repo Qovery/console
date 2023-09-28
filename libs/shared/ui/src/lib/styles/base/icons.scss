@@ -8,15 +8,6 @@
   font-weight: 900;
 }
 
-[class^='icon-brands'],
-[class*=' icon-brands'] {
-  font-weight: 400;
-}
-
-.icon-brands-accessible:before {
-  content: '\f368';
-}
-
 .icon-solid-star:before {
   content: '\f005';
 }
@@ -91,10 +82,6 @@
 
 .icon-solid-xmark:before {
   content: '\f00d';
-}
-
-.icon-brands-discord:before {
-  content: '\f392';
 }
 
 .icon-solid-envelope:before {
@@ -359,10 +346,6 @@
 
 .icon-solid-box:before {
   content: '\f466';
-}
-
-.icon-brands-sourcetree:before {
-  content: '\f7d3';
 }
 
 .icon-solid-user:before {
