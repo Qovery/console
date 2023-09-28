@@ -117,7 +117,11 @@ export function SidebarHistory({ data, serviceId, versionId, pathLogs, environme
             </div>
           </Tooltip>
         )}
-        {currentPosition === 0 && <Badge size="xs">Latest</Badge>}
+        {currentPosition === 0 && (
+          <Badge className="w-[50px] justify-center" size="xs">
+            Latest
+          </Badge>
+        )}
         {environmentState && currentPosition > 0 && !showNewTag && (
           <ButtonLegacy
             className="w-[50px]"

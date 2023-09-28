@@ -1,4 +1,4 @@
-import { Icon, Link } from '@qovery/shared/ui'
+import { ExternalLink, Icon, Link } from '@qovery/shared/ui'
 
 export function HelpSidebar() {
   const LIST = [
@@ -27,13 +27,13 @@ export function HelpSidebar() {
         </div>
         <div className="p-10">
           <p className="text-sm text-neutral-400 mb-5">Need help? You may find these links useful</p>
-          <Link
-            className="font-medium text-sky-500 text-sm block mb-3"
-            link="https://hub.qovery.com/docs/using-qovery/configuration/deployment-rule/#why-using-deployment-rule"
-            linkLabel="How to configure an deployment rule"
-            external
-            iconRight="icon-solid-arrow-up-right-from-square"
-          />
+          <ExternalLink
+            className="block mb-3"
+            href="https://hub.qovery.com/docs/using-qovery/configuration/deployment-rule/#why-using-deployment-rule"
+            size="sm"
+          >
+            How to configure an deployment rule
+          </ExternalLink>
         </div>
       </div>
     </div>

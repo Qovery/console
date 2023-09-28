@@ -4,7 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { ClusterRemoteSettings } from '@qovery/shared/console-shared'
 import { type ClusterGeneralData } from '@qovery/shared/interfaces'
 import { CLUSTERS_CREATION_RESOURCES_URL, CLUSTERS_CREATION_URL, CLUSTERS_URL } from '@qovery/shared/routes'
-import { ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle, IconAwesomeEnum, Link } from '@qovery/shared/ui'
+import { ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle, ExternalLink } from '@qovery/shared/ui'
 
 export interface StepRemoteProps {
   onSubmit: FormEventHandler<HTMLFormElement>
@@ -24,12 +24,9 @@ export function StepRemote(props: StepRemoteProps) {
           Specify an SSH key to access your EC2 instance remotely. You can also do this later in the cluster settings,
           but we recommend doing it now to avoid downtime.
         </p>
-        <Link
-          link="https://hub.qovery.com/docs/using-qovery/configuration/clusters/#generating-an-ssh-key-for-your-cluster"
-          external
-          linkLabel="How to generate an SSH Key"
-          iconRight={IconAwesomeEnum.ARROW_UP_RIGHT_FROM_SQUARE}
-        />
+        <ExternalLink href="https://hub.qovery.com/docs/using-qovery/configuration/clusters/#generating-an-ssh-key-for-your-cluster">
+          How to generate an SSH Key
+        </ExternalLink>
       </div>
 
       <form onSubmit={onSubmit}>

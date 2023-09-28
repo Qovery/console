@@ -13,9 +13,9 @@ import {
   ButtonLegacy,
   ButtonLegacySize,
   ButtonLegacyStyle,
+  ExternalLink,
   Icon,
   IconAwesomeEnum,
-  Link,
 } from '@qovery/shared/ui'
 import { trimId } from '@qovery/shared/util-js'
 
@@ -70,13 +70,13 @@ export function StepSummary(props: StepSummaryProps) {
               Use exclusively the Qovery console to update the resources managed by Qovery on your cloud account.
               <br /> Do not manually update or upgrade them on the cloud provider console, otherwise you will risk a
               drift in the configuration.
-              <Link
+              <ExternalLink
                 className="ml-0.5"
-                size="text-xs"
-                link="https://hub.qovery.com/docs/useful-resources/faq/#how-do-you-support-new-kubernetes-version"
-                linkLabel="See more details"
-                external
-              />
+                size="xs"
+                href="https://hub.qovery.com/docs/useful-resources/faq/#how-do-you-support-new-kubernetes-version"
+              >
+                See more details
+              </ExternalLink>
             </span>
           }
           type={BannerBoxEnum.WARNING}

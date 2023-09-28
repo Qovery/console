@@ -2,7 +2,15 @@ import { PlanEnum } from 'qovery-typescript-axios'
 import { type CardImages } from 'react-payment-inputs/images'
 import { type CreditCard, type OrganizationEntity } from '@qovery/shared/interfaces'
 import { CLUSTERS_URL, SETTINGS_BILLING_URL, SETTINGS_URL } from '@qovery/shared/routes'
-import { ButtonLegacy, ButtonLegacyStyle, HelpSection, Link, Skeleton, imagesCreditCart } from '@qovery/shared/ui'
+import {
+  ButtonLegacy,
+  ButtonLegacyStyle,
+  ExternalLink,
+  HelpSection,
+  Link,
+  Skeleton,
+  imagesCreditCart,
+} from '@qovery/shared/ui'
 import { dateToFormat } from '@qovery/shared/util-dates'
 import { costToHuman, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import InvoicesListFeature from '../../feature/page-organization-billing-summary-feature/invoices-list-feature/invoices-list-feature'
@@ -49,11 +57,12 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
                 </div>
               </Skeleton>
             </div>
-            <Link
-              className="!text-xs font-medium"
-              link="https://hub.qovery.com/docs/using-qovery/configuration/organization/#organization-members"
-              linkLabel="See details"
-            />
+            <ExternalLink
+              href="https://hub.qovery.com/docs/using-qovery/configuration/organization/#organization-members"
+              size="xs"
+            >
+              See details
+            </ExternalLink>
           </div>
           <div className="flex-1  h-[114px]  border  p-5 border-neutral-200 rounded">
             <div className="text-neutral-350 text-xs mb-1 font-medium">Current monthly bill</div>
@@ -100,11 +109,9 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
                   </div>
                 </Skeleton>
               </div>
-              <Link
-                className="!text-xs font-medium"
-                link={SETTINGS_URL(props.organization?.id || '') + SETTINGS_BILLING_URL}
-                linkLabel="Edit payment"
-              />
+              <Link to={SETTINGS_URL(props.organization?.id || '') + SETTINGS_BILLING_URL} size="xs">
+                Edit payment
+              </Link>
             </div>
           )}
         </div>
@@ -130,11 +137,9 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
                 </div>
               </Skeleton>
             </div>
-            <Link
-              className="!text-xs font-medium"
-              link={CLUSTERS_URL(props.organization?.id || '')}
-              linkLabel="Manage clusters"
-            />
+            <Link to={CLUSTERS_URL(props.organization?.id || '')} size="xs">
+              Manage clusters
+            </Link>
           </div>
           <div className="flex-1 p-5  h-[114px]">
             <div className="text-neutral-350 text-xs mb-1 font-medium">Deployments</div>

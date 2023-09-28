@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
 import { type JobConfigureData } from '@qovery/shared/interfaces'
-import { EnableBox, InputText, Link, LoaderSpinner } from '@qovery/shared/ui'
+import { EnableBox, ExternalLink, InputText, LoaderSpinner } from '@qovery/shared/ui'
 import EntrypointCmdInputs from '../../entrypoint-cmd-inputs/ui/entrypoint-cmd-inputs'
 
 export interface JobConfigureSettingsProps {
@@ -62,12 +62,9 @@ export function JobConfigureSettings(props: JobConfigureSettingsProps) {
           />
           <div className="mb-3 flex justify-between">
             <p className="text-neutral-400 text-xs">{cronDescription}</p>
-            <Link
-              external
-              link="https://crontab.guru/"
-              className="text-neutral-350 !text-xs"
-              linkLabel="CRON expression builder"
-            />
+            <ExternalLink href="https://crontab.guru" size="xs" className="text-neutral-350">
+              CRON expression builder
+            </ExternalLink>
           </div>
           <EntrypointCmdInputs />
         </>

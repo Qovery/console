@@ -7,7 +7,7 @@ import {
   type UseFormGetValues,
   type UseFormSetValue,
 } from 'react-hook-form'
-import { IconAwesomeEnum, InputSelect, InputToggle, Link } from '@qovery/shared/ui'
+import { ExternalLink, InputSelect, InputToggle } from '@qovery/shared/ui'
 
 export interface CardClusterFeatureProps {
   feature: ClusterFeature
@@ -111,15 +111,9 @@ export function CardClusterFeature(props: CardClusterFeatureProps) {
               )}
             </div>
           )}
-          <Link
-            external
-            className="font-medium"
-            size="text-xs"
-            link="https://hub.qovery.com/docs/using-qovery/configuration/clusters/#features"
-            linkLabel="Documentation link"
-            iconRight={IconAwesomeEnum.ARROW_UP_RIGHT_FROM_SQUARE}
-            iconRightClassName="text-2xs relative top-[1px]"
-          />
+          <ExternalLink size="xs" href="https://hub.qovery.com/docs/using-qovery/configuration/clusters/#features">
+            Documentation link
+          </ExternalLink>
         </div>
       </div>
     </div>

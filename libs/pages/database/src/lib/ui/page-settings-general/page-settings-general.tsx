@@ -9,13 +9,13 @@ import {
   ButtonLegacy,
   ButtonLegacySize,
   ButtonLegacyStyle,
+  ExternalLink,
   HelpSection,
   Icon,
   IconAwesomeEnum,
   InputSelect,
   InputText,
   InputTextArea,
-  Link,
   LoaderSpinner,
 } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
@@ -122,13 +122,13 @@ export function PageSettingsGeneral({
                     error={error?.message}
                     disabled
                   />
-                  <Link
-                    className="!text-xs ml-4 gap-0.5"
-                    link="https://hub.qovery.com/docs/using-qovery/configuration/database/#modes"
-                    linkLabel="Learn more"
-                    iconRight="icon-solid-arrow-up-right-from-square text-2xs"
-                    external
-                  />
+                  <ExternalLink
+                    className="ml-4 gap-0.5"
+                    href="https://hub.qovery.com/docs/using-qovery/configuration/database/#modes"
+                    size="xs"
+                  >
+                    Learn more
+                  </ExternalLink>
                 </div>
               )}
             />
@@ -178,13 +178,13 @@ export function PageSettingsGeneral({
                     value={field.value}
                     error={error?.message}
                   />
-                  <Link
-                    className="!text-xs ml-4 gap-0.5"
-                    link="https://hub.qovery.com/docs/using-qovery/configuration/database/#accessibility"
-                    linkLabel="Learn more"
-                    iconRight="icon-solid-arrow-up-right-from-square text-2xs"
-                    external
-                  />
+                  <ExternalLink
+                    className="ml-4 gap-0.5"
+                    href="https://hub.qovery.com/docs/using-qovery/configuration/database/#accessibility"
+                    size="xs"
+                  >
+                    Learn more
+                  </ExternalLink>
                 </>
               )}
             />

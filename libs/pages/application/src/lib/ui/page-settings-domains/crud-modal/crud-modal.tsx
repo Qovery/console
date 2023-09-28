@@ -1,6 +1,6 @@
 import { type CustomDomain } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
-import { IconAwesomeEnum, InputText, Link, ModalCrud } from '@qovery/shared/ui'
+import { ExternalLink, InputText, ModalCrud } from '@qovery/shared/ui'
 
 export interface CrudModalProps {
   customDomain?: CustomDomain
@@ -38,13 +38,9 @@ export function CrudModal(props: CrudModalProps) {
               redirect the traffic to each port by setting the “Port Name” value within the port settings.
             </li>
           </ol>
-          <Link
-            className="mt-2 font-medium"
-            link="https://hub.qovery.com/guides/getting-started/setting-custom-domain"
-            linkLabel="Documentation"
-            external
-            iconRight={IconAwesomeEnum.ARROW_UP_RIGHT_FROM_SQUARE}
-          />
+          <ExternalLink className="mt-2 " href="https://hub.qovery.com/guides/getting-started/setting-custom-domain">
+            Documentation
+          </ExternalLink>
         </>
       }
     >

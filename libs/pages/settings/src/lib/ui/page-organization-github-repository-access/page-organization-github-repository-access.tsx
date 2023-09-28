@@ -6,10 +6,10 @@ import {
   ButtonLegacy,
   ButtonLegacySize,
   ButtonLegacyStyle,
+  ExternalLink,
   HelpSection,
   Icon,
   IconAwesomeEnum,
-  Link,
   LoaderSpinner,
 } from '@qovery/shared/ui'
 
@@ -98,7 +98,7 @@ export function PageOrganizationGithubRepositoryAccess(props: PageOrganizationGi
                   <li key={repository.id} className="flex items-center justify-between">
                     <div className="flex gap-3">
                       <Icon name={IconEnum.GITHUB} className="text-neutral-400 w-4" />
-                      <Link link={repository.url} linkLabel={repository.name} external></Link>
+                      <ExternalLink href={repository.url}>{repository.name}</ExternalLink>
                     </div>
                   </li>
                 ))}

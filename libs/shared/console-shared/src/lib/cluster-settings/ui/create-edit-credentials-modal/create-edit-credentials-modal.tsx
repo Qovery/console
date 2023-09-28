@@ -1,6 +1,6 @@
 import { CloudProviderEnum } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
-import { IconAwesomeEnum, InputText, Link, ModalCrud } from '@qovery/shared/ui'
+import { ExternalLink, InputText, ModalCrud } from '@qovery/shared/ui'
 
 export interface CreateEditCredentialsModalProps {
   onSubmit: () => void
@@ -144,22 +144,20 @@ export function CreateEditCredentialsModal(props: CreateEditCredentialsModalProp
         </>
       )}
       {props.cloudProvider === CloudProviderEnum.AWS && (
-        <Link
-          className="font-medium text-sky-500 text-sm"
-          link="https://hub.qovery.com/docs/using-qovery/configuration/cloud-service-provider/amazon-web-services/"
-          linkLabel="How to configure credentials"
-          iconRight={IconAwesomeEnum.ARROW_UP_RIGHT_FROM_SQUARE}
-          external
-        />
+        <ExternalLink
+          href="https://hub.qovery.com/docs/using-qovery/configuration/cloud-service-provider/amazon-web-services"
+          size="sm"
+        >
+          How to configure credentials
+        </ExternalLink>
       )}
       {props.cloudProvider === CloudProviderEnum.SCW && (
-        <Link
-          className="font-medium text-sky-500 text-sm"
-          link="https://hub.qovery.com/docs/using-qovery/configuration/cloud-service-provider/scaleway/"
-          linkLabel="How to configure credentials"
-          iconRight={IconAwesomeEnum.ARROW_UP_RIGHT_FROM_SQUARE}
-          external
-        />
+        <ExternalLink
+          href="https://hub.qovery.com/docs/using-qovery/configuration/cloud-service-provider/scaleway"
+          size="sm"
+        >
+          How to configure credentials
+        </ExternalLink>
       )}
     </ModalCrud>
   )
