@@ -218,7 +218,7 @@ export function TabsFeature() {
       items={items}
       contentRight={
         <div className="px-5">
-          {matchEnvVariableRoute ? contentRightEnvVariable : <ServiceLinksDropdown links={availableLinks ?? []} />}
+          {matchEnvVariableRoute ? contentRightEnvVariable : <ServiceLinksDropdown links={availableLinks} />}
         </div>
       }
     />

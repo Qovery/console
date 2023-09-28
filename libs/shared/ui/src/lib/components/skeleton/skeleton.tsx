@@ -1,6 +1,7 @@
-import { type PropsWithChildren } from 'react'
+import { type ElementRef, type PropsWithChildren, forwardRef } from 'react'
+import { twMerge } from 'tailwind-merge'
 
-export interface SkeletonProps {
+export interface SkeletonProps extends PropsWithChildren {
   width?: number
   height?: number
   show?: boolean
@@ -10,24 +11,29 @@ export interface SkeletonProps {
   className?: string
 }
 
-export function Skeleton(props: PropsWithChildren<SkeletonProps>) {
-  const { children, show = true, width, height, rounded, square, truncate, className = '' } = props
-
+export const Skeleton = forwardRef<ElementRef<'div'>, SkeletonProps>(function Skeleton(
+  { children, show = true, width, height, rounded, square, truncate, className = '' },
+  forwardedRef
+) {
   return (
     <div
-      className={`skeleton ${truncate ? 'truncate' : ''} ${!show ? 'skeleton--loaded' : ''} ${
-        rounded || square ? '' : 'rounded'
-      } ${className}`}
+      ref={forwardedRef}
+      data-testid="skeleton"
+      className={twMerge(
+        `skeleton ${truncate ? 'truncate' : ''} ${!show ? 'skeleton--loaded' : ''} ${
+          rounded || square ? '' : 'rounded'
+        }`,
+        className
+      )}
       style={{
         width: show ? width : '',
         height: show ? height : '',
         borderRadius: rounded ? '100%' : square ? '0' : '',
       }}
-      data-testid="skeleton"
     >
       {!show && children}
     </div>
   )
-}
+})
 
 export default Skeleton

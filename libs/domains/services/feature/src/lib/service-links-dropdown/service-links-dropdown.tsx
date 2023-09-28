@@ -6,30 +6,31 @@ import {
   CopyToClipboard,
   IconAwesomeEnum,
   Popover,
+  Skeleton,
   Truncate,
 } from '@qovery/shared/ui'
 import { pluralize } from '@qovery/shared/util-js'
 
 export interface ServiceLinksDropdownProps {
-  links: Link[]
+  links?: Link[]
 }
 
 // TODO: Update props and using React Query
 export function ServiceLinksDropdown({ links }: ServiceLinksDropdownProps) {
-  if (links.length === 0) return null
-
   return (
     <Popover.Root>
       <Popover.Trigger>
         <div>
-          <ButtonLegacy
-            style={ButtonLegacyStyle.STROKED}
-            size={ButtonLegacySize.LARGE}
-            iconLeft={IconAwesomeEnum.ANGLE_DOWN}
-            iconRight={IconAwesomeEnum.LINK}
-          >
-            Links
-          </ButtonLegacy>
+          <Skeleton height={40} width={110} show={!links}>
+            <ButtonLegacy
+              style={ButtonLegacyStyle.STROKED}
+              size={ButtonLegacySize.LARGE}
+              iconLeft={IconAwesomeEnum.ANGLE_DOWN}
+              iconRight={IconAwesomeEnum.LINK}
+            >
+              Links
+            </ButtonLegacy>
+          </Skeleton>
         </div>
       </Popover.Trigger>
       <Popover.Content
@@ -39,7 +40,7 @@ export function ServiceLinksDropdown({ links }: ServiceLinksDropdownProps) {
       >
         <div className="p-2 flex justify-between items-center">
           <h6 className="text-neutral-350 font-medium">
-            {links?.length ?? 0} {pluralize('link', links.length)} attached
+            {links?.length ?? 0} {pluralize('link', links?.length)} attached
           </h6>
         </div>
         <ul>

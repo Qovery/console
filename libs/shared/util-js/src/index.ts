@@ -1,5 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/no-restricted-imports
-import pluralize from 'pluralize'
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const pluralize = require('pluralize')
 
 export * from './lib/uppercase-first-letter'
 export * from './lib/status-actions-available'
