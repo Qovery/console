@@ -1,16 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ActionLink should match with ActionLink component 1`] = `
-<div>
-  <span
-    class="cursor-pointer transition duration-100 font-medium inline-flex flex-center gap-1 text-sky-500 hover:text-sky-600 text-sm"
-    role="button"
-  >
-    My action link
-  </span>
-</div>
-`;
-
 exports[`ExternalLink should match with ExternalLink component 1`] = `
 <div>
   <a

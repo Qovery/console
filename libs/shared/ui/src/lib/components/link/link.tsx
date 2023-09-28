@@ -90,28 +90,3 @@ export const Link = forwardRef<HTMLAnchorElement, LinkProps>(function Link(
     </NavLink>
   )
 })
-
-export interface ActionLinkProps
-  extends Omit<ComponentPropsWithoutRef<'span'>, 'color'>,
-    VariantProps<typeof linkVariants> {
-  onClick: () => void
-  icon?: IconAwesomeEnum | string
-  className?: string
-}
-
-export const ActionLink = forwardRef<HTMLSpanElement, ActionLinkProps>(function Link(
-  { children, color, size, className, icon, onClick },
-  forwardedRef
-) {
-  return (
-    <span
-      role="button"
-      ref={forwardedRef}
-      onClick={onClick}
-      className={twMerge(linkVariants({ color, size }), className)}
-    >
-      {children}
-      {icon && <Icon name={icon} className={iconVariants({ size })} />}
-    </span>
-  )
-})
