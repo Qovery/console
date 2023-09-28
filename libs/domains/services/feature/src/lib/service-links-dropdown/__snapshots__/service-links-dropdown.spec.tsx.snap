@@ -3,28 +3,33 @@
 exports[`ServiceLinksDropdown should match snapshot with links popover 1`] = `
 <div>
   <div
-    aria-controls="radix-:rc:"
+    aria-controls="radix-:r6:"
     aria-expanded="true"
     aria-haspopup="dialog"
     data-state="open"
     type="button"
   >
-    <button
-      class="btn btn--large btn--stroked "
-      type="button"
+    <div
+      class="skeleton skeleton--loaded rounded"
+      data-testid="skeleton"
     >
-      <span
-        class="icon-solid-angle-down shrink-0 "
-        role="img"
-      />
-      <span>
-        Links
-      </span>
-      <span
-        class="icon-solid-link shrink-0 "
-        role="img"
-      />
-    </button>
+      <button
+        class="btn btn--large btn--stroked "
+        type="button"
+      >
+        <span
+          class="icon-solid-angle-down shrink-0 "
+          role="img"
+        />
+        <span>
+          Links
+        </span>
+        <span
+          class="icon-solid-link shrink-0 "
+          role="img"
+        />
+      </button>
+    </div>
   </div>
 </div>
 `;
