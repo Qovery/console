@@ -4,9 +4,9 @@ exports[`ServiceLinksDropdown should match snapshot with links popover 1`] = `
 <div>
   <div
     aria-controls="radix-:rc:"
-    aria-expanded="false"
+    aria-expanded="true"
     aria-haspopup="dialog"
-    data-state="closed"
+    data-state="open"
     type="button"
   >
     <button
