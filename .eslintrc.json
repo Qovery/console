@@ -73,6 +73,10 @@
                 "importNames": ["default"],
                 "message": "Use `Ansi` from the `@qovery/shared/ui` package.",
                 "allowTypeImports": false
+              },
+              {
+                "name": "pluralize",
+                "message": "Use imports from `@qovery/shared/util-js` instead of direct imports from `pluralize`."
               }
             ]
           }

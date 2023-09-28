@@ -8,6 +8,7 @@ import {
   Popover,
   Truncate,
 } from '@qovery/shared/ui'
+import { pluralize } from '@qovery/shared/util-js'
 
 export interface ServiceLinksDropdownProps {
   links: Link[]
@@ -37,7 +38,9 @@ export function ServiceLinksDropdown({ links }: ServiceLinksDropdownProps) {
         style={{ width: 280 }}
       >
         <div className="p-2 flex justify-between items-center">
-          <h6 className="text-neutral-350 font-medium">{(links?.length ?? 0) + 1} links attached</h6>
+          <h6 className="text-neutral-350 font-medium">
+            {links?.length ?? 0} {pluralize('link', links.length)} attached
+          </h6>
         </div>
         <ul>
           {links?.map((link: Link) => (
