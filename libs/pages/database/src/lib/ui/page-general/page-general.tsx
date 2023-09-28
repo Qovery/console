@@ -4,7 +4,6 @@ import { PodsMetrics, ServiceDetails } from '@qovery/domains/services/feature'
 import { useDeploymentStatus } from '@qovery/domains/services/feature'
 import { type DatabaseEntity, type LoadingStatus } from '@qovery/shared/interfaces'
 import { type BaseLink, HelpSection, Skeleton } from '@qovery/shared/ui'
-import About from '../about/about'
 
 export interface PageGeneralProps {
   database?: DatabaseEntity
@@ -13,7 +12,7 @@ export interface PageGeneralProps {
 }
 
 export function PageGeneral(props: PageGeneralProps) {
-  const { database, listHelpfulLinks, loadingStatus } = props
+  const { database, listHelpfulLinks } = props
   const { environmentId = '', databaseId = '' } = useParams()
 
   const { data: deploymentStatus } = useDeploymentStatus({

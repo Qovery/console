@@ -1,13 +1,9 @@
 import { type ContainerRegistryResponse } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
 import { PodsMetrics, ServiceDetails } from '@qovery/domains/services/feature'
-import { isApplication, isGitJob, isJob } from '@qovery/shared/enums'
+import { isJob } from '@qovery/shared/enums'
 import { type ApplicationEntity, type JobApplicationEntity, type LoadingStatus } from '@qovery/shared/interfaces'
 import { type BaseLink, HelpSection, Icon, Skeleton, Tooltip } from '@qovery/shared/ui'
-import About from '../about/about'
-import AboutContainer from '../about/about-container/about-container'
-import AboutGit from '../about/about-git/about-git'
-import AboutUpdate from '../about/about-update/about-update'
 import JobOverview from '../job-overview/job-overview'
 
 export interface PageGeneralProps {
@@ -19,8 +15,8 @@ export interface PageGeneralProps {
 }
 
 export function PageGeneral(props: PageGeneralProps) {
-  const { application, listHelpfulLinks, loadingStatus, serviceStability = 0 } = props
-  const { organizationId = '', environmentId = '', applicationId = '' } = useParams()
+  const { application, listHelpfulLinks, serviceStability = 0 } = props
+  const { environmentId = '', applicationId = '' } = useParams()
 
   return (
     <div className="mt-2 bg-white rounded flex flex-grow min-h-0">
