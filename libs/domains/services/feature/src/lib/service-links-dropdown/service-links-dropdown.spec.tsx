@@ -1,4 +1,4 @@
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { renderWithProviders } from '@qovery/shared/util-tests'
 import ServiceLinksDropdown from './service-links-dropdown'
 
 describe('ServiceLinksDropdown', () => {
@@ -6,8 +6,8 @@ describe('ServiceLinksDropdown', () => {
     const { baseElement } = renderWithProviders(<ServiceLinksDropdown links={[]} />)
     expect(baseElement).toBeTruthy()
   })
-  it('should match snapshot with links popover', async () => {
-    const { userEvent, container } = renderWithProviders(
+  it('should match snapshot with button links', async () => {
+    const { container } = renderWithProviders(
       <ServiceLinksDropdown
         links={[
           {
@@ -17,8 +17,6 @@ describe('ServiceLinksDropdown', () => {
         ]}
       />
     )
-
-    await userEvent.click(screen.getByRole('button', { name: 'Links' }))
 
     expect(container).toMatchSnapshot()
   })
