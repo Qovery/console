@@ -1,3 +1,4 @@
+import { twMerge } from 'tailwind-merge'
 import { IconAwesomeEnum } from '../icon/icon-awesome.enum'
 import { type BaseLink, ExternalLink, Link } from '../link/link'
 
@@ -8,10 +9,10 @@ export interface HelpSectionProps {
 }
 
 export function HelpSection(props: HelpSectionProps) {
-  const { description, links, className = '' } = props
+  const { description, links, className } = props
 
   return (
-    <div data-testid="help-section" className={`py-8 px-10 border-t border-neutral-200 ${className}`}>
+    <div data-testid="help-section" className={twMerge('py-8 px-10 border-t border-neutral-200', className)}>
       <p className="text-neutral-400 text-sm mb-5">{description}</p>
       <div className="flex flex-col gap-2">
         {links &&
