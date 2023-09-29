@@ -1,9 +1,10 @@
 import { type ClickEvent } from '@szhsin/react-menu'
+import { type Link } from 'qovery-typescript-axios'
 import { type ReactNode, useContext } from 'react'
 import { useSelector } from 'react-redux'
 import { matchPath, useLocation, useParams } from 'react-router-dom'
 import { getApplicationsState } from '@qovery/domains/application'
-import { ServiceStateChip } from '@qovery/domains/services/feature'
+import { ServiceLinksPopover, ServiceStateChip } from '@qovery/domains/services/feature'
 import { getServiceType } from '@qovery/shared/enums'
 import { type ApplicationEntity } from '@qovery/shared/interfaces'
 import {
@@ -189,7 +190,7 @@ export function TabsFeature() {
     },
   ]
 
-  const contentRight: ReactNode = matchEnvVariableRoute && (
+  const contentRightEnvVariable: ReactNode = (
     <>
       <ButtonLegacy
         className="mr-2"
@@ -207,9 +208,21 @@ export function TabsFeature() {
     </>
   )
 
+  // Remove default Qovery links
+  const availableLinks = application?.links?.items?.filter((link: Link) => !(link.is_default && link.is_qovery_domain))
+
   if (!serviceType) return null
 
-  return <Tabs items={items} contentRight={<div className="px-5">{contentRight}</div>} />
+  return (
+    <Tabs
+      items={items}
+      contentRight={
+        <div className="px-5">
+          {matchEnvVariableRoute ? contentRightEnvVariable : <ServiceLinksPopover links={availableLinks} />}
+        </div>
+      }
+    />
+  )
 }
 
 export default TabsFeature

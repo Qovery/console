@@ -10,20 +10,7 @@ import { ApplicationButtonsActions, NeedRedeployFlag } from '@qovery/shared/cons
 import { IconEnum, getServiceType, isCronJob, isLifeCycleJob } from '@qovery/shared/enums'
 import { type ApplicationEntity, type ClusterEntity } from '@qovery/shared/interfaces'
 import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
-import {
-  Badge,
-  ButtonLegacy,
-  ButtonLegacySize,
-  ButtonLegacyStyle,
-  Header,
-  Icon,
-  Menu,
-  type MenuData,
-  type MenuItemProps,
-  Section,
-  Skeleton,
-  Tooltip,
-} from '@qovery/shared/ui'
+import { Badge, Header, Icon, type MenuData, type MenuItemProps, Section, Skeleton, Tooltip } from '@qovery/shared/ui'
 import { type AppDispatch, type RootState } from '@qovery/state/store'
 import TabsFeature from '../../feature/tabs-feature/tabs-feature'
 
@@ -110,21 +97,6 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
     })
   }
 
-  const headerButtons = (
-    <div className="flex items-start gap-2">
-      {application?.links && application.links.items && application.links.items.length > 0 && (
-        <Menu
-          menus={menuLink}
-          trigger={
-            <ButtonLegacy iconRight="icon-solid-link" style={ButtonLegacyStyle.STROKED} size={ButtonLegacySize.SMALL}>
-              Open links
-            </ButtonLegacy>
-          }
-        />
-      )}
-    </div>
-  )
-
   const headerActions = (
     <div className="flex flex-col gap-3">
       <div className="flex flex-row gap-2">
@@ -170,7 +142,6 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
               ? IconEnum.LIFECYCLE_JOB
               : IconEnum.APPLICATION
           }
-          buttons={headerButtons}
           actions={headerActions}
         />
         <TabsFeature />

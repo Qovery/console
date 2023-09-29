@@ -1,0 +1,30 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ServiceLinksPopover should match snapshot with button links 1`] = `
+<div>
+  <div
+    aria-controls="radix-:rd:"
+    aria-expanded="false"
+    aria-haspopup="dialog"
+    data-state="closed"
+    type="button"
+  >
+    <button
+      class="btn btn--large btn--stroked "
+      type="button"
+    >
+      <span
+        class="icon-solid-angle-down shrink-0 "
+        role="img"
+      />
+      <span>
+        Links
+      </span>
+      <span
+        class="icon-solid-link shrink-0 "
+        role="img"
+      />
+    </button>
+  </div>
+</div>
+`;
