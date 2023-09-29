@@ -1,7 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-restricted-imports
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const pluralize = require('pluralize')
-
 export * from './lib/uppercase-first-letter'
 export * from './lib/status-actions-available'
 export * from './lib/one-to-many-redux-helpers'
@@ -19,4 +15,4 @@ export * from './lib/environment-variable-file'
 export * from './lib/sort-by-key'
 export * from './lib/cost-to-human'
 export * from './lib/merge-deployment-services'
-export { pluralize }
+export * from './lib/pluralize'
