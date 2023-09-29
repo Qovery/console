@@ -40,11 +40,9 @@ const iconVariants = cva([], {
 
 export interface ExternalLinkProps
   extends Omit<ComponentPropsWithoutRef<'a'>, 'color'>,
-    VariantProps<typeof linkVariants> {
-  className?: string
-}
+    VariantProps<typeof linkVariants> {}
 
-export const ExternalLink = forwardRef<HTMLAnchorElement, ExternalLinkProps>(function Link(
+export const ExternalLink = forwardRef<HTMLAnchorElement, ExternalLinkProps>(function ExternalLink(
   { children, color, size, className, ...props },
   forwardedRef
 ) {
@@ -62,9 +60,7 @@ export const ExternalLink = forwardRef<HTMLAnchorElement, ExternalLinkProps>(fun
   )
 })
 
-export interface LinkProps extends Omit<ReactLinkProps, 'color'>, VariantProps<typeof linkVariants> {
-  className?: string
-}
+export interface LinkProps extends Omit<ReactLinkProps, 'color'>, VariantProps<typeof linkVariants> {}
 
 export const Link = forwardRef<HTMLAnchorElement, LinkProps>(function Link(
   { children, color, size, className, ...props },
