@@ -46,7 +46,8 @@ export function StatusChip(props: StatusChipProps) {
 
   const icon = match(status)
     // success
-    .with('DEPLOYED', 'RUNNING', 'READY', 'COMPLETED', () => <DeployedIcon />)
+    .with('READY', () => <StoppedIcon />)
+    .with('DEPLOYED', 'RUNNING', 'COMPLETED', () => <DeployedIcon />)
     .with('RESTARTED', () => <RestartedIcon />)
     // spinner
     .with('QUEUED', 'DELETE_QUEUED', 'DEPLOYMENT_QUEUED', 'RESTART_QUEUED', 'STOP_QUEUED', () => <QueuedIcon />)

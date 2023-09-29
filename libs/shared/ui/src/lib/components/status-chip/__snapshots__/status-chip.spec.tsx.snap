@@ -83,6 +83,43 @@ exports[`StatusChip should match snapshot for QUEUED status 1`] = `
 </div>
 `;
 
+exports[`StatusChip should match snapshot for READY status 1`] = `
+<div>
+  <div
+    class=""
+    data-state="closed"
+  >
+    <svg
+      class="text-neutral-300"
+      fill="none"
+      height="16"
+      viewBox="0 0 24 24"
+      width="16"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <g
+        clip-path="url(#clip0_5424_5935)"
+      >
+        <path
+          d="M21.75 12a9.75 9.75 0 10-19.5 0 9.75 9.75 0 0019.5 0zM0 12a12 12 0 1124 0 12 12 0 01-24 0zm16.5-4.5v9h-9v-9h9z"
+          fill="currentColor"
+        />
+      </g>
+      <defs>
+        <clippath
+          id="clip0_5424_5935"
+        >
+          <path
+            d="M0 0H24V24H0z"
+            fill="#fff"
+          />
+        </clippath>
+      </defs>
+    </svg>
+  </div>
+</div>
+`;
+
 exports[`StatusChip should match snapshot for UNKNOW status 1`] = `
 <div>
   <div
