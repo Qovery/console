@@ -20,15 +20,10 @@ exports[`ExternalLink should match with ExternalLink component 1`] = `
 exports[`Link should match with Link component 1`] = `
 <div>
   <a
-    aria-current="page"
-    class="cursor-pointer transition duration-100 font-medium inline-flex flex-center gap-1 text-sky-500 hover:text-sky-600 text-sm active"
+    class="cursor-pointer transition duration-100 font-medium inline-flex flex-center gap-1 text-sky-500 hover:text-sky-600 text-sm"
     href="/"
   >
     My link
-    <span
-      class="icon-solid-circle-plus shrink-0 text-xs leading-5"
-      role="img"
-    />
   </a>
 </div>
 `;

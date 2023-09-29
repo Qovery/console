@@ -1,5 +1,4 @@
 import { renderWithProviders } from '@qovery/shared/util-tests'
-import { IconAwesomeEnum } from '../icon/icon-awesome.enum'
 import { ExternalLink, Link } from './link'
 
 describe('Link', () => {
@@ -9,11 +8,7 @@ describe('Link', () => {
   })
 
   it('should match with Link component', () => {
-    const { container } = renderWithProviders(
-      <Link to="/" icon={IconAwesomeEnum.CIRCLE_PLUS}>
-        My link
-      </Link>
-    )
+    const { container } = renderWithProviders(<Link to="/">My link</Link>)
     expect(container).toMatchSnapshot()
   })
 })
