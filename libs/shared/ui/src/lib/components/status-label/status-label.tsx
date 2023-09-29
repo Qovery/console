@@ -1,5 +1,5 @@
 import { StateEnum } from 'qovery-typescript-axios'
-import { twMerge } from 'tailwind-merge'
+import { twMerge } from '@qovery/shared/util-js'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import StatusChip from '../status-chip/status-chip'
 

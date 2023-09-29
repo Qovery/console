@@ -1,5 +1,5 @@
 import { type ComponentPropsWithoutRef, type ElementRef, forwardRef } from 'react'
-import { twMerge } from 'tailwind-merge'
+import { twMerge } from '@qovery/shared/util-js'
 
 interface DescriptionListRootProps extends ComponentPropsWithoutRef<'dl'> {}
 

@@ -1,5 +1,5 @@
 import { forwardRef } from 'react'
-import { twMerge } from 'tailwind-merge'
+import { twMerge } from '@qovery/shared/util-js'
 import { type IconSVGProps } from '../icon'
 
 export const DeletedIcon = forwardRef<SVGSVGElement, IconSVGProps>(function DeletedIcon(

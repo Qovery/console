@@ -1,7 +1,7 @@
 import { type VariantProps, cva } from 'class-variance-authority'
 import { type ComponentPropsWithoutRef, forwardRef } from 'react'
 import { Link as ReactLink, type LinkProps as ReactLinkProps } from 'react-router-dom'
-import { twMerge } from 'tailwind-merge'
+import { twMerge } from '@qovery/shared/util-js'
 import Icon from '../icon/icon'
 import { IconAwesomeEnum } from '../icon/icon-awesome.enum'
 

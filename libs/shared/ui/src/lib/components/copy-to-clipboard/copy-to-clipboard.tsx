@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { twMerge } from 'tailwind-merge'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
+import { twMerge } from '@qovery/shared/util-js'
 import Icon from '../icon/icon'
 import { IconAwesomeEnum } from '../icon/icon-awesome.enum'
 import Tooltip from '../tooltip/tooltip'

@@ -1,6 +1,6 @@
 import { type ReactNode } from 'react'
-import { twMerge } from 'tailwind-merge'
 import { type IconEnum } from '@qovery/shared/enums'
+import { twMerge } from '@qovery/shared/util-js'
 import { Heading } from '../heading/heading'
 import Icon from '../icon/icon'
 import Skeleton from '../skeleton/skeleton'

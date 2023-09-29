@@ -1,5 +1,5 @@
 import { type ElementRef, forwardRef } from 'react'
-import { twMerge } from 'tailwind-merge'
+import { twMerge } from '@qovery/shared/util-js'
 import { type IconSVGProps } from '../icon'
 import SpinnerIcon from './spinner'
 

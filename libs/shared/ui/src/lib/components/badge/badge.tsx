@@ -1,6 +1,6 @@
 import { type VariantProps, cva } from 'class-variance-authority'
 import { type ComponentPropsWithoutRef, type ElementRef, forwardRef } from 'react'
-import { twMerge } from 'tailwind-merge'
+import { twMerge } from '@qovery/shared/util-js'
 
 const badgeVariants = cva(['inline-flex', 'items-center', 'shrink-0', 'font-medium', 'rounded'], {
   variants: {

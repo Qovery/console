@@ -1,5 +1,5 @@
 import { type ElementRef, type PropsWithChildren, type SVGAttributes, forwardRef } from 'react'
-import { twMerge } from 'tailwind-merge'
+import { twMerge } from '@qovery/shared/util-js'
 
 export interface SpinnerIconProps extends PropsWithChildren, SVGAttributes<SVGElement> {}
 

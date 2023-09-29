@@ -1,10 +1,14 @@
-import { type Link } from 'qovery-typescript-axios'
+import { type Link as LinkProps } from 'qovery-typescript-axios'
+import { useParams } from 'react-router-dom'
+import { APPLICATION_SETTINGS_DOMAIN_URL, APPLICATION_SETTINGS_URL, APPLICATION_URL } from '@qovery/shared/routes'
 import {
   ButtonLegacy,
   ButtonLegacySize,
   ButtonLegacyStyle,
   CopyToClipboard,
+  Icon,
   IconAwesomeEnum,
+  Link,
   Popover,
   Skeleton,
   Truncate,
@@ -12,14 +16,22 @@ import {
 import { pluralize } from '@qovery/shared/util-js'
 
 export interface ServiceLinksPopoverProps {
-  links?: Link[]
+  links?: LinkProps[]
 }
 
 // TODO: Update props and using React Query
 export function ServiceLinksPopover({ links }: ServiceLinksPopoverProps) {
+  const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
+
+  const pathDomainsSetting =
+    APPLICATION_URL(organizationId, projectId, environmentId, applicationId) +
+    APPLICATION_SETTINGS_URL +
+    APPLICATION_SETTINGS_DOMAIN_URL
+
   if (!links) {
     return <Skeleton height={40} width={110} />
   }
+
   return (
     <Popover.Root>
       <Popover.Trigger hidden={links.length === 0}>
@@ -43,9 +55,15 @@ export function ServiceLinksPopover({ links }: ServiceLinksPopoverProps) {
           <p className="text-neutral-350 font-medium">
             {links?.length ?? 0} {pluralize(links?.length ?? 0, 'link')} attached
           </p>
+          <Popover.Close>
+            <Link to={pathDomainsSetting} color="brand" className="text-[13px] items-center">
+              Customize
+              <Icon name={IconAwesomeEnum.CIRCLE_PLUS} className="text-xs" />
+            </Link>
+          </Popover.Close>
         </div>
         <ul>
-          {links.map((link: Link) => (
+          {links.map((link: LinkProps) => (
             <li key={link.url} className="flex p-2">
               <CopyToClipboard className="text-brand-500 hover:text-brand-600 mr-2" content={link.url ?? ''} />
               <a

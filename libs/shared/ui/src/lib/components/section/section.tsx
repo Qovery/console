@@ -1,5 +1,5 @@
 import { type ComponentPropsWithoutRef, type ElementRef, forwardRef, useContext } from 'react'
-import { twMerge } from 'tailwind-merge'
+import { twMerge } from '@qovery/shared/util-js'
 import { LevelContext } from '../heading/level-context'
 
 export interface SectionProps extends ComponentPropsWithoutRef<'section'> {}

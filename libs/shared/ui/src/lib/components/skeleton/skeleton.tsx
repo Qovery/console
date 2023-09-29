@@ -1,5 +1,5 @@
 import { type ElementRef, type PropsWithChildren, forwardRef } from 'react'
-import { twMerge } from 'tailwind-merge'
+import { twMerge } from '@qovery/shared/util-js'
 
 export interface SkeletonProps extends PropsWithChildren {
   width?: number

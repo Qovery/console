@@ -1,6 +1,6 @@
 import { type VariantProps, cva } from 'class-variance-authority'
 import { type ComponentPropsWithoutRef, type ElementRef, forwardRef, useContext } from 'react'
-import { twMerge } from 'tailwind-merge'
+import { twMerge } from '@qovery/shared/util-js'
 import { LevelContext } from './level-context'
 
 type HX = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
