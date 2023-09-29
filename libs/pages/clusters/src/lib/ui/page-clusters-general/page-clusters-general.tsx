@@ -59,7 +59,6 @@ export function PageClustersGeneral(props: PageClustersGeneralProps) {
           {
             link: 'https://hub.qovery.com/docs/using-qovery/configuration/clusters/',
             linkLabel: 'How to configure my cluster',
-            external: true,
           },
         ]}
       />

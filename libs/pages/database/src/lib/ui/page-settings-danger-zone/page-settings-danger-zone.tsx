@@ -30,7 +30,6 @@ export function PageSettingsDangerZone(props: PageSettingsDangerZoneProps) {
           {
             link: 'https://hub.qovery.com/docs/using-qovery/configuration/database/#delete-your-database-instance',
             linkLabel: 'How to delete my database',
-            external: true,
           },
         ]}
       />

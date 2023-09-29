@@ -2,7 +2,7 @@ import { type Environment, type Project } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { type ServiceType } from '@qovery/domains/services/data-access'
 import { type ApplicationEntity, type DatabaseEntity } from '@qovery/shared/interfaces'
-import { IconAwesomeEnum, InputSelect, InputText, Link, LoaderSpinner, ModalCrud } from '@qovery/shared/ui'
+import { ExternalLink, InputSelect, InputText, LoaderSpinner, ModalCrud } from '@qovery/shared/ui'
 
 export interface CloneServiceModalProps {
   closeModal: () => void
@@ -62,13 +62,9 @@ export function CloneServiceModal({
             Once cloned, check the service setup.
             <br />
           </p>
-          <Link
-            className="mt-2 font-medium"
-            link={documentationLink}
-            linkLabel="Documentation"
-            external
-            iconRight={IconAwesomeEnum.ARROW_UP_RIGHT_FROM_SQUARE}
-          />
+          <ExternalLink href={documentationLink} className="mt-2">
+            Documentation
+          </ExternalLink>
         </>
       }
     >

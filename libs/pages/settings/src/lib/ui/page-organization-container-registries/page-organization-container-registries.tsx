@@ -135,7 +135,6 @@ export function PageOrganizationContainerRegistries(props: PageOrganizationConta
           {
             link: 'https://hub.qovery.com/docs/using-qovery/configuration/organization/container-registry',
             linkLabel: 'How to configure my container registry',
-            external: true,
           },
         ]}
       />

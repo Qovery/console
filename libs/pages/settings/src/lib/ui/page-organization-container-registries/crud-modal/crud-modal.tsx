@@ -5,7 +5,15 @@ import {
 } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { type Value } from '@qovery/shared/interfaces'
-import { Icon, IconAwesomeEnum, InputSelect, InputText, InputTextArea, Link, ModalCrud } from '@qovery/shared/ui'
+import {
+  ExternalLink,
+  Icon,
+  IconAwesomeEnum,
+  InputSelect,
+  InputText,
+  InputTextArea,
+  ModalCrud,
+} from '@qovery/shared/ui'
 import { logoByRegistryKind } from '../page-organization-container-registries'
 
 export interface CrudModalProps {
@@ -62,13 +70,12 @@ export function CrudModal(props: CrudModalProps) {
             registries like DockerHub or AWS ECR. If the registry you need is not in the list and it supports the docker
             login format you can use the “Generic” registry.
           </p>
-          <Link
-            className="mt-2 font-medium"
-            link="https://hub.qovery.com/docs/using-qovery/configuration/organization/container-registry/"
-            linkLabel="More information here"
-            external
-            iconRight={IconAwesomeEnum.ARROW_UP_RIGHT_FROM_SQUARE}
-          />
+          <ExternalLink
+            className="mt-2"
+            href="https://hub.qovery.com/docs/using-qovery/configuration/organization/container-registry/"
+          >
+            More information here
+          </ExternalLink>
         </>
       }
     >
@@ -194,15 +201,9 @@ export function CrudModal(props: CrudModalProps) {
                 {watch('kind') === ContainerRegistryKindEnum.DOCKER_HUB && (
                   <p className="text-xs text-neutral-350 my-1">
                     We encourage you to set credentials for Docker Hub due to the limits on the pull rate.
-                    <Link
-                      className="font-medium text-sky-500 block ml-1"
-                      size="text-xs"
-                      link="https://www.docker.com/increase-rate-limits"
-                      linkLabel="See here"
-                      iconRightClassName="text-2xs relative top-[1px]"
-                      iconRight={IconAwesomeEnum.ARROW_UP_RIGHT_FROM_SQUARE}
-                      external
-                    />
+                    <ExternalLink href="https://www.docker.com/increase-rate-limits" className="ml-1" size="xs">
+                      See here
+                    </ExternalLink>
                   </p>
                 )}
               </div>

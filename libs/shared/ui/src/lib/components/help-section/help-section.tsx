@@ -1,5 +1,10 @@
-import { IconAwesomeEnum } from '../icon/icon-awesome.enum'
-import { type BaseLink, Link } from '../link/link'
+import { twMerge } from 'tailwind-merge'
+import { ExternalLink } from '../link/link'
+
+export interface BaseLink {
+  link: string
+  linkLabel?: string
+}
 
 export interface HelpSectionProps {
   description: string
@@ -7,23 +12,18 @@ export interface HelpSectionProps {
   className?: string
 }
 
-export function HelpSection(props: HelpSectionProps) {
-  const { description, links, className = '' } = props
-
+export function HelpSection({ description, links, className }: HelpSectionProps) {
   return (
-    <div data-testid="help-section" className={`py-8 px-10 border-t border-neutral-200 ${className}`}>
+    <div data-testid="help-section" className={twMerge('py-8 px-10 border-t border-neutral-200', className)}>
       <p className="text-neutral-400 text-sm mb-5">{description}</p>
-      {links &&
-        links.map((link, i, row) => (
-          <Link
-            key={i}
-            className={`font-medium ${i + 1 === row.length ? '' : 'mb-2'}`}
-            link={link.link}
-            linkLabel={link.linkLabel || link.link}
-            external={link.external}
-            iconRight={IconAwesomeEnum.ARROW_UP_RIGHT_FROM_SQUARE}
-          />
-        ))}
+      <div className="flex flex-col gap-2">
+        {links &&
+          links.map((link, i) => (
+            <ExternalLink key={i} color="sky" className="flex">
+              {link.linkLabel || link.link}
+            </ExternalLink>
+          ))}
+      </div>
     </div>
   )
 }

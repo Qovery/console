@@ -37,7 +37,6 @@ export function PageSettingsDangerZone(props: PageSettingsDangerZoneProps) {
           {
             link: 'https://hub.qovery.com/docs/using-qovery/configuration/environment/#delete-an-environment',
             linkLabel: 'How to delete my environment',
-            external: true,
           },
         ]}
       />

@@ -45,7 +45,6 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
           {
             link: 'https://hub.qovery.com/docs/using-qovery/configuration/clusters/#what-is-a-cluster',
             linkLabel: 'How to configure my cluster',
-            external: true,
           },
         ]}
       />

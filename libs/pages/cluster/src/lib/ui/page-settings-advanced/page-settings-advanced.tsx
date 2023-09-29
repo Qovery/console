@@ -182,7 +182,6 @@ export function PageSettingsAdvanced(props: PageSettingsAdvancedProps) {
           {
             link: 'https://hub.qovery.com/docs/using-qovery/configuration/cluster-advanced-settings/',
             linkLabel: 'How to configure my cluster',
-            external: true,
           },
         ]}
       />

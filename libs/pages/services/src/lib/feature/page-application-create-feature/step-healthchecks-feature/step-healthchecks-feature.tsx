@@ -46,9 +46,8 @@ export function StepHealthchecksFeature() {
           {
             link: 'https://hub.qovery.com/docs/using-qovery/configuration/service-health-checks/',
             linkLabel: 'How to configure my health checks',
-            external: true,
           },
-          { link: 'https://discuss.qovery.com/', linkLabel: 'Still need help? Ask on our Forum', external: true },
+          { link: 'https://discuss.qovery.com/', linkLabel: 'Still need help? Ask on our Forum' },
         ],
       }}
     />

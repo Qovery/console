@@ -131,7 +131,6 @@ export function PageOrganizationWebhooks(props: PageOrganizationWebhooksProps) {
           {
             link: 'https://hub.qovery.com/docs/using-qovery/integration/webhook/',
             linkLabel: 'Managing your Webhooks',
-            external: true,
           },
         ]}
       />

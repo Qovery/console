@@ -29,7 +29,6 @@ export function PageSettingsDangerZone(props: PageSettingsDangerZoneProps) {
           {
             link: 'https://hub.qovery.com/docs/using-qovery/configuration/clusters/#deleting-a-cluster',
             linkLabel: 'How to delete my cluster',
-            external: true,
           },
         ]}
       />

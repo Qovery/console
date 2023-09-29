@@ -106,7 +106,6 @@ export function PageSettingsNetwork(props: PageSettingsNetworkProps) {
           {
             link: 'https://hub.qovery.com/docs/using-qovery/configuration/clusters/#network',
             linkLabel: 'How to configure my cluster',
-            external: true,
           },
         ]}
       />

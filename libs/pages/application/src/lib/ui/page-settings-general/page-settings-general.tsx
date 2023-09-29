@@ -197,7 +197,6 @@ export function PageSettingsGeneral({
           {
             link: 'https://hub.qovery.com/docs/using-qovery/configuration/application',
             linkLabel: 'How to configure my application',
-            external: true,
           },
         ]}
       />

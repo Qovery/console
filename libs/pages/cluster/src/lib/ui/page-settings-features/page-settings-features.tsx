@@ -33,7 +33,6 @@ export function PageSettingsFeatures(props: PageSettingsFeaturesProps) {
           {
             link: 'https://hub.qovery.com/docs/using-qovery/configuration/clusters/#creating-an-eks-cluster-multiple-node-cluster',
             linkLabel: 'How to configure my cluster',
-            external: true,
           },
         ]}
       />

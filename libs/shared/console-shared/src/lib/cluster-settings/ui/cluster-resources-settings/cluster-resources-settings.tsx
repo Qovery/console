@@ -7,10 +7,10 @@ import {
   BannerBox,
   BannerBoxEnum,
   BlockContent,
+  ExternalLink,
   InputRadioBox,
   InputSelect,
   InputText,
-  Link,
   Slider,
 } from '@qovery/shared/ui'
 
@@ -49,13 +49,13 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
             Use exclusively the Qovery console to update the resources managed by Qovery on your cloud account.
             <br /> Do not manually update or upgrade them on the cloud provider console, otherwise you will risk a drift
             in the configuration.
-            <Link
+            <ExternalLink
+              href="https://hub.qovery.com/docs/useful-resources/faq/#how-do-you-support-new-kubernetes-version"
               className="ml-0.5"
-              size="text-xs"
-              link="https://hub.qovery.com/docs/useful-resources/faq/#how-do-you-support-new-kubernetes-version"
-              linkLabel="See more details"
-              external
-            />
+              size="xs"
+            >
+              See more details
+            </ExternalLink>
           </span>
         }
         type={BannerBoxEnum.WARNING}

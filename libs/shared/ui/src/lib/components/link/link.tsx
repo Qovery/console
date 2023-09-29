@@ -1,58 +1,74 @@
-import { NavLink } from 'react-router-dom'
-import { type IconEnum } from '@qovery/shared/enums'
+import { type VariantProps, cva } from 'class-variance-authority'
+import { type ComponentPropsWithoutRef, forwardRef } from 'react'
+import { Link as ReactLink, type LinkProps as ReactLinkProps } from 'react-router-dom'
+import { twMerge } from 'tailwind-merge'
 import Icon from '../icon/icon'
+import { IconAwesomeEnum } from '../icon/icon-awesome.enum'
 
-export interface BaseLink {
-  link: string
-  linkLabel?: string
-  external?: boolean
-}
-
-export interface LinkProps extends BaseLink {
-  className?: string
-  size?: string
-  iconRight?: IconEnum | string
-  iconRightClassName?: string
-  iconLeft?: IconEnum | string
-  iconLeftClassName?: string
-}
-
-export function Link(props: LinkProps) {
-  const {
-    link,
-    linkLabel,
-    external = false,
-    className = '',
-    size = 'text-sm',
-    iconLeft,
-    iconRight,
-    iconLeftClassName = 'text-xs leading-5',
-    iconRightClassName = 'ml-0.5 text-xs leading-5 ',
-  } = props
-
-  const currentClassName = `${className} ${size} text-sky-500 inline-flex flex-center gap-1 hover:underline`
-
-  const content = () => (
-    <>
-      {iconLeft && <Icon name={iconLeft} className={iconLeftClassName} />}
-      {linkLabel}
-      {iconRight && <Icon name={iconRight} className={iconRightClassName} />}
-    </>
-  )
-
-  if (external) {
-    return (
-      <a className={currentClassName} href={link} target="_blank" rel="noreferrer">
-        {content()}
-      </a>
-    )
-  } else {
-    return (
-      <NavLink className={currentClassName} to={link}>
-        {content()}
-      </NavLink>
-    )
+const linkVariants = cva(
+  ['cursor-pointer', 'transition', 'duration-100', 'font-medium', 'inline-flex', 'flex-center', 'gap-1'],
+  {
+    variants: {
+      color: {
+        brand: ['text-brand-500', 'hover:text-brand-600'],
+        red: ['text-red-500', 'hover:text-red-600'],
+        sky: ['text-sky-500', 'hover:text-sky-600'],
+      },
+      size: {
+        xs: ['text-xs'],
+        sm: ['text-sm'],
+      },
+    },
+    defaultVariants: {
+      color: 'sky',
+      size: 'sm',
+    },
   }
-}
+)
 
-export default Link
+const iconVariants = cva([], {
+  variants: {
+    size: {
+      xs: ['text-2xs', 'leading-4'],
+      sm: ['text-xs', 'leading-5'],
+    },
+  },
+  defaultVariants: {
+    size: 'sm',
+  },
+})
+
+export interface ExternalLinkProps
+  extends Omit<ComponentPropsWithoutRef<'a'>, 'color'>,
+    VariantProps<typeof linkVariants> {}
+
+export const ExternalLink = forwardRef<HTMLAnchorElement, ExternalLinkProps>(function ExternalLink(
+  { children, color, size, className, ...props },
+  forwardedRef
+) {
+  return (
+    <a
+      ref={forwardedRef}
+      className={twMerge(linkVariants({ color, size }), className)}
+      target="_blank"
+      rel="noopener noreferrer"
+      {...props}
+    >
+      {children}
+      <Icon name={IconAwesomeEnum.ARROW_UP_RIGHT_FROM_SQUARE} className={iconVariants({ size })} />
+    </a>
+  )
+})
+
+export interface LinkProps extends Omit<ReactLinkProps, 'color'>, VariantProps<typeof linkVariants> {}
+
+export const Link = forwardRef<HTMLAnchorElement, LinkProps>(function Link(
+  { children, color, size, className, ...props },
+  forwardedRef
+) {
+  return (
+    <ReactLink ref={forwardedRef} className={twMerge(linkVariants({ color, size }), className)} {...props}>
+      {children}
+    </ReactLink>
+  )
+})

@@ -28,9 +28,8 @@ export function StepRemoteFeature() {
           {
             link: 'https://hub.qovery.com/docs/using-qovery/configuration/clusters/#managing-your-clusters-with-qovery',
             linkLabel: 'How to configure my cluster',
-            external: true,
           },
-          { link: 'https://discuss.qovery.com/', linkLabel: 'Still need help? Ask on our Forum', external: true },
+          { link: 'https://discuss.qovery.com/', linkLabel: 'Still need help? Ask on our Forum' },
         ],
       }}
     />

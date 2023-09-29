@@ -43,7 +43,6 @@ export function PageSettingsCredentials(props: PageSettingsCredentialsProps) {
           {
             link: 'https://hub.qovery.com/docs/using-qovery/configuration/clusters/#credentials',
             linkLabel: 'How to configure my credentials cluster',
-            external: true,
           },
         ]}
       />

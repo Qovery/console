@@ -79,7 +79,6 @@ export function PageSettingsDeploymentRestrictionsFeature() {
           {
             link: 'https://hub.qovery.com/docs/using-qovery/configuration/environment/#auto-deploy',
             linkLabel: 'How to configure the deployment restrictions',
-            external: true,
           },
         ]}
       />

@@ -49,7 +49,6 @@ export function PageOrganizationDangerZone(props: PageOrganizationDangerZoneProp
           {
             link: 'https://hub.qovery.com/docs/using-qovery/configuration/organization/#delete-an-organization',
             linkLabel: 'How to delete my organization',
-            external: true,
           },
         ]}
       />

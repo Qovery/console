@@ -136,7 +136,6 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
           {
             link: 'https://hub.qovery.com/docs/using-qovery/configuration/organization/members-rbac/#roles-based-access-control-rbac',
             linkLabel: 'How to configure my custom roles',
-            external: true,
           },
         ]}
       />

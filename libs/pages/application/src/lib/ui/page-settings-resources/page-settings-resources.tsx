@@ -55,7 +55,6 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
           {
             link: 'https://hub.qovery.com/docs/using-qovery/configuration/application/#resources',
             linkLabel: 'How to configure my application',
-            external: true,
           },
         ]}
       />

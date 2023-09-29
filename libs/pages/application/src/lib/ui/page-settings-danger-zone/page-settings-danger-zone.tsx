@@ -30,7 +30,6 @@ export function PageSettingsDangerZone(props: PageSettingsDangerZoneProps) {
           {
             link: 'https://hub.qovery.com/docs/using-qovery/configuration/application/#delete-an-application',
             linkLabel: 'How to delete my application',
-            external: true,
           },
         ]}
       />

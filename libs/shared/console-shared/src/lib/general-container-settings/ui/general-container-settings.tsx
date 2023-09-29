@@ -3,7 +3,7 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { twMerge } from 'tailwind-merge'
 import { type OrganizationEntity, type Value } from '@qovery/shared/interfaces'
 import { SETTINGS_CONTAINER_REGISTRIES_URL, SETTINGS_URL } from '@qovery/shared/routes'
-import { InputSelect, InputText, Link } from '@qovery/shared/ui'
+import { IconAwesomeEnum, InputSelect, InputText, Link } from '@qovery/shared/ui'
 
 export interface GeneralContainerSettingsProps {
   organization?: OrganizationEntity
@@ -50,12 +50,9 @@ export function GeneralContainerSettings({ organization, className }: GeneralCon
         )}
       />
       <p className="text-right">
-        <Link
-          className="font-medium text-ssm"
-          link={`${SETTINGS_URL(organization?.id)}${SETTINGS_CONTAINER_REGISTRIES_URL}`}
-          linkLabel="Don't see your registry?"
-          iconRight="icon-solid-arrow-up-right-from-square"
-        />
+        <Link to={SETTINGS_URL(organization?.id) + SETTINGS_CONTAINER_REGISTRIES_URL} className="text-ssm">
+          Don't see your registry?
+        </Link>
       </p>
       <Controller
         name="image_name"

@@ -6,8 +6,8 @@ import {
   ButtonLegacySize,
   ButtonLegacyStyle,
   CopyToClipboard,
+  ExternalLink,
   Icon,
-  Link,
   Tabs,
   Tooltip,
   Truncate,
@@ -168,13 +168,7 @@ export function TabsClusterLogs(props: TabsClusterLogsProps) {
       {section === TabsClusterLogsSection.ERROR && (
         <div className="px-5 py-6 border-t border-neutral-550 mt-5">
           <p className="text-neutral-350 text-sm mb-3">Need more help?</p>
-          <Link
-            className="font-medium"
-            link="https://discuss.qovery.com"
-            linkLabel="Ask for support on our forum"
-            external
-            iconRight="icon-solid-arrow-up-right-from-square"
-          />
+          <ExternalLink href="https://discuss.qovery.com">Ask for support on our forum</ExternalLink>
         </div>
       )}
     </div>

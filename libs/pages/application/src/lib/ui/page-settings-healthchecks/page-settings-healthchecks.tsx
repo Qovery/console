@@ -44,12 +44,9 @@ export function PageSettingsHealthchecks({
               <span>
                 Your service is configured to run with a minimum of one instance, setting the health checks will not
                 ensure the service high availability during a cluster upgrade. Have a look at your{' '}
-                <Link
-                  className="link text-sky-500"
-                  size="text-xs"
-                  link={linkResourcesSetting}
-                  linkLabel="instance setup"
-                />{' '}
+                <Link to={linkResourcesSetting} size="xs">
+                  instance setup
+                </Link>{' '}
                 first and increase the minimum instance type.
               </span>
             }
@@ -92,7 +89,6 @@ export function PageSettingsHealthchecks({
           {
             link: 'https://hub.qovery.com/docs/using-qovery/configuration/service-health-checks/',
             linkLabel: 'How to configure my health checks',
-            external: true,
           },
         ]}
       />

@@ -94,7 +94,6 @@ export function PageSettingsStorage(props: PageSettingsStorageProps) {
           {
             link: 'https://hub.qovery.com/docs/using-qovery/configuration/application/#storage',
             linkLabel: 'How to configure my application',
-            external: true,
           },
         ]}
       />

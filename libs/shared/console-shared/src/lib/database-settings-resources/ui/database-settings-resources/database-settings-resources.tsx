@@ -55,12 +55,11 @@ export function DatabaseSettingsResources({
                 {database?.maximum_cpu} mili vCPU.{' '}
                 {clusterId && (
                   <Link
-                    className="!text-xs"
-                    link={
-                      CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_RESOURCES_URL
-                    }
-                    linkLabel="Edit node"
-                  />
+                    to={CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_RESOURCES_URL}
+                    size="xs"
+                  >
+                    Edit node
+                  </Link>
                 )}
               </p>
             )}
@@ -94,12 +93,11 @@ export function DatabaseSettingsResources({
                 {database?.maximum_memory} MB.{' '}
                 {clusterId && (
                   <Link
-                    className="!text-xs"
-                    link={
-                      CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_RESOURCES_URL
-                    }
-                    linkLabel="Edit node"
-                  />
+                    to={CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_RESOURCES_URL}
+                    size="xs"
+                  >
+                    Edit node
+                  </Link>
                 )}
               </p>
             )}
