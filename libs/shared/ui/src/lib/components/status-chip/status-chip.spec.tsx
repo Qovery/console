@@ -12,6 +12,11 @@ describe('StatusChip', () => {
     expect(baseElement).toBeTruthy()
   })
 
+  it('should match snapshot for READY status', () => {
+    const { container } = renderWithProviders(<StatusChip status="READY" />)
+    expect(container).toMatchSnapshot()
+  })
+
   it('should match snapshot for DEPLOYED status', () => {
     const { container } = renderWithProviders(<StatusChip status="DEPLOYED" />)
     expect(container).toMatchSnapshot()
