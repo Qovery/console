@@ -56,7 +56,7 @@ export function ServiceLinksPopover({ links }: ServiceLinksPopoverProps) {
             {links?.length ?? 0} {pluralize(links?.length ?? 0, 'link')} attached
           </p>
           <Popover.Close>
-            <Link to={pathDomainsSetting} color="brand" className="text-[13px] items-center">
+            <Link to={pathDomainsSetting} color="brand" className="text-ssm items-center">
               Customize
               <Icon name={IconAwesomeEnum.CIRCLE_PLUS} className="text-xs" />
             </Link>
