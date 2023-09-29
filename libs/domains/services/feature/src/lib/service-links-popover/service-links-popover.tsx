@@ -11,12 +11,12 @@ import {
 } from '@qovery/shared/ui'
 import { pluralize } from '@qovery/shared/util-js'
 
-export interface ServiceLinksDropdownProps {
+export interface ServiceLinksPopoverProps {
   links?: Link[]
 }
 
 // TODO: Update props and using React Query
-export function ServiceLinksDropdown({ links }: ServiceLinksDropdownProps) {
+export function ServiceLinksPopover({ links }: ServiceLinksPopoverProps) {
   if (!links) {
     return <Skeleton height={40} width={110} />
   }
@@ -40,9 +40,9 @@ export function ServiceLinksDropdown({ links }: ServiceLinksDropdownProps) {
         align="end"
       >
         <div className="p-2 flex justify-between items-center">
-          <h6 className="text-neutral-350 font-medium">
+          <p className="text-neutral-350 font-medium">
             {links?.length ?? 0} {pluralize(links?.length ?? 0, 'link')} attached
-          </h6>
+          </p>
         </div>
         <ul>
           {links.map((link: Link) => (
@@ -67,4 +67,4 @@ export function ServiceLinksDropdown({ links }: ServiceLinksDropdownProps) {
   )
 }
 
-export default ServiceLinksDropdown
+export default ServiceLinksPopover
