@@ -1,6 +1,6 @@
 import { Controller, useFormContext } from 'react-hook-form'
-import { twMerge } from 'tailwind-merge'
-import { InputText, InputTextArea, InputToggle } from '@qovery/shared/ui'
+import { InputText, InputTextArea } from '@qovery/shared/ui'
+import { twMerge } from '@qovery/shared/util-js'
 
 export interface EntrypointCmdInputsProps {
   className?: string

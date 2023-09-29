@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { twMerge } from 'tailwind-merge'
 import { type OrganizationEntity, type Value } from '@qovery/shared/interfaces'
 import { SETTINGS_CONTAINER_REGISTRIES_URL, SETTINGS_URL } from '@qovery/shared/routes'
-import { IconAwesomeEnum, InputSelect, InputText, Link } from '@qovery/shared/ui'
+import { InputSelect, InputText, Link } from '@qovery/shared/ui'
+import { twMerge } from '@qovery/shared/util-js'
 
 export interface GeneralContainerSettingsProps {
   organization?: OrganizationEntity

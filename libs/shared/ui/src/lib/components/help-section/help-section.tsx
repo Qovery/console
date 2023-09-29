@@ -1,4 +1,4 @@
-import { twMerge } from 'tailwind-merge'
+import { twMerge } from '@qovery/shared/util-js'
 import { ExternalLink } from '../link/link'
 
 export interface BaseLink {

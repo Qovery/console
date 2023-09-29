@@ -1,12 +1,17 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ServiceLinksPopover should match snapshot with button links 1`] = `
-<div>
+exports[`ServiceLinksPopover should match snapshot 1`] = `
+<body>
+  <span
+    data-radix-focus-guard=""
+    style="outline: none; opacity: 0; position: fixed; pointer-events: none;"
+    tabindex="0"
+  />
   <div
     aria-controls="radix-:rd:"
-    aria-expanded="false"
+    aria-expanded="true"
     aria-haspopup="dialog"
-    data-state="closed"
+    data-state="open"
     type="button"
   >
     <button
@@ -26,5 +31,82 @@ exports[`ServiceLinksPopover should match snapshot with button links 1`] = `
       />
     </button>
   </div>
-</div>
+  <div
+    data-radix-popper-content-wrapper=""
+    style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 8px); min-width: max-content; --radix-popper-available-width: -20px; --radix-popper-available-height: -18px; --radix-popper-anchor-width: 0px; --radix-popper-anchor-height: 0px; --radix-popper-transform-origin: 100% 0px;"
+  >
+    <div
+      class="bg-white shadow-xl rounded border outline-none data-[state=open]:data-[side=top]:animate-slidein-down-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-sm-faded data-[state=open]:data-[side=bottom]:animate-slidein-up-sm-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded p-2 text-neutral-350 text-sm border-transparent max-w-[280px]"
+      data-align="end"
+      data-side="bottom"
+      data-state="open"
+      id="radix-:rd:"
+      role="dialog"
+      style="--radix-popover-content-transform-origin: var(--radix-popper-transform-origin); --radix-popover-content-available-width: var(--radix-popper-available-width); --radix-popover-content-available-height: var(--radix-popper-available-height); --radix-popover-trigger-width: var(--radix-popper-anchor-width); --radix-popover-trigger-height: var(--radix-popper-anchor-height);"
+      tabindex="-1"
+    >
+      <div
+        class="p-2 flex justify-between items-center"
+      >
+        <p
+          class="text-neutral-350 font-medium"
+        >
+          1
+           
+          link
+           attached
+        </p>
+        <a
+          class="cursor-pointer transition duration-100 font-medium inline-flex flex-center gap-1 text-brand-500 hover:text-brand-600 text-ssm items-center"
+          href="/organization//project//environment//application//settings/domain"
+          type="button"
+        >
+          Customize
+          <span
+            class="icon-solid-circle-plus shrink-0 text-xs"
+            role="img"
+          />
+        </a>
+      </div>
+      <ul>
+        <li
+          class="flex p-2"
+        >
+          <span
+            class="bigger-click-zone cursor-pointer text-brand-500 hover:text-brand-600 mr-2"
+            data-state="closed"
+            data-testid="copy-container"
+          >
+            <span
+              class="icon-solid-copy shrink-0 "
+              role="img"
+            />
+          </span>
+          <a
+            class="transition flex items-center justify-between w-full text-neutral-400 hover:text-brand-500"
+            href="https://qovery.com"
+            rel="noreferrer"
+            target="_blank"
+          >
+            <div
+              class="text-ssm font-medium mr-2"
+            >
+              https://qovery.com
+            </div>
+            <div
+              class="text-xs text-neutral-350"
+            >
+              8080
+            </div>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <span
+    data-radix-focus-guard=""
+    style="outline: none; opacity: 0; position: fixed; pointer-events: none;"
+    tabindex="0"
+  />
+</body>
 `;

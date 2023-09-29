@@ -10,7 +10,7 @@ import {
   selectApplicationById,
 } from '@qovery/domains/application'
 import { useFetchEnvironment } from '@qovery/domains/environment'
-import { getServiceType, isApplication, isGitJob } from '@qovery/shared/enums'
+import { getServiceType, isApplication, isContainer, isGitJob, isJob } from '@qovery/shared/enums'
 import { type ApplicationEntity, type LoadingStatus } from '@qovery/shared/interfaces'
 import { APPLICATION_GENERAL_URL, APPLICATION_URL } from '@qovery/shared/routes'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
@@ -32,17 +32,24 @@ export function PageApplication() {
   const loadingStatus = useSelector<RootState, LoadingStatus>((state) => applicationsLoadingStatus(state))
 
   const dispatch = useDispatch<AppDispatch>()
+  const serviceType = getServiceType(application as ApplicationEntity)
 
   useEffect(() => {
     if (application && applicationId && loadingStatus === 'loaded') {
-      if (application.links?.loadingStatus !== 'loaded')
-        dispatch(fetchApplicationLinks({ applicationId, serviceType: getServiceType(application) }))
-      if (application.instances?.loadingStatus !== 'loaded')
-        dispatch(fetchApplicationInstances({ applicationId, serviceType: getServiceType(application) }))
-      if (application?.commits?.loadingStatus !== 'loaded' && (isApplication(application) || isGitJob(application)))
-        dispatch(fetchApplicationCommits({ applicationId, serviceType: getServiceType(application) }))
+      // fetch links and instances for Container and GitApplication except for Jobs
+      if (isContainer(application) || isApplication(application)) {
+        if (application.links?.loadingStatus !== 'loaded')
+          dispatch(fetchApplicationLinks({ applicationId, serviceType }))
+        if (application.instances?.loadingStatus !== 'loaded')
+          dispatch(fetchApplicationInstances({ applicationId, serviceType }))
+      }
+      // fetch commits for GitApplication and GitJobs
+      if (isApplication(application) || isGitJob(application)) {
+        if (application?.commits?.loadingStatus !== 'loaded')
+          dispatch(fetchApplicationCommits({ applicationId, serviceType }))
+      }
     }
-  }, [applicationId, loadingStatus, dispatch])
+  }, [application, serviceType, applicationId, loadingStatus, dispatch])
 
   return (
     <Container application={application} environment={environment}>

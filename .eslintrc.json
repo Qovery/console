@@ -69,9 +69,15 @@
                 "message": "Use imports from `@qovery/shared/util-hooks` instead of direct imports from `@uidotdev/usehooks`."
               },
               {
-                "name": "ansi-to-react'",
+                "name": "ansi-to-react",
                 "importNames": ["default"],
                 "message": "Use `Ansi` from the `@qovery/shared/ui` package.",
+                "allowTypeImports": false
+              },
+              {
+                "name": "tailwind-merge",
+                "importNames": ["twMerge"],
+                "message": "Use `twMerge` from the `@qovery/shared/util-js` package.",
                 "allowTypeImports": false
               }
             ]
