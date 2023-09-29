@@ -73,7 +73,7 @@ export function ServiceLinksPopover({ links }: ServiceLinksPopoverProps) {
                 rel="noreferrer"
               >
                 <div className="text-ssm font-medium mr-2">
-                  <Truncate text={link.url ?? ''} truncateLimit={28} />
+                  <Truncate text={link.url ?? ''} truncateLimit={26} />
                 </div>
                 <div className="text-xs text-neutral-350">{link.internal_port}</div>
               </a>
