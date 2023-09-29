@@ -79,7 +79,6 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
           {
             link: 'https://hub.qovery.com/docs/using-qovery/configuration/database/#resources',
             linkLabel: 'How to configure my database',
-            external: true,
           },
         ]}
       />

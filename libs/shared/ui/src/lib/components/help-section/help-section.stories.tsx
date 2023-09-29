@@ -15,12 +15,10 @@ Primary.args = {
     {
       link: '#',
       linkLabel: 'How to configure my application',
-      external: true,
     },
     {
       link: '#',
       linkLabel: 'How to delete my application',
-      external: false,
     },
   ],
 }

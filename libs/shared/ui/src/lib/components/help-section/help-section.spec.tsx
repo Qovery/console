@@ -20,12 +20,10 @@ describe('HelpSection', () => {
       {
         link: '#',
         linkLabel: 'How to configure my application',
-        external: true,
       },
       {
         link: '#',
         linkLabel: 'How to delete my application',
-        external: true,
       },
     ]
     const { baseElement } = renderWithProviders(<HelpSection links={links} {...props} />)

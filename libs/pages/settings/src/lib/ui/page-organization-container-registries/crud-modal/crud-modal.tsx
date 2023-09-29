@@ -201,7 +201,7 @@ export function CrudModal(props: CrudModalProps) {
                 {watch('kind') === ContainerRegistryKindEnum.DOCKER_HUB && (
                   <p className="text-xs text-neutral-350 my-1">
                     We encourage you to set credentials for Docker Hub due to the limits on the pull rate.
-                    <ExternalLink href="https://www.docker.com/increase-rate-limits" className="block ml-1" size="xs">
+                    <ExternalLink href="https://www.docker.com/increase-rate-limits" className="ml-1" size="xs">
                       See here
                     </ExternalLink>
                   </p>

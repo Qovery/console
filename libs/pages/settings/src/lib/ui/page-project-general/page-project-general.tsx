@@ -76,7 +76,6 @@ export function PageProjectGeneral(props: PageProjectGeneralProps) {
           {
             link: 'https://hub.qovery.com/docs/using-qovery/configuration/project/#edit-project-general-settings',
             linkLabel: 'How to configure my project',
-            external: true,
           },
         ]}
       />

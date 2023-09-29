@@ -21,7 +21,6 @@ export function PageGeneralFeature() {
     {
       link: 'https://hub.qovery.com/docs/using-qovery/configuration/database',
       linkLabel: 'How to manage my database',
-      external: true,
     },
   ]
   const loadingStatus = useSelector<RootState, LoadingStatus>((state) => databasesLoadingStatus(state))

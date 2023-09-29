@@ -45,12 +45,10 @@ export function PageSettingsConfigureJob(props: PageSettingsConfigureJobProps) {
           {
             link: 'https://hub.qovery.com/docs/using-qovery/configuration/cronjob/',
             linkLabel: 'How to configure my cron job',
-            external: true,
           },
           {
             link: 'https://hub.qovery.com/docs/using-qovery/configuration/lifecycle-job/',
             linkLabel: 'How to configure my lifecycle job',
-            external: true,
           },
         ]}
       />

@@ -48,7 +48,6 @@ export function PageVariablesMemo(props: PageVariablesProps) {
               {
                 link: 'https://hub.qovery.com/docs/using-qovery/configuration/environment-variable/',
                 linkLabel: 'How to configure my environment variables',
-                external: true,
               },
             ]}
           />

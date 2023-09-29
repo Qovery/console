@@ -1,4 +1,4 @@
-import { ExternalLink, Icon, Link } from '@qovery/shared/ui'
+import { ExternalLink, Icon } from '@qovery/shared/ui'
 
 export function HelpSidebar() {
   const LIST = [
@@ -28,7 +28,7 @@ export function HelpSidebar() {
         <div className="p-10">
           <p className="text-sm text-neutral-400 mb-5">Need help? You may find these links useful</p>
           <ExternalLink
-            className="block mb-3"
+            className="mb-3"
             href="https://hub.qovery.com/docs/using-qovery/configuration/deployment-rule/#why-using-deployment-rule"
             size="sm"
           >

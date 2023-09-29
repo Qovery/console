@@ -209,7 +209,6 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
           {
             link: 'https://hub.qovery.com/docs/using-qovery/deployment/deployment-pipeline/',
             linkLabel: 'How to configure my deployment group',
-            external: true,
           },
         ]}
       />

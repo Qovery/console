@@ -142,7 +142,6 @@ export function PageSettingsDeploymentRules(props: PageSettingsDeploymentRulesPr
           {
             link: 'https://hub.qovery.com/docs/using-qovery/configuration/environment/#edit-environment-general-settings',
             linkLabel: 'How to set your deployment',
-            external: true,
           },
         ]}
       />

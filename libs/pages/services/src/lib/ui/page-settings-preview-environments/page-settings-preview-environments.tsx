@@ -120,7 +120,6 @@ export function PageSettingsPreviewEnvironments(props: PageSettingsPreviewEnviro
           {
             link: 'https://hub.qovery.com/docs/using-qovery/configuration/environment/#preview-environment',
             linkLabel: 'How to set your preview environment',
-            external: true,
           },
         ]}
       />

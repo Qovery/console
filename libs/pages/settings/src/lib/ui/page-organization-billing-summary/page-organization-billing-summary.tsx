@@ -165,7 +165,6 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
           {
             link: 'https://hub.qovery.com/docs/using-qovery/configuration/organization/#billing',
             linkLabel: 'Learn more about billing',
-            external: true,
           },
         ]}
       />

@@ -210,7 +210,6 @@ export function PageSettingsGeneral({
           {
             link: 'https://hub.qovery.com/docs/using-qovery/configuration/database',
             linkLabel: 'How to configure my database',
-            external: true,
           },
         ]}
       />

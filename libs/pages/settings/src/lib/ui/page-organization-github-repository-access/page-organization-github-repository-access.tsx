@@ -113,7 +113,6 @@ export function PageOrganizationGithubRepositoryAccess(props: PageOrganizationGi
           {
             link: 'https://hub.qovery.com/docs/using-qovery/configuration/organization/git-repository-access',
             linkLabel: 'Managing Git Permissions Using the Qovery Github application',
-            external: true,
           },
         ]}
       />

@@ -18,7 +18,6 @@ export function PageDeploymentsFeature() {
     {
       link: 'https://hub.qovery.com/docs/using-qovery/configuration/environment',
       linkLabel: 'How to manage my environment',
-      external: true,
     },
   ]
 

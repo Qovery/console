@@ -140,7 +140,6 @@ export function PageGeneral({
           {
             link: 'https://hub.qovery.com/docs/using-qovery/audit-logs/',
             linkLabel: 'How the audit logs work',
-            external: true,
           },
         ]}
       />

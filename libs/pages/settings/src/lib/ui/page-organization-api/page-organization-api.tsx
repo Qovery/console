@@ -103,7 +103,6 @@ export function PageOrganizationApi(props: PageOrganizationApiProps) {
           {
             link: 'https://hub.qovery.com/docs/using-qovery/configuration/organization/api-token',
             linkLabel: 'How to configure the Token API',
-            external: true,
           },
         ]}
       />

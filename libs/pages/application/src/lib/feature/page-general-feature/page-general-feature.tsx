@@ -25,7 +25,6 @@ export function PageGeneralFeature() {
     {
       link: 'https://hub.qovery.com/docs/using-qovery/configuration/application',
       linkLabel: 'How to manage my application',
-      external: true,
     },
   ]
   const loadingStatus = useSelector<RootState, LoadingStatus>((state) => applicationsLoadingStatus(state))

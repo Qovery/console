@@ -89,7 +89,6 @@ export function PageSettingsHealthchecks({
           {
             link: 'https://hub.qovery.com/docs/using-qovery/configuration/service-health-checks/',
             linkLabel: 'How to configure my health checks',
-            external: true,
           },
         ]}
       />

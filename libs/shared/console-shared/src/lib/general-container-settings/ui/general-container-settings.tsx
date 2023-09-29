@@ -50,11 +50,7 @@ export function GeneralContainerSettings({ organization, className }: GeneralCon
         )}
       />
       <p className="text-right">
-        <Link
-          to={SETTINGS_URL(organization?.id) + SETTINGS_CONTAINER_REGISTRIES_URL}
-          icon={IconAwesomeEnum.ARROW_UP_RIGHT_FROM_SQUARE}
-          size="ssm"
-        >
+        <Link to={SETTINGS_URL(organization?.id) + SETTINGS_CONTAINER_REGISTRIES_URL} className="text-ssm">
           Don't see your registry?
         </Link>
       </p>

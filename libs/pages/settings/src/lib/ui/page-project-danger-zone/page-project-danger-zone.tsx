@@ -44,7 +44,6 @@ export function PageProjectDangerZone(props: PageProjectDangerZoneProps) {
           {
             link: 'https://hub.qovery.com/docs/using-qovery/configuration/project/',
             linkLabel: 'How to delete my project',
-            external: true,
           },
         ]}
       />

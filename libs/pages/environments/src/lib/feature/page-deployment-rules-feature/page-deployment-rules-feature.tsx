@@ -23,7 +23,6 @@ export function PageDeploymentRulesFeature() {
     {
       link: 'https://hub.qovery.com/docs/using-qovery/configuration/deployment-rule/',
       linkLabel: 'How to configure my deployment rule',
-      external: true,
     },
   ]
 

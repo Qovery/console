@@ -133,7 +133,6 @@ export function PageOrganizationGeneral(props: PageOrganizationGeneralProps) {
           {
             link: 'https://hub.qovery.com/docs/using-qovery/configuration/organization/#creating-an-organization',
             linkLabel: 'How to configure my organization',
-            external: true,
           },
         ]}
       />

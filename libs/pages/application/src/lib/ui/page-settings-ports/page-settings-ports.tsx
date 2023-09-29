@@ -30,7 +30,6 @@ export function PageSettingsPorts({ healthchecks, ports, onAddPort, onEdit, onDe
           {
             link: 'https://hub.qovery.com/docs/using-qovery/configuration/application/#ports',
             linkLabel: 'How to configure my application',
-            external: true,
           },
         ]}
       />

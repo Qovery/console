@@ -85,7 +85,6 @@ export function PageSettingsDomains(props: PageSettingsDomainsProps) {
           {
             link: 'https://hub.qovery.com/docs/using-qovery/configuration/application/#domains',
             linkLabel: 'How to configure my application',
-            external: true,
           },
         ]}
       />

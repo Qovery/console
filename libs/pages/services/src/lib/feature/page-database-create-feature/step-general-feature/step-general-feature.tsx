@@ -111,9 +111,8 @@ export function StepGeneralFeature() {
           {
             link: 'https://hub.qovery.com/docs/using-qovery/configuration/database/#create-a-database',
             linkLabel: 'How to configure my database',
-            external: true,
           },
-          { link: 'https://discuss.qovery.com/', linkLabel: 'Still need help? Ask on our Forum', external: true },
+          { link: 'https://discuss.qovery.com/', linkLabel: 'Still need help? Ask on our Forum' },
         ],
       }}
     />
