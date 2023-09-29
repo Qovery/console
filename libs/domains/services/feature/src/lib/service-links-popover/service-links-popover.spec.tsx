@@ -1,4 +1,4 @@
-import { renderWithProviders } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import ServiceLinksPopover from './service-links-popover'
 
 describe('ServiceLinksPopover', () => {
@@ -6,8 +6,8 @@ describe('ServiceLinksPopover', () => {
     const { baseElement } = renderWithProviders(<ServiceLinksPopover links={[]} />)
     expect(baseElement).toBeTruthy()
   })
-  it('should match snapshot with button links', async () => {
-    const { container } = renderWithProviders(
+  it('should match snapshot', async () => {
+    const { container, userEvent } = renderWithProviders(
       <ServiceLinksPopover
         links={[
           {
@@ -15,8 +15,13 @@ describe('ServiceLinksPopover', () => {
             internal_port: 8080,
           },
         ]}
-      />
+      />,
+      {
+        container: document.body,
+      }
     )
+    const button = screen.getByRole('button', { name: /links/i })
+    await userEvent.click(button)
 
     expect(container).toMatchSnapshot()
   })
