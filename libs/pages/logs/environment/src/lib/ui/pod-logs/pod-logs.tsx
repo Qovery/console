@@ -163,6 +163,7 @@ export function PodLogs({
       countNginx={countNginx}
       service={service}
       isProgressing={isProgressing}
+      progressingMsg="Streaming application logs"
       withLogsNavigation
       lineNumbers
     >

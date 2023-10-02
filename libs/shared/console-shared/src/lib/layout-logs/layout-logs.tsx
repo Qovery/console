@@ -47,6 +47,7 @@ export interface LayoutLogsProps {
   customPlaceholder?: string | ReactNode
   serviceDeploymentStatus?: ServiceDeploymentStatusEnum
   isProgressing?: boolean
+  progressingMsg?: string
 }
 
 export interface ErrorLogsProps {
@@ -74,6 +75,7 @@ export function LayoutLogs({
   service,
   serviceDeploymentStatus,
   isProgressing,
+  progressingMsg,
 }: PropsWithChildren<LayoutLogsProps>) {
   const location = useLocation()
   const refScrollSection = useRef<HTMLDivElement>(null)
@@ -240,12 +242,12 @@ export function LayoutLogs({
                 {isProgressing && (
                   <div
                     role="progressbar"
-                    className="relative -top-4 ml-3 flex items-center font-code text-xs text-neutral-300"
+                    className="relative -top-8 pl-3 flex items-center text-sm text-neutral-350 border-b border-neutral-500 h-8"
                   >
-                    <span className="mr-1">Streaming application logs</span>
-                    <span className="animate-[pulse_1s_cubic-bezier(0.4,0,0.6,1)_100ms_infinite]">.</span>
-                    <span className="animate-[pulse_1s_cubic-bezier(0.4,0,0.6,1)_300ms_infinite]">.</span>
-                    <span className="animate-[pulse_1s_cubic-bezier(0.4,0,0.6,1)_600ms_infinite]">.</span>
+                    <span className="mr-1.5">{progressingMsg}</span>
+                    <span className="animate-[pulse_1s_cubic-bezier(0.4,0,0.6,1)_100ms_infinite] w-[3px] h-[3px] bg-neutral-350 mr-[2px] rounded-[0.5px]" />
+                    <span className="animate-[pulse_1s_cubic-bezier(0.4,0,0.6,1)_300ms_infinite] w-[3px] h-[3px] bg-neutral-350  mr-[2px] rounded-[0.5px]" />
+                    <span className="animate-[pulse_1s_cubic-bezier(0.4,0,0.6,1)_600ms_infinite] w-[3px] h-[3px] bg-neutral-350 rounded-[0.5px]" />
                   </div>
                 )}
               </div>
