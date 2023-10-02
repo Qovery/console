@@ -1,5 +1,4 @@
 import { type ComponentPropsWithoutRef } from 'react'
-import { Link } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { IconEnum, ServiceTypeEnum } from '@qovery/shared/enums'
 import {
@@ -9,6 +8,7 @@ import {
   DescriptionTerm as Dt,
   Icon,
   IconAwesomeEnum,
+  Link,
   Section,
   Tooltip,
   Truncate,
@@ -222,7 +222,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
                   </span>
                 </Tooltip>
               </span>
-              <Link to="../settings/resources" relative="path">
+              <Link color="current" to="../settings/resources" relative="path">
                 <Icon name={IconAwesomeEnum.WHEEL} className="text-base text-neutral-300" />
               </Link>
             </div>
