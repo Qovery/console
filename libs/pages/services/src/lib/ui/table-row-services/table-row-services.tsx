@@ -120,23 +120,21 @@ export function TableRowServices<T>(props: TableRowServicesProps<T>) {
                 </div>
               )}
               {(isContainer(type) || dataJobs.source?.image) && (
-                <Badge size="xs">
-                  <div className="block truncate">
-                    {dataContainer.image_name && (
-                      <Tooltip content={`${dataContainer.image_name}:${dataContainer.tag}`}>
-                        <span>
-                          {dataContainer.image_name}:{dataContainer.tag}
-                        </span>
-                      </Tooltip>
-                    )}
-                    {dataJobs.source?.image && (
-                      <Tooltip content={`${dataJobs.source?.image?.image_name}:${dataJobs.source?.image?.tag}`}>
-                        <span>
-                          {dataJobs.source?.image?.image_name}:{dataJobs.source?.image?.tag}
-                        </span>
-                      </Tooltip>
-                    )}
-                  </div>
+                <Badge className="truncate shrink" size="xs">
+                  {dataContainer.image_name && (
+                    <Tooltip content={`${dataContainer.image_name}:${dataContainer.tag}`}>
+                      <span className="truncate">
+                        {dataContainer.image_name}:{dataContainer.tag}
+                      </span>
+                    </Tooltip>
+                  )}
+                  {dataJobs.source?.image && (
+                    <Tooltip content={`${dataJobs.source?.image?.image_name}:${dataJobs.source?.image?.tag}`}>
+                      <span className="truncate">
+                        {dataJobs.source?.image?.image_name}:{dataJobs.source?.image?.tag}
+                      </span>
+                    </Tooltip>
+                  )}
                 </Badge>
               )}
               {isDatabase(type) && (
