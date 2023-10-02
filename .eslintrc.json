@@ -79,6 +79,18 @@
                 "importNames": ["twMerge"],
                 "message": "Use `twMerge` from the `@qovery/shared/util-js` package.",
                 "allowTypeImports": false
+              },
+              {
+                "name": "cronstrue",
+                "importNames": ["default"],
+                "message": "Use `formatCronExpression` from the `@qovery/shared/util-js` package.",
+                "allowTypeImports": false
+              },
+              {
+                "name": "pretty-bytes",
+                "importNames": ["default"],
+                "message": "Use `formatBytes` from the `@qovery/shared/util-js` package.",
+                "allowTypeImports": false
               }
             ]
           }

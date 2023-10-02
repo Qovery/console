@@ -1,3 +1,5 @@
+// TODO: Refactor cronstrue usage to only use formatCronExpression
+// eslint-disable-next-line @typescript-eslint/no-restricted-imports
 import cronstrue from 'cronstrue'
 import { Controller, useFormContext } from 'react-hook-form'
 import { type JobType, ServiceTypeEnum } from '@qovery/shared/enums'

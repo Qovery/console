@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-restricted-imports
 import cronstrue from 'cronstrue'
 
 export function formatCronExpression(expression?: string) {
