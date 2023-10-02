@@ -238,10 +238,14 @@ export function LayoutLogs({
               <div className="relative z-20">
                 {children}
                 {isProgressing && (
-                  <div role="progressbar" className="flex ml-5 relative -top-5">
-                    <div className="animate-[pulse_1s_cubic-bezier(0.4,0,0.6,1)_100ms_infinite] w-1.5 h-1.5 bg-brand-300 mr-1" />
-                    <div className="animate-[pulse_1s_cubic-bezier(0.4,0,0.6,1)_300ms_infinite] w-1.5 h-1.5 bg-brand-300 mr-1" />
-                    <div className="animate-[pulse_1s_cubic-bezier(0.4,0,0.6,1)_600ms_infinite] w-1.5 h-1.5 bg-brand-300" />
+                  <div
+                    role="progressbar"
+                    className="relative -top-4 ml-3 flex items-center font-code text-xs text-neutral-300"
+                  >
+                    <span className="mr-1">Streaming application logs</span>
+                    <span className="animate-[pulse_1s_cubic-bezier(0.4,0,0.6,1)_100ms_infinite]">.</span>
+                    <span className="animate-[pulse_1s_cubic-bezier(0.4,0,0.6,1)_300ms_infinite]">.</span>
+                    <span className="animate-[pulse_1s_cubic-bezier(0.4,0,0.6,1)_600ms_infinite]">.</span>
                   </div>
                 )}
               </div>

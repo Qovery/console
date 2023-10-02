@@ -15,7 +15,7 @@ export interface PodLogsProps {
   enabledNginx?: boolean
   setEnabledNginx?: (debugMode: boolean) => void
   countNginx?: number
-  isDeploymentProgressing?: boolean
+  isProgressing?: boolean
 }
 
 const COLORS = [
@@ -60,7 +60,7 @@ export function PodLogs({
   enabledNginx,
   setEnabledNginx,
   countNginx,
-  isDeploymentProgressing,
+  isProgressing,
 }: PodLogsProps) {
   const [filter, setFilter] = useState<TableFilterProps[]>([])
   const publiclyExposedPort = Boolean((service as ApplicationEntity)?.ports?.find((port) => port.publicly_accessible))
@@ -162,7 +162,7 @@ export function PodLogs({
       setEnabledNginx={publiclyExposedPort ? setEnabledNginx : undefined}
       countNginx={countNginx}
       service={service}
-      isProgressing={isDeploymentProgressing}
+      isProgressing={isProgressing}
       withLogsNavigation
       lineNumbers
     >

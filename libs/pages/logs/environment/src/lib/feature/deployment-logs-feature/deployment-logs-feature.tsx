@@ -2,6 +2,7 @@ import {
   type DeploymentStageWithServicesStatuses,
   type Environment,
   type EnvironmentLogs,
+  StateEnum,
   type Status,
 } from 'qovery-typescript-axios'
 import { memo, useCallback, useContext, useEffect, useState } from 'react'
@@ -11,6 +12,7 @@ import useWebSocket from 'react-use-websocket'
 import { selectApplicationById } from '@qovery/domains/application'
 import { selectDatabaseById } from '@qovery/domains/database'
 import { useEnvironmentDeploymentHistory } from '@qovery/domains/environment'
+import { useDeploymentStatus } from '@qovery/domains/services/feature'
 import { useAuth } from '@qovery/shared/auth'
 import { type ApplicationEntity, type DatabaseEntity, type LoadingStatus } from '@qovery/shared/interfaces'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
@@ -21,7 +23,6 @@ import { ServiceStageIdsContext } from '../service-stage-ids-context/service-sta
 export interface DeploymentLogsFeatureProps {
   environment: Environment
   statusStages?: DeploymentStageWithServicesStatuses[]
-  isDeploymentProgressing?: boolean
 }
 
 const DeploymentLogs = memo(_DeploymentLogs)
@@ -65,11 +66,7 @@ export function getServiceStatuesById(services?: DeploymentStageWithServicesStat
   return null
 }
 
-export function DeploymentLogsFeature({
-  environment,
-  statusStages,
-  isDeploymentProgressing,
-}: DeploymentLogsFeatureProps) {
+export function DeploymentLogsFeature({ environment, statusStages }: DeploymentLogsFeatureProps) {
   const { organizationId = '', projectId = '', environmentId = '', serviceId = '', versionId = '' } = useParams()
   const { stageId } = useContext(ServiceStageIdsContext)
 
@@ -77,7 +74,8 @@ export function DeploymentLogsFeature({
     selectApplicationById(state, serviceId)
   )
   const database = useSelector<RootState, DatabaseEntity | undefined>((state) => selectDatabaseById(state, serviceId))
-  const { data: dataDeploymentHistory } = useEnvironmentDeploymentHistory(projectId, environmentId)
+  const { data: deploymentHistory } = useEnvironmentDeploymentHistory(projectId, environmentId)
+  const { data: deploymentStatus } = useDeploymentStatus({ environmentId, serviceId })
 
   const [logs, setLogs] = useState<EnvironmentLogs[]>([])
   const [loadingStatusDeploymentLogs, setLoadingStatusDeploymentLogs] = useState<LoadingStatus>('not loaded')
@@ -171,6 +169,23 @@ export function DeploymentLogsFeature({
     }))
     .filter((log) => log.errors)
 
+  const isLastVersion = (deploymentHistory && deploymentHistory[0].id === versionId) || !versionId
+  const isDeploymentProgressing: boolean = isLastVersion
+    ? [
+        StateEnum.BUILDING,
+        StateEnum.DEPLOYING,
+        StateEnum.CANCELING,
+        StateEnum.DELETING,
+        StateEnum.RESTARTING,
+        StateEnum.STOPPING,
+        StateEnum.QUEUED,
+        StateEnum.DELETE_QUEUED,
+        StateEnum.RESTART_QUEUED,
+        StateEnum.STOP_QUEUED,
+        StateEnum.DEPLOYMENT_QUEUED,
+      ].includes(deploymentStatus?.state as StateEnum)
+    : false
+
   return (
     <DeploymentLogs
       loadingStatus={loadingStatusDeploymentLogs}
@@ -181,7 +196,7 @@ export function DeploymentLogsFeature({
       serviceDeploymentStatus={(getServiceStatuesById(statusStages, serviceId) as Status)?.service_deployment_status}
       service={application || database}
       hideDeploymentLogs={hideDeploymentLogsBoolean}
-      dataDeploymentHistory={dataDeploymentHistory}
+      dataDeploymentHistory={deploymentHistory}
       isDeploymentProgressing={isDeploymentProgressing}
     />
   )

@@ -6,6 +6,8 @@ import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { selectApplicationById } from '@qovery/domains/application'
 import { selectDatabaseById } from '@qovery/domains/database'
+import { useRunningStatus } from '@qovery/domains/services/feature'
+import { RunningState } from '@qovery/shared/enums'
 import { type ApplicationEntity, type DatabaseEntity } from '@qovery/shared/interfaces'
 import { useDebounce, useDocumentTitle } from '@qovery/shared/util-hooks'
 import { type RootState } from '@qovery/state/store'
@@ -14,12 +16,11 @@ import _PodLogs from '../../ui/pod-logs/pod-logs'
 
 export interface PodLogsFeatureProps {
   clusterId: string
-  isDeploymentProgressing?: boolean
 }
 
 const PodLogs = memo(_PodLogs)
 
-export function PodLogsFeature({ clusterId, isDeploymentProgressing }: PodLogsFeatureProps) {
+export function PodLogsFeature({ clusterId }: PodLogsFeatureProps) {
   const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams()
 
   const debounceTime = 400
@@ -46,6 +47,7 @@ export function PodLogsFeature({ clusterId, isDeploymentProgressing }: PodLogsFe
     selectApplicationById(state, serviceId)
   )
   const database = useSelector<RootState, DatabaseEntity | undefined>((state) => selectDatabaseById(state, serviceId))
+  const { data: runningStatus } = useRunningStatus({ environmentId, serviceId })
 
   useDocumentTitle(`Live logs ${application || database ? `- ${application?.name || database?.name}` : '- Loading...'}`)
 
@@ -105,6 +107,10 @@ export function PodLogsFeature({ clusterId, isDeploymentProgressing }: PodLogsFe
     onMessage: infraMessageHandler,
   })
 
+  const isProgressing: boolean = [RunningState.RUNNING, RunningState.WARNING].includes(
+    runningStatus?.state as RunningState
+  )
+
   return (
     <PodLogs
       service={application || database}
@@ -115,7 +121,7 @@ export function PodLogsFeature({ clusterId, isDeploymentProgressing }: PodLogsFe
       enabledNginx={enabledNginx}
       setEnabledNginx={setEnabledNginx}
       countNginx={infraMessages.length}
-      isDeploymentProgressing={isDeploymentProgressing}
+      isProgressing={isProgressing}
     />
   )
 }
