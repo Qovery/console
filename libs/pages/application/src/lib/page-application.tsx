@@ -49,7 +49,7 @@ export function PageApplication() {
           dispatch(fetchApplicationCommits({ applicationId, serviceType }))
       }
     }
-  }, [application, serviceType, applicationId, loadingStatus, dispatch])
+  }, [application?.id, serviceType, applicationId, loadingStatus, dispatch])
 
   return (
     <Container application={application} environment={environment}>
