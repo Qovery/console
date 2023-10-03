@@ -1,6 +1,7 @@
-import { StateEnum } from 'qovery-typescript-axios'
+import { ClusterStateEnum } from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { match } from 'ts-pattern'
 import { type ClusterEntity, type OrganizationEntity } from '@qovery/shared/interfaces'
 import { INFRA_LOGS_URL } from '@qovery/shared/routes'
 import { Banner, WarningScreenMobile } from '@qovery/shared/ui'
@@ -14,14 +15,10 @@ export interface LayoutPageProps {
   cluster?: ClusterEntity
 }
 
-export const displayClusterBanner = (status?: StateEnum): boolean => {
-  switch (status) {
-    case StateEnum.DEPLOYMENT_QUEUED:
-    case StateEnum.DEPLOYING:
-      return true
-    default:
-      return false
-  }
+export const displayClusterBanner = (status?: ClusterStateEnum): boolean => {
+  return match(status)
+    .with(ClusterStateEnum.DEPLOYMENT_QUEUED, ClusterStateEnum.DEPLOYING, () => true)
+    .otherwise(() => false)
 }
 
 export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
@@ -37,7 +34,7 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
 
   const clusterBanner = !matchLogInfraRoute && cluster && displayClusterBanner(cluster.status) && !clusterIsDeployed
 
-  const clusterNotification = StateEnum.DEPLOYMENT_ERROR === cluster?.status
+  const clusterNotification = ClusterStateEnum.DEPLOYMENT_ERROR === cluster?.status
 
   return (
     <>

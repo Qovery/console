@@ -1,4 +1,4 @@
-import { StateEnum } from 'qovery-typescript-axios'
+import { ClusterStateEnum } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -40,7 +40,7 @@ export function PageOrganizationBillingSummaryFeature() {
 
   const numberOfRunningClusters =
     clusters?.reduce((acc, cluster) => {
-      if (cluster.status === StateEnum.DEPLOYED) {
+      if (cluster.status === ClusterStateEnum.DEPLOYED) {
         return acc + 1
       }
       return acc

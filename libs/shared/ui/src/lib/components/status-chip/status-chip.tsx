@@ -1,4 +1,4 @@
-import { type StateEnum } from 'qovery-typescript-axios'
+import { type ClusterStateEnum, type StateEnum } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
 import { type RunningState } from '@qovery/shared/enums'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
@@ -23,7 +23,7 @@ import {
 import Tooltip from '../tooltip/tooltip'
 
 export interface StatusChipProps {
-  status: keyof typeof StateEnum | keyof typeof RunningState | undefined
+  status: keyof typeof StateEnum | keyof typeof RunningState | keyof typeof ClusterStateEnum | undefined
   appendTooltipMessage?: string
   className?: string
 }
@@ -65,7 +65,9 @@ export function StatusChip(props: StatusChipProps) {
     .with('UNKNOWN', () => <UnknownIcon />)
     .with('BUILD_ERROR', () => <BuildErrorIcon />)
     .with('WARNING', () => <WarningIcon />)
-    .with('DEPLOYMENT_ERROR', 'STOP_ERROR', 'DELETE_ERROR', 'RESTART_ERROR', 'ERROR', () => <ErrorIcon />)
+    .with('DEPLOYMENT_ERROR', 'STOP_ERROR', 'DELETE_ERROR', 'RESTART_ERROR', 'ERROR', 'INVALID_CREDENTIALS', () => (
+      <ErrorIcon />
+    ))
     .exhaustive()
 
   return (

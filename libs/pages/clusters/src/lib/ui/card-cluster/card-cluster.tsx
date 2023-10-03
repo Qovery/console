@@ -1,4 +1,5 @@
-import { StateEnum } from 'qovery-typescript-axios'
+import { ClusterStateEnum } from 'qovery-typescript-axios'
+import { match } from 'ts-pattern'
 import { ClusterType } from '@qovery/domains/clusters/feature'
 import { ClusterButtonsActions } from '@qovery/shared/console-shared'
 import { type ClusterEntity } from '@qovery/shared/interfaces'
@@ -9,27 +10,27 @@ export interface CardClusterProps {
   cluster: ClusterEntity
 }
 
-export const getColorForStatus = (status?: StateEnum): string => {
-  switch (status) {
-    case StateEnum.DEPLOYMENT_QUEUED:
-    case StateEnum.DEPLOYING:
-    case StateEnum.DEPLOYED:
-    case StateEnum.STOP_QUEUED:
-    case StateEnum.STOPPING:
-    case StateEnum.DELETE_QUEUED:
-    case StateEnum.DELETING:
-      return 'text-orange-500'
-    case StateEnum.STOP_ERROR:
-    case StateEnum.DELETE_ERROR:
-    case StateEnum.DEPLOYMENT_ERROR:
-    case StateEnum.BUILD_ERROR:
-      return 'text-red-500'
-    case StateEnum.READY:
-    case StateEnum.DELETED:
-    case StateEnum.STOPPED:
-    default:
-      return 'text-brand-500'
-  }
+export const getColorForStatus = (status?: ClusterStateEnum): string => {
+  return match(status)
+    .with(
+      ClusterStateEnum.DEPLOYMENT_QUEUED,
+      ClusterStateEnum.DEPLOYING,
+      ClusterStateEnum.DEPLOYED,
+      ClusterStateEnum.STOP_QUEUED,
+      ClusterStateEnum.STOPPING,
+      ClusterStateEnum.DELETE_QUEUED,
+      ClusterStateEnum.DELETING,
+      () => 'text-orange-500'
+    )
+    .with(
+      ClusterStateEnum.STOP_ERROR,
+      ClusterStateEnum.DELETE_ERROR,
+      ClusterStateEnum.DEPLOYMENT_ERROR,
+      ClusterStateEnum.BUILD_ERROR,
+      ClusterStateEnum.INVALID_CREDENTIALS,
+      () => 'text-red-500'
+    )
+    .otherwise(() => 'text-brand-500')
 }
 
 export function CardCluster(props: CardClusterProps) {
