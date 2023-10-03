@@ -7,7 +7,6 @@ import useWebSocket from 'react-use-websocket'
 import { selectApplicationsEntitiesByEnvId } from '@qovery/domains/application'
 import { selectDatabasesEntitiesByEnvId } from '@qovery/domains/database'
 import { useFetchEnvironment } from '@qovery/domains/environment'
-import { useRunningStatus } from '@qovery/domains/services/feature'
 import { useAuth } from '@qovery/shared/auth'
 import { type ApplicationEntity, type DatabaseEntity } from '@qovery/shared/interfaces'
 import {
