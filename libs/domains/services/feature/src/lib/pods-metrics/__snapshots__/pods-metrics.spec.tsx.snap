@@ -2,117 +2,129 @@
 
 exports[`PodsMetrics should match snapshot with data 1`] = `
 <div>
-  <table
-    class="table-fixed border-collapse rounded text-sm text-neutral-400 w-full"
+  <div
+    class="border rounded"
   >
-    <thead>
-      <tr>
-        <th
-          class="border border-solid border-neutral-200 px-4 py-2 text-left font-medium w-1/2"
-        >
-          Instance name
-        </th>
-        <th
-          class="border border-solid border-neutral-200 px-4 py-2 text-left font-medium"
-        >
-          RAM usage
-        </th>
-        <th
-          class="border border-solid border-neutral-200 px-4 py-2 text-left font-medium"
-        >
-          vCPU
-        </th>
-        <th
-          class="border border-solid border-neutral-200 px-4 py-2 text-left font-medium"
-        >
-          Storage
-        </th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td
-          class="border border-solid border-neutral-200 px-4 py-2"
-        >
-          foobar
-        </td>
-        <td
-          class="border border-solid border-neutral-200 px-4 py-2"
-        >
-          20
-          %
-        </td>
-        <td
-          class="border border-solid border-neutral-200 px-4 py-2"
-        >
-          5
-          %
-        </td>
-        <td
-          class="border border-solid border-neutral-200 px-4 py-2"
-        >
-          -
-        </td>
-      </tr>
-    </tbody>
-  </table>
+    <table
+      class="table-fixed min-w-full divide-y divide-neutral-200 text-sm text-neutral-400 w-full"
+    >
+      <thead>
+        <tr>
+          <th
+            class="px-4 py-2 text-left font-medium w-1/2"
+          >
+            Instance name
+          </th>
+          <th
+            class="px-4 py-2 text-left font-medium"
+          >
+            RAM usage
+          </th>
+          <th
+            class="px-4 py-2 text-left font-medium"
+          >
+            vCPU
+          </th>
+          <th
+            class="px-4 py-2 text-left font-medium"
+          >
+            Storage
+          </th>
+        </tr>
+      </thead>
+      <tbody
+        class="divide-y divide-neutral-200"
+      >
+        <tr>
+          <td
+            class="px-4 py-2"
+          >
+            foobar
+          </td>
+          <td
+            class="px-4 py-2"
+          >
+            20
+            %
+          </td>
+          <td
+            class="px-4 py-2"
+          >
+            5
+            %
+          </td>
+          <td
+            class="px-4 py-2"
+          >
+            -
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
 `;
 
 exports[`PodsMetrics should match snapshot with empty data 1`] = `
 <div>
-  <table
-    class="table-fixed border-collapse rounded text-sm text-neutral-400 w-full"
+  <div
+    class="border rounded"
   >
-    <thead>
-      <tr>
-        <th
-          class="border border-solid border-neutral-200 px-4 py-2 text-left font-medium w-1/2"
-        >
-          Instance name
-        </th>
-        <th
-          class="border border-solid border-neutral-200 px-4 py-2 text-left font-medium"
-        >
-          RAM usage
-        </th>
-        <th
-          class="border border-solid border-neutral-200 px-4 py-2 text-left font-medium"
-        >
-          vCPU
-        </th>
-        <th
-          class="border border-solid border-neutral-200 px-4 py-2 text-left font-medium"
-        >
-          Storage
-        </th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td
-          class="border border-solid border-neutral-200 px-4 py-2"
-        >
-          -
-        </td>
-        <td
-          class="border border-solid border-neutral-200 px-4 py-2"
-        >
-          -
-        </td>
-        <td
-          class="border border-solid border-neutral-200 px-4 py-2"
-        >
-          -
-        </td>
-        <td
-          class="border border-solid border-neutral-200 px-4 py-2"
-        >
-          -
-        </td>
-      </tr>
-    </tbody>
-  </table>
+    <table
+      class="table-fixed min-w-full divide-y divide-neutral-200 text-sm text-neutral-400 w-full"
+    >
+      <thead>
+        <tr>
+          <th
+            class="px-4 py-2 text-left font-medium w-1/2"
+          >
+            Instance name
+          </th>
+          <th
+            class="px-4 py-2 text-left font-medium"
+          >
+            RAM usage
+          </th>
+          <th
+            class="px-4 py-2 text-left font-medium"
+          >
+            vCPU
+          </th>
+          <th
+            class="px-4 py-2 text-left font-medium"
+          >
+            Storage
+          </th>
+        </tr>
+      </thead>
+      <tbody
+        class="divide-y divide-neutral-200"
+      >
+        <tr>
+          <td
+            class="px-4 py-2"
+          >
+            -
+          </td>
+          <td
+            class="px-4 py-2"
+          >
+            -
+          </td>
+          <td
+            class="px-4 py-2"
+          >
+            -
+          </td>
+          <td
+            class="px-4 py-2"
+          >
+            -
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
 `;
 

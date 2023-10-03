@@ -10,13 +10,15 @@ const TableRoot = forwardRef<ElementRef<'table'>, TableRootProps>(function Table
   ref
 ) {
   return (
-    <table
-      ref={ref}
-      className={twMerge('table-fixed border-collapse rounded text-sm text-neutral-400', className)}
-      {...rest}
-    >
-      {children}
-    </table>
+    <div className="border rounded">
+      <table
+        ref={ref}
+        className={twMerge('table-fixed min-w-full divide-y divide-neutral-200 text-sm text-neutral-400', className)}
+        {...rest}
+      >
+        {children}
+      </table>
+    </div>
   )
 })
 
@@ -32,9 +34,12 @@ const TableHeader = forwardRef<ElementRef<'thead'>, TableHeaderProps>(function T
 
 interface TableBodyProps extends ComponentPropsWithoutRef<'tbody'> {}
 
-const TableBody = forwardRef<ElementRef<'tbody'>, TableBodyProps>(function TableBody({ children, ...rest }, ref) {
+const TableBody = forwardRef<ElementRef<'tbody'>, TableBodyProps>(function TableBody(
+  { className, children, ...rest },
+  ref
+) {
   return (
-    <tbody ref={ref} {...rest}>
+    <tbody className={twMerge('divide-y divide-neutral-200', className)} ref={ref} {...rest}>
       {children}
     </tbody>
   )
@@ -57,7 +62,7 @@ const TableCell = forwardRef<ElementRef<'td'>, TableCellProps>(function TableCel
   ref
 ) {
   return (
-    <td ref={ref} className={twMerge('border border-solid border-neutral-200 px-4 py-2', className)} {...rest}>
+    <td ref={ref} className={twMerge('px-4 py-2', className)} {...rest}>
       {children}
     </td>
   )
@@ -70,11 +75,7 @@ const TableRowHeaderCell = forwardRef<ElementRef<'th'>, TableRowHeaderCellProps>
   ref
 ) {
   return (
-    <th
-      ref={ref}
-      className={twMerge('border border-solid border-neutral-200 px-4 py-2 text-left', className)}
-      {...rest}
-    >
+    <th ref={ref} className={twMerge('px-4 py-2 text-left', className)} {...rest}>
       {children}
     </th>
   )
@@ -87,11 +88,7 @@ const TableColumnHeaderCell = forwardRef<ElementRef<'th'>, TableColumnHeaderCell
   ref
 ) {
   return (
-    <th
-      ref={ref}
-      className={twMerge('border border-solid border-neutral-200 px-4 py-2 text-left', className)}
-      {...rest}
-    >
+    <th ref={ref} className={twMerge('px-4 py-2 text-left', className)} {...rest}>
       {children}
     </th>
   )
