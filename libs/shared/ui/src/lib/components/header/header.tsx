@@ -20,7 +20,7 @@ export function Header(props: HeaderProps) {
   const { title, icon, buttons, actions, iconClassName } = props
 
   return (
-    <div className="flex border-b border-neutral-200 items-center justify-between bg-white rounded-t px-5 py-8 shrink-0">
+    <div className="flex border-b border-neutral-200 items-center justify-between bg-white rounded-t px-5 py-6 shrink-0">
       <div className="flex gap-5 ml-4 items-center">
         {icon && (
           <div className="flex items-center justify-center w-16 h-16">
