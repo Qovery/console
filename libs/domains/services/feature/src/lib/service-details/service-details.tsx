@@ -14,7 +14,7 @@ import {
   Truncate,
 } from '@qovery/shared/ui'
 import { dateFullFormat, timeAgo } from '@qovery/shared/util-dates'
-import { formatBytes, formatCronExpression, twMerge } from '@qovery/shared/util-js'
+import { containerRegistryKindToIcon, formatBytes, formatCronExpression, twMerge } from '@qovery/shared/util-js'
 import { useService } from '../hooks/use-service/use-service'
 import { LastCommit } from '../last-commit/last-commit'
 import { ServiceDetailsSkeleton } from './service-details-skeleton'
@@ -36,7 +36,11 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
 
   const containerImage = match(service)
     .with({ serviceType: ServiceTypeEnum.JOB }, ({ source }) => source?.image)
-    .with({ serviceType: ServiceTypeEnum.CONTAINER }, ({ image_name, tag }) => ({ image_name, tag }))
+    .with({ serviceType: ServiceTypeEnum.CONTAINER }, ({ image_name, tag, registry }) => ({
+      image_name,
+      tag,
+      registry,
+    }))
     .otherwise(() => undefined)
 
   const databaseSource = match(service)
@@ -186,6 +190,21 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
           .otherwise(() => undefined)}
         {containerImage && (
           <Dl>
+            {containerImage.registry && (
+              <>
+                <Dt>ServiceType:</Dt>
+                <Dd>
+                  <Badge variant="surface" size="xs" className="items-center gap-2 capitalize">
+                    <Icon
+                      width={16}
+                      viewBox="0 0 24 16"
+                      name={containerRegistryKindToIcon(containerImage.registry.kind)}
+                    />
+                    <Truncate text={containerImage.registry.name.toLowerCase()} truncateLimit={18} />
+                  </Badge>
+                </Dd>
+              </>
+            )}
             <Dt>Image name:</Dt>
             <Dd>{containerImage.image_name}</Dd>
             <Dt>Tag:</Dt>
