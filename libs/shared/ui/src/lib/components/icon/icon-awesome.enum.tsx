@@ -101,6 +101,7 @@ export enum IconAwesomeEnum {
   HAMMER = 'icon-solid-hammer',
   ERASER = 'icon-solid-eraser',
   CHEVRON_LEFT = 'icon-solid-chevron-left',
+  CHEVRON_DOWN = 'icon-solid-chevron-down',
   CHEVRON_RIGHT = 'icon-solid-chevron-right',
   CHEVRONS_RIGHT = 'icon-solid-chevrons-right',
   CLOCK = 'icon-regular-clock',
