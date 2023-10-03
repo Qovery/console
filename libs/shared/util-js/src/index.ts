@@ -1,5 +1,6 @@
 export * from './lib/build-git-repo-url'
 export * from './lib/compute-available-environment-variable-scope'
+export * from './lib/container-registry-kind-to-icon'
 export * from './lib/convert-memory-size'
 export * from './lib/cost-to-human'
 export * from './lib/custom-tw-merge'
