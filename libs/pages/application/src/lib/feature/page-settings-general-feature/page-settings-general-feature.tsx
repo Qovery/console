@@ -142,7 +142,7 @@ export function PageSettingsGeneralFeature() {
 
   const onSubmit = methods.handleSubmit((data) => {
     if (data && application) {
-      let cloneApplication: ApplicationEntity
+      let cloneApplication: Omit<ApplicationEntity, 'registry'> & { registry?: { id?: string } }
       if (isApplication(application)) {
         cloneApplication = handleGitApplicationSubmit(data, application)
       } else if (isJob(application)) {
