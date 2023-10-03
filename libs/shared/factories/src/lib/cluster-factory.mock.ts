@@ -1,5 +1,5 @@
 import { Chance } from 'chance'
-import { CloudProviderEnum, StateEnum } from 'qovery-typescript-axios'
+import { CloudProviderEnum, ClusterStateEnum } from 'qovery-typescript-axios'
 import { type ClusterEntity } from '@qovery/shared/interfaces'
 
 const chance = new Chance('123')
@@ -16,7 +16,7 @@ export const clusterFactoryMock = (howMany: number, customCloudProvider?: CloudP
     min_running_nodes: 1,
     max_running_nodes: 5,
     disk_size: 20,
-    status: chance.pickone(Object.values(StateEnum)),
+    status: chance.pickone(Object.values(ClusterStateEnum)),
     is_default: false,
     version: '1.22',
     instance_type: chance.name(),
@@ -26,7 +26,7 @@ export const clusterFactoryMock = (howMany: number, customCloudProvider?: CloudP
         id: index,
         last_execution_id: chance.name(),
         is_deployed: true,
-        status: chance.pickone(Object.values(StateEnum)),
+        status: chance.pickone(Object.values(ClusterStateEnum)),
       },
     },
     ssh_keys: [
