@@ -156,7 +156,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
                       <Dt>Repository:</Dt>
                       <Dd>
                         <a href={gitRepository.url} target="_blank" rel="noopener noreferrer">
-                          <Badge variant="surface" size="xs" className="gap-2">
+                          <Badge variant="surface" size="xs" className="gap-1">
                             <Icon
                               name={gitRepository.url.includes('//github') ? IconEnum.GITHUB : IconEnum.GITLAB}
                               height={14}
@@ -172,7 +172,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
                     <>
                       <Dt>Branch:</Dt>
                       <Dd>
-                        <Badge variant="surface" size="xs" className="gap-2">
+                        <Badge variant="surface" size="xs" className="gap-1">
                           <Icon name={IconAwesomeEnum.CODE_BRANCH} height={14} width={14} />
                           <Truncate text={gitRepository.branch} truncateLimit={18} />
                         </Badge>
@@ -195,7 +195,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
                 <Dt>Registry:</Dt>
                 <Dd>
                   <a href={containerImage.registry.url} target="_blank" rel="noopener noreferrer">
-                    <Badge variant="surface" size="xs" className="items-center gap-2 capitalize">
+                    <Badge variant="surface" size="xs" className="items-center gap-1 capitalize">
                       <Icon width={16} name={containerRegistryKindToIcon(containerImage.registry.kind)} />
                       <Truncate text={containerImage.registry.name.toLowerCase()} truncateLimit={18} />
                     </Badge>
@@ -213,8 +213,8 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
           <Dl>
             <Dt>Type:</Dt>
             <Dd>
-              <Badge size="xs" variant="surface">
-                <Icon name={databaseSource.type} className="mr-1" height={10} width={10} />
+              <Badge size="xs" variant="surface" className="items-center gap-1">
+                <Icon name={databaseSource.type} className="max-w-[12px] max-h-[12px]" height={12} width={12} />
                 {databaseSource.version}
               </Badge>
             </Dd>
