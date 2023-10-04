@@ -1,12 +1,11 @@
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import { type RunningState } from '@qovery/shared/enums'
+import { type ServiceStateDto } from 'qovery-ws-typescript-axios'
 
 export interface ServiceRunningStatus {
   id: string
-  state: RunningState
+  state: keyof typeof ServiceStateDto
   pods: {
     name: string
-    state: RunningState
+    state: keyof typeof ServiceStateDto
     restart_count: number
     state_message: string
   }[]
