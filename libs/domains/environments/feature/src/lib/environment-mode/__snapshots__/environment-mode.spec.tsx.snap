@@ -4,7 +4,7 @@ exports[`EnvironmentMode should render as development mode 1`] = `
 <body>
   <div>
     <span
-      class="inline-flex items-center shrink-0 font-medium rounded border text-sm py-1 px-2 bg-neutral-100 border-neutral-200 text-neutral-400"
+      class="inline-flex items-center shrink-0 font-medium border text-sm py-1 px-2 rounded bg-neutral-100 border-neutral-200 text-neutral-400"
       data-accent-color="neutral"
     >
       Development
@@ -17,7 +17,7 @@ exports[`EnvironmentMode should render as preview mode 1`] = `
 <body>
   <div>
     <span
-      class="inline-flex items-center shrink-0 font-medium rounded text-purple-500 border text-sm py-1 px-2 bg-purple-50 border-purple-500"
+      class="inline-flex items-center shrink-0 font-medium text-purple-500 border text-sm py-1 px-2 rounded bg-purple-50 border-purple-500"
       data-accent-color="purple"
     >
       Preview
@@ -30,7 +30,7 @@ exports[`EnvironmentMode should render as production mode 1`] = `
 <body>
   <div>
     <span
-      class="inline-flex items-center shrink-0 font-medium rounded text-red-500 border text-sm py-1 px-2 bg-red-50 border-red-500"
+      class="inline-flex items-center shrink-0 font-medium text-red-500 border text-sm py-1 px-2 rounded bg-red-50 border-red-500"
       data-accent-color="red"
     >
       Production
@@ -43,7 +43,7 @@ exports[`EnvironmentMode should render as staging mode 1`] = `
 <body>
   <div>
     <span
-      class="inline-flex items-center shrink-0 font-medium rounded border text-sm py-1 px-2 bg-neutral-100 border-neutral-200 text-neutral-400"
+      class="inline-flex items-center shrink-0 font-medium border text-sm py-1 px-2 rounded bg-neutral-100 border-neutral-200 text-neutral-400"
       data-accent-color="neutral"
     >
       Staging
