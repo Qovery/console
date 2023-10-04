@@ -195,11 +195,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
                 <Dt>ServiceType:</Dt>
                 <Dd>
                   <Badge variant="surface" size="xs" className="items-center gap-2 capitalize">
-                    <Icon
-                      width={16}
-                      viewBox="0 0 24 16"
-                      name={containerRegistryKindToIcon(containerImage.registry.kind)}
-                    />
+                    <Icon width={16} name={containerRegistryKindToIcon(containerImage.registry.kind)} />
                     <Truncate text={containerImage.registry.name.toLowerCase()} truncateLimit={18} />
                   </Badge>
                 </Dd>
