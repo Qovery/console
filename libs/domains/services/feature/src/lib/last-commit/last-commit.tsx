@@ -1,7 +1,7 @@
 import { type ApplicationGitRepository, type Commit } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { type ServiceType } from '@qovery/domains/services/data-access'
-import { Avatar, Button, Icon, IconAwesomeEnum, Tooltip } from '@qovery/shared/ui'
+import { Avatar, Button, Icon, IconAwesomeEnum, Tooltip, Truncate } from '@qovery/shared/ui'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import { twMerge } from '@qovery/shared/util-js'
 import { useCommits } from '../hooks/use-commits/use-commits'
@@ -63,7 +63,9 @@ export function LastCommit({ className, gitRepository, serviceId, serviceType }:
           content={
             <>
               <p>Commit at: {deployedCommit.created_at}</p>
-              <p>Message: {deployedCommit.message}</p>
+              <p>
+                Message: <Truncate text={deployedCommit.message} truncateLimit={50} />
+              </p>
             </>
           }
         >
