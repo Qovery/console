@@ -25,9 +25,18 @@ export interface CrudModalFeatureProps {
   onClose: () => void
 }
 
-export function CrudModalFeature(props: CrudModalFeatureProps) {
+export function CrudModalFeature({
+  organizationId,
+  projectId,
+  customDomain,
+  application,
+  onClose,
+}: CrudModalFeatureProps) {
   const methods = useForm({
-    defaultValues: { domain: props.customDomain ? props.customDomain.domain : '' },
+    defaultValues: {
+      domain: customDomain ? customDomain.domain : '',
+      generate_certificate: customDomain ? customDomain?.generate_certificate : true,
+    },
     mode: 'onChange',
   })
   const navigate = useNavigate()
@@ -36,16 +45,16 @@ export function CrudModalFeature(props: CrudModalFeatureProps) {
   const { enableAlertClickOutside } = useModal()
 
   const toasterCallback = () => {
-    if (props.application) {
+    if (application) {
       dispatch(
         postApplicationActionsRedeploy({
-          applicationId: props.application.id,
-          environmentId: props.application.environment?.id || '',
-          serviceType: getServiceType(props.application),
+          applicationId: application.id,
+          environmentId: application.environment?.id || '',
+          serviceType: getServiceType(application),
           callback: () =>
             navigate(
-              ENVIRONMENT_LOGS_URL(props.organizationId, props.projectId, props.application?.environment?.id) +
-                DEPLOYMENT_LOGS_URL(props.application?.id)
+              ENVIRONMENT_LOGS_URL(organizationId, projectId, application?.environment?.id) +
+                DEPLOYMENT_LOGS_URL(application?.id)
             ),
         })
       )
@@ -57,57 +66,59 @@ export function CrudModalFeature(props: CrudModalFeatureProps) {
   }, [methods.formState, enableAlertClickOutside])
 
   const onSubmit = methods.handleSubmit((data) => {
-    if (!props.application) return
+    if (!application) return
 
-    if (props.customDomain) {
+    const serviceType = getServiceType(application)
+
+    if (customDomain) {
       dispatch(
         editCustomDomain({
-          applicationId: props.application.id,
-          customDomain: props.customDomain,
-          domain: data.domain,
-          serviceType: getServiceType(props.application),
+          applicationId: application.id,
+          id: customDomain.id,
+          data,
+          serviceType,
           toasterCallback,
         })
       )
         .unwrap()
         .then(() => {
-          dispatch(fetchApplicationLinks({ applicationId: props.application?.id || '' }))
-          props.onClose()
+          dispatch(fetchApplicationLinks({ applicationId: application?.id || '' }))
+          onClose()
         })
         .catch((e) => console.error(e))
     } else {
       dispatch(
         createCustomDomain({
-          applicationId: props.application.id,
-          domain: data.domain,
-          serviceType: getServiceType(props.application),
+          applicationId: application.id,
+          serviceType,
+          data,
           toasterCallback,
         })
       )
         .unwrap()
         .then(() => {
-          dispatch(fetchApplicationLinks({ applicationId: props.application?.id || '' }))
-          props.onClose()
+          dispatch(fetchApplicationLinks({ applicationId: application?.id || '' }))
+          onClose()
         })
         .catch((e) => console.error(e))
     }
   })
 
   const defaultLink = useMemo(() => {
-    const links = props.application?.links?.items
+    const links = application?.links?.items
     const defaultLinkItem = links?.find((link) => link.is_qovery_domain && link.is_default)
 
     return defaultLinkItem?.url?.replace('https://', '') || ''
-  }, [props.application?.links?.items])
+  }, [application?.links?.items])
 
   return (
     <FormProvider {...methods}>
       <CrudModal
-        customDomain={props.customDomain}
+        customDomain={customDomain}
         onSubmit={onSubmit}
-        onClose={props.onClose}
+        onClose={onClose}
         loading={loadingStatus === 'loading'}
-        isEdit={!!props.customDomain}
+        isEdit={!!customDomain}
         link={defaultLink}
       />
     </FormProvider>

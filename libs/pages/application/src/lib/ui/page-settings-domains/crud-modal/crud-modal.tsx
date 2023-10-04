@@ -1,6 +1,6 @@
 import { type CustomDomain } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
-import { ExternalLink, InputText, ModalCrud } from '@qovery/shared/ui'
+import { ExternalLink, InputText, InputToggle, ModalCrud } from '@qovery/shared/ui'
 
 export interface CrudModalProps {
   customDomain?: CustomDomain
@@ -11,7 +11,7 @@ export interface CrudModalProps {
   link?: string
 }
 
-export function CrudModal(props: CrudModalProps) {
+export function CrudModal({ customDomain, onSubmit, onClose, loading, isEdit, link }: CrudModalProps) {
   const { control, watch } = useFormContext()
 
   const watchDomain = watch('domain')
@@ -19,12 +19,12 @@ export function CrudModal(props: CrudModalProps) {
 
   return (
     <ModalCrud
-      title={props.isEdit ? `Domain: ${props.customDomain?.domain}` : 'Set custom DNS name'}
+      title={isEdit ? `Domain: ${customDomain?.domain}` : 'Set custom DNS name'}
       description="DNS configuration"
-      onSubmit={props.onSubmit}
-      onClose={props.onClose}
-      loading={props.loading}
-      isEdit={props.isEdit}
+      onSubmit={onSubmit}
+      onClose={onClose}
+      loading={loading}
+      isEdit={isEdit}
       howItWorks={
         <>
           <ol className="list-decimal ml-3">
@@ -33,9 +33,14 @@ export function CrudModal(props: CrudModalProps) {
               shown above. Qovery will handle TLS/SSL certificate creation and renewal. If “*” is not supported by your
               DNS provider, you will have to configure each subdomain manually.
             </li>
-            <li>
+            <li className="mb-2">
               If the service needs to expose more than one port publicly, you can define a dedicated subdomain to
               redirect the traffic to each port by setting the “Port Name” value within the port settings.
+            </li>
+            <li>
+              If you don’t want Qovery to manage the certificate for this custom domain, disable the “Generate
+              Certificate” flag. Disabling this flag is necessary whenever your service is behind a CDN that already
+              manages the certificate for you and the traffic is proxied by the CDN to the Qovery domain.
             </li>
           </ol>
           <ExternalLink className="mt-2 " href="https://hub.qovery.com/guides/getting-started/setting-custom-domain">
@@ -61,27 +66,38 @@ export function CrudModal(props: CrudModalProps) {
           />
         )}
       />
-      {(props.customDomain?.validation_domain || props.link) && (
+      {(customDomain?.validation_domain || link) && (
         <div className="w-full rounded-[3px] overflow-hidden">
           <div className="flex items-center h-7 text-xs text-neutral-100 bg-neutral-700 px-3">CNAME configuration</div>
           <div className={`font-code bg-neutral-650 px-3 pt-1.5 ${hideDomain ? 'pb-3' : 'pb-1'}`}>
             <div className="mb-2">
               <span className="block text-violet-400 text-xs">{watchDomain} CNAME</span>
-              <span className="block text-purple-300 text-xs">
-                {props.customDomain?.validation_domain || props.link}
-              </span>
+              <span className="block text-purple-300 text-xs">{customDomain?.validation_domain || link}</span>
             </div>
             {hideDomain && (
               <div>
                 <span className="block text-violet-400 text-xs">*.{watchDomain} CNAME</span>
-                <span className="block text-purple-300 text-xs">
-                  {props.customDomain?.validation_domain || props.link}
-                </span>
+                <span className="block text-purple-300 text-xs">{customDomain?.validation_domain || link}</span>
               </div>
             )}
           </div>
         </div>
       )}
+      <Controller
+        name="generate_certificate"
+        control={control}
+        render={({ field }) => (
+          <InputToggle
+            className="mt-6"
+            value={field.value}
+            onChange={field.onChange}
+            title="Generate certificate"
+            description="Qovery will generate and manage the certificate for this domain."
+            forceAlignTop
+            small
+          />
+        )}
+      />
     </ModalCrud>
   )
 }

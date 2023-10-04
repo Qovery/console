@@ -1,5 +1,10 @@
 import { createAsyncThunk, createEntityAdapter, createSelector, createSlice } from '@reduxjs/toolkit'
-import { ContainerCustomDomainApi, type CustomDomain, CustomDomainApi } from 'qovery-typescript-axios'
+import {
+  ContainerCustomDomainApi,
+  type CustomDomain,
+  CustomDomainApi,
+  type CustomDomainRequest,
+} from 'qovery-typescript-axios'
 import { type ServiceTypeEnum, isContainer } from '@qovery/shared/enums'
 import { type CustomDomainsState } from '@qovery/shared/interfaces'
 import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
@@ -31,18 +36,16 @@ export const createCustomDomain = createAsyncThunk(
   'customDomains/create',
   async (payload: {
     applicationId: string
-    domain: string
+    data: CustomDomainRequest
     serviceType: ServiceTypeEnum
     toasterCallback: () => void
   }) => {
     let response
     if (isContainer(payload.serviceType)) {
-      response = await customDomainContainerApi.createContainerCustomDomain(payload.applicationId, {
-        domain: payload.domain,
-      })
+      response = await customDomainContainerApi.createContainerCustomDomain(payload.applicationId, { ...payload.data })
     } else {
       response = await customDomainApplicationApi.createApplicationCustomDomain(payload.applicationId, {
-        domain: payload.domain,
+        ...payload.data,
       })
     }
 
@@ -54,8 +57,8 @@ export const editCustomDomain = createAsyncThunk(
   'customDomains/edit',
   async (payload: {
     applicationId: string
-    domain: string
-    customDomain: CustomDomain
+    id: string
+    data: CustomDomainRequest
     serviceType: ServiceTypeEnum
     toasterCallback: () => void
   }) => {
@@ -63,15 +66,11 @@ export const editCustomDomain = createAsyncThunk(
     if (isContainer(payload.serviceType)) {
       response = await customDomainContainerApi.editContainerCustomDomain(
         payload.applicationId,
-        payload.customDomain.id,
-        {
-          domain: payload.domain,
-        }
+        payload.id,
+        payload.data
       )
     } else {
-      response = await customDomainApplicationApi.editCustomDomain(payload.applicationId, payload.customDomain.id, {
-        domain: payload.domain,
-      })
+      response = await customDomainApplicationApi.editCustomDomain(payload.applicationId, payload.id, payload.data)
     }
 
     return response.data as CustomDomain
