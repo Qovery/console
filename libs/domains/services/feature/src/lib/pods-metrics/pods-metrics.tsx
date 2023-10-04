@@ -1,5 +1,24 @@
-import { Skeleton, TablePrimitives } from '@qovery/shared/ui'
+import {
+  type SortingState,
+  createColumnHelper,
+  flexRender,
+  getCoreRowModel,
+  getExpandedRowModel,
+  getSortedRowModel,
+  useReactTable,
+} from '@tanstack/react-table'
+import { type ServiceStateDto } from 'qovery-ws-typescript-axios'
+import { Fragment, useMemo, useState } from 'react'
+import { match } from 'ts-pattern'
+import { ServiceTypeEnum } from '@qovery/shared/enums'
+import { Badge, Icon, IconAwesomeEnum, StatusChip, TablePrimitives, Tooltip } from '@qovery/shared/ui'
+import { dateFullFormat, timeAgo } from '@qovery/shared/util-dates'
+import { twMerge } from '@qovery/shared/util-js'
 import { useMetrics } from '../hooks/use-metrics/use-metrics'
+import { useRunningStatus } from '../hooks/use-running-status/use-running-status'
+import { useService } from '../hooks/use-service/use-service'
+import { type Pod, PodDetails } from '../pod-details/pod-details'
+import { PodsMetricsSkeleton } from './pods-metrics-skeleton'
 
 const { Table } = TablePrimitives
 
@@ -9,60 +28,256 @@ export interface PodsMetricsProps {
 }
 
 export function PodsMetrics({ environmentId, serviceId }: PodsMetricsProps) {
-  const { data = [], isLoading } = useMetrics({ environmentId, serviceId })
+  const {
+    data: metrics = [],
+    isLoading: isMetricsLoading,
+    isError: isMetricsError,
+  } = useMetrics({ environmentId, serviceId })
+  const {
+    data: runningStatuses,
+    isLoading: isRunningStatusesLoading,
+    isError: isRunningStatusesError,
+  } = useRunningStatus({ environmentId, serviceId })
+  const [sorting, setSorting] = useState<SortingState>([{ id: 'state', desc: false }])
+  const {
+    data: service,
+    isLoading: isServiceLoading,
+    isError: isServiceError,
+  } = useService({ environmentId, serviceId })
 
-  if (data === null) {
-    return null
+  const pods: Pod[] = useMemo(() => {
+    // NOTE: metrics or runningStatuses could be undefined because backend doesn't have the info.
+    // So we must find all possible pods by merging the two into a Set.
+    const podNames = new Set([
+      ...(runningStatuses?.pods.map(({ name }) => name) ?? []),
+      ...(metrics?.map(({ pod_name }) => pod_name) ?? []),
+    ])
+
+    return [...podNames].map((podName) => ({
+      ...(metrics?.find(({ pod_name }) => pod_name === podName) ?? {}),
+      ...(runningStatuses?.pods.find(({ name }) => name === podName) ?? {}),
+      podName,
+    }))
+  }, [metrics, runningStatuses])
+
+  const columnHelper = createColumnHelper<Pod>()
+  const placeholder = <Icon name={IconAwesomeEnum.CIRCLE_QUESTION} className="text-neutral-300" />
+
+  const containerImage = match(service)
+    .with({ serviceType: ServiceTypeEnum.JOB }, ({ source }) => source?.image)
+    .with({ serviceType: ServiceTypeEnum.CONTAINER }, ({ image_name, tag, registry }) => ({
+      image_name,
+      tag,
+      registry,
+    }))
+    .otherwise(() => undefined)
+
+  const columns = useMemo(
+    () => [
+      columnHelper.accessor('podName', {
+        header: match(service)
+          .with({ serviceType: ServiceTypeEnum.JOB }, () => 'Job executions')
+          .otherwise(() => 'Service pods'),
+        cell: (info) => {
+          const podName = info.getValue()
+          return (
+            <div className="flex flex-row">
+              <button
+                className="w-9 pointer text-neutral-350"
+                type="button"
+                onClick={info.row.getToggleExpandedHandler()}
+              >
+                {info.row.getIsExpanded() ? (
+                  <Icon name={IconAwesomeEnum.CHEVRON_UP} />
+                ) : (
+                  <Icon name={IconAwesomeEnum.CHEVRON_DOWN} />
+                )}
+              </button>
+              <Badge size="xs" variant="surface">
+                {podName.length > 23 ? `${podName.substring(0, 10)}...${podName.slice(-10)}` : podName}
+              </Badge>
+            </div>
+          )
+        },
+      }),
+      columnHelper.accessor('state', {
+        header: 'Status',
+        cell: (info) => (
+          <Badge size="sm" variant="outline" radius="full" className="gap-2 capitalize">
+            <StatusChip status={info.getValue() ?? 'UNKNOWN'} />
+            <span className="text-neutral-400">{info.getValue()?.toLowerCase() ?? 'Unknown'}</span>
+          </Badge>
+        ),
+        sortingFn: (rowA, rowB, columnId) => {
+          const stateA = rowA.getValue<ServiceStateDto>(columnId)
+          const stateB = rowB.getValue<ServiceStateDto>(columnId)
+
+          if (stateA === 'ERROR' && stateB === 'ERROR') {
+            return 0
+          } else if (stateA === 'ERROR' && stateB !== 'ERROR') {
+            return -1
+          } else if (stateA !== 'ERROR' && stateB === 'ERROR') {
+            return 1
+          } else if (stateA === 'WARNING' && stateB === 'WARNING') {
+            return 0
+          } else if (stateA === 'WARNING' && stateB !== 'WARNING') {
+            return -1
+          } else if (stateA !== 'WARNING' && stateB === 'WARNING') {
+            return 1
+          } else {
+            return stateA.localeCompare(stateB)
+          }
+        },
+      }),
+      ...(service?.serviceType === 'DATABASE'
+        ? []
+        : [
+            columnHelper.accessor('service_version', {
+              header: 'Version',
+              cell: (info) => {
+                const value = info.getValue()
+                return (
+                  value && (
+                    <Badge variant="surface" size="xs" className="gap-2">
+                      {containerImage ? (
+                        `${containerImage.image_name}:${containerImage.tag}`
+                      ) : (
+                        <>
+                          <Icon name={IconAwesomeEnum.CODE_COMMIT} />
+                          {value.substring(0, 7)}
+                        </>
+                      )}
+                    </Badge>
+                  )
+                )
+              },
+            }),
+          ]),
+      columnHelper.accessor('memory.current_percent', {
+        header: 'Memory',
+        cell: (info) => (info.getValue() !== undefined ? `${info.getValue()}%` : placeholder),
+      }),
+      columnHelper.accessor('cpu.current_percent', {
+        header: 'vCPU',
+        cell: (info) => (info.getValue() !== undefined ? `${info.getValue()}%` : placeholder),
+      }),
+      ...(service?.serviceType === 'JOB'
+        ? []
+        : [
+            columnHelper.accessor('storages', {
+              header: 'Storage',
+              cell: (info) => {
+                const value = info.getValue()
+                return value?.length
+                  ? // https://qovery.slack.com/archives/C02NQ0LC8M9/p1693235796272359
+                    `${Math.max(...value.map(({ current_percent }) => current_percent))}%`
+                  : '-'
+              },
+            }),
+          ]),
+      columnHelper.accessor('started_at', {
+        header: match(service)
+          .with({ serviceType: ServiceTypeEnum.JOB }, () => 'Start time')
+          .otherwise(() => 'Age'),
+        cell: (info) => {
+          const value = info.getValue()
+          return value ? (
+            <Tooltip content={dateFullFormat(value)}>
+              <span className="text-xs text-neutral-350">{timeAgo(new Date(value))}</span>
+            </Tooltip>
+          ) : (
+            placeholder
+          )
+        },
+      }),
+    ],
+    [service, containerImage]
+  )
+
+  const table = useReactTable({
+    data: pods,
+    columns,
+    state: {
+      sorting,
+    },
+    onSortingChange: setSorting,
+    getCoreRowModel: getCoreRowModel(),
+    getRowCanExpand: () => true,
+    getExpandedRowModel: getExpandedRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+  })
+
+  if (isMetricsLoading || isServiceLoading) {
+    return <PodsMetricsSkeleton />
+  } else if (pods.length === 0 && !isMetricsLoading && isRunningStatusesLoading) {
+    // NOTE: runningStatuses may never resolve if service not started
+    return (
+      <div className="flex flex-col items-center py-10 bg-neutral-100 text-neutral-350 border border-neutral-200">
+        <Icon className="text-neutral-300" name={IconAwesomeEnum.PLAY} />
+        <span className="font-medium">Application is not running</span>
+        <span>Start to see the activites of the pods and containers.</span>
+      </div>
+    )
+  } else if (
+    (pods.length === 0 && !isMetricsLoading && !isRunningStatusesLoading) ||
+    isMetricsError ||
+    isRunningStatusesError ||
+    isServiceError
+  ) {
+    return (
+      <div className="flex flex-col items-center py-10 bg-neutral-100 text-neutral-350 border border-neutral-200">
+        <Icon className="text-neutral-300" name={IconAwesomeEnum.CIRCLE_QUESTION} />
+        <span className="font-medium">Metrics for pods are not available, try again</span>
+        <span>There is a technical issue on retrieving the pod metrics.</span>
+      </div>
+    )
   }
 
   return (
     <Table.Root className="w-full">
       <Table.Header>
-        <Table.Row>
-          <Table.ColumnHeaderCell className="font-medium w-1/2">Instance name</Table.ColumnHeaderCell>
-          <Table.ColumnHeaderCell className="font-medium">RAM usage</Table.ColumnHeaderCell>
-          <Table.ColumnHeaderCell className="font-medium">vCPU</Table.ColumnHeaderCell>
-          <Table.ColumnHeaderCell className="font-medium">Storage</Table.ColumnHeaderCell>
-        </Table.Row>
+        {table.getHeaderGroups().map((headerGroup) => (
+          <Table.Row key={headerGroup.id}>
+            {headerGroup.headers.map((header) => (
+              <Table.ColumnHeaderCell className="first:w-1/4 first:pl-[52px] font-medium" key={header.id}>
+                <button
+                  type="button"
+                  className={twMerge(
+                    'flex items-center gap-1',
+                    header.column.getCanSort() ? 'cursor-pointer select-none' : ''
+                  )}
+                  onClick={header.column.getToggleSortingHandler()}
+                >
+                  {flexRender(header.column.columnDef.header, header.getContext())}
+                  {match(header.column.getIsSorted())
+                    .with('asc', () => <Icon className="text-xs" name={IconAwesomeEnum.ARROW_DOWN} />)
+                    .with('desc', () => <Icon className="text-xs" name={IconAwesomeEnum.ARROW_UP} />)
+                    .with(false, () => null)
+                    .exhaustive()}
+                </button>
+              </Table.ColumnHeaderCell>
+            ))}
+          </Table.Row>
+        ))}
       </Table.Header>
       <Table.Body>
-        {isLoading ? (
-          <Table.Row>
-            <Table.Cell>
-              <Skeleton height={18} width={200} />
-            </Table.Cell>
-            <Table.Cell>
-              <Skeleton height={18} width={20} />
-            </Table.Cell>
-            <Table.Cell>
-              <Skeleton height={18} width={20} />
-            </Table.Cell>
-            <Table.Cell>
-              <Skeleton height={18} width={20} />
-            </Table.Cell>
-          </Table.Row>
-        ) : data?.length ? (
-          data.map((podMetrics) => (
-            <Table.Row key={podMetrics.pod_name}>
-              <Table.Cell>{podMetrics.pod_name}</Table.Cell>
-              <Table.Cell>{podMetrics.memory.current_percent}%</Table.Cell>
-              <Table.Cell>{podMetrics.cpu.current_percent}%</Table.Cell>
-              <Table.Cell>
-                {podMetrics.storages.length
-                  ? // https://qovery.slack.com/archives/C02NQ0LC8M9/p1693235796272359
-                    Math.max(...podMetrics.storages.map((storage) => storage.current_percent))
-                  : '-'}
-              </Table.Cell>
+        {table.getRowModel().rows.map((row) => (
+          <Fragment key={row.id}>
+            <Table.Row>
+              {row.getVisibleCells().map((cell) => (
+                <Table.Cell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</Table.Cell>
+              ))}
             </Table.Row>
-          ))
-        ) : (
-          <Table.Row>
-            <Table.Cell>-</Table.Cell>
-            <Table.Cell>-</Table.Cell>
-            <Table.Cell>-</Table.Cell>
-            <Table.Cell>-</Table.Cell>
-          </Table.Row>
-        )}
+            {row.getIsExpanded() && row.original.containers && (
+              <Table.Row className="dark bg-neutral-550 text-xs">
+                {/* 2nd row is a custom 1 cell row */}
+                <Table.Cell colSpan={row.getVisibleCells().length} className="p-0">
+                  <PodDetails pod={row.original} serviceId={serviceId} isGitBased={!containerImage} />
+                </Table.Cell>
+              </Table.Row>
+            )}
+          </Fragment>
+        ))}
       </Table.Body>
     </Table.Root>
   )
