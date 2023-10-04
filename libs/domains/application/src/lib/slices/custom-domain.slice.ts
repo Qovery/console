@@ -42,11 +42,9 @@ export const createCustomDomain = createAsyncThunk(
   }) => {
     let response
     if (isContainer(payload.serviceType)) {
-      response = await customDomainContainerApi.createContainerCustomDomain(payload.applicationId, { ...payload.data })
+      response = await customDomainContainerApi.createContainerCustomDomain(payload.applicationId, payload.data)
     } else {
-      response = await customDomainApplicationApi.createApplicationCustomDomain(payload.applicationId, {
-        ...payload.data,
-      })
+      response = await customDomainApplicationApi.createApplicationCustomDomain(payload.applicationId, payload.data)
     }
 
     return response.data as CustomDomain
