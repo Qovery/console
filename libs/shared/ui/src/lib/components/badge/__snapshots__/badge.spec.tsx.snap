@@ -4,7 +4,7 @@ exports[`Badge shoud match color snapshot 1`] = `
 <body>
   <div>
     <span
-      class="inline-flex items-center shrink-0 font-medium rounded text-green-500 border text-sm py-1 px-2 border-green-500"
+      class="inline-flex items-center shrink-0 font-medium text-green-500 border text-sm py-1 px-2 rounded border-green-500"
       data-accent-color="green"
     >
       Foobar
@@ -17,7 +17,7 @@ exports[`Badge shoud match size snapshot 1`] = `
 <body>
   <div>
     <span
-      class="inline-flex items-center shrink-0 font-medium rounded border text-xs px-1 py-0.5 border-neutral-250 text-neutral-350 dark:border-neutral-350"
+      class="inline-flex items-center shrink-0 font-medium border text-xs px-1 py-0.5 rounded border-neutral-250 text-neutral-350 dark:border-neutral-350"
     >
       Foobar
     </span>
@@ -29,7 +29,7 @@ exports[`Badge shoud match variant snapshot 1`] = `
 <body>
   <div>
     <span
-      class="inline-flex items-center shrink-0 font-medium rounded border text-sm py-1 px-2 bg-neutral-100 border-neutral-200 text-neutral-400"
+      class="inline-flex items-center shrink-0 font-medium border text-sm py-1 px-2 rounded bg-neutral-100 border-neutral-200 text-neutral-400"
     >
       Foobar
     </span>
