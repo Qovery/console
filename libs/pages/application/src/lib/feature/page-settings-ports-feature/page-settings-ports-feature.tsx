@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { type Probe, type ProbeType, type ServicePort } from 'qovery-typescript-axios'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -61,6 +62,7 @@ export const deletePort = (application?: ApplicationEntity, portId?: string) => 
 
 export function PageSettingsPortsFeature() {
   const dispatch = useDispatch<AppDispatch>()
+  const queryClient = useQueryClient()
 
   const { organizationId = '', projectId = '', applicationId = '', environmentId = '' } = useParams()
 
@@ -133,6 +135,7 @@ export function PageSettingsPortsFeature() {
                   data: cloneApplication,
                   serviceType: getServiceType(application),
                   toasterCallback,
+                  queryClient,
                 })
               )
             }

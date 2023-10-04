@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { type EnvironmentDeploymentRule } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
@@ -12,6 +13,7 @@ import { PageSettingsPreviewEnvironments } from '../../ui/page-settings-preview-
 
 export function PageSettingsPreviewEnvironmentsFeature() {
   const { projectId = '', environmentId = '' } = useParams()
+  const queryClient = useQueryClient()
   const dispatch = useDispatch<AppDispatch>()
   const [loading, setLoading] = useState(false)
 
@@ -57,6 +59,7 @@ export function PageSettingsPreviewEnvironmentsFeature() {
               silentToaster: true,
               // eslint-disable-next-line @typescript-eslint/no-empty-function
               toasterCallback: () => {},
+              queryClient,
             })
           )
         }

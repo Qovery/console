@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { type JobResponseAllOfSchedule } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
@@ -13,6 +14,7 @@ import PageSettingsConfigureJob from '../../ui/page-settings-configure-job/page-
 
 export function PageSettingsConfigureJobFeature() {
   const { organizationId = '', projectId = '', applicationId = '', environmentId = '' } = useParams()
+  const queryClient = useQueryClient()
   const methods = useForm<JobConfigureData>({ mode: 'onChange' })
   const navigate = useNavigate()
 
@@ -164,6 +166,7 @@ export function PageSettingsConfigureJobFeature() {
         applicationId: job.id as string,
         serviceType: ServiceTypeEnum.JOB,
         toasterCallback,
+        queryClient,
       })
     )
       .unwrap()

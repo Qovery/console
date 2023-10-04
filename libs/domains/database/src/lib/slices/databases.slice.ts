@@ -6,6 +6,7 @@ import {
   createSelector,
   createSlice,
 } from '@reduxjs/toolkit'
+import { type QueryClient } from '@tanstack/react-query'
 import { type AxiosResponse } from 'axios'
 import {
   CloudProviderApi,
@@ -32,6 +33,7 @@ import {
   sortByKey,
 } from '@qovery/shared/util-js'
 import { type RootState } from '@qovery/state/store'
+import { queries } from '@qovery/state/util-queries'
 
 export const DATABASES_FEATURE_KEY = 'databases'
 
@@ -69,10 +71,26 @@ export const fetchDatabase = createAsyncThunk<Database, { databaseId: string }>(
 
 export const editDatabase = createAsyncThunk(
   'database/edit',
-  async (payload: { databaseId: string; data: DatabaseEntity; toasterCallback: () => void }) => {
+  async (payload: {
+    databaseId: string
+    data: DatabaseEntity
+    toasterCallback: () => void
+    queryClient: QueryClient
+  }) => {
     const cloneDatabase = Object.assign({}, refactoDatabasePayload(payload.data) as DatabaseEntity)
 
     const response = await databaseMainCallsApi.editDatabase(payload.databaseId, cloneDatabase)
+
+    if (response.data.environment?.id) {
+      payload.queryClient.invalidateQueries({
+        queryKey: queries.services.list(response.data.environment.id).queryKey,
+      })
+    }
+    payload.queryClient.invalidateQueries({
+      // NOTE: we don't care about the serviceType here because it's not related to cache
+      queryKey: queries.services.details({ serviceId: payload.databaseId, serviceType: 'DATABASE' }).queryKey,
+    })
+
     return response.data
   }
 )
@@ -108,13 +126,17 @@ export const fetchDatabaseMasterCredentials = createAsyncThunk<Credentials, { da
 
 export const deleteDatabaseAction = createAsyncThunk(
   'databaseActions/delete',
-  async (data: { environmentId: string; databaseId: string; force?: boolean }) => {
+  async (data: { environmentId: string; databaseId: string; force?: boolean; queryClient: QueryClient }) => {
     try {
       const response = await databaseMainCallsApi.deleteDatabase(data.databaseId)
       if (response.status === 204 || response.status === 200) {
         // success message
         toast(ToastEnum.SUCCESS, 'Your database is being deleted')
       }
+
+      data.queryClient.invalidateQueries({
+        queryKey: queries.services.list(data.environmentId).queryKey,
+      })
 
       return response
     } catch (err) {

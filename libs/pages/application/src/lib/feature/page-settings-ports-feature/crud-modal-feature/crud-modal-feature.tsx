@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { type CloudProviderEnum, PortProtocolEnum, type Probe, type ServicePort } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
@@ -118,6 +119,7 @@ export const handleSubmit = (
 }
 
 export function CrudModalFeature({ application, onClose, port, organizationId, projectId }: CrudModalFeatureProps) {
+  const queryClient = useQueryClient()
   const [loading, setLoading] = useState(false)
   const { enableAlertClickOutside } = useModal()
   const navigate = useNavigate()
@@ -166,6 +168,7 @@ export function CrudModalFeature({ application, onClose, port, organizationId, p
         data: cloneApplication,
         serviceType: getServiceType(application),
         toasterCallback,
+        queryClient,
       })
     )
       .unwrap()

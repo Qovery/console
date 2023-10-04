@@ -1,4 +1,5 @@
 import { type ClickEvent } from '@szhsin/react-menu'
+import { useQueryClient } from '@tanstack/react-query'
 import { DatabaseModeEnum, OrganizationEventTargetType, StateEnum } from 'qovery-typescript-axios'
 import { useMemo } from 'react'
 import { useDispatch } from 'react-redux'
@@ -52,6 +53,7 @@ export function DatabaseButtonsActions(props: DatabaseButtonsActionsProps) {
   const { database, environmentMode, clusterId } = props
   const { openModal, closeModal } = useModal()
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
+  const queryClient = useQueryClient()
   const navigate = useNavigate()
   const [, copyToClipboard] = useCopyToClipboard()
 
@@ -76,7 +78,7 @@ export function DatabaseButtonsActions(props: DatabaseButtonsActionsProps) {
       name: name,
       isDelete: true,
       action: () => {
-        dispatch(deleteDatabaseAction({ environmentId, databaseId: id, force }))
+        dispatch(deleteDatabaseAction({ environmentId, databaseId: id, force, queryClient }))
         navigate(SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_GENERAL_URL)
       },
     })

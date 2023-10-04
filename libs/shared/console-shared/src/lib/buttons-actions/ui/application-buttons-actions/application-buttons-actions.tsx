@@ -1,4 +1,5 @@
 import { type ClickEvent } from '@szhsin/react-menu'
+import { useQueryClient } from '@tanstack/react-query'
 import { OrganizationEventTargetType, StateEnum } from 'qovery-typescript-axios'
 import { useMemo } from 'react'
 import { useDispatch } from 'react-redux'
@@ -68,6 +69,7 @@ export interface ApplicationButtonsActionsProps {
 export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps) {
   const { application, environmentMode, clusterId } = props
   const { environmentId = '', projectId = '', organizationId = '' } = useParams()
+  const queryClient = useQueryClient()
   const dispatch = useDispatch<AppDispatch>()
   const navigate = useNavigate()
   const { openModal, closeModal } = useModal()
@@ -111,7 +113,9 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
       name: name,
       isDelete: true,
       action: () => {
-        dispatch(deleteApplicationAction({ environmentId, applicationId: id, serviceType: serviceType, force }))
+        dispatch(
+          deleteApplicationAction({ environmentId, applicationId: id, serviceType: serviceType, force, queryClient })
+        )
         navigate(SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_GENERAL_URL)
       },
     })

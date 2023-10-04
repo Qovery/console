@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { deleteApplicationAction, selectApplicationById } from '@qovery/domains/application'
@@ -10,6 +11,7 @@ import PageSettingsDangerZone from '../../ui/page-settings-danger-zone/page-sett
 
 export function PageSettingsDangerZoneFeature() {
   const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
+  const queryClient = useQueryClient()
   const dispatch = useDispatch<AppDispatch>()
   const navigate = useNavigate()
   const { data: environment } = useFetchEnvironment(projectId, environmentId)
@@ -20,7 +22,9 @@ export function PageSettingsDangerZoneFeature() {
 
   const deleteApplication = () => {
     if (application) {
-      dispatch(deleteApplicationAction({ environmentId, applicationId, serviceType: getServiceType(application) }))
+      dispatch(
+        deleteApplicationAction({ environmentId, applicationId, serviceType: getServiceType(application), queryClient })
+      )
         .unwrap()
         .then(() => navigate(SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_GENERAL_URL))
     }
