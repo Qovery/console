@@ -1,0 +1,187 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ServiceDetails should match application snapshot 1`] = `
+<body>
+  <div>
+    <div
+      class="flex flex-col shrink-0 gap-5 py-8 text-sm"
+    >
+      <section
+        class="flex flex-1 flex-col text-neutral-350 gap-4 pl-8 pr-5"
+      >
+        <span
+          class="text-neutral-400 font-medium"
+        >
+          About
+        </span>
+        <p>
+          React Application the Qovery Console
+        </p>
+        <dl
+          class="grid grid-cols-2 gap-2"
+        >
+          <dt
+            class="text-neutral-350"
+          >
+            Created:
+          </dt>
+          <dd
+            class="text-neutral-400 font-medium"
+          >
+            12 Apr, 08:48:51
+          </dd>
+          <dt
+            class="text-neutral-350"
+          >
+            Last edit:
+          </dt>
+          <dd
+            class="text-neutral-400 font-medium"
+          >
+            <span
+              class=""
+              data-state="closed"
+            >
+              17 hours
+            </span>
+          </dd>
+        </dl>
+      </section>
+      <hr />
+      <section
+        class="flex flex-1 flex-col text-neutral-350 gap-4 pl-8 pr-5"
+      >
+        <span
+          class="text-neutral-400 font-medium"
+        >
+          Source
+        </span>
+      </section>
+    </div>
+  </div>
+</body>
+`;
+
+exports[`ServiceDetails should match database snapshot 1`] = `
+<body>
+  <div>
+    <div
+      class="flex flex-col shrink-0 gap-5 py-8 text-sm"
+    >
+      <section
+        class="flex flex-1 flex-col text-neutral-350 gap-4 pl-8 pr-5"
+      >
+        <span
+          class="text-neutral-400 font-medium"
+        >
+          About
+        </span>
+        <p>
+          No description provided yet
+        </p>
+        <dl
+          class="grid grid-cols-2 gap-2"
+        >
+          <dt
+            class="text-neutral-350"
+          >
+            Created:
+          </dt>
+          <dd
+            class="text-neutral-400 font-medium"
+          >
+            28 Jul, 14:50:09
+          </dd>
+          <dt
+            class="text-neutral-350"
+          >
+            Last edit:
+          </dt>
+          <dd
+            class="text-neutral-400 font-medium"
+          >
+            <span
+              class=""
+              data-state="closed"
+            >
+              2 months
+            </span>
+          </dd>
+        </dl>
+      </section>
+      <hr />
+      <section
+        class="flex flex-1 flex-col text-neutral-350 gap-4 pl-8 pr-5"
+      >
+        <span
+          class="text-neutral-400 font-medium"
+        >
+          Source
+        </span>
+      </section>
+    </div>
+  </div>
+</body>
+`;
+
+exports[`ServiceDetails should match job snapshot 1`] = `
+<body>
+  <div>
+    <div
+      class="flex flex-col shrink-0 gap-5 py-8 text-sm"
+    >
+      <section
+        class="flex flex-1 flex-col text-neutral-350 gap-4 pl-8 pr-5"
+      >
+        <span
+          class="text-neutral-400 font-medium"
+        >
+          About
+        </span>
+        <p>
+          No description provided yet
+        </p>
+        <dl
+          class="grid grid-cols-2 gap-2"
+        >
+          <dt
+            class="text-neutral-350"
+          >
+            Created:
+          </dt>
+          <dd
+            class="text-neutral-400 font-medium"
+          >
+            12 Sep, 10:08:39
+          </dd>
+          <dt
+            class="text-neutral-350"
+          >
+            Last edit:
+          </dt>
+          <dd
+            class="text-neutral-400 font-medium"
+          >
+            <span
+              class=""
+              data-state="closed"
+            >
+              1 day
+            </span>
+          </dd>
+        </dl>
+      </section>
+      <hr />
+      <section
+        class="flex flex-1 flex-col text-neutral-350 gap-4 pl-8 pr-5"
+      >
+        <span
+          class="text-neutral-400 font-medium"
+        >
+          Source
+        </span>
+      </section>
+    </div>
+  </div>
+</body>
+`;

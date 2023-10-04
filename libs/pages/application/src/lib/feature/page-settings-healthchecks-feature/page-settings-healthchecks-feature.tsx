@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query'
 import equal from 'fast-deep-equal'
 import { type Probe, type ProbeType } from 'qovery-typescript-axios'
 import { useEffect, useMemo, useState } from 'react'
@@ -41,6 +42,7 @@ export const handleSubmit = (data: FieldValues, application: ApplicationEntity):
 
 export function PageSettingsHealthchecksFeature() {
   const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
+  const queryClient = useQueryClient()
 
   const dispatch = useDispatch<AppDispatch>()
   const navigate = useNavigate()
@@ -102,6 +104,7 @@ export function PageSettingsHealthchecksFeature() {
           data: cloneApplication,
           serviceType: getServiceType(application),
           toasterCallback,
+          queryClient,
         })
       )
         .unwrap()

@@ -6,6 +6,7 @@ import {
   createSelector,
   createSlice,
 } from '@reduxjs/toolkit'
+import { type QueryClient } from '@tanstack/react-query'
 import { type AxiosResponse } from 'axios'
 import {
   type ApplicationAdvancedSettings,
@@ -56,6 +57,7 @@ import {
   sortByKey,
 } from '@qovery/shared/util-js'
 import { type RootState } from '@qovery/state/store'
+import { queries } from '@qovery/state/util-queries'
 
 export const APPLICATIONS_FEATURE_KEY = 'applications'
 
@@ -102,10 +104,11 @@ export const editApplication = createAsyncThunk(
   'application/edit',
   async (payload: {
     applicationId: string
-    data: Partial<ApplicationEntity>
+    data: Partial<Omit<ApplicationEntity, 'registry'>> & { registry?: { id?: string | undefined } }
     serviceType: ServiceTypeEnum
     toasterCallback: () => void
     silentToaster?: boolean
+    queryClient: QueryClient
   }) => {
     let response
     if (isContainer(payload.serviceType)) {
@@ -127,6 +130,16 @@ export const editApplication = createAsyncThunk(
         cloneApplication as ApplicationEditRequest
       )
     }
+
+    if (response.data.environment?.id) {
+      payload.queryClient.invalidateQueries({
+        queryKey: queries.services.list(response.data.environment.id).queryKey,
+      })
+    }
+    payload.queryClient.invalidateQueries({
+      // NOTE: we don't care about the serviceType here because it's not related to cache
+      queryKey: queries.services.details({ serviceId: payload.applicationId, serviceType: 'APPLICATION' }).queryKey,
+    })
 
     return response.data as ApplicationEntity
   }
@@ -278,7 +291,13 @@ export const fetchDefaultApplicationAdvancedSettings = createAsyncThunk<
 export const deleteApplicationAction = createAsyncThunk(
   'applicationActions/delete',
   async (
-    data: { environmentId: string; applicationId: string; serviceType?: ServiceTypeEnum; force?: boolean },
+    data: {
+      environmentId: string
+      applicationId: string
+      serviceType?: ServiceTypeEnum
+      force?: boolean
+      queryClient: QueryClient
+    },
     { dispatch }
   ) => {
     try {
@@ -295,6 +314,10 @@ export const deleteApplicationAction = createAsyncThunk(
         // success message
         toast(ToastEnum.SUCCESS, 'Your application is being deleted')
       }
+
+      data.queryClient.invalidateQueries({
+        queryKey: queries.services.list(data.environmentId).queryKey,
+      })
 
       return response
     } catch (err) {

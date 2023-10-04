@@ -16,6 +16,7 @@ import {
   Truncate,
 } from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond, timeAgo } from '@qovery/shared/util-dates'
+import { containerRegistryKindToIcon } from '@qovery/shared/util-js'
 
 export interface PageOrganizationContainerRegistriesProps {
   onAddRegistry: () => void
@@ -23,25 +24,6 @@ export interface PageOrganizationContainerRegistriesProps {
   onDelete: (registry: ContainerRegistryResponse) => void
   containerRegistries?: ContainerRegistryResponse[]
   loading?: LoadingStatus
-}
-
-export const logoByRegistryKind = (kind?: ContainerRegistryKindEnum) => {
-  switch (kind) {
-    case ContainerRegistryKindEnum.DOCR:
-      return IconEnum.DO
-    case ContainerRegistryKindEnum.DOCKER_HUB:
-      return IconEnum.DOCKER
-    case ContainerRegistryKindEnum.SCALEWAY_CR:
-      return IconEnum.SCW
-    case ContainerRegistryKindEnum.GITHUB_CR:
-      return IconEnum.GITHUB
-    case ContainerRegistryKindEnum.GITLAB_CR:
-      return IconEnum.GITLAB
-    case ContainerRegistryKindEnum.GENERIC_CR:
-      return ''
-    default:
-      return IconEnum.AWS
-  }
 }
 
 export function PageOrganizationContainerRegistries(props: PageOrganizationContainerRegistriesProps) {
@@ -74,7 +56,11 @@ export function PageOrganizationContainerRegistries(props: PageOrganizationConta
                 className="flex justify-between items-center px-5 py-4 border-b border-neutral-250 last:border-0"
               >
                 <div className="flex">
-                  <Icon name={logoByRegistryKind(registry.kind)} width="20" height="20" />
+                  <Icon
+                    name={registry.kind ? containerRegistryKindToIcon(registry.kind) : IconEnum.AWS}
+                    width="20"
+                    height="20"
+                  />
                   <div className="ml-4">
                     <h2 className="flex text-xs text-neutral-400 font-medium mb-1">
                       <Truncate truncateLimit={60} text={registry.name || ''} />

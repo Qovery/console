@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { type ServiceStorageStorage } from 'qovery-typescript-axios'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -23,6 +24,7 @@ export const removeStorage = (storage: ServiceStorageStorage, application: Appli
 
 export function PageSettingsStorageFeature() {
   const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
+  const queryClient = useQueryClient()
   const dispatch = useDispatch<AppDispatch>()
   const navigate = useNavigate()
   const { openModal, closeModal } = useModal()
@@ -67,6 +69,7 @@ export function PageSettingsStorageFeature() {
                 data: app,
                 serviceType: getServiceType(application),
                 toasterCallback,
+                queryClient,
               })
             )
 

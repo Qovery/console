@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { BuildModeEnum, BuildPackLanguageEnum } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
@@ -101,6 +102,7 @@ export const handleJobSubmit = (data: FieldValues, application: ApplicationEntit
 
 export function PageSettingsGeneralFeature() {
   const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
+  const queryClient = useQueryClient()
   const dispatch = useDispatch<AppDispatch>()
   const navigate = useNavigate()
   const application = useSelector<RootState, ApplicationEntity | undefined>(
@@ -142,7 +144,7 @@ export function PageSettingsGeneralFeature() {
 
   const onSubmit = methods.handleSubmit((data) => {
     if (data && application) {
-      let cloneApplication: ApplicationEntity
+      let cloneApplication: Omit<ApplicationEntity, 'registry'> & { registry?: { id?: string } }
       if (isApplication(application)) {
         cloneApplication = handleGitApplicationSubmit(data, application)
       } else if (isJob(application)) {
@@ -162,6 +164,7 @@ export function PageSettingsGeneralFeature() {
           data: cloneApplication,
           serviceType: getServiceType(application),
           toasterCallback,
+          queryClient,
         })
       )
     }

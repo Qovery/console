@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { type ServiceStorageStorage, StorageTypeEnum } from 'qovery-typescript-axios'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
@@ -39,6 +40,7 @@ export const handleSubmit = (
 }
 
 export function StorageModalFeature(props: StorageModalFeatureProps) {
+  const queryClient = useQueryClient()
   const methods = useForm({
     defaultValues: {
       size: props.storage?.size || 4,
@@ -74,7 +76,15 @@ export function StorageModalFeature(props: StorageModalFeatureProps) {
       return
     }
     const app = handleSubmit(data, props.application, props.storage)
-    dispatch(editApplication({ data: app, applicationId: app.id, serviceType: getServiceType(app), toasterCallback }))
+    dispatch(
+      editApplication({
+        data: app,
+        applicationId: app.id,
+        serviceType: getServiceType(app),
+        toasterCallback,
+        queryClient,
+      })
+    )
       .unwrap()
       .then(() => props.onClose())
       .catch((e) => console.error(e))

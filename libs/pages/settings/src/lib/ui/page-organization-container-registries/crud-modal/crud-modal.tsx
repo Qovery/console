@@ -4,6 +4,7 @@ import {
   type ContainerRegistryResponse,
 } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
+import { IconEnum } from '@qovery/shared/enums'
 import { type Value } from '@qovery/shared/interfaces'
 import {
   ExternalLink,
@@ -14,7 +15,7 @@ import {
   InputTextArea,
   ModalCrud,
 } from '@qovery/shared/ui'
-import { logoByRegistryKind } from '../page-organization-container-registries'
+import { containerRegistryKindToIcon } from '@qovery/shared/util-js'
 
 export interface CrudModalProps {
   registry?: ContainerRegistryResponse
@@ -33,7 +34,13 @@ export const getOptionsContainerRegistry = (containerRegistry: AvailableContaine
           ![ContainerRegistryKindEnum.DOCR].includes(containerRegistry.kind as ContainerRegistryKindEnum) && {
             label: containerRegistry.kind || '',
             value: containerRegistry.kind || '',
-            icon: <Icon name={logoByRegistryKind(containerRegistry.kind)} width="16px" height="16px" />,
+            icon: (
+              <Icon
+                name={containerRegistry.kind ? containerRegistryKindToIcon(containerRegistry.kind) : IconEnum.AWS}
+                width="16px"
+                height="16px"
+              />
+            ),
           }
       )
       .filter(Boolean)

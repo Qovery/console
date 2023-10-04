@@ -1,5 +1,5 @@
 import { Chance } from 'chance'
-import { PortProtocolEnum, StorageTypeEnum } from 'qovery-typescript-axios'
+import { ContainerRegistryKindEnum, PortProtocolEnum, StorageTypeEnum } from 'qovery-typescript-axios'
 import { type ContainerApplicationEntity } from '@qovery/shared/interfaces'
 
 const chance = new Chance('123')
@@ -49,6 +49,9 @@ export const containerFactoryMock = (howMany: number): ContainerApplicationEntit
     tag: chance.word({ length: 10 }),
     registry: {
       id: chance.guid(),
+      name: chance.name(),
+      url: chance.url(),
+      kind: chance.pickone(Object.values(ContainerRegistryKindEnum)),
     },
     deployments: {
       loadingStatus: 'loaded',

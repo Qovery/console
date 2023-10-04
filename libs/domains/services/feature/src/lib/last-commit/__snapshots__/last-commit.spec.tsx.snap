@@ -1,0 +1,42 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`LastCommit should match snapshot 1`] = `
+<body>
+  <div>
+    <div
+      class="inline-flex items-center gap-2"
+    >
+      <div
+        class="block rounded-full relative   border-2 border-neutral-200"
+        data-state="closed"
+        data-testid="avatar"
+        style="width: 20px; height: 20px;"
+      >
+        <img
+          class="w-full h-full rounded-full"
+          src="https://avatars.githubusercontent.com/u/19864447?v=4"
+        />
+      </div>
+      <span
+        class="relative"
+        data-state="closed"
+      >
+        <button
+          class="inline-flex items-center shrink-0 font-medium rounded text-xs px-1 py-0.5 bg-neutral-100 border border-neutral-250 text-neutral-400 group justify-between w-20"
+          type="button"
+        >
+          <span
+            class="icon-solid-copy shrink-0 hidden group-hover:inline"
+            role="img"
+          />
+          <span
+            class="icon-solid-code-commit shrink-0 group-hover:hidden"
+            role="img"
+          />
+          ddd1cee
+        </button>
+      </span>
+    </div>
+  </div>
+</body>
+`;

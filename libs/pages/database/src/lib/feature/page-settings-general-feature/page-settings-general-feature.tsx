@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query'
 import equal from 'fast-deep-equal'
 import { DatabaseModeEnum, KubernetesEnum } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
@@ -23,6 +24,7 @@ export const handleSubmit = (data: FieldValues, database: DatabaseEntity) => {
 
 export function PageSettingsGeneralFeature() {
   const { environmentId = '', projectId = '', databaseId = '' } = useParams()
+  const queryClient = useQueryClient()
   const dispatch = useDispatch<AppDispatch>()
 
   const database = useSelector<RootState, DatabaseEntity | undefined>(
@@ -75,6 +77,7 @@ export function PageSettingsGeneralFeature() {
           databaseId: databaseId,
           data: cloneDatabase,
           toasterCallback,
+          queryClient,
         })
       )
         .unwrap()

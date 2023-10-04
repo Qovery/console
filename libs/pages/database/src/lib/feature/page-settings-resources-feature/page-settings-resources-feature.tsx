@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
@@ -21,6 +22,7 @@ export const handleSubmit = (data: FieldValues, database: DatabaseEntity) => {
 
 export function PageSettingsResourcesFeature() {
   const { databaseId = '', environmentId = '', projectId = '' } = useParams()
+  const queryClient = useQueryClient()
 
   const [loading, setLoading] = useState(false)
   const dispatch = useDispatch<AppDispatch>()
@@ -69,6 +71,7 @@ export function PageSettingsResourcesFeature() {
         databaseId: databaseId,
         data: cloneDatabase,
         toasterCallback,
+        queryClient,
       })
     )
       .unwrap()

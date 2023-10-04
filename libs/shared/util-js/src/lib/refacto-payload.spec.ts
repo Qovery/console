@@ -1,5 +1,6 @@
 import {
   CloudProviderEnum,
+  ContainerRegistryKindEnum,
   DatabaseAccessibilityEnum,
   OrganizationCustomRoleClusterPermission,
   StorageTypeEnum,
@@ -104,6 +105,9 @@ describe('testing payload refactoring', () => {
       min_running_instances: 1,
       registry: {
         id: '1',
+        name: 'name',
+        url: 'url',
+        kind: ContainerRegistryKindEnum.DOCKER_HUB,
       },
       image_name: 'image_name',
     }

@@ -13,6 +13,7 @@ const linkVariants = cva(
         brand: ['text-brand-500', 'hover:text-brand-600'],
         red: ['text-red-500', 'hover:text-red-600'],
         sky: ['text-sky-500', 'hover:text-sky-600'],
+        current: ['text-current', 'hover:brightness-75'],
       },
       size: {
         xs: ['text-xs'],
