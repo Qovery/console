@@ -30,7 +30,11 @@ describe('CrudModal', () => {
     const input = screen.getByRole('textbox', { name: /domain/i })
     await userEvent.type(input, 'test.qovery.com')
 
+    const toggle = screen.getByRole('checkbox')
+    await userEvent.click(toggle)
+
     screen.getByDisplayValue('test.qovery.com')
+    screen.getByDisplayValue('true')
   })
 
   it('renders a section with CNAME value', async () => {
