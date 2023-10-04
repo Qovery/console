@@ -114,6 +114,7 @@ export function DeploymentLogs({
       service={service}
       serviceDeploymentStatus={serviceDeploymentStatus}
       isProgressing={isDeploymentProgressing}
+      progressingMsg="Streaming deployment logs"
       withLogsNavigation
       lineNumbers
     >

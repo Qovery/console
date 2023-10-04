@@ -1,5 +1,5 @@
 import equal from 'fast-deep-equal'
-import { type DeploymentStageWithServicesStatuses, type EnvironmentStatus, StateEnum } from 'qovery-typescript-axios'
+import { type DeploymentStageWithServicesStatuses, type EnvironmentStatus } from 'qovery-typescript-axios'
 import { useCallback, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { Route, Routes, matchPath, useLocation, useParams } from 'react-router-dom'
@@ -7,7 +7,6 @@ import useWebSocket from 'react-use-websocket'
 import { selectApplicationsEntitiesByEnvId } from '@qovery/domains/application'
 import { selectDatabasesEntitiesByEnvId } from '@qovery/domains/database'
 import { useFetchEnvironment } from '@qovery/domains/environment'
-import { useDeploymentStatus } from '@qovery/domains/services/feature'
 import { useAuth } from '@qovery/shared/auth'
 import { type ApplicationEntity, type DatabaseEntity } from '@qovery/shared/interfaces'
 import {
@@ -51,8 +50,6 @@ export function PageEnvironmentLogs() {
   const matchServiceId = matchDeploymentVersion || matchServiceLogs || matchDeployment
   const serviceId = matchServiceId?.params.serviceId !== ':serviceId' ? matchServiceId?.params.serviceId : undefined
 
-  const { data: deploymentStatus } = useDeploymentStatus({ environmentId, serviceId })
-
   const applications = useSelector<RootState, ApplicationEntity[]>(
     (state) => selectApplicationsEntitiesByEnvId(state, environmentId),
     equal
@@ -85,20 +82,6 @@ export function PageEnvironmentLogs() {
 
   if (!environment) return
 
-  const isDeploymentProgressing: boolean = [
-    StateEnum.BUILDING,
-    StateEnum.DEPLOYING,
-    StateEnum.CANCELING,
-    StateEnum.DELETING,
-    StateEnum.RESTARTING,
-    StateEnum.STOPPING,
-    StateEnum.QUEUED,
-    StateEnum.DELETE_QUEUED,
-    StateEnum.RESTART_QUEUED,
-    StateEnum.STOP_QUEUED,
-    StateEnum.DEPLOYMENT_QUEUED,
-  ].includes(deploymentStatus?.state as StateEnum)
-
   return (
     <div className="flex h-full">
       <ServiceStageIdsProvider>
@@ -112,30 +95,13 @@ export function PageEnvironmentLogs() {
         <Routes>
           <Route
             path={DEPLOYMENT_LOGS_URL()}
-            element={
-              <DeploymentLogsFeature
-                environment={environment}
-                statusStages={statusStages}
-                isDeploymentProgressing={isDeploymentProgressing}
-              />
-            }
+            element={<DeploymentLogsFeature environment={environment} statusStages={statusStages} />}
           />
           <Route
             path={DEPLOYMENT_LOGS_VERSION_URL()}
-            element={
-              <DeploymentLogsFeature
-                environment={environment}
-                statusStages={statusStages}
-                isDeploymentProgressing={isDeploymentProgressing}
-              />
-            }
+            element={<DeploymentLogsFeature environment={environment} statusStages={statusStages} />}
           />
-          <Route
-            path={SERVICE_LOGS_URL()}
-            element={
-              <PodLogsFeature clusterId={environment?.cluster_id} isDeploymentProgressing={isDeploymentProgressing} />
-            }
-          />
+          <Route path={SERVICE_LOGS_URL()} element={<PodLogsFeature clusterId={environment?.cluster_id} />} />
         </Routes>
       </ServiceStageIdsProvider>
       {(location.pathname === `${ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId)}/` ||
