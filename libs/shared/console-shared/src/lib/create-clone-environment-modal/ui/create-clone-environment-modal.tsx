@@ -61,7 +61,10 @@ export function CreateCloneEnvironmentModal(props: CreateCloneEnvironmentModalPr
                 the type: it defines the type of environment you are creating among Production, Staging, Development.
               </li>
             </ol>
-            <ExternalLink className="mt-2 " href="https://hub.qovery.com/guides/getting-started/setting-custom-domain">
+            <ExternalLink
+              className="mt-2"
+              href="https://hub.qovery.com/docs/using-qovery/configuration/environment/#create-an-environment"
+            >
               Documentation
             </ExternalLink>
           </>
@@ -73,7 +76,10 @@ export function CreateCloneEnvironmentModal(props: CreateCloneEnvironmentModalPr
               services. The environment will be cloned on the selected cluster and with the selected type. Once cloned,
               you will be able to deploy it.
             </div>
-            <ExternalLink className="mt-2 " href="https://hub.qovery.com/guides/getting-started/setting-custom-domain">
+            <ExternalLink
+              className="mt-2"
+              href="https://hub.qovery.com/docs/using-qovery/configuration/environment/#clone-environment"
+            >
               Documentation
             </ExternalLink>
           </>
