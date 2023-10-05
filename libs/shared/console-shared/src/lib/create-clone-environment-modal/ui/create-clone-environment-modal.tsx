@@ -2,7 +2,7 @@ import { type Environment, EnvironmentModeEnum } from 'qovery-typescript-axios'
 import { type FormEvent, useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { type ClusterEntity, type Value } from '@qovery/shared/interfaces'
-import { InputSelect, InputText, ModalCrud } from '@qovery/shared/ui'
+import { ExternalLink, InputSelect, InputText, ModalCrud } from '@qovery/shared/ui'
 
 export interface CreateCloneEnvironmentModalProps {
   onSubmit: () => void
@@ -37,13 +37,48 @@ export function CreateCloneEnvironmentModal(props: CreateCloneEnvironmentModalPr
       title={props.environmentToClone ? 'Clone Environment' : 'Create Environment'}
       description={
         props.environmentToClone
-          ? "Clone the environment on the same or different target cluster. Cluster can't be changed after creation"
-          : "Create a new environment and deploy your application on the selected cluster. Cluster can't be changed after creation"
+          ? 'Clone the environment on the same or different target cluster.'
+          : 'Create a new environment and deploy your applications.'
       }
       onClose={props.closeModal}
       onSubmit={props.onSubmit}
       loading={props.loading}
       submitLabel={props.environmentToClone ? 'Clone' : 'Create'}
+      howItWorks={
+        props.environmentToClone ? (
+          <>
+            <div>
+              Create a new environment to deploy your applications. You can create a new environment by defining:
+            </div>
+            <ol className="list-disc ml-3">
+              <li className="mb-2 mt-2">its name</li>
+              <li className="mb-2">
+                the cluster: you can select one of the existing clusters. If Automatic is selected, the environment will
+                be assigned to the oldest cluster of the organisation unless if a project deployment rule is defined and
+                matches the environment name. Cluster can’t be changed after the environment creation.
+              </li>
+              <li className="mb-2">
+                the type: it defines the type of environment you are creating among Production, Staging, Development.
+              </li>
+            </ol>
+            <ExternalLink className="mt-2 " href="https://hub.qovery.com/guides/getting-started/setting-custom-domain">
+              Documentation
+            </ExternalLink>
+          </>
+        ) : (
+          <>
+            <div>
+              It creates a new environment having the same configuration of the source environment. All the
+              configurations will be copied within the new environment except for the custom domains defined on the
+              services. The environment will be cloned on the selected cluster and with the selected type. Once cloned,
+              you will be able to deploy it.
+            </div>
+            <ExternalLink className="mt-2 " href="https://hub.qovery.com/guides/getting-started/setting-custom-domain">
+              Documentation
+            </ExternalLink>
+          </>
+        )
+      }
     >
       {props.environmentToClone && (
         <InputText
