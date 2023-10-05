@@ -153,7 +153,7 @@ export const services = createQueryKeys('services', {
   details: ({ serviceId, serviceType }: { serviceId: string; serviceType: ServiceType }) => ({
     queryKey: [serviceId],
     async queryFn() {
-      return match(serviceType)
+      const service = await match(serviceType)
         .with('APPLICATION', async () => ({
           ...(await applicationMainCallsApi.getApplication(serviceId)).data,
           serviceType: ServiceTypeEnum.APPLICATION as const,
@@ -171,6 +171,13 @@ export const services = createQueryKeys('services', {
           serviceType: ServiceTypeEnum.JOB as const,
         }))
         .exhaustive()
+      if (service.memory) {
+        service.memory *= 10 ** 6 // API return memory in MB
+      }
+      if (service.serviceType === 'DATABASE' && service.storage) {
+        service.storage *= 10 ** 9 // API return memory in GB
+      }
+      return service
     },
   }),
   listCommits: ({
