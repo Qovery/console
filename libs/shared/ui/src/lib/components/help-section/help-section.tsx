@@ -19,7 +19,7 @@ export function HelpSection({ description, links, className }: HelpSectionProps)
       <div className="flex flex-col gap-2">
         {links &&
           links.map((link, i) => (
-            <ExternalLink key={i} color="sky" className="flex">
+            <ExternalLink key={i} color="sky" href={link.link} className="flex">
               {link.linkLabel || link.link}
             </ExternalLink>
           ))}
