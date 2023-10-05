@@ -1,13 +1,17 @@
 import { type QueryClient } from '@tanstack/react-query'
 import { DatabaseModeEnum } from 'qovery-typescript-axios'
-import { type ServiceInfraLogResponseDto, type ServiceLogResponseDto } from 'qovery-ws-typescript-axios'
+import {
+  type ServiceInfraLogResponseDto,
+  type ServiceLogResponseDto,
+  ServiceStateDto,
+} from 'qovery-ws-typescript-axios'
 import { memo, useCallback, useMemo, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
+import { match } from 'ts-pattern'
 import { selectApplicationById } from '@qovery/domains/application'
 import { selectDatabaseById } from '@qovery/domains/database'
 import { useRunningStatus } from '@qovery/domains/services/feature'
-import { RunningState } from '@qovery/shared/enums'
 import { type ApplicationEntity, type DatabaseEntity } from '@qovery/shared/interfaces'
 import { useDebounce, useDocumentTitle } from '@qovery/shared/util-hooks'
 import { type RootState } from '@qovery/state/store'
@@ -107,9 +111,9 @@ export function PodLogsFeature({ clusterId }: PodLogsFeatureProps) {
     onMessage: infraMessageHandler,
   })
 
-  const isProgressing: boolean = [RunningState.RUNNING, RunningState.WARNING].includes(
-    runningStatus?.state as RunningState
-  )
+  const isProgressing = match(runningStatus?.state)
+    .with(ServiceStateDto.RUNNING, ServiceStateDto.WARNING, () => true)
+    .otherwise(() => false)
 
   return (
     <PodLogs

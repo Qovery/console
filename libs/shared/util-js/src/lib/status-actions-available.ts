@@ -8,7 +8,7 @@ export const isDeployAvailable = (status: keyof typeof StateEnum | keyof typeof 
     .otherwise(() => false)
 }
 
-export const isRestartAvailable = (runningStatus: RunningState, status: StateEnum): boolean => {
+export const isRestartAvailable = (runningStatus: keyof typeof RunningState, status: StateEnum): boolean => {
   return (
     (runningStatus === RunningState.RUNNING || runningStatus === RunningState.DEPLOYED) && isRedeployAvailable(status)
   )

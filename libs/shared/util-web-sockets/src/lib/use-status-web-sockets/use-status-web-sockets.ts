@@ -1,6 +1,5 @@
 import { type EnvironmentStatus, type Status } from 'qovery-typescript-axios'
-import { type RunningState } from '@qovery/shared/enums'
-import { type ServiceRunningStatus } from '@qovery/shared/interfaces'
+import { type ServiceStatusDto } from 'qovery-ws-typescript-axios'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
 import { queries } from '@qovery/state/util-queries'
 
@@ -14,17 +13,6 @@ interface WSDeploymentStatus {
   }[]
   // WS return results if we didn't set an environmentId
   results?: EnvironmentStatus[]
-}
-
-interface WSServiceStatus {
-  environments: {
-    id: string
-    state: RunningState
-    applications: ServiceRunningStatus[]
-    containers: ServiceRunningStatus[]
-    databases: ServiceRunningStatus[]
-    jobs: ServiceRunningStatus[]
-  }[]
 }
 
 export interface UseStatusWebSocketsProps {
@@ -88,7 +76,7 @@ export function useStatusWebSockets({
     },
     // NOTE: projectId is not required by the API but it limits WS messages when cluster handles my environments / services
     enabled: Boolean(organizationId) && Boolean(clusterId) && Boolean(projectId),
-    onMessage(queryClient, message: WSServiceStatus) {
+    onMessage(queryClient, message: ServiceStatusDto) {
       for (const env of message.environments) {
         queryClient.setQueryData(queries.environments.runningStatus(env.id).queryKey, () => ({
           state: env.state,
