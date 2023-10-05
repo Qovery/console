@@ -1,5 +1,5 @@
-import { act, getByRole, getByTestId, getByText, render } from '__tests__/utils/setup-jest'
 import { OrganizationApiTokenScope } from 'qovery-typescript-axios'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { PageOrganizationApi, type PageOrganizationApiProps } from './page-organization-api'
 
 describe('PageOrganizationApi', () => {
@@ -14,49 +14,46 @@ describe('PageOrganizationApi', () => {
         description: 'description',
         created_at: new Date().toDateString(),
         scope: OrganizationApiTokenScope.ADMIN,
+        role_name: 'Admin',
         updated_at: new Date().toDateString(),
       },
     ],
   }
 
   it('should render successfully', () => {
-    const { baseElement } = render(<PageOrganizationApi {...props} />)
+    const { baseElement } = renderWithProviders(<PageOrganizationApi {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
   it('should have an loader spinner', () => {
     props.loading = 'loading'
 
-    const { getByTestId } = render(<PageOrganizationApi {...props} apiTokens={[]} />)
-    getByTestId('loader')
+    renderWithProviders(<PageOrganizationApi {...props} apiTokens={[]} />)
+    screen.getByTestId('loader')
   })
 
   it('should have an empty screen', () => {
     props.loading = 'loaded'
+    renderWithProviders(<PageOrganizationApi {...props} apiTokens={[]} />)
 
-    const { getByTestId } = render(<PageOrganizationApi {...props} apiTokens={[]} />)
-
-    getByTestId('empty-state')
+    screen.getByTestId('empty-state')
   })
 
   it('should display a row', () => {
     props.loading = 'loaded'
+    renderWithProviders(<PageOrganizationApi {...props} />)
 
-    const { baseElement } = render(<PageOrganizationApi {...props} />)
-
-    getByText(baseElement, 'test')
-    getByTestId(baseElement, 'delete-token')
+    screen.getByText('test')
+    screen.getByTestId('delete-token')
   })
 
   it('should call on delete token', async () => {
     props.loading = 'loaded'
 
-    const { baseElement } = render(<PageOrganizationApi {...props} />)
+    const { userEvent } = renderWithProviders(<PageOrganizationApi {...props} />)
 
-    const deleteButton = getByTestId(baseElement, 'delete-token')
-    await act(() => {
-      deleteButton.click()
-    })
+    const deleteButton = screen.getByTestId('delete-token')
+    await userEvent.click(deleteButton)
 
     expect(props.onDelete).toHaveBeenCalled()
   })
@@ -64,11 +61,10 @@ describe('PageOrganizationApi', () => {
   it('should call addToken', async () => {
     props.loading = 'loaded'
 
-    const { baseElement } = render(<PageOrganizationApi {...props} />)
+    const { userEvent } = renderWithProviders(<PageOrganizationApi {...props} />)
 
-    await act(() => {
-      getByRole(baseElement, 'button', { name: 'Add new' }).click()
-    })
+    const btn = screen.getByRole('button', { name: 'Add new' })
+    await userEvent.click(btn)
 
     expect(props.onAddToken).toHaveBeenCalled()
   })
