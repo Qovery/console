@@ -4,7 +4,7 @@ exports[`Section should match snapshot 1`] = `
 <body>
   <div>
     <section
-      class="flex flex-1 flex-col"
+      class="flex flex-col"
     >
       Foobar
     </section>

@@ -132,7 +132,7 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
     <ApplicationContext.Provider
       value={{ showHideAllEnvironmentVariablesValues, setShowHideAllEnvironmentVariablesValues }}
     >
-      <Section>
+      <Section className="flex-1">
         <Header
           title={application?.name}
           icon={

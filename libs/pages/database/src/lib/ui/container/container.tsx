@@ -114,7 +114,7 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
   }
 
   return (
-    <Section>
+    <Section className="flex-1">
       <Header title={database?.name} icon={IconEnum.DATABASE} actions={headerActions} />
       <Tabs items={tabsItems} />
       {database && serviceDeploymentStatus?.service_deployment_status !== ServiceDeploymentStatusEnum.UP_TO_DATE && (
