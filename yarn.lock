@@ -18118,7 +18118,7 @@ __metadata:
     pretty-bytes: ^6.1.1
     pretty-quick: ^3.1.3
     qovery-typescript-axios: ^1.1.236
-    qovery-ws-typescript-axios: ^0.1.26
+    qovery-ws-typescript-axios: ^0.1.51
     react: 18.2.0
     react-beautiful-dnd: ^13.1.0
     react-country-flag: ^3.0.2
@@ -18165,12 +18165,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"qovery-ws-typescript-axios@npm:^0.1.26":
-  version: 0.1.26
-  resolution: "qovery-ws-typescript-axios@npm:0.1.26"
+"qovery-ws-typescript-axios@npm:^0.1.51":
+  version: 0.1.51
+  resolution: "qovery-ws-typescript-axios@npm:0.1.51"
   dependencies:
-    axios: ^0.21.4
-  checksum: 88ca86949b7eb86adea7d58a05b0ea0d57323cadc7837feb11b116e6d66eb181453f4716e234e426cac04c33196c7e8a17592677322c9ac6310d6025cfbb85a7
+    axios: ^0.27.2
+  checksum: 7fab86d0b837f18137276c616b38bbcaff3b7ca86aed3620f13e039b588784abb9eaa4a31ea3b8d17c09110aa2abd628da536ab52110adba6fc11c3db377b46d
   languageName: node
   linkType: hard
 
