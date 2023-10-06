@@ -4,11 +4,6 @@ module.exports = {
   setupFilesAfterEnv: ['./__tests__/mocks.ts'],
   collectCoverageFrom: ['<rootDir>/src/**/*.{js,jsx,ts,tsx}'],
   testPathIgnorePatterns: ['./node_modules/', './.next/', './__tests__/utils/setup-jest.tsx'],
-  testMatch: ['./libs/**/__tests__/**/*.{js,jsx,ts,tsx}', './libs/**/*.{spec,test}.{js,jsx,ts,tsx}'],
-  testEnvironment: 'jsdom',
-  transform: {
-    '^.+\\.(js|jsx|mjs|cjs|ts|tsx)$': ['babel-jest', { presets: ['@nx/react/babel'] }],
-  },
   transformIgnorePatterns: [
     '[/\\\\]node_modules[/\\\\](?!pretty-bytes).+\\.(js|jsx|mjs|cjs|ts|tsx)$',
     '^.+\\.module\\.(css|sass|scss)$',
