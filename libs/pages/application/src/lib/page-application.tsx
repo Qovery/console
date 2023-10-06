@@ -10,7 +10,7 @@ import {
   selectApplicationById,
 } from '@qovery/domains/application'
 import { useFetchEnvironment } from '@qovery/domains/environment'
-import { getServiceType, isApplication, isContainer, isGitJob, isJob } from '@qovery/shared/enums'
+import { getServiceType, isApplication, isContainer, isGitJob } from '@qovery/shared/enums'
 import { type ApplicationEntity, type LoadingStatus } from '@qovery/shared/interfaces'
 import { APPLICATION_GENERAL_URL, APPLICATION_URL } from '@qovery/shared/routes'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
