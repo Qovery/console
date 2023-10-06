@@ -27,7 +27,7 @@
           }
         ],
         "no-unused-vars": "off",
-        "@typescript-eslint/no-unused-vars": ["error"],
+        "@typescript-eslint/no-unused-vars": "error",
         "no-redeclare": "off",
         "@typescript-eslint/no-redeclare": "error"
       }
@@ -120,13 +120,20 @@
       }
     },
     {
+      "files": ["*.spec.ts", "*.spec.tsx", "*.spec.js", "*.spec.jsx"],
+      "env": {
+        "jest": true
+      },
+      "rules": {}
+    },
+    {
       "files": ["*.js", "*.jsx"],
       "extends": ["plugin:@nx/javascript"],
       "rules": {}
     },
     {
       "files": ["*.tsx", "*.jsx"],
-      "extends": ["plugin:@nx/react"],
+      "plugins": ["react"],
       "rules": {
         "react/jsx-curly-brace-presence": "error",
         "react/jsx-key": "error"
