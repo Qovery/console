@@ -1,6 +1,6 @@
-import { type OrganizationAvailableRole } from 'qovery-typescript-axios'
+import { OrganizationAccountGitRepositoriesApiFp, type OrganizationAvailableRole } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
-import { InputSelect, InputText, InputTextArea, ModalCrud } from '@qovery/shared/ui'
+import { InputSelect, InputText, InputTextArea, LoaderSpinner, ModalCrud } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
 export interface CrudModalProps {
@@ -60,30 +60,36 @@ export function CrudModal({ onClose, onSubmit, availableRoles, loading }: CrudMo
           />
         )}
       />
-      <Controller
-        name="role_id"
-        control={control}
-        defaultValue={availableRoles[0]?.id} // ADMIN default role
-        rules={{
-          required: 'Please enter a role.',
-        }}
-        render={({ field, fieldState: { error } }) => (
-          <InputSelect
-            dataTestId="input-role"
-            className="w-full"
-            label="Role"
-            options={availableRoles.map((availableRole: OrganizationAvailableRole) => ({
-              label: upperCaseFirstLetter(availableRole.name) ?? '',
-              value: availableRole.id ?? '',
-            }))}
-            onChange={field.onChange}
-            value={field.value}
-            error={error?.message}
-            isSearchable
-            portal
-          />
-        )}
-      />
+      {availableRoles.length > 0 ? (
+        <Controller
+          name="role_id"
+          control={control}
+          defaultValue={availableRoles[0]?.id} // ADMIN default role
+          rules={{
+            required: 'Please enter a role.',
+          }}
+          render={({ field, fieldState: { error } }) => (
+            <InputSelect
+              dataTestId="input-role"
+              className="w-full"
+              label="Role"
+              options={availableRoles.map((availableRole: OrganizationAvailableRole) => ({
+                label: upperCaseFirstLetter(availableRole.name) ?? '',
+                value: availableRole.id ?? '',
+              }))}
+              onChange={field.onChange}
+              value={field.value}
+              error={error?.message}
+              isSearchable
+              portal
+            />
+          )}
+        />
+      ) : (
+        <div className="flex justify-center">
+          <LoaderSpinner className="w-4" />
+        </div>
+      )}
     </ModalCrud>
   )
 }
