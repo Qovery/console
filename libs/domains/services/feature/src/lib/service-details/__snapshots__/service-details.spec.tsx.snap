@@ -21,22 +21,22 @@ exports[`ServiceDetails should match application snapshot 1`] = `
           class="grid grid-cols-2 gap-2"
         >
           <dt
-            class="text-neutral-350"
+            class="text-neutral-350 dark:text-neutral-300 dark:font-medium"
           >
             Created:
           </dt>
           <dd
-            class="text-neutral-400 font-medium"
+            class="text-neutral-400 font-medium dark:text-white dark:font-normal"
           >
             12 Apr, 08:48:51
           </dd>
           <dt
-            class="text-neutral-350"
+            class="text-neutral-350 dark:text-neutral-300 dark:font-medium"
           >
             Last edit:
           </dt>
           <dd
-            class="text-neutral-400 font-medium"
+            class="text-neutral-400 font-medium dark:text-white dark:font-normal"
           >
             <span
               class=""
@@ -83,22 +83,22 @@ exports[`ServiceDetails should match database snapshot 1`] = `
           class="grid grid-cols-2 gap-2"
         >
           <dt
-            class="text-neutral-350"
+            class="text-neutral-350 dark:text-neutral-300 dark:font-medium"
           >
             Created:
           </dt>
           <dd
-            class="text-neutral-400 font-medium"
+            class="text-neutral-400 font-medium dark:text-white dark:font-normal"
           >
             28 Jul, 14:50:09
           </dd>
           <dt
-            class="text-neutral-350"
+            class="text-neutral-350 dark:text-neutral-300 dark:font-medium"
           >
             Last edit:
           </dt>
           <dd
-            class="text-neutral-400 font-medium"
+            class="text-neutral-400 font-medium dark:text-white dark:font-normal"
           >
             <span
               class=""
@@ -145,22 +145,22 @@ exports[`ServiceDetails should match job snapshot 1`] = `
           class="grid grid-cols-2 gap-2"
         >
           <dt
-            class="text-neutral-350"
+            class="text-neutral-350 dark:text-neutral-300 dark:font-medium"
           >
             Created:
           </dt>
           <dd
-            class="text-neutral-400 font-medium"
+            class="text-neutral-400 font-medium dark:text-white dark:font-normal"
           >
             12 Sep, 10:08:39
           </dd>
           <dt
-            class="text-neutral-350"
+            class="text-neutral-350 dark:text-neutral-300 dark:font-medium"
           >
             Last edit:
           </dt>
           <dd
-            class="text-neutral-400 font-medium"
+            class="text-neutral-400 font-medium dark:text-white dark:font-normal"
           >
             <span
               class=""
