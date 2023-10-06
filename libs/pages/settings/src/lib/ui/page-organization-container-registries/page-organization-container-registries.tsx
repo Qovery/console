@@ -1,4 +1,4 @@
-import { ContainerRegistryKindEnum, type ContainerRegistryResponse } from 'qovery-typescript-axios'
+import { type ContainerRegistryResponse } from 'qovery-typescript-axios'
 import { IconEnum } from '@qovery/shared/enums'
 import { type LoadingStatus } from '@qovery/shared/interfaces'
 import {

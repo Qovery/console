@@ -6,15 +6,7 @@ import {
 import { Controller, useFormContext } from 'react-hook-form'
 import { IconEnum } from '@qovery/shared/enums'
 import { type Value } from '@qovery/shared/interfaces'
-import {
-  ExternalLink,
-  Icon,
-  IconAwesomeEnum,
-  InputSelect,
-  InputText,
-  InputTextArea,
-  ModalCrud,
-} from '@qovery/shared/ui'
+import { ExternalLink, Icon, InputSelect, InputText, InputTextArea, ModalCrud } from '@qovery/shared/ui'
 import { containerRegistryKindToIcon } from '@qovery/shared/util-js'
 
 export interface CrudModalProps {
@@ -51,7 +43,7 @@ export const getOptionsContainerRegistry = (containerRegistry: AvailableContaine
 }
 
 export function CrudModal(props: CrudModalProps) {
-  const { control, watch, setValue } = useFormContext()
+  const { control, watch, setValue, resetField } = useFormContext()
 
   const defaultRegistryUrls = {
     [ContainerRegistryKindEnum.GITLAB_CR]: 'https://registry.gitlab.com',
@@ -129,6 +121,7 @@ export function CrudModal(props: CrudModalProps) {
             <InputSelect
               onChange={(value) => {
                 setValue('url', defaultRegistryUrls[value as keyof typeof defaultRegistryUrls])
+                resetField('config')
                 field.onChange(value)
               }}
               value={field.value}
