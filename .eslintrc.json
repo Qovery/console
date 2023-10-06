@@ -2,7 +2,7 @@
   "root": true,
   "ignorePatterns": ["**/*"],
   "plugins": ["@nx"],
-  "extends": ["plugin:storybook/recommended"],
+  "extends": ["plugin:storybook/recommended", "plugin:@nx/react"],
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
