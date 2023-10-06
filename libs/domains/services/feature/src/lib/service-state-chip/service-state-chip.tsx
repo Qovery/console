@@ -1,4 +1,3 @@
-import { RunningState } from '@qovery/shared/enums'
 import { StatusChip, type StatusChipProps } from '@qovery/shared/ui'
 import { useDeploymentStatus } from '../hooks/use-deployment-status/use-deployment-status'
 import { useRunningStatus } from '../hooks/use-running-status/use-running-status'
