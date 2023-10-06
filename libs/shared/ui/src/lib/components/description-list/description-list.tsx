@@ -21,7 +21,7 @@ const DescriptionTerm = forwardRef<ElementRef<'dt'>, DescriptionTermProps>(funct
   ref
 ) {
   return (
-    <dt ref={ref} className={twMerge('text-neutral-350', className)} {...rest}>
+    <dt ref={ref} className={twMerge('text-neutral-350 dark:text-neutral-300 dark:font-medium', className)} {...rest}>
       {children}
     </dt>
   )
@@ -34,7 +34,11 @@ const DescriptionDetails = forwardRef<ElementRef<'dd'>, DescriptionDetailsProps>
   ref
 ) {
   return (
-    <dd ref={ref} className={twMerge('text-neutral-400 font-medium', className)} {...rest}>
+    <dd
+      ref={ref}
+      className={twMerge('text-neutral-400 font-medium dark:text-white dark:font-normal', className)}
+      {...rest}
+    >
       {children}
     </dd>
   )
