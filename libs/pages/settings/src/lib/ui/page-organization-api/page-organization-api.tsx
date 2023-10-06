@@ -15,6 +15,7 @@ import {
   Truncate,
 } from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
+import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
 export interface PageOrganizationApiProps {
   onAddToken: () => void
@@ -34,7 +35,7 @@ export function PageOrganizationApi(props: PageOrganizationApiProps) {
             <h1 className="h5 text-neutral-400 mb-2">API Token</h1>
             <p className="text-neutral-400 text-xs">
               API token allows third-party applications or script to access your organization via the Qovery API (CI/CD,
-              Terraform script, Pulumi etc..)
+              Terraform script, Pulumi etc..). A role can be assigned to limit the Token permission.
             </p>
           </div>
           <ButtonLegacy className="shrink-0" onClick={() => onAddToken()} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>
@@ -66,6 +67,7 @@ export function PageOrganizationApi(props: PageOrganizationApiProps) {
                       )}
                     </h2>
                     <p className="text-xs text-neutral-350">
+                      <span className="inline-block mr-3">Role: {upperCaseFirstLetter(token.role_name)}</span>
                       <span className="inline-block">
                         Created since {dateYearMonthDayHourMinuteSecond(new Date(token.created_at || ''), false)}
                       </span>

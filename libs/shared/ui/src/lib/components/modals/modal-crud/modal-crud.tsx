@@ -46,7 +46,7 @@ export function ModalCrud(props: ModalCrudProps) {
   return (
     <div className="p-6">
       <h2 className="h4 text-neutral-400 max-w-sm truncate">{title}</h2>
-      {description && <p className="mt-1 text-neutral-350 text-sm">{description}</p>}
+      {description && <p className="mt-2 text-neutral-350 text-sm">{description}</p>}
       {forService && (
         <div className="text-neutral-400 text-sm flex justify-between items-center mt-4">
           <p>
@@ -60,8 +60,8 @@ export function ModalCrud(props: ModalCrudProps) {
       {howItWorks && (
         <Popover.Root>
           <Popover.Trigger>
-            <span className="text-sm cursor-pointer text-brand-500 hover:text-brand-600 transition font-medium">
-              Show how it works <Icon name={IconAwesomeEnum.CIRCLE_QUESTION} />
+            <span className="text-sm cursor-pointer text-brand-500 hover:text-brand-600 transition font-medium mt-2">
+              Show how it works <Icon className="text-xs" name={IconAwesomeEnum.CIRCLE_QUESTION} />
             </span>
           </Popover.Trigger>
           <Popover.Content side="left" className="z-50 text-neutral-350 text-sm relative" style={{ width: 440 }}>
