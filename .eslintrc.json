@@ -2,7 +2,7 @@
   "root": true,
   "ignorePatterns": ["**/*"],
   "plugins": ["@nx"],
-  "extends": ["plugin:storybook/recommended"],
+  "extends": ["plugin:storybook/recommended", "plugin:@nx/react"],
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
@@ -27,9 +27,11 @@
           }
         ],
         "no-unused-vars": "off",
-        "@typescript-eslint/no-unused-vars": ["error"],
+        "@typescript-eslint/no-unused-vars": "error",
         "no-redeclare": "off",
-        "@typescript-eslint/no-redeclare": "error"
+        "@typescript-eslint/no-redeclare": "error",
+        "react/jsx-curly-brace-presence": "error",
+        "react/jsx-key": "error"
       }
     },
     {
@@ -123,14 +125,6 @@
       "files": ["*.js", "*.jsx"],
       "extends": ["plugin:@nx/javascript"],
       "rules": {}
-    },
-    {
-      "files": ["*.tsx", "*.jsx"],
-      "extends": ["plugin:@nx/react"],
-      "rules": {
-        "react/jsx-curly-brace-presence": "error",
-        "react/jsx-key": "error"
-      }
     }
   ]
 }
