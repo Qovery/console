@@ -1,11 +1,11 @@
 import {
   EnvironmentModeEnum,
   type OrganizationCustomRole,
-  type OrganizationCustomRoleClusterPermissions,
+  type OrganizationCustomRoleClusterPermissionsInner,
   OrganizationCustomRoleProjectPermission,
-  type OrganizationCustomRoleProjectPermissions,
+  type OrganizationCustomRoleProjectPermissionsInner,
   type OrganizationCustomRoleUpdateRequest,
-  type OrganizationCustomRoleUpdateRequestPermissions,
+  type OrganizationCustomRoleUpdateRequestProjectPermissionsInnerPermissionsInner,
 } from 'qovery-typescript-axios'
 import { useCallback, useEffect, useState } from 'react'
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
@@ -66,7 +66,7 @@ export const handleSubmit = (data: FieldValues, currentRole: OrganizationCustomR
     }
   })
 
-  cloneCurrentRole.project_permissions = projectPermissions as OrganizationCustomRoleProjectPermissions[]
+  cloneCurrentRole.project_permissions = projectPermissions as OrganizationCustomRoleProjectPermissionsInner[]
 
   // update cluster permissions
   const clusterPermissions = currentRole.cluster_permissions?.map((cluster) => {
@@ -79,13 +79,13 @@ export const handleSubmit = (data: FieldValues, currentRole: OrganizationCustomR
     }
   })
 
-  cloneCurrentRole.cluster_permissions = clusterPermissions as OrganizationCustomRoleClusterPermissions[]
+  cloneCurrentRole.cluster_permissions = clusterPermissions as OrganizationCustomRoleClusterPermissionsInner[]
 
   return cloneCurrentRole
 }
 
-export function getValue(permission = OrganizationCustomRoleProjectPermission.NO_ACCESS, isAdmin = false) {
-  let result = OrganizationCustomRoleProjectPermission.NO_ACCESS
+export function getValue(permission: OrganizationCustomRoleProjectPermission, isAdmin = false) {
+  let result: OrganizationCustomRoleProjectPermission = OrganizationCustomRoleProjectPermission.NO_ACCESS
 
   if (isAdmin) {
     result = OrganizationCustomRoleProjectPermission.MANAGER
@@ -105,14 +105,18 @@ export function resetForm(currentRole: OrganizationCustomRole) {
     description: currentRole?.description || ' ',
   }
 
-  currentRole?.project_permissions?.forEach((project: OrganizationCustomRoleProjectPermissions) => {
+  currentRole?.project_permissions?.forEach((project: OrganizationCustomRoleProjectPermissionsInner) => {
     const permission = {} as { [key: string]: string }
 
     if (project.permissions && project.permissions?.length > 0) {
-      project.permissions?.forEach((currentPermission: OrganizationCustomRoleUpdateRequestPermissions) => {
-        permission['ADMIN'] = project.is_admin ? 'ADMIN' : OrganizationCustomRoleProjectPermission.NO_ACCESS
-        permission[currentPermission.environment_type || ''] = getValue(currentPermission.permission)
-      })
+      project.permissions?.forEach(
+        (currentPermission: OrganizationCustomRoleUpdateRequestProjectPermissionsInnerPermissionsInner) => {
+          permission['ADMIN'] = project.is_admin ? 'ADMIN' : OrganizationCustomRoleProjectPermission.NO_ACCESS
+          permission[currentPermission.environment_type || ''] = getValue(
+            (currentPermission.permission as OrganizationCustomRoleProjectPermission) ?? 'NO_ACCESS'
+          )
+        }
+      )
     } else {
       if (project.is_admin) {
         for (let i = 0; i < 4; i++) {
@@ -126,7 +130,7 @@ export function resetForm(currentRole: OrganizationCustomRole) {
     result['project_permissions'][project.project_id || ''] = permission
   })
 
-  currentRole?.cluster_permissions?.forEach((cluster: OrganizationCustomRoleClusterPermissions) => {
+  currentRole?.cluster_permissions?.forEach((cluster: OrganizationCustomRoleClusterPermissionsInner) => {
     result['cluster_permissions'][cluster.cluster_id || ''] = cluster.permission
   })
 

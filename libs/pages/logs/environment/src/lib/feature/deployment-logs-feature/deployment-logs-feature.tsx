@@ -172,17 +172,17 @@ export function DeploymentLogsFeature({ environment, statusStages }: DeploymentL
   const isLastVersion = (deploymentHistory && deploymentHistory[0].id === versionId) || !versionId
   const isDeploymentProgressing: boolean = isLastVersion
     ? [
-        StateEnum.BUILDING,
-        StateEnum.DEPLOYING,
-        StateEnum.CANCELING,
-        StateEnum.DELETING,
-        StateEnum.RESTARTING,
-        StateEnum.STOPPING,
-        StateEnum.QUEUED,
-        StateEnum.DELETE_QUEUED,
-        StateEnum.RESTART_QUEUED,
-        StateEnum.STOP_QUEUED,
-        StateEnum.DEPLOYMENT_QUEUED,
+        'BUILDING',
+        'DEPLOYING',
+        'CANCELING',
+        'DELETING',
+        'RESTARTING',
+        'STOPPING',
+        'QUEUED',
+        'DELETE_QUEUED',
+        'RESTART_QUEUED',
+        'STOP_QUEUED',
+        'DEPLOYMENT_QUEUED',
       ].includes(deploymentStatus?.state as StateEnum)
     : false
 

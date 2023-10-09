@@ -2,7 +2,7 @@ import {
   CloudProviderEnum,
   type ClusterInstanceTypeResponseListResultsInner,
   type ClusterRequest,
-  type ClusterRequestFeatures,
+  type ClusterRequestFeaturesInner,
   KubernetesEnum,
 } from 'qovery-typescript-axios'
 import { useCallback, useEffect, useState } from 'react'
@@ -112,7 +112,7 @@ export function StepSummaryFeature() {
         disk_size: resourcesData.disk_size,
         instance_type: resourcesData.instance_type,
         kubernetes: resourcesData.cluster_type as KubernetesEnum,
-        features: formatFeatures as ClusterRequestFeatures[],
+        features: formatFeatures as ClusterRequestFeaturesInner[],
         ssh_keys: remoteData?.ssh_key ? [remoteData?.ssh_key] : undefined,
       }
 

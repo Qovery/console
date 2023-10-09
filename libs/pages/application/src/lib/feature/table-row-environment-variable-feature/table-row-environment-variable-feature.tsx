@@ -76,11 +76,13 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
     contentLeft: <Icon name="icon-solid-pen" className="text-sm text-brand-500" />,
   })
 
-  const disableOverride = [
-    APIVariableScopeEnum.APPLICATION,
-    APIVariableScopeEnum.CONTAINER,
-    APIVariableScopeEnum.JOB,
-  ].includes(variable.scope)
+  const disableOverride = (
+    [
+      APIVariableScopeEnum.APPLICATION,
+      APIVariableScopeEnum.CONTAINER,
+      APIVariableScopeEnum.JOB,
+    ] as APIVariableScopeEnum[]
+  ).includes(variable.scope)
   const createOverride = {
     name: 'Create override',
     disabled: disableOverride,

@@ -57,17 +57,19 @@ export function SidebarHistory({ data, serviceId, versionId, pathLogs, environme
     return index !== -1 ? index : 0
   }
 
-  const showNewTag = [
-    StateEnum.DEPLOYING,
-    StateEnum.DELETING,
-    StateEnum.RESTARTING,
-    StateEnum.BUILDING,
-    StateEnum.STOP_QUEUED,
-    StateEnum.CANCELING,
-    StateEnum.QUEUED,
-    StateEnum.DELETE_QUEUED,
-    StateEnum.DEPLOYMENT_QUEUED,
-  ].includes(environmentState as StateEnum)
+  const showNewTag = (
+    [
+      'DEPLOYING',
+      'DELETING',
+      'RESTARTING',
+      'BUILDING',
+      'STOP_QUEUED',
+      'CANCELING',
+      'QUEUED',
+      'DELETE_QUEUED',
+      'DEPLOYMENT_QUEUED',
+    ] as StateEnum[]
+  ).includes(environmentState as StateEnum)
 
   if (data.length === 0) return null
 

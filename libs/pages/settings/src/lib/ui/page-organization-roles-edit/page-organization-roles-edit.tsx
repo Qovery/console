@@ -1,4 +1,7 @@
-import { type OrganizationCustomRole, type OrganizationCustomRoleProjectPermissions } from 'qovery-typescript-axios'
+import {
+  type OrganizationCustomRole,
+  type OrganizationCustomRoleProjectPermissionsInner,
+} from 'qovery-typescript-axios'
 import { type FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -128,7 +131,7 @@ export function PageOrganizationRolesEdit(props: PageOrganizationRolesEditProps)
                       },
                     ]}
                   >
-                    {currentRole.project_permissions.map((project: OrganizationCustomRoleProjectPermissions) => (
+                    {currentRole.project_permissions.map((project: OrganizationCustomRoleProjectPermissionsInner) => (
                       <RowProject key={project.project_id} project={project} />
                     ))}
                   </Table>

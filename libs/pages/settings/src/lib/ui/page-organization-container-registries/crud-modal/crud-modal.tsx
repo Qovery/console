@@ -23,7 +23,7 @@ export const getOptionsContainerRegistry = (containerRegistry: AvailableContaine
     const options = containerRegistry
       .map(
         (containerRegistry: AvailableContainerRegistryResponse) =>
-          ![ContainerRegistryKindEnum.DOCR].includes(containerRegistry.kind as ContainerRegistryKindEnum) && {
+          ContainerRegistryKindEnum.DOCR !== containerRegistry.kind && {
             label: containerRegistry.kind || '',
             value: containerRegistry.kind || '',
             icon: (

@@ -1,4 +1,4 @@
-import { type APIVariableScopeEnum, type VariableImportRequestVars } from 'qovery-typescript-axios'
+import { type APIVariableScopeEnum, type VariableImportRequestVarsInner } from 'qovery-typescript-axios'
 import {
   fetchEnvironmentVariables,
   fetchSecretEnvironmentVariables,
@@ -8,7 +8,7 @@ import { type ServiceTypeEnum } from '@qovery/shared/enums'
 import { type AppDispatch } from '@qovery/state/store'
 
 export function formatData(data: { [key: string]: string }, keys: string[]) {
-  const vars: VariableImportRequestVars[] = []
+  const vars: VariableImportRequestVarsInner[] = []
   if (data) {
     keys.forEach((key) => {
       vars.push({
