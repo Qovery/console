@@ -109,7 +109,7 @@ export function StepGeneral(props: StepGeneralProps) {
 
         {isContainer(watchServiceType) && <GeneralContainerSettings organization={props.organization} />}
 
-        {watchBuildMode === BuildModeEnum.DOCKER && <EntrypointCmdInputs />}
+        {(watchBuildMode === BuildModeEnum.DOCKER || isContainer(watchServiceType)) && <EntrypointCmdInputs />}
 
         {watchServiceType && (
           <AutoDeploySetting source={watchServiceType === ServiceTypeEnum.CONTAINER ? 'CONTAINER_REGISTRY' : 'GIT'} />
