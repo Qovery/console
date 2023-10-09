@@ -1,4 +1,4 @@
-import { type ClusterRoutingTableResults } from 'qovery-typescript-axios'
+import { type ClusterRoutingTableResultsInner } from 'qovery-typescript-axios'
 import { type LoadingStatus } from '@qovery/shared/interfaces'
 import {
   BlockContent,
@@ -13,10 +13,10 @@ import {
 } from '@qovery/shared/ui'
 
 export interface PageSettingsNetworkProps {
-  routes?: ClusterRoutingTableResults[]
+  routes?: ClusterRoutingTableResultsInner[]
   onAddRoute: () => void
-  onEdit: (currentRoute: ClusterRoutingTableResults) => void
-  onDelete: (currentRoute: ClusterRoutingTableResults) => void
+  onEdit: (currentRoute: ClusterRoutingTableResultsInner) => void
+  onDelete: (currentRoute: ClusterRoutingTableResultsInner) => void
   loading?: LoadingStatus
 }
 

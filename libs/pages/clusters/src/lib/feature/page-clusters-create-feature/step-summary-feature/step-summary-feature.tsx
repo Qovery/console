@@ -1,6 +1,6 @@
 import {
   CloudProviderEnum,
-  type ClusterInstanceTypeResponseListResults,
+  type ClusterInstanceTypeResponseListResultsInner,
   type ClusterRequest,
   type ClusterRequestFeatures,
   KubernetesEnum,
@@ -38,15 +38,16 @@ export function StepSummaryFeature() {
 
   const pathCreate = `${CLUSTERS_URL(organizationId)}${CLUSTERS_CREATION_URL}`
 
-  const detailInstanceType = useSelector<RootState, ClusterInstanceTypeResponseListResults[] | undefined>((state) =>
-    selectInstancesTypes(
-      state,
-      generalData?.cloud_provider || CloudProviderEnum.AWS,
-      resourcesData?.cluster_type as KubernetesEnum,
-      generalData?.region || ''
-    )
+  const detailInstanceType = useSelector<RootState, ClusterInstanceTypeResponseListResultsInner[] | undefined>(
+    (state) =>
+      selectInstancesTypes(
+        state,
+        generalData?.cloud_provider || CloudProviderEnum.AWS,
+        resourcesData?.cluster_type as KubernetesEnum,
+        generalData?.region || ''
+      )
   )?.find(
-    (instanceTypes: ClusterInstanceTypeResponseListResults) => instanceTypes.type === resourcesData?.instance_type
+    (instanceTypes: ClusterInstanceTypeResponseListResultsInner) => instanceTypes.type === resourcesData?.instance_type
   )
 
   const goToFeatures = useCallback(() => {

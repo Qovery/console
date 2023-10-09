@@ -1,9 +1,9 @@
-import { type ClusterRoutingTableResults } from 'qovery-typescript-axios'
+import { type ClusterRoutingTableResultsInner } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { InputText, InputTextArea, ModalCrud } from '@qovery/shared/ui'
 
 export interface CrudModalProps {
-  route?: ClusterRoutingTableResults
+  route?: ClusterRoutingTableResultsInner
   onSubmit: () => void
   onClose: () => void
   loading?: boolean

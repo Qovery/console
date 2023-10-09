@@ -16,7 +16,7 @@ import {
   type SecretRequest,
   type Value,
   type VariableImport,
-  type VariableImportRequestVars,
+  type VariableImportRequestVarsInner,
 } from 'qovery-typescript-axios'
 import { type Key } from 'qovery-typescript-axios/api'
 import { type ServiceTypeEnum, isContainer, isJob } from '@qovery/shared/enums'
@@ -54,7 +54,7 @@ export const importEnvironmentVariables = createAsyncThunk(
   'environmentVariables/import',
   async (payload: {
     applicationId: string
-    vars: VariableImportRequestVars[]
+    vars: VariableImportRequestVarsInner[]
     overwriteEnabled: boolean
     serviceType: ServiceTypeEnum
   }) => {

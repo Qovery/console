@@ -20,12 +20,12 @@ import {
   type ClusterLogs,
   type ClusterRequest,
   type ClusterRoutingTableRequest,
-  type ClusterRoutingTableResults,
+  type ClusterRoutingTableResultsInner,
   type ClusterStatus,
   ClustersApi,
   KubernetesEnum,
 } from 'qovery-typescript-axios'
-import { type ClusterInstanceTypeResponseListResults } from 'qovery-typescript-axios/api'
+import { type ClusterInstanceTypeResponseListResultsInner } from 'qovery-typescript-axios/api'
 import { type AdvancedSettings, type ClusterEntity, type ClustersState } from '@qovery/shared/interfaces'
 import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
 import { addOneToManyRelation, getEntitiesByIds, refactoClusterPayload, sortByKey } from '@qovery/shared/util-js'
@@ -193,19 +193,19 @@ export const createCluster = createAsyncThunk<Cluster, { organizationId: string;
 )
 
 export const fetchClusterRoutingTable = createAsyncThunk<
-  ClusterRoutingTableResults[],
+  ClusterRoutingTableResultsInner[],
   { organizationId: string; clusterId: string }
 >('cluster/routingTable/fetch', async (data) => {
   const response = await clusterApi.getRoutingTable(data.organizationId, data.clusterId)
-  return response.data.results as ClusterRoutingTableResults[]
+  return response.data.results as ClusterRoutingTableResultsInner[]
 })
 
 export const editClusterRoutingTable = createAsyncThunk<
-  ClusterRoutingTableResults[],
+  ClusterRoutingTableResultsInner[],
   {
     organizationId: string
     clusterId: string
-    routes: ClusterRoutingTableResults[]
+    routes: ClusterRoutingTableResultsInner[]
     toasterCallback: () => void
   }
 >('cluster/routingTable/edit', async (data) => {
@@ -213,7 +213,7 @@ export const editClusterRoutingTable = createAsyncThunk<
     routes: data.routes,
   } as ClusterRoutingTableRequest)
 
-  return response.data.results as ClusterRoutingTableResults[]
+  return response.data.results as ClusterRoutingTableResultsInner[]
 })
 
 export const initialClusterState: ClustersState = clusterAdapter.getInitialState({
@@ -700,7 +700,7 @@ export const selectInstancesTypes = (
   cloudProvider: CloudProviderEnum,
   clusterType: KubernetesEnum,
   region: string
-): ClusterInstanceTypeResponseListResults[] | undefined => {
+): ClusterInstanceTypeResponseListResultsInner[] | undefined => {
   const clusterState = getClusterState(state)
   if (clusterState.availableClusterTypes.items[cloudProvider]?.[clusterType]?.[region]) {
     return clusterState.availableClusterTypes.items[cloudProvider][clusterType][region]
