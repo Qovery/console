@@ -159,7 +159,13 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
                         <a href={gitRepository.url} target="_blank" rel="noopener noreferrer">
                           <Badge variant="surface" size="xs" className="gap-1">
                             <Icon
-                              name={gitRepository.url.includes('//github') ? IconEnum.GITHUB : IconEnum.GITLAB}
+                              name={
+                                gitRepository.url.includes('//github')
+                                  ? IconEnum.GITHUB
+                                  : gitRepository.url.includes('//bitbucket')
+                                  ? IconEnum.BITBUCKET
+                                  : IconEnum.GITLAB
+                              }
                               height={14}
                               width={14}
                             />
