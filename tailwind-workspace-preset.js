@@ -100,7 +100,6 @@ module.exports = {
         'content-with-navigation-left': '46.5rem',
       },
       minHeight: {
-        'height-with-navigation-left': 'calc(100vh - 270px)',
         'page-container': 'calc(100vh - theme(spacing.navbar-height))',
         'page-container-wbanner': 'calc(100vh - theme(spacing.navbar-height) - 40px)',
       },

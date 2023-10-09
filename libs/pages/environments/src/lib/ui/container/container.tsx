@@ -73,7 +73,7 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
   )
 
   return (
-    <Section>
+    <Section className="flex-1">
       <Header title={project?.name} icon={IconEnum.ENVIRONMENT} iconClassName="w-16" />
       <Tabs items={tabsItems} contentRight={!isDeploymentRulesTab && contentTabs} />
       <div className="flex-grow flex-col flex">{children}</div>
