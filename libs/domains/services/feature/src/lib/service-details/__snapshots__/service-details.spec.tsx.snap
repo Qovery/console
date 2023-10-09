@@ -28,7 +28,7 @@ exports[`ServiceDetails should match application snapshot 1`] = `
           <dd
             class="text-neutral-400 font-medium"
           >
-            12 Apr, 10:48:51
+            12 Apr, 08:48:51
           </dd>
           <dt
             class="text-neutral-350"
@@ -90,7 +90,7 @@ exports[`ServiceDetails should match database snapshot 1`] = `
           <dd
             class="text-neutral-400 font-medium"
           >
-            28 Jul, 16:50:09
+            28 Jul, 14:50:09
           </dd>
           <dt
             class="text-neutral-350"
@@ -152,7 +152,7 @@ exports[`ServiceDetails should match job snapshot 1`] = `
           <dd
             class="text-neutral-400 font-medium"
           >
-            12 Sep, 12:08:39
+            12 Sep, 10:08:39
           </dd>
           <dt
             class="text-neutral-350"

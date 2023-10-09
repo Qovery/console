@@ -75,7 +75,7 @@ export function LastCommit({ className, gitRepository, serviceId, serviceType }:
               variant="surface"
               color="neutral"
               size="xs"
-              className={twMerge(`group justify-between ${delta > 0 ? 'w-24 pr-[26px]' : 'gap-1'}`, className)}
+              className={twMerge(`group justify-between ${delta > 0 ? 'w-[98px] pr-[26px]' : 'gap-1'}`, className)}
               onClick={() => onClickCopyToClipboard(deployedCommit.git_commit_id)}
             >
               <Icon name={IconAwesomeEnum.COPY} className="hidden group-hover:inline w-4" />
