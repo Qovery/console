@@ -1,4 +1,4 @@
-import { type DeploymentHistoryEnvironment, StateEnum } from 'qovery-typescript-axios'
+import { type DeploymentHistoryEnvironment, type StateEnum } from 'qovery-typescript-axios'
 import { DEPLOYMENT_LOGS_VERSION_URL } from '@qovery/shared/routes'
 import {
   Badge,
