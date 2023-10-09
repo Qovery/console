@@ -22,15 +22,15 @@ exports[`LastCommit should match snapshot 1`] = `
         data-state="closed"
       >
         <button
-          class="inline-flex items-center shrink-0 font-medium rounded text-xs px-1 py-0.5 bg-neutral-100 border border-neutral-250 text-neutral-400 group justify-between w-20"
+          class="inline-flex items-center shrink-0 font-medium rounded text-xs px-1 py-0.5 bg-neutral-100 border border-neutral-250 text-neutral-400 group justify-between gap-1"
           type="button"
         >
           <span
-            class="icon-solid-copy shrink-0 hidden group-hover:inline"
+            class="icon-solid-copy shrink-0 hidden group-hover:inline w-4"
             role="img"
           />
           <span
-            class="icon-solid-code-commit shrink-0 group-hover:hidden"
+            class="icon-solid-code-commit shrink-0 group-hover:hidden w-4"
             role="img"
           />
           ddd1cee

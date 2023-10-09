@@ -75,15 +75,15 @@ export function LastCommit({ className, gitRepository, serviceId, serviceType }:
               variant="surface"
               color="neutral"
               size="xs"
-              className={twMerge(`group justify-between ${delta > 0 ? 'w-28 pr-9' : 'w-20'}`, className)}
+              className={twMerge(`group justify-between ${delta > 0 ? 'w-[98px] pr-[26px]' : 'gap-1'}`, className)}
               onClick={() => onClickCopyToClipboard(deployedCommit.git_commit_id)}
             >
-              <Icon name={IconAwesomeEnum.COPY} className="hidden group-hover:inline" />
-              <Icon name={IconAwesomeEnum.CODE_COMMIT} className="group-hover:hidden" />
+              <Icon name={IconAwesomeEnum.COPY} className="hidden group-hover:inline w-4" />
+              <Icon name={IconAwesomeEnum.CODE_COMMIT} className="group-hover:hidden w-4" />
               {deployedCommit.git_commit_id.substring(0, 7)}
               {delta > 0 ? (
                 // TODO: improve inset
-                <span className="absolute right-0 inset-y-0 bg-orange-500 text-white px-2 rounded-tr rounded-br flex items-center w-8 justify-center">
+                <span className="absolute right-0 inset-y-0 bg-orange-500 text-white px-1 rounded-tr rounded-br flex items-center min-w-[22px] justify-center">
                   {delta}
                 </span>
               ) : null}
