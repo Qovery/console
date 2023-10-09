@@ -3,7 +3,8 @@ import { EnvironmentModeEnum, OrganizationEventTargetType } from 'qovery-typescr
 import { useMemo } from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
-import { deleteClusterAction, postClusterActionsDeploy, postClusterActionsStop } from '@qovery/domains/organization'
+import { ClusterDeleteModal } from '@qovery/domains/clusters/feature'
+import { postClusterActionsDeploy, postClusterActionsStop } from '@qovery/domains/organization'
 import { type ClusterEntity } from '@qovery/shared/interfaces'
 import { AUDIT_LOGS_PARAMS_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL, INFRA_LOGS_URL } from '@qovery/shared/routes'
 import {
@@ -12,6 +13,7 @@ import {
   Icon,
   IconAwesomeEnum,
   type MenuItemProps,
+  useModal,
   useModalConfirmation,
 } from '@qovery/shared/ui'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
@@ -36,15 +38,13 @@ export function ClusterButtonsActions(props: ClusterButtonsActionsProps) {
   const [, copyToClipboard] = useCopyToClipboard()
 
   const { openModalConfirmation } = useModalConfirmation()
+  const { openModal } = useModal()
 
   const dispatch = useDispatch<AppDispatch>()
 
-  const removeCluster = (id: string, name?: string) => {
-    openModalConfirmation({
-      title: `Uninstall cluster`,
-      name: name,
-      isDelete: true,
-      action: () => dispatch(deleteClusterAction({ organizationId, clusterId: id })),
+  const removeCluster = (id: string) => {
+    openModal({
+      content: <ClusterDeleteModal organizationId={organizationId} clusterId={id} />,
     })
   }
 
@@ -189,7 +189,7 @@ export function ClusterButtonsActions(props: ClusterButtonsActionsProps) {
                     name: 'Delete cluster',
                     containerClassName: 'text-red-600',
                     contentLeft: <Icon name={IconAwesomeEnum.TRASH} className="text-sm" />,
-                    onClick: () => removeCluster(cluster.id, cluster.name),
+                    onClick: () => removeCluster(cluster.id),
                   },
                 ],
               },

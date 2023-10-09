@@ -16,20 +16,20 @@ export interface ModalConfirmationProps {
   placeholder?: string
   ctaButton?: string
   isDelete?: boolean
+  content?: React.ReactNode
 }
 
-export function ModalConfirmation(props: ModalConfirmationProps) {
-  const {
-    title,
-    description,
-    name,
-    callback,
-    warning,
-    isDelete = false,
-    placeholder = isDelete ? 'Enter "delete"' : 'Enter the current name',
-    ctaButton = 'Confirm',
-  } = props
-
+export function ModalConfirmation({
+  title,
+  description,
+  name,
+  callback,
+  warning,
+  isDelete = false,
+  placeholder = isDelete ? 'Enter "delete"' : 'Enter the current name',
+  ctaButton = 'Confirm',
+  content,
+}: ModalConfirmationProps) {
   const { handleSubmit, control } = useForm()
   const { closeModal } = useModal()
 
@@ -101,6 +101,7 @@ export function ModalConfirmation(props: ModalConfirmationProps) {
             />
           )}
         />
+        {content}
         <div className="flex gap-3 justify-end">
           <ButtonLegacy className="btn--no-min-w" style={ButtonLegacyStyle.STROKED} onClick={() => closeModal()}>
             Cancel
