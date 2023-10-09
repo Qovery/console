@@ -1,4 +1,5 @@
 import { useNavigate, useParams } from 'react-router-dom'
+import { PodsMetrics } from '@qovery/domains/services/feature'
 import { isCronJob, isLifeCycleJob } from '@qovery/shared/enums'
 import { type JobApplicationEntity } from '@qovery/shared/interfaces'
 import {
@@ -84,6 +85,8 @@ export function JobOverview(props: JobOverviewProps) {
           helperText="Port where to run readiness and liveliness probes checks. The port will not be exposed externally"
         />
       </div>
+
+      <PodsMetrics environmentId={environmentId} serviceId={applicationId} />
     </div>
   )
 }
