@@ -2,7 +2,7 @@ import {
   type DeploymentStageWithServicesStatuses,
   type Environment,
   type EnvironmentLogs,
-  StateEnum,
+  type StateEnum,
   type Status,
 } from 'qovery-typescript-axios'
 import { memo, useCallback, useContext, useEffect, useState } from 'react'
