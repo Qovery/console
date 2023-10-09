@@ -213,8 +213,6 @@ export function TabsFeature() {
     ? application?.links?.items?.filter((link: Link) => !(link.is_default && link.is_qovery_domain))
     : []
 
-  if (!serviceType) return null
-
   return (
     <Tabs
       items={items}

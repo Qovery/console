@@ -101,11 +101,11 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
     <div className="flex flex-col gap-3">
       <div className="flex flex-row gap-2">
         {environment && (
-          <Skeleton width={80} height={32} show={!environment?.mode}>
+          <Skeleton width={80} height={22} show={!environment?.mode}>
             <EnvironmentMode size="xs" mode={environment.mode} />
           </Skeleton>
         )}
-        <Skeleton width={120} height={32} show={!cluster}>
+        <Skeleton width={120} height={22} show={!cluster}>
           <Tooltip content={cluster?.name ?? ''}>
             <Badge size="xs" variant="outline">
               <Icon name={environment?.cloud_provider.provider as IconEnum} width="16" />
