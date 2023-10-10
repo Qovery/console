@@ -4,16 +4,6 @@
   "sourceRoot": "libs/domains/clusters/data-access/src",
   "projectType": "library",
   "targets": {
-    "build": {
-      "executor": "@nx/js:tsc",
-      "outputs": ["{options.outputPath}"],
-      "options": {
-        "outputPath": "dist/libs/domains/clusters/data-access",
-        "main": "libs/domains/clusters/data-access/src/index.ts",
-        "tsConfig": "libs/domains/clusters/data-access/tsconfig.lib.json",
-        "assets": ["libs/domains/clusters/data-access/*.md"]
-      }
-    },
     "lint": {
       "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
@@ -36,5 +26,5 @@
       }
     }
   },
-  "tags": []
+  "tags": ["scope:domain", "type:data-access", "slice:clusters"]
 }
