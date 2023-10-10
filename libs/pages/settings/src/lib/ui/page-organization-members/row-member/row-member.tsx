@@ -75,7 +75,7 @@ export function RowMember(props: RowMemberProps) {
   const isOwner = member.role_name?.toUpperCase() === MemberRoleEnum.OWNER
 
   const menuItem = (role: OrganizationAvailableRole, customRole: boolean) => ({
-    name: upperCaseFirstLetter(role.name) || '',
+    name: upperCaseFirstLetter(role.name ?? ''),
     contentLeft: (
       <Icon
         name={customRole ? IconAwesomeEnum.USER : RolesIcons[role.name?.toUpperCase() || '']}
@@ -211,7 +211,7 @@ export function RowMember(props: RowMemberProps) {
             : 'border-neutral-300 text-neutral-400 cursor-pointer'
         }`}
       >
-        <span className="text-sm block max-w-[130px] truncate">{upperCaseFirstLetter(role)}</span>
+        <span className="text-sm block max-w-[130px] truncate">{upperCaseFirstLetter(role ?? '')}</span>
         {!loadingUpdateRole && role?.toUpperCase() !== MemberRoleEnum.OWNER && (member as Member).last_activity_at && (
           <Icon
             name={IconAwesomeEnum.ANGLE_DOWN}

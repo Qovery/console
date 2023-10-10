@@ -54,7 +54,7 @@ export function EditGitRepositorySettingsFeature() {
 
   const [gitDisabled, setGitDisabled] = useState(true)
 
-  const currentAuthProvider = `${upperCaseFirstLetter(getGitRepositoryFromApplication()?.provider)} (${
+  const currentAuthProvider = `${upperCaseFirstLetter(getGitRepositoryFromApplication()?.provider ?? '')} (${
     getGitRepositoryFromApplication()?.owner
   })`
   const currentRepository = repositories.find((repository) => repository.name === watchRepository)
@@ -131,7 +131,7 @@ export function EditGitRepositorySettingsFeature() {
             }))
           : [
               {
-                label: upperCaseFirstLetter(getGitRepositoryFromApplication()?.name) || '',
+                label: upperCaseFirstLetter(getGitRepositoryFromApplication()?.name ?? ''),
                 value: getGitRepositoryFromApplication()?.url || '',
               },
             ]

@@ -179,7 +179,7 @@ export function RowEvent(props: RowEventProps) {
         </div>
         <div className="px-4">
           <Skeleton height={16} width={80} show={isPlaceholder}>
-            <>{upperCaseFirstLetter(event.target_type)}</>
+            <>{upperCaseFirstLetter(event.target_type ?? '')}</>
           </Skeleton>
         </div>
         <div className="px-4">
@@ -207,7 +207,7 @@ export function RowEvent(props: RowEventProps) {
         </div>
         <div className="px-4">
           <Skeleton height={16} width={80} show={isPlaceholder}>
-            <span className="truncate">{upperCaseFirstLetter(event.sub_target_type || '')?.replace('_', ' ')}</span>
+            <span className="truncate">{upperCaseFirstLetter(event.sub_target_type ?? '')?.replace('_', ' ')}</span>
           </Skeleton>
         </div>
         <div className="px-4">
@@ -221,7 +221,7 @@ export function RowEvent(props: RowEventProps) {
           <Skeleton height={16} width={80} show={isPlaceholder}>
             <div className="truncate">
               <span className="inline-block text-neutral-400 mr-1.5">{getSourceIcon(event.origin)}</span>
-              {upperCaseFirstLetter(event.origin)?.replace('_', ' ')}
+              {upperCaseFirstLetter(event.origin ?? '')?.replace('_', ' ')}
             </div>
           </Skeleton>
         </div>

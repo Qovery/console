@@ -119,7 +119,7 @@ export function TableRowDeployment({
           </Skeleton>
           <Skeleton show={isLoading} width={80} height={20}>
             <p className="text-xs text-neutral-350 font-medium">
-              {upperCaseFirstLetter(data?.status?.replace('_', ' ').toLowerCase())}
+              {upperCaseFirstLetter(data?.status?.replace('_', ' ').toLowerCase() ?? '')}
             </p>
           </Skeleton>
         </div>
