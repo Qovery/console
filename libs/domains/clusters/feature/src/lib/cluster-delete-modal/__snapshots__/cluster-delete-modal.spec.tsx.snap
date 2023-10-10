@@ -1,0 +1,229 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ClusterDeleteModal should match snapshot 1`] = `
+<body>
+  <div>
+    <div
+      class="p-6"
+    >
+      <h2
+        class="h4 text-neutral-400 mb-2 max-w-sm"
+      >
+        Confirm deletion cluster
+      </h2>
+      <div
+        class="text-neutral-350 text-sm mb-6"
+      >
+        To confirm the deletion of 
+        <strong>
+          my-cluster
+        </strong>
+        , please type "delete"
+      </div>
+      <form>
+        <div
+          class="mb-5 "
+          data-testid="input-small-wrapper"
+        >
+          <div
+            class="input input--small flex-grow   "
+            data-testid="input"
+          >
+            <label
+              class="hidden"
+            />
+            <input
+              class="absolute text-sm top-0 left-0 h-full w-full text-neutral-400 placeholder:text-neutral-350 rounded px-2 "
+              data-testid="input-value"
+              name="name"
+              placeholder="Enter "delete""
+              type="text"
+              value=""
+            />
+          </div>
+        </div>
+        <div
+          class="border border-red-500 rounded bg-red-50 text-sm text-neutral-400 p-4 mb-6"
+        >
+          <div
+            class="mb-3"
+          >
+            <div
+              class="input input--select    "
+              data-testid="select"
+            >
+              <label
+                class="!text-xs !translate-y-0"
+                for="Delete mode"
+              >
+                Delete mode
+              </label>
+              <div
+                class=" css-b62m3t-container"
+              >
+                <span
+                  class="css-1f43avz-a11yText-A11yText"
+                  id="react-select-3-live-region"
+                />
+                <span
+                  aria-atomic="false"
+                  aria-live="polite"
+                  aria-relevant="additions text"
+                  class="css-1f43avz-a11yText-A11yText"
+                />
+                <div
+                  class="input-select__control css-13cymwt-control"
+                >
+                  <div
+                    class="input-select__value-container input-select__value-container--has-value css-1fdsijx-ValueContainer"
+                  >
+                    <span
+                      class="text-sm text-neutral-400 mr-1"
+                    >
+                      Default
+                    </span>
+                    <input
+                      aria-autocomplete="list"
+                      aria-expanded="false"
+                      aria-haspopup="true"
+                      aria-readonly="true"
+                      class="css-mohuvp-dummyInput-DummyInput"
+                      id="Delete mode"
+                      inputmode="none"
+                      role="combobox"
+                      tabindex="0"
+                      value=""
+                    />
+                  </div>
+                  <div
+                    class="input-select__indicators css-1hb7zxy-IndicatorsContainer"
+                  >
+                    <span
+                      class="input-select__indicator-separator css-1u9des2-indicatorSeparator"
+                    />
+                    <div
+                      aria-hidden="true"
+                      class="input-select__indicator input-select__dropdown-indicator css-1xc3v61-indicatorContainer"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        class="css-tj5bde-Svg"
+                        focusable="false"
+                        height="20"
+                        viewBox="0 0 20 20"
+                        width="20"
+                      >
+                        <path
+                          d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+                <input
+                  name="Delete mode"
+                  type="hidden"
+                  value="DEFAULT"
+                />
+              </div>
+              <input
+                name="Delete mode"
+                type="hidden"
+                value="DEFAULT"
+              />
+              <div
+                class="absolute top-1/2 -translate-y-1/2 right-4 pointer-events-none"
+              >
+                <span
+                  class="icon-solid-angle-down shrink-0 text-sm text-neutral-400"
+                  role="img"
+                />
+              </div>
+            </div>
+          </div>
+          <p>
+            This operation will delete:
+          </p>
+          <ul
+            class="list-disc pl-5"
+          >
+            <li>
+              <b>
+                Cloud provider
+              </b>
+              : any resource created by Qovery on your cloud provider account to run this cluster will be deleted, including any environment attached to it.
+               
+            </li>
+            <li>
+              <b>
+                Qovery organization
+              </b>
+              : the configuration of this cluster and any linked environment. Use it carefully this action is irreversible.
+            </li>
+          </ul>
+          <p>
+            Use it carefully this action is irreversible.
+          </p>
+          <div
+            class="border px-4 py-3 bg rounded flex mt-3 bg-yellow-50 border-yellow-500"
+            data-testid="banner-box"
+          >
+            <div
+              class="mr-3 shrink-0 "
+            >
+              <span
+                class="icon-solid-triangle-exclamation shrink-0 relative top-[2px] text-yellow-600"
+                role="img"
+              />
+            </div>
+            <div
+              class="flex flex-col justify-center"
+            >
+              <div
+                class="text-xs text-neutral-400"
+              >
+                <p>
+                  Please note that you will have to manually delete on your cloud account:
+                </p>
+                <ul
+                  class="list-disc pl-3"
+                >
+                  <li>
+                    the S3 bucket named xxxxxx-xxxxxx-xxxxxx
+                  </li>
+                  <li>
+                    the image registry linked to this cluster
+                  </li>
+                  <li>
+                    any resource created by a lifecycle job that will not be properly deleted during the \`environment deletion\` event.
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="flex gap-3 justify-end"
+        >
+          <button
+            class="btn btn--regular btn--stroked btn--no-min-w "
+            type="button"
+          >
+            <span>
+              Cancel
+            </span>
+          </button>
+          <button
+            class="btn btn--regular btn--error btn--no-min-w "
+            type="submit"
+          >
+            <span>
+              Confirm
+            </span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+`;

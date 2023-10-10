@@ -1,3 +1,4 @@
+import { type PropsWithChildren } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import BannerBox, { BannerBoxEnum } from '../../banner-box/banner-box'
 import ButtonLegacy, { ButtonLegacyStyle } from '../../buttons/button-legacy/button-legacy'
@@ -7,7 +8,7 @@ import InputTextSmall from '../../inputs/input-text-small/input-text-small'
 import useModal from '../../modal/use-modal/use-modal'
 import { Tooltip } from '../../tooltip/tooltip'
 
-export interface ModalConfirmationProps {
+export interface ModalConfirmationProps extends PropsWithChildren {
   title: string
   description?: string
   name?: string
@@ -18,18 +19,17 @@ export interface ModalConfirmationProps {
   isDelete?: boolean
 }
 
-export function ModalConfirmation(props: ModalConfirmationProps) {
-  const {
-    title,
-    description,
-    name,
-    callback,
-    warning,
-    isDelete = false,
-    placeholder = isDelete ? 'Enter "delete"' : 'Enter the current name',
-    ctaButton = 'Confirm',
-  } = props
-
+export function ModalConfirmation({
+  title,
+  description,
+  name,
+  callback,
+  warning,
+  isDelete = false,
+  placeholder = isDelete ? 'Enter "delete"' : 'Enter the current name',
+  ctaButton = 'Confirm',
+  children,
+}: ModalConfirmationProps) {
   const { handleSubmit, control } = useForm()
   const { closeModal } = useModal()
 
@@ -92,7 +92,7 @@ export function ModalConfirmation(props: ModalConfirmationProps) {
           defaultValue=""
           render={({ field, fieldState: { error } }) => (
             <InputTextSmall
-              className="mb-6"
+              className="mb-5"
               placeholder={placeholder}
               name={field.name}
               onChange={field.onChange}
@@ -101,6 +101,7 @@ export function ModalConfirmation(props: ModalConfirmationProps) {
             />
           )}
         />
+        {children}
         <div className="flex gap-3 justify-end">
           <ButtonLegacy className="btn--no-min-w" style={ButtonLegacyStyle.STROKED} onClick={() => closeModal()}>
             Cancel
