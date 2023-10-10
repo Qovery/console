@@ -1,6 +1,7 @@
 import { ClusterDeleteMode } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { BannerBox, BannerBoxEnum, IconAwesomeEnum, InputSelect, ModalConfirmation } from '@qovery/shared/ui'
+import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import useDeleteCluster from '../hooks/use-delete-cluster/use-delete-cluster'
 
 export interface ClusterDeleteModalProps {
@@ -16,7 +17,7 @@ export function ClusterDeleteModal({ organizationId, clusterId, name }: ClusterD
   const formattedClusterDeleteMode = (clusterDeleteMode: string) =>
     clusterDeleteMode
       .split('_')
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .map((word) => upperCaseFirstLetter(word))
       .join(' ')
 
   return (
