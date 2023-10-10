@@ -1,5 +1,7 @@
+import { ClusterDeleteMode } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { BannerBox, BannerBoxEnum, IconAwesomeEnum, InputSelect, ModalConfirmation } from '@qovery/shared/ui'
+import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import useDeleteCluster from '../hooks/use-delete-cluster/use-delete-cluster'
 
 export interface ClusterDeleteModalProps {
@@ -9,7 +11,7 @@ export interface ClusterDeleteModalProps {
 
 export function ClusterDeleteModal({ organizationId, clusterId }: ClusterDeleteModalProps) {
   const { mutateAsync } = useDeleteCluster()
-  const [deleteMode, setDeleteMode] = useState('')
+  const [deleteMode, setDeleteMode] = useState<ClusterDeleteMode>(ClusterDeleteMode.DEFAULT)
 
   return (
     <ModalConfirmation
@@ -26,13 +28,11 @@ export function ClusterDeleteModal({ organizationId, clusterId }: ClusterDeleteM
           <InputSelect
             className="mb-3"
             label="Delete mode"
-            options={[
-              {
-                label: 'test',
-                value: 'test',
-              },
-            ]}
-            onChange={(value) => setDeleteMode(value as string)}
+            options={Object.values(ClusterDeleteMode).map((mode) => ({
+              value: upperCaseFirstLetter(mode),
+              label: mode,
+            }))}
+            onChange={(value) => setDeleteMode(value as ClusterDeleteMode)}
             value={deleteMode}
           />
           <p>This operation will delete:</p>
