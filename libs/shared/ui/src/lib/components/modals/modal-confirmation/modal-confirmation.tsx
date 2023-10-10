@@ -92,7 +92,7 @@ export function ModalConfirmation({
           defaultValue=""
           render={({ field, fieldState: { error } }) => (
             <InputTextSmall
-              className="mb-6"
+              className="mb-5"
               placeholder={placeholder}
               name={field.name}
               onChange={field.onChange}
