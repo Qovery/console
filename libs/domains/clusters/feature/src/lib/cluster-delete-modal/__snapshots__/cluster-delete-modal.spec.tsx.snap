@@ -63,7 +63,7 @@ exports[`ClusterDeleteModal should match snapshot 1`] = `
               >
                 <span
                   class="css-1f43avz-a11yText-A11yText"
-                  id="react-select-2-live-region"
+                  id="react-select-3-live-region"
                 />
                 <span
                   aria-atomic="false"
