@@ -6,9 +6,10 @@ import useDeleteCluster from '../hooks/use-delete-cluster/use-delete-cluster'
 export interface ClusterDeleteModalProps {
   organizationId: string
   clusterId: string
+  name: string
 }
 
-export function ClusterDeleteModal({ organizationId, clusterId }: ClusterDeleteModalProps) {
+export function ClusterDeleteModal({ organizationId, clusterId, name }: ClusterDeleteModalProps) {
   const { mutateAsync } = useDeleteCluster()
   const [clusterDeleteMode, setClusterDeleteMode] = useState<ClusterDeleteMode>(ClusterDeleteMode.DEFAULT)
 
@@ -21,6 +22,7 @@ export function ClusterDeleteModal({ organizationId, clusterId }: ClusterDeleteM
   return (
     <ModalConfirmation
       title="Confirm deletion cluster"
+      name={name}
       callback={async () => {
         try {
           await mutateAsync({
@@ -45,7 +47,7 @@ export function ClusterDeleteModal({ organizationId, clusterId }: ClusterDeleteM
             value={clusterDeleteMode}
           />
           <p>This operation will delete:</p>
-          <ul className="list-disc pl-4">
+          <ul className="list-disc pl-5">
             <li>
               <b>Cloud provider</b>: any resource created by Qovery on your cloud provider account to run this cluster
               will be deleted, including any environment attached to it.{' '}

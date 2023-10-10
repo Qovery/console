@@ -42,9 +42,9 @@ export function ClusterButtonsActions(props: ClusterButtonsActionsProps) {
 
   const dispatch = useDispatch<AppDispatch>()
 
-  const removeCluster = (id: string) => {
+  const removeCluster = (id: string, name: string) => {
     openModal({
-      content: <ClusterDeleteModal organizationId={organizationId} clusterId={id} />,
+      content: <ClusterDeleteModal organizationId={organizationId} clusterId={id} name={name} />,
     })
   }
 
@@ -189,7 +189,7 @@ export function ClusterButtonsActions(props: ClusterButtonsActionsProps) {
                     name: 'Delete cluster',
                     containerClassName: 'text-red-600',
                     contentLeft: <Icon name={IconAwesomeEnum.TRASH} className="text-sm" />,
-                    onClick: () => removeCluster(cluster.id),
+                    onClick: () => removeCluster(cluster.id, cluster.name),
                   },
                 ],
               },

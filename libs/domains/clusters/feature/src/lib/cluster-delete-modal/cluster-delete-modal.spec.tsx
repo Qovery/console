@@ -5,6 +5,7 @@ describe('ClusterDeleteModal', () => {
   const props: ClusterDeleteModalProps = {
     organizationId: '0',
     clusterId: '1',
+    name: 'my-cluster',
   }
 
   it('should render successfully', () => {
