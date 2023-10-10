@@ -112,9 +112,7 @@ export function resetForm(currentRole: OrganizationCustomRole) {
       project.permissions?.forEach(
         (currentPermission: OrganizationCustomRoleUpdateRequestProjectPermissionsInnerPermissionsInner) => {
           permission['ADMIN'] = project.is_admin ? 'ADMIN' : OrganizationCustomRoleProjectPermission.NO_ACCESS
-          permission[currentPermission.environment_type || ''] = getValue(
-            (currentPermission.permission as OrganizationCustomRoleProjectPermission) ?? 'NO_ACCESS'
-          )
+          permission[currentPermission.environment_type || ''] = getValue(currentPermission.permission ?? 'NO_ACCESS')
         }
       )
     } else {

@@ -2,6 +2,7 @@ import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { useContext } from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
+import { match } from 'ts-pattern'
 import { useActionRedeployEnvironment } from '@qovery/domains/environment'
 import { deleteEnvironmentVariable, deleteSecret } from '@qovery/domains/environment-variable'
 import { ExternalServiceEnum, type ServiceTypeEnum } from '@qovery/shared/enums'
@@ -76,13 +77,9 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
     contentLeft: <Icon name="icon-solid-pen" className="text-sm text-brand-500" />,
   })
 
-  const disableOverride = (
-    [
-      APIVariableScopeEnum.APPLICATION,
-      APIVariableScopeEnum.CONTAINER,
-      APIVariableScopeEnum.JOB,
-    ] as APIVariableScopeEnum[]
-  ).includes(variable.scope)
+  const disableOverride = match(variable.scope)
+    .with('APPLICATION', 'CONTAINER', 'JOB', () => true)
+    .otherwise(() => false)
   const createOverride = {
     name: 'Create override',
     disabled: disableOverride,

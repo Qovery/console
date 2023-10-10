@@ -2,13 +2,13 @@ import {
   type DeploymentStageWithServicesStatuses,
   type Environment,
   type EnvironmentLogs,
-  type StateEnum,
   type Status,
 } from 'qovery-typescript-axios'
 import { memo, useCallback, useContext, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import useWebSocket from 'react-use-websocket'
+import { match } from 'ts-pattern'
 import { selectApplicationById } from '@qovery/domains/application'
 import { selectDatabaseById } from '@qovery/domains/database'
 import { useEnvironmentDeploymentHistory } from '@qovery/domains/environment'
@@ -171,19 +171,22 @@ export function DeploymentLogsFeature({ environment, statusStages }: DeploymentL
 
   const isLastVersion = (deploymentHistory && deploymentHistory[0].id === versionId) || !versionId
   const isDeploymentProgressing: boolean = isLastVersion
-    ? [
-        'BUILDING',
-        'DEPLOYING',
-        'CANCELING',
-        'DELETING',
-        'RESTARTING',
-        'STOPPING',
-        'QUEUED',
-        'DELETE_QUEUED',
-        'RESTART_QUEUED',
-        'STOP_QUEUED',
-        'DEPLOYMENT_QUEUED',
-      ].includes(deploymentStatus?.state as StateEnum)
+    ? match(deploymentStatus?.state)
+        .with(
+          'BUILDING',
+          'DEPLOYING',
+          'CANCELING',
+          'DELETING',
+          'RESTARTING',
+          'STOPPING',
+          'QUEUED',
+          'DELETE_QUEUED',
+          'RESTART_QUEUED',
+          'STOP_QUEUED',
+          'DEPLOYMENT_QUEUED',
+          () => true
+        )
+        .otherwise(() => false)
     : false
 
   return (

@@ -11,7 +11,7 @@ export interface StatusLabelProps {
 export function StatusLabel(props: StatusLabelProps) {
   const { status, className = '' } = props
 
-  if (!status || (['READY', 'DEPLOYED'] as StateEnum[]).includes(status)) {
+  if (!status || status === 'READY' || status === 'DEPLOYED') {
     return null
   }
 
