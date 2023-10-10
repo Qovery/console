@@ -1,3 +1,4 @@
+import { type PropsWithChildren } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import BannerBox, { BannerBoxEnum } from '../../banner-box/banner-box'
 import ButtonLegacy, { ButtonLegacyStyle } from '../../buttons/button-legacy/button-legacy'
@@ -16,7 +17,6 @@ export interface ModalConfirmationProps {
   placeholder?: string
   ctaButton?: string
   isDelete?: boolean
-  content?: React.ReactNode
 }
 
 export function ModalConfirmation({
@@ -28,8 +28,8 @@ export function ModalConfirmation({
   isDelete = false,
   placeholder = isDelete ? 'Enter "delete"' : 'Enter the current name',
   ctaButton = 'Confirm',
-  content,
-}: ModalConfirmationProps) {
+  children,
+}: PropsWithChildren<ModalConfirmationProps>) {
   const { handleSubmit, control } = useForm()
   const { closeModal } = useModal()
 
@@ -101,7 +101,7 @@ export function ModalConfirmation({
             />
           )}
         />
-        {content}
+        {children}
         <div className="flex gap-3 justify-end">
           <ButtonLegacy className="btn--no-min-w" style={ButtonLegacyStyle.STROKED} onClick={() => closeModal()}>
             Cancel
