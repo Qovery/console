@@ -8,7 +8,7 @@ import InputTextSmall from '../../inputs/input-text-small/input-text-small'
 import useModal from '../../modal/use-modal/use-modal'
 import { Tooltip } from '../../tooltip/tooltip'
 
-export interface ModalConfirmationProps {
+export interface ModalConfirmationProps extends PropsWithChildren {
   title: string
   description?: string
   name?: string
@@ -29,7 +29,7 @@ export function ModalConfirmation({
   placeholder = isDelete ? 'Enter "delete"' : 'Enter the current name',
   ctaButton = 'Confirm',
   children,
-}: PropsWithChildren<ModalConfirmationProps>) {
+}: ModalConfirmationProps) {
   const { handleSubmit, control } = useForm()
   const { closeModal } = useModal()
 
