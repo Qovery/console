@@ -22,11 +22,15 @@ export function ClusterDeleteModal({ organizationId, clusterId }: ClusterDeleteM
     <ModalConfirmation
       title="Confirm deletion cluster"
       callback={async () => {
-        await mutateAsync({
-          organizationId,
-          clusterId,
-          clusterDeleteMode,
-        })
+        try {
+          await mutateAsync({
+            organizationId,
+            clusterId,
+            clusterDeleteMode,
+          })
+        } catch (error) {
+          console.error(error)
+        }
       }}
       content={
         <div className="border border-red-500 rounded bg-red-50 text-sm text-neutral-400 p-4 mb-6">
