@@ -14,7 +14,7 @@ import CrudModalFeature from './crud-modal-feature/crud-modal-feature'
 export function removePortFromProbes(application?: ApplicationEntity, port?: number): ApplicationEntity {
   const cloneApplication = { ...application } as ApplicationEntity
 
-  const removePortFromProbe = (probe?: Probe): Probe | undefined => {
+  const removePortFromProbe = (probe?: Probe | null): Probe | null | undefined => {
     let result = probe
 
     if (probe && probe.type) {

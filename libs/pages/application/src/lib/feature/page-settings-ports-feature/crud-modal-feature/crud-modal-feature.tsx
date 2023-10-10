@@ -77,7 +77,7 @@ export const handleSubmit = (
     type PortProtocol = keyof typeof PortProtocolEnum
     const probProtocol = (protocol as PortProtocol).toLowerCase() as Lowercase<PortProtocol>
 
-    const updateProbe = (probe?: Probe) => {
+    const updateProbe = (probe?: Probe | null) => {
       return isMatchingHealthCheck(currentPort, probe?.type) && currentPort.protocol === protocol
         ? {
             ...probe,

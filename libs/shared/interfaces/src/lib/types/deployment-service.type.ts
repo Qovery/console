@@ -8,7 +8,7 @@ export interface DeploymentService {
   updated_at?: string
   name?: string
   status?: StateEnum
-  commit?: Commit
+  commit?: Commit | null
   type?: ServiceTypeEnum
   execution_id?: string
 }
