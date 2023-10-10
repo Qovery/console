@@ -35,19 +35,19 @@ export function Container({ children, cluster, deployCluster }: PropsWithChildre
         {cluster ? (
           <ClusterType size="xs" cloudProvider={cluster.cloud_provider} kubernetes={cluster.kubernetes} />
         ) : (
-          <Skeleton width={120} height={32} show />
+          <Skeleton width={120} height={22} show />
         )}
-        <Skeleton width={120} height={32} show={!cluster}>
+        <Skeleton width={120} height={22} show={!cluster}>
           <Badge size="xs" color="neutral">
             {cluster?.region}
           </Badge>
         </Skeleton>
-        <Skeleton width={120} height={32} show={!cluster}>
+        <Skeleton width={120} height={22} show={!cluster}>
           <Badge size="xs" color="neutral">
             {cluster?.version}
           </Badge>
         </Skeleton>
-        <Skeleton width={120} height={32} show={!cluster}>
+        <Skeleton width={120} height={22} show={!cluster}>
           <Badge size="xs" color="neutral">
             {cluster?.instance_type?.toLowerCase().replace('_', '.')}
           </Badge>
