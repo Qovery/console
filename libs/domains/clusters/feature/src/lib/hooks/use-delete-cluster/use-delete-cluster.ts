@@ -5,7 +5,7 @@ export function useDeleteCluster() {
   return useMutation(mutations.deleteCluster, {
     meta: {
       notifyOnSuccess: {
-        title: 'Cluster deleted',
+        title: 'Your cluster is being deleted',
       },
       notifyOnError: true,
     },
