@@ -1,5 +1,5 @@
 import { type CloudProvider, type CloudProviderEnum, type KubernetesEnum } from 'qovery-typescript-axios'
-import { type ClusterInstanceTypeResponseListResults } from 'qovery-typescript-axios/api'
+import { type ClusterInstanceTypeResponseListResultsInner } from 'qovery-typescript-axios/api'
 import { type LoadingStatus } from '../types/loading-status.type'
 import { type AdvancedSettings } from './../domain/advanced-settings.interface'
 import { type ClusterEntity } from './../domain/cluster.entity'
@@ -18,6 +18,9 @@ export interface ClustersState extends DefaultEntityState<ClusterEntity> {
   }
   availableClusterTypes: {
     loadingStatus: LoadingStatus
-    items: Record<CloudProviderEnum, Record<KubernetesEnum, Record<string, ClusterInstanceTypeResponseListResults[]>>>
+    items: Record<
+      CloudProviderEnum,
+      Record<KubernetesEnum, Record<string, ClusterInstanceTypeResponseListResultsInner[]>>
+    >
   }
 }

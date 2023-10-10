@@ -1,8 +1,8 @@
 import {
   EnvironmentModeEnum,
   OrganizationCustomRoleProjectPermission,
-  type OrganizationCustomRoleProjectPermissions,
-  type OrganizationCustomRoleUpdateRequestPermissions,
+  type OrganizationCustomRoleProjectPermissionsInner,
+  type OrganizationCustomRoleUpdateRequestProjectPermissionsInnerPermissionsInner,
 } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { Controller, type FieldValues, type UseFormSetValue, useFormContext } from 'react-hook-form'
@@ -11,7 +11,7 @@ import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { defaultProjectPermission } from '../../../feature/page-organization-roles-edit-feature/page-organization-roles-edit-feature'
 
 export interface RowProjectProps {
-  project: OrganizationCustomRoleProjectPermissions
+  project: OrganizationCustomRoleProjectPermissionsInner
 }
 
 enum ProjectPermissionAdmin {
@@ -45,7 +45,7 @@ const setGlobalCheckByValue = (
 }
 
 const onChangeHeadCheckbox = (
-  project: OrganizationCustomRoleProjectPermissions,
+  project: OrganizationCustomRoleProjectPermissionsInner,
   currentPermission: string,
   globalCheck: string,
   setGlobalCheck: (value: string) => void,
@@ -99,7 +99,7 @@ export function RowProject(props: RowProjectProps) {
         {(project.is_admin ? defaultProjectPermission('ADMIN') : project.permissions)?.map(
           (
             permission:
-              | OrganizationCustomRoleUpdateRequestPermissions
+              | OrganizationCustomRoleUpdateRequestProjectPermissionsInnerPermissionsInner
               | { environment_type: EnvironmentModeEnum; permission: string }
           ) => (
             <div

@@ -1,4 +1,5 @@
-import { type DeploymentHistoryEnvironment, StateEnum } from 'qovery-typescript-axios'
+import { type DeploymentHistoryEnvironment, type StateEnum } from 'qovery-typescript-axios'
+import { match } from 'ts-pattern'
 import { DEPLOYMENT_LOGS_VERSION_URL } from '@qovery/shared/routes'
 import {
   Badge,
@@ -57,17 +58,20 @@ export function SidebarHistory({ data, serviceId, versionId, pathLogs, environme
     return index !== -1 ? index : 0
   }
 
-  const showNewTag = [
-    StateEnum.DEPLOYING,
-    StateEnum.DELETING,
-    StateEnum.RESTARTING,
-    StateEnum.BUILDING,
-    StateEnum.STOP_QUEUED,
-    StateEnum.CANCELING,
-    StateEnum.QUEUED,
-    StateEnum.DELETE_QUEUED,
-    StateEnum.DEPLOYMENT_QUEUED,
-  ].includes(environmentState as StateEnum)
+  const showNewTag = match(environmentState)
+    .with(
+      'DEPLOYING',
+      'DELETING',
+      'RESTARTING',
+      'BUILDING',
+      'STOP_QUEUED',
+      'CANCELING',
+      'QUEUED',
+      'DELETE_QUEUED',
+      'DEPLOYMENT_QUEUED',
+      () => true
+    )
+    .otherwise(() => false)
 
   if (data.length === 0) return null
 

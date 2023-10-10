@@ -1,5 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query'
-import { type ServiceStorageStorage } from 'qovery-typescript-axios'
+import { type ServiceStorageStorageInner } from 'qovery-typescript-axios'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import {
@@ -16,7 +16,7 @@ import { type AppDispatch, type RootState } from '@qovery/state/store'
 import PageSettingsStorage from '../../ui/page-settings-storage/page-settings-storage'
 import StorageModalFeature from './storage-modal-feature/storage-modal-feature'
 
-export const removeStorage = (storage: ServiceStorageStorage, application: ApplicationEntity) => {
+export const removeStorage = (storage: ServiceStorageStorageInner, application: ApplicationEntity) => {
   const app = { ...application }
   app.storage = app.storage?.filter((s) => s.id !== storage.id)
   return app
@@ -55,7 +55,7 @@ export function PageSettingsStorageFeature() {
   return (
     <PageSettingsStorage
       storages={application?.storage || []}
-      onRemove={(storage: ServiceStorageStorage) => {
+      onRemove={(storage: ServiceStorageStorageInner) => {
         openModalConfirmation({
           title: 'Delete storage',
           name: storage.mount_point,
@@ -79,7 +79,7 @@ export function PageSettingsStorageFeature() {
           },
         })
       }}
-      onEdit={(storage?: ServiceStorageStorage) => {
+      onEdit={(storage?: ServiceStorageStorageInner) => {
         openModal({
           content: (
             <StorageModalFeature

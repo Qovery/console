@@ -33,7 +33,7 @@ export function StepGeneral(props: StepGeneralProps) {
   const watchType = watch('type')
   const watchMode = watch('mode')
 
-  const databaseAccessibilityOptions = [
+  const databaseAccessibilityOptions: { label: string; value: DatabaseAccessibilityEnum }[] = [
     {
       label: 'Private',
       value: DatabaseAccessibilityEnum.PRIVATE,

@@ -1,8 +1,8 @@
 import {
   CloudProviderEnum,
-  type ClusterInstanceTypeResponseListResults,
+  type ClusterInstanceTypeResponseListResultsInner,
   type ClusterRequest,
-  type ClusterRequestFeatures,
+  type ClusterRequestFeaturesInner,
   KubernetesEnum,
 } from 'qovery-typescript-axios'
 import { useCallback, useEffect, useState } from 'react'
@@ -38,15 +38,16 @@ export function StepSummaryFeature() {
 
   const pathCreate = `${CLUSTERS_URL(organizationId)}${CLUSTERS_CREATION_URL}`
 
-  const detailInstanceType = useSelector<RootState, ClusterInstanceTypeResponseListResults[] | undefined>((state) =>
-    selectInstancesTypes(
-      state,
-      generalData?.cloud_provider || CloudProviderEnum.AWS,
-      resourcesData?.cluster_type as KubernetesEnum,
-      generalData?.region || ''
-    )
+  const detailInstanceType = useSelector<RootState, ClusterInstanceTypeResponseListResultsInner[] | undefined>(
+    (state) =>
+      selectInstancesTypes(
+        state,
+        generalData?.cloud_provider || CloudProviderEnum.AWS,
+        resourcesData?.cluster_type as KubernetesEnum,
+        generalData?.region || ''
+      )
   )?.find(
-    (instanceTypes: ClusterInstanceTypeResponseListResults) => instanceTypes.type === resourcesData?.instance_type
+    (instanceTypes: ClusterInstanceTypeResponseListResultsInner) => instanceTypes.type === resourcesData?.instance_type
   )
 
   const goToFeatures = useCallback(() => {
@@ -111,7 +112,7 @@ export function StepSummaryFeature() {
         disk_size: resourcesData.disk_size,
         instance_type: resourcesData.instance_type,
         kubernetes: resourcesData.cluster_type as KubernetesEnum,
-        features: formatFeatures as ClusterRequestFeatures[],
+        features: formatFeatures as ClusterRequestFeaturesInner[],
         ssh_keys: remoteData?.ssh_key ? [remoteData?.ssh_key] : undefined,
       }
 

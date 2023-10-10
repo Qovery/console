@@ -10,7 +10,7 @@ import {
   type OrganizationCustomRole,
   type OrganizationCustomRoleUpdateRequest,
   type OrganizationEditRequest,
-  type ServiceStorageStorage,
+  type ServiceStorageStorageInner,
 } from 'qovery-typescript-axios'
 import {
   type ClusterEntity,
@@ -44,7 +44,7 @@ export function refactoGitApplicationPayload(application: Partial<GitApplication
   if (application.storage) {
     application.storage =
       application.storage.length > 0
-        ? application.storage.map((storage: ServiceStorageStorage) => ({
+        ? application.storage.map((storage: ServiceStorageStorageInner) => ({
             mount_point: storage.mount_point,
             size: storage.size,
             type: storage.type,

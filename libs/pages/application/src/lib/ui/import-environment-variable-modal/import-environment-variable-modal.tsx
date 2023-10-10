@@ -42,7 +42,7 @@ export interface ImportEnvironmentVariableModalProps {
 export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableModalProps) {
   const { control, formState, getValues, trigger } = useFormContext()
   const { keys = [], loading = false, availableScopes = computeAvailableScope(undefined, false) } = props
-  const [localScope, setLocalScope] = useState(APIVariableScopeEnum.ENVIRONMENT)
+  const [localScope, setLocalScope] = useState<APIVariableScopeEnum>(APIVariableScopeEnum.ENVIRONMENT)
 
   // write a regex pattern that rejects spaces
   const pattern = /^[^\s]+$/

@@ -1,4 +1,4 @@
-import { type ClusterRoutingTableResults } from 'qovery-typescript-axios'
+import { type ClusterRoutingTableResultsInner } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -15,7 +15,7 @@ import { type AppDispatch, type RootState } from '@qovery/state/store'
 import PageSettingsNetwork from '../../ui/page-settings-network/page-settings-network'
 import CrudModalFeature from './crud-modal-feature/crud-modal-feature'
 
-export const deleteRoutes = (routes: ClusterRoutingTableResults[], destination?: string) => {
+export const deleteRoutes = (routes: ClusterRoutingTableResultsInner[], destination?: string) => {
   return [...routes]?.filter((port) => port.destination !== destination)
 }
 
@@ -64,7 +64,7 @@ export function PageSettingsNetworkFeature() {
           ),
         })
       }}
-      onEdit={(route: ClusterRoutingTableResults) => {
+      onEdit={(route: ClusterRoutingTableResultsInner) => {
         openModal({
           content: (
             <CrudModalFeature
@@ -77,7 +77,7 @@ export function PageSettingsNetworkFeature() {
           ),
         })
       }}
-      onDelete={(route: ClusterRoutingTableResults) => {
+      onDelete={(route: ClusterRoutingTableResultsInner) => {
         openModalConfirmation({
           title: 'Delete Network',
           isDelete: true,

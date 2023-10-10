@@ -1,4 +1,4 @@
-import { StateEnum } from 'qovery-typescript-axios'
+import { type StateEnum } from 'qovery-typescript-axios'
 import { twMerge } from '@qovery/shared/util-js'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import StatusChip from '../status-chip/status-chip'
@@ -11,7 +11,7 @@ export interface StatusLabelProps {
 export function StatusLabel(props: StatusLabelProps) {
   const { status, className = '' } = props
 
-  if (!status || [StateEnum.READY, StateEnum.DEPLOYED].includes(status as StateEnum)) {
+  if (!status || status === 'READY' || status === 'DEPLOYED') {
     return null
   }
 

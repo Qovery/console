@@ -1,12 +1,12 @@
 import {
   OrganizationCustomRoleClusterPermission,
-  type OrganizationCustomRoleClusterPermissions,
+  type OrganizationCustomRoleClusterPermissionsInner,
 } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { InputCheckbox } from '@qovery/shared/ui'
 
 export interface RowClusterProps {
-  cluster: OrganizationCustomRoleClusterPermissions
+  cluster: OrganizationCustomRoleClusterPermissionsInner
   setGlobalCheck?: (value: string) => void
 }
 

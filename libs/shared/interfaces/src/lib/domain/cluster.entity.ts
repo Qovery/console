@@ -2,7 +2,7 @@ import {
   type Cluster,
   type ClusterCloudProviderInfo,
   type ClusterLogs,
-  type ClusterRoutingTableResults,
+  type ClusterRoutingTableResultsInner,
   type ClusterStatusGet,
 } from 'qovery-typescript-axios'
 import { type LoadingStatus } from '../..'
@@ -31,6 +31,6 @@ export interface ClusterEntity extends Cluster {
   }
   routingTable?: {
     loadingStatus: LoadingStatus
-    items?: ClusterRoutingTableResults[]
+    items?: ClusterRoutingTableResultsInner[]
   }
 }

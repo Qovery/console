@@ -1,5 +1,5 @@
 import { CloudProviderEnum, KubernetesEnum } from 'qovery-typescript-axios'
-import { type ClusterInstanceTypeResponseListResults } from 'qovery-typescript-axios/api'
+import { type ClusterInstanceTypeResponseListResultsInner } from 'qovery-typescript-axios/api'
 import { useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
@@ -21,13 +21,14 @@ export function ClusterResourcesSettingsFeature(props: ClusterResourcesSettingsF
   const { watch, setValue } = useFormContext<ClusterResourcesData>()
   const dispatch = useDispatch<AppDispatch>()
   const watchClusterType = watch('cluster_type')
-  const availableInstanceTypes = useSelector<RootState, ClusterInstanceTypeResponseListResults[] | undefined>((state) =>
-    selectInstancesTypes(
-      state,
-      props.cloudProvider || CloudProviderEnum.AWS,
-      watchClusterType as KubernetesEnum,
-      props.clusterRegion || ''
-    )
+  const availableInstanceTypes = useSelector<RootState, ClusterInstanceTypeResponseListResultsInner[] | undefined>(
+    (state) =>
+      selectInstancesTypes(
+        state,
+        props.cloudProvider || CloudProviderEnum.AWS,
+        watchClusterType as KubernetesEnum,
+        props.clusterRegion || ''
+      )
   )
 
   useEffect(() => {

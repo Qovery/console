@@ -32,7 +32,7 @@ export const computeAvailableScope = (
   excludeCurrentScope: boolean = false
 ): APIVariableScopeEnum[] => {
   if (!scope) {
-    const scopeToReturn = []
+    const scopeToReturn: APIVariableScopeEnum[] = []
 
     if (includeBuiltIn) {
       scopeToReturn.push(APIVariableScopeEnum.BUILT_IN)

@@ -23,7 +23,7 @@ import {
 import Tooltip from '../tooltip/tooltip'
 
 export interface StatusChipProps {
-  status: keyof typeof StateEnum | keyof typeof RunningState | keyof typeof ClusterStateEnum | undefined
+  status: StateEnum | keyof typeof RunningState | ClusterStateEnum | undefined
   appendTooltipMessage?: string
   className?: string
 }

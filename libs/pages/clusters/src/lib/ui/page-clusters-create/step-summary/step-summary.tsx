@@ -1,4 +1,4 @@
-import { type ClusterInstanceTypeResponseListResults } from 'qovery-typescript-axios'
+import { type ClusterInstanceTypeResponseListResultsInner } from 'qovery-typescript-axios'
 import {
   type ClusterFeaturesData,
   type ClusterGeneralData,
@@ -32,7 +32,7 @@ export interface StepSummaryProps {
   goToRemote: () => void
   isLoadingCreate: boolean
   isLoadingCreateAndDeploy: boolean
-  detailInstanceType?: ClusterInstanceTypeResponseListResults
+  detailInstanceType?: ClusterInstanceTypeResponseListResultsInner
 }
 
 export function StepSummary(props: StepSummaryProps) {

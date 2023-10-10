@@ -1,4 +1,4 @@
-import { type ClusterRoutingTableResults } from 'qovery-typescript-axios'
+import { type ClusterRoutingTableResultsInner } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
@@ -8,8 +8,8 @@ import { type AppDispatch } from '@qovery/state/store'
 import CrudModal from '../../../ui/page-settings-network/crud-modal/crud-modal'
 
 export interface CrudModalFeatureProps {
-  route?: ClusterRoutingTableResults
-  routes?: ClusterRoutingTableResults[]
+  route?: ClusterRoutingTableResultsInner
+  routes?: ClusterRoutingTableResultsInner[]
   organizationId: string
   clusterId: string
   onClose: () => void
@@ -17,8 +17,8 @@ export interface CrudModalFeatureProps {
 
 export const handleSubmit = (
   data: FieldValues,
-  routes: ClusterRoutingTableResults[] = [],
-  currentRoute?: ClusterRoutingTableResults
+  routes: ClusterRoutingTableResultsInner[] = [],
+  currentRoute?: ClusterRoutingTableResultsInner
 ) => {
   let currentRoutes = [...routes]
 

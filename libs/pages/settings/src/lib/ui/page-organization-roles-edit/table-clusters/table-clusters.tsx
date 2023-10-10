@@ -1,6 +1,6 @@
 import {
   OrganizationCustomRoleClusterPermission,
-  type OrganizationCustomRoleClusterPermissions,
+  type OrganizationCustomRoleClusterPermissionsInner,
 } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { useFormContext } from 'react-hook-form'
@@ -9,7 +9,7 @@ import RowCluster from '../row-cluster/row-cluster'
 import Table from '../table/table'
 
 export interface TableClustersProps {
-  clusters: OrganizationCustomRoleClusterPermissions[]
+  clusters: OrganizationCustomRoleClusterPermissionsInner[]
 }
 
 export function TableClusters(props: TableClustersProps) {
@@ -61,7 +61,7 @@ export function TableClusters(props: TableClustersProps) {
                     globalCheck !== permission ? permission : OrganizationCustomRoleClusterPermission.VIEWER
                   setGlobalCheck(newValue)
                   // set value for nextPermission if admin is uncheck
-                  clusters.forEach((cluster: OrganizationCustomRoleClusterPermissions) => {
+                  clusters.forEach((cluster: OrganizationCustomRoleClusterPermissionsInner) => {
                     const key = `cluster_permissions.${cluster.cluster_id}`
                     setValue(key, newValue)
                   })
@@ -71,7 +71,7 @@ export function TableClusters(props: TableClustersProps) {
           ))}
       </div>
       <div>
-        {clusters.map((cluster: OrganizationCustomRoleClusterPermissions) => (
+        {clusters.map((cluster: OrganizationCustomRoleClusterPermissionsInner) => (
           <RowCluster key={cluster.cluster_id} cluster={cluster} setGlobalCheck={setGlobalCheck} />
         ))}
       </div>
