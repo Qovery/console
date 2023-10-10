@@ -29,7 +29,7 @@ exports[`ModalConfirmation should match confirm mode with description 1`] = `
     </div>
     <form>
       <div
-        class="mb-6 "
+        class="mb-5 "
         data-testid="input-small-wrapper"
       >
         <div
@@ -91,7 +91,7 @@ exports[`ModalConfirmation should match delete mode with description 1`] = `
     </div>
     <form>
       <div
-        class="mb-6 "
+        class="mb-5 "
         data-testid="input-small-wrapper"
       >
         <div
@@ -157,7 +157,7 @@ exports[`ModalConfirmation should match delete mode without description 1`] = `
     </div>
     <form>
       <div
-        class="mb-6 "
+        class="mb-5 "
         data-testid="input-small-wrapper"
       >
         <div
