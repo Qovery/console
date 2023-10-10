@@ -77,7 +77,7 @@ export function groupBy<T>(
   if (dataHeadFilter?.itemsCustom) {
     // custom list without datas from array of string
     const result: MenuItemProps[] = [defaultValue, ...(dataHeadFilter?.itemsCustom ?? {})].map((item: string) => ({
-      name: upperCaseFirstLetter(item.toLowerCase())?.replace('_', ' ') || '',
+      name: upperCaseFirstLetter(item.toLowerCase())?.replace('_', ' '),
       truncateLimit: 20,
       contentLeft: (
         <Icon
@@ -157,7 +157,7 @@ export function groupBy<T>(
 
     // create menus by keys
     const result: MenuItemProps[] = Object.keys(dataByKeys).map((key: string) => ({
-      name: upperCaseFirstLetter(key.toLowerCase())?.replace('_', ' ') || '',
+      name: upperCaseFirstLetter(key.toLowerCase())?.replace('_', ' '),
       truncateLimit: 20,
       contentLeft: (
         <Icon

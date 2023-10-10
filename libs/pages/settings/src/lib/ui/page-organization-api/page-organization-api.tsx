@@ -67,7 +67,7 @@ export function PageOrganizationApi(props: PageOrganizationApiProps) {
                       )}
                     </h2>
                     <p className="text-xs text-neutral-350">
-                      <span className="inline-block mr-3">Role: {upperCaseFirstLetter(token.role_name ?? '')}</span>
+                      <span className="inline-block mr-3">Role: {upperCaseFirstLetter(token.role_name)}</span>
                       <span className="inline-block">
                         Created since {dateYearMonthDayHourMinuteSecond(new Date(token.created_at || ''), false)}
                       </span>

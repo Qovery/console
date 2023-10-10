@@ -74,7 +74,7 @@ export function GitRepositorySettingsFeature(props?: GitRepositorySettingsFeatur
       authProviders={authProvidersValues(authProviders)}
       loadingStatusRepositories={loadingStatusRepositories}
       repositories={repositories.map((repository: RepositoryEntity) => ({
-        label: upperCaseFirstLetter(repository.name) || '',
+        label: upperCaseFirstLetter(repository.name),
         value: repository.name || '',
       }))}
       loadingStatusBranches={!currentRepository ? 'not loaded' : currentRepository?.branches?.loadingStatus}

@@ -110,7 +110,7 @@ export function RowProject(props: RowProjectProps) {
                 <svg xmlns="http://www.w3.org/2000/svg" width="7" height="8" fill="none" viewBox="0 0 7 8">
                   <path fill="#C6D3E7" fillRule="evenodd" d="M2 0H.5v8h6V6.5H2V0z" clipRule="evenodd" />
                 </svg>
-                <span className="inline-block ml-3">{upperCaseFirstLetter(permission.environment_type ?? '')}</span>
+                <span className="inline-block ml-3">{upperCaseFirstLetter(permission.environment_type)}</span>
               </div>
               <div className="flex-1 flex items-center justify-center h-full px-4 border-r border-neutral-250">
                 <InputCheckbox

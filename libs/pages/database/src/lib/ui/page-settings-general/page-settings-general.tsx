@@ -30,13 +30,13 @@ export interface PageSettingsGeneralProps {
 }
 
 const databasesType = Object.values(DatabaseTypeEnum).map((value) => ({
-  label: upperCaseFirstLetter(value) || '',
+  label: upperCaseFirstLetter(value),
   value: value,
   icon: <Icon width="16px" height="16px" name={value} />,
 }))
 
 const databasesMode = Object.values(DatabaseModeEnum).map((value) => ({
-  label: upperCaseFirstLetter(value) || '',
+  label: upperCaseFirstLetter(value),
   value: value,
 }))
 
@@ -51,7 +51,7 @@ export function PageSettingsGeneral({
   const { control, formState } = useFormContext()
 
   const databasesAccessibility = Object.values(DatabaseAccessibilityEnum).map((value) => ({
-    label: upperCaseFirstLetter(value) || '',
+    label: upperCaseFirstLetter(value),
     value: value,
   }))
 

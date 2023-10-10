@@ -76,7 +76,7 @@ export function StepSummary({
                     Root application path: <strong>{generalData.root_path}</strong>
                   </li>
                   <li>
-                    Build mode: <strong>{upperCaseFirstLetter(generalData.build_mode ?? '')}</strong>
+                    Build mode: <strong>{upperCaseFirstLetter(generalData.build_mode)}</strong>
                   </li>
                   {generalData.build_mode === BuildModeEnum.BUILDPACKS && (
                     <li>
