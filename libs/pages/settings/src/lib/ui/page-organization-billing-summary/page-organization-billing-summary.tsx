@@ -53,7 +53,10 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
             <div className="text-neutral-400 font-bold text-sm mb-1">
               <Skeleton height={20} width={100} show={!props.organization?.currentCost?.value?.plan}>
                 <div className="h-5">
-                  {upperCaseFirstLetter(props.organization?.currentCost?.value?.plan?.toString()) || 'N/A'} plan
+                  {props.organization?.currentCost?.value?.plan
+                    ? upperCaseFirstLetter(props.organization?.currentCost?.value?.plan)
+                    : 'N/A'}{' '}
+                  plan
                 </div>
               </Skeleton>
             </div>

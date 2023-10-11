@@ -74,7 +74,7 @@ export function CrudModal({ onClose, onSubmit, availableRoles, loading }: CrudMo
               className="w-full"
               label="Role"
               options={availableRoles.map((availableRole: OrganizationAvailableRole) => ({
-                label: upperCaseFirstLetter(availableRole.name) ?? '',
+                label: upperCaseFirstLetter(availableRole.name),
                 value: availableRole.id ?? '',
               }))}
               onChange={field.onChange}

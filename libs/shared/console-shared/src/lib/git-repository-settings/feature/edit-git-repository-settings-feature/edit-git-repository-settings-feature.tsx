@@ -126,12 +126,12 @@ export function EditGitRepositorySettingsFeature() {
       repositories={
         !gitDisabled
           ? repositories.map((repository: RepositoryEntity) => ({
-              label: upperCaseFirstLetter(repository.name) || '',
+              label: upperCaseFirstLetter(repository.name),
               value: repository.name || '',
             }))
           : [
               {
-                label: upperCaseFirstLetter(getGitRepositoryFromApplication()?.name) || '',
+                label: upperCaseFirstLetter(getGitRepositoryFromApplication()?.name),
                 value: getGitRepositoryFromApplication()?.url || '',
               },
             ]

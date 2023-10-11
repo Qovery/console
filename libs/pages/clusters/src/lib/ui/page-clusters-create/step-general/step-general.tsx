@@ -37,7 +37,7 @@ export function StepGeneral(props: StepGeneralProps) {
   const buildCloudProviders: Value[] = useMemo(
     () =>
       cloudProviders.map((value) => ({
-        label: upperCaseFirstLetter(value.name) || '',
+        label: upperCaseFirstLetter(value.name),
         value: value.short_name || '',
         icon: <Icon name={value.short_name || CloudProviderEnum.AWS} className="w-4" />,
       })),

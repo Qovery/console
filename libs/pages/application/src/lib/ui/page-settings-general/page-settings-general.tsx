@@ -31,12 +31,12 @@ export interface PageSettingsGeneralProps {
 }
 
 const buildModeItems = Object.values(BuildModeEnum).map((value) => ({
-  label: upperCaseFirstLetter(value) || '',
+  label: upperCaseFirstLetter(value),
   value: value,
 }))
 
 const languageItems = Object.values(BuildPackLanguageEnum).map((value) => ({
-  label: upperCaseFirstLetter(value) || '',
+  label: upperCaseFirstLetter(value),
   value: value,
 }))
 

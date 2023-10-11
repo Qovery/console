@@ -79,7 +79,7 @@ export function PageOrganizationWebhooks(props: PageOrganizationWebhooksProps) {
                           }
                           className="h-4 w-4"
                         />{' '}
-                        {upperCaseFirstLetter(webhook.kind || '')}
+                        {upperCaseFirstLetter(webhook.kind)}
                       </span>
                       {webhook.updated_at && <span>Last updated {timeAgo(new Date(webhook.updated_at))} ago</span>}
                     </div>

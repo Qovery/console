@@ -75,7 +75,7 @@ export function RowMember(props: RowMemberProps) {
   const isOwner = member.role_name?.toUpperCase() === MemberRoleEnum.OWNER
 
   const menuItem = (role: OrganizationAvailableRole, customRole: boolean) => ({
-    name: upperCaseFirstLetter(role.name) || '',
+    name: upperCaseFirstLetter(role.name),
     contentLeft: (
       <Icon
         name={customRole ? IconAwesomeEnum.USER : RolesIcons[role.name?.toUpperCase() || '']}

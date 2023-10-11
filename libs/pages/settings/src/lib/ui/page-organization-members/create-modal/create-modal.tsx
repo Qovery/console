@@ -58,7 +58,7 @@ export function CreateModal(props: CreateModalProps) {
               className="w-full ml-3"
               label="Role"
               options={availableRoles.map((availableRole: OrganizationAvailableRole) => ({
-                label: upperCaseFirstLetter(availableRole.name) ?? '',
+                label: upperCaseFirstLetter(availableRole.name),
                 value: availableRole.id ?? '',
               }))}
               onChange={field.onChange}

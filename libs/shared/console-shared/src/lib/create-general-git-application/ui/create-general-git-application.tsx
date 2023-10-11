@@ -14,13 +14,13 @@ export function CreateGeneralGitApplication(props: PageSettingsGeneralProps) {
   const watchBuildMode = watch('build_mode')
 
   const buildModeItems = Object.values(BuildModeEnum).map((value) => ({
-    label: upperCaseFirstLetter(value) || '',
+    label: upperCaseFirstLetter(value),
     value: value,
     icon: <Icon name={value} className="w-4" />,
   }))
 
   const languageItems = Object.values(BuildPackLanguageEnum).map((value) => ({
-    label: upperCaseFirstLetter(value) || '',
+    label: upperCaseFirstLetter(value),
     value: value,
   }))
 
