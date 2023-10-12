@@ -170,12 +170,6 @@ export const services = createQueryKeys('services', {
           serviceType: ServiceTypeEnum.JOB as const,
         }))
         .exhaustive()
-      if (service.memory) {
-        service.memory *= 10 ** 6 // API return memory in MB
-      }
-      if (service.serviceType === 'DATABASE' && service.storage) {
-        service.storage *= 10 ** 9 // API return memory in GB
-      }
       return service
     },
   }),
