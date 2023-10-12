@@ -75,9 +75,7 @@ export function PodsMetrics({ environmentId, serviceId }: PodsMetricsProps) {
   const columns = useMemo(
     () => [
       columnHelper.accessor('podName', {
-        header: match(service)
-          .with({ serviceType: ServiceTypeEnum.JOB }, () => 'Job executions')
-          .otherwise(() => 'Service pods'),
+        header: service?.serviceType === ServiceTypeEnum.JOB ? 'Job executions' : 'Service pods',
         cell: (info) => {
           const podName = info.getValue()
           return (
@@ -184,9 +182,7 @@ export function PodsMetrics({ environmentId, serviceId }: PodsMetricsProps) {
             }),
           ]),
       columnHelper.accessor('started_at', {
-        header: match(service)
-          .with({ serviceType: ServiceTypeEnum.JOB }, () => 'Start time')
-          .otherwise(() => 'Age'),
+        header: service?.serviceType === ServiceTypeEnum.JOB ? 'Start time' : 'Age',
         cell: (info) => {
           const value = info.getValue()
           return value ? (
