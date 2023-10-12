@@ -158,7 +158,7 @@ exports[`ClusterDeleteModal should match snapshot 1`] = `
               <b>
                 Qovery organization
               </b>
-              : the configuration of this cluster and any linked environment. Use it carefully this action is irreversible.
+              : the configuration of this cluster and any linked environment.
             </li>
           </ul>
           <p>
