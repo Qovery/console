@@ -93,9 +93,17 @@ export function PodsMetrics({ environmentId, serviceId }: PodsMetricsProps) {
                   <Icon name={IconAwesomeEnum.CHEVRON_DOWN} />
                 )}
               </button>
-              <Badge size="xs" variant="surface">
-                {podName.length > 23 ? `${podName.substring(0, 10)}...${podName.slice(-10)}` : podName}
-              </Badge>
+              {podName.length > 23 ? (
+                <Tooltip content={podName}>
+                  <Badge size="xs" variant="surface">
+                    {podName.substring(0, 10)}...{podName.slice(-10)}
+                  </Badge>
+                </Tooltip>
+              ) : (
+                <Badge size="xs" variant="surface">
+                  {podName}
+                </Badge>
+              )}
             </div>
           )
         },
