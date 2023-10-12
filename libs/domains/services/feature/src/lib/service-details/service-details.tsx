@@ -15,7 +15,7 @@ import {
   Truncate,
 } from '@qovery/shared/ui'
 import { dateFullFormat, timeAgo } from '@qovery/shared/util-dates'
-import { containerRegistryKindToIcon, formatBytes, formatCronExpression, twMerge } from '@qovery/shared/util-js'
+import { containerRegistryKindToIcon, formatCronExpression, formatMetric, twMerge } from '@qovery/shared/util-js'
 import { useService } from '../hooks/use-service/use-service'
 import { LastCommit } from '../last-commit/last-commit'
 import { ServiceDetailsSkeleton } from './service-details-skeleton'
@@ -79,16 +79,16 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
             }
             description="Instances (min/max)"
           />
-          <ResourceUnit value={cpu} description="VCPU (max)" />
-          <ResourceUnit value={formatBytes(memory)} description="Memory (max)" />
+          <ResourceUnit value={cpu && formatMetric({ current: cpu, unit: 'mCPU' })} description="vCPU (max)" />
+          <ResourceUnit value={memory && formatMetric({ current: memory, unit: 'MiB' })} description="Memory (max)" />
         </>
       )
     )
     .with({ serviceType: ServiceTypeEnum.DATABASE }, ({ cpu, memory, storage, instance_type }) => (
       <>
-        <ResourceUnit value={cpu} description="VCPU (max)" />
-        <ResourceUnit value={formatBytes(memory)} description="Memory (max)" />
-        <ResourceUnit value={formatBytes(storage)} description="Storage (max)" />
+        <ResourceUnit value={cpu && formatMetric({ current: cpu, unit: 'mCPU' })} description="vCPU (max)" />
+        <ResourceUnit value={memory && formatMetric({ current: memory, unit: 'MiB' })} description="Memory (max)" />
+        <ResourceUnit value={storage && formatMetric({ current: storage, unit: 'GiB' })} description="Storage (max)" />
         <ResourceUnit value={instance_type} description="Instance type" />
       </>
     ))
@@ -107,8 +107,8 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
           <ResourceUnit value={formatCronExpression(schedule?.cronjob?.scheduled_at)} description="Scheduling" />
           <ResourceUnit value={max_nb_restart} description="Restart (max)" />
           <ResourceUnit value={max_duration_seconds && `${max_duration_seconds} s`} description="Duration (max)" />
-          <ResourceUnit value={cpu} description="VCPU (max)" />
-          <ResourceUnit value={formatBytes(memory)} description="Memory (max)" />
+          <ResourceUnit value={cpu && formatMetric({ current: cpu, unit: 'MiB' })} description="vCPU (max)" />
+          <ResourceUnit value={memory && formatMetric({ current: memory, unit: 'MiB' })} description="Memory (max)" />
           <ResourceUnit value={port} description="Port" />
         </>
       )
