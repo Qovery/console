@@ -72,7 +72,7 @@ export function JobOverview(props: JobOverviewProps) {
         />
         <PropertyCard
           name="RAM"
-          value={application.memory.toString() + ' MB'}
+          value={application.memory.toString() + ' MiB'}
           isLoading={false}
           onSettingsClick={() => navigate(`${path}${APPLICATION_SETTINGS_RESOURCES_URL}`)}
         />
