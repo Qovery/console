@@ -13,7 +13,7 @@ import { match } from 'ts-pattern'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { Badge, Icon, IconAwesomeEnum, StatusChip, TablePrimitives, Tooltip } from '@qovery/shared/ui'
 import { dateFullFormat, timeAgo } from '@qovery/shared/util-dates'
-import { twMerge } from '@qovery/shared/util-js'
+import { formatMetric, twMerge } from '@qovery/shared/util-js'
 import { useMetrics } from '../hooks/use-metrics/use-metrics'
 import { useRunningStatus } from '../hooks/use-running-status/use-running-status'
 import { useService } from '../hooks/use-service/use-service'
@@ -153,13 +153,13 @@ export function PodsMetrics({ environmentId, serviceId }: PodsMetricsProps) {
               },
             }),
           ]),
-      columnHelper.accessor('memory.current_percent', {
+      columnHelper.accessor('memory.current', {
         header: 'Memory',
-        cell: (info) => (info.getValue() !== undefined ? `${info.getValue()}%` : placeholder),
+        cell: (info) => (info.row.original.memory ? formatMetric(info.row.original.memory) : placeholder),
       }),
-      columnHelper.accessor('cpu.current_percent', {
+      columnHelper.accessor('cpu.current', {
         header: 'vCPU',
-        cell: (info) => (info.getValue() !== undefined ? `${info.getValue()}%` : placeholder),
+        cell: (info) => (info.row.original.cpu !== undefined ? formatMetric(info.row.original.cpu) : placeholder),
       }),
       ...(service?.serviceType === 'JOB'
         ? []
