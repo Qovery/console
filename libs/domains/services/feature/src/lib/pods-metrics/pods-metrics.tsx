@@ -195,7 +195,7 @@ export function PodsMetrics({ environmentId, serviceId }: PodsMetricsProps) {
         },
       }),
     ],
-    [service, containerImage]
+    [service, containerImage, columnHelper, placeholder]
   )
 
   const table = useReactTable({
