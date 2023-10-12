@@ -6,7 +6,7 @@ exports[`PodsMetrics should match snapshot with data 1`] = `
     class="border rounded"
   >
     <table
-      class="table-fixed min-w-full divide-y divide-neutral-200 text-neutral-400 w-full text-xs"
+      class="table-fixed divide-y divide-neutral-200 text-neutral-400 w-full text-xs min-w-[800px]"
     >
       <thead>
         <tr>

@@ -90,6 +90,7 @@ export function PodsMetrics({ environmentId, serviceId }: PodsMetricsProps) {
                 <Icon
                   className="pl-1"
                   name={info.row.getIsExpanded() ? IconAwesomeEnum.CHEVRON_UP : IconAwesomeEnum.CHEVRON_DOWN}
+                  aria-hidden
                 />
               </button>
               {podName.length > 23 ? (
@@ -145,14 +146,14 @@ export function PodsMetrics({ environmentId, serviceId }: PodsMetricsProps) {
                 const value = info.getValue()
                 return (
                   value && (
-                    <Badge variant="surface" size="xs" className="gap-2">
+                    <Badge variant="surface" size="xs" className="shrink max-w-full">
                       {containerImage ? (
                         `${containerImage.image_name}:${containerImage.tag}`
                       ) : (
-                        <>
-                          <Icon name={IconAwesomeEnum.CODE_COMMIT} />
+                        <span className="max-w-full truncate">
+                          <Icon className="mr-2" name={IconAwesomeEnum.CODE_COMMIT} />
                           {value.substring(0, 7)}
-                        </>
+                        </span>
                       )}
                     </Badge>
                   )
@@ -255,7 +256,7 @@ export function PodsMetrics({ environmentId, serviceId }: PodsMetricsProps) {
   }
 
   return (
-    <Table.Root className="w-full text-xs">
+    <Table.Root className="w-full text-xs min-w-[800px]">
       <Table.Header>
         {table.getHeaderGroups().map((headerGroup) => (
           <Table.Row key={headerGroup.id}>
