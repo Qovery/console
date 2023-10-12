@@ -151,7 +151,7 @@ exports[`ClusterDeleteModal should match snapshot 1`] = `
               <b>
                 Cloud provider
               </b>
-              : any resource created by Qovery on your cloud provider account to run this cluster will be deleted, including any environment attached to it.
+              : any resource created by Qovery on your cloud provider account to run this cluster will be deleted, including any application running on it.
                
             </li>
             <li>
@@ -189,7 +189,7 @@ exports[`ClusterDeleteModal should match snapshot 1`] = `
                   class="list-disc pl-3"
                 >
                   <li>
-                    the S3 bucket named xxxxxx-xxxxxx-xxxxxx
+                    the S3 bucket created during the cluster installation
                   </li>
                   <li>
                     the image registry linked to this cluster
