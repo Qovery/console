@@ -8,7 +8,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { type ServiceStateDto } from 'qovery-ws-typescript-axios'
-import { Fragment, useMemo, useState } from 'react'
+import { Fragment, useEffect, useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { Badge, Icon, IconAwesomeEnum, StatusChip, TablePrimitives, Tooltip } from '@qovery/shared/ui'
@@ -38,7 +38,7 @@ export function PodsMetrics({ environmentId, serviceId }: PodsMetricsProps) {
     isLoading: isRunningStatusesLoading,
     isError: isRunningStatusesError,
   } = useRunningStatus({ environmentId, serviceId })
-  const [sorting, setSorting] = useState<SortingState>([{ id: 'state', desc: false }])
+  const [sorting, setSorting] = useState<SortingState>([])
   const {
     data: service,
     isLoading: isServiceLoading,
@@ -214,6 +214,20 @@ export function PodsMetrics({ environmentId, serviceId }: PodsMetricsProps) {
     getExpandedRowModel: getExpandedRowModel(),
     getSortedRowModel: getSortedRowModel(),
   })
+
+  // Need useEffect because sort column is based on async data
+  useEffect(() => {
+    table.setSorting(
+      service?.serviceType === 'JOB'
+        ? [{ id: 'started_at', desc: true }]
+        : [
+            {
+              id: 'podName',
+              desc: false,
+            },
+          ]
+    )
+  }, [service?.serviceType, table.setSorting])
 
   if (isMetricsLoading || isServiceLoading) {
     return <PodsMetricsSkeleton />
