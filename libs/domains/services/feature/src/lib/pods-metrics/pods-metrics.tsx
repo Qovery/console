@@ -61,7 +61,7 @@ export function PodsMetrics({ environmentId, serviceId }: PodsMetricsProps) {
   }, [metrics, runningStatuses])
 
   const columnHelper = createColumnHelper<Pod>()
-  const placeholder = <Icon name={IconAwesomeEnum.CIRCLE_QUESTION} className="text-neutral-300" />
+  const placeholder = <Icon name={IconAwesomeEnum.CIRCLE_QUESTION} className="text-sm text-neutral-300" />
 
   const containerImage = match(service)
     .with({ serviceType: ServiceTypeEnum.JOB }, ({ source }) => source?.image)
@@ -83,15 +83,14 @@ export function PodsMetrics({ environmentId, serviceId }: PodsMetricsProps) {
           return (
             <div className="flex flex-row">
               <button
-                className="w-9 pointer text-neutral-350"
+                className="flex items-start w-9 pointer text-neutral-350"
                 type="button"
                 onClick={info.row.getToggleExpandedHandler()}
               >
-                {info.row.getIsExpanded() ? (
-                  <Icon name={IconAwesomeEnum.CHEVRON_UP} />
-                ) : (
-                  <Icon name={IconAwesomeEnum.CHEVRON_DOWN} />
-                )}
+                <Icon
+                  className="pl-1"
+                  name={info.row.getIsExpanded() ? IconAwesomeEnum.CHEVRON_UP : IconAwesomeEnum.CHEVRON_DOWN}
+                />
               </button>
               {podName.length > 23 ? (
                 <Tooltip content={podName}>
@@ -235,7 +234,7 @@ export function PodsMetrics({ environmentId, serviceId }: PodsMetricsProps) {
     // NOTE: runningStatuses may never resolve if service not started
     return (
       <div className="flex flex-col items-center gap-1 py-10 bg-neutral-100 text-sm text-neutral-350 border border-neutral-200">
-        <Icon className="text-neutral-300" name={IconAwesomeEnum.PLAY} />
+        <Icon className="text-md text-neutral-300" name={IconAwesomeEnum.PLAY} />
         <span className="font-medium">Application is not running</span>
         <span>Start to see the activites of the pods and containers.</span>
       </div>
@@ -248,7 +247,7 @@ export function PodsMetrics({ environmentId, serviceId }: PodsMetricsProps) {
   ) {
     return (
       <div className="flex flex-col items-center gap-1 py-10 bg-neutral-100 text-sm text-neutral-350 border border-neutral-200">
-        <Icon className="text-neutral-300" name={IconAwesomeEnum.CIRCLE_QUESTION} />
+        <Icon className="text-md text-neutral-300" name={IconAwesomeEnum.CIRCLE_QUESTION} />
         <span className="font-medium">Metrics for pods are not available, try again</span>
         <span>There is a technical issue on retrieving the pod metrics.</span>
       </div>
@@ -256,7 +255,7 @@ export function PodsMetrics({ environmentId, serviceId }: PodsMetricsProps) {
   }
 
   return (
-    <Table.Root className="w-full">
+    <Table.Root className="w-full text-xs">
       <Table.Header>
         {table.getHeaderGroups().map((headerGroup) => (
           <Table.Row key={headerGroup.id}>
