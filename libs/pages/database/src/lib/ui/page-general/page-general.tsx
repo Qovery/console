@@ -20,7 +20,7 @@ export function PageGeneral(props: PageGeneralProps) {
         <div className="flex flex-row grow">
           <div className="py-7 px-10 flex-grow overflow-auto">
             {database?.mode && database?.mode === DatabaseModeEnum.MANAGED ? (
-              <div className="flex flex-col items-center py-10 bg-neutral-100 text-neutral-350 border border-neutral-200">
+              <div className="flex flex-col items-center gap-1 py-10 bg-neutral-100 text-sm text-neutral-350 border border-neutral-200">
                 <span className="font-medium">Metrics for managed databases are not available</span>
                 <span>Check your cloud provider console to get more information</span>
               </div>

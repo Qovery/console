@@ -212,7 +212,7 @@ export function PodsMetrics({ environmentId, serviceId }: PodsMetricsProps) {
   } else if (pods.length === 0 && !isMetricsLoading && isRunningStatusesLoading) {
     // NOTE: runningStatuses may never resolve if service not started
     return (
-      <div className="flex flex-col items-center py-10 bg-neutral-100 text-neutral-350 border border-neutral-200">
+      <div className="flex flex-col items-center gap-1 py-10 bg-neutral-100 text-sm text-neutral-350 border border-neutral-200">
         <Icon className="text-neutral-300" name={IconAwesomeEnum.PLAY} />
         <span className="font-medium">Application is not running</span>
         <span>Start to see the activites of the pods and containers.</span>
@@ -225,7 +225,7 @@ export function PodsMetrics({ environmentId, serviceId }: PodsMetricsProps) {
     isServiceError
   ) {
     return (
-      <div className="flex flex-col items-center py-10 bg-neutral-100 text-neutral-350 border border-neutral-200">
+      <div className="flex flex-col items-center gap-1 py-10 bg-neutral-100 text-sm text-neutral-350 border border-neutral-200">
         <Icon className="text-neutral-300" name={IconAwesomeEnum.CIRCLE_QUESTION} />
         <span className="font-medium">Metrics for pods are not available, try again</span>
         <span>There is a technical issue on retrieving the pod metrics.</span>
