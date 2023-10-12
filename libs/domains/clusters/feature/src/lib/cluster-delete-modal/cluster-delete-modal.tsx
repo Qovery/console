@@ -55,8 +55,7 @@ export function ClusterDeleteModal({ organizationId, clusterId, name }: ClusterD
             will be deleted, including any environment attached to it.{' '}
           </li>
           <li>
-            <b>Qovery organization</b>: the configuration of this cluster and any linked environment. Use it carefully
-            this action is irreversible.
+            <b>Qovery organization</b>: the configuration of this cluster and any linked environment.
           </li>
         </ul>
         <p>Use it carefully this action is irreversible.</p>
