@@ -31,7 +31,7 @@ export function ApplicationSettingsResources(props: ApplicationSettingsResources
 
   return (
     <div>
-      <BlockContent title="vCPU">
+      <BlockContent title="mvCPU">
         <Controller
           name="cpu"
           control={control}
@@ -79,7 +79,7 @@ export function ApplicationSettingsResources(props: ApplicationSettingsResources
               dataTestId="input-memory-memory"
               type="number"
               name={field.name}
-              label="Size in MB"
+              label="Size in MiB"
               value={field.value}
               onChange={field.onChange}
               error={
@@ -94,8 +94,8 @@ export function ApplicationSettingsResources(props: ApplicationSettingsResources
         />
         {application && (
           <p className="text-neutral-350 text-xs mt-3">
-            Minimum value is 1 MB. Maximum value allowed based on the selected cluster instance type:{' '}
-            {application.maximum_memory} MB.{' '}
+            Minimum value is 1 MiB. Maximum value allowed based on the selected cluster instance type:{' '}
+            {application.maximum_memory} MiB.{' '}
             {clusterId && (
               <Link
                 to={CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_RESOURCES_URL}

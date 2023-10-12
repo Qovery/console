@@ -65,14 +65,14 @@ export function JobOverview(props: JobOverviewProps) {
           helperText="Maximum duration allowed for the job to run before killing it and mark it as failed"
         />
         <PropertyCard
-          name="VCPU"
+          name="mVCPU"
           value={application.max_nb_restart?.toString() || ''}
           isLoading={false}
           onSettingsClick={() => navigate(`${path}${APPLICATION_SETTINGS_RESOURCES_URL}`)}
         />
         <PropertyCard
           name="RAM"
-          value={application.memory.toString() + ' MB'}
+          value={application.memory.toString() + ' MiB'}
           isLoading={false}
           onSettingsClick={() => navigate(`${path}${APPLICATION_SETTINGS_RESOURCES_URL}`)}
         />

@@ -46,7 +46,7 @@ export function PageSettingsStorage(props: PageSettingsStorageProps) {
                   name={'size_' + storage.id}
                   className="shrink-0 grow flex-1"
                   value={storage.size.toString()}
-                  label="Size in GB"
+                  label="Size in GiB"
                   disabled
                 />
 

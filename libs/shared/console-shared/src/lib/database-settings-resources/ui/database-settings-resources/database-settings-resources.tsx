@@ -35,7 +35,7 @@ export function DatabaseSettingsResources({
     <div>
       {!isManaged && (
         <>
-          <BlockContent title="vCPU">
+          <BlockContent title="mvCPU">
             <Controller
               name="cpu"
               control={control}
@@ -74,7 +74,7 @@ export function DatabaseSettingsResources({
                   dataTestId="input-memory-memory"
                   type="number"
                   name={field.name}
-                  label="Size in MB"
+                  label="Size in MiB"
                   value={field.value}
                   onChange={field.onChange}
                   error={
@@ -89,8 +89,8 @@ export function DatabaseSettingsResources({
             />
             {database && (
               <p className="text-neutral-350 text-xs mt-3">
-                Minimum value is 1 MB. Maximum value allowed based on the selected cluster instance type:{' '}
-                {database?.maximum_memory} MB.{' '}
+                Minimum value is 1 MiB. Maximum value allowed based on the selected cluster instance type:{' '}
+                {database?.maximum_memory} MiB.{' '}
                 {clusterId && (
                   <Link
                     to={CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_RESOURCES_URL}
@@ -124,7 +124,7 @@ export function DatabaseSettingsResources({
             <InputText
               dataTestId="input-memory-storage"
               name={field.name}
-              label="Size in GB"
+              label="Size in GiB"
               value={field.value}
               onChange={field.onChange}
               error={error?.message}

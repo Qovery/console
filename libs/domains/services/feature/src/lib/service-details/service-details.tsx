@@ -79,14 +79,14 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
             }
             description="Instances (min/max)"
           />
-          <ResourceUnit value={cpu} description="VCPU (max)" />
+          <ResourceUnit value={cpu} description="mVCPU (max)" />
           <ResourceUnit value={formatBytes(memory)} description="Memory (max)" />
         </>
       )
     )
     .with({ serviceType: ServiceTypeEnum.DATABASE }, ({ cpu, memory, storage, instance_type }) => (
       <>
-        <ResourceUnit value={cpu} description="VCPU (max)" />
+        <ResourceUnit value={cpu} description="mVCPU (max)" />
         <ResourceUnit value={formatBytes(memory)} description="Memory (max)" />
         <ResourceUnit value={formatBytes(storage)} description="Storage (max)" />
         <ResourceUnit value={instance_type} description="Instance type" />
@@ -107,7 +107,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
           <ResourceUnit value={formatCronExpression(schedule?.cronjob?.scheduled_at)} description="Scheduling" />
           <ResourceUnit value={max_nb_restart} description="Restart (max)" />
           <ResourceUnit value={max_duration_seconds && `${max_duration_seconds} s`} description="Duration (max)" />
-          <ResourceUnit value={cpu} description="VCPU (max)" />
+          <ResourceUnit value={cpu} description="mVCPU (max)" />
           <ResourceUnit value={formatBytes(memory)} description="Memory (max)" />
           <ResourceUnit value={port} description="Port" />
         </>
