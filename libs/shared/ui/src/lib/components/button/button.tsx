@@ -25,15 +25,25 @@ const buttonVariants = cva(['inline-flex', 'items-center', 'shrink-0', 'font-med
       variant: ['surface', 'outline'],
       color: 'neutral',
       className: [
-        'bg-neutral-100',
-        'dark:bg-neutral-500',
-        'dark:hover:bg-neutral-550',
         'border',
         'border-neutral-250',
         'dark:border-neutral-350',
         'text-neutral-400',
         'dark:text-neutral-300',
+        'disabled:text-neutral-300',
+        'disabled:bg-neutral-150',
+        'disabled:border-none',
       ],
+    },
+    {
+      variant: 'surface',
+      color: 'neutral',
+      className: ['bg-neutral-100', 'dark:bg-neutral-500', 'dark:hover:bg-neutral-550'],
+    },
+    {
+      variant: 'outline',
+      color: 'neutral',
+      className: ['bg-transparent'],
     },
     ...['brand' as const, 'neutral' as const, 'green' as const].map((color) => ({
       variant: 'solid' as const,
