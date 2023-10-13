@@ -1,6 +1,6 @@
 import { type ContainerRegistryResponse } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
-import { PodsMetrics, ServiceDetails } from '@qovery/domains/services/feature'
+import { PodStatusesCallout, PodsMetrics, ServiceDetails } from '@qovery/domains/services/feature'
 import { isCronJob } from '@qovery/shared/enums'
 import { type ApplicationEntity, type LoadingStatus } from '@qovery/shared/interfaces'
 import { type BaseLink, ExternalLink, HelpSection, Icon, IconAwesomeEnum } from '@qovery/shared/ui'
@@ -23,7 +23,10 @@ export function PageGeneral(props: PageGeneralProps) {
         <div className="flex flex-row grow">
           <div className="py-7 px-10 flex flex-col grow overflow-y-auto min-h-0 gap-6">
             {application && application.environment && (
-              <PodsMetrics environmentId={application.environment.id} serviceId={application.id} />
+              <>
+                <PodStatusesCallout environmentId={application.environment.id} serviceId={application.id} />
+                <PodsMetrics environmentId={application.environment.id} serviceId={application.id} />
+              </>
             )}
             {isCronJob(application) && (
               <div className="grid grid-cols-[min-content_1fr] gap-x-3 gap-y-1 p-3 border rounded border-neutral-250 text-xs text-neutral-350 bg-neutral-100">
