@@ -111,7 +111,7 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
             <div className="flex px-5 pb-5">
               <DragDropContext onDragEnd={onDragEnd}>
                 {stages?.map((stage, index) => (
-                  <Fragment key={index}>
+                  <Fragment key={stage.id}>
                     {index !== 0 && (
                       <svg
                         data-testid={`arrow-${index}`}
