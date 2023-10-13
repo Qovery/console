@@ -79,11 +79,14 @@ export function PodsMetrics({ environmentId, serviceId }: PodsMetricsProps) {
         cell: (info) => {
           const podName = info.getValue()
           return (
-            <div className="flex flex-row">
+            <>
               <button
-                className="flex items-start w-9 pointer text-neutral-350"
+                className="inline-flex items-center justify-start h-14 text-md w-9 pointer text-neutral-350"
                 type="button"
-                onClick={info.row.getToggleExpandedHandler()}
+                onClick={(e) => {
+                  info.row.getToggleExpandedHandler()()
+                  e.stopPropagation()
+                }}
               >
                 <Icon
                   className="pl-1"
@@ -102,7 +105,7 @@ export function PodsMetrics({ environmentId, serviceId }: PodsMetricsProps) {
                   {podName}
                 </Badge>
               )}
-            </div>
+            </>
           )
         },
       }),
@@ -281,7 +284,7 @@ export function PodsMetrics({ environmentId, serviceId }: PodsMetricsProps) {
       <Table.Body>
         {table.getRowModel().rows.map((row) => (
           <Fragment key={row.id}>
-            <Table.Row>
+            <Table.Row onClick={row.getToggleExpandedHandler()}>
               {row.getVisibleCells().map((cell) => (
                 <Table.Cell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</Table.Cell>
               ))}

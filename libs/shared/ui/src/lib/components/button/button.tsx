@@ -2,7 +2,7 @@ import { type VariantProps, cva } from 'class-variance-authority'
 import { type ComponentPropsWithoutRef, type ElementRef, forwardRef } from 'react'
 import { twMerge } from '@qovery/shared/util-js'
 
-const buttonVariants = cva(['inline-flex', 'items-center', 'shrink-0', 'font-medium', 'rounded'], {
+const buttonVariants = cva(['inline-flex', 'items-center', 'shrink-0', 'font-medium', 'rounded', 'transition'], {
   variants: {
     variant: {
       solid: [],
@@ -27,6 +27,7 @@ const buttonVariants = cva(['inline-flex', 'items-center', 'shrink-0', 'font-med
       className: [
         'bg-neutral-100',
         'dark:bg-neutral-500',
+        'dark:hover:bg-neutral-550',
         'border',
         'border-neutral-250',
         'dark:border-neutral-350',

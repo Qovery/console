@@ -11,7 +11,7 @@ exports[`PodDetails should match snapshot with container based pod and with last
         href="/organization//project//environment//logs/1/live-logs"
       >
         <button
-          class="inline-flex items-center shrink-0 font-medium rounded text-sm py-1 px-2 bg-neutral-100 dark:bg-neutral-500 border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 gap-2"
+          class="inline-flex items-center shrink-0 font-medium rounded transition text-sm py-1 px-2 bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 gap-2"
           type="button"
         >
           Logs
@@ -122,7 +122,7 @@ exports[`PodDetails should match snapshot with git based pod and with last_termi
         href="/organization//project//environment//logs/1/live-logs"
       >
         <button
-          class="inline-flex items-center shrink-0 font-medium rounded text-sm py-1 px-2 bg-neutral-100 dark:bg-neutral-500 border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 gap-2"
+          class="inline-flex items-center shrink-0 font-medium rounded transition text-sm py-1 px-2 bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 gap-2"
           type="button"
         >
           Logs
@@ -249,7 +249,7 @@ exports[`PodDetails should match snapshot with git based pod and without last_te
         href="/organization//project//environment//logs/1/live-logs"
       >
         <button
-          class="inline-flex items-center shrink-0 font-medium rounded text-sm py-1 px-2 bg-neutral-100 dark:bg-neutral-500 border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 gap-2"
+          class="inline-flex items-center shrink-0 font-medium rounded transition text-sm py-1 px-2 bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 gap-2"
           type="button"
         >
           Logs
@@ -280,9 +280,6 @@ exports[`PodDetails should match snapshot with git based pod and without last_te
           class="relative flex flex-col items-center"
         >
           <div
-            class="absolute min-h-full border-l border-neutral-350 left-1/2 -translate-x-1/2"
-          />
-          <div
             class="grid gap-2 items-center"
           >
             <svg
@@ -304,12 +301,12 @@ exports[`PodDetails should match snapshot with git based pod and without last_te
           </div>
         </div>
         <dt
-          class="text-neutral-350 dark:text-neutral-300 dark:font-medium mb-2"
+          class="text-neutral-350 dark:text-neutral-300 dark:font-medium"
         >
           Now:
         </dt>
         <dd
-          class="text-neutral-400 font-medium dark:text-white dark:font-normal mb-2"
+          class="text-neutral-400 font-medium dark:text-white dark:font-normal"
         >
           <span
             class="text-green-500"

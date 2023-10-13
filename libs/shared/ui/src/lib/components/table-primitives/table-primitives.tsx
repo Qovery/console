@@ -10,7 +10,7 @@ const TableRoot = forwardRef<ElementRef<'table'>, TableRootProps>(function Table
   ref
 ) {
   return (
-    <div className="border rounded">
+    <div className="border rounded overflow-hidden">
       <table
         ref={ref}
         className={twMerge('table-fixed min-w-full divide-y divide-neutral-200 text-sm text-neutral-400', className)}
@@ -62,7 +62,7 @@ const TableCell = forwardRef<ElementRef<'td'>, TableCellProps>(function TableCel
   ref
 ) {
   return (
-    <td ref={ref} className={twMerge('px-4 py-3', className)} {...rest}>
+    <td ref={ref} className={twMerge('h-14 px-4 py-0', className)} {...rest}>
       {children}
     </td>
   )
@@ -75,7 +75,7 @@ const TableRowHeaderCell = forwardRef<ElementRef<'th'>, TableRowHeaderCellProps>
   ref
 ) {
   return (
-    <th ref={ref} className={twMerge('px-4 py-3 text-left', className)} {...rest}>
+    <th ref={ref} className={twMerge('h-11 px-4 text-left', className)} {...rest}>
       {children}
     </th>
   )
@@ -88,7 +88,7 @@ const TableColumnHeaderCell = forwardRef<ElementRef<'th'>, TableColumnHeaderCell
   ref
 ) {
   return (
-    <th ref={ref} className={twMerge('px-4 py-3 text-left', className)} {...rest}>
+    <th ref={ref} className={twMerge('h-11 px-4 text-left', className)} {...rest}>
       {children}
     </th>
   )

@@ -71,13 +71,15 @@ export function PodDetails({ pod: { containers = [], service_version }, serviceI
               </>
             )}
             <div className="relative flex flex-col items-center">
-              <div className="absolute min-h-full border-l border-neutral-350 left-1/2 -translate-x-1/2"></div>
+              {last_terminated_state && (
+                <div className="absolute min-h-full border-l border-neutral-350 left-1/2 -translate-x-1/2"></div>
+              )}
               <div className="grid gap-2 items-center">
                 <TimelineCircle />
               </div>
             </div>
-            <Dt className="mb-2">Now:</Dt>
-            <Dd className="mb-2">
+            <Dt className={last_terminated_state ? 'mb-2' : ''}>Now:</Dt>
+            <Dd className={last_terminated_state ? 'mb-2' : ''}>
               {current_state?.state === 'RUNNING' ? (
                 <span className="text-green-500">Running</span>
               ) : (
