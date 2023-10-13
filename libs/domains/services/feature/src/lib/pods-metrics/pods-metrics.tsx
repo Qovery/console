@@ -284,7 +284,7 @@ export function PodsMetrics({ environmentId, serviceId }: PodsMetricsProps) {
       <Table.Body>
         {table.getRowModel().rows.map((row) => (
           <Fragment key={row.id}>
-            <Table.Row onClick={row.getToggleExpandedHandler()}>
+            <Table.Row className="hover:bg-neutral-100" onClick={row.getToggleExpandedHandler()}>
               {row.getVisibleCells().map((cell) => (
                 <Table.Cell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</Table.Cell>
               ))}

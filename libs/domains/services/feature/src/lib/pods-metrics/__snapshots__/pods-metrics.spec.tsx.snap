@@ -89,7 +89,9 @@ exports[`PodsMetrics should match snapshot with data 1`] = `
       <tbody
         class="divide-y divide-neutral-200"
       >
-        <tr>
+        <tr
+          class="hover:bg-neutral-100"
+        >
           <td
             class="h-14 px-4 py-0"
           >
