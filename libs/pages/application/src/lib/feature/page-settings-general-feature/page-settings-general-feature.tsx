@@ -54,7 +54,7 @@ export const handleContainerSubmit = (data: FieldValues, application: Applicatio
     ...application,
     name: data['name'],
     description: data['description'] || '',
-    ['auto_deploy']: data['auto_deploy'],
+    auto_deploy: data['auto_deploy'],
     tag: data['image_tag'] || '',
     image_name: data['image_name'] || '',
     arguments: (data['cmd_arguments'] && data['cmd_arguments'].length && eval(data['cmd_arguments'])) || [],
@@ -75,7 +75,7 @@ export const handleJobSubmit = (data: FieldValues, application: ApplicationEntit
       ...application,
       name: data['name'],
       description: data['description'],
-      ['auto_deploy']: data['auto_deploy'],
+      auto_deploy: data['auto_deploy'],
       source: {
         docker: {
           git_repository,
@@ -88,7 +88,7 @@ export const handleJobSubmit = (data: FieldValues, application: ApplicationEntit
       ...application,
       name: data['name'],
       description: data['description'],
-      ['auto_deploy']: data['auto_deploy'],
+      auto_deploy: data['auto_deploy'],
       source: {
         image: {
           tag: data['image_tag'] || '',
