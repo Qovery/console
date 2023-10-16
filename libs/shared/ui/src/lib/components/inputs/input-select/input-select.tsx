@@ -2,6 +2,7 @@ import { type ReactNode, useEffect, useId, useState } from 'react'
 import Select, {
   type GroupBase,
   type MenuListProps,
+  type MenuPlacement,
   type MultiValue,
   type MultiValueProps,
   type NoticeProps,
@@ -37,6 +38,7 @@ export interface InputSelectProps {
   isFilter?: boolean
   autoFocus?: boolean
   placeholder?: string
+  menuPlacement?: MenuPlacement
 }
 
 export function InputSelect({
@@ -56,6 +58,7 @@ export function InputSelect({
   autoFocus = false,
   placeholder,
   menuListButton,
+  menuPlacement = 'auto',
 }: InputSelectProps) {
   const [focused, setFocused] = useState(false)
   const [selectedItems, setSelectedItems] = useState<MultiValue<Value> | SingleValue<Value>>([])
@@ -244,7 +247,7 @@ export function InputSelect({
           }}
           name={label}
           inputId={label}
-          menuPlacement="auto"
+          menuPlacement={menuPlacement}
           closeMenuOnSelect={!isMulti}
           onChange={handleChange}
           classNamePrefix="input-select"

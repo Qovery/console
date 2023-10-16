@@ -81,7 +81,8 @@ export function CrudModal({ onClose, onSubmit, availableRoles, loading }: CrudMo
               value={field.value}
               error={error?.message}
               isSearchable
-              portal
+              menuPlacement={availableRoles.length > 7 ? 'top' : 'bottom'}
+              portal={availableRoles.length > 7 ? false : true}
             />
           )}
         />
