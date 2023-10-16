@@ -52,7 +52,7 @@ exports[`PodDetails should match snapshot with container based pod and with last
           </div>
         </div>
         <dt
-          class="text-neutral-350 dark:text-neutral-300 dark:font-medium mb-2"
+          class="text-neutral-350 dark:text-neutral-300 mb-2"
         >
           Now:
         </dt>
@@ -93,7 +93,7 @@ exports[`PodDetails should match snapshot with container based pod and with last
           </div>
         </div>
         <dt
-          class="text-neutral-350 dark:text-neutral-300 dark:font-medium"
+          class="text-neutral-350 dark:text-neutral-300"
         />
         <dd
           class="text-neutral-400 font-medium dark:text-white dark:font-normal"
@@ -136,7 +136,7 @@ exports[`PodDetails should match snapshot with git based pod and with last_termi
         class="grid gap-2 grid-cols-[20px_100px_minmax(0,_1fr)] gap-y-0 gap-x-2"
       >
         <dt
-          class="text-neutral-350 dark:text-neutral-300 dark:font-medium col-span-2 mb-2"
+          class="text-neutral-350 dark:text-neutral-300 col-span-2 mb-2"
         >
           Container version:
         </dt>
@@ -177,7 +177,7 @@ exports[`PodDetails should match snapshot with git based pod and with last_termi
           </div>
         </div>
         <dt
-          class="text-neutral-350 dark:text-neutral-300 dark:font-medium mb-2"
+          class="text-neutral-350 dark:text-neutral-300 mb-2"
         >
           Now:
         </dt>
@@ -218,7 +218,7 @@ exports[`PodDetails should match snapshot with git based pod and with last_termi
           </div>
         </div>
         <dt
-          class="text-neutral-350 dark:text-neutral-300 dark:font-medium"
+          class="text-neutral-350 dark:text-neutral-300"
         >
           10 Oct, 07:36:26
         </dt>
@@ -263,7 +263,7 @@ exports[`PodDetails should match snapshot with git based pod and without last_te
         class="grid gap-2 grid-cols-[20px_100px_minmax(0,_1fr)] gap-y-0 gap-x-2"
       >
         <dt
-          class="text-neutral-350 dark:text-neutral-300 dark:font-medium col-span-2 mb-2"
+          class="text-neutral-350 dark:text-neutral-300 col-span-2 mb-2"
         >
           Container version:
         </dt>
@@ -301,7 +301,7 @@ exports[`PodDetails should match snapshot with git based pod and without last_te
           </div>
         </div>
         <dt
-          class="text-neutral-350 dark:text-neutral-300 dark:font-medium"
+          class="text-neutral-350 dark:text-neutral-300"
         >
           Now:
         </dt>

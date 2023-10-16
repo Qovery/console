@@ -21,7 +21,7 @@ exports[`ServiceDetails should match application snapshot 1`] = `
           class="grid grid-cols-2 gap-2"
         >
           <dt
-            class="text-neutral-350 dark:text-neutral-300 dark:font-medium"
+            class="text-neutral-350 dark:text-neutral-300"
           >
             Created:
           </dt>
@@ -31,7 +31,7 @@ exports[`ServiceDetails should match application snapshot 1`] = `
             12 Apr, 08:48:51
           </dd>
           <dt
-            class="text-neutral-350 dark:text-neutral-300 dark:font-medium"
+            class="text-neutral-350 dark:text-neutral-300"
           >
             Last edit:
           </dt>
@@ -83,7 +83,7 @@ exports[`ServiceDetails should match database snapshot 1`] = `
           class="grid grid-cols-2 gap-2"
         >
           <dt
-            class="text-neutral-350 dark:text-neutral-300 dark:font-medium"
+            class="text-neutral-350 dark:text-neutral-300"
           >
             Created:
           </dt>
@@ -93,7 +93,7 @@ exports[`ServiceDetails should match database snapshot 1`] = `
             28 Jul, 14:50:09
           </dd>
           <dt
-            class="text-neutral-350 dark:text-neutral-300 dark:font-medium"
+            class="text-neutral-350 dark:text-neutral-300"
           >
             Last edit:
           </dt>
@@ -145,7 +145,7 @@ exports[`ServiceDetails should match job snapshot 1`] = `
           class="grid grid-cols-2 gap-2"
         >
           <dt
-            class="text-neutral-350 dark:text-neutral-300 dark:font-medium"
+            class="text-neutral-350 dark:text-neutral-300"
           >
             Created:
           </dt>
@@ -155,7 +155,7 @@ exports[`ServiceDetails should match job snapshot 1`] = `
             12 Sep, 10:08:39
           </dd>
           <dt
-            class="text-neutral-350 dark:text-neutral-300 dark:font-medium"
+            class="text-neutral-350 dark:text-neutral-300"
           >
             Last edit:
           </dt>
