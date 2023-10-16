@@ -1,9 +1,11 @@
 import { type User, useAuth0 } from '@auth0/auth0-react'
 import { GTMProvider } from '@elgorditosalsero/react-gtm-hook'
+import algoliasearch from 'algoliasearch/lite'
 import axios from 'axios'
 import LogRocket from 'logrocket'
 import posthog from 'posthog-js'
 import { useCallback, useEffect } from 'react'
+import { InstantSearch, RefinementList } from 'react-instantsearch'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { useIntercom } from 'react-use-intercom'
 import { KubeconfigPreview } from '@qovery/domains/clusters/feature'
@@ -20,6 +22,8 @@ import { environment } from '../environments/environment'
 import PreviewCode from './components/preview-code'
 import ScrollToTop from './components/scroll-to-top'
 import { ROUTER } from './router/main.router'
+
+const searchClient = algoliasearch('FT65SBJ2DA', '02604e8b2e0918e90edd1d9eb8e30f5e')
 
 export function App() {
   useDocumentTitle('Loading...')
@@ -91,6 +95,10 @@ export function App() {
   return (
     <GTMProvider state={gtmParams}>
       <ScrollToTop />
+      <InstantSearch searchClient={searchClient} indexName="instant_search">
+        <RefinementList attribute="brand" />
+        <div>test</div>
+      </InstantSearch>
       <Routes>
         <Route path={`${LOGIN_URL}/*`} element={<PageLogin />} />
         <Route path={LOGOUT_URL} element={<PageLogoutFeature />} />

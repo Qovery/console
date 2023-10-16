@@ -39,6 +39,7 @@ function RunningStateChip({
   if (withDeploymentFallback && !runningStatus?.state) {
     return <DeploymentStateChip environmentId={environmentId} serviceId={serviceId} {...props} />
   }
+  console.log(serviceId)
   return (
     <StatusChip
       status={runningStatus?.state ?? 'STOPPED'}
