@@ -24,13 +24,13 @@ export function Spotlight({ open, onOpenChange }: SpotlightProps) {
 
   return (
     <Command.Dialog
-      label="Global Command Menu"
+      label="Console Spotlight"
       open={open}
       onOpenChange={onOpenChange}
       value={value}
       onValueChange={setValue}
     >
-      <Command.Input placeholder="Search" />
+      <Command.Input placeholder="What do you need?" />
       <Command.List>
         <Command.Empty>No results found.</Command.Empty>
 

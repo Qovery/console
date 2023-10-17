@@ -11,9 +11,10 @@ const CommandDialog = forwardRef<ElementRef<typeof CmdK.Dialog>, CommandDialogPr
   return (
     <CmdK.Dialog
       ref={ref}
-      contentClassName="fixed w-full h-full top-0 left-0 z-40 bg-neutral-700/20"
+      contentClassName="modal__content fixed top-[84px] left-1/2 z-40"
+      overlayClassName="modal__overlay fixed w-full h-screen top-0 left-0 z-30 bg-neutral-700/20"
       className={twMerge(
-        'rounded max-w-screen-sm w-full mt-[84px] p-2 mx-auto shadow-[0_0_32px_rgba(0,0,0,0.08)] bg-white overflow-hidden',
+        'rounded-lg w-[640px] p-2 mx-auto shadow-[0_16px_70px_rgba(0,0,0,0.2)] bg-white overflow-hidden transition-transform duration-100 border border-neutral-150',
         className
       )}
       {...props}
@@ -31,7 +32,7 @@ const CommandInput = forwardRef<ElementRef<typeof CmdK.Input>, CommandInputProps
     <CmdK.Input
       ref={ref}
       className={twMerge(
-        'w-full text-base mb-4 rounded-none px-2 pt-2 pb-4 border-b border-neutral-200 font-medium outline-none',
+        'w-full text-base text-neutral-550  mb-4 rounded-none px-2 pt-2 pb-4 border-b border-neutral-200 outline-none',
         className
       )}
       {...props}
@@ -48,7 +49,7 @@ const CommandList = forwardRef<ElementRef<typeof CmdK.List>, CommandListProps>(f
   return (
     <CmdK.List
       ref={ref}
-      className={twMerge('transition-all max-h-[400px]', className)}
+      className={twMerge('transition-all duration-100 max-h-[400px] overscroll-y-contain overflow-auto', className)}
       style={{
         height: 'min(300px, var(--cmdk-list-height))',
       }}
@@ -63,7 +64,7 @@ const CommandEmpty = forwardRef<ElementRef<typeof CmdK.Empty>, CommandEmptyProps
   { className, ...props },
   ref
 ) {
-  return <CmdK.Empty ref={ref} className={twMerge('', className)} {...props} />
+  return <CmdK.Empty ref={ref} className={twMerge('text-center text-xs text-neutral-350 pb-2', className)} {...props} />
 })
 
 interface CommandGroupProps extends ComponentPropsWithoutRef<typeof CmdK.Group> {}
@@ -85,7 +86,7 @@ const CommandItem = forwardRef<ElementRef<typeof CmdK.Item>, CommandItemProps>(f
     <CmdK.Item
       ref={ref}
       className={twMerge(
-        'flex items-center text-sm rounded-lg gap-2 px-2 h-10 data-[selected]:bg-neutral-150 mt-1 text-neutral-400',
+        'flex items-center mt-1 cursor-pointer text-sm rounded-lg gap-2 px-2 h-10 data-[selected]:bg-neutral-150 data-[selected]:text-neutral-550 text-neutral-350',
         className
       )}
       {...props}
