@@ -46,7 +46,7 @@ export function Navigation({ defaultOrganizationId, clusterNotification }: Navig
       title: 'Need help?',
       items: [
         {
-          name: 'See documentations',
+          name: 'See documentation',
           link: {
             url: 'https://hub.qovery.com/',
             external: true,
@@ -140,7 +140,7 @@ export function Navigation({ defaultOrganizationId, clusterNotification }: Navig
                 />
               </div>
             </Tooltip>
-            <Tooltip content="Helps" side="right">
+            <Tooltip content="Help" side="right">
               <div>
                 <Menu
                   trigger={
