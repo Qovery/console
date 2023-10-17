@@ -1,15 +1,27 @@
 import type { Meta } from '@storybook/react'
 import { Command } from './command-menu'
 
-const Story: Meta<typeof Command.Root> = {
-  component: Command.Root,
+const Story: Meta<typeof Command.Dialog> = {
+  component: Command.Dialog,
   title: 'Command Menu',
   decorators: [
     () => (
-      <div style={{ background: 'white', padding: '3em' }}>
-        <Command.Root>
-          <Command.Input />
-        </Command.Root>
+      <div>
+        <Command.Dialog open={true} label="Global Command Menu">
+          <Command.Input placeholder="Search" />
+          <Command.List>
+            <Command.Empty>No results found.</Command.Empty>
+
+            <Command.Group heading="Letters">
+              <Command.Item>a</Command.Item>
+              <Command.Item>b</Command.Item>
+              <Command.Separator />
+              <Command.Item>c</Command.Item>
+            </Command.Group>
+
+            <Command.Item>Apple</Command.Item>
+          </Command.List>
+        </Command.Dialog>
       </div>
     ),
   ],
