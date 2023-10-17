@@ -3924,10 +3924,10 @@ __metadata:
     axios: ^0.27.2
     babel-jest: 29.5.0
     babel-loader: ^8.1.0
+    carloslfu-cmdk-internal: ^0.3.1
     chance: ^1.1.8
     class-variance-authority: ^0.7.0
     clsx: ^2.1.0
-    cmdk: ^0.2.0
     cronstrue: ^2.21.0
     css-loader: ^6.8.1
     cypress: ^9.1.0
@@ -9827,6 +9827,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"carloslfu-cmdk-internal@npm:^0.3.1":
+  version: 0.3.1
+  resolution: "carloslfu-cmdk-internal@npm:0.3.1"
+  dependencies:
+    "@radix-ui/react-dialog": 1.0.0
+  peerDependencies:
+    react: ^18.0.0
+    react-dom: ^18.0.0
+  checksum: 9b8702ef9a9a7c8e63fc481668c56c904e0b85b082df0403cd3a24ee3c761e35c513f04d878b7d32a497fbd49cf92bda18d9ced399edf4d2a55bcc074af19495
+  languageName: node
+  linkType: hard
+
 "case-sensitive-paths-webpack-plugin@npm:^2.4.0":
   version: 2.4.0
   resolution: "case-sensitive-paths-webpack-plugin@npm:2.4.0"
@@ -10192,18 +10204,6 @@ __metadata:
   dependencies:
     mkdirp-infer-owner: ^2.0.0
   checksum: 83d2a46cdf4adbb38d3d3184364b2df0e4c001ac770f5ca94373825d7a48838b4cb8a59534ef48f02b0d556caa047728589ca65c640c17c0b417b3afb34acfbb
-  languageName: node
-  linkType: hard
-
-"cmdk@npm:^0.2.0":
-  version: 0.2.1
-  resolution: "cmdk@npm:0.2.1"
-  dependencies:
-    "@radix-ui/react-dialog": 1.0.0
-  peerDependencies:
-    react: ^18.0.0
-    react-dom: ^18.0.0
-  checksum: 481e53c5eed45581c02a156774fa30421861df92fb7dbb952a2eeab91718c73311dea2bc5b846f18cde2d20a4a09e966301fe090ac437e3ab44851730d6d8cac
   languageName: node
   linkType: hard
 

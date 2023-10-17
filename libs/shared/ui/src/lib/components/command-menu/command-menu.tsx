@@ -1,4 +1,4 @@
-import { Command as CmdK } from 'cmdk'
+import { Command as CmdK } from 'carloslfu-cmdk-internal'
 import { type ComponentPropsWithoutRef, type ElementRef, forwardRef } from 'react'
 import { twMerge } from '@qovery/shared/util-js'
 
@@ -11,7 +11,11 @@ const CommandDialog = forwardRef<ElementRef<typeof CmdK.Dialog>, CommandDialogPr
   return (
     <CmdK.Dialog
       ref={ref}
-      className={twMerge('rounded max-w-screen-sm w-full p-2 bg-white overflow-hidden transition-transform', className)}
+      contentClassName="fixed w-full h-full top-0 left-0 z-40 bg-neutral-700/20"
+      className={twMerge(
+        'rounded max-w-screen-sm w-full mt-[84px] p-2 mx-auto shadow-[0_0_32px_rgba(0,0,0,0.08)] bg-white overflow-hidden',
+        className
+      )}
       {...props}
     />
   )
@@ -41,7 +45,16 @@ const CommandList = forwardRef<ElementRef<typeof CmdK.List>, CommandListProps>(f
   { className, ...props },
   ref
 ) {
-  return <CmdK.List ref={ref} className={twMerge('', className)} {...props} />
+  return (
+    <CmdK.List
+      ref={ref}
+      className={twMerge('transition-all max-h-[400px]', className)}
+      style={{
+        height: 'min(300px, var(--cmdk-list-height))',
+      }}
+      {...props}
+    />
+  )
 })
 
 interface CommandEmptyProps extends ComponentPropsWithoutRef<typeof CmdK.Empty> {}
