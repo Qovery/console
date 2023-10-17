@@ -39,4 +39,4 @@ export const environments = createQueryKeys('environments', {
 
 export const mutations = {}
 
-export type ServicesKeys = inferQueryKeys<typeof environments>
+export type EnvironmentsKeys = inferQueryKeys<typeof environments>
