@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
-import { Button, Icon, IconAwesomeEnum } from '@qovery/shared/ui'
+import { Spotlight } from '@qovery/shared/spotlight/feature'
+import { ButtonIcon, ButtonIconStyle, ButtonLegacySize, IconAwesomeEnum } from '@qovery/shared/ui'
 import { BreadcrumbFeature } from '../../feature/breadcrumb/breadcrumb'
-import Spotlight from '../../feature/spotlight/spotlight'
 
 export function TopBar() {
   const [openSpotlight, setOpenSpotlight] = useState(false)
@@ -23,9 +23,12 @@ export function TopBar() {
     <div className="sticky top-0 left-16 border-l border-b w-full h-navbar-height dark:border-neutral-500 dark:bg-neutral-650 border-neutral-200 bg-white">
       <div className="flex px-5 justify-between items-center h-full">
         <BreadcrumbFeature />
-        <Button onClick={() => setOpenSpotlight(!openSpotlight)}>
-          <Icon name={IconAwesomeEnum.MAGNIFYING_GLASS} />
-        </Button>
+        <ButtonIcon
+          onClick={() => setOpenSpotlight(!openSpotlight)}
+          icon={IconAwesomeEnum.MAGNIFYING_GLASS}
+          style={ButtonIconStyle.STROKED}
+          size={ButtonLegacySize.LARGE}
+        />
         <Spotlight open={openSpotlight} onOpenChange={setOpenSpotlight} />
       </div>
     </div>
