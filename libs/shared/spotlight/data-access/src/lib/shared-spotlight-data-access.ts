@@ -38,92 +38,79 @@ export const spotlight = createQueryKeys('spotlight', {
         data: { results: projects = [] },
       } = await projectsApi.listProject(organizationId)
 
-      const projectsSuggestions = projects.map((entity) => ({
-        ...entity,
-        suggestionType: 'PROJECT' as const,
-      }))
+      const suggestions: Suggestion[] = []
 
-      const projectsPromises = projects.map(({ id, name }) =>
-        environmentsApi.listEnvironment(id).then((response) => ({
-          response,
-          projectName: name,
-        }))
-      )
-      const environmentsSuggestions = (await Promise.allSettled(projectsPromises))
-        .filter(assertFulfilled)
-        .flatMap(({ value: { response, projectName } }) =>
-          response.data.results?.map((entity) => ({
-            ...entity,
-            projectName,
-            projectId: entity.project?.id ?? '',
-            suggestionType: 'ENVIRONMENT' as const,
-          }))
-        )
+      for (const proj of projects) {
+        suggestions.push({
+          ...proj,
+          suggestionType: 'PROJECT' as const,
+        })
+        environmentsApi.listEnvironment(proj.id).then(({ data: { results: environments = [] } }) => {
+          for (const env of environments) {
+            suggestions.push({
+              ...env,
+              suggestionType: 'ENVIRONMENT' as const,
+              projectId: proj.id ?? '',
+              projectName: proj.name,
+            })
+            applicationsApi.listApplication(env.id).then(({ data: { results: applications = [] } }) => {
+              for (const app of applications) {
+                suggestions.push({
+                  ...app,
+                  name: app.name ?? '',
+                  projectId: proj.id,
+                  projectName: proj.name,
+                  environmentId: env.id,
+                  environmentName: env.name,
+                  suggestionType: 'SERVICE' as const,
+                  serviceType: 'APPLICATION' as const,
+                })
+              }
+            })
+            containersApi.listContainer(env.id).then(({ data: { results: containers = [] } }) => {
+              for (const container of containers) {
+                suggestions.push({
+                  ...container,
+                  projectId: proj.id,
+                  projectName: proj.name,
+                  environmentId: env.id,
+                  environmentName: env.name,
+                  suggestionType: 'SERVICE' as const,
+                  serviceType: 'CONTAINER' as const,
+                })
+              }
+            })
+            databasesApi.listDatabase(env.id).then(({ data: { results: databases = [] } }) => {
+              for (const database of databases) {
+                suggestions.push({
+                  ...database,
+                  projectId: proj.id,
+                  projectName: proj.name,
+                  environmentId: env.id,
+                  environmentName: env.name,
+                  suggestionType: 'SERVICE' as const,
+                  serviceType: 'DATABASE' as const,
+                })
+              }
+            })
+            jobsApi.listJobs(env.id).then(({ data: { results: jobs = [] } }) => {
+              for (const job of jobs) {
+                suggestions.push({
+                  ...job,
+                  projectId: proj.id,
+                  projectName: proj.name,
+                  environmentId: env.id,
+                  environmentName: env.name,
+                  suggestionType: 'SERVICE' as const,
+                  serviceType: 'JOB' as const,
+                })
+              }
+            })
+          }
+        })
+      }
 
-      const servicesPromises = async ({
-        projectId,
-        projectName,
-        environmentId,
-        environmentName,
-      }: {
-        projectId: string
-        projectName: string
-        environmentId: string
-        environmentName: string
-      }) => [
-        ...((await applicationsApi.listApplication(environmentId)).data.results ?? []).map((entity) => ({
-          name: entity.name ?? '',
-          projectId,
-          projectName,
-          environmentId,
-          environmentName,
-          suggestionType: 'SERVICE' as const,
-          serviceType: 'APPLICATION' as const,
-        })),
-        ...((await containersApi.listContainer(environmentId)).data.results ?? []).map((entity) => ({
-          ...entity,
-          projectId,
-          projectName,
-          environmentId,
-          environmentName,
-          suggestionType: 'SERVICE' as const,
-          serviceType: 'CONTAINER' as const,
-        })),
-        ...((await databasesApi.listDatabase(environmentId)).data.results ?? []).map((entity) => ({
-          ...entity,
-          projectId,
-          projectName,
-          environmentId,
-          environmentName,
-          suggestionType: 'SERVICE' as const,
-          serviceType: 'DATABASE' as const,
-        })),
-        ...((await jobsApi.listJobs(environmentId)).data.results ?? []).map((entity) => ({
-          ...entity,
-          projectId,
-          projectName,
-          environmentId,
-          environmentName,
-          suggestionType: 'SERVICE' as const,
-          serviceType: 'JOB' as const,
-        })),
-      ]
-
-      const environmentsPromises = environmentsSuggestions.map(
-        (env) =>
-          env &&
-          servicesPromises({
-            projectId: env.project?.id ?? '',
-            environmentId: env.id,
-            projectName: env.projectName,
-            environmentName: env.name,
-          })
-      )
-      const servicesSuggestions = (await Promise.allSettled(environmentsPromises))
-        .filter(assertFulfilled)
-        .flatMap(({ value }) => value)
-
-      return [...projectsSuggestions, ...environmentsSuggestions, ...servicesSuggestions] as Suggestion[]
+      return suggestions
     },
   }),
 })
