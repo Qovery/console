@@ -54,6 +54,10 @@ export function Spotlight({ open, onOpenChange }: SpotlightProps) {
     })
   }, [])
 
+  const dataProjects = data.filter(({ suggestionType }) => suggestionType === 'PROJECT')
+  const dataEnvironments = data.filter(({ suggestionType }) => suggestionType === 'ENVIRONMENT')
+  const dataServices = data.filter((service) => service.serviceType)
+
   return (
     <Command.Dialog
       label="Console Spotlight"
@@ -65,6 +69,7 @@ export function Spotlight({ open, onOpenChange }: SpotlightProps) {
           popPage()
         }
       }}
+      shouldFilter={false}
     >
       <div className="flex gap-1 px-2">
         {pages.map((page) => (
@@ -127,10 +132,9 @@ export function Spotlight({ open, onOpenChange }: SpotlightProps) {
                 {isFetched && (
                   <>
                     <Command.Empty>No results found</Command.Empty>
-                    <Command.Group heading="Projects">
-                      {data
-                        .filter(({ suggestionType }) => suggestionType === 'PROJECT')
-                        .map(({ id, name }) => (
+                    {dataProjects.length > 0 && (
+                      <Command.Group heading="Projects">
+                        {dataProjects.map(({ id, name }) => (
                           <Command.Item key={id} onSelect={() => closeSpotlight(ENVIRONMENTS_URL(organizationId, id))}>
                             <span className="inline-flex items-center w-6 h-5">
                               <Icon className="text-xs text-center w-6" name={IconEnum.ENVIRONMENT} />
@@ -138,11 +142,11 @@ export function Spotlight({ open, onOpenChange }: SpotlightProps) {
                             {name}
                           </Command.Item>
                         ))}
-                    </Command.Group>
-                    <Command.Group heading="Environments">
-                      {data
-                        .filter(({ suggestionType }) => suggestionType === 'ENVIRONMENT')
-                        .map(({ id, name, projectId, projectName, environmentMode }) => (
+                      </Command.Group>
+                    )}
+                    {dataEnvironments.length > 0 && (
+                      <Command.Group heading="Environments">
+                        {dataEnvironments.map(({ id, name, projectId, projectName, environmentMode }) => (
                           <Command.Item
                             key={id}
                             className="justify-between"
@@ -164,36 +168,39 @@ export function Spotlight({ open, onOpenChange }: SpotlightProps) {
                             </Badge>
                           </Command.Item>
                         ))}
-                    </Command.Group>
-                    <Command.Group heading="Services">
-                      {data
-                        .filter((service) => service.serviceType)
-                        .map(({ id, name, environmentId, projectId, serviceType, projectName, environmentName }) => (
-                          <Command.Item
-                            key={id}
-                            onSelect={() =>
-                              closeSpotlight(
-                                serviceType === 'DATABASE'
-                                  ? DATABASE_URL(organizationId, projectId, environmentId, id)
-                                  : APPLICATION_URL(organizationId, projectId, environmentId, id)
-                              )
-                            }
-                          >
-                            <Icon name={serviceType} className="w-4 h-5" width={16} />
-                            <span className="text-neutral-350">{projectName}</span>
-                            <Icon
-                              name={IconAwesomeEnum.CHEVRON_RIGHT}
-                              className="text-2xs relative top-[1px] text-neutral-350"
-                            />
-                            <span className="text-neutral-350">{environmentName}</span>
-                            <Icon
-                              name={IconAwesomeEnum.CHEVRON_RIGHT}
-                              className="text-2xs relative top-[1px] text-neutral-350"
-                            />
-                            <span>{name}</span>
-                          </Command.Item>
-                        ))}
-                    </Command.Group>
+                      </Command.Group>
+                    )}
+                    {dataServices.length > 0 && (
+                      <Command.Group heading="Services">
+                        {dataServices.map(
+                          ({ id, name, environmentId, projectId, serviceType, projectName, environmentName }) => (
+                            <Command.Item
+                              key={id}
+                              onSelect={() =>
+                                closeSpotlight(
+                                  serviceType === 'DATABASE'
+                                    ? DATABASE_URL(organizationId, projectId, environmentId, id)
+                                    : APPLICATION_URL(organizationId, projectId, environmentId, id)
+                                )
+                              }
+                            >
+                              <Icon name={serviceType} className="w-4 h-5" width={16} />
+                              <span className="text-neutral-350">{projectName}</span>
+                              <Icon
+                                name={IconAwesomeEnum.CHEVRON_RIGHT}
+                                className="text-2xs relative top-[1px] text-neutral-350"
+                              />
+                              <span className="text-neutral-350">{environmentName}</span>
+                              <Icon
+                                name={IconAwesomeEnum.CHEVRON_RIGHT}
+                                className="text-2xs relative top-[1px] text-neutral-350"
+                              />
+                              <span>{name}</span>
+                            </Command.Item>
+                          )
+                        )}
+                      </Command.Group>
+                    )}
                   </>
                 )}
               </>
