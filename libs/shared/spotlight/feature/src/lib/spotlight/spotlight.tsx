@@ -1,6 +1,7 @@
 import { type ChangeEvent, type KeyboardEvent, useCallback, useDeferredValue, useState } from 'react'
 import { Hits, SearchBox, useInstantSearch } from 'react-instantsearch'
 import { useNavigate, useParams } from 'react-router-dom'
+import { IconEnum } from '@qovery/shared/enums'
 import { APPLICATION_URL, DATABASE_URL, ENVIRONMENTS_URL, SERVICES_URL } from '@qovery/shared/routes'
 import {
   Command,
@@ -130,6 +131,7 @@ export function Spotlight({ open, onOpenChange }: SpotlightProps) {
                         .filter(({ suggestionType }) => suggestionType === 'PROJECT')
                         .map(({ id, name }) => (
                           <Command.Item key={id} onSelect={() => closeSpotlight(ENVIRONMENTS_URL(organizationId, id))}>
+                            <Icon className="text-xs" name={IconEnum.ENVIRONMENT} />
                             {name}
                           </Command.Item>
                         ))}
@@ -137,12 +139,18 @@ export function Spotlight({ open, onOpenChange }: SpotlightProps) {
                     <Command.Group heading="Environments">
                       {data
                         .filter(({ suggestionType }) => suggestionType === 'ENVIRONMENT')
-                        .map(({ id, name, projectId }) => (
+                        .map(({ id, name, projectId, projectName }) => (
                           <Command.Item
                             key={id}
                             onSelect={() => closeSpotlight(SERVICES_URL(organizationId, projectId, id))}
                           >
-                            {name}
+                            <Icon className="text-xs" name={IconAwesomeEnum.LAYER_GROUP} />
+                            <span className="text-neutral-350">{projectName}</span>
+                            <Icon
+                              name={IconAwesomeEnum.CHEVRON_RIGHT}
+                              className="text-2xs relative top-[1px] text-neutral-350"
+                            />
+                            <span>{name}</span>
                           </Command.Item>
                         ))}
                     </Command.Group>
@@ -160,9 +168,18 @@ export function Spotlight({ open, onOpenChange }: SpotlightProps) {
                               )
                             }
                           >
-                            {[projectName, environmentName, `${serviceType}:${name}`]
-                              .map(upperCaseFirstLetter)
-                              .join(' > ')}
+                            <Icon name={serviceType} width={18} />
+                            <span className="text-neutral-350">{projectName}</span>
+                            <Icon
+                              name={IconAwesomeEnum.CHEVRON_RIGHT}
+                              className="text-2xs relative top-[1px] text-neutral-350"
+                            />
+                            <span className="text-neutral-350">{environmentName}</span>
+                            <Icon
+                              name={IconAwesomeEnum.CHEVRON_RIGHT}
+                              className="text-2xs relative top-[1px] text-neutral-350"
+                            />
+                            <span>{name}</span>
                           </Command.Item>
                         ))}
                     </Command.Group>

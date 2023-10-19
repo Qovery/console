@@ -1,5 +1,5 @@
 import { type PropsWithChildren } from 'react'
-import { Command } from '@qovery/shared/ui'
+import { Command, Icon, IconAwesomeEnum } from '@qovery/shared/ui'
 import Snippet from '../snippet/snippet'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -7,11 +7,17 @@ function Wrapper({ children }: PropsWithChildren) {
   return <div className="flex flex-col gap-0.5">{children}</div>
 }
 
-export function Hit({ hit: item }: any) {
-  console.log(item)
+// export function Hits({ hits }: any) {
+//   return <div>
 
+//   </div>
+// }
+
+export function Hit({ hit: item }: any) {
   return (
     <Command.Item onSelect={() => window.open(item.url, '_blank')}>
+      <Icon className="text-xs" name={IconAwesomeEnum.BOOK} />
+
       {item.hierarchy[item.type] && item.type === 'lvl1' && (
         <Wrapper>
           <Snippet className="font-medium text-sm" hit={item} attribute="hierarchy.lvl1" />

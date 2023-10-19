@@ -9,13 +9,6 @@ function getPropertyByPath(object: Record<string, any>, path: string): any {
   }, object)
 }
 
-// interface SnippetProps<TItem> {
-//   hit: TItem
-//   attribute: string
-//   tagName?: string
-//   [prop: string]: unknown
-// }
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function Snippet({ hit, attribute, tagName = 'span', ...rest }: any) {
   return createElement(tagName, {
