@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { IconEnum } from '@qovery/shared/enums'
 import { APPLICATION_URL, DATABASE_URL, ENVIRONMENTS_URL, SERVICES_URL } from '@qovery/shared/routes'
 import {
+  Badge,
   Command,
   type CommandDialogProps,
   Icon,
@@ -131,7 +132,9 @@ export function Spotlight({ open, onOpenChange }: SpotlightProps) {
                         .filter(({ suggestionType }) => suggestionType === 'PROJECT')
                         .map(({ id, name }) => (
                           <Command.Item key={id} onSelect={() => closeSpotlight(ENVIRONMENTS_URL(organizationId, id))}>
-                            <Icon className="text-xs text-center w-6" name={IconEnum.ENVIRONMENT} />
+                            <span className="inline-flex items-center w-5 h-5">
+                              <Icon className="text-xs text-center w-6" name={IconEnum.ENVIRONMENT} />
+                            </span>
                             {name}
                           </Command.Item>
                         ))}
@@ -139,18 +142,26 @@ export function Spotlight({ open, onOpenChange }: SpotlightProps) {
                     <Command.Group heading="Environments">
                       {data
                         .filter(({ suggestionType }) => suggestionType === 'ENVIRONMENT')
-                        .map(({ id, name, projectId, projectName }) => (
+                        .map(({ id, name, projectId, projectName, environmentMode }) => (
                           <Command.Item
                             key={id}
+                            className="justify-between"
                             onSelect={() => closeSpotlight(SERVICES_URL(organizationId, projectId, id))}
                           >
-                            <Icon className="text-xs text-center w-6" name={IconAwesomeEnum.LAYER_GROUP} />
-                            <span className="text-neutral-350">{projectName}</span>
-                            <Icon
-                              name={IconAwesomeEnum.CHEVRON_RIGHT}
-                              className="text-2xs relative top-[1px] text-neutral-350"
-                            />
-                            <span>{name}</span>
+                            <div className="flex items-center gap-2">
+                              <span className="inline-flex items-center w-5 h-5">
+                                <Icon className="text-xs text-center" name={IconAwesomeEnum.LAYER_GROUP} />
+                              </span>
+                              <span className="text-neutral-350">{projectName}</span>
+                              <Icon
+                                name={IconAwesomeEnum.CHEVRON_RIGHT}
+                                className="text-2xs relative top-[1px] text-neutral-350"
+                              />
+                              <span>{name}</span>
+                            </div>
+                            <Badge variant="surface" color="neutral" size="xs">
+                              {upperCaseFirstLetter(environmentMode)}
+                            </Badge>
                           </Command.Item>
                         ))}
                     </Command.Group>
@@ -168,7 +179,9 @@ export function Spotlight({ open, onOpenChange }: SpotlightProps) {
                               )
                             }
                           >
-                            <Icon name={serviceType} width={16} />
+                            <span className="inline-flex items-center w-5 h-5">
+                              <Icon name={serviceType} width={16} />
+                            </span>
                             <span className="text-neutral-350">{projectName}</span>
                             <Icon
                               name={IconAwesomeEnum.CHEVRON_RIGHT}

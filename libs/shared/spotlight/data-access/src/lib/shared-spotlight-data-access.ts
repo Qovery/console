@@ -3,6 +3,7 @@ import {
   ApplicationsApi,
   ContainersApi,
   DatabasesApi,
+  type EnvironmentModeEnum,
   EnvironmentsApi,
   JobsApi,
   ProjectsApi,
@@ -23,6 +24,7 @@ export interface Suggestion {
   serviceType?: 'APPLICATION' | 'CONTAINER' | 'DATABASE' | 'CRON_JOB' | 'LIFECYCLE_JOB'
   environmentName?: string
   environmentId?: string
+  environmentMode?: keyof typeof EnvironmentModeEnum
   projectName?: string
   projectId?: string
 }
@@ -49,6 +51,7 @@ export const spotlight = createQueryKeys('spotlight', {
               suggestionType: 'ENVIRONMENT' as const,
               projectId: proj.id ?? '',
               projectName: proj.name,
+              environmentMode: env.mode,
             })
             applicationsApi.listApplication(env.id).then(({ data: { results: applications = [] } }) => {
               for (const app of applications) {
