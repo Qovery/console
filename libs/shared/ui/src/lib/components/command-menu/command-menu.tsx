@@ -24,20 +24,14 @@ const CommandDialog = forwardRef<ElementRef<typeof CmdK.Dialog>, CommandDialogPr
 
 interface CommandInputProps extends ComponentPropsWithoutRef<typeof CmdK.Input> {}
 
+export const commandInputStyle =
+  'w-full text-base text-neutral-550 mb-4 rounded-none px-2 pt-2 pb-4 border-b border-neutral-200 outline-none'
+
 const CommandInput = forwardRef<ElementRef<typeof CmdK.Input>, CommandInputProps>(function CommandInput(
   { className, ...props },
   ref
 ) {
-  return (
-    <CmdK.Input
-      ref={ref}
-      className={twMerge(
-        'w-full text-base text-neutral-550  mb-4 rounded-none px-2 pt-2 pb-4 border-b border-neutral-200 outline-none',
-        className
-      )}
-      {...props}
-    />
-  )
+  return <CmdK.Input ref={ref} className={twMerge(commandInputStyle, className)} {...props} />
 })
 
 interface CommandListProps extends ComponentPropsWithoutRef<typeof CmdK.List> {}

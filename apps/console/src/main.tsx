@@ -150,6 +150,7 @@ root.render(
         <QueryClientProvider client={queryClient}>
           <InstantSearch searchClient={searchClient} indexName="qovery">
             <Configure
+              maxValuesPerFacet={10}
               attributesToRetrieve={[
                 'hierarchy.lvl0',
                 'hierarchy.lvl1',
