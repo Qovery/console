@@ -131,7 +131,9 @@ export const spotlight = createQueryKeys('spotlight', {
         })
       }
 
-      await Promise.resolve(() => Promise.allSettled(promises))
+      for (const p of promises) {
+        await p
+      }
 
       return suggestions
     },
