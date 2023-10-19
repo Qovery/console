@@ -1,9 +1,15 @@
-import '@docsearch/css'
 import { type ChangeEvent, type KeyboardEvent, useCallback, useDeferredValue, useState } from 'react'
 import { Hits, SearchBox, useInstantSearch } from 'react-instantsearch'
 import { useNavigate, useParams } from 'react-router-dom'
 import { APPLICATION_URL, DATABASE_URL, ENVIRONMENTS_URL, SERVICES_URL } from '@qovery/shared/routes'
-import { Command, type CommandDialogProps, LoaderSpinner, commandInputStyle } from '@qovery/shared/ui'
+import {
+  Command,
+  type CommandDialogProps,
+  Icon,
+  IconAwesomeEnum,
+  LoaderSpinner,
+  commandInputStyle,
+} from '@qovery/shared/ui'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import Hit from '../hit/hit'
 import useSuggestions from '../hooks/use-suggestions/use-suggestions'
@@ -52,13 +58,13 @@ export function Spotlight({ open, onOpenChange }: SpotlightProps) {
       open={open}
       onOpenChange={onOpenChange}
       onKeyDown={(event: KeyboardEvent) => {
-        if (valueDoc.length === 0 && event.key === 'Backspace') {
+        if (pages.length > 1 && valueDoc.length === 0 && event.key === 'Backspace') {
           event.preventDefault()
           popPage()
         }
       }}
     >
-      <div className="flex gap-1">
+      <div className="flex gap-1 px-2">
         {pages.map((page) => (
           <span
             key={page}
@@ -80,7 +86,7 @@ export function Spotlight({ open, onOpenChange }: SpotlightProps) {
       {activePage === 'documentation' && (
         <input
           autoFocus
-          className={twMerge(commandInputStyle, 'mb-0')}
+          className={twMerge(commandInputStyle, 'mb-2')}
           value={valueDoc}
           onChange={(e: ChangeEvent<HTMLInputElement>) => {
             const value = e.target.value
@@ -91,11 +97,10 @@ export function Spotlight({ open, onOpenChange }: SpotlightProps) {
               }
             })
           }}
-          placeholder="Search on the documentation"
+          placeholder="Search documentation..."
         />
       )}
       <Command.List>
-        <Command.Empty>No results found</Command.Empty>
         {activePage === 'documentation' && <Hits hitComponent={Hit} />}
         {activePage === 'home' && (
           <>
@@ -106,7 +111,8 @@ export function Spotlight({ open, onOpenChange }: SpotlightProps) {
                   setValue('')
                 }}
               >
-                Search Docus...
+                <Icon className="text-xs" name={IconAwesomeEnum.BOOK} />
+                Search documentation
               </Command.Item>
             </Command.Group>
             {value.length > 0 && (
@@ -118,6 +124,7 @@ export function Spotlight({ open, onOpenChange }: SpotlightProps) {
                 )}
                 {isFetched && (
                   <>
+                    <Command.Empty>No results found</Command.Empty>
                     <Command.Group heading="Projects">
                       {data
                         .filter(({ suggestionType }) => suggestionType === 'PROJECT')
