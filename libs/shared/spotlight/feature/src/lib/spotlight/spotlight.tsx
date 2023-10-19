@@ -54,8 +54,6 @@ export function Spotlight({ open, onOpenChange }: SpotlightProps) {
     })
   }, [])
 
-  console.log('value: ', value)
-
   return (
     <Command.Dialog
       label="Console Spotlight"
@@ -181,9 +179,7 @@ export function Spotlight({ open, onOpenChange }: SpotlightProps) {
                               )
                             }
                           >
-                            <span className="inline-flex items-center w-4 h-5">
-                              <Icon name={serviceType} width={16} />
-                            </span>
+                            <Icon name={serviceType} className="w-4 h-5" width={16} />
                             <span className="text-neutral-350">{projectName}</span>
                             <Icon
                               name={IconAwesomeEnum.CHEVRON_RIGHT}
