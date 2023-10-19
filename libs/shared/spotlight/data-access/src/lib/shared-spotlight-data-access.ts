@@ -7,6 +7,7 @@ import {
   JobsApi,
   ProjectsApi,
 } from 'qovery-typescript-axios'
+import { isCronJob } from '@qovery/shared/enums'
 
 const projectsApi = new ProjectsApi()
 const environmentsApi = new EnvironmentsApi()
@@ -15,15 +16,11 @@ const containersApi = new ContainersApi()
 const databasesApi = new DatabasesApi()
 const jobsApi = new JobsApi()
 
-function assertFulfilled<T>(item: PromiseSettledResult<T>): item is PromiseFulfilledResult<T> {
-  return item.status === 'fulfilled'
-}
-
 export interface Suggestion {
   name: string
   id: string
   suggestionType: 'PROJECT' | 'ENVIRONMENT' | 'SERVICE'
-  serviceType?: 'APPLICATION' | 'CONTAINER' | 'DATABASE' | 'JOB'
+  serviceType?: 'APPLICATION' | 'CONTAINER' | 'DATABASE' | 'CRON_JOB' | 'LIFECYCLE_JOB'
   environmentName?: string
   environmentId?: string
   projectName?: string
@@ -76,7 +73,7 @@ export const spotlight = createQueryKeys('spotlight', {
                   environmentId: env.id,
                   environmentName: env.name,
                   suggestionType: 'SERVICE' as const,
-                  serviceType: 'CONTAINER' as const,
+                  serviceType: 'APPLICATION' as const,
                 })
               }
             })
@@ -102,7 +99,7 @@ export const spotlight = createQueryKeys('spotlight', {
                   environmentId: env.id,
                   environmentName: env.name,
                   suggestionType: 'SERVICE' as const,
-                  serviceType: 'JOB' as const,
+                  serviceType: isCronJob(proj) ? 'CRON_JOB' : ('LIFECYCLE_JOB' as const),
                 })
               }
             })

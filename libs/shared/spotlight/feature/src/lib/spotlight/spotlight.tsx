@@ -112,7 +112,7 @@ export function Spotlight({ open, onOpenChange }: SpotlightProps) {
                   setValue('')
                 }}
               >
-                <Icon className="text-xs" name={IconAwesomeEnum.BOOK} />
+                <Icon className="text-xs text-center w-6" name={IconAwesomeEnum.BOOK} />
                 Search documentation
               </Command.Item>
             </Command.Group>
@@ -131,7 +131,7 @@ export function Spotlight({ open, onOpenChange }: SpotlightProps) {
                         .filter(({ suggestionType }) => suggestionType === 'PROJECT')
                         .map(({ id, name }) => (
                           <Command.Item key={id} onSelect={() => closeSpotlight(ENVIRONMENTS_URL(organizationId, id))}>
-                            <Icon className="text-xs" name={IconEnum.ENVIRONMENT} />
+                            <Icon className="text-xs text-center w-6" name={IconEnum.ENVIRONMENT} />
                             {name}
                           </Command.Item>
                         ))}
@@ -144,7 +144,7 @@ export function Spotlight({ open, onOpenChange }: SpotlightProps) {
                             key={id}
                             onSelect={() => closeSpotlight(SERVICES_URL(organizationId, projectId, id))}
                           >
-                            <Icon className="text-xs" name={IconAwesomeEnum.LAYER_GROUP} />
+                            <Icon className="text-xs text-center w-6" name={IconAwesomeEnum.LAYER_GROUP} />
                             <span className="text-neutral-350">{projectName}</span>
                             <Icon
                               name={IconAwesomeEnum.CHEVRON_RIGHT}
@@ -168,7 +168,7 @@ export function Spotlight({ open, onOpenChange }: SpotlightProps) {
                               )
                             }
                           >
-                            <Icon name={serviceType} width={18} />
+                            <Icon name={serviceType} width={16} />
                             <span className="text-neutral-350">{projectName}</span>
                             <Icon
                               name={IconAwesomeEnum.CHEVRON_RIGHT}
