@@ -54,6 +54,8 @@ export function Spotlight({ open, onOpenChange }: SpotlightProps) {
     })
   }, [])
 
+  console.log('value: ', value)
+
   return (
     <Command.Dialog
       label="Console Spotlight"
@@ -132,7 +134,7 @@ export function Spotlight({ open, onOpenChange }: SpotlightProps) {
                         .filter(({ suggestionType }) => suggestionType === 'PROJECT')
                         .map(({ id, name }) => (
                           <Command.Item key={id} onSelect={() => closeSpotlight(ENVIRONMENTS_URL(organizationId, id))}>
-                            <span className="inline-flex items-center w-5 h-5">
+                            <span className="inline-flex items-center w-6 h-5">
                               <Icon className="text-xs text-center w-6" name={IconEnum.ENVIRONMENT} />
                             </span>
                             {name}
@@ -149,7 +151,7 @@ export function Spotlight({ open, onOpenChange }: SpotlightProps) {
                             onSelect={() => closeSpotlight(SERVICES_URL(organizationId, projectId, id))}
                           >
                             <div className="flex items-center gap-2">
-                              <span className="inline-flex items-center w-5 h-5">
+                              <span className="inline-flex items-center w-4 h-5">
                                 <Icon className="text-xs text-center" name={IconAwesomeEnum.LAYER_GROUP} />
                               </span>
                               <span className="text-neutral-350">{projectName}</span>
@@ -179,7 +181,7 @@ export function Spotlight({ open, onOpenChange }: SpotlightProps) {
                               )
                             }
                           >
-                            <span className="inline-flex items-center w-5 h-5">
+                            <span className="inline-flex items-center w-4 h-5">
                               <Icon name={serviceType} width={16} />
                             </span>
                             <span className="text-neutral-350">{projectName}</span>

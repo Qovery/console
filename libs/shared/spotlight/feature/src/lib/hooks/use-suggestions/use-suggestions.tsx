@@ -13,7 +13,7 @@ export function useSuggestions({ organizationId, enabled, search }: UseSuggestio
     ...queries.spotlight.suggestions(organizationId!!),
     enabled: Boolean(organizationId) && enabled,
     select(data) {
-      return data.filter(({ name }) => name.toLowerCase().includes(search.trim().toLowerCase()))
+      return data.filter(({ name }) => name.trim().toLowerCase().includes(search.trim().toLowerCase()))
     },
   })
 }

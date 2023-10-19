@@ -16,7 +16,9 @@ function Wrapper({ children }: PropsWithChildren) {
 export function Hit({ hit: item }: any) {
   return (
     <Command.Item onSelect={() => window.open(item.url, '_blank')}>
-      <Icon className="text-xs" name={IconAwesomeEnum.BOOK} />
+      <span className="inline-flex items-center w-4 h-5">
+        <Icon className="text-xs" name={IconAwesomeEnum.BOOK} />
+      </span>
 
       {item.hierarchy[item.type] && item.type === 'lvl1' && (
         <Wrapper>

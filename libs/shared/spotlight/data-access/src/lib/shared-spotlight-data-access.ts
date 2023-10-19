@@ -38,13 +38,18 @@ export const spotlight = createQueryKeys('spotlight', {
       } = await projectsApi.listProject(organizationId)
 
       const suggestions: Suggestion[] = []
+      const promises: Promise<unknown>[] = []
 
       for (const proj of projects) {
         suggestions.push({
           ...proj,
           suggestionType: 'PROJECT' as const,
         })
-        environmentsApi.listEnvironment(proj.id).then(({ data: { results: environments = [] } }) => {
+
+        const listEnvironmentPromises = environmentsApi.listEnvironment(proj.id)
+        promises.push(listEnvironmentPromises)
+
+        listEnvironmentPromises.then(({ data: { results: environments = [] } }) => {
           for (const env of environments) {
             suggestions.push({
               ...env,
@@ -53,7 +58,11 @@ export const spotlight = createQueryKeys('spotlight', {
               projectName: proj.name,
               environmentMode: env.mode,
             })
-            applicationsApi.listApplication(env.id).then(({ data: { results: applications = [] } }) => {
+
+            const listApplicationPromises = applicationsApi.listApplication(env.id)
+            promises.push(listApplicationPromises)
+
+            listApplicationPromises.then(({ data: { results: applications = [] } }) => {
               for (const app of applications) {
                 suggestions.push({
                   ...app,
@@ -67,7 +76,11 @@ export const spotlight = createQueryKeys('spotlight', {
                 })
               }
             })
-            containersApi.listContainer(env.id).then(({ data: { results: containers = [] } }) => {
+
+            const listContainerPromises = containersApi.listContainer(env.id)
+            promises.push(listContainerPromises)
+
+            listContainerPromises.then(({ data: { results: containers = [] } }) => {
               for (const container of containers) {
                 suggestions.push({
                   ...container,
@@ -80,7 +93,11 @@ export const spotlight = createQueryKeys('spotlight', {
                 })
               }
             })
-            databasesApi.listDatabase(env.id).then(({ data: { results: databases = [] } }) => {
+
+            const listDatabase = databasesApi.listDatabase(env.id)
+            promises.push(listDatabase)
+
+            listDatabase.then(({ data: { results: databases = [] } }) => {
               for (const database of databases) {
                 suggestions.push({
                   ...database,
@@ -93,7 +110,11 @@ export const spotlight = createQueryKeys('spotlight', {
                 })
               }
             })
-            jobsApi.listJobs(env.id).then(({ data: { results: jobs = [] } }) => {
+
+            const listJobs = jobsApi.listJobs(env.id)
+            promises.push(listJobs)
+
+            listJobs.then(({ data: { results: jobs = [] } }) => {
               for (const job of jobs) {
                 suggestions.push({
                   ...job,
@@ -109,6 +130,8 @@ export const spotlight = createQueryKeys('spotlight', {
           }
         })
       }
+
+      await Promise.resolve(() => Promise.allSettled(promises))
 
       return suggestions
     },
