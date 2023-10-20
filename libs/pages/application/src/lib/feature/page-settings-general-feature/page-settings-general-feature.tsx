@@ -6,7 +6,15 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { editApplication, getApplicationsState, postApplicationActionsRedeploy } from '@qovery/domains/application'
 import { fetchOrganizationContainerRegistries, selectOrganizationById } from '@qovery/domains/organization'
-import { ServiceTypeEnum, getServiceType, isApplication, isContainer, isJob } from '@qovery/shared/enums'
+import {
+  ServiceTypeEnum,
+  getServiceType,
+  isApplication,
+  isContainer,
+  isContainerJob,
+  isGitJob,
+  isJob,
+} from '@qovery/shared/enums'
 import { type ApplicationEntity, type OrganizationEntity } from '@qovery/shared/interfaces'
 import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { toastError } from '@qovery/shared/ui'
@@ -63,8 +71,8 @@ export const handleContainerSubmit = (data: FieldValues, application: Applicatio
   }
 }
 
-export const handleJobSubmit = (data: FieldValues, application: ApplicationEntity): ApplicationEntity => {
-  if (application.source?.docker) {
+export const handleJobSubmit = (data: FieldValues, application: ApplicationEntity) => {
+  if ('docker' in (application.source ?? {})) {
     const git_repository = {
       url: buildGitRepoUrl(data['provider'], data['repository']),
       branch: data['branch'],
@@ -222,18 +230,21 @@ export function PageSettingsGeneralFeature() {
     if (isJob(application)) {
       methods.setValue('description', application?.description)
 
-      const serviceType = application?.source?.docker ? ServiceTypeEnum.APPLICATION : ServiceTypeEnum.CONTAINER
+      const serviceType =
+        'docker' in (application?.source ?? {}) ? ServiceTypeEnum.APPLICATION : ServiceTypeEnum.CONTAINER
       methods.setValue('serviceType', serviceType)
 
       if (serviceType === ServiceTypeEnum.CONTAINER) {
         dispatch(fetchOrganizationContainerRegistries({ organizationId }))
 
-        methods.setValue('registry', application?.source?.image?.registry_id)
-        methods.setValue('image_name', application?.source?.image?.image_name)
-        methods.setValue('image_tag', application?.source?.image?.tag)
-      } else {
+        if (application && isContainerJob(application)) {
+          methods.setValue('registry', application.source.image.registry_id)
+          methods.setValue('image_name', application.source.image.image_name)
+          methods.setValue('image_tag', application.source.image.tag)
+        }
+      } else if (application && isGitJob(application)) {
         methods.setValue('build_mode', BuildModeEnum.DOCKER)
-        methods.setValue('dockerfile_path', application?.source?.docker?.dockerfile_path)
+        methods.setValue('dockerfile_path', application.source.docker.dockerfile_path)
       }
     }
   }, [methods, application, dispatch, organizationId])

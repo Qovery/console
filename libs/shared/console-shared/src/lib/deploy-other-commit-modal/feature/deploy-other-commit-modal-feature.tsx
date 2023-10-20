@@ -8,7 +8,7 @@ import {
   postApplicationActionsDeployByCommitId,
   selectApplicationById,
 } from '@qovery/domains/application'
-import { getServiceType } from '@qovery/shared/enums'
+import { getServiceType, isGitSource } from '@qovery/shared/enums'
 import { type ApplicationEntity } from '@qovery/shared/interfaces'
 import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { useModal } from '@qovery/shared/ui'
@@ -107,7 +107,7 @@ export function DeployOtherCommitModalFeature({
       setSelectedCommitId={setSelectedCommitId}
       currentCommitId={
         application?.git_repository?.deployed_commit_id ||
-        application?.source?.docker?.git_repository?.deployed_commit_id
+        (isGitSource(application?.source) ? application?.source?.docker?.git_repository?.deployed_commit_id : undefined)
       }
       buttonDisabled={buttonDisabled()}
       handleDeploy={handleDeploy}

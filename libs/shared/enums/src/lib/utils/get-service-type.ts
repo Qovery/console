@@ -1,3 +1,10 @@
+import {
+  type ApplicationGitRepository,
+  type ContainerSource,
+  type JobResponseAllOfSource,
+  type JobResponseAllOfSourceOneOf,
+  type JobResponseAllOfSourceOneOf1,
+} from 'qovery-typescript-axios'
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import {
   type ApplicationEntity,
@@ -59,12 +66,28 @@ export const isLifeCycleJob = (data?: ApplicationEntity | ServiceTypeEnum) => {
   }
 }
 
-export const isGitJob = (data: ApplicationEntity) => {
-  return data && Boolean((data as JobApplicationEntity).source?.docker)
+export function isGitSource(source?: JobResponseAllOfSource): source is JobResponseAllOfSourceOneOf1 {
+  return !!source && 'docker' in source
 }
 
-export const isContainerJob = (data: ApplicationEntity) => {
-  return data && Boolean((data as JobApplicationEntity).source?.image)
+export function isContainerSource(source?: JobResponseAllOfSource): source is JobResponseAllOfSourceOneOf {
+  return !!source && 'image' in source
+}
+
+export const isGitJob = (
+  data: ApplicationEntity
+): data is ApplicationEntity & {
+  source: { docker: { dockerfile_path?: string | null; git_repository: ApplicationGitRepository } }
+} => {
+  return data && 'docker' in (data.source ?? {})
+}
+
+export const isContainerJob = (
+  data: ApplicationEntity
+): data is ApplicationEntity & {
+  source: { image: ContainerSource }
+} => {
+  return data && 'image' in (data.source ?? {})
 }
 
 // Container
