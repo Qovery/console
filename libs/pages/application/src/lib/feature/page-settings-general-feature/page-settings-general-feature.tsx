@@ -13,6 +13,7 @@ import {
   isContainer,
   isContainerJob,
   isGitJob,
+  isGitSource,
   isJob,
 } from '@qovery/shared/enums'
 import { type ApplicationEntity, type OrganizationEntity } from '@qovery/shared/interfaces'
@@ -72,7 +73,7 @@ export const handleContainerSubmit = (data: FieldValues, application: Applicatio
 }
 
 export const handleJobSubmit = (data: FieldValues, application: ApplicationEntity) => {
-  if ('docker' in (application.source ?? {})) {
+  if (isGitSource(application.source)) {
     const git_repository = {
       url: buildGitRepoUrl(data['provider'], data['repository']),
       branch: data['branch'],
@@ -230,8 +231,7 @@ export function PageSettingsGeneralFeature() {
     if (isJob(application)) {
       methods.setValue('description', application?.description)
 
-      const serviceType =
-        'docker' in (application?.source ?? {}) ? ServiceTypeEnum.APPLICATION : ServiceTypeEnum.CONTAINER
+      const serviceType = isGitSource(application?.source) ? ServiceTypeEnum.APPLICATION : ServiceTypeEnum.CONTAINER
       methods.setValue('serviceType', serviceType)
 
       if (serviceType === ServiceTypeEnum.CONTAINER) {
