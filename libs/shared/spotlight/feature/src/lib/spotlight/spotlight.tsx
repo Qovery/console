@@ -2,7 +2,13 @@ import { type ChangeEvent, type KeyboardEvent, useCallback, useDeferredValue, us
 import { Hits, SearchBox, useInstantSearch } from 'react-instantsearch'
 import { useNavigate, useParams } from 'react-router-dom'
 import { IconEnum } from '@qovery/shared/enums'
-import { APPLICATION_URL, DATABASE_URL, ENVIRONMENTS_URL, SERVICES_URL } from '@qovery/shared/routes'
+import {
+  APPLICATION_URL,
+  DATABASE_GENERAL_URL,
+  DATABASE_URL,
+  ENVIRONMENTS_URL,
+  SERVICES_URL,
+} from '@qovery/shared/routes'
 import {
   Badge,
   Command,
@@ -179,7 +185,7 @@ export function Spotlight({ open, onOpenChange }: SpotlightProps) {
                               onSelect={() =>
                                 closeSpotlight(
                                   serviceType === 'DATABASE'
-                                    ? DATABASE_URL(organizationId, projectId, environmentId, id)
+                                    ? DATABASE_URL(organizationId, projectId, environmentId, id) + DATABASE_GENERAL_URL
                                     : APPLICATION_URL(organizationId, projectId, environmentId, id)
                                 )
                               }
