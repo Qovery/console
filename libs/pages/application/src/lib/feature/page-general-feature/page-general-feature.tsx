@@ -75,7 +75,7 @@ export function PageGeneralFeature() {
       const reg = organization?.containerRegistries?.items.find(
         (registry) =>
           registry.id ===
-          (isContainerJob(application) ? application.source?.image?.registry_id : application.registry?.id)
+          (isContainerJob(application) ? application.source.image.registry_id : application.registry?.id)
       )
       setCurrentRegistry(reg)
     }

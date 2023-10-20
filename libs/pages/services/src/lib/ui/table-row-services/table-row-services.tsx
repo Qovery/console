@@ -1,7 +1,16 @@
 import { BuildModeEnum, DatabaseModeEnum } from 'qovery-typescript-axios'
 import { ServiceDeploymentStatusLabel, ServiceStateChip } from '@qovery/domains/services/feature'
 import { ApplicationButtonsActions, DatabaseButtonsActions } from '@qovery/shared/console-shared'
-import { IconEnum, type ServiceTypeEnum, isApplication, isContainer, isDatabase, isJob } from '@qovery/shared/enums'
+import {
+  IconEnum,
+  type ServiceTypeEnum,
+  isApplication,
+  isContainer,
+  isContainerSource,
+  isDatabase,
+  isGitSource,
+  isJob,
+} from '@qovery/shared/enums'
 import {
   type ApplicationEntity,
   type ContainerApplicationEntity,
@@ -110,7 +119,7 @@ export function TableRowServices<T>(props: TableRowServicesProps<T>) {
                   </span>
                 </div>
               )}
-              {dataJobs.source?.docker && (
+              {isGitSource(dataJobs.source) && (
                 <div className="flex items-center">
                   <TagCommit commitId={dataJobs.source?.docker?.git_repository?.deployed_commit_id} />
                   <Icon name={IconAwesomeEnum.CODE_BRANCH} className="ml-2 mr-1 text-neutral-300 text-ssm" />
@@ -119,7 +128,7 @@ export function TableRowServices<T>(props: TableRowServicesProps<T>) {
                   </span>
                 </div>
               )}
-              {(isContainer(type) || dataJobs.source?.image) && (
+              {(isContainer(type) || isContainerSource(dataJobs.source)) && (
                 <Badge className="truncate shrink" size="xs">
                   {dataContainer.image_name && (
                     <Tooltip content={`${dataContainer.image_name}:${dataContainer.tag}`}>
@@ -128,7 +137,7 @@ export function TableRowServices<T>(props: TableRowServicesProps<T>) {
                       </span>
                     </Tooltip>
                   )}
-                  {dataJobs.source?.image && (
+                  {isContainerSource(dataJobs.source) && (
                     <Tooltip content={`${dataJobs.source?.image?.image_name}:${dataJobs.source?.image?.tag}`}>
                       <span className="truncate">
                         {dataJobs.source?.image?.image_name}:{dataJobs.source?.image?.tag}
@@ -153,10 +162,10 @@ export function TableRowServices<T>(props: TableRowServicesProps<T>) {
                   </div>
                 </Tooltip>
               )}
-              {(isApplication(type) || dataJobs.source?.docker) && (
+              {(isApplication(type) || isGitSource(dataJobs.source)) && (
                 <Icon name={dataApplication.build_mode || BuildModeEnum.DOCKER} width="20" height="20" />
               )}
-              {(isContainer(type) || dataJobs.source?.image) && (
+              {(isContainer(type) || isContainerSource(dataJobs.source)) && (
                 <Icon name={IconEnum.CONTAINER} width="20" height="20" />
               )}
             </div>

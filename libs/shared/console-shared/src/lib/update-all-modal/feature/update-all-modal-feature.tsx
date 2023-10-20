@@ -9,7 +9,7 @@ import {
   selectApplicationsEntitiesByEnvId,
 } from '@qovery/domains/application'
 import { useActionDeployAllEnvironment, useFetchEnvironment } from '@qovery/domains/environment'
-import { getServiceType, isApplication, isGitJob, isJob } from '@qovery/shared/enums'
+import { getServiceType, isApplication, isGitJob, isGitSource, isJob } from '@qovery/shared/enums'
 import { type ApplicationEntity, type LoadingStatus } from '@qovery/shared/interfaces'
 import { ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { useModal } from '@qovery/shared/ui'
@@ -150,7 +150,9 @@ export function UpdateAllModalFeature(props: UpdateAllModalFeatureProps) {
     if (applications) {
       const outdatedApps = applications.filter((app) => {
         if (!app.commits?.items) return false
-        const gitRepository = app.git_repository ?? app.source?.docker?.git_repository
+
+        const gitRepository =
+          app.git_repository ?? (isGitSource(app.source) ? app.source.docker?.git_repository : undefined)
         if (!gitRepository) return false
 
         return gitRepository.deployed_commit_id !== app.commits.items[0].git_commit_id

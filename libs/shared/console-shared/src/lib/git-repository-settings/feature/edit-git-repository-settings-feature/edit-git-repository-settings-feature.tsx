@@ -13,7 +13,7 @@ import {
   selectAllAuthProvider,
   selectRepositoriesByProvider,
 } from '@qovery/domains/organization'
-import { isJob } from '@qovery/shared/enums'
+import { isGitSource, isJob } from '@qovery/shared/enums'
 import { type ApplicationEntity, type LoadingStatus, type RepositoryEntity } from '@qovery/shared/interfaces'
 import { Icon } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
@@ -29,11 +29,15 @@ export function EditGitRepositorySettingsFeature() {
     (state) => selectApplicationById(state, applicationId),
     (a, b) =>
       JSON.stringify(a?.git_repository) === JSON.stringify(b?.git_repository) ||
-      JSON.stringify(a?.source?.docker?.git_repository) === JSON.stringify(b?.source?.docker?.git_repository)
+      (isGitSource(a?.source) &&
+        isGitSource(b?.source) &&
+        JSON.stringify(a?.source?.docker?.git_repository) === JSON.stringify(b?.source?.docker?.git_repository))
   )
 
   const getGitRepositoryFromApplication = useCallback(() => {
-    return isJob(application) ? application?.source?.docker?.git_repository : application?.git_repository
+    return isJob(application) && isGitSource(application?.source)
+      ? application?.source?.docker?.git_repository
+      : application?.git_repository
   }, [application])
 
   const { setValue, watch, getValues } = useFormContext<{

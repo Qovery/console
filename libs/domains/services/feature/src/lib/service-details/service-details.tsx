@@ -1,6 +1,6 @@
 import { type ComponentPropsWithoutRef } from 'react'
-import { match } from 'ts-pattern'
-import { IconEnum, ServiceTypeEnum } from '@qovery/shared/enums'
+import { P, match } from 'ts-pattern'
+import { IconEnum, ServiceTypeEnum, isContainerSource, isGitSource } from '@qovery/shared/enums'
 import { APPLICATION_SETTINGS_RESOURCES_URL, APPLICATION_SETTINGS_URL } from '@qovery/shared/routes'
 import {
   Badge,
@@ -36,7 +36,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
   }
 
   const containerImage = match(service)
-    .with({ serviceType: ServiceTypeEnum.JOB }, ({ source }) => source?.image)
+    .with({ serviceType: ServiceTypeEnum.JOB, source: P.when(isContainerSource) }, ({ source }) => source.image)
     .with({ serviceType: ServiceTypeEnum.CONTAINER }, ({ image_name, tag, registry }) => ({
       image_name,
       tag,
@@ -143,57 +143,68 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
         {/* XXX: Should be Heading, typography & design wanted */}
         <span className="text-neutral-400 font-medium">Source</span>
         {match(service)
-          .with({ serviceType: ServiceTypeEnum.APPLICATION }, { serviceType: ServiceTypeEnum.JOB }, (service) => {
-            const gitRepository = match(service)
-              .with({ serviceType: ServiceTypeEnum.APPLICATION }, ({ git_repository }) => git_repository)
-              .with({ serviceType: ServiceTypeEnum.JOB }, ({ source }) => source?.docker?.git_repository)
-              .exhaustive()
+          .with(
+            { serviceType: ServiceTypeEnum.APPLICATION },
+            {
+              serviceType: ServiceTypeEnum.JOB,
+              source: P.when(isGitSource),
+            },
+            (service) => {
+              const gitRepository = match(service)
+                .with({ serviceType: ServiceTypeEnum.APPLICATION }, ({ git_repository }) => git_repository)
+                .with({ serviceType: ServiceTypeEnum.JOB }, ({ source }) => source.docker?.git_repository)
+                .exhaustive()
 
-            return (
-              gitRepository && (
-                <Dl>
-                  {gitRepository.url && gitRepository.name && (
-                    <>
-                      <Dt>Repository:</Dt>
-                      <Dd>
-                        <a href={gitRepository.url} target="_blank" rel="noopener noreferrer">
+              return (
+                gitRepository && (
+                  <Dl>
+                    {gitRepository.url && gitRepository.name && (
+                      <>
+                        <Dt>Repository:</Dt>
+                        <Dd>
+                          <a href={gitRepository.url} target="_blank" rel="noopener noreferrer">
+                            <Badge variant="surface" size="xs" className="gap-1">
+                              <Icon
+                                name={
+                                  gitRepository.url.includes('//github')
+                                    ? IconEnum.GITHUB
+                                    : gitRepository.url.includes('//bitbucket')
+                                    ? IconEnum.BITBUCKET
+                                    : IconEnum.GITLAB
+                                }
+                                height={14}
+                                width={14}
+                              />
+                              <Truncate text={gitRepository.name} truncateLimit={18} />
+                            </Badge>
+                          </a>
+                        </Dd>
+                      </>
+                    )}
+                    {gitRepository.branch && (
+                      <>
+                        <Dt>Branch:</Dt>
+                        <Dd>
                           <Badge variant="surface" size="xs" className="gap-1">
-                            <Icon
-                              name={
-                                gitRepository.url.includes('//github')
-                                  ? IconEnum.GITHUB
-                                  : gitRepository.url.includes('//bitbucket')
-                                  ? IconEnum.BITBUCKET
-                                  : IconEnum.GITLAB
-                              }
-                              height={14}
-                              width={14}
-                            />
-                            <Truncate text={gitRepository.name} truncateLimit={18} />
+                            <Icon name={IconAwesomeEnum.CODE_BRANCH} height={14} width={14} />
+                            <Truncate text={gitRepository.branch} truncateLimit={18} />
                           </Badge>
-                        </a>
-                      </Dd>
-                    </>
-                  )}
-                  {gitRepository.branch && (
-                    <>
-                      <Dt>Branch:</Dt>
-                      <Dd>
-                        <Badge variant="surface" size="xs" className="gap-1">
-                          <Icon name={IconAwesomeEnum.CODE_BRANCH} height={14} width={14} />
-                          <Truncate text={gitRepository.branch} truncateLimit={18} />
-                        </Badge>
-                      </Dd>
-                    </>
-                  )}
-                  <Dt>Commit:</Dt>
-                  <Dd>
-                    <LastCommit gitRepository={gitRepository} serviceId={serviceId} serviceType={service.serviceType} />
-                  </Dd>
-                </Dl>
+                        </Dd>
+                      </>
+                    )}
+                    <Dt>Commit:</Dt>
+                    <Dd>
+                      <LastCommit
+                        gitRepository={gitRepository}
+                        serviceId={serviceId}
+                        serviceType={service.serviceType}
+                      />
+                    </Dd>
+                  </Dl>
+                )
               )
-            )
-          })
+            }
+          )
           .otherwise(() => undefined)}
         {containerImage && (
           <Dl>

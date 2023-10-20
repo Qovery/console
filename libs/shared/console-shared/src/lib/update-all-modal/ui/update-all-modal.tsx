@@ -1,4 +1,5 @@
 import { type Environment } from 'qovery-typescript-axios'
+import { isGitSource } from '@qovery/shared/enums'
 import { type ApplicationEntity } from '@qovery/shared/interfaces'
 import {
   Avatar,
@@ -75,7 +76,9 @@ export function UpdateAllModal(props: UpdateAllModalProps) {
         <ScrollShadowWrapper className="max-h-[440px]">
           <ul>
             {props.applications.map((application, index) => {
-              const gitRepository = application.git_repository ?? application.source?.docker?.git_repository
+              const gitRepository =
+                application.git_repository ??
+                (isGitSource(application.source) ? application.source.docker?.git_repository : undefined)
 
               return (
                 <li
