@@ -7,6 +7,7 @@ import {
   authProviderLoadingStatus,
   fetchAuthProvider,
   fetchBranches,
+  fetchGitToken,
   fetchRepository,
   repositoryLoadingStatus,
   selectAllAuthProvider,
@@ -39,6 +40,8 @@ export function GitRepositorySettingsFeature(props?: GitRepositorySettingsFeatur
 
   useEffect(() => {
     if (watchAuthProvider) {
+      console.log('watchAuthProvider', watchAuthProvider)
+
       dispatch(fetchRepository({ organizationId, gitProvider: watchAuthProvider }))
     }
   }, [dispatch, organizationId, watchAuthProvider])
@@ -64,6 +67,7 @@ export function GitRepositorySettingsFeature(props?: GitRepositorySettingsFeatur
 
   useEffect(() => {
     dispatch(fetchAuthProvider({ organizationId }))
+    dispatch(fetchGitToken({ organizationId }))
   }, [dispatch, organizationId])
 
   return (
