@@ -7,11 +7,9 @@ import {
 } from '@reduxjs/toolkit'
 import {
   type GitAuthProvider,
-  GitTokenResponse,
   GithubAppApi,
   OrganizationAccountGitRepositoriesApi,
   type OrganizationGithubAppConnectRequest,
-  OrganizationMainCallsApi,
 } from 'qovery-typescript-axios'
 import { type AuthProviderState, type LoadingStatus } from '@qovery/shared/interfaces'
 import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
@@ -21,7 +19,6 @@ export const AUTH_PROVIDER_FEATURE_KEY = 'authProvider'
 
 const authProviderApi = new OrganizationAccountGitRepositoriesApi()
 const githubAppApi = new GithubAppApi()
-const gitToken = new OrganizationMainCallsApi()
 
 export const authProviderAdapter = createEntityAdapter<GitAuthProvider>({
   selectId: (authProvider: GitAuthProvider) => `${authProvider.name}-${authProvider.id}`,
@@ -29,11 +26,6 @@ export const authProviderAdapter = createEntityAdapter<GitAuthProvider>({
 
 export const fetchAuthProvider = createAsyncThunk('authProvider/fetch', async (payload: { organizationId: string }) => {
   const response = await authProviderApi.getOrganizationGitProviderAccount(payload.organizationId)
-  return response.data as GitAuthProvider[]
-})
-
-export const fetchGitToken = createAsyncThunk('git-token/fetch', async (payload: { organizationId: string }) => {
-  const response = await gitToken.listOrganizationGitTokens(payload.organizationId)
   return response.data as GitAuthProvider[]
 })
 
@@ -75,19 +67,6 @@ export const authProviderSlice = createSlice({
         state.loadingStatus = 'loaded'
       })
       .addCase(fetchAuthProvider.rejected, (state: AuthProviderState, action) => {
-        state.loadingStatus = 'error'
-        state.error = action.error.message
-        toastError(action.error)
-      })
-      // fetch git token
-      .addCase(fetchGitToken.pending, (state: AuthProviderState) => {
-        state.loadingStatus = 'loading'
-      })
-      .addCase(fetchGitToken.fulfilled, (state: AuthProviderState, action: PayloadAction<GitTokenResponse[]>) => {
-        authProviderAdapter.addMany(state, action.payload)
-        state.loadingStatus = 'loaded'
-      })
-      .addCase(fetchGitToken.rejected, (state: AuthProviderState, action) => {
         state.loadingStatus = 'error'
         state.error = action.error.message
         toastError(action.error)

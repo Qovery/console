@@ -7,12 +7,12 @@ import {
   authProviderLoadingStatus,
   fetchAuthProvider,
   fetchBranches,
-  fetchGitToken,
   fetchRepository,
   repositoryLoadingStatus,
   selectAllAuthProvider,
   selectRepositoriesByProvider,
 } from '@qovery/domains/organization'
+import { useGitTokens } from '@qovery/domains/organizations/feature'
 import { type LoadingStatus, type RepositoryEntity } from '@qovery/shared/interfaces'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { type AppDispatch, type RootState } from '@qovery/state/store'
@@ -32,6 +32,7 @@ export function GitRepositorySettingsFeature(props?: GitRepositorySettingsFeatur
   const watchRepository = watch('repository')
 
   const authProviders = useSelector<RootState, GitAuthProvider[]>(selectAllAuthProvider)
+  const { data: gitTokens } = useGitTokens({ organizationId })
   const repositories = useSelector((state: RootState) => selectRepositoriesByProvider(state, watchAuthProvider))
   const loadingStatusRepositories = useSelector<RootState, LoadingStatus>(repositoryLoadingStatus)
   const loadingStatusAuthProviders = useSelector<RootState, LoadingStatus>(authProviderLoadingStatus)
@@ -67,8 +68,9 @@ export function GitRepositorySettingsFeature(props?: GitRepositorySettingsFeatur
 
   useEffect(() => {
     dispatch(fetchAuthProvider({ organizationId }))
-    dispatch(fetchGitToken({ organizationId }))
   }, [dispatch, organizationId])
+
+  console.log(gitTokens)
 
   return (
     <GitRepositorySettings
