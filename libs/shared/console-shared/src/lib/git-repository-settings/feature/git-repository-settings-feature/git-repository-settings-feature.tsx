@@ -4,7 +4,6 @@ import { useFormContext } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import {
-  authProviderLoadingStatus,
   fetchAuthProvider,
   fetchBranches,
   fetchRepository,
@@ -32,20 +31,30 @@ export function GitRepositorySettingsFeature(props?: GitRepositorySettingsFeatur
   const watchRepository = watch('repository')
 
   const authProviders = useSelector<RootState, GitAuthProvider[]>(selectAllAuthProvider)
-  const { data: gitTokens } = useGitTokens({ organizationId })
-  const repositories = useSelector((state: RootState) => selectRepositoriesByProvider(state, watchAuthProvider))
+  const { data: gitTokens = [] } = useGitTokens({ organizationId })
+  const gitToken = gitTokens.find((gitToken) => gitToken.id === watchAuthProvider)
+  const watchAuthProviderOrGitToken = gitToken ? gitToken.type : watchAuthProvider
+
+  const repositories = useSelector((state: RootState) =>
+    selectRepositoriesByProvider(state, watchAuthProviderOrGitToken)
+  )
   const loadingStatusRepositories = useSelector<RootState, LoadingStatus>(repositoryLoadingStatus)
-  const loadingStatusAuthProviders = useSelector<RootState, LoadingStatus>(authProviderLoadingStatus)
 
   const currentRepository = repositories.find((repository) => repository.name === watchRepository)
 
   useEffect(() => {
-    if (watchAuthProvider) {
-      console.log('watchAuthProvider', watchAuthProvider)
+    dispatch(fetchAuthProvider({ organizationId }))
+  }, [dispatch, organizationId])
 
-      dispatch(fetchRepository({ organizationId, gitProvider: watchAuthProvider }))
+  useEffect(() => {
+    if (watchAuthProvider) {
+      if (gitToken) {
+        dispatch(fetchRepository({ organizationId, gitProvider: gitToken.type, gitToken: gitToken.id }))
+      } else {
+        dispatch(fetchRepository({ organizationId, gitProvider: watchAuthProvider }))
+      }
     }
-  }, [dispatch, organizationId, watchAuthProvider])
+  }, [dispatch, organizationId, watchAuthProvider, gitToken])
 
   // fetch branches by repository and set default branch
   useEffect(() => {
@@ -57,27 +66,30 @@ export function GitRepositorySettingsFeature(props?: GitRepositorySettingsFeatur
           fetchBranches({
             id: currentRepository?.id,
             organizationId,
-            gitProvider: watchAuthProvider,
+            gitProvider: watchAuthProviderOrGitToken,
+            gitToken: gitToken?.id,
             name: watchRepository,
           })
         )
         setValue('branch', currentRepository?.default_branch, { shouldValidate: true })
       }
     }
-  }, [dispatch, organizationId, watchRepository, watchAuthProvider, loadingStatusRepositories, setValue])
-
-  useEffect(() => {
-    dispatch(fetchAuthProvider({ organizationId }))
-  }, [dispatch, organizationId])
-
-  console.log(gitTokens)
+  }, [
+    dispatch,
+    organizationId,
+    watchRepository,
+    watchAuthProvider,
+    loadingStatusRepositories,
+    setValue,
+    gitToken,
+    watchAuthProviderOrGitToken,
+  ])
 
   return (
     <GitRepositorySettings
       withBlockWrapper={props?.withBlockWrapper}
       gitDisabled={false}
-      loadingStatusAuthProviders={loadingStatusAuthProviders}
-      authProviders={authProvidersValues(authProviders)}
+      authProviders={authProvidersValues(authProviders, gitTokens)}
       loadingStatusRepositories={loadingStatusRepositories}
       repositories={repositories.map((repository: RepositoryEntity) => ({
         label: upperCaseFirstLetter(repository.name),

@@ -5,7 +5,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { selectApplicationById } from '@qovery/domains/application'
 import {
-  authProviderLoadingStatus,
   fetchAuthProvider,
   fetchBranches,
   fetchRepository,
@@ -13,6 +12,7 @@ import {
   selectAllAuthProvider,
   selectRepositoriesByProvider,
 } from '@qovery/domains/organization'
+import { useGitTokens } from '@qovery/domains/organizations/feature'
 import { isGitSource, isJob } from '@qovery/shared/enums'
 import { type ApplicationEntity, type LoadingStatus, type RepositoryEntity } from '@qovery/shared/interfaces'
 import { Icon } from '@qovery/shared/ui'
@@ -46,15 +46,18 @@ export function EditGitRepositorySettingsFeature() {
     branch: string | undefined
     root_path: string | undefined
   }>()
-  const watchAuthProvider = watch('provider')
+  const watchAuthProvider = watch('provider') as GitProviderEnum
   const watchRepository = watch('repository')
 
   const authProviders = useSelector<RootState, GitAuthProvider[]>(selectAllAuthProvider)
+  const { data: gitTokens = [] } = useGitTokens({ organizationId })
+  const gitToken = gitTokens.find((gitToken) => gitToken.id === watchAuthProvider)
+  const watchAuthProviderOrGitToken = gitToken ? gitToken.type : watchAuthProvider
+
   const repositories = useSelector((state: RootState) =>
-    selectRepositoriesByProvider(state, watchAuthProvider as GitProviderEnum)
+    selectRepositoriesByProvider(state, watchAuthProviderOrGitToken)
   )
   const loadingStatusRepositories = useSelector<RootState, LoadingStatus>(repositoryLoadingStatus)
-  const loadingStatusAuthProviders = useSelector<RootState, LoadingStatus>(authProviderLoadingStatus)
 
   const [gitDisabled, setGitDisabled] = useState(true)
 
@@ -65,9 +68,13 @@ export function EditGitRepositorySettingsFeature() {
 
   useEffect(() => {
     if (watchAuthProvider) {
-      dispatch(fetchRepository({ organizationId, gitProvider: watchAuthProvider as GitProviderEnum }))
+      if (gitToken) {
+        dispatch(fetchRepository({ organizationId, gitProvider: gitToken.type, gitToken: gitToken.id }))
+      } else {
+        dispatch(fetchRepository({ organizationId, gitProvider: watchAuthProvider as GitProviderEnum }))
+      }
     }
-  }, [dispatch, organizationId, watchAuthProvider])
+  }, [dispatch, organizationId, watchAuthProvider, gitToken])
 
   useEffect(() => {
     if (gitDisabled && getGitRepositoryFromApplication()) {
@@ -89,13 +96,24 @@ export function EditGitRepositorySettingsFeature() {
         fetchBranches({
           id: currentRepository?.id,
           organizationId,
-          gitProvider: getValues().provider as GitProviderEnum,
+          gitToken: gitToken?.id,
+          gitProvider: watchAuthProviderOrGitToken as GitProviderEnum,
           name: getValues().repository || '',
         })
       )
       setValue('branch', currentRepository?.default_branch, { shouldValidate: true })
     }
-  }, [dispatch, gitDisabled, organizationId, watchRepository, watchAuthProvider, loadingStatusRepositories, setValue])
+  }, [
+    dispatch,
+    gitDisabled,
+    organizationId,
+    watchRepository,
+    watchAuthProviderOrGitToken,
+    loadingStatusRepositories,
+    setValue,
+    getValues,
+    gitToken,
+  ])
 
   // submit for modal with the dispatchs authProvider
   const editGitSettings = () => {
@@ -114,10 +132,9 @@ export function EditGitRepositorySettingsFeature() {
       gitDisabled={gitDisabled}
       editGitSettings={editGitSettings}
       currentAuthProvider={currentAuthProvider}
-      loadingStatusAuthProviders={loadingStatusAuthProviders}
       authProviders={
         !gitDisabled
-          ? authProvidersValues(authProviders)
+          ? authProvidersValues(authProviders, gitTokens)
           : application && [
               {
                 label: currentAuthProvider,

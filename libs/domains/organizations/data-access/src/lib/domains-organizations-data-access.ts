@@ -19,7 +19,7 @@ export const organizations = createQueryKeys('organizations', {
       return response.data
     },
   }),
-  gitTokens: ({ organizationdId }) => ({
+  gitTokens: (organizationdId) => ({
     queryKey: [organizationdId],
     async queryFn() {
       const response = await organizationApi.listOrganizationGitTokens(organizationdId)

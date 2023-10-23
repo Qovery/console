@@ -19,7 +19,6 @@ export interface GitRepositorySettingsProps {
   authProviders?: Value[]
   repositories?: Value[]
   branches?: Value[]
-  loadingStatusAuthProviders?: LoadingStatus
   loadingStatusRepositories?: LoadingStatus
   loadingStatusBranches?: LoadingStatus
   currentAuthProvider?: string

@@ -3,6 +3,7 @@ import {
   BuildModeEnum,
   type BuildPackLanguageEnum,
   type ContainerRequest,
+  GitProviderEnum,
 } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -98,6 +99,11 @@ export function StepSummaryFeature() {
             url: buildGitRepoUrl(generalData.provider || '', selectRepository?.url || '') || '',
             root_path: generalData.root_path,
             branch: generalData.branch,
+            git_token_id: ![GitProviderEnum.GITHUB, GitProviderEnum.GITLAB, GitProviderEnum.BITBUCKET].includes(
+              generalData.provider as GitProviderEnum
+            )
+              ? generalData.provider
+              : undefined,
           },
           arguments: generalData.cmd,
           entrypoint: generalData.image_entry_point || '',

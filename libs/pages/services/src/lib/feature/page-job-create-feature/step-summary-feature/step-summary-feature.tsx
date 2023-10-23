@@ -106,6 +106,7 @@ function prepareJobRequest(
           url: buildGitRepoUrl(generalData.provider || '', selectedRepository?.url || '') || '',
           root_path: generalData.root_path,
           branch: generalData.branch,
+          git_token_id: generalData.provider,
         },
       },
     }
