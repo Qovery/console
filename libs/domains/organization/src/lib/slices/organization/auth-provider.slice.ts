@@ -63,7 +63,7 @@ export const authProviderSlice = createSlice({
         state.loadingStatus = 'loading'
       })
       .addCase(fetchAuthProvider.fulfilled, (state: AuthProviderState, action: PayloadAction<GitAuthProvider[]>) => {
-        authProviderAdapter.addMany(state, action.payload)
+        authProviderAdapter.setAll(state, action.payload)
         state.loadingStatus = 'loaded'
       })
       .addCase(fetchAuthProvider.rejected, (state: AuthProviderState, action) => {
