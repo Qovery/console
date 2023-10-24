@@ -4,7 +4,16 @@ import { useParams } from 'react-router-dom'
 import { isJob } from '@qovery/shared/enums'
 import { type ApplicationEntity } from '@qovery/shared/interfaces'
 import { CLUSTER_SETTINGS_RESOURCES_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
-import { BannerBox, BannerBoxEnum, BlockContent, InputText, Link, Slider, inputSizeUnitRules } from '@qovery/shared/ui'
+import {
+  BlockContent,
+  Callout,
+  Icon,
+  IconAwesomeEnum,
+  InputText,
+  Link,
+  Slider,
+  inputSizeUnitRules,
+} from '@qovery/shared/ui'
 
 export interface ApplicationSettingsResourcesProps {
   displayWarningCpu: boolean
@@ -60,13 +69,17 @@ export function ApplicationSettingsResources(props: ApplicationSettingsResources
           </p>
         )}
         {displayWarningCpu && (
-          <BannerBox
-            dataTestId="banner-box"
-            className="mt-3"
-            title="Not enough resources"
-            message="Increase the capacity of your cluster nodes or reduce the service consumption."
-            type={BannerBoxEnum.ERROR}
-          />
+          <Callout.Root color="red" className="mt-3" data-testid="banner-box">
+            <Callout.Icon>
+              <Icon name={IconAwesomeEnum.TRIANGLE_EXCLAMATION} />
+            </Callout.Icon>
+            <Callout.Text>
+              <Callout.TextHeading>Not enough resources</Callout.TextHeading>
+              <Callout.TextDescription>
+                Increase the capacity of your cluster nodes or reduce the service consumption.
+              </Callout.TextDescription>
+            </Callout.Text>
+          </Callout.Root>
         )}
       </BlockContent>
       <BlockContent title="Memory">
@@ -129,17 +142,16 @@ export function ApplicationSettingsResources(props: ApplicationSettingsResources
             CPU consumption for 5 minutes, your app will be auto-scaled and more instances will be added.
           </p>
           {environmentMode === EnvironmentModeEnum.PRODUCTION && watchInstances[0] === 1 && (
-            <BannerBox
-              className="mt-3"
-              message={
-                <span>
-                  We strongly discourage running your production environment with only one instance. This setup might
-                  create service downtime in case of cluster upgrades. Set a minimum of 2 instances for your service to
-                  ensure high availability.
-                </span>
-              }
-              type={BannerBoxEnum.WARNING}
-            />
+            <Callout.Root color="yellow" className="mt-3" data-testid="banner-box">
+              <Callout.Icon>
+                <Icon name={IconAwesomeEnum.TRIANGLE_EXCLAMATION} />
+              </Callout.Icon>
+              <Callout.Text>
+                We strongly discourage running your production environment with only one instance. This setup might
+                create service downtime in case of cluster upgrades. Set a minimum of 2 instances for your service to
+                ensure high availability.
+              </Callout.Text>
+            </Callout.Root>
           )}
         </BlockContent>
       )}
