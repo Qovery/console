@@ -3,12 +3,11 @@ import { type FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { type Value } from '@qovery/shared/interfaces'
 import {
-  BannerBox,
-  BannerBoxEnum,
   BlockContent,
   ButtonLegacy,
   ButtonLegacySize,
   ButtonLegacyStyle,
+  Callout,
   ExternalLink,
   HelpSection,
   Icon,
@@ -152,16 +151,16 @@ export function PageSettingsGeneral({
                     />
                   )}
                 />
-                <BannerBox
-                  className="mt-3"
-                  message={`${
-                    databaseMode === DatabaseModeEnum.CONTAINER
+                <Callout.Root className="mt-3" color="yellow">
+                  <Callout.Icon>
+                    <Icon name={IconAwesomeEnum.CIRCLE_INFO} />
+                  </Callout.Icon>
+                  <Callout.Text className="text-xs">
+                    {databaseMode === DatabaseModeEnum.CONTAINER
                       ? 'Upgrading the version might cause service interruption. Have a look at the database documentation before launching the upgrade.'
-                      : 'Upgrading the version might cause service interruption. Have a look at the cloud provider documentation before launching the upgrade.'
-                  }`}
-                  icon={IconAwesomeEnum.CIRCLE_INFO}
-                  type={BannerBoxEnum.WARNING}
-                />
+                      : 'Upgrading the version might cause service interruption. Have a look at the cloud provider documentation before launching the upgrade.'}
+                  </Callout.Text>
+                </Callout.Root>
               </div>
             )}
             <Controller
