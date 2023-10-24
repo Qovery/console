@@ -1,7 +1,7 @@
 import { type PropsWithChildren } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import BannerBox, { BannerBoxEnum } from '../../banner-box/banner-box'
 import ButtonLegacy, { ButtonLegacyStyle } from '../../buttons/button-legacy/button-legacy'
+import { Callout } from '../../callout/callout'
 import { Icon } from '../../icon/icon'
 import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
 import InputTextSmall from '../../inputs/input-text-small/input-text-small'
@@ -48,12 +48,12 @@ export function ModalConfirmation({
     <div className="p-6">
       <h2 className="h4 text-neutral-400 mb-2 max-w-sm">{title}</h2>
       {warning && (
-        <BannerBox
-          className="mb-2"
-          type={BannerBoxEnum.WARNING}
-          message={warning}
-          icon={IconAwesomeEnum.TRIANGLE_EXCLAMATION}
-        />
+        <Callout.Root className="mb-2" color="yellow">
+          <Callout.Icon>
+            <Icon name={IconAwesomeEnum.TRIANGLE_EXCLAMATION} />
+          </Callout.Icon>
+          <Callout.Text>{warning}</Callout.Text>
+        </Callout.Root>
       )}
       <div className="text-neutral-350 text-sm mb-6">
         {isDelete ? (
