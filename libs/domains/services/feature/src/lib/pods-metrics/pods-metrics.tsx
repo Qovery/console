@@ -236,7 +236,7 @@ export function PodsMetrics({ environmentId, serviceId }: PodsMetricsProps) {
       <div className="flex flex-col items-center gap-1 py-10 bg-neutral-100 text-sm text-neutral-350 border border-neutral-200">
         <Icon className="text-md text-neutral-300" name={IconAwesomeEnum.PLAY} />
         <span className="font-medium">Application is not running</span>
-        <span>Start to see the activites of the pods and containers.</span>
+        <span>Deploy the application first</span>
       </div>
     )
   } else if (
