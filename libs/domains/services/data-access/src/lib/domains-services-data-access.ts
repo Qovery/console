@@ -103,11 +103,11 @@ export const services = createQueryKeys('services', {
           ...entity,
           serviceType: ServiceTypeEnum.CONTAINER as const,
         })),
-        ...((await databasesApi.getEnvironmentDatabaseStatus(environmentId)).data.results ?? []).map((entity) => ({
+        ...((await databasesApi.listDatabase(environmentId)).data.results ?? []).map((entity) => ({
           ...entity,
           serviceType: ServiceTypeEnum.DATABASE as const,
         })),
-        ...((await jobsApi.getEnvironmentJobStatus(environmentId)).data.results ?? []).map((entity) => ({
+        ...((await jobsApi.listJobs(environmentId)).data.results ?? []).map((entity) => ({
           ...entity,
           serviceType: ServiceTypeEnum.JOB as const,
         })),
