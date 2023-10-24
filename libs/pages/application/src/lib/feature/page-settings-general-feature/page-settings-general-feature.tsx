@@ -1,5 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query'
-import { BuildModeEnum, BuildPackLanguageEnum } from 'qovery-typescript-axios'
+import { BuildModeEnum, BuildPackLanguageEnum, GitProviderEnum } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
@@ -40,10 +40,15 @@ export const handleGitApplicationSubmit = (data: FieldValues, application: Appli
       cloneApplication.dockerfile_path = null
     }
 
+    const isGitToken = ![GitProviderEnum.GITHUB, GitProviderEnum.GITLAB, GitProviderEnum.BITBUCKET].includes(
+      data['provider']
+    )
+
     const git_repository = {
-      url: buildGitRepoUrl(data['provider'], data['repository']),
+      url: isGitToken ? application.git_repository?.url : buildGitRepoUrl(data['provider'], data['repository']),
       branch: data['branch'],
       root_path: data['root_path'],
+      git_token_id: isGitToken ? data['provider'] : undefined,
     }
 
     cloneApplication.git_repository = git_repository
@@ -74,10 +79,15 @@ export const handleContainerSubmit = (data: FieldValues, application: Applicatio
 
 export const handleJobSubmit = (data: FieldValues, application: ApplicationEntity) => {
   if (isGitSource(application.source)) {
+    const isGitToken = ![GitProviderEnum.GITHUB, GitProviderEnum.GITLAB, GitProviderEnum.BITBUCKET].includes(
+      data['provider']
+    )
+
     const git_repository = {
-      url: buildGitRepoUrl(data['provider'], data['repository']),
+      url: isGitToken ? application.git_repository?.url : buildGitRepoUrl(data['provider'], data['repository']),
       branch: data['branch'],
       root_path: data['root_path'],
+      git_token_id: isGitToken ? data['provider'] : undefined,
     }
 
     return {

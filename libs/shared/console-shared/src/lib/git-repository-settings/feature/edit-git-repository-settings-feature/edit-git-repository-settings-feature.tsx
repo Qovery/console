@@ -42,7 +42,7 @@ export function EditGitRepositorySettingsFeature() {
 
   const hasGitToken = getGitRepositoryFromApplication()?.git_token_id
 
-  const { setValue, watch, reset } = useFormContext<{
+  const { setValue, watch, getValues } = useFormContext<{
     provider: string
     repository: string | undefined
     branch: string | undefined
@@ -78,8 +78,10 @@ export function EditGitRepositorySettingsFeature() {
       } else {
         dispatch(fetchRepository({ organizationId, gitProvider: watchAuthProvider as GitProviderEnum }))
       }
+
+      setValue('repository', undefined, { shouldValidate: false })
     }
-  }, [dispatch, organizationId, watchAuthProvider, gitToken, reset])
+  }, [dispatch, organizationId, watchAuthProvider, gitToken, setValue])
 
   useEffect(() => {
     if (gitDisabled && getGitRepositoryFromApplication()) {
@@ -91,11 +93,11 @@ export function EditGitRepositorySettingsFeature() {
       setValue('branch', getGitRepositoryFromApplication()?.branch)
       setValue('root_path', getGitRepositoryFromApplication()?.root_path)
     }
-  }, [getGitRepositoryFromApplication, setValue, gitDisabled, authProviders, repositories])
+  }, [getGitRepositoryFromApplication, setValue, gitDisabled, repositories])
 
   // fetch branches by repository and set default branch
   useEffect(() => {
-    if (!gitDisabled && watchRepository && loadingStatusRepositories === 'loaded') {
+    if (!gitDisabled && getValues().repository && loadingStatusRepositories === 'loaded') {
       const currentRepository = repositories?.find((repository) => repository.name === watchRepository)
       dispatch(
         fetchBranches({
@@ -103,7 +105,7 @@ export function EditGitRepositorySettingsFeature() {
           organizationId,
           gitToken: gitToken?.id,
           gitProvider: watchAuthProviderOrGitToken as GitProviderEnum,
-          name: watchRepository || '',
+          name: getValues().repository ?? '',
         })
       )
       setValue('branch', currentRepository?.default_branch, { shouldValidate: true })
@@ -117,7 +119,7 @@ export function EditGitRepositorySettingsFeature() {
     loadingStatusRepositories,
     setValue,
     gitToken,
-    watchRepository,
+    getValues,
   ])
 
   // submit for modal with the dispatchs authProvider
