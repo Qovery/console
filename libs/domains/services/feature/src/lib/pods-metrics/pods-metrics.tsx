@@ -164,11 +164,19 @@ export function PodsMetrics({ environmentId, serviceId }: PodsMetricsProps) {
           ]),
       columnHelper.accessor('memory.current', {
         header: 'Memory',
-        cell: (info) => (info.row.original.memory ? formatMetric(info.row.original.memory) : placeholder),
+        cell: (info) =>
+          match(info.row.original)
+            .with({ serviceType: ServiceTypeEnum.JOB, state: 'COMPLETED' }, () => null)
+            .with({ memory: P.not(P.nullish) }, (pod) => formatMetric(pod.memory))
+            .otherwise(() => placeholder),
       }),
       columnHelper.accessor('cpu.current', {
         header: 'vCPU',
-        cell: (info) => (info.row.original.cpu !== undefined ? formatMetric(info.row.original.cpu) : placeholder),
+        cell: (info) =>
+          match(info.row.original)
+            .with({ serviceType: ServiceTypeEnum.JOB, state: 'COMPLETED' }, () => null)
+            .with({ cpu: P.not(P.nullish) }, (pod) => formatMetric(pod.cpu))
+            .otherwise(() => placeholder),
       }),
       ...(service?.serviceType === 'JOB'
         ? []
