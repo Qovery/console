@@ -1,6 +1,6 @@
 import { ClusterDeleteMode } from 'qovery-typescript-axios'
 import { useState } from 'react'
-import { BannerBox, BannerBoxEnum, IconAwesomeEnum, InputSelect, ModalConfirmation } from '@qovery/shared/ui'
+import { Callout, Icon, IconAwesomeEnum, InputSelect, ModalConfirmation } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import useDeleteCluster from '../hooks/use-delete-cluster/use-delete-cluster'
 
@@ -76,27 +76,25 @@ export function ClusterDeleteModal({ organizationId, clusterId, name }: ClusterD
         </ul>
         <p>Use it carefully this action is irreversible.</p>
         {clusterDeleteMode !== ClusterDeleteMode.DELETE_QOVERY_CONFIG && (
-          <BannerBox
-            className="mt-3"
-            type={BannerBoxEnum.WARNING}
-            message={
-              <>
-                <p>Please note that you will have to manually delete on your cloud account:</p>
-                <ul className="list-disc pl-3">
-                  <li>the S3 bucket created during the cluster installation</li>
-                  <li>the image registry linked to this cluster</li>
-                  {clusterDeleteMode === ClusterDeleteMode.DELETE_CLUSTER_AND_QOVERY_CONFIG && (
-                    <li>any managed database that was created via Qovery.</li>
-                  )}
-                  <li>
-                    any resource created by a lifecycle job that will not be properly deleted during the `environment
-                    deletion` event.
-                  </li>
-                </ul>
-              </>
-            }
-            icon={IconAwesomeEnum.TRIANGLE_EXCLAMATION}
-          />
+          <Callout.Root className="mt-3 text-xs" color="yellow">
+            <Callout.Icon>
+              <Icon name={IconAwesomeEnum.TRIANGLE_EXCLAMATION} />
+            </Callout.Icon>
+            <Callout.Text>
+              <p>Please note that you will have to manually delete on your cloud account:</p>
+              <ul className="list-disc pl-3">
+                <li>the S3 bucket created during the cluster installation</li>
+                <li>the image registry linked to this cluster</li>
+                {clusterDeleteMode === ClusterDeleteMode.DELETE_CLUSTER_AND_QOVERY_CONFIG && (
+                  <li>any managed database that was created via Qovery.</li>
+                )}
+                <li>
+                  any resource created by a lifecycle job that will not be properly deleted during the `environment
+                  deletion` event.
+                </li>
+              </ul>
+            </Callout.Text>
+          </Callout.Root>
         )}
       </div>
     </ModalConfirmation>
