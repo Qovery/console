@@ -3,60 +3,183 @@
 exports[`PodsMetrics should match snapshot with data 1`] = `
 <div>
   <div
-    class="border rounded"
+    class="border rounded overflow-hidden"
   >
     <table
-      class="table-fixed min-w-full divide-y divide-neutral-200 text-sm text-neutral-400 w-full"
+      class="table-fixed divide-y divide-neutral-200 text-neutral-400 w-full text-xs min-w-[800px]"
     >
       <thead>
         <tr>
           <th
-            class="px-4 py-2 text-left font-medium w-1/2"
+            class="h-11 px-4 text-left first:w-1/4 first:pl-[52px] font-medium"
           >
-            Instance name
+            <button
+              class="flex items-center gap-1 cursor-pointer select-none"
+              type="button"
+            >
+              Service pods
+              <span
+                class="icon-solid-arrow-down shrink-0 text-xs"
+                role="img"
+              />
+            </button>
           </th>
           <th
-            class="px-4 py-2 text-left font-medium"
+            class="h-11 px-4 text-left first:w-1/4 first:pl-[52px] font-medium"
           >
-            RAM usage
+            <button
+              class="flex items-center gap-1 cursor-pointer select-none"
+              type="button"
+            >
+              Status
+            </button>
           </th>
           <th
-            class="px-4 py-2 text-left font-medium"
+            class="h-11 px-4 text-left first:w-1/4 first:pl-[52px] font-medium"
           >
-            vCPU
+            <button
+              class="flex items-center gap-1 cursor-pointer select-none"
+              type="button"
+            >
+              Version
+            </button>
           </th>
           <th
-            class="px-4 py-2 text-left font-medium"
+            class="h-11 px-4 text-left first:w-1/4 first:pl-[52px] font-medium"
           >
-            Storage
+            <button
+              class="flex items-center gap-1 cursor-pointer select-none"
+              type="button"
+            >
+              Memory
+            </button>
+          </th>
+          <th
+            class="h-11 px-4 text-left first:w-1/4 first:pl-[52px] font-medium"
+          >
+            <button
+              class="flex items-center gap-1 cursor-pointer select-none"
+              type="button"
+            >
+              vCPU
+            </button>
+          </th>
+          <th
+            class="h-11 px-4 text-left first:w-1/4 first:pl-[52px] font-medium"
+          >
+            <button
+              class="flex items-center gap-1 cursor-pointer select-none"
+              type="button"
+            >
+              Storage
+            </button>
+          </th>
+          <th
+            class="h-11 px-4 text-left first:w-1/4 first:pl-[52px] font-medium"
+          >
+            <button
+              class="flex items-center gap-1 cursor-pointer select-none"
+              type="button"
+            >
+              Age
+            </button>
           </th>
         </tr>
       </thead>
       <tbody
         class="divide-y divide-neutral-200"
       >
-        <tr>
+        <tr
+          class="hover:bg-neutral-100"
+        >
           <td
-            class="px-4 py-2"
+            class="h-14 px-4 py-0"
           >
-            foobar
+            <button
+              class="inline-flex items-center justify-start h-14 text-md w-9 pointer text-neutral-350"
+              type="button"
+            >
+              <span
+                class="icon-solid-chevron-down shrink-0 pl-1"
+                role="img"
+              />
+            </button>
+            <span
+              class="inline-flex items-center shrink-0 font-medium border text-xs px-1 py-0.5 rounded bg-neutral-100 border-neutral-200 text-neutral-400"
+            >
+              foobar
+            </span>
           </td>
           <td
-            class="px-4 py-2"
+            class="h-14 px-4 py-0"
           >
-            20
-            %
+            <span
+              class="inline-flex items-center shrink-0 font-medium border text-sm py-1 px-2 rounded-full border-neutral-250 text-neutral-350 dark:border-neutral-350 gap-2 capitalize"
+            >
+              <div
+                class=""
+                data-state="closed"
+              >
+                <svg
+                  class="text-neutral-300"
+                  fill="none"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  width="16"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <g
+                    clip-path="url(#clip0_5911_150)"
+                  >
+                    <path
+                      d="M21.75 12a9.75 9.75 0 10-19.5 0 9.75 9.75 0 0019.5 0zM0 12a12 12 0 1124 0 12 12 0 01-24 0zm7.875-3.375A2.627 2.627 0 0110.5 6h2.667a2.958 2.958 0 012.958 2.958c0 1.06-.567 2.039-1.486 2.569l-1.514.867V13.875h-2.25v-2.784l.567-.324 2.077-1.19a.709.709 0 00-.352-1.322H10.5a.376.376 0 00-.375.375v.304h-2.25v-.309zm3 7.125h2.25V18h-2.25v-2.25z"
+                      fill="currentColor"
+                    />
+                  </g>
+                  <defs>
+                    <clippath
+                      id="clip0_5911_150"
+                    >
+                      <path
+                        d="M0 0H24V24H0z"
+                        fill="#fff"
+                      />
+                    </clippath>
+                  </defs>
+                </svg>
+              </div>
+              <span
+                class="text-neutral-400"
+              >
+                Unknown
+              </span>
+            </span>
           </td>
           <td
-            class="px-4 py-2"
+            class="h-14 px-4 py-0"
+          />
+          <td
+            class="h-14 px-4 py-0"
           >
-            5
-            %
+            30 MiB (20%)
           </td>
           <td
-            class="px-4 py-2"
+            class="h-14 px-4 py-0"
+          >
+            12 mCPU (5%)
+          </td>
+          <td
+            class="h-14 px-4 py-0"
           >
             -
+          </td>
+          <td
+            class="h-14 px-4 py-0"
+          >
+            <span
+              class="icon-regular-circle-question shrink-0 text-sm text-neutral-300"
+              role="img"
+            />
           </td>
         </tr>
       </tbody>
@@ -68,64 +191,41 @@ exports[`PodsMetrics should match snapshot with data 1`] = `
 exports[`PodsMetrics should match snapshot with empty data 1`] = `
 <div>
   <div
-    class="border rounded"
+    class="flex flex-col items-center gap-1 py-10 bg-neutral-100 text-sm text-neutral-350 border border-neutral-200"
   >
-    <table
-      class="table-fixed min-w-full divide-y divide-neutral-200 text-sm text-neutral-400 w-full"
+    <span
+      class="icon-solid-play shrink-0 text-md text-neutral-300"
+      role="img"
+    />
+    <span
+      class="font-medium"
     >
-      <thead>
-        <tr>
-          <th
-            class="px-4 py-2 text-left font-medium w-1/2"
-          >
-            Instance name
-          </th>
-          <th
-            class="px-4 py-2 text-left font-medium"
-          >
-            RAM usage
-          </th>
-          <th
-            class="px-4 py-2 text-left font-medium"
-          >
-            vCPU
-          </th>
-          <th
-            class="px-4 py-2 text-left font-medium"
-          >
-            Storage
-          </th>
-        </tr>
-      </thead>
-      <tbody
-        class="divide-y divide-neutral-200"
-      >
-        <tr>
-          <td
-            class="px-4 py-2"
-          >
-            -
-          </td>
-          <td
-            class="px-4 py-2"
-          >
-            -
-          </td>
-          <td
-            class="px-4 py-2"
-          >
-            -
-          </td>
-          <td
-            class="px-4 py-2"
-          >
-            -
-          </td>
-        </tr>
-      </tbody>
-    </table>
+      Application is not running
+    </span>
+    <span>
+      Start to see the activites of the pods and containers.
+    </span>
   </div>
 </div>
 `;
 
-exports[`PodsMetrics should match snapshot with null data 1`] = `<div />`;
+exports[`PodsMetrics should match snapshot with null data 1`] = `
+<div>
+  <div
+    class="flex flex-col items-center gap-1 py-10 bg-neutral-100 text-sm text-neutral-350 border border-neutral-200"
+  >
+    <span
+      class="icon-solid-play shrink-0 text-md text-neutral-300"
+      role="img"
+    />
+    <span
+      class="font-medium"
+    >
+      Application is not running
+    </span>
+    <span>
+      Start to see the activites of the pods and containers.
+    </span>
+  </div>
+</div>
+`;

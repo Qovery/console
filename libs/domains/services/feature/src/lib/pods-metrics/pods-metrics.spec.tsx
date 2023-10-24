@@ -1,6 +1,8 @@
 import { ResourceStatusDto, UnitDto } from 'qovery-ws-typescript-axios'
+import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { renderWithProviders } from '@qovery/shared/util-tests'
 import * as useMetricsImport from '../hooks/use-metrics/use-metrics'
+import * as useServiceImport from '../hooks/use-service/use-service'
 import PodsMetrics from './pods-metrics'
 
 describe('PodsMetrics', () => {
@@ -30,6 +32,17 @@ describe('PodsMetrics', () => {
       error: {},
       isError: false,
     })
+    jest.spyOn(useServiceImport, 'useService').mockReturnValue({
+      data: {
+        id: '1',
+        serviceType: ServiceTypeEnum.APPLICATION,
+        created_at: '1696923386000',
+        healthchecks: {},
+      },
+      isLoading: false,
+      error: {},
+      isError: false,
+    })
     const { container } = renderWithProviders(<PodsMetrics environmentId="1" serviceId="1" />)
     expect(container).toMatchSnapshot()
   })
@@ -40,12 +53,34 @@ describe('PodsMetrics', () => {
       error: {},
       isError: false,
     })
+    jest.spyOn(useServiceImport, 'useService').mockReturnValue({
+      data: {
+        id: '1',
+        serviceType: ServiceTypeEnum.APPLICATION,
+        created_at: '1696923386000',
+        healthchecks: {},
+      },
+      isLoading: false,
+      error: {},
+      isError: false,
+    })
     const { container } = renderWithProviders(<PodsMetrics environmentId="1" serviceId="1" />)
     expect(container).toMatchSnapshot()
   })
   it('should match snapshot with null data', () => {
     jest.spyOn(useMetricsImport, 'useMetrics').mockReturnValue({
       data: null,
+      isLoading: false,
+      error: {},
+      isError: false,
+    })
+    jest.spyOn(useServiceImport, 'useService').mockReturnValue({
+      data: {
+        id: '1',
+        serviceType: ServiceTypeEnum.APPLICATION,
+        created_at: '1696923386000',
+        healthchecks: {},
+      },
       isLoading: false,
       error: {},
       isError: false,

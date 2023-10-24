@@ -31,6 +31,7 @@
     "@szhsin/react-menu": "^3.0.0",
     "@tanstack/react-query": "^4.32.6",
     "@tanstack/react-query-devtools": "^4.32.6",
+    "@tanstack/react-table": "^8.10.3",
     "@uidotdev/usehooks": "^2.2.0",
     "ansi-to-react": "^6.1.6",
     "autoprefixer": "10.4.13",

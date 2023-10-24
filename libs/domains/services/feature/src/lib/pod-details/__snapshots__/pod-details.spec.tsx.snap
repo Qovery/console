@@ -1,0 +1,321 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`PodDetails should match snapshot with container based pod and with last_terminated_state 1`] = `
+<body>
+  <div>
+    <div
+      class="pl-4 pb-4 pt-3 pr-20 relative"
+    >
+      <a
+        class="cursor-pointer transition duration-100 font-medium inline-flex flex-center gap-1 text-sky-500 hover:text-sky-600 text-sm absolute top-2 right-2"
+        href="/organization//project//environment//logs/1/live-logs"
+      >
+        <button
+          class="inline-flex items-center shrink-0 font-medium rounded transition text-sm py-1 px-2 bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 gap-2"
+          type="button"
+        >
+          Logs
+          <span
+            class="icon-solid-scroll shrink-0 "
+            role="img"
+          />
+        </button>
+      </a>
+      <dl
+        class="grid gap-2 grid-cols-[20px_100px_minmax(0,_1fr)] gap-y-0 gap-x-2"
+      >
+        <div
+          class="relative flex flex-col items-center"
+        >
+          <div
+            class="absolute min-h-full border-l border-neutral-350 left-1/2 -translate-x-1/2"
+          />
+          <div
+            class="grid gap-2 items-center"
+          >
+            <svg
+              class="z-10 bg-neutral-550"
+              fill="none"
+              height="16"
+              viewBox="0 0 16 16"
+              width="16"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <circle
+                cx="8"
+                cy="8"
+                r="3.75"
+                stroke="#67778E"
+                stroke-width="1.5"
+              />
+            </svg>
+          </div>
+        </div>
+        <dt
+          class="text-neutral-350 dark:text-neutral-300 mb-2"
+        >
+          Now:
+        </dt>
+        <dd
+          class="text-neutral-400 font-medium dark:text-white dark:font-normal mb-2"
+        >
+          <span
+            class="text-green-500"
+          >
+            Running
+          </span>
+        </dd>
+        <div
+          class="relative flex flex-col items-center"
+        >
+          <div
+            class="absolute min-h-full border-l border-neutral-350 left-1/2 -translate-x-1/2"
+          />
+          <div
+            class="grid gap-2"
+          >
+            <svg
+              class="z-10 bg-neutral-550"
+              fill="none"
+              height="16"
+              viewBox="0 0 16 16"
+              width="16"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <circle
+                cx="8"
+                cy="8"
+                r="3.75"
+                stroke="#67778E"
+                stroke-width="1.5"
+              />
+            </svg>
+          </div>
+        </div>
+        <dt
+          class="text-neutral-350 dark:text-neutral-300"
+        />
+        <dd
+          class="text-neutral-400 font-medium dark:text-white dark:font-normal"
+        >
+          Baz
+           (
+          1
+          ).
+           
+          If you want to clear this warning state, redeploy the service.
+        </dd>
+      </dl>
+    </div>
+  </div>
+</body>
+`;
+
+exports[`PodDetails should match snapshot with git based pod and with last_terminated_state 1`] = `
+<body>
+  <div>
+    <div
+      class="pl-4 pb-4 pt-3 pr-20 relative"
+    >
+      <a
+        class="cursor-pointer transition duration-100 font-medium inline-flex flex-center gap-1 text-sky-500 hover:text-sky-600 text-sm absolute top-2 right-2"
+        href="/organization//project//environment//logs/1/live-logs"
+      >
+        <button
+          class="inline-flex items-center shrink-0 font-medium rounded transition text-sm py-1 px-2 bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 gap-2"
+          type="button"
+        >
+          Logs
+          <span
+            class="icon-solid-scroll shrink-0 "
+            role="img"
+          />
+        </button>
+      </a>
+      <dl
+        class="grid gap-2 grid-cols-[20px_100px_minmax(0,_1fr)] gap-y-0 gap-x-2"
+      >
+        <dt
+          class="text-neutral-350 dark:text-neutral-300 col-span-2 mb-2"
+        >
+          Container version:
+        </dt>
+        <dd
+          class="text-neutral-400 font-medium dark:text-white dark:font-normal flex gap-1 mb-2"
+        >
+          <span
+            class="icon-solid-code-commit shrink-0 "
+            role="img"
+          />
+          abcd
+        </dd>
+        <div
+          class="relative flex flex-col items-center"
+        >
+          <div
+            class="absolute min-h-full border-l border-neutral-350 left-1/2 -translate-x-1/2"
+          />
+          <div
+            class="grid gap-2 items-center"
+          >
+            <svg
+              class="z-10 bg-neutral-550"
+              fill="none"
+              height="16"
+              viewBox="0 0 16 16"
+              width="16"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <circle
+                cx="8"
+                cy="8"
+                r="3.75"
+                stroke="#67778E"
+                stroke-width="1.5"
+              />
+            </svg>
+          </div>
+        </div>
+        <dt
+          class="text-neutral-350 dark:text-neutral-300 mb-2"
+        >
+          Now:
+        </dt>
+        <dd
+          class="text-neutral-400 font-medium dark:text-white dark:font-normal mb-2"
+        >
+          <span
+            class="text-green-500"
+          >
+            Running
+          </span>
+        </dd>
+        <div
+          class="relative flex flex-col items-center"
+        >
+          <div
+            class="absolute min-h-full border-l border-neutral-350 left-1/2 -translate-x-1/2"
+          />
+          <div
+            class="grid gap-2"
+          >
+            <svg
+              class="z-10 bg-neutral-550"
+              fill="none"
+              height="16"
+              viewBox="0 0 16 16"
+              width="16"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <circle
+                cx="8"
+                cy="8"
+                r="3.75"
+                stroke="#67778E"
+                stroke-width="1.5"
+              />
+            </svg>
+          </div>
+        </div>
+        <dt
+          class="text-neutral-350 dark:text-neutral-300"
+        >
+          10 Oct, 07:36:26
+        </dt>
+        <dd
+          class="text-neutral-400 font-medium dark:text-white dark:font-normal"
+        >
+          Baz
+           (
+          1
+          ).
+           
+          If you want to clear this warning state, redeploy the service.
+        </dd>
+      </dl>
+    </div>
+  </div>
+</body>
+`;
+
+exports[`PodDetails should match snapshot with git based pod and without last_terminated_state 1`] = `
+<body>
+  <div>
+    <div
+      class="pl-4 pb-4 pt-3 pr-20 relative"
+    >
+      <a
+        class="cursor-pointer transition duration-100 font-medium inline-flex flex-center gap-1 text-sky-500 hover:text-sky-600 text-sm absolute top-2 right-2"
+        href="/organization//project//environment//logs/1/live-logs"
+      >
+        <button
+          class="inline-flex items-center shrink-0 font-medium rounded transition text-sm py-1 px-2 bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 gap-2"
+          type="button"
+        >
+          Logs
+          <span
+            class="icon-solid-scroll shrink-0 "
+            role="img"
+          />
+        </button>
+      </a>
+      <dl
+        class="grid gap-2 grid-cols-[20px_100px_minmax(0,_1fr)] gap-y-0 gap-x-2"
+      >
+        <dt
+          class="text-neutral-350 dark:text-neutral-300 col-span-2 mb-2"
+        >
+          Container version:
+        </dt>
+        <dd
+          class="text-neutral-400 font-medium dark:text-white dark:font-normal flex gap-1 mb-2"
+        >
+          <span
+            class="icon-solid-code-commit shrink-0 "
+            role="img"
+          />
+          abcd
+        </dd>
+        <div
+          class="relative flex flex-col items-center"
+        >
+          <div
+            class="grid gap-2 items-center"
+          >
+            <svg
+              class="z-10 bg-neutral-550"
+              fill="none"
+              height="16"
+              viewBox="0 0 16 16"
+              width="16"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <circle
+                cx="8"
+                cy="8"
+                r="3.75"
+                stroke="#67778E"
+                stroke-width="1.5"
+              />
+            </svg>
+          </div>
+        </div>
+        <dt
+          class="text-neutral-350 dark:text-neutral-300"
+        >
+          Now:
+        </dt>
+        <dd
+          class="text-neutral-400 font-medium dark:text-white dark:font-normal"
+        >
+          <span
+            class="text-green-500"
+          >
+            Running
+          </span>
+        </dd>
+      </dl>
+    </div>
+  </div>
+</body>
+`;
