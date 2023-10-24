@@ -4,10 +4,11 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { IconEnum } from '@qovery/shared/enums'
 import { type ClusterResourcesData, type Value } from '@qovery/shared/interfaces'
 import {
-  BannerBox,
-  BannerBoxEnum,
   BlockContent,
+  Callout,
   ExternalLink,
+  Icon,
+  IconAwesomeEnum,
   InputRadioBox,
   InputSelect,
   InputText,
@@ -41,11 +42,13 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
 
   return (
     <div>
-      <BannerBox
-        className="mb-5"
-        title="Qovery manages this resource for you"
-        message={
-          <span>
+      <Callout.Root className="mb-5" color="yellow">
+        <Callout.Icon>
+          <Icon name={IconAwesomeEnum.TRIANGLE_EXCLAMATION} />
+        </Callout.Icon>
+        <Callout.Text>
+          <Callout.TextHeading>Qovery manages this resource for you</Callout.TextHeading>
+          <Callout.TextDescription className="text-xs">
             Use exclusively the Qovery console to update the resources managed by Qovery on your cloud account.
             <br /> Do not manually update or upgrade them on the cloud provider console, otherwise you will risk a drift
             in the configuration.
@@ -56,10 +59,9 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
             >
               See more details
             </ExternalLink>
-          </span>
-        }
-        type={BannerBoxEnum.WARNING}
-      />
+          </Callout.TextDescription>
+        </Callout.Text>
+      </Callout.Root>
       <BlockContent title="Cluster" className="mb-5">
         {!props.fromDetail ? (
           <Controller
@@ -111,13 +113,18 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
               />
               <p className="text-neutral-350 text-xs my-3">Instance type to be used to run your Kubernetes nodes.</p>
               {warningInstance && (
-                <BannerBox
-                  dataTestId="warning-instance"
-                  message="You selected an instance with ARM64/AARCH64 Cpu architecture. To deploy your services, be sure all containers and dockerfile you are using are compatible with this CPU architecture"
-                  className="mb-3"
-                  title="Be careful"
-                  type={BannerBoxEnum.WARNING}
-                />
+                <Callout.Root className="mb-3" color="yellow" data-testid="warning-instance">
+                  <Callout.Icon>
+                    <Icon name={IconAwesomeEnum.TRIANGLE_EXCLAMATION} />
+                  </Callout.Icon>
+                  <Callout.Text>
+                    <Callout.TextHeading>Be careful</Callout.TextHeading>
+                    <Callout.TextDescription className="text-xs">
+                      You selected an instance with ARM64/AARCH64 Cpu architecture. To deploy your services, be sure all
+                      containers and dockerfile you are using are compatible with this CPU architecture
+                    </Callout.TextDescription>
+                  </Callout.Text>
+                </Callout.Root>
               )}
             </div>
           )}
@@ -168,18 +175,19 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
       )}
 
       {!props.fromDetail && props.cloudProvider === CloudProviderEnum.AWS && (
-        <BannerBox
-          dataTestId="aws-cost-banner"
-          iconRealColors
-          icon={IconEnum.AWS}
-          iconInCircle
-          type={BannerBoxEnum.DEFAULT}
-          className="mb-10"
-          message="Approximate cost charged by the cloud provider based on your consumption"
-          title={`${
-            watchClusterType === KubernetesEnum.MANAGED ? 'Starting at $220 /month' : 'Starting at $20 /month'
-          }`}
-        />
+        <Callout.Root className="items-center mb-10" color="sky" data-testid="aws-cost-banner">
+          <Callout.Icon className="flex items-center justify-center w-12 h-12 bg-white rounded-full">
+            <Icon name={IconEnum.AWS} />
+          </Callout.Icon>
+          <Callout.Text>
+            <Callout.TextHeading>
+              {watchClusterType === KubernetesEnum.MANAGED ? 'Starting at $220 /month' : 'Starting at $20 /month'}
+            </Callout.TextHeading>
+            <Callout.TextDescription className="text-xs">
+              Approximate cost charged by the cloud provider based on your consumption
+            </Callout.TextDescription>
+          </Callout.Text>
+        </Callout.Root>
       )}
     </div>
   )
