@@ -64,7 +64,7 @@ export function PodsMetrics({ environmentId, serviceId }: PodsMetricsProps) {
   const placeholder = <Icon name={IconAwesomeEnum.CIRCLE_QUESTION} className="text-sm text-neutral-300" />
 
   const containerImage = match(service)
-    .with({ serviceType: ServiceTypeEnum.JOB, source: P.when(isContainerSource) }, ({ source }) => source?.image)
+    .with({ serviceType: ServiceTypeEnum.JOB, source: P.when(isContainerSource) }, ({ source }) => source.image)
     .with({ serviceType: ServiceTypeEnum.CONTAINER }, ({ image_name, tag, registry }) => ({
       image_name,
       tag,
