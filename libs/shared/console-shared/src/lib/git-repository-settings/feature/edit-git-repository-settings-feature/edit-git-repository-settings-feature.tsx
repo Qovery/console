@@ -40,7 +40,9 @@ export function EditGitRepositorySettingsFeature() {
       : application?.git_repository
   }, [application])
 
-  const { setValue, watch, getValues } = useFormContext<{
+  const hasGitToken = getGitRepositoryFromApplication()?.git_token_id
+
+  const { setValue, watch, reset } = useFormContext<{
     provider: string
     repository: string | undefined
     branch: string | undefined
@@ -61,9 +63,12 @@ export function EditGitRepositorySettingsFeature() {
 
   const [gitDisabled, setGitDisabled] = useState(true)
 
-  const currentAuthProvider = `${upperCaseFirstLetter(getGitRepositoryFromApplication()?.provider)} (${
-    getGitRepositoryFromApplication()?.owner
-  })`
+  const currentAuthProvider = !hasGitToken
+    ? `${upperCaseFirstLetter(getGitRepositoryFromApplication()?.provider)} (${
+        getGitRepositoryFromApplication()?.owner
+      })`
+    : `${getGitRepositoryFromApplication()?.name}`
+
   const currentRepository = repositories.find((repository) => repository.name === watchRepository)
 
   useEffect(() => {
@@ -74,7 +79,7 @@ export function EditGitRepositorySettingsFeature() {
         dispatch(fetchRepository({ organizationId, gitProvider: watchAuthProvider as GitProviderEnum }))
       }
     }
-  }, [dispatch, organizationId, watchAuthProvider, gitToken])
+  }, [dispatch, organizationId, watchAuthProvider, gitToken, reset])
 
   useEffect(() => {
     if (gitDisabled && getGitRepositoryFromApplication()) {
@@ -90,7 +95,7 @@ export function EditGitRepositorySettingsFeature() {
 
   // fetch branches by repository and set default branch
   useEffect(() => {
-    if (!gitDisabled && getValues().repository && loadingStatusRepositories === 'loaded') {
+    if (!gitDisabled && watchRepository && loadingStatusRepositories === 'loaded') {
       const currentRepository = repositories?.find((repository) => repository.name === watchRepository)
       dispatch(
         fetchBranches({
@@ -98,7 +103,7 @@ export function EditGitRepositorySettingsFeature() {
           organizationId,
           gitToken: gitToken?.id,
           gitProvider: watchAuthProviderOrGitToken as GitProviderEnum,
-          name: getValues().repository || '',
+          name: watchRepository || '',
         })
       )
       setValue('branch', currentRepository?.default_branch, { shouldValidate: true })
@@ -111,8 +116,8 @@ export function EditGitRepositorySettingsFeature() {
     watchAuthProviderOrGitToken,
     loadingStatusRepositories,
     setValue,
-    getValues,
     gitToken,
+    watchRepository,
   ])
 
   // submit for modal with the dispatchs authProvider
@@ -120,7 +125,11 @@ export function EditGitRepositorySettingsFeature() {
     setGitDisabled(false)
     dispatch(fetchAuthProvider({ organizationId }))
     if (getGitRepositoryFromApplication()?.provider) {
-      setValue('provider', getGitRepositoryFromApplication()?.provider || '')
+      setValue(
+        'provider',
+        (hasGitToken ? getGitRepositoryFromApplication()?.git_token_id : getGitRepositoryFromApplication()?.provider) ??
+          ''
+      )
       setValue('repository', undefined, { shouldValidate: false })
     }
   }
@@ -135,7 +144,7 @@ export function EditGitRepositorySettingsFeature() {
       authProviders={
         !gitDisabled
           ? authProvidersValues(authProviders, gitTokens)
-          : application && [
+          : [
               {
                 label: currentAuthProvider,
                 value: `${getGitRepositoryFromApplication()?.provider} (${getGitRepositoryFromApplication()?.owner})`,

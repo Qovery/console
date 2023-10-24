@@ -38,6 +38,7 @@ export function refactoGitApplicationPayload(application: Partial<GitApplication
       url: application.git_repository.url,
       branch: application.git_repository.branch,
       root_path: application.git_repository.root_path,
+      git_token_id: application.git_repository.git_token_id,
     }
   }
 
@@ -123,6 +124,7 @@ export function refactoJobPayload(job: Partial<JobApplicationEntity>): JobReques
           url: job.source.docker?.git_repository?.url || '',
           branch: job.source.docker?.git_repository?.branch,
           root_path: job.source.docker?.git_repository?.root_path,
+          git_token_id: job.source.docker?.git_repository?.git_token_id,
         },
       },
     }

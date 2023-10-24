@@ -7,7 +7,6 @@ export interface UseGitTokensProps {
 
 export function useGitTokens({ organizationId }: UseGitTokensProps) {
   return useQuery({
-    // eslint-disable-next-line @typescript-eslint/no-extra-non-null-assertion
     ...queries.organizations.gitTokens(organizationId),
   })
 }

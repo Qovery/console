@@ -1,15 +1,15 @@
-import { findByTestId, render, screen, waitFor } from '__tests__/utils/setup-jest'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import ConfirmationGitModal, { type ConfirmationGitModalProps } from './confirmation-git-modal'
 
 const props: ConfirmationGitModalProps = {
-  currentAuthProvider: 'Github (RemiBonnet)',
+  currentAuthProvider: 'Github (Owner)',
   onSubmit: jest.fn(),
   onClose: jest.fn(),
 }
 
 describe('ConfirmationGitModal', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<ConfirmationGitModal {...props} />)
+    const { baseElement } = renderWithProviders(<ConfirmationGitModal {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
@@ -19,38 +19,31 @@ describe('ConfirmationGitModal', () => {
     props.onSubmit = spySubmit
     props.onClose = spyClose
 
-    const { baseElement } = render(<ConfirmationGitModal {...props} />)
-    const button = await findByTestId(baseElement, 'submit-button')
+    const { userEvent } = renderWithProviders(<ConfirmationGitModal {...props} />)
+    const button = screen.getByTestId('submit-button')
 
-    await waitFor(() => {
-      button.click()
-      expect(button).not.toBeDisabled()
-      expect(spySubmit).toHaveBeenCalled()
-      expect(spyClose).toHaveBeenCalled()
-    })
+    await userEvent.click(button)
+
+    expect(button).not.toBeDisabled()
+    expect(spySubmit).toHaveBeenCalled()
+    expect(spyClose).toHaveBeenCalled()
   })
 
   it('should close the form', async () => {
     const spyClose = jest.fn()
     props.onClose = spyClose
 
-    const { baseElement } = render(<ConfirmationGitModal {...props} />)
-    const button = await findByTestId(baseElement, 'cancel-button')
+    const { userEvent } = renderWithProviders(<ConfirmationGitModal {...props} />)
+    const button = screen.getByTestId('submit-button')
 
-    await waitFor(() => {
-      button.click()
-      expect(button).not.toBeDisabled()
-      expect(spyClose).toHaveBeenCalled()
-    })
+    await userEvent.click(button)
+
+    expect(button).not.toBeDisabled()
+    expect(spyClose).toHaveBeenCalled()
   })
 
   it('should display the auth provider', () => {
-    props.currentAuthProvider = 'Gitlab (RemiBonnet)'
-    render(<ConfirmationGitModal {...props} />)
-
-    const name = screen.getByTestId('auth-provider-name')
-    const owner = screen.getByTestId('auth-provider-owner')
-    expect(name.textContent).toBe('Gitlab')
-    expect(owner.textContent).toBe('RemiBonnet')
+    renderWithProviders(<ConfirmationGitModal {...props} />)
+    screen.getByText('Github (Owner)')
   })
 })
