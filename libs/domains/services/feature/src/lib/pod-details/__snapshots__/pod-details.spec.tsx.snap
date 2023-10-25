@@ -24,6 +24,11 @@ exports[`PodDetails should match snapshot with container based pod and with last
       <dl
         class="grid gap-2 grid-cols-[20px_100px_minmax(0,_1fr)] gap-y-0 gap-x-2"
       >
+        <span
+          class="col-span-3 text-neutral-300 mb-2"
+        >
+          Pod status history:
+        </span>
         <div
           class="relative flex flex-col items-center"
         >
@@ -135,20 +140,11 @@ exports[`PodDetails should match snapshot with git based pod and with last_termi
       <dl
         class="grid gap-2 grid-cols-[20px_100px_minmax(0,_1fr)] gap-y-0 gap-x-2"
       >
-        <dt
-          class="text-neutral-350 dark:text-neutral-300 col-span-2 mb-2"
+        <span
+          class="col-span-3 text-neutral-300 mb-2"
         >
-          Container version:
-        </dt>
-        <dd
-          class="text-neutral-400 font-medium dark:text-white dark:font-normal flex gap-1 mb-2"
-        >
-          <span
-            class="icon-solid-code-commit shrink-0 "
-            role="img"
-          />
-          abcd
-        </dd>
+          Pod status history:
+        </span>
         <div
           class="relative flex flex-col items-center"
         >
@@ -262,20 +258,11 @@ exports[`PodDetails should match snapshot with git based pod and without last_te
       <dl
         class="grid gap-2 grid-cols-[20px_100px_minmax(0,_1fr)] gap-y-0 gap-x-2"
       >
-        <dt
-          class="text-neutral-350 dark:text-neutral-300 col-span-2 mb-2"
+        <span
+          class="col-span-3 text-neutral-300 mb-2"
         >
-          Container version:
-        </dt>
-        <dd
-          class="text-neutral-400 font-medium dark:text-white dark:font-normal flex gap-1 mb-2"
-        >
-          <span
-            class="icon-solid-code-commit shrink-0 "
-            role="img"
-          />
-          abcd
-        </dd>
+          Pod status history:
+        </span>
         <div
           class="relative flex flex-col items-center"
         >

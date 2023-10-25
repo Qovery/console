@@ -64,7 +64,7 @@ export function PodsMetrics({ environmentId, serviceId }: PodsMetricsProps) {
   const placeholder = <Icon name={IconAwesomeEnum.CIRCLE_QUESTION} className="text-sm text-neutral-300" />
 
   const containerImage = match(service)
-    .with({ serviceType: ServiceTypeEnum.JOB, source: P.when(isContainerSource) }, ({ source }) => source?.image)
+    .with({ serviceType: ServiceTypeEnum.JOB, source: P.when(isContainerSource) }, ({ source }) => source.image)
     .with({ serviceType: ServiceTypeEnum.CONTAINER }, ({ image_name, tag, registry }) => ({
       image_name,
       tag,
@@ -164,11 +164,19 @@ export function PodsMetrics({ environmentId, serviceId }: PodsMetricsProps) {
           ]),
       columnHelper.accessor('memory.current', {
         header: 'Memory',
-        cell: (info) => (info.row.original.memory ? formatMetric(info.row.original.memory) : placeholder),
+        cell: (info) =>
+          match(info.row.original)
+            .with({ serviceType: ServiceTypeEnum.JOB, state: 'COMPLETED' }, () => null)
+            .with({ memory: P.not(P.nullish) }, (pod) => formatMetric(pod.memory))
+            .otherwise(() => placeholder),
       }),
       columnHelper.accessor('cpu.current', {
         header: 'vCPU',
-        cell: (info) => (info.row.original.cpu !== undefined ? formatMetric(info.row.original.cpu) : placeholder),
+        cell: (info) =>
+          match(info.row.original)
+            .with({ serviceType: ServiceTypeEnum.JOB, state: 'COMPLETED' }, () => null)
+            .with({ cpu: P.not(P.nullish) }, (pod) => formatMetric(pod.cpu))
+            .otherwise(() => placeholder),
       }),
       ...(service?.serviceType === 'JOB'
         ? []
@@ -236,7 +244,7 @@ export function PodsMetrics({ environmentId, serviceId }: PodsMetricsProps) {
       <div className="flex flex-col items-center gap-1 py-10 bg-neutral-100 text-sm text-neutral-350 border border-neutral-200">
         <Icon className="text-md text-neutral-300" name={IconAwesomeEnum.PLAY} />
         <span className="font-medium">Application is not running</span>
-        <span>Start to see the activites of the pods and containers.</span>
+        <span>Deploy the application first</span>
       </div>
     )
   } else if (

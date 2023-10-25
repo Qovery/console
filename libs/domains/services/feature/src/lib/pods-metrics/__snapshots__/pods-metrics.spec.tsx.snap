@@ -203,7 +203,7 @@ exports[`PodsMetrics should match snapshot with empty data 1`] = `
       Application is not running
     </span>
     <span>
-      Start to see the activites of the pods and containers.
+      Deploy the application first
     </span>
   </div>
 </div>
@@ -224,7 +224,7 @@ exports[`PodsMetrics should match snapshot with null data 1`] = `
       Application is not running
     </span>
     <span>
-      Start to see the activites of the pods and containers.
+      Deploy the application first
     </span>
   </div>
 </div>

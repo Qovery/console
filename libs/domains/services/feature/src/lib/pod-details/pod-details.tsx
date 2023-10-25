@@ -58,21 +58,27 @@ export function PodDetails({ pod: { containers = [], service_version }, serviceI
         .map(({ current_state, last_terminated_state, restart_count, name }) => (
           <Fragment key={name}>
             <Dl className="grid-cols-[20px_100px_minmax(0,_1fr)] gap-y-0 gap-x-2">
-              {service_version && (
-                <>
-                  <Dt className="col-span-2 mb-2">Container version:</Dt>
-                  <Dd className="flex gap-1 mb-2">
-                    {isGitBased ? (
-                      <>
-                        <Icon name={IconAwesomeEnum.CODE_COMMIT} />
-                        {service_version?.substring(0, 7)}
-                      </>
-                    ) : (
-                      service_version
-                    )}
-                  </Dd>
-                </>
-              )}
+              {
+                // TODO: Code not used now but will be soon with Helm services
+                // eslint-disable-next-line no-constant-condition
+                false ? (
+                  <>
+                    <Dt className="col-span-2 mb-2">Container version:</Dt>
+                    <Dd className="flex gap-1 mb-2">
+                      {isGitBased ? (
+                        <>
+                          <Icon name={IconAwesomeEnum.CODE_COMMIT} />
+                          {service_version?.substring(0, 7)}
+                        </>
+                      ) : (
+                        service_version
+                      )}
+                    </Dd>
+                  </>
+                ) : (
+                  <span className="col-span-3 text-neutral-300 mb-2">Pod status history:</span>
+                )
+              }
               <div className="relative flex flex-col items-center">
                 {last_terminated_state && (
                   <div className="absolute min-h-full border-l border-neutral-350 left-1/2 -translate-x-1/2"></div>
