@@ -1,5 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query'
-import { BuildModeEnum, BuildPackLanguageEnum, GitProviderEnum } from 'qovery-typescript-axios'
+import { BuildModeEnum, BuildPackLanguageEnum } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
