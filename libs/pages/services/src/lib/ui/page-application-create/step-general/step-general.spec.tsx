@@ -52,7 +52,7 @@ describe('StepGeneral', () => {
       })
     )
 
-    screen.getByTestId('input-provider')
+    screen.getAllByText(/git provider/i)
     screen.getByText(/The service will be automatically updated on every new commit on the branch./i)
     const registryInput = screen.queryByTestId('input-select-registry')
     expect(registryInput).toBeNull()
