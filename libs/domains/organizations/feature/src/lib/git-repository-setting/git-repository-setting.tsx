@@ -31,8 +31,6 @@ export function GitRepositorySetting({ disabled, gitProvider }: GitRepositorySet
     enabled: !disabled,
   })
 
-  console.log(repositories)
-
   if (isError) {
     return null
   }

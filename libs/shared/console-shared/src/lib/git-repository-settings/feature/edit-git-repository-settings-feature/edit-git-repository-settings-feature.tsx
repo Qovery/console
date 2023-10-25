@@ -40,7 +40,7 @@ export function EditGitRepositorySettingsFeature() {
     // Set default disabled values
     const gitRepository = getGitRepositoryFromApplication()
     if (gitDisabled) {
-      setValue('provider', `${upperCaseFirstLetter(gitRepository?.provider)} (${gitRepository?.owner})`)
+      setValue('provider', upperCaseFirstLetter(gitRepository?.provider))
       setValue('repository', gitRepository?.name ?? '')
       setValue('branch', gitRepository?.branch ?? '')
       setValue('root_path', undefined)

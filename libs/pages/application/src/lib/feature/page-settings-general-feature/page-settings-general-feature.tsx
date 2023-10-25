@@ -47,7 +47,7 @@ export const handleGitApplicationSubmit = (data: FieldValues, application: Appli
       url: buildGitRepoUrl(gitToken?.type ?? data['provider'], data['repository']),
       branch: data['branch'],
       root_path: data['root_path'],
-      git_token_id: gitToken ? gitToken.id : undefined,
+      git_token_id: gitToken ? gitToken.id : application.git_repository?.git_token_id,
     }
 
     cloneApplication.git_repository = git_repository
