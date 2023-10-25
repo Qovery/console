@@ -14,6 +14,9 @@ const repositoryApi = new OrganizationAccountGitRepositoriesApi()
 
 export const repositoryAdapter = createEntityAdapter<RepositoryEntity>()
 
+/**
+ * @deprecated This should be migrated to the new `use-repositories` hook
+ */
 export const fetchRepository = createAsyncThunk(
   'repository/fetch',
   async (payload: { organizationId: string; gitProvider: GitProviderEnum; gitToken?: string }) => {
@@ -37,6 +40,9 @@ export const fetchRepository = createAsyncThunk(
   }
 )
 
+/**
+ * @deprecated This should be migrated to the new `use-branches` hook
+ */
 export const fetchBranches = createAsyncThunk(
   'branch/fetch',
   async (payload: {
