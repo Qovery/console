@@ -62,15 +62,15 @@ export const organizations = createQueryKeys('organizations', {
     queryKey: [organizationId, gitProvider, name],
     async queryFn() {
       if (gitProvider === GitProviderEnum.GITHUB) {
-        const response = await gitApi.getOrganizationGithubRepositoryBranches(organizationId, gitToken, name)
+        const response = await gitApi.getOrganizationGithubRepositoryBranches(organizationId, name, gitToken)
         return response.data.results
       }
       if (gitProvider === GitProviderEnum.GITLAB) {
-        const response = await gitApi.getOrganizationGitlabRepositoryBranches(organizationId, gitToken, name)
+        const response = await gitApi.getOrganizationGitlabRepositoryBranches(organizationId, name, gitToken)
         return response.data.results
       }
       if (gitProvider === GitProviderEnum.BITBUCKET) {
-        const response = await gitApi.getOrganizationBitbucketRepositoryBranches(organizationId, gitToken, name)
+        const response = await gitApi.getOrganizationBitbucketRepositoryBranches(organizationId, name, gitToken)
         return response.data.results
       }
 

@@ -4,41 +4,100 @@ exports[`GitProviderSetting should match snapshot 1`] = `
 <body>
   <div>
     <div
-      class="flex  items-start  "
-      data-testid="input-toggle"
+      class=""
     >
       <div
-        aria-label="toggle-btn"
-        class="inline-flex justify-between items-center cursor-pointer"
-        data-testid="input-toggle-button"
+        class="input input--select    "
+        data-testid="select"
       >
+        <label
+          class="text-sm translate-y-2 top-1.5"
+          for="Git repository"
+        >
+          Git repository
+        </label>
+        <div
+          class=" css-b62m3t-container"
+        >
+          <span
+            class="css-1f43avz-a11yText-A11yText"
+            id="react-select-2-live-region"
+          />
+          <span
+            aria-atomic="false"
+            aria-live="polite"
+            aria-relevant="additions text"
+            class="css-1f43avz-a11yText-A11yText"
+          />
+          <div
+            class="input-select__control css-13cymwt-control"
+          >
+            <div
+              class="input-select__value-container css-1fdsijx-ValueContainer"
+            >
+              <div
+                class="input-select__placeholder css-1jqq78o-placeholder"
+                id="react-select-2-placeholder"
+              >
+                Select...
+              </div>
+              <input
+                aria-autocomplete="list"
+                aria-describedby="react-select-2-placeholder"
+                aria-expanded="false"
+                aria-haspopup="true"
+                aria-readonly="true"
+                class="css-mohuvp-dummyInput-DummyInput"
+                id="Git repository"
+                inputmode="none"
+                role="combobox"
+                tabindex="0"
+                value=""
+              />
+            </div>
+            <div
+              class="input-select__indicators css-1hb7zxy-IndicatorsContainer"
+            >
+              <span
+                class="input-select__indicator-separator css-1u9des2-indicatorSeparator"
+              />
+              <div
+                aria-hidden="true"
+                class="input-select__indicator input-select__dropdown-indicator css-1xc3v61-indicatorContainer"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="css-tj5bde-Svg"
+                  focusable="false"
+                  height="20"
+                  viewBox="0 0 20 20"
+                  width="20"
+                >
+                  <path
+                    d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <input
+            name="Git repository"
+            type="hidden"
+            value=""
+          />
+        </div>
         <input
-          class="hidden"
-          type="checkbox"
+          name="Git repository"
+          type="hidden"
           value=""
         />
         <div
-          aria-label="bg"
-          class="w-8 h-4.5 flex items-center rounded-full p-0.5  bg-neutral-300"
+          class="absolute top-1/2 -translate-y-1/2 right-4 pointer-events-none"
         >
-          <div
-            aria-label="circle"
-            class="w-3.5 h-3.5 bg-white rounded-full shadow-lg transform  "
+          <span
+            class="icon-solid-angle-down shrink-0 text-sm text-neutral-400"
+            role="img"
           />
-        </div>
-      </div>
-      <div
-        class="relative -top-1 ml-3 cursor-pointer"
-      >
-        <p
-          class="text-neutral-400 text-ssm font-medium"
-        >
-          Auto-deploy
-        </p>
-        <div
-          class="text-xs text-neutral-350"
-        >
-          The service will be automatically updated on every new commit on the branch.
         </div>
       </div>
     </div>

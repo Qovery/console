@@ -4,7 +4,7 @@ exports[`GitBranchSetting should match snapshot 1`] = `
 <body>
   <div>
     <div
-      class="flex justify-center mt-4"
+      class="flex justify-center"
       data-testid="loader"
     >
       <div

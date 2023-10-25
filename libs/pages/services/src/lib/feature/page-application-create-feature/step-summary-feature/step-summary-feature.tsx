@@ -3,14 +3,13 @@ import {
   BuildModeEnum,
   type BuildPackLanguageEnum,
   type ContainerRequest,
-  GitRepository,
 } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { createApplication, postApplicationActionsDeploy } from '@qovery/domains/application'
 import { selectOrganizationById } from '@qovery/domains/organization'
-import { getGitTokenValue, useRepositories } from '@qovery/domains/organizations/feature'
+import { getGitTokenValue } from '@qovery/domains/organizations/feature'
 import { ServiceTypeEnum, isApplication } from '@qovery/shared/enums'
 import { type OrganizationEntity } from '@qovery/shared/interfaces'
 import {
@@ -41,18 +40,6 @@ export function StepSummaryFeature() {
   const organization = useSelector<RootState, OrganizationEntity | undefined>((state) =>
     selectOrganizationById(state, organizationId)
   )
-
-  // const { data: repositories = [] } = useRepositories({
-  //   organizationId,
-  //   gitProvider: generalData?.provider ?? '',
-  //   gitToken: gitToken?.id,
-  //   enabled: true,
-  // })
-  // console.log(repositories)
-
-  // const selectRepository = (repositories as GitRepository[]).find(
-  //   (repository) => repository.name === generalData?.repository
-  // )
 
   const gotoGlobalInformations = () => {
     navigate(pathCreate + SERVICES_CREATION_GENERAL_URL)
