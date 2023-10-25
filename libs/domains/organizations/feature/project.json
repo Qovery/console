@@ -6,7 +6,7 @@
   "tags": ["scope:domain", "type:feature", "slice:organizations"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["libs/domains/organizations/feature/**/*.{ts,tsx,js,jsx}"]

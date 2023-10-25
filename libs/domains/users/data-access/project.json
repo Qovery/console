@@ -6,7 +6,7 @@
   "tags": ["scope:domain", "type:data-access", "slice:users"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["libs/domains/users/data-access/**/*.{ts,tsx,js,jsx}"]
