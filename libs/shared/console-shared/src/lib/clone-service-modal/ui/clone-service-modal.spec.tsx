@@ -19,6 +19,7 @@ const props: CloneServiceModalProps = {
   projects: mockProjects,
   serviceToClone: applicationFactoryMock(1)[0],
   isFetchEnvironmentsLoading: false,
+  serviceType: 'APPLICATION',
 }
 
 describe('CloneEnvironmentModal', () => {

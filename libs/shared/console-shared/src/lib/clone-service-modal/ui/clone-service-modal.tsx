@@ -1,5 +1,6 @@
 import { type Environment, type Project } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
+import { match } from 'ts-pattern'
 import { type ServiceType } from '@qovery/domains/services/data-access'
 import { type ApplicationEntity, type DatabaseEntity } from '@qovery/shared/interfaces'
 import { ExternalLink, InputSelect, InputText, LoaderSpinner, ModalCrud } from '@qovery/shared/ui'
@@ -27,14 +28,14 @@ export function CloneServiceModal({
 }: CloneServiceModalProps) {
   const { control, setValue } = useFormContext()
 
-  const documentationLink = {
-    APPLICATION: 'https://hub.qovery.com/docs/using-qovery/configuration/application/#clone',
-    DATABASE: 'https://hub.qovery.com/docs/using-qovery/configuration/database/#clone',
-    CONTAINER: 'https://hub.qovery.com/docs/using-qovery/configuration/application/#clone',
-    JOB: 'https://hub.qovery.com/docs/using-qovery/configuration/cronjob/#clone',
-    CRON_JOB: 'https://hub.qovery.com/docs/using-qovery/configuration/cronjob/#clone',
-    LIFECYCLE_JOB: 'https://hub.qovery.com/docs/using-qovery/configuration/lifecylejob/#clone',
-  }[serviceType]
+  const documentationLink = match(serviceType)
+    .with('APPLICATION', () => 'https://hub.qovery.com/docs/using-qovery/configuration/application/#clone')
+    .with('DATABASE', () => 'https://hub.qovery.com/docs/using-qovery/configuration/database/#clone')
+    .with('CONTAINER', () => 'https://hub.qovery.com/docs/using-qovery/configuration/application/#clone')
+    .with('JOB', 'CRON_JOB', () => 'https://hub.qovery.com/docs/using-qovery/configuration/cronjob/#clone')
+    .with('LIFECYCLE_JOB', () => 'https://hub.qovery.com/docs/using-qovery/configuration/lifecylejob/#clone')
+    .with('HELM', () => 'https://hub.qovery.com/docs/using-qovery/configuration/helm/#clone')
+    .exhaustive()
 
   return (
     <ModalCrud

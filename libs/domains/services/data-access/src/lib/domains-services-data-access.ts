@@ -13,6 +13,10 @@ import {
   DatabaseMainCallsApi,
   DatabasesApi,
   EnvironmentMainCallsApi,
+  HelmDeploymentRestrictionApi,
+  type HelmDeploymentRestrictionRequest,
+  HelmMainCallsApi,
+  HelmsApi,
   JobDeploymentRestrictionApi,
   type JobDeploymentRestrictionRequest,
   JobMainCallsApi,
@@ -27,24 +31,30 @@ const applicationsApi = new ApplicationsApi()
 const containersApi = new ContainersApi()
 const databasesApi = new DatabasesApi()
 const jobsApi = new JobsApi()
+const helmsApi = new HelmsApi()
 
 const applicationMainCallsApi = new ApplicationMainCallsApi()
 const containerMainCallsApi = new ContainerMainCallsApi()
 const databaseMainCallsApi = new DatabaseMainCallsApi()
 const environmentMainCallsApi = new EnvironmentMainCallsApi()
 const jobMainCallsApi = new JobMainCallsApi()
+const helmCallsApi = new HelmMainCallsApi()
 
 const applicationDeploymentApi = new ApplicationDeploymentRestrictionApi()
 const jobDeploymentApi = new JobDeploymentRestrictionApi()
+const helmDeploymentApi = new HelmDeploymentRestrictionApi()
 
-// Use this type in param instead of ServiceTypeEnum
-// to suppport string AND enum as param
+// Prefer this type in param instead of ServiceTypeEnum
+// to suppport string AND enum as param.
+// ServiceTypeEnum still exist mainly for compatibility reason (to use redux and react-query fetched services in data-access).
+// It should be removed when we will be 100% relying on react-query.
 export type ServiceType = keyof typeof ServiceTypeEnum
 
 export type ApplicationType = Extract<keyof typeof ServiceTypeEnum, 'APPLICATION'>
 export type ContainerType = Extract<ServiceType, 'CONTAINER'>
 export type DatabaseType = Extract<ServiceType, 'DATABASE'>
 export type JobType = Extract<ServiceType, 'JOB' | 'LIFECYCLE_JOB' | 'CRON_JOB'>
+export type HelmType = Extract<ServiceType, 'HELM'>
 
 export function isApplicationType(serviceType: ServiceType): serviceType is ApplicationType {
   return serviceType === 'APPLICATION'
@@ -60,6 +70,10 @@ export function isDatabaseType(serviceType: ServiceType): serviceType is Databas
 
 export function isJobType(serviceType: ServiceType): serviceType is JobType {
   return serviceType === 'JOB' || serviceType === 'CRON_JOB' || serviceType === 'LIFECYCLE_JOB'
+}
+
+export function isHelmType(serviceType: ServiceType): serviceType is HelmType {
+  return serviceType === 'HELM'
 }
 
 export const services = createQueryKeys('services', {
@@ -103,13 +117,17 @@ export const services = createQueryKeys('services', {
           ...entity,
           serviceType: ServiceTypeEnum.CONTAINER as const,
         })),
-        ...((await databasesApi.getEnvironmentDatabaseStatus(environmentId)).data.results ?? []).map((entity) => ({
+        ...((await databasesApi.listDatabase(environmentId)).data.results ?? []).map((entity) => ({
           ...entity,
           serviceType: ServiceTypeEnum.DATABASE as const,
         })),
-        ...((await jobsApi.getEnvironmentJobStatus(environmentId)).data.results ?? []).map((entity) => ({
+        ...((await jobsApi.listJobs(environmentId)).data.results ?? []).map((entity) => ({
           ...entity,
           serviceType: ServiceTypeEnum.JOB as const,
+        })),
+        ...((await helmsApi.listHelms(environmentId)).data.results ?? []).map((entity) => ({
+          ...entity,
+          serviceType: ServiceTypeEnum.HELM as const,
         })),
       ]
     },
@@ -117,15 +135,13 @@ export const services = createQueryKeys('services', {
   status: ({ id: serviceId, serviceType }: { id: string; serviceType: ServiceType }) => ({
     queryKey: [serviceId],
     async queryFn() {
-      const mapper = {
-        APPLICATION: applicationMainCallsApi.getApplicationStatus.bind(applicationMainCallsApi),
-        CONTAINER: containerMainCallsApi.getContainerStatus.bind(containerMainCallsApi),
-        DATABASE: databaseMainCallsApi.getDatabaseStatus.bind(databaseMainCallsApi),
-        JOB: jobMainCallsApi.getJobStatus.bind(jobMainCallsApi),
-        CRON_JOB: jobMainCallsApi.getJobStatus.bind(jobMainCallsApi),
-        LIFECYCLE_JOB: jobMainCallsApi.getJobStatus.bind(jobMainCallsApi),
-      } as const
-      const fn = mapper[serviceType]
+      const fn = match(serviceType)
+        .with('APPLICATION', () => applicationMainCallsApi.getApplicationStatus.bind(applicationMainCallsApi))
+        .with('CONTAINER', () => containerMainCallsApi.getContainerStatus.bind(containerMainCallsApi))
+        .with('DATABASE', () => databaseMainCallsApi.getDatabaseStatus.bind(databaseMainCallsApi))
+        .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', () => jobMainCallsApi.getJobStatus.bind(jobMainCallsApi))
+        .with('HELM', () => helmCallsApi.getHelmStatus.bind(helmCallsApi))
+        .exhaustive()
       const response = await fn(serviceId)
       return response.data
     },
@@ -133,15 +149,15 @@ export const services = createQueryKeys('services', {
   deploymentRestrictions: ({ serviceId, serviceType }: { serviceId: string; serviceType: ServiceType }) => ({
     queryKey: [serviceId],
     async queryFn() {
-      const mapper = {
-        APPLICATION: applicationDeploymentApi.getApplicationDeploymentRestrictions.bind(applicationDeploymentApi),
-        CONTAINER: null,
-        DATABASE: null,
-        JOB: jobDeploymentApi.getJobDeploymentRestrictions.bind(jobDeploymentApi),
-        CRON_JOB: null,
-        LIFECYCLE_JOB: null,
-      } as const
-      const fn = mapper[serviceType]
+      const fn = match(serviceType)
+        .with('APPLICATION', () =>
+          applicationDeploymentApi.getApplicationDeploymentRestrictions.bind(applicationDeploymentApi)
+        )
+        .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', () =>
+          jobDeploymentApi.getJobDeploymentRestrictions.bind(jobDeploymentApi)
+        )
+        .with('CONTAINER', 'DATABASE', 'HELM', () => null)
+        .exhaustive()
       if (!fn) {
         throw new Error(`deploymentRestrictions unsupported for serviceType: ${serviceType}`)
       }
@@ -168,6 +184,10 @@ export const services = createQueryKeys('services', {
         .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', async () => ({
           ...(await jobMainCallsApi.getJob(serviceId)).data,
           serviceType: ServiceTypeEnum.JOB as const,
+        }))
+        .with('HELM', async () => ({
+          ...(await helmCallsApi.getHelm(serviceId)).data,
+          serviceType: ServiceTypeEnum.HELM as const,
         }))
         .exhaustive()
       return service
@@ -245,18 +265,21 @@ type DeploymentRestrictionRequest =
       deploymentRestrictionId: string
       payload: JobDeploymentRestrictionRequest
     }
+  | {
+      serviceId: string
+      serviceType: HelmType
+      deploymentRestrictionId: string
+      payload: HelmDeploymentRestrictionRequest
+    }
 
 export const mutations = {
   async cloneService({ serviceId, serviceType, payload }: CloneServiceRequest) {
-    const mapper = {
-      APPLICATION: applicationsApi.cloneApplication.bind(applicationsApi),
-      CONTAINER: containersApi.cloneContainer.bind(containersApi),
-      DATABASE: databasesApi.cloneDatabase.bind(databasesApi),
-      JOB: jobsApi.cloneJob.bind(jobsApi),
-      CRON_JOB: jobsApi.cloneJob.bind(jobsApi),
-      LIFECYCLE_JOB: jobsApi.cloneJob.bind(jobsApi),
-    } as const
-    const mutation = mapper[serviceType]
+    const mutation = match(serviceType)
+      .with('APPLICATION', () => applicationsApi.cloneApplication.bind(applicationsApi))
+      .with('CONTAINER', () => containersApi.cloneContainer.bind(containersApi))
+      .with('DATABASE', () => databasesApi.cloneDatabase.bind(databasesApi))
+      .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', () => jobsApi.cloneJob.bind(jobsApi))
+      .exhaustive()
     const response = await mutation(serviceId, payload)
     return response.data
   },
@@ -266,16 +289,15 @@ export const mutations = {
     deploymentRestrictionId,
     payload,
   }: DeploymentRestrictionRequest) {
-    const mapper = {
-      APPLICATION: applicationDeploymentApi.editApplicationDeploymentRestriction.bind(applicationDeploymentApi),
-      JOB: jobDeploymentApi.editJobDeploymentRestriction.bind(jobDeploymentApi),
-      CRON_JOB: jobDeploymentApi.editJobDeploymentRestriction.bind(jobDeploymentApi),
-      LIFECYCLE_JOB: jobDeploymentApi.editJobDeploymentRestriction.bind(jobDeploymentApi),
-    } as const
-    const mutation = mapper[serviceType]
-    if (!mutation) {
-      throw new Error(`editDeploymentRestriction unsupported for serviceType: ${serviceType}`)
-    }
+    const mutation = match(serviceType)
+      .with('APPLICATION', () =>
+        applicationDeploymentApi.editApplicationDeploymentRestriction.bind(applicationDeploymentApi)
+      )
+      .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', () =>
+        jobDeploymentApi.editJobDeploymentRestriction.bind(jobDeploymentApi)
+      )
+      .with('HELM', () => helmDeploymentApi.editHelmDeploymentRestriction.bind(helmDeploymentApi))
+      .exhaustive()
     const response = await mutation(serviceId, deploymentRestrictionId, payload)
     return response.data
   },
@@ -284,16 +306,15 @@ export const mutations = {
     serviceType,
     payload,
   }: Omit<DeploymentRestrictionRequest, 'deploymentRestrictionId'>) {
-    const mapper = {
-      APPLICATION: applicationDeploymentApi.createApplicationDeploymentRestriction.bind(applicationDeploymentApi),
-      JOB: jobDeploymentApi.createJobDeploymentRestriction.bind(jobDeploymentApi),
-      CRON_JOB: jobDeploymentApi.createJobDeploymentRestriction.bind(jobDeploymentApi),
-      LIFECYCLE_JOB: jobDeploymentApi.createJobDeploymentRestriction.bind(jobDeploymentApi),
-    } as const
-    const mutation = mapper[serviceType]
-    if (!mutation) {
-      throw new Error(`createDeploymentRestriction unsupported for serviceType: ${serviceType}`)
-    }
+    const mutation = match(serviceType)
+      .with('APPLICATION', () =>
+        applicationDeploymentApi.createApplicationDeploymentRestriction.bind(applicationDeploymentApi)
+      )
+      .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', () =>
+        jobDeploymentApi.createJobDeploymentRestriction.bind(jobDeploymentApi)
+      )
+      .with('HELM', () => helmDeploymentApi.createHelmDeploymentRestriction.bind(helmDeploymentApi))
+      .exhaustive()
     const response = await mutation(serviceId, payload)
     return response.data
   },
@@ -302,16 +323,15 @@ export const mutations = {
     serviceType,
     deploymentRestrictionId,
   }: Omit<DeploymentRestrictionRequest, 'payload'>) {
-    const mapper = {
-      APPLICATION: applicationDeploymentApi.deleteApplicationDeploymentRestriction.bind(applicationDeploymentApi),
-      JOB: jobDeploymentApi.deleteJobDeploymentRestriction.bind(jobDeploymentApi),
-      CRON_JOB: jobDeploymentApi.deleteJobDeploymentRestriction.bind(jobDeploymentApi),
-      LIFECYCLE_JOB: jobDeploymentApi.deleteJobDeploymentRestriction.bind(jobDeploymentApi),
-    } as const
-    const mutation = mapper[serviceType]
-    if (!mutation) {
-      throw new Error(`deleteDeploymentRestriction unsupported for serviceType: ${serviceType}`)
-    }
+    const mutation = match(serviceType)
+      .with('APPLICATION', () =>
+        applicationDeploymentApi.deleteApplicationDeploymentRestriction.bind(applicationDeploymentApi)
+      )
+      .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', () =>
+        jobDeploymentApi.deleteJobDeploymentRestriction.bind(jobDeploymentApi)
+      )
+      .with('HELM', () => helmDeploymentApi.deleteHelmDeploymentRestriction.bind(helmDeploymentApi))
+      .exhaustive()
     const response = await mutation(serviceId, deploymentRestrictionId)
     return response.data
   },
