@@ -41,26 +41,22 @@ export const WithButtons = {
       <Callout.Icon>
         <Icon name={IconAwesomeEnum.TRIANGLE_EXCLAMATION} />
       </Callout.Icon>
-      <Callout.Text className="flex">
-        <div>
-          <Callout.TextHeading>Lorem ipsum</Callout.TextHeading>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-          magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-          consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-          pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
-          est laborum.
-        </div>
-        <div className="place-self-center">
-          <div className="flex flex-row gap-1.5">
-            <Button type="button" color="neutral" variant="outline">
-              <Icon className="px-1" name={IconAwesomeEnum.CHEVRON_LEFT} />
-            </Button>
-            <Button type="button" color="neutral" variant="outline">
-              <Icon className="px-1" name={IconAwesomeEnum.CHEVRON_RIGHT} />
-            </Button>
-          </div>
-        </div>
+      <Callout.Text>
+        <Callout.TextHeading>Lorem ipsum</Callout.TextHeading>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
+        magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+        consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+        pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est
+        laborum.
       </Callout.Text>
+      <div className="flex flex-row gap-1.5">
+        <Button type="button" color="neutral" variant="outline">
+          <Icon className="px-1" name={IconAwesomeEnum.CHEVRON_LEFT} />
+        </Button>
+        <Button type="button" color="neutral" variant="outline">
+          <Icon className="px-1" name={IconAwesomeEnum.CHEVRON_RIGHT} />
+        </Button>
+      </div>
     </Callout.Root>
   ),
 }

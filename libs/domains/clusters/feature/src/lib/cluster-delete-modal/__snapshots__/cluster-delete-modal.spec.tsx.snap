@@ -165,19 +165,19 @@ exports[`ClusterDeleteModal should match snapshot 1`] = `
             Use it carefully this action is irreversible.
           </p>
           <div
-            class="grid items-baseline justify-start gap-x-3 p-3 border rounded border-yellow-600 bg-yellow-50 text-yellow-700 mt-3 text-xs"
+            class="flex flex-row items-baseline gap-x-3 p-3 border rounded border-yellow-600 bg-yellow-50 text-yellow-700 mt-3 text-xs"
             data-accent-color="yellow"
           >
             <div
-              class="col-start-[-2] text-base"
+              class="-order-2 text-base"
             >
               <span
                 class="icon-solid-triangle-exclamation shrink-0 "
                 role="img"
               />
             </div>
-            <p
-              class="col-start-[-1] gap-x-3 text-neutral-400"
+            <div
+              class="-order-1 mr-auto gap-x-3 text-neutral-400"
             >
               <p>
                 Please note that you will have to manually delete on your cloud account:
@@ -195,7 +195,7 @@ exports[`ClusterDeleteModal should match snapshot 1`] = `
                   any resource created by a lifecycle job that will not be properly deleted during the \`environment deletion\` event.
                 </li>
               </ul>
-            </p>
+            </div>
           </div>
         </div>
         <div

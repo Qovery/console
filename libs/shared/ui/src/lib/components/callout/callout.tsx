@@ -3,7 +3,7 @@ import { type ComponentPropsWithoutRef, type ElementRef, forwardRef } from 'reac
 import { twMerge } from '@qovery/shared/util-js'
 
 const calloutRootVariants = cva(
-  ['grid', 'items-baseline', 'justify-start', 'gap-x-3', 'p-3', 'border', 'rounded', 'text-sm'],
+  ['flex', 'flex-row', 'items-baseline', 'gap-x-3', 'p-3', 'border', 'rounded', 'text-sm'],
   {
     variants: {
       color: {
@@ -39,7 +39,7 @@ const CalloutIcon = forwardRef<ElementRef<'div'>, CalloutIconProps>(function Cal
   ref
 ) {
   return (
-    <div {...props} className={twMerge('col-start-[-2] text-base', className)} ref={ref}>
+    <div {...props} className={twMerge('-order-2 text-base', className)} ref={ref}>
       {children}
     </div>
   )
@@ -47,14 +47,14 @@ const CalloutIcon = forwardRef<ElementRef<'div'>, CalloutIconProps>(function Cal
 
 interface CalloutTextProps extends ComponentPropsWithoutRef<'p'> {}
 
-const CalloutText = forwardRef<ElementRef<'p'>, CalloutTextProps>(function CalloutText(
+const CalloutText = forwardRef<ElementRef<'div'>, CalloutTextProps>(function CalloutText(
   { children, className, ...props },
   ref
 ) {
   return (
-    <p {...props} className={twMerge('col-start-[-1] gap-x-3 text-neutral-400', className)} ref={ref}>
+    <div {...props} className={twMerge('-order-1 mr-auto gap-x-3 text-neutral-400', className)} ref={ref}>
       {children}
-    </p>
+    </div>
   )
 })
 
