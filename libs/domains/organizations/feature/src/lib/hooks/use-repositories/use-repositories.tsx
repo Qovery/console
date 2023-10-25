@@ -4,14 +4,19 @@ import { queries } from '@qovery/state/util-queries'
 
 export interface UseRepositoriesProps {
   organizationId: string
-  gitProvider: GitProviderEnum
+  gitProvider: GitProviderEnum | string
   gitToken?: string
+  enabled?: boolean
 }
 
-export function useRepositories({ organizationId, gitProvider, gitToken }: UseRepositoriesProps) {
+export function useRepositories({ organizationId, gitProvider, enabled, gitToken }: UseRepositoriesProps) {
   return useQuery({
-    ...queries.organizations.repositories({ organizationId, gitProvider, gitToken }),
-    // enabled: Boolean(gitProvider) || Boolean(gitToken),
+    ...queries.organizations.repositories(organizationId, gitProvider, gitToken),
+    meta: {
+      notifyOnError: true,
+    },
+    enabled: enabled,
+    refetchOnWindowFocus: false,
   })
 }
 

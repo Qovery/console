@@ -3,14 +3,14 @@ import {
   BuildModeEnum,
   type BuildPackLanguageEnum,
   type ContainerRequest,
-  GitProviderEnum,
+  GitRepository,
 } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { createApplication, postApplicationActionsDeploy } from '@qovery/domains/application'
-import { selectAllRepository, selectOrganizationById } from '@qovery/domains/organization'
-import { getGitTokenValue } from '@qovery/shared/console-shared'
+import { selectOrganizationById } from '@qovery/domains/organization'
+import { getGitTokenValue, useRepositories } from '@qovery/domains/organizations/feature'
 import { ServiceTypeEnum, isApplication } from '@qovery/shared/enums'
 import { type OrganizationEntity } from '@qovery/shared/interfaces'
 import {
@@ -42,8 +42,17 @@ export function StepSummaryFeature() {
     selectOrganizationById(state, organizationId)
   )
 
-  const repositories = useSelector(selectAllRepository)
-  const selectRepository = repositories.find((repository) => repository.name === generalData?.repository)
+  // const { data: repositories = [] } = useRepositories({
+  //   organizationId,
+  //   gitProvider: generalData?.provider ?? '',
+  //   gitToken: gitToken?.id,
+  //   enabled: true,
+  // })
+  // console.log(repositories)
+
+  // const selectRepository = (repositories as GitRepository[]).find(
+  //   (repository) => repository.name === generalData?.repository
+  // )
 
   const gotoGlobalInformations = () => {
     navigate(pathCreate + SERVICES_CREATION_GENERAL_URL)
@@ -79,7 +88,7 @@ export function StepSummaryFeature() {
       const memory = Number(resourcesData['memory'])
       const cpu = resourcesData['cpu']
 
-      const gitToken = getGitTokenValue(generalData.provider ?? '')
+      const gitToken = getGitTokenValue(generalData?.provider ?? '')
 
       if (isApplication(generalData.serviceType)) {
         const applicationRequest: ApplicationRequest = {
@@ -99,7 +108,7 @@ export function StepSummaryFeature() {
           max_running_instances: resourcesData.instances[1],
           build_mode: generalData.build_mode as BuildModeEnum,
           git_repository: {
-            url: buildGitRepoUrl(gitToken?.type ?? (generalData.provider || ''), selectRepository?.url || '') || '',
+            url: buildGitRepoUrl(gitToken?.type ?? generalData.provider ?? '', generalData.repository || ''),
             root_path: generalData.root_path,
             branch: generalData.branch,
             git_token_id: gitToken?.id,

@@ -3,7 +3,7 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { type ApplicationGeneralData } from '@qovery/shared/interfaces'
 import { Icon, InputSelect, InputText } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
-import GitRepositorySettingsFeature from '../../git-repository-settings/feature/git-repository-settings-feature/git-repository-settings-feature'
+import GitRepositorySettings from '../../git-repository-settings/ui/git-repository-settings/git-repository-settings'
 
 export interface PageSettingsGeneralProps {
   buildModeDisabled?: boolean
@@ -29,7 +29,7 @@ export function CreateGeneralGitApplication(props: PageSettingsGeneralProps) {
       <h3 className="text-sm font-semibold mb-3">For applications created from a Git Provider</h3>
 
       <div className="mb-6">
-        <GitRepositorySettingsFeature withBlockWrapper={false} />
+        <GitRepositorySettings withBlockWrapper={false} gitDisabled={false} />
       </div>
 
       <div className="border-b border-b-neutral-200 mb-6"></div>

@@ -1,0 +1,47 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`GitProviderSetting should match snapshot 1`] = `
+<body>
+  <div>
+    <div
+      class="flex  items-start  "
+      data-testid="input-toggle"
+    >
+      <div
+        aria-label="toggle-btn"
+        class="inline-flex justify-between items-center cursor-pointer"
+        data-testid="input-toggle-button"
+      >
+        <input
+          class="hidden"
+          type="checkbox"
+          value=""
+        />
+        <div
+          aria-label="bg"
+          class="w-8 h-4.5 flex items-center rounded-full p-0.5  bg-neutral-300"
+        >
+          <div
+            aria-label="circle"
+            class="w-3.5 h-3.5 bg-white rounded-full shadow-lg transform  "
+          />
+        </div>
+      </div>
+      <div
+        class="relative -top-1 ml-3 cursor-pointer"
+      >
+        <p
+          class="text-neutral-400 text-ssm font-medium"
+        >
+          Auto-deploy
+        </p>
+        <div
+          class="text-xs text-neutral-350"
+        >
+          The service will be automatically updated on every new commit on the branch.
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+`;

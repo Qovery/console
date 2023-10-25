@@ -12,7 +12,6 @@ export * from './lib/member-invitation/invite-details/feature/invite-details-fea
 export * from './lib/job-configure-settings/ui/job-configure-settings'
 export * from './lib/job-general-settings/ui/job-general-settings'
 export * from './lib/entrypoint-cmd-inputs/ui/entrypoint-cmd-inputs'
-export * from './lib/git-repository-settings/feature/git-repository-settings-feature/git-repository-settings-feature'
 export * from './lib/general-container-settings/ui/general-container-settings'
 export * from './lib/deploy-other-commit-modal/feature/deploy-other-commit-modal-feature'
 export * from './lib/buttons-actions/ui/application-buttons-actions/application-buttons-actions'
@@ -42,4 +41,3 @@ export * from './lib/application-settings/ui/application-settings-resources/appl
 export * from './lib/application-settings/ui/application-settings-healthchecks/application-settings-healthchecks'
 export * from './lib/application-settings/utils/probe-formatted'
 export * from './lib/terraform-export-modal/feature/terraform-export-modal-feature'
-export * from './lib/git-repository-settings/utils/auth-providers-values'

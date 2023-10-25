@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`GitBranchSetting should match snapshot 1`] = `
+<body>
+  <div>
+    <div
+      class="flex justify-center mt-4"
+      data-testid="loader"
+    >
+      <div
+        class="aspect-square border-2  rounded-full border-solid border-r-neutral-500 animate-spin w-4 "
+        data-testid="spinner"
+      />
+    </div>
+  </div>
+</body>
+`;

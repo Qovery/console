@@ -1,44 +1,31 @@
-import { Controller, useFormContext } from 'react-hook-form'
-import { type LoadingStatus, type Value } from '@qovery/shared/interfaces'
+import { useFormContext } from 'react-hook-form'
+import { GitBranchSetting, GitProviderSetting, GitRepositorySetting } from '@qovery/domains/organizations/feature'
 import {
   BlockContent,
   ButtonLegacy,
   ButtonLegacySize,
   ButtonLegacyStyle,
   IconAwesomeEnum,
-  InputSelect,
-  InputText,
-  LoaderSpinner,
   useModal,
 } from '@qovery/shared/ui'
 import ConfirmationGitModal from '../confirmation-git-modal/confirmation-git-modal'
 
 export interface GitRepositorySettingsProps {
   gitDisabled: boolean
+  currentProvider?: string
+  currentRepository?: string
   editGitSettings?: () => void
-  authProviders?: Value[]
-  repositories?: Value[]
-  branches?: Value[]
-  loadingStatusRepositories?: boolean
-  loadingStatusBranches?: LoadingStatus
-  currentAuthProvider?: string
   withBlockWrapper?: boolean
 }
 
-export function GitRepositorySettings(props: GitRepositorySettingsProps) {
-  const {
-    gitDisabled,
-    editGitSettings,
-    authProviders = [],
-    currentAuthProvider,
-    repositories = [],
-    loadingStatusRepositories,
-    loadingStatusBranches,
-    branches = [],
-    withBlockWrapper = true,
-  } = props
-
-  const { control, getValues } = useFormContext<{
+export function GitRepositorySettings({
+  gitDisabled,
+  editGitSettings,
+  currentRepository,
+  currentProvider,
+  withBlockWrapper = true,
+}: GitRepositorySettingsProps) {
+  const { watch } = useFormContext<{
     provider: string
     repository: string
     branch: string
@@ -46,108 +33,18 @@ export function GitRepositorySettings(props: GitRepositorySettingsProps) {
   }>()
   const { openModal, closeModal } = useModal()
 
+  const watchFieldProvider = watch('provider')
+  const watchFieldRepository = watch('repository')
+
   const children = (
-    <>
-      <Controller
-        name="provider"
-        control={control}
-        rules={{
-          required: 'Please select a provider.',
-        }}
-        render={({ field, fieldState: { error } }) => (
-          <InputSelect
-            dataTestId="input-provider"
-            label="Git repository"
-            className="mb-3"
-            options={authProviders}
-            onChange={field.onChange}
-            value={field.value}
-            error={error?.message}
-            disabled={gitDisabled}
-          />
-        )}
-      />
-      <Controller
-        name="repository"
-        control={control}
-        rules={{
-          required: 'Please select a repository.',
-        }}
-        render={({ field, fieldState: { error } }) => (
-          <InputSelect
-            dataTestId="input-repository"
-            label="Repository"
-            className={`mb-0.5 ${(getValues().provider && !loadingStatusRepositories) || gitDisabled ? '' : 'hidden'}`}
-            options={repositories}
-            onChange={field.onChange}
-            value={field.value}
-            error={error?.message}
-            disabled={gitDisabled}
-            isSearchable
-          />
-        )}
-      />
-      <p className="mb-3 text-right">
-        {/*todo: uncomment when github app is ready on v3*/}
-        {/*<Link*/}
-        {/*  className={`font-medium text-ssm ${*/}
-        {/*    (getValues().provider && loadingStatusRepositories === 'loaded') || gitDisabled ? '' : 'hidden'*/}
-        {/*  }`}*/}
-        {/*  link="https://discuss.qovery.com"*/}
-        {/*  linkLabel="Don't see your repository?"*/}
-        {/*  external={true}*/}
-        {/*  iconRight="icon-solid-arrow-up-right-from-square"*/}
-        {/*/>*/}
-      </p>
-
-      <Controller
-        name="branch"
-        control={control}
-        rules={{
-          required: 'Please select a branch.',
-        }}
-        render={({ field, fieldState: { error } }) => (
-          <InputSelect
-            dataTestId="input-branch"
-            label="Branch"
-            className={`mb-3 ${branches.length || loadingStatusBranches === 'loaded' || gitDisabled ? '' : 'hidden'}`}
-            options={branches}
-            onChange={field.onChange}
-            value={field.value}
-            error={error?.message}
-            disabled={gitDisabled}
-            isSearchable
-          />
-        )}
-      />
-      <Controller
-        name="root_path"
-        control={control}
-        defaultValue="/"
-        rules={{
-          required: 'Value required',
-        }}
-        render={({ field, fieldState: { error } }) => (
-          <InputText
-            dataTestId="input-root-path"
-            label="Root application path"
-            className={`${branches.length || loadingStatusBranches === 'loaded' || gitDisabled ? '' : 'hidden'}`}
-            name={field.name}
-            onChange={field.onChange}
-            value={field.value}
-            error={error?.message}
-            disabled={gitDisabled}
-          />
-        )}
-      />
-
-      {(loadingStatusRepositories || loadingStatusBranches === 'loading') && !gitDisabled && (
-        <div data-testid="loader" className="flex justify-center mt-4">
-          <LoaderSpinner />
-        </div>
+    <div className="flex flex-col gap-3">
+      <GitProviderSetting disabled={gitDisabled} />
+      {watchFieldProvider && <GitRepositorySetting disabled={gitDisabled} gitProvider={watchFieldProvider} />}
+      {watchFieldProvider && watchFieldRepository && (
+        <GitBranchSetting disabled={gitDisabled} gitProvider={watchFieldProvider} />
       )}
-      {gitDisabled && (
-        <div className="flex justify-end mt-3">
+      {gitDisabled && editGitSettings && currentProvider && currentRepository && (
+        <div className="flex justify-end">
           <ButtonLegacy
             dataTestId="button-edit"
             className="btn--no-min-w"
@@ -159,7 +56,8 @@ export function GitRepositorySettings(props: GitRepositorySettingsProps) {
               openModal({
                 content: (
                   <ConfirmationGitModal
-                    currentAuthProvider={currentAuthProvider}
+                    currentProvider={currentProvider}
+                    currentRepository={currentRepository}
                     onClose={closeModal}
                     onSubmit={editGitSettings}
                   />
@@ -171,7 +69,7 @@ export function GitRepositorySettings(props: GitRepositorySettingsProps) {
           </ButtonLegacy>
         </div>
       )}
-    </>
+    </div>
   )
 
   return withBlockWrapper ? <BlockContent title="Git repository">{children}</BlockContent> : children

@@ -3,11 +3,14 @@ import { queries } from '@qovery/state/util-queries'
 
 export interface UseAuthProvidersProps {
   organizationId: string
+  enabled?: boolean
 }
 
-export function useAuthProviders({ organizationId }: UseAuthProvidersProps) {
+export function useAuthProviders({ organizationId, enabled }: UseAuthProvidersProps) {
   return useQuery({
     ...queries.organizations.authProviders(organizationId),
+    enabled: enabled,
+    refetchOnWindowFocus: false,
   })
 }
 

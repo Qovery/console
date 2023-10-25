@@ -1,8 +1,10 @@
+import { GitProviderEnum } from 'qovery-typescript-axios'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import ConfirmationGitModal, { type ConfirmationGitModalProps } from './confirmation-git-modal'
 
 const props: ConfirmationGitModalProps = {
-  currentAuthProvider: 'Github (Owner)',
+  currentRepository: 'my-repo',
+  currentProvider: GitProviderEnum.GITHUB,
   onSubmit: jest.fn(),
   onClose: jest.fn(),
 }
@@ -44,6 +46,6 @@ describe('ConfirmationGitModal', () => {
 
   it('should display the auth provider', () => {
     renderWithProviders(<ConfirmationGitModal {...props} />)
-    screen.getByText('Github (Owner)')
+    screen.getByText('my-repo')
   })
 })
