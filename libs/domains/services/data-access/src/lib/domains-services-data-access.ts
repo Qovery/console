@@ -44,8 +44,10 @@ const applicationDeploymentApi = new ApplicationDeploymentRestrictionApi()
 const jobDeploymentApi = new JobDeploymentRestrictionApi()
 const helmDeploymentApi = new HelmDeploymentRestrictionApi()
 
-// Use this type in param instead of ServiceTypeEnum
-// to suppport string AND enum as param
+// Prefer this type in param instead of ServiceTypeEnum
+// to suppport string AND enum as param.
+// ServiceTypeEnum still exist mainly for compatibility reason (to use redux and react-query fetched services in data-access).
+// It should be removed when we will be 100% relying on react-query.
 export type ServiceType = keyof typeof ServiceTypeEnum
 
 export type ApplicationType = Extract<keyof typeof ServiceTypeEnum, 'APPLICATION'>
