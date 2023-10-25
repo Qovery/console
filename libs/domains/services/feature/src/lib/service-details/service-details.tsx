@@ -1,9 +1,11 @@
+import { type Credentials } from 'qovery-typescript-axios'
 import { type ComponentPropsWithoutRef } from 'react'
 import { P, match } from 'ts-pattern'
 import { IconEnum, ServiceTypeEnum, isContainerSource, isGitSource } from '@qovery/shared/enums'
 import { APPLICATION_SETTINGS_RESOURCES_URL, APPLICATION_SETTINGS_URL } from '@qovery/shared/routes'
 import {
   Badge,
+  Button,
   DescriptionDetails as Dd,
   DescriptionListRoot as Dl,
   DescriptionTerm as Dt,
@@ -11,11 +13,15 @@ import {
   IconAwesomeEnum,
   Link,
   Section,
+  ToastEnum,
   Tooltip,
   Truncate,
+  toast,
 } from '@qovery/shared/ui'
 import { dateFullFormat, timeAgo } from '@qovery/shared/util-dates'
+import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import { containerRegistryKindToIcon, formatCronExpression, formatMetric, twMerge } from '@qovery/shared/util-js'
+import useMasterCredentials from '../hooks/use-master-credentials/use-master-credentials'
 import { useService } from '../hooks/use-service/use-service'
 import { LastCommit } from '../last-commit/last-commit'
 import { ServiceDetailsSkeleton } from './service-details-skeleton'
@@ -30,6 +36,8 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
     environmentId,
     serviceId,
   })
+  const { data: masterCredentials } = useMasterCredentials({ serviceId, serviceType: service?.serviceType })
+  const [, copyToClipboard] = useCopyToClipboard()
 
   if (!service) {
     return <ServiceDetailsSkeleton className={className} {...props} />
@@ -50,6 +58,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
       mode,
       type,
       version,
+      masterCredentials,
     }))
     .otherwise(() => undefined)
 
@@ -116,6 +125,12 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
     .otherwise(() => null)
 
   const sectionClassName = 'text-neutral-350 gap-4 pl-8 pr-5'
+
+  const handleCopyCredentials = (credentials: Credentials) => {
+    const connectionURI = `${credentials?.login}:${credentials?.password}@${credentials?.host}:${credentials?.port}`
+    copyToClipboard(connectionURI)
+    toast(ToastEnum.SUCCESS, 'Credentials copied to clipboard')
+  }
 
   return (
     <div className={twMerge('flex flex-col shrink-0 gap-5 py-8 text-sm', className)} {...props}>
@@ -240,6 +255,25 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
             <Dd className="capitalize">{databaseSource.mode.toLowerCase()}</Dd>
             <Dt>Accessibility:</Dt>
             <Dd className="capitalize">{databaseSource.accessibility?.toLowerCase()}</Dd>
+            {databaseSource.masterCredentials && (
+              <>
+                <Dt>Access:</Dt>
+                <Dd>
+                  <Button
+                    color="neutral"
+                    variant="surface"
+                    size="xs"
+                    onClick={() =>
+                      /* XXX: TS is not able to infer that masterCredentials cannot be undef */
+                      handleCopyCredentials(databaseSource.masterCredentials!)
+                    }
+                  >
+                    <Icon name={IconAwesomeEnum.KEY} className="mr-2" />
+                    Connection URI
+                  </Button>
+                </Dd>
+              </>
+            )}
           </Dl>
         )}
       </Section>

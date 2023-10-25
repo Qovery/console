@@ -192,6 +192,22 @@ export const services = createQueryKeys('services', {
         .exhaustive()
     },
   }),
+  masterCredentials: ({
+    serviceId,
+    serviceType,
+  }: {
+    serviceId: string
+    serviceType: Extract<ServiceType, 'DATABASE'>
+  }) => ({
+    queryKey: [serviceId],
+    async queryFn() {
+      return match(serviceType)
+        .with('DATABASE', async () => {
+          return (await databaseMainCallsApi.getDatabaseMasterCredentials(serviceId)).data
+        })
+        .exhaustive()
+    },
+  }),
 })
 
 type CloneServiceRequest =
