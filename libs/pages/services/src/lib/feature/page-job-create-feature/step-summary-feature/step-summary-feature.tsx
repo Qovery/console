@@ -5,6 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { createApplication, postApplicationActionsDeploy } from '@qovery/domains/application'
 import { importEnvironmentVariables } from '@qovery/domains/environment-variable'
 import { selectAllRepository, selectOrganizationById } from '@qovery/domains/organization'
+import { getGitTokenValue } from '@qovery/shared/console-shared'
 import { type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
 import {
   type FlowVariableData,
@@ -99,14 +100,16 @@ function prepareJobRequest(
       },
     }
   } else {
+    const gitToken = getGitTokenValue(generalData.provider ?? '')
+
     jobRequest.source = {
       docker: {
         dockerfile_path: generalData.dockerfile_path,
         git_repository: {
-          url: buildGitRepoUrl(generalData.provider || '', selectedRepository?.url || '') || '',
+          url: buildGitRepoUrl(gitToken?.type ?? (generalData.provider || ''), selectedRepository?.url || '') || '',
           root_path: generalData.root_path,
           branch: generalData.branch,
-          git_token_id: generalData.provider,
+          git_token_id: gitToken?.id,
         },
       },
     }

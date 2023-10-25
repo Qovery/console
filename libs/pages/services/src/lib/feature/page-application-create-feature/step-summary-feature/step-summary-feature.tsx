@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { createApplication, postApplicationActionsDeploy } from '@qovery/domains/application'
 import { selectAllRepository, selectOrganizationById } from '@qovery/domains/organization'
+import { getGitTokenValue } from '@qovery/shared/console-shared'
 import { ServiceTypeEnum, isApplication } from '@qovery/shared/enums'
 import { type OrganizationEntity } from '@qovery/shared/interfaces'
 import {
@@ -78,6 +79,8 @@ export function StepSummaryFeature() {
       const memory = Number(resourcesData['memory'])
       const cpu = resourcesData['cpu']
 
+      const gitToken = getGitTokenValue(generalData.provider ?? '')
+
       if (isApplication(generalData.serviceType)) {
         const applicationRequest: ApplicationRequest = {
           name: generalData.name,
@@ -96,14 +99,10 @@ export function StepSummaryFeature() {
           max_running_instances: resourcesData.instances[1],
           build_mode: generalData.build_mode as BuildModeEnum,
           git_repository: {
-            url: buildGitRepoUrl(generalData.provider || '', selectRepository?.url || '') || '',
+            url: buildGitRepoUrl(gitToken?.type ?? (generalData.provider || ''), selectRepository?.url || '') || '',
             root_path: generalData.root_path,
             branch: generalData.branch,
-            git_token_id: ![GitProviderEnum.GITHUB, GitProviderEnum.GITLAB, GitProviderEnum.BITBUCKET].includes(
-              generalData.provider as GitProviderEnum
-            )
-              ? generalData.provider
-              : undefined,
+            git_token_id: gitToken?.id,
           },
           arguments: generalData.cmd,
           entrypoint: generalData.image_entry_point || '',

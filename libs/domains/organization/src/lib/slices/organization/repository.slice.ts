@@ -97,7 +97,7 @@ export const repositorySlice = createSlice({
           ...repository,
           provider: action.meta.arg.gitProvider,
         }))
-        repositoryAdapter.upsertMany(state, extendedRepositories)
+        repositoryAdapter.setAll(state, extendedRepositories)
         state.loadingStatus = 'loaded'
       })
       .addCase(fetchRepository.rejected, (state: RepositoryState, action) => {

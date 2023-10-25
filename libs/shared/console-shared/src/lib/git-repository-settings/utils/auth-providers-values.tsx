@@ -12,9 +12,14 @@ export const authProvidersValues = (authProviders: GitAuthProvider[], gitTokens?
   const currentGitTokens =
     gitTokens?.map((token: GitTokenResponse) => ({
       label: upperCaseFirstLetter(token.name),
-      value: token.id,
+      value: `token-${token.type}-${token.id}`,
       icon: <Icon width={16} height={16} name={token.type} />,
     })) || []
 
   return [...currentAuthProviders, ...currentGitTokens]
+}
+
+export const getGitTokenValue = (value: string) => {
+  if (value?.includes('token')) return { type: value.split('-')[1], id: value.split('-')[2] }
+  return null
 }

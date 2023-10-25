@@ -19,7 +19,7 @@ import { Icon } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { type AppDispatch, type RootState } from '@qovery/state/store'
 import GitRepositorySettings from '../../ui/git-repository-settings/git-repository-settings'
-import { authProvidersValues } from '../../utils/auth-providers-values'
+import { authProvidersValues, getGitTokenValue } from '../../utils/auth-providers-values'
 
 export function EditGitRepositorySettingsFeature() {
   const { organizationId = '', applicationId = '' } = useParams()
@@ -48,16 +48,19 @@ export function EditGitRepositorySettingsFeature() {
     branch: string | undefined
     root_path: string | undefined
   }>()
-  const watchAuthProvider = watch('provider') as GitProviderEnum
+  const watchAuthProvider = watch('provider')
   const watchRepository = watch('repository')
 
   const authProviders = useSelector<RootState, GitAuthProvider[]>(selectAllAuthProvider)
   const { data: gitTokens = [] } = useGitTokens({ organizationId })
-  const gitToken = gitTokens.find((gitToken) => gitToken.id === watchAuthProvider)
+  const gitToken = gitTokens.find((gitToken) => gitToken.id === getGitTokenValue(watchAuthProvider)?.id)
   const watchAuthProviderOrGitToken = gitToken ? gitToken.type : watchAuthProvider
 
   const repositories = useSelector((state: RootState) =>
-    selectRepositoriesByProvider(state, watchAuthProviderOrGitToken)
+    selectRepositoriesByProvider(
+      state,
+      (getGitTokenValue(watchAuthProvider)?.type ?? watchAuthProvider) as GitProviderEnum
+    )
   )
   const loadingStatusRepositories = useSelector<RootState, LoadingStatus>(repositoryLoadingStatus)
 
@@ -67,7 +70,7 @@ export function EditGitRepositorySettingsFeature() {
     ? `${upperCaseFirstLetter(getGitRepositoryFromApplication()?.provider)} (${
         getGitRepositoryFromApplication()?.owner
       })`
-    : `${getGitRepositoryFromApplication()?.name}`
+    : `${upperCaseFirstLetter(gitToken?.name)}`
 
   const currentRepository = repositories.find((repository) => repository.name === watchRepository)
 
@@ -126,6 +129,7 @@ export function EditGitRepositorySettingsFeature() {
   const editGitSettings = () => {
     setGitDisabled(false)
     dispatch(fetchAuthProvider({ organizationId }))
+
     if (getGitRepositoryFromApplication()?.provider) {
       setValue(
         'provider',
@@ -154,7 +158,7 @@ export function EditGitRepositorySettingsFeature() {
               },
             ]
       }
-      loadingStatusRepositories={loadingStatusRepositories}
+      loadingStatusRepositories={true}
       repositories={
         !gitDisabled
           ? repositories.map((repository: RepositoryEntity) => ({

@@ -19,7 +19,7 @@ export interface GitRepositorySettingsProps {
   authProviders?: Value[]
   repositories?: Value[]
   branches?: Value[]
-  loadingStatusRepositories?: LoadingStatus
+  loadingStatusRepositories?: boolean
   loadingStatusBranches?: LoadingStatus
   currentAuthProvider?: string
   withBlockWrapper?: boolean
@@ -77,9 +77,7 @@ export function GitRepositorySettings(props: GitRepositorySettingsProps) {
           <InputSelect
             dataTestId="input-repository"
             label="Repository"
-            className={`mb-0.5 ${
-              (getValues().provider && loadingStatusRepositories === 'loaded') || gitDisabled ? '' : 'hidden'
-            }`}
+            className={`mb-0.5 ${(getValues().provider && !loadingStatusRepositories) || gitDisabled ? '' : 'hidden'}`}
             options={repositories}
             onChange={field.onChange}
             value={field.value}
@@ -143,7 +141,7 @@ export function GitRepositorySettings(props: GitRepositorySettingsProps) {
         )}
       />
 
-      {(loadingStatusRepositories === 'loading' || loadingStatusBranches === 'loading') && !gitDisabled && (
+      {(loadingStatusRepositories || loadingStatusBranches === 'loading') && !gitDisabled && (
         <div data-testid="loader" className="flex justify-center mt-4">
           <LoaderSpinner />
         </div>
