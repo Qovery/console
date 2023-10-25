@@ -1,30 +1,6 @@
-import { type VariantProps, cva } from 'class-variance-authority'
 import { type ReactNode, useState } from 'react'
-import { Button, Icon, IconAwesomeEnum } from '@qovery/shared/ui'
+import { Button, Callout, type CalloutRootProps, Icon, IconAwesomeEnum } from '@qovery/shared/ui'
 import { useRunningStatus } from '../hooks/use-running-status/use-running-status'
-
-const calloutVariants = cva(
-  [
-    'grid',
-    'grid-cols-[min-content_1fr_min-content]',
-    'items-start',
-    'gap-x-3',
-    'gap-y-0.5',
-    'p-3',
-    'border',
-    'rounded',
-    'text-sm',
-  ],
-  {
-    variants: {
-      color: {
-        error: ['border-red-500', 'bg-red-50', 'text-red-500'],
-        success: ['border-green-600', 'bg-green-50', 'text-green-500'],
-        warning: ['border-yellow-600', 'bg-yellow-50', 'text-yellow-700'],
-      },
-    },
-  }
-)
 
 export interface PodStatusesCalloutProps {
   environmentId: string
@@ -42,7 +18,7 @@ export function PodStatusesCallout({ environmentId, serviceId }: PodStatusesCall
   const callouts: {
     id: number
     icon: IconAwesomeEnum
-    color: VariantProps<typeof calloutVariants>['color']
+    color: CalloutRootProps['color']
     title: string
     content: ReactNode
   }[] = []
@@ -51,7 +27,7 @@ export function PodStatusesCallout({ environmentId, serviceId }: PodStatusesCall
     callouts.push({
       id: 1,
       icon: IconAwesomeEnum.CIRCLE_EXCLAMATION,
-      color: 'error',
+      color: 'red',
       title: 'Application pods are in error',
       content: 'Some pods are experiencing issues. Have a look at the table below for investigation.',
     })
@@ -61,7 +37,7 @@ export function PodStatusesCallout({ environmentId, serviceId }: PodStatusesCall
     callouts.push({
       id: 2,
       icon: IconAwesomeEnum.CIRCLE_EXCLAMATION,
-      color: 'warning',
+      color: 'yellow',
       title: 'Application pods have experienced issues in the past',
       content: 'Some pods experienced issues in the past. Have a look at the table below for investigation.',
     })
@@ -73,7 +49,7 @@ export function PodStatusesCallout({ environmentId, serviceId }: PodStatusesCall
       callouts.push({
         id: 3,
         icon: IconAwesomeEnum.CHECK,
-        color: 'error',
+        color: 'red',
         title: 'Certificate Issues',
         content: (
           <>
@@ -103,37 +79,39 @@ export function PodStatusesCallout({ environmentId, serviceId }: PodStatusesCall
       {callouts
         .filter((_, index) => index === activeIndex)
         .map(({ id, icon, color, title, content }) => (
-          <div className={calloutVariants({ color })} key={id}>
-            <Icon className="row-span-2" name={icon} />
-            <span className="font-medium text-neutral-400">{title}</span>
-            <div className="row-span-2 pt-1.5">
-              <div className="flex flex-row gap-1.5">
-                {callouts.length > 1 && (
-                  <>
-                    <Button
-                      type="button"
-                      color="neutral"
-                      variant="outline"
-                      disabled={activeIndex === 0}
-                      onClick={() => setActiveIndex((index) => index - 1)}
-                    >
-                      <Icon className="px-1" name={IconAwesomeEnum.CHEVRON_LEFT} />
-                    </Button>
-                    <Button
-                      type="button"
-                      color="neutral"
-                      variant="outline"
-                      disabled={activeIndex === callouts.length - 1}
-                      onClick={() => setActiveIndex((index) => index + 1)}
-                    >
-                      <Icon className="px-1" name={IconAwesomeEnum.CHEVRON_RIGHT} />
-                    </Button>
-                  </>
-                )}
-              </div>
+          <Callout.Root color={color} key={id}>
+            <Callout.Icon>
+              <Icon name={icon} />
+            </Callout.Icon>
+            <Callout.Text>
+              <Callout.TextHeading>{title}</Callout.TextHeading>
+              <Callout.TextDescription>{content}</Callout.TextDescription>
+            </Callout.Text>
+            <div className="flex flex-row gap-1.5">
+              {callouts.length > 1 && (
+                <>
+                  <Button
+                    type="button"
+                    color="neutral"
+                    variant="outline"
+                    disabled={activeIndex === 0}
+                    onClick={() => setActiveIndex((index) => index - 1)}
+                  >
+                    <Icon className="px-1" name={IconAwesomeEnum.CHEVRON_LEFT} />
+                  </Button>
+                  <Button
+                    type="button"
+                    color="neutral"
+                    variant="outline"
+                    disabled={activeIndex === callouts.length - 1}
+                    onClick={() => setActiveIndex((index) => index + 1)}
+                  >
+                    <Icon className="px-1" name={IconAwesomeEnum.CHEVRON_RIGHT} />
+                  </Button>
+                </>
+              )}
             </div>
-            <span className="text-neutral-350">{content}</span>
-          </div>
+          </Callout.Root>
         ))}
     </>
   )

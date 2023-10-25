@@ -73,7 +73,8 @@ describe('PodStatusesCallout', () => {
     await userEvent.click(buttons[1])
 
     buttons = screen.getAllByRole('button')
-    expect(buttons[0]).toBeEnabled()
-    expect(buttons[1]).toBeDisabled()
+    // Skip first button with is in the text description
+    expect(buttons[1]).toBeEnabled()
+    expect(buttons[2]).toBeDisabled()
   })
 })
