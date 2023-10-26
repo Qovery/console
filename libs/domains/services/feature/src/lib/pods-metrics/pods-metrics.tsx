@@ -236,7 +236,7 @@ export function PodsMetrics({ environmentId, serviceId }: PodsMetricsProps) {
     )
   }, [service?.serviceType, table.setSorting])
 
-  if (isMetricsLoading || isServiceLoading) {
+  if (isServiceLoading) {
     return <PodsMetricsSkeleton />
   } else if (pods.length === 0 && !isMetricsLoading && isRunningStatusesLoading) {
     // NOTE: runningStatuses may never resolve if service not started
