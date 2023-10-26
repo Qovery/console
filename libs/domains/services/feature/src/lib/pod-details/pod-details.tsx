@@ -87,7 +87,7 @@ export function PodDetails({ pod: { containers = [], service_version }, serviceI
                   <TimelineCircle />
                 </div>
               </div>
-              <Dt className={last_terminated_state ? 'mb-2' : ''}>Now:</Dt>
+              <Dt className={last_terminated_state ? 'mb-2' : ''}>Current status:</Dt>
               <Dd className={last_terminated_state ? 'mb-2' : ''}>
                 {current_state?.state === 'RUNNING' ? (
                   <span className="text-green-500">Running</span>
