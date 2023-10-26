@@ -82,7 +82,7 @@ export function Layout(props: PropsWithChildren<LayoutProps>) {
   }, [organizationId, projectId])
 
   return (
-    <LayoutPage topBar={topBar} cluster={clusters[0]} defaultOrganizationId={organizations[0]?.id}>
+    <LayoutPage topBar={topBar} clusters={clusters} defaultOrganizationId={organizations[0]?.id}>
       <>
         {
           /**
