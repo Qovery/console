@@ -75,9 +75,7 @@ export function PodDetails({ pod: { containers = [], service_version }, serviceI
                       )}
                     </Dd>
                   </>
-                ) : (
-                  <span className="col-span-3 text-neutral-300 mb-2">Pod status history:</span>
-                )
+                ) : undefined
               }
               <div className="relative flex flex-col items-center">
                 {last_terminated_state && (
