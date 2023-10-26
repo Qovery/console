@@ -30,19 +30,22 @@ export function PodLogsFeature({ clusterId }: PodLogsFeatureProps) {
   const debounceTime = 400
   const [pauseStatusLogs, setPauseStatusLogs] = useState<boolean>(false)
   const [enabledNginx, setEnabledNginx] = useState<boolean>(false)
+  const [showPreviousLogs, setShowPreviousLogs] = useState<boolean>(false)
   const [serviceMessages, setServiceMessages] = useState<Array<ServiceLogResponseDto & { id: number }>>([])
   const debouncedServiceMessages = useDebounce(serviceMessages, debounceTime)
   const [infraMessages, setInfraMessages] = useState<Array<ServiceInfraLogResponseDto & { id: number }>>([])
   const debouncedInfraMessages = useDebounce(infraMessages, debounceTime)
   const logCounter = useRef(0)
+  const now = useMemo(() => Date.now(), [])
   const logs = useMemo(
     () =>
       debouncedServiceMessages
         .concat(
           enabledNginx ? debouncedInfraMessages.map((message) => ({ ...message, version: '', pod_name: '' })) : []
         )
+        .filter((log, index, array) => (showPreviousLogs || array.length - 1 === index ? true : log.created_at > now))
         .sort((a, b) => (a.created_at && b.created_at ? a.created_at - b.created_at : 0)),
-    [debouncedServiceMessages, debouncedInfraMessages, enabledNginx]
+    [debouncedServiceMessages, debouncedInfraMessages, enabledNginx, showPreviousLogs, now]
   )
   const debouncedLogs = useDebounce(logs, debounceTime)
   const pausedLogs = useMemo(() => debouncedLogs, [pauseStatusLogs])
@@ -124,6 +127,8 @@ export function PodLogsFeature({ clusterId }: PodLogsFeatureProps) {
       setPauseStatusLogs={setPauseStatusLogs}
       enabledNginx={enabledNginx}
       setEnabledNginx={setEnabledNginx}
+      showPreviousLogs={showPreviousLogs}
+      setShowPreviousLogs={setShowPreviousLogs}
       countNginx={infraMessages.length}
       isProgressing={isProgressing}
     />
