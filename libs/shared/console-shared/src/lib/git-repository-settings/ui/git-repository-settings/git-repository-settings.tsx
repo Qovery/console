@@ -1,4 +1,4 @@
-import { GitProviderEnum } from 'qovery-typescript-axios'
+import { type GitProviderEnum } from 'qovery-typescript-axios'
 import { useFormContext } from 'react-hook-form'
 import { GitBranchSetting, GitProviderSetting, GitRepositorySetting } from '@qovery/domains/organizations/feature'
 import {
