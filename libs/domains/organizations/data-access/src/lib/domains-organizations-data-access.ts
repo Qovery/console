@@ -1,11 +1,12 @@
 import { createQueryKeys, type inferQueryKeys } from '@lukemorales/query-key-factory'
 import {
   ContainerRegistriesApi,
-  GitProviderEnum,
-  GitRepository,
+  type GitProviderEnum,
+  type GitRepository,
   OrganizationAccountGitRepositoriesApi,
   OrganizationMainCallsApi,
 } from 'qovery-typescript-axios'
+import { match } from 'ts-pattern'
 
 const containerRegistriesApi = new ContainerRegistriesApi()
 const organizationApi = new OrganizationMainCallsApi()
@@ -51,20 +52,22 @@ export const organizations = createQueryKeys('organizations', {
   }) => ({
     queryKey: [organizationId, gitProvider, gitToken],
     async queryFn() {
-      if (gitProvider === GitProviderEnum.GITHUB) {
-        const response = await gitApi.getOrganizationGithubRepositories(organizationId, gitToken)
-        return response.data as GitRepository[]
-      }
-      if (gitProvider === GitProviderEnum.GITLAB) {
-        const response = await gitApi.getOrganizationGitlabRepositories(organizationId, gitToken)
-        return response.data as GitRepository[]
-      }
-      if (gitProvider === GitProviderEnum.BITBUCKET) {
-        const response = await gitApi.getOrganizationBitbucketRepositories(organizationId, gitToken)
-        return response.data as GitRepository[]
-      }
+      const repositories = await match(gitProvider)
+        .with('GITHUB', async () => {
+          const response = await gitApi.getOrganizationGithubRepositories(organizationId, gitToken)
+          return response.data as GitRepository[]
+        })
+        .with('GITLAB', async () => {
+          const response = await gitApi.getOrganizationGitlabRepositories(organizationId, gitToken)
+          return response.data as GitRepository[]
+        })
+        .with('BITBUCKET', async () => {
+          const response = await gitApi.getOrganizationBitbucketRepositories(organizationId, gitToken)
+          return response.data as GitRepository[]
+        })
+        .exhaustive()
 
-      return Promise.all([])
+      return repositories
     },
   }),
   branches: ({
@@ -80,20 +83,22 @@ export const organizations = createQueryKeys('organizations', {
   }) => ({
     queryKey: [organizationId, gitProvider, name],
     async queryFn() {
-      if (gitProvider === GitProviderEnum.GITHUB) {
-        const response = await gitApi.getOrganizationGithubRepositoryBranches(organizationId, name, gitToken)
-        return response.data.results
-      }
-      if (gitProvider === GitProviderEnum.GITLAB) {
-        const response = await gitApi.getOrganizationGitlabRepositoryBranches(organizationId, name, gitToken)
-        return response.data.results
-      }
-      if (gitProvider === GitProviderEnum.BITBUCKET) {
-        const response = await gitApi.getOrganizationBitbucketRepositoryBranches(organizationId, name, gitToken)
-        return response.data.results
-      }
+      const branches = await match(gitProvider)
+        .with('GITHUB', async () => {
+          const response = await gitApi.getOrganizationGithubRepositoryBranches(organizationId, name, gitToken)
+          return response.data.results
+        })
+        .with('GITLAB', async () => {
+          const response = await gitApi.getOrganizationGitlabRepositoryBranches(organizationId, name, gitToken)
+          return response.data.results
+        })
+        .with('BITBUCKET', async () => {
+          const response = await gitApi.getOrganizationBitbucketRepositoryBranches(organizationId, name, gitToken)
+          return response.data.results
+        })
+        .exhaustive()
 
-      return Promise.all([])
+      return branches
     },
   }),
 })
