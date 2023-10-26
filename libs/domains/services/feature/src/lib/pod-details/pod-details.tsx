@@ -93,7 +93,7 @@ export function PodDetails({ pod: { containers = [], service_version }, serviceI
                   <span className={current_state?.state === 'ERROR' ? 'text-red-500' : ''}>
                     {current_state?.state_reason}
                     {current_state?.state_message ? `:${current_state.state_message}` : ''}
-                    {restart_count ? (
+                    {restart_count && !last_terminated_state ? (
                       <>
                         <br />
                         The container has restarted {restart_count} {pluralize(restart_count, 'time')} since the last
