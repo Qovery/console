@@ -16,6 +16,8 @@ export function GitBranchSetting({ disabled, gitProvider }: GitBranchSettingProp
 
   const getGitToken = getGitTokenValue(gitProvider)
   const provider = getGitToken ? getGitToken?.type : gitProvider
+  const watchFieldRepository = watch('repository')
+  const watchFieldBranch = watch('branch')
 
   const {
     data: branches = [],
@@ -25,7 +27,7 @@ export function GitBranchSetting({ disabled, gitProvider }: GitBranchSettingProp
   } = useBranches({
     organizationId,
     gitProvider: provider,
-    name: watch('repository'),
+    name: watchFieldRepository,
     gitToken: getGitToken?.id,
     enabled: !disabled,
   })
@@ -56,8 +58,8 @@ export function GitBranchSetting({ disabled, gitProvider }: GitBranchSettingProp
                 disabled
                   ? [
                       {
-                        label: watch('branch') ?? '',
-                        value: watch('branch') ?? '',
+                        label: watchFieldBranch ?? '',
+                        value: watchFieldBranch ?? '',
                       },
                     ]
                   : branches.map((branch) => ({
