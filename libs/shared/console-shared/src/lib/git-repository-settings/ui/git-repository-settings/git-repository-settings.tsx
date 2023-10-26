@@ -1,3 +1,4 @@
+import { GitProviderEnum } from 'qovery-typescript-axios'
 import { useFormContext } from 'react-hook-form'
 import { GitBranchSetting, GitProviderSetting, GitRepositorySetting } from '@qovery/domains/organizations/feature'
 import {
@@ -33,7 +34,7 @@ export function GitRepositorySettings({
   }>()
   const { openModal, closeModal } = useModal()
 
-  const watchFieldProvider = watch('provider')
+  const watchFieldProvider = watch('provider') as GitProviderEnum
   const watchFieldRepository = watch('repository')
 
   const children = (

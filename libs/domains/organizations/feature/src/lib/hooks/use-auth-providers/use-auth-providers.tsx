@@ -8,7 +8,7 @@ export interface UseAuthProvidersProps {
 
 export function useAuthProviders({ organizationId, enabled }: UseAuthProvidersProps) {
   return useQuery({
-    ...queries.organizations.authProviders(organizationId),
+    ...queries.organizations.authProviders({ organizationId }),
     enabled: enabled,
     refetchOnWindowFocus: false,
   })

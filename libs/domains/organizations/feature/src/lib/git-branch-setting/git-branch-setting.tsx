@@ -6,7 +6,7 @@ import { getGitTokenValue } from '../git-provider-setting/git-provider-setting'
 import useBranches from '../hooks/use-branches/use-branches'
 
 export interface GitBranchSettingProps {
-  gitProvider: GitProviderEnum | string
+  gitProvider: GitProviderEnum
   disabled?: boolean
 }
 
@@ -14,8 +14,8 @@ export function GitBranchSetting({ disabled, gitProvider }: GitBranchSettingProp
   const { control, watch } = useFormContext()
   const { organizationId = '' } = useParams()
 
-  const getGitToken = getGitTokenValue(gitProvider)
-  const provider = getGitToken ? getGitToken?.type : gitProvider
+  const gitToken = getGitTokenValue(gitProvider)
+  const provider = gitToken ? gitToken?.type : gitProvider
   const watchFieldRepository = watch('repository')
   const watchFieldBranch = watch('branch')
 
@@ -28,7 +28,7 @@ export function GitBranchSetting({ disabled, gitProvider }: GitBranchSettingProp
     organizationId,
     gitProvider: provider,
     name: watchFieldRepository,
-    gitToken: getGitToken?.id,
+    gitToken: gitToken?.id,
     enabled: !disabled,
   })
 
@@ -38,64 +38,64 @@ export function GitBranchSetting({ disabled, gitProvider }: GitBranchSettingProp
 
   if (!disabled && (isLoading || isRefetching)) {
     return (
-      <div data-testid="loader" className="flex justify-center">
+      <div className="flex justify-center">
         <LoaderSpinner />
       </div>
     )
-  } else {
-    return (
-      <>
-        <Controller
-          name="branch"
-          control={control}
-          rules={{
-            required: 'Please select a branch.',
-          }}
-          render={({ field, fieldState: { error } }) => (
-            <InputSelect
-              label="Branch"
-              options={
-                disabled
-                  ? [
-                      {
-                        label: watchFieldBranch ?? '',
-                        value: watchFieldBranch ?? '',
-                      },
-                    ]
-                  : branches.map((branch) => ({
-                      label: branch.name,
-                      value: branch.name,
-                    }))
-              }
-              onChange={field.onChange}
-              value={field.value}
-              error={error?.message}
-              disabled={disabled}
-              isSearchable
-            />
-          )}
-        />
-        <Controller
-          name="root_path"
-          control={control}
-          defaultValue="/"
-          rules={{
-            required: 'Value required',
-          }}
-          render={({ field, fieldState: { error } }) => (
-            <InputText
-              label="Root application path"
-              name={field.name}
-              onChange={field.onChange}
-              value={field.value}
-              error={error?.message}
-              disabled={disabled}
-            />
-          )}
-        />
-      </>
-    )
   }
+
+  return (
+    <>
+      <Controller
+        name="branch"
+        control={control}
+        rules={{
+          required: 'Please select a branch.',
+        }}
+        render={({ field, fieldState: { error } }) => (
+          <InputSelect
+            label="Branch"
+            options={
+              disabled
+                ? [
+                    {
+                      label: watchFieldBranch ?? '',
+                      value: watchFieldBranch ?? '',
+                    },
+                  ]
+                : branches.map((branch) => ({
+                    label: branch.name,
+                    value: branch.name,
+                  }))
+            }
+            onChange={field.onChange}
+            value={field.value}
+            error={error?.message}
+            disabled={disabled}
+            isSearchable
+          />
+        )}
+      />
+      <Controller
+        name="root_path"
+        control={control}
+        defaultValue="/"
+        rules={{
+          required: 'Value required',
+        }}
+        render={({ field, fieldState: { error } }) => (
+          <InputText
+            label="Root application path"
+            name={field.name}
+            onChange={field.onChange}
+            value={field.value}
+            error={error?.message}
+            disabled={disabled}
+          />
+        )}
+      />
+    </>
+  )
 }
 
 export default GitBranchSetting

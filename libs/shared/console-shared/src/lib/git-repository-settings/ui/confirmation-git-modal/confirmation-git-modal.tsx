@@ -50,7 +50,7 @@ export function ConfirmationGitModal({
           dataTestId="submit-button"
           size={ButtonLegacySize.XLARGE}
           onClick={() => {
-            onSubmit && onSubmit()
+            onSubmit()
             onClose()
           }}
         >

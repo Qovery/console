@@ -5,7 +5,6 @@ exports[`GitBranchSetting should match snapshot 1`] = `
   <div>
     <div
       class="flex justify-center"
-      data-testid="loader"
     >
       <div
         class="aspect-square border-2  rounded-full border-solid border-r-neutral-500 animate-spin w-4 "

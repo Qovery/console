@@ -1,4 +1,4 @@
-import { type GitAuthProvider, type GitTokenResponse } from 'qovery-typescript-axios'
+import { type GitAuthProvider, type GitProviderEnum, type GitTokenResponse } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { Icon, InputSelect } from '@qovery/shared/ui'
@@ -10,25 +10,24 @@ export interface GitProviderSettingProps {
   disabled?: boolean
 }
 
-export const mergeProviders = (authProviders: GitAuthProvider[], gitTokens?: GitTokenResponse[]) => {
-  const currentAuthProviders = authProviders.map((provider: GitAuthProvider) => ({
+export const mergeProviders = (authProviders: GitAuthProvider[] = [], gitTokens: GitTokenResponse[] = []) => {
+  const currentAuthProviders = authProviders.map((provider) => ({
     label: `${upperCaseFirstLetter(provider.name)} (${provider.owner})`,
     value: provider.name || '',
     icon: <Icon width={16} height={16} name={provider.name} />,
   }))
 
-  const currentGitTokens =
-    gitTokens?.map((token: GitTokenResponse) => ({
-      label: upperCaseFirstLetter(token.name),
-      value: `TOKEN_${token.type}_${token.id}`,
-      icon: <Icon width={16} height={16} name={token.type} />,
-    })) || []
+  const currentGitTokens = gitTokens.map((token) => ({
+    label: upperCaseFirstLetter(token.name),
+    value: `TOKEN_${token.type}_${token.id}`,
+    icon: <Icon width={16} height={16} name={token.type} />,
+  }))
 
   return [...currentAuthProviders, ...currentGitTokens]
 }
 
 export const getGitTokenValue = (value: string) => {
-  if (value?.includes('TOKEN')) return { type: value.split('_')[1], id: value.split('_')[2] }
+  if (value?.includes('TOKEN')) return { type: value.split('_')[1] as GitProviderEnum, id: value.split('_')[2] }
   return null
 }
 
