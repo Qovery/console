@@ -1,6 +1,6 @@
 import { type GitProviderEnum } from 'qovery-typescript-axios'
 import { useFormContext } from 'react-hook-form'
-import { GitBranchSetting, GitProviderSetting, GitRepositorySetting } from '@qovery/domains/organizations/feature'
+import { GitBranchSettings, GitProviderSetting, GitRepositorySetting } from '@qovery/domains/organizations/feature'
 import {
   BlockContent,
   ButtonLegacy,
@@ -42,7 +42,7 @@ export function GitRepositorySettings({
       <GitProviderSetting disabled={gitDisabled} />
       {watchFieldProvider && <GitRepositorySetting disabled={gitDisabled} gitProvider={watchFieldProvider} />}
       {watchFieldProvider && watchFieldRepository && (
-        <GitBranchSetting disabled={gitDisabled} gitProvider={watchFieldProvider} />
+        <GitBranchSettings disabled={gitDisabled} gitProvider={watchFieldProvider} />
       )}
       {gitDisabled && editGitSettings && currentProvider && currentRepository && (
         <div className="flex justify-end">

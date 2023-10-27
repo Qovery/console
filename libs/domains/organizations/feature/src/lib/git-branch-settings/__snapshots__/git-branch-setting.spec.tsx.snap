@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`GitBranchSetting should match snapshot 1`] = `
+exports[`GitBranchSettings should match snapshot 1`] = `
 <body>
   <div>
     <div

@@ -5,12 +5,12 @@ import { InputSelect, InputText, LoaderSpinner } from '@qovery/shared/ui'
 import { getGitTokenValue } from '../git-provider-setting/git-provider-setting'
 import useBranches from '../hooks/use-branches/use-branches'
 
-export interface GitBranchSettingProps {
+export interface GitBranchSettingsProps {
   gitProvider: GitProviderEnum
   disabled?: boolean
 }
 
-export function GitBranchSetting({ disabled, gitProvider }: GitBranchSettingProps) {
+export function GitBranchSettings({ disabled, gitProvider }: GitBranchSettingsProps) {
   const { control, watch } = useFormContext()
   const { organizationId = '' } = useParams()
 
@@ -98,4 +98,4 @@ export function GitBranchSetting({ disabled, gitProvider }: GitBranchSettingProp
   )
 }
 
-export default GitBranchSetting
+export default GitBranchSettings

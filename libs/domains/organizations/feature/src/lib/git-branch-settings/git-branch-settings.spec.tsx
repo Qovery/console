@@ -1,6 +1,6 @@
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { renderWithProviders } from '@qovery/shared/util-tests'
-import { GitBranchSetting } from './git-branch-setting'
+import { GitBranchSettings } from './git-branch-settings'
 
 jest.mock('../hooks/use-branches/use-branches', () => {
   return {
@@ -15,9 +15,9 @@ jest.mock('../hooks/use-branches/use-branches', () => {
   }
 })
 
-describe('GitBranchSetting', () => {
+describe('GitBranchSettings', () => {
   it('should match snapshot', () => {
-    const { baseElement } = renderWithProviders(wrapWithReactHookForm(<GitBranchSetting gitProvider="GITHUB" />))
+    const { baseElement } = renderWithProviders(wrapWithReactHookForm(<GitBranchSettings gitProvider="GITHUB" />))
     expect(baseElement).toMatchSnapshot()
   })
 })
