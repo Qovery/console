@@ -1,5 +1,6 @@
 import { type ReactNode, useState } from 'react'
 import { Button, Callout, type CalloutRootProps, Icon, IconAwesomeEnum } from '@qovery/shared/ui'
+import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { useRunningStatus } from '../hooks/use-running-status/use-running-status'
 
 export interface PodStatusesCalloutProps {
@@ -20,7 +21,7 @@ export function PodStatusesCallout({ environmentId, serviceId }: PodStatusesCall
     icon: IconAwesomeEnum
     color: CalloutRootProps['color']
     title: string
-    content: ReactNode
+    content?: ReactNode
   }[] = []
 
   if (runningStatuses.pods.some(({ state }) => state === 'ERROR')) {
@@ -72,6 +73,15 @@ export function PodStatusesCallout({ environmentId, serviceId }: PodStatusesCall
         ),
       })
     }
+  }
+
+  if (callouts.length === 0) {
+    callouts.push({
+      id: 4,
+      icon: IconAwesomeEnum.CIRCLE_CHECK,
+      color: 'green',
+      title: `Service status: ${upperCaseFirstLetter(runningStatuses.state)}`,
+    })
   }
 
   return (
