@@ -2,6 +2,7 @@ import { type ReactNode, useState } from 'react'
 import { Button, Callout, type CalloutRootProps, Icon, IconAwesomeEnum } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { useRunningStatus } from '../hooks/use-running-status/use-running-status'
+import { useServiceType } from '../hooks/use-service-type/use-service-type'
 
 export interface PodStatusesCalloutProps {
   environmentId: string
@@ -10,9 +11,10 @@ export interface PodStatusesCalloutProps {
 
 export function PodStatusesCallout({ environmentId, serviceId }: PodStatusesCalloutProps) {
   const { data: runningStatuses, isLoading: isRunningStatusesLoading } = useRunningStatus({ environmentId, serviceId })
+  const { data: serviceType, isLoading: isServiceTypeLoading } = useServiceType({ environmentId, serviceId })
   const [activeIndex, setActiveIndex] = useState(0)
 
-  if (isRunningStatusesLoading || !runningStatuses) {
+  if (isRunningStatusesLoading || !runningStatuses || isServiceTypeLoading) {
     return null
   }
 
@@ -29,8 +31,11 @@ export function PodStatusesCallout({ environmentId, serviceId }: PodStatusesCall
       id: 1,
       icon: IconAwesomeEnum.CIRCLE_EXCLAMATION,
       color: 'red',
-      title: 'Application pods are in error',
-      content: 'Some pods are experiencing issues. Have a look at the table below for investigation.',
+      title: serviceType === 'JOB' ? 'Job execution failure' : 'Application pods are in error',
+      content:
+        serviceType === 'JOB'
+          ? 'One of the job executions have failed. Have a look at the table below for investigation.'
+          : 'Some pods are experiencing issues. Have a look at the table below for investigation.',
     })
   }
 
