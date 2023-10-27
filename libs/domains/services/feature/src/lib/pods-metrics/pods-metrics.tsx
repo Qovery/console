@@ -72,142 +72,147 @@ export function PodsMetrics({ environmentId, serviceId }: PodsMetricsProps) {
     }))
     .otherwise(() => undefined)
 
-  const columns = useMemo(
-    () => [
-      columnHelper.accessor('podName', {
-        header: service?.serviceType === ServiceTypeEnum.JOB ? 'Job executions' : 'Service pods',
-        cell: (info) => {
-          const podName = info.getValue()
-          return (
-            <>
-              <button
-                className="inline-flex items-center justify-start h-14 text-md w-9 pointer text-neutral-350"
-                type="button"
-                onClick={(e) => {
-                  info.row.getToggleExpandedHandler()()
-                  e.stopPropagation()
-                }}
-              >
-                <Icon
-                  className="pl-1"
-                  name={info.row.getIsExpanded() ? IconAwesomeEnum.CHEVRON_UP : IconAwesomeEnum.CHEVRON_DOWN}
-                  aria-hidden
-                />
-              </button>
-              {podName.length > 23 ? (
-                <Tooltip content={podName}>
-                  <Badge size="xs" variant="surface">
-                    {podName.substring(0, 10)}...{podName.slice(-10)}
-                  </Badge>
-                </Tooltip>
-              ) : (
-                <Badge size="xs" variant="surface">
-                  {podName}
-                </Badge>
-              )}
-            </>
-          )
-        },
-      }),
-      columnHelper.accessor('state', {
-        header: 'Status',
-        cell: (info) => (
-          <Badge size="sm" variant="outline" radius="full" className="gap-2 capitalize">
-            <StatusChip status={info.getValue() ?? 'UNKNOWN'} />
-            <span className="text-neutral-400">{info.getValue()?.toLowerCase() ?? 'Unknown'}</span>
+  const columns = useMemo(() => {
+    const podsColumn = columnHelper.accessor('podName', {
+      header: 'Pods',
+      cell: (info) => {
+        const podName = info.getValue()
+        return podName.length > 23 ? (
+          <Tooltip content={podName}>
+            <Badge size="xs" variant="surface">
+              {podName.substring(0, 10)}...{podName.slice(-10)}
+            </Badge>
+          </Tooltip>
+        ) : (
+          <Badge size="xs" variant="surface">
+            {podName}
           </Badge>
-        ),
-        sortingFn: (rowA, rowB, columnId) => {
-          const stateA = rowA.getValue<ServiceStateDto>(columnId)
-          const stateB = rowB.getValue<ServiceStateDto>(columnId)
+        )
+      },
+    })
+    const statusColumn = columnHelper.accessor('state', {
+      header: 'Status',
+      cell: (info) => (
+        <Badge size="sm" variant="outline" radius="full" className="gap-2 capitalize">
+          <StatusChip status={info.getValue() ?? 'UNKNOWN'} />
+          <span className="text-neutral-400">{info.getValue()?.toLowerCase() ?? 'Unknown'}</span>
+        </Badge>
+      ),
+      sortingFn: (rowA, rowB, columnId) => {
+        const stateA = rowA.getValue<ServiceStateDto>(columnId)
+        const stateB = rowB.getValue<ServiceStateDto>(columnId)
 
-          if (stateA === 'ERROR' && stateB === 'ERROR') {
-            return 0
-          } else if (stateA === 'ERROR' && stateB !== 'ERROR') {
-            return -1
-          } else if (stateA !== 'ERROR' && stateB === 'ERROR') {
-            return 1
-          } else if (stateA === 'WARNING' && stateB === 'WARNING') {
-            return 0
-          } else if (stateA === 'WARNING' && stateB !== 'WARNING') {
-            return -1
-          } else if (stateA !== 'WARNING' && stateB === 'WARNING') {
-            return 1
-          } else {
-            return stateA.localeCompare(stateB)
-          }
-        },
-      }),
-      ...(service?.serviceType === 'DATABASE'
-        ? []
-        : [
-            columnHelper.accessor('service_version', {
-              header: 'Version',
-              cell: (info) => {
-                const value = info.getValue()
-                return (
-                  value && (
-                    <Badge variant="surface" size="xs" className="shrink max-w-full">
-                      {containerImage ? (
-                        `${containerImage.image_name}:${containerImage.tag}`
-                      ) : (
-                        <span className="max-w-full truncate">
-                          <Icon className="mr-2" name={IconAwesomeEnum.CODE_COMMIT} />
-                          {value.substring(0, 7)}
-                        </span>
-                      )}
-                    </Badge>
-                  )
-                )
-              },
-            }),
-          ]),
-      columnHelper.accessor('memory.current', {
-        header: 'Memory',
-        cell: (info) =>
-          match(info.row.original)
-            .with({ serviceType: ServiceTypeEnum.JOB, state: 'COMPLETED' }, () => null)
-            .with({ memory: P.not(P.nullish) }, (pod) => formatMetric(pod.memory))
-            .otherwise(() => placeholder),
-      }),
-      columnHelper.accessor('cpu.current', {
-        header: 'vCPU',
-        cell: (info) =>
-          match(info.row.original)
-            .with({ serviceType: ServiceTypeEnum.JOB, state: 'COMPLETED' }, () => null)
-            .with({ cpu: P.not(P.nullish) }, (pod) => formatMetric(pod.cpu))
-            .otherwise(() => placeholder),
-      }),
-      ...(service?.serviceType === 'JOB'
-        ? []
-        : [
-            columnHelper.accessor('storages', {
-              header: 'Storage',
-              cell: (info) => {
-                const value = info.getValue()
-                return value?.length
-                  ? // https://qovery.slack.com/archives/C02NQ0LC8M9/p1693235796272359
-                    `${Math.max(...value.map(({ current_percent }) => current_percent))}%`
-                  : '-'
-              },
-            }),
-          ]),
+        if (stateA === 'ERROR' && stateB === 'ERROR') {
+          return 0
+        } else if (stateA === 'ERROR' && stateB !== 'ERROR') {
+          return -1
+        } else if (stateA !== 'ERROR' && stateB === 'ERROR') {
+          return 1
+        } else if (stateA === 'WARNING' && stateB === 'WARNING') {
+          return 0
+        } else if (stateA === 'WARNING' && stateB !== 'WARNING') {
+          return -1
+        } else if (stateA !== 'WARNING' && stateB === 'WARNING') {
+          return 1
+        } else {
+          return stateA.localeCompare(stateB)
+        }
+      },
+    })
+    const versionColumn = columnHelper.accessor('service_version', {
+      header: 'Version',
+      cell: (info) => {
+        const value = info.getValue()
+        return (
+          value && (
+            <Badge variant="surface" size="xs" className="shrink max-w-full">
+              {containerImage ? (
+                `${containerImage.image_name}:${containerImage.tag}`
+              ) : (
+                <span className="max-w-full truncate">
+                  <Icon className="mr-2" name={IconAwesomeEnum.CODE_COMMIT} />
+                  {value.substring(0, 7)}
+                </span>
+              )}
+            </Badge>
+          )
+        )
+      },
+    })
+
+    const memoryColumn = columnHelper.accessor('memory.current', {
+      header: 'Memory',
+      cell: (info) =>
+        match(info.row.original)
+          .with({ serviceType: ServiceTypeEnum.JOB, state: 'COMPLETED' }, () => null)
+          .with({ memory: P.not(P.nullish) }, (pod) => formatMetric(pod.memory))
+          .otherwise(() => placeholder),
+    })
+
+    const cpuColumn = columnHelper.accessor('cpu.current', {
+      header: 'vCPU',
+      cell: (info) =>
+        match(info.row.original)
+          .with({ serviceType: ServiceTypeEnum.JOB, state: 'COMPLETED' }, () => null)
+          .with({ cpu: P.not(P.nullish) }, (pod) => formatMetric(pod.cpu))
+          .otherwise(() => placeholder),
+    })
+
+    const storageColumn = columnHelper.accessor('storages', {
+      header: 'Storage',
+      cell: (info) => {
+        const value = info.getValue()
+        return value?.length
+          ? // https://qovery.slack.com/archives/C02NQ0LC8M9/p1693235796272359
+            `${Math.max(...value.map(({ current_percent }) => current_percent))}%`
+          : '-'
+      },
+    })
+
+    const startedAtColumn = (header: string = 'Age', dateFormat: 'relative' | 'absolute' = 'relative') =>
       columnHelper.accessor('started_at', {
-        header: service?.serviceType === ServiceTypeEnum.JOB ? 'Start time' : 'Age',
+        header,
         cell: (info) => {
           const value = info.getValue()
           return value ? (
             <Tooltip content={dateFullFormat(value)}>
-              <span className="text-xs text-neutral-350">{timeAgo(new Date(value))}</span>
+              <span className="text-xs text-neutral-350">
+                {dateFormat === 'relative' ? timeAgo(new Date(value)) : dateFullFormat(value)}
+              </span>
             </Tooltip>
           ) : (
             placeholder
           )
         },
-      }),
-    ],
-    [service, containerImage, columnHelper, placeholder]
-  )
+      })
+
+    return match(service?.serviceType)
+      .with(ServiceTypeEnum.JOB, () => [
+        startedAtColumn('Job executions', 'absolute'),
+        statusColumn,
+        versionColumn,
+        memoryColumn,
+        cpuColumn,
+        podsColumn,
+      ])
+      .with(ServiceTypeEnum.DATABASE, () => [
+        podsColumn,
+        statusColumn,
+        memoryColumn,
+        cpuColumn,
+        storageColumn,
+        startedAtColumn(),
+      ])
+      .otherwise(() => [
+        podsColumn,
+        statusColumn,
+        versionColumn,
+        memoryColumn,
+        cpuColumn,
+        storageColumn,
+        startedAtColumn(),
+      ])
+  }, [service, containerImage, columnHelper, placeholder])
 
   const table = useReactTable({
     data: pods,
@@ -236,7 +241,7 @@ export function PodsMetrics({ environmentId, serviceId }: PodsMetricsProps) {
     )
   }, [service?.serviceType, table.setSorting])
 
-  if (isMetricsLoading || isServiceLoading) {
+  if (isServiceLoading) {
     return <PodsMetricsSkeleton />
   } else if (pods.length === 0 && !isMetricsLoading && isRunningStatusesLoading) {
     // NOTE: runningStatuses may never resolve if service not started
@@ -293,8 +298,26 @@ export function PodsMetrics({ environmentId, serviceId }: PodsMetricsProps) {
         {table.getRowModel().rows.map((row) => (
           <Fragment key={row.id}>
             <Table.Row className="hover:bg-neutral-100" onClick={row.getToggleExpandedHandler()}>
-              {row.getVisibleCells().map((cell) => (
-                <Table.Cell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</Table.Cell>
+              {row.getVisibleCells().map((cell, index) => (
+                <Table.Cell key={cell.id}>
+                  {index === 0 && (
+                    <button
+                      className="inline-flex items-center justify-start h-14 text-md w-9 pointer text-neutral-350"
+                      type="button"
+                      onClick={(e) => {
+                        row.getToggleExpandedHandler()()
+                        e.stopPropagation()
+                      }}
+                    >
+                      <Icon
+                        className="pl-1"
+                        name={row.getIsExpanded() ? IconAwesomeEnum.CHEVRON_UP : IconAwesomeEnum.CHEVRON_DOWN}
+                        aria-hidden
+                      />
+                    </button>
+                  )}
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </Table.Cell>
               ))}
             </Table.Row>
             {row.getIsExpanded() && row.original.containers && (

@@ -75,9 +75,7 @@ export function PodDetails({ pod: { containers = [], service_version }, serviceI
                       )}
                     </Dd>
                   </>
-                ) : (
-                  <span className="col-span-3 text-neutral-300 mb-2">Pod status history:</span>
-                )
+                ) : undefined
               }
               <div className="relative flex flex-col items-center">
                 {last_terminated_state && (
@@ -87,7 +85,7 @@ export function PodDetails({ pod: { containers = [], service_version }, serviceI
                   <TimelineCircle />
                 </div>
               </div>
-              <Dt className={last_terminated_state ? 'mb-2' : ''}>Now:</Dt>
+              <Dt className={last_terminated_state ? 'mb-2' : ''}>Current status:</Dt>
               <Dd className={last_terminated_state ? 'mb-2' : ''}>
                 {current_state?.state === 'RUNNING' ? (
                   <span className="text-green-500">Running</span>
@@ -95,7 +93,7 @@ export function PodDetails({ pod: { containers = [], service_version }, serviceI
                   <span className={current_state?.state === 'ERROR' ? 'text-red-500' : ''}>
                     {current_state?.state_reason}
                     {current_state?.state_message ? `:${current_state.state_message}` : ''}
-                    {restart_count ? (
+                    {restart_count && !last_terminated_state ? (
                       <>
                         <br />
                         The container has restarted {restart_count} {pluralize(restart_count, 'time')} since the last
