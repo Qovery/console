@@ -88,13 +88,16 @@ export function PodStatusesCallout({ environmentId, serviceId }: PodStatusesCall
     <>
       {callouts
         .filter((_, index) => index === activeIndex)
-        .map(({ id, icon, color, title, content }) => (
+        .map(({ id, icon, color, title, content }, index) => (
           <Callout.Root color={color} key={id}>
             <Callout.Icon>
               <Icon name={icon} />
             </Callout.Icon>
             <Callout.Text>
-              <Callout.TextHeading>{title}</Callout.TextHeading>
+              <Callout.TextHeading>
+                {callouts.length > 1 ? `${index + 1}/${callouts.length}` : undefined}
+                {title}
+              </Callout.TextHeading>
               <Callout.TextDescription>{content}</Callout.TextDescription>
             </Callout.Text>
             <div className="flex flex-row gap-1.5">
