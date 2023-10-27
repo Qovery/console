@@ -182,9 +182,12 @@ export function PodLogs({
         {showPreviousLogs === false && (
           <button
             type="button"
-            className="block py-1.5 bg-neutral-500 text-neutral-250 text-center text-sm font-medium"
+            className="block py-1.5 bg-neutral-500 hover:bg-neutral-600 transition text-neutral-250 text-center text-sm font-medium"
             onClick={() => setShowPreviousLogs?.(true)}
-            style={{ inlineSize: '100%' }}
+            style={{
+              /* https://stackoverflow.com/questions/9699039/button-with-displayblock-not-stretched */
+              inlineSize: '100%',
+            }}
           >
             Load previous logs
             <Icon name={IconAwesomeEnum.ARROW_UP} className="ml-1.5" />
