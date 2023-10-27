@@ -1,0 +1,38 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`PodStatusesCallout should render successfully 1`] = `
+<body>
+  <div>
+    <div
+      class="flex flex-row items-baseline gap-x-3 p-3 border rounded text-sm border-red-500 bg-red-50 text-red-500"
+      data-accent-color="red"
+    >
+      <div
+        class="-order-2 text-base"
+      >
+        <span
+          class="icon-solid-circle-exclamation shrink-0 "
+          role="img"
+        />
+      </div>
+      <div
+        class="-order-1 mr-auto gap-x-3 text-neutral-400"
+      >
+        <span
+          class="block font-medium mb-0.5"
+        >
+          Application pods are in error
+        </span>
+        <span
+          class="text-neutral-350"
+        >
+          Some pods are experiencing issues. Have a look at the table below for investigation.
+        </span>
+      </div>
+      <div
+        class="flex flex-row gap-1.5"
+      />
+    </div>
+  </div>
+</body>
+`;

@@ -1,6 +1,6 @@
 import { Controller, useFormContext } from 'react-hook-form'
 import { type Value } from '@qovery/shared/interfaces'
-import { BannerBox, BannerBoxEnum, BlockContent, IconAwesomeEnum, InputSelect } from '@qovery/shared/ui'
+import { BlockContent, Callout, Icon, IconAwesomeEnum, InputSelect } from '@qovery/shared/ui'
 
 export interface SettingsResourcesInstanceTypesProps {
   databaseInstanceTypes?: Value[]
@@ -38,13 +38,16 @@ export function SettingsResourcesInstanceTypes({
         )}
       />
       {displayWarning && (
-        <BannerBox
-          dataTestId="settings-resources-instance-types-warning"
-          className="mt-3"
-          message="Once started, the upgrade will be managed by your cloud provider. The upgrade might be applied on a different time window and cause service interruption. Have a look at the cloud provider documentation before launching the upgrade."
-          type={BannerBoxEnum.WARNING}
-          icon={IconAwesomeEnum.CIRCLE_INFO}
-        />
+        <Callout.Root className="mt-3" color="yellow" data-testid="settings-resources-instance-types-warning">
+          <Callout.Icon>
+            <Icon name={IconAwesomeEnum.CIRCLE_INFO} />
+          </Callout.Icon>
+          <Callout.Text className="text-xs">
+            Once started, the upgrade will be managed by your cloud provider. The upgrade might be applied on a
+            different time window and cause service interruption. Have a look at the cloud provider documentation before
+            launching the upgrade.
+          </Callout.Text>
+        </Callout.Root>
       )}
     </BlockContent>
   )

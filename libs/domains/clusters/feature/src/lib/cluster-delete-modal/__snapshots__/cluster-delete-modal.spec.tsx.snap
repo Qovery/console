@@ -165,40 +165,36 @@ exports[`ClusterDeleteModal should match snapshot 1`] = `
             Use it carefully this action is irreversible.
           </p>
           <div
-            class="border px-4 py-3 bg rounded flex mt-3 bg-yellow-50 border-yellow-500"
-            data-testid="banner-box"
+            class="flex flex-row items-baseline gap-x-3 p-3 border rounded border-yellow-600 bg-yellow-50 text-yellow-700 mt-3 text-xs"
+            data-accent-color="yellow"
           >
             <div
-              class="mr-3 shrink-0 "
+              class="-order-2 text-base"
             >
               <span
-                class="icon-solid-triangle-exclamation shrink-0 relative top-[2px] text-yellow-600"
+                class="icon-solid-triangle-exclamation shrink-0 "
                 role="img"
               />
             </div>
             <div
-              class="flex flex-col justify-center"
+              class="-order-1 mr-auto gap-x-3 text-neutral-400"
             >
-              <div
-                class="text-xs text-neutral-400"
+              <p>
+                Please note that you will have to manually delete on your cloud account:
+              </p>
+              <ul
+                class="list-disc pl-3"
               >
-                <p>
-                  Please note that you will have to manually delete on your cloud account:
-                </p>
-                <ul
-                  class="list-disc pl-3"
-                >
-                  <li>
-                    the S3 bucket created during the cluster installation
-                  </li>
-                  <li>
-                    the image registry linked to this cluster
-                  </li>
-                  <li>
-                    any resource created by a lifecycle job that will not be properly deleted during the \`environment deletion\` event.
-                  </li>
-                </ul>
-              </div>
+                <li>
+                  the S3 bucket created during the cluster installation
+                </li>
+                <li>
+                  the image registry linked to this cluster
+                </li>
+                <li>
+                  any resource created by a lifecycle job that will not be properly deleted during the \`environment deletion\` event.
+                </li>
+              </ul>
             </div>
           </div>
         </div>

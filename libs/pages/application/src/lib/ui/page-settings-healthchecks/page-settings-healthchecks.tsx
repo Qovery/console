@@ -2,12 +2,13 @@ import { EnvironmentModeEnum, type ServicePort } from 'qovery-typescript-axios'
 import { useFormContext } from 'react-hook-form'
 import { ApplicationSettingsHealthchecks } from '@qovery/shared/console-shared'
 import {
-  BannerBox,
-  BannerBoxEnum,
   ButtonLegacy,
   ButtonLegacySize,
   ButtonLegacyStyle,
+  Callout,
   HelpSection,
+  Icon,
+  IconAwesomeEnum,
   Link,
 } from '@qovery/shared/ui'
 
@@ -38,20 +39,19 @@ export function PageSettingsHealthchecks({
     <div className="flex flex-col justify-between w-full text-ssm">
       <div className="p-8 max-w-content-with-navigation-left">
         {environmentMode === EnvironmentModeEnum.PRODUCTION && minRunningInstances === 1 && (
-          <BannerBox
-            className="mb-2"
-            message={
-              <span>
-                Your service is configured to run with a minimum of one instance, setting the health checks will not
-                ensure the service high availability during a cluster upgrade. Have a look at your{' '}
-                <Link to={linkResourcesSetting} size="xs">
-                  instance setup
-                </Link>{' '}
-                first and increase the minimum instance type.
-              </span>
-            }
-            type={BannerBoxEnum.WARNING}
-          />
+          <Callout.Root color="yellow" className="mb-2">
+            <Callout.Icon>
+              <Icon name={IconAwesomeEnum.TRIANGLE_EXCLAMATION} />
+            </Callout.Icon>
+            <Callout.Text className="text-xs">
+              Your service is configured to run with a minimum of one instance, setting the health checks will not
+              ensure the service high availability during a cluster upgrade. Have a look at your{' '}
+              <Link to={linkResourcesSetting} size="xs">
+                instance setup
+              </Link>{' '}
+              first and increase the minimum instance type.
+            </Callout.Text>
+          </Callout.Root>
         )}
         <h2 className="h5 text-neutral-400 mb-2">Health checks</h2>
         <p className="text-xs text-neutral-400 mb-8">

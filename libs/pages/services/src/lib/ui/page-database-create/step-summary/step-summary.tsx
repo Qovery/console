@@ -1,12 +1,11 @@
 import { DatabaseModeEnum } from 'qovery-typescript-axios'
 import {
-  BannerBox,
-  BannerBoxEnum,
   ButtonIcon,
   ButtonIconStyle,
   ButtonLegacy,
   ButtonLegacySize,
   ButtonLegacyStyle,
+  Callout,
   Icon,
   IconAwesomeEnum,
 } from '@qovery/shared/ui'
@@ -41,18 +40,19 @@ export function StepSummary(props: StepSummaryProps) {
 
       <div className="mb-10">
         {props.generalData.mode == DatabaseModeEnum.MANAGED && (
-          <BannerBox
-            className="mb-5"
-            title="Qovery manages this resource for you"
-            message={
-              <span>
+          <Callout.Root className="mb-5" color="yellow">
+            <Callout.Icon>
+              <Icon name={IconAwesomeEnum.TRIANGLE_EXCLAMATION} />
+            </Callout.Icon>
+            <Callout.Text>
+              <Callout.TextHeading>Qovery manages this resource for you</Callout.TextHeading>
+              <Callout.TextDescription className="text-xs">
                 Use exclusively the Qovery console to update the resources managed by Qovery on your cloud account.
                 <br /> Do not manually update or upgrade them on the cloud provider console, otherwise you will risk a
                 drift in the configuration.
-              </span>
-            }
-            type={BannerBoxEnum.WARNING}
-          />
+              </Callout.TextDescription>
+            </Callout.Text>
+          </Callout.Root>
         )}
         <div className="flex p-4 w-full border rounded border-neutral-250 bg-neutral-100 mb-2">
           <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />

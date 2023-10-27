@@ -4,12 +4,13 @@ import { useFormContext } from 'react-hook-form'
 import { DatabaseSettingsResources } from '@qovery/shared/console-shared'
 import { type DatabaseEntity } from '@qovery/shared/interfaces'
 import {
-  BannerBox,
-  BannerBoxEnum,
   ButtonLegacy,
   ButtonLegacySize,
   ButtonLegacyStyle,
+  Callout,
   HelpSection,
+  Icon,
+  IconAwesomeEnum,
 } from '@qovery/shared/ui'
 
 export interface PageSettingsResourcesProps {
@@ -37,18 +38,19 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
         </p>
         <form onSubmit={onSubmit}>
           {database.mode === DatabaseModeEnum.MANAGED && (
-            <BannerBox
-              className="mb-5"
-              title="Qovery manages this resource for you"
-              message={
-                <span>
+            <Callout.Root className="mb-5" color="yellow">
+              <Callout.Icon>
+                <Icon name={IconAwesomeEnum.TRIANGLE_EXCLAMATION} />
+              </Callout.Icon>
+              <Callout.Text>
+                <Callout.TextHeading>Qovery manages this resource for you </Callout.TextHeading>
+                <Callout.TextDescription className="text-xs">
                   Use exclusively the Qovery console to update the resources managed by Qovery on your cloud account.
                   <br /> Do not manually update or upgrade them on the cloud provider console, otherwise you will risk a
                   drift in the configuration.
-                </span>
-              }
-              type={BannerBoxEnum.WARNING}
-            />
+                </Callout.TextDescription>
+              </Callout.Text>
+            </Callout.Root>
           )}
 
           <DatabaseSettingsResources

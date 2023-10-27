@@ -6,13 +6,12 @@ import {
   type ClusterResourcesData,
 } from '@qovery/shared/interfaces'
 import {
-  BannerBox,
-  BannerBoxEnum,
   ButtonIcon,
   ButtonIconStyle,
   ButtonLegacy,
   ButtonLegacySize,
   ButtonLegacyStyle,
+  Callout,
   ExternalLink,
   Icon,
   IconAwesomeEnum,
@@ -62,11 +61,13 @@ export function StepSummary(props: StepSummaryProps) {
       </div>
 
       <div className="mb-10">
-        <BannerBox
-          className="mb-5"
-          title="Qovery manages this resource for you"
-          message={
-            <span>
+        <Callout.Root color="yellow" className="mb-5">
+          <Callout.Icon>
+            <Icon name={IconAwesomeEnum.TRIANGLE_EXCLAMATION} />
+          </Callout.Icon>
+          <Callout.Text>
+            <Callout.TextHeading>Qovery manages this resource for you</Callout.TextHeading>
+            <Callout.TextDescription className="text-xs">
               Use exclusively the Qovery console to update the resources managed by Qovery on your cloud account.
               <br /> Do not manually update or upgrade them on the cloud provider console, otherwise you will risk a
               drift in the configuration.
@@ -77,10 +78,9 @@ export function StepSummary(props: StepSummaryProps) {
               >
                 See more details
               </ExternalLink>
-            </span>
-          }
-          type={BannerBoxEnum.WARNING}
-        />
+            </Callout.TextDescription>
+          </Callout.Text>
+        </Callout.Root>
         <div
           data-testid="summary-general"
           className="flex p-4 w-full border rounded border-neutral-250 bg-neutral-100 mb-2"

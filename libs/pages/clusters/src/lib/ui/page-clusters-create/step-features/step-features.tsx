@@ -3,11 +3,12 @@ import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { CardClusterFeature } from '@qovery/shared/console-shared'
 import {
-  BannerBox,
-  BannerBoxEnum,
   ButtonLegacy,
   ButtonLegacySize,
   ButtonLegacyStyle,
+  Callout,
+  Icon,
+  IconAwesomeEnum,
   LoaderSpinner,
 } from '@qovery/shared/ui'
 
@@ -33,12 +34,17 @@ export function StepFeatures(props: StepFeaturesProps) {
         <div className="mb-10">
           {features && features.length > 0 ? (
             <div>
-              <BannerBox
-                className="mb-5"
-                title="Choose wisely"
-                message="These features will not be modifiable after cluster creation."
-                type={BannerBoxEnum.WARNING}
-              />
+              <Callout.Root className="mb-5" color="yellow">
+                <Callout.Icon>
+                  <Icon name={IconAwesomeEnum.TRIANGLE_EXCLAMATION} />
+                </Callout.Icon>
+                <Callout.Text>
+                  <Callout.TextHeading>Choose wisely</Callout.TextHeading>
+                  <Callout.TextDescription>
+                    These features will not be modifiable after cluster creation.
+                  </Callout.TextDescription>
+                </Callout.Text>
+              </Callout.Root>
               {features.map((feature) => (
                 <CardClusterFeature
                   key={feature.id}

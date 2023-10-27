@@ -2,8 +2,7 @@ import { CloudProviderEnum, PortProtocolEnum } from 'qovery-typescript-axios'
 import { type FormEvent } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import {
-  BannerBox,
-  BannerBoxEnum,
+  Callout,
   Icon,
   IconAwesomeEnum,
   InputSelect,
@@ -211,28 +210,31 @@ export function CrudModal({
         </>
       )}
       {(watchProtocol === PortProtocolEnum.TCP || watchProtocol === PortProtocolEnum.UDP) && watchPublicly && (
-        <BannerBox
-          className="mt-4"
-          icon={IconAwesomeEnum.CIRCLE_INFO}
-          type={BannerBoxEnum.WARNING}
-          message="Activating this feature will add an extra cost to your cloud provider bill (a Network Load Balancer will be created)."
-        />
+        <Callout.Root className="mt-4" color="yellow">
+          <Callout.Icon>
+            <Icon name={IconAwesomeEnum.CIRCLE_INFO} />
+          </Callout.Icon>
+          <Callout.Text className="text-xs">
+            Activating this feature will add an extra cost to your cloud provider bill (a Network Load Balancer will be
+            created).
+          </Callout.Text>
+        </Callout.Root>
       )}
       {isMatchingHealthCheck && currentProtocol === watchProtocol && (
-        <BannerBox
-          className="mt-4"
-          icon={IconAwesomeEnum.CIRCLE_INFO}
-          type={BannerBoxEnum.WARNING}
-          message="The health check will be updated to use the new port value."
-        />
+        <Callout.Root className="mt-4" color="yellow">
+          <Callout.Icon>
+            <Icon name={IconAwesomeEnum.CIRCLE_INFO} />
+          </Callout.Icon>
+          <Callout.Text className="text-xs">The health check will be updated to use the new port value.</Callout.Text>
+        </Callout.Root>
       )}
       {isMatchingHealthCheck && currentProtocol !== watchProtocol && (
-        <BannerBox
-          className="mt-4"
-          icon={IconAwesomeEnum.CIRCLE_INFO}
-          type={BannerBoxEnum.WARNING}
-          message="Please verify the health check configuration."
-        />
+        <Callout.Root className="mt-4" color="yellow">
+          <Callout.Icon>
+            <Icon name={IconAwesomeEnum.CIRCLE_INFO} />
+          </Callout.Icon>
+          <Callout.Text className="text-xs">Please verify the health check configuration.</Callout.Text>
+        </Callout.Root>
       )}
     </ModalCrud>
   )
