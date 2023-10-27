@@ -1,6 +1,6 @@
 import { DatabaseModeEnum } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
-import { PodsMetrics, ServiceDetails } from '@qovery/domains/services/feature'
+import { PodStatusesCallout, PodsMetrics, ServiceDetails } from '@qovery/domains/services/feature'
 import { type DatabaseEntity, type LoadingStatus } from '@qovery/shared/interfaces'
 import { type BaseLink, HelpSection } from '@qovery/shared/ui'
 
@@ -26,7 +26,12 @@ export function PageGeneral(props: PageGeneralProps) {
               </div>
             ) : (
               database &&
-              database.environment && <PodsMetrics environmentId={database.environment.id} serviceId={database.id} />
+              database.environment && (
+                <>
+                  <PodStatusesCallout environmentId={database.environment.id} serviceId={database.id} />
+                  <PodsMetrics environmentId={database.environment.id} serviceId={database.id} />
+                </>
+              )
             )}
           </div>
           <ServiceDetails className="w-[360px] border-l" environmentId={environmentId} serviceId={databaseId} />
