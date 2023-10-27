@@ -4,7 +4,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { createApplication, postApplicationActionsDeploy } from '@qovery/domains/application'
 import { importEnvironmentVariables } from '@qovery/domains/environment-variable'
-import { selectAllRepository, selectOrganizationById } from '@qovery/domains/organization'
+import { selectOrganizationById } from '@qovery/domains/organization'
+import { getGitTokenValue } from '@qovery/domains/organizations/feature'
 import { type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
 import {
   type FlowVariableData,
@@ -12,7 +13,6 @@ import {
   type JobGeneralData,
   type JobResourcesData,
   type OrganizationEntity,
-  type RepositoryEntity,
 } from '@qovery/shared/interfaces'
 import {
   DEPLOYMENT_LOGS_URL,
@@ -34,7 +34,6 @@ function prepareJobRequest(
   generalData: JobGeneralData,
   configureData: JobConfigureData,
   resourcesData: JobResourcesData,
-  selectedRepository: RepositoryEntity | undefined,
   jobType: JobType
 ): JobRequest {
   const memory = Number(resourcesData['memory'])
@@ -99,13 +98,16 @@ function prepareJobRequest(
       },
     }
   } else {
+    const gitToken = getGitTokenValue(generalData.provider ?? '')
+
     jobRequest.source = {
       docker: {
         dockerfile_path: generalData.dockerfile_path,
         git_repository: {
-          url: buildGitRepoUrl(generalData.provider || '', selectedRepository?.url || '') || '',
+          url: buildGitRepoUrl(gitToken?.type ?? generalData.provider ?? '', generalData.repository || ''),
           root_path: generalData.root_path,
           branch: generalData.branch,
+          git_token_id: gitToken?.id,
         },
       },
     }
@@ -142,8 +144,6 @@ export function StepSummaryFeature() {
   const organization = useSelector<RootState, OrganizationEntity | undefined>((state) =>
     selectOrganizationById(state, organizationId)
   )
-  const repositories = useSelector(selectAllRepository)
-  const selectedRepository = repositories.find((repository) => repository.name === generalData?.repository)
 
   const gotoGlobalInformations = () => {
     navigate(pathCreate + SERVICES_JOB_CREATION_GENERAL_URL)
@@ -173,13 +173,7 @@ export function StepSummaryFeature() {
     if (generalData && resourcesData && variableData && configureData) {
       toggleLoading(true, withDeploy)
 
-      const jobRequest: JobRequest = prepareJobRequest(
-        generalData,
-        configureData,
-        resourcesData,
-        selectedRepository,
-        jobType
-      )
+      const jobRequest: JobRequest = prepareJobRequest(generalData, configureData, resourcesData, jobType)
       const variableRequest = prepareVariableRequest(variableData)
 
       dispatch(

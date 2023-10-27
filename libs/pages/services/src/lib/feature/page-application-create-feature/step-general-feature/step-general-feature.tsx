@@ -71,6 +71,7 @@ export function StepGeneralFeature() {
         return
       }
     }
+
     setGeneralData(cloneData)
     const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_APPLICATION_CREATION_URL}`
     navigate(pathCreate + SERVICES_CREATION_RESOURCES_URL)

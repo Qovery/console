@@ -1,5 +1,5 @@
-export const buildGitRepoUrl = (provider: string, branch: string): string => {
-  if (branch.includes('http://') || branch.includes('https://')) return branch
+export const buildGitRepoUrl = (provider: string, repository: string): string => {
+  if (repository.includes('http://') || repository.includes('https://')) return repository
   const authProvider = provider.toLowerCase()
-  return `https://${authProvider}.com/${branch}.git`
+  return `https://${authProvider}.com/${repository}.git`
 }

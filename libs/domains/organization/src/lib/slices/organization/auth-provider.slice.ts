@@ -24,6 +24,9 @@ export const authProviderAdapter = createEntityAdapter<GitAuthProvider>({
   selectId: (authProvider: GitAuthProvider) => `${authProvider.name}-${authProvider.id}`,
 })
 
+/**
+ * @deprecated This should be migrated to the new `use-auth-providers` hook
+ */
 export const fetchAuthProvider = createAsyncThunk('authProvider/fetch', async (payload: { organizationId: string }) => {
   const response = await authProviderApi.getOrganizationGitProviderAccount(payload.organizationId)
   return response.data as GitAuthProvider[]
@@ -58,6 +61,7 @@ export const authProviderSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      // fetch auth provider
       .addCase(fetchAuthProvider.pending, (state: AuthProviderState) => {
         state.loadingStatus = 'loading'
       })
@@ -70,6 +74,7 @@ export const authProviderSlice = createSlice({
         state.error = action.error.message
         toastError(action.error)
       })
+      // disconnect github app
       .addCase(disconnectGithubApp.fulfilled, () => {
         toast(ToastEnum.SUCCESS, `Github App disconnected successfully`)
       })

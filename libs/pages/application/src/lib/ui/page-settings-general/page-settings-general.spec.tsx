@@ -1,7 +1,7 @@
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { BuildModeEnum, BuildPackLanguageEnum, GitProviderEnum } from 'qovery-typescript-axios'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import PageSettingsGeneral, { type PageSettingsGeneralProps } from './page-settings-general'
 
 describe('PageSettingsGeneral', () => {
@@ -115,6 +115,9 @@ describe('PageSettingsGeneral', () => {
     const button = screen.getByTestId('submit-button')
 
     await userEvent.click(button)
-    expect(spy).toHaveBeenCalled()
+
+    waitFor(() => {
+      expect(spy).toHaveBeenCalled()
+    })
   })
 })

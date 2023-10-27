@@ -8,7 +8,8 @@ import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { createApplication, postApplicationActionsDeploy } from '@qovery/domains/application'
-import { selectAllRepository, selectOrganizationById } from '@qovery/domains/organization'
+import { selectOrganizationById } from '@qovery/domains/organization'
+import { getGitTokenValue } from '@qovery/domains/organizations/feature'
 import { ServiceTypeEnum, isApplication } from '@qovery/shared/enums'
 import { type OrganizationEntity } from '@qovery/shared/interfaces'
 import {
@@ -39,9 +40,6 @@ export function StepSummaryFeature() {
   const organization = useSelector<RootState, OrganizationEntity | undefined>((state) =>
     selectOrganizationById(state, organizationId)
   )
-
-  const repositories = useSelector(selectAllRepository)
-  const selectRepository = repositories.find((repository) => repository.name === generalData?.repository)
 
   const gotoGlobalInformations = () => {
     navigate(pathCreate + SERVICES_CREATION_GENERAL_URL)
@@ -77,6 +75,8 @@ export function StepSummaryFeature() {
       const memory = Number(resourcesData['memory'])
       const cpu = resourcesData['cpu']
 
+      const gitToken = getGitTokenValue(generalData?.provider ?? '')
+
       if (isApplication(generalData.serviceType)) {
         const applicationRequest: ApplicationRequest = {
           name: generalData.name,
@@ -95,9 +95,10 @@ export function StepSummaryFeature() {
           max_running_instances: resourcesData.instances[1],
           build_mode: generalData.build_mode as BuildModeEnum,
           git_repository: {
-            url: buildGitRepoUrl(generalData.provider || '', selectRepository?.url || '') || '',
+            url: buildGitRepoUrl(gitToken?.type ?? generalData.provider ?? '', generalData.repository || ''),
             root_path: generalData.root_path,
             branch: generalData.branch,
+            git_token_id: gitToken?.id,
           },
           arguments: generalData.cmd,
           entrypoint: generalData.image_entry_point || '',

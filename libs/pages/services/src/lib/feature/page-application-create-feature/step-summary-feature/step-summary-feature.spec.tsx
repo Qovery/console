@@ -1,8 +1,7 @@
 import { act, getByTestId, render } from '__tests__/utils/setup-jest'
-import { GitProviderEnum, PortProtocolEnum } from 'qovery-typescript-axios'
+import { PortProtocolEnum } from 'qovery-typescript-axios'
 import * as storeApplication from '@qovery/domains/application'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
-import { type RepositoryEntity } from '@qovery/shared/interfaces'
 import {
   ApplicationContainerCreateContext,
   type ApplicationContainerCreateContextInterface,
@@ -10,24 +9,6 @@ import {
 import StepSummaryFeature from './step-summary-feature'
 
 import SpyInstance = jest.SpyInstance
-
-const mockRepositories: RepositoryEntity[] = [
-  {
-    url: 'https://github.com/Qovery/test_http_server.git',
-    provider: GitProviderEnum.GITHUB,
-    name: 'Qovery/test_http_server',
-    id: '1',
-    branches: {
-      loadingStatus: 'loaded',
-      items: [],
-    },
-  },
-]
-
-jest.mock('@qovery/domains/organization', () => ({
-  ...jest.requireActual('@qovery/domains/organization'),
-  selectAllRepository: () => mockRepositories,
-}))
 
 jest.mock('@qovery/domains/application', () => {
   return {

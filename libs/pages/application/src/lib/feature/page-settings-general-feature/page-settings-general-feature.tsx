@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { editApplication, getApplicationsState, postApplicationActionsRedeploy } from '@qovery/domains/application'
 import { fetchOrganizationContainerRegistries, selectOrganizationById } from '@qovery/domains/organization'
+import { getGitTokenValue } from '@qovery/domains/organizations/feature'
 import {
   ServiceTypeEnum,
   getServiceType,
@@ -40,10 +41,13 @@ export const handleGitApplicationSubmit = (data: FieldValues, application: Appli
       cloneApplication.dockerfile_path = null
     }
 
+    const gitToken = getGitTokenValue(data['provider'])
+
     const git_repository = {
-      url: buildGitRepoUrl(data['provider'], data['repository']),
+      url: buildGitRepoUrl(gitToken?.type ?? data['provider'], data['repository']),
       branch: data['branch'],
       root_path: data['root_path'],
+      git_token_id: gitToken ? gitToken.id : application.git_repository?.git_token_id,
     }
 
     cloneApplication.git_repository = git_repository
@@ -74,10 +78,13 @@ export const handleContainerSubmit = (data: FieldValues, application: Applicatio
 
 export const handleJobSubmit = (data: FieldValues, application: ApplicationEntity) => {
   if (isGitSource(application.source)) {
+    const gitToken = getGitTokenValue(data['provider'])
+
     const git_repository = {
-      url: buildGitRepoUrl(data['provider'], data['repository']),
+      url: buildGitRepoUrl(gitToken?.type ?? data['provider'], data['repository']),
       branch: data['branch'],
       root_path: data['root_path'],
+      git_token_id: gitToken ? gitToken.id : undefined,
     }
 
     return {

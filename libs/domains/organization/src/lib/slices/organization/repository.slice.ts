@@ -14,19 +14,25 @@ const repositoryApi = new OrganizationAccountGitRepositoriesApi()
 
 export const repositoryAdapter = createEntityAdapter<RepositoryEntity>()
 
+/**
+ * @deprecated This should be migrated to the new `use-repositories` hook
+ */
 export const fetchRepository = createAsyncThunk(
   'repository/fetch',
-  async (payload: { organizationId: string; gitProvider: GitProviderEnum }) => {
+  async (payload: { organizationId: string; gitProvider: GitProviderEnum; gitToken?: string }) => {
     if (payload.gitProvider === GitProviderEnum.GITHUB) {
-      const response = await repositoryApi.getOrganizationGithubRepositories(payload.organizationId)
+      const response = await repositoryApi.getOrganizationGithubRepositories(payload.organizationId, payload.gitToken)
       return response.data as RepositoryEntity[]
     }
     if (payload.gitProvider === GitProviderEnum.GITLAB) {
-      const response = await repositoryApi.getOrganizationGitlabRepositories(payload.organizationId)
+      const response = await repositoryApi.getOrganizationGitlabRepositories(payload.organizationId, payload.gitToken)
       return response.data as RepositoryEntity[]
     }
     if (payload.gitProvider === GitProviderEnum.BITBUCKET) {
-      const response = await repositoryApi.getOrganizationBitbucketRepositories(payload.organizationId)
+      const response = await repositoryApi.getOrganizationBitbucketRepositories(
+        payload.organizationId,
+        payload.gitToken
+      )
       return response.data as RepositoryEntity[]
     }
 
@@ -34,20 +40,38 @@ export const fetchRepository = createAsyncThunk(
   }
 )
 
+/**
+ * @deprecated This should be migrated to the new `use-branches` hook
+ */
 export const fetchBranches = createAsyncThunk(
   'branch/fetch',
-  async (payload: { organizationId: string; gitProvider: GitProviderEnum; name: string; id?: string }) => {
+  async (payload: {
+    organizationId: string
+    gitProvider: GitProviderEnum
+    name: string
+    gitToken?: string
+    id?: string
+  }) => {
     if (payload.gitProvider === GitProviderEnum.GITHUB) {
-      const response = await repositoryApi.getOrganizationGithubRepositoryBranches(payload.organizationId, payload.name)
+      const response = await repositoryApi.getOrganizationGithubRepositoryBranches(
+        payload.organizationId,
+        payload.gitToken,
+        payload.name
+      )
       return response.data.results as GitRepositoryBranch[]
     }
     if (payload.gitProvider === GitProviderEnum.GITLAB) {
-      const response = await repositoryApi.getOrganizationGitlabRepositoryBranches(payload.organizationId, payload.name)
+      const response = await repositoryApi.getOrganizationGitlabRepositoryBranches(
+        payload.organizationId,
+        payload.gitToken,
+        payload.name
+      )
       return response.data.results as GitRepositoryBranch[]
     }
     if (payload.gitProvider === GitProviderEnum.BITBUCKET) {
       const response = await repositoryApi.getOrganizationBitbucketRepositoryBranches(
         payload.organizationId,
+        payload.gitToken,
         payload.name
       )
       return response.data.results as GitRepositoryBranch[]
@@ -79,7 +103,7 @@ export const repositorySlice = createSlice({
           ...repository,
           provider: action.meta.arg.gitProvider,
         }))
-        repositoryAdapter.upsertMany(state, extendedRepositories)
+        repositoryAdapter.setAll(state, extendedRepositories)
         state.loadingStatus = 'loaded'
       })
       .addCase(fetchRepository.rejected, (state: RepositoryState, action) => {
