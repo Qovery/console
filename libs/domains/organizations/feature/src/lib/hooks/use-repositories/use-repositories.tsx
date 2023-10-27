@@ -15,7 +15,7 @@ export function useRepositories({ organizationId, gitProvider, enabled, gitToken
     meta: {
       notifyOnError: true,
     },
-    enabled: enabled,
+    enabled,
     refetchOnWindowFocus: false,
   })
 }

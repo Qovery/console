@@ -1,6 +1,7 @@
 import { createQueryKeys, type inferQueryKeys } from '@lukemorales/query-key-factory'
 import {
   ContainerRegistriesApi,
+  type GitAuthProvider,
   type GitProviderEnum,
   type GitRepository,
   OrganizationAccountGitRepositoriesApi,
@@ -38,7 +39,7 @@ export const organizations = createQueryKeys('organizations', {
     queryKey: [organizationId],
     async queryFn() {
       const response = await gitApi.getOrganizationGitProviderAccount(organizationId)
-      return response.data
+      return response.data as GitAuthProvider[]
     },
   }),
   repositories: ({

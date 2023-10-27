@@ -15,8 +15,8 @@ export function GitRepositorySetting({ disabled, gitProvider }: GitRepositorySet
   const { control, setValue, watch } = useFormContext()
   const { organizationId = '' } = useParams()
 
-  const getGitToken = getGitTokenValue(gitProvider)
-  const gitProviderOrTokenType = getGitToken ? getGitToken?.type : gitProvider
+  const gitToken = getGitTokenValue(gitProvider)
+  const gitProviderOrTokenType = gitToken ? gitToken?.type : gitProvider
   const watchFieldRepository = watch('repository')
 
   const {
@@ -27,7 +27,7 @@ export function GitRepositorySetting({ disabled, gitProvider }: GitRepositorySet
   } = useRepositories({
     organizationId,
     gitProvider: gitProviderOrTokenType,
-    gitToken: getGitToken?.id,
+    gitToken: gitToken?.id,
     enabled: !disabled,
   })
 

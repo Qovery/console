@@ -48,7 +48,7 @@ export function GitProviderSetting({ disabled }: GitProviderSettingProps) {
           icon: <Icon name={`${watchFieldProvider?.split(' ')[0].toUpperCase()}`} />,
         },
       ]
-    : mergeProviders(authProviders as GitAuthProvider[], gitTokens)
+    : mergeProviders(authProviders, gitTokens)
 
   return (
     <Controller

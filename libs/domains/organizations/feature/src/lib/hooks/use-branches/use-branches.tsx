@@ -13,7 +13,7 @@ export interface UseBranchesProps {
 export function useBranches({ organizationId, gitProvider, name, gitToken, enabled }: UseBranchesProps) {
   return useQuery({
     ...queries.organizations.branches({ organizationId, gitProvider, name, gitToken }),
-    enabled: enabled,
+    enabled,
     meta: {
       notifyOnError: true,
     },

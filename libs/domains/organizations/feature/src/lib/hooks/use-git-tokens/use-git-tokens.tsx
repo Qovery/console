@@ -9,7 +9,7 @@ export interface UseGitTokensProps {
 export function useGitTokens({ organizationId, enabled }: UseGitTokensProps) {
   return useQuery({
     ...queries.organizations.gitTokens({ organizationId }),
-    enabled: enabled,
+    enabled,
     refetchOnWindowFocus: false,
   })
 }
