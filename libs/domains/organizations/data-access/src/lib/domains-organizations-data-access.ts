@@ -38,7 +38,7 @@ export const organizations = createQueryKeys('organizations', {
   authProviders: ({ organizationId }: { organizationId: string }) => ({
     queryKey: [organizationId],
     async queryFn() {
-      const response = await gitApi.getOrganizationGitProviderAccount(organizationId)
+      const response = await gitApi.getOrganizationGitProviderAccountTemp(organizationId)
       return response.data as GitAuthProvider[]
     },
   }),
@@ -55,15 +55,15 @@ export const organizations = createQueryKeys('organizations', {
     async queryFn() {
       const repositories = await match(gitProvider)
         .with('GITHUB', async () => {
-          const response = await gitApi.getOrganizationGithubRepositories(organizationId, gitToken)
+          const response = await gitApi.getOrganizationGithubRepositoriesTemp(organizationId, gitToken)
           return response.data as GitRepository[]
         })
         .with('GITLAB', async () => {
-          const response = await gitApi.getOrganizationGitlabRepositories(organizationId, gitToken)
+          const response = await gitApi.getOrganizationGitlabRepositoriesTemp(organizationId, gitToken)
           return response.data as GitRepository[]
         })
         .with('BITBUCKET', async () => {
-          const response = await gitApi.getOrganizationBitbucketRepositories(organizationId, gitToken)
+          const response = await gitApi.getOrganizationBitbucketRepositoriesTemp(organizationId, gitToken)
           return response.data as GitRepository[]
         })
         .exhaustive()
