@@ -7,10 +7,12 @@ import {
   ButtonLegacySize,
   ButtonLegacyStyle,
   ExternalLink,
+  Heading,
   HelpSection,
   Icon,
   IconAwesomeEnum,
   LoaderSpinner,
+  Section,
 } from '@qovery/shared/ui'
 
 export interface PageOrganizationGithubRepositoryAccessProps {
@@ -26,14 +28,15 @@ export interface PageOrganizationGithubRepositoryAccessProps {
 
 export function PageOrganizationGithubRepositoryAccess(props: PageOrganizationGithubRepositoryAccessProps) {
   return (
-    <div className="flex flex-col justify-between w-full">
+    <Section className="flex flex-col justify-between w-full">
       <div className="p-8 max-w-content-with-navigation-left">
         <div className="flex justify-between mb-8">
           <div>
-            <h1 className="h5 text-neutral-400 mb-2">Github Repository Access</h1>
+            <Heading className="mb-2">Github Repository Access</Heading>
             <p className="text-neutral-400 text-xs">
-              By default Qovery has access to all your repositories. If you are using Github, you can restrict the
-              Qovery accesses by installing the Qovery Github application on your GitHub organization
+              By default Qovery has access to all the repositories linked to your git account. If you want to give
+              Qovery access to additional repositories and manage the access from one place, you can configure a git
+              token.
             </p>
           </div>
         </div>
@@ -116,7 +119,7 @@ export function PageOrganizationGithubRepositoryAccess(props: PageOrganizationGi
           },
         ]}
       />
-    </div>
+    </Section>
   )
 }
 

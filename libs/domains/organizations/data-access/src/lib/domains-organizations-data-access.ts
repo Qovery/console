@@ -2,6 +2,7 @@ import { createQueryKeys, type inferQueryKeys } from '@lukemorales/query-key-fac
 import {
   ContainerRegistriesApi,
   type GitProviderEnum,
+  type GitTokenRequest,
   OrganizationAccountGitRepositoriesApi,
   OrganizationMainCallsApi,
 } from 'qovery-typescript-axios'
@@ -31,6 +32,41 @@ export const organizations = createQueryKeys('organizations', {
     async queryFn() {
       const response = await organizationApi.listOrganizationGitTokens(organizationId)
       return response.data.results
+    },
+  }),
+  createGitToken: ({
+    organizationId,
+    gitTokenRequest,
+  }: {
+    organizationId: string
+    gitTokenRequest: GitTokenRequest
+  }) => ({
+    queryKey: [organizationId],
+    async queryFn() {
+      const response = await organizationApi.createGitToken(organizationId, gitTokenRequest)
+      return response.data
+    },
+  }),
+  editGitToken: ({
+    organizationId,
+    gitTokenId,
+    gitTokenRequest,
+  }: {
+    organizationId: string
+    gitTokenId: string
+    gitTokenRequest: GitTokenRequest
+  }) => ({
+    queryKey: [organizationId],
+    async queryFn() {
+      const response = await organizationApi.editGitToken(organizationId, gitTokenId, gitTokenRequest)
+      return response.data
+    },
+  }),
+  deleteGitToken: ({ organizationId, gitTokenId }: { organizationId: string; gitTokenId: string }) => ({
+    queryKey: [organizationId],
+    async queryFn() {
+      const response = await organizationApi.deleteGitToken(organizationId, gitTokenId)
+      return response.data
     },
   }),
   authProviders: ({ organizationId }: { organizationId: string }) => ({
