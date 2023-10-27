@@ -26,9 +26,8 @@ export const displayClusterDeploymentBanner = (status?: ClusterStateEnum): boole
     .otherwise(() => false)
 }
 
-export const displayClusterCredentialErrorBanner = (clusters?: ClusterEntity[]): ClusterEntity[] => {
-  if (!clusters) return []
-  const clustersDeploymentError = clusters?.filter((c) => c.status === ClusterStateEnum.DEPLOYMENT_ERROR)
+export const displayClusterCredentialErrorBanner = (clusters?: ClusterEntity[]): ClusterEntity | undefined => {
+  const clustersDeploymentError = clusters?.find((c) => c.status === ClusterStateEnum.DEPLOYMENT_ERROR)
   return clustersDeploymentError
 }
 
@@ -46,8 +45,7 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
   const clusterBanner =
     !matchLogInfraRoute && clusters && displayClusterDeploymentBanner(clusters?.[0]?.status) && !clusterIsDeployed
 
-  const clusterCredentialError = !matchLogInfraRoute && displayClusterCredentialErrorBanner(clusters).length > 0
-  const clusterNotification = displayClusterCredentialErrorBanner.length > 0
+  const clusterCredentialError = !matchLogInfraRoute && displayClusterCredentialErrorBanner(clusters)
 
   return (
     <>
@@ -55,7 +53,10 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
       <main className="dark:bg-neutral-900 dark:h-full bg-neutral-200">
         <div className="flex">
           <div className="h-full sticky top-0 z-30">
-            <Navigation defaultOrganizationId={defaultOrganizationId} clusterNotification={clusterNotification} />
+            <Navigation
+              defaultOrganizationId={defaultOrganizationId}
+              clusterNotification={!!displayClusterCredentialErrorBanner}
+            />
           </div>
           <div className="w-full">
             {topBar && <TopBar />}
@@ -74,7 +75,7 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
                 color="yellow"
                 onClickButton={() =>
                   navigate(
-                    CLUSTER_URL(organizationId, displayClusterCredentialErrorBanner(clusters)?.[0].id) +
+                    CLUSTER_URL(organizationId, displayClusterCredentialErrorBanner(clusters)?.id) +
                       CLUSTER_SETTINGS_URL +
                       CLUSTER_SETTINGS_CREDENTIALS_URL
                   )
@@ -82,8 +83,8 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
                 buttonLabel="Check the credentials configuration"
               >
                 The credentials for the cluster{' '}
-                <span className="block font-bold mx-1">{displayClusterCredentialErrorBanner(clusters)?.[0].name}</span>{' '}
-                are invalid.
+                <span className="block font-bold mx-1">{displayClusterCredentialErrorBanner(clusters)?.name}</span> are
+                invalid.
               </Banner>
             )}
             <div
