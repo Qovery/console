@@ -1,10 +1,17 @@
 import { ServiceStateDto } from 'qovery-ws-typescript-axios'
+import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import * as useRunningStatusImport from '../hooks/use-running-status/use-running-status'
+import * as useServiceTypeImport from '../hooks/use-service-type/use-service-type'
 import { PodStatusesCallout } from './pod-statuses-callout'
 
 describe('PodStatusesCallout', () => {
   it('should render successfully', () => {
+    jest.spyOn(useServiceTypeImport, 'useServiceType').mockReturnValue({
+      data: ServiceTypeEnum.APPLICATION,
+      isLoading: false,
+      error: {},
+    })
     jest.spyOn(useRunningStatusImport, 'useRunningStatus').mockReturnValue({
       data: {
         state: ServiceStateDto.ERROR,
@@ -27,6 +34,11 @@ describe('PodStatusesCallout', () => {
     expect(baseElement).toMatchSnapshot()
   })
   it('should handle multiple messages', async () => {
+    jest.spyOn(useServiceTypeImport, 'useServiceType').mockReturnValue({
+      data: ServiceTypeEnum.APPLICATION,
+      isLoading: false,
+      error: {},
+    })
     jest.spyOn(useRunningStatusImport, 'useRunningStatus').mockReturnValue({
       data: {
         state: ServiceStateDto.ERROR,
