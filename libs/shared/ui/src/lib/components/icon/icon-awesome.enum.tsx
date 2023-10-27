@@ -13,6 +13,7 @@ export enum IconAwesomeEnum {
   WHEEL = 'icon-solid-wheel',
   CIRCLE_INFO = 'icon-solid-circle-info',
   CIRCLE_QUESTION = 'icon-regular-circle-question',
+  CIRCLE_CHECK = 'icon-regular-circle-check',
   MAGNIFYING_GLASS = 'icon-solid-magnifying-glass',
   XMARK = 'icon-solid-xmark',
   ENVELOPE = 'icon-solid-envelope',
