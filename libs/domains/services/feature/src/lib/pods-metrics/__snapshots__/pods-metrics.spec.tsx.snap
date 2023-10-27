@@ -17,7 +17,7 @@ exports[`PodsMetrics should match snapshot with data 1`] = `
               class="flex items-center gap-1 cursor-pointer select-none"
               type="button"
             >
-              Service pods
+              Pods
               <span
                 class="icon-solid-arrow-down shrink-0 text-xs"
                 role="img"
