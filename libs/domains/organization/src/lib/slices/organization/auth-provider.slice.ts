@@ -29,7 +29,7 @@ export const authProviderAdapter = createEntityAdapter<GitAuthProvider>({
  */
 export const fetchAuthProvider = createAsyncThunk('authProvider/fetch', async (payload: { organizationId: string }) => {
   const response = await authProviderApi.getOrganizationGitProviderAccountTemp(payload.organizationId)
-  return response.data as GitAuthProvider[]
+  return response.data.results as GitAuthProvider[]
 })
 
 export const connectGithubApp = createAsyncThunk(
