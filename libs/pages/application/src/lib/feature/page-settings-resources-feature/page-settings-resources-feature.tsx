@@ -38,8 +38,7 @@ export function PageSettingsResourcesFeature() {
       a?.memory === b?.memory &&
       a?.cpu === b?.cpu &&
       a?.min_running_instances === b?.min_running_instances &&
-      a?.max_running_instances === b?.max_running_instances &&
-      JSON.stringify(a?.instances) === JSON.stringify(b?.instances)
+      a?.max_running_instances === b?.max_running_instances
   )
 
   const { data: environment } = useFetchEnvironment(projectId, environmentId)

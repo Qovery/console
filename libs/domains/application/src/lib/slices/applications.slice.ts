@@ -14,7 +14,6 @@ import {
   ApplicationDeploymentHistoryApi,
   type ApplicationEditRequest,
   ApplicationMainCallsApi,
-  ApplicationMetricsApi,
   type ApplicationRequest,
   ApplicationsApi,
   type Commit,
@@ -22,12 +21,10 @@ import {
   ContainerConfigurationApi,
   ContainerDeploymentHistoryApi,
   ContainerMainCallsApi,
-  ContainerMetricsApi,
   type ContainerRequest,
   ContainersApi,
   type DeploymentHistory,
   type DeploymentHistoryPaginatedResponseList,
-  type Instance,
   type JobAdvancedSettings,
   JobConfigurationApi,
   JobDeploymentHistoryApi,
@@ -66,12 +63,10 @@ export const applicationsAdapter = createEntityAdapter<ApplicationEntity>()
 const applicationsApi = new ApplicationsApi()
 const applicationMainCallsApi = new ApplicationMainCallsApi()
 const applicationDeploymentsApi = new ApplicationDeploymentHistoryApi()
-const applicationMetricsApi = new ApplicationMetricsApi()
 const applicationConfigurationApi = new ApplicationConfigurationApi()
 
 const containersApi = new ContainersApi()
 const containerMainCallsApi = new ContainerMainCallsApi()
-const containerMetricsApi = new ContainerMetricsApi()
 const containerDeploymentsApi = new ContainerDeploymentHistoryApi()
 const containerConfigurationApi = new ContainerConfigurationApi()
 
@@ -178,20 +173,6 @@ export const fetchApplicationLinks = createAsyncThunk<Link[], { applicationId: s
     return response.data.results as Link[]
   }
 )
-
-export const fetchApplicationInstances = createAsyncThunk<
-  Instance[],
-  { applicationId: string; serviceType?: ServiceTypeEnum }
->('application/instances', async (data) => {
-  let response
-
-  if (isContainer(data.serviceType)) {
-    response = await containerMetricsApi.getContainerCurrentInstance(data.applicationId)
-  } else {
-    response = await applicationMetricsApi.getApplicationCurrentInstance(data.applicationId)
-  }
-  return response.data.results as Instance[]
-})
 
 export const fetchApplicationCommits = createAsyncThunk<
   Commit[],
@@ -442,44 +423,6 @@ export const applicationsSlice = createSlice({
             links: {
               items: action.payload,
               loadingStatus: 'loaded',
-            },
-          },
-        }
-        applicationsAdapter.updateOne(state, update)
-      })
-      .addCase(fetchApplicationInstances.pending, (state: ApplicationsState, action) => {
-        const applicationId = action.meta.arg.applicationId
-        const update: Update<ApplicationEntity> = {
-          id: applicationId,
-          changes: {
-            instances: {
-              ...state.entities[applicationId]?.instances,
-              loadingStatus: 'loading',
-            },
-          },
-        }
-        applicationsAdapter.updateOne(state, update)
-      })
-      .addCase(fetchApplicationInstances.fulfilled, (state: ApplicationsState, action) => {
-        const applicationId = action.meta.arg.applicationId
-        const update: Update<ApplicationEntity> = {
-          id: applicationId,
-          changes: {
-            instances: {
-              items: action.payload,
-              loadingStatus: 'loaded',
-            },
-          },
-        }
-        applicationsAdapter.updateOne(state, update)
-      })
-      .addCase(fetchApplicationInstances.rejected, (state: ApplicationsState, action) => {
-        const applicationId = action.meta.arg.applicationId
-        const update: Update<ApplicationEntity> = {
-          id: applicationId,
-          changes: {
-            instances: {
-              loadingStatus: 'error',
             },
           },
         }

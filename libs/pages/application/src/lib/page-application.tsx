@@ -5,7 +5,6 @@ import { Navigate, Route, Routes, useParams } from 'react-router-dom'
 import {
   applicationsLoadingStatus,
   fetchApplicationCommits,
-  fetchApplicationInstances,
   fetchApplicationLinks,
   selectApplicationById,
 } from '@qovery/domains/application'
@@ -40,8 +39,6 @@ export function PageApplication() {
       if (isContainer(application) || isApplication(application)) {
         if (application.links?.loadingStatus !== 'loaded')
           dispatch(fetchApplicationLinks({ applicationId, serviceType }))
-        if (application.instances?.loadingStatus !== 'loaded')
-          dispatch(fetchApplicationInstances({ applicationId, serviceType }))
       }
       // fetch commits for GitApplication and GitJobs
       if (isApplication(application) || isGitJob(application)) {
