@@ -14,6 +14,8 @@ export interface PodLogsProps {
   service?: ApplicationEntity | DatabaseEntity
   enabledNginx?: boolean
   setEnabledNginx?: (debugMode: boolean) => void
+  showPreviousLogs?: boolean
+  setShowPreviousLogs?: (showPreviousLogs: boolean) => void
   countNginx?: number
   isProgressing?: boolean
 }
@@ -59,6 +61,8 @@ export function PodLogs({
   loadingStatus,
   enabledNginx,
   setEnabledNginx,
+  showPreviousLogs,
+  setShowPreviousLogs,
   countNginx,
   isProgressing,
 }: PodLogsProps) {
@@ -175,6 +179,16 @@ export function PodLogs({
         setFilter={setFilter}
         filter={filter}
       >
+        {showPreviousLogs === false && (
+          <button
+            type="button"
+            className="block py-1.5 bg-neutral-500 hover:bg-neutral-600 transition text-neutral-250 text-center text-sm font-medium w-full"
+            onClick={() => setShowPreviousLogs?.(true)}
+          >
+            Load previous logs
+            <Icon name={IconAwesomeEnum.ARROW_UP} className="ml-1.5" />
+          </button>
+        )}
         <div className="pt-1 pb-8">{memoRow}</div>
       </Table>
     </LayoutLogs>
