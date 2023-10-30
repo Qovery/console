@@ -1,27 +1,25 @@
-import { useDispatch, useSelector } from 'react-redux'
-import { useNavigate, useParams } from 'react-router-dom'
-import { deleteClusterAction, selectClusterById } from '@qovery/domains/organization'
+import { useSelector } from 'react-redux'
+import { useParams } from 'react-router-dom'
+import { ClusterDeleteModal } from '@qovery/domains/clusters/feature'
+import { selectClusterById } from '@qovery/domains/organization'
 import { type ClusterEntity } from '@qovery/shared/interfaces'
-import { CLUSTERS_GENERAL_URL, CLUSTERS_URL } from '@qovery/shared/routes'
-import { type AppDispatch, type RootState } from '@qovery/state/store'
+import { useModal } from '@qovery/shared/ui'
+import { type RootState } from '@qovery/state/store'
 import PageSettingsDangerZone from '../../ui/page-settings-danger-zone/page-settings-danger-zone'
 
 export function PageSettingsDangerZoneFeature() {
   const { organizationId = '', clusterId = '' } = useParams()
-  const dispatch = useDispatch<AppDispatch>()
-  const navigate = useNavigate()
 
   const cluster = useSelector<RootState, ClusterEntity | undefined>((state) => selectClusterById(state, clusterId))
+  const { openModal } = useModal()
 
   const deleteCluster = () => {
-    if (cluster) {
-      dispatch(deleteClusterAction({ organizationId, clusterId }))
-        .unwrap()
-        .then(() => navigate(CLUSTERS_URL(organizationId) + CLUSTERS_GENERAL_URL))
-    }
+    openModal({
+      content: <ClusterDeleteModal organizationId={organizationId} clusterId={clusterId} name={cluster?.name ?? ''} />,
+    })
   }
 
-  return <PageSettingsDangerZone deleteCluster={deleteCluster} cluster={cluster} />
+  return <PageSettingsDangerZone deleteCluster={deleteCluster} />
 }
 
 export default PageSettingsDangerZoneFeature

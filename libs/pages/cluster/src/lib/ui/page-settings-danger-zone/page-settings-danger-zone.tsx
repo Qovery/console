@@ -1,26 +1,18 @@
-import { EnvironmentModeEnum } from 'qovery-typescript-axios'
-import { type ClusterEntity } from '@qovery/shared/interfaces'
 import { BlockContentDelete, HelpSection } from '@qovery/shared/ui'
 
 export interface PageSettingsDangerZoneProps {
   deleteCluster: () => void
-  cluster?: ClusterEntity
 }
 
 export function PageSettingsDangerZone(props: PageSettingsDangerZoneProps) {
-  const { deleteCluster, cluster } = props
+  const { deleteCluster } = props
   return (
     <div className="flex flex-col justify-between w-full">
       <div className="p-8 max-w-content-with-navigation-left">
         <BlockContentDelete
           title="Uninstall cluster"
           ctaLabel="Delete cluster"
-          callback={deleteCluster}
-          modalConfirmation={{
-            mode: EnvironmentModeEnum.PRODUCTION,
-            title: 'Uninstall cluster',
-            name: cluster?.name,
-          }}
+          customModalConfirmation={deleteCluster}
         />
       </div>
       <HelpSection
