@@ -32,8 +32,8 @@ export function PageGeneral(props: PageGeneralProps) {
               <div className="grid grid-cols-[min-content_1fr] gap-x-3 gap-y-1 p-3 border rounded border-neutral-250 text-xs text-neutral-350 bg-neutral-100">
                 <Icon className="row-span-2" name={IconAwesomeEnum.CIRCLE_INFO} />
                 <p>
-                  The number of past Completed or Failed job execution retained in the history can be customized in the
-                  advanced settings.
+                  The number of past Completed or Failed job execution retained in the history and their TTL can be
+                  customized in the advanced settings.
                 </p>
                 <ExternalLink
                   className="text-xs"
