@@ -1,9 +1,7 @@
 import { createQueryKeys, type inferQueryKeys } from '@lukemorales/query-key-factory'
 import {
   ContainerRegistriesApi,
-  type GitAuthProvider,
   type GitProviderEnum,
-  type GitRepository,
   OrganizationAccountGitRepositoriesApi,
   OrganizationMainCallsApi,
 } from 'qovery-typescript-axios'
@@ -39,7 +37,7 @@ export const organizations = createQueryKeys('organizations', {
     queryKey: [organizationId],
     async queryFn() {
       const response = await gitApi.getOrganizationGitProviderAccountTemp(organizationId)
-      return response.data as GitAuthProvider[]
+      return response.data.results
     },
   }),
   repositories: ({
@@ -56,15 +54,15 @@ export const organizations = createQueryKeys('organizations', {
       const repositories = await match(gitProvider)
         .with('GITHUB', async () => {
           const response = await gitApi.getOrganizationGithubRepositoriesTemp(organizationId, gitToken)
-          return response.data as GitRepository[]
+          return response.data.results
         })
         .with('GITLAB', async () => {
           const response = await gitApi.getOrganizationGitlabRepositoriesTemp(organizationId, gitToken)
-          return response.data as GitRepository[]
+          return response.data.results
         })
         .with('BITBUCKET', async () => {
           const response = await gitApi.getOrganizationBitbucketRepositoriesTemp(organizationId, gitToken)
-          return response.data as GitRepository[]
+          return response.data.results
         })
         .exhaustive()
 
