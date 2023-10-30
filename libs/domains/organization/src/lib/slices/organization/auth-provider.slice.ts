@@ -28,7 +28,7 @@ export const authProviderAdapter = createEntityAdapter<GitAuthProvider>({
  * @deprecated This should be migrated to the new `use-auth-providers` hook
  */
 export const fetchAuthProvider = createAsyncThunk('authProvider/fetch', async (payload: { organizationId: string }) => {
-  const response = await authProviderApi.getOrganizationGitProviderAccountTemp(payload.organizationId)
+  const response = await authProviderApi.getOrganizationGitProviderAccount(payload.organizationId)
   return response.data.results as GitAuthProvider[]
 })
 
