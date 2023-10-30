@@ -1,6 +1,7 @@
 import { EnvironmentModeEnum } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
+import { useRunningStatus } from '@qovery/domains/services/feature'
 import { isJob } from '@qovery/shared/enums'
 import { type ApplicationEntity } from '@qovery/shared/interfaces'
 import { CLUSTER_SETTINGS_RESOURCES_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
@@ -27,7 +28,8 @@ export interface ApplicationSettingsResourcesProps {
 export function ApplicationSettingsResources(props: ApplicationSettingsResourcesProps) {
   const { displayWarningCpu, application, minInstances = 1, maxInstances = 50, clusterId = '', environmentMode } = props
   const { control, watch } = useFormContext()
-  const { organizationId = '' } = useParams()
+  const { organizationId = '', environmentId = '', applicationId = '' } = useParams()
+  const { data: runningStatuses } = useRunningStatus({ environmentId, serviceId: applicationId })
 
   let maxMemoryBySize = application?.maximum_memory
 
@@ -132,10 +134,10 @@ export function ApplicationSettingsResources(props: ApplicationSettingsResources
             )}
           />
           <p className="text-neutral-350 text-xs mt-3">
-            {application?.instances?.items && (
+            {runningStatuses?.pods && (
               <span className="flex mb-1">
-                Current consumption: {application.instances.items.length} instance
-                {application.instances.items.length > 1 ? 's' : ''}
+                Current consumption: {runningStatuses.pods.length} instance
+                {runningStatuses.pods.length > 1 ? 's' : ''}
               </span>
             )}
             Application auto-scaling is based on real-time CPU consumption. When your app goes above 60% (default) of
