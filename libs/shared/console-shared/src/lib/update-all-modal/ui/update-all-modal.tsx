@@ -1,6 +1,7 @@
 import { type Environment } from 'qovery-typescript-axios'
-import { isGitSource } from '@qovery/shared/enums'
-import { type ApplicationEntity } from '@qovery/shared/interfaces'
+import { P, match } from 'ts-pattern'
+import { type OutdatedService } from '@qovery/domains/services/feature'
+import { ServiceTypeEnum, isGitSource } from '@qovery/shared/enums'
 import {
   Avatar,
   AvatarStyle,
@@ -17,7 +18,7 @@ import {
 } from '@qovery/shared/ui'
 
 export interface UpdateAllModalProps {
-  applications?: ApplicationEntity[]
+  services: OutdatedService[]
   environment?: Environment
   closeModal?: () => void
   submitDisabled?: boolean
@@ -28,12 +29,26 @@ export interface UpdateAllModalProps {
   unselectAll: () => void
   selectAll: () => void
   listLoading?: boolean
-  getAvatarForCommit: (application: ApplicationEntity, commitId?: string) => string | undefined
-  getNameForCommit: (application: ApplicationEntity, commitId?: string) => string | undefined
+  getAvatarForCommit: (service: OutdatedService, commitId?: string) => string | undefined
+  getNameForCommit: (service: OutdatedService, commitId?: string) => string | undefined
 }
 
-export function UpdateAllModal(props: UpdateAllModalProps) {
-  const isChecked = (serviceId: string) => props.selectedServiceIds.includes(serviceId)
+export function UpdateAllModal({
+  services,
+  selectedServiceIds,
+  environment,
+  selectAll,
+  unselectAll,
+  submitDisabled,
+  submitLoading,
+  onSubmit,
+  listLoading,
+  closeModal,
+  checkService,
+  getNameForCommit,
+  getAvatarForCommit,
+}: UpdateAllModalProps) {
+  const isChecked = (serviceId: string) => selectedServiceIds.includes(serviceId)
 
   return (
     <div className="p-6">
@@ -44,15 +59,14 @@ export function UpdateAllModal(props: UpdateAllModalProps) {
         <p>
           For{' '}
           <strong className="text-neutral-400 font-medium">
-            <Truncate truncateLimit={60} text={props.environment?.name || ''} />
+            <Truncate truncateLimit={60} text={environment?.name || ''} />
           </strong>
         </p>
 
-        {props.applications &&
-          props.applications.length > 0 &&
-          (props.selectedServiceIds.length > 0 ? (
+        {services.length > 0 &&
+          (selectedServiceIds.length > 0 ? (
             <ButtonLegacy
-              onClick={props.unselectAll}
+              onClick={unselectAll}
               dataTestId="deselect-all"
               size={ButtonLegacySize.TINY}
               style={ButtonLegacyStyle.STROKED}
@@ -61,7 +75,7 @@ export function UpdateAllModal(props: UpdateAllModalProps) {
             </ButtonLegacy>
           ) : (
             <ButtonLegacy
-              onClick={props.selectAll}
+              onClick={selectAll}
               dataTestId="select-all"
               size={ButtonLegacySize.TINY}
               style={ButtonLegacyStyle.STROKED}
@@ -70,26 +84,30 @@ export function UpdateAllModal(props: UpdateAllModalProps) {
             </ButtonLegacy>
           ))}
       </div>
-      {props.listLoading ? (
+      {listLoading ? (
         <LoaderSpinner className="mx-auto block" />
-      ) : props.applications && props.applications.length ? (
+      ) : services.length ? (
         <ScrollShadowWrapper className="max-h-[440px]">
           <ul>
-            {props.applications.map((application, index) => {
-              const gitRepository =
-                application.git_repository ??
-                (isGitSource(application.source) ? application.source.docker?.git_repository : undefined)
+            {services.map((application, index) => {
+              const gitRepository = match(application)
+                .with({ serviceType: ServiceTypeEnum.APPLICATION }, ({ git_repository }) => git_repository)
+                .with(
+                  { serviceType: ServiceTypeEnum.JOB, source: P.when(isGitSource) },
+                  ({ source }) => source.docker?.git_repository
+                )
+                .otherwise(() => undefined)
 
               return (
                 <li
                   data-testid="outdated-service-row"
-                  onClick={() => props.checkService(application.id)}
+                  onClick={() => checkService(application.id)}
                   key={application.id}
                   className={`${index === 0 ? 'rounded-t' : ''} ${
-                    props.applications && props.applications.length - 1 === index ? 'rounded-b !border-b' : ''
+                    services.length - 1 === index ? 'rounded-b !border-b' : ''
                   } border border-b-0  p-4 flex justify-between ${
                     isChecked(application.id) ? `bg-brand-50 border border-brand-500` : 'border-neutral-250'
-                  } ${props.applications && isChecked(props.applications[index - 1]?.id) && 'border-t-brand-500'}`}
+                  } ${services && isChecked(services[index - 1]?.id) && 'border-t-brand-500'}`}
                 >
                   <div className="text-neutral-400 font-medium flex">
                     <InputCheckbox
@@ -111,13 +129,13 @@ export function UpdateAllModal(props: UpdateAllModalProps) {
                         size={28}
                         className="mr-2"
                         style={AvatarStyle.STROKED}
-                        firstName={props.getNameForCommit(application, gitRepository?.deployed_commit_id) || 'Unknown'}
-                        url={props.getAvatarForCommit(application, gitRepository?.deployed_commit_id)}
+                        firstName={getNameForCommit(application, gitRepository?.deployed_commit_id) || 'Unknown'}
+                        url={getAvatarForCommit(application, gitRepository?.deployed_commit_id)}
                       />
                       <TagCommit withBackground commitId={gitRepository?.deployed_commit_id} />
                     </div>
                     <Icon name={IconAwesomeEnum.ARROW_LEFT} className="-scale-100 text-neutral-400 mx-2" />
-                    {application.commits?.items && (
+                    {application.commits && (
                       <div
                         data-testid="last-commit-block"
                         className={`flex items-center ${!isChecked(application.id) ? 'opacity-50' : ''}`}
@@ -127,10 +145,10 @@ export function UpdateAllModal(props: UpdateAllModalProps) {
                           size={28}
                           className="mr-2"
                           style={AvatarStyle.STROKED}
-                          firstName={application.commits?.items[0].author_name || ''}
-                          url={application.commits?.items[0].author_avatar_url || ''}
+                          firstName={application.commits[0].author_name || ''}
+                          url={application.commits[0].author_avatar_url || ''}
                         />
-                        <TagCommit withBackground commitId={application.commits?.items[0].git_commit_id} />
+                        <TagCommit withBackground commitId={application.commits[0].git_commit_id} />
                       </div>
                     )}
                   </div>
@@ -152,20 +170,20 @@ export function UpdateAllModal(props: UpdateAllModalProps) {
           className="btn--no-min-w"
           style={ButtonLegacyStyle.STROKED}
           size={ButtonLegacySize.XLARGE}
-          onClick={props.closeModal}
+          onClick={closeModal}
         >
           Cancel
         </ButtonLegacy>
         <ButtonLegacy
           dataTestId="submit-button"
-          disabled={props.selectedServiceIds.length === 0 || props.submitDisabled}
+          disabled={selectedServiceIds.length === 0 || submitDisabled}
           className="btn--no-min-w"
           type="submit"
           size={ButtonLegacySize.XLARGE}
-          onClick={props.onSubmit}
-          loading={props.submitLoading}
+          onClick={onSubmit}
+          loading={submitLoading}
         >
-          Update {props.selectedServiceIds.length} service{props.selectedServiceIds.length > 1 ? 's' : ''}
+          Update {selectedServiceIds.length} service{selectedServiceIds.length > 1 ? 's' : ''}
         </ButtonLegacy>
       </div>
     </div>

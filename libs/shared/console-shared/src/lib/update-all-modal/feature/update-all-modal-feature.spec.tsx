@@ -1,15 +1,20 @@
-import { act, getAllByTestId, getByTestId, render } from '__tests__/utils/setup-jest'
 import { type Commit } from 'qovery-typescript-axios'
 import * as environmentDomains from '@qovery/domains/environment'
+import { type OutdatedService } from '@qovery/domains/services/feature'
+import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { applicationFactoryMock } from '@qovery/shared/factories'
-import { type ApplicationEntity } from '@qovery/shared/interfaces'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import UpdateAllModalFeature, { type UpdateAllModalFeatureProps } from './update-all-modal-feature'
 
 const useActionDeployAllEnvironmentSpy = jest.spyOn(environmentDomains, 'useActionDeployAllEnvironment') as jest.Mock
 
-const mockApplications = applicationFactoryMock(3).map((app) => {
+const mockApplications = applicationFactoryMock(3).map((app): OutdatedService => {
   return {
     ...app,
+    environment: {
+      id: '1',
+    },
+    healthchecks: {},
     git_repository: {
       ...app.git_repository,
       url: '',
@@ -18,14 +23,12 @@ const mockApplications = applicationFactoryMock(3).map((app) => {
       deployed_commit_id: 'commit0',
       deployed_commit_tag: '',
     },
-    commits: {
-      loadingStatus: 'loaded',
-      items: [
-        { git_commit_id: 'commit1' } as Commit,
-        { git_commit_id: 'commit2' } as Commit,
-        { git_commit_id: 'commit3' } as Commit,
-      ],
-    },
+    serviceType: ServiceTypeEnum.APPLICATION,
+    commits: [
+      { git_commit_id: 'commit1' } as Commit,
+      { git_commit_id: 'commit2' } as Commit,
+      { git_commit_id: 'commit3' } as Commit,
+    ],
   }
 })
 
@@ -35,27 +38,17 @@ jest.mock('react-redux', () => ({
   useDispatch: () => mockDispatch,
 }))
 
-jest.mock('@qovery/domains/application', () => {
-  return {
-    ...jest.requireActual('@qovery/domains/application'),
-    editApplication: jest.fn(),
-    getApplicationsState: () => ({
-      loadingStatus: 'loaded',
-      ids: mockApplications.map((app) => app.id),
-      entities: mockApplications.reduce((acc, app) => {
-        acc[app.id] = app as ApplicationEntity
-        return acc
-      }, {} as Record<string, ApplicationEntity>),
-      error: null,
-    }),
-    applicationsLoadingStatus: () => 'loaded',
-    fetchApplications: () => mockApplications,
-    selectApplicationsEntitiesByEnvId: () => mockApplications,
-  }
-})
+jest.mock('@qovery/domains/services/feature', () => ({
+  useOutdatedServices: () => ({
+    data: mockApplications,
+    isLoading: false,
+    error: {},
+  }),
+}))
 
 describe('UpdateAllModalFeature', () => {
   const props: UpdateAllModalFeatureProps = {
+    organizationId: 'org1',
     environmentId: 'env1',
     projectId: 'project1',
   }
@@ -65,36 +58,30 @@ describe('UpdateAllModalFeature', () => {
   })
 
   it('should render successfully', () => {
-    const { baseElement } = render(<UpdateAllModalFeature {...props} />)
+    const { baseElement } = renderWithProviders(<UpdateAllModalFeature {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
   it('should postEnvironmentServicesUpdate have been called on submit with good payload', async () => {
-    const { baseElement } = render(<UpdateAllModalFeature {...props} />)
+    const { userEvent } = renderWithProviders(<UpdateAllModalFeature {...props} />)
 
-    const deselectAll = getByTestId(baseElement, 'deselect-all')
+    const deselectAll = screen.getByTestId('deselect-all')
 
-    await act(() => {
-      deselectAll.click()
-    })
+    await userEvent.click(deselectAll)
 
-    const firstRow = getAllByTestId(baseElement, 'outdated-service-row')[0]
+    const firstRow = screen.getAllByTestId('outdated-service-row')[0]
 
-    await act(() => {
-      firstRow.click()
-    })
+    await userEvent.click(firstRow)
 
-    const submitButton = getByTestId(baseElement, 'submit-button')
+    const submitButton = screen.getByTestId('submit-button')
 
-    await act(() => {
-      submitButton.click()
-    })
+    await userEvent.click(submitButton)
 
     expect(useActionDeployAllEnvironmentSpy().mutate).toHaveBeenCalledWith({
       applications: [
         {
           application_id: mockApplications[0].id,
-          git_commit_id: mockApplications[0].commits.items[0].git_commit_id,
+          git_commit_id: mockApplications[0].commits[0].git_commit_id,
         },
       ],
       jobs: [],

@@ -1,19 +1,10 @@
 import { type Commit, type DeployAllRequest } from 'qovery-typescript-axios'
-import { useCallback, useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import {
-  applicationsLoadingStatus,
-  fetchApplicationCommits,
-  fetchApplications,
-  selectApplicationsEntitiesByEnvId,
-} from '@qovery/domains/application'
 import { useActionDeployAllEnvironment, useFetchEnvironment } from '@qovery/domains/environment'
-import { getServiceType, isApplication, isGitJob, isGitSource, isJob } from '@qovery/shared/enums'
-import { type ApplicationEntity, type LoadingStatus } from '@qovery/shared/interfaces'
+import { type OutdatedService, useOutdatedServices } from '@qovery/domains/services/feature'
 import { ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { useModal } from '@qovery/shared/ui'
-import { type AppDispatch, type RootState } from '@qovery/state/store'
 import UpdateAllModal from '../ui/update-all-modal'
 
 export interface UpdateAllModalFeatureProps {
@@ -29,23 +20,8 @@ export function UpdateAllModalFeature(props: UpdateAllModalFeatureProps) {
 
   const { closeModal } = useModal()
   const navigate = useNavigate()
-  const dispatch: AppDispatch = useDispatch()
-  const applications = useSelector<RootState, ApplicationEntity[] | undefined>(
-    (state: RootState) => selectApplicationsEntitiesByEnvId(state, environmentId),
-    (a, b) => {
-      if (!a || !b) {
-        return false
-      }
-      return a.length === b.length && a.every((v, i) => v.commits?.loadingStatus === b[i].commits?.loadingStatus)
-    }
-  )
-  const appsLoadingStatus = useSelector<RootState, LoadingStatus | undefined>((state: RootState) =>
-    applicationsLoadingStatus(state)
-  )
-  const [outdatedApps, setOutdatedApps] = useState<ApplicationEntity[]>([])
-
+  const { data: outdatedServices = [], isLoading: isOutdatedServicesLoading } = useOutdatedServices({ environmentId })
   const [selectedServiceIds, setSelectedServiceIds] = useState<string[]>([])
-  const [listLoading, setListLoading] = useState<boolean>(true)
   const [submitButtonLoading, setSubmitButtonLoading] = useState<boolean>(false)
 
   const actionDeployAllEnvironments = useActionDeployAllEnvironment(
@@ -64,41 +40,6 @@ export function UpdateAllModalFeature(props: UpdateAllModalFeatureProps) {
     }
   }
 
-  useEffect(() => {
-    dispatch(fetchApplications({ environmentId }))
-  }, [dispatch, environmentId])
-
-  useEffect(() => {
-    if (appsLoadingStatus === 'loaded') {
-      applications?.forEach((application) => {
-        if (
-          (isApplication(application) || isGitJob(application)) &&
-          (!application.commits || application.commits.loadingStatus === 'not loaded')
-        ) {
-          dispatch(fetchApplicationCommits({ applicationId: application.id, serviceType: getServiceType(application) }))
-          setListLoading(true)
-        }
-      })
-    }
-  }, [applications, dispatch, appsLoadingStatus])
-
-  const isLoading = useCallback(() => {
-    let loading = true
-    if (applications && appsLoadingStatus === 'loaded') {
-      loading = false
-      applications.forEach((application) => {
-        if (
-          (isApplication(application) || isGitJob(application)) &&
-          (!application.commits || !['loaded', 'error'].includes(application.commits.loadingStatus ?? ''))
-        ) {
-          loading = true
-        }
-      })
-    }
-
-    return loading
-  }, [applications, appsLoadingStatus])
-
   const onSubmit = () => {
     if (selectedServiceIds.length > 0) {
       setSubmitButtonLoading(true)
@@ -106,24 +47,24 @@ export function UpdateAllModalFeature(props: UpdateAllModalFeatureProps) {
       const appsToUpdate: DeployAllRequest['applications'] = []
       const jobsToUpdate: DeployAllRequest['jobs'] = []
 
-      const servicesDictionary: Record<string, ApplicationEntity> = outdatedApps.reduce((acc, app) => {
-        acc[app.id] = app
+      const servicesDictionary = outdatedServices.reduce((acc, service) => {
+        acc[service.id] = service
         return acc
-      }, {} as Record<string, ApplicationEntity>)
+      }, {} as Record<string, OutdatedService>)
 
       selectedServiceIds.forEach((serviceId) => {
-        const app = servicesDictionary[serviceId]
-        if (isApplication(app)) {
+        const { serviceType, id, commits } = servicesDictionary[serviceId]
+        if (serviceType === 'APPLICATION') {
           appsToUpdate.push({
-            application_id: app.id,
-            git_commit_id: app.commits?.items ? app.commits?.items[0].git_commit_id : '',
+            application_id: id,
+            git_commit_id: commits[0]?.git_commit_id ?? '',
           })
         }
 
-        if (isJob(app)) {
+        if (serviceType === 'JOB') {
           jobsToUpdate.push({
-            id: app.id,
-            git_commit_id: app.commits?.items ? app.commits?.items[0].git_commit_id : '',
+            id,
+            git_commit_id: commits[0]?.git_commit_id ?? '',
           })
         }
       })
@@ -142,44 +83,30 @@ export function UpdateAllModalFeature(props: UpdateAllModalFeatureProps) {
   }
 
   const selectAll = () => {
-    setSelectedServiceIds(outdatedApps.map((app) => app.id))
+    setSelectedServiceIds(outdatedServices.map(({ id }) => id))
   }
 
   useEffect(() => {
-    // set outdated apps
-    if (applications) {
-      const outdatedApps = applications.filter((app) => {
-        if (!app.commits?.items) return false
-
-        const gitRepository =
-          app.git_repository ?? (isGitSource(app.source) ? app.source.docker?.git_repository : undefined)
-        if (!gitRepository) return false
-
-        return gitRepository.deployed_commit_id !== app.commits.items[0].git_commit_id
-      })
-      setOutdatedApps(outdatedApps)
-      setSelectedServiceIds(outdatedApps.map((app) => app.id))
-      setListLoading(isLoading())
+    if (!isOutdatedServicesLoading) {
+      selectAll()
     }
-  }, [applications, isLoading])
+  }, [isOutdatedServicesLoading])
 
-  const findCommitById = (application: ApplicationEntity, commitId?: string): Commit | undefined => {
-    if (!commitId || !application.commits?.items) return
-
-    return application.commits.items.find((commit) => commit.git_commit_id === commitId) as Commit
+  const findCommitById = (application: OutdatedService, commitId?: string): Commit | undefined => {
+    return application.commits.find((commit) => commit.git_commit_id === commitId) as Commit
   }
 
-  const getAvatarForCommit = (application: ApplicationEntity, commitId?: string): string | undefined => {
+  const getAvatarForCommit = (application: OutdatedService, commitId?: string): string | undefined => {
     return findCommitById(application, commitId)?.author_avatar_url
   }
 
-  const getNameForCommit = (application: ApplicationEntity, commitId?: string): string | undefined => {
+  const getNameForCommit = (application: OutdatedService, commitId?: string): string | undefined => {
     return findCommitById(application, commitId)?.author_name
   }
 
   return (
     <UpdateAllModal
-      applications={outdatedApps}
+      services={outdatedServices}
       environment={environment}
       closeModal={closeModal}
       onSubmit={onSubmit}
@@ -188,7 +115,7 @@ export function UpdateAllModalFeature(props: UpdateAllModalFeatureProps) {
       selectedServiceIds={selectedServiceIds}
       checkService={checkService}
       unselectAll={unselectAll}
-      listLoading={listLoading}
+      listLoading={isOutdatedServicesLoading}
       getAvatarForCommit={getAvatarForCommit}
       getNameForCommit={getNameForCommit}
       selectAll={selectAll}

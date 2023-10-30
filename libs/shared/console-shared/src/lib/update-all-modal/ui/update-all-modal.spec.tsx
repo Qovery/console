@@ -1,5 +1,6 @@
 import { act, getAllByTestId, getByTestId, render } from '__tests__/utils/setup-jest'
 import { type Commit } from 'qovery-typescript-axios'
+import { type OutdatedService } from '@qovery/domains/services/feature'
 import { applicationFactoryMock, environmentFactoryMock } from '@qovery/shared/factories'
 import UpdateAllModal, { type UpdateAllModalProps } from './update-all-modal'
 
@@ -9,18 +10,16 @@ const defaultProps: UpdateAllModalProps = {
   closeModal: jest.fn(),
   submitLoading: false,
   getNameForCommit: jest.fn(),
-  applications: applicationFactoryMock(3).map((app) => {
+  services: applicationFactoryMock(3).map((app) => {
     return {
       ...app,
-      commits: {
-        loadingStatus: 'loaded',
-        items: [
-          { git_commit_id: 'commit1' } as Commit,
-          { git_commit_id: 'commit2' } as Commit,
-          { git_commit_id: 'commit3' } as Commit,
-        ],
-      },
-    }
+      serviceType: 'APPLICATION' as const,
+      commits: [
+        { git_commit_id: 'commit1' } as Commit,
+        { git_commit_id: 'commit2' } as Commit,
+        { git_commit_id: 'commit3' } as Commit,
+      ],
+    } as OutdatedService
   }),
   unselectAll: jest.fn(),
   selectAll: jest.fn(),
@@ -55,7 +54,7 @@ describe('UpdateAllModal', () => {
   })
 
   it('should have 1 row checked', () => {
-    if (props.applications) props.selectedServiceIds = [props.applications[0].id]
+    if (props.services) props.selectedServiceIds = [props.services[0].id]
     const { baseElement } = render(<UpdateAllModal {...props} />)
 
     const firstRow = getAllByTestId(baseElement, 'outdated-service-row')[0]
@@ -63,7 +62,7 @@ describe('UpdateAllModal', () => {
   })
 
   it('should color border top if previous row is checked', () => {
-    if (props.applications) props.selectedServiceIds = [props.applications[0].id]
+    if (props.services) props.selectedServiceIds = [props.services[0].id]
     const { baseElement } = render(<UpdateAllModal {...props} />)
 
     const secondRow = getAllByTestId(baseElement, 'outdated-service-row')[1]
@@ -71,8 +70,8 @@ describe('UpdateAllModal', () => {
   })
 
   it('should check a row if click on the row', async () => {
-    if (props.applications) {
-      props.selectedServiceIds = [props.applications[0].id]
+    if (props.services) {
+      props.selectedServiceIds = [props.services[0].id]
       const { baseElement } = render(<UpdateAllModal {...props} />)
 
       const firstRow = getAllByTestId(baseElement, 'outdated-service-row')[0]
@@ -81,13 +80,13 @@ describe('UpdateAllModal', () => {
         firstRow.click()
       })
 
-      expect(props.checkService).toHaveBeenCalledWith(props.applications[0].id)
+      expect(props.checkService).toHaveBeenCalledWith(props.services[0].id)
     }
   })
 
   it('should not check a row if click is on commit tag', async () => {
-    if (props.applications) {
-      props.selectedServiceIds = [props.applications[0].id]
+    if (props.services) {
+      props.selectedServiceIds = [props.services[0].id]
       const { baseElement } = render(<UpdateAllModal {...props} />)
 
       const firstRow = getAllByTestId(baseElement, 'outdated-service-row')[0]
@@ -111,7 +110,7 @@ describe('UpdateAllModal', () => {
     })
     expect(props.selectAll).toHaveBeenCalled()
 
-    props.selectedServiceIds = props.applications?.map((app) => app.id) || []
+    props.selectedServiceIds = props.services?.map((app) => app.id) || []
     baseElement = render(<UpdateAllModal {...props} />).baseElement
 
     const deselectAll = getByTestId(baseElement, 'deselect-all')
@@ -122,8 +121,8 @@ describe('UpdateAllModal', () => {
   })
 
   it('should call submit all on click on the button', async () => {
-    if (props.applications) {
-      props.selectedServiceIds = [props.applications[0].id]
+    if (props.services) {
+      props.selectedServiceIds = [props.services[0].id]
       const { baseElement } = render(<UpdateAllModal {...props} />)
 
       const submitButton = getByTestId(baseElement, 'submit-button')
@@ -146,7 +145,7 @@ describe('UpdateAllModal', () => {
   })
 
   it('should display empty state', async () => {
-    props.applications = []
+    props.services = []
     props.listLoading = false
 
     const { baseElement } = render(<UpdateAllModal {...props} />)
@@ -155,7 +154,7 @@ describe('UpdateAllModal', () => {
   })
 
   it('should reduce opacity of commit blocks', () => {
-    if (props.applications) props.selectedServiceIds = [props.applications[0].id]
+    if (props.services) props.selectedServiceIds = [props.services[0].id]
     const { baseElement } = render(<UpdateAllModal {...props} />)
 
     const rows = getAllByTestId(baseElement, 'outdated-service-row')
