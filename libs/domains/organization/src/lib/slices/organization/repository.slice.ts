@@ -25,21 +25,21 @@ export const fetchRepository = createAsyncThunk(
         payload.organizationId,
         payload.gitToken
       )
-      return response.data as RepositoryEntity[]
+      return response.data.results as RepositoryEntity[]
     }
     if (payload.gitProvider === GitProviderEnum.GITLAB) {
       const response = await repositoryApi.getOrganizationGitlabRepositoriesTemp(
         payload.organizationId,
         payload.gitToken
       )
-      return response.data as RepositoryEntity[]
+      return response.data.results as RepositoryEntity[]
     }
     if (payload.gitProvider === GitProviderEnum.BITBUCKET) {
       const response = await repositoryApi.getOrganizationBitbucketRepositoriesTemp(
         payload.organizationId,
         payload.gitToken
       )
-      return response.data as RepositoryEntity[]
+      return response.data.results as RepositoryEntity[]
     }
 
     return Promise.all([])
