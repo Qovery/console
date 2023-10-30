@@ -3,7 +3,7 @@ import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { fetchClusterInfraLogs, selectClusterById } from '@qovery/domains/organization'
-import { displayClusterBanner } from '@qovery/pages/layout'
+import { displayClusterDeploymentBanner } from '@qovery/pages/layout'
 import { type ErrorLogsProps, LayoutLogs } from '@qovery/shared/console-shared'
 import { dateDifferenceMinutes } from '@qovery/shared/util-dates'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
@@ -63,7 +63,7 @@ export function PageInfraLogs() {
   )
 
   const clusterIsDeployed = cluster?.extendedStatus?.status?.is_deployed
-  const clusterBanner = cluster && displayClusterBanner(cluster.status) && !clusterIsDeployed
+  const clusterBanner = cluster && displayClusterDeploymentBanner(cluster.status) && !clusterIsDeployed
 
   return (
     <LayoutLogs
