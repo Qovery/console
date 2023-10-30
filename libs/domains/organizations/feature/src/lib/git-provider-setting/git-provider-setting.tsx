@@ -37,7 +37,6 @@ export function GitProviderSetting({ disabled }: GitProviderSettingProps) {
 
   const { data: authProviders = [] } = useAuthProviders({ organizationId, enabled: !disabled })
   const { data: gitTokens = [] } = useGitTokens({ organizationId, enabled: !disabled })
-
   const watchFieldProvider = watch('provider')
 
   const providerOptions = disabled
