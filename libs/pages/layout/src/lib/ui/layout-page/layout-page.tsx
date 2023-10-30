@@ -45,7 +45,7 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
   const clusterBanner =
     !matchLogInfraRoute && clusters && displayClusterDeploymentBanner(clusters?.[0]?.status) && !clusterIsDeployed
 
-  const clusterCredentialError = !matchLogInfraRoute && displayClusterCredentialErrorBanner(clusters)
+  const clusterCredentialError = Boolean(!matchLogInfraRoute && displayClusterCredentialErrorBanner(clusters))
 
   return (
     <>
@@ -53,10 +53,7 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
       <main className="dark:bg-neutral-900 dark:h-full bg-neutral-200">
         <div className="flex">
           <div className="h-full sticky top-0 z-30">
-            <Navigation
-              defaultOrganizationId={defaultOrganizationId}
-              clusterNotification={!!displayClusterCredentialErrorBanner}
-            />
+            <Navigation defaultOrganizationId={defaultOrganizationId} clusterNotification={clusterCredentialError} />
           </div>
           <div className="w-full">
             {topBar && <TopBar />}
