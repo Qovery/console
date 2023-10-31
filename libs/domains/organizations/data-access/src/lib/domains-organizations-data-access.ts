@@ -1,4 +1,4 @@
-import { createQueryKeys, type inferQueryKeys } from '@lukemorales/query-key-factory'
+import { createQueryKeys } from '@lukemorales/query-key-factory'
 import {
   ContainerRegistriesApi,
   type GitProviderEnum,
@@ -32,41 +32,6 @@ export const organizations = createQueryKeys('organizations', {
     async queryFn() {
       const response = await organizationApi.listOrganizationGitTokens(organizationId)
       return response.data.results
-    },
-  }),
-  createGitToken: ({
-    organizationId,
-    gitTokenRequest,
-  }: {
-    organizationId: string
-    gitTokenRequest: GitTokenRequest
-  }) => ({
-    queryKey: [organizationId],
-    async queryFn() {
-      const response = await organizationApi.createGitToken(organizationId, gitTokenRequest)
-      return response.data
-    },
-  }),
-  editGitToken: ({
-    organizationId,
-    gitTokenId,
-    gitTokenRequest,
-  }: {
-    organizationId: string
-    gitTokenId: string
-    gitTokenRequest: GitTokenRequest
-  }) => ({
-    queryKey: [organizationId],
-    async queryFn() {
-      const response = await organizationApi.editGitToken(organizationId, gitTokenId, gitTokenRequest)
-      return response.data
-    },
-  }),
-  deleteGitToken: ({ organizationId, gitTokenId }: { organizationId: string; gitTokenId: string }) => ({
-    queryKey: [organizationId],
-    async queryFn() {
-      const response = await organizationApi.deleteGitToken(organizationId, gitTokenId)
-      return response.data
     },
   }),
   authProviders: ({ organizationId }: { organizationId: string }) => ({
@@ -138,4 +103,32 @@ export const organizations = createQueryKeys('organizations', {
   }),
 })
 
-export type OrganizationsKeys = inferQueryKeys<typeof organizations>
+export const mutations = {
+  async deleteGitToken({ organizationId, gitTokenId }: { organizationId: string; gitTokenId: string }) {
+    const response = await organizationApi.deleteGitToken(organizationId, gitTokenId)
+    return response.data
+  },
+  async editGitToken({
+    organizationId,
+    gitTokenId,
+    gitTokenRequest,
+  }: {
+    organizationId: string
+    gitTokenId: string
+    gitTokenRequest: GitTokenRequest
+  }) {
+    const response = await organizationApi.editGitToken(organizationId, gitTokenId, gitTokenRequest)
+    return response.data
+  },
+  async createGitToken({
+    organizationId,
+    gitTokenRequest,
+  }: {
+    organizationId: string
+    gitTokenRequest: GitTokenRequest
+  }) {
+    console.log(organizationId)
+    const response = await organizationApi.createGitToken(organizationId, gitTokenRequest)
+    return response.data
+  },
+}

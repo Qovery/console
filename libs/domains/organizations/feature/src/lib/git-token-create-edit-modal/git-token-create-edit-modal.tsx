@@ -1,57 +1,106 @@
+import { GitProviderEnum, type GitTokenResponse } from 'qovery-typescript-axios'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
-import { ExternalLink, InputSelect, InputText, InputTextArea, ModalCrud } from '@qovery/shared/ui'
+import { ExternalLink, Icon, InputSelect, InputText, InputTextArea, ModalCrud } from '@qovery/shared/ui'
+import { upperCaseFirstLetter } from '@qovery/shared/util-js'
+import useCreateGitToken from '../hooks/use-create-git-token/use-create-git-token'
+import useEditGitToken from '../hooks/use-edit-git-token/use-edit-git-token'
 
 export interface GitTokenCreateEditModalProps {
-  isEdit?: boolean
   onClose: () => void
+  organizationId: string
+  isEdit?: boolean
+  gitToken?: GitTokenResponse
 }
 
-export function GitTokenCreateEditModal({ isEdit, onClose }: GitTokenCreateEditModalProps) {
+export function GitTokenCreateEditModal({ isEdit, gitToken, organizationId, onClose }: GitTokenCreateEditModalProps) {
   const methods = useForm({
-    defaultValues: {
-      kind: '',
-      name: '',
-      description: '',
-    },
     mode: 'onChange',
+    defaultValues: {
+      type: gitToken?.type ?? GitProviderEnum.GITHUB,
+      name: gitToken?.name ?? '',
+      description: gitToken?.description ?? '',
+      token: '',
+    },
+  })
+
+  const { mutateAsync: editGitToken } = useEditGitToken({ organizationId })
+  const { mutateAsync: createGitToken } = useCreateGitToken({ organizationId })
+
+  const onSubmit = methods.handleSubmit(async () => {
+    if (isEdit) {
+      try {
+        await editGitToken({
+          organizationId,
+          gitTokenId: gitToken?.id ?? '',
+          gitTokenRequest: methods.getValues(),
+        })
+        onClose()
+      } catch (error) {
+        console.error(error)
+      }
+    } else {
+      try {
+        await createGitToken({
+          organizationId,
+          gitTokenRequest: methods.getValues(),
+        })
+        onClose()
+      } catch (error) {
+        console.error(error)
+      }
+    }
   })
 
   return (
-    <ModalCrud
-      title={isEdit ? 'Edit git token' : 'Set container registry'}
-      onClose={onClose}
-      onSubmit={() => {}}
-      howItWorks={
-        <>
-          <p>
-            Connect your private container registry to directly deploy your images. You can also access public container
-            registries like DockerHub or AWS ECR. If the registry you need is not in the list and it supports the docker
-            login format you can use the “Generic” registry.
-          </p>
-          <ExternalLink
-            className="mt-2"
-            href="https://hub.qovery.com/docs/using-qovery/configuration/organization/container-registry/"
-          >
-            More information here
-          </ExternalLink>
-        </>
-      }
-    >
-      <FormProvider {...methods}>
+    <FormProvider {...methods}>
+      <ModalCrud
+        title={isEdit ? 'Edit git token' : 'Add git token'}
+        onClose={onClose}
+        onSubmit={onSubmit}
+        howItWorks={
+          <>
+            <p>
+              Git tokens allow Qovery to access any git repository within your git organization. By default Qovery uses
+              your own git account to retrieve the access but if you want to manage the accesses in a centralized way,
+              create dedicated git tokens.
+            </p>
+            <p>How to configure it:</p>
+            <ol className="list-disc ml-3 mb-2">
+              <li>
+                Create a token within your git account (procedures depends on the git provider, see linked
+                documentation)
+              </li>
+              <li>Add the token within this page</li>
+              <li>
+                When creating an application from a git provider, select the git token you want to use to access the
+                repository.
+              </li>
+            </ol>
+            <p className="mb-2">A workspace is necessary for bitbucket tokens</p>
+            <ExternalLink href="https://hub.qovery.com/docs/using-qovery/configuration/organization/container-registry/">
+              Documentation
+            </ExternalLink>
+          </>
+        }
+      >
         <Controller
-          name="kind"
+          name="type"
           control={methods.control}
           rules={{
-            required: 'Please enter a registry type.',
+            required: 'Please enter a git type.',
           }}
           render={({ field, fieldState: { error } }) => (
             <div className="mb-5">
               <InputSelect
+                label="Type"
                 onChange={field.onChange}
                 value={field.value}
-                label="Type"
                 error={error?.message}
-                options={[]}
+                options={Object.keys(GitProviderEnum).map((key) => ({
+                  label: upperCaseFirstLetter(key),
+                  value: key,
+                  icon: <Icon name={key} width="16px" height="16px" />,
+                }))}
                 portal
               />
             </div>
@@ -61,16 +110,15 @@ export function GitTokenCreateEditModal({ isEdit, onClose }: GitTokenCreateEditM
           name="name"
           control={methods.control}
           rules={{
-            required: 'Please enter a registry name.',
+            required: 'Please enter a token name.',
           }}
           render={({ field, fieldState: { error } }) => (
             <InputText
-              dataTestId="input-name"
               className="mb-5"
+              label="Token name"
               name={field.name}
               onChange={field.onChange}
               value={field.value}
-              label="Registry name"
               error={error?.message}
             />
           )}
@@ -81,16 +129,33 @@ export function GitTokenCreateEditModal({ isEdit, onClose }: GitTokenCreateEditM
           render={({ field, fieldState: { error } }) => (
             <InputTextArea
               className="mb-5"
+              label="Description"
               name={field.name}
               onChange={field.onChange}
               value={field.value}
-              label="Description"
               error={error?.message}
             />
           )}
         />
-      </FormProvider>
-    </ModalCrud>
+        <Controller
+          name="token"
+          control={methods.control}
+          rules={{
+            required: 'Please enter a token vakue.',
+          }}
+          render={({ field, fieldState: { error } }) => (
+            <InputText
+              className="mb-5"
+              label="Token value"
+              name={field.name}
+              onChange={field.onChange}
+              value={field.value}
+              error={error?.message}
+            />
+          )}
+        />
+      </ModalCrud>
+    </FormProvider>
   )
 }
 

@@ -1,9 +1,11 @@
 import { type GitAuthProvider } from 'qovery-typescript-axios'
-import { ListGitTokens } from '@qovery/domains/organizations/feature'
+import { useParams } from 'react-router-dom'
+import { GitTokenCreateEditModal, ListGitTokens } from '@qovery/domains/organizations/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import { type RepositoryEntity } from '@qovery/shared/interfaces'
 import {
   BlockContent,
+  Button,
   ButtonLegacy,
   ButtonLegacySize,
   ButtonLegacyStyle,
@@ -14,6 +16,7 @@ import {
   IconAwesomeEnum,
   LoaderSpinner,
   Section,
+  useModal,
 } from '@qovery/shared/ui'
 
 export interface PageOrganizationGithubRepositoryAccessProps {
@@ -28,11 +31,14 @@ export interface PageOrganizationGithubRepositoryAccessProps {
 }
 
 export function PageOrganizationGithubRepositoryAccess(props: PageOrganizationGithubRepositoryAccessProps) {
+  const { openModal, closeModal } = useModal()
+  const { organizationId = '' } = useParams()
+
   return (
     <Section className="flex flex-col justify-between w-full">
       <div className="p-8 max-w-content-with-navigation-left">
         <div className="flex justify-between mb-8">
-          <div>
+          <div className="mr-5">
             <Heading className="mb-2">Github Repository Access</Heading>
             <p className="text-neutral-400 text-xs">
               By default Qovery has access to all the repositories linked to your git account. If you want to give
@@ -40,6 +46,19 @@ export function PageOrganizationGithubRepositoryAccess(props: PageOrganizationGi
               token.
             </p>
           </div>
+          <Button
+            onClick={() => {
+              openModal({
+                content: <GitTokenCreateEditModal organizationId={organizationId} onClose={closeModal} />,
+              })
+            }}
+          >
+            Add new token
+            <Icon name={IconAwesomeEnum.CIRCLE_PLUS} className="ml-2" />
+          </Button>
+          {/* <ButtonLegacy onClick={() => console.log('hello')} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>
+            Add registry
+          </ButtonLegacy> */}
         </div>
         <ListGitTokens />
 

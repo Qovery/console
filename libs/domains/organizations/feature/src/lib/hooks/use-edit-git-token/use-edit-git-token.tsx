@@ -1,16 +1,26 @@
-import { useQuery } from '@tanstack/react-query'
-import { type GitTokenRequest } from 'qovery-typescript-axios'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { mutations } from '@qovery/domains/organizations/data-access'
 import { queries } from '@qovery/state/util-queries'
 
 export interface UseEditGitTokenProps {
   organizationId: string
-  gitTokenId: string
-  gitTokenRequest: GitTokenRequest
 }
 
-export function useEditGitToken({ organizationId, gitTokenId, gitTokenRequest }: UseEditGitTokenProps) {
-  return useQuery({
-    ...queries.organizations.editGitToken({ organizationId, gitTokenId, gitTokenRequest }),
+export function useEditGitToken({ organizationId }: UseEditGitTokenProps) {
+  const queryClient = useQueryClient()
+
+  return useMutation(mutations.editGitToken, {
+    onSuccess() {
+      queryClient.invalidateQueries({
+        queryKey: queries.organizations.gitTokens({ organizationId }).queryKey,
+      })
+    },
+    meta: {
+      notifyOnSuccess: {
+        title: 'Your Git token is being edited',
+      },
+      notifyOnError: true,
+    },
   })
 }
 

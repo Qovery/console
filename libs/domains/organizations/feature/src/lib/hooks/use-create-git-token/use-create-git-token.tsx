@@ -1,15 +1,26 @@
-import { useQuery } from '@tanstack/react-query'
-import { type GitTokenRequest } from 'qovery-typescript-axios'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { mutations } from '@qovery/domains/organizations/data-access'
 import { queries } from '@qovery/state/util-queries'
 
 export interface UseCreateGitTokenProps {
   organizationId: string
-  gitTokenRequest: GitTokenRequest
 }
 
-export function useCreateGitToken({ organizationId, gitTokenRequest }: UseCreateGitTokenProps) {
-  return useQuery({
-    ...queries.organizations.createGitToken({ organizationId, gitTokenRequest }),
+export function useCreateGitToken({ organizationId }: UseCreateGitTokenProps) {
+  const queryClient = useQueryClient()
+
+  return useMutation(mutations.createGitToken, {
+    onSuccess() {
+      queryClient.invalidateQueries({
+        queryKey: queries.organizations.gitTokens({ organizationId }).queryKey,
+      })
+    },
+    meta: {
+      notifyOnSuccess: {
+        title: 'Your Git token is being created',
+      },
+      notifyOnError: true,
+    },
   })
 }
 
