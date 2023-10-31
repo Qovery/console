@@ -20,11 +20,13 @@ export function GitTokenCreateEditModal({ isEdit, gitToken, organizationId, onCl
       name: gitToken?.name ?? '',
       description: gitToken?.description ?? '',
       token: '',
+      workspace: gitToken?.workspace ?? '',
     },
   })
 
-  const { mutateAsync: editGitToken } = useEditGitToken({ organizationId })
-  const { mutateAsync: createGitToken } = useCreateGitToken({ organizationId })
+  const { mutateAsync: editGitToken, isLoading: isLoadingEditGitToken } = useEditGitToken({ organizationId })
+  const { mutateAsync: createGitToken, isLoading: isLoadingCreateGitToken } = useCreateGitToken({ organizationId })
+  const gitType = methods.watch('type')
 
   const onSubmit = methods.handleSubmit(async () => {
     if (isEdit) {
@@ -57,6 +59,7 @@ export function GitTokenCreateEditModal({ isEdit, gitToken, organizationId, onCl
         title={isEdit ? 'Edit git token' : 'Add git token'}
         onClose={onClose}
         onSubmit={onSubmit}
+        loading={isLoadingEditGitToken || isLoadingCreateGitToken}
         howItWorks={
           <>
             <p>
@@ -141,7 +144,7 @@ export function GitTokenCreateEditModal({ isEdit, gitToken, organizationId, onCl
           name="token"
           control={methods.control}
           rules={{
-            required: 'Please enter a token vakue.',
+            required: 'Please enter a token value.',
           }}
           render={({ field, fieldState: { error } }) => (
             <InputText
@@ -154,6 +157,25 @@ export function GitTokenCreateEditModal({ isEdit, gitToken, organizationId, onCl
             />
           )}
         />
+        {gitType === GitProviderEnum.BITBUCKET && (
+          <Controller
+            name="workspace"
+            control={methods.control}
+            rules={{
+              required: 'Please enter a correct workspace.',
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <InputText
+                className="mb-5"
+                label="Workspace"
+                name={field.name}
+                onChange={field.onChange}
+                value={field.value}
+                error={error?.message}
+              />
+            )}
+          />
+        )}
       </ModalCrud>
     </FormProvider>
   )
