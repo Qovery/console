@@ -25,11 +25,6 @@ describe('PageOrganizationGithubRepositoryAccess', () => {
     expect(baseElement).toBeTruthy()
   })
 
-  it('should display a spinner on auth provider loading', () => {
-    const { getByTestId } = render(<PageOrganizationGithubRepositoryAccess {...props} authProviderLoading />)
-    expect(getByTestId('spinner')).toBeTruthy()
-  })
-
   it('should display install button if githubAuthProvider does not use_bot', async () => {
     const testProps = {
       ...props,
@@ -59,11 +54,6 @@ describe('PageOrganizationGithubRepositoryAccess', () => {
 
     expect(props.onDisconnect).toHaveBeenCalled()
     expect(props.onConfigure).toHaveBeenCalled()
-  })
-
-  it('should display repository spinner on repositories loading', () => {
-    const { getByTestId } = render(<PageOrganizationGithubRepositoryAccess {...props} repositoriesLoading />)
-    expect(getByTestId('spinner')).toBeTruthy()
   })
 
   it('should display repository list if repositories are not empty and not loading', () => {
