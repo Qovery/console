@@ -1,16 +1,9 @@
-import { type EnvironmentStatus, type Status } from 'qovery-typescript-axios'
+import { type EnvironmentStatus, type EnvironmentStatusesWithStages } from 'qovery-typescript-axios'
 import { type ServiceStatusDto } from 'qovery-ws-typescript-axios'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
 import { queries } from '@qovery/state/util-queries'
 
-interface WSDeploymentStatus {
-  environment: EnvironmentStatus
-  stages: {
-    applications: Status[]
-    containers: Status[]
-    databases: Status[]
-    jobs: Status[]
-  }[]
+interface WSDeploymentStatus extends EnvironmentStatusesWithStages {
   // WS return results if we didn't set an environmentId
   results?: EnvironmentStatus[]
 }
@@ -42,13 +35,18 @@ export function useStatusWebSockets({
     enabled: Boolean(organizationId) && Boolean(clusterId) && Boolean(projectId),
     onMessage(queryClient, message: WSDeploymentStatus) {
       if (environmentId) {
-        const environmentId = message.environment.id
         queryClient.setQueryData(
           queries.environments.deploymentStatus(environmentId).queryKey,
           () => message.environment
         )
         for (const stage of message.stages ?? []) {
-          const services = [...stage.applications, ...stage.containers, ...stage.databases, ...stage.jobs]
+          const services = [
+            ...(stage.applications ?? []),
+            ...(stage.containers ?? []),
+            ...(stage.databases ?? []),
+            ...(stage.jobs ?? []),
+            ...(stage.helms ?? []),
+          ]
           for (const serviceDeploymentStatus of services) {
             queryClient.setQueryData(
               queries.services.deploymentStatus(environmentId, serviceDeploymentStatus.id).queryKey,
