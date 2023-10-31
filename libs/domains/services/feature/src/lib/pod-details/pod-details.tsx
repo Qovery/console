@@ -48,7 +48,7 @@ export function PodDetails({ pod: { containers = [], service_version }, serviceI
         to={ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + SERVICE_LOGS_URL(serviceId)}
         className="absolute top-2 right-2"
       >
-        <Button type="button" color="neutral" variant="surface" className="gap-2">
+        <Button type="button" size="sm" color="neutral" variant="surface" className="gap-2">
           Logs
           <Icon name={IconAwesomeEnum.SCROLL} />
         </Button>
