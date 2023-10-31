@@ -9,8 +9,8 @@ import {
   ButtonLegacy,
   ButtonLegacySize,
   ButtonLegacyStyle,
+  Callout,
   ExternalLink,
-  Heading,
   HelpSection,
   Icon,
   IconAwesomeEnum,
@@ -39,7 +39,8 @@ export function PageOrganizationGithubRepositoryAccess(props: PageOrganizationGi
       <div className="p-8 max-w-content-with-navigation-left">
         <div className="flex justify-between mb-8">
           <div className="mr-5">
-            <Heading className="mb-2">Github Repository Access</Heading>
+            {/* TODO: Fix need to use <Heading /> component */}
+            <h1 className="h5 text-neutral-400 mb-2">Github Repository Access</h1>
             <p className="text-neutral-400 text-xs">
               By default Qovery has access to all the repositories linked to your git account. If you want to give
               Qovery access to additional repositories and manage the access from one place, you can configure a git
@@ -56,18 +57,22 @@ export function PageOrganizationGithubRepositoryAccess(props: PageOrganizationGi
             Add new token
             <Icon name={IconAwesomeEnum.CIRCLE_PLUS} className="ml-2" />
           </Button>
-          {/* <ButtonLegacy onClick={() => console.log('hello')} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>
-            Add registry
-          </ButtonLegacy> */}
         </div>
         <ListGitTokens />
 
         <Section>
-          <Heading className="mb-2">Qovery GitHub App</Heading>
+          {/* TODO: Fix need to use <Heading /> component */}
+          <h2 className="h5 text-neutral-400 mb-2">Qovery GitHub App</h2>
           <p className="text-neutral-400 text-xs mb-8">
             By default Qovery has access to all your repositories. If you are using Github, you can restrict the Qovery
             accesses by installing the Qovery Github App on your GitHub organization.
           </p>
+          <Callout.Root className="text-xs mb-5" color="yellow">
+            <Callout.Icon>
+              <Icon name={IconAwesomeEnum.CIRCLE_INFO} />
+            </Callout.Icon>
+            <Callout.Text>The Qovery GitHub app is being deprecated, please use the Git tokens.</Callout.Text>
+          </Callout.Root>
 
           <BlockContent title="Qovery Github application installation status">
             {props.authProviderLoading || props.forceLoading ? (
@@ -145,7 +150,7 @@ export function PageOrganizationGithubRepositoryAccess(props: PageOrganizationGi
         links={[
           {
             link: 'https://hub.qovery.com/docs/using-qovery/configuration/organization/git-repository-access',
-            linkLabel: 'Managing Git Permissions Using the Qovery Github application',
+            linkLabel: 'How to configure the git repository access',
           },
         ]}
       />

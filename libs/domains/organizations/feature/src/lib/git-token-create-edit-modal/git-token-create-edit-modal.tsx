@@ -19,8 +19,8 @@ export function GitTokenCreateEditModal({ isEdit, gitToken, organizationId, onCl
       type: gitToken?.type ?? GitProviderEnum.GITHUB,
       name: gitToken?.name ?? '',
       description: gitToken?.description ?? '',
+      workspace: gitToken?.workspace ?? undefined,
       token: '',
-      workspace: gitToken?.workspace ?? '',
     },
   })
 
@@ -60,6 +60,7 @@ export function GitTokenCreateEditModal({ isEdit, gitToken, organizationId, onCl
         onClose={onClose}
         onSubmit={onSubmit}
         loading={isLoadingEditGitToken || isLoadingCreateGitToken}
+        isEdit={isEdit}
         howItWorks={
           <>
             <p>
@@ -96,7 +97,10 @@ export function GitTokenCreateEditModal({ isEdit, gitToken, organizationId, onCl
             <div className="mb-5">
               <InputSelect
                 label="Type"
-                onChange={field.onChange}
+                onChange={(event) => {
+                  field.onChange(event)
+                  methods.setValue('workspace', undefined)
+                }}
                 value={field.value}
                 error={error?.message}
                 options={Object.keys(GitProviderEnum).map((key) => ({

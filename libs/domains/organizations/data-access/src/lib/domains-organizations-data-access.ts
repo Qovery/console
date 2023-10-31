@@ -127,7 +127,6 @@ export const mutations = {
     organizationId: string
     gitTokenRequest: GitTokenRequest
   }) {
-    console.log(organizationId)
     const response = await organizationApi.createGitToken(organizationId, gitTokenRequest)
     return response.data
   },

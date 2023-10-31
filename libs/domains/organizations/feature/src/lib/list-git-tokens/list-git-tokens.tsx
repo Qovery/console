@@ -4,6 +4,7 @@ import {
   Button,
   Icon,
   IconAwesomeEnum,
+  LoaderSpinner,
   Tooltip,
   Truncate,
   useModal,
@@ -18,79 +19,85 @@ export function ListGitTokens() {
   const { organizationId = '' } = useParams()
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
-  const { data: gitTokens } = useGitTokens({ organizationId })
+  const { data: gitTokens, isFetched: isFetchedGitTokens } = useGitTokens({ organizationId })
   const { mutate: deleteToken } = useDeleteGitToken({ organizationId })
 
   return (
     <BlockContent title="Git tokens" classNameContent="p-0">
-      <ul>
-        {gitTokens?.map((gitToken) => (
-          <li
-            key={gitToken.id}
-            className="flex justify-between items-center px-5 py-4 border-b border-neutral-250 last:border-0"
-          >
-            <div className="flex">
-              <Icon name={gitToken.type} width="20" height="20" />
-              <div className="ml-4">
-                <h2 className="flex text-xs text-neutral-400 font-medium mb-1">
-                  <Truncate truncateLimit={60} text={gitToken.name ?? ''} />
-                  {gitToken.description && (
-                    <Tooltip content={gitToken.description}>
-                      <div className="ml-1 cursor-pointer">
-                        <Icon name={IconAwesomeEnum.CIRCLE_INFO} className="text-neutral-350" />
-                      </div>
-                    </Tooltip>
-                  )}
-                </h2>
-                <p className="text-xs text-neutral-350">
-                  <span className="inline-block">Last updated {timeAgo(new Date(gitToken.updated_at ?? ''))}</span>
-                  <span className="inline-block ml-3">
-                    Created since {dateYearMonthDayHourMinuteSecond(new Date(gitToken.created_at ?? ''), false)}
-                  </span>
-                  {gitToken.expired_at && (
+      {!isFetchedGitTokens ? (
+        <div className="flex justify-center p-5">
+          <LoaderSpinner className="w-5" />
+        </div>
+      ) : (
+        <ul>
+          {gitTokens?.map((gitToken) => (
+            <li
+              key={gitToken.id}
+              className="flex justify-between items-center px-5 py-4 border-b border-neutral-250 last:border-0"
+            >
+              <div className="flex">
+                <Icon name={gitToken.type} width="20" height="20" />
+                <div className="ml-4">
+                  <h2 className="flex text-xs text-neutral-400 font-medium mb-1">
+                    <Truncate truncateLimit={60} text={gitToken.name ?? ''} />
+                    {gitToken.description && (
+                      <Tooltip content={gitToken.description}>
+                        <div className="ml-1 cursor-pointer">
+                          <Icon name={IconAwesomeEnum.CIRCLE_INFO} className="text-neutral-350" />
+                        </div>
+                      </Tooltip>
+                    )}
+                  </h2>
+                  <p className="text-xs text-neutral-350">
+                    <span className="inline-block">Last updated {timeAgo(new Date(gitToken.updated_at ?? ''))}</span>
                     <span className="inline-block ml-3">
-                      Expiration: {dateYearMonthDayHourMinuteSecond(new Date(gitToken.expired_at ?? ''), false)}
+                      Created since {dateYearMonthDayHourMinuteSecond(new Date(gitToken.created_at ?? ''), false)}
                     </span>
-                  )}
-                </p>
+                    {gitToken.expired_at && (
+                      <span className="inline-block ml-3">
+                        Expiration: {dateYearMonthDayHourMinuteSecond(new Date(gitToken.expired_at ?? ''), false)}
+                      </span>
+                    )}
+                  </p>
+                </div>
               </div>
-            </div>
-            <div>
-              <Button
-                variant="surface"
-                className="mr-2"
-                onClick={() => {
-                  openModal({
-                    content: (
-                      <GitTokenCreateEditModal
-                        isEdit
-                        gitToken={gitToken}
-                        organizationId={organizationId}
-                        onClose={closeModal}
-                      />
-                    ),
-                  })
-                }}
-              >
-                <Icon name={IconAwesomeEnum.WHEEL} />
-              </Button>
-              <Button
-                variant="surface"
-                onClick={() => {
-                  openModalConfirmation({
-                    title: 'Delete git token',
-                    isDelete: true,
-                    name: gitToken?.name,
-                    action: () => deleteToken({ organizationId, gitTokenId: gitToken.id }),
-                  })
-                }}
-              >
-                <Icon name={IconAwesomeEnum.TRASH} />
-              </Button>
-            </div>
-          </li>
-        ))}
-      </ul>
+              <div>
+                <Button
+                  variant="surface"
+                  className="mr-2"
+                  onClick={() => {
+                    openModal({
+                      content: (
+                        <GitTokenCreateEditModal
+                          isEdit
+                          gitToken={gitToken}
+                          organizationId={organizationId}
+                          onClose={closeModal}
+                        />
+                      ),
+                    })
+                  }}
+                >
+                  <Icon name={IconAwesomeEnum.WHEEL} />
+                </Button>
+                <Button
+                  variant="surface"
+                  onClick={() => {
+                    openModalConfirmation({
+                      title: 'Delete git token',
+                      isDelete: true,
+                      name: gitToken?.name,
+                      action: () => deleteToken({ organizationId, gitTokenId: gitToken.id }),
+                    })
+                  }}
+                >
+                  <Icon name={IconAwesomeEnum.TRASH} />
+                </Button>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
     </BlockContent>
   )
 }
