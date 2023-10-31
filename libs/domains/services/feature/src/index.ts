@@ -1,4 +1,5 @@
 export * from './lib/auto-deploy-setting/auto-deploy-setting'
+export * from './lib/hooks/use-commits/use-commits'
 export * from './lib/hooks/use-create-deployment-restriction/use-create-deployment-restriction'
 export * from './lib/hooks/use-delete-deployment-restriction/use-delete-deployment-restriction'
 export * from './lib/hooks/use-deployment-restrictions/use-deployment-restrictions'
