@@ -4,7 +4,7 @@ exports[`Button should match snapshot 1`] = `
 <body>
   <div>
     <button
-      class="inline-flex items-center shrink-0 font-medium rounded transition text-sm h-9 px-3 bg-brand-500 hover:bg-brand-600 text-white"
+      class="inline-flex items-center shrink-0 font-medium rounded transition text-sm h-7 px-2 bg-brand-500 hover:bg-brand-600 text-white"
       type="button"
     >
       Foobar
