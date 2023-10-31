@@ -65,23 +65,3 @@ export const postClusterActionsStop = createAsyncThunk(
     }
   }
 )
-
-export const deleteClusterAction = createAsyncThunk(
-  'clusterActions/delete',
-  async (data: { organizationId: string; clusterId: string }, { dispatch }) => {
-    try {
-      const response = await clusterApi.deleteCluster(data.organizationId, data.clusterId)
-      if (response.status === 204 || response.status === 200) {
-        // refetch status after update
-        await dispatch(fetchClusterStatus({ organizationId: data.organizationId, clusterId: data.clusterId }))
-
-        // success message
-        toast(ToastEnum.SUCCESS, 'Your cluster is being deleted')
-      }
-
-      return response
-    } catch (err) {
-      return toast(ToastEnum.ERROR, 'Deleting error', (err as Error).message)
-    }
-  }
-)

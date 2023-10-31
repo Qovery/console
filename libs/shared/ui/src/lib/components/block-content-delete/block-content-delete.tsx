@@ -4,7 +4,7 @@ import useModalConfirmation from '../modals/modal-confirmation/use-modal-confirm
 
 export interface BlockContentDeleteProps {
   title: string
-  modalConfirmation: {
+  modalConfirmation?: {
     title: string
     name?: string
     mode?: string
@@ -19,6 +19,7 @@ export interface BlockContentDeleteProps {
   ctaLoading?: boolean
   callback?: () => void
   customWidth?: string
+  customModalConfirmation?: () => void
 }
 
 export function BlockContentDelete(props: BlockContentDeleteProps) {
@@ -32,6 +33,7 @@ export function BlockContentDelete(props: BlockContentDeleteProps) {
     list,
     modalConfirmation,
     ctaLoading,
+    customModalConfirmation,
   } = props
 
   const { openModalConfirmation } = useModalConfirmation()
@@ -54,13 +56,15 @@ export function BlockContentDelete(props: BlockContentDeleteProps) {
             className="mt-3 ml-auto"
             loading={ctaLoading}
             onClick={() => {
-              openModalConfirmation({
-                mode: modalConfirmation.mode,
-                title: modalConfirmation.title,
-                name: modalConfirmation.name,
-                action: () => callback && callback(),
-                isDelete: true,
-              })
+              customModalConfirmation
+                ? customModalConfirmation()
+                : openModalConfirmation({
+                    title: modalConfirmation?.title ?? '',
+                    mode: modalConfirmation?.mode,
+                    name: modalConfirmation?.name,
+                    action: () => callback && callback(),
+                    isDelete: true,
+                  })
             }}
             style={ButtonLegacyStyle.ERROR}
           >
