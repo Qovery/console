@@ -63,7 +63,8 @@ export function ListGitTokens() {
               </div>
               <div>
                 <Button
-                  variant="surface"
+                  variant="outline"
+                  color="neutral"
                   className="mr-2"
                   onClick={() => {
                     openModal({
@@ -81,7 +82,8 @@ export function ListGitTokens() {
                   <Icon name={IconAwesomeEnum.WHEEL} />
                 </Button>
                 <Button
-                  variant="surface"
+                  variant="outline"
+                  color="neutral"
                   onClick={() => {
                     openModalConfirmation({
                       title: 'Delete git token',
