@@ -27,7 +27,7 @@ const allQueries = {
 }
 
 const customScreen = { ...screen, ...within(document.body, allQueries) }
-const customWithin = (element: Parameters<typeof within>[0]) => within(element, allQueries)
+const customWithin = (element: HTMLElement) => within(element, allQueries)
 
 // This type interface extends the default options for render from RTL, as well
 // as allows the user to specify other things such as initialState, store.
