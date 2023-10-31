@@ -48,7 +48,7 @@ export function PageOrganizationGithubRepositoryAccess(props: PageOrganizationGi
             </p>
           </div>
           <Button
-            size="md"
+            size="lg"
             onClick={() => {
               openModal({
                 content: <GitTokenCreateEditModal organizationId={organizationId} onClose={closeModal} />,
