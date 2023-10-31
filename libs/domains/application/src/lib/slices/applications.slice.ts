@@ -16,7 +16,6 @@ import {
   ApplicationMainCallsApi,
   type ApplicationRequest,
   ApplicationsApi,
-  type Commit,
   type ContainerAdvancedSettings,
   ContainerConfigurationApi,
   ContainerDeploymentHistoryApi,
@@ -173,20 +172,6 @@ export const fetchApplicationLinks = createAsyncThunk<Link[], { applicationId: s
     return response.data.results as Link[]
   }
 )
-
-export const fetchApplicationCommits = createAsyncThunk<
-  Commit[],
-  { applicationId: string; serviceType: ServiceTypeEnum }
->('application/commits', async (data) => {
-  let response
-  if (isApplication(data.serviceType)) {
-    response = await applicationMainCallsApi.listApplicationCommit(data.applicationId)
-  } else {
-    response = await jobMainCallsApi.listJobCommit(data.applicationId)
-  }
-
-  return response.data.results as Commit[]
-})
 
 export const fetchApplicationDeployments = createAsyncThunk<
   DeploymentHistory[],
@@ -523,44 +508,6 @@ export const applicationsSlice = createSlice({
         )
         applicationsAdapter.updateOne(state, update)
       })
-      .addCase(fetchApplicationCommits.pending, (state: ApplicationsState, action) => {
-        const applicationId = action.meta.arg.applicationId
-        const update: Update<ApplicationEntity> = {
-          id: applicationId,
-          changes: {
-            commits: {
-              ...(state.entities[applicationId] as GitApplicationEntity)?.commits,
-              loadingStatus: 'loading',
-            },
-          },
-        }
-        applicationsAdapter.updateOne(state, update)
-      })
-      .addCase(fetchApplicationCommits.fulfilled, (state: ApplicationsState, action) => {
-        const applicationId = action.meta.arg.applicationId
-        const update: Update<ApplicationEntity> = {
-          id: applicationId,
-          changes: {
-            commits: {
-              items: action.payload,
-              loadingStatus: 'loaded',
-            },
-          },
-        }
-        applicationsAdapter.updateOne(state, update)
-      })
-      .addCase(fetchApplicationCommits.rejected, (state: ApplicationsState, action) => {
-        const applicationId = action.meta.arg.applicationId
-        const update: Update<ApplicationEntity> = {
-          id: applicationId,
-          changes: {
-            commits: {
-              loadingStatus: 'error',
-            },
-          },
-        }
-        applicationsAdapter.updateOne(state, update)
-      })
       // get application deployment history
       .addCase(fetchApplicationDeployments.pending, (state: ApplicationsState, action) => {
         const update = {
@@ -614,7 +561,7 @@ export const applications = applicationsSlice.reducer
 
 export const applicationsActions = applicationsSlice.actions
 
-const { selectAll, selectEntities, selectById } = applicationsAdapter.getSelectors()
+const { selectAll, selectEntities } = applicationsAdapter.getSelectors()
 
 export const getApplicationsState = (rootState: RootState): ApplicationsState =>
   rootState.application[APPLICATIONS_FEATURE_KEY]
@@ -637,46 +584,3 @@ export const selectApplicationById = (state: RootState, applicationId: string): 
   getApplicationsState(state).entities[applicationId]
 
 export const applicationsLoadingStatus = (state: RootState): LoadingStatus => getApplicationsState(state).loadingStatus
-
-export const getCountNewCommitsToDeploy = (applicationId: string) =>
-  createSelector(
-    (state: RootState) => {
-      return selectById(getApplicationsState(state), applicationId) as GitApplicationEntity
-    },
-    (application): number => {
-      const deployedCommit = application?.git_repository?.deployed_commit_id
-      let delta = 0
-      if (!deployedCommit) return delta
-      if (!application.commits?.items) return delta
-
-      for (const commit of application.commits.items) {
-        if (commit.git_commit_id === deployedCommit) break
-        delta++
-      }
-
-      return delta
-    }
-  )
-
-export const getCommitsGroupedByDate = createSelector(
-  [getApplicationsState, (state, applicationId: string) => applicationId],
-  (state, applicationId) => {
-    const application = state.entities[applicationId] as GitApplicationEntity
-
-    if (!application || !application.commits) return {}
-
-    const commits: Commit[] | undefined = application.commits.items
-    if (!commits) return {}
-
-    const commitsByDate = commits.reduce((acc: Record<string, Commit[]>, obj) => {
-      const key = new Date(obj['created_at']).toDateString()
-      if (!acc[key]) {
-        acc[key] = []
-      }
-      acc[key].push(obj)
-      return acc
-    }, {})
-
-    return commitsByDate
-  }
-)
