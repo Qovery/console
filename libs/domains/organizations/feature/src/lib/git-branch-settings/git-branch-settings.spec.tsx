@@ -6,6 +6,8 @@ jest.mock('../hooks/use-branches/use-branches', () => {
   return {
     ...jest.requireActual('../hooks/use-branches/use-branches'),
     useGitTokens: () => ({
+      isLoading: false,
+      isRefetching: false,
       data: [
         {
           name: 'main',

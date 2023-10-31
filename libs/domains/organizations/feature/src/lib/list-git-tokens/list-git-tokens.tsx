@@ -12,14 +12,14 @@ import {
 } from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond, timeAgo } from '@qovery/shared/util-dates'
 import GitTokenCreateEditModal from '../git-token-create-edit-modal/git-token-create-edit-modal'
-import useDeleteGitToken from '../hooks/use-delete-git-token/use-delete-git-token'
-import useGitTokens from '../hooks/use-git-tokens/use-git-tokens'
+import { useDeleteGitToken } from '../hooks/use-delete-git-token/use-delete-git-token'
+import { useGitTokens } from '../hooks/use-git-tokens/use-git-tokens'
 
 export function ListGitTokens() {
   const { organizationId = '' } = useParams()
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
-  const { data: gitTokens, isFetched: isFetchedGitTokens } = useGitTokens({ organizationId })
+  const { data: gitTokens = [], isFetched: isFetchedGitTokens } = useGitTokens({ organizationId })
   const { mutate: deleteToken } = useDeleteGitToken({ organizationId })
 
   return (

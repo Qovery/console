@@ -2,8 +2,8 @@ import { GitProviderEnum, type GitTokenResponse } from 'qovery-typescript-axios'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { ExternalLink, Icon, InputSelect, InputText, InputTextArea, ModalCrud } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
-import useCreateGitToken from '../hooks/use-create-git-token/use-create-git-token'
-import useEditGitToken from '../hooks/use-edit-git-token/use-edit-git-token'
+import { useCreateGitToken } from '../hooks/use-create-git-token/use-create-git-token'
+import { useEditGitToken } from '../hooks/use-edit-git-token/use-edit-git-token'
 
 export interface GitTokenCreateEditModalProps {
   onClose: () => void
@@ -28,13 +28,13 @@ export function GitTokenCreateEditModal({ isEdit, gitToken, organizationId, onCl
   const { mutateAsync: createGitToken, isLoading: isLoadingCreateGitToken } = useCreateGitToken({ organizationId })
   const gitType = methods.watch('type')
 
-  const onSubmit = methods.handleSubmit(async () => {
+  const onSubmit = methods.handleSubmit(async (data) => {
     if (isEdit) {
       try {
         await editGitToken({
           organizationId,
           gitTokenId: gitToken?.id ?? '',
-          gitTokenRequest: methods.getValues(),
+          gitTokenRequest: data,
         })
         onClose()
       } catch (error) {
@@ -44,7 +44,7 @@ export function GitTokenCreateEditModal({ isEdit, gitToken, organizationId, onCl
       try {
         await createGitToken({
           organizationId,
-          gitTokenRequest: methods.getValues(),
+          gitTokenRequest: data,
         })
         onClose()
       } catch (error) {

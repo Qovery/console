@@ -1,0 +1,196 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ListGitTokens should match snapshot 1`] = `
+<body>
+  <div>
+    <div
+      class="border border-neutral-250 bg-neutral-100 rounded mb-5  w-full"
+      data-testid="block-content"
+    >
+      <div
+        class="flex items-center justify-between h-9 px-4 border-b border-neutral-250"
+      >
+        <h2
+          class="font-medium text-neutral-400 text-ssm"
+        >
+          Git tokens
+        </h2>
+      </div>
+      <div
+        class="p-0"
+      >
+        <ul>
+          <li
+            class="flex justify-between items-center px-5 py-4 border-b border-neutral-250 last:border-0"
+          >
+            <div
+              class="flex"
+            >
+              <svg
+                class="svg-icon shrink-0 "
+                height="20"
+                name="GITHUB"
+                viewBox="0 0 24 24"
+                width="20"
+                xmlns="http://www.w3.org/2000/svg"
+                xmlns:xlink="http://www.w3.org/1999/xlink"
+              >
+                <path
+                  d="M12.0013 1.03134e-06C5.37057 -0.00275316 0 5.51113 0 12.3167C0 17.6984 3.35962 22.2731 8.03843 23.9532C8.66853 24.1157 8.572 23.6557 8.572 23.3417V21.2073C4.93353 21.6452 4.78606 19.1719 4.54206 18.7588C4.04871 17.894 2.88236 17.6736 3.23092 17.2605C4.05943 16.8226 4.90403 17.3707 5.88269 18.8552C6.59055 19.9321 7.9714 19.7503 8.67121 19.5713C8.82404 18.924 9.15116 18.3456 9.60161 17.8967C5.83175 17.2027 4.26053 14.8396 4.26053 12.0303C4.26053 10.667 4.69758 9.41382 5.55558 8.40303C5.0086 6.73675 5.60652 5.31008 5.68696 5.098C7.24478 4.95479 8.86426 6.24375 8.99028 6.34565C9.8751 6.10053 10.8859 5.97108 12.0174 5.97108C13.1543 5.97108 14.1678 6.10604 15.0607 6.35391C15.3636 6.11705 16.8652 5.00987 18.313 5.14482C18.3908 5.3569 18.9753 6.75052 18.4605 8.39477C19.3292 9.40831 19.7716 10.6725 19.7716 12.0386C19.7716 14.8533 18.1897 17.2192 14.4091 17.9022C14.7329 18.2293 14.99 18.6195 15.1654 19.0498C15.3408 19.4801 15.431 19.942 15.4307 20.4085V23.507C15.4521 23.7549 15.4307 24 15.8329 24C20.5814 22.3557 24 17.748 24 12.3195C24 5.51113 18.6267 1.03134e-06 12.0013 1.03134e-06Z"
+                  fill="#212346"
+                />
+              </svg>
+              <div
+                class="ml-4"
+              >
+                <h2
+                  class="flex text-xs text-neutral-400 font-medium mb-1"
+                >
+                  token1
+                </h2>
+                <p
+                  class="text-xs text-neutral-350"
+                >
+                  <span
+                    class="inline-block"
+                  >
+                    Last updated 
+                    7 hours
+                  </span>
+                  <span
+                    class="inline-block ml-3"
+                  >
+                    Created since 
+                    2023-10-31
+                  </span>
+                </p>
+              </div>
+            </div>
+            <div>
+              <button
+                class="inline-flex items-center shrink-0 font-medium rounded transition text-sm h-9 px-3 border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent hover:bg-neutral-50 mr-2"
+              >
+                <span
+                  class="icon-solid-wheel shrink-0 "
+                  role="img"
+                />
+              </button>
+              <button
+                class="inline-flex items-center shrink-0 font-medium rounded transition text-sm h-9 px-3 border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent hover:bg-neutral-50"
+              >
+                <span
+                  class="icon-solid-trash shrink-0 "
+                  role="img"
+                />
+              </button>
+            </div>
+          </li>
+          <li
+            class="flex justify-between items-center px-5 py-4 border-b border-neutral-250 last:border-0"
+          >
+            <div
+              class="flex"
+            >
+              <svg
+                class="svg-icon shrink-0 "
+                height="20"
+                name="GITLAB"
+                viewBox="0 0 24 24"
+                width="20"
+                xmlns="http://www.w3.org/2000/svg"
+                xmlns:xlink="http://www.w3.org/1999/xlink"
+              >
+                <g
+                  clip-path="url(#clip0_19_61)"
+                >
+                  <path
+                    d="M12.007 24.008l4.416-14.743H7.591l4.416 14.743z"
+                    fill="#E24329"
+                  />
+                  <path
+                    d="M12.007 24.007L7.591 9.265H1.402l10.605 14.742z"
+                    fill="#FC6D26"
+                  />
+                  <path
+                    d="M1.402 9.265L.06 13.745c-.06.2-.06.414 0 .613.06.2.176.373.332.496l11.614 9.154L1.402 9.264z"
+                    fill="#FCA326"
+                  />
+                  <path
+                    d="M1.402 9.265h6.189L4.93.385a.447.447 0 00-.87 0l-2.659 8.88z"
+                    fill="#E24329"
+                  />
+                  <path
+                    d="M12.007 24.007l4.416-14.742h6.189L12.007 24.007z"
+                    fill="#FC6D26"
+                  />
+                  <path
+                    d="M22.612 9.265l1.342 4.48c.06.2.06.414 0 .613a.992.992 0 01-.332.496l-11.615 9.154L22.612 9.264z"
+                    fill="#FCA326"
+                  />
+                  <path
+                    d="M22.612 9.265h-6.189l2.66-8.88a.447.447 0 01.87 0l2.659 8.88z"
+                    fill="#E24329"
+                  />
+                </g>
+                <defs>
+                  <clippath
+                    id="clip0_19_61"
+                  >
+                    <path
+                      d="M0 0H24V24H0z"
+                      fill="#fff"
+                    />
+                  </clippath>
+                </defs>
+              </svg>
+              <div
+                class="ml-4"
+              >
+                <h2
+                  class="flex text-xs text-neutral-400 font-medium mb-1"
+                >
+                  token2
+                </h2>
+                <p
+                  class="text-xs text-neutral-350"
+                >
+                  <span
+                    class="inline-block"
+                  >
+                    Last updated 
+                    7 hours
+                  </span>
+                  <span
+                    class="inline-block ml-3"
+                  >
+                    Created since 
+                    2023-10-31
+                  </span>
+                </p>
+              </div>
+            </div>
+            <div>
+              <button
+                class="inline-flex items-center shrink-0 font-medium rounded transition text-sm h-9 px-3 border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent hover:bg-neutral-50 mr-2"
+              >
+                <span
+                  class="icon-solid-wheel shrink-0 "
+                  role="img"
+                />
+              </button>
+              <button
+                class="inline-flex items-center shrink-0 font-medium rounded transition text-sm h-9 px-3 border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent hover:bg-neutral-50"
+              >
+                <span
+                  class="icon-solid-trash shrink-0 "
+                  role="img"
+                />
+              </button>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</body>
+`;
