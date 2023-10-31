@@ -1,13 +1,9 @@
 import { type Commit } from 'qovery-typescript-axios'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import {
-  fetchApplicationCommits,
-  getCommitsGroupedByDate,
-  postApplicationActionsDeployByCommitId,
-  selectApplicationById,
-} from '@qovery/domains/application'
+import { postApplicationActionsDeployByCommitId, selectApplicationById } from '@qovery/domains/application'
+import { useCommits, useServiceType } from '@qovery/domains/services/feature'
 import { getServiceType, isGitSource } from '@qovery/shared/enums'
 import { type ApplicationEntity } from '@qovery/shared/interfaces'
 import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
@@ -35,27 +31,27 @@ export function DeployOtherCommitModalFeature({
   const [selectedCommitId, setSelectedCommitId] = useState<string | null>(null)
   const [deployLoading, setDeployLoading] = useState(false)
   const [search, setSearch] = useState('')
+  const { data: serviceType } = useServiceType({ serviceId: applicationId })
+  const { data: commits = [], isLoading } = useCommits({ serviceId: applicationId, serviceType })
 
-  const commitsByDay = useSelector<RootState, Record<string, Commit[]>>((state) =>
-    getCommitsGroupedByDate(state, applicationId)
-  )
+  const commitsByDay = commits.reduce((acc: Record<string, Commit[]>, obj) => {
+    const key = new Date(obj['created_at']).toDateString()
+    if (!acc[key]) {
+      acc[key] = []
+    }
+    acc[key].push(obj)
+    return acc
+  }, {})
 
   const [commitsByDayFiltered, setCommitsByDayFiltered] = useState<Record<string, Commit[]>>({})
 
   const application = useSelector<RootState, ApplicationEntity | undefined>((state) =>
     selectApplicationById(state, applicationId)
   )
-  const isLoading = application?.commits?.loadingStatus
 
   const buttonDisabled = () => {
     return selectedCommitId === null || selectedCommitId === application?.git_repository?.deployed_commit_id
   }
-
-  useEffect(() => {
-    if (application && (!application?.commits || application?.commits?.loadingStatus === 'not loaded')) {
-      dispatch(fetchApplicationCommits({ applicationId, serviceType: getServiceType(application) }))
-    }
-  }, [application, applicationId, dispatch])
 
   const handleDeploy = () => {
     if (selectedCommitId && application) {
@@ -102,7 +98,7 @@ export function DeployOtherCommitModalFeature({
   return (
     <DeployOtherCommitModal
       commitsByDay={search.length ? commitsByDayFiltered : commitsByDay}
-      isLoading={isLoading === 'loading'}
+      isLoading={isLoading}
       selectedCommitId={selectedCommitId}
       setSelectedCommitId={setSelectedCommitId}
       currentCommitId={
