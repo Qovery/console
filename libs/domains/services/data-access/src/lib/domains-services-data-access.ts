@@ -1,5 +1,6 @@
 import { createQueryKeys, type inferQueryKeys } from '@lukemorales/query-key-factory'
 import {
+  ApplicationDeploymentHistoryApi,
   ApplicationDeploymentRestrictionApi,
   type ApplicationDeploymentRestrictionRequest,
   ApplicationMainCallsApi,
@@ -8,15 +9,19 @@ import {
   type CloneContainerRequest,
   type CloneDatabaseRequest,
   type CloneJobRequest,
+  ContainerDeploymentHistoryApi,
   ContainerMainCallsApi,
   ContainersApi,
+  DatabaseDeploymentHistoryApi,
   DatabaseMainCallsApi,
   DatabasesApi,
   EnvironmentMainCallsApi,
+  HelmDeploymentHistoryApi,
   HelmDeploymentRestrictionApi,
   type HelmDeploymentRestrictionRequest,
   HelmMainCallsApi,
   HelmsApi,
+  JobDeploymentHistoryApi,
   JobDeploymentRestrictionApi,
   type JobDeploymentRestrictionRequest,
   JobMainCallsApi,
@@ -48,6 +53,12 @@ const helmCallsApi = new HelmMainCallsApi()
 const applicationDeploymentApi = new ApplicationDeploymentRestrictionApi()
 const jobDeploymentApi = new JobDeploymentRestrictionApi()
 const helmDeploymentApi = new HelmDeploymentRestrictionApi()
+
+const applicationDeploymentsApi = new ApplicationDeploymentHistoryApi()
+const containerDeploymentsApi = new ContainerDeploymentHistoryApi()
+const databaseDeploymentsApi = new DatabaseDeploymentHistoryApi()
+const helmDeploymentsApi = new HelmDeploymentHistoryApi()
+const jobDeploymentsApi = new JobDeploymentHistoryApi()
 
 // Prefer this type in param instead of ServiceTypeEnum
 // to suppport string AND enum as param.
@@ -222,6 +233,33 @@ export const services = createQueryKeys('services', {
         .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', async () => {
           return (await jobMainCallsApi.listJobCommit(serviceId)).data.results
         })
+        .exhaustive()
+    },
+  }),
+  deploymentHistory: ({ serviceId, serviceType }: { serviceId: string; serviceType: ServiceType }) => ({
+    queryKey: [serviceId],
+    async queryFn() {
+      return await match(serviceType)
+        .with('APPLICATION', async () => ({
+          ...(await applicationDeploymentsApi.listApplicationDeploymentHistory(serviceId)).data,
+          serviceType: ServiceTypeEnum.APPLICATION as const,
+        }))
+        .with('CONTAINER', async () => ({
+          ...(await containerDeploymentsApi.listContainerDeploymentHistory(serviceId)).data,
+          serviceType: ServiceTypeEnum.CONTAINER as const,
+        }))
+        .with('DATABASE', async () => ({
+          ...(await databaseDeploymentsApi.listDatabaseDeploymentHistory(serviceId)).data,
+          serviceType: ServiceTypeEnum.DATABASE as const,
+        }))
+        .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', async () => ({
+          ...(await jobDeploymentsApi.listJobDeploymentHistory(serviceId)).data,
+          serviceType: ServiceTypeEnum.JOB as const,
+        }))
+        .with('HELM', async () => ({
+          ...(await helmDeploymentsApi.listHelmDeploymentHistory(serviceId)).data,
+          serviceType: ServiceTypeEnum.HELM as const,
+        }))
         .exhaustive()
     },
   }),
