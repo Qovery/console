@@ -2,6 +2,7 @@ import { useParams } from 'react-router-dom'
 import {
   BlockContent,
   Button,
+  EmptyState,
   Icon,
   IconAwesomeEnum,
   LoaderSpinner,
@@ -28,7 +29,7 @@ export function ListGitTokens() {
         <div className="flex justify-center p-5">
           <LoaderSpinner className="w-5" />
         </div>
-      ) : (
+      ) : gitTokens.length > 0 ? (
         <ul>
           {gitTokens?.map((gitToken) => (
             <li
@@ -101,6 +102,13 @@ export function ListGitTokens() {
             </li>
           ))}
         </ul>
+      ) : (
+        <div className="text-center py-4 px-5">
+          <Icon name={IconAwesomeEnum.WAVE_PULSE} className="text-neutral-350" />
+          <p className="text-neutral-350 font-medium text-xs mt-1">
+            No Git Tokens found. <br /> Please add one.
+          </p>
+        </div>
       )}
     </BlockContent>
   )
