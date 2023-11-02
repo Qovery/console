@@ -1,15 +1,22 @@
 import { useQuery } from '@tanstack/react-query'
+import { match } from 'ts-pattern'
 import { type ServiceType } from '@qovery/domains/services/data-access'
 import { queries } from '@qovery/state/util-queries'
 
 export interface UseCommitsProps {
   serviceId: string
-  serviceType: Extract<ServiceType, 'APPLICATION' | 'JOB' | 'CRON_JOB' | 'LIFECYCLE_JOB'>
+  serviceType?: ServiceType
 }
 
 export function useCommits({ serviceId, serviceType }: UseCommitsProps) {
   return useQuery({
-    ...queries.services.listCommits({ serviceId, serviceType }),
+    ...queries.services.listCommits({
+      serviceId,
+      serviceType: serviceType as Extract<ServiceType, 'APPLICATION' | 'JOB' | 'CRON_JOB' | 'LIFECYCLE_JOB'>,
+    }),
+    enabled: match(serviceType)
+      .with('APPLICATION', 'JOB', 'CRON_JOB', 'LIFECYCLE_JOB', () => true)
+      .otherwise(() => false),
   })
 }
 

@@ -62,6 +62,7 @@
       "@qovery/shared/util-hooks": ["libs/shared/util-hooks/src/index.ts"],
       "@qovery/shared/util-js": ["libs/shared/util-js/src/index.ts"],
       "@qovery/shared/util-tests": ["libs/shared/util-tests/src/index.ts"],
+      "@qovery/shared/util-types": ["libs/shared/util-types/src/index.ts"],
       "@qovery/shared/util-web-sockets": ["libs/shared/util-web-sockets/src/index.ts"],
       "@qovery/shared/utils": ["libs/shared/utils/src/index.ts"],
       "@qovery/state/store": ["libs/state/store/src/index.ts"],

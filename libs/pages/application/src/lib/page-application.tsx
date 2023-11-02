@@ -2,14 +2,9 @@ import equal from 'fast-deep-equal'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
-import {
-  applicationsLoadingStatus,
-  fetchApplicationCommits,
-  fetchApplicationLinks,
-  selectApplicationById,
-} from '@qovery/domains/application'
+import { applicationsLoadingStatus, fetchApplicationLinks, selectApplicationById } from '@qovery/domains/application'
 import { useFetchEnvironment } from '@qovery/domains/environment'
-import { getServiceType, isApplication, isContainer, isGitJob } from '@qovery/shared/enums'
+import { getServiceType, isApplication, isContainer } from '@qovery/shared/enums'
 import { type ApplicationEntity, type LoadingStatus } from '@qovery/shared/interfaces'
 import { APPLICATION_GENERAL_URL, APPLICATION_URL } from '@qovery/shared/routes'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
@@ -39,11 +34,6 @@ export function PageApplication() {
       if (isContainer(application) || isApplication(application)) {
         if (application.links?.loadingStatus !== 'loaded')
           dispatch(fetchApplicationLinks({ applicationId, serviceType }))
-      }
-      // fetch commits for GitApplication and GitJobs
-      if (isApplication(application) || isGitJob(application)) {
-        if (application?.commits?.loadingStatus !== 'loaded')
-          dispatch(fetchApplicationCommits({ applicationId, serviceType }))
       }
     }
   }, [application?.id, serviceType, applicationId, loadingStatus, dispatch])

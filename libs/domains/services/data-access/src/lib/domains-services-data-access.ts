@@ -22,6 +22,11 @@ import {
   JobMainCallsApi,
   JobsApi,
   type Status,
+  type Application as _Application,
+  type ContainerResponse as _Container,
+  type Database as _Database,
+  type HelmResponse as _Helm,
+  type JobResponse as _Job,
 } from 'qovery-typescript-axios'
 import { type ApplicationStatusDto, type DatabaseStatusDto, type ServiceMetricsDto } from 'qovery-ws-typescript-axios'
 import { match } from 'ts-pattern'
@@ -56,24 +61,32 @@ export type DatabaseType = Extract<ServiceType, 'DATABASE'>
 export type JobType = Extract<ServiceType, 'JOB' | 'LIFECYCLE_JOB' | 'CRON_JOB'>
 export type HelmType = Extract<ServiceType, 'HELM'>
 
-export function isApplicationType(serviceType: ServiceType): serviceType is ApplicationType {
-  return serviceType === 'APPLICATION'
+export type Application = _Application & { serviceType: ServiceTypeEnum.APPLICATION }
+export type Database = _Database & { serviceType: ServiceTypeEnum.DATABASE }
+export type Container = _Container & { serviceType: ServiceTypeEnum.CONTAINER }
+export type Job = _Job & { serviceType: ServiceTypeEnum.JOB }
+export type Helm = _Helm & { serviceType: ServiceTypeEnum.HELM }
+
+type AnyService = Application | Database | Container | Job | Helm
+
+export function isApplication(service: AnyService): service is Application {
+  return service.serviceType === 'APPLICATION'
 }
 
-export function isContainerType(serviceType: ServiceType): serviceType is ContainerType {
-  return serviceType === 'CONTAINER'
+export function isContainer(service: AnyService): service is Container {
+  return service.serviceType === 'CONTAINER'
 }
 
-export function isDatabaseType(serviceType: ServiceType): serviceType is DatabaseType {
-  return serviceType === 'DATABASE'
+export function isDatabase(service: AnyService): service is Database {
+  return service.serviceType === 'DATABASE'
 }
 
-export function isJobType(serviceType: ServiceType): serviceType is JobType {
-  return serviceType === 'JOB' || serviceType === 'CRON_JOB' || serviceType === 'LIFECYCLE_JOB'
+export function isJob(service: AnyService): service is Job {
+  return service.serviceType === 'JOB'
 }
 
-export function isHelmType(serviceType: ServiceType): serviceType is HelmType {
-  return serviceType === 'HELM'
+export function isHelm(service: AnyService): service is Helm {
+  return service.serviceType === 'HELM'
 }
 
 export const services = createQueryKeys('services', {

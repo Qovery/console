@@ -1,16 +1,7 @@
-import {
-  act,
-  fireEvent,
-  getAllByTestId,
-  getByTestId,
-  getByText,
-  queryAllByTestId,
-  render,
-  waitFor,
-} from '__tests__/utils/setup-jest'
 import * as storeApplication from '@qovery/domains/application'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { applicationFactoryMock } from '@qovery/shared/factories'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import DeployOtherCommitModalFeature, {
   type DeployOtherCommitModalFeatureProps,
 } from './deploy-other-commit-modal-feature'
@@ -32,11 +23,14 @@ jest.mock('react-redux', () => ({
 
 const mockApplication = applicationFactoryMock(1)[0]
 
-jest.mock('@qovery/domains/application', () => ({
-  ...jest.requireActual('@qovery/domains/application'),
-  fetchApplicationCommits: () => jest.fn(),
-  getCommitsGroupedByDate: () => ({
-    '2021-09-01': [
+jest.mock('@qovery/domains/services/feature', () => ({
+  useServiceType: () => ({
+    data: 'APPLICATION',
+    isLoading: false,
+    error: {},
+  }),
+  useCommits: () => ({
+    data: [
       {
         message: 'blabla',
         commit_page_url: '#',
@@ -53,8 +47,6 @@ jest.mock('@qovery/domains/application', () => ({
         created_at: '2021-09-01',
         author_name: 'John Doe',
       },
-    ],
-    '2021-09-02': [
       {
         message: 'blabla pouic pouic search',
         commit_page_url: '#',
@@ -64,7 +56,13 @@ jest.mock('@qovery/domains/application', () => ({
         author_name: 'John Doe',
       },
     ],
+    isLoading: false,
+    error: {},
   }),
+}))
+
+jest.mock('@qovery/domains/application', () => ({
+  ...jest.requireActual('@qovery/domains/application'),
   selectApplicationById: () => mockApplication,
   postApplicationActionsDeployByCommitId: jest.fn(),
 }))
@@ -72,11 +70,13 @@ jest.mock('@qovery/domains/application', () => ({
 const props: DeployOtherCommitModalFeatureProps = {
   applicationId: 'applicationId',
   environmentId: 'environmentId',
+  organizationId: 'organizationId',
+  projectId: 'projectId',
 }
 
 describe('DeployOtherCommitModalFeature', () => {
   it('should render successfully', async () => {
-    const { baseElement } = render(<DeployOtherCommitModalFeature {...props} />)
+    const { baseElement } = renderWithProviders(<DeployOtherCommitModalFeature {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
@@ -89,17 +89,15 @@ describe('DeployOtherCommitModalFeature', () => {
         }),
     }))
 
-    const { baseElement } = render(<DeployOtherCommitModalFeature {...props} />)
+    const { userEvent } = renderWithProviders(<DeployOtherCommitModalFeature {...props} />)
 
-    await waitFor(jest.fn())
-    const commitBoxes = getAllByTestId(baseElement, 'commit-box')
+    const commitBoxes = screen.getAllByTestId('commit-box')
 
-    commitBoxes[1].click()
-    await waitFor(jest.fn())
+    await userEvent.click(commitBoxes[1])
 
     // click on submit button
-    const submitButton = getByTestId(baseElement, 'submit-button')
-    submitButton.click()
+    const submitButton = screen.getByTestId('submit-button')
+    await userEvent.click(submitButton)
 
     expect(deploySpy).toHaveBeenCalledWith({
       applicationId: 'applicationId',
@@ -111,27 +109,23 @@ describe('DeployOtherCommitModalFeature', () => {
   })
 
   it('should filter by search', async () => {
-    const { baseElement } = render(<DeployOtherCommitModalFeature {...props} />)
-    const searchInput = getByTestId(baseElement, 'input-search')
+    const { userEvent } = renderWithProviders(<DeployOtherCommitModalFeature {...props} />)
+    const searchInput = screen.getByTestId('input-search')
 
-    await act(() => {
-      fireEvent.change(searchInput, { target: { value: 'pouic' } })
-    })
+    await userEvent.type(searchInput, 'pouic')
 
-    const commitBoxes = getAllByTestId(baseElement, 'commit-box')
+    const commitBoxes = screen.getAllByTestId('commit-box')
     expect(commitBoxes.length).toEqual(1)
   })
 
   it('should filter by search and display no result', async () => {
-    const { baseElement } = render(<DeployOtherCommitModalFeature {...props} />)
-    const searchInput = getByTestId(baseElement, 'input-search')
+    const { userEvent } = renderWithProviders(<DeployOtherCommitModalFeature {...props} />)
+    const searchInput = screen.getByTestId('input-search')
 
-    await act(() => {
-      fireEvent.change(searchInput, { target: { value: 'asdfasdf asdf asd ' } })
-    })
+    await userEvent.type(searchInput, 'asdfasdf asdf asd ')
 
-    const commitBoxes = queryAllByTestId(baseElement, 'commit-box')
+    const commitBoxes = screen.queryAllByTestId('commit-box')
     expect(commitBoxes.length).toEqual(0)
-    getByText(baseElement, 'No result for this search')
+    screen.getByText('No result for this search')
   })
 })
