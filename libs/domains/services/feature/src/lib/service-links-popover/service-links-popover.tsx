@@ -15,18 +15,18 @@ import {
 } from '@qovery/shared/ui'
 import { pluralize } from '@qovery/shared/util-js'
 import useLinks from '../hooks/use-links/use-links'
-import useService from '../hooks/use-service/use-service'
+import useServiceType from '../hooks/use-service-type/use-service-type'
 
 export function ServiceLinksPopover() {
   const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
-  const { data: service } = useService({
-    environmentId,
-    serviceId: applicationId,
-  })
-  const { data: links } = useLinks({ serviceId: service?.id ?? applicationId, serviceType: service?.type ?? '' })
+  const { data: serviceType } = useServiceType({ environmentId, serviceId: applicationId })
+  const { data: links = [] } = useLinks({ serviceId: applicationId, serviceType })
+
+  // Remove default Qovery links
+  const filteredLinks = links.filter((link: LinkProps) => !(link.is_default && link.is_qovery_domain))
 
   const pathDomainsSetting =
-    APPLICATION_URL(organizationId, projectId, environmentId, service?.id) +
+    APPLICATION_URL(organizationId, projectId, environmentId, applicationId) +
     APPLICATION_SETTINGS_URL +
     APPLICATION_SETTINGS_DOMAIN_URL
 
@@ -65,7 +65,7 @@ export function ServiceLinksPopover() {
           </Popover.Close>
         </div>
         <ul>
-          {links.map((link: LinkProps) => (
+          {filteredLinks.map((link: LinkProps) => (
             <li key={link.url} className="flex p-2">
               <CopyToClipboard className="text-brand-500 hover:text-brand-600 mr-2" content={link.url ?? ''} />
               <a

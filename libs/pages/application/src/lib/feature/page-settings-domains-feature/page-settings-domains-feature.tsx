@@ -1,19 +1,22 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { type CustomDomain } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import {
   deleteCustomDomain,
-  fetchApplicationLinks,
   fetchCustomDomains,
   getApplicationsState,
   getCustomDomainsState,
   selectCustomDomainsByApplicationId,
 } from '@qovery/domains/application'
+import { ServiceType } from '@qovery/domains/services/data-access'
+import { useLinks } from '@qovery/domains/services/feature'
 import { getServiceType } from '@qovery/shared/enums'
 import { type ApplicationEntity, type LoadingStatus } from '@qovery/shared/interfaces'
 import { useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { type AppDispatch, type RootState } from '@qovery/state/store'
+import { queries } from '@qovery/state/util-queries'
 import PageSettingsDomains from '../../ui/page-settings-domains/page-settings-domains'
 import CrudModalFeature from './crud-modal-feature/crud-modal-feature'
 
@@ -23,8 +26,7 @@ export function PageSettingsDomainsFeature() {
   const { organizationId = '', projectId = '', applicationId = '' } = useParams()
 
   const application = useSelector<RootState, ApplicationEntity | undefined>(
-    (state) => getApplicationsState(state).entities[applicationId],
-    (a, b) => a?.id === b?.id || a?.links?.items?.length === b?.links?.items?.length
+    (state) => getApplicationsState(state).entities[applicationId]
   )
 
   const customDomains = useSelector<RootState, CustomDomain[] | undefined>((state) =>
@@ -34,6 +36,8 @@ export function PageSettingsDomainsFeature() {
   const customDomainsLoadingStatus = useSelector<RootState, LoadingStatus>(
     (state) => getCustomDomainsState(state).loadingStatus
   )
+
+  const queryClient = useQueryClient()
 
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
@@ -83,7 +87,15 @@ export function PageSettingsDomainsFeature() {
               dispatch(deleteCustomDomain({ applicationId, customDomain, serviceType: getServiceType(application) }))
                 .unwrap()
                 .then(() => {
-                  dispatch(fetchApplicationLinks({ applicationId }))
+                  queryClient.invalidateQueries(
+                    queries.services.listLinks({
+                      serviceId: applicationId,
+                      serviceType: getServiceType(application as ApplicationEntity) as Extract<
+                        ServiceType,
+                        'APPLICATION' | 'CONTAINER' | 'JOB' | 'CRON_JOB' | 'LIFECYCLE_JOB'
+                      >,
+                    })
+                  )
                 })
                 .catch((e) => {
                   console.error(e)

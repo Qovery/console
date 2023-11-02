@@ -1,15 +1,25 @@
 import { useQuery } from '@tanstack/react-query'
+import { match } from 'ts-pattern'
 import { type ServiceType } from '@qovery/domains/services/data-access'
 import { queries } from '@qovery/state/util-queries'
 
 export interface UseLinksProps {
   serviceId: string
-  serviceType: Extract<ServiceType, 'APPLICATION' | 'JOB' | 'CRON_JOB' | 'LIFECYCLE_JOB'>
+  serviceType?: ServiceType
 }
 
 export function useLinks({ serviceId, serviceType }: UseLinksProps) {
   return useQuery({
-    ...queries.services.listLinks({ serviceId, serviceType }),
+    ...queries.services.listLinks({
+      serviceId,
+      serviceType: serviceType as Extract<
+        ServiceType,
+        'APPLICATION' | 'CONTAINER' | 'JOB' | 'CRON_JOB' | 'LIFECYCLE_JOB'
+      >,
+    }),
+    enabled: match(serviceType)
+      .with('APPLICATION', 'CONTAINER', 'JOB', 'CRON_JOB', 'LIFECYCLE_JOB', () => true)
+      .otherwise(() => false),
   })
 }
 
