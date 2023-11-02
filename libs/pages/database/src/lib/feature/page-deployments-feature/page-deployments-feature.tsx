@@ -1,29 +1,28 @@
-import { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { type DeploymentHistoryDatabase } from 'qovery-typescript-axios'
+import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { databasesLoadingStatus, fetchDatabaseDeployments, getDatabasesState } from '@qovery/domains/database'
+import { databasesLoadingStatus } from '@qovery/domains/database'
+import { useDeploymentHistory, useServiceType } from '@qovery/domains/services/feature'
 import { databaseDeploymentsFactoryMock } from '@qovery/shared/factories'
-import { type DatabaseEntity } from '@qovery/shared/interfaces'
 import { type BaseLink } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { type AppDispatch, type RootState } from '@qovery/state/store'
+import { type RootState } from '@qovery/state/store'
 import { PageDeployments } from '../../ui/page-deployments/page-deployments'
 
 export function PageDeploymentsFeature() {
   useDocumentTitle('Database Deployments - Qovery')
 
-  const { databaseId = '' } = useParams()
-  const dispatch = useDispatch<AppDispatch>()
-
-  const database = useSelector<RootState, DatabaseEntity | undefined>(
-    (state) => getDatabasesState(state).entities[databaseId]
-  )
+  const { databaseId = '', environmentId = '' } = useParams()
+  const { data: serviceType } = useServiceType({ serviceId: databaseId, environmentId })
+  const { data: deploymentHistory, isLoading: isDeploymentHistoryLoading } = useDeploymentHistory({
+    serviceId: databaseId,
+    serviceType,
+  })
 
   const loadingDatabasesDeployments = databaseDeploymentsFactoryMock(3)
 
   const loadingStatus = useSelector<RootState>((state) => databasesLoadingStatus(state))
-  const loadingStatusDeployments = database?.deployments?.loadingStatus
-  const isLoading = loadingStatus !== 'loaded' || loadingStatusDeployments !== 'loaded'
+  const isLoading = loadingStatus !== 'loaded' || isDeploymentHistoryLoading
 
   const listHelpfulLinks: BaseLink[] = [
     {
@@ -32,15 +31,11 @@ export function PageDeploymentsFeature() {
     },
   ]
 
-  useEffect(() => {
-    if (loadingStatus === 'loaded') {
-      dispatch(fetchDatabaseDeployments({ databaseId }))
-    }
-  }, [dispatch, loadingStatus, databaseId])
-
   return (
     <PageDeployments
-      deployments={!isLoading ? database?.deployments?.items : loadingDatabasesDeployments}
+      deployments={
+        !isLoading ? ((deploymentHistory?.results ?? []) as DeploymentHistoryDatabase[]) : loadingDatabasesDeployments
+      }
       listHelpfulLinks={listHelpfulLinks}
       isLoading={isLoading}
     />
