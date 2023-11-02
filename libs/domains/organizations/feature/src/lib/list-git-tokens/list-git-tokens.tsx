@@ -2,7 +2,6 @@ import { useParams } from 'react-router-dom'
 import {
   BlockContent,
   Button,
-  EmptyState,
   Icon,
   IconAwesomeEnum,
   LoaderSpinner,
