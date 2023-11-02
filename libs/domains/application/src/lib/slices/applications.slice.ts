@@ -24,7 +24,6 @@ import {
   JobMainCallsApi,
   type JobRequest,
   JobsApi,
-  type Link,
 } from 'qovery-typescript-axios'
 import { type ServiceTypeEnum, isApplication, isContainer, isJob } from '@qovery/shared/enums'
 import {
@@ -358,32 +357,6 @@ export const applicationsSlice = createSlice({
         state.loadingStatus = 'error'
         toastError(action.error)
         state.error = action.error.message
-      })
-      .addCase(fetchApplicationLinks.pending, (state: ApplicationsState, action) => {
-        const applicationId = action.meta.arg.applicationId
-        const update: Update<ApplicationEntity> = {
-          id: applicationId,
-          changes: {
-            links: {
-              ...state.entities[applicationId]?.links,
-              loadingStatus: 'loading',
-            },
-          },
-        }
-        applicationsAdapter.updateOne(state, update)
-      })
-      .addCase(fetchApplicationLinks.fulfilled, (state: ApplicationsState, action) => {
-        const applicationId = action.meta.arg.applicationId
-        const update: Update<ApplicationEntity> = {
-          id: applicationId,
-          changes: {
-            links: {
-              items: action.payload,
-              loadingStatus: 'loaded',
-            },
-          },
-        }
-        applicationsAdapter.updateOne(state, update)
       })
       // fetch application advanced Settings
       .addCase(fetchApplicationAdvancedSettings.pending, (state: ApplicationsState, action) => {

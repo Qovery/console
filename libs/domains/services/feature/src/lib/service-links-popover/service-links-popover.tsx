@@ -14,17 +14,19 @@ import {
   Truncate,
 } from '@qovery/shared/ui'
 import { pluralize } from '@qovery/shared/util-js'
+import useLinks from '../hooks/use-links/use-links'
+import useService from '../hooks/use-service/use-service'
 
-export interface ServiceLinksPopoverProps {
-  links?: LinkProps[]
-}
-
-// TODO: Update props and using React Query
-export function ServiceLinksPopover({ links }: ServiceLinksPopoverProps) {
+export function ServiceLinksPopover() {
   const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
+  const { data: service } = useService({
+    environmentId,
+    serviceId: applicationId,
+  })
+  const { data: links } = useLinks({ serviceId: service?.id ?? applicationId, serviceType: service?.type ?? '' })
 
   const pathDomainsSetting =
-    APPLICATION_URL(organizationId, projectId, environmentId, applicationId) +
+    APPLICATION_URL(organizationId, projectId, environmentId, service?.id) +
     APPLICATION_SETTINGS_URL +
     APPLICATION_SETTINGS_DOMAIN_URL
 

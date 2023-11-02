@@ -1,9 +1,3 @@
-import { type ContainerResponse, type Link } from 'qovery-typescript-axios'
-import { type LoadingStatus } from '../types/loading-status.type'
+import { type ContainerResponse } from 'qovery-typescript-axios'
 
-export interface ContainerApplicationEntity extends ContainerResponse {
-  links?: {
-    loadingStatus: LoadingStatus
-    items?: Link[]
-  }
-}
+export interface ContainerApplicationEntity extends ContainerResponse {}

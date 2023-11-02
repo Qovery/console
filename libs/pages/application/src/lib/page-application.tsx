@@ -1,14 +1,12 @@
 import equal from 'fast-deep-equal'
-import { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
-import { applicationsLoadingStatus, fetchApplicationLinks, selectApplicationById } from '@qovery/domains/application'
+import { selectApplicationById } from '@qovery/domains/application'
 import { useFetchEnvironment } from '@qovery/domains/environment'
-import { getServiceType, isApplication, isContainer } from '@qovery/shared/enums'
-import { type ApplicationEntity, type LoadingStatus } from '@qovery/shared/interfaces'
+import { type ApplicationEntity } from '@qovery/shared/interfaces'
 import { APPLICATION_GENERAL_URL, APPLICATION_URL } from '@qovery/shared/routes'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { type AppDispatch, type RootState } from '@qovery/state/store'
+import { type RootState } from '@qovery/state/store'
 import { ROUTER_APPLICATION } from './router/router'
 import Container from './ui/container/container'
 
@@ -22,21 +20,6 @@ export function PageApplication() {
   )
 
   useDocumentTitle(`${application?.name || 'Application'} - Qovery`)
-
-  const loadingStatus = useSelector<RootState, LoadingStatus>((state) => applicationsLoadingStatus(state))
-
-  const dispatch = useDispatch<AppDispatch>()
-  const serviceType = getServiceType(application as ApplicationEntity)
-
-  useEffect(() => {
-    if (application && applicationId && loadingStatus === 'loaded') {
-      // fetch links and instances for Container and GitApplication except for Jobs
-      if (isContainer(application) || isApplication(application)) {
-        if (application.links?.loadingStatus !== 'loaded')
-          dispatch(fetchApplicationLinks({ applicationId, serviceType }))
-      }
-    }
-  }, [application?.id, serviceType, applicationId, loadingStatus, dispatch])
 
   return (
     <Container application={application} environment={environment}>
