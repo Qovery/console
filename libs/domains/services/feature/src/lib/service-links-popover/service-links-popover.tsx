@@ -14,8 +14,8 @@ import {
   Truncate,
 } from '@qovery/shared/ui'
 import { pluralize } from '@qovery/shared/util-js'
-import useLinks from '../hooks/use-links/use-links'
-import useServiceType from '../hooks/use-service-type/use-service-type'
+import { useLinks } from '../hooks/use-links/use-links'
+import { useServiceType } from '../hooks/use-service-type/use-service-type'
 
 export function ServiceLinksPopover() {
   const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
