@@ -15,7 +15,7 @@ import GitTokenCreateEditModal from '../git-token-create-edit-modal/git-token-cr
 import { useDeleteGitToken } from '../hooks/use-delete-git-token/use-delete-git-token'
 import { useGitTokens } from '../hooks/use-git-tokens/use-git-tokens'
 
-export function ListGitTokens() {
+export function GitTokenList() {
   const { organizationId = '' } = useParams()
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
@@ -36,9 +36,9 @@ export function ListGitTokens() {
               className="flex justify-between items-center px-5 py-4 border-b border-neutral-250 last:border-0"
             >
               <div className="flex">
-                <Icon name={gitToken.type} width="20" height="20" />
+                <Icon name={gitToken.type} width="20px" height="20px" />
                 <div className="ml-4">
-                  <h2 className="flex text-xs text-neutral-400 font-medium mb-1">
+                  <p className="flex text-xs text-neutral-400 font-medium mb-1">
                     <Truncate truncateLimit={60} text={gitToken.name ?? ''} />
                     {gitToken.description && (
                       <Tooltip content={gitToken.description}>
@@ -47,7 +47,7 @@ export function ListGitTokens() {
                         </div>
                       </Tooltip>
                     )}
-                  </h2>
+                  </p>
                   <p className="text-xs text-neutral-350">
                     <span className="inline-block">Last updated {timeAgo(new Date(gitToken.updated_at ?? ''))}</span>
                     <span className="inline-block ml-3">
@@ -113,4 +113,4 @@ export function ListGitTokens() {
   )
 }
 
-export default ListGitTokens
+export default GitTokenList

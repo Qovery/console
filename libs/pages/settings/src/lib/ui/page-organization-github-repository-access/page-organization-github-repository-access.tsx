@@ -1,6 +1,6 @@
 import { type GitAuthProvider } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
-import { GitTokenCreateEditModal, ListGitTokens } from '@qovery/domains/organizations/feature'
+import { GitTokenCreateEditModal, GitTokenList } from '@qovery/domains/organizations/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import { type RepositoryEntity } from '@qovery/shared/interfaces'
 import {
@@ -35,7 +35,7 @@ export function PageOrganizationGithubRepositoryAccess(props: PageOrganizationGi
   const { organizationId = '' } = useParams()
 
   return (
-    <Section className="flex flex-col justify-between w-full">
+    <Section className="justify-between w-full">
       <div className="p-8 max-w-content-with-navigation-left">
         <div className="flex justify-between mb-8">
           <div className="mr-5">
@@ -59,7 +59,7 @@ export function PageOrganizationGithubRepositoryAccess(props: PageOrganizationGi
             <Icon name={IconAwesomeEnum.CIRCLE_PLUS} className="ml-2" />
           </Button>
         </div>
-        <ListGitTokens />
+        <GitTokenList />
 
         <Section>
           {/* TODO: Fix need to use <Heading /> component */}
@@ -68,11 +68,13 @@ export function PageOrganizationGithubRepositoryAccess(props: PageOrganizationGi
             By default Qovery has access to all your repositories. If you are using Github, you can restrict the Qovery
             accesses by installing the Qovery Github App on your GitHub organization.
           </p>
-          <Callout.Root className="text-xs mb-5" color="yellow">
+          <Callout.Root className="mb-5" color="yellow">
             <Callout.Icon>
               <Icon name={IconAwesomeEnum.CIRCLE_INFO} />
             </Callout.Icon>
-            <Callout.Text>The Qovery GitHub app is being deprecated, please use the Git tokens.</Callout.Text>
+            <Callout.Text className="text-xs">
+              The Qovery GitHub app is being deprecated, please use the Git tokens.
+            </Callout.Text>
           </Callout.Root>
 
           <BlockContent title="Qovery Github application installation status">

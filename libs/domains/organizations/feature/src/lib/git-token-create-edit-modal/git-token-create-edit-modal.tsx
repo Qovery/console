@@ -29,27 +29,22 @@ export function GitTokenCreateEditModal({ isEdit, gitToken, organizationId, onCl
   const gitType = methods.watch('type')
 
   const onSubmit = methods.handleSubmit(async (data) => {
-    if (isEdit) {
-      try {
+    try {
+      if (isEdit) {
         await editGitToken({
           organizationId,
           gitTokenId: gitToken?.id ?? '',
           gitTokenRequest: data,
         })
-        onClose()
-      } catch (error) {
-        console.error(error)
-      }
-    } else {
-      try {
+      } else {
         await createGitToken({
           organizationId,
           gitTokenRequest: data,
         })
-        onClose()
-      } catch (error) {
-        console.error(error)
       }
+      onClose()
+    } catch (error) {
+      console.error(error)
     }
   })
 

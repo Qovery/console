@@ -5,7 +5,7 @@ import { GitBranchSettings } from './git-branch-settings'
 jest.mock('../hooks/use-branches/use-branches', () => {
   return {
     ...jest.requireActual('../hooks/use-branches/use-branches'),
-    useGitTokens: () => ({
+    useBranches: () => ({
       isLoading: false,
       isRefetching: false,
       data: [

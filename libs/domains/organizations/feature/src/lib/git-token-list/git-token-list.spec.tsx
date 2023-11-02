@@ -1,5 +1,5 @@
 import { renderWithProviders } from '@qovery/shared/util-tests'
-import ListGitTokens from './list-git-tokens'
+import GitTokenList from './git-token-list'
 
 jest.mock('../hooks/use-git-tokens/use-git-tokens', () => {
   return {
@@ -28,14 +28,14 @@ jest.mock('../hooks/use-git-tokens/use-git-tokens', () => {
   }
 })
 
-describe('ListGitTokens', () => {
+describe('GitTokenList', () => {
   it('should render successfully', () => {
-    const { baseElement } = renderWithProviders(<ListGitTokens />)
+    const { baseElement } = renderWithProviders(<GitTokenList />)
     expect(baseElement).toBeTruthy()
   })
 
   it('should match snapshot', () => {
-    const { baseElement } = renderWithProviders(<ListGitTokens />)
+    const { baseElement } = renderWithProviders(<GitTokenList />)
     expect(baseElement).toMatchSnapshot()
   })
 })
