@@ -11,12 +11,9 @@ import { type AxiosResponse } from 'axios'
 import {
   CloudProviderApi,
   CloudProviderEnum,
-  type Credentials,
   type Database,
-  type DatabaseCurrentMetric,
   DatabaseDeploymentHistoryApi,
   DatabaseMainCallsApi,
-  DatabaseMetricsApi,
   type DatabaseRequest,
   type DatabaseTypeEnum,
   DatabasesApi,
@@ -42,7 +39,6 @@ export const databasesAdapter = createEntityAdapter<DatabaseEntity>()
 const databasesApi = new DatabasesApi()
 const databaseMainCallsApi = new DatabaseMainCallsApi()
 const databaseDeploymentsApi = new DatabaseDeploymentHistoryApi()
-const databaseMetricsApi = new DatabaseMetricsApi()
 const cloudProviderApi = new CloudProviderApi()
 
 export const fetchDatabases = createAsyncThunk<Database[], { environmentId: string }>(
@@ -95,14 +91,6 @@ export const editDatabase = createAsyncThunk(
   }
 )
 
-export const fetchDatabaseMetrics = createAsyncThunk<DatabaseCurrentMetric, { databaseId: string }>(
-  'database/instances',
-  async (data) => {
-    const response = await databaseMetricsApi.getDatabaseCurrentMetric(data.databaseId)
-    return response.data as DatabaseCurrentMetric
-  }
-)
-
 export const fetchDatabaseDeployments = createAsyncThunk<
   DeploymentHistoryDatabase[],
   { databaseId: string; silently?: boolean }
@@ -115,14 +103,6 @@ export const fetchDatabaseDeployments = createAsyncThunk<
   }>
   return response.data.results as DeploymentHistoryDatabase[]
 })
-
-export const fetchDatabaseMasterCredentials = createAsyncThunk<Credentials, { databaseId: string }>(
-  'database/credentials',
-  async (data) => {
-    const response = await databaseMainCallsApi.getDatabaseMasterCredentials(data.databaseId)
-    return response.data as Credentials
-  }
-)
 
 export const deleteDatabaseAction = createAsyncThunk(
   'databaseActions/delete',
@@ -266,47 +246,6 @@ export const databasesSlice = createSlice({
         toastError(action.error)
         state.error = action.error.message
       })
-      .addCase(fetchDatabaseMetrics.pending, (state: DatabasesState, action) => {
-        const databaseId = action.meta.arg.databaseId
-        const update: Update<DatabaseEntity> = {
-          id: databaseId,
-          changes: {
-            metrics: {
-              ...state.entities[databaseId]?.metrics,
-              loadingStatus: 'loading',
-            },
-          },
-        }
-        databasesAdapter.updateOne(state, update)
-      })
-      .addCase(fetchDatabaseMetrics.fulfilled, (state: DatabasesState, action) => {
-        const databaseId = action.meta.arg.databaseId
-        const update: Update<DatabaseEntity> = {
-          id: databaseId,
-          changes: {
-            metrics: {
-              data: action.payload,
-              loadingStatus: 'loaded',
-            },
-          },
-        }
-        databasesAdapter.updateOne(state, update)
-      })
-      .addCase(fetchDatabaseMetrics.rejected, (state: DatabasesState, action) => {
-        const databaseId = action.meta.arg.databaseId
-        const update: Update<DatabaseEntity> = {
-          id: databaseId,
-          changes: {
-            metrics: {
-              loadingStatus: 'error',
-            },
-          },
-        }
-        databasesAdapter.updateOne(state, update)
-
-        state.error = action.error.message
-        toastError(action.error)
-      })
       .addCase(fetchDatabaseDeployments.pending, (state: DatabasesState, action) => {
         const update = {
           id: action.meta.arg.databaseId,
@@ -336,41 +275,6 @@ export const databasesSlice = createSlice({
           id: action.meta.arg.databaseId,
           changes: {
             deployments: {
-              loadingStatus: 'error',
-            },
-          },
-        }
-        databasesAdapter.updateOne(state, update as Update<Database>)
-      })
-      .addCase(fetchDatabaseMasterCredentials.pending, (state: DatabasesState, action) => {
-        const update = {
-          id: action.meta.arg.databaseId,
-          changes: {
-            credentials: {
-              ...state.entities[action.meta.arg.databaseId]?.credentials,
-              loadingStatus: 'loading',
-            },
-          },
-        }
-        databasesAdapter.updateOne(state, update as Update<Database>)
-      })
-      .addCase(fetchDatabaseMasterCredentials.fulfilled, (state: DatabasesState, action) => {
-        const update = {
-          id: action.meta.arg.databaseId,
-          changes: {
-            credentials: {
-              loadingStatus: 'loaded',
-              items: action.payload,
-            },
-          },
-        }
-        databasesAdapter.updateOne(state, update as Update<Database>)
-      })
-      .addCase(fetchDatabaseMasterCredentials.rejected, (state: DatabasesState, action) => {
-        const update = {
-          id: action.meta.arg.databaseId,
-          changes: {
-            credentials: {
               loadingStatus: 'error',
             },
           },
