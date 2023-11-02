@@ -29,14 +29,9 @@ import {
   repositoryReducer,
 } from '@qovery/domains/organization'
 // eslint-disable-next-line @nx/enforce-module-boundaries
-import {
-  deploymentRulesReducer,
-  initialDeploymentRulesState,
-  initialProjectsState,
-  projects,
-} from '@qovery/domains/projects'
-// eslint-disable-next-line @nx/enforce-module-boundaries
 import { initialUserSignUpState, initialUserState, userReducer, userSignUp } from '@qovery/domains/users/data-access'
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { deploymentRulesReducer, initialDeploymentRulesState, initialProjectsState, projects } from '@qovery/project'
 
 export const organizationReducer = combineReducers({
   organizations: organization,

@@ -1,11 +1,11 @@
 /* eslint-disable */
 export default {
-  displayName: 'domains-projects',
+  displayName: 'project',
   preset: '../../../jest.preset.js',
   transform: {
     '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)': '@nx/react/plugins/jest',
     '^.+\\.[tj]sx?$': ['babel-jest', { presets: ['@nx/react/babel'] }],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../../coverage/libs/domains/projects',
+  coverageDirectory: '../../../coverage/libs/domains/project',
 }

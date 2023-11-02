@@ -4,8 +4,8 @@ import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { fetchOrganization } from '@qovery/domains/organization'
-import { fetchProjects } from '@qovery/domains/projects'
 import { fetchUserSignUp } from '@qovery/domains/users/data-access'
+import { fetchProjects } from '@qovery/project'
 import { useAuth } from '@qovery/shared/auth'
 import {
   ONBOARDING_PERSONALIZE_URL,

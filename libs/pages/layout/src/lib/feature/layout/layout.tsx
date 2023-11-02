@@ -13,7 +13,7 @@ import {
   selectAllOrganization,
   selectClustersEntitiesByOrganizationId,
 } from '@qovery/domains/organization'
-import { fetchProjects } from '@qovery/domains/projects'
+import { fetchProjects } from '@qovery/project'
 import { type OrganizationEntity } from '@qovery/shared/interfaces'
 import { ORGANIZATION_URL } from '@qovery/shared/routes'
 import { StatusWebSocketListener } from '@qovery/shared/util-web-sockets'

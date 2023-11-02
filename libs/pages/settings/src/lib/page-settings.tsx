@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux'
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
-import { selectProjectsEntitiesByOrgId } from '@qovery/domains/projects'
+import { selectProjectsEntitiesByOrgId } from '@qovery/project'
 import {
   SETTINGS_API_URL,
   SETTINGS_BILLING_SUMMARY_URL,

@@ -8,7 +8,7 @@ import {
   fetchDeploymentRules,
   selectDeploymentRulesEntitiesByProjectId,
   updateDeploymentRuleOrder,
-} from '@qovery/domains/projects'
+} from '@qovery/project'
 import { ENVIRONMENTS_DEPLOYMENT_RULES_CREATE_URL, ENVIRONMENTS_URL } from '@qovery/shared/routes'
 import { type BaseLink } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
