@@ -2,7 +2,6 @@ import { createAsyncThunk } from '@reduxjs/toolkit'
 import { ApplicationActionsApi, ContainerActionsApi, JobActionsApi, type JobForceEvent } from 'qovery-typescript-axios'
 import { type ServiceTypeEnum, isApplication, isContainer, isJob } from '@qovery/shared/enums'
 import { ToastEnum, toast } from '@qovery/shared/ui'
-import { fetchApplicationDeployments } from './applications.slice'
 
 const applicationActionApi = new ApplicationActionsApi()
 const containerActionApi = new ContainerActionsApi()
@@ -15,7 +14,6 @@ export const postApplicationActionsRedeploy = createAsyncThunk(
       environmentId: string
       applicationId: string
       serviceType?: ServiceTypeEnum
-      withDeployments?: boolean
       callback: () => void
     },
     { dispatch }
@@ -31,15 +29,6 @@ export const postApplicationActionsRedeploy = createAsyncThunk(
       }
 
       if (response.status === 202) {
-        // refetch deployments after update
-        if (data.withDeployments)
-          await dispatch(
-            fetchApplicationDeployments({
-              applicationId: data.applicationId,
-              serviceType: data.serviceType,
-              silently: true,
-            })
-          )
         // success message
         toast(
           ToastEnum.SUCCESS,
@@ -66,7 +55,6 @@ export const postApplicationActionsReboot = createAsyncThunk(
       environmentId: string
       applicationId: string
       serviceType?: ServiceTypeEnum
-      withDeployments?: boolean
       callback: () => void
     },
     { dispatch }
@@ -80,15 +68,6 @@ export const postApplicationActionsReboot = createAsyncThunk(
       }
 
       if (response.status === 202) {
-        // refetch deployments after update
-        if (data.withDeployments)
-          await dispatch(
-            fetchApplicationDeployments({
-              applicationId: data.applicationId,
-              serviceType: data.serviceType,
-              silently: true,
-            })
-          )
         // success message
         toast(
           ToastEnum.SUCCESS,
@@ -115,7 +94,6 @@ export const postApplicationActionsDeploy = createAsyncThunk(
       environmentId: string
       applicationId: string
       serviceType?: ServiceTypeEnum
-      withDeployments?: boolean
       callback: () => void
     },
     { dispatch }
@@ -131,15 +109,6 @@ export const postApplicationActionsDeploy = createAsyncThunk(
       }
 
       if (response.status === 202) {
-        // refetch deployments after update
-        if (data.withDeployments)
-          await dispatch(
-            fetchApplicationDeployments({
-              applicationId: data.applicationId,
-              serviceType: data.serviceType,
-              silently: true,
-            })
-          )
         // success message
         toast(
           ToastEnum.SUCCESS,
@@ -254,7 +223,6 @@ export const postApplicationActionsStop = createAsyncThunk(
       environmentId: string
       applicationId: string
       serviceType?: ServiceTypeEnum
-      withDeployments?: boolean
       callback: () => void
     },
     { dispatch }
@@ -270,15 +238,6 @@ export const postApplicationActionsStop = createAsyncThunk(
       }
 
       if (response.status === 202) {
-        // refetch deployments after update
-        if (data.withDeployments)
-          await dispatch(
-            fetchApplicationDeployments({
-              applicationId: data.applicationId,
-              serviceType: data.serviceType,
-              silently: true,
-            })
-          )
         // success message
         toast(
           ToastEnum.SUCCESS,
