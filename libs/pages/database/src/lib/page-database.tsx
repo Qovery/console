@@ -1,14 +1,11 @@
 import equal from 'fast-deep-equal'
-import { DatabaseModeEnum, StateEnum } from 'qovery-typescript-axios'
-import { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { Route, Routes, useParams } from 'react-router-dom'
-import { databasesLoadingStatus, fetchDatabaseMasterCredentials, selectDatabaseById } from '@qovery/domains/database'
+import { selectDatabaseById } from '@qovery/domains/database'
 import { useFetchEnvironment } from '@qovery/domains/environment'
-import { useDeploymentStatus } from '@qovery/domains/services/feature'
-import { type DatabaseEntity, type LoadingStatus } from '@qovery/shared/interfaces'
+import { type DatabaseEntity } from '@qovery/shared/interfaces'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { type AppDispatch, type RootState } from '@qovery/state/store'
+import { type RootState } from '@qovery/state/store'
 import { ROUTER_DATABASE } from './router/router'
 import Container from './ui/container/container'
 
@@ -22,22 +19,6 @@ export function PageDatabase() {
   )
 
   useDocumentTitle(`${database?.name || 'Database'} - Qovery`)
-
-  const loadingStatus = useSelector<RootState, LoadingStatus>((state) => databasesLoadingStatus(state))
-
-  const dispatch = useDispatch<AppDispatch>()
-
-  const { data: deploymentStatus } = useDeploymentStatus({
-    environmentId: database?.environment?.id,
-    serviceId: database?.id,
-  })
-  const isDeployed = deploymentStatus?.state === StateEnum.DEPLOYED
-
-  useEffect(() => {
-    if (database && databaseId && loadingStatus === 'loaded' && database?.credentials?.loadingStatus !== 'loaded') {
-      dispatch(fetchDatabaseMasterCredentials({ databaseId }))
-    }
-  }, [databaseId, loadingStatus, environmentId, database, isDeployed, dispatch])
 
   return (
     <Container database={database} environment={environment}>

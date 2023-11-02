@@ -11,7 +11,6 @@ import { type AxiosResponse } from 'axios'
 import {
   CloudProviderApi,
   CloudProviderEnum,
-  type Credentials,
   type Database,
   DatabaseDeploymentHistoryApi,
   DatabaseMainCallsApi,
@@ -104,14 +103,6 @@ export const fetchDatabaseDeployments = createAsyncThunk<
   }>
   return response.data.results as DeploymentHistoryDatabase[]
 })
-
-export const fetchDatabaseMasterCredentials = createAsyncThunk<Credentials, { databaseId: string }>(
-  'database/credentials',
-  async (data) => {
-    const response = await databaseMainCallsApi.getDatabaseMasterCredentials(data.databaseId)
-    return response.data as Credentials
-  }
-)
 
 export const deleteDatabaseAction = createAsyncThunk(
   'databaseActions/delete',
@@ -284,41 +275,6 @@ export const databasesSlice = createSlice({
           id: action.meta.arg.databaseId,
           changes: {
             deployments: {
-              loadingStatus: 'error',
-            },
-          },
-        }
-        databasesAdapter.updateOne(state, update as Update<Database>)
-      })
-      .addCase(fetchDatabaseMasterCredentials.pending, (state: DatabasesState, action) => {
-        const update = {
-          id: action.meta.arg.databaseId,
-          changes: {
-            credentials: {
-              ...state.entities[action.meta.arg.databaseId]?.credentials,
-              loadingStatus: 'loading',
-            },
-          },
-        }
-        databasesAdapter.updateOne(state, update as Update<Database>)
-      })
-      .addCase(fetchDatabaseMasterCredentials.fulfilled, (state: DatabasesState, action) => {
-        const update = {
-          id: action.meta.arg.databaseId,
-          changes: {
-            credentials: {
-              loadingStatus: 'loaded',
-              items: action.payload,
-            },
-          },
-        }
-        databasesAdapter.updateOne(state, update as Update<Database>)
-      })
-      .addCase(fetchDatabaseMasterCredentials.rejected, (state: DatabasesState, action) => {
-        const update = {
-          id: action.meta.arg.databaseId,
-          changes: {
-            credentials: {
               loadingStatus: 'error',
             },
           },
