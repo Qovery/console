@@ -1,3 +1,4 @@
+import { type QueryClient } from '@tanstack/query-core'
 import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { postApplicationActionsRedeploy } from '@qovery/domains/application'
 import {
@@ -30,7 +31,8 @@ export function handleSubmitForEnvSecretCreation(
   setClosing: (b: boolean) => void,
   serviceType: ServiceTypeEnum,
   actionRedeployEnvironment: () => void,
-  callback: () => void
+  callback: () => void,
+  queryClient: QueryClient
 ): void {
   if (data) {
     let entityId
@@ -60,6 +62,7 @@ export function handleSubmitForEnvSecretCreation(
             environmentId: props.environmentId,
             serviceType: serviceType,
             callback: () => callback(),
+            queryClient,
           })
         )
       } else {

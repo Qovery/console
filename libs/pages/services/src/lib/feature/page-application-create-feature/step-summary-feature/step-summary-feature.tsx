@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query'
 import {
   type ApplicationRequest,
   BuildModeEnum,
@@ -40,6 +41,7 @@ export function StepSummaryFeature() {
   const organization = useSelector<RootState, OrganizationEntity | undefined>((state) =>
     selectOrganizationById(state, organizationId)
   )
+  const queryClient = useQueryClient()
 
   const gotoGlobalInformations = () => {
     navigate(pathCreate + SERVICES_CREATION_GENERAL_URL)
@@ -131,6 +133,7 @@ export function StepSummaryFeature() {
                     navigate(
                       ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(app.id)
                     ),
+                  queryClient,
                 })
               )
             }
@@ -185,6 +188,7 @@ export function StepSummaryFeature() {
                     navigate(
                       ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(app.id)
                     ),
+                  queryClient,
                 })
               )
             }

@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { type Environment, type Link, ServiceDeploymentStatusEnum } from 'qovery-typescript-axios'
 import { type PropsWithChildren, createContext, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -31,6 +32,7 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
   const { application, environment, children } = props
   const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
   const [showHideAllEnvironmentVariablesValues, setShowHideAllEnvironmentVariablesValues] = useState<boolean>(false)
+  const queryClient = useQueryClient()
 
   const cluster = useSelector<RootState, ClusterEntity | undefined>((state: RootState) =>
     selectClusterById(state, environment?.cluster_id || '')
@@ -55,6 +57,7 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
               navigate(
                 ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(applicationId)
               ),
+            queryClient,
           })
         )
       } else {
@@ -67,6 +70,7 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
               navigate(
                 ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(applicationId)
               ),
+            queryClient,
           })
         )
       }

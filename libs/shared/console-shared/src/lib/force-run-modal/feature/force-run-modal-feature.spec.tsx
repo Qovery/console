@@ -71,6 +71,7 @@ describe('ForceRunModalFeature', () => {
       applicationId: '4',
       jobForceEvent: JobForceEvent.START,
       callback: expect.any(Function),
+      queryClient: expect.any(Object),
     })
   })
 })

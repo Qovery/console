@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { type CustomDomain } from 'qovery-typescript-axios'
 import { useEffect, useMemo } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
@@ -43,6 +44,7 @@ export function CrudModalFeature({
   const dispatch = useDispatch<AppDispatch>()
   const loadingStatus = useSelector<RootState, LoadingStatus>((state) => getCustomDomainsState(state).loadingStatus)
   const { enableAlertClickOutside } = useModal()
+  const queryClient = useQueryClient()
 
   const toasterCallback = () => {
     if (application) {
@@ -56,6 +58,7 @@ export function CrudModalFeature({
               ENVIRONMENT_LOGS_URL(organizationId, projectId, application?.environment?.id) +
                 DEPLOYMENT_LOGS_URL(application?.id)
             ),
+          queryClient,
         })
       )
     }

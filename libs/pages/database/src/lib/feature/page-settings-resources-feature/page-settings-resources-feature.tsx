@@ -55,6 +55,7 @@ export function PageSettingsResourcesFeature() {
         postDatabaseActionsRedeploy({
           databaseId,
           environmentId,
+          queryClient,
         })
       )
     }

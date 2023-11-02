@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
@@ -67,6 +68,7 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
   const [loading, setLoading] = useState(false)
   const { enableAlertClickOutside } = useModal()
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
 
   const actionRedeployEnvironment = useActionRedeployEnvironment(projectId, environmentId, false, undefined, () =>
     navigate(ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(applicationId))
@@ -120,7 +122,8 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
         serviceType,
         () => actionRedeployEnvironment.mutate(),
         () =>
-          navigate(ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(applicationId))
+          navigate(ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(applicationId)),
+        queryClient
       )
     }
   })

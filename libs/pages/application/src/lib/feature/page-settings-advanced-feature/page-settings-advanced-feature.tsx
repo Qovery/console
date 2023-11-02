@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
@@ -36,6 +37,7 @@ export function PageSettingsAdvancedFeature() {
   const methods = useForm({ mode: 'onChange' })
   const navigate = useNavigate()
   const [serviceType, setServiceType] = useState<ServiceTypeEnum>()
+  const queryClient = useQueryClient()
 
   useEffect(() => {
     if (application) setServiceType(getServiceType(application))
@@ -83,6 +85,7 @@ export function PageSettingsAdvancedFeature() {
             navigate(
               ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(applicationId)
             ),
+          queryClient,
         })
       )
     }

@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { type Commit } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -27,6 +28,7 @@ export function DeployOtherCommitModalFeature({
   const dispatch = useDispatch<AppDispatch>()
   const navigate = useNavigate()
   const { closeModal } = useModal()
+  const queryClient = useQueryClient()
 
   const [selectedCommitId, setSelectedCommitId] = useState<string | null>(null)
   const [deployLoading, setDeployLoading] = useState(false)
@@ -66,6 +68,7 @@ export function DeployOtherCommitModalFeature({
             navigate(
               ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(applicationId)
             ),
+          queryClient,
         })
       ).then(() => {
         closeModal()

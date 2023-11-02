@@ -1,7 +1,9 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
+import { type QueryClient } from '@tanstack/query-core'
 import { ApplicationActionsApi, ContainerActionsApi, JobActionsApi, type JobForceEvent } from 'qovery-typescript-axios'
 import { type ServiceTypeEnum, isApplication, isContainer, isJob } from '@qovery/shared/enums'
 import { ToastEnum, toast } from '@qovery/shared/ui'
+import { queries } from '@qovery/state/util-queries'
 
 const applicationActionApi = new ApplicationActionsApi()
 const containerActionApi = new ContainerActionsApi()
@@ -15,6 +17,7 @@ export const postApplicationActionsRedeploy = createAsyncThunk(
       applicationId: string
       serviceType?: ServiceTypeEnum
       callback: () => void
+      queryClient: QueryClient
     },
     { dispatch }
   ) => {
@@ -29,6 +32,11 @@ export const postApplicationActionsRedeploy = createAsyncThunk(
       }
 
       if (response.status === 202) {
+        data.queryClient.invalidateQueries({
+          // NOTE: we don't care about the serviceType here because it's not related to cache
+          queryKey: queries.services.deploymentHistory({ serviceId: data.applicationId, serviceType: 'APPLICATION' })
+            .queryKey,
+        })
         // success message
         toast(
           ToastEnum.SUCCESS,
@@ -56,6 +64,7 @@ export const postApplicationActionsReboot = createAsyncThunk(
       applicationId: string
       serviceType?: ServiceTypeEnum
       callback: () => void
+      queryClient: QueryClient
     },
     { dispatch }
   ) => {
@@ -68,6 +77,11 @@ export const postApplicationActionsReboot = createAsyncThunk(
       }
 
       if (response.status === 202) {
+        data.queryClient.invalidateQueries({
+          // NOTE: we don't care about the serviceType here because it's not related to cache
+          queryKey: queries.services.deploymentHistory({ serviceId: data.applicationId, serviceType: 'APPLICATION' })
+            .queryKey,
+        })
         // success message
         toast(
           ToastEnum.SUCCESS,
@@ -95,6 +109,7 @@ export const postApplicationActionsDeploy = createAsyncThunk(
       applicationId: string
       serviceType?: ServiceTypeEnum
       callback: () => void
+      queryClient: QueryClient
     },
     { dispatch }
   ) => {
@@ -109,6 +124,11 @@ export const postApplicationActionsDeploy = createAsyncThunk(
       }
 
       if (response.status === 202) {
+        data.queryClient.invalidateQueries({
+          // NOTE: we don't care about the serviceType here because it's not related to cache
+          queryKey: queries.services.deploymentHistory({ serviceId: data.applicationId, serviceType: 'APPLICATION' })
+            .queryKey,
+        })
         // success message
         toast(
           ToastEnum.SUCCESS,
@@ -137,6 +157,7 @@ export const postApplicationActionsDeployByCommitId = createAsyncThunk(
       git_commit_id: string
       serviceType: ServiceTypeEnum
       callback: () => void
+      queryClient: QueryClient
     },
     { dispatch }
   ) => {
@@ -154,6 +175,11 @@ export const postApplicationActionsDeployByCommitId = createAsyncThunk(
       }
 
       if (response.status === 202) {
+        data.queryClient.invalidateQueries({
+          // NOTE: we don't care about the serviceType here because it's not related to cache
+          queryKey: queries.services.deploymentHistory({ serviceId: data.applicationId, serviceType: 'APPLICATION' })
+            .queryKey,
+        })
         toast(
           ToastEnum.SUCCESS,
           'Your application is deploying',
@@ -181,6 +207,7 @@ export const postApplicationActionsDeployByTag = createAsyncThunk(
       tag: string
       serviceType: ServiceTypeEnum
       callback: () => void
+      queryClient: QueryClient
     },
     { dispatch }
   ) => {
@@ -198,6 +225,11 @@ export const postApplicationActionsDeployByTag = createAsyncThunk(
       }
 
       if (response.status === 202) {
+        data.queryClient.invalidateQueries({
+          // NOTE: we don't care about the serviceType here because it's not related to cache
+          queryKey: queries.services.deploymentHistory({ serviceId: data.applicationId, serviceType: 'APPLICATION' })
+            .queryKey,
+        })
         toast(
           ToastEnum.SUCCESS,
           `Your ${isJob(data.serviceType) ? 'job' : 'application'} is deploying`,
@@ -224,6 +256,7 @@ export const postApplicationActionsStop = createAsyncThunk(
       applicationId: string
       serviceType?: ServiceTypeEnum
       callback: () => void
+      queryClient: QueryClient
     },
     { dispatch }
   ) => {
@@ -238,6 +271,11 @@ export const postApplicationActionsStop = createAsyncThunk(
       }
 
       if (response.status === 202) {
+        data.queryClient.invalidateQueries({
+          // NOTE: we don't care about the serviceType here because it's not related to cache
+          queryKey: queries.services.deploymentHistory({ serviceId: data.applicationId, serviceType: 'APPLICATION' })
+            .queryKey,
+        })
         // success message
         toast(
           ToastEnum.SUCCESS,
@@ -259,11 +297,21 @@ export const postApplicationActionsStop = createAsyncThunk(
 
 export const forceRunJob = createAsyncThunk(
   'applicationActions/delete',
-  async (data: { applicationId: string; jobForceEvent: JobForceEvent; callback: () => void }) => {
+  async (data: {
+    applicationId: string
+    jobForceEvent: JobForceEvent
+    callback: () => void
+    queryClient: QueryClient
+  }) => {
     try {
       const response = await jobActionApi.deployJob(data.applicationId, data.jobForceEvent)
 
       if (response.status === 202) {
+        data.queryClient.invalidateQueries({
+          // NOTE: we don't care about the serviceType here because it's not related to cache
+          queryKey: queries.services.deploymentHistory({ serviceId: data.applicationId, serviceType: 'APPLICATION' })
+            .queryKey,
+        })
         // success message
         toast(
           ToastEnum.SUCCESS,

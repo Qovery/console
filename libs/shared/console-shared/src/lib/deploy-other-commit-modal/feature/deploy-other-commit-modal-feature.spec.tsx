@@ -105,6 +105,7 @@ describe('DeployOtherCommitModalFeature', () => {
       environmentId: 'environmentId',
       serviceType: ServiceTypeEnum.APPLICATION,
       callback: expect.any(Function),
+      queryClient: expect.any(Object),
     })
   })
 
