@@ -89,6 +89,12 @@ export function GitTokenList() {
                   onClick={() => {
                     openModalConfirmation({
                       title: 'Delete git token',
+                      description: (
+                        <p>
+                          Token deletion is allowed only if no services are using it. <br />
+                          To confirm the deletion of <strong>{gitToken?.name}</strong>, please type "delete"
+                        </p>
+                      ),
                       isDelete: true,
                       name: gitToken?.name,
                       action: () => deleteToken({ organizationId, gitTokenId: gitToken.id }),
