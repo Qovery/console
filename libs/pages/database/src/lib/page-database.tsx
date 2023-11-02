@@ -3,12 +3,7 @@ import { DatabaseModeEnum, StateEnum } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Route, Routes, useParams } from 'react-router-dom'
-import {
-  databasesLoadingStatus,
-  fetchDatabaseMasterCredentials,
-  fetchDatabaseMetrics,
-  selectDatabaseById,
-} from '@qovery/domains/database'
+import { databasesLoadingStatus, fetchDatabaseMasterCredentials, selectDatabaseById } from '@qovery/domains/database'
 import { useFetchEnvironment } from '@qovery/domains/environment'
 import { useDeploymentStatus } from '@qovery/domains/services/feature'
 import { type DatabaseEntity, type LoadingStatus } from '@qovery/shared/interfaces'
@@ -39,12 +34,6 @@ export function PageDatabase() {
   const isDeployed = deploymentStatus?.state === StateEnum.DEPLOYED
 
   useEffect(() => {
-    if (isDeployed && database?.mode !== DatabaseModeEnum.MANAGED && databaseId && loadingStatus === 'loaded') {
-      database?.metrics?.loadingStatus !== 'loaded' &&
-        database?.metrics?.loadingStatus !== 'error' &&
-        dispatch(fetchDatabaseMetrics({ databaseId }))
-    }
-
     if (database && databaseId && loadingStatus === 'loaded' && database?.credentials?.loadingStatus !== 'loaded') {
       dispatch(fetchDatabaseMasterCredentials({ databaseId }))
     }

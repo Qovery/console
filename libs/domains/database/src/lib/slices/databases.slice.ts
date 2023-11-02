@@ -13,10 +13,8 @@ import {
   CloudProviderEnum,
   type Credentials,
   type Database,
-  type DatabaseCurrentMetric,
   DatabaseDeploymentHistoryApi,
   DatabaseMainCallsApi,
-  DatabaseMetricsApi,
   type DatabaseRequest,
   type DatabaseTypeEnum,
   DatabasesApi,
@@ -42,7 +40,6 @@ export const databasesAdapter = createEntityAdapter<DatabaseEntity>()
 const databasesApi = new DatabasesApi()
 const databaseMainCallsApi = new DatabaseMainCallsApi()
 const databaseDeploymentsApi = new DatabaseDeploymentHistoryApi()
-const databaseMetricsApi = new DatabaseMetricsApi()
 const cloudProviderApi = new CloudProviderApi()
 
 export const fetchDatabases = createAsyncThunk<Database[], { environmentId: string }>(
@@ -92,14 +89,6 @@ export const editDatabase = createAsyncThunk(
     })
 
     return response.data
-  }
-)
-
-export const fetchDatabaseMetrics = createAsyncThunk<DatabaseCurrentMetric, { databaseId: string }>(
-  'database/instances',
-  async (data) => {
-    const response = await databaseMetricsApi.getDatabaseCurrentMetric(data.databaseId)
-    return response.data as DatabaseCurrentMetric
   }
 )
 
@@ -265,47 +254,6 @@ export const databasesSlice = createSlice({
         state.loadingStatus = 'error'
         toastError(action.error)
         state.error = action.error.message
-      })
-      .addCase(fetchDatabaseMetrics.pending, (state: DatabasesState, action) => {
-        const databaseId = action.meta.arg.databaseId
-        const update: Update<DatabaseEntity> = {
-          id: databaseId,
-          changes: {
-            metrics: {
-              ...state.entities[databaseId]?.metrics,
-              loadingStatus: 'loading',
-            },
-          },
-        }
-        databasesAdapter.updateOne(state, update)
-      })
-      .addCase(fetchDatabaseMetrics.fulfilled, (state: DatabasesState, action) => {
-        const databaseId = action.meta.arg.databaseId
-        const update: Update<DatabaseEntity> = {
-          id: databaseId,
-          changes: {
-            metrics: {
-              data: action.payload,
-              loadingStatus: 'loaded',
-            },
-          },
-        }
-        databasesAdapter.updateOne(state, update)
-      })
-      .addCase(fetchDatabaseMetrics.rejected, (state: DatabasesState, action) => {
-        const databaseId = action.meta.arg.databaseId
-        const update: Update<DatabaseEntity> = {
-          id: databaseId,
-          changes: {
-            metrics: {
-              loadingStatus: 'error',
-            },
-          },
-        }
-        databasesAdapter.updateOne(state, update)
-
-        state.error = action.error.message
-        toastError(action.error)
       })
       .addCase(fetchDatabaseDeployments.pending, (state: DatabasesState, action) => {
         const update = {
