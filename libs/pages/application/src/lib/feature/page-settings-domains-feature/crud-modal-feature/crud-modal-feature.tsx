@@ -10,7 +10,7 @@ import {
   getCustomDomainsState,
   postApplicationActionsRedeploy,
 } from '@qovery/domains/application'
-import { ServiceType } from '@qovery/domains/services/data-access'
+import { type ServiceType } from '@qovery/domains/services/data-access'
 import { useLinks } from '@qovery/domains/services/feature'
 import { getServiceType } from '@qovery/shared/enums'
 import { type ApplicationEntity, type LoadingStatus } from '@qovery/shared/interfaces'
