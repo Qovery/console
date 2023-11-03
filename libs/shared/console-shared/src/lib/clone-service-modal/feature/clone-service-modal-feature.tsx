@@ -1,6 +1,6 @@
 import { type Environment } from 'qovery-typescript-axios'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { fetchApplications } from '@qovery/domains/application'
 import { fetchDatabases } from '@qovery/domains/database'
