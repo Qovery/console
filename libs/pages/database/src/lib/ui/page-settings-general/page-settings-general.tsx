@@ -73,9 +73,9 @@ export function PageSettingsGeneral({
               <Callout.Text>
                 <Callout.TextHeading>Qovery manages this resource for you </Callout.TextHeading>
                 <Callout.TextDescription className="text-xs">
-                  Use exclusively the Qovery console to update the resources managed by Qovery on your cloud account. Do
-                  not manually update or upgrade them on the cloud provider console, otherwise you will risk a drift in
-                  the configuration. <br />
+                  Use exclusively the Qovery console to update the resources managed by Qovery on your cloud account.
+                  <br /> Do not manually update or upgrade them on the cloud provider console, otherwise you will risk a
+                  drift in the configuration. <br />
                 </Callout.TextDescription>
               </Callout.Text>
             </Callout.Root>
