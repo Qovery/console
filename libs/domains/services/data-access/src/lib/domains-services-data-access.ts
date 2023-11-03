@@ -268,7 +268,7 @@ export const services = createQueryKeys('services', {
     serviceType,
   }: {
     serviceId: string
-    serviceType: Extract<ServiceType, 'APPLICATION' | 'CONTAINER' | 'JOB' | 'CRON_JOB' | 'LIFECYCLE_JOB'>
+    serviceType: Extract<ServiceType, 'APPLICATION' | 'CONTAINER'>
   }) => ({
     queryKey: [serviceId],
     async queryFn() {
@@ -276,7 +276,7 @@ export const services = createQueryKeys('services', {
         .with('APPLICATION', async () => {
           return (await applicationMainCallsApi.listApplicationLinks(serviceId)).data.results
         })
-        .with('CONTAINER', 'JOB', 'CRON_JOB', 'LIFECYCLE_JOB', async () => {
+        .with('CONTAINER', async () => {
           return (await containerMainCallsApi.listContainerLinks(serviceId)).data.results
         })
         .exhaustive()

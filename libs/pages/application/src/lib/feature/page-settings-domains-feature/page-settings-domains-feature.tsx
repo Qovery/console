@@ -10,7 +10,6 @@ import {
   getCustomDomainsState,
   selectCustomDomainsByApplicationId,
 } from '@qovery/domains/application'
-import { type ServiceType } from '@qovery/domains/services/data-access'
 import { getServiceType } from '@qovery/shared/enums'
 import { type ApplicationEntity, type LoadingStatus } from '@qovery/shared/interfaces'
 import { useModal, useModalConfirmation } from '@qovery/shared/ui'
@@ -89,10 +88,7 @@ export function PageSettingsDomainsFeature() {
                   queryClient.invalidateQueries(
                     queries.services.listLinks({
                       serviceId: applicationId,
-                      serviceType: getServiceType(application as ApplicationEntity) as Extract<
-                        ServiceType,
-                        'APPLICATION' | 'CONTAINER' | 'JOB' | 'CRON_JOB' | 'LIFECYCLE_JOB'
-                      >,
+                      serviceType: 'APPLICATION',
                     })
                   )
                 })

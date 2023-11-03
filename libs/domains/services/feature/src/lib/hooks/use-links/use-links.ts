@@ -12,13 +12,10 @@ export function useLinks({ serviceId, serviceType }: UseLinksProps) {
   return useQuery({
     ...queries.services.listLinks({
       serviceId,
-      serviceType: serviceType as Extract<
-        ServiceType,
-        'APPLICATION' | 'CONTAINER' | 'JOB' | 'CRON_JOB' | 'LIFECYCLE_JOB'
-      >,
+      serviceType: serviceType as Extract<ServiceType, 'APPLICATION' | 'CONTAINER'>,
     }),
     enabled: match(serviceType)
-      .with('APPLICATION', 'CONTAINER', 'JOB', 'CRON_JOB', 'LIFECYCLE_JOB', () => true)
+      .with('APPLICATION', 'CONTAINER', () => true)
       .otherwise(() => false),
   })
 }

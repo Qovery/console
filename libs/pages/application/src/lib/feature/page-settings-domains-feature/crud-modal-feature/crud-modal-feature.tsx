@@ -10,7 +10,6 @@ import {
   getCustomDomainsState,
   postApplicationActionsRedeploy,
 } from '@qovery/domains/application'
-import { type ServiceType } from '@qovery/domains/services/data-access'
 import { useLinks } from '@qovery/domains/services/feature'
 import { getServiceType } from '@qovery/shared/enums'
 import { type ApplicationEntity, type LoadingStatus } from '@qovery/shared/interfaces'
@@ -77,10 +76,7 @@ export function CrudModalFeature({
     queryClient.invalidateQueries(
       queries.services.listLinks({
         serviceId: application.id,
-        serviceType: getServiceType(application) as Extract<
-          ServiceType,
-          'APPLICATION' | 'CONTAINER' | 'JOB' | 'CRON_JOB' | 'LIFECYCLE_JOB'
-        >,
+        serviceType: 'APPLICATION',
       })
     )
   }
