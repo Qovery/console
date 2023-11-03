@@ -149,20 +149,6 @@ export const createApplication = createAsyncThunk(
   }
 )
 
-export const fetchApplicationLinks = createAsyncThunk<Link[], { applicationId: string; serviceType?: ServiceTypeEnum }>(
-  'application/links',
-  async (data) => {
-    let response
-
-    if (isContainer(data.serviceType)) {
-      response = await containerMainCallsApi.listContainerLinks(data.applicationId)
-    } else {
-      response = await applicationMainCallsApi.listApplicationLinks(data.applicationId)
-    }
-    return response.data.results as Link[]
-  }
-)
-
 export const fetchApplicationAdvancedSettings = createAsyncThunk<
   ApplicationAdvancedSettings,
   { applicationId: string; serviceType: ServiceTypeEnum }

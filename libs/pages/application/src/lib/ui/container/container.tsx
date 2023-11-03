@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { type Environment, ServiceDeploymentStatusEnum } from 'qovery-typescript-axios'
 import { type PropsWithChildren, createContext, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'

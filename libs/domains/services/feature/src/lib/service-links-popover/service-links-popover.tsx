@@ -55,7 +55,7 @@ export function ServiceLinksPopover() {
       >
         <div className="p-2 flex justify-between items-center">
           <p className="text-neutral-350 font-medium">
-            {links?.length ?? 0} {pluralize(links?.length ?? 0, 'link')} attached
+            {filteredLinks?.length ?? 0} {pluralize(filteredLinks?.length ?? 0, 'link')} attached
           </p>
           <Popover.Close>
             <Link to={pathDomainsSetting} color="brand" className="text-ssm items-center">
