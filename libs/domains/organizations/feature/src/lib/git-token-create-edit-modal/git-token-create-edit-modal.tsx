@@ -143,7 +143,7 @@ export function GitTokenCreateEditModal({ isEdit, gitToken, organizationId, onCl
           name="token"
           control={methods.control}
           rules={{
-            required: 'Please enter a token value.',
+            required: true,
           }}
           render={({ field, fieldState: { error } }) => (
             <InputText
