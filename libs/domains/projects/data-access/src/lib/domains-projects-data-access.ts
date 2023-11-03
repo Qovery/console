@@ -11,19 +11,13 @@ export const projects = createQueryKeys('projects', {
       return (await projectsApi.listProject(organizationId)).data.results
     },
   }),
-  detail: ({ projectId }: { projectId: string }) => ({
-    queryKey: [projectId],
-    async queryFn() {
-      return (await projectMainCalls.getProject(projectId)).data
-    },
-  }),
 })
 
 export const mutations = {
-  async createProject({ organizationId }: { organizationId: string }) {
-    return (await projectsApi.createProject(organizationId)).data
+  async createProject({ organizationId, projectRequest }: { organizationId: string; projectRequest: ProjectRequest }) {
+    return (await projectsApi.createProject(organizationId, projectRequest)).data
   },
-  async editProject({ projectId, projectRequest }: { projectId: string; projectRequest?: ProjectRequest }) {
+  async editProject({ projectId, projectRequest }: { projectId: string; projectRequest: ProjectRequest }) {
     return (await projectMainCalls.editProject(projectId, projectRequest)).data
   },
   async deleteProject({ projectId }: { projectId: string }) {

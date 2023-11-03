@@ -1,11 +1,11 @@
-import { type Organization, PlanEnum, type Project } from 'qovery-typescript-axios'
+import { type Organization, PlanEnum } from 'qovery-typescript-axios'
 import { useContext, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { useIntercom } from 'react-use-intercom'
 import { postOrganization } from '@qovery/domains/organization'
+import { useCreateProject } from '@qovery/domains/projects/feature'
 import { selectUser } from '@qovery/domains/users/data-access'
-import { postProject } from '@qovery/project'
 import { useAuth } from '@qovery/shared/auth'
 import { ENVIRONMENTS_GENERAL_URL, ENVIRONMENTS_URL } from '@qovery/shared/routes'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
@@ -75,6 +75,7 @@ export function OnboardingPricing() {
   const { organization_name, project_name, admin_email } = useContext(ContextOnboarding)
   const { createAuthCookies, getAccessTokenSilently } = useAuth()
   const [loading, setLoading] = useState('')
+  const { mutateAsync: createProject } = useCreateProject({})
 
   const onSubmit = async (plan: PlanEnum) => {
     setLoading(plan)
@@ -93,14 +94,21 @@ export function OnboardingPricing() {
         const organization = result.payload as Organization
 
         if (result.payload) {
-          const project: Project = await dispatch(
-            postProject({ organizationId: organization.id, name: project_name })
-          ).unwrap()
-          if (project) {
-            await createAuthCookies()
-            setLoading('')
-            // redirect on the project page
-            navigate(ENVIRONMENTS_URL(organization.id, project.id) + ENVIRONMENTS_GENERAL_URL)
+          try {
+            const project = await createProject({
+              organizationId: organization.id,
+              projectRequest: {
+                name: project_name,
+              },
+            })
+            if (project) {
+              await createAuthCookies()
+              setLoading('')
+              // redirect on the project page
+              navigate(ENVIRONMENTS_URL(organization.id, project.id) + ENVIRONMENTS_GENERAL_URL)
+            }
+          } catch (error) {
+            console.error(error)
           }
         } else {
           setLoading('')

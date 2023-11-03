@@ -1,10 +1,8 @@
 import { useState } from 'react'
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
-import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { postProject } from '@qovery/project'
+import { useCreateProject } from '@qovery/domains/projects/feature'
 import { ENVIRONMENTS_GENERAL_URL, ENVIRONMENTS_URL } from '@qovery/shared/routes'
-import { type AppDispatch } from '@qovery/state/store'
 import CreateProjectModal from '../ui/create-project-modal'
 
 export interface CreateProjectModalFeatureProps {
@@ -16,29 +14,29 @@ export function CreateProjectModalFeature(props: CreateProjectModalFeatureProps)
   const { onClose, organizationId } = props
 
   const navigate = useNavigate()
-  const dispatch = useDispatch<AppDispatch>()
   const methods = useForm({
     mode: 'onChange',
   })
   const [loading, setLoading] = useState(false)
+  const { mutateAsync: createProject } = useCreateProject({ organizationId })
 
-  const onSubmit = methods.handleSubmit((data: FieldValues) => {
+  const onSubmit = methods.handleSubmit(async (data: FieldValues) => {
     setLoading(true)
 
-    dispatch(
-      postProject({
+    try {
+      const project = await createProject({
         organizationId: organizationId,
-        name: data['name'],
-        description: data['description'],
+        projectRequest: {
+          name: data['name'],
+          description: data['description'],
+        },
       })
-    )
-      .unwrap()
-      .then((project) => {
-        navigate(ENVIRONMENTS_URL(organizationId, project.id) + ENVIRONMENTS_GENERAL_URL)
-        setLoading(false)
-        onClose()
-      })
-      .catch(() => setLoading(false))
+      navigate(ENVIRONMENTS_URL(organizationId, project.id) + ENVIRONMENTS_GENERAL_URL)
+      onClose()
+    } catch (error) {
+      console.error(error)
+    }
+    setLoading(false)
   })
 
   return (
