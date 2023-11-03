@@ -9,7 +9,6 @@ const props: SettingsResourcesInstanceTypesProps = {
     { label: 'Type 1', value: 'type1' },
     { label: 'Type 2', value: 'type2' },
   ],
-  displayWarning: true,
 }
 
 describe('SettingsResourcesInstanceTypes', () => {

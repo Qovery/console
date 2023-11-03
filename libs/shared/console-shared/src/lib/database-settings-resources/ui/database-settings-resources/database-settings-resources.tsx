@@ -3,7 +3,7 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { type DatabaseEntity } from '@qovery/shared/interfaces'
 import { CLUSTER_SETTINGS_RESOURCES_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
-import { BlockContent, InputText, Link, inputSizeUnitRules } from '@qovery/shared/ui'
+import { BlockContent, Callout, Icon, IconAwesomeEnum, InputText, Link, inputSizeUnitRules } from '@qovery/shared/ui'
 import SettingsResourcesInstanceTypesFeature from '../../feature/settings-resources-instance-types-feature/setting-resources-instance-types-feature'
 
 export interface DatabaseSettingsResourcesProps {
@@ -13,6 +13,7 @@ export interface DatabaseSettingsResourcesProps {
   clusterId?: string
   databaseType?: DatabaseTypeEnum
   displayInstanceTypesWarning?: boolean
+  displayStorageWarning?: boolean
 }
 
 export function DatabaseSettingsResources({
@@ -21,6 +22,7 @@ export function DatabaseSettingsResources({
   isManaged = false,
   clusterId = '',
   displayInstanceTypesWarning = false,
+  displayStorageWarning = false,
 }: DatabaseSettingsResourcesProps) {
   const { control } = useFormContext()
   const { organizationId = '' } = useParams()
@@ -131,6 +133,23 @@ export function DatabaseSettingsResources({
             />
           )}
         />
+        {displayStorageWarning && (
+          <Callout.Root className="mt-3" color="yellow">
+            <Callout.Icon>
+              <Icon name={IconAwesomeEnum.CIRCLE_INFO} />
+            </Callout.Icon>
+            <Callout.Text className="text-xs">
+              Once triggered, the update will be managed by your cloud provider and applied during the configured
+              maintenance window. Moreover, the operation might cause a service interruption.{' '}
+              <Link
+                to="https://hub.qovery.com/docs/using-qovery/configuration/database/#applying-changes-to-a-managed-database"
+                size="xs"
+              >
+                Have a look at the documentation first.
+              </Link>
+            </Callout.Text>
+          </Callout.Root>
+        )}
       </BlockContent>
     </div>
   )
