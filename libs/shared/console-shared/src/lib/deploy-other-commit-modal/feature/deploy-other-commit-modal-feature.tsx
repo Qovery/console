@@ -33,7 +33,7 @@ export function DeployOtherCommitModalFeature({
   const [selectedCommitId, setSelectedCommitId] = useState<string | null>(null)
   const [deployLoading, setDeployLoading] = useState(false)
   const [search, setSearch] = useState('')
-  const { data: serviceType } = useServiceType({ serviceId: applicationId })
+  const { data: serviceType } = useServiceType({ environmentId, serviceId: applicationId })
   const { data: commits = [], isLoading } = useCommits({ serviceId: applicationId, serviceType })
 
   const commitsByDay = commits.reduce((acc: Record<string, Commit[]>, obj) => {
