@@ -3,8 +3,8 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { Icon, InputSelect } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
-import useAuthProviders from '../hooks/use-auth-providers/use-auth-providers'
-import useGitTokens from '../hooks/use-git-tokens/use-git-tokens'
+import { useAuthProviders } from '../hooks/use-auth-providers/use-auth-providers'
+import { useGitTokens } from '../hooks/use-git-tokens/use-git-tokens'
 
 export interface GitProviderSettingProps {
   disabled?: boolean

@@ -1,11 +1,11 @@
 import { EnvironmentModeEnum } from 'qovery-typescript-axios'
-import { useEffect, useState } from 'react'
+import { type ReactNode, useEffect, useState } from 'react'
 import useModal from '../../../modal/use-modal/use-modal'
 import { ModalConfirmation } from '../modal-confirmation'
 
 export interface UseModalConfirmationProps {
   title: string
-  description?: string
+  description?: string | ReactNode
   action: () => void
   name?: string
   mode?: EnvironmentModeEnum | string | undefined

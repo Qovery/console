@@ -1,7 +1,8 @@
-import { createQueryKeys, type inferQueryKeys } from '@lukemorales/query-key-factory'
+import { createQueryKeys } from '@lukemorales/query-key-factory'
 import {
   ContainerRegistriesApi,
   type GitProviderEnum,
+  type GitTokenRequest,
   OrganizationAccountGitRepositoriesApi,
   OrganizationMainCallsApi,
 } from 'qovery-typescript-axios'
@@ -102,4 +103,31 @@ export const organizations = createQueryKeys('organizations', {
   }),
 })
 
-export type OrganizationsKeys = inferQueryKeys<typeof organizations>
+export const mutations = {
+  async deleteGitToken({ organizationId, gitTokenId }: { organizationId: string; gitTokenId: string }) {
+    const response = await organizationApi.deleteGitToken(organizationId, gitTokenId)
+    return response.data
+  },
+  async editGitToken({
+    organizationId,
+    gitTokenId,
+    gitTokenRequest,
+  }: {
+    organizationId: string
+    gitTokenId: string
+    gitTokenRequest: GitTokenRequest
+  }) {
+    const response = await organizationApi.editGitToken(organizationId, gitTokenId, gitTokenRequest)
+    return response.data
+  },
+  async createGitToken({
+    organizationId,
+    gitTokenRequest,
+  }: {
+    organizationId: string
+    gitTokenRequest: GitTokenRequest
+  }) {
+    const response = await organizationApi.createGitToken(organizationId, gitTokenRequest)
+    return response.data
+  },
+}

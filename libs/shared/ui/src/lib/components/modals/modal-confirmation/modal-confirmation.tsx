@@ -1,4 +1,4 @@
-import { type PropsWithChildren } from 'react'
+import { type PropsWithChildren, type ReactNode } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import ButtonLegacy, { ButtonLegacyStyle } from '../../buttons/button-legacy/button-legacy'
 import { Callout } from '../../callout/callout'
@@ -10,7 +10,7 @@ import { Tooltip } from '../../tooltip/tooltip'
 
 export interface ModalConfirmationProps extends PropsWithChildren {
   title: string
-  description?: string
+  description?: string | ReactNode
   name?: string
   callback: () => void
   warning?: string

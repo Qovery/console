@@ -16,8 +16,9 @@ const buttonVariants = cva(['inline-flex', 'items-center', 'shrink-0', 'font-med
     },
     size: {
       xs: ['text-xs', 'px-1', 'py-0.5'],
-      sm: ['text-sm', 'py-1', 'px-2'],
-      md: ['text-base', 'py-1.5', 'px-4'],
+      sm: ['text-sm', 'h-7', 'px-2'],
+      md: ['text-sm', 'h-9', 'px-3'],
+      lg: ['text-sm', 'h-10', 'px-4'],
     },
   },
   compoundVariants: [
@@ -43,12 +44,12 @@ const buttonVariants = cva(['inline-flex', 'items-center', 'shrink-0', 'font-med
     {
       variant: 'outline',
       color: 'neutral',
-      className: ['bg-transparent'],
+      className: ['bg-transparent', 'hover:bg-neutral-50'],
     },
     ...['brand' as const, 'neutral' as const, 'green' as const].map((color) => ({
       variant: 'solid' as const,
       color,
-      className: [`bg-${color}-500`, 'border', `border-${color}-500`, 'text-white'],
+      className: [`bg-${color}-500`, `hover:bg-${color}-600`, 'text-white'],
     })),
   ],
   defaultVariants: {

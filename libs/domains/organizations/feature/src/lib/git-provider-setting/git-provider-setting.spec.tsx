@@ -48,8 +48,8 @@ describe('GitProviderSetting', () => {
     ]
 
     const gitTokens: GitTokenResponse[] = [
-      { name: 'token1', type: GitProviderEnum.GITHUB, id: '123', created_at: '' },
-      { name: 'token2', type: GitProviderEnum.GITLAB, id: '456', created_at: '' },
+      { name: 'token1', type: GitProviderEnum.GITHUB, id: '123', created_at: '', associated_services_count: 0 },
+      { name: 'token2', type: GitProviderEnum.GITLAB, id: '456', created_at: '', associated_services_count: 0 },
     ]
 
     const result = mergeProviders(authProviders, gitTokens)

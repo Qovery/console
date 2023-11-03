@@ -9,6 +9,12 @@ export interface UseGitTokensProps {
 export function useGitTokens({ organizationId, enabled }: UseGitTokensProps) {
   return useQuery({
     ...queries.organizations.gitTokens({ organizationId }),
+    select(data) {
+      if (!data) {
+        return data
+      }
+      return data.sort((a, b) => a.name.localeCompare(b.name))
+    },
     enabled,
     refetchOnWindowFocus: false,
   })

@@ -3,7 +3,7 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { InputSelect, InputText, LoaderSpinner } from '@qovery/shared/ui'
 import { getGitTokenValue } from '../git-provider-setting/git-provider-setting'
-import useBranches from '../hooks/use-branches/use-branches'
+import { useBranches } from '../hooks/use-branches/use-branches'
 
 export interface GitBranchSettingsProps {
   gitProvider: GitProviderEnum
