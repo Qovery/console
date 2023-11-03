@@ -1,21 +1,20 @@
-import { act, fireEvent, render } from '__tests__/utils/setup-jest'
-import * as storeProjects from '@qovery/project'
+import * as projectsDomain from '@qovery/domains/projects/feature'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import PageProjectGeneralFeature from './page-project-general-feature'
 
-import SpyInstance = jest.SpyInstance
+const useEditProjectMockSpy = jest.spyOn(projectsDomain, 'useEditProject') as jest.Mock
 
-jest.mock('@qovery/domains/projects', () => {
+jest.mock('@qovery/domains/projects/feature', () => {
   return {
-    ...jest.requireActual('@qovery/domains/projects'),
-    editProject: jest.fn(),
+    ...jest.requireActual('@qovery/domains/projects/feature'),
+    useProject: () => ({
+      data: {
+        name: 'name',
+        description: 'description',
+      },
+    }),
   }
 })
-
-const mockDispatch = jest.fn()
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useDispatch: () => mockDispatch,
-}))
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -23,39 +22,34 @@ jest.mock('react-router-dom', () => ({
 }))
 
 describe('PageProjectGeneral', () => {
+  beforeEach(() => {
+    useEditProjectMockSpy.mockReturnValue({
+      mutateAsync: jest.fn(),
+    })
+  })
+
   it('should render successfully', () => {
-    const { baseElement } = render(<PageProjectGeneralFeature />)
+    const { baseElement } = renderWithProviders(<PageProjectGeneralFeature />)
     expect(baseElement).toBeTruthy()
   })
 
   it('should dispatch editProject if form is submitted', async () => {
-    const editProjectSpy: SpyInstance = jest.spyOn(storeProjects, 'editProject')
-    mockDispatch.mockImplementation(() => ({
-      unwrap: () =>
-        Promise.resolve({
-          data: {},
-        }),
-    }))
+    const { userEvent } = renderWithProviders(<PageProjectGeneralFeature />)
 
-    const { getByTestId } = render(<PageProjectGeneralFeature />)
+    const inputName = screen.getByTestId('input-name')
+    await userEvent.clear(inputName)
+    await userEvent.type(inputName, 'hello-world')
 
-    await act(() => {
-      const inputName = getByTestId('input-name')
-      fireEvent.input(inputName, { target: { value: 'hello-world' } })
-    })
+    expect(screen.getByTestId('submit-button')).not.toBeDisabled()
 
-    expect(getByTestId('submit-button')).not.toBeDisabled()
+    await userEvent.click(screen.getByTestId('submit-button'))
 
-    await act(() => {
-      getByTestId('submit-button').click()
-    })
-
-    expect(editProjectSpy).toHaveBeenCalledWith({
-      data: {
+    expect(useEditProjectMockSpy().mutateAsync).toHaveBeenCalledWith({
+      projectId: '0',
+      projectRequest: {
         name: 'hello-world',
         description: 'description',
       },
-      projectId: '0',
     })
   })
 })
