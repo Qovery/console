@@ -153,6 +153,7 @@ export function PageSettingsGeneralFeature() {
             navigate(
               ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(applicationId)
             ),
+          queryClient,
         })
       )
     }

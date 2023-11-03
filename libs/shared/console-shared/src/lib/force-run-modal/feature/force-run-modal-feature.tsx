@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { JobForceEvent } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
@@ -31,6 +32,7 @@ export function ForceRunModalFeature({
   const [isLoading, setIsLoading] = useState(false)
   const dispatch = useDispatch<AppDispatch>()
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
 
   const methods = useForm({
     mode: 'all',
@@ -71,6 +73,7 @@ export function ForceRunModalFeature({
             navigate(
               ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(applicationId)
             ),
+          queryClient,
         })
       ).then(() => {
         closeModal()

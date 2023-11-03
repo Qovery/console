@@ -93,6 +93,7 @@ export function DatabaseButtonsActions(props: DatabaseButtonsActionsProps) {
           postDatabaseActionsDeploy({
             environmentId,
             databaseId: database.id,
+            queryClient,
           })
         ),
     }
@@ -118,6 +119,7 @@ export function DatabaseButtonsActions(props: DatabaseButtonsActionsProps) {
               postDatabaseActionsRedeploy({
                 environmentId,
                 databaseId: database.id,
+                queryClient,
               })
             )
           },
@@ -131,7 +133,7 @@ export function DatabaseButtonsActions(props: DatabaseButtonsActionsProps) {
       onClick: (e: ClickEvent) => {
         e.syntheticEvent.preventDefault()
 
-        dispatch(postDatabaseActionsReboot({ environmentId, databaseId: database.id }))
+        dispatch(postDatabaseActionsReboot({ environmentId, databaseId: database.id, queryClient }))
       },
     }
 
@@ -150,6 +152,7 @@ export function DatabaseButtonsActions(props: DatabaseButtonsActionsProps) {
               postDatabaseActionsStop({
                 environmentId,
                 databaseId: database.id,
+                queryClient,
               })
             )
           },

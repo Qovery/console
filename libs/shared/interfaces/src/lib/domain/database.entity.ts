@@ -1,10 +1,3 @@
-import { type Database, type DeploymentHistoryDatabase } from 'qovery-typescript-axios'
-import { type LoadingStatus } from '../types/loading-status.type'
+import { type Database } from 'qovery-typescript-axios'
 
-export interface DatabaseEntity extends Database {
-  description?: string
-  deployments?: {
-    loadingStatus: LoadingStatus
-    items: DeploymentHistoryDatabase[]
-  }
-}
+export interface DatabaseEntity extends Database {}

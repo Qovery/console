@@ -63,6 +63,7 @@ export function StorageModalFeature(props: StorageModalFeatureProps) {
               ENVIRONMENT_LOGS_URL(props.organizationId, props.projectId, props.application?.environment?.id) +
                 DEPLOYMENT_LOGS_URL(props.application?.id)
             ),
+          queryClient,
         })
       )
     }

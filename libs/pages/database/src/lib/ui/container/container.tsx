@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { DatabaseModeEnum, type Environment, ServiceDeploymentStatusEnum } from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -28,6 +29,7 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
 
   const { organizationId = '', projectId = '', environmentId = '', databaseId = '' } = useParams()
   const location = useLocation()
+  const queryClient = useQueryClient()
 
   const cluster = useSelector<RootState, ClusterEntity | undefined>((state: RootState) =>
     selectClusterById(state, environment?.cluster_id || '')
@@ -106,9 +108,9 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
   const redeployDatabase = () => {
     if (database) {
       if (serviceDeploymentStatus?.service_deployment_status === ServiceDeploymentStatusEnum.NEVER_DEPLOYED) {
-        dispatch(postDatabaseActionsDeploy({ environmentId, databaseId }))
+        dispatch(postDatabaseActionsDeploy({ environmentId, databaseId, queryClient }))
       } else {
-        dispatch(postDatabaseActionsRedeploy({ environmentId, databaseId }))
+        dispatch(postDatabaseActionsRedeploy({ environmentId, databaseId, queryClient }))
       }
     }
   }

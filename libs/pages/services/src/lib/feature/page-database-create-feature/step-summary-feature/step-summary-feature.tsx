@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { DatabaseModeEnum, type DatabaseRequest } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
@@ -23,6 +24,7 @@ export function StepSummaryFeature() {
   const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_DATABASE_CREATION_URL}`
   const [loadingCreate, setLoadingCreate] = useState(false)
   const [loadingCreateAndDeploy, setLoadingCreateAndDeploy] = useState(false)
+  const queryClient = useQueryClient()
 
   const gotoGlobalInformations = () => {
     navigate(pathCreate + SERVICES_DATABASE_CREATION_GENERAL_URL)
@@ -77,6 +79,7 @@ export function StepSummaryFeature() {
               postDatabaseActionsDeploy({
                 environmentId,
                 databaseId: database.id,
+                queryClient,
               })
             )
           }

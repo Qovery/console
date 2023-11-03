@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { APIVariableScopeEnum, type JobRequest, type VariableImportRequest } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -144,6 +145,7 @@ export function StepSummaryFeature() {
   const organization = useSelector<RootState, OrganizationEntity | undefined>((state) =>
     selectOrganizationById(state, organizationId)
   )
+  const queryClient = useQueryClient()
 
   const gotoGlobalInformations = () => {
     navigate(pathCreate + SERVICES_JOB_CREATION_GENERAL_URL)
@@ -207,6 +209,7 @@ export function StepSummaryFeature() {
                         navigate(
                           ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(app.id)
                         ),
+                      queryClient,
                     })
                   )
                 }
@@ -223,6 +226,7 @@ export function StepSummaryFeature() {
                     navigate(
                       ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(app.id)
                     ),
+                  queryClient,
                 })
               )
             }

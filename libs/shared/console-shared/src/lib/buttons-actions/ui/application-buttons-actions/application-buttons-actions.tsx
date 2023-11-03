@@ -136,6 +136,7 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
               navigate(
                 ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(application.id)
               ),
+            queryClient,
           })
         ),
     }
@@ -166,6 +167,7 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
                   navigate(
                     ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(application.id)
                   ),
+                queryClient,
               })
             )
           },
@@ -188,6 +190,7 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
               navigate(
                 ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(application.id)
               ),
+            queryClient,
           })
         )
       },
@@ -230,6 +233,7 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
                   navigate(
                     ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(application.id)
                   ),
+                queryClient,
               })
             )
           },

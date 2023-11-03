@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
@@ -31,6 +32,7 @@ export function DeployOtherTagModalFeature({
   const navigate = useNavigate()
   const [deployLoading, setDeployLoading] = useState(false)
   const { closeModal } = useModal()
+  const queryClient = useQueryClient()
 
   const onSubmit = methods.handleSubmit((data) => {
     if (application) {
@@ -45,6 +47,7 @@ export function DeployOtherTagModalFeature({
             navigate(
               ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(applicationId)
             ),
+          queryClient,
         })
       ).then(() => {
         closeModal()

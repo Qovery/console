@@ -7,26 +7,20 @@ import {
   createSlice,
 } from '@reduxjs/toolkit'
 import { type QueryClient } from '@tanstack/react-query'
-import { type AxiosResponse } from 'axios'
 import {
   type ApplicationAdvancedSettings,
   ApplicationConfigurationApi,
-  ApplicationDeploymentHistoryApi,
   type ApplicationEditRequest,
   ApplicationMainCallsApi,
   type ApplicationRequest,
   ApplicationsApi,
   type ContainerAdvancedSettings,
   ContainerConfigurationApi,
-  ContainerDeploymentHistoryApi,
   ContainerMainCallsApi,
   type ContainerRequest,
   ContainersApi,
-  type DeploymentHistory,
-  type DeploymentHistoryPaginatedResponseList,
   type JobAdvancedSettings,
   JobConfigurationApi,
-  JobDeploymentHistoryApi,
   JobMainCallsApi,
   type JobRequest,
   JobsApi,
@@ -61,17 +55,14 @@ export const applicationsAdapter = createEntityAdapter<ApplicationEntity>()
 
 const applicationsApi = new ApplicationsApi()
 const applicationMainCallsApi = new ApplicationMainCallsApi()
-const applicationDeploymentsApi = new ApplicationDeploymentHistoryApi()
 const applicationConfigurationApi = new ApplicationConfigurationApi()
 
 const containersApi = new ContainersApi()
 const containerMainCallsApi = new ContainerMainCallsApi()
-const containerDeploymentsApi = new ContainerDeploymentHistoryApi()
 const containerConfigurationApi = new ContainerConfigurationApi()
 
 const jobsApi = new JobsApi()
 const jobMainCallsApi = new JobMainCallsApi()
-const jobDeploymentsApi = new JobDeploymentHistoryApi()
 const jobConfigurationApi = new JobConfigurationApi()
 
 export const fetchApplications = createAsyncThunk<ApplicationEntity[], { environmentId: string }>(
@@ -172,25 +163,6 @@ export const fetchApplicationLinks = createAsyncThunk<Link[], { applicationId: s
     return response.data.results as Link[]
   }
 )
-
-export const fetchApplicationDeployments = createAsyncThunk<
-  DeploymentHistory[],
-  { applicationId: string; serviceType?: ServiceTypeEnum; silently?: boolean }
->('application/deployments', async (data) => {
-  let response
-  if (isContainer(data.serviceType)) {
-    response = (await containerDeploymentsApi.listContainerDeploymentHistory(
-      data.applicationId
-    )) as AxiosResponse<DeploymentHistoryPaginatedResponseList>
-  } else if (isJob(data.serviceType)) {
-    response = (await jobDeploymentsApi.listJobDeploymentHistory(
-      data.applicationId
-    )) as AxiosResponse<DeploymentHistoryPaginatedResponseList>
-  } else {
-    response = await applicationDeploymentsApi.listApplicationDeploymentHistory(data.applicationId)
-  }
-  return response.data.results as DeploymentHistory[]
-})
 
 export const fetchApplicationAdvancedSettings = createAsyncThunk<
   ApplicationAdvancedSettings,
@@ -507,42 +479,6 @@ export const applicationsSlice = createSlice({
             : `Your advanced settings have not been updated. Something must be wrong with the values provided`
         )
         applicationsAdapter.updateOne(state, update)
-      })
-      // get application deployment history
-      .addCase(fetchApplicationDeployments.pending, (state: ApplicationsState, action) => {
-        const update = {
-          id: action.meta.arg.applicationId,
-          changes: {
-            deployments: {
-              ...state.entities[action.meta.arg.applicationId]?.deployments,
-              loadingStatus: action.meta.arg.silently ? 'loaded' : 'loading',
-            },
-          },
-        }
-        applicationsAdapter.updateOne(state, update as Update<ApplicationEntity>)
-      })
-      .addCase(fetchApplicationDeployments.fulfilled, (state: ApplicationsState, action) => {
-        const update = {
-          id: action.meta.arg.applicationId,
-          changes: {
-            deployments: {
-              loadingStatus: 'loaded',
-              items: action.payload,
-            },
-          },
-        }
-        applicationsAdapter.updateOne(state, update as Update<ApplicationEntity>)
-      })
-      .addCase(fetchApplicationDeployments.rejected, (state: ApplicationsState, action) => {
-        const update = {
-          id: action.meta.arg.applicationId,
-          changes: {
-            deployments: {
-              loadingStatus: 'error',
-            },
-          },
-        }
-        applicationsAdapter.updateOne(state, update as Update<ApplicationEntity>)
       })
       .addCase(fetchDefaultApplicationAdvancedSettings.pending, (state: ApplicationsState, action) => {
         state.defaultApplicationAdvancedSettings.settings = action.payload

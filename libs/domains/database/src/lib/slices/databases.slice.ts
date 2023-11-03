@@ -12,12 +12,10 @@ import {
   CloudProviderApi,
   CloudProviderEnum,
   type Database,
-  DatabaseDeploymentHistoryApi,
   DatabaseMainCallsApi,
   type DatabaseRequest,
   type DatabaseTypeEnum,
   DatabasesApi,
-  type DeploymentHistoryDatabase,
   type ManagedDatabaseInstanceTypeResponseList,
 } from 'qovery-typescript-axios'
 import { type DatabaseEntity, type DatabasesState, type LoadingStatus } from '@qovery/shared/interfaces'
@@ -38,7 +36,6 @@ export const databasesAdapter = createEntityAdapter<DatabaseEntity>()
 
 const databasesApi = new DatabasesApi()
 const databaseMainCallsApi = new DatabaseMainCallsApi()
-const databaseDeploymentsApi = new DatabaseDeploymentHistoryApi()
 const cloudProviderApi = new CloudProviderApi()
 
 export const fetchDatabases = createAsyncThunk<Database[], { environmentId: string }>(
@@ -90,19 +87,6 @@ export const editDatabase = createAsyncThunk(
     return response.data
   }
 )
-
-export const fetchDatabaseDeployments = createAsyncThunk<
-  DeploymentHistoryDatabase[],
-  { databaseId: string; silently?: boolean }
->('database/deployments', async (data) => {
-  // @todo remove response any update documentation
-  const response = (await databaseDeploymentsApi.listDatabaseDeploymentHistory(data.databaseId)) as AxiosResponse<{
-    page: number
-    page_size: number
-    results: DeploymentHistoryDatabase[]
-  }>
-  return response.data.results as DeploymentHistoryDatabase[]
-})
 
 export const deleteDatabaseAction = createAsyncThunk(
   'databaseActions/delete',
@@ -245,41 +229,6 @@ export const databasesSlice = createSlice({
         state.loadingStatus = 'error'
         toastError(action.error)
         state.error = action.error.message
-      })
-      .addCase(fetchDatabaseDeployments.pending, (state: DatabasesState, action) => {
-        const update = {
-          id: action.meta.arg.databaseId,
-          changes: {
-            deployments: {
-              ...state.entities[action.meta.arg.databaseId]?.deployments,
-              loadingStatus: action.meta.arg.silently ? 'loaded' : 'loading',
-            },
-          },
-        }
-        databasesAdapter.updateOne(state, update as Update<Database>)
-      })
-      .addCase(fetchDatabaseDeployments.fulfilled, (state: DatabasesState, action) => {
-        const update = {
-          id: action.meta.arg.databaseId,
-          changes: {
-            deployments: {
-              loadingStatus: 'loaded',
-              items: action.payload,
-            },
-          },
-        }
-        databasesAdapter.updateOne(state, update as Update<Database>)
-      })
-      .addCase(fetchDatabaseDeployments.rejected, (state: DatabasesState, action) => {
-        const update = {
-          id: action.meta.arg.databaseId,
-          changes: {
-            deployments: {
-              loadingStatus: 'error',
-            },
-          },
-        }
-        databasesAdapter.updateOne(state, update as Update<Database>)
       })
   },
 })

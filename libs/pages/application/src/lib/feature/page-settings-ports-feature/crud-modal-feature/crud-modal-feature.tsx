@@ -151,6 +151,7 @@ export function CrudModalFeature({ application, onClose, port, organizationId, p
               ENVIRONMENT_LOGS_URL(organizationId, projectId, application?.environment?.id) +
                 DEPLOYMENT_LOGS_URL(application?.id)
             ),
+          queryClient,
         })
       )
     }
