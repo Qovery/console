@@ -1,5 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query'
-import { type Environment, type Link, ServiceDeploymentStatusEnum } from 'qovery-typescript-axios'
+import { type Environment, ServiceDeploymentStatusEnum } from 'qovery-typescript-axios'
 import { type PropsWithChildren, createContext, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -11,7 +11,7 @@ import { ApplicationButtonsActions, NeedRedeployFlag } from '@qovery/shared/cons
 import { IconEnum, getServiceType, isCronJob, isLifeCycleJob } from '@qovery/shared/enums'
 import { type ApplicationEntity, type ClusterEntity } from '@qovery/shared/interfaces'
 import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
-import { Badge, Header, Icon, type MenuData, type MenuItemProps, Section, Skeleton, Tooltip } from '@qovery/shared/ui'
+import { Badge, Header, Icon, Section, Skeleton, Tooltip } from '@qovery/shared/ui'
 import { type AppDispatch, type RootState } from '@qovery/state/store'
 import TabsFeature from '../../feature/tabs-feature/tabs-feature'
 
@@ -75,30 +75,6 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
         )
       }
     }
-  }
-
-  const menuLink: MenuData = []
-
-  if (application && application.links && application.links.items) {
-    const items: MenuItemProps[] = application.links.items
-      // remove default Qovery links
-      .filter((link: Link) => !(link.is_default && link.is_qovery_domain))
-      .map((link) => {
-        return {
-          name: link.url || '',
-          link: {
-            url: link.url || '',
-            external: true,
-          },
-          copy: link.url || undefined,
-          copyTooltip: 'Copy the link',
-        }
-      })
-
-    menuLink.push({
-      title: 'Links',
-      items,
-    })
   }
 
   const headerActions = (

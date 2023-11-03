@@ -1,12 +1,8 @@
-import { type JobResponse, type Link } from 'qovery-typescript-axios'
+import { type JobResponse } from 'qovery-typescript-axios'
 import { type LoadingStatus } from '../types/loading-status.type'
 import { type AdvancedSettings } from './advanced-settings.interface'
 
 export interface JobApplicationEntity extends JobResponse {
-  links?: {
-    loadingStatus: LoadingStatus
-    items?: Link[]
-  }
   advanced_settings?: {
     loadingStatus: LoadingStatus
     current_settings?: AdvancedSettings

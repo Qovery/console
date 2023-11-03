@@ -14,14 +14,16 @@ import {
   Truncate,
 } from '@qovery/shared/ui'
 import { pluralize } from '@qovery/shared/util-js'
+import { useLinks } from '../hooks/use-links/use-links'
+import { useServiceType } from '../hooks/use-service-type/use-service-type'
 
-export interface ServiceLinksPopoverProps {
-  links?: LinkProps[]
-}
-
-// TODO: Update props and using React Query
-export function ServiceLinksPopover({ links }: ServiceLinksPopoverProps) {
+export function ServiceLinksPopover() {
   const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
+  const { data: serviceType } = useServiceType({ environmentId, serviceId: applicationId })
+  const { data: links = [] } = useLinks({ serviceId: applicationId, serviceType })
+
+  // Remove default Qovery links
+  const filteredLinks = links.filter((link: LinkProps) => !(link.is_default && link.is_qovery_domain))
 
   const pathDomainsSetting =
     APPLICATION_URL(organizationId, projectId, environmentId, applicationId) +
@@ -53,7 +55,7 @@ export function ServiceLinksPopover({ links }: ServiceLinksPopoverProps) {
       >
         <div className="p-2 flex justify-between items-center">
           <p className="text-neutral-350 font-medium">
-            {links?.length ?? 0} {pluralize(links?.length ?? 0, 'link')} attached
+            {filteredLinks?.length ?? 0} {pluralize(filteredLinks?.length ?? 0, 'link')} attached
           </p>
           <Popover.Close>
             <Link to={pathDomainsSetting} color="brand" className="text-ssm items-center">
@@ -63,7 +65,7 @@ export function ServiceLinksPopover({ links }: ServiceLinksPopoverProps) {
           </Popover.Close>
         </div>
         <ul>
-          {links.map((link: LinkProps) => (
+          {filteredLinks.map((link: LinkProps) => (
             <li key={link.url} className="flex p-2">
               <CopyToClipboard className="text-brand-500 hover:text-brand-600 mr-2" content={link.url ?? ''} />
               <a

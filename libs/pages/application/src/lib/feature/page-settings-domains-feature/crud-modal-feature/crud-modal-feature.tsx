@@ -7,15 +7,16 @@ import { useNavigate } from 'react-router-dom'
 import {
   createCustomDomain,
   editCustomDomain,
-  fetchApplicationLinks,
   getCustomDomainsState,
   postApplicationActionsRedeploy,
 } from '@qovery/domains/application'
+import { useLinks } from '@qovery/domains/services/feature'
 import { getServiceType } from '@qovery/shared/enums'
 import { type ApplicationEntity, type LoadingStatus } from '@qovery/shared/interfaces'
 import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { useModal } from '@qovery/shared/ui'
 import { type AppDispatch, type RootState } from '@qovery/state/store'
+import { queries } from '@qovery/state/util-queries'
 import CrudModal from '../../../ui/page-settings-domains/crud-modal/crud-modal'
 
 export interface CrudModalFeatureProps {
@@ -64,6 +65,22 @@ export function CrudModalFeature({
     }
   }
 
+  const { data: links = [] } = useLinks({
+    serviceId: application?.id ?? '',
+    serviceType: getServiceType(application as ApplicationEntity),
+  })
+
+  const refetchLinks = () => {
+    if (!application) return
+
+    queryClient.invalidateQueries(
+      queries.services.listLinks({
+        serviceId: application.id,
+        serviceType: 'APPLICATION',
+      })
+    )
+  }
+
   useEffect(() => {
     enableAlertClickOutside(methods.formState.isDirty)
   }, [methods.formState, enableAlertClickOutside])
@@ -85,7 +102,7 @@ export function CrudModalFeature({
       )
         .unwrap()
         .then(() => {
-          dispatch(fetchApplicationLinks({ applicationId: application?.id || '' }))
+          refetchLinks()
           onClose()
         })
         .catch((e) => console.error(e))
@@ -100,7 +117,7 @@ export function CrudModalFeature({
       )
         .unwrap()
         .then(() => {
-          dispatch(fetchApplicationLinks({ applicationId: application?.id || '' }))
+          refetchLinks()
           onClose()
         })
         .catch((e) => console.error(e))
@@ -108,11 +125,10 @@ export function CrudModalFeature({
   })
 
   const defaultLink = useMemo(() => {
-    const links = application?.links?.items
     const defaultLinkItem = links?.find((link) => link.is_qovery_domain && link.is_default)
 
     return defaultLinkItem?.url?.replace('https://', '') || ''
-  }, [application?.links?.items])
+  }, [links])
 
   return (
     <FormProvider {...methods}>

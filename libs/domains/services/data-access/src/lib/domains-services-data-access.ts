@@ -263,6 +263,25 @@ export const services = createQueryKeys('services', {
         .exhaustive()
     },
   }),
+  listLinks: ({
+    serviceId,
+    serviceType,
+  }: {
+    serviceId: string
+    serviceType: Extract<ServiceType, 'APPLICATION' | 'CONTAINER'>
+  }) => ({
+    queryKey: [serviceId],
+    async queryFn() {
+      return match(serviceType)
+        .with('APPLICATION', async () => {
+          return (await applicationMainCallsApi.listApplicationLinks(serviceId)).data.results
+        })
+        .with('CONTAINER', async () => {
+          return (await containerMainCallsApi.listContainerLinks(serviceId)).data.results
+        })
+        .exhaustive()
+    },
+  }),
   masterCredentials: ({
     serviceId,
     serviceType,

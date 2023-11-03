@@ -1,12 +1,8 @@
-import { type Application, type Link } from 'qovery-typescript-axios'
+import { type Application } from 'qovery-typescript-axios'
 import { type LoadingStatus } from '../types/loading-status.type'
 import { type AdvancedSettings } from './advanced-settings.interface'
 
 export interface GitApplicationEntity extends Application {
-  links?: {
-    loadingStatus: LoadingStatus
-    items?: Link[]
-  }
   advanced_settings?: {
     loadingStatus: LoadingStatus
     current_settings?: AdvancedSettings

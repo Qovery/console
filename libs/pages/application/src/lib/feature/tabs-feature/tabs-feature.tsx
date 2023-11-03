@@ -1,11 +1,10 @@
 import { type ClickEvent } from '@szhsin/react-menu'
-import { type Link } from 'qovery-typescript-axios'
 import { type ReactNode, useContext } from 'react'
 import { useSelector } from 'react-redux'
 import { matchPath, useLocation, useParams } from 'react-router-dom'
 import { getApplicationsState } from '@qovery/domains/application'
 import { ServiceLinksPopover, ServiceStateChip } from '@qovery/domains/services/feature'
-import { getServiceType, isJob } from '@qovery/shared/enums'
+import { getServiceType } from '@qovery/shared/enums'
 import { type ApplicationEntity } from '@qovery/shared/interfaces'
 import {
   APPLICATION_DEPLOYMENTS_URL,
@@ -40,7 +39,6 @@ export function TabsFeature() {
   const application = useSelector<RootState, ApplicationEntity | undefined>(
     (state) => getApplicationsState(state).entities[applicationId]
   )
-
   const serviceType = application && getServiceType(application)
 
   const location = useLocation()
@@ -208,18 +206,11 @@ export function TabsFeature() {
     </>
   )
 
-  // Remove default Qovery links
-  const availableLinks = !isJob(application)
-    ? application?.links?.items?.filter((link: Link) => !(link.is_default && link.is_qovery_domain))
-    : []
-
   return (
     <Tabs
       items={items}
       contentRight={
-        <div className="px-5">
-          {matchEnvVariableRoute ? contentRightEnvVariable : <ServiceLinksPopover links={availableLinks} />}
-        </div>
+        <div className="px-5">{matchEnvVariableRoute ? contentRightEnvVariable : <ServiceLinksPopover />}</div>
       }
     />
   )
