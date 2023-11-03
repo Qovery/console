@@ -27,7 +27,7 @@ export const displayClusterDeploymentBanner = (status?: ClusterStateEnum): boole
 }
 
 export const displayClusterCredentialErrorBanner = (clusters?: ClusterEntity[]): ClusterEntity | undefined => {
-  const clustersDeploymentError = clusters?.find((c) => c.status === ClusterStateEnum.DEPLOYMENT_ERROR)
+  const clustersDeploymentError = clusters?.find((c) => c.status === ClusterStateEnum.INVALID_CREDENTIALS)
   return clustersDeploymentError
 }
 
