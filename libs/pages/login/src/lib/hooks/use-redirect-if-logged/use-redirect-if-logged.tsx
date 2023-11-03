@@ -27,7 +27,7 @@ export function useRedirectIfLogged() {
   const dispatch = useDispatch<AppDispatch>()
   const sendDataToGTM = useGTMDispatch()
   const organizations = useSelector(selectAllOrganization)
-  const { data: projects = [] } = useProjects({ organizationId: organizations[0].id })
+  const { data: projects = [] } = useProjects({ organizationId: organizations[0]?.id })
 
   useEffect(() => {
     async function fetchData() {
