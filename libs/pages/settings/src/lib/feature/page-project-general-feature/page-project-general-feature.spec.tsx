@@ -33,7 +33,7 @@ describe('PageProjectGeneral', () => {
     expect(baseElement).toBeTruthy()
   })
 
-  it('should dispatch editProject if form is submitted', async () => {
+  it('should editProject if form is submitted', async () => {
     const { userEvent } = renderWithProviders(<PageProjectGeneralFeature />)
 
     const inputName = screen.getByTestId('input-name')
