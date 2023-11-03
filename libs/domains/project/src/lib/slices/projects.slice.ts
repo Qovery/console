@@ -9,7 +9,7 @@ import {
 import { type Project, ProjectMainCallsApi, type ProjectRequest, ProjectsApi } from 'qovery-typescript-axios'
 import { type ProjectsState } from '@qovery/shared/interfaces'
 import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
-import { addOneToManyRelation, getEntitiesByIds, sortByKey } from '@qovery/shared/util-js'
+import { addOneToManyRelation, getEntitiesByIds } from '@qovery/shared/util-js'
 import { type RootState } from '@qovery/state/store'
 
 export const PROJECTS_FEATURE_KEY = 'projects'
@@ -18,11 +18,6 @@ const projectsApi = new ProjectsApi()
 const projectMainCalls = new ProjectMainCallsApi()
 
 export const projectsAdapter = createEntityAdapter<Project>()
-
-export const fetchProjects = createAsyncThunk<Project[], { organizationId: string }>('projects/fetch', async (data) => {
-  const response = await projectsApi.listProject(data.organizationId)
-  return response.data.results as Project[]
-})
 
 export const postProject = createAsyncThunk<Project, { organizationId: string } & ProjectRequest>(
   'project/post',
@@ -67,22 +62,6 @@ export const projectsSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchProjects.pending, (state: ProjectsState) => {
-        state.loadingStatus = 'loading'
-      })
-      .addCase(fetchProjects.fulfilled, (state: ProjectsState, action: PayloadAction<Project[]>) => {
-        projectsAdapter.upsertMany(state, action.payload)
-        action.payload.forEach((project) => {
-          state.joinOrganizationProject = addOneToManyRelation(project.organization?.id, project.id, {
-            ...state.joinOrganizationProject,
-          })
-        })
-        state.loadingStatus = 'loaded'
-      })
-      .addCase(fetchProjects.rejected, (state: ProjectsState, action) => {
-        state.loadingStatus = 'error'
-        state.error = action.error.message
-      })
       // post project
       .addCase(postProject.pending, (state: ProjectsState) => {
         state.loadingStatus = 'loading'
@@ -148,19 +127,6 @@ export const getProjectsState = (rootState: RootState): ProjectsState => rootSta
 export const selectAllProjects = createSelector(getProjectsState, selectAll)
 
 export const selectProjectsEntities = createSelector(getProjectsState, selectEntities)
-
-export const selectProjectsEntitiesByOrgId = (
-  state: RootState,
-  organizationId: string,
-  orderBy: keyof Project = 'name'
-): Project[] => {
-  const projectState = getProjectsState(state)
-  const entities = getEntitiesByIds<Project>(
-    projectState.entities,
-    projectState?.joinOrganizationProject[organizationId]
-  )
-  return orderBy ? sortByKey<Project>(entities, orderBy) : entities
-}
 
 export const selectProjectById = (state: RootState, organizationId: string, projectId: string): Project => {
   const projectState = getProjectsState(state)

@@ -1,12 +1,10 @@
 import { OrganizationEventTargetType } from 'qovery-typescript-axios'
 import { memo, useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
 import { useLocation, useParams, useSearchParams } from 'react-router-dom'
 import { useFetchEnvironments } from '@qovery/domains/environment'
 import { type EventQueryParams, useFetchEventTargets } from '@qovery/domains/event'
-import { selectProjectsEntitiesByOrgId } from '@qovery/project'
+import { useProjects } from '@qovery/domains/projects/feature'
 import { convertDatetoTimestamp } from '@qovery/shared/util-dates'
-import { type RootState } from '@qovery/state/store'
 import CustomFilter from '../../ui/custom-filter/custom-filter'
 import { extractEventQueryParams, hasEnvironment } from '../page-general-feature/page-general-feature'
 
@@ -24,7 +22,7 @@ export function CustomFilterFeature({ handleClearFilter }: CustomFilterFeaturePr
   const queryParams: EventQueryParams = extractEventQueryParams(location.pathname + location.search)
   const { environmentId, projectId, targetType, targetId } = queryParams
 
-  const projects = useSelector((state: RootState) => selectProjectsEntitiesByOrgId(state, organizationId))
+  const { data: projects = [] } = useProjects({ organizationId })
   const { data: environments } = useFetchEnvironments(projectId || '')
 
   // NOTE: - ENVIRONMENT: we don't display target input if no project selected

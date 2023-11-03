@@ -5,13 +5,13 @@ import { useNavigate } from 'react-router-dom'
 import { fetchApplications } from '@qovery/domains/application'
 import { fetchDatabases } from '@qovery/domains/database'
 import { useFetchEnvironments } from '@qovery/domains/environment'
+import { useProjects } from '@qovery/domains/projects/feature'
 import { useCloneService } from '@qovery/domains/services/feature'
-import { selectProjectsEntitiesByOrgId } from '@qovery/project'
 import { ServiceTypeEnum, getServiceType } from '@qovery/shared/enums'
 import { type ApplicationEntity, type DatabaseEntity } from '@qovery/shared/interfaces'
 import { APPLICATION_GENERAL_URL, APPLICATION_URL, DATABASE_GENERAL_URL, DATABASE_URL } from '@qovery/shared/routes'
 import { useModal } from '@qovery/shared/ui'
-import { type AppDispatch, type RootState } from '@qovery/state/store'
+import { type AppDispatch } from '@qovery/state/store'
 import CloneServiceModal from '../ui/clone-service-modal'
 
 export interface CloneServiceModalFeatureProps {
@@ -30,7 +30,7 @@ export function CloneServiceModalFeature({
   const dispatch: AppDispatch = useDispatch()
   const { enableAlertClickOutside } = useModal()
   const { mutateAsync, isLoading: isCloneServiceLoading } = useCloneService()
-  const projects = useSelector((state: RootState) => selectProjectsEntitiesByOrgId(state, organizationId))
+  const { data: projects = [] } = useProjects({ organizationId })
 
   const methods = useForm({
     mode: 'onChange',

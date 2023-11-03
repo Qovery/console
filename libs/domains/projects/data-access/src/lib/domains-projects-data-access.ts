@@ -11,6 +11,12 @@ export const projects = createQueryKeys('projects', {
       return (await projectsApi.listProject(organizationId)).data.results
     },
   }),
+  detail: ({ projectId }: { projectId: string }) => ({
+    queryKey: [projectId],
+    async queryFn() {
+      return (await projectMainCalls.getProject(projectId)).data
+    },
+  }),
 })
 
 export const mutations = {

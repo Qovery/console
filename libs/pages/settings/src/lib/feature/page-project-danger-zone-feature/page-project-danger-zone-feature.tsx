@@ -1,10 +1,11 @@
 import { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
-import { deleteProject, selectProjectById } from '@qovery/project'
+import { useProject } from '@qovery/domains/projects/feature'
+import { deleteProject } from '@qovery/project'
 import { SETTINGS_URL } from '@qovery/shared/routes'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { type AppDispatch, type RootState } from '@qovery/state/store'
+import { type AppDispatch } from '@qovery/state/store'
 import PageProjectDangerZone from '../../ui/page-project-danger-zone/page-project-danger-zone'
 
 export function PageProjectDangerZoneFeature() {
@@ -16,7 +17,7 @@ export function PageProjectDangerZoneFeature() {
 
   const [loading, setLoading] = useState(false)
 
-  const project = useSelector((state: RootState) => selectProjectById(state, organizationId, projectId))
+  const { data: project } = useProject({ projectId })
 
   const deleteProjectAction = () => {
     setLoading(true)

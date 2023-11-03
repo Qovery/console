@@ -1,17 +1,18 @@
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { editProject, selectProjectById } from '@qovery/project'
+import { useProject } from '@qovery/domains/projects/feature'
+import { editProject } from '@qovery/project'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { type AppDispatch, type RootState } from '@qovery/state/store'
+import { type AppDispatch } from '@qovery/state/store'
 import PageProjectGeneral from '../../ui/page-project-general/page-project-general'
 
 export function PageProjectGeneralFeature() {
-  const { organizationId = '', projectId = '' } = useParams()
+  const { projectId = '' } = useParams()
   useDocumentTitle('General - Project settings')
 
-  const project = useSelector((state: RootState) => selectProjectById(state, organizationId, projectId))
+  const { data: project } = useProject({ projectId })
 
   const [loading, setLoading] = useState(false)
   const dispatch = useDispatch<AppDispatch>()
