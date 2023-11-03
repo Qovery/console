@@ -18,7 +18,7 @@ describe('LayoutPage', () => {
       {
         id: '0000-0000-0000-0000',
         name: 'cluster-name',
-        status: ClusterStateEnum.DEPLOYMENT_ERROR,
+        status: ClusterStateEnum.INVALID_CREDENTIALS,
         created_at: '',
         region: '',
         cloud_provider: CloudProviderEnum.AWS,
