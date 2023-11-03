@@ -11,7 +11,6 @@ import {
   HelpSection,
   Icon,
   IconAwesomeEnum,
-  Link,
 } from '@qovery/shared/ui'
 
 export interface PageSettingsResourcesProps {
