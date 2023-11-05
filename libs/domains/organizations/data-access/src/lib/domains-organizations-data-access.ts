@@ -5,6 +5,9 @@ import {
   type GitProviderEnum,
   type GitTokenRequest,
   OrganizationAccountGitRepositoriesApi,
+  OrganizationApiTokenApi,
+  type OrganizationApiTokenCreateRequest,
+  OrganizationApiTokenScope,
   OrganizationMainCallsApi,
 } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
@@ -12,6 +15,7 @@ import { match } from 'ts-pattern'
 const containerRegistriesApi = new ContainerRegistriesApi()
 const organizationApi = new OrganizationMainCallsApi()
 const gitApi = new OrganizationAccountGitRepositoriesApi()
+const apiTokenApi = new OrganizationApiTokenApi()
 
 export const organizations = createQueryKeys('organizations', {
   containerRegistries: ({ organizationId }: { organizationId: string }) => ({
@@ -115,6 +119,13 @@ export const organizations = createQueryKeys('organizations', {
       return branches
     },
   }),
+  apiTokens: ({ organizationId }: { organizationId: string }) => ({
+    queryKey: [organizationId],
+    async queryFn() {
+      const response = await apiTokenApi.listOrganizationApiTokens(organizationId)
+      return response.data.results
+    },
+  }),
 })
 
 export const mutations = {
@@ -178,6 +189,23 @@ export const mutations = {
     gitTokenRequest: GitTokenRequest
   }) {
     const response = await organizationApi.createGitToken(organizationId, gitTokenRequest)
+    return response.data
+  },
+  async deleteApiToken({ organizationId, apiTokenId }: { organizationId: string; apiTokenId: string }) {
+    const response = await apiTokenApi.deleteOrganizationApiToken(organizationId, apiTokenId)
+    return response.data
+  },
+  async createApiToken({
+    organizationId,
+    apiTokenCreateRequest,
+  }: {
+    organizationId: string
+    apiTokenCreateRequest: OrganizationApiTokenCreateRequest
+  }) {
+    const response = await apiTokenApi.createOrganizationApiToken(organizationId, {
+      ...apiTokenCreateRequest,
+      scope: OrganizationApiTokenScope.ADMIN,
+    })
     return response.data
   },
 }

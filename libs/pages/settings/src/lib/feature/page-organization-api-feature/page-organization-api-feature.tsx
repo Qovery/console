@@ -1,11 +1,8 @@
 import { type OrganizationApiToken } from 'qovery-typescript-axios'
-import { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { deleteApiToken, fetchApiTokens, selectOrganizationById } from '@qovery/domains/organization'
+import { useApiTokens, useDeleteApiToken } from '@qovery/domains/organizations/feature'
 import { useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { type AppDispatch, type RootState } from '@qovery/state/store'
 import PageOrganizationApi from '../../ui/page-organization-api/page-organization-api'
 import CrudModalFeature from './crud-modal-feature/crud-modal-feature'
 
@@ -14,24 +11,16 @@ export function PageOrganizationApiFeature() {
 
   useDocumentTitle('API - Organization settings')
 
-  const dispatch = useDispatch<AppDispatch>()
-  const organization = useSelector((state: RootState) => selectOrganizationById(state, organizationId))
+  const { data: apiTokens = [], isFetched: isFetchedApiTokens } = useApiTokens({ organizationId })
+  const { mutateAsync: deleteApiToken } = useDeleteApiToken({ organizationId })
 
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
 
-  useEffect(() => {
-    if (
-      organization &&
-      (!organization.apiTokens?.loadingStatus || organization.apiTokens.loadingStatus === 'not loaded')
-    )
-      dispatch(fetchApiTokens({ organizationId }))
-  }, [dispatch, organizationId, organization, organization?.apiTokens?.loadingStatus])
-
   return (
     <PageOrganizationApi
-      apiTokens={organization?.apiTokens?.items}
-      loading={organization?.apiTokens?.loadingStatus || 'not loaded'}
+      apiTokens={apiTokens}
+      isFetched={isFetchedApiTokens}
       onAddToken={() => {
         openModal({ content: <CrudModalFeature organizationId={organizationId} onClose={closeModal} /> })
       }}
@@ -41,12 +30,11 @@ export function PageOrganizationApiFeature() {
           isDelete: true,
           name: token?.name,
           action: () => {
-            dispatch(
-              deleteApiToken({
-                organizationId: organizationId,
-                apiTokenId: token.id,
-              })
-            )
+            try {
+              deleteApiToken({ organizationId, apiTokenId: token.id })
+            } catch (error) {
+              console.error(error)
+            }
           },
         })
       }}
