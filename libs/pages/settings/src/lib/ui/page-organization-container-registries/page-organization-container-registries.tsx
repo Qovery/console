@@ -1,6 +1,5 @@
 import { type ContainerRegistryResponse } from 'qovery-typescript-axios'
 import { IconEnum } from '@qovery/shared/enums'
-import { type LoadingStatus } from '@qovery/shared/interfaces'
 import {
   BlockContent,
   ButtonIcon,
@@ -23,7 +22,7 @@ export interface PageOrganizationContainerRegistriesProps {
   onEdit: (registry: ContainerRegistryResponse) => void
   onDelete: (registry: ContainerRegistryResponse) => void
   containerRegistries?: ContainerRegistryResponse[]
-  loading?: LoadingStatus
+  loading?: boolean
 }
 
 export function PageOrganizationContainerRegistries(props: PageOrganizationContainerRegistriesProps) {
@@ -43,7 +42,7 @@ export function PageOrganizationContainerRegistries(props: PageOrganizationConta
             Add registry
           </ButtonLegacy>
         </div>
-        {(loading === 'not loaded' || loading === 'loading') && containerRegistries?.length === 0 ? (
+        {loading && containerRegistries?.length === 0 ? (
           <div data-testid="registries-loader" className="flex justify-center">
             <LoaderSpinner className="w-6" />
           </div>
@@ -105,7 +104,7 @@ export function PageOrganizationContainerRegistries(props: PageOrganizationConta
             ))}
           </BlockContent>
         ) : (
-          loading === 'loaded' &&
+          !loading &&
           containerRegistries?.length === 0 && (
             <EmptyState
               dataTestId="empty-state"

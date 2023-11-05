@@ -1,19 +1,17 @@
 import { useQueryClient } from '@tanstack/react-query'
 import { APIVariableScopeEnum, type JobRequest, type VariableImportRequest } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { createApplication, postApplicationActionsDeploy } from '@qovery/domains/application'
 import { importEnvironmentVariables } from '@qovery/domains/environment-variable'
-import { selectOrganizationById } from '@qovery/domains/organization'
-import { getGitTokenValue } from '@qovery/domains/organizations/feature'
+import { getGitTokenValue, useContainerRegistry } from '@qovery/domains/organizations/feature'
 import { type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
 import {
   type FlowVariableData,
   type JobConfigureData,
   type JobGeneralData,
   type JobResourcesData,
-  type OrganizationEntity,
 } from '@qovery/shared/interfaces'
 import {
   DEPLOYMENT_LOGS_URL,
@@ -27,7 +25,7 @@ import {
 import { FunnelFlowBody } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
-import { type AppDispatch, type RootState } from '@qovery/state/store'
+import { type AppDispatch } from '@qovery/state/store'
 import StepSummary from '../../../ui/page-job-create/step-summary/step-summary'
 import { useJobContainerCreateContext } from '../page-job-create-feature'
 
@@ -142,9 +140,11 @@ export function StepSummaryFeature() {
   const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${jobURL}`
   const [loadingCreate, setLoadingCreate] = useState(false)
   const [loadingCreateAndDeploy, setLoadingCreateAndDeploy] = useState(false)
-  const organization = useSelector<RootState, OrganizationEntity | undefined>((state) =>
-    selectOrganizationById(state, organizationId)
-  )
+  const { data: containerRegistry } = useContainerRegistry({
+    organizationId,
+    containerRegistryId: generalData?.registry,
+  })
+
   const queryClient = useQueryClient()
 
   const gotoGlobalInformations = () => {
@@ -264,9 +264,7 @@ export function StepSummaryFeature() {
           gotoVariables={gotoVariable}
           gotoGlobalInformation={gotoGlobalInformations}
           variableData={variableData}
-          selectedRegistryName={
-            organization?.containerRegistries?.items?.find((registry) => registry.id === generalData.registry)?.name
-          }
+          selectedRegistryName={containerRegistry?.name}
           jobType={jobType}
           gotoConfigureJob={gotoConfigureJob}
         />

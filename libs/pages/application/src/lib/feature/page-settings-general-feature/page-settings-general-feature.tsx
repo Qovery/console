@@ -5,7 +5,7 @@ import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { editApplication, getApplicationsState, postApplicationActionsRedeploy } from '@qovery/domains/application'
-import { fetchOrganizationContainerRegistries, selectOrganizationById } from '@qovery/domains/organization'
+import { selectOrganizationById } from '@qovery/domains/organization'
 import { getGitTokenValue } from '@qovery/domains/organizations/feature'
 import {
   ServiceTypeEnum,
@@ -225,8 +225,6 @@ export function PageSettingsGeneralFeature() {
         methods.unregister('dockerfile_path')
 
         methods.unregister('build_mode')
-
-        dispatch(fetchOrganizationContainerRegistries({ organizationId }))
       }
 
       methods.setValue('image_entry_point', application.entrypoint)
@@ -243,8 +241,6 @@ export function PageSettingsGeneralFeature() {
       methods.setValue('serviceType', serviceType)
 
       if (serviceType === ServiceTypeEnum.CONTAINER) {
-        dispatch(fetchOrganizationContainerRegistries({ organizationId }))
-
         if (application && isContainerJob(application)) {
           methods.setValue('registry', application.source.image.registry_id)
           methods.setValue('image_name', application.source.image.image_name)

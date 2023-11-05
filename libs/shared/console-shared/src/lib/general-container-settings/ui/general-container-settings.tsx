@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { type OrganizationEntity, type Value } from '@qovery/shared/interfaces'
+import { useContainerRegistries } from '@qovery/domains/organizations/feature'
+import { type OrganizationEntity } from '@qovery/shared/interfaces'
 import { SETTINGS_CONTAINER_REGISTRIES_URL, SETTINGS_URL } from '@qovery/shared/routes'
 import { InputSelect, InputText, Link } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
@@ -16,18 +16,7 @@ export function GeneralContainerSettings({ organization, className }: GeneralCon
     image_name?: string
     image_tag?: string
   }>()
-  const [availableRegistiesOptions, setAvailableRegistiesOptions] = useState<Value[]>([])
-
-  useEffect(() => {
-    if (organization?.containerRegistries?.items && organization.containerRegistries.items.length > 0) {
-      setAvailableRegistiesOptions(
-        organization.containerRegistries.items.map((registry) => ({
-          value: registry.id,
-          label: registry.name || '',
-        }))
-      )
-    }
-  }, [organization])
+  const { data: containerRegistries = [] } = useContainerRegistries({ organizationId: organization?.id ?? '' })
 
   return (
     <div className={twMerge('mb-6 flex flex-col gap-3', className)}>
@@ -44,7 +33,10 @@ export function GeneralContainerSettings({ organization, className }: GeneralCon
               className="mb-0.5"
               onChange={field.onChange}
               value={field.value}
-              options={availableRegistiesOptions}
+              options={containerRegistries?.map((registry) => ({
+                value: registry.id,
+                label: registry.name || '',
+              }))}
               label="Registry"
               error={error?.message}
             />

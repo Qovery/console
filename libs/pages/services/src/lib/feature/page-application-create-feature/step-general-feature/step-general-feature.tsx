@@ -1,14 +1,13 @@
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
-import { fetchOrganizationContainerRegistries, selectOrganizationById } from '@qovery/domains/organization'
-import { isContainer } from '@qovery/shared/enums'
+import { selectOrganizationById } from '@qovery/domains/organization'
 import { type ApplicationGeneralData, type OrganizationEntity } from '@qovery/shared/interfaces'
 import { SERVICES_APPLICATION_CREATION_URL, SERVICES_CREATION_RESOURCES_URL, SERVICES_URL } from '@qovery/shared/routes'
 import { FunnelFlowBody, FunnelFlowHelpCard, toastError } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { type AppDispatch, type RootState } from '@qovery/state/store'
+import { type RootState } from '@qovery/state/store'
 import StepGeneral from '../../../ui/page-application-create/step-general/step-general'
 import { useApplicationContainerCreateContext } from '../page-application-create-feature'
 
@@ -20,7 +19,6 @@ export function StepGeneralFeature() {
   const organization = useSelector<RootState, OrganizationEntity | undefined>((state) =>
     selectOrganizationById(state, organizationId)
   )
-  const dispatch = useDispatch<AppDispatch>()
   const funnelCardHelp = (
     <FunnelFlowHelpCard
       title="Application creation flow"
@@ -49,14 +47,6 @@ export function StepGeneralFeature() {
     defaultValues: { auto_deploy: true, ...generalData },
     mode: 'onChange',
   })
-
-  const watchServiceType = methods.watch('serviceType')
-
-  useEffect(() => {
-    if (isContainer(watchServiceType)) {
-      dispatch(fetchOrganizationContainerRegistries({ organizationId }))
-    }
-  }, [watchServiceType, dispatch, organizationId])
 
   const onSubmit = methods.handleSubmit((data) => {
     const cloneData = {

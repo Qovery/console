@@ -5,7 +5,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import {
   editOrganizationContainerRegistry,
   fetchAvailableContainerRegistry,
-  postOrganizationContainerRegistry,
   selectAvailableContainerRegistry,
   selectAvailableContainerRegistryLoadingStatus,
 } from '@qovery/domains/organization'

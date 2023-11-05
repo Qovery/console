@@ -1,15 +1,8 @@
 import { type ContainerRegistryResponse } from 'qovery-typescript-axios'
-import { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import {
-  deleteOrganizationContainerRegistry,
-  fetchOrganizationContainerRegistries,
-  selectOrganizationById,
-} from '@qovery/domains/organization'
+import { useContainerRegistries, useDeleteContainerRegistry } from '@qovery/domains/organizations/feature'
 import { useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { type AppDispatch, type RootState } from '@qovery/state/store'
 import PageOrganizationContainerRegistries from '../../ui/page-organization-container-registries/page-organization-container-registries'
 import CrudModalFeature from './crud-modal-feature/crud-modal-feature'
 
@@ -18,24 +11,18 @@ export function PageOrganizationContainerRegistriesFeature() {
 
   useDocumentTitle('Container registries - Organization settings')
 
-  const dispatch = useDispatch<AppDispatch>()
-  const organization = useSelector((state: RootState) => selectOrganizationById(state, organizationId))
-  const containerRegistriesLoadingStatus = useSelector(
-    (state: RootState) => selectOrganizationById(state, organizationId)?.containerRegistries?.loadingStatus
-  )
+  const { data: containerRegistries = [], isLoading: isLoadingContainerRegistries } = useContainerRegistries({
+    organizationId,
+  })
+  const { mutateAsync: deleteContainerRegistry } = useDeleteContainerRegistry({ organizationId })
 
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
 
-  useEffect(() => {
-    if (organization && containerRegistriesLoadingStatus !== 'loaded')
-      dispatch(fetchOrganizationContainerRegistries({ organizationId }))
-  }, [dispatch, organizationId, organization, containerRegistriesLoadingStatus])
-
   return (
     <PageOrganizationContainerRegistries
-      containerRegistries={organization?.containerRegistries?.items}
-      loading={containerRegistriesLoadingStatus || 'not loaded'}
+      containerRegistries={containerRegistries}
+      loading={isLoadingContainerRegistries}
       onAddRegistry={() => {
         openModal({ content: <CrudModalFeature organizationId={organizationId} onClose={closeModal} /> })
       }}
@@ -49,13 +36,15 @@ export function PageOrganizationContainerRegistriesFeature() {
           title: 'Delete container registry',
           isDelete: true,
           name: registry?.name,
-          action: () => {
-            dispatch(
-              deleteOrganizationContainerRegistry({
+          action: async () => {
+            try {
+              await deleteContainerRegistry({
                 organizationId: organizationId,
                 containerRegistryId: registry.id,
               })
-            )
+            } catch (error) {
+              console.error(error)
+            }
           },
         })
       }}
