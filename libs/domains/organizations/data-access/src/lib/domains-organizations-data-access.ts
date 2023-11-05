@@ -204,6 +204,7 @@ export const mutations = {
   }) {
     const response = await apiTokenApi.createOrganizationApiToken(organizationId, {
       ...apiTokenCreateRequest,
+      // Role for token is not available in the API
       scope: OrganizationApiTokenScope.ADMIN,
     })
     return response.data
