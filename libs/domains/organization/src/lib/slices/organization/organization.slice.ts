@@ -8,10 +8,6 @@ import {
 } from '@reduxjs/toolkit'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
-  type AvailableContainerRegistryResponse,
-  ContainerRegistriesApi,
-  type ContainerRegistryRequest,
-  type ContainerRegistryResponse,
   type Environment,
   type InviteMember,
   type InviteMemberRequest,
@@ -38,7 +34,6 @@ import { credentialsExtraReducers } from './credentials'
 export const ORGANIZATION_KEY = 'organizations'
 
 const organizationMainCalls = new OrganizationMainCallsApi()
-const containerRegistriesApi = new ContainerRegistriesApi()
 const customRolesApi = new OrganizationCustomRoleApi()
 const membersApi = new MembersApi()
 

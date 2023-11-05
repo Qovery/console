@@ -11,7 +11,7 @@ export function PageOrganizationContainerRegistriesFeature() {
 
   useDocumentTitle('Container registries - Organization settings')
 
-  const { data: containerRegistries = [], isLoading: isLoadingContainerRegistries } = useContainerRegistries({
+  const { data: containerRegistries = [], isFetched: isFetchedContainerRegistries } = useContainerRegistries({
     organizationId,
   })
   const { mutateAsync: deleteContainerRegistry } = useDeleteContainerRegistry({ organizationId })
@@ -22,7 +22,7 @@ export function PageOrganizationContainerRegistriesFeature() {
   return (
     <PageOrganizationContainerRegistries
       containerRegistries={containerRegistries}
-      loading={isLoadingContainerRegistries}
+      isFetched={isFetchedContainerRegistries}
       onAddRegistry={() => {
         openModal({ content: <CrudModalFeature organizationId={organizationId} onClose={closeModal} /> })
       }}

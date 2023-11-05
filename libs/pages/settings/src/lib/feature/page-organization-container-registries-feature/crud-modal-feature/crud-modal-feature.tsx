@@ -40,27 +40,23 @@ export function CrudModalFeature(props: CrudModalFeatureProps) {
   const onSubmit = methods.handleSubmit(async (data) => {
     setLoading(true)
 
-    if (registry) {
-      try {
+    try {
+      if (registry) {
         await editContainerRegistry({
           organizationId: organizationId,
           containerRegistryId: registry.id,
           containerRegistryRequest: data as ContainerRegistryRequest,
         })
-      } catch (error) {
-        console.error(error)
-      }
-      setLoading(false)
-    } else {
-      try {
+        setLoading(false)
+      } else {
         await createContainerRegistry({
           organizationId: organizationId,
           containerRegistryRequest: data as ContainerRegistryRequest,
         })
-      } catch (error) {
-        console.error(error)
+        setLoading(false)
       }
-      setLoading(false)
+    } catch (error) {
+      console.error(error)
     }
   })
 
