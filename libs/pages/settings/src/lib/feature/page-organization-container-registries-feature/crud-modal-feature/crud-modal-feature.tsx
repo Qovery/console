@@ -1,14 +1,11 @@
 import { type ContainerRegistryRequest, type ContainerRegistryResponse } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useDispatch, useSelector } from 'react-redux'
 import {
-  editOrganizationContainerRegistry,
-  fetchAvailableContainerRegistry,
-  selectAvailableContainerRegistry,
-  selectAvailableContainerRegistryLoadingStatus,
-} from '@qovery/domains/organization'
-import { type AppDispatch, type RootState } from '@qovery/state/store'
+  useAvailableContainerRegistry,
+  useCreateContainerRegistry,
+  useEditContainerRegistry,
+} from '@qovery/domains/organizations/feature'
 import CrudModal from '../../../ui/page-organization-container-registries/crud-modal/crud-modal'
 
 export interface CrudModalFeatureProps {
@@ -20,6 +17,9 @@ export interface CrudModalFeatureProps {
 export function CrudModalFeature(props: CrudModalFeatureProps) {
   const { organizationId = '', onClose, registry } = props
 
+  const { data: availableContainerRegistry = [] } = useAvailableContainerRegistry({ organizationId })
+  const { mutateAsync: editContainerRegistry } = useEditContainerRegistry({ organizationId })
+  const { mutateAsync: createContainerRegistry } = useCreateContainerRegistry({ organizationId })
   const [loading, setLoading] = useState(false)
 
   const methods = useForm({
@@ -37,53 +37,30 @@ export function CrudModalFeature(props: CrudModalFeatureProps) {
     setTimeout(() => methods.clearErrors('config'), 0)
   }, [methods])
 
-  const availableContainerRegistry = useSelector((state: RootState) => selectAvailableContainerRegistry(state))
-  const availableContainerRegistryLoadingStatus = useSelector((state: RootState) =>
-    selectAvailableContainerRegistryLoadingStatus(state)
-  )
-
-  const dispatch = useDispatch<AppDispatch>()
-
-  useEffect(() => {
-    if (availableContainerRegistryLoadingStatus !== 'loaded') dispatch(fetchAvailableContainerRegistry())
-  }, [dispatch, availableContainerRegistryLoadingStatus])
-
-  const onSubmit = methods.handleSubmit((data) => {
+  const onSubmit = methods.handleSubmit(async (data) => {
     setLoading(true)
 
     if (registry) {
-      dispatch(
-        editOrganizationContainerRegistry({
+      try {
+        await editContainerRegistry({
           organizationId: organizationId,
           containerRegistryId: registry.id,
-          data: data as ContainerRegistryRequest,
+          containerRegistryRequest: data as ContainerRegistryRequest,
         })
-      )
-        .unwrap()
-        .then(() => {
-          setLoading(false)
-          onClose()
-        })
-        .catch((e) => {
-          setLoading(false)
-          console.error(e)
-        })
+      } catch (error) {
+        console.error(error)
+      }
+      setLoading(false)
     } else {
-      dispatch(
-        postOrganizationContainerRegistry({
+      try {
+        await createContainerRegistry({
           organizationId: organizationId,
-          data: data as ContainerRegistryRequest,
+          containerRegistryRequest: data as ContainerRegistryRequest,
         })
-      )
-        .unwrap()
-        .then(() => {
-          setLoading(false)
-          onClose()
-        })
-        .catch((e) => {
-          setLoading(false)
-          console.error(e)
-        })
+      } catch (error) {
+        console.error(error)
+      }
+      setLoading(false)
     }
   })
 
@@ -91,7 +68,7 @@ export function CrudModalFeature(props: CrudModalFeatureProps) {
     <FormProvider {...methods}>
       <CrudModal
         registry={registry}
-        availableContainerRegistry={availableContainerRegistry || []}
+        availableContainerRegistry={availableContainerRegistry}
         onSubmit={onSubmit}
         onClose={onClose}
         loading={loading}

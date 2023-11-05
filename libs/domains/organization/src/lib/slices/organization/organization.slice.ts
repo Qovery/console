@@ -87,25 +87,6 @@ export const deleteOrganization = createAsyncThunk(
   }
 )
 
-export const editOrganizationContainerRegistry = createAsyncThunk(
-  'organization/containerRegistries/edit',
-  async (payload: { organizationId: string; containerRegistryId: string; data: ContainerRegistryRequest }) => {
-    // edit container registry
-    const result = await containerRegistriesApi.editContainerRegistry(
-      payload.organizationId,
-      payload.containerRegistryId,
-      payload.data
-    )
-    return result.data as ContainerRegistryResponse
-  }
-)
-
-export const fetchAvailableContainerRegistry = createAsyncThunk('availableContainerRegistry/fetch', async () => {
-  // fetch container registries
-  const result = await containerRegistriesApi.listAvailableContainerRegistry()
-  return result.data.results as AvailableContainerRegistryResponse[]
-})
-
 export const fetchCustomRole = createAsyncThunk(
   'customRole/fetch',
   async (payload: { organizationId: string; customRoleId: string }) => {
@@ -392,57 +373,6 @@ export const organizationSlice = createSlice({
         toastError(action.error)
         state.error = action.error.message
       })
-      // post container registry
-      // .addCase(postOrganizationContainerRegistry.fulfilled, (state: OrganizationState, action) => {
-      //   const containerRegistries = state.entities[action.meta.arg.organizationId]?.containerRegistries?.items || []
-
-      //   const update: Update<OrganizationEntity> = {
-      //     id: action.meta.arg.organizationId,
-      //     changes: {
-      //       containerRegistries: {
-      //         loadingStatus: 'loaded',
-      //         items: [...containerRegistries, action.payload],
-      //       },
-      //     },
-      //   }
-      //   organizationAdapter.updateOne(state, update)
-      //   toast(ToastEnum.SUCCESS, `Container registry added`)
-      // })
-      // .addCase(postOrganizationContainerRegistry.rejected, (state: OrganizationState, action) => {
-      //   toastError(action.error)
-      // })
-      // edit container registry
-      // .addCase(editOrganizationContainerRegistry.fulfilled, (state: OrganizationState, action) => {
-      //   const containerRegistries = state.entities[action.meta.arg.organizationId]?.containerRegistries?.items || []
-      //   const index = containerRegistries.findIndex((obj) => obj.id === action.payload.id)
-      //   containerRegistries[index] = action.payload
-
-      //   const update: Update<OrganizationEntity> = {
-      //     id: action.meta.arg.organizationId,
-      //     changes: {
-      //       containerRegistries: {
-      //         loadingStatus: 'loaded',
-      //         items: containerRegistries,
-      //       },
-      //     },
-      //   }
-      //   organizationAdapter.updateOne(state, update)
-      //   toast(ToastEnum.SUCCESS, `Container registry updated`)
-      // })
-      // .addCase(editOrganizationContainerRegistry.rejected, (state: OrganizationState, action) => {
-      //   toastError(action.error)
-      // })
-      // fetch container registries
-      // .addCase(fetchAvailableContainerRegistry.pending, (state: OrganizationState) => {
-      //   state.availableContainerRegistries.loadingStatus = 'loading'
-      // })
-      // .addCase(
-      //   fetchAvailableContainerRegistry.fulfilled,
-      //   (state: OrganizationState, action: PayloadAction<AvailableContainerRegistryResponse[]>) => {
-      //     state.availableContainerRegistries.loadingStatus = 'loaded'
-      //     state.availableContainerRegistries.items = action.payload
-      //   }
-      // )
       // fetch custom role
       .addCase(fetchCustomRole.fulfilled, (state: OrganizationState, action) => {
         const customRoles = state.entities[action.meta.arg.organizationId]?.customRoles?.items || []
@@ -681,13 +611,3 @@ export const selectOrganizationById = (state: RootState, organizationId: string)
   getOrganizationState(state).entities[organizationId]
 
 export const selectOrganizationLoadingStatus = createSelector(getOrganizationState, (state) => state.loadingStatus)
-
-export const selectAvailableContainerRegistry = createSelector(
-  getOrganizationState,
-  (state) => state.availableContainerRegistries.items
-)
-
-export const selectAvailableContainerRegistryLoadingStatus = createSelector(
-  getOrganizationState,
-  (state) => state.availableContainerRegistries.loadingStatus
-)

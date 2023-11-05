@@ -34,6 +34,13 @@ export const organizations = createQueryKeys('organizations', {
       return response.data
     },
   }),
+  availableContainerRegistry: ({ organizationId }: { organizationId: string }) => ({
+    queryKey: [organizationId],
+    async queryFn() {
+      const response = await containerRegistriesApi.listAvailableContainerRegistry()
+      return response.data.results
+    },
+  }),
   gitTokens: ({ organizationId }: { organizationId: string }) => ({
     queryKey: [organizationId],
     async queryFn() {
