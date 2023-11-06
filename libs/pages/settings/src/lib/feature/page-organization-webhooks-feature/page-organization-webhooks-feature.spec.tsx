@@ -1,14 +1,12 @@
-import { mockUseQueryResult } from '__tests__/utils/mock-use-query-result'
-import { act, fireEvent, getAllByTestId, getByLabelText, getByTestId, render } from '__tests__/utils/setup-jest'
-import { type OrganizationWebhookResponse } from 'qovery-typescript-axios'
-import * as organizationDomain from '@qovery/domains/organization'
+import * as organizationsDomain from '@qovery/domains/organizations/feature'
 import { webhookFactoryMock } from '@qovery/shared/factories'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import PageOrganizationWebhooksFeature from './page-organization-webhooks-feature'
 
-const useFetchWebhooksMockSpy = jest.spyOn(organizationDomain, 'useFetchWebhooks') as jest.Mock
-const useEditWebhooksMockSpy = jest.spyOn(organizationDomain, 'useEditWebhook') as jest.Mock
+const useWebhooksMockSpy = jest.spyOn(organizationsDomain, 'useWebhooks') as jest.Mock
+const useEditWebhooksMockSpy = jest.spyOn(organizationsDomain, 'useEditWebhook') as jest.Mock
 
-const mockWebhooks = webhookFactoryMock(3)
+const mockWebhooks = webhookFactoryMock(1)
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -17,42 +15,43 @@ jest.mock('react-router-dom', () => ({
 
 describe('PageOrganizationWebhooksFeature', () => {
   beforeEach(() => {
-    useFetchWebhooksMockSpy.mockReturnValue(mockUseQueryResult<OrganizationWebhookResponse[]>(mockWebhooks))
+    useWebhooksMockSpy.mockReturnValue({
+      data: mockWebhooks,
+    })
     useEditWebhooksMockSpy.mockReturnValue({
-      mutate: jest.fn(),
+      mutateAsync: jest.fn(),
     })
   })
 
   it('should render successfully', () => {
-    const { baseElement } = render(<PageOrganizationWebhooksFeature />)
+    const { baseElement } = renderWithProviders(<PageOrganizationWebhooksFeature />)
     expect(baseElement).toBeTruthy()
   })
 
-  it('should render 3 rows', () => {
-    const { baseElement } = render(<PageOrganizationWebhooksFeature />)
-    const rows = getAllByTestId(baseElement, 'webhook-row')
-    expect(rows).toHaveLength(3)
+  it('should render 1 row', () => {
+    renderWithProviders(<PageOrganizationWebhooksFeature />)
+    const rows = screen.getAllByTestId('webhook-row')
+    expect(rows).toHaveLength(1)
   })
 
   it('should render empty placeholder', () => {
-    useFetchWebhooksMockSpy.mockReturnValue(mockUseQueryResult<OrganizationWebhookResponse[]>([]))
-    const { baseElement } = render(<PageOrganizationWebhooksFeature />)
-    getByTestId(baseElement, 'empty-webhook')
+    useWebhooksMockSpy.mockReturnValue({
+      data: [],
+    })
+    renderWithProviders(<PageOrganizationWebhooksFeature />)
+    screen.getByTestId('empty-webhook')
   })
 
   it('should render pass the toggle to true', async () => {
-    const { baseElement } = render(<PageOrganizationWebhooksFeature />)
-    const toggles = getAllByTestId(baseElement, 'input-toggle')
+    const { userEvent } = renderWithProviders(<PageOrganizationWebhooksFeature />)
 
-    await act(() => {
-      const input = getByLabelText(toggles[0], 'toggle-btn')
-      if (input) fireEvent.click(input)
-    })
+    const input = screen.getByTestId('input-toggle-button')
+    await userEvent.click(input)
 
-    expect(useEditWebhooksMockSpy().mutate).toHaveBeenCalledWith({
+    expect(useEditWebhooksMockSpy().mutateAsync).toHaveBeenCalledWith({
       organizationId: '1',
       webhookId: mockWebhooks[0].id,
-      data: {
+      webhookRequest: {
         ...mockWebhooks[0],
         enabled: true,
       },

@@ -110,44 +110,42 @@ export function WebhookCrudModal(props: WebhookCrudModalProps) {
       <div className="text-neutral-400 font-bold mb-3">Event & filters</div>
 
       <div className="mb-3">
-        <div data-testid="test-debug">
-          <Controller
-            name="events"
-            control={control}
-            rules={{
-              required: 'Please enter events',
-            }}
-            render={({ field }) => (
-              <InputSelect
-                onChange={field.onChange}
-                value={field.value}
-                isMulti
-                portal
-                options={[
-                  {
-                    label: OrganizationWebhookEventEnum.FAILURE,
-                    value: OrganizationWebhookEventEnum.FAILURE,
-                  },
-                  {
-                    label: OrganizationWebhookEventEnum.STARTED,
-                    value: OrganizationWebhookEventEnum.STARTED,
-                  },
-                  {
-                    label: OrganizationWebhookEventEnum.CANCELLED,
-                    value: OrganizationWebhookEventEnum.CANCELLED,
-                  },
-                  {
-                    label: OrganizationWebhookEventEnum.SUCCESSFUL,
-                    value: OrganizationWebhookEventEnum.SUCCESSFUL,
-                  },
-                ]}
-                label="Events"
-                dataTestId="events-input"
-              />
-            )}
-          />
-          <p className="text-neutral-350 text-xs ml-4 mt-0.5">List all the events you want to be notified about.</p>
-        </div>
+        <Controller
+          name="events"
+          control={control}
+          rules={{
+            required: 'Please enter events',
+          }}
+          render={({ field }) => (
+            <InputSelect
+              onChange={field.onChange}
+              value={field.value}
+              isMulti
+              portal
+              options={[
+                {
+                  label: OrganizationWebhookEventEnum.FAILURE,
+                  value: OrganizationWebhookEventEnum.FAILURE,
+                },
+                {
+                  label: OrganizationWebhookEventEnum.STARTED,
+                  value: OrganizationWebhookEventEnum.STARTED,
+                },
+                {
+                  label: OrganizationWebhookEventEnum.CANCELLED,
+                  value: OrganizationWebhookEventEnum.CANCELLED,
+                },
+                {
+                  label: OrganizationWebhookEventEnum.SUCCESSFUL,
+                  value: OrganizationWebhookEventEnum.SUCCESSFUL,
+                },
+              ]}
+              label="Events"
+              dataTestId="events-input"
+            />
+          )}
+        />
+        <p className="text-neutral-350 text-xs ml-4 mt-0.5">List all the events you want to be notified about.</p>
       </div>
 
       <div className="mb-3">

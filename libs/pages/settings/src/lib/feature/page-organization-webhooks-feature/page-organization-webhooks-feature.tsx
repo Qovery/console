@@ -1,6 +1,6 @@
 import { type OrganizationWebhookResponse } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
-import { useDeleteWebhook, useEditWebhook, useFetchWebhooks } from '@qovery/domains/organization'
+import { useDeleteWebhook, useEditWebhook, useWebhooks } from '@qovery/domains/organizations/feature'
 import { useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import PageOrganizationWebhooks from '../../ui/page-organization-webhooks/page-organization-webhooks'
@@ -9,11 +9,11 @@ import WebhookCrudModalFeature from './webhook-crud-modal-feature/webhook-crud-m
 export function PageOrganizationWebhooksFeature() {
   useDocumentTitle('Webhooks - Organization settings')
   const { organizationId = '' } = useParams()
-  const fetchWebhooks = useFetchWebhooks(organizationId)
-  const deleteWebhooks = useDeleteWebhook(organizationId)
+  const fetchWebhooks = useWebhooks({ organizationId })
+  const { mutateAsync: deleteWebhook } = useDeleteWebhook({ organizationId })
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
-  const editWebhook = useEditWebhook(organizationId, closeModal)
+  const { mutateAsync: editWebhook } = useEditWebhook({ organizationId })
 
   const openAddNew = () => {
     openModal({
@@ -33,7 +33,11 @@ export function PageOrganizationWebhooksFeature() {
       isDelete: true,
       name: webhook.target_url || '',
       action: () => {
-        deleteWebhooks.mutate({ webhookId: webhook.id })
+        try {
+          deleteWebhook({ organizationId, webhookId: webhook.id })
+        } catch (error) {
+          console.error(error)
+        }
       },
     })
   }
@@ -45,15 +49,21 @@ export function PageOrganizationWebhooksFeature() {
       (webhook) => webhook.id === webhookId
     ) as Required<OrganizationWebhookResponse>
 
-    if (webhook !== undefined)
-      editWebhook.mutate({
-        organizationId,
-        webhookId,
-        data: {
-          ...webhook,
-          enabled: enabled,
-        },
-      })
+    if (webhook !== undefined) {
+      try {
+        editWebhook({
+          organizationId,
+          webhookId,
+          webhookRequest: {
+            ...webhook,
+            enabled: enabled,
+          },
+        })
+        closeModal()
+      } catch (error) {
+        console.error(error)
+      }
+    }
   }
 
   return (

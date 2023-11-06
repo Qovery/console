@@ -9,6 +9,8 @@ import {
   type OrganizationApiTokenCreateRequest,
   OrganizationApiTokenScope,
   OrganizationMainCallsApi,
+  OrganizationWebhookApi,
+  type OrganizationWebhookCreateRequest,
 } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
 
@@ -16,6 +18,7 @@ const containerRegistriesApi = new ContainerRegistriesApi()
 const organizationApi = new OrganizationMainCallsApi()
 const gitApi = new OrganizationAccountGitRepositoriesApi()
 const apiTokenApi = new OrganizationApiTokenApi()
+const webhookApi = new OrganizationWebhookApi()
 
 export const organizations = createQueryKeys('organizations', {
   containerRegistries: ({ organizationId }: { organizationId: string }) => ({
@@ -126,6 +129,13 @@ export const organizations = createQueryKeys('organizations', {
       return response.data.results
     },
   }),
+  webhooks: ({ organizationId }: { organizationId: string }) => ({
+    queryKey: [organizationId],
+    async queryFn() {
+      const response = await webhookApi.listOrganizationWebHooks(organizationId)
+      return response.data.results
+    },
+  }),
 })
 
 export const mutations = {
@@ -207,6 +217,32 @@ export const mutations = {
       // Role for token is not available in the API
       scope: OrganizationApiTokenScope.ADMIN,
     })
+    return response.data
+  },
+  async createWebhook({
+    organizationId,
+    webhookRequest,
+  }: {
+    organizationId: string
+    webhookRequest: OrganizationWebhookCreateRequest
+  }) {
+    const response = await webhookApi.createOrganizationWebhook(organizationId, webhookRequest)
+    return response.data
+  },
+  async editWebhook({
+    organizationId,
+    webhookId,
+    webhookRequest,
+  }: {
+    organizationId: string
+    webhookId: string
+    webhookRequest: OrganizationWebhookCreateRequest
+  }) {
+    const response = await webhookApi.editOrganizationWebhook(organizationId, webhookId, webhookRequest)
+    return response.data
+  },
+  async deleteWebhook({ organizationId, webhookId }: { organizationId: string; webhookId: string }) {
+    const response = await webhookApi.deleteOrganizationWebhook(organizationId, webhookId)
     return response.data
   },
 }
