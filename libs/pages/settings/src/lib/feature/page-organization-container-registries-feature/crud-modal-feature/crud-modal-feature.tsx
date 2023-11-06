@@ -47,17 +47,18 @@ export function CrudModalFeature(props: CrudModalFeatureProps) {
           containerRegistryId: registry.id,
           containerRegistryRequest: data as ContainerRegistryRequest,
         })
-        setLoading(false)
       } else {
         await createContainerRegistry({
           organizationId: organizationId,
           containerRegistryRequest: data as ContainerRegistryRequest,
         })
-        setLoading(false)
       }
     } catch (error) {
       console.error(error)
     }
+
+    setLoading(false)
+    onClose()
   })
 
   return (
