@@ -13,7 +13,6 @@ import {
   selectAllOrganization,
   selectClustersEntitiesByOrganizationId,
 } from '@qovery/domains/organization'
-import { fetchProjects } from '@qovery/domains/projects'
 import { type OrganizationEntity } from '@qovery/shared/interfaces'
 import { ORGANIZATION_URL } from '@qovery/shared/routes'
 import { StatusWebSocketListener } from '@qovery/shared/util-web-sockets'
@@ -70,7 +69,6 @@ export function Layout(props: PropsWithChildren<LayoutProps>) {
 
   useEffect(() => {
     if (organizationId) {
-      dispatch(fetchProjects({ organizationId }))
       dispatch(fetchClusters({ organizationId }))
       dispatch(fetchClustersStatus({ organizationId }))
     }

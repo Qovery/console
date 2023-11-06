@@ -1,7 +1,7 @@
 {
-  "name": "domains-projects",
+  "name": "project",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/domains/projects/src",
+  "sourceRoot": "libs/domains/project/src",
   "projectType": "library",
   "tags": [],
   "targets": {
@@ -9,14 +9,14 @@
       "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["libs/domains/projects/**/*.{ts,tsx,js,jsx}"]
+        "lintFilePatterns": ["libs/domains/project/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/libs/domains/projects"],
+      "outputs": ["{workspaceRoot}/coverage/libs/domains/project"],
       "options": {
-        "jestConfig": "libs/domains/projects/jest.config.ts",
+        "jestConfig": "libs/domains/project/jest.config.ts",
         "passWithNoTests": true
       }
     }

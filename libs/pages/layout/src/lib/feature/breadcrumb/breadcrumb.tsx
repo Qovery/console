@@ -4,7 +4,7 @@ import { selectApplicationsEntitiesByEnvId } from '@qovery/domains/application'
 import { selectDatabasesEntitiesByEnvId } from '@qovery/domains/database'
 import { useFetchEnvironments } from '@qovery/domains/environment'
 import { selectAllOrganization, selectClustersEntitiesByOrganizationId } from '@qovery/domains/organization'
-import { selectProjectsEntitiesByOrgId } from '@qovery/domains/projects'
+import { useProjects } from '@qovery/domains/projects/feature'
 import { CreateProjectModalFeature } from '@qovery/shared/console-shared'
 import { useModal } from '@qovery/shared/ui'
 import { type RootState } from '@qovery/state/store'
@@ -16,8 +16,8 @@ export function BreadcrumbFeature() {
   const clusters = useSelector((state: RootState) => selectClustersEntitiesByOrganizationId(state, organizationId))
   const applications = useSelector((state: RootState) => selectApplicationsEntitiesByEnvId(state, environmentId))
   const databases = useSelector((state: RootState) => selectDatabasesEntitiesByEnvId(state, environmentId))
-  const projects = useSelector((state: RootState) => selectProjectsEntitiesByOrgId(state, organizationId))
 
+  const { data: projects = [] } = useProjects({ organizationId })
   const { data: environments } = useFetchEnvironments(projectId)
 
   const { openModal, closeModal } = useModal()

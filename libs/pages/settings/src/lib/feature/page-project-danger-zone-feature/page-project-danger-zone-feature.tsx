@@ -1,32 +1,33 @@
 import { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
-import { deleteProject, selectProjectById } from '@qovery/domains/projects'
+import { useDeleteProject, useProject } from '@qovery/domains/projects/feature'
 import { SETTINGS_URL } from '@qovery/shared/routes'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { type AppDispatch, type RootState } from '@qovery/state/store'
 import PageProjectDangerZone from '../../ui/page-project-danger-zone/page-project-danger-zone'
 
 export function PageProjectDangerZoneFeature() {
   const { organizationId = '', projectId = '' } = useParams()
   useDocumentTitle('Danger zone - Project settings')
 
-  const dispatch = useDispatch<AppDispatch>()
   const navigate = useNavigate()
 
   const [loading, setLoading] = useState(false)
 
-  const project = useSelector((state: RootState) => selectProjectById(state, organizationId, projectId))
+  const { data: project } = useProject({ organizationId, projectId })
+  const { mutateAsync } = useDeleteProject({ organizationId })
 
-  const deleteProjectAction = () => {
+  const deleteProjectAction = async () => {
     setLoading(true)
 
-    dispatch(deleteProject({ projectId }))
-      .unwrap()
-      .then(() => {
-        setLoading(false)
-        navigate(SETTINGS_URL(organizationId))
+    try {
+      await mutateAsync({
+        projectId,
       })
+      setLoading(false)
+      navigate(SETTINGS_URL(organizationId))
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   return <PageProjectDangerZone deleteProject={deleteProjectAction} project={project} loading={loading} />

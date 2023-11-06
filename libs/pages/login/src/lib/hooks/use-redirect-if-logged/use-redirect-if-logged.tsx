@@ -1,10 +1,10 @@
 import { useGTMDispatch } from '@elgorditosalsero/react-gtm-hook'
-import { type Organization, type Project } from 'qovery-typescript-axios'
+import { type Organization } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { fetchOrganization } from '@qovery/domains/organization'
-import { fetchProjects } from '@qovery/domains/projects'
+import { fetchOrganization, selectAllOrganization } from '@qovery/domains/organization'
+import { useProjects } from '@qovery/domains/projects/feature'
 import { fetchUserSignUp } from '@qovery/domains/users/data-access'
 import { useAuth } from '@qovery/shared/auth'
 import {
@@ -26,6 +26,8 @@ export function useRedirectIfLogged() {
   const { createAuthCookies, checkIsAuthenticated, user } = useAuth()
   const dispatch = useDispatch<AppDispatch>()
   const sendDataToGTM = useGTMDispatch()
+  const organizations = useSelector(selectAllOrganization)
+  const { data: projects = [] } = useProjects({ organizationId: organizations[0]?.id })
 
   useEffect(() => {
     async function fetchData() {
@@ -41,7 +43,6 @@ export function useRedirectIfLogged() {
 
       if (organization.length > 0) {
         const organizationId = organization[0].id
-        const projects: Project[] = await dispatch(fetchProjects({ organizationId })).unwrap()
         if (projects.length > 0) navigate(OVERVIEW_URL(organizationId, projects[0].id))
         else navigate(ORGANIZATION_URL(organizationId))
       } else {
@@ -73,7 +74,7 @@ export function useRedirectIfLogged() {
 
       fetchData()
     }
-  }, [navigate, checkIsAuthenticated, createAuthCookies, dispatch, sendDataToGTM, user?.email])
+  }, [navigate, checkIsAuthenticated, createAuthCookies, dispatch, sendDataToGTM, user?.email, projects])
 }
 
 export default useRedirectIfLogged

@@ -1,8 +1,18 @@
-import { act, fireEvent, render } from '__tests__/utils/setup-jest'
-import * as storeProjects from '@qovery/domains/projects'
+import * as projectsDomain from '@qovery/domains/projects/feature'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import CreateProjectModalFeature, { type CreateProjectModalFeatureProps } from './create-project-modal-feature'
 
-import SpyInstance = jest.SpyInstance
+const useCreateProjectMockSpy = jest.spyOn(projectsDomain, 'useCreateProject') as jest.Mock
+
+jest.mock('@tanstack/react-query', () => {
+  const queryClient = {
+    invalidateQueries: jest.fn(),
+  }
+  return {
+    ...jest.requireActual('@tanstack/react-query'),
+    useQueryClient: () => queryClient,
+  }
+})
 
 const mockedUsedNavigate = jest.fn()
 jest.mock('react-router-dom', () => ({
@@ -10,60 +20,42 @@ jest.mock('react-router-dom', () => ({
   useNavigate: () => mockedUsedNavigate,
 }))
 
-jest.mock('@qovery/domains/projects', () => ({
-  ...jest.requireActual('@qovery/domains/projects'),
-  postProject: jest.fn().mockImplementation(() => Promise.resolve()),
-}))
-
-const mockDispatch = jest.fn()
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useDispatch: () => mockDispatch,
-}))
+const props: CreateProjectModalFeatureProps = {
+  onClose: jest.fn(),
+  organizationId: '0',
+}
 
 describe('CreateProjectModalFeature', () => {
-  const props: CreateProjectModalFeatureProps = {
-    onClose: jest.fn(),
-    organizationId: '0',
-    goToEnvironment: false,
-  }
+  beforeEach(() => {
+    useCreateProjectMockSpy.mockReturnValue({
+      mutateAsync: jest.fn(),
+    })
+  })
 
   it('should render successfully', () => {
-    const { baseElement } = render(<CreateProjectModalFeature {...props} />)
+    const { baseElement } = renderWithProviders(<CreateProjectModalFeature {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
-  it('should dispatch postProject if form is submitted', async () => {
-    const postProjectSpy: SpyInstance = jest.spyOn(storeProjects, 'postProject')
-    mockDispatch.mockImplementation(() => ({
-      unwrap: () =>
-        Promise.resolve({
-          data: {},
-        }),
-    }))
+  it('should createProject if form is submitted', async () => {
+    const { userEvent } = renderWithProviders(<CreateProjectModalFeature {...props} />)
 
-    const { getByTestId } = render(<CreateProjectModalFeature {...props} />)
+    const inputName = screen.getByTestId('input-name')
+    await userEvent.type(inputName, 'hello-world')
 
-    await act(() => {
-      const inputName = getByTestId('input-name')
-      fireEvent.input(inputName, { target: { value: 'hello-world' } })
-    })
+    const inputDescription = screen.getByTestId('input-description')
+    await userEvent.type(inputDescription, 'description')
 
-    await act(() => {
-      const inputName = getByTestId('input-description')
-      fireEvent.input(inputName, { target: { value: 'description' } })
-    })
+    expect(screen.getByTestId('submit-button')).not.toBeDisabled()
 
-    expect(getByTestId('submit-button')).not.toBeDisabled()
+    await userEvent.click(screen.getByTestId('submit-button'))
 
-    await act(() => {
-      getByTestId('submit-button').click()
-    })
-
-    expect(postProjectSpy).toHaveBeenCalledWith({
-      name: 'hello-world',
-      description: 'description',
+    expect(useCreateProjectMockSpy().mutateAsync).toHaveBeenCalledWith({
       organizationId: '0',
+      projectRequest: {
+        name: 'hello-world',
+        description: 'description',
+      },
     })
   })
 })

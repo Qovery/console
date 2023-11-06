@@ -1,20 +1,18 @@
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { editProject, selectProjectById } from '@qovery/domains/projects'
+import { useEditProject, useProject } from '@qovery/domains/projects/feature'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { type AppDispatch, type RootState } from '@qovery/state/store'
 import PageProjectGeneral from '../../ui/page-project-general/page-project-general'
 
 export function PageProjectGeneralFeature() {
   const { organizationId = '', projectId = '' } = useParams()
   useDocumentTitle('General - Project settings')
 
-  const project = useSelector((state: RootState) => selectProjectById(state, organizationId, projectId))
+  const { data: project } = useProject({ organizationId, projectId })
+  const { mutateAsync: editProject } = useEditProject({ organizationId })
 
   const [loading, setLoading] = useState(false)
-  const dispatch = useDispatch<AppDispatch>()
 
   const methods = useForm({
     mode: 'onChange',
@@ -27,22 +25,22 @@ export function PageProjectGeneralFeature() {
     })
   }, [methods, project?.name, project?.description])
 
-  const onSubmit = methods.handleSubmit((data) => {
+  const onSubmit = methods.handleSubmit(async (data) => {
     if (data && project) {
       setLoading(true)
 
-      dispatch(
-        editProject({
+      try {
+        await editProject({
           projectId,
-          data: {
+          projectRequest: {
             name: data['name'],
             description: data['description'],
           },
         })
-      )
-        .unwrap()
-        .then(() => setLoading(false))
-        .catch(() => setLoading(false))
+      } catch (error) {
+        console.error(error)
+      }
+      setLoading(false)
     }
   })
 

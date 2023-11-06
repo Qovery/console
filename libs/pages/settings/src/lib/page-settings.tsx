@@ -1,6 +1,5 @@
-import { useSelector } from 'react-redux'
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
-import { selectProjectsEntitiesByOrgId } from '@qovery/domains/projects'
+import { useProjects } from '@qovery/domains/projects/feature'
 import {
   SETTINGS_API_URL,
   SETTINGS_BILLING_SUMMARY_URL,
@@ -18,7 +17,6 @@ import {
   SETTINGS_WEBHOOKS,
 } from '@qovery/shared/routes'
 import { IconAwesomeEnum } from '@qovery/shared/ui'
-import { type RootState } from '@qovery/state/store'
 import { ROUTER_SETTINGS } from './router/router'
 import { Container } from './ui/container/container'
 
@@ -26,7 +24,7 @@ export function PageSettings() {
   const { organizationId = '' } = useParams()
 
   const pathSettings = SETTINGS_URL(organizationId)
-  const projects = useSelector((state: RootState) => selectProjectsEntitiesByOrgId(state, organizationId))
+  const { data: projects = [] } = useProjects({ organizationId })
 
   const organizationLinks = [
     {
