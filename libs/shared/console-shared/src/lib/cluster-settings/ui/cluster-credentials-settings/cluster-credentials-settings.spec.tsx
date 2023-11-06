@@ -1,33 +1,34 @@
-import { render, waitFor } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import selectEvent from 'react-select-event'
-import { organizationFactoryMock } from '@qovery/shared/factories'
-import { type OrganizationEntity } from '@qovery/shared/interfaces'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import ClusterCredentialsSettings, { type ClusterCredentialsSettingsProps } from './cluster-credentials-settings'
-
-const mockOrganization: OrganizationEntity = organizationFactoryMock(1)[0]
 
 describe('ClusterCredentialsSettings', () => {
   const props: ClusterCredentialsSettingsProps = {
-    credentials: mockOrganization.credentials?.items,
+    credentials: [
+      {
+        name: 'my-credential',
+        id: '000-000-000',
+      },
+    ],
     openCredentialsModal: jest.fn(),
-    loadingStatus: 'not loaded',
+    loading: true,
   }
 
   it('should render successfully', () => {
-    const { baseElement } = render(wrapWithReactHookForm(<ClusterCredentialsSettings {...props} />))
+    const { baseElement } = renderWithProviders(wrapWithReactHookForm(<ClusterCredentialsSettings {...props} />))
     expect(baseElement).toBeTruthy()
   })
 
   it('should have loader', () => {
-    const { getByTestId } = render(wrapWithReactHookForm(<ClusterCredentialsSettings {...props} />))
+    const { getByTestId } = renderWithProviders(wrapWithReactHookForm(<ClusterCredentialsSettings {...props} />))
     getByTestId('spinner')
   })
 
   it('should submit the form on click', async () => {
-    props.loadingStatus = 'loaded'
+    props.loading = false
 
-    const { getByLabelText, getByTestId, getAllByDisplayValue } = render(
+    renderWithProviders(
       wrapWithReactHookForm(<ClusterCredentialsSettings {...props} />, {
         defaultValues: {
           credentials: '0',
@@ -35,13 +36,10 @@ describe('ClusterCredentialsSettings', () => {
       })
     )
 
-    const realSelect = getByLabelText('Credentials')
-    const value = mockOrganization.credentials?.items?.[1].name || ''
-    await selectEvent.select(realSelect, value)
+    const realSelect = screen.getByLabelText('Credentials')
+    await selectEvent.select(realSelect, ['my-credential'])
 
-    await waitFor(() => {
-      getByTestId('input-credentials')
-      getAllByDisplayValue('1')
-    })
+    screen.getByTestId('input-credentials')
+    screen.getAllByDisplayValue('000-000-000')
   })
 })
