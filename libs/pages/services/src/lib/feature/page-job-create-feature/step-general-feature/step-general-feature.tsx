@@ -1,15 +1,15 @@
 import { BuildModeEnum } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
-import { fetchOrganizationContainerRegistries, selectOrganizationById } from '@qovery/domains/organization'
-import { ServiceTypeEnum, isContainer } from '@qovery/shared/enums'
+import { selectOrganizationById } from '@qovery/domains/organization'
+import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { type JobGeneralData, type OrganizationEntity } from '@qovery/shared/interfaces'
 import { SERVICES_JOB_CREATION_CONFIGURE_URL, SERVICES_URL } from '@qovery/shared/routes'
 import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { type AppDispatch, type RootState } from '@qovery/state/store'
+import { type RootState } from '@qovery/state/store'
 import StepGeneral from '../../../ui/page-job-create/step-general/step-general'
 import { useJobContainerCreateContext } from '../page-job-create-feature'
 
@@ -43,18 +43,9 @@ export function StepGeneralFeature() {
     mode: 'onChange',
   })
 
-  const dispatch = useDispatch<AppDispatch>()
-  const watchServiceType = methods.watch('serviceType')
-
   useEffect(() => {
     methods.setValue('build_mode', BuildModeEnum.DOCKER)
   }, [methods])
-
-  useEffect(() => {
-    if (isContainer(watchServiceType)) {
-      dispatch(fetchOrganizationContainerRegistries({ organizationId }))
-    }
-  }, [watchServiceType, dispatch, organizationId])
 
   const onSubmit = methods.handleSubmit((data) => {
     const cloneData = {

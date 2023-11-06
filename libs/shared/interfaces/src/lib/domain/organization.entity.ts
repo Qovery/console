@@ -2,7 +2,6 @@ import {
   type BillingInfo,
   type CloudProviderEnum,
   type ClusterCredentials,
-  type ContainerRegistryResponse,
   type InviteMember,
   type Invoice,
   type Member,
@@ -19,10 +18,6 @@ export interface ClusterCredentialsEntity extends ClusterCredentials {
 }
 
 export interface OrganizationEntity extends Organization {
-  containerRegistries?: {
-    loadingStatus: LoadingStatus
-    items?: ContainerRegistryResponse[]
-  }
   customRoles?: {
     loadingStatus: LoadingStatus
     items?: OrganizationCustomRole[]

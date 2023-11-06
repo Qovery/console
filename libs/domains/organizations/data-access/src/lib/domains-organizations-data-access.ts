@@ -1,6 +1,7 @@
 import { createQueryKeys } from '@lukemorales/query-key-factory'
 import {
   ContainerRegistriesApi,
+  type ContainerRegistryRequest,
   type GitProviderEnum,
   type GitTokenRequest,
   OrganizationAccountGitRepositoriesApi,
@@ -13,18 +14,31 @@ const organizationApi = new OrganizationMainCallsApi()
 const gitApi = new OrganizationAccountGitRepositoriesApi()
 
 export const organizations = createQueryKeys('organizations', {
-  containerRegistries: ({ organizationId }) => ({
+  containerRegistries: ({ organizationId }: { organizationId: string }) => ({
     queryKey: [organizationId],
     async queryFn() {
       const response = await containerRegistriesApi.listContainerRegistry(organizationId)
       return response.data.results
     },
   }),
-  containerRegistry: ({ organizationId, containerRegistryId }) => ({
-    queryKey: [organizationId, containerRegistryId],
+  containerRegistry: ({
+    organizationId,
+    containerRegistryId,
+  }: {
+    organizationId: string
+    containerRegistryId: string
+  }) => ({
+    queryKey: [organizationId],
     async queryFn() {
       const response = await containerRegistriesApi.getContainerRegistry(organizationId, containerRegistryId)
       return response.data
+    },
+  }),
+  availableContainerRegistry: ({ organizationId }: { organizationId: string }) => ({
+    queryKey: [organizationId],
+    async queryFn() {
+      const response = await containerRegistriesApi.listAvailableContainerRegistry()
+      return response.data.results
     },
   }),
   gitTokens: ({ organizationId }: { organizationId: string }) => ({
@@ -104,6 +118,42 @@ export const organizations = createQueryKeys('organizations', {
 })
 
 export const mutations = {
+  async editContainerRegistry({
+    organizationId,
+    containerRegistryId,
+    containerRegistryRequest,
+  }: {
+    organizationId: string
+    containerRegistryId: string
+    containerRegistryRequest: ContainerRegistryRequest
+  }) {
+    const response = await containerRegistriesApi.editContainerRegistry(
+      organizationId,
+      containerRegistryId,
+      containerRegistryRequest
+    )
+    return response.data
+  },
+  async createContainerRegistry({
+    organizationId,
+    containerRegistryRequest,
+  }: {
+    organizationId: string
+    containerRegistryRequest: ContainerRegistryRequest
+  }) {
+    const response = await containerRegistriesApi.createContainerRegistry(organizationId, containerRegistryRequest)
+    return response.data
+  },
+  async deleteContainerRegistry({
+    organizationId,
+    containerRegistryId,
+  }: {
+    organizationId: string
+    containerRegistryId: string
+  }) {
+    const response = await containerRegistriesApi.deleteContainerRegistry(organizationId, containerRegistryId)
+    return response.data
+  },
   async deleteGitToken({ organizationId, gitTokenId }: { organizationId: string; gitTokenId: string }) {
     const response = await organizationApi.deleteGitToken(organizationId, gitTokenId)
     return response.data

@@ -19,6 +19,7 @@ import DOGrayIcon from './icons/do-gray'
 import DockerIcon from './icons/docker'
 import DopplerIcon from './icons/doppler'
 import EnvironmentIcon from './icons/environment'
+import GenericRegistryIcon from './icons/generic-registry'
 import GitIcon from './icons/git'
 import InformationIcon from './icons/information'
 import LifecycleJobIcon from './icons/lifecycle-job'
@@ -115,6 +116,8 @@ export function Icon(props: IconProps) {
       return <TerraformIcon {...formattedProps} />
     case IconEnum.SERVICES:
       return <ServicesIcon {...formattedProps} />
+    case IconEnum.GENERIC_REGISTRY:
+      return <GenericRegistryIcon {...formattedProps} />
     default:
       return <IconFa {...formattedProps} />
   }
