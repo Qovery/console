@@ -11,7 +11,7 @@ export function containerRegistryKindToIcon(
     .with('SCALEWAY_CR', () => IconEnum.SCW)
     .with('GITHUB_CR', () => IconEnum.GITHUB)
     .with('GITLAB_CR', () => IconEnum.GITLAB)
-    .with('GENERIC_CR', () => undefined)
+    .with('GENERIC_CR', () => IconEnum.GENERIC_REGISTRY)
     .with('ECR', 'PUBLIC_ECR', () => IconEnum.AWS)
     .exhaustive()
 }
