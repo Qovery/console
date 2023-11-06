@@ -1,10 +1,10 @@
-import { type ApplicationGitRepository, type Commit } from 'qovery-typescript-axios'
+import { type ApplicationGitRepository } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { type ServiceType } from '@qovery/domains/services/data-access'
 import { Avatar, Button, Icon, IconAwesomeEnum, Tooltip, Truncate } from '@qovery/shared/ui'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import { twMerge } from '@qovery/shared/util-js'
-import { useCommits } from '../hooks/use-commits/use-commits'
+import { useLastDeployedCommit } from '../hooks/use-last-deployed-commit/use-last-deployed-commit'
 
 export interface LastCommitProps {
   className?: string
@@ -14,19 +14,11 @@ export interface LastCommitProps {
 }
 
 export function LastCommit({ className, gitRepository, serviceId, serviceType }: LastCommitProps) {
-  const { data: commits } = useCommits({ serviceId, serviceType })
   const [, copyToClipboard] = useCopyToClipboard()
   const [copied, setCopied] = useState(false)
-
-  const delta = commits?.findIndex(({ git_commit_id }) => git_commit_id === gitRepository.deployed_commit_id) ?? 0
-  const defaultCommitInfo: Commit = {
-    created_at: gitRepository.deployed_commit_date ?? 'unknown',
-    git_commit_id: gitRepository.deployed_commit_id ?? 'unknown',
-    tag: gitRepository.deployed_commit_tag ?? 'unknown',
-    message: 'unknown',
-    author_name: gitRepository.deployed_commit_contributor ?? 'unknown',
-  }
-  const deployedCommit = commits?.[delta] ?? defaultCommitInfo
+  const {
+    data: { deployedCommit, delta },
+  } = useLastDeployedCommit({ gitRepository, serviceId, serviceType })
 
   const onClickCopyToClipboard = (content: string) => {
     copyToClipboard(content)
