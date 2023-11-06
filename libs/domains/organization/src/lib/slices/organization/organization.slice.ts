@@ -23,7 +23,6 @@ import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
 import { refactoOrganizationCustomRolePayload, refactoOrganizationPayload } from '@qovery/shared/util-js'
 import { type RootState } from '@qovery/state/store'
 import { billingInfoExtraReducers } from '../billing/billing-info'
-import { credentialsExtraReducers } from './credentials'
 
 export const ORGANIZATION_KEY = 'organizations'
 
@@ -183,7 +182,6 @@ export const organizationSlice = createSlice({
     removeOrganization: organizationAdapter.removeOne,
   },
   extraReducers: (builder) => {
-    credentialsExtraReducers(builder)
     billingInfoExtraReducers(builder)
     builder
       .addCase(fetchOrganization.pending, (state: OrganizationState) => {

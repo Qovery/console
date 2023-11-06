@@ -1,9 +1,11 @@
 import { createQueryKeys } from '@lukemorales/query-key-factory'
 import {
+  type AwsCredentialsRequest,
   CloudProviderCredentialsApi,
   type CloudProviderEnum,
   ContainerRegistriesApi,
   type ContainerRegistryRequest,
+  type DoCredentialsRequest,
   type GitProviderEnum,
   type GitTokenRequest,
   OrganizationAccountGitRepositoriesApi,
@@ -13,6 +15,7 @@ import {
   OrganizationMainCallsApi,
   OrganizationWebhookApi,
   type OrganizationWebhookCreateRequest,
+  type ScalewayCredentialsRequest,
 } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
 
@@ -277,5 +280,116 @@ export const mutations = {
   async deleteWebhook({ organizationId, webhookId }: { organizationId: string; webhookId: string }) {
     const response = await webhookApi.deleteOrganizationWebhook(organizationId, webhookId)
     return response.data
+  },
+  async createCloudProviderCredential({
+    organizationId,
+    cloudProvider,
+    credentialRequest,
+  }: {
+    organizationId: string
+    cloudProvider: CloudProviderEnum
+    credentialRequest: AwsCredentialsRequest | ScalewayCredentialsRequest | DoCredentialsRequest
+  }) {
+    const cloudProviderCredential = await match(cloudProvider)
+      .with('AWS', async () => {
+        const response = await cloudProviderCredentialsApi.createAWSCredentials(
+          organizationId,
+          credentialRequest as AwsCredentialsRequest
+        )
+        return response.data
+      })
+      .with('SCW', async () => {
+        const response = await cloudProviderCredentialsApi.createScalewayCredentials(
+          organizationId,
+          credentialRequest as ScalewayCredentialsRequest
+        )
+        return response.data
+      })
+      /*
+       * @deprecated Digital Ocean is not supported anymore (should be remove on the API doc)
+       */
+      .with('DO', async () => {
+        const response = await cloudProviderCredentialsApi.createDOCredentials(
+          organizationId,
+          credentialRequest as DoCredentialsRequest
+        )
+        return response.data
+      })
+      .exhaustive()
+
+    return cloudProviderCredential
+  },
+  async editCloudProviderCredential({
+    organizationId,
+    credentialId,
+    cloudProvider,
+    credentialRequest,
+  }: {
+    organizationId: string
+    credentialId: string
+    cloudProvider: CloudProviderEnum
+    credentialRequest: AwsCredentialsRequest | ScalewayCredentialsRequest | DoCredentialsRequest
+  }) {
+    const cloudProviderCredential = await match(cloudProvider)
+      .with('AWS', async () => {
+        const response = await cloudProviderCredentialsApi.editAWSCredentials(
+          organizationId,
+          credentialId,
+          credentialRequest as AwsCredentialsRequest
+        )
+        return response.data
+      })
+      .with('SCW', async () => {
+        const response = await cloudProviderCredentialsApi.editScalewayCredentials(
+          organizationId,
+          credentialId,
+
+          credentialRequest as ScalewayCredentialsRequest
+        )
+        return response.data
+      })
+      /*
+       * @deprecated Digital Ocean is not supported anymore (should be remove on the API doc)
+       */
+      .with('DO', async () => {
+        const response = await cloudProviderCredentialsApi.editDOCredentials(
+          organizationId,
+          credentialId,
+          credentialRequest as DoCredentialsRequest
+        )
+        return response.data
+      })
+      .exhaustive()
+
+    return cloudProviderCredential
+  },
+  async deleteCloudProviderCredential({
+    organizationId,
+    credentialId,
+    cloudProvider,
+  }: {
+    organizationId: string
+    credentialId: string
+    cloudProvider: CloudProviderEnum
+  }) {
+    const cloudProviderCredential = await match(cloudProvider)
+      .with('AWS', async () => {
+        const response = await cloudProviderCredentialsApi.deleteAWSCredentials(organizationId, credentialId)
+        return response.data
+      })
+      .with('SCW', async () => {
+        const response = await cloudProviderCredentialsApi.deleteScalewayCredentials(organizationId, credentialId)
+        return response.data
+      })
+      /*
+       * @deprecated Digital Ocean is not supported anymore (should be remove on the API doc)
+       */
+      .with('DO', async () => {
+        const response = await cloudProviderCredentialsApi.deleteDOCredentials(organizationId, credentialId)
+        return response.data
+      })
+      .exhaustive()
+
+    return cloudProviderCredential
   },
 }
