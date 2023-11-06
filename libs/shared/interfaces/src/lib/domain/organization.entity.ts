@@ -2,7 +2,6 @@ import {
   type BillingInfo,
   type CloudProviderEnum,
   type ClusterCredentials,
-  type ContainerRegistryResponse,
   type InviteMember,
   type Invoice,
   type Member,
