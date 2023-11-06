@@ -1,5 +1,7 @@
 import { createQueryKeys } from '@lukemorales/query-key-factory'
 import {
+  CloudProviderCredentialsApi,
+  type CloudProviderEnum,
   ContainerRegistriesApi,
   type ContainerRegistryRequest,
   type GitProviderEnum,
@@ -19,6 +21,7 @@ const organizationApi = new OrganizationMainCallsApi()
 const gitApi = new OrganizationAccountGitRepositoriesApi()
 const apiTokenApi = new OrganizationApiTokenApi()
 const webhookApi = new OrganizationWebhookApi()
+const cloudProviderCredentialsApi = new CloudProviderCredentialsApi()
 
 export const organizations = createQueryKeys('organizations', {
   containerRegistries: ({ organizationId }: { organizationId: string }) => ({
@@ -53,6 +56,36 @@ export const organizations = createQueryKeys('organizations', {
     async queryFn() {
       const response = await organizationApi.listOrganizationGitTokens(organizationId)
       return response.data.results
+    },
+  }),
+  cloudProviderCredentials: ({
+    organizationId,
+    cloudProvider,
+  }: {
+    organizationId: string
+    cloudProvider: CloudProviderEnum
+  }) => ({
+    queryKey: [organizationId, cloudProvider],
+    async queryFn() {
+      const cloudProviders = await match(cloudProvider)
+        .with('AWS', async () => {
+          const response = await cloudProviderCredentialsApi.listAWSCredentials(organizationId)
+          return response.data.results
+        })
+        .with('SCW', async () => {
+          const response = await cloudProviderCredentialsApi.listScalewayCredentials(organizationId)
+          return response.data.results
+        })
+        /*
+         * @deprecated Digital Ocean is not supported anymore (should be remove on the API doc)
+         */
+        .with('DO', async () => {
+          const response = await cloudProviderCredentialsApi.listDOCredentials(organizationId)
+          return response.data.results
+        })
+        .exhaustive()
+
+      return cloudProviders
     },
   }),
   authProviders: ({ organizationId }: { organizationId: string }) => ({

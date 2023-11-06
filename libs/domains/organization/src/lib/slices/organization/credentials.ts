@@ -1,4 +1,4 @@
-import { type ActionReducerMapBuilder, type Update, createAsyncThunk } from '@reduxjs/toolkit'
+import { type ActionReducerMapBuilder, createAsyncThunk } from '@reduxjs/toolkit'
 import {
   type AwsCredentialsRequest,
   CloudProviderCredentialsApi,
@@ -7,26 +7,9 @@ import {
   type DoCredentialsRequest,
   type ScalewayCredentialsRequest,
 } from 'qovery-typescript-axios'
-import { type OrganizationEntity, type OrganizationState } from '@qovery/shared/interfaces'
-import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
-import { organizationAdapter } from './organization.slice'
+import { type OrganizationState } from '@qovery/shared/interfaces'
 
 const cloudProviderCredentialsApi = new CloudProviderCredentialsApi()
-
-export const fetchCredentialsList = createAsyncThunk(
-  'organization/fetch-credentials-list',
-  async (payload: { cloudProvider: CloudProviderEnum; organizationId: string }) => {
-    let response
-    if (payload.cloudProvider === CloudProviderEnum.AWS)
-      response = await cloudProviderCredentialsApi.listAWSCredentials(payload.organizationId)
-    if (payload.cloudProvider === CloudProviderEnum.SCW)
-      response = await cloudProviderCredentialsApi.listScalewayCredentials(payload.organizationId)
-    if (payload.cloudProvider === CloudProviderEnum.DO)
-      response = await cloudProviderCredentialsApi.listDOCredentials(payload.organizationId)
-
-    return response?.data.results as ClusterCredentials[]
-  }
-)
 
 export const postCredentials = createAsyncThunk(
   'organization/post-credentials',
@@ -95,127 +78,96 @@ export const editCredentials = createAsyncThunk(
 
 export const credentialsExtraReducers = (builder: ActionReducerMapBuilder<OrganizationState>) => {
   builder
-    .addCase(fetchCredentialsList.pending, (state: OrganizationState, action) => {
-      const credentials = state.entities[action.meta.arg.organizationId]?.credentials?.items || []
+  // post credentials
+  // .addCase(postCredentials.pending, (state: OrganizationState, action) => {
+  //   const credentials = state.entities[action.meta.arg.organizationId]?.credentials?.items || []
 
-      const update: Update<OrganizationEntity> = {
-        id: action.meta.arg.organizationId,
-        changes: {
-          credentials: {
-            loadingStatus: 'loading',
-            items: credentials,
-          },
-        },
-      }
-      organizationAdapter.updateOne(state, update)
-    })
-    .addCase(fetchCredentialsList.fulfilled, (state: OrganizationState, action) => {
-      const cloudProvider = action.meta.arg.cloudProvider as CloudProviderEnum
+  //   const update: Update<OrganizationEntity> = {
+  //     id: action.meta.arg.organizationId,
+  //     changes: {
+  //       credentials: {
+  //         loadingStatus: 'loading',
+  //         items: credentials,
+  //       },
+  //     },
+  //   }
+  //   organizationAdapter.updateOne(state, update)
+  // })
+  // .addCase(postCredentials.fulfilled, (state: OrganizationState, action) => {
+  //   const cloudProvider = action.meta.arg.cloudProvider as CloudProviderEnum
+  //   const credentials = state.entities[action.meta.arg.organizationId]?.credentials?.items || []
 
-      const update: Update<OrganizationEntity> = {
-        id: action.meta.arg.organizationId,
-        changes: {
-          credentials: {
-            loadingStatus: 'loaded',
-            items: action.payload.map((value) => ({ ...value, cloudProvider })),
-          },
-        },
-      }
-      organizationAdapter.updateOne(state, update)
-    })
-    .addCase(fetchCredentialsList.rejected, (state: OrganizationState, action) => {
-      toastError(action.error)
-    })
-    // post credentials
-    .addCase(postCredentials.pending, (state: OrganizationState, action) => {
-      const credentials = state.entities[action.meta.arg.organizationId]?.credentials?.items || []
+  //   const update: Update<OrganizationEntity> = {
+  //     id: action.meta.arg.organizationId,
+  //     changes: {
+  //       credentials: {
+  //         loadingStatus: 'loaded',
+  //         items: [...credentials, { ...action.payload, cloudProvider }],
+  //       },
+  //     },
+  //   }
+  //   organizationAdapter.updateOne(state, update)
+  //   toast(ToastEnum.SUCCESS, 'Credentials added')
+  // })
+  // .addCase(postCredentials.rejected, (state: OrganizationState, action) => {
+  //   toastError(action.error)
+  // })
+  // edit credentials
+  // .addCase(editCredentials.pending, (state: OrganizationState, action) => {
+  //   const credentials = state.entities[action.meta.arg.organizationId]?.credentials?.items || []
 
-      const update: Update<OrganizationEntity> = {
-        id: action.meta.arg.organizationId,
-        changes: {
-          credentials: {
-            loadingStatus: 'loading',
-            items: credentials,
-          },
-        },
-      }
-      organizationAdapter.updateOne(state, update)
-    })
-    .addCase(postCredentials.fulfilled, (state: OrganizationState, action) => {
-      const cloudProvider = action.meta.arg.cloudProvider as CloudProviderEnum
-      const credentials = state.entities[action.meta.arg.organizationId]?.credentials?.items || []
+  //   const update: Update<OrganizationEntity> = {
+  //     id: action.meta.arg.organizationId,
+  //     changes: {
+  //       credentials: {
+  //         loadingStatus: 'loading',
+  //         items: credentials,
+  //       },
+  //     },
+  //   }
+  //   organizationAdapter.updateOne(state, update)
+  // })
+  // .addCase(editCredentials.fulfilled, (state: OrganizationState, action) => {
+  //   const cloudProvider = action.meta.arg.cloudProvider as CloudProviderEnum
+  //   const credentials = state.entities[action.meta.arg.organizationId]?.credentials?.items || []
+  //   const index = credentials.findIndex((obj) => obj.id === action.payload.id)
+  //   credentials[index] = Object.assign(action.payload, { cloudProvider: cloudProvider })
 
-      const update: Update<OrganizationEntity> = {
-        id: action.meta.arg.organizationId,
-        changes: {
-          credentials: {
-            loadingStatus: 'loaded',
-            items: [...credentials, { ...action.payload, cloudProvider }],
-          },
-        },
-      }
-      organizationAdapter.updateOne(state, update)
-      toast(ToastEnum.SUCCESS, 'Credentials added')
-    })
-    .addCase(postCredentials.rejected, (state: OrganizationState, action) => {
-      toastError(action.error)
-    })
-    // edit credentials
-    .addCase(editCredentials.pending, (state: OrganizationState, action) => {
-      const credentials = state.entities[action.meta.arg.organizationId]?.credentials?.items || []
+  //   const update: Update<OrganizationEntity> = {
+  //     id: action.meta.arg.organizationId,
+  //     changes: {
+  //       credentials: {
+  //         loadingStatus: 'loaded',
+  //         items: credentials,
+  //       },
+  //     },
+  //   }
 
-      const update: Update<OrganizationEntity> = {
-        id: action.meta.arg.organizationId,
-        changes: {
-          credentials: {
-            loadingStatus: 'loading',
-            items: credentials,
-          },
-        },
-      }
-      organizationAdapter.updateOne(state, update)
-    })
-    .addCase(editCredentials.fulfilled, (state: OrganizationState, action) => {
-      const cloudProvider = action.meta.arg.cloudProvider as CloudProviderEnum
-      const credentials = state.entities[action.meta.arg.organizationId]?.credentials?.items || []
-      const index = credentials.findIndex((obj) => obj.id === action.payload.id)
-      credentials[index] = Object.assign(action.payload, { cloudProvider: cloudProvider })
+  //   organizationAdapter.updateOne(state, update)
+  //   toast(ToastEnum.SUCCESS, 'Credentials updated')
+  // })
+  // .addCase(editCredentials.rejected, (state: OrganizationState, action) => {
+  //   toastError(action.error)
+  // })
+  // delete credentials
+  // .addCase(deleteCredentials.fulfilled, (state: OrganizationState, action) => {
+  //   const credentials = state.entities[action.meta.arg.organizationId]?.credentials?.items || []
+  //   const currentCredentials = credentials.filter((obj) => obj.id !== action.meta.arg.credentialsId)
 
-      const update: Update<OrganizationEntity> = {
-        id: action.meta.arg.organizationId,
-        changes: {
-          credentials: {
-            loadingStatus: 'loaded',
-            items: credentials,
-          },
-        },
-      }
+  //   const update: Update<OrganizationEntity> = {
+  //     id: action.meta.arg.organizationId,
+  //     changes: {
+  //       credentials: {
+  //         loadingStatus: 'loaded',
+  //         items: currentCredentials,
+  //       },
+  //     },
+  //   }
 
-      organizationAdapter.updateOne(state, update)
-      toast(ToastEnum.SUCCESS, 'Credentials updated')
-    })
-    .addCase(editCredentials.rejected, (state: OrganizationState, action) => {
-      toastError(action.error)
-    })
-    // delete credentials
-    .addCase(deleteCredentials.fulfilled, (state: OrganizationState, action) => {
-      const credentials = state.entities[action.meta.arg.organizationId]?.credentials?.items || []
-      const currentCredentials = credentials.filter((obj) => obj.id !== action.meta.arg.credentialsId)
-
-      const update: Update<OrganizationEntity> = {
-        id: action.meta.arg.organizationId,
-        changes: {
-          credentials: {
-            loadingStatus: 'loaded',
-            items: currentCredentials,
-          },
-        },
-      }
-
-      organizationAdapter.updateOne(state, update)
-      toast(ToastEnum.SUCCESS, 'Credentials deleted')
-    })
-    .addCase(deleteCredentials.rejected, (state: OrganizationState, action) => {
-      toastError(action.error)
-    })
+  //   organizationAdapter.updateOne(state, update)
+  //   toast(ToastEnum.SUCCESS, 'Credentials deleted')
+  // })
+  // .addCase(deleteCredentials.rejected, (state: OrganizationState, action) => {
+  //   toastError(action.error)
+  // })
 }

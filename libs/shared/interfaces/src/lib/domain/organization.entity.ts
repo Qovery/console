@@ -33,10 +33,6 @@ export interface OrganizationEntity extends Organization {
     loadingStatus: LoadingStatus
     items?: OrganizationAvailableRole[]
   }
-  credentials?: {
-    loadingStatus: LoadingStatus
-    items?: ClusterCredentialsEntity[]
-  }
   billingInfos?: {
     loadingStatus: LoadingStatus
     value?: BillingInfo
