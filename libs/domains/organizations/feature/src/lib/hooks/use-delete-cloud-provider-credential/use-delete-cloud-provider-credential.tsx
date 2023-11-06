@@ -22,7 +22,7 @@ export function useDeleteCloudProviderCredential({
     },
     meta: {
       notifyOnSuccess: {
-        title: 'Your Git token is being deleted',
+        title: 'Your credential is being deleted',
       },
       notifyOnError: true,
     },

@@ -374,18 +374,18 @@ export const mutations = {
   }) {
     const cloudProviderCredential = await match(cloudProvider)
       .with('AWS', async () => {
-        const response = await cloudProviderCredentialsApi.deleteAWSCredentials(organizationId, credentialId)
+        const response = await cloudProviderCredentialsApi.deleteAWSCredentials(credentialId, organizationId)
         return response.data
       })
       .with('SCW', async () => {
-        const response = await cloudProviderCredentialsApi.deleteScalewayCredentials(organizationId, credentialId)
+        const response = await cloudProviderCredentialsApi.deleteScalewayCredentials(credentialId, organizationId)
         return response.data
       })
       /*
        * @deprecated Digital Ocean is not supported anymore (should be remove on the API doc)
        */
       .with('DO', async () => {
-        const response = await cloudProviderCredentialsApi.deleteDOCredentials(organizationId, credentialId)
+        const response = await cloudProviderCredentialsApi.deleteDOCredentials(credentialId, organizationId)
         return response.data
       })
       .exhaustive()
