@@ -1,16 +1,17 @@
-import { act, render, waitFor } from '__tests__/utils/setup-jest'
 import { CloudProviderEnum } from 'qovery-typescript-axios'
 import selectEvent from 'react-select-event'
-import * as storeOrganization from '@qovery/domains/organization'
-import { clusterFactoryMock, credentialsMock, organizationFactoryMock } from '@qovery/shared/factories'
-import { type ClusterCredentialsEntity, type ClusterEntity, type OrganizationEntity } from '@qovery/shared/interfaces'
+import * as organizationDomain from '@qovery/domains/organization'
+import * as organizationsDomain from '@qovery/domains/organizations/feature'
+import { clusterFactoryMock, credentialsMock } from '@qovery/shared/factories'
+import { type ClusterCredentialsEntity, type ClusterEntity } from '@qovery/shared/interfaces'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import PageSettingsCredentialsFeature, { handleSubmit } from './page-settings-credentials-feature'
 
 import SpyInstance = jest.SpyInstance
 
 const mockCluster: ClusterEntity = clusterFactoryMock(1, CloudProviderEnum.AWS)[0]
-const mockOrganization: OrganizationEntity = organizationFactoryMock(1)[0]
 const mockCredentials: ClusterCredentialsEntity[] = credentialsMock(2)
+const useCloudProviderCredentialsMockSpy = jest.spyOn(organizationsDomain, 'useCloudProviderCredentials') as jest.Mock
 
 jest.mock('@qovery/domains/organization', () => {
   return {
@@ -24,16 +25,6 @@ jest.mock('@qovery/domains/organization', () => {
       error: null,
     }),
     selectClusterById: () => mockCluster,
-    getOrganizationsState: () => ({
-      loadingStatus: 'loaded',
-      ids: [mockOrganization.id],
-      entities: {
-        [mockOrganization.id]: mockOrganization,
-      },
-      error: null,
-    }),
-    selectOrganizationById: () => mockOrganization,
-    fetchCredentialsList: () => mockCredentials,
   }
 })
 
@@ -59,8 +50,31 @@ jest.mock('react-hook-form', () => ({
 }))
 
 describe('PageSettingsCredentialsFeature', () => {
+  beforeEach(() => {
+    mockDispatch.mockImplementation(() => ({
+      unwrap: () =>
+        Promise.resolve([
+          {
+            short_name: CloudProviderEnum.AWS,
+            regions: [
+              {
+                name: 'Paris',
+              },
+            ],
+          },
+        ]),
+    }))
+    useCloudProviderCredentialsMockSpy.mockReturnValue({
+      data: [
+        {
+          name: 'my-credential',
+          id: '000-000-000',
+        },
+      ],
+    })
+  })
   it('should render successfully', () => {
-    const { baseElement } = render(<PageSettingsCredentialsFeature />)
+    const { baseElement } = renderWithProviders(<PageSettingsCredentialsFeature />)
     expect(baseElement).toBeTruthy()
   })
 
@@ -82,7 +96,7 @@ describe('PageSettingsCredentialsFeature', () => {
   })
 
   it('should dispatch postCloudProviderInfo if form is submitted', async () => {
-    const postCloudProviderInfoSpy: SpyInstance = jest.spyOn(storeOrganization, 'postCloudProviderInfo')
+    const postCloudProviderInfoSpy: SpyInstance = jest.spyOn(organizationDomain, 'postCloudProviderInfo')
     mockDispatch.mockImplementation(() => ({
       unwrap: () =>
         Promise.resolve({
@@ -90,27 +104,26 @@ describe('PageSettingsCredentialsFeature', () => {
         }),
     }))
 
-    const { getByTestId, getByLabelText } = render(<PageSettingsCredentialsFeature />)
-    getByTestId('input-credentials')
-    const realSelect = getByLabelText('Credentials')
+    const { userEvent } = renderWithProviders(<PageSettingsCredentialsFeature />)
+    screen.getByTestId('input-credentials')
+    const realSelect = screen.getByLabelText('Credentials')
 
-    const item = (mockOrganization.credentials?.items && mockOrganization.credentials?.items[0].id) || ''
+    await selectEvent.select(realSelect, 'my-credential')
 
-    await waitFor(() => {
-      selectEvent.select(realSelect, item)
-    })
+    expect(screen.getByTestId('submit-button')).not.toBeDisabled()
 
-    expect(getByTestId('submit-button')).not.toBeDisabled()
-
-    await act(() => {
-      getByTestId('submit-button').click()
-    })
+    await userEvent.click(screen.getByTestId('submit-button'))
 
     const cloneClusterProviderInfo = handleSubmit(
       {
-        credentials: item,
+        credentials: '000-000-000',
       },
-      mockOrganization.credentials?.items,
+      [
+        {
+          name: 'my-credential',
+          id: '000-000-000',
+        },
+      ],
       mockCluster
     )
 
