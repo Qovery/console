@@ -39,10 +39,11 @@ export function CrudModalFeature(props: CrudModalFeatureProps) {
     try {
       const token = await createApiToken({ organizationId, apiTokenCreateRequest: data })
       onClose()
-
-      openModal({
-        content: <ValueModal token={token.token ?? ''} onClose={closeModal} />,
-      })
+      if (token) {
+        openModal({
+          content: <ValueModal token={token.token ?? ''} onClose={closeModal} />,
+        })
+      }
     } catch (error) {
       console.error(error)
     }
