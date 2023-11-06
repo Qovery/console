@@ -1,12 +1,12 @@
-import * as storeOrganization from '@qovery/domains/organization'
+import * as organizationsDomain from '@qovery/domains/organizations/feature'
 import { organizationFactoryMock } from '@qovery/shared/factories'
 import { type OrganizationEntity } from '@qovery/shared/interfaces'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { CrudModalFeature, type CrudModalFeatureProps } from './crud-modal-feature'
 
-import SpyInstance = jest.SpyInstance
-
 const mockOrganization: OrganizationEntity = organizationFactoryMock(1)[0]
+
+const useCreateApiTokenMockSpy = jest.spyOn(organizationsDomain, 'useCreateApiToken') as jest.Mock
 
 const mockDispatch = jest.fn()
 jest.mock('react-redux', () => ({
@@ -21,11 +21,17 @@ jest.mock('@qovery/domains/organization', () => {
   }
 })
 
+const props: CrudModalFeatureProps = {
+  onClose: jest.fn(),
+  organizationId: '1',
+}
+
 describe('CrudModalFeature', () => {
-  const props: CrudModalFeatureProps = {
-    onClose: jest.fn(),
-    organizationId: '1',
-  }
+  beforeEach(() => {
+    useCreateApiTokenMockSpy.mockReturnValue({
+      mutateAsync: jest.fn(),
+    })
+  })
 
   it('should render successfully', async () => {
     const { baseElement } = renderWithProviders(<CrudModalFeature {...props} />)
@@ -33,16 +39,6 @@ describe('CrudModalFeature', () => {
   })
 
   it('should render submit and call good api endpoint', async () => {
-    mockDispatch.mockImplementation(() => ({
-      unwrap: () =>
-        Promise.resolve({
-          results: {
-            data: {},
-          },
-        }),
-    }))
-
-    const postApiTokenSpy: SpyInstance = jest.spyOn(storeOrganization, 'postApiToken')
     const { userEvent } = renderWithProviders(<CrudModalFeature {...props} />)
 
     const inputName = screen.getByRole('textbox', { name: /token name/i })
@@ -56,9 +52,9 @@ describe('CrudModalFeature', () => {
 
     await userEvent.click(button)
 
-    expect(postApiTokenSpy).toHaveBeenCalledWith({
+    expect(useCreateApiTokenMockSpy().mutateAsync).toHaveBeenCalledWith({
       organizationId: props.organizationId,
-      token: {
+      apiTokenCreateRequest: {
         name: 'test',
         description: 'description',
         role_id: '0',
