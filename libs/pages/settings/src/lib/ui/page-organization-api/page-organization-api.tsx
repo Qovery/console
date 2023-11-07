@@ -1,12 +1,10 @@
 import { type OrganizationApiToken } from 'qovery-typescript-axios'
-import { type LoadingStatus } from '@qovery/shared/interfaces'
 import {
   BlockContent,
   ButtonIcon,
   ButtonIconStyle,
   ButtonLegacy,
   ButtonLegacySize,
-  EmptyState,
   HelpSection,
   Icon,
   IconAwesomeEnum,
@@ -21,11 +19,11 @@ export interface PageOrganizationApiProps {
   onAddToken: () => void
   onDelete: (token: OrganizationApiToken) => void
   apiTokens?: OrganizationApiToken[]
-  loading?: LoadingStatus
+  isFetched: boolean
 }
 
 export function PageOrganizationApi(props: PageOrganizationApiProps) {
-  const { apiTokens, loading, onAddToken, onDelete } = props
+  const { apiTokens, isFetched, onAddToken, onDelete } = props
 
   return (
     <div className="flex flex-col justify-between w-full">
@@ -42,62 +40,62 @@ export function PageOrganizationApi(props: PageOrganizationApiProps) {
             Add new
           </ButtonLegacy>
         </div>
-        {(loading === 'not loaded' || loading === 'loading') && apiTokens?.length === 0 ? (
-          <div data-testid="loader" className="flex justify-center">
-            <LoaderSpinner className="w-6" />
-          </div>
-        ) : apiTokens && apiTokens.length > 0 ? (
-          <BlockContent title="Token List" classNameContent="p-0">
-            {apiTokens?.map((token: OrganizationApiToken) => (
-              <div
-                data-testid={`token-list-${token.id}`}
-                key={token.id}
-                className="flex justify-between items-center px-5 py-4 border-b border-neutral-250 last:border-0"
-              >
-                <div className="flex">
-                  <div className="">
-                    <h2 className="flex text-xs text-neutral-400 font-medium mb-1">
-                      <Truncate truncateLimit={60} text={token.name || ''} />
-                      {token.description && (
-                        <Tooltip content={token.description}>
-                          <div className="ml-1 cursor-pointer">
-                            <Icon name={IconAwesomeEnum.CIRCLE_INFO} className="text-neutral-350" />
-                          </div>
-                        </Tooltip>
-                      )}
-                    </h2>
-                    <p className="text-xs text-neutral-350">
-                      <span className="inline-block mr-3">Role: {upperCaseFirstLetter(token.role_name)}</span>
-                      <span className="inline-block">
-                        Created since {dateYearMonthDayHourMinuteSecond(new Date(token.created_at || ''), false)}
-                      </span>
-                    </p>
+        <BlockContent title="Token List" classNameContent="p-0">
+          {!isFetched ? (
+            <div className="flex justify-center p-5">
+              <LoaderSpinner className="w-5" />
+            </div>
+          ) : apiTokens && apiTokens.length > 0 ? (
+            <ul>
+              {apiTokens?.map((token: OrganizationApiToken) => (
+                <li
+                  data-testid={`token-list-${token.id}`}
+                  key={token.id}
+                  className="flex justify-between items-center px-5 py-4 border-b border-neutral-250 last:border-0"
+                >
+                  <div className="flex">
+                    <div className="">
+                      <h2 className="flex text-xs text-neutral-400 font-medium mb-1">
+                        <Truncate truncateLimit={60} text={token.name || ''} />
+                        {token.description && (
+                          <Tooltip content={token.description}>
+                            <div className="ml-1 cursor-pointer">
+                              <Icon name={IconAwesomeEnum.CIRCLE_INFO} className="text-neutral-350" />
+                            </div>
+                          </Tooltip>
+                        )}
+                      </h2>
+                      <p className="text-xs text-neutral-350">
+                        <span className="inline-block mr-3">Role: {upperCaseFirstLetter(token.role_name)}</span>
+                        <span className="inline-block">
+                          Created since {dateYearMonthDayHourMinuteSecond(new Date(token.created_at || ''), false)}
+                        </span>
+                      </p>
+                    </div>
                   </div>
-                </div>
-                <div>
-                  <ButtonIcon
-                    icon={IconAwesomeEnum.TRASH}
-                    style={ButtonIconStyle.STROKED}
-                    size={ButtonLegacySize.TINY}
-                    onClick={() => onDelete(token)}
-                    className="text-neutral-350 hover:text-neutral-400 bg-transparent !w-9 !h-8"
-                    iconClassName="!text-xs"
-                    dataTestId="delete-token"
-                  />
-                </div>
-              </div>
-            ))}
-          </BlockContent>
-        ) : (
-          loading === 'loaded' &&
-          apiTokens?.length === 0 && (
-            <EmptyState
-              dataTestId="empty-state"
-              title="No API token found"
-              description="Define an API token for your organization"
-            />
-          )
-        )}
+                  <div>
+                    <ButtonIcon
+                      icon={IconAwesomeEnum.TRASH}
+                      style={ButtonIconStyle.STROKED}
+                      size={ButtonLegacySize.TINY}
+                      onClick={() => onDelete(token)}
+                      className="text-neutral-350 hover:text-neutral-400 bg-transparent !w-9 !h-8"
+                      iconClassName="!text-xs"
+                      dataTestId="delete-token"
+                    />
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <div className="text-center py-4 px-5">
+              <Icon name={IconAwesomeEnum.WAVE_PULSE} className="text-neutral-350" />
+              <p className="text-neutral-350 font-medium text-xs mt-1">
+                No Api Token found. <br /> Please add one.
+              </p>
+            </div>
+          )}
+        </BlockContent>
       </div>
       <HelpSection
         description="Need help? You may find these links useful"

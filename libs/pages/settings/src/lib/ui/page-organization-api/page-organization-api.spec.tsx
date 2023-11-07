@@ -26,21 +26,21 @@ describe('PageOrganizationApi', () => {
   })
 
   it('should have an loader spinner', () => {
-    props.loading = 'loading'
+    props.isFetched = false
 
     renderWithProviders(<PageOrganizationApi {...props} apiTokens={[]} />)
-    screen.getByTestId('loader')
+    screen.getByTestId('spinner')
   })
 
   it('should have an empty screen', () => {
-    props.loading = 'loaded'
+    props.isFetched = true
     renderWithProviders(<PageOrganizationApi {...props} apiTokens={[]} />)
 
-    screen.getByTestId('empty-state')
+    screen.findByText('No Api Token found.')
   })
 
   it('should display a row', () => {
-    props.loading = 'loaded'
+    props.isFetched = true
     renderWithProviders(<PageOrganizationApi {...props} />)
 
     screen.getByText('test')
@@ -48,7 +48,7 @@ describe('PageOrganizationApi', () => {
   })
 
   it('should call on delete token', async () => {
-    props.loading = 'loaded'
+    props.isFetched = true
 
     const { userEvent } = renderWithProviders(<PageOrganizationApi {...props} />)
 
@@ -59,7 +59,7 @@ describe('PageOrganizationApi', () => {
   })
 
   it('should call addToken', async () => {
-    props.loading = 'loaded'
+    props.isFetched = true
 
     const { userEvent } = renderWithProviders(<PageOrganizationApi {...props} />)
 

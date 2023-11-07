@@ -2,7 +2,8 @@ import { type OrganizationApiTokenCreateRequest } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
-import { fetchAvailableRoles, postApiToken, selectOrganizationById } from '@qovery/domains/organization'
+import { fetchAvailableRoles, selectOrganizationById } from '@qovery/domains/organization'
+import { useCreateApiToken } from '@qovery/domains/organizations/feature'
 import { useModal } from '@qovery/shared/ui'
 import { type AppDispatch, type RootState } from '@qovery/state/store'
 import CrudModal from '../../../ui/page-organization-api/crud-modal/crud-modal'
@@ -16,6 +17,7 @@ export interface CrudModalFeatureProps {
 export function CrudModalFeature(props: CrudModalFeatureProps) {
   const { organizationId = '', onClose } = props
   const dispatch = useDispatch<AppDispatch>()
+  const { mutateAsync: createApiToken } = useCreateApiToken({ organizationId })
 
   const { openModal, closeModal } = useModal()
   const [loading, setLoading] = useState(false)
@@ -31,28 +33,22 @@ export function CrudModalFeature(props: CrudModalFeatureProps) {
     mode: 'onChange',
   })
 
-  const onSubmit = methods.handleSubmit((data) => {
+  const onSubmit = methods.handleSubmit(async (data) => {
     setLoading(true)
 
-    dispatch(
-      postApiToken({
-        organizationId: organizationId,
-        token: data,
-      })
-    )
-      .unwrap()
-      .then((token) => {
-        setLoading(false)
-        onClose()
-
+    try {
+      const token = await createApiToken({ organizationId, apiTokenCreateRequest: data })
+      onClose()
+      if (token) {
         openModal({
           content: <ValueModal token={token.token ?? ''} onClose={closeModal} />,
         })
-      })
-      .catch((e) => {
-        setLoading(false)
-        console.error(e)
-      })
+      }
+    } catch (error) {
+      console.error(error)
+    }
+
+    setLoading(false)
   })
 
   if (!availableRoles?.items) return null
