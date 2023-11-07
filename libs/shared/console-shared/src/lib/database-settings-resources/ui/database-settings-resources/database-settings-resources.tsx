@@ -3,7 +3,16 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { type DatabaseEntity } from '@qovery/shared/interfaces'
 import { CLUSTER_SETTINGS_RESOURCES_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
-import { BlockContent, Callout, Icon, IconAwesomeEnum, InputText, Link, inputSizeUnitRules } from '@qovery/shared/ui'
+import {
+  BlockContent,
+  Callout,
+  ExternalLink,
+  Icon,
+  IconAwesomeEnum,
+  InputText,
+  Link,
+  inputSizeUnitRules,
+} from '@qovery/shared/ui'
 import SettingsResourcesInstanceTypesFeature from '../../feature/settings-resources-instance-types-feature/setting-resources-instance-types-feature'
 
 export interface DatabaseSettingsResourcesProps {
@@ -138,15 +147,16 @@ export function DatabaseSettingsResources({
             <Callout.Icon>
               <Icon name={IconAwesomeEnum.CIRCLE_INFO} />
             </Callout.Icon>
-            <Callout.Text className="text-xs">
+            <Callout.Text className="text-xs text-neutral-350">
               Once triggered, the update will be managed by your cloud provider and applied during the configured
               maintenance window. Moreover, the operation might cause a service interruption.{' '}
-              <Link
-                to="https://hub.qovery.com/docs/using-qovery/configuration/database/#applying-changes-to-a-managed-database"
+              <ExternalLink
+                className="mt-1"
+                href="https://hub.qovery.com/docs/using-qovery/configuration/database/#applying-changes-to-a-managed-database"
                 size="xs"
               >
-                Have a look at the documentation first.
-              </Link>
+                Have a look at the documentation first
+              </ExternalLink>
             </Callout.Text>
           </Callout.Root>
         )}
