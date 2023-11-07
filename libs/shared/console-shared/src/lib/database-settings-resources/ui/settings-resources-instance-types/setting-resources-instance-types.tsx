@@ -1,6 +1,6 @@
 import { Controller, useFormContext } from 'react-hook-form'
 import { type Value } from '@qovery/shared/interfaces'
-import { BlockContent, Callout, ExternalLink, Icon, IconAwesomeEnum, InputSelect, Link } from '@qovery/shared/ui'
+import { BlockContent, Callout, ExternalLink, Icon, IconAwesomeEnum, InputSelect } from '@qovery/shared/ui'
 
 export interface SettingsResourcesInstanceTypesProps {
   databaseInstanceTypes?: Value[]
@@ -45,12 +45,12 @@ export function SettingsResourcesInstanceTypes({
           <Callout.Text className="text-xs">
             Once triggered, the update will be managed by your cloud provider and applied during the configured
             maintenance window. Moreover, the operation might cause a service interruption.{' '}
-            <Link
-              to="https://hub.qovery.com/docs/using-qovery/configuration/database/#applying-changes-to-a-managed-database"
+            <ExternalLink
+              href="https://hub.qovery.com/docs/using-qovery/configuration/database/#applying-changes-to-a-managed-database"
               size="xs"
             >
               Have a look at the documentation first.
-            </Link>
+            </ExternalLink>
           </Callout.Text>
         </Callout.Root>
       )}
