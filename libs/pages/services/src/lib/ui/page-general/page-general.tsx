@@ -1,5 +1,6 @@
 import { memo, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
+import { ServiceList } from '@qovery/domains/services/feature'
 import { type ApplicationEntity, type DatabaseEntity, type GitApplicationEntity } from '@qovery/shared/interfaces'
 import { APPLICATION_URL, DATABASE_GENERAL_URL, DATABASE_URL, SERVICES_GENERAL_URL } from '@qovery/shared/routes'
 import { type BaseLink, EmptyState, HelpSection, Table, type TableFilterProps } from '@qovery/shared/ui'
@@ -15,7 +16,7 @@ export interface PageGeneralProps {
 
 function PageGeneralMemo(props: PageGeneralProps) {
   const { environmentMode, services, listHelpfulLinks, isLoading, clusterId } = props
-  const { organizationId, projectId, environmentId } = useParams()
+  const { organizationId = '', projectId = '', environmentId = '' } = useParams()
 
   const [data, setData] = useState<(ApplicationEntity | DatabaseEntity)[]>([])
   const [filter, setFilter] = useState<TableFilterProps[]>([])
@@ -55,6 +56,15 @@ function PageGeneralMemo(props: PageGeneralProps) {
 
   return (
     <>
+      <div className="mt-2 bg-white rounded-t-sm rounded-b-none flex-grow overflow-y-auto min-h-0">
+        <ServiceList
+          className="border-b-neutral-200 border-b"
+          organizationId={organizationId}
+          projectId={projectId}
+          environmentId={environmentId}
+        />
+      </div>
+
       {services.length ? (
         <Table
           dataHead={tableHead}
