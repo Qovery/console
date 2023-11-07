@@ -1,15 +1,13 @@
 import { type Link as LinkProps } from 'qovery-typescript-axios'
-import { useParams } from 'react-router-dom'
+import { type ReactNode } from 'react'
 import { APPLICATION_SETTINGS_DOMAIN_URL, APPLICATION_SETTINGS_URL, APPLICATION_URL } from '@qovery/shared/routes'
 import {
-  ButtonLegacy,
-  ButtonLegacySize,
-  ButtonLegacyStyle,
   CopyToClipboard,
   Icon,
   IconAwesomeEnum,
   Link,
   Popover,
+  type PopoverContentProps,
   Skeleton,
   Truncate,
 } from '@qovery/shared/ui'
@@ -17,16 +15,31 @@ import { pluralize } from '@qovery/shared/util-js'
 import { useLinks } from '../hooks/use-links/use-links'
 import { useServiceType } from '../hooks/use-service-type/use-service-type'
 
-export function ServiceLinksPopover() {
-  const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
-  const { data: serviceType } = useServiceType({ environmentId, serviceId: applicationId })
-  const { data: links = [] } = useLinks({ serviceId: applicationId, serviceType })
+export interface ServiceLinksPopoverProps extends Pick<PopoverContentProps, 'align' | 'side'> {
+  organizationId: string
+  projectId: string
+  environmentId: string
+  serviceId: string
+  children: ReactNode
+}
+
+export function ServiceLinksPopover({
+  organizationId,
+  projectId,
+  environmentId,
+  serviceId,
+  children,
+  align = 'end',
+  side = 'bottom',
+}: ServiceLinksPopoverProps) {
+  const { data: serviceType } = useServiceType({ environmentId, serviceId })
+  const { data: links = [] } = useLinks({ serviceId, serviceType })
 
   // Remove default Qovery links
   const filteredLinks = links.filter((link: LinkProps) => !(link.is_default && link.is_qovery_domain))
 
   const pathDomainsSetting =
-    APPLICATION_URL(organizationId, projectId, environmentId, applicationId) +
+    APPLICATION_URL(organizationId, projectId, environmentId, serviceId) +
     APPLICATION_SETTINGS_URL +
     APPLICATION_SETTINGS_DOMAIN_URL
 
@@ -36,22 +49,11 @@ export function ServiceLinksPopover() {
 
   return (
     <Popover.Root>
-      <Popover.Trigger hidden={links.length === 0}>
-        <div>
-          <ButtonLegacy
-            style={ButtonLegacyStyle.STROKED}
-            size={ButtonLegacySize.LARGE}
-            iconLeft={IconAwesomeEnum.ANGLE_DOWN}
-            iconRight={IconAwesomeEnum.LINK}
-          >
-            Links
-          </ButtonLegacy>
-        </div>
-      </Popover.Trigger>
+      <Popover.Trigger className={filteredLinks.length === 0 ? 'hidden' : ''}>{children}</Popover.Trigger>
       <Popover.Content
-        side="bottom"
+        side={side}
         className="p-2 text-neutral-350 text-sm border-transparent max-w-[280px]"
-        align="end"
+        align={align}
       >
         <div className="p-2 flex justify-between items-center">
           <p className="text-neutral-350 font-medium">

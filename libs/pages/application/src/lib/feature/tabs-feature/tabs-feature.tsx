@@ -14,6 +14,7 @@ import {
   APPLICATION_VARIABLES_URL,
 } from '@qovery/shared/routes'
 import {
+  Button,
   ButtonAction,
   ButtonLegacy,
   ButtonLegacyStyle,
@@ -226,7 +227,18 @@ export function TabsFeature() {
               projectId={projectId}
             />
           ) : (
-            <ServiceLinksPopover />
+            <ServiceLinksPopover
+              organizationId={organizationId}
+              projectId={projectId}
+              environmentId={environmentId}
+              serviceId={applicationId}
+            >
+              <Button className="gap-2" size="lg" color="neutral" variant="surface">
+                <Icon name={IconAwesomeEnum.ANGLE_DOWN} />
+                Links
+                <Icon name={IconAwesomeEnum.LINK} />
+              </Button>
+            </ServiceLinksPopover>
           )}
         </div>
       }

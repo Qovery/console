@@ -7,30 +7,16 @@ exports[`ServiceLinksPopover should match snapshot 1`] = `
     style="outline: none; opacity: 0; position: fixed; pointer-events: none;"
     tabindex="0"
   />
-  <div
+  <button
     aria-controls="radix-:rd:"
     aria-expanded="true"
     aria-haspopup="dialog"
+    class=""
     data-state="open"
     type="button"
   >
-    <button
-      class="btn btn--large btn--stroked "
-      type="button"
-    >
-      <span
-        class="icon-solid-angle-down shrink-0 "
-        role="img"
-      />
-      <span>
-        Links
-      </span>
-      <span
-        class="icon-solid-link shrink-0 "
-        role="img"
-      />
-    </button>
-  </div>
+    links
+  </button>
   <div
     data-radix-popper-content-wrapper=""
     style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 8px); min-width: max-content; --radix-popper-available-width: -20px; --radix-popper-available-height: -18px; --radix-popper-anchor-width: 0px; --radix-popper-anchor-height: 0px; --radix-popper-transform-origin: 100% 0px;"
@@ -58,7 +44,7 @@ exports[`ServiceLinksPopover should match snapshot 1`] = `
         </p>
         <a
           class="cursor-pointer transition duration-100 font-medium inline-flex flex-center gap-1 text-brand-500 hover:text-brand-600 text-ssm items-center"
-          href="/organization//project//environment//application//settings/domain"
+          href="/organization/:organizationId/project/:projectId/environment/:environmentId/application/:applicationId/settings/domain"
           type="button"
         >
           Customize
