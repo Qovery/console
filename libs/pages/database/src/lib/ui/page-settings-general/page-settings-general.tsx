@@ -63,6 +63,21 @@ export function PageSettingsGeneral({
       <div className="p-8 max-w-content-with-navigation-left">
         <h2 className="h5 mb-8 text-neutral-400">General settings</h2>
         <form onSubmit={onSubmit}>
+          {databaseMode === DatabaseModeEnum.MANAGED && (
+            <Callout.Root className="mb-5" color="yellow">
+              <Callout.Icon>
+                <Icon name={IconAwesomeEnum.TRIANGLE_EXCLAMATION} />
+              </Callout.Icon>
+              <Callout.Text>
+                <Callout.TextHeading>Qovery manages this resource for you </Callout.TextHeading>
+                <Callout.TextDescription className="text-xs">
+                  Use exclusively the Qovery console to update the resources managed by Qovery on your cloud account.
+                  <br /> Do not manually update or upgrade them on the cloud provider console, otherwise you will risk a
+                  drift in the configuration. <br />
+                </Callout.TextDescription>
+              </Callout.Text>
+            </Callout.Root>
+          )}
           <BlockContent title="General information">
             <Controller
               name="name"
@@ -155,11 +170,24 @@ export function PageSettingsGeneral({
                   <Callout.Icon>
                     <Icon name={IconAwesomeEnum.CIRCLE_INFO} />
                   </Callout.Icon>
-                  <Callout.Text className="text-xs">
-                    {databaseMode === DatabaseModeEnum.CONTAINER
-                      ? 'Upgrading the version might cause service interruption. Have a look at the database documentation before launching the upgrade.'
-                      : 'Upgrading the version might cause service interruption. Have a look at the cloud provider documentation before launching the upgrade.'}
-                  </Callout.Text>
+                  {databaseMode === DatabaseModeEnum.CONTAINER ? (
+                    <Callout.Text className="text-xs">
+                      Upgrading the version might cause service interruption. Have a look at the database documentation
+                      before launching the upgrade.
+                    </Callout.Text>
+                  ) : (
+                    <Callout.Text className="text-xs text-neutral-350">
+                      Once triggered, the update will be managed by your cloud provider and applied during the
+                      configured maintenance window. Moreover, the operation might cause a service interruption.{' '}
+                      <ExternalLink
+                        className="mt-1"
+                        href="https://hub.qovery.com/docs/using-qovery/configuration/database/#applying-changes-to-a-managed-database"
+                        size="xs"
+                      >
+                        Have a look at the documentation first
+                      </ExternalLink>
+                    </Callout.Text>
+                  )}
                 </Callout.Root>
               </div>
             )}

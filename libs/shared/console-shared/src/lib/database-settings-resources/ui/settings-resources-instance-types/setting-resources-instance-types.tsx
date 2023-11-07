@@ -1,6 +1,6 @@
 import { Controller, useFormContext } from 'react-hook-form'
 import { type Value } from '@qovery/shared/interfaces'
-import { BlockContent, Callout, Icon, IconAwesomeEnum, InputSelect } from '@qovery/shared/ui'
+import { BlockContent, Callout, ExternalLink, Icon, IconAwesomeEnum, InputSelect } from '@qovery/shared/ui'
 
 export interface SettingsResourcesInstanceTypesProps {
   databaseInstanceTypes?: Value[]
@@ -42,10 +42,16 @@ export function SettingsResourcesInstanceTypes({
           <Callout.Icon>
             <Icon name={IconAwesomeEnum.CIRCLE_INFO} />
           </Callout.Icon>
-          <Callout.Text className="text-xs">
-            Once started, the upgrade will be managed by your cloud provider. The upgrade might be applied on a
-            different time window and cause service interruption. Have a look at the cloud provider documentation before
-            launching the upgrade.
+          <Callout.Text className="text-xs text-neutral-350">
+            Once triggered, the update will be managed by your cloud provider and applied during the configured
+            maintenance window. Moreover, the operation might cause a service interruption.{' '}
+            <ExternalLink
+              className="mt-1"
+              href="https://hub.qovery.com/docs/using-qovery/configuration/database/#applying-changes-to-a-managed-database"
+              size="xs"
+            >
+              Have a look at the documentation first
+            </ExternalLink>
           </Callout.Text>
         </Callout.Root>
       )}

@@ -29,6 +29,8 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
   const displayInstanceTypesWarning =
     watch('instance_type') !== database.instance_type && database.mode === DatabaseModeEnum.MANAGED
 
+  const displayStorageWarning = watch('storage') !== database.storage && database.mode === DatabaseModeEnum.MANAGED
+
   return (
     <div className="flex flex-col justify-between w-full">
       <div className="p-8 max-w-content-with-navigation-left">
@@ -58,6 +60,7 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
             clusterId={clusterId}
             isManaged={database.mode === DatabaseModeEnum.MANAGED}
             displayInstanceTypesWarning={displayInstanceTypesWarning}
+            displayStorageWarning={displayStorageWarning}
           />
 
           <div className="flex justify-end">
