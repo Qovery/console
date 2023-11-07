@@ -15,7 +15,6 @@ import {
   InputSelect,
   InputText,
   InputTextArea,
-  Link,
   LoaderSpinner,
 } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
@@ -177,15 +176,16 @@ export function PageSettingsGeneral({
                       before launching the upgrade.
                     </Callout.Text>
                   ) : (
-                    <Callout.Text className="text-xs">
+                    <Callout.Text className="text-xs text-neutral-350">
                       Once triggered, the update will be managed by your cloud provider and applied during the
                       configured maintenance window. Moreover, the operation might cause a service interruption.{' '}
-                      <Link
-                        to="https://hub.qovery.com/docs/using-qovery/configuration/database/#applying-changes-to-a-managed-database"
+                      <ExternalLink
+                        className="mt-1"
+                        href="https://hub.qovery.com/docs/using-qovery/configuration/database/#applying-changes-to-a-managed-database"
                         size="xs"
                       >
-                        Have a look at the documentation first.
-                      </Link>
+                        Have a look at the documentation first
+                      </ExternalLink>
                     </Callout.Text>
                   )}
                 </Callout.Root>
