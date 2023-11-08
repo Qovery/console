@@ -67,7 +67,7 @@ describe('CreateEditCredentialsModalFeature', () => {
       cloudProvider: CloudProviderEnum.AWS,
       organizationId: '0',
       credentialId: '000-000-000',
-      credentialRequest: handleSubmit(
+      payload: handleSubmit(
         {
           name: 'test',
           access_key_id: 'access',
@@ -102,7 +102,7 @@ describe('CreateEditCredentialsModalFeature', () => {
       cloudProvider: CloudProviderEnum.SCW,
       organizationId: '0',
       credentialId: '000-000-000',
-      credentialRequest: handleSubmit(
+      payload: handleSubmit(
         {
           name: 'test',
           scaleway_access_key: 'access',
@@ -134,7 +134,7 @@ describe('CreateEditCredentialsModalFeature', () => {
     expect(useCreateCloudProviderCredentialsMockSpy().mutateAsync).toHaveBeenCalledWith({
       cloudProvider: CloudProviderEnum.AWS,
       organizationId: '0',
-      credentialRequest: handleSubmit(
+      payload: handleSubmit(
         {
           name: 'test',
           access_key_id: 'access',
@@ -167,7 +167,7 @@ describe('CreateEditCredentialsModalFeature', () => {
     expect(useCreateCloudProviderCredentialsMockSpy().mutateAsync).toHaveBeenCalledWith({
       cloudProvider: CloudProviderEnum.SCW,
       organizationId: '0',
-      credentialRequest: handleSubmit(
+      payload: handleSubmit(
         {
           name: 'test',
           scaleway_access_key: 'access',
