@@ -1,40 +1,37 @@
-import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { CloudProviderEnum } from 'qovery-typescript-axios'
 import selectEvent from 'react-select-event'
-import { organizationFactoryMock } from '@qovery/shared/factories'
-import { type OrganizationEntity } from '@qovery/shared/interfaces'
+import * as organizationsDomain from '@qovery/domains/organizations/feature'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import ClusterCredentialsSettingsFeature, {
   type ClusterCredentialsSettingsFeatureProps,
 } from './cluster-credentials-settings-feature'
 
-const mockOrganization: OrganizationEntity = organizationFactoryMock(1)[0]
+const useCloudProviderCredentialsMockSpy = jest.spyOn(organizationsDomain, 'useCloudProviderCredentials') as jest.Mock
 
-jest.mock('@qovery/domains/organization', () => {
-  return {
-    ...jest.requireActual('@qovery/domains/organization'),
-    selectOrganizationById: () => mockOrganization,
-  }
-})
-
-const mockDispatch = jest.fn()
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useDispatch: () => mockDispatch,
-}))
+const props: ClusterCredentialsSettingsFeatureProps = {
+  cloudProvider: CloudProviderEnum.AWS,
+}
 
 describe('ClusterCredentialsSettingsFeature', () => {
-  const props: ClusterCredentialsSettingsFeatureProps = {
-    cloudProvider: CloudProviderEnum.AWS,
-  }
+  beforeEach(() => {
+    useCloudProviderCredentialsMockSpy.mockReturnValue({
+      data: [
+        {
+          name: 'my-credential',
+          id: '000-000-000',
+        },
+      ],
+    })
+  })
 
   it('should render successfully', () => {
-    const { baseElement } = render(wrapWithReactHookForm(<ClusterCredentialsSettingsFeature {...props} />))
+    const { baseElement } = renderWithProviders(wrapWithReactHookForm(<ClusterCredentialsSettingsFeature {...props} />))
     expect(baseElement).toBeTruthy()
   })
 
   it('should submit the form on click', async () => {
-    const { getByTestId, getAllByDisplayValue, getByLabelText } = render(
+    renderWithProviders(
       wrapWithReactHookForm(<ClusterCredentialsSettingsFeature {...props} />, {
         defaultValues: {
           credentials: '0',
@@ -42,13 +39,11 @@ describe('ClusterCredentialsSettingsFeature', () => {
       })
     )
 
-    const realSelect = getByLabelText('Credentials')
-    await selectEvent.select(realSelect, [
-      (mockOrganization.credentials?.items && mockOrganization.credentials?.items[1].name) || '',
-    ])
+    const realSelect = screen.getByLabelText('Credentials')
+    await selectEvent.select(realSelect, ['my-credential'])
 
-    getByTestId('input-credentials')
+    screen.getByTestId('input-credentials')
     // using getAllByDisplay because we have two inputs on the input-select when we use the search
-    expect(getAllByDisplayValue('1')).toHaveLength(2)
+    expect(screen.getAllByDisplayValue('000-000-000')).toHaveLength(2)
   })
 })

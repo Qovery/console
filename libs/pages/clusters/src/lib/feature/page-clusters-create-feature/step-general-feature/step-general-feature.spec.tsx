@@ -1,14 +1,17 @@
-import { act, fireEvent, render } from '__tests__/utils/setup-jest'
 import { CloudProviderEnum } from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
+import * as organizationsDomain from '@qovery/domains/organizations/feature'
 import { organizationFactoryMock } from '@qovery/shared/factories'
 import { type OrganizationEntity } from '@qovery/shared/interfaces'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ClusterContainerCreateContext } from '../page-clusters-create-feature'
 import StepGeneralFeature from './step-general-feature'
 
 const mockSetGeneralData = jest.fn()
 const mockNavigate = jest.fn()
 const mockOrganization: OrganizationEntity = organizationFactoryMock(1)[0]
+
+const useCloudProviderCredentialsMockSpy = jest.spyOn(organizationsDomain, 'useCloudProviderCredentials') as jest.Mock
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -45,8 +48,8 @@ const ContextWrapper = (props: { children: ReactNode }) => {
           production: false,
           cloud_provider: CloudProviderEnum.AWS,
           region: 'Paris',
-          credentials: mockOrganization.credentials?.items ? mockOrganization.credentials?.items[0].id : '',
-          credentials_name: mockOrganization.credentials?.items ? mockOrganization.credentials?.items[0].name : '',
+          credentials: '000-000-000',
+          credentials_name: 'my-credential',
         },
         setGeneralData: mockSetGeneralData,
       }}
@@ -71,9 +74,17 @@ describe('StepGeneralFeature', () => {
           },
         ]),
     }))
+    useCloudProviderCredentialsMockSpy.mockReturnValue({
+      data: [
+        {
+          name: 'my-credential',
+          id: '000-000-000',
+        },
+      ],
+    })
   })
   it('should render successfully', () => {
-    const { baseElement } = render(
+    const { baseElement } = renderWithProviders(
       <ContextWrapper>
         <StepGeneralFeature />
       </ContextWrapper>
@@ -82,32 +93,29 @@ describe('StepGeneralFeature', () => {
   })
 
   it('should submit form and navigate', async () => {
-    const { getByTestId } = render(
+    const { userEvent } = renderWithProviders(
       <ContextWrapper>
         <StepGeneralFeature />
       </ContextWrapper>
     )
 
-    await act(() => {
-      const input = getByTestId('input-name')
-      fireEvent.input(input, { target: { value: 'test' } })
-    })
+    const input = screen.getByTestId('input-name')
+    await userEvent.clear(input)
+    await userEvent.type(input, 'my-cluster-name')
 
-    const button = getByTestId('button-submit')
+    const button = screen.getByTestId('button-submit')
     expect(button).not.toBeDisabled()
 
-    await act(() => {
-      button.click()
-    })
+    await userEvent.click(button)
 
     expect(mockSetGeneralData).toHaveBeenCalledWith({
-      name: 'test',
+      name: 'my-cluster-name',
       description: 'hello',
       production: false,
       cloud_provider: CloudProviderEnum.AWS,
       region: 'Paris',
-      credentials: mockOrganization.credentials?.items ? mockOrganization.credentials?.items[0].id : '',
-      credentials_name: mockOrganization.credentials?.items ? mockOrganization.credentials?.items[0].name : '',
+      credentials: '000-000-000',
+      credentials_name: 'my-credential',
     })
     expect(mockNavigate).toHaveBeenCalledWith('/organization/1/clusters/create/resources')
   })

@@ -1,4 +1,8 @@
-import { type ClusterCloudProviderInfo, type ClusterCloudProviderInfoRequest } from 'qovery-typescript-axios'
+import {
+  type ClusterCloudProviderInfo,
+  type ClusterCloudProviderInfoRequest,
+  type ClusterCredentials,
+} from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
@@ -9,14 +13,14 @@ import {
   postClusterActionsDeploy,
   selectClusterById,
   selectClustersLoadingStatus,
-  selectOrganizationById,
 } from '@qovery/domains/organization'
-import { type ClusterCredentialsEntity, type ClusterEntity } from '@qovery/shared/interfaces'
+import { useCloudProviderCredentials } from '@qovery/domains/organizations/feature'
+import { type ClusterEntity } from '@qovery/shared/interfaces'
 import { ToastEnum, toast } from '@qovery/shared/toast'
 import { type AppDispatch, type RootState } from '@qovery/state/store'
 import PageSettingsCredentials from '../../ui/page-settings-credentials/page-settings-credentials'
 
-export const handleSubmit = (data: FieldValues, credentials?: ClusterCredentialsEntity[], cluster?: ClusterEntity) => {
+export const handleSubmit = (data: FieldValues, credentials?: ClusterCredentials[], cluster?: ClusterEntity) => {
   const currentCredentials = credentials?.filter((item) => item.id === data['credentials'])[0]
 
   return {
@@ -42,12 +46,13 @@ export function PageSettingsCredentialsFeature() {
   const cluster = useSelector<RootState, ClusterEntity | undefined>((state) => selectClusterById(state, clusterId))
   const clustersLoading = useSelector((state: RootState) => selectClustersLoadingStatus(state))
 
-  const credentials = useSelector<RootState, ClusterCredentialsEntity[] | undefined>(
-    (state) => selectOrganizationById(state, organizationId)?.credentials?.items
-  )
+  const { data: credentials = [] } = useCloudProviderCredentials({
+    organizationId,
+    cloudProvider: methods.getValues('credentials'),
+  })
 
   const onSubmit = methods.handleSubmit((data) => {
-    const findCredentials = credentials?.find((credential) => credential.id === data['credentials'])
+    const findCredentials = credentials.find((credential) => credential.id === data['credentials'])
 
     if (data && cluster && findCredentials) {
       setLoading(true)

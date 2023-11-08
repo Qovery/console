@@ -1,80 +1,73 @@
-import { act, fireEvent, render } from '__tests__/utils/setup-jest'
 import { CloudProviderEnum } from 'qovery-typescript-axios'
-import * as storeOrganization from '@qovery/domains/organization'
-import { organizationFactoryMock } from '@qovery/shared/factories'
-import { type OrganizationEntity } from '@qovery/shared/interfaces'
+import * as organizationsDomain from '@qovery/domains/organizations/feature'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import CreateEditCredentialsModalFeature, {
   type CreateEditCredentialsModalFeatureProps,
   handleSubmit,
 } from './create-edit-credentials-modal-feature'
 
-let props: CreateEditCredentialsModalFeatureProps
+const useCreateCloudProviderCredentialsMockSpy = jest.spyOn(
+  organizationsDomain,
+  'useCreateCloudProviderCredential'
+) as jest.Mock
+const useEditCloudProviderCredentialsMockSpy = jest.spyOn(
+  organizationsDomain,
+  'useEditCloudProviderCredential'
+) as jest.Mock
+const useDeleteCloudProviderCredentialsMockSpy = jest.spyOn(
+  organizationsDomain,
+  'useDeleteCloudProviderCredential'
+) as jest.Mock
 
-const mockOrganization: OrganizationEntity = organizationFactoryMock(1)[0]
-
-jest.mock('@qovery/domains/organization', () => ({
-  ...jest.requireActual('@qovery/domains/organization'),
-  editCredentials: jest.fn(),
-  postCredentials: jest.fn(),
-}))
-
-const mockDispatch = jest.fn()
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useDispatch: () => mockDispatch,
-}))
+const props: CreateEditCredentialsModalFeatureProps = {
+  onClose: jest.fn(),
+  cloudProvider: CloudProviderEnum.AWS,
+  organizationId: '0',
+  currentCredential: {
+    id: '000-000-000',
+    name: 'my-credential',
+  },
+}
 
 describe('CreateEditCredentialsModalFeature', () => {
   beforeEach(() => {
-    props = {
-      onClose: jest.fn(),
-      cloudProvider: CloudProviderEnum.AWS,
-      organizationId: '0',
-      currentCredential: mockOrganization.credentials?.items && mockOrganization.credentials?.items[0],
-    }
-  })
-
-  afterEach(() => {
-    jest.clearAllMocks()
-    jest.restoreAllMocks()
+    useCreateCloudProviderCredentialsMockSpy.mockReturnValue({
+      mutateAsync: jest.fn(),
+    })
+    useEditCloudProviderCredentialsMockSpy.mockReturnValue({
+      mutateAsync: jest.fn(),
+    })
+    useDeleteCloudProviderCredentialsMockSpy.mockReturnValue({
+      mutateAsync: jest.fn(),
+    })
   })
 
   it('should render successfully', () => {
-    const { baseElement } = render(<CreateEditCredentialsModalFeature {...props} />)
+    const { baseElement } = renderWithProviders(<CreateEditCredentialsModalFeature {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
-  it('should submit editCredentials on click on button for AWS', async () => {
-    const spy = jest.spyOn(storeOrganization, 'editCredentials')
-    mockDispatch.mockImplementation(() => ({
-      unwrap: () =>
-        Promise.resolve({
-          data: {},
-        }),
-    }))
+  it('should submit edit credential on click on button for AWS', async () => {
+    const { userEvent } = renderWithProviders(<CreateEditCredentialsModalFeature {...props} />)
 
-    const { getByTestId } = render(<CreateEditCredentialsModalFeature {...props} />)
+    const inputName = screen.getByTestId('input-name')
+    const inputAccessKey = screen.getByTestId('input-access-key')
+    const inputSecretKey = screen.getByTestId('input-secret-key')
 
-    const inputName = getByTestId('input-name')
-    const inputAccessKey = getByTestId('input-access-key')
-    const inputSecretKey = getByTestId('input-secret-key')
+    await userEvent.clear(inputName)
 
-    await act(async () => {
-      fireEvent.input(inputName, { target: { value: 'test' } })
-      fireEvent.input(inputAccessKey, { target: { value: 'access' } })
-      fireEvent.input(inputSecretKey, { target: { value: 'secret' } })
-    })
+    await userEvent.type(inputName, 'test')
+    await userEvent.type(inputAccessKey, 'access')
+    await userEvent.type(inputSecretKey, 'secret')
 
-    const submitButton = getByTestId('submit-button')
-    await act(async () => {
-      fireEvent.click(submitButton)
-    })
+    const submitButton = screen.getByTestId('submit-button')
+    await userEvent.click(submitButton)
 
-    expect(spy).toHaveBeenCalledWith({
+    expect(useEditCloudProviderCredentialsMockSpy().mutateAsync).toHaveBeenCalledWith({
       cloudProvider: CloudProviderEnum.AWS,
       organizationId: '0',
-      credentialsId: props.currentCredential?.id,
-      credentials: handleSubmit(
+      credentialId: '000-000-000',
+      payload: handleSubmit(
         {
           name: 'test',
           access_key_id: 'access',
@@ -85,41 +78,31 @@ describe('CreateEditCredentialsModalFeature', () => {
     })
   })
 
-  it('should submit editCredentials on click on button for SCW', async () => {
+  it('should submit edit credential on click on button for SCW', async () => {
     props.cloudProvider = CloudProviderEnum.SCW
 
-    const spy = jest.spyOn(storeOrganization, 'editCredentials')
-    mockDispatch.mockImplementation(() => ({
-      unwrap: () =>
-        Promise.resolve({
-          data: {},
-        }),
-    }))
+    const { userEvent } = renderWithProviders(<CreateEditCredentialsModalFeature {...props} />)
 
-    const { getByTestId } = render(<CreateEditCredentialsModalFeature {...props} />)
+    const inputName = screen.getByTestId('input-name')
+    const inputAccessKey = screen.getByTestId('input-scw-access-key')
+    const inputSecretKey = screen.getByTestId('input-scw-secret-key')
+    const inputProjectId = screen.getByTestId('input-scw-project-id')
 
-    const inputName = getByTestId('input-name')
-    const inputAccessKey = getByTestId('input-scw-access-key')
-    const inputSecretKey = getByTestId('input-scw-secret-key')
-    const inputProjectId = getByTestId('input-scw-project-id')
+    await userEvent.clear(inputName)
 
-    await act(async () => {
-      fireEvent.input(inputName, { target: { value: 'test' } })
-      fireEvent.input(inputAccessKey, { target: { value: 'access' } })
-      fireEvent.input(inputSecretKey, { target: { value: 'secret' } })
-      fireEvent.input(inputProjectId, { target: { value: 'project' } })
-    })
+    await userEvent.type(inputName, 'test')
+    await userEvent.type(inputAccessKey, 'access')
+    await userEvent.type(inputSecretKey, 'secret')
+    await userEvent.type(inputProjectId, 'project')
 
-    const submitButton = getByTestId('submit-button')
-    await act(async () => {
-      fireEvent.click(submitButton)
-    })
+    const submitButton = screen.getByTestId('submit-button')
+    await userEvent.click(submitButton)
 
-    expect(spy).toHaveBeenCalledWith({
+    expect(useEditCloudProviderCredentialsMockSpy().mutateAsync).toHaveBeenCalledWith({
       cloudProvider: CloudProviderEnum.SCW,
       organizationId: '0',
-      credentialsId: props.currentCredential?.id,
-      credentials: handleSubmit(
+      credentialId: '000-000-000',
+      payload: handleSubmit(
         {
           name: 'test',
           scaleway_access_key: 'access',
@@ -131,38 +114,27 @@ describe('CreateEditCredentialsModalFeature', () => {
     })
   })
 
-  it('should submit postCredentials on click on button for AWS', async () => {
+  it('should submit create credential on click on button for AWS', async () => {
     props.currentCredential = undefined
+    props.cloudProvider = CloudProviderEnum.AWS
 
-    const spy = jest.spyOn(storeOrganization, 'postCredentials')
-    mockDispatch.mockImplementation(() => ({
-      unwrap: () =>
-        Promise.resolve({
-          data: {},
-        }),
-    }))
+    const { userEvent } = renderWithProviders(<CreateEditCredentialsModalFeature {...props} />)
 
-    const { getByTestId } = render(<CreateEditCredentialsModalFeature {...props} />)
+    const inputName = screen.getByTestId('input-name')
+    const inputAccessKey = screen.getByTestId('input-access-key')
+    const inputSecretKey = screen.getByTestId('input-secret-key')
 
-    const inputName = getByTestId('input-name')
-    const inputAccessKey = getByTestId('input-access-key')
-    const inputSecretKey = getByTestId('input-secret-key')
+    await userEvent.type(inputName, 'test')
+    await userEvent.type(inputAccessKey, 'access')
+    await userEvent.type(inputSecretKey, 'secret')
 
-    await act(async () => {
-      fireEvent.input(inputName, { target: { value: 'test' } })
-      fireEvent.input(inputAccessKey, { target: { value: 'access' } })
-      fireEvent.input(inputSecretKey, { target: { value: 'secret' } })
-    })
+    const submitButton = screen.getByTestId('submit-button')
+    await userEvent.click(submitButton)
 
-    const submitButton = getByTestId('submit-button')
-    await act(async () => {
-      fireEvent.click(submitButton)
-    })
-
-    expect(spy).toHaveBeenCalledWith({
+    expect(useCreateCloudProviderCredentialsMockSpy().mutateAsync).toHaveBeenCalledWith({
       cloudProvider: CloudProviderEnum.AWS,
       organizationId: '0',
-      credentials: handleSubmit(
+      payload: handleSubmit(
         {
           name: 'test',
           access_key_id: 'access',
@@ -173,41 +145,29 @@ describe('CreateEditCredentialsModalFeature', () => {
     })
   })
 
-  it('should submit postCredentials on click on button for SCW', async () => {
+  it('should submit create credential on click on button for SCW', async () => {
     props.currentCredential = undefined
     props.cloudProvider = CloudProviderEnum.SCW
 
-    const spy = jest.spyOn(storeOrganization, 'postCredentials')
-    mockDispatch.mockImplementation(() => ({
-      unwrap: () =>
-        Promise.resolve({
-          data: {},
-        }),
-    }))
+    const { userEvent } = renderWithProviders(<CreateEditCredentialsModalFeature {...props} />)
 
-    const { getByTestId } = render(<CreateEditCredentialsModalFeature {...props} />)
+    const inputName = screen.getByTestId('input-name')
+    const inputAccessKey = screen.getByTestId('input-scw-access-key')
+    const inputSecretKey = screen.getByTestId('input-scw-secret-key')
+    const inputProjectId = screen.getByTestId('input-scw-project-id')
 
-    const inputName = getByTestId('input-name')
-    const inputAccessKey = getByTestId('input-scw-access-key')
-    const inputSecretKey = getByTestId('input-scw-secret-key')
-    const inputProjectId = getByTestId('input-scw-project-id')
+    await userEvent.type(inputName, 'test')
+    await userEvent.type(inputAccessKey, 'access')
+    await userEvent.type(inputSecretKey, 'secret')
+    await userEvent.type(inputProjectId, 'project')
 
-    await act(async () => {
-      fireEvent.input(inputName, { target: { value: 'test' } })
-      fireEvent.input(inputAccessKey, { target: { value: 'access' } })
-      fireEvent.input(inputSecretKey, { target: { value: 'secret' } })
-      fireEvent.input(inputProjectId, { target: { value: 'project' } })
-    })
+    const submitButton = screen.getByTestId('submit-button')
+    await userEvent.click(submitButton)
 
-    const submitButton = getByTestId('submit-button')
-    await act(async () => {
-      fireEvent.click(submitButton)
-    })
-
-    expect(spy).toHaveBeenCalledWith({
+    expect(useCreateCloudProviderCredentialsMockSpy().mutateAsync).toHaveBeenCalledWith({
       cloudProvider: CloudProviderEnum.SCW,
       organizationId: '0',
-      credentials: handleSubmit(
+      payload: handleSubmit(
         {
           name: 'test',
           scaleway_access_key: 'access',

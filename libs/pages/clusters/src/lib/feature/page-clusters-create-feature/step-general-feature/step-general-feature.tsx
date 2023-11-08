@@ -2,8 +2,9 @@ import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
-import { fetchCloudProvider, getClusterState, selectOrganizationById } from '@qovery/domains/organization'
-import { type ClusterCredentialsEntity, type ClusterGeneralData } from '@qovery/shared/interfaces'
+import { fetchCloudProvider, getClusterState } from '@qovery/domains/organization'
+import { useCloudProviderCredentials } from '@qovery/domains/organizations/feature'
+import { type ClusterGeneralData } from '@qovery/shared/interfaces'
 import { CLUSTERS_CREATION_RESOURCES_URL, CLUSTERS_CREATION_URL, CLUSTERS_URL } from '@qovery/shared/routes'
 import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
@@ -16,11 +17,17 @@ export function StepGeneralFeature() {
   const { setGeneralData, generalData, setCurrentStep, setResourcesData } = useClusterContainerCreateContext()
   const navigate = useNavigate()
   const { organizationId = '' } = useParams()
+  const methods = useForm<ClusterGeneralData>({
+    defaultValues: generalData,
+    mode: 'onChange',
+  })
+
   const dispatch = useDispatch<AppDispatch>()
   const cloudProvider = useSelector((state: RootState) => getClusterState(state).cloudProvider)
-  const credentials = useSelector<RootState, ClusterCredentialsEntity[] | undefined>(
-    (state) => selectOrganizationById(state, organizationId)?.credentials?.items
-  )
+  const { data: credentials = [] } = useCloudProviderCredentials({
+    organizationId,
+    cloudProvider: methods.getValues('cloud_provider'),
+  })
 
   const funnelCardHelp = (
     <FunnelFlowHelpCard
@@ -47,19 +54,15 @@ export function StepGeneralFeature() {
     setCurrentStep(1)
   }, [setCurrentStep])
 
-  const methods = useForm<ClusterGeneralData>({
-    defaultValues: generalData,
-    mode: 'onChange',
-  })
-
   useEffect(() => {
     if (cloudProvider.loadingStatus !== 'loaded') dispatch(fetchCloudProvider())
   }, [cloudProvider.loadingStatus, dispatch, methods])
 
   const onSubmit = methods.handleSubmit((data) => {
-    if (credentials) {
+    if (credentials.length > 0) {
       // necessary to get the name of credentials
       const currentCredentials = credentials?.filter((item) => item.id === data['credentials'])[0]
+
       data['credentials_name'] = currentCredentials.name
 
       setGeneralData(data)

@@ -1,10 +1,12 @@
 import { CloudProviderEnum, type ClusterCredentials } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
-import { useDispatch } from 'react-redux'
-import { deleteCredentials, editCredentials, postCredentials } from '@qovery/domains/organization'
+import {
+  useCreateCloudProviderCredential,
+  useDeleteCloudProviderCredential,
+  useEditCloudProviderCredential,
+} from '@qovery/domains/organizations/feature'
 import { useModal } from '@qovery/shared/ui'
-import { type AppDispatch } from '@qovery/state/store'
 import CreateEditCredentialsModal from '../../ui/create-edit-credentials-modal/create-edit-credentials-modal'
 
 export interface CreateEditCredentialsModalFeatureProps {
@@ -52,54 +54,63 @@ export function CreateEditCredentialsModalFeature(props: CreateEditCredentialsMo
     },
   })
 
-  methods.watch(() => enableAlertClickOutside(methods.formState.isDirty))
+  const { mutateAsync: createCloudProviderCredential } = useCreateCloudProviderCredential({
+    organizationId,
+    cloudProvider,
+  })
+  const { mutateAsync: editCloudProviderCredential } = useEditCloudProviderCredential({
+    organizationId,
+    cloudProvider,
+  })
+  const { mutateAsync: deleteCloudProviderCredential } = useDeleteCloudProviderCredential({
+    organizationId,
+    cloudProvider,
+  })
 
-  const dispatch = useDispatch<AppDispatch>()
+  methods.watch(() => enableAlertClickOutside(methods.formState.isDirty))
 
   const onSubmit = methods.handleSubmit(async (data) => {
     setLoading(true)
 
     const credentials = handleSubmit(data, cloudProvider)
 
-    if (currentCredential) {
-      dispatch(
-        editCredentials({
-          cloudProvider,
+    try {
+      if (currentCredential) {
+        await editCloudProviderCredential({
           organizationId,
-          credentialsId: currentCredential.id,
-          credentials,
+          cloudProvider,
+          credentialId: currentCredential.id,
+          payload: credentials,
         })
-      )
-        .unwrap()
-        .then(() => {
-          setLoading(false)
-          onClose()
+        onClose()
+      } else {
+        await createCloudProviderCredential({
+          organizationId,
+          cloudProvider,
+          payload: credentials,
         })
-        .catch((e) => console.error(e))
-        .finally(() => setLoading(false))
-    } else {
-      dispatch(postCredentials({ cloudProvider, organizationId, credentials }))
-        .unwrap()
-        .then(() => {
-          setLoading(false)
-          onClose()
-        })
-        .catch((e) => console.error(e))
-        .finally(() => setLoading(false))
+        onClose()
+      }
+    } catch (error) {
+      console.error(error)
     }
+
+    setLoading(false)
   })
 
-  const onDelete = () => {
-    if (currentCredential?.id)
-      dispatch(
-        deleteCredentials({
-          cloudProvider,
+  const onDelete = async () => {
+    if (currentCredential?.id) {
+      try {
+        await deleteCloudProviderCredential({
           organizationId,
-          credentialsId: currentCredential.id,
+          cloudProvider,
+          credentialId: currentCredential.id,
         })
-      )
-        .unwrap()
-        .then(() => onClose())
+        onClose()
+      } catch (error) {
+        console.error(error)
+      }
+    }
   }
 
   return (

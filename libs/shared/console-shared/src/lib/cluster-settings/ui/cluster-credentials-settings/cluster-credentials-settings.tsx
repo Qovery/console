@@ -1,16 +1,15 @@
 import { type ClusterCredentials } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
-import { type ClusterCredentialsEntity, type LoadingStatus } from '@qovery/shared/interfaces'
 import { IconAwesomeEnum, IconFa, InputSelect, LoaderSpinner } from '@qovery/shared/ui'
 
 export interface ClusterCredentialsSettingsProps {
-  credentials?: ClusterCredentialsEntity[]
+  credentials?: ClusterCredentials[]
   openCredentialsModal: (id?: string) => void
-  loadingStatus: LoadingStatus
+  loading: boolean
 }
 
 export function ClusterCredentialsSettings(props: ClusterCredentialsSettingsProps) {
-  const { credentials, openCredentialsModal, loadingStatus } = props
+  const { credentials, openCredentialsModal, loading } = props
   const { control } = useFormContext()
 
   const buildCredentials = credentials?.map((item: ClusterCredentials) => ({
@@ -21,7 +20,7 @@ export function ClusterCredentialsSettings(props: ClusterCredentialsSettingsProp
 
   return (
     <div>
-      {loadingStatus !== 'loaded' ? (
+      {loading ? (
         <div className="flex justify-center mt-2">
           <LoaderSpinner className="w-4" />
         </div>
