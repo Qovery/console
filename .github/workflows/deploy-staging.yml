@@ -18,3 +18,15 @@ jobs:
     secrets:
       organization-id: ${{ secrets.QOVERY_ORGANIZATION_ID }}
       api-token: ${{ secrets.QOVERY_API_TOKEN }}
+  test-build-and-deploy-s3:
+    uses: ./.github/workflows/test-build-and-deploy-to-s3.yml
+    with:
+      flow: deploy-staging
+      configuration: staging
+    secrets:
+      aws-region: ${{ secrets.AWS_REGION }}
+      aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      s3-bucket-name: ${{ secrets.S3_BUCKET_NAME }}
+      cloudflare-zone: ${{ secrets.CLOUDFLARE_ZONE }}
+      cloudflare-token: ${{ secrets.CLOUDFLARE_TOKEN }}
