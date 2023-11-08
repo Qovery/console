@@ -27,28 +27,22 @@ const apiTokenApi = new OrganizationApiTokenApi()
 const webhookApi = new OrganizationWebhookApi()
 const cloudProviderCredentialsApi = new CloudProviderCredentialsApi()
 
-export type cloudProvider = keyof typeof CloudProviderEnum
-
-export type AWSType = Extract<cloudProvider, 'AWS'>
-export type ScalewayType = Extract<cloudProvider, 'SCW'>
-export type DoType = Extract<cloudProvider, 'DO'>
-
 type CredentialRequest =
   | {
       organizationId: string
-      cloudProvider: cloudProvider
+      cloudProvider: CloudProviderEnum
       payload: AwsCredentialsRequest
       credentialId: string
     }
   | {
       organizationId: string
-      cloudProvider: cloudProvider
+      cloudProvider: CloudProviderEnum
       payload: ScalewayCredentialsRequest
       credentialId: string
     }
   | {
       organizationId: string
-      cloudProvider: cloudProvider
+      cloudProvider: CloudProviderEnum
       payload: DoCredentialsRequest
       credentialId: string
     }
