@@ -1,14 +1,11 @@
 import { type BillingInfoRequest } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { editBillingInfo } from '@qovery/domains/organization'
-import { useBillingInfo } from '@qovery/domains/organizations/feature'
+import { useBillingInfo, useEditBillingInfo } from '@qovery/domains/organizations/feature'
 import { countries } from '@qovery/shared/enums'
 import { type Value } from '@qovery/shared/interfaces'
 import { IconFlag } from '@qovery/shared/ui'
-import { type AppDispatch } from '@qovery/state/store'
 import BillingDetails from '../../../ui/page-organization-billing/billing-details/billing-details'
 
 export function BillingDetailsFeature() {
@@ -16,6 +13,7 @@ export function BillingDetailsFeature() {
   const [editInProcess, setEditInProcess] = useState(false)
   const [countryValues, setCountryValues] = useState<Value[]>([])
   const { data: billingInfo, isLoading: isLoadingBillingInfo } = useBillingInfo({ organizationId })
+  const { mutateAsync: editBillingInfo } = useEditBillingInfo({ organizationId })
   const methods = useForm<BillingInfoRequest>({
     mode: 'onChange',
     defaultValues: {
@@ -32,18 +30,21 @@ export function BillingDetailsFeature() {
     },
   })
 
-  const dispatch = useDispatch<AppDispatch>()
-
-  const onSubmit = methods.handleSubmit((data) => {
+  const onSubmit = methods.handleSubmit(async (data) => {
     if (organizationId) {
       setEditInProcess(true)
-      dispatch(editBillingInfo({ organizationId, billingInfoRequest: data }))
-        .unwrap()
-        .then((data) => {
-          methods.reset(data as BillingInfoRequest)
+
+      try {
+        const response = await editBillingInfo({
+          organizationId,
+          billingInfoRequest: data,
         })
-        .catch(console.error)
-        .then(() => setEditInProcess(false))
+        methods.reset(response as BillingInfoRequest)
+      } catch (error) {
+        console.error(error)
+      }
+
+      setEditInProcess(false)
     }
   })
 

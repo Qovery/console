@@ -2,6 +2,7 @@ import { createQueryKeys } from '@lukemorales/query-key-factory'
 import {
   type AwsCredentialsRequest,
   BillingApi,
+  type BillingInfoRequest,
   CloudProviderCredentialsApi,
   type CloudProviderEnum,
   ContainerRegistriesApi,
@@ -400,7 +401,21 @@ export const mutations = {
     return cloudProviderCredential
   },
   async invoiceUrl({ organizationId, invoiceId }: { organizationId: string; invoiceId: string }) {
-    const result = await billingApi.getOrganizationInvoicePDF(organizationId, invoiceId)
-    return result.data
+    const response = await billingApi.getOrganizationInvoicePDF(organizationId, invoiceId)
+    return response.data
+  },
+  async editBillingInfo({
+    organizationId,
+    billingInfoRequest,
+  }: {
+    organizationId: string
+    billingInfoRequest: BillingInfoRequest
+  }) {
+    const response = await billingApi.editOrganizationBillingInfo(organizationId, billingInfoRequest)
+    return response.data
+  },
+  async addCreditCode({ organizationId, code }: { organizationId: string; code: string }) {
+    const response = await billingApi.addCreditCode(organizationId, { code: code })
+    return response.data
   },
 }
