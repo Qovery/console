@@ -6,7 +6,7 @@ on:
       - staging
 jobs:
   test-build-and-deploy:
-    uses: ./.github/workflows/test-build-and-deploy.yml
+    uses: ./.github/workflows/test-build-and-deploy-to-qovery.yml
     with:
       flow: deploy-staging
       branch: staging
