@@ -1,13 +1,13 @@
-import { act, fireEvent, getByLabelText, getByTestId, render, waitFor } from '__tests__/utils/setup-jest'
 import selectEvent from 'react-select-event'
-import * as organizationDomain from '@qovery/domains/organization'
+import * as organizationDomain from '@qovery/domains/organizations/feature'
 import { webhookFactoryMock } from '@qovery/shared/factories'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import WebhookCrudModalFeature, { type WebhookCrudModalFeatureProps } from './webhook-crud-modal-feature'
 
 const mockWebhook = webhookFactoryMock(1)[0]
 const props: WebhookCrudModalFeatureProps = {
   closeModal: jest.fn(),
-  organizationId: 'organizationId',
+  organizationId: '000-000-000',
   webhook: undefined,
 }
 
@@ -17,68 +17,69 @@ const useCreateWebhookMockSpy = jest.spyOn(organizationDomain, 'useCreateWebhook
 describe('WebhookCrudModalFeature', () => {
   beforeEach(() => {
     useEditWebhooksMockSpy.mockReturnValue({
-      mutate: jest.fn(),
+      mutateAsync: jest.fn(),
     })
     useCreateWebhookMockSpy.mockReturnValue({
-      mutate: jest.fn(),
+      mutateAsync: jest.fn(),
     })
   })
 
   it('should render successfully', () => {
-    const { baseElement } = render(<WebhookCrudModalFeature {...props} webhook={mockWebhook} />)
+    const { baseElement } = renderWithProviders(<WebhookCrudModalFeature {...props} webhook={mockWebhook} />)
     expect(baseElement).toBeTruthy()
   })
 
   it('should render all the inputs', () => {
-    const { baseElement } = render(<WebhookCrudModalFeature {...props} webhook={mockWebhook} />)
-    getByLabelText(baseElement, 'URL')
-    getByLabelText(baseElement, 'Kind')
-    getByLabelText(baseElement, 'Description')
-    getByLabelText(baseElement, 'Secret')
-    getByLabelText(baseElement, 'Events')
-    getByTestId(baseElement, 'project-filter-input')
-    getByLabelText(baseElement, 'Environment type filter')
+    renderWithProviders(<WebhookCrudModalFeature {...props} webhook={mockWebhook} />)
+
+    screen.getByLabelText('URL')
+    screen.getByLabelText('Kind')
+    screen.getByLabelText('Description')
+    screen.getByLabelText('Secret')
+    screen.getByLabelText('Events')
+    screen.getByTestId('project-filter-input')
+    screen.getByLabelText('Environment type filter')
   })
 
   it('should mutate useCreateWebhook', async () => {
-    const { baseElement } = render(<WebhookCrudModalFeature {...props} />)
-    const url = getByLabelText(baseElement, 'URL')
-    const kind = getByLabelText(baseElement, 'Kind')
-    const description = getByLabelText(baseElement, 'Description')
-    const secret = getByLabelText(baseElement, 'Secret')
-    const events = getByLabelText(baseElement, 'Events')
-    const tags = getByTestId(baseElement, 'input-tags-field')
-    const envType = getByLabelText(baseElement, 'Environment type filter')
+    const { userEvent } = renderWithProviders(<WebhookCrudModalFeature {...props} />)
 
-    fireEvent.change(url, { target: { value: 'https://test.com' } })
+    const url = screen.getByLabelText('URL')
+    const kind = screen.getByLabelText('Kind')
+    const description = screen.getByLabelText('Description')
+    const secret = screen.getByLabelText('Secret')
+    const events = screen.getByLabelText('Events')
+    const tags = screen.getByTestId('input-tags-field')
+    const envType = screen.getByLabelText('Environment type filter')
+
+    await userEvent.type(url, 'https://test.com')
+
     await selectEvent.select(kind, ['Standard'], {
       container: document.body,
     })
-    fireEvent.change(description, { target: { value: 'description' } })
-    fireEvent.change(secret, { target: { value: 'secret' } })
+
+    await userEvent.type(description, 'description')
+    await userEvent.type(secret, 'secret')
 
     await selectEvent.select(events, ['DEPLOYMENT_STARTED'], {
       container: document.body,
     })
 
-    fireEvent.input(tags, { target: { value: 'test' } })
-    fireEvent.keyDown(tags, { key: 'Enter', keyCode: 13 })
+    await userEvent.type(tags, 'test')
+    await userEvent.keyboard('{enter}')
 
     await selectEvent.select(envType, ['STAGING'], {
       container: document.body,
     })
 
-    const button = getByTestId(baseElement, 'submit-button')
-    await waitFor(() => {
-      expect(button).not.toBeDisabled()
-    })
+    const button = screen.getByTestId('submit-button')
+    expect(button).not.toBeDisabled()
 
-    await act(() => {
-      fireEvent.click(button)
-    })
-    expect(useCreateWebhookMockSpy().mutate).toHaveBeenCalledWith({
-      organizationId: 'organizationId',
-      data: {
+    await userEvent.click(button)
+
+    expect(useCreateWebhookMockSpy().mutateAsync).toHaveBeenCalledWith({
+      organizationId: '000-000-000',
+      webhookRequest: {
         target_url: 'https://test.com',
         kind: 'STANDARD',
         description: 'description',
@@ -91,40 +92,41 @@ describe('WebhookCrudModalFeature', () => {
   })
 
   it('should mutate useEditWebhook', async () => {
-    const { baseElement } = render(<WebhookCrudModalFeature {...props} webhook={mockWebhook} />)
-    const url = getByLabelText(baseElement, 'URL')
-    const kind = getByLabelText(baseElement, 'Kind')
-    const description = getByLabelText(baseElement, 'Description')
-    const secret = getByLabelText(baseElement, 'Secret')
-    const tags = getByTestId(baseElement, 'input-tags-field')
-    const envType = getByLabelText(baseElement, 'Environment type filter')
+    const { userEvent } = renderWithProviders(<WebhookCrudModalFeature {...props} webhook={mockWebhook} />)
+    const url = screen.getByLabelText('URL')
+    const kind = screen.getByLabelText('Kind')
+    const description = screen.getByLabelText('Description')
+    const secret = screen.getByLabelText('Secret')
+    const tags = screen.getByTestId('input-tags-field')
+    const envType = screen.getByLabelText('Environment type filter')
 
-    fireEvent.change(url, { target: { value: 'https://test.com' } })
+    await userEvent.clear(url)
+    await userEvent.type(url, 'https://test.com')
+
     await selectEvent.select(kind, ['Standard'], {
       container: document.body,
     })
-    fireEvent.change(description, { target: { value: 'description' } })
-    fireEvent.change(secret, { target: { value: 'secret' } })
 
-    fireEvent.input(tags, { target: { value: 'test' } })
-    fireEvent.keyDown(tags, { key: 'Enter', keyCode: 13 })
+    await userEvent.clear(description)
+    await userEvent.type(description, 'description')
+    await userEvent.type(secret, 'secret')
+
+    await userEvent.type(tags, 'test')
+    await userEvent.keyboard('{enter}')
 
     await selectEvent.select(envType, ['STAGING'], {
       container: document.body,
     })
 
-    const button = getByTestId(baseElement, 'submit-button')
-    await waitFor(() => {
-      expect(button).not.toBeDisabled()
-    })
+    const button = screen.getByTestId('submit-button')
+    expect(button).not.toBeDisabled()
 
-    await act(() => {
-      fireEvent.click(button)
-    })
-    expect(useEditWebhooksMockSpy().mutate).toHaveBeenCalledWith({
-      organizationId: 'organizationId',
+    await userEvent.click(button)
+
+    expect(useEditWebhooksMockSpy().mutateAsync).toHaveBeenCalledWith({
+      organizationId: '000-000-000',
       webhookId: mockWebhook.id,
-      data: {
+      webhookRequest: {
         ...mockWebhook,
         target_url: 'https://test.com',
         kind: 'STANDARD',

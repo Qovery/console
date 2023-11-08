@@ -1,6 +1,6 @@
 import { type OrganizationWebhookCreateRequest, type OrganizationWebhookResponse } from 'qovery-typescript-axios'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useCreateWebhook, useEditWebhook } from '@qovery/domains/organization'
+import { useCreateWebhook, useEditWebhook } from '@qovery/domains/organizations/feature'
 import WebhookCrudModal from '../../../ui/page-organization-webhooks/webhook-crud-modal/webhook-crud-modal'
 
 export interface WebhookCrudModalFeatureProps {
@@ -9,42 +9,51 @@ export interface WebhookCrudModalFeatureProps {
   webhook?: OrganizationWebhookResponse
 }
 
-export function WebhookCrudModalFeature(props: WebhookCrudModalFeatureProps) {
-  const createWebhooks = useCreateWebhook(props.organizationId, props.closeModal)
-  const editWebhook = useEditWebhook(props.organizationId, props.closeModal)
+export function WebhookCrudModalFeature({ organizationId, closeModal, webhook }: WebhookCrudModalFeatureProps) {
+  const { mutateAsync: createWebhook, isLoading: isLoadingCreateWebhook } = useCreateWebhook({ organizationId })
+  const { mutateAsync: editWebhook, isLoading: isLoadingEditWebhook } = useEditWebhook({ organizationId })
 
   const methods = useForm<OrganizationWebhookCreateRequest>({
     mode: 'all',
     defaultValues: {
-      kind: props.webhook?.kind ?? undefined,
-      environment_types_filter: props.webhook?.environment_types_filter ?? [],
-      project_names_filter: props.webhook?.project_names_filter ?? [],
-      events: props.webhook?.events ?? [],
-      description: props.webhook?.description ?? '',
-      target_url: props.webhook?.target_url ?? '',
+      kind: webhook?.kind ?? undefined,
+      environment_types_filter: webhook?.environment_types_filter ?? [],
+      project_names_filter: webhook?.project_names_filter ?? [],
+      events: webhook?.events ?? [],
+      description: webhook?.description ?? '',
+      target_url: webhook?.target_url ?? '',
       target_secret: '',
     },
   })
 
-  const onSubmit = methods.handleSubmit((data) => {
-    if (props.webhook) {
-      editWebhook.mutate({
-        organizationId: props.organizationId,
-        webhookId: props.webhook.id,
-        data: { ...props.webhook, ...data },
-      })
-    } else {
-      createWebhooks.mutate({ organizationId: props.organizationId, data })
+  const onSubmit = methods.handleSubmit(async (data) => {
+    try {
+      if (webhook) {
+        await editWebhook({
+          organizationId,
+          webhookId: webhook.id,
+          webhookRequest: { ...webhook, ...data },
+        })
+        closeModal()
+      } else {
+        await createWebhook({
+          organizationId,
+          webhookRequest: data,
+        })
+        closeModal()
+      }
+    } catch (error) {
+      console.error(error)
     }
   })
 
   return (
     <FormProvider {...methods}>
       <WebhookCrudModal
-        closeModal={props.closeModal}
+        closeModal={closeModal}
         onSubmit={onSubmit}
-        isEdition={Boolean(props.webhook)}
-        isLoading={editWebhook.isLoading || createWebhooks.isLoading}
+        isEdition={Boolean(webhook)}
+        isLoading={isLoadingCreateWebhook || isLoadingEditWebhook}
       />
     </FormProvider>
   )
