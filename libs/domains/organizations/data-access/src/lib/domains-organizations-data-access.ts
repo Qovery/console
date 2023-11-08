@@ -1,6 +1,7 @@
 import { createQueryKeys } from '@lukemorales/query-key-factory'
 import {
   type AwsCredentialsRequest,
+  BillingApi,
   CloudProviderCredentialsApi,
   type CloudProviderEnum,
   ContainerRegistriesApi,
@@ -20,14 +21,13 @@ import {
 import { match } from 'ts-pattern'
 import { type DistributiveOmit } from '@qovery/shared/util-types'
 
-// import { billing } from './domains-billing-data-access'
-
 const containerRegistriesApi = new ContainerRegistriesApi()
 const organizationApi = new OrganizationMainCallsApi()
 const gitApi = new OrganizationAccountGitRepositoriesApi()
 const apiTokenApi = new OrganizationApiTokenApi()
 const webhookApi = new OrganizationWebhookApi()
 const cloudProviderCredentialsApi = new CloudProviderCredentialsApi()
+const billingApi = new BillingApi()
 
 type CredentialRequest =
   | {
@@ -193,6 +193,27 @@ export const organizations = createQueryKeys('organizations', {
     async queryFn() {
       const response = await webhookApi.listOrganizationWebHooks(organizationId)
       return response.data.results
+    },
+  }),
+  billingInfo: ({ organizationId }: { organizationId: string }) => ({
+    queryKey: [organizationId],
+    async queryFn() {
+      const response = await billingApi.getOrganizationBillingInfo(organizationId)
+      return response.data
+    },
+  }),
+  currentCost: ({ organizationId }: { organizationId: string }) => ({
+    queryKey: [organizationId],
+    async queryFn() {
+      const result = await billingApi.getOrganizationCurrentCost(organizationId)
+      return result.data
+    },
+  }),
+  invoices: ({ organizationId }: { organizationId: string }) => ({
+    queryKey: [organizationId],
+    async queryFn() {
+      const result = await billingApi.listOrganizationInvoice(organizationId)
+      return result.data.results
     },
   }),
 })
@@ -377,5 +398,9 @@ export const mutations = {
       .exhaustive()
 
     return cloudProviderCredential
+  },
+  async invoiceUrl({ organizationId, invoiceId }: { organizationId: string; invoiceId: string }) {
+    const result = await billingApi.getOrganizationInvoicePDF(organizationId, invoiceId)
+    return result.data
   },
 }

@@ -1,6 +1,7 @@
-import { PlanEnum } from 'qovery-typescript-axios'
+import { type OrganizationCurrentCost, PlanEnum } from 'qovery-typescript-axios'
 import { type CardImages } from 'react-payment-inputs/images'
-import { type CreditCard, type OrganizationEntity } from '@qovery/shared/interfaces'
+import { useParams } from 'react-router-dom'
+import { type CreditCard } from '@qovery/shared/interfaces'
 import { CLUSTERS_URL, SETTINGS_BILLING_URL, SETTINGS_URL } from '@qovery/shared/routes'
 import {
   ButtonLegacy,
@@ -16,7 +17,7 @@ import { costToHuman, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import InvoicesListFeature from '../../feature/page-organization-billing-summary-feature/invoices-list-feature/invoices-list-feature'
 
 export interface PageOrganizationBillingSummaryProps {
-  organization?: OrganizationEntity
+  currentCost?: OrganizationCurrentCost
   creditCard?: CreditCard
   numberOfRunningClusters?: number
   numberOfClusters?: number
@@ -26,6 +27,8 @@ export interface PageOrganizationBillingSummaryProps {
 }
 
 export function PageOrganizationBillingSummary(props: PageOrganizationBillingSummaryProps) {
+  const { organizationId = '' } = useParams()
+
   return (
     <div className="flex flex-col justify-between w-full max-w-[832px]">
       <div className="p-8">
@@ -51,12 +54,9 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
           <div className="flex-1  h-[114px]  border  p-5 border-neutral-200 rounded">
             <div className="text-neutral-350 text-xs mb-1 font-medium">Current plan</div>
             <div className="text-neutral-400 font-bold text-sm mb-1">
-              <Skeleton height={20} width={100} show={!props.organization?.currentCost?.value?.plan}>
+              <Skeleton height={20} width={100} show={!props.currentCost?.plan}>
                 <div className="h-5">
-                  {props.organization?.currentCost?.value?.plan
-                    ? upperCaseFirstLetter(props.organization?.currentCost?.value?.plan)
-                    : 'N/A'}{' '}
-                  plan
+                  {props.currentCost?.plan ? upperCaseFirstLetter(props.currentCost?.plan) : 'N/A'} plan
                 </div>
               </Skeleton>
             </div>
@@ -70,30 +70,27 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
           <div className="flex-1  h-[114px]  border  p-5 border-neutral-200 rounded">
             <div className="text-neutral-350 text-xs mb-1 font-medium">Current monthly bill</div>
             <div className="mb-2">
-              <Skeleton height={20} width={100} show={!props.organization?.currentCost?.value?.plan}>
+              <Skeleton height={20} width={100} show={!props.currentCost?.plan}>
                 <div className="h-5">
                   <strong className="text-neutral-400 font-bold text-sm">
-                    {costToHuman(
-                      props.organization?.currentCost?.value?.cost?.total || 0,
-                      props.organization?.currentCost?.value?.cost?.currency_code || 'USD'
-                    )}
+                    {costToHuman(props.currentCost?.cost?.total || 0, props.currentCost?.cost?.currency_code || 'USD')}
                   </strong>{' '}
                   <span className="text-neutral-350 text-xs">/ m</span>
                 </div>
               </Skeleton>
             </div>
-            {props.organization?.currentCost?.value?.plan !== PlanEnum.FREE && (
+            {props.currentCost?.plan !== PlanEnum.FREE && (
               <p className="text-neutral-350 text-xs font-medium">
                 Next invoice{' '}
                 <strong className="text-neutral-400">
-                  {props.organization?.currentCost?.value?.paid_usage?.renewal_at &&
-                    dateToFormat(props.organization.currentCost.value.paid_usage.renewal_at, 'MMM dd, Y')}
+                  {props.currentCost?.paid_usage?.renewal_at &&
+                    dateToFormat(props.currentCost?.paid_usage.renewal_at, 'MMM dd, Y')}
                 </strong>
               </p>
             )}
           </div>
 
-          {props.organization?.currentCost?.value && props.organization.currentCost.value.plan !== PlanEnum.FREE && (
+          {props.currentCost?.plan !== PlanEnum.FREE && (
             <div className="flex-1  h-[114px]  border  p-5 border-neutral-200 rounded">
               <div className="text-neutral-350 text-xs mb-3 font-medium">Payment method</div>
               <div className="mb-2">
@@ -112,7 +109,7 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
                   </div>
                 </Skeleton>
               </div>
-              <Link to={SETTINGS_URL(props.organization?.id || '') + SETTINGS_BILLING_URL} size="xs">
+              <Link to={SETTINGS_URL(organizationId) + SETTINGS_BILLING_URL} size="xs">
                 Edit payment
               </Link>
             </div>
@@ -140,19 +137,19 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
                 </div>
               </Skeleton>
             </div>
-            <Link to={CLUSTERS_URL(props.organization?.id || '')} size="xs">
+            <Link to={CLUSTERS_URL(organizationId)} size="xs">
               Manage clusters
             </Link>
           </div>
           <div className="flex-1 p-5  h-[114px]">
             <div className="text-neutral-350 text-xs mb-1 font-medium">Deployments</div>
-            <Skeleton height={20} width={100} show={!props.organization?.currentCost?.value?.plan}>
+            <Skeleton height={20} width={100} show={!props.currentCost?.plan}>
               <div className="h-5">
                 <strong className="text-neutral-400 font-bold text-sm">
-                  {props.organization?.currentCost?.value?.paid_usage?.consumed_deployments}
+                  {props.currentCost?.paid_usage?.consumed_deployments}
                 </strong>{' '}
                 <span className="text-neutral-350 text-xs">
-                  / {props.organization?.currentCost?.value?.paid_usage?.max_deployments_per_month}
+                  / {props.currentCost?.paid_usage?.max_deployments_per_month}
                 </span>
               </div>
             </Skeleton>

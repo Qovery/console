@@ -6,13 +6,12 @@ import { useIntercom } from 'react-use-intercom'
 import {
   fetchClusters,
   fetchCreditCards,
-  fetchCurrentCost,
   getCreditCardsState,
   selectClustersEntitiesByOrganizationId,
   selectClustersLoadingStatus,
   selectCreditCardsByOrganizationId,
-  selectOrganizationById,
 } from '@qovery/domains/organization'
+import { useCurrentCost } from '@qovery/domains/organizations/feature'
 import { useModal } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { type AppDispatch, type RootState } from '@qovery/state/store'
@@ -24,9 +23,8 @@ export function PageOrganizationBillingSummaryFeature() {
 
   const { openModal, closeModal } = useModal()
 
-  const { organizationId } = useParams()
+  const { organizationId = '' } = useParams()
   const dispatch = useDispatch<AppDispatch>()
-  const organization = useSelector((state: RootState) => selectOrganizationById(state, organizationId || ''))
   const clusters = useSelector((state: RootState) =>
     selectClustersEntitiesByOrganizationId(state, organizationId || '')
   )
@@ -36,6 +34,7 @@ export function PageOrganizationBillingSummaryFeature() {
   const creditCardLoadingStatus = useSelector<RootState, string | undefined>(
     (state) => getCreditCardsState(state).loadingStatus
   )
+  const { data: currentCost } = useCurrentCost({ organizationId })
   const { show: showIntercom } = useIntercom()
 
   const numberOfRunningClusters =
@@ -48,17 +47,11 @@ export function PageOrganizationBillingSummaryFeature() {
   const numberOfClusters = clusters?.length || undefined
 
   useEffect(() => {
-    if (organizationId && !organization?.currentCost?.loadingStatus) {
-      dispatch(fetchCurrentCost({ organizationId }))
-    }
-  }, [organizationId, dispatch, organization?.billingInfos?.loadingStatus])
-
-  useEffect(() => {
-    if (organizationId && creditCardLoadingStatus === 'not loaded') dispatch(fetchCreditCards({ organizationId }))
+    if (creditCardLoadingStatus === 'not loaded') dispatch(fetchCreditCards({ organizationId }))
   }, [organizationId, dispatch, creditCardLoadingStatus])
 
   useEffect(() => {
-    if (organizationId && clustersStatusLoading === 'not loaded') {
+    if (clustersStatusLoading === 'not loaded') {
       dispatch(fetchClusters({ organizationId }))
     }
   }, [organizationId, dispatch, clustersStatusLoading])
@@ -71,7 +64,7 @@ export function PageOrganizationBillingSummaryFeature() {
 
   return (
     <PageOrganizationBillingSummary
-      organization={organization}
+      currentCost={currentCost}
       numberOfClusters={numberOfClusters}
       numberOfRunningClusters={numberOfRunningClusters}
       creditCard={creditCard}
