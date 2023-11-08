@@ -51,7 +51,6 @@ export const addCreditCode = (payload: { organizationId: string; code: string })
 }
 
 export const billingInfoExtraReducers = (builder: ActionReducerMapBuilder<OrganizationState>) => {
-  //builder
   builder
     .addCase(fetchBillingInfo.pending, (state: OrganizationState, action) => {
       const value = state.entities[action.meta.arg.organizationId]?.billingInfos?.value
@@ -82,7 +81,6 @@ export const billingInfoExtraReducers = (builder: ActionReducerMapBuilder<Organi
     .addCase(fetchBillingInfo.rejected, (state: OrganizationState, action) => {
       toastError(action.error)
     })
-
     .addCase(fetchInvoices.pending, (state: OrganizationState, action) => {
       const items = state.entities[action.meta.arg.organizationId]?.invoices?.items
 

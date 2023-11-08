@@ -132,6 +132,11 @@
         "react/jsx-curly-brace-presence": "error",
         "react/jsx-key": "error"
       }
+    },
+    {
+      "files": ["*.ts", "*.tsx"],
+      "extends": ["plugin:@tanstack/eslint-plugin-query/recommended"],
+      "rules": {}
     }
   ]
 }

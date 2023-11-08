@@ -3702,6 +3702,7 @@ __metadata:
     "@swc/core": 1.3.95
     "@swc/helpers": 0.5.3
     "@szhsin/react-menu": ^3.0.0
+    "@tanstack/eslint-plugin-query": ^5.6.0
     "@tanstack/react-query": ^4.32.6
     "@tanstack/react-query-devtools": ^4.32.6
     "@tanstack/react-table": ^8.10.3
@@ -6235,6 +6236,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tanstack/eslint-plugin-query@npm:^5.6.0":
+  version: 5.6.0
+  resolution: "@tanstack/eslint-plugin-query@npm:5.6.0"
+  dependencies:
+    "@typescript-eslint/utils": ^5.54.0
+  peerDependencies:
+    eslint: ^8.0.0
+  checksum: dec80d44d33bf7c8e911cbc14eacd4c7ed505d6d40c9d3788db883773d522423f5ddfc3bb734005063dd08541d1235fb001fb8aebe4d5c9e326cf38c1844d9e5
+  languageName: node
+  linkType: hard
+
 "@tanstack/match-sorter-utils@npm:^8.7.0":
   version: 8.8.4
   resolution: "@tanstack/match-sorter-utils@npm:8.8.4"
@@ -7344,7 +7356,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/utils@npm:5.62.0, @typescript-eslint/utils@npm:^5.45.0, @typescript-eslint/utils@npm:^5.60.1":
+"@typescript-eslint/utils@npm:5.62.0, @typescript-eslint/utils@npm:^5.45.0, @typescript-eslint/utils@npm:^5.54.0, @typescript-eslint/utils@npm:^5.60.1":
   version: 5.62.0
   resolution: "@typescript-eslint/utils@npm:5.62.0"
   dependencies:
