@@ -80,14 +80,14 @@ export function CreateEditCredentialsModalFeature(props: CreateEditCredentialsMo
           organizationId,
           cloudProvider,
           credentialId: currentCredential.id,
-          credentialRequest: credentials,
+          payload: credentials,
         })
         onClose()
       } else {
         await createCloudProviderCredential({
           organizationId,
           cloudProvider,
-          credentialRequest: credentials,
+          payload: credentials,
         })
         onClose()
       }

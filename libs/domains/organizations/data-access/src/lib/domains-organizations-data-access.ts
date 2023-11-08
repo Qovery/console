@@ -18,6 +18,7 @@ import {
   type ScalewayCredentialsRequest,
 } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
+import { type DistributiveOmit } from '@qovery/shared/util-types'
 
 const containerRegistriesApi = new ContainerRegistriesApi()
 const organizationApi = new OrganizationMainCallsApi()
@@ -25,6 +26,32 @@ const gitApi = new OrganizationAccountGitRepositoriesApi()
 const apiTokenApi = new OrganizationApiTokenApi()
 const webhookApi = new OrganizationWebhookApi()
 const cloudProviderCredentialsApi = new CloudProviderCredentialsApi()
+
+export type cloudProvider = keyof typeof CloudProviderEnum
+
+export type AWSType = Extract<cloudProvider, 'AWS'>
+export type ScalewayType = Extract<cloudProvider, 'SCW'>
+export type DoType = Extract<cloudProvider, 'DO'>
+
+type CredentialRequest =
+  | {
+      organizationId: string
+      cloudProvider: cloudProvider
+      payload: AwsCredentialsRequest
+      credentialId: string
+    }
+  | {
+      organizationId: string
+      cloudProvider: cloudProvider
+      payload: ScalewayCredentialsRequest
+      credentialId: string
+    }
+  | {
+      organizationId: string
+      cloudProvider: cloudProvider
+      payload: DoCredentialsRequest
+      credentialId: string
+    }
 
 export const organizations = createQueryKeys('organizations', {
   containerRegistries: ({ organizationId }: { organizationId: string }) => ({
@@ -281,110 +308,73 @@ export const mutations = {
     const response = await webhookApi.deleteOrganizationWebhook(organizationId, webhookId)
     return response.data
   },
-  async createCloudProviderCredential({
-    organizationId,
-    cloudProvider,
-    credentialRequest,
-  }: {
-    organizationId: string
-    cloudProvider: CloudProviderEnum
-    credentialRequest: AwsCredentialsRequest | ScalewayCredentialsRequest | DoCredentialsRequest
-  }) {
-    const cloudProviderCredential = await match(cloudProvider)
-      .with('AWS', async () => {
+  async createCloudProviderCredential(request: DistributiveOmit<CredentialRequest, 'credentialId'>) {
+    const cloudProviderCredential = await match(request)
+      .with({ cloudProvider: 'AWS' }, async ({ organizationId, payload }) => {
         const response = await cloudProviderCredentialsApi.createAWSCredentials(
           organizationId,
-          credentialRequest as AwsCredentialsRequest
+          payload as AwsCredentialsRequest
         )
         return response.data
       })
-      .with('SCW', async () => {
-        const response = await cloudProviderCredentialsApi.createScalewayCredentials(
-          organizationId,
-          credentialRequest as ScalewayCredentialsRequest
-        )
+      .with({ cloudProvider: 'SCW' }, async ({ organizationId, payload }) => {
+        const response = await cloudProviderCredentialsApi.createScalewayCredentials(organizationId, payload)
         return response.data
       })
       /*
        * @deprecated Digital Ocean is not supported anymore (should be remove on the API doc)
        */
-      .with('DO', async () => {
-        const response = await cloudProviderCredentialsApi.createDOCredentials(
-          organizationId,
-          credentialRequest as DoCredentialsRequest
-        )
+      .with({ cloudProvider: 'DO' }, async ({ organizationId, payload }) => {
+        const response = await cloudProviderCredentialsApi.createDOCredentials(organizationId, payload)
         return response.data
       })
       .exhaustive()
 
     return cloudProviderCredential
   },
-  async editCloudProviderCredential({
-    organizationId,
-    credentialId,
-    cloudProvider,
-    credentialRequest,
-  }: {
-    organizationId: string
-    credentialId: string
-    cloudProvider: CloudProviderEnum
-    credentialRequest: AwsCredentialsRequest | ScalewayCredentialsRequest | DoCredentialsRequest
-  }) {
-    const cloudProviderCredential = await match(cloudProvider)
-      .with('AWS', async () => {
+  async editCloudProviderCredential(request: CredentialRequest) {
+    const cloudProviderCredential = await match(request)
+      .with({ cloudProvider: 'AWS' }, async ({ organizationId, credentialId, payload }) => {
         const response = await cloudProviderCredentialsApi.editAWSCredentials(
           organizationId,
           credentialId,
-          credentialRequest as AwsCredentialsRequest
+          payload as AwsCredentialsRequest
         )
         return response.data
       })
-      .with('SCW', async () => {
+      .with({ cloudProvider: 'SCW' }, async ({ organizationId, credentialId, payload }) => {
         const response = await cloudProviderCredentialsApi.editScalewayCredentials(
           organizationId,
           credentialId,
-
-          credentialRequest as ScalewayCredentialsRequest
+          payload
         )
         return response.data
       })
       /*
        * @deprecated Digital Ocean is not supported anymore (should be remove on the API doc)
        */
-      .with('DO', async () => {
-        const response = await cloudProviderCredentialsApi.editDOCredentials(
-          organizationId,
-          credentialId,
-          credentialRequest as DoCredentialsRequest
-        )
+      .with({ cloudProvider: 'DO' }, async ({ organizationId, credentialId, payload }) => {
+        const response = await cloudProviderCredentialsApi.editDOCredentials(organizationId, credentialId, payload)
         return response.data
       })
       .exhaustive()
 
     return cloudProviderCredential
   },
-  async deleteCloudProviderCredential({
-    organizationId,
-    credentialId,
-    cloudProvider,
-  }: {
-    organizationId: string
-    credentialId: string
-    cloudProvider: CloudProviderEnum
-  }) {
-    const cloudProviderCredential = await match(cloudProvider)
-      .with('AWS', async () => {
+  async deleteCloudProviderCredential(request: DistributiveOmit<CredentialRequest, 'payload'>) {
+    const cloudProviderCredential = await match(request)
+      .with({ cloudProvider: 'AWS' }, async ({ organizationId, credentialId }) => {
         const response = await cloudProviderCredentialsApi.deleteAWSCredentials(credentialId, organizationId)
         return response.data
       })
-      .with('SCW', async () => {
+      .with({ cloudProvider: 'SCW' }, async ({ organizationId, credentialId }) => {
         const response = await cloudProviderCredentialsApi.deleteScalewayCredentials(credentialId, organizationId)
         return response.data
       })
       /*
        * @deprecated Digital Ocean is not supported anymore (should be remove on the API doc)
        */
-      .with('DO', async () => {
+      .with({ cloudProvider: 'DO' }, async ({ organizationId, credentialId }) => {
         const response = await cloudProviderCredentialsApi.deleteDOCredentials(credentialId, organizationId)
         return response.data
       })

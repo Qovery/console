@@ -15,4 +15,8 @@ export function intersectionTypeGuard<T extends GenericTypeGuard>(
 ): (x: any) => x is IntersectionTypeGuard<T> {
   return (value): value is IntersectionTypeGuard<T> => guards.every((guard) => guard(value))
 }
+
+// From https://stackoverflow.com/a/57103940
+export type DistributiveOmit<T, K extends keyof any> = T extends any ? Omit<T, K> : never
+
 /* eslint-enable @typescript-eslint/no-explicit-any */
