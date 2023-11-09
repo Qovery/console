@@ -1,11 +1,8 @@
 import { type Invoice } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { selectOrganizationById } from '@qovery/domains/organization'
 import { useInvoiceUrl, useInvoices } from '@qovery/domains/organizations/feature'
 import { type Value } from '@qovery/shared/interfaces'
-import { type RootState } from '@qovery/state/store'
 import InvoicesList from '../../../ui/page-organization-billing-summary/invoices-list/invoices-list'
 
 export const getListOfYears = (invoices: Invoice[]) => {
@@ -15,7 +12,6 @@ export const getListOfYears = (invoices: Invoice[]) => {
 
 export function InvoicesListFeature() {
   const { organizationId = '' } = useParams()
-  const organization = useSelector((state: RootState) => selectOrganizationById(state, organizationId || ''))
   const [yearsFilterOptions, setYearsFilterOptions] = useState<Value[]>([])
   const [idOfInvoiceToDownload, setIdOfInvoiceToDownload] = useState<string | undefined>(undefined)
   const [invoices, setInvoices] = useState<Invoice[]>([])
@@ -50,7 +46,7 @@ export function InvoicesListFeature() {
         ...years.map((year) => ({ label: `${year}`, value: `${year}` })),
       ])
     }
-  }, [dataInvoices, organization])
+  }, [dataInvoices])
 
   const filterByYear = (year?: string) => {
     if (invoices.length > 0) {

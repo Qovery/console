@@ -1,17 +1,19 @@
-import { act, getAllByTestId, render } from '__tests__/utils/setup-jest'
 import { type Invoice, InvoiceStatusEnum } from 'qovery-typescript-axios'
-import * as storeOrganization from '@qovery/domains/organization'
-import { organizationFactoryMock } from '@qovery/shared/factories'
+import * as organizationsDomain from '@qovery/domains/organizations/feature'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import InvoicesListFeature, { getListOfYears } from './invoices-list-feature'
 
 import SpyInstance = jest.SpyInstance
+
+const useInvoicesSpy: SpyInstance = jest.spyOn(organizationsDomain, 'useInvoices')
+const useInvoiceUrlSpy: SpyInstance = jest.spyOn(organizationsDomain, 'useInvoiceUrl')
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useParams: () => ({ organizationId: '1' }),
 }))
 
-const invoices: Invoice[] = [
+const invoicesMock: Invoice[] = [
   {
     status: InvoiceStatusEnum.UNKNOWN,
     currency_code: 'EUR',
@@ -54,75 +56,42 @@ const invoices: Invoice[] = [
   },
 ]
 
-const mockOrganization = organizationFactoryMock(1)[0]
-mockOrganization.invoices = {
-  loadingStatus: 'loaded',
-  items: invoices,
-}
-
-jest.mock('@qovery/domains/organization', () => ({
-  ...jest.requireActual('@qovery/domains/organization'),
-  selectOrganizationById: () => mockOrganization,
-}))
-
-const mockDispatch = jest.fn()
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useDispatch: () => mockDispatch,
-}))
-
 describe('InvoicesListFeature', () => {
   beforeEach(() => {
-    mockDispatch.mockImplementation(() => ({
-      unwrap: () => Promise.resolve({ url: 'url' }),
-    }))
-
-    mockOrganization.invoices = {
-      loadingStatus: 'not loaded',
-      items: invoices,
-    }
+    useInvoicesSpy.mockReturnValue({
+      data: invoicesMock,
+    })
+    useInvoiceUrlSpy.mockReturnValue({
+      mutateAsync: jest.fn(),
+    })
   })
 
   it('should render successfully', () => {
-    const { baseElement } = render(<InvoicesListFeature />)
+    const { baseElement } = renderWithProviders(<InvoicesListFeature />)
     expect(baseElement).toBeTruthy()
   })
 
   it('should dispatch fetchInvoices', () => {
-    const fetchBillingInfoSpy: SpyInstance = jest.spyOn(storeOrganization, 'fetchInvoices')
-    mockOrganization.invoices = {
-      loadingStatus: undefined,
-      items: invoices,
-    }
-
-    render(<InvoicesListFeature />)
-    expect(fetchBillingInfoSpy).toHaveBeenCalledWith({
+    renderWithProviders(<InvoicesListFeature />)
+    expect(useInvoicesSpy).toHaveBeenCalledWith({
       organizationId: '1',
     })
   })
 
-  it('should dispatch downloadOne', async () => {
-    const spy: SpyInstance = jest.spyOn(storeOrganization, 'fetchInvoiceUrl')
-    mockOrganization.invoices = {
-      loadingStatus: 'loaded',
-      items: invoices,
-    }
-    jest.spyOn(storeOrganization, 'selectOrganizationById').mockReturnValue(mockOrganization)
+  it('should download invoice', async () => {
     window.open = jest.fn((url: string, target: string) => ({}))
-    const { baseElement } = render(<InvoicesListFeature />)
-    const button = getAllByTestId(baseElement, 'download-invoice-btn')[0]
+    const { userEvent } = renderWithProviders(<InvoicesListFeature />)
+    const button = screen.getAllByTestId('download-invoice-btn')[0]
 
-    await act(() => {
-      button.click()
-    })
+    await userEvent.click(button)
 
-    expect(spy).toHaveBeenCalledWith({ organizationId: '1', invoiceId: '1' })
+    expect(useInvoiceUrlSpy().mutateAsync).toHaveBeenCalledWith({ organizationId: '1', invoiceId: '1' })
   })
 })
 
 describe('getListOfYears', () => {
   it('should return an array of years', () => {
-    const result = getListOfYears(invoices)
+    const result = getListOfYears(invoicesMock)
     expect(result).toEqual([2023, 2021, 2020, 2018])
   })
 })
