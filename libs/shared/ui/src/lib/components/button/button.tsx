@@ -16,8 +16,8 @@ const buttonVariants = cva(['inline-flex', 'items-center', 'shrink-0', 'font-med
     },
     size: {
       xs: ['text-xs', 'px-1', 'py-0.5'],
-      sm: ['text-sm', 'h-7', 'px-2'],
-      md: ['text-sm', 'h-9', 'px-3'],
+      sm: ['text-xs', 'h-7', 'px-2'],
+      md: ['text-xs', 'h-8', 'px-3'],
       lg: ['text-sm', 'h-10', 'px-4'],
     },
     radius: {
