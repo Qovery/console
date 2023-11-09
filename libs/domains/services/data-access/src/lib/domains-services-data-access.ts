@@ -48,7 +48,7 @@ const containerMainCallsApi = new ContainerMainCallsApi()
 const databaseMainCallsApi = new DatabaseMainCallsApi()
 const environmentMainCallsApi = new EnvironmentMainCallsApi()
 const jobMainCallsApi = new JobMainCallsApi()
-const helmCallsApi = new HelmMainCallsApi()
+const helmMainCallsApi = new HelmMainCallsApi()
 
 const applicationDeploymentApi = new ApplicationDeploymentRestrictionApi()
 const jobDeploymentApi = new JobDeploymentRestrictionApi()
@@ -164,7 +164,7 @@ export const services = createQueryKeys('services', {
         .with('CONTAINER', () => containerMainCallsApi.getContainerStatus.bind(containerMainCallsApi))
         .with('DATABASE', () => databaseMainCallsApi.getDatabaseStatus.bind(databaseMainCallsApi))
         .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', () => jobMainCallsApi.getJobStatus.bind(jobMainCallsApi))
-        .with('HELM', () => helmCallsApi.getHelmStatus.bind(helmCallsApi))
+        .with('HELM', () => helmMainCallsApi.getHelmStatus.bind(helmMainCallsApi))
         .exhaustive()
       const response = await fn(serviceId)
       return response.data
@@ -210,7 +210,7 @@ export const services = createQueryKeys('services', {
           serviceType: ServiceTypeEnum.JOB as const,
         }))
         .with('HELM', async () => ({
-          ...(await helmCallsApi.getHelm(serviceId)).data,
+          ...(await helmMainCallsApi.getHelm(serviceId)).data,
           serviceType: ServiceTypeEnum.HELM as const,
         }))
         .exhaustive()
@@ -222,7 +222,7 @@ export const services = createQueryKeys('services', {
     serviceType,
   }: {
     serviceId: string
-    serviceType: Extract<ServiceType, 'APPLICATION' | 'JOB' | 'CRON_JOB' | 'LIFECYCLE_JOB'>
+    serviceType: Extract<ServiceType, 'APPLICATION' | 'JOB' | 'CRON_JOB' | 'LIFECYCLE_JOB' | 'HELM'>
   }) => ({
     queryKey: [serviceId],
     async queryFn() {
@@ -232,6 +232,10 @@ export const services = createQueryKeys('services', {
         })
         .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', async () => {
           return (await jobMainCallsApi.listJobCommit(serviceId)).data.results
+        })
+        .with('HELM', async () => {
+          // TODO: waiting for helmMainCallsApi.listHelmCommit
+          return []
         })
         .exhaustive()
     },

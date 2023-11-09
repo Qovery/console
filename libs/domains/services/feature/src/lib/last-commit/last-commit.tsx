@@ -10,7 +10,7 @@ export interface LastCommitProps {
   className?: string
   gitRepository: ApplicationGitRepository
   serviceId: string
-  serviceType: Extract<ServiceType, 'APPLICATION' | 'JOB' | 'CRON_JOB' | 'LIFECYCLE_JOB'>
+  serviceType: Extract<ServiceType, 'APPLICATION' | 'JOB' | 'CRON_JOB' | 'LIFECYCLE_JOB' | 'HELM'>
 }
 
 export function LastCommit({ className, gitRepository, serviceId, serviceType }: LastCommitProps) {

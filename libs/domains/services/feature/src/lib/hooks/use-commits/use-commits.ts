@@ -12,10 +12,10 @@ export function useCommits({ serviceId, serviceType }: UseCommitsProps) {
   return useQuery({
     ...queries.services.listCommits({
       serviceId,
-      serviceType: serviceType as Extract<ServiceType, 'APPLICATION' | 'JOB' | 'CRON_JOB' | 'LIFECYCLE_JOB'>,
+      serviceType: serviceType as Extract<ServiceType, 'APPLICATION' | 'JOB' | 'CRON_JOB' | 'LIFECYCLE_JOB' | 'HELM'>,
     }),
     enabled: match(serviceType)
-      .with('APPLICATION', 'JOB', 'CRON_JOB', 'LIFECYCLE_JOB', () => true)
+      .with('APPLICATION', 'JOB', 'CRON_JOB', 'LIFECYCLE_JOB', 'HELM', () => true)
       .otherwise(() => false),
   })
 }

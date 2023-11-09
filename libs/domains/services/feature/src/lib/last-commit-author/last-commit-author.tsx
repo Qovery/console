@@ -7,7 +7,7 @@ import { useLastDeployedCommit } from '../hooks/use-last-deployed-commit/use-las
 export interface LastCommitAuthorProps extends Omit<AvatarProps, 'firstName' | 'lastName' | 'url'> {
   gitRepository: ApplicationGitRepository
   serviceId: string
-  serviceType: Extract<ServiceType, 'APPLICATION' | 'JOB' | 'CRON_JOB' | 'LIFECYCLE_JOB'>
+  serviceType: Extract<ServiceType, 'APPLICATION' | 'JOB' | 'CRON_JOB' | 'LIFECYCLE_JOB' | 'HELM'>
 }
 
 export function LastCommitAuthor({
