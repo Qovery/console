@@ -32,4 +32,5 @@ export enum IconEnum {
   DOPPLER = 'DOPPLER',
   TERRAFORM = 'TERRAFORM',
   GENERIC_REGISTRY = 'GENERIC_REGISTRY',
+  HELM = 'HELM',
 }
