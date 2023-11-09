@@ -12,7 +12,7 @@ jest.mock('../hooks/use-git-tokens/use-git-tokens', () => {
           type: 'GITHUB',
           id: '123',
           created_at: '2023-10-31T10:48:26.645507Z',
-          updated_at: '2023-10-31T10:48:26.645507Z',
+          updated_at: new Date(),
           associated_services_count: 0,
         },
         {
@@ -20,7 +20,7 @@ jest.mock('../hooks/use-git-tokens/use-git-tokens', () => {
           type: 'GITLAB',
           id: '456',
           created_at: '2023-10-31T10:48:26.645507Z',
-          updated_at: '2023-10-31T10:48:26.645507Z',
+          updated_at: new Date(),
           associated_services_count: 0,
         },
       ],

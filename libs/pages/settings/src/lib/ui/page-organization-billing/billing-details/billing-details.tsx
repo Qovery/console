@@ -154,6 +154,7 @@ export function BillingDetails(props: BillingDetailsProps) {
                   label="Country (optional)"
                   value={field.value}
                   onChange={field.onChange}
+                  isSearchable
                 />
               )}
             />
