@@ -28,7 +28,7 @@ describe('PageOrganizationBillingSummaryFeature', () => {
   })
 
   it('should fetch credit card, clusters and organization costs', () => {
-    const fetchCreditCardsSpy: SpyInstance = jest.spyOn(storeOrganization, 'fetchCreditCards')
+    const useCreditCardsSpy: SpyInstance = jest.spyOn(organizationsDomain, 'useCreditCards')
     const fetchClustersSpy: SpyInstance = jest.spyOn(storeOrganization, 'fetchClusters')
     const useCurrentCostSpy: SpyInstance = jest.spyOn(organizationsDomain, 'useCurrentCost')
 
@@ -38,7 +38,7 @@ describe('PageOrganizationBillingSummaryFeature', () => {
       </IntercomProvider>
     )
 
-    expect(fetchCreditCardsSpy).toHaveBeenCalled()
+    expect(useCreditCardsSpy).toHaveBeenCalled()
     expect(fetchClustersSpy).toHaveBeenCalled()
     expect(useCurrentCostSpy).toHaveBeenCalled()
   })

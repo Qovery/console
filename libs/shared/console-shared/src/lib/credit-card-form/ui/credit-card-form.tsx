@@ -1,5 +1,5 @@
+import { type CreditCard } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
-import { type CreditCard } from '@qovery/shared/interfaces'
 import { InputCreditCard } from '@qovery/shared/ui'
 
 export interface CreditCardFormProps {

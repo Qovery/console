@@ -5,13 +5,10 @@ import { useParams } from 'react-router-dom'
 import { useIntercom } from 'react-use-intercom'
 import {
   fetchClusters,
-  fetchCreditCards,
-  getCreditCardsState,
   selectClustersEntitiesByOrganizationId,
   selectClustersLoadingStatus,
-  selectCreditCardsByOrganizationId,
 } from '@qovery/domains/organization'
-import { useCurrentCost } from '@qovery/domains/organizations/feature'
+import { useCreditCards, useCurrentCost } from '@qovery/domains/organizations/feature'
 import { useModal } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { type AppDispatch, type RootState } from '@qovery/state/store'
@@ -29,11 +26,8 @@ export function PageOrganizationBillingSummaryFeature() {
     selectClustersEntitiesByOrganizationId(state, organizationId || '')
   )
   const clustersStatusLoading = useSelector(selectClustersLoadingStatus)
-  const creditCards = useSelector((state: RootState) => selectCreditCardsByOrganizationId(state, organizationId || ''))
-  const creditCard = creditCards?.[0]
-  const creditCardLoadingStatus = useSelector<RootState, string | undefined>(
-    (state) => getCreditCardsState(state).loadingStatus
-  )
+
+  const { data: creditCards = [], isLoading: isLoadingCreditCards } = useCreditCards({ organizationId })
   const { data: currentCost } = useCurrentCost({ organizationId })
   const { show: showIntercom } = useIntercom()
 
@@ -45,10 +39,6 @@ export function PageOrganizationBillingSummaryFeature() {
       return acc
     }, 0) || 0
   const numberOfClusters = clusters?.length || undefined
-
-  useEffect(() => {
-    if (creditCardLoadingStatus === 'not loaded') dispatch(fetchCreditCards({ organizationId }))
-  }, [organizationId, dispatch, creditCardLoadingStatus])
 
   useEffect(() => {
     if (clustersStatusLoading === 'not loaded') {
@@ -67,8 +57,8 @@ export function PageOrganizationBillingSummaryFeature() {
       currentCost={currentCost}
       numberOfClusters={numberOfClusters}
       numberOfRunningClusters={numberOfRunningClusters}
-      creditCard={creditCard}
-      creditCardLoading={creditCardLoadingStatus === 'loading'}
+      creditCard={creditCards[0]}
+      creditCardLoading={isLoadingCreditCards}
       onPromoCodeClick={openPromoCodeModal}
       openIntercom={showIntercom}
     />

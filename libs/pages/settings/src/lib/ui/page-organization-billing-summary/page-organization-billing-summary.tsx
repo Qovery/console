@@ -1,7 +1,6 @@
-import { type OrganizationCurrentCost, PlanEnum } from 'qovery-typescript-axios'
+import { type CreditCard, type OrganizationCurrentCost, PlanEnum } from 'qovery-typescript-axios'
 import { type CardImages } from 'react-payment-inputs/images'
 import { useParams } from 'react-router-dom'
-import { type CreditCard } from '@qovery/shared/interfaces'
 import { CLUSTERS_URL, SETTINGS_BILLING_URL, SETTINGS_URL } from '@qovery/shared/routes'
 import {
   ButtonLegacy,

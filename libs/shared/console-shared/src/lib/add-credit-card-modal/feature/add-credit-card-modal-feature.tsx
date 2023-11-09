@@ -1,28 +1,27 @@
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useDispatch } from 'react-redux'
-import { addCreditCard } from '@qovery/domains/organization'
+import { useAddCreditCard } from '@qovery/domains/organizations/feature'
 import { useModal } from '@qovery/shared/ui'
-import { type AppDispatch } from '@qovery/state/store'
 import { type CreditCardFormValues } from '../../credit-card-form/ui/credit-card-form'
 import AddCreditCardModal from '../ui/add-credit-card-modal'
 
 export interface AddCreditCardModalFeatureProps {
-  organizationId?: string
+  organizationId: string
 }
 
-export function AddCreditCardModalFeature(props: AddCreditCardModalFeatureProps) {
+export function AddCreditCardModalFeature({ organizationId }: AddCreditCardModalFeatureProps) {
   const methods = useForm<CreditCardFormValues>()
   const { closeModal } = useModal()
-  const dispatch = useDispatch<AppDispatch>()
   const [loading, setLoading] = useState(false)
+  const { mutateAsync: addCreditCard } = useAddCreditCard({ organizationId })
 
-  const onSubmit = methods.handleSubmit((data) => {
-    if (data.card_number && data.expiry && data.cvc && props.organizationId) {
+  const onSubmit = methods.handleSubmit(async (data) => {
+    if (data.card_number && data.expiry && data.cvc && organizationId) {
       setLoading(true)
-      dispatch(
-        addCreditCard({
-          organizationId: props.organizationId,
+
+      try {
+        await addCreditCard({
+          organizationId,
           creditCardRequest: {
             cvv: data.cvc,
             number: data.card_number,
@@ -30,15 +29,12 @@ export function AddCreditCardModalFeature(props: AddCreditCardModalFeatureProps)
             expiry_month: Number(data.expiry.split('/')[0]),
           },
         })
-      )
-        .unwrap()
-        .then(() => {
-          closeModal()
-        })
-        .catch((err) => {
-          console.error(err)
-        })
-        .finally(() => setLoading(false))
+        closeModal()
+      } catch (error) {
+        console.error(error)
+      }
+
+      setLoading(false)
     }
   })
 

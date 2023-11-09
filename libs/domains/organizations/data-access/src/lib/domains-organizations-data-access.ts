@@ -7,6 +7,7 @@ import {
   type CloudProviderEnum,
   ContainerRegistriesApi,
   type ContainerRegistryRequest,
+  type CreditCardRequest,
   type DoCredentialsRequest,
   type GitProviderEnum,
   type GitTokenRequest,
@@ -217,6 +218,13 @@ export const organizations = createQueryKeys('organizations', {
       return result.data.results
     },
   }),
+  creditCards: ({ organizationId }: { organizationId: string }) => ({
+    queryKey: [organizationId],
+    async queryFn() {
+      const response = await billingApi.listOrganizationCreditCards(organizationId)
+      return response.data.results
+    },
+  }),
 })
 
 export const mutations = {
@@ -416,6 +424,25 @@ export const mutations = {
   },
   async addCreditCode({ organizationId, code }: { organizationId: string; code: string }) {
     const response = await billingApi.addCreditCode(organizationId, { code: code })
+    return response.data
+  },
+  async addCreditCard({
+    organizationId,
+    creditCardRequest,
+  }: {
+    organizationId: string
+    creditCardRequest: CreditCardRequest
+  }) {
+    // if expiryYear does not have 4 digits, we add 2000 to it
+    if (creditCardRequest.expiry_year < 1000) {
+      creditCardRequest.expiry_year += 2000
+    }
+
+    const response = await billingApi.addCreditCard(organizationId, creditCardRequest)
+    return response.data
+  },
+  async deleteCreditCard({ organizationId, creditCardId }: { organizationId: string; creditCardId: string }) {
+    const response = await billingApi.deleteCreditCard(organizationId, creditCardId)
     return response.data
   },
 }
