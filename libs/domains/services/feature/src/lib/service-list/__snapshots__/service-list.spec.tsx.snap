@@ -1,0 +1,1870 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ServiceList should match snapshot 1`] = `
+<div>
+  <table
+    class="divide-y divide-neutral-200 text-neutral-400 w-full text-xs min-w-[800px] table-auto"
+  >
+    <thead>
+      <tr>
+        <th
+          class="h-11 px-4 text-left first:border-r font-medium"
+          style="width: 40%;"
+        >
+          <div
+            class="inline-block relative"
+          >
+            <button
+              aria-controls="radix-:r1s:"
+              aria-expanded="false"
+              aria-haspopup="dialog"
+              class="inline-flex items-center shrink-0 font-medium transition h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 text-xs gap-1"
+              data-state="closed"
+              type="button"
+            >
+              Name
+              <span
+                class="icon-solid-angle-down shrink-0 "
+                role="img"
+              />
+            </button>
+          </div>
+        </th>
+        <th
+          class="h-11 px-4 text-left first:border-r font-medium"
+          style="width: 15%;"
+        >
+          <div
+            class="inline-block relative"
+          >
+            <button
+              aria-controls="radix-:r1v:"
+              aria-expanded="false"
+              aria-haspopup="dialog"
+              class="inline-flex items-center shrink-0 font-medium transition h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 text-xs gap-1"
+              data-state="closed"
+              type="button"
+            >
+              Service status
+              <span
+                class="icon-solid-angle-down shrink-0 "
+                role="img"
+              />
+            </button>
+          </div>
+        </th>
+        <th
+          class="h-11 px-4 text-left first:border-r font-medium"
+          style="width: 15%;"
+        >
+          <div
+            class="inline-block relative"
+          >
+            <button
+              aria-controls="radix-:r22:"
+              aria-expanded="false"
+              aria-haspopup="dialog"
+              class="inline-flex items-center shrink-0 font-medium transition h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 text-xs gap-1"
+              data-state="closed"
+              type="button"
+            >
+              Last deployment
+              <span
+                class="icon-solid-angle-down shrink-0 "
+                role="img"
+              />
+            </button>
+          </div>
+        </th>
+        <th
+          class="h-11 px-4 text-left first:border-r font-medium"
+          style="width: 20%;"
+        >
+          Version
+        </th>
+        <th
+          class="h-11 px-4 text-left first:border-r font-medium"
+          style="width: 10%;"
+        >
+          <button
+            class="flex items-center gap-1 cursor-pointer select-none"
+            type="button"
+          >
+            Last update
+          </button>
+        </th>
+      </tr>
+    </thead>
+    <tbody
+      class="divide-y divide-neutral-200"
+    >
+      <tr
+        class="hover:bg-neutral-100 h-16 cursor-pointer"
+      >
+        <td
+          class="h-14 px-4 py-0 first:border-r"
+          style="width: 40%;"
+        >
+          <div
+            class="flex items-center justify-between"
+          >
+            <span
+              class="flex items-center gap-4 font-medium text-sm text-neutral-400"
+            >
+              <svg
+                class="shrink-0 "
+                fill="none"
+                name="APPLICATION"
+                viewBox="0 0 20 20"
+                width="20"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M8.651 18.034h.001c.416.232.88.35 1.35.34a2.64 2.64 0 001.347-.34h.001l7.051-4.295a.9.9 0 00.43-.343.975.975 0 000-1.086.9.9 0 00-.43-.343l-7.05-4.294h0l-.003-.002a2.858 2.858 0 00-1.347-.339c-.469 0-.93.116-1.348.34h0-.002l-7.049 4.296c-.164.078-.305.2-.41.355a1.101 1.101 0 00-.182.525h0v.007c.016.189.08.37.184.525.104.155.244.279.408.358l7.05 4.296zm9.654-4.492v-.001l-.008.005-7.05 4.303a2.649 2.649 0 01-1.246.313c-.433 0-.86-.107-1.247-.313l-7.05-4.303v-.001l-.008-.003a.697.697 0 01-.343-.266.763.763 0 010-.86.697.697 0 01.343-.267v.001l.008-.004 7.05-4.296a2.648 2.648 0 011.247-.314c.433 0 .86.108 1.246.314l7.05 4.296h0l.008.003a.697.697 0 01.343.267.763.763 0 010 .86.697.697 0 01-.343.266z"
+                  fill="#42E8E0"
+                  stroke="#42E8E0"
+                  stroke-width="0.083"
+                />
+                <path
+                  d="M19.166 11.203V8.656l-.442-.26c-.124.794-1.008 1.321-1.753 1.43l-5.052 3.115-2.206.843L2.676 9.95l.164-.097c-.602-.298-.927-.979-1.25-1.596l-.475.298-.282.082v2.593c.019.196.086.384.195.544.109.16.256.288.426.37L8.5 16.44c.464.247.977.376 1.497.376.52 0 1.033-.129 1.497-.376l7.051-4.296c.167-.08.312-.206.42-.363.108-.156.176-.34.197-.533v-.045h.003z"
+                  fill="#42E8E0"
+                  opacity="0.4"
+                />
+                <path
+                  d="M19.166 8.938V7.253l-.442-.26c-.124.794-1.008 1.32-1.753 1.43l-5.052 3.119-2.206.839-7.037-3.834.164-.098c-.602-.297-.927-.974-1.25-1.595l-.475.297-.282.087v1.727c.019.196.086.384.195.544.109.16.256.288.426.37L8.5 14.175c.464.247.977.376 1.497.376.52 0 1.033-.129 1.497-.376l7.051-4.296c.168-.081.313-.207.42-.364.109-.158.176-.342.197-.535v-.042h.003z"
+                  fill="url(#paint0_linear_10141_398872)"
+                />
+                <path
+                  d="M16.971 8.423l-5.05 3.119-1.919.73v2.28a2.929 2.929 0 001.498-.377l7.05-4.296c.168-.081.313-.207.42-.364.109-.158.177-.342.197-.535V7.253l-.403-.237h-.042c-.136.782-1.013 1.298-1.75 1.407z"
+                  fill="#0F054C"
+                  opacity="0.3"
+                />
+                <path
+                  d="M8.502 12.452L1.454 8.163c-.827-.5-.827-1.32 0-1.824l7.048-4.297a3.188 3.188 0 011.497-.375c.52 0 1.033.128 1.497.375l7.05 4.297c.824.504.824 1.324 0 1.824l-7.046 4.29a3.168 3.168 0 01-2.998 0z"
+                  fill="url(#paint1_linear_10141_398872)"
+                />
+                <path
+                  d="M18.55 8.163l-7.05 4.29a3.168 3.168 0 01-1.498.378c-.52 0-1.033-.13-1.497-.378l-7.051-4.29a1.116 1.116 0 01-.396-.327 1.195 1.195 0 01-.217-.478c-.05.377.153.753.613 1.016L8.5 12.671c.464.248.977.378 1.497.378.52 0 1.034-.13 1.498-.378l7.05-4.297c.189-.082.348-.224.457-.406a1.09 1.09 0 00.153-.61c-.036.174-.11.337-.215.477-.105.14-.239.252-.391.328z"
+                  fill="#fff"
+                />
+                <defs>
+                  <lineargradient
+                    gradientUnits="userSpaceOnUse"
+                    id="paint0_linear_10141_398872"
+                    x1="4723.62"
+                    x2="5068.67"
+                    y1="801.697"
+                    y2="1276.19"
+                  >
+                    <stop
+                      stop-color="#BCBEFF"
+                    />
+                    <stop
+                      offset="0.23"
+                      stop-color="#AAADF8"
+                    />
+                    <stop
+                      offset="0.68"
+                      stop-color="#7C83E5"
+                    />
+                    <stop
+                      offset="1"
+                      stop-color="#5761D7"
+                    />
+                  </lineargradient>
+                  <lineargradient
+                    gradientUnits="userSpaceOnUse"
+                    id="paint1_linear_10141_398872"
+                    x1="4629.08"
+                    x2="5571.81"
+                    y1="1254.11"
+                    y2="1254.11"
+                  >
+                    <stop
+                      stop-color="#E9E9FD"
+                    />
+                    <stop
+                      offset="0.36"
+                      stop-color="#D3D2F9"
+                    />
+                    <stop
+                      offset="0.71"
+                      stop-color="#C5C4F7"
+                    />
+                    <stop
+                      offset="1"
+                      stop-color="#C0BFF6"
+                    />
+                  </lineargradient>
+                </defs>
+              </svg>
+              FRONT-END
+              <div>
+                <button
+                  aria-controls="radix-:r23:"
+                  aria-expanded="false"
+                  aria-haspopup="dialog"
+                  class="inline-flex shrink-0 font-medium transition text-xs px-1 py-0.5 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 items-center gap-1"
+                  data-state="closed"
+                  type="button"
+                >
+                  <span
+                    class="icon-solid-link shrink-0 "
+                    role="img"
+                  />
+                  <span
+                    class="icon-solid-angle-down shrink-0 "
+                    role="img"
+                  />
+                </button>
+              </div>
+            </span>
+            <div
+              class="flex items-center gap-4"
+            >
+              <div>
+                <div
+                  class="btn-icon-action !h-8"
+                  data-testid="button-icon-action"
+                >
+                  <div
+                    class="w-max menu__trigger menu__trigger--closed border-r border-r-neutral-250"
+                  >
+                    <span
+                      class=""
+                      data-state="closed"
+                    >
+                      <div
+                        class="btn-icon-action__element  "
+                        data-testid="element"
+                      >
+                        <span
+                          class="icon-solid-play shrink-0 px-0.5"
+                          role="img"
+                        />
+                        <span
+                          class="icon-solid-angle-down shrink-0 px-0.5"
+                          role="img"
+                        />
+                      </div>
+                    </span>
+                  </div>
+                  <span
+                    class="flex border-r border-r-neutral-250"
+                    data-state="closed"
+                  >
+                    <div
+                      class="btn-icon-action__element"
+                      data-testid="element"
+                    >
+                      <span
+                        class="icon-solid-scroll shrink-0 px-0.5"
+                        role="img"
+                      />
+                    </div>
+                  </span>
+                  <div
+                    class="w-max menu__trigger menu__trigger--closed "
+                  >
+                    <span
+                      class=""
+                      data-state="closed"
+                    >
+                      <div
+                        class="btn-icon-action__element  "
+                        data-testid="element"
+                      >
+                        <span
+                          class="icon-solid-ellipsis-v shrink-0 px-0.5"
+                          role="img"
+                        />
+                      </div>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </td>
+        <td
+          class="h-14 px-4 py-0 first:border-r"
+          style="width: 15%;"
+        >
+          <button
+            class="inline-flex items-center shrink-0 font-medium transition h-8 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent text-xs gap-2"
+          >
+            <div
+              class=""
+              data-state="closed"
+            >
+              <svg
+                class="text-neutral-300"
+                fill="none"
+                height="16"
+                viewBox="0 0 24 24"
+                width="16"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <g
+                  clip-path="url(#clip0_5424_5935)"
+                >
+                  <path
+                    d="M21.75 12a9.75 9.75 0 10-19.5 0 9.75 9.75 0 0019.5 0zM0 12a12 12 0 1124 0 12 12 0 01-24 0zm16.5-4.5v9h-9v-9h9z"
+                    fill="currentColor"
+                  />
+                </g>
+                <defs>
+                  <clippath
+                    id="clip0_5424_5935"
+                  >
+                    <path
+                      d="M0 0H24V24H0z"
+                      fill="#fff"
+                    />
+                  </clippath>
+                </defs>
+              </svg>
+            </div>
+            Stopped
+          </button>
+        </td>
+        <td
+          class="h-14 px-4 py-0 first:border-r"
+          style="width: 15%;"
+        >
+          <button
+            class="inline-flex items-center shrink-0 font-medium transition h-8 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent text-xs gap-2"
+          >
+            <div
+              class=""
+              data-state="closed"
+            >
+              <svg
+                class="text-neutral-300"
+                fill="none"
+                height="16"
+                viewBox="0 0 24 24"
+                width="16"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <g
+                  clip-path="url(#clip0_5424_5935)"
+                >
+                  <path
+                    d="M21.75 12a9.75 9.75 0 10-19.5 0 9.75 9.75 0 0019.5 0zM0 12a12 12 0 1124 0 12 12 0 01-24 0zm16.5-4.5v9h-9v-9h9z"
+                    fill="currentColor"
+                  />
+                </g>
+                <defs>
+                  <clippath
+                    id="clip0_5424_5935"
+                  >
+                    <path
+                      d="M0 0H24V24H0z"
+                      fill="#fff"
+                    />
+                  </clippath>
+                </defs>
+              </svg>
+            </div>
+            Stopped
+          </button>
+        </td>
+        <td
+          class="h-14 px-4 py-0 first:border-r"
+          style="width: 20%;"
+        >
+          <div
+            class="flex flex-row items-center gap-2"
+          >
+            <div
+              class="block rounded-full relative   border-2 border-neutral-200"
+              data-state="closed"
+              data-testid="avatar"
+              style="width: 20px; height: 20px;"
+            >
+              <div
+                class="w-full h-full rounded-full bg-neutral-200 text-center flex justify-center items-center"
+              >
+                <span
+                  class="text-xs text-neutral-400 font-medium relative"
+                >
+                  A
+                </span>
+              </div>
+            </div>
+            <div
+              class="flex flex-col gap-1"
+            >
+              <span
+                class="relative"
+                data-state="closed"
+              >
+                <button
+                  class="inline-flex items-center shrink-0 font-medium transition text-xs px-1 py-0.5 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 group justify-between gap-1"
+                  type="button"
+                >
+                  <span
+                    class="icon-solid-copy shrink-0 hidden group-hover:inline w-4"
+                    role="img"
+                  />
+                  <span
+                    class="icon-solid-code-commit shrink-0 group-hover:hidden w-4"
+                    role="img"
+                  />
+                  2f74448
+                </button>
+              </span>
+              <div>
+                <span
+                  class="inline-flex items-center shrink-0 font-medium border text-xs px-1 py-0.5 rounded bg-neutral-100 border-neutral-200 text-neutral-400 gap-1"
+                >
+                  <span
+                    class="icon-solid-code-branch shrink-0 "
+                    role="img"
+                  />
+                  master
+                </span>
+              </div>
+            </div>
+          </div>
+        </td>
+        <td
+          class="h-14 px-4 py-0 first:border-r"
+          style="width: 10%;"
+        >
+          <span
+            class="text-xs text-neutral-350"
+            data-state="closed"
+          >
+            6 days
+          </span>
+        </td>
+      </tr>
+      <tr
+        class="hover:bg-neutral-100 h-16 cursor-pointer"
+      >
+        <td
+          class="h-14 px-4 py-0 first:border-r"
+          style="width: 40%;"
+        >
+          <div
+            class="flex items-center justify-between"
+          >
+            <span
+              class="flex items-center gap-4 font-medium text-sm text-neutral-400"
+            >
+              <svg
+                class="shrink-0 "
+                fill="none"
+                name="APPLICATION"
+                viewBox="0 0 20 20"
+                width="20"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M8.651 18.034h.001c.416.232.88.35 1.35.34a2.64 2.64 0 001.347-.34h.001l7.051-4.295a.9.9 0 00.43-.343.975.975 0 000-1.086.9.9 0 00-.43-.343l-7.05-4.294h0l-.003-.002a2.858 2.858 0 00-1.347-.339c-.469 0-.93.116-1.348.34h0-.002l-7.049 4.296c-.164.078-.305.2-.41.355a1.101 1.101 0 00-.182.525h0v.007c.016.189.08.37.184.525.104.155.244.279.408.358l7.05 4.296zm9.654-4.492v-.001l-.008.005-7.05 4.303a2.649 2.649 0 01-1.246.313c-.433 0-.86-.107-1.247-.313l-7.05-4.303v-.001l-.008-.003a.697.697 0 01-.343-.266.763.763 0 010-.86.697.697 0 01.343-.267v.001l.008-.004 7.05-4.296a2.648 2.648 0 011.247-.314c.433 0 .86.108 1.246.314l7.05 4.296h0l.008.003a.697.697 0 01.343.267.763.763 0 010 .86.697.697 0 01-.343.266z"
+                  fill="#42E8E0"
+                  stroke="#42E8E0"
+                  stroke-width="0.083"
+                />
+                <path
+                  d="M19.166 11.203V8.656l-.442-.26c-.124.794-1.008 1.321-1.753 1.43l-5.052 3.115-2.206.843L2.676 9.95l.164-.097c-.602-.298-.927-.979-1.25-1.596l-.475.298-.282.082v2.593c.019.196.086.384.195.544.109.16.256.288.426.37L8.5 16.44c.464.247.977.376 1.497.376.52 0 1.033-.129 1.497-.376l7.051-4.296c.167-.08.312-.206.42-.363.108-.156.176-.34.197-.533v-.045h.003z"
+                  fill="#42E8E0"
+                  opacity="0.4"
+                />
+                <path
+                  d="M19.166 8.938V7.253l-.442-.26c-.124.794-1.008 1.32-1.753 1.43l-5.052 3.119-2.206.839-7.037-3.834.164-.098c-.602-.297-.927-.974-1.25-1.595l-.475.297-.282.087v1.727c.019.196.086.384.195.544.109.16.256.288.426.37L8.5 14.175c.464.247.977.376 1.497.376.52 0 1.033-.129 1.497-.376l7.051-4.296c.168-.081.313-.207.42-.364.109-.158.176-.342.197-.535v-.042h.003z"
+                  fill="url(#paint0_linear_10141_398872)"
+                />
+                <path
+                  d="M16.971 8.423l-5.05 3.119-1.919.73v2.28a2.929 2.929 0 001.498-.377l7.05-4.296c.168-.081.313-.207.42-.364.109-.158.177-.342.197-.535V7.253l-.403-.237h-.042c-.136.782-1.013 1.298-1.75 1.407z"
+                  fill="#0F054C"
+                  opacity="0.3"
+                />
+                <path
+                  d="M8.502 12.452L1.454 8.163c-.827-.5-.827-1.32 0-1.824l7.048-4.297a3.188 3.188 0 011.497-.375c.52 0 1.033.128 1.497.375l7.05 4.297c.824.504.824 1.324 0 1.824l-7.046 4.29a3.168 3.168 0 01-2.998 0z"
+                  fill="url(#paint1_linear_10141_398872)"
+                />
+                <path
+                  d="M18.55 8.163l-7.05 4.29a3.168 3.168 0 01-1.498.378c-.52 0-1.033-.13-1.497-.378l-7.051-4.29a1.116 1.116 0 01-.396-.327 1.195 1.195 0 01-.217-.478c-.05.377.153.753.613 1.016L8.5 12.671c.464.248.977.378 1.497.378.52 0 1.034-.13 1.498-.378l7.05-4.297c.189-.082.348-.224.457-.406a1.09 1.09 0 00.153-.61c-.036.174-.11.337-.215.477-.105.14-.239.252-.391.328z"
+                  fill="#fff"
+                />
+                <defs>
+                  <lineargradient
+                    gradientUnits="userSpaceOnUse"
+                    id="paint0_linear_10141_398872"
+                    x1="4723.62"
+                    x2="5068.67"
+                    y1="801.697"
+                    y2="1276.19"
+                  >
+                    <stop
+                      stop-color="#BCBEFF"
+                    />
+                    <stop
+                      offset="0.23"
+                      stop-color="#AAADF8"
+                    />
+                    <stop
+                      offset="0.68"
+                      stop-color="#7C83E5"
+                    />
+                    <stop
+                      offset="1"
+                      stop-color="#5761D7"
+                    />
+                  </lineargradient>
+                  <lineargradient
+                    gradientUnits="userSpaceOnUse"
+                    id="paint1_linear_10141_398872"
+                    x1="4629.08"
+                    x2="5571.81"
+                    y1="1254.11"
+                    y2="1254.11"
+                  >
+                    <stop
+                      stop-color="#E9E9FD"
+                    />
+                    <stop
+                      offset="0.36"
+                      stop-color="#D3D2F9"
+                    />
+                    <stop
+                      offset="0.71"
+                      stop-color="#C5C4F7"
+                    />
+                    <stop
+                      offset="1"
+                      stop-color="#C0BFF6"
+                    />
+                  </lineargradient>
+                </defs>
+              </svg>
+              back-end-A
+              <div>
+                <button
+                  aria-controls="radix-:r2c:"
+                  aria-expanded="false"
+                  aria-haspopup="dialog"
+                  class="inline-flex shrink-0 font-medium transition text-xs px-1 py-0.5 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 items-center gap-1"
+                  data-state="closed"
+                  type="button"
+                >
+                  <span
+                    class="icon-solid-link shrink-0 "
+                    role="img"
+                  />
+                  <span
+                    class="icon-solid-angle-down shrink-0 "
+                    role="img"
+                  />
+                </button>
+              </div>
+            </span>
+            <div
+              class="flex items-center gap-4"
+            >
+              <span
+                class=""
+                data-state="closed"
+              >
+                <span
+                  class="icon-solid-arrows-rotate shrink-0 text-neutral-300"
+                  role="img"
+                />
+              </span>
+              <div>
+                <div
+                  class="btn-icon-action !h-8"
+                  data-testid="button-icon-action"
+                >
+                  <div
+                    class="w-max menu__trigger menu__trigger--closed border-r border-r-neutral-250"
+                  >
+                    <span
+                      class=""
+                      data-state="closed"
+                    >
+                      <div
+                        class="btn-icon-action__element  "
+                        data-testid="element"
+                      >
+                        <span
+                          class="icon-solid-play shrink-0 px-0.5"
+                          role="img"
+                        />
+                        <span
+                          class="icon-solid-angle-down shrink-0 px-0.5"
+                          role="img"
+                        />
+                      </div>
+                    </span>
+                  </div>
+                  <span
+                    class="flex border-r border-r-neutral-250"
+                    data-state="closed"
+                  >
+                    <div
+                      class="btn-icon-action__element"
+                      data-testid="element"
+                    >
+                      <span
+                        class="icon-solid-scroll shrink-0 px-0.5"
+                        role="img"
+                      />
+                    </div>
+                  </span>
+                  <div
+                    class="w-max menu__trigger menu__trigger--closed "
+                  >
+                    <span
+                      class=""
+                      data-state="closed"
+                    >
+                      <div
+                        class="btn-icon-action__element  "
+                        data-testid="element"
+                      >
+                        <span
+                          class="icon-solid-ellipsis-v shrink-0 px-0.5"
+                          role="img"
+                        />
+                      </div>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </td>
+        <td
+          class="h-14 px-4 py-0 first:border-r"
+          style="width: 15%;"
+        >
+          <button
+            class="inline-flex items-center shrink-0 font-medium transition h-8 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent text-xs gap-2"
+          >
+            <div
+              class=""
+              data-state="closed"
+            >
+              <svg
+                class="text-neutral-300"
+                fill="none"
+                height="16"
+                viewBox="0 0 24 24"
+                width="16"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <g
+                  clip-path="url(#clip0_5424_5935)"
+                >
+                  <path
+                    d="M21.75 12a9.75 9.75 0 10-19.5 0 9.75 9.75 0 0019.5 0zM0 12a12 12 0 1124 0 12 12 0 01-24 0zm16.5-4.5v9h-9v-9h9z"
+                    fill="currentColor"
+                  />
+                </g>
+                <defs>
+                  <clippath
+                    id="clip0_5424_5935"
+                  >
+                    <path
+                      d="M0 0H24V24H0z"
+                      fill="#fff"
+                    />
+                  </clippath>
+                </defs>
+              </svg>
+            </div>
+            Stopped
+          </button>
+        </td>
+        <td
+          class="h-14 px-4 py-0 first:border-r"
+          style="width: 15%;"
+        >
+          <button
+            class="inline-flex items-center shrink-0 font-medium transition h-8 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent text-xs gap-2"
+          >
+            <div
+              class=""
+              data-state="closed"
+            >
+              <svg
+                class="text-neutral-300"
+                fill="none"
+                height="16"
+                viewBox="0 0 24 24"
+                width="16"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <g
+                  clip-path="url(#clip0_5424_5935)"
+                >
+                  <path
+                    d="M21.75 12a9.75 9.75 0 10-19.5 0 9.75 9.75 0 0019.5 0zM0 12a12 12 0 1124 0 12 12 0 01-24 0zm16.5-4.5v9h-9v-9h9z"
+                    fill="currentColor"
+                  />
+                </g>
+                <defs>
+                  <clippath
+                    id="clip0_5424_5935"
+                  >
+                    <path
+                      d="M0 0H24V24H0z"
+                      fill="#fff"
+                    />
+                  </clippath>
+                </defs>
+              </svg>
+            </div>
+            Stopped
+          </button>
+        </td>
+        <td
+          class="h-14 px-4 py-0 first:border-r"
+          style="width: 20%;"
+        >
+          <div
+            class="flex flex-col gap-1 ml-7"
+          >
+            <a
+              href="https://docker.io"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              <span
+                class="inline-flex shrink-0 font-medium border text-xs px-1 py-0.5 rounded bg-neutral-100 border-neutral-200 text-neutral-400 items-center gap-1 capitalize"
+              >
+                <svg
+                  class="shrink-0 "
+                  fill="none"
+                  height="16"
+                  name="DOCKER"
+                  viewBox="0 0 24 16"
+                  width="16"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M23.505 6.425c-.54-.329-1.78-.452-2.748-.288-.112-.822-.63-1.54-1.53-2.177l-.519-.33-.36.473c-.45.617-.676 1.48-.608 2.301.022.288.135.801.473 1.253-.315.165-.968.37-1.824.37H.109l-.046.165c-.157.821-.157 3.39 1.69 5.361 1.395 1.5 3.467 2.26 6.192 2.26 5.9 0 10.268-2.486 12.317-6.985.81.02 2.545 0 3.423-1.54.022-.042.067-.124.225-.432l.09-.164-.495-.267zM13.124.632h-2.477v2.054h2.477V.632zm0 2.465h-2.477V5.15h2.477V3.097zm-2.928 0H7.72V5.15h2.477V3.097zm-2.927 0H4.792V5.15h2.477V3.097zM4.342 5.562H1.865v2.054h2.477V5.562zm2.927 0H4.792v2.054h2.477V5.562zm2.927 0H7.72v2.054h2.477V5.562zm2.928 0h-2.477v2.054h2.477V5.562zm2.927 0h-2.477v2.054h2.477V5.562z"
+                    fill="#2396ED"
+                  />
+                </svg>
+                dockerhub public
+              </span>
+            </a>
+            <div>
+              <span
+                class="inline-flex items-center shrink-0 font-medium border text-xs px-1 py-0.5 rounded bg-neutral-100 border-neutral-200 text-neutral-400 gap-1"
+              >
+                <svg
+                  class="shrink-0 "
+                  fill="none"
+                  name="CONTAINER"
+                  viewBox="0 0 24 24"
+                  width="16"
+                  xmlns="http://www.w3.org/2000/svg"
+                  xmlns:xlink="http://www.w3.org/1999/xlink"
+                >
+                  <path
+                    d="M12.025 3l8.946 3.992-8.946 3.962-9.062-3.962L12.026 3zM12.22 11.503L21 7.653v9.154l-8.78 4.157v-9.46zM11.588 11.434L2.963 7.652v9.155l8.625 4.202v-9.575z"
+                    fill="#2196F3"
+                  />
+                </svg>
+                stefanprodan/podinfo:6.5.2
+              </span>
+            </div>
+          </div>
+        </td>
+        <td
+          class="h-14 px-4 py-0 first:border-r"
+          style="width: 10%;"
+        >
+          <span
+            class="text-xs text-neutral-350"
+            data-state="closed"
+          >
+            19 days
+          </span>
+        </td>
+      </tr>
+      <tr
+        class="hover:bg-neutral-100 h-16 cursor-pointer"
+      >
+        <td
+          class="h-14 px-4 py-0 first:border-r"
+          style="width: 40%;"
+        >
+          <div
+            class="flex items-center justify-between"
+          >
+            <span
+              class="flex items-center gap-4 font-medium text-sm text-neutral-400"
+            >
+              <svg
+                class="shrink-0 "
+                fill="none"
+                name="CRON_JOB"
+                viewBox="0 0 22 22"
+                width="20"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M11.59 13.586a1.211 1.211 0 00-.542-.126c-.19 0-.377.043-.542.126L4.05 16.82a.144.144 0 00-.056.048.12.12 0 000 .133c.013.02.033.037.056.048l6.511 3.268c.146.073.31.111.478.111.168 0 .333-.038.478-.111l6.52-3.265a.145.145 0 00.056-.049.12.12 0 00.02-.066.12.12 0 00-.02-.066.144.144 0 00-.056-.049l-6.447-3.236z"
+                  fill="url(#paint0_linear_10141_161369)"
+                  opacity="0.16"
+                />
+                <path
+                  d="M11.59 12.64a1.213 1.213 0 00-.542-.126c-.19 0-.377.043-.542.126L4.05 15.873a.144.144 0 00-.056.049.12.12 0 000 .132c.013.02.033.037.056.049l6.511 3.267a1.067 1.067 0 00.956 0l6.52-3.265a.145.145 0 00.056-.048.12.12 0 00.02-.066.12.12 0 00-.02-.067.144.144 0 00-.056-.048L11.59 12.64z"
+                  fill="url(#paint1_linear_10141_161369)"
+                  opacity="0.16"
+                />
+                <path
+                  d="M11.59 11.694a1.213 1.213 0 00-.542-.126c-.19 0-.377.044-.542.126L4.05 14.926a.145.145 0 00-.056.049.12.12 0 00-.02.066.12.12 0 00.02.066c.013.02.033.037.056.049l6.511 3.268c.146.073.31.111.478.111.168 0 .333-.038.478-.11l6.52-3.266a.143.143 0 00.056-.048.12.12 0 00.02-.066.12.12 0 00-.02-.067.143.143 0 00-.056-.048l-6.447-3.236z"
+                  fill="url(#paint2_linear_10141_161369)"
+                  opacity="0.16"
+                />
+                <path
+                  d="M11.59 10.746a1.21 1.21 0 00-.542-.126c-.19 0-.377.044-.542.126L4.05 13.98a.145.145 0 00-.056.048.12.12 0 00-.02.066.12.12 0 00.02.067c.013.02.033.037.056.048l6.511 3.268c.146.073.31.111.478.111.168 0 .333-.038.478-.111l6.52-3.265a.143.143 0 00.056-.048.12.12 0 00.02-.067.12.12 0 00-.02-.066.143.143 0 00-.056-.048l-6.447-3.237z"
+                  fill="url(#paint3_linear_10141_161369)"
+                  opacity="0.16"
+                />
+                <path
+                  d="M18.039 11.586L11.59 8.35a1.213 1.213 0 00-.542-.126c-.19 0-.376.043-.541.126L4.05 11.582a.143.143 0 00-.055.049.12.12 0 00-.02.066v2.834a.12.12 0 00.02.066c.013.02.032.037.055.049l6.512 3.268c.145.073.31.111.478.111.167 0 .332-.038.478-.111l6.52-3.265a.141.141 0 00.056-.048.117.117 0 00.02-.067v-2.833a.118.118 0 00-.02-.067.141.141 0 00-.055-.048z"
+                  fill="url(#paint4_linear_10141_161369)"
+                  opacity="0.71"
+                />
+                <path
+                  d="M11.59 11.187a1.213 1.213 0 00-.542-.127c-.19 0-.377.044-.542.127L4.05 14.419a.145.145 0 00-.056.049.12.12 0 00-.02.066.12.12 0 00.02.066c.013.02.033.037.056.049l6.511 3.268c.146.073.31.111.478.111.168 0 .333-.038.478-.111l6.52-3.265a.143.143 0 00.056-.048.12.12 0 00.02-.066.12.12 0 00-.02-.067.143.143 0 00-.056-.048l-6.447-3.236z"
+                  fill="url(#paint5_linear_10141_161369)"
+                  opacity="0.11"
+                />
+                <path
+                  d="M11.59 10.241a1.21 1.21 0 00-.542-.126c-.19 0-.377.044-.542.126L4.05 13.475a.144.144 0 00-.056.048.12.12 0 000 .133c.013.02.033.037.056.048l6.511 3.268c.146.073.31.111.478.111.168 0 .333-.038.478-.111l6.52-3.265a.143.143 0 00.056-.048.12.12 0 00.02-.067.12.12 0 00-.02-.066.143.143 0 00-.056-.048L11.59 10.24z"
+                  fill="url(#paint6_linear_10141_161369)"
+                  opacity="0.11"
+                />
+                <path
+                  d="M11.59 8.35a1.213 1.213 0 00-.542-.126c-.19 0-.377.043-.542.126L4.05 11.582a.145.145 0 00-.056.049.12.12 0 00-.02.066.12.12 0 00.02.066c.013.02.033.037.056.049l6.511 3.268c.146.073.31.111.478.111.168 0 .333-.038.478-.11l6.52-3.266a.143.143 0 00.056-.048.12.12 0 00.02-.066.12.12 0 00-.02-.067.143.143 0 00-.056-.048L11.59 8.35z"
+                  fill="url(#paint7_linear_10141_161369)"
+                  opacity="0.11"
+                />
+                <path
+                  d="M11.59 8.35a1.213 1.213 0 00-.542-.126c-.19 0-.377.043-.542.126L4.05 11.582a.145.145 0 00-.056.049.12.12 0 00-.02.066.12.12 0 00.02.066c.013.02.033.037.056.049l6.511 3.268c.146.073.31.111.478.111.168 0 .333-.038.478-.11l6.52-3.266a.143.143 0 00.056-.048.12.12 0 00.02-.066.12.12 0 00-.02-.067.143.143 0 00-.056-.048L11.59 8.35z"
+                  fill="url(#paint8_linear_10141_161369)"
+                  opacity="0.11"
+                />
+                <path
+                  d="M18.036 11.684l-6.52 3.265c-.145.073-.31.111-.478.111-.168 0-.332-.038-.478-.111L4.05 11.68a.137.137 0 01-.056-.05.115.115 0 00-.015.1.125.125 0 00.026.047.148.148 0 00.045.034l6.511 3.268c.146.073.31.111.478.111.168 0 .333-.038.478-.111l6.52-3.265a.137.137 0 00.071-.08.118.118 0 00-.014-.1.144.144 0 01-.057.05z"
+                  fill="url(#paint9_linear_10141_161369)"
+                  opacity="0.71"
+                />
+                <circle
+                  cx="10.875"
+                  cy="11"
+                  r="10.15"
+                  stroke="#42E8E0"
+                  stroke-width="0.3"
+                />
+                <circle
+                  cx="10.875"
+                  cy="11"
+                  fill="#EAEAFE"
+                  r="9.427"
+                />
+                <circle
+                  cx="10.875"
+                  cy="11"
+                  r="8.427"
+                  stroke="url(#paint10_linear_10141_161369)"
+                  stroke-opacity="0.3"
+                  stroke-width="2"
+                />
+                <circle
+                  cx="10.874"
+                  cy="11"
+                  fill="#EAEAFE"
+                  r="7.702"
+                  stroke="url(#paint11_linear_10141_161369)"
+                  stroke-width="2"
+                />
+                <path
+                  d="M9.666 7.357a.725.725 0 011.45 0v4.351h-1.45V7.357z"
+                  fill="#fff"
+                />
+                <path
+                  d="M13.919 13.91a.725.725 0 01-1.026 1.026l-3.227-3.228 1.026-1.026 3.227 3.227z"
+                  fill="#fff"
+                />
+                <path
+                  clip-rule="evenodd"
+                  d="M10.534 6.592c-.4 0-.725.324-.725.725v4.351l3.227 3.227a.725.725 0 101.025-1.025l-2.802-2.803v-3.75c0-.4-.325-.725-.725-.725z"
+                  fill="#8987C9"
+                  fill-rule="evenodd"
+                />
+                <defs>
+                  <lineargradient
+                    gradientUnits="userSpaceOnUse"
+                    id="paint0_linear_10141_161369"
+                    x1="17.881"
+                    x2="4.052"
+                    y1="16.878"
+                    y2="16.878"
+                  >
+                    <stop
+                      stop-color="#42E8E0"
+                    />
+                    <stop
+                      offset="1"
+                      stop-color="#5761D7"
+                    />
+                  </lineargradient>
+                  <lineargradient
+                    gradientUnits="userSpaceOnUse"
+                    id="paint1_linear_10141_161369"
+                    x1="17.881"
+                    x2="4.052"
+                    y1="15.931"
+                    y2="15.931"
+                  >
+                    <stop
+                      stop-color="#42E8E0"
+                    />
+                    <stop
+                      offset="1"
+                      stop-color="#5761D7"
+                    />
+                  </lineargradient>
+                  <lineargradient
+                    gradientUnits="userSpaceOnUse"
+                    id="paint2_linear_10141_161369"
+                    x1="17.881"
+                    x2="4.052"
+                    y1="14.985"
+                    y2="14.985"
+                  >
+                    <stop
+                      stop-color="#42E8E0"
+                    />
+                    <stop
+                      offset="1"
+                      stop-color="#5761D7"
+                    />
+                  </lineargradient>
+                  <lineargradient
+                    gradientUnits="userSpaceOnUse"
+                    id="paint3_linear_10141_161369"
+                    x1="17.881"
+                    x2="4.052"
+                    y1="14.038"
+                    y2="14.038"
+                  >
+                    <stop
+                      stop-color="#42E8E0"
+                    />
+                    <stop
+                      offset="1"
+                      stop-color="#5761D7"
+                    />
+                  </lineargradient>
+                  <lineargradient
+                    gradientUnits="userSpaceOnUse"
+                    id="paint4_linear_10141_161369"
+                    x1="17.523"
+                    x2="4.175"
+                    y1="13.222"
+                    y2="13.222"
+                  >
+                    <stop
+                      stop-color="#42E8E0"
+                    />
+                    <stop
+                      offset="1"
+                      stop-color="#5761D7"
+                    />
+                  </lineargradient>
+                  <lineargradient
+                    gradientUnits="userSpaceOnUse"
+                    id="paint5_linear_10141_161369"
+                    x1="1488.82"
+                    x2="3942.11"
+                    y1="1610.23"
+                    y2="1610.23"
+                  >
+                    <stop
+                      stop-color="#5761D7"
+                    />
+                    <stop
+                      offset="0.07"
+                      stop-color="#5472D8"
+                    />
+                    <stop
+                      offset="0.28"
+                      stop-color="#4E9CDB"
+                    />
+                    <stop
+                      offset="0.48"
+                      stop-color="#49BDDD"
+                    />
+                    <stop
+                      offset="0.67"
+                      stop-color="#45D5DF"
+                    />
+                    <stop
+                      offset="0.85"
+                      stop-color="#43E3E0"
+                    />
+                    <stop
+                      offset="1"
+                      stop-color="#42E8E0"
+                    />
+                  </lineargradient>
+                  <lineargradient
+                    gradientUnits="userSpaceOnUse"
+                    id="paint6_linear_10141_161369"
+                    x1="1488.82"
+                    x2="3942.11"
+                    y1="1516.43"
+                    y2="1516.43"
+                  >
+                    <stop
+                      stop-color="#5761D7"
+                    />
+                    <stop
+                      offset="0.07"
+                      stop-color="#5472D8"
+                    />
+                    <stop
+                      offset="0.28"
+                      stop-color="#4E9CDB"
+                    />
+                    <stop
+                      offset="0.48"
+                      stop-color="#49BDDD"
+                    />
+                    <stop
+                      offset="0.67"
+                      stop-color="#45D5DF"
+                    />
+                    <stop
+                      offset="0.85"
+                      stop-color="#43E3E0"
+                    />
+                    <stop
+                      offset="1"
+                      stop-color="#42E8E0"
+                    />
+                  </lineargradient>
+                  <lineargradient
+                    gradientUnits="userSpaceOnUse"
+                    id="paint7_linear_10141_161369"
+                    x1="1488.82"
+                    x2="3942.11"
+                    y1="1328.35"
+                    y2="1328.35"
+                  >
+                    <stop
+                      stop-color="#5761D7"
+                    />
+                    <stop
+                      offset="0.07"
+                      stop-color="#5472D8"
+                    />
+                    <stop
+                      offset="0.28"
+                      stop-color="#4E9CDB"
+                    />
+                    <stop
+                      offset="0.48"
+                      stop-color="#49BDDD"
+                    />
+                    <stop
+                      offset="0.67"
+                      stop-color="#45D5DF"
+                    />
+                    <stop
+                      offset="0.85"
+                      stop-color="#43E3E0"
+                    />
+                    <stop
+                      offset="1"
+                      stop-color="#42E8E0"
+                    />
+                  </lineargradient>
+                  <lineargradient
+                    gradientUnits="userSpaceOnUse"
+                    id="paint8_linear_10141_161369"
+                    x1="1488.82"
+                    x2="3942.11"
+                    y1="1328.35"
+                    y2="1328.35"
+                  >
+                    <stop
+                      stop-color="#5761D7"
+                    />
+                    <stop
+                      offset="0.07"
+                      stop-color="#5472D8"
+                    />
+                    <stop
+                      offset="0.28"
+                      stop-color="#4E9CDB"
+                    />
+                    <stop
+                      offset="0.48"
+                      stop-color="#49BDDD"
+                    />
+                    <stop
+                      offset="0.67"
+                      stop-color="#45D5DF"
+                    />
+                    <stop
+                      offset="0.85"
+                      stop-color="#43E3E0"
+                    />
+                    <stop
+                      offset="1"
+                      stop-color="#42E8E0"
+                    />
+                  </lineargradient>
+                  <lineargradient
+                    gradientUnits="userSpaceOnUse"
+                    id="paint9_linear_10141_161369"
+                    x1="17.521"
+                    x2="4.173"
+                    y1="13.447"
+                    y2="13.447"
+                  >
+                    <stop
+                      stop-color="#42E8E0"
+                    />
+                    <stop
+                      offset="1"
+                      stop-color="#5761D7"
+                    />
+                  </lineargradient>
+                  <lineargradient
+                    gradientUnits="userSpaceOnUse"
+                    id="paint10_linear_10141_161369"
+                    x1="18.731"
+                    x2="3.804"
+                    y1="18.07"
+                    y2="3.143"
+                  >
+                    <stop
+                      stop-color="#8987C9"
+                    />
+                    <stop
+                      offset="1"
+                      stop-color="#BDBFFF"
+                    />
+                  </lineargradient>
+                  <lineargradient
+                    gradientUnits="userSpaceOnUse"
+                    id="paint11_linear_10141_161369"
+                    x1="18.126"
+                    x2="4.347"
+                    y1="17.527"
+                    y2="3.748"
+                  >
+                    <stop
+                      stop-color="#8987C9"
+                    />
+                    <stop
+                      offset="1"
+                      stop-color="#BDBFFF"
+                    />
+                  </lineargradient>
+                </defs>
+              </svg>
+              CRONJOB
+              <div>
+                <button
+                  aria-controls="radix-:r2k:"
+                  aria-expanded="false"
+                  aria-haspopup="dialog"
+                  class="inline-flex shrink-0 font-medium transition text-xs px-1 py-0.5 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 items-center gap-1"
+                  data-state="closed"
+                  type="button"
+                >
+                  <span
+                    class="icon-solid-link shrink-0 "
+                    role="img"
+                  />
+                  <span
+                    class="icon-solid-angle-down shrink-0 "
+                    role="img"
+                  />
+                </button>
+              </div>
+            </span>
+            <div
+              class="flex items-center gap-4"
+            >
+              <span
+                class=""
+                data-state="closed"
+              >
+                <span
+                  class="icon-solid-arrows-rotate shrink-0 text-neutral-300"
+                  role="img"
+                />
+              </span>
+              <div>
+                <div
+                  class="btn-icon-action !h-8"
+                  data-testid="button-icon-action"
+                >
+                  <div
+                    class="w-max menu__trigger menu__trigger--closed border-r border-r-neutral-250"
+                  >
+                    <span
+                      class=""
+                      data-state="closed"
+                    >
+                      <div
+                        class="btn-icon-action__element  "
+                        data-testid="element"
+                      >
+                        <span
+                          class="icon-solid-play shrink-0 px-0.5"
+                          role="img"
+                        />
+                        <span
+                          class="icon-solid-angle-down shrink-0 px-0.5"
+                          role="img"
+                        />
+                      </div>
+                    </span>
+                  </div>
+                  <span
+                    class="flex border-r border-r-neutral-250"
+                    data-state="closed"
+                  >
+                    <div
+                      class="btn-icon-action__element"
+                      data-testid="element"
+                    >
+                      <span
+                        class="icon-solid-scroll shrink-0 px-0.5"
+                        role="img"
+                      />
+                    </div>
+                  </span>
+                  <div
+                    class="w-max menu__trigger menu__trigger--closed "
+                  >
+                    <span
+                      class=""
+                      data-state="closed"
+                    >
+                      <div
+                        class="btn-icon-action__element  "
+                        data-testid="element"
+                      >
+                        <span
+                          class="icon-solid-ellipsis-v shrink-0 px-0.5"
+                          role="img"
+                        />
+                      </div>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </td>
+        <td
+          class="h-14 px-4 py-0 first:border-r"
+          style="width: 15%;"
+        >
+          <button
+            class="inline-flex items-center shrink-0 font-medium transition h-8 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent text-xs gap-2"
+          >
+            <div
+              class=""
+              data-state="closed"
+            >
+              <svg
+                class="text-neutral-300"
+                fill="none"
+                height="16"
+                viewBox="0 0 24 24"
+                width="16"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <g
+                  clip-path="url(#clip0_5424_5935)"
+                >
+                  <path
+                    d="M21.75 12a9.75 9.75 0 10-19.5 0 9.75 9.75 0 0019.5 0zM0 12a12 12 0 1124 0 12 12 0 01-24 0zm16.5-4.5v9h-9v-9h9z"
+                    fill="currentColor"
+                  />
+                </g>
+                <defs>
+                  <clippath
+                    id="clip0_5424_5935"
+                  >
+                    <path
+                      d="M0 0H24V24H0z"
+                      fill="#fff"
+                    />
+                  </clippath>
+                </defs>
+              </svg>
+            </div>
+            Stopped
+          </button>
+        </td>
+        <td
+          class="h-14 px-4 py-0 first:border-r"
+          style="width: 15%;"
+        >
+          <button
+            class="inline-flex items-center shrink-0 font-medium transition h-8 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent text-xs gap-2"
+          >
+            <div
+              class=""
+              data-state="closed"
+            >
+              <svg
+                class="text-neutral-300"
+                fill="none"
+                height="16"
+                viewBox="0 0 24 24"
+                width="16"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <g
+                  clip-path="url(#clip0_5424_5935)"
+                >
+                  <path
+                    d="M21.75 12a9.75 9.75 0 10-19.5 0 9.75 9.75 0 0019.5 0zM0 12a12 12 0 1124 0 12 12 0 01-24 0zm16.5-4.5v9h-9v-9h9z"
+                    fill="currentColor"
+                  />
+                </g>
+                <defs>
+                  <clippath
+                    id="clip0_5424_5935"
+                  >
+                    <path
+                      d="M0 0H24V24H0z"
+                      fill="#fff"
+                    />
+                  </clippath>
+                </defs>
+              </svg>
+            </div>
+            Stopped
+          </button>
+        </td>
+        <td
+          class="h-14 px-4 py-0 first:border-r"
+          style="width: 20%;"
+        >
+          <div
+            class="flex flex-row items-center gap-2"
+          >
+            <div
+              class="block rounded-full relative   border-2 border-neutral-200"
+              data-state="closed"
+              data-testid="avatar"
+              style="width: 20px; height: 20px;"
+            >
+              <div
+                class="w-full h-full rounded-full bg-neutral-200 text-center flex justify-center items-center"
+              >
+                <span
+                  class="text-xs text-neutral-400 font-medium relative"
+                >
+                  A
+                </span>
+              </div>
+            </div>
+            <div
+              class="flex flex-col gap-1"
+            >
+              <span
+                class="relative"
+                data-state="closed"
+              >
+                <button
+                  class="inline-flex items-center shrink-0 font-medium transition text-xs px-1 py-0.5 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 group justify-between gap-1"
+                  type="button"
+                >
+                  <span
+                    class="icon-solid-copy shrink-0 hidden group-hover:inline w-4"
+                    role="img"
+                  />
+                  <span
+                    class="icon-solid-code-commit shrink-0 group-hover:hidden w-4"
+                    role="img"
+                  />
+                  10ad354
+                </button>
+              </span>
+              <div>
+                <span
+                  class="inline-flex items-center shrink-0 font-medium border text-xs px-1 py-0.5 rounded bg-neutral-100 border-neutral-200 text-neutral-400 gap-1"
+                >
+                  <span
+                    class="icon-solid-code-branch shrink-0 "
+                    role="img"
+                  />
+                  main
+                </span>
+              </div>
+            </div>
+          </div>
+        </td>
+        <td
+          class="h-14 px-4 py-0 first:border-r"
+          style="width: 10%;"
+        >
+          <span
+            class="text-xs text-neutral-350"
+            data-state="closed"
+          >
+            19 days
+          </span>
+        </td>
+      </tr>
+      <tr
+        class="hover:bg-neutral-100 h-16 cursor-pointer"
+      >
+        <td
+          class="h-14 px-4 py-0 first:border-r"
+          style="width: 40%;"
+        >
+          <div
+            class="flex items-center justify-between"
+          >
+            <span
+              class="flex items-center gap-4 font-medium text-sm text-neutral-400"
+            >
+              <svg
+                class="shrink-0 "
+                fill="none"
+                name="LIFECYCLE_JOB"
+                viewBox="0 0 22 22"
+                width="20"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <g
+                  opacity="0.7"
+                >
+                  <circle
+                    cx="10.875"
+                    cy="11"
+                    r="10.15"
+                    stroke="#42E8E0"
+                    stroke-width="0.3"
+                  />
+                  <ellipse
+                    cx="10.876"
+                    cy="11.077"
+                    fill="#EAEAFE"
+                    rx="7.669"
+                    ry="7.669"
+                  />
+                  <path
+                    clip-rule="evenodd"
+                    d="M1.762 11.076a9.114 9.114 0 019.036-9.113v2.72a6.394 6.394 0 00-6.316 6.393h-2.72z"
+                    fill="url(#paint0_linear_10128_95071)"
+                    fill-rule="evenodd"
+                  />
+                  <path
+                    clip-rule="evenodd"
+                    d="M10.688 1.963a9.218 9.218 0 019.218 9.14h-2.751a6.467 6.467 0 00-6.467-6.389V1.963z"
+                    fill="url(#paint1_linear_10128_95071)"
+                    fill-rule="evenodd"
+                  />
+                  <path
+                    clip-rule="evenodd"
+                    d="M19.906 11a9.231 9.231 0 01-9.036 9.112v-2.756A6.476 6.476 0 0017.15 11h2.756z"
+                    fill="url(#paint2_linear_10128_95071)"
+                    fill-rule="evenodd"
+                  />
+                  <path
+                    clip-rule="evenodd"
+                    d="M10.875 20.113a9.114 9.114 0 01-9.113-9.037h2.72a6.394 6.394 0 006.393 6.317v2.72z"
+                    fill="url(#paint3_linear_10128_95071)"
+                    fill-rule="evenodd"
+                  />
+                  <path
+                    d="M11.514 3.326L10.15 1.963v2.726l1.364-1.363zM18.543 11.72l1.363-1.364H17.18l1.363 1.364zM10.15 18.75l1.364 1.363v-2.726L10.15 18.75zM3.152 10.357L1.79 11.72h2.726l-1.363-1.363z"
+                    fill="#fff"
+                  />
+                  <rect
+                    fill="#fff"
+                    height="1.252"
+                    rx="0.626"
+                    width="5.803"
+                    x="7.975"
+                    y="8.274"
+                  />
+                  <rect
+                    fill="#fff"
+                    height="1.252"
+                    rx="0.626"
+                    width="5.803"
+                    x="7.975"
+                    y="10.45"
+                  />
+                  <rect
+                    fill="#fff"
+                    height="1.252"
+                    rx="0.626"
+                    width="5.803"
+                    x="7.975"
+                    y="12.627"
+                  />
+                  <rect
+                    fill="#8987C9"
+                    height="1.252"
+                    rx="0.626"
+                    width="5.803"
+                    x="7.975"
+                    y="8.198"
+                  />
+                  <rect
+                    fill="#8987C9"
+                    height="1.252"
+                    rx="0.626"
+                    width="5.803"
+                    x="7.975"
+                    y="10.374"
+                  />
+                  <rect
+                    fill="#8987C9"
+                    height="1.252"
+                    rx="0.626"
+                    width="5.803"
+                    x="7.975"
+                    y="12.55"
+                  />
+                </g>
+                <defs>
+                  <lineargradient
+                    gradientUnits="userSpaceOnUse"
+                    id="paint0_linear_10128_95071"
+                    x1="11.349"
+                    x2="7.509"
+                    y1="17.65"
+                    y2="6.193"
+                  >
+                    <stop
+                      stop-color="#8987C9"
+                    />
+                    <stop
+                      offset="1"
+                      stop-color="#BDBFFF"
+                    />
+                  </lineargradient>
+                  <lineargradient
+                    gradientUnits="userSpaceOnUse"
+                    id="paint1_linear_10128_95071"
+                    x1="16.627"
+                    x2="13.808"
+                    y1="11.103"
+                    y2="4.453"
+                  >
+                    <stop
+                      stop-color="#8987C9"
+                    />
+                    <stop
+                      offset="1"
+                      stop-color="#BDBFFF"
+                    />
+                  </lineargradient>
+                  <lineargradient
+                    gradientUnits="userSpaceOnUse"
+                    id="paint2_linear_10128_95071"
+                    x1="16.527"
+                    x2="17.628"
+                    y1="17.334"
+                    y2="18.595"
+                  >
+                    <stop
+                      stop-color="#8987C9"
+                    />
+                    <stop
+                      offset="1"
+                      stop-color="#BDBFFF"
+                    />
+                  </lineargradient>
+                  <lineargradient
+                    gradientUnits="userSpaceOnUse"
+                    id="paint3_linear_10128_95071"
+                    x1="6.85"
+                    x2="1.762"
+                    y1="18.01"
+                    y2="18.19"
+                  >
+                    <stop
+                      stop-color="#8987C9"
+                    />
+                    <stop
+                      offset="1"
+                      stop-color="#BDBFFF"
+                    />
+                  </lineargradient>
+                </defs>
+              </svg>
+              seed_script
+              <div>
+                <button
+                  aria-controls="radix-:r2u:"
+                  aria-expanded="false"
+                  aria-haspopup="dialog"
+                  class="inline-flex shrink-0 font-medium transition text-xs px-1 py-0.5 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 items-center gap-1"
+                  data-state="closed"
+                  type="button"
+                >
+                  <span
+                    class="icon-solid-link shrink-0 "
+                    role="img"
+                  />
+                  <span
+                    class="icon-solid-angle-down shrink-0 "
+                    role="img"
+                  />
+                </button>
+              </div>
+            </span>
+            <div
+              class="flex items-center gap-4"
+            >
+              <span
+                class=""
+                data-state="closed"
+              >
+                <span
+                  class="icon-solid-arrows-rotate shrink-0 text-neutral-300"
+                  role="img"
+                />
+              </span>
+              <div>
+                <div
+                  class="btn-icon-action !h-8"
+                  data-testid="button-icon-action"
+                >
+                  <div
+                    class="w-max menu__trigger menu__trigger--closed border-r border-r-neutral-250"
+                  >
+                    <span
+                      class=""
+                      data-state="closed"
+                    >
+                      <div
+                        class="btn-icon-action__element  "
+                        data-testid="element"
+                      >
+                        <span
+                          class="icon-solid-play shrink-0 px-0.5"
+                          role="img"
+                        />
+                        <span
+                          class="icon-solid-angle-down shrink-0 px-0.5"
+                          role="img"
+                        />
+                      </div>
+                    </span>
+                  </div>
+                  <span
+                    class="flex border-r border-r-neutral-250"
+                    data-state="closed"
+                  >
+                    <div
+                      class="btn-icon-action__element"
+                      data-testid="element"
+                    >
+                      <span
+                        class="icon-solid-scroll shrink-0 px-0.5"
+                        role="img"
+                      />
+                    </div>
+                  </span>
+                  <div
+                    class="w-max menu__trigger menu__trigger--closed "
+                  >
+                    <span
+                      class=""
+                      data-state="closed"
+                    >
+                      <div
+                        class="btn-icon-action__element  "
+                        data-testid="element"
+                      >
+                        <span
+                          class="icon-solid-ellipsis-v shrink-0 px-0.5"
+                          role="img"
+                        />
+                      </div>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </td>
+        <td
+          class="h-14 px-4 py-0 first:border-r"
+          style="width: 15%;"
+        >
+          <button
+            class="inline-flex items-center shrink-0 font-medium transition h-8 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent text-xs gap-2"
+          >
+            <div
+              class=""
+              data-state="closed"
+            >
+              <svg
+                class="text-neutral-300"
+                fill="none"
+                height="16"
+                viewBox="0 0 24 24"
+                width="16"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <g
+                  clip-path="url(#clip0_5424_5935)"
+                >
+                  <path
+                    d="M21.75 12a9.75 9.75 0 10-19.5 0 9.75 9.75 0 0019.5 0zM0 12a12 12 0 1124 0 12 12 0 01-24 0zm16.5-4.5v9h-9v-9h9z"
+                    fill="currentColor"
+                  />
+                </g>
+                <defs>
+                  <clippath
+                    id="clip0_5424_5935"
+                  >
+                    <path
+                      d="M0 0H24V24H0z"
+                      fill="#fff"
+                    />
+                  </clippath>
+                </defs>
+              </svg>
+            </div>
+            Stopped
+          </button>
+        </td>
+        <td
+          class="h-14 px-4 py-0 first:border-r"
+          style="width: 15%;"
+        >
+          <button
+            class="inline-flex items-center shrink-0 font-medium transition h-8 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent text-xs gap-2"
+          >
+            <div
+              class=""
+              data-state="closed"
+            >
+              <svg
+                class="text-neutral-300"
+                fill="none"
+                height="16"
+                viewBox="0 0 24 24"
+                width="16"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <g
+                  clip-path="url(#clip0_5424_5935)"
+                >
+                  <path
+                    d="M21.75 12a9.75 9.75 0 10-19.5 0 9.75 9.75 0 0019.5 0zM0 12a12 12 0 1124 0 12 12 0 01-24 0zm16.5-4.5v9h-9v-9h9z"
+                    fill="currentColor"
+                  />
+                </g>
+                <defs>
+                  <clippath
+                    id="clip0_5424_5935"
+                  >
+                    <path
+                      d="M0 0H24V24H0z"
+                      fill="#fff"
+                    />
+                  </clippath>
+                </defs>
+              </svg>
+            </div>
+            Never deployed
+          </button>
+        </td>
+        <td
+          class="h-14 px-4 py-0 first:border-r"
+          style="width: 20%;"
+        >
+          <div
+            class="flex flex-row items-center gap-2"
+          >
+            <div
+              class="block rounded-full relative   border-2 border-neutral-200"
+              data-state="closed"
+              data-testid="avatar"
+              style="width: 20px; height: 20px;"
+            >
+              <div
+                class="w-full h-full rounded-full bg-neutral-200 text-center flex justify-center items-center"
+              >
+                <span
+                  class="text-xs text-neutral-400 font-medium relative"
+                >
+                  A
+                </span>
+              </div>
+            </div>
+            <div
+              class="flex flex-col gap-1"
+            >
+              <span
+                class="relative"
+                data-state="closed"
+              >
+                <button
+                  class="inline-flex items-center shrink-0 font-medium transition text-xs px-1 py-0.5 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 group justify-between gap-1"
+                  type="button"
+                >
+                  <span
+                    class="icon-solid-copy shrink-0 hidden group-hover:inline w-4"
+                    role="img"
+                  />
+                  <span
+                    class="icon-solid-code-commit shrink-0 group-hover:hidden w-4"
+                    role="img"
+                  />
+                  10ad354
+                </button>
+              </span>
+              <div>
+                <span
+                  class="inline-flex items-center shrink-0 font-medium border text-xs px-1 py-0.5 rounded bg-neutral-100 border-neutral-200 text-neutral-400 gap-1"
+                >
+                  <span
+                    class="icon-solid-code-branch shrink-0 "
+                    role="img"
+                  />
+                  main
+                </span>
+              </div>
+            </div>
+          </div>
+        </td>
+        <td
+          class="h-14 px-4 py-0 first:border-r"
+          style="width: 10%;"
+        >
+          <span
+            class="text-xs text-neutral-350"
+            data-state="closed"
+          >
+            19 days
+          </span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+`;

@@ -1,6 +1,9 @@
 import {
   type ApplicationGitRepository,
   type ContainerSource,
+  type HelmResponseAllOfSource,
+  type HelmResponseAllOfSourceOneOf,
+  type HelmResponseAllOfSourceOneOf1,
   type JobResponseAllOfSource,
   type JobResponseAllOfSourceOneOf,
   type JobResponseAllOfSourceOneOf1,
@@ -64,6 +67,14 @@ export const isLifeCycleJob = (data?: ApplicationEntity | ServiceTypeEnum) => {
   } else {
     return data === ServiceTypeEnum.LIFECYCLE_JOB
   }
+}
+
+export function isHelmGitSource(source?: HelmResponseAllOfSource): source is HelmResponseAllOfSourceOneOf {
+  return !!source && 'git' in source
+}
+
+export function isHelmRepositorySource(source?: HelmResponseAllOfSource): source is HelmResponseAllOfSourceOneOf1 {
+  return !!source && 'repository' in source
 }
 
 export function isJobGitSource(source?: JobResponseAllOfSource): source is JobResponseAllOfSourceOneOf1 {
