@@ -7,6 +7,7 @@ import { CrudModalFeature, type CrudModalFeatureProps } from './crud-modal-featu
 const mockOrganization: OrganizationEntity = organizationFactoryMock(1)[0]
 
 const useCreateApiTokenMockSpy = jest.spyOn(organizationsDomain, 'useCreateApiToken') as jest.Mock
+const useAvailableRolesMockSpy = jest.spyOn(organizationsDomain, 'useAvailableRoles') as jest.Mock
 
 const mockDispatch = jest.fn()
 jest.mock('react-redux', () => ({
@@ -30,6 +31,15 @@ describe('CrudModalFeature', () => {
   beforeEach(() => {
     useCreateApiTokenMockSpy.mockReturnValue({
       mutateAsync: jest.fn(),
+    })
+    useAvailableRolesMockSpy.mockReturnValue({
+      data: [
+        {
+          id: '0',
+          name: 'my-role',
+        },
+      ],
+      isFetched: true,
     })
   })
 
