@@ -70,6 +70,7 @@ export function StepSummaryFeature() {
         createDatabase({
           environmentId: environmentId,
           databaseRequest,
+          queryClient,
         })
       )
         .unwrap()
@@ -83,6 +84,7 @@ export function StepSummaryFeature() {
               })
             )
           }
+          queryClient.invalidateQueries()
           navigate(SERVICES_URL(organizationId, projectId, environmentId))
         })
         .catch((e) => console.error(e))

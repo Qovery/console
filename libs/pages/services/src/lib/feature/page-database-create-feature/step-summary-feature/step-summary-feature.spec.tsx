@@ -96,6 +96,7 @@ describe('StepSummaryFeature', () => {
         version: '1',
         description: '',
       },
+      queryClient: expect.any(Object),
     })
     expect(mockNavigate).toHaveBeenCalledWith('/organization/1/project/2/environment/3')
   })

@@ -115,6 +115,7 @@ describe('PageApplicationPostFeature', () => {
         auto_deploy: true,
       },
       serviceType: 'APPLICATION',
+      queryClient: expect.any(Object),
     })
   })
 
@@ -174,6 +175,7 @@ describe('PageApplicationPostFeature', () => {
         auto_deploy: true,
       },
       serviceType: 'CONTAINER',
+      queryClient: expect.any(Object),
     })
   })
 })
