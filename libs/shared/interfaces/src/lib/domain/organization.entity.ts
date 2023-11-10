@@ -6,7 +6,6 @@ import {
   type Invoice,
   type Member,
   type Organization,
-  type OrganizationAvailableRole,
   type OrganizationCurrentCost,
   type OrganizationCustomRole,
 } from 'qovery-typescript-axios'
@@ -28,10 +27,6 @@ export interface OrganizationEntity extends Organization {
   inviteMembers?: {
     loadingStatus: LoadingStatus
     items?: InviteMember[]
-  }
-  availableRoles?: {
-    loadingStatus: LoadingStatus
-    items?: OrganizationAvailableRole[]
   }
   billingInfos?: {
     loadingStatus: LoadingStatus

@@ -138,15 +138,6 @@ export const deleteInviteMember = createAsyncThunk(
   }
 )
 
-export const fetchAvailableRoles = createAsyncThunk(
-  'organization/available-roles',
-  async (payload: { organizationId: string }) => {
-    // fetch available roles
-    const result = await organizationMainCalls.listOrganizationAvailableRoles(payload.organizationId)
-    return result.data.results
-  }
-)
-
 export const deleteMember = createAsyncThunk(
   'organization/member-delete',
   async (payload: { organizationId: string; userId: string }) => {
@@ -379,33 +370,6 @@ export const organizationSlice = createSlice({
           id: action.meta.arg.organizationId,
           changes: {
             inviteMembers: {
-              loadingStatus: 'loaded',
-              items: action.payload,
-            },
-          },
-        }
-
-        organizationAdapter.updateOne(state, update)
-      })
-      // fetch organization available roles
-      .addCase(fetchAvailableRoles.pending, (state: OrganizationState, action) => {
-        const update: Update<OrganizationEntity> = {
-          id: action.meta.arg.organizationId,
-          changes: {
-            availableRoles: {
-              loadingStatus: 'loaded',
-              items: state.entities[action.meta.arg.organizationId]?.availableRoles?.items || [],
-            },
-          },
-        }
-
-        organizationAdapter.updateOne(state, update)
-      })
-      .addCase(fetchAvailableRoles.fulfilled, (state: OrganizationState, action) => {
-        const update: Update<OrganizationEntity> = {
-          id: action.meta.arg.organizationId,
-          changes: {
-            availableRoles: {
               loadingStatus: 'loaded',
               items: action.payload,
             },

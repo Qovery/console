@@ -15,6 +15,7 @@ import {
   OrganizationApiTokenApi,
   type OrganizationApiTokenCreateRequest,
   OrganizationApiTokenScope,
+  OrganizationCustomRoleApi,
   OrganizationMainCallsApi,
   OrganizationWebhookApi,
   type OrganizationWebhookCreateRequest,
@@ -30,6 +31,7 @@ const apiTokenApi = new OrganizationApiTokenApi()
 const webhookApi = new OrganizationWebhookApi()
 const cloudProviderCredentialsApi = new CloudProviderCredentialsApi()
 const billingApi = new BillingApi()
+const customRolesApi = new OrganizationCustomRoleApi()
 
 type CredentialRequest =
   | {
@@ -223,6 +225,20 @@ export const organizations = createQueryKeys('organizations', {
     async queryFn() {
       const response = await billingApi.listOrganizationCreditCards(organizationId)
       return response.data.results
+    },
+  }),
+  availableRoles: ({ organizationId }: { organizationId: string }) => ({
+    queryKey: [organizationId],
+    async queryFn() {
+      const response = await organizationApi.listOrganizationAvailableRoles(organizationId)
+      return response.data.results
+    },
+  }),
+  customRoles: ({ organizationId, customRoleId }: { organizationId: string; customRoleId: string }) => ({
+    queryKey: [organizationId],
+    async queryFn() {
+      const result = await customRolesApi.getOrganizationCustomRole(organizationId, customRoleId)
+      return result.data
     },
   }),
 })

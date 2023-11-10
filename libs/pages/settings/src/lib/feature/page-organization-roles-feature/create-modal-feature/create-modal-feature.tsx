@@ -3,7 +3,8 @@ import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { fetchAvailableRoles, postCustomRoles } from '@qovery/domains/organization'
+import { postCustomRoles } from '@qovery/domains/organization'
+import { useAvailableRoles } from '@qovery/domains/organizations/feature'
 import { SETTINGS_ROLES_EDIT_URL, SETTINGS_URL } from '@qovery/shared/routes'
 import { type AppDispatch } from '@qovery/state/store'
 import CreateModal from '../../../ui/page-organization-roles/create-modal/create-modal'
@@ -16,6 +17,7 @@ export interface CreateModalFeatureProps {
 export function CreateModalFeature(props: CreateModalFeatureProps) {
   const { organizationId = '', onClose } = props
 
+  const { refetch: refetchAvailableRoles } = useAvailableRoles({ organizationId })
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
 
@@ -37,7 +39,7 @@ export function CreateModalFeature(props: CreateModalFeatureProps) {
       .unwrap()
       .then((result) => {
         // fetch the list of available roles after add new role
-        dispatch(fetchAvailableRoles({ organizationId }))
+        refetchAvailableRoles()
 
         setLoading(false)
         onClose()

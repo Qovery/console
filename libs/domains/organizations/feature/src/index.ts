@@ -19,6 +19,7 @@ export * from './lib/hooks/use-cloud-provider-credentials/use-cloud-provider-cre
 export * from './lib/hooks/use-create-cloud-provider-credential/use-create-cloud-provider-credential'
 export * from './lib/hooks/use-edit-cloud-provider-credential/use-edit-cloud-provider-credential'
 export * from './lib/hooks/use-delete-cloud-provider-credential/use-delete-cloud-provider-credential'
+export * from './lib/hooks/use-available-roles/use-available-roles'
 export * from './lib/git-provider-setting/git-provider-setting'
 export * from './lib/git-repository-setting/git-repository-setting'
 export * from './lib/git-branch-settings/git-branch-settings'
