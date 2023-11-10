@@ -1,13 +1,11 @@
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
-import { selectOrganizationById } from '@qovery/domains/organization'
-import { type ApplicationGeneralData, type OrganizationEntity } from '@qovery/shared/interfaces'
+import { useOrganization } from '@qovery/domains/organizations/feature'
+import { type ApplicationGeneralData } from '@qovery/shared/interfaces'
 import { SERVICES_APPLICATION_CREATION_URL, SERVICES_CREATION_RESOURCES_URL, SERVICES_URL } from '@qovery/shared/routes'
 import { FunnelFlowBody, FunnelFlowHelpCard, toastError } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { type RootState } from '@qovery/state/store'
 import StepGeneral from '../../../ui/page-application-create/step-general/step-general'
 import { useApplicationContainerCreateContext } from '../page-application-create-feature'
 
@@ -16,9 +14,8 @@ export function StepGeneralFeature() {
   const { setGeneralData, generalData, setCurrentStep } = useApplicationContainerCreateContext()
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const navigate = useNavigate()
-  const organization = useSelector<RootState, OrganizationEntity | undefined>((state) =>
-    selectOrganizationById(state, organizationId)
-  )
+  const { data: organization } = useOrganization({ organizationId })
+
   const funnelCardHelp = (
     <FunnelFlowHelpCard
       title="Application creation flow"

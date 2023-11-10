@@ -17,7 +17,7 @@ export function useCreateApiToken({ organizationId }: UseCreateApiTokenProps) {
     },
     meta: {
       notifyOnSuccess: {
-        title: 'Your Api token is being created',
+        title: 'Your Api token has been created',
       },
       notifyOnError: true,
     },

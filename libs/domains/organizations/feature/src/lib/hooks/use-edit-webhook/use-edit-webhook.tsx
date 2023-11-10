@@ -17,7 +17,7 @@ export function useEditWebhook({ organizationId }: UseEditWebhookProps) {
     },
     meta: {
       notifyOnSuccess: {
-        title: 'Your webhook is being edited',
+        title: 'Your webhook has been edited',
       },
       notifyOnError: true,
     },

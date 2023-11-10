@@ -17,7 +17,7 @@ export function useCreateGitToken({ organizationId }: UseCreateGitTokenProps) {
     },
     meta: {
       notifyOnSuccess: {
-        title: 'Your Git token is being created',
+        title: 'Your Git token has been created',
       },
       notifyOnError: true,
     },

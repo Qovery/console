@@ -19,7 +19,7 @@ export function useEditCloudProviderCredential({ organizationId, cloudProvider }
     },
     meta: {
       notifyOnSuccess: {
-        title: 'Your credential is being edited',
+        title: 'Your credential has been edited',
       },
       notifyOnError: true,
     },

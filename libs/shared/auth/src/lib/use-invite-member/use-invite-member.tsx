@@ -2,7 +2,7 @@ import { type InviteMember } from 'qovery-typescript-axios'
 import { useCallback, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { fetchOrganization } from '@qovery/domains/organization'
+import { useOrganizations } from '@qovery/domains/organizations/feature'
 import { acceptMembershipInvitation, fetchMemberInvitation } from '@qovery/domains/users/data-access'
 import { ACCEPT_INVITATION_URL, LOGIN_URL, LOGOUT_URL } from '@qovery/shared/routes'
 import { type AppDispatch } from '@qovery/state/store'
@@ -17,6 +17,7 @@ export function useInviteMember() {
   const navigate = useNavigate()
   const { getAccessTokenSilently } = useAuth()
   const dispatch = useDispatch<AppDispatch>()
+  const { refetch: refetchOrganizations } = useOrganizations()
 
   const checkTokenInStorage = useCallback(() => {
     const inviteToken = localStorage.getItem('inviteToken')
@@ -75,11 +76,8 @@ export function useInviteMember() {
             cleanInvitation()
             try {
               await getAccessTokenSilently({ ignoreCache: true })
-              dispatch(fetchOrganization())
-                .unwrap()
-                .then((value) => {
-                  window.location.assign(`/organization/${organizationId}`)
-                })
+              await refetchOrganizations()
+              window.location.assign(`/organization/${organizationId}`)
             } catch (e) {
               navigate(LOGOUT_URL)
             }

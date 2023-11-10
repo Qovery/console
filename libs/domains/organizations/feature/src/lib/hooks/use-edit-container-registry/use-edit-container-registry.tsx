@@ -17,7 +17,7 @@ export function useEditContainerRegistry({ organizationId }: UseEditContainerReg
     },
     meta: {
       notifyOnSuccess: {
-        title: 'Your container registry is being edited',
+        title: 'Your container registry has been edited',
       },
       notifyOnError: true,
     },

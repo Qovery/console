@@ -82,25 +82,6 @@ export const organizationSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchOrganization.pending, (state: OrganizationState) => {
-        state.loadingStatus = 'loading'
-      })
-      .addCase(fetchOrganization.fulfilled, (state: OrganizationState, action: PayloadAction<OrganizationEntity[]>) => {
-        organizationAdapter.upsertMany(state, action.payload)
-        state.loadingStatus = 'loaded'
-      })
-      .addCase(fetchOrganization.rejected, (state: OrganizationState, action) => {
-        state.loadingStatus = 'error'
-        state.error = action.error.message
-      })
-      // fetch organization by id
-      .addCase(
-        fetchOrganizationById.fulfilled,
-        (state: OrganizationState, action: PayloadAction<OrganizationEntity>) => {
-          organizationAdapter.upsertOne(state, action.payload)
-          state.loadingStatus = 'loaded'
-        }
-      )
       // post organization
       .addCase(postOrganization.pending, (state: OrganizationState) => {
         state.loadingStatus = 'loading'

@@ -17,7 +17,7 @@ export function useCreateContainerRegistry({ organizationId }: UseCreateContaine
     },
     meta: {
       notifyOnSuccess: {
-        title: 'Your container registry is being created',
+        title: 'Your container registry has been created',
       },
       notifyOnError: true,
     },

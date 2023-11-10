@@ -17,7 +17,7 @@ export function useCreateWebhook({ organizationId }: UseCreateWebhookProps) {
     },
     meta: {
       notifyOnSuccess: {
-        title: 'Your webhooks is being created',
+        title: 'Your webhooks has been created',
       },
       notifyOnError: true,
     },

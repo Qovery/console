@@ -1,11 +1,9 @@
 import { type Organization } from 'qovery-typescript-axios'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
-import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { editOrganization, selectOrganizationById } from '@qovery/domains/organization'
+import { useEditOrganization, useOrganization } from '@qovery/domains/organizations/feature'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { type AppDispatch, type RootState } from '@qovery/state/store'
 import PageOrganizationGeneral from '../../ui/page-organization-general/page-organization-general'
 
 export const handleSubmit = (data: FieldValues, organization: Organization) => {
@@ -23,10 +21,10 @@ export function PageOrganizationGeneralFeature() {
   const { organizationId = '' } = useParams()
   useDocumentTitle('General - Organization settings')
 
-  const organization = useSelector((state: RootState) => selectOrganizationById(state, organizationId))
-
-  const [loading, setLoading] = useState(false)
-  const dispatch = useDispatch<AppDispatch>()
+  const { data: organization } = useOrganization({ organizationId })
+  const { mutateAsync: editOrganization, isLoading: isLoadingEditOrganization } = useEditOrganization({
+    organizationId,
+  })
 
   const methods = useForm({
     mode: 'onChange',
@@ -49,26 +47,30 @@ export function PageOrganizationGeneralFeature() {
     organization?.admin_emails,
   ])
 
-  const onSubmit = methods.handleSubmit((data) => {
+  const onSubmit = methods.handleSubmit(async (data) => {
     if (data && organization) {
-      setLoading(true)
       const cloneOrganization = handleSubmit(data, organization)
 
-      dispatch(
-        editOrganization({
+      console.log(data)
+
+      try {
+        await editOrganization({
           organizationId,
-          data: cloneOrganization,
+          organizationRequest: cloneOrganization,
         })
-      )
-        .unwrap()
-        .then(() => setLoading(false))
-        .catch(() => setLoading(false))
+      } catch (error) {
+        console.error(error)
+      }
     }
   })
 
   return (
     <FormProvider {...methods}>
-      <PageOrganizationGeneral onSubmit={onSubmit} loading={loading} created_at={organization?.created_at || ''} />
+      <PageOrganizationGeneral
+        onSubmit={onSubmit}
+        loading={isLoadingEditOrganization}
+        created_at={organization?.created_at || ''}
+      />
     </FormProvider>
   )
 }

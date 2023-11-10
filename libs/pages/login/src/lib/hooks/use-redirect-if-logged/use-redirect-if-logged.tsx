@@ -1,9 +1,8 @@
 import { useGTMDispatch } from '@elgorditosalsero/react-gtm-hook'
-import { type Organization } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { fetchOrganization, selectAllOrganization } from '@qovery/domains/organization'
+import { useOrganizations } from '@qovery/domains/organizations/feature'
 import { useProjects } from '@qovery/domains/projects/feature'
 import { fetchUserSignUp } from '@qovery/domains/users/data-access'
 import { useAuth } from '@qovery/shared/auth'
@@ -26,23 +25,15 @@ export function useRedirectIfLogged() {
   const { createAuthCookies, checkIsAuthenticated, user } = useAuth()
   const dispatch = useDispatch<AppDispatch>()
   const sendDataToGTM = useGTMDispatch()
-  const organizations = useSelector(selectAllOrganization)
+  const { data: organizations = [] } = useOrganizations()
   const { data: projects = [] } = useProjects({ organizationId: organizations[0]?.id })
 
   useEffect(() => {
     async function fetchData() {
-      let organization: Organization[] = []
-
-      try {
-        organization = await dispatch(fetchOrganization()).unwrap()
-      } catch (e) {
-        console.warn(e)
-      }
-
       await createAuthCookies()
 
-      if (organization.length > 0) {
-        const organizationId = organization[0].id
+      if (organizations.length > 0) {
+        const organizationId = organizations[0].id
         if (projects.length > 0) navigate(OVERVIEW_URL(organizationId, projects[0].id))
         else navigate(ORGANIZATION_URL(organizationId))
       } else {
@@ -74,7 +65,7 @@ export function useRedirectIfLogged() {
 
       fetchData()
     }
-  }, [navigate, checkIsAuthenticated, createAuthCookies, dispatch, sendDataToGTM, user?.email, projects])
+  }, [navigate, checkIsAuthenticated, createAuthCookies, dispatch, sendDataToGTM, user?.email, organizations, projects])
 }
 
 export default useRedirectIfLogged

@@ -17,7 +17,7 @@ export function useEditGitToken({ organizationId }: UseEditGitTokenProps) {
     },
     meta: {
       notifyOnSuccess: {
-        title: 'Your Git token is being edited',
+        title: 'Your Git token has been edited',
       },
       notifyOnError: true,
     },

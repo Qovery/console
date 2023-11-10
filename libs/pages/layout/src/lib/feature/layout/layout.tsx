@@ -8,12 +8,9 @@ import { useEnvironment } from '@qovery/domains/environments/feature'
 import {
   fetchClusters,
   fetchClustersStatus,
-  fetchOrganization,
-  fetchOrganizationById,
-  selectAllOrganization,
   selectClustersEntitiesByOrganizationId,
 } from '@qovery/domains/organization'
-import { type OrganizationEntity } from '@qovery/shared/interfaces'
+import { useOrganization, useOrganizations } from '@qovery/domains/organizations/feature'
 import { ORGANIZATION_URL } from '@qovery/shared/routes'
 import { StatusWebSocketListener } from '@qovery/shared/util-web-sockets'
 import { type AppDispatch, type RootState } from '@qovery/state/store'
@@ -36,29 +33,34 @@ export function Layout(props: PropsWithChildren<LayoutProps>) {
   const clusters = useSelector<RootState, Cluster[]>((state) =>
     selectClustersEntitiesByOrganizationId(state, organizationId)
   )
-  const organizations = useSelector(selectAllOrganization)
+  const { data: organizations = [] } = useOrganizations()
+  const { refetch: fetchOrganization } = useOrganization({ organizationId, enabled: false })
+
   const { data: environment } = useEnvironment({ environmentId })
 
   useEffect(() => {
-    dispatch(fetchOrganization())
-      .unwrap()
-      .then((result: OrganizationEntity[]) => {
-        const organizationIds: string[] = []
+    const organizationIds: string[] = []
 
-        for (let i = 0; i < result.length; i++) {
-          const organization = result[i]
-          organizationIds.push(organization.id)
-        }
+    for (let i = 0; i < organizations.length; i++) {
+      const organization = organizations[i]
+      organizationIds.push(organization.id)
+    }
 
-        // fetch organization by id neccessary for debug by Qovery team
-        if (result.length > 0 && !organizationIds.includes(organizationId)) {
-          dispatch(fetchOrganizationById({ organizationId }))
-            .unwrap()
-            .catch(() => redirect(ORGANIZATION_URL(result[0].id))) // using redirect instead of navigate because navigate was needed in useEffect deps and retriggering everytime we change location https://github.com/remix-run/react-router/discussions/8465#discussioncomment-4051081
-        }
-      })
-      .catch((error) => console.error(error))
-  }, [dispatch, organizationId])
+    async function fetchOrganizationForQoveryTeam() {
+      try {
+        await fetchOrganization()
+        redirect(ORGANIZATION_URL(organizationId))
+      } catch (error) {
+        console.error(error)
+        redirect(ORGANIZATION_URL(organizations[0].id))
+      }
+    }
+
+    // fetch organization by id neccessary for debug by Qovery team
+    if (organizations.length > 0 && !organizationIds.includes(organizationId)) {
+      fetchOrganizationForQoveryTeam()
+    }
+  }, [organizationId, organizations, fetchOrganization])
 
   useEffect(() => {
     if (environmentId) {

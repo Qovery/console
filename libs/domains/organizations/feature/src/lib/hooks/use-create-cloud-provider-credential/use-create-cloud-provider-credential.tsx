@@ -22,7 +22,7 @@ export function useCreateCloudProviderCredential({
     },
     meta: {
       notifyOnSuccess: {
-        title: 'Your credential is being created',
+        title: 'Your credential has been created',
       },
       notifyOnError: true,
     },
