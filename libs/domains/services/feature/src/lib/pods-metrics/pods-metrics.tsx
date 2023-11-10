@@ -127,7 +127,9 @@ export function PodsMetrics({ environmentId, serviceId }: PodsMetricsProps) {
           value && (
             <Badge variant="surface" size="xs" className="shrink max-w-full">
               {containerImage ? (
-                `${containerImage.image_name}:${containerImage.tag}`
+                <div className="truncate">
+                  {containerImage.image_name}:{containerImage.tag}
+                </div>
               ) : (
                 <span className="max-w-full truncate">
                   <Icon className="mr-2" name={IconAwesomeEnum.CODE_COMMIT} />
