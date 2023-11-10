@@ -93,6 +93,8 @@ export function RowEvent(props: RowEventProps) {
     }
 
     if (event_type !== OrganizationEventType.DELETE) {
+      if (targetType.includes('HELM_REPOSITORY')) return <span>NOT_IMPLEMENTED</span>
+
       return linkConfig[targetType]()
     } else {
       return <span className="truncate">{target_name}</span>
