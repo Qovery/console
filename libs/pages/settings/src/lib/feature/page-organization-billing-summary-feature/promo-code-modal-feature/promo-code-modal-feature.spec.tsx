@@ -1,44 +1,35 @@
-import { act, fireEvent, getByLabelText, getByTestId, render } from '__tests__/utils/setup-jest'
-import * as organizationDomains from '@qovery/domains/organization'
+import * as organizationsDomain from '@qovery/domains/organizations/feature'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import PromoCodeModalFeature, { type PromocodeModalFeatureProps } from './promo-code-modal-feature'
+
+const useAddCreditCodeSpy = jest.spyOn(organizationsDomain, 'useAddCreditCode')
 
 const props: PromocodeModalFeatureProps = {
   closeModal: jest.fn(),
   organizationId: '1',
 }
 
-const mockDispatch = jest.fn()
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useDispatch: () => mockDispatch,
-}))
-
 describe('PromoCodeModalFeature', () => {
   beforeEach(() => {
-    mockDispatch.mockImplementation(() => ({
-      unwrap: () => Promise.resolve(),
-    }))
+    useAddCreditCodeSpy.mockReturnValue({
+      mutateAsync: jest.fn(),
+    })
   })
 
   it('should render successfully', () => {
-    const { baseElement } = render(<PromoCodeModalFeature {...props} />)
+    const { baseElement } = renderWithProviders(<PromoCodeModalFeature {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
-  it('should dispatch addCreditCode with good params', async () => {
-    const spy = jest.spyOn(organizationDomains, 'addCreditCode')
-    const { baseElement } = render(<PromoCodeModalFeature {...props} />)
+  it('should useAddCreditCode with good params', async () => {
+    const { userEvent } = renderWithProviders(<PromoCodeModalFeature {...props} />)
 
-    const input = getByLabelText(baseElement, 'Promo code')
-    await act(() => {
-      fireEvent.input(input, { target: { value: 'test' } })
-    })
+    const input = screen.getByLabelText('Promo code')
+    await userEvent.type(input, 'test')
 
-    const button = getByTestId(baseElement, 'submit-button')
-    await act(() => {
-      button.click()
-    })
+    const button = screen.getByTestId('submit-button')
+    await userEvent.click(button)
 
-    expect(spy).toHaveBeenCalledWith({ organizationId: '1', code: 'test' })
+    expect(useAddCreditCodeSpy().mutateAsync).toHaveBeenCalledWith({ organizationId: '1', code: 'test' })
   })
 })

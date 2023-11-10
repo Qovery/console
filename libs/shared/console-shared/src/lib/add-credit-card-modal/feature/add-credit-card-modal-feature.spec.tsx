@@ -1,52 +1,44 @@
-import { act, fireEvent, getByLabelText, getByTestId, render } from '__tests__/utils/setup-jest'
-import * as storeOrganization from '@qovery/domains/organization'
-import AddCreditCardModalFeature from './add-credit-card-modal-feature'
+import * as organizationsDomain from '@qovery/domains/organizations/feature'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import AddCreditCardModalFeature, { type AddCreditCardModalFeatureProps } from './add-credit-card-modal-feature'
 
 import SpyInstance = jest.SpyInstance
 
-const mockDispatch = jest.fn()
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useDispatch: () => mockDispatch,
-}))
+const useAddCreditCardSpy: SpyInstance = jest.spyOn(organizationsDomain, 'useAddCreditCard')
+
+const props: AddCreditCardModalFeatureProps = {
+  organizationId: '1',
+}
 
 describe('AddCreditCardModalFeature', () => {
   beforeEach(() => {
-    mockDispatch.mockImplementation(() => ({
-      unwrap: () =>
-        Promise.resolve({
-          data: {},
-        }),
-    }))
+    useAddCreditCardSpy.mockReturnValue({
+      mutateAsync: jest.fn(),
+    })
   })
 
   it('should render successfully', () => {
-    const { baseElement } = render(<AddCreditCardModalFeature />)
+    const { baseElement } = renderWithProviders(<AddCreditCardModalFeature {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
   it('should dispatch addCreditCard action', async () => {
-    const addCreditCardSpy: SpyInstance = jest.spyOn(storeOrganization, 'addCreditCard')
-    const { baseElement } = render(<AddCreditCardModalFeature organizationId="1" />)
+    const { userEvent } = renderWithProviders(<AddCreditCardModalFeature organizationId="1" />)
 
-    const button = getByTestId(baseElement, 'submit-button')
-    const cardNumberInput = getByLabelText(baseElement, 'Card number')
-    const cardExpiryInput = getByLabelText(baseElement, 'Expiration date')
-    const cardCVCInput = getByLabelText(baseElement, 'CVC')
+    const button = screen.getByTestId('submit-button')
+    const cardNumberInput = screen.getByLabelText('Card number')
+    const cardExpiryInput = screen.getByLabelText('Expiration date')
+    const cardCVCInput = screen.getByLabelText('CVC')
 
-    await act(() => {
-      fireEvent.change(cardNumberInput, { target: { value: '4444444444444444' } })
-      fireEvent.input(cardExpiryInput, { target: { value: '0320' } })
-      fireEvent.input(cardCVCInput, { target: { value: '032' } })
-    })
+    await userEvent.type(cardNumberInput, '4444444444444444')
+    await userEvent.type(cardExpiryInput, '0320')
+    await userEvent.type(cardCVCInput, '032')
 
     expect(button).not.toBeDisabled()
 
-    await act(() => {
-      button.click()
-    })
+    await userEvent.click(button)
 
-    expect(addCreditCardSpy).toHaveBeenCalledWith({
+    expect(useAddCreditCardSpy().mutateAsync).toHaveBeenCalledWith({
       organizationId: '1',
       creditCardRequest: {
         cvv: '032',

@@ -1,10 +1,13 @@
 import { createQueryKeys } from '@lukemorales/query-key-factory'
 import {
   type AwsCredentialsRequest,
+  BillingApi,
+  type BillingInfoRequest,
   CloudProviderCredentialsApi,
   type CloudProviderEnum,
   ContainerRegistriesApi,
   type ContainerRegistryRequest,
+  type CreditCardRequest,
   type DoCredentialsRequest,
   type GitProviderEnum,
   type GitTokenRequest,
@@ -26,6 +29,7 @@ const gitApi = new OrganizationAccountGitRepositoriesApi()
 const apiTokenApi = new OrganizationApiTokenApi()
 const webhookApi = new OrganizationWebhookApi()
 const cloudProviderCredentialsApi = new CloudProviderCredentialsApi()
+const billingApi = new BillingApi()
 
 type CredentialRequest =
   | {
@@ -190,6 +194,34 @@ export const organizations = createQueryKeys('organizations', {
     queryKey: [organizationId],
     async queryFn() {
       const response = await webhookApi.listOrganizationWebHooks(organizationId)
+      return response.data.results
+    },
+  }),
+  billingInfo: ({ organizationId }: { organizationId: string }) => ({
+    queryKey: [organizationId],
+    async queryFn() {
+      const response = await billingApi.getOrganizationBillingInfo(organizationId)
+      return response.data
+    },
+  }),
+  currentCost: ({ organizationId }: { organizationId: string }) => ({
+    queryKey: [organizationId],
+    async queryFn() {
+      const result = await billingApi.getOrganizationCurrentCost(organizationId)
+      return result.data
+    },
+  }),
+  invoices: ({ organizationId }: { organizationId: string }) => ({
+    queryKey: [organizationId],
+    async queryFn() {
+      const result = await billingApi.listOrganizationInvoice(organizationId)
+      return result.data.results
+    },
+  }),
+  creditCards: ({ organizationId }: { organizationId: string }) => ({
+    queryKey: [organizationId],
+    async queryFn() {
+      const response = await billingApi.listOrganizationCreditCards(organizationId)
       return response.data.results
     },
   }),
@@ -375,5 +407,42 @@ export const mutations = {
       .exhaustive()
 
     return cloudProviderCredential
+  },
+  async invoiceUrl({ organizationId, invoiceId }: { organizationId: string; invoiceId: string }) {
+    const response = await billingApi.getOrganizationInvoicePDF(organizationId, invoiceId)
+    return response.data
+  },
+  async editBillingInfo({
+    organizationId,
+    billingInfoRequest,
+  }: {
+    organizationId: string
+    billingInfoRequest: BillingInfoRequest
+  }) {
+    const response = await billingApi.editOrganizationBillingInfo(organizationId, billingInfoRequest)
+    return response.data
+  },
+  async addCreditCode({ organizationId, code }: { organizationId: string; code: string }) {
+    const response = await billingApi.addCreditCode(organizationId, { code: code })
+    return response.data
+  },
+  async addCreditCard({
+    organizationId,
+    creditCardRequest,
+  }: {
+    organizationId: string
+    creditCardRequest: CreditCardRequest
+  }) {
+    // if expiryYear does not have 4 digits, we add 2000 to it
+    if (creditCardRequest.expiry_year < 1000) {
+      creditCardRequest.expiry_year += 2000
+    }
+
+    const response = await billingApi.addCreditCard(organizationId, creditCardRequest)
+    return response.data
+  },
+  async deleteCreditCard({ organizationId, creditCardId }: { organizationId: string; creditCardId: string }) {
+    const response = await billingApi.deleteCreditCard(organizationId, creditCardId)
+    return response.data
   },
 }

@@ -8,4 +8,5 @@ export const creditCardsFactoryMock = (howMany: number): CreditCard[] =>
     expiry_year: 2024,
     expiry_month: 12,
     is_expired: false,
+    brand: 'MASTERCARD',
   }))

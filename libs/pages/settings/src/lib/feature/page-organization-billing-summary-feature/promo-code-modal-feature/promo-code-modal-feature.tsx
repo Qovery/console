@@ -1,39 +1,36 @@
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { addCreditCode } from '@qovery/domains/organization'
-import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
+import { useAddCreditCode } from '@qovery/domains/organizations/feature'
 import PromoCodeModal from '../../../ui/page-organization-billing-summary/promo-code-modal/promo-code-modal'
 
 export interface PromocodeModalFeatureProps {
-  organizationId: string | undefined
+  organizationId?: string
   closeModal: () => void
 }
 
-export function PromoCodeModalFeature(props: PromocodeModalFeatureProps) {
+export function PromoCodeModalFeature({ organizationId, closeModal }: PromocodeModalFeatureProps) {
   const methods = useForm<{ code: string }>({ defaultValues: { code: '' }, mode: 'all' })
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const { mutateAsync: addCreditCode } = useAddCreditCode()
 
-  const onSubmit = methods.handleSubmit((data) => {
-    if (props.organizationId && data.code) {
+  const onSubmit = methods.handleSubmit(async (data) => {
+    if (organizationId && data.code) {
       setIsSubmitting(true)
-      addCreditCode({ organizationId: props.organizationId, code: data.code })
-        .then(() => {
-          props.closeModal()
-          toast(ToastEnum.SUCCESS, 'Credit code added')
-        })
-        .catch((err) => {
-          console.error(err)
-          toastError(err)
-        })
-        .finally(() => {
-          setIsSubmitting(false)
-        })
+
+      try {
+        await addCreditCode({ organizationId, code: data.code })
+        closeModal()
+      } catch (error) {
+        console.error(error)
+      }
+
+      setIsSubmitting(false)
     }
   })
 
   return (
     <FormProvider {...methods}>
-      <PromoCodeModal onSubmit={onSubmit} onClose={props.closeModal} isSubmitting={isSubmitting} />
+      <PromoCodeModal onSubmit={onSubmit} onClose={closeModal} isSubmitting={isSubmitting} />
     </FormProvider>
   )
 }

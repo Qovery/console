@@ -10,7 +10,7 @@ export interface InvoicesListProps {
   downloadOne?: (invoiceId: string) => void
   yearsForSorting?: Value[]
   onFilterByYear?: (year?: string) => void
-  idOfInvoiceToDownload?: string | undefined
+  idOfInvoiceToDownload?: string
 }
 
 export function InvoicesList(props: InvoicesListProps) {

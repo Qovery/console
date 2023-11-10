@@ -34,7 +34,7 @@
     },
     {
       "files": ["*.ts", "*.tsx"],
-      "extends": ["plugin:@nx/typescript"],
+      "extends": ["plugin:@nx/typescript", "plugin:@tanstack/eslint-plugin-query/recommended"],
       "rules": {
         "@typescript-eslint/consistent-type-imports": [
           "error",

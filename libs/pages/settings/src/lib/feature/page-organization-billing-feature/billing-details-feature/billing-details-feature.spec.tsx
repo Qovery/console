@@ -1,118 +1,72 @@
-import { getByLabelText, getByTestId, render, waitFor } from '__tests__/utils/setup-jest'
-import { type BillingInfo } from 'qovery-typescript-axios'
-import * as storeOrganization from '@qovery/domains/organization'
-import { organizationFactoryMock } from '@qovery/shared/factories'
-import { act, fireEvent } from '../../../../../../../../__tests__/utils/setup-jest'
+import * as organizationsDomain from '@qovery/domains/organizations/feature'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import BillingDetailsFeature from './billing-details-feature'
-
-import SpyInstance = jest.SpyInstance
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useParams: () => ({ organizationId: '1' }),
 }))
 
-const mockOrganization = organizationFactoryMock(1)[0]
-mockOrganization.billingInfos = {
-  loadingStatus: 'loaded',
-  value: {
-    city: 'city',
-    company: 'company',
-    address: 'address',
-    state: '',
-    zip: 'zip',
-    email: 'email',
-    first_name: 'first_name',
-    vat_number: 'vat_number',
-    last_name: 'last_name',
-    country_code: 'FR',
-  },
-}
-
-jest.mock('@qovery/domains/organization', () => ({
-  ...jest.requireActual('@qovery/domains/organization'),
-  selectOrganizationById: () => mockOrganization,
-}))
-
-const mockDispatch = jest.fn()
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useDispatch: () => mockDispatch,
-}))
+const useBillingInfoMockSpy = jest.spyOn(organizationsDomain, 'useBillingInfo') as jest.Mock
+const useEditBillingInfoMockSpy = jest.spyOn(organizationsDomain, 'useEditBillingInfo') as jest.Mock
 
 describe('BillingDetailsFeature', () => {
   beforeEach(() => {
-    mockDispatch.mockImplementation(() => ({
-      unwrap: () =>
-        Promise.resolve<{ data: BillingInfo }>({
-          data: {
-            city: 'city',
-            company: 'company',
-            address: 'address',
-            state: '',
-            zip: 'zip',
-            email: 'email',
-            first_name: 'first_name',
-            vat_number: 'vat_number',
-            last_name: 'last_name',
-            country_code: 'FR',
-          },
-        }),
-    }))
-
-    jest.spyOn(storeOrganization, 'selectOrganizationById').mockReturnValue(mockOrganization)
+    useBillingInfoMockSpy.mockReturnValue({
+      data: {
+        city: 'city',
+        company: 'company',
+        address: 'address',
+        state: '',
+        zip: 'zip',
+        email: 'email',
+        first_name: 'first_name',
+        vat_number: 'vat_number',
+        last_name: 'last_name',
+        country_code: 'FR',
+      },
+    })
+    useEditBillingInfoMockSpy.mockReturnValue({
+      mutateAsync: jest.fn(),
+    })
   })
 
   it('should render successfully', () => {
-    const { baseElement } = render(<BillingDetailsFeature />)
+    const { baseElement } = renderWithProviders(<BillingDetailsFeature />)
     expect(baseElement).toBeTruthy()
   })
 
   it('should fetch the billing info', () => {
-    const fetchBillingInfoSpy: SpyInstance = jest.spyOn(storeOrganization, 'fetchBillingInfo')
-    jest
-      .spyOn(storeOrganization, 'selectOrganizationById')
-      .mockReturnValue({ ...mockOrganization, billingInfos: { loadingStatus: undefined } })
-
-    render(<BillingDetailsFeature />)
-
-    expect(fetchBillingInfoSpy).toHaveBeenCalled()
+    renderWithProviders(<BillingDetailsFeature />)
+    expect(useBillingInfoMockSpy).toHaveBeenCalled()
   })
 
   it('should dispatch the editBillingInfo', async () => {
-    const editBillingInfoSpy: SpyInstance = jest.spyOn(storeOrganization, 'editBillingInfo')
-    const { baseElement } = render(<BillingDetailsFeature />)
+    const { userEvent } = renderWithProviders(<BillingDetailsFeature />)
 
-    await act(() => {
-      const input = getByLabelText(baseElement, 'First name')
-      fireEvent.input(input, { target: { value: 'test' } })
-    })
+    const input = screen.getByLabelText('First name')
+    await userEvent.clear(input)
+    await userEvent.type(input, 'test')
 
-    const button = getByTestId(baseElement, 'submit-button')
-    await waitFor(() => {
-      expect(button).not.toBeDisabled()
-    })
+    const button = screen.getByTestId('submit-button')
 
-    await act(() => {
-      button.click()
-    })
+    expect(button).not.toBeDisabled()
+    await userEvent.click(button)
 
-    await waitFor(() => {
-      expect(editBillingInfoSpy).toHaveBeenCalledWith({
-        organizationId: '1',
-        billingInfoRequest: {
-          city: 'city',
-          company: 'company',
-          address: 'address',
-          state: '',
-          zip: 'zip',
-          email: 'email',
-          first_name: 'test',
-          vat_number: 'vat_number',
-          last_name: 'last_name',
-          country_code: 'FR',
-        },
-      })
+    expect(useEditBillingInfoMockSpy().mutateAsync).toHaveBeenCalledWith({
+      organizationId: '1',
+      billingInfoRequest: {
+        city: 'city',
+        company: 'company',
+        address: 'address',
+        state: '',
+        zip: 'zip',
+        email: 'email',
+        first_name: 'test',
+        vat_number: 'vat_number',
+        last_name: 'last_name',
+        country_code: 'FR',
+      },
     })
   })
 })
