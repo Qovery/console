@@ -34,7 +34,7 @@
     },
     {
       "files": ["*.ts", "*.tsx"],
-      "extends": ["plugin:@nx/typescript"],
+      "extends": ["plugin:@nx/typescript", "plugin:@tanstack/eslint-plugin-query/recommended"],
       "rules": {
         "@typescript-eslint/consistent-type-imports": [
           "error",
@@ -132,11 +132,6 @@
         "react/jsx-curly-brace-presence": "error",
         "react/jsx-key": "error"
       }
-    },
-    {
-      "files": ["*.ts", "*.tsx"],
-      "extends": ["plugin:@tanstack/eslint-plugin-query/recommended"],
-      "rules": {}
     }
   ]
 }
