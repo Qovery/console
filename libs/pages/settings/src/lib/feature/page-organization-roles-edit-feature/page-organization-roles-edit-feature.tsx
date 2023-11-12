@@ -7,15 +7,13 @@ import {
   type OrganizationCustomRoleUpdateRequest,
   type OrganizationCustomRoleUpdateRequestProjectPermissionsInnerPermissionsInner,
 } from 'qovery-typescript-axios'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect } from 'react'
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
-import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
-import { deleteCustomRole, editCustomRole, fetchCustomRole, selectOrganizationById } from '@qovery/domains/organization'
+import { useCustomRole, useDeleteCustomRole, useEditCustomRole } from '@qovery/domains/organizations/feature'
 import { SETTINGS_ROLES_URL, SETTINGS_URL } from '@qovery/shared/routes'
 import { useModalConfirmation } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { type AppDispatch, type RootState } from '@qovery/state/store'
 import PageOrganizationRolesEdit from '../../ui/page-organization-roles-edit/page-organization-roles-edit'
 
 export const defaultProjectPermission = (permission: string) => {
@@ -142,13 +140,12 @@ export function PageOrganizationRolesEditFeature() {
 
   const navigate = useNavigate()
 
-  const organization = useSelector((state: RootState) => selectOrganizationById(state, organizationId))
-
-  const [currentRole, setCurrentRole] = useState<OrganizationCustomRole | undefined>()
-  const [loading, setLoading] = useState(false)
-  const [loadingForm, setLoadingForm] = useState(false)
-
-  const dispatch = useDispatch<AppDispatch>()
+  const { data: customRole, isLoading: isLoadingCustomRole } = useCustomRole({ organizationId, customRoleId: roleId })
+  const { mutateAsync: editCustomRole, isLoading: isLoadingEditCustomRole } = useEditCustomRole({
+    organizationId,
+    customRoleId: roleId,
+  })
+  const { mutateAsync: deleteCustomRole } = useDeleteCustomRole({ organizationId })
 
   const { openModalConfirmation } = useModalConfirmation()
 
@@ -156,85 +153,56 @@ export function PageOrganizationRolesEditFeature() {
     mode: 'onChange',
   })
 
+  useEffect(() => {
+    if (customRole) {
+      const result = resetForm(customRole)
+      methods.reset(result)
+    }
+  }, [customRole, methods])
+
   const redirectPageRoles = useCallback(
     () => navigate(`${SETTINGS_URL(organizationId)}${SETTINGS_ROLES_URL}`),
     [navigate, organizationId]
   )
 
-  useEffect(() => {
-    if (
-      organization &&
-      (organization?.customRoles?.loadingStatus !== 'loaded' ||
-        (organization?.customRoles?.items && organization?.customRoles?.items?.length > 0))
-    ) {
-      setLoading(true)
+  const onSubmit = methods.handleSubmit(async (data) => {
+    if (data && customRole) {
+      const cloneCustomRole = handleSubmit(data, customRole)
 
-      const role = organization?.customRoles?.items?.find((currentRole) => currentRole.id === roleId)
-      if (role) {
-        setCurrentRole(role)
-        setLoading(false)
-      } else {
-        dispatch(fetchCustomRole({ organizationId, customRoleId: roleId }))
-          .unwrap()
-          .then((result: OrganizationCustomRole) => {
-            // set default custom role
-            setCurrentRole(result)
-          })
-          .catch(() => {
-            redirectPageRoles()
-          })
-          .finally(() => setLoading(false))
-      }
-    }
-  }, [organization, navigate, dispatch, organizationId, roleId, redirectPageRoles])
-
-  useEffect(() => {
-    if (currentRole) {
-      const result = resetForm(currentRole)
-      methods.reset(result)
-    }
-  }, [currentRole, setCurrentRole, methods])
-
-  const onSubmit = methods.handleSubmit((data) => {
-    if (data && currentRole) {
-      setLoadingForm(true)
-
-      const cloneCustomRole = handleSubmit(data, currentRole)
-
-      dispatch(
-        editCustomRole({
+      try {
+        await editCustomRole({
           organizationId,
-          customRoleId: currentRole?.id || '',
-          data: cloneCustomRole as OrganizationCustomRoleUpdateRequest,
+          customRoleId: customRole.id ?? '',
+          customRoleUpdateRequest: cloneCustomRole as OrganizationCustomRoleUpdateRequest,
         })
-      )
-        .unwrap()
-        .then(() => setLoadingForm(false))
-        .catch(() => setLoadingForm(false))
+      } catch (error) {
+        console.error(error)
+      }
     }
   })
 
   return (
     <FormProvider {...methods}>
       <PageOrganizationRolesEdit
-        currentRole={currentRole}
+        currentRole={customRole}
         onSubmit={onSubmit}
-        loading={loading}
-        loadingForm={loadingForm}
+        loading={isLoadingCustomRole}
+        loadingForm={isLoadingEditCustomRole}
         onDeleteRole={(customRole: OrganizationCustomRole) => {
           openModalConfirmation({
             title: 'Delete custom role',
             isDelete: true,
             name: customRole?.name,
-            action: () => {
-              dispatch(
-                deleteCustomRole({
+            action: async () => {
+              try {
+                await deleteCustomRole({
                   organizationId: organizationId,
-                  customRoleId: customRole.id || '',
+                  customRoleId: customRole.id ?? '',
                 })
-              )
-                .unwrap()
-                .then(() => redirectPageRoles())
+                redirectPageRoles()
+              } catch (error) {
+                console.error(error)
+              }
             },
           })
         }}

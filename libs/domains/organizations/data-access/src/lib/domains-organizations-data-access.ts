@@ -16,12 +16,15 @@ import {
   type OrganizationApiTokenCreateRequest,
   OrganizationApiTokenScope,
   OrganizationCustomRoleApi,
+  type OrganizationCustomRoleCreateRequest,
+  type OrganizationCustomRoleUpdateRequest,
   OrganizationMainCallsApi,
   OrganizationWebhookApi,
   type OrganizationWebhookCreateRequest,
   type ScalewayCredentialsRequest,
 } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
+import { refactoOrganizationCustomRolePayload } from '@qovery/shared/util-js'
 import { type DistributiveOmit } from '@qovery/shared/util-types'
 
 const containerRegistriesApi = new ContainerRegistriesApi()
@@ -234,7 +237,7 @@ export const organizations = createQueryKeys('organizations', {
       return response.data.results
     },
   }),
-  customRoles: ({ organizationId, customRoleId }: { organizationId: string; customRoleId: string }) => ({
+  customRole: ({ organizationId, customRoleId }: { organizationId: string; customRoleId: string }) => ({
     queryKey: [organizationId],
     async queryFn() {
       const result = await customRolesApi.getOrganizationCustomRole(organizationId, customRoleId)
@@ -459,6 +462,33 @@ export const mutations = {
   },
   async deleteCreditCard({ organizationId, creditCardId }: { organizationId: string; creditCardId: string }) {
     const response = await billingApi.deleteCreditCard(organizationId, creditCardId)
+    return response.data
+  },
+  async editCustomRole({
+    organizationId,
+    customRoleId,
+    customRoleUpdateRequest,
+  }: {
+    organizationId: string
+    customRoleId: string
+    customRoleUpdateRequest: OrganizationCustomRoleUpdateRequest
+  }) {
+    const cloneCustomRole = Object.assign({}, refactoOrganizationCustomRolePayload(customRoleUpdateRequest))
+    const result = await customRolesApi.editOrganizationCustomRole(organizationId, customRoleId, cloneCustomRole)
+    return result.data
+  },
+  async createCustomRole({
+    organizationId,
+    customRoleUpdateRequest,
+  }: {
+    organizationId: string
+    customRoleUpdateRequest: OrganizationCustomRoleCreateRequest
+  }) {
+    const response = await customRolesApi.createOrganizationCustomRole(organizationId, customRoleUpdateRequest)
+    return response.data
+  },
+  async deleteCustomRole({ organizationId, customRoleId }: { organizationId: string; customRoleId: string }) {
+    const response = await customRolesApi.deleteOrganizationCustomRole(organizationId, customRoleId)
     return response.data
   },
 }

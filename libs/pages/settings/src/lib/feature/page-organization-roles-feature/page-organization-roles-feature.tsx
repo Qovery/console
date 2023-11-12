@@ -1,11 +1,8 @@
 import { type OrganizationCustomRole } from 'qovery-typescript-axios'
-import { useDispatch } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { deleteCustomRole } from '@qovery/domains/organization'
-import { useAvailableRoles } from '@qovery/domains/organizations/feature'
+import { useAvailableRoles, useDeleteCustomRole } from '@qovery/domains/organizations/feature'
 import { useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { type AppDispatch } from '@qovery/state/store'
 import PageOrganizationRoles from '../../ui/page-organization-roles/page-organization-roles'
 import CreateModalFeature from './create-modal-feature/create-modal-feature'
 
@@ -14,13 +11,8 @@ export function PageOrganizationRolesFeature() {
 
   useDocumentTitle('Roles & permissions - Organization settings')
 
-  const {
-    data: availableRoles = [],
-    isLoading: isLoadingAvailableRoles,
-    refetch: refetchAvailableRoles,
-  } = useAvailableRoles({ organizationId })
-
-  const dispatch = useDispatch<AppDispatch>()
+  const { data: availableRoles = [], isLoading: isLoadingAvailableRoles } = useAvailableRoles({ organizationId })
+  const { mutateAsync: deleteCustomRole } = useDeleteCustomRole({ organizationId })
 
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
@@ -40,20 +32,15 @@ export function PageOrganizationRolesFeature() {
           isDelete: true,
           description: 'Are you sure you want to delete this custom role?',
           name: customRole?.name,
-          action: () => {
-            dispatch(
-              deleteCustomRole({
+          action: async () => {
+            try {
+              await deleteCustomRole({
                 organizationId: organizationId,
-                customRoleId: customRole.id || '',
+                customRoleId: customRole.id ?? '',
               })
-            )
-              .unwrap()
-              .then(() =>
-                // fetch the list of available roles after add new role
-                // state update doesn't work need to be refetch because request don't return response
-                refetchAvailableRoles()
-              )
-              .catch((e) => console.error(e))
+            } catch (error) {
+              console.error(error)
+            }
           },
         })
       }}
