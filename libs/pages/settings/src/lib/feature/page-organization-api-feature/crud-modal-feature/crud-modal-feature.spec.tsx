@@ -1,26 +1,9 @@
 import * as organizationsDomain from '@qovery/domains/organizations/feature'
-import { organizationFactoryMock } from '@qovery/shared/factories'
-import { type OrganizationEntity } from '@qovery/shared/interfaces'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { CrudModalFeature, type CrudModalFeatureProps } from './crud-modal-feature'
 
-const mockOrganization: OrganizationEntity = organizationFactoryMock(1)[0]
-
 const useCreateApiTokenMockSpy = jest.spyOn(organizationsDomain, 'useCreateApiToken') as jest.Mock
 const useAvailableRolesMockSpy = jest.spyOn(organizationsDomain, 'useAvailableRoles') as jest.Mock
-
-const mockDispatch = jest.fn()
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useDispatch: () => mockDispatch,
-}))
-
-jest.mock('@qovery/domains/organization', () => {
-  return {
-    ...jest.requireActual('@qovery/domains/organization'),
-    selectOrganizationById: () => mockOrganization,
-  }
-})
 
 const props: CrudModalFeatureProps = {
   onClose: jest.fn(),
