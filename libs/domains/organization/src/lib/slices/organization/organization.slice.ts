@@ -10,17 +10,14 @@ import {
   type InviteMember,
   type InviteMemberRequest,
   MembersApi,
-  type OrganizationCustomRole,
   OrganizationCustomRoleApi,
-  type OrganizationCustomRoleCreateRequest,
-  type OrganizationCustomRoleUpdateRequest,
   type OrganizationEditRequest,
   OrganizationMainCallsApi,
   type OrganizationRequest,
 } from 'qovery-typescript-axios'
 import { type OrganizationEntity, type OrganizationState } from '@qovery/shared/interfaces'
 import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
-import { refactoOrganizationCustomRolePayload, refactoOrganizationPayload } from '@qovery/shared/util-js'
+import { refactoOrganizationPayload } from '@qovery/shared/util-js'
 import { type RootState } from '@qovery/state/store'
 
 export const ORGANIZATION_KEY = 'organizations'
@@ -70,30 +67,6 @@ export const deleteOrganization = createAsyncThunk(
   'organization/delete',
   async (payload: { organizationId: string }) => {
     return await organizationMainCalls.deleteOrganization(payload.organizationId)
-  }
-)
-
-export const postCustomRoles = createAsyncThunk(
-  'customRole/post',
-  async (payload: { organizationId: string; data: OrganizationCustomRoleCreateRequest }) => {
-    // post custom roles
-    const result = await customRolesApi.createOrganizationCustomRole(payload.organizationId, payload.data)
-    return result.data as OrganizationCustomRole
-  }
-)
-
-export const editCustomRole = createAsyncThunk(
-  'customRole/edit',
-  async (payload: { organizationId: string; customRoleId: string; data: OrganizationCustomRoleUpdateRequest }) => {
-    // edit custom role
-    const cloneCustomRole = Object.assign({}, refactoOrganizationCustomRolePayload(payload.data))
-
-    const result = await customRolesApi.editOrganizationCustomRole(
-      payload.organizationId,
-      payload.customRoleId,
-      cloneCustomRole
-    )
-    return result.data
   }
 )
 
@@ -224,69 +197,6 @@ export const organizationSlice = createSlice({
         toastError(action.error)
         state.error = action.error.message
       })
-      // fetch custom role
-      // .addCase(fetchCustomRole.fulfilled, (state: OrganizationState, action) => {
-      //   const customRoles = state.entities[action.meta.arg.organizationId]?.customRoles?.items || []
-
-      //   const index = customRoles.findIndex((obj) => obj.name === action.payload.name)
-      //   if (index === -1) {
-      //     customRoles.push(action.payload)
-      //   } else {
-      //     customRoles[index] = action.payload
-      //   }
-
-      //   const update: Update<OrganizationEntity> = {
-      //     id: action.meta.arg.organizationId,
-      //     changes: {
-      //       customRoles: {
-      //         loadingStatus: 'loaded',
-      //         items: customRoles,
-      //       },
-      //     },
-      //   }
-
-      //   organizationAdapter.updateOne(state, update)
-      // })
-      // edit custom roles
-      // .addCase(editCustomRole.fulfilled, (state: OrganizationState, action) => {
-      //   const customRoles = state.entities[action.meta.arg.organizationId]?.customRoles?.items || []
-      //   const index = customRoles.findIndex((obj) => obj.name === action.payload.name)
-      //   customRoles[index] = action.payload
-
-      //   const update: Update<OrganizationEntity> = {
-      //     id: action.meta.arg.organizationId,
-      //     changes: {
-      //       customRoles: {
-      //         loadingStatus: 'loaded',
-      //         items: customRoles,
-      //       },
-      //     },
-      //   }
-      //   organizationAdapter.updateOne(state, update)
-      //   toast(ToastEnum.SUCCESS, `Role updated`)
-      // })
-      // .addCase(editCustomRole.rejected, (state: OrganizationState, action) => {
-      //   toastError(action.error)
-      // })
-      // post custom role
-      // .addCase(postCustomRoles.fulfilled, (state: OrganizationState, action) => {
-      //   const customRoles = state.entities[action.meta.arg.organizationId]?.customRoles?.items || []
-
-      //   const update: Update<OrganizationEntity> = {
-      //     id: action.meta.arg.organizationId,
-      //     changes: {
-      //       customRoles: {
-      //         loadingStatus: 'loaded',
-      //         items: [action.payload, ...customRoles],
-      //       },
-      //     },
-      //   }
-      //   organizationAdapter.updateOne(state, update)
-      //   toast(ToastEnum.SUCCESS, `Custom role added`)
-      // })
-      // .addCase(postCustomRoles.rejected, (state: OrganizationState, action) => {
-      //   toastError(action.error)
-      // })
       // fetch organization members
       .addCase(fetchMembers.pending, (state: OrganizationState, action) => {
         const update: Update<OrganizationEntity> = {

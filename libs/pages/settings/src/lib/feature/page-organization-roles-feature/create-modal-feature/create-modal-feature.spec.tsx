@@ -23,7 +23,7 @@ describe('CreateModalFeature', () => {
     expect(baseElement).toBeTruthy()
   })
 
-  it('should dispatch postCustomRoles if form is submitted', async () => {
+  it('should dispatch create custom role if form is submitted', async () => {
     const { userEvent } = renderWithProviders(<CreateModalFeature {...props} />)
 
     const inputName = screen.getByTestId('input-name')
