@@ -7,8 +7,6 @@ import {
   createSlice,
 } from '@reduxjs/toolkit'
 import {
-  type InviteMember,
-  type InviteMemberRequest,
   MembersApi,
   type OrganizationEditRequest,
   OrganizationMainCallsApi,

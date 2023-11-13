@@ -12,6 +12,7 @@ import {
   type GitProviderEnum,
   type GitTokenRequest,
   type InviteMemberRequest,
+  MemberRoleUpdateRequest,
   MembersApi,
   OrganizationAccountGitRepositoriesApi,
   OrganizationApiTokenApi,
@@ -523,6 +524,22 @@ export const mutations = {
   },
   async deleteMember({ organizationId, userId }: { organizationId: string; userId: string }) {
     const response = await membersApi.deleteMember(organizationId, { user_id: userId })
+    return response.data
+  },
+  async editMemberRole({
+    organizationId,
+    memberRoleUpdateRequest,
+  }: {
+    organizationId: string
+    memberRoleUpdateRequest: MemberRoleUpdateRequest
+  }) {
+    const response = await membersApi.editOrganizationMemberRole(organizationId, memberRoleUpdateRequest)
+    return response.data
+  },
+  async transferOwnershipMemberRole({ organizationId, userId }: { organizationId: string; userId: string }) {
+    const response = await membersApi.postOrganizationTransferOwnership(organizationId, {
+      user_id: userId,
+    })
     return response.data
   },
 }

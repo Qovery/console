@@ -2,10 +2,14 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { mutations } from '@qovery/domains/organizations/data-access'
 import { queries } from '@qovery/state/util-queries'
 
-export function useDeleteMember({ organizationId }: { organizationId: string }) {
+export interface UseTransferOwnershipMemberRoleProps {
+  organizationId: string
+}
+
+export function useTransferOwnershipMemberRole({ organizationId }: UseTransferOwnershipMemberRoleProps) {
   const queryClient = useQueryClient()
 
-  return useMutation(mutations.deleteMember, {
+  return useMutation(mutations.transferOwnershipMemberRole, {
     onSuccess() {
       queryClient.invalidateQueries({
         queryKey: queries.organizations.members({ organizationId }).queryKey,
@@ -13,11 +17,11 @@ export function useDeleteMember({ organizationId }: { organizationId: string }) 
     },
     meta: {
       notifyOnSuccess: {
-        title: 'Your member is deleted',
+        title: 'Ownership transferred successfully',
       },
       notifyOnError: true,
     },
   })
 }
 
-export default useDeleteMember
+export default useTransferOwnershipMemberRole

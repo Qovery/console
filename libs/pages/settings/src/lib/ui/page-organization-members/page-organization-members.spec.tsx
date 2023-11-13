@@ -1,5 +1,5 @@
-import { render } from '__tests__/utils/setup-jest'
 import { membersMock } from '@qovery/shared/factories'
+import { renderWithProviders } from '@qovery/shared/util-tests'
 import PageOrganizationMembers, { type PageOrganizationMembersProps } from './page-organization-members'
 
 describe('PageOrganizationMembers', () => {
@@ -10,20 +10,17 @@ describe('PageOrganizationMembers', () => {
     transferOwnership: jest.fn(),
     resendInvite: jest.fn(),
     members: membersMock(4),
-    setDataMembers: jest.fn(),
-    setDataInviteMembers: jest.fn(),
     loadingUpdateRole: { userId: '0', loading: false },
-    loadingMembers: false,
-    loadingInviteMembers: false,
+    isFetchedMembers: true,
   }
 
   it('should render successfully', async () => {
-    const { baseElement } = render(<PageOrganizationMembers {...props} />)
+    const { baseElement } = renderWithProviders(<PageOrganizationMembers {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
   it('should have help section', () => {
-    const { getByTestId } = render(<PageOrganizationMembers {...props} />)
+    const { getByTestId } = renderWithProviders(<PageOrganizationMembers {...props} />)
     getByTestId('help-section')
   })
 })

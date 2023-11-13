@@ -2,10 +2,14 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { mutations } from '@qovery/domains/organizations/data-access'
 import { queries } from '@qovery/state/util-queries'
 
-export function useDeleteMember({ organizationId }: { organizationId: string }) {
+export interface UseEditMemberRoleProps {
+  organizationId: string
+}
+
+export function useEditMemberRole({ organizationId }: UseEditMemberRoleProps) {
   const queryClient = useQueryClient()
 
-  return useMutation(mutations.deleteMember, {
+  return useMutation(mutations.editMemberRole, {
     onSuccess() {
       queryClient.invalidateQueries({
         queryKey: queries.organizations.members({ organizationId }).queryKey,
@@ -13,11 +17,12 @@ export function useDeleteMember({ organizationId }: { organizationId: string }) 
     },
     meta: {
       notifyOnSuccess: {
-        title: 'Your member is deleted',
+        title: 'Member role updated',
+        description: 'Target user needs to relog or wait a few minutes to make it work.',
       },
       notifyOnError: true,
     },
   })
 }
 
-export default useDeleteMember
+export default useEditMemberRole

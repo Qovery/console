@@ -5,7 +5,7 @@ import { queries } from '@qovery/state/util-queries'
 export function useDeleteInviteMember({ organizationId }: { organizationId: string }) {
   const queryClient = useQueryClient()
 
-  return useMutation(mutations.deleteWebhook, {
+  return useMutation(mutations.deleteInviteMember, {
     onSuccess() {
       queryClient.invalidateQueries({
         queryKey: queries.organizations.inviteMembers({ organizationId }).queryKey,
