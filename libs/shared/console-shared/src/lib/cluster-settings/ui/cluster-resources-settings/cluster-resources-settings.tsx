@@ -27,8 +27,8 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
   const { control, watch } = useFormContext<ClusterResourcesData>()
   const watchNodes = watch('nodes')
   const [warningInstance, setWarningInstance] = useState(false)
+  const [warningClusterNodes, setWarningClusterNodes] = useState(false)
   const watchClusterType = watch('cluster_type')
-
   const watchInstanceType = watch('instance_type')
 
   useEffect(() => {
@@ -105,13 +105,18 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
             <div>
               <InputSelect
                 isSearchable
-                onChange={field.onChange}
+                onChange={(event) => {
+                  field.onChange(event)
+                  setWarningClusterNodes(true)
+                }}
                 value={field.value}
                 label="Instance type"
                 error={error?.message}
                 options={props.instanceTypeOptions || []}
               />
-              <p className="text-neutral-350 text-xs my-3">Instance type to be used to run your Kubernetes nodes.</p>
+              <p className="text-neutral-350 text-xs ml-4 mt-1 mb-3">
+                Instance type to be used to run your Kubernetes nodes.
+              </p>
               {warningInstance && (
                 <Callout.Root className="mb-3" color="yellow" data-testid="warning-instance">
                   <Callout.Icon>
@@ -138,17 +143,31 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
           render={({ field }) => (
             <InputText
               type="number"
-              className="mb-3"
               name={field.name}
-              onChange={field.onChange}
+              onChange={(event) => {
+                field.onChange(event)
+                setWarningClusterNodes(true)
+              }}
               value={field.value}
               label="Disk size (GB)"
             />
           )}
         />
-        <p className="text-neutral-350 text-xs my-3">
+        <p className="text-neutral-350 text-xs ml-4 mt-1 mb-3">
           Storage allocated to your Kubernetes nodes to store files, application images etc..
         </p>
+        {warningClusterNodes && (
+          <Callout.Root color="yellow">
+            <Callout.Icon className="text-xs">
+              <Icon name={IconAwesomeEnum.CIRCLE_EXCLAMATION} />
+            </Callout.Icon>
+            <Callout.Text className="text-xs">
+              <Callout.TextHeading>
+                Changing these parameters might cause a downtime on your service.
+              </Callout.TextHeading>
+            </Callout.Text>
+          </Callout.Root>
+        )}
       </BlockContent>
 
       {watchClusterType === KubernetesEnum.MANAGED && (

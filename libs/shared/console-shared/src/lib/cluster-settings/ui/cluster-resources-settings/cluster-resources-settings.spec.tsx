@@ -1,7 +1,8 @@
-import { getByLabelText, getByTestId, getByText, queryByTestId, render, waitFor } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { CloudProviderEnum } from 'qovery-typescript-axios'
+import selectEvent from 'react-select-event'
 import { type ClusterResourcesData } from '@qovery/shared/interfaces'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import ClusterResourcesSettings, { type ClusterResourcesSettingsProps } from './cluster-resources-settings'
 
 describe('ClusterResourcesSettings', () => {
@@ -46,7 +47,7 @@ describe('ClusterResourcesSettings', () => {
   })
 
   it('should render successfully', () => {
-    const { baseElement } = render(
+    const { baseElement } = renderWithProviders(
       wrapWithReactHookForm<ClusterResourcesData>(<ClusterResourcesSettings />, {
         defaultValues,
       })
@@ -55,53 +56,53 @@ describe('ClusterResourcesSettings', () => {
   })
 
   it('should render 2 radios, 1 select, 1 input and 1 slider', () => {
-    const { baseElement } = render(
+    renderWithProviders(
       wrapWithReactHookForm<ClusterResourcesData>(<ClusterResourcesSettings {...props} />, {
         defaultValues,
       })
     )
 
-    getByLabelText(baseElement, 'Managed K8S (EKS)')
-    getByLabelText(baseElement, 'BETA - Single EC2 (K3S)')
-    getByTestId(baseElement, 'select')
-    getByTestId(baseElement, 'input-text')
-    getByTestId(baseElement, 'input-slider')
+    screen.getByLabelText('Managed K8S (EKS)')
+    screen.getByLabelText('BETA - Single EC2 (K3S)')
+    screen.getByLabelText('Instance type')
+    screen.getByLabelText('Disk size (GB)')
+    screen.getByTestId('input-slider')
   })
 
   it('should display min and max nodes', () => {
-    const { baseElement } = render(
+    renderWithProviders(
       wrapWithReactHookForm<ClusterResourcesData>(<ClusterResourcesSettings {...props} />, {
         defaultValues,
       })
     )
 
-    getByText(baseElement, 'min 1 - max 3')
+    screen.getByText('min 1 - max 3')
   })
 
   it('should display banner box', () => {
-    const { baseElement } = render(
+    renderWithProviders(
       wrapWithReactHookForm<ClusterResourcesData>(<ClusterResourcesSettings {...props} />, {
         defaultValues,
       })
     )
 
-    getByTestId(baseElement, 'aws-cost-banner')
+    screen.getByTestId('aws-cost-banner')
   })
 
   it('should not display banner box in detail mode and for Scaleway', () => {
     props.cloudProvider = CloudProviderEnum.SCW
 
-    const { baseElement } = render(
+    renderWithProviders(
       wrapWithReactHookForm<ClusterResourcesData>(<ClusterResourcesSettings {...props} fromDetail />, {
         defaultValues,
       })
     )
 
-    expect(queryByTestId(baseElement, 'aws-cost-banner')).toBeNull()
+    expect(screen.queryByTestId('aws-cost-banner')).toBeNull()
   })
 
   it('should display warning instance box', async () => {
-    const { baseElement } = render(
+    renderWithProviders(
       wrapWithReactHookForm<ClusterResourcesData>(<ClusterResourcesSettings {...props} />, {
         defaultValues: {
           ...defaultValues,
@@ -110,8 +111,22 @@ describe('ClusterResourcesSettings', () => {
       })
     )
 
-    await waitFor(() => {
-      getByTestId(baseElement, 'warning-instance')
-    })
+    screen.getByTestId('warning-instance')
+  })
+
+  it('should display warning for cluster nodes', async () => {
+    const { userEvent } = renderWithProviders(
+      wrapWithReactHookForm<ClusterResourcesData>(<ClusterResourcesSettings {...props} fromDetail />, {
+        defaultValues,
+      })
+    )
+
+    const selectInstanceType = screen.getByLabelText('Instance type')
+    await selectEvent.select(selectInstanceType, 't2.micro (1CPU - 1GB RAM)', { container: document.body })
+
+    const inputDiskSize = screen.getByLabelText('Disk size (GB)')
+    await userEvent.type(inputDiskSize, '100')
+
+    screen.getByText('Changing these parameters might cause a downtime on your service.')
   })
 })
