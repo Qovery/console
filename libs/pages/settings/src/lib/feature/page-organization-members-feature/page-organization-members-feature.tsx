@@ -6,13 +6,13 @@ import {
   deleteInviteMember,
   deleteMember,
   editMemberRole,
-  fetchAvailableRoles,
   fetchInviteMembers,
   fetchMembers,
   postInviteMember,
   selectOrganizationById,
   transferOwnershipMemberRole,
 } from '@qovery/domains/organization'
+import { useAvailableRoles } from '@qovery/domains/organizations/feature'
 import { selectUser } from '@qovery/domains/users/data-access'
 import { membersMock } from '@qovery/shared/factories'
 import { ToastEnum, toast, useModal, useModalConfirmation } from '@qovery/shared/ui'
@@ -37,9 +37,7 @@ export function PageOrganizationMembersFeature() {
     (state: RootState) => selectOrganizationById(state, organizationId)?.inviteMembers?.loadingStatus
   )
 
-  const availableRolesLoadingStatus = useSelector(
-    (state: RootState) => selectOrganizationById(state, organizationId)?.availableRoles?.loadingStatus
-  )
+  const { data: availableRoles = [] } = useAvailableRoles({ organizationId })
 
   const userSub = useSelector((state: RootState) => selectUser(state)?.sub)
 
@@ -81,19 +79,7 @@ export function PageOrganizationMembersFeature() {
         .catch((e) => console.error(e))
         .finally(() => setLoadingInviteMembers(false))
     }
-
-    if (organization && availableRolesLoadingStatus !== 'loaded') {
-      dispatch(fetchAvailableRoles({ organizationId }))
-    }
-  }, [
-    dispatch,
-    organization,
-    organizationId,
-    fetchMembersDispatch,
-    membersLoadingStatus,
-    inviteMembersLoadingStatus,
-    availableRolesLoadingStatus,
-  ])
+  }, [dispatch, organization, organizationId, fetchMembersDispatch, membersLoadingStatus, inviteMembersLoadingStatus])
 
   const onClickEditMemberRole = (userId: string, roleId: string) => {
     const data = { user_id: userId, role_id: roleId }
@@ -158,7 +144,7 @@ export function PageOrganizationMembersFeature() {
       setDataInviteMembers={setDataInviteMembers}
       loadingInviteMembers={loadingInviteMembers}
       inviteMembers={organization?.inviteMembers?.items}
-      availableRoles={organization?.availableRoles?.items}
+      availableRoles={availableRoles}
       loadingUpdateRole={loadingUpdateRole}
       editMemberRole={onClickEditMemberRole}
       transferOwnership={onClickTransferOwnership}
@@ -168,11 +154,7 @@ export function PageOrganizationMembersFeature() {
       onAddMember={() => {
         openModal({
           content: (
-            <CreateModalFeature
-              organizationId={organizationId}
-              onClose={closeModal}
-              availableRoles={organization?.availableRoles?.items || []}
-            />
+            <CreateModalFeature organizationId={organizationId} onClose={closeModal} availableRoles={availableRoles} />
           ),
         })
       }}

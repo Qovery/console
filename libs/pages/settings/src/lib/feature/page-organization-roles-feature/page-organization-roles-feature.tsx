@@ -1,11 +1,8 @@
 import { type OrganizationCustomRole } from 'qovery-typescript-axios'
-import { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { deleteCustomRole, fetchAvailableRoles, selectOrganizationById } from '@qovery/domains/organization'
+import { useAvailableRoles, useDeleteCustomRole } from '@qovery/domains/organizations/feature'
 import { useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { type AppDispatch, type RootState } from '@qovery/state/store'
 import PageOrganizationRoles from '../../ui/page-organization-roles/page-organization-roles'
 import CreateModalFeature from './create-modal-feature/create-modal-feature'
 
@@ -14,36 +11,16 @@ export function PageOrganizationRolesFeature() {
 
   useDocumentTitle('Roles & permissions - Organization settings')
 
-  const organization = useSelector((state: RootState) => selectOrganizationById(state, organizationId))
-  const customRolesLoadingStatus = useSelector(
-    (state: RootState) => selectOrganizationById(state, organizationId)?.customRoles?.loadingStatus
-  )
-
-  const availableRolesLoadingStatus = useSelector(
-    (state: RootState) => selectOrganizationById(state, organizationId)?.availableRoles?.loadingStatus
-  )
-  const availableRoles = organization?.availableRoles?.items || []
-
-  const dispatch = useDispatch<AppDispatch>()
-  const [loading, setLoading] = useState(false)
+  const { data: availableRoles = [], isLoading: isLoadingAvailableRoles } = useAvailableRoles({ organizationId })
+  const { mutateAsync: deleteCustomRole } = useDeleteCustomRole({ organizationId })
 
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
 
-  useEffect(() => {
-    if (organization && (!availableRolesLoadingStatus || availableRolesLoadingStatus === 'not loaded')) {
-      setLoading(true)
-
-      dispatch(fetchAvailableRoles({ organizationId }))
-        .unwrap()
-        .finally(() => setLoading(false))
-    }
-  }, [organization, customRolesLoadingStatus, dispatch, organizationId, availableRolesLoadingStatus])
-
   return (
     <PageOrganizationRoles
       roles={availableRoles}
-      loading={loading}
+      loading={isLoadingAvailableRoles}
       onAddRole={() => {
         openModal({
           content: <CreateModalFeature organizationId={organizationId} onClose={closeModal} />,
@@ -55,20 +32,15 @@ export function PageOrganizationRolesFeature() {
           isDelete: true,
           description: 'Are you sure you want to delete this custom role?',
           name: customRole?.name,
-          action: () => {
-            dispatch(
-              deleteCustomRole({
+          action: async () => {
+            try {
+              await deleteCustomRole({
                 organizationId: organizationId,
-                customRoleId: customRole.id || '',
+                customRoleId: customRole.id ?? '',
               })
-            )
-              .unwrap()
-              .then(() =>
-                // fetch the list of available roles after add new role
-                // state update doesn't work need to be refetch because request don't return response
-                dispatch(fetchAvailableRoles({ organizationId }))
-              )
-              .catch((e) => console.error(e))
+            } catch (error) {
+              console.error(error)
+            }
           },
         })
       }}

@@ -1,62 +1,42 @@
-import { act, fireEvent, render } from '__tests__/utils/setup-jest'
-import * as storeOrganization from '@qovery/domains/organization'
+import * as organizationsDomain from '@qovery/domains/organizations/feature'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import CreateModalFeature, { type CreateModalFeatureProps } from './create-modal-feature'
 
 import SpyInstance = jest.SpyInstance
 
-jest.mock('@qovery/domains/organization', () => {
-  return {
-    ...jest.requireActual('@qovery/domains/organization'),
-    postCustomRoles: jest.fn(),
-  }
-})
+const useCreateCustomRoleSpy: SpyInstance = jest.spyOn(organizationsDomain, 'useCreateCustomRole')
 
-const mockDispatch = jest.fn()
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useDispatch: () => mockDispatch,
-}))
-
+const props: CreateModalFeatureProps = {
+  onClose: jest.fn(),
+  organizationId: '1',
+}
 describe('CreateModalFeature', () => {
-  const props: CreateModalFeatureProps = {
-    onClose: jest.fn(),
-    organizationId: '1',
-  }
-
-  it('should render successfully', async () => {
-    const { baseElement } = render(<CreateModalFeature {...props} />)
-    await act(() => {
-      expect(baseElement).toBeTruthy()
+  beforeEach(() => {
+    useCreateCustomRoleSpy.mockReturnValue({
+      mutateAsync: jest.fn(),
+      isLoading: false,
     })
   })
 
-  it('should dispatch postCustomRoles if form is submitted', async () => {
-    const postCustomRoles: SpyInstance = jest.spyOn(storeOrganization, 'postCustomRoles')
+  it('should render successfully', async () => {
+    const { baseElement } = renderWithProviders(<CreateModalFeature {...props} />)
+    expect(baseElement).toBeTruthy()
+  })
 
-    mockDispatch.mockImplementation(() => ({
-      unwrap: () =>
-        Promise.resolve({
-          data: {},
-        }),
-    }))
+  it('should dispatch create custom role if form is submitted', async () => {
+    const { userEvent } = renderWithProviders(<CreateModalFeature {...props} />)
 
-    const { getByTestId } = render(<CreateModalFeature {...props} />)
+    const inputName = screen.getByTestId('input-name')
+    await userEvent.type(inputName, 'my-role')
 
-    await act(() => {
-      const inputName = getByTestId('input-name')
-      fireEvent.input(inputName, { target: { value: 'my-role' } })
+    expect(screen.getByTestId('input-description')).toBeInTheDocument()
 
-      expect(getByTestId('input-description')).toBeInTheDocument()
-    })
+    expect(screen.getByTestId('submit-button')).not.toBeDisabled()
 
-    expect(getByTestId('submit-button')).not.toBeDisabled()
+    await userEvent.click(screen.getByTestId('submit-button'))
 
-    await act(() => {
-      getByTestId('submit-button').click()
-    })
-
-    expect(postCustomRoles).toHaveBeenCalledWith({
-      data: {
+    expect(useCreateCustomRoleSpy().mutateAsync).toHaveBeenCalledWith({
+      customRoleUpdateRequest: {
         name: 'my-role',
       },
       organizationId: '1',

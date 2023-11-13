@@ -1,11 +1,8 @@
 import { type OrganizationApiTokenCreateRequest } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useDispatch, useSelector } from 'react-redux'
-import { fetchAvailableRoles, selectOrganizationById } from '@qovery/domains/organization'
-import { useCreateApiToken } from '@qovery/domains/organizations/feature'
+import { useAvailableRoles, useCreateApiToken } from '@qovery/domains/organizations/feature'
 import { useModal } from '@qovery/shared/ui'
-import { type AppDispatch, type RootState } from '@qovery/state/store'
 import CrudModal from '../../../ui/page-organization-api/crud-modal/crud-modal'
 import ValueModal from '../../../ui/page-organization-api/value-modal/value-modal'
 
@@ -16,18 +13,11 @@ export interface CrudModalFeatureProps {
 
 export function CrudModalFeature(props: CrudModalFeatureProps) {
   const { organizationId = '', onClose } = props
-  const dispatch = useDispatch<AppDispatch>()
   const { mutateAsync: createApiToken } = useCreateApiToken({ organizationId })
+  const { data: availableRoles = [], isFetched: isFetchedAvailableRoles } = useAvailableRoles({ organizationId })
 
   const { openModal, closeModal } = useModal()
   const [loading, setLoading] = useState(false)
-  const availableRoles = useSelector((state: RootState) =>
-    selectOrganizationById(state, organizationId)
-  )?.availableRoles
-
-  if (!availableRoles) {
-    dispatch(fetchAvailableRoles({ organizationId }))
-  }
 
   const methods = useForm<OrganizationApiTokenCreateRequest>({
     mode: 'onChange',
@@ -51,11 +41,11 @@ export function CrudModalFeature(props: CrudModalFeatureProps) {
     setLoading(false)
   })
 
-  if (!availableRoles?.items) return null
+  if (!isFetchedAvailableRoles) return null
 
   return (
     <FormProvider {...methods}>
-      <CrudModal onSubmit={onSubmit} onClose={onClose} loading={loading} availableRoles={availableRoles?.items} />
+      <CrudModal onSubmit={onSubmit} onClose={onClose} loading={loading} availableRoles={availableRoles} />
     </FormProvider>
   )
 }

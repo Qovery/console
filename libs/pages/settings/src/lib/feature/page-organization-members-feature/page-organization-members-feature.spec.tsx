@@ -1,11 +1,13 @@
-import { act, render } from '__tests__/utils/setup-jest'
 import * as storeOrganization from '@qovery/domains/organization'
+import * as organizationsDomain from '@qovery/domains/organizations/feature'
 import { organizationFactoryMock } from '@qovery/shared/factories'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import PageOrganizationMembersFeature from './page-organization-members-feature'
 
 import SpyInstance = jest.SpyInstance
 
 const mockOrganization = organizationFactoryMock(1)[0]
+const useAvailableRolesMockSpy = jest.spyOn(organizationsDomain, 'useAvailableRoles') as jest.Mock
 
 jest.mock('@qovery/domains/organization', () => {
   return {
@@ -36,8 +38,18 @@ jest.mock('react-router-dom', () => ({
 }))
 
 describe('PageOrganizationMembersFeature', () => {
+  beforeEach(() => {
+    useAvailableRolesMockSpy.mockReturnValue({
+      data: [
+        {
+          id: '0',
+          name: 'my-role',
+        },
+      ],
+    })
+  })
   it('should render successfully', () => {
-    const { baseElement } = render(<PageOrganizationMembersFeature />)
+    const { baseElement } = renderWithProviders(<PageOrganizationMembersFeature />)
     expect(baseElement).toBeTruthy()
   })
 
@@ -51,14 +63,12 @@ describe('PageOrganizationMembersFeature', () => {
         }),
     }))
 
-    const { getAllByTestId } = render(<PageOrganizationMembersFeature />)
+    const { userEvent } = renderWithProviders(<PageOrganizationMembersFeature />)
 
-    const items = getAllByTestId('menuItem')
+    const items = screen.getAllByTestId('menuItem')
 
-    await act(() => {
-      // 5 is menu for row members
-      items[5].click()
-    })
+    // 5 is menu for row members
+    await userEvent.click(items[5])
 
     expect(editMemberRoleSpy).toBeCalled()
   })
@@ -71,14 +81,12 @@ describe('PageOrganizationMembersFeature', () => {
       unwrap: () => Promise.resolve(mockOrganization.members?.items),
     }))
 
-    const { getAllByTestId } = render(<PageOrganizationMembersFeature />)
+    const { userEvent } = renderWithProviders(<PageOrganizationMembersFeature />)
 
-    const items = getAllByTestId('menuItem')
+    const items = screen.getAllByTestId('menuItem')
 
-    await act(() => {
-      // 3 is menu for row members
-      items[3].click()
-    })
+    // 3 is menu for row members
+    await userEvent.click(items[3])
 
     expect(transferOwnershipSpy).toBeCalled()
     expect(fetchMembersSpy).toBeCalled()
@@ -95,14 +103,12 @@ describe('PageOrganizationMembersFeature', () => {
         }),
     }))
 
-    const { getAllByTestId } = render(<PageOrganizationMembersFeature />)
+    const { userEvent } = renderWithProviders(<PageOrganizationMembersFeature />)
 
-    const items = getAllByTestId('menuItem')
+    const items = screen.getAllByTestId('menuItem')
 
-    await act(() => {
-      // 8 is menu for resend invite
-      items[8].click()
-    })
+    // 7 is menu for resend invite
+    await userEvent.click(items[7])
 
     expect(resendInviteSpy).toBeCalled()
     expect(postInviteMemberSpy).toBeCalled()
