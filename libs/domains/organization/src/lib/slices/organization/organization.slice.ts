@@ -10,7 +10,6 @@ import {
   type InviteMember,
   type InviteMemberRequest,
   MembersApi,
-  OrganizationCustomRoleApi,
   type OrganizationEditRequest,
   OrganizationMainCallsApi,
   type OrganizationRequest,
@@ -23,7 +22,6 @@ import { type RootState } from '@qovery/state/store'
 export const ORGANIZATION_KEY = 'organizations'
 
 const organizationMainCalls = new OrganizationMainCallsApi()
-const customRolesApi = new OrganizationCustomRoleApi()
 const membersApi = new MembersApi()
 
 export const organizationAdapter = createEntityAdapter<OrganizationEntity>()
