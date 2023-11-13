@@ -7,7 +7,6 @@ import {
   createSlice,
 } from '@reduxjs/toolkit'
 import {
-  MembersApi,
   type OrganizationEditRequest,
   OrganizationMainCallsApi,
   type OrganizationRequest,
@@ -20,7 +19,6 @@ import { type RootState } from '@qovery/state/store'
 export const ORGANIZATION_KEY = 'organizations'
 
 const organizationMainCalls = new OrganizationMainCallsApi()
-const membersApi = new MembersApi()
 
 export const organizationAdapter = createEntityAdapter<OrganizationEntity>()
 
@@ -63,46 +61,6 @@ export const deleteOrganization = createAsyncThunk(
   'organization/delete',
   async (payload: { organizationId: string }) => {
     return await organizationMainCalls.deleteOrganization(payload.organizationId)
-  }
-)
-
-export const fetchMembers = createAsyncThunk('organization/members', async (payload: { organizationId: string }) => {
-  // fetch organization members
-  const result = await membersApi.getOrganizationMembers(payload.organizationId)
-  return result.data.results
-})
-
-export const fetchInviteMembers = createAsyncThunk(
-  'organization/inviteMembers',
-  async (payload: { organizationId: string }) => {
-    // fetch organization invite members
-    const result = await membersApi.getOrganizationInvitedMembers(payload.organizationId)
-    return result.data.results
-  }
-)
-
-export const deleteInviteMember = createAsyncThunk(
-  'organization/delete-invite-member',
-  async (payload: { organizationId: string; inviteId: string; silentToaster?: boolean }) => {
-    // delete invite member by user id
-    await membersApi.deleteInviteMember(payload.organizationId, payload.inviteId)
-  }
-)
-
-export const deleteMember = createAsyncThunk(
-  'organization/member-delete',
-  async (payload: { organizationId: string; userId: string }) => {
-    // delete member by user id
-    await membersApi.deleteMember(payload.organizationId, { user_id: payload.userId })
-  }
-)
-
-export const postInviteMember = createAsyncThunk(
-  'organization/invite-member',
-  async (payload: { organizationId: string; data: InviteMemberRequest; silentToaster?: boolean }) => {
-    // post invite member
-    const result = await membersApi.postInviteMember(payload.organizationId, payload.data)
-    return result.data as InviteMember
   }
 )
 
@@ -192,117 +150,6 @@ export const organizationSlice = createSlice({
         state.loadingStatus = 'error'
         toastError(action.error)
         state.error = action.error.message
-      })
-      // fetch organization members
-      .addCase(fetchMembers.pending, (state: OrganizationState, action) => {
-        const update: Update<OrganizationEntity> = {
-          id: action.meta.arg.organizationId,
-          changes: {
-            members: {
-              loadingStatus: 'loaded',
-              items: state.entities[action.meta.arg.organizationId]?.members?.items || [],
-            },
-          },
-        }
-
-        organizationAdapter.updateOne(state, update)
-      })
-      .addCase(fetchMembers.fulfilled, (state: OrganizationState, action) => {
-        const update: Update<OrganizationEntity> = {
-          id: action.meta.arg.organizationId,
-          changes: {
-            members: {
-              loadingStatus: 'loaded',
-              items: action.payload,
-            },
-          },
-        }
-
-        organizationAdapter.updateOne(state, update)
-      })
-      // fetch organization invite members
-      .addCase(fetchInviteMembers.pending, (state: OrganizationState, action) => {
-        const update: Update<OrganizationEntity> = {
-          id: action.meta.arg.organizationId,
-          changes: {
-            inviteMembers: {
-              loadingStatus: 'loaded',
-              items: state.entities[action.meta.arg.organizationId]?.inviteMembers?.items || [],
-            },
-          },
-        }
-
-        organizationAdapter.updateOne(state, update)
-      })
-      .addCase(fetchInviteMembers.fulfilled, (state: OrganizationState, action) => {
-        const update: Update<OrganizationEntity> = {
-          id: action.meta.arg.organizationId,
-          changes: {
-            inviteMembers: {
-              loadingStatus: 'loaded',
-              items: action.payload,
-            },
-          },
-        }
-
-        organizationAdapter.updateOne(state, update)
-      })
-      // delete member
-      .addCase(deleteMember.fulfilled, (state: OrganizationState, action) => {
-        const members = state.entities[action.meta.arg.organizationId]?.members?.items || []
-
-        const update: Update<OrganizationEntity> = {
-          id: action.meta.arg.organizationId,
-          changes: {
-            members: {
-              loadingStatus: 'loaded',
-              items: members.filter((member) => member.id !== action.meta.arg.userId),
-            },
-          },
-        }
-        organizationAdapter.updateOne(state, update)
-        toast(ToastEnum.SUCCESS, `Member removed`)
-      })
-      .addCase(deleteMember.rejected, (state: OrganizationState, action) => {
-        toastError(action.error)
-      })
-      // delete invite member
-      .addCase(deleteInviteMember.fulfilled, (state: OrganizationState, action) => {
-        const inviteMembers = state.entities[action.meta.arg.organizationId]?.inviteMembers?.items || []
-
-        const update: Update<OrganizationEntity> = {
-          id: action.meta.arg.organizationId,
-          changes: {
-            inviteMembers: {
-              loadingStatus: 'loaded',
-              items: inviteMembers.filter((member) => member.id !== action.meta.arg.inviteId),
-            },
-          },
-        }
-        organizationAdapter.updateOne(state, update)
-        if (!action.meta.arg.silentToaster) toast(ToastEnum.SUCCESS, 'Invite member removed')
-      })
-      .addCase(deleteInviteMember.rejected, (state: OrganizationState, action) => {
-        toastError(action.error)
-      })
-      // post invite member
-      .addCase(postInviteMember.fulfilled, (state: OrganizationState, action) => {
-        const inviteMembers = state.entities[action.meta.arg.organizationId]?.inviteMembers?.items || []
-
-        const update: Update<OrganizationEntity> = {
-          id: action.meta.arg.organizationId,
-          changes: {
-            inviteMembers: {
-              loadingStatus: 'loaded',
-              items: [action.payload, ...inviteMembers],
-            },
-          },
-        }
-        organizationAdapter.updateOne(state, update)
-        if (!action.meta.arg.silentToaster) toast(ToastEnum.SUCCESS, 'Invite member added')
-      })
-      .addCase(postInviteMember.rejected, (state: OrganizationState, action) => {
-        toastError(action.error)
       })
   },
 })
