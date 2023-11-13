@@ -123,7 +123,7 @@ export function LayoutLogs({
       }`}
     >
       {withLogsNavigation && (
-        <div className="absolute z-20 overflow-y-auto left-1 flex items-center w-[calc(100%-8px)] h-11 bg-neutral-900">
+        <div className="absolute overflow-y-auto left-1 flex items-center w-[calc(100%-8px)] h-11 bg-neutral-900">
           {LinkNavigation(
             'Deployment logs',
             ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(serviceId),
@@ -155,7 +155,7 @@ export function LayoutLogs({
       ) : (
         <>
           <div
-            className={`absolute left-1 z-20 flex justify-end items-center h-11 bg-neutral-650 px-5 border-y border-neutral-550  ${
+            className={`absolute left-1 flex justify-end items-center h-11 bg-neutral-650 px-5 border-y border-neutral-550  ${
               tabInformation ? 'w-[calc(100%-360px)]' : 'w-[calc(100%-8px)]'
             } ${withLogsNavigation ? 'top-12' : ''}`}
           >
@@ -227,7 +227,7 @@ export function LayoutLogs({
             }
             className={`overflow-y-auto w-full h-[calc(100%-20px)] bg-neutral-700 pb-16 mb-5 ${
               lineNumbers
-                ? 'before:bg-neutral-700 before:absolute before:left-1 before:top-9 before:w-10 before:h-full'
+                ? 'before:bg-neutral-700 before:absolute before:left-1 before:top-9 before:w-10 before:h-full before:-z-[1]'
                 : ''
             } ${withLogsNavigation ? 'mt-[88px]' : 'mt-11'}`}
           >
@@ -237,7 +237,7 @@ export function LayoutLogs({
                 setUpdateTimeContext,
               }}
             >
-              <div className="relative z-20">
+              <div className="relative">
                 {children}
                 {isProgressing && (
                   <div

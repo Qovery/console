@@ -2,7 +2,7 @@ import * as TooltipPrimitive from '@radix-ui/react-tooltip'
 import { type VariantProps, cva } from 'class-variance-authority'
 import { type ComponentProps, type ElementRef, type ReactNode, forwardRef } from 'react'
 
-const tooltipContentVariants = cva(['rounded-sm', 'px-2', 'py-1', 'text-xs', 'font-medium', 'z-30'], {
+const tooltipContentVariants = cva(['rounded-sm', 'px-2', 'py-1', 'text-xs', 'font-medium'], {
   variants: {
     color: {
       neutral: ['bg-neutral-600', 'text-neutral-50', 'dark:bg-neutral-100', 'dark:text-neutral-400'],

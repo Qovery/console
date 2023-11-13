@@ -82,14 +82,14 @@ export const Modal = (props: ModalProps) => {
               setExternalOpen ? setExternalOpen(false) : setOpen(false)
             }
           }}
-          className="modal__overlay flex fixed top-0 left-0 bg-neutral-700/20 w-full h-screen z-30"
+          className="modal__overlay flex fixed top-0 left-0 bg-neutral-700/20 w-full h-screen"
         />
         <Dialog.Content
           onPointerDownOutside={(event) => {
             event.preventDefault()
           }}
           style={{ width: `${width}px` }}
-          className={`modal__content fixed top-[84px] left-1/2 bg-white rounded-md shadow-[0_0_32px_rgba(0,0,0,0.08)] z-40 ${className}`}
+          className={`modal__content fixed top-[84px] left-1/2 bg-white rounded-md shadow-[0_0_32px_rgba(0,0,0,0.08)] ${className}`}
         >
           <div className="max-h-[80vh] overflow-auto">
             {cloneElement(children, {

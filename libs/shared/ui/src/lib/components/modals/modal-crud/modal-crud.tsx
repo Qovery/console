@@ -64,7 +64,7 @@ export function ModalCrud(props: ModalCrudProps) {
               Show how it works <Icon className="text-xs" name={IconAwesomeEnum.CIRCLE_QUESTION} />
             </span>
           </Popover.Trigger>
-          <Popover.Content side="left" className="z-50 text-neutral-350 text-sm relative" style={{ width: 440 }}>
+          <Popover.Content side="left" className="text-neutral-350 text-sm relative" style={{ width: 440 }}>
             <h6 className="text-neutral-400 font-medium mb-2">How it works</h6>
             {howItWorks}
             <Popover.Close className="absolute top-4 right-4">

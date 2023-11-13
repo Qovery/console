@@ -51,21 +51,17 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
       <WarningScreenMobile />
       <main className="dark:bg-neutral-900 dark:h-full bg-neutral-200">
         <div className="flex">
-          <div className="h-full sticky top-0 z-30">
+          <div className="h-full sticky top-0">
             <Navigation defaultOrganizationId={defaultOrganizationId} clusterNotification={clusterCredentialError} />
           </div>
-          <div className="w-full">
-            {topBar && <TopBar />}
-            {clusterBanner && (
-              <Banner
-                color="brand"
-                onClickButton={() => navigate(INFRA_LOGS_URL(organizationId, clusters[0].id))}
-                buttonLabel="See logs"
-              >
-                Installation of the cluster <span className="block font-bold mx-1">{clusters[0].name}</span> is ongoing,
-                you can follow it from logs
-              </Banner>
-            )}
+          <div className="w-full flex flex-col-reverse">
+            <div
+              className={`relative flex flex-col pt-2 px-2 dark:pt-0 dark:px-0 ${
+                clusterCredentialError || clusterBanner ? 'min-h-page-container-wbanner' : 'min-h-page-container'
+              }`}
+            >
+              {children}
+            </div>
             {clusterCredentialError && (
               <Banner
                 color="yellow"
@@ -83,13 +79,17 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
                 invalid.
               </Banner>
             )}
-            <div
-              className={`relative flex flex-col pt-2 px-2 dark:pt-0 dark:px-0 ${
-                clusterCredentialError || clusterBanner ? 'min-h-page-container-wbanner' : 'min-h-page-container'
-              }`}
-            >
-              {children}
-            </div>
+            {clusterBanner && (
+              <Banner
+                color="brand"
+                onClickButton={() => navigate(INFRA_LOGS_URL(organizationId, clusters[0].id))}
+                buttonLabel="See logs"
+              >
+                Installation of the cluster <span className="block font-bold mx-1">{clusters[0].name}</span> is ongoing,
+                you can follow it from logs
+              </Banner>
+            )}
+            {topBar && <TopBar />}
           </div>
         </div>
       </main>
