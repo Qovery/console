@@ -6,10 +6,10 @@ import {
   type ServiceTypeEnum,
   isApplication,
   isContainer,
-  isContainerSource,
   isDatabase,
-  isGitSource,
   isJob,
+  isJobContainerSource,
+  isJobGitSource,
 } from '@qovery/shared/enums'
 import {
   type ApplicationEntity,
@@ -119,7 +119,7 @@ export function TableRowServices<T>(props: TableRowServicesProps<T>) {
                   </span>
                 </div>
               )}
-              {isGitSource(dataJobs.source) && (
+              {isJobGitSource(dataJobs.source) && (
                 <div className="flex items-center">
                   <TagCommit commitId={dataJobs.source?.docker?.git_repository?.deployed_commit_id} />
                   <Icon name={IconAwesomeEnum.CODE_BRANCH} className="ml-2 mr-1 text-neutral-300 text-ssm" />
@@ -128,7 +128,7 @@ export function TableRowServices<T>(props: TableRowServicesProps<T>) {
                   </span>
                 </div>
               )}
-              {(isContainer(type) || isContainerSource(dataJobs.source)) && (
+              {(isContainer(type) || isJobContainerSource(dataJobs.source)) && (
                 <Badge className="truncate shrink" size="xs">
                   {dataContainer.image_name && (
                     <Tooltip content={`${dataContainer.image_name}:${dataContainer.tag}`}>
@@ -137,7 +137,7 @@ export function TableRowServices<T>(props: TableRowServicesProps<T>) {
                       </span>
                     </Tooltip>
                   )}
-                  {isContainerSource(dataJobs.source) && (
+                  {isJobContainerSource(dataJobs.source) && (
                     <Tooltip content={`${dataJobs.source?.image?.image_name}:${dataJobs.source?.image?.tag}`}>
                       <span className="truncate">
                         {dataJobs.source?.image?.image_name}:{dataJobs.source?.image?.tag}
@@ -162,10 +162,10 @@ export function TableRowServices<T>(props: TableRowServicesProps<T>) {
                   </div>
                 </Tooltip>
               )}
-              {(isApplication(type) || isGitSource(dataJobs.source)) && (
+              {(isApplication(type) || isJobGitSource(dataJobs.source)) && (
                 <Icon name={dataApplication.build_mode || BuildModeEnum.DOCKER} width="20" height="20" />
               )}
-              {(isContainer(type) || isContainerSource(dataJobs.source)) && (
+              {(isContainer(type) || isJobContainerSource(dataJobs.source)) && (
                 <Icon name={IconEnum.CONTAINER} width="20" height="20" />
               )}
             </div>

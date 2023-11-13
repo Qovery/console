@@ -12,7 +12,7 @@ import {
   type OrganizationEditRequest,
   type ServiceStorageStorageInner,
 } from 'qovery-typescript-axios'
-import { isGitSource } from '@qovery/shared/enums'
+import { isJobGitSource } from '@qovery/shared/enums'
 import {
   type ClusterEntity,
   type ContainerApplicationEntity,
@@ -116,7 +116,7 @@ export function refactoJobPayload(job: Partial<JobApplicationEntity>): JobReques
     healthchecks: job.healthchecks ?? {},
   }
 
-  if (isGitSource(job.source)) {
+  if (isJobGitSource(job.source)) {
     jobRequest.source = {
       docker: {
         dockerfile_path: job.source.docker?.dockerfile_path,

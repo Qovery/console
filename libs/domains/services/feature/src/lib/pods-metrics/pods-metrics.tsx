@@ -10,7 +10,7 @@ import {
 import { type ServiceStateDto } from 'qovery-ws-typescript-axios'
 import { Fragment, useEffect, useMemo, useState } from 'react'
 import { P, match } from 'ts-pattern'
-import { ServiceTypeEnum, isContainerSource } from '@qovery/shared/enums'
+import { ServiceTypeEnum, isJobContainerSource } from '@qovery/shared/enums'
 import { Badge, Icon, IconAwesomeEnum, StatusChip, TablePrimitives, Tooltip } from '@qovery/shared/ui'
 import { dateFullFormat, timeAgo } from '@qovery/shared/util-dates'
 import { formatMetric, twMerge } from '@qovery/shared/util-js'
@@ -64,7 +64,7 @@ export function PodsMetrics({ environmentId, serviceId }: PodsMetricsProps) {
   const placeholder = <Icon name={IconAwesomeEnum.CIRCLE_QUESTION} className="text-sm text-neutral-300" />
 
   const containerImage = match(service)
-    .with({ serviceType: ServiceTypeEnum.JOB, source: P.when(isContainerSource) }, ({ source }) => source.image)
+    .with({ serviceType: ServiceTypeEnum.JOB, source: P.when(isJobContainerSource) }, ({ source }) => source.image)
     .with({ serviceType: ServiceTypeEnum.CONTAINER }, ({ image_name, tag, registry }) => ({
       image_name,
       tag,

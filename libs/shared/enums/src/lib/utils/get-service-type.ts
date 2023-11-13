@@ -66,11 +66,11 @@ export const isLifeCycleJob = (data?: ApplicationEntity | ServiceTypeEnum) => {
   }
 }
 
-export function isGitSource(source?: JobResponseAllOfSource): source is JobResponseAllOfSourceOneOf1 {
+export function isJobGitSource(source?: JobResponseAllOfSource): source is JobResponseAllOfSourceOneOf1 {
   return !!source && 'docker' in source
 }
 
-export function isContainerSource(source?: JobResponseAllOfSource): source is JobResponseAllOfSourceOneOf {
+export function isJobContainerSource(source?: JobResponseAllOfSource): source is JobResponseAllOfSourceOneOf {
   return !!source && 'image' in source
 }
 

@@ -1,7 +1,7 @@
 import { type Credentials } from 'qovery-typescript-axios'
 import { type ComponentPropsWithoutRef } from 'react'
 import { P, match } from 'ts-pattern'
-import { IconEnum, ServiceTypeEnum, isContainerSource, isGitSource } from '@qovery/shared/enums'
+import { IconEnum, ServiceTypeEnum, isJobContainerSource, isJobGitSource } from '@qovery/shared/enums'
 import { APPLICATION_SETTINGS_RESOURCES_URL, APPLICATION_SETTINGS_URL } from '@qovery/shared/routes'
 import {
   Badge,
@@ -45,7 +45,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
   }
 
   const containerImage = match(service)
-    .with({ serviceType: ServiceTypeEnum.JOB, source: P.when(isContainerSource) }, ({ source }) => source.image)
+    .with({ serviceType: ServiceTypeEnum.JOB, source: P.when(isJobContainerSource) }, ({ source }) => source.image)
     .with({ serviceType: ServiceTypeEnum.CONTAINER }, ({ image_name, tag, registry }) => ({
       image_name,
       tag,
@@ -163,7 +163,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
             { serviceType: ServiceTypeEnum.APPLICATION },
             {
               serviceType: ServiceTypeEnum.JOB,
-              source: P.when(isGitSource),
+              source: P.when(isJobGitSource),
             },
             (service) => {
               const gitRepository = match(service)
