@@ -136,12 +136,12 @@ export function PageOrganizationMembers(props: PageOrganizationMembersProps) {
           columnsWidth={columnsWidth}
         >
           <div>
-            {dataMembers?.map((member: Member) => (
+            {dataMembers?.map((member: Member, index) => (
               <RowMember
                 key={member.id}
                 filter={filterMembers}
                 userIsOwner={userIsOwner?.role_name?.toUpperCase() === MemberRoleEnum.OWNER}
-                loading={!isFetchedMembers}
+                loading={!isFetchedMembers || member.id === index.toString()}
                 member={member}
                 availableRoles={availableRoles}
                 editMemberRole={editMemberRole}

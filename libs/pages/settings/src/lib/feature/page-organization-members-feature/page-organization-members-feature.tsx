@@ -16,11 +16,11 @@ import { selectUser } from '@qovery/domains/users/data-access'
 import { membersMock } from '@qovery/shared/factories'
 import { useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { type AppDispatch, type RootState } from '@qovery/state/store'
+import { type RootState } from '@qovery/state/store'
 import PageOrganizationMembers from '../../ui/page-organization-members/page-organization-members'
 import CreateModalFeature from './create-modal-feature/create-modal-feature'
 
-const membersDataMock = membersMock(5)
+export const membersDataMock = membersMock(5)
 
 export function PageOrganizationMembersFeature() {
   const { organizationId = '' } = useParams()
@@ -28,7 +28,7 @@ export function PageOrganizationMembersFeature() {
   useDocumentTitle('Members - Organization settings')
 
   const { data: members = membersDataMock, isFetched: isFetchedMembers } = useMembers({ organizationId })
-  const { data: inviteMembers = [], isLoading: isLoadingInviteMembers } = useInviteMembers({
+  const { data: inviteMembers = [] } = useInviteMembers({
     organizationId,
   })
   const { data: availableRoles = [] } = useAvailableRoles({ organizationId })
