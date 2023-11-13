@@ -11,6 +11,8 @@ import {
   type DoCredentialsRequest,
   type GitProviderEnum,
   type GitTokenRequest,
+  type InviteMemberRequest,
+  MembersApi,
   OrganizationAccountGitRepositoriesApi,
   OrganizationApiTokenApi,
   type OrganizationApiTokenCreateRequest,
@@ -35,6 +37,7 @@ const webhookApi = new OrganizationWebhookApi()
 const cloudProviderCredentialsApi = new CloudProviderCredentialsApi()
 const billingApi = new BillingApi()
 const customRolesApi = new OrganizationCustomRoleApi()
+const membersApi = new MembersApi()
 
 type CredentialRequest =
   | {
@@ -242,6 +245,20 @@ export const organizations = createQueryKeys('organizations', {
     async queryFn() {
       const result = await customRolesApi.getOrganizationCustomRole(organizationId, customRoleId)
       return result.data
+    },
+  }),
+  members: ({ organizationId }: { organizationId: string }) => ({
+    queryKey: [organizationId],
+    async queryFn() {
+      const result = await membersApi.getOrganizationMembers(organizationId)
+      return result.data.results
+    },
+  }),
+  inviteMembers: ({ organizationId }: { organizationId: string }) => ({
+    queryKey: [organizationId],
+    async queryFn() {
+      const result = await membersApi.getOrganizationInvitedMembers(organizationId)
+      return result.data.results
     },
   }),
 })
@@ -489,6 +506,23 @@ export const mutations = {
   },
   async deleteCustomRole({ organizationId, customRoleId }: { organizationId: string; customRoleId: string }) {
     const response = await customRolesApi.deleteOrganizationCustomRole(organizationId, customRoleId)
+  },
+  async deleteInviteMember({ organizationId, inviteId }: { organizationId: string; inviteId: string }) {
+    const response = await membersApi.deleteInviteMember(organizationId, inviteId)
+    return response.data
+  },
+  async createInviteMember({
+    organizationId,
+    inviteMemberRequest,
+  }: {
+    organizationId: string
+    inviteMemberRequest: InviteMemberRequest
+  }) {
+    const response = await membersApi.postInviteMember(organizationId, inviteMemberRequest)
+    return response.data
+  },
+  async deleteMember({ organizationId, userId }: { organizationId: string; userId: string }) {
+    const response = await membersApi.deleteMember(organizationId, { user_id: userId })
     return response.data
   },
 }
