@@ -12,7 +12,7 @@ import {
   type GitProviderEnum,
   type GitTokenRequest,
   type InviteMemberRequest,
-  MemberRoleUpdateRequest,
+  type MemberRoleUpdateRequest,
   MembersApi,
   OrganizationAccountGitRepositoriesApi,
   OrganizationApiTokenApi,
@@ -244,22 +244,22 @@ export const organizations = createQueryKeys('organizations', {
   customRole: ({ organizationId, customRoleId }: { organizationId: string; customRoleId: string }) => ({
     queryKey: [organizationId],
     async queryFn() {
-      const result = await customRolesApi.getOrganizationCustomRole(organizationId, customRoleId)
-      return result.data
+      const response = await customRolesApi.getOrganizationCustomRole(organizationId, customRoleId)
+      return response.data
     },
   }),
   members: ({ organizationId }: { organizationId: string }) => ({
     queryKey: [organizationId],
     async queryFn() {
-      const result = await membersApi.getOrganizationMembers(organizationId)
-      return result.data.results
+      const response = await membersApi.getOrganizationMembers(organizationId)
+      return response.data.results
     },
   }),
   inviteMembers: ({ organizationId }: { organizationId: string }) => ({
     queryKey: [organizationId],
     async queryFn() {
-      const result = await membersApi.getOrganizationInvitedMembers(organizationId)
-      return result.data.results
+      const response = await membersApi.getOrganizationInvitedMembers(organizationId)
+      return response.data.results
     },
   }),
 })
@@ -492,8 +492,8 @@ export const mutations = {
     customRoleUpdateRequest: OrganizationCustomRoleUpdateRequest
   }) {
     const cloneCustomRole = Object.assign({}, refactoOrganizationCustomRolePayload(customRoleUpdateRequest))
-    const result = await customRolesApi.editOrganizationCustomRole(organizationId, customRoleId, cloneCustomRole)
-    return result.data
+    const response = await customRolesApi.editOrganizationCustomRole(organizationId, customRoleId, cloneCustomRole)
+    return response.data
   },
   async createCustomRole({
     organizationId,
@@ -507,6 +507,7 @@ export const mutations = {
   },
   async deleteCustomRole({ organizationId, customRoleId }: { organizationId: string; customRoleId: string }) {
     const response = await customRolesApi.deleteOrganizationCustomRole(organizationId, customRoleId)
+    return response.data
   },
   async deleteInviteMember({ organizationId, inviteId }: { organizationId: string; inviteId: string }) {
     const response = await membersApi.deleteInviteMember(organizationId, inviteId)
