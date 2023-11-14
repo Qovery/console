@@ -4,7 +4,7 @@ import {
   type Member,
   type OrganizationAvailableRole,
 } from 'qovery-typescript-axios'
-import { type Dispatch, type SetStateAction, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { MemberRoleEnum } from '@qovery/shared/enums'
 import { ButtonLegacy, HelpSection, IconAwesomeEnum, Table, type TableFilterProps } from '@qovery/shared/ui'
 import RowMember from './row-member/row-member'
@@ -15,13 +15,8 @@ export interface PageOrganizationMembersProps {
   deleteInviteMember: (inviteId: string) => void
   resendInvite: (inviteId: string, data: InviteMemberRequest) => void
   transferOwnership: (user: Member) => void
-  setDataMembers: Dispatch<SetStateAction<Member[]>>
-  setDataInviteMembers: Dispatch<SetStateAction<InviteMember[]>>
-  loadingInviteMembers: boolean
   loadingUpdateRole: { userId: string; loading: boolean }
-  loadingMembers: boolean
-  dataInviteMembers?: InviteMember[]
-  dataMembers?: Member[]
+  isFetchedMembers: boolean
   members?: Member[]
   inviteMembers?: InviteMember[]
   availableRoles?: OrganizationAvailableRole[]
@@ -85,15 +80,10 @@ export function PageOrganizationMembers(props: PageOrganizationMembersProps) {
   const {
     members = [],
     inviteMembers = [],
-    dataMembers,
-    setDataMembers,
-    dataInviteMembers,
     deleteInviteMember,
-    setDataInviteMembers,
-    loadingInviteMembers,
     availableRoles,
     editMemberRole,
-    loadingMembers,
+    isFetchedMembers,
     loadingUpdateRole,
     deleteMember,
     transferOwnership,
@@ -106,6 +96,9 @@ export function PageOrganizationMembers(props: PageOrganizationMembersProps) {
 
   const [filterMembers, setFilterMembers] = useState<TableFilterProps[]>([])
   const [filterInviteMembers, setFilterInviteMembers] = useState<TableFilterProps[]>([])
+
+  const [dataMembers, setDataMembers] = useState<Member[]>(members)
+  const [dataInviteMembers, setDataInviteMembers] = useState<InviteMember[]>(inviteMembers)
 
   useEffect(() => {
     setDataMembers(members)
@@ -143,12 +136,12 @@ export function PageOrganizationMembers(props: PageOrganizationMembersProps) {
           columnsWidth={columnsWidth}
         >
           <div>
-            {dataMembers?.map((member: Member) => (
+            {dataMembers?.map((member: Member, index) => (
               <RowMember
                 key={member.id}
                 filter={filterMembers}
                 userIsOwner={userIsOwner?.role_name?.toUpperCase() === MemberRoleEnum.OWNER}
-                loading={loadingMembers}
+                loading={!isFetchedMembers || member.id === index.toString()}
                 member={member}
                 availableRoles={availableRoles}
                 editMemberRole={editMemberRole}
@@ -160,7 +153,7 @@ export function PageOrganizationMembers(props: PageOrganizationMembersProps) {
             ))}
           </div>
         </Table>
-        {!loadingMembers && dataInviteMembers && dataInviteMembers?.length > 0 && (
+        {isFetchedMembers && dataInviteMembers?.length > 0 && (
           <Table
             className="border border-neutral-200 rounded mt-5"
             classNameHead="rounded-t"
@@ -175,7 +168,7 @@ export function PageOrganizationMembers(props: PageOrganizationMembersProps) {
               {dataInviteMembers?.map((member: InviteMember) => (
                 <RowMember
                   key={member.id}
-                  loading={loadingInviteMembers}
+                  loading={false}
                   member={member}
                   filter={filterInviteMembers}
                   availableRoles={availableRoles}

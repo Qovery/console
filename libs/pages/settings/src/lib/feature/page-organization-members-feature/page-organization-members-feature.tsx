@@ -1,105 +1,76 @@
-import { EnvironmentModeEnum, type InviteMember, type InviteMemberRequest, type Member } from 'qovery-typescript-axios'
-import { useCallback, useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { EnvironmentModeEnum, type InviteMemberRequest, type Member } from 'qovery-typescript-axios'
+import { useState } from 'react'
+import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import {
-  deleteInviteMember,
-  deleteMember,
-  editMemberRole,
-  fetchInviteMembers,
-  fetchMembers,
-  postInviteMember,
-  selectOrganizationById,
-  transferOwnershipMemberRole,
-} from '@qovery/domains/organization'
-import { useAvailableRoles } from '@qovery/domains/organizations/feature'
+  useAvailableRoles,
+  useCreateInviteMember,
+  useDeleteInviteMember,
+  useDeleteMember,
+  useEditMemberRole,
+  useInviteMembers,
+  useMembers,
+  useTransferOwnershipMemberRole,
+} from '@qovery/domains/organizations/feature'
 import { selectUser } from '@qovery/domains/users/data-access'
 import { membersMock } from '@qovery/shared/factories'
-import { ToastEnum, toast, useModal, useModalConfirmation } from '@qovery/shared/ui'
+import { useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { type AppDispatch, type RootState } from '@qovery/state/store'
+import { type RootState } from '@qovery/state/store'
 import PageOrganizationMembers from '../../ui/page-organization-members/page-organization-members'
 import CreateModalFeature from './create-modal-feature/create-modal-feature'
 
-const membersDataMock = membersMock(5)
+export const membersDataMock = membersMock(5)
 
 export function PageOrganizationMembersFeature() {
   const { organizationId = '' } = useParams()
 
   useDocumentTitle('Members - Organization settings')
 
-  const organization = useSelector((state: RootState) => selectOrganizationById(state, organizationId))
-  const membersLoadingStatus = useSelector(
-    (state: RootState) => selectOrganizationById(state, organizationId)?.members?.loadingStatus
-  )
-
-  const inviteMembersLoadingStatus = useSelector(
-    (state: RootState) => selectOrganizationById(state, organizationId)?.inviteMembers?.loadingStatus
-  )
-
+  const { data: members = membersDataMock, isFetched: isFetchedMembers } = useMembers({ organizationId })
+  const { data: inviteMembers = [] } = useInviteMembers({
+    organizationId,
+  })
   const { data: availableRoles = [] } = useAvailableRoles({ organizationId })
+  const { mutateAsync: editMemberRole } = useEditMemberRole({ organizationId })
+  const { mutateAsync: deleteMember } = useDeleteMember({ organizationId })
+  const { mutateAsync: deleteInviteMember } = useDeleteInviteMember({ organizationId })
+  const { mutateAsync: transferOwnershipMemberRole } = useTransferOwnershipMemberRole({ organizationId })
+  const { mutateAsync: createInviteMember } = useCreateInviteMember({ organizationId })
 
   const userSub = useSelector((state: RootState) => selectUser(state)?.sub)
 
-  const dispatch = useDispatch<AppDispatch>()
-
   const { openModal, closeModal } = useModal()
-  const [loadingMembers, setLoadingMembers] = useState(false)
   const [loadingUpdateRole, setLoadingUpdateRole] = useState({ userId: '', loading: false })
-  const [loadingInviteMembers, setLoadingInviteMembers] = useState(false)
-
-  const [dataMembers, setDataMembers] = useState<Member[]>(organization?.members?.items || membersDataMock)
-  const [dataInviteMembers, setDataInviteMembers] = useState<InviteMember[]>(organization?.inviteMembers?.items || [])
 
   const { openModalConfirmation } = useModalConfirmation()
 
-  const fetchMembersDispatch = useCallback((): void => {
-    dispatch(fetchMembers({ organizationId }))
-      .unwrap()
-      .then((result?: Member[]) => {
-        result && setDataMembers(result)
-      })
-      .catch((e) => console.error(e))
-      .finally(() => setLoadingMembers(false))
-  }, [dispatch, organizationId])
-
-  useEffect(() => {
-    if (membersLoadingStatus !== 'loaded') setLoadingMembers(true)
-
-    if (organization && membersLoadingStatus !== 'loaded') {
-      fetchMembersDispatch()
-    }
-
-    if (organization && inviteMembersLoadingStatus !== 'loaded') {
-      dispatch(fetchInviteMembers({ organizationId }))
-        .unwrap()
-        .then((result?: InviteMember[]) => {
-          result && setDataInviteMembers(result)
-        })
-        .catch((e) => console.error(e))
-        .finally(() => setLoadingInviteMembers(false))
-    }
-  }, [dispatch, organization, organizationId, fetchMembersDispatch, membersLoadingStatus, inviteMembersLoadingStatus])
-
-  const onClickEditMemberRole = (userId: string, roleId: string) => {
+  const onClickEditMemberRole = async (userId: string, roleId: string) => {
     const data = { user_id: userId, role_id: roleId }
     setLoadingUpdateRole({ userId, loading: true })
 
-    dispatch(editMemberRole({ organizationId, data }))
-      .unwrap()
-      .finally(() => setLoadingUpdateRole({ userId, loading: false }))
+    try {
+      await editMemberRole({ organizationId, memberRoleUpdateRequest: data })
+      setLoadingUpdateRole({ userId, loading: false })
+    } catch (error) {
+      console.error(error)
+    }
   }
 
-  const onClickDeleteMember = (userId: string) => {
-    dispatch(deleteMember({ organizationId, userId }))
-      .unwrap()
-      .catch((e) => console.error(e))
+  const onClickDeleteMember = async (userId: string) => {
+    try {
+      await deleteMember({ organizationId, userId })
+    } catch (error) {
+      console.error(error)
+    }
   }
 
-  const onClickRevokeMemberInvite = (inviteId: string) => {
-    dispatch(deleteInviteMember({ organizationId, inviteId }))
-      .unwrap()
-      .catch((e) => console.error(e))
+  const onClickRevokeMemberInvite = async (inviteId: string) => {
+    try {
+      await deleteInviteMember({ organizationId, inviteId })
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   const onClickTransferOwnership = (user: Member) => {
@@ -108,42 +79,31 @@ export function PageOrganizationMembersFeature() {
       description: 'Confirm by entering the member name',
       name: user?.name,
       mode: process.env['NODE_ENV'] === 'production' ? EnvironmentModeEnum.PRODUCTION : EnvironmentModeEnum.DEVELOPMENT,
-      action: () => {
-        dispatch(transferOwnershipMemberRole({ organizationId, userId: user.id }))
-          .unwrap()
-          .then(() => fetchMembersDispatch())
+      action: async () => {
+        try {
+          await transferOwnershipMemberRole({ organizationId, userId: user.id })
+        } catch (error) {
+          console.error(error)
+        }
       },
     })
   }
 
-  const onClickResendInvite = (inviteId: string, data: InviteMemberRequest) => {
-    dispatch(deleteInviteMember({ organizationId, inviteId, silentToaster: true }))
-      .unwrap()
-      .then(() => {
-        dispatch(
-          postInviteMember({
-            organizationId: organizationId,
-            data: data,
-            silentToaster: true,
-          })
-        )
-          .unwrap()
-          .then(() => toast(ToastEnum.SUCCESS, 'Invitation sent'))
-      })
-      .catch((e) => console.error(e))
+  const onClickResendInvite = async (inviteId: string, data: InviteMemberRequest) => {
+    try {
+      await deleteInviteMember({ organizationId, inviteId })
+      await createInviteMember({ organizationId, inviteMemberRequest: data })
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   return (
     <PageOrganizationMembers
       userId={userSub}
-      members={!loadingMembers ? organization?.members?.items : membersDataMock}
-      dataMembers={dataMembers}
-      setDataMembers={setDataMembers}
-      loadingMembers={loadingMembers}
-      dataInviteMembers={dataInviteMembers}
-      setDataInviteMembers={setDataInviteMembers}
-      loadingInviteMembers={loadingInviteMembers}
-      inviteMembers={organization?.inviteMembers?.items}
+      members={members}
+      isFetchedMembers={isFetchedMembers}
+      inviteMembers={inviteMembers}
       availableRoles={availableRoles}
       loadingUpdateRole={loadingUpdateRole}
       editMemberRole={onClickEditMemberRole}

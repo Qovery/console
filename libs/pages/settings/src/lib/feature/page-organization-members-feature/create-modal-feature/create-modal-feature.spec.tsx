@@ -1,68 +1,48 @@
-import { act, fireEvent, render } from '__tests__/utils/setup-jest'
-import * as storeOrganization from '@qovery/domains/organization'
+import * as organizationsDomain from '@qovery/domains/organizations/feature'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import CreateModalFeature, { type CreateModalFeatureProps } from './create-modal-feature'
 
 import SpyInstance = jest.SpyInstance
 
-jest.mock('@qovery/domains/organization', () => {
-  return {
-    ...jest.requireActual('@qovery/domains/organization'),
-    postInviteMember: jest.fn(),
-  }
-})
+const useCreateInviteMemberSpy: SpyInstance = jest.spyOn(organizationsDomain, 'useCreateInviteMember')
 
-const mockDispatch = jest.fn()
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useDispatch: () => mockDispatch,
-}))
+const props: CreateModalFeatureProps = {
+  onClose: jest.fn(),
+  availableRoles: [
+    {
+      id: '1111-1111-1111-1111',
+      name: 'ADMIN',
+    },
+    {
+      id: '2222-2222-2222-2222',
+      name: 'VIEWER',
+    },
+  ],
+  organizationId: '1',
+}
 
 describe('CreateModalFeature', () => {
-  const props: CreateModalFeatureProps = {
-    onClose: jest.fn(),
-    availableRoles: [
-      {
-        id: '1111-1111-1111-1111',
-        name: 'ADMIN',
-      },
-      {
-        id: '2222-2222-2222-2222',
-        name: 'VIEWER',
-      },
-    ],
-    organizationId: '1',
-  }
-
-  it('should render successfully', async () => {
-    const { baseElement } = render(<CreateModalFeature {...props} />)
-    await act(() => {
-      expect(baseElement).toBeTruthy()
+  beforeEach(() => {
+    useCreateInviteMemberSpy.mockReturnValue({
+      mutateAsync: jest.fn(),
     })
   })
 
+  it('should render successfully', async () => {
+    const { baseElement } = renderWithProviders(<CreateModalFeature {...props} />)
+    expect(baseElement).toBeTruthy()
+  })
+
   it('should dispatch postInviteMember if form is submitted', async () => {
-    const postInviteMember: SpyInstance = jest.spyOn(storeOrganization, 'postInviteMember')
+    const { userEvent } = renderWithProviders(<CreateModalFeature {...props} />)
 
-    mockDispatch.mockImplementation(() => ({
-      unwrap: () =>
-        Promise.resolve({
-          data: {},
-        }),
-    }))
+    const inputEmail = screen.getByTestId('input-email')
+    await userEvent.type(inputEmail, 'test@qovery.com')
 
-    const { getByTestId } = render(<CreateModalFeature {...props} />)
+    await userEvent.click(screen.getByTestId('submit-button'))
 
-    await act(() => {
-      const inputEmail = getByTestId('input-email')
-      fireEvent.input(inputEmail, { target: { value: 'test@qovery.com' } })
-    })
-
-    await act(() => {
-      getByTestId('submit-button').click()
-    })
-
-    expect(postInviteMember).toHaveBeenCalledWith({
-      data: {
+    expect(useCreateInviteMemberSpy().mutateAsync).toHaveBeenCalledWith({
+      inviteMemberRequest: {
         email: 'test@qovery.com',
         role_id: '1111-1111-1111-1111',
       },

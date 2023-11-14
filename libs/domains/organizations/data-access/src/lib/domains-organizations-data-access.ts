@@ -11,6 +11,9 @@ import {
   type DoCredentialsRequest,
   type GitProviderEnum,
   type GitTokenRequest,
+  type InviteMemberRequest,
+  type MemberRoleUpdateRequest,
+  MembersApi,
   OrganizationAccountGitRepositoriesApi,
   OrganizationApiTokenApi,
   type OrganizationApiTokenCreateRequest,
@@ -35,6 +38,7 @@ const webhookApi = new OrganizationWebhookApi()
 const cloudProviderCredentialsApi = new CloudProviderCredentialsApi()
 const billingApi = new BillingApi()
 const customRolesApi = new OrganizationCustomRoleApi()
+const membersApi = new MembersApi()
 
 type CredentialRequest =
   | {
@@ -240,8 +244,22 @@ export const organizations = createQueryKeys('organizations', {
   customRole: ({ organizationId, customRoleId }: { organizationId: string; customRoleId: string }) => ({
     queryKey: [organizationId],
     async queryFn() {
-      const result = await customRolesApi.getOrganizationCustomRole(organizationId, customRoleId)
-      return result.data
+      const response = await customRolesApi.getOrganizationCustomRole(organizationId, customRoleId)
+      return response.data
+    },
+  }),
+  members: ({ organizationId }: { organizationId: string }) => ({
+    queryKey: [organizationId],
+    async queryFn() {
+      const response = await membersApi.getOrganizationMembers(organizationId)
+      return response.data.results
+    },
+  }),
+  inviteMembers: ({ organizationId }: { organizationId: string }) => ({
+    queryKey: [organizationId],
+    async queryFn() {
+      const response = await membersApi.getOrganizationInvitedMembers(organizationId)
+      return response.data.results
     },
   }),
 })
@@ -474,8 +492,8 @@ export const mutations = {
     customRoleUpdateRequest: OrganizationCustomRoleUpdateRequest
   }) {
     const cloneCustomRole = Object.assign({}, refactoOrganizationCustomRolePayload(customRoleUpdateRequest))
-    const result = await customRolesApi.editOrganizationCustomRole(organizationId, customRoleId, cloneCustomRole)
-    return result.data
+    const response = await customRolesApi.editOrganizationCustomRole(organizationId, customRoleId, cloneCustomRole)
+    return response.data
   },
   async createCustomRole({
     organizationId,
@@ -489,6 +507,40 @@ export const mutations = {
   },
   async deleteCustomRole({ organizationId, customRoleId }: { organizationId: string; customRoleId: string }) {
     const response = await customRolesApi.deleteOrganizationCustomRole(organizationId, customRoleId)
+    return response.data
+  },
+  async deleteInviteMember({ organizationId, inviteId }: { organizationId: string; inviteId: string }) {
+    const response = await membersApi.deleteInviteMember(organizationId, inviteId)
+    return response.data
+  },
+  async createInviteMember({
+    organizationId,
+    inviteMemberRequest,
+  }: {
+    organizationId: string
+    inviteMemberRequest: InviteMemberRequest
+  }) {
+    const response = await membersApi.postInviteMember(organizationId, inviteMemberRequest)
+    return response.data
+  },
+  async deleteMember({ organizationId, userId }: { organizationId: string; userId: string }) {
+    const response = await membersApi.deleteMember(organizationId, { user_id: userId })
+    return response.data
+  },
+  async editMemberRole({
+    organizationId,
+    memberRoleUpdateRequest,
+  }: {
+    organizationId: string
+    memberRoleUpdateRequest: MemberRoleUpdateRequest
+  }) {
+    const response = await membersApi.editOrganizationMemberRole(organizationId, memberRoleUpdateRequest)
+    return response.data
+  },
+  async transferOwnershipMemberRole({ organizationId, userId }: { organizationId: string; userId: string }) {
+    const response = await membersApi.postOrganizationTransferOwnership(organizationId, {
+      user_id: userId,
+    })
     return response.data
   },
 }

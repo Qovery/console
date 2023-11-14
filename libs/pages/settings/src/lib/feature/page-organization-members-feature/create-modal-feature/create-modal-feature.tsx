@@ -1,9 +1,6 @@
 import { type InviteMemberRequest, type OrganizationAvailableRole } from 'qovery-typescript-axios'
-import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useDispatch } from 'react-redux'
-import { postInviteMember } from '@qovery/domains/organization'
-import { type AppDispatch } from '@qovery/state/store'
+import { useCreateInviteMember } from '@qovery/domains/organizations/feature'
 import CreateModal from '../../../ui/page-organization-members/create-modal/create-modal'
 
 export interface CreateModalFeatureProps {
@@ -15,7 +12,9 @@ export interface CreateModalFeatureProps {
 export function CreateModalFeature(props: CreateModalFeatureProps) {
   const { organizationId = '', availableRoles, onClose } = props
 
-  const [loading, setLoading] = useState(false)
+  const { mutateAsync: createInviteMember, isLoading: isLoadingInviteMember } = useCreateInviteMember({
+    organizationId,
+  })
 
   const methods = useForm({
     mode: 'onChange',
@@ -25,31 +24,26 @@ export function CreateModalFeature(props: CreateModalFeatureProps) {
     },
   })
 
-  const dispatch = useDispatch<AppDispatch>()
-
-  const onSubmit = methods.handleSubmit((data) => {
-    setLoading(true)
-
-    dispatch(
-      postInviteMember({
-        organizationId: organizationId,
-        data: data as InviteMemberRequest,
+  const onSubmit = methods.handleSubmit(async (data) => {
+    try {
+      await createInviteMember({
+        organizationId,
+        inviteMemberRequest: data as InviteMemberRequest,
       })
-    )
-      .unwrap()
-      .then(() => {
-        setLoading(false)
-        onClose()
-      })
-      .catch((e) => {
-        setLoading(false)
-        console.error(e)
-      })
+      onClose()
+    } catch (error) {
+      console.error(error)
+    }
   })
 
   return (
     <FormProvider {...methods}>
-      <CreateModal onSubmit={onSubmit} availableRoles={availableRoles || []} onClose={onClose} loading={loading} />
+      <CreateModal
+        onSubmit={onSubmit}
+        availableRoles={availableRoles || []}
+        onClose={onClose}
+        loading={isLoadingInviteMember}
+      />
     </FormProvider>
   )
 }
