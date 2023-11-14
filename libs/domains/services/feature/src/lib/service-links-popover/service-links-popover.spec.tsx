@@ -26,13 +26,22 @@ jest.mock('../hooks/use-links/use-links', () => {
 
 describe('ServiceLinksPopover', () => {
   it('should render successfully', () => {
-    const { baseElement } = renderWithProviders(<ServiceLinksPopover />)
+    const { baseElement } = renderWithProviders(
+      <ServiceLinksPopover>
+        <button>links</button>
+      </ServiceLinksPopover>
+    )
     expect(baseElement).toBeTruthy()
   })
   it('should match snapshot', async () => {
-    const { container, userEvent } = renderWithProviders(<ServiceLinksPopover />, {
-      container: document.body,
-    })
+    const { container, userEvent } = renderWithProviders(
+      <ServiceLinksPopover>
+        <button>links</button>
+      </ServiceLinksPopover>,
+      {
+        container: document.body,
+      }
+    )
     const button = screen.getByRole('button', { name: /links/i })
     await userEvent.click(button)
 

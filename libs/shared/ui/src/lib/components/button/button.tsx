@@ -2,7 +2,7 @@ import { type VariantProps, cva } from 'class-variance-authority'
 import { type ComponentPropsWithoutRef, type ElementRef, forwardRef } from 'react'
 import { twMerge } from '@qovery/shared/util-js'
 
-const buttonVariants = cva(['inline-flex', 'items-center', 'shrink-0', 'font-medium', 'rounded', 'transition'], {
+const buttonVariants = cva(['inline-flex', 'items-center', 'shrink-0', 'font-medium', 'transition'], {
   variants: {
     variant: {
       solid: [],
@@ -16,9 +16,13 @@ const buttonVariants = cva(['inline-flex', 'items-center', 'shrink-0', 'font-med
     },
     size: {
       xs: ['text-xs', 'px-1', 'py-0.5'],
-      sm: ['text-sm', 'h-7', 'px-2'],
-      md: ['text-sm', 'h-9', 'px-3'],
+      sm: ['text-xs', 'h-7', 'px-2'],
+      md: ['text-xs', 'h-8', 'px-3'],
       lg: ['text-sm', 'h-10', 'px-4'],
+    },
+    radius: {
+      rounded: ['rounded'],
+      full: ['rounded-full'],
     },
   },
   compoundVariants: [
@@ -31,6 +35,8 @@ const buttonVariants = cva(['inline-flex', 'items-center', 'shrink-0', 'font-med
         'dark:border-neutral-350',
         'text-neutral-400',
         'dark:text-neutral-300',
+        'hover:[&:not(:active)]:border-neutral-300',
+        'active:bg-neutral-150',
         'disabled:text-neutral-300',
         'disabled:bg-neutral-150',
         'disabled:border-none',
@@ -44,7 +50,7 @@ const buttonVariants = cva(['inline-flex', 'items-center', 'shrink-0', 'font-med
     {
       variant: 'outline',
       color: 'neutral',
-      className: ['bg-transparent', 'hover:bg-neutral-50'],
+      className: ['bg-transparent'],
     },
     ...['brand' as const, 'neutral' as const, 'green' as const].map((color) => ({
       variant: 'solid' as const,
@@ -56,6 +62,7 @@ const buttonVariants = cva(['inline-flex', 'items-center', 'shrink-0', 'font-med
     variant: 'solid',
     color: 'brand',
     size: 'sm',
+    radius: 'rounded',
   },
 })
 
@@ -64,14 +71,14 @@ export interface ButtonProps
     VariantProps<typeof buttonVariants> {}
 
 export const Button = forwardRef<ElementRef<'button'>, ButtonProps>(function Button(
-  { className, color, variant, size, ...buttonProps },
+  { className, color, radius, size, variant, ...buttonProps },
   forwardedRef
 ) {
   return (
     <button
       {...buttonProps}
       ref={forwardedRef}
-      className={twMerge(buttonVariants({ color, size, variant }), className)}
+      className={twMerge(buttonVariants({ color, radius, size, variant }), className)}
     />
   )
 })

@@ -20,8 +20,8 @@ import {
   isContainer,
   isContainerJob,
   isGitJob,
-  isGitSource,
   isJob,
+  isJobGitSource,
 } from '@qovery/shared/enums'
 import { type ApplicationEntity, type GitApplicationEntity } from '@qovery/shared/interfaces'
 import {
@@ -377,7 +377,7 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
                   url:
                     urlCodeEditor(
                       (application as GitApplicationEntity)?.git_repository ||
-                        (isGitSource(application.source) ? application.source.docker?.git_repository : undefined)
+                        (isJobGitSource(application.source) ? application.source.docker?.git_repository : undefined)
                     ) || '',
                   external: true,
                 },

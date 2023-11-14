@@ -11,7 +11,7 @@ exports[`PodDetails should match snapshot with container based pod and with last
         href="/organization//project//environment//logs/1/live-logs"
       >
         <button
-          class="inline-flex items-center shrink-0 font-medium rounded transition text-sm h-7 px-2 border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 gap-2"
+          class="inline-flex items-center shrink-0 font-medium transition text-xs h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 gap-2"
           type="button"
         >
           Logs
@@ -122,7 +122,7 @@ exports[`PodDetails should match snapshot with git based pod and with last_termi
         href="/organization//project//environment//logs/1/live-logs"
       >
         <button
-          class="inline-flex items-center shrink-0 font-medium rounded transition text-sm h-7 px-2 border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 gap-2"
+          class="inline-flex items-center shrink-0 font-medium transition text-xs h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 gap-2"
           type="button"
         >
           Logs
@@ -235,7 +235,7 @@ exports[`PodDetails should match snapshot with git based pod and without last_te
         href="/organization//project//environment//logs/1/live-logs"
       >
         <button
-          class="inline-flex items-center shrink-0 font-medium rounded transition text-sm h-7 px-2 border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 gap-2"
+          class="inline-flex items-center shrink-0 font-medium transition text-xs h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 gap-2"
           type="button"
         >
           Logs

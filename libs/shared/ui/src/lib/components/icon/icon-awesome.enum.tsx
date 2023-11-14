@@ -52,6 +52,7 @@ export enum IconAwesomeEnum {
   ARROW_DOWN_TO_LINE = 'icon-solid-arrow-down-to-line',
   ARROW_UP_TO_LINE = 'icon-solid-arrow-up-to-line',
   ARROW_UP_RIGHT_FROM_SQUARE = 'icon-solid-arrow-up-right-from-square',
+  ARROWS_ROTATE = 'icon-solid-arrows-rotate',
   TRIANGLE_EXCLAMATION = 'icon-solid-triangle-exclamation',
   EYE = 'icon-solid-eye',
   EYE_SLASH = 'icon-solid-eye-slash',

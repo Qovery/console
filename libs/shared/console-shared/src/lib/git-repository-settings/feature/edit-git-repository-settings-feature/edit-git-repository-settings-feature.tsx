@@ -3,7 +3,7 @@ import { useFormContext } from 'react-hook-form'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { selectApplicationById } from '@qovery/domains/application'
-import { isGitSource, isJob } from '@qovery/shared/enums'
+import { isJob, isJobGitSource } from '@qovery/shared/enums'
 import { type ApplicationEntity } from '@qovery/shared/interfaces'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { type RootState } from '@qovery/state/store'
@@ -16,13 +16,13 @@ export function EditGitRepositorySettingsFeature() {
     (state) => selectApplicationById(state, applicationId),
     (a, b) =>
       JSON.stringify(a?.git_repository) === JSON.stringify(b?.git_repository) ||
-      (isGitSource(a?.source) &&
-        isGitSource(b?.source) &&
+      (isJobGitSource(a?.source) &&
+        isJobGitSource(b?.source) &&
         JSON.stringify(a?.source?.docker?.git_repository) === JSON.stringify(b?.source?.docker?.git_repository))
   )
 
   const getGitRepositoryFromApplication = useCallback(() => {
-    return isJob(application) && isGitSource(application?.source)
+    return isJob(application) && isJobGitSource(application?.source)
       ? application?.source?.docker?.git_repository
       : application?.git_repository
   }, [application])

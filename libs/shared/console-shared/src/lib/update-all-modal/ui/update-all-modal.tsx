@@ -1,7 +1,7 @@
 import { type Environment } from 'qovery-typescript-axios'
 import { P, match } from 'ts-pattern'
 import { type OutdatedService } from '@qovery/domains/services/feature'
-import { ServiceTypeEnum, isGitSource } from '@qovery/shared/enums'
+import { ServiceTypeEnum, isJobGitSource } from '@qovery/shared/enums'
 import {
   Avatar,
   AvatarStyle,
@@ -93,7 +93,7 @@ export function UpdateAllModal({
               const gitRepository = match(application)
                 .with({ serviceType: ServiceTypeEnum.APPLICATION }, ({ git_repository }) => git_repository)
                 .with(
-                  { serviceType: ServiceTypeEnum.JOB, source: P.when(isGitSource) },
+                  { serviceType: ServiceTypeEnum.JOB, source: P.when(isJobGitSource) },
                   ({ source }) => source.docker?.git_repository
                 )
                 .otherwise(() => undefined)

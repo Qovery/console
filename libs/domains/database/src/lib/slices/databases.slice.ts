@@ -47,14 +47,18 @@ export const fetchDatabases = createAsyncThunk<Database[], { environmentId: stri
   }
 )
 
-export const createDatabase = createAsyncThunk<Database, { environmentId: string; databaseRequest: DatabaseRequest }>(
-  'databases/create',
-  async (data) => {
-    const response = await databasesApi.createDatabase(data.environmentId, data.databaseRequest)
+export const createDatabase = createAsyncThunk<
+  Database,
+  { environmentId: string; databaseRequest: DatabaseRequest; queryClient: QueryClient }
+>('databases/create', async (data) => {
+  const response = await databasesApi.createDatabase(data.environmentId, data.databaseRequest)
 
-    return response.data as DatabaseEntity
-  }
-)
+  data.queryClient.invalidateQueries({
+    queryKey: queries.services.list(data.environmentId).queryKey,
+  })
+
+  return response.data as DatabaseEntity
+})
 
 export const fetchDatabase = createAsyncThunk<Database, { databaseId: string }>('database/fetch', async (data) => {
   const response = await databaseMainCallsApi.getDatabase(data.databaseId)

@@ -183,6 +183,7 @@ export function StepSummaryFeature() {
           environmentId: environmentId,
           data: jobRequest,
           serviceType: ServiceTypeEnum.JOB,
+          queryClient,
         })
       )
         .unwrap()

@@ -75,6 +75,7 @@ export function RowEvent(props: RowEventProps) {
       [OrganizationEventTargetType.APPLICATION]: generateApplicationLink,
       [OrganizationEventTargetType.CONTAINER]: generateApplicationLink,
       [OrganizationEventTargetType.JOB]: generateApplicationLink,
+      [OrganizationEventTargetType.HELM]: generateApplicationLink,
       [OrganizationEventTargetType.ORGANIZATION]: () => customLink(SETTINGS_URL(organizationId)),
       [OrganizationEventTargetType.MEMBERS_AND_ROLES]: () =>
         customLink(SETTINGS_URL(organizationId) + SETTINGS_MEMBERS_URL),
@@ -89,7 +90,6 @@ export function RowEvent(props: RowEventProps) {
       [OrganizationEventTargetType.WEBHOOK]: () => customLink(SETTINGS_URL(organizationId) + SETTINGS_WEBHOOKS),
       [OrganizationEventTargetType.CONTAINER_REGISTRY]: () =>
         customLink(SETTINGS_URL(organizationId) + SETTINGS_CONTAINER_REGISTRIES_URL),
-      [OrganizationEventTargetType.HELM]: () => <span>NOT_IMPLEMENTED</span>,
     }
 
     if (event_type !== OrganizationEventType.DELETE) {

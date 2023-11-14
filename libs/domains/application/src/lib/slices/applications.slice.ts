@@ -135,6 +135,7 @@ export const createApplication = createAsyncThunk(
     environmentId: string
     data: ApplicationRequest | ContainerRequest | JobRequest
     serviceType: ServiceTypeEnum
+    queryClient: QueryClient
   }) => {
     let response
     if (isContainer(payload.serviceType)) {
@@ -144,6 +145,10 @@ export const createApplication = createAsyncThunk(
     } else {
       response = await jobsApi.createJob(payload.environmentId, payload.data as JobRequest)
     }
+
+    payload.queryClient.invalidateQueries({
+      queryKey: queries.services.list(payload.environmentId).queryKey,
+    })
 
     return response.data as ApplicationEntity
   }

@@ -14,8 +14,8 @@ import {
   isContainer,
   isContainerJob,
   isGitJob,
-  isGitSource,
   isJob,
+  isJobGitSource,
 } from '@qovery/shared/enums'
 import { type ApplicationEntity, type OrganizationEntity } from '@qovery/shared/interfaces'
 import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
@@ -77,7 +77,7 @@ export const handleContainerSubmit = (data: FieldValues, application: Applicatio
 }
 
 export const handleJobSubmit = (data: FieldValues, application: ApplicationEntity) => {
-  if (isGitSource(application.source)) {
+  if (isJobGitSource(application.source)) {
     const gitToken = getGitTokenValue(data['provider'])
 
     const git_repository = {
@@ -237,7 +237,7 @@ export function PageSettingsGeneralFeature() {
     if (isJob(application)) {
       methods.setValue('description', application?.description)
 
-      const serviceType = isGitSource(application?.source) ? ServiceTypeEnum.APPLICATION : ServiceTypeEnum.CONTAINER
+      const serviceType = isJobGitSource(application?.source) ? ServiceTypeEnum.APPLICATION : ServiceTypeEnum.CONTAINER
       methods.setValue('serviceType', serviceType)
 
       if (serviceType === ServiceTypeEnum.CONTAINER) {

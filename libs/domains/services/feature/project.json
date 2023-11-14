@@ -4,6 +4,7 @@
   "sourceRoot": "libs/domains/services/feature/src",
   "projectType": "library",
   "tags": ["scope:domain", "type:feature", "slice:services"],
+  "implicitDependencies": ["!shared-console-shared"],
   "targets": {
     "lint": {
       "executor": "@nx/eslint:lint",

@@ -1,7 +1,7 @@
 import { type Credentials } from 'qovery-typescript-axios'
 import { type ComponentPropsWithoutRef } from 'react'
 import { P, match } from 'ts-pattern'
-import { IconEnum, ServiceTypeEnum, isContainerSource, isGitSource } from '@qovery/shared/enums'
+import { IconEnum, ServiceTypeEnum, isJobContainerSource, isJobGitSource } from '@qovery/shared/enums'
 import { APPLICATION_SETTINGS_RESOURCES_URL, APPLICATION_SETTINGS_URL } from '@qovery/shared/routes'
 import {
   Badge,
@@ -23,6 +23,7 @@ import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import { containerRegistryKindToIcon, formatCronExpression, formatMetric, twMerge } from '@qovery/shared/util-js'
 import useMasterCredentials from '../hooks/use-master-credentials/use-master-credentials'
 import { useService } from '../hooks/use-service/use-service'
+import { LastCommitAuthor } from '../last-commit-author/last-commit-author'
 import { LastCommit } from '../last-commit/last-commit'
 import { ServiceDetailsSkeleton } from './service-details-skeleton'
 
@@ -44,7 +45,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
   }
 
   const containerImage = match(service)
-    .with({ serviceType: ServiceTypeEnum.JOB, source: P.when(isContainerSource) }, ({ source }) => source.image)
+    .with({ serviceType: ServiceTypeEnum.JOB, source: P.when(isJobContainerSource) }, ({ source }) => source.image)
     .with({ serviceType: ServiceTypeEnum.CONTAINER }, ({ image_name, tag, registry }) => ({
       image_name,
       tag,
@@ -162,7 +163,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
             { serviceType: ServiceTypeEnum.APPLICATION },
             {
               serviceType: ServiceTypeEnum.JOB,
-              source: P.when(isGitSource),
+              source: P.when(isJobGitSource),
             },
             (service) => {
               const gitRepository = match(service)
@@ -209,11 +210,18 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
                     )}
                     <Dt>Commit:</Dt>
                     <Dd>
-                      <LastCommit
-                        gitRepository={gitRepository}
-                        serviceId={serviceId}
-                        serviceType={service.serviceType}
-                      />
+                      <div className="inline-flex items-center gap-2">
+                        <LastCommitAuthor
+                          gitRepository={gitRepository}
+                          serviceId={serviceId}
+                          serviceType={service.serviceType}
+                        />
+                        <LastCommit
+                          gitRepository={gitRepository}
+                          serviceId={serviceId}
+                          serviceType={service.serviceType}
+                        />
+                      </div>
                     </Dd>
                   </Dl>
                 )

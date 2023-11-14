@@ -118,6 +118,7 @@ export function StepSummaryFeature() {
             environmentId: environmentId,
             data: applicationRequest,
             serviceType: ServiceTypeEnum.APPLICATION,
+            queryClient,
           })
         )
           .unwrap()
@@ -173,6 +174,7 @@ export function StepSummaryFeature() {
             environmentId: environmentId,
             data: containerRequest,
             serviceType: ServiceTypeEnum.CONTAINER,
+            queryClient,
           })
         )
           .unwrap()
