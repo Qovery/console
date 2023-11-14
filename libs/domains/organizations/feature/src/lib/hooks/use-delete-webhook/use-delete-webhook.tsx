@@ -13,7 +13,7 @@ export function useDeleteWebhook({ organizationId }: { organizationId: string })
     },
     meta: {
       notifyOnSuccess: {
-        title: 'Your webhook is being deleted',
+        title: 'Your webhook has been deleted',
       },
       notifyOnError: true,
     },

@@ -22,7 +22,7 @@ export function useDeleteCloudProviderCredential({
     },
     meta: {
       notifyOnSuccess: {
-        title: 'Your credential is being deleted',
+        title: 'Your credential has been deleted',
       },
       notifyOnError: true,
     },

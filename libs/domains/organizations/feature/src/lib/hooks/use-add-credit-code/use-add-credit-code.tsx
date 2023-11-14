@@ -5,7 +5,7 @@ export function useAddCreditCode() {
   return useMutation(mutations.addCreditCode, {
     meta: {
       notifyOnSuccess: {
-        title: 'Your code is being added',
+        title: 'Your code has been added',
       },
       notifyOnError: true,
     },

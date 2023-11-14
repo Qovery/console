@@ -13,7 +13,7 @@ export function useDeleteGitToken({ organizationId }: { organizationId: string }
     },
     meta: {
       notifyOnSuccess: {
-        title: 'Your Git token is being deleted',
+        title: 'Your Git token has been deleted',
       },
       notifyOnError: true,
     },

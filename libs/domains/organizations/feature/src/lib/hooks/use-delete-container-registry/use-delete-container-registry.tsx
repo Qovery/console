@@ -13,7 +13,7 @@ export function useDeleteContainerRegistry({ organizationId }: { organizationId:
     },
     meta: {
       notifyOnSuccess: {
-        title: 'Your container registry is being deleted',
+        title: 'Your container registry has been deleted',
       },
       notifyOnError: true,
     },
