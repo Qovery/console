@@ -8,16 +8,17 @@ import {
   InviteMemberRoleEnum,
   InviteStatusEnum,
   type Member,
+  type Organization,
   type OrganizationCustomRole,
   OrganizationCustomRoleClusterPermission,
   OrganizationCustomRoleProjectPermission,
   PlanEnum,
 } from 'qovery-typescript-axios'
-import { type ClusterCredentialsEntity, type OrganizationEntity } from '@qovery/shared/interfaces'
+import { type ClusterCredentialsEntity } from '@qovery/shared/interfaces'
 
 const chance = new Chance('123')
 
-export const organizationFactoryMock = (howMany: number): OrganizationEntity[] =>
+export const organizationFactoryMock = (howMany: number): Organization[] =>
   Array.from({ length: howMany }).map((_, index) => ({
     id: `${index}`,
     created_at: new Date().toString(),

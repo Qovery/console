@@ -557,6 +557,7 @@ export const mutations = {
     const response = await membersApi.postOrganizationTransferOwnership(organizationId, {
       user_id: userId,
     })
+    return response.data
   },
   async deleteOrganization({ organizationId }: { organizationId: string }) {
     const response = await organizationApi.deleteOrganization(organizationId)

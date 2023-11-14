@@ -1,16 +1,17 @@
+import { type Organization } from 'qovery-typescript-axios'
 import { type FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { AutoDeploySetting } from '@qovery/domains/services/feature'
 import { JobGeneralSettings } from '@qovery/shared/console-shared'
 import { type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
-import { type JobGeneralData, type OrganizationEntity } from '@qovery/shared/interfaces'
+import { type JobGeneralData } from '@qovery/shared/interfaces'
 import { SERVICES_URL } from '@qovery/shared/routes'
 import { ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle, InputText, InputTextArea } from '@qovery/shared/ui'
 
 export interface StepGeneralProps {
   onSubmit: FormEventHandler<HTMLFormElement>
-  organization?: OrganizationEntity
+  organization?: Organization
   jobType: JobType
 }
 

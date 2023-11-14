@@ -51,8 +51,6 @@ export function PageOrganizationGeneralFeature() {
     if (data && organization) {
       const cloneOrganization = handleSubmit(data, organization)
 
-      console.log(data)
-
       try {
         await editOrganization({
           organizationId,

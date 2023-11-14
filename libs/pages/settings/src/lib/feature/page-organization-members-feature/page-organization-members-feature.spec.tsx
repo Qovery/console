@@ -1,5 +1,5 @@
 import * as organizationsDomain from '@qovery/domains/organizations/feature'
-import { membersMock, organizationFactoryMock } from '@qovery/shared/factories'
+import { membersMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import PageOrganizationMembersFeature from './page-organization-members-feature'
 
@@ -11,17 +11,8 @@ const useTransferOwnershipMemberRoleSpy: SpyInstance = jest.spyOn(organizationsD
 const useDeleteInviteMemberSpy: SpyInstance = jest.spyOn(organizationsDomain, 'useDeleteInviteMember')
 const useCreateInviteMemberSpy: SpyInstance = jest.spyOn(organizationsDomain, 'useCreateInviteMember')
 
-const mockOrganization = organizationFactoryMock(1)[0]
 const useAvailableRolesMockSpy = jest.spyOn(organizationsDomain, 'useAvailableRoles') as jest.Mock
 const mockMembers = [...membersMock(1, 'Owner', '0'), ...membersMock(1, 'Admin', '1')]
-
-jest.mock('@qovery/domains/organization', () => {
-  return {
-    ...jest.requireActual('@qovery/domains/organization'),
-    editMemberRole: jest.fn(),
-    selectOrganizationById: () => mockOrganization,
-  }
-})
 
 jest.mock('@qovery/domains/users/data-access', () => {
   return {

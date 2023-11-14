@@ -16,7 +16,7 @@ export function useDeleteOrganization({ organizationId }: { organizationId: stri
     },
     meta: {
       notifyOnSuccess: {
-        title: 'Your organization is being deleted',
+        title: 'Your organization is deleted',
       },
       notifyOnError: true,
     },

@@ -1,11 +1,11 @@
+import { type Organization } from 'qovery-typescript-axios'
 import { useNavigate } from 'react-router-dom'
-import { type OrganizationEntity } from '@qovery/shared/interfaces'
 import { LOGOUT_URL, ONBOARDING_PROJECT_URL, ONBOARDING_URL, ORGANIZATION_URL, USER_URL } from '@qovery/shared/routes'
 import { Avatar, Icon, IconAwesomeEnum, Menu, MenuAlign, type MenuData, MenuDirection } from '@qovery/shared/ui'
 
 export interface MenuAccountProps {
-  organizations: OrganizationEntity[]
-  currentOrganization?: OrganizationEntity
+  organizations: Organization[]
+  currentOrganization?: Organization
   user: {
     firstName?: string
     lastName?: string
@@ -18,7 +18,7 @@ export function MenuAccount(props: MenuAccountProps) {
   const { user, organizations, currentOrganization } = props
   const navigate = useNavigate()
 
-  const blockOrganization = (organization: OrganizationEntity) => (
+  const blockOrganization = (organization: Organization) => (
     <div data-testid={`content-${organization.id}`} className="flex items-center">
       <Icon
         name={IconAwesomeEnum.CHECK}
@@ -45,7 +45,7 @@ export function MenuAccount(props: MenuAccountProps) {
         label: <Icon name={IconAwesomeEnum.CIRCLE_PLUS} className="text-brand-500 link !text-base mr-3" />,
         onClick: () => navigate(ONBOARDING_URL + ONBOARDING_PROJECT_URL),
       },
-      items: organizations.map((organization: OrganizationEntity) => ({
+      items: organizations.map((organization: Organization) => ({
         name: organization.name,
         itemContentCustom: blockOrganization(organization),
         containerClassName: '!h-14',
