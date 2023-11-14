@@ -105,7 +105,7 @@ export function CustomFilter({
           )}
         </DatePicker>
       </div>
-      <div className="flex items-center relative z-20 text-neutral-350 text-ssm font-medium">
+      <div className="flex items-center relative text-neutral-350 text-ssm font-medium">
         <p className=" mr-1.5">Search</p>
         <div className="flex items-center gap-2">
           <InputFilter

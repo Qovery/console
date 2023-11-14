@@ -55,7 +55,7 @@ export function Login(props: ILoginProps) {
         </div>
       </div>
       <div className="hidden xl:block flex-[1_1_0%] bg-neutral-150 px-20 before:absolute before:top-0 before:w-full before:h-full before:bg-neutral-150">
-        <div className="max-w-md relative z-10">
+        <div className="max-w-md relative">
           <h2 className="h1 text-neutral-400 mt-44 mb-6">Deliver Self-Service Infrastructure, Faster!</h2>
           <p className="text-neutral-400 mb-6 text-sm">Built for DevOps, Loved by Developers ✨</p>
           <ul className="list-disc pl-4 text-sm">

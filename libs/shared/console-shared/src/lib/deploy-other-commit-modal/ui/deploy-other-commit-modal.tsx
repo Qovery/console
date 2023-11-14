@@ -86,7 +86,6 @@ export function DeployOtherCommitModal(props: DeployOtherCommitModalProps) {
                             ? 'bg-brand-50 outline-brand-500 outline'
                             : ''
                         } ${commitsByDay[date].length - 1 === index ? '' : 'border-b'}
-                        ${selectedCommitId === commit.git_commit_id ? 'z-50' : ''}
                     ${currentCommitId === commit.git_commit_id ? 'bg-green-50' : ''}
                     ${index === 0 ? 'rounded-t-md' : ''} ${
                           index === commitsByDay[date].length - 1 ? 'rounded-b-md' : ''

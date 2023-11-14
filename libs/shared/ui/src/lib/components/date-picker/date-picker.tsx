@@ -102,7 +102,7 @@ export function DatePicker({
     <div className="relative">
       {children}
       {isOpen && (
-        <div className={`date-picker absolute z-50 mt-2.5 ${isOpen ? 'date-picker--open' : ''}`}>
+        <div className={`date-picker absolute z-10 mt-2.5 ${isOpen ? 'date-picker--open' : ''}`}>
           <DatePickerLib
             withPortal
             selected={startDate}
