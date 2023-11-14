@@ -12,12 +12,9 @@ export function RedirectOverview() {
   const { data: projects = [], isLoading, isFetched } = useProjects({ organizationId })
 
   useEffect(() => {
-    async function redirectIfProjects() {
-      if (projects.length > 0) {
-        navigate(ENVIRONMENTS_URL(organizationId, projects[0]?.id) + ENVIRONMENTS_GENERAL_URL)
-      }
+    if (projects.length > 0) {
+      navigate(ENVIRONMENTS_URL(organizationId, projects[0]?.id) + ENVIRONMENTS_GENERAL_URL)
     }
-    redirectIfProjects()
   }, [organizationId, organizations, navigate, projects])
 
   if (isLoading) {
