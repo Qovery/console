@@ -33,6 +33,7 @@
       "@qovery/domains/services/feature": ["libs/domains/services/feature/src/index.ts"],
       "@qovery/domains/users/data-access": ["libs/domains/users/data-access/src/index.ts"],
       "@qovery/domains/variables/data-access": ["libs/domains/variables/data-access/src/index.ts"],
+      "@qovery/domains/variables/feature": ["libs/domains/variables/feature/src/index.ts"],
       "@qovery/pages/application": ["libs/pages/application/src/index.ts"],
       "@qovery/pages/cluster": ["libs/pages/cluster/src/index.ts"],
       "@qovery/pages/clusters": ["libs/pages/clusters/src/index.ts"],
