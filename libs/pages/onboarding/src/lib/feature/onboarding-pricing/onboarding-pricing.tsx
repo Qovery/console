@@ -91,20 +91,16 @@ export function OnboardingPricing() {
       // refresh token needed after created an organization
       await getAccessTokenSilently({ ignoreCache: true })
 
-      try {
-        const project = await createProject({
-          organizationId: organization.id,
-          projectRequest: {
-            name: project_name,
-          },
-        })
-        if (project) {
-          await createAuthCookies()
-          // redirect on the project page
-          navigate(ENVIRONMENTS_URL(organization.id, project.id) + ENVIRONMENTS_GENERAL_URL)
-        }
-      } catch (error) {
-        console.error(error)
+      const project = await createProject({
+        organizationId: organization.id,
+        projectRequest: {
+          name: project_name,
+        },
+      })
+      if (project) {
+        await createAuthCookies()
+        // redirect on the project page
+        navigate(ENVIRONMENTS_URL(organization.id, project.id) + ENVIRONMENTS_GENERAL_URL)
       }
     } catch (error) {
       console.error(error)
