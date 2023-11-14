@@ -279,7 +279,7 @@ export function ServiceList({ organizationId, projectId, environmentId, classNam
                 <div>
                   <Badge variant="surface" size="xs" className="gap-1">
                     <Icon width={16} name={IconEnum.CONTAINER} />
-                    {containerImage.image_name}:{containerImage.tag}
+                    <Truncate text={`${containerImage.image_name}:${containerImage.tag}`} truncateLimit={35} />
                   </Badge>
                 </div>
               </div>
