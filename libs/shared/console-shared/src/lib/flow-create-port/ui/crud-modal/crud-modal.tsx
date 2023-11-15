@@ -133,6 +133,7 @@ export function CrudModal({
             error={error?.message}
             onChange={field.onChange}
             className="mb-5"
+            portal
           />
         )}
       />
