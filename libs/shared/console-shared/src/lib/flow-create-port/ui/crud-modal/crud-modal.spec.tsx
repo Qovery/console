@@ -127,7 +127,9 @@ describe('CrudModal', () => {
     const protocolSelect = screen.getByRole('combobox', {
       name: /protocol/i,
     })
-    await selectEvent.select(protocolSelect, 'TCP')
+    await selectEvent.select(protocolSelect, 'TCP', {
+      container: document.body,
+    })
 
     screen.getByText('Please verify the health check configuration.')
   })
