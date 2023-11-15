@@ -195,23 +195,23 @@ export const services = createQueryKeys('services', {
       const service = await match(serviceType)
         .with('APPLICATION', async () => ({
           ...(await applicationMainCallsApi.getApplication(serviceId)).data,
-          serviceType: ServiceTypeEnum.APPLICATION as const,
+          serviceType: 'APPLICATION' as const,
         }))
         .with('CONTAINER', async () => ({
           ...(await containerMainCallsApi.getContainer(serviceId)).data,
-          serviceType: ServiceTypeEnum.CONTAINER as const,
+          serviceType: 'CONTAINER' as const,
         }))
         .with('DATABASE', async () => ({
           ...(await databaseMainCallsApi.getDatabase(serviceId)).data,
-          serviceType: ServiceTypeEnum.DATABASE as const,
+          serviceType: 'DATABASE' as const,
         }))
         .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', async () => ({
           ...(await jobMainCallsApi.getJob(serviceId)).data,
-          serviceType: ServiceTypeEnum.JOB as const,
+          serviceType: 'JOB' as const,
         }))
         .with('HELM', async () => ({
           ...(await helmMainCallsApi.getHelm(serviceId)).data,
-          serviceType: ServiceTypeEnum.HELM as const,
+          serviceType: 'HELM' as const,
         }))
         .exhaustive()
       return service
