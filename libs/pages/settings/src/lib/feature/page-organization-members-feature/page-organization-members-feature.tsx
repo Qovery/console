@@ -32,11 +32,11 @@ export function PageOrganizationMembersFeature() {
     organizationId,
   })
   const { data: availableRoles = [] } = useAvailableRoles({ organizationId })
-  const { mutateAsync: editMemberRole } = useEditMemberRole({ organizationId })
-  const { mutateAsync: deleteMember } = useDeleteMember({ organizationId })
-  const { mutateAsync: deleteInviteMember } = useDeleteInviteMember({ organizationId })
-  const { mutateAsync: transferOwnershipMemberRole } = useTransferOwnershipMemberRole({ organizationId })
-  const { mutateAsync: createInviteMember } = useCreateInviteMember({ organizationId })
+  const { mutateAsync: editMemberRole } = useEditMemberRole()
+  const { mutateAsync: deleteMember } = useDeleteMember()
+  const { mutateAsync: deleteInviteMember } = useDeleteInviteMember()
+  const { mutateAsync: transferOwnershipMemberRole } = useTransferOwnershipMemberRole()
+  const { mutateAsync: createInviteMember } = useCreateInviteMember()
 
   const userSub = useSelector((state: RootState) => selectUser(state)?.sub)
 

@@ -14,7 +14,7 @@ export function PageOrganizationContainerRegistriesFeature() {
   const { data: containerRegistries = [], isFetched: isFetchedContainerRegistries } = useContainerRegistries({
     organizationId,
   })
-  const { mutateAsync: deleteContainerRegistry } = useDeleteContainerRegistry({ organizationId })
+  const { mutateAsync: deleteContainerRegistry } = useDeleteContainerRegistry()
 
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()

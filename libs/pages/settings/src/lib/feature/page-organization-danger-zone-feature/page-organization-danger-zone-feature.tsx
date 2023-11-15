@@ -1,40 +1,33 @@
-import { type Organization } from 'qovery-typescript-axios'
-import { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
-import { deleteOrganization, selectOrganizationById } from '@qovery/domains/organization'
+import { useDeleteOrganization, useOrganization } from '@qovery/domains/organizations/feature'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { type AppDispatch, type RootState } from '@qovery/state/store'
 import PageOrganizationDangerZone from '../../ui/page-organization-danger-zone/page-organization-danger-zone'
 
 export function PageOrganizationDangerZoneFeature() {
   const { organizationId = '' } = useParams()
   useDocumentTitle('Danger zone - Organization settings')
 
-  const dispatch = useDispatch<AppDispatch>()
   const navigate = useNavigate()
 
-  const [loading, setLoading] = useState(false)
+  const { data: organization } = useOrganization({ organizationId })
+  const { mutateAsync: deleteOrganization, isLoading: isLoadingDeleteOrganization } = useDeleteOrganization()
 
-  const organization = useSelector<RootState, Organization | undefined>((state) =>
-    selectOrganizationById(state, organizationId)
-  )
-
-  const deleteOrganizationAction = () => {
-    setLoading(true)
-
-    dispatch(deleteOrganization({ organizationId }))
-      .unwrap()
-      .then(() => navigate('/'))
-      .catch((error) => console.error(error))
-      .finally(() => setLoading(false))
+  const deleteOrganizationAction = async () => {
+    try {
+      await deleteOrganization({
+        organizationId,
+      })
+      navigate('/')
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   return (
     <PageOrganizationDangerZone
       deleteOrganization={deleteOrganizationAction}
       organization={organization}
-      loading={loading}
+      loading={isLoadingDeleteOrganization}
     />
   )
 }

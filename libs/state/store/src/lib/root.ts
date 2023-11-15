@@ -21,9 +21,7 @@ import {
   clusterReducer,
   initialAuthProviderState,
   initialClusterState,
-  initialOrganizationState,
   initialRepositoryState,
-  organization,
   repositoryReducer,
 } from '@qovery/domains/organization'
 // eslint-disable-next-line @nx/enforce-module-boundaries
@@ -32,7 +30,6 @@ import { initialUserSignUpState, initialUserState, userReducer, userSignUp } fro
 import { deploymentRulesReducer, initialDeploymentRulesState } from '@qovery/project'
 
 export const organizationReducer = combineReducers({
-  organizations: organization,
   authProvider: authProviderReducer,
   repository: repositoryReducer,
 })
@@ -80,7 +77,6 @@ export type AppDispatch = AppStore['dispatch']
 
 export const initialRootState = (): RootState => ({
   organization: {
-    organizations: initialOrganizationState,
     authProvider: initialAuthProviderState,
     repository: initialRepositoryState,
   },

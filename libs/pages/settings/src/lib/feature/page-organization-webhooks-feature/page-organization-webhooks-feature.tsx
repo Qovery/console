@@ -10,10 +10,10 @@ export function PageOrganizationWebhooksFeature() {
   useDocumentTitle('Webhooks - Organization settings')
   const { organizationId = '' } = useParams()
   const fetchWebhooks = useWebhooks({ organizationId })
-  const { mutateAsync: deleteWebhook } = useDeleteWebhook({ organizationId })
+  const { mutateAsync: deleteWebhook } = useDeleteWebhook()
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
-  const { mutateAsync: editWebhook } = useEditWebhook({ organizationId })
+  const { mutateAsync: editWebhook } = useEditWebhook()
 
   const openAddNew = () => {
     openModal({

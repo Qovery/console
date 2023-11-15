@@ -1,8 +1,8 @@
-import { ClusterStateEnum } from 'qovery-typescript-axios'
+import { ClusterStateEnum, type Organization } from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { type ClusterEntity, type OrganizationEntity } from '@qovery/shared/interfaces'
+import { type ClusterEntity } from '@qovery/shared/interfaces'
 import {
   CLUSTER_SETTINGS_CREDENTIALS_URL,
   CLUSTER_SETTINGS_URL,
@@ -16,7 +16,7 @@ import TopBar from '../top-bar/top-bar'
 export interface LayoutPageProps {
   defaultOrganizationId: string
   topBar?: boolean
-  organization?: OrganizationEntity
+  organization?: Organization
   clusters?: ClusterEntity[]
 }
 

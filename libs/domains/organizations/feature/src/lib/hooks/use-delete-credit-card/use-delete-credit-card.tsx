@@ -2,11 +2,11 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { mutations } from '@qovery/domains/organizations/data-access'
 import { queries } from '@qovery/state/util-queries'
 
-export function useDeleteCreditCard({ organizationId }: { organizationId: string }) {
+export function useDeleteCreditCard() {
   const queryClient = useQueryClient()
 
   return useMutation(mutations.deleteCreditCard, {
-    onSuccess() {
+    onSuccess(_, { organizationId }) {
       queryClient.invalidateQueries({
         queryKey: queries.organizations.creditCards({ organizationId }).queryKey,
       })

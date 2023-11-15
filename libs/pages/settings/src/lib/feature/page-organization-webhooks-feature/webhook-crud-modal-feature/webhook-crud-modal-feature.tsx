@@ -10,8 +10,8 @@ export interface WebhookCrudModalFeatureProps {
 }
 
 export function WebhookCrudModalFeature({ organizationId, closeModal, webhook }: WebhookCrudModalFeatureProps) {
-  const { mutateAsync: createWebhook, isLoading: isLoadingCreateWebhook } = useCreateWebhook({ organizationId })
-  const { mutateAsync: editWebhook, isLoading: isLoadingEditWebhook } = useEditWebhook({ organizationId })
+  const { mutateAsync: createWebhook, isLoading: isLoadingCreateWebhook } = useCreateWebhook()
+  const { mutateAsync: editWebhook, isLoading: isLoadingEditWebhook } = useEditWebhook()
 
   const methods = useForm<OrganizationWebhookCreateRequest>({
     mode: 'all',

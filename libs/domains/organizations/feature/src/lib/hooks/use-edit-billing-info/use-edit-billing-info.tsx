@@ -2,15 +2,11 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { mutations } from '@qovery/domains/organizations/data-access'
 import { queries } from '@qovery/state/util-queries'
 
-export interface UseEditBillingInfoProps {
-  organizationId: string
-}
-
-export function useEditBillingInfo({ organizationId }: UseEditBillingInfoProps) {
+export function useEditBillingInfo() {
   const queryClient = useQueryClient()
 
   return useMutation(mutations.editBillingInfo, {
-    onSuccess() {
+    onSuccess(_, { organizationId }) {
       queryClient.invalidateQueries({
         queryKey: queries.organizations.billingInfo({ organizationId }).queryKey,
       })

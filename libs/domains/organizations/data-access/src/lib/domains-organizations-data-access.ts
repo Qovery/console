@@ -21,13 +21,15 @@ import {
   OrganizationCustomRoleApi,
   type OrganizationCustomRoleCreateRequest,
   type OrganizationCustomRoleUpdateRequest,
+  type OrganizationEditRequest,
   OrganizationMainCallsApi,
+  type OrganizationRequest,
   OrganizationWebhookApi,
   type OrganizationWebhookCreateRequest,
   type ScalewayCredentialsRequest,
 } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
-import { refactoOrganizationCustomRolePayload } from '@qovery/shared/util-js'
+import { refactoOrganizationCustomRolePayload, refactoOrganizationPayload } from '@qovery/shared/util-js'
 import { type DistributiveOmit } from '@qovery/shared/util-types'
 
 const containerRegistriesApi = new ContainerRegistriesApi()
@@ -61,6 +63,20 @@ type CredentialRequest =
     }
 
 export const organizations = createQueryKeys('organizations', {
+  list: {
+    queryKey: null,
+    async queryFn() {
+      const response = await organizationApi.listOrganization()
+      return response.data.results
+    },
+  },
+  details: ({ organizationId }: { organizationId: string }) => ({
+    queryKey: [organizationId],
+    async queryFn() {
+      const response = await organizationApi.getOrganization(organizationId)
+      return response.data
+    },
+  }),
   containerRegistries: ({ organizationId }: { organizationId: string }) => ({
     queryKey: [organizationId],
     async queryFn() {
@@ -541,6 +557,27 @@ export const mutations = {
     const response = await membersApi.postOrganizationTransferOwnership(organizationId, {
       user_id: userId,
     })
+    return response.data
+  },
+  async deleteOrganization({ organizationId }: { organizationId: string }) {
+    const response = await organizationApi.deleteOrganization(organizationId)
+    return response.data
+  },
+  async createOrganization({ organizationRequest }: { organizationRequest: OrganizationRequest }) {
+    const result = await organizationApi.createOrganization(organizationRequest)
+    return result.data
+  },
+  async editOrganization({
+    organizationId,
+    organizationRequest,
+  }: {
+    organizationId: string
+    organizationRequest: OrganizationEditRequest
+  }) {
+    const response = await organizationApi.editOrganization(
+      organizationId,
+      refactoOrganizationPayload(organizationRequest)
+    )
     return response.data
   },
 }

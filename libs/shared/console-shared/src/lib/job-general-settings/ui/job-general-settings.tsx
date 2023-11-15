@@ -1,14 +1,14 @@
-import { BuildModeEnum } from 'qovery-typescript-axios'
+import { BuildModeEnum, type Organization } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { IconEnum, type JobType, ServiceTypeEnum, isApplication, isContainer } from '@qovery/shared/enums'
-import { type JobGeneralData, type OrganizationEntity } from '@qovery/shared/interfaces'
+import { type JobGeneralData } from '@qovery/shared/interfaces'
 import { BlockContent, Icon, InputSelect, InputText } from '@qovery/shared/ui'
 import CreateGeneralGitApplication from '../../create-general-git-application/ui/create-general-git-application'
 import GeneralContainerSettings from '../../general-container-settings/ui/general-container-settings'
 import EditGitRepositorySettingsFeature from '../../git-repository-settings/feature/edit-git-repository-settings-feature/edit-git-repository-settings-feature'
 
 export interface JobGeneralSettingProps {
-  organization?: OrganizationEntity
+  organization?: Organization
   jobType: JobType
   isEdition?: boolean
 }

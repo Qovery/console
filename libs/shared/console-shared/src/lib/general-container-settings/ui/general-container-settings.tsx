@@ -1,12 +1,12 @@
+import { type Organization } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useContainerRegistries } from '@qovery/domains/organizations/feature'
-import { type OrganizationEntity } from '@qovery/shared/interfaces'
 import { SETTINGS_CONTAINER_REGISTRIES_URL, SETTINGS_URL } from '@qovery/shared/routes'
 import { InputSelect, InputText, Link } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 
 export interface GeneralContainerSettingsProps {
-  organization?: OrganizationEntity
+  organization?: Organization
   className?: string
 }
 

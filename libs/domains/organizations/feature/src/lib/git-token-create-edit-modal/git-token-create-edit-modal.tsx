@@ -24,8 +24,8 @@ export function GitTokenCreateEditModal({ isEdit, gitToken, organizationId, onCl
     },
   })
 
-  const { mutateAsync: editGitToken, isLoading: isLoadingEditGitToken } = useEditGitToken({ organizationId })
-  const { mutateAsync: createGitToken, isLoading: isLoadingCreateGitToken } = useCreateGitToken({ organizationId })
+  const { mutateAsync: editGitToken, isLoading: isLoadingEditGitToken } = useEditGitToken()
+  const { mutateAsync: createGitToken, isLoading: isLoadingCreateGitToken } = useCreateGitToken()
   const gitType = methods.watch('type')
 
   const onSubmit = methods.handleSubmit(async (data) => {

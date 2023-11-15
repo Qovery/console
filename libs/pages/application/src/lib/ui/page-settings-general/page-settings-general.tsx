@@ -1,4 +1,4 @@
-import { BuildModeEnum, BuildPackLanguageEnum } from 'qovery-typescript-axios'
+import { BuildModeEnum, BuildPackLanguageEnum, type Organization } from 'qovery-typescript-axios'
 import { type FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { AutoDeploySetting } from '@qovery/domains/services/feature'
@@ -9,7 +9,6 @@ import {
   JobGeneralSettings,
 } from '@qovery/shared/console-shared'
 import { ServiceTypeEnum, isApplication, isContainer, isCronJob, isJob } from '@qovery/shared/enums'
-import { type OrganizationEntity } from '@qovery/shared/interfaces'
 import {
   BlockContent,
   ButtonLegacy,
@@ -27,7 +26,7 @@ export interface PageSettingsGeneralProps {
   watchBuildMode: BuildModeEnum
   type?: ServiceTypeEnum
   loading?: boolean
-  organization?: OrganizationEntity
+  organization?: Organization
 }
 
 const buildModeItems = Object.values(BuildModeEnum).map((value) => ({

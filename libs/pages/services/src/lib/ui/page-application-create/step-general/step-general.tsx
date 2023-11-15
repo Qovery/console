@@ -1,4 +1,4 @@
-import { BuildModeEnum } from 'qovery-typescript-axios'
+import { BuildModeEnum, type Organization } from 'qovery-typescript-axios'
 import { type FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -9,7 +9,7 @@ import {
   GeneralContainerSettings,
 } from '@qovery/shared/console-shared'
 import { IconEnum, ServiceTypeEnum, isApplication, isContainer } from '@qovery/shared/enums'
-import { type ApplicationGeneralData, type OrganizationEntity } from '@qovery/shared/interfaces'
+import { type ApplicationGeneralData } from '@qovery/shared/interfaces'
 import { SERVICES_URL } from '@qovery/shared/routes'
 import {
   ButtonLegacy,
@@ -23,7 +23,7 @@ import {
 
 export interface StepGeneralProps {
   onSubmit: FormEventHandler<HTMLFormElement>
-  organization?: OrganizationEntity
+  organization?: Organization
 }
 
 export function StepGeneral(props: StepGeneralProps) {

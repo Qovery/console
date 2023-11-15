@@ -2,22 +2,18 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { mutations } from '@qovery/domains/organizations/data-access'
 import { queries } from '@qovery/state/util-queries'
 
-export interface UseEditWebhookProps {
-  organizationId: string
-}
-
-export function useEditWebhook({ organizationId }: UseEditWebhookProps) {
+export function useEditWebhook() {
   const queryClient = useQueryClient()
 
   return useMutation(mutations.editWebhook, {
-    onSuccess() {
+    onSuccess(_, { organizationId }) {
       queryClient.invalidateQueries({
         queryKey: queries.organizations.webhooks({ organizationId }).queryKey,
       })
     },
     meta: {
       notifyOnSuccess: {
-        title: 'Your webhook is being edited',
+        title: 'Your webhook has been edited',
       },
       notifyOnError: true,
     },

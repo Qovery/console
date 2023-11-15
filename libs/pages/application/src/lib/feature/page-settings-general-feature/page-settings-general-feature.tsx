@@ -5,8 +5,7 @@ import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { editApplication, getApplicationsState, postApplicationActionsRedeploy } from '@qovery/domains/application'
-import { selectOrganizationById } from '@qovery/domains/organization'
-import { getGitTokenValue } from '@qovery/domains/organizations/feature'
+import { getGitTokenValue, useOrganization } from '@qovery/domains/organizations/feature'
 import {
   ServiceTypeEnum,
   getServiceType,
@@ -17,7 +16,7 @@ import {
   isJob,
   isJobGitSource,
 } from '@qovery/shared/enums'
-import { type ApplicationEntity, type OrganizationEntity } from '@qovery/shared/interfaces'
+import { type ApplicationEntity } from '@qovery/shared/interfaces'
 import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { toastError } from '@qovery/shared/ui'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
@@ -131,9 +130,7 @@ export function PageSettingsGeneralFeature() {
       a?.dockerfile_path === b?.dockerfile_path
   )
 
-  const organization = useSelector<RootState, OrganizationEntity | undefined>((state) =>
-    selectOrganizationById(state, organizationId)
-  )
+  const { data: organization } = useOrganization({ organizationId })
   const loadingStatus = useSelector((state: RootState) => getApplicationsState(state).loadingStatus)
 
   const methods = useForm({

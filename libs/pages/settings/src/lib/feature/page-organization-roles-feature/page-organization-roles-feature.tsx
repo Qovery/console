@@ -12,7 +12,7 @@ export function PageOrganizationRolesFeature() {
   useDocumentTitle('Roles & permissions - Organization settings')
 
   const { data: availableRoles = [], isLoading: isLoadingAvailableRoles } = useAvailableRoles({ organizationId })
-  const { mutateAsync: deleteCustomRole } = useDeleteCustomRole({ organizationId })
+  const { mutateAsync: deleteCustomRole } = useDeleteCustomRole()
 
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()

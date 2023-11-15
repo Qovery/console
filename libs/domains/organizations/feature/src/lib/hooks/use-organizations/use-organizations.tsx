@@ -1,13 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
 import { queries } from '@qovery/state/util-queries'
 
-export interface UseProjectsProps {
-  organizationId: string
-}
-
-export function useProjects({ organizationId }: UseProjectsProps) {
+export function useOrganizations() {
   return useQuery({
-    ...queries.projects.list({ organizationId }),
+    ...queries.organizations.list,
     select(data) {
       if (!data) {
         return data
@@ -17,4 +13,4 @@ export function useProjects({ organizationId }: UseProjectsProps) {
   })
 }
 
-export default useProjects
+export default useOrganizations

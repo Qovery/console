@@ -1,10 +1,7 @@
-import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { selectAllOrganization, selectOrganizationById } from '@qovery/domains/organization'
+import { useOrganization, useOrganizations } from '@qovery/domains/organizations/feature'
 import { useAuth } from '@qovery/shared/auth'
 import { useUserAccount } from '@qovery/shared/iam/feature'
-import { type OrganizationEntity } from '@qovery/shared/interfaces'
-import { type RootState } from '@qovery/state/store'
 import MenuAccount from '../../ui/menu-account/menu-account'
 
 export function MenuAccountFeature() {
@@ -13,10 +10,8 @@ export function MenuAccountFeature() {
   const { data: user } = useUserAccount()
   const { user: userToken } = useAuth()
 
-  const currentOrganization = useSelector<RootState, OrganizationEntity | undefined>((state) =>
-    selectOrganizationById(state, organizationId)
-  )
-  const organizations = useSelector(selectAllOrganization)
+  const { data: organizations = [] } = useOrganizations()
+  const { data: currentOrganization } = useOrganization({ organizationId })
 
   return (
     <MenuAccount

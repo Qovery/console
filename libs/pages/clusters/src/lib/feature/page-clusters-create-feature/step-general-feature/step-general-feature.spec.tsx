@@ -1,15 +1,12 @@
 import { CloudProviderEnum } from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
 import * as organizationsDomain from '@qovery/domains/organizations/feature'
-import { organizationFactoryMock } from '@qovery/shared/factories'
-import { type OrganizationEntity } from '@qovery/shared/interfaces'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ClusterContainerCreateContext } from '../page-clusters-create-feature'
 import StepGeneralFeature from './step-general-feature'
 
 const mockSetGeneralData = jest.fn()
 const mockNavigate = jest.fn()
-const mockOrganization: OrganizationEntity = organizationFactoryMock(1)[0]
 
 const useCloudProviderCredentialsMockSpy = jest.spyOn(organizationsDomain, 'useCloudProviderCredentials') as jest.Mock
 
@@ -32,7 +29,6 @@ jest.mock('@qovery/domains/organization', () => {
       loading: 'loaded',
       items: [],
     }),
-    selectOrganizationById: () => mockOrganization,
   }
 })
 
