@@ -8,7 +8,7 @@ export function useEditOrganization() {
   return useMutation(mutations.editOrganization, {
     onSuccess(_, { organizationId }) {
       queryClient.invalidateQueries({
-        queryKey: queries.organizations.list().queryKey,
+        queryKey: queries.organizations.list.queryKey,
       })
       queryClient.invalidateQueries({
         queryKey: queries.organizations.details({ organizationId }).queryKey,

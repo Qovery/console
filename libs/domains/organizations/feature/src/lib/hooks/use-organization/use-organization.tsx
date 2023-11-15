@@ -9,7 +9,7 @@ export interface UseOrganizationProps {
 export function useOrganization({ organizationId, enabled }: UseOrganizationProps) {
   return useQuery({
     ...queries.organizations.details({ organizationId }),
-    enabled: enabled,
+    enabled,
   })
 }
 

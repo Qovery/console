@@ -12,7 +12,7 @@ export function useCreateOrganization({ organizationId }: UseCreateOrganizationP
   return useMutation(mutations.createOrganization, {
     onSuccess() {
       queryClient.invalidateQueries({
-        queryKey: queries.organizations.list().queryKey,
+        queryKey: queries.organizations.list.queryKey,
       })
       if (!organizationId) return
       queryClient.invalidateQueries({

@@ -8,7 +8,7 @@ export function useDeleteOrganization() {
   return useMutation(mutations.deleteOrganization, {
     onSuccess(_, { organizationId }) {
       queryClient.invalidateQueries({
-        queryKey: queries.organizations.list().queryKey,
+        queryKey: queries.organizations.list.queryKey,
       })
       queryClient.invalidateQueries({
         queryKey: queries.organizations.details({ organizationId }).queryKey,

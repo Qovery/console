@@ -63,13 +63,13 @@ type CredentialRequest =
     }
 
 export const organizations = createQueryKeys('organizations', {
-  list: () => ({
-    queryKey: ['organizations'],
+  list: {
+    queryKey: null,
     async queryFn() {
       const response = await organizationApi.listOrganization()
       return response.data.results
     },
-  }),
+  },
   details: ({ organizationId }: { organizationId: string }) => ({
     queryKey: [organizationId],
     async queryFn() {

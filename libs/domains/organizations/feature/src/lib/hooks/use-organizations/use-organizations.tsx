@@ -3,7 +3,7 @@ import { queries } from '@qovery/state/util-queries'
 
 export function useOrganizations() {
   return useQuery({
-    ...queries.organizations.list(),
+    ...queries.organizations.list,
     select(data) {
       if (!data) {
         return data

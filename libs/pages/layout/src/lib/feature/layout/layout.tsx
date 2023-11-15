@@ -39,12 +39,7 @@ export function Layout(props: PropsWithChildren<LayoutProps>) {
   const { data: environment } = useEnvironment({ environmentId })
 
   useEffect(() => {
-    const organizationIds: string[] = []
-
-    for (let i = 0; i < organizations.length; i++) {
-      const organization = organizations[i]
-      organizationIds.push(organization.id)
-    }
+    const organizationIds = organizations.map(({ id }) => id)
 
     async function fetchOrganizationForQoveryTeam() {
       try {
