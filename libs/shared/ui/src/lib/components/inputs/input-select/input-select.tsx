@@ -224,7 +224,7 @@ export function InputSelect({
         {currentIcon?.onClickEditable && (
           <div
             data-testid="selected-edit-icon"
-            className="cursor-pointer flex items-center justify-center text-sm text-neutral-400 hover:text-brand-500 w-8 h-8 absolute z-10 right-8 top-[10px]"
+            className="cursor-pointer flex items-center justify-center text-sm text-neutral-400 hover:text-brand-500 w-8 h-8 absolute z-[1] right-8 top-[10px]"
             onClick={(event) => {
               event.stopPropagation()
               currentIcon.onClickEditable && currentIcon.onClickEditable()

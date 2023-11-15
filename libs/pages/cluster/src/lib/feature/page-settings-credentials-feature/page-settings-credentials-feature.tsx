@@ -48,7 +48,7 @@ export function PageSettingsCredentialsFeature() {
 
   const { data: credentials = [] } = useCloudProviderCredentials({
     organizationId,
-    cloudProvider: methods.getValues('credentials'),
+    cloudProvider: cluster?.cloud_provider,
   })
 
   const onSubmit = methods.handleSubmit((data) => {

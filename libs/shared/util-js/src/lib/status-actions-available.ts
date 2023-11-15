@@ -34,6 +34,7 @@ export const isRedeployAvailable = (status: keyof typeof StateEnum | keyof typeo
       'DEPLOYMENT_QUEUED',
       'RESTART_QUEUED',
       'CANCELED',
+      'INVALID_CREDENTIALS',
       () => !isCancelBuildAvailable(status)
     )
     .otherwise(() => false)
@@ -74,6 +75,7 @@ export const isDeleteAvailable = (status: keyof typeof StateEnum | keyof typeof 
       'RESTARTED',
       'CANCELED',
       'DELETED',
+      'INVALID_CREDENTIALS',
       () => true
     )
     .otherwise(() => false)
