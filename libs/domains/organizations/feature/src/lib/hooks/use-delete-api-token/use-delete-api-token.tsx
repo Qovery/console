@@ -2,11 +2,11 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { mutations } from '@qovery/domains/organizations/data-access'
 import { queries } from '@qovery/state/util-queries'
 
-export function useDeleteApiToken({ organizationId }: { organizationId: string }) {
+export function useDeleteApiToken() {
   const queryClient = useQueryClient()
 
   return useMutation(mutations.deleteApiToken, {
-    onSuccess() {
+    onSuccess(_, { organizationId }) {
       queryClient.invalidateQueries({
         queryKey: queries.organizations.apiTokens({ organizationId }).queryKey,
       })

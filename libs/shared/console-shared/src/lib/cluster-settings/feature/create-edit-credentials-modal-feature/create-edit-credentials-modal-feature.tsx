@@ -54,18 +54,9 @@ export function CreateEditCredentialsModalFeature(props: CreateEditCredentialsMo
     },
   })
 
-  const { mutateAsync: createCloudProviderCredential } = useCreateCloudProviderCredential({
-    organizationId,
-    cloudProvider,
-  })
-  const { mutateAsync: editCloudProviderCredential } = useEditCloudProviderCredential({
-    organizationId,
-    cloudProvider,
-  })
-  const { mutateAsync: deleteCloudProviderCredential } = useDeleteCloudProviderCredential({
-    organizationId,
-    cloudProvider,
-  })
+  const { mutateAsync: createCloudProviderCredential } = useCreateCloudProviderCredential()
+  const { mutateAsync: editCloudProviderCredential } = useEditCloudProviderCredential()
+  const { mutateAsync: deleteCloudProviderCredential } = useDeleteCloudProviderCredential()
 
   methods.watch(() => enableAlertClickOutside(methods.formState.isDirty))
 

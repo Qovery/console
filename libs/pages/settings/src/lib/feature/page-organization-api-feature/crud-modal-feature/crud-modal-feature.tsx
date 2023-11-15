@@ -13,7 +13,7 @@ export interface CrudModalFeatureProps {
 
 export function CrudModalFeature(props: CrudModalFeatureProps) {
   const { organizationId = '', onClose } = props
-  const { mutateAsync: createApiToken } = useCreateApiToken({ organizationId })
+  const { mutateAsync: createApiToken } = useCreateApiToken()
   const { data: availableRoles = [], isFetched: isFetchedAvailableRoles } = useAvailableRoles({ organizationId })
 
   const { openModal, closeModal } = useModal()

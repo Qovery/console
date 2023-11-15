@@ -13,7 +13,7 @@ export interface CreateModalFeatureProps {
 export function CreateModalFeature(props: CreateModalFeatureProps) {
   const { organizationId = '', onClose } = props
 
-  const { mutateAsync: createCustomRole, isLoading: isLoadingCustomRole } = useCreateCustomRole({ organizationId })
+  const { mutateAsync: createCustomRole, isLoading: isLoadingCustomRole } = useCreateCustomRole()
   const navigate = useNavigate()
 
   const methods = useForm({

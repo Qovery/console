@@ -10,9 +10,7 @@ export function PageOrganizationDangerZoneFeature() {
   const navigate = useNavigate()
 
   const { data: organization } = useOrganization({ organizationId })
-  const { mutateAsync: deleteOrganization, isLoading: isLoadingDeleteOrganization } = useDeleteOrganization({
-    organizationId,
-  })
+  const { mutateAsync: deleteOrganization, isLoading: isLoadingDeleteOrganization } = useDeleteOrganization()
 
   const deleteOrganizationAction = async () => {
     try {

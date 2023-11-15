@@ -22,9 +22,7 @@ export function PageOrganizationGeneralFeature() {
   useDocumentTitle('General - Organization settings')
 
   const { data: organization } = useOrganization({ organizationId })
-  const { mutateAsync: editOrganization, isLoading: isLoadingEditOrganization } = useEditOrganization({
-    organizationId,
-  })
+  const { mutateAsync: editOrganization, isLoading: isLoadingEditOrganization } = useEditOrganization()
 
   const methods = useForm({
     mode: 'onChange',

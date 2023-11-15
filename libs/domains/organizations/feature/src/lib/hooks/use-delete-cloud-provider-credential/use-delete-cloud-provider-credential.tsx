@@ -1,21 +1,12 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { type CloudProviderEnum } from 'qovery-typescript-axios'
 import { mutations } from '@qovery/domains/organizations/data-access'
 import { queries } from '@qovery/state/util-queries'
 
-export interface UseDeleteCloudProviderCredentialProps {
-  organizationId: string
-  cloudProvider: CloudProviderEnum
-}
-
-export function useDeleteCloudProviderCredential({
-  organizationId,
-  cloudProvider,
-}: UseDeleteCloudProviderCredentialProps) {
+export function useDeleteCloudProviderCredential() {
   const queryClient = useQueryClient()
 
   return useMutation(mutations.deleteCloudProviderCredential, {
-    onSuccess() {
+    onSuccess(_, { organizationId, cloudProvider }) {
       queryClient.invalidateQueries({
         queryKey: queries.organizations.cloudProviderCredentials({ organizationId, cloudProvider }).queryKey,
       })

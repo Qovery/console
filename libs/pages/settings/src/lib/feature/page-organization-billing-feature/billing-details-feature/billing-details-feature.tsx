@@ -13,7 +13,7 @@ export function BillingDetailsFeature() {
   const [editInProcess, setEditInProcess] = useState(false)
   const [countryValues, setCountryValues] = useState<Value[]>([])
   const { data: billingInfo, isLoading: isLoadingBillingInfo } = useBillingInfo({ organizationId })
-  const { mutateAsync: editBillingInfo } = useEditBillingInfo({ organizationId })
+  const { mutateAsync: editBillingInfo } = useEditBillingInfo()
   const methods = useForm<BillingInfoRequest>({
     mode: 'onChange',
     defaultValues: {

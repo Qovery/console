@@ -13,7 +13,7 @@ export function PageOrganizationBillingFeature() {
   const { openModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
   const { data: creditCards = [], isLoading: isLoadingCreditCards } = useCreditCards({ organizationId })
-  const { mutateAsync: deleteCreditCard } = useDeleteCreditCard({ organizationId })
+  const { mutateAsync: deleteCreditCard } = useDeleteCreditCard()
 
   const methods = useForm<CreditCardFormValues>({
     mode: 'onChange',

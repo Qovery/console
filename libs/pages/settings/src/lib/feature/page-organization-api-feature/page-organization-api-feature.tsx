@@ -12,7 +12,7 @@ export function PageOrganizationApiFeature() {
   useDocumentTitle('API - Organization settings')
 
   const { data: apiTokens = [], isFetched: isFetchedApiTokens } = useApiTokens({ organizationId })
-  const { mutateAsync: deleteApiToken } = useDeleteApiToken({ organizationId })
+  const { mutateAsync: deleteApiToken } = useDeleteApiToken()
 
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()

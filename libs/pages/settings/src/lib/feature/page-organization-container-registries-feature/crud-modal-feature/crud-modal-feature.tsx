@@ -18,8 +18,8 @@ export function CrudModalFeature(props: CrudModalFeatureProps) {
   const { organizationId = '', onClose, registry } = props
 
   const { data: availableContainerRegistry = [] } = useAvailableContainerRegistry({ organizationId })
-  const { mutateAsync: editContainerRegistry } = useEditContainerRegistry({ organizationId })
-  const { mutateAsync: createContainerRegistry } = useCreateContainerRegistry({ organizationId })
+  const { mutateAsync: editContainerRegistry } = useEditContainerRegistry()
+  const { mutateAsync: createContainerRegistry } = useCreateContainerRegistry()
   const [loading, setLoading] = useState(false)
 
   const methods = useForm({

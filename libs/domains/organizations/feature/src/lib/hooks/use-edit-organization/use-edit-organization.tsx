@@ -2,15 +2,11 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { mutations } from '@qovery/domains/organizations/data-access'
 import { queries } from '@qovery/state/util-queries'
 
-export interface UseEditOrganizationProps {
-  organizationId: string
-}
-
-export function useEditOrganization({ organizationId }: UseEditOrganizationProps) {
+export function useEditOrganization() {
   const queryClient = useQueryClient()
 
   return useMutation(mutations.editOrganization, {
-    onSuccess() {
+    onSuccess(_, { organizationId }) {
       queryClient.invalidateQueries({
         queryKey: queries.organizations.list().queryKey,
       })

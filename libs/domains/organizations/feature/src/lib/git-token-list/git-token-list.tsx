@@ -20,7 +20,7 @@ export function GitTokenList() {
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
   const { data: gitTokens = [], isFetched: isFetchedGitTokens } = useGitTokens({ organizationId })
-  const { mutate: deleteToken } = useDeleteGitToken({ organizationId })
+  const { mutate: deleteToken } = useDeleteGitToken()
 
   return (
     <BlockContent title="Git tokens" classNameContent="p-0">

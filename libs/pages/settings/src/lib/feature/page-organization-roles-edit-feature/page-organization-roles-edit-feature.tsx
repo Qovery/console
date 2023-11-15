@@ -141,11 +141,8 @@ export function PageOrganizationRolesEditFeature() {
   const navigate = useNavigate()
 
   const { data: customRole, isLoading: isLoadingCustomRole } = useCustomRole({ organizationId, customRoleId: roleId })
-  const { mutateAsync: editCustomRole, isLoading: isLoadingEditCustomRole } = useEditCustomRole({
-    organizationId,
-    customRoleId: roleId,
-  })
-  const { mutateAsync: deleteCustomRole } = useDeleteCustomRole({ organizationId })
+  const { mutateAsync: editCustomRole, isLoading: isLoadingEditCustomRole } = useEditCustomRole()
+  const { mutateAsync: deleteCustomRole } = useDeleteCustomRole()
 
   const { openModalConfirmation } = useModalConfirmation()
 

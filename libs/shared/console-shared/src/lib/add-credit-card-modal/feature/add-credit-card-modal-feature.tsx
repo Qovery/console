@@ -13,7 +13,7 @@ export function AddCreditCardModalFeature({ organizationId }: AddCreditCardModal
   const methods = useForm<CreditCardFormValues>()
   const { closeModal } = useModal()
   const [loading, setLoading] = useState(false)
-  const { mutateAsync: addCreditCard } = useAddCreditCard({ organizationId })
+  const { mutateAsync: addCreditCard } = useAddCreditCard()
 
   const onSubmit = methods.handleSubmit(async (data) => {
     if (data.card_number && data.expiry && data.cvc && organizationId) {

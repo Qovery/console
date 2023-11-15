@@ -2,16 +2,11 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { mutations } from '@qovery/domains/organizations/data-access'
 import { queries } from '@qovery/state/util-queries'
 
-export interface UseEditCustomRoleProps {
-  organizationId: string
-  customRoleId: string
-}
-
-export function useEditCustomRole({ organizationId, customRoleId }: UseEditCustomRoleProps) {
+export function useEditCustomRole() {
   const queryClient = useQueryClient()
 
   return useMutation(mutations.editCustomRole, {
-    onSuccess() {
+    onSuccess(_, { organizationId, customRoleId }) {
       queryClient.invalidateQueries({
         queryKey: queries.organizations.customRole({ organizationId, customRoleId }).queryKey,
       })

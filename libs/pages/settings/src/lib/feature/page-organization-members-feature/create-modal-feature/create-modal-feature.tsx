@@ -12,9 +12,7 @@ export interface CreateModalFeatureProps {
 export function CreateModalFeature(props: CreateModalFeatureProps) {
   const { organizationId = '', availableRoles, onClose } = props
 
-  const { mutateAsync: createInviteMember, isLoading: isLoadingInviteMember } = useCreateInviteMember({
-    organizationId,
-  })
+  const { mutateAsync: createInviteMember, isLoading: isLoadingInviteMember } = useCreateInviteMember()
 
   const methods = useForm({
     mode: 'onChange',
