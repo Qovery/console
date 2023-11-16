@@ -1,32 +1,23 @@
-import { type APIVariableScopeEnum } from 'qovery-typescript-axios'
+import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { useCallback, useEffect, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useDispatch, useSelector } from 'react-redux'
-import {
-  getEnvironmentVariablesState,
-  selectEnvironmentVariablesByApplicationId,
-  selectSecretEnvironmentVariablesByApplicationId,
-} from '@qovery/domains/environment-variable'
+import { match } from 'ts-pattern'
+import { useService } from '@qovery/domains/services/feature'
+import { useImportVariables, useVariables } from '@qovery/domains/variables/feature'
 import { type ServiceTypeEnum } from '@qovery/shared/enums'
-import {
-  type EnvironmentVariableEntity,
-  type EnvironmentVariableSecretOrPublic,
-  type LoadingStatus,
-  type SecretEnvironmentVariableEntity,
-} from '@qovery/shared/interfaces'
 import { useModal } from '@qovery/shared/ui'
 import { computeAvailableScope, parseEnvText } from '@qovery/shared/util-js'
-import { type AppDispatch, type RootState } from '@qovery/state/store'
 import ImportEnvironmentVariableModal from '../../ui/import-environment-variable-modal/import-environment-variable-modal'
 import { changeScopeForAll } from './utils/change-scope-all'
 import { deleteEntry } from './utils/delete-entry'
 import { parsedToForm } from './utils/file-to-form'
-import { handleSubmit } from './utils/handle-submit'
+import { formatData } from './utils/handle-submit'
 import { onDrop } from './utils/on-drop'
 import { triggerToggleAll } from './utils/trigger-toggle-all'
 
 export interface ImportEnvironmentVariableModalFeatureProps {
+  environmentId: string
   applicationId: string
   closeModal: () => void
   serviceType?: ServiceTypeEnum
@@ -40,27 +31,21 @@ export function ImportEnvironmentVariableModalFeature(props: ImportEnvironmentVa
 
   const { enableAlertClickOutside } = useModal()
 
-  const dispatch = useDispatch<AppDispatch>()
+  const { data: service } = useService({
+    environmentId: props.environmentId,
+    serviceId: props.applicationId,
+  })
 
-  const environmentVariables: EnvironmentVariableEntity[] = useSelector<RootState, EnvironmentVariableEntity[]>(
-    (state) => selectEnvironmentVariablesByApplicationId(state, props.applicationId)
-  )
-  const loadingStatus: LoadingStatus = useSelector<RootState, LoadingStatus>(
-    (state) => getEnvironmentVariablesState(state).loadingStatus
-  )
-  const secretEnvironmentVariables: SecretEnvironmentVariableEntity[] = useSelector<
-    RootState,
-    SecretEnvironmentVariableEntity[]
-  >((state) => selectSecretEnvironmentVariablesByApplicationId(state, props.applicationId))
+  const scope = match(service?.serviceType)
+    .with('APPLICATION', () => APIVariableScopeEnum.APPLICATION)
+    .with('CONTAINER', () => APIVariableScopeEnum.CONTAINER)
+    .with('JOB', () => APIVariableScopeEnum.JOB)
+    .otherwise(() => undefined)
 
-  const [existingEnvVars, setExistingEnvVars] = useState<EnvironmentVariableSecretOrPublic[]>([])
-
-  useEffect(() => {
-    setExistingEnvVars([
-      ...(environmentVariables as EnvironmentVariableSecretOrPublic[]),
-      ...(secretEnvironmentVariables as EnvironmentVariableSecretOrPublic[]),
-    ])
-  }, [environmentVariables, secretEnvironmentVariables])
+  const { data: existingEnvVars = [], isLoading } = useVariables({
+    parentId: props.applicationId,
+    scope,
+  })
 
   const handleData = useCallback(
     async (data: string) => {
@@ -87,6 +72,8 @@ export function ImportEnvironmentVariableModalFeature(props: ImportEnvironmentVa
     onDrop: (acceptedFiles) => onDrop(acceptedFiles, handleData),
   })
 
+  const { mutateAsync: importVariables } = useImportVariables()
+
   return (
     <FormProvider {...methods}>
       <ImportEnvironmentVariableModal
@@ -95,19 +82,23 @@ export function ImportEnvironmentVariableModalFeature(props: ImportEnvironmentVa
         changeScopeForAll={(scope) => changeScopeForAll(scope as APIVariableScopeEnum, methods.setValue, keys)}
         keys={keys}
         closeModal={props.closeModal}
-        loading={loadingStatus === 'loading'}
+        loading={isLoading}
         availableScopes={computeAvailableScope(undefined, false)}
-        onSubmit={methods.handleSubmit(() =>
-          handleSubmit(
-            methods.getValues(),
-            props.applicationId,
-            keys,
-            dispatch,
-            props.closeModal,
-            overwriteEnabled,
-            props.serviceType
-          )
-        )}
+        onSubmit={methods.handleSubmit(async () => {
+          if (!scope) {
+            return
+          }
+          const vars = formatData(methods.getValues(), keys)
+          await importVariables({
+            serviceType: scope,
+            serviceId: props.applicationId,
+            variableImportRequest: {
+              overwrite: overwriteEnabled,
+              vars,
+            },
+          })
+          props.closeModal()
+        })}
         showDropzone={!fileParsed}
         dropzoneGetInputProps={getInputProps}
         dropzoneGetRootProps={getRootProps}

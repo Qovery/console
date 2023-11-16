@@ -10,7 +10,6 @@ const mockedExistingEnvVar = [
     value: 'lkj',
     scope: APIVariableScopeEnum.PROJECT,
     service_name: '',
-    variable_kind: 'public' as const,
   },
   {
     id: '684bf2e9-ceda-481b-8b4f-1620711f50ca',
@@ -20,7 +19,6 @@ const mockedExistingEnvVar = [
     value: 'lkjdsf',
     scope: APIVariableScopeEnum.ENVIRONMENT,
     service_name: '',
-    variable_kind: 'public' as const,
   },
   {
     id: '48903a30-f661-4f78-85ad-9a4435428ea6',
@@ -38,7 +36,6 @@ const mockedExistingEnvVar = [
       variable_type: APIVariableTypeEnum.ALIAS,
     },
     service_name: '',
-    variable_kind: 'public' as const,
   },
   {
     id: '7bf87f4c-d040-4061-a854-1da9a2683cfa',
@@ -48,7 +45,6 @@ const mockedExistingEnvVar = [
     value: 'hey',
     scope: APIVariableScopeEnum.PROJECT,
     service_name: '',
-    variable_kind: 'public' as const,
   },
   {
     id: '7c91be9d-d583-4341-813b-9dd6014571e6',
@@ -58,7 +54,6 @@ const mockedExistingEnvVar = [
     value: 'hello',
     scope: APIVariableScopeEnum.PROJECT,
     service_name: '',
-    variable_kind: 'public' as const,
   },
   {
     id: '2c5a25a6-a009-4d1d-826c-0a3763e55a16',
@@ -68,7 +63,6 @@ const mockedExistingEnvVar = [
     value: 'melvin',
     scope: APIVariableScopeEnum.ENVIRONMENT,
     service_name: '',
-    variable_kind: 'public' as const,
   },
   {
     id: 'b1378a36-331a-4ed0-95dc-fd8c28dc16f6',
@@ -78,7 +72,6 @@ const mockedExistingEnvVar = [
     value: '098098',
     scope: APIVariableScopeEnum.ENVIRONMENT,
     service_name: '',
-    variable_kind: 'public' as const,
   },
   {
     id: 'a89dab02-5dae-4c7f-a9ff-b278944c8f0b',
@@ -96,7 +89,6 @@ const mockedExistingEnvVar = [
       variable_type: APIVariableTypeEnum.OVERRIDE,
     },
     service_name: '',
-    variable_kind: 'public' as const,
   },
 ]
 

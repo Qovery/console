@@ -1,11 +1,11 @@
 import { type Dispatch, type SetStateAction, memo, useState } from 'react'
 import { type ServiceTypeEnum } from '@qovery/shared/enums'
-import { type EnvironmentVariableEntity, type EnvironmentVariableSecretOrPublic } from '@qovery/shared/interfaces'
+import { type EnvironmentVariableSecretOrPublic } from '@qovery/shared/interfaces'
 import { HelpSection, Table, type TableFilterProps, type TableHeadProps } from '@qovery/shared/ui'
 import TableRowEnvironmentVariableFeature from '../../feature/table-row-environment-variable-feature/table-row-environment-variable-feature'
 
 export interface PageVariablesProps {
-  tableHead: TableHeadProps<EnvironmentVariableEntity>[]
+  tableHead: TableHeadProps<EnvironmentVariableSecretOrPublic>[]
   variables: EnvironmentVariableSecretOrPublic[]
   setData: Dispatch<SetStateAction<EnvironmentVariableSecretOrPublic[]>>
   isLoading: boolean
@@ -64,13 +64,13 @@ export const PageVariables = memo(PageVariablesMemo, (prevProps, nextProps) => {
     id: envVariables.id,
     updated_at: envVariables.updated_at,
     key: envVariables.key,
-    value: (envVariables as EnvironmentVariableEntity).value || '',
+    value: envVariables.value || '',
   }))
   const nextPropsIds = nextProps.variables.map((envVariables) => ({
     id: envVariables.id,
     updated_at: envVariables.updated_at,
     key: envVariables.key,
-    value: (envVariables as EnvironmentVariableEntity).value || '',
+    value: envVariables.value || '',
   }))
 
   return JSON.stringify(prevPropsIds) === JSON.stringify(nextPropsIds)

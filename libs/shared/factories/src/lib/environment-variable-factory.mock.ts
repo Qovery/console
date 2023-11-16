@@ -1,10 +1,9 @@
 import { Chance } from 'chance'
-import { APIVariableScopeEnum, APIVariableTypeEnum } from 'qovery-typescript-axios'
-import { type EnvironmentVariableEntity, type SecretEnvironmentVariableEntity } from '@qovery/shared/interfaces'
+import { APIVariableScopeEnum, APIVariableTypeEnum, type VariableResponse } from 'qovery-typescript-axios'
 
 const chance = new Chance('123')
 
-export const mockEnvironmentVariable = (isAlias = false, isOverride = false): EnvironmentVariableEntity => ({
+export const mockEnvironmentVariable = (isAlias = false, isOverride = false): VariableResponse => ({
   id: chance.integer().toString(),
   created_at: chance.date().toString(),
   updated_at: chance.date().toString(),
@@ -28,7 +27,6 @@ export const mockEnvironmentVariable = (isAlias = false, isOverride = false): En
         variable_type: APIVariableTypeEnum.VALUE,
       }
     : undefined,
-  variable_kind: 'public',
   service_name: chance.name().toString(),
   key: chance.word().toString(),
   value: chance.word().toString(),
@@ -45,11 +43,11 @@ export const mockSecretEnvironmentVariable = (
   isAlias = false,
   isOverride = false,
   ownedBy = 'QOVERY'
-): SecretEnvironmentVariableEntity => ({
+): VariableResponse => ({
   id: chance.integer().toString(),
   created_at: chance.date().toString(),
   updated_at: chance.date().toString(),
-  aliased_secret: isAlias
+  aliased_variable: isAlias
     ? {
         id: chance.integer().toString(),
         key: chance.word().toString(),
@@ -58,7 +56,7 @@ export const mockSecretEnvironmentVariable = (
         variable_type: APIVariableTypeEnum.VALUE,
       }
     : undefined,
-  overridden_secret: isOverride
+  overridden_variable: isOverride
     ? {
         id: chance.integer().toString(),
         key: chance.word().toString(),
@@ -67,7 +65,7 @@ export const mockSecretEnvironmentVariable = (
         variable_type: APIVariableTypeEnum.VALUE,
       }
     : undefined,
-  variable_kind: 'secret',
+  value: null,
   key: chance.word().toString(),
   scope: APIVariableScopeEnum.PROJECT,
   variable_type: isOverride
@@ -82,12 +80,11 @@ export const environmentVariableFactoryMock = (
   howMany: number,
   aliases = false,
   overrides = false
-): EnvironmentVariableEntity[] =>
-  Array.from({ length: howMany }).map((_, index) => mockEnvironmentVariable(aliases, overrides))
+): VariableResponse[] => Array.from({ length: howMany }).map((_, index) => mockEnvironmentVariable(aliases, overrides))
 
 export const secretEnvironmentVariableFactoryMock = (
   howMany: number,
   aliases = false,
   overrides = false
-): SecretEnvironmentVariableEntity[] =>
+): VariableResponse[] =>
   Array.from({ length: howMany }).map((_, index) => mockSecretEnvironmentVariable(aliases, overrides))

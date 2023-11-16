@@ -3,18 +3,12 @@ import { type EnvironmentVariableSecretOrPublic } from '@qovery/shared/interface
 
 export const environmentVariableFile = (variable: EnvironmentVariableSecretOrPublic): boolean => {
   if (variable.variable_type === APIVariableTypeEnum.ALIAS) {
-    if (
-      variable.aliased_variable?.variable_type === APIVariableTypeEnum.FILE ||
-      variable.aliased_secret?.variable_type === APIVariableTypeEnum.FILE
-    ) {
+    if (variable.aliased_variable?.variable_type === APIVariableTypeEnum.FILE) {
       return true
     }
   }
   if (variable.variable_type === APIVariableTypeEnum.OVERRIDE) {
-    if (
-      variable.overridden_variable?.variable_type === APIVariableTypeEnum.FILE ||
-      variable.overridden_secret?.variable_type === APIVariableTypeEnum.FILE
-    ) {
+    if (variable.overridden_variable?.variable_type === APIVariableTypeEnum.FILE) {
       return true
     }
   }
@@ -34,20 +28,12 @@ export const getEnvironmentVariableFileMountPath = (
     if (variable.aliased_variable?.variable_type === APIVariableTypeEnum.FILE) {
       return variable.aliased_variable.mount_path
     }
-
-    if (variable.aliased_secret?.variable_type === APIVariableTypeEnum.FILE) {
-      return variable.aliased_secret.mount_path
-    }
   }
 
   // if the variable is an override we have to check if the parent is a file and fetch its mounth path
   if (variable.variable_type === APIVariableTypeEnum.OVERRIDE) {
     if (variable.overridden_variable?.variable_type === APIVariableTypeEnum.FILE) {
       return variable.overridden_variable.mount_path
-    }
-
-    if (variable.overridden_secret?.variable_type === APIVariableTypeEnum.FILE) {
-      return variable.overridden_secret.mount_path
     }
   }
 

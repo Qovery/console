@@ -2,23 +2,29 @@ import { useQueryClient } from '@tanstack/react-query'
 import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
+import { match } from 'ts-pattern'
+import { postApplicationActionsRedeploy } from '@qovery/domains/application'
 import { useActionRedeployEnvironment } from '@qovery/domains/environment'
-import { getEnvironmentVariablesState } from '@qovery/domains/environment-variable'
+import {
+  useCreateVariable,
+  useCreateVariableAlias,
+  useCreateVariableOverride,
+  useEditVariable,
+} from '@qovery/domains/variables/feature'
 import { type ServiceTypeEnum } from '@qovery/shared/enums'
-import { type EnvironmentVariableEntity, type EnvironmentVariableSecretOrPublic } from '@qovery/shared/interfaces'
+import { type EnvironmentVariableSecretOrPublic } from '@qovery/shared/interfaces'
 import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
-import { useModal } from '@qovery/shared/ui'
+import { ToastEnum, toast, useModal } from '@qovery/shared/ui'
 import { computeAvailableScope, getEnvironmentVariableFileMountPath } from '@qovery/shared/util-js'
-import { type AppDispatch, type RootState } from '@qovery/state/store'
+import { type AppDispatch } from '@qovery/state/store'
 import CrudEnvironmentVariableModal from '../../ui/crud-environment-variable-modal/crud-environment-variable-modal'
-import { handleSubmitForEnvSecretCreation } from './handle-submit/handle-submit'
 
 export interface CrudEnvironmentVariableModalFeatureProps {
   variable?: EnvironmentVariableSecretOrPublic
   mode: EnvironmentVariableCrudMode
-  type?: EnvironmentVariableType
+  type: EnvironmentVariableType
   closeModal: () => void
   organizationId: string
   applicationId: string
@@ -61,10 +67,6 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
     serviceType,
   } = props
   const dispatch = useDispatch<AppDispatch>()
-  const errorEnvironmentVariable = useSelector<RootState, string | null | undefined>(
-    (state) => getEnvironmentVariablesState(state).error
-  )
-  const [closing, setClosing] = useState(false)
   const [loading, setLoading] = useState(false)
   const { enableAlertClickOutside } = useModal()
   const navigate = useNavigate()
@@ -74,10 +76,10 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
     navigate(ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(applicationId))
   )
 
-  useEffect(() => {
-    if (closing && !errorEnvironmentVariable) closeModal()
-    setClosing(false)
-  }, [closing, errorEnvironmentVariable, closeModal])
+  const { mutateAsync: createVariable } = useCreateVariable()
+  const { mutateAsync: createVariableAlias } = useCreateVariableAlias()
+  const { mutateAsync: createVariableOverride } = useCreateVariableOverride()
+  const { mutateAsync: editVariable } = useEditVariable()
 
   const availableScopes = computeAvailableScope(
     variable?.scope,
@@ -96,14 +98,14 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
     defaultValues: {
       key: variable?.key,
       scope: defaultScope,
-      value: (variable as EnvironmentVariableEntity)?.value,
-      isSecret: variable?.variable_kind === 'secret',
+      value: variable?.value ?? '',
+      isSecret: variable?.value === null,
       mountPath: getEnvironmentVariableFileMountPath(variable),
     },
     mode: 'onChange',
   })
 
-  const onSubmit = methods.handleSubmit((data) => {
+  const onSubmit = methods.handleSubmit(async (data) => {
     if (serviceType) {
       const cloneData = { ...data }
 
@@ -113,18 +115,117 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
       if (!isFile) {
         delete cloneData.mountPath
       }
-      handleSubmitForEnvSecretCreation(
-        cloneData,
-        setLoading,
-        props,
-        dispatch,
-        setClosing,
-        serviceType,
-        () => actionRedeployEnvironment.mutate(),
-        () =>
-          navigate(ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(applicationId)),
-        queryClient
-      )
+
+      try {
+        const parentId = match(data)
+          .with({ scope: APIVariableScopeEnum.ENVIRONMENT }, () => props.environmentId)
+          .with({ scope: APIVariableScopeEnum.PROJECT }, () => props.projectId)
+          .with(
+            { scope: APIVariableScopeEnum.APPLICATION },
+            { scope: APIVariableScopeEnum.CONTAINER },
+            { scope: APIVariableScopeEnum.JOB },
+            () => props.applicationId
+          )
+          .otherwise(() => '')
+
+        await match(props)
+          .with({ mode: EnvironmentVariableCrudMode.CREATION, type: EnvironmentVariableType.NORMAL }, () =>
+            createVariable({
+              variableRequest: {
+                is_secret: data.isSecret,
+                key: data.key,
+                value: data.value,
+                mount_path: data.mountPath || null,
+                variable_parent_id: parentId,
+                variable_scope: data.scope as APIVariableScopeEnum,
+              },
+            })
+          )
+          .with({ mode: EnvironmentVariableCrudMode.CREATION, type: EnvironmentVariableType.ALIAS }, () => {
+            if (!props.variable) {
+              // TODO: Fix props type for this case to be impossible
+              throw new Error('No variable to be based on')
+            }
+            return createVariableAlias({
+              variableId: props.variable.id,
+              variableAliasRequest: {
+                alias_scope: data.scope as APIVariableScopeEnum,
+                alias_parent_id: parentId,
+                key: data.key,
+              },
+            })
+          })
+          .with({ mode: EnvironmentVariableCrudMode.CREATION, type: EnvironmentVariableType.OVERRIDE }, () => {
+            if (!props.variable) {
+              // TODO: Fix props type for this case to be impossible
+              throw new Error('No variable to be based on')
+            }
+            return createVariableOverride({
+              variableId: props.variable.id,
+              variableOverrideRequest: {
+                override_scope: data.scope as APIVariableScopeEnum,
+                override_parent_id: parentId,
+                value: data.value,
+              },
+            })
+          })
+          .with({ mode: EnvironmentVariableCrudMode.EDITION }, () => {
+            if (!props.variable) {
+              // TODO: Fix props type for this case to be impossible
+              throw new Error('No variable to be based on')
+            }
+            editVariable({
+              variableId: props.variable.id,
+              variableEditRequest: {
+                key: data.key,
+                value: data.value,
+              },
+            })
+          })
+          .exhaustive()
+
+        const toasterCallback = () => {
+          if (
+            data.scope === APIVariableScopeEnum.JOB ||
+            data.scope === APIVariableScopeEnum.CONTAINER ||
+            data.scope === APIVariableScopeEnum.APPLICATION
+          ) {
+            dispatch(
+              postApplicationActionsRedeploy({
+                applicationId: props.applicationId,
+                environmentId: props.environmentId,
+                serviceType: serviceType,
+                callback: () =>
+                  navigate(
+                    ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(applicationId)
+                  ),
+                queryClient,
+              })
+            )
+          } else {
+            actionRedeployEnvironment.mutate()
+          }
+        }
+
+        const toasterInfo = match(props.mode)
+          .with(
+            EnvironmentVariableCrudMode.CREATION,
+            () => ['Creation success', 'You need to redeploy your environment for your changes to be applied.'] as const
+          )
+          .with(
+            EnvironmentVariableCrudMode.EDITION,
+            () => ['Edition success', 'You need to redeploy your environment for your changes to be applied.'] as const
+          )
+          .exhaustive()
+
+        toast(ToastEnum.SUCCESS, toasterInfo[0], toasterInfo[1], toasterCallback, undefined, 'Redeploy')
+
+        closeModal()
+      } catch (e) {
+        console.error(e)
+      } finally {
+        setLoading(false)
+      }
     }
   })
 
