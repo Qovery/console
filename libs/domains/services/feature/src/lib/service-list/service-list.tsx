@@ -118,20 +118,14 @@ export function ServiceList({ organizationId, projectId, environmentId, classNam
           }
 
           const buttonActions = match(serviceType)
-            .with(
-              ServiceTypeEnum.APPLICATION,
-              ServiceTypeEnum.CONTAINER,
-              ServiceTypeEnum.JOB,
-              ServiceTypeEnum.HELM,
-              () => (
-                <ApplicationButtonsActions
-                  application={service as ApplicationEntity}
-                  environmentMode={environment.mode}
-                  clusterId={environment.cluster_id}
-                />
-              )
-            )
-            .with(ServiceTypeEnum.DATABASE, () => (
+            .with('APPLICATION', 'CONTAINER', 'JOB', 'HELM', () => (
+              <ApplicationButtonsActions
+                application={service as ApplicationEntity}
+                environmentMode={environment.mode}
+                clusterId={environment.cluster_id}
+              />
+            ))
+            .with('DATABASE', () => (
               <DatabaseButtonsActions
                 database={service as DatabaseEntity}
                 environmentMode={environment.mode}

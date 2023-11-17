@@ -32,7 +32,7 @@ import {
 } from 'qovery-typescript-axios'
 import { type ApplicationStatusDto, type DatabaseStatusDto, type ServiceMetricsDto } from 'qovery-ws-typescript-axios'
 import { match } from 'ts-pattern'
-import { ServiceTypeEnum } from '@qovery/shared/enums'
+import { type ServiceTypeEnum } from '@qovery/shared/enums'
 
 const applicationsApi = new ApplicationsApi()
 const containersApi = new ContainersApi()
@@ -63,17 +63,17 @@ const jobDeploymentsApi = new JobDeploymentHistoryApi()
 // It should be removed when we will be 100% relying on react-query.
 export type ServiceType = keyof typeof ServiceTypeEnum
 
-export type ApplicationType = Extract<keyof typeof ServiceTypeEnum, 'APPLICATION'>
+export type ApplicationType = Extract<ServiceType, 'APPLICATION'>
 export type ContainerType = Extract<ServiceType, 'CONTAINER'>
 export type DatabaseType = Extract<ServiceType, 'DATABASE'>
-export type JobType = Extract<ServiceType, 'JOB' | 'LIFECYCLE_JOB' | 'CRON_JOB'>
+export type JobType = Extract<ServiceType, 'JOB'>
 export type HelmType = Extract<ServiceType, 'HELM'>
 
-export type Application = _Application & { serviceType: ServiceTypeEnum.APPLICATION }
-export type Database = _Database & { serviceType: ServiceTypeEnum.DATABASE }
-export type Container = _Container & { serviceType: ServiceTypeEnum.CONTAINER }
-export type Job = _Job & { serviceType: ServiceTypeEnum.JOB }
-export type Helm = _Helm & { serviceType: ServiceTypeEnum.HELM }
+export type Application = _Application & { serviceType: ApplicationType }
+export type Database = _Database & { serviceType: DatabaseType }
+export type Container = _Container & { serviceType: ContainerType }
+export type Job = _Job & { serviceType: JobType }
+export type Helm = _Helm & { serviceType: HelmType }
 
 export type AnyService = Application | Database | Container | Job | Helm
 
@@ -132,23 +132,23 @@ export const services = createQueryKeys('services', {
       return [
         ...((await applicationsApi.listApplication(environmentId)).data.results ?? []).map((entity) => ({
           ...entity,
-          serviceType: ServiceTypeEnum.APPLICATION as const,
+          serviceType: 'APPLICATION' as const,
         })),
         ...((await containersApi.listContainer(environmentId)).data.results ?? []).map((entity) => ({
           ...entity,
-          serviceType: ServiceTypeEnum.CONTAINER as const,
+          serviceType: 'CONTAINER' as const,
         })),
         ...((await databasesApi.listDatabase(environmentId)).data.results ?? []).map((entity) => ({
           ...entity,
-          serviceType: ServiceTypeEnum.DATABASE as const,
+          serviceType: 'DATABASE' as const,
         })),
         ...((await jobsApi.listJobs(environmentId)).data.results ?? []).map((entity) => ({
           ...entity,
-          serviceType: ServiceTypeEnum.JOB as const,
+          serviceType: 'JOB' as const,
         })),
         ...((await helmsApi.listHelms(environmentId)).data.results ?? []).map((entity) => ({
           ...entity,
-          serviceType: ServiceTypeEnum.HELM as const,
+          serviceType: 'HELM' as const,
         })),
       ]
     },
@@ -243,23 +243,23 @@ export const services = createQueryKeys('services', {
       return await match(serviceType)
         .with('APPLICATION', async () => ({
           ...(await applicationDeploymentsApi.listApplicationDeploymentHistory(serviceId)).data,
-          serviceType: ServiceTypeEnum.APPLICATION as const,
+          serviceType: 'APPLICATION' as const,
         }))
         .with('CONTAINER', async () => ({
           ...(await containerDeploymentsApi.listContainerDeploymentHistory(serviceId)).data,
-          serviceType: ServiceTypeEnum.CONTAINER as const,
+          serviceType: 'CONTAINER' as const,
         }))
         .with('DATABASE', async () => ({
           ...(await databaseDeploymentsApi.listDatabaseDeploymentHistory(serviceId)).data,
-          serviceType: ServiceTypeEnum.DATABASE as const,
+          serviceType: 'DATABASE' as const,
         }))
         .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', async () => ({
           ...(await jobDeploymentsApi.listJobDeploymentHistory(serviceId)).data,
-          serviceType: ServiceTypeEnum.JOB as const,
+          serviceType: 'JOB' as const,
         }))
         .with('HELM', async () => ({
           ...(await helmDeploymentsApi.listHelmDeploymentHistory(serviceId)).data,
-          serviceType: ServiceTypeEnum.HELM as const,
+          serviceType: 'HELM' as const,
         }))
         .exhaustive()
     },
@@ -333,7 +333,7 @@ export const mutations = {
       .with('APPLICATION', () => applicationsApi.cloneApplication.bind(applicationsApi))
       .with('CONTAINER', () => containersApi.cloneContainer.bind(containersApi))
       .with('DATABASE', () => databasesApi.cloneDatabase.bind(databasesApi))
-      .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', () => jobsApi.cloneJob.bind(jobsApi))
+      .with('JOB', () => jobsApi.cloneJob.bind(jobsApi))
       .exhaustive()
     const response = await mutation(serviceId, payload)
     return response.data
@@ -348,9 +348,7 @@ export const mutations = {
       .with('APPLICATION', () =>
         applicationDeploymentApi.editApplicationDeploymentRestriction.bind(applicationDeploymentApi)
       )
-      .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', () =>
-        jobDeploymentApi.editJobDeploymentRestriction.bind(jobDeploymentApi)
-      )
+      .with('JOB', () => jobDeploymentApi.editJobDeploymentRestriction.bind(jobDeploymentApi))
       .with('HELM', () => helmDeploymentApi.editHelmDeploymentRestriction.bind(helmDeploymentApi))
       .exhaustive()
     const response = await mutation(serviceId, deploymentRestrictionId, payload)
@@ -365,9 +363,7 @@ export const mutations = {
       .with('APPLICATION', () =>
         applicationDeploymentApi.createApplicationDeploymentRestriction.bind(applicationDeploymentApi)
       )
-      .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', () =>
-        jobDeploymentApi.createJobDeploymentRestriction.bind(jobDeploymentApi)
-      )
+      .with('JOB', () => jobDeploymentApi.createJobDeploymentRestriction.bind(jobDeploymentApi))
       .with('HELM', () => helmDeploymentApi.createHelmDeploymentRestriction.bind(helmDeploymentApi))
       .exhaustive()
     const response = await mutation(serviceId, payload)
@@ -382,9 +378,7 @@ export const mutations = {
       .with('APPLICATION', () =>
         applicationDeploymentApi.deleteApplicationDeploymentRestriction.bind(applicationDeploymentApi)
       )
-      .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', () =>
-        jobDeploymentApi.deleteJobDeploymentRestriction.bind(jobDeploymentApi)
-      )
+      .with('JOB', () => jobDeploymentApi.deleteJobDeploymentRestriction.bind(jobDeploymentApi))
       .with('HELM', () => helmDeploymentApi.deleteHelmDeploymentRestriction.bind(helmDeploymentApi))
       .exhaustive()
     const response = await mutation(serviceId, deploymentRestrictionId)
