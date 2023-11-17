@@ -1,27 +1,20 @@
-import equal from 'fast-deep-equal'
-import { useSelector } from 'react-redux'
 import { Route, Routes, useParams } from 'react-router-dom'
-import { selectDatabaseById } from '@qovery/domains/database'
-import { useFetchEnvironment } from '@qovery/domains/environment'
-import { type DatabaseEntity } from '@qovery/shared/interfaces'
+import { useEnvironment } from '@qovery/domains/environments/feature'
+import { type AnyService } from '@qovery/domains/services/data-access'
+import { useService } from '@qovery/domains/services/feature'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { type RootState } from '@qovery/state/store'
 import { ROUTER_DATABASE } from './router/router'
 import Container from './ui/container/container'
 
 export function PageDatabase() {
-  const { databaseId = '', environmentId = '', projectId = '' } = useParams()
-  const { data: environment } = useFetchEnvironment(projectId, environmentId)
+  const { databaseId = '', environmentId = '' } = useParams()
+  const { data: environment } = useEnvironment({ environmentId })
+  const { data: service } = useService({ environmentId, serviceId: databaseId })
 
-  const database = useSelector<RootState, DatabaseEntity | undefined>(
-    (state) => selectDatabaseById(state, databaseId),
-    equal
-  )
-
-  useDocumentTitle(`${database?.name || 'Database'} - Qovery`)
+  useDocumentTitle(`${service?.name || 'Database'} - Qovery`)
 
   return (
-    <Container database={database} environment={environment}>
+    <Container service={service as AnyService} environment={environment}>
       <Routes>
         {ROUTER_DATABASE.map((route) => (
           <Route key={route.path} path={route.path} element={route.component} />
