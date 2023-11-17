@@ -18,7 +18,7 @@ declare module '@tanstack/table-core' {
 export function ServiceListFilter({ column }: { column: Column<any, unknown> }) {
   const [open, setOpen] = useState(false)
   const sortedUniqueValues = useMemo(
-    () => Array.from(column.getFacetedUniqueValues().entries()).sort(([a], [b]) => a.localeCompare(b)),
+    () => Array.from(column.getFacetedUniqueValues().entries()).sort(([a], [b]) => a?.localeCompare?.(b) ?? 0),
     [column.getFacetedUniqueValues()]
   )
 
