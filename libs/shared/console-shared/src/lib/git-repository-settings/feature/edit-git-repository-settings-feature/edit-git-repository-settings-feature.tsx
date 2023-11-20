@@ -32,6 +32,7 @@ export function EditGitRepositorySettingsFeature() {
     repository: string | undefined
     branch: string | undefined
     root_path: string | undefined
+    git_token_name?: string
   }>()
 
   const [gitDisabled, setGitDisabled] = useState(true)
@@ -44,6 +45,7 @@ export function EditGitRepositorySettingsFeature() {
       setValue('repository', gitRepository?.name ?? '')
       setValue('branch', gitRepository?.branch ?? '')
       setValue('root_path', undefined)
+      setValue('git_token_name', gitRepository?.git_token_name ?? undefined)
     }
   }, [gitDisabled, getGitRepositoryFromApplication, setValue])
 

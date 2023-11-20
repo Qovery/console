@@ -38,11 +38,14 @@ export function GitProviderSetting({ disabled }: GitProviderSettingProps) {
   const { data: authProviders = [] } = useAuthProviders({ organizationId, enabled: !disabled })
   const { data: gitTokens = [] } = useGitTokens({ organizationId, enabled: !disabled })
   const watchFieldProvider = watch('provider')
+  const watchFieldGitTokenName = watch('git_token_name')
 
   const providerOptions = disabled
     ? [
         {
-          label: watchFieldProvider ?? '',
+          label: watchFieldProvider
+            ? `${watchFieldProvider}${watchFieldGitTokenName ? ` (${watchFieldGitTokenName})` : ''}`
+            : '',
           value: watchFieldProvider ?? '',
           icon: <Icon name={`${watchFieldProvider?.split(' ')[0].toUpperCase()}`} />,
         },
