@@ -25,11 +25,11 @@ export function PageGeneral(props: PageGeneralProps) {
                 <span>Check your cloud provider console to get more information</span>
               </div>
             ) : (
-              database &&
-              database.environment && (
+              databaseId &&
+              environmentId && (
                 <>
-                  <PodStatusesCallout environmentId={database.environment.id} serviceId={database.id} />
-                  <PodsMetrics environmentId={database.environment.id} serviceId={database.id} />
+                  <PodStatusesCallout environmentId={environmentId} serviceId={databaseId} />
+                  <PodsMetrics environmentId={environmentId} serviceId={databaseId} />
                 </>
               )
             )}
