@@ -15,7 +15,7 @@ export interface FunnelFlowProps extends PropsWithChildren {
 
 const FunnelFlowContent = (props: FunnelFlowProps) => {
   return (
-    <div className="absolute top-0 left-0 inset-0 bg-neutral-150 scroll-auto flex flex-col min-h-0 z-30">
+    <div className="absolute top-0 left-0 inset-0 bg-neutral-150 scroll-auto flex flex-col min-h-0">
       <header className="h-16 px-5 bg-white flex shrink-0 items-center justify-between">
         <div className="flex items-center h-full">
           <div className="pr-4">
