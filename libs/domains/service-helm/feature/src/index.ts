@@ -1,1 +1,1 @@
-export * from './lib/domains-service-helm-feature'
+export * from './lib/deployment-setting/deployment-setting'

@@ -1,3 +1,4 @@
+import { type GitProviderEnum } from 'qovery-typescript-axios'
 import { createContext, useContext, useState } from 'react'
 import { type UseFormReturn, useForm } from 'react-hook-form'
 import { Route, Routes, useNavigate, useParams } from 'react-router-dom'
@@ -15,6 +16,23 @@ export const steps: { title: string }[] = [
 type HelmGeneralData = {
   name: string
   description?: string
+  auto_preview: boolean
+  timeout_sec: number
+  arguments: string[]
+  provider: 'HELM_REPOSITORY' | 'GIT'
+  source: {
+    git?: {
+      provider: GitProviderEnum
+      repository: string
+      branch: string
+      root_path: string
+    }
+    repository?: {
+      repository: string
+      chart_name: string
+      chart_version: string
+    }
+  }
 }
 
 interface HelmCreateContextInterface {

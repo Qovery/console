@@ -1,5 +1,8 @@
+import { type GitProviderEnum } from 'qovery-typescript-axios'
 import { FormProvider } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
+import { GitBranchSettings, GitProviderSetting, GitRepositorySetting } from '@qovery/domains/organizations/feature'
+import { DeploymentSetting } from '@qovery/domains/service-helm/feature'
 import { AutoDeploySetting, GeneralSetting } from '@qovery/domains/services/feature'
 import { SERVICES_CREATION_RESOURCES_URL, SERVICES_HELM_CREATION_URL, SERVICES_URL } from '@qovery/shared/routes'
 import { Button, FunnelFlowBody, FunnelFlowHelpCard, Heading, Section } from '@qovery/shared/ui'
@@ -42,6 +45,10 @@ export function StepGeneralFeature() {
     navigate(pathCreate + SERVICES_CREATION_RESOURCES_URL)
   })
 
+  const watchFieldProvider = generalForm.watch('provider')
+  const watchFieldGitProvider = generalForm.watch('source.git.provider')
+  const watchFieldGitRepository = generalForm.watch('source.git.repository')
+
   return (
     <FunnelFlowBody helpSection={funnelCardHelp}>
       <FormProvider {...generalForm}>
@@ -56,9 +63,25 @@ export function StepGeneralFeature() {
               <GeneralSetting label="Helm chart name" />
             </Section>
             <Section>
+              <Heading className="mt-10 mb-2">Source</Heading>
+              <p className="text-sm text-neutral-350 mb-3">
+                Deploy your helm chart from a Git repository or from a Helm repository.
+              </p>
+              {watchFieldProvider === 'GIT' && (
+                <>
+                  <GitProviderSetting />
+                  {watchFieldGitProvider && <GitRepositorySetting gitProvider={watchFieldGitProvider} />}
+                  {watchFieldGitProvider && watchFieldGitRepository && (
+                    <GitBranchSettings gitProvider={watchFieldGitProvider} />
+                  )}
+                </>
+              )}
+            </Section>
+            <Section>
               <Heading className="mt-10 mb-2">Deployment</Heading>
               <p className="text-sm text-neutral-350 mb-3">Define the deployment configuration of your service.</p>
-              <AutoDeploySetting source="GIT" />
+              <DeploymentSetting />
+              <AutoDeploySetting source="GIT" className="mt-5" />
             </Section>
           </Section>
           <div className="flex justify-end gap-3 mt-6">
