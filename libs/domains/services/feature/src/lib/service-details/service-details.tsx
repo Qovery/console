@@ -1,7 +1,7 @@
 import { type Credentials } from 'qovery-typescript-axios'
 import { type ComponentPropsWithoutRef } from 'react'
 import { P, match } from 'ts-pattern'
-import { IconEnum, ServiceTypeEnum, isJobContainerSource, isJobGitSource } from '@qovery/shared/enums'
+import { IconEnum, ServiceTypeEnum, isHelmGitSource, isJobContainerSource, isJobGitSource } from '@qovery/shared/enums'
 import { APPLICATION_SETTINGS_RESOURCES_URL, APPLICATION_SETTINGS_URL } from '@qovery/shared/routes'
 import {
   Badge,
@@ -166,15 +166,20 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
         <span className="text-neutral-400 font-medium">Source</span>
         {match(service)
           .with(
-            { serviceType: ServiceTypeEnum.APPLICATION },
+            { serviceType: 'APPLICATION' },
             {
-              serviceType: ServiceTypeEnum.JOB,
+              serviceType: 'JOB',
               source: P.when(isJobGitSource),
+            },
+            {
+              serviceType: 'HELM',
+              source: P.when(isHelmGitSource),
             },
             (service) => {
               const gitRepository = match(service)
-                .with({ serviceType: ServiceTypeEnum.APPLICATION }, ({ git_repository }) => git_repository)
-                .with({ serviceType: ServiceTypeEnum.JOB }, ({ source }) => source.docker?.git_repository)
+                .with({ serviceType: 'APPLICATION' }, ({ git_repository }) => git_repository)
+                .with({ serviceType: 'JOB' }, ({ source }) => source.docker?.git_repository)
+                .with({ serviceType: 'HELM' }, ({ source }) => source.git?.git_repository)
                 .exhaustive()
 
               return (
