@@ -56,7 +56,16 @@ export function PageVariablesFeature() {
     if (isLoading) {
       setData(placeholder)
     } else {
-      setData(sortVariableMemo)
+      // XXX: This should be done using `useMutationState` in tanstack-query v5 (we are currently still in v4)
+      // https://tanstack.com/query/v5/docs/react/guides/optimistic-updates
+      setData((previousData) =>
+        previousData.length === 0 || previousData === placeholder
+          ? sortVariableMemo
+          : sortVariableMemo.map((variable) => ({
+              ...variable,
+              is_new: !previousData.find((v) => v.key === variable.key),
+            }))
+      )
     }
   }, [sortVariableMemo, isLoading])
 
