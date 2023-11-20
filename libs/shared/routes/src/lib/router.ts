@@ -11,6 +11,7 @@ export * from './sub-router/logs.router'
 export * from './sub-router/clusters.router'
 export * from './sub-router/cluster.router'
 export * from './sub-router/job.router'
+export * from './sub-router/helm.router'
 export * from './sub-router/audit-logs.router'
 export * from './sub-router/user.router'
 

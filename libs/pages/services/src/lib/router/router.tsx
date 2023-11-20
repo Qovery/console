@@ -13,6 +13,7 @@ import {
   SERVICES_DATABASE_CREATION_URL,
   SERVICES_DEPLOYMENTS_URL,
   SERVICES_GENERAL_URL,
+  SERVICES_HELM_CREATION_URL,
   SERVICES_JOB_CREATION_CONFIGURE_URL,
   SERVICES_JOB_CREATION_GENERAL_URL,
   SERVICES_JOB_CREATION_POST_URL,
@@ -38,6 +39,8 @@ import { StepResourcesFeature as DatabaseStepResourcesFeature } from '../feature
 import { StepSummaryFeature as DatabaseStepSummaryFeature } from '../feature/page-database-create-feature/step-summary-feature/step-summary-feature'
 import PageDeploymentsFeature from '../feature/page-deployments-feature/page-deployments-feature'
 import PageGeneralFeature from '../feature/page-general-feature/page-general-feature'
+import PageHelmCreateFeature from '../feature/page-helm-create-feature/page-helm-create-feature'
+import { StepGeneralFeature as HelmStepGeneralFeature } from '../feature/page-helm-create-feature/step-general-feature/step-general-feature'
 import { PageJobCreateFeature } from '../feature/page-job-create-feature/page-job-create-feature'
 import StepConfigureFeature from '../feature/page-job-create-feature/step-configure-feature/step-configure-feature'
 import { StepGeneralFeature } from '../feature/page-job-create-feature/step-general-feature/step-general-feature'
@@ -79,6 +82,10 @@ export const ROUTER_SERVICES: Route[] = [
   {
     path: `${SERVICES_APPLICATION_CREATION_URL}/*`,
     component: <PageApplicationCreateFeature />,
+  },
+  {
+    path: `${SERVICES_HELM_CREATION_URL}/*`,
+    component: <PageHelmCreateFeature />,
   },
 ]
 
@@ -164,5 +171,12 @@ export const ROUTER_SERVICE_JOB_CREATION: Route[] = [
   {
     path: SERVICES_JOB_CREATION_POST_URL,
     component: <StepSummaryFeature />,
+  },
+]
+
+export const ROUTER_SERVICE_HELM_CREATION: Route[] = [
+  {
+    path: SERVICES_CREATION_GENERAL_URL,
+    component: <HelmStepGeneralFeature />,
   },
 ]

@@ -16,6 +16,7 @@ import {
   SERVICES_DATABASE_CREATION_URL,
   SERVICES_DEPLOYMENTS_URL,
   SERVICES_GENERAL_URL,
+  SERVICES_HELM_CREATION_URL,
   SERVICES_LIFECYCLE_CREATION_URL,
   SERVICES_SETTINGS_URL,
   SERVICES_URL,
@@ -154,6 +155,15 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
           ),
           onClick: () => {
             navigate(`${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_CRONJOB_CREATION_URL}`)
+          },
+        },
+        {
+          name: 'Create helm',
+          contentLeft: (
+            <Icon name={IconEnum.CRON_JOB_STROKE} width="14" height="16" className="text-brand-500 text-sm" />
+          ),
+          onClick: () => {
+            navigate(`${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_HELM_CREATION_URL}`)
           },
         },
       ],
