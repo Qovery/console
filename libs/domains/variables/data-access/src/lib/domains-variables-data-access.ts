@@ -1,4 +1,4 @@
-import { createQueryKeys, type inferQueryKeys } from '@lukemorales/query-key-factory'
+import { createQueryKeys } from '@lukemorales/query-key-factory'
 import {
   type APIVariableScopeEnum,
   type ServiceTypeForVariableEnum,
@@ -80,5 +80,3 @@ export const mutations = {
     return response.data
   },
 }
-
-export type VariablesKeys = inferQueryKeys<typeof variables>
