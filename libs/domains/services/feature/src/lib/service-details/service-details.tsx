@@ -102,19 +102,25 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
         <ResourceUnit value={instance_type} description="Instance type" />
       </>
     ))
-    .with(
-      { serviceType: ServiceTypeEnum.JOB },
-      ({ cpu, memory, max_duration_seconds, max_nb_restart, schedule, port }) => (
+    .with({ serviceType: ServiceTypeEnum.JOB }, (job) => {
+      const { cpu, memory, max_duration_seconds, max_nb_restart, port } = job
+      return (
         <>
-          <ResourceUnit
-            value={
-              [schedule?.on_start && 'Start', schedule?.on_stop && 'Stop', schedule?.on_delete && 'Delete']
-                .filter(Boolean)
-                .join(' - ') || undefined
-            }
-            description="Event"
-          />
-          <ResourceUnit value={formatCronExpression(schedule?.cronjob?.scheduled_at)} description="Scheduling" />
+          {match(job)
+            .with({ job_type: 'LIFECYCLE' }, ({ schedule }) => (
+              <ResourceUnit
+                value={
+                  [schedule.on_start && 'Start', schedule.on_stop && 'Stop', schedule.on_delete && 'Delete']
+                    .filter(Boolean)
+                    .join(' - ') || undefined
+                }
+                description="Event"
+              />
+            ))
+            .with({ job_type: 'CRON' }, ({ schedule }) => (
+              <ResourceUnit value={formatCronExpression(schedule.cronjob?.scheduled_at)} description="Scheduling" />
+            ))
+            .exhaustive()}
           <ResourceUnit value={max_nb_restart} description="Restart (max)" />
           <ResourceUnit value={max_duration_seconds && `${max_duration_seconds} s`} description="Duration (max)" />
           <ResourceUnit value={cpu && formatMetric({ current: cpu, unit: 'MiB' })} description="vCPU (max)" />
@@ -122,7 +128,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
           <ResourceUnit value={port} description="Port" />
         </>
       )
-    )
+    })
     .otherwise(() => null)
 
   const sectionClassName = 'text-neutral-350 gap-4 pl-8 pr-5'

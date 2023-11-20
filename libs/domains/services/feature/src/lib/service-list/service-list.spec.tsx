@@ -223,6 +223,7 @@ jest.mock('../hooks/use-services/use-services', () => ({
             dockerfile_path: 'Dockerfile',
           },
         },
+        job_type: 'CRON',
         schedule: {
           cronjob: {
             arguments: ['python', 'cronjob.py'],
@@ -285,6 +286,7 @@ jest.mock('../hooks/use-services/use-services', () => ({
             dockerfile_path: 'Dockerfile',
           },
         },
+        job_type: 'LIFECYCLE',
         schedule: {
           on_start: {
             arguments: ['job.py'],

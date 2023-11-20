@@ -1,10 +1,11 @@
-import { type JobRequestAllOfScheduleOnStart, type JobResponseAllOfSchedule } from 'qovery-typescript-axios/api'
+import { type LifecycleJobResponseAllOfSchedule } from 'qovery-typescript-axios'
+import { type JobRequestAllOfScheduleOnStart } from 'qovery-typescript-axios/api'
 import { Controller, useFormContext } from 'react-hook-form'
-import { type ApplicationEntity } from '@qovery/shared/interfaces'
+import { type JobApplicationEntity } from '@qovery/shared/interfaces'
 import { InputRadioBox, ModalCrud } from '@qovery/shared/ui'
 
 export interface ForceRunModalProps {
-  application: ApplicationEntity | undefined
+  application: JobApplicationEntity | undefined
   closeModal: () => void
   onSubmit: () => void
   isCronJob?: boolean
@@ -14,7 +15,7 @@ export interface ForceRunModalProps {
 export function ForceRunModal(props: ForceRunModalProps) {
   const { control } = useFormContext()
 
-  const description = (key: keyof JobResponseAllOfSchedule, schedule: JobResponseAllOfSchedule) => {
+  const description = (key: keyof LifecycleJobResponseAllOfSchedule, schedule: LifecycleJobResponseAllOfSchedule) => {
     const scheduleEvent: JobRequestAllOfScheduleOnStart = schedule[key] as JobRequestAllOfScheduleOnStart
 
     if (!scheduleEvent) return
@@ -55,36 +56,42 @@ export function ForceRunModal(props: ForceRunModalProps) {
           control={control}
           render={({ field }) => (
             <>
-              {props.application?.schedule && props.application.schedule['on_start'] && (
-                <InputRadioBox
-                  fieldValue={field.value}
-                  onChange={field.onChange}
-                  name={field.name}
-                  label="Start"
-                  value="start"
-                  description={props.application?.schedule && description('on_start', props.application.schedule)}
-                />
-              )}
-              {props.application?.schedule && props.application.schedule['on_stop'] && (
-                <InputRadioBox
-                  fieldValue={field.value}
-                  onChange={field.onChange}
-                  name={field.name}
-                  label="Stop"
-                  value="stop"
-                  description={props.application?.schedule && description('on_stop', props.application.schedule)}
-                />
-              )}
-              {props.application?.schedule && props.application.schedule['on_delete'] && (
-                <InputRadioBox
-                  fieldValue={field.value}
-                  onChange={field.onChange}
-                  name={field.name}
-                  label="Delete"
-                  value="delete"
-                  description={props.application?.schedule && description('on_delete', props.application.schedule)}
-                />
-              )}
+              {props.application?.schedule &&
+                props.application.job_type === 'LIFECYCLE' &&
+                props.application.schedule['on_start'] && (
+                  <InputRadioBox
+                    fieldValue={field.value}
+                    onChange={field.onChange}
+                    name={field.name}
+                    label="Start"
+                    value="start"
+                    description={props.application?.schedule && description('on_start', props.application.schedule)}
+                  />
+                )}
+              {props.application?.schedule &&
+                props.application.job_type === 'LIFECYCLE' &&
+                props.application.schedule['on_stop'] && (
+                  <InputRadioBox
+                    fieldValue={field.value}
+                    onChange={field.onChange}
+                    name={field.name}
+                    label="Stop"
+                    value="stop"
+                    description={props.application?.schedule && description('on_stop', props.application.schedule)}
+                  />
+                )}
+              {props.application?.schedule &&
+                props.application.job_type === 'LIFECYCLE' &&
+                props.application.schedule['on_delete'] && (
+                  <InputRadioBox
+                    fieldValue={field.value}
+                    onChange={field.onChange}
+                    name={field.name}
+                    label="Delete"
+                    value="delete"
+                    description={props.application?.schedule && description('on_delete', props.application.schedule)}
+                  />
+                )}
             </>
           )}
         />

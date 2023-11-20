@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { forceRunJob, selectApplicationById } from '@qovery/domains/application'
 import { isCronJob } from '@qovery/shared/enums'
-import { type ApplicationEntity } from '@qovery/shared/interfaces'
+import { type ApplicationEntity, type JobApplicationEntity } from '@qovery/shared/interfaces'
 import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { useModal } from '@qovery/shared/ui'
 import { type AppDispatch, type RootState } from '@qovery/state/store'
@@ -84,7 +84,7 @@ export function ForceRunModalFeature({
   return (
     <FormProvider {...methods}>
       <ForceRunModal
-        application={application}
+        application={application as JobApplicationEntity}
         closeModal={closeModal}
         onSubmit={onSubmit}
         isCronJob={isCronJob(application)}
