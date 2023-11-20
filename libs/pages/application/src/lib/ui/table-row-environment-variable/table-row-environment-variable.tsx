@@ -3,11 +3,7 @@ import { LinkedServiceTypeEnum } from 'qovery-typescript-axios'
 import { useMemo } from 'react'
 import { NavLink, useParams } from 'react-router-dom'
 import { ExternalServiceEnum, IconEnum } from '@qovery/shared/enums'
-import {
-  type EnvironmentVariableEntity,
-  type EnvironmentVariableSecretOrPublic,
-  type SecretEnvironmentVariableEntity,
-} from '@qovery/shared/interfaces'
+import { type EnvironmentVariableSecretOrPublic } from '@qovery/shared/interfaces'
 import { APPLICATION_GENERAL_URL, APPLICATION_URL, DATABASE_GENERAL_URL, DATABASE_URL } from '@qovery/shared/routes'
 import {
   ButtonIconAction,
@@ -27,7 +23,7 @@ import { environmentVariableFile, getEnvironmentVariableFileMountPath } from '@q
 
 export interface TableRowEnvironmentVariableProps {
   variable: EnvironmentVariableSecretOrPublic
-  dataHead: TableHeadProps<EnvironmentVariableEntity>[]
+  dataHead: TableHeadProps<EnvironmentVariableSecretOrPublic>[]
   rowActions: ButtonIconActionElementProps[]
   filter: TableFilterProps[]
   columnsWidth?: string
@@ -71,16 +67,14 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
                       {variable.owned_by}
                     </span>
                   )}{' '}
-                  {(variable as EnvironmentVariableEntity).aliased_variable ||
-                  (variable as SecretEnvironmentVariableEntity).aliased_secret ? (
+                  {variable.aliased_variable ? (
                     <>
                       <Icon name={IconEnum.CHILDREN_ARROW} className="mr-2 ml-1" />
                       <span className="bg-teal-500 font-bold rounded-sm text-2xs text-neutral-50 px-1 inline-flex items-center h-4 mr-2">
                         ALIAS
                       </span>
                     </>
-                  ) : (variable as EnvironmentVariableEntity).overridden_variable ||
-                    (variable as SecretEnvironmentVariableEntity).overridden_secret ? (
+                  ) : variable.overridden_variable ? (
                     <>
                       <Icon name={IconEnum.CHILDREN_ARROW} className="mr-2 ml-1" />
                       <span className="bg-brand-500 font-bold rounded-sm text-2xs text-neutral-50 px-1 inline-flex items-center h-4 mr-2">
@@ -90,7 +84,7 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
                   ) : (
                     ''
                   )}
-                  {(variable as EnvironmentVariableEntity).mount_path ? (
+                  {variable.mount_path ? (
                     <span className="bg-purple-500 font-bold rounded-sm text-2xs text-neutral-50 px-1 inline-flex items-center h-4 mr-2">
                       FILE
                     </span>
@@ -141,7 +135,7 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
                       if (editFile) editFile({} as ClickEvent)
                     }}
                   >
-                    {variable.variable_kind === 'public' ? (
+                    {variable.value !== null ? (
                       <Icon className="ml-0.5 text-neutral-400" name={IconAwesomeEnum.FILE_LINES} />
                     ) : (
                       /* todo put FILE_LOCK back when we managed to update font awesome to the pro version */
@@ -152,7 +146,7 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
                       {getEnvironmentVariableFileMountPath(variable)}
                     </span>
                   </div>
-                ) : variable.variable_kind === 'public' ? (
+                ) : variable.value !== null ? (
                   <PasswordShowHide
                     value={variable.value || ''}
                     defaultVisible={defaultShowHidePassword}

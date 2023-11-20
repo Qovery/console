@@ -1,16 +1,11 @@
 import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { useContext } from 'react'
-import { useDispatch } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useActionRedeployEnvironment } from '@qovery/domains/environment'
-import { deleteEnvironmentVariable, deleteSecret } from '@qovery/domains/environment-variable'
+import { useDeleteVariable } from '@qovery/domains/variables/feature'
 import { ExternalServiceEnum, type ServiceTypeEnum } from '@qovery/shared/enums'
-import {
-  type EnvironmentVariableEntity,
-  type EnvironmentVariableSecretOrPublic,
-  type SecretEnvironmentVariableEntity,
-} from '@qovery/shared/interfaces'
+import { type EnvironmentVariableSecretOrPublic } from '@qovery/shared/interfaces'
 import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import {
   type ButtonIconActionElementProps,
@@ -19,11 +14,12 @@ import {
   type MenuItemProps,
   type TableFilterProps,
   type TableHeadProps,
+  ToastEnum,
+  toast,
   useModal,
   useModalConfirmation,
 } from '@qovery/shared/ui'
 import { environmentVariableFile } from '@qovery/shared/util-js'
-import { type AppDispatch } from '@qovery/state/store'
 import { ApplicationContext } from '../../ui/container/container'
 import TableRowEnvironmentVariable from '../../ui/table-row-environment-variable/table-row-environment-variable'
 import CrudEnvironmentVariableModalFeature, {
@@ -33,7 +29,7 @@ import CrudEnvironmentVariableModalFeature, {
 
 export interface TableRowEnvironmentVariableFeatureProps {
   variable: EnvironmentVariableSecretOrPublic
-  dataHead: TableHeadProps<EnvironmentVariableEntity>[]
+  dataHead: TableHeadProps<EnvironmentVariableSecretOrPublic>[]
   filter: TableFilterProps[]
   isLoading: boolean
   columnsWidth?: string
@@ -52,7 +48,7 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
     navigate(ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(applicationId))
   )
 
-  const dispatch = useDispatch<AppDispatch>()
+  const { mutateAsync: deleteVariable } = useDeleteVariable()
 
   const edit = (type: EnvironmentVariableType) => ({
     name: 'Edit',
@@ -132,30 +128,15 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
     const menu = []
     let variableType: EnvironmentVariableType = EnvironmentVariableType.NORMAL
 
-    if (
-      (variable as EnvironmentVariableEntity).overridden_variable ||
-      (variable as SecretEnvironmentVariableEntity).overridden_secret
-    ) {
+    if (variable.overridden_variable) {
       variableType = EnvironmentVariableType.OVERRIDE
-    } else if (
-      (variable as EnvironmentVariableEntity).aliased_variable ||
-      (variable as SecretEnvironmentVariableEntity).aliased_secret
-    ) {
+    } else if (variable.aliased_variable) {
       variableType = EnvironmentVariableType.ALIAS
     }
 
     if (variable.scope !== APIVariableScopeEnum.BUILT_IN) menu.push(edit(variableType))
 
-    if (
-      !(
-        (variable as EnvironmentVariableEntity).overridden_variable ||
-        (variable as SecretEnvironmentVariableEntity).overridden_secret
-      ) &&
-      !(
-        (variable as EnvironmentVariableEntity).aliased_variable ||
-        (variable as SecretEnvironmentVariableEntity).aliased_secret
-      )
-    ) {
+    if (!variable.overridden_variable && !variable.aliased_variable) {
       menu.push(createAlias)
 
       if (variable.scope !== APIVariableScopeEnum.BUILT_IN) menu.push(createOverride)
@@ -198,48 +179,23 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
           onClick: () => {
             openModalConfirmation({
               title: 'Delete variable',
-              name: variable?.key,
+              name: variable.key,
               isDelete: true,
-              action: () => {
-                let entityId: string
-                switch (variable.scope) {
-                  case APIVariableScopeEnum.ENVIRONMENT:
-                    entityId = environmentId
-                    break
-                  case APIVariableScopeEnum.PROJECT:
-                    entityId = projectId
-                    break
-                  case APIVariableScopeEnum.APPLICATION:
-                  default:
-                    entityId = applicationId
-                    break
+              action: async () => {
+                await deleteVariable({ variableId: variable.id })
+                let name = variable.key
+                if (name && name.length > 30) {
+                  name = name.substring(0, 30) + '...'
                 }
-
-                if (variable.variable_kind === 'public') {
-                  if (props.serviceType) {
-                    dispatch(
-                      deleteEnvironmentVariable({
-                        entityId,
-                        environmentVariableId: variable.id,
-                        scope: variable.scope,
-                        serviceType: props.serviceType,
-                        toasterCallback: () => actionRedeployEnvironment.mutate(),
-                      })
-                    )
-                  }
-                } else {
-                  if (props.serviceType) {
-                    dispatch(
-                      deleteSecret({
-                        entityId,
-                        environmentVariableId: variable.id,
-                        scope: variable.scope,
-                        serviceType: props.serviceType,
-                        toasterCallback: () => actionRedeployEnvironment.mutate(),
-                      })
-                    )
-                  }
-                }
+                const toasterCallback = () => actionRedeployEnvironment.mutate()
+                toast(
+                  ToastEnum.SUCCESS,
+                  'Deletion success',
+                  `${name} has been deleted. You need to redeploy your environment for your changes to be applied.`,
+                  toasterCallback,
+                  undefined,
+                  'Redeploy'
+                )
               },
             })
           },

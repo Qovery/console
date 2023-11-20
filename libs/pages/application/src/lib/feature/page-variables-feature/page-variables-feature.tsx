@@ -1,37 +1,42 @@
-import { useContext, useEffect, useMemo, useState } from 'react'
-import { shallowEqual, useDispatch, useSelector } from 'react-redux'
+import { APIVariableScopeEnum } from 'qovery-typescript-axios'
+import { useContext, useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
+import { match } from 'ts-pattern'
 import { selectApplicationById } from '@qovery/domains/application'
-import {
-  fetchEnvironmentVariables,
-  fetchSecretEnvironmentVariables,
-  getEnvironmentVariablesState,
-  getSecretEnvironmentVariablesState,
-  selectEnvironmentVariablesByApplicationId,
-  selectSecretEnvironmentVariablesByApplicationId,
-} from '@qovery/domains/environment-variable'
+import { useService } from '@qovery/domains/services/feature'
+import { useVariables } from '@qovery/domains/variables/feature'
 import { type ServiceTypeEnum, getServiceType } from '@qovery/shared/enums'
 import { environmentVariableFactoryMock } from '@qovery/shared/factories'
-import {
-  type ApplicationEntity,
-  type EnvironmentVariableEntity,
-  type EnvironmentVariableSecretOrPublic,
-  type LoadingStatus,
-  type SecretEnvironmentVariableEntity,
-} from '@qovery/shared/interfaces'
+import { type ApplicationEntity, type EnvironmentVariableSecretOrPublic } from '@qovery/shared/interfaces'
 import { type TableHeadProps } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { type AppDispatch, type RootState } from '@qovery/state/store'
 import { ApplicationContext } from '../../ui/container/container'
 import PageVariables from '../../ui/page-variables/page-variables'
-import { sortVariable } from './utils/sort-variable'
 
 const placeholder = environmentVariableFactoryMock(5) as EnvironmentVariableSecretOrPublic[]
 
 export function PageVariablesFeature() {
   useDocumentTitle('Environment Variables – Qovery')
   const dispatch = useDispatch<AppDispatch>()
-  const { applicationId = '' } = useParams()
+  const { environmentId, applicationId = '' } = useParams()
+
+  const { data: service } = useService({
+    environmentId,
+    serviceId: applicationId,
+  })
+
+  const scope = match(service?.serviceType)
+    .with('APPLICATION', () => APIVariableScopeEnum.APPLICATION)
+    .with('CONTAINER', () => APIVariableScopeEnum.CONTAINER)
+    .with('JOB', () => APIVariableScopeEnum.JOB)
+    .otherwise(() => undefined)
+
+  const { data: sortVariableMemo = [], isLoading } = useVariables({
+    parentId: applicationId,
+    scope,
+  })
 
   const application = useSelector<RootState, ApplicationEntity | undefined>((state) =>
     selectApplicationById(state, applicationId)
@@ -39,66 +44,32 @@ export function PageVariablesFeature() {
 
   const serviceType: ServiceTypeEnum | undefined = application && getServiceType(application)
 
-  const environmentVariables = useSelector<RootState, EnvironmentVariableEntity[]>(
-    (state) => selectEnvironmentVariablesByApplicationId(state, applicationId),
-    shallowEqual
-  )
-  const secretEnvironmentVariables = useSelector<RootState, SecretEnvironmentVariableEntity[]>(
-    (state) => selectSecretEnvironmentVariablesByApplicationId(state, applicationId),
-    shallowEqual
-  )
-
-  const environmentVariablesLoadingStatus = useSelector<RootState, LoadingStatus>(
-    (state) => getEnvironmentVariablesState(state).loadingStatus
-  )
-
-  const sortVariableMemo = useMemo(
-    () =>
-      sortVariable(
-        environmentVariables as EnvironmentVariableSecretOrPublic[],
-        secretEnvironmentVariables as EnvironmentVariableSecretOrPublic[]
-      ),
-    [environmentVariables, secretEnvironmentVariables]
-  )
-
-  const isPublicEnvVariableLoading = useSelector<RootState, LoadingStatus>(
-    (state) => getEnvironmentVariablesState(state).loadingStatus
-  )
-  const isSecretEnvVariableLoading = useSelector<RootState, LoadingStatus>(
-    (state) => getSecretEnvironmentVariablesState(state).loadingStatus
-  )
-
   const [data, setData] = useState<EnvironmentVariableSecretOrPublic[]>(sortVariableMemo || placeholder)
-  const [isLoading, setLoading] = useState(false)
 
   const { setShowHideAllEnvironmentVariablesValues } = useContext(ApplicationContext)
 
   useEffect(() => {
     setShowHideAllEnvironmentVariablesValues(false)
-
-    if (serviceType) {
-      dispatch(fetchEnvironmentVariables({ applicationId, serviceType }))
-      dispatch(fetchSecretEnvironmentVariables({ applicationId, serviceType }))
-    }
   }, [dispatch, applicationId, serviceType])
-
-  useEffect(() => {
-    setLoading(
-      !(isPublicEnvVariableLoading === 'loaded' || isSecretEnvVariableLoading === 'loaded') &&
-        !environmentVariables.length &&
-        !secretEnvironmentVariables.length
-    )
-  }, [isPublicEnvVariableLoading, isSecretEnvVariableLoading])
 
   useEffect(() => {
     if (isLoading) {
       setData(placeholder)
     } else {
-      setData(sortVariableMemo)
+      // XXX: This should be done using `useMutationState` in tanstack-query v5 (we are currently still in v4)
+      // https://tanstack.com/query/v5/docs/react/guides/optimistic-updates
+      setData((previousData) =>
+        previousData.length === 0 || previousData === placeholder
+          ? sortVariableMemo
+          : sortVariableMemo.map((variable) => ({
+              ...variable,
+              is_new: !previousData.find((v) => v.key === variable.key),
+            }))
+      )
     }
-  }, [environmentVariables, secretEnvironmentVariables, sortVariableMemo, isLoading, environmentVariablesLoadingStatus])
+  }, [sortVariableMemo, isLoading])
 
-  const tableHead: TableHeadProps<EnvironmentVariableEntity>[] = [
+  const tableHead: TableHeadProps<EnvironmentVariableSecretOrPublic>[] = [
     {
       title: !isLoading ? `${data?.length} variable${data?.length && data.length > 1 ? 's' : ''}` : `0 variable`,
       className: 'px-4 py-2',
@@ -141,7 +112,16 @@ export function PageVariablesFeature() {
     <PageVariables
       key={data.length}
       tableHead={tableHead}
-      variables={!isLoading ? data : placeholder}
+      variables={
+        !isLoading
+          ? data.map((variable) => ({
+              ...variable,
+              // XXX: this is needed to comply with the current table implementation.
+              // It should be removed when migrating to tanstack-table
+              variable_kind: variable.value === null ? ('secret' as const) : ('public' as const),
+            }))
+          : placeholder
+      }
       setData={setData}
       isLoading={isLoading}
       serviceType={serviceType}

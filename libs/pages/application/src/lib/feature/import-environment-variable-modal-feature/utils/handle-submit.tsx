@@ -1,11 +1,4 @@
 import { type APIVariableScopeEnum, type VariableImportRequestVarsInner } from 'qovery-typescript-axios'
-import {
-  fetchEnvironmentVariables,
-  fetchSecretEnvironmentVariables,
-  importEnvironmentVariables,
-} from '@qovery/domains/environment-variable'
-import { type ServiceTypeEnum } from '@qovery/shared/enums'
-import { type AppDispatch } from '@qovery/state/store'
 
 export function formatData(data: { [key: string]: string }, keys: string[]) {
   const vars: VariableImportRequestVarsInner[] = []
@@ -20,22 +13,4 @@ export function formatData(data: { [key: string]: string }, keys: string[]) {
     })
   }
   return vars
-}
-
-export function handleSubmit(
-  data: { [key: string]: string },
-  applicationId: string,
-  keys: string[],
-  dispatch: AppDispatch,
-  closeModal: () => void,
-  overwriteEnabled = false,
-  serviceType?: ServiceTypeEnum
-): void {
-  if (!serviceType) return
-  const vars = formatData(data, keys)
-  dispatch(importEnvironmentVariables({ applicationId, vars, overwriteEnabled, serviceType })).then(() => {
-    closeModal()
-    dispatch(fetchEnvironmentVariables({ applicationId, serviceType }))
-    dispatch(fetchSecretEnvironmentVariables({ applicationId, serviceType }))
-  })
 }

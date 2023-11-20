@@ -10,13 +10,6 @@ import {
 import { databases, initialDatabasesState } from '@qovery/domains/database'
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import {
-  environmentVariables,
-  initialEnvironmentVariablesState,
-  initialSecretEnvironmentVariablesState,
-  secretEnvironmentVariables,
-} from '@qovery/domains/environment-variable'
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import {
   authProviderReducer,
   clusterReducer,
   initialAuthProviderState,
@@ -38,11 +31,6 @@ export const projectReducer = combineReducers({
   deploymentRules: deploymentRulesReducer,
 })
 
-export const environmentVariable = combineReducers({
-  public: environmentVariables,
-  secret: secretEnvironmentVariables,
-})
-
 export const applicationReducer = combineReducers({
   applications: applications,
   customDomains: customDomainReducer,
@@ -52,7 +40,6 @@ export const rootReducer = combineReducers({
   organization: organizationReducer,
   cluster: clusterReducer,
   databases: databases,
-  environmentVariable,
   application: applicationReducer,
   user: userReducer,
   userSignUp: userSignUp,
@@ -83,10 +70,6 @@ export const initialRootState = (): RootState => ({
   cluster: initialClusterState,
   project: {
     deploymentRules: initialDeploymentRulesState,
-  },
-  environmentVariable: {
-    public: initialEnvironmentVariablesState,
-    secret: initialSecretEnvironmentVariablesState,
   },
   databases: initialDatabasesState,
   application: {

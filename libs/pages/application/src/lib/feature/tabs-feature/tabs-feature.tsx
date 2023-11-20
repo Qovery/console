@@ -60,6 +60,7 @@ function ContentRightEnvVariable({
             openModal({
               content: (
                 <ImportEnvironmentVariableModalFeature
+                  environmentId={environmentId}
                   closeModal={closeModal}
                   applicationId={application.id}
                   serviceType={serviceType}
