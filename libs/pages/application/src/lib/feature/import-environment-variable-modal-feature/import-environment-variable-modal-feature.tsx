@@ -72,7 +72,7 @@ export function ImportEnvironmentVariableModalFeature(props: ImportEnvironmentVa
     onDrop: (acceptedFiles) => onDrop(acceptedFiles, handleData),
   })
 
-  const { mutateAsync: importVariables } = useImportVariables()
+  const { mutateAsync: importVariables, isLoading: isImportVariablesLoading } = useImportVariables()
 
   return (
     <FormProvider {...methods}>
@@ -82,7 +82,7 @@ export function ImportEnvironmentVariableModalFeature(props: ImportEnvironmentVa
         changeScopeForAll={(scope) => changeScopeForAll(scope as APIVariableScopeEnum, methods.setValue, keys)}
         keys={keys}
         closeModal={props.closeModal}
-        loading={isLoading}
+        loading={isLoading || isImportVariablesLoading}
         availableScopes={computeAvailableScope(undefined, false)}
         onSubmit={methods.handleSubmit(async () => {
           if (!scope) {

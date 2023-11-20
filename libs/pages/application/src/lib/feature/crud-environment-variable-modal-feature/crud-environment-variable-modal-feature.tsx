@@ -128,6 +128,8 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
           )
           .otherwise(() => '')
 
+        setLoading(true)
+
         await match(props)
           .with({ mode: EnvironmentVariableCrudMode.CREATION, type: EnvironmentVariableType.NORMAL }, () =>
             createVariable({
