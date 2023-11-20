@@ -31,6 +31,7 @@ export function GitRepositorySettings({
     repository: string
     branch: string
     root_path: string
+    git_token_name: string
   }>()
   const { openModal, closeModal } = useModal()
 
