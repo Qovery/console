@@ -6,7 +6,7 @@ import useHelmRepository from '../hooks/use-helm-repository/use-helm-repository'
 export function SourceSetting() {
   const { organizationId = '' } = useParams()
   const { control, watch } = useFormContext()
-  const watchFieldProvider = watch('provider')
+  const watchFieldProvider = watch('source_provider')
 
   const {
     data: helmRepositories = [],
@@ -20,7 +20,7 @@ export function SourceSetting() {
   return (
     <div className="flex flex-col gap-3">
       <Controller
-        name="provider"
+        name="source_provider"
         control={control}
         render={({ field, fieldState: { error } }) => (
           <InputSelect
@@ -42,14 +42,14 @@ export function SourceSetting() {
         )}
       />
       {watchFieldProvider === 'HELM_REPOSITORY' && (
-        <>
+        <div className="flex flex-col gap-3">
           {!isFetchedHelmRepositories || isLoadingHelmRepositories ? (
             <div className="flex justify-center">
               <LoaderSpinner />
             </div>
           ) : (
             <Controller
-              name="source.repository.repository"
+              name="repository"
               control={control}
               rules={{
                 required: 'Please select a repository.',
@@ -70,7 +70,7 @@ export function SourceSetting() {
             />
           )}
           <Controller
-            name="name"
+            name="chart_name"
             control={control}
             rules={{
               required: 'Please enter a chart name.',
@@ -86,7 +86,7 @@ export function SourceSetting() {
             )}
           />
           <Controller
-            name="version"
+            name="chart_version"
             control={control}
             rules={{
               required: 'Please enter a version.',
@@ -101,7 +101,7 @@ export function SourceSetting() {
               />
             )}
           />
-        </>
+        </div>
       )}
     </div>
   )

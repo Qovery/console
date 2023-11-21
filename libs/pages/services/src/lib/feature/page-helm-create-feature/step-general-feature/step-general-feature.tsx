@@ -14,7 +14,6 @@ export function StepGeneralFeature() {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const { generalForm, setCurrentStep } = useHelmCreateContext()
   const navigate = useNavigate()
-
   setCurrentStep(1)
 
   const funnelCardHelp = (
@@ -44,9 +43,9 @@ export function StepGeneralFeature() {
     navigate(pathCreate + SERVICES_CREATION_RESOURCES_URL)
   })
 
-  const watchFieldProvider = generalForm.watch('provider')
-  const watchFieldGitProvider = generalForm.watch('source.git.provider')
-  const watchFieldGitRepository = generalForm.watch('source.git.repository')
+  const watchFieldProvider = generalForm.watch('source_provider')
+  const watchFieldGitProvider = generalForm.watch('provider')
+  const watchFieldGitRepository = generalForm.watch('repository')
 
   return (
     <FunnelFlowBody helpSection={funnelCardHelp}>
@@ -68,7 +67,7 @@ export function StepGeneralFeature() {
               </p>
               <SourceSetting />
               {watchFieldProvider === 'GIT' && (
-                <div className="mt-3">
+                <div className="flex flex-col gap-3 mt-3">
                   <GitProviderSetting />
                   {watchFieldGitProvider && <GitRepositorySetting gitProvider={watchFieldGitProvider} />}
                   {watchFieldGitProvider && watchFieldGitRepository && (
@@ -81,7 +80,7 @@ export function StepGeneralFeature() {
               <Heading className="mt-10 mb-2">Deployment</Heading>
               <p className="text-sm text-neutral-350 mb-3">Define the deployment configuration of your service.</p>
               <DeploymentSetting />
-              <AutoDeploySetting source="GIT" className="mt-5" />
+              {watchFieldProvider === 'GIT' && <AutoDeploySetting source="GIT" className="mt-5" />}
             </Section>
           </Section>
           <div className="flex justify-end gap-3 mt-6">

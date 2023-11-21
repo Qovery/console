@@ -17,22 +17,16 @@ type HelmGeneralData = {
   name: string
   description?: string
   auto_preview: boolean
+  auto_deploy?: boolean
   timeout_sec: number
   arguments: string[]
-  provider: 'HELM_REPOSITORY' | 'GIT'
-  source: {
-    git?: {
-      provider: GitProviderEnum
-      repository: string
-      branch: string
-      root_path: string
-    }
-    repository?: {
-      repository: string
-      chart_name: string
-      chart_version: string
-    }
-  }
+  source_provider: 'HELM_REPOSITORY' | 'GIT'
+  repository: string
+  provider?: GitProviderEnum
+  branch?: string
+  root_path?: string
+  chart_name?: string
+  chart_version?: string
 }
 
 interface HelmCreateContextInterface {
