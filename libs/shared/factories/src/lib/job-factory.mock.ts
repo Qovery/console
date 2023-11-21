@@ -38,6 +38,7 @@ export const cronjobFactoryMock = (howMany: number, withContainer = false): JobA
 
     return {
       id: `${index}`,
+      job_type: 'CRON',
       created_at: new Date().toString(),
       updated_at: new Date().toString(),
       storage: [
@@ -110,6 +111,7 @@ export const lifecycleJobFactoryMock = (howMany: number, withContainer = false):
 
     return {
       id: `${index}`,
+      job_type: 'LIFECYCLE',
       created_at: new Date().toString(),
       updated_at: new Date().toString(),
       storage: [

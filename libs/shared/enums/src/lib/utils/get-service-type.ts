@@ -1,12 +1,12 @@
 import {
   type ApplicationGitRepository,
+  type BaseJobResponseAllOfSource,
+  type BaseJobResponseAllOfSourceOneOf,
+  type BaseJobResponseAllOfSourceOneOf1,
   type ContainerSource,
   type HelmResponseAllOfSource,
   type HelmResponseAllOfSourceOneOf,
   type HelmResponseAllOfSourceOneOf1,
-  type JobResponseAllOfSource,
-  type JobResponseAllOfSourceOneOf,
-  type JobResponseAllOfSourceOneOf1,
 } from 'qovery-typescript-axios'
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import {
@@ -31,9 +31,9 @@ export const getServiceType = (data: ApplicationEntity | DatabaseEntity) => {
     !isJob
   ) {
     currentType = ServiceTypeEnum.DATABASE
-  } else if (isJob && (data as JobApplicationEntity)?.schedule?.cronjob) {
+  } else if (isJob && 'schedule' in data && 'cronjob' in (data.schedule ?? {})) {
     currentType = ServiceTypeEnum.CRON_JOB
-  } else if (isJob && !(data as JobApplicationEntity)?.schedule?.cronjob) {
+  } else if (isJob && 'schedule' in data && !('cronjob' in (data.schedule ?? {}))) {
     currentType = ServiceTypeEnum.LIFECYCLE_JOB
   } else {
     currentType = ServiceTypeEnum.APPLICATION
@@ -77,11 +77,11 @@ export function isHelmRepositorySource(source?: HelmResponseAllOfSource): source
   return !!source && 'repository' in source
 }
 
-export function isJobGitSource(source?: JobResponseAllOfSource): source is JobResponseAllOfSourceOneOf1 {
+export function isJobGitSource(source?: BaseJobResponseAllOfSource): source is BaseJobResponseAllOfSourceOneOf1 {
   return !!source && 'docker' in source
 }
 
-export function isJobContainerSource(source?: JobResponseAllOfSource): source is JobResponseAllOfSourceOneOf {
+export function isJobContainerSource(source?: BaseJobResponseAllOfSource): source is BaseJobResponseAllOfSourceOneOf {
   return !!source && 'image' in source
 }
 

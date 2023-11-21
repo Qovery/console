@@ -1,12 +1,18 @@
 import { useQueryClient } from '@tanstack/react-query'
-import { type JobResponseAllOfSchedule } from 'qovery-typescript-axios'
+import { type CronJobResponseAllOfSchedule, type LifecycleJobResponseAllOfSchedule } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { editApplication, postApplicationActionsRedeploy, selectApplicationById } from '@qovery/domains/application'
 import { ServiceTypeEnum, getServiceType, isCronJob, isLifeCycleJob } from '@qovery/shared/enums'
-import { type ApplicationEntity, type JobConfigureData } from '@qovery/shared/interfaces'
+import {
+  type ApplicationEntity,
+  type CronJob,
+  type JobApplicationEntity,
+  type JobConfigureData,
+  type LifecycleJob,
+} from '@qovery/shared/interfaces'
 import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { toastError } from '@qovery/shared/ui'
 import { type AppDispatch, type RootState } from '@qovery/state/store'
@@ -52,43 +58,46 @@ export function PageSettingsConfigureJobFeature() {
       methods.setValue('nb_restarts', application.max_nb_restart)
       methods.setValue('port', application.port || undefined)
 
+      // TODO: should be typeguard
       if (isCronJob(application)) {
-        methods.setValue('schedule', application.schedule?.cronjob?.scheduled_at || undefined)
-        methods.setValue('cmd_arguments', JSON.stringify(application.schedule?.cronjob?.arguments) || undefined)
-        methods.setValue('image_entry_point', application.schedule?.cronjob?.entrypoint || undefined)
+        const { cronjob } = (application as CronJob).schedule
+        methods.setValue('schedule', cronjob?.scheduled_at || undefined)
+        methods.setValue('cmd_arguments', JSON.stringify(cronjob?.arguments) || undefined)
+        methods.setValue('image_entry_point', cronjob?.entrypoint || undefined)
       } else {
-        methods.setValue('on_start.enabled', !!application.schedule?.on_start)
-        if (application.schedule?.on_start?.arguments && application.schedule?.on_start?.arguments.length > 0) {
-          methods.setValue('on_start.arguments_string', JSON.stringify(application.schedule.on_start.arguments))
+        const { on_start, on_delete, on_stop } = (application as LifecycleJob).schedule
+        methods.setValue('on_start.enabled', !!on_start)
+        if (on_start?.arguments && on_start?.arguments.length > 0) {
+          methods.setValue('on_start.arguments_string', JSON.stringify(on_start.arguments))
         }
-        methods.setValue('on_start.entrypoint', application.schedule?.on_start?.entrypoint)
+        methods.setValue('on_start.entrypoint', on_start?.entrypoint)
 
-        methods.setValue('on_stop.enabled', !!application.schedule?.on_stop)
-        if (application.schedule?.on_stop?.arguments && application.schedule?.on_stop?.arguments.length > 0) {
-          methods.setValue('on_stop.arguments_string', JSON.stringify(application.schedule?.on_stop?.arguments))
+        methods.setValue('on_stop.enabled', !!on_stop)
+        if (on_stop?.arguments && on_stop?.arguments.length > 0) {
+          methods.setValue('on_stop.arguments_string', JSON.stringify(on_stop?.arguments))
         }
-        methods.setValue('on_stop.entrypoint', application.schedule?.on_stop?.entrypoint)
+        methods.setValue('on_stop.entrypoint', on_stop?.entrypoint)
 
-        methods.setValue('on_delete.enabled', !!application.schedule?.on_delete)
-        if (application.schedule?.on_delete?.arguments && application.schedule?.on_delete?.arguments.length > 0) {
-          methods.setValue('on_delete.arguments_string', JSON.stringify(application.schedule?.on_delete?.arguments))
+        methods.setValue('on_delete.enabled', !!on_delete)
+        if (on_delete?.arguments && on_delete?.arguments.length > 0) {
+          methods.setValue('on_delete.arguments_string', JSON.stringify(on_delete?.arguments))
         }
-        methods.setValue('on_delete.entrypoint', application.schedule?.on_delete?.entrypoint)
+        methods.setValue('on_delete.entrypoint', on_delete?.entrypoint)
       }
     }
   }, [application, methods])
 
   const onSubmit = methods.handleSubmit((data) => {
     setLoading(true)
-    const job = { ...application }
+    const job = { ...(application as JobApplicationEntity) }
 
     job.max_duration_seconds = data.max_duration
     job.max_nb_restart = data.nb_restarts
     job.port = data.port
 
     if (isCronJob(application)) {
-      const schedule: JobResponseAllOfSchedule = {}
-      if (job.schedule?.cronjob) {
+      const schedule: CronJobResponseAllOfSchedule = {}
+      if ('cronjob' in job.schedule) {
         schedule.cronjob = {
           scheduled_at: data.schedule || '',
         }
@@ -109,7 +118,7 @@ export function PageSettingsConfigureJobFeature() {
     }
 
     if (isLifeCycleJob(application)) {
-      const schedule: JobResponseAllOfSchedule = {}
+      const schedule: LifecycleJobResponseAllOfSchedule = {}
       if (data.on_start?.enabled) {
         schedule.on_start = {
           entrypoint: data.on_start.entrypoint,
