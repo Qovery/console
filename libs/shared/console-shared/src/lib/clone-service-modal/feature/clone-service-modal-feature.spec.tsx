@@ -62,7 +62,7 @@ describe('CloneServiceModalFeature', () => {
     expect(useCloneServiceMockSpy().mutateAsync).toHaveBeenCalledWith({
       serviceId: serviceToClone.id,
       serviceType: 'APPLICATION',
-      cloneRequest: {
+      payload: {
         environment_id: mockEnvironments[2].id,
         name: 'test',
       },
