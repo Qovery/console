@@ -17,7 +17,7 @@ export function DeploymentSetting() {
           render={({ field, fieldState: { error } }) => (
             <InputTextArea
               label="Helm arguments"
-              name="arguments"
+              name={field.name}
               onChange={field.onChange}
               value={field.value}
               error={error?.message}
@@ -42,7 +42,7 @@ export function DeploymentSetting() {
         render={({ field, fieldState: { error } }) => (
           <InputText
             label="Helm timeout"
-            name="timeout_sec"
+            name={field.name}
             onChange={field.onChange}
             value={field.value}
             error={error?.message}

@@ -1,8 +1,7 @@
-import { type GitProviderEnum } from 'qovery-typescript-axios'
 import { FormProvider } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { GitBranchSettings, GitProviderSetting, GitRepositorySetting } from '@qovery/domains/organizations/feature'
-import { DeploymentSetting } from '@qovery/domains/service-helm/feature'
+import { DeploymentSetting, SourceSetting } from '@qovery/domains/service-helm/feature'
 import { AutoDeploySetting, GeneralSetting } from '@qovery/domains/services/feature'
 import { SERVICES_CREATION_RESOURCES_URL, SERVICES_HELM_CREATION_URL, SERVICES_URL } from '@qovery/shared/routes'
 import { Button, FunnelFlowBody, FunnelFlowHelpCard, Heading, Section } from '@qovery/shared/ui'
@@ -67,14 +66,15 @@ export function StepGeneralFeature() {
               <p className="text-sm text-neutral-350 mb-3">
                 Deploy your helm chart from a Git repository or from a Helm repository.
               </p>
+              <SourceSetting />
               {watchFieldProvider === 'GIT' && (
-                <>
+                <div className="mt-3">
                   <GitProviderSetting />
                   {watchFieldGitProvider && <GitRepositorySetting gitProvider={watchFieldGitProvider} />}
                   {watchFieldGitProvider && watchFieldGitRepository && (
                     <GitBranchSettings gitProvider={watchFieldGitProvider} />
                   )}
-                </>
+                </div>
               )}
             </Section>
             <Section>
