@@ -1,8 +1,13 @@
-import { type Credentials } from 'qovery-typescript-axios'
+import { type ApplicationGitRepository, type Credentials } from 'qovery-typescript-axios'
 import { type ComponentPropsWithoutRef } from 'react'
 import { P, match } from 'ts-pattern'
+import { type ServiceType } from '@qovery/domains/services/data-access'
 import { IconEnum, ServiceTypeEnum, isHelmGitSource, isJobContainerSource, isJobGitSource } from '@qovery/shared/enums'
-import { APPLICATION_SETTINGS_RESOURCES_URL, APPLICATION_SETTINGS_URL } from '@qovery/shared/routes'
+import {
+  APPLICATION_SETTINGS_RESOURCES_URL,
+  APPLICATION_SETTINGS_URL,
+  APPLICATION_SETTINGS_VALUES_URL,
+} from '@qovery/shared/routes'
 import {
   Badge,
   Button,
@@ -26,6 +31,62 @@ import { useService } from '../hooks/use-service/use-service'
 import { LastCommitAuthor } from '../last-commit-author/last-commit-author'
 import { LastCommit } from '../last-commit/last-commit'
 import { ServiceDetailsSkeleton } from './service-details-skeleton'
+
+function GitRepository({
+  serviceId,
+  serviceType,
+  gitRepository,
+}: {
+  serviceId: string
+  serviceType: Extract<ServiceType, 'APPLICATION' | 'JOB' | 'CRON_JOB' | 'LIFECYCLE_JOB' | 'HELM'>
+  gitRepository: ApplicationGitRepository
+}) {
+  return (
+    <>
+      {gitRepository.url && gitRepository.name && (
+        <>
+          <Dt>Repository:</Dt>
+          <Dd>
+            <a href={gitRepository.url} target="_blank" rel="noopener noreferrer">
+              <Badge variant="surface" size="xs" className="gap-1">
+                <Icon
+                  name={
+                    gitRepository.url.includes('//github')
+                      ? IconEnum.GITHUB
+                      : gitRepository.url.includes('//bitbucket')
+                      ? IconEnum.BITBUCKET
+                      : IconEnum.GITLAB
+                  }
+                  height={14}
+                  width={14}
+                />
+                <Truncate text={gitRepository.name} truncateLimit={18} />
+              </Badge>
+            </a>
+          </Dd>
+        </>
+      )}
+      {gitRepository.branch && (
+        <>
+          <Dt>Branch:</Dt>
+          <Dd>
+            <Badge variant="surface" size="xs" className="gap-1">
+              <Icon name={IconAwesomeEnum.CODE_BRANCH} height={14} width={14} />
+              <Truncate text={gitRepository.branch} truncateLimit={18} />
+            </Badge>
+          </Dd>
+        </>
+      )}
+      <Dt>Commit:</Dt>
+      <Dd>
+        <div className="inline-flex items-center gap-2">
+          <LastCommitAuthor gitRepository={gitRepository} serviceId={serviceId} serviceType={serviceType} />
+          <LastCommit gitRepository={gitRepository} serviceId={serviceId} serviceType={serviceType} />
+        </div>
+      </Dd>
+    </>
+  )
+}
 
 export interface ServiceDetailsProps extends ComponentPropsWithoutRef<'div'> {
   environmentId: string
@@ -131,6 +192,34 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
     })
     .otherwise(() => null)
 
+  const valuesOverride = match(service)
+    .with({ serviceType: 'HELM' }, ({ serviceType, values_override: { file } }) => {
+      if (file?.git?.git_repository) {
+        return (
+          <Dl>
+            <Dt>Type:</Dt>
+            <Dd>Git repository</Dd>
+            <GitRepository serviceId={serviceId} serviceType={serviceType} gitRepository={file.git.git_repository} />
+          </Dl>
+        )
+      } else if (file?.raw) {
+        return (
+          <Dl>
+            <Dt>Type:</Dt>
+            <Dd>Raw YAML</Dd>
+          </Dl>
+        )
+      } else {
+        return (
+          <Dl>
+            <Dt>Type:</Dt>
+            <Dd>Manual</Dd>
+          </Dl>
+        )
+      }
+    })
+    .otherwise(() => null)
+
   const sectionClassName = 'text-neutral-350 gap-4 pl-8 pr-5'
 
   const handleCopyCredentials = (credentials: Credentials) => {
@@ -182,60 +271,18 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
                 .with({ serviceType: 'HELM' }, ({ source }) => source.git?.git_repository)
                 .exhaustive()
 
+              if (!gitRepository) {
+                return null
+              }
+
               return (
-                gitRepository && (
-                  <Dl>
-                    {gitRepository.url && gitRepository.name && (
-                      <>
-                        <Dt>Repository:</Dt>
-                        <Dd>
-                          <a href={gitRepository.url} target="_blank" rel="noopener noreferrer">
-                            <Badge variant="surface" size="xs" className="gap-1">
-                              <Icon
-                                name={
-                                  gitRepository.url.includes('//github')
-                                    ? IconEnum.GITHUB
-                                    : gitRepository.url.includes('//bitbucket')
-                                    ? IconEnum.BITBUCKET
-                                    : IconEnum.GITLAB
-                                }
-                                height={14}
-                                width={14}
-                              />
-                              <Truncate text={gitRepository.name} truncateLimit={18} />
-                            </Badge>
-                          </a>
-                        </Dd>
-                      </>
-                    )}
-                    {gitRepository.branch && (
-                      <>
-                        <Dt>Branch:</Dt>
-                        <Dd>
-                          <Badge variant="surface" size="xs" className="gap-1">
-                            <Icon name={IconAwesomeEnum.CODE_BRANCH} height={14} width={14} />
-                            <Truncate text={gitRepository.branch} truncateLimit={18} />
-                          </Badge>
-                        </Dd>
-                      </>
-                    )}
-                    <Dt>Commit:</Dt>
-                    <Dd>
-                      <div className="inline-flex items-center gap-2">
-                        <LastCommitAuthor
-                          gitRepository={gitRepository}
-                          serviceId={serviceId}
-                          serviceType={service.serviceType}
-                        />
-                        <LastCommit
-                          gitRepository={gitRepository}
-                          serviceId={serviceId}
-                          serviceType={service.serviceType}
-                        />
-                      </div>
-                    </Dd>
-                  </Dl>
-                )
+                <Dl>
+                  <GitRepository
+                    serviceId={serviceId}
+                    serviceType={service.serviceType}
+                    gitRepository={gitRepository}
+                  />
+                </Dl>
               )
             }
           )
@@ -319,6 +366,25 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
               </Link>
             </div>
             <div className="grid grid-cols-2 gap-2">{resources}</div>
+          </Section>
+        </>
+      )}
+      {valuesOverride && (
+        <>
+          <hr />
+          <Section className={sectionClassName}>
+            <div className="flex flex-row justify-between">
+              {/* XXX: Should be Heading, typography & design wanted */}
+              <span className="flex items-center gap-1 text-neutral-400 font-medium">Values override</span>
+              <Link
+                color="current"
+                to={`..${APPLICATION_SETTINGS_URL + APPLICATION_SETTINGS_VALUES_URL}`}
+                relative="path"
+              >
+                <Icon name={IconAwesomeEnum.WHEEL} className="text-base text-neutral-300" />
+              </Link>
+            </div>
+            <div className="grid grid-cols-2 gap-2">{valuesOverride}</div>
           </Section>
         </>
       )}
