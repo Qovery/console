@@ -52,6 +52,7 @@ export function DeploymentSetting() {
       <Controller
         name="auto_preview"
         control={control}
+        defaultValue={false}
         render={({ field }) => (
           <InputToggle
             title="Allow cluster-wide resources"

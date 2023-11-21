@@ -6,12 +6,7 @@ import { SERVICES_URL } from '@qovery/shared/routes'
 import { FunnelFlow } from '@qovery/shared/ui'
 import { ROUTER_SERVICE_HELM_CREATION } from '../../router/router'
 
-export const steps: { title: string }[] = [
-  { title: 'General data' },
-  { title: 'Values' },
-  { title: 'Networking' },
-  { title: 'Summary' },
-]
+export const steps: { title: string }[] = [{ title: 'General data' }, { title: 'Values' }, { title: 'Summary' }]
 
 type HelmGeneralData = {
   name: string
@@ -63,7 +58,7 @@ export function PageHelmCreateFeature() {
     >
       <FunnelFlow
         onExit={() => navigate(SERVICES_URL(organizationId, projectId, environmentId))}
-        totalSteps={5}
+        totalSteps={steps.length}
         currentStep={currentStep}
         currentTitle={steps[currentStep - 1].title}
         portal

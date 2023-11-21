@@ -22,6 +22,9 @@ export function SourceSetting() {
       <Controller
         name="source_provider"
         control={control}
+        rules={{
+          required: 'Please select a Helm source.',
+        }}
         render={({ field, fieldState: { error } }) => (
           <InputSelect
             label="Helm source"

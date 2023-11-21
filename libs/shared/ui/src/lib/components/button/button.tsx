@@ -10,7 +10,7 @@ const buttonVariants = cva(['inline-flex', 'items-center', 'shrink-0', 'font-med
       outline: [],
     },
     color: {
-      brand: [],
+      brand: ['disabled:text-brand-300', 'disabled:bg-brand-100', 'disabled:border-none'],
       neutral: [],
       green: [],
     },
