@@ -15,9 +15,11 @@ export function useInviteMember() {
   const [inviteDetail, setInviteDetail] = useState<InviteMember | undefined>()
   const { search, pathname } = useLocation()
   const navigate = useNavigate()
-  const { getAccessTokenSilently } = useAuth()
+  const { getAccessTokenSilently, checkIsAuthenticated } = useAuth()
   const dispatch = useDispatch<AppDispatch>()
-  const { refetch: refetchOrganizations } = useOrganizations()
+  const { refetch: refetchOrganizations } = useOrganizations({
+    enabled: checkIsAuthenticated,
+  })
 
   const checkTokenInStorage = useCallback(() => {
     const inviteToken = localStorage.getItem('inviteToken')

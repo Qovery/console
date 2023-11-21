@@ -8,7 +8,9 @@ import { LoaderSpinner, ToastEnum, toast } from '@qovery/shared/ui'
 export function RedirectOverview() {
   const { organizationId = '' } = useParams()
   const navigate = useNavigate()
-  const { data: organizations = [] } = useOrganizations()
+
+  const { data: organizations = [] } = useOrganizations({})
+
   const { data: projects = [], isLoading, isFetched } = useProjects({ organizationId })
 
   useEffect(() => {

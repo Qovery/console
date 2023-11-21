@@ -33,7 +33,7 @@ export function Layout(props: PropsWithChildren<LayoutProps>) {
   const clusters = useSelector<RootState, Cluster[]>((state) =>
     selectClustersEntitiesByOrganizationId(state, organizationId)
   )
-  const { data: organizations = [] } = useOrganizations()
+  const { data: organizations = [] } = useOrganizations({})
   const { refetch: fetchOrganization } = useOrganization({ organizationId, enabled: false })
 
   const { data: environment } = useEnvironment({ environmentId })
