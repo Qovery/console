@@ -83,7 +83,7 @@ export function useStatusWebSockets({
         // You can have information about an application (eg. if it's stopping)
         // But you can also lose the information about this application (eg. it it's stopped it won't appear in the socket result)
         queryClient.resetQueries([...queries.services.runningStatus._def, env.id])
-        const services = [...env.applications, ...env.containers, ...env.databases, ...env.jobs]
+        const services = [...env.applications, ...env.containers, ...env.databases, ...env.jobs, ...env.helms]
         for (const serviceRunningStatus of services) {
           queryClient.setQueryData(
             queries.services.runningStatus(env.id, serviceRunningStatus.id).queryKey,
