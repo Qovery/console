@@ -18,7 +18,7 @@ export function CreateProjectModalFeature(props: CreateProjectModalFeatureProps)
     mode: 'onChange',
   })
   const [loading, setLoading] = useState(false)
-  const { mutateAsync: createProject } = useCreateProject({ organizationId })
+  const { mutateAsync: createProject } = useCreateProject()
 
   const onSubmit = methods.handleSubmit(async (data: FieldValues) => {
     setLoading(true)

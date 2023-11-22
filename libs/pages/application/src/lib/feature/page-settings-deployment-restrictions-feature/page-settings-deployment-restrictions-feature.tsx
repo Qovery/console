@@ -101,7 +101,7 @@ function PageSettingsDeploymentRestrictionsFeatureInner({
   }
   const { data: deploymentRestrictions = [], isLoading: isLoadingDeploymentRestrictions } =
     useDeploymentRestrictions(serviceParams)
-  const { mutate: deleteRestriction } = useDeleteDeploymentRestriction(serviceParams)
+  const { mutate: deleteRestriction } = useDeleteDeploymentRestriction()
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
   const handleEdit = (deploymentRestriction: ApplicationDeploymentRestriction) => {

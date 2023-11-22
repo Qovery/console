@@ -14,13 +14,14 @@ export function PageProjectDangerZoneFeature() {
   const [loading, setLoading] = useState(false)
 
   const { data: project } = useProject({ organizationId, projectId })
-  const { mutateAsync } = useDeleteProject({ organizationId })
+  const { mutateAsync } = useDeleteProject()
 
   const deleteProjectAction = async () => {
     setLoading(true)
 
     try {
       await mutateAsync({
+        organizationId,
         projectId,
       })
       setLoading(false)

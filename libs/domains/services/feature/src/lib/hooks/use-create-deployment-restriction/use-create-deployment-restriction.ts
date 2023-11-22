@@ -1,16 +1,11 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { type ApplicationType, type JobType, mutations } from '@qovery/domains/services/data-access'
+import { mutations } from '@qovery/domains/services/data-access'
 import { queries } from '@qovery/state/util-queries'
 
-export interface UseCreateDeploymentRestrictionProps {
-  serviceId: string
-  serviceType: ApplicationType | JobType
-}
-
-export function useCreateDeploymentRestriction({ serviceId, serviceType }: UseCreateDeploymentRestrictionProps) {
+export function useCreateDeploymentRestriction() {
   const queryClient = useQueryClient()
   return useMutation(mutations.createDeploymentRestriction, {
-    onSuccess() {
+    onSuccess(_, { serviceId, serviceType }) {
       queryClient.invalidateQueries({
         queryKey: queries.services.deploymentRestrictions({ serviceId, serviceType }).queryKey,
       })
