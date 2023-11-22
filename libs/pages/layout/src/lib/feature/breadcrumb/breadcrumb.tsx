@@ -13,7 +13,7 @@ import { Breadcrumb } from '../../ui/breadcrumb/breadcrumb'
 
 export function BreadcrumbFeature() {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
-  const { data: organizations = [] } = useOrganizations({})
+  const { data: organizations = [] } = useOrganizations()
   const { data: organization } = useOrganization({ organizationId })
   const clusters = useSelector((state: RootState) => selectClustersEntitiesByOrganizationId(state, organizationId))
   const applications = useSelector((state: RootState) => selectApplicationsEntitiesByEnvId(state, environmentId))

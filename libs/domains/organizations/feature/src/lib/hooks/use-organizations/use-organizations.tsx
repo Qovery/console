@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { queries } from '@qovery/state/util-queries'
 
-export function useOrganizations({ enabled }: { enabled?: boolean }) {
+export function useOrganizations({ enabled }: { enabled?: boolean } = {}) {
   return useQuery({
     ...queries.organizations.list,
     select(data) {

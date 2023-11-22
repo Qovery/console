@@ -14,7 +14,7 @@ export function OnboardingProject() {
   const navigate = useNavigate()
   const { authLogout } = useAuth()
   const { handleSubmit, control, setValue } = useForm<{ project_name: string; organization_name: string }>()
-  const { data: organizations = [] } = useOrganizations({})
+  const { data: organizations = [] } = useOrganizations()
   const [backButton, setBackButton] = useState<boolean>()
 
   const { organization_name, project_name, admin_email, setContextValue } = useContext(ContextOnboarding)

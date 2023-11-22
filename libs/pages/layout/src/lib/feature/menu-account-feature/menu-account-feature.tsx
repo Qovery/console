@@ -10,7 +10,7 @@ export function MenuAccountFeature() {
   const { data: user } = useUserAccount()
   const { user: userToken } = useAuth()
 
-  const { data: organizations = [] } = useOrganizations({})
+  const { data: organizations = [] } = useOrganizations()
   const { data: currentOrganization } = useOrganization({ organizationId })
 
   return (
