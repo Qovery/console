@@ -38,7 +38,6 @@ export function StepGeneralFeature() {
   )
 
   const onSubmit = generalForm.handleSubmit((data) => {
-    console.log(data)
     const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_HELM_CREATION_URL}`
     navigate(pathCreate + SERVICES_CREATION_RESOURCES_URL)
   })
