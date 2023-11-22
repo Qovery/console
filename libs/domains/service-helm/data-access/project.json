@@ -12,5 +12,5 @@
       }
     }
   },
-  "tags": []
+  "tags": ["scope:domain", "type:data-access", "slice:services"]
 }
