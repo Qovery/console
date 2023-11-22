@@ -1,5 +1,6 @@
 import { useQueries, useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
+import { P, match } from 'ts-pattern'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { queries } from '@qovery/state/util-queries'
 
@@ -30,31 +31,42 @@ export function useServices({ environmentId }: UseServicesProps) {
       (services ?? []).map((service, index) => {
         const runningStatus = runningStatusResults[index].data
         const deploymentStatus = deploymentStatusResults[index].data
+
+        const runningStatusLabel = upperCaseFirstLetter(runningStatus?.state.replace('_', ' ') ?? 'STOPPED')
+        const deploymentStatusLabel = upperCaseFirstLetter(
+          (deploymentStatus?.state === 'READY' ? 'NEVER_DEPLOYED' : deploymentStatus?.state)?.replace('_', ' ') ??
+            'STOPPED'
+        )
+        const isManagedDb = service.serviceType === 'DATABASE' && service.mode === 'MANAGED'
+
+        const runningStatusOverride = match({ runningStatus, isManagedDb })
+          .with({ runningStatus: P.any, isManagedDb: true }, () => ({
+            ...deploymentStatus,
+            state: match(deploymentStatus?.state)
+              .with('DEPLOYED', () => 'RUNNING' as const)
+              .otherwise(() => 'UNKNOWN' as const),
+            stateLabel: match(deploymentStatus?.state)
+              .with('DEPLOYED', () => 'Running')
+              .otherwise(() => 'Unknown'),
+          }))
+          .with({ runningStatus: P.nullish, isManagedDb: false }, () => ({
+            state: undefined,
+            stateLabel: 'Stopped',
+          }))
+          .with({ runningStatus: P.not(P.nullish) }, ({ runningStatus }) => ({
+            ...runningStatus,
+            stateLabel: runningStatusLabel,
+          }))
+          .exhaustive()
+
         return {
           ...service,
-          ...(runningStatus
-            ? {
-                runningStatus: {
-                  ...runningStatus,
-                  stateLabel: upperCaseFirstLetter(runningStatus?.state.replace('_', ' ') ?? 'STOPPED'),
-                },
-              }
-            : {
-                runningStatus: {
-                  state: undefined,
-                  stateLabel: 'Stopped',
-                },
-              }),
+          runningStatus: runningStatusOverride,
           ...(deploymentStatus
             ? {
                 deploymentStatus: {
                   ...deploymentStatus,
-                  stateLabel: upperCaseFirstLetter(
-                    (deploymentStatus?.state === 'READY' ? 'NEVER_DEPLOYED' : deploymentStatus?.state)?.replace(
-                      '_',
-                      ' '
-                    ) ?? 'STOPPED'
-                  ),
+                  stateLabel: deploymentStatusLabel,
                 },
               }
             : {}),
