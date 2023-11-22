@@ -28,6 +28,7 @@ export const getServiceType = (data: ApplicationEntity | DatabaseEntity) => {
   } else if (
     !(data as GitApplicationEntity)?.build_mode &&
     !(data as ContainerApplicationEntity)?.image_name &&
+    !('values_override' in data) &&
     !isJob
   ) {
     currentType = ServiceTypeEnum.DATABASE
@@ -35,6 +36,8 @@ export const getServiceType = (data: ApplicationEntity | DatabaseEntity) => {
     currentType = ServiceTypeEnum.CRON_JOB
   } else if (isJob && 'schedule' in data && !('cronjob' in (data.schedule ?? {}))) {
     currentType = ServiceTypeEnum.LIFECYCLE_JOB
+  } else if ('values_override' in data) {
+    currentType = ServiceTypeEnum.HELM
   } else {
     currentType = ServiceTypeEnum.APPLICATION
   }

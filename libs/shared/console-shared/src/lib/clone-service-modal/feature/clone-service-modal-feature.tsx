@@ -2,6 +2,7 @@ import { type Environment } from 'qovery-typescript-axios'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
+import { match } from 'ts-pattern'
 import { fetchApplications } from '@qovery/domains/application'
 import { fetchDatabases } from '@qovery/domains/database'
 import { useFetchEnvironments } from '@qovery/domains/environment'
@@ -61,7 +62,10 @@ export function CloneServiceModalFeature({
 
     const result = await mutateAsync({
       serviceId: serviceToClone.id,
-      serviceType,
+      serviceType: match(serviceType)
+        .with(ServiceTypeEnum.CRON_JOB, ServiceTypeEnum.LIFECYCLE_JOB, () => ServiceTypeEnum.JOB as const)
+        .with(ServiceTypeEnum.HELM, () => ServiceTypeEnum.APPLICATION as const)
+        .otherwise((serviceType) => serviceType),
       payload: cloneRequest,
     })
 
