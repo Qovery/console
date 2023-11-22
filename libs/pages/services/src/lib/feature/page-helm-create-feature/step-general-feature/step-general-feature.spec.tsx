@@ -28,9 +28,6 @@ describe('PageApplicationCreateGeneralFeature', () => {
       isFetched: true,
       isLoading: false,
     })
-    // useOrganizationsSpy.mockReturnValue({
-    //   data: [],
-    // })
   })
 
   it('should render successfully', () => {
