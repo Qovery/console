@@ -27,4 +27,12 @@ describe('PageApplicationCreateGeneralFeature', () => {
     )
     expect(baseElement).toBeTruthy()
   })
+
+  it('should submit a form with a helm repository', async () => {
+    const { userEvent } = renderWithProviders(<StepGeneralFeature />)
+  })
+
+  it('should submit a form with a git repository', async () => {
+    const { userEvent } = renderWithProviders(<StepGeneralFeature />)
+  })
 })

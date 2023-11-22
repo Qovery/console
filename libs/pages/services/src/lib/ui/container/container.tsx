@@ -157,6 +157,7 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
             navigate(`${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_CRONJOB_CREATION_URL}`)
           },
         },
+        /* TODO: Uncomment when helm is ready
         {
           name: 'Create helm',
           contentLeft: (
@@ -165,7 +166,8 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
           onClick: () => {
             navigate(`${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_HELM_CREATION_URL}`)
           },
-        },
+        }, 
+        */
       ],
     },
   ]
