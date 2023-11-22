@@ -5,10 +5,6 @@ import {
   type ApplicationDeploymentRestrictionRequest,
   ApplicationMainCallsApi,
   ApplicationsApi,
-  type CloneApplicationRequest,
-  type CloneContainerRequest,
-  type CloneDatabaseRequest,
-  type CloneJobRequest,
   ContainerDeploymentHistoryApi,
   ContainerMainCallsApi,
   ContainersApi,
@@ -28,6 +24,7 @@ import {
   JobsApi,
   type Status,
   type Application as _Application,
+  type CloneServiceRequest as _CloneServiceRequest,
   type ContainerResponse as _Container,
   type Database as _Database,
   type HelmResponse as _Helm,
@@ -304,27 +301,11 @@ export const services = createQueryKeys('services', {
   }),
 })
 
-type CloneServiceRequest =
-  | {
-      serviceId: string
-      serviceType: ApplicationType
-      payload: CloneApplicationRequest
-    }
-  | {
-      serviceId: string
-      serviceType: ContainerType
-      payload: CloneContainerRequest
-    }
-  | {
-      serviceId: string
-      serviceType: DatabaseType
-      payload: CloneDatabaseRequest
-    }
-  | {
-      serviceId: string
-      serviceType: JobType
-      payload: CloneJobRequest
-    }
+type CloneServiceRequest = {
+  serviceId: string
+  serviceType: ApplicationType | ContainerType | DatabaseType | JobType
+  payload: _CloneServiceRequest
+}
 
 type DeploymentRestrictionRequest =
   | {

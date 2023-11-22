@@ -1,7 +1,7 @@
 import { type QueryClient, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import download from 'downloadjs'
 import {
-  type CloneRequest,
+  type CloneEnvironmentRequest,
   type CreateEnvironmentRequest,
   type DatabaseConfiguration,
   DatabasesApi,
@@ -197,7 +197,7 @@ export const useCloneEnvironment = (
   const queryClient = useQueryClient()
 
   return useMutation(
-    async ({ environmentId, data }: { environmentId: string; data: CloneRequest }) => {
+    async ({ environmentId, data }: { environmentId: string; data: CloneEnvironmentRequest }) => {
       const response = await environmentsActionsApi.cloneEnvironment(environmentId, data)
       return response.data
     },

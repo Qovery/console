@@ -1,5 +1,5 @@
 import {
-  type CloneRequest,
+  type CloneEnvironmentRequest,
   type CreateEnvironmentModeEnum,
   type CreateEnvironmentRequest,
   type Environment,
@@ -75,7 +75,7 @@ export function CreateCloneEnvironmentModalFeature(props: CreateCloneEnvironment
     setLoading(true)
 
     if (props.environmentToClone) {
-      const cloneRequest: CloneRequest = {
+      const cloneRequest: CloneEnvironmentRequest = {
         name: dataFormatted.name,
         mode: dataFormatted.mode as EnvironmentModeEnum,
         cluster_id: dataFormatted.cluster,
