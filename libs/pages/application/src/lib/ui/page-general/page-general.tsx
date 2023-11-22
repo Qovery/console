@@ -1,20 +1,14 @@
-import { type ContainerRegistryResponse } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
 import { PodStatusesCallout, PodsMetrics, ServiceDetails } from '@qovery/domains/services/feature'
-import { isCronJob } from '@qovery/shared/enums'
-import { type ApplicationEntity, type LoadingStatus } from '@qovery/shared/interfaces'
 import { type BaseLink, ExternalLink, HelpSection, Icon, IconAwesomeEnum } from '@qovery/shared/ui'
 
 export interface PageGeneralProps {
-  application?: ApplicationEntity
   listHelpfulLinks: BaseLink[]
-  loadingStatus?: LoadingStatus
-  serviceStability?: number
-  currentRegistry?: ContainerRegistryResponse
+  isCronJob: boolean
 }
 
 export function PageGeneral(props: PageGeneralProps) {
-  const { application, listHelpfulLinks } = props
+  const { isCronJob, listHelpfulLinks } = props
   const { environmentId = '', applicationId = '' } = useParams()
 
   return (
@@ -28,7 +22,7 @@ export function PageGeneral(props: PageGeneralProps) {
                 <PodsMetrics environmentId={environmentId} serviceId={applicationId} />
               </>
             )}
-            {isCronJob(application) && (
+            {isCronJob && (
               <div className="grid grid-cols-[min-content_1fr] gap-x-3 gap-y-1 p-3 border rounded border-neutral-250 text-xs text-neutral-350 bg-neutral-100">
                 <Icon className="row-span-2" name={IconAwesomeEnum.CIRCLE_INFO} />
                 <p>
