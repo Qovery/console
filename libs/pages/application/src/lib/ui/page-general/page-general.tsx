@@ -22,10 +22,10 @@ export function PageGeneral(props: PageGeneralProps) {
       <div className="flex flex-col grow">
         <div className="flex flex-row grow">
           <div className="py-7 px-10 flex flex-col grow overflow-y-auto min-h-0 gap-6">
-            {application && application.environment && (
+            {applicationId && environmentId && (
               <>
-                <PodStatusesCallout environmentId={application.environment.id} serviceId={application.id} />
-                <PodsMetrics environmentId={application.environment.id} serviceId={application.id} />
+                <PodStatusesCallout environmentId={environmentId} serviceId={applicationId} />
+                <PodsMetrics environmentId={environmentId} serviceId={applicationId} />
               </>
             )}
             {isCronJob(application) && (

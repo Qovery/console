@@ -62,7 +62,7 @@ export function CloneServiceModalFeature({
     const result = await mutateAsync({
       serviceId: serviceToClone.id,
       serviceType,
-      cloneRequest,
+      payload: cloneRequest,
     })
 
     if (serviceType === ServiceTypeEnum.DATABASE) {
