@@ -55,7 +55,14 @@ const buttonVariants = cva(['inline-flex', 'items-center', 'shrink-0', 'font-med
     ...['brand' as const, 'neutral' as const, 'green' as const].map((color) => ({
       variant: 'solid' as const,
       color,
-      className: [`bg-${color}-500`, `hover:bg-${color}-600`, 'text-white'],
+      className: [
+        `bg-${color}-500`,
+        `hover:bg-${color}-600`,
+        'text-white',
+        `disabled:text-${color}-300`,
+        `disabled:bg-${color}-100`,
+        `disabled:border-none`,
+      ],
     })),
   ],
   defaultVariants: {

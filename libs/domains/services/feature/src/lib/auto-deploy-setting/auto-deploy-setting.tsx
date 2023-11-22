@@ -3,9 +3,10 @@ import { InputToggle } from '@qovery/shared/ui'
 
 export interface AutoDeploySettingProps {
   source: 'CONTAINER_REGISTRY' | 'GIT'
+  className?: string
 }
 
-export function AutoDeploySetting({ source }: AutoDeploySettingProps) {
+export function AutoDeploySetting({ source, className = '' }: AutoDeploySettingProps) {
   const { control } = useFormContext()
 
   return (
@@ -14,6 +15,7 @@ export function AutoDeploySetting({ source }: AutoDeploySettingProps) {
       control={control}
       render={({ field }) => (
         <InputToggle
+          className={className}
           value={field.value}
           onChange={field.onChange}
           title="Auto-deploy"

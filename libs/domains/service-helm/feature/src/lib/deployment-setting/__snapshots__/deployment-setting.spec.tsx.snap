@@ -1,0 +1,125 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DeploymentSetting should match snapshot 1`] = `
+<body>
+  <div>
+    <div
+      class="flex flex-col gap-3"
+    >
+      <div>
+        <div
+          data-testid="input-textarea"
+        >
+          <div
+            aria-label="textarea-container"
+            class="input pb-0 pr-2    input--label-up"
+          >
+            <label
+              class="text-sm translate-y-2"
+              for="Helm arguments"
+            >
+              Helm arguments
+            </label>
+            <textarea
+              class="w-full min-h-[52px] mt-5 pr-3 bg-transparent appearance-none text-sm text-neutral-400 outline-0"
+              id="Helm arguments"
+              name="arguments"
+            >
+              ["--wait"]
+            </textarea>
+          </div>
+        </div>
+        <p
+          class="text-xs text-neutral-350 ml-4 mt-1"
+        >
+          Specify the helm arguments to be used during the helm install/upgrade. Expected format: ["-h", "0.0.0.0"]
+          <br />
+          <a
+            class="cursor-pointer transition duration-100 font-medium inline-flex flex-center gap-1 text-sky-500 hover:text-sky-600 text-xs mt-0.5"
+            href="https://helm.sh/docs/helm/helm_install/"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            See documentation
+            <span
+              class="icon-solid-arrow-up-right-from-square shrink-0 text-2xs leading-4"
+              role="img"
+            />
+          </a>
+        </p>
+      </div>
+      <div
+        class=""
+        data-testid="input-text-wrapper"
+      >
+        <div
+          class="relative"
+        >
+          <div
+            aria-label="input-container"
+            class="input    input--label-up "
+          >
+            <div
+              class=""
+            >
+              <label
+                class="text-sm translate-y-2"
+                for="Helm timeout"
+              >
+                Helm timeout
+              </label>
+              <input
+                class="input__value "
+                data-testid="input-text"
+                id="Helm timeout"
+                name="timeout_sec"
+                type="text"
+                value="600"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex  items-start mt-2 "
+        data-testid="input-toggle"
+      >
+        <div
+          aria-label="toggle-btn"
+          class="inline-flex justify-between items-center cursor-pointer"
+          data-testid="input-toggle-button"
+        >
+          <input
+            class="hidden"
+            type="checkbox"
+            value="false"
+          />
+          <div
+            aria-label="bg"
+            class="w-8 h-4.5 flex items-center rounded-full p-0.5  bg-neutral-300"
+          >
+            <div
+              aria-label="circle"
+              class="w-3.5 h-3.5 bg-white rounded-full shadow-lg transform  "
+            />
+          </div>
+        </div>
+        <div
+          class="relative -top-1 ml-3 cursor-pointer"
+        >
+          <p
+            class="text-neutral-400 text-ssm font-medium"
+          >
+            Allow cluster-wide resources
+          </p>
+          <div
+            class="text-xs text-neutral-350"
+          >
+            Allow this chart to deploy resources outside of this environment namespace (including CRDs or non-namespaced resources).
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+`;

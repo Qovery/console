@@ -1,0 +1,60 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`GeneralSetting should match snapshot 1`] = `
+<body>
+  <div>
+    <div
+      class="mb-3"
+      data-testid="input-text-wrapper"
+    >
+      <div
+        class="relative"
+      >
+        <div
+          aria-label="input-container"
+          class="input     "
+        >
+          <div
+            class=""
+          >
+            <label
+              class="text-sm translate-y-2"
+              for="Name"
+            >
+              Name
+            </label>
+            <input
+              class="input__value "
+              data-testid="input-text"
+              id="Name"
+              name="name"
+              type="text"
+              value=""
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      data-testid="input-textarea"
+    >
+      <div
+        aria-label="textarea-container"
+        class="input pb-0 pr-2    "
+      >
+        <label
+          class="text-sm translate-y-2"
+          for="Description (optional)"
+        >
+          Description (optional)
+        </label>
+        <textarea
+          class="w-full min-h-[52px] mt-5 pr-3 bg-transparent appearance-none text-sm text-neutral-400 outline-0"
+          id="Description (optional)"
+          name="description"
+        />
+      </div>
+    </div>
+  </div>
+</body>
+`;
