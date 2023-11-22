@@ -8,7 +8,7 @@ import { ROUTER_SERVICE_HELM_CREATION } from '../../router/router'
 
 export const steps: { title: string }[] = [{ title: 'General data' }, { title: 'Values' }, { title: 'Summary' }]
 
-type HelmGeneralData = {
+export type HelmGeneralData = {
   name: string
   description?: string
   auto_preview: boolean

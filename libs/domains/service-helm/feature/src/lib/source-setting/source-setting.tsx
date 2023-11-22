@@ -51,59 +51,61 @@ export function SourceSetting() {
               <LoaderSpinner />
             </div>
           ) : (
-            <Controller
-              name="repository"
-              control={control}
-              rules={{
-                required: 'Please select a repository.',
-              }}
-              render={({ field, fieldState: { error } }) => (
-                <InputSelect
-                  label="Repository"
-                  options={helmRepositories.map((helmRepository) => ({
-                    label: helmRepository.name ?? '',
-                    value: helmRepository.id,
-                  }))}
-                  onChange={field.onChange}
-                  value={field.value}
-                  error={error?.message}
-                  isSearchable
-                />
-              )}
-            />
+            <>
+              <Controller
+                name="repository"
+                control={control}
+                rules={{
+                  required: 'Please select a repository.',
+                }}
+                render={({ field, fieldState: { error } }) => (
+                  <InputSelect
+                    label="Repository"
+                    options={helmRepositories.map((helmRepository) => ({
+                      label: helmRepository.name ?? '',
+                      value: helmRepository.id,
+                    }))}
+                    onChange={field.onChange}
+                    value={field.value}
+                    error={error?.message}
+                    isSearchable
+                  />
+                )}
+              />
+              <Controller
+                name="chart_name"
+                control={control}
+                rules={{
+                  required: 'Please enter a chart name.',
+                }}
+                render={({ field, fieldState: { error } }) => (
+                  <InputText
+                    label="Chart name"
+                    name={field.name}
+                    onChange={field.onChange}
+                    value={field.value}
+                    error={error?.message}
+                  />
+                )}
+              />
+              <Controller
+                name="chart_version"
+                control={control}
+                rules={{
+                  required: 'Please enter a version.',
+                }}
+                render={({ field, fieldState: { error } }) => (
+                  <InputText
+                    label="Version"
+                    name={field.name}
+                    onChange={field.onChange}
+                    value={field.value}
+                    error={error?.message}
+                  />
+                )}
+              />
+            </>
           )}
-          <Controller
-            name="chart_name"
-            control={control}
-            rules={{
-              required: 'Please enter a chart name.',
-            }}
-            render={({ field, fieldState: { error } }) => (
-              <InputText
-                label="Chart name"
-                name={field.name}
-                onChange={field.onChange}
-                value={field.value}
-                error={error?.message}
-              />
-            )}
-          />
-          <Controller
-            name="chart_version"
-            control={control}
-            rules={{
-              required: 'Please enter a version.',
-            }}
-            render={({ field, fieldState: { error } }) => (
-              <InputText
-                label="Version"
-                name={field.name}
-                onChange={field.onChange}
-                value={field.value}
-                error={error?.message}
-              />
-            )}
-          />
         </div>
       )}
     </div>
