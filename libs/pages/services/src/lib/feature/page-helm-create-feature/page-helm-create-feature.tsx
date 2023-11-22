@@ -19,22 +19,6 @@ export interface HelmGeneralData
   chart_version?: string
 }
 
-export type HelmGeneralDataa = {
-  name: string
-  description?: string
-  auto_preview: boolean
-  auto_deploy?: boolean
-  timeout_sec: number
-  arguments: string[]
-  // source_provider: 'HELM_REPOSITORY' | 'GIT'
-  // repository: string
-  // provider?: GitProviderEnum
-  // branch?: string
-  // root_path?: string
-  // chart_name?: string
-  // chart_version?: string
-}
-
 interface HelmCreateContextInterface {
   currentStep: number
   setCurrentStep: (step: number) => void
