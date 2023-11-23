@@ -19,9 +19,8 @@ export function CrudModalFeature({ deploymentRestriction, serviceId, serviceType
     serviceId,
     serviceType,
   }
-  const { mutate: createRestriction, isLoading: isCreateRestrictionLoading } =
-    useCreateDeploymentRestriction(serviceParams)
-  const { mutate: editRestriction, isLoading: isEditRestrictionLoading } = useEditDeploymentRestriction(serviceParams)
+  const { mutate: createRestriction, isLoading: isCreateRestrictionLoading } = useCreateDeploymentRestriction()
+  const { mutate: editRestriction, isLoading: isEditRestrictionLoading } = useEditDeploymentRestriction()
   const methods = useForm({
     defaultValues: {
       mode: deploymentRestriction?.mode ?? DeploymentRestrictionModeEnum.EXCLUDE,

@@ -20,7 +20,8 @@ export const mutations = {
   async editProject({ projectId, projectRequest }: { projectId: string; projectRequest: ProjectRequest }) {
     return (await projectMainCalls.editProject(projectId, projectRequest)).data
   },
-  async deleteProject({ projectId }: { projectId: string }) {
+  async deleteProject({ projectId }: { projectId: string; organizationId: string }) {
+    // NOTE: organizationId is for invalidateQueries
     return (await projectMainCalls.deleteProject(projectId)).data
   },
 }

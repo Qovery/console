@@ -73,8 +73,8 @@ export function OnboardingPricing() {
   const { organization_name, project_name, admin_email } = useContext(ContextOnboarding)
   const { createAuthCookies, getAccessTokenSilently } = useAuth()
   const [loading, setLoading] = useState('')
-  const { mutateAsync: createOrganization } = useCreateOrganization({})
-  const { mutateAsync: createProject } = useCreateProject({})
+  const { mutateAsync: createOrganization } = useCreateOrganization()
+  const { mutateAsync: createProject } = useCreateProject()
 
   const onSubmit = async (plan: PlanEnum) => {
     setLoading(plan)

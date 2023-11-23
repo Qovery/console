@@ -10,7 +10,7 @@ export function PageProjectGeneralFeature() {
   useDocumentTitle('General - Project settings')
 
   const { data: project } = useProject({ organizationId, projectId })
-  const { mutateAsync: editProject } = useEditProject({ organizationId })
+  const { mutateAsync: editProject } = useEditProject()
 
   const [loading, setLoading] = useState(false)
 
