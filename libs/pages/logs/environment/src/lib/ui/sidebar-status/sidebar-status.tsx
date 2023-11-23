@@ -37,7 +37,7 @@ export function SidebarStatus(props: SidebarStatusProps) {
       <p className="flex items-center justify-between text-neutral-300 text-xs mt-2">
         Parallel Deployment:
         <span className="flex text-neutral-50">
-          4{' '}
+          7{' '}
           <Tooltip side="right" content="Number of services deployed in parallel on each pipeline stage">
             <span className="flex items-center">
               <Icon className="cursor-pointer ml-1 text-xs text-neutral-300" name="icon-solid-circle-info" />
