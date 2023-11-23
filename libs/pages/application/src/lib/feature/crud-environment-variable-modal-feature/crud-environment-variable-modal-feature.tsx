@@ -1,5 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query'
-import { APIVariableScopeEnum } from 'qovery-typescript-axios'
+import { APIVariableScopeEnum, VariableResponse } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
@@ -176,11 +176,12 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
               // TODO: Fix props type for this case to be impossible
               throw new Error('No variable to be based on')
             }
-            editVariable({
+
+            return editVariable({
               variableId: props.variable.id,
               variableEditRequest: {
                 key: data.key,
-                value: data.value,
+                value: props.variable.aliased_variable?.key || data.value || '',
               },
             })
           })
