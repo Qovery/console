@@ -1,8 +1,8 @@
 import { type GitProviderEnum, type HelmRequest } from 'qovery-typescript-axios'
 import { createContext, useContext, useState } from 'react'
 import { type UseFormReturn, useForm } from 'react-hook-form'
-import { Route, Routes, useNavigate, useParams } from 'react-router-dom'
-import { SERVICES_URL } from '@qovery/shared/routes'
+import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
+import { SERVICES_HELM_CREATION_GENERAL_URL, SERVICES_HELM_CREATION_URL, SERVICES_URL } from '@qovery/shared/routes'
 import { FunnelFlow } from '@qovery/shared/ui'
 import { ROUTER_SERVICE_HELM_CREATION } from '../../router/router'
 
@@ -43,6 +43,8 @@ export function PageHelmCreateFeature() {
     mode: 'onChange',
   })
 
+  const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_HELM_CREATION_URL}`
+
   return (
     <HelmCreateContext.Provider
       value={{
@@ -62,6 +64,7 @@ export function PageHelmCreateFeature() {
           {ROUTER_SERVICE_HELM_CREATION.map((route) => (
             <Route key={route.path} path={route.path} element={route.component} />
           ))}
+          <Route path="*" element={<Navigate replace to={pathCreate + SERVICES_HELM_CREATION_GENERAL_URL} />} />
         </Routes>
       </FunnelFlow>
     </HelmCreateContext.Provider>
