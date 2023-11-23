@@ -1,4 +1,6 @@
 import { useNavigate, useParams } from 'react-router-dom'
+import { match } from 'ts-pattern'
+import { useCreateHelm } from '@qovery/domains/service-helm/feature'
 import { SERVICES_CREATION_GENERAL_URL, SERVICES_HELM_CREATION_URL, SERVICES_URL } from '@qovery/shared/routes'
 import { Button, FunnelFlowBody, Heading, Icon, IconAwesomeEnum, Section } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
@@ -8,15 +10,49 @@ export function StepSummaryFeature() {
   useDocumentTitle('Summary - Create Helm')
 
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
-  const { generalForm, setCurrentStep } = useHelmCreateContext()
   const navigate = useNavigate()
+
+  const { generalForm, setCurrentStep } = useHelmCreateContext()
+  const generalData = generalForm.getValues()
   setCurrentStep(3)
 
   const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_HELM_CREATION_URL}`
 
-  const onSubmit = (withDeploy: boolean) => {}
+  const { mutateAsync: createHelm } = useCreateHelm()
 
-  const generalData = generalForm.getValues()
+  const onSubmit = async (withDeploy: boolean) => {
+    const source = match(generalData.source_provider)
+      .with('GIT', () => ({
+        git_repository: {
+          url: generalData.repository,
+          branch: generalData.branch,
+          root_path: generalData.root_path,
+        },
+      }))
+      .with('HELM_REPOSITORY', () => ({
+        helm_repository: {
+          repository: generalData.repository,
+          chart_name: generalData.chart_name,
+          chart_version: generalData.chart_version,
+        },
+      }))
+      .exhaustive()
+
+    await createHelm({
+      environmentId,
+      helmRequest: {
+        name: generalData.name,
+        description: generalData.description,
+        source,
+        allow_cluster_wide_resources: generalData.auto_preview!,
+        arguments: generalData.arguments,
+        timeout_sec: generalData.timeout_sec,
+        auto_deploy: generalData.auto_deploy,
+        ports: [],
+        values_override: {},
+      },
+    })
+  }
 
   return (
     <FunnelFlowBody>
