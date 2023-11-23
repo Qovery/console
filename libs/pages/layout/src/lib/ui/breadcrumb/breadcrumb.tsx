@@ -1,10 +1,10 @@
 import equal from 'fast-deep-equal'
-import { type Cluster, type Database, type Environment, type Organization, type Project } from 'qovery-typescript-axios'
+import { type Cluster, type Environment, type Organization, type Project } from 'qovery-typescript-axios'
 import { memo, useEffect } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
-import { ServiceStateChip } from '@qovery/domains/services/feature'
+import { ServiceStateChip, useServices } from '@qovery/domains/services/feature'
 import { IconEnum } from '@qovery/shared/enums'
-import { type ApplicationEntity, type ClusterEntity, type DatabaseEntity } from '@qovery/shared/interfaces'
+import { type ClusterEntity } from '@qovery/shared/interfaces'
 import {
   APPLICATION_GENERAL_URL,
   APPLICATION_URL,
@@ -38,12 +38,10 @@ export interface BreadcrumbProps {
   clusters?: ClusterEntity[]
   projects?: Project[]
   environments?: Environment[]
-  applications?: ApplicationEntity[]
-  databases?: Database[]
 }
 
 export function BreadcrumbMemo(props: BreadcrumbProps) {
-  const { organizations, clusters, projects, environments, applications, databases, createProjectModal } = props
+  const { organizations, clusters, projects, environments, createProjectModal } = props
   const { organizationId, projectId, environmentId, applicationId, databaseId, clusterId } = useParams()
 
   const location = useLocation()
@@ -138,33 +136,31 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
     },
   ]
 
-  const mergedServices =
-    applications && databases && ([...applications, ...databases] as ApplicationEntity[] | DatabaseEntity[])
+  const { data: services = [] } = useServices({ environmentId })
 
   const applicationMenu: MenuData = [
     {
       title: 'Services',
       search: true,
       sortAlphabetically: true,
-      items: applications
-        ? (mergedServices?.map((service: ApplicationEntity | DatabaseEntity) => ({
-            name: service.name,
-            link: {
-              url: (service as DatabaseEntity).type
-                ? `${DATABASE_URL(organizationId, projectId, environmentId, service.id)}${DATABASE_GENERAL_URL}`
-                : `${APPLICATION_URL(organizationId, projectId, environmentId, service.id)}${APPLICATION_GENERAL_URL}`,
-            },
-            contentLeft: (
-              <div className="flex items-center">
-                <ServiceStateChip mode="deployment" environmentId={service.environment?.id} serviceId={service.id} />
-                <div className="ml-3 mt-[1px]">
-                  <Icon name={(service as DatabaseEntity).type ? IconEnum.DATABASE : IconEnum.APPLICATION} width="16" />
-                </div>
-              </div>
-            ),
-            isActive: applicationId === service.id,
-          })) as MenuItemProps[])
-        : [],
+      items: services.map((service) => ({
+        name: service.name,
+        link: {
+          url:
+            service.serviceType === 'DATABASE'
+              ? `${DATABASE_URL(organizationId, projectId, environmentId, service.id)}${DATABASE_GENERAL_URL}`
+              : `${APPLICATION_URL(organizationId, projectId, environmentId, service.id)}${APPLICATION_GENERAL_URL}`,
+        },
+        contentLeft: (
+          <div className="flex items-center">
+            <ServiceStateChip mode="deployment" environmentId={service.environment?.id} serviceId={service.id} />
+            <div className="ml-3 mt-[1px]">
+              <Icon name={service.serviceType === 'DATABASE' ? IconEnum.DATABASE : IconEnum.APPLICATION} width="16" />
+            </div>
+          </div>
+        ),
+        isActive: applicationId === service.id,
+      })) as MenuItemProps[],
     },
   ]
 
@@ -252,7 +248,7 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
                         <BreadcrumbItem
                           isLast={true}
                           label="Service"
-                          data={mergedServices}
+                          data={services}
                           menuItems={applicationMenu}
                           paramId={applicationId || databaseId || ''}
                           link={

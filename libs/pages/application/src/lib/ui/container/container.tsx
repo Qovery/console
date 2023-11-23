@@ -6,9 +6,10 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { postApplicationActionsDeploy, postApplicationActionsRedeploy } from '@qovery/domains/application'
 import { EnvironmentMode } from '@qovery/domains/environments/feature'
 import { selectClusterById } from '@qovery/domains/organization'
+import { type AnyService } from '@qovery/domains/services/data-access'
 import { useDeploymentStatus } from '@qovery/domains/services/feature'
 import { ApplicationButtonsActions, NeedRedeployFlag } from '@qovery/shared/console-shared'
-import { IconEnum, getServiceType, isCronJob, isLifeCycleJob } from '@qovery/shared/enums'
+import { IconEnum, isCronJob, isLifeCycleJob } from '@qovery/shared/enums'
 import { type ApplicationEntity, type ClusterEntity } from '@qovery/shared/interfaces'
 import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { Badge, Header, Icon, Section, Skeleton, Tooltip } from '@qovery/shared/ui'
@@ -24,12 +25,11 @@ export const ApplicationContext = createContext<{
 })
 
 export interface ContainerProps {
-  application?: ApplicationEntity
+  service?: AnyService
   environment?: Environment
 }
 
-export function Container(props: PropsWithChildren<ContainerProps>) {
-  const { application, environment, children } = props
+export function Container({ service, environment, children }: PropsWithChildren<ContainerProps>) {
   const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
   const [showHideAllEnvironmentVariablesValues, setShowHideAllEnvironmentVariablesValues] = useState<boolean>(false)
   const queryClient = useQueryClient()
@@ -41,18 +41,18 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
   const dispatch = useDispatch<AppDispatch>()
   const navigate = useNavigate()
   const { data: serviceDeploymentStatus, isLoading: isLoadingServiceDeploymentStatus } = useDeploymentStatus({
-    environmentId: application?.environment?.id,
-    serviceId: application?.id,
+    environmentId,
+    serviceId: service?.id,
   })
 
   const redeployApplication = () => {
-    if (application) {
+    if (service) {
       if (serviceDeploymentStatus?.service_deployment_status === ServiceDeploymentStatusEnum.NEVER_DEPLOYED) {
         dispatch(
           postApplicationActionsDeploy({
             environmentId,
             applicationId,
-            serviceType: getServiceType(application),
+            serviceType: service.serviceType,
             callback: () =>
               navigate(
                 ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(applicationId)
@@ -65,7 +65,7 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
           postApplicationActionsRedeploy({
             environmentId,
             applicationId,
-            serviceType: getServiceType(application),
+            serviceType: service.serviceType,
             callback: () =>
               navigate(
                 ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(applicationId)
@@ -96,9 +96,9 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
       </div>
       <Skeleton width={150} height={32} show={isLoadingServiceDeploymentStatus}>
         <div className="flex">
-          {environment && application && (
+          {environment && service && (
             <ApplicationButtonsActions
-              application={application}
+              application={service as ApplicationEntity}
               environmentMode={environment.mode}
               clusterId={environment.cluster_id}
             />
@@ -114,21 +114,20 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
     >
       <Section className="flex-1">
         <Header
-          title={application?.name}
+          title={service?.name}
           icon={
-            isCronJob(application)
+            isCronJob(service as ApplicationEntity)
               ? IconEnum.CRON_JOB
-              : isLifeCycleJob(application)
+              : isLifeCycleJob(service as ApplicationEntity)
               ? IconEnum.LIFECYCLE_JOB
               : IconEnum.APPLICATION
           }
           actions={headerActions}
         />
         <TabsFeature />
-        {application &&
-          serviceDeploymentStatus?.service_deployment_status !== ServiceDeploymentStatusEnum.UP_TO_DATE && (
-            <NeedRedeployFlag service={application} onClickCTA={redeployApplication} />
-          )}
+        {service && serviceDeploymentStatus?.service_deployment_status !== ServiceDeploymentStatusEnum.UP_TO_DATE && (
+          <NeedRedeployFlag service={service as ApplicationEntity} onClickCTA={redeployApplication} />
+        )}
         {children}
       </Section>
     </ApplicationContext.Provider>

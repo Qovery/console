@@ -6,6 +6,7 @@ import { useLocation, useParams } from 'react-router-dom'
 import { postDatabaseActionsDeploy, postDatabaseActionsRedeploy } from '@qovery/domains/database'
 import { EnvironmentMode } from '@qovery/domains/environments/feature'
 import { selectClusterById } from '@qovery/domains/organization'
+import { type AnyService } from '@qovery/domains/services/data-access'
 import { ServiceStateChip, useDeploymentStatus } from '@qovery/domains/services/feature'
 import { DatabaseButtonsActions, NeedRedeployFlag } from '@qovery/shared/console-shared'
 import { IconEnum } from '@qovery/shared/enums'
@@ -20,13 +21,11 @@ import { Badge, Header, Icon, Section, Skeleton, Tabs, Tooltip } from '@qovery/s
 import { type AppDispatch, type RootState } from '@qovery/state/store'
 
 export interface ContainerProps {
-  database?: DatabaseEntity
+  service?: AnyService
   environment?: Environment
 }
 
-export function Container(props: PropsWithChildren<ContainerProps>) {
-  const { database, environment, children } = props
-
+export function Container({ service, environment, children }: PropsWithChildren<ContainerProps>) {
   const { organizationId = '', projectId = '', environmentId = '', databaseId = '' } = useParams()
   const location = useLocation()
   const queryClient = useQueryClient()
@@ -37,8 +36,8 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
 
   const dispatch = useDispatch<AppDispatch>()
   const { data: serviceDeploymentStatus, isLoading: isLoadingServiceDeploymentStatus } = useDeploymentStatus({
-    environmentId: database?.environment?.id,
-    serviceId: database?.id,
+    environmentId,
+    serviceId: databaseId,
   })
 
   const headerActions = (
@@ -60,9 +59,9 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
       </div>
       <Skeleton width={150} height={32} show={isLoadingServiceDeploymentStatus}>
         <div className="flex">
-          {environment && database && (
+          {environment && service && (
             <DatabaseButtonsActions
-              database={database}
+              database={service as DatabaseEntity}
               environmentMode={environment.mode}
               clusterId={environment.cluster_id}
             />
@@ -77,9 +76,9 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
       icon: (
         <ServiceStateChip
           mode="running"
-          environmentId={database?.environment?.id}
-          serviceId={database?.id}
-          withDeploymentFallback={database?.mode === DatabaseModeEnum.MANAGED}
+          environmentId={environmentId}
+          serviceId={databaseId}
+          withDeploymentFallback={service && 'mode' in service && service.mode === DatabaseModeEnum.MANAGED}
         />
       ),
       name: 'Overview',
@@ -88,7 +87,7 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
       link: DATABASE_URL(organizationId, projectId, environmentId, databaseId) + DATABASE_GENERAL_URL,
     },
     {
-      icon: <ServiceStateChip mode="deployment" environmentId={database?.environment?.id} serviceId={database?.id} />,
+      icon: <ServiceStateChip mode="deployment" environmentId={environmentId} serviceId={databaseId} />,
       name: 'Deployments',
       active:
         location.pathname ===
@@ -106,7 +105,7 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
   ]
 
   const redeployDatabase = () => {
-    if (database) {
+    if (service) {
       if (serviceDeploymentStatus?.service_deployment_status === ServiceDeploymentStatusEnum.NEVER_DEPLOYED) {
         dispatch(postDatabaseActionsDeploy({ environmentId, databaseId, queryClient }))
       } else {
@@ -117,10 +116,10 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
 
   return (
     <Section className="flex-1">
-      <Header title={database?.name} icon={IconEnum.DATABASE} actions={headerActions} />
+      <Header title={service?.name} icon={IconEnum.DATABASE} actions={headerActions} />
       <Tabs items={tabsItems} />
-      {database && serviceDeploymentStatus?.service_deployment_status !== ServiceDeploymentStatusEnum.UP_TO_DATE && (
-        <NeedRedeployFlag service={database} onClickCTA={redeployDatabase} />
+      {service && serviceDeploymentStatus?.service_deployment_status !== ServiceDeploymentStatusEnum.UP_TO_DATE && (
+        <NeedRedeployFlag service={service as DatabaseEntity} onClickCTA={redeployDatabase} />
       )}
       {children}
     </Section>

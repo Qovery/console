@@ -75,7 +75,7 @@ export type Container = _Container & { serviceType: ServiceTypeEnum.CONTAINER }
 export type Job = _Job & { serviceType: ServiceTypeEnum.JOB }
 export type Helm = _Helm & { serviceType: ServiceTypeEnum.HELM }
 
-type AnyService = Application | Database | Container | Job | Helm
+export type AnyService = Application | Database | Container | Job | Helm
 
 export function isApplication(service: AnyService): service is Application {
   return service.serviceType === 'APPLICATION'

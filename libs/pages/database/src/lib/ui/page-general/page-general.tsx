@@ -1,17 +1,15 @@
 import { DatabaseModeEnum } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
 import { PodStatusesCallout, PodsMetrics, ServiceDetails } from '@qovery/domains/services/feature'
-import { type DatabaseEntity, type LoadingStatus } from '@qovery/shared/interfaces'
 import { type BaseLink, HelpSection } from '@qovery/shared/ui'
 
 export interface PageGeneralProps {
-  database?: DatabaseEntity
+  databaseMode?: DatabaseModeEnum
   listHelpfulLinks: BaseLink[]
-  loadingStatus?: LoadingStatus
 }
 
 export function PageGeneral(props: PageGeneralProps) {
-  const { database, listHelpfulLinks } = props
+  const { databaseMode, listHelpfulLinks } = props
   const { environmentId = '', databaseId = '' } = useParams()
 
   return (
@@ -19,7 +17,7 @@ export function PageGeneral(props: PageGeneralProps) {
       <div className="flex h-full flex-col grow">
         <div className="flex flex-row grow">
           <div className="py-7 px-10 flex-grow overflow-auto">
-            {database?.mode && database?.mode === DatabaseModeEnum.MANAGED ? (
+            {databaseMode === DatabaseModeEnum.MANAGED ? (
               <div className="flex flex-col items-center gap-1 py-10 bg-neutral-100 text-sm text-neutral-350 border border-neutral-200">
                 <span className="font-medium">Metrics for managed databases are not available</span>
                 <span>Check your cloud provider console to get more information</span>
