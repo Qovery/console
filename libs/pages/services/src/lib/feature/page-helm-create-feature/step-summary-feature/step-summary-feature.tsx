@@ -85,7 +85,7 @@ export function StepSummaryFeature() {
 
             <ul className="text-neutral-350 text-sm list-none">
               <li>
-                <span className="font-medium">Helm parameters:</span> {generalData.arguments.toString()}
+                <span className="font-medium">Helm parameters:</span> {generalData.arguments?.toString()}
               </li>
               <li>
                 <span className="font-medium">Helm timeout:</span> {generalData.timeout_sec}
