@@ -2,7 +2,7 @@ import { type ContainerRegistryRequest, type ContainerRegistryResponse } from 'q
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import {
-  useAvailableContainerRegistry,
+  useAvailableContainerRegistries,
   useCreateContainerRegistry,
   useEditContainerRegistry,
 } from '@qovery/domains/organizations/feature'
@@ -17,7 +17,7 @@ export interface CrudModalFeatureProps {
 export function CrudModalFeature(props: CrudModalFeatureProps) {
   const { organizationId = '', onClose, registry } = props
 
-  const { data: availableContainerRegistry = [] } = useAvailableContainerRegistry({ organizationId })
+  const { data: availableContainerRegistries = [] } = useAvailableContainerRegistries()
   const { mutateAsync: editContainerRegistry } = useEditContainerRegistry()
   const { mutateAsync: createContainerRegistry } = useCreateContainerRegistry()
   const [loading, setLoading] = useState(false)
@@ -66,7 +66,7 @@ export function CrudModalFeature(props: CrudModalFeatureProps) {
     <FormProvider {...methods}>
       <CrudModal
         registry={registry}
-        availableContainerRegistry={availableContainerRegistry}
+        availableContainerRegistries={availableContainerRegistries}
         onSubmit={onSubmit}
         onClose={onClose}
         loading={loading}

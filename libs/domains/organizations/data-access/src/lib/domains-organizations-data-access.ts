@@ -91,19 +91,19 @@ export const organizations = createQueryKeys('organizations', {
     organizationId: string
     containerRegistryId: string
   }) => ({
-    queryKey: [organizationId],
+    queryKey: [organizationId, containerRegistryId],
     async queryFn() {
       const response = await containerRegistriesApi.getContainerRegistry(organizationId, containerRegistryId)
       return response.data
     },
   }),
-  availableContainerRegistry: ({ organizationId }: { organizationId: string }) => ({
-    queryKey: [organizationId],
+  availableContainerRegistries: {
+    queryKey: null,
     async queryFn() {
       const response = await containerRegistriesApi.listAvailableContainerRegistry()
       return response.data.results
     },
-  }),
+  },
   gitTokens: ({ organizationId }: { organizationId: string }) => ({
     queryKey: [organizationId],
     async queryFn() {

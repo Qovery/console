@@ -11,7 +11,7 @@ import { containerRegistryKindToIcon } from '@qovery/shared/util-js'
 
 export interface CrudModalProps {
   registry?: ContainerRegistryResponse
-  availableContainerRegistry: AvailableContainerRegistryResponse[]
+  availableContainerRegistries: AvailableContainerRegistryResponse[]
   onSubmit: () => void
   onClose: () => void
   loading?: boolean
@@ -127,7 +127,7 @@ export function CrudModal(props: CrudModalProps) {
               value={field.value}
               label="Type"
               error={error?.message}
-              options={getOptionsContainerRegistry(props.availableContainerRegistry)}
+              options={getOptionsContainerRegistry(props.availableContainerRegistries)}
               portal
             />
           </div>
