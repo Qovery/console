@@ -2,10 +2,7 @@ import { type ContainerRegistryResponse } from 'qovery-typescript-axios'
 import { IconEnum } from '@qovery/shared/enums'
 import {
   BlockContent,
-  ButtonIcon,
-  ButtonIconStyle,
-  ButtonLegacy,
-  ButtonLegacySize,
+  Button,
   HelpSection,
   Icon,
   IconAwesomeEnum,
@@ -37,9 +34,10 @@ export function PageOrganizationContainerRegistries(props: PageOrganizationConta
               Define and manage the container registry to be used within your organization to deploy applications.
             </p>
           </div>
-          <ButtonLegacy onClick={() => onAddRegistry()} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>
+          <Button className="gap-2" size="lg" onClick={() => onAddRegistry()}>
             Add registry
-          </ButtonLegacy>
+            <Icon name={IconAwesomeEnum.CIRCLE_PLUS} />
+          </Button>
         </div>
         <BlockContent title="Container registries" classNameContent="p-0">
           {!isFetched ? (
@@ -82,23 +80,13 @@ export function PageOrganizationContainerRegistries(props: PageOrganizationConta
                       </p>
                     </div>
                   </div>
-                  <div>
-                    <ButtonIcon
-                      icon={IconAwesomeEnum.WHEEL}
-                      style={ButtonIconStyle.STROKED}
-                      size={ButtonLegacySize.TINY}
-                      onClick={() => onEdit(registry)}
-                      className="text-neutral-350 hover:text-neutral-400 bg-transparent !w-9 !h-8 mr-2"
-                      iconClassName="!text-xs"
-                    />
-                    <ButtonIcon
-                      icon={IconAwesomeEnum.TRASH}
-                      style={ButtonIconStyle.STROKED}
-                      size={ButtonLegacySize.TINY}
-                      onClick={() => onDelete(registry)}
-                      className="text-neutral-350 hover:text-neutral-400 bg-transparent !w-9 !h-8"
-                      iconClassName="!text-xs"
-                    />
+                  <div className="flex gap-2">
+                    <Button size="md" variant="outline" color="neutral" onClick={() => onEdit(registry)}>
+                      <Icon name={IconAwesomeEnum.WHEEL} />
+                    </Button>
+                    <Button size="md" variant="outline" color="neutral" onClick={() => onDelete(registry)}>
+                      <Icon name={IconAwesomeEnum.TRASH} />
+                    </Button>
                   </div>
                 </li>
               ))}
