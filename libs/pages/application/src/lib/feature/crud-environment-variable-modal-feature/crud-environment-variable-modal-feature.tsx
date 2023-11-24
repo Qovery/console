@@ -176,11 +176,12 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
               // TODO: Fix props type for this case to be impossible
               throw new Error('No variable to be based on')
             }
-            editVariable({
+
+            return editVariable({
               variableId: props.variable.id,
               variableEditRequest: {
                 key: data.key,
-                value: data.value,
+                value: props.variable.aliased_variable?.key || data.value || '',
               },
             })
           })
