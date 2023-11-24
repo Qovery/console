@@ -60,7 +60,7 @@ const triggerVariants = cva(
       },
       size: {
         xs: ['text-2xs', 'px-2', 'h-5', 'font-semibold'],
-        md: ['text-sm', 'px-3', 'h-[52px]', 'font-medium'],
+        md: ['text-sm', 'px-4', 'h-[52px]', 'font-medium'],
       },
     },
     compoundVariants: [
