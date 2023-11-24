@@ -1,5 +1,5 @@
 import { renderWithProviders } from '@qovery/shared/util-tests'
-import Editor from './editor'
+import CodeEditor from './code-editor'
 
 const example = `labels: 
   qovery.labels.service
@@ -13,9 +13,9 @@ postgres:
   dabatase_url: qovery.env.DATABASE_URL 
 `
 
-describe('Editor', () => {
+describe('CodeEditor', () => {
   it('should render successfully', () => {
-    const { baseElement } = renderWithProviders(<Editor defaultValue={example} defaultLanguage="yaml" />)
+    const { baseElement } = renderWithProviders(<CodeEditor defaultValue={example} defaultLanguage="yaml" />)
     expect(baseElement).toBeTruthy()
   })
 })
