@@ -1,7 +1,8 @@
 import type { Meta } from '@storybook/react'
 import Editor from './editor'
 
-const example = `labels: 
+const example = `
+labels: 
   qovery.labels.service
   mylabel: mylabel
   mylabel: mylabel
@@ -16,15 +17,6 @@ postgres:
   database_user: qovery.env.DATABASE_USER 
   dabatase_url: qovery.env.DATABASE_URL 
   database_user: qovery.env.DATABASE_USER 
-  database_user: qovery.env.DATABASE_USER 
-  dabatase_url: qovery.env.DATABASE_URL 
-  database_user: qovery.env.DATABASE_USER 
-  database_user: qovery.env.DATABASE_USER 
-  dabatase_url: qovery.env.DATABASE_URL 
-  database_user: qovery.env.DATABASE_USER 
-  database_user: qovery.env.DATABASE_USER 
-  dabatase_url: qovery.env.DATABASE_URL 
-  database_user: qovery.env.DATABASE_USER 
 `
 
 const Story: Meta<typeof Editor> = {
@@ -32,7 +24,7 @@ const Story: Meta<typeof Editor> = {
   title: 'Editor',
   decorators: [
     (Story) => (
-      <div style={{ background: 'white', padding: '1em' }}>
+      <div style={{ background: 'white', padding: '3em' }}>
         <Story />
       </div>
     ),
