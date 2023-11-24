@@ -38,20 +38,24 @@ export function StepSummaryFeature() {
       }))
       .exhaustive()
 
-    await createHelm({
-      environmentId,
-      helmRequest: {
-        name: generalData.name,
-        description: generalData.description,
-        source,
-        allow_cluster_wide_resources: generalData.auto_preview!,
-        arguments: generalData.arguments,
-        timeout_sec: generalData.timeout_sec,
-        auto_deploy: generalData.auto_deploy,
-        ports: [],
-        values_override: {},
-      },
-    })
+    try {
+      await createHelm({
+        environmentId,
+        helmRequest: {
+          name: generalData.name,
+          description: generalData.description,
+          source,
+          allow_cluster_wide_resources: generalData.auto_preview!,
+          arguments: generalData.arguments,
+          timeout_sec: generalData.timeout_sec,
+          auto_deploy: generalData.auto_deploy,
+          ports: [],
+          values_override: {},
+        },
+      })
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   return (
@@ -95,9 +99,6 @@ export function StepSummaryFeature() {
                 <li>
                   <span className="font-medium">Root path:</span> {generalData.root_path}
                 </li>
-                <li>
-                  <span className="font-medium">Auto-deploy:</span> {generalData.auto_deploy.toString()}
-                </li>
               </ul>
             )}
 
@@ -132,7 +133,7 @@ export function StepSummaryFeature() {
               </li>
               {generalData.source_provider === 'GIT' && (
                 <li>
-                  <span className="font-medium">Auto-deploy:</span> {generalData.auto_deploy.toString()}
+                  <span className="font-medium">Auto-deploy:</span> {generalData.auto_deploy?.toString()}
                 </li>
               )}
             </ul>
