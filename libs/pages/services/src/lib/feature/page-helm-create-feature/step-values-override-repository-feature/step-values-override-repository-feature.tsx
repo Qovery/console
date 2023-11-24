@@ -74,15 +74,9 @@ export function StepValuesOverrideRepositoryFeature() {
               </div>
             </Section>
           </Section>
-          <div className="flex justify-between mt-6">
-            <Button
-              type="button"
-              size="lg"
-              color="neutral"
-              variant="surface"
-              onClick={() => navigate(SERVICES_URL(organizationId, projectId, environmentId))}
-            >
-              Cancel
+          <div className="flex justify-between mt-10">
+            <Button type="button" size="lg" variant="surface" color="neutral" onClick={() => navigate(-1)}>
+              Back
             </Button>
             <Button type="submit" size="lg" disabled={!valuesOverrideRepositoryForm.formState.isValid}>
               Continue

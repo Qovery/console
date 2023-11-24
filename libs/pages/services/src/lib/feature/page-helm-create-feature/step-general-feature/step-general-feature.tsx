@@ -86,7 +86,7 @@ export function StepGeneralFeature() {
               {watchFieldProvider === 'GIT' && <AutoDeploySetting source="GIT" className="mt-5" />}
             </Section>
           </Section>
-          <div className="flex justify-between mt-6">
+          <div className="flex justify-between mt-10">
             <Button
               type="button"
               size="lg"
