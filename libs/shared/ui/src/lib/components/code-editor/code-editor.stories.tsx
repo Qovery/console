@@ -1,5 +1,5 @@
 import type { Meta } from '@storybook/react'
-import Editor from './editor'
+import CodeEditor from './code-editor'
 
 const example = `
 labels: 
@@ -19,9 +19,9 @@ postgres:
   database_user: qovery.env.DATABASE_USER 
 `
 
-const Story: Meta<typeof Editor> = {
-  component: Editor,
-  title: 'Editor',
+const Story: Meta<typeof CodeEditor> = {
+  component: CodeEditor,
+  title: 'CodeEditor',
   decorators: [
     (Story) => (
       <div style={{ background: 'white', padding: '3em' }}>
