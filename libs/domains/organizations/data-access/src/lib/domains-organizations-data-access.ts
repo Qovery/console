@@ -97,7 +97,7 @@ export const organizations = createQueryKeys('organizations', {
       return response.data
     },
   }),
-  availableContainerRegistry: {
+  availableContainerRegistries: {
     queryKey: null,
     async queryFn() {
       const response = await containerRegistriesApi.listAvailableContainerRegistry()

@@ -9,9 +9,9 @@ const mockContainerRegistries = containerRegistriesByOrganizationIdMock
 
 const useEditContainerRegistryMockSpy = jest.spyOn(organizationsDomain, 'useEditContainerRegistry') as jest.Mock
 const useCreateContainerRegistryMockSpy = jest.spyOn(organizationsDomain, 'useCreateContainerRegistry') as jest.Mock
-const useAvailableContainerRegistryMockSpy = jest.spyOn(
+const useAvailableContainerRegistriesMockSpy = jest.spyOn(
   organizationsDomain,
-  'useAvailableContainerRegistry'
+  'useAvailableContainerRegistries'
 ) as jest.Mock
 
 const props: CrudModalFeatureProps = {
@@ -28,7 +28,7 @@ describe('CrudModalFeature', () => {
     useCreateContainerRegistryMockSpy.mockReturnValue({
       mutateAsync: jest.fn(),
     })
-    useAvailableContainerRegistryMockSpy.mockReturnValue({
+    useAvailableContainerRegistriesMockSpy.mockReturnValue({
       data: [
         {
           kind: 'DOCKER_HUB',

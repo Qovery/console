@@ -8,7 +8,7 @@ const props: CrudModalProps = {
   loading: false,
   onSubmit: jest.fn(),
   onClose: jest.fn(),
-  availableContainerRegistry: [
+  availableContainerRegistries: [
     {
       kind: ContainerRegistryKindEnum.DOCKER_HUB,
     },
