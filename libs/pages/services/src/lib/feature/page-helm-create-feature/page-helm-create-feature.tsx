@@ -19,10 +19,17 @@ export interface HelmGeneralData
   chart_version?: string
 }
 
+export interface HelmValuesOverrideRepositoryData {
+  repository: string
+  provider?: GitProviderEnum
+  branch?: string
+}
+
 interface HelmCreateContextInterface {
   currentStep: number
   setCurrentStep: (step: number) => void
   generalForm: UseFormReturn<HelmGeneralData>
+  valuesOverrideRepositoryForm: UseFormReturn<HelmValuesOverrideRepositoryData>
 }
 
 export const HelmCreateContext = createContext<HelmCreateContextInterface | undefined>(undefined)
@@ -43,6 +50,10 @@ export function PageHelmCreateFeature() {
     mode: 'onChange',
   })
 
+  const valuesOverrideRepositoryForm = useForm<HelmValuesOverrideRepositoryData>({
+    mode: 'onChange',
+  })
+
   const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_HELM_CREATION_URL}`
 
   return (
@@ -51,6 +62,7 @@ export function PageHelmCreateFeature() {
         currentStep,
         setCurrentStep,
         generalForm,
+        valuesOverrideRepositoryForm,
       }}
     >
       <FunnelFlow

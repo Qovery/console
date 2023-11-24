@@ -3,7 +3,11 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { GitBranchSettings, GitProviderSetting, GitRepositorySetting } from '@qovery/domains/organizations/feature'
 import { DeploymentSetting, SourceSetting } from '@qovery/domains/service-helm/feature'
 import { AutoDeploySetting, GeneralSetting } from '@qovery/domains/services/feature'
-import { SERVICES_HELM_CREATION_SUMMARY_URL, SERVICES_HELM_CREATION_URL, SERVICES_URL } from '@qovery/shared/routes'
+import {
+  SERVICES_HELM_CREATION_URL,
+  SERVICES_HELM_CREATION_VALUES_OVERRIDE_REPOSITORY_URL,
+  SERVICES_URL,
+} from '@qovery/shared/routes'
 import { Button, FunnelFlowBody, FunnelFlowHelpCard, Heading, Section } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { useHelmCreateContext } from '../page-helm-create-feature'
@@ -39,7 +43,7 @@ export function StepGeneralFeature() {
 
   const onSubmit = generalForm.handleSubmit((data) => {
     const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_HELM_CREATION_URL}`
-    navigate(pathCreate + SERVICES_HELM_CREATION_SUMMARY_URL)
+    navigate(pathCreate + SERVICES_HELM_CREATION_VALUES_OVERRIDE_REPOSITORY_URL)
   })
 
   const watchFieldProvider = generalForm.watch('source_provider')

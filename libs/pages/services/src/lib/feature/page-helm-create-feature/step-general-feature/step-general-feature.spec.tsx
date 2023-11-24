@@ -15,7 +15,7 @@ jest.mock('react-router-dom', () => ({
   useParams: () => ({ organizationId: '1' }),
 }))
 
-describe('PageApplicationCreateGeneralFeature', () => {
+describe('StepGeneralFeature', () => {
   beforeEach(() => {
     useHelmRepositorySpy.mockReturnValue({
       data: [
