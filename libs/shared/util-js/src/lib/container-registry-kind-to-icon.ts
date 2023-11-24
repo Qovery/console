@@ -13,6 +13,6 @@ export function containerRegistryKindToIcon(
     .with('GITLAB_CR', () => IconEnum.GITLAB)
     .with('GENERIC_CR', () => IconEnum.GENERIC_REGISTRY)
     .with('ECR', 'PUBLIC_ECR', () => IconEnum.AWS)
-    .with('GCP_ARTIFACT_REGISTRY', () => IconEnum.GENERIC_REGISTRY) // TODO change it when GCP design has been done
+    .with('GCP_ARTIFACT_REGISTRY', () => IconEnum.GCP_ARTIFACT_REGISTRY)
     .exhaustive()
 }

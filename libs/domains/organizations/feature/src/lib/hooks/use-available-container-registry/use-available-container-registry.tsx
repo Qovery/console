@@ -8,6 +8,9 @@ export interface UseAvailableContainerRegistryProps {
 export function useAvailableContainerRegistry({ organizationId }: UseAvailableContainerRegistryProps) {
   return useQuery({
     ...queries.organizations.availableContainerRegistry({ organizationId }),
+    select(registries) {
+      return registries?.filter(({ kind }) => kind !== 'GCP_ARTIFACT_REGISTRY')
+    },
   })
 }
 
