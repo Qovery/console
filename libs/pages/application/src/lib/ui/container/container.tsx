@@ -120,6 +120,8 @@ export function Container({ service, environment, children }: PropsWithChildren<
               ? IconEnum.CRON_JOB
               : isLifeCycleJob(service as ApplicationEntity)
               ? IconEnum.LIFECYCLE_JOB
+              : service?.serviceType === 'HELM'
+              ? IconEnum.HELM
               : IconEnum.APPLICATION
           }
           actions={headerActions}

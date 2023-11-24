@@ -291,12 +291,12 @@ export function ServiceList({ organizationId, projectId, environmentId, classNam
             helmRepository && (
               <div className="flex flex-col gap-1 ml-7" onClick={(e) => e.stopPropagation()}>
                 <Badge variant="surface" size="xs" className="gap-1">
-                  <Icon width={16} name={IconEnum.AWS} />
+                  <Icon width={16} name={IconEnum.HELM_OFFICIAL} />
                   <Truncate text={(helmRepository.repository?.name ?? '').toLowerCase()} truncateLimit={18} />
                 </Badge>
                 <div>
                   <Badge variant="surface" size="xs" className="gap-1">
-                    <Icon width={16} name={IconEnum.HELM} />
+                    <Icon width={16} name={IconEnum.HELM_OFFICIAL} />
                     {helmRepository.chart_name}:{helmRepository.chart_version}
                   </Badge>
                 </div>

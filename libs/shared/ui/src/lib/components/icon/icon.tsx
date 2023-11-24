@@ -22,6 +22,8 @@ import EnvironmentIcon from './icons/environment'
 import GcpArtifactRegistryIcon from './icons/gcp-artifact-registry'
 import GenericRegistryIcon from './icons/generic-registry'
 import GitIcon from './icons/git'
+import HelmOfficialIcon from './icons/helm-official'
+import HelmServiceIcon from './icons/helm-service'
 import InformationIcon from './icons/information'
 import LifecycleJobIcon from './icons/lifecycle-job'
 import LifecycleJobStrokeIcon from './icons/lifecycle-job-stroke-icon'
@@ -121,6 +123,10 @@ export function Icon(props: IconProps) {
       return <GenericRegistryIcon {...formattedProps} />
     case IconEnum.GCP_ARTIFACT_REGISTRY:
       return <GcpArtifactRegistryIcon {...formattedProps} />
+    case IconEnum.HELM:
+      return <HelmServiceIcon {...formattedProps} />
+    case IconEnum.HELM_OFFICIAL:
+      return <HelmOfficialIcon {...formattedProps} />
     default:
       return <IconFa {...formattedProps} />
   }

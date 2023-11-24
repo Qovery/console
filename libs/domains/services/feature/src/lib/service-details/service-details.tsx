@@ -327,7 +327,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
                 <Dd>
                   <a href={helmRepository.repository.url} target="_blank" rel="noopener noreferrer">
                     <Badge variant="surface" size="xs" className="items-center gap-1 capitalize">
-                      <Icon width={16} name={IconEnum.HELM} />
+                      <Icon width={16} name={IconEnum.HELM_OFFICIAL} />
                       <Truncate text={helmRepository.repository.name ?? ''} truncateLimit={18} />
                     </Badge>
                   </a>
