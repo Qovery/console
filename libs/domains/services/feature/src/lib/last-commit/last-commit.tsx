@@ -33,7 +33,13 @@ export function LastCommit({ className, gitRepository, serviceId, serviceType }:
   }
 
   return copied ? (
-    <Button type="button" variant="solid" color="green" size="xs">
+    <Button
+      type="button"
+      variant="solid"
+      color="green"
+      size="xs"
+      className="shrink-0 border border-green-500 max-w-max"
+    >
       <Icon name={IconAwesomeEnum.CHECK} className="mr-1" />
       <span>Copied</span>
     </Button>
