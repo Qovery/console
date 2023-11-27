@@ -204,13 +204,20 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
     .otherwise(() => null)
 
   const valuesOverride = match(service)
-    .with({ serviceType: 'HELM' }, ({ serviceType, values_override: { file } }) => {
+    .with({ serviceType: 'HELM' }, ({ serviceType, values_override: { file, set, set_json, set_string } }) => {
+      const overrideWithArguments = (
+        <>
+          <Dt>Override with arguments:</Dt>
+          <Dl>{set?.length || set_json?.length || set_string?.length ? 'Yes' : 'No'}</Dl>
+        </>
+      )
       if (file?.git?.git_repository) {
         return (
           <Dl>
             <Dt>Type:</Dt>
             <Dd>Git repository</Dd>
             <GitRepository serviceId={serviceId} serviceType={serviceType} gitRepository={file.git.git_repository} />
+            {overrideWithArguments}
           </Dl>
         )
       } else if (file?.raw) {
@@ -218,15 +225,11 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
           <Dl>
             <Dt>Type:</Dt>
             <Dd>Raw YAML</Dd>
+            {overrideWithArguments}
           </Dl>
         )
       } else {
-        return (
-          <Dl>
-            <Dt>Type:</Dt>
-            <Dd>Manual</Dd>
-          </Dl>
-        )
+        return <Dl>{overrideWithArguments}</Dl>
       }
     })
     .otherwise(() => null)
