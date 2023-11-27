@@ -290,10 +290,12 @@ export function ServiceList({ organizationId, projectId, environmentId, classNam
           const helmInfo = (helmRepository?: HelmResponseAllOfSourceOneOf1Repository) =>
             helmRepository && (
               <div className="flex flex-col gap-1 ml-7" onClick={(e) => e.stopPropagation()}>
-                <Badge variant="surface" size="xs" className="gap-1">
-                  <Icon width={16} name={IconEnum.HELM_OFFICIAL} />
-                  <Truncate text={(helmRepository.repository?.name ?? '').toLowerCase()} truncateLimit={18} />
-                </Badge>
+                <a href={helmRepository.repository?.url} target="_blank" rel="noopener noreferrer">
+                  <Badge variant="surface" size="xs" className="items-center gap-1">
+                    <Icon width={16} name={IconEnum.HELM_OFFICIAL} />
+                    <Truncate text={(helmRepository.repository?.name ?? '').toLowerCase()} truncateLimit={18} />
+                  </Badge>
+                </a>
                 <div>
                   <Badge variant="surface" size="xs" className="gap-1">
                     <Icon width={16} name={IconEnum.HELM_OFFICIAL} />
