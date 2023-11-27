@@ -10,10 +10,21 @@ export interface InputToggleProps {
   dataTestId?: string
   forceAlignTop?: boolean
   disabled?: boolean
+  name?: string
 }
 
 export function InputToggle(props: InputToggleProps) {
-  const { small, value, onChange, description, title, className = '', forceAlignTop = false, disabled = false } = props
+  const {
+    small,
+    value,
+    onChange,
+    description,
+    title,
+    className = '',
+    forceAlignTop = false,
+    disabled = false,
+    name,
+  } = props
 
   const [toggleActive, setToggleActive] = useState(value)
   const [animateEnabled, setAnimateEnabled] = useState(false)
@@ -59,6 +70,7 @@ export function InputToggle(props: InputToggleProps) {
           defaultValue={toggleActive?.toString()}
           className="hidden"
           disabled={disabled}
+          name={name}
         />
         <div
           aria-label="bg"
