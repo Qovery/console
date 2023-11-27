@@ -221,18 +221,6 @@ export function InputSelect({
             {label}
           </label>
         )}
-        {currentIcon?.onClickEditable && (
-          <div
-            data-testid="selected-edit-icon"
-            className="cursor-pointer flex items-center justify-center text-sm text-neutral-400 hover:text-brand-500 w-8 h-8 absolute z-[1] right-8 top-[10px]"
-            onClick={(event) => {
-              event.stopPropagation()
-              currentIcon.onClickEditable && currentIcon.onClickEditable()
-            }}
-          >
-            <IconFa name={IconAwesomeEnum.PEN} />
-          </div>
-        )}
         <Select
           autoFocus={autoFocus}
           options={options}
@@ -263,7 +251,6 @@ export function InputSelect({
           styles={{
             menuPortal: (base) => ({
               ...base,
-              zIndex: 50,
               pointerEvents: 'auto',
               // Prevent misplacement with intercom banner
               marginTop: `-${document.body.style.marginTop ? document.body.style.marginTop : 0}`,
@@ -275,6 +262,18 @@ export function InputSelect({
         {!isFilter && (
           <div className="absolute top-1/2 -translate-y-1/2 right-4 pointer-events-none">
             <Icon name="icon-solid-angle-down" className="text-sm text-neutral-400" />
+          </div>
+        )}
+        {currentIcon?.onClickEditable && (
+          <div
+            data-testid="selected-edit-icon"
+            className="cursor-pointer flex items-center justify-center text-sm text-neutral-400 hover:text-brand-500 w-8 h-8 absolute right-8 top-[10px]"
+            onClick={(event) => {
+              event.stopPropagation()
+              currentIcon.onClickEditable && currentIcon.onClickEditable()
+            }}
+          >
+            <IconFa name={IconAwesomeEnum.PEN} />
           </div>
         )}
       </div>
