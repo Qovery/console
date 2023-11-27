@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
 import { useProjects } from '@qovery/domains/projects/feature'
+import { IconEnum } from '@qovery/shared/enums'
 import {
   SETTINGS_API_URL,
   SETTINGS_BILLING_SUMMARY_URL,
@@ -8,6 +9,7 @@ import {
   SETTINGS_DANGER_ZONE_URL,
   SETTINGS_GENERAL_URL,
   SETTINGS_GIT_REPOSITORY_ACCESS_URL,
+  SETTINGS_HELM_REPOSITORIES_URL,
   SETTINGS_MEMBERS_URL,
   SETTINGS_PROJECT_DANGER_ZONE_URL,
   SETTINGS_PROJECT_GENERAL_URL,
@@ -64,6 +66,11 @@ export function PageSettings() {
       title: 'Container registries',
       icon: IconAwesomeEnum.BOX,
       url: pathSettings + SETTINGS_CONTAINER_REGISTRIES_URL,
+    },
+    {
+      title: 'Helm repositories',
+      icon: IconEnum.HELM_OFFICIAL,
+      url: pathSettings + SETTINGS_HELM_REPOSITORIES_URL,
     },
     {
       title: 'Git repositories access',
