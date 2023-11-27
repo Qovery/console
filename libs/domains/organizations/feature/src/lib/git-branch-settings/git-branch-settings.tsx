@@ -8,9 +8,10 @@ import { useBranches } from '../hooks/use-branches/use-branches'
 export interface GitBranchSettingsProps {
   gitProvider: GitProviderEnum
   disabled?: boolean
+  hideRootPath?: boolean
 }
 
-export function GitBranchSettings({ disabled, gitProvider }: GitBranchSettingsProps) {
+export function GitBranchSettings({ disabled, gitProvider, hideRootPath }: GitBranchSettingsProps) {
   const { control, watch } = useFormContext()
   const { organizationId = '' } = useParams()
 
@@ -76,24 +77,26 @@ export function GitBranchSettings({ disabled, gitProvider }: GitBranchSettingsPr
           />
         )}
       />
-      <Controller
-        name="root_path"
-        control={control}
-        defaultValue="/"
-        rules={{
-          required: 'Value required',
-        }}
-        render={({ field, fieldState: { error } }) => (
-          <InputText
-            label="Root application path"
-            name={field.name}
-            onChange={field.onChange}
-            value={field.value}
-            error={error?.message}
-            disabled={disabled}
-          />
-        )}
-      />
+      {hideRootPath && (
+        <Controller
+          name="root_path"
+          control={control}
+          defaultValue="/"
+          rules={{
+            required: 'Value required',
+          }}
+          render={({ field, fieldState: { error } }) => (
+            <InputText
+              label="Root application path"
+              name={field.name}
+              onChange={field.onChange}
+              value={field.value}
+              error={error?.message}
+              disabled={disabled}
+            />
+          )}
+        />
+      )}
     </>
   )
 }

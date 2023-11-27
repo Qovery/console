@@ -5,7 +5,7 @@ import { DeploymentSetting, SourceSetting } from '@qovery/domains/service-helm/f
 import { AutoDeploySetting, GeneralSetting } from '@qovery/domains/services/feature'
 import {
   SERVICES_HELM_CREATION_URL,
-  SERVICES_HELM_CREATION_VALUES_OVERRIDE_REPOSITORY_URL,
+  SERVICES_HELM_CREATION_VALUES_STEP_1_URL,
   SERVICES_URL,
 } from '@qovery/shared/routes'
 import { Button, FunnelFlowBody, FunnelFlowHelpCard, Heading, Section } from '@qovery/shared/ui'
@@ -41,9 +41,9 @@ export function StepGeneralFeature() {
     />
   )
 
-  const onSubmit = generalForm.handleSubmit((data) => {
+  const onSubmit = generalForm.handleSubmit(() => {
     const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_HELM_CREATION_URL}`
-    navigate(pathCreate + SERVICES_HELM_CREATION_VALUES_OVERRIDE_REPOSITORY_URL)
+    navigate(pathCreate + SERVICES_HELM_CREATION_VALUES_STEP_1_URL)
   })
 
   const watchFieldProvider = generalForm.watch('source_provider')

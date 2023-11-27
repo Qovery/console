@@ -9,7 +9,7 @@ import { ROUTER_SERVICE_HELM_CREATION } from '../../router/router'
 export const steps: { title: string }[] = [{ title: 'General data' }, { title: 'Values' }, { title: 'Summary' }]
 
 export interface HelmGeneralData
-  extends Omit<HelmRequest, 'source' | 'ports' | 'allow_cluster_wide_resources' | 'values_override'> {
+  extends Omit<HelmRequest, 'source' | 'ports' | 'allow_cluster_wide_resources' | 'values_override' | 'arguments'> {
   source_provider: 'HELM_REPOSITORY' | 'GIT'
   repository: string
   provider?: GitProviderEnum
@@ -17,19 +17,21 @@ export interface HelmGeneralData
   root_path?: string
   chart_name?: string
   chart_version?: string
+  arguments: string
 }
 
-export interface HelmValuesOverrideRepositoryData {
+export interface HelmValuesAsFileData {
   repository: string
   provider?: GitProviderEnum
   branch?: string
+  paths?: string
 }
 
 interface HelmCreateContextInterface {
   currentStep: number
   setCurrentStep: (step: number) => void
   generalForm: UseFormReturn<HelmGeneralData>
-  valuesOverrideRepositoryForm: UseFormReturn<HelmValuesOverrideRepositoryData>
+  valuesOverrideRepositoryForm: UseFormReturn<HelmValuesAsFileData>
 }
 
 export const HelmCreateContext = createContext<HelmCreateContextInterface | undefined>(undefined)
@@ -50,7 +52,7 @@ export function PageHelmCreateFeature() {
     mode: 'onChange',
   })
 
-  const valuesOverrideRepositoryForm = useForm<HelmValuesOverrideRepositoryData>({
+  const valuesOverrideRepositoryForm = useForm<HelmValuesAsFileData>({
     mode: 'onChange',
   })
 

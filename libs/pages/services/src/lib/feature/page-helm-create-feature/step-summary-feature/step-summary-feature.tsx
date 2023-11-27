@@ -1,9 +1,16 @@
 import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
+import { getGitTokenValue } from '@qovery/domains/organizations/feature'
 import { useCreateHelm } from '@qovery/domains/service-helm/feature'
-import { SERVICES_CREATION_GENERAL_URL, SERVICES_HELM_CREATION_URL, SERVICES_URL } from '@qovery/shared/routes'
+import {
+  SERVICES_CREATION_GENERAL_URL,
+  SERVICES_GENERAL_URL,
+  SERVICES_HELM_CREATION_URL,
+  SERVICES_URL,
+} from '@qovery/shared/routes'
 import { Button, FunnelFlowBody, Heading, Icon, IconAwesomeEnum, Section } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { buildGitRepoUrl } from '@qovery/shared/util-js'
 import { useHelmCreateContext } from '../page-helm-create-feature'
 
 export function StepSummaryFeature() {
@@ -22,13 +29,17 @@ export function StepSummaryFeature() {
 
   const onSubmit = async (withDeploy: boolean) => {
     const source = match(generalData.source_provider)
-      .with('GIT', () => ({
-        git_repository: {
-          url: generalData.repository,
-          branch: generalData.branch,
-          root_path: generalData.root_path,
-        },
-      }))
+      .with('GIT', () => {
+        const gitToken = getGitTokenValue(generalData.provider ?? '')
+
+        return {
+          git_repository: {
+            url: buildGitRepoUrl(gitToken?.type ?? generalData.provider ?? '', generalData.repository),
+            branch: generalData.branch,
+            root_path: generalData.root_path,
+          },
+        }
+      })
       .with('HELM_REPOSITORY', () => ({
         helm_repository: {
           repository: generalData.repository,
@@ -46,13 +57,13 @@ export function StepSummaryFeature() {
           description: generalData.description,
           source,
           allow_cluster_wide_resources: generalData.auto_preview!,
-          arguments: generalData.arguments,
+          arguments: JSON.parse(generalData.arguments),
           timeout_sec: generalData.timeout_sec,
           auto_deploy: generalData.auto_deploy,
-          ports: [],
           values_override: {},
         },
       })
+      navigate(SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_GENERAL_URL)
     } catch (error) {
       console.log(error)
     }

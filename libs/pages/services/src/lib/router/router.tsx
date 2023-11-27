@@ -16,7 +16,7 @@ import {
   SERVICES_HELM_CREATION_GENERAL_URL,
   SERVICES_HELM_CREATION_SUMMARY_URL,
   SERVICES_HELM_CREATION_URL,
-  SERVICES_HELM_CREATION_VALUES_OVERRIDE_REPOSITORY_URL,
+  SERVICES_HELM_CREATION_VALUES_STEP_1_URL,
   SERVICES_JOB_CREATION_CONFIGURE_URL,
   SERVICES_JOB_CREATION_GENERAL_URL,
   SERVICES_JOB_CREATION_POST_URL,
@@ -45,7 +45,7 @@ import PageGeneralFeature from '../feature/page-general-feature/page-general-fea
 import PageHelmCreateFeature from '../feature/page-helm-create-feature/page-helm-create-feature'
 import { StepGeneralFeature as HelmStepGeneralFeature } from '../feature/page-helm-create-feature/step-general-feature/step-general-feature'
 import { StepSummaryFeature as HelmStepSummaryFeature } from '../feature/page-helm-create-feature/step-summary-feature/step-summary-feature'
-import { StepValuesOverrideRepositoryFeature as HelmStepValuesOverrideRepositoryFeature } from '../feature/page-helm-create-feature/step-values-override-repository-feature/step-values-override-repository-feature'
+import { StepValuesStep1Feature as HelmStepValuesStep1Feature } from '../feature/page-helm-create-feature/step-values-step-1-feature/step-values-step-1-feature'
 import { PageJobCreateFeature } from '../feature/page-job-create-feature/page-job-create-feature'
 import StepConfigureFeature from '../feature/page-job-create-feature/step-configure-feature/step-configure-feature'
 import { StepGeneralFeature } from '../feature/page-job-create-feature/step-general-feature/step-general-feature'
@@ -185,8 +185,8 @@ export const ROUTER_SERVICE_HELM_CREATION: Route[] = [
     component: <HelmStepGeneralFeature />,
   },
   {
-    path: SERVICES_HELM_CREATION_VALUES_OVERRIDE_REPOSITORY_URL,
-    component: <HelmStepValuesOverrideRepositoryFeature />,
+    path: SERVICES_HELM_CREATION_VALUES_STEP_1_URL,
+    component: <HelmStepValuesStep1Feature />,
   },
   {
     path: SERVICES_HELM_CREATION_SUMMARY_URL,

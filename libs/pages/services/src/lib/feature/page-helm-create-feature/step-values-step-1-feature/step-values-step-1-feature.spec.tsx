@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form'
 import { renderHook, renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { type HelmValuesOverrideRepositoryData } from '../page-helm-create-feature'
 import { HelmCreateContext } from '../page-helm-create-feature'
-import StepGeneralFeature from './step-values-override-repository-feature'
+import StepValuesStep1Feature from './step-values-step-1-feature'
 
 describe('StepValuesOverrideGeneralFeature', () => {
   it('should render successfully', () => {
@@ -21,7 +21,7 @@ describe('StepValuesOverrideGeneralFeature', () => {
           valuesOverrideRepositoryForm: result.current,
         }}
       >
-        <StepGeneralFeature />
+        <StepValuesStep1Feature />
       </HelmCreateContext.Provider>
     )
     expect(baseElement).toBeTruthy()
@@ -47,7 +47,7 @@ describe('StepValuesOverrideGeneralFeature', () => {
             valuesOverrideRepositoryForm: result.current,
           }}
         >
-          <StepGeneralFeature />
+          <StepValuesStep1Feature />
         </HelmCreateContext.Provider>
       )
     )
