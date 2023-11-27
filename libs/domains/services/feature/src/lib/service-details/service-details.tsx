@@ -2,7 +2,14 @@ import { type ApplicationGitRepository, type Credentials } from 'qovery-typescri
 import { type ComponentPropsWithoutRef } from 'react'
 import { P, match } from 'ts-pattern'
 import { type ServiceType } from '@qovery/domains/services/data-access'
-import { IconEnum, ServiceTypeEnum, isHelmGitSource, isJobContainerSource, isJobGitSource } from '@qovery/shared/enums'
+import {
+  IconEnum,
+  ServiceTypeEnum,
+  isHelmGitSource,
+  isHelmRepositorySource,
+  isJobContainerSource,
+  isJobGitSource,
+} from '@qovery/shared/enums'
 import {
   APPLICATION_SETTINGS_RESOURCES_URL,
   APPLICATION_SETTINGS_URL,
@@ -112,6 +119,10 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
       tag,
       registry,
     }))
+    .otherwise(() => undefined)
+
+  const helmRepository = match(service)
+    .with({ serviceType: 'HELM', source: P.when(isHelmRepositorySource) }, ({ source }) => source.repository)
     .otherwise(() => undefined)
 
   const databaseSource = match(service)
@@ -306,6 +317,27 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
             <Dd>{containerImage.image_name}</Dd>
             <Dt>Tag:</Dt>
             <Dd>{containerImage.tag}</Dd>
+          </Dl>
+        )}
+        {helmRepository && (
+          <Dl>
+            {helmRepository.repository && (
+              <>
+                <Dt>Repository:</Dt>
+                <Dd>
+                  <a href={helmRepository.repository.url} target="_blank" rel="noopener noreferrer">
+                    <Badge variant="surface" size="xs" className="items-center gap-1 capitalize">
+                      <Icon width={16} name={IconEnum.HELM} />
+                      <Truncate text={helmRepository.repository.name ?? ''} truncateLimit={18} />
+                    </Badge>
+                  </a>
+                </Dd>
+              </>
+            )}
+            <Dt>Chart name:</Dt>
+            <Dd>{helmRepository.chart_name}</Dd>
+            <Dt>Version:</Dt>
+            <Dd>{helmRepository.chart_version}</Dd>
           </Dl>
         )}
         {databaseSource && (
