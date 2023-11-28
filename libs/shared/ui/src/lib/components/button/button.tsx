@@ -13,7 +13,7 @@ export const Button = forwardRef<ElementRef<typeof ButtonPrimitive>, ButtonProps
   return (
     <ButtonPrimitive {...props} ref={forwardedRef} loading={loading}>
       {loading && <LoaderSpinner className="absolute m-auto left-0 right-0" theme="dark" />}
-      <span className={loading ? 'opacity-0' : ''}>{props.children}</span>
+      <span className={loading ? 'opacity-0' : undefined}>{props.children}</span>
     </ButtonPrimitive>
   )
 })
