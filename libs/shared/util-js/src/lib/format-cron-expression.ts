@@ -1,14 +1,13 @@
 // eslint-disable-next-line @typescript-eslint/no-restricted-imports
 import cronstrue from 'cronstrue'
 
-export function formatCronExpression(expression?: string) {
+export function formatCronExpression(expression?: string, tzOffset?: number) {
   if (expression === undefined) {
     return undefined
   }
-  const res =
-    cronstrue.toString(expression, {
-      throwExceptionOnParseError: false,
-      tzOffset: (new Date().getTimezoneOffset() / 60) * -1,
-    }) + ' (browser timezone)'
+  const res = cronstrue.toString(expression, {
+    throwExceptionOnParseError: false,
+    tzOffset: tzOffset ? tzOffset : 0,
+  })
   return res.indexOf('An error') === -1 ? res : undefined
 }
