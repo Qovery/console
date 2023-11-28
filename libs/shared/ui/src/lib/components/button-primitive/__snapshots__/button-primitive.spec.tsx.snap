@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ButtonPrimitive should match snapshot 1`] = `
+<body>
+  <div>
+    <button
+      class="inline-flex items-center shrink-0 font-medium transition text-xs h-7 px-2 rounded bg-brand-500 hover:bg-brand-600 text-white disabled:text-brand-300 disabled:bg-brand-100 disabled:border-none"
+      type="button"
+    >
+      Foobar
+    </button>
+  </div>
+</body>
+`;

@@ -1,5 +1,5 @@
 import type { Meta } from '@storybook/react'
-import { Button } from '../button/button'
+import { Button } from '../button-primitive/button-primitive'
 import { Icon } from '../icon/icon'
 import { IconAwesomeEnum } from '../icon/icon-awesome.enum'
 import { Callout } from './callout'
