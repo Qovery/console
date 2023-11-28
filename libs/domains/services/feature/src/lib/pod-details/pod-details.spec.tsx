@@ -17,7 +17,7 @@ describe('PodDetails', () => {
         },
       ],
     }
-    const { baseElement } = renderWithProviders(<PodDetails pod={pod} serviceId="1" isGitBased />)
+    const { baseElement } = renderWithProviders(<PodDetails pod={pod} serviceId="1" serviceType="APPLICATION" />)
     expect(baseElement).toMatchSnapshot()
   })
   it('should match snapshot with git based pod and with last_terminated_state', () => {
@@ -43,10 +43,10 @@ describe('PodDetails', () => {
         },
       ],
     }
-    const { baseElement } = renderWithProviders(<PodDetails pod={pod} serviceId="1" isGitBased />)
+    const { baseElement } = renderWithProviders(<PodDetails pod={pod} serviceId="1" serviceType="APPLICATION" />)
     expect(baseElement).toMatchSnapshot()
   })
-  it('should match snapshot with container based pod and with last_terminated_state', () => {
+  it('should match snapshot with container based pod and with multiple containers', () => {
     const pod: Pod = {
       podName: 'foobar',
       containers: [
@@ -54,6 +54,14 @@ describe('PodDetails', () => {
           name: 'pod-container-1',
           current_state: {
             state: 'RUNNING',
+          },
+          image: 'foobar-img',
+          restart_count: 0,
+        },
+        {
+          name: 'pod-container-2',
+          current_state: {
+            state: 'ERROR',
           },
           image: 'foobar-img',
           last_terminated_state: {
@@ -67,7 +75,7 @@ describe('PodDetails', () => {
         },
       ],
     }
-    const { baseElement } = renderWithProviders(<PodDetails pod={pod} serviceId="1" isGitBased={false} />)
+    const { baseElement } = renderWithProviders(<PodDetails pod={pod} serviceId="1" serviceType="HELM" />)
     expect(baseElement).toMatchSnapshot()
   })
 })

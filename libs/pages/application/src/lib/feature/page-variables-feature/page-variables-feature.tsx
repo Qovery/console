@@ -31,6 +31,7 @@ export function PageVariablesFeature() {
     .with('APPLICATION', () => APIVariableScopeEnum.APPLICATION)
     .with('CONTAINER', () => APIVariableScopeEnum.CONTAINER)
     .with('JOB', () => APIVariableScopeEnum.JOB)
+    .with('HELM', () => APIVariableScopeEnum.HELM)
     .otherwise(() => undefined)
 
   const { data: sortVariableMemo = [], isLoading } = useVariables({

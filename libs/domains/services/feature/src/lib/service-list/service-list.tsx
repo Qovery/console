@@ -118,20 +118,14 @@ export function ServiceList({ organizationId, projectId, environmentId, classNam
           }
 
           const buttonActions = match(serviceType)
-            .with(
-              ServiceTypeEnum.APPLICATION,
-              ServiceTypeEnum.CONTAINER,
-              ServiceTypeEnum.JOB,
-              ServiceTypeEnum.HELM,
-              () => (
-                <ApplicationButtonsActions
-                  application={service as ApplicationEntity}
-                  environmentMode={environment.mode}
-                  clusterId={environment.cluster_id}
-                />
-              )
-            )
-            .with(ServiceTypeEnum.DATABASE, () => (
+            .with('APPLICATION', 'CONTAINER', 'JOB', 'HELM', () => (
+              <ApplicationButtonsActions
+                application={service as ApplicationEntity}
+                environmentMode={environment.mode}
+                clusterId={environment.cluster_id}
+              />
+            ))
+            .with('DATABASE', () => (
               <DatabaseButtonsActions
                 database={service as DatabaseEntity}
                 environmentMode={environment.mode}
@@ -296,13 +290,15 @@ export function ServiceList({ organizationId, projectId, environmentId, classNam
           const helmInfo = (helmRepository?: HelmResponseAllOfSourceOneOf1Repository) =>
             helmRepository && (
               <div className="flex flex-col gap-1 ml-7" onClick={(e) => e.stopPropagation()}>
-                <Badge variant="surface" size="xs" className="gap-1">
-                  <Icon width={16} name={IconEnum.AWS} />
-                  <Truncate text={(helmRepository.repository?.name ?? '').toLowerCase()} truncateLimit={18} />
-                </Badge>
+                <a href={helmRepository.repository?.url} target="_blank" rel="noopener noreferrer">
+                  <Badge variant="surface" size="xs" className="items-center gap-1">
+                    <Icon width={16} name={IconEnum.HELM_OFFICIAL} />
+                    <Truncate text={(helmRepository.repository?.name ?? '').toLowerCase()} truncateLimit={18} />
+                  </Badge>
+                </a>
                 <div>
                   <Badge variant="surface" size="xs" className="gap-1">
-                    <Icon width={16} name={IconEnum.HELM} />
+                    <Icon width={16} name={IconEnum.HELM_OFFICIAL} />
                     {helmRepository.chart_name}:{helmRepository.chart_version}
                   </Badge>
                 </div>

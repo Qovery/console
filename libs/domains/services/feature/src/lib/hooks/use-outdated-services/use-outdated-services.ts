@@ -2,7 +2,7 @@ import { useQueries, useQuery } from '@tanstack/react-query'
 import { type Commit } from 'qovery-typescript-axios'
 import { P, match } from 'ts-pattern'
 import { type Application, type Job, isApplication, isJob } from '@qovery/domains/services/data-access'
-import { ServiceTypeEnum, isJobGitSource } from '@qovery/shared/enums'
+import { isJobGitSource } from '@qovery/shared/enums'
 import { unionTypeGuard } from '@qovery/shared/util-types'
 import { queries } from '@qovery/state/util-queries'
 
@@ -20,11 +20,8 @@ export function useOutdatedServices({ environmentId }: UseOutdatedServicesProps)
 
   const getGitRepository = (service: Application | Job) =>
     match(service)
-      .with({ serviceType: ServiceTypeEnum.APPLICATION }, ({ git_repository }) => git_repository)
-      .with(
-        { serviceType: ServiceTypeEnum.JOB, source: P.when(isJobGitSource) },
-        ({ source }) => source.docker?.git_repository
-      )
+      .with({ serviceType: 'APPLICATION' }, ({ git_repository }) => git_repository)
+      .with({ serviceType: 'JOB', source: P.when(isJobGitSource) }, ({ source }) => source.docker?.git_repository)
       .otherwise(() => undefined)
 
   const gitServices = services

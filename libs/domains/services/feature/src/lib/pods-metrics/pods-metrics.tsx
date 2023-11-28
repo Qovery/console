@@ -327,7 +327,7 @@ export function PodsMetrics({ environmentId, serviceId }: PodsMetricsProps) {
                 <Table.Row className="dark bg-neutral-550 text-xs">
                   {/* 2nd row is a custom 1 cell row */}
                   <Table.Cell colSpan={row.getVisibleCells().length} className="p-0">
-                    <PodDetails pod={row.original} serviceId={serviceId} isGitBased={!containerImage} />
+                    <PodDetails pod={row.original} serviceId={serviceId} serviceType={service.serviceType} />
                   </Table.Cell>
                 </Table.Row>
               )}

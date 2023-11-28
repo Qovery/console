@@ -28,6 +28,7 @@ export const getServiceType = (data: ApplicationEntity | DatabaseEntity) => {
   } else if (
     !(data as GitApplicationEntity)?.build_mode &&
     !(data as ContainerApplicationEntity)?.image_name &&
+    !('values_override' in data) &&
     !isJob
   ) {
     currentType = ServiceTypeEnum.DATABASE
@@ -35,6 +36,8 @@ export const getServiceType = (data: ApplicationEntity | DatabaseEntity) => {
     currentType = ServiceTypeEnum.CRON_JOB
   } else if (isJob && 'schedule' in data && !('cronjob' in (data.schedule ?? {}))) {
     currentType = ServiceTypeEnum.LIFECYCLE_JOB
+  } else if ('values_override' in data) {
+    currentType = ServiceTypeEnum.HELM
   } else {
     currentType = ServiceTypeEnum.APPLICATION
   }
@@ -43,7 +46,7 @@ export const getServiceType = (data: ApplicationEntity | DatabaseEntity) => {
 }
 
 // Job
-export const isJob = (data?: ApplicationEntity | ServiceTypeEnum) => {
+export const isJob = (data?: ApplicationEntity | keyof typeof ServiceTypeEnum) => {
   if (data && (data as ApplicationEntity).id) {
     return (
       getServiceType(data as ApplicationEntity) === ServiceTypeEnum.CRON_JOB ||
@@ -54,14 +57,14 @@ export const isJob = (data?: ApplicationEntity | ServiceTypeEnum) => {
   }
 }
 
-export const isCronJob = (data?: ApplicationEntity | ServiceTypeEnum) => {
+export const isCronJob = (data?: ApplicationEntity | keyof typeof ServiceTypeEnum) => {
   if (data && (data as ApplicationEntity).id) {
     return getServiceType(data as ApplicationEntity) === ServiceTypeEnum.CRON_JOB
   } else {
     return data === ServiceTypeEnum.CRON_JOB
   }
 }
-export const isLifeCycleJob = (data?: ApplicationEntity | ServiceTypeEnum) => {
+export const isLifeCycleJob = (data?: ApplicationEntity | keyof typeof ServiceTypeEnum) => {
   if (data as ApplicationEntity) {
     return getServiceType(data as ApplicationEntity) === ServiceTypeEnum.LIFECYCLE_JOB
   } else {
@@ -102,7 +105,7 @@ export const isContainerJob = (
 }
 
 // Container
-export const isContainer = (data?: ApplicationEntity | ServiceTypeEnum) => {
+export const isContainer = (data?: ApplicationEntity | keyof typeof ServiceTypeEnum) => {
   if (data && (data as ApplicationEntity).id) {
     return getServiceType(data as ApplicationEntity) === ServiceTypeEnum.CONTAINER
   } else {
@@ -110,7 +113,7 @@ export const isContainer = (data?: ApplicationEntity | ServiceTypeEnum) => {
   }
 }
 // Application
-export const isApplication = (data?: ApplicationEntity | ServiceTypeEnum) => {
+export const isApplication = (data?: ApplicationEntity | keyof typeof ServiceTypeEnum) => {
   if (data && (data as ApplicationEntity).id) {
     return getServiceType(data as ApplicationEntity) === ServiceTypeEnum.APPLICATION
   } else {
@@ -118,7 +121,7 @@ export const isApplication = (data?: ApplicationEntity | ServiceTypeEnum) => {
   }
 }
 // Database
-export const isDatabase = (data?: DatabaseEntity | ServiceTypeEnum) => {
+export const isDatabase = (data?: DatabaseEntity | keyof typeof ServiceTypeEnum) => {
   if ((data as DatabaseEntity).id) {
     return getServiceType(data as DatabaseEntity) === ServiceTypeEnum.DATABASE
   } else {

@@ -15,7 +15,7 @@ export const postApplicationActionsRedeploy = createAsyncThunk(
     data: {
       environmentId: string
       applicationId: string
-      serviceType?: ServiceTypeEnum
+      serviceType?: keyof typeof ServiceTypeEnum
       callback: () => void
       queryClient: QueryClient
     },
@@ -107,7 +107,7 @@ export const postApplicationActionsDeploy = createAsyncThunk(
     data: {
       environmentId: string
       applicationId: string
-      serviceType?: ServiceTypeEnum
+      serviceType?: keyof typeof ServiceTypeEnum
       callback: () => void
       queryClient: QueryClient
     },
