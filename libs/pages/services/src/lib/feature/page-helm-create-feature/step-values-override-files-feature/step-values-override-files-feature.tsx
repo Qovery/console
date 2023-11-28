@@ -13,7 +13,12 @@ import {
   ValuesOverrideAsFileSetting,
   useCreateHelmDefaultValues,
 } from '@qovery/domains/service-helm/feature'
-import { SERVICES_HELM_CREATION_SUMMARY_URL, SERVICES_HELM_CREATION_URL, SERVICES_URL } from '@qovery/shared/routes'
+import {
+  PREVIEW_CODE,
+  SERVICES_HELM_CREATION_SUMMARY_URL,
+  SERVICES_HELM_CREATION_URL,
+  SERVICES_URL,
+} from '@qovery/shared/routes'
 import {
   Button,
   FunnelFlowBody,
@@ -34,8 +39,7 @@ export function StepValuesOverrideFilesFeature() {
 
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const { generalForm, valuesOverrideRepositoryForm, setCurrentStep } = useHelmCreateContext()
-  const { mutateAsync: createHelmDefaultValues, isLoading: isLoadingCreateHelmDefaultValues } =
-    useCreateHelmDefaultValues()
+  const { mutateAsync: createHelmDefaultValues } = useCreateHelmDefaultValues()
   const [currentTab, setCurrentTab] = useState<Tabs>('GIT_REPOSITORY')
   const navigate = useNavigate()
   setCurrentStep(2)
@@ -104,7 +108,7 @@ export function StepValuesOverrideFilesFeature() {
           source,
         },
       })
-      console.log(response)
+      window.open(`${PREVIEW_CODE}?code=${response}`, '_blank')
     } catch (error) {
       console.error(error)
     }

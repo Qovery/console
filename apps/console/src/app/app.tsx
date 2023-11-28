@@ -12,11 +12,12 @@ import { PageLogin, PageLogoutFeature } from '@qovery/pages/login'
 import { useAuth, useInviteMember } from '@qovery/shared/auth'
 import { type UserInterface } from '@qovery/shared/interfaces'
 import { ProtectedRoute } from '@qovery/shared/router'
-import { LOGIN_URL, LOGOUT_URL } from '@qovery/shared/routes'
+import { LOGIN_URL, LOGOUT_URL, PREVIEW_CODE } from '@qovery/shared/routes'
 import { LoadingScreen } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { useAuthInterceptor } from '@qovery/shared/utils'
 import { environment } from '../environments/environment'
+import PreviewCode from './components/preview-code'
 import ScrollToTop from './components/scroll-to-top'
 import { ROUTER } from './router/main.router'
 
@@ -93,6 +94,7 @@ export function App() {
       <Routes>
         <Route path={`${LOGIN_URL}/*`} element={<PageLogin />} />
         <Route path={LOGOUT_URL} element={<PageLogoutFeature />} />
+        <Route path={PREVIEW_CODE} element={<PreviewCode />} />
         {ROUTER.map((route) =>
           route.layout ? (
             <Route
