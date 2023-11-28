@@ -134,7 +134,7 @@ export function StepValuesOverrideFilesFeature() {
             </Popover.Trigger>
             <Popover.Content side="left" className="text-neutral-350 text-sm relative" style={{ width: 440 }}>
               <h6 className="text-neutral-400 font-medium mb-2">How it works</h6>
-              <ul className="list-disc pl-3">
+              <ul className="list-disc pl-4">
                 <li>
                   You can specify one or more YAML file to be used to override the values.yaml delivered with the chart.
                   These will be passed via the -f helm argument.
