@@ -77,7 +77,7 @@ export function GitBranchSettings({ disabled, gitProvider, hideRootPath }: GitBr
           />
         )}
       />
-      {hideRootPath && (
+      {!hideRootPath && (
         <Controller
           name="root_path"
           control={control}

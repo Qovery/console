@@ -1,8 +1,18 @@
 import { useState } from 'react'
 import { Controller, FormProvider } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
-import { GitBranchSettings, GitProviderSetting, GitRepositorySetting } from '@qovery/domains/organizations/feature'
-import { type Tabs, ValuesOverrideAsFileSetting } from '@qovery/domains/service-helm/feature'
+import { match } from 'ts-pattern'
+import {
+  GitBranchSettings,
+  GitProviderSetting,
+  GitRepositorySetting,
+  getGitTokenValue,
+} from '@qovery/domains/organizations/feature'
+import {
+  type Tabs,
+  ValuesOverrideAsFileSetting,
+  useCreateHelmDefaultValues,
+} from '@qovery/domains/service-helm/feature'
 import { SERVICES_HELM_CREATION_SUMMARY_URL, SERVICES_HELM_CREATION_URL, SERVICES_URL } from '@qovery/shared/routes'
 import {
   Button,
@@ -16,13 +26,16 @@ import {
   Section,
 } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { buildGitRepoUrl } from '@qovery/shared/util-js'
 import { useHelmCreateContext } from '../page-helm-create-feature'
 
-export function StepValuesStep1Feature() {
+export function StepValuesOverrideFilesFeature() {
   useDocumentTitle('General - Values override as file')
 
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
-  const { valuesOverrideRepositoryForm, setCurrentStep } = useHelmCreateContext()
+  const { generalForm, valuesOverrideRepositoryForm, setCurrentStep } = useHelmCreateContext()
+  const { mutateAsync: createHelmDefaultValues, isLoading: isLoadingCreateHelmDefaultValues } =
+    useCreateHelmDefaultValues()
   const [currentTab, setCurrentTab] = useState<Tabs>('GIT_REPOSITORY')
   const navigate = useNavigate()
   setCurrentStep(2)
@@ -58,6 +71,43 @@ export function StepValuesStep1Feature() {
   const resetForm = () => {
     valuesOverrideRepositoryForm.reset()
     navigate(pathCreate + SERVICES_HELM_CREATION_SUMMARY_URL)
+  }
+
+  const createHelmDefaultValuesMutation = async () => {
+    const generalData = generalForm.getValues()
+
+    const source = match(generalData.source_provider)
+      .with('GIT', () => {
+        const gitToken = getGitTokenValue(generalData.provider ?? '')
+
+        return {
+          git_repository: {
+            url: buildGitRepoUrl(gitToken?.type ?? generalData.provider ?? '', generalData.repository),
+            branch: generalData.branch,
+            root_path: generalData.root_path,
+          },
+        }
+      })
+      .with('HELM_REPOSITORY', () => ({
+        helm_repository: {
+          repository: generalData.repository,
+          chart_name: generalData.chart_name,
+          chart_version: generalData.chart_version,
+        },
+      }))
+      .exhaustive()
+
+    try {
+      const response = await createHelmDefaultValues({
+        environmentId,
+        helmDefaultValuesRequest: {
+          source,
+        },
+      })
+      console.log(response)
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   const watchFieldGitProvider = valuesOverrideRepositoryForm.watch('provider')
@@ -110,7 +160,13 @@ export function StepValuesStep1Feature() {
               </Popover.Close>
             </Popover.Content>
           </Popover.Root>
-          <Button size="lg" variant="surface" color="neutral" className="mb-10">
+          <Button
+            size="lg"
+            variant="surface"
+            color="neutral"
+            className="mb-10"
+            onClick={() => createHelmDefaultValuesMutation()}
+          >
             See default values.yaml <Icon className="text-xs ml-2" name={IconAwesomeEnum.ARROW_UP_RIGHT_FROM_SQUARE} />
           </Button>
           <form onSubmit={onSubmit} className="w-full">
@@ -128,7 +184,7 @@ export function StepValuesStep1Feature() {
                   {watchFieldGitProvider && <GitRepositorySetting gitProvider={watchFieldGitProvider} />}
                   {watchFieldGitProvider && watchFieldGitRepository && (
                     <>
-                      <GitBranchSettings gitProvider={watchFieldGitProvider} />
+                      <GitBranchSettings gitProvider={watchFieldGitProvider} hideRootPath />
                       <div>
                         <Controller
                           name="paths"
@@ -175,4 +231,4 @@ export function StepValuesStep1Feature() {
   )
 }
 
-export default StepValuesStep1Feature
+export default StepValuesOverrideFilesFeature

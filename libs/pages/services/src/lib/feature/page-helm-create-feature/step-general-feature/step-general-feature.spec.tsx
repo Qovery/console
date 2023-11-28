@@ -59,7 +59,7 @@ describe('StepGeneralFeature', () => {
           name: 'my-helm-app',
           description: 'description',
           source_provider: 'HELM_REPOSITORY',
-          arguments: ['--wait'],
+          arguments: `['--wait']`,
           timeout_sec: 600,
           auto_preview: true,
           chart_name: 'name',
@@ -101,7 +101,7 @@ describe('StepGeneralFeature', () => {
         defaultValues: {
           name: 'my-helm-app',
           source_provider: 'GIT',
-          arguments: ['--wait'],
+          arguments: `['--wait']`,
           timeout_sec: 600,
           auto_preview: false,
           provider: 'GITHUB',

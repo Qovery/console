@@ -45,7 +45,7 @@ import PageGeneralFeature from '../feature/page-general-feature/page-general-fea
 import PageHelmCreateFeature from '../feature/page-helm-create-feature/page-helm-create-feature'
 import { StepGeneralFeature as HelmStepGeneralFeature } from '../feature/page-helm-create-feature/step-general-feature/step-general-feature'
 import { StepSummaryFeature as HelmStepSummaryFeature } from '../feature/page-helm-create-feature/step-summary-feature/step-summary-feature'
-import { StepValuesStep1Feature as HelmStepValuesStep1Feature } from '../feature/page-helm-create-feature/step-values-step-1-feature/step-values-step-1-feature'
+import { StepValuesOverrideFilesFeature as HelmStepValuesOverrideFilesFeature } from '../feature/page-helm-create-feature/step-values-override-files-feature/step-values-override-files-feature'
 import { PageJobCreateFeature } from '../feature/page-job-create-feature/page-job-create-feature'
 import StepConfigureFeature from '../feature/page-job-create-feature/step-configure-feature/step-configure-feature'
 import { StepGeneralFeature } from '../feature/page-job-create-feature/step-general-feature/step-general-feature'
@@ -186,7 +186,7 @@ export const ROUTER_SERVICE_HELM_CREATION: Route[] = [
   },
   {
     path: SERVICES_HELM_CREATION_VALUES_STEP_1_URL,
-    component: <HelmStepValuesStep1Feature />,
+    component: <HelmStepValuesOverrideFilesFeature />,
   },
   {
     path: SERVICES_HELM_CREATION_SUMMARY_URL,
