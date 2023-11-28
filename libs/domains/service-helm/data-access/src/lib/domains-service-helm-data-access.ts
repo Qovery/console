@@ -19,4 +19,8 @@ export const mutations = {
     const response = await helmsApi.createHelm(environmentId, helmRequest)
     return response.data
   },
+  async createHelmDefaultValues({ environmentId }: { environmentId: string }) {
+    const response = await helmsApi.createHelmDefaultValues(environmentId)
+    return response.data
+  },
 }
