@@ -179,7 +179,7 @@ export function PodsMetrics({ environmentId, serviceId }: PodsMetricsProps) {
           return value ? (
             <Tooltip content={dateFullFormat(value)}>
               <span className="text-xs text-neutral-350">
-                {dateFormat === 'relative' ? timeAgo(new Date(value)) : dateFullFormat(value)}
+                {dateFormat === 'relative' ? timeAgo(new Date(value)) : dateFullFormat(value, 'UTC')}
               </span>
             </Tooltip>
           ) : (
@@ -190,7 +190,7 @@ export function PodsMetrics({ environmentId, serviceId }: PodsMetricsProps) {
 
     return match(service?.serviceType)
       .with(ServiceTypeEnum.JOB, () => [
-        startedAtColumn('Job executions', 'absolute'),
+        startedAtColumn('Job executions (UTC)', 'absolute'),
         statusColumn,
         versionColumn,
         memoryColumn,
