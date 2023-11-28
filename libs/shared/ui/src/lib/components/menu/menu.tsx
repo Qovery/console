@@ -70,7 +70,7 @@ export function Menu(props: MenuProps) {
     trigger,
     children,
     direction = MenuDirection.BOTTOM,
-    open = false,
+    open,
     arrowAlign = MenuAlign.START,
     menus = [],
     className = '',
@@ -84,7 +84,7 @@ export function Menu(props: MenuProps) {
   } = props
 
   const ref = useRef(null)
-  const [isOpen, setOpen] = useState(false)
+  const [isOpen, setOpen] = useState<boolean | undefined>(undefined)
 
   // XXX: This is an ugly hack to solve poor design decision
   // `menus` prop is an array without distinct ids/keys
@@ -130,7 +130,7 @@ export function Menu(props: MenuProps) {
   }
 
   const closeMenu = () => {
-    setOpen(false)
+    setOpen((previousOpen) => (previousOpen === undefined ? undefined : false))
     if (ref.current) {
       const el = ref.current as HTMLElement
       const btn = el.querySelector('.btn, .btn-icon')
@@ -139,7 +139,7 @@ export function Menu(props: MenuProps) {
   }
 
   useEffect(() => {
-    setOpen(open)
+    setOpen((previousOpen) => (previousOpen === undefined && open === false ? undefined : open))
     window.addEventListener('resize', closeMenu)
     window.addEventListener('scroll', closeMenu)
     return () => {
@@ -177,7 +177,7 @@ export function Menu(props: MenuProps) {
         )}
       </div>
       <ControlledMenu
-        state={isOpen ? 'open' : 'closed'}
+        state={isOpen === undefined ? undefined : isOpen ? 'open' : 'closed'}
         arrow
         offsetX={offsetX}
         offsetY={offsetY}

@@ -9,6 +9,11 @@ $menuTiming: 0.6s;
   z-index: 0;
 }
 
+// Override pointer-events: none placed on body by radix
+.szh-menu-container {
+  pointer-events: all;
+}
+
 // open
 .menu__container--open {
   animation-duration: $menuTiming;
