@@ -3760,7 +3760,7 @@ __metadata:
     babel-loader: ^8.1.0
     chance: ^1.1.8
     class-variance-authority: ^0.7.0
-    cronstrue: ^2.21.0
+    cronstrue: ^2.44.0
     css-loader: ^6.8.1
     cypress: ^9.1.0
     date-fns: ^2.29.3
@@ -10294,12 +10294,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cronstrue@npm:^2.21.0":
-  version: 2.23.0
-  resolution: "cronstrue@npm:2.23.0"
+"cronstrue@npm:^2.44.0":
+  version: 2.44.0
+  resolution: "cronstrue@npm:2.44.0"
   bin:
     cronstrue: bin/cli.js
-  checksum: 050140ac6452468d6f9032f18038f41b16968502d411a996efd5d42243cfd882271ff20ed4a3cdb25c45bf8f88beeb0579e45e974a11987401e9d383af2641a8
+  checksum: 43197b062c57ecf66a6e23043e67a4430f84678029e39f8029ccb0c0af1d1f151389f4076345c07a283d8e4fef2d8eb50bdd95c8755d0cb59b34a555ace68930
   languageName: node
   linkType: hard
 
