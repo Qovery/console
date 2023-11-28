@@ -88,7 +88,8 @@ describe('Menu', () => {
     expect(menu.classList.contains('szh-menu--dir-right')).toBe(true)
   })
 
-  it('should an item have an icon', () => {
+  it('should have an item have an icon', () => {
+    props.open = true
     props.menus = [
       {
         items: [
@@ -111,6 +112,7 @@ describe('Menu', () => {
   })
 
   it('should have a search input on menu', () => {
+    props.open = true
     props.menus = [
       {
         items: [
@@ -134,6 +136,7 @@ describe('Menu', () => {
   })
 
   it('should have a custom content on menu', () => {
+    props.open = true
     props.menus = [
       {
         items: [

@@ -7,12 +7,15 @@ import SpyInstance = jest.SpyInstance
 
 const useEditMemberRoleSpy: SpyInstance = jest.spyOn(organizationsDomain, 'useEditMemberRole')
 const useMembersSpy: SpyInstance = jest.spyOn(organizationsDomain, 'useMembers')
+const useInviteMembersSpy: SpyInstance = jest.spyOn(organizationsDomain, 'useInviteMembers')
 const useTransferOwnershipMemberRoleSpy: SpyInstance = jest.spyOn(organizationsDomain, 'useTransferOwnershipMemberRole')
 const useDeleteInviteMemberSpy: SpyInstance = jest.spyOn(organizationsDomain, 'useDeleteInviteMember')
 const useCreateInviteMemberSpy: SpyInstance = jest.spyOn(organizationsDomain, 'useCreateInviteMember')
 
 const useAvailableRolesMockSpy = jest.spyOn(organizationsDomain, 'useAvailableRoles') as jest.Mock
-const mockMembers = [...membersMock(1, 'Owner', '0'), ...membersMock(1, 'Admin', '1')]
+// XXX: Prevent infinite loading
+// https://github.com/Qovery/console/blob/b2a922b8bf94b31e9f9e49449ff124785667b875/libs/pages/settings/src/lib/ui/page-organization-members/page-organization-members.tsx#L144
+const mockMembers = [...membersMock(1, 'Owner', '10'), ...membersMock(1, 'Admin', '11')]
 
 jest.mock('@qovery/domains/users/data-access', () => {
   return {
@@ -43,6 +46,7 @@ describe('PageOrganizationMembersFeature', () => {
           name: 'my-role',
         },
       ],
+      isFetched: true,
     })
     useEditMemberRoleSpy.mockReturnValue({
       mutateAsync: jest.fn(),
@@ -58,6 +62,11 @@ describe('PageOrganizationMembersFeature', () => {
     })
     useMembersSpy.mockReturnValue({
       data: mockMembers,
+      isFetched: true,
+    })
+    useInviteMembersSpy.mockReturnValue({
+      data: [],
+      isFetched: true,
     })
   })
   it('should render successfully', () => {
@@ -67,10 +76,11 @@ describe('PageOrganizationMembersFeature', () => {
 
   it('should have dispatch to edit member role', async () => {
     const { userEvent } = renderWithProviders(<PageOrganizationMembersFeature />)
+    await userEvent.click(screen.getByTestId('element'))
 
     const items = screen.getAllByTestId('menuItem')
 
-    // 5 is menu for row members
+    // menu for row members
     await userEvent.click(items[5])
 
     expect(useEditMemberRoleSpy).toBeCalled()
@@ -78,10 +88,10 @@ describe('PageOrganizationMembersFeature', () => {
 
   it('should have dispatch to transfer ownership', async () => {
     const { userEvent } = renderWithProviders(<PageOrganizationMembersFeature />)
-
+    await userEvent.click(screen.getByTestId('element'))
     const items = screen.getAllByTestId('menuItem')
 
-    // 3 is menu for row members
+    // menu for row members
     await userEvent.click(items[3])
 
     expect(useTransferOwnershipMemberRoleSpy).toBeCalled()
@@ -90,10 +100,10 @@ describe('PageOrganizationMembersFeature', () => {
 
   it('should have dispatch resend invite', async () => {
     const { userEvent } = renderWithProviders(<PageOrganizationMembersFeature />)
-
+    await userEvent.click(screen.getByTestId('element'))
     const items = screen.getAllByTestId('menuItem')
 
-    // 8 is menu for resend invite
+    // menu for resend invite
     await userEvent.click(items[8])
 
     expect(useDeleteInviteMemberSpy).toBeCalled()

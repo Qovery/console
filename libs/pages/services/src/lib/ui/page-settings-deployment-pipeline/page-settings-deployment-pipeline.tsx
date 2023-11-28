@@ -147,6 +147,7 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
                           width={256}
                           trigger={
                             <ButtonIcon
+                              dataTestId="btn-more-menu"
                               className="text-neutral-400 !px-1 !w-7"
                               style={ButtonIconStyle.FLAT}
                               icon={IconAwesomeEnum.ELLIPSIS}

@@ -97,7 +97,7 @@ export function MenuAccount(props: MenuAccountProps) {
   return (
     <Menu
       trigger={
-        <div className="cursor-pointer select-none">
+        <div className="cursor-pointer select-none" data-testid="btn-menu-account">
           <Avatar
             size={40}
             firstName={user?.firstName || ''}

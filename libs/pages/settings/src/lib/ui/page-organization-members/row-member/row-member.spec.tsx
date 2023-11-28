@@ -1,6 +1,6 @@
-import { act, render } from '__tests__/utils/setup-jest'
 import { inviteMembersMock, membersMock } from '@qovery/shared/factories'
 import { dateYearMonthDayHourMinuteSecond, timeAgo } from '@qovery/shared/util-dates'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import RowMember, { type RowMemberProps } from './row-member'
 
 describe('RowMember', () => {
@@ -25,7 +25,7 @@ describe('RowMember', () => {
   }
 
   it('should render successfully', () => {
-    const { baseElement } = render(<RowMember {...props} />)
+    const { baseElement } = renderWithProviders(<RowMember {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
@@ -35,9 +35,9 @@ describe('RowMember', () => {
 
     props.member = memberOwner
 
-    const { getByTestId } = render(<RowMember {...props} />)
+    renderWithProviders(<RowMember {...props} />)
 
-    const input = getByTestId('input')
+    const input = screen.getByTestId('input')
 
     expect(input).toHaveClass('bg-neutral-100 border-neutral-250 text-neutral-350')
   })
@@ -45,28 +45,28 @@ describe('RowMember', () => {
   it('should have loading input', () => {
     props.loadingUpdateRole = true
 
-    const { getByTestId } = render(<RowMember {...props} />)
+    renderWithProviders(<RowMember {...props} />)
 
-    getByTestId('spinner')
+    screen.getByTestId('spinner')
   })
 
   it('should have an avatar + render name and email', () => {
-    const { getByTestId, getByText } = render(<RowMember {...props} />)
+    renderWithProviders(<RowMember {...props} />)
 
-    const avatar = getByTestId('avatar')
+    const avatar = screen.getByTestId('avatar')
 
     const name = props.member.name?.split(' ') || []
 
-    getByText(props.member.name || '')
-    getByText(props.member.email || '')
+    screen.getByText(props.member.name || '')
+    screen.getByText(props.member.email || '')
     expect(avatar.textContent).toBe(`${name[0].charAt(0)}${name[1].charAt(0)}`)
   })
 
   it('should have last activity and created date', () => {
-    const { getByTestId } = render(<RowMember {...props} />)
+    renderWithProviders(<RowMember {...props} />)
 
-    const dateLastActivity = getByTestId('last-activity')
-    const dateCreatedAt = getByTestId('created-at')
+    const dateLastActivity = screen.getByTestId('last-activity')
+    const dateCreatedAt = screen.getByTestId('created-at')
 
     expect(dateLastActivity.textContent).toBe(`${timeAgo(new Date(props.member.last_activity_at || ''))} ago`)
     expect(dateCreatedAt.textContent).toBe(
@@ -79,30 +79,12 @@ describe('RowMember', () => {
     props.editMemberRole = spy
     props.member = membersMock(1)[0]
 
-    const { getAllByTestId } = render(<RowMember {...props} />)
+    const { userEvent } = renderWithProviders(<RowMember {...props} />)
+    await userEvent.click(screen.getByTestId('input'))
 
-    const items = getAllByTestId('menuItem')
+    const items = screen.getAllByTestId('menuItem')
 
-    await act(() => {
-      items[2].click()
-    })
-
-    expect(spy).toBeCalled()
-  })
-
-  it('should have menu with transfer member role action', async () => {
-    const spy = jest.fn()
-    props.transferOwnership = spy
-    props.userIsOwner = true
-    props.member = membersMock(1)[0]
-
-    const { getAllByTestId } = render(<RowMember {...props} />)
-
-    const items = getAllByTestId('menuItem')
-
-    await act(() => {
-      items[0].click()
-    })
+    await userEvent.click(items[0])
 
     expect(spy).toBeCalled()
   })
@@ -113,13 +95,28 @@ describe('RowMember', () => {
     props.userIsOwner = true
     props.member = membersMock(1)[0]
 
-    const { getAllByTestId } = render(<RowMember {...props} />)
+    const { userEvent } = renderWithProviders(<RowMember {...props} />)
+    await userEvent.click(screen.getByTestId('element'))
 
-    const items = getAllByTestId('menuItem')
+    const items = screen.getAllByTestId('menuItem')
 
-    await act(() => {
-      items[0].click()
-    })
+    await userEvent.click(items[0])
+
+    expect(spy).toBeCalled()
+  })
+
+  it('should have menu with transfer member role action', async () => {
+    const spy = jest.fn()
+    props.transferOwnership = spy
+    props.userIsOwner = true
+    props.member = membersMock(1)[0]
+
+    const { userEvent } = renderWithProviders(<RowMember {...props} />)
+    await userEvent.click(screen.getByTestId('element'))
+
+    const items = screen.getAllByTestId('menuItem')
+
+    await userEvent.click(items[0])
 
     expect(spy).toBeCalled()
   })
@@ -129,13 +126,12 @@ describe('RowMember', () => {
     props.resendInvite = spy
     props.member = inviteMembersMock(1)[0]
 
-    const { getAllByTestId } = render(<RowMember {...props} />)
+    const { userEvent } = renderWithProviders(<RowMember {...props} />)
+    await userEvent.click(screen.getByTestId('element'))
 
-    const items = getAllByTestId('menuItem')
+    const items = screen.getAllByTestId('menuItem')
 
-    await act(() => {
-      items[0].click()
-    })
+    await userEvent.click(items[0])
 
     expect(spy).toBeCalled()
   })

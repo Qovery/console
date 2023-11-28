@@ -1,6 +1,6 @@
-import { act, render } from '__tests__/utils/setup-jest'
 import { CloudProviderEnum, type DeploymentStageResponse } from 'qovery-typescript-axios'
 import { type ApplicationEntity, type DatabaseEntity } from '@qovery/shared/interfaces'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import PageSettingsDeploymentPipeline, {
   type PageSettingsDeploymentPipelineProps,
 } from './page-settings-deployment-pipeline'
@@ -84,12 +84,12 @@ describe('PageSettingsDeploymentPipeline', () => {
   })
 
   it('should render successfully', () => {
-    const { baseElement } = render(<PageSettingsDeploymentPipeline {...defaultProps} />)
+    const { baseElement } = renderWithProviders(<PageSettingsDeploymentPipeline {...defaultProps} />)
     expect(baseElement).toBeTruthy()
   })
 
   it('should PageSettingsDeploymentPipeline component without errors', () => {
-    const { getByText } = render(<PageSettingsDeploymentPipeline {...defaultProps} />)
+    const { getByText } = renderWithProviders(<PageSettingsDeploymentPipeline {...defaultProps} />)
 
     expect(getByText('Stage 1')).toBeInTheDocument()
     expect(getByText('Stage 2')).toBeInTheDocument()
@@ -99,7 +99,7 @@ describe('PageSettingsDeploymentPipeline', () => {
   })
 
   it('should have loading component', () => {
-    const { getByTestId } = render(
+    renderWithProviders(
       <PageSettingsDeploymentPipeline
         onSubmit={onSubmit}
         setStages={setStages}
@@ -107,43 +107,41 @@ describe('PageSettingsDeploymentPipeline', () => {
         menuStage={(stage: DeploymentStageResponse) => menuStage(stage)}
       />
     )
-    getByTestId('stages-loader')
+    screen.getByTestId('stages-loader')
   })
 
   it('should have UI arrow between group', () => {
-    const { getByTestId } = render(<PageSettingsDeploymentPipeline {...defaultProps} />)
-    getByTestId('arrow-1')
+    renderWithProviders(<PageSettingsDeploymentPipeline {...defaultProps} />)
+    screen.getByTestId('arrow-1')
   })
 
   it('should have button to add stage', async () => {
-    const { getByTestId } = render(<PageSettingsDeploymentPipeline {...defaultProps} />)
+    const { userEvent } = renderWithProviders(<PageSettingsDeploymentPipeline {...defaultProps} />)
 
-    await act(() => {
-      getByTestId('btn-add-stage').click()
-    })
+    await userEvent.click(screen.getByTestId('btn-add-stage'))
 
     expect(onAddStage).toBeCalled()
   })
 
   it('should have button to delete and edit stage', async () => {
-    const { getAllByTestId } = render(<PageSettingsDeploymentPipeline {...defaultProps} />)
+    const { userEvent } = renderWithProviders(<PageSettingsDeploymentPipeline {...defaultProps} />)
+    const actions = screen.getAllByTestId('btn-more-menu')
 
-    const items = getAllByTestId('menuItem')
+    await userEvent.click(actions[0])
+
+    const items = screen.getAllByTestId('menuItem')
 
     // edit stage
-    await act(() => {
-      items[0].click()
-    })
+    await userEvent.click(items[0])
 
     // order stage
-    await act(() => {
-      items[1].click()
-    })
+    await userEvent.click(items[1])
 
+    await userEvent.click(actions[1])
+
+    const items2 = screen.getAllByTestId('menuItem')
     // delete stage
-    await act(() => {
-      items[2].click()
-    })
+    await userEvent.click(items2[2])
 
     expect(menuEditStage).toBeCalled()
     expect(menuOrderStage).toBeCalled()
@@ -177,7 +175,7 @@ describe('PageSettingsDeploymentPipeline', () => {
       },
     ]
 
-    const { getByTestId } = render(<PageSettingsDeploymentPipeline {...defaultProps} />)
-    getByTestId('placeholder-stage')
+    renderWithProviders(<PageSettingsDeploymentPipeline {...defaultProps} />)
+    screen.getByTestId('placeholder-stage')
   })
 })
