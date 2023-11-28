@@ -6,7 +6,7 @@ export interface ButtonProps extends React.ComponentPropsWithoutRef<typeof Butto
   loading?: boolean
 }
 
-export const Button = forwardRef<ElementRef<'button'>, ButtonProps>(function Button(
+export const Button = forwardRef<ElementRef<typeof ButtonPrimitive>, ButtonProps>(function Button(
   { loading = false, ...props },
   forwardedRef
 ) {
