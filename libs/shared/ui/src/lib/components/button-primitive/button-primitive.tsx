@@ -52,18 +52,61 @@ const buttonVariants = cva(['inline-flex', 'items-center', 'shrink-0', 'font-med
       color: 'neutral',
       className: ['bg-transparent'],
     },
-    ...['brand' as const, 'neutral' as const, 'green' as const].map((color) => ({
-      variant: 'solid' as const,
-      color,
+    /*
+    // Generate all colors
+      ...['brand' as const, 'neutral' as const, 'green' as const].map((color) => ({
+        variant: 'solid' as const,
+        color,
+        className: [
+          `bg-${color}-500`,
+          `hover:bg-${color}-600`,
+          'text-white',
+          'disabled:text-brand-300',
+          `disabled:text-${color}-300`,
+          `disabled:bg-${color}-100`,
+          `disabled:border-none`,
+        ],
+      })),
+    */
+    {
+      variant: 'solid',
+      color: 'brand',
       className: [
-        `bg-${color}-500`,
-        `hover:bg-${color}-600`,
+        'bg-brand-500',
+        'hover:bg-brand-600',
         'text-white',
-        `disabled:text-${color}-300`,
-        `disabled:bg-${color}-100`,
-        `disabled:border-none`,
+        'disabled:text-brand-300',
+        'disabled:text-brand-300',
+        'disabled:bg-brand-100',
+        'disabled:border-none',
       ],
-    })),
+    },
+    {
+      variant: 'solid',
+      color: 'neutral',
+      className: [
+        'bg-neutral-500',
+        'hover:bg-neutral-600',
+        'text-white',
+        'disabled:text-brand-300',
+        'disabled:text-neutral-300',
+        'disabled:bg-neutral-100',
+        'disabled:border-none',
+      ],
+    },
+    {
+      variant: 'solid',
+      color: 'green',
+      className: [
+        'bg-green-500',
+        'hover:bg-green-600',
+        'text-white',
+        'disabled:text-brand-300',
+        'disabled:text-green-300',
+        'disabled:bg-green-100',
+        'disabled:border-none',
+      ],
+    },
   ],
   defaultVariants: {
     variant: 'solid',

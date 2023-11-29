@@ -70,22 +70,18 @@ exports[`GitTokenList should match snapshot 1`] = `
               <button
                 class="inline-flex items-center shrink-0 font-medium transition text-xs h-8 px-3 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent mr-2"
               >
-                <span>
-                  <span
-                    class="icon-solid-wheel shrink-0 "
-                    role="img"
-                  />
-                </span>
+                <span
+                  class="icon-solid-wheel shrink-0 "
+                  role="img"
+                />
               </button>
               <button
                 class="inline-flex items-center shrink-0 font-medium transition text-xs h-8 px-3 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent"
               >
-                <span>
-                  <span
-                    class="icon-solid-trash shrink-0 "
-                    role="img"
-                  />
-                </span>
+                <span
+                  class="icon-solid-trash shrink-0 "
+                  role="img"
+                />
               </button>
             </div>
           </li>
@@ -177,22 +173,18 @@ exports[`GitTokenList should match snapshot 1`] = `
               <button
                 class="inline-flex items-center shrink-0 font-medium transition text-xs h-8 px-3 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent mr-2"
               >
-                <span>
-                  <span
-                    class="icon-solid-wheel shrink-0 "
-                    role="img"
-                  />
-                </span>
+                <span
+                  class="icon-solid-wheel shrink-0 "
+                  role="img"
+                />
               </button>
               <button
                 class="inline-flex items-center shrink-0 font-medium transition text-xs h-8 px-3 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent"
               >
-                <span>
-                  <span
-                    class="icon-solid-trash shrink-0 "
-                    role="img"
-                  />
-                </span>
+                <span
+                  class="icon-solid-trash shrink-0 "
+                  role="img"
+                />
               </button>
             </div>
           </li>

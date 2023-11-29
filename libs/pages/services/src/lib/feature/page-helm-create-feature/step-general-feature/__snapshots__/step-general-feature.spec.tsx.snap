@@ -503,18 +503,14 @@ exports[`PageApplicationCreateGeneralFeature should submit a form with a git rep
                 class="inline-flex items-center shrink-0 font-medium transition text-sm h-10 px-4 rounded"
                 type="button"
               >
-                <span>
-                  Cancel
-                </span>
+                Cancel
               </button>
               <button
                 class="inline-flex items-center shrink-0 font-medium transition text-sm h-10 px-4 rounded bg-brand-500 hover:bg-brand-600 text-white disabled:text-brand-300 disabled:bg-brand-100 disabled:border-none"
                 disabled=""
                 type="submit"
               >
-                <span>
-                  Continue
-                </span>
+                Continue
               </button>
             </div>
           </form>
@@ -974,18 +970,14 @@ exports[`PageApplicationCreateGeneralFeature should submit a form with a helm re
                 class="inline-flex items-center shrink-0 font-medium transition text-sm h-10 px-4 rounded"
                 type="button"
               >
-                <span>
-                  Cancel
-                </span>
+                Cancel
               </button>
               <button
                 class="inline-flex items-center shrink-0 font-medium transition text-sm h-10 px-4 rounded bg-brand-500 hover:bg-brand-600 text-white disabled:text-brand-300 disabled:bg-brand-100 disabled:border-none"
                 disabled=""
                 type="submit"
               >
-                <span>
-                  Continue
-                </span>
+                Continue
               </button>
             </div>
           </form>
