@@ -58,7 +58,7 @@ export function PodLogsFeature({ clusterId }: PodLogsFeatureProps) {
 
   useDocumentTitle(`Live logs ${application || database ? `- ${application?.name || database?.name}` : '- Loading...'}`)
 
-  const disabledLogs = database && database.mode === DatabaseModeEnum.MANAGED
+  const enabledLogs = database && database.mode === DatabaseModeEnum.CONTAINER
 
   const serviceMessageHandler = useCallback(
     (_: QueryClient, message: ServiceLogResponseDto) => {
@@ -82,7 +82,7 @@ export function PodLogsFeature({ clusterId }: PodLogsFeatureProps) {
       Boolean(projectId) &&
       Boolean(environmentId) &&
       Boolean(serviceId) &&
-      !disabledLogs,
+      enabledLogs,
     onMessage: serviceMessageHandler,
   })
 
@@ -109,7 +109,7 @@ export function PodLogsFeature({ clusterId }: PodLogsFeatureProps) {
       Boolean(projectId) &&
       Boolean(environmentId) &&
       Boolean(serviceId) &&
-      disabledLogs &&
+      enabledLogs &&
       enabledNginx,
     onMessage: infraMessageHandler,
   })
