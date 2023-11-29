@@ -190,7 +190,10 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
               />
             ))
             .with({ job_type: 'CRON' }, ({ schedule }) => (
-              <ResourceUnit value={formatCronExpression(schedule.cronjob?.scheduled_at)} description="Scheduling" />
+              <ResourceUnit
+                value={formatCronExpression(schedule.cronjob?.scheduled_at)}
+                description="Scheduling (UTC)"
+              />
             ))
             .exhaustive()}
           <ResourceUnit value={max_nb_restart} description="Restart (max)" />
