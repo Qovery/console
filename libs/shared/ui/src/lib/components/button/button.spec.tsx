@@ -6,4 +6,13 @@ describe('Button', () => {
     const { baseElement } = renderWithProviders(<Button type="button">Foobar</Button>)
     expect(baseElement).toMatchSnapshot()
   })
+
+  it('should match snapshot with loading', () => {
+    const { baseElement } = renderWithProviders(
+      <Button type="button" loading>
+        Foobar
+      </Button>
+    )
+    expect(baseElement).toMatchSnapshot()
+  })
 })

@@ -7,7 +7,30 @@ exports[`Button should match snapshot 1`] = `
       class="inline-flex items-center shrink-0 font-medium transition text-xs h-7 px-2 rounded bg-brand-500 hover:bg-brand-600 text-white disabled:text-brand-300 disabled:bg-brand-100 disabled:border-none"
       type="button"
     >
-      Foobar
+      <span>
+        Foobar
+      </span>
+    </button>
+  </div>
+</body>
+`;
+
+exports[`Button should match snapshot with loading 1`] = `
+<body>
+  <div>
+    <button
+      class="inline-flex items-center shrink-0 font-medium transition text-xs h-7 px-2 rounded bg-brand-500 hover:bg-brand-600 text-white disabled:text-brand-300 disabled:bg-brand-100 disabled:border-none relative pointer-events-none"
+      type="button"
+    >
+      <div
+        class="aspect-square border-2  rounded-full border-solid border-neutral-350 border-r-neutral-50 animate-spin w-4 absolute m-auto left-0 right-0"
+        data-testid="spinner"
+      />
+      <span
+        class="opacity-0"
+      >
+        Foobar
+      </span>
     </button>
   </div>
 </body>
