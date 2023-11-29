@@ -7,7 +7,7 @@ exports[`PodDetails should match snapshot with container based pod and with mult
       class="pl-4 pb-4 pt-3 pr-20 relative"
     >
       <a
-        class="cursor-pointer transition duration-100 font-medium inline-flex flex-center gap-1 text-sky-500 hover:text-sky-600 text-sm absolute top-2 right-2"
+        class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-sky-500 hover:text-sky-600 text-sm absolute top-2 right-2"
         href="/organization//project//environment//logs/1/live-logs"
       >
         <button
@@ -182,7 +182,7 @@ exports[`PodDetails should match snapshot with git based pod and with last_termi
       class="pl-4 pb-4 pt-3 pr-20 relative"
     >
       <a
-        class="cursor-pointer transition duration-100 font-medium inline-flex flex-center gap-1 text-sky-500 hover:text-sky-600 text-sm absolute top-2 right-2"
+        class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-sky-500 hover:text-sky-600 text-sm absolute top-2 right-2"
         href="/organization//project//environment//logs/1/live-logs"
       >
         <button
@@ -353,7 +353,7 @@ exports[`PodDetails should match snapshot with git based pod and without last_te
       class="pl-4 pb-4 pt-3 pr-20 relative"
     >
       <a
-        class="cursor-pointer transition duration-100 font-medium inline-flex flex-center gap-1 text-sky-500 hover:text-sky-600 text-sm absolute top-2 right-2"
+        class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-sky-500 hover:text-sky-600 text-sm absolute top-2 right-2"
         href="/organization//project//environment//logs/1/live-logs"
       >
         <button

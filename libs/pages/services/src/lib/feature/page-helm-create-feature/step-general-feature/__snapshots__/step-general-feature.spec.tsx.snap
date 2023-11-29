@@ -370,7 +370,7 @@ exports[`PageApplicationCreateGeneralFeature should submit a form with a git rep
                       Specify the helm arguments to be used during the helm install/upgrade. Expected format: ["-h", "0.0.0.0"]
                       <br />
                       <a
-                        class="cursor-pointer transition duration-100 font-medium inline-flex flex-center gap-1 text-sky-500 hover:text-sky-600 text-xs mt-0.5"
+                        class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-sky-500 hover:text-sky-600 text-xs mt-0.5"
                         href="https://helm.sh/docs/helm/helm_install/"
                         rel="noopener noreferrer"
                         target="_blank"
@@ -588,7 +588,7 @@ exports[`PageApplicationCreateGeneralFeature should submit a form with a git rep
                 class="flex flex-col gap-2"
               >
                 <a
-                  class="cursor-pointer transition duration-100 font-medium flex-center gap-1 text-sky-500 hover:text-sky-600 text-sm flex"
+                  class="cursor-pointer transition duration-100 font-medium items-center gap-1 text-sky-500 hover:text-sky-600 text-sm flex"
                   href="https://hub.qovery.com/docs/using-qovery/configuration/application/#general"
                   rel="noopener noreferrer"
                   target="_blank"
@@ -875,7 +875,7 @@ exports[`PageApplicationCreateGeneralFeature should submit a form with a helm re
                       Specify the helm arguments to be used during the helm install/upgrade. Expected format: ["-h", "0.0.0.0"]
                       <br />
                       <a
-                        class="cursor-pointer transition duration-100 font-medium inline-flex flex-center gap-1 text-sky-500 hover:text-sky-600 text-xs mt-0.5"
+                        class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-sky-500 hover:text-sky-600 text-xs mt-0.5"
                         href="https://helm.sh/docs/helm/helm_install/"
                         rel="noopener noreferrer"
                         target="_blank"
@@ -1055,7 +1055,7 @@ exports[`PageApplicationCreateGeneralFeature should submit a form with a helm re
                 class="flex flex-col gap-2"
               >
                 <a
-                  class="cursor-pointer transition duration-100 font-medium flex-center gap-1 text-sky-500 hover:text-sky-600 text-sm flex"
+                  class="cursor-pointer transition duration-100 font-medium items-center gap-1 text-sky-500 hover:text-sky-600 text-sm flex"
                   href="https://hub.qovery.com/docs/using-qovery/configuration/application/#general"
                   rel="noopener noreferrer"
                   target="_blank"
