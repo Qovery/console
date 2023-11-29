@@ -244,9 +244,7 @@ export function PodsMetrics({ environmentId, serviceId, children }: PodsMetricsP
     )
   }, [service?.serviceType, table.setSorting])
 
-  if (isServiceLoading) {
-    return <PodsMetricsSkeleton />
-  } else if (pods.length === 0 && !isMetricsLoading && isRunningStatusesLoading) {
+  if (pods.length === 0 && !isMetricsLoading && isRunningStatusesLoading) {
     // NOTE: runningStatuses may never resolve if service not started
     return <EmptyState serviceId={serviceId} environmentId={environmentId} />
   } else if (
@@ -262,6 +260,8 @@ export function PodsMetrics({ environmentId, serviceId, children }: PodsMetricsP
         <span>There is a technical issue on retrieving the pod metrics.</span>
       </div>
     )
+  } else if (isServiceLoading || pods.length === 0) {
+    return <PodsMetricsSkeleton />
   }
 
   return (
