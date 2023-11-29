@@ -16,7 +16,7 @@ export function PageGeneral(props: PageGeneralProps) {
     <div className="mt-2 bg-white rounded flex flex-grow min-h-0">
       <div className="flex h-full flex-col grow">
         <div className="flex flex-row grow">
-          <div className="py-7 px-10 flex-grow overflow-auto">
+          <div className="py-7 px-10 flex flex-col grow overflow-auto gap-6">
             {databaseMode === DatabaseModeEnum.MANAGED ? (
               <div className="flex flex-col items-center gap-1 py-10 bg-neutral-100 text-sm text-neutral-350 border border-neutral-200">
                 <span className="font-medium">Metrics for managed databases are not available</span>
