@@ -1,10 +1,25 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Button should match snapshot 1`] = `
+<body>
+  <div>
+    <button
+      class="inline-flex items-center shrink-0 font-medium transition text-xs h-7 px-2 rounded bg-brand-500 hover:bg-brand-600 text-white disabled:text-brand-300 disabled:bg-brand-100 disabled:border-none"
+      type="button"
+    >
+      <span>
+        Foobar
+      </span>
+    </button>
+  </div>
+</body>
+`;
+
 exports[`Button should match snapshot with loading 1`] = `
 <body>
   <div>
     <button
-      class="inline-flex items-center shrink-0 font-medium transition text-xs h-7 px-2 rounded relative pointer-events-none bg-brand-500 hover:bg-brand-600 text-white disabled:text-brand-300 disabled:bg-brand-100 disabled:border-none"
+      class="inline-flex items-center shrink-0 font-medium transition text-xs h-7 px-2 rounded bg-brand-500 hover:bg-brand-600 text-white disabled:text-brand-300 disabled:bg-brand-100 disabled:border-none relative pointer-events-none"
       type="button"
     >
       <div

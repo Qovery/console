@@ -24,9 +24,6 @@ const buttonVariants = cva(['inline-flex', 'items-center', 'shrink-0', 'font-med
       rounded: ['rounded'],
       full: ['rounded-full'],
     },
-    loading: {
-      true: ['relative', 'pointer-events-none'],
-    },
   },
   compoundVariants: [
     {
@@ -81,14 +78,14 @@ export interface ButtonPrimitiveProps
     VariantProps<typeof buttonVariants> {}
 
 export const ButtonPrimitive = forwardRef<ElementRef<'button'>, ButtonPrimitiveProps>(function ButtonPrimitive(
-  { className, color, radius, size, variant, loading, ...buttonProps },
+  { className, color, radius, size, variant, ...buttonProps },
   forwardedRef
 ) {
   return (
     <button
       {...buttonProps}
       ref={forwardedRef}
-      className={twMerge(buttonVariants({ color, radius, size, variant, loading }), className)}
+      className={twMerge(buttonVariants({ color, radius, size, variant }), className)}
     />
   )
 })
