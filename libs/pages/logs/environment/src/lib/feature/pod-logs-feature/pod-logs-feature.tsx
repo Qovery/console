@@ -1,4 +1,5 @@
 import { type QueryClient } from '@tanstack/react-query'
+import { DatabaseModeEnum } from 'qovery-typescript-axios'
 import {
   type ServiceInfraLogResponseDto,
   type ServiceLogResponseDto,
@@ -57,6 +58,8 @@ export function PodLogsFeature({ clusterId }: PodLogsFeatureProps) {
 
   useDocumentTitle(`Live logs ${application || database ? `- ${application?.name || database?.name}` : '- Loading...'}`)
 
+  const disabledLogs = database && database.mode === DatabaseModeEnum.MANAGED
+
   const serviceMessageHandler = useCallback(
     (_: QueryClient, message: ServiceLogResponseDto) => {
       setServiceMessages((prevMessages) => [...prevMessages, { ...message, id: logCounter.current++ }])
@@ -78,7 +81,8 @@ export function PodLogsFeature({ clusterId }: PodLogsFeatureProps) {
       Boolean(clusterId) &&
       Boolean(projectId) &&
       Boolean(environmentId) &&
-      Boolean(serviceId),
+      Boolean(serviceId) &&
+      !disabledLogs,
     onMessage: serviceMessageHandler,
   })
 
@@ -105,6 +109,7 @@ export function PodLogsFeature({ clusterId }: PodLogsFeatureProps) {
       Boolean(projectId) &&
       Boolean(environmentId) &&
       Boolean(serviceId) &&
+      disabledLogs &&
       enabledNginx,
     onMessage: infraMessageHandler,
   })
@@ -112,6 +117,14 @@ export function PodLogsFeature({ clusterId }: PodLogsFeatureProps) {
   const isProgressing = match(runningStatus?.state)
     .with(ServiceStateDto.RUNNING, ServiceStateDto.WARNING, () => true)
     .otherwise(() => false)
+
+  console.log('Boolean(organizationId): ', Boolean(organizationId))
+  console.log('Boolean(clusterId): ', Boolean(clusterId))
+  console.log('Boolean(projectId): ', Boolean(projectId))
+  console.log('Boolean(environmentId): ', Boolean(environmentId))
+  console.log('Boolean(serviceId): ', Boolean(serviceId))
+  console.log('!disabledLogs: ', !disabledLogs)
+  console.log('enabledNginx: ', enabledNginx)
 
   return (
     <PodLogs
