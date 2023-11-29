@@ -82,7 +82,7 @@ export function PlaceholderLogs({
           ) : (
             <div className="text-center">
               <p className="text-neutral-50 font-medium mb-1">
-                No logs on this execution for <span className="text-brand-400">{serviceName}</span>.
+                No logs are available for <span className="text-brand-400">{serviceName}</span>.
               </p>
 
               {databaseMode === DatabaseModeEnum.MANAGED && (
