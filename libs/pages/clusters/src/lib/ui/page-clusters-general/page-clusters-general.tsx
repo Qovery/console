@@ -1,12 +1,12 @@
+import { type Cluster } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
-import { type ClusterEntity, type LoadingStatus } from '@qovery/shared/interfaces'
 import { CLUSTERS_CREATION_GENERAL_URL, CLUSTERS_CREATION_URL, CLUSTERS_URL } from '@qovery/shared/routes'
 import { ButtonLegacy, EmptyState, HelpSection, IconAwesomeEnum, LoaderSpinner } from '@qovery/shared/ui'
 import CardCluster from '../card-cluster/card-cluster'
 
 export interface PageClustersGeneralProps {
-  clusters: ClusterEntity[]
-  loading: LoadingStatus
+  clusters: Cluster[]
+  loading: boolean
 }
 
 export function PageClustersGeneral(props: PageClustersGeneralProps) {
@@ -27,18 +27,18 @@ export function PageClustersGeneral(props: PageClustersGeneralProps) {
             Add Cluster
           </ButtonLegacy>
         </div>
-        {(loading === 'not loaded' || loading === 'loading') && clusters?.length === 0 ? (
+        {loading && clusters?.length === 0 ? (
           <div data-testid="clusters-loader" className="flex justify-center">
             <LoaderSpinner className="w-6" />
           </div>
         ) : clusters && clusters.length > 0 ? (
           <div className="grid grid-cols-3 gap-5">
             {clusters.map((cluster) => (
-              <CardCluster key={cluster.id} cluster={cluster} />
+              <CardCluster key={cluster.id} cluster={cluster} organizationId={organizationId} />
             ))}
           </div>
         ) : (
-          loading === 'loaded' &&
+          !loading &&
           clusters?.length === 0 && (
             <EmptyState
               dataTestId="empty-state"

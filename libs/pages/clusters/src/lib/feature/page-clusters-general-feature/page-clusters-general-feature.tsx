@@ -1,40 +1,16 @@
-import { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import {
-  fetchClustersStatus,
-  selectClustersEntitiesByOrganizationId,
-  selectClustersLoadingStatus,
-  selectClustersStatusLoadingStatus,
-} from '@qovery/domains/organization'
+import { useClusters } from '@qovery/domains/clusters/feature'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { type AppDispatch, type RootState } from '@qovery/state/store'
 import PageClustersGeneral from '../../ui/page-clusters-general/page-clusters-general'
 
 export function PageClustersGeneralFeature() {
   const { organizationId = '' } = useParams()
 
-  const dispatch = useDispatch<AppDispatch>()
-  const clusters = useSelector((state: RootState) => selectClustersEntitiesByOrganizationId(state, organizationId))
-  const clustersLoading = useSelector((state: RootState) => selectClustersLoadingStatus(state))
-  const clustersStatusLoading = useSelector((state: RootState) => selectClustersStatusLoadingStatus(state))
+  const { data: clusters = [], isLoading: isClustersLoading } = useClusters({ organizationId })
 
   useDocumentTitle('General - Clusters')
 
-  useEffect(() => {
-    /**
-     * @deprecated This should be migrated to the new `use-status-web-sockets` hook
-     */
-    const fetchClustersStatusByInterval = setInterval(() => {
-      if (clusters.length > 0) dispatch(fetchClustersStatus({ organizationId }))
-    }, 3000)
-    if (clusters.length > 0) dispatch(fetchClustersStatus({ organizationId }))
-    return () => clearInterval(fetchClustersStatusByInterval)
-  }, [dispatch, organizationId, clusters.length])
-
-  return (
-    <PageClustersGeneral clusters={clusters} loading={clusters.length > 0 ? clustersStatusLoading : clustersLoading} />
-  )
+  return <PageClustersGeneral clusters={clusters} loading={isClustersLoading} />
 }
 
 export default PageClustersGeneralFeature

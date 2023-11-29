@@ -5,7 +5,7 @@ import PageClustersGeneral, { type PageClustersGeneralProps } from './page-clust
 describe('PageClustersGeneral', () => {
   const props: PageClustersGeneralProps = {
     clusters: clusterFactoryMock(2),
-    loading: 'loaded',
+    loading: false,
   }
 
   it('should render successfully', () => {
@@ -14,7 +14,7 @@ describe('PageClustersGeneral', () => {
   })
 
   it('should have an loader spinner', () => {
-    props.loading = 'loading'
+    props.loading = true
     props.clusters = []
 
     const { getByTestId } = render(<PageClustersGeneral {...props} />)
@@ -23,7 +23,7 @@ describe('PageClustersGeneral', () => {
   })
 
   it('should have an empty screen', () => {
-    props.loading = 'loaded'
+    props.loading = false
     props.clusters = []
 
     const { getByTestId } = render(<PageClustersGeneral {...props} />)
@@ -32,7 +32,7 @@ describe('PageClustersGeneral', () => {
   })
 
   it('should have an list of registries', () => {
-    props.loading = 'loaded'
+    props.loading = false
     props.clusters = clusterFactoryMock(1)
 
     const { getByTestId } = render(<PageClustersGeneral {...props} />)
