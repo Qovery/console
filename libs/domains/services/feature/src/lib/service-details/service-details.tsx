@@ -359,7 +359,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
             <Dd className="capitalize">{databaseSource.mode.toLowerCase()}</Dd>
             <Dt>Accessibility:</Dt>
             <Dd className="capitalize">{databaseSource.accessibility?.toLowerCase()}</Dd>
-            {databaseSource.masterCredentials && (
+            {databaseSource.masterCredentials && databaseSource.accessibility !== 'PRIVATE' && (
               <>
                 <Dt>Access:</Dt>
                 <Dd>
