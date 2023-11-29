@@ -1,8 +1,8 @@
-import { getByText, queryByText, render } from '__tests__/utils/setup-jest'
 import { ServiceDeploymentStatusEnum, StateEnum } from 'qovery-typescript-axios'
 import * as domainsServicesFeature from '@qovery/domains/services/feature'
 import { RunningState } from '@qovery/shared/enums'
 import { applicationFactoryMock, lifecycleJobFactoryMock } from '@qovery/shared/factories'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ApplicationButtonsActions, type ApplicationButtonsActionsProps } from './application-buttons-actions'
 
 const mockApplication = applicationFactoryMock(1)[0]
@@ -31,7 +31,7 @@ describe('ApplicationButtonsActionsFeature', () => {
   })
 
   it('should render successfully', () => {
-    const { baseElement } = render(<ApplicationButtonsActions {...props} />)
+    const { baseElement } = renderWithProviders(<ApplicationButtonsActions {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
@@ -43,19 +43,21 @@ describe('ApplicationButtonsActionsFeature', () => {
         service_deployment_status: ServiceDeploymentStatusEnum.UP_TO_DATE,
       },
     })
-    const { baseElement } = render(<ApplicationButtonsActions {...props} />)
+    const { userEvent } = renderWithProviders(<ApplicationButtonsActions {...props} />)
+    const actions = screen.getAllByTestId('element')
 
-    getByText(baseElement, 'Redeploy')
-    getByText(baseElement, 'Stop')
+    await userEvent.click(actions[0])
+    screen.getByText('Redeploy')
+    screen.getByText('Stop')
+    screen.getByText('Deploy other version')
+    screen.getByText('Restart Service')
 
-    getByText(baseElement, 'Restart Service')
-
-    getByText(baseElement, 'Edit code')
-    getByText(baseElement, 'See audit logs')
-    getByText(baseElement, 'Copy identifiers')
-    getByText(baseElement, 'Open settings')
-    getByText(baseElement, 'Delete service')
-    getByText(baseElement, 'Deploy other version')
+    await userEvent.click(actions[actions.length - 1])
+    screen.getByText('Edit code')
+    screen.getByText('See audit logs')
+    screen.getByText('Copy identifiers')
+    screen.getByText('Open settings')
+    screen.getByText('Delete service')
   })
 
   it('should render actions for STOPPED status', async () => {
@@ -66,16 +68,19 @@ describe('ApplicationButtonsActionsFeature', () => {
         service_deployment_status: ServiceDeploymentStatusEnum.UP_TO_DATE,
       },
     })
-    const { baseElement } = render(<ApplicationButtonsActions {...props} />)
+    const { userEvent } = renderWithProviders(<ApplicationButtonsActions {...props} />)
+    const actions = screen.getAllByTestId('element')
 
-    getByText(baseElement, 'Deploy')
+    await userEvent.click(actions[0])
+    screen.getByText('Deploy')
+    screen.getByText('Deploy other version')
 
-    getByText(baseElement, 'Edit code')
-    getByText(baseElement, 'Copy identifiers')
-    getByText(baseElement, 'See audit logs')
-    getByText(baseElement, 'Open settings')
-    getByText(baseElement, 'Delete service')
-    getByText(baseElement, 'Deploy other version')
+    await userEvent.click(actions[actions.length - 1])
+    screen.getByText('Edit code')
+    screen.getByText('Copy identifiers')
+    screen.getByText('See audit logs')
+    screen.getByText('Open settings')
+    screen.getByText('Delete service')
   })
 
   it('should render actions for DELETING status', async () => {
@@ -86,15 +91,19 @@ describe('ApplicationButtonsActionsFeature', () => {
         service_deployment_status: ServiceDeploymentStatusEnum.UP_TO_DATE,
       },
     })
-    const { baseElement } = render(<ApplicationButtonsActions {...props} />)
+    const { userEvent } = renderWithProviders(<ApplicationButtonsActions {...props} />)
+    const actions = screen.getAllByTestId('element')
 
-    getByText(baseElement, 'Edit code')
-    getByText(baseElement, 'Logs')
-    getByText(baseElement, 'Deploy other version')
-    getByText(baseElement, 'See audit logs')
-    getByText(baseElement, 'Copy identifiers')
-    getByText(baseElement, 'Cancel delete')
-    getByText(baseElement, 'Open settings')
+    await userEvent.click(actions[0])
+    screen.getByText('Deploy other version')
+
+    await userEvent.click(actions[actions.length - 1])
+    screen.getByText('Edit code')
+    screen.getByText('Logs')
+    screen.getByText('See audit logs')
+    screen.getByText('Copy identifiers')
+    screen.getByText('Cancel delete')
+    screen.getByText('Open settings')
   })
 
   it('should not render Restart Service if running status is not running', async () => {
@@ -106,16 +115,20 @@ describe('ApplicationButtonsActionsFeature', () => {
       },
     })
 
-    const { baseElement } = render(<ApplicationButtonsActions {...props} />)
+    const { userEvent } = renderWithProviders(<ApplicationButtonsActions {...props} />)
+    const actions = screen.getAllByTestId('element')
 
-    expect(queryByText(baseElement, 'Restart Service')).toBeNull()
+    await userEvent.click(actions[0])
+    expect(screen.queryByText('Restart Service')).toBeNull()
   })
 
   it('should not render Restart Service if application is a job', async () => {
     const mockJob = lifecycleJobFactoryMock(1)[0]
 
-    const { baseElement } = render(<ApplicationButtonsActions {...props} application={mockJob} />)
+    const { userEvent } = renderWithProviders(<ApplicationButtonsActions {...props} application={mockJob} />)
+    const actions = screen.getAllByTestId('element')
 
-    expect(queryByText(baseElement, 'Restart Service')).toBeNull()
+    await userEvent.click(actions[0])
+    expect(screen.queryByText('Restart Service')).toBeNull()
   })
 })

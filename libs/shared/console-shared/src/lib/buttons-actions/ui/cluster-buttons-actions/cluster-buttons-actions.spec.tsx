@@ -1,6 +1,6 @@
-import { getByText, render } from '__tests__/utils/setup-jest'
 import { StateEnum } from 'qovery-typescript-axios'
 import { clusterFactoryMock } from '@qovery/shared/factories'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ClusterButtonsActions, type ClusterButtonsActionsProps } from './cluster-buttons-actions'
 
 const mockCluster = clusterFactoryMock(1)[0]
@@ -14,7 +14,7 @@ describe('ClusterButtonsActionsFeature', () => {
   })
 
   it('should render successfully', () => {
-    const { baseElement } = render(<ClusterButtonsActions {...props} />)
+    const { baseElement } = renderWithProviders(<ClusterButtonsActions {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
@@ -25,13 +25,17 @@ describe('ClusterButtonsActionsFeature', () => {
         status: StateEnum.DEPLOYED,
       },
     }
-    const { baseElement } = render(<ClusterButtonsActions {...props} />)
+    const { userEvent } = renderWithProviders(<ClusterButtonsActions {...props} />)
+    const actions = screen.getAllByTestId('element')
 
-    getByText(baseElement, 'Update')
-    getByText(baseElement, 'Stop')
-    getByText(baseElement, 'See audit logs')
-    getByText(baseElement, 'Copy identifier')
-    getByText(baseElement, 'Delete cluster')
+    await userEvent.click(actions[0])
+    screen.getByText('Update')
+    screen.getByText('Stop')
+
+    await userEvent.click(actions[actions.length - 1])
+    screen.getByText('See audit logs')
+    screen.getByText('Copy identifier')
+    screen.getByText('Delete cluster')
   })
 
   it('should render actions for STOPPED status', async () => {
@@ -43,12 +47,16 @@ describe('ClusterButtonsActionsFeature', () => {
       },
     }
 
-    const { baseElement } = render(<ClusterButtonsActions {...props} />)
+    const { userEvent } = renderWithProviders(<ClusterButtonsActions {...props} />)
+    const actions = screen.getAllByTestId('element')
 
-    getByText(baseElement, 'Deploy')
-    getByText(baseElement, 'See audit logs')
-    getByText(baseElement, 'Copy identifier')
-    getByText(baseElement, 'Delete cluster')
+    await userEvent.click(actions[0])
+    screen.getByText('Deploy')
+
+    await userEvent.click(actions[actions.length - 1])
+    screen.getByText('See audit logs')
+    screen.getByText('Copy identifier')
+    screen.getByText('Delete cluster')
   })
 
   it('should render actions for READY status', async () => {
@@ -60,11 +68,15 @@ describe('ClusterButtonsActionsFeature', () => {
       },
     }
 
-    const { baseElement } = render(<ClusterButtonsActions {...props} />)
+    const { userEvent } = renderWithProviders(<ClusterButtonsActions {...props} />)
+    const actions = screen.getAllByTestId('element')
 
-    getByText(baseElement, 'Install')
-    getByText(baseElement, 'See audit logs')
-    getByText(baseElement, 'Copy identifier')
-    getByText(baseElement, 'Delete cluster')
+    await userEvent.click(actions[0])
+    screen.getByText('Install')
+
+    await userEvent.click(actions[actions.length - 1])
+    screen.getByText('See audit logs')
+    screen.getByText('Copy identifier')
+    screen.getByText('Delete cluster')
   })
 })

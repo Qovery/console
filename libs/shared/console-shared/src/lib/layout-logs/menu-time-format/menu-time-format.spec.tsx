@@ -1,4 +1,4 @@
-import { act, render } from '__tests__/utils/setup-jest'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import MenuTimeFormat, { type MenuTimeFormatProps } from './menu-time-format'
 
 describe('MenuTimeFormat', () => {
@@ -7,28 +7,26 @@ describe('MenuTimeFormat', () => {
     updateTimeContextValue: { utc: false },
   }
 
-  it('should render successfully', () => {
-    const { getByText, baseElement } = render(<MenuTimeFormat {...props} />)
-    expect(baseElement).toBeTruthy()
-    expect(getByText('Local browser time')).toBeInTheDocument()
-    expect(getByText('UTC')).toBeInTheDocument()
+  it('should render successfully', async () => {
+    const { userEvent } = renderWithProviders(<MenuTimeFormat {...props} />)
+    await userEvent.click(screen.getByRole('button'))
+    expect(screen.getByText('Local browser time')).toBeInTheDocument()
+    expect(screen.getByText('UTC')).toBeInTheDocument()
   })
 
   it('should updates time context to local browser time', async () => {
-    const { getByText } = render(<MenuTimeFormat {...props} />)
-    const localBrowserTimeButton = getByText('Local browser time')
-    await act(() => {
-      localBrowserTimeButton.click()
-      expect(props.setUpdateTimeContext).toHaveBeenCalledWith({ utc: false })
-    })
+    const { userEvent } = renderWithProviders(<MenuTimeFormat {...props} />)
+    await userEvent.click(screen.getByRole('button'))
+    const localBrowserTimeButton = screen.getByText('Local browser time')
+    await userEvent.click(localBrowserTimeButton)
+    expect(props.setUpdateTimeContext).toHaveBeenCalledWith({ utc: false })
   })
 
   it('should updates time context to UTC', async () => {
-    const { getByText } = render(<MenuTimeFormat {...props} />)
-    const utcButton = getByText('UTC')
-    await act(() => {
-      utcButton.click()
-      expect(props.setUpdateTimeContext).toHaveBeenCalledWith({ utc: true })
-    })
+    const { userEvent } = renderWithProviders(<MenuTimeFormat {...props} />)
+    await userEvent.click(screen.getByRole('button'))
+    const utcButton = screen.getByText('UTC')
+    await userEvent.click(utcButton)
+    expect(props.setUpdateTimeContext).toHaveBeenCalledWith({ utc: true })
   })
 })

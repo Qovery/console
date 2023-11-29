@@ -1,8 +1,8 @@
-import { getByText, queryByText, render } from '__tests__/utils/setup-jest'
 import { DatabaseModeEnum, ServiceDeploymentStatusEnum, StateEnum } from 'qovery-typescript-axios'
 import * as domainsServicesFeature from '@qovery/domains/services/feature'
 import { RunningState } from '@qovery/shared/enums'
 import { databaseFactoryMock } from '@qovery/shared/factories'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { DatabaseButtonsActions, type DatabaseButtonsActionsProps } from './database-buttons-actions'
 
 const mockDatabase = databaseFactoryMock(1)[0]
@@ -30,7 +30,7 @@ describe('DatabaseButtonsActionsFeature', () => {
   })
 
   it('should render successfully', () => {
-    const { baseElement } = render(<DatabaseButtonsActions {...props} />)
+    const { baseElement } = renderWithProviders(<DatabaseButtonsActions {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
@@ -42,14 +42,18 @@ describe('DatabaseButtonsActionsFeature', () => {
         service_deployment_status: ServiceDeploymentStatusEnum.UP_TO_DATE,
       },
     })
-    const { baseElement } = render(<DatabaseButtonsActions {...props} />)
+    const { userEvent } = renderWithProviders(<DatabaseButtonsActions {...props} />)
+    const actions = screen.getAllByTestId('element')
 
-    getByText(baseElement, 'Redeploy')
-    getByText(baseElement, 'Stop')
-    getByText(baseElement, 'Restart Database')
-    getByText(baseElement, 'See audit logs')
-    getByText(baseElement, 'Copy identifiers')
-    getByText(baseElement, 'Delete database')
+    await userEvent.click(actions[0])
+    screen.getByText('Redeploy')
+    screen.getByText('Stop')
+
+    await userEvent.click(actions[actions.length - 1])
+    screen.getByText('Restart Database')
+    screen.getByText('See audit logs')
+    screen.getByText('Copy identifiers')
+    screen.getByText('Delete database')
   })
 
   it('should render actions for STOPPED status', async () => {
@@ -60,12 +64,16 @@ describe('DatabaseButtonsActionsFeature', () => {
         service_deployment_status: ServiceDeploymentStatusEnum.UP_TO_DATE,
       },
     })
-    const { baseElement } = render(<DatabaseButtonsActions {...props} />)
+    const { userEvent } = renderWithProviders(<DatabaseButtonsActions {...props} />)
+    const actions = screen.getAllByTestId('element')
 
-    getByText(baseElement, 'Deploy')
-    getByText(baseElement, 'See audit logs')
-    getByText(baseElement, 'Copy identifiers')
-    getByText(baseElement, 'Delete database')
+    await userEvent.click(actions[0])
+    screen.getByText('Deploy')
+
+    await userEvent.click(actions[actions.length - 1])
+    screen.getByText('See audit logs')
+    screen.getByText('Copy identifiers')
+    screen.getByText('Delete database')
   })
 
   it('should render actions for DELETING status', async () => {
@@ -76,11 +84,15 @@ describe('DatabaseButtonsActionsFeature', () => {
         service_deployment_status: ServiceDeploymentStatusEnum.UP_TO_DATE,
       },
     })
-    const { baseElement } = render(<DatabaseButtonsActions {...props} />)
+    const { userEvent } = renderWithProviders(<DatabaseButtonsActions {...props} />)
+    const actions = screen.getAllByTestId('element')
 
-    getByText(baseElement, 'See audit logs')
-    getByText(baseElement, 'Copy identifiers')
-    getByText(baseElement, 'Cancel delete')
+    await userEvent.click(actions[0])
+    screen.getByText('Cancel delete')
+
+    await userEvent.click(actions[actions.length - 1])
+    screen.getByText('See audit logs')
+    screen.getByText('Copy identifiers')
   })
 
   it('should not render Restart Database if running status is not running', async () => {
@@ -92,16 +104,20 @@ describe('DatabaseButtonsActionsFeature', () => {
       },
     })
 
-    const { baseElement } = render(<DatabaseButtonsActions {...props} />)
+    const { userEvent } = renderWithProviders(<DatabaseButtonsActions {...props} />)
+    const actions = screen.getAllByTestId('element')
 
-    expect(queryByText(baseElement, 'Restart Database')).toBeNull()
+    await userEvent.click(actions[0])
+    expect(screen.queryByText('Restart Database')).toBeNull()
   })
 
   it('should not render Restart Database if database is managed', async () => {
     mockDatabase.mode = DatabaseModeEnum.MANAGED
 
-    const { baseElement } = render(<DatabaseButtonsActions {...props} />)
+    const { userEvent } = renderWithProviders(<DatabaseButtonsActions {...props} />)
+    const actions = screen.getAllByTestId('element')
 
-    expect(queryByText(baseElement, 'Restart Database')).toBeNull()
+    await userEvent.click(actions[0])
+    expect(screen.queryByText('Restart Database')).toBeNull()
   })
 })

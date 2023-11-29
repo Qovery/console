@@ -28,7 +28,8 @@ describe('MenuAccount', () => {
   })
 
   it('should have a active organization on the menu', async () => {
-    renderWithProviders(<MenuAccount {...props} />)
+    const { userEvent } = renderWithProviders(<MenuAccount {...props} />)
+    await userEvent.click(screen.getByTestId('btn-menu-account'))
 
     const item = screen.getByTestId('content-0')
 
@@ -37,6 +38,7 @@ describe('MenuAccount', () => {
 
   it('should have navigate to organization', async () => {
     const { userEvent } = renderWithProviders(<MenuAccount {...props} />)
+    await userEvent.click(screen.getByTestId('btn-menu-account'))
 
     const items = screen.getAllByTestId('menuItem')
 
@@ -50,6 +52,7 @@ describe('MenuAccount', () => {
 
   it('should have navigate to logout', async () => {
     const { userEvent } = renderWithProviders(<MenuAccount {...props} />)
+    await userEvent.click(screen.getByTestId('btn-menu-account'))
 
     const items = screen.getAllByTestId('menuItem')
 

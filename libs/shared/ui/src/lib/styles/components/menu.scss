@@ -2,6 +2,18 @@
 
 $menuTiming: 0.6s;
 
+// Our menu are always portal, so no z-index is necessary
+// We need to remove the initial z-index
+// https://github.com/szhsin/react-menu/blob/d7c4df8a4324847403990174d9298038e11ac0c2/src/styles/core.scss#L9
+.szh-menu {
+  z-index: 0;
+}
+
+// Override pointer-events: none placed on body by radix
+.szh-menu-container {
+  pointer-events: all;
+}
+
 // open
 .menu__container--open {
   animation-duration: $menuTiming;
