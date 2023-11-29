@@ -54,7 +54,7 @@ describe('PlaceholderLogs', () => {
     renderWithProviders(<PlaceholderLogs {...props} />)
 
     screen.getByText(props.serviceName as string)
-    screen.getByText(/No logs on this execution for/i)
+    screen.getByText(/No logs are available for/i)
     screen.getByText(
       /Managed Databases are managed by your cloud providers. Logs can be found within your cloud provider console./i
     )
