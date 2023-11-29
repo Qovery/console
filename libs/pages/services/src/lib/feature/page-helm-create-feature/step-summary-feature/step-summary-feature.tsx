@@ -25,7 +25,7 @@ export function StepSummaryFeature() {
 
   const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_HELM_CREATION_URL}`
 
-  const { mutateAsync: createHelm } = useCreateHelm()
+  const { mutateAsync: createHelm, isLoading: isLoadingCreateHelm } = useCreateHelm()
 
   const onSubmit = async (withDeploy: boolean) => {
     const source = match(generalData.source_provider)
@@ -164,10 +164,17 @@ export function StepSummaryFeature() {
             Back
           </Button>
           <div className="flex gap-2">
-            <Button type="submit" size="lg" variant="surface" color="neutral" onClick={() => onSubmit(false)}>
+            <Button
+              type="submit"
+              size="lg"
+              variant="surface"
+              color="neutral"
+              onClick={() => onSubmit(false)}
+              loading={isLoadingCreateHelm}
+            >
               Create
             </Button>
-            <Button type="submit" size="lg" onClick={() => onSubmit(true)}>
+            <Button type="submit" size="lg" onClick={() => onSubmit(true)} loading={isLoadingCreateHelm}>
               Create and deploy
             </Button>
           </div>

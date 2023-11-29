@@ -8,11 +8,7 @@ import {
   GitRepositorySetting,
   getGitTokenValue,
 } from '@qovery/domains/organizations/feature'
-import {
-  type Tabs,
-  ValuesOverrideAsFileSetting,
-  useCreateHelmDefaultValues,
-} from '@qovery/domains/service-helm/feature'
+import { ValuesOverrideAsYamlSetting, useCreateHelmDefaultValues } from '@qovery/domains/service-helm/feature'
 import {
   PREVIEW_CODE,
   SERVICES_HELM_CREATION_SUMMARY_URL,
@@ -39,8 +35,8 @@ export function StepValuesOverrideFilesFeature() {
 
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const { generalForm, valuesOverrideRepositoryForm, setCurrentStep } = useHelmCreateContext()
-  const { mutateAsync: createHelmDefaultValues } = useCreateHelmDefaultValues()
-  const [currentTab, setCurrentTab] = useState<Tabs>('GIT_REPOSITORY')
+  const { mutateAsync: createHelmDefaultValues, isLoading: isLoadingHelmDefaultValues } = useCreateHelmDefaultValues()
+  const [currentTab, setCurrentTab] = useState<'GIT_REPOSITORY' | 'YAML'>('GIT_REPOSITORY')
   const navigate = useNavigate()
   setCurrentStep(2)
 
@@ -117,6 +113,8 @@ export function StepValuesOverrideFilesFeature() {
   const watchFieldGitProvider = valuesOverrideRepositoryForm.watch('provider')
   const watchFieldGitRepository = valuesOverrideRepositoryForm.watch('repository')
 
+  const switchActiveClassName = 'bg-neutral-150 border border-neutral-250 cursor-default'
+
   return (
     <FunnelFlowBody helpSection={funnelCardHelp}>
       <FormProvider {...valuesOverrideRepositoryForm}>
@@ -169,12 +167,41 @@ export function StepValuesOverrideFilesFeature() {
             variant="surface"
             color="neutral"
             className="mb-10"
+            loading={isLoadingHelmDefaultValues}
             onClick={() => createHelmDefaultValuesMutation()}
           >
             See default values.yaml <Icon className="text-xs ml-2" name={IconAwesomeEnum.ARROW_UP_RIGHT_FROM_SQUARE} />
           </Button>
           <form onSubmit={onSubmit} className="w-full">
-            <ValuesOverrideAsFileSetting currentTab={currentTab} setCurrentTab={setCurrentTab} />
+            {/* TODO: should be update with TabsPrimitive component */}
+            <div className="flex h-9 text-xs font-medium rounded overflow-hidden">
+              <button
+                className={`w-full border rounded-l ${
+                  currentTab === 'GIT_REPOSITORY'
+                    ? switchActiveClassName
+                    : 'border-neutral-200 text-neutral-350 border-r-0 transition hover:bg-neutral-100 hover:text-neutral-500'
+                }`}
+                onClick={(event) => {
+                  event.preventDefault()
+                  setCurrentTab('GIT_REPOSITORY')
+                }}
+              >
+                Git repository
+              </button>
+              <button
+                className={`w-full border rounded-r ${
+                  currentTab === 'YAML'
+                    ? switchActiveClassName
+                    : 'border-neutral-200 text-neutral-350 border-l-0 transition hover:bg-neutral-100 hover:text-neutral-500'
+                }`}
+                onClick={(event) => {
+                  event.preventDefault()
+                  setCurrentTab('YAML')
+                }}
+              >
+                Raw YAML
+              </button>
+            </div>
             {currentTab === 'GIT_REPOSITORY' && (
               <Section>
                 <Heading className="mt-10 mb-2">Override from repository</Heading>
@@ -212,6 +239,18 @@ export function StepValuesOverrideFilesFeature() {
                       </div>
                     </>
                   )}
+                </div>
+              </Section>
+            )}
+            {currentTab === 'YAML' && (
+              <Section>
+                <Heading className="mt-10 mb-2">Override with raw Yaml</Heading>
+                <p className="text-sm text-neutral-350 mb-6">
+                  You can define here the YAML containing the overrides you want to apply. The YAML will be stored by
+                  Qovery and can be updated later within the settings but no history will be retained.
+                </p>
+                <div className="flex flex-col gap-3">
+                  <ValuesOverrideAsYamlSetting />
                 </div>
               </Section>
             )}
