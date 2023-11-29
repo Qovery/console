@@ -1,5 +1,4 @@
 import { type QueryClient } from '@tanstack/react-query'
-import { DatabaseModeEnum } from 'qovery-typescript-axios'
 import {
   type ServiceInfraLogResponseDto,
   type ServiceLogResponseDto,
@@ -58,8 +57,6 @@ export function PodLogsFeature({ clusterId }: PodLogsFeatureProps) {
 
   useDocumentTitle(`Live logs ${application || database ? `- ${application?.name || database?.name}` : '- Loading...'}`)
 
-  const disabledLogs = database && database.mode !== DatabaseModeEnum.MANAGED
-
   const serviceMessageHandler = useCallback(
     (_: QueryClient, message: ServiceLogResponseDto) => {
       setServiceMessages((prevMessages) => [...prevMessages, { ...message, id: logCounter.current++ }])
@@ -81,8 +78,7 @@ export function PodLogsFeature({ clusterId }: PodLogsFeatureProps) {
       Boolean(clusterId) &&
       Boolean(projectId) &&
       Boolean(environmentId) &&
-      Boolean(serviceId) &&
-      !disabledLogs,
+      Boolean(serviceId),
     onMessage: serviceMessageHandler,
   })
 
@@ -109,7 +105,6 @@ export function PodLogsFeature({ clusterId }: PodLogsFeatureProps) {
       Boolean(projectId) &&
       Boolean(environmentId) &&
       Boolean(serviceId) &&
-      !disabledLogs &&
       enabledNginx,
     onMessage: infraMessageHandler,
   })
