@@ -118,14 +118,6 @@ export function PodLogsFeature({ clusterId }: PodLogsFeatureProps) {
     .with(ServiceStateDto.RUNNING, ServiceStateDto.WARNING, () => true)
     .otherwise(() => false)
 
-  console.log('Boolean(organizationId): ', Boolean(organizationId))
-  console.log('Boolean(clusterId): ', Boolean(clusterId))
-  console.log('Boolean(projectId): ', Boolean(projectId))
-  console.log('Boolean(environmentId): ', Boolean(environmentId))
-  console.log('Boolean(serviceId): ', Boolean(serviceId))
-  console.log('!disabledLogs: ', !disabledLogs)
-  console.log('enabledNginx: ', enabledNginx)
-
   return (
     <PodLogs
       service={application || database}
