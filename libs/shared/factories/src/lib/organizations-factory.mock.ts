@@ -4,6 +4,8 @@ import {
   ContainerRegistryKindEnum,
   type ContainerRegistryResponse,
   EnvironmentModeEnum,
+  HelmRepositoryKindEnum,
+  type HelmRepositoryResponse,
   type InviteMember,
   InviteMemberRoleEnum,
   InviteStatusEnum,
@@ -103,6 +105,17 @@ export const inviteMembersMock = (howMany: number): InviteMember[] =>
     role: chance.pickone(Object.values(InviteMemberRoleEnum)),
     role_name: 'Admin',
     role_id: chance.guid(),
+  }))
+
+export const helmRepositoriesMock = (howMany: number): HelmRepositoryResponse[] =>
+  Array.from({ length: howMany }).map((_, index) => ({
+    id: `${index}`,
+    created_at: new Date().toString(),
+    updated_at: new Date().toString(),
+    name: chance.name(),
+    kind: chance.pickone(Object.values([HelmRepositoryKindEnum.HTTPS])),
+    description: chance.word({ length: 10 }),
+    url: chance.url(),
   }))
 
 export const containerRegistriesMock = (howMany: number): ContainerRegistryResponse[] =>

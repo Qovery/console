@@ -11,6 +11,8 @@ import {
   type DoCredentialsRequest,
   type GitProviderEnum,
   type GitTokenRequest,
+  HelmRepositoriesApi,
+  type HelmRepositoryRequest,
   type InviteMemberRequest,
   type MemberRoleUpdateRequest,
   MembersApi,
@@ -33,6 +35,7 @@ import { refactoOrganizationCustomRolePayload, refactoOrganizationPayload } from
 import { type DistributiveOmit } from '@qovery/shared/util-types'
 
 const containerRegistriesApi = new ContainerRegistriesApi()
+const helmRepositoriesApi = new HelmRepositoriesApi()
 const organizationApi = new OrganizationMainCallsApi()
 const gitApi = new OrganizationAccountGitRepositoriesApi()
 const apiTokenApi = new OrganizationApiTokenApi()
@@ -77,6 +80,27 @@ export const organizations = createQueryKeys('organizations', {
       return response.data
     },
   }),
+  helmRepositories: ({ organizationId }: { organizationId: string }) => ({
+    queryKey: [organizationId],
+    async queryFn() {
+      const response = await helmRepositoriesApi.listHelmRepository(organizationId)
+      return response.data.results
+    },
+  }),
+  helmRepository: ({ organizationId, helmRepositoryId }: { organizationId: string; helmRepositoryId: string }) => ({
+    queryKey: [organizationId, helmRepositoryId],
+    async queryFn() {
+      const response = await helmRepositoriesApi.getHelmRepository(organizationId, helmRepositoryId)
+      return response.data
+    },
+  }),
+  availableHelmRepositories: {
+    queryKey: null,
+    async queryFn() {
+      const response = await helmRepositoriesApi.listAvailableHelmRepository()
+      return response.data.results
+    },
+  },
   containerRegistries: ({ organizationId }: { organizationId: string }) => ({
     queryKey: [organizationId],
     async queryFn() {
@@ -281,6 +305,42 @@ export const organizations = createQueryKeys('organizations', {
 })
 
 export const mutations = {
+  async editHelmRepository({
+    organizationId,
+    helmRepositoryId,
+    helmRepositoryRequest,
+  }: {
+    organizationId: string
+    helmRepositoryId: string
+    helmRepositoryRequest: HelmRepositoryRequest
+  }) {
+    const response = await helmRepositoriesApi.editHelmRepository(
+      organizationId,
+      helmRepositoryId,
+      helmRepositoryRequest
+    )
+    return response.data
+  },
+  async createHelmRepository({
+    organizationId,
+    helmRepositoryRequest,
+  }: {
+    organizationId: string
+    helmRepositoryRequest: HelmRepositoryRequest
+  }) {
+    const response = await helmRepositoriesApi.createHelmRepository(organizationId, helmRepositoryRequest)
+    return response.data
+  },
+  async deleteHelmRepository({
+    organizationId,
+    helmRepositoryId,
+  }: {
+    organizationId: string
+    helmRepositoryId: string
+  }) {
+    const response = await helmRepositoriesApi.deleteHelmRepository(organizationId, helmRepositoryId)
+    return response.data
+  },
   async editContainerRegistry({
     organizationId,
     containerRegistryId,

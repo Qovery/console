@@ -139,7 +139,7 @@ export function CrudModal(props: CrudModalProps) {
           control={control}
           rules={{
             // eslint-disable-next-line no-useless-escape
-            value: /^(http(s)?:\/\/)[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/gm,
+            pattern: /^(http(s)?:\/\/)[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/gm,
             required: 'Please enter a registry url.',
           }}
           render={({ field, fieldState: { error } }) => (
