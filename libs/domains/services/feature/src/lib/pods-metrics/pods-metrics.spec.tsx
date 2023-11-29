@@ -1,6 +1,7 @@
 import { ResourceStatusDto, UnitDto } from 'qovery-ws-typescript-axios'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { renderWithProviders } from '@qovery/shared/util-tests'
+import * as useDeploymentStatusImport from '../hooks/use-deployment-status/use-deployment-status'
 import * as useMetricsImport from '../hooks/use-metrics/use-metrics'
 import * as useServiceImport from '../hooks/use-service/use-service'
 import PodsMetrics from './pods-metrics'
@@ -64,6 +65,16 @@ describe('PodsMetrics', () => {
       error: {},
       isError: false,
     })
+    jest.spyOn(useDeploymentStatusImport, 'useDeploymentStatus').mockReturnValue({
+      data: {
+        id: '1',
+        service_deployment_status: 'UP_TO_DATE',
+        state: 'READY',
+      },
+      isLoading: false,
+      error: {},
+      isError: false,
+    })
     const { container } = renderWithProviders(<PodsMetrics environmentId="1" serviceId="1" />)
     expect(container).toMatchSnapshot()
   })
@@ -80,6 +91,16 @@ describe('PodsMetrics', () => {
         serviceType: ServiceTypeEnum.APPLICATION,
         created_at: '1696923386000',
         healthchecks: {},
+      },
+      isLoading: false,
+      error: {},
+      isError: false,
+    })
+    jest.spyOn(useDeploymentStatusImport, 'useDeploymentStatus').mockReturnValue({
+      data: {
+        id: '1',
+        service_deployment_status: 'UP_TO_DATE',
+        state: 'READY',
       },
       isLoading: false,
       error: {},

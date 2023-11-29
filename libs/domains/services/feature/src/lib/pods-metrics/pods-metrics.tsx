@@ -8,7 +8,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { type ServiceStateDto } from 'qovery-ws-typescript-axios'
-import { Fragment, useEffect, useMemo, useState } from 'react'
+import { Fragment, type PropsWithChildren, useEffect, useMemo, useState } from 'react'
 import { P, match } from 'ts-pattern'
 import { ServiceTypeEnum, isJobContainerSource } from '@qovery/shared/enums'
 import { Badge, Icon, IconAwesomeEnum, StatusChip, TablePrimitives, Tooltip } from '@qovery/shared/ui'
@@ -18,16 +18,17 @@ import { useMetrics } from '../hooks/use-metrics/use-metrics'
 import { useRunningStatus } from '../hooks/use-running-status/use-running-status'
 import { useService } from '../hooks/use-service/use-service'
 import { type Pod, PodDetails } from '../pod-details/pod-details'
+import EmptyState from './empty-state'
 import { PodsMetricsSkeleton } from './pods-metrics-skeleton'
 
 const { Table } = TablePrimitives
 
-export interface PodsMetricsProps {
+export interface PodsMetricsProps extends PropsWithChildren {
   environmentId: string
   serviceId: string
 }
 
-export function PodsMetrics({ environmentId, serviceId }: PodsMetricsProps) {
+export function PodsMetrics({ environmentId, serviceId, children }: PodsMetricsProps) {
   const {
     data: metrics = [],
     isLoading: isMetricsLoading,
@@ -247,13 +248,7 @@ export function PodsMetrics({ environmentId, serviceId }: PodsMetricsProps) {
     return <PodsMetricsSkeleton />
   } else if (pods.length === 0 && !isMetricsLoading && isRunningStatusesLoading) {
     // NOTE: runningStatuses may never resolve if service not started
-    return (
-      <div className="flex flex-col items-center gap-1 py-10 bg-neutral-100 text-sm text-neutral-350 border border-neutral-200">
-        <Icon className="text-md text-neutral-300" name={IconAwesomeEnum.PLAY} />
-        <span className="font-medium">Application is not running</span>
-        <span>Deploy the application first</span>
-      </div>
-    )
+    return <EmptyState serviceId={serviceId} environmentId={environmentId} />
   } else if (
     (pods.length === 0 && !isMetricsLoading && !isRunningStatusesLoading) ||
     isMetricsError ||
@@ -270,72 +265,75 @@ export function PodsMetrics({ environmentId, serviceId }: PodsMetricsProps) {
   }
 
   return (
-    <div className="border rounded overflow-hidden">
-      <Table.Root className="w-full text-xs min-w-[800px]">
-        <Table.Header>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <Table.Row key={headerGroup.id}>
-              {headerGroup.headers.map((header) => (
-                <Table.ColumnHeaderCell className="first:w-1/4 first:pl-[52px] font-medium" key={header.id}>
-                  <button
-                    type="button"
-                    className={twMerge(
-                      'flex items-center gap-1',
-                      header.column.getCanSort() ? 'cursor-pointer select-none' : ''
-                    )}
-                    onClick={header.column.getToggleSortingHandler()}
-                  >
-                    {flexRender(header.column.columnDef.header, header.getContext())}
-                    {match(header.column.getIsSorted())
-                      .with('asc', () => <Icon className="text-xs" name={IconAwesomeEnum.ARROW_DOWN} />)
-                      .with('desc', () => <Icon className="text-xs" name={IconAwesomeEnum.ARROW_UP} />)
-                      .with(false, () => null)
-                      .exhaustive()}
-                  </button>
-                </Table.ColumnHeaderCell>
-              ))}
-            </Table.Row>
-          ))}
-        </Table.Header>
-        <Table.Body>
-          {table.getRowModel().rows.map((row) => (
-            <Fragment key={row.id}>
-              <Table.Row className="hover:bg-neutral-100" onClick={row.getToggleExpandedHandler()}>
-                {row.getVisibleCells().map((cell, index) => (
-                  <Table.Cell key={cell.id}>
-                    {index === 0 && (
-                      <button
-                        className="inline-flex items-center justify-start h-14 text-md w-9 pointer text-neutral-350"
-                        type="button"
-                        onClick={(e) => {
-                          row.getToggleExpandedHandler()()
-                          e.stopPropagation()
-                        }}
-                      >
-                        <Icon
-                          className="pl-1"
-                          name={row.getIsExpanded() ? IconAwesomeEnum.CHEVRON_UP : IconAwesomeEnum.CHEVRON_DOWN}
-                          aria-hidden
-                        />
-                      </button>
-                    )}
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </Table.Cell>
+    <>
+      <div className="border rounded overflow-hidden">
+        <Table.Root className="w-full text-xs min-w-[800px]">
+          <Table.Header>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <Table.Row key={headerGroup.id}>
+                {headerGroup.headers.map((header) => (
+                  <Table.ColumnHeaderCell className="first:w-1/4 first:pl-[52px] font-medium" key={header.id}>
+                    <button
+                      type="button"
+                      className={twMerge(
+                        'flex items-center gap-1',
+                        header.column.getCanSort() ? 'cursor-pointer select-none' : ''
+                      )}
+                      onClick={header.column.getToggleSortingHandler()}
+                    >
+                      {flexRender(header.column.columnDef.header, header.getContext())}
+                      {match(header.column.getIsSorted())
+                        .with('asc', () => <Icon className="text-xs" name={IconAwesomeEnum.ARROW_DOWN} />)
+                        .with('desc', () => <Icon className="text-xs" name={IconAwesomeEnum.ARROW_UP} />)
+                        .with(false, () => null)
+                        .exhaustive()}
+                    </button>
+                  </Table.ColumnHeaderCell>
                 ))}
               </Table.Row>
-              {row.getIsExpanded() && row.original.containers && (
-                <Table.Row className="dark bg-neutral-550 text-xs">
-                  {/* 2nd row is a custom 1 cell row */}
-                  <Table.Cell colSpan={row.getVisibleCells().length} className="p-0">
-                    <PodDetails pod={row.original} serviceId={serviceId} serviceType={service.serviceType} />
-                  </Table.Cell>
+            ))}
+          </Table.Header>
+          <Table.Body>
+            {table.getRowModel().rows.map((row) => (
+              <Fragment key={row.id}>
+                <Table.Row className="hover:bg-neutral-100" onClick={row.getToggleExpandedHandler()}>
+                  {row.getVisibleCells().map((cell, index) => (
+                    <Table.Cell key={cell.id}>
+                      {index === 0 && (
+                        <button
+                          className="inline-flex items-center justify-start h-14 text-md w-9 pointer text-neutral-350"
+                          type="button"
+                          onClick={(e) => {
+                            row.getToggleExpandedHandler()()
+                            e.stopPropagation()
+                          }}
+                        >
+                          <Icon
+                            className="pl-1"
+                            name={row.getIsExpanded() ? IconAwesomeEnum.CHEVRON_UP : IconAwesomeEnum.CHEVRON_DOWN}
+                            aria-hidden
+                          />
+                        </button>
+                      )}
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </Table.Cell>
+                  ))}
                 </Table.Row>
-              )}
-            </Fragment>
-          ))}
-        </Table.Body>
-      </Table.Root>
-    </div>
+                {row.getIsExpanded() && row.original.containers && (
+                  <Table.Row className="dark bg-neutral-550 text-xs">
+                    {/* 2nd row is a custom 1 cell row */}
+                    <Table.Cell colSpan={row.getVisibleCells().length} className="p-0">
+                      <PodDetails pod={row.original} serviceId={serviceId} serviceType={service.serviceType} />
+                    </Table.Cell>
+                  </Table.Row>
+                )}
+              </Fragment>
+            ))}
+          </Table.Body>
+        </Table.Root>
+      </div>
+      {children}
+    </>
   )
 }
 
