@@ -22,13 +22,11 @@ exports[`ServiceList should match snapshot 1`] = `
               data-state="closed"
               type="button"
             >
-              <span>
-                Name
-                <span
-                  class="icon-solid-angle-down shrink-0 "
-                  role="img"
-                />
-              </span>
+              Name
+              <span
+                class="icon-solid-angle-down shrink-0 "
+                role="img"
+              />
             </button>
           </div>
         </th>
@@ -47,13 +45,11 @@ exports[`ServiceList should match snapshot 1`] = `
               data-state="closed"
               type="button"
             >
-              <span>
-                Service status
-                <span
-                  class="icon-solid-angle-down shrink-0 "
-                  role="img"
-                />
-              </span>
+              Service status
+              <span
+                class="icon-solid-angle-down shrink-0 "
+                role="img"
+              />
             </button>
           </div>
         </th>
@@ -72,13 +68,11 @@ exports[`ServiceList should match snapshot 1`] = `
               data-state="closed"
               type="button"
             >
-              <span>
-                Last deployment
-                <span
-                  class="icon-solid-angle-down shrink-0 "
-                  role="img"
-                />
-              </span>
+              Last deployment
+              <span
+                class="icon-solid-angle-down shrink-0 "
+                role="img"
+              />
             </button>
           </div>
         </th>
@@ -214,16 +208,14 @@ exports[`ServiceList should match snapshot 1`] = `
                   data-state="closed"
                   type="button"
                 >
-                  <span>
-                    <span
-                      class="icon-solid-link shrink-0 "
-                      role="img"
-                    />
-                    <span
-                      class="icon-solid-angle-down shrink-0 "
-                      role="img"
-                    />
-                  </span>
+                  <span
+                    class="icon-solid-link shrink-0 "
+                    role="img"
+                  />
+                  <span
+                    class="icon-solid-angle-down shrink-0 "
+                    role="img"
+                  />
                 </button>
               </div>
             </span>
@@ -301,41 +293,39 @@ exports[`ServiceList should match snapshot 1`] = `
           <button
             class="inline-flex items-center shrink-0 font-medium transition h-8 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent text-xs gap-2"
           >
-            <span>
-              <div
-                class=""
-                data-state="closed"
+            <div
+              class=""
+              data-state="closed"
+            >
+              <svg
+                class="text-neutral-300"
+                fill="none"
+                height="16"
+                viewBox="0 0 24 24"
+                width="16"
+                xmlns="http://www.w3.org/2000/svg"
               >
-                <svg
-                  class="text-neutral-300"
-                  fill="none"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  width="16"
-                  xmlns="http://www.w3.org/2000/svg"
+                <g
+                  clip-path="url(#clip0_5424_5935)"
                 >
-                  <g
-                    clip-path="url(#clip0_5424_5935)"
+                  <path
+                    d="M21.75 12a9.75 9.75 0 10-19.5 0 9.75 9.75 0 0019.5 0zM0 12a12 12 0 1124 0 12 12 0 01-24 0zm16.5-4.5v9h-9v-9h9z"
+                    fill="currentColor"
+                  />
+                </g>
+                <defs>
+                  <clippath
+                    id="clip0_5424_5935"
                   >
                     <path
-                      d="M21.75 12a9.75 9.75 0 10-19.5 0 9.75 9.75 0 0019.5 0zM0 12a12 12 0 1124 0 12 12 0 01-24 0zm16.5-4.5v9h-9v-9h9z"
-                      fill="currentColor"
+                      d="M0 0H24V24H0z"
+                      fill="#fff"
                     />
-                  </g>
-                  <defs>
-                    <clippath
-                      id="clip0_5424_5935"
-                    >
-                      <path
-                        d="M0 0H24V24H0z"
-                        fill="#fff"
-                      />
-                    </clippath>
-                  </defs>
-                </svg>
-              </div>
-              Stopped
-            </span>
+                  </clippath>
+                </defs>
+              </svg>
+            </div>
+            Stopped
           </button>
         </td>
         <td
@@ -345,41 +335,39 @@ exports[`ServiceList should match snapshot 1`] = `
           <button
             class="inline-flex items-center shrink-0 font-medium transition h-8 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent text-xs gap-2"
           >
-            <span>
-              <div
-                class=""
-                data-state="closed"
+            <div
+              class=""
+              data-state="closed"
+            >
+              <svg
+                class="text-neutral-300"
+                fill="none"
+                height="16"
+                viewBox="0 0 24 24"
+                width="16"
+                xmlns="http://www.w3.org/2000/svg"
               >
-                <svg
-                  class="text-neutral-300"
-                  fill="none"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  width="16"
-                  xmlns="http://www.w3.org/2000/svg"
+                <g
+                  clip-path="url(#clip0_5424_5935)"
                 >
-                  <g
-                    clip-path="url(#clip0_5424_5935)"
+                  <path
+                    d="M21.75 12a9.75 9.75 0 10-19.5 0 9.75 9.75 0 0019.5 0zM0 12a12 12 0 1124 0 12 12 0 01-24 0zm16.5-4.5v9h-9v-9h9z"
+                    fill="currentColor"
+                  />
+                </g>
+                <defs>
+                  <clippath
+                    id="clip0_5424_5935"
                   >
                     <path
-                      d="M21.75 12a9.75 9.75 0 10-19.5 0 9.75 9.75 0 0019.5 0zM0 12a12 12 0 1124 0 12 12 0 01-24 0zm16.5-4.5v9h-9v-9h9z"
-                      fill="currentColor"
+                      d="M0 0H24V24H0z"
+                      fill="#fff"
                     />
-                  </g>
-                  <defs>
-                    <clippath
-                      id="clip0_5424_5935"
-                    >
-                      <path
-                        d="M0 0H24V24H0z"
-                        fill="#fff"
-                      />
-                    </clippath>
-                  </defs>
-                </svg>
-              </div>
-              Stopped
-            </span>
+                  </clippath>
+                </defs>
+              </svg>
+            </div>
+            Stopped
           </button>
         </td>
         <td
@@ -416,17 +404,15 @@ exports[`ServiceList should match snapshot 1`] = `
                   class="inline-flex items-center shrink-0 font-medium transition text-xs px-1 py-0.5 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 group justify-between gap-1"
                   type="button"
                 >
-                  <span>
-                    <span
-                      class="icon-solid-copy shrink-0 hidden group-hover:inline w-4"
-                      role="img"
-                    />
-                    <span
-                      class="icon-solid-code-commit shrink-0 group-hover:hidden w-4"
-                      role="img"
-                    />
-                    2f74448
-                  </span>
+                  <span
+                    class="icon-solid-copy shrink-0 hidden group-hover:inline w-4"
+                    role="img"
+                  />
+                  <span
+                    class="icon-solid-code-commit shrink-0 group-hover:hidden w-4"
+                    role="img"
+                  />
+                  2f74448
                 </button>
               </span>
               <div>
@@ -565,16 +551,14 @@ exports[`ServiceList should match snapshot 1`] = `
                   data-state="closed"
                   type="button"
                 >
-                  <span>
-                    <span
-                      class="icon-solid-link shrink-0 "
-                      role="img"
-                    />
-                    <span
-                      class="icon-solid-angle-down shrink-0 "
-                      role="img"
-                    />
-                  </span>
+                  <span
+                    class="icon-solid-link shrink-0 "
+                    role="img"
+                  />
+                  <span
+                    class="icon-solid-angle-down shrink-0 "
+                    role="img"
+                  />
                 </button>
               </div>
             </span>
@@ -661,41 +645,39 @@ exports[`ServiceList should match snapshot 1`] = `
           <button
             class="inline-flex items-center shrink-0 font-medium transition h-8 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent text-xs gap-2"
           >
-            <span>
-              <div
-                class=""
-                data-state="closed"
+            <div
+              class=""
+              data-state="closed"
+            >
+              <svg
+                class="text-neutral-300"
+                fill="none"
+                height="16"
+                viewBox="0 0 24 24"
+                width="16"
+                xmlns="http://www.w3.org/2000/svg"
               >
-                <svg
-                  class="text-neutral-300"
-                  fill="none"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  width="16"
-                  xmlns="http://www.w3.org/2000/svg"
+                <g
+                  clip-path="url(#clip0_5424_5935)"
                 >
-                  <g
-                    clip-path="url(#clip0_5424_5935)"
+                  <path
+                    d="M21.75 12a9.75 9.75 0 10-19.5 0 9.75 9.75 0 0019.5 0zM0 12a12 12 0 1124 0 12 12 0 01-24 0zm16.5-4.5v9h-9v-9h9z"
+                    fill="currentColor"
+                  />
+                </g>
+                <defs>
+                  <clippath
+                    id="clip0_5424_5935"
                   >
                     <path
-                      d="M21.75 12a9.75 9.75 0 10-19.5 0 9.75 9.75 0 0019.5 0zM0 12a12 12 0 1124 0 12 12 0 01-24 0zm16.5-4.5v9h-9v-9h9z"
-                      fill="currentColor"
+                      d="M0 0H24V24H0z"
+                      fill="#fff"
                     />
-                  </g>
-                  <defs>
-                    <clippath
-                      id="clip0_5424_5935"
-                    >
-                      <path
-                        d="M0 0H24V24H0z"
-                        fill="#fff"
-                      />
-                    </clippath>
-                  </defs>
-                </svg>
-              </div>
-              Stopped
-            </span>
+                  </clippath>
+                </defs>
+              </svg>
+            </div>
+            Stopped
           </button>
         </td>
         <td
@@ -705,41 +687,39 @@ exports[`ServiceList should match snapshot 1`] = `
           <button
             class="inline-flex items-center shrink-0 font-medium transition h-8 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent text-xs gap-2"
           >
-            <span>
-              <div
-                class=""
-                data-state="closed"
+            <div
+              class=""
+              data-state="closed"
+            >
+              <svg
+                class="text-neutral-300"
+                fill="none"
+                height="16"
+                viewBox="0 0 24 24"
+                width="16"
+                xmlns="http://www.w3.org/2000/svg"
               >
-                <svg
-                  class="text-neutral-300"
-                  fill="none"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  width="16"
-                  xmlns="http://www.w3.org/2000/svg"
+                <g
+                  clip-path="url(#clip0_5424_5935)"
                 >
-                  <g
-                    clip-path="url(#clip0_5424_5935)"
+                  <path
+                    d="M21.75 12a9.75 9.75 0 10-19.5 0 9.75 9.75 0 0019.5 0zM0 12a12 12 0 1124 0 12 12 0 01-24 0zm16.5-4.5v9h-9v-9h9z"
+                    fill="currentColor"
+                  />
+                </g>
+                <defs>
+                  <clippath
+                    id="clip0_5424_5935"
                   >
                     <path
-                      d="M21.75 12a9.75 9.75 0 10-19.5 0 9.75 9.75 0 0019.5 0zM0 12a12 12 0 1124 0 12 12 0 01-24 0zm16.5-4.5v9h-9v-9h9z"
-                      fill="currentColor"
+                      d="M0 0H24V24H0z"
+                      fill="#fff"
                     />
-                  </g>
-                  <defs>
-                    <clippath
-                      id="clip0_5424_5935"
-                    >
-                      <path
-                        d="M0 0H24V24H0z"
-                        fill="#fff"
-                      />
-                    </clippath>
-                  </defs>
-                </svg>
-              </div>
-              Stopped
-            </span>
+                  </clippath>
+                </defs>
+              </svg>
+            </div>
+            Stopped
           </button>
         </td>
         <td
@@ -1208,16 +1188,14 @@ exports[`ServiceList should match snapshot 1`] = `
                   data-state="closed"
                   type="button"
                 >
-                  <span>
-                    <span
-                      class="icon-solid-link shrink-0 "
-                      role="img"
-                    />
-                    <span
-                      class="icon-solid-angle-down shrink-0 "
-                      role="img"
-                    />
-                  </span>
+                  <span
+                    class="icon-solid-link shrink-0 "
+                    role="img"
+                  />
+                  <span
+                    class="icon-solid-angle-down shrink-0 "
+                    role="img"
+                  />
                 </button>
               </div>
             </span>
@@ -1304,41 +1282,39 @@ exports[`ServiceList should match snapshot 1`] = `
           <button
             class="inline-flex items-center shrink-0 font-medium transition h-8 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent text-xs gap-2"
           >
-            <span>
-              <div
-                class=""
-                data-state="closed"
+            <div
+              class=""
+              data-state="closed"
+            >
+              <svg
+                class="text-neutral-300"
+                fill="none"
+                height="16"
+                viewBox="0 0 24 24"
+                width="16"
+                xmlns="http://www.w3.org/2000/svg"
               >
-                <svg
-                  class="text-neutral-300"
-                  fill="none"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  width="16"
-                  xmlns="http://www.w3.org/2000/svg"
+                <g
+                  clip-path="url(#clip0_5424_5935)"
                 >
-                  <g
-                    clip-path="url(#clip0_5424_5935)"
+                  <path
+                    d="M21.75 12a9.75 9.75 0 10-19.5 0 9.75 9.75 0 0019.5 0zM0 12a12 12 0 1124 0 12 12 0 01-24 0zm16.5-4.5v9h-9v-9h9z"
+                    fill="currentColor"
+                  />
+                </g>
+                <defs>
+                  <clippath
+                    id="clip0_5424_5935"
                   >
                     <path
-                      d="M21.75 12a9.75 9.75 0 10-19.5 0 9.75 9.75 0 0019.5 0zM0 12a12 12 0 1124 0 12 12 0 01-24 0zm16.5-4.5v9h-9v-9h9z"
-                      fill="currentColor"
+                      d="M0 0H24V24H0z"
+                      fill="#fff"
                     />
-                  </g>
-                  <defs>
-                    <clippath
-                      id="clip0_5424_5935"
-                    >
-                      <path
-                        d="M0 0H24V24H0z"
-                        fill="#fff"
-                      />
-                    </clippath>
-                  </defs>
-                </svg>
-              </div>
-              Stopped
-            </span>
+                  </clippath>
+                </defs>
+              </svg>
+            </div>
+            Stopped
           </button>
         </td>
         <td
@@ -1348,41 +1324,39 @@ exports[`ServiceList should match snapshot 1`] = `
           <button
             class="inline-flex items-center shrink-0 font-medium transition h-8 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent text-xs gap-2"
           >
-            <span>
-              <div
-                class=""
-                data-state="closed"
+            <div
+              class=""
+              data-state="closed"
+            >
+              <svg
+                class="text-neutral-300"
+                fill="none"
+                height="16"
+                viewBox="0 0 24 24"
+                width="16"
+                xmlns="http://www.w3.org/2000/svg"
               >
-                <svg
-                  class="text-neutral-300"
-                  fill="none"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  width="16"
-                  xmlns="http://www.w3.org/2000/svg"
+                <g
+                  clip-path="url(#clip0_5424_5935)"
                 >
-                  <g
-                    clip-path="url(#clip0_5424_5935)"
+                  <path
+                    d="M21.75 12a9.75 9.75 0 10-19.5 0 9.75 9.75 0 0019.5 0zM0 12a12 12 0 1124 0 12 12 0 01-24 0zm16.5-4.5v9h-9v-9h9z"
+                    fill="currentColor"
+                  />
+                </g>
+                <defs>
+                  <clippath
+                    id="clip0_5424_5935"
                   >
                     <path
-                      d="M21.75 12a9.75 9.75 0 10-19.5 0 9.75 9.75 0 0019.5 0zM0 12a12 12 0 1124 0 12 12 0 01-24 0zm16.5-4.5v9h-9v-9h9z"
-                      fill="currentColor"
+                      d="M0 0H24V24H0z"
+                      fill="#fff"
                     />
-                  </g>
-                  <defs>
-                    <clippath
-                      id="clip0_5424_5935"
-                    >
-                      <path
-                        d="M0 0H24V24H0z"
-                        fill="#fff"
-                      />
-                    </clippath>
-                  </defs>
-                </svg>
-              </div>
-              Stopped
-            </span>
+                  </clippath>
+                </defs>
+              </svg>
+            </div>
+            Stopped
           </button>
         </td>
         <td
@@ -1419,17 +1393,15 @@ exports[`ServiceList should match snapshot 1`] = `
                   class="inline-flex items-center shrink-0 font-medium transition text-xs px-1 py-0.5 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 group justify-between gap-1"
                   type="button"
                 >
-                  <span>
-                    <span
-                      class="icon-solid-copy shrink-0 hidden group-hover:inline w-4"
-                      role="img"
-                    />
-                    <span
-                      class="icon-solid-code-commit shrink-0 group-hover:hidden w-4"
-                      role="img"
-                    />
-                    10ad354
-                  </span>
+                  <span
+                    class="icon-solid-copy shrink-0 hidden group-hover:inline w-4"
+                    role="img"
+                  />
+                  <span
+                    class="icon-solid-code-commit shrink-0 group-hover:hidden w-4"
+                    role="img"
+                  />
+                  10ad354
                 </button>
               </span>
               <div>
@@ -1650,16 +1622,14 @@ exports[`ServiceList should match snapshot 1`] = `
                   data-state="closed"
                   type="button"
                 >
-                  <span>
-                    <span
-                      class="icon-solid-link shrink-0 "
-                      role="img"
-                    />
-                    <span
-                      class="icon-solid-angle-down shrink-0 "
-                      role="img"
-                    />
-                  </span>
+                  <span
+                    class="icon-solid-link shrink-0 "
+                    role="img"
+                  />
+                  <span
+                    class="icon-solid-angle-down shrink-0 "
+                    role="img"
+                  />
                 </button>
               </div>
             </span>
@@ -1746,41 +1716,39 @@ exports[`ServiceList should match snapshot 1`] = `
           <button
             class="inline-flex items-center shrink-0 font-medium transition h-8 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent text-xs gap-2"
           >
-            <span>
-              <div
-                class=""
-                data-state="closed"
+            <div
+              class=""
+              data-state="closed"
+            >
+              <svg
+                class="text-neutral-300"
+                fill="none"
+                height="16"
+                viewBox="0 0 24 24"
+                width="16"
+                xmlns="http://www.w3.org/2000/svg"
               >
-                <svg
-                  class="text-neutral-300"
-                  fill="none"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  width="16"
-                  xmlns="http://www.w3.org/2000/svg"
+                <g
+                  clip-path="url(#clip0_5424_5935)"
                 >
-                  <g
-                    clip-path="url(#clip0_5424_5935)"
+                  <path
+                    d="M21.75 12a9.75 9.75 0 10-19.5 0 9.75 9.75 0 0019.5 0zM0 12a12 12 0 1124 0 12 12 0 01-24 0zm16.5-4.5v9h-9v-9h9z"
+                    fill="currentColor"
+                  />
+                </g>
+                <defs>
+                  <clippath
+                    id="clip0_5424_5935"
                   >
                     <path
-                      d="M21.75 12a9.75 9.75 0 10-19.5 0 9.75 9.75 0 0019.5 0zM0 12a12 12 0 1124 0 12 12 0 01-24 0zm16.5-4.5v9h-9v-9h9z"
-                      fill="currentColor"
+                      d="M0 0H24V24H0z"
+                      fill="#fff"
                     />
-                  </g>
-                  <defs>
-                    <clippath
-                      id="clip0_5424_5935"
-                    >
-                      <path
-                        d="M0 0H24V24H0z"
-                        fill="#fff"
-                      />
-                    </clippath>
-                  </defs>
-                </svg>
-              </div>
-              Stopped
-            </span>
+                  </clippath>
+                </defs>
+              </svg>
+            </div>
+            Stopped
           </button>
         </td>
         <td
@@ -1790,41 +1758,39 @@ exports[`ServiceList should match snapshot 1`] = `
           <button
             class="inline-flex items-center shrink-0 font-medium transition h-8 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent text-xs gap-2"
           >
-            <span>
-              <div
-                class=""
-                data-state="closed"
+            <div
+              class=""
+              data-state="closed"
+            >
+              <svg
+                class="text-neutral-300"
+                fill="none"
+                height="16"
+                viewBox="0 0 24 24"
+                width="16"
+                xmlns="http://www.w3.org/2000/svg"
               >
-                <svg
-                  class="text-neutral-300"
-                  fill="none"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  width="16"
-                  xmlns="http://www.w3.org/2000/svg"
+                <g
+                  clip-path="url(#clip0_5424_5935)"
                 >
-                  <g
-                    clip-path="url(#clip0_5424_5935)"
+                  <path
+                    d="M21.75 12a9.75 9.75 0 10-19.5 0 9.75 9.75 0 0019.5 0zM0 12a12 12 0 1124 0 12 12 0 01-24 0zm16.5-4.5v9h-9v-9h9z"
+                    fill="currentColor"
+                  />
+                </g>
+                <defs>
+                  <clippath
+                    id="clip0_5424_5935"
                   >
                     <path
-                      d="M21.75 12a9.75 9.75 0 10-19.5 0 9.75 9.75 0 0019.5 0zM0 12a12 12 0 1124 0 12 12 0 01-24 0zm16.5-4.5v9h-9v-9h9z"
-                      fill="currentColor"
+                      d="M0 0H24V24H0z"
+                      fill="#fff"
                     />
-                  </g>
-                  <defs>
-                    <clippath
-                      id="clip0_5424_5935"
-                    >
-                      <path
-                        d="M0 0H24V24H0z"
-                        fill="#fff"
-                      />
-                    </clippath>
-                  </defs>
-                </svg>
-              </div>
-              Never deployed
-            </span>
+                  </clippath>
+                </defs>
+              </svg>
+            </div>
+            Never deployed
           </button>
         </td>
         <td
@@ -1861,17 +1827,15 @@ exports[`ServiceList should match snapshot 1`] = `
                   class="inline-flex items-center shrink-0 font-medium transition text-xs px-1 py-0.5 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 group justify-between gap-1"
                   type="button"
                 >
-                  <span>
-                    <span
-                      class="icon-solid-copy shrink-0 hidden group-hover:inline w-4"
-                      role="img"
-                    />
-                    <span
-                      class="icon-solid-code-commit shrink-0 group-hover:hidden w-4"
-                      role="img"
-                    />
-                    10ad354
-                  </span>
+                  <span
+                    class="icon-solid-copy shrink-0 hidden group-hover:inline w-4"
+                    role="img"
+                  />
+                  <span
+                    class="icon-solid-code-commit shrink-0 group-hover:hidden w-4"
+                    role="img"
+                  />
+                  10ad354
                 </button>
               </span>
               <div>
