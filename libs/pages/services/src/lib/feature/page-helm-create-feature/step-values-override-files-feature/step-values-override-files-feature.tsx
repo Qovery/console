@@ -108,7 +108,7 @@ export function StepValuesOverrideFilesFeature() {
           source,
         },
       })
-      window.open(`${PREVIEW_CODE}?code=${response}`, '_blank')
+      window.open(`${PREVIEW_CODE}?code=${encodeURIComponent(response)}`, '_blank')
     } catch (error) {
       console.error(error)
     }
