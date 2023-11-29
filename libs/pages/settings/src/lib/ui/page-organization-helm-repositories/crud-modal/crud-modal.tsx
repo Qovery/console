@@ -85,9 +85,7 @@ export function CrudModal({ isEdit, onSubmit, onClose, loading, availableHelmRep
         render={({ field, fieldState: { error } }) => (
           <div className="mb-5">
             <InputSelect
-              onChange={(value) => {
-                field.onChange(value)
-              }}
+              onChange={field.onChange}
               value={field.value}
               label="Kind"
               error={error?.message}

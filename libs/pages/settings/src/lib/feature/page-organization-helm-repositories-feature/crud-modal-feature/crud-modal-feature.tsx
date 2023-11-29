@@ -1,5 +1,4 @@
 import { type HelmRepositoryRequest, type HelmRepositoryResponse } from 'qovery-typescript-axios'
-import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import {
   useAvailableHelmRepositories,
@@ -18,9 +17,9 @@ export function CrudModalFeature(props: CrudModalFeatureProps) {
   const { organizationId = '', onClose, repository } = props
 
   const { data: availableHelmRepositories = [] } = useAvailableHelmRepositories()
-  const { mutateAsync: editHelmRepository } = useEditHelmRepository()
-  const { mutateAsync: createHelmRepository } = useCreateHelmRepository()
-  const [loading, setLoading] = useState(false)
+  const { mutateAsync: editHelmRepository, isLoading: isEditHelmRepositoryLoading } = useEditHelmRepository()
+  const { mutateAsync: createHelmRepository, isLoading: isCreateHelmRepositoryLoading } = useCreateHelmRepository()
+  const loading = isEditHelmRepositoryLoading || isCreateHelmRepositoryLoading
 
   const methods = useForm({
     defaultValues: {
@@ -33,13 +32,7 @@ export function CrudModalFeature(props: CrudModalFeatureProps) {
     mode: 'onChange',
   })
 
-  useEffect(() => {
-    setTimeout(() => methods.clearErrors('config'), 0)
-  }, [methods])
-
   const onSubmit = methods.handleSubmit(async (data) => {
-    setLoading(true)
-
     try {
       if (repository) {
         await editHelmRepository({
@@ -47,19 +40,16 @@ export function CrudModalFeature(props: CrudModalFeatureProps) {
           helmRepositoryId: repository.id,
           helmRepositoryRequest: data as HelmRepositoryRequest,
         })
-        onClose()
       } else {
         await createHelmRepository({
           organizationId: organizationId,
           helmRepositoryRequest: data as HelmRepositoryRequest,
         })
-        onClose()
       }
+      onClose()
     } catch (error) {
       console.error(error)
     }
-
-    setLoading(false)
   })
 
   return (
