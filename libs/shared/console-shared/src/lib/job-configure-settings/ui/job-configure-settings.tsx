@@ -50,7 +50,9 @@ export function JobConfigureSettings(props: JobConfigureSettingsProps) {
             )}
           />
           <div className="mb-3 flex justify-between">
-            <p className="text-neutral-400 text-xs">{formatCronExpression(watchSchedule)}</p>
+            <p className="text-neutral-400 text-xs">
+              {formatCronExpression(watchSchedule) ? formatCronExpression(watchSchedule) + ' (UTC)' : ''}
+            </p>
             <ExternalLink href="https://crontab.guru" size="xs" className="text-neutral-350">
               CRON expression builder
             </ExternalLink>
