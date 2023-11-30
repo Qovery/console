@@ -7,14 +7,11 @@ import {
 } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
+import { useClusters } from '@qovery/domains/clusters/feature'
 import { useCloneEnvironment, useCreateEnvironment } from '@qovery/domains/environment'
-import { selectClustersEntitiesByOrganizationId } from '@qovery/domains/organization'
-import { type ClusterEntity } from '@qovery/shared/interfaces'
 import { SERVICES_GENERAL_URL, SERVICES_URL } from '@qovery/shared/routes'
 import { useModal } from '@qovery/shared/ui'
-import { type RootState } from '@qovery/state/store'
 import CreateCloneEnvironmentModal from '../ui/create-clone-environment-modal'
 
 export interface CreateCloneEnvironmentModalFeatureProps {
@@ -29,9 +26,7 @@ export function CreateCloneEnvironmentModalFeature(props: CreateCloneEnvironment
 
   const { enableAlertClickOutside } = useModal()
 
-  const clusters = useSelector<RootState, ClusterEntity[]>((state) =>
-    selectClustersEntitiesByOrganizationId(state, props.organizationId)
-  )
+  const { data: clusters = [] } = useClusters({ organizationId: props.organizationId })
 
   const methods = useForm({
     mode: 'onChange',
