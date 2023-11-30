@@ -25,7 +25,7 @@ export function StepSummaryFeature() {
 
   const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_HELM_CREATION_URL}`
 
-  const { mutateAsync: createHelm, isLoading: isLoadingCreateHelm } = useCreateHelm()
+  const { mutateAsync: createHelmService, isLoading: isLoadingCreateHelm } = useCreateHelm()
 
   const onSubmit = async (withDeploy: boolean) => {
     const source = match(generalData.source_provider)
@@ -50,7 +50,7 @@ export function StepSummaryFeature() {
       .exhaustive()
 
     try {
-      await createHelm({
+      await createHelmService({
         environmentId,
         helmRequest: {
           name: generalData.name,

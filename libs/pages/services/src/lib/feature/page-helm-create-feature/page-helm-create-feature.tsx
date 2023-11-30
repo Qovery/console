@@ -31,7 +31,7 @@ interface HelmCreateContextInterface {
   currentStep: number
   setCurrentStep: (step: number) => void
   generalForm: UseFormReturn<HelmGeneralData>
-  valuesOverrideRepositoryForm: UseFormReturn<HelmValuesAsFileData>
+  valuesOverrideFileForm: UseFormReturn<HelmValuesAsFileData>
 }
 
 export const HelmCreateContext = createContext<HelmCreateContextInterface | undefined>(undefined)
@@ -52,7 +52,7 @@ export function PageHelmCreateFeature() {
     mode: 'onChange',
   })
 
-  const valuesOverrideRepositoryForm = useForm<HelmValuesAsFileData>({
+  const valuesOverrideFileForm = useForm<HelmValuesAsFileData>({
     mode: 'onChange',
   })
 
@@ -64,7 +64,7 @@ export function PageHelmCreateFeature() {
         currentStep,
         setCurrentStep,
         generalForm,
-        valuesOverrideRepositoryForm,
+        valuesOverrideFileForm,
       }}
     >
       <FunnelFlow
