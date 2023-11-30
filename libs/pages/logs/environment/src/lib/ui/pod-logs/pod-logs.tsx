@@ -173,7 +173,7 @@ export function PodLogs({
     >
       <Table
         className="bg-transparent"
-        classNameHead="!flex !bg-neutral-650 !border-transparent"
+        classNameHead="!flex !bg-neutral-650 !border-transparent z-10"
         dataHead={tableHead}
         data={logs}
         setFilter={setFilter}
