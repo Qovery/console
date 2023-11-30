@@ -2,10 +2,10 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { mutations } from '@qovery/domains/service-helm/data-access'
 import { queries } from '@qovery/state/util-queries'
 
-export function useCreateHelm() {
+export function useCreateHelmService() {
   const queryClient = useQueryClient()
 
-  return useMutation(mutations.createHelm, {
+  return useMutation(mutations.createHelmService, {
     onSuccess(_, { environmentId }) {
       queryClient.invalidateQueries({
         queryKey: queries.services.list(environmentId).queryKey,
@@ -20,4 +20,4 @@ export function useCreateHelm() {
   })
 }
 
-export default useCreateHelm
+export default useCreateHelmService

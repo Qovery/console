@@ -15,7 +15,7 @@ export const serviceHelm = createQueryKeys('serviceHelm', {
 })
 
 export const mutations = {
-  async createHelm({ environmentId, helmRequest }: { environmentId: string; helmRequest: HelmRequest }) {
+  async createHelmService({ environmentId, helmRequest }: { environmentId: string; helmRequest: HelmRequest }) {
     const response = await helmsApi.createHelm(environmentId, helmRequest)
     return response.data
   },
