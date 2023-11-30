@@ -166,7 +166,7 @@ export function Menu(props: MenuProps) {
       <div
         className={`w-max menu__trigger menu__trigger--${isOpen ? 'open' : 'closed'} ${className}`}
         ref={ref}
-        onMouseDown={() => handleClick(null)}
+        onMouseUp={() => handleClick(null)}
       >
         {!triggerTooltip ? (
           trigger
