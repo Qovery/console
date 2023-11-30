@@ -69,7 +69,7 @@ export function Table<T>({
 
   return (
     <div className={twMerge('bg-white rounded-sm flex flex-col-reverse', className)}>
-      <div>{children}</div>
+      <div className="grow">{children}</div>
       <div
         data-testid="table-container"
         className={`grid items-center border-b-neutral-200 border-b sticky top-0 bg-white h-10 ${classNameHead}`}
