@@ -1,14 +1,14 @@
-import { type Cluster, type ProjectDeploymentRuleRequest, type Value } from 'qovery-typescript-axios'
+import { type ProjectDeploymentRuleRequest, type Value } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
-import { fetchClusters, selectClustersEntitiesByOrganizationId } from '@qovery/domains/organization'
+import { useClusters } from '@qovery/domains/clusters/feature'
 import { postDeploymentRule } from '@qovery/project'
 import { weekdaysValues } from '@qovery/shared/enums'
 import { ENVIRONMENTS_DEPLOYMENT_RULES_URL, ENVIRONMENTS_URL } from '@qovery/shared/routes'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { type AppDispatch, type RootState } from '@qovery/state/store'
+import { type AppDispatch } from '@qovery/state/store'
 import PageCreateEditDeploymentRule from '../../ui/page-create-edit-deployment-rule/page-create-edit-deployment-rule'
 
 export function PageCreateDeploymentRuleFeature() {
@@ -20,13 +20,9 @@ export function PageCreateDeploymentRuleFeature() {
   const dispatch = useDispatch<AppDispatch>()
   const navigate = useNavigate()
 
-  const clusters = useSelector<RootState, Cluster[]>((state) =>
-    selectClustersEntitiesByOrganizationId(state, organizationId)
-  )
+  const { data: clusters } = useClusters({ organizationId })
 
   useEffect(() => {
-    dispatch(fetchClusters({ organizationId }))
-
     setValue('timezone', 'UTC')
     setValue('start_time', '08:00')
     setValue('stop_time', '19:00')
