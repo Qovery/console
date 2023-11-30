@@ -29,6 +29,7 @@ export function BreadcrumbItem(props: BreadcrumbItemProps) {
             <Menu
               menus={menuItems}
               open={false}
+              portal={false}
               arrowAlign={MenuAlign.START}
               trigger={
                 <ButtonIcon
