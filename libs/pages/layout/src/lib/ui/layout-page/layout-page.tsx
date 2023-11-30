@@ -1,8 +1,8 @@
-import { ClusterStateEnum, type Organization } from 'qovery-typescript-axios'
+import { type Cluster, ClusterStateEnum, type Organization } from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { type ClusterEntity } from '@qovery/shared/interfaces'
+import { useClusterStatuses } from '@qovery/domains/clusters/feature'
 import {
   CLUSTER_SETTINGS_CREDENTIALS_URL,
   CLUSTER_SETTINGS_URL,
@@ -17,7 +17,7 @@ export interface LayoutPageProps {
   defaultOrganizationId: string
   topBar?: boolean
   organization?: Organization
-  clusters?: ClusterEntity[]
+  clusters?: Cluster[]
 }
 
 export const displayClusterDeploymentBanner = (status?: ClusterStateEnum): boolean => {
@@ -26,25 +26,26 @@ export const displayClusterDeploymentBanner = (status?: ClusterStateEnum): boole
     .otherwise(() => false)
 }
 
-export const displayClusterCredentialErrorBanner = (clusters?: ClusterEntity[]): ClusterEntity | undefined => {
-  return clusters?.find((c) => c.status === ClusterStateEnum.INVALID_CREDENTIALS)
-}
-
 export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
   const { children, topBar = true, clusters, defaultOrganizationId } = props
 
   const { organizationId = '' } = useParams()
   const { pathname } = useLocation()
   const navigate = useNavigate()
+  const { data: clusterStatuses } = useClusterStatuses({ organizationId })
 
-  const matchLogInfraRoute = pathname.includes(INFRA_LOGS_URL(organizationId, clusters?.[0]?.id))
-
-  const clusterIsDeployed = clusters?.[0]?.extendedStatus?.status?.is_deployed
+  const matchLogInfraRoute = pathname.includes(INFRA_LOGS_URL(organizationId, clusterStatuses?.[0]?.cluster_id))
+  const clusterIsDeployed = clusterStatuses?.[0].is_deployed
 
   const clusterBanner =
-    !matchLogInfraRoute && clusters && displayClusterDeploymentBanner(clusters?.[0]?.status) && !clusterIsDeployed
+    !matchLogInfraRoute && clusters && displayClusterDeploymentBanner(clusterStatuses?.[0].status) && !clusterIsDeployed
 
-  const clusterCredentialError = Boolean(!matchLogInfraRoute && displayClusterCredentialErrorBanner(clusters))
+  const invalidCluster = clusters?.find(
+    ({ id }) =>
+      clusterStatuses?.find(({ status }) => status === ClusterStateEnum.INVALID_CREDENTIALS)?.cluster_id === id
+  )
+
+  const clusterCredentialError = Boolean(!matchLogInfraRoute && invalidCluster)
 
   return (
     <>
@@ -67,15 +68,14 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
                 color="yellow"
                 onClickButton={() =>
                   navigate(
-                    CLUSTER_URL(organizationId, displayClusterCredentialErrorBanner(clusters)?.id) +
+                    CLUSTER_URL(organizationId, invalidCluster?.id) +
                       CLUSTER_SETTINGS_URL +
                       CLUSTER_SETTINGS_CREDENTIALS_URL
                   )
                 }
                 buttonLabel="Check the credentials configuration"
               >
-                The credentials for the cluster{' '}
-                <span className="block font-bold mx-1">{displayClusterCredentialErrorBanner(clusters)?.name}</span> are
+                The credentials for the cluster <span className="block font-bold mx-1">{invalidCluster?.name}</span> are
                 invalid.
               </Banner>
             )}
