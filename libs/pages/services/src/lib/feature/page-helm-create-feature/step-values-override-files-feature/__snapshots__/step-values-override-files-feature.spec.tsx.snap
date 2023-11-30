@@ -32,7 +32,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
               Define the YAML file(s) to be applied as override to the default values.yaml delivered with the chart. It is highly recommended to store the override file(s) in a git repository.
             </p>
             <span
-              aria-controls="radix-:r6:"
+              aria-controls="radix-:rd:"
               aria-expanded="false"
               aria-haspopup="dialog"
               class="text-sm cursor-pointer text-brand-500 hover:text-brand-600 transition font-medium mb-5"
@@ -75,7 +75,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
                   >
                     <span
                       class="css-1f43avz-a11yText-A11yText"
-                      id="react-select-2-live-region"
+                      id="react-select-4-live-region"
                     />
                     <span
                       aria-atomic="false"
@@ -187,7 +187,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
                       >
                         <span
                           class="css-1f43avz-a11yText-A11yText"
-                          id="react-select-3-live-region"
+                          id="react-select-5-live-region"
                         />
                         <span
                           aria-atomic="false"
@@ -203,13 +203,13 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
                           >
                             <div
                               class="input-select__placeholder css-1jqq78o-placeholder"
-                              id="react-select-3-placeholder"
+                              id="react-select-5-placeholder"
                             >
                               Select...
                             </div>
                             <input
                               aria-autocomplete="list"
-                              aria-describedby="react-select-3-placeholder"
+                              aria-describedby="react-select-5-placeholder"
                               aria-expanded="false"
                               aria-haspopup="true"
                               aria-readonly="true"
@@ -371,7 +371,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
                 class="flex flex-col gap-2"
               >
                 <a
-                  class="cursor-pointer transition duration-100 font-medium flex-center gap-1 text-sky-500 hover:text-sky-600 text-sm flex"
+                  class="cursor-pointer transition duration-100 font-medium items-center gap-1 text-sky-500 hover:text-sky-600 text-sm flex"
                   href="https://hub.qovery.com/docs/using-qovery/configuration/application/#general"
                   rel="noopener noreferrer"
                   target="_blank"
