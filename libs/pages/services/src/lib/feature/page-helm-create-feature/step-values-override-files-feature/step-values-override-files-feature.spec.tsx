@@ -18,7 +18,7 @@ describe('StepValuesOverrideFilesFeature', () => {
         value={{
           currentStep: 1,
           setCurrentStep: jest.fn(),
-          valuesOverrideRepositoryForm: result.current,
+          valuesOverrideFileForm: result.current,
         }}
       >
         <StepValuesOverrideFilesFeature />
@@ -44,7 +44,7 @@ describe('StepValuesOverrideFilesFeature', () => {
           value={{
             currentStep: 2,
             setCurrentStep: jest.fn(),
-            valuesOverrideRepositoryForm: result.current,
+            valuesOverrideFileForm: result.current,
           }}
         >
           <StepValuesOverrideFilesFeature />

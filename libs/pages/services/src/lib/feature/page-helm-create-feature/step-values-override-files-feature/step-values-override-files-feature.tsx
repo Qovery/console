@@ -245,7 +245,11 @@ export function StepValuesOverrideFilesFeature() {
                 Back
               </Button>
               <div className="flex gap-3">
-                <Button type="submit" size="lg" disabled={!valuesOverrideFileForm.formState.isValid}>
+                <Button
+                  type="submit"
+                  size="lg"
+                  disabled={currentTab !== 'NONE' ? !valuesOverrideFileForm.formState.isValid : false}
+                >
                   Continue
                 </Button>
               </div>
