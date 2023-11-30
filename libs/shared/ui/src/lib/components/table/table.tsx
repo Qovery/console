@@ -1,4 +1,5 @@
 import { type Dispatch, type ReactNode, type SetStateAction, useEffect, useState } from 'react'
+import { twMerge } from '@qovery/shared/util-js'
 import { TableHeadFilter } from './table-head-filter/table-head-filter'
 import TableHeadSort from './table-head-sort/table-head-sort'
 
@@ -45,7 +46,7 @@ export interface TableHeadCustomFilterProps<T> {
  */
 export function Table<T>({
   dataHead,
-  className = 'bg-white rounded-sm',
+  className,
   classNameHead = '',
   columnsWidth = `repeat(${dataHead.length},minmax(0,1fr))`,
   children,
@@ -67,7 +68,8 @@ export function Table<T>({
   }, [data, defaultSortingKey, isSorted, setDataSort])
 
   return (
-    <div className={className}>
+    <div className={twMerge('bg-white rounded-sm flex flex-col-reverse', className)}>
+      <div>{children}</div>
       <div
         data-testid="table-container"
         className={`grid items-center border-b-neutral-200 border-b sticky top-0 bg-white h-10 ${classNameHead}`}
@@ -106,7 +108,6 @@ export function Table<T>({
           )
         )}
       </div>
-      <div>{children}</div>
     </div>
   )
 }
