@@ -15,7 +15,7 @@ jest.mock('react-router-dom', () => ({
   useParams: () => ({ organizationId: '1' }),
 }))
 
-describe('PageApplicationCreateGeneralFeature', () => {
+describe('StepGeneralFeature', () => {
   beforeEach(() => {
     useHelmRepositorySpy.mockReturnValue({
       data: [
@@ -59,7 +59,7 @@ describe('PageApplicationCreateGeneralFeature', () => {
           name: 'my-helm-app',
           description: 'description',
           source_provider: 'HELM_REPOSITORY',
-          arguments: ['--wait'],
+          arguments: `['--wait']`,
           timeout_sec: 600,
           auto_preview: true,
           chart_name: 'name',
@@ -101,7 +101,7 @@ describe('PageApplicationCreateGeneralFeature', () => {
         defaultValues: {
           name: 'my-helm-app',
           source_provider: 'GIT',
-          arguments: ['--wait'],
+          arguments: `['--wait']`,
           timeout_sec: 600,
           auto_preview: false,
           provider: 'GITHUB',

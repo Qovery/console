@@ -1,15 +1,15 @@
 import { type GitProviderEnum, type HelmRequest } from 'qovery-typescript-axios'
 import { createContext, useContext, useState } from 'react'
 import { type UseFormReturn, useForm } from 'react-hook-form'
-import { Route, Routes, useNavigate, useParams } from 'react-router-dom'
-import { SERVICES_URL } from '@qovery/shared/routes'
+import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
+import { SERVICES_HELM_CREATION_GENERAL_URL, SERVICES_HELM_CREATION_URL, SERVICES_URL } from '@qovery/shared/routes'
 import { FunnelFlow } from '@qovery/shared/ui'
 import { ROUTER_SERVICE_HELM_CREATION } from '../../router/router'
 
 export const steps: { title: string }[] = [{ title: 'General data' }, { title: 'Values' }, { title: 'Summary' }]
 
 export interface HelmGeneralData
-  extends Omit<HelmRequest, 'source' | 'ports' | 'allow_cluster_wide_resources' | 'values_override'> {
+  extends Omit<HelmRequest, 'source' | 'ports' | 'allow_cluster_wide_resources' | 'values_override' | 'arguments'> {
   source_provider: 'HELM_REPOSITORY' | 'GIT'
   repository: string
   provider?: GitProviderEnum
@@ -17,12 +17,21 @@ export interface HelmGeneralData
   root_path?: string
   chart_name?: string
   chart_version?: string
+  arguments: string
+}
+
+export interface HelmValuesAsFileData {
+  repository: string
+  provider?: GitProviderEnum
+  branch?: string
+  paths?: string
 }
 
 interface HelmCreateContextInterface {
   currentStep: number
   setCurrentStep: (step: number) => void
   generalForm: UseFormReturn<HelmGeneralData>
+  valuesOverrideFileForm: UseFormReturn<HelmValuesAsFileData>
 }
 
 export const HelmCreateContext = createContext<HelmCreateContextInterface | undefined>(undefined)
@@ -43,12 +52,19 @@ export function PageHelmCreateFeature() {
     mode: 'onChange',
   })
 
+  const valuesOverrideFileForm = useForm<HelmValuesAsFileData>({
+    mode: 'onChange',
+  })
+
+  const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_HELM_CREATION_URL}`
+
   return (
     <HelmCreateContext.Provider
       value={{
         currentStep,
         setCurrentStep,
         generalForm,
+        valuesOverrideFileForm,
       }}
     >
       <FunnelFlow
@@ -62,6 +78,7 @@ export function PageHelmCreateFeature() {
           {ROUTER_SERVICE_HELM_CREATION.map((route) => (
             <Route key={route.path} path={route.path} element={route.component} />
           ))}
+          <Route path="*" element={<Navigate replace to={pathCreate + SERVICES_HELM_CREATION_GENERAL_URL} />} />
         </Routes>
       </FunnelFlow>
     </HelmCreateContext.Provider>
