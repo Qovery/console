@@ -8,7 +8,7 @@ import {
   GitRepositorySetting,
   getGitTokenValue,
 } from '@qovery/domains/organizations/feature'
-import { ValuesOverrideAsYamlSetting, useCreateHelmDefaultValues } from '@qovery/domains/service-helm/feature'
+import { ValuesOverrideYamlSetting, useCreateHelmDefaultValues } from '@qovery/domains/service-helm/feature'
 import {
   PREVIEW_CODE,
   SERVICES_HELM_CREATION_SUMMARY_URL,
@@ -71,30 +71,30 @@ export function StepValuesOverrideFilesFeature() {
     navigate(pathCreate + SERVICES_HELM_CREATION_SUMMARY_URL)
   })
 
-  const createHelmDefaultValuesMutation = async () => {
-    const generalData = generalForm.getValues()
+  const generalData = generalForm.getValues()
 
-    const source = match(generalData.source_provider)
-      .with('GIT', () => {
-        const gitToken = getGitTokenValue(generalData.provider ?? '')
+  const source = match(generalData.source_provider)
+    .with('GIT', () => {
+      const gitToken = getGitTokenValue(generalData.provider ?? '')
 
-        return {
-          git_repository: {
-            url: buildGitRepoUrl(gitToken?.type ?? generalData.provider ?? '', generalData.repository),
-            branch: generalData.branch,
-            root_path: generalData.root_path,
-          },
-        }
-      })
-      .with('HELM_REPOSITORY', () => ({
-        helm_repository: {
-          repository: generalData.repository,
-          chart_name: generalData.chart_name,
-          chart_version: generalData.chart_version,
+      return {
+        git_repository: {
+          url: buildGitRepoUrl(gitToken?.type ?? generalData.provider ?? '', generalData.repository),
+          branch: generalData.branch,
+          root_path: generalData.root_path,
         },
-      }))
-      .exhaustive()
+      }
+    })
+    .with('HELM_REPOSITORY', () => ({
+      helm_repository: {
+        repository: generalData.repository,
+        chart_name: generalData.chart_name,
+        chart_version: generalData.chart_version,
+      },
+    }))
+    .exhaustive()
 
+  const createHelmDefaultValuesMutation = async () => {
     try {
       const response = await createHelmDefaultValues({
         environmentId,
@@ -236,7 +236,7 @@ export function StepValuesOverrideFilesFeature() {
                   Qovery and can be updated later within the settings but no history will be retained.
                 </p>
                 <div className="flex flex-col gap-3">
-                  <ValuesOverrideAsYamlSetting />
+                  <ValuesOverrideYamlSetting source={source} />
                 </div>
               </Section>
             )}
