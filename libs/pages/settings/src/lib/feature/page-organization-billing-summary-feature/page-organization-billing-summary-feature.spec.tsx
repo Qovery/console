@@ -1,16 +1,10 @@
 import { IntercomProvider } from 'react-use-intercom'
-import * as storeOrganization from '@qovery/domains/organization'
+import * as clustersDomain from '@qovery/domains/clusters/feature'
 import * as organizationsDomain from '@qovery/domains/organizations/feature'
 import { renderWithProviders } from '@qovery/shared/util-tests'
 import PageOrganizationBillingSummaryFeature from './page-organization-billing-summary-feature'
 
 import SpyInstance = jest.SpyInstance
-
-const mockDispatch = jest.fn()
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useDispatch: () => mockDispatch,
-}))
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -29,7 +23,7 @@ describe('PageOrganizationBillingSummaryFeature', () => {
 
   it('should fetch credit card, clusters and organization costs', () => {
     const useCreditCardsSpy: SpyInstance = jest.spyOn(organizationsDomain, 'useCreditCards')
-    const fetchClustersSpy: SpyInstance = jest.spyOn(storeOrganization, 'fetchClusters')
+    const useClustersSpy: SpyInstance = jest.spyOn(clustersDomain, 'useClusters')
     const useCurrentCostSpy: SpyInstance = jest.spyOn(organizationsDomain, 'useCurrentCost')
 
     renderWithProviders(
@@ -39,7 +33,7 @@ describe('PageOrganizationBillingSummaryFeature', () => {
     )
 
     expect(useCreditCardsSpy).toHaveBeenCalled()
-    expect(fetchClustersSpy).toHaveBeenCalled()
+    expect(useClustersSpy).toHaveBeenCalled()
     expect(useCurrentCostSpy).toHaveBeenCalled()
   })
 })
