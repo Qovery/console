@@ -4,6 +4,7 @@ import Modal from './modal'
 
 interface ModalOptions {
   width: number
+  fullScreen?: boolean
 }
 
 interface DefaultContextProps {
@@ -29,6 +30,7 @@ const defaultContext = {
   setOptionsModal: () => {},
   optionsModal: {
     width: 488,
+    fullScreen: false,
   },
   alertClickOutside: false,
   enableAlertClickOutside: () => {},
@@ -71,7 +73,7 @@ export const ModalProvider = (props: ModalProviderProps) => {
         setAlertModalChoice,
       }}
     >
-      <Modal externalOpen={openModal} setExternalOpen={setOpenModal} width={optionsModal.width}>
+      <Modal externalOpen={openModal} setExternalOpen={setOpenModal} {...optionsModal}>
         {contentModal}
       </Modal>
       <ModalAlert isOpen={modalAlertOpen} />

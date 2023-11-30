@@ -1,0 +1,181 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ValuesOverrideAsYamlModal should match snapshot 1`] = `
+<body>
+  <script
+    src="https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/vs/loader.js"
+  />
+  <div>
+    <div
+      class="p-6"
+    >
+      <h2
+        class="h4 text-neutral-400 mb-2 max-w-sm"
+      >
+        Raw YAML
+      </h2>
+      <div
+        class="text-neutral-350 text-sm mb-6"
+      >
+        <span
+          class="link inline cursor-pointer text-sky-500 text-sm ml-1 truncate max-w-[250px]"
+          data-state="closed"
+          data-testid="copy-cta"
+        >
+          my-cluster
+           
+          <span
+            class="icon-solid-copy shrink-0 "
+            role="img"
+          />
+        </span>
+      </div>
+      <form>
+        <div
+          class="mb-5 "
+          data-testid="input-small-wrapper"
+        >
+          <div
+            class="input input--small flex-grow   "
+            data-testid="input"
+          >
+            <label
+              class="hidden"
+            />
+            <input
+              class="absolute text-sm top-0 left-0 h-full w-full text-neutral-400 placeholder:text-neutral-350 rounded px-2 "
+              data-testid="input-value"
+              name="name"
+              placeholder="Enter the current name"
+              type="text"
+              value=""
+            />
+          </div>
+        </div>
+        <section
+          style="display: flex; position: relative; text-align: initial; width: 100%; height: 100%;"
+        >
+          <div
+            style="display: flex; height: 100%; width: 100%; justify-content: center; align-items: center;"
+          >
+            Loading...
+          </div>
+          <div
+            style="width: 100%; display: none;"
+          />
+        </section>
+        <div
+          class="flex gap-3 justify-end"
+        >
+          <button
+            class="btn btn--regular btn--stroked btn--no-min-w "
+            type="button"
+          >
+            <span>
+              Cancel
+            </span>
+          </button>
+          <button
+            class="btn btn--regular btn--basic btn--no-min-w "
+            type="submit"
+          >
+            <span>
+              Confirm
+            </span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+`;
+
+exports[`ValuesOverrideAsYamlModalProps should match snapshot 1`] = `
+<body>
+  <script
+    src="https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/vs/loader.js"
+  />
+  <div>
+    <div
+      class="p-6"
+    >
+      <h2
+        class="h4 text-neutral-400 mb-2 max-w-sm"
+      >
+        Raw YAML
+      </h2>
+      <div
+        class="text-neutral-350 text-sm mb-6"
+      >
+        <span
+          class="link inline cursor-pointer text-sky-500 text-sm ml-1 truncate max-w-[250px]"
+          data-state="closed"
+          data-testid="copy-cta"
+        >
+          my-cluster
+           
+          <span
+            class="icon-solid-copy shrink-0 "
+            role="img"
+          />
+        </span>
+      </div>
+      <form>
+        <div
+          class="mb-5 "
+          data-testid="input-small-wrapper"
+        >
+          <div
+            class="input input--small flex-grow   "
+            data-testid="input"
+          >
+            <label
+              class="hidden"
+            />
+            <input
+              class="absolute text-sm top-0 left-0 h-full w-full text-neutral-400 placeholder:text-neutral-350 rounded px-2 "
+              data-testid="input-value"
+              name="name"
+              placeholder="Enter the current name"
+              type="text"
+              value=""
+            />
+          </div>
+        </div>
+        <section
+          style="display: flex; position: relative; text-align: initial; width: 100%; height: 100%;"
+        >
+          <div
+            style="display: flex; height: 100%; width: 100%; justify-content: center; align-items: center;"
+          >
+            Loading...
+          </div>
+          <div
+            style="width: 100%; display: none;"
+          />
+        </section>
+        <div
+          class="flex gap-3 justify-end"
+        >
+          <button
+            class="btn btn--regular btn--stroked btn--no-min-w "
+            type="button"
+          >
+            <span>
+              Cancel
+            </span>
+          </button>
+          <button
+            class="btn btn--regular btn--basic btn--no-min-w "
+            type="submit"
+          >
+            <span>
+              Confirm
+            </span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+`;

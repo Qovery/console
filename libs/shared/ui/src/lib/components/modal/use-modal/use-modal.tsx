@@ -5,6 +5,7 @@ export interface UseModalProps {
   content: ReactNode
   options?: {
     width: number
+    fullScreen?: boolean
   }
 }
 
