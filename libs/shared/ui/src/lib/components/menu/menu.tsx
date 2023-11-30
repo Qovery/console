@@ -63,6 +63,7 @@ export interface MenuProps {
   paddingMenuX?: number
   onOpen?: (e: boolean) => void
   isFilter?: boolean
+  portal?: boolean
 }
 
 export function Menu(props: MenuProps) {
@@ -81,10 +82,13 @@ export function Menu(props: MenuProps) {
     onOpen,
     isFilter,
     triggerTooltip,
+    portal = true,
   } = props
 
   const ref = useRef(null)
   const [isOpen, setOpen] = useState<boolean | undefined>(undefined)
+  // XXX: https://github.com/szhsin/react-menu/blob/d7c4df8a4324847403990174d9298038e11ac0c2/src/hooks/useClick.js
+  const [skipOpen] = useState<{ v?: boolean }>({})
 
   // XXX: This is an ugly hack to solve poor design decision
   // `menus` prop is an array without distinct ids/keys
@@ -166,7 +170,10 @@ export function Menu(props: MenuProps) {
       <div
         className={`w-max menu__trigger menu__trigger--${isOpen ? 'open' : 'closed'} ${className}`}
         ref={ref}
-        onMouseDown={() => handleClick(null)}
+        onMouseDown={() => {
+          skipOpen.v = isOpen
+        }}
+        onClick={() => (skipOpen.v ? (skipOpen.v = false) : handleClick(null))}
       >
         {!triggerTooltip ? (
           trigger
@@ -186,10 +193,10 @@ export function Menu(props: MenuProps) {
         anchorRef={ref}
         align={arrowAlign}
         className="menu"
-        menuClassName={`rounded-md shadow-[0_0_32px_rgba(0,0,0,0.08)] p-0 menu__container menu__container--${direction} menu__container--${
-          isOpen ? 'open' : 'closed'
+        menuClassName={`rounded-md shadow-[0_0_32px_rgba(0,0,0,0.08)] p-0 menu__container menu__container--${direction} ${
+          isOpen !== undefined ? (isOpen ? 'menu__container--open' : 'menu__container--closed') : ''
         } menu__container--${arrowAlign} dark:bg-neutral-700`}
-        portal
+        portal={portal}
       >
         {children}
         {menusMemo}
