@@ -6,7 +6,7 @@ import Icon from '../icon/icon'
 import { IconAwesomeEnum } from '../icon/icon-awesome.enum'
 
 const linkVariants = cva(
-  ['cursor-pointer', 'transition', 'duration-100', 'font-medium', 'inline-flex', 'flex-center', 'gap-1'],
+  ['cursor-pointer', 'transition', 'duration-100', 'font-medium', 'inline-flex', 'items-center', 'gap-1'],
   {
     variants: {
       color: {
