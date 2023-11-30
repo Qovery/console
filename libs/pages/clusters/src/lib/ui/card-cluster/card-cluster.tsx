@@ -1,6 +1,6 @@
 import { ClusterStateEnum } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
-import { ClusterType } from '@qovery/domains/clusters/feature'
+import { ClusterType, useClusterStatus } from '@qovery/domains/clusters/feature'
 import { ClusterButtonsActions } from '@qovery/shared/console-shared'
 import { type ClusterEntity } from '@qovery/shared/interfaces'
 import { Badge, Icon, Skeleton, StatusChip } from '@qovery/shared/ui'
@@ -8,6 +8,7 @@ import { getStatusClusterMessage } from '@qovery/shared/util-js'
 
 export interface CardClusterProps {
   cluster: ClusterEntity
+  organizationId: string
 }
 
 export const getColorForStatus = (status?: ClusterStateEnum): string => {
@@ -33,10 +34,12 @@ export const getColorForStatus = (status?: ClusterStateEnum): string => {
     .otherwise(() => 'text-brand-500')
 }
 
-export function CardCluster(props: CardClusterProps) {
-  const { cluster } = props
-
-  const statusLoading = !!cluster.extendedStatus?.status?.status
+export function CardCluster({ organizationId, cluster }: CardClusterProps) {
+  const { data: clusterStatus, isLoading: isClusterStatusLoading } = useClusterStatus({
+    organizationId,
+    clusterId: cluster.id,
+    refetchInterval: 3000,
+  })
 
   return (
     <div data-testid={`cluster-list-${cluster.id}`} className="border border-neutral-200 rounded p-5">
@@ -47,23 +50,20 @@ export function CardCluster(props: CardClusterProps) {
             <div className="flex">
               <h2 className="flex items-center text-xs text-neutral-400 font-medium">
                 <span className="block mr-2">{cluster.name}</span>
-                <StatusChip status={cluster.extendedStatus?.status?.status} />
+                <StatusChip status={clusterStatus?.status} />
               </h2>
             </div>
-            <Skeleton height={12} width={100} show={!statusLoading}>
+            <Skeleton height={12} width={100} show={isClusterStatusLoading}>
               <p
                 data-testid="status-message"
                 className={`text-2xs mt-0.5 font-medium ${getColorForStatus(cluster.extendedStatus?.status?.status)}`}
               >
-                {getStatusClusterMessage(
-                  cluster.extendedStatus?.status?.status,
-                  cluster.extendedStatus?.status?.is_deployed
-                )}
+                {getStatusClusterMessage(clusterStatus?.status, clusterStatus?.is_deployed)}
               </p>
             </Skeleton>
           </div>
         </div>
-        <Skeleton height={32} width={146} show={!statusLoading}>
+        <Skeleton height={32} width={146} show={isClusterStatusLoading}>
           <ClusterButtonsActions cluster={cluster} />
         </Skeleton>
       </div>

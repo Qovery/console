@@ -4,6 +4,17 @@ import { clusterFactoryMock } from '@qovery/shared/factories'
 import { getStatusClusterMessage } from '@qovery/shared/util-js'
 import CardCluster, { type CardClusterProps, getColorForStatus } from './card-cluster'
 
+jest.mock('@qovery/domains/clusters/feature', () => ({
+  ...jest.requireActual('@qovery/domains/clusters/feature'),
+  useClusterStatus: () => ({
+    data: {
+      state: 'READY',
+    },
+    isLoading: false,
+    error: {},
+  }),
+}))
+
 describe('CardCluster', () => {
   let props: CardClusterProps
 
@@ -38,15 +49,10 @@ describe('CardCluster', () => {
   })
 
   it('should have a status message', async () => {
-    if (props.cluster.extendedStatus?.status?.status) {
-      props.cluster.extendedStatus.status.status = StateEnum.READY
-    }
-    const status = props.cluster.extendedStatus?.status?.status
-
     const { getByTestId } = render(<CardCluster {...props} />)
 
     await act(() => {
-      expect(getByTestId('status-message').textContent).toContain(getStatusClusterMessage(status))
+      expect(getByTestId('status-message').textContent).toContain(getStatusClusterMessage(StateEnum.READY))
     })
   })
 

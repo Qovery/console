@@ -1,70 +1,95 @@
 import { CloudProviderEnum, StateEnum } from 'qovery-typescript-axios'
+import * as domainsClustersFeature from '@qovery/domains/clusters/feature'
 // eslint-disable-next-line @nx/enforce-module-boundaries
-import { clusterFactoryMock, organizationFactoryMock } from '@qovery/shared/factories'
+import { clusterFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import CardCluster, { type CardClusterProps, splitId } from './card-cluster'
 
 describe('CardCluster', () => {
   const cluster = clusterFactoryMock(1)[0]
-  const organization = organizationFactoryMock(1)[0]
 
   const props: CardClusterProps = {
-    cluster: cluster,
-    organizationId: organization.id,
+    clusterId: '1',
+    organizationId: '0',
   }
 
   it('should render successfully', () => {
+    jest.spyOn(domainsClustersFeature, 'useCluster').mockReturnValue({
+      data: cluster,
+    })
+    jest.spyOn(domainsClustersFeature, 'useClusterStatus').mockReturnValue({
+      data: {
+        status: StateEnum.STOPPED,
+      },
+    })
     const { baseElement } = renderWithProviders(<CardCluster {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
   it('should match snapshot', () => {
-    props.cluster = {
-      id: 'fff-fff-fff-fff',
-      created_at: '',
-      name: '',
-      region: '',
-      cloud_provider: CloudProviderEnum.AWS,
-      extendedStatus: {
-        loadingStatus: 'loaded',
-        status: {
-          status: StateEnum.STOPPED,
-        },
+    jest.spyOn(domainsClustersFeature, 'useCluster').mockReturnValue({
+      data: {
+        id: 'fff-fff-fff-fff',
+        created_at: '',
+        name: '',
+        region: '',
+        cloud_provider: CloudProviderEnum.AWS,
       },
-    }
+    })
+    jest.spyOn(domainsClustersFeature, 'useClusterStatus').mockReturnValue({
+      data: {
+        status: StateEnum.STOPPED,
+      },
+    })
 
     const { container } = renderWithProviders(<CardCluster {...props} />)
     expect(container).toMatchSnapshot()
   })
 
   it('should have a icon for cloud provider', () => {
-    props.cluster = {
-      id: 'fff-fff-fff-fff',
-      created_at: '',
-      name: '',
-      region: '',
-      cloud_provider: CloudProviderEnum.AWS,
-    }
+    const cloud_provider = CloudProviderEnum.AWS
+    jest.spyOn(domainsClustersFeature, 'useCluster').mockReturnValue({
+      data: {
+        id: 'fff-fff-fff-fff',
+        created_at: '',
+        name: '',
+        region: '',
+        cloud_provider,
+      },
+    })
+    jest.spyOn(domainsClustersFeature, 'useClusterStatus').mockReturnValue({
+      data: {
+        status: StateEnum.STOPPED,
+      },
+    })
 
     renderWithProviders(<CardCluster {...props} />)
 
     const icon = screen.getByTestId('icon')
 
-    expect(icon?.getAttribute('name')).toBe(`${props.cluster.cloud_provider}_GRAY`)
+    expect(icon?.getAttribute('name')).toBe(`${cloud_provider}_GRAY`)
   })
 
   it('should have function to split id', () => {
-    props.cluster = {
-      id: 'fff-fff-fff-fff',
-      created_at: '',
-      name: '',
-      region: '',
-      cloud_provider: CloudProviderEnum.AWS,
-    }
+    const id = 'fff-fff-fff-fff'
+    jest.spyOn(domainsClustersFeature, 'useCluster').mockReturnValue({
+      data: {
+        id,
+        created_at: '',
+        name: '',
+        region: '',
+        cloud_provider: CloudProviderEnum.AWS,
+      },
+    })
+    jest.spyOn(domainsClustersFeature, 'useClusterStatus').mockReturnValue({
+      data: {
+        status: StateEnum.STOPPED,
+      },
+    })
 
     renderWithProviders(<CardCluster {...props} />)
 
-    expect(splitId(props.cluster.id)).toBe('fff[...]fff')
+    expect(splitId(id)).toBe('fff[...]fff')
   })
 
   renderWithProviders(<CardCluster {...props} />)

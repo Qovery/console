@@ -1,22 +1,27 @@
-import { type ClusterEntity } from '@qovery/shared/interfaces'
+import { useCluster, useClusterStatus } from '@qovery/domains/clusters/feature'
 import { CopyToClipboard, Icon, StatusChip } from '@qovery/shared/ui'
 
 export interface CardClusterProps {
-  cluster?: ClusterEntity
+  clusterId: string
   organizationId: string
 }
 
 export const splitId = (id: string) => `${id.split('-')[0]}[...]${id.split('-')[id.split('-').length - 1]}`
 
-export function CardCluster(props: CardClusterProps) {
-  const { cluster, organizationId } = props
+export function CardCluster({ clusterId, organizationId }: CardClusterProps) {
+  const { data: cluster } = useCluster({ organizationId, clusterId })
+  const { data: clusterStatus } = useClusterStatus({
+    organizationId,
+    clusterId,
+    refetchInterval: 3000,
+  })
 
   if (!cluster) return null
 
   return (
     <div className="bg-neutral-600 p-4 rounded">
       <div data-testid="status" className="flex items-center text-neutral-300 font-bold text-xs">
-        <StatusChip status={cluster.extendedStatus?.status?.status} className="mr-4" /> Cluster infra logs
+        <StatusChip status={clusterStatus?.status} className="mr-4" /> Cluster infra logs
       </div>
       <div className="mt-4">
         <div className="flex mt-1">
@@ -33,15 +38,12 @@ export function CardCluster(props: CardClusterProps) {
                   <CopyToClipboard content={cluster.id} className="text-neutral-300 ml-1" />
                 </div>
               </li>
-              {cluster.extendedStatus?.status?.last_execution_id && (
+              {clusterStatus?.last_execution_id && (
                 <li className="flex mb-2">
                   <span className="text-neutral-300 w-16 mr-3">Exec. ID</span>
                   <div className="flex">
-                    <span className="text-sky-400">{splitId(cluster.extendedStatus?.status?.last_execution_id)}</span>
-                    <CopyToClipboard
-                      content={cluster.extendedStatus?.status?.last_execution_id}
-                      className="text-neutral-300 ml-1"
-                    />
+                    <span className="text-sky-400">{splitId(clusterStatus?.last_execution_id)}</span>
+                    <CopyToClipboard content={clusterStatus?.last_execution_id} className="text-neutral-300 ml-1" />
                   </div>
                 </li>
               )}

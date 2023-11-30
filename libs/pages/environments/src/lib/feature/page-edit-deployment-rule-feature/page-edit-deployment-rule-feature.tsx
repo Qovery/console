@@ -1,9 +1,9 @@
-import { type Cluster, type ProjectDeploymentRule, type ProjectDeploymentRuleRequest } from 'qovery-typescript-axios'
+import { type ProjectDeploymentRule, type ProjectDeploymentRuleRequest } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
-import { fetchClusters, selectClustersEntitiesByOrganizationId } from '@qovery/domains/organization'
+import { useClusters } from '@qovery/domains/clusters/feature'
 import { fetchDeploymentRule, selectDeploymentRuleById, updateDeploymentRule } from '@qovery/project'
 import { ENVIRONMENTS_DEPLOYMENT_RULES_URL, ENVIRONMENTS_URL } from '@qovery/shared/routes'
 import { dateToHours } from '@qovery/shared/util-dates'
@@ -22,9 +22,7 @@ export function PageEditDeploymentRuleFeature() {
     selectDeploymentRuleById(state, deploymentRuleId)
   )
 
-  const clusters = useSelector<RootState, Cluster[]>((state) =>
-    selectClustersEntitiesByOrganizationId(state, organizationId)
-  )
+  const { data: clusters } = useClusters({ organizationId })
 
   const onSubmit = handleSubmit(async (data) => {
     if (data) {
@@ -44,7 +42,6 @@ export function PageEditDeploymentRuleFeature() {
 
   useEffect(() => {
     dispatch(fetchDeploymentRule({ projectId, deploymentRuleId }))
-    dispatch(fetchClusters({ organizationId }))
   }, [dispatch, organizationId, projectId, deploymentRuleId])
 
   useEffect(() => {

@@ -1,13 +1,11 @@
-import { type Cluster, type Environment } from 'qovery-typescript-axios'
-import { useSelector } from 'react-redux'
+import { type Environment } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
+import { useClusters } from '@qovery/domains/clusters/feature'
 import { useFetchEnvironments } from '@qovery/domains/environment'
 import { useListStatuses } from '@qovery/domains/environments/feature'
-import { selectClustersEntitiesByOrganizationId } from '@qovery/domains/organization'
 import { environmentFactoryMock } from '@qovery/shared/factories'
 import { type BaseLink } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { type RootState } from '@qovery/state/store'
 import { PageGeneral } from '../../ui/page-general/page-general'
 
 export function PageGeneralFeature() {
@@ -15,9 +13,7 @@ export function PageGeneralFeature() {
   const { organizationId = '', projectId = '' } = useParams()
   const loadingEnvironments = environmentFactoryMock(3, true)
 
-  const clusters = useSelector<RootState, Cluster[]>((state) =>
-    selectClustersEntitiesByOrganizationId(state, organizationId)
-  )
+  const { data: clusters = [] } = useClusters({ organizationId })
 
   const res = useFetchEnvironments(projectId)
   let { data: environments = [] } = res

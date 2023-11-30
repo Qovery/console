@@ -1,19 +1,14 @@
-import { type Cluster } from 'qovery-typescript-axios'
-import { useSelector } from 'react-redux'
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
-import { selectClustersEntitiesByOrganizationId } from '@qovery/domains/organization'
+import { useClusters } from '@qovery/domains/clusters/feature'
 import { useProject } from '@qovery/domains/projects/feature'
 import { ENVIRONMENTS_GENERAL_URL, ENVIRONMENTS_URL } from '@qovery/shared/routes'
-import { type RootState } from '@qovery/state/store'
 import { ROUTER_ENVIRONMENTS } from './router/router'
 import Container from './ui/container/container'
 
 export function PageEnvironments() {
   const { organizationId = '', projectId = '' } = useParams()
   const { data: project } = useProject({ organizationId, projectId })
-  const clusters = useSelector<RootState, Cluster[]>((state) =>
-    selectClustersEntitiesByOrganizationId(state, organizationId)
-  )
+  const { data: clusters = [] } = useClusters({ organizationId })
 
   return (
     <Container project={project} clusterAvailable={clusters.length > 0}>
