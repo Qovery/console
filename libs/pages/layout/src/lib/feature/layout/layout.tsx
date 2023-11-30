@@ -1,19 +1,14 @@
-import { type Cluster } from 'qovery-typescript-axios'
 import { type PropsWithChildren, memo, useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { redirect, useParams } from 'react-router-dom'
 import { fetchApplications } from '@qovery/domains/application'
+import { useClusters } from '@qovery/domains/clusters/feature'
 import { fetchDatabases } from '@qovery/domains/database'
 import { useEnvironment } from '@qovery/domains/environments/feature'
-import {
-  fetchClusters,
-  fetchClustersStatus,
-  selectClustersEntitiesByOrganizationId,
-} from '@qovery/domains/organization'
 import { useOrganization, useOrganizations } from '@qovery/domains/organizations/feature'
 import { ORGANIZATION_URL } from '@qovery/shared/routes'
 import { StatusWebSocketListener } from '@qovery/shared/util-web-sockets'
-import { type AppDispatch, type RootState } from '@qovery/state/store'
+import { type AppDispatch } from '@qovery/state/store'
 import LayoutPage from '../../ui/layout-page/layout-page'
 import { setCurrentOrganizationIdOnStorage, setCurrentProjectIdOnStorage } from '../../utils/utils'
 
@@ -30,9 +25,7 @@ export function Layout(props: PropsWithChildren<LayoutProps>) {
 
   const dispatch = useDispatch<AppDispatch>()
 
-  const clusters = useSelector<RootState, Cluster[]>((state) =>
-    selectClustersEntitiesByOrganizationId(state, organizationId)
-  )
+  const { data: clusters = [] } = useClusters({ organizationId })
   const { data: organizations = [] } = useOrganizations()
   const { refetch: fetchOrganization } = useOrganization({ organizationId, enabled: false })
 
@@ -63,13 +56,6 @@ export function Layout(props: PropsWithChildren<LayoutProps>) {
       dispatch(fetchDatabases({ environmentId }))
     }
   }, [environmentId, dispatch])
-
-  useEffect(() => {
-    if (organizationId) {
-      dispatch(fetchClusters({ organizationId }))
-      dispatch(fetchClustersStatus({ organizationId }))
-    }
-  }, [dispatch, organizationId])
 
   useEffect(() => {
     setCurrentOrganizationIdOnStorage(organizationId)
