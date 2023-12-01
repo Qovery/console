@@ -72,4 +72,8 @@ export const mutations = {
     const response = await clusterApi.deployCluster(organizationId, clusterId)
     return response.data
   },
+  async stopCluster({ organizationId, clusterId }: { organizationId: string; clusterId: string }) {
+    const response = await clusterApi.stopCluster(organizationId, clusterId)
+    return response.data
+  },
 }
