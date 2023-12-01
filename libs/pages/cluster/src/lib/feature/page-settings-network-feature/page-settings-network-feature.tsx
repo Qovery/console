@@ -1,17 +1,10 @@
 import { type ClusterRoutingTableResultsInner } from 'qovery-typescript-axios'
-import { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import {
-  editClusterRoutingTable,
-  fetchClusterRoutingTable,
-  postClusterActionsDeploy,
-  selectClusterById,
-  selectClustersLoadingStatus,
-} from '@qovery/domains/organization'
-import { type ClusterEntity } from '@qovery/shared/interfaces'
+import { useClusterRoutingTable } from '@qovery/domains/clusters/feature'
+import { editClusterRoutingTable, postClusterActionsDeploy } from '@qovery/domains/organization'
 import { useModal, useModalConfirmation } from '@qovery/shared/ui'
-import { type AppDispatch, type RootState } from '@qovery/state/store'
+import { type AppDispatch } from '@qovery/state/store'
 import PageSettingsNetwork from '../../ui/page-settings-network/page-settings-network'
 import CrudModalFeature from './crud-modal-feature/crud-modal-feature'
 
@@ -24,21 +17,16 @@ export function PageSettingsNetworkFeature() {
 
   const { organizationId = '', clusterId = '' } = useParams()
 
-  const cluster = useSelector<RootState, ClusterEntity | undefined>((state) => selectClusterById(state, clusterId))
-  const clustersLoading = useSelector((state: RootState) => selectClustersLoadingStatus(state))
-
-  const clusterRoutingTableLoadingStatus = cluster?.routingTable?.loadingStatus
+  const { data: clusterRoutingTable, isLoading: isClusterRoutingTableLoading } = useClusterRoutingTable({
+    organizationId,
+    clusterId,
+  })
 
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
 
-  useEffect(() => {
-    if (clustersLoading === 'loaded' && clusterRoutingTableLoadingStatus !== 'loaded')
-      dispatch(fetchClusterRoutingTable({ organizationId, clusterId }))
-  }, [dispatch, clustersLoading, clusterRoutingTableLoadingStatus, organizationId, clusterId])
-
   const toasterCallback = () => {
-    if (cluster?.routingTable) {
+    if (clusterRoutingTable) {
       dispatch(
         postClusterActionsDeploy({
           organizationId,
@@ -50,8 +38,8 @@ export function PageSettingsNetworkFeature() {
 
   return (
     <PageSettingsNetwork
-      routes={cluster?.routingTable?.items}
-      loading={clusterRoutingTableLoadingStatus}
+      routes={clusterRoutingTable}
+      loading={isClusterRoutingTableLoading}
       onAddRoute={() => {
         openModal({
           content: (
@@ -59,7 +47,7 @@ export function PageSettingsNetworkFeature() {
               onClose={closeModal}
               clusterId={clusterId}
               organizationId={organizationId}
-              routes={cluster?.routingTable?.items}
+              routes={clusterRoutingTable}
             />
           ),
         })
@@ -72,7 +60,7 @@ export function PageSettingsNetworkFeature() {
               clusterId={clusterId}
               organizationId={organizationId}
               route={route}
-              routes={cluster?.routingTable?.items}
+              routes={clusterRoutingTable}
             />
           ),
         })
@@ -83,8 +71,8 @@ export function PageSettingsNetworkFeature() {
           isDelete: true,
           name: route.target,
           action: () => {
-            if (cluster?.routingTable?.items && cluster?.routingTable?.items?.length > 0) {
-              const cloneRoutes = deleteRoutes(cluster?.routingTable?.items, route.destination)
+            if (clusterRoutingTable && clusterRoutingTable.length > 0) {
+              const cloneRoutes = deleteRoutes(clusterRoutingTable, route.destination)
               dispatch(
                 editClusterRoutingTable({
                   clusterId,

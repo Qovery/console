@@ -1,5 +1,4 @@
 import { type ClusterRoutingTableResultsInner } from 'qovery-typescript-axios'
-import { type LoadingStatus } from '@qovery/shared/interfaces'
 import {
   BlockContent,
   ButtonIcon,
@@ -17,7 +16,7 @@ export interface PageSettingsNetworkProps {
   onAddRoute: () => void
   onEdit: (currentRoute: ClusterRoutingTableResultsInner) => void
   onDelete: (currentRoute: ClusterRoutingTableResultsInner) => void
-  loading?: LoadingStatus
+  loading: boolean
 }
 
 export function PageSettingsNetwork(props: PageSettingsNetworkProps) {
@@ -42,8 +41,7 @@ export function PageSettingsNetwork(props: PageSettingsNetworkProps) {
           </ButtonLegacy>
         </div>
 
-        {((props.loading === 'not loaded' || props.loading === 'loading') && props.routes?.length === 0) ||
-        !props.routes ? (
+        {(props.loading && props.routes?.length === 0) || !props.routes ? (
           <div className="flex justify-center">
             <LoaderSpinner className="w-4" />
           </div>
