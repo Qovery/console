@@ -68,4 +68,8 @@ export const mutations = {
     const response = await clusterApi.deleteCluster(organizationId, clusterId, clusterDeleteMode)
     return response.data
   },
+  async deployCluster({ organizationId, clusterId }: { organizationId: string; clusterId: string }) {
+    const response = await clusterApi.deployCluster(organizationId, clusterId)
+    return response.data
+  },
 }
