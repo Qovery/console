@@ -1,16 +1,16 @@
 import { useQueryClient } from '@tanstack/react-query'
 import { DatabaseModeEnum, type Environment, ServiceDeploymentStatusEnum } from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { useLocation, useParams } from 'react-router-dom'
+import { useCluster } from '@qovery/domains/clusters/feature'
 import { postDatabaseActionsDeploy, postDatabaseActionsRedeploy } from '@qovery/domains/database'
 import { EnvironmentMode } from '@qovery/domains/environments/feature'
-import { selectClusterById } from '@qovery/domains/organization'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { ServiceStateChip, useDeploymentStatus } from '@qovery/domains/services/feature'
 import { DatabaseButtonsActions, NeedRedeployFlag } from '@qovery/shared/console-shared'
 import { IconEnum } from '@qovery/shared/enums'
-import { type ClusterEntity, type DatabaseEntity } from '@qovery/shared/interfaces'
+import { type DatabaseEntity } from '@qovery/shared/interfaces'
 import {
   DATABASE_DEPLOYMENTS_URL,
   DATABASE_GENERAL_URL,
@@ -18,7 +18,7 @@ import {
   DATABASE_URL,
 } from '@qovery/shared/routes'
 import { Badge, Header, Icon, Section, Skeleton, Tabs, Tooltip } from '@qovery/shared/ui'
-import { type AppDispatch, type RootState } from '@qovery/state/store'
+import { type AppDispatch } from '@qovery/state/store'
 
 export interface ContainerProps {
   service?: AnyService
@@ -30,9 +30,7 @@ export function Container({ service, environment, children }: PropsWithChildren<
   const location = useLocation()
   const queryClient = useQueryClient()
 
-  const cluster = useSelector<RootState, ClusterEntity | undefined>((state: RootState) =>
-    selectClusterById(state, environment?.cluster_id || '')
-  )
+  const { data: cluster } = useCluster({ organizationId, clusterId: environment?.cluster_id || '' })
 
   const dispatch = useDispatch<AppDispatch>()
   const { data: serviceDeploymentStatus, isLoading: isLoadingServiceDeploymentStatus } = useDeploymentStatus({
