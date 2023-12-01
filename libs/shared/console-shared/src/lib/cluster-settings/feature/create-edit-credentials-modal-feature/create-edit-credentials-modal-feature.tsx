@@ -23,22 +23,29 @@ export const handleSubmit = (data: FieldValues, cloudProvider: CloudProviderEnum
 
   if (cloudProvider === CloudProviderEnum.AWS) {
     return {
-      ...currentData,
-      access_key_id: data['access_key_id'],
-      secret_access_key: data['secret_access_key'],
+      cloudProvider,
+      payload: {
+        ...currentData,
+        access_key_id: data['access_key_id'],
+        secret_access_key: data['secret_access_key'],
+      },
     }
   }
 
   if (cloudProvider === CloudProviderEnum.SCW) {
     return {
-      ...currentData,
-      scaleway_access_key: data['scaleway_access_key'],
-      scaleway_secret_key: data['scaleway_secret_key'],
-      scaleway_project_id: data['scaleway_project_id'],
+      cloudProvider,
+      payload: {
+        ...currentData,
+        scaleway_access_key: data['scaleway_access_key'],
+        scaleway_secret_key: data['scaleway_secret_key'],
+        scaleway_project_id: data['scaleway_project_id'],
+        scaleway_organization_id: data['scaleway_organization_id'],
+      },
     }
   }
 
-  return currentData
+  return { cloudProvider, payload: currentData }
 }
 
 export function CreateEditCredentialsModalFeature(props: CreateEditCredentialsModalFeatureProps) {
@@ -69,16 +76,14 @@ export function CreateEditCredentialsModalFeature(props: CreateEditCredentialsMo
       if (currentCredential) {
         await editCloudProviderCredential({
           organizationId,
-          cloudProvider,
           credentialId: currentCredential.id,
-          payload: credentials,
+          ...credentials,
         })
         onClose()
       } else {
         await createCloudProviderCredential({
           organizationId,
-          cloudProvider,
-          payload: credentials,
+          ...credentials,
         })
         onClose()
       }

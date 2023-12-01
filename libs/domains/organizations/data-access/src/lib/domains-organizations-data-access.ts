@@ -48,19 +48,19 @@ const membersApi = new MembersApi()
 type CredentialRequest =
   | {
       organizationId: string
-      cloudProvider: CloudProviderEnum
+      cloudProvider: Extract<CloudProviderEnum, 'AWS'>
       payload: AwsCredentialsRequest
       credentialId: string
     }
   | {
       organizationId: string
-      cloudProvider: CloudProviderEnum
+      cloudProvider: Extract<CloudProviderEnum, 'SCW'>
       payload: ScalewayCredentialsRequest
       credentialId: string
     }
   | {
       organizationId: string
-      cloudProvider: CloudProviderEnum
+      cloudProvider: Extract<CloudProviderEnum, 'DO'>
       payload: DoCredentialsRequest
       credentialId: string
     }
@@ -450,10 +450,7 @@ export const mutations = {
   async createCloudProviderCredential(request: DistributiveOmit<CredentialRequest, 'credentialId'>) {
     const cloudProviderCredential = await match(request)
       .with({ cloudProvider: 'AWS' }, async ({ organizationId, payload }) => {
-        const response = await cloudProviderCredentialsApi.createAWSCredentials(
-          organizationId,
-          payload as AwsCredentialsRequest
-        )
+        const response = await cloudProviderCredentialsApi.createAWSCredentials(organizationId, payload)
         return response.data
       })
       .with({ cloudProvider: 'SCW' }, async ({ organizationId, payload }) => {
@@ -474,11 +471,7 @@ export const mutations = {
   async editCloudProviderCredential(request: CredentialRequest) {
     const cloudProviderCredential = await match(request)
       .with({ cloudProvider: 'AWS' }, async ({ organizationId, credentialId, payload }) => {
-        const response = await cloudProviderCredentialsApi.editAWSCredentials(
-          organizationId,
-          credentialId,
-          payload as AwsCredentialsRequest
-        )
+        const response = await cloudProviderCredentialsApi.editAWSCredentials(organizationId, credentialId, payload)
         return response.data
       })
       .with({ cloudProvider: 'SCW' }, async ({ organizationId, credentialId, payload }) => {

@@ -64,10 +64,9 @@ describe('CreateEditCredentialsModalFeature', () => {
     await userEvent.click(submitButton)
 
     expect(useEditCloudProviderCredentialsMockSpy().mutateAsync).toHaveBeenCalledWith({
-      cloudProvider: CloudProviderEnum.AWS,
       organizationId: '0',
       credentialId: '000-000-000',
-      payload: handleSubmit(
+      ...handleSubmit(
         {
           name: 'test',
           access_key_id: 'access',
@@ -87,6 +86,7 @@ describe('CreateEditCredentialsModalFeature', () => {
     const inputAccessKey = screen.getByTestId('input-scw-access-key')
     const inputSecretKey = screen.getByTestId('input-scw-secret-key')
     const inputProjectId = screen.getByTestId('input-scw-project-id')
+    const inputOrganizationId = screen.getByTestId('input-scw-organization-id')
 
     await userEvent.clear(inputName)
 
@@ -94,20 +94,21 @@ describe('CreateEditCredentialsModalFeature', () => {
     await userEvent.type(inputAccessKey, 'access')
     await userEvent.type(inputSecretKey, 'secret')
     await userEvent.type(inputProjectId, 'project')
+    await userEvent.type(inputOrganizationId, 'organization')
 
     const submitButton = screen.getByTestId('submit-button')
     await userEvent.click(submitButton)
 
     expect(useEditCloudProviderCredentialsMockSpy().mutateAsync).toHaveBeenCalledWith({
-      cloudProvider: CloudProviderEnum.SCW,
       organizationId: '0',
       credentialId: '000-000-000',
-      payload: handleSubmit(
+      ...handleSubmit(
         {
           name: 'test',
           scaleway_access_key: 'access',
           scaleway_secret_key: 'secret',
           scaleway_project_id: 'project',
+          scaleway_organization_id: 'organization',
         },
         CloudProviderEnum.SCW
       ),
@@ -132,9 +133,8 @@ describe('CreateEditCredentialsModalFeature', () => {
     await userEvent.click(submitButton)
 
     expect(useCreateCloudProviderCredentialsMockSpy().mutateAsync).toHaveBeenCalledWith({
-      cloudProvider: CloudProviderEnum.AWS,
       organizationId: '0',
-      payload: handleSubmit(
+      ...handleSubmit(
         {
           name: 'test',
           access_key_id: 'access',
@@ -155,24 +155,26 @@ describe('CreateEditCredentialsModalFeature', () => {
     const inputAccessKey = screen.getByTestId('input-scw-access-key')
     const inputSecretKey = screen.getByTestId('input-scw-secret-key')
     const inputProjectId = screen.getByTestId('input-scw-project-id')
+    const inputOrganizationId = screen.getByTestId('input-scw-organization-id')
 
     await userEvent.type(inputName, 'test')
     await userEvent.type(inputAccessKey, 'access')
     await userEvent.type(inputSecretKey, 'secret')
     await userEvent.type(inputProjectId, 'project')
+    await userEvent.type(inputOrganizationId, 'organization')
 
     const submitButton = screen.getByTestId('submit-button')
     await userEvent.click(submitButton)
 
     expect(useCreateCloudProviderCredentialsMockSpy().mutateAsync).toHaveBeenCalledWith({
-      cloudProvider: CloudProviderEnum.SCW,
       organizationId: '0',
-      payload: handleSubmit(
+      ...handleSubmit(
         {
           name: 'test',
           scaleway_access_key: 'access',
           scaleway_secret_key: 'secret',
           scaleway_project_id: 'project',
+          scaleway_organization_id: 'organization',
         },
         CloudProviderEnum.SCW
       ),
