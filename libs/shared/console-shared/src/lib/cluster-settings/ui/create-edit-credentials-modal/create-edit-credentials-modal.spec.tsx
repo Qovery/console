@@ -54,6 +54,7 @@ describe('CreateEditCredentialsModal', () => {
           scaleway_access_key: 'scaleway-access-key',
           scaleway_secret_key: 'scaleway-secret-key',
           scaleway_project_id: 'scaleway-project-id',
+          scaleway_organization_id: 'scaleway-organization-id',
         },
       })
     )

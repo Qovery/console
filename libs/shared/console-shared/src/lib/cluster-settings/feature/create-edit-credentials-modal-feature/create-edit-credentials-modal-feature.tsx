@@ -35,6 +35,7 @@ export const handleSubmit = (data: FieldValues, cloudProvider: CloudProviderEnum
       scaleway_access_key: data['scaleway_access_key'],
       scaleway_secret_key: data['scaleway_secret_key'],
       scaleway_project_id: data['scaleway_project_id'],
+      scaleway_organization_id: data['scaleway_organization_id'],
     }
   }
 
