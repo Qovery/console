@@ -64,10 +64,9 @@ describe('CreateEditCredentialsModalFeature', () => {
     await userEvent.click(submitButton)
 
     expect(useEditCloudProviderCredentialsMockSpy().mutateAsync).toHaveBeenCalledWith({
-      cloudProvider: CloudProviderEnum.AWS,
       organizationId: '0',
       credentialId: '000-000-000',
-      payload: handleSubmit(
+      ...handleSubmit(
         {
           name: 'test',
           access_key_id: 'access',
@@ -101,10 +100,9 @@ describe('CreateEditCredentialsModalFeature', () => {
     await userEvent.click(submitButton)
 
     expect(useEditCloudProviderCredentialsMockSpy().mutateAsync).toHaveBeenCalledWith({
-      cloudProvider: CloudProviderEnum.SCW,
       organizationId: '0',
       credentialId: '000-000-000',
-      payload: handleSubmit(
+      ...handleSubmit(
         {
           name: 'test',
           scaleway_access_key: 'access',
@@ -135,9 +133,8 @@ describe('CreateEditCredentialsModalFeature', () => {
     await userEvent.click(submitButton)
 
     expect(useCreateCloudProviderCredentialsMockSpy().mutateAsync).toHaveBeenCalledWith({
-      cloudProvider: CloudProviderEnum.AWS,
       organizationId: '0',
-      payload: handleSubmit(
+      ...handleSubmit(
         {
           name: 'test',
           access_key_id: 'access',
@@ -170,9 +167,8 @@ describe('CreateEditCredentialsModalFeature', () => {
     await userEvent.click(submitButton)
 
     expect(useCreateCloudProviderCredentialsMockSpy().mutateAsync).toHaveBeenCalledWith({
-      cloudProvider: CloudProviderEnum.SCW,
       organizationId: '0',
-      payload: handleSubmit(
+      ...handleSubmit(
         {
           name: 'test',
           scaleway_access_key: 'access',
