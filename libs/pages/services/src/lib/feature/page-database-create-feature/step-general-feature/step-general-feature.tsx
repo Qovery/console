@@ -1,11 +1,10 @@
 import { type DatabaseConfiguration, DatabaseModeEnum, KubernetesEnum } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
+import { useCluster } from '@qovery/domains/clusters/feature'
 import { useFetchDatabaseConfiguration, useFetchEnvironment } from '@qovery/domains/environment'
-import { selectClusterById } from '@qovery/domains/organization'
-import { type ClusterEntity, type Value } from '@qovery/shared/interfaces'
+import { type Value } from '@qovery/shared/interfaces'
 import {
   SERVICES_DATABASE_CREATION_RESOURCES_URL,
   SERVICES_DATABASE_CREATION_URL,
@@ -13,7 +12,6 @@ import {
 } from '@qovery/shared/routes'
 import { FunnelFlowBody, FunnelFlowHelpCard, Icon } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { type RootState } from '@qovery/state/store'
 import StepGeneral from '../../../ui/page-database-create/step-general/step-general'
 import { type GeneralData } from '../database-creation-flow.interface'
 import { useDatabaseCreateContext } from '../page-database-create-feature'
@@ -79,9 +77,7 @@ export function StepGeneralFeature() {
 
   const { data: environment } = useFetchEnvironment(projectId, environmentId)
 
-  const cluster = useSelector<RootState, ClusterEntity | undefined>((state: RootState) =>
-    selectClusterById(state, environment?.cluster_id || '')
-  )
+  const { data: cluster } = useCluster({ organizationId, clusterId: environment?.cluster_id ?? '' })
 
   const { data: databaseConfigurations } = useFetchDatabaseConfiguration(projectId, environmentId)
 
