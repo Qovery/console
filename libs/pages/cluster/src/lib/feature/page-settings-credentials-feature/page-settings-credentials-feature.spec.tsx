@@ -1,9 +1,9 @@
 import { CloudProviderEnum } from 'qovery-typescript-axios'
 import selectEvent from 'react-select-event'
+import * as clustersDomain from '@qovery/domains/clusters/feature'
 import * as organizationDomain from '@qovery/domains/organization'
 import * as organizationsDomain from '@qovery/domains/organizations/feature'
 import { clusterFactoryMock, credentialsMock } from '@qovery/shared/factories'
-import { type ClusterEntity } from '@qovery/shared/interfaces'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import PageSettingsCredentialsFeature, { handleSubmit } from './page-settings-credentials-feature'
 
@@ -11,6 +11,7 @@ import SpyInstance = jest.SpyInstance
 
 const mockCluster: ClusterEntity = clusterFactoryMock(1, CloudProviderEnum.AWS)[0]
 const mockCredentials = credentialsMock(2)
+const useClusterCloudProviderInfoSpy = jest.spyOn(clustersDomain, 'useClusterCloudProviderInfo') as jest.Mock
 const useCloudProviderCredentialsMockSpy = jest.spyOn(organizationsDomain, 'useCloudProviderCredentials') as jest.Mock
 
 jest.mock('@qovery/domains/organization', () => {
@@ -72,6 +73,9 @@ describe('PageSettingsCredentialsFeature', () => {
         },
       ],
     })
+    useClusterCloudProviderInfoSpy.mockReturnValue({
+      data: mockCluster.cloudProviderInfo?.item,
+    })
   })
   it('should render successfully', () => {
     const { baseElement } = renderWithProviders(<PageSettingsCredentialsFeature />)
@@ -124,7 +128,7 @@ describe('PageSettingsCredentialsFeature', () => {
           id: '000-000-000',
         },
       ],
-      mockCluster
+      mockCluster.cloudProviderInfo!.item!
     )
 
     expect(postCloudProviderInfoSpy.mock.calls[0][0].organizationId).toStrictEqual('0')
