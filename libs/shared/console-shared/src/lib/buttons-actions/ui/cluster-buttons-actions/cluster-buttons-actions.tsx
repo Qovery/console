@@ -1,11 +1,10 @@
 import { type ClickEvent } from '@szhsin/react-menu'
-import { EnvironmentModeEnum, OrganizationEventTargetType } from 'qovery-typescript-axios'
+import { type Cluster, EnvironmentModeEnum, OrganizationEventTargetType } from 'qovery-typescript-axios'
 import { useMemo } from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
-import { ClusterDeleteModal } from '@qovery/domains/clusters/feature'
+import { ClusterDeleteModal, useClusterStatus } from '@qovery/domains/clusters/feature'
 import { postClusterActionsDeploy, postClusterActionsStop } from '@qovery/domains/organization'
-import { type ClusterEntity } from '@qovery/shared/interfaces'
 import { AUDIT_LOGS_PARAMS_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL, INFRA_LOGS_URL } from '@qovery/shared/routes'
 import {
   ButtonIconAction,
@@ -27,7 +26,7 @@ import {
 import { type AppDispatch } from '@qovery/state/store'
 
 export interface ClusterButtonsActionsProps {
-  cluster: ClusterEntity
+  cluster: Cluster
   noSettings?: boolean
 }
 
@@ -39,6 +38,7 @@ export function ClusterButtonsActions(props: ClusterButtonsActionsProps) {
 
   const { openModalConfirmation } = useModalConfirmation()
   const { openModal } = useModal()
+  const { data: clusterStatus } = useClusterStatus({ organizationId, clusterId: cluster.id })
 
   const dispatch = useDispatch<AppDispatch>()
 
@@ -50,7 +50,7 @@ export function ClusterButtonsActions(props: ClusterButtonsActionsProps) {
 
   const buttonStatusActions = useMemo(() => {
     const deployButton: MenuItemProps = {
-      name: `${!cluster.extendedStatus?.status?.is_deployed ? 'Install' : 'Deploy'}`,
+      name: `${!clusterStatus?.is_deployed ? 'Install' : 'Deploy'}`,
       contentLeft: <Icon name={IconAwesomeEnum.PLAY} className="text-sm text-brand-400" />,
       onClick: () =>
         dispatch(
@@ -110,14 +110,14 @@ export function ClusterButtonsActions(props: ClusterButtonsActionsProps) {
     const topItems: MenuItemProps[] = []
     const bottomItems: MenuItemProps[] = []
 
-    if (cluster.extendedStatus?.status?.status) {
-      if (isDeployAvailable(cluster.extendedStatus?.status?.status)) {
+    if (clusterStatus?.status) {
+      if (isDeployAvailable(clusterStatus?.status)) {
         topItems.push(deployButton)
       }
-      if (isRedeployAvailable(cluster.extendedStatus?.status?.status)) {
+      if (isRedeployAvailable(clusterStatus?.status)) {
         topItems.push(updateButton)
       }
-      if (isStopAvailable(cluster.extendedStatus?.status?.status)) {
+      if (isStopAvailable(clusterStatus?.status)) {
         topItems.push(stopButton)
       }
     }
@@ -125,15 +125,15 @@ export function ClusterButtonsActions(props: ClusterButtonsActionsProps) {
     return [{ items: topItems }, { items: bottomItems }]
   }, [cluster, dispatch, openModalConfirmation, organizationId])
 
-  const canDelete = cluster.extendedStatus?.status?.status && isDeleteAvailable(cluster.extendedStatus?.status?.status)
+  const canDelete = clusterStatus?.status && isDeleteAvailable(clusterStatus?.status)
 
   const copyContent = cluster.id
 
   const deploymentActions =
-    cluster.extendedStatus?.status?.status &&
-    (isDeployAvailable(cluster.extendedStatus?.status?.status) ||
-      isDeleteAvailable(cluster.extendedStatus?.status?.status) ||
-      isUpdateAvailable(cluster.extendedStatus?.status?.status))
+    clusterStatus?.status &&
+    (isDeployAvailable(clusterStatus?.status) ||
+      isDeleteAvailable(clusterStatus?.status) ||
+      isUpdateAvailable(clusterStatus?.status))
 
   const buttonActionsDefault: ButtonIconActionElementProps[] = [
     deploymentActions
