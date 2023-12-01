@@ -1,4 +1,5 @@
 import { act, fireEvent, render } from '__tests__/utils/setup-jest'
+import * as clustersDomains from '@qovery/domains/clusters/feature'
 import * as storeOrganization from '@qovery/domains/organization'
 import { clusterFactoryMock } from '@qovery/shared/factories'
 import { type ClusterEntity } from '@qovery/shared/interfaces'
@@ -8,21 +9,7 @@ import SpyInstance = jest.SpyInstance
 
 const mockCluster: ClusterEntity = clusterFactoryMock(1)[0]
 
-jest.mock('@qovery/domains/organization', () => {
-  return {
-    ...jest.requireActual('@qovery/domains/organization'),
-    editCluster: jest.fn(),
-    getClusterState: () => ({
-      loadingStatus: 'loaded',
-      ids: [mockCluster.id],
-      entities: {
-        [mockCluster.id]: mockCluster,
-      },
-      error: null,
-    }),
-    selectClusterById: () => mockCluster,
-  }
-})
+const useClusterMockSpy = jest.spyOn(clustersDomains, 'useCluster') as jest.Mock
 
 const mockDispatch = jest.fn()
 jest.mock('react-redux', () => ({
@@ -36,6 +23,13 @@ jest.mock('react-router-dom', () => ({
 }))
 
 describe('PageSettingsRemoteFeature', () => {
+  beforeEach(() => {
+    useClusterMockSpy.mockReturnValue({
+      data: mockCluster,
+      isLoading: false,
+    })
+  })
+
   it('should render successfully', () => {
     const { baseElement } = render(<PageSettingsRemoteFeature />)
     expect(baseElement).toBeTruthy()
@@ -75,8 +69,11 @@ describe('PageSettingsRemoteFeature', () => {
 
     const cloneCluster = handleSubmit({ ssh_key: 'hello' }, mockCluster)
 
-    expect(editClusterSpy.mock.calls[0][0].organizationId).toStrictEqual('0')
-    expect(editClusterSpy.mock.calls[0][0].clusterId).toStrictEqual(mockCluster.id)
-    expect(editClusterSpy.mock.calls[0][0].data).toStrictEqual(cloneCluster)
+    expect(editClusterSpy).toBeCalledWith({
+      organizationId: '0',
+      clusterId: mockCluster.id,
+      data: cloneCluster,
+      toasterCallback: expect.anything(),
+    })
   })
 })

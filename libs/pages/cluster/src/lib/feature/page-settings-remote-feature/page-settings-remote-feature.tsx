@@ -1,13 +1,15 @@
+import { type Cluster } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { editCluster, postClusterActionsDeploy, selectClusterById } from '@qovery/domains/organization'
-import { type ClusterEntity, type ClusterRemoteData } from '@qovery/shared/interfaces'
-import { type AppDispatch, type RootState } from '@qovery/state/store'
+import { useCluster } from '@qovery/domains/clusters/feature'
+import { editCluster, postClusterActionsDeploy } from '@qovery/domains/organization'
+import { type ClusterRemoteData } from '@qovery/shared/interfaces'
+import { type AppDispatch } from '@qovery/state/store'
 import PageSettingsRemote from '../../ui/page-settings-remote/page-settings-remote'
 
-export const handleSubmit = (data: ClusterRemoteData, cluster: ClusterEntity): ClusterEntity => {
+export const handleSubmit = (data: ClusterRemoteData, cluster: Cluster): Cluster => {
   return {
     ...cluster,
     ssh_keys: [data['ssh_key']],
@@ -24,7 +26,7 @@ export function PageSettingsRemoteFeature() {
     mode: 'onChange',
   })
 
-  const cluster = useSelector<RootState, ClusterEntity | undefined>((state) => selectClusterById(state, clusterId))
+  const { data: cluster } = useCluster({ organizationId, clusterId })
 
   const onSubmit = methods.handleSubmit((data) => {
     if (data && cluster) {
@@ -40,8 +42,8 @@ export function PageSettingsRemoteFeature() {
 
       dispatch(
         editCluster({
-          organizationId: organizationId,
-          clusterId: clusterId,
+          organizationId,
+          clusterId,
           data: cloneCluster,
           toasterCallback,
         })
