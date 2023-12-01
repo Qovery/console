@@ -57,7 +57,7 @@ export function CrudModal({ isEdit, onSubmit, onClose, loading, availableHelmRep
             name={field.name}
             onChange={field.onChange}
             value={field.value}
-            label="Registry name"
+            label="Repository name"
             error={error?.message}
           />
         )}
@@ -118,7 +118,7 @@ export function CrudModal({ isEdit, onSubmit, onClose, loading, availableHelmRep
               name={field.name}
               onChange={field.onChange}
               value={field.value}
-              label="Registry url"
+              label="Repository url"
               error={error?.message}
             />
           )}
