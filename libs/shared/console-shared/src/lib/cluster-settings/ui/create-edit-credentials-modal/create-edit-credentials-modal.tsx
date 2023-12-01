@@ -123,24 +123,6 @@ export function CreateEditCredentialsModal(props: CreateEditCredentialsModalProp
             )}
           />
           <Controller
-            name="scaleway_project_id"
-            control={control}
-            rules={{
-              required: 'Please enter a project id.',
-            }}
-            render={({ field, fieldState: { error } }) => (
-              <InputText
-                dataTestId="input-scw-project-id"
-                className="mb-5"
-                name={field.name}
-                onChange={field.onChange}
-                value={field.value}
-                label="Project id"
-                error={error?.message}
-              />
-            )}
-          />
-          <Controller
             name="scaleway_organization_id"
             control={control}
             rules={{
@@ -154,6 +136,24 @@ export function CreateEditCredentialsModal(props: CreateEditCredentialsModalProp
                 onChange={field.onChange}
                 value={field.value}
                 label="Organization id"
+                error={error?.message}
+              />
+            )}
+          />
+          <Controller
+            name="scaleway_project_id"
+            control={control}
+            rules={{
+              required: 'Please enter a project id.',
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <InputText
+                dataTestId="input-scw-project-id"
+                className="mb-5"
+                name={field.name}
+                onChange={field.onChange}
+                value={field.value}
+                label="Project id"
                 error={error?.message}
               />
             )}
