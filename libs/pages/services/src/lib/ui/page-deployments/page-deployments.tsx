@@ -82,7 +82,7 @@ export function PageDeploymentsMemo(props: PageDeploymentsProps) {
         setDataSort={setData}
         className="mt-2 rounded-sm flex-grow overflow-y-auto min-h-0"
       >
-        <div>
+        <div className="bg-neutral-200">
           {data?.map((currentData, index) => (
             <TableRowDeployment
               key={index}

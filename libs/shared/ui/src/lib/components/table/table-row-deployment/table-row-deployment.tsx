@@ -176,7 +176,7 @@ export function TableRowDeployment({
               <TagCommit commitId={(data as DeploymentService | DeploymentHistoryApplication)?.commit?.git_commit_id} />
             )}
             {(data as ContainerApplicationEntity).image_name && (
-              <Badge size="xs">
+              <Badge size="xs" className="truncate max-w-[200px]">
                 <span className="block truncate">
                   <Tooltip
                     side="left"
