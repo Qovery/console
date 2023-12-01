@@ -2,10 +2,9 @@ import { render, waitFor } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { CloudProviderEnum } from 'qovery-typescript-axios'
 import { credentialsMock } from '@qovery/shared/factories'
-import { type ClusterCredentialsEntity } from '@qovery/shared/interfaces'
 import PageSettingsGeneral, { type PageSettingsCredentialsProps } from './page-settings-credentials'
 
-const mockCredentials: ClusterCredentialsEntity[] = credentialsMock(2)
+const mockCredentials = credentialsMock(2)
 
 describe('PageSettingsGeneral', () => {
   const props: PageSettingsCredentialsProps = {

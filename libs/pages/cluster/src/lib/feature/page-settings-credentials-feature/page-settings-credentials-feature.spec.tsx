@@ -3,14 +3,14 @@ import selectEvent from 'react-select-event'
 import * as organizationDomain from '@qovery/domains/organization'
 import * as organizationsDomain from '@qovery/domains/organizations/feature'
 import { clusterFactoryMock, credentialsMock } from '@qovery/shared/factories'
-import { type ClusterCredentialsEntity, type ClusterEntity } from '@qovery/shared/interfaces'
+import { type ClusterEntity } from '@qovery/shared/interfaces'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import PageSettingsCredentialsFeature, { handleSubmit } from './page-settings-credentials-feature'
 
 import SpyInstance = jest.SpyInstance
 
 const mockCluster: ClusterEntity = clusterFactoryMock(1, CloudProviderEnum.AWS)[0]
-const mockCredentials: ClusterCredentialsEntity[] = credentialsMock(2)
+const mockCredentials = credentialsMock(2)
 const useCloudProviderCredentialsMockSpy = jest.spyOn(organizationsDomain, 'useCloudProviderCredentials') as jest.Mock
 
 jest.mock('@qovery/domains/organization', () => {
