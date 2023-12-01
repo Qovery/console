@@ -1,58 +1,93 @@
 import { type HelmRequestAllOfSource } from 'qovery-typescript-axios'
-import { useEffect, useState } from 'react'
-import { BlockContent, Button, CodeEditor } from '@qovery/shared/ui'
+import { useEffect } from 'react'
+import { Controller, FormProvider, useForm } from 'react-hook-form'
+import { BlockContent, CodeEditor, Icon, IconAwesomeEnum, LoaderSpinner, ModalCrud } from '@qovery/shared/ui'
 import useCreateHelmDefaultValues from '../hooks/use-create-helm-default-values/use-create-helm-default-values'
-
-// import useCreateHelmDefaultValues from '../hooks/use-create-helm-default-values/use-create-helm-default-values'
 
 export interface ValuesOverrideYamlModalProps {
   environmentId: string
   source: HelmRequestAllOfSource
+  onSubmit: (value: string) => void
   onClose: () => void
 }
 
-export function ValuesOverrideYamlModal({ source, environmentId, onClose }: ValuesOverrideYamlModalProps) {
-  const { mutateAsync: createHelmDefaultValues } = useCreateHelmDefaultValues()
-  const [value, setValue] = useState('')
-  const [error, setError] = useState(false)
+export function ValuesOverrideYamlModal({ source, environmentId, onClose, onSubmit }: ValuesOverrideYamlModalProps) {
+  const {
+    data: helmDefaultValues,
+    mutateAsync: createHelmDefaultValues,
+    isLoading: isLoadingHelmDefaultValues,
+    isError: isErrorHelmDefaultValues,
+  } = useCreateHelmDefaultValues()
+
+  const methods = useForm({
+    mode: 'onChange',
+  })
 
   useEffect(() => {
     async function fetchHelmDefaultValues() {
       try {
-        const response = await createHelmDefaultValues({
+        await createHelmDefaultValues({
           environmentId,
           helmDefaultValuesRequest: {
             source,
           },
         })
-        setValue(response)
       } catch (error) {
-        setError(true)
+        console.log(error)
       }
     }
 
     fetchHelmDefaultValues()
   }, [environmentId, source, createHelmDefaultValues])
 
+  const onSubmitValue = methods.handleSubmit(async ({ content }) => {
+    onSubmit(content)
+  })
+
   return (
-    <div className="p-6 h-full">
-      <h2 className="h4 text-neutral-400">Raw YAML</h2>
-      <div className="flex h-full">
-        <BlockContent title="Raw YAML" classNameContent="p-0">
-          <CodeEditor width="100%" height="100vh" />
-        </BlockContent>
-        <BlockContent title="Raw YAML" classNameContent="p-0">
-          {error ? (
-            <p>Default values not available</p>
-          ) : (
-            <CodeEditor width="100%" height="100vh" defaultValue={value} />
-          )}
-        </BlockContent>
-      </div>
-      <div className="flex gap-3 justify-end mt-6">
-        <Button>Save</Button>
-      </div>
-    </div>
+    <FormProvider {...methods}>
+      <ModalCrud title="Raw YAML" onSubmit={onSubmitValue} onClose={onClose} submitLabel="Save">
+        <div className="flex h-full">
+          <BlockContent title="Raw YAML" className="mb-0 rounded-r-none border-r-0" classNameContent="p-0">
+            <Controller
+              name="content"
+              control={methods.control}
+              render={({ field }) => (
+                <CodeEditor
+                  width="100%"
+                  height="calc(100vh  - 254px)"
+                  language="yaml"
+                  value={field.value}
+                  onChange={field.onChange}
+                />
+              )}
+            />
+          </BlockContent>
+          <BlockContent title="Default values.yaml" className="mb-0 rounded-l-none" classNameContent="p-0">
+            {isErrorHelmDefaultValues && (
+              <div className="text-center py-14 px-5">
+                <Icon name={IconAwesomeEnum.WAVE_PULSE} className="text-neutral-350" />
+                <p className="text-neutral-350 font-medium text-xs mt-1 mb-3">No default values.yaml available</p>
+              </div>
+            )}
+            {isLoadingHelmDefaultValues && (
+              <div className="flex justify-center py-14 px-5">
+                <LoaderSpinner />
+              </div>
+            )}
+            {!isErrorHelmDefaultValues && !isLoadingHelmDefaultValues && (
+              <CodeEditor
+                width="100%"
+                height="calc(100vh  - 254px)"
+                language="yaml"
+                defaultValue={helmDefaultValues}
+                readOnly
+              />
+            )}
+          </BlockContent>
+        </div>
+      </ModalCrud>
+    </FormProvider>
   )
 }
 

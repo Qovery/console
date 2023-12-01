@@ -22,7 +22,7 @@ export function BlockContent(props: PropsWithChildren<BlockContentProps>) {
   return (
     <div
       data-testid={dataTestId}
-      className={`border border-neutral-250 bg-neutral-100 rounded mb-5 ${className} ${customWidth}`}
+      className={twMerge(`border border-neutral-250 bg-neutral-100 rounded mb-5 ${customWidth}`, className)}
     >
       <div className="flex items-center justify-between h-9 px-4 border-b border-neutral-250">
         <h2 className="font-medium text-neutral-400 text-ssm">{title}</h2>

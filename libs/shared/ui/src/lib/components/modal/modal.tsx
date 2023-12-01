@@ -90,10 +90,14 @@ export const Modal = (props: ModalProps) => {
           onPointerDownOutside={(event) => {
             event.preventDefault()
           }}
-          style={fullScreen ? { width: '100vw', height: '100vh', top: 0 } : { width: `${width}px` }}
+          style={
+            fullScreen
+              ? { width: 'calc(100vw - 48px)', height: 'calc(100vh  - 48px)', top: 24 }
+              : { width: `${width}px` }
+          }
           className={`modal__content fixed top-[84px] left-1/2 bg-white rounded-md shadow-[0_0_32px_rgba(0,0,0,0.08)] ${className}`}
         >
-          <div className="max-h-[80vh] overflow-auto">
+          <div className={`overflow-auto ${fullScreen ? '' : 'max-h-[80vh]'}`}>
             {cloneElement(children, {
               setOpen: setExternalOpen ? setExternalOpen : setOpen,
             })}

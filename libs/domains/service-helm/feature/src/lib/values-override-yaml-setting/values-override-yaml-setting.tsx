@@ -21,7 +21,16 @@ export function ValuesOverrideYamlSetting({ source }: ValuesOverrideYamlSettingP
           size="md"
           onClick={() => {
             openModal({
-              content: <ValuesOverrideYamlModal environmentId={environmentId} source={source} onClose={closeModal} />,
+              content: (
+                <ValuesOverrideYamlModal
+                  environmentId={environmentId}
+                  source={source}
+                  onClose={closeModal}
+                  onSubmit={(value: string) => {
+                    console.log(value)
+                  }}
+                />
+              ),
               options: {
                 width: 0,
                 fullScreen: true,
