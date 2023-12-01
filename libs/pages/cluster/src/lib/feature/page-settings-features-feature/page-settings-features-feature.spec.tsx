@@ -5,17 +5,16 @@ import PageSettingsFeaturesFeature from './page-settings-features-feature'
 
 const mockCluster: ClusterEntity = clusterFactoryMock(1)[0]
 
-jest.mock('@qovery/domains/organization', () => {
+jest.mock('@qovery/domains/clusters/feature', () => {
   return {
-    ...jest.requireActual('@qovery/domains/organization'),
-    selectClusterById: () => mockCluster,
-    selectClustersLoadingStatus: () => 'loaded',
+    ...jest.requireActual('@qovery/domains/clusters/feature'),
+    useCluster: () => ({ data: mockCluster, isLoading: false }),
   }
 })
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
-  useParams: () => ({ clusterId: mockCluster.id }),
+  useParams: () => ({ organization: '1', clusterId: mockCluster.id }),
 }))
 
 describe('PageSettingsFeaturesFeature', () => {

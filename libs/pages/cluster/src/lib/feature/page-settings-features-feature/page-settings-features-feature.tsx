@@ -1,21 +1,17 @@
-import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { selectClusterById, selectClustersLoadingStatus } from '@qovery/domains/organization'
-import { type ClusterEntity } from '@qovery/shared/interfaces'
-import { type RootState } from '@qovery/state/store'
+import { useCluster } from '@qovery/domains/clusters/feature'
 import PageSettingsFeatures from '../../ui/page-settings-features/page-settings-features'
 
 export function PageSettingsFeaturesFeature() {
-  const { clusterId = '' } = useParams()
+  const { organizationId = '', clusterId = '' } = useParams()
 
-  const cluster = useSelector<RootState, ClusterEntity | undefined>((state) => selectClusterById(state, clusterId))
-  const clusterStatusLoading = useSelector((state: RootState) => selectClustersLoadingStatus(state))
+  const { data: cluster, isLoading: isClusterLoading } = useCluster({ organizationId, clusterId })
 
   return (
     <PageSettingsFeatures
       features={cluster?.features}
       cloudProvider={cluster?.cloud_provider}
-      loadingStatus={clusterStatusLoading}
+      loading={isClusterLoading}
     />
   )
 }
