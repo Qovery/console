@@ -11,7 +11,6 @@ import {
 import { KubernetesEnum } from 'qovery-typescript-axios'
 import * as storeOrganization from '@qovery/domains/organization'
 import { clusterFactoryMock } from '@qovery/shared/factories'
-import { type ClusterEntity } from '@qovery/shared/interfaces'
 import PageSettingsResourcesFeature, { handleSubmit } from './page-settings-resources-feature'
 
 import SpyInstance = jest.SpyInstance
@@ -45,7 +44,7 @@ jest.mock('@qovery/domains/organization', () => ({
   fetchAvailableInstanceTypes: jest.fn(),
 }))
 
-const mockCluster: ClusterEntity = clusterFactoryMock(1)[0]
+const mockCluster = clusterFactoryMock(1)[0]
 mockCluster.kubernetes = KubernetesEnum.MANAGED
 mockCluster.instance_type = 't2.micro'
 jest.mock('@qovery/domains/organization', () => {

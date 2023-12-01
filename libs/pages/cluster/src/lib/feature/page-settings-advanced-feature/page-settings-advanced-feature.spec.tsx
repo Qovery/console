@@ -4,13 +4,12 @@ import { type ClusterAdvancedSettings } from 'qovery-typescript-axios'
 import React from 'react'
 import * as storeOrganization from '@qovery/domains/organization'
 import { clusterFactoryMock } from '@qovery/shared/factories'
-import { type ClusterEntity } from '@qovery/shared/interfaces'
 import * as InitFormValues from './init-form-values/init-form-values'
 import PageSettingsAdvancedFeature from './page-settings-advanced-feature'
 
 import SpyInstance = jest.SpyInstance
 
-const mockCluster: ClusterEntity = clusterFactoryMock(1)[0]
+const mockCluster = clusterFactoryMock(1)[0]
 const mockAdvancedSettings: Partial<ClusterAdvancedSettings> = {
   'loki.log_retention_in_week': 1,
   'aws.vpc.enable_s3_flow_logs': false,

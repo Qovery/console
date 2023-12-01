@@ -2,12 +2,11 @@ import { act, fireEvent, render } from '__tests__/utils/setup-jest'
 import * as clustersDomains from '@qovery/domains/clusters/feature'
 import * as storeOrganization from '@qovery/domains/organization'
 import { clusterFactoryMock } from '@qovery/shared/factories'
-import { type ClusterEntity } from '@qovery/shared/interfaces'
 import PageSettingsRemoteFeature, { handleSubmit } from './page-settings-remote-feature'
 
 import SpyInstance = jest.SpyInstance
 
-const mockCluster: ClusterEntity = clusterFactoryMock(1)[0]
+const mockCluster = clusterFactoryMock(1)[0]
 
 const useClusterMockSpy = jest.spyOn(clustersDomains, 'useCluster') as jest.Mock
 

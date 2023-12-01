@@ -9,7 +9,7 @@ import PageSettingsCredentialsFeature, { handleSubmit } from './page-settings-cr
 
 import SpyInstance = jest.SpyInstance
 
-const mockCluster: ClusterEntity = clusterFactoryMock(1, CloudProviderEnum.AWS)[0]
+const mockCluster = clusterFactoryMock(1, CloudProviderEnum.AWS)[0]
 const mockCredentials = credentialsMock(2)
 const useClusterCloudProviderInfoSpy = jest.spyOn(clustersDomain, 'useClusterCloudProviderInfo') as jest.Mock
 const useCloudProviderCredentialsMockSpy = jest.spyOn(organizationsDomain, 'useCloudProviderCredentials') as jest.Mock
