@@ -1,4 +1,5 @@
 import { act, fireEvent, render } from '__tests__/utils/setup-jest'
+import * as clustersDomains from '@qovery/domains/clusters/feature'
 import * as storeOrganization from '@qovery/domains/organization'
 import { clusterFactoryMock } from '@qovery/shared/factories'
 import PageSettingsGeneralFeature, { handleSubmit } from './page-settings-general-feature'
@@ -7,19 +8,12 @@ import SpyInstance = jest.SpyInstance
 
 const mockCluster = clusterFactoryMock(1)[0]
 
+const useClusterMockSpy = jest.spyOn(clustersDomains, 'useCluster') as jest.Mock
+
 jest.mock('@qovery/domains/organization', () => {
   return {
     ...jest.requireActual('@qovery/domains/organization'),
     editCluster: jest.fn(),
-    getClusterState: () => ({
-      loadingStatus: 'loaded',
-      ids: [mockCluster.id],
-      entities: {
-        [mockCluster.id]: mockCluster,
-      },
-      error: null,
-    }),
-    selectClusterById: () => mockCluster,
   }
 })
 
@@ -35,6 +29,13 @@ jest.mock('react-router-dom', () => ({
 }))
 
 describe('PageSettingsGeneralFeature', () => {
+  beforeEach(() => {
+    useClusterMockSpy.mockReturnValue({
+      data: mockCluster,
+      isLoading: false,
+    })
+  })
+
   it('should render successfully', () => {
     const { baseElement } = render(<PageSettingsGeneralFeature />)
     expect(baseElement).toBeTruthy()
@@ -81,8 +82,11 @@ describe('PageSettingsGeneralFeature', () => {
       mockCluster
     )
 
-    expect(editClusterSpy.mock.calls[0][0].organizationId).toStrictEqual('0')
-    expect(editClusterSpy.mock.calls[0][0].clusterId).toStrictEqual(mockCluster.id)
-    expect(editClusterSpy.mock.calls[0][0].data).toStrictEqual(cloneCluster)
+    expect(editClusterSpy).toBeCalledWith({
+      organizationId: '0',
+      clusterId: mockCluster.id,
+      data: cloneCluster,
+      toasterCallback: expect.anything(),
+    })
   })
 })

@@ -1,13 +1,14 @@
+import { type Cluster } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { editCluster, postClusterActionsDeploy, selectClusterById } from '@qovery/domains/organization'
-import { type ClusterEntity } from '@qovery/shared/interfaces'
-import { type AppDispatch, type RootState } from '@qovery/state/store'
+import { useCluster } from '@qovery/domains/clusters/feature'
+import { editCluster, postClusterActionsDeploy } from '@qovery/domains/organization'
+import { type AppDispatch } from '@qovery/state/store'
 import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-general'
 
-export const handleSubmit = (data: FieldValues, cluster: ClusterEntity) => {
+export const handleSubmit = (data: FieldValues, cluster: Cluster) => {
   return {
     ...cluster,
     name: data['name'],
@@ -26,7 +27,7 @@ export function PageSettingsGeneralFeature() {
     mode: 'onChange',
   })
 
-  const cluster = useSelector<RootState, ClusterEntity | undefined>((state) => selectClusterById(state, clusterId))
+  const { data: cluster } = useCluster({ organizationId, clusterId })
 
   const onSubmit = methods.handleSubmit((data) => {
     if (data && cluster) {
