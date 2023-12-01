@@ -32,6 +32,13 @@ export const clusters = createQueryKeys('clusters', {
       return response.data.results
     },
   }),
+  cloudProviderInfo: ({ organizationId, clusterId }: { organizationId: string; clusterId: string }) => ({
+    queryKey: [organizationId, clusterId],
+    async queryFn() {
+      const response = await clusterApi.getOrganizationCloudProviderInfo(organizationId, clusterId)
+      return response.data
+    },
+  }),
 })
 
 interface DeleteClusterProps {
