@@ -16,7 +16,7 @@ describe('PageSettingsNetwork', () => {
           description: 'desc',
         },
       ],
-      loading: 'loaded',
+      loading: false,
     }
   })
   it('should render successfully', () => {
