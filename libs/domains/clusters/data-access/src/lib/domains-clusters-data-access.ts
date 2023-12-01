@@ -52,6 +52,18 @@ export const mutations = {
     const response = await clusterApi.createCluster(organizationId, clusterRequest)
     return response.data
   },
+  async editCluster({
+    organizationId,
+    clusterId,
+    clusterRequest,
+  }: {
+    organizationId: string
+    clusterId: string
+    clusterRequest: ClusterRequest
+  }) {
+    const response = await clusterApi.editCluster(organizationId, clusterId, clusterRequest)
+    return response.data
+  },
   async deleteCluster({ organizationId, clusterId, clusterDeleteMode }: DeleteClusterProps) {
     const response = await clusterApi.deleteCluster(organizationId, clusterId, clusterDeleteMode)
     return response.data
