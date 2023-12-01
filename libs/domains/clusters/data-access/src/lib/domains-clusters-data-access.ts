@@ -1,5 +1,5 @@
 import { createQueryKeys } from '@lukemorales/query-key-factory'
-import { type ClusterDeleteMode, ClustersApi } from 'qovery-typescript-axios'
+import { type ClusterDeleteMode, type ClusterRequest, ClustersApi } from 'qovery-typescript-axios'
 
 const clusterApi = new ClustersApi()
 
@@ -48,6 +48,10 @@ interface DeleteClusterProps {
 }
 
 export const mutations = {
+  async createCluster({ organizationId, clusterRequest }: { organizationId: string; clusterRequest: ClusterRequest }) {
+    const response = await clusterApi.createCluster(organizationId, clusterRequest)
+    return response.data
+  },
   async deleteCluster({ organizationId, clusterId, clusterDeleteMode }: DeleteClusterProps) {
     const response = await clusterApi.deleteCluster(organizationId, clusterId, clusterDeleteMode)
     return response.data
