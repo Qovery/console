@@ -25,6 +25,13 @@ export const clusters = createQueryKeys('clusters', {
       return response.data
     },
   }),
+  routingTable: ({ organizationId, clusterId }: { organizationId: string; clusterId: string }) => ({
+    queryKey: [organizationId, clusterId],
+    async queryFn() {
+      const response = await clusterApi.getRoutingTable(organizationId, clusterId)
+      return response.data.results
+    },
+  }),
 })
 
 interface DeleteClusterProps {
