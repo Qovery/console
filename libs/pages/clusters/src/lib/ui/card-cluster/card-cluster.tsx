@@ -1,13 +1,12 @@
-import { ClusterStateEnum } from 'qovery-typescript-axios'
+import { type Cluster, ClusterStateEnum } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
 import { ClusterType, useClusterStatus } from '@qovery/domains/clusters/feature'
 import { ClusterButtonsActions } from '@qovery/shared/console-shared'
-import { type ClusterEntity } from '@qovery/shared/interfaces'
 import { Badge, Icon, Skeleton, StatusChip } from '@qovery/shared/ui'
 import { getStatusClusterMessage } from '@qovery/shared/util-js'
 
 export interface CardClusterProps {
-  cluster: ClusterEntity
+  cluster: Cluster
   organizationId: string
 }
 
@@ -56,7 +55,7 @@ export function CardCluster({ organizationId, cluster }: CardClusterProps) {
             <Skeleton height={12} width={100} show={isClusterStatusLoading}>
               <p
                 data-testid="status-message"
-                className={`text-2xs mt-0.5 font-medium ${getColorForStatus(cluster.extendedStatus?.status?.status)}`}
+                className={`text-2xs mt-0.5 font-medium ${getColorForStatus(clusterStatus?.status)}`}
               >
                 {getStatusClusterMessage(clusterStatus?.status, clusterStatus?.is_deployed)}
               </p>
