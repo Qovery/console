@@ -1,7 +1,10 @@
 import { StateEnum } from 'qovery-typescript-axios'
+import * as clustersDomain from '@qovery/domains/clusters/feature'
 import { clusterFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ClusterButtonsActions, type ClusterButtonsActionsProps } from './cluster-buttons-actions'
+
+const useClusterStatusSpy = jest.spyOn(clustersDomain, 'useClusterStatus') as jest.Mock
 
 const mockCluster = clusterFactoryMock(1)[0]
 const props: ClusterButtonsActionsProps = {
@@ -19,12 +22,12 @@ describe('ClusterButtonsActionsFeature', () => {
   })
 
   it('should render actions for DEPLOYED status', async () => {
-    props.cluster.extendedStatus = {
-      loadingStatus: 'loaded',
-      status: {
+    useClusterStatusSpy.mockReturnValue({
+      data: {
         status: StateEnum.DEPLOYED,
       },
-    }
+      isLoading: false,
+    })
     const { userEvent } = renderWithProviders(<ClusterButtonsActions {...props} />)
     const actions = screen.getAllByTestId('element')
 
@@ -39,13 +42,13 @@ describe('ClusterButtonsActionsFeature', () => {
   })
 
   it('should render actions for STOPPED status', async () => {
-    props.cluster.extendedStatus = {
-      loadingStatus: 'loaded',
-      status: {
+    useClusterStatusSpy.mockReturnValue({
+      data: {
         is_deployed: true,
         status: StateEnum.STOPPED,
       },
-    }
+      isLoading: false,
+    })
 
     const { userEvent } = renderWithProviders(<ClusterButtonsActions {...props} />)
     const actions = screen.getAllByTestId('element')
@@ -60,13 +63,13 @@ describe('ClusterButtonsActionsFeature', () => {
   })
 
   it('should render actions for READY status', async () => {
-    props.cluster.extendedStatus = {
-      loadingStatus: 'loaded',
-      status: {
+    useClusterStatusSpy.mockReturnValue({
+      data: {
         is_deployed: false,
         status: StateEnum.READY,
       },
-    }
+      isLoading: false,
+    })
 
     const { userEvent } = renderWithProviders(<ClusterButtonsActions {...props} />)
     const actions = screen.getAllByTestId('element')
