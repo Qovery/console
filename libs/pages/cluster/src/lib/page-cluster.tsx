@@ -1,10 +1,9 @@
-import { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
-import { fetchClusterStatus, postClusterActionsDeploy, selectClusterById } from '@qovery/domains/organization'
-import { type ClusterEntity } from '@qovery/shared/interfaces'
+import { useCluster } from '@qovery/domains/clusters/feature'
+import { postClusterActionsDeploy } from '@qovery/domains/organization'
 import { CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
-import { type AppDispatch, type RootState } from '@qovery/state/store'
+import { type AppDispatch } from '@qovery/state/store'
 import { ROUTER_CLUSTER } from './router/router'
 import Container from './ui/container/container'
 
@@ -12,9 +11,7 @@ export function PagesCluster() {
   const { organizationId = '', clusterId = '' } = useParams()
   const dispatch = useDispatch<AppDispatch>()
 
-  const cluster = useSelector<RootState, ClusterEntity | undefined>((state: RootState) =>
-    selectClusterById(state, clusterId)
-  )
+  const { data: cluster } = useCluster({ organizationId, clusterId })
 
   const deployCluster = () =>
     cluster &&
@@ -24,10 +21,6 @@ export function PagesCluster() {
         clusterId: cluster.id,
       })
     )
-
-  useEffect(() => {
-    if (!cluster?.extendedStatus) dispatch(fetchClusterStatus({ organizationId, clusterId }))
-  }, [dispatch, organizationId, clusterId, cluster])
 
   return (
     <Container cluster={cluster} deployCluster={deployCluster}>
