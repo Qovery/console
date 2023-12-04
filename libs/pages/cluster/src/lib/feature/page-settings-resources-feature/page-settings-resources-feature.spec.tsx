@@ -10,13 +10,11 @@ import {
 } from '__tests__/utils/setup-jest'
 import { KubernetesEnum } from 'qovery-typescript-axios'
 import * as clustersDomains from '@qovery/domains/clusters/feature'
-import * as storeOrganization from '@qovery/domains/organization'
 import { clusterFactoryMock } from '@qovery/shared/factories'
 import PageSettingsResourcesFeature, { handleSubmit } from './page-settings-resources-feature'
 
-import SpyInstance = jest.SpyInstance
-
 const useClusterMockSpy = jest.spyOn(clustersDomains, 'useCluster') as jest.Mock
+const useEditClusterMockSpy = jest.spyOn(clustersDomains, 'useEditCluster') as jest.Mock
 
 const mockInstanceType = [
   {
@@ -70,10 +68,14 @@ jest.mock('react-router-dom', () => ({
 }))
 
 describe('PageSettingsResourcesFeature', () => {
+  const editCluster = jest.fn()
   beforeEach(() => {
     useClusterMockSpy.mockReturnValue({
       data: mockCluster,
       isLoading: false,
+    })
+    useEditClusterMockSpy.mockReturnValue({
+      mutateAsync: editCluster,
     })
     mockDispatch.mockImplementation(() => ({
       unwrap: () =>
@@ -100,13 +102,6 @@ describe('PageSettingsResourcesFeature', () => {
   })
 
   it('should submit the values', async () => {
-    const editClusterSpy: SpyInstance = jest.spyOn(storeOrganization, 'editCluster')
-    mockDispatch.mockImplementation(() => ({
-      unwrap: () =>
-        Promise.resolve({
-          data: {},
-        }),
-    }))
     const { baseElement } = render(<PageSettingsResourcesFeature />)
     const button = getByTestId(baseElement, 'submit-button')
 
@@ -133,9 +128,11 @@ describe('PageSettingsResourcesFeature', () => {
     await waitFor(() => {
       button.click()
 
-      expect(editClusterSpy.mock.calls[0][0].organizationId).toStrictEqual('0')
-      expect(editClusterSpy.mock.calls[0][0].clusterId).toStrictEqual(mockCluster.id)
-      expect(editClusterSpy.mock.calls[0][0].data).toStrictEqual(cloneCluster)
+      expect(editCluster).toBeCalledWith({
+        organizationId: '0',
+        clusterId: mockCluster.id,
+        clusterRequest: cloneCluster,
+      })
     })
   })
 })
