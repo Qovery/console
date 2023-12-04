@@ -1,8 +1,6 @@
 import { CloudProviderEnum, KubernetesEnum } from 'qovery-typescript-axios'
-import { useSelector } from 'react-redux'
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
-import { selectClusterById } from '@qovery/domains/organization'
-import { type ClusterEntity } from '@qovery/shared/interfaces'
+import { useCluster } from '@qovery/domains/clusters/feature'
 import {
   CLUSTER_SETTINGS_ADVANCED_SETTINGS_URL,
   CLUSTER_SETTINGS_CREDENTIALS_URL,
@@ -17,7 +15,6 @@ import {
 } from '@qovery/shared/routes'
 import { IconAwesomeEnum } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { type RootState } from '@qovery/state/store'
 import { ROUTER_CLUSTER_SETTINGS } from '../../router/router'
 import PageSettings from '../../ui/page-settings/page-settings'
 
@@ -26,9 +23,7 @@ export function PageSettingsFeature() {
 
   useDocumentTitle('Cluster - Settings')
 
-  const cluster = useSelector<RootState, ClusterEntity | undefined>((state: RootState) =>
-    selectClusterById(state, clusterId)
-  )
+  const { data: cluster } = useCluster({ organizationId, clusterId })
 
   const pathSettings = CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL
 
