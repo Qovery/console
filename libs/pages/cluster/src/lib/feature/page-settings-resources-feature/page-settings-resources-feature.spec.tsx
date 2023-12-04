@@ -9,11 +9,14 @@ import {
   waitFor,
 } from '__tests__/utils/setup-jest'
 import { KubernetesEnum } from 'qovery-typescript-axios'
+import * as clustersDomains from '@qovery/domains/clusters/feature'
 import * as storeOrganization from '@qovery/domains/organization'
 import { clusterFactoryMock } from '@qovery/shared/factories'
 import PageSettingsResourcesFeature, { handleSubmit } from './page-settings-resources-feature'
 
 import SpyInstance = jest.SpyInstance
+
+const useClusterMockSpy = jest.spyOn(clustersDomains, 'useCluster') as jest.Mock
 
 const mockInstanceType = [
   {
@@ -51,15 +54,6 @@ jest.mock('@qovery/domains/organization', () => {
   return {
     ...jest.requireActual('@qovery/domains/organization'),
     editCluster: jest.fn(),
-    getClusterState: () => ({
-      loadingStatus: 'loaded',
-      ids: [mockCluster.id],
-      entities: {
-        [mockCluster.id]: mockCluster,
-      },
-      error: null,
-    }),
-    selectClusterById: () => mockCluster,
     selectInstancesTypes: () => mockInstanceType,
   }
 })
@@ -77,6 +71,10 @@ jest.mock('react-router-dom', () => ({
 
 describe('PageSettingsResourcesFeature', () => {
   beforeEach(() => {
+    useClusterMockSpy.mockReturnValue({
+      data: mockCluster,
+      isLoading: false,
+    })
     mockDispatch.mockImplementation(() => ({
       unwrap: () =>
         Promise.resolve({
