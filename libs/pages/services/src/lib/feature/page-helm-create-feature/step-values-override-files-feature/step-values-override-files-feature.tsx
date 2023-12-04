@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { Controller, FormProvider } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
@@ -31,15 +30,12 @@ import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
 import { useHelmCreateContext } from '../page-helm-create-feature'
 
-type ValuesOverrideTypes = 'GIT_REPOSITORY' | 'YAML' | 'NONE'
-
 export function StepValuesOverrideFilesFeature() {
   useDocumentTitle('General - Values override as file')
 
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const { generalForm, valuesOverrideFileForm, setCurrentStep } = useHelmCreateContext()
   const { mutateAsync: createHelmDefaultValues, isLoading: isLoadingHelmDefaultValues } = useCreateHelmDefaultValues()
-  const [currentTab, setCurrentTab] = useState<ValuesOverrideTypes>('GIT_REPOSITORY')
   const navigate = useNavigate()
   setCurrentStep(2)
 
@@ -108,8 +104,23 @@ export function StepValuesOverrideFilesFeature() {
     }
   }
 
+  const watchFieldType = valuesOverrideFileForm.watch('type')
   const watchFieldGitProvider = valuesOverrideFileForm.watch('provider')
   const watchFieldGitRepository = valuesOverrideFileForm.watch('repository')
+
+  const disabledContinueButton = () => {
+    return match(watchFieldType)
+      .with('GIT_REPOSITORY', () => {
+        const { provider, repository, branch, paths } = valuesOverrideFileForm.watch()
+        return !provider || !repository || !branch || !paths
+      })
+      .with('YAML', () => {
+        const { content } = valuesOverrideFileForm.watch()
+        return !content
+      })
+      .with('NONE', () => false)
+      .exhaustive()
+  }
 
   return (
     <FunnelFlowBody helpSection={funnelCardHelp}>
@@ -169,26 +180,33 @@ export function StepValuesOverrideFilesFeature() {
             See default values.yaml <Icon className="text-xs ml-2" name={IconAwesomeEnum.ARROW_UP_RIGHT_FROM_SQUARE} />
           </Button>
           <form onSubmit={onSubmit} className="w-full">
-            <InputSelect
-              label="File source"
-              value={currentTab}
-              onChange={(event) => setCurrentTab(event as ValuesOverrideTypes)}
-              options={[
-                {
-                  label: 'Git repository',
-                  value: 'GIT_REPOSITORY',
-                },
-                {
-                  label: 'Raw YAML',
-                  value: 'YAML',
-                },
-                {
-                  label: 'None',
-                  value: 'NONE',
-                },
-              ]}
+            <Controller
+              name="type"
+              control={valuesOverrideFileForm.control}
+              defaultValue="GIT_REPOSITORY"
+              render={({ field }) => (
+                <InputSelect
+                  label="File source"
+                  value={field.value}
+                  onChange={field.onChange}
+                  options={[
+                    {
+                      label: 'Git repository',
+                      value: 'GIT_REPOSITORY',
+                    },
+                    {
+                      label: 'Raw YAML',
+                      value: 'YAML',
+                    },
+                    {
+                      label: 'None',
+                      value: 'NONE',
+                    },
+                  ]}
+                />
+              )}
             />
-            {currentTab === 'GIT_REPOSITORY' && (
+            {watchFieldType === 'GIT_REPOSITORY' && (
               <Section>
                 <Heading className="mt-10 mb-2">Override from repository</Heading>
                 <p className="text-sm text-neutral-350 mb-6">
@@ -228,7 +246,7 @@ export function StepValuesOverrideFilesFeature() {
                 </div>
               </Section>
             )}
-            {currentTab === 'YAML' && (
+            {watchFieldType === 'YAML' && (
               <Section>
                 <Heading className="mt-10 mb-2">Override with raw Yaml</Heading>
                 <p className="text-sm text-neutral-350 mb-6">
@@ -236,7 +254,11 @@ export function StepValuesOverrideFilesFeature() {
                   Qovery and can be updated later within the settings but no history will be retained.
                 </p>
                 <div className="flex flex-col gap-3">
-                  <ValuesOverrideYamlSetting source={source} />
+                  <ValuesOverrideYamlSetting
+                    content={valuesOverrideFileForm.getValues('content')}
+                    onSubmit={(value) => valuesOverrideFileForm.setValue('content', value)}
+                    source={source}
+                  />
                 </div>
               </Section>
             )}
@@ -245,11 +267,7 @@ export function StepValuesOverrideFilesFeature() {
                 Back
               </Button>
               <div className="flex gap-3">
-                <Button
-                  type="submit"
-                  size="lg"
-                  disabled={currentTab !== 'NONE' ? !valuesOverrideFileForm.formState.isValid : false}
-                >
+                <Button type="submit" size="lg" disabled={disabledContinueButton()}>
                   Continue
                 </Button>
               </div>

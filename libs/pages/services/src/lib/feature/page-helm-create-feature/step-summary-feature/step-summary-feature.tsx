@@ -6,9 +6,10 @@ import {
   SERVICES_CREATION_GENERAL_URL,
   SERVICES_GENERAL_URL,
   SERVICES_HELM_CREATION_URL,
+  SERVICES_HELM_CREATION_VALUES_STEP_1_URL,
   SERVICES_URL,
 } from '@qovery/shared/routes'
-import { Button, FunnelFlowBody, Heading, Icon, IconAwesomeEnum, Section } from '@qovery/shared/ui'
+import { Button, FunnelFlowBody, Heading, Icon, IconAwesomeEnum, Section, truncateText } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
 import { useHelmCreateContext } from '../page-helm-create-feature'
@@ -19,8 +20,9 @@ export function StepSummaryFeature() {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const navigate = useNavigate()
 
-  const { generalForm, setCurrentStep } = useHelmCreateContext()
+  const { generalForm, valuesOverrideFileForm, setCurrentStep } = useHelmCreateContext()
   const generalData = generalForm.getValues()
+  const valuesOverrideFileData = valuesOverrideFileForm.getValues()
   setCurrentStep(3)
 
   const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_HELM_CREATION_URL}`
@@ -37,6 +39,7 @@ export function StepSummaryFeature() {
             url: buildGitRepoUrl(gitToken?.type ?? generalData.provider ?? '', generalData.repository),
             branch: generalData.branch,
             root_path: generalData.root_path,
+            git_token_id: gitToken?.id,
           },
         }
       })
@@ -47,6 +50,37 @@ export function StepSummaryFeature() {
           chart_version: generalData.chart_version,
         },
       }))
+      .exhaustive()
+
+    const valuesOverrideFile = match(valuesOverrideFileData.type)
+      .with('GIT_REPOSITORY', () => {
+        const gitToken = getGitTokenValue(valuesOverrideFileData.provider ?? '')
+
+        return {
+          git_repository: {
+            url: buildGitRepoUrl(
+              gitToken?.type ?? valuesOverrideFileData.provider ?? '',
+              valuesOverrideFileData.repository!
+            ),
+            branch: valuesOverrideFileData.branch!,
+            git_token_id: gitToken?.id,
+            paths: valuesOverrideFileData.paths?.split(',') ?? [],
+          },
+        }
+      })
+      .with('YAML', () => {
+        return {
+          raw: {
+            values: [
+              {
+                name: 'override',
+                content: valuesOverrideFileData.content!,
+              },
+            ],
+          },
+        }
+      })
+      .with('NONE', () => null)
       .exhaustive()
 
     try {
@@ -60,7 +94,9 @@ export function StepSummaryFeature() {
           arguments: JSON.parse(generalData.arguments),
           timeout_sec: generalData.timeout_sec,
           auto_deploy: generalData.auto_deploy,
-          values_override: {},
+          values_override: {
+            file: valuesOverrideFile,
+          },
         },
       })
       navigate(SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_GENERAL_URL)
@@ -77,7 +113,7 @@ export function StepSummaryFeature() {
           The setup is done, you can now create and deploy your Helm chart.
         </p>
 
-        <div className="flex p-4 w-full border rounded border-neutral-250 bg-neutral-100 mb-10">
+        <div className="flex p-4 w-full border rounded border-neutral-250 bg-neutral-100 mb-2">
           <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
           <div className="flex-grow mr-2">
             <div className="text-sm text-neutral-400 font-bold mb-5">Helm General Data</div>
@@ -159,7 +195,50 @@ export function StepSummaryFeature() {
           </Button>
         </div>
 
-        <div className="flex justify-between">
+        {valuesOverrideFileData.type !== 'NONE' && (
+          <div className="flex p-4 w-full border rounded border-neutral-250 bg-neutral-100">
+            <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
+            <div className="flex-grow mr-2">
+              <div className="text-sm text-neutral-400 font-bold mb-5">Variables</div>
+
+              {valuesOverrideFileData.type === 'GIT_REPOSITORY' && (
+                <ul className="text-neutral-350 text-sm list-none">
+                  <li>
+                    <span className="font-medium">From Git Provider:</span> {valuesOverrideFileData.provider}
+                  </li>
+                  <li>
+                    <span className="font-medium">Repository:</span> {valuesOverrideFileData.repository}
+                  </li>
+                  <li>
+                    <span className="font-medium">Branch:</span> {valuesOverrideFileData.branch}
+                  </li>
+                  <li>
+                    <span className="font-medium">Overrides path:</span> {valuesOverrideFileData.paths}
+                  </li>
+                </ul>
+              )}
+
+              {valuesOverrideFileData.type === 'YAML' && (
+                <ul className="text-neutral-350 text-sm list-none">
+                  <li>
+                    <span className="font-medium">From YAML:</span> {truncateText(valuesOverrideFileData.content!, 50)}
+                    ...
+                  </li>
+                </ul>
+              )}
+            </div>
+
+            <Button
+              color="neutral"
+              variant="surface"
+              onClick={() => navigate(pathCreate + SERVICES_HELM_CREATION_VALUES_STEP_1_URL)}
+            >
+              <Icon name={IconAwesomeEnum.WHEEL} />
+            </Button>
+          </div>
+        )}
+
+        <div className="flex justify-between mt-10">
           <Button type="button" size="lg" variant="surface" color="neutral" onClick={() => navigate(-1)}>
             Back
           </Button>

@@ -1,17 +1,32 @@
 import { type HelmRequestAllOfSource } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
-import { BlockContent, CodeEditor, Icon, IconAwesomeEnum, LoaderSpinner, ModalCrud } from '@qovery/shared/ui'
+import {
+  BlockContent,
+  CodeEditor,
+  CopyToClipboard,
+  Icon,
+  IconAwesomeEnum,
+  LoaderSpinner,
+  ModalCrud,
+} from '@qovery/shared/ui'
 import useCreateHelmDefaultValues from '../hooks/use-create-helm-default-values/use-create-helm-default-values'
 
 export interface ValuesOverrideYamlModalProps {
   environmentId: string
   source: HelmRequestAllOfSource
-  onSubmit: (value: string) => void
+  onSubmit: (value?: string) => void
   onClose: () => void
+  content?: string
 }
 
-export function ValuesOverrideYamlModal({ source, environmentId, onClose, onSubmit }: ValuesOverrideYamlModalProps) {
+export function ValuesOverrideYamlModal({
+  source,
+  environmentId,
+  onClose,
+  onSubmit,
+  content,
+}: ValuesOverrideYamlModalProps) {
   const {
     data: helmDefaultValues,
     mutateAsync: createHelmDefaultValues,
@@ -21,6 +36,9 @@ export function ValuesOverrideYamlModal({ source, environmentId, onClose, onSubm
 
   const methods = useForm({
     mode: 'onChange',
+    defaultValues: {
+      content,
+    },
   })
 
   useEffect(() => {
@@ -42,13 +60,14 @@ export function ValuesOverrideYamlModal({ source, environmentId, onClose, onSubm
 
   const onSubmitValue = methods.handleSubmit(async ({ content }) => {
     onSubmit(content)
+    onClose()
   })
 
   return (
     <FormProvider {...methods}>
       <ModalCrud title="Raw YAML" onSubmit={onSubmitValue} onClose={onClose} submitLabel="Save">
         <div className="flex h-full">
-          <BlockContent title="Raw YAML" className="mb-0 rounded-r-none border-r-0" classNameContent="p-0">
+          <BlockContent title="Override" className="mb-0 rounded-r-none border-r-0" classNameContent="p-0">
             <Controller
               name="content"
               control={methods.control}
@@ -63,7 +82,12 @@ export function ValuesOverrideYamlModal({ source, environmentId, onClose, onSubm
               )}
             />
           </BlockContent>
-          <BlockContent title="Default values.yaml" className="mb-0 rounded-l-none" classNameContent="p-0">
+          <BlockContent
+            title="Default values.yaml"
+            className="mb-0 rounded-l-none"
+            classNameContent="p-0"
+            headRight={<CopyToClipboard className="text-xs hover:text-neutral-400" content={helmDefaultValues!} />}
+          >
             {isErrorHelmDefaultValues && (
               <div className="text-center py-14 px-5">
                 <Icon name={IconAwesomeEnum.WAVE_PULSE} className="text-neutral-350" />
