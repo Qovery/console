@@ -10,65 +10,99 @@ exports[`ValuesOverrideYamlModal should match snapshot 1`] = `
       class="p-6"
     >
       <h2
-        class="h4 text-neutral-400 mb-2 max-w-sm"
+        class="h4 text-neutral-400 max-w-sm truncate"
       >
         Raw YAML
       </h2>
-      <div
-        class="text-neutral-350 text-sm mb-6"
+      <form
+        class="mt-6"
       >
-        <span
-          class="link inline cursor-pointer text-sky-500 text-sm ml-1 truncate max-w-[250px]"
-          data-state="closed"
-          data-testid="copy-cta"
-        >
-          my-cluster
-           
-          <span
-            class="icon-solid-copy shrink-0 "
-            role="img"
-          />
-        </span>
-      </div>
-      <form>
         <div
-          class="mb-5 "
-          data-testid="input-small-wrapper"
+          class="flex h-full"
         >
           <div
-            class="input input--small flex-grow   "
-            data-testid="input"
+            class="border border-neutral-250 bg-neutral-100 rounded w-full mb-0 rounded-r-none border-r-0"
+            data-testid="block-content"
           >
-            <label
-              class="hidden"
-            />
-            <input
-              class="absolute text-sm top-0 left-0 h-full w-full text-neutral-400 placeholder:text-neutral-350 rounded px-2 "
-              data-testid="input-value"
-              name="name"
-              placeholder="Enter the current name"
-              type="text"
-              value=""
-            />
+            <div
+              class="flex items-center justify-between h-9 px-4 border-b border-neutral-250"
+            >
+              <h2
+                class="font-medium text-neutral-400 text-ssm"
+              >
+                Override
+              </h2>
+            </div>
+            <div
+              class="p-0"
+            >
+              <section
+                style="display: flex; position: relative; text-align: initial; width: 100%; height: calc(100vh  - 254px);"
+              >
+                <div
+                  style="display: flex; height: 100%; width: 100%; justify-content: center; align-items: center;"
+                >
+                  <div
+                    class="aspect-square border-2  rounded-full border-solid border-r-neutral-500 animate-spin w-4 "
+                    data-testid="spinner"
+                  />
+                </div>
+                <div
+                  style="width: 100%; display: none;"
+                />
+              </section>
+            </div>
+          </div>
+          <div
+            class="border border-neutral-250 bg-neutral-100 rounded w-full mb-0 rounded-l-none"
+            data-testid="block-content"
+          >
+            <div
+              class="flex items-center justify-between h-9 px-4 border-b border-neutral-250"
+            >
+              <h2
+                class="font-medium text-neutral-400 text-ssm"
+              >
+                Default values.yaml
+              </h2>
+              <span
+                class="bigger-click-zone cursor-pointer text-xs hover:text-neutral-400"
+                data-state="closed"
+                data-testid="copy-container"
+              >
+                <span
+                  class="icon-solid-copy shrink-0 "
+                  role="img"
+                />
+              </span>
+            </div>
+            <div
+              class="p-0"
+            >
+              <section
+                style="display: flex; position: relative; text-align: initial; width: 100%; height: calc(100vh  - 254px);"
+              >
+                <div
+                  style="display: flex; height: 100%; width: 100%; justify-content: center; align-items: center;"
+                >
+                  <div
+                    class="aspect-square border-2  rounded-full border-solid border-r-neutral-500 animate-spin w-4 "
+                    data-testid="spinner"
+                  />
+                </div>
+                <div
+                  style="width: 100%; display: none;"
+                />
+              </section>
+            </div>
           </div>
         </div>
-        <section
-          style="display: flex; position: relative; text-align: initial; width: 100%; height: 100%;"
-        >
-          <div
-            style="display: flex; height: 100%; width: 100%; justify-content: center; align-items: center;"
-          >
-            Loading...
-          </div>
-          <div
-            style="width: 100%; display: none;"
-          />
-        </section>
         <div
-          class="flex gap-3 justify-end"
+          class="flex gap-3 justify-end mt-6"
         >
           <button
-            class="btn btn--regular btn--stroked btn--no-min-w "
+            class="btn btn--xlarge btn--stroked btn--no-min-w "
+            data-testid="cancel-button"
             type="button"
           >
             <span>
@@ -76,11 +110,13 @@ exports[`ValuesOverrideYamlModal should match snapshot 1`] = `
             </span>
           </button>
           <button
-            class="btn btn--regular btn--basic btn--no-min-w "
+            class="btn btn--xlarge btn--basic btn--disabled btn--no-min-w "
+            data-testid="submit-button"
+            disabled=""
             type="submit"
           >
             <span>
-              Confirm
+              Save
             </span>
           </button>
         </div>

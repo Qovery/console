@@ -4,7 +4,7 @@ import { ModalContext } from '../modal-root'
 export interface UseModalProps {
   content: ReactNode
   options?: {
-    width: number
+    width?: number
     fullScreen?: boolean
   }
 }

@@ -25,7 +25,6 @@ export function ValuesOverrideYamlSetting({ onSubmit, content, source }: ValuesO
         />
       ),
       options: {
-        width: 0,
         fullScreen: true,
       },
     })

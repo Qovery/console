@@ -9,7 +9,7 @@ export interface ModalProps {
   trigger?: ReactNode
   defaultOpen?: boolean
   buttonClose?: boolean
-  width?: number
+  width?: number | string
   fullScreen?: boolean
   className?: string
   externalOpen?: boolean

@@ -1,9 +1,9 @@
-import { type Dispatch, type ReactNode, type SetStateAction, createContext, useState } from 'react'
+import { type Dispatch, type ReactNode, type SetStateAction, createContext, useEffect, useState } from 'react'
 import ModalAlert from '../modal-alert/modal-alert'
 import Modal from './modal'
 
 interface ModalOptions {
-  width: number
+  width?: number
   fullScreen?: boolean
 }
 
@@ -50,12 +50,17 @@ interface ModalProviderProps {
 export const ModalProvider = (props: ModalProviderProps) => {
   const [openModal, setOpenModal] = useState(false)
   const [contentModal, setContentModal] = useState(<></>)
-  const [optionsModal, setOptionsModal] = useState({
-    width: 488,
-  })
+  const [optionsModal, setOptionsModal] = useState({})
   const [alertClickOutside, enableAlertClickOutside] = useState(false)
   const [modalAlertOpen, setModalAlertOpen] = useState(false)
   const [alertModalChoice, setAlertModalChoice] = useState<boolean | undefined>(undefined)
+
+  // Reset modal options when the modal is closed
+  useEffect(() => {
+    if (!openModal) {
+      setOptionsModal(defaultContext.optionsModal)
+    }
+  }, [openModal])
 
   return (
     <ModalContext.Provider
