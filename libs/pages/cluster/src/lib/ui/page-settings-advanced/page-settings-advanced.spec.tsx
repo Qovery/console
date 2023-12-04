@@ -27,7 +27,7 @@ const props: PageSettingsAdvancedProps = {
   discardChanges: jest.fn(),
   onSubmit: jest.fn(),
   defaultAdvancedSettings: defaultAdvancedSetting,
-  loading: 'loaded',
+  loading: false,
   advancedSettings: undefined,
 }
 

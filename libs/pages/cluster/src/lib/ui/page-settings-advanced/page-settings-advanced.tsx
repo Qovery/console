@@ -2,7 +2,6 @@ import equal from 'fast-deep-equal'
 import { type ClusterAdvancedSettings } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { type AdvancedSettings, type LoadingStatus } from '@qovery/shared/interfaces'
 import {
   CopyToClipboard,
   HelpSection,
@@ -17,9 +16,9 @@ import {
 
 export interface PageSettingsAdvancedProps {
   keys?: string[]
-  defaultAdvancedSettings?: AdvancedSettings
-  advancedSettings?: AdvancedSettings
-  loading: LoadingStatus
+  defaultAdvancedSettings?: ClusterAdvancedSettings
+  advancedSettings?: ClusterAdvancedSettings
+  loading: boolean
   onSubmit?: () => void
   discardChanges: () => void
 }
@@ -159,7 +158,7 @@ export function PageSettingsAdvanced(props: PageSettingsAdvancedProps) {
 
         <form onSubmit={props.onSubmit}>
           <div className="relative">
-            {(!props.loading || props.loading === 'loading') && props.keys?.length === 0 ? (
+            {props.loading && props.keys?.length === 0 ? (
               <div className="flex justify-center">
                 <LoaderSpinner className="w-6" />
               </div>
@@ -171,7 +170,7 @@ export function PageSettingsAdvanced(props: PageSettingsAdvancedProps) {
               onSubmit={props.onSubmit}
               onReset={props.discardChanges}
               disabledValidation={!formState.isValid}
-              loading={props.loading === 'loading'}
+              loading={props.loading}
             />
           </div>
         </form>

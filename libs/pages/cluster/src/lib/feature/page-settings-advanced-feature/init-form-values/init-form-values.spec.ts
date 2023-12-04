@@ -1,18 +1,11 @@
 import { type ClusterAdvancedSettings } from 'qovery-typescript-axios'
-import { applicationFactoryMock } from '@qovery/shared/factories'
-import { type ApplicationEntity, type ClusterEntity } from '@qovery/shared/interfaces'
 import { initFormValues } from './init-form-values'
 
-const mockCluster: ApplicationEntity = applicationFactoryMock(1)[0]
-const mockAdvancedSettings: Partial<ClusterAdvancedSettings> = {
+const mockAdvancedSettings: ClusterAdvancedSettings = {
   'registry.image_retention_time': 60,
   'aws.vpc.enable_s3_flow_logs': false,
   'aws.iam.admin_group': 'Admins',
   'cloud_provider.container_registry.tags': {},
-}
-mockCluster.advanced_settings = {
-  loadingStatus: 'loaded',
-  current_settings: mockAdvancedSettings,
 }
 
 describe('InitFormValues', () => {
@@ -25,7 +18,7 @@ describe('InitFormValues', () => {
           'aws.iam.admin_group',
           'cloud_provider.container_registry.tags',
         ],
-        mockCluster as ClusterEntity
+        mockAdvancedSettings
       )
     ).toStrictEqual({
       'registry.image_retention_time': '60',
