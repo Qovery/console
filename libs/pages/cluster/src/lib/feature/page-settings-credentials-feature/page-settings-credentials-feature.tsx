@@ -3,15 +3,12 @@ import {
   type ClusterCloudProviderInfoRequest,
   type ClusterCredentials,
 } from 'qovery-typescript-axios'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
-import { useDispatch } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { useClusterCloudProviderInfo } from '@qovery/domains/clusters/feature'
-import { postCloudProviderInfo, postClusterActionsDeploy } from '@qovery/domains/organization'
+import { useClusterCloudProviderInfo, useEditCloudProviderInfo } from '@qovery/domains/clusters/feature'
 import { useCloudProviderCredentials } from '@qovery/domains/organizations/feature'
 import { ToastEnum, toast } from '@qovery/shared/toast'
-import { type AppDispatch } from '@qovery/state/store'
 import PageSettingsCredentials from '../../ui/page-settings-credentials/page-settings-credentials'
 
 export const handleSubmit = (
@@ -33,9 +30,6 @@ export const handleSubmit = (
 
 export function PageSettingsCredentialsFeature() {
   const { organizationId = '', clusterId = '' } = useParams()
-  const dispatch = useDispatch<AppDispatch>()
-
-  const [loading, setLoading] = useState(false)
 
   const methods = useForm({
     mode: 'onChange',
@@ -49,31 +43,19 @@ export function PageSettingsCredentialsFeature() {
     organizationId,
     cloudProvider: clusterCloudProviderInfo?.cloud_provider,
   })
+  const { mutateAsync: editCloudProviderInfo, isLoading: isEditCloudProviderInfoLoading } = useEditCloudProviderInfo()
 
   const onSubmit = methods.handleSubmit((data) => {
     const findCredentials = credentials.find((credential) => credential.id === data['credentials'])
 
     if (data && clusterCloudProviderInfo && findCredentials) {
-      setLoading(true)
-
       const clusterCloudProviderInfoRequest = handleSubmit(data, credentials, clusterCloudProviderInfo)
 
-      const toasterCallback = () => {
-        if (clusterCloudProviderInfo) {
-          dispatch(postClusterActionsDeploy({ organizationId, clusterId }))
-        }
-      }
-
-      dispatch(
-        postCloudProviderInfo({
-          organizationId,
-          clusterId,
-          clusterCloudProviderInfo: clusterCloudProviderInfoRequest,
-          toasterCallback,
-        })
-      )
-        .unwrap()
-        .finally(() => setLoading(false))
+      editCloudProviderInfo({
+        organizationId,
+        clusterId,
+        cloudProviderInfoRequest: clusterCloudProviderInfoRequest,
+      })
     } else {
       toast(ToastEnum.ERROR, 'Please select a credential')
     }
@@ -83,13 +65,13 @@ export function PageSettingsCredentialsFeature() {
     if (clusterCloudProviderInfo) {
       methods.setValue('credentials', clusterCloudProviderInfo.credentials?.id)
     }
-  }, [methods, organizationId, clusterId, dispatch, clusterCloudProviderInfo])
+  }, [methods, organizationId, clusterId, clusterCloudProviderInfo])
 
   return (
     <FormProvider {...methods}>
       <PageSettingsCredentials
         onSubmit={onSubmit}
-        loading={loading}
+        loading={isEditCloudProviderInfoLoading}
         cloudProvider={clusterCloudProviderInfo?.cloud_provider}
       />
     </FormProvider>
