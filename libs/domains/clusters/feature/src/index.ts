@@ -10,6 +10,7 @@ export * from './lib/hooks/use-cluster-advanced-settings/use-cluster-advanced-se
 export * from './lib/hooks/use-default-advanced-settings/use-default-advanced-settings'
 export * from './lib/hooks/use-create-cluster/use-create-cluster'
 export * from './lib/hooks/use-edit-cluster/use-edit-cluster'
+export * from './lib/hooks/use-edit-cluster-advanced-settings/use-edit-cluster-advanced-settings'
 export * from './lib/hooks/use-delete-cluster/use-delete-cluster'
 export * from './lib/hooks/use-deploy-cluster/use-deploy-cluster'
 export * from './lib/hooks/use-stop-cluster/use-stop-cluster'
