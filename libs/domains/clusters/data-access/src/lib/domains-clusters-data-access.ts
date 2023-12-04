@@ -1,6 +1,7 @@
 import { createQueryKeys } from '@lukemorales/query-key-factory'
 import {
   type ClusterAdvancedSettings,
+  type ClusterCloudProviderInfoRequest,
   type ClusterDeleteMode,
   type ClusterRequest,
   ClustersApi,
@@ -105,6 +106,22 @@ export const mutations = {
     clusterAdvancedSettings: ClusterAdvancedSettings
   }) {
     const response = await clusterApi.editClusterAdvancedSettings(organizationId, clusterId, clusterAdvancedSettings)
+    return response.data
+  },
+  async editCloudProviderInfo({
+    organizationId,
+    clusterId,
+    cloudProviderInfoRequest,
+  }: {
+    organizationId: string
+    clusterId: string
+    cloudProviderInfoRequest: ClusterCloudProviderInfoRequest
+  }) {
+    const response = await clusterApi.specifyClusterCloudProviderInfo(
+      organizationId,
+      clusterId,
+      cloudProviderInfoRequest
+    )
     return response.data
   },
 }
