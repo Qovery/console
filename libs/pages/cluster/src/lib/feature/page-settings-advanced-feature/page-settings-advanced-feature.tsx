@@ -1,12 +1,13 @@
 import { type ClusterAdvancedSettings } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useDispatch } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { useClusterAdvancedSettings, useDefaultAdvancedSettings } from '@qovery/domains/clusters/feature'
-import { editClusterAdvancedSettings, postClusterActionsDeploy } from '@qovery/domains/organization'
+import {
+  useClusterAdvancedSettings,
+  useDefaultAdvancedSettings,
+  useEditClusterAdvancedSettings,
+} from '@qovery/domains/clusters/feature'
 import { objectFlattener } from '@qovery/shared/util-js'
-import { type AppDispatch } from '@qovery/state/store'
 import PageSettingsAdvanced from '../../ui/page-settings-advanced/page-settings-advanced'
 import { initFormValues } from './init-form-values/init-form-values'
 
@@ -17,11 +18,11 @@ export function PageSettingsAdvancedFeature() {
     organizationId,
     clusterId,
   })
+  const { mutateAsync: editClusterAdvancedSettings } = useEditClusterAdvancedSettings()
   const { data: defaultAdvancedSettings } = useDefaultAdvancedSettings()
 
   const [keys, setKeys] = useState<string[]>([])
 
-  const dispatch = useDispatch<AppDispatch>()
   const methods = useForm({ mode: 'onChange' })
 
   // init the keys when cluster is updated
@@ -37,12 +38,6 @@ export function PageSettingsAdvancedFeature() {
       methods.reset(initFormValues(keys, clusterAdvancedSettings))
     }
   }, [clusterAdvancedSettings, keys, methods])
-
-  const toasterCallback = () => {
-    if (clusterAdvancedSettings) {
-      dispatch(postClusterActionsDeploy({ organizationId, clusterId }))
-    }
-  }
 
   const onSubmit = methods.handleSubmit((data) => {
     let dataFormatted = { ...data }
@@ -78,14 +73,11 @@ export function PageSettingsAdvancedFeature() {
     })
 
     if (clusterAdvancedSettings) {
-      dispatch(
-        editClusterAdvancedSettings({
-          organizationId,
-          clusterId,
-          settings: dataFormatted,
-          toasterCallback,
-        })
-      )
+      editClusterAdvancedSettings({
+        organizationId,
+        clusterId,
+        clusterAdvancedSettings: dataFormatted,
+      })
     }
   })
 
