@@ -39,6 +39,20 @@ export const clusters = createQueryKeys('clusters', {
       return response.data
     },
   }),
+  advancedSettings: ({ organizationId, clusterId }: { organizationId: string; clusterId: string }) => ({
+    queryKey: [organizationId, clusterId],
+    async queryFn() {
+      const response = await clusterApi.getClusterAdvancedSettings(organizationId, clusterId)
+      return response.data
+    },
+  }),
+  defaultAdvancedSettings: {
+    queryKey: null,
+    async queryFn() {
+      const response = await clusterApi.getDefaultClusterAdvancedSettings()
+      return response.data
+    },
+  },
 })
 
 interface DeleteClusterProps {
