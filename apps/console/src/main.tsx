@@ -1,6 +1,13 @@
 import { Auth0Provider } from '@auth0/auth0-react'
 import { Provider as TooltipProvider } from '@radix-ui/react-tooltip'
-import { MutationCache, QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import {
+  type Mutation,
+  MutationCache,
+  type Query,
+  QueryCache,
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query'
 import posthog from 'posthog-js'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
@@ -15,23 +22,37 @@ import { setupStore } from '@qovery/state/store'
 import App from './app/app'
 import { environment } from './environments/environment'
 
-interface Meta {
+type ToastArgs = {
+  status?: ToastEnum
+  title: string
+  description?: string
+  callback?: () => void
+  iconAction?: string
+  labelAction?: string
+  externalLink?: string
+}
+
+interface _QueryMeta {
+  notifyOnSuccess?: boolean | ((data: unknown, query: Query<unknown, unknown, unknown>) => ToastArgs) | ToastArgs
+  notifyOnError?: boolean | { title: string; description?: string }
+}
+
+interface _MutationMeta {
   notifyOnSuccess?:
     | boolean
-    | {
-        title: string
-        description?: string
-        callback?: () => void
-        iconAction?: string
-        labelAction?: string
-        externalLink?: string
-      }
+    | ((
+        data: unknown,
+        variables: unknown,
+        context: unknown,
+        mutation: Mutation<unknown, unknown, unknown>
+      ) => ToastArgs)
+    | ToastArgs
   notifyOnError?: boolean | { title: string; description?: string }
 }
 
 declare module '@tanstack/react-query' {
-  interface MutationMeta extends Meta {}
-  interface QueryMeta extends Meta {}
+  interface MutationMeta extends _MutationMeta {}
+  interface QueryMeta extends _QueryMeta {}
 }
 
 // posthog init
@@ -49,20 +70,23 @@ const queryClient = new QueryClient({
     },
   },
   mutationCache: new MutationCache({
-    onSuccess(data, _variables, _context, mutation) {
+    onSuccess(data, variables, context, mutation) {
       if (mutation.meta?.notifyOnSuccess) {
         if (mutation.meta.notifyOnSuccess === true) {
           toast(ToastEnum.SUCCESS, JSON.stringify(data))
         } else {
-          toast(
-            ToastEnum.SUCCESS,
-            mutation.meta.notifyOnSuccess.title,
-            mutation.meta.notifyOnSuccess.description,
-            mutation.meta.notifyOnSuccess.callback,
-            mutation.meta.notifyOnSuccess.iconAction,
-            mutation.meta.notifyOnSuccess.labelAction,
-            mutation.meta.notifyOnSuccess.externalLink
-          )
+          const {
+            status = ToastEnum.SUCCESS,
+            title,
+            description,
+            callback,
+            iconAction,
+            labelAction,
+            externalLink,
+          } = typeof mutation.meta.notifyOnSuccess === 'function'
+            ? mutation.meta.notifyOnSuccess(data, variables, context, mutation)
+            : mutation.meta.notifyOnSuccess
+          toast(status, title, description, callback, iconAction, labelAction, externalLink)
         }
       }
     },
@@ -82,15 +106,18 @@ const queryClient = new QueryClient({
         if (query.meta.notifyOnSuccess === true) {
           toast(ToastEnum.SUCCESS, JSON.stringify(data))
         } else {
-          toast(
-            ToastEnum.SUCCESS,
-            query.meta.notifyOnSuccess.title,
-            query.meta.notifyOnSuccess.description,
-            query.meta.notifyOnSuccess.callback,
-            query.meta.notifyOnSuccess.iconAction,
-            query.meta.notifyOnSuccess.labelAction,
-            query.meta.notifyOnSuccess.externalLink
-          )
+          const {
+            status = ToastEnum.SUCCESS,
+            title,
+            description,
+            callback,
+            iconAction,
+            labelAction,
+            externalLink,
+          } = typeof query.meta.notifyOnSuccess === 'function'
+            ? query.meta.notifyOnSuccess(data, query)
+            : query.meta.notifyOnSuccess
+          toast(status, title, description, callback, iconAction, labelAction, externalLink)
         }
       }
     },
