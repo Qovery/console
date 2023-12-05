@@ -53,27 +53,34 @@ export const cloudProviders = createQueryKeys('cloudProviders', {
       return response.data.results
     },
   }),
-  listInstanceTypes: ({
-    cloudProvider,
-    clusterType,
-    region,
-  }:
-    | {
-        cloudProvider: Extract<CloudProviderEnum, 'AWS'>
-        clusterType: keyof typeof KubernetesEnum
-        region: string
-      }
-    | {
-        cloudProvider: Extract<CloudProviderEnum, 'SCW'>
-        clusterType: Extract<KubernetesEnum, 'MANAGED'>
-        region: string
-      }) => ({
-    queryKey: [cloudProvider, clusterType],
+  listInstanceTypes: (
+    args:
+      | {
+          cloudProvider: Extract<CloudProviderEnum, 'AWS'>
+          clusterType: keyof typeof KubernetesEnum
+          region: string
+        }
+      | {
+          cloudProvider: Extract<CloudProviderEnum, 'SCW'>
+          clusterType: Extract<KubernetesEnum, 'MANAGED'>
+          region: string
+        }
+      | {
+          cloudProvider: Extract<CloudProviderEnum, 'DO'>
+          clusterType: Extract<KubernetesEnum, 'MANAGED'>
+        }
+  ) => ({
+    queryKey: [args.cloudProvider, args.clusterType],
     async queryFn() {
-      const response = await match({ cloudProvider, clusterType })
-        .with({ cloudProvider: 'AWS', clusterType: 'K3_S' }, () => cloudProviderApi.listAWSEc2InstanceType(region))
-        .with({ cloudProvider: 'AWS', clusterType: 'MANAGED' }, () => cloudProviderApi.listAWSEKSInstanceType(region))
-        .with({ cloudProvider: 'SCW' }, () => cloudProviderApi.listScalewayKapsuleInstanceType(region))
+      const response = await match(args)
+        .with({ cloudProvider: 'AWS', clusterType: 'K3_S' }, ({ region }) =>
+          cloudProviderApi.listAWSEc2InstanceType(region)
+        )
+        .with({ cloudProvider: 'AWS', clusterType: 'MANAGED' }, ({ region }) =>
+          cloudProviderApi.listAWSEKSInstanceType(region)
+        )
+        .with({ cloudProvider: 'SCW' }, ({ region }) => cloudProviderApi.listScalewayKapsuleInstanceType(region))
+        .with({ cloudProvider: 'DO' }, () => cloudProviderApi.listDOInstanceType())
         .exhaustive()
       return response.data.results
     },
