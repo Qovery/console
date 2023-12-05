@@ -1,10 +1,9 @@
 import { Chance } from 'chance'
-import { CloudProviderEnum, ClusterStateEnum } from 'qovery-typescript-axios'
-import { type ClusterEntity } from '@qovery/shared/interfaces'
+import { CloudProviderEnum, type Cluster, ClusterStateEnum } from 'qovery-typescript-axios'
 
 const chance = new Chance('123')
 
-export const clusterFactoryMock = (howMany: number, customCloudProvider?: CloudProviderEnum): ClusterEntity[] =>
+export const clusterFactoryMock = (howMany: number, customCloudProvider?: CloudProviderEnum): Cluster[] =>
   Array.from({ length: howMany }).map((_, index) => ({
     id: `${index}`,
     created_at: new Date().toString(),
@@ -20,37 +19,7 @@ export const clusterFactoryMock = (howMany: number, customCloudProvider?: CloudP
     is_default: false,
     version: '1.22',
     instance_type: chance.name(),
-    extendedStatus: {
-      loadingStatus: 'loaded',
-      status: {
-        id: index,
-        last_execution_id: chance.name(),
-        is_deployed: true,
-        status: chance.pickone(Object.values(ClusterStateEnum)),
-      },
-    },
     ssh_keys: [
       'ssh-rsa AAAAB3sdasC1yc2EAAAADAQABAAABAQDxtW6w8oPL8AR6asdYDk5DFfmqWoqrWHJp6QYq94c9PYdt9bhtxDfyMnNKDnyz4zWwdknqjyK6Wqwn3sjZYkwovkx+9KpxvpWozoIuMnUAJvVr0FT6Tf9/lo5ikUPkaG2tEhDYWL5BccVE5jES8LPsy6h/gIEWcGOmWcu9p9rQWWQpKGFkkuuaLHADfei3tf39o6s3o6p3nN549jTJ7ZIidXyA1CcA0s2KHtzc5y7ZEtfWeM17BEkXoCh67HnVNcmfrcvuYEUGdZVNxWse6inZuq5K2rEK/uBvIfyWWQ9tUWq7RhNxA9rX0KgETvNJxlI5X4cYaJK3crEL qovery@qovery.home',
     ],
-    cloudProviderInfo: {
-      loadingStatus: 'loaded',
-      item: {
-        cloud_provider: customCloudProvider || CloudProviderEnum.AWS,
-        credentials: {
-          id: '0',
-          name: 'credentials',
-        },
-        region: 'eu-west',
-      },
-    },
-    routingTable: {
-      loadingStatus: 'loaded',
-      items: [
-        {
-          destination: '10.0.0.0/16',
-          target: 'pcx-0abf',
-          description: 'my description',
-        },
-      ],
-    },
   }))

@@ -27,6 +27,15 @@ jest.mock('react-hook-form', () => ({
   }),
 }))
 
+const cloudProviderInfo = {
+  cloud_provider: CloudProviderEnum.AWS,
+  credentials: {
+    id: '0',
+    name: 'credentials',
+  },
+  region: 'eu-west',
+}
+
 describe('PageSettingsCredentialsFeature', () => {
   const editCloudProviderInfo = jest.fn()
   beforeEach(() => {
@@ -39,7 +48,7 @@ describe('PageSettingsCredentialsFeature', () => {
       ],
     })
     useClusterCloudProviderInfoSpy.mockReturnValue({
-      data: mockCluster.cloudProviderInfo?.item,
+      data: cloudProviderInfo,
     })
     useEditCloudProviderInfoMockSpy.mockReturnValue({
       mutateAsync: editCloudProviderInfo,
@@ -88,7 +97,7 @@ describe('PageSettingsCredentialsFeature', () => {
           id: '000-000-000',
         },
       ],
-      mockCluster.cloudProviderInfo!.item!
+      cloudProviderInfo
     )
 
     expect(editCloudProviderInfo).toBeCalledWith({
