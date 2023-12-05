@@ -60,13 +60,14 @@ export const clusters = createQueryKeys('clusters', {
       return response.data
     },
   },
+  logs: ({ organizationId, clusterId }: { organizationId: string; clusterId: string }) => ({
+    queryKey: [organizationId, clusterId],
+    async queryFn() {
+      const response = await clusterApi.listClusterLogs(organizationId, clusterId)
+      return response.data.results
+    },
+  }),
 })
-
-interface DeleteClusterProps {
-  organizationId: string
-  clusterId: string
-  clusterDeleteMode: ClusterDeleteMode
-}
 
 export const mutations = {
   async createCluster({ organizationId, clusterRequest }: { organizationId: string; clusterRequest: ClusterRequest }) {
@@ -85,7 +86,15 @@ export const mutations = {
     const response = await clusterApi.editCluster(organizationId, clusterId, clusterRequest)
     return response.data
   },
-  async deleteCluster({ organizationId, clusterId, clusterDeleteMode }: DeleteClusterProps) {
+  async deleteCluster({
+    organizationId,
+    clusterId,
+    clusterDeleteMode,
+  }: {
+    organizationId: string
+    clusterId: string
+    clusterDeleteMode: ClusterDeleteMode
+  }) {
     const response = await clusterApi.deleteCluster(organizationId, clusterId, clusterDeleteMode)
     return response.data
   },
