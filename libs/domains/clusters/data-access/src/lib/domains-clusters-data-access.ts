@@ -4,6 +4,7 @@ import {
   type ClusterCloudProviderInfoRequest,
   type ClusterDeleteMode,
   type ClusterRequest,
+  type ClusterRoutingTableRequest,
   ClustersApi,
 } from 'qovery-typescript-axios'
 
@@ -122,6 +123,18 @@ export const mutations = {
       clusterId,
       cloudProviderInfoRequest
     )
+    return response.data
+  },
+  async editRoutingTable({
+    organizationId,
+    clusterId,
+    routingTableRequest,
+  }: {
+    organizationId: string
+    clusterId: string
+    routingTableRequest: ClusterRoutingTableRequest
+  }) {
+    const response = await clusterApi.editRoutingTable(organizationId, clusterId, routingTableRequest)
     return response.data
   },
 }
