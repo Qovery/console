@@ -1,10 +1,7 @@
 import { type ClusterRoutingTableResultsInner } from 'qovery-typescript-axios'
-import { useDispatch } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { useClusterRoutingTable } from '@qovery/domains/clusters/feature'
-import { editClusterRoutingTable, postClusterActionsDeploy } from '@qovery/domains/organization'
+import { useClusterRoutingTable, useEditRoutingTable } from '@qovery/domains/clusters/feature'
 import { useModal, useModalConfirmation } from '@qovery/shared/ui'
-import { type AppDispatch } from '@qovery/state/store'
 import PageSettingsNetwork from '../../ui/page-settings-network/page-settings-network'
 import CrudModalFeature from './crud-modal-feature/crud-modal-feature'
 
@@ -13,28 +10,16 @@ export const deleteRoutes = (routes: ClusterRoutingTableResultsInner[], destinat
 }
 
 export function PageSettingsNetworkFeature() {
-  const dispatch = useDispatch<AppDispatch>()
-
   const { organizationId = '', clusterId = '' } = useParams()
 
   const { data: clusterRoutingTable, isLoading: isClusterRoutingTableLoading } = useClusterRoutingTable({
     organizationId,
     clusterId,
   })
+  const { mutateAsync: editRoutingTable } = useEditRoutingTable()
 
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
-
-  const toasterCallback = () => {
-    if (clusterRoutingTable) {
-      dispatch(
-        postClusterActionsDeploy({
-          organizationId,
-          clusterId,
-        })
-      )
-    }
-  }
 
   return (
     <PageSettingsNetwork
@@ -73,14 +58,11 @@ export function PageSettingsNetworkFeature() {
           action: () => {
             if (clusterRoutingTable && clusterRoutingTable.length > 0) {
               const cloneRoutes = deleteRoutes(clusterRoutingTable, route.destination)
-              dispatch(
-                editClusterRoutingTable({
-                  clusterId,
-                  organizationId,
-                  routes: cloneRoutes,
-                  toasterCallback,
-                })
-              )
+              editRoutingTable({
+                clusterId,
+                organizationId,
+                routingTableRequest: { routes: cloneRoutes },
+              })
             }
           },
         })

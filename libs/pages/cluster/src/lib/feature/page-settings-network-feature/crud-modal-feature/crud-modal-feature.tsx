@@ -1,10 +1,8 @@
 import { type ClusterRoutingTableResultsInner } from 'qovery-typescript-axios'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
-import { useDispatch } from 'react-redux'
-import { editClusterRoutingTable, postClusterActionsDeploy } from '@qovery/domains/organization'
+import { useEditRoutingTable } from '@qovery/domains/clusters/feature'
 import { useModal } from '@qovery/shared/ui'
-import { type AppDispatch } from '@qovery/state/store'
 import CrudModal from '../../../ui/page-settings-network/crud-modal/crud-modal'
 
 export interface CrudModalFeatureProps {
@@ -37,9 +35,9 @@ export const handleSubmit = (
 }
 
 export function CrudModalFeature(props: CrudModalFeatureProps) {
-  const [loading, setLoading] = useState(false)
   const { enableAlertClickOutside } = useModal()
 
+  const { mutateAsync: editRoutingTable, isLoading: isEditRoutingTableLoading } = useEditRoutingTable()
   const methods = useForm({
     defaultValues: {
       destination: props.route ? props.route.destination : undefined,
@@ -48,38 +46,20 @@ export function CrudModalFeature(props: CrudModalFeatureProps) {
     },
     mode: 'onChange',
   })
-  const dispatch = useDispatch<AppDispatch>()
 
-  const toasterCallback = () => {
-    dispatch(
-      postClusterActionsDeploy({
-        organizationId: props.organizationId,
-        clusterId: props.clusterId,
-      })
-    )
-  }
-
-  const onSubmit = methods.handleSubmit((data) => {
-    setLoading(true)
+  const onSubmit = methods.handleSubmit(async (data) => {
     const cloneRoutingTable = handleSubmit(data, props.routes, props.route)
 
-    dispatch(
-      editClusterRoutingTable({
+    try {
+      await editRoutingTable({
         clusterId: props.clusterId,
         organizationId: props.clusterId,
-        routes: cloneRoutingTable,
-        toasterCallback,
+        routingTableRequest: { routes: cloneRoutingTable },
       })
-    )
-      .unwrap()
-      .then(() => {
-        setLoading(false)
-        props.onClose()
-      })
-      .catch((e) => {
-        setLoading(false)
-        console.error(e)
-      })
+      props.onClose()
+    } catch (e) {
+      console.error(e)
+    }
   })
 
   useEffect(() => {
@@ -92,7 +72,7 @@ export function CrudModalFeature(props: CrudModalFeatureProps) {
         route={props.route}
         onSubmit={onSubmit}
         onClose={props.onClose}
-        loading={loading}
+        loading={isEditRoutingTableLoading}
         isEdit={!!props.route}
       />
     </FormProvider>
