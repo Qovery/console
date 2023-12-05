@@ -1,11 +1,9 @@
 import { CloudProviderEnum, KubernetesEnum } from 'qovery-typescript-axios'
-import { type ClusterInstanceTypeResponseListResultsInner } from 'qovery-typescript-axios/api'
 import { useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { useDispatch, useSelector } from 'react-redux'
-import { fetchAvailableInstanceTypes, selectInstancesTypes } from '@qovery/domains/organization'
+import { match } from 'ts-pattern'
+import { useCloudProviderInstanceTypes } from '@qovery/domains/cloud-providers/feature'
 import { type ClusterResourcesData, type Value } from '@qovery/shared/interfaces'
-import { type AppDispatch, type RootState } from '@qovery/state/store'
 import ClusterResourcesSettings from '../../ui/cluster-resources-settings/cluster-resources-settings'
 import { listInstanceTypeFormatter } from './utils/list-instance-type-formatter'
 
@@ -17,19 +15,28 @@ export interface ClusterResourcesSettingsFeatureProps {
 
 export function ClusterResourcesSettingsFeature(props: ClusterResourcesSettingsFeatureProps) {
   const [clusterTypeOptions, setClusterTypeOptions] = useState<Value[]>([])
-  const [instanceTypeOptions, setInstanceTypeOptions] = useState<Value[]>([])
   const { watch, setValue } = useFormContext<ClusterResourcesData>()
-  const dispatch = useDispatch<AppDispatch>()
   const watchClusterType = watch('cluster_type')
-  const availableInstanceTypes = useSelector<RootState, ClusterInstanceTypeResponseListResultsInner[] | undefined>(
-    (state) =>
-      selectInstancesTypes(
-        state,
-        props.cloudProvider || CloudProviderEnum.AWS,
-        watchClusterType as KubernetesEnum,
-        props.clusterRegion || ''
-      )
+
+  const { data: cloudProviderInstanceTypes } = useCloudProviderInstanceTypes(
+    match(props.cloudProvider || CloudProviderEnum.AWS)
+      .with('AWS', (cloudProvider) => ({
+        cloudProvider,
+        clusterType: (watchClusterType ?? 'MANAGED') as keyof typeof KubernetesEnum,
+        region: props.clusterRegion || '',
+      }))
+      .with('SCW', (cloudProvider) => ({
+        cloudProvider,
+        clusterType: 'MANAGED' as const,
+        region: props.clusterRegion || '',
+      }))
+      .with('DO', (cloudProvider) => ({
+        cloudProvider,
+        clusterType: 'MANAGED' as const,
+      }))
+      .exhaustive()
   )
+  const instanceTypeOptions = listInstanceTypeFormatter(cloudProviderInstanceTypes ?? [])
 
   useEffect(() => {
     let clusterTypeOptions: Value[] = []
@@ -59,22 +66,6 @@ export function ClusterResourcesSettingsFeature(props: ClusterResourcesSettingsF
       setValue('cluster_type', clusterTypeOptions[0].value)
     }
   }, [props.cloudProvider, setValue, watchClusterType, props.fromDetail])
-
-  useEffect(() => {
-    if (!availableInstanceTypes) {
-      if (watchClusterType && props.clusterRegion && props.cloudProvider)
-        dispatch(
-          fetchAvailableInstanceTypes({
-            region: props.clusterRegion,
-            clusterType: watchClusterType as KubernetesEnum,
-            provider: props.cloudProvider,
-          })
-        )
-    } else {
-      const list = listInstanceTypeFormatter(availableInstanceTypes)
-      setInstanceTypeOptions(list)
-    }
-  }, [watchClusterType, dispatch, props.clusterRegion, props.cloudProvider, availableInstanceTypes])
 
   return (
     <ClusterResourcesSettings
