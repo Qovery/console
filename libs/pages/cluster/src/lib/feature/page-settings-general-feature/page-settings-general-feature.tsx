@@ -1,11 +1,8 @@
 import { type Cluster } from 'qovery-typescript-axios'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
-import { useDispatch } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { useCluster } from '@qovery/domains/clusters/feature'
-import { editCluster, postClusterActionsDeploy } from '@qovery/domains/organization'
-import { type AppDispatch } from '@qovery/state/store'
+import { useCluster, useEditCluster } from '@qovery/domains/clusters/feature'
 import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-general'
 
 export const handleSubmit = (data: FieldValues, cluster: Cluster) => {
@@ -19,39 +16,23 @@ export const handleSubmit = (data: FieldValues, cluster: Cluster) => {
 
 export function PageSettingsGeneralFeature() {
   const { organizationId = '', clusterId = '' } = useParams()
-  const dispatch = useDispatch<AppDispatch>()
-
-  const [loading, setLoading] = useState(false)
 
   const methods = useForm({
     mode: 'onChange',
   })
 
   const { data: cluster } = useCluster({ organizationId, clusterId })
+  const { mutateAsync: editCluster, isLoading: isEditClusterLoading } = useEditCluster()
 
   const onSubmit = methods.handleSubmit((data) => {
     if (data && cluster) {
-      setLoading(true)
-
       const cloneCluster = handleSubmit(data, cluster)
 
-      const toasterCallback = () => {
-        if (cluster) {
-          dispatch(postClusterActionsDeploy({ organizationId, clusterId }))
-        }
-      }
-
-      dispatch(
-        editCluster({
-          organizationId: organizationId,
-          clusterId: clusterId,
-          data: cloneCluster,
-          toasterCallback,
-        })
-      )
-        .unwrap()
-        .then(() => setLoading(false))
-        .catch(() => setLoading(false))
+      editCluster({
+        organizationId,
+        clusterId,
+        clusterRequest: cloneCluster,
+      })
     }
   })
 
@@ -63,7 +44,7 @@ export function PageSettingsGeneralFeature() {
 
   return (
     <FormProvider {...methods}>
-      <PageSettingsGeneral onSubmit={onSubmit} loading={loading} />
+      <PageSettingsGeneral onSubmit={onSubmit} loading={isEditClusterLoading} />
     </FormProvider>
   )
 }

@@ -1,27 +1,12 @@
 import { act, fireEvent, render } from '__tests__/utils/setup-jest'
 import * as clustersDomains from '@qovery/domains/clusters/feature'
-import * as storeOrganization from '@qovery/domains/organization'
 import { clusterFactoryMock } from '@qovery/shared/factories'
 import PageSettingsGeneralFeature, { handleSubmit } from './page-settings-general-feature'
-
-import SpyInstance = jest.SpyInstance
 
 const mockCluster = clusterFactoryMock(1)[0]
 
 const useClusterMockSpy = jest.spyOn(clustersDomains, 'useCluster') as jest.Mock
-
-jest.mock('@qovery/domains/organization', () => {
-  return {
-    ...jest.requireActual('@qovery/domains/organization'),
-    editCluster: jest.fn(),
-  }
-})
-
-const mockDispatch = jest.fn()
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useDispatch: () => mockDispatch,
-}))
+const useEditClusterMockSpy = jest.spyOn(clustersDomains, 'useEditCluster') as jest.Mock
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -29,10 +14,14 @@ jest.mock('react-router-dom', () => ({
 }))
 
 describe('PageSettingsGeneralFeature', () => {
+  const editCluster = jest.fn()
   beforeEach(() => {
     useClusterMockSpy.mockReturnValue({
       data: mockCluster,
       isLoading: false,
+    })
+    useEditClusterMockSpy.mockReturnValue({
+      mutateAsync: editCluster,
     })
   })
 
@@ -55,15 +44,7 @@ describe('PageSettingsGeneralFeature', () => {
     expect(currentCluster.production).toBe(true)
   })
 
-  it('should dispatch editCluster if form is submitted', async () => {
-    const editClusterSpy: SpyInstance = jest.spyOn(storeOrganization, 'editCluster')
-    mockDispatch.mockImplementation(() => ({
-      unwrap: () =>
-        Promise.resolve({
-          data: {},
-        }),
-    }))
-
+  it('should edit Cluster if form is submitted', async () => {
     const { getByTestId } = render(<PageSettingsGeneralFeature />)
 
     await act(() => {
@@ -82,11 +63,10 @@ describe('PageSettingsGeneralFeature', () => {
       mockCluster
     )
 
-    expect(editClusterSpy).toBeCalledWith({
+    expect(editCluster).toBeCalledWith({
       organizationId: '0',
       clusterId: mockCluster.id,
-      data: cloneCluster,
-      toasterCallback: expect.anything(),
+      clusterRequest: cloneCluster,
     })
   })
 })
