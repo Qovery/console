@@ -69,8 +69,6 @@ export function StepValuesOverrideFilesFeature() {
 
   const generalData = generalForm.getValues()
 
-  console.log(generalData.source_provider)
-
   const source = match(generalData.source_provider)
     .with('GIT', () => {
       const gitToken = getGitTokenValue(generalData.provider ?? '')
