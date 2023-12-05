@@ -9,12 +9,17 @@ import {
   waitFor,
 } from '__tests__/utils/setup-jest'
 import { KubernetesEnum } from 'qovery-typescript-axios'
-import * as clustersDomains from '@qovery/domains/clusters/feature'
+import * as cloudProvidersDomain from '@qovery/domains/cloud-providers/feature'
+import * as clustersDomain from '@qovery/domains/clusters/feature'
 import { clusterFactoryMock } from '@qovery/shared/factories'
 import PageSettingsResourcesFeature, { handleSubmit } from './page-settings-resources-feature'
 
-const useClusterMockSpy = jest.spyOn(clustersDomains, 'useCluster') as jest.Mock
-const useEditClusterMockSpy = jest.spyOn(clustersDomains, 'useEditCluster') as jest.Mock
+const useClusterMockSpy = jest.spyOn(clustersDomain, 'useCluster') as jest.Mock
+const useEditClusterMockSpy = jest.spyOn(clustersDomain, 'useEditCluster') as jest.Mock
+const useCloudProviderInstanceTypesMockSpy = jest.spyOn(
+  cloudProvidersDomain,
+  'useCloudProviderInstanceTypes'
+) as jest.Mock
 
 const mockInstanceType = [
   {
@@ -40,27 +45,9 @@ const mockInstanceType = [
   },
 ]
 
-jest.mock('@qovery/domains/organization', () => ({
-  ...jest.requireActual('@qovery/domains/organization'),
-  fetchAvailableInstanceTypes: jest.fn(),
-}))
-
 const mockCluster = clusterFactoryMock(1)[0]
 mockCluster.kubernetes = KubernetesEnum.MANAGED
 mockCluster.instance_type = 't2.micro'
-jest.mock('@qovery/domains/organization', () => {
-  return {
-    ...jest.requireActual('@qovery/domains/organization'),
-    editCluster: jest.fn(),
-    selectInstancesTypes: () => mockInstanceType,
-  }
-})
-
-const mockDispatch = jest.fn()
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useDispatch: () => mockDispatch,
-}))
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -77,12 +64,9 @@ describe('PageSettingsResourcesFeature', () => {
     useEditClusterMockSpy.mockReturnValue({
       mutateAsync: editCluster,
     })
-    mockDispatch.mockImplementation(() => ({
-      unwrap: () =>
-        Promise.resolve({
-          results: [...mockInstanceType],
-        }),
-    }))
+    useCloudProviderInstanceTypesMockSpy.mockReturnValue({
+      data: mockInstanceType,
+    })
   })
 
   it('should render successfully', () => {
