@@ -63,6 +63,8 @@ export function ValuesOverrideYamlModal({
     onClose()
   })
 
+  console.log(helmDefaultValues)
+
   return (
     <FormProvider {...methods}>
       <ModalCrud title="Raw YAML" onSubmit={onSubmitValue} onClose={onClose} submitLabel="Save">

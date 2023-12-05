@@ -28,13 +28,13 @@ const props: ValuesOverrideYamlModalProps = {
 }
 
 describe('ValuesOverrideYamlModal', () => {
-  it('should render successfully', async () => {
-    const { baseElement } = await renderWithProviders(<ValuesOverrideYamlModal {...props} />)
+  it('should render successfully', () => {
+    const { baseElement } = renderWithProviders(<ValuesOverrideYamlModal {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
-  it('should match snapshot', async () => {
-    const { baseElement } = await renderWithProviders(<ValuesOverrideYamlModal {...props} />)
+  it('should match snapshot', () => {
+    const { baseElement } = renderWithProviders(<ValuesOverrideYamlModal {...props} />)
     expect(baseElement).toMatchSnapshot()
   })
 })

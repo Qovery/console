@@ -5,14 +5,14 @@ export interface CodeEditorProps extends CodeEditorMonacoProps {
   readOnly?: boolean
 }
 
-export function CodeEditor(props: CodeEditorProps) {
+export function CodeEditor({ readOnly, ...props }: CodeEditorProps) {
   return (
     <CodeEditorMonaco
       theme="Chrome DevTools"
       loading={<LoaderSpinner />}
       options={{
         minimap: { enabled: false },
-        readOnly: props.readOnly,
+        readOnly,
       }}
       {...props}
     />

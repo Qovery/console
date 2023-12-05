@@ -108,19 +108,17 @@ export function StepValuesOverrideFilesFeature() {
   const watchFieldGitProvider = valuesOverrideFileForm.watch('provider')
   const watchFieldGitRepository = valuesOverrideFileForm.watch('repository')
 
-  const disabledContinueButton = () => {
-    return match(watchFieldType)
-      .with('GIT_REPOSITORY', () => {
-        const { provider, repository, branch, paths } = valuesOverrideFileForm.watch()
-        return !provider || !repository || !branch || !paths
-      })
-      .with('YAML', () => {
-        const { content } = valuesOverrideFileForm.watch()
-        return !content
-      })
-      .with('NONE', () => false)
-      .exhaustive()
-  }
+  const disabledContinueButton = match(watchFieldType)
+    .with('GIT_REPOSITORY', () => {
+      const { provider, repository, branch, paths } = valuesOverrideFileForm.watch()
+      return !provider || !repository || !branch || !paths
+    })
+    .with('YAML', () => {
+      const { content } = valuesOverrideFileForm.watch()
+      return !content
+    })
+    .with('NONE', () => false)
+    .exhaustive()
 
   return (
     <FunnelFlowBody helpSection={funnelCardHelp}>
@@ -267,7 +265,7 @@ export function StepValuesOverrideFilesFeature() {
                 Back
               </Button>
               <div className="flex gap-3">
-                <Button type="submit" size="lg" disabled={disabledContinueButton()}>
+                <Button type="submit" size="lg" disabled={disabledContinueButton}>
                   Continue
                 </Button>
               </div>
