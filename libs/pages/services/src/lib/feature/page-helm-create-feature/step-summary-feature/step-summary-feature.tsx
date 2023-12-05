@@ -99,7 +99,7 @@ export function StepSummaryFeature() {
       })
       navigate(SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_GENERAL_URL)
     } catch (error) {
-      console.log(error)
+      console.error(error)
     }
   }
 
