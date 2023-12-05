@@ -83,12 +83,7 @@ export const handleSubmit = (
     type PortProtocol = keyof typeof PortProtocolEnum
 
     const getProbProtocol = (probe: ProbeType | undefined) => {
-      for (const key in probe) {
-        if (probe[key as keyof ProbeType] !== null) {
-          return key
-        }
-      }
-      return null
+      return Object.keys(probe || {}).find((key) => probe?.[key as keyof ProbeType] !== null) || null
     }
 
     const updateProbe = (probe?: Probe | null) => {
