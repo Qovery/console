@@ -1,9 +1,8 @@
-import { type ClusterFeature, KubernetesEnum } from 'qovery-typescript-axios'
-import { useEffect, useState } from 'react'
+import { KubernetesEnum } from 'qovery-typescript-axios'
+import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useDispatch } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
-import { fetchClusterFeatures } from '@qovery/domains/organization'
+import { useCloudProviderFeatures } from '@qovery/domains/clusters/feature'
 import { type ClusterFeaturesData } from '@qovery/shared/interfaces'
 import {
   CLUSTERS_CREATION_GENERAL_URL,
@@ -15,7 +14,6 @@ import {
 } from '@qovery/shared/routes'
 import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { type AppDispatch } from '@qovery/state/store'
 import StepFeatures from '../../../ui/page-clusters-create/step-features/step-features'
 import { steps, useClusterContainerCreateContext } from '../page-clusters-create-feature'
 
@@ -24,8 +22,7 @@ export function StepFeaturesFeature() {
   const { organizationId = '' } = useParams()
   const { setFeaturesData, generalData, featuresData, resourcesData, setCurrentStep } =
     useClusterContainerCreateContext()
-  const dispatch = useDispatch<AppDispatch>()
-  const [features, setFeatures] = useState<ClusterFeature[]>()
+  const { data: features } = useCloudProviderFeatures({ cloudProvider: generalData?.cloud_provider ?? 'AWS' })
   const navigate = useNavigate()
 
   const funnelCardHelp = (
@@ -65,14 +62,6 @@ export function StepFeaturesFeature() {
   useEffect(() => {
     !resourcesData?.cluster_type && navigate(CLUSTERS_CREATION_URL + CLUSTERS_CREATION_GENERAL_URL)
   }, [resourcesData?.cluster_type, navigate, organizationId])
-
-  useEffect(() => {
-    if (!features && generalData?.cloud_provider)
-      dispatch(fetchClusterFeatures({ cloudProvider: generalData?.cloud_provider }))
-        .unwrap()
-        .then((data) => setFeatures(data.results))
-        .catch((error) => console.log(error))
-  }, [dispatch, features, generalData?.cloud_provider])
 
   const methods = useForm<ClusterFeaturesData>({
     defaultValues: featuresData,
