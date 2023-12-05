@@ -3791,7 +3791,7 @@ __metadata:
     posthog-js: ^1.24.0
     prettier: ^2.8.2
     pretty-quick: ^3.1.3
-    qovery-typescript-axios: ^1.1.303
+    qovery-typescript-axios: ^1.1.306
     qovery-ws-typescript-axios: ^0.1.69
     react: 18.2.0
     react-beautiful-dnd: ^13.1.0
@@ -18871,12 +18871,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"qovery-typescript-axios@npm:^1.1.303":
-  version: 1.1.303
-  resolution: "qovery-typescript-axios@npm:1.1.303"
+"qovery-typescript-axios@npm:^1.1.306":
+  version: 1.1.306
+  resolution: "qovery-typescript-axios@npm:1.1.306"
   dependencies:
     axios: ^0.27.2
-  checksum: 19380ab8c395642a55cdbfd2d4bf710b599fbff7f3af70ebbc59129a9ce6203bf41d2702296ea5f34e32d528551bf461f7819812ae6cb6a63142793478b9428c
+  checksum: 1dd687319995e8fffa3b25527305844310c9426474e5f6c8218d36940f48db13e20eced17d1ae5049db03d9948d83d959190eab3617c12f56ecef376e02e6f1d
   languageName: node
   linkType: hard
 
