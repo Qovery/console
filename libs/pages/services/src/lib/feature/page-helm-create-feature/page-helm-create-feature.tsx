@@ -6,7 +6,11 @@ import { SERVICES_HELM_CREATION_GENERAL_URL, SERVICES_HELM_CREATION_URL, SERVICE
 import { FunnelFlow } from '@qovery/shared/ui'
 import { ROUTER_SERVICE_HELM_CREATION } from '../../router/router'
 
-export const steps: { title: string }[] = [{ title: 'General data' }, { title: 'Values' }, { title: 'Summary' }]
+export const steps: { title: string }[] = [
+  { title: 'General data' },
+  { title: 'Values override as file' },
+  { title: 'Summary' },
+]
 
 export type ValuesOverrideTypes = 'GIT_REPOSITORY' | 'YAML' | 'NONE'
 export interface HelmGeneralData

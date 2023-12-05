@@ -68,18 +68,16 @@ export function StepSummaryFeature() {
           },
         }
       })
-      .with('YAML', () => {
-        return {
-          raw: {
-            values: [
-              {
-                name: 'override',
-                content: valuesOverrideFileData.content!,
-              },
-            ],
-          },
-        }
-      })
+      .with('YAML', () => ({
+        raw: {
+          values: [
+            {
+              name: 'override',
+              content: valuesOverrideFileData.content!,
+            },
+          ],
+        },
+      }))
       .with('NONE', () => null)
       .exhaustive()
 
