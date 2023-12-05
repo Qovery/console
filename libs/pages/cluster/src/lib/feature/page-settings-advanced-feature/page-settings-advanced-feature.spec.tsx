@@ -2,14 +2,14 @@ import { act, fireEvent, render } from '__tests__/utils/setup-jest'
 import { type ClusterAdvancedSettings } from 'qovery-typescript-axios'
 // eslint-disable-next-line @typescript-eslint/no-restricted-imports
 import React from 'react'
-import * as clustersDomains from '@qovery/domains/clusters/feature'
+import * as clustersDomain from '@qovery/domains/clusters/feature'
 import { clusterFactoryMock } from '@qovery/shared/factories'
 import * as InitFormValues from './init-form-values/init-form-values'
 import PageSettingsAdvancedFeature from './page-settings-advanced-feature'
 
-const useClusterAdvancedSettingsMockSpy = jest.spyOn(clustersDomains, 'useClusterAdvancedSettings') as jest.Mock
-const useDefaultAdvancedSettingsMockSpy = jest.spyOn(clustersDomains, 'useDefaultAdvancedSettings') as jest.Mock
-const useEditClusterAdvancedSettingsMockSpy = jest.spyOn(clustersDomains, 'useEditClusterAdvancedSettings') as jest.Mock
+const useClusterAdvancedSettingsMockSpy = jest.spyOn(clustersDomain, 'useClusterAdvancedSettings') as jest.Mock
+const useDefaultAdvancedSettingsMockSpy = jest.spyOn(clustersDomain, 'useDefaultAdvancedSettings') as jest.Mock
+const useEditClusterAdvancedSettingsMockSpy = jest.spyOn(clustersDomain, 'useEditClusterAdvancedSettings') as jest.Mock
 const mockCluster = clusterFactoryMock(1)[0]
 const mockAdvancedSettings: ClusterAdvancedSettings = {
   'loki.log_retention_in_week': 1,

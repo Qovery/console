@@ -1,12 +1,12 @@
 import { act, fireEvent, render } from '__tests__/utils/setup-jest'
-import * as clustersDomains from '@qovery/domains/clusters/feature'
+import * as clustersDomain from '@qovery/domains/clusters/feature'
 import { clusterFactoryMock } from '@qovery/shared/factories'
 import PageSettingsGeneralFeature, { handleSubmit } from './page-settings-general-feature'
 
 const mockCluster = clusterFactoryMock(1)[0]
 
-const useClusterMockSpy = jest.spyOn(clustersDomains, 'useCluster') as jest.Mock
-const useEditClusterMockSpy = jest.spyOn(clustersDomains, 'useEditCluster') as jest.Mock
+const useClusterMockSpy = jest.spyOn(clustersDomain, 'useCluster') as jest.Mock
+const useEditClusterMockSpy = jest.spyOn(clustersDomain, 'useEditCluster') as jest.Mock
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),

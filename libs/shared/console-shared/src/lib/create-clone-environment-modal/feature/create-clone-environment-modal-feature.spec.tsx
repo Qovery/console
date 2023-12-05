@@ -1,7 +1,7 @@
 import { act, fireEvent, getAllByTestId, getByLabelText, getByTestId, render } from '__tests__/utils/setup-jest'
 import { EnvironmentModeEnum } from 'qovery-typescript-axios'
 import selectEvent from 'react-select-event'
-import * as clustersDomains from '@qovery/domains/clusters/feature'
+import * as clustersDomain from '@qovery/domains/clusters/feature'
 import * as environmentDomains from '@qovery/domains/environment'
 import { clusterFactoryMock, environmentFactoryMock } from '@qovery/shared/factories'
 import CreateCloneEnvironmentModalFeature, {
@@ -10,7 +10,7 @@ import CreateCloneEnvironmentModalFeature, {
 
 let props: CreateCloneEnvironmentModalFeatureProps
 
-const useClustersMockSpy = jest.spyOn(clustersDomains, 'useClusters') as jest.Mock
+const useClustersMockSpy = jest.spyOn(clustersDomain, 'useClusters') as jest.Mock
 const useCreateEnvironmentMockSpy = jest.spyOn(environmentDomains, 'useCreateEnvironment') as jest.Mock
 const useCloneEnvironmentMockSpy = jest.spyOn(environmentDomains, 'useCloneEnvironment') as jest.Mock
 

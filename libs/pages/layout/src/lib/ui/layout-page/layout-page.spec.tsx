@@ -1,9 +1,9 @@
 import { CloudProviderEnum, ClusterStateEnum } from 'qovery-typescript-axios'
-import * as clustersDomains from '@qovery/domains/clusters/feature'
+import * as clustersDomain from '@qovery/domains/clusters/feature'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import LayoutPage, { type LayoutPageProps } from './layout-page'
 
-const useClusterStatusesMockSpy = jest.spyOn(clustersDomains, 'useClusterStatuses') as jest.Mock
+const useClusterStatusesMockSpy = jest.spyOn(clustersDomain, 'useClusterStatuses') as jest.Mock
 
 describe('LayoutPage', () => {
   const props: LayoutPageProps = {
