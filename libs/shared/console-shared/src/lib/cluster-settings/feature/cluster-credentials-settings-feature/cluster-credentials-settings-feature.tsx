@@ -1,6 +1,6 @@
 import { type CloudProviderEnum, type ClusterCredentials } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
-import { useCloudProviderCredentials } from '@qovery/domains/organizations/feature'
+import { useCloudProviderCredentials } from '@qovery/domains/cloud-providers/feature'
 import { useModal } from '@qovery/shared/ui'
 import ClusterCredentialsSettings from '../../ui/cluster-credentials-settings/cluster-credentials-settings'
 import CreateEditCredentialsModalFeature from '../create-edit-credentials-modal-feature/create-edit-credentials-modal-feature'

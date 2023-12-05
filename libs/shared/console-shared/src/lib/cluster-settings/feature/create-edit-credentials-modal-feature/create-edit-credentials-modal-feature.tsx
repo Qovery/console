@@ -5,7 +5,7 @@ import {
   useCreateCloudProviderCredential,
   useDeleteCloudProviderCredential,
   useEditCloudProviderCredential,
-} from '@qovery/domains/organizations/feature'
+} from '@qovery/domains/cloud-providers/feature'
 import { useModal } from '@qovery/shared/ui'
 import CreateEditCredentialsModal from '../../ui/create-edit-credentials-modal/create-edit-credentials-modal'
 

@@ -2,7 +2,7 @@ import { act, render, waitFor } from '__tests__/utils/setup-jest'
 import { CloudProviderEnum } from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
 import selectEvent from 'react-select-event'
-import * as clustersDomain from '@qovery/domains/clusters/feature'
+import * as cloudProvidersDomain from '@qovery/domains/cloud-providers/feature'
 import { ClusterContainerCreateContext } from '../page-clusters-create-feature'
 import StepFeaturesFeature from './step-features-feature'
 
@@ -19,22 +19,13 @@ const mockFeatures = [
   },
 ]
 
-const useCloudProviderFeaturesMockSpy = jest.spyOn(clustersDomain, 'useCloudProviderFeatures') as jest.Mock
+const useCloudProviderFeaturesMockSpy = jest.spyOn(cloudProvidersDomain, 'useCloudProviderFeatures') as jest.Mock
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useParams: () => ({ organizationId: '1' }),
   useNavigate: () => mockNavigate,
 }))
-
-jest.mock('@qovery/domains/organization', () => {
-  return {
-    ...jest.requireActual('@qovery/domains/organization'),
-    fetchClusterFeatures: () => ({
-      results: mockFeatures,
-    }),
-  }
-})
 
 const ContextWrapper = (props: { children: ReactNode }) => {
   return (

@@ -1,7 +1,5 @@
 import { createQueryKeys } from '@lukemorales/query-key-factory'
 import {
-  CloudProviderApi,
-  type CloudProviderEnum,
   type ClusterAdvancedSettings,
   type ClusterCloudProviderInfoRequest,
   type ClusterDeleteMode,
@@ -9,10 +7,8 @@ import {
   type ClusterRoutingTableRequest,
   ClustersApi,
 } from 'qovery-typescript-axios'
-import { match } from 'ts-pattern'
 
 const clusterApi = new ClustersApi()
-const cloudProviderApi = new CloudProviderApi()
 
 export const clusters = createQueryKeys('clusters', {
   list: ({ organizationId }: { organizationId: string }) => ({
@@ -68,17 +64,6 @@ export const clusters = createQueryKeys('clusters', {
     queryKey: [organizationId, clusterId],
     async queryFn() {
       const response = await clusterApi.listClusterLogs(organizationId, clusterId)
-      return response.data.results
-    },
-  }),
-  cloudProviderFeatures: ({ cloudProvider }: { cloudProvider: CloudProviderEnum }) => ({
-    queryKey: [cloudProvider],
-    async queryFn() {
-      const response = await match(cloudProvider)
-        .with('AWS', () => cloudProviderApi.listAWSFeatures())
-        .with('DO', () => cloudProviderApi.listDOFeatures())
-        .with('SCW', () => cloudProviderApi.listScalewayFeatures())
-        .exhaustive()
       return response.data.results
     },
   }),

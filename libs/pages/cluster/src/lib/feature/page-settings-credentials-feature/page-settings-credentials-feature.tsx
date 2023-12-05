@@ -6,8 +6,8 @@ import {
 import { useEffect } from 'react'
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
+import { useCloudProviderCredentials } from '@qovery/domains/cloud-providers/feature'
 import { useClusterCloudProviderInfo, useEditCloudProviderInfo } from '@qovery/domains/clusters/feature'
-import { useCloudProviderCredentials } from '@qovery/domains/organizations/feature'
 import { ToastEnum, toast } from '@qovery/shared/toast'
 import PageSettingsCredentials from '../../ui/page-settings-credentials/page-settings-credentials'
 

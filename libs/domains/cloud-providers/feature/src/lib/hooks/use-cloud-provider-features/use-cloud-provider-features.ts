@@ -8,7 +8,7 @@ interface UseCloudProviderFeaturesProps {
 
 export function useCloudProviderFeatures({ cloudProvider }: UseCloudProviderFeaturesProps) {
   return useQuery({
-    ...queries.clusters.cloudProviderFeatures({ cloudProvider }),
+    ...queries.cloudProviders.features({ cloudProvider }),
   })
 }
 

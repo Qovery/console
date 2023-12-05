@@ -9,7 +9,7 @@ export interface UseCloudProviderCredentialsProps {
 
 export function useCloudProviderCredentials({ organizationId, cloudProvider }: UseCloudProviderCredentialsProps) {
   return useQuery({
-    ...queries.organizations.cloudProviderCredentials({ organizationId, cloudProvider: cloudProvider! }),
+    ...queries.cloudProviders.credentials({ organizationId, cloudProvider: cloudProvider! }),
     select(data) {
       if (!data) {
         return data

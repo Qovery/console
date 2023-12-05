@@ -1,7 +1,7 @@
 import { CloudProviderEnum } from 'qovery-typescript-axios'
 import selectEvent from 'react-select-event'
+import * as cloudProvidersDomain from '@qovery/domains/cloud-providers/feature'
 import * as clustersDomain from '@qovery/domains/clusters/feature'
-import * as organizationsDomain from '@qovery/domains/organizations/feature'
 import { clusterFactoryMock, credentialsMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import PageSettingsCredentialsFeature, { handleSubmit } from './page-settings-credentials-feature'
@@ -9,7 +9,7 @@ import PageSettingsCredentialsFeature, { handleSubmit } from './page-settings-cr
 const mockCluster = clusterFactoryMock(1, CloudProviderEnum.AWS)[0]
 const mockCredentials = credentialsMock(2)
 const useClusterCloudProviderInfoSpy = jest.spyOn(clustersDomain, 'useClusterCloudProviderInfo') as jest.Mock
-const useCloudProviderCredentialsMockSpy = jest.spyOn(organizationsDomain, 'useCloudProviderCredentials') as jest.Mock
+const useCloudProviderCredentialsMockSpy = jest.spyOn(cloudProvidersDomain, 'useCloudProviderCredentials') as jest.Mock
 const useEditCloudProviderInfoMockSpy = jest.spyOn(clustersDomain, 'useEditCloudProviderInfo') as jest.Mock
 
 jest.mock('react-router-dom', () => ({
