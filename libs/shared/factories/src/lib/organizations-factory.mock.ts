@@ -1,6 +1,6 @@
 import { Chance } from 'chance'
 import {
-  CloudProviderEnum,
+  type ClusterCredentials,
   ContainerRegistryKindEnum,
   type ContainerRegistryResponse,
   EnvironmentModeEnum,
@@ -16,7 +16,6 @@ import {
   OrganizationCustomRoleProjectPermission,
   PlanEnum,
 } from 'qovery-typescript-axios'
-import { type ClusterCredentialsEntity } from '@qovery/shared/interfaces'
 
 const chance = new Chance('123')
 
@@ -32,32 +31,8 @@ export const organizationFactoryMock = (howMany: number): Organization[] =>
     repository: chance.name(),
     logo_url: chance.url(),
     icon_url: chance.url(),
-    owner: chance.name(),
     admin_emails: ['test@test.com'],
-    containerRegistries: {
-      loadingStatus: 'loaded',
-      items: containerRegistriesByOrganizationIdMock,
-    },
-    customRoles: {
-      loadingStatus: 'loaded',
-      items: customRolesMock(2),
-    },
-    members: {
-      loadingStatus: 'loaded',
-      items: [...membersMock(1, 'Owner', '0'), ...membersMock(1, 'Admin', '1')],
-    },
-    inviteMembers: {
-      loadingStatus: 'loaded',
-      items: inviteMembersMock(1),
-    },
-    availableRoles: {
-      loadingStatus: 'loaded',
-      items: availableRolesMock,
-    },
-    credentials: {
-      loadingStatus: 'loaded',
-      items: credentialsMock(2),
-    },
+    owner: chance.name(),
   }))
 
 export const availableRolesMock = [
@@ -71,11 +46,10 @@ export const availableRolesMock = [
   },
 ]
 
-export const credentialsMock = (howMany: number): ClusterCredentialsEntity[] =>
+export const credentialsMock = (howMany: number): ClusterCredentials[] =>
   Array.from({ length: howMany }).map((_, index) => ({
     id: `${index}`,
     name: chance.name(),
-    cloudProvider: CloudProviderEnum.AWS,
   }))
 
 export const membersMock = (howMany: number, roleName = 'Admin', customIndex?: string): Member[] =>

@@ -1,4 +1,4 @@
-import { type QueryClient, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import download from 'downloadjs'
 import {
   type CloneEnvironmentRequest,
@@ -16,7 +16,6 @@ import {
   EnvironmentMainCallsApi,
   EnvironmentsApi,
 } from 'qovery-typescript-axios'
-import { type WebsocketRunningStatusInterface } from '@qovery/shared/interfaces'
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
 import { refactoPayload } from '@qovery/shared/util-js'
@@ -59,21 +58,6 @@ export const useFetchEnvironment = (projectId: string, environmentId: string) =>
   useFetchEnvironments(projectId, (environments) =>
     environments.find((environment) => environment.id === environmentId)
   )
-
-/**
- * @deprecated This should be migrated to the new `use-status-web-sockets` hook
- */
-export const updateEnvironmentsRunningStatus = async (
-  queryClient: QueryClient,
-  environments: WebsocketRunningStatusInterface[]
-) => {
-  for (let i = 0; i < environments.length; i++) {
-    const environment = environments[i]
-    const queryKey = ['environments-running-status', environment.id]
-    queryClient.invalidateQueries({ queryKey })
-    queryClient.setQueryData(queryKey, environment)
-  }
-}
 
 export const useEditEnvironment = (projectId: string, onSettledCallback: () => void) => {
   const queryClient = useQueryClient()
