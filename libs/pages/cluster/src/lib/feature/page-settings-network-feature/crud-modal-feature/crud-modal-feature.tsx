@@ -53,7 +53,7 @@ export function CrudModalFeature(props: CrudModalFeatureProps) {
     try {
       await editRoutingTable({
         clusterId: props.clusterId,
-        organizationId: props.clusterId,
+        organizationId: props.organizationId,
         routingTableRequest: { routes: cloneRoutingTable },
       })
       props.onClose()
