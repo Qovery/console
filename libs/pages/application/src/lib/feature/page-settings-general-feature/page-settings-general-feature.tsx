@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { editApplication, getApplicationsState, postApplicationActionsRedeploy } from '@qovery/domains/application'
 import { useOrganization } from '@qovery/domains/organizations/feature'
+import { useService } from '@qovery/domains/services/feature'
 import {
   ServiceTypeEnum,
   getServiceType,
@@ -121,18 +122,22 @@ export function PageSettingsGeneralFeature() {
   const queryClient = useQueryClient()
   const dispatch = useDispatch<AppDispatch>()
   const navigate = useNavigate()
-  const application = useSelector<RootState, ApplicationEntity | undefined>(
-    (state) => getApplicationsState(state).entities[applicationId],
-    (a, b) =>
-      a?.name === b?.name &&
-      a?.description === b?.description &&
-      a?.build_mode === b?.build_mode &&
-      a?.buildpack_language === b?.buildpack_language &&
-      a?.dockerfile_path === b?.dockerfile_path
-  )
 
+  // const application = useSelector<RootState, ApplicationEntity | undefined>(
+  //   (state) => getApplicationsState(state).entities[applicationId],
+  //   (a, b) =>
+  //     a?.name === b?.name &&
+  //     a?.description === b?.description &&
+  //     a?.build_mode === b?.build_mode &&
+  //     a?.buildpack_language === b?.buildpack_language &&
+  //     a?.dockerfile_path === b?.dockerfile_path
+  // )
+
+  const { data: service } = useService({ environmentId, serviceId: applicationId })
   const { data: organization } = useOrganization({ organizationId })
   const loadingStatus = useSelector((state: RootState) => getApplicationsState(state).loadingStatus)
+
+  console.log(service)
 
   const methods = useForm({
     mode: 'onChange',
@@ -141,12 +146,12 @@ export function PageSettingsGeneralFeature() {
   const watchBuildMode = methods.watch('build_mode')
 
   const toasterCallback = () => {
-    if (application) {
+    if (service) {
       dispatch(
         postApplicationActionsRedeploy({
           applicationId,
           environmentId,
-          serviceType: getServiceType(application),
+          serviceType: service.serviceType,
           callback: () =>
             navigate(
               ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(applicationId)
@@ -158,8 +163,13 @@ export function PageSettingsGeneralFeature() {
   }
 
   const onSubmit = methods.handleSubmit((data) => {
-    if (data && application) {
+    if (data && service) {
       let cloneApplication: Omit<ApplicationEntity, 'registry'> & { registry?: { id?: string } }
+
+      if (service?.serviceType === ServiceTypeEnum.APPLICATION) {
+        cloneApplication = handleGitApplicationSubmit(data, service)
+      }
+
       if (isApplication(application)) {
         cloneApplication = handleGitApplicationSubmit(data, application)
       } else if (isJob(application)) {
@@ -250,6 +260,9 @@ export function PageSettingsGeneralFeature() {
       }
     }
   }, [methods, application, dispatch, organizationId])
+
+  console.log(application)
+  console.log(application && getServiceType(application))
 
   return (
     <FormProvider {...methods}>

@@ -1,6 +1,7 @@
 import { BuildModeEnum, BuildPackLanguageEnum, type Organization } from 'qovery-typescript-axios'
 import { type FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
+import { type ServiceType } from '@qovery/domains/services/data-access'
 import { AutoDeploySetting } from '@qovery/domains/services/feature'
 import {
   EditGitRepositorySettingsFeature,
@@ -24,7 +25,7 @@ import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 export interface PageSettingsGeneralProps {
   onSubmit: FormEventHandler<HTMLFormElement>
   watchBuildMode: BuildModeEnum
-  type?: ServiceTypeEnum
+  type?: ServiceType
   loading?: boolean
   organization?: Organization
 }
