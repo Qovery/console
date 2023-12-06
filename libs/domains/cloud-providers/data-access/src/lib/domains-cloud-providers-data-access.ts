@@ -57,7 +57,7 @@ export const cloudProviders = createQueryKeys('cloudProviders', {
     args:
       | {
           cloudProvider: Extract<CloudProviderEnum, 'AWS'>
-          clusterType: keyof typeof KubernetesEnum
+          clusterType: (typeof KubernetesEnum)[keyof typeof KubernetesEnum]
           region: string
         }
       | {
@@ -73,7 +73,7 @@ export const cloudProviders = createQueryKeys('cloudProviders', {
     queryKey: [args.cloudProvider, args.clusterType],
     async queryFn() {
       const response = await match(args)
-        .with({ cloudProvider: 'AWS', clusterType: 'K3_S' }, ({ region }) =>
+        .with({ cloudProvider: 'AWS', clusterType: 'K3S' }, ({ region }) =>
           cloudProviderApi.listAWSEc2InstanceType(region)
         )
         .with({ cloudProvider: 'AWS', clusterType: 'MANAGED' }, ({ region }) =>

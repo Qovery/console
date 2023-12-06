@@ -37,7 +37,7 @@ export function StepSummaryFeature() {
     match(generalData?.cloud_provider || CloudProviderEnum.AWS)
       .with('AWS', (cloudProvider) => ({
         cloudProvider,
-        clusterType: (resourcesData?.cluster_type ?? 'MANAGED') as keyof typeof KubernetesEnum,
+        clusterType: (resourcesData?.cluster_type ?? 'MANAGED') as (typeof KubernetesEnum)[keyof typeof KubernetesEnum],
         region: generalData?.region || '',
       }))
       .with('SCW', (cloudProvider) => ({
