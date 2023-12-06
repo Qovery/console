@@ -1,5 +1,11 @@
 import { useQueryClient } from '@tanstack/react-query'
-import { type CloudProviderEnum, PortProtocolEnum, type Probe, type ServicePort } from 'qovery-typescript-axios'
+import {
+  type CloudProviderEnum,
+  PortProtocolEnum,
+  type Probe,
+  type ProbeType,
+  type ServicePort,
+} from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
@@ -75,10 +81,15 @@ export const handleSubmit = (
     const livenessProbe = cloneApplication.healthchecks?.liveness_probe
     const readinessProbe = cloneApplication.healthchecks?.readiness_probe
     type PortProtocol = keyof typeof PortProtocolEnum
-    const probProtocol = (protocol as PortProtocol).toLowerCase() as Lowercase<PortProtocol>
+
+    const getProbeProtocol = (probeType: ProbeType | undefined) => {
+      return Object.keys(probeType ?? {}).find((key) => probeType?.[key as keyof ProbeType] !== null) ?? null
+    }
 
     const updateProbe = (probe?: Probe | null) => {
-      return isMatchingHealthCheck(currentPort, probe?.type) && currentPort.protocol === protocol
+      const probProtocol = getProbeProtocol(probe?.type) as Lowercase<PortProtocol>
+
+      return isMatchingHealthCheck(currentPort, probe?.type)
         ? {
             ...probe,
             type: {

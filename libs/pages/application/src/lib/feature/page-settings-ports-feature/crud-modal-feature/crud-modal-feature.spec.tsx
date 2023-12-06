@@ -116,7 +116,7 @@ describe('CrudModalFeature', () => {
         external_port: '340',
         publicly_accessible: false,
         name: 'p520',
-        protocol: PortProtocolEnum.HTTP,
+        protocol: PortProtocolEnum.TCP,
       },
       application,
       application.ports?.[0]
@@ -156,7 +156,7 @@ describe('CrudModalFeature', () => {
             "external_port": undefined,
             "internal_port": 52,
             "name": "p520",
-            "protocol": "HTTP",
+            "protocol": "TCP",
             "publicly_accessible": false,
           },
         ],

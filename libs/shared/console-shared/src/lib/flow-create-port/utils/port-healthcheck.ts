@@ -1,4 +1,4 @@
-import { PortProtocolEnum, type ProbeType, type ServicePort } from 'qovery-typescript-axios'
+import { type ProbeType, type ServicePort } from 'qovery-typescript-axios'
 import { type PortData } from '@qovery/shared/interfaces'
 
 const extractProtocol = (obj: ProbeType | undefined = {}) =>
@@ -25,10 +25,6 @@ export const isMatchingHealthCheck = (port?: PortData | ServicePort, probType?: 
   const healthCheckProtocol = extractProtocol(probType)
 
   const healthCheckPort = extractPort(probType, healthCheckProtocol)
-
-  if (healthCheckProtocol !== PortProtocolEnum[port.protocol]) {
-    return false
-  }
 
   if (port && isPortData(port)) {
     return healthCheckPort === port.application_port

@@ -14,7 +14,7 @@ describe('isMatchingHealthCheck', () => {
     }
     expect(isMatchingHealthCheck(port)).toBeFalsy()
   })
-  it("should return false if protocol doesn't match", () => {
+  it("should return true if protocol doesn't match", () => {
     const port = {
       application_port: 123,
       is_public: false,
@@ -26,7 +26,7 @@ describe('isMatchingHealthCheck', () => {
         port: 123,
       },
     }
-    expect(isMatchingHealthCheck(port, probeType)).toBeFalsy()
+    expect(isMatchingHealthCheck(port, probeType)).toBeTruthy()
   })
   it("should return false if port number doesn't match", () => {
     const port = {
