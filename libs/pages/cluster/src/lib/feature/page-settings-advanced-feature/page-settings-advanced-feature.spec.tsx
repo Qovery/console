@@ -99,8 +99,6 @@ describe('PageSettingsAdvancedFeature', () => {
     jest.spyOn(React, 'useState').mockImplementation(useStateMock)
     render(<PageSettingsAdvancedFeature />)
 
-    console.log(setState)
-
     expect(setState).toHaveBeenNthCalledWith(
       10,
       Object.keys(mockCluster.advanced_settings?.current_settings || {}).sort()
