@@ -16,7 +16,7 @@ export interface DraggableItemProps {
 const getServiceByServiceId = (
   serviceId: string,
   services: (DatabaseEntity | ApplicationEntity)[]
-): DatabaseEntity | ApplicationEntity => {
+): DatabaseEntity | ApplicationEntity | undefined => {
   return services.filter((service) => service.id === serviceId)[0]
 }
 
@@ -24,7 +24,7 @@ export function DraggableItem(props: DraggableItemProps) {
   const { services, serviceId, cloudProvider, provided, snapshot } = props
 
   const service = getServiceByServiceId(serviceId || '', services)
-  const serviceType = getServiceType(service)
+  const serviceType = service ? getServiceType(service) : undefined
 
   const classNameItem = (isDragging: boolean) =>
     `flex items-center bg-neutral-50 rounded px-2 py-3 border ${
@@ -54,12 +54,14 @@ export function DraggableItem(props: DraggableItemProps) {
       style={{ ...provided?.draggableProps.style }}
       className={snapshot && classNameItem(snapshot.isDragging)}
     >
-      <ServiceIcon
-        className="mr-2"
-        serviceType={serviceType}
-        cloudProvider={cloudProvider}
-        buildMode={(service as ApplicationEntity)?.build_mode}
-      />
+      {serviceType && (
+        <ServiceIcon
+          className="mr-2"
+          serviceType={serviceType}
+          cloudProvider={cloudProvider}
+          buildMode={(service as ApplicationEntity)?.build_mode}
+        />
+      )}
       {content(service?.name, (service as DatabaseEntity)?.type, (service as DatabaseEntity)?.mode)}
     </div>
   )
