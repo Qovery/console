@@ -82,12 +82,12 @@ export const handleSubmit = (
     const readinessProbe = cloneApplication.healthchecks?.readiness_probe
     type PortProtocol = keyof typeof PortProtocolEnum
 
-    const getProbProtocol = (probe: ProbeType | undefined) => {
-      return Object.keys(probe || {}).find((key) => probe?.[key as keyof ProbeType] !== null) || null
+    const getProbeProtocol = (probeType: ProbeType | undefined) => {
+      return Object.keys(probeType ?? {}).find((key) => probeType?.[key as keyof ProbeType] !== null) ?? null
     }
 
     const updateProbe = (probe?: Probe | null) => {
-      const probProtocol = getProbProtocol(probe?.type) as Lowercase<PortProtocol>
+      const probProtocol = getProbeProtocol(probe?.type) as Lowercase<PortProtocol>
 
       return isMatchingHealthCheck(currentPort, probe?.type)
         ? {
