@@ -19,7 +19,7 @@ export const serviceHelm = createQueryKeys('serviceHelm', {
     environmentId: string
     helmDefaultValuesRequest: HelmDefaultValuesRequest
   }) => ({
-    queryKey: [environmentId],
+    queryKey: [environmentId, helmDefaultValuesRequest],
     async queryFn() {
       const response = await helmsApi.createHelmDefaultValues(environmentId, helmDefaultValuesRequest)
       return response.data

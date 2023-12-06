@@ -44,7 +44,7 @@ export function ValuesOverrideYamlModal({
     },
   })
 
-  const onSubmitValue = methods.handleSubmit(async ({ content }) => {
+  const onSubmitValue = methods.handleSubmit(({ content }) => {
     onSubmit(content)
     onClose()
   })
