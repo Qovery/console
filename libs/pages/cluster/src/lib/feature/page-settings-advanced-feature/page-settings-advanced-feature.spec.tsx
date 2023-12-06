@@ -100,7 +100,7 @@ describe('PageSettingsAdvancedFeature', () => {
     render(<PageSettingsAdvancedFeature />)
 
     expect(setState).toHaveBeenNthCalledWith(
-      10,
+      9,
       Object.keys(mockCluster.advanced_settings?.current_settings || {}).sort()
     )
     await act(async () => {
