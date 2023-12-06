@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form'
 import * as serviceHelmDomain from '@qovery/domains/service-helm/feature'
 import { renderHook, renderWithProviders } from '@qovery/shared/util-tests'
-import { type HelmGeneralData } from '../page-helm-create-feature'
+import { type HelmGeneralData, type HelmValuesAsFileData } from '../page-helm-create-feature'
 import { HelmCreateContext } from '../page-helm-create-feature'
 import StepSummaryFeature from './step-summary-feature'
 
@@ -30,9 +30,26 @@ describe('PageApplicationCreateGeneralFeature', () => {
   })
 
   it('should render successfully', () => {
-    const { result } = renderHook(() =>
+    const { result: generalForm } = renderHook(() =>
       useForm<HelmGeneralData>({
         mode: 'onChange',
+        defaultValues: {
+          source_provider: 'GIT',
+          provider: 'GITHUB',
+          repository: 'Qovery/github',
+          branch: 'main',
+          root_path: '/',
+        },
+      })
+    )
+
+    const { result: valuesOverrideFileForm } = renderHook(() =>
+      useForm<HelmValuesAsFileData>({
+        mode: 'onChange',
+        defaultValues: {
+          type: 'YAML',
+          content: 'test',
+        },
       })
     )
 
@@ -41,7 +58,8 @@ describe('PageApplicationCreateGeneralFeature', () => {
         value={{
           currentStep: 1,
           setCurrentStep: jest.fn(),
-          generalForm: result.current,
+          generalForm: generalForm.current,
+          valuesOverrideFileForm: valuesOverrideFileForm.current,
         }}
       >
         <StepSummaryFeature />

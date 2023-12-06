@@ -1,15 +1,31 @@
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { useForm } from 'react-hook-form'
 import { renderHook, renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
-import { type HelmValuesAsFileData } from '../page-helm-create-feature'
+import { type HelmGeneralData, type HelmValuesAsFileData } from '../page-helm-create-feature'
 import { HelmCreateContext } from '../page-helm-create-feature'
 import StepValuesOverrideFilesFeature from './step-values-override-files-feature'
 
 describe('StepValuesOverrideFilesFeature', () => {
   it('should render successfully', () => {
-    const { result } = renderHook(() =>
+    const { result: generalForm } = renderHook(() =>
+      useForm<HelmGeneralData>({
+        mode: 'onChange',
+        defaultValues: {
+          source_provider: 'HELM_REPOSITORY',
+          repository: 'https://charts.bitnami.com/bitnami',
+          chart_name: 'nginx',
+          chart_version: '8.9.0',
+          arguments: '',
+        },
+      })
+    )
+
+    const { result: valuesOverrideFileForm } = renderHook(() =>
       useForm<HelmValuesAsFileData>({
         mode: 'onChange',
+        defaultValues: {
+          type: 'NONE',
+        },
       })
     )
 
@@ -18,7 +34,8 @@ describe('StepValuesOverrideFilesFeature', () => {
         value={{
           currentStep: 1,
           setCurrentStep: jest.fn(),
-          valuesOverrideFileForm: result.current,
+          generalForm: generalForm.current,
+          valuesOverrideFileForm: valuesOverrideFileForm.current,
         }}
       >
         <StepValuesOverrideFilesFeature />
@@ -28,12 +45,28 @@ describe('StepValuesOverrideFilesFeature', () => {
   })
 
   it('should submit a form with a git repository', async () => {
-    const { result } = renderHook(() =>
+    const { result: generalForm } = renderHook(() =>
+      useForm<HelmGeneralData>({
+        mode: 'onChange',
+        defaultValues: {
+          source_provider: 'GIT',
+          provider: 'GITHUB',
+          repository: 'Qovery/github',
+          branch: 'main',
+          root_path: '/',
+        },
+      })
+    )
+
+    const { result: valuesOverrideFileForm } = renderHook(() =>
       useForm<HelmValuesAsFileData>({
         mode: 'onChange',
         defaultValues: {
-          repository: 'Qovery/.github',
+          type: 'GIT_REPOSITORY',
+          provider: 'GITHUB',
+          repository: 'Qovery/github',
           branch: 'main',
+          paths: '/',
         },
       })
     )
@@ -44,7 +77,8 @@ describe('StepValuesOverrideFilesFeature', () => {
           value={{
             currentStep: 2,
             setCurrentStep: jest.fn(),
-            valuesOverrideFileForm: result.current,
+            generalForm: generalForm.current,
+            valuesOverrideFileForm: valuesOverrideFileForm.current,
           }}
         >
           <StepValuesOverrideFilesFeature />
@@ -59,6 +93,53 @@ describe('StepValuesOverrideFilesFeature', () => {
       expect(button).not.toBeDisabled()
       await userEvent.click(button)
     })
+
+    expect(baseElement).toMatchSnapshot()
+  })
+
+  it('should submit a form with a yaml', async () => {
+    const { result: generalForm } = renderHook(() =>
+      useForm<HelmGeneralData>({
+        mode: 'onChange',
+        defaultValues: {
+          source_provider: 'GIT',
+          provider: 'GITHUB',
+          repository: 'Qovery/github',
+          branch: 'main',
+          root_path: '/',
+        },
+      })
+    )
+
+    const { result: valuesOverrideFileForm } = renderHook(() =>
+      useForm<HelmValuesAsFileData>({
+        mode: 'onChange',
+        defaultValues: {
+          type: 'YAML',
+          content: 'test',
+        },
+      })
+    )
+
+    const { baseElement, userEvent } = renderWithProviders(
+      wrapWithReactHookForm(
+        <HelmCreateContext.Provider
+          value={{
+            currentStep: 2,
+            setCurrentStep: jest.fn(),
+            generalForm: generalForm.current,
+            valuesOverrideFileForm: valuesOverrideFileForm.current,
+          }}
+        >
+          <StepValuesOverrideFilesFeature />
+        </HelmCreateContext.Provider>
+      )
+    )
+
+    const button = screen.getByRole('button', { name: 'Continue' })
+
+    expect(button).not.toBeDisabled()
+    await userEvent.click(button)
 
     expect(baseElement).toMatchSnapshot()
   })

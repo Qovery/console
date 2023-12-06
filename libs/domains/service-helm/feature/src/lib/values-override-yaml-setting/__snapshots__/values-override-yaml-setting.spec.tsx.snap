@@ -4,7 +4,7 @@ exports[`ValuesOverrideAsYamlSetting should match snapshot 1`] = `
 <body>
   <div>
     <div
-      class="border border-neutral-250 bg-neutral-100 rounded mb-5  w-full"
+      class="border border-neutral-250 bg-neutral-100 rounded mb-5 w-full"
       data-testid="block-content"
     >
       <div
@@ -17,20 +17,30 @@ exports[`ValuesOverrideAsYamlSetting should match snapshot 1`] = `
         </h2>
       </div>
       <div
-        class="p-5"
+        class="p-0"
       >
         <div
-          class="text-center my-4 px-5"
+          class="text-center my-4 py-5 px-10"
         >
           <span
             class="icon-solid-wave-pulse shrink-0 text-neutral-350"
             role="img"
           />
           <p
-            class="text-neutral-350 font-medium text-xs mt-1"
+            class="text-neutral-350 font-medium text-xs mt-1 mb-3"
           >
             No override defined.
           </p>
+          <button
+            class="inline-flex items-center shrink-0 font-medium transition text-xs h-8 px-3 rounded bg-brand-500 hover:bg-brand-600 text-white disabled:text-brand-300 disabled:bg-brand-100 disabled:border-none"
+            type="button"
+          >
+            Create override 
+            <span
+              class="icon-solid-pen shrink-0 ml-2"
+              role="img"
+            />
+          </button>
         </div>
       </div>
     </div>

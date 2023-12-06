@@ -3,7 +3,8 @@ import ModalAlert from '../modal-alert/modal-alert'
 import Modal from './modal'
 
 interface ModalOptions {
-  width: number
+  width?: number
+  fullScreen?: boolean
 }
 
 interface DefaultContextProps {
@@ -22,13 +23,14 @@ interface DefaultContextProps {
   setAlertModalChoice: (alertModalChoice: boolean | undefined) => void
 }
 
-const defaultContext = {
+export const defaultContext = {
   openModal: false,
   setOpenModal: () => true,
   setContentModal: () => <></>,
   setOptionsModal: () => {},
   optionsModal: {
     width: 488,
+    fullScreen: false,
   },
   alertClickOutside: false,
   enableAlertClickOutside: () => {},
@@ -48,9 +50,7 @@ interface ModalProviderProps {
 export const ModalProvider = (props: ModalProviderProps) => {
   const [openModal, setOpenModal] = useState(false)
   const [contentModal, setContentModal] = useState(<></>)
-  const [optionsModal, setOptionsModal] = useState({
-    width: 488,
-  })
+  const [optionsModal, setOptionsModal] = useState({})
   const [alertClickOutside, enableAlertClickOutside] = useState(false)
   const [modalAlertOpen, setModalAlertOpen] = useState(false)
   const [alertModalChoice, setAlertModalChoice] = useState<boolean | undefined>(undefined)
@@ -71,7 +71,7 @@ export const ModalProvider = (props: ModalProviderProps) => {
         setAlertModalChoice,
       }}
     >
-      <Modal externalOpen={openModal} setExternalOpen={setOpenModal} width={optionsModal.width}>
+      <Modal externalOpen={openModal} setExternalOpen={setOpenModal} {...optionsModal}>
         {contentModal}
       </Modal>
       <ModalAlert isOpen={modalAlertOpen} />

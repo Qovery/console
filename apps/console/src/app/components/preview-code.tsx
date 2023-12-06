@@ -8,7 +8,12 @@ function PreviewCode() {
   const params = new URLSearchParams(search)
 
   return (
-    <CodeEditor language={params.get('language') ?? 'yaml'} defaultValue={params.get('code') ?? ''} height="100vh" />
+    <CodeEditor
+      language={params.get('language') ?? 'yaml'}
+      defaultValue={params.get('code') ?? ''}
+      height="100vh"
+      readOnly
+    />
   )
 }
 

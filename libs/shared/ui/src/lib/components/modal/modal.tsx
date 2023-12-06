@@ -9,7 +9,8 @@ export interface ModalProps {
   trigger?: ReactNode
   defaultOpen?: boolean
   buttonClose?: boolean
-  width?: number
+  width?: number | string
+  fullScreen?: boolean
   className?: string
   externalOpen?: boolean
   setExternalOpen?: (e: boolean) => void
@@ -24,6 +25,7 @@ export const Modal = (props: ModalProps) => {
     children,
     trigger,
     width = '474',
+    fullScreen = false,
     className = '',
     defaultOpen = false,
     buttonClose = true,
@@ -68,7 +70,15 @@ export const Modal = (props: ModalProps) => {
   return (
     <Dialog.Root
       open={externalOpen ? externalOpen : open}
-      onOpenChange={setExternalOpen ? () => setExternalOpen(!externalOpen) : () => setOpen(!open)}
+      onOpenChange={
+        setExternalOpen
+          ? () => {
+              setExternalOpen(!externalOpen)
+            }
+          : () => {
+              setOpen(!open)
+            }
+      }
     >
       {trigger && <div onClick={() => setOpen(!open)}>{trigger}</div>}
       <Dialog.Portal>
@@ -88,10 +98,14 @@ export const Modal = (props: ModalProps) => {
           onPointerDownOutside={(event) => {
             event.preventDefault()
           }}
-          style={{ width: `${width}px` }}
+          style={
+            fullScreen
+              ? { width: 'calc(100vw - 48px)', height: 'calc(100vh  - 48px)', top: 24 }
+              : { width: `${width}px` }
+          }
           className={`modal__content fixed top-[84px] left-1/2 bg-white rounded-md shadow-[0_0_32px_rgba(0,0,0,0.08)] ${className}`}
         >
-          <div className="max-h-[80vh] overflow-auto">
+          <div className={`overflow-auto ${fullScreen ? '' : 'max-h-[80vh]'}`}>
             {cloneElement(children, {
               setOpen: setExternalOpen ? setExternalOpen : setOpen,
             })}

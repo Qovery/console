@@ -6,8 +6,13 @@ import { SERVICES_HELM_CREATION_GENERAL_URL, SERVICES_HELM_CREATION_URL, SERVICE
 import { FunnelFlow } from '@qovery/shared/ui'
 import { ROUTER_SERVICE_HELM_CREATION } from '../../router/router'
 
-export const steps: { title: string }[] = [{ title: 'General data' }, { title: 'Values' }, { title: 'Summary' }]
+export const steps: { title: string }[] = [
+  { title: 'General data' },
+  { title: 'Values override as file' },
+  { title: 'Summary' },
+]
 
+export type ValuesOverrideTypes = 'GIT_REPOSITORY' | 'YAML' | 'NONE'
 export interface HelmGeneralData
   extends Omit<HelmRequest, 'source' | 'ports' | 'allow_cluster_wide_resources' | 'values_override' | 'arguments'> {
   source_provider: 'HELM_REPOSITORY' | 'GIT'
@@ -21,10 +26,12 @@ export interface HelmGeneralData
 }
 
 export interface HelmValuesAsFileData {
-  repository: string
+  type: ValuesOverrideTypes
+  repository?: string
   provider?: GitProviderEnum
   branch?: string
   paths?: string
+  content?: string
 }
 
 interface HelmCreateContextInterface {
@@ -54,6 +61,9 @@ export function PageHelmCreateFeature() {
 
   const valuesOverrideFileForm = useForm<HelmValuesAsFileData>({
     mode: 'onChange',
+    defaultValues: {
+      type: 'GIT_REPOSITORY',
+    },
   })
 
   const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_HELM_CREATION_URL}`

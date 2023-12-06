@@ -4,7 +4,7 @@ exports[`GitTokenList should match snapshot 1`] = `
 <body>
   <div>
     <div
-      class="border border-neutral-250 bg-neutral-100 rounded mb-5  w-full"
+      class="border border-neutral-250 bg-neutral-100 rounded mb-5 w-full"
       data-testid="block-content"
     >
       <div

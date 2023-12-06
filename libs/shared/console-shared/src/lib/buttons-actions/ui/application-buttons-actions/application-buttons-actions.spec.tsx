@@ -36,7 +36,7 @@ describe('ApplicationButtonsActionsFeature', () => {
   })
 
   it('should render actions for DEPLOYED status', async () => {
-    jest.spyOn(domainsServicesFeature, 'useDeploymentStatus').mockReturnValueOnce({
+    jest.spyOn(domainsServicesFeature, 'useDeploymentStatus').mockReturnValue({
       data: {
         state: StateEnum.DEPLOYED,
         id: 'id',
@@ -61,7 +61,7 @@ describe('ApplicationButtonsActionsFeature', () => {
   })
 
   it('should render actions for STOPPED status', async () => {
-    jest.spyOn(domainsServicesFeature, 'useDeploymentStatus').mockReturnValueOnce({
+    jest.spyOn(domainsServicesFeature, 'useDeploymentStatus').mockReturnValue({
       data: {
         state: StateEnum.STOPPED,
         id: 'id',

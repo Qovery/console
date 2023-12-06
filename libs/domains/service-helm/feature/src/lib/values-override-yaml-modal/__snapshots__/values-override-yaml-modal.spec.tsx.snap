@@ -1,0 +1,120 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ValuesOverrideYamlModal should match snapshot 1`] = `
+<body>
+  <script
+    src="https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/vs/loader.js"
+  />
+  <div>
+    <div
+      class="p-6"
+    >
+      <h2
+        class="h4 text-neutral-400 max-w-sm truncate"
+      >
+        Raw YAML
+      </h2>
+      <form
+        class="mt-6"
+      >
+        <div
+          class="flex h-full"
+        >
+          <div
+            class="border border-neutral-250 bg-neutral-100 rounded w-full mb-0 rounded-r-none border-r-0"
+            data-testid="block-content"
+          >
+            <div
+              class="flex items-center justify-between h-9 px-4 border-b border-neutral-250"
+            >
+              <h2
+                class="font-medium text-neutral-400 text-ssm"
+              >
+                Override
+              </h2>
+            </div>
+            <div
+              class="p-0"
+            >
+              <section
+                style="display: flex; position: relative; text-align: initial; width: 100%; height: calc(100vh  - 254px);"
+              >
+                <div
+                  style="display: flex; height: 100%; width: 100%; justify-content: center; align-items: center;"
+                >
+                  <div
+                    class="aspect-square border-2  rounded-full border-solid border-r-neutral-500 animate-spin w-4 "
+                    data-testid="spinner"
+                  />
+                </div>
+                <div
+                  style="width: 100%; display: none;"
+                />
+              </section>
+            </div>
+          </div>
+          <div
+            class="border border-neutral-250 bg-neutral-100 rounded w-full mb-0 rounded-l-none"
+            data-testid="block-content"
+          >
+            <div
+              class="flex items-center justify-between h-9 px-4 border-b border-neutral-250"
+            >
+              <h2
+                class="font-medium text-neutral-400 text-ssm"
+              >
+                Default values.yaml
+              </h2>
+              <span
+                class="bigger-click-zone cursor-pointer text-xs hover:text-neutral-400"
+                data-state="closed"
+                data-testid="copy-container"
+              >
+                <span
+                  class="icon-solid-copy shrink-0 "
+                  role="img"
+                />
+              </span>
+            </div>
+            <div
+              class="p-0"
+            >
+              <div
+                class="flex justify-center py-14 px-5"
+              >
+                <div
+                  class="aspect-square border-2  rounded-full border-solid border-r-neutral-500 animate-spin w-4 "
+                  data-testid="spinner"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="flex gap-3 justify-end mt-6"
+        >
+          <button
+            class="btn btn--xlarge btn--stroked btn--no-min-w "
+            data-testid="cancel-button"
+            type="button"
+          >
+            <span>
+              Cancel
+            </span>
+          </button>
+          <button
+            class="btn btn--xlarge btn--basic btn--disabled btn--no-min-w "
+            data-testid="submit-button"
+            disabled=""
+            type="submit"
+          >
+            <span>
+              Save
+            </span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+`;
