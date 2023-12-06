@@ -438,7 +438,7 @@ describe('ServiceList', () => {
     await userEvent.click(screen.getAllByRole('button', { name: /stopped/i })[0])
 
     expect(mockNavigate).toHaveBeenCalledWith(
-      '/organization/1/project/2/environment/3/logs/037c9e87-e098-4970-8b1f-9a5ffe9e4b89/live-logs'
+      '/organization/1/project/2/environment/3/application/037c9e87-e098-4970-8b1f-9a5ffe9e4b89/services/general'
     )
   })
   it('should navigate to service deployment logs on service deployment status click', async () => {

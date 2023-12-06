@@ -40,7 +40,6 @@ import {
   DEPLOYMENT_LOGS_URL,
   ENVIRONMENT_LOGS_URL,
   SERVICES_GENERAL_URL,
-  SERVICE_LOGS_URL,
 } from '@qovery/shared/routes'
 import {
   Badge,
@@ -220,20 +219,30 @@ export function ServiceList({ organizationId, projectId, environmentId, classNam
           const value = info.getValue()
           const service = info.row.original
           return (
-            <Button
-              className="text-xs gap-2"
-              size="md"
-              color="neutral"
-              variant="outline"
-              radius="full"
-              onClick={(e) => {
-                e.stopPropagation()
-                navigate(ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + SERVICE_LOGS_URL(service.id))
-              }}
-            >
-              <StatusChip status={service.runningStatus?.state} />
-              {value}
-            </Button>
+            <Tooltip content="See overview">
+              <Button
+                className="text-xs gap-2"
+                size="md"
+                color="neutral"
+                variant="outline"
+                radius="full"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  const link = match(service)
+                    .with(
+                      { serviceType: ServiceTypeEnum.DATABASE },
+                      ({ id }) => DATABASE_URL(organizationId, projectId, environmentId, id) + DATABASE_GENERAL_URL
+                    )
+                    .otherwise(
+                      ({ id }) => APPLICATION_URL(organizationId, projectId, environmentId, id) + SERVICES_GENERAL_URL
+                    )
+                  navigate(link)
+                }}
+              >
+                <StatusChip status={service.runningStatus?.state} />
+                {value}
+              </Button>
+            </Tooltip>
           )
         },
       }),
@@ -248,22 +257,24 @@ export function ServiceList({ organizationId, projectId, environmentId, classNam
           const value = info.getValue()
           const service = info.row.original
           return (
-            <Button
-              className="text-xs gap-2"
-              size="md"
-              color="neutral"
-              variant="outline"
-              radius="full"
-              onClick={(e) => {
-                e.stopPropagation()
-                navigate(
-                  ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(service.id)
-                )
-              }}
-            >
-              <StatusChip status={service.deploymentStatus?.state} />
-              {value}
-            </Button>
+            <Tooltip content="See logs">
+              <Button
+                className="text-xs gap-2"
+                size="md"
+                color="neutral"
+                variant="outline"
+                radius="full"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  navigate(
+                    ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(service.id)
+                  )
+                }}
+              >
+                <StatusChip status={service.deploymentStatus?.state} />
+                {value}
+              </Button>
+            </Tooltip>
           )
         },
       }),
