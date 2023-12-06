@@ -33,7 +33,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
               Define the YAML file(s) to be applied as override to the default values.yaml delivered with the chart. It is highly recommended to store the override file(s) in a git repository.
             </p>
             <span
-              aria-controls="radix-:r6:"
+              aria-controls="radix-:rd:"
               aria-expanded="false"
               aria-haspopup="dialog"
               class="text-sm cursor-pointer text-brand-500 hover:text-brand-600 transition font-medium mb-5"
@@ -47,12 +47,8 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
               />
             </span>
             <button
-              class="inline-flex items-center shrink-0 font-medium transition text-sm h-10 px-4 rounded border border-neutral-250 dark:border-neutral-350 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 relative pointer-events-none text-transparent mb-10"
+              class="inline-flex items-center shrink-0 font-medium transition text-sm h-10 px-4 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 mb-10"
             >
-              <div
-                class="aspect-square border-2  rounded-full border-solid border-neutral-350 border-r-neutral-50 animate-spin w-4 absolute m-auto left-0 right-0"
-                data-testid="spinner"
-              />
               See default values.yaml 
               <span
                 class="icon-solid-arrow-up-right-from-square shrink-0 text-xs ml-2"
@@ -80,7 +76,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
                   >
                     <span
                       class="css-1f43avz-a11yText-A11yText"
-                      id="react-select-2-live-region"
+                      id="react-select-3-live-region"
                     />
                     <span
                       aria-atomic="false"
@@ -192,7 +188,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
                       >
                         <span
                           class="css-1f43avz-a11yText-A11yText"
-                          id="react-select-3-live-region"
+                          id="react-select-4-live-region"
                         />
                         <span
                           aria-atomic="false"
@@ -208,13 +204,13 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
                           >
                             <div
                               class="input-select__placeholder css-1jqq78o-placeholder"
-                              id="react-select-3-placeholder"
+                              id="react-select-4-placeholder"
                             >
                               Select...
                             </div>
                             <input
                               aria-autocomplete="list"
-                              aria-describedby="react-select-3-placeholder"
+                              aria-describedby="react-select-4-placeholder"
                               aria-expanded="false"
                               aria-haspopup="true"
                               aria-readonly="true"
