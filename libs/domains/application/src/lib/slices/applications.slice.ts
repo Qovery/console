@@ -25,6 +25,7 @@ import {
   type JobRequest,
   JobsApi,
 } from 'qovery-typescript-axios'
+import { type AnyService } from '@qovery/domains/services/data-access'
 import { type ServiceTypeEnum, isApplication, isContainer, isJob } from '@qovery/shared/enums'
 import {
   type AdvancedSettings,
@@ -88,7 +89,9 @@ export const editApplication = createAsyncThunk(
   'application/edit',
   async (payload: {
     applicationId: string
-    data: Partial<Omit<ApplicationEntity, 'registry'>> & { registry?: { id?: string | undefined } }
+    data:
+      | (Partial<Omit<ApplicationEntity, 'registry'>> & { registry?: { id?: string | undefined } })
+      | (Omit<AnyService, 'registry'> & { registry?: { id?: string } })
     serviceType: ServiceTypeEnum
     toasterCallback: () => void
     silentToaster?: boolean

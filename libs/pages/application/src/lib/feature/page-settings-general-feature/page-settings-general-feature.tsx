@@ -2,14 +2,14 @@ import { useQueryClient } from '@tanstack/react-query'
 import { BuildModeEnum, BuildPackLanguageEnum } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
-import { editApplication, getApplicationsState, postApplicationActionsRedeploy } from '@qovery/domains/application'
+import { editApplication, postApplicationActionsRedeploy } from '@qovery/domains/application'
 import { useOrganization } from '@qovery/domains/organizations/feature'
+import { type AnyService, type Application, type Container, type Job } from '@qovery/domains/services/data-access'
 import { useService } from '@qovery/domains/services/feature'
 import {
   ServiceTypeEnum,
-  getServiceType,
   isApplication,
   isContainer,
   isContainerJob,
@@ -17,15 +17,14 @@ import {
   isJob,
   isJobGitSource,
 } from '@qovery/shared/enums'
-import { type ApplicationEntity } from '@qovery/shared/interfaces'
 import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { toastError } from '@qovery/shared/ui'
 import { getGitTokenValue } from '@qovery/shared/util-git'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
-import { type AppDispatch, type RootState } from '@qovery/state/store'
+import { type AppDispatch } from '@qovery/state/store'
 import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-general'
 
-export const handleGitApplicationSubmit = (data: FieldValues, application: ApplicationEntity) => {
+export const handleGitApplicationSubmit = (data: FieldValues, application: Application) => {
   let cloneApplication = Object.assign({}, application)
   cloneApplication.name = data['name']
   cloneApplication.description = data['description']
@@ -63,9 +62,9 @@ export const handleGitApplicationSubmit = (data: FieldValues, application: Appli
   return cloneApplication
 }
 
-export const handleContainerSubmit = (data: FieldValues, application: ApplicationEntity) => {
+export const handleContainerSubmit = (data: FieldValues, container: Container) => {
   return {
-    ...application,
+    ...container,
     name: data['name'],
     description: data['description'] || '',
     auto_deploy: data['auto_deploy'],
@@ -77,8 +76,8 @@ export const handleContainerSubmit = (data: FieldValues, application: Applicatio
   }
 }
 
-export const handleJobSubmit = (data: FieldValues, application: ApplicationEntity) => {
-  if (isJobGitSource(application.source)) {
+export const handleJobSubmit = (data: FieldValues, job: Job) => {
+  if (isJobGitSource(job.source)) {
     const gitToken = getGitTokenValue(data['provider'])
 
     const git_repository = {
@@ -89,7 +88,7 @@ export const handleJobSubmit = (data: FieldValues, application: ApplicationEntit
     }
 
     return {
-      ...application,
+      ...job,
       name: data['name'],
       description: data['description'],
       auto_deploy: data['auto_deploy'],
@@ -102,7 +101,7 @@ export const handleJobSubmit = (data: FieldValues, application: ApplicationEntit
     }
   } else {
     return {
-      ...application,
+      ...job,
       name: data['name'],
       description: data['description'],
       auto_deploy: data['auto_deploy'],
@@ -123,21 +122,8 @@ export function PageSettingsGeneralFeature() {
   const dispatch = useDispatch<AppDispatch>()
   const navigate = useNavigate()
 
-  // const application = useSelector<RootState, ApplicationEntity | undefined>(
-  //   (state) => getApplicationsState(state).entities[applicationId],
-  //   (a, b) =>
-  //     a?.name === b?.name &&
-  //     a?.description === b?.description &&
-  //     a?.build_mode === b?.build_mode &&
-  //     a?.buildpack_language === b?.buildpack_language &&
-  //     a?.dockerfile_path === b?.dockerfile_path
-  // )
-
-  const { data: service } = useService({ environmentId, serviceId: applicationId })
+  const { data: service, isLoading: isLoadingService } = useService({ environmentId, serviceId: applicationId })
   const { data: organization } = useOrganization({ organizationId })
-  const loadingStatus = useSelector((state: RootState) => getApplicationsState(state).loadingStatus)
-
-  console.log(service)
 
   const methods = useForm({
     mode: 'onChange',
@@ -164,34 +150,38 @@ export function PageSettingsGeneralFeature() {
 
   const onSubmit = methods.handleSubmit((data) => {
     if (data && service) {
-      let cloneApplication: Omit<ApplicationEntity, 'registry'> & { registry?: { id?: string } }
+      let cloneApplication: Omit<AnyService, 'registry'> & { registry?: { id?: string } }
 
       if (service?.serviceType === ServiceTypeEnum.APPLICATION) {
         cloneApplication = handleGitApplicationSubmit(data, service)
       }
 
-      if (isApplication(application)) {
-        cloneApplication = handleGitApplicationSubmit(data, application)
-      } else if (isJob(application)) {
-        cloneApplication = handleJobSubmit(data, application)
+      if (service?.serviceType === ServiceTypeEnum.APPLICATION) {
+        cloneApplication = handleGitApplicationSubmit(data, service)
+      }
+
+      if (service?.serviceType === ServiceTypeEnum.JOB) {
+        cloneApplication = handleJobSubmit(data, service)
       } else {
         try {
-          cloneApplication = handleContainerSubmit(data, application)
+          cloneApplication = handleContainerSubmit(data, service)
         } catch (e: unknown) {
           toastError(e as Error, 'Invalid CMD array')
           return
         }
       }
 
-      dispatch(
-        editApplication({
-          applicationId: applicationId,
-          data: cloneApplication,
-          serviceType: getServiceType(application),
-          toasterCallback,
-          queryClient,
-        })
-      )
+      if (service?.serviceType) {
+        dispatch(
+          editApplication({
+            applicationId: applicationId,
+            data: cloneApplication,
+            serviceType: service.serviceType as ServiceTypeEnum,
+            toasterCallback,
+            queryClient,
+          })
+        )
+      }
     }
   })
 
@@ -261,16 +251,13 @@ export function PageSettingsGeneralFeature() {
     }
   }, [methods, application, dispatch, organizationId])
 
-  console.log(application)
-  console.log(application && getServiceType(application))
-
   return (
     <FormProvider {...methods}>
       <PageSettingsGeneral
         onSubmit={onSubmit}
         watchBuildMode={watchBuildMode}
-        loading={loadingStatus === 'loading'}
-        type={application && getServiceType(application)}
+        loading={isLoadingService}
+        type={service?.serviceType}
         organization={organization}
       />
     </FormProvider>

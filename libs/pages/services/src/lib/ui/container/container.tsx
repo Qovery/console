@@ -16,6 +16,7 @@ import {
   SERVICES_DATABASE_CREATION_URL,
   SERVICES_DEPLOYMENTS_URL,
   SERVICES_GENERAL_URL,
+  SERVICES_HELM_CREATION_URL,
   SERVICES_LIFECYCLE_CREATION_URL,
   SERVICES_SETTINGS_URL,
   SERVICES_URL,
@@ -155,13 +156,15 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
           },
         },
         // TODO: Uncomment when helm is ready
-        // {
-        //   name: 'Create helm',
-        //   contentLeft: <Icon name={IconEnum.HELM_OFFICIAL} width="14" height="16" className="text-brand-500 text-sm" />,
-        //   onClick: () => {
-        //     navigate(`${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_HELM_CREATION_URL}`)
-        //   },
-        // },
+        {
+          name: 'Create helm',
+          contentLeft: (
+            <Icon name={IconEnum.CRON_JOB_STROKE} width="14" height="16" className="text-brand-500 text-sm" />
+          ),
+          onClick: () => {
+            navigate(`${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_HELM_CREATION_URL}`)
+          },
+        },
       ],
     },
   ]
