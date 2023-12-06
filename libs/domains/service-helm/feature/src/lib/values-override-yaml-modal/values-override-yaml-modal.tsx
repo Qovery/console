@@ -37,10 +37,6 @@ export function ValuesOverrideYamlModal({
     },
   })
 
-  console.log('helmDefaultValues: ' + helmDefaultValues)
-  console.log('isLoadingHelmDefaultValues: ' + isLoadingHelmDefaultValues)
-  console.log('isErrorHelmDefaultValues: ' + isErrorHelmDefaultValues)
-
   const methods = useForm({
     mode: 'onChange',
     defaultValues: {
