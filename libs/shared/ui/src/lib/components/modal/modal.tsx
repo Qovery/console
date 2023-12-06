@@ -36,8 +36,7 @@ export const Modal = (props: ModalProps) => {
   const [open, setOpen] = useState(defaultOpen)
   const { setModalAlertOpen } = useModalAlert()
 
-  const { setOptionsModal, setAlertModalChoice, enableAlertClickOutside, alertClickOutside, alertModalChoice } =
-    useContext(ModalContext)
+  const { setAlertModalChoice, enableAlertClickOutside, alertClickOutside, alertModalChoice } = useContext(ModalContext)
 
   useEffect(() => {
     if (!open)
