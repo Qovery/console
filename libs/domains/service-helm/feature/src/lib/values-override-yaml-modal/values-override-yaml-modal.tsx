@@ -1,5 +1,4 @@
 import { type HelmRequestAllOfSource } from 'qovery-typescript-axios'
-import { useEffect } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import {
   BlockContent,
@@ -10,7 +9,7 @@ import {
   LoaderSpinner,
   ModalCrud,
 } from '@qovery/shared/ui'
-import useCreateHelmDefaultValues from '../hooks/use-create-helm-default-values/use-create-helm-default-values'
+import useHelmDefaultValues from '../hooks/use-helm-default-values/use-helm-default-values'
 
 export interface ValuesOverrideYamlModalProps {
   environmentId: string
@@ -29,10 +28,18 @@ export function ValuesOverrideYamlModal({
 }: ValuesOverrideYamlModalProps) {
   const {
     data: helmDefaultValues,
-    mutateAsync: createHelmDefaultValues,
     isLoading: isLoadingHelmDefaultValues,
     isError: isErrorHelmDefaultValues,
-  } = useCreateHelmDefaultValues()
+  } = useHelmDefaultValues({
+    environmentId,
+    helmDefaultValuesRequest: {
+      source,
+    },
+  })
+
+  console.log('helmDefaultValues: ' + helmDefaultValues)
+  console.log('isLoadingHelmDefaultValues: ' + isLoadingHelmDefaultValues)
+  console.log('isErrorHelmDefaultValues: ' + isErrorHelmDefaultValues)
 
   const methods = useForm({
     mode: 'onChange',
@@ -41,29 +48,10 @@ export function ValuesOverrideYamlModal({
     },
   })
 
-  useEffect(() => {
-    async function fetchHelmDefaultValues() {
-      try {
-        await createHelmDefaultValues({
-          environmentId,
-          helmDefaultValuesRequest: {
-            source,
-          },
-        })
-      } catch (error) {
-        console.error(error)
-      }
-    }
-
-    fetchHelmDefaultValues()
-  }, [environmentId, source, createHelmDefaultValues])
-
   const onSubmitValue = methods.handleSubmit(async ({ content }) => {
     onSubmit(content)
     onClose()
   })
-
-  console.log(helmDefaultValues)
 
   return (
     <FormProvider {...methods}>

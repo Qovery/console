@@ -12,21 +12,24 @@ export const serviceHelm = createQueryKeys('serviceHelm', {
       return response.data.results
     },
   }),
-})
-
-export const mutations = {
-  async createHelmService({ environmentId, helmRequest }: { environmentId: string; helmRequest: HelmRequest }) {
-    const response = await helmsApi.createHelm(environmentId, helmRequest)
-    return response.data
-  },
-  async createHelmDefaultValues({
+  helmDefaultValues: ({
     environmentId,
     helmDefaultValuesRequest,
   }: {
     environmentId: string
     helmDefaultValuesRequest: HelmDefaultValuesRequest
-  }) {
-    const response = await helmsApi.createHelmDefaultValues(environmentId, helmDefaultValuesRequest)
+  }) => ({
+    queryKey: [environmentId],
+    async queryFn() {
+      const response = await helmsApi.createHelmDefaultValues(environmentId, helmDefaultValuesRequest)
+      return response.data
+    },
+  }),
+})
+
+export const mutations = {
+  async createHelmService({ environmentId, helmRequest }: { environmentId: string; helmRequest: HelmRequest }) {
+    const response = await helmsApi.createHelm(environmentId, helmRequest)
     return response.data
   },
 }

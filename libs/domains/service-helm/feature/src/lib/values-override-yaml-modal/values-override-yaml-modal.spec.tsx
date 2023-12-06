@@ -1,17 +1,8 @@
 import { renderWithProviders } from '@qovery/shared/util-tests'
+import * as useHelmDefaultValues from '../hooks/use-helm-default-values/use-helm-default-values'
 import ValuesOverrideYamlModal, { type ValuesOverrideYamlModalProps } from './values-override-yaml-modal'
 
-jest.mock('../hooks/use-create-helm-default-values/use-create-helm-default-values', () => {
-  return {
-    ...jest.requireActual('../hooks/use-create-helm-default-values/use-create-helm-default-values'),
-    useCreateHelmDefaultValues: () => ({
-      mutateAsync: jest.fn(),
-      isLoading: false,
-      isError: false,
-      data: 'content',
-    }),
-  }
-})
+const useHelmDefaultValuesMockSpy = jest.spyOn(useHelmDefaultValues, 'useHelmDefaultValues') as jest.Mock
 
 const props: ValuesOverrideYamlModalProps = {
   environmentId: '0',
@@ -24,10 +15,18 @@ const props: ValuesOverrideYamlModalProps = {
   },
   onSubmit: jest.fn(),
   onClose: jest.fn(),
-  content: 'content',
+  content: 'my-yaml-content',
 }
 
 describe('ValuesOverrideYamlModal', () => {
+  beforeEach(() => {
+    useHelmDefaultValuesMockSpy.mockReturnValue({
+      isLoading: false,
+      isError: false,
+      data: 'my-yaml-content',
+    })
+  })
+
   it('should render successfully', () => {
     const { baseElement } = renderWithProviders(<ValuesOverrideYamlModal {...props} />)
     expect(baseElement).toBeTruthy()

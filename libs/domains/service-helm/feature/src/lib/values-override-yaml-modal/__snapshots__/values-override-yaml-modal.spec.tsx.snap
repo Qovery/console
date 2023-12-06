@@ -79,21 +79,14 @@ exports[`ValuesOverrideYamlModal should match snapshot 1`] = `
             <div
               class="p-0"
             >
-              <section
-                style="display: flex; position: relative; text-align: initial; width: 100%; height: calc(100vh  - 254px);"
+              <div
+                class="flex justify-center py-14 px-5"
               >
                 <div
-                  style="display: flex; height: 100%; width: 100%; justify-content: center; align-items: center;"
-                >
-                  <div
-                    class="aspect-square border-2  rounded-full border-solid border-r-neutral-500 animate-spin w-4 "
-                    data-testid="spinner"
-                  />
-                </div>
-                <div
-                  style="width: 100%; display: none;"
+                  class="aspect-square border-2  rounded-full border-solid border-r-neutral-500 animate-spin w-4 "
+                  data-testid="spinner"
                 />
-              </section>
+              </div>
             </div>
           </div>
         </div>
