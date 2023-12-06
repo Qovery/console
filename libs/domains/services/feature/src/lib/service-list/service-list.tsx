@@ -54,7 +54,7 @@ import {
   Truncate,
 } from '@qovery/shared/ui'
 import { dateFullFormat, timeAgo } from '@qovery/shared/util-dates'
-import { twMerge } from '@qovery/shared/util-js'
+import { formatCronExpression, twMerge } from '@qovery/shared/util-js'
 import { containerRegistryKindToIcon } from '@qovery/shared/util-js'
 import { useServices } from '../hooks/use-services/use-services'
 import { LastCommitAuthor } from '../last-commit-author/last-commit-author'
@@ -145,7 +145,41 @@ export function ServiceList({ organizationId, projectId, environmentId, classNam
                   }
                   width="20"
                 />
-                {serviceName}
+                {match(service)
+                  .with({ serviceType: 'DATABASE' }, (db) => {
+                    return (
+                      <span className="flex flex-col">
+                        <span>{serviceName}</span>
+                        <span className="text-xs text-neutral-350 font-normal">
+                          {match(db.mode)
+                            .with('CONTAINER', () => 'Container DB')
+                            .with('MANAGED', () => 'Cloud Managed DB')
+                            .exhaustive()}
+                        </span>
+                      </span>
+                    )
+                  })
+                  .with({ serviceType: 'JOB' }, (job) => (
+                    <span className="flex flex-col">
+                      <span>{serviceName}</span>
+                      <span className="text-xs text-neutral-350 font-normal">
+                        {match(job)
+                          .with(
+                            { job_type: 'CRON' },
+                            ({ schedule }) => `${formatCronExpression(schedule.cronjob?.scheduled_at)} (UTC)`
+                          )
+                          .with(
+                            { job_type: 'LIFECYCLE' },
+                            ({ schedule }) =>
+                              [schedule.on_start && 'Start', schedule.on_stop && 'Stop', schedule.on_delete && 'Delete']
+                                .filter(Boolean)
+                                .join(' - ') || undefined
+                          )
+                          .exhaustive()}
+                      </span>
+                    </span>
+                  ))
+                  .otherwise(() => serviceName)}
                 <div onClick={(e) => e.stopPropagation()}>
                   <ServiceLinksPopover
                     organizationId={organizationId}
