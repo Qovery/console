@@ -2,7 +2,7 @@ import * as Dialog from '@radix-ui/react-dialog'
 import { type ReactElement, type ReactNode, cloneElement, useContext, useEffect, useState } from 'react'
 import { Icon } from '../icon/icon'
 import useModalAlert from '../modal-alert/use-modal-alert/use-modal-alert'
-import { ModalContext, defaultContext } from './modal-root'
+import { ModalContext } from './modal-root'
 
 export interface ModalProps {
   children: ReactElement
@@ -67,13 +67,6 @@ export const Modal = (props: ModalProps) => {
     alertClickOutside,
     setAlertModalChoice,
   ])
-
-  // Reset modal options when the modal is closed
-  useEffect(() => {
-    if (externalOpen ? !externalOpen : !open) {
-      setOptionsModal(defaultContext.optionsModal)
-    }
-  }, [externalOpen, open, setOptionsModal])
 
   return (
     <Dialog.Root
