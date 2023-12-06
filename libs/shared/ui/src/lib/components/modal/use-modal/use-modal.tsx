@@ -17,7 +17,10 @@ export function useModal() {
     if (modal) {
       setOpenModal(true)
       if (modal.options) {
-        setOptionsModal(modal.options)
+        setOptionsModal({
+          ...defaultContext.optionsModal,
+          ...modal.options,
+        })
       } else {
         // Reset options with default values
         setOptionsModal(defaultContext.optionsModal)
