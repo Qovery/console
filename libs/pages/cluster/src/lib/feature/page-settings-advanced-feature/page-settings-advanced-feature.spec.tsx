@@ -98,8 +98,11 @@ describe('PageSettingsAdvancedFeature', () => {
     mockCluster.advanced_settings!.loadingStatus = 'loaded'
     jest.spyOn(React, 'useState').mockImplementation(useStateMock)
     render(<PageSettingsAdvancedFeature />)
+
+    console.log(setState)
+
     expect(setState).toHaveBeenNthCalledWith(
-      9,
+      10,
       Object.keys(mockCluster.advanced_settings?.current_settings || {}).sort()
     )
     await act(async () => {
