@@ -37,7 +37,6 @@ export function PageSettingsFeature() {
         {
           title: 'Pipeline',
           url: pathSettings + SERVICES_SETTINGS_PIPELINE_URL,
-          badge: 'New',
         },
       ],
     },
