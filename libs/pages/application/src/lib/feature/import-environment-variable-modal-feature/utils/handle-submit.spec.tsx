@@ -4,7 +4,7 @@ describe('formatData()', () => {
   it('should format the data correctly', () => {
     const data = {
       key_key: 'key',
-      key_value: 'value',
+      key_value: 'value\r',
       key_scope: 'application',
       key_secret: 'false',
       key2_key: 'key',
