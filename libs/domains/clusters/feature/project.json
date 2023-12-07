@@ -3,7 +3,7 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/domains/clusters/feature/src",
   "projectType": "library",
-  "tags": [],
+  "tags": ["scope:domain", "type:feature", "slice:clusters"],
   "targets": {
     "lint": {
       "executor": "@nx/eslint:lint",

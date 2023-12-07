@@ -3,7 +3,7 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/domains/cloud-providers/feature/src",
   "projectType": "library",
-  "tags": [],
+  "tags": ["scope:domain", "type:feature", "slice:cloud-providers"],
   "targets": {
     "lint": {
       "executor": "@nx/eslint:lint",
