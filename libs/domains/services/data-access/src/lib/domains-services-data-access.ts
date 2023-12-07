@@ -4,14 +4,17 @@ import {
   ApplicationDeploymentHistoryApi,
   ApplicationDeploymentRestrictionApi,
   type ApplicationDeploymentRestrictionRequest,
+  type ApplicationEditRequest,
   ApplicationMainCallsApi,
   ApplicationsApi,
   ContainerActionsApi,
   ContainerDeploymentHistoryApi,
   ContainerMainCallsApi,
+  type ContainerRequest,
   ContainersApi,
   DatabaseActionsApi,
   DatabaseDeploymentHistoryApi,
+  type DatabaseEditRequest,
   DatabaseMainCallsApi,
   DatabasesApi,
   EnvironmentMainCallsApi,
@@ -20,12 +23,14 @@ import {
   HelmDeploymentRestrictionApi,
   type HelmDeploymentRestrictionRequest,
   HelmMainCallsApi,
+  type HelmRequest,
   HelmsApi,
   JobActionsApi,
   JobDeploymentHistoryApi,
   JobDeploymentRestrictionApi,
   type JobDeploymentRestrictionRequest,
   JobMainCallsApi,
+  type JobRequest,
   JobsApi,
   type Status,
   type Application as _Application,
@@ -343,6 +348,33 @@ type DeploymentRestrictionRequest =
       serviceType: HelmType
       deploymentRestrictionId: string
       payload: HelmDeploymentRestrictionRequest
+    }
+
+type ServiceRequest =
+  | {
+      serviceId: string
+      serviceType: ApplicationType
+      payload: ApplicationEditRequest
+    }
+  | {
+      serviceId: string
+      serviceType: ContainerType
+      payload: ContainerRequest
+    }
+  | {
+      serviceId: string
+      serviceType: DatabaseType
+      payload: DatabaseEditRequest
+    }
+  | {
+      serviceId: string
+      serviceType: JobType
+      payload: JobRequest
+    }
+  | {
+      serviceId: string
+      serviceType: HelmType
+      payload: HelmRequest
     }
 
 export const mutations = {

@@ -1,23 +1,12 @@
-import { useQueryClient } from '@tanstack/react-query'
 import { BuildModeEnum, BuildPackLanguageEnum } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
-import { useNavigate, useParams } from 'react-router-dom'
-import { editApplication, postApplicationActionsRedeploy } from '@qovery/domains/application'
+import { useParams } from 'react-router-dom'
 import { useOrganization } from '@qovery/domains/organizations/feature'
 import { type AnyService, type Application, type Container, type Job } from '@qovery/domains/services/data-access'
-import { useService } from '@qovery/domains/services/feature'
-import {
-  ServiceTypeEnum,
-  isApplication,
-  isContainer,
-  isContainerJob,
-  isGitJob,
-  isJob,
-  isJobGitSource,
-} from '@qovery/shared/enums'
-import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
+import { useEditService, useService } from '@qovery/domains/services/feature'
+import { ServiceTypeEnum, isContainerJob, isGitJob, isJobGitSource } from '@qovery/shared/enums'
 import { toastError } from '@qovery/shared/ui'
 import { getGitTokenValue } from '@qovery/shared/util-git'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
@@ -117,13 +106,14 @@ export const handleJobSubmit = (data: FieldValues, job: Job) => {
 }
 
 export function PageSettingsGeneralFeature() {
-  const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
-  const queryClient = useQueryClient()
+  const { organizationId = '', environmentId = '', applicationId = '' } = useParams()
+  // const queryClient = useQueryClient()
   const dispatch = useDispatch<AppDispatch>()
-  const navigate = useNavigate()
+  // const navigate = useNavigate()
 
-  const { data: service, isLoading: isLoadingService } = useService({ environmentId, serviceId: applicationId })
   const { data: organization } = useOrganization({ organizationId })
+  const { data: service, isLoading: isLoadingService } = useService({ environmentId, serviceId: applicationId })
+  const { mutate: editService } = useEditService()
 
   const methods = useForm({
     mode: 'onChange',
@@ -131,22 +121,22 @@ export function PageSettingsGeneralFeature() {
 
   const watchBuildMode = methods.watch('build_mode')
 
-  const toasterCallback = () => {
-    if (service) {
-      dispatch(
-        postApplicationActionsRedeploy({
-          applicationId,
-          environmentId,
-          serviceType: service.serviceType,
-          callback: () =>
-            navigate(
-              ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(applicationId)
-            ),
-          queryClient,
-        })
-      )
-    }
-  }
+  // const toasterCallback = () => {
+  //   if (service) {
+  //     dispatch(
+  //       postApplicationActionsRedeploy({
+  //         applicationId,
+  //         environmentId,
+  //         serviceType: service.serviceType,
+  //         callback: () =>
+  //           navigate(
+  //             ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(applicationId)
+  //           ),
+  //         queryClient,
+  //       })
+  //     )
+  //   }
+  // }
 
   const onSubmit = methods.handleSubmit((data) => {
     if (data && service) {
@@ -162,7 +152,9 @@ export function PageSettingsGeneralFeature() {
 
       if (service?.serviceType === ServiceTypeEnum.JOB) {
         cloneApplication = handleJobSubmit(data, service)
-      } else {
+      }
+
+      if (service?.serviceType === ServiceTypeEnum.CONTAINER) {
         try {
           cloneApplication = handleContainerSubmit(data, service)
         } catch (e: unknown) {
@@ -171,93 +163,93 @@ export function PageSettingsGeneralFeature() {
         }
       }
 
+      if (cloneApplication!) console.log('cloneApplication: ', cloneApplication)
+
       if (service?.serviceType) {
-        dispatch(
-          editApplication({
-            applicationId: applicationId,
-            data: cloneApplication,
-            serviceType: service.serviceType as ServiceTypeEnum,
-            toasterCallback,
-            queryClient,
-          })
-        )
+        editService({
+          serviceId: applicationId,
+          serviceType: service.serviceType,
+          payload: cloneApplication!,
+        })
       }
     }
   })
 
   useEffect(() => {
-    if (!application) return
+    if (!service) return
 
-    if (isApplication(application)) {
+    if (service.serviceType === ServiceTypeEnum.APPLICATION) {
       if (watchBuildMode === BuildModeEnum.DOCKER) {
-        methods.setValue('dockerfile_path', application.dockerfile_path ? application.dockerfile_path : 'Dockerfile')
+        methods.setValue('dockerfile_path', service.dockerfile_path ? service.dockerfile_path : 'Dockerfile')
       } else {
         methods.setValue(
           'buildpack_language',
-          application.buildpack_language ? application.buildpack_language : BuildPackLanguageEnum.PYTHON
+          service.buildpack_language ? service.buildpack_language : BuildPackLanguageEnum.PYTHON
         )
       }
     }
-  }, [watchBuildMode, methods, application])
+  }, [watchBuildMode, methods, service])
 
   useEffect(() => {
-    methods.setValue('name', application?.name)
-    methods.setValue('description', application?.description)
-    methods.setValue('auto_deploy', application?.auto_deploy)
+    methods.setValue('name', service?.name)
+    methods.setValue('description', service?.description)
+    methods.setValue('auto_deploy', (service as Application)?.auto_deploy)
 
-    if (application) {
-      if (isApplication(application)) {
-        methods.setValue('build_mode', application.build_mode)
+    if (service) {
+      if (service.serviceType === ServiceTypeEnum.APPLICATION) {
+        methods.setValue('build_mode', service.build_mode)
         methods.setValue(
           'buildpack_language',
-          application.buildpack_language ? application.buildpack_language : BuildPackLanguageEnum.PYTHON
+          service.buildpack_language ? service.buildpack_language : BuildPackLanguageEnum.PYTHON
         )
-        methods.setValue('dockerfile_path', application.dockerfile_path ? application.dockerfile_path : 'Dockerfile')
+        methods.setValue('dockerfile_path', service.dockerfile_path ? service.dockerfile_path : 'Dockerfile')
       }
 
-      if (isContainer(application)) {
-        methods.setValue('registry', application.registry?.id)
-        methods.setValue('image_name', application.image_name)
-        methods.setValue('image_tag', application.tag)
+      if (service.serviceType === ServiceTypeEnum.CONTAINER) {
+        methods.setValue('registry', service.registry?.id)
+        methods.setValue('image_name', service.image_name)
+        methods.setValue('image_tag', service.tag)
         methods.unregister('buildpack_language')
         methods.unregister('dockerfile_path')
 
         methods.unregister('build_mode')
       }
 
-      methods.setValue('image_entry_point', application.entrypoint)
+      methods.setValue('image_entry_point', (service as Application).entrypoint)
       methods.setValue(
         'cmd_arguments',
-        application.arguments && application.arguments?.length ? JSON.stringify(application.arguments) : ''
+        (service as Application).arguments && (service as Application).arguments?.length
+          ? JSON.stringify((service as Application).arguments)
+          : ''
       )
     }
 
-    if (isJob(application)) {
-      methods.setValue('description', application?.description)
+    if (service?.serviceType === ServiceTypeEnum.JOB) {
+      methods.setValue('description', service?.description)
 
-      const serviceType = isJobGitSource(application?.source) ? ServiceTypeEnum.APPLICATION : ServiceTypeEnum.CONTAINER
+      const serviceType = isJobGitSource(service?.source) ? ServiceTypeEnum.APPLICATION : ServiceTypeEnum.CONTAINER
       methods.setValue('serviceType', serviceType)
 
       if (serviceType === ServiceTypeEnum.CONTAINER) {
-        if (application && isContainerJob(application)) {
-          methods.setValue('registry', application.source.image.registry_id)
-          methods.setValue('image_name', application.source.image.image_name)
-          methods.setValue('image_tag', application.source.image.tag)
+        if (service && isContainerJob(service)) {
+          methods.setValue('registry', service.source.image.registry_id)
+          methods.setValue('image_name', service.source.image.image_name)
+          methods.setValue('image_tag', service.source.image.tag)
         }
-      } else if (application && isGitJob(application)) {
+      } else if (service && isGitJob(service)) {
         methods.setValue('build_mode', BuildModeEnum.DOCKER)
-        methods.setValue('dockerfile_path', application.source.docker.dockerfile_path)
+        methods.setValue('dockerfile_path', service.source.docker.dockerfile_path)
       }
     }
-  }, [methods, application, dispatch, organizationId])
+  }, [methods, service, dispatch, organizationId])
 
   return (
     <FormProvider {...methods}>
       <PageSettingsGeneral
+        type={service?.serviceType}
         onSubmit={onSubmit}
         watchBuildMode={watchBuildMode}
         loading={isLoadingService}
-        type={service?.serviceType}
         organization={organization}
       />
     </FormProvider>
