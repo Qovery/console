@@ -62,7 +62,7 @@ describe('PageSettingsResourcesFeature', () => {
       isLoading: false,
     })
     useEditClusterMockSpy.mockReturnValue({
-      mutateAsync: editCluster,
+      mutate: editCluster,
     })
     useCloudProviderInstanceTypesMockSpy.mockReturnValue({
       data: mockInstanceType,

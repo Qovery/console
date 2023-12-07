@@ -41,8 +41,8 @@ export function ClusterButtonsActions(props: ClusterButtonsActionsProps) {
   const { openModalConfirmation } = useModalConfirmation()
   const { openModal } = useModal()
   const { data: clusterStatus } = useClusterStatus({ organizationId, clusterId: cluster.id, refetchInterval: 3000 })
-  const { mutateAsync: stopCluster } = useStopCluster()
-  const { mutateAsync: deployCluster } = useDeployCluster()
+  const { mutate: stopCluster } = useStopCluster()
+  const { mutate: deployCluster } = useDeployCluster()
 
   const removeCluster = (id: string, name: string) => {
     openModal({

@@ -23,7 +23,7 @@ export function PageSettingsResourcesFeature() {
     mode: 'onChange',
   })
   const { data: cluster } = useCluster({ organizationId, clusterId })
-  const { mutateAsync: editCluster, isLoading: isEditClusterLoading } = useEditCluster()
+  const { mutate: editCluster, isLoading: isEditClusterLoading } = useEditCluster()
 
   const onSubmit = methods.handleSubmit((data) => {
     if (data && cluster) {
