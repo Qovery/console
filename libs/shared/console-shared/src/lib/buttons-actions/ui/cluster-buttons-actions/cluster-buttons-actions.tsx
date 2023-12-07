@@ -1,10 +1,13 @@
 import { type ClickEvent } from '@szhsin/react-menu'
 import { type Cluster, EnvironmentModeEnum, OrganizationEventTargetType } from 'qovery-typescript-axios'
 import { useMemo } from 'react'
-import { useDispatch } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
-import { ClusterDeleteModal, useClusterStatus } from '@qovery/domains/clusters/feature'
-import { postClusterActionsDeploy, postClusterActionsStop } from '@qovery/domains/organization'
+import {
+  ClusterDeleteModal,
+  useClusterStatus,
+  useDeployCluster,
+  useStopCluster,
+} from '@qovery/domains/clusters/feature'
 import { AUDIT_LOGS_PARAMS_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL, INFRA_LOGS_URL } from '@qovery/shared/routes'
 import {
   ButtonIconAction,
@@ -23,7 +26,6 @@ import {
   isStopAvailable,
   isUpdateAvailable,
 } from '@qovery/shared/util-js'
-import { type AppDispatch } from '@qovery/state/store'
 
 export interface ClusterButtonsActionsProps {
   cluster: Cluster
@@ -39,8 +41,8 @@ export function ClusterButtonsActions(props: ClusterButtonsActionsProps) {
   const { openModalConfirmation } = useModalConfirmation()
   const { openModal } = useModal()
   const { data: clusterStatus } = useClusterStatus({ organizationId, clusterId: cluster.id, refetchInterval: 3000 })
-
-  const dispatch = useDispatch<AppDispatch>()
+  const { mutate: stopCluster } = useStopCluster()
+  const { mutate: deployCluster } = useDeployCluster()
 
   const removeCluster = (id: string, name: string) => {
     openModal({
@@ -53,12 +55,10 @@ export function ClusterButtonsActions(props: ClusterButtonsActionsProps) {
       name: `${!clusterStatus?.is_deployed ? 'Install' : 'Deploy'}`,
       contentLeft: <Icon name={IconAwesomeEnum.PLAY} className="text-sm text-brand-400" />,
       onClick: () =>
-        dispatch(
-          postClusterActionsDeploy({
-            organizationId,
-            clusterId: cluster.id,
-          })
-        ),
+        deployCluster({
+          organizationId,
+          clusterId: cluster.id,
+        }),
     }
 
     const updateButton: MenuItemProps = {
@@ -73,12 +73,10 @@ export function ClusterButtonsActions(props: ClusterButtonsActionsProps) {
           description: 'To confirm the update of your cluster, please type the name:',
           name: cluster.name,
           action: () =>
-            dispatch(
-              postClusterActionsDeploy({
-                organizationId,
-                clusterId: cluster.id,
-              })
-            ),
+            deployCluster({
+              organizationId,
+              clusterId: cluster.id,
+            }),
         })
       },
     }
@@ -96,12 +94,10 @@ export function ClusterButtonsActions(props: ClusterButtonsActionsProps) {
             'Please note that by stopping your cluster, some resources will still be used on your cloud provider account and still be added to your bill. To completely remove them, please use the “Remove” feature.',
           name: cluster.name,
           action: () =>
-            dispatch(
-              postClusterActionsStop({
-                organizationId,
-                clusterId: cluster.id,
-              })
-            ),
+            stopCluster({
+              organizationId,
+              clusterId: cluster.id,
+            }),
         })
       },
       contentLeft: <Icon name={IconAwesomeEnum.CIRCLE_STOP} className="text-sm text-brand-400" />,
@@ -123,7 +119,7 @@ export function ClusterButtonsActions(props: ClusterButtonsActionsProps) {
     }
 
     return [{ items: topItems }, { items: bottomItems }]
-  }, [cluster, dispatch, openModalConfirmation, organizationId])
+  }, [cluster, openModalConfirmation, organizationId])
 
   const canDelete = clusterStatus?.status && isDeleteAvailable(clusterStatus?.status)
 

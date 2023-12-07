@@ -1,5 +1,5 @@
 import { CloudProviderEnum } from 'qovery-typescript-axios'
-import * as organizationsDomain from '@qovery/domains/organizations/feature'
+import * as cloudProvidersDomain from '@qovery/domains/cloud-providers/feature'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import CreateEditCredentialsModalFeature, {
   type CreateEditCredentialsModalFeatureProps,
@@ -7,15 +7,15 @@ import CreateEditCredentialsModalFeature, {
 } from './create-edit-credentials-modal-feature'
 
 const useCreateCloudProviderCredentialsMockSpy = jest.spyOn(
-  organizationsDomain,
+  cloudProvidersDomain,
   'useCreateCloudProviderCredential'
 ) as jest.Mock
 const useEditCloudProviderCredentialsMockSpy = jest.spyOn(
-  organizationsDomain,
+  cloudProvidersDomain,
   'useEditCloudProviderCredential'
 ) as jest.Mock
 const useDeleteCloudProviderCredentialsMockSpy = jest.spyOn(
-  organizationsDomain,
+  cloudProvidersDomain,
   'useDeleteCloudProviderCredential'
 ) as jest.Mock
 

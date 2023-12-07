@@ -2,8 +2,14 @@ import { fireEvent, getByLabelText, getByTestId, render, waitFor } from '__tests
 import { CloudProviderEnum } from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
 import selectEvent from 'react-select-event'
+import * as cloudProvidersDomain from '@qovery/domains/cloud-providers/feature'
 import { ClusterContainerCreateContext } from '../page-clusters-create-feature'
 import StepResourcesFeature from './step-resources-feature'
+
+const useCloudProviderInstanceTypesMockSpy = jest.spyOn(
+  cloudProvidersDomain,
+  'useCloudProviderInstanceTypes'
+) as jest.Mock
 
 const mockInstanceType = [
   {
@@ -28,19 +34,6 @@ const mockInstanceType = [
     architecture: 'x86_64',
   },
 ]
-
-jest.mock('@qovery/domains/organization', () => ({
-  ...jest.requireActual('@qovery/domains/organization'),
-  fetchAvailableInstanceTypes: jest.fn(),
-  selectInstancesTypes: () => mockInstanceType,
-}))
-
-const mockDispatch = jest.fn()
-
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useDispatch: () => mockDispatch,
-}))
 
 const mockSetResourceData = jest.fn()
 
@@ -81,14 +74,10 @@ const ContextWrapper = (props: { children: ReactNode }) => {
 describe('StepResourcesFeature', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    useCloudProviderInstanceTypesMockSpy.mockReturnValue({
+      data: mockInstanceType,
+    })
   })
-
-  mockDispatch.mockImplementation(() => ({
-    unwrap: () =>
-      Promise.resolve({
-        results: [...mockInstanceType],
-      }),
-  }))
 
   it('should submit form and navigate', async () => {
     const { baseElement } = render(

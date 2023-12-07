@@ -11,9 +11,7 @@ import { databases, initialDatabasesState } from '@qovery/domains/database'
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import {
   authProviderReducer,
-  clusterReducer,
   initialAuthProviderState,
-  initialClusterState,
   initialRepositoryState,
   repositoryReducer,
 } from '@qovery/domains/organization'
@@ -38,7 +36,6 @@ export const applicationReducer = combineReducers({
 
 export const rootReducer = combineReducers({
   organization: organizationReducer,
-  cluster: clusterReducer,
   databases: databases,
   application: applicationReducer,
   user: userReducer,
@@ -67,7 +64,6 @@ export const initialRootState = (): RootState => ({
     authProvider: initialAuthProviderState,
     repository: initialRepositoryState,
   },
-  cluster: initialClusterState,
   project: {
     deploymentRules: initialDeploymentRulesState,
   },

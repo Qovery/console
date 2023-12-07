@@ -1,6 +1,9 @@
 import { CloudProviderEnum, ClusterStateEnum } from 'qovery-typescript-axios'
+import * as clustersDomain from '@qovery/domains/clusters/feature'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import LayoutPage, { type LayoutPageProps } from './layout-page'
+
+const useClusterStatusesMockSpy = jest.spyOn(clustersDomain, 'useClusterStatuses') as jest.Mock
 
 describe('LayoutPage', () => {
   const props: LayoutPageProps = {
@@ -14,11 +17,18 @@ describe('LayoutPage', () => {
   })
 
   it('should have cluster deployment error banner', () => {
+    useClusterStatusesMockSpy.mockReturnValue({
+      data: [
+        {
+          cluster_id: '0000-0000-0000-0000',
+          status: ClusterStateEnum.INVALID_CREDENTIALS,
+        },
+      ],
+    })
     props.clusters = [
       {
         id: '0000-0000-0000-0000',
         name: 'cluster-name',
-        status: ClusterStateEnum.INVALID_CREDENTIALS,
         created_at: '',
         region: '',
         cloud_provider: CloudProviderEnum.AWS,

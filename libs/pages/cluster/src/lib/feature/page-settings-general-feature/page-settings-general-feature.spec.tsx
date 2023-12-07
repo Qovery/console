@@ -1,34 +1,12 @@
 import { act, fireEvent, render } from '__tests__/utils/setup-jest'
-import * as storeOrganization from '@qovery/domains/organization'
+import * as clustersDomain from '@qovery/domains/clusters/feature'
 import { clusterFactoryMock } from '@qovery/shared/factories'
-import { type ClusterEntity } from '@qovery/shared/interfaces'
 import PageSettingsGeneralFeature, { handleSubmit } from './page-settings-general-feature'
 
-import SpyInstance = jest.SpyInstance
+const mockCluster = clusterFactoryMock(1)[0]
 
-const mockCluster: ClusterEntity = clusterFactoryMock(1)[0]
-
-jest.mock('@qovery/domains/organization', () => {
-  return {
-    ...jest.requireActual('@qovery/domains/organization'),
-    editCluster: jest.fn(),
-    getClusterState: () => ({
-      loadingStatus: 'loaded',
-      ids: [mockCluster.id],
-      entities: {
-        [mockCluster.id]: mockCluster,
-      },
-      error: null,
-    }),
-    selectClusterById: () => mockCluster,
-  }
-})
-
-const mockDispatch = jest.fn()
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useDispatch: () => mockDispatch,
-}))
+const useClusterMockSpy = jest.spyOn(clustersDomain, 'useCluster') as jest.Mock
+const useEditClusterMockSpy = jest.spyOn(clustersDomain, 'useEditCluster') as jest.Mock
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -36,6 +14,17 @@ jest.mock('react-router-dom', () => ({
 }))
 
 describe('PageSettingsGeneralFeature', () => {
+  const editCluster = jest.fn()
+  beforeEach(() => {
+    useClusterMockSpy.mockReturnValue({
+      data: mockCluster,
+      isLoading: false,
+    })
+    useEditClusterMockSpy.mockReturnValue({
+      mutateAsync: editCluster,
+    })
+  })
+
   it('should render successfully', () => {
     const { baseElement } = render(<PageSettingsGeneralFeature />)
     expect(baseElement).toBeTruthy()
@@ -55,15 +44,7 @@ describe('PageSettingsGeneralFeature', () => {
     expect(currentCluster.production).toBe(true)
   })
 
-  it('should dispatch editCluster if form is submitted', async () => {
-    const editClusterSpy: SpyInstance = jest.spyOn(storeOrganization, 'editCluster')
-    mockDispatch.mockImplementation(() => ({
-      unwrap: () =>
-        Promise.resolve({
-          data: {},
-        }),
-    }))
-
+  it('should edit Cluster if form is submitted', async () => {
     const { getByTestId } = render(<PageSettingsGeneralFeature />)
 
     await act(() => {
@@ -82,8 +63,10 @@ describe('PageSettingsGeneralFeature', () => {
       mockCluster
     )
 
-    expect(editClusterSpy.mock.calls[0][0].organizationId).toStrictEqual('0')
-    expect(editClusterSpy.mock.calls[0][0].clusterId).toStrictEqual(mockCluster.id)
-    expect(editClusterSpy.mock.calls[0][0].data).toStrictEqual(cloneCluster)
+    expect(editCluster).toBeCalledWith({
+      organizationId: '0',
+      clusterId: mockCluster.id,
+      clusterRequest: cloneCluster,
+    })
   })
 })

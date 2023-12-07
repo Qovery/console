@@ -1,13 +1,13 @@
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { CloudProviderEnum } from 'qovery-typescript-axios'
 import selectEvent from 'react-select-event'
-import * as organizationsDomain from '@qovery/domains/organizations/feature'
+import * as cloudProvidersDomain from '@qovery/domains/cloud-providers/feature'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import ClusterCredentialsSettingsFeature, {
   type ClusterCredentialsSettingsFeatureProps,
 } from './cluster-credentials-settings-feature'
 
-const useCloudProviderCredentialsMockSpy = jest.spyOn(organizationsDomain, 'useCloudProviderCredentials') as jest.Mock
+const useCloudProviderCredentialsMockSpy = jest.spyOn(cloudProvidersDomain, 'useCloudProviderCredentials') as jest.Mock
 
 const props: ClusterCredentialsSettingsFeatureProps = {
   cloudProvider: CloudProviderEnum.AWS,

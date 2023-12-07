@@ -1,13 +1,12 @@
-import { useEffect, useState } from 'react'
+import { type Cluster } from 'qovery-typescript-axios'
+import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { editCluster, postClusterActionsDeploy, selectClusterById } from '@qovery/domains/organization'
-import { type ClusterEntity, type ClusterRemoteData } from '@qovery/shared/interfaces'
-import { type AppDispatch, type RootState } from '@qovery/state/store'
+import { useCluster, useEditCluster } from '@qovery/domains/clusters/feature'
+import { type ClusterRemoteData } from '@qovery/shared/interfaces'
 import PageSettingsRemote from '../../ui/page-settings-remote/page-settings-remote'
 
-export const handleSubmit = (data: ClusterRemoteData, cluster: ClusterEntity): ClusterEntity => {
+export const handleSubmit = (data: ClusterRemoteData, cluster: Cluster): Cluster => {
   return {
     ...cluster,
     ssh_keys: [data['ssh_key']],
@@ -16,39 +15,23 @@ export const handleSubmit = (data: ClusterRemoteData, cluster: ClusterEntity): C
 
 export function PageSettingsRemoteFeature() {
   const { organizationId = '', clusterId = '' } = useParams()
-  const dispatch = useDispatch<AppDispatch>()
-
-  const [loading, setLoading] = useState(false)
 
   const methods = useForm<ClusterRemoteData>({
     mode: 'onChange',
   })
 
-  const cluster = useSelector<RootState, ClusterEntity | undefined>((state) => selectClusterById(state, clusterId))
+  const { data: cluster } = useCluster({ organizationId, clusterId })
+  const { mutateAsync: editCluster, isLoading: isEditClusterLoading } = useEditCluster()
 
   const onSubmit = methods.handleSubmit((data) => {
     if (data && cluster) {
-      setLoading(true)
-
       const cloneCluster = handleSubmit(data, cluster)
 
-      const toasterCallback = () => {
-        if (cluster) {
-          dispatch(postClusterActionsDeploy({ organizationId, clusterId }))
-        }
-      }
-
-      dispatch(
-        editCluster({
-          organizationId: organizationId,
-          clusterId: clusterId,
-          data: cloneCluster,
-          toasterCallback,
-        })
-      )
-        .unwrap()
-        .then(() => setLoading(false))
-        .catch(() => setLoading(false))
+      editCluster({
+        organizationId,
+        clusterId,
+        clusterRequest: cloneCluster,
+      })
     }
   })
 
@@ -58,7 +41,7 @@ export function PageSettingsRemoteFeature() {
 
   return (
     <FormProvider {...methods}>
-      <PageSettingsRemote onSubmit={onSubmit} loading={loading} />
+      <PageSettingsRemote onSubmit={onSubmit} loading={isEditClusterLoading} />
     </FormProvider>
   )
 }

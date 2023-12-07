@@ -1,19 +1,19 @@
 import { useQueryClient } from '@tanstack/react-query'
 import { type Environment, ServiceDeploymentStatusEnum } from 'qovery-typescript-axios'
 import { type PropsWithChildren, createContext, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { postApplicationActionsDeploy, postApplicationActionsRedeploy } from '@qovery/domains/application'
+import { useCluster } from '@qovery/domains/clusters/feature'
 import { EnvironmentMode } from '@qovery/domains/environments/feature'
-import { selectClusterById } from '@qovery/domains/organization'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { useDeploymentStatus } from '@qovery/domains/services/feature'
 import { ApplicationButtonsActions, NeedRedeployFlag } from '@qovery/shared/console-shared'
 import { IconEnum, isCronJob, isLifeCycleJob } from '@qovery/shared/enums'
-import { type ApplicationEntity, type ClusterEntity } from '@qovery/shared/interfaces'
+import { type ApplicationEntity } from '@qovery/shared/interfaces'
 import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { Badge, Header, Icon, Section, Skeleton, Tooltip } from '@qovery/shared/ui'
-import { type AppDispatch, type RootState } from '@qovery/state/store'
+import { type AppDispatch } from '@qovery/state/store'
 import TabsFeature from '../../feature/tabs-feature/tabs-feature'
 
 export const ApplicationContext = createContext<{
@@ -34,9 +34,7 @@ export function Container({ service, environment, children }: PropsWithChildren<
   const [showHideAllEnvironmentVariablesValues, setShowHideAllEnvironmentVariablesValues] = useState<boolean>(false)
   const queryClient = useQueryClient()
 
-  const cluster = useSelector<RootState, ClusterEntity | undefined>((state: RootState) =>
-    selectClusterById(state, environment?.cluster_id || '')
-  )
+  const { data: cluster } = useCluster({ organizationId, clusterId: environment?.cluster_id ?? '' })
 
   const dispatch = useDispatch<AppDispatch>()
   const navigate = useNavigate()

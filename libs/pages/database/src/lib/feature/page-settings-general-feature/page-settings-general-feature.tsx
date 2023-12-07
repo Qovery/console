@@ -5,10 +5,10 @@ import { useEffect, useState } from 'react'
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
+import { useCluster } from '@qovery/domains/clusters/feature'
 import { editDatabase, postDatabaseActionsRedeploy, selectDatabaseById } from '@qovery/domains/database'
 import { useFetchDatabaseConfiguration, useFetchEnvironment } from '@qovery/domains/environment'
-import { selectClusterById } from '@qovery/domains/organization'
-import { type ClusterEntity, type DatabaseEntity } from '@qovery/shared/interfaces'
+import { type DatabaseEntity } from '@qovery/shared/interfaces'
 import { type AppDispatch, type RootState } from '@qovery/state/store'
 import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-general'
 
@@ -23,7 +23,7 @@ export const handleSubmit = (data: FieldValues, database: DatabaseEntity) => {
 }
 
 export function PageSettingsGeneralFeature() {
-  const { environmentId = '', projectId = '', databaseId = '' } = useParams()
+  const { organizationId = '', environmentId = '', projectId = '', databaseId = '' } = useParams()
   const queryClient = useQueryClient()
   const dispatch = useDispatch<AppDispatch>()
 
@@ -32,10 +32,8 @@ export function PageSettingsGeneralFeature() {
     equal
   )
   const { data: environment } = useFetchEnvironment(projectId, environmentId)
+  const { data: cluster } = useCluster({ organizationId, clusterId: environment?.cluster_id ?? '' })
 
-  const cluster = useSelector<RootState, ClusterEntity | undefined>((state: RootState) =>
-    selectClusterById(state, environment?.cluster_id || '')
-  )
   const { data: databaseConfigurations, isLoading } = useFetchDatabaseConfiguration(projectId, environmentId)
 
   const databaseVersionOptions = databaseConfigurations

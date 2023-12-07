@@ -1,11 +1,10 @@
 import { KubernetesEnum } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
+import { useCluster } from '@qovery/domains/clusters/feature'
 import { useFetchEnvironment } from '@qovery/domains/environment'
-import { selectClusterById } from '@qovery/domains/organization'
-import { type ApplicationResourcesData, type ClusterEntity } from '@qovery/shared/interfaces'
+import { type ApplicationResourcesData } from '@qovery/shared/interfaces'
 import {
   SERVICES_APPLICATION_CREATION_URL,
   SERVICES_CREATION_GENERAL_URL,
@@ -14,7 +13,6 @@ import {
 } from '@qovery/shared/routes'
 import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { type RootState } from '@qovery/state/store'
 import StepResources from '../../../ui/page-application-create/step-resources/step-resources'
 import { useApplicationContainerCreateContext } from '../page-application-create-feature'
 
@@ -27,9 +25,7 @@ export function StepResourcesFeature() {
 
   const { data: environment } = useFetchEnvironment(projectId, environmentId)
 
-  const cluster = useSelector<RootState, ClusterEntity | undefined>((state) =>
-    selectClusterById(state, environment?.cluster_id || '')
-  )
+  const { data: cluster } = useCluster({ organizationId, clusterId: environment?.cluster_id ?? '' })
 
   useEffect(() => {
     !generalData?.name &&

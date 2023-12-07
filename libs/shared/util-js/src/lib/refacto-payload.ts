@@ -2,6 +2,7 @@ import {
   type ApplicationEditRequest,
   type ApplicationGitRepositoryRequest,
   CloudProviderEnum,
+  type Cluster,
   type ClusterRequest,
   type DatabaseEditRequest,
   DatabaseModeEnum,
@@ -14,7 +15,6 @@ import {
 } from 'qovery-typescript-axios'
 import { isJobGitSource } from '@qovery/shared/enums'
 import {
-  type ClusterEntity,
   type ContainerApplicationEntity,
   type DatabaseEntity,
   type GitApplicationEntity,
@@ -192,7 +192,7 @@ export function refactoOrganizationCustomRolePayload(customRole: Partial<Organiz
   return customRoleRequestPayload
 }
 
-export function refactoClusterPayload(cluster: Partial<ClusterEntity>) {
+export function refactoClusterPayload(cluster: Partial<Cluster>) {
   const clusterRequestPayload: ClusterRequest = {
     name: cluster.name || '',
     description: cluster.description,

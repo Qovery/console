@@ -1,14 +1,11 @@
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
-import { fetchCloudProvider, getClusterState } from '@qovery/domains/organization'
-import { useCloudProviderCredentials } from '@qovery/domains/organizations/feature'
+import { useCloudProviderCredentials, useCloudProviders } from '@qovery/domains/cloud-providers/feature'
 import { type ClusterGeneralData } from '@qovery/shared/interfaces'
 import { CLUSTERS_CREATION_RESOURCES_URL, CLUSTERS_CREATION_URL, CLUSTERS_URL } from '@qovery/shared/routes'
 import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { type AppDispatch, type RootState } from '@qovery/state/store'
 import StepGeneral from '../../../ui/page-clusters-create/step-general/step-general'
 import { useClusterContainerCreateContext } from '../page-clusters-create-feature'
 
@@ -22,8 +19,7 @@ export function StepGeneralFeature() {
     mode: 'onChange',
   })
 
-  const dispatch = useDispatch<AppDispatch>()
-  const cloudProvider = useSelector((state: RootState) => getClusterState(state).cloudProvider)
+  const { data: cloudProviders = [] } = useCloudProviders()
   const { data: credentials = [] } = useCloudProviderCredentials({
     organizationId,
     cloudProvider: methods.getValues('cloud_provider'),
@@ -54,10 +50,6 @@ export function StepGeneralFeature() {
     setCurrentStep(1)
   }, [setCurrentStep])
 
-  useEffect(() => {
-    if (cloudProvider.loadingStatus !== 'loaded') dispatch(fetchCloudProvider())
-  }, [cloudProvider.loadingStatus, dispatch, methods])
-
   const onSubmit = methods.handleSubmit((data) => {
     if (credentials.length > 0) {
       // necessary to get the name of credentials
@@ -76,7 +68,7 @@ export function StepGeneralFeature() {
       <FormProvider {...methods}>
         <StepGeneral
           onSubmit={onSubmit}
-          cloudProviders={cloudProvider.items}
+          cloudProviders={cloudProviders}
           currentCloudProvider={generalData?.cloud_provider}
           setResourcesData={setResourcesData}
         />

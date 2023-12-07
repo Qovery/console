@@ -1,23 +1,22 @@
 import { type CloudProviderEnum, type ClusterFeature } from 'qovery-typescript-axios'
 import { CardClusterFeature } from '@qovery/shared/console-shared'
-import { type LoadingStatus } from '@qovery/shared/interfaces'
 import { BlockContent, HelpSection, LoaderSpinner } from '@qovery/shared/ui'
 
 export interface PageSettingsFeaturesProps {
-  loadingStatus: LoadingStatus
+  loading: boolean
   features?: ClusterFeature[]
   cloudProvider?: CloudProviderEnum
 }
 
 export function PageSettingsFeatures(props: PageSettingsFeaturesProps) {
-  const { loadingStatus, features, cloudProvider } = props
+  const { loading, features, cloudProvider } = props
 
   return (
     <div className="flex flex-col justify-between w-full">
       <div className="p-8 max-w-content-with-navigation-left">
         <h2 className="h5 mb-8 text-neutral-400">Features</h2>
         <BlockContent title="Configured features" classNameContent="p-0">
-          {loadingStatus !== 'loaded' && (
+          {loading && (
             <div className="flex justify-center p-5">
               <LoaderSpinner className="w-4" />
             </div>

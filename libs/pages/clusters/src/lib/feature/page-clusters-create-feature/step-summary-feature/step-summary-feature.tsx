@@ -1,19 +1,14 @@
 import {
   CloudProviderEnum,
-  type ClusterInstanceTypeResponseListResultsInner,
   type ClusterRequest,
   type ClusterRequestFeaturesInner,
   KubernetesEnum,
 } from 'qovery-typescript-axios'
-import { useCallback, useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useCallback, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import {
-  createCluster,
-  postCloudProviderInfo,
-  postClusterActionsDeploy,
-  selectInstancesTypes,
-} from '@qovery/domains/organization'
+import { match } from 'ts-pattern'
+import { useCloudProviderInstanceTypes } from '@qovery/domains/cloud-providers/feature'
+import { useCreateCluster, useDeployCluster, useEditCloudProviderInfo } from '@qovery/domains/clusters/feature'
 import {
   CLUSTERS_CREATION_FEATURES_URL,
   CLUSTERS_CREATION_GENERAL_URL,
@@ -24,7 +19,6 @@ import {
 } from '@qovery/shared/routes'
 import { FunnelFlowBody } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { type AppDispatch, type RootState } from '@qovery/state/store'
 import StepSummary from '../../../ui/page-clusters-create/step-summary/step-summary'
 import { steps, useClusterContainerCreateContext } from '../page-clusters-create-feature'
 
@@ -33,22 +27,31 @@ export function StepSummaryFeature() {
   const { generalData, resourcesData, featuresData, remoteData, setCurrentStep } = useClusterContainerCreateContext()
   const navigate = useNavigate()
   const { organizationId = '' } = useParams()
-  const [loadingCreate, setLoadingCreate] = useState(false)
-  const [loadingCreateAndDeploy, setLoadingCreateAndDeploy] = useState(false)
 
   const pathCreate = `${CLUSTERS_URL(organizationId)}${CLUSTERS_CREATION_URL}`
 
-  const detailInstanceType = useSelector<RootState, ClusterInstanceTypeResponseListResultsInner[] | undefined>(
-    (state) =>
-      selectInstancesTypes(
-        state,
-        generalData?.cloud_provider || CloudProviderEnum.AWS,
-        resourcesData?.cluster_type as KubernetesEnum,
-        generalData?.region || ''
-      )
-  )?.find(
-    (instanceTypes: ClusterInstanceTypeResponseListResultsInner) => instanceTypes.type === resourcesData?.instance_type
+  const { mutateAsync: createCluster, isLoading: isCreateClusterLoading } = useCreateCluster()
+  const { mutateAsync: editCloudProviderInfo } = useEditCloudProviderInfo({ silently: true })
+  const { mutateAsync: deployCluster, isLoading: isDeployClusterLoading } = useDeployCluster()
+  const { data: cloudProviderInstanceTypes } = useCloudProviderInstanceTypes(
+    match(generalData?.cloud_provider || CloudProviderEnum.AWS)
+      .with('AWS', (cloudProvider) => ({
+        cloudProvider,
+        clusterType: (resourcesData?.cluster_type ?? 'MANAGED') as (typeof KubernetesEnum)[keyof typeof KubernetesEnum],
+        region: generalData?.region || '',
+      }))
+      .with('SCW', (cloudProvider) => ({
+        cloudProvider,
+        clusterType: 'MANAGED' as const,
+        region: generalData?.region || '',
+      }))
+      .with('DO', (cloudProvider) => ({
+        cloudProvider,
+        clusterType: 'MANAGED' as const,
+      }))
+      .exhaustive()
   )
+  const detailInstanceType = cloudProviderInstanceTypes?.find(({ type }) => type === resourcesData?.instance_type)
 
   const goToFeatures = useCallback(() => {
     navigate(pathCreate + CLUSTERS_CREATION_FEATURES_URL)
@@ -82,13 +85,8 @@ export function StepSummaryFeature() {
     !generalData?.name && navigate(pathCreate + CLUSTERS_CREATION_GENERAL_URL)
   }, [pathCreate, generalData, navigate, organizationId])
 
-  const dispatch = useDispatch<AppDispatch>()
-
-  const onSubmit = (withDeploy: boolean) => {
+  const onSubmit = async (withDeploy: boolean) => {
     if (generalData && resourcesData) {
-      if (withDeploy) setLoadingCreateAndDeploy(true)
-      else setLoadingCreate(true)
-
       const formatFeatures =
         featuresData &&
         Object.keys(featuresData)
@@ -116,53 +114,31 @@ export function StepSummaryFeature() {
         ssh_keys: remoteData?.ssh_key ? [remoteData?.ssh_key] : undefined,
       }
 
-      dispatch(
-        createCluster({
+      try {
+        const cluster = await createCluster({
           organizationId,
           clusterRequest,
         })
-      )
-        .unwrap()
-        .then((cluster) => {
-          // post cloud provider info
-          dispatch(
-            postCloudProviderInfo({
-              organizationId,
-              clusterId: cluster.id,
-              clusterCloudProviderInfo: {
-                cloud_provider: generalData.cloud_provider,
-                credentials: {
-                  id: generalData.credentials,
-                  name: generalData.credentials_name,
-                },
-                region: generalData.region,
-              },
-              silently: true,
-            })
-          )
-            .unwrap()
-            .then(() => {
-              if (withDeploy) {
-                dispatch(
-                  postClusterActionsDeploy({
-                    organizationId,
-                    clusterId: cluster.id,
-                  })
-                )
-              }
-              navigate(CLUSTERS_URL(organizationId))
-            })
-            .catch((e) => console.error(e))
-            .finally(() => {
-              if (withDeploy) setLoadingCreateAndDeploy(false)
-              else setLoadingCreate(false)
-            })
+        await editCloudProviderInfo({
+          organizationId,
+          clusterId: cluster.id,
+          cloudProviderInfoRequest: {
+            cloud_provider: generalData.cloud_provider,
+            credentials: {
+              id: generalData.credentials,
+              name: generalData.credentials_name,
+            },
+            region: generalData.region,
+          },
         })
-        .catch((e) => console.error(e))
-        .finally(() => {
-          if (withDeploy) setLoadingCreateAndDeploy(false)
-          else setLoadingCreate(false)
-        })
+
+        if (withDeploy) {
+          await deployCluster({ clusterId: cluster.id, organizationId })
+        }
+        navigate(CLUSTERS_URL(organizationId))
+      } catch (e) {
+        console.error(e)
+      }
     }
   }
 
@@ -176,8 +152,8 @@ export function StepSummaryFeature() {
     <FunnelFlowBody>
       {generalData && resourcesData && (
         <StepSummary
-          isLoadingCreate={loadingCreate}
-          isLoadingCreateAndDeploy={loadingCreateAndDeploy}
+          isLoadingCreate={isCreateClusterLoading}
+          isLoadingCreateAndDeploy={isCreateClusterLoading || isDeployClusterLoading}
           onSubmit={onSubmit}
           onPrevious={onBack}
           generalData={generalData}

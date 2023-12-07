@@ -1,15 +1,14 @@
-import { ClusterDeploymentStatusEnum } from 'qovery-typescript-axios'
+import { type Cluster, ClusterDeploymentStatusEnum } from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
-import { ClusterType } from '@qovery/domains/clusters/feature'
+import { ClusterType, useClusterStatus } from '@qovery/domains/clusters/feature'
 import { ClusterButtonsActions } from '@qovery/shared/console-shared'
-import { type ClusterEntity } from '@qovery/shared/interfaces'
 import { CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
 import { Badge, Header, Icon, IconAwesomeEnum, Section, Skeleton, Tabs } from '@qovery/shared/ui'
 import NeedRedeployFlag from '../need-redeploy-flag/need-redeploy-flag'
 
 export interface ContainerProps {
-  cluster?: ClusterEntity
+  cluster?: Cluster
   deployCluster: () => void
 }
 
@@ -17,7 +16,7 @@ export function Container({ children, cluster, deployCluster }: PropsWithChildre
   const { organizationId = '', clusterId = '' } = useParams()
   const { pathname } = useLocation()
 
-  const statusLoading = !!cluster?.extendedStatus?.status?.status
+  const { isLoading } = useClusterStatus({ organizationId, clusterId })
 
   const headerActions = (
     <div className="flex flex-col gap-3">
@@ -53,7 +52,7 @@ export function Container({ children, cluster, deployCluster }: PropsWithChildre
           </Badge>
         </Skeleton>
       </div>
-      <Skeleton width={150} height={32} show={!statusLoading}>
+      <Skeleton width={150} height={32} show={isLoading}>
         {cluster ? <ClusterButtonsActions cluster={cluster} noSettings /> : <div />}
       </Skeleton>
     </div>

@@ -1,38 +1,16 @@
 import { CloudProviderEnum } from 'qovery-typescript-axios'
 import selectEvent from 'react-select-event'
-import * as organizationDomain from '@qovery/domains/organization'
-import * as organizationsDomain from '@qovery/domains/organizations/feature'
+import * as cloudProvidersDomain from '@qovery/domains/cloud-providers/feature'
+import * as clustersDomain from '@qovery/domains/clusters/feature'
 import { clusterFactoryMock, credentialsMock } from '@qovery/shared/factories'
-import { type ClusterEntity } from '@qovery/shared/interfaces'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import PageSettingsCredentialsFeature, { handleSubmit } from './page-settings-credentials-feature'
 
-import SpyInstance = jest.SpyInstance
-
-const mockCluster: ClusterEntity = clusterFactoryMock(1, CloudProviderEnum.AWS)[0]
+const mockCluster = clusterFactoryMock(1, CloudProviderEnum.AWS)[0]
 const mockCredentials = credentialsMock(2)
-const useCloudProviderCredentialsMockSpy = jest.spyOn(organizationsDomain, 'useCloudProviderCredentials') as jest.Mock
-
-jest.mock('@qovery/domains/organization', () => {
-  return {
-    ...jest.requireActual('@qovery/domains/organization'),
-    getClusterState: () => ({
-      loadingStatus: 'loaded',
-      ids: [mockCluster.id],
-      entities: {
-        [mockCluster.id]: mockCluster,
-      },
-      error: null,
-    }),
-    selectClusterById: () => mockCluster,
-  }
-})
-
-const mockDispatch = jest.fn()
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useDispatch: () => mockDispatch,
-}))
+const useClusterCloudProviderInfoSpy = jest.spyOn(clustersDomain, 'useClusterCloudProviderInfo') as jest.Mock
+const useCloudProviderCredentialsMockSpy = jest.spyOn(cloudProvidersDomain, 'useCloudProviderCredentials') as jest.Mock
+const useEditCloudProviderInfoMockSpy = jest.spyOn(clustersDomain, 'useEditCloudProviderInfo') as jest.Mock
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -49,21 +27,18 @@ jest.mock('react-hook-form', () => ({
   }),
 }))
 
+const cloudProviderInfo = {
+  cloud_provider: CloudProviderEnum.AWS,
+  credentials: {
+    id: '0',
+    name: 'credentials',
+  },
+  region: 'eu-west',
+}
+
 describe('PageSettingsCredentialsFeature', () => {
+  const editCloudProviderInfo = jest.fn()
   beforeEach(() => {
-    mockDispatch.mockImplementation(() => ({
-      unwrap: () =>
-        Promise.resolve([
-          {
-            short_name: CloudProviderEnum.AWS,
-            regions: [
-              {
-                name: 'Paris',
-              },
-            ],
-          },
-        ]),
-    }))
     useCloudProviderCredentialsMockSpy.mockReturnValue({
       data: [
         {
@@ -71,6 +46,12 @@ describe('PageSettingsCredentialsFeature', () => {
           id: '000-000-000',
         },
       ],
+    })
+    useClusterCloudProviderInfoSpy.mockReturnValue({
+      data: cloudProviderInfo,
+    })
+    useEditCloudProviderInfoMockSpy.mockReturnValue({
+      mutateAsync: editCloudProviderInfo,
     })
   })
   it('should render successfully', () => {
@@ -95,15 +76,7 @@ describe('PageSettingsCredentialsFeature', () => {
     expect(cloneClusterProviderInfo.region).toBe(mockCluster.region)
   })
 
-  it('should dispatch postCloudProviderInfo if form is submitted', async () => {
-    const postCloudProviderInfoSpy: SpyInstance = jest.spyOn(organizationDomain, 'postCloudProviderInfo')
-    mockDispatch.mockImplementation(() => ({
-      unwrap: () =>
-        Promise.resolve({
-          data: {},
-        }),
-    }))
-
+  it('should post CloudProviderInfo if form is submitted', async () => {
     const { userEvent } = renderWithProviders(<PageSettingsCredentialsFeature />)
     screen.getByTestId('input-credentials')
     const realSelect = screen.getByLabelText('Credentials')
@@ -124,11 +97,13 @@ describe('PageSettingsCredentialsFeature', () => {
           id: '000-000-000',
         },
       ],
-      mockCluster
+      cloudProviderInfo
     )
 
-    expect(postCloudProviderInfoSpy.mock.calls[0][0].organizationId).toStrictEqual('0')
-    expect(postCloudProviderInfoSpy.mock.calls[0][0].clusterId).toStrictEqual(mockCluster.id)
-    expect(postCloudProviderInfoSpy.mock.calls[0][0].clusterCloudProviderInfo).toStrictEqual(cloneClusterProviderInfo)
+    expect(editCloudProviderInfo).toBeCalledWith({
+      organizationId: '0',
+      clusterId: mockCluster.id,
+      cloudProviderInfoRequest: cloneClusterProviderInfo,
+    })
   })
 })

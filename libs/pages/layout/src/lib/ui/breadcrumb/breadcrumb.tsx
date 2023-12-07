@@ -4,7 +4,6 @@ import { memo, useEffect } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { ServiceStateChip, useServices } from '@qovery/domains/services/feature'
 import { IconEnum } from '@qovery/shared/enums'
-import { type ClusterEntity } from '@qovery/shared/interfaces'
 import {
   APPLICATION_GENERAL_URL,
   APPLICATION_URL,
@@ -35,7 +34,7 @@ import BreadcrumbItem from '../breadcrumb-item/breadcrumb-item'
 export interface BreadcrumbProps {
   organizations: Organization[]
   createProjectModal: () => void
-  clusters?: ClusterEntity[]
+  clusters?: Cluster[]
   projects?: Project[]
   environments?: Environment[]
 }
@@ -68,7 +67,7 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
       sortAlphabetically: true,
       search: true,
       items: clusters
-        ? clusters?.map((cluster: Cluster) => ({
+        ? clusters?.map((cluster) => ({
             name: cluster.name,
             link: {
               url: matchLogsRoute

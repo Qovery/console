@@ -9,12 +9,17 @@ import {
   waitFor,
 } from '__tests__/utils/setup-jest'
 import { KubernetesEnum } from 'qovery-typescript-axios'
-import * as storeOrganization from '@qovery/domains/organization'
+import * as cloudProvidersDomain from '@qovery/domains/cloud-providers/feature'
+import * as clustersDomain from '@qovery/domains/clusters/feature'
 import { clusterFactoryMock } from '@qovery/shared/factories'
-import { type ClusterEntity } from '@qovery/shared/interfaces'
 import PageSettingsResourcesFeature, { handleSubmit } from './page-settings-resources-feature'
 
-import SpyInstance = jest.SpyInstance
+const useClusterMockSpy = jest.spyOn(clustersDomain, 'useCluster') as jest.Mock
+const useEditClusterMockSpy = jest.spyOn(clustersDomain, 'useEditCluster') as jest.Mock
+const useCloudProviderInstanceTypesMockSpy = jest.spyOn(
+  cloudProvidersDomain,
+  'useCloudProviderInstanceTypes'
+) as jest.Mock
 
 const mockInstanceType = [
   {
@@ -40,36 +45,9 @@ const mockInstanceType = [
   },
 ]
 
-jest.mock('@qovery/domains/organization', () => ({
-  ...jest.requireActual('@qovery/domains/organization'),
-  fetchAvailableInstanceTypes: jest.fn(),
-}))
-
-const mockCluster: ClusterEntity = clusterFactoryMock(1)[0]
+const mockCluster = clusterFactoryMock(1)[0]
 mockCluster.kubernetes = KubernetesEnum.MANAGED
 mockCluster.instance_type = 't2.micro'
-jest.mock('@qovery/domains/organization', () => {
-  return {
-    ...jest.requireActual('@qovery/domains/organization'),
-    editCluster: jest.fn(),
-    getClusterState: () => ({
-      loadingStatus: 'loaded',
-      ids: [mockCluster.id],
-      entities: {
-        [mockCluster.id]: mockCluster,
-      },
-      error: null,
-    }),
-    selectClusterById: () => mockCluster,
-    selectInstancesTypes: () => mockInstanceType,
-  }
-})
-
-const mockDispatch = jest.fn()
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useDispatch: () => mockDispatch,
-}))
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -77,13 +55,18 @@ jest.mock('react-router-dom', () => ({
 }))
 
 describe('PageSettingsResourcesFeature', () => {
+  const editCluster = jest.fn()
   beforeEach(() => {
-    mockDispatch.mockImplementation(() => ({
-      unwrap: () =>
-        Promise.resolve({
-          results: [...mockInstanceType],
-        }),
-    }))
+    useClusterMockSpy.mockReturnValue({
+      data: mockCluster,
+      isLoading: false,
+    })
+    useEditClusterMockSpy.mockReturnValue({
+      mutate: editCluster,
+    })
+    useCloudProviderInstanceTypesMockSpy.mockReturnValue({
+      data: mockInstanceType,
+    })
   })
 
   it('should render successfully', () => {
@@ -103,13 +86,6 @@ describe('PageSettingsResourcesFeature', () => {
   })
 
   it('should submit the values', async () => {
-    const editClusterSpy: SpyInstance = jest.spyOn(storeOrganization, 'editCluster')
-    mockDispatch.mockImplementation(() => ({
-      unwrap: () =>
-        Promise.resolve({
-          data: {},
-        }),
-    }))
     const { baseElement } = render(<PageSettingsResourcesFeature />)
     const button = getByTestId(baseElement, 'submit-button')
 
@@ -136,9 +112,11 @@ describe('PageSettingsResourcesFeature', () => {
     await waitFor(() => {
       button.click()
 
-      expect(editClusterSpy.mock.calls[0][0].organizationId).toStrictEqual('0')
-      expect(editClusterSpy.mock.calls[0][0].clusterId).toStrictEqual(mockCluster.id)
-      expect(editClusterSpy.mock.calls[0][0].data).toStrictEqual(cloneCluster)
+      expect(editCluster).toBeCalledWith({
+        organizationId: '0',
+        clusterId: mockCluster.id,
+        clusterRequest: cloneCluster,
+      })
     })
   })
 })

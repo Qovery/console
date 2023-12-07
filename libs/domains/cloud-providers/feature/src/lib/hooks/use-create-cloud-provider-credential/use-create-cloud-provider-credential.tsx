@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { mutations } from '@qovery/domains/organizations/data-access'
+import { mutations } from '@qovery/domains/cloud-providers/data-access'
 import { queries } from '@qovery/state/util-queries'
 
 export function useCreateCloudProviderCredential() {
@@ -8,7 +8,7 @@ export function useCreateCloudProviderCredential() {
   return useMutation(mutations.createCloudProviderCredential, {
     onSuccess(_, { organizationId, cloudProvider }) {
       queryClient.invalidateQueries({
-        queryKey: queries.organizations.cloudProviderCredentials({ organizationId, cloudProvider }).queryKey,
+        queryKey: queries.cloudProviders.credentials({ organizationId, cloudProvider }).queryKey,
       })
     },
     meta: {

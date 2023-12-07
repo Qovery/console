@@ -1,69 +1,43 @@
+import { type ClusterAdvancedSettings } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import {
-  editClusterAdvancedSettings,
-  fetchClusterAdvancedSettings,
-  fetchDefaultClusterAdvancedSettings,
-  getClusterState,
-  postClusterActionsDeploy,
-  selectClusterById,
-} from '@qovery/domains/organization'
-import { type AdvancedSettings, type ClusterEntity, type LoadingStatus } from '@qovery/shared/interfaces'
+  useClusterAdvancedSettings,
+  useDefaultAdvancedSettings,
+  useEditClusterAdvancedSettings,
+} from '@qovery/domains/clusters/feature'
 import { objectFlattener } from '@qovery/shared/util-js'
-import { type AppDispatch, type RootState } from '@qovery/state/store'
 import PageSettingsAdvanced from '../../ui/page-settings-advanced/page-settings-advanced'
 import { initFormValues } from './init-form-values/init-form-values'
 
 export function PageSettingsAdvancedFeature() {
   const { organizationId = '', clusterId = '' } = useParams()
 
-  const cluster = useSelector<RootState, ClusterEntity | undefined>((state) => selectClusterById(state, clusterId))
-  const defaultSettingsLoadingStatus = useSelector<RootState, LoadingStatus>(
-    (state) => getClusterState(state).defaultClusterAdvancedSettings.loadingStatus
-  )
-  const defaultSettings = useSelector<RootState, AdvancedSettings | undefined>(
-    (state) => getClusterState(state).defaultClusterAdvancedSettings.settings
-  )
+  const { data: clusterAdvancedSettings, isLoading: isClusterAdvancedSettingsLoading } = useClusterAdvancedSettings({
+    organizationId,
+    clusterId,
+  })
+  const { mutateAsync: editClusterAdvancedSettings } = useEditClusterAdvancedSettings()
+  const { data: defaultAdvancedSettings } = useDefaultAdvancedSettings()
+
   const [keys, setKeys] = useState<string[]>([])
 
-  const dispatch = useDispatch<AppDispatch>()
   const methods = useForm({ mode: 'onChange' })
-
-  // at the init fetch the default settings advanced settings
-  useEffect(() => {
-    if (!cluster?.advanced_settings?.loadingStatus && defaultSettingsLoadingStatus === 'not loaded') {
-      dispatch(fetchDefaultClusterAdvancedSettings())
-    }
-  }, [cluster, defaultSettingsLoadingStatus])
-
-  // when cluster is ready, and advanced setting has never been fetched before
-  useEffect(() => {
-    if (cluster && !cluster.advanced_settings?.loadingStatus) {
-      dispatch(fetchClusterAdvancedSettings({ organizationId, clusterId }))
-    }
-  }, [dispatch, cluster, organizationId, clusterId])
 
   // init the keys when cluster is updated
   useEffect(() => {
-    if (cluster?.advanced_settings?.current_settings && cluster.advanced_settings?.loadingStatus === 'loaded') {
-      setKeys(Object.keys(cluster?.advanced_settings.current_settings).sort())
+    if (clusterAdvancedSettings) {
+      setKeys(Object.keys(clusterAdvancedSettings).sort())
     }
-  }, [cluster])
+  }, [clusterAdvancedSettings])
 
   // init form
   useEffect(() => {
-    if (cluster && cluster.advanced_settings?.loadingStatus === 'loaded') {
-      methods.reset(initFormValues(keys, cluster))
+    if (clusterAdvancedSettings) {
+      methods.reset(initFormValues(keys, clusterAdvancedSettings))
     }
-  }, [cluster, keys, methods])
-
-  const toasterCallback = () => {
-    if (cluster) {
-      dispatch(postClusterActionsDeploy({ organizationId, clusterId }))
-    }
-  }
+  }, [clusterAdvancedSettings, keys, methods])
 
   const onSubmit = methods.handleSubmit((data) => {
     let dataFormatted = { ...data }
@@ -89,31 +63,30 @@ export function PageSettingsAdvancedFeature() {
         JSON.parse(dataFormatted[key])
       } catch (e) {
         if (dataFormatted[key] === '') {
-          dataFormatted[key] = defaultSettings ? defaultSettings[key as keyof AdvancedSettings] : ''
+          dataFormatted[key] = defaultAdvancedSettings
+            ? defaultAdvancedSettings[key as keyof ClusterAdvancedSettings]
+            : ''
         }
         return
       }
       dataFormatted[key] = JSON.parse(dataFormatted[key])
     })
 
-    if (cluster) {
-      dispatch(
-        editClusterAdvancedSettings({
-          organizationId,
-          clusterId,
-          settings: dataFormatted,
-          toasterCallback,
-        })
-      )
+    if (clusterAdvancedSettings) {
+      editClusterAdvancedSettings({
+        organizationId,
+        clusterId,
+        clusterAdvancedSettings: dataFormatted,
+      })
     }
   })
 
   return (
     <FormProvider {...methods}>
       <PageSettingsAdvanced
-        defaultAdvancedSettings={defaultSettings}
-        advancedSettings={cluster?.advanced_settings?.current_settings}
-        loading={cluster?.advanced_settings?.loadingStatus}
+        defaultAdvancedSettings={defaultAdvancedSettings}
+        advancedSettings={clusterAdvancedSettings}
+        loading={isClusterAdvancedSettingsLoading}
         keys={keys}
         discardChanges={() => methods.reset()}
         onSubmit={() => onSubmit()}

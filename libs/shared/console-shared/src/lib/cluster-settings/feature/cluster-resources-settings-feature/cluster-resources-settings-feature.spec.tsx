@@ -1,11 +1,14 @@
 import { act, getByLabelText, getByText, render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { CloudProviderEnum, KubernetesEnum } from 'qovery-typescript-axios'
-import * as storeOrganization from '@qovery/domains/organization'
+import * as cloudProvidersDomain from '@qovery/domains/cloud-providers/feature'
 import { type ClusterResourcesData } from '@qovery/shared/interfaces'
 import ClusterResourcesSettingsFeature from './cluster-resources-settings-feature'
 
-import SpyInstance = jest.SpyInstance
+const useCloudProviderInstanceTypesMockSpy = jest.spyOn(
+  cloudProvidersDomain,
+  'useCloudProviderInstanceTypes'
+) as jest.Mock
 
 describe('ClusterResourcesSettingsFeature', () => {
   let defaultValues: ClusterResourcesData
@@ -85,8 +88,6 @@ describe('ClusterResourcesSettingsFeature', () => {
   })
 
   it('should fetch the availabale Instance types at init and on change', async () => {
-    const editProjectSpy: SpyInstance = jest.spyOn(storeOrganization, 'fetchAvailableInstanceTypes')
-
     const { baseElement } = render(
       wrapWithReactHookForm<ClusterResourcesData>(
         <ClusterResourcesSettingsFeature
@@ -100,16 +101,20 @@ describe('ClusterResourcesSettingsFeature', () => {
       )
     )
 
-    expect(editProjectSpy).toHaveBeenCalledWith({ clusterType: 'MANAGED', provider: 'AWS', region: 'us-east-2' })
+    expect(useCloudProviderInstanceTypesMockSpy).toHaveBeenCalledWith({
+      clusterType: 'MANAGED',
+      cloudProvider: 'AWS',
+      region: 'us-east-2',
+    })
 
     const checkbox = getByText(baseElement, 'BETA - Single EC2 (K3S)')
     await act(() => {
       checkbox.click()
     })
 
-    expect(editProjectSpy).toHaveBeenCalledWith({
+    expect(useCloudProviderInstanceTypesMockSpy).toHaveBeenCalledWith({
       clusterType: KubernetesEnum.K3_S,
-      provider: 'AWS',
+      cloudProvider: 'AWS',
       region: 'us-east-2',
     })
   })

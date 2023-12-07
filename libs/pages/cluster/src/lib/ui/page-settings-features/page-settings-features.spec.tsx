@@ -1,14 +1,13 @@
 import { render } from '__tests__/utils/setup-jest'
 import { CloudProviderEnum } from 'qovery-typescript-axios'
 import { clusterFactoryMock } from '@qovery/shared/factories'
-import { type ClusterEntity } from '@qovery/shared/interfaces'
 import PageSettingsFeatures, { type PageSettingsFeaturesProps } from './page-settings-features'
 
-const cluster: ClusterEntity = clusterFactoryMock(1)[0]
+const cluster = clusterFactoryMock(1)[0]
 
 describe('PageSettingsFeatures', () => {
   const props: PageSettingsFeaturesProps = {
-    loadingStatus: 'loaded',
+    loading: false,
     cloudProvider: CloudProviderEnum.AWS,
     features: cluster.features,
   }
@@ -19,13 +18,13 @@ describe('PageSettingsFeatures', () => {
   })
 
   it('should render a loader spinner', () => {
-    props.loadingStatus = 'not loaded'
+    props.loading = true
     const { getByTestId } = render(<PageSettingsFeatures {...props} />)
     getByTestId('spinner')
   })
 
   it('should render a list of features', () => {
-    props.loadingStatus = 'loaded'
+    props.loading = false
     props.features = [
       {
         title: 'feature 1',

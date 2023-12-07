@@ -1,36 +1,30 @@
 import { act, fireEvent, render } from '__tests__/utils/setup-jest'
-import * as storeOrganization from '@qovery/domains/organization'
-import { clusterFactoryMock } from '@qovery/shared/factories'
+import * as clustersDomain from '@qovery/domains/clusters/feature'
 import CrudModalFeature, { type CrudModalFeatureProps, handleSubmit } from './crud-modal-feature'
 
-import SpyInstance = jest.SpyInstance
-
-const cluster = clusterFactoryMock(1)[0]
-
-const route = cluster.routingTable?.items && cluster.routingTable?.items[0]
+const route = {
+  destination: '10.0.0.0/16',
+  target: 'pcx-0abf',
+  description: 'my description',
+}
+const useEditRoutingTableMockSpy = jest.spyOn(clustersDomain, 'useEditRoutingTable') as jest.Mock
 
 const props: CrudModalFeatureProps = {
   route: route,
-  routes: cluster.routingTable?.items,
+  routes: [route],
   organizationId: '0',
-  clusterId: cluster.id,
+  clusterId: '0',
   onClose: jest.fn(),
 }
 
-jest.mock('@qovery/domains/organization', () => {
-  return {
-    ...jest.requireActual('@qovery/domains/organization'),
-    editClusterRoutingTable: jest.fn(),
-  }
-})
-
-const mockDispatch = jest.fn()
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useDispatch: () => mockDispatch,
-}))
-
 describe('CrudModalFeature', () => {
+  const editRoutingTable = jest.fn()
+  beforeEach(() => {
+    useEditRoutingTableMockSpy.mockReturnValue({
+      mutateAsync: editRoutingTable,
+    })
+  })
+
   it('should render successfully', async () => {
     const { baseElement } = render(<CrudModalFeature {...props} />)
     await act(() => {
@@ -39,10 +33,7 @@ describe('CrudModalFeature', () => {
   })
 
   it('should submit a new route', () => {
-    const routes = handleSubmit(
-      { destination: '10.0.0.0/20', target: 'my-target', description: 'my-desc' },
-      cluster?.routingTable?.items
-    )
+    const routes = handleSubmit({ destination: '10.0.0.0/20', target: 'my-target', description: 'my-desc' }, [route])
 
     expect(routes).toStrictEqual([
       {
@@ -61,7 +52,7 @@ describe('CrudModalFeature', () => {
   it('should submit a edit route', () => {
     const routes = handleSubmit(
       { destination: route?.destination, target: 'my-target', description: 'my-desc' },
-      cluster?.routingTable?.items,
+      [route],
       route
     )
 
@@ -74,15 +65,7 @@ describe('CrudModalFeature', () => {
     ])
   })
 
-  it('should dispatch editClusterRoutingTable if form is submitted', async () => {
-    const editClusterSpy: SpyInstance = jest.spyOn(storeOrganization, 'editClusterRoutingTable')
-    mockDispatch.mockImplementation(() => ({
-      unwrap: () =>
-        Promise.resolve({
-          data: {},
-        }),
-    }))
-
+  it('should edit ClusterRoutingTable if form is submitted', async () => {
     const { getByTestId } = render(<CrudModalFeature {...props} />)
 
     await act(() => {
@@ -100,12 +83,14 @@ describe('CrudModalFeature', () => {
 
     const routes = handleSubmit(
       { destination: '10.0.0.0/20', target: 'test', description: 'my description' },
-      cluster?.routingTable?.items,
+      [route],
       route
     )
 
-    expect(editClusterSpy.mock.calls[0][0].organizationId).toStrictEqual('0')
-    expect(editClusterSpy.mock.calls[0][0].clusterId).toStrictEqual(cluster.id)
-    expect(editClusterSpy.mock.calls[0][0].routes).toStrictEqual(routes)
+    expect(editRoutingTable).toBeCalledWith({
+      organizationId: '0',
+      clusterId: '0',
+      routingTableRequest: { routes },
+    })
   })
 })

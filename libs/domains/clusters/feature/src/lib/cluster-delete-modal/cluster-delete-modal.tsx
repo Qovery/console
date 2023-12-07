@@ -1,5 +1,7 @@
 import { ClusterDeleteMode } from 'qovery-typescript-axios'
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { CLUSTERS_URL } from '@qovery/shared/routes'
 import { Callout, Icon, IconAwesomeEnum, InputSelect, ModalConfirmation } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import useDeleteCluster from '../hooks/use-delete-cluster/use-delete-cluster'
@@ -19,6 +21,7 @@ export function ClusterDeleteModal({ organizationId, clusterId, name }: ClusterD
       .split('_')
       .map((word) => upperCaseFirstLetter(word))
       .join(' ')
+  const navigate = useNavigate()
 
   return (
     <ModalConfirmation
@@ -31,6 +34,7 @@ export function ClusterDeleteModal({ organizationId, clusterId, name }: ClusterD
             clusterId,
             clusterDeleteMode,
           })
+          navigate(CLUSTERS_URL(organizationId))
         } catch (error) {
           console.error(error)
         }

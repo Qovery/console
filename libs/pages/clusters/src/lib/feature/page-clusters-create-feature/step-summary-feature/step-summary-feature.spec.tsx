@@ -1,17 +1,41 @@
 import { act, getByTestId, render } from '__tests__/utils/setup-jest'
 import { CloudProviderEnum } from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
-import * as storeCluster from '@qovery/domains/organization'
+import * as cloudProvidersDomain from '@qovery/domains/cloud-providers/feature'
+import * as clustersDomain from '@qovery/domains/clusters/feature'
 import { ClusterContainerCreateContext } from '../page-clusters-create-feature'
 import StepSummaryFeature from './step-summary-feature'
 
-import SpyInstance = jest.SpyInstance
+const useCreateClusterMockSpy = jest.spyOn(clustersDomain, 'useCreateCluster') as jest.Mock
+const useEditCloudProviderInfoMockSpy = jest.spyOn(clustersDomain, 'useEditCloudProviderInfo') as jest.Mock
+const useCloudProviderInstanceTypesMockSpy = jest.spyOn(
+  cloudProvidersDomain,
+  'useCloudProviderInstanceTypes'
+) as jest.Mock
 
-const mockDispatch = jest.fn()
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useDispatch: () => mockDispatch,
-}))
+const mockInstanceType = [
+  {
+    name: 't2.micro',
+    cpu: 1,
+    ram_in_gb: 1,
+    type: 't2.micro',
+    architecture: 'arm64',
+  },
+  {
+    name: 't2.small',
+    cpu: 1,
+    ram_in_gb: 2,
+    type: 't2.small',
+    architecture: 'arm64',
+  },
+  {
+    name: 't2.medium',
+    cpu: 2,
+    ram_in_gb: 4,
+    type: 't2.medium',
+    architecture: 'x86_64',
+  },
+]
 
 const mockNavigate = jest.fn()
 jest.mock('react-router-dom', () => ({
@@ -66,6 +90,21 @@ const ContextWrapper = (props: { children: ReactNode }) => {
 }
 
 describe('StepSummaryFeature', () => {
+  const createCluster = jest.fn()
+  const editCloudProviderInfo = jest.fn()
+  beforeEach(() => {
+    useCreateClusterMockSpy.mockReturnValue({
+      mutateAsync: createCluster,
+    })
+    useEditCloudProviderInfoMockSpy.mockReturnValue({
+      mutateAsync: editCloudProviderInfo,
+    })
+    useCloudProviderInstanceTypesMockSpy.mockReturnValue({
+      data: mockInstanceType,
+      isLoading: false,
+    })
+  })
+
   it('should render successfully', () => {
     const { baseElement } = render(
       <ContextWrapper>
@@ -76,15 +115,9 @@ describe('StepSummaryFeature', () => {
   })
 
   it('should post the request with expected form values', async () => {
-    const createClusterSpy: SpyInstance = jest.spyOn(storeCluster, 'createCluster')
-    const postCloudProviderInfoSpy: SpyInstance = jest.spyOn(storeCluster, 'postCloudProviderInfo')
-
-    mockDispatch.mockImplementation(() => ({
-      unwrap: () =>
-        Promise.resolve({
-          data: {},
-        }),
-    }))
+    createCluster.mockReturnValue({
+      id: '42',
+    })
     const { baseElement } = render(
       <ContextWrapper>
         <StepSummaryFeature />
@@ -97,7 +130,7 @@ describe('StepSummaryFeature', () => {
       button.click()
     })
 
-    expect(createClusterSpy).toHaveBeenCalledWith({
+    expect(createCluster).toHaveBeenCalledWith({
       organizationId: '1',
       clusterRequest: {
         name: 'test',
@@ -120,10 +153,10 @@ describe('StepSummaryFeature', () => {
       },
     })
 
-    expect(postCloudProviderInfoSpy).toHaveBeenCalledWith({
+    expect(editCloudProviderInfo).toHaveBeenCalledWith({
       organizationId: '1',
-      clusterId: undefined,
-      clusterCloudProviderInfo: {
+      clusterId: '42',
+      cloudProviderInfoRequest: {
         cloud_provider: CloudProviderEnum.AWS,
         credentials: {
           id: '1',
@@ -131,7 +164,6 @@ describe('StepSummaryFeature', () => {
         },
         region: 'region',
       },
-      silently: true,
     })
   })
 })

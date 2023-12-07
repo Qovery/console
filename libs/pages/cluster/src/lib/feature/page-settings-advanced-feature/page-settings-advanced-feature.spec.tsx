@@ -2,20 +2,20 @@ import { act, fireEvent, render } from '__tests__/utils/setup-jest'
 import { type ClusterAdvancedSettings } from 'qovery-typescript-axios'
 // eslint-disable-next-line @typescript-eslint/no-restricted-imports
 import React from 'react'
-import * as storeOrganization from '@qovery/domains/organization'
+import * as clustersDomain from '@qovery/domains/clusters/feature'
 import { clusterFactoryMock } from '@qovery/shared/factories'
-import { type ClusterEntity } from '@qovery/shared/interfaces'
 import * as InitFormValues from './init-form-values/init-form-values'
 import PageSettingsAdvancedFeature from './page-settings-advanced-feature'
 
-import SpyInstance = jest.SpyInstance
-
-const mockCluster: ClusterEntity = clusterFactoryMock(1)[0]
-const mockAdvancedSettings: Partial<ClusterAdvancedSettings> = {
+const useClusterAdvancedSettingsMockSpy = jest.spyOn(clustersDomain, 'useClusterAdvancedSettings') as jest.Mock
+const useDefaultAdvancedSettingsMockSpy = jest.spyOn(clustersDomain, 'useDefaultAdvancedSettings') as jest.Mock
+const useEditClusterAdvancedSettingsMockSpy = jest.spyOn(clustersDomain, 'useEditClusterAdvancedSettings') as jest.Mock
+const mockCluster = clusterFactoryMock(1)[0]
+const mockAdvancedSettings: ClusterAdvancedSettings = {
   'loki.log_retention_in_week': 1,
   'aws.vpc.enable_s3_flow_logs': false,
   'load_balancer.size': '-',
-  cloud_provider_container_registry_tags: {},
+  'cloud_provider.container_registry.tags': {},
 }
 
 jest.mock('./init-form-values/init-form-values', () => ({
@@ -27,48 +27,24 @@ jest.mock('react-router-dom', () => ({
   useParams: () => ({ organizationId: '1', clusterId: mockCluster.id }),
 }))
 
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useDispatch: () => jest.fn(),
-}))
-
-jest.mock('@qovery/domains/organization', () => {
-  return {
-    ...jest.requireActual('@qovery/domains/organization'),
-    editClusterAdvancedSettings: jest.fn(),
-    fetchClusterAdvancedSettings: jest.fn(),
-    fetchDefaultClusterAdvancedSettings: jest.fn(),
-    getClusterState: () => ({
-      defaultClusterAdvancedSettings: {
-        loadingStatus: 'loaded',
-        settings: mockAdvancedSettings,
-      },
-      loadingStatus: 'loaded',
-      ids: [mockCluster.id],
-      entities: {
-        [mockCluster.id]: mockCluster,
-      },
-      error: null,
-    }),
-    selectClusterById: () => mockCluster,
-  }
-})
-
 describe('PageSettingsAdvancedFeature', () => {
   const setState = jest.fn()
+  const editClusterAdvancedSettingsSpy = jest.fn()
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const useStateMock: any = (initState: any) => [initState, setState]
   let promise: Promise
 
   beforeEach(() => {
-    mockCluster.advanced_settings = {
-      loadingStatus: 'not loaded',
-      current_settings: mockAdvancedSettings,
-    }
+    useClusterAdvancedSettingsMockSpy.mockReturnValue({ data: mockAdvancedSettings, isLoading: false })
+    useDefaultAdvancedSettingsMockSpy.mockReturnValue({ data: {}, isLoading: false })
+
+    useEditClusterAdvancedSettingsMockSpy.mockReturnValue({
+      mutateAsync: editClusterAdvancedSettingsSpy,
+    })
     promise = Promise.resolve()
   })
 
-  afterEach(() => {
+  afterAll(() => {
     jest.clearAllMocks()
     jest.restoreAllMocks()
   })
@@ -82,11 +58,10 @@ describe('PageSettingsAdvancedFeature', () => {
     })
   })
 
-  it('should dispatch fetchClusterAdvancedSettings if advanced_settings does not exist', async () => {
-    mockCluster.advanced_settings = undefined
-    const fetchClusterAdvancedSettingsSpy: SpyInstance = jest.spyOn(storeOrganization, 'fetchClusterAdvancedSettings')
+  it('should fetch ClusterAdvancedSettings if advanced_settings does not exist', async () => {
+    useClusterAdvancedSettingsMockSpy.mockReturnValueOnce({ data: undefined, isLoading: false })
     render(<PageSettingsAdvancedFeature />)
-    expect(fetchClusterAdvancedSettingsSpy).toHaveBeenCalled()
+    expect(useClusterAdvancedSettingsMockSpy).toHaveBeenCalled()
 
     await act(async () => {
       await promise
@@ -95,30 +70,22 @@ describe('PageSettingsAdvancedFeature', () => {
 
   // I think the useForm hook also use useState, this is why the first 4th call are to ignored. https://gist.github.com/mauricedb/eb2bae5592e3ddc64fa965cde4afe7bc
   it('should set the keys if application and advanced_settings are defined', async () => {
-    mockCluster.advanced_settings!.loadingStatus = 'loaded'
     jest.spyOn(React, 'useState').mockImplementation(useStateMock)
     render(<PageSettingsAdvancedFeature />)
-
-    expect(setState).toHaveBeenNthCalledWith(
-      9,
-      Object.keys(mockCluster.advanced_settings?.current_settings || {}).sort()
-    )
+    expect(setState).toHaveBeenNthCalledWith(9, Object.keys(mockAdvancedSettings || {}).sort())
     await act(async () => {
       await promise
     })
   })
 
-  it('should dispatch editClusterAdvancedSettings if form is submitted', async () => {
-    mockCluster.advanced_settings!.loadingStatus = 'loaded'
-    const editClusterAdvancedSettingsSpy: SpyInstance = jest.spyOn(storeOrganization, 'editClusterAdvancedSettings')
-
+  it('should edit ClusterAdvancedSettings if form is submitted', async () => {
     const { getByLabelText, getByTestId } = render(<PageSettingsAdvancedFeature />)
 
     await act(() => {
       fireEvent.input(getByLabelText('loki.log_retention_in_week'), { target: { value: '2' } })
       fireEvent.input(getByLabelText('aws.vpc.enable_s3_flow_logs'), { target: { value: 'true' } })
       fireEvent.input(getByLabelText('load_balancer.size'), { target: { value: '/' } })
-      fireEvent.input(getByLabelText('cloud_provider_container_registry_tags'), {
+      fireEvent.input(getByLabelText('cloud_provider.container_registry.tags'), {
         target: { value: '{"test":"test"}' },
       })
     })
@@ -129,12 +96,15 @@ describe('PageSettingsAdvancedFeature', () => {
       getByTestId('submit-button').click()
     })
 
-    expect(editClusterAdvancedSettingsSpy.mock.calls[0][0].clusterId).toBe(mockCluster.id)
-    expect(editClusterAdvancedSettingsSpy.mock.calls[0][0].settings).toStrictEqual({
-      'loki.log_retention_in_week': 2,
-      'aws.vpc.enable_s3_flow_logs': true,
-      'load_balancer.size': '/',
-      cloud_provider_container_registry_tags: { test: 'test' },
+    expect(editClusterAdvancedSettingsSpy).toBeCalledWith({
+      clusterId: mockCluster.id,
+      organizationId: '1',
+      clusterAdvancedSettings: {
+        'loki.log_retention_in_week': 2,
+        'aws.vpc.enable_s3_flow_logs': true,
+        'load_balancer.size': '/',
+        'cloud_provider.container_registry.tags': { test: 'test' },
+      },
     })
 
     await act(async () => {
@@ -143,7 +113,6 @@ describe('PageSettingsAdvancedFeature', () => {
   })
 
   it('should init the form', async () => {
-    mockCluster.advanced_settings!.loadingStatus = 'loaded'
     const spy = jest.spyOn(InitFormValues, 'initFormValues')
     render(<PageSettingsAdvancedFeature />)
     expect(spy).toHaveBeenCalled()

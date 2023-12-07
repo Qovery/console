@@ -3,13 +3,13 @@ import { type PropsWithChildren } from 'react'
 import { useSelector } from 'react-redux'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { selectApplicationsEntitiesByEnvId } from '@qovery/domains/application'
+import { useCluster } from '@qovery/domains/clusters/feature'
 import { selectDatabasesEntitiesByEnvId } from '@qovery/domains/database'
 import { EnvironmentMode, EnvironmentStateChip } from '@qovery/domains/environments/feature'
-import { selectClusterById } from '@qovery/domains/organization'
 import { useDeploymentStatus } from '@qovery/domains/services/feature'
 import { EnvironmentButtonsActions } from '@qovery/shared/console-shared'
 import { IconEnum } from '@qovery/shared/enums'
-import { type ApplicationEntity, type ClusterEntity, type DatabaseEntity } from '@qovery/shared/interfaces'
+import { type ApplicationEntity, type DatabaseEntity } from '@qovery/shared/interfaces'
 import {
   SERVICES_APPLICATION_CREATION_URL,
   SERVICES_CRONJOB_CREATION_URL,
@@ -43,7 +43,7 @@ export interface ContainerProps {
 
 export function Container(props: PropsWithChildren<ContainerProps>) {
   const { environment, children } = props
-  const { organizationId, projectId, environmentId } = useParams()
+  const { organizationId = '', projectId, environmentId } = useParams()
   const location = useLocation()
   const navigate = useNavigate()
 
@@ -59,9 +59,7 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
     selectDatabasesEntitiesByEnvId(state, environment?.id || '')
   )
 
-  const cluster = useSelector<RootState, ClusterEntity | undefined>((state: RootState) =>
-    selectClusterById(state, environment?.cluster_id || '')
-  )
+  const { data: cluster } = useCluster({ organizationId, clusterId: environment?.cluster_id ?? '' })
 
   const matchSettingsRoute = location.pathname.includes(
     SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_SETTINGS_URL

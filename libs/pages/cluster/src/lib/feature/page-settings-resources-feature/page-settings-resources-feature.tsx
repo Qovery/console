@@ -1,13 +1,12 @@
-import { useEffect, useState } from 'react'
+import { type Cluster } from 'qovery-typescript-axios'
+import { useEffect } from 'react'
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
-import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { editCluster, postClusterActionsDeploy, selectClusterById } from '@qovery/domains/organization'
-import { type ClusterEntity, type ClusterResourcesData } from '@qovery/shared/interfaces'
-import { type AppDispatch, type RootState } from '@qovery/state/store'
+import { useCluster, useEditCluster } from '@qovery/domains/clusters/feature'
+import { type ClusterResourcesData } from '@qovery/shared/interfaces'
 import PageSettingsResources from '../../ui/page-settings-resources/page-settings-resources'
 
-export const handleSubmit = (data: FieldValues, cluster: ClusterEntity): Partial<ClusterEntity> => {
+export const handleSubmit = (data: FieldValues, cluster: Cluster): Cluster => {
   return {
     ...cluster,
     max_running_nodes: data['nodes'][1],
@@ -19,37 +18,22 @@ export const handleSubmit = (data: FieldValues, cluster: ClusterEntity): Partial
 
 export function PageSettingsResourcesFeature() {
   const { organizationId = '', clusterId = '' } = useParams()
-  const dispatch = useDispatch<AppDispatch>()
-
-  const [loading, setLoading] = useState(false)
 
   const methods = useForm<ClusterResourcesData>({
     mode: 'onChange',
   })
-  const cluster = useSelector<RootState, ClusterEntity | undefined>((state) => selectClusterById(state, clusterId))
+  const { data: cluster } = useCluster({ organizationId, clusterId })
+  const { mutate: editCluster, isLoading: isEditClusterLoading } = useEditCluster()
 
   const onSubmit = methods.handleSubmit((data) => {
     if (data && cluster) {
-      setLoading(true)
-
       const cloneCluster = handleSubmit(data, cluster)
 
-      const toasterCallback = () => {
-        if (cluster) {
-          dispatch(postClusterActionsDeploy({ organizationId, clusterId }))
-        }
-      }
-
-      dispatch(
-        editCluster({
-          organizationId: organizationId,
-          clusterId: clusterId,
-          data: cloneCluster,
-          toasterCallback,
-        })
-      )
-        .unwrap()
-        .finally(() => setLoading(false))
+      editCluster({
+        organizationId,
+        clusterId,
+        clusterRequest: cloneCluster,
+      })
     }
   })
 
@@ -71,10 +55,10 @@ export function PageSettingsResourcesFeature() {
     <FormProvider {...methods}>
       {cluster && (
         <PageSettingsResources
-          cloudProvider={cluster?.cloud_provider}
-          clusterRegion={cluster?.region}
+          cloudProvider={cluster.cloud_provider}
+          clusterRegion={cluster.region}
           onSubmit={onSubmit}
-          loading={loading}
+          loading={isEditClusterLoading}
         />
       )}
     </FormProvider>

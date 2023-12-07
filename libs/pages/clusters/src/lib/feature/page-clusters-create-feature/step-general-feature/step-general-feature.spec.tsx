@@ -1,6 +1,6 @@
 import { CloudProviderEnum } from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
-import * as organizationsDomain from '@qovery/domains/organizations/feature'
+import * as cloudProvidersDomain from '@qovery/domains/cloud-providers/feature'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ClusterContainerCreateContext } from '../page-clusters-create-feature'
 import StepGeneralFeature from './step-general-feature'
@@ -8,18 +8,13 @@ import StepGeneralFeature from './step-general-feature'
 const mockSetGeneralData = jest.fn()
 const mockNavigate = jest.fn()
 
-const useCloudProviderCredentialsMockSpy = jest.spyOn(organizationsDomain, 'useCloudProviderCredentials') as jest.Mock
+const useCloudProvidersMockSpy = jest.spyOn(cloudProvidersDomain, 'useCloudProviders') as jest.Mock
+const useCloudProviderCredentialsMockSpy = jest.spyOn(cloudProvidersDomain, 'useCloudProviderCredentials') as jest.Mock
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useParams: () => ({ organizationId: '1' }),
   useNavigate: () => mockNavigate,
-}))
-
-const mockDispatch = jest.fn()
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useDispatch: () => mockDispatch,
 }))
 
 jest.mock('@qovery/domains/organization', () => {
@@ -57,19 +52,18 @@ const ContextWrapper = (props: { children: ReactNode }) => {
 
 describe('StepGeneralFeature', () => {
   beforeEach(() => {
-    mockDispatch.mockImplementation(() => ({
-      unwrap: () =>
-        Promise.resolve([
-          {
-            short_name: CloudProviderEnum.AWS,
-            regions: [
-              {
-                name: 'Paris',
-              },
-            ],
-          },
-        ]),
-    }))
+    useCloudProvidersMockSpy.mockReturnValue({
+      data: [
+        {
+          short_name: CloudProviderEnum.AWS,
+          regions: [
+            {
+              name: 'Paris',
+            },
+          ],
+        },
+      ],
+    })
     useCloudProviderCredentialsMockSpy.mockReturnValue({
       data: [
         {
