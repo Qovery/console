@@ -124,7 +124,7 @@ export function CrudModal({ isEdit, onSubmit, onClose, loading, availableHelmRep
           )}
         />
       )}
-      {watch('kind') === 'HTTPS' && (
+      {['HTTPS', 'OCI_DOCKER_HUB', 'OCI_GENERIC_CR', 'OCI_GITHUB_CR', 'OCI_GITLAB_CR'].includes(watch('kind')) && (
         <>
           <Controller
             name="config.username"
@@ -162,8 +162,130 @@ export function CrudModal({ isEdit, onSubmit, onClose, loading, availableHelmRep
           />
         </>
       )}
+      {watch('kind') === 'OCI_SCALEWAY_CR' && (
+        <>
+          <Controller
+            name="config.region"
+            control={control}
+            rules={{
+              required: 'Please enter a region.',
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <InputText
+                dataTestId="input-region"
+                className="mb-5"
+                type="text"
+                name={field.name}
+                onChange={field.onChange}
+                value={field.value}
+                label="Region"
+                error={error?.message}
+              />
+            )}
+          />
+          <Controller
+            name="config.scaleway_access_key"
+            control={control}
+            rules={{
+              required: 'Please enter a Scaleway access key.',
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <InputText
+                dataTestId="input-scaleway_access_key"
+                className="mb-5"
+                type="text"
+                name={field.name}
+                onChange={field.onChange}
+                value={field.value}
+                label="Access key"
+                error={error?.message}
+              />
+            )}
+          />
+          <Controller
+            name="config.scaleway_secret_key"
+            control={control}
+            rules={{
+              required: 'Please enter a Scaleway secret key.',
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <InputText
+                dataTestId="input-scaleway_secret_key"
+                className="mb-5"
+                type="password"
+                name={field.name}
+                onChange={field.onChange}
+                value={field.value}
+                label="Secret access key"
+                error={error?.message}
+              />
+            )}
+          />
+        </>
+      )}
+      {watch('kind') === 'OCI_ECR' && (
+        <>
+          <Controller
+            name="config.region"
+            control={control}
+            rules={{
+              required: 'Please enter a region.',
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <InputText
+                dataTestId="input-region"
+                className="mb-5"
+                type="text"
+                name={field.name}
+                onChange={field.onChange}
+                value={field.value}
+                label="Region"
+                error={error?.message}
+              />
+            )}
+          />
+          <Controller
+            name="config.access_key_id"
+            control={control}
+            rules={{
+              required: 'Please enter an access key.',
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <InputText
+                dataTestId="input-access_key_id"
+                className="mb-5"
+                type="text"
+                name={field.name}
+                onChange={field.onChange}
+                value={field.value}
+                label="Access key"
+                error={error?.message}
+              />
+            )}
+          />
+          <Controller
+            name="config.secret_access_key"
+            control={control}
+            rules={{
+              required: 'Please enter a secret key.',
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <InputText
+                dataTestId="input-secret_access_key"
+                className="mb-5"
+                type="password"
+                name={field.name}
+                onChange={field.onChange}
+                value={field.value}
+                label="Secret key"
+                error={error?.message}
+              />
+            )}
+          />
+        </>
+      )}
       <Controller
-        name="config.skip_tls_verification"
+        name="skip_tls_verification"
         control={control}
         render={({ field }) => (
           <InputToggle

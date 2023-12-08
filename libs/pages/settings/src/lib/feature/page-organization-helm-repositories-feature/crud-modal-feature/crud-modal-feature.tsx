@@ -27,6 +27,7 @@ export function CrudModalFeature(props: CrudModalFeatureProps) {
       description: repository?.description,
       url: repository?.url,
       kind: repository?.kind,
+      skip_tls_verification: repository?.skip_tls_verification,
       config: {},
     },
     mode: 'onChange',
