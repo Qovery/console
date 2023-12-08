@@ -127,11 +127,11 @@ export function CrudModal({ isEdit, onSubmit, onClose, loading, availableHelmRep
       {watch('kind') === 'HTTPS' && (
         <>
           <Controller
-            name="config.login"
+            name="config.username"
             control={control}
             render={({ field, fieldState: { error } }) => (
               <InputText
-                dataTestId="input-login"
+                dataTestId="input-username"
                 className="mb-5"
                 type="text"
                 name={field.name}

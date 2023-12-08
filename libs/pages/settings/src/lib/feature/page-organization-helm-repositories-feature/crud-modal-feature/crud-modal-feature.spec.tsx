@@ -42,8 +42,8 @@ describe('CrudModalFeature', () => {
   it('should edit helm repository if form is submitted', async () => {
     const { userEvent } = renderWithProviders(<CrudModalFeature {...props} />)
 
-    const inputLogin = screen.getByTestId('input-login')
-    await userEvent.type(inputLogin, 'hello')
+    const inputUsername = screen.getByTestId('input-username')
+    await userEvent.type(inputUsername, 'hello')
 
     const inputPassword = screen.getByTestId('input-password')
     await userEvent.type(inputPassword, 'password')
@@ -63,7 +63,7 @@ describe('CrudModalFeature', () => {
         kind: mockHelmRepositoriesConfig.kind,
         url: mockHelmRepositoriesConfig.url,
         config: {
-          login: 'hello',
+          username: 'hello',
           password: 'password',
         },
       },
@@ -81,8 +81,8 @@ describe('CrudModalFeature', () => {
     const selectType = screen.getByLabelText('Kind')
     await selectEvent.select(selectType, HelmRepositoryKindEnum.HTTPS, { container: document.body })
 
-    const inputLogin = screen.getByTestId('input-login')
-    await userEvent.type(inputLogin, 'hello')
+    const inputUsername = screen.getByTestId('input-username')
+    await userEvent.type(inputUsername, 'hello')
 
     const inputPassword = screen.getByTestId('input-password')
     await userEvent.type(inputPassword, 'password')
@@ -98,7 +98,6 @@ describe('CrudModalFeature', () => {
     await userEvent.click(screen.getByTestId('submit-button'))
 
     const mockHelmRepositoriesConfig = mockHelmRepositories[0]
-    console.log(mockHelmRepositoriesConfig)
 
     expect(useCreateHelmRepositoryMockSpy().mutateAsync).toHaveBeenCalledWith({
       organizationId: '0',
@@ -108,7 +107,7 @@ describe('CrudModalFeature', () => {
         description: undefined,
         url: 'https://helm-charts.io',
         config: {
-          login: 'hello',
+          username: 'hello',
           password: 'password',
         },
       },

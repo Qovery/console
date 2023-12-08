@@ -29,7 +29,7 @@ describe('CrudModal', () => {
           url: 'https://helm-charts.io',
           kind: HelmRepositoryKindEnum.HTTPS,
           config: {
-            login: 'test',
+            username: 'test',
             password: 'password',
           },
         },
@@ -58,7 +58,7 @@ describe('CrudModal', () => {
           url: 'https://qovery.com',
           kind: HelmRepositoryKindEnum.HTTPS,
           config: {
-            login: 'test',
+            username: 'test',
             password: 'password',
           },
         },
