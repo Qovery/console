@@ -12,6 +12,7 @@ import {
   APPLICATION_SETTINGS_RESOURCES_URL,
   APPLICATION_SETTINGS_STORAGE_URL,
   APPLICATION_SETTINGS_URL,
+  APPLICATION_SETTINGS_VALUES_OVERRIDE_URL,
   APPLICATION_VARIABLES_URL,
   type Route,
 } from '@qovery/shared/routes'
@@ -28,6 +29,7 @@ import PageSettingsHealthchecksFeature from '../feature/page-settings-healthchec
 import PageSettingsPortsFeature from '../feature/page-settings-ports-feature/page-settings-ports-feature'
 import PageSettingsResourcesFeature from '../feature/page-settings-resources-feature/page-settings-resources-feature'
 import PageSettingsStorageFeature from '../feature/page-settings-storage-feature/page-settings-storage-feature'
+import PageSettingsValuesOverrideFileFeature from '../feature/page-settings-values-override-file-feature/page-settings-values-override-file-feature'
 import PageVariablesFeature from '../feature/page-variables-feature/page-variables-feature'
 
 export const ROUTER_APPLICATION: Route[] = [
@@ -85,6 +87,10 @@ export const ROUTER_APPLICATION_SETTINGS: Route[] = [
   {
     path: APPLICATION_SETTINGS_ADVANCED_SETTINGS_URL,
     component: <PageSettingsAdvancedFeature />,
+  },
+  {
+    path: APPLICATION_SETTINGS_VALUES_OVERRIDE_URL,
+    component: <PageSettingsValuesOverrideFileFeature />,
   },
   {
     path: APPLICATION_SETTINGS_DANGER_ZONE_URL,
