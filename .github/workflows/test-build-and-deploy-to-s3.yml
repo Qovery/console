@@ -98,26 +98,3 @@ jobs:
       - name: Copy index.html to S3 last
         run: |
           AWS_REGION=${{ secrets.aws-region }} AWS_ACCESS_KEY_ID=${{ secrets.aws-access-key-id }} AWS_SECRET_ACCESS_KEY=${{ secrets.aws-secret-access-key }} aws s3 cp ./dist/dist/apps/console/index.html s3://${{ secrets.s3-bucket-name }}/
-      - name: Invalidate Cloudflare CDN
-        run: |
-          HTTP_RESPONSE=$(curl -sS "https://api.cloudflare.com/client/v4/zones/${{ secrets.cloudflare-zone }}/purge_cache" \
-              -H "Authorization: Bearer ${{ secrets.cloudflare-token }}" \
-              -H "Content-Type:application/json" \
-              -w "HTTP_STATUS:%{http_code}" \
-              --data '{"files":"[\"https://console-s3.qovery.com/index.html\"]"}')
-
-          ######## Format response for a pretty command line output. ########
-          # Store result and HTTP status code separately to appropriately throw CI errors.
-          # https://gist.github.com/maxcnunes/9f77afdc32df354883df
-          HTTP_BODY=$(echo "${HTTP_RESPONSE}" | sed -E 's/HTTP_STATUS\:[0-9]{3}$//')
-          HTTP_STATUS=$(echo "${HTTP_RESPONSE}" | tr -d '\n' | sed -E 's/.*HTTP_STATUS:([0-9]{3})$/\1/')
-
-          # Fail pipeline and print errors if API doesn't return an OK status.
-          if [ "${HTTP_STATUS}" -eq "200" ]; then
-            echo "Successfully purged!"
-            exit 0
-          else
-            echo "Purge failed. API response was: "
-            echo "${HTTP_BODY}"
-            exit 1
-          fi
