@@ -3,6 +3,7 @@ import { useCallback } from 'react'
 import { useSelector } from 'react-redux'
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
 import { selectApplicationById } from '@qovery/domains/application'
+import { useService } from '@qovery/domains/services/feature'
 import { isApplication, isJob } from '@qovery/shared/enums'
 import { type ApplicationEntity } from '@qovery/shared/interfaces'
 import {
@@ -17,9 +18,10 @@ import {
   APPLICATION_SETTINGS_RESOURCES_URL,
   APPLICATION_SETTINGS_STORAGE_URL,
   APPLICATION_SETTINGS_URL,
+  APPLICATION_SETTINGS_VALUES_OVERRIDE_URL,
   APPLICATION_URL,
 } from '@qovery/shared/routes'
-import { IconAwesomeEnum } from '@qovery/shared/ui'
+import { IconAwesomeEnum, type NavigationLeftLinkProps } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { type RootState } from '@qovery/state/store'
 import { ROUTER_APPLICATION_SETTINGS } from '../../router/router'
@@ -41,15 +43,31 @@ export function PageSettingsFeature() {
     (state) => selectApplicationById(state, applicationId),
     equal
   )
+  const { data: service } = useService({ serviceId: applicationId })
+
+  const isHelm = service?.serviceType === 'HELM'
 
   const getLinks = useCallback(() => {
-    const links = [
+    const links: NavigationLeftLinkProps[] = [
       {
         title: 'General',
         icon: IconAwesomeEnum.WHEEL,
         url: pathSettings + APPLICATION_SETTINGS_GENERAL_URL,
       },
     ]
+
+    if (isHelm) {
+      links.push({
+        title: 'Values',
+        icon: IconAwesomeEnum.KEY,
+        subLinks: [
+          {
+            title: 'Values override as file',
+            url: pathSettings + APPLICATION_SETTINGS_VALUES_OVERRIDE_URL,
+          },
+        ],
+      })
+    }
 
     if (isJob(application)) {
       links.push({
@@ -59,13 +77,15 @@ export function PageSettingsFeature() {
       })
     }
 
-    links.push({
-      title: 'Resources',
-      icon: IconAwesomeEnum.CHART_BULLET,
-      url: pathSettings + APPLICATION_SETTINGS_RESOURCES_URL,
-    })
+    if (!isHelm) {
+      links.push({
+        title: 'Resources',
+        icon: IconAwesomeEnum.CHART_BULLET,
+        url: pathSettings + APPLICATION_SETTINGS_RESOURCES_URL,
+      })
+    }
 
-    if (!isJob(application)) {
+    if (!isJob(application) && !isHelm) {
       links.push(
         {
           title: 'Storage',
@@ -98,21 +118,22 @@ export function PageSettingsFeature() {
       })
     }
 
-    links.push(
-      {
+    if (!isHelm) {
+      links.push({
         title: 'Advanced settings',
         icon: IconAwesomeEnum.GEARS,
         url: pathSettings + APPLICATION_SETTINGS_ADVANCED_SETTINGS_URL,
-      },
-      {
-        title: 'Danger zone',
-        icon: IconAwesomeEnum.SKULL,
-        url: pathSettings + APPLICATION_SETTINGS_DANGER_ZONE_URL,
-      }
-    )
+      })
+    }
+
+    links.push({
+      title: 'Danger zone',
+      icon: IconAwesomeEnum.SKULL,
+      url: pathSettings + APPLICATION_SETTINGS_DANGER_ZONE_URL,
+    })
 
     return links
-  }, [application, pathSettings])
+  }, [application, isHelm, pathSettings])
 
   return (
     <PageSettings links={getLinks()}>
