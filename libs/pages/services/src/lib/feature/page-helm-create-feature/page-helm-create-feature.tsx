@@ -2,6 +2,7 @@ import { type GitProviderEnum, type HelmRequest } from 'qovery-typescript-axios'
 import { createContext, useContext, useState } from 'react'
 import { type UseFormReturn, useForm } from 'react-hook-form'
 import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
+import { type HelmValuesFileData } from '@qovery/domains/service-helm/feature'
 import { SERVICES_HELM_CREATION_GENERAL_URL, SERVICES_HELM_CREATION_URL, SERVICES_URL } from '@qovery/shared/routes'
 import { FunnelFlow } from '@qovery/shared/ui'
 import { ROUTER_SERVICE_HELM_CREATION } from '../../router/router'
@@ -11,8 +12,6 @@ export const steps: { title: string }[] = [
   { title: 'Values override as file' },
   { title: 'Summary' },
 ]
-
-export type ValuesOverrideTypes = 'GIT_REPOSITORY' | 'YAML' | 'NONE'
 export interface HelmGeneralData
   extends Omit<HelmRequest, 'source' | 'ports' | 'allow_cluster_wide_resources' | 'values_override' | 'arguments'> {
   source_provider: 'HELM_REPOSITORY' | 'GIT'
@@ -25,20 +24,11 @@ export interface HelmGeneralData
   arguments: string
 }
 
-export interface HelmValuesAsFileData {
-  type: ValuesOverrideTypes
-  repository?: string
-  provider?: GitProviderEnum
-  branch?: string
-  paths?: string
-  content?: string
-}
-
 interface HelmCreateContextInterface {
   currentStep: number
   setCurrentStep: (step: number) => void
   generalForm: UseFormReturn<HelmGeneralData>
-  valuesOverrideFileForm: UseFormReturn<HelmValuesAsFileData>
+  valuesOverrideFileForm: UseFormReturn<HelmValuesFileData>
 }
 
 export const HelmCreateContext = createContext<HelmCreateContextInterface | undefined>(undefined)
@@ -59,7 +49,7 @@ export function PageHelmCreateFeature() {
     mode: 'onChange',
   })
 
-  const valuesOverrideFileForm = useForm<HelmValuesAsFileData>({
+  const valuesOverrideFileForm = useForm<HelmValuesFileData>({
     mode: 'onChange',
     defaultValues: {
       type: 'GIT_REPOSITORY',

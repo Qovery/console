@@ -3,12 +3,15 @@ import {
   ApplicationDeploymentHistoryApi,
   ApplicationDeploymentRestrictionApi,
   type ApplicationDeploymentRestrictionRequest,
+  type ApplicationEditRequest,
   ApplicationMainCallsApi,
   ApplicationsApi,
   ContainerDeploymentHistoryApi,
   ContainerMainCallsApi,
+  type ContainerRequest,
   ContainersApi,
   DatabaseDeploymentHistoryApi,
+  type DatabaseEditRequest,
   DatabaseMainCallsApi,
   DatabasesApi,
   EnvironmentMainCallsApi,
@@ -16,11 +19,13 @@ import {
   HelmDeploymentRestrictionApi,
   type HelmDeploymentRestrictionRequest,
   HelmMainCallsApi,
+  type HelmRequest,
   HelmsApi,
   JobDeploymentHistoryApi,
   JobDeploymentRestrictionApi,
   type JobDeploymentRestrictionRequest,
   JobMainCallsApi,
+  type JobRequest,
   JobsApi,
   type Status,
   type Application as _Application,
@@ -327,6 +332,33 @@ type DeploymentRestrictionRequest =
       payload: HelmDeploymentRestrictionRequest
     }
 
+type ServiceRequest =
+  | {
+      serviceId: string
+      serviceType: ApplicationType
+      payload: ApplicationEditRequest
+    }
+  | {
+      serviceId: string
+      serviceType: ContainerType
+      payload: ContainerRequest
+    }
+  | {
+      serviceId: string
+      serviceType: DatabaseType
+      payload: DatabaseEditRequest
+    }
+  | {
+      serviceId: string
+      serviceType: JobType
+      payload: JobRequest
+    }
+  | {
+      serviceId: string
+      serviceType: HelmType
+      payload: HelmRequest
+    }
+
 export const mutations = {
   async cloneService({ serviceId, serviceType, payload }: CloneServiceRequest) {
     const mutation = match(serviceType)
@@ -393,6 +425,18 @@ export const mutations = {
       .with('HELM', () => helmMainCallsApi.deleteHelm.bind(helmMainCallsApi))
       .exhaustive()
     const response = await mutation(serviceId)
+    return response.data
+  },
+  async editService({ serviceId, serviceType, payload }: ServiceRequest) {
+    const mutation = match(serviceType)
+      .with('APPLICATION', () => applicationMainCallsApi.editApplication.bind(applicationMainCallsApi))
+      .with('CONTAINER', () => containerMainCallsApi.editContainer.bind(containerMainCallsApi))
+      .with('DATABASE', () => databaseMainCallsApi.editDatabase.bind(databaseMainCallsApi))
+      .with('JOB', () => jobMainCallsApi.editJob.bind(jobMainCallsApi))
+      .with('HELM', () => helmMainCallsApi.editHelm.bind(helmMainCallsApi))
+      .exhaustive()
+
+    const response = await mutation(serviceId, payload)
     return response.data
   },
 }

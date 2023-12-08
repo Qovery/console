@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form'
 import * as serviceHelmDomain from '@qovery/domains/service-helm/feature'
 import { renderHook, renderWithProviders } from '@qovery/shared/util-tests'
-import { type HelmGeneralData, type HelmValuesAsFileData } from '../page-helm-create-feature'
+import { type HelmGeneralData } from '../page-helm-create-feature'
 import { HelmCreateContext } from '../page-helm-create-feature'
 import StepSummaryFeature from './step-summary-feature'
 
@@ -44,7 +44,7 @@ describe('PageApplicationCreateGeneralFeature', () => {
     )
 
     const { result: valuesOverrideFileForm } = renderHook(() =>
-      useForm<HelmValuesAsFileData>({
+      useForm<serviceHelmDomain.HelmValuesFileData>({
         mode: 'onChange',
         defaultValues: {
           type: 'YAML',

@@ -1,32 +1,156 @@
-// import { useState } from 'react'
-// import { Controller } from 'react-hook-form'
-// import { useParams } from 'react-router-dom'
-// import { useHelmDefaultValues } from '@qovery/domains/service-helm/feature'
-// import { type Helm } from '@qovery/domains/services/data-access'
-// import { useService } from '@qovery/domains/services/feature'
-// import { PREVIEW_CODE } from '@qovery/shared/routes'
-// import { Button, Heading, Icon, IconAwesomeEnum, Popover, Section } from '@qovery/shared/ui'
+import { type HelmRequestAllOfSource } from 'qovery-typescript-axios'
+import { Controller, FormProvider, useForm } from 'react-hook-form'
+import { useParams } from 'react-router-dom'
+import { match } from 'ts-pattern'
+import {
+  GitBranchSettings,
+  GitProviderSetting,
+  GitRepositorySetting,
+  getGitTokenValue,
+} from '@qovery/domains/organizations/feature'
+import {
+  type HelmValuesFileData,
+  ValuesOverrideFilesSetting,
+  type ValuesOverrideTypes,
+} from '@qovery/domains/service-helm/feature'
+import { useEditService, useHelmService } from '@qovery/domains/services/feature'
+import { Button, InputText } from '@qovery/shared/ui'
+import { buildGitRepoUrl } from '@qovery/shared/util-js'
 
 export function PageSettingsValuesOverrideFileFeature() {
-  // const { environmentId = '', applicationId = '' } = useParams()
-  // const { data: service } = useService({ serviceId: applicationId })
-  // const [enabledHelmDefaultValues, setEnabledHelmDefaultValues] = useState(false)
+  const { applicationId = '' } = useParams()
+  const { data: service } = useHelmService({ serviceId: applicationId })
+  const { mutate: editService, isLoading: isLoadingEditService } = useEditService()
 
-  // const { refetch: refetchHelmDefaultValues, isFetching: isLoadingHelmDefaultValues } = useHelmDefaultValues({
-  //   environmentId,
-  //   helmDefaultValuesRequest: {
-  //     source: (service as Helm).source,
-  //   },
-  //   enabled: enabledHelmDefaultValues,
-  // })
+  console.log(service?.values_override)
 
-  // const createHelmDefaultValuesMutation = async () => {
-  //   setEnabledHelmDefaultValues(true)
-  //   const { data: helmDefaultValues } = await refetchHelmDefaultValues()
-  //   if (helmDefaultValues) window.open(`${PREVIEW_CODE}?code=${encodeURIComponent(helmDefaultValues)}`, '_blank')
-  // }
+  const type = service?.values_override?.file?.raw
+    ? 'YAML'
+    : service?.values_override?.file?.git
+    ? 'GIT_REPOSITORY'
+    : 'NONE'
 
-  return <div>test</div>
+  const valuesOverrideFile = service?.values_override.file
+
+  const methods = useForm<HelmValuesFileData>({
+    mode: 'onChange',
+    defaultValues: {
+      type,
+      content: valuesOverrideFile?.raw?.values?.[0]?.content ?? '',
+      provider: 'GITHUB',
+      repository: valuesOverrideFile?.git?.git_repository?.url,
+      branch: valuesOverrideFile?.git?.git_repository?.branch,
+      paths: valuesOverrideFile?.git?.paths?.toString(),
+    },
+  })
+
+  const watchFieldType: ValuesOverrideTypes = methods.watch('type')
+  const watchFieldGitProvider = methods.watch('provider')
+  const watchFieldGitRepository = methods.watch('repository')
+
+  const disabledContinueButton = match(watchFieldType)
+    .with('GIT_REPOSITORY', () => {
+      const { provider, repository, branch, paths } = methods.watch()
+      return !provider || !repository || !branch || !paths
+    })
+    .with('YAML', () => {
+      const { content } = methods.watch()
+      return !content
+    })
+    .with('NONE', () => false)
+    .exhaustive()
+
+  const onSubmit = methods.handleSubmit(async (data) => {
+    const valuesOverrideFile = match(type)
+      .with('GIT_REPOSITORY', () => {
+        const gitToken = getGitTokenValue('GITHUB' ?? '')
+
+        return {
+          git_repository: {
+            url: buildGitRepoUrl(gitToken?.type ?? 'GITHUB' ?? '', data['repository']!),
+            branch: data['branch'],
+            git_token_id: gitToken?.id,
+            paths: data['paths']?.split(',') ?? [],
+          },
+        }
+      })
+      .with('YAML', () => ({
+        raw: {
+          values: [
+            {
+              name: 'override',
+              content: data['content']!,
+            },
+          ],
+        },
+      }))
+      .with('NONE', () => null)
+      .exhaustive()
+
+    editService({
+      serviceType: 'HELM',
+      serviceId: applicationId,
+      payload: {
+        ...service,
+        values_override: valuesOverrideFile,
+      },
+    })
+  })
+
+  const gitRepositoryElement = (
+    <>
+      <GitProviderSetting />
+      {watchFieldGitProvider && <GitRepositorySetting gitProvider={watchFieldGitProvider} />}
+      {watchFieldGitProvider && watchFieldGitRepository && (
+        <>
+          <GitBranchSettings gitProvider={watchFieldGitProvider} hideRootPath />
+          <div>
+            <Controller
+              name="paths"
+              control={methods.control}
+              rules={{
+                required: 'Value required',
+              }}
+              render={({ field, fieldState: { error } }) => (
+                <InputText
+                  label="Overrides path"
+                  name={field.name}
+                  onChange={field.onChange}
+                  value={field.value}
+                  error={error?.message}
+                />
+              )}
+            />
+            <p className="text-xs text-neutral-350 ml-4 mt-1">
+              Specify multiple paths by separating them with a semi-colon
+            </p>
+          </div>
+        </>
+      )}
+    </>
+  )
+
+  return (
+    <div className="flex flex-col justify-between w-full">
+      <div className="p-8 max-w-content-with-navigation-left">
+        <FormProvider {...methods}>
+          <ValuesOverrideFilesSetting
+            methods={methods}
+            watchFieldType={watchFieldType}
+            source={service?.source as HelmRequestAllOfSource}
+            gitRepositoryElement={gitRepositoryElement}
+            onSubmit={onSubmit}
+          >
+            <div className="flex justify-end mt-10">
+              <Button type="submit" size="lg" loading={isLoadingEditService} disabled={disabledContinueButton}>
+                Save
+              </Button>
+            </div>
+          </ValuesOverrideFilesSetting>
+        </FormProvider>
+      </div>
+    </div>
+  )
 }
 
 export default PageSettingsValuesOverrideFileFeature

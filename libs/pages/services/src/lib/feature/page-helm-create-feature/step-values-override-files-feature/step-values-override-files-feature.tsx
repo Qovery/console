@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { Controller, FormProvider } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
@@ -8,25 +7,9 @@ import {
   GitRepositorySetting,
   getGitTokenValue,
 } from '@qovery/domains/organizations/feature'
-import { ValuesOverrideYamlSetting, useHelmDefaultValues } from '@qovery/domains/service-helm/feature'
-import {
-  PREVIEW_CODE,
-  SERVICES_HELM_CREATION_SUMMARY_URL,
-  SERVICES_HELM_CREATION_URL,
-  SERVICES_URL,
-} from '@qovery/shared/routes'
-import {
-  Button,
-  FunnelFlowBody,
-  FunnelFlowHelpCard,
-  Heading,
-  Icon,
-  IconAwesomeEnum,
-  InputSelect,
-  InputText,
-  Popover,
-  Section,
-} from '@qovery/shared/ui'
+import { ValuesOverrideFilesSetting } from '@qovery/domains/service-helm/feature'
+import { SERVICES_HELM_CREATION_SUMMARY_URL, SERVICES_HELM_CREATION_URL, SERVICES_URL } from '@qovery/shared/routes'
+import { Button, FunnelFlowBody, FunnelFlowHelpCard, InputText } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
 import { useHelmCreateContext } from '../page-helm-create-feature'
@@ -60,15 +43,6 @@ export function StepValuesOverrideFilesFeature() {
     }))
     .exhaustive()
 
-  const [enabledHelmDefaultValues, setEnabledHelmDefaultValues] = useState(false)
-
-  const { refetch: refetchHelmDefaultValues, isFetching: isLoadingHelmDefaultValues } = useHelmDefaultValues({
-    environmentId,
-    helmDefaultValuesRequest: {
-      source,
-    },
-    enabled: enabledHelmDefaultValues,
-  })
   const navigate = useNavigate()
   setCurrentStep(2)
 
@@ -100,12 +74,6 @@ export function StepValuesOverrideFilesFeature() {
     navigate(pathCreate + SERVICES_HELM_CREATION_SUMMARY_URL)
   })
 
-  const createHelmDefaultValuesMutation = async () => {
-    setEnabledHelmDefaultValues(true)
-    const { data: helmDefaultValues } = await refetchHelmDefaultValues()
-    if (helmDefaultValues) window.open(`${PREVIEW_CODE}?code=${encodeURIComponent(helmDefaultValues)}`, '_blank')
-  }
-
   const watchFieldType = valuesOverrideFileForm.watch('type')
   const watchFieldGitProvider = valuesOverrideFileForm.watch('provider')
   const watchFieldGitRepository = valuesOverrideFileForm.watch('repository')
@@ -122,158 +90,60 @@ export function StepValuesOverrideFilesFeature() {
     .with('NONE', () => false)
     .exhaustive()
 
-  return (
-    <FunnelFlowBody helpSection={funnelCardHelp}>
-      <FormProvider {...valuesOverrideFileForm}>
-        <Section className="items-start">
-          <Heading className="mb-2">Values override as file</Heading>
-          <p className="text-sm text-neutral-350 mb-2">
-            Define the YAML file(s) to be applied as override to the default values.yaml delivered with the chart. It is
-            highly recommended to store the override file(s) in a git repository.
-          </p>
-          <Popover.Root>
-            <Popover.Trigger>
-              <span className="text-sm cursor-pointer text-brand-500 hover:text-brand-600 transition font-medium mb-5">
-                How it works <Icon className="text-xs" name={IconAwesomeEnum.CIRCLE_QUESTION} />
-              </span>
-            </Popover.Trigger>
-            <Popover.Content side="left" className="text-neutral-350 text-sm relative" style={{ width: 440 }}>
-              <h6 className="text-neutral-400 font-medium mb-2">How it works</h6>
-              <ul className="list-disc pl-4">
-                <li>
-                  You can specify one or more YAML file to be used to override the values.yaml delivered with the chart.
-                  These will be passed via the -f helm argument.
-                </li>
-                <li>
-                  The files can be retrieved either from a git repository (preferred option) or they can be stored as
-                  raw YAML by Qovery (no history is retained). The chosen git repository can be a repository different
-                  from the one of the chart.
-                </li>
-                <li>
-                  If you don’t have a file, you can skip this step and instead define the values override directly as
-                  arguments (--set).
-                </li>
-                <li>
-                  You can use the Qovery environment variables as overrides by using the pattern
-                  “qovery.env.ENV_VAR_NAME”.
-                </li>
-                <li>
-                  To get all the Qovery functionalities, add the macro “qovery.labels.service” within the field managing
-                  the labels assigned to the deployed pods.
-                </li>
-              </ul>
-              <Popover.Close className="absolute top-4 right-4">
-                <button type="button">
-                  <Icon name={IconAwesomeEnum.XMARK} className="text-lg leading-4 text-neutral-400" />
-                </button>
-              </Popover.Close>
-            </Popover.Content>
-          </Popover.Root>
-          <Button
-            size="lg"
-            variant="surface"
-            color="neutral"
-            className="mb-10"
-            loading={isLoadingHelmDefaultValues}
-            onClick={() => createHelmDefaultValuesMutation()}
-          >
-            See default values.yaml <Icon className="text-xs ml-2" name={IconAwesomeEnum.ARROW_UP_RIGHT_FROM_SQUARE} />
-          </Button>
-          <form onSubmit={onSubmit} className="w-full">
+  const gitRepositoryElement = (
+    <>
+      <GitProviderSetting />
+      {watchFieldGitProvider && <GitRepositorySetting gitProvider={watchFieldGitProvider} />}
+      {watchFieldGitProvider && watchFieldGitRepository && (
+        <>
+          <GitBranchSettings gitProvider={watchFieldGitProvider} hideRootPath />
+          <div>
             <Controller
-              name="type"
+              name="paths"
               control={valuesOverrideFileForm.control}
-              defaultValue="GIT_REPOSITORY"
-              render={({ field }) => (
-                <InputSelect
-                  label="File source"
-                  value={field.value}
+              rules={{
+                required: 'Value required',
+              }}
+              render={({ field, fieldState: { error } }) => (
+                <InputText
+                  label="Overrides path"
+                  name={field.name}
                   onChange={field.onChange}
-                  options={[
-                    {
-                      label: 'Git repository',
-                      value: 'GIT_REPOSITORY',
-                    },
-                    {
-                      label: 'Raw YAML',
-                      value: 'YAML',
-                    },
-                    {
-                      label: 'None',
-                      value: 'NONE',
-                    },
-                  ]}
+                  value={field.value}
+                  error={error?.message}
                 />
               )}
             />
-            {watchFieldType === 'GIT_REPOSITORY' && (
-              <Section>
-                <Heading className="mt-10 mb-2">Override from repository</Heading>
-                <p className="text-sm text-neutral-350 mb-6">
-                  Specify the repository and the path containing the override yaml file to be passed via the “-f” helm
-                  argument. More than one file can be used as override by adding them in the path field separated by a
-                  semi-colon. If you don’t have a repository, you can set the override manually or via a raw YAML file.
-                </p>
-                <div className="flex flex-col gap-3">
-                  <GitProviderSetting />
-                  {watchFieldGitProvider && <GitRepositorySetting gitProvider={watchFieldGitProvider} />}
-                  {watchFieldGitProvider && watchFieldGitRepository && (
-                    <>
-                      <GitBranchSettings gitProvider={watchFieldGitProvider} hideRootPath />
-                      <div>
-                        <Controller
-                          name="paths"
-                          control={valuesOverrideFileForm.control}
-                          rules={{
-                            required: 'Value required',
-                          }}
-                          render={({ field, fieldState: { error } }) => (
-                            <InputText
-                              label="Overrides path"
-                              name={field.name}
-                              onChange={field.onChange}
-                              value={field.value}
-                              error={error?.message}
-                            />
-                          )}
-                        />
-                        <p className="text-xs text-neutral-350 ml-4 mt-1">
-                          Specify multiple paths by separating them with a semi-colon
-                        </p>
-                      </div>
-                    </>
-                  )}
-                </div>
-              </Section>
-            )}
-            {watchFieldType === 'YAML' && (
-              <Section>
-                <Heading className="mt-10 mb-2">Override with raw Yaml</Heading>
-                <p className="text-sm text-neutral-350 mb-6">
-                  You can define here the YAML containing the overrides you want to apply. The YAML will be stored by
-                  Qovery and can be updated later within the settings but no history will be retained.
-                </p>
-                <div className="flex flex-col gap-3">
-                  <ValuesOverrideYamlSetting
-                    content={valuesOverrideFileForm.getValues('content')}
-                    onSubmit={(value) => valuesOverrideFileForm.setValue('content', value)}
-                    source={source}
-                  />
-                </div>
-              </Section>
-            )}
-            <div className="flex justify-between mt-10">
-              <Button type="button" size="lg" variant="surface" color="neutral" onClick={() => navigate(-1)}>
-                Back
+            <p className="text-xs text-neutral-350 ml-4 mt-1">
+              Specify multiple paths by separating them with a semi-colon
+            </p>
+          </div>
+        </>
+      )}
+    </>
+  )
+
+  return (
+    <FunnelFlowBody helpSection={funnelCardHelp}>
+      <FormProvider {...valuesOverrideFileForm}>
+        <ValuesOverrideFilesSetting
+          methods={valuesOverrideFileForm}
+          watchFieldType={watchFieldType}
+          source={source}
+          gitRepositoryElement={gitRepositoryElement}
+          onSubmit={onSubmit}
+        >
+          <div className="flex justify-between mt-10">
+            <Button type="button" size="lg" variant="surface" color="neutral" onClick={() => navigate(-1)}>
+              Back
+            </Button>
+            <div className="flex gap-3">
+              <Button type="submit" size="lg" disabled={disabledContinueButton}>
+                Continue
               </Button>
-              <div className="flex gap-3">
-                <Button type="submit" size="lg" disabled={disabledContinueButton}>
-                  Continue
-                </Button>
-              </div>
             </div>
-          </form>
-        </Section>
+          </div>
+        </ValuesOverrideFilesSetting>
       </FormProvider>
     </FunnelFlowBody>
   )

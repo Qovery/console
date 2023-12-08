@@ -135,6 +135,8 @@ export function PageSettingsFeature() {
     return links
   }, [application, isHelm, pathSettings])
 
+  if (!service) return null
+
   return (
     <PageSettings links={getLinks()}>
       <Routes>
