@@ -8,11 +8,7 @@ import {
   getGitProvider,
   getGitTokenValue,
 } from '@qovery/domains/organizations/feature'
-import {
-  type HelmValuesFileData,
-  ValuesOverrideFilesSetting,
-  type ValuesOverrideTypes,
-} from '@qovery/domains/service-helm/feature'
+import { type HelmValuesFileData, ValuesOverrideFilesSetting } from '@qovery/domains/service-helm/feature'
 import { type Helm, refactoHelm } from '@qovery/domains/services/data-access'
 import { useEditService, useHelmService } from '@qovery/domains/services/feature'
 import { Button, InputText } from '@qovery/shared/ui'
@@ -42,7 +38,7 @@ export function PageSettingsValuesOverrideFileFeature() {
     },
   })
 
-  const watchFieldType: ValuesOverrideTypes = methods.watch('type')
+  const watchFieldType = methods.watch('type')
   const watchFieldGitProvider = methods.watch('provider')
   const watchFieldGitRepository = methods.watch('repository')
 
