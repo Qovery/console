@@ -32,8 +32,8 @@ export function CreateCloneEnvironmentModalFeature(props: CreateCloneEnvironment
     mode: 'onChange',
     defaultValues: {
       name: props.environmentToClone?.name ? props.environmentToClone?.name + '-clone' : '',
-      cluster: 'automatic',
-      mode: 'automatic',
+      cluster: undefined,
+      mode: undefined,
     },
   })
 
@@ -62,10 +62,6 @@ export function CreateCloneEnvironmentModalFeature(props: CreateCloneEnvironment
       cluster: data.cluster,
       mode: data.mode,
     }
-
-    if (dataFormatted.cluster === 'automatic') delete dataFormatted.cluster
-
-    if (dataFormatted.mode === 'automatic') delete dataFormatted.mode
 
     setLoading(true)
 

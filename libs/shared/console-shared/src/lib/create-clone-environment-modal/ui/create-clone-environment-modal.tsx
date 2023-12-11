@@ -1,5 +1,5 @@
 import { type Cluster, type Environment, EnvironmentModeEnum } from 'qovery-typescript-axios'
-import { type FormEvent, useEffect, useState } from 'react'
+import { type FormEvent, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { type Value } from '@qovery/shared/interfaces'
 import { ExternalLink, InputSelect, InputText, ModalCrud } from '@qovery/shared/ui'
@@ -16,21 +16,10 @@ export function CreateCloneEnvironmentModal(props: CreateCloneEnvironmentModalPr
   const { control } = useFormContext()
 
   const [environmentModes] = useState<Value[]>([
-    { value: 'automatic', label: 'Automatic' },
     { value: EnvironmentModeEnum.DEVELOPMENT, label: 'Development' },
     { value: EnvironmentModeEnum.STAGING, label: 'Staging' },
     { value: EnvironmentModeEnum.PRODUCTION, label: 'Production' },
   ])
-  const [clusterItems, setClusterItems] = useState<Value[]>([])
-
-  useEffect(() => {
-    if (props.clusters && props.clusters.length) {
-      setClusterItems([
-        { label: 'Automatic', value: 'automatic' },
-        ...props.clusters.map((c) => ({ value: c.id, label: c.name })),
-      ])
-    }
-  }, [setClusterItems, props.clusters])
 
   return (
     <ModalCrud
@@ -48,29 +37,6 @@ export function CreateCloneEnvironmentModal(props: CreateCloneEnvironmentModalPr
         props.environmentToClone ? (
           <>
             <div>
-              Create a new environment to deploy your applications. You can create a new environment by defining:
-            </div>
-            <ol className="list-disc ml-3">
-              <li className="mb-2 mt-2">its name</li>
-              <li className="mb-2">
-                the cluster: you can select one of the existing clusters. If Automatic is selected, the environment will
-                be assigned to the oldest cluster of the organisation unless if a project deployment rule is defined and
-                matches the environment name. Cluster can’t be changed after the environment creation.
-              </li>
-              <li className="mb-2">
-                the type: it defines the type of environment you are creating among Production, Staging, Development.
-              </li>
-            </ol>
-            <ExternalLink
-              className="mt-2"
-              href="https://hub.qovery.com/docs/using-qovery/configuration/environment/#create-an-environment"
-            >
-              Documentation
-            </ExternalLink>
-          </>
-        ) : (
-          <>
-            <div>
               It creates a new environment having the same configuration of the source environment. All the
               configurations will be copied within the new environment except for the custom domains defined on the
               services. The environment will be cloned on the selected cluster and with the selected type. Once cloned,
@@ -79,6 +45,28 @@ export function CreateCloneEnvironmentModal(props: CreateCloneEnvironmentModalPr
             <ExternalLink
               className="mt-2"
               href="https://hub.qovery.com/docs/using-qovery/configuration/environment/#clone-environment"
+            >
+              Documentation
+            </ExternalLink>
+          </>
+        ) : (
+          <>
+            <div>
+              Create a new environment to deploy your applications. You can create a new environment by defining:
+            </div>
+            <ol className="list-disc ml-3">
+              <li className="mb-2 mt-2">its name</li>
+              <li className="mb-2">
+                the cluster: you can select one of the existing clusters. Cluster can’t be changed after the environment
+                creation.
+              </li>
+              <li className="mb-2">
+                the type: it defines the type of environment you are creating among Production, Staging, Development.
+              </li>
+            </ol>
+            <ExternalLink
+              className="mt-2"
+              href="https://hub.qovery.com/docs/using-qovery/configuration/environment/#create-an-environment"
             >
               Documentation
             </ExternalLink>
@@ -95,7 +83,6 @@ export function CreateCloneEnvironmentModal(props: CreateCloneEnvironmentModalPr
           disabled={true}
         />
       )}
-
       <Controller
         name="name"
         control={control}
@@ -123,6 +110,9 @@ export function CreateCloneEnvironmentModal(props: CreateCloneEnvironmentModalPr
       <Controller
         name="cluster"
         control={control}
+        rules={{
+          required: 'Please select a value.',
+        }}
         render={({ field, fieldState: { error } }) => (
           <InputSelect
             dataTestId="input-select-cluster"
@@ -131,7 +121,7 @@ export function CreateCloneEnvironmentModal(props: CreateCloneEnvironmentModalPr
             value={field.value}
             label="Cluster"
             error={error?.message}
-            options={clusterItems}
+            options={props.clusters?.map((c) => ({ value: c.id, label: c.name })) ?? []}
             portal={true}
           />
         )}
