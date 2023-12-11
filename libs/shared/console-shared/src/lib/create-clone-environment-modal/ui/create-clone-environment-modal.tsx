@@ -48,6 +48,21 @@ export function CreateCloneEnvironmentModal(props: CreateCloneEnvironmentModalPr
         props.environmentToClone ? (
           <>
             <div>
+              It creates a new environment having the same configuration of the source environment. All the
+              configurations will be copied within the new environment except for the custom domains defined on the
+              services. The environment will be cloned on the selected cluster and with the selected type. Once cloned,
+              you will be able to deploy it.
+            </div>
+            <ExternalLink
+              className="mt-2"
+              href="https://hub.qovery.com/docs/using-qovery/configuration/environment/#clone-environment"
+            >
+              Documentation
+            </ExternalLink>
+          </>
+        ) : (
+          <>
+            <div>
               Create a new environment to deploy your applications. You can create a new environment by defining:
             </div>
             <ol className="list-disc ml-3">
@@ -64,21 +79,6 @@ export function CreateCloneEnvironmentModal(props: CreateCloneEnvironmentModalPr
             <ExternalLink
               className="mt-2"
               href="https://hub.qovery.com/docs/using-qovery/configuration/environment/#create-an-environment"
-            >
-              Documentation
-            </ExternalLink>
-          </>
-        ) : (
-          <>
-            <div>
-              It creates a new environment having the same configuration of the source environment. All the
-              configurations will be copied within the new environment except for the custom domains defined on the
-              services. The environment will be cloned on the selected cluster and with the selected type. Once cloned,
-              you will be able to deploy it.
-            </div>
-            <ExternalLink
-              className="mt-2"
-              href="https://hub.qovery.com/docs/using-qovery/configuration/environment/#clone-environment"
             >
               Documentation
             </ExternalLink>
