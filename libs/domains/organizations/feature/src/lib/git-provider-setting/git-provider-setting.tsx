@@ -31,6 +31,20 @@ export const getGitTokenValue = (value: string) => {
   return null
 }
 
+export const getGitProvider = (url: string) => {
+  const githubRegex = /^(https?:\/\/)?(www\.)?github\.com\/.*$/
+  const gitlabRegex = /^(https?:\/\/)?(www\.)?gitlab\.com\/.*$/
+  const bitbucketRegex = /^(https?:\/\/)?(www\.)?bitbucket\.org\/.*$/
+
+  if (githubRegex.test(url)) {
+    return 'GITHUB'
+  } else if (gitlabRegex.test(url)) {
+    return 'GITLAB'
+  } else if (bitbucketRegex.test(url)) {
+    return 'BITBUCKET'
+  }
+}
+
 export function GitProviderSetting({ disabled }: GitProviderSettingProps) {
   const { control, watch, setValue } = useFormContext()
   const { organizationId = '' } = useParams()

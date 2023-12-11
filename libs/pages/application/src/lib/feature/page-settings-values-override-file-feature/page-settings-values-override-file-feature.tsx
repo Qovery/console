@@ -5,6 +5,7 @@ import {
   GitBranchSettings,
   GitProviderSetting,
   GitRepositorySetting,
+  getGitProvider,
   getGitTokenValue,
 } from '@qovery/domains/organizations/feature'
 import {
@@ -34,7 +35,7 @@ export function PageSettingsValuesOverrideFileFeature() {
     defaultValues: {
       type: currentType,
       content: valuesOverrideFile?.raw?.values?.[0]?.content ?? '',
-      provider: 'GITHUB',
+      provider: getGitProvider(valuesOverrideFile?.git?.git_repository?.url ?? ''),
       repository: valuesOverrideFile?.git?.git_repository?.url,
       branch: valuesOverrideFile?.git?.git_repository?.branch,
       paths: valuesOverrideFile?.git?.paths?.toString(),
@@ -60,11 +61,12 @@ export function PageSettingsValuesOverrideFileFeature() {
   const onSubmit = methods.handleSubmit(async (data) => {
     const valuesOverrideFile = match(watchFieldType)
       .with('GIT_REPOSITORY', () => {
-        const gitToken = getGitTokenValue('GITHUB' ?? '')
+        const gitProvider = getGitProvider(data['repository']!)
+        const gitToken = getGitTokenValue(gitProvider ?? '')
 
         return {
           git_repository: {
-            url: buildGitRepoUrl(gitToken?.type ?? 'GITHUB' ?? '', data['repository']!),
+            url: buildGitRepoUrl(gitProvider ?? '', data['repository']!),
             branch: data['branch'],
             git_token_id: gitToken?.id,
             paths: data['paths']?.split(',') ?? [],

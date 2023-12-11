@@ -1,7 +1,7 @@
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { GitProviderEnum, type GitTokenResponse } from 'qovery-typescript-axios'
 import { renderWithProviders } from '@qovery/shared/util-tests'
-import { GitProviderSetting, getGitTokenValue, mergeProviders } from './git-provider-setting'
+import { GitProviderSetting, getGitProvider, getGitTokenValue, mergeProviders } from './git-provider-setting'
 
 jest.mock('../hooks/use-auth-providers/use-auth-providers', () => {
   return {
@@ -71,5 +71,20 @@ describe('GitProviderSetting', () => {
     const tokenValue = 'INVALID'
     const result = getGitTokenValue(tokenValue)
     expect(result).toBeNull()
+  })
+
+  it('Should return GITHUB for a valid GitHub URL', () => {
+    const url = 'https://github.com/user/my-repo'
+    expect(getGitProvider(url)).toBe('GITHUB')
+  })
+
+  it('Should return GITLAB for a valid GitLab URL', () => {
+    const url = 'https://gitlab.com/user/my-repo'
+    expect(getGitProvider(url)).toBe('GITLAB')
+  })
+
+  it('Should return BITBUCKET for a valid Bitbucket URL', () => {
+    const url = 'https://bitbucket.org/user/my-repo'
+    expect(getGitProvider(url)).toBe('BITBUCKET')
   })
 })
