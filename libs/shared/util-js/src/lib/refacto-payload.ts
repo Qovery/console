@@ -32,7 +32,7 @@ export function refactoPayload<T extends { id?: string; created_at?: string; upd
 }
 
 /*
- * @deprecated Redux refacto payload you can use refactoApplication with React Query now
+ * @deprecated Redux refacto payload, you can use refactoApplication with React Query now
  */
 export function refactoGitApplicationPayload(application: Partial<GitApplicationEntity>) {
   // refacto because we can't send all git data
@@ -81,6 +81,9 @@ export function refactoGitApplicationPayload(application: Partial<GitApplication
   return applicationRequestPayload
 }
 
+/*
+ * @deprecated Redux refacto payload, you can use refactoContainer with React Query now
+ */
 export function refactoContainerApplicationPayload(application: Partial<ContainerApplicationEntity>) {
   // todo type with the ContainerEditRequest interface but for now api doc is not updated, does not take auto_preview into account
   const containerRequestPayload = {
@@ -105,6 +108,9 @@ export function refactoContainerApplicationPayload(application: Partial<Containe
   return containerRequestPayload
 }
 
+/*
+ * @deprecated Redux refacto payload, you can use refactoJob with React Query now
+ */
 export function refactoJobPayload(job: Partial<JobApplicationEntity>): JobRequest {
   const jobRequest: JobRequest = {
     name: job.name || '',
@@ -146,6 +152,9 @@ export function refactoJobPayload(job: Partial<JobApplicationEntity>): JobReques
   return jobRequest
 }
 
+/*
+ * @deprecated Redux refacto payload, you can use refactoDatabase with React Query now
+ */
 export function refactoDatabasePayload(database: Partial<DatabaseEntity>) {
   const databaseRequestPayload: DatabaseEditRequest = {
     name: database.name,

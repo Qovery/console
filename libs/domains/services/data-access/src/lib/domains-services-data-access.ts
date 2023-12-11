@@ -33,7 +33,13 @@ import {
 import { type ApplicationStatusDto, type DatabaseStatusDto, type ServiceMetricsDto } from 'qovery-ws-typescript-axios'
 import { match } from 'ts-pattern'
 import { type ServiceTypeEnum } from '@qovery/shared/enums'
-import { refactoApplication, refactoHelm } from './refacto-service-payload'
+import {
+  refactoApplication,
+  refactoContainer,
+  refactoDatabase,
+  refactoHelm,
+  refactoJob,
+} from './utils/refacto-service-payload'
 
 const applicationsApi = new ApplicationsApi()
 const containersApi = new ContainersApi()

@@ -1,13 +1,15 @@
 import {
   type ApplicationEditRequest,
   type ApplicationGitRepositoryRequest,
+  DatabaseModeEnum,
   type HelmRequest,
   type HelmResponseAllOfSourceOneOf,
   type HelmResponseAllOfSourceOneOf1,
   type ServiceStorageStorageInner,
 } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
-import { type Application, type Helm } from './domains-services-data-access'
+import { isJobGitSource } from '@qovery/shared/enums'
+import { type Application, type Container, type Database, type Helm, type Job } from '../domains-services-data-access'
 
 export function refactoApplication(application: Application) {
   // refacto because we can't send all git data
@@ -56,12 +58,93 @@ export function refactoApplication(application: Application) {
   return applicationRequestPayload
 }
 
+export function refactoContainer(container: Container) {
+  const containerRequestPayload = {
+    name: container.name || '',
+    description: container.description || '',
+    storage: container.storage,
+    ports: container.ports,
+    cpu: container.cpu,
+    memory: container.memory,
+    max_running_instances: container.max_running_instances,
+    min_running_instances: container.min_running_instances,
+    registry_id: container.registry?.id || '',
+    image_name: container.image_name || '',
+    tag: container.tag || '',
+    arguments: container.arguments,
+    entrypoint: container.entrypoint,
+    auto_preview: container.auto_preview,
+    auto_deploy: container.auto_deploy,
+    healthchecks: container.healthchecks,
+  }
+
+  return containerRequestPayload
+}
+
+export function refactoJob(job: Job) {
+  const jobRequest = {
+    name: job.name,
+    description: job.description,
+    cpu: job.cpu,
+    memory: job.memory,
+    auto_preview: job.auto_preview,
+    auto_deploy: job.auto_deploy,
+    max_duration_seconds: job.max_duration_seconds,
+    port: job.port,
+    max_nb_restart: job.max_nb_restart,
+    schedule: job.schedule,
+    healthchecks: job.healthchecks ?? {},
+    source: {},
+  }
+
+  if (isJobGitSource(job.source)) {
+    jobRequest.source = {
+      docker: {
+        dockerfile_path: job.source.docker?.dockerfile_path,
+        git_repository: {
+          url: job.source.docker?.git_repository?.url || '',
+          branch: job.source.docker?.git_repository?.branch,
+          root_path: job.source.docker?.git_repository?.root_path,
+          git_token_id: job.source.docker?.git_repository?.git_token_id,
+        },
+      },
+    }
+  } else {
+    jobRequest.source = {
+      image: {
+        registry_id: job.source?.image?.registry_id,
+        image_name: job.source?.image?.image_name,
+        tag: job.source?.image?.tag,
+      },
+    }
+  }
+
+  return jobRequest
+}
+
+export function refactoDatabase(database: Database) {
+  const databaseRequestPayload = {
+    name: database.name,
+    description: database.description,
+    version: database.version,
+    accessibility: database.accessibility,
+    cpu: database.cpu,
+    memory: database.memory,
+    storage: database.storage,
+    instance_type: database.instance_type,
+  }
+
+  if (database.mode === DatabaseModeEnum.MANAGED) databaseRequestPayload.version = database.version
+
+  return databaseRequestPayload
+}
+
 export function refactoHelm(helm: Helm) {
-  const sourceProvider = (helm.source as HelmResponseAllOfSourceOneOf).git ? 'GIT' : 'HELM_REPOSITORY'
+  const sourceProvider = (helm?.source as HelmResponseAllOfSourceOneOf).git ? 'GIT' : 'HELM_REPOSITORY'
 
   const source = match(sourceProvider)
     .with('GIT', () => {
-      const gitRepository = (helm.source as HelmResponseAllOfSourceOneOf).git?.git_repository
+      const gitRepository = (helm?.source as HelmResponseAllOfSourceOneOf).git?.git_repository
       return {
         git_repository: {
           url: gitRepository?.url ?? '',
@@ -72,7 +155,7 @@ export function refactoHelm(helm: Helm) {
       }
     })
     .with('HELM_REPOSITORY', () => {
-      const helmRepository = (helm.source as HelmResponseAllOfSourceOneOf1).repository
+      const helmRepository = (helm?.source as HelmResponseAllOfSourceOneOf1).repository
       return {
         helm_repository: {
           repository: helmRepository?.repository?.id,
