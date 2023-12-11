@@ -38,6 +38,7 @@ describe('ClusterButtonsActionsFeature', () => {
     await userEvent.click(actions[actions.length - 1])
     screen.getByText('See audit logs')
     screen.getByText('Copy identifier')
+    screen.getByText('Get Kubeconfig')
     screen.getByText('Delete cluster')
   })
 
@@ -80,6 +81,7 @@ describe('ClusterButtonsActionsFeature', () => {
     await userEvent.click(actions[actions.length - 1])
     screen.getByText('See audit logs')
     screen.getByText('Copy identifier')
+    screen.getByText('Get Kubeconfig')
     screen.getByText('Delete cluster')
   })
 })
