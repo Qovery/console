@@ -31,6 +31,9 @@ export function refactoPayload<T extends { id?: string; created_at?: string; upd
   return response
 }
 
+/*
+ * @deprecated Redux refacto payload you can use refactoApplication with React Query now
+ */
 export function refactoGitApplicationPayload(application: Partial<GitApplicationEntity>) {
   // refacto because we can't send all git data
   if (application.git_repository) {

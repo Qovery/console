@@ -90,7 +90,7 @@ export function StepValuesOverrideFilesFeature() {
     .with('NONE', () => false)
     .exhaustive()
 
-  const gitRepositoryElement = (
+  const gitRepositorySettings = (
     <>
       <GitProviderSetting />
       {watchFieldGitProvider && <GitRepositorySetting gitProvider={watchFieldGitProvider} />}
@@ -130,7 +130,7 @@ export function StepValuesOverrideFilesFeature() {
           methods={valuesOverrideFileForm}
           watchFieldType={watchFieldType}
           source={source}
-          gitRepositoryElement={gitRepositoryElement}
+          gitRepositorySettings={gitRepositorySettings}
           onSubmit={onSubmit}
         >
           <div className="flex justify-between mt-10">

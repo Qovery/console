@@ -22,7 +22,7 @@ export interface ValuesOverrideFilesSettingProps {
   source: HelmRequestAllOfSource
   methods: UseFormReturn<HelmValuesFileData>
   watchFieldType: ValuesOverrideTypes
-  gitRepositoryElement: ReactNode
+  gitRepositorySettings: ReactNode
   onSubmit: () => void
 }
 
@@ -31,7 +31,7 @@ export function ValuesOverrideFilesSetting({
   source,
   watchFieldType,
   children,
-  gitRepositoryElement,
+  gitRepositorySettings,
   onSubmit,
 }: PropsWithChildren<ValuesOverrideFilesSettingProps>) {
   const { environmentId = '' } = useParams()
@@ -158,7 +158,7 @@ export function ValuesOverrideFilesSetting({
               argument. More than one file can be used as override by adding them in the path field separated by a
               semi-colon. If you don’t have a repository, you can set the override manually or via a raw YAML file.
             </p>
-            <div className="flex flex-col gap-3">{gitRepositoryElement}</div>
+            <div className="flex flex-col gap-3">{gitRepositorySettings}</div>
           </Section>
         )}
         {children}

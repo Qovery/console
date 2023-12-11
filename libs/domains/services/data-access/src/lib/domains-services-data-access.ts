@@ -3,15 +3,12 @@ import {
   ApplicationDeploymentHistoryApi,
   ApplicationDeploymentRestrictionApi,
   type ApplicationDeploymentRestrictionRequest,
-  type ApplicationEditRequest,
   ApplicationMainCallsApi,
   ApplicationsApi,
   ContainerDeploymentHistoryApi,
   ContainerMainCallsApi,
-  type ContainerRequest,
   ContainersApi,
   DatabaseDeploymentHistoryApi,
-  type DatabaseEditRequest,
   DatabaseMainCallsApi,
   DatabasesApi,
   EnvironmentMainCallsApi,
@@ -19,13 +16,11 @@ import {
   HelmDeploymentRestrictionApi,
   type HelmDeploymentRestrictionRequest,
   HelmMainCallsApi,
-  type HelmRequest,
   HelmsApi,
   JobDeploymentHistoryApi,
   JobDeploymentRestrictionApi,
   type JobDeploymentRestrictionRequest,
   JobMainCallsApi,
-  type JobRequest,
   JobsApi,
   type Status,
   type Application as _Application,
@@ -38,6 +33,7 @@ import {
 import { type ApplicationStatusDto, type DatabaseStatusDto, type ServiceMetricsDto } from 'qovery-ws-typescript-axios'
 import { match } from 'ts-pattern'
 import { type ServiceTypeEnum } from '@qovery/shared/enums'
+import { refactoApplication, refactoHelm } from './refacto-service-payload'
 
 const applicationsApi = new ApplicationsApi()
 const containersApi = new ContainersApi()
@@ -335,28 +331,23 @@ type DeploymentRestrictionRequest =
 type ServiceRequest =
   | {
       serviceId: string
-      serviceType: ApplicationType
-      payload: ApplicationEditRequest
+      payload: Application
     }
   | {
       serviceId: string
-      serviceType: ContainerType
-      payload: ContainerRequest
+      payload: Container
     }
   | {
       serviceId: string
-      serviceType: DatabaseType
-      payload: DatabaseEditRequest
+      payload: Database
     }
   | {
       serviceId: string
-      serviceType: JobType
-      payload: JobRequest
+      payload: Job
     }
   | {
       serviceId: string
-      serviceType: HelmType
-      payload: HelmRequest
+      payload: Helm
     }
 
 export const mutations = {
@@ -427,17 +418,31 @@ export const mutations = {
     const response = await mutation(serviceId)
     return response.data
   },
-  async editService({ serviceId, serviceType, payload }: ServiceRequest) {
-    const mutation = match(serviceType)
-      .with('APPLICATION', () => applicationMainCallsApi.editApplication.bind(applicationMainCallsApi))
-      .with('CONTAINER', () => containerMainCallsApi.editContainer.bind(containerMainCallsApi))
-      .with('DATABASE', () => databaseMainCallsApi.editDatabase.bind(databaseMainCallsApi))
-      .with('JOB', () => jobMainCallsApi.editJob.bind(jobMainCallsApi))
-      .with('HELM', () => helmMainCallsApi.editHelm.bind(helmMainCallsApi))
+  async editService({ serviceId, payload }: ServiceRequest) {
+    const response = await match(payload)
+      .with(
+        { serviceType: 'APPLICATION' },
+        async (payload) => (await applicationMainCallsApi.editApplication(serviceId, refactoApplication(payload))).data
+      )
+      .with(
+        { serviceType: 'CONTAINER' },
+        async (payload) => (await containerMainCallsApi.editContainer(serviceId, refactoContainer(payload))).data
+      )
+      .with(
+        { serviceType: 'DATABASE' },
+        async (payload) => (await databaseMainCallsApi.editDatabase(serviceId, refactoDatabase(payload))).data
+      )
+      .with(
+        { serviceType: 'JOB' },
+        async (payload) => (await jobMainCallsApi.editJob(serviceId, refactoJob(payload))).data
+      )
+      .with(
+        { serviceType: 'HELM' },
+        async (payload) => (await helmMainCallsApi.editHelm(serviceId, refactoHelm(payload))).data
+      )
       .exhaustive()
 
-    const response = await mutation(serviceId, payload)
-    return response.data
+    return response
   },
 }
 

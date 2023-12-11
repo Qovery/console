@@ -1,4 +1,3 @@
-import { type HelmRequestAllOfSource } from 'qovery-typescript-axios'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
@@ -13,6 +12,7 @@ import {
   ValuesOverrideFilesSetting,
   type ValuesOverrideTypes,
 } from '@qovery/domains/service-helm/feature'
+import { type Helm, refactoHelm } from '@qovery/domains/services/data-access'
 import { useEditService, useHelmService } from '@qovery/domains/services/feature'
 import { Button, InputText } from '@qovery/shared/ui'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
@@ -22,20 +22,17 @@ export function PageSettingsValuesOverrideFileFeature() {
   const { data: service } = useHelmService({ serviceId: applicationId })
   const { mutate: editService, isLoading: isLoadingEditService } = useEditService()
 
-  console.log(service?.values_override)
-
-  const type = service?.values_override?.file?.raw
+  const valuesOverrideFile = service?.values_override.file
+  const currentType = valuesOverrideFile?.raw?.values?.[0]?.content
     ? 'YAML'
-    : service?.values_override?.file?.git
+    : valuesOverrideFile?.git
     ? 'GIT_REPOSITORY'
     : 'NONE'
-
-  const valuesOverrideFile = service?.values_override.file
 
   const methods = useForm<HelmValuesFileData>({
     mode: 'onChange',
     defaultValues: {
-      type,
+      type: currentType,
       content: valuesOverrideFile?.raw?.values?.[0]?.content ?? '',
       provider: 'GITHUB',
       repository: valuesOverrideFile?.git?.git_repository?.url,
@@ -61,7 +58,7 @@ export function PageSettingsValuesOverrideFileFeature() {
     .exhaustive()
 
   const onSubmit = methods.handleSubmit(async (data) => {
-    const valuesOverrideFile = match(type)
+    const valuesOverrideFile = match(watchFieldType)
       .with('GIT_REPOSITORY', () => {
         const gitToken = getGitTokenValue('GITHUB' ?? '')
 
@@ -84,20 +81,22 @@ export function PageSettingsValuesOverrideFileFeature() {
           ],
         },
       }))
-      .with('NONE', () => null)
+      .with('NONE', () => undefined)
       .exhaustive()
 
     editService({
-      serviceType: 'HELM',
       serviceId: applicationId,
       payload: {
         ...service,
-        values_override: valuesOverrideFile,
-      },
+        values_override: {
+          ...service?.values_override,
+          file: valuesOverrideFile,
+        },
+      } as Helm,
     })
   })
 
-  const gitRepositoryElement = (
+  const gitRepositorySettings = (
     <>
       <GitProviderSetting />
       {watchFieldGitProvider && <GitRepositorySetting gitProvider={watchFieldGitProvider} />}
@@ -137,8 +136,8 @@ export function PageSettingsValuesOverrideFileFeature() {
           <ValuesOverrideFilesSetting
             methods={methods}
             watchFieldType={watchFieldType}
-            source={service?.source as HelmRequestAllOfSource}
-            gitRepositoryElement={gitRepositoryElement}
+            source={refactoHelm(service!).source}
+            gitRepositorySettings={gitRepositorySettings}
             onSubmit={onSubmit}
           >
             <div className="flex justify-end mt-10">

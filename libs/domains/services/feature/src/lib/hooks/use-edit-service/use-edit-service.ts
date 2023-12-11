@@ -7,9 +7,9 @@ export function useEditService() {
   // const { mutateAsync: deployCluster } = useDeployCluster()
 
   return useMutation(mutations.editService, {
-    onSuccess(_, { serviceType, serviceId }) {
+    onSuccess(_, { payload, serviceId }) {
       queryClient.invalidateQueries({
-        queryKey: queries.services.details({ serviceType, serviceId }).queryKey,
+        queryKey: queries.services.details({ serviceType: payload.serviceType, serviceId }).queryKey,
       })
     },
     meta: {
