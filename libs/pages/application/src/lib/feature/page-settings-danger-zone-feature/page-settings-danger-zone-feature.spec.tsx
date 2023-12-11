@@ -1,9 +1,9 @@
-import { render } from '__tests__/utils/setup-jest'
+import { renderWithProviders } from '@qovery/shared/util-tests'
 import PageSettingsDangerZoneFeature from './page-settings-danger-zone-feature'
 
 describe('PageSettingsDangerZoneFeature', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<PageSettingsDangerZoneFeature />)
+    const { baseElement } = renderWithProviders(<PageSettingsDangerZoneFeature />)
     expect(baseElement).toBeTruthy()
   })
 })
