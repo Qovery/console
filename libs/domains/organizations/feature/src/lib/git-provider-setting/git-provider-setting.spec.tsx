@@ -73,17 +73,17 @@ describe('GitProviderSetting', () => {
     expect(result).toBeNull()
   })
 
-  it('Should return GITHUB for a valid GitHub URL', () => {
+  it('should return GITHUB for a valid GitHub URL', () => {
     const url = 'https://github.com/user/my-repo'
     expect(getGitProvider(url)).toBe('GITHUB')
   })
 
-  it('Should return GITLAB for a valid GitLab URL', () => {
+  it('should return GITLAB for a valid GitLab URL', () => {
     const url = 'https://gitlab.com/user/my-repo'
     expect(getGitProvider(url)).toBe('GITLAB')
   })
 
-  it('Should return BITBUCKET for a valid Bitbucket URL', () => {
+  it('should return BITBUCKET for a valid Bitbucket URL', () => {
     const url = 'https://bitbucket.org/user/my-repo'
     expect(getGitProvider(url)).toBe('BITBUCKET')
   })
