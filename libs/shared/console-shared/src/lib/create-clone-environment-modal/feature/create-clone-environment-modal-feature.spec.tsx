@@ -1,9 +1,9 @@
-import { act, fireEvent, getAllByTestId, getByLabelText, getByTestId, render } from '__tests__/utils/setup-jest'
 import { EnvironmentModeEnum } from 'qovery-typescript-axios'
 import selectEvent from 'react-select-event'
 import * as clustersDomain from '@qovery/domains/clusters/feature'
 import * as environmentDomains from '@qovery/domains/environment'
 import { clusterFactoryMock, environmentFactoryMock } from '@qovery/shared/factories'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import CreateCloneEnvironmentModalFeature, {
   type CreateCloneEnvironmentModalFeatureProps,
 } from './create-clone-environment-modal-feature'
@@ -39,30 +39,26 @@ describe('CreateCloneEnvironmentModalFeature', () => {
   })
 
   it('should render successfully', () => {
-    const { baseElement } = render(<CreateCloneEnvironmentModalFeature {...props} />)
+    const { baseElement } = renderWithProviders(<CreateCloneEnvironmentModalFeature {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
   describe('creation mode', function () {
     it('should submit form on click on button', async () => {
-      const { baseElement } = render(<CreateCloneEnvironmentModalFeature {...props} />)
+      const { userEvent } = renderWithProviders(<CreateCloneEnvironmentModalFeature {...props} />)
 
-      const input = getByTestId(baseElement, 'input-text')
+      const input = screen.getByTestId('input-text')
 
-      await act(async () => {
-        fireEvent.input(input, { target: { value: 'test' } })
-      })
+      await userEvent.type(input, 'test')
 
-      await selectEvent.select(getByLabelText(baseElement, 'Cluster'), mockClusters[2].name, {
+      await selectEvent.select(screen.getByLabelText('Cluster'), mockClusters[2].name, {
         container: document.body,
       })
 
-      await selectEvent.select(getByLabelText(baseElement, 'Type'), 'Staging', { container: document.body })
+      await selectEvent.select(screen.getByLabelText('Type'), 'Staging', { container: document.body })
 
-      const submitButton = getByTestId(baseElement, 'submit-button')
-      await act(async () => {
-        fireEvent.click(submitButton)
-      })
+      const submitButton = screen.getByTestId('submit-button')
+      await userEvent.click(submitButton)
 
       expect(useCreateEnvironmentMockSpy().mutate).toHaveBeenCalledWith({
         projectId: '1',
@@ -82,24 +78,23 @@ describe('CreateCloneEnvironmentModalFeature', () => {
       })
 
       const mockEnv = environmentFactoryMock(1)[0]
-      const { baseElement } = render(<CreateCloneEnvironmentModalFeature {...props} environmentToClone={mockEnv} />)
+      const { userEvent } = renderWithProviders(
+        <CreateCloneEnvironmentModalFeature {...props} environmentToClone={mockEnv} />
+      )
 
-      const inputs = getAllByTestId(baseElement, 'input-text')
+      const inputs = screen.getAllByTestId('input-text')
 
-      await act(async () => {
-        fireEvent.input(inputs[1], { target: { value: 'test' } })
-      })
+      await userEvent.clear(inputs[1])
+      await userEvent.type(inputs[1], 'test')
 
-      await selectEvent.select(getByLabelText(baseElement, 'Cluster'), mockClusters[2].name, {
+      await selectEvent.select(screen.getByLabelText('Cluster'), mockClusters[2].name, {
         container: document.body,
       })
 
-      await selectEvent.select(getByLabelText(baseElement, 'Type'), 'Staging', { container: document.body })
+      await selectEvent.select(screen.getByLabelText('Type'), 'Staging', { container: document.body })
 
-      const submitButton = getByTestId(baseElement, 'submit-button')
-      await act(async () => {
-        fireEvent.click(submitButton)
-      })
+      const submitButton = screen.getByTestId('submit-button')
+      await userEvent.click(submitButton)
 
       expect(useCloneEnvironmentMockSpy().mutate).toHaveBeenCalledWith({
         environmentId: mockEnv.id,
