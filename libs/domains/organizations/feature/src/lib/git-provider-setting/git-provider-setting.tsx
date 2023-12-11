@@ -43,6 +43,8 @@ export const getGitProvider = (url: string) => {
   } else if (bitbucketRegex.test(url)) {
     return 'BITBUCKET'
   }
+
+  return undefined
 }
 
 export function GitProviderSetting({ disabled }: GitProviderSettingProps) {
