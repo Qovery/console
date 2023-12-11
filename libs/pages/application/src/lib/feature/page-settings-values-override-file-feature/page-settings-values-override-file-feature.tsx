@@ -61,12 +61,11 @@ export function PageSettingsValuesOverrideFileFeature() {
   const onSubmit = methods.handleSubmit(async (data) => {
     const valuesOverrideFile = match(watchFieldType)
       .with('GIT_REPOSITORY', () => {
-        const gitProvider = getGitProvider(data['repository']!)
-        const gitToken = getGitTokenValue(gitProvider ?? '')
+        const gitToken = getGitTokenValue(data['provider']!)
 
         return {
           git_repository: {
-            url: buildGitRepoUrl(gitProvider ?? '', data['repository']!),
+            url: buildGitRepoUrl(data['provider']!, data['repository']!),
             branch: data['branch'],
             git_token_id: gitToken?.id,
             paths: data['paths']?.split(',') ?? [],
