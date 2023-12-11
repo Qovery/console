@@ -1,22 +1,27 @@
 import { createQueryKeys, type inferQueryKeys } from '@lukemorales/query-key-factory'
 import {
+  ApplicationActionsApi,
   ApplicationDeploymentHistoryApi,
   ApplicationDeploymentRestrictionApi,
   type ApplicationDeploymentRestrictionRequest,
   ApplicationMainCallsApi,
   ApplicationsApi,
+  ContainerActionsApi,
   ContainerDeploymentHistoryApi,
   ContainerMainCallsApi,
   ContainersApi,
+  DatabaseActionsApi,
   DatabaseDeploymentHistoryApi,
   DatabaseMainCallsApi,
   DatabasesApi,
   EnvironmentMainCallsApi,
+  HelmActionsApi,
   HelmDeploymentHistoryApi,
   HelmDeploymentRestrictionApi,
   type HelmDeploymentRestrictionRequest,
   HelmMainCallsApi,
   HelmsApi,
+  JobActionsApi,
   JobDeploymentHistoryApi,
   JobDeploymentRestrictionApi,
   type JobDeploymentRestrictionRequest,
@@ -63,6 +68,12 @@ const containerDeploymentsApi = new ContainerDeploymentHistoryApi()
 const databaseDeploymentsApi = new DatabaseDeploymentHistoryApi()
 const helmDeploymentsApi = new HelmDeploymentHistoryApi()
 const jobDeploymentsApi = new JobDeploymentHistoryApi()
+
+const applicationActionsApi = new ApplicationActionsApi()
+const containerActionsApi = new ContainerActionsApi()
+const databaseActionsApi = new DatabaseActionsApi()
+const helmActionsApi = new HelmActionsApi()
+const jobActionsApi = new JobActionsApi()
 
 // Prefer this type in param instead of ServiceTypeEnum
 // to suppport string AND enum as param.
@@ -449,6 +460,17 @@ export const mutations = {
       .exhaustive()
 
     return response
+  },
+  async redeployService({ serviceId, serviceType }: { serviceId: string; serviceType: ServiceType }) {
+    const mutation = match(serviceType)
+      .with('APPLICATION', () => applicationActionsApi.redeployApplication.bind(applicationActionsApi))
+      .with('CONTAINER', () => containerActionsApi.redeployContainer.bind(containerActionsApi))
+      .with('DATABASE', () => databaseActionsApi.redeployDatabase.bind(databaseActionsApi))
+      .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', () => jobActionsApi.redeployJob.bind(jobActionsApi))
+      .with('HELM', () => helmActionsApi.redeployHelm.bind(helmActionsApi))
+      .exhaustive()
+    const response = await mutation(serviceId)
+    return response.data
   },
 }
 

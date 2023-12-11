@@ -18,9 +18,9 @@ import { Button, InputText } from '@qovery/shared/ui'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
 
 export function PageSettingsValuesOverrideFileFeature() {
-  const { applicationId = '' } = useParams()
+  const { environmentId = '', applicationId = '' } = useParams()
   const { data: service } = useHelmService({ serviceId: applicationId })
-  const { mutate: editService, isLoading: isLoadingEditService } = useEditService()
+  const { mutate: editService, isLoading: isLoadingEditService } = useEditService({ environmentId })
 
   const valuesOverrideFile = service?.values_override.file
   const currentType = valuesOverrideFile?.raw?.values?.[0]?.content
