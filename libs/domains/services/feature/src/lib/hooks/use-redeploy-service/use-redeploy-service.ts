@@ -16,8 +16,7 @@ export function useRedeployService({ environmentId }: { environmentId: string })
     },
     meta: {
       notifyOnSuccess: {
-        title: 'Service updated',
-        description: 'You must update to apply the settings',
+        title: 'Your application is redeploying',
       },
       notifyOnError: true,
     },
