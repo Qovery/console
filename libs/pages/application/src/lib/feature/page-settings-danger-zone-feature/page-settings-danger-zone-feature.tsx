@@ -1,39 +1,31 @@
-import { useQueryClient } from '@tanstack/react-query'
-import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
-import { deleteApplicationAction, selectApplicationById } from '@qovery/domains/application'
 import { useFetchEnvironment } from '@qovery/domains/environment'
-import { getServiceType } from '@qovery/shared/enums'
-import { type ApplicationEntity } from '@qovery/shared/interfaces'
+import { useDeleteService, useService } from '@qovery/domains/services/feature'
 import { SERVICES_GENERAL_URL, SERVICES_URL } from '@qovery/shared/routes'
-import { type AppDispatch, type RootState } from '@qovery/state/store'
 import PageSettingsDangerZone from '../../ui/page-settings-danger-zone/page-settings-danger-zone'
 
 export function PageSettingsDangerZoneFeature() {
   const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
-  const queryClient = useQueryClient()
-  const dispatch = useDispatch<AppDispatch>()
   const navigate = useNavigate()
   const { data: environment } = useFetchEnvironment(projectId, environmentId)
+  const { data: service } = useService({ environmentId, serviceId: applicationId })
+  const { mutateAsync: deleteService } = useDeleteService({ environmentId })
 
-  const application = useSelector<RootState, ApplicationEntity | undefined>((state) =>
-    selectApplicationById(state, applicationId)
-  )
+  const mutationDeleteService = async () => {
+    if (!service) return
 
-  const deleteApplication = () => {
-    if (application) {
-      dispatch(
-        deleteApplicationAction({ environmentId, applicationId, serviceType: getServiceType(application), queryClient })
-      )
-        .unwrap()
-        .then(() => navigate(SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_GENERAL_URL))
+    try {
+      await deleteService({ serviceId: applicationId, serviceType: service.serviceType })
+      navigate(SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_GENERAL_URL)
+    } catch (error) {
+      console.error(error)
     }
   }
 
   return (
     <PageSettingsDangerZone
-      deleteApplication={deleteApplication}
-      application={application}
+      deleteService={mutationDeleteService}
+      serviceName={service?.name}
       environmentMode={environment?.mode}
     />
   )

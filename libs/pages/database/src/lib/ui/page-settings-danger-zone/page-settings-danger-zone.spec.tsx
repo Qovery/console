@@ -1,4 +1,4 @@
-import { render } from '__tests__/utils/setup-jest'
+import { renderWithProviders } from '@qovery/shared/util-tests'
 import PageSettingsDangerZone, { type PageSettingsDangerZoneProps } from './page-settings-danger-zone'
 
 const props: PageSettingsDangerZoneProps = {
@@ -7,7 +7,7 @@ const props: PageSettingsDangerZoneProps = {
 
 describe('PageSettingsDangerZone', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<PageSettingsDangerZone {...props} />)
+    const { baseElement } = renderWithProviders(<PageSettingsDangerZone {...props} />)
     expect(baseElement).toBeTruthy()
   })
 })

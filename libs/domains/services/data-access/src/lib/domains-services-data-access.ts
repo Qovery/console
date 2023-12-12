@@ -384,6 +384,17 @@ export const mutations = {
     const response = await mutation(serviceId, deploymentRestrictionId)
     return response.data
   },
+  async deleteService({ serviceId, serviceType }: { serviceId: string; serviceType: ServiceType }) {
+    const mutation = match(serviceType)
+      .with('APPLICATION', () => applicationMainCallsApi.deleteApplication.bind(applicationMainCallsApi))
+      .with('CONTAINER', () => containerMainCallsApi.deleteContainer.bind(containerMainCallsApi))
+      .with('DATABASE', () => databaseMainCallsApi.deleteDatabase.bind(databaseMainCallsApi))
+      .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', () => jobMainCallsApi.deleteJob.bind(jobMainCallsApi))
+      .with('HELM', () => helmMainCallsApi.deleteHelm.bind(helmMainCallsApi))
+      .exhaustive()
+    const response = await mutation(serviceId)
+    return response.data
+  },
 }
 
 export type ServicesKeys = inferQueryKeys<typeof services>
