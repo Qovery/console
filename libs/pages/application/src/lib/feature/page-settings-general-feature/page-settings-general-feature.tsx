@@ -5,7 +5,7 @@ import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { editApplication, getApplicationsState, postApplicationActionsRedeploy } from '@qovery/domains/application'
-import { getGitTokenValue, useOrganization } from '@qovery/domains/organizations/feature'
+import { useOrganization } from '@qovery/domains/organizations/feature'
 import {
   ServiceTypeEnum,
   getServiceType,
@@ -21,6 +21,7 @@ import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes
 import { toastError } from '@qovery/shared/ui'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
 import { type AppDispatch, type RootState } from '@qovery/state/store'
+import { getGitTokenValue } from '@qovery/util-git'
 import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-general'
 
 export const handleGitApplicationSubmit = (data: FieldValues, application: ApplicationEntity) => {

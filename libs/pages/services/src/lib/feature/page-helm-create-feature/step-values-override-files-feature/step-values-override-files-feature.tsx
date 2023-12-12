@@ -1,17 +1,13 @@
 import { Controller, FormProvider } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import {
-  GitBranchSettings,
-  GitProviderSetting,
-  GitRepositorySetting,
-  getGitTokenValue,
-} from '@qovery/domains/organizations/feature'
+import { GitBranchSettings, GitProviderSetting, GitRepositorySetting } from '@qovery/domains/organizations/feature'
 import { ValuesOverrideFilesSetting } from '@qovery/domains/service-helm/feature'
 import { SERVICES_HELM_CREATION_SUMMARY_URL, SERVICES_HELM_CREATION_URL, SERVICES_URL } from '@qovery/shared/routes'
 import { Button, FunnelFlowBody, FunnelFlowHelpCard, InputText } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
+import { getGitTokenValue } from '@qovery/util-git'
 import { useHelmCreateContext } from '../page-helm-create-feature'
 
 export function StepValuesOverrideFilesFeature() {

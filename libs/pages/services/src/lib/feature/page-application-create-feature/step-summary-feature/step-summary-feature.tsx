@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { createApplication, postApplicationActionsDeploy } from '@qovery/domains/application'
-import { getGitTokenValue, useContainerRegistry } from '@qovery/domains/organizations/feature'
+import { useContainerRegistry } from '@qovery/domains/organizations/feature'
 import { ServiceTypeEnum, isApplication } from '@qovery/shared/enums'
 import {
   DEPLOYMENT_LOGS_URL,
@@ -25,6 +25,7 @@ import { FunnelFlowBody } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
 import { type AppDispatch } from '@qovery/state/store'
+import { getGitTokenValue } from '@qovery/util-git'
 import StepSummary from '../../../ui/page-application-create/step-summary/step-summary'
 import { steps, useApplicationContainerCreateContext } from '../page-application-create-feature'
 

@@ -1,6 +1,5 @@
 import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { getGitTokenValue } from '@qovery/domains/organizations/feature'
 import { useCreateHelmService } from '@qovery/domains/service-helm/feature'
 import {
   SERVICES_CREATION_GENERAL_URL,
@@ -12,6 +11,7 @@ import {
 import { Button, FunnelFlowBody, Heading, Icon, IconAwesomeEnum, Section, truncateText } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
+import { getGitTokenValue } from '@qovery/util-git'
 import { useHelmCreateContext } from '../page-helm-create-feature'
 
 export function StepSummaryFeature() {

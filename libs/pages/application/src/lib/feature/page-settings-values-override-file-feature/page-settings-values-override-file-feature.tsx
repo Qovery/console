@@ -1,18 +1,13 @@
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import {
-  GitBranchSettings,
-  GitProviderSetting,
-  GitRepositorySetting,
-  getGitTokenValue,
-  guessGitProvider,
-} from '@qovery/domains/organizations/feature'
+import { GitBranchSettings, GitProviderSetting, GitRepositorySetting } from '@qovery/domains/organizations/feature'
 import { type HelmValuesFileData, ValuesOverrideFilesSetting } from '@qovery/domains/service-helm/feature'
 import { refactoHelm } from '@qovery/domains/services/data-access'
 import { useEditService, useHelmService } from '@qovery/domains/services/feature'
 import { Button, InputText } from '@qovery/shared/ui'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
+import { getGitTokenValue, guessGitProvider } from '@qovery/util-git'
 
 export function PageSettingsValuesOverrideFileFeature() {
   const { environmentId = '', applicationId = '' } = useParams()
