@@ -78,4 +78,19 @@ describe('PodDetails', () => {
     const { baseElement } = renderWithProviders(<PodDetails pod={pod} serviceId="1" serviceType="HELM" />)
     expect(baseElement).toMatchSnapshot()
   })
+  it('should match snapshot with pod error with 0 containers', () => {
+    const pod: Pod = {
+      name: 'app-z0fb41d62-5c7fdb6f5f-44wpd',
+      state: 'ERROR',
+      state_reason: 'Evicted',
+      state_message: 'Pod was rejected: The node had condition: [DiskPressure]. ',
+      restart_count: 0,
+      containers: [],
+      started_at: 1702309622000,
+      service_version: 'd921f8b5107f35d7b06f859a2a133a2b0a189160',
+      podName: 'app-z0fb41d62-5c7fdb6f5f-44wpd',
+    }
+    const { baseElement } = renderWithProviders(<PodDetails pod={pod} serviceId="1" serviceType="APPLICATION" />)
+    expect(baseElement).toMatchSnapshot()
+  })
 })
