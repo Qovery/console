@@ -5,11 +5,11 @@ import {
   GitBranchSettings,
   GitProviderSetting,
   GitRepositorySetting,
-  getGitProvider,
   getGitTokenValue,
+  guessGitProvider,
 } from '@qovery/domains/organizations/feature'
 import { type HelmValuesFileData, ValuesOverrideFilesSetting } from '@qovery/domains/service-helm/feature'
-import { type Helm, refactoHelm } from '@qovery/domains/services/data-access'
+import { refactoHelm } from '@qovery/domains/services/data-access'
 import { useEditService, useHelmService } from '@qovery/domains/services/feature'
 import { Button, InputText } from '@qovery/shared/ui'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
@@ -31,7 +31,7 @@ export function PageSettingsValuesOverrideFileFeature() {
     defaultValues: {
       type: currentType,
       content: valuesOverrideFile?.raw?.values?.[0]?.content ?? '',
-      provider: getGitProvider(valuesOverrideFile?.git?.git_repository?.url ?? ''),
+      provider: guessGitProvider(valuesOverrideFile?.git?.git_repository?.url ?? ''),
       repository: valuesOverrideFile?.git?.git_repository?.url,
       branch: valuesOverrideFile?.git?.git_repository?.branch,
       paths: valuesOverrideFile?.git?.paths?.toString(),
@@ -55,16 +55,20 @@ export function PageSettingsValuesOverrideFileFeature() {
     .exhaustive()
 
   const onSubmit = methods.handleSubmit(async (data) => {
+    if (!service) return
+
     const valuesOverrideFile = match(watchFieldType)
       .with('GIT_REPOSITORY', () => {
         const gitToken = getGitTokenValue(data['provider']!)
 
         return {
-          git_repository: {
-            url: buildGitRepoUrl(data['provider']!, data['repository']!),
-            branch: data['branch'],
-            git_token_id: gitToken?.id,
-            paths: data['paths']?.split(',') ?? [],
+          git: {
+            git_repository: {
+              url: buildGitRepoUrl(data['provider']!, data['repository']!),
+              branch: data['branch'],
+              git_token_id: gitToken?.id,
+              paths: data['paths']?.split(',') ?? [],
+            },
           },
         }
       })
@@ -89,7 +93,7 @@ export function PageSettingsValuesOverrideFileFeature() {
           ...service?.values_override,
           file: valuesOverrideFile,
         },
-      } as Helm,
+      },
     })
   })
 

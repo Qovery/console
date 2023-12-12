@@ -9,7 +9,7 @@ export const helmFactoryMock = (howMany: number): Helm[] =>
     created_at: chance.date({ year: 2023, string: true }).toString(),
     updated_at: chance.date({ year: 2024, string: true }).toString(),
     name: chance.name(),
-    serviceType: 'HELM',
+    serviceType: 'HELM' as const,
     description: chance.sentence(),
     environment: {
       id: '1',

@@ -31,7 +31,7 @@ export const getGitTokenValue = (value: string) => {
   return null
 }
 
-export const getGitProvider = (url: string) => {
+export const guessGitProvider = (url: string) => {
   const githubRegex = /^(https?:\/\/)?(www\.)?github\.com\/.*$/
   const gitlabRegex = /^(https?:\/\/)?(www\.)?gitlab\.com\/.*$/
   const bitbucketRegex = /^(https?:\/\/)?(www\.)?bitbucket\.org\/.*$/
