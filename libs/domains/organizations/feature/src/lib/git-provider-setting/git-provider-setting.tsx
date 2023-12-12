@@ -1,4 +1,4 @@
-import { type GitAuthProvider, type GitProviderEnum, type GitTokenResponse } from 'qovery-typescript-axios'
+import { type GitAuthProvider, type GitTokenResponse } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { Icon, InputSelect } from '@qovery/shared/ui'
