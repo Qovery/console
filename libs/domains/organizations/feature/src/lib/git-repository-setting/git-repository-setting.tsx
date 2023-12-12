@@ -2,8 +2,8 @@ import { type GitProviderEnum } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { InputSelect, LoaderSpinner } from '@qovery/shared/ui'
+import { getGitTokenValue } from '@qovery/shared/util-git'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
-import { getGitTokenValue } from '../git-provider-setting/git-provider-setting'
 import { useRepositories } from '../hooks/use-repositories/use-repositories'
 
 export interface GitRepositorySettingProps {

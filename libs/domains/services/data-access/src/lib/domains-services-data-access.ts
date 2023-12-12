@@ -1,22 +1,27 @@
 import { createQueryKeys, type inferQueryKeys } from '@lukemorales/query-key-factory'
 import {
+  ApplicationActionsApi,
   ApplicationDeploymentHistoryApi,
   ApplicationDeploymentRestrictionApi,
   type ApplicationDeploymentRestrictionRequest,
   ApplicationMainCallsApi,
   ApplicationsApi,
+  ContainerActionsApi,
   ContainerDeploymentHistoryApi,
   ContainerMainCallsApi,
   ContainersApi,
+  DatabaseActionsApi,
   DatabaseDeploymentHistoryApi,
   DatabaseMainCallsApi,
   DatabasesApi,
   EnvironmentMainCallsApi,
+  HelmActionsApi,
   HelmDeploymentHistoryApi,
   HelmDeploymentRestrictionApi,
   type HelmDeploymentRestrictionRequest,
   HelmMainCallsApi,
   HelmsApi,
+  JobActionsApi,
   JobDeploymentHistoryApi,
   JobDeploymentRestrictionApi,
   type JobDeploymentRestrictionRequest,
@@ -33,6 +38,13 @@ import {
 import { type ApplicationStatusDto, type DatabaseStatusDto, type ServiceMetricsDto } from 'qovery-ws-typescript-axios'
 import { match } from 'ts-pattern'
 import { type ServiceTypeEnum } from '@qovery/shared/enums'
+import {
+  refactoApplication,
+  refactoContainer,
+  refactoDatabase,
+  refactoHelm,
+  refactoJob,
+} from './utils/refacto-service-payload'
 
 const applicationsApi = new ApplicationsApi()
 const containersApi = new ContainersApi()
@@ -56,6 +68,12 @@ const containerDeploymentsApi = new ContainerDeploymentHistoryApi()
 const databaseDeploymentsApi = new DatabaseDeploymentHistoryApi()
 const helmDeploymentsApi = new HelmDeploymentHistoryApi()
 const jobDeploymentsApi = new JobDeploymentHistoryApi()
+
+const applicationActionsApi = new ApplicationActionsApi()
+const containerActionsApi = new ContainerActionsApi()
+const databaseActionsApi = new DatabaseActionsApi()
+const helmActionsApi = new HelmActionsApi()
+const jobActionsApi = new JobActionsApi()
 
 // Prefer this type in param instead of ServiceTypeEnum
 // to suppport string AND enum as param.
@@ -391,6 +409,38 @@ export const mutations = {
       .with('DATABASE', () => databaseMainCallsApi.deleteDatabase.bind(databaseMainCallsApi))
       .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', () => jobMainCallsApi.deleteJob.bind(jobMainCallsApi))
       .with('HELM', () => helmMainCallsApi.deleteHelm.bind(helmMainCallsApi))
+      .exhaustive()
+    const response = await mutation(serviceId)
+    return response.data
+  },
+  async editService({ serviceId, payload }: { serviceId: string; payload: AnyService }) {
+    const mutation = match(payload)
+      .with({ serviceType: 'APPLICATION' }, (payload) =>
+        applicationMainCallsApi.editApplication.bind(applicationMainCallsApi, serviceId, refactoApplication(payload))
+      )
+      .with({ serviceType: 'CONTAINER' }, (payload) =>
+        containerMainCallsApi.editContainer.bind(containerMainCallsApi, serviceId, refactoContainer(payload))
+      )
+      .with({ serviceType: 'DATABASE' }, (payload) =>
+        databaseMainCallsApi.editDatabase.bind(databaseMainCallsApi, serviceId, refactoDatabase(payload))
+      )
+      .with({ serviceType: 'JOB' }, (payload) =>
+        jobMainCallsApi.editJob.bind(jobMainCallsApi, serviceId, refactoJob(payload))
+      )
+      .with({ serviceType: 'HELM' }, (payload) =>
+        helmMainCallsApi.editHelm.bind(helmMainCallsApi, serviceId, refactoHelm(payload))
+      )
+      .exhaustive()
+    const response = await mutation()
+    return response.data
+  },
+  async redeployService({ serviceId, serviceType }: { serviceId: string; serviceType: ServiceType }) {
+    const mutation = match(serviceType)
+      .with('APPLICATION', () => applicationActionsApi.redeployApplication.bind(applicationActionsApi))
+      .with('CONTAINER', () => containerActionsApi.redeployContainer.bind(containerActionsApi))
+      .with('DATABASE', () => databaseActionsApi.redeployDatabase.bind(databaseActionsApi))
+      .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', () => jobActionsApi.redeployJob.bind(jobActionsApi))
+      .with('HELM', () => helmActionsApi.redeployHelm.bind(helmActionsApi))
       .exhaustive()
     const response = await mutation(serviceId)
     return response.data

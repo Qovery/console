@@ -1,7 +1,8 @@
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { useForm } from 'react-hook-form'
+import { type HelmValuesFileData } from '@qovery/domains/service-helm/feature'
 import { renderHook, renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
-import { type HelmGeneralData, type HelmValuesAsFileData } from '../page-helm-create-feature'
+import { type HelmGeneralData } from '../page-helm-create-feature'
 import { HelmCreateContext } from '../page-helm-create-feature'
 import StepValuesOverrideFilesFeature from './step-values-override-files-feature'
 
@@ -21,7 +22,7 @@ describe('StepValuesOverrideFilesFeature', () => {
     )
 
     const { result: valuesOverrideFileForm } = renderHook(() =>
-      useForm<HelmValuesAsFileData>({
+      useForm<HelmValuesFileData>({
         mode: 'onChange',
         defaultValues: {
           type: 'NONE',
@@ -59,7 +60,7 @@ describe('StepValuesOverrideFilesFeature', () => {
     )
 
     const { result: valuesOverrideFileForm } = renderHook(() =>
-      useForm<HelmValuesAsFileData>({
+      useForm<HelmValuesFileData>({
         mode: 'onChange',
         defaultValues: {
           type: 'GIT_REPOSITORY',
@@ -112,7 +113,7 @@ describe('StepValuesOverrideFilesFeature', () => {
     )
 
     const { result: valuesOverrideFileForm } = renderHook(() =>
-      useForm<HelmValuesAsFileData>({
+      useForm<HelmValuesFileData>({
         mode: 'onChange',
         defaultValues: {
           type: 'YAML',

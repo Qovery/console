@@ -1,4 +1,4 @@
-import { type GitAuthProvider, type GitProviderEnum, type GitTokenResponse } from 'qovery-typescript-axios'
+import { type GitAuthProvider, type GitTokenResponse } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { Icon, InputSelect } from '@qovery/shared/ui'
@@ -24,11 +24,6 @@ export const mergeProviders = (authProviders: GitAuthProvider[] = [], gitTokens:
   }))
 
   return [...currentAuthProviders, ...currentGitTokens]
-}
-
-export const getGitTokenValue = (value: string) => {
-  if (value?.includes('TOKEN')) return { type: value.split('_')[1] as GitProviderEnum, id: value.split('_')[2] }
-  return null
 }
 
 export function GitProviderSetting({ disabled }: GitProviderSettingProps) {
