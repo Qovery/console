@@ -436,30 +436,25 @@ export const mutations = {
     return response.data
   },
   async editService({ serviceId, payload }: ServiceRequest) {
-    const response = await match(payload)
-      .with(
-        { serviceType: 'APPLICATION' },
-        async (payload) => (await applicationMainCallsApi.editApplication(serviceId, refactoApplication(payload))).data
+    const mutation = match(payload)
+      .with({ serviceType: 'APPLICATION' }, (payload) =>
+        applicationMainCallsApi.editApplication.bind(applicationMainCallsApi, serviceId, refactoApplication(payload))
       )
-      .with(
-        { serviceType: 'CONTAINER' },
-        async (payload) => (await containerMainCallsApi.editContainer(serviceId, refactoContainer(payload))).data
+      .with({ serviceType: 'CONTAINER' }, (payload) =>
+        containerMainCallsApi.editContainer.bind(containerMainCallsApi, serviceId, refactoContainer(payload))
       )
-      .with(
-        { serviceType: 'DATABASE' },
-        async (payload) => (await databaseMainCallsApi.editDatabase(serviceId, refactoDatabase(payload))).data
+      .with({ serviceType: 'DATABASE' }, (payload) =>
+        databaseMainCallsApi.editDatabase.bind(databaseMainCallsApi, serviceId, refactoDatabase(payload))
       )
-      .with(
-        { serviceType: 'JOB' },
-        async (payload) => (await jobMainCallsApi.editJob(serviceId, refactoJob(payload))).data
+      .with({ serviceType: 'JOB' }, (payload) =>
+        jobMainCallsApi.editJob.bind(jobMainCallsApi, serviceId, refactoJob(payload))
       )
-      .with(
-        { serviceType: 'HELM' },
-        async (payload) => (await helmMainCallsApi.editHelm(serviceId, refactoHelm(payload))).data
+      .with({ serviceType: 'HELM' }, (payload) =>
+        helmMainCallsApi.editHelm.bind(helmMainCallsApi, serviceId, refactoHelm(payload))
       )
       .exhaustive()
-
-    return response
+    const response = await mutation()
+    return response.data
   },
   async redeployService({ serviceId, serviceType }: { serviceId: string; serviceType: ServiceType }) {
     const mutation = match(serviceType)
