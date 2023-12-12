@@ -126,24 +126,22 @@ export function PageSettingsValuesOverrideFileFeature() {
   )
 
   return (
-    <div className="flex flex-col justify-between w-full">
-      <div className="p-8 max-w-content-with-navigation-left">
-        <FormProvider {...methods}>
-          <ValuesOverrideFilesSetting
-            methods={methods}
-            watchFieldType={watchFieldType}
-            source={refactoHelm(service!).source}
-            gitRepositorySettings={gitRepositorySettings}
-            onSubmit={onSubmit}
-          >
-            <div className="flex justify-end mt-10">
-              <Button type="submit" size="lg" loading={isLoadingEditService} disabled={disabledContinueButton}>
-                Save
-              </Button>
-            </div>
-          </ValuesOverrideFilesSetting>
-        </FormProvider>
-      </div>
+    <div className="flex flex-col justify-between w-full p-8 max-w-content-with-navigation-left">
+      <FormProvider {...methods}>
+        <ValuesOverrideFilesSetting
+          methods={methods}
+          watchFieldType={watchFieldType}
+          source={refactoHelm(service!).source}
+          gitRepositorySettings={gitRepositorySettings}
+          onSubmit={onSubmit}
+        >
+          <div className="flex justify-end mt-10">
+            <Button type="submit" size="lg" loading={isLoadingEditService} disabled={disabledContinueButton}>
+              Save
+            </Button>
+          </div>
+        </ValuesOverrideFilesSetting>
+      </FormProvider>
     </div>
   )
 }
