@@ -11,6 +11,11 @@ import { match } from 'ts-pattern'
 import { isJobGitSource } from '@qovery/shared/enums'
 import { type Application, type Container, type Database, type Helm, type Job } from '../domains-services-data-access'
 
+/* 
+TODO: all this following functions should be removed after the API refactoring and we need to clean it after the Services migration to React Query 
+https://www.notion.so/qovery/API-improvements-b54ba305c2ee4e549eb002278c532c7f?pvs=4#7d71ea23b5fa44ca80c15a0c32ebd8da
+*/
+
 export function refactoApplication(application: Application) {
   // refacto because we can't send all git data
   if (application.git_repository) {

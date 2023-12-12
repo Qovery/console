@@ -345,28 +345,6 @@ type DeploymentRestrictionRequest =
       payload: HelmDeploymentRestrictionRequest
     }
 
-type ServiceRequest =
-  | {
-      serviceId: string
-      payload: Application
-    }
-  | {
-      serviceId: string
-      payload: Container
-    }
-  | {
-      serviceId: string
-      payload: Database
-    }
-  | {
-      serviceId: string
-      payload: Job
-    }
-  | {
-      serviceId: string
-      payload: Helm
-    }
-
 export const mutations = {
   async cloneService({ serviceId, serviceType, payload }: CloneServiceRequest) {
     const mutation = match(serviceType)
@@ -435,7 +413,7 @@ export const mutations = {
     const response = await mutation(serviceId)
     return response.data
   },
-  async editService({ serviceId, payload }: ServiceRequest) {
+  async editService({ serviceId, payload }: { serviceId: string; payload: AnyService }) {
     const mutation = match(payload)
       .with({ serviceType: 'APPLICATION' }, (payload) =>
         applicationMainCallsApi.editApplication.bind(applicationMainCallsApi, serviceId, refactoApplication(payload))
