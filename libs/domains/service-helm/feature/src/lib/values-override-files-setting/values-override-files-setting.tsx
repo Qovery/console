@@ -1,5 +1,5 @@
 import { type GitProviderEnum, type HelmRequestAllOfSource } from 'qovery-typescript-axios'
-import { type PropsWithChildren, type ReactNode, useState } from 'react'
+import { type PropsWithChildren, type ReactNode } from 'react'
 import { Controller, type UseFormReturn } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { PREVIEW_CODE } from '@qovery/shared/routes'
@@ -36,18 +36,15 @@ export function ValuesOverrideFilesSetting({
 }: PropsWithChildren<ValuesOverrideFilesSettingProps>) {
   const { environmentId = '' } = useParams()
 
-  const [enabledHelmDefaultValues, setEnabledHelmDefaultValues] = useState(false)
-
   const { refetch: refetchHelmDefaultValues, isFetching: isLoadingHelmDefaultValues } = useHelmDefaultValues({
     environmentId,
     helmDefaultValuesRequest: {
       source,
     },
-    enabled: enabledHelmDefaultValues,
+    enabled: false,
   })
 
   const createHelmDefaultValuesMutation = async () => {
-    setEnabledHelmDefaultValues(true)
     const { data: helmDefaultValues } = await refetchHelmDefaultValues()
     if (helmDefaultValues) window.open(`${PREVIEW_CODE}?code=${encodeURIComponent(helmDefaultValues)}`, '_blank')
   }
