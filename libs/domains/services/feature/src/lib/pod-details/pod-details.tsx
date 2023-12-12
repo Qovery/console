@@ -58,7 +58,7 @@ export function PodDetails({ pod: { containers = [] }, serviceId, serviceType }:
           <Icon name={IconAwesomeEnum.SCROLL} />
         </Button>
       </Link>
-      <Tabs.Root defaultValue={containers[0].name}>
+      <Tabs.Root defaultValue={containers[0]?.name}>
         <Tabs.List className={serviceType !== 'HELM' ? 'hidden' : ''}>
           {containers
             .filter(({ name }) => name !== QOVERY_SIDECAR_NAME)
