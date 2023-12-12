@@ -9,9 +9,9 @@ import {
   SERVICES_URL,
 } from '@qovery/shared/routes'
 import { Button, FunnelFlowBody, Heading, Icon, IconAwesomeEnum, Section, truncateText } from '@qovery/shared/ui'
+import { getGitTokenValue } from '@qovery/shared/util-git'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
-import { getGitTokenValue } from '@qovery/util-git'
 import { useHelmCreateContext } from '../page-helm-create-feature'
 
 export function StepSummaryFeature() {

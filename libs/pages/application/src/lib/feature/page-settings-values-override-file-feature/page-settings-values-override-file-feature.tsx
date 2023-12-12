@@ -6,8 +6,8 @@ import { type HelmValuesFileData, ValuesOverrideFilesSetting } from '@qovery/dom
 import { refactoHelm } from '@qovery/domains/services/data-access'
 import { useEditService, useHelmService } from '@qovery/domains/services/feature'
 import { Button, InputText } from '@qovery/shared/ui'
+import { getGitTokenValue, guessGitProvider } from '@qovery/shared/util-git'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
-import { getGitTokenValue, guessGitProvider } from '@qovery/util-git'
 
 export function PageSettingsValuesOverrideFileFeature() {
   const { environmentId = '', applicationId = '' } = useParams()

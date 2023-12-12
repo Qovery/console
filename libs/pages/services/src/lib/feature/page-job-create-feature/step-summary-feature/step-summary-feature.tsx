@@ -23,10 +23,10 @@ import {
   SERVICES_URL,
 } from '@qovery/shared/routes'
 import { FunnelFlowBody } from '@qovery/shared/ui'
+import { getGitTokenValue } from '@qovery/shared/util-git'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
 import { type AppDispatch } from '@qovery/state/store'
-import { getGitTokenValue } from '@qovery/util-git'
 import StepSummary from '../../../ui/page-job-create/step-summary/step-summary'
 import { useJobContainerCreateContext } from '../page-job-create-feature'
 

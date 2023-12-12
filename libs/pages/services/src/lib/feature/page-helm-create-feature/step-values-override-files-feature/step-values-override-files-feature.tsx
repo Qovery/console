@@ -5,9 +5,9 @@ import { GitBranchSettings, GitProviderSetting, GitRepositorySetting } from '@qo
 import { ValuesOverrideFilesSetting } from '@qovery/domains/service-helm/feature'
 import { SERVICES_HELM_CREATION_SUMMARY_URL, SERVICES_HELM_CREATION_URL, SERVICES_URL } from '@qovery/shared/routes'
 import { Button, FunnelFlowBody, FunnelFlowHelpCard, InputText } from '@qovery/shared/ui'
+import { getGitTokenValue } from '@qovery/shared/util-git'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
-import { getGitTokenValue } from '@qovery/util-git'
 import { useHelmCreateContext } from '../page-helm-create-feature'
 
 export function StepValuesOverrideFilesFeature() {

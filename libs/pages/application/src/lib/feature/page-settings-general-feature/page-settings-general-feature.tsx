@@ -19,9 +19,9 @@ import {
 import { type ApplicationEntity } from '@qovery/shared/interfaces'
 import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { toastError } from '@qovery/shared/ui'
+import { getGitTokenValue } from '@qovery/shared/util-git'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
 import { type AppDispatch, type RootState } from '@qovery/state/store'
-import { getGitTokenValue } from '@qovery/util-git'
 import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-general'
 
 export const handleGitApplicationSubmit = (data: FieldValues, application: ApplicationEntity) => {

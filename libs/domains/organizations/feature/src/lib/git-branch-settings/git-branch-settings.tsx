@@ -2,7 +2,7 @@ import { type GitProviderEnum } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { InputSelect, InputText, LoaderSpinner } from '@qovery/shared/ui'
-import { getGitTokenValue } from '@qovery/util-git'
+import { getGitTokenValue } from '@qovery/shared/util-git'
 import { useBranches } from '../hooks/use-branches/use-branches'
 
 export interface GitBranchSettingsProps {
