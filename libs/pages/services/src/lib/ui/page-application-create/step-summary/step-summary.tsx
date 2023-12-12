@@ -13,6 +13,7 @@ import {
   ButtonLegacyStyle,
   Icon,
   IconAwesomeEnum,
+  Truncate,
 } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
@@ -106,9 +107,14 @@ export function StepSummary({
               <li>
                 Image entrypoint: <strong>{generalData.image_entry_point}</strong>
               </li>
-              <li>
-                CMD arguments: <strong>{generalData.cmd_arguments}</strong>
-              </li>
+              {generalData.cmd_arguments && (
+                <li>
+                  CMD arguments:{' '}
+                  <strong>
+                    <Truncate text={generalData.cmd_arguments} truncateLimit={120} />
+                  </strong>
+                </li>
+              )}
               <li>
                 Auto-deploy: <strong>{generalData.auto_deploy.toString()}</strong>
               </li>
