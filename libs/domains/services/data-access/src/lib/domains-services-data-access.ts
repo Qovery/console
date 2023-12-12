@@ -350,33 +350,6 @@ type DeploymentRestrictionRequest =
       payload: HelmDeploymentRestrictionRequest
     }
 
-type ServiceRequest =
-  | {
-      serviceId: string
-      serviceType: ApplicationType
-      payload: ApplicationEditRequest
-    }
-  | {
-      serviceId: string
-      serviceType: ContainerType
-      payload: ContainerRequest
-    }
-  | {
-      serviceId: string
-      serviceType: DatabaseType
-      payload: DatabaseEditRequest
-    }
-  | {
-      serviceId: string
-      serviceType: JobType
-      payload: JobRequest
-    }
-  | {
-      serviceId: string
-      serviceType: HelmType
-      payload: HelmRequest
-    }
-
 export const mutations = {
   async cloneService({ serviceId, serviceType, payload }: CloneServiceRequest) {
     const mutation = match(serviceType)

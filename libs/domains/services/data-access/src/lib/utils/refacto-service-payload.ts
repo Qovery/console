@@ -73,7 +73,7 @@ export function refactoContainer(container: Container) {
     memory: container.memory,
     max_running_instances: container.max_running_instances,
     min_running_instances: container.min_running_instances,
-    registry_id: container.registry?.id || '',
+    registry_id: container.registry_id || '',
     image_name: container.image_name || '',
     tag: container.tag || '',
     arguments: container.arguments,

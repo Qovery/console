@@ -24,7 +24,7 @@ import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
 export interface PageSettingsGeneralProps {
   onSubmit: FormEventHandler<HTMLFormElement>
-  watchBuildMode: BuildModeEnum
+  watchBuildMode?: BuildModeEnum
   type?: ServiceType
   loading?: boolean
   organization?: Organization
