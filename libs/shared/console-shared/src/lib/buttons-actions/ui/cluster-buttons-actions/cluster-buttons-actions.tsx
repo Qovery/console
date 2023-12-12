@@ -6,6 +6,7 @@ import {
   ClusterDeleteModal,
   useClusterStatus,
   useDeployCluster,
+  useDownloadKubeconfig,
   useStopCluster,
 } from '@qovery/domains/clusters/feature'
 import { AUDIT_LOGS_PARAMS_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL, INFRA_LOGS_URL } from '@qovery/shared/routes'
@@ -43,6 +44,7 @@ export function ClusterButtonsActions(props: ClusterButtonsActionsProps) {
   const { data: clusterStatus } = useClusterStatus({ organizationId, clusterId: cluster.id, refetchInterval: 3000 })
   const { mutate: stopCluster } = useStopCluster()
   const { mutate: deployCluster } = useDeployCluster()
+  const { mutate: downloadKubeconfig } = useDownloadKubeconfig()
 
   const removeCluster = (id: string, name: string) => {
     openModal({
@@ -174,6 +176,11 @@ export function ClusterButtonsActions(props: ClusterButtonsActionsProps) {
               name: 'Copy identifier',
               contentLeft: <Icon name={IconAwesomeEnum.COPY} className="text-sm text-brand-400" />,
               onClick: () => copyToClipboard(copyContent),
+            },
+            {
+              name: 'Get Kubeconfig',
+              contentLeft: <Icon name={IconAwesomeEnum.DOWNLOAD} className="text-sm text-brand-400" />,
+              onClick: () => downloadKubeconfig({ organizationId, clusterId: cluster.id }),
             },
           ],
         },

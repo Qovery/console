@@ -146,4 +146,8 @@ export const mutations = {
     const response = await clusterApi.editRoutingTable(organizationId, clusterId, routingTableRequest)
     return response.data
   },
+  async kubeconfig({ organizationId, clusterId }: { organizationId: string; clusterId: string }) {
+    const response = await clusterApi.getClusterKubeconfig(organizationId, clusterId)
+    return response.data
+  },
 }
