@@ -6,15 +6,11 @@ import {
   ServiceStateDto,
 } from 'qovery-ws-typescript-axios'
 import { memo, useCallback, useMemo, useRef, useState } from 'react'
-import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { selectApplicationById } from '@qovery/domains/application'
-import { selectDatabaseById } from '@qovery/domains/database'
-import { useRunningStatus } from '@qovery/domains/services/feature'
-import { type ApplicationEntity, type DatabaseEntity } from '@qovery/shared/interfaces'
+import { type Database } from '@qovery/domains/services/data-access'
+import { useRunningStatus, useService } from '@qovery/domains/services/feature'
 import { useDebounce, useDocumentTitle } from '@qovery/shared/util-hooks'
-import { type RootState } from '@qovery/state/store'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
 import _PodLogs from '../../ui/pod-logs/pod-logs'
 
@@ -50,15 +46,12 @@ export function PodLogsFeature({ clusterId }: PodLogsFeatureProps) {
   const debouncedLogs = useDebounce(logs, debounceTime)
   const pausedLogs = useMemo(() => debouncedLogs, [pauseStatusLogs])
 
-  const application = useSelector<RootState, ApplicationEntity | undefined>((state) =>
-    selectApplicationById(state, serviceId)
-  )
-  const database = useSelector<RootState, DatabaseEntity | undefined>((state) => selectDatabaseById(state, serviceId))
+  const { data: service } = useService({ environmentId, serviceId })
   const { data: runningStatus } = useRunningStatus({ environmentId, serviceId })
 
-  useDocumentTitle(`Live logs ${application || database ? `- ${application?.name || database?.name}` : '- Loading...'}`)
+  useDocumentTitle(`Live logs ${service ? `- ${service?.name}` : '- Loading...'}`)
 
-  const enabledLogs = database && database.mode === DatabaseModeEnum.CONTAINER
+  const enabledLogs = (service as Database) && (service as Database)?.mode === DatabaseModeEnum.CONTAINER
 
   const serviceMessageHandler = useCallback(
     (_: QueryClient, message: ServiceLogResponseDto) => {
@@ -120,7 +113,7 @@ export function PodLogsFeature({ clusterId }: PodLogsFeatureProps) {
 
   return (
     <PodLogs
-      service={application || database}
+      service={service}
       loadingStatus={debouncedLogs.length !== 0 ? 'loaded' : 'loading'}
       logs={pauseStatusLogs ? pausedLogs : debouncedLogs}
       pauseStatusLogs={pauseStatusLogs}

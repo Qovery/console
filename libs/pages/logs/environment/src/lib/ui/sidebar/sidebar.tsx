@@ -5,14 +5,14 @@ import {
   type StateEnum,
 } from 'qovery-typescript-axios'
 import { useState } from 'react'
-import { type ApplicationEntity, type DatabaseEntity } from '@qovery/shared/interfaces'
+import { type AnyService } from '@qovery/domains/services/data-access'
 import { Icon, IconAwesomeEnum } from '@qovery/shared/ui'
 import SidebarHistoryFeature from '../../feature/sidebar-history-feature/sidebar-history-feature'
 import SidebarPipeline from '../sidebar-pipeline/sidebar-pipeline'
 import SidebarStatus from '../sidebar-status/sidebar-status'
 
 export interface SidebarProps {
-  services: Array<ApplicationEntity | DatabaseEntity>
+  services: AnyService[]
   statusStages?: DeploymentStageWithServicesStatuses[]
   environmentStatus?: EnvironmentStatus
   currentEnvironmentState?: StateEnum

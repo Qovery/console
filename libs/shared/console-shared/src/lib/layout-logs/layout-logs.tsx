@@ -10,8 +10,9 @@ import {
 import { type ServiceLogResponseDto } from 'qovery-ws-typescript-axios'
 import { type PropsWithChildren, type ReactNode, useRef, useState } from 'react'
 import { Link, useLocation, useParams } from 'react-router-dom'
+import { type AnyService, type Database } from '@qovery/domains/services/data-access'
 import { ServiceStateChip } from '@qovery/domains/services/feature'
-import { type ApplicationEntity, type DatabaseEntity, type LoadingStatus } from '@qovery/shared/interfaces'
+import { type LoadingStatus } from '@qovery/shared/interfaces'
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
 import { Icon, IconAwesomeEnum, IconFa, InputCheckbox, Tooltip } from '@qovery/shared/ui'
@@ -32,7 +33,7 @@ export type logsType = 'infra' | 'live' | 'deployment'
 
 export interface LayoutLogsProps {
   type: logsType
-  service?: ApplicationEntity | DatabaseEntity
+  service?: AnyService
   data?: LayoutLogsDataProps
   errors?: ErrorLogsProps[]
   tabInformation?: ReactNode
@@ -136,7 +137,7 @@ export function LayoutLogs({
             ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + SERVICE_LOGS_URL(serviceId),
             environmentId,
             serviceId,
-            (service as DatabaseEntity)?.mode !== DatabaseModeEnum.MANAGED
+            (service as Database)?.mode !== DatabaseModeEnum.MANAGED
           )}
         </div>
       )}
@@ -146,7 +147,7 @@ export function LayoutLogs({
           type={type}
           serviceDeploymentStatus={serviceDeploymentStatus}
           serviceName={service?.name}
-          databaseMode={(service as DatabaseEntity)?.mode}
+          databaseMode={(service as Database)?.mode}
           loadingStatus={data?.loadingStatus}
           itemsLength={data?.items?.length}
           customPlaceholder={customPlaceholder}
