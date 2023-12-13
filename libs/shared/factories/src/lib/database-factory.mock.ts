@@ -1,14 +1,19 @@
 import { Chance } from 'chance'
 import { DatabaseAccessibilityEnum, DatabaseModeEnum, DatabaseTypeEnum } from 'qovery-typescript-axios'
+import { type Database } from '@qovery/domains/services/data-access'
 import { type DatabaseEntity } from '@qovery/shared/interfaces'
 
 const chance = new Chance('123')
 
-export const databaseFactoryMock = (howMany: number, mode = DatabaseModeEnum.CONTAINER): DatabaseEntity[] =>
+export const databaseFactoryMock = (
+  howMany: number,
+  mode = DatabaseModeEnum.CONTAINER
+): DatabaseEntity[] | Database[] =>
   Array.from({ length: howMany }).map((_, index) => ({
     id: `${index}`,
     created_at: new Date().toString(),
     updated_at: new Date().toString(),
+    serviceType: 'DATABASE' as const,
     name: chance.name(),
     type: DatabaseTypeEnum.POSTGRESQL,
     version: '12',

@@ -1,14 +1,16 @@
 import { Chance } from 'chance'
 import { BuildModeEnum, BuildPackLanguageEnum, PortProtocolEnum, StorageTypeEnum } from 'qovery-typescript-axios'
+import { type Application } from '@qovery/domains/services/data-access'
 import { type ApplicationEntity } from '@qovery/shared/interfaces'
 
 const chance = new Chance('123')
 
-export const applicationFactoryMock = (howMany: number): ApplicationEntity[] =>
+export const applicationFactoryMock = (howMany: number): ApplicationEntity[] | Application[] =>
   Array.from({ length: howMany }).map((_, index) => ({
     id: `${index}`,
     created_at: chance.date({ year: 2023, string: true }).toString(),
     updated_at: chance.date({ year: 2024, string: true }).toString(),
+    serviceType: 'APPLICATION' as const,
     storage: [
       {
         id: chance.guid(),

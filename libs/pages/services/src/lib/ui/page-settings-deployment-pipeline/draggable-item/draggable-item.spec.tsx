@@ -1,7 +1,7 @@
-import { render } from '__tests__/utils/setup-jest'
-import { CloudProviderEnum } from 'qovery-typescript-axios'
+import { type AnyService } from '@qovery/domains/services/data-access'
 import { applicationFactoryMock, databaseFactoryMock } from '@qovery/shared/factories'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
+import { renderWithProviders } from '@qovery/shared/util-tests'
 import DraggableItem, { type DraggableItemProps } from './draggable-item'
 
 const applications = applicationFactoryMock(1)
@@ -9,18 +9,18 @@ const databases = databaseFactoryMock(1)
 
 describe('DraggableItem', () => {
   const props: DraggableItemProps = {
-    services: [...applications, ...databases],
+    // TODO: cast should be removed when all mock migrated to React Query types
+    services: [...applications, ...databases] as AnyService[],
     serviceId: applications[0].id,
-    cloudProvider: CloudProviderEnum.AWS,
   }
 
   it('should render successfully', () => {
-    const { baseElement } = render(<DraggableItem {...props} />)
+    const { baseElement } = renderWithProviders(<DraggableItem {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
   it('should render a application content', () => {
-    const { getByText } = render(<DraggableItem {...props} />)
+    const { getByText } = renderWithProviders(<DraggableItem {...props} />)
 
     expect(getByText(applications[0].name)).toBeInTheDocument()
   })
@@ -28,7 +28,7 @@ describe('DraggableItem', () => {
   it('should render a database content', () => {
     props.services = databases
     props.serviceId = databases[0].id
-    const { getByText, getByTestId } = render(<DraggableItem {...props} />)
+    const { getByText, getByTestId } = renderWithProviders(<DraggableItem {...props} />)
 
     expect(getByText(databases[0].name)).toBeInTheDocument()
     expect(getByTestId('draggable-item-subtitle').textContent).toBe(
