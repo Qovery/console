@@ -224,36 +224,35 @@ export function PageSettingsGeneralFeature() {
     // methods.setValue('auto_deploy', (service as Application)?.auto_deploy)
 
     if (service) {
-      if (service.serviceType === ServiceTypeEnum.APPLICATION) {
-        methods.setValue('build_mode', service.build_mode)
-        methods.setValue(
-          'buildpack_language',
-          service.buildpack_language ? service.buildpack_language : BuildPackLanguageEnum.PYTHON
-        )
-        methods.setValue('dockerfile_path', service.dockerfile_path ? service.dockerfile_path : 'Dockerfile')
-      }
+      // if (service.serviceType === ServiceTypeEnum.APPLICATION) {
+      // methods.setValue('build_mode', service.build_mode)
+      // methods.setValue(
+      //   'buildpack_language',
+      //   service.buildpack_language ? service.buildpack_language : BuildPackLanguageEnum.PYTHON
+      // )
+      // methods.setValue('dockerfile_path', service.dockerfile_path ? service.dockerfile_path : 'Dockerfile')
+      // }
 
       if (service.serviceType === ServiceTypeEnum.CONTAINER) {
-        methods.setValue('registry', service.registry?.id)
-        methods.setValue('image_name', service.image_name)
-        methods.setValue('image_tag', service.tag)
+        // methods.setValue('registry', service.registry?.id)
+        // methods.setValue('image_name', service.image_name)
+        // methods.setValue('image_tag', service.tag)
         methods.unregister('buildpack_language')
         methods.unregister('dockerfile_path')
-
         methods.unregister('build_mode')
       }
 
-      methods.setValue('image_entry_point', (service as Application).entrypoint)
-      methods.setValue(
-        'cmd_arguments',
-        (service as Application).arguments && (service as Application).arguments?.length
-          ? JSON.stringify((service as Application).arguments)
-          : ''
-      )
+      // methods.setValue('image_entry_point', (service as Application).entrypoint)
+      // methods.setValue(
+      //   'cmd_arguments',
+      //   (service as Application).arguments && (service as Application).arguments?.length
+      //     ? JSON.stringify((service as Application).arguments)
+      //     : ''
+      // )
     }
 
     if (service?.serviceType === ServiceTypeEnum.JOB) {
-      methods.setValue('description', service?.description)
+      // methods.setValue('description', service?.description)
 
       const serviceType = isJobGitSource(service?.source) ? ServiceTypeEnum.APPLICATION : ServiceTypeEnum.CONTAINER
       // methods.setValue('serviceType', serviceType)

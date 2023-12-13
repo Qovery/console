@@ -2,7 +2,7 @@ import { BuildModeEnum, BuildPackLanguageEnum, type Organization } from 'qovery-
 import { type FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { type ServiceType } from '@qovery/domains/services/data-access'
-import { AutoDeploySetting } from '@qovery/domains/services/feature'
+import { AutoDeploySetting, GeneralSetting } from '@qovery/domains/services/feature'
 import {
   EditGitRepositorySettingsFeature,
   EntrypointCmdInputs,
@@ -12,13 +12,10 @@ import {
 import { ServiceTypeEnum, isApplication, isContainer, isCronJob, isJob } from '@qovery/shared/enums'
 import {
   BlockContent,
-  ButtonLegacy,
-  ButtonLegacySize,
-  ButtonLegacyStyle,
+  Button,
   HelpSection,
   InputSelect,
-  InputText,
-  InputTextArea,
+  InputText, // InputTextArea,
 } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
@@ -56,7 +53,8 @@ export function PageSettingsGeneral({
         <h2 className="h5 mb-8 text-neutral-400">General settings</h2>
         <form onSubmit={onSubmit}>
           <BlockContent title="General information">
-            <Controller
+            <GeneralSetting />
+            {/* <Controller
               name="name"
               control={control}
               rules={{ required: 'Please enter a name.' }}
@@ -78,7 +76,7 @@ export function PageSettingsGeneral({
               render={({ field }) => (
                 <InputTextArea name={field.name} onChange={field.onChange} value={field.value} label="Description" />
               )}
-            />
+            /> */}
           </BlockContent>
           {isJob(type) && (
             <>
@@ -177,17 +175,9 @@ export function PageSettingsGeneral({
           )}
 
           <div className="flex justify-end">
-            <ButtonLegacy
-              dataTestId="submit-button"
-              className="btn--no-min-w"
-              size={ButtonLegacySize.LARGE}
-              style={ButtonLegacyStyle.BASIC}
-              type="submit"
-              disabled={!formState.isValid}
-              loading={loading}
-            >
+            <Button type="submit" size="lg" disabled={!formState.isValid}>
               Save
-            </ButtonLegacy>
+            </Button>
           </div>
         </form>
       </div>
