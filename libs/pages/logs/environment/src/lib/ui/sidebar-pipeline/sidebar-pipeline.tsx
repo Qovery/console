@@ -1,10 +1,10 @@
 import { type DeploymentStageWithServicesStatuses } from 'qovery-typescript-axios'
-import { type ApplicationEntity, type DatabaseEntity } from '@qovery/shared/interfaces'
+import { type AnyService } from '@qovery/domains/services/data-access'
 import { LoaderSpinner } from '@qovery/shared/ui'
 import SidebarPipelineItem from '../sidebar-pipeline-item/sidebar-pipeline-item'
 
 export interface SidebarPipelineProps {
-  services: Array<ApplicationEntity | DatabaseEntity>
+  services: AnyService[]
   serviceId?: string
   versionId?: string
   statusStages?: DeploymentStageWithServicesStatuses[]

@@ -1,14 +1,11 @@
 import equal from 'fast-deep-equal'
 import { type DeploymentStageWithServicesStatuses, type EnvironmentStatus } from 'qovery-typescript-axios'
 import { useCallback, useState } from 'react'
-import { useSelector } from 'react-redux'
 import { Route, Routes, matchPath, useLocation, useParams } from 'react-router-dom'
 import useWebSocket from 'react-use-websocket'
-import { selectApplicationsEntitiesByEnvId } from '@qovery/domains/application'
-import { selectDatabasesEntitiesByEnvId } from '@qovery/domains/database'
 import { useFetchEnvironment } from '@qovery/domains/environment'
+import { useServices } from '@qovery/domains/services/feature'
 import { useAuth } from '@qovery/shared/auth'
-import { type ApplicationEntity, type DatabaseEntity } from '@qovery/shared/interfaces'
 import {
   DEPLOYMENT_LOGS_URL,
   DEPLOYMENT_LOGS_VERSION_URL,
@@ -17,7 +14,6 @@ import {
 } from '@qovery/shared/routes'
 import { Icon, IconAwesomeEnum } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { type RootState } from '@qovery/state/store'
 import DeploymentLogsFeature from './feature/deployment-logs-feature/deployment-logs-feature'
 import PodLogsFeature from './feature/pod-logs-feature/pod-logs-feature'
 import { ServiceStageIdsProvider } from './feature/service-stage-ids-context/service-stage-ids-context'
@@ -50,14 +46,7 @@ export function PageEnvironmentLogs() {
   const matchServiceId = matchDeploymentVersion || matchServiceLogs || matchDeployment
   const serviceId = matchServiceId?.params.serviceId !== ':serviceId' ? matchServiceId?.params.serviceId : undefined
 
-  const applications = useSelector<RootState, ApplicationEntity[]>(
-    (state) => selectApplicationsEntitiesByEnvId(state, environmentId),
-    equal
-  )
-  const databases = useSelector<RootState, DatabaseEntity[]>(
-    (state) => selectDatabasesEntitiesByEnvId(state, environmentId),
-    equal
-  )
+  const { data: services } = useServices({ environmentId })
 
   const [statusStages, setStatusStages] = useState<DeploymentStageWithServicesStatuses[]>()
   const [environmentStatus, setEnvironmentStatus] = useState<EnvironmentStatus>()
@@ -86,7 +75,7 @@ export function PageEnvironmentLogs() {
     <div className="flex h-full">
       <ServiceStageIdsProvider>
         <Sidebar
-          services={[...applications, ...databases]}
+          services={services}
           statusStages={statusStages}
           environmentStatus={environmentStatus}
           versionId={versionId}

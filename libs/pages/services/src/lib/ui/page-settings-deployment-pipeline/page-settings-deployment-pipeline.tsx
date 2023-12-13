@@ -5,7 +5,7 @@ import {
 } from 'qovery-typescript-axios'
 import { type Dispatch, Fragment, type SetStateAction } from 'react'
 import { DragDropContext, Draggable, type DropResult, Droppable } from 'react-beautiful-dnd'
-import { type ApplicationEntity, type DatabaseEntity } from '@qovery/shared/interfaces'
+import { type AnyService } from '@qovery/domains/services/data-access'
 import {
   BadgeDeploymentOrder,
   ButtonIcon,
@@ -32,7 +32,7 @@ export interface PageSettingsDeploymentPipelineProps {
   menuStage: (stage: DeploymentStageResponse, stages?: DeploymentStageResponse[]) => MenuData
   onAddStage: () => void
   stages?: DeploymentStageResponse[]
-  services?: (DatabaseEntity | ApplicationEntity)[]
+  services?: AnyService[]
   cloudProvider?: CloudProviderEnum
 }
 
@@ -103,7 +103,7 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
           </ButtonLegacy>
         </div>
         <div className="h-full overflow-x-scroll">
-          {!stages ? (
+          {!stages && !services ? (
             <div data-testid="stages-loader" className="flex justify-center max-w-4xl">
               <LoaderSpinner className="w-4 mt-5" />
             </div>
@@ -175,7 +175,6 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
                                         provided={provided}
                                         snapshot={snapshot}
                                         services={services}
-                                        cloudProvider={cloudProvider}
                                       />
                                     )
                                   }

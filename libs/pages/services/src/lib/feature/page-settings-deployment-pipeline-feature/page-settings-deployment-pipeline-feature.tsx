@@ -1,18 +1,15 @@
 import { type CloudProviderEnum, type DeploymentStageResponse } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { toast as toastAction } from 'react-hot-toast'
-import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { selectApplicationsEntitiesByEnvId } from '@qovery/domains/application'
-import { selectDatabasesEntitiesByEnvId } from '@qovery/domains/database'
 import {
   useAddServiceToDeploymentStage,
   useDeleteEnvironmentDeploymentStage,
   useFetchDeploymentStageList,
   useFetchEnvironment,
 } from '@qovery/domains/environment'
+import { useServices } from '@qovery/domains/services/feature'
 import { Icon, IconAwesomeEnum, useModal, useModalConfirmation } from '@qovery/shared/ui'
-import { type RootState } from '@qovery/state/store'
 import PageSettingsDeploymentPipeline from '../../ui/page-settings-deployment-pipeline/page-settings-deployment-pipeline'
 import StageModalFeature from './stage-modal-feature/stage-modal-feature'
 import StageOrderModalFeature from './stage-order-modal-feature/stage-order-modal-feature'
@@ -26,15 +23,7 @@ export function PageSettingsDeploymentPipelineFeature() {
   const { projectId = '', environmentId = '' } = useParams()
 
   const { data: environment } = useFetchEnvironment(projectId, environmentId)
-
-  const applications = useSelector(
-    (state: RootState) => selectApplicationsEntitiesByEnvId(state, environmentId),
-    (a, b) => a.length === b.length
-  )
-  const databases = useSelector(
-    (state: RootState) => selectDatabasesEntitiesByEnvId(state, environmentId),
-    (a, b) => a.length === b.length
-  )
+  const { data: services } = useServices({ environmentId })
 
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
@@ -108,7 +97,7 @@ export function PageSettingsDeploymentPipelineFeature() {
       stages={stages}
       setStages={setStages}
       onSubmit={onSubmit}
-      services={[...applications, ...databases]}
+      services={services}
       cloudProvider={environment?.cloud_provider.provider as CloudProviderEnum}
       onAddStage={() => {
         openModal({

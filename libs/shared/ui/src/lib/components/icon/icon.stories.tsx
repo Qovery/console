@@ -117,6 +117,12 @@ export const ManyItems: Story = {
         <button onClick={() => copyName(IconEnum.CHILDREN_ARROW)}>
           <Icon name={IconEnum.CHILDREN_ARROW} />
         </button>
+        <button onClick={() => copyName(IconEnum.HELM)}>
+          <Icon name={IconEnum.HELM} />
+        </button>
+        <button onClick={() => copyName(IconEnum.HELM_OFFICIAL)}>
+          <Icon name={IconEnum.HELM_OFFICIAL} />
+        </button>
       </div>
       <div className="max-w-[550px] w-full p-3 rounded bg-neutral-150 border-solid border-x border-y border-neutral-250 flex flex-wrap gap-x-2 justify-center mb-6 mx-auto">
         <h2 className="w-full mb-2">FontAwesome Icons</h2>

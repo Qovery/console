@@ -1,10 +1,11 @@
-import { BuildModeEnum, type CloudProviderEnum } from 'qovery-typescript-axios'
-import { IconEnum, ServiceTypeEnum } from '@qovery/shared/enums'
+import { BuildModeEnum } from 'qovery-typescript-axios'
+import { match } from 'ts-pattern'
+import { type AnyService } from '@qovery/domains/services/data-access'
+import { IconEnum } from '@qovery/shared/enums'
 import Icon from '../icon/icon'
 
 export interface ServiceIconProps {
-  serviceType: ServiceTypeEnum
-  cloudProvider?: CloudProviderEnum
+  service: AnyService
   buildMode?: BuildModeEnum
   size?: string
   padding?: string
@@ -12,36 +13,23 @@ export interface ServiceIconProps {
   notRounded?: boolean
 }
 
-export const iconByService = (
-  serviceType: ServiceTypeEnum,
-  cloudProvider?: CloudProviderEnum,
-  buildMode?: BuildModeEnum
-) => {
-  switch (serviceType) {
-    case ServiceTypeEnum.APPLICATION:
-      return (
-        <Icon
-          name={buildMode === BuildModeEnum.DOCKER ? IconEnum.DOCKER : IconEnum.BUILDPACKS}
-          className={`w-full h-full ${buildMode === BuildModeEnum.DOCKER ? 'relative left-[1px]' : ''}`}
-        />
-      )
-    case ServiceTypeEnum.CONTAINER:
-      return <Icon name={IconEnum.CONTAINER} className="w-full h-full" />
-    case ServiceTypeEnum.CRON_JOB:
-      return <Icon name={IconEnum.CRON_JOB} className="w-full h-full" />
-    case ServiceTypeEnum.LIFECYCLE_JOB:
-      return <Icon name={IconEnum.LIFECYCLE_JOB} className="w-full h-full" />
-    case ServiceTypeEnum.DATABASE:
-      return <Icon name={IconEnum.DATABASE} className="w-full h-full" />
-
-    default:
-      return serviceType
-  }
+export const iconByService = (service: AnyService) => {
+  return match(service)
+    .with({ serviceType: 'APPLICATION' }, (application) => (
+      <Icon
+        name={application.build_mode === BuildModeEnum.DOCKER ? IconEnum.DOCKER : IconEnum.BUILDPACKS}
+        className={`w-full h-full ${application.build_mode === BuildModeEnum.DOCKER ? 'relative left-[1px]' : ''}`}
+      />
+    ))
+    .with({ serviceType: 'CONTAINER' }, () => <Icon name={IconEnum.CONTAINER} className="w-full h-full" />)
+    .with({ job_type: 'CRON' }, () => <Icon name={IconEnum.CRON_JOB} className="w-full h-full" />)
+    .with({ job_type: 'LIFECYCLE' }, () => <Icon name={IconEnum.LIFECYCLE_JOB} className="w-full h-full" />)
+    .with({ serviceType: 'DATABASE' }, () => <Icon name={IconEnum.DATABASE} className="w-full h-full" />)
+    .with({ serviceType: 'HELM' }, () => <Icon name={IconEnum.HELM} className="w-full h-full" />)
+    .exhaustive()
 }
 
-export function ServiceIcon(props: ServiceIconProps) {
-  const { serviceType, buildMode, cloudProvider, notRounded, size = '28', padding = '1', className = '' } = props
-
+export function ServiceIcon({ service, notRounded, size = '28', padding = '1', className = '' }: ServiceIconProps) {
   return (
     <div
       className={`flex items-center justify-center shrink-0 
@@ -53,9 +41,7 @@ export function ServiceIcon(props: ServiceIconProps) {
         padding: `${padding}px`,
       }}
     >
-      <span className={`w-full h-full ${!notRounded ? 'p-1' : ''}`}>
-        {iconByService(serviceType, cloudProvider, buildMode)}
-      </span>
+      <span className={`w-full h-full ${!notRounded ? 'p-1' : ''}`}>{iconByService(service)}</span>
     </div>
   )
 }
