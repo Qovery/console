@@ -1,5 +1,6 @@
 import { type ServiceLogResponseDto } from 'qovery-ws-typescript-axios'
 import { useMemo, useState } from 'react'
+import { AnyService } from '@qovery/domains/services/data-access'
 import { useRunningStatus } from '@qovery/domains/services/feature'
 import { LayoutLogs } from '@qovery/shared/console-shared'
 import { type ApplicationEntity, type DatabaseEntity, type LoadingStatus } from '@qovery/shared/interfaces'
@@ -11,7 +12,7 @@ export interface PodLogsProps {
   logs: Array<ServiceLogResponseDto & { id: number }>
   pauseStatusLogs: boolean
   setPauseStatusLogs: (pause: boolean) => void
-  service?: ApplicationEntity | DatabaseEntity
+  service?: AnyService
   enabledNginx?: boolean
   setEnabledNginx?: (debugMode: boolean) => void
   showPreviousLogs?: boolean
@@ -67,7 +68,10 @@ export function PodLogs({
   isProgressing,
 }: PodLogsProps) {
   const [filter, setFilter] = useState<TableFilterProps[]>([])
-  const publiclyExposedPort = Boolean((service as ApplicationEntity)?.ports?.find((port) => port.publicly_accessible))
+  const publiclyExposedPort =
+    (service?.serviceType === 'APPLICATION' || service?.serviceType === 'CONTAINER') &&
+    Boolean(service?.ports?.find((port) => port.publicly_accessible))
+
   const { data: serviceRunningStatus } = useRunningStatus({
     environmentId: service?.environment?.id,
     serviceId: service?.id,

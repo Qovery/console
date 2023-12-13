@@ -5,13 +5,9 @@ import {
 } from 'qovery-typescript-axios'
 import { useMemo } from 'react'
 import { Link, useParams } from 'react-router-dom'
+import { type AnyService } from '@qovery/domains/services/data-access'
 import { type ErrorLogsProps, LayoutLogs } from '@qovery/shared/console-shared'
-import {
-  type ApplicationEntity,
-  type DatabaseEntity,
-  type DeploymentService,
-  type LoadingStatus,
-} from '@qovery/shared/interfaces'
+import { type DeploymentService, type LoadingStatus } from '@qovery/shared/interfaces'
 import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { StatusChip } from '@qovery/shared/ui'
 import { dateFullFormat } from '@qovery/shared/util-dates'
@@ -27,7 +23,7 @@ export interface DeploymentLogsProps {
   hideDeploymentLogs?: boolean
   serviceDeploymentStatus?: ServiceDeploymentStatusEnum
   dataDeploymentHistory?: DeploymentHistoryEnvironment[]
-  service?: ApplicationEntity | DatabaseEntity
+  service?: AnyService
   isDeploymentProgressing?: boolean
 }
 

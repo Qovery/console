@@ -5,18 +5,14 @@ import {
   type Status,
 } from 'qovery-typescript-axios'
 import { memo, useCallback, useContext, useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import useWebSocket from 'react-use-websocket'
 import { match } from 'ts-pattern'
-import { selectApplicationById } from '@qovery/domains/application'
-import { selectDatabaseById } from '@qovery/domains/database'
 import { useEnvironmentDeploymentHistory } from '@qovery/domains/environment'
-import { useDeploymentStatus } from '@qovery/domains/services/feature'
+import { useDeploymentStatus, useService } from '@qovery/domains/services/feature'
 import { useAuth } from '@qovery/shared/auth'
-import { type ApplicationEntity, type DatabaseEntity, type LoadingStatus } from '@qovery/shared/interfaces'
+import { type LoadingStatus } from '@qovery/shared/interfaces'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { type RootState } from '@qovery/state/store'
 import _DeploymentLogs from '../../ui/deployment-logs/deployment-logs'
 import { ServiceStageIdsContext } from '../service-stage-ids-context/service-stage-ids-context'
 
@@ -61,6 +57,13 @@ export function getServiceStatuesById(services?: DeploymentStageWithServicesStat
           }
         }
       }
+      if (service.helms && service.helms?.length > 0) {
+        for (const helms of service.helms) {
+          if (helms.id === serviceId) {
+            return helms
+          }
+        }
+      }
     }
   }
   return null
@@ -70,10 +73,7 @@ export function DeploymentLogsFeature({ environment, statusStages }: DeploymentL
   const { organizationId = '', projectId = '', environmentId = '', serviceId = '', versionId = '' } = useParams()
   const { stageId } = useContext(ServiceStageIdsContext)
 
-  const application = useSelector<RootState, ApplicationEntity | undefined>((state) =>
-    selectApplicationById(state, serviceId)
-  )
-  const database = useSelector<RootState, DatabaseEntity | undefined>((state) => selectDatabaseById(state, serviceId))
+  const { data: service } = useService({ environmentId, serviceId })
   const { data: deploymentHistory } = useEnvironmentDeploymentHistory(projectId, environmentId)
   const { data: deploymentStatus } = useDeploymentStatus({ environmentId, serviceId })
 
@@ -84,9 +84,7 @@ export function DeploymentLogsFeature({ environment, statusStages }: DeploymentL
   const [pauseStatusLogs, setPauseStatusLogs] = useState<boolean>(false)
 
   useDocumentTitle(
-    `Deployment logs ${
-      loadingStatusDeploymentLogs === 'loaded' ? `- ${application?.name || database?.name}` : '- Loading...'
-    }`
+    `Deployment logs ${loadingStatusDeploymentLogs === 'loaded' ? `- ${service?.name}` : '- Loading...'}`
   )
 
   const { getAccessTokenSilently } = useAuth()
@@ -197,7 +195,7 @@ export function DeploymentLogsFeature({ environment, statusStages }: DeploymentL
       pauseStatusLogs={pauseStatusLogs}
       setPauseStatusLogs={setPauseStatusLogs}
       serviceDeploymentStatus={(getServiceStatuesById(statusStages, serviceId) as Status)?.service_deployment_status}
-      service={application || database}
+      service={service}
       hideDeploymentLogs={hideDeploymentLogsBoolean}
       dataDeploymentHistory={deploymentHistory}
       isDeploymentProgressing={isDeploymentProgressing}
