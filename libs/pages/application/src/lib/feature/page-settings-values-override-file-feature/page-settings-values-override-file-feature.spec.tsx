@@ -6,7 +6,7 @@ import PageSettingsValuesOverrideFileFeature from './page-settings-values-overri
 
 import SpyInstance = jest.SpyInstance
 
-const useHelmServiceSpy: SpyInstance = jest.spyOn(servicesDomains, 'useHelmService')
+const useServiceSpy: SpyInstance = jest.spyOn(servicesDomains, 'useService')
 const useEditServiceSpy: SpyInstance = jest.spyOn(servicesDomains, 'useEditService')
 
 const helm = helmFactoryMock(1)[0]
@@ -18,7 +18,7 @@ jest.mock('react-router-dom', () => ({
 
 describe('PageSettingsPortsFeature', () => {
   beforeEach(() => {
-    useHelmServiceSpy.mockReturnValue({
+    useServiceSpy.mockReturnValue({
       data: helm,
     })
     useEditServiceSpy.mockReturnValue({
