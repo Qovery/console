@@ -4,14 +4,14 @@ import { match } from 'ts-pattern'
 import { GitBranchSettings, GitProviderSetting, GitRepositorySetting } from '@qovery/domains/organizations/feature'
 import { type HelmValuesFileData, ValuesOverrideFilesSetting } from '@qovery/domains/service-helm/feature'
 import { refactoHelm } from '@qovery/domains/services/data-access'
-import { useEditService, useHelmService } from '@qovery/domains/services/feature'
+import { useEditService, useService } from '@qovery/domains/services/feature'
 import { Button, InputText } from '@qovery/shared/ui'
 import { getGitTokenValue, guessGitProvider } from '@qovery/shared/util-git'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
 
 export function PageSettingsValuesOverrideFileFeature() {
   const { environmentId = '', applicationId = '' } = useParams()
-  const { data: service } = useHelmService({ serviceId: applicationId })
+  const { data: service } = useService({ serviceId: applicationId, serviceType: 'HELM' })
   const { mutate: editService, isLoading: isLoadingEditService } = useEditService({ environmentId })
 
   const valuesOverrideFile = service?.values_override.file
