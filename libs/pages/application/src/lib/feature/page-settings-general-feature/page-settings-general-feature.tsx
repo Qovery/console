@@ -7,7 +7,7 @@ import { type Application, type Container, type Helm, type Job } from '@qovery/d
 import { useEditService, useService } from '@qovery/domains/services/feature'
 import { isHelmGitSource, isHelmRepositorySource, isJobGitSource } from '@qovery/shared/enums'
 import { toastError } from '@qovery/shared/ui'
-import { getGitTokenValue, guessGitProvider } from '@qovery/shared/util-git'
+import { getGitTokenValue } from '@qovery/shared/util-git'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
 import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-general'
 
@@ -134,8 +134,11 @@ export const handleHelmSubmit = (data: FieldValues, helm: Helm) => {
     ...helm,
     name: data['name'],
     description: data['description'],
-    auto_deploy: data['auto_deploy'],
     source,
+    allow_cluster_wide_resources: data['auto_preview'],
+    arguments: JSON.parse(data['arguments']),
+    timeout_sec: parseInt(data['timeout_sec'], 10),
+    auto_deploy: data['auto_deploy'] ?? false,
   }
 }
 
@@ -171,9 +174,6 @@ export function PageSettingsGeneralFeature() {
           ? JSON.stringify((service as Application).arguments)
           : '',
       source_provider: isHelmRepositorySource((service as Helm).source) ? 'HELM_REPOSITORY' : 'GIT',
-      provider: helmGit?.url && guessGitProvider(helmGit.url),
-      branch: helmGit?.branch,
-      root_path: helmGit?.root_path,
       repository: helmRepository?.repository?.id ?? helmGit?.url,
       chart_name: helmRepository?.chart_name,
       chart_version: helmRepository?.chart_version,

@@ -2,7 +2,7 @@ import { BuildModeEnum, BuildPackLanguageEnum, type Organization } from 'qovery-
 import { type FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { match } from 'ts-pattern'
-import { SourceSetting } from '@qovery/domains/service-helm/feature'
+import { DeploymentSetting, SourceSetting } from '@qovery/domains/service-helm/feature'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { AutoDeploySetting, GeneralSetting } from '@qovery/domains/services/feature'
 import {
@@ -151,14 +151,20 @@ export function PageSettingsGeneral({
               </>
             ))
             .with({ serviceType: 'HELM' }, () => (
-              <BlockContent title="Source">
-                <SourceSetting disabled />
-                {watchFieldProvider === 'GIT' && (
-                  <div className="mt-3">
-                    <EditGitRepositorySettingsFeature withBlockWrapper={false} />
-                  </div>
-                )}
-              </BlockContent>
+              <>
+                <BlockContent title="Source">
+                  <SourceSetting disabled />
+                  {watchFieldProvider === 'GIT' && (
+                    <div className="mt-3">
+                      <EditGitRepositorySettingsFeature withBlockWrapper={false} />
+                    </div>
+                  )}
+                </BlockContent>
+                <BlockContent title="Deploy">
+                  <DeploymentSetting />
+                  {watchFieldProvider === 'GIT' && <AutoDeploySetting source="GIT" className="mt-5" />}
+                </BlockContent>
+              </>
             ))
             // TODO: fix unsafe function
             .run()}

@@ -39,7 +39,7 @@ export function EditGitRepositorySettingsFeature({ withBlockWrapper = true }: Ed
       setValue('provider', upperCaseFirstLetter(gitRepository?.provider))
       setValue('repository', gitRepository?.name ?? '')
       setValue('branch', gitRepository?.branch ?? '')
-      setValue('root_path', undefined)
+      setValue('root_path', gitRepository?.root_path ?? '/')
       setValue('git_token_name', gitRepository?.git_token_name ?? undefined)
     }
   }, [gitDisabled, gitRepository, setValue])

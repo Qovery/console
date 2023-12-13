@@ -184,6 +184,7 @@ export function refactoHelm(helm: Helm) {
     allow_cluster_wide_resources: helm.allow_cluster_wide_resources,
     arguments: helm.arguments,
     values_override: helm.values_override,
+    timeout_sec: helm.timeout_sec,
     source,
   }
 
