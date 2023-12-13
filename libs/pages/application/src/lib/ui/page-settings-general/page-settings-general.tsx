@@ -166,8 +166,7 @@ export function PageSettingsGeneral({
                 </BlockContent>
               </>
             ))
-            // TODO: fix unsafe function
-            .run()}
+            .otherwise(() => null)}
 
           <div className="flex justify-end">
             <Button type="submit" size="lg" loading={isLoadingEditService} disabled={!formState.isValid}>

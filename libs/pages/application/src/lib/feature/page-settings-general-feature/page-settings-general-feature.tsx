@@ -128,14 +128,14 @@ export const handleHelmSubmit = (data: FieldValues, helm: Helm) => {
         chart_version: data['chart_version'],
       },
     }))
-    .run()
+    .otherwise(() => undefined)
 
   return {
     ...helm,
     name: data['name'],
     description: data['description'],
     source,
-    allow_cluster_wide_resources: data['auto_preview'],
+    allow_cluster_wide_resources: data['allow_cluster_wide_resources'],
     arguments: JSON.parse(data['arguments']),
     timeout_sec: parseInt(data['timeout_sec'], 10),
     auto_deploy: data['auto_deploy'] ?? false,
@@ -173,7 +173,7 @@ export function PageSettingsGeneralFeature() {
         (service as Application)?.arguments && (service as Application)?.arguments?.length
           ? JSON.stringify((service as Application).arguments)
           : '',
-      source_provider: isHelmRepositorySource((service as Helm).source) ? 'HELM_REPOSITORY' : 'GIT',
+      source_provider: isHelmRepositorySource((service as Helm)?.source) ? 'HELM_REPOSITORY' : 'GIT',
       repository: helmRepository?.repository?.id ?? helmGit?.url,
       chart_name: helmRepository?.chart_name,
       chart_version: helmRepository?.chart_version,
@@ -183,44 +183,41 @@ export function PageSettingsGeneralFeature() {
   const onSubmit = methods.handleSubmit((data) => {
     if (!service) return
 
-    return (
-      match(service)
-        .with({ serviceType: 'APPLICATION' }, (service) => {
-          const application = handleGitApplicationSubmit(data, service)
+    return match(service)
+      .with({ serviceType: 'APPLICATION' }, (service) => {
+        const application = handleGitApplicationSubmit(data, service)
+        editService({
+          serviceId: applicationId,
+          payload: application,
+        })
+      })
+      .with({ serviceType: 'JOB' }, (service) => {
+        const job = handleJobSubmit(data, service)
+        editService({
+          serviceId: applicationId,
+          payload: job,
+        })
+      })
+      .with({ serviceType: 'CONTAINER' }, (service) => {
+        try {
+          const container = handleContainerSubmit(data, service)
           editService({
             serviceId: applicationId,
-            payload: application,
+            payload: container,
           })
+        } catch (e: unknown) {
+          toastError(e as Error, 'Invalid CMD array')
+          return
+        }
+      })
+      .with({ serviceType: 'HELM' }, (service) => {
+        const helm = handleHelmSubmit(data, service)
+        editService({
+          serviceId: applicationId,
+          payload: helm,
         })
-        .with({ serviceType: 'JOB' }, (service) => {
-          const job = handleJobSubmit(data, service)
-          editService({
-            serviceId: applicationId,
-            payload: job,
-          })
-        })
-        .with({ serviceType: 'CONTAINER' }, (service) => {
-          try {
-            const container = handleContainerSubmit(data, service)
-            editService({
-              serviceId: applicationId,
-              payload: container,
-            })
-          } catch (e: unknown) {
-            toastError(e as Error, 'Invalid CMD array')
-            return
-          }
-        })
-        .with({ serviceType: 'HELM' }, (service) => {
-          const helm = handleHelmSubmit(data, service)
-          editService({
-            serviceId: applicationId,
-            payload: helm,
-          })
-        })
-        // TODO: fix unsafe function
-        .run()
-    )
+      })
+      .otherwise(() => undefined)
   })
 
   return (
