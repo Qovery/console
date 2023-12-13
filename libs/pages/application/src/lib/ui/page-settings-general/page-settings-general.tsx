@@ -2,6 +2,7 @@ import { BuildModeEnum, BuildPackLanguageEnum, type Organization } from 'qovery-
 import { type FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { match } from 'ts-pattern'
+import { SourceSetting } from '@qovery/domains/service-helm/feature'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { AutoDeploySetting, GeneralSetting } from '@qovery/domains/services/feature'
 import {
@@ -40,6 +41,7 @@ export function PageSettingsGeneral({
   const { control, formState, watch } = useFormContext()
   const watchServiceType = watch('serviceType')
   const watchBuildMode = watch('build_mode')
+  const watchFieldProvider = watch('source_provider')
 
   const blockContentBuildDeploy = (
     <BlockContent classNameContent="gap-3 flex flex-col" title="Build & deploy">
@@ -148,7 +150,16 @@ export function PageSettingsGeneral({
                 </BlockContent>
               </>
             ))
-            .with({ serviceType: 'HELM' }, () => <p>helm</p>)
+            .with({ serviceType: 'HELM' }, () => (
+              <BlockContent title="Source">
+                <SourceSetting disabled />
+                {watchFieldProvider === 'GIT' && (
+                  <div className="mt-3">
+                    <EditGitRepositorySettingsFeature withBlockWrapper={false} />
+                  </div>
+                )}
+              </BlockContent>
+            ))
             // TODO: fix unsafe function
             .run()}
 

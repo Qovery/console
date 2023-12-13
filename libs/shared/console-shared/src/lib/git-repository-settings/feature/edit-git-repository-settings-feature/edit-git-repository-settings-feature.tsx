@@ -1,31 +1,27 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { selectApplicationById } from '@qovery/domains/application'
-import { isJob, isJobGitSource } from '@qovery/shared/enums'
-import { type ApplicationEntity } from '@qovery/shared/interfaces'
+import { match } from 'ts-pattern'
+import { useService } from '@qovery/domains/services/feature'
+import { isHelmGitSource, isJobGitSource } from '@qovery/shared/enums'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
-import { type RootState } from '@qovery/state/store'
 import GitRepositorySettings from '../../ui/git-repository-settings/git-repository-settings'
 
-export function EditGitRepositorySettingsFeature() {
+export interface EditGitRepositorySettingsFeatureProps {
+  withBlockWrapper?: boolean
+}
+
+export function EditGitRepositorySettingsFeature({ withBlockWrapper = true }: EditGitRepositorySettingsFeatureProps) {
   const { applicationId = '' } = useParams()
+  const { data: service } = useService({ serviceId: applicationId })
 
-  const application = useSelector<RootState, ApplicationEntity | undefined>(
-    (state) => selectApplicationById(state, applicationId),
-    (a, b) =>
-      JSON.stringify(a?.git_repository) === JSON.stringify(b?.git_repository) ||
-      (isJobGitSource(a?.source) &&
-        isJobGitSource(b?.source) &&
-        JSON.stringify(a?.source?.docker?.git_repository) === JSON.stringify(b?.source?.docker?.git_repository))
-  )
-
-  const getGitRepositoryFromApplication = useCallback(() => {
-    return isJob(application) && isJobGitSource(application?.source)
-      ? application?.source?.docker?.git_repository
-      : application?.git_repository
-  }, [application])
+  const gitRepository = match(service)
+    .with({ serviceType: 'JOB' }, (job) => (isJobGitSource(job.source) ? job.source.docker?.git_repository : undefined))
+    .with({ serviceType: 'APPLICATION' }, (application) => application.git_repository)
+    .with({ serviceType: 'HELM' }, (helm) =>
+      isHelmGitSource(helm.source) ? helm.source?.git?.git_repository : undefined
+    )
+    .otherwise(() => undefined)
 
   const { setValue } = useFormContext<{
     provider: string
@@ -39,7 +35,6 @@ export function EditGitRepositorySettingsFeature() {
 
   useEffect(() => {
     // Set default disabled values
-    const gitRepository = getGitRepositoryFromApplication()
     if (gitDisabled) {
       setValue('provider', upperCaseFirstLetter(gitRepository?.provider))
       setValue('repository', gitRepository?.name ?? '')
@@ -47,13 +42,13 @@ export function EditGitRepositorySettingsFeature() {
       setValue('root_path', undefined)
       setValue('git_token_name', gitRepository?.git_token_name ?? undefined)
     }
-  }, [gitDisabled, getGitRepositoryFromApplication, setValue])
+  }, [gitDisabled, gitRepository, setValue])
 
   // Submit for modal with the dispatchs authProvider
   const editGitSettings = () => {
     setGitDisabled(false)
     // Reset fields except provider
-    setValue('provider', getGitRepositoryFromApplication()?.provider ?? '')
+    setValue('provider', gitRepository?.provider ?? '')
     setValue('repository', undefined)
   }
 
@@ -61,8 +56,9 @@ export function EditGitRepositorySettingsFeature() {
     <GitRepositorySettings
       gitDisabled={gitDisabled}
       editGitSettings={editGitSettings}
-      currentProvider={getGitRepositoryFromApplication()?.provider}
-      currentRepository={getGitRepositoryFromApplication()?.name}
+      currentProvider={gitRepository?.provider}
+      currentRepository={gitRepository?.name}
+      withBlockWrapper={withBlockWrapper}
     />
   )
 }

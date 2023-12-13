@@ -1,13 +1,13 @@
 import { BuildModeEnum, BuildPackLanguageEnum } from 'qovery-typescript-axios'
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
-import { match } from 'ts-pattern'
+import { P, match } from 'ts-pattern'
 import { useOrganization } from '@qovery/domains/organizations/feature'
 import { type Application, type Container, type Helm, type Job } from '@qovery/domains/services/data-access'
 import { useEditService, useService } from '@qovery/domains/services/feature'
-import { isJobGitSource } from '@qovery/shared/enums'
+import { isHelmGitSource, isHelmRepositorySource, isJobGitSource } from '@qovery/shared/enums'
 import { toastError } from '@qovery/shared/ui'
-import { getGitTokenValue } from '@qovery/shared/util-git'
+import { getGitTokenValue, guessGitProvider } from '@qovery/shared/util-git'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
 import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-general'
 
@@ -104,11 +104,38 @@ export const handleJobSubmit = (data: FieldValues, job: Job) => {
 }
 
 export const handleHelmSubmit = (data: FieldValues, helm: Helm) => {
+  const source = match(data['source_provider'])
+    .with('GIT', () => {
+      const gitToken = getGitTokenValue(data['provider'] ?? '')
+
+      return {
+        git: {
+          git_repository: {
+            url: buildGitRepoUrl(gitToken?.type ?? data['provider'] ?? '', data['repository']),
+            branch: data['branch'],
+            root_path: data['root_path'],
+            git_token_id: gitToken?.id,
+          },
+        },
+      }
+    })
+    .with('HELM_REPOSITORY', () => ({
+      repository: {
+        repository: {
+          id: data['repository'],
+        },
+        chart_name: data['chart_name'],
+        chart_version: data['chart_version'],
+      },
+    }))
+    .run()
+
   return {
     ...helm,
     name: data['name'],
     description: data['description'],
     auto_deploy: data['auto_deploy'],
+    source,
   }
 }
 
@@ -118,6 +145,13 @@ export function PageSettingsGeneralFeature() {
   const { data: organization } = useOrganization({ organizationId })
   const { data: service } = useService({ environmentId, serviceId: applicationId })
   const { mutate: editService, isLoading: isLoadingEditService } = useEditService({ environmentId })
+
+  const helmRepository = match(service)
+    .with({ serviceType: 'HELM', source: P.when(isHelmRepositorySource) }, ({ source }) => source.repository)
+    .otherwise(() => undefined)
+  const helmGit = match(service)
+    .with({ serviceType: 'HELM', source: P.when(isHelmGitSource) }, ({ source }) => source.git?.git_repository)
+    .otherwise(() => undefined)
 
   const methods = useForm({
     mode: 'onChange',
@@ -136,6 +170,13 @@ export function PageSettingsGeneralFeature() {
         (service as Application)?.arguments && (service as Application)?.arguments?.length
           ? JSON.stringify((service as Application).arguments)
           : '',
+      source_provider: isHelmRepositorySource((service as Helm).source) ? 'HELM_REPOSITORY' : 'GIT',
+      provider: helmGit?.url && guessGitProvider(helmGit.url),
+      branch: helmGit?.branch,
+      root_path: helmGit?.root_path,
+      repository: helmRepository?.repository?.id ?? helmGit?.url,
+      chart_name: helmRepository?.chart_name,
+      chart_version: helmRepository?.chart_version,
     },
   })
 

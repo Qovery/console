@@ -3,12 +3,10 @@ import {
   type ApplicationGitRepositoryRequest,
   DatabaseModeEnum,
   type HelmRequest,
-  type HelmResponseAllOfSourceOneOf,
-  type HelmResponseAllOfSourceOneOf1,
   type ServiceStorageStorageInner,
 } from 'qovery-typescript-axios'
-import { match } from 'ts-pattern'
-import { isJobGitSource } from '@qovery/shared/enums'
+import { P, match } from 'ts-pattern'
+import { isHelmGitSource, isHelmRepositorySource, isJobGitSource } from '@qovery/shared/enums'
 import { type Application, type Container, type Database, type Helm, type Job } from '../domains-services-data-access'
 
 /* 
@@ -145,30 +143,36 @@ export function refactoDatabase(database: Database) {
 }
 
 export function refactoHelm(helm: Helm) {
-  const sourceProvider = (helm?.source as HelmResponseAllOfSourceOneOf).git ? 'GIT' : 'HELM_REPOSITORY'
-
-  const source = match(sourceProvider)
-    .with('GIT', () => {
-      const gitRepository = (helm?.source as HelmResponseAllOfSourceOneOf).git?.git_repository
-      return {
-        git_repository: {
-          url: gitRepository?.url ?? '',
-          branch: gitRepository?.branch,
-          root_path: gitRepository?.root_path,
-          git_token_id: gitRepository?.git_token_id,
-        },
+  const source = match(helm)
+    .with(
+      {
+        source: P.when(isHelmGitSource),
+      },
+      ({ source: { git } }) => {
+        return {
+          git_repository: {
+            url: git?.git_repository?.url ?? '',
+            branch: git?.git_repository?.branch,
+            root_path: git?.git_repository?.root_path,
+            git_token_id: git?.git_repository?.git_token_id,
+          },
+        }
       }
-    })
-    .with('HELM_REPOSITORY', () => {
-      const helmRepository = (helm?.source as HelmResponseAllOfSourceOneOf1).repository
-      return {
-        helm_repository: {
-          repository: helmRepository?.repository?.id,
-          chart_name: helmRepository?.chart_name,
-          chart_version: helmRepository?.chart_version,
-        },
+    )
+    .with(
+      {
+        source: P.when(isHelmRepositorySource),
+      },
+      ({ source: { repository } }) => {
+        return {
+          helm_repository: {
+            repository: repository?.repository?.id,
+            chart_name: repository?.chart_name,
+            chart_version: repository?.chart_version,
+          },
+        }
       }
-    })
+    )
     .exhaustive()
 
   const helmRequestPayload: HelmRequest = {
