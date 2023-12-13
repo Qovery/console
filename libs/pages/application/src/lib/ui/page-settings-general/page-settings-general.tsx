@@ -1,7 +1,8 @@
 import { BuildModeEnum, BuildPackLanguageEnum, type Organization } from 'qovery-typescript-axios'
 import { type FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { type ServiceType } from '@qovery/domains/services/data-access'
+import { match } from 'ts-pattern'
+import { type AnyService } from '@qovery/domains/services/data-access'
 import { AutoDeploySetting, GeneralSetting } from '@qovery/domains/services/feature'
 import {
   EditGitRepositorySettingsFeature,
@@ -9,21 +10,14 @@ import {
   GeneralContainerSettings,
   JobGeneralSettings,
 } from '@qovery/shared/console-shared'
-import { ServiceTypeEnum, isApplication, isContainer, isCronJob, isJob } from '@qovery/shared/enums'
-import {
-  BlockContent,
-  Button,
-  HelpSection,
-  InputSelect,
-  InputText, // InputTextArea,
-} from '@qovery/shared/ui'
+import { ServiceTypeEnum } from '@qovery/shared/enums'
+import { BlockContent, Button, HelpSection, InputSelect, InputText } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
 export interface PageSettingsGeneralProps {
+  service?: Exclude<AnyService, 'Database'>
+  isLoadingEditService?: boolean
   onSubmit: FormEventHandler<HTMLFormElement>
-  watchBuildMode?: BuildModeEnum
-  type?: ServiceType
-  loading?: boolean
   organization?: Organization
 }
 
@@ -39,13 +33,69 @@ const languageItems = Object.values(BuildPackLanguageEnum).map((value) => ({
 
 export function PageSettingsGeneral({
   onSubmit,
-  watchBuildMode,
-  type,
-  loading,
+  service,
+  isLoadingEditService,
   organization,
 }: PageSettingsGeneralProps) {
   const { control, formState, watch } = useFormContext()
   const watchServiceType = watch('serviceType')
+  const watchBuildMode = watch('build_mode')
+
+  const blockContentBuildDeploy = (
+    <BlockContent classNameContent="gap-3 flex flex-col" title="Build & deploy">
+      <Controller
+        name="build_mode"
+        control={control}
+        render={({ field, fieldState: { error } }) => (
+          <InputSelect
+            dataTestId="input-select-mode"
+            label="Mode"
+            options={buildModeItems}
+            onChange={field.onChange}
+            value={field.value}
+            error={error?.message}
+            disabled={service?.serviceType === 'JOB'}
+          />
+        )}
+      />
+      {watchBuildMode === BuildModeEnum.BUILDPACKS ? (
+        <Controller
+          key="buildpack_language"
+          name="buildpack_language"
+          control={control}
+          rules={{
+            required: 'Please enter your buildpack language.',
+          }}
+          render={({ field, fieldState: { error } }) => (
+            <InputSelect
+              dataTestId="input-select-language"
+              label="Language framework"
+              options={languageItems}
+              onChange={field.onChange}
+              value={field.value}
+              error={error?.message}
+            />
+          )}
+        />
+      ) : (
+        <Controller
+          key="dockerfile_path"
+          name="dockerfile_path"
+          control={control}
+          render={({ field, fieldState: { error } }) => (
+            <InputText
+              dataTestId="input-text-dockerfile"
+              name={field.name}
+              onChange={field.onChange}
+              value={field.value}
+              label="Dockerfile path"
+              error={error?.message}
+            />
+          )}
+        />
+      )}
+    </BlockContent>
+  )
 
   return (
     <div className="flex flex-col justify-between w-full">
@@ -53,129 +103,57 @@ export function PageSettingsGeneral({
         <h2 className="h5 mb-8 text-neutral-400">General settings</h2>
         <form onSubmit={onSubmit}>
           <BlockContent title="General information">
-            <GeneralSetting />
-            {/* <Controller
-              name="name"
-              control={control}
-              rules={{ required: 'Please enter a name.' }}
-              render={({ field, fieldState: { error } }) => (
-                <InputText
-                  dataTestId="input-name"
-                  className="mb-3"
-                  name={field.name}
-                  onChange={field.onChange}
-                  value={field.value}
-                  label="Application name"
-                  error={error?.message}
-                />
-              )}
-            />
-            <Controller
-              name="description"
-              control={control}
-              render={({ field }) => (
-                <InputTextArea name={field.name} onChange={field.onChange} value={field.value} label="Description" />
-              )}
-            /> */}
+            <GeneralSetting label="Application name" />
           </BlockContent>
-          {isJob(type) && (
-            <>
-              <JobGeneralSettings
-                isEdition={true}
-                jobType={isCronJob(type) ? ServiceTypeEnum.CRON_JOB : ServiceTypeEnum.LIFECYCLE_JOB}
-                organization={organization}
-              />
-              <BlockContent title="Auto-deploy">
-                <AutoDeploySetting
-                  source={watchServiceType === ServiceTypeEnum.CONTAINER ? 'CONTAINER_REGISTRY' : 'GIT'}
+          {match(service)
+            .with({ serviceType: 'JOB' }, (job) => (
+              <>
+                <JobGeneralSettings
+                  isEdition={true}
+                  jobType={job.job_type === 'CRON' ? ServiceTypeEnum.CRON_JOB : ServiceTypeEnum.LIFECYCLE_JOB}
+                  organization={organization}
                 />
-              </BlockContent>
-            </>
-          )}
-          {isApplication(type) && (
-            <>
-              <EditGitRepositorySettingsFeature />
-              <BlockContent classNameContent="gap-3 flex flex-col" title="Build & deploy">
-                <Controller
-                  name="build_mode"
-                  control={control}
-                  render={({ field, fieldState: { error } }) => (
-                    <InputSelect
-                      dataTestId="input-select-mode"
-                      label="Mode"
-                      options={buildModeItems}
-                      onChange={field.onChange}
-                      value={field.value}
-                      error={error?.message}
-                    />
-                  )}
-                />
-                {watchBuildMode === BuildModeEnum.BUILDPACKS ? (
-                  <Controller
-                    key="buildpack_language"
-                    name="buildpack_language"
-                    control={control}
-                    rules={{
-                      required: 'Please enter your buildpack language.',
-                    }}
-                    render={({ field, fieldState: { error } }) => (
-                      <InputSelect
-                        dataTestId="input-select-language"
-                        label="Language framework"
-                        options={languageItems}
-                        onChange={field.onChange}
-                        value={field.value}
-                        error={error?.message}
-                      />
-                    )}
-                  />
-                ) : (
-                  <Controller
-                    key="dockerfile_path"
-                    name="dockerfile_path"
-                    control={control}
-                    render={({ field, fieldState: { error } }) => (
-                      <InputText
-                        dataTestId="input-text-dockerfile"
-                        name={field.name}
-                        onChange={field.onChange}
-                        value={field.value}
-                        label="Dockerfile path"
-                        error={error?.message}
-                      />
-                    )}
-                  />
+                <EditGitRepositorySettingsFeature />
+                {blockContentBuildDeploy}
+                <BlockContent title="Auto-deploy">
+                  <AutoDeploySetting source={watchServiceType === 'CONTAINER' ? 'CONTAINER_REGISTRY' : 'GIT'} />
+                </BlockContent>
+              </>
+            ))
+            .with({ serviceType: 'APPLICATION' }, () => (
+              <>
+                <EditGitRepositorySettingsFeature />
+                {blockContentBuildDeploy}
+                {watchBuildMode === BuildModeEnum.DOCKER && (
+                  <BlockContent title="Entrypoint and arguments">
+                    <EntrypointCmdInputs />
+                  </BlockContent>
                 )}
-              </BlockContent>
 
-              {watchBuildMode === BuildModeEnum.DOCKER && (
+                <BlockContent title="Auto-deploy">
+                  <AutoDeploySetting source="GIT" />
+                </BlockContent>
+              </>
+            ))
+            .with({ serviceType: 'CONTAINER' }, () => (
+              <>
+                <BlockContent title="Container Settings">
+                  <GeneralContainerSettings organization={organization} />
+                </BlockContent>
                 <BlockContent title="Entrypoint and arguments">
                   <EntrypointCmdInputs />
                 </BlockContent>
-              )}
-
-              <BlockContent title="Auto-deploy">
-                <AutoDeploySetting source="GIT" />
-              </BlockContent>
-            </>
-          )}
-
-          {isContainer(type) && (
-            <>
-              <BlockContent title="Container Settings">
-                <GeneralContainerSettings organization={organization} />
-              </BlockContent>
-              <BlockContent title="Entrypoint and arguments">
-                <EntrypointCmdInputs />
-              </BlockContent>
-              <BlockContent title="Auto-deploy">
-                <AutoDeploySetting source="CONTAINER_REGISTRY" />
-              </BlockContent>
-            </>
-          )}
+                <BlockContent title="Auto-deploy">
+                  <AutoDeploySetting source="CONTAINER_REGISTRY" />
+                </BlockContent>
+              </>
+            ))
+            .with({ serviceType: 'HELM' }, () => <p>helm</p>)
+            // TODO: fix unsafe function
+            .run()}
 
           <div className="flex justify-end">
-            <Button type="submit" size="lg" disabled={!formState.isValid}>
+            <Button type="submit" size="lg" loading={isLoadingEditService} disabled={!formState.isValid}>
               Save
             </Button>
           </div>

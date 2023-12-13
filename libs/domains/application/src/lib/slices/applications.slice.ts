@@ -89,9 +89,7 @@ export const editApplication = createAsyncThunk(
   'application/edit',
   async (payload: {
     applicationId: string
-    data:
-      | (Partial<Omit<ApplicationEntity, 'registry'>> & { registry?: { id?: string | undefined } })
-      | (Omit<AnyService, 'registry'> & { registry?: { id?: string } })
+    data: Partial<Omit<ApplicationEntity, 'registry'>> & { registry?: { id?: string | undefined } }
     serviceType: ServiceTypeEnum
     toasterCallback: () => void
     silentToaster?: boolean

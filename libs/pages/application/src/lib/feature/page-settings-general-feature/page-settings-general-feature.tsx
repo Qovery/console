@@ -1,17 +1,14 @@
 import { BuildModeEnum, BuildPackLanguageEnum } from 'qovery-typescript-axios'
-import { useEffect } from 'react'
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
-import { useDispatch } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useOrganization } from '@qovery/domains/organizations/feature'
-import { type Application, type Container, type Job } from '@qovery/domains/services/data-access'
+import { type Application, type Container, type Helm, type Job } from '@qovery/domains/services/data-access'
 import { useEditService, useService } from '@qovery/domains/services/feature'
-import { ServiceTypeEnum, isContainerJob, isGitJob, isJobGitSource } from '@qovery/shared/enums'
-// import { toastError } from '@qovery/shared/ui'
+import { isJobGitSource } from '@qovery/shared/enums'
+import { toastError } from '@qovery/shared/ui'
 import { getGitTokenValue } from '@qovery/shared/util-git'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
-import { type AppDispatch } from '@qovery/state/store'
 import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-general'
 
 export const handleGitApplicationSubmit = (data: FieldValues, application: Application) => {
@@ -106,15 +103,21 @@ export const handleJobSubmit = (data: FieldValues, job: Job) => {
   }
 }
 
+export const handleHelmSubmit = (data: FieldValues, helm: Helm) => {
+  return {
+    ...helm,
+    name: data['name'],
+    description: data['description'],
+    auto_deploy: data['auto_deploy'],
+  }
+}
+
 export function PageSettingsGeneralFeature() {
   const { organizationId = '', environmentId = '', applicationId = '' } = useParams()
-  const dispatch = useDispatch<AppDispatch>()
 
   const { data: organization } = useOrganization({ organizationId })
-  const { data: service, isLoading: isLoadingService } = useService({ environmentId, serviceId: applicationId })
-  const { mutate: editService } = useEditService({ environmentId })
-
-  console.log('service: ', service?.serviceType)
+  const { data: service } = useService({ environmentId, serviceId: applicationId })
+  const { mutate: editService, isLoading: isLoadingEditService } = useEditService({ environmentId })
 
   const methods = useForm({
     mode: 'onChange',
@@ -122,7 +125,7 @@ export function PageSettingsGeneralFeature() {
       name: service?.name,
       description: service?.description,
       auto_deploy: (service as Application)?.auto_deploy,
-      build_mode: (service as Application)?.build_mode,
+      build_mode: service?.serviceType === 'JOB' ? BuildModeEnum.DOCKER : (service as Application)?.build_mode,
       buildpack_language: (service as Application)?.buildpack_language ?? BuildPackLanguageEnum.PYTHON,
       dockerfile_path: (service as Application)?.dockerfile_path ?? 'Dockerfile',
       registry: (service as Container)?.registry?.id,
@@ -133,150 +136,58 @@ export function PageSettingsGeneralFeature() {
         (service as Application)?.arguments && (service as Application)?.arguments?.length
           ? JSON.stringify((service as Application).arguments)
           : '',
-      // provider: service?.git_repository?.git_token_id,
-      // repository: service?.git_repository?.url,
-      // branch: service?.git_repository?.branch,
     },
   })
-
-  const watchBuildMode = methods.watch('build_mode')
 
   const onSubmit = methods.handleSubmit((data) => {
     if (!service) return
 
-    return match(service)
-      .with({ serviceType: ServiceTypeEnum.APPLICATION }, (service) => {
-        const application = handleGitApplicationSubmit(data, service)
-        editService({
-          serviceId: applicationId,
-          payload: application,
+    return (
+      match(service)
+        .with({ serviceType: 'APPLICATION' }, (service) => {
+          const application = handleGitApplicationSubmit(data, service)
+          editService({
+            serviceId: applicationId,
+            payload: application,
+          })
         })
-      })
-      .with({ serviceType: ServiceTypeEnum.JOB }, (service) => {
-        const job = handleJobSubmit(data, service)
-        editService({
-          serviceId: applicationId,
-          payload: job,
+        .with({ serviceType: 'JOB' }, (service) => {
+          const job = handleJobSubmit(data, service)
+          editService({
+            serviceId: applicationId,
+            payload: job,
+          })
         })
-      })
-      .with({ serviceType: ServiceTypeEnum.CONTAINER }, (service) => {
-        const container = handleContainerSubmit(data, service)
-        editService({
-          serviceId: applicationId,
-          payload: container,
+        .with({ serviceType: 'CONTAINER' }, (service) => {
+          try {
+            const container = handleContainerSubmit(data, service)
+            editService({
+              serviceId: applicationId,
+              payload: container,
+            })
+          } catch (e: unknown) {
+            toastError(e as Error, 'Invalid CMD array')
+            return
+          }
         })
-      })
-      .with({ serviceType: ServiceTypeEnum.HELM }, (service) => {
-        editService({
-          serviceId: applicationId,
-          payload: service,
+        .with({ serviceType: 'HELM' }, (service) => {
+          const helm = handleHelmSubmit(data, service)
+          editService({
+            serviceId: applicationId,
+            payload: helm,
+          })
         })
-      })
-      .run()
-
-    // if (data && service) {
-    // let cloneApplication: Omit<AnyService, 'registry'> & { registry?: { id?: string } }
-    // let cloneApplication: AnyService
-    // if (service?.serviceType === ServiceTypeEnum.APPLICATION) {
-    //   cloneApplication = handleGitApplicationSubmit(data, service)
-    // }
-    // if (service?.serviceType === ServiceTypeEnum.APPLICATION) {
-    //   cloneApplication = handleGitApplicationSubmit(data, service)
-    // }
-    // if (service?.serviceType === ServiceTypeEnum.JOB) {
-    //   cloneApplication = handleJobSubmit(data, service)
-    // }
-    // if (service?.serviceType === ServiceTypeEnum.CONTAINER) {
-    //   try {
-    //     cloneApplication = handleContainerSubmit(data, service)
-    //   } catch (e: unknown) {
-    //     toastError(e as Error, 'Invalid CMD array')
-    //     return
-    //   }
-    // }
-    // if (service?.serviceType) {
-    // editService({
-    //   serviceId: applicationId,
-    //   payload: cloneApplication,
-    // })
-    // }
-    // }
+        // TODO: fix unsafe function
+        .run()
+    )
   })
-
-  //  useEffect(() => {
-  //     if (!service) return
-
-  //     if (service.serviceType === ServiceTypeEnum.APPLICATION) {
-  //       if (watchBuildMode === BuildModeEnum.DOCKER) {
-  //         methods.setValue('dockerfile_path', service.dockerfile_path ? service.dockerfile_path : 'Dockerfile')
-  //       } else {
-  //         methods.setValue(
-  //           'buildpack_language',
-  //           service.buildpack_language ? service.buildpack_language : BuildPackLanguageEnum.PYTHON
-  //         )
-  //       }
-  //     }
-  //   }, [watchBuildMode, methods, service])>
-
-  useEffect(() => {
-    // methods.setValue('name', service?.name)
-    // methods.setValue('description', service?.description)
-    // methods.setValue('auto_deploy', (service as Application)?.auto_deploy)
-
-    if (service) {
-      // if (service.serviceType === ServiceTypeEnum.APPLICATION) {
-      // methods.setValue('build_mode', service.build_mode)
-      // methods.setValue(
-      //   'buildpack_language',
-      //   service.buildpack_language ? service.buildpack_language : BuildPackLanguageEnum.PYTHON
-      // )
-      // methods.setValue('dockerfile_path', service.dockerfile_path ? service.dockerfile_path : 'Dockerfile')
-      // }
-
-      if (service.serviceType === ServiceTypeEnum.CONTAINER) {
-        // methods.setValue('registry', service.registry?.id)
-        // methods.setValue('image_name', service.image_name)
-        // methods.setValue('image_tag', service.tag)
-        methods.unregister('buildpack_language')
-        methods.unregister('dockerfile_path')
-        methods.unregister('build_mode')
-      }
-
-      // methods.setValue('image_entry_point', (service as Application).entrypoint)
-      // methods.setValue(
-      //   'cmd_arguments',
-      //   (service as Application).arguments && (service as Application).arguments?.length
-      //     ? JSON.stringify((service as Application).arguments)
-      //     : ''
-      // )
-    }
-
-    if (service?.serviceType === ServiceTypeEnum.JOB) {
-      // methods.setValue('description', service?.description)
-
-      const serviceType = isJobGitSource(service?.source) ? ServiceTypeEnum.APPLICATION : ServiceTypeEnum.CONTAINER
-      // methods.setValue('serviceType', serviceType)
-
-      if (serviceType === ServiceTypeEnum.CONTAINER) {
-        if (service && isContainerJob(service)) {
-          // methods.setValue('registry', service.source.image.registry_id)
-          methods.setValue('image_name', service.source.image.image_name)
-          methods.setValue('image_tag', service.source.image.tag)
-        }
-      } else if (service && isGitJob(service)) {
-        methods.setValue('build_mode', BuildModeEnum.DOCKER)
-        // methods.setValue('dockerfile_path', service.source.docker.dockerfile_path)
-      }
-    }
-  }, [methods, service, dispatch, organizationId])
 
   return (
     <FormProvider {...methods}>
       <PageSettingsGeneral
-        type={service?.serviceType}
+        service={service}
+        isLoadingEditService={isLoadingEditService}
         onSubmit={onSubmit}
-        watchBuildMode={watchBuildMode}
-        loading={isLoadingService}
         organization={organization}
       />
     </FormProvider>
