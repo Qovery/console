@@ -1,9 +1,9 @@
 import { type ServiceLogResponseDto } from 'qovery-ws-typescript-axios'
 import { useMemo, useState } from 'react'
-import { AnyService } from '@qovery/domains/services/data-access'
+import { type AnyService } from '@qovery/domains/services/data-access'
 import { useRunningStatus } from '@qovery/domains/services/feature'
 import { LayoutLogs } from '@qovery/shared/console-shared'
-import { type ApplicationEntity, type DatabaseEntity, type LoadingStatus } from '@qovery/shared/interfaces'
+import { type LoadingStatus } from '@qovery/shared/interfaces'
 import { Icon, IconAwesomeEnum, StatusChip, Table, type TableFilterProps, type TableHeadProps } from '@qovery/shared/ui'
 import RowPod from '../row-pod/row-pod'
 
