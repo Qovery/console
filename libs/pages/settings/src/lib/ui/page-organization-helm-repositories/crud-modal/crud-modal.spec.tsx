@@ -10,6 +10,8 @@ const props: CrudModalProps = {
   availableHelmRepositories: [
     {
       kind: HelmRepositoryKindEnum.HTTPS,
+      is_mandatory: false,
+      required_config: ['username', 'password'],
     },
   ],
 }
