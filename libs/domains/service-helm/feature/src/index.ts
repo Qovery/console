@@ -1,4 +1,5 @@
 export * from './lib/deployment-setting/deployment-setting'
+export * from './lib/networking-setting/networking-setting'
 export * from './lib/source-setting/source-setting'
 export * from './lib/values-override-yaml-setting/values-override-yaml-setting'
 export * from './lib/hooks/use-helm-repositories/use-helm-repositories'
