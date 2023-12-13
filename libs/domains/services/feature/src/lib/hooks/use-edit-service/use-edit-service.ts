@@ -10,6 +10,9 @@ export function useEditService({ environmentId }: { environmentId: string }) {
   return useMutation(mutations.editService, {
     onSuccess(_, { payload, serviceId }) {
       queryClient.invalidateQueries({
+        queryKey: queries.services.list(payload.environment.id).queryKey,
+      })
+      queryClient.invalidateQueries({
         queryKey: queries.services.details({ serviceType: payload.serviceType, serviceId }).queryKey,
       })
     },
