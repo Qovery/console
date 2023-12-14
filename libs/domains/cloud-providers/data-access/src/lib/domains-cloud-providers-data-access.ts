@@ -79,6 +79,9 @@ export const cloudProviders = createQueryKeys('cloudProviders', {
         .with({ cloudProvider: 'AWS', clusterType: 'MANAGED' }, ({ region }) =>
           cloudProviderApi.listAWSEKSInstanceType(region)
         )
+        .with({ cloudProvider: 'AWS', clusterType: 'SELF_MANAGED' }, ({ region }) =>
+          cloudProviderApi.listAWSEKSInstanceType(region)
+        )
         .with({ cloudProvider: 'SCW' }, ({ region }) => cloudProviderApi.listScalewayKapsuleInstanceType(region))
         .with({ cloudProvider: 'DO' }, () => cloudProviderApi.listDOInstanceType())
         .exhaustive()
