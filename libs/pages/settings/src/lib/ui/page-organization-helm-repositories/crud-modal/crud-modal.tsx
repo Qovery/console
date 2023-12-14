@@ -12,7 +12,7 @@ export interface CrudModalProps {
 }
 
 export function CrudModal({ isEdit, onSubmit, onClose, loading, availableHelmRepositories }: CrudModalProps) {
-  const { control, watch } = useFormContext()
+  const { control, resetField, watch } = useFormContext()
 
   return (
     <ModalCrud
@@ -85,7 +85,10 @@ export function CrudModal({ isEdit, onSubmit, onClose, loading, availableHelmRep
         render={({ field, fieldState: { error } }) => (
           <div className="mb-5">
             <InputSelect
-              onChange={field.onChange}
+              onChange={(value) => {
+                resetField('config')
+                field.onChange(value)
+              }}
               value={field.value}
               label="Kind"
               error={error?.message}
