@@ -8,7 +8,6 @@ import {
 import { memo, useCallback, useMemo, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { type Database } from '@qovery/domains/services/data-access'
 import { useRunningStatus, useService } from '@qovery/domains/services/feature'
 import { useDebounce, useDocumentTitle } from '@qovery/shared/util-hooks'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
@@ -51,7 +50,7 @@ export function PodLogsFeature({ clusterId }: PodLogsFeatureProps) {
 
   useDocumentTitle(`Live logs ${service ? `- ${service?.name}` : '- Loading...'}`)
 
-  const enabledLogs = (service as Database) && (service as Database)?.mode === DatabaseModeEnum.CONTAINER
+  const enabledLogs = service?.serviceType === 'DATABASE' ? service?.mode === DatabaseModeEnum.CONTAINER : true
 
   const serviceMessageHandler = useCallback(
     (_: QueryClient, message: ServiceLogResponseDto) => {
