@@ -1,27 +1,15 @@
-import { act, fireEvent, render } from '__tests__/utils/setup-jest'
 import { DatabaseAccessibilityEnum } from 'qovery-typescript-axios'
-import * as storeDatabase from '@qovery/domains/database'
+import { type Database } from '@qovery/domains/services/data-access'
+import * as servicesDomains from '@qovery/domains/services/feature'
 import { databaseFactoryMock } from '@qovery/shared/factories'
-import { type DatabaseEntity } from '@qovery/shared/interfaces'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import PageSettingsGeneralFeature, { handleSubmit } from './page-settings-general-feature'
 
 import SpyInstance = jest.SpyInstance
 
-const mockDatabase: DatabaseEntity = databaseFactoryMock(1)[0]
-
-jest.mock('@qovery/domains/database', () => {
-  return {
-    ...jest.requireActual('@qovery/domains/database'),
-    editDatabase: jest.fn(),
-    selectDatabaseById: () => mockDatabase,
-  }
-})
-
-const mockDispatch = jest.fn()
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useDispatch: () => mockDispatch,
-}))
+const mockDatabase = databaseFactoryMock(1)[0] as Database
+const useEditServiceSpy: SpyInstance = jest.spyOn(servicesDomains, 'useEditService')
+const useServiceSpy: SpyInstance = jest.spyOn(servicesDomains, 'useService')
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -29,13 +17,18 @@ jest.mock('react-router-dom', () => ({
 }))
 
 describe('PageSettingsGeneralFeature', () => {
-  let database: DatabaseEntity
   beforeEach(() => {
-    database = mockDatabase
+    useEditServiceSpy.mockReturnValue({
+      mutate: jest.fn(),
+      isLoading: false,
+    })
+    useServiceSpy.mockReturnValue({
+      data: mockDatabase,
+    })
   })
 
   it('should render successfully', () => {
-    const { baseElement } = render(<PageSettingsGeneralFeature />)
+    const { baseElement } = renderWithProviders(<PageSettingsGeneralFeature />)
     expect(baseElement).toBeTruthy()
   })
 
@@ -45,41 +38,34 @@ describe('PageSettingsGeneralFeature', () => {
         name: 'hello',
         accessibility: DatabaseAccessibilityEnum.PRIVATE,
       },
-      database
+      mockDatabase
     )
 
     expect(db.name).toBe('hello')
     expect(db.accessibility).toBe(DatabaseAccessibilityEnum.PRIVATE)
   })
 
-  it('should dispatch editDatabase if form is submitted', async () => {
-    const editDatabaseSpy: SpyInstance = jest.spyOn(storeDatabase, 'editDatabase')
-    mockDispatch.mockImplementation(() => ({
-      unwrap: () =>
-        Promise.resolve({
-          data: {},
-        }),
-    }))
+  it('should submit editService if form is submitted', async () => {
+    const { userEvent } = renderWithProviders(<PageSettingsGeneralFeature />)
 
-    const { getByTestId } = render(<PageSettingsGeneralFeature />)
+    const input = screen.getByRole('textbox', { name: /database name/i })
+    await userEvent.clear(input)
+    await userEvent.type(input, 'hello')
 
-    await act(() => {
-      const input = getByTestId('input-name')
-      fireEvent.input(input, { target: { value: 'hello' } })
-    })
+    const button = screen.getByRole('button', { name: /save/i })
 
-    expect(getByTestId('submit-button')).not.toBeDisabled()
+    expect(button).not.toBeDisabled()
 
-    await act(() => {
-      getByTestId('submit-button').click()
-    })
+    await userEvent.click(button)
 
     const cloneApplication = handleSubmit(
       { name: 'hello', accessibility: DatabaseAccessibilityEnum.PRIVATE, version: '12' },
       mockDatabase
     )
 
-    expect(editDatabaseSpy.mock.calls[0][0].databaseId).toBe(mockDatabase.id)
-    expect(editDatabaseSpy.mock.calls[0][0].data).toStrictEqual(cloneApplication)
+    expect(useEditServiceSpy().mutate).toHaveBeenCalledWith({
+      serviceId: '0',
+      payload: cloneApplication,
+    })
   })
 })

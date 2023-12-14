@@ -1,20 +1,17 @@
 import { DatabaseAccessibilityEnum, DatabaseModeEnum, DatabaseTypeEnum } from 'qovery-typescript-axios'
 import { type FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
+import { GeneralSetting } from '@qovery/domains/services/feature'
 import { type Value } from '@qovery/shared/interfaces'
 import {
   BlockContent,
-  ButtonLegacy,
-  ButtonLegacySize,
-  ButtonLegacyStyle,
+  Button,
   Callout,
   ExternalLink,
   HelpSection,
   Icon,
   IconAwesomeEnum,
   InputSelect,
-  InputText,
-  InputTextArea,
   LoaderSpinner,
 } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
@@ -79,41 +76,13 @@ export function PageSettingsGeneral({
             </Callout.Root>
           )}
           <BlockContent title="General information">
-            <Controller
-              name="name"
-              control={control}
-              rules={{ required: 'Please enter a name.' }}
-              render={({ field, fieldState: { error } }) => (
-                <InputText
-                  className="mb-3"
-                  dataTestId="input-name"
-                  name={field.name}
-                  onChange={field.onChange}
-                  value={field.value}
-                  label="Database name"
-                  error={error?.message}
-                />
-              )}
-            />
-            <Controller
-              name="description"
-              control={control}
-              render={({ field }) => (
-                <InputTextArea
-                  className="mb-3"
-                  name={field.name}
-                  onChange={field.onChange}
-                  value={field.value}
-                  label="Description"
-                />
-              )}
-            />
+            <GeneralSetting label="Database name" />
             <Controller
               name="type"
               control={control}
               render={({ field, fieldState: { error } }) => (
                 <InputSelect
-                  className="mb-3"
+                  className="my-3"
                   label="Type"
                   options={databasesType}
                   onChange={field.onChange}
@@ -217,17 +186,9 @@ export function PageSettingsGeneral({
             />
           </BlockContent>
           <div className="flex justify-end">
-            <ButtonLegacy
-              dataTestId="submit-button"
-              className="btn--no-min-w"
-              size={ButtonLegacySize.LARGE}
-              style={ButtonLegacyStyle.BASIC}
-              type="submit"
-              disabled={!formState.isValid}
-              loading={loading}
-            >
+            <Button type="submit" size="lg" loading={loading} disabled={!formState.isValid}>
               Save
-            </ButtonLegacy>
+            </Button>
           </div>
         </form>
       </div>

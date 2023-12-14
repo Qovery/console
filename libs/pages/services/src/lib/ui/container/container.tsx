@@ -158,7 +158,7 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
         // {
         //   name: 'Create helm',
         //   contentLeft: (
-        //     <Icon name={IconEnum.HELM} width="14" height="16" className="text-brand-500 text-sm" />
+        //     <Icon name={IconEnum.HELM_OFFICIAL} width="14" height="16" className="text-brand-500 text-sm" />
         //   ),
         //   onClick: () => {
         //     navigate(`${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_HELM_CREATION_URL}`)
