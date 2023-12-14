@@ -8,7 +8,6 @@ import {
 import { memo, useCallback, useMemo, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { type Database } from '@qovery/domains/services/data-access'
 import { useRunningStatus, useService } from '@qovery/domains/services/feature'
 import { useDebounce, useDocumentTitle } from '@qovery/shared/util-hooks'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
