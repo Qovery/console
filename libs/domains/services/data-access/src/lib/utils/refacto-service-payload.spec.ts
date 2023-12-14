@@ -82,6 +82,12 @@ describe('testing payload refactoring', () => {
       max_running_instances: 12,
       min_running_instances: 1,
       registry_id: '1',
+      registry: {
+        id: '1',
+        name: 'registry',
+        url: 'url',
+        kind: 'DOCKER_HUB',
+      },
       image_name: 'image_name',
       healthchecks: {},
     }
