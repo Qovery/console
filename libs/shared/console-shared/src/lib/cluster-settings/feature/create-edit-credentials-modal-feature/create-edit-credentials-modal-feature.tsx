@@ -50,7 +50,7 @@ export const handleSubmit = (data: FieldValues, cloudProvider: CloudProviderEnum
       cloudProvider,
       payload: {
         ...currentData,
-        credentials_json: data['credentials_json'],
+        json_credentials: data['json_credentials'],
       },
     }
   }
