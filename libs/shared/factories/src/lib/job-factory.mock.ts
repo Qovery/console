@@ -39,6 +39,7 @@ export const cronjobFactoryMock = (howMany: number, withContainer = false): JobA
 
     return {
       id: `${index}`,
+      serviceType: 'JOB',
       job_type: 'CRON',
       created_at: new Date().toString(),
       updated_at: new Date().toString(),

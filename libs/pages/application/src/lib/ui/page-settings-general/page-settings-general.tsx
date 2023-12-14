@@ -16,7 +16,7 @@ import { BlockContent, Button, HelpSection, InputSelect, InputText } from '@qove
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
 export interface PageSettingsGeneralProps {
-  service?: Exclude<AnyService, 'Database'>
+  service?: AnyService
   isLoadingEditService?: boolean
   onSubmit: FormEventHandler<HTMLFormElement>
   organization?: Organization

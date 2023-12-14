@@ -1,44 +1,29 @@
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import { BuildModeEnum, BuildPackLanguageEnum, GitProviderEnum } from 'qovery-typescript-axios'
-import { ServiceTypeEnum } from '@qovery/shared/enums'
+import { BuildModeEnum, BuildPackLanguageEnum } from 'qovery-typescript-axios'
+import { type Application, type Container, type Job } from '@qovery/domains/services/data-access'
+import {
+  applicationFactoryMock,
+  containerFactoryMock,
+  cronjobFactoryMock,
+  helmFactoryMock,
+  organizationFactoryMock,
+} from '@qovery/shared/factories'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import PageSettingsGeneral, { type PageSettingsGeneralProps } from './page-settings-general'
 
+const mockApplication = applicationFactoryMock(1)[0] as Application
+const mockContainer = containerFactoryMock(1)[0] as Container
+const mockJob = cronjobFactoryMock(1)[0] as Job
+const mockHelm = helmFactoryMock(1)[0]
+const mockOrganization = organizationFactoryMock(1)[0]
+
 describe('PageSettingsGeneral', () => {
   const props: PageSettingsGeneralProps = {
-    watchBuildMode: BuildModeEnum.DOCKER,
+    service: mockApplication,
+    organization: mockOrganization,
+    isLoadingEditService: false,
     onSubmit: jest.fn((e) => e.preventDefault()),
-    type: ServiceTypeEnum.APPLICATION,
   }
-
-  const defaultValuesApplication = (mode = BuildModeEnum.DOCKER) => ({
-    name: 'hello-world',
-    description: 'desc',
-    build_mode: mode,
-    buildpack_language: BuildPackLanguageEnum.CLOJURE,
-    dockerfile_path: 'Dockerfile',
-    provider: GitProviderEnum.GITHUB,
-    repository: 'qovery/console',
-    branch: 'main',
-    root_path: '/',
-  })
-
-  const defaultValuesContainer = () => ({
-    name: 'hello-world',
-    description: 'desc',
-    buildpack_language: BuildPackLanguageEnum.CLOJURE,
-    dockerfile_path: 'Dockerfile',
-    provider: GitProviderEnum.GITHUB,
-    repository: 'qovery/console',
-    branch: 'main',
-    root_path: '/',
-    registry: 'registry',
-    image_name: 'image_name',
-    image_tag: 'image_tag',
-    image_entry_point: 'image_entry_point',
-    image_command: 'image_command',
-    cmd_arguments: 'cmd_arguments',
-  })
 
   it('should render successfully', async () => {
     const { baseElement } = renderWithProviders(wrapWithReactHookForm(<PageSettingsGeneral {...props} />))
@@ -46,9 +31,16 @@ describe('PageSettingsGeneral', () => {
   })
 
   it('should render the form with docker section', async () => {
+    props.service = {
+      ...mockApplication,
+      name: 'hello-world',
+      dockerfile_path: 'Dockerfile',
+      build_mode: BuildModeEnum.DOCKER,
+    }
+
     renderWithProviders(
       wrapWithReactHookForm(<PageSettingsGeneral {...props} />, {
-        defaultValues: defaultValuesApplication(),
+        defaultValues: props.service,
       })
     )
 
@@ -62,11 +54,16 @@ describe('PageSettingsGeneral', () => {
   })
 
   it('should render the form with buildpack section', async () => {
-    props.watchBuildMode = BuildModeEnum.BUILDPACKS
+    props.service = {
+      ...mockApplication,
+      name: 'hello-world',
+      buildpack_language: BuildPackLanguageEnum.CLOJURE,
+      build_mode: BuildModeEnum.BUILDPACKS,
+    }
 
     renderWithProviders(
       wrapWithReactHookForm(<PageSettingsGeneral {...props} />, {
-        defaultValues: defaultValuesApplication(BuildModeEnum.BUILDPACKS),
+        defaultValues: props.service,
       })
     )
 
@@ -79,45 +76,72 @@ describe('PageSettingsGeneral', () => {
     screen.getByText(/The service will be automatically updated on every new commit on the branch./i)
   })
 
-  it('should render the form with container settings', async () => {
-    props.type = ServiceTypeEnum.CONTAINER
+  it('should render application general settings fields', async () => {
+    const service = {
+      ...mockApplication,
+      dockerfile_path: 'Dockerfile',
+      build_mode: BuildModeEnum.DOCKER,
+    }
 
     renderWithProviders(
-      wrapWithReactHookForm(<PageSettingsGeneral {...props} />, {
-        defaultValues: defaultValuesContainer(),
+      wrapWithReactHookForm(<PageSettingsGeneral service={service} {...props} />, {
+        defaultValues: service,
       })
     )
 
-    // https://react-hook-form.com/advanced-usage#TransformandParse
-    expect(await screen.findByRole('button', { name: /save/i })).toBeInTheDocument()
-    screen.getByDisplayValue('hello-world')
-    screen.getByDisplayValue('image_name')
-    screen.getByDisplayValue('image_tag')
-    screen.getByDisplayValue('image_entry_point')
-    screen.getByDisplayValue('cmd_arguments')
-    screen.getByText(
-      /The service will be automatically updated if Qovery is notified on the API that a new image tag is available./i
-    )
+    expect(screen.getByText('General information')).toBeInTheDocument()
+    expect(screen.getByText('Build & deploy')).toBeInTheDocument()
+    expect(screen.getByText('Entrypoint and arguments')).toBeInTheDocument()
+    // Necessary to get sub-component
+    waitFor(() => {
+      expect(screen.getByText('Git repository')).toBeInTheDocument()
+      expect(screen.getByText('Auto-deploy')).toBeInTheDocument()
+    })
   })
 
-  it('should submit the form', async () => {
-    props.type = ServiceTypeEnum.APPLICATION
-    const spy = jest.fn((e) => e.preventDefault())
-    props.onSubmit = spy
-    const { userEvent } = renderWithProviders(
-      wrapWithReactHookForm(<PageSettingsGeneral {...props} />, {
-        defaultValues: defaultValuesApplication(),
+  it('should render container general settings fields', async () => {
+    renderWithProviders(
+      wrapWithReactHookForm(<PageSettingsGeneral {...props} service={mockContainer} />, {
+        defaultValues: mockContainer,
       })
     )
 
-    // https://react-hook-form.com/advanced-usage#TransformandParse
-    expect(await screen.findByRole('button', { name: /save/i })).toBeInTheDocument()
-    const button = screen.getByTestId('submit-button')
-
-    await userEvent.click(button)
-
+    expect(screen.getByText('General information')).toBeInTheDocument()
+    expect(screen.getByText('Container Settings')).toBeInTheDocument()
+    expect(screen.getByText('Entrypoint and arguments')).toBeInTheDocument()
+    // Necessary to get sub-component
     waitFor(() => {
-      expect(spy).toHaveBeenCalled()
+      expect(screen.getByText('Auto-deploy')).toBeInTheDocument()
+    })
+  })
+
+  it('should render jobs general settings fields', async () => {
+    renderWithProviders(
+      wrapWithReactHookForm(<PageSettingsGeneral {...props} service={mockJob} />, {
+        defaultValues: mockJob,
+      })
+    )
+
+    expect(screen.getByText('General information')).toBeInTheDocument()
+    // Necessary to get sub-component
+    waitFor(() => {
+      expect(screen.getByText('Git repository')).toBeInTheDocument()
+      expect(screen.getByText('Auto-deploy')).toBeInTheDocument()
+    })
+  })
+
+  it('should render helm general settings fields', async () => {
+    renderWithProviders(
+      wrapWithReactHookForm(<PageSettingsGeneral {...props} service={mockJob} />, {
+        defaultValues: mockHelm,
+      })
+    )
+
+    expect(screen.getByText('General information')).toBeInTheDocument()
+    // Necessary to get sub-component
+    waitFor(() => {
+      expect(screen.getByText('Source')).toBeInTheDocument()
+      expect(screen.getByText('Auto-deploy')).toBeInTheDocument()
     })
   })
 })
