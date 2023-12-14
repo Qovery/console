@@ -51,7 +51,8 @@ export function PodLogsFeature({ clusterId }: PodLogsFeatureProps) {
 
   useDocumentTitle(`Live logs ${service ? `- ${service?.name}` : '- Loading...'}`)
 
-  const enabledLogs = (service as Database) && (service as Database)?.mode === DatabaseModeEnum.CONTAINER
+  const enabledLogs =
+    service?.serviceType === 'DATABASE' ? (service as Database)?.mode === DatabaseModeEnum.CONTAINER : true
 
   const serviceMessageHandler = useCallback(
     (_: QueryClient, message: ServiceLogResponseDto) => {
