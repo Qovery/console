@@ -16,6 +16,8 @@ export function ClusterType({ cloudProvider, kubernetes, ...props }: ClusterType
     .with(['DO', P._], () => 'Managed (DOKS)')
     // Scaleway
     .with(['SCW', P._], () => 'Managed (Kapsule)')
+    // Google GCP
+    .with(['GCP', P._], () => 'Managed (GKE)')
     .exhaustive()
   return (
     <Badge color="neutral" {...props}>

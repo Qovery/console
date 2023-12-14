@@ -19,4 +19,8 @@ describe('ClusterType', () => {
     const { baseElement } = renderWithProviders(<ClusterType cloudProvider="SCW" />)
     expect(baseElement).toMatchSnapshot()
   })
+  it('should render as GCP', () => {
+    const { baseElement } = renderWithProviders(<ClusterType cloudProvider="GCP" />)
+    expect(baseElement).toMatchSnapshot()
+  })
 })

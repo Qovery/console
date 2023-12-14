@@ -160,6 +160,28 @@ export function CreateEditCredentialsModal(props: CreateEditCredentialsModalProp
           />
         </>
       )}
+      {props.cloudProvider === CloudProviderEnum.GCP && (
+        <>
+          <Controller
+            name="credentials_json"
+            control={control}
+            rules={{
+              required: 'Please enter your credentials JSON',
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <InputText
+                dataTestId="input-credentials-json"
+                className="mb-3"
+                name={field.name}
+                onChange={field.onChange}
+                value={field.value}
+                label="Crdentials JSON"
+                error={error?.message}
+              />
+            )}
+          />
+        </>
+      )}
       {props.cloudProvider === CloudProviderEnum.AWS && (
         <ExternalLink
           href="https://hub.qovery.com/docs/using-qovery/configuration/cloud-service-provider/amazon-web-services"

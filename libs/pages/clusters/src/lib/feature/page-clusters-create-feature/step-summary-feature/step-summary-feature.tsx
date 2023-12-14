@@ -49,6 +49,10 @@ export function StepSummaryFeature() {
         cloudProvider,
         clusterType: 'MANAGED' as const,
       }))
+      .with('GCP', (cloudProvider) => ({
+        cloudProvider,
+        clusterType: 'MANAGED' as const,
+      }))
       .exhaustive()
   )
   const detailInstanceType = cloudProviderInstanceTypes?.find(({ type }) => type === resourcesData?.instance_type)

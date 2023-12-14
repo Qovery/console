@@ -70,6 +70,22 @@ describe('ClusterResourcesSettingsFeature', () => {
     getByText(baseElement, 'Managed K8S (KAPSULE)')
   })
 
+  it('should render one cluster type option if gcp', () => {
+    const { baseElement } = render(
+      wrapWithReactHookForm<ClusterResourcesData>(
+        <ClusterResourcesSettingsFeature
+          clusterRegion="europe-west9"
+          fromDetail={false}
+          cloudProvider={CloudProviderEnum.GCP}
+        />,
+        {
+          defaultValues,
+        }
+      )
+    )
+    getByText(baseElement, 'Managed K8S (GKE with Autopilot)')
+  })
+
   it('should select first cluster option at initialisation', () => {
     const { baseElement } = render(
       wrapWithReactHookForm<ClusterResourcesData>(
