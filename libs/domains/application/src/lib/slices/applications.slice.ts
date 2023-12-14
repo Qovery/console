@@ -25,7 +25,6 @@ import {
   type JobRequest,
   JobsApi,
 } from 'qovery-typescript-axios'
-import { type AnyService } from '@qovery/domains/services/data-access'
 import { type ServiceTypeEnum, isApplication, isContainer, isJob } from '@qovery/shared/enums'
 import {
   type AdvancedSettings,

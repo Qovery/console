@@ -59,7 +59,7 @@ export const handleContainerSubmit = (data: FieldValues, container: Container) =
     image_name: data['image_name'] || '',
     arguments: (data['cmd_arguments'] && data['cmd_arguments'].length && eval(data['cmd_arguments'])) || [],
     entrypoint: data['image_entry_point'] || '',
-    registry: data['registry'] || '',
+    registry_id: data['registry'] || '',
   }
 }
 
