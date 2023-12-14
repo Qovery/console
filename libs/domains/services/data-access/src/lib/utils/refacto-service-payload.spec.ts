@@ -87,6 +87,7 @@ describe('testing payload refactoring', () => {
       memory: 32,
       max_running_instances: 12,
       min_running_instances: 1,
+      registry_id: '1',
       registry: {
         id: '1',
         name: 'name',
