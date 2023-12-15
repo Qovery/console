@@ -45,6 +45,16 @@ export const handleSubmit = (data: FieldValues, cloudProvider: CloudProviderEnum
     }
   }
 
+  if (cloudProvider === CloudProviderEnum.GCP) {
+    return {
+      cloudProvider,
+      payload: {
+        ...currentData,
+        gcp_credentials: data['gcp_credentials'],
+      },
+    }
+  }
+
   return { cloudProvider, payload: currentData }
 }
 

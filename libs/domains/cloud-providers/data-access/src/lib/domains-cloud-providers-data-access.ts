@@ -5,6 +5,7 @@ import {
   CloudProviderCredentialsApi,
   type CloudProviderEnum,
   type DoCredentialsRequest,
+  type GcpCredentialsRequest,
   type KubernetesEnum,
   type ScalewayCredentialsRequest,
 } from 'qovery-typescript-axios'
@@ -33,6 +34,12 @@ type CredentialRequest =
       payload: DoCredentialsRequest
       credentialId: string
     }
+  | {
+      organizationId: string
+      cloudProvider: Extract<CloudProviderEnum, 'GCP'>
+      payload: GcpCredentialsRequest
+      credentialId: string
+    }
 
 export const cloudProviders = createQueryKeys('cloudProviders', {
   list: {
@@ -49,6 +56,7 @@ export const cloudProviders = createQueryKeys('cloudProviders', {
         .with('AWS', () => cloudProviderApi.listAWSFeatures())
         .with('DO', () => cloudProviderApi.listDOFeatures())
         .with('SCW', () => cloudProviderApi.listScalewayFeatures())
+        .with('GCP', () => cloudProviderApi.listGcpFeatures())
         .exhaustive()
       return response.data.results
     },
@@ -69,6 +77,10 @@ export const cloudProviders = createQueryKeys('cloudProviders', {
           cloudProvider: Extract<CloudProviderEnum, 'DO'>
           clusterType: Extract<KubernetesEnum, 'MANAGED'>
         }
+      | {
+          cloudProvider: Extract<CloudProviderEnum, 'GCP'>
+          clusterType: Extract<KubernetesEnum, 'MANAGED'>
+        }
   ) => ({
     queryKey: [args.cloudProvider, args.clusterType],
     async queryFn() {
@@ -84,6 +96,7 @@ export const cloudProviders = createQueryKeys('cloudProviders', {
         )
         .with({ cloudProvider: 'SCW' }, ({ region }) => cloudProviderApi.listScalewayKapsuleInstanceType(region))
         .with({ cloudProvider: 'DO' }, () => cloudProviderApi.listDOInstanceType())
+        .with({ cloudProvider: 'GCP' }, () => Promise.resolve({ data: { results: [] } }))
         .exhaustive()
       return response.data.results
     },
@@ -98,6 +111,10 @@ export const cloudProviders = createQueryKeys('cloudProviders', {
         })
         .with('SCW', async () => {
           const response = await cloudProviderCredentialsApi.listScalewayCredentials(organizationId)
+          return response.data.results
+        })
+        .with('GCP', async () => {
+          const response = await cloudProviderCredentialsApi.listGcpCredentials(organizationId)
           return response.data.results
         })
         /*
@@ -125,6 +142,10 @@ export const mutations = {
         const response = await cloudProviderCredentialsApi.createScalewayCredentials(organizationId, payload)
         return response.data
       })
+      .with({ cloudProvider: 'GCP' }, async ({ organizationId, payload }) => {
+        const response = await cloudProviderCredentialsApi.createGcpCredentials(organizationId, payload)
+        return response.data
+      })
       /*
        * @deprecated Digital Ocean is not supported anymore (should be remove on the API doc)
        */
@@ -150,6 +171,10 @@ export const mutations = {
         )
         return response.data
       })
+      .with({ cloudProvider: 'GCP' }, async ({ organizationId, credentialId, payload }) => {
+        const response = await cloudProviderCredentialsApi.editGcpCredentials(organizationId, credentialId, payload)
+        return response.data
+      })
       /*
        * @deprecated Digital Ocean is not supported anymore (should be remove on the API doc)
        */
@@ -169,6 +194,10 @@ export const mutations = {
       })
       .with({ cloudProvider: 'SCW' }, async ({ organizationId, credentialId }) => {
         const response = await cloudProviderCredentialsApi.deleteScalewayCredentials(credentialId, organizationId)
+        return response.data
+      })
+      .with({ cloudProvider: 'GCP' }, async ({ organizationId, credentialId }) => {
+        const response = await cloudProviderCredentialsApi.deleteGcpCredentials(credentialId, organizationId)
         return response.data
       })
       /*

@@ -34,6 +34,10 @@ export function ClusterResourcesSettingsFeature(props: ClusterResourcesSettingsF
         cloudProvider,
         clusterType: 'MANAGED' as const,
       }))
+      .with('GCP', (cloudProvider) => ({
+        cloudProvider,
+        clusterType: 'MANAGED' as const,
+      }))
       .exhaustive()
   )
   const instanceTypeOptions = listInstanceTypeFormatter(cloudProviderInstanceTypes ?? [])
@@ -47,6 +51,14 @@ export function ClusterResourcesSettingsFeature(props: ClusterResourcesSettingsF
           label: 'BETA - Single EC2 (K3S)',
           value: KubernetesEnum.K3_S,
           description: 'Single instance K3S cluster - only for dev purposes',
+        },
+      ]
+    } else if (props?.cloudProvider === CloudProviderEnum.GCP) {
+      clusterTypeOptions = [
+        {
+          label: 'Managed K8S (GKE with Autopilot)',
+          value: KubernetesEnum.MANAGED,
+          description: 'Multiple node cluster powered with Autopilot',
         },
       ]
     } else {

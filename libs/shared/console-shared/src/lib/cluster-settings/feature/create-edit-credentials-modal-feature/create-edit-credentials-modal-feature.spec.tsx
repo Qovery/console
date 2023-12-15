@@ -115,6 +115,36 @@ describe('CreateEditCredentialsModalFeature', () => {
     })
   })
 
+  it('should submit edit credential on click on button for GCP', async () => {
+    props.cloudProvider = CloudProviderEnum.GCP
+
+    const { userEvent } = renderWithProviders(<CreateEditCredentialsModalFeature {...props} />)
+
+    const inputName = screen.getByTestId('input-name')
+    const inputCredentialsJson = screen.getByTestId('input-credentials-json')
+
+    await userEvent.clear(inputName)
+    await userEvent.clear(inputCredentialsJson)
+
+    await userEvent.type(inputName, 'test')
+    await userEvent.type(inputCredentialsJson, 'credentials')
+
+    const submitButton = screen.getByTestId('submit-button')
+    await userEvent.click(submitButton)
+
+    expect(useEditCloudProviderCredentialsMockSpy().mutateAsync).toHaveBeenCalledWith({
+      organizationId: '0',
+      credentialId: '000-000-000',
+      ...handleSubmit(
+        {
+          name: 'test',
+          gcp_credentials: 'credentials',
+        },
+        CloudProviderEnum.GCP
+      ),
+    })
+  })
+
   it('should submit create credential on click on button for AWS', async () => {
     props.currentCredential = undefined
     props.cloudProvider = CloudProviderEnum.AWS

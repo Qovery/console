@@ -65,6 +65,22 @@ describe('CreateEditCredentialsModal', () => {
     getByDisplayValue('scaleway-project-id')
   })
 
+  it('should render the form with fields GCP', async () => {
+    props.cloudProvider = CloudProviderEnum.GCP
+
+    const { getByDisplayValue } = render(
+      wrapWithReactHookForm(<CreateEditCredentialsModal {...props} />, {
+        defaultValues: {
+          name: 'credentials',
+          gcp_credentials: 'gcp-credentials-json',
+        },
+      })
+    )
+
+    getByDisplayValue('credentials')
+    getByDisplayValue('gcp-credentials-json')
+  })
+
   it('should submit the form on click AWS', async () => {
     const { getByTestId } = render(
       wrapWithReactHookForm(<CreateEditCredentialsModal {...props} />, {
