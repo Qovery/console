@@ -167,7 +167,7 @@ export function DeploymentLogsFeature({ environment, statusStages }: DeploymentL
     }))
     .filter((log) => log.errors)
 
-  const isLastVersion = (deploymentHistory && deploymentHistory[0].id === versionId) || !versionId
+  const isLastVersion = (deploymentHistory && deploymentHistory[0]?.id === versionId) || !versionId
   const isDeploymentProgressing: boolean = isLastVersion
     ? match(deploymentStatus?.state)
         .with(
