@@ -128,7 +128,7 @@ export const handleHelmSubmit = (data: FieldValues, helm: Helm) => {
         chart_version: data['chart_version'],
       },
     }))
-    .run()
+    .otherwise(() => undefined)
 
   return {
     ...helm,
