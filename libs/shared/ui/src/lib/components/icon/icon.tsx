@@ -19,6 +19,7 @@ import DOGrayIcon from './icons/do-gray'
 import DockerIcon from './icons/docker'
 import DopplerIcon from './icons/doppler'
 import EnvironmentIcon from './icons/environment'
+import GCPIcon from './icons/gcp'
 import GcpArtifactRegistryIcon from './icons/gcp-artifact-registry'
 import GenericRegistryIcon from './icons/generic-registry'
 import GitIcon from './icons/git'
@@ -79,6 +80,8 @@ export function Icon(props: IconProps) {
       return <DOIcon {...formattedProps} />
     case IconEnum.DO_GRAY:
       return <DOGrayIcon {...formattedProps} />
+    case IconEnum.GCP:
+      return <GCPIcon {...formattedProps} />
     case IconEnum.APPLICATION:
       return <ApplicationIcon {...formattedProps} />
     case IconEnum.DATABASE:

@@ -14,6 +14,7 @@ export enum IconEnum {
   SCW_GRAY = 'SCW_GRAY',
   DO = 'DO',
   DO_GRAY = 'DO_GRAY',
+  GCP = 'GCP',
   DOCKER = 'DOCKER',
   POSTGRESQL = 'POSTGRESQL',
   REDIS = 'REDIS',
