@@ -20,18 +20,18 @@ export default Story
 export const Primary = {
   render: () => (
     <ToggleGroup.Root type="single">
-      <ToggleGroup.Item value="left" aria-label="Left aligned">
+      <ToggleGroup.Item value="left" aria-label="Service Actions">
         <Button size="md" className="rounded-r-none">
           <Icon name={IconAwesomeEnum.PLAY} className="mr-3" />
           <Icon name={IconAwesomeEnum.ANGLE_DOWN} />
         </Button>
       </ToggleGroup.Item>
-      <ToggleGroup.Item className="relative" value="center" aria-label="Center aligned">
+      <ToggleGroup.Item className="relative" value="center" aria-label="Service Logs">
         <Button size="md" className="rounded-none">
           <Icon name={IconAwesomeEnum.SCROLL} />
         </Button>
       </ToggleGroup.Item>
-      <ToggleGroup.Item value="right" aria-label="Right aligned">
+      <ToggleGroup.Item value="right" aria-label="Service Settings">
         <Button size="md" className="rounded-l-none">
           <Icon name={IconAwesomeEnum.WHEEL} />
         </Button>
