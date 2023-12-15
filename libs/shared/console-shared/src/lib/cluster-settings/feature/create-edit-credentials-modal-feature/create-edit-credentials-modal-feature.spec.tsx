@@ -116,14 +116,15 @@ describe('CreateEditCredentialsModalFeature', () => {
   })
 
   it('should submit edit credential on click on button for GCP', async () => {
-    props.cloudProvider = CloudProviderEnum.SCW
+    props.cloudProvider = CloudProviderEnum.GCP
 
     const { userEvent } = renderWithProviders(<CreateEditCredentialsModalFeature {...props} />)
 
     const inputName = screen.getByTestId('input-name')
-    const inputCredentialsJson = screen.getByTestId('input-gcp-credentials-id')
+    const inputCredentialsJson = screen.getByTestId('input-credentials-json')
 
     await userEvent.clear(inputName)
+    await userEvent.clear(inputCredentialsJson)
 
     await userEvent.type(inputName, 'test')
     await userEvent.type(inputCredentialsJson, 'credentials')
@@ -137,7 +138,7 @@ describe('CreateEditCredentialsModalFeature', () => {
       ...handleSubmit(
         {
           name: 'test',
-          credentials_json: 'credentials',
+          gcp_credentials: 'credentials',
         },
         CloudProviderEnum.GCP
       ),
