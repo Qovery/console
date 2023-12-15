@@ -11,6 +11,9 @@ export function useHelmRepository({ organizationId, enabled }: UseHelmRepository
     ...queries.serviceHelm.listHelmRepository({
       organizationId,
     }),
+    select(data) {
+      return data?.sort((a, b) => a.name.localeCompare(b.name))
+    },
     enabled,
   })
 }
