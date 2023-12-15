@@ -104,7 +104,8 @@ export const handleJobSubmit = (data: FieldValues, job: Job) => {
 }
 
 export const handleHelmSubmit = (data: FieldValues, helm: Helm) => {
-  const source = match(data['source_provider'])
+  const sourceProvider: 'HELM_REPOSITORY' | 'GIT' = data['source_provider']
+  const source = match(sourceProvider)
     .with('GIT', () => {
       const gitToken = getGitTokenValue(data['provider'] ?? '')
 
@@ -128,7 +129,7 @@ export const handleHelmSubmit = (data: FieldValues, helm: Helm) => {
         chart_version: data['chart_version'],
       },
     }))
-    .otherwise(() => undefined)
+    .exhaustive()
 
   return {
     ...helm,
