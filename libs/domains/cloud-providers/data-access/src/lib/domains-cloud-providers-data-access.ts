@@ -143,7 +143,7 @@ export const mutations = {
         return response.data
       })
       .with({ cloudProvider: 'GCP' }, async ({ organizationId, payload }) => {
-        const response = await cloudProviderCredentialsApi.createGCPCredentials(organizationId, payload)
+        const response = await cloudProviderCredentialsApi.createGcpCredentials(organizationId, payload)
         return response.data
       })
       /*
