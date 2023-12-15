@@ -1,14 +1,14 @@
 import { useQuery } from '@tanstack/react-query'
 import { queries } from '@qovery/state/util-queries'
 
-export interface UseHelmRepositoryProps {
+export interface UseHelmRepositoriesProps {
   organizationId: string
   enabled?: boolean
 }
 
-export function useHelmRepository({ organizationId, enabled }: UseHelmRepositoryProps) {
+export function useHelmRepositories({ organizationId, enabled }: UseHelmRepositoriesProps) {
   return useQuery({
-    ...queries.serviceHelm.listHelmRepository({
+    ...queries.organizations.helmRepositories({
       organizationId,
     }),
     select(data) {
@@ -18,4 +18,4 @@ export function useHelmRepository({ organizationId, enabled }: UseHelmRepository
   })
 }
 
-export default useHelmRepository
+export default useHelmRepositories

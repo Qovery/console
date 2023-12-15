@@ -1,17 +1,9 @@
 import { createQueryKeys } from '@lukemorales/query-key-factory'
-import { type HelmDefaultValuesRequest, HelmRepositoriesApi, type HelmRequest, HelmsApi } from 'qovery-typescript-axios'
+import { type HelmDefaultValuesRequest, type HelmRequest, HelmsApi } from 'qovery-typescript-axios'
 
-const helmRepositoriesApi = new HelmRepositoriesApi()
 const helmsApi = new HelmsApi()
 
 export const serviceHelm = createQueryKeys('serviceHelm', {
-  listHelmRepository: ({ organizationId }: { organizationId: string }) => ({
-    queryKey: [organizationId],
-    async queryFn() {
-      const response = await helmRepositoriesApi.listHelmRepository(organizationId)
-      return response.data.results
-    },
-  }),
   helmDefaultValues: ({
     environmentId,
     helmDefaultValuesRequest,
