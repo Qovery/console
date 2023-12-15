@@ -162,7 +162,7 @@ export function CreateEditCredentialsModal(props: CreateEditCredentialsModalProp
       )}
       {props.cloudProvider === CloudProviderEnum.GCP && (
         <Controller
-          name="json_credentials"
+          name="gcp_credentials"
           control={control}
           rules={{
             required: 'Please enter your credentials JSON',

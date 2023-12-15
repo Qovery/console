@@ -72,7 +72,7 @@ describe('CreateEditCredentialsModal', () => {
       wrapWithReactHookForm(<CreateEditCredentialsModal {...props} />, {
         defaultValues: {
           name: 'credentials',
-          json_credentials: 'gcp-credentials-json',
+          gcp_credentials: 'gcp-credentials-json',
         },
       })
     )
