@@ -1,7 +1,7 @@
 import { Controller, useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { InputSelect, InputText, LoaderSpinner } from '@qovery/shared/ui'
-import useHelmRepository from '../hooks/use-helm-repository/use-helm-repository'
+import { useHelmRepositories } from '../hooks/use-helm-repositories/use-helm-repositories'
 
 export function SourceSetting() {
   const { organizationId = '' } = useParams()
@@ -12,7 +12,7 @@ export function SourceSetting() {
     data: helmRepositories = [],
     isLoading: isLoadingHelmRepositories,
     isFetched: isFetchedHelmRepositories,
-  } = useHelmRepository({
+  } = useHelmRepositories({
     organizationId,
     enabled: watchFieldProvider === 'HELM_REPOSITORY',
   })

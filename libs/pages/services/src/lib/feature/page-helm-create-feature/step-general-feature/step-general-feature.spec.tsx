@@ -8,7 +8,7 @@ import StepGeneralFeature from './step-general-feature'
 
 import SpyInstance = jest.SpyInstance
 
-const useHelmRepositorySpy: SpyInstance = jest.spyOn(serviceHelmDomain, 'useHelmRepository')
+const useHelmRepositoriesSpy: SpyInstance = jest.spyOn(serviceHelmDomain, 'useHelmRepositories')
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -17,7 +17,7 @@ jest.mock('react-router-dom', () => ({
 
 describe('StepGeneralFeature', () => {
   beforeEach(() => {
-    useHelmRepositorySpy.mockReturnValue({
+    useHelmRepositoriesSpy.mockReturnValue({
       data: [
         {
           id: '000-000-000',

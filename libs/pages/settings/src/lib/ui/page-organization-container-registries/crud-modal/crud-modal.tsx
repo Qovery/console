@@ -236,7 +236,7 @@ export function CrudModal(props: CrudModalProps) {
             name="config.access_key_id"
             control={control}
             rules={{
-              required: 'Please enter a access key.',
+              required: 'Please enter an access key.',
             }}
             render={({ field, fieldState: { error } }) => (
               <InputText

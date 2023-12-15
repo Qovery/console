@@ -8,7 +8,9 @@ export interface UseHelmRepositoriesProps {
 
 export function useHelmRepositories({ organizationId, enabled }: UseHelmRepositoriesProps) {
   return useQuery({
-    ...queries.organizations.helmRepositories({ organizationId }),
+    ...queries.organizations.helmRepositories({
+      organizationId,
+    }),
     select(data) {
       return data?.sort((a, b) => a.name.localeCompare(b.name))
     },

@@ -10,6 +10,8 @@ const props: CrudModalProps = {
   availableHelmRepositories: [
     {
       kind: HelmRepositoryKindEnum.HTTPS,
+      is_mandatory: false,
+      required_config: ['username', 'password'],
     },
   ],
 }
@@ -29,7 +31,7 @@ describe('CrudModal', () => {
           url: 'https://helm-charts.io',
           kind: HelmRepositoryKindEnum.HTTPS,
           config: {
-            login: 'test',
+            username: 'test',
             password: 'password',
           },
         },
@@ -58,7 +60,7 @@ describe('CrudModal', () => {
           url: 'https://qovery.com',
           kind: HelmRepositoryKindEnum.HTTPS,
           config: {
-            login: 'test',
+            username: 'test',
             password: 'password',
           },
         },
