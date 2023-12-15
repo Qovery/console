@@ -21,18 +21,18 @@ export const Primary = {
   render: () => (
     <ToggleGroup.Root type="single">
       <ToggleGroup.Item value="left" aria-label="Left aligned">
-        <Button variant="surface" color="neutral" size="md" className="rounded-r-none">
+        <Button size="md" className="rounded-r-none">
           <Icon name={IconAwesomeEnum.PLAY} className="mr-3" />
           <Icon name={IconAwesomeEnum.ANGLE_DOWN} />
         </Button>
       </ToggleGroup.Item>
       <ToggleGroup.Item className="relative" value="center" aria-label="Center aligned">
-        <Button variant="surface" color="neutral" size="md" className="rounded-none">
+        <Button size="md" className="rounded-none">
           <Icon name={IconAwesomeEnum.SCROLL} />
         </Button>
       </ToggleGroup.Item>
       <ToggleGroup.Item value="right" aria-label="Right aligned">
-        <Button variant="surface" color="neutral" size="md" className="rounded-l-none">
+        <Button size="md" className="rounded-l-none">
           <Icon name={IconAwesomeEnum.WHEEL} />
         </Button>
       </ToggleGroup.Item>
