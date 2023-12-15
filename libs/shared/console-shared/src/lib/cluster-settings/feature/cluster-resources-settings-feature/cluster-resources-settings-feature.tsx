@@ -55,9 +55,13 @@ export function ClusterResourcesSettingsFeature(props: ClusterResourcesSettingsF
       ]
     } else if (props?.cloudProvider === CloudProviderEnum.GCP) {
       clusterTypeOptions = [
-        { label: 'Managed K8S (GKE with Autopilot)', value: KubernetesEnum.MANAGED, description: 'Multiple node cluster powered with Autopilot' },
+        {
+          label: 'Managed K8S (GKE with Autopilot)',
+          value: KubernetesEnum.MANAGED,
+          description: 'Multiple node cluster powered with Autopilot',
+        },
       ]
-   } else {
+    } else {
       clusterTypeOptions = [
         { label: 'Managed K8S (KAPSULE)', value: KubernetesEnum.MANAGED, description: 'Multiple node cluster' },
       ]
