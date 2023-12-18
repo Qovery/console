@@ -19,22 +19,19 @@ export default Story
 export const Primary = {
   render: () => (
     <ButtonAction.Root>
-      <ButtonAction.Item asChild>
-        <ButtonAction.Button className="rounded-r-none">
-          <Icon name={IconAwesomeEnum.PLAY} className="mr-3" />
-          <Icon name={IconAwesomeEnum.ANGLE_DOWN} />
-        </ButtonAction.Button>
-      </ButtonAction.Item>
-      <ButtonAction.Item asChild>
-        <ButtonAction.Button className="rounded-none border-x-0">
-          <Icon name={IconAwesomeEnum.SCROLL} />
-        </ButtonAction.Button>
-      </ButtonAction.Item>
-      <ButtonAction.Item asChild>
-        <ButtonAction.Button className="rounded-l-none">
-          <Icon name={IconAwesomeEnum.WHEEL} />
-        </ButtonAction.Button>
-      </ButtonAction.Item>
+      <ButtonAction.Button>
+        <Icon name={IconAwesomeEnum.PLAY} className="mr-3" />
+        <Icon name={IconAwesomeEnum.ANGLE_DOWN} />
+      </ButtonAction.Button>
+      <ButtonAction.Button>
+        <Icon name={IconAwesomeEnum.SCROLL} />
+      </ButtonAction.Button>
+      <ButtonAction.Button>
+        <Icon name={IconAwesomeEnum.SCROLL} />
+      </ButtonAction.Button>
+      <ButtonAction.Button>
+        <Icon name={IconAwesomeEnum.WHEEL} />
+      </ButtonAction.Button>
     </ButtonAction.Root>
   ),
 }

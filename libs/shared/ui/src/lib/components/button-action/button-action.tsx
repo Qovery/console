@@ -1,54 +1,37 @@
 import * as Toolbar from '@radix-ui/react-toolbar'
+import { type VariantProps } from 'class-variance-authority'
 import { type ComponentPropsWithoutRef, type ElementRef, forwardRef } from 'react'
 import { twMerge } from '@qovery/shared/util-js'
-import ButtonPrimitive from '../button-primitive/button-primitive'
+import { buttonVariants } from '../button-primitive/button-primitive'
 
-interface ButtonItemProps extends ComponentPropsWithoutRef<typeof Toolbar.Button> {}
+interface ToolbarButtonProps
+  extends Omit<ComponentPropsWithoutRef<typeof Toolbar.Button>, 'color'>,
+    VariantProps<typeof buttonVariants> {}
 
-const Item = forwardRef<ElementRef<typeof Toolbar.Button>, ButtonItemProps>(function Item(
-  { children, className, ...props },
+const ToolbarButton = forwardRef<ElementRef<typeof Toolbar.Button>, ToolbarButtonProps>(function Item(
+  { children, className, color = 'neutral', radius = 'none', size, variant = 'outline', ...props },
   forwardedRef
 ) {
   return (
-    <Toolbar.Button {...props} ref={forwardedRef}>
+    <Toolbar.Button
+      className={twMerge(
+        buttonVariants({ color, radius, size, variant }),
+        'first:rounded-l last:rounded-r first:border-r-0 first:border-x border-l-0 hover:[&:not(:active)]:border-neutral-250 text-neutral-350 hover:bg-neutral-150 hover:text-brand-400',
+        className
+      )}
+      {...props}
+      ref={forwardedRef}
+    >
       {children}
     </Toolbar.Button>
   )
 })
 
-interface ButtonProps extends React.ComponentPropsWithoutRef<typeof ButtonPrimitive> {}
-
-/* 
-  TODO: 
-  Custom className should be removed to use a real variant from ButtonPrimitive.
-  This will be done when we will have all button actions migrate.
-*/
-const Button = forwardRef<ElementRef<typeof ButtonPrimitive>, ButtonProps>(function Button(
-  { className, ...props },
-  forwardedRef
-) {
-  return (
-    <ButtonPrimitive
-      {...props}
-      size="md"
-      variant="outline"
-      color="neutral"
-      ref={forwardedRef}
-      className={twMerge(
-        'hover:[&:not(:active)]:border-neutral-250 text-neutral-350 hover:bg-neutral-150 hover:text-brand-400',
-        className
-      )}
-    >
-      {props.children}
-    </ButtonPrimitive>
-  )
-})
 const ButtonAction = Object.assign(
   {},
   {
     Root: Toolbar.Root,
-    Item: Item,
-    Button: Button,
+    Button: ToolbarButton,
   }
 )
 
