@@ -45,28 +45,34 @@ exports[`NetworkingSetting should match snapshot in empty state 1`] = `
         class="w-full"
       >
         <div
-          class="flex flex-grow items-center justify-center "
+          class="border border-neutral-250 bg-neutral-100 rounded mb-5 w-full"
+          data-testid="block-content"
         >
           <div
-            class="text-center flex flex-col items-center justify-center w-[420px] m-auto mt-10"
-            data-testid="placeholder-settings"
+            class="flex items-center justify-between h-9 px-4 border-b border-neutral-250"
           >
-            <img
-              alt="Event placeholder"
-              class="pointer-events-none user-none mb-5 w-[48px]"
-              src="/assets/images/event-placeholder-light.svg"
-            />
-            <p
-              class="text-neutral-400 font-medium"
+            <h2
+              class="font-medium text-neutral-400 text-ssm"
             >
-              No port are set
-            </p>
-            <p
-              class="text-sm text-neutral-350 mt-1"
-              data-testid="placeholder-settings-description"
+              Services exposed publicly
+            </h2>
+          </div>
+          <div
+            class="p-0"
+          >
+            <div
+              class="text-center my-4 py-5 px-10"
             >
-              Define a custom port for your helm service
-            </p>
+              <span
+                class="icon-solid-wave-pulse shrink-0 text-neutral-300"
+                role="img"
+              />
+              <p
+                class="text-neutral-350 font-medium text-xs mt-1 mb-3"
+              >
+                No port are set.
+              </p>
+            </div>
           </div>
         </div>
       </form>

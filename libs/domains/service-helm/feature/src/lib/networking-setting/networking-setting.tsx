@@ -3,7 +3,6 @@ import { type PropsWithChildren } from 'react'
 import {
   BlockContent,
   Button,
-  EmptyState,
   ExternalLink,
   Heading,
   Icon,
@@ -85,9 +84,9 @@ export function NetworkingSetting({ ports, onUpdatePorts, children }: Networking
         </Button>
       </div>
       <form className="w-full">
-        {ports.length > 0 ? (
-          <BlockContent title="Services exposed publicly" classNameContent="p-0">
-            {ports.map((port) => {
+        <BlockContent title="Services exposed publicly" classNameContent="p-0">
+          {ports.length > 0 ? (
+            ports.map((port) => {
               const { service_name, internal_port, protocol, namespace, name } = port
               return (
                 <div
@@ -126,11 +125,14 @@ export function NetworkingSetting({ ports, onUpdatePorts, children }: Networking
                   </div>
                 </div>
               )
-            })}
-          </BlockContent>
-        ) : (
-          <EmptyState title="No port are set" description="Define a custom port for your helm service" />
-        )}
+            })
+          ) : (
+            <div className="text-center my-4 py-5 px-10">
+              <Icon name={IconAwesomeEnum.WAVE_PULSE} className="text-neutral-300" />
+              <p className="text-neutral-350 font-medium text-xs mt-1 mb-3">No port are set.</p>
+            </div>
+          )}
+        </BlockContent>
         {children}
       </form>
     </Section>
