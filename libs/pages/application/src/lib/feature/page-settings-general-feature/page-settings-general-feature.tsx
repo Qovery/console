@@ -211,22 +211,17 @@ export function PageSettingsGeneralFeature() {
 
     if (!payload) return null
 
-    if (payload.serviceType === 'CONTAINER') {
-      try {
-        editService({
-          serviceId: applicationId,
-          payload,
-        })
-      } catch (e: unknown) {
+    try {
+      editService({
+        serviceId: applicationId,
+        payload,
+      })
+    } catch (e: unknown) {
+      if (payload.serviceType === 'CONTAINER') {
         toastError(e as Error, 'Invalid CMD array')
-        return
       }
+      return
     }
-
-    editService({
-      serviceId: applicationId,
-      payload,
-    })
 
     return null
   })
