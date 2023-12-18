@@ -1,8 +1,8 @@
 import { render, screen } from '__tests__/utils/setup-jest'
 import Icon from '../../icon/icon'
-import ButtonAction, { type ButtonActionProps } from './button-action'
+import ButtonActionLegacy, { type ButtonActionLegacyProps } from './button-action-legacy'
 
-let props: ButtonActionProps
+let props: ButtonActionLegacyProps
 
 beforeEach(() => {
   props = {
@@ -22,19 +22,18 @@ beforeEach(() => {
         ],
       },
     ],
-    children: 'Button',
   }
 })
 
-describe('ButtonAction', () => {
+describe('ButtonActionLegacy', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<ButtonAction {...props} />)
+    const { baseElement } = render(<ButtonActionLegacy {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
   it('should have an accurate classname', () => {
     props.className = 'some-class-name'
-    render(<ButtonAction {...props} />)
+    render(<ButtonActionLegacy {...props} />)
     const button = screen.getByTestId('button-action')
     expect(button.classList.contains('some-class-name')).toBeTruthy()
   })
