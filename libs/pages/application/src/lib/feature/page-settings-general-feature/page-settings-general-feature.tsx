@@ -184,41 +184,33 @@ export function PageSettingsGeneralFeature() {
   const onSubmit = methods.handleSubmit((data) => {
     if (!service) return
 
-    return match(service)
-      .with({ serviceType: 'APPLICATION' }, (service) => {
-        const application = handleGitApplicationSubmit(data, service)
-        editService({
-          serviceId: applicationId,
-          payload: application,
-        })
-      })
-      .with({ serviceType: 'JOB' }, (service) => {
-        const job = handleJobSubmit(data, service)
-        editService({
-          serviceId: applicationId,
-          payload: job,
-        })
-      })
-      .with({ serviceType: 'CONTAINER' }, (service) => {
-        try {
-          const container = handleContainerSubmit(data, service)
-          editService({
-            serviceId: applicationId,
-            payload: container,
-          })
-        } catch (e: unknown) {
-          toastError(e as Error, 'Invalid CMD array')
-          return
-        }
-      })
-      .with({ serviceType: 'HELM' }, (service) => {
-        const helm = handleHelmSubmit(data, service)
-        editService({
-          serviceId: applicationId,
-          payload: helm,
-        })
-      })
+    const payload = match(service)
+      .with({ serviceType: 'APPLICATION' }, (service) => handleGitApplicationSubmit(data, service))
+      .with({ serviceType: 'JOB' }, (service) => handleJobSubmit(data, service))
+      .with({ serviceType: 'CONTAINER' }, (service) => handleContainerSubmit(data, service))
+      .with({ serviceType: 'HELM' }, (service) => handleHelmSubmit(data, service))
       .otherwise(() => undefined)
+
+    if (!payload) return null
+
+    if (payload.serviceType === 'CONTAINER') {
+      try {
+        editService({
+          serviceId: applicationId,
+          payload,
+        })
+      } catch (e: unknown) {
+        toastError(e as Error, 'Invalid CMD array')
+        return
+      }
+    }
+
+    editService({
+      serviceId: applicationId,
+      payload,
+    })
+
+    return null
   })
 
   return (

@@ -62,7 +62,6 @@ export function PageSettingsGeneral({
       />
       {watchBuildMode === BuildModeEnum.BUILDPACKS ? (
         <Controller
-          key="buildpack_language"
           name="buildpack_language"
           control={control}
           rules={{
@@ -81,7 +80,6 @@ export function PageSettingsGeneral({
         />
       ) : (
         <Controller
-          key="dockerfile_path"
           name="dockerfile_path"
           control={control}
           render={({ field, fieldState: { error } }) => (

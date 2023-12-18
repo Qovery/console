@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
-import { match } from 'ts-pattern'
+import { P, match } from 'ts-pattern'
 import { useService } from '@qovery/domains/services/feature'
 import { isHelmGitSource, isJobGitSource } from '@qovery/shared/enums'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
@@ -16,11 +16,9 @@ export function EditGitRepositorySettingsFeature({ withBlockWrapper = true }: Ed
   const { data: service } = useService({ serviceId: applicationId })
 
   const gitRepository = match(service)
-    .with({ serviceType: 'JOB' }, (job) => (isJobGitSource(job.source) ? job.source.docker?.git_repository : undefined))
+    .with({ serviceType: 'JOB', source: P.when(isJobGitSource) }, (job) => job.source.docker?.git_repository)
     .with({ serviceType: 'APPLICATION' }, (application) => application.git_repository)
-    .with({ serviceType: 'HELM' }, (helm) =>
-      isHelmGitSource(helm.source) ? helm.source?.git?.git_repository : undefined
-    )
+    .with({ serviceType: 'HELM', source: P.when(isHelmGitSource) }, (helm) => helm.source?.git?.git_repository)
     .otherwise(() => undefined)
 
   const { setValue } = useFormContext<{
