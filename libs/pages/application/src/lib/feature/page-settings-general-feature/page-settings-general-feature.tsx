@@ -1,4 +1,4 @@
-import { BuildModeEnum, BuildPackLanguageEnum } from 'qovery-typescript-axios'
+import { BuildModeEnum } from 'qovery-typescript-axios'
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { P, match } from 'ts-pattern'
@@ -157,27 +157,45 @@ export function PageSettingsGeneralFeature() {
     .with({ serviceType: 'HELM', source: P.when(isHelmGitSource) }, ({ source }) => source.git?.git_repository)
     .otherwise(() => undefined)
 
+  const defaultValues = match(service)
+    .with({ serviceType: 'APPLICATION' }, (service) => ({
+      auto_deploy: service.auto_deploy,
+      dockerfile_path: service.dockerfile_path ?? 'Dockerfile',
+      build_mode: service.build_mode,
+      image_entry_point: service.entrypoint,
+      cmd_arguments: (service.arguments && service.arguments.length && JSON.stringify(service.arguments)) || '',
+    }))
+    .with({ serviceType: 'CONTAINER' }, (service) => ({
+      registry: service.registry?.id,
+      image_name: service.image_name,
+      image_tag: service.tag,
+      image_entry_point: service.entrypoint,
+      auto_deploy: service.auto_deploy,
+      cmd_arguments: (service.arguments && service.arguments.length && JSON.stringify(service.arguments)) || '',
+    }))
+    .with({ serviceType: 'JOB' }, (service) => ({
+      auto_deploy: service.auto_deploy,
+      build_mode: BuildModeEnum.DOCKER,
+      dockerfile_path: isJobGitSource(service.source) ? service.source.docker?.dockerfile_path : 'Dockerfile',
+    }))
+    .with({ serviceType: 'HELM' }, (service) => ({
+      source_provider: isHelmRepositorySource(service.source) ? 'HELM_REPOSITORY' : 'GIT',
+      repository: helmRepository?.repository?.id ?? helmGit?.url,
+      chart_name: helmRepository?.chart_name,
+      chart_version: helmRepository?.chart_version,
+      auto_deploy: service.auto_deploy,
+      auto_preview: service.allow_cluster_wide_resources,
+      timeout_sec: service.timeout_sec,
+      arguments: JSON.stringify(service.arguments),
+    }))
+    .otherwise(() => undefined)
+
   const methods = useForm({
     mode: 'onChange',
     defaultValues: {
       name: service?.name,
       description: service?.description,
-      auto_deploy: (service as Application)?.auto_deploy,
-      build_mode: service?.serviceType === 'JOB' ? BuildModeEnum.DOCKER : (service as Application)?.build_mode,
-      buildpack_language: (service as Application)?.buildpack_language ?? BuildPackLanguageEnum.PYTHON,
-      dockerfile_path: (service as Application)?.dockerfile_path ?? 'Dockerfile',
-      registry: (service as Container)?.registry?.id,
-      image_name: (service as Container)?.image_name,
-      image_tag: (service as Container)?.tag,
-      image_entry_point: (service as Application)?.entrypoint,
-      cmd_arguments:
-        (service as Application)?.arguments && (service as Application)?.arguments?.length
-          ? JSON.stringify((service as Application).arguments)
-          : '',
-      source_provider: isHelmRepositorySource((service as Helm)?.source) ? 'HELM_REPOSITORY' : 'GIT',
-      repository: helmRepository?.repository?.id ?? helmGit?.url,
-      chart_name: helmRepository?.chart_name,
-      chart_version: helmRepository?.chart_version,
+      ...defaultValues,
     },
   })
 
