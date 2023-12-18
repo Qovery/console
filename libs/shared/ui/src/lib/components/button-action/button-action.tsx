@@ -5,13 +5,16 @@ import ButtonPrimitive from '../button-primitive/button-primitive'
 
 interface ButtonItemProps extends ComponentPropsWithoutRef<typeof Toolbar.Button> {}
 
-const Item = forwardRef<ElementRef<typeof Toolbar.Button>, ButtonItemProps>(
-  ({ children, className, ...props }, forwardedRef) => (
+const Item = forwardRef<ElementRef<typeof Toolbar.Button>, ButtonItemProps>(function Item(
+  { children, className, ...props },
+  forwardedRef
+) {
+  return (
     <Toolbar.Button {...props} ref={forwardedRef}>
       {children}
     </Toolbar.Button>
   )
-)
+})
 
 interface ButtonProps extends React.ComponentPropsWithoutRef<typeof ButtonPrimitive> {}
 
@@ -49,8 +52,4 @@ const ButtonAction = Object.assign(
   }
 )
 
-const ButtonActionRoot = Toolbar.Root
-
-export { ButtonAction, ButtonActionRoot, Button, Item }
-
-export type { ButtonItemProps, ButtonProps }
+export { ButtonAction }
