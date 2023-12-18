@@ -25,11 +25,6 @@ export function NetworkingPortSettingModal({ port, onClose, onSubmit }: Networki
 
   const { control, watch, setValue } = methods
 
-  const pattern = {
-    value: /^[0-9]+$/,
-    message: 'Please enter a number.',
-  }
-
   const watchInternalPort = watch('internal_port')
   const watchServiceName = watch('service_name')
 
@@ -109,7 +104,10 @@ export function NetworkingPortSettingModal({ port, onClose, onSubmit }: Networki
             control={control}
             rules={{
               required: 'Please enter an internal port.',
-              pattern,
+              pattern: {
+                value: /^[0-9]+$/,
+                message: 'Please enter a number.',
+              },
             }}
             render={({ field, fieldState: { error } }) => (
               <InputText
