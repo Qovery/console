@@ -1,0 +1,653 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`NetworkingPortSettingModal should match snapshot in create state 1`] = `
+<body>
+  <div>
+    <div
+      class="p-6"
+    >
+      <h2
+        class="h4 text-neutral-400 max-w-sm truncate"
+      >
+        Set port
+      </h2>
+      <span
+        aria-controls="radix-:r6:"
+        aria-expanded="false"
+        aria-haspopup="dialog"
+        class="text-sm cursor-pointer text-brand-500 hover:text-brand-600 transition font-medium mt-2"
+        data-state="closed"
+        type="button"
+      >
+        Show how it works 
+        <span
+          class="icon-regular-circle-question shrink-0 text-xs"
+          role="img"
+        />
+      </span>
+      <form
+        class="mt-6"
+      >
+        <div
+          class="flex flex-col gap-5"
+        >
+          <div
+            class=""
+            data-testid="input-text-wrapper"
+          >
+            <div
+              class="relative"
+            >
+              <div
+                aria-label="input-container"
+                class="input     "
+              >
+                <div
+                  class=""
+                >
+                  <label
+                    class="text-sm translate-y-2"
+                    for="Service name"
+                  >
+                    Service name
+                  </label>
+                  <input
+                    class="input__value "
+                    data-testid="input-text"
+                    id="Service name"
+                    name="service_name"
+                    type="text"
+                    value=""
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class=""
+            data-testid="input-text-wrapper"
+          >
+            <div
+              class="relative"
+            >
+              <div
+                aria-label="input-container"
+                class="input     "
+              >
+                <div
+                  class=""
+                >
+                  <label
+                    class="text-sm translate-y-2"
+                    for="Namespace (optional)"
+                  >
+                    Namespace (optional)
+                  </label>
+                  <input
+                    class="input__value "
+                    data-testid="input-text"
+                    id="Namespace (optional)"
+                    name="namespace"
+                    type="text"
+                    value=""
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class=""
+            data-testid="input-text-wrapper"
+          >
+            <div
+              class="relative"
+            >
+              <div
+                aria-label="input-container"
+                class="input     "
+              >
+                <div
+                  class=""
+                >
+                  <label
+                    class="text-sm translate-y-2"
+                    for="Service port"
+                  >
+                    Service port
+                  </label>
+                  <input
+                    class="input__value "
+                    data-testid="input-text"
+                    id="Service port"
+                    name="internal_port"
+                    type="number"
+                    value=""
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class=""
+          >
+            <div
+              class="input input--select    "
+              data-testid="select"
+            >
+              <label
+                class="!text-xs !translate-y-0"
+                for="Select protocol"
+              >
+                Select protocol
+              </label>
+              <div
+                class=" css-b62m3t-container"
+              >
+                <span
+                  class="css-1f43avz-a11yText-A11yText"
+                  id="react-select-2-live-region"
+                />
+                <span
+                  aria-atomic="false"
+                  aria-live="polite"
+                  aria-relevant="additions text"
+                  class="css-1f43avz-a11yText-A11yText"
+                />
+                <div
+                  class="input-select__control css-13cymwt-control"
+                >
+                  <div
+                    class="input-select__value-container input-select__value-container--has-value css-1fdsijx-ValueContainer"
+                  >
+                    <span
+                      class="text-sm text-neutral-400 mr-1"
+                    >
+                      HTTP
+                    </span>
+                    <input
+                      aria-autocomplete="list"
+                      aria-expanded="false"
+                      aria-haspopup="true"
+                      aria-readonly="true"
+                      class="css-mohuvp-dummyInput-DummyInput"
+                      id="Select protocol"
+                      inputmode="none"
+                      role="combobox"
+                      tabindex="0"
+                      value=""
+                    />
+                  </div>
+                  <div
+                    class="input-select__indicators css-1hb7zxy-IndicatorsContainer"
+                  >
+                    <span
+                      class="input-select__indicator-separator css-1u9des2-indicatorSeparator"
+                    />
+                    <div
+                      aria-hidden="true"
+                      class="input-select__indicator input-select__dropdown-indicator css-1xc3v61-indicatorContainer"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        class="css-tj5bde-Svg"
+                        focusable="false"
+                        height="20"
+                        viewBox="0 0 20 20"
+                        width="20"
+                      >
+                        <path
+                          d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+                <input
+                  name="Select protocol"
+                  type="hidden"
+                  value="HTTP"
+                />
+              </div>
+              <input
+                name="Select protocol"
+                type="hidden"
+                value="HTTP"
+              />
+              <div
+                class="absolute top-1/2 -translate-y-1/2 right-4 pointer-events-none"
+              >
+                <span
+                  class="icon-solid-angle-down shrink-0 text-sm text-neutral-400"
+                  role="img"
+                />
+              </div>
+            </div>
+          </div>
+          <div
+            class=""
+            data-testid="input-text-wrapper"
+          >
+            <div
+              class="relative"
+            >
+              <div
+                aria-label="input-container"
+                class="input input--disabled input--disabled !border-neutral-250  input--label-up "
+              >
+                <div
+                  class="pointer-events-none"
+                >
+                  <label
+                    class="text-sm translate-y-2"
+                    for="External port"
+                  >
+                    External port
+                  </label>
+                  <input
+                    class="input__value "
+                    data-testid="input-text"
+                    disabled=""
+                    id="External port"
+                    name="external_port"
+                    type="number"
+                    value="443"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div
+              class="mb-1"
+              data-testid="input-text-wrapper"
+            >
+              <div
+                class="relative"
+              >
+                <div
+                  aria-label="input-container"
+                  class="input     "
+                >
+                  <div
+                    class=""
+                  >
+                    <label
+                      class="text-sm translate-y-2"
+                      for="Port name"
+                    >
+                      Port name
+                    </label>
+                    <input
+                      class="input__value "
+                      data-testid="input-text"
+                      id="Port name"
+                      name="name"
+                      type="text"
+                      value=""
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <p
+              class="text-neutral-350 text-xs ml-4 mb-5"
+            >
+              Port Name allows to customize the subdomain assigned to reach the application
+port from the internet. Default value is &lt;service_name&gt;-p&lt;port_number&gt;
+            </p>
+          </div>
+        </div>
+        <div
+          class="flex gap-3 justify-end mt-6"
+        >
+          <button
+            class="btn btn--xlarge btn--stroked btn--no-min-w "
+            data-testid="cancel-button"
+            type="button"
+          >
+            <span>
+              Cancel
+            </span>
+          </button>
+          <button
+            class="btn btn--xlarge btn--basic btn--disabled btn--no-min-w "
+            data-testid="submit-button"
+            disabled=""
+            type="submit"
+          >
+            <span>
+              Create
+            </span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+`;
+
+exports[`NetworkingPortSettingModal should match snapshot in edit state 1`] = `
+<body>
+  <div>
+    <div
+      class="p-6"
+    >
+      <h2
+        class="h4 text-neutral-400 max-w-sm truncate"
+      >
+        Edit port
+      </h2>
+      <span
+        aria-controls="radix-:rd:"
+        aria-expanded="false"
+        aria-haspopup="dialog"
+        class="text-sm cursor-pointer text-brand-500 hover:text-brand-600 transition font-medium mt-2"
+        data-state="closed"
+        type="button"
+      >
+        Show how it works 
+        <span
+          class="icon-regular-circle-question shrink-0 text-xs"
+          role="img"
+        />
+      </span>
+      <form
+        class="mt-6"
+      >
+        <div
+          class="flex flex-col gap-5"
+        >
+          <div
+            class=""
+            data-testid="input-text-wrapper"
+          >
+            <div
+              class="relative"
+            >
+              <div
+                aria-label="input-container"
+                class="input    input--label-up "
+              >
+                <div
+                  class=""
+                >
+                  <label
+                    class="text-sm translate-y-2"
+                    for="Service name"
+                  >
+                    Service name
+                  </label>
+                  <input
+                    class="input__value "
+                    data-testid="input-text"
+                    id="Service name"
+                    name="service_name"
+                    type="text"
+                    value="My service"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class=""
+            data-testid="input-text-wrapper"
+          >
+            <div
+              class="relative"
+            >
+              <div
+                aria-label="input-container"
+                class="input    input--label-up "
+              >
+                <div
+                  class=""
+                >
+                  <label
+                    class="text-sm translate-y-2"
+                    for="Namespace (optional)"
+                  >
+                    Namespace (optional)
+                  </label>
+                  <input
+                    class="input__value "
+                    data-testid="input-text"
+                    id="Namespace (optional)"
+                    name="namespace"
+                    type="text"
+                    value="My namespace"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class=""
+            data-testid="input-text-wrapper"
+          >
+            <div
+              class="relative"
+            >
+              <div
+                aria-label="input-container"
+                class="input    input--label-up "
+              >
+                <div
+                  class=""
+                >
+                  <label
+                    class="text-sm translate-y-2"
+                    for="Service port"
+                  >
+                    Service port
+                  </label>
+                  <input
+                    class="input__value "
+                    data-testid="input-text"
+                    id="Service port"
+                    name="internal_port"
+                    type="number"
+                    value="1234"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class=""
+          >
+            <div
+              class="input input--select    "
+              data-testid="select"
+            >
+              <label
+                class="!text-xs !translate-y-0"
+                for="Select protocol"
+              >
+                Select protocol
+              </label>
+              <div
+                class=" css-b62m3t-container"
+              >
+                <span
+                  class="css-1f43avz-a11yText-A11yText"
+                  id="react-select-3-live-region"
+                />
+                <span
+                  aria-atomic="false"
+                  aria-live="polite"
+                  aria-relevant="additions text"
+                  class="css-1f43avz-a11yText-A11yText"
+                />
+                <div
+                  class="input-select__control css-13cymwt-control"
+                >
+                  <div
+                    class="input-select__value-container input-select__value-container--has-value css-1fdsijx-ValueContainer"
+                  >
+                    <span
+                      class="text-sm text-neutral-400 mr-1"
+                    >
+                      HTTP
+                    </span>
+                    <input
+                      aria-autocomplete="list"
+                      aria-expanded="false"
+                      aria-haspopup="true"
+                      aria-readonly="true"
+                      class="css-mohuvp-dummyInput-DummyInput"
+                      id="Select protocol"
+                      inputmode="none"
+                      role="combobox"
+                      tabindex="0"
+                      value=""
+                    />
+                  </div>
+                  <div
+                    class="input-select__indicators css-1hb7zxy-IndicatorsContainer"
+                  >
+                    <span
+                      class="input-select__indicator-separator css-1u9des2-indicatorSeparator"
+                    />
+                    <div
+                      aria-hidden="true"
+                      class="input-select__indicator input-select__dropdown-indicator css-1xc3v61-indicatorContainer"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        class="css-tj5bde-Svg"
+                        focusable="false"
+                        height="20"
+                        viewBox="0 0 20 20"
+                        width="20"
+                      >
+                        <path
+                          d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+                <input
+                  name="Select protocol"
+                  type="hidden"
+                  value="HTTP"
+                />
+              </div>
+              <input
+                name="Select protocol"
+                type="hidden"
+                value="HTTP"
+              />
+              <div
+                class="absolute top-1/2 -translate-y-1/2 right-4 pointer-events-none"
+              >
+                <span
+                  class="icon-solid-angle-down shrink-0 text-sm text-neutral-400"
+                  role="img"
+                />
+              </div>
+            </div>
+          </div>
+          <div
+            class=""
+            data-testid="input-text-wrapper"
+          >
+            <div
+              class="relative"
+            >
+              <div
+                aria-label="input-container"
+                class="input input--disabled input--disabled !border-neutral-250  input--label-up "
+              >
+                <div
+                  class="pointer-events-none"
+                >
+                  <label
+                    class="text-sm translate-y-2"
+                    for="External port"
+                  >
+                    External port
+                  </label>
+                  <input
+                    class="input__value "
+                    data-testid="input-text"
+                    disabled=""
+                    id="External port"
+                    name="external_port"
+                    type="number"
+                    value="443"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div
+              class="mb-1"
+              data-testid="input-text-wrapper"
+            >
+              <div
+                class="relative"
+              >
+                <div
+                  aria-label="input-container"
+                  class="input    input--label-up "
+                >
+                  <div
+                    class=""
+                  >
+                    <label
+                      class="text-sm translate-y-2"
+                      for="Port name"
+                    >
+                      Port name
+                    </label>
+                    <input
+                      class="input__value "
+                      data-testid="input-text"
+                      id="Port name"
+                      name="name"
+                      type="text"
+                      value="My service-p1234"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <p
+              class="text-neutral-350 text-xs ml-4 mb-5"
+            >
+              Port Name allows to customize the subdomain assigned to reach the application
+port from the internet. Default value is &lt;service_name&gt;-p&lt;port_number&gt;
+            </p>
+          </div>
+        </div>
+        <div
+          class="flex gap-3 justify-end mt-6"
+        >
+          <button
+            class="btn btn--xlarge btn--stroked btn--no-min-w "
+            data-testid="cancel-button"
+            type="button"
+          >
+            <span>
+              Cancel
+            </span>
+          </button>
+          <button
+            class="btn btn--xlarge btn--basic btn--disabled btn--no-min-w "
+            data-testid="submit-button"
+            disabled=""
+            type="submit"
+          >
+            <span>
+              Confirm
+            </span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+`;

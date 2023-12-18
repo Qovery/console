@@ -1,9 +1,11 @@
+import { Fragment } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useCreateHelmService } from '@qovery/domains/service-helm/feature'
 import {
   SERVICES_CREATION_GENERAL_URL,
   SERVICES_GENERAL_URL,
+  SERVICES_HELM_CREATION_NETWORKING_URL,
   SERVICES_HELM_CREATION_URL,
   SERVICES_HELM_CREATION_VALUES_STEP_1_URL,
   SERVICES_URL,
@@ -11,6 +13,7 @@ import {
 import { Button, FunnelFlowBody, Heading, Icon, IconAwesomeEnum, Section, truncateText } from '@qovery/shared/ui'
 import { getGitTokenValue } from '@qovery/shared/util-git'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { pluralize } from '@qovery/shared/util-js'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
 import { useHelmCreateContext } from '../page-helm-create-feature'
 
@@ -20,10 +23,11 @@ export function StepSummaryFeature() {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const navigate = useNavigate()
 
-  const { generalForm, valuesOverrideFileForm, setCurrentStep } = useHelmCreateContext()
+  const { generalForm, valuesOverrideFileForm, networkingForm, setCurrentStep } = useHelmCreateContext()
   const generalData = generalForm.getValues()
   const valuesOverrideFileData = valuesOverrideFileForm.getValues()
-  setCurrentStep(3)
+  const networkingData = networkingForm.getValues()
+  setCurrentStep(4)
 
   const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_HELM_CREATION_URL}`
 
@@ -95,6 +99,7 @@ export function StepSummaryFeature() {
           values_override: {
             file: valuesOverrideFile,
           },
+          ports: networkingData.ports,
         },
       })
       navigate(SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_GENERAL_URL)
@@ -194,7 +199,7 @@ export function StepSummaryFeature() {
         </div>
 
         {valuesOverrideFileData.type !== 'NONE' && (
-          <div className="flex p-4 w-full border rounded border-neutral-250 bg-neutral-100">
+          <div className="flex p-4 w-full border rounded border-neutral-250 bg-neutral-100 mb-2">
             <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
             <div className="flex-grow mr-2">
               <div className="text-sm text-neutral-400 font-bold mb-5">Variables</div>
@@ -235,6 +240,38 @@ export function StepSummaryFeature() {
             </Button>
           </div>
         )}
+
+        <div className="flex p-4 w-full border rounded border-neutral-250 bg-neutral-100">
+          <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
+          <div className="flex-grow mr-2">
+            <div className="text-sm text-neutral-400 font-bold mb-5">
+              {networkingData.ports.length} {pluralize(networkingData.ports.length, 'services')} exposed publicly
+            </div>
+            {networkingData.ports.map(({ service_name, internal_port, protocol }, i) => (
+              <Fragment key={i}>
+                {!!i && <div className="my-4 border-b border-neutral-250 border-dashed" />}
+                <ul className="text-neutral-350 text-sm list-none">
+                  <li>
+                    <span className="font-medium">Service {i + 1}:</span> {service_name}
+                  </li>
+                  <li>
+                    <span className="font-medium">Service port:</span> {internal_port}
+                  </li>
+                  <li>
+                    <span className="font-medium">Protocol:</span> {protocol}
+                  </li>
+                </ul>
+              </Fragment>
+            ))}
+          </div>
+          <Button
+            color="neutral"
+            variant="surface"
+            onClick={() => navigate(pathCreate + SERVICES_HELM_CREATION_NETWORKING_URL)}
+          >
+            <Icon name={IconAwesomeEnum.WHEEL} />
+          </Button>
+        </div>
 
         <div className="flex justify-between mt-10">
           <Button type="button" size="lg" variant="surface" color="neutral" onClick={() => navigate(-1)}>

@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form'
 import * as serviceHelmDomain from '@qovery/domains/service-helm/feature'
 import { renderHook, renderWithProviders } from '@qovery/shared/util-tests'
-import { type HelmGeneralData } from '../page-helm-create-feature'
+import { type HelmGeneralData, type HelmNetworkingData } from '../page-helm-create-feature'
 import { HelmCreateContext } from '../page-helm-create-feature'
 import StepSummaryFeature from './step-summary-feature'
 
@@ -53,6 +53,32 @@ describe('PageApplicationCreateGeneralFeature', () => {
       })
     )
 
+    const { result: networkingForm } = renderHook(() =>
+      useForm<HelmNetworkingData>({
+        mode: 'onChange',
+        defaultValues: {
+          ports: [
+            {
+              internal_port: 1234,
+              external_port: 443,
+              service_name: 'My service',
+              namespace: 'My namespace',
+              protocol: 'HTTP',
+              name: 'My service-p1234',
+            },
+            {
+              internal_port: 4321,
+              external_port: 443,
+              service_name: 'My service 2',
+              namespace: '',
+              protocol: 'GRPC',
+              name: 'My service 2-p4321',
+            },
+          ],
+        },
+      })
+    )
+
     const { baseElement } = renderWithProviders(
       <HelmCreateContext.Provider
         value={{
@@ -60,6 +86,7 @@ describe('PageApplicationCreateGeneralFeature', () => {
           setCurrentStep: jest.fn(),
           generalForm: generalForm.current,
           valuesOverrideFileForm: valuesOverrideFileForm.current,
+          networkingForm: networkingForm.current,
         }}
       >
         <StepSummaryFeature />
