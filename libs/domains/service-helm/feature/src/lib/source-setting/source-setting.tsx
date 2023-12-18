@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom'
 import { InputSelect, InputText, LoaderSpinner } from '@qovery/shared/ui'
 import { useHelmRepositories } from '../hooks/use-helm-repositories/use-helm-repositories'
 
-export function SourceSetting() {
+export function SourceSetting({ disabled = false }: { disabled?: boolean }) {
   const { organizationId = '' } = useParams()
   const { control, watch } = useFormContext()
   const watchFieldProvider = watch('source_provider')
@@ -28,6 +28,7 @@ export function SourceSetting() {
         render={({ field, fieldState: { error } }) => (
           <InputSelect
             label="Helm source"
+            disabled={disabled}
             options={[
               {
                 label: 'Git provider',

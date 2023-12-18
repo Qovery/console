@@ -44,4 +44,11 @@ export const applicationFactoryMock = (howMany: number): ApplicationEntity[] | A
     min_running_instances: 1,
     max_running_instances: 3,
     auto_preview: false,
+    git_repository: {
+      id: chance.guid(),
+      url: chance.url(),
+      branch: chance.word({ length: 5 }),
+      root_path: chance.word({ length: 5 }),
+      git_token_id: chance.guid(),
+    },
   }))

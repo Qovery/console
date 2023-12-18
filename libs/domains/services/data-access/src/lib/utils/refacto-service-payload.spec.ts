@@ -1,10 +1,4 @@
-import {
-  ContainerRegistryKindEnum,
-  DatabaseAccessibilityEnum,
-  DatabaseModeEnum,
-  DatabaseTypeEnum,
-  StorageTypeEnum,
-} from 'qovery-typescript-axios'
+import { DatabaseAccessibilityEnum, DatabaseModeEnum, DatabaseTypeEnum, StorageTypeEnum } from 'qovery-typescript-axios'
 import { type Application, type Container, type Database, type Job } from '../domains-services-data-access'
 import { refactoApplication, refactoContainer, refactoDatabase, refactoJob } from './refacto-service-payload'
 
@@ -87,11 +81,12 @@ describe('testing payload refactoring', () => {
       memory: 32,
       max_running_instances: 12,
       min_running_instances: 1,
+      registry_id: '1',
       registry: {
         id: '1',
-        name: 'name',
+        name: 'registry',
         url: 'url',
-        kind: ContainerRegistryKindEnum.DOCKER_HUB,
+        kind: 'DOCKER_HUB',
       },
       image_name: 'image_name',
       healthchecks: {},

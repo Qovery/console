@@ -1,6 +1,6 @@
-import { getByTestId, render, waitFor } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { DatabaseAccessibilityEnum, DatabaseModeEnum, DatabaseTypeEnum } from 'qovery-typescript-axios'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import PageSettingsGeneral, { type PageSettingsGeneralProps } from './page-settings-general'
 
 describe('PageSettingsGeneral', () => {
@@ -18,24 +18,22 @@ describe('PageSettingsGeneral', () => {
   }
 
   it('should render successfully', async () => {
-    const { baseElement } = render(wrapWithReactHookForm(<PageSettingsGeneral {...props} />))
+    const { baseElement } = renderWithProviders(wrapWithReactHookForm(<PageSettingsGeneral {...props} />))
     expect(baseElement).toBeTruthy()
   })
 
   it('should submit the form', async () => {
     const spy = jest.fn((e) => e.preventDefault())
     props.onSubmit = spy
-    const { baseElement } = render(
+    const { userEvent } = renderWithProviders(
       wrapWithReactHookForm(<PageSettingsGeneral {...props} />, {
         defaultValues: defaultValues,
       })
     )
 
-    const button = getByTestId(baseElement, 'submit-button')
+    const button = screen.getByRole('button', { name: /save/i })
 
-    await waitFor(() => {
-      button.click()
-      expect(spy).toHaveBeenCalled()
-    })
+    await userEvent.click(button)
+    expect(spy).toHaveBeenCalled()
   })
 })

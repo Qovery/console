@@ -66,6 +66,13 @@ describe('CrudModalFeature', () => {
         "environment": {
           "id": "a423de79-940a-5328-9a47-e525140f87ec",
         },
+        "git_repository": {
+          "branch": "irved",
+          "git_token_id": "5f3e8c0c-4725-540c-b879-c9ae17c71ad3",
+          "id": "19a2f9a1-9cac-52c0-b043-01cbc6818f5f",
+          "root_path": "juzma",
+          "url": "http://cub.cr/zutgi",
+        },
         "healthchecks": {
           "liveness_probe": undefined,
           "readiness_probe": undefined,
@@ -134,6 +141,13 @@ describe('CrudModalFeature', () => {
         "dockerfile_path": "geniz",
         "environment": {
           "id": "a423de79-940a-5328-9a47-e525140f87ec",
+        },
+        "git_repository": {
+          "branch": "irved",
+          "git_token_id": "5f3e8c0c-4725-540c-b879-c9ae17c71ad3",
+          "id": "19a2f9a1-9cac-52c0-b043-01cbc6818f5f",
+          "root_path": "juzma",
+          "url": "http://cub.cr/zutgi",
         },
         "healthchecks": {
           "liveness_probe": {
@@ -209,6 +223,13 @@ describe('CrudModalFeature', () => {
         "dockerfile_path": "geniz",
         "environment": {
           "id": "a423de79-940a-5328-9a47-e525140f87ec",
+        },
+        "git_repository": {
+          "branch": "irved",
+          "git_token_id": "5f3e8c0c-4725-540c-b879-c9ae17c71ad3",
+          "id": "19a2f9a1-9cac-52c0-b043-01cbc6818f5f",
+          "root_path": "juzma",
+          "url": "http://cub.cr/zutgi",
         },
         "healthchecks": {
           "liveness_probe": undefined,

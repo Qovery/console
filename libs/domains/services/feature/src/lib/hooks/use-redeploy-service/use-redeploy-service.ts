@@ -16,7 +16,7 @@ export function useRedeployService({ environmentId }: { environmentId: string })
     },
     meta: {
       notifyOnSuccess: {
-        title: 'Your application is redeploying',
+        title: 'Your service is redeploying',
       },
       notifyOnError: true,
     },
