@@ -2,24 +2,24 @@ import { type Meta, type Story } from '@storybook/react'
 import { type ClickEvent } from '@szhsin/react-menu'
 import Icon from '../../icon/icon'
 import { ButtonLegacySize } from '../button-legacy/button-legacy'
-import ButtonAction, { type ButtonActionProps, ButtonActionStyle } from './button-action'
+import ButtonActionLegacy, { type ButtonActionLegacyProps, ButtonActionLegacyStyle } from './button-action-legacy'
 
 export default {
-  component: ButtonAction,
-  title: 'Buttons/ButtonAction',
+  component: ButtonActionLegacy,
+  title: 'Buttons/ButtonActionLegacy',
   argTypes: {
     size: {
       options: Object.values(ButtonLegacySize).filter((x) => typeof x === 'string'),
       control: { type: 'select' },
     },
     style: {
-      options: Object.values(ButtonActionStyle).filter((x) => typeof x === 'string'),
+      options: Object.values(ButtonActionLegacyStyle).filter((x) => typeof x === 'string'),
       control: { type: 'select' },
     },
   },
 } as Meta
 
-const Template: Story<ButtonActionProps> = (args) => <ButtonAction {...args}>Button</ButtonAction>
+const Template: Story<ButtonActionLegacyProps> = (args) => <ButtonActionLegacy {...args}>Button</ButtonActionLegacy>
 
 const menusButton = [
   {
@@ -59,7 +59,7 @@ const menusButton = [
 
 export const Primary = Template.bind({})
 Primary.args = {
-  style: ButtonActionStyle.BASIC,
+  style: ButtonActionLegacyStyle.BASIC,
   size: ButtonLegacySize.LARGE,
   iconRight: 'icon-solid-plus',
   menus: menusButton,

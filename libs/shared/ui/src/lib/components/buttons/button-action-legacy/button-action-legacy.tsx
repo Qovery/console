@@ -5,15 +5,15 @@ import Icon from '../../icon/icon'
 import Menu, { MenuAlign, type MenuData } from '../../menu/menu'
 import { ButtonLegacySize } from '../button-legacy/button-legacy'
 
-export enum ButtonActionStyle {
+export enum ButtonActionLegacyStyle {
   BASIC = 'basic',
   RAISED = 'raised',
   STROKED = 'stroked',
   FLAT = 'flat',
 }
 
-export interface ButtonActionProps {
-  style?: ButtonActionStyle
+export interface ButtonActionLegacyProps {
+  style?: ButtonActionLegacyStyle
   iconRight?: IconEnum | string
   link?: string
   external?: boolean
@@ -25,10 +25,13 @@ export interface ButtonActionProps {
   size?: ButtonLegacySize
 }
 
-export function ButtonAction(props: PropsWithChildren<ButtonActionProps>) {
+/**
+ * @deprecated This should be migrated to the <Button /> with dropdown component
+ */
+export function ButtonActionLegacy(props: PropsWithChildren<ButtonActionLegacyProps>) {
   const {
     children,
-    style = ButtonActionStyle.BASIC,
+    style = ButtonActionLegacyStyle.BASIC,
     iconRight,
     link,
     disabled = false,
@@ -94,4 +97,4 @@ export function ButtonAction(props: PropsWithChildren<ButtonActionProps>) {
   )
 }
 
-export default ButtonAction
+export default ButtonActionLegacy

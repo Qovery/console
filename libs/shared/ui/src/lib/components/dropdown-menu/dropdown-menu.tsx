@@ -9,6 +9,8 @@ const dropdownMenuItemVariants = cva(
     variants: {
       color: {
         brand: [
+          'text-neutral-400',
+          'dark:text-neutral-100',
           'hover:bg-brand-50',
           'data-[highlighted]:bg-brand-50',
           'hover:text-brand-500',

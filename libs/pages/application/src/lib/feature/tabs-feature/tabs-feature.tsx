@@ -15,7 +15,7 @@ import {
 } from '@qovery/shared/routes'
 import {
   Button,
-  ButtonAction,
+  ButtonActionLegacy,
   ButtonLegacy,
   ButtonLegacyStyle,
   Icon,
@@ -157,9 +157,9 @@ function ContentRightEnvVariable({
       >
         {globalShowHideValue ? 'Hide all' : 'Show all'}
       </ButtonLegacy>
-      <ButtonAction iconRight={IconAwesomeEnum.CIRCLE_PLUS} menus={menuForContentRight} dropdown={dropdown}>
+      <ButtonActionLegacy iconRight={IconAwesomeEnum.CIRCLE_PLUS} menus={menuForContentRight} dropdown={dropdown}>
         New variable
-      </ButtonAction>
+      </ButtonActionLegacy>
     </>
   )
 }
