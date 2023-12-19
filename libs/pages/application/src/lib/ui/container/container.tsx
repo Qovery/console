@@ -7,7 +7,7 @@ import { postApplicationActionsDeploy, postApplicationActionsRedeploy } from '@q
 import { useCluster } from '@qovery/domains/clusters/feature'
 import { EnvironmentMode } from '@qovery/domains/environments/feature'
 import { type AnyService } from '@qovery/domains/services/data-access'
-import { useDeploymentStatus } from '@qovery/domains/services/feature'
+import { ServiceActionToolbar, useDeploymentStatus } from '@qovery/domains/services/feature'
 import { ApplicationButtonsActions, NeedRedeployFlag } from '@qovery/shared/console-shared'
 import { IconEnum, isCronJob, isLifeCycleJob } from '@qovery/shared/enums'
 import { type ApplicationEntity } from '@qovery/shared/interfaces'
@@ -93,15 +93,19 @@ export function Container({ service, environment, children }: PropsWithChildren<
         </Skeleton>
       </div>
       <Skeleton width={150} height={32} show={isLoadingServiceDeploymentStatus}>
-        <div className="flex">
-          {environment && service && (
-            <ApplicationButtonsActions
-              application={service as ApplicationEntity}
-              environmentMode={environment.mode}
-              clusterId={environment.cluster_id}
-            />
-          )}
-        </div>
+        {environment && (
+          <div className="flex">
+            {service?.serviceType === 'HELM' ? (
+              <ServiceActionToolbar serviceId={service.id} />
+            ) : (
+              <ApplicationButtonsActions
+                application={service as ApplicationEntity}
+                environmentMode={environment.mode}
+                clusterId={environment.cluster_id}
+              />
+            )}
+          </div>
+        )}
       </Skeleton>
     </div>
   )
