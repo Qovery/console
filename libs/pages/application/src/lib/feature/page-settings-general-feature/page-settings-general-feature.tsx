@@ -5,7 +5,7 @@ import { P, match } from 'ts-pattern'
 import { useOrganization } from '@qovery/domains/organizations/feature'
 import { type Application, type Container, type Helm, type Job } from '@qovery/domains/services/data-access'
 import { useEditService, useService } from '@qovery/domains/services/feature'
-import { isHelmGitSource, isHelmRepositorySource, isJobGitSource } from '@qovery/shared/enums'
+import { isHelmGitSource, isHelmRepositorySource, isJobContainerSource, isJobGitSource } from '@qovery/shared/enums'
 import { toastError } from '@qovery/shared/ui'
 import { getGitTokenValue } from '@qovery/shared/util-git'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
@@ -173,11 +173,18 @@ export function PageSettingsGeneralFeature() {
       auto_deploy: service.auto_deploy,
       cmd_arguments: (service.arguments && service.arguments.length && JSON.stringify(service.arguments)) || '',
     }))
-    .with({ serviceType: 'JOB' }, (service) => ({
-      auto_deploy: service.auto_deploy,
-      build_mode: BuildModeEnum.DOCKER,
-      dockerfile_path: isJobGitSource(service.source) ? service.source.docker?.dockerfile_path : 'Dockerfile',
-    }))
+    .with({ serviceType: 'JOB' }, (service) => {
+      const jobContainerSource = isJobContainerSource(service.source) ? service.source : undefined
+
+      return {
+        auto_deploy: service.auto_deploy,
+        build_mode: BuildModeEnum.DOCKER,
+        dockerfile_path: isJobGitSource(service.source) ? service.source.docker?.dockerfile_path : 'Dockerfile',
+        registry: jobContainerSource?.image?.registry_id,
+        image_name: jobContainerSource?.image?.image_name,
+        image_tag: jobContainerSource?.image?.tag,
+      }
+    })
     .with({ serviceType: 'HELM' }, (service) => ({
       source_provider: isHelmRepositorySource(service.source) ? 'HELM_REPOSITORY' : 'GIT',
       repository: helmRepository?.repository?.id ?? helmGit?.url,
