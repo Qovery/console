@@ -330,7 +330,10 @@ exports[`PodDetails should match snapshot with git based pod and with last_termi
               <dd
                 class="text-neutral-400 font-medium dark:text-white dark:font-normal"
               >
-                Baz
+                Baz reason
+                :
+                 
+                baz
                  (
                 1
                 ).
