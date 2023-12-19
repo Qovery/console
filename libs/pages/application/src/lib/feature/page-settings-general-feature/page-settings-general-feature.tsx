@@ -174,15 +174,15 @@ export function PageSettingsGeneralFeature() {
       cmd_arguments: (service.arguments && service.arguments.length && JSON.stringify(service.arguments)) || '',
     }))
     .with({ serviceType: 'JOB' }, (service) => {
-      const jobContainerSource = isJobContainerSource(service.source) ? service.source : undefined
+      const jobContainerSource = isJobContainerSource(service.source) ? service.source.image : undefined
 
       return {
         auto_deploy: service.auto_deploy,
         build_mode: BuildModeEnum.DOCKER,
         dockerfile_path: isJobGitSource(service.source) ? service.source.docker?.dockerfile_path : 'Dockerfile',
-        registry: jobContainerSource?.image?.registry_id,
-        image_name: jobContainerSource?.image?.image_name,
-        image_tag: jobContainerSource?.image?.tag,
+        registry: jobContainerSource?.registry_id,
+        image_name: jobContainerSource?.image_name,
+        image_tag: jobContainerSource?.tag,
       }
     })
     .with({ serviceType: 'HELM' }, (service) => ({
