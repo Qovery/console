@@ -8,9 +8,9 @@ export function useEditService({ environmentId }: { environmentId: string }) {
   const { mutate: redeployService } = useRedeployService({ environmentId })
 
   return useMutation(mutations.editService, {
-    onSuccess(_, { payload, serviceId }) {
+    onSuccess(response, { payload, serviceId }) {
       queryClient.invalidateQueries({
-        queryKey: queries.services.list(payload.environment.id).queryKey,
+        queryKey: queries.services.list(response.environment.id).queryKey,
       })
       queryClient.invalidateQueries({
         queryKey: queries.services.details({ serviceType: payload.serviceType, serviceId }).queryKey,

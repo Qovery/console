@@ -1,4 +1,13 @@
-import { BuildModeEnum } from 'qovery-typescript-axios'
+import {
+  type ApplicationEditRequest,
+  BuildModeEnum,
+  type ContainerRequest,
+  type HelmRequest,
+  type HelmRequestAllOfSource,
+  type HelmRequestAllOfSourceOneOf,
+  type HelmRequestAllOfSourceOneOf1,
+  type JobRequest,
+} from 'qovery-typescript-axios'
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { P, match } from 'ts-pattern'
@@ -11,10 +20,15 @@ import { getGitTokenValue } from '@qovery/shared/util-git'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
 import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-general'
 
-export const handleGitApplicationSubmit = (data: FieldValues, application: Application) => {
-  let cloneApplication = Object.assign({}, application)
-  cloneApplication.name = data['name']
-  cloneApplication.description = data['description']
+export const handleGitApplicationSubmit = (data: FieldValues, application: Application): ApplicationEditRequest => {
+  let cloneApplication: ApplicationEditRequest = {
+    ...application,
+    dockerfile_path: undefined,
+    git_repository: undefined,
+    name: data['name'],
+    description: data['description'] || '',
+    auto_deploy: data['auto_deploy'],
+  }
   cloneApplication.auto_deploy = data['auto_deploy']
 
   if ('build_mode' in cloneApplication) {
@@ -25,7 +39,7 @@ export const handleGitApplicationSubmit = (data: FieldValues, application: Appli
       cloneApplication.buildpack_language = null
     } else {
       cloneApplication.buildpack_language = data['buildpack_language']
-      cloneApplication.dockerfile_path = null
+      cloneApplication.dockerfile_path = undefined
     }
 
     const gitToken = getGitTokenValue(data['provider'])
@@ -49,7 +63,7 @@ export const handleGitApplicationSubmit = (data: FieldValues, application: Appli
   return cloneApplication
 }
 
-export const handleContainerSubmit = (data: FieldValues, container: Container) => {
+export const handleContainerSubmit = (data: FieldValues, container: Container): ContainerRequest => {
   return {
     ...container,
     name: data['name'],
@@ -63,7 +77,7 @@ export const handleContainerSubmit = (data: FieldValues, container: Container) =
   }
 }
 
-export const handleJobSubmit = (data: FieldValues, job: Job) => {
+export const handleJobSubmit = (data: FieldValues, job: Job): JobRequest => {
   if (isJobGitSource(job.source)) {
     const gitToken = getGitTokenValue(data['provider'])
 
@@ -103,32 +117,31 @@ export const handleJobSubmit = (data: FieldValues, job: Job) => {
   }
 }
 
-export const handleHelmSubmit = (data: FieldValues, helm: Helm) => {
+export const handleHelmSubmit = (data: FieldValues, helm: Helm): HelmRequest => {
   const sourceProvider: 'HELM_REPOSITORY' | 'GIT' = data['source_provider']
-  const source = match(sourceProvider)
-    .with('GIT', () => {
+  const source: HelmRequestAllOfSource = match(sourceProvider)
+    .with('GIT', (): HelmRequestAllOfSourceOneOf => {
       const gitToken = getGitTokenValue(data['provider'] ?? '')
 
       return {
-        git: {
-          git_repository: {
-            url: buildGitRepoUrl(gitToken?.type ?? data['provider'] ?? '', data['repository']),
-            branch: data['branch'],
-            root_path: data['root_path'],
-            git_token_id: gitToken?.id,
-          },
+        git_repository: {
+          url: buildGitRepoUrl(gitToken?.type ?? data['provider'] ?? '', data['repository']),
+          branch: data['branch'],
+          root_path: data['root_path'],
+          git_token_id: gitToken?.id,
         },
       }
     })
-    .with('HELM_REPOSITORY', () => ({
-      repository: {
-        repository: {
-          id: data['repository'],
+    .with(
+      'HELM_REPOSITORY',
+      (): HelmRequestAllOfSourceOneOf1 => ({
+        helm_repository: {
+          repository: data['repository'],
+          chart_name: data['chart_name'],
+          chart_version: data['chart_version'],
         },
-        chart_name: data['chart_name'],
-        chart_version: data['chart_version'],
-      },
-    }))
+      })
+    )
     .exhaustive()
 
   return {
@@ -210,10 +223,22 @@ export function PageSettingsGeneralFeature() {
     if (!service) return
 
     const payload = match(service)
-      .with({ serviceType: 'APPLICATION' }, (service) => handleGitApplicationSubmit(data, service))
-      .with({ serviceType: 'JOB' }, (service) => handleJobSubmit(data, service))
-      .with({ serviceType: 'CONTAINER' }, (service) => handleContainerSubmit(data, service))
-      .with({ serviceType: 'HELM' }, (service) => handleHelmSubmit(data, service))
+      .with({ serviceType: 'APPLICATION' }, (s) => ({
+        ...handleGitApplicationSubmit(data, s),
+        serviceType: s.serviceType,
+      }))
+      .with({ serviceType: 'JOB' }, (s) => ({
+        ...handleJobSubmit(data, s),
+        serviceType: s.serviceType,
+      }))
+      .with({ serviceType: 'CONTAINER' }, (s) => ({
+        ...handleContainerSubmit(data, s),
+        serviceType: s.serviceType,
+      }))
+      .with({ serviceType: 'HELM' }, (s) => ({
+        ...handleHelmSubmit(data, s),
+        serviceType: s.serviceType,
+      }))
       .otherwise(() => undefined)
 
     if (!payload) return null

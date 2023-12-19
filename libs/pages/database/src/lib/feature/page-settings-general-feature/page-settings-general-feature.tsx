@@ -1,21 +1,11 @@
 import { DatabaseModeEnum, KubernetesEnum } from 'qovery-typescript-axios'
-import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
+import { FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { useCluster } from '@qovery/domains/clusters/feature'
 import { useFetchDatabaseConfiguration, useFetchEnvironment } from '@qovery/domains/environment'
-import { type Database } from '@qovery/domains/services/data-access'
 import { useEditService, useService } from '@qovery/domains/services/feature'
+import { buildEditServicePayload } from '@qovery/shared/util-services'
 import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-general'
-
-export const handleSubmit = (data: FieldValues, database: Database) => {
-  const cloneDatabase = Object.assign({}, database)
-  cloneDatabase.name = data['name']
-  cloneDatabase.description = data['description']
-  cloneDatabase.accessibility = data['accessibility']
-  cloneDatabase.version = data['version']
-
-  return cloneDatabase
-}
 
 export function PageSettingsGeneralFeature() {
   const { organizationId = '', environmentId = '', projectId = '', databaseId = '' } = useParams()
@@ -53,11 +43,9 @@ export function PageSettingsGeneralFeature() {
 
   const onSubmit = methods.handleSubmit((data) => {
     if (data && database) {
-      const cloneDatabase = handleSubmit(data, database)
-
       editService({
         serviceId: databaseId,
-        payload: cloneDatabase,
+        payload: buildEditServicePayload({ service: database, request: data }),
       })
     }
   })

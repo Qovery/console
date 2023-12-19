@@ -1,20 +1,82 @@
 import {
   type ApplicationEditRequest,
   type ApplicationGitRepositoryRequest,
+  type ContainerRequest,
+  type DatabaseEditRequest,
   DatabaseModeEnum,
   type HelmRequest,
+  type JobRequest,
   type ServiceStorageStorageInner,
 } from 'qovery-typescript-axios'
 import { P, match } from 'ts-pattern'
+import {
+  type Application,
+  type ApplicationType,
+  type Container,
+  type ContainerType,
+  type Database,
+  type DatabaseType,
+  type Helm,
+  type HelmType,
+  type Job,
+  type JobType,
+} from '@qovery/domains/services/data-access'
 import { isHelmGitSource, isHelmRepositorySource, isJobGitSource } from '@qovery/shared/enums'
-import { type Application, type Container, type Database, type Helm, type Job } from '../domains-services-data-access'
 
-/* 
-TODO: all this following functions should be removed after the API refactoring and we need to clean it after the Services migration to React Query 
+type applicationProps = {
+  service: Application
+  request?: Partial<ApplicationEditRequest>
+}
+
+type containerProps = {
+  service: Container
+  request?: Partial<ContainerRequest>
+}
+
+type databaseProps = {
+  service: Database
+  request?: Partial<DatabaseEditRequest>
+}
+
+type jobProps = {
+  service: Job
+  request?: Partial<JobRequest>
+}
+
+type helmProps = {
+  service: Helm
+  request?: Partial<HelmRequest>
+}
+
+export type responseToRequestProps = applicationProps | containerProps | databaseProps | jobProps | helmProps
+
+export function buildEditServicePayload(
+  props: applicationProps
+): ApplicationEditRequest & { serviceType: ApplicationType }
+export function buildEditServicePayload(props: containerProps): ContainerRequest & { serviceType: ContainerType }
+export function buildEditServicePayload(props: databaseProps): DatabaseEditRequest & { serviceType: DatabaseType }
+export function buildEditServicePayload(props: jobProps): JobRequest & { serviceType: JobType }
+export function buildEditServicePayload(props: helmProps): HelmRequest & { serviceType: HelmType }
+
+export function buildEditServicePayload(props: responseToRequestProps) {
+  return {
+    serviceType: props.service.serviceType,
+    ...match(props)
+      .with({ service: { serviceType: 'APPLICATION' } }, (props) => refactoApplication(props))
+      .with({ service: { serviceType: 'CONTAINER' } }, (props) => refactoContainer(props))
+      .with({ service: { serviceType: 'DATABASE' } }, (props) => refactoDatabase(props))
+      .with({ service: { serviceType: 'JOB' } }, (props) => refactoJob(props))
+      .with({ service: { serviceType: 'HELM' } }, (props) => refactoHelm(props))
+      .exhaustive(),
+  }
+}
+
+/*
+TODO: all this following functions should be removed after the API refactoring and we need to clean it after the Services migration to React Query
 https://www.notion.so/qovery/API-improvements-b54ba305c2ee4e549eb002278c532c7f?pvs=4#7d71ea23b5fa44ca80c15a0c32ebd8da
 */
 
-export function refactoApplication(application: Application) {
+function refactoApplication({ service: application, request = {} }: applicationProps): ApplicationEditRequest {
   // refacto because we can't send all git data
   if (application.git_repository) {
     application.git_repository = {
@@ -58,10 +120,10 @@ export function refactoApplication(application: Application) {
     arguments: application.arguments,
   }
 
-  return applicationRequestPayload
+  return { ...applicationRequestPayload, ...request }
 }
 
-export function refactoContainer(container: Container) {
+function refactoContainer({ service: container, request = {} }: containerProps): ContainerRequest {
   const containerRequestPayload = {
     name: container.name || '',
     description: container.description || '',
@@ -81,10 +143,10 @@ export function refactoContainer(container: Container) {
     healthchecks: container.healthchecks,
   }
 
-  return containerRequestPayload
+  return { ...containerRequestPayload, ...request }
 }
 
-export function refactoJob(job: Job) {
+function refactoJob({ service: job, request = {} }: jobProps): JobRequest {
   const jobRequest = {
     name: job.name,
     description: job.description,
@@ -122,10 +184,10 @@ export function refactoJob(job: Job) {
     }
   }
 
-  return jobRequest
+  return { ...jobRequest, ...request }
 }
 
-export function refactoDatabase(database: Database) {
+function refactoDatabase({ service: database, request = {} }: databaseProps): DatabaseEditRequest {
   const databaseRequestPayload = {
     name: database.name,
     description: database.description,
@@ -135,14 +197,16 @@ export function refactoDatabase(database: Database) {
     memory: database.memory,
     storage: database.storage,
     instance_type: database.instance_type,
+    type: database.type,
+    mode: database.mode,
   }
 
   if (database.mode === DatabaseModeEnum.MANAGED) databaseRequestPayload.version = database.version
 
-  return databaseRequestPayload
+  return { ...databaseRequestPayload, ...request }
 }
 
-export function refactoHelm(helm: Helm) {
+function refactoHelm({ service: helm, request = {} }: helmProps): HelmRequest {
   const source = match(helm)
     .with(
       {
@@ -188,5 +252,5 @@ export function refactoHelm(helm: Helm) {
     source,
   }
 
-  return helmRequestPayload
+  return { ...helmRequestPayload, ...request }
 }

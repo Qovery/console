@@ -1,7 +1,6 @@
 import { type PodStatusDto, type ServiceMetricsDto } from 'qovery-ws-typescript-axios'
 import { useParams } from 'react-router-dom'
 import { type ServiceType } from '@qovery/domains/services/data-access'
-import { getServiceStateColor } from '@qovery/domains/services/util'
 import { ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
 import {
   Button,
@@ -15,6 +14,7 @@ import {
 } from '@qovery/shared/ui'
 import { dateFullFormat } from '@qovery/shared/util-dates'
 import { pluralize, upperCaseFirstLetter } from '@qovery/shared/util-js'
+import { getServiceStateColor } from '@qovery/shared/util-services'
 
 const { Tabs } = TabsPrimitives
 

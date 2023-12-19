@@ -1,21 +1,21 @@
 {
-  "name": "domains-services-util",
-  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/domains/services/util/src",
+  "name": "shared-util-services",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/shared/util-services/src",
   "projectType": "library",
   "targets": {
     "lint": {
       "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["libs/domains/services/util/**/*.ts"]
+        "lintFilePatterns": ["libs/shared/util-services/**/*.ts"]
       }
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "libs/domains/services/util/jest.config.ts",
+        "jestConfig": "libs/shared/util-services/jest.config.ts",
         "passWithNoTests": true
       },
       "configurations": {
@@ -26,5 +26,5 @@
       }
     }
   },
-  "tags": ["scope:domain", "type:util", "slice:services"]
+  "tags": []
 }
