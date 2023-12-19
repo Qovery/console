@@ -108,5 +108,3 @@ const DropdownMenu = Object.assign(
 )
 
 export { DropdownMenu }
-
-export type { DropdownMenuItemProps }
