@@ -66,6 +66,9 @@ export interface MenuProps {
   portal?: boolean
 }
 
+/*
+ * @deprecated Use DropdownMenu
+ */
 export function Menu(props: MenuProps) {
   const {
     trigger,
