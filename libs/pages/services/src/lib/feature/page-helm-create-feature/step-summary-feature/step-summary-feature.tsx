@@ -1,6 +1,7 @@
 import { Fragment } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
+import { useHelmRepositories } from '@qovery/domains/organizations/feature'
 import { useCreateHelmService } from '@qovery/domains/service-helm/feature'
 import {
   SERVICES_CREATION_GENERAL_URL,
@@ -32,6 +33,7 @@ export function StepSummaryFeature() {
   const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_HELM_CREATION_URL}`
 
   const { mutateAsync: createHelmService, isLoading: isLoadingCreateHelm } = useCreateHelmService()
+  const { data: helmRepositories = [] } = useHelmRepositories({ organizationId })
 
   const onSubmit = async (withDeploy: boolean) => {
     const source = match(generalData.source_provider)
@@ -155,7 +157,8 @@ export function StepSummaryFeature() {
             {generalData.source_provider === 'HELM_REPOSITORY' && (
               <ul className="text-neutral-350 text-sm list-none">
                 <li>
-                  <span className="font-medium">Repository:</span> {generalData.repository}
+                  <span className="font-medium">Repository:</span>{' '}
+                  {helmRepositories.find(({ id }) => id === generalData.repository)?.name}
                 </li>
                 <li>
                   <span className="font-medium">Chart name:</span> {generalData.chart_name}

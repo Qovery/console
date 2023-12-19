@@ -1,4 +1,5 @@
 import { useForm } from 'react-hook-form'
+import * as organizationDomain from '@qovery/domains/organizations/feature'
 import * as serviceHelmDomain from '@qovery/domains/service-helm/feature'
 import { renderHook, renderWithProviders } from '@qovery/shared/util-tests'
 import { type HelmGeneralData, type HelmNetworkingData } from '../page-helm-create-feature'
@@ -7,7 +8,7 @@ import StepSummaryFeature from './step-summary-feature'
 
 import SpyInstance = jest.SpyInstance
 
-const useHelmRepositoriesSpy: SpyInstance = jest.spyOn(serviceHelmDomain, 'useHelmRepositories')
+const useHelmRepositoriesSpy: SpyInstance = jest.spyOn(organizationDomain, 'useHelmRepositories')
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
