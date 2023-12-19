@@ -50,6 +50,7 @@ const slideEntrances = () => {
   })
   return {
     ...genSlide('sm', '4px'),
+    ...genSlide('md', '8px'),
   }
 }
 
@@ -74,6 +75,7 @@ const slideExits = () => {
   })
   return {
     ...genSlide('sm', '4px'),
+    ...genSlide('md', '8px'),
   }
 }
 
@@ -260,6 +262,12 @@ module.exports = {
         'slidein-right-sm-faded': `400ms ${easingFunctions['ease-out-quart']} 0s slidein-right-sm, 200ms ${easingFunctions['ease-out-quart']} 0s fadein`,
         'slidein-down-sm-faded': `400ms ${easingFunctions['ease-out-quart']} 0s slidein-down-sm, 200ms ${easingFunctions['ease-out-quart']} 0s fadein`,
         'slidein-left-sm-faded': `400ms ${easingFunctions['ease-out-quart']} 0s slidein-left-sm, 200ms ${easingFunctions['ease-out-quart']} 0s fadein`,
+
+        'slidein-up-md-faded': `400ms ${easingFunctions['ease-out-quart']} 0s slidein-up-sm, 200ms ${easingFunctions['ease-out-quart']} 0s fadein`,
+        'slidein-right-md-faded': `400ms ${easingFunctions['ease-out-quart']} 0s slidein-right-sm, 200ms ${easingFunctions['ease-out-quart']} 0s fadein`,
+        'slidein-down-md-faded': `400ms ${easingFunctions['ease-out-quart']} 0s slidein-down-sm, 200ms ${easingFunctions['ease-out-quart']} 0s fadein`,
+        'slidein-left-md-faded': `400ms ${easingFunctions['ease-out-quart']} 0s slidein-left-sm, 200ms ${easingFunctions['ease-out-quart']} 0s fadein`,
+
         fadein: `0.35s ${easingFunctions['ease-in-quad']} 0s fadein both`,
         fadeout: `0.2s ${easingFunctions['ease-out-quad']} 0s fadeout both`,
       },
