@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ServiceActionToolbar should match snapshot 1`] = `
+<body>
+  <div />
+</body>
+`;

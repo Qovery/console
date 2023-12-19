@@ -445,6 +445,28 @@ export const mutations = {
     const response = await mutation(serviceId)
     return response.data
   },
+  async deployService({ serviceId, serviceType }: { serviceId: string; serviceType: ServiceType }) {
+    const mutation = match(serviceType)
+      .with('APPLICATION', () => applicationActionsApi.deployApplication.bind(applicationActionsApi))
+      .with('CONTAINER', () => containerActionsApi.deployContainer.bind(containerActionsApi))
+      .with('DATABASE', () => databaseActionsApi.deployDatabase.bind(databaseActionsApi))
+      .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', () => jobActionsApi.deployJob.bind(jobActionsApi))
+      .with('HELM', () => helmActionsApi.deployHelm.bind(helmActionsApi))
+      .exhaustive()
+    const response = await mutation(serviceId)
+    return response.data
+  },
+  async stopService({ serviceId, serviceType }: { serviceId: string; serviceType: ServiceType }) {
+    const mutation = match(serviceType)
+      .with('APPLICATION', () => applicationActionsApi.stopApplication.bind(applicationActionsApi))
+      .with('CONTAINER', () => containerActionsApi.stopContainer.bind(containerActionsApi))
+      .with('DATABASE', () => databaseActionsApi.stopDatabase.bind(databaseActionsApi))
+      .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', () => jobActionsApi.stopJob.bind(jobActionsApi))
+      .with('HELM', () => helmActionsApi.stopHelm.bind(helmActionsApi))
+      .exhaustive()
+    const response = await mutation(serviceId)
+    return response.data
+  },
 }
 
 export type ServicesKeys = inferQueryKeys<typeof services>
