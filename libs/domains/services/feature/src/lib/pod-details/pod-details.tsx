@@ -126,8 +126,8 @@ export function PodDetails({ pod, serviceId, serviceType }: PodDetailsProps) {
                           {last_terminated_state.finished_at && dateFullFormat(last_terminated_state.finished_at)}
                         </Dt>
                         <Dd>
-                          {upperCaseFirstLetter(last_terminated_state.exit_code_message)} (
-                          {last_terminated_state.exit_code}).
+                          {upperCaseFirstLetter(last_terminated_state.reason)}:{' '}
+                          {last_terminated_state.exit_code_message} ({last_terminated_state.exit_code}).
                           {restart_count ? (
                             <>
                               <br />
