@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form'
 import * as organizationDomain from '@qovery/domains/organizations/feature'
-import * as serviceHelmDomain from '@qovery/domains/service-helm/feature'
+import type * as serviceHelmDomain from '@qovery/domains/service-helm/feature'
 import { renderHook, renderWithProviders } from '@qovery/shared/util-tests'
 import { type HelmGeneralData, type HelmNetworkingData } from '../page-helm-create-feature'
 import { HelmCreateContext } from '../page-helm-create-feature'
