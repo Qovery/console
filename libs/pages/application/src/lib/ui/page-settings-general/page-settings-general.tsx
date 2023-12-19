@@ -11,7 +11,7 @@ import {
   GeneralContainerSettings,
   JobGeneralSettings,
 } from '@qovery/shared/console-shared'
-import { ServiceTypeEnum } from '@qovery/shared/enums'
+import { ServiceTypeEnum, isJobGitSource } from '@qovery/shared/enums'
 import { BlockContent, Button, HelpSection, InputSelect, InputText } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
@@ -113,8 +113,16 @@ export function PageSettingsGeneral({
                   jobType={job.job_type === 'CRON' ? ServiceTypeEnum.CRON_JOB : ServiceTypeEnum.LIFECYCLE_JOB}
                   organization={organization}
                 />
-                <EditGitRepositorySettingsFeature />
-                {blockContentBuildDeploy}
+                {isJobGitSource(job.source) ? (
+                  <>
+                    <EditGitRepositorySettingsFeature />
+                    {blockContentBuildDeploy}
+                  </>
+                ) : (
+                  <BlockContent title="Container Settings">
+                    <GeneralContainerSettings organization={organization} />
+                  </BlockContent>
+                )}
                 <BlockContent title="Auto-deploy">
                   <AutoDeploySetting source={watchServiceType === 'CONTAINER' ? 'CONTAINER_REGISTRY' : 'GIT'} />
                 </BlockContent>
