@@ -65,7 +65,7 @@ const DropdownMenuItemIcon = forwardRef<ElementRef<typeof DropdownMenuPrimitive.
   function DropdownMenuItemIcon({ icon, color, children, ...props }, ref) {
     return (
       <DropdownMenuItem color={color} {...props} ref={ref}>
-        {cloneElement(icon, { className: dropdownMenuItemVariants({ color }) })}
+        {cloneElement(icon, { className: dropdownMenuItemIconVariants({ color }) })}
         {children}
       </DropdownMenuItem>
     )
