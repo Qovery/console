@@ -59,12 +59,14 @@ export function ServiceLinksPopover({
           <p className="text-neutral-350 font-medium">
             {filteredLinks?.length ?? 0} {pluralize(filteredLinks?.length ?? 0, 'link')} attached
           </p>
-          <Popover.Close>
-            <Link to={pathDomainsSetting} color="brand" className="text-ssm">
-              Customize
-              <Icon name={IconAwesomeEnum.CIRCLE_PLUS} className="text-xs" />
-            </Link>
-          </Popover.Close>
+          {serviceType !== 'HELM' && (
+            <Popover.Close>
+              <Link to={pathDomainsSetting} color="brand" className="text-ssm">
+                Customize
+                <Icon name={IconAwesomeEnum.CIRCLE_PLUS} className="text-xs" />
+              </Link>
+            </Popover.Close>
+          )}
         </div>
         <ul>
           {filteredLinks.map((link: LinkProps) => (
