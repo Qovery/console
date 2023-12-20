@@ -287,7 +287,7 @@ export const services = createQueryKeys('services', {
     serviceType,
   }: {
     serviceId: string
-    serviceType: Extract<ServiceType, 'APPLICATION' | 'CONTAINER'>
+    serviceType: Extract<ServiceType, 'APPLICATION' | 'CONTAINER' | 'HELM'>
   }) => ({
     queryKey: [serviceId],
     async queryFn() {
@@ -297,6 +297,9 @@ export const services = createQueryKeys('services', {
         })
         .with('CONTAINER', async () => {
           return (await containerMainCallsApi.listContainerLinks(serviceId)).data.results
+        })
+        .with('HELM', async () => {
+          return (await helmMainCallsApi.listHelmLinks(serviceId)).data.results
         })
         .exhaustive()
     },
