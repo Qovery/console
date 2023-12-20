@@ -59,7 +59,7 @@ describe('PageSettingsGeneralFeature', () => {
     )
     expect(app.name).toBe('hello')
     expect(app.description).toBe('description')
-    expect(app.dockerfile_path).toBe(null)
+    expect(app.dockerfile_path).toBe(undefined)
     expect(app.buildpack_language).toBe(BuildPackLanguageEnum.GO)
   })
 
@@ -147,13 +147,11 @@ describe('PageSettingsGeneralFeature', () => {
       timeout_sec: 600,
       auto_deploy: false,
       source: {
-        git: {
-          git_repository: {
-            url: 'https://github.com/qovery/console.git',
-            branch: 'main',
-            root_path: '/',
-            git_token_id: undefined,
-          },
+        git_repository: {
+          url: 'https://github.com/qovery/console.git',
+          branch: 'main',
+          root_path: '/',
+          git_token_id: undefined,
         },
       },
     })
@@ -185,10 +183,8 @@ describe('PageSettingsGeneralFeature', () => {
       timeout_sec: 600,
       auto_deploy: false,
       source: {
-        repository: {
-          repository: {
-            id: '000-000',
-          },
+        helm_repository: {
+          repository: '000-000',
           chart_name: 'chart',
           chart_version: '1.0.0',
         },

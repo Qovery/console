@@ -1,6 +1,6 @@
 import { DatabaseAccessibilityEnum, DatabaseModeEnum, DatabaseTypeEnum, StorageTypeEnum } from 'qovery-typescript-axios'
-import { type Application, type Container, type Database, type Job } from '../domains-services-data-access'
-import { refactoApplication, refactoContainer, refactoDatabase, refactoJob } from './refacto-service-payload'
+import { type Application, type Container, type Database, type Job } from '@qovery/domains/services/data-access'
+import { buildEditServicePayload } from './build-edit-service-payload'
 
 describe('testing payload refactoring', () => {
   it('should remove useless application values', () => {
@@ -31,7 +31,8 @@ describe('testing payload refactoring', () => {
       },
     }
 
-    expect(refactoApplication(response)).toEqual({
+    expect(buildEditServicePayload({ service: response })).toEqual({
+      serviceType: 'APPLICATION',
       storage: [
         {
           id: '1',
@@ -92,7 +93,8 @@ describe('testing payload refactoring', () => {
       healthchecks: {},
     }
 
-    expect(refactoContainer(response)).toEqual({
+    expect(buildEditServicePayload({ service: response })).toEqual({
+      serviceType: 'CONTAINER',
       name: 'hello-2',
       description: 'test',
       storage: [
@@ -140,11 +142,14 @@ describe('testing payload refactoring', () => {
       version: '12',
     }
 
-    expect(refactoDatabase(response)).toEqual({
+    expect(buildEditServicePayload({ service: response })).toEqual({
+      serviceType: 'DATABASE',
       name: 'hello',
       description: 'test',
       version: '12',
       accessibility: DatabaseAccessibilityEnum.PRIVATE,
+      type: DatabaseTypeEnum.POSTGRESQL,
+      mode: DatabaseModeEnum.CONTAINER,
       cpu: 1024,
       memory: 1024,
       storage: 1024,
@@ -191,7 +196,8 @@ describe('testing payload refactoring', () => {
       maximum_memory: 10,
     }
 
-    expect(refactoJob(job)).toEqual({
+    expect(buildEditServicePayload({ service: job })).toEqual({
+      serviceType: 'JOB',
       name: 'my-job',
       description: '',
       cpu: 500,

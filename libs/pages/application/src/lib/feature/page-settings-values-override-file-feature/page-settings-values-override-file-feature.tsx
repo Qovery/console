@@ -1,13 +1,14 @@
+import { type HelmRequestAllOfValuesOverrideFile } from 'qovery-typescript-axios'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { GitBranchSettings, GitProviderSetting, GitRepositorySetting } from '@qovery/domains/organizations/feature'
 import { type HelmValuesFileData, ValuesOverrideFilesSetting } from '@qovery/domains/service-helm/feature'
-import { refactoHelm } from '@qovery/domains/services/data-access'
 import { useEditService, useService } from '@qovery/domains/services/feature'
 import { Button, InputText } from '@qovery/shared/ui'
 import { getGitTokenValue, guessGitProvider } from '@qovery/shared/util-git'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
+import { buildEditServicePayload } from '@qovery/shared/util-services'
 
 export function PageSettingsValuesOverrideFileFeature() {
   const { environmentId = '', applicationId = '' } = useParams()
@@ -52,18 +53,16 @@ export function PageSettingsValuesOverrideFileFeature() {
   const onSubmit = methods.handleSubmit(async (data) => {
     if (!service) return
 
-    const valuesOverrideFile = match(watchFieldType)
+    const valuesOverrideFile: HelmRequestAllOfValuesOverrideFile | undefined = match(watchFieldType)
       .with('GIT_REPOSITORY', () => {
         const gitToken = getGitTokenValue(data['provider']!)
 
         return {
-          git: {
-            git_repository: {
-              url: buildGitRepoUrl(data['provider']!, data['repository']!),
-              branch: data['branch'],
-              git_token_id: gitToken?.id,
-              paths: data['paths']?.split(',') ?? [],
-            },
+          git_repository: {
+            url: buildGitRepoUrl(data['provider']!, data['repository']!),
+            branch: data['branch'] ?? '',
+            git_token_id: gitToken?.id,
+            paths: data['paths']?.split(',') ?? [],
           },
         }
       })
@@ -82,13 +81,15 @@ export function PageSettingsValuesOverrideFileFeature() {
 
     editService({
       serviceId: applicationId,
-      payload: {
-        ...service,
-        values_override: {
-          ...service?.values_override,
-          file: valuesOverrideFile,
+      payload: buildEditServicePayload({
+        service,
+        request: {
+          values_override: {
+            ...service?.values_override,
+            file: valuesOverrideFile,
+          },
         },
-      },
+      }),
     })
   })
 
@@ -131,7 +132,7 @@ export function PageSettingsValuesOverrideFileFeature() {
         <ValuesOverrideFilesSetting
           methods={methods}
           watchFieldType={watchFieldType}
-          source={refactoHelm(service!).source}
+          source={buildEditServicePayload({ service: service! }).source}
           gitRepositorySettings={gitRepositorySettings}
           onSubmit={onSubmit}
         >

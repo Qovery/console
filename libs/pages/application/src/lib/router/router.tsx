@@ -8,6 +8,7 @@ import {
   APPLICATION_SETTINGS_DOMAIN_URL,
   APPLICATION_SETTINGS_GENERAL_URL,
   APPLICATION_SETTINGS_HEALTHCHECKS_URL,
+  APPLICATION_SETTINGS_NETWORKING_URL,
   APPLICATION_SETTINGS_PORT_URL,
   APPLICATION_SETTINGS_RESOURCES_URL,
   APPLICATION_SETTINGS_STORAGE_URL,
@@ -26,6 +27,7 @@ import PageSettingsDomainsFeature from '../feature/page-settings-domains-feature
 import { PageSettingsFeature } from '../feature/page-settings-feature/page-settings-feature'
 import PageSettingsGeneralFeature from '../feature/page-settings-general-feature/page-settings-general-feature'
 import PageSettingsHealthchecksFeature from '../feature/page-settings-healthchecks-feature/page-settings-healthchecks-feature'
+import { PageSettingsNetworkingFeature } from '../feature/page-settings-networking-feature/page-settings-networking-feature'
 import PageSettingsPortsFeature from '../feature/page-settings-ports-feature/page-settings-ports-feature'
 import PageSettingsResourcesFeature from '../feature/page-settings-resources-feature/page-settings-resources-feature'
 import PageSettingsStorageFeature from '../feature/page-settings-storage-feature/page-settings-storage-feature'
@@ -91,6 +93,10 @@ export const ROUTER_APPLICATION_SETTINGS: Route[] = [
   {
     path: APPLICATION_SETTINGS_VALUES_OVERRIDE_URL,
     component: <PageSettingsValuesOverrideFileFeature />,
+  },
+  {
+    path: APPLICATION_SETTINGS_NETWORKING_URL,
+    component: <PageSettingsNetworkingFeature />,
   },
   {
     path: APPLICATION_SETTINGS_DANGER_ZONE_URL,

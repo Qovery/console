@@ -2,8 +2,9 @@ import { DatabaseAccessibilityEnum } from 'qovery-typescript-axios'
 import { type Database } from '@qovery/domains/services/data-access'
 import * as servicesDomains from '@qovery/domains/services/feature'
 import { databaseFactoryMock } from '@qovery/shared/factories'
+import { buildEditServicePayload } from '@qovery/shared/util-services'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import PageSettingsGeneralFeature, { handleSubmit } from './page-settings-general-feature'
+import { PageSettingsGeneralFeature } from './page-settings-general-feature'
 
 import SpyInstance = jest.SpyInstance
 
@@ -33,13 +34,13 @@ describe('PageSettingsGeneralFeature', () => {
   })
 
   it('should update the database with git repository', () => {
-    const db = handleSubmit(
-      {
+    const db = buildEditServicePayload({
+      service: mockDatabase,
+      request: {
         name: 'hello',
         accessibility: DatabaseAccessibilityEnum.PRIVATE,
       },
-      mockDatabase
-    )
+    })
 
     expect(db.name).toBe('hello')
     expect(db.accessibility).toBe(DatabaseAccessibilityEnum.PRIVATE)
@@ -58,10 +59,10 @@ describe('PageSettingsGeneralFeature', () => {
 
     await userEvent.click(button)
 
-    const cloneApplication = handleSubmit(
-      { name: 'hello', accessibility: DatabaseAccessibilityEnum.PRIVATE, version: '12' },
-      mockDatabase
-    )
+    const cloneApplication = buildEditServicePayload({
+      service: mockDatabase,
+      request: { name: 'hello', accessibility: DatabaseAccessibilityEnum.PRIVATE, version: '12' },
+    })
 
     expect(useEditServiceSpy().mutate).toHaveBeenCalledWith({
       serviceId: '0',

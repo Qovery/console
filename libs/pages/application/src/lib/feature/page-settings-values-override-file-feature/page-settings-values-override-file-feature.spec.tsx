@@ -1,6 +1,7 @@
 import selectEvent from 'react-select-event'
 import * as servicesDomains from '@qovery/domains/services/feature'
 import { helmFactoryMock } from '@qovery/shared/factories'
+import { buildEditServicePayload } from '@qovery/shared/util-services'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import PageSettingsValuesOverrideFileFeature from './page-settings-values-override-file-feature'
 
@@ -44,7 +45,7 @@ describe('PageSettingsPortsFeature', () => {
 
     expect(useEditServiceSpy().mutate).toHaveBeenCalledWith({
       serviceId: '1',
-      payload: helm,
+      payload: buildEditServicePayload({ service: helm }),
     })
   })
 })
