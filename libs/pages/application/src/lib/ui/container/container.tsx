@@ -98,11 +98,13 @@ export function Container({ service, environment, children }: PropsWithChildren<
             {service?.serviceType === 'HELM' ? (
               <ServiceActionToolbar serviceId={service.id} />
             ) : (
-              <ApplicationButtonsActions
-                application={service as ApplicationEntity}
-                environmentMode={environment.mode}
-                clusterId={environment.cluster_id}
-              />
+              service && (
+                <ApplicationButtonsActions
+                  application={service as ApplicationEntity}
+                  environmentMode={environment.mode}
+                  clusterId={environment.cluster_id}
+                />
+              )
             )}
           </div>
         )}
