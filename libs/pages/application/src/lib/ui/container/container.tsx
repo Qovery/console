@@ -1,11 +1,11 @@
-import { type Environment, ServiceDeploymentStatusEnum } from 'qovery-typescript-axios'
+import { type Environment } from 'qovery-typescript-axios'
 import { type PropsWithChildren, createContext, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useCluster } from '@qovery/domains/clusters/feature'
 import { EnvironmentMode } from '@qovery/domains/environments/feature'
 import { type AnyService } from '@qovery/domains/services/data-access'
-import { ServiceActionToolbar, useDeploymentStatus } from '@qovery/domains/services/feature'
-import { ApplicationButtonsActions, NeedRedeployFlag } from '@qovery/shared/console-shared'
+import { NeedRedeployFlag, ServiceActionToolbar } from '@qovery/domains/services/feature'
+import { ApplicationButtonsActions } from '@qovery/shared/console-shared'
 import { IconEnum, isCronJob, isLifeCycleJob } from '@qovery/shared/enums'
 import { type ApplicationEntity } from '@qovery/shared/interfaces'
 import { Badge, Header, Icon, Section, Skeleton, Tooltip } from '@qovery/shared/ui'
@@ -25,15 +25,10 @@ export interface ContainerProps {
 }
 
 export function Container({ service, environment, children }: PropsWithChildren<ContainerProps>) {
-  const { organizationId = '', environmentId = '' } = useParams()
+  const { organizationId = '' } = useParams()
   const [showHideAllEnvironmentVariablesValues, setShowHideAllEnvironmentVariablesValues] = useState<boolean>(false)
 
   const { data: cluster } = useCluster({ organizationId, clusterId: environment?.cluster_id ?? '' })
-
-  const { data: serviceDeploymentStatus, isLoading: isLoadingServiceDeploymentStatus } = useDeploymentStatus({
-    environmentId,
-    serviceId: service?.id,
-  })
 
   const headerActions = (
     <div className="flex flex-col gap-3">
@@ -52,7 +47,7 @@ export function Container({ service, environment, children }: PropsWithChildren<
           </Tooltip>
         </Skeleton>
       </div>
-      <Skeleton width={150} height={32} show={isLoadingServiceDeploymentStatus}>
+      <Skeleton width={150} height={32} show={!!service}>
         {environment && (
           <div className="flex">
             {service?.serviceType === 'HELM' ? (
@@ -91,14 +86,7 @@ export function Container({ service, environment, children }: PropsWithChildren<
           actions={headerActions}
         />
         <TabsFeature />
-        {service &&
-          serviceDeploymentStatus &&
-          serviceDeploymentStatus.service_deployment_status !== ServiceDeploymentStatusEnum.UP_TO_DATE && (
-            <NeedRedeployFlag
-              service={service}
-              serviceDeploymentStatus={serviceDeploymentStatus.service_deployment_status}
-            />
-          )}
+        <NeedRedeployFlag />
         {children}
       </Section>
     </ApplicationContext.Provider>

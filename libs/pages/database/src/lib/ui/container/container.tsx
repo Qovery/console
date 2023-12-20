@@ -1,11 +1,11 @@
-import { DatabaseModeEnum, type Environment, ServiceDeploymentStatusEnum } from 'qovery-typescript-axios'
+import { DatabaseModeEnum, type Environment } from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
 import { useCluster } from '@qovery/domains/clusters/feature'
 import { EnvironmentMode } from '@qovery/domains/environments/feature'
 import { type AnyService } from '@qovery/domains/services/data-access'
-import { ServiceStateChip, useDeploymentStatus } from '@qovery/domains/services/feature'
-import { DatabaseButtonsActions, NeedRedeployFlag } from '@qovery/shared/console-shared'
+import { NeedRedeployFlag, ServiceStateChip } from '@qovery/domains/services/feature'
+import { DatabaseButtonsActions } from '@qovery/shared/console-shared'
 import { IconEnum } from '@qovery/shared/enums'
 import { type DatabaseEntity } from '@qovery/shared/interfaces'
 import {
@@ -27,11 +27,6 @@ export function Container({ service, environment, children }: PropsWithChildren<
 
   const { data: cluster } = useCluster({ organizationId, clusterId: environment?.cluster_id || '' })
 
-  const { data: serviceDeploymentStatus, isLoading: isLoadingServiceDeploymentStatus } = useDeploymentStatus({
-    environmentId,
-    serviceId: databaseId,
-  })
-
   const headerActions = (
     <div className="flex flex-col gap-3">
       <div className="flex flex-row gap-2">
@@ -49,7 +44,7 @@ export function Container({ service, environment, children }: PropsWithChildren<
           </Tooltip>
         </Skeleton>
       </div>
-      <Skeleton width={150} height={32} show={isLoadingServiceDeploymentStatus}>
+      <Skeleton width={150} height={32} show={!!service}>
         <div className="flex">
           {environment && service && (
             <DatabaseButtonsActions
@@ -100,14 +95,7 @@ export function Container({ service, environment, children }: PropsWithChildren<
     <Section className="flex-1">
       <Header title={service?.name} icon={IconEnum.DATABASE} actions={headerActions} />
       <Tabs items={tabsItems} />
-      {service &&
-        serviceDeploymentStatus &&
-        serviceDeploymentStatus.service_deployment_status !== ServiceDeploymentStatusEnum.UP_TO_DATE && (
-          <NeedRedeployFlag
-            service={service}
-            serviceDeploymentStatus={serviceDeploymentStatus.service_deployment_status}
-          />
-        )}
+      <NeedRedeployFlag />
       {children}
     </Section>
   )
