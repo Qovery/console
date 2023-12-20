@@ -1,5 +1,4 @@
-import { de } from 'date-fns/locale'
-import { Environment, type StateEnum } from 'qovery-typescript-axios'
+import { type Environment, type StateEnum } from 'qovery-typescript-axios'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { type AnyService } from '@qovery/domains/services/data-access'
