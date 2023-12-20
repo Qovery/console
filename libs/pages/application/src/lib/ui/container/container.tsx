@@ -26,10 +26,11 @@ export const ApplicationContext = createContext<{
 
 export interface ContainerProps {
   service?: AnyService
+  isLoadingService?: boolean
   environment?: Environment
 }
 
-export function Container({ service, environment, children }: PropsWithChildren<ContainerProps>) {
+export function Container({ service, isLoadingService, environment, children }: PropsWithChildren<ContainerProps>) {
   const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
   const [showHideAllEnvironmentVariablesValues, setShowHideAllEnvironmentVariablesValues] = useState<boolean>(false)
   const queryClient = useQueryClient()
@@ -92,7 +93,7 @@ export function Container({ service, environment, children }: PropsWithChildren<
           </Tooltip>
         </Skeleton>
       </div>
-      <Skeleton width={150} height={32} show={isLoadingServiceDeploymentStatus}>
+      <Skeleton width={150} height={32} show={isLoadingServiceDeploymentStatus || isLoadingService}>
         {environment && (
           <div className="flex">
             {service?.serviceType === 'HELM' ? (

@@ -10,12 +10,12 @@ import Container from './ui/container/container'
 export function PageApplication() {
   const { applicationId = '', environmentId = '', organizationId = '', projectId = '' } = useParams()
   const { data: environment } = useEnvironment({ environmentId })
-  const { data: service } = useService({ environmentId, serviceId: applicationId })
+  const { data: service, isLoading: isLoadingService } = useService({ environmentId, serviceId: applicationId })
 
   useDocumentTitle(`${service?.name || 'Application'} - Qovery`)
 
   return (
-    <Container service={service as AnyService} environment={environment}>
+    <Container service={service as AnyService} isLoadingService={isLoadingService} environment={environment}>
       <Routes>
         {ROUTER_APPLICATION.map((route) => (
           <Route key={route.path} path={route.path} element={route.component} />
