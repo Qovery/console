@@ -1,6 +1,6 @@
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu'
 import { type VariantProps, cva } from 'class-variance-authority'
-import { type ComponentPropsWithoutRef, type ElementRef, forwardRef } from 'react'
+import { type ComponentPropsWithoutRef, type ElementRef, type ReactElement, cloneElement, forwardRef } from 'react'
 import { twMerge } from '@qovery/shared/util-js'
 
 const dropdownMenuItemVariants = cva(
@@ -25,6 +25,18 @@ const dropdownMenuItemVariants = cva(
   }
 )
 
+const dropdownMenuItemIconVariants = cva(['text-sm', 'mr-3'], {
+  variants: {
+    color: {
+      brand: ['text-brand-400'],
+      red: ['text-red-600'],
+    },
+  },
+  defaultVariants: {
+    color: 'brand',
+  },
+})
+
 interface DropdownMenuItemProps
   extends VariantProps<typeof dropdownMenuItemVariants>,
     Omit<ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Item>, 'color'> {}
@@ -39,6 +51,23 @@ const DropdownMenuItem = forwardRef<ElementRef<typeof DropdownMenuPrimitive.Item
       >
         {children}
       </DropdownMenuPrimitive.Item>
+    )
+  }
+)
+
+interface DropdownMenuItemIconProps
+  extends VariantProps<typeof dropdownMenuItemVariants>,
+    Omit<ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Item>, 'color'> {
+  icon: ReactElement
+}
+
+const DropdownMenuItemIcon = forwardRef<ElementRef<typeof DropdownMenuPrimitive.Item>, DropdownMenuItemIconProps>(
+  function DropdownMenuItemIcon({ icon, color, children, ...props }, ref) {
+    return (
+      <DropdownMenuItem color={color} {...props} ref={ref}>
+        {cloneElement(icon, { className: dropdownMenuItemVariants({ color }) })}
+        {children}
+      </DropdownMenuItem>
     )
   }
 )
@@ -106,6 +135,7 @@ const DropdownMenu = Object.assign(
     Content: DropdownMenuContent,
     Group: DropdownMenuPrimitive.Group,
     Item: DropdownMenuItem,
+    ItemIcon: DropdownMenuItemIcon,
     Separator: DropdownMenuSeparator,
   }
 )

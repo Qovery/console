@@ -98,22 +98,19 @@ export function ServiceActionToolbar({ serviceId }: { serviceId: string }) {
       </DropdownMenu.Trigger>
       <DropdownMenu.Content>
         {isDeployAvailable(deploymentStatus.state) && (
-          <DropdownMenu.Item onClick={mutationDeploy}>
-            <Icon name={IconAwesomeEnum.PLAY} className="text-sm mr-3 text-brand-400" />
+          <DropdownMenu.ItemIcon icon={<Icon name={IconAwesomeEnum.PLAY} />} onClick={mutationDeploy}>
             Deploy
-          </DropdownMenu.Item>
+          </DropdownMenu.ItemIcon>
         )}
         {isRedeployAvailable(deploymentStatus.state) && (
-          <DropdownMenu.Item onClick={mutationRedeploy}>
-            <Icon name={IconAwesomeEnum.ROTATE_RIGHT} className="text-sm mr-3 text-brand-400" />
+          <DropdownMenu.ItemIcon icon={<Icon name={IconAwesomeEnum.ROTATE_RIGHT} />} onClick={mutationRedeploy}>
             Redeploy
-          </DropdownMenu.Item>
+          </DropdownMenu.ItemIcon>
         )}
         {isStopAvailable(deploymentStatus.state) && (
-          <DropdownMenu.Item onClick={mutationStop}>
-            <Icon name={IconAwesomeEnum.CIRCLE_STOP} className="text-sm mr-3 text-brand-400" />
+          <DropdownMenu.ItemIcon icon={<Icon name={IconAwesomeEnum.CIRCLE_STOP} />} onClick={mutationStop}>
             Stop
-          </DropdownMenu.Item>
+          </DropdownMenu.ItemIcon>
         )}
       </DropdownMenu.Content>
     </DropdownMenu.Root>
@@ -131,15 +128,16 @@ export function ServiceActionToolbar({ serviceId }: { serviceId: string }) {
         </ActionToolbar.Button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content>
-        <DropdownMenu.Item
+        <DropdownMenu.ItemIcon
+          icon={<Icon name={IconAwesomeEnum.SCROLL} />}
           onClick={() =>
             navigate(ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + SERVICE_LOGS_URL(serviceId))
           }
         >
-          <Icon name={IconAwesomeEnum.SCROLL} className="text-sm mr-3 text-brand-400" />
           Logs
-        </DropdownMenu.Item>
-        <DropdownMenu.Item
+        </DropdownMenu.ItemIcon>
+        <DropdownMenu.ItemIcon
+          icon={<Icon name={IconAwesomeEnum.COPY} />}
           onClick={() =>
             navigate(
               AUDIT_LOGS_PARAMS_URL(organizationId, {
@@ -151,30 +149,30 @@ export function ServiceActionToolbar({ serviceId }: { serviceId: string }) {
             )
           }
         >
-          <Icon name={IconAwesomeEnum.COPY} className="text-sm mr-3 text-brand-400" />
           See audit logs
-        </DropdownMenu.Item>
-        <DropdownMenu.Item onClick={() => copyToClipboard(copyContent)}>
-          <Icon name={IconAwesomeEnum.CLOCK_ROTATE_LEFT} className="text-sm mr-3 text-brand-400" />
+        </DropdownMenu.ItemIcon>
+        <DropdownMenu.ItemIcon
+          icon={<Icon name={IconAwesomeEnum.CLOCK_ROTATE_LEFT} />}
+          onClick={() => copyToClipboard(copyContent)}
+        >
           Copy identifiers
-        </DropdownMenu.Item>
-        <DropdownMenu.Item
+        </DropdownMenu.ItemIcon>
+        <DropdownMenu.ItemIcon
+          icon={<Icon name={IconAwesomeEnum.WHEEL} />}
           onClick={() =>
             navigate(
               `${APPLICATION_URL(organizationId, projectId, environmentId, serviceId)}${APPLICATION_SETTINGS_URL}`
             ) + APPLICATION_SETTINGS_GENERAL_URL
           }
         >
-          <Icon name={IconAwesomeEnum.WHEEL} className="text-sm mr-3 text-brand-400" />
           Open settings
-        </DropdownMenu.Item>
+        </DropdownMenu.ItemIcon>
         {isDeleteAvailable(deploymentStatus.state) && (
           <>
             <DropdownMenu.Separator />
-            <DropdownMenu.Item color="red" onClick={mutationDelete}>
-              <Icon name={IconAwesomeEnum.TRASH} className="text-sm mr-3 text-red-600" />
+            <DropdownMenu.ItemIcon color="red" icon={<Icon name={IconAwesomeEnum.TRASH} />} onClick={mutationDelete}>
               Delete service
-            </DropdownMenu.Item>
+            </DropdownMenu.ItemIcon>
           </>
         )}
       </DropdownMenu.Content>
