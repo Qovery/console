@@ -27,15 +27,15 @@ export const Primary = {
         </Button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content>
-        <DropdownMenu.ItemIcon icon={<Icon name={IconAwesomeEnum.PLAY} />}>Deploy</DropdownMenu.ItemIcon>
+        <DropdownMenu.Item icon={<Icon name={IconAwesomeEnum.PLAY} />}>Deploy</DropdownMenu.Item>
         <DropdownMenu.Item>Deploy latest version</DropdownMenu.Item>
-        <DropdownMenu.ItemIcon icon={<Icon name={IconAwesomeEnum.WHEEL} />}>
+        <DropdownMenu.Item icon={<Icon name={IconAwesomeEnum.WHEEL} />}>
           <Truncate text="Super long text that should be truncated at some point" truncateLimit={27} />
-        </DropdownMenu.ItemIcon>
+        </DropdownMenu.Item>
         <DropdownMenu.Separator />
-        <DropdownMenu.ItemIcon color="red" icon={<Icon name={IconAwesomeEnum.TRASH} />}>
+        <DropdownMenu.Item color="red" icon={<Icon name={IconAwesomeEnum.TRASH} />}>
           Delete service
-        </DropdownMenu.ItemIcon>
+        </DropdownMenu.Item>
       </DropdownMenu.Content>
     </DropdownMenu.Root>
   ),

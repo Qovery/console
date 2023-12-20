@@ -39,35 +39,21 @@ const dropdownMenuItemIconVariants = cva(['text-sm', 'mr-3'], {
 
 interface DropdownMenuItemProps
   extends VariantProps<typeof dropdownMenuItemVariants>,
-    Omit<ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Item>, 'color'> {}
+    Omit<ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Item>, 'color'> {
+  icon?: ReactElement
+}
 
 const DropdownMenuItem = forwardRef<ElementRef<typeof DropdownMenuPrimitive.Item>, DropdownMenuItemProps>(
-  function DropdownMenuItem({ color, children, className, ...props }, ref) {
+  function DropdownMenuItem({ color, icon, children, className, ...props }, ref) {
     return (
       <DropdownMenuPrimitive.Item
         {...props}
         className={twMerge(dropdownMenuItemVariants({ color }), className)}
         ref={ref}
       >
+        {icon && cloneElement(icon, { className: dropdownMenuItemIconVariants({ color }) })}
         {children}
       </DropdownMenuPrimitive.Item>
-    )
-  }
-)
-
-interface DropdownMenuItemIconProps
-  extends VariantProps<typeof dropdownMenuItemVariants>,
-    Omit<ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Item>, 'color'> {
-  icon: ReactElement
-}
-
-const DropdownMenuItemIcon = forwardRef<ElementRef<typeof DropdownMenuPrimitive.Item>, DropdownMenuItemIconProps>(
-  function DropdownMenuItemIcon({ icon, color, children, ...props }, ref) {
-    return (
-      <DropdownMenuItem color={color} {...props} ref={ref}>
-        {cloneElement(icon, { className: dropdownMenuItemIconVariants({ color }) })}
-        {children}
-      </DropdownMenuItem>
     )
   }
 )
@@ -135,7 +121,6 @@ const DropdownMenu = Object.assign(
     Content: DropdownMenuContent,
     Group: DropdownMenuPrimitive.Group,
     Item: DropdownMenuItem,
-    ItemIcon: DropdownMenuItemIcon,
     Separator: DropdownMenuSeparator,
   }
 )

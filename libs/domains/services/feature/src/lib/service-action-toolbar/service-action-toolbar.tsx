@@ -98,19 +98,19 @@ export function ServiceActionToolbar({ serviceId }: { serviceId: string }) {
       </DropdownMenu.Trigger>
       <DropdownMenu.Content>
         {isDeployAvailable(deploymentStatus.state) && (
-          <DropdownMenu.ItemIcon icon={<Icon name={IconAwesomeEnum.PLAY} />} onClick={mutationDeploy}>
+          <DropdownMenu.Item icon={<Icon name={IconAwesomeEnum.PLAY} />} onClick={mutationDeploy}>
             Deploy
-          </DropdownMenu.ItemIcon>
+          </DropdownMenu.Item>
         )}
         {isRedeployAvailable(deploymentStatus.state) && (
-          <DropdownMenu.ItemIcon icon={<Icon name={IconAwesomeEnum.ROTATE_RIGHT} />} onClick={mutationRedeploy}>
+          <DropdownMenu.Item icon={<Icon name={IconAwesomeEnum.ROTATE_RIGHT} />} onClick={mutationRedeploy}>
             Redeploy
-          </DropdownMenu.ItemIcon>
+          </DropdownMenu.Item>
         )}
         {isStopAvailable(deploymentStatus.state) && (
-          <DropdownMenu.ItemIcon icon={<Icon name={IconAwesomeEnum.CIRCLE_STOP} />} onClick={mutationStop}>
+          <DropdownMenu.Item icon={<Icon name={IconAwesomeEnum.CIRCLE_STOP} />} onClick={mutationStop}>
             Stop
-          </DropdownMenu.ItemIcon>
+          </DropdownMenu.Item>
         )}
       </DropdownMenu.Content>
     </DropdownMenu.Root>
@@ -128,15 +128,15 @@ export function ServiceActionToolbar({ serviceId }: { serviceId: string }) {
         </ActionToolbar.Button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content>
-        <DropdownMenu.ItemIcon
+        <DropdownMenu.Item
           icon={<Icon name={IconAwesomeEnum.SCROLL} />}
           onClick={() =>
             navigate(ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + SERVICE_LOGS_URL(serviceId))
           }
         >
           Logs
-        </DropdownMenu.ItemIcon>
-        <DropdownMenu.ItemIcon
+        </DropdownMenu.Item>
+        <DropdownMenu.Item
           icon={<Icon name={IconAwesomeEnum.COPY} />}
           onClick={() =>
             navigate(
@@ -150,14 +150,14 @@ export function ServiceActionToolbar({ serviceId }: { serviceId: string }) {
           }
         >
           See audit logs
-        </DropdownMenu.ItemIcon>
-        <DropdownMenu.ItemIcon
+        </DropdownMenu.Item>
+        <DropdownMenu.Item
           icon={<Icon name={IconAwesomeEnum.CLOCK_ROTATE_LEFT} />}
           onClick={() => copyToClipboard(copyContent)}
         >
           Copy identifiers
-        </DropdownMenu.ItemIcon>
-        <DropdownMenu.ItemIcon
+        </DropdownMenu.Item>
+        <DropdownMenu.Item
           icon={<Icon name={IconAwesomeEnum.WHEEL} />}
           onClick={() =>
             navigate(
@@ -166,13 +166,13 @@ export function ServiceActionToolbar({ serviceId }: { serviceId: string }) {
           }
         >
           Open settings
-        </DropdownMenu.ItemIcon>
+        </DropdownMenu.Item>
         {isDeleteAvailable(deploymentStatus.state) && (
           <>
             <DropdownMenu.Separator />
-            <DropdownMenu.ItemIcon color="red" icon={<Icon name={IconAwesomeEnum.TRASH} />} onClick={mutationDelete}>
+            <DropdownMenu.Item color="red" icon={<Icon name={IconAwesomeEnum.TRASH} />} onClick={mutationDelete}>
               Delete service
-            </DropdownMenu.ItemIcon>
+            </DropdownMenu.Item>
           </>
         )}
       </DropdownMenu.Content>
