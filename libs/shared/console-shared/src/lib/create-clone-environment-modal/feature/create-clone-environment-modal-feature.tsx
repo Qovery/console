@@ -3,7 +3,7 @@ import {
   type CreateEnvironmentModeEnum,
   type CreateEnvironmentRequest,
   type Environment,
-  type EnvironmentModeEnum,
+  EnvironmentModeEnum,
 } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
@@ -32,8 +32,8 @@ export function CreateCloneEnvironmentModalFeature(props: CreateCloneEnvironment
     mode: 'onChange',
     defaultValues: {
       name: props.environmentToClone?.name ? props.environmentToClone?.name + '-clone' : '',
-      cluster: undefined,
-      mode: undefined,
+      cluster: clusters.find(({ is_default }) => is_default)?.id,
+      mode: EnvironmentModeEnum.DEVELOPMENT,
     },
   })
 
