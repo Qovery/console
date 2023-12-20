@@ -1,10 +1,7 @@
-import { useQueryClient } from '@tanstack/react-query'
 import { DatabaseModeEnum, type Environment, ServiceDeploymentStatusEnum } from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
-import { useDispatch } from 'react-redux'
 import { useLocation, useParams } from 'react-router-dom'
 import { useCluster } from '@qovery/domains/clusters/feature'
-import { postDatabaseActionsDeploy, postDatabaseActionsRedeploy } from '@qovery/domains/database'
 import { EnvironmentMode } from '@qovery/domains/environments/feature'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { ServiceStateChip, useDeploymentStatus } from '@qovery/domains/services/feature'
@@ -18,7 +15,6 @@ import {
   DATABASE_URL,
 } from '@qovery/shared/routes'
 import { Badge, Header, Icon, Section, Skeleton, Tabs, Tooltip } from '@qovery/shared/ui'
-import { type AppDispatch } from '@qovery/state/store'
 
 export interface ContainerProps {
   service?: AnyService
@@ -28,11 +24,9 @@ export interface ContainerProps {
 export function Container({ service, environment, children }: PropsWithChildren<ContainerProps>) {
   const { organizationId = '', projectId = '', environmentId = '', databaseId = '' } = useParams()
   const location = useLocation()
-  const queryClient = useQueryClient()
 
   const { data: cluster } = useCluster({ organizationId, clusterId: environment?.cluster_id || '' })
 
-  const dispatch = useDispatch<AppDispatch>()
   const { data: serviceDeploymentStatus, isLoading: isLoadingServiceDeploymentStatus } = useDeploymentStatus({
     environmentId,
     serviceId: databaseId,
@@ -102,23 +96,18 @@ export function Container({ service, environment, children }: PropsWithChildren<
     },
   ]
 
-  const redeployDatabase = () => {
-    if (service) {
-      if (serviceDeploymentStatus?.service_deployment_status === ServiceDeploymentStatusEnum.NEVER_DEPLOYED) {
-        dispatch(postDatabaseActionsDeploy({ environmentId, databaseId, queryClient }))
-      } else {
-        dispatch(postDatabaseActionsRedeploy({ environmentId, databaseId, queryClient }))
-      }
-    }
-  }
-
   return (
     <Section className="flex-1">
       <Header title={service?.name} icon={IconEnum.DATABASE} actions={headerActions} />
       <Tabs items={tabsItems} />
-      {service && serviceDeploymentStatus?.service_deployment_status !== ServiceDeploymentStatusEnum.UP_TO_DATE && (
-        <NeedRedeployFlag service={service as DatabaseEntity} onClickCTA={redeployDatabase} />
-      )}
+      {service &&
+        serviceDeploymentStatus &&
+        serviceDeploymentStatus.service_deployment_status !== ServiceDeploymentStatusEnum.UP_TO_DATE && (
+          <NeedRedeployFlag
+            service={service}
+            serviceDeploymentStatus={serviceDeploymentStatus.service_deployment_status}
+          />
+        )}
       {children}
     </Section>
   )

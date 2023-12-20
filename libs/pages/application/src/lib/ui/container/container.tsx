@@ -1,9 +1,6 @@
-import { useQueryClient } from '@tanstack/react-query'
 import { type Environment, ServiceDeploymentStatusEnum } from 'qovery-typescript-axios'
 import { type PropsWithChildren, createContext, useState } from 'react'
-import { useDispatch } from 'react-redux'
-import { useNavigate, useParams } from 'react-router-dom'
-import { postApplicationActionsDeploy, postApplicationActionsRedeploy } from '@qovery/domains/application'
+import { useParams } from 'react-router-dom'
 import { useCluster } from '@qovery/domains/clusters/feature'
 import { EnvironmentMode } from '@qovery/domains/environments/feature'
 import { type AnyService } from '@qovery/domains/services/data-access'
@@ -11,9 +8,7 @@ import { ServiceActionToolbar, useDeploymentStatus } from '@qovery/domains/servi
 import { ApplicationButtonsActions, NeedRedeployFlag } from '@qovery/shared/console-shared'
 import { IconEnum, isCronJob, isLifeCycleJob } from '@qovery/shared/enums'
 import { type ApplicationEntity } from '@qovery/shared/interfaces'
-import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { Badge, Header, Icon, Section, Skeleton, Tooltip } from '@qovery/shared/ui'
-import { type AppDispatch } from '@qovery/state/store'
 import TabsFeature from '../../feature/tabs-feature/tabs-feature'
 
 export const ApplicationContext = createContext<{
@@ -30,50 +25,15 @@ export interface ContainerProps {
 }
 
 export function Container({ service, environment, children }: PropsWithChildren<ContainerProps>) {
-  const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
+  const { organizationId = '', environmentId = '' } = useParams()
   const [showHideAllEnvironmentVariablesValues, setShowHideAllEnvironmentVariablesValues] = useState<boolean>(false)
-  const queryClient = useQueryClient()
 
   const { data: cluster } = useCluster({ organizationId, clusterId: environment?.cluster_id ?? '' })
 
-  const dispatch = useDispatch<AppDispatch>()
-  const navigate = useNavigate()
   const { data: serviceDeploymentStatus, isLoading: isLoadingServiceDeploymentStatus } = useDeploymentStatus({
     environmentId,
     serviceId: service?.id,
   })
-
-  const redeployApplication = () => {
-    if (service) {
-      if (serviceDeploymentStatus?.service_deployment_status === ServiceDeploymentStatusEnum.NEVER_DEPLOYED) {
-        dispatch(
-          postApplicationActionsDeploy({
-            environmentId,
-            applicationId,
-            serviceType: service.serviceType,
-            callback: () =>
-              navigate(
-                ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(applicationId)
-              ),
-            queryClient,
-          })
-        )
-      } else {
-        dispatch(
-          postApplicationActionsRedeploy({
-            environmentId,
-            applicationId,
-            serviceType: service.serviceType,
-            callback: () =>
-              navigate(
-                ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(applicationId)
-              ),
-            queryClient,
-          })
-        )
-      }
-    }
-  }
 
   const headerActions = (
     <div className="flex flex-col gap-3">
@@ -131,9 +91,14 @@ export function Container({ service, environment, children }: PropsWithChildren<
           actions={headerActions}
         />
         <TabsFeature />
-        {service && serviceDeploymentStatus?.service_deployment_status !== ServiceDeploymentStatusEnum.UP_TO_DATE && (
-          <NeedRedeployFlag service={service as ApplicationEntity} onClickCTA={redeployApplication} />
-        )}
+        {service &&
+          serviceDeploymentStatus &&
+          serviceDeploymentStatus.service_deployment_status !== ServiceDeploymentStatusEnum.UP_TO_DATE && (
+            <NeedRedeployFlag
+              service={service}
+              serviceDeploymentStatus={serviceDeploymentStatus.service_deployment_status}
+            />
+          )}
         {children}
       </Section>
     </ApplicationContext.Provider>
