@@ -69,7 +69,7 @@ export function TableRowDeployment({
     }, 2000)
   }
 
-  const serviceId = applicationId || databaseId
+  const serviceId = applicationId || databaseId || data?.id
 
   return (
     <TableRow
