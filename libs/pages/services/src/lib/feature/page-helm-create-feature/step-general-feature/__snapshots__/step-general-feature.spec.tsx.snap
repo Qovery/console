@@ -930,18 +930,17 @@ exports[`StepGeneralFeature should submit a form with a helm repository and matc
                       data-testid="input-toggle-button"
                     >
                       <input
-                        checked=""
                         class="hidden"
                         type="checkbox"
-                        value="true"
+                        value="false"
                       />
                       <div
                         aria-label="bg"
-                        class="w-8 h-4.5 flex items-center rounded-full p-0.5  bg-brand-500"
+                        class="w-8 h-4.5 flex items-center rounded-full p-0.5  bg-neutral-300"
                       >
                         <div
                           aria-label="circle"
-                          class="w-3.5 h-3.5 bg-white rounded-full shadow-lg transform  translate-x-3.5"
+                          class="w-3.5 h-3.5 bg-white rounded-full shadow-lg transform  "
                         />
                       </div>
                     </div>

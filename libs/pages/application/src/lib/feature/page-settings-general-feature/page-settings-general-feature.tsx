@@ -204,7 +204,8 @@ export function PageSettingsGeneralFeature() {
       chart_name: helmRepository?.chart_name,
       chart_version: helmRepository?.chart_version,
       auto_deploy: service.auto_deploy,
-      auto_preview: service.allow_cluster_wide_resources,
+      auto_preview: service.auto_preview,
+      allow_cluster_wide_resources: service.allow_cluster_wide_resources,
       timeout_sec: service.timeout_sec,
       arguments: JSON.stringify(service.arguments),
     }))
