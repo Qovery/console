@@ -47,7 +47,7 @@ export function Container({ service, environment, children }: PropsWithChildren<
           </Tooltip>
         </Skeleton>
       </div>
-      <Skeleton width={150} height={32} show={!!service}>
+      <Skeleton width={150} height={32} show={!service}>
         {environment && (
           <div className="flex">
             {service?.serviceType === 'HELM' ? (
