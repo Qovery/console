@@ -15,7 +15,7 @@ export function useLinks({ serviceId, serviceType }: UseLinksProps) {
       serviceType: serviceType as Extract<ServiceType, 'APPLICATION' | 'CONTAINER' | 'HELM'>,
     }),
     enabled: match(serviceType)
-      .with('APPLICATION', 'CONTAINER', () => true)
+      .with('APPLICATION', 'CONTAINER', 'HELM', () => true)
       .otherwise(() => false),
   })
 }
