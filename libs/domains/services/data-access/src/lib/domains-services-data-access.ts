@@ -193,7 +193,8 @@ export const services = createQueryKeys('services', {
         .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', () =>
           jobDeploymentApi.getJobDeploymentRestrictions.bind(jobDeploymentApi)
         )
-        .with('CONTAINER', 'DATABASE', 'HELM', () => null)
+        .with('HELM', () => helmDeploymentApi.getHelmDeploymentRestrictions.bind(helmDeploymentApi))
+        .with('CONTAINER', 'DATABASE', () => null)
         .exhaustive()
       if (!fn) {
         throw new Error(`deploymentRestrictions unsupported for serviceType: ${serviceType}`)
