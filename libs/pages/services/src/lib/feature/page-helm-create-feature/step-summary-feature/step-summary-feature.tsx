@@ -304,12 +304,19 @@ export function StepSummaryFeature() {
               size="lg"
               variant="surface"
               color="neutral"
+              disabled={isLoadingCreateAndDeploy}
               onClick={() => onSubmit(false)}
               loading={isLoadingCreate}
             >
               Create
             </Button>
-            <Button type="submit" size="lg" onClick={() => onSubmit(true)} loading={isLoadingCreateAndDeploy}>
+            <Button
+              type="submit"
+              size="lg"
+              disabled={isLoadingCreate}
+              onClick={() => onSubmit(true)}
+              loading={isLoadingCreateAndDeploy}
+            >
               Create and deploy
             </Button>
           </div>
