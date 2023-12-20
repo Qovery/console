@@ -287,7 +287,7 @@ export const services = createQueryKeys('services', {
     serviceType,
   }: {
     serviceId: string
-    serviceType: Extract<ServiceType, 'APPLICATION' | 'CONTAINER'>
+    serviceType: Extract<ServiceType, 'APPLICATION' | 'CONTAINER' | 'HELM'>
   }) => ({
     queryKey: [serviceId],
     async queryFn() {
@@ -297,6 +297,9 @@ export const services = createQueryKeys('services', {
         })
         .with('CONTAINER', async () => {
           return (await containerMainCallsApi.listContainerLinks(serviceId)).data.results
+        })
+        .with('HELM', async () => {
+          return (await helmMainCallsApi.listHelmLinks(serviceId)).data.results
         })
         .exhaustive()
     },
@@ -441,6 +444,28 @@ export const mutations = {
       .with('DATABASE', () => databaseActionsApi.redeployDatabase.bind(databaseActionsApi))
       .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', () => jobActionsApi.redeployJob.bind(jobActionsApi))
       .with('HELM', () => helmActionsApi.redeployHelm.bind(helmActionsApi))
+      .exhaustive()
+    const response = await mutation(serviceId)
+    return response.data
+  },
+  async deployService({ serviceId, serviceType }: { serviceId: string; serviceType: ServiceType }) {
+    const mutation = match(serviceType)
+      .with('APPLICATION', () => applicationActionsApi.deployApplication.bind(applicationActionsApi))
+      .with('CONTAINER', () => containerActionsApi.deployContainer.bind(containerActionsApi))
+      .with('DATABASE', () => databaseActionsApi.deployDatabase.bind(databaseActionsApi))
+      .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', () => jobActionsApi.deployJob.bind(jobActionsApi))
+      .with('HELM', () => helmActionsApi.deployHelm.bind(helmActionsApi))
+      .exhaustive()
+    const response = await mutation(serviceId)
+    return response.data
+  },
+  async stopService({ serviceId, serviceType }: { serviceId: string; serviceType: ServiceType }) {
+    const mutation = match(serviceType)
+      .with('APPLICATION', () => applicationActionsApi.stopApplication.bind(applicationActionsApi))
+      .with('CONTAINER', () => containerActionsApi.stopContainer.bind(containerActionsApi))
+      .with('DATABASE', () => databaseActionsApi.stopDatabase.bind(databaseActionsApi))
+      .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', () => jobActionsApi.stopJob.bind(jobActionsApi))
+      .with('HELM', () => helmActionsApi.stopHelm.bind(helmActionsApi))
       .exhaustive()
     const response = await mutation(serviceId)
     return response.data

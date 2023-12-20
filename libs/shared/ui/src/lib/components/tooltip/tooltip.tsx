@@ -28,7 +28,7 @@ export interface TooltipProps extends VariantProps<typeof tooltipContentVariants
   classNameTrigger?: string
 }
 
-export const Tooltip = forwardRef<ElementRef<typeof TooltipPrimitive.Content>, TooltipProps>(function Tooltip(
+export const Tooltip = forwardRef<ElementRef<typeof TooltipPrimitive.Trigger>, TooltipProps>(function Tooltip(
   {
     children,
     content,
@@ -51,7 +51,7 @@ export const Tooltip = forwardRef<ElementRef<typeof TooltipPrimitive.Content>, T
       onOpenChange={onOpenChange}
       delayDuration={delayDuration}
     >
-      <TooltipPrimitive.Trigger asChild className={classNameTrigger}>
+      <TooltipPrimitive.Trigger asChild className={classNameTrigger} ref={forwardedRef}>
         {children}
       </TooltipPrimitive.Trigger>
       <TooltipPrimitive.Portal container={container}>
@@ -60,7 +60,6 @@ export const Tooltip = forwardRef<ElementRef<typeof TooltipPrimitive.Content>, T
           side={side}
           sideOffset={6}
           align={align}
-          ref={forwardedRef}
         >
           {content}
           <TooltipPrimitive.Arrow className={tooltipArrowVariants({ color })} offset={10} width={11} height={5} />

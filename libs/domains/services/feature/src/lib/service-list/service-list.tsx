@@ -58,6 +58,7 @@ import { containerRegistryKindToIcon } from '@qovery/shared/util-js'
 import { useServices } from '../hooks/use-services/use-services'
 import { LastCommitAuthor } from '../last-commit-author/last-commit-author'
 import { LastCommit } from '../last-commit/last-commit'
+import ServiceActionToolbar from '../service-action-toolbar/service-action-toolbar'
 import { ServiceLinksPopover } from '../service-links-popover/service-links-popover'
 import { ServiceListFilter } from './service-list-filter'
 import { ServiceListSkeleton } from './service-list-skeleton'
@@ -117,13 +118,14 @@ export function ServiceList({ organizationId, projectId, environmentId, classNam
           }
 
           const buttonActions = match(serviceType)
-            .with('APPLICATION', 'CONTAINER', 'JOB', 'HELM', () => (
+            .with('APPLICATION', 'CONTAINER', 'JOB', () => (
               <ApplicationButtonsActions
                 application={service as ApplicationEntity}
                 environmentMode={environment.mode}
                 clusterId={environment.cluster_id}
               />
             ))
+            .with('HELM', () => <ServiceActionToolbar serviceId={service.id} />)
             .with('DATABASE', () => (
               <DatabaseButtonsActions
                 database={service as DatabaseEntity}

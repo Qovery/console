@@ -1,6 +1,6 @@
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu'
 import { type VariantProps, cva } from 'class-variance-authority'
-import { type ComponentPropsWithoutRef, type ElementRef, forwardRef } from 'react'
+import { type ComponentPropsWithoutRef, type ElementRef, type ReactElement, cloneElement, forwardRef } from 'react'
 import { twMerge } from '@qovery/shared/util-js'
 
 const dropdownMenuItemVariants = cva(
@@ -25,18 +25,33 @@ const dropdownMenuItemVariants = cva(
   }
 )
 
+const dropdownMenuItemIconVariants = cva(['text-sm', 'mr-3'], {
+  variants: {
+    color: {
+      brand: ['text-brand-400'],
+      red: ['text-red-600'],
+    },
+  },
+  defaultVariants: {
+    color: 'brand',
+  },
+})
+
 interface DropdownMenuItemProps
   extends VariantProps<typeof dropdownMenuItemVariants>,
-    Omit<ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Item>, 'color'> {}
+    Omit<ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Item>, 'color'> {
+  icon?: ReactElement
+}
 
 const DropdownMenuItem = forwardRef<ElementRef<typeof DropdownMenuPrimitive.Item>, DropdownMenuItemProps>(
-  function DropdownMenuItem({ color, children, className, ...props }, ref) {
+  function DropdownMenuItem({ color, icon, children, className, ...props }, ref) {
     return (
       <DropdownMenuPrimitive.Item
         {...props}
         className={twMerge(dropdownMenuItemVariants({ color }), className)}
         ref={ref}
       >
+        {icon && cloneElement(icon, { className: dropdownMenuItemIconVariants({ color }) })}
         {children}
       </DropdownMenuPrimitive.Item>
     )
@@ -48,18 +63,21 @@ interface DropdownMenuContentProps extends ComponentPropsWithoutRef<typeof Dropd
 const DropdownMenuContent = forwardRef<ElementRef<typeof DropdownMenuPrimitive.Content>, DropdownMenuContentProps>(
   function DropdownMenuContent({ children, sideOffset = 12, align = 'start', className, ...props }, ref) {
     return (
-      <DropdownMenuPrimitive.Content
-        {...props}
-        sideOffset={sideOffset}
-        align={align}
-        className={twMerge(
-          'flex flex-col gap-1 w-[258px] p-3 bg-neutral-50 shadow-[0_0_32px_rgba(0,0,0,0.08)] rounded-md data-[state=open]:data-[side=top]:animate-slidein-down-md-faded data-[state=open]:data-[side=right]:animate-slidein-left-md-faded data-[state=open]:data-[side=bottom]:animate-slidein-up-md-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded',
-          className
-        )}
-        ref={ref}
-      >
-        {children}
-      </DropdownMenuPrimitive.Content>
+      <DropdownMenuPrimitive.Portal>
+        <DropdownMenuPrimitive.Content
+          {...props}
+          sideOffset={sideOffset}
+          align={align}
+          className={twMerge(
+            'flex flex-col gap-1 w-[258px] p-3 bg-neutral-50 shadow-[0_0_32px_rgba(0,0,0,0.08)] rounded-md data-[state=open]:data-[side=top]:animate-slidein-down-md-faded data-[state=open]:data-[side=right]:animate-slidein-left-md-faded data-[state=open]:data-[side=bottom]:animate-slidein-up-md-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded',
+            className
+          )}
+          ref={ref}
+        >
+          <DropdownMenuArrow />
+          {children}
+        </DropdownMenuPrimitive.Content>
+      </DropdownMenuPrimitive.Portal>
     )
   }
 )
@@ -100,9 +118,7 @@ const DropdownMenu = Object.assign(
   {
     Root: DropdownMenuPrimitive.Root,
     Trigger: DropdownMenuPrimitive.Trigger,
-    Portal: DropdownMenuPrimitive.Portal,
     Content: DropdownMenuContent,
-    Arrow: DropdownMenuArrow,
     Group: DropdownMenuPrimitive.Group,
     Item: DropdownMenuItem,
     Separator: DropdownMenuSeparator,

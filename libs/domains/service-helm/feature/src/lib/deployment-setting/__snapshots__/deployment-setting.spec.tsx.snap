@@ -25,7 +25,7 @@ exports[`DeploymentSetting should match snapshot 1`] = `
               id="Helm arguments"
               name="arguments"
             >
-              ["--wait"]
+              ["--wait", "--atomic", "--debug"]
             </textarea>
           </div>
         </div>
