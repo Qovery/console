@@ -57,9 +57,9 @@ const environmentMainCallsApi = new EnvironmentMainCallsApi()
 const jobMainCallsApi = new JobMainCallsApi()
 const helmMainCallsApi = new HelmMainCallsApi()
 
-const applicationDeploymentApi = new ApplicationDeploymentRestrictionApi()
-const jobDeploymentApi = new JobDeploymentRestrictionApi()
-const helmDeploymentApi = new HelmDeploymentRestrictionApi()
+const applicationDeploymentRestrictionApi = new ApplicationDeploymentRestrictionApi()
+const jobDeploymentRestrictionApi = new JobDeploymentRestrictionApi()
+const helmDeploymentRestrictionApi = new HelmDeploymentRestrictionApi()
 
 const applicationDeploymentsApi = new ApplicationDeploymentHistoryApi()
 const containerDeploymentsApi = new ContainerDeploymentHistoryApi()
@@ -188,12 +188,16 @@ export const services = createQueryKeys('services', {
     async queryFn() {
       const fn = match(serviceType)
         .with('APPLICATION', () =>
-          applicationDeploymentApi.getApplicationDeploymentRestrictions.bind(applicationDeploymentApi)
+          applicationDeploymentRestrictionApi.getApplicationDeploymentRestrictions.bind(
+            applicationDeploymentRestrictionApi
+          )
         )
         .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', () =>
-          jobDeploymentApi.getJobDeploymentRestrictions.bind(jobDeploymentApi)
+          jobDeploymentRestrictionApi.getJobDeploymentRestrictions.bind(jobDeploymentRestrictionApi)
         )
-        .with('HELM', () => helmDeploymentApi.getHelmDeploymentRestrictions.bind(helmDeploymentApi))
+        .with('HELM', () =>
+          helmDeploymentRestrictionApi.getHelmDeploymentRestrictions.bind(helmDeploymentRestrictionApi)
+        )
         .with('CONTAINER', 'DATABASE', () => null)
         .exhaustive()
       if (!fn) {
@@ -386,10 +390,12 @@ export const mutations = {
   }: DeploymentRestrictionRequest) {
     const mutation = match(serviceType)
       .with('APPLICATION', () =>
-        applicationDeploymentApi.editApplicationDeploymentRestriction.bind(applicationDeploymentApi)
+        applicationDeploymentRestrictionApi.editApplicationDeploymentRestriction.bind(
+          applicationDeploymentRestrictionApi
+        )
       )
-      .with('JOB', () => jobDeploymentApi.editJobDeploymentRestriction.bind(jobDeploymentApi))
-      .with('HELM', () => helmDeploymentApi.editHelmDeploymentRestriction.bind(helmDeploymentApi))
+      .with('JOB', () => jobDeploymentRestrictionApi.editJobDeploymentRestriction.bind(jobDeploymentRestrictionApi))
+      .with('HELM', () => helmDeploymentRestrictionApi.editHelmDeploymentRestriction.bind(helmDeploymentRestrictionApi))
       .exhaustive()
     const response = await mutation(serviceId, deploymentRestrictionId, payload)
     return response.data
@@ -401,10 +407,14 @@ export const mutations = {
   }: Omit<DeploymentRestrictionRequest, 'deploymentRestrictionId'>) {
     const mutation = match(serviceType)
       .with('APPLICATION', () =>
-        applicationDeploymentApi.createApplicationDeploymentRestriction.bind(applicationDeploymentApi)
+        applicationDeploymentRestrictionApi.createApplicationDeploymentRestriction.bind(
+          applicationDeploymentRestrictionApi
+        )
       )
-      .with('JOB', () => jobDeploymentApi.createJobDeploymentRestriction.bind(jobDeploymentApi))
-      .with('HELM', () => helmDeploymentApi.createHelmDeploymentRestriction.bind(helmDeploymentApi))
+      .with('JOB', () => jobDeploymentRestrictionApi.createJobDeploymentRestriction.bind(jobDeploymentRestrictionApi))
+      .with('HELM', () =>
+        helmDeploymentRestrictionApi.createHelmDeploymentRestriction.bind(helmDeploymentRestrictionApi)
+      )
       .exhaustive()
     const response = await mutation(serviceId, payload)
     return response.data
@@ -416,10 +426,14 @@ export const mutations = {
   }: Omit<DeploymentRestrictionRequest, 'payload'>) {
     const mutation = match(serviceType)
       .with('APPLICATION', () =>
-        applicationDeploymentApi.deleteApplicationDeploymentRestriction.bind(applicationDeploymentApi)
+        applicationDeploymentRestrictionApi.deleteApplicationDeploymentRestriction.bind(
+          applicationDeploymentRestrictionApi
+        )
       )
-      .with('JOB', () => jobDeploymentApi.deleteJobDeploymentRestriction.bind(jobDeploymentApi))
-      .with('HELM', () => helmDeploymentApi.deleteHelmDeploymentRestriction.bind(helmDeploymentApi))
+      .with('JOB', () => jobDeploymentRestrictionApi.deleteJobDeploymentRestriction.bind(jobDeploymentRestrictionApi))
+      .with('HELM', () =>
+        helmDeploymentRestrictionApi.deleteHelmDeploymentRestriction.bind(helmDeploymentRestrictionApi)
+      )
       .exhaustive()
     const response = await mutation(serviceId, deploymentRestrictionId)
     return response.data
