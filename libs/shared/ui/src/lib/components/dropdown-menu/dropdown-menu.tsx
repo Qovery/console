@@ -48,18 +48,21 @@ interface DropdownMenuContentProps extends ComponentPropsWithoutRef<typeof Dropd
 const DropdownMenuContent = forwardRef<ElementRef<typeof DropdownMenuPrimitive.Content>, DropdownMenuContentProps>(
   function DropdownMenuContent({ children, sideOffset = 12, align = 'start', className, ...props }, ref) {
     return (
-      <DropdownMenuPrimitive.Content
-        {...props}
-        sideOffset={sideOffset}
-        align={align}
-        className={twMerge(
-          'flex flex-col gap-1 w-[258px] p-3 bg-neutral-50 shadow-[0_0_32px_rgba(0,0,0,0.08)] rounded-md data-[state=open]:data-[side=top]:animate-slidein-down-md-faded data-[state=open]:data-[side=right]:animate-slidein-left-md-faded data-[state=open]:data-[side=bottom]:animate-slidein-up-md-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded',
-          className
-        )}
-        ref={ref}
-      >
-        {children}
-      </DropdownMenuPrimitive.Content>
+      <DropdownMenuPrimitive.Portal>
+        <DropdownMenuPrimitive.Content
+          {...props}
+          sideOffset={sideOffset}
+          align={align}
+          className={twMerge(
+            'flex flex-col gap-1 w-[258px] p-3 bg-neutral-50 shadow-[0_0_32px_rgba(0,0,0,0.08)] rounded-md data-[state=open]:data-[side=top]:animate-slidein-down-md-faded data-[state=open]:data-[side=right]:animate-slidein-left-md-faded data-[state=open]:data-[side=bottom]:animate-slidein-up-md-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded',
+            className
+          )}
+          ref={ref}
+        >
+          <DropdownMenuArrow />
+          {children}
+        </DropdownMenuPrimitive.Content>
+      </DropdownMenuPrimitive.Portal>
     )
   }
 )
@@ -100,9 +103,7 @@ const DropdownMenu = Object.assign(
   {
     Root: DropdownMenuPrimitive.Root,
     Trigger: DropdownMenuPrimitive.Trigger,
-    Portal: DropdownMenuPrimitive.Portal,
     Content: DropdownMenuContent,
-    Arrow: DropdownMenuArrow,
     Group: DropdownMenuPrimitive.Group,
     Item: DropdownMenuItem,
     Separator: DropdownMenuSeparator,

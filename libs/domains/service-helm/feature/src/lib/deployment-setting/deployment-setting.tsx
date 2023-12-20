@@ -10,7 +10,7 @@ export function DeploymentSetting() {
         <Controller
           name="arguments"
           control={control}
-          defaultValue={`["--wait"]`}
+          defaultValue={`["--wait", "--atomic"]`}
           rules={{
             required: 'Please enter an command.',
           }}

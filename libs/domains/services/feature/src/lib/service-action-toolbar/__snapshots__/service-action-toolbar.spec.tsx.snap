@@ -1,7 +1,348 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ServiceActionToolbar should match snapshot 1`] = `
-<body>
-  <div />
+exports[`ServiceActionToolbar should match manage deployment snapshot 1`] = `
+<body
+  style="pointer-events: none;"
+>
+  <span
+    aria-hidden="true"
+    data-aria-hidden="true"
+    data-radix-focus-guard=""
+    style="outline: none; opacity: 0; position: fixed; pointer-events: none;"
+    tabindex="0"
+  />
+  <div
+    aria-hidden="true"
+    aria-orientation="horizontal"
+    data-aria-hidden="true"
+    data-orientation="horizontal"
+    dir="ltr"
+    role="toolbar"
+    style="outline: none;"
+    tabindex="0"
+  >
+    <button
+      aria-controls="radix-:r7:"
+      aria-expanded="true"
+      aria-haspopup="menu"
+      aria-label="Manage Deployment"
+      class="inline-flex items-center shrink-0 font-medium transition h-8 px-3 border border-neutral-250 dark:border-neutral-350 dark:text-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent first:rounded-l last:rounded-r first:border-x border-l-0 hover:[&:not(:active)]:border-neutral-250 text-neutral-350 hover:bg-neutral-150 hover:text-brand-400 data-[state=open]:bg-neutral-150 data-[state=open]:text-brand-400 text-2xs outline-0"
+      data-orientation="horizontal"
+      data-radix-collection-item=""
+      data-state="open"
+      id="radix-:r6:"
+      tabindex="-1"
+      type="button"
+    >
+      <div
+        class="flex items-center w-full h-full"
+        data-state="closed"
+      >
+        <span
+          class="icon-solid-play shrink-0 mr-3"
+          role="img"
+        />
+        <span
+          class="icon-solid-angle-down shrink-0 "
+          role="img"
+        />
+      </div>
+    </button>
+    <button
+      class="inline-flex items-center shrink-0 font-medium transition h-8 px-3 border border-neutral-250 dark:border-neutral-350 dark:text-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent first:rounded-l last:rounded-r first:border-x border-l-0 hover:[&:not(:active)]:border-neutral-250 text-neutral-350 hover:bg-neutral-150 hover:text-brand-400 data-[state=open]:bg-neutral-150 data-[state=open]:text-brand-400 text-2xs outline-0"
+      data-orientation="horizontal"
+      data-radix-collection-item=""
+      data-state="closed"
+      tabindex="-1"
+      type="button"
+    >
+      <span
+        class="icon-solid-scroll shrink-0 "
+        role="img"
+      />
+    </button>
+    <button
+      aria-expanded="false"
+      aria-haspopup="menu"
+      aria-label="Other actions"
+      class="inline-flex items-center shrink-0 font-medium transition h-8 px-3 border border-neutral-250 dark:border-neutral-350 dark:text-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent first:rounded-l last:rounded-r first:border-x border-l-0 hover:[&:not(:active)]:border-neutral-250 text-neutral-350 hover:bg-neutral-150 hover:text-brand-400 data-[state=open]:bg-neutral-150 data-[state=open]:text-brand-400 text-2xs outline-0"
+      data-orientation="horizontal"
+      data-radix-collection-item=""
+      data-state="closed"
+      id="radix-:rc:"
+      tabindex="-1"
+      type="button"
+    >
+      <div
+        class="flex items-center w-full h-full"
+        data-state="closed"
+      >
+        <span
+          class="icon-solid-ellipsis-v shrink-0 "
+          role="img"
+        />
+      </div>
+    </button>
+  </div>
+  <div
+    data-radix-popper-content-wrapper=""
+    dir="ltr"
+    style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 12px); min-width: max-content; --radix-popper-available-width: 0px; --radix-popper-available-height: -12px; --radix-popper-anchor-width: 0px; --radix-popper-anchor-height: 0px; --radix-popper-transform-origin: 0px 0px;"
+  >
+    <div
+      aria-labelledby="radix-:r6:"
+      aria-orientation="vertical"
+      class="flex flex-col gap-1 w-[258px] p-3 bg-neutral-50 shadow-[0_0_32px_rgba(0,0,0,0.08)] rounded-md data-[state=open]:data-[side=top]:animate-slidein-down-md-faded data-[state=open]:data-[side=right]:animate-slidein-left-md-faded data-[state=open]:data-[side=bottom]:animate-slidein-up-md-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded"
+      data-align="start"
+      data-orientation="vertical"
+      data-radix-menu-content=""
+      data-side="bottom"
+      data-state="open"
+      dir="ltr"
+      id="radix-:r7:"
+      role="menu"
+      style="outline: none; --radix-dropdown-menu-content-transform-origin: var(--radix-popper-transform-origin); --radix-dropdown-menu-content-available-width: var(--radix-popper-available-width); --radix-dropdown-menu-content-available-height: var(--radix-popper-available-height); --radix-dropdown-menu-trigger-width: var(--radix-popper-anchor-width); --radix-dropdown-menu-trigger-height: var(--radix-popper-anchor-height); pointer-events: auto;"
+      tabindex="-1"
+    >
+      <span
+        style="position: absolute; top: 0px; transform-origin: center 0; transform: rotate(180deg); left: 0px;"
+      >
+        <svg
+          class="fill-white"
+          height="6"
+          preserveAspectRatio="none"
+          style="display: block;"
+          viewBox="0 0 30 10"
+          width="12"
+        >
+          <polygon
+            points="0,0 30,0 15,10"
+          />
+        </svg>
+      </span>
+      <div
+        class="px-3 flex items-center h-9 text-sm font-medium cursor-pointer rounded-sm outline-none text-neutral-400 dark:text-neutral-100 hover:bg-brand-50 data-[highlighted]:bg-brand-50 hover:text-brand-500 data-[highlighted]:text-brand-500"
+        data-orientation="vertical"
+        data-radix-collection-item=""
+        role="menuitem"
+        tabindex="-1"
+      >
+        <span
+          class="icon-solid-play shrink-0 text-sm mr-3 text-brand-400"
+          role="img"
+        />
+        Deploy
+      </div>
+    </div>
+  </div>
+  <span
+    aria-hidden="true"
+    data-aria-hidden="true"
+    data-radix-focus-guard=""
+    style="outline: none; opacity: 0; position: fixed; pointer-events: none;"
+    tabindex="0"
+  />
+</body>
+`;
+
+exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
+<body
+  style="pointer-events: none;"
+>
+  <span
+    aria-hidden="true"
+    data-aria-hidden="true"
+    data-radix-focus-guard=""
+    style="outline: none; opacity: 0; position: fixed; pointer-events: none;"
+    tabindex="0"
+  />
+  <div
+    aria-hidden="true"
+    aria-orientation="horizontal"
+    data-aria-hidden="true"
+    data-orientation="horizontal"
+    dir="ltr"
+    role="toolbar"
+    style="outline: none;"
+    tabindex="0"
+  >
+    <button
+      aria-expanded="false"
+      aria-haspopup="menu"
+      aria-label="Manage Deployment"
+      class="inline-flex items-center shrink-0 font-medium transition h-8 px-3 border border-neutral-250 dark:border-neutral-350 dark:text-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent first:rounded-l last:rounded-r first:border-x border-l-0 hover:[&:not(:active)]:border-neutral-250 text-neutral-350 hover:bg-neutral-150 hover:text-brand-400 data-[state=open]:bg-neutral-150 data-[state=open]:text-brand-400 text-2xs outline-0"
+      data-orientation="horizontal"
+      data-radix-collection-item=""
+      data-state="closed"
+      id="radix-:rn:"
+      tabindex="-1"
+      type="button"
+    >
+      <div
+        class="flex items-center w-full h-full"
+        data-state="closed"
+      >
+        <span
+          class="icon-solid-play shrink-0 mr-3"
+          role="img"
+        />
+        <span
+          class="icon-solid-angle-down shrink-0 "
+          role="img"
+        />
+      </div>
+    </button>
+    <button
+      class="inline-flex items-center shrink-0 font-medium transition h-8 px-3 border border-neutral-250 dark:border-neutral-350 dark:text-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent first:rounded-l last:rounded-r first:border-x border-l-0 hover:[&:not(:active)]:border-neutral-250 text-neutral-350 hover:bg-neutral-150 hover:text-brand-400 data-[state=open]:bg-neutral-150 data-[state=open]:text-brand-400 text-2xs outline-0"
+      data-orientation="horizontal"
+      data-radix-collection-item=""
+      data-state="closed"
+      tabindex="-1"
+      type="button"
+    >
+      <span
+        class="icon-solid-scroll shrink-0 "
+        role="img"
+      />
+    </button>
+    <button
+      aria-controls="radix-:ru:"
+      aria-expanded="true"
+      aria-haspopup="menu"
+      aria-label="Other actions"
+      class="inline-flex items-center shrink-0 font-medium transition h-8 px-3 border border-neutral-250 dark:border-neutral-350 dark:text-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent first:rounded-l last:rounded-r first:border-x border-l-0 hover:[&:not(:active)]:border-neutral-250 text-neutral-350 hover:bg-neutral-150 hover:text-brand-400 data-[state=open]:bg-neutral-150 data-[state=open]:text-brand-400 text-2xs outline-0"
+      data-orientation="horizontal"
+      data-radix-collection-item=""
+      data-state="open"
+      id="radix-:rt:"
+      tabindex="-1"
+      type="button"
+    >
+      <div
+        class="flex items-center w-full h-full"
+        data-state="closed"
+      >
+        <span
+          class="icon-solid-ellipsis-v shrink-0 "
+          role="img"
+        />
+      </div>
+    </button>
+  </div>
+  <div
+    data-radix-popper-content-wrapper=""
+    dir="ltr"
+    style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 12px); min-width: max-content; --radix-popper-available-width: 0px; --radix-popper-available-height: -12px; --radix-popper-anchor-width: 0px; --radix-popper-anchor-height: 0px; --radix-popper-transform-origin: 0px 0px;"
+  >
+    <div
+      aria-labelledby="radix-:rt:"
+      aria-orientation="vertical"
+      class="flex flex-col gap-1 w-[258px] p-3 bg-neutral-50 shadow-[0_0_32px_rgba(0,0,0,0.08)] rounded-md data-[state=open]:data-[side=top]:animate-slidein-down-md-faded data-[state=open]:data-[side=right]:animate-slidein-left-md-faded data-[state=open]:data-[side=bottom]:animate-slidein-up-md-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded"
+      data-align="start"
+      data-orientation="vertical"
+      data-radix-menu-content=""
+      data-side="bottom"
+      data-state="open"
+      dir="ltr"
+      id="radix-:ru:"
+      role="menu"
+      style="outline: none; --radix-dropdown-menu-content-transform-origin: var(--radix-popper-transform-origin); --radix-dropdown-menu-content-available-width: var(--radix-popper-available-width); --radix-dropdown-menu-content-available-height: var(--radix-popper-available-height); --radix-dropdown-menu-trigger-width: var(--radix-popper-anchor-width); --radix-dropdown-menu-trigger-height: var(--radix-popper-anchor-height); pointer-events: auto;"
+      tabindex="-1"
+    >
+      <span
+        style="position: absolute; top: 0px; transform-origin: center 0; transform: rotate(180deg); left: 0px;"
+      >
+        <svg
+          class="fill-white"
+          height="6"
+          preserveAspectRatio="none"
+          style="display: block;"
+          viewBox="0 0 30 10"
+          width="12"
+        >
+          <polygon
+            points="0,0 30,0 15,10"
+          />
+        </svg>
+      </span>
+      <div
+        class="px-3 flex items-center h-9 text-sm font-medium cursor-pointer rounded-sm outline-none text-neutral-400 dark:text-neutral-100 hover:bg-brand-50 data-[highlighted]:bg-brand-50 hover:text-brand-500 data-[highlighted]:text-brand-500"
+        data-orientation="vertical"
+        data-radix-collection-item=""
+        role="menuitem"
+        tabindex="-1"
+      >
+        <span
+          class="icon-solid-scroll shrink-0 text-sm mr-3 text-brand-400"
+          role="img"
+        />
+        Logs
+      </div>
+      <div
+        class="px-3 flex items-center h-9 text-sm font-medium cursor-pointer rounded-sm outline-none text-neutral-400 dark:text-neutral-100 hover:bg-brand-50 data-[highlighted]:bg-brand-50 hover:text-brand-500 data-[highlighted]:text-brand-500"
+        data-orientation="vertical"
+        data-radix-collection-item=""
+        role="menuitem"
+        tabindex="-1"
+      >
+        <span
+          class="icon-solid-copy shrink-0 text-sm mr-3 text-brand-400"
+          role="img"
+        />
+        See audit logs
+      </div>
+      <div
+        class="px-3 flex items-center h-9 text-sm font-medium cursor-pointer rounded-sm outline-none text-neutral-400 dark:text-neutral-100 hover:bg-brand-50 data-[highlighted]:bg-brand-50 hover:text-brand-500 data-[highlighted]:text-brand-500"
+        data-orientation="vertical"
+        data-radix-collection-item=""
+        role="menuitem"
+        tabindex="-1"
+      >
+        <span
+          class="icon-solid-clock-rotate-left shrink-0 text-sm mr-3 text-brand-400"
+          role="img"
+        />
+        Copy identifiers
+      </div>
+      <div
+        class="px-3 flex items-center h-9 text-sm font-medium cursor-pointer rounded-sm outline-none text-neutral-400 dark:text-neutral-100 hover:bg-brand-50 data-[highlighted]:bg-brand-50 hover:text-brand-500 data-[highlighted]:text-brand-500"
+        data-orientation="vertical"
+        data-radix-collection-item=""
+        role="menuitem"
+        tabindex="-1"
+      >
+        <span
+          class="icon-solid-wheel shrink-0 text-sm mr-3 text-brand-400"
+          role="img"
+        />
+        Open settings
+      </div>
+      <div
+        aria-orientation="horizontal"
+        class="w-full h-[1px] bg-neutral-200 dark:bg-neutral-600 my-2"
+        role="separator"
+      />
+      <div
+        class="px-3 flex items-center h-9 text-sm font-medium cursor-pointer rounded-sm outline-none hover:bg-red-50 data-[highlighted]:bg-red-50 text-red-600 data-[highlighted]:text-red-600"
+        data-orientation="vertical"
+        data-radix-collection-item=""
+        role="menuitem"
+        tabindex="-1"
+      >
+        <span
+          class="icon-solid-trash shrink-0 text-sm mr-3 text-red-600"
+          role="img"
+        />
+        Delete service
+      </div>
+    </div>
+  </div>
+  <span
+    aria-hidden="true"
+    data-aria-hidden="true"
+    data-radix-focus-guard=""
+    style="outline: none; opacity: 0; position: fixed; pointer-events: none;"
+    tabindex="0"
+  />
 </body>
 `;
