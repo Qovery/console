@@ -1,6 +1,6 @@
 import { DatabaseAccessibilityEnum, DatabaseModeEnum, DatabaseTypeEnum, StorageTypeEnum } from 'qovery-typescript-axios'
 import { type Application, type Container, type Database, type Job } from '@qovery/domains/services/data-access'
-import { buildEditServicePayload } from './api'
+import { buildEditServicePayload } from './build-edit-service-payload'
 
 describe('testing payload refactoring', () => {
   it('should remove useless application values', () => {
