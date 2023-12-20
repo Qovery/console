@@ -107,7 +107,9 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                 isSearchable
                 onChange={(event) => {
                   field.onChange(event)
-                  setWarningClusterNodes(true)
+                  if (props.fromDetail) {
+                    setWarningClusterNodes(true)
+                  }
                 }}
                 value={field.value}
                 label="Instance type"
@@ -146,7 +148,9 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
               name={field.name}
               onChange={(event) => {
                 field.onChange(event)
-                setWarningClusterNodes(true)
+                if (props.fromDetail) {
+                  setWarningClusterNodes(true)
+                }
               }}
               value={field.value}
               label="Disk size (GB)"
