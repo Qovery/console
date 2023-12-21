@@ -94,7 +94,7 @@ export function StepSummaryFeature() {
           name: generalData.name,
           description: generalData.description,
           source,
-          allow_cluster_wide_resources: generalData.auto_preview!,
+          allow_cluster_wide_resources: generalData.allow_cluster_wide_resources,
           arguments: JSON.parse(generalData.arguments),
           timeout_sec: generalData.timeout_sec,
           auto_deploy: generalData.auto_deploy,
@@ -182,7 +182,7 @@ export function StepSummaryFeature() {
               </li>
               <li>
                 <span className="font-medium">Allow cluster-wide resources:</span>{' '}
-                {generalData.auto_preview?.toString()}
+                {generalData.allow_cluster_wide_resources?.toString()}
               </li>
               {generalData.source_provider === 'GIT' && (
                 <li>

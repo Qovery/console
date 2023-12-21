@@ -13,8 +13,7 @@ export const steps: { title: string }[] = [
   { title: 'Networking' },
   { title: 'Summary' },
 ]
-export interface HelmGeneralData
-  extends Omit<HelmRequest, 'source' | 'ports' | 'allow_cluster_wide_resources' | 'values_override' | 'arguments'> {
+export interface HelmGeneralData extends Omit<HelmRequest, 'source' | 'ports' | 'values_override' | 'arguments'> {
   source_provider: 'HELM_REPOSITORY' | 'GIT'
   repository: string
   provider?: GitProviderEnum
