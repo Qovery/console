@@ -3,9 +3,9 @@ import { useCallback, useEffect, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { FormProvider, useForm } from 'react-hook-form'
 import { match } from 'ts-pattern'
+import { type ServiceType } from '@qovery/domains/services/data-access'
 import { useService } from '@qovery/domains/services/feature'
 import { useImportVariables, useVariables } from '@qovery/domains/variables/feature'
-import { type ServiceTypeEnum } from '@qovery/shared/enums'
 import { useModal } from '@qovery/shared/ui'
 import { computeAvailableScope, parseEnvText } from '@qovery/shared/util-js'
 import ImportEnvironmentVariableModal from '../../ui/import-environment-variable-modal/import-environment-variable-modal'
@@ -20,7 +20,7 @@ export interface ImportEnvironmentVariableModalFeatureProps {
   environmentId: string
   applicationId: string
   closeModal: () => void
-  serviceType?: ServiceTypeEnum
+  serviceType?: ServiceType
 }
 
 export function ImportEnvironmentVariableModalFeature(props: ImportEnvironmentVariableModalFeatureProps) {
@@ -40,6 +40,7 @@ export function ImportEnvironmentVariableModalFeature(props: ImportEnvironmentVa
     .with('APPLICATION', () => APIVariableScopeEnum.APPLICATION)
     .with('CONTAINER', () => APIVariableScopeEnum.CONTAINER)
     .with('JOB', () => APIVariableScopeEnum.JOB)
+    .with('HELM', () => APIVariableScopeEnum.HELM)
     .otherwise(() => undefined)
 
   const { data: existingEnvVars = [], isLoading } = useVariables({

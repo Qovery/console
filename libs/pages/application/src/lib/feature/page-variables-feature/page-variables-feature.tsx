@@ -1,17 +1,13 @@
 import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { useContext, useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { selectApplicationById } from '@qovery/domains/application'
 import { useService } from '@qovery/domains/services/feature'
 import { useVariables } from '@qovery/domains/variables/feature'
-import { type ServiceTypeEnum, getServiceType } from '@qovery/shared/enums'
 import { environmentVariableFactoryMock } from '@qovery/shared/factories'
-import { type ApplicationEntity, type EnvironmentVariableSecretOrPublic } from '@qovery/shared/interfaces'
+import { type EnvironmentVariableSecretOrPublic } from '@qovery/shared/interfaces'
 import { type TableHeadProps } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { type AppDispatch, type RootState } from '@qovery/state/store'
 import { ApplicationContext } from '../../ui/container/container'
 import PageVariables from '../../ui/page-variables/page-variables'
 
@@ -19,7 +15,6 @@ const placeholder = environmentVariableFactoryMock(5) as EnvironmentVariableSecr
 
 export function PageVariablesFeature() {
   useDocumentTitle('Environment Variables – Qovery')
-  const dispatch = useDispatch<AppDispatch>()
   const { environmentId, applicationId = '' } = useParams()
 
   const { data: service } = useService({
@@ -39,11 +34,7 @@ export function PageVariablesFeature() {
     scope,
   })
 
-  const application = useSelector<RootState, ApplicationEntity | undefined>((state) =>
-    selectApplicationById(state, applicationId)
-  )
-
-  const serviceType: ServiceTypeEnum | undefined = application && getServiceType(application)
+  const serviceType = service?.serviceType
 
   const [data, setData] = useState<EnvironmentVariableSecretOrPublic[]>(sortVariableMemo || placeholder)
 
@@ -51,7 +42,7 @@ export function PageVariablesFeature() {
 
   useEffect(() => {
     setShowHideAllEnvironmentVariablesValues(false)
-  }, [dispatch, applicationId, serviceType])
+  }, [applicationId, serviceType])
 
   useEffect(() => {
     if (isLoading) {
