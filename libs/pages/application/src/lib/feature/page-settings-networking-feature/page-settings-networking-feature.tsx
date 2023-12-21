@@ -17,7 +17,7 @@ export function PageSettingsNetworkingFeature() {
   const methods = useForm<HelmNetworkingData>({
     mode: 'onChange',
     defaultValues: {
-      ports: [],
+      ports: service?.ports ?? [],
     },
   })
   const ports = methods.watch('ports')
