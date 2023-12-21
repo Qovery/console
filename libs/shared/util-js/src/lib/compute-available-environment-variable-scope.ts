@@ -1,8 +1,9 @@
 import { APIVariableScopeEnum } from 'qovery-typescript-axios'
+import { match } from 'ts-pattern'
 import { type ServiceType } from '@qovery/domains/services/data-access'
 import { upperCaseFirstLetter } from './uppercase-first-letter'
 
-const environmentScopes = (serviceType?: ServiceType) => [
+const environmentScopes = (scope: APIVariableScopeEnum) => [
   {
     name: APIVariableScopeEnum.BUILT_IN,
     hierarchy: -1,
@@ -16,7 +17,7 @@ const environmentScopes = (serviceType?: ServiceType) => [
     hierarchy: 2,
   },
   {
-    name: (serviceType as APIVariableScopeEnum) ?? APIVariableScopeEnum.APPLICATION,
+    name: scope,
     hierarchy: 3,
   },
 ]
@@ -27,6 +28,13 @@ export const computeAvailableScope = (
   serviceType?: ServiceType,
   excludeCurrentScope: boolean = false
 ): APIVariableScopeEnum[] => {
+  const scopeByServiceType = match(serviceType)
+    .with('APPLICATION', () => APIVariableScopeEnum.APPLICATION)
+    .with('CONTAINER', () => APIVariableScopeEnum.CONTAINER)
+    .with('JOB', () => APIVariableScopeEnum.JOB)
+    .with('HELM', () => APIVariableScopeEnum.HELM)
+    .otherwise(() => APIVariableScopeEnum.APPLICATION)
+
   if (!scope) {
     const scopeToReturn: APIVariableScopeEnum[] = []
 
@@ -34,17 +42,13 @@ export const computeAvailableScope = (
       scopeToReturn.push(APIVariableScopeEnum.BUILT_IN)
     }
 
-    return [
-      ...scopeToReturn,
-      APIVariableScopeEnum.PROJECT,
-      APIVariableScopeEnum.ENVIRONMENT,
-      (serviceType as APIVariableScopeEnum) ?? APIVariableScopeEnum.APPLICATION,
-    ]
+    if (scopeByServiceType)
+      return [...scopeToReturn, APIVariableScopeEnum.PROJECT, APIVariableScopeEnum.ENVIRONMENT, scopeByServiceType]
   }
 
-  const theScope = environmentScopes(serviceType).find((s) => s.name === scope)
+  const theScope = environmentScopes(scopeByServiceType).find((s) => s.name === scope)
 
-  return environmentScopes(serviceType)
+  return environmentScopes(scopeByServiceType)
     .filter((scope) => {
       return scope.hierarchy >= (theScope?.hierarchy || -1) && scope.hierarchy >= 0
     })
@@ -55,7 +59,14 @@ export const computeAvailableScope = (
 export function getScopeHierarchy(scope?: APIVariableScopeEnum, serviceType?: ServiceType): number {
   if (!scope) return -1
 
-  const hierarchy = environmentScopes(serviceType).find((s) => s.name === scope)?.hierarchy
+  const scopeByServiceType = match(serviceType)
+    .with('APPLICATION', () => APIVariableScopeEnum.APPLICATION)
+    .with('CONTAINER', () => APIVariableScopeEnum.CONTAINER)
+    .with('JOB', () => APIVariableScopeEnum.JOB)
+    .with('HELM', () => APIVariableScopeEnum.HELM)
+    .otherwise(() => APIVariableScopeEnum.APPLICATION)
+
+  const hierarchy = environmentScopes(scopeByServiceType).find((s) => s.name === scope)?.hierarchy
 
   return hierarchy || -1
 }
