@@ -16,7 +16,7 @@ const environmentScopes = (serviceType?: ServiceType) => [
     hierarchy: 2,
   },
   {
-    name: serviceType as APIVariableScopeEnum,
+    name: (serviceType as APIVariableScopeEnum) ?? APIVariableScopeEnum.APPLICATION,
     hierarchy: 3,
   },
 ]
@@ -38,7 +38,7 @@ export const computeAvailableScope = (
       ...scopeToReturn,
       APIVariableScopeEnum.PROJECT,
       APIVariableScopeEnum.ENVIRONMENT,
-      serviceType as APIVariableScopeEnum,
+      (serviceType as APIVariableScopeEnum) ?? APIVariableScopeEnum.APPLICATION,
     ]
   }
 
