@@ -1,5 +1,5 @@
 import { type Dispatch, type SetStateAction, memo, useState } from 'react'
-import { type ServiceTypeEnum } from '@qovery/shared/enums'
+import { type ServiceType } from '@qovery/domains/services/data-access'
 import { type EnvironmentVariableSecretOrPublic } from '@qovery/shared/interfaces'
 import { HelpSection, Table, type TableFilterProps, type TableHeadProps } from '@qovery/shared/ui'
 import TableRowEnvironmentVariableFeature from '../../feature/table-row-environment-variable-feature/table-row-environment-variable-feature'
@@ -9,7 +9,7 @@ export interface PageVariablesProps {
   variables: EnvironmentVariableSecretOrPublic[]
   setData: Dispatch<SetStateAction<EnvironmentVariableSecretOrPublic[]>>
   isLoading: boolean
-  serviceType?: ServiceTypeEnum
+  serviceType?: ServiceType
 }
 
 export function PageVariablesMemo(props: PageVariablesProps) {

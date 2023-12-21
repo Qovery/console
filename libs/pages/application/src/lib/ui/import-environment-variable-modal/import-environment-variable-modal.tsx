@@ -2,7 +2,7 @@ import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { type DropzoneRootProps } from 'react-dropzone'
 import { Controller, useFormContext } from 'react-hook-form'
-import { type ServiceTypeEnum } from '@qovery/shared/enums'
+import { type ServiceType } from '@qovery/domains/services/data-access'
 import { type EnvironmentVariableSecretOrPublic } from '@qovery/shared/interfaces'
 import {
   ButtonIcon,
@@ -36,7 +36,7 @@ export interface ImportEnvironmentVariableModalProps {
   deleteKey: (key: string) => void
   overwriteEnabled: boolean
   setOverwriteEnabled: (b: boolean) => void
-  serviceType?: ServiceTypeEnum
+  serviceType?: ServiceType
 }
 
 export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableModalProps) {

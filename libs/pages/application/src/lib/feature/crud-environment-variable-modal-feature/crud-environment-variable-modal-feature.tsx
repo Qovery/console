@@ -1,24 +1,21 @@
-import { useQueryClient } from '@tanstack/react-query'
 import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { postApplicationActionsRedeploy } from '@qovery/domains/application'
 import { useActionRedeployEnvironment } from '@qovery/domains/environment'
+import { type ServiceType } from '@qovery/domains/services/data-access'
+import { useRedeployService } from '@qovery/domains/services/feature'
 import {
   useCreateVariable,
   useCreateVariableAlias,
   useCreateVariableOverride,
   useEditVariable,
 } from '@qovery/domains/variables/feature'
-import { type ServiceTypeEnum } from '@qovery/shared/enums'
 import { type EnvironmentVariableSecretOrPublic } from '@qovery/shared/interfaces'
 import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { ToastEnum, toast, useModal } from '@qovery/shared/ui'
 import { computeAvailableScope, getEnvironmentVariableFileMountPath } from '@qovery/shared/util-js'
-import { type AppDispatch } from '@qovery/state/store'
 import CrudEnvironmentVariableModal from '../../ui/crud-environment-variable-modal/crud-environment-variable-modal'
 
 export interface CrudEnvironmentVariableModalFeatureProps {
@@ -30,7 +27,7 @@ export interface CrudEnvironmentVariableModalFeatureProps {
   applicationId: string
   environmentId: string
   projectId: string
-  serviceType?: ServiceTypeEnum
+  serviceType?: ServiceType
   isFile?: boolean
 }
 
@@ -66,12 +63,11 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
     closeModal,
     serviceType,
   } = props
-  const dispatch = useDispatch<AppDispatch>()
   const [loading, setLoading] = useState(false)
   const { enableAlertClickOutside } = useModal()
   const navigate = useNavigate()
-  const queryClient = useQueryClient()
 
+  const { mutate: redeployService } = useRedeployService({ environmentId })
   const actionRedeployEnvironment = useActionRedeployEnvironment(projectId, environmentId, false, undefined, () =>
     navigate(ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(applicationId))
   )
@@ -124,6 +120,7 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
             { scope: APIVariableScopeEnum.APPLICATION },
             { scope: APIVariableScopeEnum.CONTAINER },
             { scope: APIVariableScopeEnum.JOB },
+            { scope: APIVariableScopeEnum.HELM },
             () => props.applicationId
           )
           .otherwise(() => '')
@@ -191,20 +188,13 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
           if (
             data.scope === APIVariableScopeEnum.JOB ||
             data.scope === APIVariableScopeEnum.CONTAINER ||
-            data.scope === APIVariableScopeEnum.APPLICATION
+            data.scope === APIVariableScopeEnum.APPLICATION ||
+            data.scope === APIVariableScopeEnum.HELM
           ) {
-            dispatch(
-              postApplicationActionsRedeploy({
-                applicationId: props.applicationId,
-                environmentId: props.environmentId,
-                serviceType: serviceType,
-                callback: () =>
-                  navigate(
-                    ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(applicationId)
-                  ),
-                queryClient,
-              })
-            )
+            redeployService({
+              serviceId: props.applicationId,
+              serviceType: data.scope,
+            })
           } else {
             actionRedeployEnvironment.mutate()
           }

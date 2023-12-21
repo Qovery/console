@@ -1,11 +1,8 @@
 import { type ClickEvent } from '@szhsin/react-menu'
 import { useContext } from 'react'
-import { useSelector } from 'react-redux'
 import { matchPath, useLocation, useParams } from 'react-router-dom'
-import { getApplicationsState } from '@qovery/domains/application'
-import { ServiceLinksPopover, ServiceStateChip } from '@qovery/domains/services/feature'
-import { getServiceType } from '@qovery/shared/enums'
-import { type ApplicationEntity } from '@qovery/shared/interfaces'
+import { type AnyService } from '@qovery/domains/services/data-access'
+import { ServiceLinksPopover, ServiceStateChip, useService } from '@qovery/domains/services/feature'
 import {
   APPLICATION_DEPLOYMENTS_URL,
   APPLICATION_GENERAL_URL,
@@ -27,7 +24,6 @@ import {
   Tooltip,
   useModal,
 } from '@qovery/shared/ui'
-import { type RootState } from '@qovery/state/store'
 import { ApplicationContext } from '../../ui/container/container'
 import CrudEnvironmentVariableModalFeature, {
   EnvironmentVariableCrudMode,
@@ -36,12 +32,12 @@ import CrudEnvironmentVariableModalFeature, {
 import ImportEnvironmentVariableModalFeature from '../import-environment-variable-modal-feature/import-environment-variable-modal-feature'
 
 function ContentRightEnvVariable({
-  application,
+  service,
   organizationId,
   environmentId,
   projectId,
 }: {
-  application: ApplicationEntity
+  service: AnyService
   organizationId: string
   environmentId: string
   projectId: string
@@ -49,7 +45,7 @@ function ContentRightEnvVariable({
   const { showHideAllEnvironmentVariablesValues: globalShowHideValue, setShowHideAllEnvironmentVariablesValues } =
     useContext(ApplicationContext)
   const { openModal, closeModal } = useModal()
-  const serviceType = getServiceType(application)
+  const serviceType = service?.serviceType
 
   const menuForContentRight: MenuData = [
     {
@@ -62,7 +58,7 @@ function ContentRightEnvVariable({
                 <ImportEnvironmentVariableModalFeature
                   environmentId={environmentId}
                   closeModal={closeModal}
-                  applicationId={application.id}
+                  applicationId={service.id}
                   serviceType={serviceType}
                 />
               ),
@@ -111,7 +107,7 @@ function ContentRightEnvVariable({
                   type={EnvironmentVariableType.NORMAL}
                   mode={EnvironmentVariableCrudMode.CREATION}
                   organizationId={organizationId}
-                  applicationId={application.id}
+                  applicationId={service.id}
                   environmentId={environmentId}
                   projectId={projectId}
                   serviceType={serviceType}
@@ -131,7 +127,7 @@ function ContentRightEnvVariable({
                   type={EnvironmentVariableType.NORMAL}
                   mode={EnvironmentVariableCrudMode.CREATION}
                   organizationId={organizationId}
-                  applicationId={application.id}
+                  applicationId={service.id}
                   environmentId={environmentId}
                   projectId={projectId}
                   serviceType={serviceType}
@@ -166,16 +162,12 @@ function ContentRightEnvVariable({
 
 export function TabsFeature() {
   const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
-  const application = useSelector<RootState, ApplicationEntity | undefined>(
-    (state) => getApplicationsState(state).entities[applicationId]
-  )
+  const { data: service } = useService({ environmentId, serviceId: applicationId })
   const location = useLocation()
 
   const items: TabsItem[] = [
     {
-      icon: (
-        <ServiceStateChip mode="running" environmentId={application?.environment?.id} serviceId={application?.id} />
-      ),
+      icon: <ServiceStateChip mode="running" environmentId={service?.environment?.id} serviceId={service?.id} />,
       name: 'Overview',
       active:
         location.pathname ===
@@ -183,9 +175,7 @@ export function TabsFeature() {
       link: APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_GENERAL_URL,
     },
     {
-      icon: (
-        <ServiceStateChip mode="deployment" environmentId={application?.environment?.id} serviceId={application?.id} />
-      ),
+      icon: <ServiceStateChip mode="deployment" environmentId={service?.environment?.id} serviceId={service?.id} />,
       name: 'Deployments',
       active:
         location.pathname ===
@@ -220,9 +210,9 @@ export function TabsFeature() {
       items={items}
       contentRight={
         <div className="px-5">
-          {matchEnvVariableRoute && application ? (
+          {matchEnvVariableRoute && service ? (
             <ContentRightEnvVariable
-              application={application}
+              service={service}
               organizationId={organizationId}
               environmentId={environmentId}
               projectId={projectId}

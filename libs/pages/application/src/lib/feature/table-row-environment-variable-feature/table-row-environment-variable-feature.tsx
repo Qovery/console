@@ -3,8 +3,9 @@ import { useContext } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useActionRedeployEnvironment } from '@qovery/domains/environment'
+import { type ServiceType } from '@qovery/domains/services/data-access'
 import { useDeleteVariable } from '@qovery/domains/variables/feature'
-import { ExternalServiceEnum, type ServiceTypeEnum } from '@qovery/shared/enums'
+import { ExternalServiceEnum } from '@qovery/shared/enums'
 import { type EnvironmentVariableSecretOrPublic } from '@qovery/shared/interfaces'
 import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import {
@@ -33,7 +34,7 @@ export interface TableRowEnvironmentVariableFeatureProps {
   filter: TableFilterProps[]
   isLoading: boolean
   columnsWidth?: string
-  serviceType?: ServiceTypeEnum
+  serviceType?: ServiceType
 }
 
 export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVariableFeatureProps) {
@@ -74,7 +75,7 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
   })
 
   const disableOverride = match(variable.scope)
-    .with('APPLICATION', 'CONTAINER', 'JOB', () => true)
+    .with('APPLICATION', 'CONTAINER', 'JOB', 'HELM', () => true)
     .otherwise(() => false)
   const createOverride = {
     name: 'Create override',

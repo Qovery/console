@@ -39,11 +39,7 @@ export function PageVariablesFeature() {
     scope,
   })
 
-  const application = useSelector<RootState, ApplicationEntity | undefined>((state) =>
-    selectApplicationById(state, applicationId)
-  )
-
-  const serviceType: ServiceTypeEnum | undefined = application && getServiceType(application)
+  const serviceType = service?.serviceType
 
   const [data, setData] = useState<EnvironmentVariableSecretOrPublic[]>(sortVariableMemo || placeholder)
 

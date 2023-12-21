@@ -1,8 +1,8 @@
 import { APIVariableScopeEnum } from 'qovery-typescript-axios'
-import { type ServiceTypeEnum, isContainer, isJob } from '@qovery/shared/enums'
+import { type ServiceType } from '@qovery/domains/services/data-access'
 import { upperCaseFirstLetter } from './uppercase-first-letter'
 
-const environmentScopes = (serviceType?: ServiceTypeEnum) => [
+const environmentScopes = (serviceType?: ServiceType) => [
   {
     name: APIVariableScopeEnum.BUILT_IN,
     hierarchy: -1,
@@ -16,11 +16,7 @@ const environmentScopes = (serviceType?: ServiceTypeEnum) => [
     hierarchy: 2,
   },
   {
-    name: isJob(serviceType)
-      ? APIVariableScopeEnum.JOB
-      : isContainer(serviceType)
-      ? APIVariableScopeEnum.CONTAINER
-      : APIVariableScopeEnum.APPLICATION,
+    name: serviceType as APIVariableScopeEnum,
     hierarchy: 3,
   },
 ]
@@ -28,7 +24,7 @@ const environmentScopes = (serviceType?: ServiceTypeEnum) => [
 export const computeAvailableScope = (
   scope?: APIVariableScopeEnum,
   includeBuiltIn?: boolean,
-  serviceType?: ServiceTypeEnum,
+  serviceType?: ServiceType,
   excludeCurrentScope: boolean = false
 ): APIVariableScopeEnum[] => {
   if (!scope) {
@@ -42,11 +38,7 @@ export const computeAvailableScope = (
       ...scopeToReturn,
       APIVariableScopeEnum.PROJECT,
       APIVariableScopeEnum.ENVIRONMENT,
-      isJob(serviceType)
-        ? APIVariableScopeEnum.JOB
-        : isContainer(serviceType)
-        ? APIVariableScopeEnum.CONTAINER
-        : APIVariableScopeEnum.APPLICATION,
+      serviceType as APIVariableScopeEnum,
     ]
   }
 
@@ -60,7 +52,7 @@ export const computeAvailableScope = (
     .filter((s) => (excludeCurrentScope ? s !== scope : true))
 }
 
-export function getScopeHierarchy(scope?: APIVariableScopeEnum, serviceType?: ServiceTypeEnum): number {
+export function getScopeHierarchy(scope?: APIVariableScopeEnum, serviceType?: ServiceType): number {
   if (!scope) return -1
 
   const hierarchy = environmentScopes(serviceType).find((s) => s.name === scope)?.hierarchy
@@ -72,7 +64,8 @@ export function generateScopeLabel(scope: APIVariableScopeEnum): string {
   if (
     scope === APIVariableScopeEnum.APPLICATION ||
     scope === APIVariableScopeEnum.JOB ||
-    scope === APIVariableScopeEnum.CONTAINER
+    scope === APIVariableScopeEnum.CONTAINER ||
+    scope === APIVariableScopeEnum.HELM
   )
     return 'Service'
   return upperCaseFirstLetter(scope) as string
