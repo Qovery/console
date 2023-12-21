@@ -40,6 +40,15 @@ export const mergeDeploymentServices = (deploymentHistory?: DeploymentHistoryEnv
       }
       merged.push(j)
     })
+
+    deployment.helms?.forEach((helm) => {
+      const h: DeploymentService = {
+        ...helm,
+        execution_id: deployment.id,
+        type: ServiceTypeEnum.HELM,
+      }
+      merged.push(h)
+    })
   })
   return merged
 }
