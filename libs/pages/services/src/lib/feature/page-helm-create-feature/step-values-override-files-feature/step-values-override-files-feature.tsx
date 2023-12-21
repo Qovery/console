@@ -47,16 +47,15 @@ export function StepValuesOverrideFilesFeature() {
       title="Using values overrides"
       items={[
         'Your helm chart might have already a variables.yaml file with some basic configuration. In this section you can define your own overrides to customize the helm chart behaviour.',
-        'You can define the overrides by selecting a YAML file from a git repository, by passing a raw YAML file or by adding one by one your overrides. You can combine all the 3 methods.',
-        'You can use the Qovery environment variables as overrides by using the placeholder “qovery.env.<env_var_name>” (Example: qovery.env.DB_URL. Qovery will manage the replacement of those placeholders at deployment time.',
-        'To get all the Qovery functionalities, add the macro “qovery.labels.service” within the field managing the labels assigned to the deployed pods.',
-        'Overrides can be passed in the “Helm arguments” field as well but we recommend to use this section.',
+        'You can define the overrides by selecting a YAML file from a git repository (preferred) or by passing a raw YAML file.',
+        'You can use the Qovery environment variables as overrides by using the placeholder "qovery.env.ENV_VAR_NAME” (Example: qovery.env.DB_URL. Qovery will manage the replacement of those placeholders at deployment time.',
+        'To get all the Qovery functionalities, add the macro “qovery.labels.service” and "qovery.annotations.service" within the field managing the labels/annotations assigned to the deployed Pods/Deployments/Services/Jobs. Qovery will automatically replace the macro with a dedicated set of labels/annotations.',
       ]}
       helpSectionProps={{
         description: 'Need help? You may find these links useful',
         links: [
           {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/application/#general',
+            link: 'https://hub.qovery.com/docs/using-qovery/configuration/helm/',
             linkLabel: 'How to configure my Helm chart',
           },
         ],

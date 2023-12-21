@@ -3,7 +3,7 @@ import { type PropsWithChildren, type ReactNode } from 'react'
 import { Controller, type UseFormReturn } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { PREVIEW_CODE } from '@qovery/shared/routes'
-import { Button, Heading, Icon, IconAwesomeEnum, InputSelect, Popover, Section } from '@qovery/shared/ui'
+import { Button, ExternalLink, Heading, Icon, IconAwesomeEnum, InputSelect, Popover, Section } from '@qovery/shared/ui'
 import useHelmDefaultValues from '../hooks/use-helm-default-values/use-helm-default-values'
 import ValuesOverrideYamlSetting from '../values-override-yaml-setting/values-override-yaml-setting'
 
@@ -54,7 +54,9 @@ export function ValuesOverrideFilesSetting({
       <Heading className="mb-2">Values override as file</Heading>
       <p className="text-sm text-neutral-350 mb-2">
         Define the YAML file(s) to be applied as override to the default values.yaml delivered with the chart. It is
-        highly recommended to store the override file(s) in a git repository.
+        highly recommended to store the override file(s) in a git repository. To get all the Qovery functionalities, add
+        the macro “qovery.labels.service” and "qovery.annotations.service" within the field managing the
+        labels/annotations assigned to the deployed Pods/Deployments/Services/Jobs.
       </p>
       <Popover.Root>
         <Popover.Trigger>
@@ -66,26 +68,31 @@ export function ValuesOverrideFilesSetting({
           <h6 className="text-neutral-400 font-medium mb-2">How it works</h6>
           <ul className="list-disc pl-4">
             <li>
-              You can specify one or more YAML file to be used to override the values.yaml delivered with the chart.
-              These will be passed via the -f helm argument.
+              Your helm chart might have already a variables.yaml file with some basic configuration. In this section
+              you can define your own overrides to customize the helm chart behaviour.
             </li>
             <li>
-              The files can be retrieved either from a git repository (preferred option) or they can be stored as raw
-              YAML by Qovery (no history is retained). The chosen git repository can be a repository different from the
-              one of the chart.
+              You can define the overrides by selecting a YAML file from a git repository (preferred) or by passing a
+              raw YAML file.
             </li>
             <li>
               If you don’t have a file, you can skip this step and instead define the values override directly as
               arguments (--set).
             </li>
             <li>
-              You can use the Qovery environment variables as overrides by using the pattern “qovery.env.ENV_VAR_NAME”.
+              You can use the Qovery environment variables as overrides by using the placeholder
+              “qovery.env.ENV_VAR_NAME” (Example: qovery.env.DB_URL. Qovery will manage the replacement of those
+              placeholders at deployment time.
             </li>
             <li>
-              To get all the Qovery functionalities, add the macro “qovery.labels.service” within the field managing the
-              labels assigned to the deployed pods.
+              To get all the Qovery functionalities, add the macro “qovery.labels.service” and
+              "qovery.annotations.service" within the field managing the labels/annotations assigned to the deployed
+              pods. Qovery will automatically replace the macro with a dedicated set of labels/annotations.
             </li>
           </ul>
+          <ExternalLink href="https://hub.qovery.com/docs/using-qovery/configuration/helm/#values">
+            Documentation
+          </ExternalLink>
           <Popover.Close className="absolute top-4 right-4">
             <button type="button">
               <Icon name={IconAwesomeEnum.XMARK} className="text-lg leading-4 text-neutral-400" />
