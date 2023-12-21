@@ -182,11 +182,11 @@ export function StepSummaryFeature() {
               </li>
               <li>
                 <span className="font-medium">Allow cluster-wide resources:</span>{' '}
-                {generalData.allow_cluster_wide_resources?.toString()}
+                {Boolean(generalData.allow_cluster_wide_resources).toString()}
               </li>
               {generalData.source_provider === 'GIT' && (
                 <li>
-                  <span className="font-medium">Auto-deploy:</span> {generalData.auto_deploy?.toString()}
+                  <span className="font-medium">Auto-deploy:</span> {Boolean(generalData.auto_deploy).toString()}
                 </li>
               )}
             </ul>
