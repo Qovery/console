@@ -1,6 +1,6 @@
 import { type ApplicationDeploymentRestriction } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
-import { type ApplicationType, type JobType } from '@qovery/domains/services/data-access'
+import { type ApplicationType, type HelmType, type JobType } from '@qovery/domains/services/data-access'
 import {
   useDeleteDeploymentRestriction,
   useDeploymentRestrictions,
@@ -35,7 +35,7 @@ export function PageSettingsDeploymentRestrictionsFeature() {
     return null
   }
 
-  const isValidServiceType = serviceType === 'APPLICATION' || serviceType === 'JOB'
+  const isValidServiceType = serviceType === 'APPLICATION' || serviceType === 'JOB' || serviceType === 'HELM'
 
   return (
     <div className="flex flex-col justify-between w-full">
@@ -88,7 +88,7 @@ export function PageSettingsDeploymentRestrictionsFeature() {
 
 interface PageSettingsDeploymentRestrictionsFeatureInnerProps {
   serviceId: string
-  serviceType: ApplicationType | JobType
+  serviceType: ApplicationType | JobType | HelmType
 }
 
 function PageSettingsDeploymentRestrictionsFeatureInner({

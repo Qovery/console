@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux'
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
 import { selectApplicationById } from '@qovery/domains/application'
 import { useService } from '@qovery/domains/services/feature'
-import { isApplication, isJob } from '@qovery/shared/enums'
+import { isApplication, isHelmGitSource, isJob } from '@qovery/shared/enums'
 import { type ApplicationEntity } from '@qovery/shared/interfaces'
 import {
   APPLICATION_SETTINGS_ADVANCED_SETTINGS_URL,
@@ -116,7 +116,7 @@ export function PageSettingsFeature() {
       )
     }
 
-    if (isApplication(application) || isJob(application)) {
+    if (isApplication(application) || isJob(application) || (isHelm && isHelmGitSource(service.source))) {
       links.push({
         title: 'Deployment restrictions',
         icon: IconAwesomeEnum.CART_FLATBED,
