@@ -42,8 +42,7 @@ export const computeAvailableScope = (
       scopeToReturn.push(APIVariableScopeEnum.BUILT_IN)
     }
 
-    if (scopeByServiceType)
-      return [...scopeToReturn, APIVariableScopeEnum.PROJECT, APIVariableScopeEnum.ENVIRONMENT, scopeByServiceType]
+    return [...scopeToReturn, APIVariableScopeEnum.PROJECT, APIVariableScopeEnum.ENVIRONMENT, scopeByServiceType]
   }
 
   const theScope = environmentScopes(scopeByServiceType).find((s) => s.name === scope)
