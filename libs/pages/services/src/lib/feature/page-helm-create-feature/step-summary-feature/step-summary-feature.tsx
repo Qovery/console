@@ -1,8 +1,9 @@
-import { Fragment } from 'react'
+import { Fragment, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useHelmRepositories } from '@qovery/domains/organizations/feature'
 import { useCreateHelmService } from '@qovery/domains/service-helm/feature'
+import { useDeployService } from '@qovery/domains/services/feature'
 import {
   SERVICES_CREATION_GENERAL_URL,
   SERVICES_GENERAL_URL,
@@ -32,10 +33,19 @@ export function StepSummaryFeature() {
 
   const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_HELM_CREATION_URL}`
 
-  const { mutateAsync: createHelmService, isLoading: isLoadingCreateHelm } = useCreateHelmService()
+  const { mutateAsync: createHelmService } = useCreateHelmService()
+  const { mutateAsync: deployService } = useDeployService({ environmentId })
   const { data: helmRepositories = [] } = useHelmRepositories({ organizationId })
+  const [isLoadingCreate, setIsLoadingCreate] = useState(false)
+  const [isLoadingCreateAndDeploy, setIsLoadingCreateAndDeploy] = useState(false)
 
   const onSubmit = async (withDeploy: boolean) => {
+    if (withDeploy) {
+      setIsLoadingCreateAndDeploy(true)
+    } else {
+      setIsLoadingCreate(true)
+    }
+
     const source = match(generalData.source_provider)
       .with('GIT', () => {
         const gitToken = getGitTokenValue(generalData.provider ?? '')
@@ -88,7 +98,7 @@ export function StepSummaryFeature() {
       .exhaustive()
 
     try {
-      await createHelmService({
+      const response = await createHelmService({
         environmentId,
         helmRequest: {
           name: generalData.name,
@@ -104,9 +114,17 @@ export function StepSummaryFeature() {
           ports: networkingData.ports,
         },
       })
+
+      if (withDeploy) {
+        await deployService({ serviceId: response.id, serviceType: 'HELM' })
+        setIsLoadingCreateAndDeploy(false)
+      }
+
+      setIsLoadingCreate(false)
       navigate(SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_GENERAL_URL)
     } catch (error) {
-      console.error(error)
+      setIsLoadingCreateAndDeploy(false)
+      setIsLoadingCreate(false)
     }
   }
 
@@ -286,12 +304,19 @@ export function StepSummaryFeature() {
               size="lg"
               variant="surface"
               color="neutral"
+              disabled={isLoadingCreateAndDeploy}
               onClick={() => onSubmit(false)}
-              loading={isLoadingCreateHelm}
+              loading={isLoadingCreate}
             >
               Create
             </Button>
-            <Button type="submit" size="lg" onClick={() => onSubmit(true)} loading={isLoadingCreateHelm}>
+            <Button
+              type="submit"
+              size="lg"
+              disabled={isLoadingCreate}
+              onClick={() => onSubmit(true)}
+              loading={isLoadingCreateAndDeploy}
+            >
               Create and deploy
             </Button>
           </div>
