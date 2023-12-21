@@ -2,7 +2,7 @@ import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form
 import { renderWithProviders } from '@qovery/shared/util-tests'
 import { ValuesOverrideFilesSetting, type ValuesOverrideFilesSettingProps } from './values-override-files-setting'
 
-describe('ValuesOverrideYamlSetting', () => {
+describe('ValuesOverrideFilesSetting', () => {
   const props: ValuesOverrideFilesSettingProps = {
     type: 'NONE',
     source: {
