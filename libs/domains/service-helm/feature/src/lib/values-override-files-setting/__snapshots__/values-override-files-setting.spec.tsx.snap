@@ -14,7 +14,7 @@ exports[`ValuesOverrideYamlSetting should match snapshot with GIT_REPOSITORY typ
       <p
         class="text-sm text-neutral-350 mb-2"
       >
-        Define the YAML file(s) to be applied as override to the default values.yaml delivered with the chart. It is highly recommended to store the override file(s) in a git repository.
+        Define the YAML file(s) to be applied as override to the default values.yaml delivered with the chart. It is highly recommended to store the override file(s) in a git repository. To get all the Qovery functionalities, add the macro “qovery.labels.service” and "qovery.annotations.service" within the field managing the labels/annotations assigned to the deployed Pods/Deployments/Services/Jobs.
       </p>
       <span
         aria-controls="radix-:rk:"
@@ -179,7 +179,7 @@ exports[`ValuesOverrideYamlSetting should match snapshot with NONE type 1`] = `
       <p
         class="text-sm text-neutral-350 mb-2"
       >
-        Define the YAML file(s) to be applied as override to the default values.yaml delivered with the chart. It is highly recommended to store the override file(s) in a git repository.
+        Define the YAML file(s) to be applied as override to the default values.yaml delivered with the chart. It is highly recommended to store the override file(s) in a git repository. To get all the Qovery functionalities, add the macro “qovery.labels.service” and "qovery.annotations.service" within the field managing the labels/annotations assigned to the deployed Pods/Deployments/Services/Jobs.
       </p>
       <span
         aria-controls="radix-:r6:"
@@ -323,7 +323,7 @@ exports[`ValuesOverrideYamlSetting should match snapshot with YAML type 1`] = `
       <p
         class="text-sm text-neutral-350 mb-2"
       >
-        Define the YAML file(s) to be applied as override to the default values.yaml delivered with the chart. It is highly recommended to store the override file(s) in a git repository.
+        Define the YAML file(s) to be applied as override to the default values.yaml delivered with the chart. It is highly recommended to store the override file(s) in a git repository. To get all the Qovery functionalities, add the macro “qovery.labels.service” and "qovery.annotations.service" within the field managing the labels/annotations assigned to the deployed Pods/Deployments/Services/Jobs.
       </p>
       <span
         aria-controls="radix-:rd:"

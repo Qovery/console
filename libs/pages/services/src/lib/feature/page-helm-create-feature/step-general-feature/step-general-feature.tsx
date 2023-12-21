@@ -33,7 +33,7 @@ export function StepGeneralFeature() {
         description: 'Need help? You may find these links useful',
         links: [
           {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/application/#general',
+            link: 'https://hub.qovery.com/docs/using-qovery/configuration/helm/',
             linkLabel: 'How to configure my Helm chart',
           },
         ],
