@@ -34,6 +34,16 @@ describe('mergeDeploymentServices', () => {
             name: 'Job 2',
           },
         ],
+        helms: [
+          {
+            id: 'helm1',
+            name: 'Helm 1',
+          },
+          {
+            id: 'helm2',
+            name: 'Helm 2',
+          },
+        ],
       },
     ]
 
@@ -67,6 +77,18 @@ describe('mergeDeploymentServices', () => {
         name: 'Job 2',
         execution_id: '1',
         type: 'LIFECYCLE_JOB',
+      },
+      {
+        execution_id: '1',
+        id: 'helm1',
+        name: 'Helm 1',
+        type: 'HELM',
+      },
+      {
+        execution_id: '1',
+        id: 'helm2',
+        name: 'Helm 2',
+        type: 'HELM',
       },
     ]
 
