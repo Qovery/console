@@ -1,4 +1,8 @@
-import { type DeploymentHistoryApplication, type DeploymentHistoryDatabase } from 'qovery-typescript-axios'
+import {
+  type DeploymentHistoryApplication,
+  type DeploymentHistoryDatabase,
+  type DeploymentHistoryHelmResponse,
+} from 'qovery-typescript-axios'
 import { type MouseEvent, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
@@ -31,7 +35,7 @@ export interface TableRowDeploymentProps {
   dataHead: TableHeadProps<DeploymentService | DeploymentHistoryApplication | DeploymentHistoryDatabase>[]
   filter: TableFilterProps[]
   isLoading: boolean
-  data?: DeploymentService | DeploymentHistoryApplication | DeploymentHistoryDatabase
+  data?: DeploymentService | DeploymentHistoryApplication | DeploymentHistoryDatabase | DeploymentHistoryHelmResponse
   columnsWidth?: string
   startGroup?: boolean
   noCommit?: boolean
@@ -186,6 +190,23 @@ export function TableRowDeployment({
                   >
                     <span>
                       {(data as ContainerApplicationEntity).image_name}:{(data as ContainerApplicationEntity).tag}
+                    </span>
+                  </Tooltip>
+                </span>
+              </Badge>
+            )}
+            {(data as DeploymentHistoryHelmResponse).repository && (
+              <Badge size="xs" className="truncate max-w-[200px]">
+                <span className="block truncate">
+                  <Tooltip
+                    side="left"
+                    content={`${(data as DeploymentHistoryHelmResponse).repository?.chart_name}:${
+                      (data as DeploymentHistoryHelmResponse).repository?.chart_version
+                    }`}
+                  >
+                    <span>
+                      {(data as DeploymentHistoryHelmResponse).repository?.chart_name}:
+                      {(data as DeploymentHistoryHelmResponse).repository?.chart_version}
                     </span>
                   </Tooltip>
                 </span>
