@@ -1,15 +1,11 @@
 import { type Environment } from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
-import { useSelector } from 'react-redux'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
-import { selectApplicationsEntitiesByEnvId } from '@qovery/domains/application'
 import { useCluster } from '@qovery/domains/clusters/feature'
-import { selectDatabasesEntitiesByEnvId } from '@qovery/domains/database'
 import { EnvironmentMode, EnvironmentStateChip } from '@qovery/domains/environments/feature'
-import { useDeploymentStatus } from '@qovery/domains/services/feature'
+import { useDeploymentStatus, useServices } from '@qovery/domains/services/feature'
 import { EnvironmentButtonsActions } from '@qovery/shared/console-shared'
 import { IconEnum } from '@qovery/shared/enums'
-import { type ApplicationEntity, type DatabaseEntity } from '@qovery/shared/interfaces'
 import {
   SERVICES_APPLICATION_CREATION_URL,
   SERVICES_CRONJOB_CREATION_URL,
@@ -36,7 +32,6 @@ import {
   Tabs,
   Tooltip,
 } from '@qovery/shared/ui'
-import { type RootState } from '@qovery/state/store'
 
 export interface ContainerProps {
   environment?: Environment
@@ -52,14 +47,7 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
     environmentId: environment?.id,
   })
 
-  const applicationsByEnv = useSelector<RootState, ApplicationEntity[]>((state: RootState) =>
-    selectApplicationsEntitiesByEnvId(state, environment?.id || '')
-  )
-
-  const databasesByEnv = useSelector<RootState, DatabaseEntity[]>((state: RootState) =>
-    selectDatabasesEntitiesByEnvId(state, environment?.id || '')
-  )
-
+  const { data: services } = useServices({ environmentId: environment?.id })
   const { data: cluster } = useCluster({ organizationId, clusterId: environment?.cluster_id ?? '' })
 
   const matchSettingsRoute = location.pathname.includes(
@@ -85,10 +73,7 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
       </div>
       <Skeleton width={150} height={32} show={!environment}>
         {environment ? (
-          <EnvironmentButtonsActions
-            environment={environment}
-            hasServices={Boolean(applicationsByEnv?.length || databasesByEnv?.length)}
-          />
+          <EnvironmentButtonsActions environment={environment} hasServices={Boolean(services?.length)} />
         ) : (
           <div />
         )}
