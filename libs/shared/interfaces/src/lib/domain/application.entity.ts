@@ -7,7 +7,7 @@ import { type JobApplicationEntity } from './job-application.entity'
 // - We omit certain values because they don't have the same type in the different interfaces
 // - We also redeclare the most used properties that we are sure the three interfaces will have any matter what (id, name, etc.)
 export type ApplicationEntity = Partial<ContainerApplicationEntity> &
-  Omit<Partial<GitApplicationEntity>, 'description' | 'default_advanced_settings' | 'advanced_settings'> &
+  Omit<Partial<GitApplicationEntity>, 'description'> &
   Partial<JobApplicationEntity> & {
     id: string
     created_at: string

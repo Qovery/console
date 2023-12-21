@@ -22,7 +22,6 @@ export * from './lib/domain/repository.entity'
 export * from './lib/domain/application-creation-flow.interface'
 export * from './lib/domain/job-creation-flow.interface'
 export * from './lib/domain/cluster-creation-flow.interface'
-export * from './lib/domain/advanced-settings.interface'
 
 export * from './lib/types/loading-status.type'
 export * from './lib/types/deployment-service.type'
