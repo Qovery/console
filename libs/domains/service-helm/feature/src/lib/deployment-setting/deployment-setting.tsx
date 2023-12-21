@@ -50,7 +50,7 @@ export function DeploymentSetting() {
         )}
       />
       <Controller
-        name="auto_preview"
+        name="allow_cluster_wide_resources"
         control={control}
         defaultValue={false}
         render={({ field }) => (
