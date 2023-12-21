@@ -1,8 +1,8 @@
 import { memo } from 'react'
 import { useParams } from 'react-router-dom'
+import { match } from 'ts-pattern'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { useService } from '@qovery/domains/services/feature'
-import { type BaseLink } from '@qovery/shared/ui'
 import { MetricsWebSocketListener } from '@qovery/shared/util-web-sockets'
 import PageGeneral from '../../ui/page-general/page-general'
 
@@ -12,12 +12,20 @@ const WebSocketListenerMemo = memo(MetricsWebSocketListener)
 export function PageGeneralFeature() {
   const { applicationId = '', organizationId = '', projectId = '', environmentId = '' } = useParams()
   const { data: service } = useService({ environmentId, serviceId: applicationId })
-  const listHelpfulLinks: BaseLink[] = [
-    {
-      link: 'https://hub.qovery.com/docs/using-qovery/configuration/application',
-      linkLabel: 'How to manage my application',
-    },
-  ]
+
+  const listHelpfulLinks = match(service?.serviceType)
+    .with('HELM', () => [
+      {
+        link: 'https://hub.qovery.com/docs/using-qovery/configuration/helm/',
+        linkLabel: 'How to manage my Helm chart',
+      },
+    ])
+    .otherwise(() => [
+      {
+        link: 'https://hub.qovery.com/docs/using-qovery/configuration/application',
+        linkLabel: 'How to manage my application',
+      },
+    ])
 
   const { data: environment } = useEnvironment({ environmentId })
 
