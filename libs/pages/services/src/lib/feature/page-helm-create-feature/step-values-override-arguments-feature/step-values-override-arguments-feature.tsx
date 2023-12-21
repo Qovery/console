@@ -6,7 +6,7 @@ import { Button, FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { useHelmCreateContext } from '../page-helm-create-feature'
 
-export function StepNetworkingFeature() {
+export function StepValuesOverrideArgumentsFeature() {
   useDocumentTitle('General - Values override as arguments')
 
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
@@ -61,4 +61,4 @@ export function StepNetworkingFeature() {
   )
 }
 
-export default StepNetworkingFeature
+export default StepValuesOverrideArgumentsFeature

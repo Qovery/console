@@ -3,10 +3,7 @@ import { type PropsWithChildren } from 'react'
 import { type UseFormReturn } from 'react-hook-form'
 import { Heading, Icon, IconAwesomeEnum, Popover, Section } from '@qovery/shared/ui'
 
-export type ValuesOverrideTypes = 'GIT_REPOSITORY' | 'YAML' | 'NONE'
-
-export interface HelmValuesFileData {
-  type: ValuesOverrideTypes
+export interface HelmValuesArgumentData {
   repository?: string
   provider?: GitProviderEnum
   branch?: string
@@ -15,7 +12,7 @@ export interface HelmValuesFileData {
 }
 
 export interface ValuesOverrideArgumentsSettingProps extends PropsWithChildren {
-  methods?: UseFormReturn<HelmValuesFileData>
+  methods?: UseFormReturn<HelmValuesArgumentData>
   onSubmit?: () => void
 }
 
