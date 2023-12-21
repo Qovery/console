@@ -1,6 +1,8 @@
 import { createQueryKeys, type inferQueryKeys } from '@lukemorales/query-key-factory'
 import {
   ApplicationActionsApi,
+  type ApplicationAdvancedSettings,
+  ApplicationConfigurationApi,
   ApplicationDeploymentHistoryApi,
   ApplicationDeploymentRestrictionApi,
   type ApplicationDeploymentRestrictionRequest,
@@ -8,6 +10,8 @@ import {
   ApplicationMainCallsApi,
   ApplicationsApi,
   ContainerActionsApi,
+  type ContainerAdvancedSettings,
+  ContainerConfigurationApi,
   ContainerDeploymentHistoryApi,
   ContainerMainCallsApi,
   type ContainerRequest,
@@ -19,6 +23,8 @@ import {
   DatabasesApi,
   EnvironmentMainCallsApi,
   HelmActionsApi,
+  type HelmAdvancedSettings,
+  HelmConfigurationApi,
   HelmDeploymentHistoryApi,
   HelmDeploymentRestrictionApi,
   type HelmDeploymentRestrictionRequest,
@@ -26,6 +32,8 @@ import {
   type HelmRequest,
   HelmsApi,
   JobActionsApi,
+  type JobAdvancedSettings,
+  JobConfigurationApi,
   JobDeploymentHistoryApi,
   JobDeploymentRestrictionApi,
   type JobDeploymentRestrictionRequest,
@@ -73,6 +81,11 @@ const databaseActionsApi = new DatabaseActionsApi()
 const helmActionsApi = new HelmActionsApi()
 const jobActionsApi = new JobActionsApi()
 
+const applicationConfigurationApi = new ApplicationConfigurationApi()
+const containerConfigurationApi = new ContainerConfigurationApi()
+const helmConfigurationApi = new HelmConfigurationApi()
+const jobConfigurationApi = new JobConfigurationApi()
+
 // Prefer this type in param instead of ServiceTypeEnum
 // to suppport string AND enum as param.
 // ServiceTypeEnum still exist mainly for compatibility reason (to use redux and react-query fetched services in data-access).
@@ -92,6 +105,12 @@ export type Job = _Job & { serviceType: JobType }
 export type Helm = _Helm & { serviceType: HelmType }
 
 export type AnyService = Application | Database | Container | Job | Helm
+
+export type AdvancedSettings =
+  | ApplicationAdvancedSettings
+  | ContainerAdvancedSettings
+  | JobAdvancedSettings
+  | HelmAdvancedSettings
 
 export function isApplication(service: AnyService): service is Application {
   return service.serviceType === 'APPLICATION'
@@ -323,6 +342,59 @@ export const services = createQueryKeys('services', {
         .exhaustive()
     },
   }),
+  defaultAdvancedSettings: ({ serviceType }: { serviceType: Exclude<ServiceType, 'DATABASE'> }) => ({
+    queryKey: [serviceType],
+    async queryFn() {
+      const { query } = match(serviceType)
+        .with('APPLICATION', (serviceType) => ({
+          query: applicationsApi.getDefaultApplicationAdvancedSettings.bind(applicationsApi),
+          serviceType,
+        }))
+        .with('CONTAINER', (serviceType) => ({
+          query: containersApi.getDefaultContainerAdvancedSettings.bind(containersApi),
+          serviceType,
+        }))
+        .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', (serviceType) => ({
+          query: jobsApi.getDefaultJobAdvancedSettings.bind(jobsApi),
+          serviceType,
+        }))
+        .with('HELM', (serviceType) => ({ query: helmsApi.getDefaultHelmAdvancedSettings.bind(helmsApi), serviceType }))
+        .exhaustive()
+      const response = await query()
+      return response.data
+    },
+  }),
+  advancedSettings: ({
+    serviceId,
+    serviceType,
+  }: {
+    serviceId: string
+    serviceType: Exclude<ServiceType, 'DATABASE'>
+  }) => ({
+    queryKey: [serviceId],
+    async queryFn() {
+      const { query } = match(serviceType)
+        .with('APPLICATION', (serviceType) => ({
+          query: applicationConfigurationApi.getAdvancedSettings.bind(applicationConfigurationApi),
+          serviceType,
+        }))
+        .with('CONTAINER', (serviceType) => ({
+          query: containerConfigurationApi.getContainerAdvancedSettings.bind(containerConfigurationApi),
+          serviceType,
+        }))
+        .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', (serviceType) => ({
+          query: jobConfigurationApi.getJobAdvancedSettings.bind(jobConfigurationApi),
+          serviceType,
+        }))
+        .with('HELM', (serviceType) => ({
+          query: helmConfigurationApi.getHelmAdvancedSettings.bind(helmConfigurationApi),
+          serviceType,
+        }))
+        .exhaustive()
+      const response = await query(serviceId)
+      return response.data
+    },
+  }),
 })
 
 type CloneServiceRequest = {
@@ -369,6 +441,23 @@ type EditServiceRequest = {
     | ({
         serviceType: HelmType
       } & HelmRequest)
+}
+
+type EditAdvancedSettingsRequest = {
+  serviceId: string
+  payload:
+    | ({
+        serviceType: ApplicationType
+      } & ApplicationAdvancedSettings)
+    | ({
+        serviceType: ContainerType
+      } & ContainerAdvancedSettings)
+    | ({
+        serviceType: JobType
+      } & JobAdvancedSettings)
+    | ({
+        serviceType: HelmType
+      } & HelmAdvancedSettings)
 }
 
 export const mutations = {
@@ -498,6 +587,36 @@ export const mutations = {
       .with('HELM', () => helmActionsApi.stopHelm.bind(helmActionsApi))
       .exhaustive()
     const response = await mutation(serviceId)
+    return response.data
+  },
+  async editAdvancedSettings({ serviceId, payload }: EditAdvancedSettingsRequest) {
+    const { mutation } = match(payload)
+      .with({ serviceType: 'APPLICATION' }, ({ serviceType, ...payload }) => ({
+        mutation: applicationConfigurationApi.editAdvancedSettings.bind(
+          applicationConfigurationApi,
+          serviceId,
+          payload
+        ),
+        serviceType,
+      }))
+      .with({ serviceType: 'CONTAINER' }, ({ serviceType, ...payload }) => ({
+        mutation: containerConfigurationApi.editContainerAdvancedSettings.bind(
+          containerConfigurationApi,
+          serviceId,
+          payload
+        ),
+        serviceType,
+      }))
+      .with({ serviceType: 'JOB' }, ({ serviceType, ...payload }) => ({
+        mutation: jobConfigurationApi.editJobAdvancedSettings.bind(jobConfigurationApi, serviceId, payload),
+        serviceType,
+      }))
+      .with({ serviceType: 'HELM' }, ({ serviceType, ...payload }) => ({
+        mutation: helmConfigurationApi.editHelmAdvancedSettings.bind(helmConfigurationApi, serviceId, payload),
+        serviceType,
+      }))
+      .exhaustive()
+    const response = await mutation()
     return response.data
   },
 }
