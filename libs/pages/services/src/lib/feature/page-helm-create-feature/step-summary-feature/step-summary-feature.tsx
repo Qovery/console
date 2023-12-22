@@ -104,7 +104,7 @@ export function StepSummaryFeature() {
         .filter((a) => a.type === type)
         .map((a) => ({
           key: a.key,
-          value: a.value,
+          value: a.json ?? a.value,
         }))
     }
 
@@ -121,7 +121,7 @@ export function StepSummaryFeature() {
           auto_deploy: generalData.auto_deploy,
           values_override: {
             set: getValuesByType('generic'),
-            set_string: getValuesByType('json'),
+            set_string: getValuesByType('string'),
             set_json: getValuesByType('json'),
             file: valuesOverrideFile,
           },
