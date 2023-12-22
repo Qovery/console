@@ -2,7 +2,7 @@ import { type GitProviderEnum, type HelmPortRequestPortsInner, type HelmRequest 
 import { createContext, useContext, useState } from 'react'
 import { type UseFormReturn, useForm } from 'react-hook-form'
 import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
-import { type HelmValuesFileData } from '@qovery/domains/service-helm/feature'
+import { type HelmValuesArgumentsData, type HelmValuesFileData } from '@qovery/domains/service-helm/feature'
 import { SERVICES_HELM_CREATION_GENERAL_URL, SERVICES_HELM_CREATION_URL, SERVICES_URL } from '@qovery/shared/routes'
 import { FunnelFlow } from '@qovery/shared/ui'
 import { ROUTER_SERVICE_HELM_CREATION } from '../../router/router'
@@ -10,6 +10,7 @@ import { ROUTER_SERVICE_HELM_CREATION } from '../../router/router'
 export const steps: { title: string }[] = [
   { title: 'General data' },
   { title: 'Values override as file' },
+  { title: 'Values override as arguments' },
   { title: 'Networking' },
   { title: 'Summary' },
 ]
@@ -33,6 +34,7 @@ interface HelmCreateContextInterface {
   setCurrentStep: (step: number) => void
   generalForm: UseFormReturn<HelmGeneralData>
   valuesOverrideFileForm: UseFormReturn<HelmValuesFileData>
+  valuesOverrideArgumentsForm: UseFormReturn<HelmValuesArgumentsData>
   networkingForm: UseFormReturn<HelmNetworkingData>
 }
 
@@ -61,6 +63,10 @@ export function PageHelmCreateFeature() {
     },
   })
 
+  const valuesOverrideArgumentsForm = useForm<HelmValuesArgumentsData>({
+    mode: 'onChange',
+  })
+
   const networkingForm = useForm<HelmNetworkingData>({
     mode: 'onChange',
     defaultValues: {
@@ -77,6 +83,7 @@ export function PageHelmCreateFeature() {
         setCurrentStep,
         generalForm,
         valuesOverrideFileForm,
+        valuesOverrideArgumentsForm,
         networkingForm,
       }}
     >
