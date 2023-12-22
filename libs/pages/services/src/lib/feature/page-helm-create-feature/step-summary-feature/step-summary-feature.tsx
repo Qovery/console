@@ -100,12 +100,7 @@ export function StepSummaryFeature() {
       .exhaustive()
 
     const getValuesByType = (type: 'generic' | 'string' | 'json') => {
-      return valuesOverrideArgumentData.arguments
-        .filter((a) => a.type === type)
-        .map((a) => ({
-          key: a.key,
-          value: a.json ?? a.value,
-        }))
+      return valuesOverrideArgumentData.arguments.filter((a) => a.type === type).map((a) => [a.key, a.json ?? a.value])
     }
 
     try {
