@@ -183,12 +183,19 @@ export function PageSettingsGeneral({
       </div>
       <HelpSection
         description="Need help? You may find these links useful"
-        links={[
-          {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/application',
-            linkLabel: 'How to configure my application',
-          },
-        ]}
+        links={match(service?.serviceType)
+          .with('HELM', () => [
+            {
+              link: 'https://hub.qovery.com/docs/using-qovery/configuration/helm/',
+              linkLabel: 'How to manage my Helm chart',
+            },
+          ])
+          .otherwise(() => [
+            {
+              link: 'https://hub.qovery.com/docs/using-qovery/configuration/application',
+              linkLabel: 'How to manage my application',
+            },
+          ])}
       />
     </div>
   )
