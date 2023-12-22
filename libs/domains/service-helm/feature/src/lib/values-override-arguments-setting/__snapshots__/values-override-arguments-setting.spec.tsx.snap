@@ -6,16 +6,27 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
     <section
       class="flex flex-col items-start"
     >
-      <h1
-        class="text-neutral-400 text-3xl font-bold mb-2"
+      <div
+        class="flex justify-between w-full"
       >
-        Value override as arguments
-      </h1>
-      <p
-        class="text-sm text-neutral-350 mb-2"
-      >
-        Specify each override by declaring the variable name, value and its type.
-      </p>
+        <div>
+          <h1
+            class="text-neutral-400 text-3xl font-bold mb-2"
+          >
+            Value override as arguments
+          </h1>
+          <p
+            class="text-sm text-neutral-350 mb-2"
+          >
+            Specify each override by declaring the variable name, value and its type.
+          </p>
+        </div>
+        <button
+          class="inline-flex items-center shrink-0 font-medium transition text-sm h-10 px-4 rounded bg-brand-500 hover:bg-brand-600 text-white disabled:text-brand-300 disabled:bg-brand-100 disabled:border-none"
+        >
+          Add variable
+        </button>
+      </div>
       <span
         aria-controls="radix-:r6:"
         aria-expanded="false"
@@ -33,135 +44,25 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
       <form
         class="w-full"
       >
-        <p>
-          hello
-        </p>
-      </form>
-    </section>
-  </div>
-</body>
-`;
-
-exports[`ValuesOverrideArgumentsSetting should match snapshot with GIT_REPOSITORY type 1`] = `
-<body>
-  <div>
-    <section
-      class="flex flex-col items-start"
-    >
-      <h1
-        class="text-neutral-400 text-3xl font-bold mb-2"
-      >
-        Value override as arguments
-      </h1>
-      <p
-        class="text-sm text-neutral-350 mb-2"
-      >
-        Specify each override by declaring the variable name, value and its type.
-      </p>
-      <span
-        aria-controls="radix-:rk:"
-        aria-expanded="false"
-        aria-haspopup="dialog"
-        class="text-sm cursor-pointer text-brand-500 hover:text-brand-600 transition font-medium mb-5"
-        data-state="closed"
-        type="button"
-      >
-        How it works 
-        <span
-          class="icon-regular-circle-question shrink-0 text-xs"
-          role="img"
-        />
-      </span>
-      <form
-        class="w-full"
-      >
-        <p>
-          hello
-        </p>
-      </form>
-    </section>
-  </div>
-</body>
-`;
-
-exports[`ValuesOverrideArgumentsSetting should match snapshot with NONE type 1`] = `
-<body>
-  <div>
-    <section
-      class="flex flex-col items-start"
-    >
-      <h1
-        class="text-neutral-400 text-3xl font-bold mb-2"
-      >
-        Value override as arguments
-      </h1>
-      <p
-        class="text-sm text-neutral-350 mb-2"
-      >
-        Specify each override by declaring the variable name, value and its type.
-      </p>
-      <span
-        aria-controls="radix-:r6:"
-        aria-expanded="false"
-        aria-haspopup="dialog"
-        class="text-sm cursor-pointer text-brand-500 hover:text-brand-600 transition font-medium mb-5"
-        data-state="closed"
-        type="button"
-      >
-        How it works 
-        <span
-          class="icon-regular-circle-question shrink-0 text-xs"
-          role="img"
-        />
-      </span>
-      <form
-        class="w-full"
-      >
-        <p>
-          hello
-        </p>
-      </form>
-    </section>
-  </div>
-</body>
-`;
-
-exports[`ValuesOverrideArgumentsSetting should match snapshot with YAML type 1`] = `
-<body>
-  <div>
-    <section
-      class="flex flex-col items-start"
-    >
-      <h1
-        class="text-neutral-400 text-3xl font-bold mb-2"
-      >
-        Value override as arguments
-      </h1>
-      <p
-        class="text-sm text-neutral-350 mb-2"
-      >
-        Specify each override by declaring the variable name, value and its type.
-      </p>
-      <span
-        aria-controls="radix-:rd:"
-        aria-expanded="false"
-        aria-haspopup="dialog"
-        class="text-sm cursor-pointer text-brand-500 hover:text-brand-600 transition font-medium mb-5"
-        data-state="closed"
-        type="button"
-      >
-        How it works 
-        <span
-          class="icon-regular-circle-question shrink-0 text-xs"
-          role="img"
-        />
-      </span>
-      <form
-        class="w-full"
-      >
-        <p>
-          hello
-        </p>
+        <div
+          class="flex flex-grow items-center justify-center "
+        >
+          <div
+            class="text-center flex flex-col items-center justify-center w-[420px] m-auto mt-10"
+            data-testid="placeholder-settings"
+          >
+            <img
+              alt="Event placeholder"
+              class="pointer-events-none user-none mb-5 w-[48px]"
+              src="/assets/images/event-placeholder-light.svg"
+            />
+            <p
+              class="text-neutral-400 font-medium"
+            >
+              No override defined
+            </p>
+          </div>
+        </div>
       </form>
     </section>
   </div>

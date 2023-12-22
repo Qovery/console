@@ -99,6 +99,15 @@ export function StepSummaryFeature() {
       .with('NONE', () => null)
       .exhaustive()
 
+    const getValuesByType = (type: 'generic' | 'string' | 'json') => {
+      return valuesOverrideArgumentData.arguments
+        .filter((a) => a.type === type)
+        .map((a) => ({
+          name: a.variable,
+          value: a.value,
+        }))
+    }
+
     try {
       const response = await createHelmService({
         environmentId,
@@ -111,6 +120,9 @@ export function StepSummaryFeature() {
           timeout_sec: generalData.timeout_sec,
           auto_deploy: generalData.auto_deploy,
           values_override: {
+            set: getValuesByType('generic'),
+            set_string: getValuesByType('json'),
+            set_json: getValuesByType('json'),
             file: valuesOverrideFile,
           },
           ports: networkingData.ports,
@@ -221,7 +233,7 @@ export function StepSummaryFeature() {
           </Button>
         </div>
 
-        {valuesOverrideFileData.type !== 'NONE' && (
+        {(valuesOverrideFileData.type !== 'NONE' || valuesOverrideArgumentData.arguments.length > 0) && (
           <div className="flex p-4 w-full border rounded border-neutral-250 bg-neutral-100 mb-2">
             <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
             <div className="flex-grow mr-2">

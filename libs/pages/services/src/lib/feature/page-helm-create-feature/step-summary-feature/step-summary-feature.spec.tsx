@@ -54,6 +54,21 @@ describe('PageApplicationCreateGeneralFeature', () => {
       })
     )
 
+    const { result: valuesOverrideArgumentsForm } = renderHook(() =>
+      useForm<serviceHelmDomain.HelmValuesArgumentsData>({
+        mode: 'onChange',
+        defaultValues: {
+          arguments: [
+            {
+              variable: 'test',
+              type: 'generic',
+              value: 'test',
+            },
+          ],
+        },
+      })
+    )
+
     const { result: networkingForm } = renderHook(() =>
       useForm<HelmNetworkingData>({
         mode: 'onChange',
@@ -88,6 +103,7 @@ describe('PageApplicationCreateGeneralFeature', () => {
           generalForm: generalForm.current,
           valuesOverrideFileForm: valuesOverrideFileForm.current,
           networkingForm: networkingForm.current,
+          valuesOverrideArgumentsForm: valuesOverrideArgumentsForm.current,
         }}
       >
         <StepSummaryFeature />
