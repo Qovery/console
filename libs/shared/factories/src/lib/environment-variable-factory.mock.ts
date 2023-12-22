@@ -30,6 +30,7 @@ export const mockEnvironmentVariable = (isAlias = false, isOverride = false): Va
   service_name: chance.name().toString(),
   key: chance.word().toString(),
   value: chance.word().toString(),
+  is_secret: false,
   scope: APIVariableScopeEnum.PROJECT,
   variable_type: isOverride
     ? APIVariableTypeEnum.OVERRIDE
@@ -66,6 +67,7 @@ export const mockSecretEnvironmentVariable = (
       }
     : undefined,
   value: null,
+  is_secret: true,
   key: chance.word().toString(),
   scope: APIVariableScopeEnum.PROJECT,
   variable_type: isOverride

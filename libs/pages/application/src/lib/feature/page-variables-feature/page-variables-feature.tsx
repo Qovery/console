@@ -110,7 +110,7 @@ export function PageVariablesFeature() {
               ...variable,
               // XXX: this is needed to comply with the current table implementation.
               // It should be removed when migrating to tanstack-table
-              variable_kind: variable.value === null ? ('secret' as const) : ('public' as const),
+              variable_kind: variable.is_secret ? ('secret' as const) : ('public' as const),
             }))
           : placeholder
       }

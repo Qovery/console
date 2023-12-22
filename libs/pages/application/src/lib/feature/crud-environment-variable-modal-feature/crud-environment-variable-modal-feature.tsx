@@ -95,7 +95,7 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
       key: variable?.key,
       scope: defaultScope,
       value: variable?.value ?? '',
-      isSecret: variable?.value === null,
+      isSecret: variable?.is_secret,
       mountPath: getEnvironmentVariableFileMountPath(variable),
     },
     mode: 'onChange',
