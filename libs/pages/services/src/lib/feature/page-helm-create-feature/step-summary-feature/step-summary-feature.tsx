@@ -25,9 +25,11 @@ export function StepSummaryFeature() {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const navigate = useNavigate()
 
-  const { generalForm, valuesOverrideFileForm, networkingForm, setCurrentStep } = useHelmCreateContext()
+  const { generalForm, valuesOverrideFileForm, valuesOverrideArgumentsForm, networkingForm, setCurrentStep } =
+    useHelmCreateContext()
   const generalData = generalForm.getValues()
   const valuesOverrideFileData = valuesOverrideFileForm.getValues()
+  const valuesOverrideArgumentData = valuesOverrideArgumentsForm.getValues()
   const networkingData = networkingForm.getValues()
   setCurrentStep(4)
 
@@ -250,6 +252,15 @@ export function StepSummaryFeature() {
                   </li>
                 </ul>
               )}
+
+              {valuesOverrideArgumentData.arguments.length > 0 && (
+                <ul className="text-neutral-350 text-sm list-none">
+                  <li>
+                    <span className="font-medium">Manual:</span> {valuesOverrideArgumentData.arguments.length} variables
+                    added
+                  </li>
+                </ul>
+              )}
             </div>
 
             <Button
@@ -265,9 +276,13 @@ export function StepSummaryFeature() {
         <div className="flex p-4 w-full border rounded border-neutral-250 bg-neutral-100">
           <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
           <div className="flex-grow mr-2">
-            <div className="text-sm text-neutral-400 font-bold mb-5">
-              {networkingData.ports.length} {pluralize(networkingData.ports.length, 'services')} exposed publicly
-            </div>
+            {networkingData.ports.length > 0 ? (
+              <div className="text-sm text-neutral-400 font-bold mb-5">
+                {networkingData.ports.length} {pluralize(networkingData.ports.length, 'service')} exposed publicly
+              </div>
+            ) : (
+              <span className="text-sm text-neutral-400 font-bold">No service exposed</span>
+            )}
             {networkingData.ports.map(({ service_name, internal_port, protocol }, i) => (
               <Fragment key={i}>
                 {!!i && <div className="my-4 border-b border-neutral-250 border-dashed" />}
