@@ -99,14 +99,14 @@ export function StepSummaryFeature() {
       .with('NONE', () => null)
       .exhaustive()
 
-    const getValuesByType = (type: 'generic' | 'string' | 'json') => {
-      return valuesOverrideArgumentData.arguments
-        .filter((a) => a.type === type)
-        .map((a) => ({
-          name: a.variable,
-          value: a.value,
-        }))
-    }
+    // const getValuesByType = (type: 'generic' | 'string' | 'json') => {
+    //   return valuesOverrideArgumentData.arguments
+    //     .filter((a) => a.type === type)
+    //     .map((a) => ({
+    //       name: a.variable,
+    //       value: a.value,
+    //     }))
+    // }
 
     try {
       const response = await createHelmService({
@@ -120,9 +120,9 @@ export function StepSummaryFeature() {
           timeout_sec: generalData.timeout_sec,
           auto_deploy: generalData.auto_deploy,
           values_override: {
-            set: getValuesByType('generic'),
-            set_string: getValuesByType('json'),
-            set_json: getValuesByType('json'),
+            // set: getValuesByType('generic'),
+            // set_string: getValuesByType('json'),
+            // set_json: getValuesByType('json'),
             file: valuesOverrideFile,
           },
           ports: networkingData.ports,
