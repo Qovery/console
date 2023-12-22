@@ -21,7 +21,7 @@ import {
 
 export interface HelmValuesArgumentsData {
   arguments: {
-    variable: string
+    key: string
     type: string
     value: string
     json?: string
@@ -43,7 +43,7 @@ function Row({ index, remove }: { index: number; remove: UseFieldArrayRemove }) 
     <li className="mb-3 last:mb-0">
       <div className="grid grid-cols-[6fr_6fr_6fr_1fr] gap-x-2 items-center">
         <Controller
-          name={`arguments.${index}.variable`}
+          name={`arguments.${index}.key`}
           control={control}
           rules={{
             required: 'Please enter a variable name.',
@@ -64,6 +64,7 @@ function Row({ index, remove }: { index: number; remove: UseFieldArrayRemove }) 
               name={field.name}
               onChange={field.onChange}
               defaultValue={field.value}
+              inputClassName="bg-neutral-50"
               items={[
                 {
                   label: 'Generic',
@@ -85,7 +86,7 @@ function Row({ index, remove }: { index: number; remove: UseFieldArrayRemove }) 
           <Button
             size="md"
             color="neutral"
-            variant="outline"
+            variant="surface"
             type="button"
             className="justify-between h-[36px]"
             onClick={() => setOpenEditor(!openEditor)}
@@ -157,7 +158,7 @@ export function ValuesOverrideArgumentsSetting({ methods, children, onSubmit }: 
           size="lg"
           onClick={() =>
             append({
-              variable: '',
+              key: '',
               type: 'generic',
               value: '',
             })

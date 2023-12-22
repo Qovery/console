@@ -103,7 +103,7 @@ export function StepSummaryFeature() {
     //   return valuesOverrideArgumentData.arguments
     //     .filter((a) => a.type === type)
     //     .map((a) => ({
-    //       name: a.variable,
+    //       key: a.key,
     //       value: a.value,
     //     }))
     // }
