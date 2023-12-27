@@ -117,7 +117,7 @@ describe('PageSettingsNetwork', () => {
 
   it('should have a placeholder if no route yet', async () => {
     props.routes = []
-    const { getByTestId } = render(<PageSettingsNetwork {...props} />)
-    expect(getByTestId('placeholder-settings'))
+    const { getByText } = render(<PageSettingsNetwork {...props} />)
+    expect(getByText('No network are set'))
   })
 })
