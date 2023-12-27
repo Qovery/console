@@ -11,7 +11,7 @@ export type ValuesOverrideTypes = 'GIT_REPOSITORY' | 'YAML' | 'NONE'
 
 export interface HelmValuesFileData {
   type: ValuesOverrideTypes
-  repository?: string
+  repository?: string | null
   provider?: GitProviderEnum
   branch?: string
   paths?: string

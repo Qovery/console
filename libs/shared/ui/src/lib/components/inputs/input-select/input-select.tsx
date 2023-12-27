@@ -258,7 +258,7 @@ export function InputSelect({
           }}
           menuIsOpen={isFilter ? true : undefined}
         />
-        <input type="hidden" name={label} value={selectedValue} />
+        <input type="hidden" name={label?.toLowerCase()} value={selectedValue} />
         {!isFilter && (
           <div className="absolute top-1/2 -translate-y-1/2 right-4 pointer-events-none">
             <Icon name="icon-solid-angle-down" className="text-sm text-neutral-400" />
