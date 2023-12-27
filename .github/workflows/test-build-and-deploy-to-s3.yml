@@ -1,0 +1,93 @@
+name: Test, Build And Deploy to S3
+
+on:
+  workflow_call:
+    inputs:
+      flow:
+        required: true
+        type: string
+      configuration:
+        required: true
+        type: string
+    secrets:
+      aws-region:
+        required: true
+      aws-access-key-id:
+        required: true
+      aws-secret-access-key:
+        required: true
+      s3-bucket-name:
+        required: true
+      cloudflare-zone:
+        required: true
+      cloudflare-token:
+        required: true
+
+# Define a concurrency group at the branch level for the current workflows..
+# Trigerred workflow will be queued and cancel the previous ones.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  nx-main:
+    name: Nx Cloud - Main Job
+    uses: nrwl/ci/.github/workflows/nx-cloud-main.yml@v0.13.0
+    with:
+      # NOTE: Here we are using the special `nx-cloud record` command to ensure that any commands we run that do not go through the cloud task runner natively
+      # (i.e. anything that starts with `nx run`/`nx run-many`/`nx affected --target`), are still captured in the Nx Cloud UI and Github App comment for
+      # easier troubleshooting. See more here: https://nx.dev/nx-cloud/set-up/record-commands#recording-non-nx-commands
+      parallel-commands: |
+        npx nx-cloud record -- npx nx format:check
+      parallel-commands-on-agents: |
+        npx nx affected --target=lint --parallel=3
+        npx nx affected --target=test --parallel=3 --configuration=${{ inputs.configuration }} --ci --code-coverage --coverageReporters=lcov --silent
+        npx nx affected --target=build --parallel=3
+      artifacts-path: |
+        dist/
+        coverage
+      artifacts-name: dist-and-coverage-artifacts
+
+  agents:
+    name: Nx Cloud - Agents
+    uses: nrwl/ci/.github/workflows/nx-cloud-agents.yml@v0.13.0
+    with:
+      number-of-agents: 3
+
+  codecoverage:
+    runs-on: ubuntu-latest
+    name: Code Coverage
+    needs: ['nx-main']
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/download-artifact@v3
+        with:
+          name: dist-and-coverage-artifacts
+          path: coverage
+      - name: Display structure of downloaded files
+        run: ls -R
+      - uses: codecov/codecov-action@v3
+        with:
+          directory: ./coverage/coverage
+          flags: unittests # optional
+          fail_ci_if_error: false # optional (default = false)
+          verbose: true # optional (default = false)
+
+  deploy:
+    name: Deploy to S3
+    runs-on: ubuntu-latest
+    needs: [nx-main]
+    if: ${{ inputs.flow != 'pull-request' }}
+    steps:
+      - name: Git clone the repository
+        uses: actions/checkout@v4
+      - uses: actions/download-artifact@v3
+        with:
+          name: dist-and-coverage-artifacts
+          path: dist/
+      - name: Copy assets to S3
+        run: |
+          AWS_REGION=${{ secrets.aws-region }} AWS_ACCESS_KEY_ID=${{ secrets.aws-access-key-id }} AWS_SECRET_ACCESS_KEY=${{ secrets.aws-secret-access-key }} aws s3 cp ./dist/dist/apps/console/ s3://${{ secrets.s3-bucket-name }}/  --recursive --exclude "index.html"
+      - name: Copy index.html to S3 last
+        run: |
+          AWS_REGION=${{ secrets.aws-region }} AWS_ACCESS_KEY_ID=${{ secrets.aws-access-key-id }} AWS_SECRET_ACCESS_KEY=${{ secrets.aws-secret-access-key }} aws s3 cp ./dist/dist/apps/console/index.html s3://${{ secrets.s3-bucket-name }}/
