@@ -19,6 +19,7 @@ import {
   IconAwesomeEnum,
   Skeleton,
   Tooltip,
+  useModal,
   useModalConfirmation,
 } from '@qovery/shared/ui'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
@@ -29,6 +30,7 @@ import { useDeploymentStatus } from '../hooks/use-deployment-status/use-deployme
 import { useRedeployService } from '../hooks/use-redeploy-service/use-redeploy-service'
 import { useService } from '../hooks/use-service/use-service'
 import { useStopService } from '../hooks/use-stop-service/use-stop-service'
+import ServiceCloneModal from '../service-clone-modal/service-clone-modal'
 
 function MenuManageDeployment({
   state,
@@ -113,6 +115,7 @@ function MenuOtherActions({
   environmentId: string
   service: AnyService
 }) {
+  const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
   const navigate = useNavigate()
   const { mutateAsync: deleteService } = useDeleteService({ environmentId })
@@ -133,6 +136,19 @@ function MenuOtherActions({
           console.error(error)
         }
       },
+    })
+  }
+
+  const openServiceCloneModal = () => {
+    openModal({
+      content: (
+        <ServiceCloneModal
+          onClose={closeModal}
+          organizationId={organizationId}
+          projectId={projectId}
+          serviceId={service.id}
+        />
+      ),
     })
   }
 
@@ -186,6 +202,9 @@ function MenuOtherActions({
           }
         >
           Open settings
+        </DropdownMenu.Item>
+        <DropdownMenu.Item icon={<Icon name={IconAwesomeEnum.COPY} />} onClick={() => openServiceCloneModal()}>
+          Clone
         </DropdownMenu.Item>
         {isDeleteAvailable(state) && (
           <>

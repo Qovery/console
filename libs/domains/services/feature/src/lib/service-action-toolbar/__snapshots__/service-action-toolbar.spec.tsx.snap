@@ -318,6 +318,19 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
         Open settings
       </div>
       <div
+        class="px-3 flex items-center h-9 text-sm font-medium cursor-pointer rounded-sm outline-none text-neutral-400 dark:text-neutral-100 hover:bg-brand-50 data-[highlighted]:bg-brand-50 hover:text-brand-500 data-[highlighted]:text-brand-500"
+        data-orientation="vertical"
+        data-radix-collection-item=""
+        role="menuitem"
+        tabindex="-1"
+      >
+        <span
+          class="icon-solid-copy shrink-0 text-sm mr-3 text-brand-400"
+          role="img"
+        />
+        Clone
+      </div>
+      <div
         aria-orientation="horizontal"
         class="w-full h-[1px] bg-neutral-200 dark:bg-neutral-600 my-2"
         role="separator"

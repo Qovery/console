@@ -16,6 +16,9 @@ export interface CloneServiceModalProps {
   serviceType: ServiceType
 }
 
+/*
+ * @deprecated Use ServiceCloneModal from Service domain
+ */
 export function CloneServiceModal({
   closeModal,
   environments,
