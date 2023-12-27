@@ -19,10 +19,12 @@ import {
   Section,
 } from '@qovery/shared/ui'
 
+export type ArgumentTypes = 'json' | 'generic' | 'string'
+
 export interface HelmValuesArgumentsData {
   arguments: {
     key: string
-    type: string
+    type: ArgumentTypes
     value: string
     json?: string
   }[]

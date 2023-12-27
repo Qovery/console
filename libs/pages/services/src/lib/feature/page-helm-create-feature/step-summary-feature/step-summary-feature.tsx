@@ -2,7 +2,7 @@ import { Fragment, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useHelmRepositories } from '@qovery/domains/organizations/feature'
-import { useCreateHelmService } from '@qovery/domains/service-helm/feature'
+import { ArgumentTypes, useCreateHelmService } from '@qovery/domains/service-helm/feature'
 import { useDeployService } from '@qovery/domains/services/feature'
 import {
   SERVICES_CREATION_GENERAL_URL,
@@ -99,7 +99,7 @@ export function StepSummaryFeature() {
       .with('NONE', () => null)
       .exhaustive()
 
-    const getValuesByType = (type: 'generic' | 'string' | 'json') => {
+    const getValuesByType = (type: ArgumentTypes) => {
       return valuesOverrideArgumentData.arguments.filter((a) => a.type === type).map((a) => [a.key, a.json ?? a.value])
     }
 
