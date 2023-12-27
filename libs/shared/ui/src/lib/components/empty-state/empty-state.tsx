@@ -12,7 +12,7 @@ export function EmptyState({ title, description, className, children }: EmptySta
     <div className={twMerge('flex flex-grow items-center justify-center', className)}>
       <div className="text-center flex flex-col items-center justify-center w-[420px] m-auto mt-12">
         <img
-          className="pointer-events-none user-none mb-4 w-[170px]"
+          className="pointer-events-none user-none w-[170px]"
           src="/assets/images/event-placeholder-light.svg"
           alt="Event placeholder"
         />

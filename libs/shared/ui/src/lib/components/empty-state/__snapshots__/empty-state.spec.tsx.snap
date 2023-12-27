@@ -1,0 +1,31 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`EmptyState should match snapshot 1`] = `
+<body>
+  <div>
+    <div
+      class="flex flex-grow items-center justify-center"
+    >
+      <div
+        class="text-center flex flex-col items-center justify-center w-[420px] m-auto mt-12"
+      >
+        <img
+          alt="Event placeholder"
+          class="pointer-events-none user-none w-[170px]"
+          src="/assets/images/event-placeholder-light.svg"
+        />
+        <p
+          class="text-neutral-400 font-medium"
+        >
+          No Storage are set
+        </p>
+        <p
+          class="text-sm text-neutral-350 mt-1"
+        >
+          Need help? You may find these links useful
+        </p>
+      </div>
+    </div>
+  </div>
+</body>
+`;
