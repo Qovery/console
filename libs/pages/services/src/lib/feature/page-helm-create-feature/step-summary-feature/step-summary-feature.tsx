@@ -2,7 +2,7 @@ import { Fragment, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useHelmRepositories } from '@qovery/domains/organizations/feature'
-import { ArgumentTypes, useCreateHelmService } from '@qovery/domains/service-helm/feature'
+import { type ArgumentTypes, useCreateHelmService } from '@qovery/domains/service-helm/feature'
 import { useDeployService } from '@qovery/domains/services/feature'
 import {
   SERVICES_CREATION_GENERAL_URL,
