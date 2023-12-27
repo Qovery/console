@@ -1,4 +1,4 @@
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { renderWithProviders } from '@qovery/shared/util-tests'
 import EmptyState, { type EmptyStateProps } from './empty-state'
 
 const props: EmptyStateProps = {
@@ -11,14 +11,9 @@ describe('EmptyState', () => {
     expect(baseElement).toBeTruthy()
   })
 
-  it('should render the title', () => {
-    renderWithProviders(<EmptyState {...props} />)
-    screen.getByText('No Storage are set')
-  })
-
-  it('should render the description block if no description provided', () => {
+  it('should match snapshot', () => {
     props.description = 'Need help? You may find these links useful'
-    renderWithProviders(<EmptyState {...props} />)
-    screen.getByText('Need help? You may find these links useful')
+    const { baseElement } = renderWithProviders(<EmptyState {...props} />)
+    expect(baseElement).toMatchSnapshot()
   })
 })
