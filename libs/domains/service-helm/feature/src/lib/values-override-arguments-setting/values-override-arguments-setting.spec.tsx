@@ -27,7 +27,31 @@ describe('ValuesOverrideArgumentsSetting', () => {
   }
 
   it('should match snapshot', () => {
-    const { baseElement } = renderWithProviders(wrapWithReactHookForm(<ValuesOverrideArgumentsSetting {...props} />))
+    const { baseElement } = renderWithProviders(
+      wrapWithReactHookForm(<ValuesOverrideArgumentsSetting {...props} />, {
+        defaultValues: {
+          arguments: [
+            {
+              key: 'test',
+              type: 'generic',
+              value: 'test',
+            },
+            {
+              key: 'test2',
+              type: 'json',
+              value: 'test',
+              json: '{"test": "test"}',
+            },
+            {
+              key: 'test3',
+              type: 'string',
+              value: 'test',
+              json: 'test',
+            },
+          ],
+        },
+      })
+    )
     expect(baseElement).toMatchSnapshot()
   })
 })

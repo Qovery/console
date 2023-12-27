@@ -455,7 +455,6 @@ export function ServiceList({ organizationId, projectId, environmentId, classNam
         title="No service found"
         description="You can create a service from the button on the top"
         className="bg-white rounded-t-sm mt-2 pt-10"
-        imageWidth="w-[160px]"
       />
     )
   }

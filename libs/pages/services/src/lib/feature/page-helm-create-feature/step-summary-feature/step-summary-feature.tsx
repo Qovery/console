@@ -31,7 +31,7 @@ export function StepSummaryFeature() {
   const valuesOverrideFileData = valuesOverrideFileForm.getValues()
   const valuesOverrideArgumentData = valuesOverrideArgumentsForm.getValues()
   const networkingData = networkingForm.getValues()
-  setCurrentStep(4)
+  setCurrentStep(5)
 
   const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_HELM_CREATION_URL}`
 

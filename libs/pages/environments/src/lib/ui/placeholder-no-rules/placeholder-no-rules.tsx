@@ -13,7 +13,7 @@ export function PlaceholderNoRules(props: PlaceholderNoRulesProps) {
       <div className="flex justify-center items-center flex-grow">
         <div className="flex flex-col items-center">
           <img
-            className="w-12 pointer-events-none user-none mb-5"
+            className="pointer-events-none user-none mb-5"
             src="/assets/images/event-placeholder-light.svg"
             alt="Event placeholder"
           />
