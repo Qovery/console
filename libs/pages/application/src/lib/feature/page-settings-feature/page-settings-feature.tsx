@@ -20,7 +20,7 @@ import {
   APPLICATION_SETTINGS_STORAGE_URL,
   APPLICATION_SETTINGS_URL,
   APPLICATION_SETTINGS_VALUES_OVERRIDE_ARGUMENTS_URL,
-  APPLICATION_SETTINGS_VALUES_OVERRIDE_FILES_URL,
+  APPLICATION_SETTINGS_VALUES_OVERRIDE_FILE_URL,
   APPLICATION_URL,
 } from '@qovery/shared/routes'
 import { IconAwesomeEnum, type NavigationLeftLinkProps } from '@qovery/shared/ui'
@@ -65,7 +65,7 @@ export function PageSettingsFeature() {
         subLinks: [
           {
             title: 'Override as file',
-            url: pathSettings + APPLICATION_SETTINGS_VALUES_OVERRIDE_FILES_URL,
+            url: pathSettings + APPLICATION_SETTINGS_VALUES_OVERRIDE_FILE_URL,
           },
           {
             title: 'Override as arguments',
