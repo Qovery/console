@@ -18,6 +18,7 @@ jobs:
     secrets:
       organization-id: ${{ secrets.QOVERY_ORGANIZATION_ID }}
       api-token: ${{ secrets.QOVERY_API_TOKEN }}
+
   test-build-and-deploy-s3:
     uses: ./.github/workflows/test-build-and-deploy-to-s3.yml
     with:
