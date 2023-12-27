@@ -46,7 +46,10 @@ jobs:
       artifacts-path: |
         dist/
         coverage/
-        !coverage/**/*.{js,css,png,html}
+        !coverage/**/*.js
+        !coverage/**/*.css
+        !coverage/**/*.html
+        !coverage/**/*.png
       artifacts-name: dist-and-coverage-artifacts
 
   agents:
