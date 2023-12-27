@@ -85,13 +85,6 @@ jobs:
         with:
           name: dist-and-coverage-artifacts
           path: dist/
-      #- name: Configure AWS credentials
-      #  uses: aws-actions/configure-aws-credentials@v4
-      #  with:
-      #    role-to-assume: arn:aws:iam::1234567890:role/example-role
-      #    role-session-name: samplerolesession
-      #    aws-region: ${{ secrets.aws-region }}
-      # Upload a file to AWS s3
       - name: Copy assets to S3
         run: |
           AWS_REGION=${{ secrets.aws-region }} AWS_ACCESS_KEY_ID=${{ secrets.aws-access-key-id }} AWS_SECRET_ACCESS_KEY=${{ secrets.aws-secret-access-key }} aws s3 cp ./dist/dist/apps/console/ s3://${{ secrets.s3-bucket-name }}/  --recursive --exclude "index.html"
