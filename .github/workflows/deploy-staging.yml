@@ -27,6 +27,6 @@ jobs:
       aws-region: ${{ secrets.AWS_REGION }}
       aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
       aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      s3-bucket-name: ${{ secrets.S3_BUCKET_NAME }}
+      s3-bucket-name: 'console-staging.qovery.com'
       cloudflare-zone: ${{ secrets.CLOUDFLARE_ZONE }}
       cloudflare-token: ${{ secrets.CLOUDFLARE_TOKEN }}
