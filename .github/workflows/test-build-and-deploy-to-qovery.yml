@@ -33,7 +33,7 @@ on:
 # Define a concurrency group at the branch level for the current workflows..
 # Trigerred workflow will be queued and cancel the previous ones.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
+  group: ${{ github.workflow }}-qovery-${{ github.event.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
