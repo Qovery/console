@@ -52,7 +52,8 @@ jobs:
         npx nx affected --target=build --parallel=3
       artifacts-path: |
         dist/
-        coverage
+        coverage/
+        !coverage/**/*.{js,css,png,html}
       artifacts-name: dist-and-coverage-artifacts
 
   agents:
