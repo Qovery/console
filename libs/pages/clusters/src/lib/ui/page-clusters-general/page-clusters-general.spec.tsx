@@ -1,5 +1,5 @@
-import { render } from '__tests__/utils/setup-jest'
 import { clusterFactoryMock } from '@qovery/shared/factories'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import PageClustersGeneral, { type PageClustersGeneralProps } from './page-clusters-general'
 
 describe('PageClustersGeneral', () => {
@@ -9,7 +9,7 @@ describe('PageClustersGeneral', () => {
   }
 
   it('should render successfully', () => {
-    const { baseElement } = render(<PageClustersGeneral {...props} />)
+    const { baseElement } = renderWithProviders(<PageClustersGeneral {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
@@ -17,26 +17,23 @@ describe('PageClustersGeneral', () => {
     props.loading = true
     props.clusters = []
 
-    const { getByTestId } = render(<PageClustersGeneral {...props} />)
-
-    getByTestId('clusters-loader')
+    renderWithProviders(<PageClustersGeneral {...props} />)
+    screen.getByTestId('spinner')
   })
 
   it('should have an empty screen', () => {
     props.loading = false
     props.clusters = []
 
-    const { getByTestId } = render(<PageClustersGeneral {...props} />)
-
-    getByTestId('empty-state')
+    renderWithProviders(<PageClustersGeneral {...props} />)
+    screen.getByText('No cluster set')
   })
 
   it('should have an list of registries', () => {
     props.loading = false
     props.clusters = clusterFactoryMock(1)
 
-    const { getByTestId } = render(<PageClustersGeneral {...props} />)
-
-    getByTestId(`cluster-list-${props.clusters[0].id}`)
+    renderWithProviders(<PageClustersGeneral {...props} />)
+    screen.getByTestId(`cluster-list-${props.clusters[0].id}`)
   })
 })

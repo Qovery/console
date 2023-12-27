@@ -15,7 +15,7 @@ export function StepNetworkingFeature() {
   const ports = networkingForm.watch('ports')
 
   const navigate = useNavigate()
-  setCurrentStep(3)
+  setCurrentStep(4)
 
   const funnelCardHelp = (
     <FunnelFlowHelpCard

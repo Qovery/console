@@ -46,7 +46,7 @@ function Row({ index, remove }: { index: number; remove: UseFieldArrayRemove }) 
           name={`arguments.${index}.key`}
           control={control}
           rules={{
-            required: 'Please enter a variable name.',
+            required: true,
           }}
           render={({ field, fieldState: { error } }) => (
             <InputTextSmall name={field.name} value={field.value} onChange={field.onChange} error={error?.message} />
@@ -169,7 +169,7 @@ export function ValuesOverrideArgumentsSetting({ methods, children, onSubmit }: 
       </div>
       <Popover.Root>
         <Popover.Trigger>
-          <span className="text-sm cursor-pointer text-brand-500 hover:text-brand-600 transition font-medium mb-5">
+          <span className="text-sm cursor-pointer text-brand-500 hover:text-brand-600 transition font-medium mb-10">
             How it works <Icon className="text-xs" name={IconAwesomeEnum.CIRCLE_QUESTION} />
           </span>
         </Popover.Trigger>
