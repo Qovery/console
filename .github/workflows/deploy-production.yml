@@ -5,7 +5,7 @@ on:
     types: [created]
 
 jobs:
-  test-build-and-deploy-s3:
+  test-build-and-deploy:
     uses: ./.github/workflows/test-build-and-deploy.yml
     with:
       flow: deploy-production
