@@ -6,6 +6,7 @@ on:
       - staging
 jobs:
   test-build-and-deploy:
+    needs: [test-build-and-deploy-s3]
     uses: ./.github/workflows/test-build-and-deploy-to-qovery.yml
     with:
       flow: deploy-staging
