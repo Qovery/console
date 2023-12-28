@@ -3,7 +3,17 @@ import { type PropsWithChildren, type ReactNode } from 'react'
 import { Controller, type UseFormReturn } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { PREVIEW_CODE } from '@qovery/shared/routes'
-import { Button, ExternalLink, Heading, Icon, IconAwesomeEnum, InputSelect, Popover, Section } from '@qovery/shared/ui'
+import {
+  Button,
+  Callout,
+  ExternalLink,
+  Heading,
+  Icon,
+  IconAwesomeEnum,
+  InputSelect,
+  Popover,
+  Section,
+} from '@qovery/shared/ui'
 import useHelmDefaultValues from '../hooks/use-helm-default-values/use-helm-default-values'
 import ValuesOverrideYamlSetting from '../values-override-yaml-setting/values-override-yaml-setting'
 
@@ -54,9 +64,7 @@ export function ValuesOverrideFilesSetting({
       <Heading className="mb-2">Values override as file</Heading>
       <p className="text-sm text-neutral-350 mb-2">
         Define the YAML file(s) to be applied as override to the default values.yaml delivered with the chart. It is
-        highly recommended to store the override file(s) in a git repository. To get all the Qovery functionalities, add
-        the macro “qovery.labels.service” and "qovery.annotations.service" within the field managing the
-        labels/annotations assigned to the deployed Pods/Deployments/Services/Jobs.
+        highly recommended to store the override file(s) in a git repository.
       </p>
       <Popover.Root>
         <Popover.Trigger>
@@ -100,6 +108,26 @@ export function ValuesOverrideFilesSetting({
           </Popover.Close>
         </Popover.Content>
       </Popover.Root>
+      <Callout.Root className="mb-5" color="yellow">
+        <Callout.Icon>
+          <Icon name={IconAwesomeEnum.TRIANGLE_EXCLAMATION} />
+        </Callout.Icon>
+        <Callout.Text>
+          <Callout.TextHeading>Add the Qovery macros to your override</Callout.TextHeading>
+          <Callout.TextDescription className="text-xs">
+            To get all the Qovery functionalities (Logs, Statuses, Helm stop and restart), add the macro
+            “qovery.labels.service” and "qovery.annotations.service" within the field managing the labels/annotations
+            assigned to the deployed Pods/Deployments/Services/Jobs.
+            <ExternalLink
+              href="https://hub.qovery.com/docs/using-qovery/configuration/helm/#values"
+              className="ml-0.5"
+              size="xs"
+            >
+              See more details
+            </ExternalLink>
+          </Callout.TextDescription>
+        </Callout.Text>
+      </Callout.Root>
       <Button
         size="lg"
         variant="surface"
