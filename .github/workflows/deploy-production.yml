@@ -6,10 +6,18 @@ on:
 
 jobs:
   test-build-and-deploy-s3:
-    uses: ./.github/workflows/test-build-and-deploy-to-s3.yml
+    uses: ./.github/workflows/test-build-and-deploy.yml
     with:
       flow: deploy-production
       configuration: production
+
+      # Qovery params
+      branch: main
+      project-name: R&D / Frontend
+      environment-name: production
+      application-names: console
+      application-commit-id: ${{ github.sha }}
+
     secrets:
       aws-region: ${{ secrets.AWS_REGION }}
       aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -18,18 +26,6 @@ jobs:
       cloudflare-zone: ${{ secrets.CLOUDFLARE_ZONE }}
       cloudflare-token: ${{ secrets.CLOUDFLARE_TOKEN }}
 
-  test-build-and-deploy:
-    needs: [test-build-and-deploy-s3]
-    uses: ./.github/workflows/test-build-and-deploy-to-qovery.yml
-    with:
-      enable-nx-main: false
-      flow: deploy-production
-      branch: main
-      configuration: production
-      project-name: R&D / Frontend
-      environment-name: production
-      application-names: console
-      application-commit-id: ${{ github.sha }}
-    secrets:
+      # Qovery secrets
       organization-id: ${{ secrets.QOVERY_ORGANIZATION_ID }}
       api-token: ${{ secrets.QOVERY_API_TOKEN }}

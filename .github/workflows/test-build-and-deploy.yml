@@ -1,19 +1,17 @@
-name: Test, Build And Deploy to Qovery
+name: Test, Build And Deploy to S3
 
 on:
   workflow_call:
     inputs:
-      enable-nx-main:
-        required: false
-        default: true
-        type: boolean
       flow:
         required: true
         type: string
-      branch:
+      configuration:
         required: true
         type: string
-      configuration:
+
+      # Qovery params
+      branch:
         required: true
         type: string
       project-name:
@@ -29,6 +27,20 @@ on:
         required: true
         type: string
     secrets:
+      aws-region:
+        required: false
+      aws-access-key-id:
+        required: false
+      aws-secret-access-key:
+        required: false
+      s3-bucket-name:
+        required: false
+      cloudflare-zone:
+        required: false
+      cloudflare-token:
+        required: false
+
+      # Qovery secrets
       organization-id:
         required: true
       api-token:
@@ -37,13 +49,12 @@ on:
 # Define a concurrency group at the branch level for the current workflows..
 # Trigerred workflow will be queued and cancel the previous ones.
 concurrency:
-  group: ${{ github.workflow }}-qovery-${{ github.event.number || github.ref }}
+  group: ${{ github.workflow }}-s3-${{ github.event.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
-  nx-main-qovery:
+  nx-main:
     name: Nx Cloud - Main Job
-    if: ${{ inputs.enable-nx-main }}
     uses: nrwl/ci/.github/workflows/nx-cloud-main.yml@v0.13.0
     with:
       # NOTE: Here we are using the special `nx-cloud record` command to ensure that any commands we run that do not go through the cloud task runner natively
@@ -66,15 +77,14 @@ jobs:
 
   agents:
     name: Nx Cloud - Agents
-    if: ${{ inputs.enable-nx-main }}
     uses: nrwl/ci/.github/workflows/nx-cloud-agents.yml@v0.13.0
     with:
       number-of-agents: 3
 
-  codecoverage-qovery:
+  codecoverage:
     runs-on: ubuntu-latest
     name: Code Coverage
-    needs: [nx-main-qovery]
+    needs: ['nx-main']
     steps:
       - uses: actions/checkout@v3
       - uses: actions/download-artifact@v3
@@ -90,10 +100,29 @@ jobs:
           fail_ci_if_error: false # optional (default = false)
           verbose: true # optional (default = false)
 
+  deploy:
+    name: Deploy to S3
+    runs-on: ubuntu-latest
+    needs: [nx-main]
+    if: ${{ inputs.flow != 'pull-request' }}
+    steps:
+      - name: Git clone the repository
+        uses: actions/checkout@v4
+      - uses: actions/download-artifact@v3
+        with:
+          name: dist-and-coverage-artifacts
+          path: dist/
+      - name: Copy assets to S3
+        run: |
+          AWS_REGION=${{ secrets.aws-region }} AWS_ACCESS_KEY_ID=${{ secrets.aws-access-key-id }} AWS_SECRET_ACCESS_KEY=${{ secrets.aws-secret-access-key }} aws s3 cp ./dist/dist/apps/console/ s3://${{ secrets.s3-bucket-name }}/  --recursive --exclude "index.html"
+      - name: Copy index.html to S3 last
+        run: |
+          AWS_REGION=${{ secrets.aws-region }} AWS_ACCESS_KEY_ID=${{ secrets.aws-access-key-id }} AWS_SECRET_ACCESS_KEY=${{ secrets.aws-secret-access-key }} aws s3 cp ./dist/dist/apps/console/index.html s3://${{ secrets.s3-bucket-name }}/
+
   deploy-qovery:
     name: Deploy to Qovery
     runs-on: ubuntu-latest
-    needs: [nx-main-qovery]
+    needs: [nx-main]
     if: ${{ inputs.flow != 'pull-request' }}
     steps:
       - name: Checkout
