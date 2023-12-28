@@ -1,7 +1,6 @@
 import { type CloudProviderEnum, PortProtocolEnum, type ServicePort } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useCluster } from '@qovery/domains/clusters/feature'
 import { useFetchEnvironment } from '@qovery/domains/environment'
 import { CrudModal } from '@qovery/shared/console-shared'
 import { type FlowPortData, type PortData } from '@qovery/shared/interfaces'
