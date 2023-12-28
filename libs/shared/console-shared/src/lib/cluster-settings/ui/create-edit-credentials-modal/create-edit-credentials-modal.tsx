@@ -174,7 +174,7 @@ export function CreateEditCredentialsModal(props: CreateEditCredentialsModalProp
               name={field.name}
               onChange={field.onChange}
               value={field.value}
-              label="Crdentials JSON"
+              label="Credentials JSON"
               error={error?.message}
             />
           )}

@@ -44,6 +44,11 @@ export const steps = (cloudProvider?: CloudProviderEnum, clusterType?: string) =
       { title: 'Set resources', key: 'resources' },
       { title: 'Ready to install', key: 'summary' },
     ]
+  } else if (cloudProvider === CloudProviderEnum.GCP) {
+    return [
+      { title: 'Create new cluster', key: 'general' },
+      { title: 'Ready to install', key: 'summary' },
+    ]
   } else {
     if (clusterType === KubernetesEnum.K3_S) {
       return [

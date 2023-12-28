@@ -3,7 +3,12 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useCloudProviderCredentials, useCloudProviders } from '@qovery/domains/cloud-providers/feature'
 import { type ClusterGeneralData } from '@qovery/shared/interfaces'
-import { CLUSTERS_CREATION_RESOURCES_URL, CLUSTERS_CREATION_URL, CLUSTERS_URL } from '@qovery/shared/routes'
+import {
+  CLUSTERS_CREATION_RESOURCES_URL,
+  CLUSTERS_CREATION_SUMMARY_URL,
+  CLUSTERS_CREATION_URL,
+  CLUSTERS_URL,
+} from '@qovery/shared/routes'
 import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import StepGeneral from '../../../ui/page-clusters-create/step-general/step-general'
@@ -59,7 +64,11 @@ export function StepGeneralFeature() {
 
       setGeneralData(data)
       const pathCreate = `${CLUSTERS_URL(organizationId)}${CLUSTERS_CREATION_URL}`
-      navigate(pathCreate + CLUSTERS_CREATION_RESOURCES_URL)
+      if (data['cloud_provider'] === 'GCP') {
+        navigate(pathCreate + CLUSTERS_CREATION_SUMMARY_URL)
+      } else {
+        navigate(pathCreate + CLUSTERS_CREATION_RESOURCES_URL)
+      }
     }
   })
 
