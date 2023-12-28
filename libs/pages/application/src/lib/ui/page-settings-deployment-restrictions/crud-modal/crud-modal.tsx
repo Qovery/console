@@ -36,7 +36,7 @@ export function CrudModal({ onClose, onSubmit, isEdit, isLoading }: CrudModalPro
           <p>Wildcards are not supported in the "Value" field</p>
           <ExternalLink
             className="mt-2"
-            href="https://hub.qovery.com/docs/using-qovery/configuration/environment/#auto-deploy"
+            href="https://hub.qovery.com/docs/using-qovery/deployment/deploying-with-auto-deploy/#filtering-commits-triggering-the-auto-deploy"
           >
             Documentation
           </ExternalLink>
