@@ -1,5 +1,6 @@
-import { CloudProviderEnum, KubernetesEnum } from 'qovery-typescript-axios'
+import { KubernetesEnum } from 'qovery-typescript-axios'
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
+import { P, match } from 'ts-pattern'
 import { useCluster } from '@qovery/domains/clusters/feature'
 import {
   CLUSTER_SETTINGS_ADVANCED_SETTINGS_URL,
@@ -27,60 +28,83 @@ export function PageSettingsFeature() {
 
   const pathSettings = CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL
 
-  const links = [
-    {
-      title: 'General',
-      icon: IconAwesomeEnum.WHEEL,
-      url: pathSettings + CLUSTER_SETTINGS_GENERAL_URL,
-    },
-    {
-      title: 'Credentials',
-      icon: IconAwesomeEnum.KEY,
-      url: pathSettings + CLUSTER_SETTINGS_CREDENTIALS_URL,
-    },
-    {
-      title: 'Resources',
-      icon: IconAwesomeEnum.CHART_BULLET,
-      url: pathSettings + CLUSTER_SETTINGS_RESOURCES_URL,
-    },
-  ]
-
-  if (cluster?.cloud_provider === CloudProviderEnum.AWS) {
-    links.push({
-      title: 'Features',
-      icon: IconAwesomeEnum.PUZZLE_PIECE,
-      url: pathSettings + CLUSTER_SETTINGS_FEATURES_URL,
-    })
-
-    if (cluster?.kubernetes === KubernetesEnum.K3_S) {
-      links.push({
-        title: 'Remote access',
-        icon: IconAwesomeEnum.LIGHTBULB,
-        url: pathSettings + CLUSTER_SETTINGS_REMOTE_ACCESS_URL,
-      })
-    }
-
-    links.push({
-      title: 'Network',
-      icon: IconAwesomeEnum.PLUG,
-      url: pathSettings + CLUSTER_SETTINGS_NETWORK_URL,
-    })
+  const generalLink = {
+    title: 'General',
+    icon: IconAwesomeEnum.WHEEL,
+    url: pathSettings + CLUSTER_SETTINGS_GENERAL_URL,
   }
 
-  links.push(
-    ...[
-      {
-        title: 'Advanced settings',
-        icon: IconAwesomeEnum.GEARS,
-        url: pathSettings + CLUSTER_SETTINGS_ADVANCED_SETTINGS_URL,
-      },
-      {
-        title: 'Danger zone',
-        icon: IconAwesomeEnum.SKULL,
-        url: pathSettings + CLUSTER_SETTINGS_DANGER_ZONE_URL,
-      },
-    ]
-  )
+  const credentialsLink = {
+    title: 'Credentials',
+    icon: IconAwesomeEnum.KEY,
+    url: pathSettings + CLUSTER_SETTINGS_CREDENTIALS_URL,
+  }
+
+  const resourcesLink = {
+    title: 'Resources',
+    icon: IconAwesomeEnum.CHART_BULLET,
+    url: pathSettings + CLUSTER_SETTINGS_RESOURCES_URL,
+  }
+
+  const featuresLink = {
+    title: 'Features',
+    icon: IconAwesomeEnum.PUZZLE_PIECE,
+    url: pathSettings + CLUSTER_SETTINGS_FEATURES_URL,
+  }
+
+  const remoteAccessLink = {
+    title: 'Remote access',
+    icon: IconAwesomeEnum.LIGHTBULB,
+    url: pathSettings + CLUSTER_SETTINGS_REMOTE_ACCESS_URL,
+  }
+
+  const networkLink = {
+    title: 'Network',
+    icon: IconAwesomeEnum.PLUG,
+    url: pathSettings + CLUSTER_SETTINGS_NETWORK_URL,
+  }
+
+  const advancedSettingsLink = {
+    title: 'Advanced settings',
+    icon: IconAwesomeEnum.GEARS,
+    url: pathSettings + CLUSTER_SETTINGS_ADVANCED_SETTINGS_URL,
+  }
+
+  const dangerZoneLink = {
+    title: 'Danger zone',
+    icon: IconAwesomeEnum.SKULL,
+    url: pathSettings + CLUSTER_SETTINGS_DANGER_ZONE_URL,
+  }
+
+  const links = match(cluster)
+    .with({ cloud_provider: 'AWS' }, () => [
+      generalLink,
+      credentialsLink,
+      resourcesLink,
+      featuresLink,
+      networkLink,
+      advancedSettingsLink,
+      dangerZoneLink,
+    ])
+    .with({ cloud_provider: 'AWS', kubernetes: KubernetesEnum.K3_S }, () => [
+      generalLink,
+      credentialsLink,
+      resourcesLink,
+      featuresLink,
+      remoteAccessLink,
+      networkLink,
+      advancedSettingsLink,
+      dangerZoneLink,
+    ])
+    .with({ cloud_provider: 'SCW' }, () => [
+      generalLink,
+      credentialsLink,
+      resourcesLink,
+      advancedSettingsLink,
+      dangerZoneLink,
+    ])
+    .with({ cloud_provider: 'GCP' }, () => [generalLink, credentialsLink, dangerZoneLink])
+    .otherwise(() => [])
 
   return (
     <PageSettings links={links}>
