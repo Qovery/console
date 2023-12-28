@@ -2,7 +2,7 @@ import { type IconProps } from '../icon'
 
 export function GCPGrayIcon(props: IconProps) {
   return (
-    <svg {...props} xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16 16">
+    <svg {...props} xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24">
       <path
         fill="#A0AFC5"
         d="M15.23 7.819h.731l2.086-2.086.102-.886c-3.882-3.428-9.807-3.057-13.235.825a9.374 9.374 0 00-2.02 3.75c.232-.095.49-.11.732-.043l4.172-.689s.212-.351.323-.33a5.204 5.204 0 017.123-.541h-.015z"
