@@ -117,42 +117,44 @@ export function StepSummary(props: StepSummaryProps) {
           />
         </div>
 
-        <div
-          data-testid="summary-resources"
-          className="flex p-4 w-full border rounded border-neutral-250 bg-neutral-100 mb-2"
-        >
-          <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
-          <div className="flex-grow mr-2">
-            <div className="text-sm text-neutral-400 font-bold mb-2">Resources</div>
-            <ul className="text-neutral-350 text-sm list-none">
-              <li>
-                Cluster type: <strong className="font-medium">{props.resourcesData.cluster_type}</strong>
-              </li>
-              <li>
-                Instance type:{' '}
-                <strong className="font-medium">
-                  {props.detailInstanceType?.name} ({props.detailInstanceType?.cpu}CPU -{' '}
-                  {props.detailInstanceType?.ram_in_gb}GB RAM - {props.detailInstanceType?.architecture})
-                </strong>
-              </li>
-              <li>
-                Disk size: <strong className="font-medium">{props.resourcesData.disk_size} GB</strong>
-              </li>
-              <li>
-                Nodes:{' '}
-                <strong className="font-medium">
-                  {props.resourcesData.nodes[0]} min - {props.resourcesData.nodes[1]} max
-                </strong>
-              </li>
-            </ul>
+        {props.generalData.cloud_provider !== 'GCP' && (
+          <div
+            data-testid="summary-resources"
+            className="flex p-4 w-full border rounded border-neutral-250 bg-neutral-100 mb-2"
+          >
+            <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
+            <div className="flex-grow mr-2">
+              <div className="text-sm text-neutral-400 font-bold mb-2">Resources</div>
+              <ul className="text-neutral-350 text-sm list-none">
+                <li>
+                  Cluster type: <strong className="font-medium">{props.resourcesData.cluster_type}</strong>
+                </li>
+                <li>
+                  Instance type:{' '}
+                  <strong className="font-medium">
+                    {props.detailInstanceType?.name} ({props.detailInstanceType?.cpu}CPU -{' '}
+                    {props.detailInstanceType?.ram_in_gb}GB RAM - {props.detailInstanceType?.architecture})
+                  </strong>
+                </li>
+                <li>
+                  Disk size: <strong className="font-medium">{props.resourcesData.disk_size} GB</strong>
+                </li>
+                <li>
+                  Nodes:{' '}
+                  <strong className="font-medium">
+                    {props.resourcesData.nodes[0]} min - {props.resourcesData.nodes[1]} max
+                  </strong>
+                </li>
+              </ul>
+            </div>
+            <ButtonIcon
+              onClick={props.goToResources}
+              icon={IconAwesomeEnum.WHEEL}
+              style={ButtonIconStyle.FLAT}
+              className="text-neutral-400 hover:text-neutral-400"
+            />
           </div>
-          <ButtonIcon
-            onClick={props.goToResources}
-            icon={IconAwesomeEnum.WHEEL}
-            style={ButtonIconStyle.FLAT}
-            className="text-neutral-400 hover:text-neutral-400"
-          />
-        </div>
+        )}
 
         {props.remoteData && props.remoteData.ssh_key.length > 0 && (
           <div

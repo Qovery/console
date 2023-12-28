@@ -74,15 +74,18 @@ export function StepSummaryFeature() {
   }
 
   const onBack = () => {
-    if (generalData?.cloud_provider === CloudProviderEnum.AWS) {
-      if (resourcesData?.cluster_type === KubernetesEnum.K3_S) {
-        goToRemote()
-      } else {
-        goToFeatures()
-      }
-    } else {
-      goToResources()
-    }
+    return match(generalData?.cloud_provider)
+      .with('AWS', () => {
+        if (resourcesData?.cluster_type === KubernetesEnum.K3_S) {
+          goToRemote()
+        } else {
+          goToFeatures()
+        }
+      })
+      .with('GCP', () => {
+        goToGeneral()
+      })
+      .otherwise(() => goToResources())
   }
 
   useEffect(() => {
