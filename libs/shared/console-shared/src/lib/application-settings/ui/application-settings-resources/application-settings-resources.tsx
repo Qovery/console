@@ -46,8 +46,6 @@ export function ApplicationSettingsResources(props: ApplicationSettingsResources
 
   const watchInstances = watch('instances')
 
-  if (!application) return null
-
   const hintCPU = match(cloudProvider)
     .with('GCP', () => (
       <>
@@ -90,7 +88,7 @@ export function ApplicationSettingsResources(props: ApplicationSettingsResources
     .otherwise(() => (
       <>
         Minimum value is 1 MiB. Maximum value allowed based on the selected cluster instance type:{' '}
-        {application.maximum_memory} MiB.{' '}
+        {application?.maximum_memory} MiB.{' '}
         {clusterId && (
           <Link
             to={CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_RESOURCES_URL}
@@ -118,7 +116,7 @@ export function ApplicationSettingsResources(props: ApplicationSettingsResources
             />
           )}
         />
-        <p className="text-neutral-350 text-xs mt-3">{hintCPU}</p>
+        {application && <p className="text-neutral-350 text-xs mt-3">{hintCPU}</p>}
         {displayWarningCpu && (
           <Callout.Root color="red" className="mt-3" data-testid="banner-box">
             <Callout.Icon>
@@ -156,7 +154,7 @@ export function ApplicationSettingsResources(props: ApplicationSettingsResources
             />
           )}
         />
-        <p className="text-neutral-350 text-xs mt-3">{hintMemory}</p>
+        {application && <p className="text-neutral-350 text-xs mt-3">{hintMemory}</p>}
       </BlockContent>
 
       {!isJob(application) && watchInstances && (
