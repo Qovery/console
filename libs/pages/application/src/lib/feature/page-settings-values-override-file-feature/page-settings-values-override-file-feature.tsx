@@ -28,7 +28,8 @@ export function PageSettingsValuesOverrideFileFeature() {
       type: currentType,
       content: valuesOverrideFile?.raw?.values?.[0]?.content ?? '',
       provider: guessGitProvider(valuesOverrideFile?.git?.git_repository?.url ?? ''),
-      repository: valuesOverrideFile?.git?.git_repository?.url,
+      repository:
+        valuesOverrideFile?.git?.git_repository?.name ?? valuesOverrideFile?.git?.git_repository?.git_token_id,
       branch: valuesOverrideFile?.git?.git_repository?.branch,
       paths: valuesOverrideFile?.git?.paths?.toString(),
     },
