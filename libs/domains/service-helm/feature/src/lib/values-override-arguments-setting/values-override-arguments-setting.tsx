@@ -35,14 +35,14 @@ export interface ValuesOverrideArgumentsSettingProps extends PropsWithChildren {
   onSubmit: () => void
 }
 
-function Row({ index, remove }: { index: number; remove: UseFieldArrayRemove }) {
+function Row({ key, index, remove }: { key: string; index: number; remove: UseFieldArrayRemove }) {
   const { watch, control } = useFormContext()
 
   const [openEditor, setOpenEditor] = useState(true)
   const valueTypeJson = watch(`arguments.${index}.type`) === 'json'
 
   return (
-    <li className="mb-3 last:mb-0">
+    <li key={key} className="mb-3 last:mb-0">
       <div className="grid grid-cols-[6fr_6fr_6fr_1fr] gap-x-2 items-center">
         <Controller
           name={`arguments.${index}.key`}

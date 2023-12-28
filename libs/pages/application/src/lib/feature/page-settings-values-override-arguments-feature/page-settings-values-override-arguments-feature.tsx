@@ -9,7 +9,7 @@ import { useEditService, useService } from '@qovery/domains/services/feature'
 import { Button } from '@qovery/shared/ui'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
 
-export const generateArguments = (
+const generateArguments = (
   type: ArgumentTypes,
   values?: string[][]
 ): { key: string; type: ArgumentTypes; value: string }[] => {
