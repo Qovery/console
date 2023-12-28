@@ -1,9 +1,4 @@
-import {
-  CloudProviderEnum,
-  type ClusterRequest,
-  type ClusterRequestFeaturesInner,
-  KubernetesEnum,
-} from 'qovery-typescript-axios'
+import { CloudProviderEnum, type ClusterRequestFeaturesInner, KubernetesEnum } from 'qovery-typescript-axios'
 import { useCallback, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
