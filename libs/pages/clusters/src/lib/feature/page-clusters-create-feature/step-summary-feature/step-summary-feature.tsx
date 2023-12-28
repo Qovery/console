@@ -106,20 +106,28 @@ export function StepSummaryFeature() {
           )
           .filter(Boolean)
 
-      const clusterRequest: ClusterRequest = {
-        name: generalData.name,
-        description: generalData.description || '',
-        production: generalData.production,
-        cloud_provider: generalData.cloud_provider,
-        region: generalData.region,
-        min_running_nodes: resourcesData.nodes[0],
-        max_running_nodes: resourcesData.nodes[1],
-        disk_size: resourcesData.disk_size,
-        instance_type: resourcesData.instance_type,
-        kubernetes: resourcesData.cluster_type as KubernetesEnum,
-        features: formatFeatures as ClusterRequestFeaturesInner[],
-        ssh_keys: remoteData?.ssh_key ? [remoteData?.ssh_key] : undefined,
-      }
+      const clusterRequest = match(generalData.cloud_provider)
+        .with('GCP', () => ({
+          name: generalData.name,
+          description: generalData.description || '',
+          production: generalData.production,
+          cloud_provider: generalData.cloud_provider,
+          region: generalData.region,
+        }))
+        .otherwise(() => ({
+          name: generalData.name,
+          description: generalData.description || '',
+          production: generalData.production,
+          cloud_provider: generalData.cloud_provider,
+          region: generalData.region,
+          min_running_nodes: resourcesData.nodes[0],
+          max_running_nodes: resourcesData.nodes[1],
+          disk_size: resourcesData.disk_size,
+          instance_type: resourcesData.instance_type,
+          kubernetes: resourcesData.cluster_type as KubernetesEnum,
+          features: formatFeatures as ClusterRequestFeaturesInner[],
+          ssh_keys: remoteData?.ssh_key ? [remoteData?.ssh_key] : undefined,
+        }))
 
       try {
         const cluster = await createCluster({
