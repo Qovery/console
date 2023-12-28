@@ -115,7 +115,7 @@ export function ClusterButtonsActions(props: ClusterButtonsActionsProps) {
       if (isRedeployAvailable(clusterStatus?.status)) {
         topItems.push(updateButton)
       }
-      if (isStopAvailable(clusterStatus?.status)) {
+      if (cluster.cloud_provider !== 'GCP' && isStopAvailable(clusterStatus?.status)) {
         topItems.push(stopButton)
       }
     }
