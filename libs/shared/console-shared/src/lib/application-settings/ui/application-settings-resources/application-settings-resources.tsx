@@ -1,6 +1,8 @@
 import { EnvironmentModeEnum } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
+import { match } from 'ts-pattern'
+import { useFetchEnvironment } from '@qovery/domains/environment'
 import { useRunningStatus } from '@qovery/domains/services/feature'
 import { isJob } from '@qovery/shared/enums'
 import { type ApplicationEntity } from '@qovery/shared/interfaces'
@@ -8,6 +10,7 @@ import { CLUSTER_SETTINGS_RESOURCES_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL } fro
 import {
   BlockContent,
   Callout,
+  ExternalLink,
   Icon,
   IconAwesomeEnum,
   InputText,
@@ -28,8 +31,11 @@ export interface ApplicationSettingsResourcesProps {
 export function ApplicationSettingsResources(props: ApplicationSettingsResourcesProps) {
   const { displayWarningCpu, application, minInstances = 1, maxInstances = 50, clusterId = '', environmentMode } = props
   const { control, watch } = useFormContext()
-  const { organizationId = '', environmentId = '', applicationId = '' } = useParams()
+  const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
   const { data: runningStatuses } = useRunningStatus({ environmentId, serviceId: applicationId })
+  const { data: environment } = useFetchEnvironment(projectId, environmentId)
+
+  const cloudProvider = environment?.cloud_provider.provider
 
   let maxMemoryBySize = application?.maximum_memory
 
@@ -39,6 +45,62 @@ export function ApplicationSettingsResources(props: ApplicationSettingsResources
   }
 
   const watchInstances = watch('instances')
+
+  if (!application) return null
+
+  const hintCPU = match(cloudProvider)
+    .with('GCP', () => (
+      <>
+        Minimum value is 250 milli vCPU. Note that resources might be rounded up automatically by GCP.
+        <ExternalLink
+          size="xs"
+          href="https://cloud.google.com/kubernetes-engine/docs/concepts/autopilot-resource-requests"
+        >
+          Have a look at this documentation
+        </ExternalLink>
+      </>
+    ))
+    .otherwise(() => (
+      <>
+        Minimum value is 10 milli vCPU. Maximum value allowed based on the selected cluster instance type:{' '}
+        {application?.maximum_cpu} mili vCPU.{' '}
+        {clusterId && (
+          <Link
+            to={CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_RESOURCES_URL}
+            size="xs"
+          >
+            Edit node
+          </Link>
+        )}
+      </>
+    ))
+
+  const hintMemory = match(cloudProvider)
+    .with('GCP', () => (
+      <>
+        Minimum value is 512 MiB. Note that resources might be rounded up automatically by GCP.{' '}
+        <ExternalLink
+          size="xs"
+          href="https://cloud.google.com/kubernetes-engine/docs/concepts/autopilot-resource-requests"
+        >
+          Have a look at this documentation
+        </ExternalLink>
+      </>
+    ))
+    .otherwise(() => (
+      <>
+        Minimum value is 1 MiB. Maximum value allowed based on the selected cluster instance type:{' '}
+        {application.maximum_memory} MiB.{' '}
+        {clusterId && (
+          <Link
+            to={CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_RESOURCES_URL}
+            size="xs"
+          >
+            Edit node
+          </Link>
+        )}
+      </>
+    ))
 
   return (
     <div>
@@ -56,20 +118,7 @@ export function ApplicationSettingsResources(props: ApplicationSettingsResources
             />
           )}
         />
-        {application && (
-          <p className="text-neutral-350 text-xs mt-3">
-            Minimum value is 10 milli vCPU. Maximum value allowed based on the selected cluster instance type:{' '}
-            {application?.maximum_cpu} mili vCPU.{' '}
-            {clusterId && (
-              <Link
-                to={CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_RESOURCES_URL}
-                size="xs"
-              >
-                Edit node
-              </Link>
-            )}
-          </p>
-        )}
+        <p className="text-neutral-350 text-xs mt-3">{hintCPU}</p>
         {displayWarningCpu && (
           <Callout.Root color="red" className="mt-3" data-testid="banner-box">
             <Callout.Icon>
@@ -107,20 +156,7 @@ export function ApplicationSettingsResources(props: ApplicationSettingsResources
             />
           )}
         />
-        {application && (
-          <p className="text-neutral-350 text-xs mt-3">
-            Minimum value is 1 MiB. Maximum value allowed based on the selected cluster instance type:{' '}
-            {application.maximum_memory} MiB.{' '}
-            {clusterId && (
-              <Link
-                to={CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_RESOURCES_URL}
-                size="xs"
-              >
-                Edit node
-              </Link>
-            )}
-          </p>
-        )}
+        <p className="text-neutral-350 text-xs mt-3">{hintMemory}</p>
       </BlockContent>
 
       {!isJob(application) && watchInstances && (
