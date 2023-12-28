@@ -1,6 +1,6 @@
 import { KubernetesEnum } from 'qovery-typescript-axios'
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
-import { P, match } from 'ts-pattern'
+import { match } from 'ts-pattern'
 import { useCluster } from '@qovery/domains/clusters/feature'
 import {
   CLUSTER_SETTINGS_ADVANCED_SETTINGS_URL,
