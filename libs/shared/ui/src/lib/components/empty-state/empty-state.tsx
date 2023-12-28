@@ -1,33 +1,24 @@
-import { type ReactNode } from 'react'
+import { type PropsWithChildren } from 'react'
+import { twMerge } from '@qovery/shared/util-js'
 
-export interface EmptyStateProps {
+export interface EmptyStateProps extends PropsWithChildren {
   title: string
   description?: string
   className?: string
-  imageWidth?: string
-  dataTestId?: string
-  children?: ReactNode
 }
 
-export function EmptyState(props: EmptyStateProps) {
+export function EmptyState({ title, description, className, children }: EmptyStateProps) {
   return (
-    <div className={`flex flex-grow items-center justify-center ${props.className || ''}`}>
-      <div
-        className="text-center flex flex-col items-center justify-center w-[420px] m-auto mt-10"
-        data-testid={props.dataTestId || 'placeholder-settings'}
-      >
+    <div className={twMerge('flex flex-grow items-center justify-center', className)}>
+      <div className="text-center flex flex-col items-center justify-center w-[420px] m-auto mt-12">
         <img
-          className={`pointer-events-none user-none mb-5 ${props.imageWidth || 'w-[48px]'}`}
+          className="pointer-events-none user-none w-[170px]"
           src="/assets/images/event-placeholder-light.svg"
           alt="Event placeholder"
         />
-        <p className="text-neutral-400 font-medium">{props.title}</p>
-        {props.description && (
-          <p data-testid="placeholder-settings-description" className="text-sm text-neutral-350 mt-1">
-            {props.description}
-          </p>
-        )}
-        {props.children}
+        <p className="text-neutral-400 font-medium">{title}</p>
+        {description && <p className="text-sm text-neutral-350 mt-1">{description}</p>}
+        {children}
       </div>
     </div>
   )

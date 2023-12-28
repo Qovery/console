@@ -1,4 +1,4 @@
-import { findByText, queryByTestId, queryByText, render } from '__tests__/utils/setup-jest'
+import { renderWithProviders } from '@qovery/shared/util-tests'
 import EmptyState, { type EmptyStateProps } from './empty-state'
 
 const props: EmptyStateProps = {
@@ -7,25 +7,13 @@ const props: EmptyStateProps = {
 
 describe('EmptyState', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<EmptyState {...props} />)
+    const { baseElement } = renderWithProviders(<EmptyState {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
-  it('should render the title', () => {
-    const { baseElement } = render(<EmptyState {...props} />)
-    findByText(baseElement, 'No Storage are set')
-  })
-
-  it('should not render the description block if no description provided', async () => {
-    const { baseElement } = render(<EmptyState {...props} />)
-    const paragraph = queryByTestId(baseElement, 'placeholder-settings-description')
-    expect(paragraph).toBeNull()
-  })
-
-  it('should render the description block if no description provided', async () => {
+  it('should match snapshot', () => {
     props.description = 'Need help? You may find these links useful'
-    const { baseElement } = render(<EmptyState {...props} />)
-    const paragraph = queryByText(baseElement, 'Need help? You may find these links useful')
-    expect(paragraph).not.toBeNull()
+    const { baseElement } = renderWithProviders(<EmptyState {...props} />)
+    expect(baseElement).toMatchSnapshot()
   })
 })

@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { type Value } from '@qovery/shared/interfaces'
+import { twMerge } from '@qovery/shared/util-js'
 import Icon from '../../icon/icon'
+import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
 
 export interface InputSelectSmallProps {
   name: string
@@ -52,7 +54,10 @@ export function InputSelectSmall(props: InputSelectSmallProps) {
         data-testid={dataTestId || 'input-select-small'}
         name={name}
         value={value}
-        className={`input input__select--small ${inputClassName}`}
+        className={twMerge(
+          'h-9 px-4 py-2 cursor-pointer pl-2 pr-6 pt-2 pb-2 bg-neutral-100 border border-neutral-250 text-neutral-400 rounded text-sm appearance-none w-full',
+          inputClassName
+        )}
         onChange={(e) => onClickItem(e.target.value)}
       >
         {items.map((item: Value, index: number) => (
@@ -62,8 +67,8 @@ export function InputSelectSmall(props: InputSelectSmallProps) {
         ))}
       </select>
       <Icon
-        name="icon-solid-angle-down"
-        className="absolute top-3 right-4 text-sm text-neutral-400 leading-3 translate-y-0.5 pointer-events-none"
+        name={IconAwesomeEnum.CHEVRON_DOWN}
+        className="absolute top-2.5 right-4 text-xs text-neutral-400 leading-3 translate-y-0.5 pointer-events-none"
       />
     </div>
   )

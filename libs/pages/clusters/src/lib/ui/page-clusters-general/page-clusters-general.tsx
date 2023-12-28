@@ -41,8 +41,6 @@ export function PageClustersGeneral(props: PageClustersGeneralProps) {
           !loading &&
           clusters?.length === 0 && (
             <EmptyState
-              dataTestId="empty-state"
-              imageWidth="160"
               title="No cluster set"
               description="A cluster is necessary to run your applications with Qovery"
             >

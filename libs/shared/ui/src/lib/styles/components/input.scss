@@ -147,14 +147,7 @@
   @apply absolute top-1/2 -translate-y-1/2 text-sm text-neutral-400 right-4;
 }
 
-.input__select--small {
-  @apply pl-2 pr-6 pt-2 pb-2 bg-neutral-100 border border-neutral-250 text-neutral-400 rounded text-sm appearance-none w-full min-h-0;
-
-  @apply focus:outline-brand-500 focus:border-transparent focus:outline-2;
-}
-
 // time
-
 input[type='time'],
 input[type='date'],
 input[type='datetime'] {

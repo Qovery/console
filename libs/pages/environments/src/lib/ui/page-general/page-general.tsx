@@ -118,7 +118,6 @@ export function PageGeneral(props: PageGeneralProps) {
                 ? 'Please create your environment to start using Qovery and create your first service'
                 : 'Deploying a cluster is necessary to start using Qovery and create your first environment'
             }`}
-            imageWidth="w-[160px]"
           >
             <ButtonLegacy
               className="mt-5"

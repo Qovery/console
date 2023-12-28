@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ValuesOverrideYamlSetting should match snapshot with GIT_REPOSITORY type 1`] = `
+exports[`ValuesOverrideFilesSetting should match snapshot with GIT_REPOSITORY type 1`] = `
 <body>
   <div>
     <section
@@ -165,7 +165,7 @@ exports[`ValuesOverrideYamlSetting should match snapshot with GIT_REPOSITORY typ
 </body>
 `;
 
-exports[`ValuesOverrideYamlSetting should match snapshot with NONE type 1`] = `
+exports[`ValuesOverrideFilesSetting should match snapshot with NONE type 1`] = `
 <body>
   <div>
     <section
@@ -309,7 +309,7 @@ exports[`ValuesOverrideYamlSetting should match snapshot with NONE type 1`] = `
 </body>
 `;
 
-exports[`ValuesOverrideYamlSetting should match snapshot with YAML type 1`] = `
+exports[`ValuesOverrideFilesSetting should match snapshot with YAML type 1`] = `
 <body>
   <div>
     <section
