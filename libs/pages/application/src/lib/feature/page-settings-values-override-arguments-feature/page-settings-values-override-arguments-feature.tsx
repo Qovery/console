@@ -66,6 +66,7 @@ export function PageSettingsValuesOverrideArgumentsFeature() {
             set: getValuesByType('generic'),
             set_string: getValuesByType('string'),
             set_json: getValuesByType('json'),
+            file: service.values_override.file,
           },
         },
       }),
