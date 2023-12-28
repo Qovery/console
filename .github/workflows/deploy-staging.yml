@@ -5,21 +5,6 @@ on:
     branches:
       - staging
 jobs:
-  test-build-and-deploy:
-    needs: [test-build-and-deploy-s3]
-    uses: ./.github/workflows/test-build-and-deploy-to-qovery.yml
-    with:
-      flow: deploy-staging
-      branch: staging
-      configuration: staging
-      project-name: R&D / Frontend
-      environment-name: staging
-      application-names: console
-      application-commit-id: ${{ github.sha }}
-    secrets:
-      organization-id: ${{ secrets.QOVERY_ORGANIZATION_ID }}
-      api-token: ${{ secrets.QOVERY_API_TOKEN }}
-
   test-build-and-deploy-s3:
     uses: ./.github/workflows/test-build-and-deploy-to-s3.yml
     with:
@@ -32,3 +17,19 @@ jobs:
       s3-bucket-name: 'console-staging.qovery.com'
       cloudflare-zone: ${{ secrets.CLOUDFLARE_ZONE }}
       cloudflare-token: ${{ secrets.CLOUDFLARE_TOKEN }}
+
+  test-build-and-deploy:
+    needs: [test-build-and-deploy-s3]
+    uses: ./.github/workflows/test-build-and-deploy-to-qovery.yml
+    with:
+      enable-nx-main: false
+      flow: deploy-staging
+      branch: staging
+      configuration: staging
+      project-name: R&D / Frontend
+      environment-name: staging
+      application-names: console
+      application-commit-id: ${{ github.sha }}
+    secrets:
+      organization-id: ${{ secrets.QOVERY_ORGANIZATION_ID }}
+      api-token: ${{ secrets.QOVERY_API_TOKEN }}

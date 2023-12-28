@@ -3,6 +3,10 @@ name: Test, Build And Deploy to Qovery
 on:
   workflow_call:
     inputs:
+      enable-nx-main:
+        required: false
+        default: true
+        type: boolean
       flow:
         required: true
         type: string
@@ -39,6 +43,7 @@ concurrency:
 jobs:
   nx-main-qovery:
     name: Nx Cloud - Main Job
+    if: ${{ inputs.enable-nx-main }}
     uses: nrwl/ci/.github/workflows/nx-cloud-main.yml@v0.13.0
     with:
       # NOTE: Here we are using the special `nx-cloud record` command to ensure that any commands we run that do not go through the cloud task runner natively
@@ -61,6 +66,7 @@ jobs:
 
   agents:
     name: Nx Cloud - Agents
+    if: ${{ inputs.enable-nx-main }}
     uses: nrwl/ci/.github/workflows/nx-cloud-agents.yml@v0.13.0
     with:
       number-of-agents: 3
