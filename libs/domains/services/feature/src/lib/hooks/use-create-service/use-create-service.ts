@@ -13,7 +13,7 @@ export function useCreateService() {
     },
     meta: {
       notifyOnSuccess: {
-        title: `Your database  has been created`,
+        title: `Your database has been created`,
       },
       notifyOnError: true,
     },
