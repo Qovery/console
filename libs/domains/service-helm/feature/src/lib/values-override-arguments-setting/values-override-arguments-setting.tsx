@@ -180,7 +180,9 @@ export function ValuesOverrideArgumentsSetting({ methods, children, onSubmit }: 
           <p>
             Specify each override by declaring the variable name, value and its type. These will be passed via the
             --set, --set-string and --set-json helm argument depending on the selected type (Generic, String or Json).
-            Values set here have the higher override priority.
+            Values set here have an override priority higher to the ones defined in the values as file section and can
+            be used to manage specific configurations. You can assign any environment variable by adding the macro
+            "qovery.env.ENV_VAR_NAME" within the “Value” field.
           </p>
           <Popover.Close className="absolute top-4 right-4">
             <button type="button">
