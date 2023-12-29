@@ -5,14 +5,13 @@ import { useMemo } from 'react'
 import { useDispatch } from 'react-redux'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import {
-  deleteDatabaseAction,
   postDatabaseActionsDeploy,
   postDatabaseActionsReboot,
   postDatabaseActionsRedeploy,
   postDatabaseActionsStop,
 } from '@qovery/domains/database'
 import { useActionCancelEnvironment } from '@qovery/domains/environment'
-import { useDeploymentStatus, useRunningStatus } from '@qovery/domains/services/feature'
+import { useDeleteService, useDeploymentStatus, useRunningStatus } from '@qovery/domains/services/feature'
 import { type DatabaseEntity } from '@qovery/shared/interfaces'
 import {
   AUDIT_LOGS_PARAMS_URL,
@@ -71,15 +70,20 @@ export function DatabaseButtonsActions(props: DatabaseButtonsActionsProps) {
 
   const { data: runningSatus } = useRunningStatus({ environmentId, serviceId: database.id })
   const { data: deploymentStatus } = useDeploymentStatus({ environmentId, serviceId: database.id })
+  const { mutateAsync: deleteService } = useDeleteService({ environmentId })
 
   const removeDatabase = (id: string, name?: string, force = false) => {
     openModalConfirmation({
       title: `Delete database`,
       name: name,
       isDelete: true,
-      action: () => {
-        dispatch(deleteDatabaseAction({ environmentId, databaseId: id, force, queryClient }))
-        navigate(SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_GENERAL_URL)
+      action: async () => {
+        try {
+          await deleteService({ serviceId: id, serviceType: 'DATABASE' })
+          navigate(SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_GENERAL_URL)
+        } catch (error) {
+          console.error(error)
+        }
       },
     })
   }

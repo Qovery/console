@@ -3,7 +3,6 @@ import { useDispatch } from 'react-redux'
 import { redirect, useParams } from 'react-router-dom'
 import { fetchApplications } from '@qovery/domains/application'
 import { useClusters } from '@qovery/domains/clusters/feature'
-import { fetchDatabases } from '@qovery/domains/database'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { useOrganization, useOrganizations } from '@qovery/domains/organizations/feature'
 import { ORGANIZATION_URL } from '@qovery/shared/routes'
@@ -53,7 +52,6 @@ export function Layout(props: PropsWithChildren<LayoutProps>) {
   useEffect(() => {
     if (environmentId) {
       dispatch(fetchApplications({ environmentId }))
-      dispatch(fetchDatabases({ environmentId }))
     }
   }, [environmentId, dispatch])
 

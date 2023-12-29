@@ -1,12 +1,9 @@
 import { type DeploymentHistoryDatabase } from 'qovery-typescript-axios'
-import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { databasesLoadingStatus } from '@qovery/domains/database'
-import { useDeploymentHistory, useServiceType } from '@qovery/domains/services/feature'
+import { useDeploymentHistory, useService, useServiceType } from '@qovery/domains/services/feature'
 import { databaseDeploymentsFactoryMock } from '@qovery/shared/factories'
 import { type BaseLink } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { type RootState } from '@qovery/state/store'
 import { PageDeployments } from '../../ui/page-deployments/page-deployments'
 
 export function PageDeploymentsFeature() {
@@ -18,11 +15,10 @@ export function PageDeploymentsFeature() {
     serviceId: databaseId,
     serviceType,
   })
+  const { isLoading: isLoadingDatabase } = useService({ serviceId: databaseId, serviceType: 'DATABASE' })
 
   const loadingDatabasesDeployments = databaseDeploymentsFactoryMock(3)
-
-  const loadingStatus = useSelector<RootState>((state) => databasesLoadingStatus(state))
-  const isLoading = loadingStatus !== 'loaded' || isDeploymentHistoryLoading
+  const isLoading = isLoadingDatabase || isDeploymentHistoryLoading
 
   const listHelpfulLinks: BaseLink[] = [
     {

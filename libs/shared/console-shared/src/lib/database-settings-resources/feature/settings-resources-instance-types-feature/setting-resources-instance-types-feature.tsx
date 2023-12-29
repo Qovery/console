@@ -1,8 +1,12 @@
-import { type DatabaseTypeEnum, type ManagedDatabaseInstanceTypeResponse } from 'qovery-typescript-axios'
+import {
+  type CloudProviderEnum,
+  type DatabaseTypeEnum,
+  type ManagedDatabaseInstanceTypeResponse,
+} from 'qovery-typescript-axios'
 import { useMemo } from 'react'
 import { useParams } from 'react-router-dom'
+import { useCloudProviderDatabaseInstanceTypes } from '@qovery/domains/cloud-providers/feature'
 import { useCluster } from '@qovery/domains/clusters/feature'
-import { useFetchDatabaseInstanceTypes } from '@qovery/domains/database'
 import { useFetchEnvironment } from '@qovery/domains/environment'
 import SettingsResourcesInstanceTypes from '../../ui/settings-resources-instance-types/setting-resources-instance-types'
 
@@ -19,12 +23,11 @@ export function SettingsResourcesInstanceTypesFeature({
 
   const { data: environment } = useFetchEnvironment(projectId, environmentId)
   const { data: cluster } = useCluster({ organizationId, clusterId: environment?.cluster_id ?? '' })
-
-  const { data: databaseInstanceTypes } = useFetchDatabaseInstanceTypes(
-    cluster?.cloud_provider,
+  const { data: databaseInstanceTypes } = useCloudProviderDatabaseInstanceTypes({
+    cloudProvider: cluster?.cloud_provider as Extract<CloudProviderEnum, 'AWS' | 'SCW'>,
     databaseType,
-    cluster?.region
-  )
+    region: cluster?.region,
+  })
 
   const formatDatabaseInstanceTypes = useMemo(
     () =>

@@ -1,7 +1,7 @@
 import { type DatabaseTypeEnum } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
-import { type DatabaseEntity } from '@qovery/shared/interfaces'
+import { type Database } from '@qovery/domains/services/data-access'
 import { CLUSTER_SETTINGS_RESOURCES_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
 import {
   BlockContent,
@@ -16,7 +16,7 @@ import {
 import SettingsResourcesInstanceTypesFeature from '../../feature/settings-resources-instance-types-feature/setting-resources-instance-types-feature'
 
 export interface DatabaseSettingsResourcesProps {
-  database?: DatabaseEntity
+  database?: Database
   isDatabase?: boolean
   isManaged?: boolean
   clusterId?: string

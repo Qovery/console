@@ -3,7 +3,6 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { fetchApplications } from '@qovery/domains/application'
-import { fetchDatabases } from '@qovery/domains/database'
 import { useFetchEnvironments } from '@qovery/domains/environment'
 import { useProjects } from '@qovery/domains/projects/feature'
 import { useCloneService } from '@qovery/domains/services/feature'
@@ -69,7 +68,6 @@ export function CloneServiceModalFeature({
     })
 
     if (serviceType === ServiceTypeEnum.DATABASE) {
-      dispatch(fetchDatabases({ environmentId }))
       navigate(DATABASE_URL(organizationId, projectId, environmentId, result.id) + DATABASE_GENERAL_URL)
     } else {
       dispatch(fetchApplications({ environmentId }))

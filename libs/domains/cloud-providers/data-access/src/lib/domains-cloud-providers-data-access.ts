@@ -129,6 +129,26 @@ export const cloudProviders = createQueryKeys('cloudProviders', {
       return cloudProviders
     },
   }),
+  listDatabaseInstanceTypes: ({
+    cloudProvider,
+    databaseType,
+    region,
+  }: {
+    cloudProvider: Extract<CloudProviderEnum, 'AWS' | 'SCW'>
+    databaseType: string
+    region?: string
+  }) => ({
+    queryKey: [cloudProvider, databaseType, region],
+    async queryFn() {
+      return match(cloudProvider)
+        .with('AWS', async () => {
+          if (!region) throw new Error('Region is required for AWS')
+          return (await cloudProviderApi.listAWSManagedDatabaseInstanceType(region, databaseType)).data.results
+        })
+        .with('SCW', async () => (await cloudProviderApi.listSCWManagedDatabaseInstanceType(databaseType)).data.results)
+        .exhaustive()
+    },
+  }),
 })
 
 export const mutations = {
