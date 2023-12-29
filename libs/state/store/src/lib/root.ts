@@ -7,8 +7,6 @@ import {
   initialCustomDomainState,
 } from '@qovery/domains/application'
 // eslint-disable-next-line @nx/enforce-module-boundaries
-import { databases, initialDatabasesState } from '@qovery/domains/database'
-// eslint-disable-next-line @nx/enforce-module-boundaries
 import {
   authProviderReducer,
   initialAuthProviderState,
@@ -17,8 +15,6 @@ import {
 } from '@qovery/domains/organization'
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { initialUserSignUpState, initialUserState, userReducer, userSignUp } from '@qovery/domains/users/data-access'
-
-// eslint-disable-next-line @nx/enforce-module-boundaries
 
 export const organizationReducer = combineReducers({
   authProvider: authProviderReducer,
@@ -32,7 +28,6 @@ export const applicationReducer = combineReducers({
 
 export const rootReducer = combineReducers({
   organization: organizationReducer,
-  databases: databases,
   application: applicationReducer,
   user: userReducer,
   userSignUp: userSignUp,
@@ -59,7 +54,6 @@ export const initialRootState = (): RootState => ({
     authProvider: initialAuthProviderState,
     repository: initialRepositoryState,
   },
-  databases: initialDatabasesState,
   application: {
     applications: initialApplicationsState,
     customDomains: initialCustomDomainState,
