@@ -517,6 +517,17 @@ export const mutations = {
     const response = await mutation(serviceId)
     return response.data
   },
+  async restartService({ serviceId, serviceType }: { serviceId: string; serviceType: ServiceType }) {
+    const mutation = match(serviceType)
+      .with('APPLICATION', () => applicationActionsApi.rebootApplication.bind(applicationActionsApi))
+      .with('CONTAINER', () => containerActionsApi.rebootContainer.bind(containerActionsApi))
+      .with('DATABASE', () => databaseActionsApi.rebootDatabase.bind(databaseActionsApi))
+      .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', () => jobActionsApi.restartJob.bind(jobActionsApi))
+      .with('HELM', () => helmActionsApi.restartHelm.bind(helmActionsApi))
+      .exhaustive()
+    const response = await mutation(serviceId)
+    return response.data
+  },
   async deployService({ serviceId, serviceType }: { serviceId: string; serviceType: ServiceType }) {
     const mutation = match(serviceType)
       .with('APPLICATION', () => applicationActionsApi.deployApplication.bind(applicationActionsApi))

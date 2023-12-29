@@ -4,10 +4,8 @@ import { useLocation, useParams } from 'react-router-dom'
 import { useCluster } from '@qovery/domains/clusters/feature'
 import { EnvironmentMode } from '@qovery/domains/environments/feature'
 import { type AnyService } from '@qovery/domains/services/data-access'
-import { NeedRedeployFlag, ServiceStateChip } from '@qovery/domains/services/feature'
-import { DatabaseButtonsActions } from '@qovery/shared/console-shared'
+import { NeedRedeployFlag, ServiceActionToolbar, ServiceStateChip } from '@qovery/domains/services/feature'
 import { IconEnum } from '@qovery/shared/enums'
-import { type DatabaseEntity } from '@qovery/shared/interfaces'
 import {
   DATABASE_DEPLOYMENTS_URL,
   DATABASE_GENERAL_URL,
@@ -45,15 +43,7 @@ export function Container({ service, environment, children }: PropsWithChildren<
         </Skeleton>
       </div>
       <Skeleton width={150} height={32} show={!service}>
-        <div className="flex">
-          {environment && service && (
-            <DatabaseButtonsActions
-              database={service as DatabaseEntity}
-              environmentMode={environment.mode}
-              clusterId={environment.cluster_id}
-            />
-          )}
-        </div>
+        <div className="flex">{environment && service && <ServiceActionToolbar serviceId={service.id} />}</div>
       </Skeleton>
     </div>
   )
