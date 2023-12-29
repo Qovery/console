@@ -1,23 +1,25 @@
-import { act, getByTestId, render } from '__tests__/utils/setup-jest'
 import { DatabaseAccessibilityEnum, DatabaseModeEnum, DatabaseTypeEnum } from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
-import * as storeDatabase from '@qovery/domains/database'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { DatabaseCreateContext } from '../page-database-create-feature'
 import StepSummaryFeature from './step-summary-feature'
-
-import SpyInstance = jest.SpyInstance
-
-const mockDispatch = jest.fn()
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useDispatch: () => mockDispatch,
-}))
 
 const mockNavigate = jest.fn()
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useParams: () => ({ organizationId: '1', projectId: '2', environmentId: '3' }),
   useNavigate: () => mockNavigate,
+}))
+
+const mockCreateService = jest.fn()
+
+jest.mock('@qovery/domains/services/feature', () => ({
+  useCreateService: () => ({
+    mutateAsync: mockCreateService,
+  }),
+  useDeployService: () => ({
+    mutate: jest.fn(),
+  }),
 }))
 
 const mockSetResourcesData = jest.fn()
@@ -50,7 +52,7 @@ const ContextWrapper = (props: { children: ReactNode }) => {
 
 describe('StepSummaryFeature', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(
+    const { baseElement } = renderWithProviders(
       <ContextWrapper>
         <StepSummaryFeature />
       </ContextWrapper>
@@ -59,33 +61,19 @@ describe('StepSummaryFeature', () => {
   })
 
   it('should post the request with expected form values', async () => {
-    const createDatabaseSpy: SpyInstance = jest.spyOn(storeDatabase, 'createDatabase')
-    mockDispatch.mockImplementation(() => ({
-      unwrap: () =>
-        Promise.resolve({
-          data: {
-            id: '1',
-            environment: {
-              id: '2',
-            },
-          },
-        }),
-    }))
-    const { baseElement } = render(
+    const { userEvent } = renderWithProviders(
       <ContextWrapper>
         <StepSummaryFeature />
       </ContextWrapper>
     )
 
-    const button = getByTestId(baseElement, 'button-create-deploy')
+    const button = screen.getByText('Create')
+    await userEvent.click(button)
 
-    await act(() => {
-      button.click()
-    })
-
-    expect(createDatabaseSpy).toHaveBeenCalledWith({
+    expect(mockCreateService).toHaveBeenCalledWith({
       environmentId: '3',
-      databaseRequest: {
+      payload: {
+        serviceType: 'DATABASE',
         accessibility: DatabaseAccessibilityEnum.PRIVATE,
         cpu: 100000,
         memory: 100,
@@ -96,7 +84,6 @@ describe('StepSummaryFeature', () => {
         version: '1',
         description: '',
       },
-      queryClient: expect.any(Object),
     })
     expect(mockNavigate).toHaveBeenCalledWith('/organization/1/project/2/environment/3')
   })
