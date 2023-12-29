@@ -1,5 +1,6 @@
-import { type Environment, type StateEnum } from 'qovery-typescript-axios'
+import { type Environment, StateEnum } from 'qovery-typescript-axios'
 import { useNavigate, useParams } from 'react-router-dom'
+import { useActionCancelEnvironment } from '@qovery/domains/environment'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import {
@@ -23,7 +24,13 @@ import {
   useModalConfirmation,
 } from '@qovery/shared/ui'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
-import { isDeleteAvailable, isDeployAvailable, isRedeployAvailable, isStopAvailable } from '@qovery/shared/util-js'
+import {
+  isCancelBuildAvailable,
+  isDeleteAvailable,
+  isDeployAvailable,
+  isRedeployAvailable,
+  isStopAvailable,
+} from '@qovery/shared/util-js'
 import { useDeleteService } from '../hooks/use-delete-service/use-delete-service'
 import { useDeployService } from '../hooks/use-deploy-service/use-deploy-service'
 import { useDeploymentStatus } from '../hooks/use-deployment-status/use-deployment-status'
@@ -46,6 +53,7 @@ function MenuManageDeployment({
   const { mutate: deployService } = useDeployService({ environmentId: environment.id })
   const { mutate: redeployService } = useRedeployService({ environmentId: environment.id })
   const { mutate: stopService } = useStopService({ environmentId: environment.id })
+  const { mutate: cancelBuild } = useActionCancelEnvironment(environment.project.id, environment.id, true)
 
   const mutationDeploy = () => deployService({ serviceId: service.id, serviceType: service.serviceType })
 
@@ -69,6 +77,17 @@ function MenuManageDeployment({
     })
   }
 
+  const mutationCancelBuild = () => {
+    openModalConfirmation({
+      mode: environment.mode,
+      title: 'Cancel deployment',
+      description:
+        'Stopping a deployment for your service will stop the deployment of the whole environment. It may take a while, as a safe point needs to be reached. Some operations cannot be stopped (i.e: terraform actions) and need to be completed before stopping the deployment. Any action performed before won’t be rolled back. To confirm the cancellation of your deployment, please type the name of the application:',
+      name: service.name,
+      action: () => cancelBuild(),
+    })
+  }
+
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
@@ -82,6 +101,11 @@ function MenuManageDeployment({
         </ActionToolbar.Button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content>
+        {isCancelBuildAvailable(state) && (
+          <DropdownMenu.Item icon={<Icon name={IconAwesomeEnum.XMARK} />} onClick={mutationCancelBuild}>
+            {state === StateEnum.DELETE_QUEUED || state === StateEnum.DELETING ? 'Cancel delete' : 'Cancel deployment'}
+          </DropdownMenu.Item>
+        )}
         {isDeployAvailable(state) && (
           <DropdownMenu.Item icon={<Icon name={IconAwesomeEnum.PLAY} />} onClick={mutationDeploy}>
             Deploy
