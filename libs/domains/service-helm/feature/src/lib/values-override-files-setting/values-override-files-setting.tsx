@@ -115,7 +115,7 @@ export function ValuesOverrideFilesSetting({
         <Callout.Text>
           <Callout.TextHeading>Add the Qovery macros to your override</Callout.TextHeading>
           <Callout.TextDescription className="text-xs">
-            To get all the Qovery functionalities (Logs, Statuses, Helm stop and restart), add the macro
+            To get all the Qovery functionalities (App logs, Statuses, Helm stop and restart), add the macro
             “qovery.labels.service” and "qovery.annotations.service" within the field managing the labels/annotations
             assigned to the deployed Pods/Deployments/Services/Jobs.
             <ExternalLink
