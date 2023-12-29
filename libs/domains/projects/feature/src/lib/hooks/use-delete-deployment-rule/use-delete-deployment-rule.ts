@@ -13,7 +13,7 @@ export function useDeleteDeploymentRule() {
     },
     meta: {
       notifyOnSuccess: {
-        title: 'Your deployment rule has been deleted',
+        title: 'Your rule has been deleted',
       },
       notifyOnError: true,
     },
