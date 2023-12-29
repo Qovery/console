@@ -1,4 +1,4 @@
-import { CloudProviderEnum, KubernetesEnum } from 'qovery-typescript-axios'
+import { type CloudProviderEnum, KubernetesEnum } from 'qovery-typescript-axios'
 import { createContext, useContext, useState } from 'react'
 import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
