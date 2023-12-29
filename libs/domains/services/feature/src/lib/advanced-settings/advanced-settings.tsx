@@ -25,8 +25,7 @@ import { useEditAdvancedSettings } from '../hooks/use-edit-advanced-settings/use
 
 const { Table } = TablePrimitives
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function formatValue(value: any) {
+function formatValue(value: unknown) {
   return (typeof value === 'object' ? JSON.stringify(value) : value?.toString()) || ''
 }
 
