@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useClusters } from '@qovery/domains/clusters/feature'
-import { postDeploymentRule } from '@qovery/project'
+import { useCreateDeploymentRule } from '@qovery/domains/projects/feature'
 import { weekdaysValues } from '@qovery/shared/enums'
 import { ENVIRONMENTS_DEPLOYMENT_RULES_URL, ENVIRONMENTS_URL } from '@qovery/shared/routes'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
@@ -20,6 +20,7 @@ export function PageCreateDeploymentRuleFeature() {
   const dispatch = useDispatch<AppDispatch>()
   const navigate = useNavigate()
 
+  const { mutateAsync: createDeploymentRule } = useCreateDeploymentRule()
   const { data: clusters } = useClusters({ organizationId })
 
   useEffect(() => {
@@ -31,19 +32,19 @@ export function PageCreateDeploymentRuleFeature() {
     setValue('weekdays', weekdaysValues)
   }, [setValue, dispatch, organizationId])
 
-  const onSubmit = handleSubmit((data) => {
+  const onSubmit = handleSubmit(async (data) => {
     if (data) {
       const fields = data as ProjectDeploymentRuleRequest
       fields.start_time = `1970-01-01T${fields.start_time}:00.000Z`
       fields.stop_time = `1970-01-01T${fields.stop_time}:00.000Z`
       fields.weekdays = data['weekdays'][0].value ? data['weekdays'].map((day: Value) => day.value) : data['weekdays']
 
-      dispatch(postDeploymentRule({ projectId, data: fields }))
-        .unwrap()
-        .then(() => {
-          navigate(`${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_DEPLOYMENT_RULES_URL}`)
-        })
-        .catch((e) => console.error(e))
+      try {
+        await createDeploymentRule({ projectId, deploymentRuleRequest: fields })
+        navigate(`${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_DEPLOYMENT_RULES_URL}`)
+      } catch (error) {
+        console.error(error)
+      }
     }
   })
 

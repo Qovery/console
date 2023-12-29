@@ -1,5 +1,5 @@
 import { type ProjectDeploymentRule } from 'qovery-typescript-axios'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import {
   DragDropContext,
   Draggable,
@@ -18,7 +18,7 @@ export interface PageDeploymentRulesProps {
   updateDeploymentRulesOrder: (list: ProjectDeploymentRule[]) => void
   deleteDeploymentRule: (rule: string) => void
   linkNewRule?: string
-  isLoading?: string
+  isLoading?: boolean
 }
 
 export function PageDeploymentRules(props: PageDeploymentRulesProps) {
@@ -30,7 +30,7 @@ export function PageDeploymentRules(props: PageDeploymentRulesProps) {
     deleteDeploymentRule,
     linkNewRule = '',
   } = props
-  const [listRules, setListRules] = useState<ProjectDeploymentRule[]>(deploymentRules || [])
+  const [listRules, setListRules] = useState<ProjectDeploymentRule[]>(deploymentRules)
 
   const onDragEnd = (result: DropResult) => {
     const { destination, source } = result
@@ -48,15 +48,11 @@ export function PageDeploymentRules(props: PageDeploymentRulesProps) {
     updateDeploymentRulesOrder(currentList)
   }
 
-  useEffect(() => {
-    if (isLoading === 'loaded') setListRules(deploymentRules)
-  }, [deploymentRules, isLoading])
-
   return (
     <div className="mt-2 bg-white rounded flex flex-col flex-grow">
-      {isLoading === 'loading' && <div date-testid="screen-loading" className="h-full" />}
-      {listRules.length === 0 && isLoading === 'loaded' && <PlaceholderNoRules linkNewRule={linkNewRule} />}
-      {listRules.length >= 1 && isLoading === 'loaded' && (
+      {isLoading && <div date-testid="screen-loading" className="h-full" />}
+      {listRules.length === 0 && !isLoading && <PlaceholderNoRules linkNewRule={linkNewRule} />}
+      {listRules.length >= 1 && !isLoading && (
         <div className="py-7 px-10 flex-grow overflow-y-auto min-h-0">
           <div className="flex justify-between items-center mb-8 w-[640px]">
             <p className="text-neutral-400 text-xs">
@@ -98,7 +94,7 @@ export function PageDeploymentRules(props: PageDeploymentRulesProps) {
                               stopTime={rule.stop_time}
                               weekDays={rule.weekdays}
                               isLast={index === listRules.length - 1 ? true : false}
-                              isLoading={isLoading !== 'loaded'}
+                              isLoading={isLoading}
                               removeDeploymentRule={deleteDeploymentRule}
                             />
                           </div>
