@@ -1,5 +1,5 @@
 import { CloudProviderEnum, type DeploymentStageResponse } from 'qovery-typescript-axios'
-import { type ApplicationEntity, type DatabaseEntity } from '@qovery/shared/interfaces'
+import { type ApplicationEntity } from '@qovery/shared/interfaces'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import PageSettingsDeploymentPipeline, {
   type PageSettingsDeploymentPipelineProps,
@@ -62,7 +62,7 @@ const stages: DeploymentStageResponse[] = [
   },
 ]
 
-const services: (DatabaseEntity | ApplicationEntity)[] = [
+const services: ApplicationEntity[] = [
   { id: '1', created_at: '', name: 'Service 1' },
   { id: '2', created_at: '', name: 'Database 2' },
   { id: '3', created_at: '', name: 'Application 3' },

@@ -4,8 +4,6 @@ import {
   CloudProviderEnum,
   type Cluster,
   type ClusterRequest,
-  type DatabaseEditRequest,
-  DatabaseModeEnum,
   type JobRequest,
   type Organization,
   type OrganizationCustomRole,
@@ -16,7 +14,6 @@ import {
 import { isJobGitSource } from '@qovery/shared/enums'
 import {
   type ContainerApplicationEntity,
-  type DatabaseEntity,
   type GitApplicationEntity,
   type JobApplicationEntity,
 } from '@qovery/shared/interfaces'
@@ -150,26 +147,6 @@ export function refactoJobPayload(job: Partial<JobApplicationEntity>): JobReques
   jobRequest.schedule = job.schedule
 
   return jobRequest
-}
-
-/*
- * @deprecated Redux refacto payload, you can use refactoDatabase with React Query now
- */
-export function refactoDatabasePayload(database: Partial<DatabaseEntity>) {
-  const databaseRequestPayload: DatabaseEditRequest = {
-    name: database.name,
-    description: database.description || '',
-    version: database.version,
-    accessibility: database.accessibility,
-    cpu: database.cpu,
-    memory: database.memory,
-    storage: database.storage,
-    instance_type: database.instance_type,
-  }
-
-  if (database.mode === DatabaseModeEnum.MANAGED) databaseRequestPayload.version = database.version
-
-  return databaseRequestPayload
 }
 
 export function refactoOrganizationPayload(organization: Partial<Organization>) {
