@@ -1,15 +1,15 @@
 import { useQuery } from '@tanstack/react-query'
 import { queries } from '@qovery/state/util-queries'
 
-export interface UseDetailsDeploymentRuleProps {
+export interface UseDeploymentRuleProps {
   projectId: string
   deploymentRuleId: string
 }
 
-export function useDetailsDeploymentRule({ projectId, deploymentRuleId }: UseDetailsDeploymentRuleProps) {
+export function useDeploymentRule({ projectId, deploymentRuleId }: UseDeploymentRuleProps) {
   return useQuery({
     ...queries.projects.detailsDeploymentRule({ projectId, deploymentRuleId }),
   })
 }
 
-export default useDetailsDeploymentRule
+export default useDeploymentRule

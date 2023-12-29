@@ -3,7 +3,7 @@ import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useClusters } from '@qovery/domains/clusters/feature'
-import { useDetailsDeploymentRule, useEditDeploymentRule } from '@qovery/domains/projects/feature'
+import { useDeploymentRule, useEditDeploymentRule } from '@qovery/domains/projects/feature'
 import { ENVIRONMENTS_DEPLOYMENT_RULES_URL, ENVIRONMENTS_URL } from '@qovery/shared/routes'
 import { dateToHours } from '@qovery/shared/util-dates'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
@@ -15,7 +15,7 @@ export function PageEditDeploymentRuleFeature() {
   const navigate = useNavigate()
   const { control, handleSubmit, setValue } = useForm()
 
-  const { data: deploymentRule } = useDetailsDeploymentRule({ projectId, deploymentRuleId })
+  const { data: deploymentRule } = useDeploymentRule({ projectId, deploymentRuleId })
   const { data: clusters } = useClusters({ organizationId })
   const { mutateAsync: editDeploymentRule } = useEditDeploymentRule()
 
