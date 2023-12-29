@@ -6,6 +6,7 @@ import {
   type ApplicationDeploymentRestrictionRequest,
   type ApplicationEditRequest,
   ApplicationMainCallsApi,
+  type ApplicationRequest,
   ApplicationsApi,
   ContainerActionsApi,
   ContainerDeploymentHistoryApi,
@@ -16,6 +17,7 @@ import {
   DatabaseDeploymentHistoryApi,
   type DatabaseEditRequest,
   DatabaseMainCallsApi,
+  type DatabaseRequest,
   DatabasesApi,
   EnvironmentMainCallsApi,
   HelmActionsApi,
@@ -351,6 +353,26 @@ type DeploymentRestrictionRequest =
       payload: HelmDeploymentRestrictionRequest
     }
 
+type CreateServiceRequest = {
+  environmentId: string
+  payload:
+    | ({
+        serviceType: ApplicationType
+      } & ApplicationRequest)
+    | ({
+        serviceType: ContainerType
+      } & ContainerRequest)
+    | ({
+        serviceType: DatabaseType
+      } & DatabaseRequest)
+    | ({
+        serviceType: JobType
+      } & JobRequest)
+    | ({
+        serviceType: HelmType
+      } & HelmRequest)
+}
+
 type EditServiceRequest = {
   serviceId: string
   payload:
@@ -448,6 +470,23 @@ export const mutations = {
       .with('HELM', () => helmMainCallsApi.deleteHelm.bind(helmMainCallsApi))
       .exhaustive()
     const response = await mutation(serviceId)
+    return response.data
+  },
+  async createService({ environmentId, payload }: CreateServiceRequest) {
+    const mutation = match(payload)
+      .with({ serviceType: 'APPLICATION' }, (payload) =>
+        applicationsApi.createApplication.bind(applicationsApi, environmentId, payload)
+      )
+      .with({ serviceType: 'CONTAINER' }, (payload) =>
+        containersApi.createContainer.bind(containersApi, environmentId, payload)
+      )
+      .with({ serviceType: 'DATABASE' }, (payload) =>
+        databasesApi.createDatabase.bind(databasesApi, environmentId, payload)
+      )
+      .with({ serviceType: 'JOB' }, (payload) => jobsApi.createJob.bind(jobsApi, environmentId, payload))
+      .with({ serviceType: 'HELM' }, (payload) => helmsApi.createHelm.bind(helmsApi, environmentId, payload))
+      .exhaustive()
+    const response = await mutation()
     return response.data
   },
   async editService({ serviceId, payload }: EditServiceRequest) {

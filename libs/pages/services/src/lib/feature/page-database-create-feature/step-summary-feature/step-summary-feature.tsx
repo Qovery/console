@@ -1,9 +1,7 @@
-import { useQueryClient } from '@tanstack/react-query'
 import { DatabaseModeEnum, type DatabaseRequest } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
-import { useDispatch } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
-import { createDatabase, postDatabaseActionsDeploy } from '@qovery/domains/database'
+import { useCreateService, useDeployService } from '@qovery/domains/services/feature'
 import {
   SERVICES_DATABASE_CREATION_GENERAL_URL,
   SERVICES_DATABASE_CREATION_RESOURCES_URL,
@@ -12,7 +10,6 @@ import {
 } from '@qovery/shared/routes'
 import { FunnelFlowBody } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { type AppDispatch } from '@qovery/state/store'
 import StepSummary from '../../../ui/page-database-create/step-summary/step-summary'
 import { useDatabaseCreateContext } from '../page-database-create-feature'
 
@@ -24,7 +21,9 @@ export function StepSummaryFeature() {
   const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_DATABASE_CREATION_URL}`
   const [loadingCreate, setLoadingCreate] = useState(false)
   const [loadingCreateAndDeploy, setLoadingCreateAndDeploy] = useState(false)
-  const queryClient = useQueryClient()
+
+  const { mutateAsync: createDatabase } = useCreateService()
+  const { mutate: deployDatabase } = useDeployService({ environmentId })
 
   const gotoGlobalInformations = () => {
     navigate(pathCreate + SERVICES_DATABASE_CREATION_GENERAL_URL)
@@ -38,9 +37,7 @@ export function StepSummaryFeature() {
     !generalData?.name && gotoGlobalInformations()
   }, [generalData, navigate, environmentId, organizationId, projectId, gotoGlobalInformations])
 
-  const dispatch = useDispatch<AppDispatch>()
-
-  const onSubmit = (withDeploy: boolean) => {
+  const onSubmit = async (withDeploy: boolean) => {
     if (generalData && resourcesData) {
       if (withDeploy) setLoadingCreateAndDeploy(true)
       else setLoadingCreate(true)
@@ -66,32 +63,29 @@ export function StepSummaryFeature() {
         databaseRequest.instance_type = resourcesData.instance_type
       }
 
-      dispatch(
-        createDatabase({
+      try {
+        const database = await createDatabase({
           environmentId: environmentId,
-          databaseRequest,
-          queryClient,
+          payload: {
+            serviceType: 'DATABASE',
+            ...databaseRequest,
+          },
         })
-      )
-        .unwrap()
-        .then((database) => {
-          if (withDeploy) {
-            dispatch(
-              postDatabaseActionsDeploy({
-                environmentId,
-                databaseId: database.id,
-                queryClient,
-              })
-            )
-          }
-          queryClient.invalidateQueries()
-          navigate(SERVICES_URL(organizationId, projectId, environmentId))
-        })
-        .catch((e) => console.error(e))
-        .finally(() => {
-          if (withDeploy) setLoadingCreateAndDeploy(false)
-          else setLoadingCreate(false)
-        })
+
+        if (withDeploy) {
+          deployDatabase({
+            serviceId: database.id,
+            serviceType: 'DATABASE',
+          })
+          setLoadingCreateAndDeploy(false)
+        }
+        setLoadingCreate(false)
+        navigate(SERVICES_URL(organizationId, projectId, environmentId))
+      } catch (error) {
+        console.error(error)
+        setLoadingCreateAndDeploy(false)
+        setLoadingCreate(false)
+      }
     }
   }
 
