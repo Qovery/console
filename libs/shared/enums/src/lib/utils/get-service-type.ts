@@ -7,6 +7,8 @@ import {
   type HelmResponseAllOfSource,
   type HelmResponseAllOfSourceOneOf,
   type HelmResponseAllOfSourceOneOf1,
+  type HelmResponseAllOfValuesOverride,
+  type HelmResponseAllOfValuesOverrideFileGit,
 } from 'qovery-typescript-axios'
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import {
@@ -77,6 +79,12 @@ export function isHelmGitSource(source?: HelmResponseAllOfSource): source is Hel
 
 export function isHelmRepositorySource(source?: HelmResponseAllOfSource): source is HelmResponseAllOfSourceOneOf1 {
   return !!source && 'repository' in source
+}
+
+export function isHelmGitValuesOverride(
+  valuesOverride?: HelmResponseAllOfValuesOverride
+): valuesOverride is HelmResponseAllOfValuesOverride & { file: { git: HelmResponseAllOfValuesOverrideFileGit } } {
+  return !!valuesOverride?.file?.git?.git_repository
 }
 
 export function isJobGitSource(source?: BaseJobResponseAllOfSource): source is BaseJobResponseAllOfSourceOneOf1 {
