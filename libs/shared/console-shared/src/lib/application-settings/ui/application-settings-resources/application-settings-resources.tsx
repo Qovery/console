@@ -2,7 +2,7 @@ import { EnvironmentModeEnum } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { useFetchEnvironment } from '@qovery/domains/environment'
+import { useEnvironment } from '@qovery/domains/environments/feature'
 import { useRunningStatus } from '@qovery/domains/services/feature'
 import { isJob } from '@qovery/shared/enums'
 import { type ApplicationEntity } from '@qovery/shared/interfaces'
@@ -31,9 +31,9 @@ export interface ApplicationSettingsResourcesProps {
 export function ApplicationSettingsResources(props: ApplicationSettingsResourcesProps) {
   const { displayWarningCpu, application, minInstances = 1, maxInstances = 50, clusterId = '', environmentMode } = props
   const { control, watch } = useFormContext()
-  const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
+  const { organizationId = '', environmentId = '', applicationId = '' } = useParams()
   const { data: runningStatuses } = useRunningStatus({ environmentId, serviceId: applicationId })
-  const { data: environment } = useFetchEnvironment(projectId, environmentId)
+  const { data: environment } = useEnvironment({ environmentId })
 
   const cloudProvider = environment?.cloud_provider.provider
 

@@ -1,6 +1,7 @@
 import { CloudProviderEnum, KubernetesEnum } from 'qovery-typescript-axios'
 import { createContext, useContext, useState } from 'react'
 import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
+import { match } from 'ts-pattern'
 import {
   type ClusterFeaturesData,
   type ClusterGeneralData,
@@ -38,34 +39,34 @@ export const useClusterContainerCreateContext = () => {
 }
 
 export const steps = (cloudProvider?: CloudProviderEnum, clusterType?: string) => {
-  if (cloudProvider === CloudProviderEnum.SCW) {
-    return [
+  return match(cloudProvider)
+    .with('SCW', () => [
       { title: 'Create new cluster', key: 'general' },
       { title: 'Set resources', key: 'resources' },
       { title: 'Ready to install', key: 'summary' },
-    ]
-  } else if (cloudProvider === CloudProviderEnum.GCP) {
-    return [
+    ])
+    .with('GCP', () => [
       { title: 'Create new cluster', key: 'general' },
       { title: 'Ready to install', key: 'summary' },
-    ]
-  } else {
-    if (clusterType === KubernetesEnum.K3_S) {
-      return [
-        { title: 'Create new cluster', key: 'general' },
-        { title: 'Set resources', key: 'resources' },
-        { title: 'Set SSH Key', key: 'remote' },
-        { title: 'Ready to install', key: 'summary' },
-      ]
-    } else {
-      return [
-        { title: 'Create new cluster', key: 'general' },
-        { title: 'Set resources', key: 'resources' },
-        { title: 'Set features', key: 'features' },
-        { title: 'Ready to install', key: 'summary' },
-      ]
-    }
-  }
+    ])
+    .with('AWS', () => {
+      if (clusterType === KubernetesEnum.K3_S) {
+        return [
+          { title: 'Create new cluster', key: 'general' },
+          { title: 'Set resources', key: 'resources' },
+          { title: 'Set SSH Key', key: 'remote' },
+          { title: 'Ready to install', key: 'summary' },
+        ]
+      } else {
+        return [
+          { title: 'Create new cluster', key: 'general' },
+          { title: 'Set resources', key: 'resources' },
+          { title: 'Set features', key: 'features' },
+          { title: 'Ready to install', key: 'summary' },
+        ]
+      }
+    })
+    .otherwise(() => [])
 }
 
 export const defaultResourcesData: ClusterResourcesData = {
@@ -114,7 +115,7 @@ export function PageClusterCreateFeature() {
         }}
         totalSteps={steps(generalData?.cloud_provider, resourcesData?.cluster_type).length}
         currentStep={currentStep}
-        currentTitle={steps(generalData?.cloud_provider, resourcesData?.cluster_type)[currentStep - 1].title}
+        currentTitle={steps(generalData?.cloud_provider, resourcesData?.cluster_type)[currentStep - 1]?.title}
         portal
       >
         <Routes>

@@ -34,8 +34,6 @@ export function CrudModal({
 }: CrudModalProps) {
   const { control, watch, setValue } = useFormContext()
 
-  console.log(cloudProvider)
-
   const watchProtocol = watch('protocol')
   const watchPublicly = watch('publicly_accessible') || false
   const watchInternalPort = watch('internal_port') || false
@@ -80,8 +78,6 @@ export function CrudModal({
         .with(CloudProviderEnum.AWS, () => true)
         .otherwise(() => false)
     )
-
-  console.log(protocolOptions)
 
   return (
     <ModalCrud
