@@ -8,12 +8,6 @@ export interface UseListDeploymentRulesProps {
 export function useListDeploymentRules({ projectId }: UseListDeploymentRulesProps) {
   return useQuery({
     ...queries.projects.listDeploymentRules({ projectId }),
-    select(data) {
-      if (!data) {
-        return data
-      }
-      return data.sort((a, b) => a.name.localeCompare(b.name))
-    },
   })
 }
 
