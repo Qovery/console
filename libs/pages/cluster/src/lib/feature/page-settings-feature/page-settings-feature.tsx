@@ -90,7 +90,6 @@ export function PageSettingsFeature() {
       generalLink,
       credentialsLink,
       resourcesLink,
-      featuresLink,
       remoteAccessLink,
       networkLink,
       advancedSettingsLink,
