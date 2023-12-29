@@ -8,7 +8,8 @@ import {
   Droppable,
   type DroppableProvided,
 } from 'react-beautiful-dnd'
-import { type BaseLink, ButtonLegacy, ButtonLegacySize, HelpSection } from '@qovery/shared/ui'
+import { useNavigate } from 'react-router-dom'
+import { type BaseLink, Button, HelpSection, Icon, IconAwesomeEnum } from '@qovery/shared/ui'
 import DeploymentRuleItem from '../deployment-rule-item/deployment-rule-item'
 import PlaceholderNoRules from '../placeholder-no-rules/placeholder-no-rules'
 
@@ -18,18 +19,18 @@ export interface PageDeploymentRulesProps {
   updateDeploymentRulesOrder: (list: ProjectDeploymentRule[]) => void
   deleteDeploymentRule: (rule: string) => void
   linkNewRule?: string
-  isLoading?: string
+  isLoading?: boolean
 }
 
-export function PageDeploymentRules(props: PageDeploymentRulesProps) {
-  const {
-    listHelpfulLinks,
-    deploymentRules,
-    updateDeploymentRulesOrder,
-    isLoading = false,
-    deleteDeploymentRule,
-    linkNewRule = '',
-  } = props
+export function PageDeploymentRules({
+  listHelpfulLinks,
+  deploymentRules,
+  updateDeploymentRulesOrder,
+  isLoading = false,
+  deleteDeploymentRule,
+  linkNewRule = '',
+}: PageDeploymentRulesProps) {
+  const navigate = useNavigate()
   const [listRules, setListRules] = useState<ProjectDeploymentRule[]>(deploymentRules || [])
 
   const onDragEnd = (result: DropResult) => {
@@ -43,34 +44,28 @@ export function PageDeploymentRules(props: PageDeploymentRulesProps) {
     const ruleToMove = currentList[source.index]
     currentList.splice(source.index, 1)
     currentList.splice(destination.index, 0, ruleToMove)
-    setListRules(currentList)
 
+    setListRules(currentList)
     updateDeploymentRulesOrder(currentList)
   }
 
   useEffect(() => {
-    if (isLoading === 'loaded') setListRules(deploymentRules)
+    if (!isLoading) setListRules(deploymentRules)
   }, [deploymentRules, isLoading])
 
   return (
     <div className="mt-2 bg-white rounded flex flex-col flex-grow">
-      {isLoading === 'loading' && <div date-testid="screen-loading" className="h-full" />}
-      {listRules.length === 0 && isLoading === 'loaded' && <PlaceholderNoRules linkNewRule={linkNewRule} />}
-      {listRules.length >= 1 && isLoading === 'loaded' && (
+      {isLoading && <div className="h-full" />}
+      {listRules.length === 0 && !isLoading && <PlaceholderNoRules linkNewRule={linkNewRule} />}
+      {listRules.length >= 1 && !isLoading && (
         <div className="py-7 px-10 flex-grow overflow-y-auto min-h-0">
           <div className="flex justify-between items-center mb-8 w-[640px]">
             <p className="text-neutral-400 text-xs">
               Configure your default deployment rules. Drag & drop rules to prioritize them.
             </p>
-
-            <ButtonLegacy
-              size={ButtonLegacySize.REGULAR}
-              className="leading-none"
-              link={linkNewRule}
-              iconRight="icon-solid-circle-plus"
-            >
-              Add rule
-            </ButtonLegacy>
+            <Button size="lg" onClick={() => navigate(linkNewRule)}>
+              Add rule <Icon className="ml-2" name={IconAwesomeEnum.CIRCLE_PLUS} />
+            </Button>
           </div>
 
           <div className={`w-[640px] bg-neutral-100 rounded ${listRules?.length === 0 ? 'hidden' : ''}`}>
@@ -98,7 +93,7 @@ export function PageDeploymentRules(props: PageDeploymentRulesProps) {
                               stopTime={rule.stop_time}
                               weekDays={rule.weekdays}
                               isLast={index === listRules.length - 1 ? true : false}
-                              isLoading={isLoading !== 'loaded'}
+                              isLoading={isLoading}
                               removeDeploymentRule={deleteDeploymentRule}
                             />
                           </div>

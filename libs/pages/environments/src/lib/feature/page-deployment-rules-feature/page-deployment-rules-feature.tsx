@@ -1,23 +1,22 @@
 import { type ProjectDeploymentRule } from 'qovery-typescript-axios'
-import { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import {
-  deleteDeploymentRule,
-  deploymentRulesLoadingStatus,
-  fetchDeploymentRules,
-  selectDeploymentRulesEntitiesByProjectId,
-  updateDeploymentRuleOrder,
-} from '@qovery/project'
+  useDeleteDeploymentRule,
+  useEditDeploymentRulesPriorityOrder,
+  useListDeploymentRules,
+} from '@qovery/domains/projects/feature'
 import { ENVIRONMENTS_DEPLOYMENT_RULES_CREATE_URL, ENVIRONMENTS_URL } from '@qovery/shared/routes'
 import { type BaseLink } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { type AppDispatch, type RootState } from '@qovery/state/store'
 import PageDeploymentRules from '../../ui/page-deployment-rules/page-deployment-rules'
 
 export function PageDeploymentRulesFeature() {
   const { projectId = '', organizationId = '' } = useParams()
   useDocumentTitle('Deployment Rules - Qovery')
+
+  const { data: deploymentRules = [], isLoading: isLoadingDeploymentRules } = useListDeploymentRules({ projectId })
+  const { mutate: deleteDeploymentRule } = useDeleteDeploymentRule()
+  const { mutate: deploymentRuleOrder } = useEditDeploymentRulesPriorityOrder()
 
   const listHelpfulLinks: BaseLink[] = [
     {
@@ -26,34 +25,27 @@ export function PageDeploymentRulesFeature() {
     },
   ]
 
-  const dispatch = useDispatch<AppDispatch>()
-
-  const deploymentRulesList = useSelector<RootState, ProjectDeploymentRule[]>((state) =>
-    selectDeploymentRulesEntitiesByProjectId(state, projectId)
-  )
-
-  const updateDeploymentRulesOrder = async (deploymentRules: ProjectDeploymentRule[]) => {
-    await dispatch(updateDeploymentRuleOrder({ projectId, deploymentRules }))
+  const updateDeploymentRulesOrder = (deploymentRules: ProjectDeploymentRule[]) => {
+    deploymentRuleOrder({
+      projectId,
+      deploymentRulesPriorityOrderRequest: {
+        project_deployment_rule_ids_in_order: deploymentRules.map((deploymentRule) => deploymentRule.id),
+      },
+    })
   }
 
-  const removeDeploymentRule = async (deploymentRuleId: string) => {
-    await dispatch(deleteDeploymentRule({ projectId, deploymentRuleId }))
+  const removeDeploymentRule = (deploymentRuleId: string) => {
+    deleteDeploymentRule({ projectId, deploymentRuleId })
   }
-
-  const loadingStatus = useSelector(deploymentRulesLoadingStatus)
 
   const linkNewRule = ENVIRONMENTS_URL(organizationId, projectId) + ENVIRONMENTS_DEPLOYMENT_RULES_CREATE_URL
-
-  useEffect(() => {
-    dispatch(fetchDeploymentRules({ projectId }))
-  }, [projectId, dispatch])
 
   return (
     <PageDeploymentRules
       listHelpfulLinks={listHelpfulLinks}
-      deploymentRules={deploymentRulesList}
+      deploymentRules={deploymentRules}
       updateDeploymentRulesOrder={updateDeploymentRulesOrder}
-      isLoading={loadingStatus}
+      isLoading={isLoadingDeploymentRules}
       deleteDeploymentRule={removeDeploymentRule}
       linkNewRule={linkNewRule}
     />
