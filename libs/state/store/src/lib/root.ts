@@ -17,16 +17,12 @@ import {
 } from '@qovery/domains/organization'
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { initialUserSignUpState, initialUserState, userReducer, userSignUp } from '@qovery/domains/users/data-access'
+
 // eslint-disable-next-line @nx/enforce-module-boundaries
-import { deploymentRulesReducer, initialDeploymentRulesState } from '@qovery/project'
 
 export const organizationReducer = combineReducers({
   authProvider: authProviderReducer,
   repository: repositoryReducer,
-})
-
-export const projectReducer = combineReducers({
-  deploymentRules: deploymentRulesReducer,
 })
 
 export const applicationReducer = combineReducers({
@@ -40,7 +36,6 @@ export const rootReducer = combineReducers({
   application: applicationReducer,
   user: userReducer,
   userSignUp: userSignUp,
-  project: projectReducer,
 })
 
 export function setupStore(preloadedState?: PreloadedState<RootState>) {
@@ -63,9 +58,6 @@ export const initialRootState = (): RootState => ({
   organization: {
     authProvider: initialAuthProviderState,
     repository: initialRepositoryState,
-  },
-  project: {
-    deploymentRules: initialDeploymentRulesState,
   },
   databases: initialDatabasesState,
   application: {
