@@ -178,9 +178,22 @@ export function ValuesOverrideArgumentsSetting({ methods, children, onSubmit }: 
         <Popover.Content side="left" className="text-neutral-350 text-sm relative" style={{ width: 440 }}>
           <h6 className="text-neutral-400 font-medium mb-2">How it works</h6>
           <p>
-            Specify each override by declaring the variable name, value and its type. These will be passed via the
-            --set, --set-string and --set-json helm argument depending on the selected type (Generic, String or Json).
-            Values set here have the higher override priority.
+            <ul className="list-disc pl-4">
+              <li>
+                Specify each override by declaring the variable name, value and its type. These will be passed via the
+                --set, --set-string and --set-json helm argument depending on the selected type (Generic, String or
+                Json).
+              </li>
+              <li>
+                Values set here have an higher override priority compared to the ones defined in the values as file
+                section , this allows you to manage specific configurations (example: test a change in a value without
+                changing your file).
+              </li>
+              <li>
+                You can assign any environment variable by adding the macro "qovery.env.ENV_VAR_NAME" within the “Value”
+                field.
+              </li>
+            </ul>
           </p>
           <Popover.Close className="absolute top-4 right-4">
             <button type="button">
