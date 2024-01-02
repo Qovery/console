@@ -1,6 +1,6 @@
 import { type Application } from '@qovery/domains/services/data-access'
 import { applicationFactoryMock } from '@qovery/shared/factories'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import * as hooks from '../hooks/use-edit-advanced-settings/use-edit-advanced-settings'
 import { AdvancedSettings } from './advanced-settings'
 
@@ -57,7 +57,7 @@ describe('AdvancedSettings', () => {
     await userEvent.clear(input)
     await userEvent.type(input, 'hello')
 
-    expect(screen.getByTestId('sticky-action-form-toaster')).toHaveClass('visible')
+    await waitFor(() => expect(screen.getByTestId('sticky-action-form-toaster')).toHaveClass('visible'))
   })
 
   it('should disabled the form submit', async () => {
