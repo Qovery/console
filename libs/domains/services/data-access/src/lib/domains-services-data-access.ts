@@ -1,6 +1,8 @@
 import { createQueryKeys, type inferQueryKeys } from '@lukemorales/query-key-factory'
 import {
   ApplicationActionsApi,
+  type ApplicationAdvancedSettings,
+  ApplicationConfigurationApi,
   ApplicationDeploymentHistoryApi,
   ApplicationDeploymentRestrictionApi,
   type ApplicationDeploymentRestrictionRequest,
@@ -8,6 +10,8 @@ import {
   ApplicationMainCallsApi,
   ApplicationsApi,
   ContainerActionsApi,
+  type ContainerAdvancedSettings,
+  ContainerConfigurationApi,
   ContainerDeploymentHistoryApi,
   ContainerMainCallsApi,
   type ContainerRequest,
@@ -19,6 +23,8 @@ import {
   DatabasesApi,
   EnvironmentMainCallsApi,
   HelmActionsApi,
+  type HelmAdvancedSettings,
+  HelmConfigurationApi,
   HelmDeploymentHistoryApi,
   HelmDeploymentRestrictionApi,
   type HelmDeploymentRestrictionRequest,
@@ -26,6 +32,8 @@ import {
   type HelmRequest,
   HelmsApi,
   JobActionsApi,
+  type JobAdvancedSettings,
+  JobConfigurationApi,
   JobDeploymentHistoryApi,
   JobDeploymentRestrictionApi,
   type JobDeploymentRestrictionRequest,
@@ -73,6 +81,11 @@ const databaseActionsApi = new DatabaseActionsApi()
 const helmActionsApi = new HelmActionsApi()
 const jobActionsApi = new JobActionsApi()
 
+const applicationConfigurationApi = new ApplicationConfigurationApi()
+const containerConfigurationApi = new ContainerConfigurationApi()
+const helmConfigurationApi = new HelmConfigurationApi()
+const jobConfigurationApi = new JobConfigurationApi()
+
 // Prefer this type in param instead of ServiceTypeEnum
 // to suppport string AND enum as param.
 // ServiceTypeEnum still exist mainly for compatibility reason (to use redux and react-query fetched services in data-access).
@@ -92,6 +105,12 @@ export type Job = _Job & { serviceType: JobType }
 export type Helm = _Helm & { serviceType: HelmType }
 
 export type AnyService = Application | Database | Container | Job | Helm
+
+export type AdvancedSettings =
+  | ApplicationAdvancedSettings
+  | ContainerAdvancedSettings
+  | JobAdvancedSettings
+  | HelmAdvancedSettings
 
 export function isApplication(service: AnyService): service is Application {
   return service.serviceType === 'APPLICATION'
@@ -244,18 +263,22 @@ export const services = createQueryKeys('services', {
   }) => ({
     queryKey: [serviceId],
     async queryFn() {
-      return match(serviceType)
-        .with('APPLICATION', async () => {
-          return (await applicationMainCallsApi.listApplicationCommit(serviceId)).data.results
-        })
-        .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', async () => {
-          return (await jobMainCallsApi.listJobCommit(serviceId)).data.results
-        })
-        .with('HELM', async () => {
-          // TODO: waiting for helmMainCallsApi.listHelmCommit
-          return []
-        })
+      const { query } = match(serviceType)
+        .with('APPLICATION', (serviceType) => ({
+          query: applicationMainCallsApi.listApplicationCommit.bind(applicationMainCallsApi),
+          serviceType,
+        }))
+        .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', (serviceType) => ({
+          query: jobMainCallsApi.listJobCommit.bind(jobMainCallsApi),
+          serviceType,
+        }))
+        .with('HELM', (serviceType) => ({
+          query: helmMainCallsApi.listHelmCommit.bind(helmMainCallsApi),
+          serviceType,
+        }))
         .exhaustive()
+      const response = await query(serviceId)
+      return response.data.results
     },
   }),
   deploymentHistory: ({ serviceId, serviceType }: { serviceId: string; serviceType: ServiceType }) => ({
@@ -294,17 +317,19 @@ export const services = createQueryKeys('services', {
   }) => ({
     queryKey: [serviceId],
     async queryFn() {
-      return match(serviceType)
-        .with('APPLICATION', async () => {
-          return (await applicationMainCallsApi.listApplicationLinks(serviceId)).data.results
-        })
-        .with('CONTAINER', async () => {
-          return (await containerMainCallsApi.listContainerLinks(serviceId)).data.results
-        })
-        .with('HELM', async () => {
-          return (await helmMainCallsApi.listHelmLinks(serviceId)).data.results
-        })
+      const { query } = match(serviceType)
+        .with('APPLICATION', (serviceType) => ({
+          query: applicationMainCallsApi.listApplicationLinks.bind(applicationMainCallsApi),
+          serviceType,
+        }))
+        .with('CONTAINER', (serviceType) => ({
+          query: containerMainCallsApi.listContainerLinks.bind(containerMainCallsApi),
+          serviceType,
+        }))
+        .with('HELM', (serviceType) => ({ query: helmMainCallsApi.listHelmLinks.bind(helmMainCallsApi), serviceType }))
         .exhaustive()
+      const response = await query(serviceId)
+      return response.data.results
     },
   }),
   masterCredentials: ({
@@ -321,6 +346,59 @@ export const services = createQueryKeys('services', {
           return (await databaseMainCallsApi.getDatabaseMasterCredentials(serviceId)).data
         })
         .exhaustive()
+    },
+  }),
+  defaultAdvancedSettings: ({ serviceType }: { serviceType: Exclude<ServiceType, 'DATABASE'> }) => ({
+    queryKey: [serviceType],
+    async queryFn() {
+      const { query } = match(serviceType)
+        .with('APPLICATION', (serviceType) => ({
+          query: applicationsApi.getDefaultApplicationAdvancedSettings.bind(applicationsApi),
+          serviceType,
+        }))
+        .with('CONTAINER', (serviceType) => ({
+          query: containersApi.getDefaultContainerAdvancedSettings.bind(containersApi),
+          serviceType,
+        }))
+        .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', (serviceType) => ({
+          query: jobsApi.getDefaultJobAdvancedSettings.bind(jobsApi),
+          serviceType,
+        }))
+        .with('HELM', (serviceType) => ({ query: helmsApi.getDefaultHelmAdvancedSettings.bind(helmsApi), serviceType }))
+        .exhaustive()
+      const response = await query()
+      return response.data
+    },
+  }),
+  advancedSettings: ({
+    serviceId,
+    serviceType,
+  }: {
+    serviceId: string
+    serviceType: Exclude<ServiceType, 'DATABASE'>
+  }) => ({
+    queryKey: [serviceId],
+    async queryFn() {
+      const { query } = match(serviceType)
+        .with('APPLICATION', (serviceType) => ({
+          query: applicationConfigurationApi.getAdvancedSettings.bind(applicationConfigurationApi),
+          serviceType,
+        }))
+        .with('CONTAINER', (serviceType) => ({
+          query: containerConfigurationApi.getContainerAdvancedSettings.bind(containerConfigurationApi),
+          serviceType,
+        }))
+        .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', (serviceType) => ({
+          query: jobConfigurationApi.getJobAdvancedSettings.bind(jobConfigurationApi),
+          serviceType,
+        }))
+        .with('HELM', (serviceType) => ({
+          query: helmConfigurationApi.getHelmAdvancedSettings.bind(helmConfigurationApi),
+          serviceType,
+        }))
+        .exhaustive()
+      const response = await query(serviceId)
+      return response.data
     },
   }),
 })
@@ -371,14 +449,37 @@ type EditServiceRequest = {
       } & HelmRequest)
 }
 
+type EditAdvancedSettingsRequest = {
+  serviceId: string
+  payload:
+    | ({
+        serviceType: ApplicationType
+      } & ApplicationAdvancedSettings)
+    | ({
+        serviceType: ContainerType
+      } & ContainerAdvancedSettings)
+    | ({
+        serviceType: JobType
+      } & JobAdvancedSettings)
+    | ({
+        serviceType: HelmType
+      } & HelmAdvancedSettings)
+}
+
 export const mutations = {
   async cloneService({ serviceId, serviceType, payload }: CloneServiceRequest) {
-    const mutation = match(serviceType)
-      .with('APPLICATION', () => applicationsApi.cloneApplication.bind(applicationsApi))
-      .with('CONTAINER', () => containersApi.cloneContainer.bind(containersApi))
-      .with('DATABASE', () => databasesApi.cloneDatabase.bind(databasesApi))
-      .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', () => jobsApi.cloneJob.bind(jobsApi))
-      .with('HELM', () => helmsApi.cloneHelm.bind(helmsApi))
+    const { mutation } = match(serviceType)
+      .with('APPLICATION', (serviceType) => ({
+        mutation: applicationsApi.cloneApplication.bind(applicationsApi),
+        serviceType,
+      }))
+      .with('CONTAINER', (serviceType) => ({ mutation: containersApi.cloneContainer.bind(containersApi), serviceType }))
+      .with('DATABASE', (serviceType) => ({ mutation: databasesApi.cloneDatabase.bind(databasesApi), serviceType }))
+      .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', (serviceType) => ({
+        mutation: jobsApi.cloneJob.bind(jobsApi),
+        serviceType,
+      }))
+      .with('HELM', (serviceType) => ({ mutation: helmsApi.cloneHelm.bind(helmsApi), serviceType }))
       .exhaustive()
     const response = await mutation(serviceId, payload)
     return response.data
@@ -389,14 +490,21 @@ export const mutations = {
     deploymentRestrictionId,
     payload,
   }: DeploymentRestrictionRequest) {
-    const mutation = match(serviceType)
-      .with('APPLICATION', () =>
-        applicationDeploymentRestrictionApi.editApplicationDeploymentRestriction.bind(
+    const { mutation } = match(serviceType)
+      .with('APPLICATION', (serviceType) => ({
+        mutation: applicationDeploymentRestrictionApi.editApplicationDeploymentRestriction.bind(
           applicationDeploymentRestrictionApi
-        )
-      )
-      .with('JOB', () => jobDeploymentRestrictionApi.editJobDeploymentRestriction.bind(jobDeploymentRestrictionApi))
-      .with('HELM', () => helmDeploymentRestrictionApi.editHelmDeploymentRestriction.bind(helmDeploymentRestrictionApi))
+        ),
+        serviceType,
+      }))
+      .with('JOB', (serviceType) => ({
+        mutation: jobDeploymentRestrictionApi.editJobDeploymentRestriction.bind(jobDeploymentRestrictionApi),
+        serviceType,
+      }))
+      .with('HELM', (serviceType) => ({
+        mutation: helmDeploymentRestrictionApi.editHelmDeploymentRestriction.bind(helmDeploymentRestrictionApi),
+        serviceType,
+      }))
       .exhaustive()
     const response = await mutation(serviceId, deploymentRestrictionId, payload)
     return response.data
@@ -406,16 +514,21 @@ export const mutations = {
     serviceType,
     payload,
   }: Omit<DeploymentRestrictionRequest, 'deploymentRestrictionId'>) {
-    const mutation = match(serviceType)
-      .with('APPLICATION', () =>
-        applicationDeploymentRestrictionApi.createApplicationDeploymentRestriction.bind(
+    const { mutation } = match(serviceType)
+      .with('APPLICATION', (serviceType) => ({
+        mutation: applicationDeploymentRestrictionApi.createApplicationDeploymentRestriction.bind(
           applicationDeploymentRestrictionApi
-        )
-      )
-      .with('JOB', () => jobDeploymentRestrictionApi.createJobDeploymentRestriction.bind(jobDeploymentRestrictionApi))
-      .with('HELM', () =>
-        helmDeploymentRestrictionApi.createHelmDeploymentRestriction.bind(helmDeploymentRestrictionApi)
-      )
+        ),
+        serviceType,
+      }))
+      .with('JOB', (serviceType) => ({
+        mutation: jobDeploymentRestrictionApi.createJobDeploymentRestriction.bind(jobDeploymentRestrictionApi),
+        serviceType,
+      }))
+      .with('HELM', (serviceType) => ({
+        mutation: helmDeploymentRestrictionApi.createHelmDeploymentRestriction.bind(helmDeploymentRestrictionApi),
+        serviceType,
+      }))
       .exhaustive()
     const response = await mutation(serviceId, payload)
     return response.data
@@ -425,79 +538,171 @@ export const mutations = {
     serviceType,
     deploymentRestrictionId,
   }: Omit<DeploymentRestrictionRequest, 'payload'>) {
-    const mutation = match(serviceType)
-      .with('APPLICATION', () =>
-        applicationDeploymentRestrictionApi.deleteApplicationDeploymentRestriction.bind(
+    const { mutation } = match(serviceType)
+      .with('APPLICATION', (serviceType) => ({
+        mutation: applicationDeploymentRestrictionApi.deleteApplicationDeploymentRestriction.bind(
           applicationDeploymentRestrictionApi
-        )
-      )
-      .with('JOB', () => jobDeploymentRestrictionApi.deleteJobDeploymentRestriction.bind(jobDeploymentRestrictionApi))
-      .with('HELM', () =>
-        helmDeploymentRestrictionApi.deleteHelmDeploymentRestriction.bind(helmDeploymentRestrictionApi)
-      )
+        ),
+        serviceType,
+      }))
+      .with('JOB', (serviceType) => ({
+        mutation: jobDeploymentRestrictionApi.deleteJobDeploymentRestriction.bind(jobDeploymentRestrictionApi),
+        serviceType,
+      }))
+      .with('HELM', (serviceType) => ({
+        mutation: helmDeploymentRestrictionApi.deleteHelmDeploymentRestriction.bind(helmDeploymentRestrictionApi),
+        serviceType,
+      }))
       .exhaustive()
     const response = await mutation(serviceId, deploymentRestrictionId)
     return response.data
   },
   async deleteService({ serviceId, serviceType }: { serviceId: string; serviceType: ServiceType }) {
-    const mutation = match(serviceType)
-      .with('APPLICATION', () => applicationMainCallsApi.deleteApplication.bind(applicationMainCallsApi))
-      .with('CONTAINER', () => containerMainCallsApi.deleteContainer.bind(containerMainCallsApi))
-      .with('DATABASE', () => databaseMainCallsApi.deleteDatabase.bind(databaseMainCallsApi))
-      .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', () => jobMainCallsApi.deleteJob.bind(jobMainCallsApi))
-      .with('HELM', () => helmMainCallsApi.deleteHelm.bind(helmMainCallsApi))
+    const { mutation } = match(serviceType)
+      .with('APPLICATION', (serviceType) => ({
+        mutation: applicationMainCallsApi.deleteApplication.bind(applicationMainCallsApi),
+        serviceType,
+      }))
+      .with('CONTAINER', (serviceType) => ({
+        mutation: containerMainCallsApi.deleteContainer.bind(containerMainCallsApi),
+        serviceType,
+      }))
+      .with('DATABASE', (serviceType) => ({
+        mutation: databaseMainCallsApi.deleteDatabase.bind(databaseMainCallsApi),
+        serviceType,
+      }))
+      .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', (serviceType) => ({
+        mutation: jobMainCallsApi.deleteJob.bind(jobMainCallsApi),
+        serviceType,
+      }))
+      .with('HELM', (serviceType) => ({ mutation: helmMainCallsApi.deleteHelm.bind(helmMainCallsApi), serviceType }))
       .exhaustive()
     const response = await mutation(serviceId)
     return response.data
   },
   async editService({ serviceId, payload }: EditServiceRequest) {
-    const mutation = match(payload)
-      .with({ serviceType: 'APPLICATION' }, (payload) =>
-        applicationMainCallsApi.editApplication.bind(applicationMainCallsApi, serviceId, payload)
-      )
-      .with({ serviceType: 'CONTAINER' }, (payload) =>
-        containerMainCallsApi.editContainer.bind(containerMainCallsApi, serviceId, payload)
-      )
-      .with({ serviceType: 'DATABASE' }, (payload) =>
-        databaseMainCallsApi.editDatabase.bind(databaseMainCallsApi, serviceId, payload)
-      )
-      .with({ serviceType: 'JOB' }, (payload) => jobMainCallsApi.editJob.bind(jobMainCallsApi, serviceId, payload))
-      .with({ serviceType: 'HELM' }, (payload) => helmMainCallsApi.editHelm.bind(helmMainCallsApi, serviceId, payload))
+    const { mutation } = match(payload)
+      .with({ serviceType: 'APPLICATION' }, ({ serviceType, ...payload }) => ({
+        mutation: applicationMainCallsApi.editApplication.bind(applicationMainCallsApi, serviceId, payload),
+        serviceType,
+      }))
+      .with({ serviceType: 'CONTAINER' }, ({ serviceType, ...payload }) => ({
+        mutation: containerMainCallsApi.editContainer.bind(containerMainCallsApi, serviceId, payload),
+        serviceType,
+      }))
+      .with({ serviceType: 'DATABASE' }, ({ serviceType, ...payload }) => ({
+        mutation: databaseMainCallsApi.editDatabase.bind(databaseMainCallsApi, serviceId, payload),
+        serviceType,
+      }))
+      .with({ serviceType: 'JOB' }, ({ serviceType, ...payload }) => ({
+        mutation: jobMainCallsApi.editJob.bind(jobMainCallsApi, serviceId, payload),
+        serviceType,
+      }))
+      .with({ serviceType: 'HELM' }, ({ serviceType, ...payload }) => ({
+        mutation: helmMainCallsApi.editHelm.bind(helmMainCallsApi, serviceId, payload),
+        serviceType,
+      }))
       .exhaustive()
     const response = await mutation()
     return response.data
   },
   async redeployService({ serviceId, serviceType }: { serviceId: string; serviceType: ServiceType }) {
-    const mutation = match(serviceType)
-      .with('APPLICATION', () => applicationActionsApi.redeployApplication.bind(applicationActionsApi))
-      .with('CONTAINER', () => containerActionsApi.redeployContainer.bind(containerActionsApi))
-      .with('DATABASE', () => databaseActionsApi.redeployDatabase.bind(databaseActionsApi))
-      .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', () => jobActionsApi.redeployJob.bind(jobActionsApi))
-      .with('HELM', () => helmActionsApi.redeployHelm.bind(helmActionsApi))
+    const { mutation } = match(serviceType)
+      .with('APPLICATION', (serviceType) => ({
+        mutation: applicationActionsApi.redeployApplication.bind(applicationActionsApi),
+        serviceType,
+      }))
+      .with('CONTAINER', (serviceType) => ({
+        mutation: containerActionsApi.redeployContainer.bind(containerActionsApi),
+        serviceType,
+      }))
+      .with('DATABASE', (serviceType) => ({
+        mutation: databaseActionsApi.redeployDatabase.bind(databaseActionsApi),
+        serviceType,
+      }))
+      .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', (serviceType) => ({
+        mutation: jobActionsApi.redeployJob.bind(jobActionsApi),
+        serviceType,
+      }))
+      .with('HELM', (serviceType) => ({ mutation: helmActionsApi.redeployHelm.bind(helmActionsApi), serviceType }))
       .exhaustive()
     const response = await mutation(serviceId)
     return response.data
   },
   async deployService({ serviceId, serviceType }: { serviceId: string; serviceType: ServiceType }) {
-    const mutation = match(serviceType)
-      .with('APPLICATION', () => applicationActionsApi.deployApplication.bind(applicationActionsApi))
-      .with('CONTAINER', () => containerActionsApi.deployContainer.bind(containerActionsApi))
-      .with('DATABASE', () => databaseActionsApi.deployDatabase.bind(databaseActionsApi))
-      .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', () => jobActionsApi.deployJob.bind(jobActionsApi))
-      .with('HELM', () => helmActionsApi.deployHelm.bind(helmActionsApi))
+    const { mutation } = match(serviceType)
+      .with('APPLICATION', (serviceType) => ({
+        mutation: applicationActionsApi.deployApplication.bind(applicationActionsApi),
+        serviceType,
+      }))
+      .with('CONTAINER', (serviceType) => ({
+        mutation: containerActionsApi.deployContainer.bind(containerActionsApi),
+        serviceType,
+      }))
+      .with('DATABASE', (serviceType) => ({
+        mutation: databaseActionsApi.deployDatabase.bind(databaseActionsApi),
+        serviceType,
+      }))
+      .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', (serviceType) => ({
+        mutation: jobActionsApi.deployJob.bind(jobActionsApi),
+        serviceType,
+      }))
+      .with('HELM', (serviceType) => ({ mutation: helmActionsApi.deployHelm.bind(helmActionsApi), serviceType }))
       .exhaustive()
     const response = await mutation(serviceId)
     return response.data
   },
   async stopService({ serviceId, serviceType }: { serviceId: string; serviceType: ServiceType }) {
-    const mutation = match(serviceType)
-      .with('APPLICATION', () => applicationActionsApi.stopApplication.bind(applicationActionsApi))
-      .with('CONTAINER', () => containerActionsApi.stopContainer.bind(containerActionsApi))
-      .with('DATABASE', () => databaseActionsApi.stopDatabase.bind(databaseActionsApi))
-      .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', () => jobActionsApi.stopJob.bind(jobActionsApi))
-      .with('HELM', () => helmActionsApi.stopHelm.bind(helmActionsApi))
+    const { mutation } = match(serviceType)
+      .with('APPLICATION', (serviceType) => ({
+        mutation: applicationActionsApi.stopApplication.bind(applicationActionsApi),
+        serviceType,
+      }))
+      .with('CONTAINER', (serviceType) => ({
+        mutation: containerActionsApi.stopContainer.bind(containerActionsApi),
+        serviceType,
+      }))
+      .with('DATABASE', (serviceType) => ({
+        mutation: databaseActionsApi.stopDatabase.bind(databaseActionsApi),
+        serviceType,
+      }))
+      .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', (serviceType) => ({
+        mutation: jobActionsApi.stopJob.bind(jobActionsApi),
+        serviceType,
+      }))
+      .with('HELM', (serviceType) => ({ mutation: helmActionsApi.stopHelm.bind(helmActionsApi), serviceType }))
       .exhaustive()
     const response = await mutation(serviceId)
+    return response.data
+  },
+  async editAdvancedSettings({ serviceId, payload }: EditAdvancedSettingsRequest) {
+    const { mutation } = match(payload)
+      .with({ serviceType: 'APPLICATION' }, ({ serviceType, ...payload }) => ({
+        mutation: applicationConfigurationApi.editAdvancedSettings.bind(
+          applicationConfigurationApi,
+          serviceId,
+          payload
+        ),
+        serviceType,
+      }))
+      .with({ serviceType: 'CONTAINER' }, ({ serviceType, ...payload }) => ({
+        mutation: containerConfigurationApi.editContainerAdvancedSettings.bind(
+          containerConfigurationApi,
+          serviceId,
+          payload
+        ),
+        serviceType,
+      }))
+      .with({ serviceType: 'JOB' }, ({ serviceType, ...payload }) => ({
+        mutation: jobConfigurationApi.editJobAdvancedSettings.bind(jobConfigurationApi, serviceId, payload),
+        serviceType,
+      }))
+      .with({ serviceType: 'HELM' }, ({ serviceType, ...payload }) => ({
+        mutation: helmConfigurationApi.editHelmAdvancedSettings.bind(helmConfigurationApi, serviceId, payload),
+        serviceType,
+      }))
+      .exhaustive()
+    const response = await mutation()
     return response.data
   },
 }

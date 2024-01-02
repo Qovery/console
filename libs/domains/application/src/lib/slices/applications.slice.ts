@@ -8,26 +8,19 @@ import {
 } from '@reduxjs/toolkit'
 import { type QueryClient } from '@tanstack/react-query'
 import {
-  type ApplicationAdvancedSettings,
-  ApplicationConfigurationApi,
   type ApplicationEditRequest,
   ApplicationMainCallsApi,
   type ApplicationRequest,
   ApplicationsApi,
-  type ContainerAdvancedSettings,
-  ContainerConfigurationApi,
   ContainerMainCallsApi,
   type ContainerRequest,
   ContainersApi,
-  type JobAdvancedSettings,
-  JobConfigurationApi,
   JobMainCallsApi,
   type JobRequest,
   JobsApi,
 } from 'qovery-typescript-axios'
 import { type ServiceTypeEnum, isApplication, isContainer, isJob } from '@qovery/shared/enums'
 import {
-  type AdvancedSettings,
   type ApplicationEntity,
   type ApplicationsState,
   type ContainerApplicationEntity,
@@ -54,15 +47,12 @@ export const applicationsAdapter = createEntityAdapter<ApplicationEntity>()
 
 const applicationsApi = new ApplicationsApi()
 const applicationMainCallsApi = new ApplicationMainCallsApi()
-const applicationConfigurationApi = new ApplicationConfigurationApi()
 
 const containersApi = new ContainersApi()
 const containerMainCallsApi = new ContainerMainCallsApi()
-const containerConfigurationApi = new ContainerConfigurationApi()
 
 const jobsApi = new JobsApi()
 const jobMainCallsApi = new JobMainCallsApi()
-const jobConfigurationApi = new JobConfigurationApi()
 
 export const fetchApplications = createAsyncThunk<ApplicationEntity[], { environmentId: string }>(
   'applications/fetch',
@@ -153,68 +143,6 @@ export const createApplication = createAsyncThunk(
     return response.data as ApplicationEntity
   }
 )
-
-export const fetchApplicationAdvancedSettings = createAsyncThunk<
-  ApplicationAdvancedSettings,
-  { applicationId: string; serviceType: ServiceTypeEnum }
->('application/advancedSettings', async (data) => {
-  let response
-  if (isContainer(data.serviceType)) {
-    response = await containerConfigurationApi.getContainerAdvancedSettings(data.applicationId)
-  } else if (isJob(data.serviceType)) {
-    response = await jobConfigurationApi.getJobAdvancedSettings(data.applicationId)
-  } else {
-    response = await applicationConfigurationApi.getAdvancedSettings(data.applicationId)
-  }
-  return response.data as ApplicationAdvancedSettings
-})
-
-export const editApplicationAdvancedSettings = createAsyncThunk<
-  ApplicationAdvancedSettings | JobAdvancedSettings,
-  {
-    applicationId: string
-    settings: ApplicationAdvancedSettings | ContainerAdvancedSettings | JobAdvancedSettings
-    serviceType: ServiceTypeEnum
-    toasterCallback: () => void
-  }
->('application/advancedSettings/edit', async (data) => {
-  let response
-  if (isContainer(data.serviceType)) {
-    response = await containerConfigurationApi.editContainerAdvancedSettings(
-      data.applicationId,
-      data.settings as ContainerAdvancedSettings
-    )
-  } else if (isJob(data.serviceType)) {
-    response = await jobConfigurationApi.editJobAdvancedSettings(
-      data.applicationId,
-      data.settings as JobAdvancedSettings
-    )
-  } else {
-    response = await applicationConfigurationApi.editAdvancedSettings(
-      data.applicationId,
-      data.settings as ApplicationAdvancedSettings
-    )
-  }
-  return response.data as ApplicationAdvancedSettings
-})
-
-export const fetchDefaultApplicationAdvancedSettings = createAsyncThunk<
-  AdvancedSettings,
-  {
-    serviceType: ServiceTypeEnum
-  }
->('application/defaultAdvancedSettings', async (data) => {
-  let response
-
-  if (isApplication(data.serviceType) || isContainer(data.serviceType)) {
-    response = await applicationsApi.getDefaultApplicationAdvancedSettings()
-  } else if (isJob(data.serviceType)) {
-    response = await jobsApi.getDefaultJobAdvancedSettings()
-  } else {
-    response = { data: {} }
-  }
-  return response.data
-})
 
 export const deleteApplicationAction = createAsyncThunk(
   'applicationActions/delete',
@@ -348,111 +276,6 @@ export const applicationsSlice = createSlice({
         state.loadingStatus = 'error'
         toastError(action.error)
         state.error = action.error.message
-      })
-      // fetch application advanced Settings
-      .addCase(fetchApplicationAdvancedSettings.pending, (state: ApplicationsState, action) => {
-        const applicationId = action.meta.arg.applicationId
-        const update: Update<ApplicationEntity> = {
-          id: applicationId,
-          changes: {
-            advanced_settings: {
-              loadingStatus: 'loading',
-              current_settings: undefined,
-            },
-          },
-        }
-        applicationsAdapter.updateOne(state, update)
-      })
-      .addCase(fetchApplicationAdvancedSettings.fulfilled, (state: ApplicationsState, action) => {
-        const applicationId = action.meta.arg.applicationId
-        const update: Update<ApplicationEntity> = {
-          id: applicationId,
-          changes: {
-            advanced_settings: {
-              loadingStatus: 'loaded',
-              current_settings: action.payload,
-            },
-          },
-        }
-        applicationsAdapter.updateOne(state, update)
-      })
-      .addCase(fetchApplicationAdvancedSettings.rejected, (state: ApplicationsState, action) => {
-        const applicationId = action.meta.arg.applicationId
-        const update: Update<ApplicationEntity> = {
-          id: applicationId,
-          changes: {
-            advanced_settings: {
-              loadingStatus: 'error',
-              current_settings: undefined,
-            },
-          },
-        }
-        applicationsAdapter.updateOne(state, update)
-      })
-      // edit application advanced Settings
-      .addCase(editApplicationAdvancedSettings.pending, (state: ApplicationsState, action) => {
-        const applicationId = action.meta.arg.applicationId
-        const update: Update<ApplicationEntity> = {
-          id: applicationId,
-          changes: {
-            advanced_settings: {
-              loadingStatus: 'loading',
-              current_settings: state.entities[applicationId]?.advanced_settings?.current_settings,
-            },
-          },
-        }
-        applicationsAdapter.updateOne(state, update)
-      })
-      .addCase(editApplicationAdvancedSettings.fulfilled, (state: ApplicationsState, action) => {
-        const applicationId = action.meta.arg.applicationId
-        const update: Update<ApplicationEntity> = {
-          id: applicationId,
-          changes: {
-            advanced_settings: {
-              loadingStatus: 'loaded',
-              current_settings: action.payload,
-            },
-          },
-        }
-        toast(
-          ToastEnum.SUCCESS,
-          `Application updated`,
-          'You must redeploy to apply the settings update',
-          action.meta.arg.toasterCallback,
-          undefined,
-          'Redeploy'
-        )
-        applicationsAdapter.updateOne(state, update)
-      })
-      .addCase(editApplicationAdvancedSettings.rejected, (state: ApplicationsState, action) => {
-        const applicationId = action.meta.arg.applicationId
-        const update: Update<ApplicationEntity> = {
-          id: applicationId,
-          changes: {
-            advanced_settings: {
-              loadingStatus: 'error',
-              current_settings: state.entities[applicationId]?.advanced_settings?.current_settings,
-            },
-          },
-        }
-
-        toast(
-          ToastEnum.ERROR,
-          action.error.message
-            ? action.error.message
-            : `Your advanced settings have not been updated. Something must be wrong with the values provided`
-        )
-        applicationsAdapter.updateOne(state, update)
-      })
-      .addCase(fetchDefaultApplicationAdvancedSettings.pending, (state: ApplicationsState, action) => {
-        state.defaultApplicationAdvancedSettings.settings = action.payload
-      })
-      .addCase(fetchDefaultApplicationAdvancedSettings.fulfilled, (state: ApplicationsState, action) => {
-        state.defaultApplicationAdvancedSettings.settings = action.payload
-        state.defaultApplicationAdvancedSettings.loadingStatus = 'loaded'
-      })
-      .addCase(fetchDefaultApplicationAdvancedSettings.rejected, (state: ApplicationsState, action) => {
-        state.defaultApplicationAdvancedSettings.loadingStatus = 'error'
       })
   },
 })

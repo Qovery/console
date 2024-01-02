@@ -50,9 +50,6 @@ jest.mock('react-redux', () => ({
 jest.mock('@qovery/domains/application', () => {
   return {
     ...jest.requireActual('@qovery/domains/application'),
-    editApplicationAdvancedSettings: jest.fn(),
-    fetchApplicationAdvancedSettings: jest.fn(),
-    fetchDefaultApplicationAdvancedSettings: jest.fn(),
     getApplicationsState: () => ({
       loadingStatus: 'loaded',
       ids: [mockApplication.id],

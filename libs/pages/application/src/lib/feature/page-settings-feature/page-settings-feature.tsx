@@ -129,13 +129,11 @@ export function PageSettingsFeature() {
       })
     }
 
-    if (!isHelm) {
-      links.push({
-        title: 'Advanced settings',
-        icon: IconAwesomeEnum.GEARS,
-        url: pathSettings + APPLICATION_SETTINGS_ADVANCED_SETTINGS_URL,
-      })
-    }
+    links.push({
+      title: 'Advanced settings',
+      icon: IconAwesomeEnum.GEARS,
+      url: pathSettings + APPLICATION_SETTINGS_ADVANCED_SETTINGS_URL,
+    })
 
     links.push({
       title: 'Danger zone',

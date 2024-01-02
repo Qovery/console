@@ -3,27 +3,27 @@ import { mutations } from '@qovery/domains/services/data-access'
 import { queries } from '@qovery/state/util-queries'
 import { useRedeployService } from '../use-redeploy-service/use-redeploy-service'
 
-export function useEditService({ environmentId }: { environmentId: string }) {
+export function useEditAdvancedSettings({ environmentId }: { environmentId: string }) {
   const queryClient = useQueryClient()
   const { mutate: redeployService } = useRedeployService({ environmentId })
 
-  return useMutation(mutations.editService, {
-    onSuccess(response, { payload, serviceId }) {
+  return useMutation(mutations.editAdvancedSettings, {
+    onSuccess(_, { serviceId, payload: { serviceType } }) {
       queryClient.invalidateQueries({
-        queryKey: queries.services.list(response.environment.id).queryKey,
-      })
-      queryClient.invalidateQueries({
-        queryKey: queries.services.details({ serviceType: payload.serviceType, serviceId }).queryKey,
+        queryKey: queries.services.advancedSettings({ serviceId, serviceType }).queryKey,
       })
     },
     meta: {
       notifyOnSuccess(_: unknown, variables: unknown) {
-        const { serviceId, payload } = variables as Parameters<typeof mutations.editService>[0]
+        const {
+          serviceId,
+          payload: { serviceType },
+        } = variables as Parameters<typeof mutations.editAdvancedSettings>[0]
         return {
           title: 'Service updated',
           description: 'You must update to apply the settings',
           callback() {
-            redeployService({ serviceId, serviceType: payload.serviceType })
+            redeployService({ serviceId, serviceType })
           },
           labelAction: 'Update',
         }
@@ -33,4 +33,4 @@ export function useEditService({ environmentId }: { environmentId: string }) {
   })
 }
 
-export default useEditService
+export default useEditAdvancedSettings
