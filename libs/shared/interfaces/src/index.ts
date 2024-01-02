@@ -7,7 +7,6 @@ export * from './lib/states/applications.interface'
 export * from './lib/states/deployment-rules.interface'
 export * from './lib/common/detect-new-row.interface'
 export * from './lib/states/environment-deployment-rules.interface'
-export * from './lib/states/custom-domains-state.interface'
 export * from './lib/states/auth-provider.interface'
 export * from './lib/states/repository.interface'
 

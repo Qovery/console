@@ -1,11 +1,6 @@
 import { type PreloadedState, combineReducers, configureStore } from '@reduxjs/toolkit'
 // eslint-disable-next-line @nx/enforce-module-boundaries
-import {
-  applications,
-  customDomainReducer,
-  initialApplicationsState,
-  initialCustomDomainState,
-} from '@qovery/domains/application'
+import { applications, initialApplicationsState } from '@qovery/domains/application'
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import {
   authProviderReducer,
@@ -23,7 +18,6 @@ export const organizationReducer = combineReducers({
 
 export const applicationReducer = combineReducers({
   applications: applications,
-  customDomains: customDomainReducer,
 })
 
 export const rootReducer = combineReducers({
@@ -56,7 +50,6 @@ export const initialRootState = (): RootState => ({
   },
   application: {
     applications: initialApplicationsState,
-    customDomains: initialCustomDomainState,
   },
   user: initialUserState,
   userSignUp: initialUserSignUpState,
