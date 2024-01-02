@@ -1,0 +1,280 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SelectCommitModal should match snapshot 1`] = `
+<div>
+  <div
+    class="flex flex-col gap-6 p-5"
+  >
+    <div
+      class="flex flex-col gap-2 text-sm text-neutral-350"
+    >
+      <h2
+        class="h4 text-neutral-400 max-w-sm truncate mb-1"
+      >
+        Deploy other version
+      </h2>
+      <p>
+        Type a version to deploy
+      </p>
+      For X service
+    </div>
+    <div
+      class="relative w-full "
+    >
+      <span
+        class="icon-solid-magnifying-glass shrink-0 absolute left-3 top-1/2 -translate-y-1/2 block text-xs text-neutral-350 leading-none"
+        role="img"
+      />
+      <input
+        class="w-full rounded border border-neutral-250 dark:border-neutral-400 bg-neutral-150 dark:bg-neutral-700 text-neutral-400 dark:text-neutral-350 placeholder:text-neutral-350 pl-8 pr-6 leading-none focus:outline-none focus:border-brand-400 focus:transition-[border-color] h-9 text-xs"
+        data-testid="input-search"
+        name="search"
+        placeholder="Search by commit message or commit id"
+        type="text"
+      />
+    </div>
+    <div
+      aria-required="false"
+      dir="ltr"
+      role="radiogroup"
+      style="outline: none;"
+      tabindex="0"
+    >
+      <div
+        class="relative overflow-y-auto pr-[1px] max-h-[440px]"
+        data-testid="scroll-shadow-wrapper"
+      >
+        <div
+          class="sticky top-0 bg-scroll-shadow-up w-full h-4 -mb-4 pointer-events-none transition-opacity duration-300 opacity-0"
+          data-testid="scroll-shadow-top"
+        />
+        <div
+          class="pl-2"
+        >
+          <div
+            class="text-sm pl-5 text-neutral-350 font-medium relative"
+          >
+            <span
+              class="icon-solid-code-commit shrink-0 absolute left-0 text-neutral-300 -translate-x-1/2"
+              role="img"
+            />
+            Commit
+             on 
+            Jan 01, 0123
+          </div>
+          <div
+            class="border-l border-neutral-250 pt-3 pl-5 pb-5"
+          >
+            <label
+              class="flex flex-row gap-3 w-full p-3 border border-neutral-250 -mt-px first:rounded-t-md last:rounded-b-md"
+            >
+              <div>
+                <button
+                  aria-checked="false"
+                  class="bg-neutral-100 border border-neutral-300 w-[20px] h-[20px] rounded-full text-white flex items-center justify-center text-xs data-[state=checked]:bg-brand-500 data-[state=checked]:border-0 disabled:border-2 disabled:border-neutral-350 disabled:after:content-[''] disabled:after:block disabled:after:w-[10px] disabled:after:h-[10px] disabled:after:rounded-[50%] disabled:after:bg-neutral-350"
+                  data-radix-collection-item=""
+                  data-state="unchecked"
+                  role="radio"
+                  tabindex="-1"
+                  type="button"
+                  value="123"
+                />
+              </div>
+              <div
+                class="flex flex-col items-start flex-1 min-w-0 text-sm gap-1"
+              >
+                <a
+                  class="font-medium text-neutral-400 hover:text-brand-500 truncate max-w-full"
+                  rel="noreferrer"
+                  target="_blank"
+                >
+                  lorem
+                </a>
+                <span
+                  class="text-neutral-350"
+                >
+                  committed 
+                  1902 years
+                   ago
+                </span>
+              </div>
+              <div
+                class="flex flex-col items-end gap-2"
+              >
+                <div
+                  class="flex items-center gap-1.5"
+                >
+                  <div
+                    class="block rounded-full relative border border-neutral-200  "
+                    data-state="closed"
+                    data-testid="avatar"
+                    style="width: 28px; height: 28px;"
+                  >
+                    <div
+                      class="w-full h-full rounded-full bg-neutral-200 text-center flex justify-center items-center"
+                    >
+                      <span
+                        class="text-xs text-neutral-400 font-medium relative"
+                      >
+                        F
+                      </span>
+                    </div>
+                  </div>
+                  <div
+                    class="block w-fit cursor-pointer"
+                    data-state="closed"
+                    data-testid="tag-commit"
+                  >
+                    <span
+                      class="rounded text-xs items-center inline-flex font-bold h-7 px-2   border font-medium flex items-center justify-center  border-neutral-250 text-neutral-350 hover:bg-neutral-200 w-[90px]"
+                      data-testid="tag"
+                    >
+                      <div
+                        class="w-4 mr-1"
+                      >
+                        <span
+                          class="icon-solid-code-commit shrink-0 mr-1"
+                          role="img"
+                        />
+                      </div>
+                      123
+                    </span>
+                  </div>
+                </div>
+                <span
+                  class="text-xs text-brand-500"
+                >
+                   
+                </span>
+              </div>
+            </label>
+          </div>
+        </div>
+        <div
+          class="pl-2"
+        >
+          <div
+            class="text-sm pl-5 text-neutral-350 font-medium relative"
+          >
+            <span
+              class="icon-solid-code-commit shrink-0 absolute left-0 text-neutral-300 -translate-x-1/2"
+              role="img"
+            />
+            Commit
+             on 
+            Jan 01, 0456
+          </div>
+          <div
+            class="border-l border-neutral-250 pt-3 pl-5 pb-5"
+          >
+            <label
+              class="flex flex-row gap-3 w-full p-3 border border-neutral-250 -mt-px first:rounded-t-md last:rounded-b-md bg-neutral-100"
+            >
+              <div>
+                <button
+                  aria-checked="false"
+                  class="bg-neutral-100 border border-neutral-300 w-[20px] h-[20px] rounded-full text-white flex items-center justify-center text-xs data-[state=checked]:bg-brand-500 data-[state=checked]:border-0 disabled:border-2 disabled:border-neutral-350 disabled:after:content-[''] disabled:after:block disabled:after:w-[10px] disabled:after:h-[10px] disabled:after:rounded-[50%] disabled:after:bg-neutral-350"
+                  data-disabled=""
+                  data-radix-collection-item=""
+                  data-state="unchecked"
+                  disabled=""
+                  role="radio"
+                  tabindex="-1"
+                  type="button"
+                  value="456"
+                />
+              </div>
+              <div
+                class="flex flex-col items-start flex-1 min-w-0 text-sm gap-1"
+              >
+                <a
+                  class="font-medium hover:text-brand-500 truncate max-w-full text-neutral-350"
+                  rel="noreferrer"
+                  target="_blank"
+                >
+                  ipsum
+                </a>
+                <span
+                  class="text-neutral-350"
+                >
+                  committed 
+                  1569 years
+                   ago
+                </span>
+              </div>
+              <div
+                class="flex flex-col items-end gap-2"
+              >
+                <div
+                  class="flex items-center gap-1.5"
+                >
+                  <div
+                    class="block rounded-full relative border border-neutral-200  "
+                    data-state="closed"
+                    data-testid="avatar"
+                    style="width: 28px; height: 28px;"
+                  >
+                    <div
+                      class="w-full h-full rounded-full bg-neutral-200 text-center flex justify-center items-center"
+                    >
+                      <span
+                        class="text-xs text-neutral-400 font-medium relative"
+                      >
+                        F
+                      </span>
+                    </div>
+                  </div>
+                  <div
+                    class="block w-fit cursor-pointer"
+                    data-state="closed"
+                    data-testid="tag-commit"
+                  >
+                    <span
+                      class="rounded text-xs items-center inline-flex font-bold h-7 px-2   border font-medium flex items-center justify-center  border-neutral-250 text-neutral-350 hover:bg-neutral-200 w-[90px]"
+                      data-testid="tag"
+                    >
+                      <div
+                        class="w-4 mr-1"
+                      >
+                        <span
+                          class="icon-solid-code-commit shrink-0 mr-1"
+                          role="img"
+                        />
+                      </div>
+                      456
+                    </span>
+                  </div>
+                </div>
+                <span
+                  class="text-xs text-neutral-400"
+                >
+                  Current version
+                </span>
+              </div>
+            </label>
+          </div>
+        </div>
+        <div
+          class="sticky bottom-0 bg-scroll-shadow-bottom w-full h-4 -mt-4 pointer-events-none rotate-180 transition-opacity duration-300 opacity-0"
+          data-testid="scroll-shadow-bottom"
+        />
+      </div>
+    </div>
+    <div
+      class="flex gap-3 justify-end"
+    >
+      <button
+        class="inline-flex items-center shrink-0 font-medium transition text-sm h-10 px-4 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent"
+      >
+        Cancel
+      </button>
+      <button
+        class="inline-flex items-center shrink-0 font-medium transition text-sm h-10 px-4 rounded bg-brand-500 hover:bg-brand-600 text-white disabled:text-brand-300 disabled:bg-brand-100 disabled:border-none"
+        disabled=""
+      >
+        Deploy
+      </button>
+    </div>
+  </div>
+</div>
+`;
