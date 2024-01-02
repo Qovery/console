@@ -133,6 +133,24 @@ exports[`ServiceActionToolbar should match manage deployment snapshot 1`] = `
         />
         Deploy
       </div>
+      <div
+        aria-orientation="horizontal"
+        class="w-full h-[1px] bg-neutral-200 dark:bg-neutral-600 my-2"
+        role="separator"
+      />
+      <div
+        class="px-3 flex items-center h-9 text-sm font-medium cursor-pointer rounded-sm outline-none text-neutral-400 dark:text-neutral-100 hover:bg-brand-50 data-[highlighted]:bg-brand-50 hover:text-brand-500 data-[highlighted]:text-brand-500"
+        data-orientation="vertical"
+        data-radix-collection-item=""
+        role="menuitem"
+        tabindex="-1"
+      >
+        <span
+          class="icon-solid-clock-rotate-left shrink-0 text-sm mr-3 text-brand-400"
+          role="img"
+        />
+        Deploy another chart version
+      </div>
     </div>
   </div>
   <span
@@ -174,7 +192,7 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
       data-orientation="horizontal"
       data-radix-collection-item=""
       data-state="closed"
-      id="radix-:rn:"
+      id="radix-:ro:"
       tabindex="-1"
       type="button"
     >
@@ -206,7 +224,7 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
       />
     </button>
     <button
-      aria-controls="radix-:ru:"
+      aria-controls="radix-:rv:"
       aria-expanded="true"
       aria-haspopup="menu"
       aria-label="Other actions"
@@ -214,7 +232,7 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
       data-orientation="horizontal"
       data-radix-collection-item=""
       data-state="open"
-      id="radix-:rt:"
+      id="radix-:ru:"
       tabindex="-1"
       type="button"
     >
@@ -235,7 +253,7 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
     style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 12px); min-width: max-content; --radix-popper-available-width: 0px; --radix-popper-available-height: -12px; --radix-popper-anchor-width: 0px; --radix-popper-anchor-height: 0px; --radix-popper-transform-origin: 0px 0px;"
   >
     <div
-      aria-labelledby="radix-:rt:"
+      aria-labelledby="radix-:ru:"
       aria-orientation="vertical"
       class="flex flex-col gap-1 w-[258px] p-3 bg-neutral-50 shadow-[0_0_32px_rgba(0,0,0,0.08)] rounded-md data-[state=open]:data-[side=top]:animate-slidein-down-md-faded data-[state=open]:data-[side=right]:animate-slidein-left-md-faded data-[state=open]:data-[side=bottom]:animate-slidein-up-md-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded"
       data-align="start"
@@ -244,7 +262,7 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
       data-side="bottom"
       data-state="open"
       dir="ltr"
-      id="radix-:ru:"
+      id="radix-:rv:"
       role="menu"
       style="outline: none; --radix-dropdown-menu-content-transform-origin: var(--radix-popper-transform-origin); --radix-dropdown-menu-content-available-width: var(--radix-popper-available-width); --radix-dropdown-menu-content-available-height: var(--radix-popper-available-height); --radix-dropdown-menu-trigger-width: var(--radix-popper-anchor-width); --radix-dropdown-menu-trigger-height: var(--radix-popper-anchor-height); pointer-events: auto;"
       tabindex="-1"

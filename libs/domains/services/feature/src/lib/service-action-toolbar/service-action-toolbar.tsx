@@ -1,16 +1,24 @@
-import { type Environment, StateEnum } from 'qovery-typescript-axios'
+import { type ApplicationGitRepository, type Environment, StateEnum } from 'qovery-typescript-axios'
 import { useNavigate, useParams } from 'react-router-dom'
 import { P, match } from 'ts-pattern'
 import { useActionCancelEnvironment } from '@qovery/domains/environment'
 import { useEnvironment } from '@qovery/domains/environments/feature'
-import { type AnyService } from '@qovery/domains/services/data-access'
-// eslint-disable-next-line @nx/enforce-module-boundaries
 import {
-  DeployOtherCommitModalFeature,
-  DeployOtherTagModalFeature,
-  ForceRunModalFeature,
-} from '@qovery/shared/console-shared'
-import { isHelmGitSource, isJobContainerSource, isJobGitSource } from '@qovery/shared/enums'
+  type AnyService,
+  type Application,
+  type Container,
+  type Helm,
+  type Job,
+} from '@qovery/domains/services/data-access'
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { ForceRunModalFeature } from '@qovery/shared/console-shared'
+import {
+  isHelmGitSource,
+  isHelmGitValuesOverride,
+  isHelmRepositorySource,
+  isJobContainerSource,
+  isJobGitSource,
+} from '@qovery/shared/enums'
 import {
   APPLICATION_SETTINGS_GENERAL_URL,
   APPLICATION_SETTINGS_URL,
@@ -50,6 +58,8 @@ import { useRestartService } from '../hooks/use-restart-service/use-restart-serv
 import { useRunningStatus } from '../hooks/use-running-status/use-running-status'
 import { useService } from '../hooks/use-service/use-service'
 import { useStopService } from '../hooks/use-stop-service/use-stop-service'
+import { SelectCommitModal } from '../select-commit-modal/select-commit-modal'
+import { SelectVersionModal } from '../select-version-modal/select-version-modal'
 import ServiceCloneModal from '../service-clone-modal/service-clone-modal'
 
 function MenuManageDeployment({
@@ -68,8 +78,8 @@ function MenuManageDeployment({
   projectId: string
 }) {
   const navigate = useNavigate()
+  const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
-  const { openModal } = useModal()
 
   const { data: runningState } = useRunningStatus({ environmentId: environment.id, serviceId: service.id })
   const { mutate: deployService } = useDeployService({ environmentId: environment.id })
@@ -117,29 +127,120 @@ function MenuManageDeployment({
     })
   }
 
-  const deployOtherCommitModal = () => {
+  const deployCommitVersion = (
+    service: Application | Job | Helm,
+    gitRepository: ApplicationGitRepository,
+    title: string
+  ) => {
     openModal({
       content: (
-        <DeployOtherCommitModalFeature
-          organizationId={organizationId}
-          projectId={projectId}
-          environmentId={service.environment.id}
-          applicationId={service.id}
-        />
+        <SelectCommitModal
+          title={title}
+          description="Select the commit id you want to deploy."
+          submitLabel="Deploy"
+          serviceId={service.id}
+          serviceType={service.serviceType}
+          gitRepository={gitRepository}
+          onCancel={closeModal}
+          onSubmit={(git_commit_id) => {
+            deployService({
+              serviceId: service.id,
+              serviceType: service.serviceType,
+              request: {
+                git_commit_id,
+              },
+            })
+            closeModal()
+          }}
+        >
+          <p>
+            For <strong className="text-neutral-400 font-medium">{service.name}</strong>
+          </p>
+        </SelectCommitModal>
       ),
       options: { width: 596 },
     })
   }
-
-  const deployOtherTagModal = () => {
+  const deployTagVersion = (service: Container | Job, version: string) => {
     openModal({
       content: (
-        <DeployOtherTagModalFeature
-          organizationId={organizationId}
-          projectId={projectId}
-          environmentId={service.environment.id}
-          applicationId={service.id}
-        />
+        <SelectVersionModal
+          title="Deploy another version"
+          description="Select the version you want to deploy."
+          submitLabel="Deploy"
+          currentVersion={version}
+          onCancel={closeModal}
+          onSubmit={(image_tag) => {
+            deployService({
+              serviceId: service.id,
+              serviceType: service.serviceType,
+              request: {
+                image_tag,
+              },
+            })
+            closeModal()
+          }}
+        >
+          <p>
+            For <strong className="text-neutral-400 font-medium">{service.name}</strong>
+          </p>
+        </SelectVersionModal>
+      ),
+    })
+  }
+  const deployHelmChartVersion = (service: Helm, version: string) => {
+    openModal({
+      content: (
+        <SelectVersionModal
+          title="Deploy another version"
+          description="Select the chart version that you want to deploy."
+          submitLabel="Deploy"
+          currentVersion={version}
+          onCancel={closeModal}
+          onSubmit={(chart_version) => {
+            deployService({
+              serviceId: service.id,
+              serviceType: service.serviceType,
+              request: {
+                chart_version,
+              },
+            })
+            closeModal()
+          }}
+        >
+          <p>
+            For <strong className="text-neutral-400 font-medium">{service.name}</strong>
+          </p>
+        </SelectVersionModal>
+      ),
+    })
+  }
+  const deployHelmOverrideVersion = (service: Helm, gitRepository: ApplicationGitRepository) => {
+    openModal({
+      content: (
+        <SelectCommitModal
+          title="Deploy another override version"
+          description="Select the commit id you want to deploy."
+          submitLabel="Deploy"
+          serviceId={service.id}
+          serviceType={service.serviceType}
+          gitRepository={gitRepository}
+          onCancel={closeModal}
+          onSubmit={(values_override_git_commit_id) => {
+            deployService({
+              serviceId: service.id,
+              serviceType: service.serviceType,
+              request: {
+                values_override_git_commit_id,
+              },
+            })
+            closeModal()
+          }}
+        >
+          <p>
+            For <strong className="text-neutral-400 font-medium">{service.name}</strong>
+          </p>
+        </SelectCommitModal>
       ),
       options: { width: 596 },
     })
@@ -157,30 +258,6 @@ function MenuManageDeployment({
       ),
     })
   }
-
-  const displayOtherCommitItem = match(service)
-    .with(
-      { serviceType: 'APPLICATION' },
-      {
-        serviceType: 'JOB',
-        source: P.when(isJobGitSource),
-      },
-      () => true
-    )
-    .otherwise(() => false)
-
-  const displayOtherTagItem = match(service)
-    .with(
-      {
-        serviceType: 'CONTAINER',
-      },
-      {
-        serviceType: 'JOB',
-        source: P.when(isJobContainerSource),
-      },
-      () => true
-    )
-    .otherwise(() => false)
 
   return (
     <DropdownMenu.Root>
@@ -228,28 +305,108 @@ function MenuManageDeployment({
             Stop
           </DropdownMenu.Item>
         )}
-        {displayOtherCommitItem && (
-          <>
-            <DropdownMenu.Separator />
-            <DropdownMenu.Item
-              icon={<Icon name={IconAwesomeEnum.CLOCK_ROTATE_LEFT} />}
-              onClick={() => deployOtherCommitModal()}
-            >
-              Deploy other version
-            </DropdownMenu.Item>
-          </>
-        )}
-        {displayOtherTagItem && (
-          <>
-            <DropdownMenu.Separator />
-            <DropdownMenu.Item
-              icon={<Icon name={IconAwesomeEnum.CLOCK_ROTATE_LEFT} />}
-              onClick={() => deployOtherTagModal()}
-            >
-              Deploy other version
-            </DropdownMenu.Item>
-          </>
-        )}
+        {match({ service })
+          .with(
+            { service: { serviceType: 'APPLICATION' } },
+            { service: P.intersection({ serviceType: 'JOB' }, { source: P.when(isJobGitSource) }) },
+            ({ service }) => {
+              const gitRepository = match(service)
+                .with({ serviceType: 'APPLICATION' }, ({ git_repository }) => git_repository)
+                .with({ serviceType: 'JOB' }, ({ source }) => source.docker?.git_repository)
+                .exhaustive()
+              return (
+                <>
+                  <DropdownMenu.Separator />
+                  {gitRepository && (
+                    <DropdownMenu.Item
+                      icon={<Icon name={IconAwesomeEnum.CLOCK_ROTATE_LEFT} />}
+                      onClick={() => deployCommitVersion(service, gitRepository, 'Deploy another version')}
+                    >
+                      Deploy another version
+                    </DropdownMenu.Item>
+                  )}
+                </>
+              )
+            }
+          )
+          .with(
+            { service: { serviceType: 'CONTAINER' } },
+            { service: P.intersection({ serviceType: 'JOB' }, { source: P.when(isJobContainerSource) }) },
+            ({ service }) => {
+              const version = match(service)
+                .with({ serviceType: 'CONTAINER' }, ({ tag }) => tag)
+                .with({ serviceType: 'JOB' }, ({ source: { image } }) => image?.tag)
+                .exhaustive()
+              return (
+                version && (
+                  <>
+                    <DropdownMenu.Separator />
+                    <DropdownMenu.Item
+                      icon={<Icon name={IconAwesomeEnum.CLOCK_ROTATE_LEFT} />}
+                      onClick={() => deployTagVersion(service, version)}
+                    >
+                      Deploy another version
+                    </DropdownMenu.Item>
+                  </>
+                )
+              )
+            }
+          )
+          .with(
+            { service: P.intersection({ serviceType: 'HELM' }, { source: P.when(isHelmGitSource) }) },
+            ({ service }) => {
+              const gitRepository = service.source.git?.git_repository
+              return (
+                <>
+                  <DropdownMenu.Separator />
+                  {gitRepository && (
+                    <DropdownMenu.Item
+                      icon={<Icon name={IconAwesomeEnum.CLOCK_ROTATE_LEFT} />}
+                      onClick={() => deployCommitVersion(service, gitRepository, 'Deploy another chart version')}
+                    >
+                      Deploy another chart version
+                    </DropdownMenu.Item>
+                  )}
+                </>
+              )
+            }
+          )
+          .with(
+            { service: P.intersection({ serviceType: 'HELM' }, { source: P.when(isHelmRepositorySource) }) },
+            ({ service }) => {
+              const version = service.source.repository?.chart_version
+              return (
+                version && (
+                  <>
+                    <DropdownMenu.Separator />
+                    <DropdownMenu.Item
+                      icon={<Icon name={IconAwesomeEnum.CLOCK_ROTATE_LEFT} />}
+                      onClick={() => deployHelmChartVersion(service, version)}
+                    >
+                      Deploy another chart version
+                    </DropdownMenu.Item>
+                  </>
+                )
+              )
+            }
+          )
+          .with({ service: { serviceType: 'DATABASE' } }, () => null)
+          .exhaustive()}
+        {match(service)
+          .with({ serviceType: 'HELM', values_override: P.when(isHelmGitValuesOverride) }, (service) => {
+            const gitRepository = service.values_override.file.git.git_repository
+            return (
+              gitRepository && (
+                <DropdownMenu.Item
+                  icon={<Icon name={IconAwesomeEnum.CLOCK_ROTATE_LEFT} />}
+                  onClick={() => deployHelmOverrideVersion(service, gitRepository)}
+                >
+                  Deploy another override version
+                </DropdownMenu.Item>
+              )
+            )
+          })
+          .otherwise(() => null)}
       </DropdownMenu.Content>
     </DropdownMenu.Root>
   )
