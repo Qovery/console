@@ -527,12 +527,27 @@ export const mutations = {
     return response.data
   },
   async restartService({ serviceId, serviceType }: { serviceId: string; serviceType: ServiceType }) {
-    const mutation = match(serviceType)
-      .with('APPLICATION', () => applicationActionsApi.rebootApplication.bind(applicationActionsApi))
-      .with('CONTAINER', () => containerActionsApi.rebootContainer.bind(containerActionsApi))
-      .with('DATABASE', () => databaseActionsApi.rebootDatabase.bind(databaseActionsApi))
-      .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', () => jobActionsApi.restartJob.bind(jobActionsApi))
-      .with('HELM', () => helmActionsApi.restartHelm.bind(helmActionsApi))
+    const { mutation } = match(serviceType)
+      .with('APPLICATION', (serviceType) => ({
+        mutation: applicationActionsApi.rebootApplication.bind(applicationActionsApi),
+        serviceType,
+      }))
+      .with('CONTAINER', (serviceType) => ({
+        mutation: containerActionsApi.rebootContainer.bind(containerActionsApi),
+        serviceType,
+      }))
+      .with('DATABASE', (serviceType) => ({
+        mutation: databaseActionsApi.rebootDatabase.bind(databaseActionsApi),
+        serviceType,
+      }))
+      .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', (serviceType) => ({
+        mutation: jobActionsApi.restartJob.bind(jobActionsApi),
+        serviceType,
+      }))
+      .with('HELM', (serviceType) => ({
+        mutation: helmActionsApi.restartHelm.bind(helmActionsApi),
+        serviceType,
+      }))
       .exhaustive()
     const response = await mutation(serviceId)
     return response.data
