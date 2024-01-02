@@ -1,11 +1,10 @@
 import { DatabaseModeEnum } from 'qovery-typescript-axios'
 import selectEvent from 'react-select-event'
-import { type Database } from '@qovery/domains/services/data-access'
 import { databaseFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import PageSettingsResourcesFeature, { handleSubmit } from './page-settings-resources-feature'
 
-const mockDatabase = databaseFactoryMock(1)[0] as Database
+const mockDatabase = databaseFactoryMock(1)[0]
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
