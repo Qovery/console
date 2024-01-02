@@ -1,5 +1,4 @@
 import { useQuery } from '@tanstack/react-query'
-import { type CloudProviderEnum } from 'qovery-typescript-axios'
 import { queries } from '@qovery/state/util-queries'
 
 export function useCloudProviderDatabaseInstanceTypes(

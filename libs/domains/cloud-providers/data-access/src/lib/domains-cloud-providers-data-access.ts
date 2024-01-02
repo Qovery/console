@@ -95,6 +95,9 @@ export const cloudProviders = createQueryKeys('cloudProviders', {
           cloudProviderApi.listAWSEKSInstanceType(region)
         )
         .with({ cloudProvider: 'SCW' }, ({ region }) => cloudProviderApi.listScalewayKapsuleInstanceType(region))
+        /*
+         * @deprecated Digital Ocean is not supported anymore (should be remove on the API doc)
+         */
         .with({ cloudProvider: 'DO' }, () => cloudProviderApi.listDOInstanceType())
         .with({ cloudProvider: 'GCP' }, () => Promise.resolve({ data: { results: [] } }))
         .exhaustive()
@@ -140,21 +143,41 @@ export const cloudProviders = createQueryKeys('cloudProviders', {
           cloudProvider: Extract<CloudProviderEnum, 'SCW'>
           databaseType: string
         }
+      | {
+          cloudProvider: Extract<CloudProviderEnum, 'GCP'>
+          databaseType: string
+        }
+      | {
+          cloudProvider: Extract<CloudProviderEnum, 'DO'>
+          databaseType: string
+          region: string
+        }
   ) => ({
     queryKey: [args.cloudProvider, args.databaseType],
     async queryFn() {
-      return match(args)
-        .with(
-          { cloudProvider: 'AWS' },
-          async ({ region, databaseType }) =>
-            (await cloudProviderApi.listAWSManagedDatabaseInstanceType(region, databaseType)).data.results
-        )
-        .with(
-          { cloudProvider: 'SCW' },
-          async ({ databaseType }) =>
-            (await cloudProviderApi.listSCWManagedDatabaseInstanceType(databaseType)).data.results
-        )
-        .exhaustive()
+      return (
+        match(args)
+          .with(
+            { cloudProvider: 'AWS' },
+            async ({ region, databaseType }) =>
+              (await cloudProviderApi.listAWSManagedDatabaseInstanceType(region, databaseType)).data.results
+          )
+          .with(
+            { cloudProvider: 'SCW' },
+            async ({ databaseType }) =>
+              (await cloudProviderApi.listSCWManagedDatabaseInstanceType(databaseType)).data.results
+          )
+          /*
+           * @deprecated Digital Ocean is not supported anymore (should be remove on the API doc)
+           */
+          .with(
+            { cloudProvider: 'DO' },
+            async ({ region, databaseType }) =>
+              (await cloudProviderApi.listDOManagedDatabaseInstanceType(region, databaseType)).data.results
+          )
+          .with({ cloudProvider: 'GCP' }, () => undefined)
+          .exhaustive()
+      )
     },
   }),
 })
