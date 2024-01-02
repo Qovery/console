@@ -1,65 +1,42 @@
-import { mockUseQueryResult } from '__tests__/utils/mock-use-query-result'
-import {
-  type CloudProviderEnum,
-  DatabaseModeEnum,
-  type DatabaseTypeEnum,
-  type ManagedDatabaseInstanceTypeResponse,
-} from 'qovery-typescript-axios'
+import { DatabaseModeEnum } from 'qovery-typescript-axios'
 import selectEvent from 'react-select-event'
-import * as storeDatabase from '@qovery/domains/database'
 import { databaseFactoryMock } from '@qovery/shared/factories'
-import { type DatabaseEntity } from '@qovery/shared/interfaces'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import PageSettingsResourcesFeature, { handleSubmit } from './page-settings-resources-feature'
 
-import SpyInstance = jest.SpyInstance
-
-const mockDatabase: DatabaseEntity = databaseFactoryMock(1)[0]
-const mockUseFetchDatabaseInstanceTypes: jest.Mock = jest.fn()
-
-jest.mock('@qovery/domains/database', () => {
-  return {
-    ...jest.requireActual('@qovery/domains/database'),
-    editDatabase: jest.fn(),
-    getDatabasesState: () => ({
-      loadingStatus: 'loaded',
-      ids: [mockDatabase.id],
-      entities: {
-        [mockDatabase.id]: mockDatabase,
-      },
-      error: null,
-    }),
-    selectDatabaseById: () => mockDatabase,
-    useFetchDatabaseInstanceTypes: (provider: CloudProviderEnum, databaseType: DatabaseTypeEnum, region: string) =>
-      mockUseFetchDatabaseInstanceTypes(provider, databaseType, region),
-  }
-})
-
-const mockDispatch = jest.fn()
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useDispatch: () => mockDispatch,
-}))
+const mockDatabase = databaseFactoryMock(1)[0]
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
-  useParams: () => ({ databaseId: '0' }),
+  useParams: () => ({ databaseId: '0', environmentId: '1' }),
+}))
+
+const mockEditService = jest.fn()
+
+jest.mock('@qovery/domains/cloud-providers/feature', () => ({
+  useCloudProviderDatabaseInstanceTypes: () => ({
+    data: [
+      {
+        name: 't2.micro',
+      },
+      {
+        name: 'db.t3.medium',
+      },
+    ],
+  }),
+}))
+
+jest.mock('@qovery/domains/services/feature', () => ({
+  useService: () => ({
+    data: mockDatabase,
+  }),
+  useEditService: () => ({
+    mutate: mockEditService,
+    isLoading: false,
+  }),
 }))
 
 describe('PageSettingsResourcesFeature', () => {
-  beforeEach(() => {
-    mockUseFetchDatabaseInstanceTypes.mockReturnValue(
-      mockUseQueryResult<ManagedDatabaseInstanceTypeResponse[]>([
-        {
-          name: 't2.micro',
-        },
-        {
-          name: 'db.t3.medium',
-        },
-      ])
-    )
-  })
-
   it('should render successfully', async () => {
     const { baseElement } = renderWithProviders(<PageSettingsResourcesFeature />)
 
@@ -79,15 +56,7 @@ describe('PageSettingsResourcesFeature', () => {
     expect(db.storage).toBe(storage)
   })
 
-  it('should dispatch editDatabase for CONTAINER if form is submitted', async () => {
-    const editDatabaseSpy: SpyInstance = jest.spyOn(storeDatabase, 'editDatabase')
-    mockDispatch.mockImplementation(() => ({
-      unwrap: () =>
-        Promise.resolve({
-          data: {},
-        }),
-    }))
-
+  it('should dispatch edit database for CONTAINER if form is submitted', async () => {
     const { userEvent } = renderWithProviders(<PageSettingsResourcesFeature />)
 
     // https://react-hook-form.com/advanced-usage#TransformandParse
@@ -102,28 +71,23 @@ describe('PageSettingsResourcesFeature', () => {
 
     await userEvent.click(submitButton)
 
-    expect(editDatabaseSpy.mock.calls[0][0].databaseId).toBe(mockDatabase.id)
-    expect(editDatabaseSpy.mock.calls[0][0].data).toStrictEqual({
-      ...mockDatabase,
-      ...{
-        memory: 512,
-        storage: 512,
-        cpu: 1,
-        mode: DatabaseModeEnum.CONTAINER,
-      },
+    expect(mockEditService).toHaveBeenCalledWith({
+      serviceId: mockDatabase.id,
+      payload: handleSubmit(
+        {
+          cpu: 1,
+          memory: 512,
+          storage: 512,
+          instance_type: 't2.micro',
+          mode: DatabaseModeEnum.CONTAINER,
+        },
+        mockDatabase
+      ),
     })
   })
 
-  it('should dispatch editDatabase for MANAGED db if form is submitted', async () => {
+  it('should dispatch edit database for MANAGED db if form is submitted', async () => {
     mockDatabase.mode = DatabaseModeEnum.MANAGED
-    const editDatabaseSpy: SpyInstance = jest.spyOn(storeDatabase, 'editDatabase')
-    mockDispatch.mockImplementation(() => ({
-      unwrap: () =>
-        Promise.resolve({
-          data: {},
-        }),
-    }))
-
     const { userEvent } = renderWithProviders(<PageSettingsResourcesFeature />)
 
     // https://react-hook-form.com/advanced-usage#TransformandParse
@@ -141,14 +105,18 @@ describe('PageSettingsResourcesFeature', () => {
 
     await userEvent.click(submitButton)
 
-    expect(editDatabaseSpy.mock.calls[0][0].databaseId).toBe(mockDatabase.id)
-    expect(editDatabaseSpy.mock.calls[0][0].data).toStrictEqual({
-      ...mockDatabase,
-      ...{
-        storage: 510,
-        instance_type: 'db.t3.medium',
-        mode: DatabaseModeEnum.MANAGED,
-      },
+    expect(mockEditService).toHaveBeenCalledWith({
+      serviceId: mockDatabase.id,
+      payload: handleSubmit(
+        {
+          cpu: 1,
+          memory: 1024,
+          storage: 510,
+          instance_type: 'db.t3.medium',
+          mode: DatabaseModeEnum.MANAGED,
+        },
+        mockDatabase
+      ),
     })
   })
 })

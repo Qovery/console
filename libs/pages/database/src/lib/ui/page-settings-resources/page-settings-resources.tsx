@@ -1,8 +1,8 @@
 import { DatabaseModeEnum } from 'qovery-typescript-axios'
 import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
+import { type Database } from '@qovery/domains/services/data-access'
 import { DatabaseSettingsResources } from '@qovery/shared/console-shared'
-import { type DatabaseEntity } from '@qovery/shared/interfaces'
 import {
   ButtonLegacy,
   ButtonLegacySize,
@@ -15,7 +15,7 @@ import {
 
 export interface PageSettingsResourcesProps {
   onSubmit: FormEventHandler<HTMLFormElement>
-  database?: DatabaseEntity
+  database?: Database
   loading?: boolean
   clusterId?: string
 }

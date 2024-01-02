@@ -5,3 +5,4 @@ export * from './lib/hooks/use-cloud-provider-instance-types/use-cloud-provider-
 export * from './lib/hooks/use-create-cloud-provider-credential/use-create-cloud-provider-credential'
 export * from './lib/hooks/use-delete-cloud-provider-credential/use-delete-cloud-provider-credential'
 export * from './lib/hooks/use-edit-cloud-provider-credential/use-edit-cloud-provider-credential'
+export * from './lib/hooks/use-cloud-provider-database-instance-types/use-cloud-provider-database-instance-types'

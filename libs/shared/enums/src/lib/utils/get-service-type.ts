@@ -12,13 +12,12 @@ import {
 import {
   type ApplicationEntity,
   type ContainerApplicationEntity,
-  type DatabaseEntity,
   type GitApplicationEntity,
   type JobApplicationEntity,
 } from '@qovery/shared/interfaces'
 import { ServiceTypeEnum } from '../service-type.enum'
 
-export const getServiceType = (data: ApplicationEntity | DatabaseEntity) => {
+export const getServiceType = (data: ApplicationEntity) => {
   let currentType: ServiceTypeEnum
 
   const isJob = (data as JobApplicationEntity)?.max_nb_restart !== undefined
@@ -118,13 +117,5 @@ export const isApplication = (data?: ApplicationEntity | keyof typeof ServiceTyp
     return getServiceType(data as ApplicationEntity) === ServiceTypeEnum.APPLICATION
   } else {
     return data === ServiceTypeEnum.APPLICATION
-  }
-}
-// Database
-export const isDatabase = (data?: DatabaseEntity | keyof typeof ServiceTypeEnum) => {
-  if ((data as DatabaseEntity).id) {
-    return getServiceType(data as DatabaseEntity) === ServiceTypeEnum.DATABASE
-  } else {
-    return data === ServiceTypeEnum.DATABASE
   }
 }

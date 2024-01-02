@@ -2,7 +2,7 @@ import { type Environment, type Project } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { match } from 'ts-pattern'
 import { type ServiceType } from '@qovery/domains/services/data-access'
-import { type ApplicationEntity, type DatabaseEntity } from '@qovery/shared/interfaces'
+import { type ApplicationEntity } from '@qovery/shared/interfaces'
 import { ExternalLink, InputSelect, InputText, LoaderSpinner, ModalCrud } from '@qovery/shared/ui'
 
 export interface CloneServiceModalProps {
@@ -12,7 +12,7 @@ export interface CloneServiceModalProps {
   isFetchEnvironmentsLoading: boolean
   onSubmit: () => void
   projects: Project[]
-  serviceToClone: ApplicationEntity | DatabaseEntity
+  serviceToClone: ApplicationEntity
   serviceType: ServiceType
 }
 

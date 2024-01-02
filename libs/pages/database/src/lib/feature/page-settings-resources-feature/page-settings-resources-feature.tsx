@@ -1,15 +1,12 @@
-import { useQueryClient } from '@tanstack/react-query'
-import { useEffect, useState } from 'react'
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
-import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { editDatabase, postDatabaseActionsRedeploy, selectDatabaseById } from '@qovery/domains/database'
-import { useFetchEnvironment } from '@qovery/domains/environment'
-import { type DatabaseEntity } from '@qovery/shared/interfaces'
-import { type AppDispatch, type RootState } from '@qovery/state/store'
+import { useEnvironment } from '@qovery/domains/environments/feature'
+import { type Database } from '@qovery/domains/services/data-access'
+import { useEditService, useService } from '@qovery/domains/services/feature'
+import { buildEditServicePayload } from '@qovery/shared/util-services'
 import PageSettingsResources from '../../ui/page-settings-resources/page-settings-resources'
 
-export const handleSubmit = (data: FieldValues, database: DatabaseEntity) => {
+export const handleSubmit = (data: FieldValues, database: Database) => {
   const cloneDatabase = Object.assign({}, database)
 
   cloneDatabase.cpu = data['cpu']
@@ -21,14 +18,11 @@ export const handleSubmit = (data: FieldValues, database: DatabaseEntity) => {
 }
 
 export function PageSettingsResourcesFeature() {
-  const { databaseId = '', environmentId = '', projectId = '' } = useParams()
-  const queryClient = useQueryClient()
+  const { databaseId = '', environmentId = '' } = useParams()
 
-  const [loading, setLoading] = useState(false)
-  const dispatch = useDispatch<AppDispatch>()
-
-  const database = useSelector<RootState, DatabaseEntity | undefined>((state) => selectDatabaseById(state, databaseId))
-  const { data: environment } = useFetchEnvironment(projectId, environmentId)
+  const { data: environment } = useEnvironment({ environmentId })
+  const { data: database } = useService({ serviceId: databaseId, serviceType: 'DATABASE' })
+  const { mutate: editService, isLoading: isLoadingEditService } = useEditService({ environmentId })
 
   const methods = useForm({
     mode: 'onChange',
@@ -40,51 +34,19 @@ export function PageSettingsResourcesFeature() {
     },
   })
 
-  useEffect(() => {
-    methods.reset({
-      memory: database?.memory,
-      storage: database?.storage,
-      cpu: database?.cpu || 10,
-      instance_type: database?.instance_type,
-    })
-  }, [methods, database?.memory, database?.storage, database?.cpu, database?.instance_type])
-
-  const toasterCallback = () => {
-    if (database) {
-      dispatch(
-        postDatabaseActionsRedeploy({
-          databaseId,
-          environmentId,
-          queryClient,
-        })
-      )
-    }
-  }
-
   const onSubmit = methods.handleSubmit((data) => {
     if (!database) return
-
-    setLoading(true)
-    const cloneDatabase = handleSubmit(data, database)
-
-    dispatch(
-      editDatabase({
-        databaseId: databaseId,
-        data: cloneDatabase,
-        toasterCallback,
-        queryClient,
-      })
-    )
-      .unwrap()
-      .then(() => setLoading(false))
-      .catch(() => setLoading(false))
+    editService({
+      serviceId: databaseId,
+      payload: buildEditServicePayload({ service: database, request: handleSubmit(data, database) }),
+    })
   })
 
   return (
     <FormProvider {...methods}>
       <PageSettingsResources
         onSubmit={onSubmit}
-        loading={loading}
+        loading={isLoadingEditService}
         database={database}
         clusterId={environment?.cluster_id}
       />

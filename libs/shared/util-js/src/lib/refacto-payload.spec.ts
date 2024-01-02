@@ -1,16 +1,13 @@
 import {
   CloudProviderEnum,
   ContainerRegistryKindEnum,
-  DatabaseAccessibilityEnum,
   OrganizationCustomRoleClusterPermission,
   StorageTypeEnum,
 } from 'qovery-typescript-axios'
-import { databaseFactoryMock } from '@qovery/shared/factories'
 import { type ContainerApplicationEntity } from '@qovery/shared/interfaces'
 import {
   refactoClusterPayload,
   refactoContainerApplicationPayload,
-  refactoDatabasePayload,
   refactoGitApplicationPayload,
   refactoJobPayload,
   refactoOrganizationCustomRolePayload,
@@ -134,29 +131,6 @@ describe('testing payload refactoring', () => {
       arguments: [],
       entrypoint: '/',
       auto_preview: false,
-    })
-  })
-
-  it('should remove useless database values', () => {
-    const response = databaseFactoryMock(2)[0]
-    response.name = 'hello'
-    response.description = 'test'
-    response.version = '12'
-    response.accessibility = DatabaseAccessibilityEnum.PRIVATE
-    response.cpu = 1024
-    response.memory = 1024
-    response.storage = 1024
-    response.instance_type = 't2.small'
-
-    expect(refactoDatabasePayload(response)).toEqual({
-      name: 'hello',
-      description: 'test',
-      version: '12',
-      accessibility: DatabaseAccessibilityEnum.PRIVATE,
-      cpu: 1024,
-      memory: 1024,
-      storage: 1024,
-      instance_type: 't2.small',
     })
   })
 

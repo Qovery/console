@@ -8,6 +8,7 @@ import {
   APPLICATION_SETTINGS_URL,
   APPLICATION_URL,
   AUDIT_LOGS_PARAMS_URL,
+  DEPLOYMENT_LOGS_URL,
   ENVIRONMENT_LOGS_URL,
   SERVICES_GENERAL_URL,
   SERVICES_URL,
@@ -29,12 +30,15 @@ import {
   isDeleteAvailable,
   isDeployAvailable,
   isRedeployAvailable,
+  isRestartAvailable,
   isStopAvailable,
 } from '@qovery/shared/util-js'
 import { useDeleteService } from '../hooks/use-delete-service/use-delete-service'
 import { useDeployService } from '../hooks/use-deploy-service/use-deploy-service'
 import { useDeploymentStatus } from '../hooks/use-deployment-status/use-deployment-status'
 import { useRedeployService } from '../hooks/use-redeploy-service/use-redeploy-service'
+import { useRestartService } from '../hooks/use-restart-service/use-restart-service'
+import { useRunningStatus } from '../hooks/use-running-status/use-running-status'
 import { useService } from '../hooks/use-service/use-service'
 import { useStopService } from '../hooks/use-stop-service/use-stop-service'
 import ServiceCloneModal from '../service-clone-modal/service-clone-modal'
@@ -43,21 +47,32 @@ function MenuManageDeployment({
   state,
   environment,
   service,
+  environmentLogsLink,
 }: {
   state: StateEnum
   environment: Environment
   service: AnyService
+  environmentLogsLink: string
 }) {
+  const navigate = useNavigate()
   const { openModalConfirmation } = useModalConfirmation()
 
+  const { data: runningState } = useRunningStatus({ environmentId: environment.id, serviceId: service.id })
   const { mutate: deployService } = useDeployService({ environmentId: environment.id })
   const { mutate: redeployService } = useRedeployService({ environmentId: environment.id })
+  const { mutate: restartService } = useRestartService({ environmentId: environment.id })
   const { mutate: stopService } = useStopService({ environmentId: environment.id })
-  const { mutate: cancelBuild } = useActionCancelEnvironment(environment.project.id, environment.id, true)
+  const { mutate: cancelBuild } = useActionCancelEnvironment(
+    environment.project.id,
+    environment.id,
+    true,
+    undefined,
+    () => navigate(environmentLogsLink + DEPLOYMENT_LOGS_URL(service.id))
+  )
 
   const mutationDeploy = () => deployService({ serviceId: service.id, serviceType: service.serviceType })
 
-  const mutationRedeploy = async () => {
+  const mutationRedeploy = () => {
     openModalConfirmation({
       mode: environment?.mode,
       title: 'Confirm redeploy',
@@ -67,7 +82,7 @@ function MenuManageDeployment({
     })
   }
 
-  const mutationStop = async () => {
+  const mutationStop = () => {
     openModalConfirmation({
       mode: environment?.mode,
       title: 'Confirm stop',
@@ -116,6 +131,14 @@ function MenuManageDeployment({
             Redeploy
           </DropdownMenu.Item>
         )}
+        {runningState && service.serviceType !== 'JOB' && isRestartAvailable(runningState.state, state) && (
+          <DropdownMenu.Item
+            icon={<Icon name={IconAwesomeEnum.ROTATE_RIGHT} />}
+            onClick={() => restartService({ serviceId: service.id, serviceType: service.serviceType })}
+          >
+            Restart Service
+          </DropdownMenu.Item>
+        )}
         {isStopAvailable(state) && (
           <DropdownMenu.Item icon={<Icon name={IconAwesomeEnum.CIRCLE_STOP} />} onClick={mutationStop}>
             Stop
@@ -132,12 +155,14 @@ function MenuOtherActions({
   projectId,
   environmentId,
   service,
+  environmentLogsLink,
 }: {
   state: StateEnum
   organizationId: string
   projectId: string
   environmentId: string
   service: AnyService
+  environmentLogsLink: string
 }) {
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
@@ -190,9 +215,7 @@ function MenuOtherActions({
       <DropdownMenu.Content>
         <DropdownMenu.Item
           icon={<Icon name={IconAwesomeEnum.SCROLL} />}
-          onClick={() =>
-            navigate(ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + SERVICE_LOGS_URL(service.id))
-          }
+          onClick={() => navigate(environmentLogsLink + SERVICE_LOGS_URL(service.id))}
         >
           Logs
         </DropdownMenu.Item>
@@ -252,15 +275,18 @@ export function ServiceActionToolbar({ serviceId }: { serviceId: string }) {
 
   if (!service || !deploymentStatus || !environment) return <Skeleton height={32} width={115} />
 
+  const environmentLogsLink = ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId)
+
   return (
     <ActionToolbar.Root>
-      <MenuManageDeployment state={deploymentStatus.state} environment={environment} service={service} />
+      <MenuManageDeployment
+        state={deploymentStatus.state}
+        environment={environment}
+        service={service}
+        environmentLogsLink={environmentLogsLink}
+      />
       <Tooltip content="Logs">
-        <ActionToolbar.Button
-          onClick={() =>
-            navigate(ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + SERVICE_LOGS_URL(serviceId))
-          }
-        >
+        <ActionToolbar.Button onClick={() => navigate(environmentLogsLink + SERVICE_LOGS_URL(service.id))}>
           <Icon name={IconAwesomeEnum.SCROLL} />
         </ActionToolbar.Button>
       </Tooltip>
@@ -270,6 +296,7 @@ export function ServiceActionToolbar({ serviceId }: { serviceId: string }) {
         projectId={projectId}
         environmentId={environmentId}
         service={service}
+        environmentLogsLink={environmentLogsLink}
       />
     </ActionToolbar.Root>
   )

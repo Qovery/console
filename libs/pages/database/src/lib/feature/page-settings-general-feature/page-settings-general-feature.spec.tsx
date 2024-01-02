@@ -1,5 +1,4 @@
 import { DatabaseAccessibilityEnum } from 'qovery-typescript-axios'
-import { type Database } from '@qovery/domains/services/data-access'
 import * as servicesDomains from '@qovery/domains/services/feature'
 import { databaseFactoryMock } from '@qovery/shared/factories'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
@@ -8,7 +7,7 @@ import { PageSettingsGeneralFeature } from './page-settings-general-feature'
 
 import SpyInstance = jest.SpyInstance
 
-const mockDatabase = databaseFactoryMock(1)[0] as Database
+const mockDatabase = databaseFactoryMock(1)[0]
 const useEditServiceSpy: SpyInstance = jest.spyOn(servicesDomains, 'useEditService')
 const useServiceSpy: SpyInstance = jest.spyOn(servicesDomains, 'useService')
 

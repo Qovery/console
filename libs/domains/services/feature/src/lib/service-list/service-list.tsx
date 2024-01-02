@@ -22,7 +22,7 @@ import { useEnvironment } from '@qovery/domains/environments/feature'
 // XXX: Those ButtonsActions should live in domains/services
 // We ignore implicitDependencies in project.json to avoid circular dependencies
 // eslint-disable-next-line @nx/enforce-module-boundaries
-import { ApplicationButtonsActions, DatabaseButtonsActions } from '@qovery/shared/console-shared'
+import { ApplicationButtonsActions } from '@qovery/shared/console-shared'
 import {
   IconEnum,
   ServiceTypeEnum,
@@ -32,7 +32,7 @@ import {
   isJobContainerSource,
   isJobGitSource,
 } from '@qovery/shared/enums'
-import { type ApplicationEntity, type DatabaseEntity } from '@qovery/shared/interfaces'
+import { type ApplicationEntity } from '@qovery/shared/interfaces'
 import {
   APPLICATION_URL,
   DATABASE_GENERAL_URL,
@@ -125,14 +125,7 @@ export function ServiceList({ organizationId, projectId, environmentId, classNam
                 clusterId={environment.cluster_id}
               />
             ))
-            .with('HELM', () => <ServiceActionToolbar serviceId={service.id} />)
-            .with('DATABASE', () => (
-              <DatabaseButtonsActions
-                database={service as DatabaseEntity}
-                environmentMode={environment.mode}
-                clusterId={environment.cluster_id}
-              />
-            ))
+            .with('HELM', 'DATABASE', () => <ServiceActionToolbar serviceId={service.id} />)
             .exhaustive()
 
           return (

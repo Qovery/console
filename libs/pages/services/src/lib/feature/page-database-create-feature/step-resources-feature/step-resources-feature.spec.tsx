@@ -1,27 +1,18 @@
-import { mockUseQueryResult } from '__tests__/utils/mock-use-query-result'
-import { act, getByTestId, render, waitFor } from '__tests__/utils/setup-jest'
-import {
-  type CloudProviderEnum,
-  DatabaseAccessibilityEnum,
-  DatabaseModeEnum,
-  DatabaseTypeEnum,
-  type ManagedDatabaseInstanceTypeResponse,
-} from 'qovery-typescript-axios'
+import { DatabaseAccessibilityEnum, DatabaseModeEnum, DatabaseTypeEnum } from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
 import selectEvent from 'react-select-event'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { DatabaseCreateContext } from '../page-database-create-feature'
 import StepResourcesFeature from './step-resources-feature'
 
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useDispatch: () => jest.fn(),
-}))
-
-const mockUseFetchDatabaseInstanceTypes: jest.Mock = jest.fn()
-jest.mock('@qovery/domains/database', () => ({
-  ...jest.requireActual('@qovery/domains/database'),
-  useFetchDatabaseInstanceTypes: (provider: CloudProviderEnum, databaseType: DatabaseTypeEnum, region: string) =>
-    mockUseFetchDatabaseInstanceTypes(provider, databaseType, region),
+jest.mock('@qovery/domains/cloud-providers/feature', () => ({
+  useCloudProviderDatabaseInstanceTypes: () => ({
+    data: [
+      {
+        name: 'db.t3.medium',
+      },
+    ],
+  }),
 }))
 
 const mockNavigate = jest.fn()
@@ -60,26 +51,8 @@ const ContextWrapper = (props: { children: ReactNode }) => {
 }
 
 describe('PageDatabaseCreateResourcesFeature', () => {
-  beforeEach(() => {
-    mockUseFetchDatabaseInstanceTypes.mockReturnValue(
-      mockUseQueryResult<ManagedDatabaseInstanceTypeResponse[]>([
-        {
-          name: 'db.t3.medium',
-        },
-      ])
-    )
-  })
   it('should render successfully', () => {
-    const { baseElement } = render(
-      <ContextWrapper>
-        <StepResourcesFeature />
-      </ContextWrapper>
-    )
-    expect(baseElement).toBeTruthy()
-  })
-
-  it('should render successfully', () => {
-    const { baseElement } = render(
+    const { baseElement } = renderWithProviders(
       <ContextWrapper>
         <StepResourcesFeature />
       </ContextWrapper>
@@ -88,21 +61,14 @@ describe('PageDatabaseCreateResourcesFeature', () => {
   })
 
   it('should submit form and navigate', async () => {
-    const { baseElement } = render(
+    const { userEvent } = renderWithProviders(
       <ContextWrapper>
         <StepResourcesFeature />
       </ContextWrapper>
     )
 
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    await act(() => {})
-
-    const button = getByTestId(baseElement, 'button-submit')
-    expect(button).not.toBeDisabled()
-
-    await act(() => {
-      button.click()
-    })
+    const button = screen.getByTestId('button-submit')
+    await userEvent.click(button)
 
     expect(mockSetResourcesData).toHaveBeenCalledWith({
       storage: 1,
@@ -113,7 +79,7 @@ describe('PageDatabaseCreateResourcesFeature', () => {
   })
 
   it('should render resources with managed type', async () => {
-    const { getByTestId, getByText, getByLabelText } = render(
+    const { userEvent } = renderWithProviders(
       <DatabaseCreateContext.Provider
         value={{
           currentStep: 1,
@@ -139,21 +105,14 @@ describe('PageDatabaseCreateResourcesFeature', () => {
       </DatabaseCreateContext.Provider>
     )
 
-    const realSelect = getByLabelText('Instance type')
+    const realSelect = screen.getByLabelText('Instance type')
     await selectEvent.select(realSelect, 'db.t3.medium')
 
-    expect(getByText('db.t3.medium')).toBeInTheDocument()
+    expect(screen.getByText('db.t3.medium')).toBeInTheDocument()
 
-    const button = getByTestId('button-submit')
+    const button = screen.getByTestId('button-submit')
 
-    await waitFor(() => {
-      expect(button).not.toBeDisabled()
-    })
-
-    await act(() => {
-      button.click()
-    })
-
+    await userEvent.click(button)
     expect(mockNavigate).toHaveBeenCalledWith('/organization/1/project/2/environment/3/services/create/database/post')
   })
 })
