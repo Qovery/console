@@ -23,6 +23,7 @@ export function useLastDeployedCommit({ gitRepository, serviceId, serviceType }:
     data: {
       deployedCommit: commits?.[delta] ?? defaultCommitInfo,
       delta,
+      commits,
     },
     ...props,
   }

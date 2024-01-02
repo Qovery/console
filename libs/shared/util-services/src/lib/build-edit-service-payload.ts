@@ -207,36 +207,26 @@ function refactoDatabase({ service: database, request = {} }: databaseProps): Da
 }
 
 function refactoHelm({ service: helm, request = {} }: helmProps): HelmRequest {
-  const source = match(helm)
-    .with(
-      {
-        source: P.when(isHelmGitSource),
-      },
-      ({ source: { git } }) => {
-        return {
-          git_repository: {
-            url: git?.git_repository?.url ?? '',
-            branch: git?.git_repository?.branch,
-            root_path: git?.git_repository?.root_path,
-            git_token_id: git?.git_repository?.git_token_id,
-          },
-        }
+  const source = match(helm.source)
+    .with(P.when(isHelmGitSource), ({ git }) => {
+      return {
+        git_repository: {
+          url: git?.git_repository?.url ?? '',
+          branch: git?.git_repository?.branch,
+          root_path: git?.git_repository?.root_path,
+          git_token_id: git?.git_repository?.git_token_id,
+        },
       }
-    )
-    .with(
-      {
-        source: P.when(isHelmRepositorySource),
-      },
-      ({ source: { repository } }) => {
-        return {
-          helm_repository: {
-            repository: repository?.repository?.id,
-            chart_name: repository?.chart_name,
-            chart_version: repository?.chart_version,
-          },
-        }
+    })
+    .with(P.when(isHelmRepositorySource), ({ repository }) => {
+      return {
+        helm_repository: {
+          repository: repository?.repository?.id,
+          chart_name: repository?.chart_name,
+          chart_version: repository?.chart_version,
+        },
       }
-    )
+    })
     .exhaustive()
 
   const helmRequestPayload: HelmRequest = {

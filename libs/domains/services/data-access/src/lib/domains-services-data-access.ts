@@ -3,6 +3,7 @@ import {
   ApplicationActionsApi,
   type ApplicationAdvancedSettings,
   ApplicationConfigurationApi,
+  type DeployRequest as ApplicationDeployRequest,
   ApplicationDeploymentHistoryApi,
   ApplicationDeploymentRestrictionApi,
   type ApplicationDeploymentRestrictionRequest,
@@ -13,6 +14,7 @@ import {
   ContainerActionsApi,
   type ContainerAdvancedSettings,
   ContainerConfigurationApi,
+  type ContainerDeployRequest,
   ContainerDeploymentHistoryApi,
   ContainerMainCallsApi,
   type ContainerRequest,
@@ -27,6 +29,7 @@ import {
   HelmActionsApi,
   type HelmAdvancedSettings,
   HelmConfigurationApi,
+  type HelmDeployRequest,
   HelmDeploymentHistoryApi,
   HelmDeploymentRestrictionApi,
   type HelmDeploymentRestrictionRequest,
@@ -36,6 +39,7 @@ import {
   JobActionsApi,
   type JobAdvancedSettings,
   JobConfigurationApi,
+  type JobDeployRequest,
   JobDeploymentHistoryApi,
   JobDeploymentRestrictionApi,
   type JobDeploymentRestrictionRequest,
@@ -471,6 +475,32 @@ type EditServiceRequest = {
       } & HelmRequest)
 }
 
+type DeployRequest =
+  | {
+      serviceId: string
+      serviceType: ApplicationType
+      request?: ApplicationDeployRequest
+    }
+  | {
+      serviceId: string
+      serviceType: ContainerType
+      request?: ContainerDeployRequest
+    }
+  | {
+      serviceId: string
+      serviceType: JobType
+      request?: JobDeployRequest
+    }
+  | {
+      serviceId: string
+      serviceType: HelmType
+      request?: HelmDeployRequest
+    }
+  | {
+      serviceId: string
+      serviceType: DatabaseType
+    }
+
 type EditAdvancedSettingsRequest = {
   serviceId: string
   payload:
@@ -703,27 +733,30 @@ export const mutations = {
     const response = await mutation(serviceId)
     return response.data
   },
-  async deployService({ serviceId, serviceType }: { serviceId: string; serviceType: ServiceType }) {
-    const { mutation } = match(serviceType)
-      .with('APPLICATION', (serviceType) => ({
-        mutation: applicationActionsApi.deployApplication.bind(applicationActionsApi),
+  async deployService(props: DeployRequest) {
+    const { mutation } = match(props)
+      .with({ serviceType: 'APPLICATION' }, ({ serviceId, serviceType, request }) => ({
+        mutation: applicationActionsApi.deployApplication.bind(applicationActionsApi, serviceId, request),
         serviceType,
       }))
-      .with('CONTAINER', (serviceType) => ({
-        mutation: containerActionsApi.deployContainer.bind(containerActionsApi),
+      .with({ serviceType: 'CONTAINER' }, ({ serviceId, serviceType, request }) => ({
+        mutation: containerActionsApi.deployContainer.bind(containerActionsApi, serviceId, request),
         serviceType,
       }))
-      .with('DATABASE', (serviceType) => ({
-        mutation: databaseActionsApi.deployDatabase.bind(databaseActionsApi),
+      .with({ serviceType: 'DATABASE' }, ({ serviceId, serviceType }) => ({
+        mutation: databaseActionsApi.deployDatabase.bind(databaseActionsApi, serviceId),
         serviceType,
       }))
-      .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', (serviceType) => ({
-        mutation: jobActionsApi.deployJob.bind(jobActionsApi),
+      .with({ serviceType: 'JOB' }, ({ serviceId, serviceType, request }) => ({
+        mutation: jobActionsApi.deployJob.bind(jobActionsApi, serviceId, undefined, request),
         serviceType,
       }))
-      .with('HELM', (serviceType) => ({ mutation: helmActionsApi.deployHelm.bind(helmActionsApi), serviceType }))
+      .with({ serviceType: 'HELM' }, ({ serviceId, serviceType, request }) => ({
+        mutation: helmActionsApi.deployHelm.bind(helmActionsApi, serviceId, undefined, request),
+        serviceType,
+      }))
       .exhaustive()
-    const response = await mutation(serviceId)
+    const response = await mutation()
     return response.data
   },
   async stopService({ serviceId, serviceType }: { serviceId: string; serviceType: ServiceType }) {
