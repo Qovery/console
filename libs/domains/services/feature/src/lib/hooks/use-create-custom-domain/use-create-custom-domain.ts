@@ -12,11 +12,9 @@ export function useCreateCustomDomain({ environmentId }: { environmentId: string
       queryClient.invalidateQueries({
         queryKey: queries.services.customDomains({ serviceId, serviceType }).queryKey,
       })
-      if (serviceType === 'APPLICATION') {
-        queryClient.invalidateQueries({
-          queryKey: queries.services.listLinks({ serviceId, serviceType: 'APPLICATION' }).queryKey,
-        })
-      }
+      queryClient.invalidateQueries({
+        queryKey: queries.services.listLinks({ serviceId, serviceType }).queryKey,
+      })
     },
     meta: {
       notifyOnSuccess(_: unknown, variables: unknown) {
