@@ -6,7 +6,7 @@ import {
   useDefaultAdvancedSettings,
   useService,
 } from '@qovery/domains/services/feature'
-import { HelpSection } from '@qovery/shared/ui'
+import { Heading, HelpSection, Section } from '@qovery/shared/ui'
 
 interface SettingsAdvancedFeatureProps {
   service: Exclude<AnyService, Database>
@@ -23,10 +23,10 @@ function SettingsAdvancedFeature({ service }: SettingsAdvancedFeatureProps) {
 
   return (
     <div className="flex flex-col justify-between w-full">
-      <div className="p-8 ">
+      <Section className="p-8">
         <div className="flex justify-between mb-4">
           <div>
-            <h1 className="h5 text-neutral-400 mb-2">Advanced Settings</h1>
+            <Heading className="mb-2">Advanced Settings</Heading>
             <p className="text-sm text-neutral-400 max-w-content-with-navigation-left">
               Settings are injected at the build and run time of your application and thus any change on this section
               will be applied on the next manual/automatic deploy.
@@ -39,7 +39,7 @@ function SettingsAdvancedFeature({ service }: SettingsAdvancedFeatureProps) {
           defaultAdvancedSettings={defaultAdvancedSettings}
           advancedSettings={advancedSettings}
         />
-      </div>
+      </Section>
       <HelpSection
         description="Need help? You may find these links useful"
         links={[
