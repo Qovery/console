@@ -1,39 +1,18 @@
-import { useQueryClient } from '@tanstack/react-query'
 import { type CustomDomain } from 'qovery-typescript-axios'
 import { useEffect, useMemo } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useDispatch, useSelector } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
-import {
-  createCustomDomain,
-  editCustomDomain,
-  getCustomDomainsState,
-  postApplicationActionsRedeploy,
-} from '@qovery/domains/application'
-import { useLinks } from '@qovery/domains/services/feature'
-import { getServiceType } from '@qovery/shared/enums'
-import { type ApplicationEntity, type LoadingStatus } from '@qovery/shared/interfaces'
-import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
+import { type AnyService } from '@qovery/domains/services/data-access'
+import { useCreateCustomDomain, useEditCustomDomain, useLinks } from '@qovery/domains/services/feature'
 import { useModal } from '@qovery/shared/ui'
-import { type AppDispatch, type RootState } from '@qovery/state/store'
-import { queries } from '@qovery/state/util-queries'
 import CrudModal from '../../../ui/page-settings-domains/crud-modal/crud-modal'
 
 export interface CrudModalFeatureProps {
-  organizationId: string
-  projectId: string
   customDomain?: CustomDomain
-  application?: ApplicationEntity
+  service?: AnyService
   onClose: () => void
 }
 
-export function CrudModalFeature({
-  organizationId,
-  projectId,
-  customDomain,
-  application,
-  onClose,
-}: CrudModalFeatureProps) {
+export function CrudModalFeature({ customDomain, service, onClose }: CrudModalFeatureProps) {
   const methods = useForm({
     defaultValues: {
       domain: customDomain ? customDomain.domain : '',
@@ -41,86 +20,45 @@ export function CrudModalFeature({
     },
     mode: 'onChange',
   })
-  const navigate = useNavigate()
-  const dispatch = useDispatch<AppDispatch>()
-  const loadingStatus = useSelector<RootState, LoadingStatus>((state) => getCustomDomainsState(state).loadingStatus)
-  const { enableAlertClickOutside } = useModal()
-  const queryClient = useQueryClient()
-
-  const toasterCallback = () => {
-    if (application) {
-      dispatch(
-        postApplicationActionsRedeploy({
-          applicationId: application.id,
-          environmentId: application.environment?.id || '',
-          serviceType: getServiceType(application),
-          callback: () =>
-            navigate(
-              ENVIRONMENT_LOGS_URL(organizationId, projectId, application?.environment?.id) +
-                DEPLOYMENT_LOGS_URL(application?.id)
-            ),
-          queryClient,
-        })
-      )
-    }
-  }
-
-  const { data: links = [] } = useLinks({
-    serviceId: application?.id ?? '',
-    serviceType: getServiceType(application as ApplicationEntity),
+  const { mutateAsync: editCustomDomain, isLoading: isLoadingEditCustomDomain } = useEditCustomDomain({
+    environmentId: service?.environment.id ?? '',
+  })
+  const { mutateAsync: createCustomDomain, isLoading: isLoadingCreateCustomDomain } = useCreateCustomDomain({
+    environmentId: service?.environment.id ?? '',
   })
 
-  const refetchLinks = () => {
-    if (!application) return
+  const { enableAlertClickOutside } = useModal()
 
-    queryClient.invalidateQueries(
-      queries.services.listLinks({
-        serviceId: application.id,
-        serviceType: 'APPLICATION',
-      })
-    )
-  }
+  const { data: links = [] } = useLinks({
+    serviceId: service?.id ?? '',
+    serviceType: service?.serviceType,
+  })
 
   useEffect(() => {
     enableAlertClickOutside(methods.formState.isDirty)
   }, [methods.formState, enableAlertClickOutside])
 
-  const onSubmit = methods.handleSubmit((data) => {
-    if (!application) return
+  const onSubmit = methods.handleSubmit(async (data) => {
+    if (service?.serviceType !== ('APPLICATION' || 'CONTAINER')) return
 
-    const serviceType = getServiceType(application)
-
-    if (customDomain) {
-      dispatch(
-        editCustomDomain({
-          applicationId: application.id,
-          id: customDomain.id,
-          data,
-          serviceType,
-          toasterCallback,
+    try {
+      if (customDomain) {
+        await editCustomDomain({
+          serviceId: service.id,
+          serviceType: service.serviceType,
+          customDomainId: customDomain.id,
+          payload: data,
         })
-      )
-        .unwrap()
-        .then(() => {
-          refetchLinks()
-          onClose()
+      } else {
+        await createCustomDomain({
+          serviceId: service.id,
+          serviceType: service.serviceType,
+          payload: data,
         })
-        .catch((e) => console.error(e))
-    } else {
-      dispatch(
-        createCustomDomain({
-          applicationId: application.id,
-          serviceType,
-          data,
-          toasterCallback,
-        })
-      )
-        .unwrap()
-        .then(() => {
-          refetchLinks()
-          onClose()
-        })
-        .catch((e) => console.error(e))
+      }
+      onClose()
+    } catch (error) {
+      console.error(error)
     }
   })
 
@@ -136,7 +74,7 @@ export function CrudModalFeature({
         customDomain={customDomain}
         onSubmit={onSubmit}
         onClose={onClose}
-        loading={loadingStatus === 'loading'}
+        loading={isLoadingEditCustomDomain || isLoadingCreateCustomDomain}
         isEdit={!!customDomain}
         link={defaultLink}
       />

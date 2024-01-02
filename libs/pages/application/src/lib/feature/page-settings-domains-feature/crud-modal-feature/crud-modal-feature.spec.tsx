@@ -1,11 +1,25 @@
 import { CustomDomainStatusEnum } from 'qovery-typescript-axios'
+import { type Application } from '@qovery/domains/services/data-access'
 import { applicationFactoryMock } from '@qovery/shared/factories'
-import { renderWithProviders } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import CrudModalFeature, { type CrudModalFeatureProps } from './crud-modal-feature'
 
+const mockMutateEditCustomDomain = jest.fn()
+const mockMutateCreateCustomDomain = jest.fn()
+
+jest.mock('@qovery/domains/services/feature', () => ({
+  useEditCustomDomain: () => ({
+    mutateAsync: mockMutateEditCustomDomain,
+  }),
+  useCreateCustomDomain: () => ({
+    mutateAsync: mockMutateCreateCustomDomain,
+  }),
+  useLinks: () => ({
+    data: [],
+  }),
+}))
+
 const props: CrudModalFeatureProps = {
-  organizationId: '0',
-  projectId: '1',
   customDomain: {
     id: '1',
     domain: 'example.com',
@@ -15,7 +29,7 @@ const props: CrudModalFeatureProps = {
     created_at: '2020-01-01T00:00:00Z',
     generate_certificate: true,
   },
-  application: applicationFactoryMock(1)[0],
+  service: applicationFactoryMock(1)[0] as Application,
   onClose: jest.fn(),
 }
 
@@ -23,5 +37,55 @@ describe('CrudModalFeature', () => {
   it('should render successfully', async () => {
     const { baseElement } = renderWithProviders(<CrudModalFeature {...props} />)
     expect(baseElement).toBeTruthy()
+  })
+
+  it('should create a custom domain', async () => {
+    const { userEvent } = renderWithProviders(<CrudModalFeature {...props} customDomain={undefined} />)
+
+    const input = screen.getByLabelText('Domain')
+    await userEvent.type(input, 'example.com')
+
+    const button = screen.getByRole('button', { name: 'Create' })
+    await userEvent.click(button)
+
+    expect(mockMutateCreateCustomDomain).toHaveBeenCalledWith({
+      serviceId: '0',
+      serviceType: 'APPLICATION',
+      payload: {
+        domain: 'example.com',
+        generate_certificate: true,
+      },
+    })
+  })
+
+  it('should edit a custom domain', async () => {
+    props.customDomain = {
+      id: '1',
+      domain: 'example.com',
+      status: 'VALIDATION_PENDING',
+      validation_domain: 'example.com',
+      updated_at: '2020-01-01T00:00:00Z',
+      created_at: '2020-01-01T00:00:00Z',
+      generate_certificate: false,
+    }
+
+    const { userEvent } = renderWithProviders(<CrudModalFeature {...props} />)
+
+    const input = screen.getByLabelText('Domain')
+    await userEvent.clear(input)
+    await userEvent.type(input, 'example.com')
+
+    const button = screen.getByRole('button', { name: 'Confirm' })
+    await userEvent.click(button)
+
+    expect(mockMutateEditCustomDomain).toHaveBeenCalledWith({
+      serviceId: '0',
+      customDomainId: '1',
+      serviceType: 'APPLICATION',
+      payload: {
+        domain: 'example.com',
+        generate_certificate: false,
+      },
+    })
   })
 })
