@@ -473,18 +473,27 @@ export const mutations = {
     return response.data
   },
   async createService({ environmentId, payload }: CreateServiceRequest) {
-    const mutation = match(payload)
-      .with({ serviceType: 'APPLICATION' }, (payload) =>
-        applicationsApi.createApplication.bind(applicationsApi, environmentId, payload)
-      )
-      .with({ serviceType: 'CONTAINER' }, (payload) =>
-        containersApi.createContainer.bind(containersApi, environmentId, payload)
-      )
-      .with({ serviceType: 'DATABASE' }, (payload) =>
-        databasesApi.createDatabase.bind(databasesApi, environmentId, payload)
-      )
-      .with({ serviceType: 'JOB' }, (payload) => jobsApi.createJob.bind(jobsApi, environmentId, payload))
-      .with({ serviceType: 'HELM' }, (payload) => helmsApi.createHelm.bind(helmsApi, environmentId, payload))
+    const { mutation } = match(payload)
+      .with({ serviceType: 'APPLICATION' }, (payload) => ({
+        mutation: applicationsApi.createApplication.bind(applicationsApi, environmentId, payload),
+        serviceType: 'APPLICATION' as const,
+      }))
+      .with({ serviceType: 'CONTAINER' }, (payload) => ({
+        mutation: containersApi.createContainer.bind(containersApi, environmentId, payload),
+        serviceType: 'CONTAINER' as const,
+      }))
+      .with({ serviceType: 'DATABASE' }, (payload) => ({
+        mutation: databasesApi.createDatabase.bind(databasesApi, environmentId, payload),
+        serviceType: 'DATABASE' as const,
+      }))
+      .with({ serviceType: 'JOB' }, (payload) => ({
+        mutation: jobsApi.createJob.bind(jobsApi, environmentId, payload),
+        serviceType: 'JOB' as const,
+      }))
+      .with({ serviceType: 'HELM' }, (payload) => ({
+        mutation: helmsApi.createHelm.bind(helmsApi, environmentId, payload),
+        serviceType: 'HELM' as const,
+      }))
       .exhaustive()
     const response = await mutation()
     return response.data

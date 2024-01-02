@@ -125,8 +125,7 @@ export function ServiceList({ organizationId, projectId, environmentId, classNam
                 clusterId={environment.cluster_id}
               />
             ))
-            .with('HELM', () => <ServiceActionToolbar serviceId={service.id} />)
-            .with('DATABASE', () => <ServiceActionToolbar serviceId={service.id} />)
+            .with('HELM', 'DATABASE', () => <ServiceActionToolbar serviceId={service.id} />)
             .exhaustive()
 
           return (
