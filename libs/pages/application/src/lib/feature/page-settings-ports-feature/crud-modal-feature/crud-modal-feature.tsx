@@ -134,8 +134,8 @@ export function CrudModalFeature({ service, onClose, port }: CrudModalFeaturePro
   const { mutateAsync: editService, isLoading: isLoadingEditService } = useEditService({
     environmentId: service.environment?.id || '',
   })
-  const livenessType = service.healthchecks.liveness_probe?.type
-  const readinessType = service.healthchecks.readiness_probe?.type
+  const livenessType = service.healthchecks?.liveness_probe?.type
+  const readinessType = service.healthchecks?.readiness_probe?.type
 
   const methods = useForm({
     defaultValues: {
