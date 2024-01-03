@@ -1,7 +1,8 @@
-import { render } from '__tests__/utils/setup-jest'
 import { PortProtocolEnum } from 'qovery-typescript-axios'
+import { type Application } from '@qovery/domains/services/data-access'
 import { isMatchingHealthCheck } from '@qovery/shared/console-shared'
 import { applicationFactoryMock } from '@qovery/shared/factories'
+import { renderWithProviders } from '@qovery/shared/util-tests'
 import CrudModalFeature, { type CrudModalFeatureProps, handleSubmit } from './crud-modal-feature'
 
 const mockedIsMatchingHealthCheck = jest.mocked(isMatchingHealthCheck)
@@ -11,18 +12,18 @@ jest.mock('@qovery/shared/console-shared', () => ({
   isMatchingHealthCheck: jest.fn(),
 }))
 
-const application = applicationFactoryMock(1)[0]
+const application = applicationFactoryMock(1)[0] as Application
 
 const props: CrudModalFeatureProps = {
   port: application.ports?.[0],
-  application: application,
+  service: application,
   projectId: '0',
   onClose: jest.fn(),
 }
 
 describe('CrudModalFeature', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<CrudModalFeature {...props} />)
+    const { baseElement } = renderWithProviders(<CrudModalFeature {...props} />)
     expect(baseElement).toBeTruthy()
   })
 

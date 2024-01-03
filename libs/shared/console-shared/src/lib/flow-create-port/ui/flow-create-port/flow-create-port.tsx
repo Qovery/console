@@ -1,17 +1,6 @@
 import { type Healthcheck, type ServicePort } from 'qovery-typescript-axios'
 import { type PortData } from '@qovery/shared/interfaces'
-import {
-  BlockContent,
-  ButtonIcon,
-  ButtonIconStyle,
-  ButtonLegacy,
-  ButtonLegacySize,
-  ButtonLegacyStyle,
-  EmptyState,
-  Icon,
-  IconAwesomeEnum,
-  Tooltip,
-} from '@qovery/shared/ui'
+import { BlockContent, Button, EmptyState, Icon, IconAwesomeEnum, Tooltip } from '@qovery/shared/ui'
 import { isMatchingHealthCheck } from '../../utils/port-healthcheck'
 
 export interface FlowCreatePortProps {
@@ -54,9 +43,10 @@ export function FlowCreatePort({
         </div>
 
         {isSetting && (
-          <ButtonLegacy dataTestId="add-button" onClick={() => onAddPort()} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>
+          <Button size="lg" variant="solid" color="brand" data-testid="add-button" onClick={() => onAddPort()}>
             Add Port
-          </ButtonLegacy>
+            <Icon name={IconAwesomeEnum.CIRCLE_PLUS} className="ml-2" />
+          </Button>
         )}
       </div>
 
@@ -112,20 +102,24 @@ export function FlowCreatePort({
                   </div>
                   <div>
                     {onEdit && (
-                      <ButtonIcon
-                        className="mr-2 !bg-transparent hover:!bg-neutral-200"
-                        style={ButtonIconStyle.STROKED}
-                        size={ButtonLegacySize.REGULAR}
+                      <Button
+                        data-testid="edit-button"
+                        variant="outline"
+                        color="neutral"
+                        size="md"
+                        className="justify-center w-9 h-9 mr-2"
                         onClick={() => onEdit(customPort)}
-                        dataTestId="edit-button"
-                        icon={IconAwesomeEnum.WHEEL}
-                      />
+                      >
+                        <Icon name={IconAwesomeEnum.WHEEL} />
+                      </Button>
                     )}
                     {onRemovePort && (
-                      <ButtonIcon
-                        className="!bg-transparent hover:!bg-neutral-200"
-                        style={ButtonIconStyle.STROKED}
-                        size={ButtonLegacySize.REGULAR}
+                      <Button
+                        data-testid="delete-button"
+                        variant="outline"
+                        color="neutral"
+                        size="md"
+                        className="justify-center w-9 h-9"
                         onClick={() =>
                           onRemovePort(
                             customPort,
@@ -135,23 +129,19 @@ export function FlowCreatePort({
                               : undefined
                           )
                         }
-                        dataTestId="delete-button"
-                        icon={IconAwesomeEnum.TRASH}
-                      />
+                      >
+                        <Icon name={IconAwesomeEnum.TRASH} />
+                      </Button>
                     )}
                   </div>
                 </div>
               ))}
             {!isSetting && (
               <div className="flex justify-end items-center py-3 px-4">
-                <ButtonLegacy
-                  size={ButtonLegacySize.TINY}
-                  iconRight={IconAwesomeEnum.CIRCLE_PLUS}
-                  className="btn--no-min-w"
-                  onClick={onAddPort}
-                >
+                <Button onClick={onAddPort}>
                   Add port
-                </ButtonLegacy>
+                  <Icon name={IconAwesomeEnum.CIRCLE_PLUS} className="ml-2" />
+                </Button>
               </div>
             )}
           </BlockContent>
@@ -162,23 +152,12 @@ export function FlowCreatePort({
 
       {!isSetting && (
         <div className="flex justify-between">
-          <ButtonLegacy
-            onClick={onBack}
-            className="btn--no-min-w"
-            type="button"
-            size={ButtonLegacySize.XLARGE}
-            style={ButtonLegacyStyle.STROKED}
-          >
+          <Button variant="surface" color="neutral" size="lg" onClick={onBack}>
             Back
-          </ButtonLegacy>
-          <ButtonLegacy
-            dataTestId="button-submit"
-            onClick={onSubmit}
-            size={ButtonLegacySize.XLARGE}
-            style={ButtonLegacyStyle.BASIC}
-          >
+          </Button>
+          <Button data-testid="button-submit" size="lg" onClick={onSubmit}>
             Continue
-          </ButtonLegacy>
+          </Button>
         </div>
       )}
     </div>

@@ -1,33 +1,32 @@
-import { useQueryClient } from '@tanstack/react-query'
 import {
+  type ApplicationEditRequest,
   type CloudProviderEnum,
+  type ContainerRequest,
   PortProtocolEnum,
   type Probe,
   type ProbeType,
   type ServicePort,
 } from 'qovery-typescript-axios'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useDispatch } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
-import { editApplication, postApplicationActionsRedeploy } from '@qovery/domains/application'
-import { useFetchEnvironment } from '@qovery/domains/environment'
+import { match } from 'ts-pattern'
+import { useEnvironment } from '@qovery/domains/environments/feature'
+import { type AnyService, type Application, type Container } from '@qovery/domains/services/data-access'
+import { useEditService } from '@qovery/domains/services/feature'
 import { CrudModal, defaultLivenessProbe, isMatchingHealthCheck } from '@qovery/shared/console-shared'
-import { ProbeTypeEnum, getServiceType } from '@qovery/shared/enums'
-import { type ApplicationEntity } from '@qovery/shared/interfaces'
-import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
+import { ProbeTypeEnum } from '@qovery/shared/enums'
 import { useModal } from '@qovery/shared/ui'
-import { type AppDispatch } from '@qovery/state/store'
 
 export interface CrudModalFeatureProps {
   onClose: () => void
-  organizationId: string
-  projectId: string
-  application?: ApplicationEntity
+  service: Extract<AnyService, Application | Container>
   port?: ServicePort
 }
 
-export const handleSubmit = (
+export function handleSubmit<
+  T extends Application | Container,
+  R = T extends Application ? ApplicationEditRequest : ContainerRequest
+>(
   {
     internal_port,
     external_port,
@@ -41,10 +40,10 @@ export const handleSubmit = (
     protocol: PortProtocolEnum | undefined
     name: string | undefined
   },
-  application: ApplicationEntity,
+  service: T,
   currentPort?: ServicePort
-) => {
-  const cloneApplication = Object.assign({}, application)
+): R {
+  const cloneApplication = Object.assign({}, service)
 
   const ports: ServicePort[] | [] = cloneApplication.ports || []
 
@@ -54,7 +53,7 @@ export const handleSubmit = (
 
   // impossible due to form validation
   if (!protocol || !currentInternalPort) {
-    return application
+    return service as unknown as R
   }
 
   const port = {
@@ -70,7 +69,7 @@ export const handleSubmit = (
   }
 
   if (currentPort) {
-    cloneApplication.ports = application.ports?.map((p: ServicePort) => {
+    cloneApplication.ports = service.ports?.map((p: ServicePort) => {
       if (p.id === currentPort.id) {
         return port
       } else {
@@ -126,17 +125,17 @@ export const handleSubmit = (
     }
   }
 
-  return cloneApplication
+  return cloneApplication as R
 }
 
-export function CrudModalFeature({ application, onClose, port, organizationId, projectId }: CrudModalFeatureProps) {
-  const queryClient = useQueryClient()
-  const [loading, setLoading] = useState(false)
+export function CrudModalFeature({ service, onClose, port }: CrudModalFeatureProps) {
   const { enableAlertClickOutside } = useModal()
-  const navigate = useNavigate()
-  const { data: environment } = useFetchEnvironment(projectId, application?.environment?.id || '')
-  const livenessType = application?.healthchecks?.liveness_probe?.type
-  const readinessType = application?.healthchecks?.readiness_probe?.type
+  const { data: environment } = useEnvironment({ environmentId: service?.environment?.id || '' })
+  const { mutateAsync: editService, isLoading: isLoadingEditService } = useEditService({
+    environmentId: service.environment?.id || '',
+  })
+  const livenessType = service.healthchecks?.liveness_probe?.type
+  const readinessType = service.healthchecks?.readiness_probe?.type
 
   const methods = useForm({
     defaultValues: {
@@ -148,50 +147,28 @@ export function CrudModalFeature({ application, onClose, port, organizationId, p
     },
     mode: 'onChange',
   })
-  const dispatch = useDispatch<AppDispatch>()
 
-  const toasterCallback = () => {
-    if (application) {
-      dispatch(
-        postApplicationActionsRedeploy({
-          applicationId: application?.id || '',
-          environmentId: application?.environment?.id || '',
-          serviceType: getServiceType(application),
-          callback: () =>
-            navigate(
-              ENVIRONMENT_LOGS_URL(organizationId, projectId, application?.environment?.id) +
-                DEPLOYMENT_LOGS_URL(application?.id)
-            ),
-          queryClient,
-        })
-      )
+  const onSubmit = methods.handleSubmit(async (data) => {
+    const payload = match(service)
+      .with({ serviceType: 'APPLICATION' }, (s) => ({
+        ...handleSubmit(data, s, port),
+        serviceType: s.serviceType,
+      }))
+      .with({ serviceType: 'CONTAINER' }, (s) => ({
+        ...handleSubmit(data, s, port),
+        serviceType: s.serviceType,
+      }))
+      .exhaustive()
+
+    try {
+      await editService({
+        serviceId: service.id,
+        payload,
+      })
+      onClose()
+    } catch (error) {
+      console.error(error)
     }
-  }
-
-  const onSubmit = methods.handleSubmit((data) => {
-    if (!application) return
-
-    setLoading(true)
-    const cloneApplication = handleSubmit(data, application, port)
-
-    dispatch(
-      editApplication({
-        applicationId: application.id,
-        data: cloneApplication,
-        serviceType: getServiceType(application),
-        toasterCallback,
-        queryClient,
-      })
-    )
-      .unwrap()
-      .then(() => {
-        setLoading(false)
-        onClose()
-      })
-      .catch((e) => {
-        setLoading(false)
-        console.error(e)
-      })
   })
 
   useEffect(() => {
@@ -205,7 +182,7 @@ export function CrudModalFeature({ application, onClose, port, organizationId, p
         currentProtocol={port?.protocol}
         isEdit={!!port}
         isMatchingHealthCheck={isMatchingHealthCheck(port, livenessType) || isMatchingHealthCheck(port, readinessType)}
-        loading={loading}
+        loading={isLoadingEditService}
         onClose={onClose}
         onSubmit={onSubmit}
       />
