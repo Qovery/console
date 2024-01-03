@@ -1,71 +1,33 @@
-import { useQueryClient } from '@tanstack/react-query'
 import { type CronJobResponseAllOfSchedule, type LifecycleJobResponseAllOfSchedule } from 'qovery-typescript-axios'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useDispatch, useSelector } from 'react-redux'
-import { useNavigate, useParams } from 'react-router-dom'
-import { editApplication, postApplicationActionsRedeploy, selectApplicationById } from '@qovery/domains/application'
-import { ServiceTypeEnum, getServiceType, isCronJob, isLifeCycleJob } from '@qovery/shared/enums'
-import {
-  type ApplicationEntity,
-  type CronJob,
-  type JobApplicationEntity,
-  type JobConfigureData,
-  type LifecycleJob,
-} from '@qovery/shared/interfaces'
-import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
+import { useParams } from 'react-router-dom'
+import { useEditService, useService } from '@qovery/domains/services/feature'
+import { type JobConfigureData } from '@qovery/shared/interfaces'
 import { toastError } from '@qovery/shared/ui'
-import { type AppDispatch, type RootState } from '@qovery/state/store'
 import PageSettingsConfigureJob from '../../ui/page-settings-configure-job/page-settings-configure-job'
 
 export function PageSettingsConfigureJobFeature() {
-  const { organizationId = '', projectId = '', applicationId = '', environmentId = '' } = useParams()
-  const queryClient = useQueryClient()
+  const { environmentId = '', applicationId = '' } = useParams()
   const methods = useForm<JobConfigureData>({ mode: 'onChange' })
-  const navigate = useNavigate()
 
-  const application: ApplicationEntity | undefined = useSelector<RootState, ApplicationEntity | undefined>(
-    (state) => selectApplicationById(state, applicationId),
-    (a, b) => {
-      return JSON.stringify(a?.id) === JSON.stringify(b?.id)
-    }
-  ) as ApplicationEntity | undefined
-
-  const [loading, setLoading] = useState(false)
-
-  const dispatch = useDispatch<AppDispatch>()
-
-  const toasterCallback = () => {
-    if (application) {
-      dispatch(
-        postApplicationActionsRedeploy({
-          applicationId,
-          environmentId,
-          serviceType: getServiceType(application),
-          callback: () =>
-            navigate(
-              ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(applicationId)
-            ),
-          queryClient,
-        })
-      )
-    }
-  }
+  const { data: service } = useService({ serviceId: applicationId, serviceType: 'JOB' })
+  const { mutate: editService, isLoading: isLoadingEditService } = useEditService({ environmentId })
 
   useEffect(() => {
-    if (application) {
-      methods.setValue('max_duration', application.max_duration_seconds)
-      methods.setValue('nb_restarts', application.max_nb_restart)
-      methods.setValue('port', application.port || undefined)
+    if (service) {
+      methods.setValue('max_duration', service.max_duration_seconds)
+      methods.setValue('nb_restarts', service.max_nb_restart)
+      methods.setValue('port', service.port || undefined)
 
       // TODO: should be typeguard
-      if (isCronJob(application)) {
-        const { cronjob } = (application as CronJob).schedule
+      if (service.job_type === 'CRON') {
+        const { cronjob } = service.schedule
         methods.setValue('schedule', cronjob?.scheduled_at || undefined)
         methods.setValue('cmd_arguments', JSON.stringify(cronjob?.arguments) || undefined)
         methods.setValue('image_entry_point', cronjob?.entrypoint || undefined)
       } else {
-        const { on_start, on_delete, on_stop } = (application as LifecycleJob).schedule
+        const { on_start, on_delete, on_stop } = service.schedule
         methods.setValue('on_start.enabled', !!on_start)
         if (on_start?.arguments && on_start?.arguments.length > 0) {
           methods.setValue('on_start.arguments_string', JSON.stringify(on_start.arguments))
@@ -85,17 +47,18 @@ export function PageSettingsConfigureJobFeature() {
         methods.setValue('on_delete.entrypoint', on_delete?.entrypoint)
       }
     }
-  }, [application, methods])
+  }, [service, methods])
 
   const onSubmit = methods.handleSubmit((data) => {
-    setLoading(true)
-    const job = { ...(application as JobApplicationEntity) }
+    if (!service) return
+
+    const job = { ...service }
 
     job.max_duration_seconds = data.max_duration
     job.max_nb_restart = data.nb_restarts
     job.port = data.port
 
-    if (isCronJob(application)) {
+    if (service.job_type === 'CRON') {
       const schedule: CronJobResponseAllOfSchedule = {}
       if ('cronjob' in job.schedule) {
         schedule.cronjob = {
@@ -117,7 +80,7 @@ export function PageSettingsConfigureJobFeature() {
       job.schedule = schedule
     }
 
-    if (isLifeCycleJob(application)) {
+    if (service.job_type === 'LIFECYCLE') {
       const schedule: LifecycleJobResponseAllOfSchedule = {}
       if (data.on_start?.enabled) {
         schedule.on_start = {
@@ -170,24 +133,19 @@ export function PageSettingsConfigureJobFeature() {
       job.schedule = schedule
     }
 
-    dispatch(
-      editApplication({
-        data: job,
-        applicationId: job.id as string,
-        serviceType: ServiceTypeEnum.JOB,
-        toasterCallback,
-        queryClient,
-      })
-    )
-      .unwrap()
-      .then(() => {})
-      .finally(() => setLoading(false))
-      .catch((e) => console.error(e))
+    console.log(job)
+
+    editService({
+      serviceId: job.id,
+      payload: job,
+    })
   })
+
+  if (!service) return
 
   return (
     <FormProvider {...methods}>
-      <PageSettingsConfigureJob application={application} loading={loading} onSubmit={onSubmit} />
+      <PageSettingsConfigureJob service={service} loading={isLoadingEditService} onSubmit={onSubmit} />
     </FormProvider>
   )
 }

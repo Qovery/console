@@ -5,7 +5,7 @@ import { type JobApplicationEntity } from '@qovery/shared/interfaces'
 
 const chance = new Chance('123')
 
-export const cronjobFactoryMock = (howMany: number, withContainer = false): JobApplicationEntity[] | Job =>
+export const cronjobFactoryMock = (howMany: number, withContainer = false): JobApplicationEntity[] | Job[] =>
   Array.from({ length: howMany }).map((_, index) => {
     let source
     if (!withContainer) {
