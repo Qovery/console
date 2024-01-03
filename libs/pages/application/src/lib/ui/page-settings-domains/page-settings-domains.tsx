@@ -31,8 +31,8 @@ export function PageSettingsDomains(props: PageSettingsDomainsProps) {
           </div>
 
           <Button size="lg" variant="solid" color="brand" onClick={() => props.onAddDomain()}>
-            <Icon name={IconAwesomeEnum.CIRCLE_PLUS} className="mr-2" />
             Add Domain
+            <Icon name={IconAwesomeEnum.CIRCLE_PLUS} className="ml-2" />
           </Button>
         </div>
 
