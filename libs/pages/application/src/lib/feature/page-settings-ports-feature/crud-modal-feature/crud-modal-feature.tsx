@@ -10,7 +10,7 @@ import {
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { match } from 'ts-pattern'
-import { useFetchEnvironment } from '@qovery/domains/environment'
+import { useEnvironment } from '@qovery/domains/environments/feature'
 import { type AnyService, type Application, type Container } from '@qovery/domains/services/data-access'
 import { useEditService } from '@qovery/domains/services/feature'
 import { CrudModal, defaultLivenessProbe, isMatchingHealthCheck } from '@qovery/shared/console-shared'
@@ -19,8 +19,7 @@ import { useModal } from '@qovery/shared/ui'
 
 export interface CrudModalFeatureProps {
   onClose: () => void
-  projectId: string
-  service?: Extract<AnyService, Application | Container>
+  service: Extract<AnyService, Application | Container>
   port?: ServicePort
 }
 
@@ -126,9 +125,9 @@ export const handleSubmit = (
   return cloneApplication
 }
 
-export function CrudModalFeature({ service, onClose, port, projectId }: CrudModalFeatureProps) {
+export function CrudModalFeature({ service, onClose, port }: CrudModalFeatureProps) {
   const { enableAlertClickOutside } = useModal()
-  const { data: environment } = useFetchEnvironment(projectId, service?.environment?.id || '')
+  const { data: environment } = useEnvironment({ environmentId: service?.environment?.id || '' })
   const { mutateAsync: editService, isLoading: isLoadingEditService } = useEditService({
     environmentId: service?.environment?.id || '',
   })

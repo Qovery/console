@@ -84,14 +84,12 @@ export function SettingsPortsFeature({
       healthchecks={service?.healthchecks}
       onAddPort={() => {
         openModal({
-          content: <CrudModalFeature onClose={closeModal} service={service} projectId={projectId} />,
+          content: <CrudModalFeature onClose={closeModal} service={service} />,
         })
       }}
       onEdit={(port: PortData | ServicePort) => {
         openModal({
-          content: (
-            <CrudModalFeature onClose={closeModal} service={service} port={port as ServicePort} projectId={projectId} />
-          ),
+          content: <CrudModalFeature onClose={closeModal} service={service} port={port as ServicePort} />,
         })
       }}
       onDelete={(port: PortData | ServicePort, warning) => {
