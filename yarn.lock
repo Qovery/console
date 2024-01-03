@@ -3761,6 +3761,7 @@ __metadata:
     babel-loader: ^8.1.0
     chance: ^1.1.8
     class-variance-authority: ^0.7.0
+    clsx: ^2.1.0
     cronstrue: ^2.21.0
     css-loader: ^6.8.1
     cypress: ^9.1.0
@@ -9810,6 +9811,13 @@ __metadata:
   version: 2.0.0
   resolution: "clsx@npm:2.0.0"
   checksum: a2cfb2351b254611acf92faa0daf15220f4cd648bdf96ce369d729813b85336993871a4bf6978ddea2b81b5a130478339c20d9d0b5c6fc287e5147f0c059276e
+  languageName: node
+  linkType: hard
+
+"clsx@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "clsx@npm:2.1.0"
+  checksum: 43fefc29b6b49c9476fbce4f8b1cc75c27b67747738e598e6651dd40d63692135dc60b18fa1c5b78a2a9ba8ae6fd2055a068924b94e20b42039bd53b78b98e1d
   languageName: node
   linkType: hard
 
