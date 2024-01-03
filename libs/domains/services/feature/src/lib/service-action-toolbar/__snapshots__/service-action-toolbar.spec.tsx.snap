@@ -305,7 +305,7 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
         tabindex="-1"
       >
         <span
-          class="icon-solid-copy shrink-0 text-sm mr-3 text-brand-400"
+          class="icon-solid-clock-rotate-left shrink-0 text-sm mr-3 text-brand-400"
           role="img"
         />
         See audit logs
@@ -318,7 +318,7 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
         tabindex="-1"
       >
         <span
-          class="icon-solid-clock-rotate-left shrink-0 text-sm mr-3 text-brand-400"
+          class="icon-solid-copy shrink-0 text-sm mr-3 text-brand-400"
           role="img"
         />
         Copy identifiers
