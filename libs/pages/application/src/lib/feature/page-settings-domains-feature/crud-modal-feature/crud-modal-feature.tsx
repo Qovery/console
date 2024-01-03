@@ -21,17 +21,17 @@ export function CrudModalFeature({ customDomain, service, onClose }: CrudModalFe
     mode: 'onChange',
   })
   const { mutateAsync: editCustomDomain, isLoading: isLoadingEditCustomDomain } = useEditCustomDomain({
-    environmentId: service?.environment.id ?? '',
+    environmentId: service.environment.id,
   })
   const { mutateAsync: createCustomDomain, isLoading: isLoadingCreateCustomDomain } = useCreateCustomDomain({
-    environmentId: service?.environment.id ?? '',
+    environmentId: service.environment.id,
   })
 
   const { enableAlertClickOutside } = useModal()
 
   const { data: links = [] } = useLinks({
-    serviceId: service?.id ?? '',
-    serviceType: service?.serviceType,
+    serviceId: service.id,
+    serviceType: service.serviceType,
   })
 
   useEffect(() => {
@@ -39,8 +39,6 @@ export function CrudModalFeature({ customDomain, service, onClose }: CrudModalFe
   }, [methods.formState, enableAlertClickOutside])
 
   const onSubmit = methods.handleSubmit(async (data) => {
-    if (service?.serviceType !== ('APPLICATION' || 'CONTAINER')) return
-
     try {
       if (customDomain) {
         await editCustomDomain({
