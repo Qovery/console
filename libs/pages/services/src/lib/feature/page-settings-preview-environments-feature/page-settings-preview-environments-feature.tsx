@@ -1,32 +1,28 @@
-import { useQueryClient } from '@tanstack/react-query'
 import { type EnvironmentDeploymentRule } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { editApplication, selectApplicationsEntitiesByEnvId } from '@qovery/domains/application'
+import { match } from 'ts-pattern'
 import { useEditEnvironmentDeploymentRule, useFetchEnvironmentDeploymentRule } from '@qovery/domains/environment'
-import { getServiceType } from '@qovery/shared/enums'
-import { type ApplicationEntity } from '@qovery/shared/interfaces'
-import { type AppDispatch, type RootState } from '@qovery/state/store'
+import {
+  type AnyService,
+  type Application,
+  type Container,
+  Database,
+  type Job,
+} from '@qovery/domains/services/data-access'
+import { useEditService, useServices } from '@qovery/domains/services/feature'
+import { buildEditServicePayload } from '@qovery/shared/util-services'
 import { PageSettingsPreviewEnvironments } from '../../ui/page-settings-preview-environments/page-settings-preview-environments'
 
-export function PageSettingsPreviewEnvironmentsFeature() {
+export function SettingsPreviewEnvironmentsFeature({ services }: { services?: AnyService[] }) {
   const { projectId = '', environmentId = '' } = useParams()
-  const queryClient = useQueryClient()
-  const dispatch = useDispatch<AppDispatch>()
   const [loading, setLoading] = useState(false)
 
   const { isFetched: loadingStatusEnvironmentDeploymentRules, data: environmentDeploymentRules } =
     useFetchEnvironmentDeploymentRule(projectId, environmentId)
   const editEnvironmentDeploymentRule = useEditEnvironmentDeploymentRule(projectId, environmentId)
-
-  const applications = useSelector<RootState, ApplicationEntity[] | undefined>(
-    (state) => selectApplicationsEntitiesByEnvId(state, environmentId),
-    (a, b) =>
-      JSON.stringify(a?.map((application) => application.auto_preview)) ===
-      JSON.stringify(b?.map((application) => application.auto_preview))
-  )
+  const { mutateAsync: editService } = useEditService({ environmentId })
 
   const methods = useForm({
     mode: 'onChange',
@@ -40,28 +36,68 @@ export function PageSettingsPreviewEnvironmentsFeature() {
       cloneEnvironmentDeploymentRules.auto_preview = data['auto_preview']
       cloneEnvironmentDeploymentRules.on_demand_preview = data['on_demand_preview']
 
-      await editEnvironmentDeploymentRule.mutate({
+      editEnvironmentDeploymentRule.mutate({
         environmentId,
         deploymentRuleId: environmentDeploymentRules?.id || '',
         data: cloneEnvironmentDeploymentRules,
       })
 
-      await applications?.forEach(async (application: ApplicationEntity) => {
-        if (application.id === Object.keys(data).find((key) => key === application.id)) {
-          const cloneApplication: ApplicationEntity = Object.assign({}, application as ApplicationEntity)
-          cloneApplication.auto_preview = data[application.id]
+      services?.forEach(async (service: AnyService) => {
+        if (service.serviceType === 'DATABASE') return
 
-          await dispatch(
-            editApplication({
-              applicationId: application.id,
-              data: cloneApplication,
-              serviceType: getServiceType(application),
-              silentToaster: true,
-              // eslint-disable-next-line @typescript-eslint/no-empty-function
-              toasterCallback: () => {},
-              queryClient,
-            })
-          )
+        if (service.id === Object.keys(data).find((key) => key === service.id)) {
+          // const payload = match(service)
+          //   .with({ serviceType: 'APPLICATION' }, (s) => ({
+          //     ...(s as Application),
+          //     serviceType: 'APPLICATION',
+          //   }))
+          //   .with({ serviceType: 'JOB' }, (s) => ({
+          //     ...(s as Job),
+          //     serviceType: 'JOB',
+          //   }))
+          //   .with({ serviceType: 'CONTAINER' }, (s) => ({
+          //     ...(s as Container),
+          //     serviceType: 'CONTAINER',
+          //   }))
+          //   .otherwise(() => null)
+
+          const payload = match(service.serviceType)
+            .with('APPLICATION', () => ({
+              ...service,
+              serviceType: 'APPLICATION',
+              request: {
+                auto_preview: data[service.id],
+              },
+            }))
+            .with('JOB', () => ({
+              ...service,
+              serviceType: 'JOB',
+              request: {
+                auto_preview: data[service.id],
+              },
+            }))
+            .with('CONTAINER', () => ({
+              ...service,
+              serviceType: 'CONTAINER',
+              request: {
+                auto_preview: data[service.id],
+              },
+            }))
+            .with('HELM', () => ({
+              ...service,
+              serviceType: 'HELM',
+              request: {
+                auto_preview: data[service.id],
+              },
+            }))
+            .otherwise(() => null)
+
+          if (!service) return
+
+          await editService({
+            serviceId: service.id,
+            payload: buildEditServicePayload(payload),
+          })
         }
       })
 
@@ -73,13 +109,15 @@ export function PageSettingsPreviewEnvironmentsFeature() {
     methods.setValue('on_demand_preview', value)
     //set all preview applications "true" when env preview is true
     if (loadingStatusEnvironmentDeploymentRules) {
-      applications?.forEach((application) => methods.setValue(application.id, value, { shouldDirty: true }))
+      services?.forEach((service) => methods.setValue(service.id, value, { shouldDirty: true }))
     }
   }
 
   // Force enable Preview if we enable preview from the 1rst application
   const toggleEnablePreview = (value: boolean) => {
-    const isApplicationPreviewEnabled = applications ? applications.some((app) => app.auto_preview) : false
+    const isApplicationPreviewEnabled = services
+      ? services.some((service) => service?.serviceType !== 'DATABASE' && service.auto_preview)
+      : false
     if (isApplicationPreviewEnabled || !value) {
       return
     }
@@ -91,24 +129,35 @@ export function PageSettingsPreviewEnvironmentsFeature() {
   useEffect(() => {
     // !loading is here to prevent the toggle to glitch the time we are submitting the two api endpoints
     if (environmentDeploymentRules && loadingStatusEnvironmentDeploymentRules && !loading) {
-      const isApplicationPreviewEnabled = applications ? applications.some((app) => app.auto_preview) : false
+      const isApplicationPreviewEnabled = services
+        ? services.some((app) => app.serviceType !== 'DATABASE' && app.auto_preview)
+        : false
       methods.setValue('auto_preview', environmentDeploymentRules.auto_preview || isApplicationPreviewEnabled)
       methods.setValue('on_demand_preview', environmentDeploymentRules.on_demand_preview)
-      applications?.forEach((application) => methods.setValue(application.id, application.auto_preview))
+      services?.forEach((service) =>
+        methods.setValue(service.id, service.serviceType !== 'DATABASE' && service.auto_preview)
+      )
     }
-  }, [loadingStatusEnvironmentDeploymentRules, methods, environmentDeploymentRules, applications])
+  }, [loadingStatusEnvironmentDeploymentRules, methods, environmentDeploymentRules, services, loading])
 
   return (
     <FormProvider {...methods}>
       <PageSettingsPreviewEnvironments
         onSubmit={onSubmit}
-        applications={applications}
+        services={services}
         loading={loading}
         toggleAll={toggleAll}
         toggleEnablePreview={toggleEnablePreview}
       />
     </FormProvider>
   )
+}
+
+export function PageSettingsPreviewEnvironmentsFeature() {
+  const { environmentId = '' } = useParams()
+  const { data: services } = useServices({ environmentId })
+
+  return <SettingsPreviewEnvironmentsFeature services={services} />
 }
 
 export default PageSettingsPreviewEnvironmentsFeature
