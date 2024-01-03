@@ -852,23 +852,15 @@ export const mutations = {
   }) {
     const { mutation } = match(serviceType)
       .with('APPLICATION', () => ({
-        mutation: customDomainApplicationApi.createApplicationCustomDomain.bind(
-          customDomainApplicationApi,
-          serviceId,
-          payload
-        ),
+        mutation: customDomainApplicationApi.createApplicationCustomDomain.bind(customDomainApplicationApi),
         serviceType,
       }))
       .with('CONTAINER', () => ({
-        mutation: customDomainContainerApi.createContainerCustomDomain.bind(
-          customDomainContainerApi,
-          serviceId,
-          payload
-        ),
+        mutation: customDomainContainerApi.createContainerCustomDomain.bind(customDomainContainerApi),
         serviceType,
       }))
       .exhaustive()
-    const response = await mutation()
+    const response = await mutation(serviceId, payload)
     return response.data
   },
   async editCustomDomain({
@@ -884,25 +876,15 @@ export const mutations = {
   }) {
     const { mutation } = match(serviceType)
       .with('APPLICATION', () => ({
-        mutation: customDomainApplicationApi.editCustomDomain.bind(
-          customDomainApplicationApi,
-          serviceId,
-          customDomainId,
-          payload
-        ),
+        mutation: customDomainApplicationApi.editCustomDomain.bind(customDomainApplicationApi),
         serviceType,
       }))
       .with('CONTAINER', () => ({
-        mutation: customDomainContainerApi.editContainerCustomDomain.bind(
-          customDomainContainerApi,
-          serviceId,
-          customDomainId,
-          payload
-        ),
+        mutation: customDomainContainerApi.editContainerCustomDomain.bind(customDomainContainerApi),
         serviceType,
       }))
       .exhaustive()
-    const response = await mutation()
+    const response = await mutation(serviceId, customDomainId, payload)
     return response.data
   },
   async deleteCustomDomain({
@@ -916,23 +898,15 @@ export const mutations = {
   }) {
     const { mutation } = match(serviceType)
       .with('APPLICATION', (serviceType) => ({
-        mutation: customDomainApplicationApi.deleteCustomDomain.bind(
-          applicationMainCallsApi,
-          serviceId,
-          customDomainId
-        ),
+        mutation: customDomainApplicationApi.deleteCustomDomain.bind(applicationMainCallsApi),
         serviceType,
       }))
       .with('CONTAINER', (serviceType) => ({
-        mutation: customDomainContainerApi.deleteContainerCustomDomain.bind(
-          containerMainCallsApi,
-          serviceId,
-          customDomainId
-        ),
+        mutation: customDomainContainerApi.deleteContainerCustomDomain.bind(containerMainCallsApi),
         serviceType,
       }))
       .exhaustive()
-    const response = await mutation()
+    const response = await mutation(serviceId, customDomainId)
     return response.data
   },
 }
