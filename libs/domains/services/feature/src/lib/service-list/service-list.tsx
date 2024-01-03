@@ -19,10 +19,6 @@ import { type ComponentProps, Fragment, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { P, match } from 'ts-pattern'
 import { useEnvironment } from '@qovery/domains/environments/feature'
-// XXX: Those ButtonsActions should live in domains/services
-// We ignore implicitDependencies in project.json to avoid circular dependencies
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import { ApplicationButtonsActions } from '@qovery/shared/console-shared'
 import {
   IconEnum,
   ServiceTypeEnum,
@@ -117,17 +113,6 @@ export function ServiceList({ organizationId, projectId, environmentId, classNam
             return null
           }
 
-          const buttonActions = match(serviceType)
-            .with('APPLICATION', 'CONTAINER', 'JOB', () => (
-              <ApplicationButtonsActions
-                application={service as ApplicationEntity}
-                environmentMode={environment.mode}
-                clusterId={environment.cluster_id}
-              />
-            ))
-            .with('HELM', 'DATABASE', () => <ServiceActionToolbar serviceId={service.id} />)
-            .exhaustive()
-
           return (
             <div className="flex items-center justify-between">
               <span className="flex items-center gap-4 font-medium text-sm text-neutral-400">
@@ -197,7 +182,9 @@ export function ServiceList({ organizationId, projectId, environmentId, classNam
                     </span>
                   </Tooltip>
                 )}
-                <div onClick={(e) => e.stopPropagation()}>{buttonActions}</div>
+                <div onClick={(e) => e.stopPropagation()}>
+                  <ServiceActionToolbar serviceId={service.id} />
+                </div>
               </div>
             </div>
           )

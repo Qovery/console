@@ -5,7 +5,6 @@ import { useCluster } from '@qovery/domains/clusters/feature'
 import { EnvironmentMode } from '@qovery/domains/environments/feature'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { NeedRedeployFlag, ServiceActionToolbar } from '@qovery/domains/services/feature'
-import { ApplicationButtonsActions } from '@qovery/shared/console-shared'
 import { IconEnum, isCronJob, isLifeCycleJob } from '@qovery/shared/enums'
 import { type ApplicationEntity } from '@qovery/shared/interfaces'
 import { Badge, Header, Icon, Section, Skeleton, Tooltip } from '@qovery/shared/ui'
@@ -48,21 +47,7 @@ export function Container({ service, environment, children }: PropsWithChildren<
         </Skeleton>
       </div>
       <Skeleton width={150} height={32} show={!service}>
-        {environment && (
-          <div className="flex">
-            {service?.serviceType === 'HELM' ? (
-              <ServiceActionToolbar serviceId={service.id} />
-            ) : (
-              service && (
-                <ApplicationButtonsActions
-                  application={service as ApplicationEntity}
-                  environmentMode={environment.mode}
-                  clusterId={environment.cluster_id}
-                />
-              )
-            )}
-          </div>
-        )}
+        {service && <ServiceActionToolbar serviceId={service.id} />}
       </Skeleton>
     </div>
   )

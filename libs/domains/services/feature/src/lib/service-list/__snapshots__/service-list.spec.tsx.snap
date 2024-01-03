@@ -15,7 +15,7 @@ exports[`ServiceList should match snapshot 1`] = `
             class="inline-block relative"
           >
             <button
-              aria-controls="radix-:r24:"
+              aria-controls="radix-:r1o:"
               aria-expanded="false"
               aria-haspopup="dialog"
               class="inline-flex items-center shrink-0 font-medium transition h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 text-xs gap-1"
@@ -38,7 +38,7 @@ exports[`ServiceList should match snapshot 1`] = `
             class="inline-block relative"
           >
             <button
-              aria-controls="radix-:r27:"
+              aria-controls="radix-:r1r:"
               aria-expanded="false"
               aria-haspopup="dialog"
               class="inline-flex items-center shrink-0 font-medium transition h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 text-xs gap-1"
@@ -61,7 +61,7 @@ exports[`ServiceList should match snapshot 1`] = `
             class="inline-block relative"
           >
             <button
-              aria-controls="radix-:r2a:"
+              aria-controls="radix-:r1u:"
               aria-expanded="false"
               aria-haspopup="dialog"
               class="inline-flex items-center shrink-0 font-medium transition h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 text-xs gap-1"
@@ -201,7 +201,7 @@ exports[`ServiceList should match snapshot 1`] = `
               FRONT-END
               <div>
                 <button
-                  aria-controls="radix-:r2b:"
+                  aria-controls="radix-:r1v:"
                   aria-expanded="false"
                   aria-haspopup="dialog"
                   class="inline-flex shrink-0 font-medium transition text-xs px-1 py-0.5 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 items-center gap-1"
@@ -224,64 +224,10 @@ exports[`ServiceList should match snapshot 1`] = `
             >
               <div>
                 <div
-                  class="btn-icon-action !h-8"
-                  data-testid="button-icon-action"
-                >
-                  <div
-                    class="w-max menu__trigger menu__trigger--closed border-r border-r-neutral-250"
-                  >
-                    <span
-                      class=""
-                      data-state="closed"
-                    >
-                      <div
-                        class="btn-icon-action__element  "
-                        data-testid="element"
-                      >
-                        <span
-                          class="icon-solid-play shrink-0 px-0.5"
-                          role="img"
-                        />
-                        <span
-                          class="icon-solid-angle-down shrink-0 px-0.5"
-                          role="img"
-                        />
-                      </div>
-                    </span>
-                  </div>
-                  <span
-                    class="flex border-r border-r-neutral-250"
-                    data-state="closed"
-                  >
-                    <div
-                      class="btn-icon-action__element"
-                      data-testid="element"
-                    >
-                      <span
-                        class="icon-solid-scroll shrink-0 px-0.5"
-                        role="img"
-                      />
-                    </div>
-                  </span>
-                  <div
-                    class="w-max menu__trigger menu__trigger--closed "
-                  >
-                    <span
-                      class=""
-                      data-state="closed"
-                    >
-                      <div
-                        class="btn-icon-action__element  "
-                        data-testid="element"
-                      >
-                        <span
-                          class="icon-solid-ellipsis-v shrink-0 px-0.5"
-                          role="img"
-                        />
-                      </div>
-                    </span>
-                  </div>
-                </div>
+                  class="skeleton rounded"
+                  data-testid="skeleton"
+                  style="width: 115px; height: 32px;"
+                />
               </div>
             </div>
           </div>
@@ -546,7 +492,7 @@ exports[`ServiceList should match snapshot 1`] = `
               back-end-A
               <div>
                 <button
-                  aria-controls="radix-:r2m:"
+                  aria-controls="radix-:r27:"
                   aria-expanded="false"
                   aria-haspopup="dialog"
                   class="inline-flex shrink-0 font-medium transition text-xs px-1 py-0.5 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 items-center gap-1"
@@ -578,64 +524,10 @@ exports[`ServiceList should match snapshot 1`] = `
               </span>
               <div>
                 <div
-                  class="btn-icon-action !h-8"
-                  data-testid="button-icon-action"
-                >
-                  <div
-                    class="w-max menu__trigger menu__trigger--closed border-r border-r-neutral-250"
-                  >
-                    <span
-                      class=""
-                      data-state="closed"
-                    >
-                      <div
-                        class="btn-icon-action__element  "
-                        data-testid="element"
-                      >
-                        <span
-                          class="icon-solid-play shrink-0 px-0.5"
-                          role="img"
-                        />
-                        <span
-                          class="icon-solid-angle-down shrink-0 px-0.5"
-                          role="img"
-                        />
-                      </div>
-                    </span>
-                  </div>
-                  <span
-                    class="flex border-r border-r-neutral-250"
-                    data-state="closed"
-                  >
-                    <div
-                      class="btn-icon-action__element"
-                      data-testid="element"
-                    >
-                      <span
-                        class="icon-solid-scroll shrink-0 px-0.5"
-                        role="img"
-                      />
-                    </div>
-                  </span>
-                  <div
-                    class="w-max menu__trigger menu__trigger--closed "
-                  >
-                    <span
-                      class=""
-                      data-state="closed"
-                    >
-                      <div
-                        class="btn-icon-action__element  "
-                        data-testid="element"
-                      >
-                        <span
-                          class="icon-solid-ellipsis-v shrink-0 px-0.5"
-                          role="img"
-                        />
-                      </div>
-                    </span>
-                  </div>
-                </div>
+                  class="skeleton rounded"
+                  data-testid="skeleton"
+                  style="width: 115px; height: 32px;"
+                />
               </div>
             </div>
           </div>
@@ -1196,7 +1088,7 @@ exports[`ServiceList should match snapshot 1`] = `
               </span>
               <div>
                 <button
-                  aria-controls="radix-:r30:"
+                  aria-controls="radix-:r2e:"
                   aria-expanded="false"
                   aria-haspopup="dialog"
                   class="inline-flex shrink-0 font-medium transition text-xs px-1 py-0.5 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 items-center gap-1"
@@ -1228,64 +1120,10 @@ exports[`ServiceList should match snapshot 1`] = `
               </span>
               <div>
                 <div
-                  class="btn-icon-action !h-8"
-                  data-testid="button-icon-action"
-                >
-                  <div
-                    class="w-max menu__trigger menu__trigger--closed border-r border-r-neutral-250"
-                  >
-                    <span
-                      class=""
-                      data-state="closed"
-                    >
-                      <div
-                        class="btn-icon-action__element  "
-                        data-testid="element"
-                      >
-                        <span
-                          class="icon-solid-play shrink-0 px-0.5"
-                          role="img"
-                        />
-                        <span
-                          class="icon-solid-angle-down shrink-0 px-0.5"
-                          role="img"
-                        />
-                      </div>
-                    </span>
-                  </div>
-                  <span
-                    class="flex border-r border-r-neutral-250"
-                    data-state="closed"
-                  >
-                    <div
-                      class="btn-icon-action__element"
-                      data-testid="element"
-                    >
-                      <span
-                        class="icon-solid-scroll shrink-0 px-0.5"
-                        role="img"
-                      />
-                    </div>
-                  </span>
-                  <div
-                    class="w-max menu__trigger menu__trigger--closed "
-                  >
-                    <span
-                      class=""
-                      data-state="closed"
-                    >
-                      <div
-                        class="btn-icon-action__element  "
-                        data-testid="element"
-                      >
-                        <span
-                          class="icon-solid-ellipsis-v shrink-0 px-0.5"
-                          role="img"
-                        />
-                      </div>
-                    </span>
-                  </div>
-                </div>
+                  class="skeleton rounded"
+                  data-testid="skeleton"
+                  style="width: 115px; height: 32px;"
+                />
               </div>
             </div>
           </div>
@@ -1643,7 +1481,7 @@ exports[`ServiceList should match snapshot 1`] = `
               </span>
               <div>
                 <button
-                  aria-controls="radix-:r3c:"
+                  aria-controls="radix-:r2n:"
                   aria-expanded="false"
                   aria-haspopup="dialog"
                   class="inline-flex shrink-0 font-medium transition text-xs px-1 py-0.5 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 items-center gap-1"
@@ -1675,64 +1513,10 @@ exports[`ServiceList should match snapshot 1`] = `
               </span>
               <div>
                 <div
-                  class="btn-icon-action !h-8"
-                  data-testid="button-icon-action"
-                >
-                  <div
-                    class="w-max menu__trigger menu__trigger--closed border-r border-r-neutral-250"
-                  >
-                    <span
-                      class=""
-                      data-state="closed"
-                    >
-                      <div
-                        class="btn-icon-action__element  "
-                        data-testid="element"
-                      >
-                        <span
-                          class="icon-solid-play shrink-0 px-0.5"
-                          role="img"
-                        />
-                        <span
-                          class="icon-solid-angle-down shrink-0 px-0.5"
-                          role="img"
-                        />
-                      </div>
-                    </span>
-                  </div>
-                  <span
-                    class="flex border-r border-r-neutral-250"
-                    data-state="closed"
-                  >
-                    <div
-                      class="btn-icon-action__element"
-                      data-testid="element"
-                    >
-                      <span
-                        class="icon-solid-scroll shrink-0 px-0.5"
-                        role="img"
-                      />
-                    </div>
-                  </span>
-                  <div
-                    class="w-max menu__trigger menu__trigger--closed "
-                  >
-                    <span
-                      class=""
-                      data-state="closed"
-                    >
-                      <div
-                        class="btn-icon-action__element  "
-                        data-testid="element"
-                      >
-                        <span
-                          class="icon-solid-ellipsis-v shrink-0 px-0.5"
-                          role="img"
-                        />
-                      </div>
-                    </span>
-                  </div>
-                </div>
+                  class="skeleton rounded"
+                  data-testid="skeleton"
+                  style="width: 115px; height: 32px;"
+                />
               </div>
             </div>
           </div>

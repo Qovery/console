@@ -278,6 +278,25 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
         />
         Logs
       </div>
+      <a
+        href="https://gitpod.io/#/tree/"
+        rel="noreferrer"
+        target="_blank"
+      >
+        <div
+          class="px-3 flex items-center h-9 text-sm font-medium cursor-pointer rounded-sm outline-none text-neutral-400 dark:text-neutral-100 hover:bg-brand-50 data-[highlighted]:bg-brand-50 hover:text-brand-500 data-[highlighted]:text-brand-500"
+          data-orientation="vertical"
+          data-radix-collection-item=""
+          role="menuitem"
+          tabindex="-1"
+        >
+          <span
+            class="icon-solid-code shrink-0 text-sm mr-3 text-brand-400"
+            role="img"
+          />
+          Edit code
+        </div>
+      </a>
       <div
         class="px-3 flex items-center h-9 text-sm font-medium cursor-pointer rounded-sm outline-none text-neutral-400 dark:text-neutral-100 hover:bg-brand-50 data-[highlighted]:bg-brand-50 hover:text-brand-500 data-[highlighted]:text-brand-500"
         data-orientation="vertical"

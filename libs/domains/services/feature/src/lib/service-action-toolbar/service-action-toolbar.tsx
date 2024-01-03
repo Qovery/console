@@ -1,8 +1,16 @@
 import { type Environment, StateEnum } from 'qovery-typescript-axios'
 import { useNavigate, useParams } from 'react-router-dom'
+import { P, match } from 'ts-pattern'
 import { useActionCancelEnvironment } from '@qovery/domains/environment'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { type AnyService } from '@qovery/domains/services/data-access'
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import {
+  DeployOtherCommitModalFeature,
+  DeployOtherTagModalFeature,
+  ForceRunModalFeature,
+} from '@qovery/shared/console-shared'
+import { isHelmGitSource, isJobContainerSource, isJobGitSource } from '@qovery/shared/enums'
 import {
   APPLICATION_SETTINGS_GENERAL_URL,
   APPLICATION_SETTINGS_URL,
@@ -32,6 +40,7 @@ import {
   isRedeployAvailable,
   isRestartAvailable,
   isStopAvailable,
+  urlCodeEditor,
 } from '@qovery/shared/util-js'
 import { useDeleteService } from '../hooks/use-delete-service/use-delete-service'
 import { useDeployService } from '../hooks/use-deploy-service/use-deploy-service'
@@ -48,14 +57,19 @@ function MenuManageDeployment({
   environment,
   service,
   environmentLogsLink,
+  organizationId,
+  projectId,
 }: {
   state: StateEnum
   environment: Environment
   service: AnyService
   environmentLogsLink: string
+  organizationId: string
+  projectId: string
 }) {
   const navigate = useNavigate()
   const { openModalConfirmation } = useModalConfirmation()
+  const { openModal } = useModal()
 
   const { data: runningState } = useRunningStatus({ environmentId: environment.id, serviceId: service.id })
   const { mutate: deployService } = useDeployService({ environmentId: environment.id })
@@ -103,6 +117,71 @@ function MenuManageDeployment({
     })
   }
 
+  const deployOtherCommitModal = () => {
+    openModal({
+      content: (
+        <DeployOtherCommitModalFeature
+          organizationId={organizationId}
+          projectId={projectId}
+          environmentId={service.environment.id}
+          applicationId={service.id}
+        />
+      ),
+      options: { width: 596 },
+    })
+  }
+
+  const deployOtherTagModal = () => {
+    openModal({
+      content: (
+        <DeployOtherTagModalFeature
+          organizationId={organizationId}
+          projectId={projectId}
+          environmentId={service.environment.id}
+          applicationId={service.id}
+        />
+      ),
+      options: { width: 596 },
+    })
+  }
+
+  const forceRunModal = () => {
+    openModal({
+      content: (
+        <ForceRunModalFeature
+          organizationId={organizationId}
+          projectId={projectId}
+          environmentId={service.environment.id}
+          applicationId={service.id}
+        />
+      ),
+    })
+  }
+
+  const displayOtherCommitItem = match(service)
+    .with(
+      { serviceType: 'APPLICATION' },
+      {
+        serviceType: 'JOB',
+        source: P.when(isJobGitSource),
+      },
+      () => true
+    )
+    .otherwise(() => false)
+
+  const displayOtherTagItem = match(service)
+    .with(
+      {
+        serviceType: 'CONTAINER',
+      },
+      {
+        serviceType: 'JOB',
+        source: P.when(isJobContainerSource),
+      },
+      () => true
+    )
+    .otherwise(() => false)
+
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
@@ -139,10 +218,37 @@ function MenuManageDeployment({
             Restart Service
           </DropdownMenu.Item>
         )}
+        {service.serviceType === 'JOB' && (
+          <DropdownMenu.Item icon={<Icon name={IconAwesomeEnum.PLAY} />} onClick={forceRunModal}>
+            Force Run
+          </DropdownMenu.Item>
+        )}
         {isStopAvailable(state) && (
           <DropdownMenu.Item icon={<Icon name={IconAwesomeEnum.CIRCLE_STOP} />} onClick={mutationStop}>
             Stop
           </DropdownMenu.Item>
+        )}
+        {displayOtherCommitItem && (
+          <>
+            <DropdownMenu.Separator />
+            <DropdownMenu.Item
+              icon={<Icon name={IconAwesomeEnum.CLOCK_ROTATE_LEFT} />}
+              onClick={() => deployOtherCommitModal()}
+            >
+              Deploy other version
+            </DropdownMenu.Item>
+          </>
+        )}
+        {displayOtherTagItem && (
+          <>
+            <DropdownMenu.Separator />
+            <DropdownMenu.Item
+              icon={<Icon name={IconAwesomeEnum.CLOCK_ROTATE_LEFT} />}
+              onClick={() => deployOtherTagModal()}
+            >
+              Deploy other version
+            </DropdownMenu.Item>
+          </>
         )}
       </DropdownMenu.Content>
     </DropdownMenu.Root>
@@ -201,6 +307,29 @@ function MenuOtherActions({
     })
   }
 
+  const editCodeUrl = match(service)
+    .with(
+      { serviceType: 'APPLICATION' },
+      {
+        serviceType: 'JOB',
+        source: P.when(isJobGitSource),
+      },
+      {
+        serviceType: 'HELM',
+        source: P.when(isHelmGitSource),
+      },
+      (service) => {
+        const gitRepository = match(service)
+          .with({ serviceType: 'APPLICATION' }, ({ git_repository }) => git_repository)
+          .with({ serviceType: 'JOB' }, ({ source }) => source.docker?.git_repository)
+          .with({ serviceType: 'HELM' }, ({ source }) => source.git?.git_repository)
+          .exhaustive()
+
+        return urlCodeEditor(gitRepository)
+      }
+    )
+    .otherwise(() => null)
+
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
@@ -219,6 +348,11 @@ function MenuOtherActions({
         >
           Logs
         </DropdownMenu.Item>
+        {editCodeUrl && (
+          <a href={editCodeUrl} target="_blank" rel="noreferrer">
+            <DropdownMenu.Item icon={<Icon name={IconAwesomeEnum.CODE} />}>Edit code</DropdownMenu.Item>
+          </a>
+        )}
         <DropdownMenu.Item
           icon={<Icon name={IconAwesomeEnum.COPY} />}
           onClick={() =>
@@ -284,6 +418,8 @@ export function ServiceActionToolbar({ serviceId }: { serviceId: string }) {
         environment={environment}
         service={service}
         environmentLogsLink={environmentLogsLink}
+        organizationId={organizationId}
+        projectId={projectId}
       />
       <Tooltip content="Logs">
         <ActionToolbar.Button onClick={() => navigate(environmentLogsLink + SERVICE_LOGS_URL(service.id))}>
