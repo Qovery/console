@@ -1,13 +1,10 @@
 import { type Healthcheck } from 'qovery-typescript-axios'
-import * as storeApplication from '@qovery/domains/application'
+import { type Application } from '@qovery/domains/services/data-access'
 import { applicationFactoryMock } from '@qovery/shared/factories'
-import { type ApplicationEntity } from '@qovery/shared/interfaces'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import PageSettingsHealthchecksFeature from './page-settings-healthchecks-feature'
 
-import SpyInstance = jest.SpyInstance
-
-const mockApplication: ApplicationEntity = applicationFactoryMock(1)[0]
+const mockApplication = applicationFactoryMock(1)[0] as Application
 const healthchecks: Healthcheck = {
   readiness_probe: {
     type: {
@@ -41,24 +38,20 @@ jest.mock('react-router-dom', () => ({
   useParams: () => ({ applicationId: mockApplication.id }),
 }))
 
-const mockDispatch = jest.fn()
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useDispatch: () => mockDispatch,
-}))
+const mockEditService = jest.fn()
 
-jest.mock('@qovery/domains/application', () => {
+jest.mock('@qovery/domains/services/feature', () => {
   return {
-    ...jest.requireActual('@qovery/domains/application'),
-    getApplicationsState: () => ({
-      loadingStatus: 'loaded',
-      ids: [mockApplication.id],
-      entities: {
-        [mockApplication.id]: { ...mockApplication, healthchecks: healthchecks },
-      },
-      error: null,
+    useServiceType: () => ({
+      data: 'APPLICATION',
     }),
-    selectApplicationById: () => mockApplication,
+    useService: () => ({
+      data: { ...mockApplication, healthchecks },
+    }),
+    useEditService: () => ({
+      mutate: mockEditService,
+      isLoading: false,
+    }),
   }
 })
 
@@ -69,14 +62,6 @@ describe('PageSettingsHealthchecksFeature', () => {
   })
 
   it('should dispatch editApplication if form is submitted', async () => {
-    const editApplicationSpy: SpyInstance = jest.spyOn(storeApplication, 'editApplication')
-    mockDispatch.mockImplementation(() => ({
-      unwrap: () =>
-        Promise.resolve({
-          data: {},
-        }),
-    }))
-
     const { userEvent } = renderWithProviders(<PageSettingsHealthchecksFeature />)
 
     const input = screen.getByTestId('input-readiness-probe-service')
@@ -87,7 +72,37 @@ describe('PageSettingsHealthchecksFeature', () => {
 
     await userEvent.click(btnSave)
 
-    expect(editApplicationSpy.mock.calls[0][0].applicationId).toBe(mockApplication.id)
-    expect(editApplicationSpy.mock.calls[0][0].data)
+    expect(mockEditService).toHaveBeenCalledWith({
+      serviceId: mockApplication.id,
+      payload: {
+        healthchecks: {
+          readiness_probe: {
+            type: {
+              grpc: {
+                service: 'my-service',
+                port: 1000,
+              },
+            },
+            initial_delay_seconds: 3000,
+            period_seconds: 10,
+            timeout_seconds: 1,
+            success_threshold: 1,
+            failure_threshold: 3,
+          },
+          liveness_probe: {
+            type: {
+              exec: {
+                command: ['test', 'test'],
+              },
+            },
+            initial_delay_seconds: 230,
+            period_seconds: 10,
+            timeout_seconds: 5,
+            success_threshold: 1,
+            failure_threshold: 3,
+          },
+        },
+      },
+    })
   })
 })
