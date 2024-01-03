@@ -23,7 +23,10 @@ export interface CrudModalFeatureProps {
   port?: ServicePort
 }
 
-export const handleSubmit = (
+export function handleSubmit<
+  T extends Application | Container,
+  R = T extends Application ? ApplicationEditRequest : ContainerRequest
+>(
   {
     internal_port,
     external_port,
@@ -37,9 +40,9 @@ export const handleSubmit = (
     protocol: PortProtocolEnum | undefined
     name: string | undefined
   },
-  service: Extract<AnyService, Application | Container>,
+  service: T,
   currentPort?: ServicePort
-) => {
+): R {
   const cloneApplication = Object.assign({}, service)
 
   const ports: ServicePort[] | [] = cloneApplication.ports || []
@@ -50,7 +53,7 @@ export const handleSubmit = (
 
   // impossible due to form validation
   if (!protocol || !currentInternalPort) {
-    return service
+    return service as unknown as R
   }
 
   const port = {
@@ -122,17 +125,17 @@ export const handleSubmit = (
     }
   }
 
-  return cloneApplication
+  return cloneApplication as R
 }
 
 export function CrudModalFeature({ service, onClose, port }: CrudModalFeatureProps) {
   const { enableAlertClickOutside } = useModal()
   const { data: environment } = useEnvironment({ environmentId: service?.environment?.id || '' })
   const { mutateAsync: editService, isLoading: isLoadingEditService } = useEditService({
-    environmentId: service?.environment?.id || '',
+    environmentId: service.environment?.id || '',
   })
-  const livenessType = service?.healthchecks?.liveness_probe?.type
-  const readinessType = service?.healthchecks?.readiness_probe?.type
+  const livenessType = service.healthchecks.liveness_probe?.type
+  const readinessType = service.healthchecks.readiness_probe?.type
 
   const methods = useForm({
     defaultValues: {
@@ -146,22 +149,16 @@ export function CrudModalFeature({ service, onClose, port }: CrudModalFeaturePro
   })
 
   const onSubmit = methods.handleSubmit(async (data) => {
-    if (!service) return
-
-    const cloneApplication = handleSubmit(data, service, port)
-
     const payload = match(service)
       .with({ serviceType: 'APPLICATION' }, (s) => ({
-        ...(cloneApplication as ApplicationEditRequest),
+        ...handleSubmit(data, s, port),
         serviceType: s.serviceType,
       }))
       .with({ serviceType: 'CONTAINER' }, (s) => ({
-        ...(cloneApplication as ContainerRequest),
+        ...handleSubmit(data, s, port),
         serviceType: s.serviceType,
       }))
-      .otherwise(() => undefined)
-
-    if (!payload) return
+      .exhaustive()
 
     try {
       await editService({
