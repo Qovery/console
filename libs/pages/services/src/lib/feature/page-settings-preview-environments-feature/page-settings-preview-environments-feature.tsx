@@ -4,25 +4,19 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useEditEnvironmentDeploymentRule, useFetchEnvironmentDeploymentRule } from '@qovery/domains/environment'
-import {
-  type AnyService,
-  type Application,
-  type Container,
-  Database,
-  type Job,
-} from '@qovery/domains/services/data-access'
+import { type AnyService } from '@qovery/domains/services/data-access'
 import { useEditService, useServices } from '@qovery/domains/services/feature'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
 import { PageSettingsPreviewEnvironments } from '../../ui/page-settings-preview-environments/page-settings-preview-environments'
 
-export function SettingsPreviewEnvironmentsFeature({ services }: { services?: AnyService[] }) {
+export function SettingsPreviewEnvironmentsFeature({ services }: { services: AnyService[] }) {
   const { projectId = '', environmentId = '' } = useParams()
   const [loading, setLoading] = useState(false)
 
   const { isFetched: loadingStatusEnvironmentDeploymentRules, data: environmentDeploymentRules } =
     useFetchEnvironmentDeploymentRule(projectId, environmentId)
   const editEnvironmentDeploymentRule = useEditEnvironmentDeploymentRule(projectId, environmentId)
-  const { mutateAsync: editService } = useEditService({ environmentId })
+  const { mutateAsync: editService } = useEditService({ environmentId, silently: true })
 
   const methods = useForm({
     mode: 'onChange',
@@ -46,58 +40,27 @@ export function SettingsPreviewEnvironmentsFeature({ services }: { services?: An
         if (service.serviceType === 'DATABASE') return
 
         if (service.id === Object.keys(data).find((key) => key === service.id)) {
-          // const payload = match(service)
-          //   .with({ serviceType: 'APPLICATION' }, (s) => ({
-          //     ...(s as Application),
-          //     serviceType: 'APPLICATION',
-          //   }))
-          //   .with({ serviceType: 'JOB' }, (s) => ({
-          //     ...(s as Job),
-          //     serviceType: 'JOB',
-          //   }))
-          //   .with({ serviceType: 'CONTAINER' }, (s) => ({
-          //     ...(s as Container),
-          //     serviceType: 'CONTAINER',
-          //   }))
-          //   .otherwise(() => null)
+          const request = {
+            auto_preview: data[service.id],
+          }
 
-          const payload = match(service.serviceType)
-            .with('APPLICATION', () => ({
-              ...service,
-              serviceType: 'APPLICATION',
-              request: {
-                auto_preview: data[service.id],
-              },
-            }))
-            .with('JOB', () => ({
-              ...service,
-              serviceType: 'JOB',
-              request: {
-                auto_preview: data[service.id],
-              },
-            }))
-            .with('CONTAINER', () => ({
-              ...service,
-              serviceType: 'CONTAINER',
-              request: {
-                auto_preview: data[service.id],
-              },
-            }))
-            .with('HELM', () => ({
-              ...service,
-              serviceType: 'HELM',
-              request: {
-                auto_preview: data[service.id],
-              },
-            }))
+          const payload = match(service)
+            .with({ serviceType: 'APPLICATION' }, (s) => buildEditServicePayload({ service: s, request }))
+            .with({ serviceType: 'CONTAINER' }, (s) => buildEditServicePayload({ service: s, request }))
+            .with({ serviceType: 'JOB' }, (s) => buildEditServicePayload({ service: s, request }))
+            .with({ serviceType: 'HELM' }, (s) => buildEditServicePayload({ service: s, request }))
             .otherwise(() => null)
 
-          if (!service) return
+          if (!payload) return
 
-          await editService({
-            serviceId: service.id,
-            payload: buildEditServicePayload(payload),
-          })
+          try {
+            await editService({
+              serviceId: service.id,
+              payload,
+            })
+          } catch (error) {
+            console.error(error)
+          }
         }
       })
 

@@ -1,5 +1,7 @@
 import { Controller, useFormContext } from 'react-hook-form'
+import { match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
+import { IconEnum } from '@qovery/shared/enums'
 import { BlockContent, Button, HelpSection, Icon, InputToggle } from '@qovery/shared/ui'
 
 export interface PageSettingsPreviewEnvironmentsProps {
@@ -14,9 +16,16 @@ export function PageSettingsPreviewEnvironments(props: PageSettingsPreviewEnviro
   const { onSubmit, services, loading, toggleAll, toggleEnablePreview } = props
   const { control, formState } = useFormContext()
 
+  const getIconName = (service: AnyService) =>
+    match(service)
+      .with({ serviceType: 'JOB', job_type: 'CRON' }, () => IconEnum.CRON_JOB)
+      .with({ serviceType: 'JOB', job_type: 'LIFECYCLE' }, () => IconEnum.LIFECYCLE_JOB)
+      .with({ serviceType: 'HELM' }, () => IconEnum.HELM)
+      .otherwise(() => IconEnum.APPLICATION)
+
   return (
     <div className="flex flex-col justify-between w-full">
-      <div className="p-8  max-w-content-with-navigation-left">
+      <div className="p-8 max-w-content-with-navigation-left">
         <div className="flex justify-between mb-8">
           <div>
             <h2 className="h5 text-neutral-400 mb-2">Preview environments</h2>
@@ -82,7 +91,8 @@ export function PageSettingsPreviewEnvironments(props: PageSettingsPreviewEnviro
                             }}
                             title={
                               <span className="flex items-center -top-1 relative">
-                                <Icon name={service.serviceType} className="mr-3" /> {service.name}
+                                <Icon name={getIconName(service)} className="mr-3" />
+                                {service.name}
                               </span>
                             }
                             small
