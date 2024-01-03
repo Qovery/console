@@ -274,9 +274,10 @@ function MenuOtherActions({
   const { openModalConfirmation } = useModalConfirmation()
   const navigate = useNavigate()
   const { mutateAsync: deleteService } = useDeleteService({ environmentId })
+  const { data: environment } = useEnvironment({ environmentId })
 
   const [, copyToClipboard] = useCopyToClipboard()
-  const copyContent = `Organization ID: ${organizationId}\nProject ID: ${projectId}\nEnvironment ID: ${environmentId}\nService ID: ${service.id}`
+  const copyContent = `Cluster ID: ${environment?.cluster_id}\nOrganization ID: ${organizationId}\nProject ID: ${projectId}\nEnvironment ID: ${environmentId}\nService ID: ${service.id}`
 
   const mutationDelete = async () => {
     openModalConfirmation({
@@ -354,7 +355,7 @@ function MenuOtherActions({
           </a>
         )}
         <DropdownMenu.Item
-          icon={<Icon name={IconAwesomeEnum.COPY} />}
+          icon={<Icon name={IconAwesomeEnum.CLOCK_ROTATE_LEFT} />}
           onClick={() =>
             navigate(
               AUDIT_LOGS_PARAMS_URL(organizationId, {
@@ -368,10 +369,7 @@ function MenuOtherActions({
         >
           See audit logs
         </DropdownMenu.Item>
-        <DropdownMenu.Item
-          icon={<Icon name={IconAwesomeEnum.CLOCK_ROTATE_LEFT} />}
-          onClick={() => copyToClipboard(copyContent)}
-        >
+        <DropdownMenu.Item icon={<Icon name={IconAwesomeEnum.COPY} />} onClick={() => copyToClipboard(copyContent)}>
           Copy identifiers
         </DropdownMenu.Item>
         <DropdownMenu.Item
