@@ -1,78 +1,36 @@
-import { useQueryClient } from '@tanstack/react-query'
-import { type CustomDomain } from 'qovery-typescript-axios'
-import { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import {
-  deleteCustomDomain,
-  fetchCustomDomains,
-  getApplicationsState,
-  getCustomDomainsState,
-  selectCustomDomainsByApplicationId,
-} from '@qovery/domains/application'
-import { getServiceType } from '@qovery/shared/enums'
-import { type ApplicationEntity, type LoadingStatus } from '@qovery/shared/interfaces'
+import { useCustomDomains, useDeleteCustomDomain, useService } from '@qovery/domains/services/feature'
 import { useModal, useModalConfirmation } from '@qovery/shared/ui'
-import { type AppDispatch, type RootState } from '@qovery/state/store'
-import { queries } from '@qovery/state/util-queries'
 import PageSettingsDomains from '../../ui/page-settings-domains/page-settings-domains'
 import CrudModalFeature from './crud-modal-feature/crud-modal-feature'
 
 export function PageSettingsDomainsFeature() {
-  const dispatch = useDispatch<AppDispatch>()
+  const { applicationId = '' } = useParams()
 
-  const { organizationId = '', projectId = '', applicationId = '' } = useParams()
-
-  const application = useSelector<RootState, ApplicationEntity | undefined>(
-    (state) => getApplicationsState(state).entities[applicationId]
-  )
-
-  const customDomains = useSelector<RootState, CustomDomain[] | undefined>((state) =>
-    selectCustomDomainsByApplicationId(state, applicationId)
-  )
-
-  const customDomainsLoadingStatus = useSelector<RootState, LoadingStatus>(
-    (state) => getCustomDomainsState(state).loadingStatus
-  )
-
-  const queryClient = useQueryClient()
+  const { data: service } = useService({ serviceId: applicationId })
+  const { data: customDomains, isLoading: isLoadingCustomDomains } = useCustomDomains({
+    serviceId: applicationId,
+    serviceType: service?.serviceType ?? 'APPLICATION',
+  })
+  const { mutate: deleteCustomDomain } = useDeleteCustomDomain()
 
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
 
-  useEffect(() => {
-    if (application) {
-      dispatch(fetchCustomDomains({ applicationId, serviceType: getServiceType(application) }))
-    }
-  }, [dispatch, applicationId, application])
+  if (service?.serviceType !== ('APPLICATION' || 'CONTAINER')) return null
 
   return (
     <PageSettingsDomains
       domains={customDomains}
-      loading={customDomainsLoadingStatus}
+      loading={isLoadingCustomDomains}
       onAddDomain={() => {
         openModal({
-          content: (
-            <CrudModalFeature
-              organizationId={organizationId}
-              projectId={projectId}
-              onClose={closeModal}
-              application={application}
-            />
-          ),
+          content: <CrudModalFeature onClose={closeModal} service={service} />,
         })
       }}
       onEdit={(customDomain) => {
         openModal({
-          content: (
-            <CrudModalFeature
-              organizationId={organizationId}
-              projectId={projectId}
-              onClose={closeModal}
-              application={application}
-              customDomain={customDomain}
-            />
-          ),
+          content: <CrudModalFeature onClose={closeModal} service={service} customDomain={customDomain} />,
         })
       }}
       onDelete={(customDomain) => {
@@ -81,20 +39,12 @@ export function PageSettingsDomainsFeature() {
           isDelete: true,
           name: customDomain.domain,
           action: () => {
-            if (application) {
-              dispatch(deleteCustomDomain({ applicationId, customDomain, serviceType: getServiceType(application) }))
-                .unwrap()
-                .then(() => {
-                  queryClient.invalidateQueries(
-                    queries.services.listLinks({
-                      serviceId: applicationId,
-                      serviceType: 'APPLICATION',
-                    })
-                  )
-                })
-                .catch((e) => {
-                  console.error(e)
-                })
+            if (service) {
+              deleteCustomDomain({
+                serviceId: service.id,
+                customDomainId: customDomain.id,
+                serviceType: service.serviceType,
+              })
             }
           },
         })

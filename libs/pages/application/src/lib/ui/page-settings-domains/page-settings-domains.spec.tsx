@@ -1,22 +1,12 @@
-import {
-  act,
-  findByText,
-  getByDisplayValue,
-  getByRole,
-  getByTestId,
-  queryByTestId,
-  render,
-} from '__tests__/utils/setup-jest'
 import { CustomDomainStatusEnum } from 'qovery-typescript-axios'
-import { applicationFactoryMock } from '@qovery/shared/factories'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { PageSettingsDomains, type PageSettingsDomainsProps } from './page-settings-domains'
 
 let props: PageSettingsDomainsProps
 
-describe('PagesSettingsDomains', () => {
+describe('PageSettingsDomains', () => {
   beforeEach(() => {
     props = {
-      application: applicationFactoryMock(1)[0],
       onAddDomain: jest.fn(),
       onDelete: jest.fn(),
       onEdit: jest.fn(),
@@ -25,24 +15,22 @@ describe('PagesSettingsDomains', () => {
   })
 
   it('should render successfully', () => {
-    const { baseElement } = render(<PageSettingsDomains {...props} />)
+    const { baseElement } = renderWithProviders(<PageSettingsDomains {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
   it('should render the placeholder if no domains found', () => {
-    const { baseElement } = render(<PageSettingsDomains {...props} />)
-    findByText(baseElement, 'No domains are set')
+    renderWithProviders(<PageSettingsDomains {...props} />)
+    screen.findByText('No domains are set')
   })
 
   it('should render an add button and handle its click', async () => {
     const spy = jest.fn()
     props.onAddDomain = spy
-    const { baseElement } = render(<PageSettingsDomains {...props} />)
-    const button = getByRole(baseElement, 'button', { name: 'Add Domain' })
+    const { userEvent } = renderWithProviders(<PageSettingsDomains {...props} />)
+    const button = screen.getByRole('button', { name: 'Add Domain' })
 
-    await act(() => {
-      button.click()
-    })
+    await userEvent.click(button)
     expect(spy).toHaveBeenCalled()
   })
 
@@ -65,10 +53,10 @@ describe('PagesSettingsDomains', () => {
         created_at: '2020-01-01T00:00:00Z',
       },
     ]
-    const { baseElement } = render(<PageSettingsDomains {...props} />)
+    renderWithProviders(<PageSettingsDomains {...props} />)
 
-    getByDisplayValue(baseElement, 'example.com')
-    getByDisplayValue(baseElement, 'example2.com')
+    screen.getByDisplayValue('example.com')
+    screen.getByDisplayValue('example2.com')
   })
 
   it('should render a form row with one edit and one delete button', async () => {
@@ -88,15 +76,13 @@ describe('PagesSettingsDomains', () => {
     const spyDelete = jest.fn()
     props.onDelete = spyDelete
 
-    const { baseElement } = render(<PageSettingsDomains {...props} />)
+    const { userEvent } = renderWithProviders(<PageSettingsDomains {...props} />)
 
-    const editButton = getByTestId(baseElement, 'edit-button')
-    const deleteButton = getByTestId(baseElement, 'delete-button')
+    const editButton = screen.getByTestId('edit-button')
+    const deleteButton = screen.getByTestId('delete-button')
 
-    await act((): void => {
-      editButton.click()
-      deleteButton.click()
-    })
+    await userEvent.click(editButton)
+    await userEvent.click(deleteButton)
 
     expect(spyEdit).toHaveBeenCalledWith(customDomain)
     expect(spyDelete).toHaveBeenCalledWith(customDomain)
@@ -104,19 +90,17 @@ describe('PagesSettingsDomains', () => {
 
   it('should show a loader', async () => {
     props.domains = []
-    props.loading = 'not loaded'
+    props.loading = true
 
-    const { baseElement } = render(<PageSettingsDomains {...props} />)
-
-    getByTestId(baseElement, 'spinner')
+    renderWithProviders(<PageSettingsDomains {...props} />)
+    screen.getByTestId('spinner')
   })
 
   it('should not show a loader', async () => {
     props.domains = []
-    props.loading = 'loaded'
+    props.loading = false
 
-    const { baseElement } = render(<PageSettingsDomains {...props} />)
-
-    expect(queryByTestId(baseElement, 'spinner')).toBeNull()
+    renderWithProviders(<PageSettingsDomains {...props} />)
+    expect(screen.queryByTestId('spinner')).toBeNull()
   })
 })

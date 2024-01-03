@@ -1,15 +1,42 @@
-import { act, getAllByTestId, render } from '__tests__/utils/setup-jest'
-import { type CustomDomain, CustomDomainStatusEnum } from 'qovery-typescript-axios'
-import * as redux from 'react-redux'
+import { type Application } from '@qovery/domains/services/data-access'
 import { applicationFactoryMock } from '@qovery/shared/factories'
-import { type ApplicationEntity } from '@qovery/shared/interfaces'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import PageSettingsDomainsFeature from './page-settings-domains-feature'
 
-import SpyInstance = jest.SpyInstance
+const mockApplication = applicationFactoryMock(1)[0] as Application
 
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useDispatch: () => jest.fn(),
+jest.mock('@qovery/domains/services/feature', () => ({
+  useService: () => ({
+    data: mockApplication,
+  }),
+  useCustomDomains: () => ({
+    data: [
+      {
+        id: '1',
+        domain: 'example.com',
+        status: 'VALIDATION_PENDING',
+        validation_domain: 'example.com',
+        updated_at: '2020-01-01T00:00:00Z',
+        created_at: '2020-01-01T00:00:00Z',
+      },
+      {
+        id: '2',
+        domain: 'example2.com',
+        status: 'VALIDATION_PENDING',
+        validation_domain: 'example.com',
+        updated_at: '2020-01-01T00:00:00Z',
+        created_at: '2020-01-01T00:00:00Z',
+      },
+    ],
+  }),
+  useDeleteCustomDomain: () => ({
+    mutate: jest.fn(),
+  }),
+}))
+
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useParams: () => ({ applicationId: '1' }),
 }))
 
 const mockOpenModal = jest.fn()
@@ -31,67 +58,25 @@ jest.mock('react-router-dom', () => ({
 
 describe('PageSettingsDomainsFeature', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<PageSettingsDomainsFeature />)
+    const { baseElement } = renderWithProviders(<PageSettingsDomainsFeature />)
     expect(baseElement).toBeTruthy()
   })
 
   describe('with an application defined', () => {
-    let useDispatchSpy: SpyInstance
-    let application: ApplicationEntity
-    let useSelectorSpy: SpyInstance
-
-    const customDomainsMocked: CustomDomain[] = [
-      {
-        id: '1',
-        domain: 'example.com',
-        status: CustomDomainStatusEnum.VALIDATION_PENDING,
-        validation_domain: 'example.com',
-        updated_at: '2020-01-01T00:00:00Z',
-        created_at: '2020-01-01T00:00:00Z',
-      },
-      {
-        id: '2',
-        domain: 'example2.com',
-        status: CustomDomainStatusEnum.VALIDATION_PENDING,
-        validation_domain: 'example.com',
-        updated_at: '2020-01-01T00:00:00Z',
-        created_at: '2020-01-01T00:00:00Z',
-      },
-    ]
-
-    beforeEach(() => {
-      useDispatchSpy = jest.spyOn(redux, 'useDispatch').mockReturnValue(jest.fn())
-      application = applicationFactoryMock(1)[0]
-      application.id = '1'
-      useSelectorSpy = jest.spyOn(redux, 'useSelector')
-      useSelectorSpy.mockReturnValue(application).mockReturnValue(customDomainsMocked)
-    })
-
-    it('should dispatch the custom domain fetch', async () => {
-      render(<PageSettingsDomainsFeature />)
-      expect(useDispatchSpy).toHaveBeenCalled()
-    })
-
     it('should dispatch open modal if click on edit', async () => {
-      const { baseElement } = render(<PageSettingsDomainsFeature />)
+      const { userEvent } = renderWithProviders(<PageSettingsDomainsFeature />)
 
-      const editButton = getAllByTestId(baseElement, 'edit-button')[0]
-
-      await act(() => {
-        editButton.click()
-      })
+      const editButton = screen.getAllByTestId('edit-button')[0]
+      await userEvent.click(editButton)
 
       expect(mockOpenModal).toHaveBeenCalled()
     })
 
     it('should dispatch open confirmation modal if click on delete', async () => {
-      const { baseElement } = render(<PageSettingsDomainsFeature />)
+      const { userEvent } = renderWithProviders(<PageSettingsDomainsFeature />)
 
-      const deleteButton = getAllByTestId(baseElement, 'delete-button')[0]
-
-      await act(() => {
-        deleteButton.click()
-      })
+      const deleteButton = screen.getAllByTestId('delete-button')[0]
+      await userEvent.click(deleteButton)
 
       expect(mockOpenConfirmationModal).toHaveBeenCalled()
     })

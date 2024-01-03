@@ -14,11 +14,14 @@ import {
   ContainerActionsApi,
   type ContainerAdvancedSettings,
   ContainerConfigurationApi,
+  ContainerCustomDomainApi,
   type ContainerDeployRequest,
   ContainerDeploymentHistoryApi,
   ContainerMainCallsApi,
   type ContainerRequest,
   ContainersApi,
+  CustomDomainApi,
+  type CustomDomainRequest,
   DatabaseActionsApi,
   DatabaseDeploymentHistoryApi,
   type DatabaseEditRequest,
@@ -91,6 +94,9 @@ const applicationConfigurationApi = new ApplicationConfigurationApi()
 const containerConfigurationApi = new ContainerConfigurationApi()
 const helmConfigurationApi = new HelmConfigurationApi()
 const jobConfigurationApi = new JobConfigurationApi()
+
+const customDomainApplicationApi = new CustomDomainApi()
+const customDomainContainerApi = new ContainerCustomDomainApi()
 
 // Prefer this type in param instead of ServiceTypeEnum
 // to suppport string AND enum as param.
@@ -405,6 +411,29 @@ export const services = createQueryKeys('services', {
         .exhaustive()
       const response = await query(serviceId)
       return response.data
+    },
+  }),
+  customDomains: ({
+    serviceId,
+    serviceType,
+  }: {
+    serviceId: string
+    serviceType: Extract<ServiceType, 'APPLICATION' | 'CONTAINER'>
+  }) => ({
+    queryKey: [serviceId],
+    async queryFn() {
+      const { query } = match(serviceType)
+        .with('APPLICATION', (serviceType) => ({
+          query: customDomainApplicationApi.listApplicationCustomDomain.bind(customDomainApplicationApi),
+          serviceType,
+        }))
+        .with('CONTAINER', (serviceType) => ({
+          query: customDomainContainerApi.listContainerCustomDomain.bind(customDomainContainerApi),
+          serviceType,
+        }))
+        .exhaustive()
+      const response = await query(serviceId)
+      return response.data.results
     },
   }),
 })
@@ -810,6 +839,74 @@ export const mutations = {
       }))
       .exhaustive()
     const response = await mutation()
+    return response.data
+  },
+  async createCustomDomain({
+    serviceId,
+    serviceType,
+    payload,
+  }: {
+    serviceId: string
+    serviceType: Extract<ServiceType, 'APPLICATION' | 'CONTAINER'>
+    payload: CustomDomainRequest
+  }) {
+    const { mutation } = match(serviceType)
+      .with('APPLICATION', () => ({
+        mutation: customDomainApplicationApi.createApplicationCustomDomain.bind(customDomainApplicationApi),
+        serviceType,
+      }))
+      .with('CONTAINER', () => ({
+        mutation: customDomainContainerApi.createContainerCustomDomain.bind(customDomainContainerApi),
+        serviceType,
+      }))
+      .exhaustive()
+    const response = await mutation(serviceId, payload)
+    return response.data
+  },
+  async editCustomDomain({
+    serviceId,
+    serviceType,
+    customDomainId,
+    payload,
+  }: {
+    serviceId: string
+    serviceType: Extract<ServiceType, 'APPLICATION' | 'CONTAINER'>
+    customDomainId: string
+    payload: CustomDomainRequest
+  }) {
+    const { mutation } = match(serviceType)
+      .with('APPLICATION', () => ({
+        mutation: customDomainApplicationApi.editCustomDomain.bind(customDomainApplicationApi),
+        serviceType,
+      }))
+      .with('CONTAINER', () => ({
+        mutation: customDomainContainerApi.editContainerCustomDomain.bind(customDomainContainerApi),
+        serviceType,
+      }))
+      .exhaustive()
+    const response = await mutation(serviceId, customDomainId, payload)
+    return response.data
+  },
+  async deleteCustomDomain({
+    serviceId,
+    serviceType,
+    customDomainId,
+  }: {
+    serviceId: string
+    serviceType: Extract<ServiceType, 'APPLICATION' | 'CONTAINER'>
+    customDomainId: string
+  }) {
+    const { mutation } = match(serviceType)
+      .with('APPLICATION', (serviceType) => ({
+        mutation: customDomainApplicationApi.deleteCustomDomain.bind(applicationMainCallsApi),
+        serviceType,
+      }))
+      .with('CONTAINER', (serviceType) => ({
+        mutation: customDomainContainerApi.deleteContainerCustomDomain.bind(containerMainCallsApi),
+        serviceType,
+      }))
+      .exhaustive()
+    const response = await mutation(serviceId, customDomainId)
     return response.data
   },
 }

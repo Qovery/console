@@ -1,42 +1,42 @@
 import { type CustomDomain } from 'qovery-typescript-axios'
-import { type ApplicationEntity, type LoadingStatus } from '@qovery/shared/interfaces'
 import {
   BlockContent,
-  ButtonIcon,
-  ButtonIconStyle,
-  ButtonLegacy,
+  Button,
   EmptyState,
+  Heading,
   HelpSection,
+  Icon,
   IconAwesomeEnum,
   InputText,
   LoaderSpinner,
+  Section,
 } from '@qovery/shared/ui'
 
 export interface PageSettingsDomainsProps {
-  application?: ApplicationEntity
   onAddDomain: () => void
   onEdit: (customDomain: CustomDomain) => void
   onDelete: (customDomain: CustomDomain) => void
   domains?: CustomDomain[]
-  loading?: LoadingStatus
+  loading?: boolean
 }
 
 export function PageSettingsDomains(props: PageSettingsDomainsProps) {
   return (
-    <div className="flex flex-col justify-between w-full">
+    <Section className="justify-between w-full">
       <div className="p-8  max-w-content-with-navigation-left">
         <div className="flex justify-between mb-8">
           <div>
-            <h1 className="h5 text-neutral-400 mb-2">Domain</h1>
-            <p className="text-sm text-neutral-400">Add custom domains to your application.</p>
+            <Heading className="mb-2">Domain</Heading>
+            <p className="text-sm text-neutral-400 mb-2">Add custom domains to your service.</p>
           </div>
 
-          <ButtonLegacy onClick={() => props.onAddDomain()} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>
+          <Button size="lg" variant="solid" color="brand" onClick={() => props.onAddDomain()}>
             Add Domain
-          </ButtonLegacy>
+            <Icon name={IconAwesomeEnum.CIRCLE_PLUS} className="ml-2" />
+          </Button>
         </div>
 
-        {(props.loading === 'not loaded' || props.loading === 'loading') && props.domains?.length === 0 ? (
+        {props.loading && props.domains?.length === 0 ? (
           <div className="flex justify-center">
             <LoaderSpinner className="w-6" />
           </div>
@@ -58,20 +58,26 @@ export function PageSettingsDomains(props: PageSettingsDomainsProps) {
                     label="Default Domain"
                     disabled
                   />
-                  <ButtonIcon
-                    className="!bg-transparent hover:!bg-neutral-200 !w-[52px] !h-[52px]"
+                  <Button
+                    data-testid="edit-button"
+                    variant="outline"
+                    color="neutral"
+                    size="lg"
+                    className="justify-center w-[52px] h-[52px]"
                     onClick={() => props.onEdit(customDomain)}
-                    dataTestId="edit-button"
-                    icon={IconAwesomeEnum.WHEEL}
-                    style={ButtonIconStyle.STROKED}
-                  />
-                  <ButtonIcon
-                    className="!bg-transparent hover:!bg-neutral-200 !w-[52px] !h-[52px]"
+                  >
+                    <Icon name={IconAwesomeEnum.WHEEL} />
+                  </Button>
+                  <Button
+                    data-testid="delete-button"
+                    variant="outline"
+                    color="neutral"
+                    size="lg"
+                    className="justify-center w-[52px] h-[52px]"
                     onClick={() => props.onDelete(customDomain)}
-                    dataTestId="delete-button"
-                    icon={IconAwesomeEnum.TRASH}
-                    style={ButtonIconStyle.STROKED}
-                  />
+                  >
+                    <Icon name={IconAwesomeEnum.TRASH} />
+                  </Button>
                 </div>
               ))}
           </BlockContent>
@@ -88,7 +94,7 @@ export function PageSettingsDomains(props: PageSettingsDomainsProps) {
           },
         ]}
       />
-    </div>
+    </Section>
   )
 }
 
