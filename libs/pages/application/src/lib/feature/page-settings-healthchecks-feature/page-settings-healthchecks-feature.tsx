@@ -5,11 +5,8 @@ import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import {
-  type Application,
   type ApplicationType,
-  type Container,
   type ContainerType,
-  type Job,
   type JobType,
   type ServiceType,
 } from '@qovery/domains/services/data-access'
@@ -59,7 +56,7 @@ export function SettingsHealthchecksFeature({
 
     const defaultPort = match(service)
       .with({ serviceType: 'JOB' }, (s) => s.port)
-      .otherwise((s) => s?.ports?.[0]?.internal_port)
+      .otherwise((s) => s.ports?.[0]?.internal_port)
 
     const healthchecks = {
       readiness_probe:
@@ -137,10 +134,10 @@ export function SettingsHealthchecksFeature({
   return (
     <FormProvider {...methods}>
       <PageSettingsHealthchecks
-        ports={(service as Application | Container).ports}
-        jobPort={(service as Job).port}
+        ports={'ports' in service ? service.ports : undefined}
+        jobPort={'port' in service ? service.port : undefined}
         isJob={service.serviceType === 'JOB'}
-        minRunningInstances={(service as Application | Container)?.min_running_instances}
+        minRunningInstances={'min_running_instances' in service ? service.min_running_instances : undefined}
         linkResourcesSetting={`${APPLICATION_URL(
           organizationId,
           projectId,
@@ -160,8 +157,8 @@ export function PageSettingsAdvancedFeature() {
 
   const { data: serviceType } = useServiceType({ environmentId, serviceId: applicationId })
 
-  if (serviceType !== ('APPLICATION' || 'CONTAINER' || 'JOB')) {
-    return undefined
+  if (serviceType !== 'APPLICATION' && serviceType !== 'CONTAINER' && serviceType !== 'JOB') {
+    return null
   }
 
   return <SettingsHealthchecksFeature serviceType={serviceType} />
