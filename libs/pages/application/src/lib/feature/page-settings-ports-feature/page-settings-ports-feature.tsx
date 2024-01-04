@@ -64,13 +64,7 @@ export const deletePort = (application?: Extract<AnyService, Application | Conta
   return cloneApplication
 }
 
-export function SettingsPortsFeature({
-  service,
-  projectId,
-}: {
-  service: Extract<AnyService, Application | Container>
-  projectId: string
-}) {
+export function SettingsPortsFeature({ service }: { service: Extract<AnyService, Application | Container> }) {
   const { mutate: editService } = useEditService({
     environmentId: service?.environment?.id || '',
   })
@@ -127,14 +121,14 @@ export function SettingsPortsFeature({
 }
 
 export function PageSettingsPortsFeature() {
-  const { projectId = '', applicationId = '', environmentId = '' } = useParams()
+  const { applicationId = '', environmentId = '' } = useParams()
   const { data: service } = useService({ environmentId, serviceId: applicationId })
 
-  if (service?.serviceType !== ('APPLICATION' || 'CONTAINER')) {
+  if (service?.serviceType !== 'APPLICATION' && service?.serviceType !== 'CONTAINER') {
     return null
   }
 
-  return <SettingsPortsFeature service={service} projectId={projectId} />
+  return <SettingsPortsFeature service={service} />
 }
 
 export default PageSettingsPortsFeature

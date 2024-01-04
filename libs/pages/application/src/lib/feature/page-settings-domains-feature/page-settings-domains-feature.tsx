@@ -17,7 +17,7 @@ export function PageSettingsDomainsFeature() {
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
 
-  if (service?.serviceType !== ('APPLICATION' || 'CONTAINER')) return null
+  if (service?.serviceType !== 'APPLICATION' && service?.serviceType !== 'CONTAINER') return null
 
   return (
     <PageSettingsDomains
