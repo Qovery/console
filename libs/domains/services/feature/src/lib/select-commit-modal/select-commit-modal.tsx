@@ -15,7 +15,7 @@ import {
   TagCommit,
 } from '@qovery/shared/ui'
 import { dateToFormat, timeAgo } from '@qovery/shared/util-dates'
-import { twMerge } from '@qovery/shared/util-js'
+import { pluralize, twMerge } from '@qovery/shared/util-js'
 import { useLastDeployedCommit } from '../hooks/use-last-deployed-commit/use-last-deployed-commit'
 
 export interface SelectCommitModalProps extends Omit<ComponentPropsWithoutRef<'div'>, 'onSubmit'> {
@@ -96,7 +96,7 @@ export function SelectCommitModal({
                     name={IconAwesomeEnum.CODE_COMMIT}
                     className="absolute left-0 text-neutral-300 -translate-x-1/2"
                   />
-                  Commit{commits.length > 1 ? 's' : ''} on {dateToFormat(date, 'MMM dd, yyyy')}
+                  {pluralize(commits.length, 'Commit')} on {dateToFormat(date, 'MMM dd, yyyy')}
                 </div>
                 <div className="border-l border-neutral-250 pt-3 pl-5 pb-5">
                   {commits.map(
