@@ -9,11 +9,13 @@ exports[`SelectCommitModal should match snapshot 1`] = `
       class="flex flex-col gap-2 text-sm text-neutral-350"
     >
       <h2
-        class="h4 text-neutral-400 max-w-sm truncate mb-1"
+        class="h4 text-neutral-400 max-w-sm truncate"
       >
         Deploy other version
       </h2>
-      <p>
+      <p
+        class="text-neutral-350"
+      >
         Type a version to deploy
       </p>
       For X service
@@ -66,12 +68,12 @@ exports[`SelectCommitModal should match snapshot 1`] = `
             class="border-l border-neutral-250 pt-3 pl-5 pb-5"
           >
             <label
-              class="flex flex-row gap-3 w-full p-3 border border-neutral-250 -mt-px first:rounded-t-md last:rounded-b-md"
+              class="flex flex-row gap-3 w-full p-3 border border-neutral-250 -mt-px first:rounded-t-md last:rounded-b-md cursor-pointer"
             >
               <div>
                 <button
                   aria-checked="false"
-                  class="bg-neutral-100 border border-neutral-300 w-[20px] h-[20px] rounded-full text-white flex items-center justify-center text-xs data-[state=checked]:bg-brand-500 data-[state=checked]:border-0 disabled:border-2 disabled:border-neutral-350 disabled:after:content-[''] disabled:after:block disabled:after:w-[10px] disabled:after:h-[10px] disabled:after:rounded-[50%] disabled:after:bg-neutral-350"
+                  class="group transition bg-neutral-100 border border-neutral-300 w-[20px] h-[20px] rounded-full hover:border-2 hover:border-brand-500 data-[state=checked]:border-2 data-[state=checked]:border-brand-500 disabled:hover:border disabled:bg-neutral-150 disabled:border-neutral-250 disabled:data-[state=checked]:hover:border-2 disabled:data-[state=checked]:border-neutral-350"
                   data-radix-collection-item=""
                   data-state="unchecked"
                   role="radio"
@@ -171,17 +173,8 @@ exports[`SelectCommitModal should match snapshot 1`] = `
               class="flex flex-row gap-3 w-full p-3 border border-neutral-250 -mt-px first:rounded-t-md last:rounded-b-md bg-neutral-100"
             >
               <div>
-                <button
-                  aria-checked="false"
-                  class="bg-neutral-100 border border-neutral-300 w-[20px] h-[20px] rounded-full text-white flex items-center justify-center text-xs data-[state=checked]:bg-brand-500 data-[state=checked]:border-0 disabled:border-2 disabled:border-neutral-350 disabled:after:content-[''] disabled:after:block disabled:after:w-[10px] disabled:after:h-[10px] disabled:after:rounded-[50%] disabled:after:bg-neutral-350"
-                  data-disabled=""
-                  data-radix-collection-item=""
-                  data-state="unchecked"
-                  disabled=""
-                  role="radio"
-                  tabindex="-1"
-                  type="button"
-                  value="456"
+                <div
+                  class="pr-5"
                 />
               </div>
               <div
