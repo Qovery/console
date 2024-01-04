@@ -146,6 +146,9 @@ describe('NetworkingSetting', () => {
 
     await userEvent.click(screen.getAllByTestId('remove-port')[0])
 
+    await userEvent.type(screen.getByRole('textbox'), 'delete')
+    await userEvent.click(screen.getByRole('button', { name: /confirm/i }))
+
     expect(onUpdatePorts).toHaveBeenCalledWith([])
   })
 })

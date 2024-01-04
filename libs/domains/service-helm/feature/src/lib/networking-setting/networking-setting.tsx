@@ -10,6 +10,7 @@ import {
   Popover,
   Section,
   useModal,
+  useModalConfirmation,
 } from '@qovery/shared/ui'
 import { NetworkingPortSettingModal } from '../networking-port-setting-modal/networking-port-setting-modal'
 
@@ -20,6 +21,7 @@ export interface NetworkingSettingProps extends PropsWithChildren {
 
 export function NetworkingSetting({ ports, onUpdatePorts, children }: NetworkingSettingProps) {
   const { openModal, closeModal } = useModal()
+  const { openModalConfirmation } = useModalConfirmation()
 
   const onAddPort = () =>
     openModal({
@@ -46,7 +48,14 @@ export function NetworkingSetting({ ports, onUpdatePorts, children }: Networking
         />
       ),
     })
-  const onRemovePort = (port: HelmPortRequestPortsInner) => onUpdatePorts(ports.filter((p) => p !== port))
+  const onRemovePort = (port: HelmPortRequestPortsInner) =>
+    openModalConfirmation({
+      title: 'Delete Port',
+      isDelete: true,
+      action: () => {
+        onUpdatePorts(ports.filter((p) => p !== port))
+      },
+    })
 
   return (
     <Section className="items-start">
