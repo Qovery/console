@@ -24,8 +24,8 @@ export function SelectVersionModal({
   return (
     <div className="flex flex-col gap-6 p-5">
       <div className="flex flex-col gap-2 text-sm text-neutral-350">
-        <h2 className="h4 text-neutral-400 max-w-sm truncate mb-1">{title}</h2>
-        <p>{description}</p>
+        <h2 className="h4 text-neutral-400 max-w-sm truncate">{title}</h2>
+        <p className="text-neutral-350">{description}</p>
         {children}
       </div>
       <InputText
