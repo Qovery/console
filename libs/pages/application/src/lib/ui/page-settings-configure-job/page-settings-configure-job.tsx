@@ -6,12 +6,11 @@ import { BlockContent, Button, HelpSection } from '@qovery/shared/ui'
 
 export interface PageSettingsConfigureJobProps {
   service: Job
-  loading?: boolean
   onSubmit: () => void
+  loading: boolean
 }
 
-export function PageSettingsConfigureJob(props: PageSettingsConfigureJobProps) {
-  const { loading, onSubmit } = props
+export function PageSettingsConfigureJob({ service, loading, onSubmit }: PageSettingsConfigureJobProps) {
   const { formState } = useFormContext()
 
   return (
@@ -20,8 +19,8 @@ export function PageSettingsConfigureJob(props: PageSettingsConfigureJobProps) {
         <form onSubmit={onSubmit}>
           <BlockContent title="Configuration job">
             <JobConfigureSettings
-              loading={!props.service}
-              jobType={props.service.job_type === 'CRON' ? ServiceTypeEnum.CRON_JOB : ServiceTypeEnum.LIFECYCLE_JOB}
+              loading={!service}
+              jobType={service.job_type === 'CRON' ? ServiceTypeEnum.CRON_JOB : ServiceTypeEnum.LIFECYCLE_JOB}
             />
           </BlockContent>
           <div className="flex justify-end">
