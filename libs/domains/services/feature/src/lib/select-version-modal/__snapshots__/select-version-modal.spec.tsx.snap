@@ -9,11 +9,13 @@ exports[`SelectVersionModal should match snapshot 1`] = `
       class="flex flex-col gap-2 text-sm text-neutral-350"
     >
       <h2
-        class="h4 text-neutral-400 max-w-sm truncate mb-1"
+        class="h4 text-neutral-400 max-w-sm truncate"
       >
         Deploy other version
       </h2>
-      <p>
+      <p
+        class="text-neutral-350"
+      >
         Type a version to deploy
       </p>
       For X service
