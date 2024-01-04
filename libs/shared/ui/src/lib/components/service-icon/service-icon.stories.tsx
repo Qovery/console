@@ -1,9 +1,9 @@
-import { type Meta, type Story } from '@storybook/react'
+import { type Meta } from '@storybook/react'
 import { CloudProviderEnum } from 'qovery-typescript-axios'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
-import { ServiceIcon, type ServiceIconProps } from './service-icon'
+import { ServiceIcon } from './service-icon'
 
-export default {
+const Story: Meta<typeof ServiceIcon> = {
   component: ServiceIcon,
   title: 'ServiceIcon',
   parameters: {
@@ -12,20 +12,16 @@ export default {
       values: [{ name: 'white', value: '#fff' }],
     },
   },
-  argTypes: {
-    serviceType: {
-      options: ServiceTypeEnum,
-      control: { type: 'select' },
+}
+export default Story
+
+export const Primary = {
+  args: {
+    service: {
+      serviceType: ServiceTypeEnum.DATABASE,
     },
+    cloudProvider: CloudProviderEnum.AWS,
+    size: '32',
+    padding: '2',
   },
-} as Meta
-
-const Template: Story<ServiceIconProps> = (args) => <ServiceIcon {...args} />
-
-export const Primary = Template.bind({})
-Primary.args = {
-  serviceType: ServiceTypeEnum.DATABASE,
-  cloudProvider: CloudProviderEnum.AWS,
-  size: '32',
-  padding: '2',
 }
