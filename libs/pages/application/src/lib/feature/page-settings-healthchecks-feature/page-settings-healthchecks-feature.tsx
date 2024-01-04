@@ -124,7 +124,13 @@ export function SettingsHealthchecksFeature({
     if (service?.healthchecks?.liveness_probe) {
       setProbeValues('liveness_probe', service?.healthchecks?.liveness_probe)
     }
-  }, [methods, service, defaultTypeReadiness, defaultTypeLiveness])
+  }, [
+    methods,
+    service?.healthchecks?.liveness_probe,
+    service?.healthchecks?.readiness_probe,
+    defaultTypeReadiness,
+    defaultTypeLiveness,
+  ])
 
   if (!service) return null
 
