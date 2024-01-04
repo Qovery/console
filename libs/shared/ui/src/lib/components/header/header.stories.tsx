@@ -2,13 +2,23 @@ import { type Meta } from '@storybook/react'
 import { IconEnum } from '@qovery/shared/enums'
 import ButtonIcon, { ButtonIconStyle } from '../buttons/button-icon/button-icon'
 import Icon from '../icon/icon'
+import { Section } from '../section/section'
 import Tag from '../tag/tag'
-import { Header, type HeaderProps } from './header'
+import { Header } from './header'
 
-export default {
+const Story: Meta<typeof Header> = {
   component: Header,
   title: 'Header',
-} as Meta
+  decorators: [
+    (Story) => (
+      <Section>
+        <Story />
+      </Section>
+    ),
+  ],
+}
+
+export default Story
 
 const buttons = (
   <>
@@ -32,12 +42,11 @@ const actions = (
   </>
 )
 
-const Template: Story<HeaderProps> = (args) => <Header {...args} />
-
-export const Primary = Template.bind({})
-Primary.args = {
-  title: 'Environments',
-  icon: IconEnum.ENVIRONMENT,
-  buttons: buttons,
-  actions: actions,
+export const Primary = {
+  args: {
+    title: 'Environments',
+    icon: IconEnum.ENVIRONMENT,
+    buttons: buttons,
+    actions: actions,
+  },
 }
