@@ -1,6 +1,7 @@
-import { act, fireEvent, render, screen, waitFor } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
+import { type Application } from '@qovery/domains/services/data-access'
 import { applicationFactoryMock } from '@qovery/shared/factories'
+import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import PageSettingsPreviewEnvironments, {
   type PageSettingsPreviewEnvironmentsProps,
 } from './page-settings-preview-environments'
@@ -8,7 +9,7 @@ import PageSettingsPreviewEnvironments, {
 const props: PageSettingsPreviewEnvironmentsProps = {
   loading: false,
   onSubmit: jest.fn(),
-  applications: applicationFactoryMock(3),
+  services: applicationFactoryMock(3) as Application[],
   toggleAll: jest.fn(),
   toggleEnablePreview: jest.fn(),
 }
@@ -21,25 +22,20 @@ describe('PageSettingsPreviewEnvironments', () => {
     1: true,
   }
 
-  it('should render successfully', async () => {
-    const { baseElement } = render(wrapWithReactHookForm(<PageSettingsPreviewEnvironments {...props} />))
-
-    await waitFor(() => {
-      expect(baseElement).toBeTruthy()
-    })
+  it('should render successfully', () => {
+    const { baseElement } = renderWithProviders(wrapWithReactHookForm(<PageSettingsPreviewEnvironments {...props} />))
+    expect(baseElement).toBeTruthy()
   })
 
   it('should have the toggle with all applications has true', async () => {
-    render(
+    const { userEvent } = renderWithProviders(
       wrapWithReactHookForm(<PageSettingsPreviewEnvironments {...props} />, {
         defaultValues,
       })
     )
 
-    await act(() => {
-      const toggle = screen.getByTestId('toggle-all')
-      fireEvent.click(toggle)
-    })
+    const toggle = screen.getByTestId('toggle-all')
+    userEvent.click(toggle)
 
     await waitFor(async () => {
       expect(screen.getByTestId(`toggle-all`)?.querySelector('input')?.getAttribute('value')).toBe('true')
@@ -48,16 +44,14 @@ describe('PageSettingsPreviewEnvironments', () => {
     })
   })
   it('should have the toggle with on_demand_preview', async () => {
-    render(
+    const { userEvent } = renderWithProviders(
       wrapWithReactHookForm(<PageSettingsPreviewEnvironments {...props} />, {
         defaultValues,
       })
     )
 
-    await act(() => {
-      const toggle = screen.getByTestId('toggle-on-demand-preview')
-      fireEvent.click(toggle)
-    })
+    const toggle = screen.getByTestId('toggle-on-demand-preview')
+    userEvent.click(toggle)
 
     await waitFor(async () => {
       expect(screen.getByTestId(`toggle-on-demand-preview`)?.querySelector('input')?.getAttribute('value')).toBe('true')
@@ -65,12 +59,12 @@ describe('PageSettingsPreviewEnvironments', () => {
   })
 
   it(`should have margin when we have applications`, () => {
-    render(wrapWithReactHookForm(<PageSettingsPreviewEnvironments {...props} />))
+    renderWithProviders(wrapWithReactHookForm(<PageSettingsPreviewEnvironments {...props} />))
 
     const toggles = screen.getByTestId('toggles')
     expect(toggles.classList.contains('mt-5')).toBe(true)
 
-    const applicationTitle = screen.getByTestId('applications-title')
+    const applicationTitle = screen.getByTestId('services-title')
     expect(applicationTitle).toBeTruthy()
   })
 })

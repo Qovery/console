@@ -3,7 +3,7 @@ import { mutations } from '@qovery/domains/services/data-access'
 import { queries } from '@qovery/state/util-queries'
 import { useRedeployService } from '../use-redeploy-service/use-redeploy-service'
 
-export function useEditService({ environmentId }: { environmentId: string }) {
+export function useEditService({ environmentId, silently = false }: { environmentId: string; silently?: boolean }) {
   const queryClient = useQueryClient()
   const { mutate: redeployService } = useRedeployService({ environmentId })
 
@@ -16,20 +16,24 @@ export function useEditService({ environmentId }: { environmentId: string }) {
         queryKey: queries.services.details({ serviceType: payload.serviceType, serviceId }).queryKey,
       })
     },
-    meta: {
-      notifyOnSuccess(_: unknown, variables: unknown) {
-        const { serviceId, payload } = variables as Parameters<typeof mutations.editService>[0]
-        return {
-          title: 'Service updated',
-          description: 'You must update to apply the settings',
-          callback() {
-            redeployService({ serviceId, serviceType: payload.serviceType })
+    ...(silently
+      ? {}
+      : {
+          meta: {
+            notifyOnSuccess(_: unknown, variables: unknown) {
+              const { serviceId, payload } = variables as Parameters<typeof mutations.editService>[0]
+              return {
+                title: 'Service updated',
+                description: 'You must update to apply the settings',
+                callback() {
+                  redeployService({ serviceId, serviceType: payload.serviceType })
+                },
+                labelAction: 'Update',
+              }
+            },
+            notifyOnError: true,
           },
-          labelAction: 'Update',
-        }
-      },
-      notifyOnError: true,
-    },
+        }),
   })
 }
 
