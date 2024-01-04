@@ -36,7 +36,7 @@ export function SettingsPreviewEnvironmentsFeature({ services }: { services: Any
         data: cloneEnvironmentDeploymentRules,
       })
 
-      services?.forEach(async (service: AnyService) => {
+      services.forEach(async (service: AnyService) => {
         if (service.serviceType === 'DATABASE') return
 
         if (service.id === Object.keys(data).find((key) => key === service.id)) {
@@ -49,9 +49,7 @@ export function SettingsPreviewEnvironmentsFeature({ services }: { services: Any
             .with({ serviceType: 'CONTAINER' }, (s) => buildEditServicePayload({ service: s, request }))
             .with({ serviceType: 'JOB' }, (s) => buildEditServicePayload({ service: s, request }))
             .with({ serviceType: 'HELM' }, (s) => buildEditServicePayload({ service: s, request }))
-            .otherwise(() => null)
-
-          if (!payload) return
+            .exhaustive()
 
           try {
             await editService({
@@ -72,7 +70,7 @@ export function SettingsPreviewEnvironmentsFeature({ services }: { services: Any
     methods.setValue('on_demand_preview', value)
     //set all preview applications "true" when env preview is true
     if (loadingStatusEnvironmentDeploymentRules) {
-      services?.forEach((service) => methods.setValue(service.id, value, { shouldDirty: true }))
+      services.forEach((service) => methods.setValue(service.id, value, { shouldDirty: true }))
     }
   }
 
@@ -97,7 +95,7 @@ export function SettingsPreviewEnvironmentsFeature({ services }: { services: Any
         : false
       methods.setValue('auto_preview', environmentDeploymentRules.auto_preview || isApplicationPreviewEnabled)
       methods.setValue('on_demand_preview', environmentDeploymentRules.on_demand_preview)
-      services?.forEach((service) =>
+      services.forEach((service) =>
         methods.setValue(service.id, service.serviceType !== 'DATABASE' && service.auto_preview)
       )
     }

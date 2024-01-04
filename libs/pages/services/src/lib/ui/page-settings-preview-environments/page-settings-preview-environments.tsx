@@ -7,7 +7,7 @@ import { BlockContent, Button, HelpSection, Icon, InputToggle } from '@qovery/sh
 export interface PageSettingsPreviewEnvironmentsProps {
   onSubmit: () => void
   loading: boolean
-  services?: AnyService[]
+  services: AnyService[]
   toggleAll: (value: boolean) => void
   toggleEnablePreview: (value: boolean) => void
 }
@@ -68,13 +68,13 @@ export function PageSettingsPreviewEnvironments(props: PageSettingsPreviewEnviro
                 />
               )}
             />
-            <div data-testid="toggles" className={services && services.length > 0 ? 'mt-5' : ''}>
-              {services && services.length > 0 && (
+            <div data-testid="toggles" className={services.length > 0 ? 'mt-5' : ''}>
+              {services.length > 0 && (
                 <h2 data-testid="services-title" className="font-medium text-neutral-400 text-ssm mb-5">
                   Create Preview for PR opened on those services
                 </h2>
               )}
-              {services?.map(
+              {services.map(
                 (service: AnyService) =>
                   service.serviceType !== 'DATABASE' && (
                     <div key={service.id} className="h-9 flex items-center">
