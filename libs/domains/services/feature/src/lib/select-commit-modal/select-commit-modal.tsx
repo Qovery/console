@@ -1,4 +1,3 @@
-import * as RadioGroup from '@radix-ui/react-radio-group'
 import { clsx } from 'clsx'
 import { type ApplicationGitRepository } from 'qovery-typescript-axios'
 import { type Commit } from 'qovery-typescript-axios'
@@ -11,6 +10,7 @@ import {
   Icon,
   IconAwesomeEnum,
   InputSearch,
+  RadioGroup,
   ScrollShadowWrapper,
   TagCommit,
 } from '@qovery/shared/ui'
@@ -121,19 +121,11 @@ export function SelectCommitModal({
                           )}
                         >
                           <div>
-                            <RadioGroup.Item
-                              className={twMerge(
-                                'bg-neutral-100 border border-neutral-300 w-[20px] h-[20px] rounded-full text-white flex items-center justify-center text-xs',
-                                'data-[state=checked]:bg-brand-500 data-[state=checked]:border-0',
-                                "disabled:border-2 disabled:border-neutral-350 disabled:after:content-[''] disabled:after:block disabled:after:w-[10px] disabled:after:h-[10px] disabled:after:rounded-[50%] disabled:after:bg-neutral-350"
-                              )}
-                              value={git_commit_id}
-                              disabled={isCurrentDeployedCommit}
-                            >
-                              <RadioGroup.Indicator>
-                                <Icon name={IconAwesomeEnum.CHECK} className="" />
-                              </RadioGroup.Indicator>
-                            </RadioGroup.Item>
+                            {!isCurrentDeployedCommit ? (
+                              <RadioGroup.Item value={git_commit_id} />
+                            ) : (
+                              <div className="pr-5" />
+                            )}
                           </div>
                           <div className="flex flex-col items-start flex-1 min-w-0 text-sm gap-1">
                             <a
