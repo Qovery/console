@@ -112,11 +112,11 @@ export function SelectCommitModal({
                         <label
                           key={git_commit_id}
                           className={twMerge(
-                            'flex flex-row gap-3 w-full w-full p-3 border border-neutral-250 -mt-px first:rounded-t-md last:rounded-b-md',
+                            'flex flex-row gap-3 w-full p-3 border border-neutral-250 -mt-px first:rounded-t-md last:rounded-b-md',
+                            isCurrentDeployedCommit ? 'bg-neutral-100' : 'cursor-pointer',
                             clsx({
                               'bg-brand-50 border-brand-500': isSelected,
                               'border-t-transparent': isSelectedSiblings,
-                              'bg-neutral-100': isCurrentDeployedCommit,
                             })
                           )}
                         >
