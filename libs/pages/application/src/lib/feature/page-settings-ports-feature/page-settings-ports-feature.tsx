@@ -7,7 +7,7 @@ import {
 } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { type AnyService, type Application, type Container } from '@qovery/domains/services/data-access'
+import { type Application, type Container } from '@qovery/domains/services/data-access'
 import { useEditService, useService } from '@qovery/domains/services/feature'
 import { ProbeTypeEnum } from '@qovery/shared/enums'
 import { type PortData } from '@qovery/shared/interfaces'
@@ -15,8 +15,8 @@ import { useModal, useModalConfirmation } from '@qovery/shared/ui'
 import PageSettingsPorts from '../../ui/page-settings-ports/page-settings-ports'
 import CrudModalFeature from './crud-modal-feature/crud-modal-feature'
 
-export function removePortFromProbes(application?: Extract<AnyService, Application | Container>, port?: number) {
-  const cloneApplication = { ...application } as Extract<AnyService, Application | Container>
+export function removePortFromProbes(application: Application | Container, port?: number) {
+  const cloneApplication = { ...application }
 
   const removePortFromProbe = (probe?: Probe | null): Probe | null | undefined => {
     let result = probe
@@ -55,18 +55,18 @@ export function removePortFromProbes(application?: Extract<AnyService, Applicati
   return cloneApplication
 }
 
-export const deletePort = (application?: Extract<AnyService, Application | Container>, portId?: string) => {
+export const deletePort = (application: Application | Container, portId?: string) => {
   const cloneApplication = {
-    ...removePortFromProbes(application, application?.ports?.find((port) => port.id === portId)?.internal_port),
+    ...removePortFromProbes(application, application.ports?.find((port) => port.id === portId)?.internal_port),
   }
 
   cloneApplication.ports = cloneApplication.ports?.filter((port) => port.id !== portId)
   return cloneApplication
 }
 
-export function SettingsPortsFeature({ service }: { service: Extract<AnyService, Application | Container> }) {
+export function SettingsPortsFeature({ service }: { service: Application | Container }) {
   const { mutate: editService } = useEditService({
-    environmentId: service?.environment?.id || '',
+    environmentId: service.environment?.id || '',
   })
 
   const { openModal, closeModal } = useModal()
@@ -74,8 +74,8 @@ export function SettingsPortsFeature({ service }: { service: Extract<AnyService,
 
   return (
     <PageSettingsPorts
-      ports={service?.ports}
-      healthchecks={service?.healthchecks}
+      ports={service.ports}
+      healthchecks={service.healthchecks}
       onAddPort={() => {
         openModal({
           content: <CrudModalFeature onClose={closeModal} service={service} />,
@@ -93,26 +93,24 @@ export function SettingsPortsFeature({ service }: { service: Extract<AnyService,
           name: `Port: ${(port as PortData).application_port || (port as ServicePort).internal_port}`,
           warning,
           action: () => {
-            if (service) {
-              const cloneApplication = deletePort(service, (port as ServicePort).id)
-              const payload = match(service)
-                .with({ serviceType: 'APPLICATION' }, (s) => ({
-                  ...(cloneApplication as ApplicationEditRequest),
-                  serviceType: s.serviceType,
-                }))
-                .with({ serviceType: 'CONTAINER' }, (s) => ({
-                  ...(cloneApplication as ContainerRequest),
-                  serviceType: s.serviceType,
-                }))
-                .otherwise(() => undefined)
+            const cloneApplication = deletePort(service, (port as ServicePort).id)
+            const payload = match(service)
+              .with({ serviceType: 'APPLICATION' }, (s) => ({
+                ...(cloneApplication as ApplicationEditRequest),
+                serviceType: s.serviceType,
+              }))
+              .with({ serviceType: 'CONTAINER' }, (s) => ({
+                ...(cloneApplication as ContainerRequest),
+                serviceType: s.serviceType,
+              }))
+              .otherwise(() => undefined)
 
-              if (!payload) return
+            if (!payload) return
 
-              editService({
-                serviceId: service.id,
-                payload,
-              })
-            }
+            editService({
+              serviceId: service.id,
+              payload,
+            })
           },
         })
       }}
@@ -124,11 +122,9 @@ export function PageSettingsPortsFeature() {
   const { applicationId = '', environmentId = '' } = useParams()
   const { data: service } = useService({ environmentId, serviceId: applicationId })
 
-  if (service?.serviceType !== 'APPLICATION' && service?.serviceType !== 'CONTAINER') {
-    return null
-  }
-
-  return <SettingsPortsFeature service={service} />
+  return match(service)
+    .with({ serviceType: 'APPLICATION' }, { serviceType: 'CONTAINER' }, (s) => <SettingsPortsFeature service={s} />)
+    .otherwise(() => null)
 }
 
 export default PageSettingsPortsFeature
