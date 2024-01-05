@@ -36,14 +36,11 @@ export function StepGeneral(props: StepGeneralProps) {
 
   const buildCloudProviders: Value[] = useMemo(
     () =>
-      cloudProviders
-        .map((value) => ({
-          label: upperCaseFirstLetter(value.name),
-          value: value.short_name || '',
-          icon: <Icon name={value.short_name || CloudProviderEnum.AWS} className="w-4" />,
-        }))
-        // TODO: remove when GCP is available for customers
-        .filter((value) => value.value !== CloudProviderEnum.GCP),
+      cloudProviders.map((value) => ({
+        label: upperCaseFirstLetter(value.name),
+        value: value.short_name || '',
+        icon: <Icon name={value.short_name || CloudProviderEnum.AWS} className="w-4" />,
+      })),
     [cloudProviders]
   )
 
