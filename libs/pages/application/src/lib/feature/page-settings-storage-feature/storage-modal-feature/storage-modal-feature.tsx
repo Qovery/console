@@ -1,13 +1,13 @@
 import { type ServiceStorageStorageInner, StorageTypeEnum } from 'qovery-typescript-axios'
 import { FormProvider, useForm } from 'react-hook-form'
 import { match } from 'ts-pattern'
-import { type AnyService, type Application, type Container } from '@qovery/domains/services/data-access'
+import { type Application, type Container } from '@qovery/domains/services/data-access'
 import { useEditService } from '@qovery/domains/services/feature'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
 import StorageModal from '../../../ui/page-settings-storage/storage-modal/storage-modal'
 
 export interface StorageModalFeatureProps {
-  service: Extract<AnyService, Application | Container>
+  service: Application | Container
   onClose: () => void
   storage?: ServiceStorageStorageInner
 }
