@@ -68,7 +68,7 @@ jobs:
         id: var
         with:
           script: |
-            const varsFromJSON = JSON.parse('${{ toJSON(vars) }}')
+            const varsFromJSON = ${{ toJSON(vars) }}
             const variables = []
             core.setOutput('variables', '')
 
