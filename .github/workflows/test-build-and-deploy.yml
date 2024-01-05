@@ -53,10 +53,30 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # NOTE: Create a "variables" ouput which expose github repository variables as .env string
+  # for NX Cloud main reusable workflow.
+  #
+  # https://github.com/nrwl/ci?tab=readme-ov-file#limited-secrets-support
+  # https://docs.github.com/en/enterprise-cloud@latest/actions/learn-github-actions/variables#defining-configuration-variables-for-multiple-workflows
+  env-vars:
+    outputs:
+      variables: ${{ steps.var.outputs.variables }}
+    steps:
+      - name: Setting global variables
+        uses: actions/github-script@v7
+        id: var
+        with:
+          script: |
+            const variables = Object.entries(JSON.parse('${{ toJSON(vars) }}')).map(([key, val]) => key + '=' + val).join('\n')
+            core.setOutput('variables', variables)
+
   nx-main:
+    needs: [env-vars]
     name: Nx Cloud - Main Job
     uses: nrwl/ci/.github/workflows/nx-cloud-main.yml@v0.13.0
     with:
+      environment-variables: |
+        ${{ needs.env-vars.outputs.variables }}
       # NOTE: Here we are using the special `nx-cloud record` command to ensure that any commands we run that do not go through the cloud task runner natively
       # (i.e. anything that starts with `nx run`/`nx run-many`/`nx affected --target`), are still captured in the Nx Cloud UI and Github App comment for
       # easier troubleshooting. See more here: https://nx.dev/nx-cloud/set-up/record-commands#recording-non-nx-commands
