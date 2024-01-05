@@ -87,12 +87,7 @@ export function StepResourcesFeature() {
   return (
     <FunnelFlowBody helpSection={funnelCardHelp}>
       <FormProvider {...methods}>
-        <StepResources
-          maximumInstances={maxInstances}
-          onBack={onBack}
-          onSubmit={onSubmit}
-          environmentMode={environment?.mode}
-        />
+        <StepResources maximumInstances={maxInstances} onBack={onBack} onSubmit={onSubmit} />
       </FormProvider>
     </FunnelFlowBody>
   )

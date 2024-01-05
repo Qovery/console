@@ -1,4 +1,3 @@
-import { type EnvironmentModeEnum } from 'qovery-typescript-axios'
 import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { ApplicationSettingsResources } from '@qovery/shared/console-shared'
@@ -9,10 +8,9 @@ export interface StepResourcesProps {
   onBack: () => void
   onSubmit: FormEventHandler<HTMLFormElement>
   maximumInstances?: number
-  environmentMode?: EnvironmentModeEnum
 }
 
-export function StepResources({ maximumInstances, onSubmit, onBack, environmentMode }: StepResourcesProps) {
+export function StepResources({ maximumInstances, onSubmit, onBack }: StepResourcesProps) {
   const { formState } = useFormContext<ApplicationResourcesData>()
 
   return (
@@ -22,11 +20,7 @@ export function StepResources({ maximumInstances, onSubmit, onBack, environmentM
       </div>
 
       <form onSubmit={onSubmit}>
-        <ApplicationSettingsResources
-          maxInstances={maximumInstances}
-          displayWarningCpu={false}
-          environmentMode={environmentMode}
-        />
+        <ApplicationSettingsResources maxInstances={maximumInstances} displayWarningCpu={false} />
 
         <div className="flex justify-between">
           <ButtonLegacy

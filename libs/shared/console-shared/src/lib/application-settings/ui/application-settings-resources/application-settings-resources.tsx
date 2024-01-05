@@ -3,9 +3,8 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useEnvironment } from '@qovery/domains/environments/feature'
+import { type AnyService, type Database, type Helm } from '@qovery/domains/services/data-access'
 import { useRunningStatus } from '@qovery/domains/services/feature'
-import { isJob } from '@qovery/shared/enums'
-import { type ApplicationEntity } from '@qovery/shared/interfaces'
 import { CLUSTER_SETTINGS_RESOURCES_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
 import {
   BlockContent,
@@ -21,25 +20,30 @@ import {
 
 export interface ApplicationSettingsResourcesProps {
   displayWarningCpu: boolean
-  application?: ApplicationEntity
+  service?: Exclude<AnyService, Helm | Database>
   minInstances?: number
   maxInstances?: number
-  clusterId?: string
-  environmentMode?: EnvironmentModeEnum
 }
 
-export function ApplicationSettingsResources(props: ApplicationSettingsResourcesProps) {
-  const { displayWarningCpu, application, minInstances = 1, maxInstances = 50, clusterId = '', environmentMode } = props
+export function ApplicationSettingsResources({
+  displayWarningCpu,
+  service,
+  minInstances = 1,
+  maxInstances = 50,
+}: ApplicationSettingsResourcesProps) {
   const { control, watch } = useFormContext()
   const { organizationId = '', environmentId = '', applicationId = '' } = useParams()
   const { data: runningStatuses } = useRunningStatus({ environmentId, serviceId: applicationId })
   const { data: environment } = useEnvironment({ environmentId })
 
+  const clusterId = environment?.cluster_id
+  const environmentMode = environment?.mode
+
   const cloudProvider = environment?.cloud_provider.provider
 
-  let maxMemoryBySize = application?.maximum_memory
+  let maxMemoryBySize = service?.maximum_memory
 
-  if (!application) {
+  if (!service) {
     // until api allows us to fetch the max possible value
     maxMemoryBySize = 128000
   }
@@ -61,7 +65,7 @@ export function ApplicationSettingsResources(props: ApplicationSettingsResources
     .otherwise(() => (
       <>
         Minimum value is 10 milli vCPU. Maximum value allowed based on the selected cluster instance type:{' '}
-        {application?.maximum_cpu} mili vCPU.{' '}
+        {service?.maximum_cpu} mili vCPU.{' '}
         {clusterId && (
           <Link
             to={CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_RESOURCES_URL}
@@ -88,7 +92,7 @@ export function ApplicationSettingsResources(props: ApplicationSettingsResources
     .otherwise(() => (
       <>
         Minimum value is 1 MiB. Maximum value allowed based on the selected cluster instance type:{' '}
-        {application?.maximum_memory} MiB.{' '}
+        {service?.maximum_memory} MiB.{' '}
         {clusterId && (
           <Link
             to={CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_RESOURCES_URL}
@@ -116,7 +120,7 @@ export function ApplicationSettingsResources(props: ApplicationSettingsResources
             />
           )}
         />
-        {application && <p className="text-neutral-350 text-xs mt-3">{hintCPU}</p>}
+        {service && <p className="text-neutral-350 text-xs mt-3">{hintCPU}</p>}
         {displayWarningCpu && (
           <Callout.Root color="red" className="mt-3" data-testid="banner-box">
             <Callout.Icon>
@@ -154,10 +158,10 @@ export function ApplicationSettingsResources(props: ApplicationSettingsResources
             />
           )}
         />
-        {application && <p className="text-neutral-350 text-xs mt-3">{hintMemory}</p>}
+        {service && <p className="text-neutral-350 text-xs mt-3">{hintMemory}</p>}
       </BlockContent>
 
-      {!isJob(application) && watchInstances && (
+      {service?.serviceType !== 'JOB' && watchInstances && (
         <BlockContent title="Instances">
           <p className="text-neutral-400 mb-3 font-medium">{`${watchInstances[0]} - ${watchInstances[1]}`}</p>
           <Controller

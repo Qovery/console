@@ -1,116 +1,97 @@
-import { useQueryClient } from '@tanstack/react-query'
-import { useEffect, useState } from 'react'
+import { type Environment } from 'qovery-typescript-axios'
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
-import { useDispatch, useSelector } from 'react-redux'
-import { useNavigate, useParams } from 'react-router-dom'
-import { editApplication, postApplicationActionsRedeploy, selectApplicationById } from '@qovery/domains/application'
-import { useFetchEnvironment } from '@qovery/domains/environment'
-import { getServiceType, isJob } from '@qovery/shared/enums'
-import { type ApplicationEntity } from '@qovery/shared/interfaces'
-import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
-import { type AppDispatch, type RootState } from '@qovery/state/store'
+import { useParams } from 'react-router-dom'
+import { match } from 'ts-pattern'
+import { useEnvironment } from '@qovery/domains/environments/feature'
+import { type AnyService, type Database, type Helm } from '@qovery/domains/services/data-access'
+import { useEditService, useService } from '@qovery/domains/services/feature'
+import { buildEditServicePayload } from '@qovery/shared/util-services'
 import PageSettingsResources from '../../ui/page-settings-resources/page-settings-resources'
 
-export const handleSubmit = (data: FieldValues, application: ApplicationEntity) => {
-  const cloneApplication = Object.assign({}, application)
-
-  cloneApplication.memory = Number(data['memory'])
-  cloneApplication.cpu = data['cpu']
-  if (!isJob(application)) {
-    cloneApplication.min_running_instances = data['instances'][0]
-    cloneApplication.max_running_instances = data['instances'][1]
-  }
-
-  return cloneApplication
+export interface SettingsResourcesFeatureProps {
+  service: Exclude<AnyService, Helm | Database>
+  environment: Environment
 }
 
-export function PageSettingsResourcesFeature() {
-  const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
-  const queryClient = useQueryClient()
+export function SettingsResourcesFeature({ service, environment }: SettingsResourcesFeatureProps) {
+  const { mutate: editService, isLoading: isLoadingService } = useEditService({ environmentId: environment.id })
 
-  const [loading, setLoading] = useState(false)
-  const dispatch = useDispatch<AppDispatch>()
-  const navigate = useNavigate()
-
-  const application = useSelector<RootState, ApplicationEntity | undefined>(
-    (state) => selectApplicationById(state, applicationId),
-    (a, b) =>
-      a?.memory === b?.memory &&
-      a?.cpu === b?.cpu &&
-      a?.min_running_instances === b?.min_running_instances &&
-      a?.max_running_instances === b?.max_running_instances
-  )
-
-  const { data: environment } = useFetchEnvironment(projectId, environmentId)
+  const defaultInstances = match(service)
+    .with({ serviceType: 'JOB' }, () => undefined)
+    .otherwise((s) => [s.min_running_instances || 1, s.max_running_instances || 1])
 
   const methods = useForm({
     mode: 'onChange',
     defaultValues: {
-      memory: application?.memory,
-      cpu: application?.cpu,
-      instances: [application?.min_running_instances || 1, application?.max_running_instances || 1],
+      memory: service.memory,
+      cpu: service.cpu,
+      instances: defaultInstances,
     },
   })
 
-  useEffect(() => {
-    methods.reset({
-      memory: application?.memory,
-      cpu: application?.cpu,
-      instances: [application?.min_running_instances || 1, application?.max_running_instances || 1],
-    })
-  }, [methods, application?.memory, application?.cpu, application])
+  const onSubmit = methods.handleSubmit((data: FieldValues) => {
+    const request = {
+      memory: Number(data['memory']),
+      cpu: data['cpu'],
+    }
 
-  const toasterCallback = () => {
-    if (application) {
-      dispatch(
-        postApplicationActionsRedeploy({
-          applicationId,
-          environmentId,
-          serviceType: getServiceType(application),
-          callback: () =>
-            navigate(
-              ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(applicationId)
-            ),
-          queryClient,
+    let requestWithInstances = {}
+    if (service.serviceType !== 'JOB') {
+      requestWithInstances = {
+        ...request,
+        ...{ min_running_instances: data['instances'][0], max_running_instances: data['instances'][1] },
+      }
+    }
+
+    const payload = match(service)
+      .with({ serviceType: 'JOB' }, (service) => buildEditServicePayload({ service, request }))
+      .with({ serviceType: 'APPLICATION' }, (service) =>
+        buildEditServicePayload({
+          service,
+          request: requestWithInstances,
         })
       )
-    }
-  }
+      .with({ serviceType: 'CONTAINER' }, (service) =>
+        buildEditServicePayload({
+          service,
+          request: requestWithInstances,
+        })
+      )
+      .exhaustive()
 
-  const onSubmit = methods.handleSubmit((data) => {
-    if (!application) return
-
-    setLoading(true)
-    const cloneApplication = handleSubmit(data, application)
-
-    dispatch(
-      editApplication({
-        applicationId: applicationId,
-        data: cloneApplication,
-        serviceType: getServiceType(application),
-        toasterCallback,
-        queryClient,
-      })
-    )
-      .unwrap()
-      .then(() => setLoading(false))
-      .catch(() => setLoading(false))
+    editService({
+      serviceId: service.id,
+      payload,
+    })
   })
 
-  const displayWarningCpu: boolean = (methods.watch('cpu') || 0) > (application?.maximum_cpu || 0)
+  const displayWarningCpu: boolean = (methods.watch('cpu') || 0) > (service.maximum_cpu || 0)
 
   return (
     <FormProvider {...methods}>
       <PageSettingsResources
         onSubmit={onSubmit}
-        loading={loading}
-        application={application}
+        loading={isLoadingService}
+        service={service}
         displayWarningCpu={displayWarningCpu}
-        clusterId={environment?.cluster_id}
-        environmentMode={environment?.mode}
       />
     </FormProvider>
   )
+}
+
+export function PageSettingsResourcesFeature() {
+  const { environmentId = '', applicationId = '' } = useParams()
+
+  const { data: environment } = useEnvironment({ environmentId })
+  const { data: service } = useService({ environmentId, serviceId: applicationId })
+
+  if (!environment) return null
+
+  return match(service)
+    .with({ serviceType: 'APPLICATION' }, { serviceType: 'CONTAINER' }, { serviceType: 'JOB' }, (service) => (
+      <SettingsResourcesFeature service={service} environment={environment} />
+    ))
+    .otherwise(() => null)
 }
 
 export default PageSettingsResourcesFeature
