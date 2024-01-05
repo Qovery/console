@@ -4,13 +4,8 @@ import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useEnvironment } from '@qovery/domains/environments/feature'
-import {
-  type ApplicationType,
-  type ContainerType,
-  type JobType,
-  type ServiceType,
-} from '@qovery/domains/services/data-access'
-import { useEditService, useService, useServiceType } from '@qovery/domains/services/feature'
+import { type Application, type Container, type Job } from '@qovery/domains/services/data-access'
+import { useEditService, useService } from '@qovery/domains/services/feature'
 import { defaultLivenessProbe, defaultReadinessProbe, probeFormatted } from '@qovery/shared/console-shared'
 import { ProbeTypeEnum } from '@qovery/shared/enums'
 import { type HealthcheckData } from '@qovery/shared/interfaces'
@@ -18,15 +13,10 @@ import { APPLICATION_SETTINGS_RESOURCES_URL, APPLICATION_SETTINGS_URL, APPLICATI
 import { buildEditServicePayload } from '@qovery/shared/util-services'
 import PageSettingsHealthchecks from '../../ui/page-settings-healthchecks/page-settings-healthchecks'
 
-export function SettingsHealthchecksFeature({
-  serviceType,
-}: {
-  serviceType: Extract<ServiceType, ApplicationType | ContainerType | JobType>
-}) {
+export function SettingsHealthchecksFeature({ service }: { service: Application | Container | Job }) {
   const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
 
   const { data: environment } = useEnvironment({ environmentId })
-  const { data: service } = useService({ serviceId: applicationId, serviceType })
   const { mutate: editService, isLoading: isLoadingEditService } = useEditService({ environmentId })
 
   const methods = useForm({
@@ -52,8 +42,6 @@ export function SettingsHealthchecksFeature({
   })
 
   const onSubmit = methods.handleSubmit((data: FieldValues) => {
-    if (!service) return
-
     const defaultPort = match(service)
       .with({ serviceType: 'JOB' }, (s) => s.port)
       .otherwise((s) => s.ports?.[0]?.internal_port)
@@ -83,19 +71,19 @@ export function SettingsHealthchecksFeature({
 
   // Use memo to get the TYPE of readiness probe
   const defaultTypeReadiness = useMemo(() => {
-    const types = service?.healthchecks?.readiness_probe?.type as ProbeType
+    const types = service.healthchecks?.readiness_probe?.type as ProbeType
     const readinessProbeKeys = Object.keys(types || {})
     const nonNullKeyReadiness = readinessProbeKeys.find((key) => (types as { [key: string]: unknown })[key] !== null)
     return nonNullKeyReadiness?.toUpperCase() || ProbeTypeEnum.NONE
-  }, [service?.healthchecks?.readiness_probe])
+  }, [service.healthchecks?.readiness_probe])
 
   // Use memo to get the TYPE of liveness probe
   const defaultTypeLiveness = useMemo(() => {
-    const types = service?.healthchecks?.liveness_probe?.type as ProbeType
+    const types = service.healthchecks?.liveness_probe?.type as ProbeType
     const livenessProbeKeys = Object.keys(types || {})
     const nonNullKeyLiveness = livenessProbeKeys.find((key) => (types as { [key: string]: unknown })[key] !== null)
     return nonNullKeyLiveness?.toUpperCase() || ProbeTypeEnum.NONE
-  }, [service?.healthchecks?.liveness_probe])
+  }, [service.healthchecks?.liveness_probe])
 
   useEffect(() => {
     const setProbeValues = (probeName: string, values: Probe) => {
@@ -114,17 +102,17 @@ export function SettingsHealthchecksFeature({
     methods.setValue('readiness_probe.current_type', defaultTypeReadiness)
     methods.setValue('liveness_probe.current_type', defaultTypeLiveness)
 
-    if (service?.healthchecks?.readiness_probe) {
-      setProbeValues('readiness_probe', service?.healthchecks?.readiness_probe)
+    if (service.healthchecks?.readiness_probe) {
+      setProbeValues('readiness_probe', service.healthchecks?.readiness_probe)
     }
 
-    if (service?.healthchecks?.liveness_probe) {
-      setProbeValues('liveness_probe', service?.healthchecks?.liveness_probe)
+    if (service.healthchecks?.liveness_probe) {
+      setProbeValues('liveness_probe', service.healthchecks?.liveness_probe)
     }
   }, [
     methods,
-    service?.healthchecks?.liveness_probe,
-    service?.healthchecks?.readiness_probe,
+    service.healthchecks?.liveness_probe,
+    service.healthchecks?.readiness_probe,
     defaultTypeReadiness,
     defaultTypeLiveness,
   ])
@@ -155,13 +143,13 @@ export function SettingsHealthchecksFeature({
 export function PageSettingsAdvancedFeature() {
   const { environmentId = '', applicationId = '' } = useParams()
 
-  const { data: serviceType } = useServiceType({ environmentId, serviceId: applicationId })
+  const { data: service } = useService({ environmentId, serviceId: applicationId })
 
-  if (serviceType !== 'APPLICATION' && serviceType !== 'CONTAINER' && serviceType !== 'JOB') {
-    return null
-  }
-
-  return <SettingsHealthchecksFeature serviceType={serviceType} />
+  return match(service)
+    .with({ serviceType: 'APPLICATION' }, { serviceType: 'CONTAINER' }, { serviceType: 'JOB' }, (s) => (
+      <SettingsHealthchecksFeature service={s} />
+    ))
+    .otherwise(() => null)
 }
 
 export default PageSettingsAdvancedFeature
