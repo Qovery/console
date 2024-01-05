@@ -73,7 +73,6 @@ jobs:
             for (const v in varsFromJSON) {
               variables.push(`${v}=${varsFromJSON[v]}`)
             }
-            console.log(variables)
             core.setOutput('variables', '')
 
   nx-main:
