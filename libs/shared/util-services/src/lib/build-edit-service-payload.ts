@@ -124,7 +124,6 @@ function refactoApplication({ service: application, request = {} }: applicationP
 }
 
 function refactoContainer({ service: container, request = {} }: containerProps): ContainerRequest {
-  console.log(container)
   const containerRequestPayload = {
     name: container.name || '',
     description: container.description || '',
