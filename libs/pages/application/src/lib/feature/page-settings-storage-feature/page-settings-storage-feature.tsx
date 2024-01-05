@@ -1,114 +1,65 @@
-import { useQueryClient } from '@tanstack/react-query'
-import { type ServiceStorageStorageInner } from 'qovery-typescript-axios'
-import { useDispatch, useSelector } from 'react-redux'
-import { useNavigate, useParams } from 'react-router-dom'
-import {
-  editApplication,
-  getApplicationsState,
-  postApplicationActionsRedeploy,
-  selectApplicationById,
-} from '@qovery/domains/application'
-import { getServiceType } from '@qovery/shared/enums'
-import { type ApplicationEntity } from '@qovery/shared/interfaces'
-import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
+import { useParams } from 'react-router-dom'
+import { match } from 'ts-pattern'
+import { useEditService, useService } from '@qovery/domains/services/feature'
 import { useModal, useModalConfirmation } from '@qovery/shared/ui'
-import { type AppDispatch, type RootState } from '@qovery/state/store'
+import { buildEditServicePayload } from '@qovery/shared/util-services'
 import PageSettingsStorage from '../../ui/page-settings-storage/page-settings-storage'
 import StorageModalFeature from './storage-modal-feature/storage-modal-feature'
 
-export const removeStorage = (storage: ServiceStorageStorageInner, application: ApplicationEntity) => {
-  const app = { ...application }
-  app.storage = app.storage?.filter((s) => s.id !== storage.id)
-  return app
-}
-
 export function PageSettingsStorageFeature() {
-  const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
-  const queryClient = useQueryClient()
-  const dispatch = useDispatch<AppDispatch>()
-  const navigate = useNavigate()
+  const { environmentId = '', applicationId = '' } = useParams()
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
-  const error = useSelector((state: RootState) => getApplicationsState(state).error)
 
-  const application = useSelector<RootState, ApplicationEntity | undefined>(
-    (state) => selectApplicationById(state, applicationId),
-    (a, b) => a?.id === b?.id && JSON.stringify(a?.storage) === JSON.stringify(b?.storage)
-  )
+  const { data: service } = useService({ environmentId: environmentId, serviceId: applicationId })
+  const { mutateAsync: editService } = useEditService({ environmentId })
 
-  const toasterCallback = () => {
-    if (application) {
-      dispatch(
-        postApplicationActionsRedeploy({
-          applicationId,
-          environmentId,
-          serviceType: getServiceType(application),
-          callback: () =>
-            navigate(
-              ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(applicationId)
-            ),
-          queryClient,
-        })
+  return match(service)
+    .with({ serviceType: 'APPLICATION' }, { serviceType: 'CONTAINER' }, (service) => {
+      return (
+        <PageSettingsStorage
+          storages={service.storage || []}
+          onRemove={(storage) => {
+            openModalConfirmation({
+              title: 'Delete storage',
+              name: storage.mount_point,
+              isDelete: true,
+              action: async () => {
+                const request = {
+                  storage: service.storage?.filter((s) => s.id !== storage.id),
+                }
+
+                const payload = match(service)
+                  .with({ serviceType: 'APPLICATION' }, (s) => buildEditServicePayload({ service: s, request }))
+                  .with({ serviceType: 'CONTAINER' }, (s) => buildEditServicePayload({ service: s, request }))
+                  .exhaustive()
+
+                try {
+                  await editService({
+                    serviceId: service.id,
+                    payload: payload,
+                  })
+                  closeModal()
+                } catch (error) {
+                  console.error(error)
+                }
+              },
+            })
+          }}
+          onEdit={(storage) => {
+            openModal({
+              content: <StorageModalFeature onClose={closeModal} storage={storage} service={service} />,
+            })
+          }}
+          onAddStorage={() => {
+            openModal({
+              content: <StorageModalFeature onClose={closeModal} service={service} />,
+            })
+          }}
+        />
       )
-    }
-  }
-
-  return (
-    <PageSettingsStorage
-      storages={application?.storage || []}
-      onRemove={(storage: ServiceStorageStorageInner) => {
-        openModalConfirmation({
-          title: 'Delete storage',
-          name: storage.mount_point,
-          isDelete: true,
-          action: async () => {
-            if (!application) return
-            const app = removeStorage(storage, application)
-            await dispatch(
-              editApplication({
-                applicationId: app.id,
-                data: app,
-                serviceType: getServiceType(application),
-                toasterCallback,
-                queryClient,
-              })
-            )
-
-            if (!error) {
-              closeModal()
-            }
-          },
-        })
-      }}
-      onEdit={(storage?: ServiceStorageStorageInner) => {
-        openModal({
-          content: (
-            <StorageModalFeature
-              organizationId={organizationId}
-              projectId={projectId}
-              onClose={closeModal}
-              storage={storage}
-              applicationId={applicationId}
-              application={application}
-            />
-          ),
-        })
-      }}
-      onAddStorage={() => {
-        openModal({
-          content: (
-            <StorageModalFeature
-              organizationId={organizationId}
-              projectId={projectId}
-              onClose={closeModal}
-              applicationId={applicationId}
-              application={application}
-            />
-          ),
-        })
-      }}
-    />
-  )
+    })
+    .otherwise(() => null)
 }
 
 export default PageSettingsStorageFeature

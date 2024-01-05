@@ -1,52 +1,65 @@
-import { render } from '__tests__/utils/setup-jest'
 import { StorageTypeEnum } from 'qovery-typescript-axios'
+import { type Application } from '@qovery/domains/services/data-access'
 import { applicationFactoryMock } from '@qovery/shared/factories'
-import { type ApplicationEntity } from '@qovery/shared/interfaces'
-import StorageModalFeature, { type StorageModalFeatureProps, handleSubmit } from './storage-modal-feature'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import StorageModalFeature, { type StorageModalFeatureProps } from './storage-modal-feature'
+
+const mockApplication = applicationFactoryMock(1)[0] as Application
+
+const mockEditService = jest.fn()
+
+jest.mock('@qovery/domains/services/feature', () => ({
+  useEditService: () => ({
+    mutateAsync: mockEditService,
+    isLoading: false,
+  }),
+}))
 
 const props: StorageModalFeatureProps = {
   onClose: jest.fn(),
-  application: applicationFactoryMock(1)[0],
-  applicationId: '1',
+  service: mockApplication,
 }
 
 describe('StorageModalFeature', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<StorageModalFeature {...props} />)
+    const { baseElement } = renderWithProviders(<StorageModalFeature {...props} />)
     expect(baseElement).toBeTruthy()
   })
-})
 
-describe('handleSubmit', () => {
-  let application: ApplicationEntity
-  beforeEach(() => {
-    application = applicationFactoryMock(1)[0]
+  it('should submit a new storage', async () => {
+    const { userEvent } = renderWithProviders(<StorageModalFeature {...props} />)
+
+    const mountPointInput = screen.getByLabelText('Mounting Path')
+    await userEvent.type(mountPointInput, '/test')
+
+    const submitButton = screen.getByRole('button', { name: 'Create' })
+    await userEvent.click(submitButton)
+
+    const storageRequest = [
+      ...(mockApplication.storage || []),
+      { mount_point: '/test', size: 4, type: StorageTypeEnum.FAST_SSD },
+    ]
+
+    expect(mockEditService.mock.calls[0][0].payload.storage).toEqual(storageRequest)
   })
 
-  describe('creation mode', () => {
-    it('should create the first storage', () => {
-      application.storage = []
-      const app = handleSubmit({ size: 54, type: StorageTypeEnum.FAST_SSD, mount_point: '/test' }, application)
-      expect(app.storage).toHaveLength(1)
-    })
+  it('should submit a edit storage', async () => {
+    const storage = mockApplication.storage ? mockApplication.storage[0] : undefined
+    const { userEvent } = renderWithProviders(<StorageModalFeature {...props} storage={storage} />)
 
-    it('should add a new storage', () => {
-      const app = handleSubmit({ size: 54, type: StorageTypeEnum.FAST_SSD, mount_point: '/test' }, application)
-      expect(app.storage).toHaveLength(2)
-    })
-  })
+    const mountPointInput = screen.getByLabelText('Mounting Path')
+    await userEvent.type(mountPointInput, '/test')
 
-  describe('edit mode', () => {
-    it('should edit the only storage', () => {
-      const app = handleSubmit(
-        { size: 54, type: StorageTypeEnum.FAST_SSD, mount_point: '/test' },
-        application,
-        application.storage ? application.storage[0] : undefined
-      )
+    const submitButton = screen.getByRole('button', { name: 'Confirm' })
+    await userEvent.click(submitButton)
 
-      if (app.storage?.length) {
-        expect(app.storage[0].size).toBe(54)
-      }
-    })
+    expect(mockEditService.mock.calls[0][0].payload.storage).toEqual([
+      {
+        id: storage?.id,
+        mount_point: '/test',
+        size: storage?.size,
+        type: storage?.type,
+      },
+    ])
   })
 })
