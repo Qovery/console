@@ -3,25 +3,6 @@
   "affected": {
     "defaultBase": "staging"
   },
-  "tasksRunnerOptions": {
-    "default": {
-      "options": {
-        "runtimeCacheInputs": [
-          "echo $NODE_ENV",
-          "echo $NX_GTM",
-          "echo $NX_INTERCOM",
-          "echo $NX_LOGROCKET",
-          "echo $NX_OAUTH_AUDIENCE",
-          "echo $NX_OAUTH_DOMAIN",
-          "echo $NX_OAUTH_KEY",
-          "echo $NX_POSTHOG",
-          "echo $NX_POSTHOG_APIHOST",
-          "echo $NX_QOVERY_API",
-          "echo $NX_URL"
-        ]
-      }
-    }
-  },
   "workspaceLayout": {
     "appsDir": "apps",
     "libsDir": "libs"
@@ -29,7 +10,19 @@
   "targetDefaults": {
     "build": {
       "dependsOn": ["^build"],
-      "inputs": ["production", "^production"],
+      "inputs": [
+        "production",
+        "^production",
+        { "env": "NX_GTM" },
+        { "env": "NX_INTERCOM" },
+        { "env": "NX_LOGROCKET" },
+        { "env": "NX_OAUTH_AUDIENCE" },
+        { "env": "NX_OAUTH_DOMAIN" },
+        { "env": "NX_OAUTH_KEY" },
+        { "env": "NX_POSTHOG" },
+        { "env": "NX_POSTHOG_APIHOST" },
+        { "env": "NX_QOVERY_API" }
+      ],
       "cache": true
     },
     "e2e": {
