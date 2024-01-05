@@ -59,6 +59,7 @@ jobs:
   # https://github.com/nrwl/ci?tab=readme-ov-file#limited-secrets-support
   # https://docs.github.com/en/enterprise-cloud@latest/actions/learn-github-actions/variables#defining-configuration-variables-for-multiple-workflows
   env-vars:
+    runs-on: ubuntu-latest
     outputs:
       variables: ${{ steps.var.outputs.variables }}
     steps:
