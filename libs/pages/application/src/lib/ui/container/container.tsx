@@ -1,12 +1,12 @@
 import { type Environment } from 'qovery-typescript-axios'
 import { type PropsWithChildren, createContext, useState } from 'react'
 import { useParams } from 'react-router-dom'
+import { match } from 'ts-pattern'
 import { useCluster } from '@qovery/domains/clusters/feature'
 import { EnvironmentMode } from '@qovery/domains/environments/feature'
-import { type AnyService } from '@qovery/domains/services/data-access'
+import { type AnyService, type Database } from '@qovery/domains/services/data-access'
 import { NeedRedeployFlag, ServiceActionToolbar } from '@qovery/domains/services/feature'
-import { IconEnum, isCronJob, isLifeCycleJob } from '@qovery/shared/enums'
-import { type ApplicationEntity } from '@qovery/shared/interfaces'
+import { IconEnum } from '@qovery/shared/enums'
 import { Badge, Header, Icon, Section, Skeleton, Tooltip } from '@qovery/shared/ui'
 import TabsFeature from '../../feature/tabs-feature/tabs-feature'
 
@@ -19,7 +19,7 @@ export const ApplicationContext = createContext<{
 })
 
 export interface ContainerProps {
-  service?: AnyService
+  service?: Exclude<AnyService, Database>
   environment?: Environment
 }
 
@@ -52,24 +52,17 @@ export function Container({ service, environment, children }: PropsWithChildren<
     </div>
   )
 
+  const headerIcon = match(service)
+    .with({ serviceType: 'HELM' }, () => IconEnum.HELM)
+    .with({ serviceType: 'JOB' }, (s) => (s.job_type === 'LIFECYCLE' ? IconEnum.LIFECYCLE_JOB : IconEnum.CRON_JOB))
+    .otherwise(() => IconEnum.APPLICATION)
+
   return (
     <ApplicationContext.Provider
       value={{ showHideAllEnvironmentVariablesValues, setShowHideAllEnvironmentVariablesValues }}
     >
       <Section className="flex-1">
-        <Header
-          title={service?.name}
-          icon={
-            isCronJob(service as ApplicationEntity)
-              ? IconEnum.CRON_JOB
-              : isLifeCycleJob(service as ApplicationEntity)
-              ? IconEnum.LIFECYCLE_JOB
-              : service?.serviceType === 'HELM'
-              ? IconEnum.HELM
-              : IconEnum.APPLICATION
-          }
-          actions={headerActions}
-        />
+        <Header title={service?.name} icon={headerIcon} actions={headerActions} />
         <TabsFeature />
         <NeedRedeployFlag />
         {children}

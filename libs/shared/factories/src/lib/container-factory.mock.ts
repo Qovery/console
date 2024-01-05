@@ -1,11 +1,10 @@
 import { Chance } from 'chance'
 import { ContainerRegistryKindEnum, PortProtocolEnum, StorageTypeEnum } from 'qovery-typescript-axios'
 import { type Container } from '@qovery/domains/services/data-access'
-import { type ContainerApplicationEntity } from '@qovery/shared/interfaces'
 
 const chance = new Chance('123')
 
-export const containerFactoryMock = (howMany: number): ContainerApplicationEntity[] | Container[] =>
+export const containerFactoryMock = (howMany: number): Container[] =>
   Array.from({ length: howMany }).map((_, index) => ({
     id: index.toString(),
     name: chance.name(),

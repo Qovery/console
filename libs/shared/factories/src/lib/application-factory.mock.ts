@@ -1,11 +1,10 @@
 import { Chance } from 'chance'
 import { BuildModeEnum, BuildPackLanguageEnum, PortProtocolEnum, StorageTypeEnum } from 'qovery-typescript-axios'
 import { type Application } from '@qovery/domains/services/data-access'
-import { type ApplicationEntity } from '@qovery/shared/interfaces'
 
 const chance = new Chance('123')
 
-export const applicationFactoryMock = (howMany: number): ApplicationEntity[] | Application[] =>
+export const applicationFactoryMock = (howMany: number): Application[] =>
   Array.from({ length: howMany }).map((_, index) => ({
     id: `${index}`,
     created_at: chance.date({ year: 2023, string: true }).toString(),
@@ -44,6 +43,7 @@ export const applicationFactoryMock = (howMany: number): ApplicationEntity[] | A
     min_running_instances: 1,
     max_running_instances: 3,
     auto_preview: false,
+    healthchecks: {},
     git_repository: {
       id: chance.guid(),
       url: chance.url(),

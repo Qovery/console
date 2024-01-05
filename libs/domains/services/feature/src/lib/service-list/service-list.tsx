@@ -19,16 +19,15 @@ import { type ComponentProps, Fragment, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { P, match } from 'ts-pattern'
 import { useEnvironment } from '@qovery/domains/environments/feature'
+import { type AnyService } from '@qovery/domains/services/data-access'
 import {
   IconEnum,
   ServiceTypeEnum,
-  getServiceType,
   isHelmGitSource,
   isHelmRepositorySource,
   isJobContainerSource,
   isJobGitSource,
 } from '@qovery/shared/enums'
-import { type ApplicationEntity } from '@qovery/shared/interfaces'
 import {
   APPLICATION_URL,
   DATABASE_GENERAL_URL,
@@ -73,6 +72,13 @@ export function ServiceList({ organizationId, projectId, environmentId, classNam
   const [sorting, setSorting] = useState<SortingState>([])
   const navigate = useNavigate()
 
+  const getServiceIcon = (service: AnyService) =>
+    match(service)
+      .with({ serviceType: 'HELM' }, () => IconEnum.HELM)
+      .with({ serviceType: 'DATABASE' }, () => IconEnum.DATABASE)
+      .with({ serviceType: 'JOB' }, (s) => (s.job_type === 'LIFECYCLE' ? IconEnum.LIFECYCLE_JOB : IconEnum.CRON_JOB))
+      .otherwise(() => IconEnum.APPLICATION)
+
   const columnHelper = createColumnHelper<(typeof services)[number]>()
   const columns = useMemo(
     () => [
@@ -91,14 +97,7 @@ export function ServiceList({ organizationId, projectId, environmentId, classNam
             }
             return (
               <span className="flex items-center gap-2 text-sm font-medium">
-                <Icon
-                  name={
-                    serviceType === 'APPLICATION' || serviceType === 'CONTAINER'
-                      ? IconEnum.APPLICATION
-                      : getServiceType(service as ApplicationEntity)
-                  }
-                  width="20"
-                />
+                <Icon name={getServiceIcon(service)} width="20" />
                 {value}
               </span>
             )
@@ -107,7 +106,6 @@ export function ServiceList({ organizationId, projectId, environmentId, classNam
         cell: (info) => {
           const serviceName = info.getValue()
           const service = info.row.original
-          const { serviceType } = service
 
           if (!environment) {
             return null
@@ -116,14 +114,7 @@ export function ServiceList({ organizationId, projectId, environmentId, classNam
           return (
             <div className="flex items-center justify-between">
               <span className="flex items-center gap-4 font-medium text-sm text-neutral-400">
-                <Icon
-                  name={
-                    serviceType === 'APPLICATION' || serviceType === 'CONTAINER'
-                      ? IconEnum.APPLICATION
-                      : getServiceType(service as ApplicationEntity)
-                  }
-                  width="20"
-                />
+                <Icon name={getServiceIcon(service)} width="20" />
                 {match(service)
                   .with({ serviceType: 'DATABASE' }, (db) => {
                     return (

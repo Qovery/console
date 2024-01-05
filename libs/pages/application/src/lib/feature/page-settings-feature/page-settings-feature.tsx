@@ -1,11 +1,7 @@
-import equal from 'fast-deep-equal'
 import { useCallback } from 'react'
-import { useSelector } from 'react-redux'
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
-import { selectApplicationById } from '@qovery/domains/application'
 import { useService } from '@qovery/domains/services/feature'
-import { isApplication, isHelmGitSource, isJob } from '@qovery/shared/enums'
-import { type ApplicationEntity } from '@qovery/shared/interfaces'
+import { isHelmGitSource } from '@qovery/shared/enums'
 import {
   APPLICATION_SETTINGS_ADVANCED_SETTINGS_URL,
   APPLICATION_SETTINGS_CONFIGURE_URL,
@@ -25,7 +21,6 @@ import {
 } from '@qovery/shared/routes'
 import { IconAwesomeEnum, type NavigationLeftLinkProps } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { type RootState } from '@qovery/state/store'
 import { ROUTER_APPLICATION_SETTINGS } from '../../router/router'
 import PageSettings from '../../ui/page-settings/page-settings'
 
@@ -41,10 +36,6 @@ export function PageSettingsFeature() {
     applicationId
   )}${APPLICATION_SETTINGS_URL}`
 
-  const application = useSelector<RootState, ApplicationEntity | undefined>(
-    (state) => selectApplicationById(state, applicationId),
-    equal
-  )
   const { data: service } = useService({ serviceId: applicationId })
 
   const isHelm = service?.serviceType === 'HELM'
@@ -80,7 +71,7 @@ export function PageSettingsFeature() {
       })
     }
 
-    if (isJob(application)) {
+    if (service?.serviceType === 'JOB') {
       links.push({
         title: 'Configure Job',
         icon: IconAwesomeEnum.GEARS,
@@ -96,7 +87,7 @@ export function PageSettingsFeature() {
       })
     }
 
-    if (!isJob(application) && !isHelm) {
+    if (service?.serviceType !== 'JOB' && !isHelm) {
       links.push(
         {
           title: 'Storage',
@@ -121,7 +112,11 @@ export function PageSettingsFeature() {
       )
     }
 
-    if (isApplication(application) || isJob(application) || (isHelm && isHelmGitSource(service.source))) {
+    if (
+      service?.serviceType === 'APPLICATION' ||
+      service?.serviceType === 'JOB' ||
+      (isHelm && isHelmGitSource(service.source))
+    ) {
       links.push({
         title: 'Deployment restrictions',
         icon: IconAwesomeEnum.CART_FLATBED,
@@ -142,7 +137,7 @@ export function PageSettingsFeature() {
     })
 
     return links
-  }, [application, isHelm, pathSettings])
+  }, [service, isHelm, pathSettings])
 
   if (!service) return null
 
