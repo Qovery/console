@@ -110,8 +110,8 @@ jobs:
     uses: nrwl/ci/.github/workflows/nx-cloud-agents.yml@v0.13.0
     with:
       number-of-agents: 3
-    environment-variables: |
-      ${{ needs.env-vars.outputs.variables }}
+      environment-variables: |
+        ${{ needs.env-vars.outputs.variables }}
 
   codecoverage:
     runs-on: ubuntu-latest
