@@ -74,7 +74,7 @@ jobs:
               variables.push(`${v}=${varsFromJSON[v]}`)
             }
             console.log(variables)
-            core.setOutput('variables', variables.join('\n'))
+            core.setOutput('variables', variables.join('\\n'))
 
   nx-main:
     needs: [env-vars]
