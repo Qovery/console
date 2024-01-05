@@ -1,76 +1,23 @@
-import { useQueryClient } from '@tanstack/react-query'
-import equal from 'fast-deep-equal'
 import { type Probe, type ProbeType } from 'qovery-typescript-axios'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo } from 'react'
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
-import { useDispatch, useSelector } from 'react-redux'
-import { useNavigate, useParams } from 'react-router-dom'
-import { editApplication, getApplicationsState, postApplicationActionsRedeploy } from '@qovery/domains/application'
-import { useFetchEnvironment } from '@qovery/domains/environment'
+import { useParams } from 'react-router-dom'
+import { match } from 'ts-pattern'
+import { useEnvironment } from '@qovery/domains/environments/feature'
+import { type Application, type Container, type Job } from '@qovery/domains/services/data-access'
+import { useEditService, useService } from '@qovery/domains/services/feature'
 import { defaultLivenessProbe, defaultReadinessProbe, probeFormatted } from '@qovery/shared/console-shared'
-import { ProbeTypeEnum, getServiceType, isJob } from '@qovery/shared/enums'
-import { type ApplicationEntity, type HealthcheckData } from '@qovery/shared/interfaces'
-import {
-  APPLICATION_SETTINGS_RESOURCES_URL,
-  APPLICATION_SETTINGS_URL,
-  APPLICATION_URL,
-  DEPLOYMENT_LOGS_URL,
-  ENVIRONMENT_LOGS_URL,
-} from '@qovery/shared/routes'
-import { type AppDispatch, type RootState } from '@qovery/state/store'
+import { ProbeTypeEnum } from '@qovery/shared/enums'
+import { type HealthcheckData } from '@qovery/shared/interfaces'
+import { APPLICATION_SETTINGS_RESOURCES_URL, APPLICATION_SETTINGS_URL, APPLICATION_URL } from '@qovery/shared/routes'
+import { buildEditServicePayload } from '@qovery/shared/util-services'
 import PageSettingsHealthchecks from '../../ui/page-settings-healthchecks/page-settings-healthchecks'
 
-export const handleSubmit = (data: FieldValues, application: ApplicationEntity): ApplicationEntity => {
-  const defaultPort = application?.ports?.[0]?.internal_port || application.port
-
-  const result = {
-    ...application,
-    healthchecks: {
-      readiness_probe:
-        ProbeTypeEnum.NONE !== data['readiness_probe']['current_type']
-          ? probeFormatted(data['readiness_probe'], defaultPort)
-          : undefined,
-      liveness_probe:
-        ProbeTypeEnum.NONE !== data['liveness_probe']['current_type']
-          ? probeFormatted(data['liveness_probe'], defaultPort)
-          : undefined,
-    },
-  }
-
-  return result
-}
-
-export function PageSettingsHealthchecksFeature() {
+export function SettingsHealthchecksFeature({ service }: { service: Application | Container | Job }) {
   const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
-  const queryClient = useQueryClient()
 
-  const dispatch = useDispatch<AppDispatch>()
-  const navigate = useNavigate()
-  const { data: environment } = useFetchEnvironment(projectId, environmentId)
-
-  const application = useSelector<RootState, ApplicationEntity | undefined>(
-    (state) => getApplicationsState(state).entities[applicationId],
-    equal
-  )
-
-  const toasterCallback = () => {
-    if (application) {
-      dispatch(
-        postApplicationActionsRedeploy({
-          applicationId,
-          environmentId,
-          serviceType: getServiceType(application),
-          callback: () =>
-            navigate(
-              ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(applicationId)
-            ),
-          queryClient,
-        })
-      )
-    }
-  }
-
-  const [loading, setLoading] = useState(false)
+  const { data: environment } = useEnvironment({ environmentId })
+  const { mutate: editService, isLoading: isLoadingEditService } = useEditService({ environmentId })
 
   const methods = useForm({
     mode: 'onChange',
@@ -94,41 +41,49 @@ export function PageSettingsHealthchecksFeature() {
     } as HealthcheckData,
   })
 
-  const onSubmit = methods.handleSubmit((data) => {
-    if (application) {
-      setLoading(true)
-      const cloneApplication = handleSubmit(data, application)
+  const onSubmit = methods.handleSubmit((data: FieldValues) => {
+    const defaultPort = match(service)
+      .with({ serviceType: 'JOB' }, (s) => s.port)
+      .otherwise((s) => s.ports?.[0]?.internal_port)
 
-      dispatch(
-        editApplication({
-          applicationId: applicationId,
-          data: cloneApplication,
-          serviceType: getServiceType(application),
-          toasterCallback,
-          queryClient,
-        })
-      )
-        .unwrap()
-        .catch((error) => console.error(error))
-        .finally(() => setLoading(false))
+    const healthchecks = {
+      readiness_probe:
+        ProbeTypeEnum.NONE !== data['readiness_probe']['current_type']
+          ? probeFormatted(data['readiness_probe'], defaultPort)
+          : undefined,
+      liveness_probe:
+        ProbeTypeEnum.NONE !== data['liveness_probe']['current_type']
+          ? probeFormatted(data['liveness_probe'], defaultPort)
+          : undefined,
     }
+
+    const payload = match(service)
+      .with({ serviceType: 'APPLICATION' }, (s) => buildEditServicePayload({ service: s, request: { healthchecks } }))
+      .with({ serviceType: 'JOB' }, (s) => buildEditServicePayload({ service: s, request: { healthchecks } }))
+      .with({ serviceType: 'CONTAINER' }, (s) => buildEditServicePayload({ service: s, request: { healthchecks } }))
+      .exhaustive()
+
+    editService({
+      serviceId: applicationId,
+      payload,
+    })
   })
 
   // Use memo to get the TYPE of readiness probe
   const defaultTypeReadiness = useMemo(() => {
-    const types = application?.healthchecks?.readiness_probe?.type as ProbeType
+    const types = service.healthchecks?.readiness_probe?.type as ProbeType
     const readinessProbeKeys = Object.keys(types || {})
     const nonNullKeyReadiness = readinessProbeKeys.find((key) => (types as { [key: string]: unknown })[key] !== null)
     return nonNullKeyReadiness?.toUpperCase() || ProbeTypeEnum.NONE
-  }, [application?.healthchecks?.readiness_probe])
+  }, [service.healthchecks?.readiness_probe])
 
   // Use memo to get the TYPE of liveness probe
   const defaultTypeLiveness = useMemo(() => {
-    const types = application?.healthchecks?.liveness_probe?.type as ProbeType
+    const types = service.healthchecks?.liveness_probe?.type as ProbeType
     const livenessProbeKeys = Object.keys(types || {})
     const nonNullKeyLiveness = livenessProbeKeys.find((key) => (types as { [key: string]: unknown })[key] !== null)
     return nonNullKeyLiveness?.toUpperCase() || ProbeTypeEnum.NONE
-  }, [application?.healthchecks?.liveness_probe])
+  }, [service.healthchecks?.liveness_probe])
 
   useEffect(() => {
     const setProbeValues = (probeName: string, values: Probe) => {
@@ -147,22 +102,30 @@ export function PageSettingsHealthchecksFeature() {
     methods.setValue('readiness_probe.current_type', defaultTypeReadiness)
     methods.setValue('liveness_probe.current_type', defaultTypeLiveness)
 
-    if (application?.healthchecks?.readiness_probe) {
-      setProbeValues('readiness_probe', application?.healthchecks?.readiness_probe)
+    if (service.healthchecks?.readiness_probe) {
+      setProbeValues('readiness_probe', service.healthchecks?.readiness_probe)
     }
 
-    if (application?.healthchecks?.liveness_probe) {
-      setProbeValues('liveness_probe', application?.healthchecks?.liveness_probe)
+    if (service.healthchecks?.liveness_probe) {
+      setProbeValues('liveness_probe', service.healthchecks?.liveness_probe)
     }
-  }, [methods, application, defaultTypeReadiness, defaultTypeLiveness])
+  }, [
+    methods,
+    service.healthchecks?.liveness_probe,
+    service.healthchecks?.readiness_probe,
+    defaultTypeReadiness,
+    defaultTypeLiveness,
+  ])
+
+  if (!service) return null
 
   return (
     <FormProvider {...methods}>
       <PageSettingsHealthchecks
-        ports={application?.ports}
-        jobPort={application?.port}
-        isJob={isJob(application)}
-        minRunningInstances={application?.min_running_instances}
+        ports={'ports' in service ? service.ports : undefined}
+        jobPort={'port' in service ? service.port : undefined}
+        isJob={service.serviceType === 'JOB'}
+        minRunningInstances={'min_running_instances' in service ? service.min_running_instances : undefined}
         linkResourcesSetting={`${APPLICATION_URL(
           organizationId,
           projectId,
@@ -170,11 +133,23 @@ export function PageSettingsHealthchecksFeature() {
           applicationId
         )}${APPLICATION_SETTINGS_URL}${APPLICATION_SETTINGS_RESOURCES_URL}`}
         onSubmit={onSubmit}
-        loading={loading}
+        loading={isLoadingEditService}
         environmentMode={environment?.mode}
       />
     </FormProvider>
   )
 }
 
-export default PageSettingsHealthchecksFeature
+export function PageSettingsAdvancedFeature() {
+  const { environmentId = '', applicationId = '' } = useParams()
+
+  const { data: service } = useService({ environmentId, serviceId: applicationId })
+
+  return match(service)
+    .with({ serviceType: 'APPLICATION' }, { serviceType: 'CONTAINER' }, { serviceType: 'JOB' }, (s) => (
+      <SettingsHealthchecksFeature service={s} />
+    ))
+    .otherwise(() => null)
+}
+
+export default PageSettingsAdvancedFeature
