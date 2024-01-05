@@ -58,7 +58,7 @@ export function ForceRunModalFeature({ service }: ForceRunModalFeatureProps) {
         service={service}
         closeModal={closeModal}
         onSubmit={onSubmit}
-        isCronJob={service?.job_type === 'CRON'}
+        isCronJob={service.job_type === 'CRON'}
         isLoading={isLoadingEditService}
       />
     </FormProvider>
