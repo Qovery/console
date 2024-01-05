@@ -1,6 +1,5 @@
 import { type FormEventHandler, type ReactNode, useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { type ApplicationEntity } from '@qovery/shared/interfaces'
 import { ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle } from '../../buttons/button-legacy/button-legacy'
 import Icon from '../../icon/icon'
 import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
@@ -16,7 +15,7 @@ export interface ModalCrudProps {
   loading?: boolean
   description?: string
   submitLabel?: string
-  forService?: ApplicationEntity
+  forServiceName?: string
   onDelete?: () => void
   deleteButtonLabel?: string
   howItWorks?: ReactNode
@@ -31,7 +30,7 @@ export function ModalCrud(props: ModalCrudProps) {
     title,
     isEdit,
     description,
-    forService,
+    forServiceName,
     onDelete,
     submitLabel,
     deleteButtonLabel,
@@ -47,12 +46,12 @@ export function ModalCrud(props: ModalCrudProps) {
     <div className="p-6">
       <h2 className="h4 text-neutral-400 max-w-sm truncate">{title}</h2>
       {description && <p className="mt-2 text-neutral-350 text-sm">{description}</p>}
-      {forService && (
+      {forServiceName && (
         <div className="text-neutral-400 text-sm flex justify-between items-center mt-4">
           <p>
             For{' '}
             <strong className="text-neutral-400 font-medium">
-              <Truncate truncateLimit={60} text={forService.name || ''} />
+              <Truncate truncateLimit={60} text={forServiceName} />
             </strong>
           </p>
         </div>
