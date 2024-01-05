@@ -10,7 +10,7 @@ const application = applicationFactoryMock(1)[0]
 const props: PageSettingsResourcesProps = {
   loading: false,
   onSubmit: () => jest.fn(),
-  application: application,
+  service: application,
   displayWarningCpu: true,
 }
 

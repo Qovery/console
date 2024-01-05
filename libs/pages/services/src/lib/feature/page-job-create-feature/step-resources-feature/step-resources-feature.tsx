@@ -1,7 +1,6 @@
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
-import { useFetchEnvironment } from '@qovery/domains/environment'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { type ApplicationResourcesData } from '@qovery/shared/interfaces'
 import {
@@ -20,7 +19,6 @@ export function StepResourcesFeature() {
   const { setCurrentStep, resourcesData, setResourcesData, generalData, jobURL, jobType } =
     useJobContainerCreateContext()
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
-  const { data: environment } = useFetchEnvironment(projectId, environmentId)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -74,7 +72,7 @@ export function StepResourcesFeature() {
   return (
     <FunnelFlowBody helpSection={funnelCardHelp}>
       <FormProvider {...methods}>
-        <StepResources onBack={onBack} onSubmit={onSubmit} environmentMode={environment?.mode} />
+        <StepResources onBack={onBack} onSubmit={onSubmit} />
       </FormProvider>
     </FunnelFlowBody>
   )
