@@ -1,0 +1,72 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SelectVersionModal should match snapshot 1`] = `
+<div>
+  <div
+    class="flex flex-col gap-6 p-5"
+  >
+    <div
+      class="flex flex-col gap-2 text-sm text-neutral-350"
+    >
+      <h2
+        class="h4 text-neutral-400 max-w-sm truncate"
+      >
+        Deploy other version
+      </h2>
+      <p
+        class="text-neutral-350"
+      >
+        Type a version to deploy
+      </p>
+      For X service
+    </div>
+    <div
+      class=""
+      data-testid="input-text-wrapper"
+    >
+      <div
+        class="relative"
+      >
+        <div
+          aria-label="input-container"
+          class="input     "
+        >
+          <div
+            class=""
+          >
+            <label
+              class="text-sm translate-y-2"
+              for="Version"
+            >
+              Version
+            </label>
+            <input
+              class="input__value "
+              data-testid="input-text"
+              id="Version"
+              name="version"
+              type="text"
+              value=""
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="flex gap-3 justify-end"
+    >
+      <button
+        class="inline-flex items-center shrink-0 font-medium transition text-sm h-10 px-4 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent"
+      >
+        Cancel
+      </button>
+      <button
+        class="inline-flex items-center shrink-0 font-medium transition text-sm h-10 px-4 rounded bg-brand-500 hover:bg-brand-600 text-white disabled:text-brand-300 disabled:bg-brand-100 disabled:border-none"
+        disabled=""
+      >
+        Deploy
+      </button>
+    </div>
+  </div>
+</div>
+`;

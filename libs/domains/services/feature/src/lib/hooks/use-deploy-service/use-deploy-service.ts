@@ -13,6 +13,10 @@ export function useDeployService({ environmentId }: { environmentId: string }) {
       queryClient.invalidateQueries({
         queryKey: queries.services.status({ id: serviceId, serviceType }).queryKey,
       })
+      // NOTE: This is to invalidate deployed git_commit_id cache
+      queryClient.invalidateQueries({
+        queryKey: queries.services.details({ serviceId, serviceType }).queryKey,
+      })
     },
     meta: {
       notifyOnSuccess: {
