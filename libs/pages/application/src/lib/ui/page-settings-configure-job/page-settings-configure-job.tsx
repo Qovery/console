@@ -1,17 +1,16 @@
 import { useFormContext } from 'react-hook-form'
+import { type Job } from '@qovery/domains/services/data-access'
 import { JobConfigureSettings } from '@qovery/shared/console-shared'
-import { ServiceTypeEnum, isCronJob } from '@qovery/shared/enums'
-import { type ApplicationEntity } from '@qovery/shared/interfaces'
-import { BlockContent, ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle, HelpSection } from '@qovery/shared/ui'
+import { ServiceTypeEnum } from '@qovery/shared/enums'
+import { BlockContent, Button, HelpSection } from '@qovery/shared/ui'
 
 export interface PageSettingsConfigureJobProps {
-  application?: ApplicationEntity
-  loading?: boolean
+  service: Job
   onSubmit: () => void
+  loading: boolean
 }
 
-export function PageSettingsConfigureJob(props: PageSettingsConfigureJobProps) {
-  const { loading, onSubmit } = props
+export function PageSettingsConfigureJob({ service, loading, onSubmit }: PageSettingsConfigureJobProps) {
   const { formState } = useFormContext()
 
   return (
@@ -20,22 +19,14 @@ export function PageSettingsConfigureJob(props: PageSettingsConfigureJobProps) {
         <form onSubmit={onSubmit}>
           <BlockContent title="Configuration job">
             <JobConfigureSettings
-              loading={!props.application}
-              jobType={isCronJob(props.application) ? ServiceTypeEnum.CRON_JOB : ServiceTypeEnum.LIFECYCLE_JOB}
+              loading={!service}
+              jobType={service.job_type === 'CRON' ? ServiceTypeEnum.CRON_JOB : ServiceTypeEnum.LIFECYCLE_JOB}
             />
           </BlockContent>
           <div className="flex justify-end">
-            <ButtonLegacy
-              dataTestId="submit-button"
-              className="btn--no-min-w"
-              size={ButtonLegacySize.LARGE}
-              style={ButtonLegacyStyle.BASIC}
-              type="submit"
-              disabled={!formState.isValid}
-              loading={loading}
-            >
+            <Button size="lg" disabled={!formState.isValid} loading={loading}>
               Save
-            </ButtonLegacy>
+            </Button>
           </div>
         </form>
       </div>
