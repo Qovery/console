@@ -68,9 +68,12 @@ jobs:
         id: var
         with:
           script: |
-            const varsFromJSON = ${{ toJSON(vars) }}')
+            const varsFromJSON = ${{ toJSON(vars) }}
             const variables = []
-            core.setOutput('variables', variables.join(''))
+            for (const v in varsFromJSON) {
+              variables.push(v + '=' + varsFromJSON[v])
+            }
+            core.setOutput('variables', variables.join('\n'))
 
   nx-main:
     needs: [env-vars]
