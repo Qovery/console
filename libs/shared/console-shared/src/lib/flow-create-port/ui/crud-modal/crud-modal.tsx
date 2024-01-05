@@ -1,6 +1,7 @@
 import { CloudProviderEnum, PortProtocolEnum } from 'qovery-typescript-axios'
 import { type FormEvent } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
+import { match } from 'ts-pattern'
 import {
   Callout,
   Icon,
@@ -67,7 +68,16 @@ export function CrudModal({
 
   const protocolOptions = Object.keys(PortProtocolEnum)
     .map((value: string) => ({ label: value, value: value }))
-    .filter((option) => (cloudProvider === CloudProviderEnum.SCW ? option.value !== PortProtocolEnum.UDP : true))
+    .filter((option) =>
+      match(cloudProvider)
+        .with(CloudProviderEnum.SCW, () => option.value !== PortProtocolEnum.UDP)
+        .with(
+          CloudProviderEnum.GCP,
+          () => option.value === PortProtocolEnum.HTTP || option.value === PortProtocolEnum.GRPC
+        )
+        .with(CloudProviderEnum.AWS, () => true)
+        .otherwise(() => false)
+    )
 
   return (
     <ModalCrud

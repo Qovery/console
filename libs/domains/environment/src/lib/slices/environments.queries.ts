@@ -54,6 +54,9 @@ export const useFetchEnvironments = <TData = Environment[]>(
   )
 }
 
+/*
+ * @deprecated use `useEnvironment` from `@qovery/domains/environments/feature` instead of `useFetchEnvironment`
+ */
 export const useFetchEnvironment = (projectId: string, environmentId: string) =>
   useFetchEnvironments(projectId, (environments) =>
     environments.find((environment) => environment.id === environmentId)
