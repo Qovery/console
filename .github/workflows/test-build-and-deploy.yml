@@ -74,6 +74,13 @@ jobs:
               variables.push(v + '=' + varsFromJSON[v])
             }
             core.setOutput('variables', variables.join('\n'))
+  debug:
+    needs: [env-vars]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Echo variables
+        run: |
+          echo ${{ needs.env-vars.outputs.variables }}
 
   nx-main:
     needs: [env-vars]
