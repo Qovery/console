@@ -14,51 +14,52 @@ export function PageSettingsStorageFeature() {
   const { data: service } = useService({ environmentId: environmentId, serviceId: applicationId })
   const { mutateAsync: editService } = useEditService({ environmentId })
 
-  if (!service || service.serviceType === 'JOB' || service.serviceType === 'HELM' || service.serviceType === 'DATABASE')
-    return null
+  return match(service)
+    .with({ serviceType: 'APPLICATION' }, { serviceType: 'CONTAINER' }, (service) => {
+      return (
+        <PageSettingsStorage
+          storages={service.storage || []}
+          onRemove={(storage) => {
+            openModalConfirmation({
+              title: 'Delete storage',
+              name: storage.mount_point,
+              isDelete: true,
+              action: async () => {
+                const request = {
+                  storage: service.storage?.filter((s) => s.id !== storage.id),
+                }
 
-  return (
-    <PageSettingsStorage
-      storages={service.storage || []}
-      onRemove={(storage) => {
-        openModalConfirmation({
-          title: 'Delete storage',
-          name: storage.mount_point,
-          isDelete: true,
-          action: async () => {
-            const request = {
-              storage: service.storage?.filter((s) => s.id !== storage.id),
-            }
+                const payload = match(service)
+                  .with({ serviceType: 'APPLICATION' }, (s) => buildEditServicePayload({ service: s, request }))
+                  .with({ serviceType: 'CONTAINER' }, (s) => buildEditServicePayload({ service: s, request }))
+                  .exhaustive()
 
-            const payload = match(service)
-              .with({ serviceType: 'APPLICATION' }, (s) => buildEditServicePayload({ service: s, request }))
-              .with({ serviceType: 'CONTAINER' }, (s) => buildEditServicePayload({ service: s, request }))
-              .exhaustive()
-
-            try {
-              await editService({
-                serviceId: service.id,
-                payload: payload,
-              })
-              closeModal()
-            } catch (error) {
-              console.error(error)
-            }
-          },
-        })
-      }}
-      onEdit={(storage) => {
-        openModal({
-          content: <StorageModalFeature onClose={closeModal} storage={storage} service={service} />,
-        })
-      }}
-      onAddStorage={() => {
-        openModal({
-          content: <StorageModalFeature onClose={closeModal} service={service} />,
-        })
-      }}
-    />
-  )
+                try {
+                  await editService({
+                    serviceId: service.id,
+                    payload: payload,
+                  })
+                  closeModal()
+                } catch (error) {
+                  console.error(error)
+                }
+              },
+            })
+          }}
+          onEdit={(storage) => {
+            openModal({
+              content: <StorageModalFeature onClose={closeModal} storage={storage} service={service} />,
+            })
+          }}
+          onAddStorage={() => {
+            openModal({
+              content: <StorageModalFeature onClose={closeModal} service={service} />,
+            })
+          }}
+        />
+      )
+    })
+    .otherwise(() => null)
 }
 
 export default PageSettingsStorageFeature
