@@ -68,6 +68,7 @@ export function PageSettingsConfigureJobFeature() {
             cronjob: {
               scheduled_at: data.schedule || '',
               entrypoint: data.image_entry_point,
+              // thread `eval`: https://qovery.slack.com/archives/C02NPSG2HBL/p1664352927296669
               arguments: data.cmd_arguments ? eval(data.cmd_arguments) : undefined,
             },
           }
@@ -77,18 +78,21 @@ export function PageSettingsConfigureJobFeature() {
             on_start: data.on_start?.enabled
               ? {
                   entrypoint: data.on_start.entrypoint,
+                  // thread `eval`: https://qovery.slack.com/archives/C02NPSG2HBL/p1664352927296669
                   arguments: data.on_start.arguments_string ? eval(data.on_start.arguments_string) : undefined,
                 }
               : undefined,
             on_stop: data.on_stop?.enabled
               ? {
                   entrypoint: data.on_stop.entrypoint,
+                  // thread `eval`: https://qovery.slack.com/archives/C02NPSG2HBL/p1664352927296669
                   arguments: data.on_stop.arguments_string ? eval(data.on_stop.arguments_string) : undefined,
                 }
               : undefined,
             on_delete: data.on_delete?.enabled
               ? {
                   entrypoint: data.on_delete.entrypoint,
+                  // thread `eval`: https://qovery.slack.com/archives/C02NPSG2HBL/p1664352927296669
                   arguments: data.on_delete.arguments_string ? eval(data.on_delete.arguments_string) : undefined,
                 }
               : undefined,
