@@ -124,6 +124,7 @@ function refactoApplication({ service: application, request = {} }: applicationP
 }
 
 function refactoContainer({ service: container, request = {} }: containerProps): ContainerRequest {
+  console.log(container)
   const containerRequestPayload = {
     name: container.name || '',
     description: container.description || '',
@@ -133,7 +134,7 @@ function refactoContainer({ service: container, request = {} }: containerProps):
     memory: container.memory,
     max_running_instances: container.max_running_instances,
     min_running_instances: container.min_running_instances,
-    registry_id: container.registry_id || '',
+    registry_id: container.registry_id || container.registry?.id || '',
     image_name: container.image_name || '',
     tag: container.tag || '',
     arguments: container.arguments,

@@ -1,30 +1,29 @@
-import { findByTestId, render, waitFor } from '__tests__/utils/setup-jest'
-import * as redux from 'react-redux'
 import { applicationFactoryMock } from '@qovery/shared/factories'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import PageSettingsStorageFeature from './page-settings-storage-feature'
 
-const mockDispatch = jest.fn()
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useDispatch: () => mockDispatch,
+const mockApplication = applicationFactoryMock(1)[0]
+
+jest.mock('@qovery/domains/services/feature', () => ({
+  useService: () => ({
+    data: mockApplication,
+  }),
+  useEditService: () => ({
+    mutateAsync: jest.fn(),
+    isLoading: false,
+  }),
 }))
 
 describe('PageSettingsStorageFeature', () => {
   it('should render successfully', async () => {
-    const { baseElement } = render(<PageSettingsStorageFeature />)
-
+    const { baseElement } = renderWithProviders(<PageSettingsStorageFeature />)
     expect(baseElement).toBeTruthy()
   })
 
-  it('should create keys if application exists', async () => {
-    const useSelectorSpy = jest.spyOn(redux, 'useSelector')
-    useSelectorSpy.mockReturnValueOnce('loaded').mockReturnValue(applicationFactoryMock(1)[0])
+  it('should create keys if service exists', async () => {
+    renderWithProviders(<PageSettingsStorageFeature />)
 
-    const { baseElement } = render(<PageSettingsStorageFeature />)
-
-    await waitFor(async () => {
-      const row = await findByTestId(baseElement, 'form-row')
-      expect(row).toBeTruthy()
-    })
+    const row = await screen.findByTestId('form-row')
+    expect(row).toBeTruthy()
   })
 })
