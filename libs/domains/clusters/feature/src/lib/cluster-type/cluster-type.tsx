@@ -12,8 +12,6 @@ export function ClusterType({ cloudProvider, kubernetes, ...props }: ClusterType
     .with(['AWS', KubernetesEnum.K3_S], () => 'EC2 (K3S)')
     .with(['AWS', KubernetesEnum.MANAGED], ['AWS', undefined], () => 'Managed (EKS)')
     .with(['AWS', KubernetesEnum.SELF_MANAGED], ['AWS', undefined], () => 'Self-managed')
-    // Digital Ocean
-    .with(['DO', P._], () => 'Managed (DOKS)')
     // Scaleway
     .with(['SCW', P._], () => 'Managed (Kapsule)')
     // Google GCP

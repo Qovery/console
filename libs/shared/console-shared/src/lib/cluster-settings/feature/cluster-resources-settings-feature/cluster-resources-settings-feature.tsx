@@ -30,10 +30,6 @@ export function ClusterResourcesSettingsFeature(props: ClusterResourcesSettingsF
         clusterType: 'MANAGED' as const,
         region: props.clusterRegion || '',
       }))
-      .with('DO', (cloudProvider) => ({
-        cloudProvider,
-        clusterType: 'MANAGED' as const,
-      }))
       .with('GCP', (cloudProvider) => ({
         cloudProvider,
         clusterType: 'MANAGED' as const,

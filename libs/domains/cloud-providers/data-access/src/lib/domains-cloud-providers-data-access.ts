@@ -4,7 +4,6 @@ import {
   CloudProviderApi,
   CloudProviderCredentialsApi,
   type CloudProviderEnum,
-  type DoCredentialsRequest,
   type GcpCredentialsRequest,
   type KubernetesEnum,
   type ScalewayCredentialsRequest,
@@ -30,12 +29,6 @@ type CredentialRequest =
     }
   | {
       organizationId: string
-      cloudProvider: Extract<CloudProviderEnum, 'DO'>
-      payload: DoCredentialsRequest
-      credentialId: string
-    }
-  | {
-      organizationId: string
       cloudProvider: Extract<CloudProviderEnum, 'GCP'>
       payload: GcpCredentialsRequest
       credentialId: string
@@ -54,7 +47,6 @@ export const cloudProviders = createQueryKeys('cloudProviders', {
     async queryFn() {
       const response = await match(cloudProvider)
         .with('AWS', () => cloudProviderApi.listAWSFeatures())
-        .with('DO', () => cloudProviderApi.listDOFeatures())
         .with('SCW', () => cloudProviderApi.listScalewayFeatures())
         .with('GCP', () => cloudProviderApi.listGcpFeatures())
         .exhaustive()
@@ -74,10 +66,6 @@ export const cloudProviders = createQueryKeys('cloudProviders', {
           region: string
         }
       | {
-          cloudProvider: Extract<CloudProviderEnum, 'DO'>
-          clusterType: Extract<KubernetesEnum, 'MANAGED'>
-        }
-      | {
           cloudProvider: Extract<CloudProviderEnum, 'GCP'>
           clusterType: Extract<KubernetesEnum, 'MANAGED'>
         }
@@ -95,10 +83,6 @@ export const cloudProviders = createQueryKeys('cloudProviders', {
           cloudProviderApi.listAWSEKSInstanceType(region)
         )
         .with({ cloudProvider: 'SCW' }, ({ region }) => cloudProviderApi.listScalewayKapsuleInstanceType(region))
-        /*
-         * @deprecated Digital Ocean is not supported anymore (should be remove on the API doc)
-         */
-        .with({ cloudProvider: 'DO' }, () => cloudProviderApi.listDOInstanceType())
         .with({ cloudProvider: 'GCP' }, () => Promise.resolve({ data: { results: [] } }))
         .exhaustive()
       return response.data.results
@@ -118,13 +102,6 @@ export const cloudProviders = createQueryKeys('cloudProviders', {
         })
         .with('GCP', async () => {
           const response = await cloudProviderCredentialsApi.listGcpCredentials(organizationId)
-          return response.data.results
-        })
-        /*
-         * @deprecated Digital Ocean is not supported anymore (should be remove on the API doc)
-         */
-        .with('DO', async () => {
-          const response = await cloudProviderCredentialsApi.listDOCredentials(organizationId)
           return response.data.results
         })
         .exhaustive()
@@ -147,37 +124,22 @@ export const cloudProviders = createQueryKeys('cloudProviders', {
           cloudProvider: Extract<CloudProviderEnum, 'GCP'>
           databaseType: string
         }
-      | {
-          cloudProvider: Extract<CloudProviderEnum, 'DO'>
-          databaseType: string
-          region: string
-        }
   ) => ({
     queryKey: [args.cloudProvider, args.databaseType],
     async queryFn() {
-      return (
-        match(args)
-          .with(
-            { cloudProvider: 'AWS' },
-            async ({ region, databaseType }) =>
-              (await cloudProviderApi.listAWSManagedDatabaseInstanceType(region, databaseType)).data.results
-          )
-          .with(
-            { cloudProvider: 'SCW' },
-            async ({ databaseType }) =>
-              (await cloudProviderApi.listSCWManagedDatabaseInstanceType(databaseType)).data.results
-          )
-          /*
-           * @deprecated Digital Ocean is not supported anymore (should be remove on the API doc)
-           */
-          .with(
-            { cloudProvider: 'DO' },
-            async ({ region, databaseType }) =>
-              (await cloudProviderApi.listDOManagedDatabaseInstanceType(region, databaseType)).data.results
-          )
-          .with({ cloudProvider: 'GCP' }, () => undefined)
-          .exhaustive()
-      )
+      return match(args)
+        .with(
+          { cloudProvider: 'AWS' },
+          async ({ region, databaseType }) =>
+            (await cloudProviderApi.listAWSManagedDatabaseInstanceType(region, databaseType)).data.results
+        )
+        .with(
+          { cloudProvider: 'SCW' },
+          async ({ databaseType }) =>
+            (await cloudProviderApi.listSCWManagedDatabaseInstanceType(databaseType)).data.results
+        )
+        .with({ cloudProvider: 'GCP' }, () => undefined)
+        .exhaustive()
     },
   }),
 })
@@ -195,13 +157,6 @@ export const mutations = {
       })
       .with({ cloudProvider: 'GCP' }, async ({ organizationId, payload }) => {
         const response = await cloudProviderCredentialsApi.createGcpCredentials(organizationId, payload)
-        return response.data
-      })
-      /*
-       * @deprecated Digital Ocean is not supported anymore (should be remove on the API doc)
-       */
-      .with({ cloudProvider: 'DO' }, async ({ organizationId, payload }) => {
-        const response = await cloudProviderCredentialsApi.createDOCredentials(organizationId, payload)
         return response.data
       })
       .exhaustive()
@@ -226,13 +181,6 @@ export const mutations = {
         const response = await cloudProviderCredentialsApi.editGcpCredentials(organizationId, credentialId, payload)
         return response.data
       })
-      /*
-       * @deprecated Digital Ocean is not supported anymore (should be remove on the API doc)
-       */
-      .with({ cloudProvider: 'DO' }, async ({ organizationId, credentialId, payload }) => {
-        const response = await cloudProviderCredentialsApi.editDOCredentials(organizationId, credentialId, payload)
-        return response.data
-      })
       .exhaustive()
 
     return cloudProviderCredential
@@ -249,13 +197,6 @@ export const mutations = {
       })
       .with({ cloudProvider: 'GCP' }, async ({ organizationId, credentialId }) => {
         const response = await cloudProviderCredentialsApi.deleteGcpCredentials(credentialId, organizationId)
-        return response.data
-      })
-      /*
-       * @deprecated Digital Ocean is not supported anymore (should be remove on the API doc)
-       */
-      .with({ cloudProvider: 'DO' }, async ({ organizationId, credentialId }) => {
-        const response = await cloudProviderCredentialsApi.deleteDOCredentials(credentialId, organizationId)
         return response.data
       })
       .exhaustive()

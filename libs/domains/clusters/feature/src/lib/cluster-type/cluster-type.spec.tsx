@@ -11,10 +11,6 @@ describe('ClusterType', () => {
     const { baseElement } = renderWithProviders(<ClusterType cloudProvider="AWS" kubernetes={KubernetesEnum.MANAGED} />)
     expect(baseElement).toMatchSnapshot()
   })
-  it('should render as DOKS', () => {
-    const { baseElement } = renderWithProviders(<ClusterType cloudProvider="DO" />)
-    expect(baseElement).toMatchSnapshot()
-  })
   it('should render as SCW', () => {
     const { baseElement } = renderWithProviders(<ClusterType cloudProvider="SCW" />)
     expect(baseElement).toMatchSnapshot()

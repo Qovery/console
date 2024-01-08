@@ -21,20 +21,17 @@ export interface CrudModalProps {
 export const getOptionsContainerRegistry = (containerRegistry: AvailableContainerRegistryResponse[]) => {
   if (containerRegistry.length > 0) {
     const options = containerRegistry
-      .map(
-        (containerRegistry: AvailableContainerRegistryResponse) =>
-          ContainerRegistryKindEnum.DOCR !== containerRegistry.kind && {
-            label: containerRegistry.kind || '',
-            value: containerRegistry.kind || '',
-            icon: (
-              <Icon
-                name={containerRegistry.kind ? containerRegistryKindToIcon(containerRegistry.kind) : IconEnum.AWS}
-                width="16px"
-                height="16px"
-              />
-            ),
-          }
-      )
+      .map((containerRegistry: AvailableContainerRegistryResponse) => ({
+        label: containerRegistry.kind || '',
+        value: containerRegistry.kind || '',
+        icon: (
+          <Icon
+            name={containerRegistry.kind ? containerRegistryKindToIcon(containerRegistry.kind) : IconEnum.AWS}
+            width="16px"
+            height="16px"
+          />
+        ),
+      }))
       .filter(Boolean)
     return options as Value[]
   } else {

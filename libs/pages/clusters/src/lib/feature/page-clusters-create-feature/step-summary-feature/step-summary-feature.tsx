@@ -40,10 +40,6 @@ export function StepSummaryFeature() {
         clusterType: 'MANAGED' as const,
         region: generalData?.region || '',
       }))
-      .with('DO', (cloudProvider) => ({
-        cloudProvider,
-        clusterType: 'MANAGED' as const,
-      }))
       .with('GCP', (cloudProvider) => ({
         cloudProvider,
         clusterType: 'MANAGED' as const,

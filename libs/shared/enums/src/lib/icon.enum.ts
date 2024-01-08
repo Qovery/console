@@ -12,8 +12,6 @@ export enum IconEnum {
   AWS_GRAY = 'AWS_GRAY',
   SCW = 'SCW',
   SCW_GRAY = 'SCW_GRAY',
-  DO = 'DO',
-  DO_GRAY = 'DO_GRAY',
   GCP = 'GCP',
   GCP_GRAY = 'GCP_GRAY',
   DOCKER = 'DOCKER',

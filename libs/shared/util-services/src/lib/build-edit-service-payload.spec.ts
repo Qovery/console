@@ -186,6 +186,7 @@ describe('testing payload refactoring', () => {
         cronjob: {
           arguments: [],
           scheduled_at: '5 4 * * *',
+          timezone: 'UTC',
         },
       },
       environment: {
@@ -221,6 +222,7 @@ describe('testing payload refactoring', () => {
         cronjob: {
           arguments: [],
           scheduled_at: '5 4 * * *',
+          timezone: 'UTC',
         },
       },
     })

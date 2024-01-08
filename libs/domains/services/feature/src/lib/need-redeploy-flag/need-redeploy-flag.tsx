@@ -4,7 +4,6 @@ import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes
 import { Banner, IconAwesomeEnum } from '@qovery/shared/ui'
 import { useDeployService } from '../hooks/use-deploy-service/use-deploy-service'
 import { useDeploymentStatus } from '../hooks/use-deployment-status/use-deployment-status'
-import { useRedeployService } from '../hooks/use-redeploy-service/use-redeploy-service'
 import { useService } from '../hooks/use-service/use-service'
 
 export function NeedRedeployFlag() {
@@ -21,7 +20,6 @@ export function NeedRedeployFlag() {
     serviceDeploymentStatus?.service_deployment_status ?? ServiceDeploymentStatusEnum.NEVER_DEPLOYED
 
   const { mutate: deployService } = useDeployService({ environmentId })
-  const { mutate: redeployService } = useRedeployService({ environmentId })
 
   if (serviceDeploymentStatusState === ServiceDeploymentStatusEnum.UP_TO_DATE) return null
 
@@ -30,11 +28,7 @@ export function NeedRedeployFlag() {
 
   const mutationDeployService = () => {
     if (service) {
-      if (serviceDeploymentStatusState === ServiceDeploymentStatusEnum.NEVER_DEPLOYED) {
-        deployService({ serviceId: service.id, serviceType: service.serviceType })
-      } else {
-        redeployService({ serviceId: service.id, serviceType: service.serviceType })
-      }
+      deployService({ serviceId: service.id, serviceType: service.serviceType })
       navigate(ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(applicationId))
     }
   }

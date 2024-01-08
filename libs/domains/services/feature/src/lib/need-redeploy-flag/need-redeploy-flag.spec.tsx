@@ -1,15 +1,15 @@
 import { ServiceDeploymentStatusEnum, ServiceTypeEnum, StateEnum } from 'qovery-typescript-axios'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import * as useDeployServiceImport from '../hooks/use-deploy-service/use-deploy-service'
 import * as useDeploymentStatusImport from '../hooks/use-deployment-status/use-deployment-status'
-import * as useRedeployServiceImport from '../hooks/use-redeploy-service/use-redeploy-service'
 import * as useServiceImport from '../hooks/use-service/use-service'
 import NeedRedeployFlag from './need-redeploy-flag'
 
-const useRedeployServiceSpy = jest.spyOn(useRedeployServiceImport, 'useRedeployService') as jest.Mock
+const useDeployServiceSpy = jest.spyOn(useDeployServiceImport, 'useDeployService') as jest.Mock
 
 describe('NeedRedeployFlag', () => {
   beforeEach(() => {
-    useRedeployServiceSpy.mockReturnValue({
+    useDeployServiceSpy.mockReturnValue({
       mutate: jest.fn(),
     })
   })
@@ -80,6 +80,6 @@ describe('NeedRedeployFlag', () => {
 
     debug()
 
-    expect(useRedeployServiceSpy().mutate).toBeCalled()
+    expect(useDeployServiceSpy().mutate).toBeCalled()
   })
 })

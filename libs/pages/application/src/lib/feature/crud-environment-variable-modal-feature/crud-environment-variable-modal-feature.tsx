@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useActionRedeployEnvironment } from '@qovery/domains/environment'
 import { type ServiceType } from '@qovery/domains/services/data-access'
-import { useRedeployService } from '@qovery/domains/services/feature'
+import { useDeployService } from '@qovery/domains/services/feature'
 import {
   useCreateVariable,
   useCreateVariableAlias,
@@ -67,7 +67,7 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
   const { enableAlertClickOutside } = useModal()
   const navigate = useNavigate()
 
-  const { mutate: redeployService } = useRedeployService({ environmentId })
+  const { mutate: deployService } = useDeployService({ environmentId })
   const actionRedeployEnvironment = useActionRedeployEnvironment(projectId, environmentId, false, undefined, () =>
     navigate(ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(applicationId))
   )
@@ -191,7 +191,7 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
             data.scope === APIVariableScopeEnum.APPLICATION ||
             data.scope === APIVariableScopeEnum.HELM
           ) {
-            redeployService({
+            deployService({
               serviceId: props.applicationId,
               serviceType: data.scope,
             })

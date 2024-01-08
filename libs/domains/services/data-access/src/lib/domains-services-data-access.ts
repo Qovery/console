@@ -715,29 +715,6 @@ export const mutations = {
     const response = await mutation()
     return response.data
   },
-  async redeployService({ serviceId, serviceType }: { serviceId: string; serviceType: ServiceType }) {
-    const { mutation } = match(serviceType)
-      .with('APPLICATION', (serviceType) => ({
-        mutation: applicationActionsApi.redeployApplication.bind(applicationActionsApi),
-        serviceType,
-      }))
-      .with('CONTAINER', (serviceType) => ({
-        mutation: containerActionsApi.redeployContainer.bind(containerActionsApi),
-        serviceType,
-      }))
-      .with('DATABASE', (serviceType) => ({
-        mutation: databaseActionsApi.redeployDatabase.bind(databaseActionsApi),
-        serviceType,
-      }))
-      .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', (serviceType) => ({
-        mutation: jobActionsApi.redeployJob.bind(jobActionsApi),
-        serviceType,
-      }))
-      .with('HELM', (serviceType) => ({ mutation: helmActionsApi.redeployHelm.bind(helmActionsApi), serviceType }))
-      .exhaustive()
-    const response = await mutation(serviceId)
-    return response.data
-  },
   async restartService({ serviceId, serviceType }: { serviceId: string; serviceType: ServiceType }) {
     const { mutation } = match(serviceType)
       .with('APPLICATION', (serviceType) => ({
