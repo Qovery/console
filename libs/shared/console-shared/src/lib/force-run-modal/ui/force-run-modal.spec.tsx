@@ -4,7 +4,7 @@ import { lifecycleJobFactoryMock } from '@qovery/shared/factories'
 import ForceRunModal, { type ForceRunModalProps } from './force-run-modal'
 
 const props: ForceRunModalProps = {
-  application: lifecycleJobFactoryMock(1)[0],
+  service: lifecycleJobFactoryMock(1)[0],
   onSubmit: jest.fn(),
   closeModal: jest.fn(),
   isCronJob: false,

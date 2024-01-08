@@ -67,15 +67,11 @@ function MenuManageDeployment({
   environment,
   service,
   environmentLogsLink,
-  organizationId,
-  projectId,
 }: {
   state: StateEnum
   environment: Environment
   service: AnyService
   environmentLogsLink: string
-  organizationId: string
-  projectId: string
 }) {
   const navigate = useNavigate()
   const { openModal, closeModal } = useModal()
@@ -246,19 +242,6 @@ function MenuManageDeployment({
     })
   }
 
-  const forceRunModal = () => {
-    openModal({
-      content: (
-        <ForceRunModalFeature
-          organizationId={organizationId}
-          projectId={projectId}
-          environmentId={service.environment.id}
-          applicationId={service.id}
-        />
-      ),
-    })
-  }
-
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
@@ -296,7 +279,14 @@ function MenuManageDeployment({
           </DropdownMenu.Item>
         )}
         {service.serviceType === 'JOB' && (
-          <DropdownMenu.Item icon={<Icon name={IconAwesomeEnum.PLAY} />} onClick={forceRunModal}>
+          <DropdownMenu.Item
+            icon={<Icon name={IconAwesomeEnum.PLAY} />}
+            onClick={() =>
+              openModal({
+                content: <ForceRunModalFeature service={service} />,
+              })
+            }
+          >
             Force Run
           </DropdownMenu.Item>
         )}
@@ -573,8 +563,6 @@ export function ServiceActionToolbar({ serviceId }: { serviceId: string }) {
         environment={environment}
         service={service}
         environmentLogsLink={environmentLogsLink}
-        organizationId={organizationId}
-        projectId={projectId}
       />
       <Tooltip content="Logs">
         <ActionToolbar.Button onClick={() => navigate(environmentLogsLink + SERVICE_LOGS_URL(service.id))}>

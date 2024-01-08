@@ -46,6 +46,7 @@ import {
   JobDeploymentHistoryApi,
   JobDeploymentRestrictionApi,
   type JobDeploymentRestrictionRequest,
+  type JobForceEvent,
   JobMainCallsApi,
   type JobRequest,
   JobsApi,
@@ -518,6 +519,7 @@ type DeployRequest =
   | {
       serviceId: string
       serviceType: JobType
+      forceEvent?: JobForceEvent
       request?: JobDeployRequest
     }
   | {
@@ -776,8 +778,8 @@ export const mutations = {
         mutation: databaseActionsApi.deployDatabase.bind(databaseActionsApi, serviceId),
         serviceType,
       }))
-      .with({ serviceType: 'JOB' }, ({ serviceId, serviceType, request }) => ({
-        mutation: jobActionsApi.deployJob.bind(jobActionsApi, serviceId, undefined, request),
+      .with({ serviceType: 'JOB' }, ({ serviceId, serviceType, forceEvent, request }) => ({
+        mutation: jobActionsApi.deployJob.bind(jobActionsApi, serviceId, forceEvent, request),
         serviceType,
       }))
       .with({ serviceType: 'HELM' }, ({ serviceId, serviceType, request }) => ({
