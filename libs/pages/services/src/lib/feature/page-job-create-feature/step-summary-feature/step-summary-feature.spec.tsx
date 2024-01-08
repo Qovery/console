@@ -1,11 +1,11 @@
-import { render } from '__tests__/utils/setup-jest'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
+import { renderWithProviders } from '@qovery/shared/util-tests'
 import { JobContainerCreateContext } from '../page-job-create-feature'
 import StepSummaryFeature from './step-summary-feature'
 
 describe('PostFeature', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(
+    const { baseElement } = renderWithProviders(
       <JobContainerCreateContext.Provider
         value={{
           currentStep: 1,

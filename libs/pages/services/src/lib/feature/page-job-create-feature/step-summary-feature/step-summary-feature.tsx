@@ -1,10 +1,8 @@
-import { useQueryClient } from '@tanstack/react-query'
 import { APIVariableScopeEnum, type JobRequest, type VariableImportRequest } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
-import { useDispatch } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
-import { createApplication, postApplicationActionsDeploy } from '@qovery/domains/application'
 import { useContainerRegistry } from '@qovery/domains/organizations/feature'
+import { useCreateService, useDeployService } from '@qovery/domains/services/feature'
 import { useImportVariables } from '@qovery/domains/variables/feature'
 import { type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
 import {
@@ -14,8 +12,6 @@ import {
   type JobResourcesData,
 } from '@qovery/shared/interfaces'
 import {
-  DEPLOYMENT_LOGS_URL,
-  ENVIRONMENT_LOGS_URL,
   SERVICES_JOB_CREATION_CONFIGURE_URL,
   SERVICES_JOB_CREATION_GENERAL_URL,
   SERVICES_JOB_CREATION_RESOURCES_URL,
@@ -26,7 +22,6 @@ import { FunnelFlowBody } from '@qovery/shared/ui'
 import { getGitTokenValue } from '@qovery/shared/util-git'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
-import { type AppDispatch } from '@qovery/state/store'
 import StepSummary from '../../../ui/page-job-create/step-summary/step-summary'
 import { useJobContainerCreateContext } from '../page-job-create-feature'
 
@@ -145,8 +140,8 @@ export function StepSummaryFeature() {
     organizationId,
     containerRegistryId: generalData?.registry,
   })
-
-  const queryClient = useQueryClient()
+  const { mutateAsync: createService } = useCreateService()
+  const { mutate: deployService } = useDeployService({ environmentId })
 
   const gotoGlobalInformations = () => {
     navigate(pathCreate + SERVICES_JOB_CREATION_GENERAL_URL)
@@ -172,70 +167,44 @@ export function StepSummaryFeature() {
       navigate(`${SERVICES_URL(organizationId, projectId, environmentId)}${jobURL}` + SERVICES_JOB_CREATION_GENERAL_URL)
   }, [generalData, navigate, environmentId, organizationId, projectId, jobURL, gotoGlobalInformations])
 
-  const dispatch = useDispatch<AppDispatch>()
-
-  const onSubmit = (withDeploy: boolean) => {
+  const onSubmit = async (withDeploy: boolean) => {
     if (generalData && resourcesData && variableData && configureData) {
       toggleLoading(true, withDeploy)
 
       const jobRequest: JobRequest = prepareJobRequest(generalData, configureData, resourcesData, jobType)
       const variableImportRequest = prepareVariableRequest(variableData)
 
-      dispatch(
-        createApplication({
+      try {
+        const service = await createService({
           environmentId: environmentId,
-          data: jobRequest,
-          serviceType: ServiceTypeEnum.JOB,
-          queryClient,
+          payload: {
+            serviceType: 'JOB',
+            ...jobRequest,
+          },
         })
-      )
-        .unwrap()
-        .then((app) => {
-          if (variableImportRequest) {
-            importVariables({
-              serviceType: ServiceTypeEnum.JOB,
-              serviceId: app.id,
-              variableImportRequest,
-            }).then(() => {
-              toggleLoading(false, withDeploy)
-              if (withDeploy) {
-                dispatch(
-                  postApplicationActionsDeploy({
-                    environmentId,
-                    applicationId: app.id,
-                    serviceType: ServiceTypeEnum.JOB,
-                    callback: () =>
-                      navigate(
-                        ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(app.id)
-                      ),
-                    queryClient,
-                  })
-                )
-              }
-              navigate(SERVICES_URL(organizationId, projectId, environmentId))
-            })
-          } else {
-            if (withDeploy) {
-              dispatch(
-                postApplicationActionsDeploy({
-                  environmentId,
-                  applicationId: app.id,
-                  serviceType: ServiceTypeEnum.JOB,
-                  callback: () =>
-                    navigate(
-                      ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(app.id)
-                    ),
-                  queryClient,
-                })
-              )
-            }
-            navigate(SERVICES_URL(organizationId, projectId, environmentId))
-          }
-        })
-        .catch((e) => console.error(e))
-        .finally(() => {
-          toggleLoading(false, withDeploy)
-        })
+
+        if (variableImportRequest) {
+          importVariables({
+            serviceType: ServiceTypeEnum.JOB,
+            serviceId: service.id,
+            variableImportRequest,
+          })
+        }
+
+        if (withDeploy) {
+          deployService({
+            serviceId: service.id,
+            serviceType: 'APPLICATION',
+          })
+          setLoadingCreateAndDeploy(false)
+        }
+        setLoadingCreate(false)
+        navigate(SERVICES_URL(organizationId, projectId, environmentId))
+      } catch (error) {
+        console.error(error)
+        setLoadingCreateAndDeploy(false)
+        setLoadingCreate(false)
+      }
     }
   }
 

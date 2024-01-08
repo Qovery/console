@@ -119,31 +119,6 @@ export const editApplication = createAsyncThunk(
   }
 )
 
-export const createApplication = createAsyncThunk(
-  'application/create',
-  async (payload: {
-    environmentId: string
-    data: ApplicationRequest | ContainerRequest | JobRequest
-    serviceType: ServiceTypeEnum
-    queryClient: QueryClient
-  }) => {
-    let response
-    if (isContainer(payload.serviceType)) {
-      response = await containersApi.createContainer(payload.environmentId, payload.data as ContainerRequest)
-    } else if (isApplication(payload.serviceType)) {
-      response = await applicationsApi.createApplication(payload.environmentId, payload.data as ApplicationRequest)
-    } else {
-      response = await jobsApi.createJob(payload.environmentId, payload.data as JobRequest)
-    }
-
-    payload.queryClient.invalidateQueries({
-      queryKey: queries.services.list(payload.environmentId).queryKey,
-    })
-
-    return response.data as ApplicationEntity
-  }
-)
-
 export const deleteApplicationAction = createAsyncThunk(
   'applicationActions/delete',
   async (
@@ -256,26 +231,6 @@ export const applicationsSlice = createSlice({
             ...state.joinEnvApplication,
           })
         }
-      })
-      // create application
-      .addCase(createApplication.pending, (state: ApplicationsState) => {
-        state.loadingStatus = 'loading'
-      })
-      .addCase(createApplication.fulfilled, (state: ApplicationsState, action) => {
-        const application = action.payload
-        applicationsAdapter.addOne(state, application)
-        state.error = null
-        state.loadingStatus = 'loaded'
-
-        state.joinEnvApplication = addOneToManyRelation(application.environment?.id, application.id, {
-          ...state.joinEnvApplication,
-        })
-        toast(ToastEnum.SUCCESS, `Application created`)
-      })
-      .addCase(createApplication.rejected, (state: ApplicationsState, action) => {
-        state.loadingStatus = 'error'
-        toastError(action.error)
-        state.error = action.error.message
       })
   },
 })
