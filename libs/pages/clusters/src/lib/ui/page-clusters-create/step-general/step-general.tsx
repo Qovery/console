@@ -6,9 +6,7 @@ import { ClusterCredentialsSettingsFeature, ClusterGeneralSettings } from '@qove
 import { type ClusterGeneralData, type ClusterResourcesData, type Value } from '@qovery/shared/interfaces'
 import { CLUSTERS_URL } from '@qovery/shared/routes'
 import {
-  ButtonLegacy,
-  ButtonLegacySize,
-  ButtonLegacyStyle,
+  Button,
   Callout,
   ExternalLink,
   Icon,
@@ -158,24 +156,18 @@ export function StepGeneral(props: StepGeneralProps) {
         </div>
 
         <div className="flex justify-between">
-          <ButtonLegacy
-            onClick={() => navigate(CLUSTERS_URL(organizationId))}
+          <Button
+            size="lg"
             type="button"
-            className="btn--no-min-w"
-            size={ButtonLegacySize.XLARGE}
-            style={ButtonLegacyStyle.STROKED}
+            variant="surface"
+            color="neutral"
+            onClick={() => navigate(CLUSTERS_URL(organizationId))}
           >
             Cancel
-          </ButtonLegacy>
-          <ButtonLegacy
-            dataTestId="button-submit"
-            type="submit"
-            disabled={!formState.isValid}
-            size={ButtonLegacySize.XLARGE}
-            style={ButtonLegacyStyle.BASIC}
-          >
+          </Button>
+          <Button size="lg" data-testid="button-submit" type="submit" disabled={!formState.isValid}>
             Continue
-          </ButtonLegacy>
+          </Button>
         </div>
       </form>
     </div>
