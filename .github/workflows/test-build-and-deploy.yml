@@ -74,19 +74,14 @@ jobs:
               variables.push(v + '=' + varsFromJSON[v])
             }
             core.setOutput('variables', variables.join('\n'))
-  debug:
-    needs: [env-vars]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Echo variables
-        run: |
-          echo ${{ needs.env-vars.outputs.variables }}
 
   nx-main:
     needs: [env-vars]
     name: Nx Cloud - Main Job
     uses: nrwl/ci/.github/workflows/nx-cloud-main.yml@v0.13.0
     with:
+      environment-variables: |
+        ${{ needs.env-vars.outputs.variables }}
       # NOTE: Here we are using the special `nx-cloud record` command to ensure that any commands we run that do not go through the cloud task runner natively
       # (i.e. anything that starts with `nx run`/`nx run-many`/`nx affected --target`), are still captured in the Nx Cloud UI and Github App comment for
       # easier troubleshooting. See more here: https://nx.dev/nx-cloud/set-up/record-commands#recording-non-nx-commands
@@ -106,6 +101,7 @@ jobs:
       artifacts-name: dist-and-coverage-artifacts
 
   agents:
+    needs: [env-vars]
     name: Nx Cloud - Agents
     uses: nrwl/ci/.github/workflows/nx-cloud-agents.yml@v0.13.0
     with:
