@@ -8,7 +8,7 @@ import {
   EntrypointCmdInputs,
   GeneralContainerSettings,
 } from '@qovery/shared/console-shared'
-import { IconEnum, ServiceTypeEnum, isApplication, isContainer } from '@qovery/shared/enums'
+import { IconEnum, ServiceTypeEnum } from '@qovery/shared/enums'
 import { type ApplicationGeneralData } from '@qovery/shared/interfaces'
 import { SERVICES_URL } from '@qovery/shared/routes'
 import {
@@ -105,11 +105,11 @@ export function StepGeneral(props: StepGeneralProps) {
         />
 
         <div className="border-b border-b-neutral-200 mb-6"></div>
-        {isApplication(watchServiceType) && <CreateGeneralGitApplication />}
+        {watchServiceType === 'APPLICATION' && <CreateGeneralGitApplication />}
 
-        {isContainer(watchServiceType) && <GeneralContainerSettings organization={props.organization} />}
+        {watchServiceType === 'CONTAINER' && <GeneralContainerSettings organization={props.organization} />}
 
-        {(watchBuildMode === BuildModeEnum.DOCKER || isContainer(watchServiceType)) && <EntrypointCmdInputs />}
+        {(watchBuildMode === BuildModeEnum.DOCKER || watchServiceType === 'CONTAINER') && <EntrypointCmdInputs />}
 
         {watchServiceType && (
           <AutoDeploySetting source={watchServiceType === ServiceTypeEnum.CONTAINER ? 'CONTAINER_REGISTRY' : 'GIT'} />

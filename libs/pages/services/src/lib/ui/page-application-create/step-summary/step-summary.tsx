@@ -1,5 +1,5 @@
 import { BuildModeEnum } from 'qovery-typescript-axios'
-import { ProbeTypeEnum, isApplication, isContainer } from '@qovery/shared/enums'
+import { ProbeTypeEnum } from '@qovery/shared/enums'
 import {
   type ApplicationGeneralData,
   type ApplicationResourcesData,
@@ -65,7 +65,7 @@ export function StepSummary({
               <li>
                 Name: <strong className="font-medium">{generalData.name}</strong>
               </li>
-              {isApplication(generalData.serviceType) && (
+              {generalData.serviceType === 'APPLICATION' && (
                 <>
                   <li>
                     Repository: <strong className="font-medium">{generalData.repository}</strong>
@@ -91,7 +91,7 @@ export function StepSummary({
                   )}
                 </>
               )}
-              {isContainer(generalData.serviceType) && (
+              {generalData.serviceType === 'CONTAINER' && (
                 <>
                   <li>
                     Registry: <strong className="font-medium">{selectedRegistryName}</strong>

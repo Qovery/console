@@ -1,26 +1,21 @@
-import { act, getByTestId, render } from '__tests__/utils/setup-jest'
 import { PortProtocolEnum } from 'qovery-typescript-axios'
-import * as storeApplication from '@qovery/domains/application'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import {
   ApplicationContainerCreateContext,
   type ApplicationContainerCreateContextInterface,
 } from '../page-application-create-feature'
 import StepSummaryFeature from './step-summary-feature'
 
-import SpyInstance = jest.SpyInstance
+const mockCreateService = jest.fn()
 
-jest.mock('@qovery/domains/application', () => {
-  return {
-    ...jest.requireActual('@qovery/domains/application'),
-    createApplication: jest.fn(),
-  }
-})
-
-const mockDispatch = jest.fn()
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useDispatch: () => mockDispatch,
+jest.mock('@qovery/domains/services/feature', () => ({
+  useCreateService: () => ({
+    mutateAsync: mockCreateService,
+  }),
+  useDeployService: () => ({
+    mutate: jest.fn(),
+  }),
 }))
 
 const mockContext: Required<ApplicationContainerCreateContextInterface> = {
@@ -50,7 +45,7 @@ const mockContext: Required<ApplicationContainerCreateContextInterface> = {
 
 describe('PageApplicationPostFeature', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(
+    const { baseElement } = renderWithProviders(
       <ApplicationContainerCreateContext.Provider value={mockContext}>
         <StepSummaryFeature />
       </ApplicationContainerCreateContext.Provider>
@@ -59,16 +54,8 @@ describe('PageApplicationPostFeature', () => {
     expect(baseElement).toBeTruthy()
   })
 
-  it('should dispatch createApplication with good payload', async () => {
-    const createApplicationSpy: SpyInstance = jest.spyOn(storeApplication, 'createApplication')
-    mockDispatch.mockImplementation(() => ({
-      unwrap: () =>
-        Promise.resolve({
-          data: {},
-        }),
-    }))
-
-    const { baseElement } = render(
+  it('should create an application with good payload', async () => {
+    const { userEvent } = renderWithProviders(
       <ApplicationContainerCreateContext.Provider
         value={{
           ...mockContext,
@@ -90,15 +77,13 @@ describe('PageApplicationPostFeature', () => {
       </ApplicationContainerCreateContext.Provider>
     )
 
-    const submitButton = getByTestId(baseElement, 'button-create')
+    const submitButton = screen.getByTestId('button-create')
+    await userEvent.click(submitButton)
 
-    await act(() => {
-      submitButton.click()
-    })
-
-    expect(createApplicationSpy).toHaveBeenCalledWith({
+    expect(mockCreateService).toHaveBeenCalledWith({
       environmentId: '',
-      data: {
+      payload: {
+        serviceType: 'APPLICATION',
         name: 'test',
         description: '',
         arguments: undefined,
@@ -114,21 +99,11 @@ describe('PageApplicationPostFeature', () => {
         healthchecks: {},
         auto_deploy: true,
       },
-      serviceType: 'APPLICATION',
-      queryClient: expect.any(Object),
     })
   })
 
-  it('should dispatch createApplication for container with good payload', async () => {
-    const createApplicationSpy: SpyInstance = jest.spyOn(storeApplication, 'createApplication')
-    mockDispatch.mockImplementation(() => ({
-      unwrap: () =>
-        Promise.resolve({
-          data: {},
-        }),
-    }))
-
-    const { baseElement } = render(
+  it('should createn a container with good payload', async () => {
+    const { userEvent } = renderWithProviders(
       <ApplicationContainerCreateContext.Provider
         value={{
           ...mockContext,
@@ -150,15 +125,13 @@ describe('PageApplicationPostFeature', () => {
       </ApplicationContainerCreateContext.Provider>
     )
 
-    const submitButton = getByTestId(baseElement, 'button-create')
+    const submitButton = screen.getByTestId('button-create')
+    await userEvent.click(submitButton)
 
-    await act(() => {
-      submitButton.click()
-    })
-
-    expect(createApplicationSpy).toHaveBeenCalledWith({
+    expect(mockCreateService).toHaveBeenCalledWith({
       environmentId: '',
-      data: {
+      payload: {
+        serviceType: 'CONTAINER',
         name: 'test',
         description: '',
         healthchecks: {},
@@ -174,8 +147,6 @@ describe('PageApplicationPostFeature', () => {
         entrypoint: '/',
         auto_deploy: true,
       },
-      serviceType: 'CONTAINER',
-      queryClient: expect.any(Object),
     })
   })
 })

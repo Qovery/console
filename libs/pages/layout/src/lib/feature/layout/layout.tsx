@@ -1,13 +1,10 @@
 import { type PropsWithChildren, memo, useEffect } from 'react'
-import { useDispatch } from 'react-redux'
 import { redirect, useParams } from 'react-router-dom'
-import { fetchApplications } from '@qovery/domains/application'
 import { useClusters } from '@qovery/domains/clusters/feature'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { useOrganization, useOrganizations } from '@qovery/domains/organizations/feature'
 import { ORGANIZATION_URL } from '@qovery/shared/routes'
 import { StatusWebSocketListener } from '@qovery/shared/util-web-sockets'
-import { type AppDispatch } from '@qovery/state/store'
 import LayoutPage from '../../ui/layout-page/layout-page'
 import { setCurrentOrganizationIdOnStorage, setCurrentProjectIdOnStorage } from '../../utils/utils'
 
@@ -21,8 +18,6 @@ const StatusWebSocketListenerMemo = memo(StatusWebSocketListener)
 export function Layout(props: PropsWithChildren<LayoutProps>) {
   const { children, topBar } = props
   const { organizationId = '', projectId = '', environmentId = '', versionId } = useParams()
-
-  const dispatch = useDispatch<AppDispatch>()
 
   const { data: clusters = [] } = useClusters({ organizationId })
   const { data: organizations = [] } = useOrganizations()
@@ -48,12 +43,6 @@ export function Layout(props: PropsWithChildren<LayoutProps>) {
       fetchOrganizationForQoveryTeam()
     }
   }, [organizationId, organizations, fetchOrganization])
-
-  useEffect(() => {
-    if (environmentId) {
-      dispatch(fetchApplications({ environmentId }))
-    }
-  }, [environmentId, dispatch])
 
   useEffect(() => {
     setCurrentOrganizationIdOnStorage(organizationId)

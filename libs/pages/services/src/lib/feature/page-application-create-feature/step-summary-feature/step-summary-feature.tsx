@@ -1,4 +1,3 @@
-import { useQueryClient } from '@tanstack/react-query'
 import {
   type ApplicationRequest,
   BuildModeEnum,
@@ -6,14 +5,10 @@ import {
   type ContainerRequest,
 } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
-import { useDispatch } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
-import { createApplication, postApplicationActionsDeploy } from '@qovery/domains/application'
 import { useContainerRegistry } from '@qovery/domains/organizations/feature'
-import { ServiceTypeEnum, isApplication } from '@qovery/shared/enums'
+import { useCreateService, useDeployService } from '@qovery/domains/services/feature'
 import {
-  DEPLOYMENT_LOGS_URL,
-  ENVIRONMENT_LOGS_URL,
   SERVICES_APPLICATION_CREATION_URL,
   SERVICES_CREATION_GENERAL_URL,
   SERVICES_CREATION_HEALTHCHECKS_URL,
@@ -25,7 +20,6 @@ import { FunnelFlowBody } from '@qovery/shared/ui'
 import { getGitTokenValue } from '@qovery/shared/util-git'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
-import { type AppDispatch } from '@qovery/state/store'
 import StepSummary from '../../../ui/page-application-create/step-summary/step-summary'
 import { steps, useApplicationContainerCreateContext } from '../page-application-create-feature'
 
@@ -41,7 +35,8 @@ export function StepSummaryFeature() {
     organizationId,
     containerRegistryId: generalData?.registry,
   })
-  const queryClient = useQueryClient()
+  const { mutateAsync: createService } = useCreateService()
+  const { mutate: deployService } = useDeployService({ environmentId })
 
   const gotoGlobalInformations = () => {
     navigate(pathCreate + SERVICES_CREATION_GENERAL_URL)
@@ -67,9 +62,7 @@ export function StepSummaryFeature() {
     !generalData?.name && gotoGlobalInformations()
   }, [generalData, navigate, environmentId, organizationId, projectId])
 
-  const dispatch = useDispatch<AppDispatch>()
-
-  const onSubmit = (withDeploy: boolean) => {
+  const onSubmit = async (withDeploy: boolean) => {
     if (generalData && portData && resourcesData) {
       if (withDeploy) setLoadingCreateAndDeploy(true)
       else setLoadingCreate(true)
@@ -79,7 +72,7 @@ export function StepSummaryFeature() {
 
       const gitToken = getGitTokenValue(generalData?.provider ?? '')
 
-      if (isApplication(generalData.serviceType)) {
+      if (generalData.serviceType === 'APPLICATION') {
         const applicationRequest: ApplicationRequest = {
           name: generalData.name,
           description: generalData.description || '',
@@ -114,37 +107,29 @@ export function StepSummaryFeature() {
           applicationRequest.buildpack_language = generalData.buildpack_language as BuildPackLanguageEnum
         }
 
-        dispatch(
-          createApplication({
+        try {
+          const service = await createService({
             environmentId: environmentId,
-            data: applicationRequest,
-            serviceType: ServiceTypeEnum.APPLICATION,
-            queryClient,
+            payload: {
+              serviceType: 'APPLICATION',
+              ...applicationRequest,
+            },
           })
-        )
-          .unwrap()
-          .then((app) => {
-            if (withDeploy) {
-              dispatch(
-                postApplicationActionsDeploy({
-                  environmentId,
-                  applicationId: app.id,
-                  serviceType: ServiceTypeEnum.APPLICATION,
-                  callback: () =>
-                    navigate(
-                      ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(app.id)
-                    ),
-                  queryClient,
-                })
-              )
-            }
-            navigate(SERVICES_URL(organizationId, projectId, environmentId))
-          })
-          .catch((e) => console.error(e))
-          .finally(() => {
-            if (withDeploy) setLoadingCreateAndDeploy(false)
-            else setLoadingCreate(false)
-          })
+
+          if (withDeploy) {
+            deployService({
+              serviceId: service.id,
+              serviceType: 'APPLICATION',
+            })
+            setLoadingCreateAndDeploy(false)
+          }
+          setLoadingCreate(false)
+          navigate(SERVICES_URL(organizationId, projectId, environmentId))
+        } catch (error) {
+          console.error(error)
+          setLoadingCreateAndDeploy(false)
+          setLoadingCreate(false)
+        }
       } else {
         const containerRequest: ContainerRequest = {
           name: generalData.name,
@@ -170,37 +155,29 @@ export function StepSummaryFeature() {
           auto_deploy: generalData.auto_deploy,
         }
 
-        dispatch(
-          createApplication({
+        try {
+          const service = await createService({
             environmentId: environmentId,
-            data: containerRequest,
-            serviceType: ServiceTypeEnum.CONTAINER,
-            queryClient,
+            payload: {
+              serviceType: 'CONTAINER',
+              ...containerRequest,
+            },
           })
-        )
-          .unwrap()
-          .then((app) => {
-            if (withDeploy) {
-              dispatch(
-                postApplicationActionsDeploy({
-                  environmentId,
-                  applicationId: app.id,
-                  serviceType: ServiceTypeEnum.CONTAINER,
-                  callback: () =>
-                    navigate(
-                      ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(app.id)
-                    ),
-                  queryClient,
-                })
-              )
-            }
-            navigate(SERVICES_URL(organizationId, projectId, environmentId))
-          })
-          .catch((e) => console.error(e))
-          .finally(() => {
-            if (withDeploy) setLoadingCreateAndDeploy(false)
-            else setLoadingCreate(false)
-          })
+
+          if (withDeploy) {
+            deployService({
+              serviceId: service.id,
+              serviceType: 'CONTAINER',
+            })
+            setLoadingCreateAndDeploy(false)
+          }
+          setLoadingCreate(false)
+          navigate(SERVICES_URL(organizationId, projectId, environmentId))
+        } catch (error) {
+          console.error(error)
+          setLoadingCreateAndDeploy(false)
+          setLoadingCreate(false)
+        }
       }
     }
   }
