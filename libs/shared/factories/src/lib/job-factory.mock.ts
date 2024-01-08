@@ -70,6 +70,7 @@ export const cronjobFactoryMock = (howMany: number, withContainer = false): Job[
           scheduled_at: '0 0 * * *',
           entrypoint: '/',
           arguments: [],
+          timezone: 'UTC',
         },
       },
       registry: {
