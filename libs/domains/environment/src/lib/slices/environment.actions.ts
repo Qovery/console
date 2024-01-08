@@ -20,7 +20,7 @@ export const useActionRedeployEnvironment = (
 
   return useMutation(
     async () => {
-      const response = await environmentActionApi.redeployEnvironment(environmentId)
+      const response = await environmentActionApi.deployEnvironment(environmentId)
       return response.data
     },
     {

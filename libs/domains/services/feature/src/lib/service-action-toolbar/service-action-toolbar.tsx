@@ -53,7 +53,6 @@ import {
 import { useDeleteService } from '../hooks/use-delete-service/use-delete-service'
 import { useDeployService } from '../hooks/use-deploy-service/use-deploy-service'
 import { useDeploymentStatus } from '../hooks/use-deployment-status/use-deployment-status'
-import { useRedeployService } from '../hooks/use-redeploy-service/use-redeploy-service'
 import { useRestartService } from '../hooks/use-restart-service/use-restart-service'
 import { useRunningStatus } from '../hooks/use-running-status/use-running-status'
 import { useService } from '../hooks/use-service/use-service'
@@ -79,7 +78,6 @@ function MenuManageDeployment({
 
   const { data: runningState } = useRunningStatus({ environmentId: environment.id, serviceId: service.id })
   const { mutate: deployService } = useDeployService({ environmentId: environment.id })
-  const { mutate: redeployService } = useRedeployService({ environmentId: environment.id })
   const { mutate: restartService } = useRestartService({ environmentId: environment.id })
   const { mutate: stopService } = useStopService({ environmentId: environment.id })
   const { mutate: cancelBuild } = useActionCancelEnvironment(
@@ -98,7 +96,7 @@ function MenuManageDeployment({
       title: 'Confirm redeploy',
       description: 'To confirm the redeploy of your service, please type the name:',
       name: service.name,
-      action: () => redeployService({ serviceId: service.id, serviceType: service.serviceType }),
+      action: () => deployService({ serviceId: service.id, serviceType: service.serviceType }),
     })
   }
 

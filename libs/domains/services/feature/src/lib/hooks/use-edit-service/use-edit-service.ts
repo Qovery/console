@@ -1,11 +1,11 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { mutations } from '@qovery/domains/services/data-access'
 import { queries } from '@qovery/state/util-queries'
-import { useRedeployService } from '../use-redeploy-service/use-redeploy-service'
+import { useDeployService } from '../use-deploy-service/use-deploy-service'
 
 export function useEditService({ environmentId, silently = false }: { environmentId: string; silently?: boolean }) {
   const queryClient = useQueryClient()
-  const { mutate: redeployService } = useRedeployService({ environmentId })
+  const { mutate: deployService } = useDeployService({ environmentId })
 
   return useMutation(mutations.editService, {
     onSuccess(response, { payload, serviceId }) {
@@ -26,7 +26,7 @@ export function useEditService({ environmentId, silently = false }: { environmen
                 title: 'Service updated',
                 description: 'You must update to apply the settings',
                 callback() {
-                  redeployService({ serviceId, serviceType: payload.serviceType })
+                  deployService({ serviceId, serviceType: payload.serviceType })
                 },
                 labelAction: 'Update',
               }

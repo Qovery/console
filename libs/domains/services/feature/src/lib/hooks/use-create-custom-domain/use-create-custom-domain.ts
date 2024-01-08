@@ -1,11 +1,11 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { mutations } from '@qovery/domains/services/data-access'
 import { queries } from '@qovery/state/util-queries'
-import { useRedeployService } from '../use-redeploy-service/use-redeploy-service'
+import { useDeployService } from '../use-deploy-service/use-deploy-service'
 
 export function useCreateCustomDomain({ environmentId }: { environmentId: string }) {
   const queryClient = useQueryClient()
-  const { mutate: redeployService } = useRedeployService({ environmentId })
+  const { mutate: deployService } = useDeployService({ environmentId })
 
   return useMutation(mutations.createCustomDomain, {
     onSuccess(_, { serviceType, serviceId }) {
@@ -23,7 +23,7 @@ export function useCreateCustomDomain({ environmentId }: { environmentId: string
           title: 'Your domain has been created',
           description: 'Service must be redeployed to apply the settings update',
           callback() {
-            redeployService({ serviceId, serviceType })
+            deployService({ serviceId, serviceType })
           },
           labelAction: 'Update',
         }
