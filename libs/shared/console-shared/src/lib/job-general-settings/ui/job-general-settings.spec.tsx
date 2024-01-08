@@ -1,27 +1,9 @@
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { BuildModeEnum, GitProviderEnum } from 'qovery-typescript-axios'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
-import { cronjobFactoryMock } from '@qovery/shared/factories'
 import { type JobGeneralData } from '@qovery/shared/interfaces'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import JobGeneralSettings from './job-general-settings'
-
-const mockJobApplication = cronjobFactoryMock(1)[0]
-jest.mock('@qovery/domains/application', () => {
-  return {
-    ...jest.requireActual('@qovery/domains/application'),
-    editApplication: jest.fn(),
-    getApplicationsState: () => ({
-      loadingStatus: 'loaded',
-      ids: [mockJobApplication.id],
-      entities: {
-        [mockJobApplication.id]: mockJobApplication,
-      },
-      error: null,
-    }),
-    selectApplicationById: () => mockJobApplication,
-  }
-})
 
 describe('JobGeneralSettings', () => {
   let defaultValues: JobGeneralData
