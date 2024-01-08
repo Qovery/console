@@ -1,18 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ClusterType should render as DOKS 1`] = `
-<body>
-  <div>
-    <span
-      class="inline-flex items-center shrink-0 font-medium border text-sm py-1 px-2 rounded border-neutral-250 text-neutral-350 dark:border-neutral-350"
-      data-accent-color="neutral"
-    >
-      Managed (DOKS)
-    </span>
-  </div>
-</body>
-`;
-
 exports[`ClusterType should render as EKS 1`] = `
 <body>
   <div>

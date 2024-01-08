@@ -39,11 +39,6 @@ export function SettingsResourcesInstanceTypesFeature({
         cloudProvider,
         databaseType,
       }))
-      .with('DO', (cloudProvider) => ({
-        cloudProvider,
-        databaseType,
-        region: cluster?.region || '',
-      }))
       .exhaustive()
   )
 

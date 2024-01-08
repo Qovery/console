@@ -1,6 +1,7 @@
 import { CloudProviderEnum, type ClusterCredentials } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
+import { match } from 'ts-pattern'
 import {
   useCreateCloudProviderCredential,
   useDeleteCloudProviderCredential,
@@ -21,20 +22,17 @@ export const handleSubmit = (data: FieldValues, cloudProvider: CloudProviderEnum
     name: data['name'],
   }
 
-  if (cloudProvider === CloudProviderEnum.AWS) {
-    return {
-      cloudProvider,
+  return match(cloudProvider)
+    .with(CloudProviderEnum.AWS, (cp) => ({
+      cloudProvider: cp,
       payload: {
         ...currentData,
         access_key_id: data['access_key_id'],
         secret_access_key: data['secret_access_key'],
       },
-    }
-  }
-
-  if (cloudProvider === CloudProviderEnum.SCW) {
-    return {
-      cloudProvider,
+    }))
+    .with(CloudProviderEnum.SCW, (cp) => ({
+      cloudProvider: cp,
       payload: {
         ...currentData,
         scaleway_access_key: data['scaleway_access_key'],
@@ -42,20 +40,15 @@ export const handleSubmit = (data: FieldValues, cloudProvider: CloudProviderEnum
         scaleway_project_id: data['scaleway_project_id'],
         scaleway_organization_id: data['scaleway_organization_id'],
       },
-    }
-  }
-
-  if (cloudProvider === CloudProviderEnum.GCP) {
-    return {
-      cloudProvider,
+    }))
+    .with(CloudProviderEnum.GCP, (cp) => ({
+      cloudProvider: cp,
       payload: {
         ...currentData,
         gcp_credentials: data['gcp_credentials'],
       },
-    }
-  }
-
-  return { cloudProvider, payload: currentData }
+    }))
+    .exhaustive()
 }
 
 export function CreateEditCredentialsModalFeature(props: CreateEditCredentialsModalFeatureProps) {
