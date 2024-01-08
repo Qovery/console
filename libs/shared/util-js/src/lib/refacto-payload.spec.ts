@@ -1,15 +1,6 @@
-import {
-  CloudProviderEnum,
-  ContainerRegistryKindEnum,
-  OrganizationCustomRoleClusterPermission,
-  StorageTypeEnum,
-} from 'qovery-typescript-axios'
-import { type ContainerApplicationEntity } from '@qovery/shared/interfaces'
+import { CloudProviderEnum, OrganizationCustomRoleClusterPermission } from 'qovery-typescript-axios'
 import {
   refactoClusterPayload,
-  refactoContainerApplicationPayload,
-  refactoGitApplicationPayload,
-  refactoJobPayload,
   refactoOrganizationCustomRolePayload,
   refactoOrganizationPayload,
   refactoPayload,
@@ -26,112 +17,6 @@ describe('testing payload refactoring', () => {
     }
 
     expect(refactoPayload(response)).toEqual({ name: 'hello', description: 'test' })
-  })
-
-  it('should remove useless application values', () => {
-    const response = {
-      id: '1',
-      created_at: '',
-      updated_at: '',
-      storage: [
-        {
-          id: '1',
-          mount_point: '',
-          size: 4,
-          type: StorageTypeEnum.FAST_SSD,
-        },
-      ],
-      maximum_cpu: 10,
-      maximum_memory: 10,
-      git_repository: {
-        url: '',
-        branch: '',
-        root_path: '',
-      },
-      name: 'hello-2',
-      test: 'test',
-    }
-
-    expect(refactoGitApplicationPayload(response)).toEqual({
-      storage: [
-        {
-          id: '1',
-          mount_point: '',
-          size: 4,
-          type: StorageTypeEnum.FAST_SSD,
-        },
-      ],
-      git_repository: {
-        url: '',
-        branch: '',
-        root_path: '',
-      },
-      healthchecks: {},
-      name: 'hello-2',
-    })
-  })
-
-  it('should remove useless container values', () => {
-    const response: Partial<ContainerApplicationEntity> = {
-      id: '1',
-      created_at: '',
-      updated_at: '',
-      environment: {
-        id: '1',
-      },
-      storage: [
-        {
-          id: '1',
-          mount_point: '',
-          size: 4,
-          type: StorageTypeEnum.FAST_SSD,
-        },
-      ],
-      maximum_cpu: 10,
-      maximum_memory: 10,
-      name: 'hello-2',
-      description: 'test',
-      entrypoint: '/',
-      cpu: 3000,
-      auto_preview: false,
-      tag: '1',
-      ports: [],
-      arguments: [],
-      memory: 32,
-      max_running_instances: 12,
-      min_running_instances: 1,
-      registry: {
-        id: '1',
-        name: 'name',
-        url: 'url',
-        kind: ContainerRegistryKindEnum.DOCKER_HUB,
-      },
-      image_name: 'image_name',
-    }
-
-    expect(refactoContainerApplicationPayload(response)).toEqual({
-      name: 'hello-2',
-      description: 'test',
-      storage: [
-        {
-          id: '1',
-          mount_point: '',
-          size: 4,
-          type: StorageTypeEnum.FAST_SSD,
-        },
-      ],
-      ports: [],
-      cpu: 3000,
-      memory: 32,
-      max_running_instances: 12,
-      min_running_instances: 1,
-      registry_id: '1',
-      image_name: 'image_name',
-      tag: '1',
-      arguments: [],
-      entrypoint: '/',
-      auto_preview: false,
-    })
   })
 
   it('should remove useless organization values', () => {
@@ -214,65 +99,6 @@ describe('testing payload refactoring', () => {
       region: 'est',
       cloud_provider: CloudProviderEnum.AWS,
       production: false,
-    })
-  })
-
-  it('should remove useless job values', () => {
-    const job = {
-      name: 'my-job',
-      description: '',
-      cpu: 500,
-      memory: 512,
-      auto_preview: true,
-      max_duration_seconds: 300,
-      port: null,
-      max_nb_restart: 0,
-      source: {
-        docker: {
-          dockerfile_path: 'Dockerfile',
-          git_repository: {
-            url: 'https://github.com',
-            branch: 'master',
-            root_path: '/',
-          },
-        },
-      },
-      schedule: {
-        cronjob: {
-          arguments: [],
-          scheduled_at: '5 4 * * *',
-        },
-      },
-    }
-
-    const result = refactoJobPayload(job)
-
-    expect(result).toEqual({
-      name: 'my-job',
-      description: '',
-      cpu: 500,
-      memory: 512,
-      auto_preview: true,
-      max_duration_seconds: 300,
-      port: null,
-      max_nb_restart: 0,
-      healthchecks: {},
-      source: {
-        docker: {
-          dockerfile_path: 'Dockerfile',
-          git_repository: {
-            url: 'https://github.com',
-            branch: 'master',
-            root_path: '/',
-          },
-        },
-      },
-      schedule: {
-        cronjob: {
-          arguments: [],
-          scheduled_at: '5 4 * * *',
-        },
-      },
     })
   })
 })

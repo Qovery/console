@@ -1,6 +1,6 @@
 import { BuildModeEnum, type Organization } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
-import { IconEnum, type JobType, ServiceTypeEnum, isApplication, isContainer } from '@qovery/shared/enums'
+import { IconEnum, type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
 import { type JobGeneralData } from '@qovery/shared/interfaces'
 import { BlockContent, Icon, InputSelect, InputText } from '@qovery/shared/ui'
 import CreateGeneralGitApplication from '../../create-general-git-application/ui/create-general-git-application'
@@ -53,7 +53,7 @@ export function JobGeneralSettings(props: JobGeneralSettingProps) {
 
       {watchServiceType && (
         <>
-          {isApplication(watchServiceType) &&
+          {watchServiceType === 'APPLICATION' &&
             (props.isEdition ? (
               <div data-testid="git-fields">
                 <EditGitRepositorySettingsFeature />
@@ -105,7 +105,7 @@ export function JobGeneralSettings(props: JobGeneralSettingProps) {
               <CreateGeneralGitApplication buildModeDisabled={true} />
             ))}
 
-          {isContainer(watchServiceType) &&
+          {watchServiceType === 'CONTAINER' &&
             (props.isEdition ? (
               <div data-testid="container-fields">
                 <BlockContent title="Container Settings">

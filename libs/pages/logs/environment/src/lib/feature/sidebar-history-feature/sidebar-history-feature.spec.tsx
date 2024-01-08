@@ -1,4 +1,4 @@
-import { render } from '__tests__/utils/setup-jest'
+import { renderWithProviders } from '@qovery/shared/util-tests'
 import SidebarHistoryFeature, { type SidebarHistoryFeatureProps } from './sidebar-history-feature'
 
 describe('SidebarHistoryFeature', () => {
@@ -8,7 +8,7 @@ describe('SidebarHistoryFeature', () => {
   }
 
   it('should render successfully', () => {
-    const { baseElement } = render(<SidebarHistoryFeature {...props} />)
+    const { baseElement } = renderWithProviders(<SidebarHistoryFeature {...props} />)
     expect(baseElement).toBeTruthy()
   })
 })

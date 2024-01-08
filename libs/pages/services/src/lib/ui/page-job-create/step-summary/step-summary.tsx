@@ -1,5 +1,5 @@
 import { BuildModeEnum } from 'qovery-typescript-axios'
-import { type JobType, ServiceTypeEnum, isCronJob } from '@qovery/shared/enums'
+import { type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
 import {
   type FlowVariableData,
   type JobConfigureData,
@@ -39,7 +39,7 @@ export function StepSummary(props: StepSummaryProps) {
       <div className="mb-10">
         <div className="flex justify-between mb-2 items-center">
           <h3 className="text-neutral-400 text-lg">
-            Ready to create your {isCronJob(props.jobType) ? 'Cron' : 'Lifecycle'} job
+            Ready to create your {props.jobType === 'CRON_JOB' ? 'Cron' : 'Lifecycle'} job
           </h3>
         </div>
         <p className="text-xs text-neutral-400 mb-2">

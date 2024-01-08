@@ -5,8 +5,9 @@ import {
 } from 'qovery-typescript-axios'
 import { type MouseEvent, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
+import { type Container } from '@qovery/domains/services/data-access'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
-import { type ContainerApplicationEntity, type DeploymentService } from '@qovery/shared/interfaces'
+import { type DeploymentService } from '@qovery/shared/interfaces'
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import {
   APPLICATION_GENERAL_URL,
@@ -179,17 +180,12 @@ export function TableRowDeployment({
             {(data as DeploymentService | DeploymentHistoryApplication)?.commit && (
               <TagCommit commitId={(data as DeploymentService | DeploymentHistoryApplication)?.commit?.git_commit_id} />
             )}
-            {(data as ContainerApplicationEntity).image_name && (
+            {(data as Container).image_name && (
               <Badge size="xs" className="truncate max-w-[200px]">
                 <span className="block truncate">
-                  <Tooltip
-                    side="left"
-                    content={`${(data as ContainerApplicationEntity).image_name}:${
-                      (data as ContainerApplicationEntity).tag
-                    }`}
-                  >
+                  <Tooltip side="left" content={`${(data as Container).image_name}:${(data as Container).tag}`}>
                     <span>
-                      {(data as ContainerApplicationEntity).image_name}:{(data as ContainerApplicationEntity).tag}
+                      {(data as Container).image_name}:{(data as Container).tag}
                     </span>
                   </Tooltip>
                 </span>
