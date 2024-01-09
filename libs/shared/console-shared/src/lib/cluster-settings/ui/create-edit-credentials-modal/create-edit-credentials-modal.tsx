@@ -227,9 +227,14 @@ export function CreateEditCredentialsModal(props: CreateEditCredentialsModalProp
         href={match(props.cloudProvider)
           .with(
             'AWS',
-            () => 'https://hub.qovery.com/docs/using-qovery/configuration/cloud-service-provider/amazon-web-services'
+            () =>
+              'https://hub.qovery.com/docs/getting-started/install-qovery/aws/cluster-managed-by-qovery/create-credentials'
           )
-          .with('SCW', () => 'https://hub.qovery.com/docs/using-qovery/configuration/cloud-service-provider/scaleway')
+          .with(
+            'SCW',
+            () =>
+              'https://hub.qovery.com/docs/getting-started/install-qovery/scaleway/cluster-managed-by-qovery/create-credentials'
+          )
           .with(
             'GCP',
             () =>
