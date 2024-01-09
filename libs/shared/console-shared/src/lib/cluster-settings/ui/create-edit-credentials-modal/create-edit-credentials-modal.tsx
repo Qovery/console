@@ -194,17 +194,7 @@ export function CreateEditCredentialsModal(props: CreateEditCredentialsModalProp
             <div className="mb-5">
               {!field.value ? (
                 <div {...getRootProps()}>
-                  <input
-                    className="hidden"
-                    {...getInputProps({
-                      name: field.name,
-                      value: field.value,
-                      onChange: (e) => {
-                        console.log(e)
-                        field.onChange(e.target.files?.[0])
-                      },
-                    })}
-                  />
+                  <input className="hidden" {...getInputProps()} />
                   <Dropzone typeFile=".json" isDragActive={isDragActive} />
                 </div>
               ) : fileDetails ? (
