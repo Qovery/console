@@ -124,10 +124,14 @@ describe('CreateEditCredentialsModalFeature', () => {
     const inputCredentialsJson = screen.getByTestId('input-credentials-json')
 
     await userEvent.clear(inputName)
-    await userEvent.clear(inputCredentialsJson)
-
     await userEvent.type(inputName, 'test')
-    await userEvent.type(inputCredentialsJson, 'credentials')
+
+    const value = '{"json":"json"}'
+    const file = new File([value], 'values.json', {
+      type: 'application/json',
+    })
+
+    await userEvent.upload(inputCredentialsJson, file)
 
     const submitButton = screen.getByTestId('submit-button')
     await userEvent.click(submitButton)
@@ -138,7 +142,7 @@ describe('CreateEditCredentialsModalFeature', () => {
       ...handleSubmit(
         {
           name: 'test',
-          gcp_credentials: 'credentials',
+          gcp_credentials: value,
         },
         CloudProviderEnum.GCP
       ),
