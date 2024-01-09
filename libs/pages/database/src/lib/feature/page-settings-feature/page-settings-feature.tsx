@@ -13,7 +13,7 @@ import PageSettings from '../../ui/page-settings/page-settings'
 
 export function PageSettingsFeature() {
   const { organizationId = '', projectId = '', environmentId = '', databaseId = '' } = useParams()
-  const { data: database } = useService({ serviceId: databaseId })
+  const { data: database } = useService({ environmentId, serviceId: databaseId })
 
   useDocumentTitle('Database - Settings')
 
