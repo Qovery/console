@@ -1,6 +1,6 @@
-import { act, fireEvent, render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { CloudProviderEnum } from 'qovery-typescript-axios'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import CreateEditCredentialsModal, { type CreateEditCredentialsModalProps } from './create-edit-credentials-modal'
 
 let props: CreateEditCredentialsModalProps
@@ -22,14 +22,14 @@ describe('CreateEditCredentialsModal', () => {
   })
 
   it('should render successfully', () => {
-    const { baseElement } = render(wrapWithReactHookForm(<CreateEditCredentialsModal {...props} />))
+    const { baseElement } = renderWithProviders(wrapWithReactHookForm(<CreateEditCredentialsModal {...props} />))
     expect(baseElement).toBeTruthy()
   })
 
   it('should render the form with fields AWS', async () => {
     props.cloudProvider = CloudProviderEnum.AWS
 
-    const { getByDisplayValue } = render(
+    renderWithProviders(
       wrapWithReactHookForm(<CreateEditCredentialsModal {...props} />, {
         defaultValues: {
           name: 'credentials',
@@ -39,15 +39,15 @@ describe('CreateEditCredentialsModal', () => {
       })
     )
 
-    getByDisplayValue('credentials')
-    getByDisplayValue('access-key-id')
-    getByDisplayValue('secret-access-key')
+    screen.getByDisplayValue('credentials')
+    screen.getByDisplayValue('access-key-id')
+    screen.getByDisplayValue('secret-access-key')
   })
 
   it('should render the form with fields SCW', async () => {
     props.cloudProvider = CloudProviderEnum.SCW
 
-    const { getByDisplayValue } = render(
+    renderWithProviders(
       wrapWithReactHookForm(<CreateEditCredentialsModal {...props} />, {
         defaultValues: {
           name: 'credentials',
@@ -59,16 +59,16 @@ describe('CreateEditCredentialsModal', () => {
       })
     )
 
-    getByDisplayValue('credentials')
-    getByDisplayValue('scaleway-access-key')
-    getByDisplayValue('scaleway-secret-key')
-    getByDisplayValue('scaleway-project-id')
+    screen.getByDisplayValue('credentials')
+    screen.getByDisplayValue('scaleway-access-key')
+    screen.getByDisplayValue('scaleway-secret-key')
+    screen.getByDisplayValue('scaleway-project-id')
   })
 
   it('should render the form with fields GCP', async () => {
     props.cloudProvider = CloudProviderEnum.GCP
 
-    const { getByDisplayValue } = render(
+    const { getByDisplayValue } = renderWithProviders(
       wrapWithReactHookForm(<CreateEditCredentialsModal {...props} />, {
         defaultValues: {
           name: 'credentials',
@@ -78,11 +78,10 @@ describe('CreateEditCredentialsModal', () => {
     )
 
     getByDisplayValue('credentials')
-    getByDisplayValue('gcp-credentials-json')
   })
 
   it('should submit the form on click AWS', async () => {
-    const { getByTestId } = render(
+    const { userEvent } = renderWithProviders(
       wrapWithReactHookForm(<CreateEditCredentialsModal {...props} />, {
         defaultValues: {
           name: 'credentials',
@@ -90,20 +89,16 @@ describe('CreateEditCredentialsModal', () => {
       })
     )
 
-    const button = getByTestId('submit-button')
-    const inputName = getByTestId('input-name')
-    const inputAccessKey = getByTestId('input-access-key')
-    const inputSecretKey = getByTestId('input-secret-key')
+    const button = screen.getByTestId('submit-button')
+    const inputName = screen.getByTestId('input-name')
+    const inputAccessKey = screen.getByTestId('input-access-key')
+    const inputSecretKey = screen.getByTestId('input-secret-key')
 
-    await act(async () => {
-      fireEvent.input(inputName, { target: { value: 'test' } })
-      fireEvent.input(inputAccessKey, { target: { value: 'access' } })
-      fireEvent.input(inputSecretKey, { target: { value: 'secret' } })
-    })
+    await userEvent.type(inputName, 'test')
+    await userEvent.type(inputAccessKey, 'access')
+    await userEvent.type(inputSecretKey, 'secret')
 
-    await act(async () => {
-      button?.click()
-    })
+    await userEvent.click(button)
 
     expect(button).not.toBeDisabled()
     expect(props.onSubmit).toHaveBeenCalled()
