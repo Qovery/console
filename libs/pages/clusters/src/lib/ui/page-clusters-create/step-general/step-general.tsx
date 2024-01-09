@@ -79,8 +79,17 @@ export function StepGeneral(props: StepGeneralProps) {
                     <Icon name={IconAwesomeEnum.TRIANGLE_EXCLAMATION} />
                   </Callout.Icon>
                   <Callout.Text className="text-xs">
-                    GCP integration is beta, please report any bugs and keep an eye on your cluster costs just in case.{' '}
+                    GCP integration is beta, keep an eye on your cluster costs and report any bugs and/or weird
+                    behavior.
                     <ExternalLink
+                      className="flex mt-1"
+                      href="https://cloud.google.com/billing/docs/how-to/budgets"
+                      size="xs"
+                    >
+                      Setup budget alerts
+                    </ExternalLink>
+                    <ExternalLink
+                      className="flex mt-1"
                       href="https://discuss.qovery.com/t/new-feature-google-cloud-platform-gcp-beta-support/2307"
                       size="xs"
                     >
