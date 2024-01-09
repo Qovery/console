@@ -9,7 +9,10 @@ import {
   ButtonLegacy,
   ButtonLegacySize,
   ButtonLegacyStyle,
+  Callout,
+  ExternalLink,
   Icon,
+  IconAwesomeEnum,
   IconFlag,
   InputSelect,
   LoaderSpinner,
@@ -26,7 +29,7 @@ export interface StepGeneralProps {
 
 export function StepGeneral(props: StepGeneralProps) {
   const { onSubmit, cloudProviders = [], currentCloudProvider, setResourcesData } = props
-  const { control, formState } = useFormContext<ClusterGeneralData>()
+  const { control, formState, watch } = useFormContext<ClusterGeneralData>()
   const { organizationId = '' } = useParams()
   const navigate = useNavigate()
 
@@ -70,6 +73,31 @@ export function StepGeneral(props: StepGeneralProps) {
           <h4 className="mb-3 text-neutral-400 text-sm">Provider credentials</h4>
           {cloudProviders.length > 0 ? (
             <>
+              {watch('cloud_provider') === CloudProviderEnum.GCP && (
+                <Callout.Root color="yellow" className="mb-2">
+                  <Callout.Icon>
+                    <Icon name={IconAwesomeEnum.TRIANGLE_EXCLAMATION} />
+                  </Callout.Icon>
+                  <Callout.Text className="text-xs">
+                    GCP integration is beta, keep an eye on your cluster costs and report any bugs and/or weird
+                    behavior.
+                    <ExternalLink
+                      className="flex mt-1"
+                      href="https://cloud.google.com/billing/docs/how-to/budgets"
+                      size="xs"
+                    >
+                      Setup budget alerts
+                    </ExternalLink>
+                    <ExternalLink
+                      className="flex mt-1"
+                      href="https://discuss.qovery.com/t/new-feature-google-cloud-platform-gcp-beta-support/2307"
+                      size="xs"
+                    >
+                      More details
+                    </ExternalLink>
+                  </Callout.Text>
+                </Callout.Root>
+              )}
               <Controller
                 name="cloud_provider"
                 control={control}

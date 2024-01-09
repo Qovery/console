@@ -38,7 +38,7 @@ export const useClusterContainerCreateContext = () => {
   return clusterContainerCreateContext
 }
 
-export const steps = (cloudProvider?: CloudProviderEnum, clusterType?: string) => {
+export const steps = (cloudProvider: CloudProviderEnum = 'AWS', clusterType?: string) => {
   return match(cloudProvider)
     .with('SCW', () => [
       { title: 'Create new cluster', key: 'general' },
