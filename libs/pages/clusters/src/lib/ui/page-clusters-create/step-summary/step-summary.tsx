@@ -7,17 +7,7 @@ import {
   type ClusterRemoteData,
   type ClusterResourcesData,
 } from '@qovery/shared/interfaces'
-import {
-  ButtonIcon,
-  ButtonIconStyle,
-  ButtonLegacy,
-  ButtonLegacySize,
-  ButtonLegacyStyle,
-  Callout,
-  ExternalLink,
-  Icon,
-  IconAwesomeEnum,
-} from '@qovery/shared/ui'
+import { Button, ButtonIcon, ButtonIconStyle, Callout, ExternalLink, Icon, IconAwesomeEnum } from '@qovery/shared/ui'
 import { trimId } from '@qovery/shared/util-js'
 
 export interface StepSummaryProps {
@@ -257,35 +247,28 @@ export function StepSummary(props: StepSummaryProps) {
         )}
 
         <div className="flex justify-between mt-10">
-          <ButtonLegacy
-            onClick={props.onPrevious}
-            className="btn--no-min-w"
-            type="button"
-            size={ButtonLegacySize.XLARGE}
-            style={ButtonLegacyStyle.STROKED}
-          >
+          <Button onClick={props.onPrevious} type="button" size="lg" color="neutral" variant="surface">
             Back
-          </ButtonLegacy>
+          </Button>
           <div className="flex gap-2">
-            <ButtonLegacy
-              dataTestId="button-create"
+            <Button
+              data-testid="button-create"
               loading={props.isLoadingCreate}
               onClick={() => props.onSubmit(false)}
-              size={ButtonLegacySize.XLARGE}
-              style={ButtonLegacyStyle.STROKED}
-              className="btn--no-min-w"
+              size="lg"
+              color="neutral"
+              variant="surface"
             >
               Create
-            </ButtonLegacy>
-            <ButtonLegacy
-              dataTestId="button-create-deploy"
+            </Button>
+            <Button
+              data-testid="button-create-deploy"
               loading={props.isLoadingCreateAndDeploy}
               onClick={() => props.onSubmit(true)}
-              size={ButtonLegacySize.XLARGE}
-              style={ButtonLegacyStyle.BASIC}
+              size="lg"
             >
               Create and install
-            </ButtonLegacy>
+            </Button>
           </div>
         </div>
       </div>
