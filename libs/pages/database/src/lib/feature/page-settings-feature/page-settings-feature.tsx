@@ -1,4 +1,5 @@
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
+import { useService } from '@qovery/domains/services/feature'
 import {
   DATABASE_SETTINGS_DANGER_ZONE_URL,
   DATABASE_SETTINGS_GENERAL_URL,
@@ -12,8 +13,11 @@ import PageSettings from '../../ui/page-settings/page-settings'
 
 export function PageSettingsFeature() {
   const { organizationId = '', projectId = '', environmentId = '', databaseId = '' } = useParams()
+  const { data: database } = useService({ environmentId, serviceId: databaseId })
 
-  useDocumentTitle('Application - Settings')
+  useDocumentTitle('Database - Settings')
+
+  if (!database) return null
 
   const pathSettings = `${DATABASE_URL(organizationId, projectId, environmentId, databaseId)}${DATABASE_SETTINGS_URL}`
 
