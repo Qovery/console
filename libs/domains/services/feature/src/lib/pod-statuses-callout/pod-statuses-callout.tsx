@@ -79,6 +79,7 @@ export function PodStatusesCallout({ environmentId, serviceId }: PodStatusesCall
               type="button"
               color="neutral"
               variant="outline"
+              className="mt-2"
               onClick={() =>
                 navigate(
                   APPLICATION_URL(organizationId, projectId, environmentId, serviceId) +
