@@ -1,7 +1,9 @@
 import { type ClusterInstanceTypeResponseListResultsInner } from 'qovery-typescript-axios'
+import { match } from 'ts-pattern'
 import {
   type ClusterFeaturesData,
   type ClusterGeneralData,
+  type ClusterKubeconfigData,
   type ClusterRemoteData,
   type ClusterResourcesData,
 } from '@qovery/shared/interfaces'
@@ -22,11 +24,13 @@ export interface StepSummaryProps {
   onSubmit: (withDeploy: boolean) => void
   onPrevious: () => void
   generalData: ClusterGeneralData
+  kubeconfigData?: ClusterKubeconfigData
   resourcesData: ClusterResourcesData
   featuresData?: ClusterFeaturesData
   remoteData?: ClusterRemoteData
   goToFeatures: () => void
   goToResources: () => void
+  goToKubeconfig: () => void
   goToGeneral: () => void
   goToRemote: () => void
   isLoadingCreate: boolean
@@ -61,26 +65,28 @@ export function StepSummary(props: StepSummaryProps) {
       </div>
 
       <div className="mb-10">
-        <Callout.Root color="yellow" className="mb-5">
-          <Callout.Icon>
-            <Icon name={IconAwesomeEnum.TRIANGLE_EXCLAMATION} />
-          </Callout.Icon>
-          <Callout.Text>
-            <Callout.TextHeading>Qovery manages this resource for you</Callout.TextHeading>
-            <Callout.TextDescription className="text-xs">
-              Use exclusively the Qovery console to update the resources managed by Qovery on your cloud account.
-              <br /> Do not manually update or upgrade them on the cloud provider console, otherwise you will risk a
-              drift in the configuration.
-              <ExternalLink
-                className="ml-0.5"
-                size="xs"
-                href="https://hub.qovery.com/docs/useful-resources/faq/#how-do-you-support-new-kubernetes-version"
-              >
-                See more details
-              </ExternalLink>
-            </Callout.TextDescription>
-          </Callout.Text>
-        </Callout.Root>
+        {props.generalData.installation_type === 'MANAGED' && (
+          <Callout.Root color="yellow" className="mb-5">
+            <Callout.Icon>
+              <Icon name={IconAwesomeEnum.TRIANGLE_EXCLAMATION} />
+            </Callout.Icon>
+            <Callout.Text>
+              <Callout.TextHeading>Qovery manages this resource for you</Callout.TextHeading>
+              <Callout.TextDescription className="text-xs">
+                Use exclusively the Qovery console to update the resources managed by Qovery on your cloud account.
+                <br /> Do not manually update or upgrade them on the cloud provider console, otherwise you will risk a
+                drift in the configuration.
+                <ExternalLink
+                  className="ml-0.5"
+                  size="xs"
+                  href="https://hub.qovery.com/docs/useful-resources/faq/#how-do-you-support-new-kubernetes-version"
+                >
+                  See more details
+                </ExternalLink>
+              </Callout.TextDescription>
+            </Callout.Text>
+          </Callout.Root>
+        )}
         <div
           data-testid="summary-general"
           className="flex p-4 w-full border rounded border-neutral-250 bg-neutral-100 mb-2"
@@ -89,6 +95,15 @@ export function StepSummary(props: StepSummaryProps) {
           <div className="flex-grow mr-2">
             <div className="text-sm text-neutral-400 font-bold mb-2">General information</div>
             <ul className="text-neutral-350 text-sm list-none">
+              <li>
+                Installation type:{' '}
+                <strong className="font-medium">
+                  {match(props.generalData.installation_type)
+                    .with('MANAGED', () => 'Managed')
+                    .with('SELF_MANAGED', () => 'Self-Managed')
+                    .exhaustive()}
+                </strong>
+              </li>
               <li>
                 Cluster name: <strong className="font-medium">{props.generalData.name}</strong>
               </li>
@@ -117,44 +132,72 @@ export function StepSummary(props: StepSummaryProps) {
           />
         </div>
 
-        {props.generalData.cloud_provider !== 'GCP' && (
-          <div
-            data-testid="summary-resources"
-            className="flex p-4 w-full border rounded border-neutral-250 bg-neutral-100 mb-2"
-          >
-            <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
-            <div className="flex-grow mr-2">
-              <div className="text-sm text-neutral-400 font-bold mb-2">Resources</div>
-              <ul className="text-neutral-350 text-sm list-none">
-                <li>
-                  Cluster type: <strong className="font-medium">{props.resourcesData.cluster_type}</strong>
-                </li>
-                <li>
-                  Instance type:{' '}
-                  <strong className="font-medium">
-                    {props.detailInstanceType?.name} ({props.detailInstanceType?.cpu}CPU -{' '}
-                    {props.detailInstanceType?.ram_in_gb}GB RAM - {props.detailInstanceType?.architecture})
-                  </strong>
-                </li>
-                <li>
-                  Disk size: <strong className="font-medium">{props.resourcesData.disk_size} GB</strong>
-                </li>
-                <li>
-                  Nodes:{' '}
-                  <strong className="font-medium">
-                    {props.resourcesData.nodes[0]} min - {props.resourcesData.nodes[1]} max
-                  </strong>
-                </li>
-              </ul>
+        {match(props.generalData)
+          .with(
+            { installation_type: 'MANAGED', cloud_provider: 'AWS' },
+            { installation_type: 'MANAGED', cloud_provider: 'SCW' },
+            () => (
+              <div
+                data-testid="summary-resources"
+                className="flex p-4 w-full border rounded border-neutral-250 bg-neutral-100 mb-2"
+              >
+                <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
+                <div className="flex-grow mr-2">
+                  <div className="text-sm text-neutral-400 font-bold mb-2">Resources</div>
+                  <ul className="text-neutral-350 text-sm list-none">
+                    <li>
+                      Cluster type: <strong className="font-medium">{props.resourcesData.cluster_type}</strong>
+                    </li>
+                    <li>
+                      Instance type:{' '}
+                      <strong className="font-medium">
+                        {props.detailInstanceType?.name} ({props.detailInstanceType?.cpu}CPU -{' '}
+                        {props.detailInstanceType?.ram_in_gb}GB RAM - {props.detailInstanceType?.architecture})
+                      </strong>
+                    </li>
+                    <li>
+                      Disk size: <strong className="font-medium">{props.resourcesData.disk_size} GB</strong>
+                    </li>
+                    <li>
+                      Nodes:{' '}
+                      <strong className="font-medium">
+                        {props.resourcesData.nodes[0]} min - {props.resourcesData.nodes[1]} max
+                      </strong>
+                    </li>
+                  </ul>
+                </div>
+                <ButtonIcon
+                  onClick={props.goToResources}
+                  icon={IconAwesomeEnum.WHEEL}
+                  style={ButtonIconStyle.FLAT}
+                  className="text-neutral-400 hover:text-neutral-400"
+                />
+              </div>
+            )
+          )
+          .with({ installation_type: 'SELF_MANAGED' }, () => (
+            <div
+              data-testid="summary-kubeconfig"
+              className="flex p-4 w-full border rounded border-neutral-250 bg-neutral-100 mb-2"
+            >
+              <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
+              <div className="flex-grow mr-2">
+                <div className="text-sm text-neutral-400 font-bold mb-2">Kubeconfig</div>
+                <ul className="text-neutral-350 text-sm list-none">
+                  <li>
+                    Kubeconfig: <strong className="font-medium">{props.kubeconfigData?.file_name}</strong>
+                  </li>
+                </ul>
+              </div>
+              <ButtonIcon
+                onClick={props.goToKubeconfig}
+                icon={IconAwesomeEnum.WHEEL}
+                style={ButtonIconStyle.FLAT}
+                className="text-neutral-400 hover:text-neutral-400"
+              />
             </div>
-            <ButtonIcon
-              onClick={props.goToResources}
-              icon={IconAwesomeEnum.WHEEL}
-              style={ButtonIconStyle.FLAT}
-              className="text-neutral-400 hover:text-neutral-400"
-            />
-          </div>
-        )}
+          ))
+          .otherwise(() => null)}
 
         {props.remoteData && props.remoteData.ssh_key.length > 0 && (
           <div

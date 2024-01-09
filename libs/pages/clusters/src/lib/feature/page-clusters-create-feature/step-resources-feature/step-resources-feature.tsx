@@ -44,10 +44,8 @@ export function StepResourcesFeature() {
   )
 
   useEffect(() => {
-    setCurrentStep(
-      steps(generalData?.cloud_provider, resourcesData?.cluster_type).findIndex((step) => step.key === 'resources') + 1
-    )
-  }, [setCurrentStep, generalData?.cloud_provider, resourcesData?.cluster_type])
+    setCurrentStep(steps(generalData, resourcesData?.cluster_type).findIndex((step) => step.key === 'resources') + 1)
+  }, [setCurrentStep, generalData?.cloud_provider, generalData?.installation_type, resourcesData?.cluster_type])
 
   const methods = useForm<ClusterResourcesData>({
     defaultValues: resourcesData,

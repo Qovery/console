@@ -6,6 +6,7 @@ import { ClusterCredentialsSettingsFeature, ClusterGeneralSettings } from '@qove
 import { type ClusterGeneralData, type ClusterResourcesData, type Value } from '@qovery/shared/interfaces'
 import { CLUSTERS_URL } from '@qovery/shared/routes'
 import {
+  BlockContent,
   Button,
   Callout,
   ExternalLink,
@@ -14,6 +15,7 @@ import {
   IconFlag,
   InputSelect,
   LoaderSpinner,
+  RadioGroup,
 } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { defaultResourcesData } from '../../../feature/page-clusters-create-feature/page-clusters-create-feature'
@@ -66,6 +68,44 @@ export function StepGeneral(props: StepGeneralProps) {
         <div className="mb-10">
           <h4 className="mb-4 text-neutral-400 text-sm">General</h4>
           <ClusterGeneralSettings />
+        </div>
+        <div className="text-sm mb-10">
+          <Controller
+            name="installation_type"
+            control={control}
+            rules={{
+              required: 'Please select an installation type.',
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <BlockContent title="Installation type">
+                <RadioGroup.Root className="flex flex-col gap-4" defaultValue={field.value} onChange={field.onChange}>
+                  <label className="flex gap-3">
+                    <div>
+                      <RadioGroup.Item value="MANAGED" />
+                    </div>
+                    <div>
+                      <span className="text-neutral-400 font-medium">Qovery Managed</span>
+                      <p className="text-neutral-350">
+                        Qovery will install and manage the Kubernetes cluster and the underlying infrastructure on your
+                        cloud provider account.
+                      </p>
+                    </div>
+                  </label>
+                  <label className="flex gap-3">
+                    <div>
+                      <RadioGroup.Item value="SELF_MANAGED" />
+                    </div>
+                    <div>
+                      <span className="text-neutral-400 font-medium">Self-Managed (BETA)</span>
+                      <p className="text-neutral-350">
+                        You will manage the infrastructure, including any update/upgrade.
+                      </p>
+                    </div>
+                  </label>
+                </RadioGroup.Root>
+              </BlockContent>
+            )}
+          />
         </div>
         <div className="mb-10">
           <h4 className="mb-3 text-neutral-400 text-sm">Provider credentials</h4>

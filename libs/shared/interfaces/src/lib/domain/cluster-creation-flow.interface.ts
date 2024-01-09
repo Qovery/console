@@ -8,6 +8,12 @@ export interface ClusterGeneralData {
   region: string
   credentials: string
   credentials_name: string
+  installation_type: 'MANAGED' | 'SELF_MANAGED'
+}
+
+export interface ClusterKubeconfigData {
+  file_name: string
+  file_content: string
 }
 
 export interface ClusterResourcesData {

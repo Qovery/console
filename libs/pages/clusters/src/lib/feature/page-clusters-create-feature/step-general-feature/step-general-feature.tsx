@@ -1,9 +1,11 @@
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
+import { match } from 'ts-pattern'
 import { useCloudProviderCredentials, useCloudProviders } from '@qovery/domains/cloud-providers/feature'
 import { type ClusterGeneralData } from '@qovery/shared/interfaces'
 import {
+  CLUSTERS_CREATION_KUBECONFIG_URL,
   CLUSTERS_CREATION_RESOURCES_URL,
   CLUSTERS_CREATION_SUMMARY_URL,
   CLUSTERS_CREATION_URL,
@@ -20,7 +22,7 @@ export function StepGeneralFeature() {
   const navigate = useNavigate()
   const { organizationId = '' } = useParams()
   const methods = useForm<ClusterGeneralData>({
-    defaultValues: generalData,
+    defaultValues: { installation_type: 'MANAGED', ...generalData },
     mode: 'onChange',
   })
 
@@ -64,11 +66,12 @@ export function StepGeneralFeature() {
 
       setGeneralData(data)
       const pathCreate = `${CLUSTERS_URL(organizationId)}${CLUSTERS_CREATION_URL}`
-      if (data['cloud_provider'] === 'GCP') {
-        navigate(pathCreate + CLUSTERS_CREATION_SUMMARY_URL)
-      } else {
-        navigate(pathCreate + CLUSTERS_CREATION_RESOURCES_URL)
-      }
+      match(data)
+        .with({ installation_type: 'SELF_MANAGED' }, () => navigate(pathCreate + CLUSTERS_CREATION_KUBECONFIG_URL))
+        .with({ installation_type: 'MANAGED', cloud_provider: 'GCP' }, () =>
+          navigate(pathCreate + CLUSTERS_CREATION_SUMMARY_URL)
+        )
+        .otherwise(() => navigate(pathCreate + CLUSTERS_CREATION_RESOURCES_URL))
     }
   })
 
