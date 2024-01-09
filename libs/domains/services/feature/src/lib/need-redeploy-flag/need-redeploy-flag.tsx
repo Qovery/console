@@ -7,19 +7,18 @@ import { useDeploymentStatus } from '../hooks/use-deployment-status/use-deployme
 import { useService } from '../hooks/use-service/use-service'
 
 export function NeedRedeployFlag() {
-  const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
+  const { organizationId = '', projectId = '', environmentId = '', applicationId = '', databaseId = '' } = useParams()
   const navigate = useNavigate()
 
-  const { data: service } = useService({ serviceId: applicationId })
+  const { data: service } = useService({ environmentId, serviceId: applicationId || databaseId })
   const { data: serviceDeploymentStatus } = useDeploymentStatus({
     environmentId,
     serviceId: service?.id,
   })
+  const { mutate: deployService } = useDeployService({ environmentId })
 
   const serviceDeploymentStatusState =
     serviceDeploymentStatus?.service_deployment_status ?? ServiceDeploymentStatusEnum.NEVER_DEPLOYED
-
-  const { mutate: deployService } = useDeployService({ environmentId })
 
   if (serviceDeploymentStatusState === ServiceDeploymentStatusEnum.UP_TO_DATE) return null
 
@@ -29,7 +28,7 @@ export function NeedRedeployFlag() {
   const mutationDeployService = () => {
     if (service) {
       deployService({ serviceId: service.id, serviceType: service.serviceType })
-      navigate(ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(applicationId))
+      navigate(ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(service.id))
     }
   }
 
