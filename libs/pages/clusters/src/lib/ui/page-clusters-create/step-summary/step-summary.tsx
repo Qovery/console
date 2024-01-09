@@ -251,24 +251,41 @@ export function StepSummary(props: StepSummaryProps) {
             Back
           </Button>
           <div className="flex gap-2">
-            <Button
-              data-testid="button-create"
-              loading={props.isLoadingCreate}
-              onClick={() => props.onSubmit(false)}
-              size="lg"
-              color="neutral"
-              variant="surface"
-            >
-              Create
-            </Button>
-            <Button
-              data-testid="button-create-deploy"
-              loading={props.isLoadingCreateAndDeploy}
-              onClick={() => props.onSubmit(true)}
-              size="lg"
-            >
-              Create and install
-            </Button>
+            {props.generalData.installation_type === 'MANAGED' ? (
+              <>
+                <Button
+                  data-testid="button-create"
+                  loading={props.isLoadingCreate}
+                  onClick={() => props.onSubmit(false)}
+                  size="lg"
+                  color="neutral"
+                  variant="surface"
+                >
+                  Create
+                </Button>
+                <Button
+                  data-testid="button-create-deploy"
+                  loading={props.isLoadingCreateAndDeploy}
+                  onClick={() => props.onSubmit(true)}
+                  size="lg"
+                >
+                  Create and install
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  data-testid="button-create"
+                  loading={props.isLoadingCreate}
+                  onClick={() => props.onSubmit(false)}
+                  size="lg"
+                  color="brand"
+                  variant="solid"
+                >
+                  Create
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </div>

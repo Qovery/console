@@ -90,6 +90,28 @@ export function StepSummaryFeature() {
   }, [pathCreate, generalData, navigate, organizationId])
 
   const onSubmit = async (withDeploy: boolean) => {
+    if (generalData && generalData.installation_type === 'SELF_MANAGED' && kubeconfigData) {
+      try {
+        await createCluster({
+          organizationId,
+          clusterRequest: {
+            name: generalData.name,
+            description: generalData.description,
+            region: generalData.region,
+            cloud_provider: generalData.cloud_provider,
+            kubernetes: 'SELF_MANAGED',
+            production: true,
+            ssh_keys: [],
+            kubeconfig: kubeconfigData.file_content,
+            features: [],
+          },
+        })
+        navigate(CLUSTERS_URL(organizationId))
+      } catch (e) {
+        console.error(e)
+      }
+      return
+    }
     if (generalData && resourcesData) {
       const formatFeatures =
         featuresData &&
