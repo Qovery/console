@@ -1,4 +1,4 @@
-import { type CloudProviderEnum, KubernetesEnum } from 'qovery-typescript-axios'
+import { KubernetesEnum } from 'qovery-typescript-axios'
 import { createContext, useContext, useState } from 'react'
 import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
@@ -38,7 +38,7 @@ export const useClusterContainerCreateContext = () => {
   return clusterContainerCreateContext
 }
 
-export const steps = (cloudProvider?: CloudProviderEnum, clusterType?: string) => {
+export const steps = (cloudProvider = 'AWS', clusterType?: string) => {
   return match(cloudProvider)
     .with('SCW', () => [
       { title: 'Create new cluster', key: 'general' },
