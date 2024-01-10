@@ -27,6 +27,7 @@ export function StepValuesOverrideArgumentsFeature() {
           url: buildGitRepoUrl(gitToken?.type ?? generalData.provider ?? '', generalData.repository),
           branch: generalData.branch,
           root_path: generalData.root_path,
+          git_token_id: gitToken?.id,
         },
       }
     })
