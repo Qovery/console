@@ -25,6 +25,7 @@ import {
   isUpdateAvailable,
 } from '@qovery/shared/util-js'
 import { ClusterDeleteModal } from '../cluster-delete-modal/cluster-delete-modal'
+import { ClusterInstallationGuideModal } from '../cluster-installation-guide-modal/cluster-installation-guide-modal'
 import { useDeployCluster } from '../hooks/use-deploy-cluster/use-deploy-cluster'
 import { useDownloadKubeconfig } from '../hooks/use-download-kubeconfig/use-download-kubeconfig'
 import { useStopCluster } from '../hooks/use-stop-cluster/use-stop-cluster'
@@ -128,7 +129,7 @@ function MenuOtherActions({
   organizationId: string
 }) {
   const navigate = useNavigate()
-  const { openModal } = useModal()
+  const { openModal, closeModal } = useModal()
   const [, copyToClipboard] = useCopyToClipboard()
   const { mutate: downloadKubeconfig } = useDownloadKubeconfig()
 
@@ -139,6 +140,13 @@ function MenuOtherActions({
   }
 
   const canDelete = clusterStatus.status && isDeleteAvailable(clusterStatus.status)
+
+  const mutationInstallationGuide = () =>
+    openModal({
+      content: (
+        <ClusterInstallationGuideModal organizationId={organizationId} clusterId={cluster.id} onClose={closeModal} />
+      ),
+    })
 
   return (
     <DropdownMenu.Root>
@@ -174,6 +182,15 @@ function MenuOtherActions({
         >
           Get Kubeconfig
         </DropdownMenu.Item>
+        {cluster.kubernetes === 'SELF_MANAGED' && (
+          <DropdownMenu.Item
+            key="3"
+            icon={<Icon name={IconAwesomeEnum.CIRCLE_INFO} />}
+            onClick={mutationInstallationGuide}
+          >
+            Installation guide
+          </DropdownMenu.Item>
+        )}
         {canDelete && (
           <>
             <DropdownMenu.Separator />
