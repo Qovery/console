@@ -42,7 +42,12 @@ function MenuManageDeployment({
   const { mutate: deployCluster } = useDeployCluster()
   const { mutate: stopCluster } = useStopCluster()
 
-  if (!clusterStatus.status || !isUpdateAvailable(clusterStatus.status)) {
+  if (
+    !clusterStatus.status ||
+    (!isDeployAvailable(clusterStatus?.status) &&
+      !isDeleteAvailable(clusterStatus?.status) &&
+      !isUpdateAvailable(clusterStatus?.status))
+  ) {
     return null
   }
 
@@ -80,17 +85,17 @@ function MenuManageDeployment({
 
   const entries: ReactNode[] = [
     isDeployAvailable(clusterStatus.status) && (
-      <DropdownMenu.Item icon={<Icon name={IconAwesomeEnum.PLAY} />} onClick={mutationDeploy}>
+      <DropdownMenu.Item key="0" icon={<Icon name={IconAwesomeEnum.PLAY} />} onClick={mutationDeploy}>
         {clusterStatus.is_deployed ? 'Deploy' : 'Install'}
       </DropdownMenu.Item>
     ),
     isRedeployAvailable(clusterStatus.status) && (
-      <DropdownMenu.Item icon={<Icon name={IconAwesomeEnum.ROTATE_RIGHT} />} onClick={mutationUpdate}>
+      <DropdownMenu.Item key="1" icon={<Icon name={IconAwesomeEnum.ROTATE_RIGHT} />} onClick={mutationUpdate}>
         Update
       </DropdownMenu.Item>
     ),
     cluster.cloud_provider !== 'GCP' && isStopAvailable(clusterStatus.status) && (
-      <DropdownMenu.Item icon={<Icon name={IconAwesomeEnum.CIRCLE_STOP} />} onClick={mutationStop}>
+      <DropdownMenu.Item key="2" icon={<Icon name={IconAwesomeEnum.CIRCLE_STOP} />} onClick={mutationStop}>
         Stop
       </DropdownMenu.Item>
     ),
