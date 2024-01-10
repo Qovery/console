@@ -2,7 +2,6 @@ import { type DatabaseConfiguration, DatabaseModeEnum, KubernetesEnum } from 'qo
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
-import { cloudProviders } from '@qovery/domains/cloud-providers/data-access'
 import { useCluster } from '@qovery/domains/clusters/feature'
 import { useFetchDatabaseConfiguration, useFetchEnvironment } from '@qovery/domains/environment'
 import { type Value } from '@qovery/shared/interfaces'
