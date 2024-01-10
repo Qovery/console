@@ -7,6 +7,7 @@ import {
   type CreditCardRequest,
   type GitProviderEnum,
   type GitTokenRequest,
+  GithubAppApi,
   HelmRepositoriesApi,
   type HelmRepositoryRequest,
   type InviteMemberRequest,
@@ -20,6 +21,7 @@ import {
   type OrganizationCustomRoleCreateRequest,
   type OrganizationCustomRoleUpdateRequest,
   type OrganizationEditRequest,
+  type OrganizationGithubAppConnectRequest,
   OrganizationMainCallsApi,
   type OrganizationRequest,
   OrganizationWebhookApi,
@@ -37,6 +39,7 @@ const webhookApi = new OrganizationWebhookApi()
 const billingApi = new BillingApi()
 const customRolesApi = new OrganizationCustomRoleApi()
 const membersApi = new MembersApi()
+const githubAppApi = new GithubAppApi()
 
 export const organizations = createQueryKeys('organizations', {
   list: {
@@ -507,6 +510,20 @@ export const mutations = {
       organizationId,
       refactoOrganizationPayload(organizationRequest)
     )
+    return response.data
+  },
+  async connectGithubApp({
+    organizationId,
+    appConnectRequest,
+  }: {
+    organizationId: string
+    appConnectRequest: OrganizationGithubAppConnectRequest
+  }) {
+    const response = await githubAppApi.organizationGithubAppConnect(organizationId, appConnectRequest)
+    return response.data
+  },
+  async disconnectGithubApp({ organizationId, force }: { organizationId: string; force?: boolean }) {
+    const response = await githubAppApi.organizationGithubAppDisconnect(organizationId, force)
     return response.data
   },
 }

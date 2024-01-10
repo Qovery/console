@@ -17,16 +17,6 @@ jest.mock('react-router-dom', () => ({
   useNavigate: () => mockNavigate,
 }))
 
-jest.mock('@qovery/domains/organization', () => {
-  return {
-    ...jest.requireActual('@qovery/domains/organization'),
-    fetchCloudProvider: () => ({
-      loading: 'loaded',
-      items: [],
-    }),
-  }
-})
-
 const ContextWrapper = (props: { children: ReactNode }) => {
   return (
     <ClusterContainerCreateContext.Provider

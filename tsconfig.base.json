@@ -23,7 +23,6 @@
       "@qovery/domains/environments/data-access": ["libs/domains/environments/data-access/src/index.ts"],
       "@qovery/domains/environments/feature": ["libs/domains/environments/feature/src/index.ts"],
       "@qovery/domains/event": ["libs/domains/event/src/index.ts"],
-      "@qovery/domains/organization": ["libs/domains/organization/src/index.ts"],
       "@qovery/domains/organizations/data-access": ["libs/domains/organizations/data-access/src/index.ts"],
       "@qovery/domains/organizations/feature": ["libs/domains/organizations/feature/src/index.ts"],
       "@qovery/domains/projects/data-access": ["libs/domains/projects/data-access/src/index.ts"],

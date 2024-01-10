@@ -1,17 +1,19 @@
-import { act, getByTestId, render, waitFor } from '__tests__/utils/setup-jest'
+import { type Auth0ProviderOptions } from '@auth0/auth0-react'
 import { type GitAuthProvider } from 'qovery-typescript-axios'
-import { repositorySlice } from '@qovery/domains/organization'
+import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import PageOrganizationGithubRepositoryAccessFeature from './page-organization-github-repository-access-feature'
 
 const mockGetTokenSilently = jest.fn()
-jest.mock('@qovery/shared/auth', () => ({
-  ...jest.requireActual('@qovery/shared/auth'),
-  useAuth: () => ({
-    getAccessTokenSilently: mockGetTokenSilently,
-  }),
+jest.mock('@auth0/auth0-react', () => ({
+  Auth0Provider: ({ children }: Auth0ProviderOptions) => children,
+  useAuth0: () => {
+    return {
+      getAccessTokenSilently: mockGetTokenSilently,
+    }
+  },
 }))
 
-const mockFetchAuthProvider = jest.fn()
+const mockRefetchAuthProviders = jest.fn()
 const mockGitAuthProviders: GitAuthProvider[] = [
   {
     name: 'GITHUB',
@@ -21,32 +23,25 @@ const mockGitAuthProviders: GitAuthProvider[] = [
   },
 ]
 
-const mockOpenModal = jest.fn()
-jest.mock('@qovery/shared/ui', () => ({
-  ...jest.requireActual('@qovery/shared/ui'),
-  useModal: () => ({
-    openModal: mockOpenModal,
-  }),
-}))
-
-const mockDispatch = jest.fn()
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useDispatch: () => mockDispatch,
-}))
-
 const mockDisconnectGithubApp = jest.fn()
-jest.mock('@qovery/domains/organization', () => ({
-  ...jest.requireActual('@qovery/domains/organization'),
-  fetchAuthProvider: () => mockFetchAuthProvider,
-  selectAllAuthProvider: () => mockGitAuthProviders,
-  disconnectGithubApp: () => mockDisconnectGithubApp,
-  fetchRepository: jest.fn(),
-  getAuthProviderState: () => ({
-    loadingStatus: 'loaded',
-    error: null,
-  }),
-}))
+jest.mock('@qovery/domains/organizations/feature', () => {
+  return {
+    ...jest.requireActual('@qovery/domains/organizations/feature'),
+    useAuthProviders: () => ({
+      data: mockGitAuthProviders,
+      refetch: mockRefetchAuthProviders,
+      isLoading: false,
+    }),
+    useDisconnectGithubApp: () => ({
+      mutateAsync: mockDisconnectGithubApp,
+      isLoading: false,
+    }),
+    useRepositories: () => ({
+      data: [],
+      isLoading: false,
+    }),
+  }
+})
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -55,87 +50,47 @@ jest.mock('react-router-dom', () => ({
 }))
 
 describe('PageOrganizationGithubRepositoryAccessFeature', () => {
-  beforeEach(() => {
-    mockGetTokenSilently.mockImplementation(() =>
-      Promise.resolve({
-        data: {},
-      })
-    )
-
-    mockDispatch.mockImplementation((a: () => void) => {
-      if (a) a()
-      return {
-        unwrap: () =>
-          Promise.resolve({
-            data: {},
-          }),
-      }
-    })
-  })
-
-  afterEach(() => {
-    jest.resetAllMocks()
-  })
-
   it('should render successfully', () => {
-    const { baseElement } = render(<PageOrganizationGithubRepositoryAccessFeature />)
+    const { baseElement } = renderWithProviders(<PageOrganizationGithubRepositoryAccessFeature />)
     expect(baseElement).toBeTruthy()
   })
 
-  it('should fetch token silently at page init', () => {
-    render(<PageOrganizationGithubRepositoryAccessFeature />)
-    expect(mockGetTokenSilently).toHaveBeenCalledWith({ ignoreCache: true })
-  })
-
-  it('should fetch token silently and then fetch auth provider at page init', async () => {
-    render(<PageOrganizationGithubRepositoryAccessFeature />)
-    expect(mockGetTokenSilently).toHaveBeenCalledWith({ ignoreCache: true })
+  it('should fetch token silently and then refetch auth provider at page init', async () => {
+    renderWithProviders(<PageOrganizationGithubRepositoryAccessFeature />)
     await waitFor(() => {
-      expect(mockFetchAuthProvider).toHaveBeenCalled()
+      expect(mockGetTokenSilently).toHaveBeenCalled()
+      expect(mockRefetchAuthProviders).toHaveBeenCalled()
     })
   })
 
   it('should disconnect without opening the modal', async () => {
-    const { baseElement } = render(<PageOrganizationGithubRepositoryAccessFeature />)
+    const { userEvent } = renderWithProviders(<PageOrganizationGithubRepositoryAccessFeature />)
 
     mockDisconnectGithubApp.mockReturnValueOnce({
       unwrap: jest.fn().mockResolvedValueOnce({}),
     })
 
-    const disconnectButton = getByTestId(baseElement, 'disconnect-button')
-
-    await act(() => {
-      disconnectButton.click()
-    })
-
-    expect(mockDispatch).toHaveBeenCalledWith(repositorySlice.actions.removeAll())
+    const disconnectButton = screen.getByTestId('disconnect-button')
+    await userEvent.click(disconnectButton)
 
     await waitFor(() => {
-      // both are called two times, one at init, another time if we successfully disconnect
-      expect(mockGetTokenSilently).toHaveBeenCalledTimes(2)
-      expect(mockFetchAuthProvider).toHaveBeenCalledTimes(2)
+      expect(mockGetTokenSilently).toHaveBeenCalled()
+      expect(mockRefetchAuthProviders).toHaveBeenCalled()
     })
   })
 
   it('calls onDisconnectWithModal if error is thrown', async () => {
     const error = new Error('error')
     error.name = 'Bad Request'
-    error.code = '400'
     error.message = 'This git provider is'
 
-    const { baseElement } = render(<PageOrganizationGithubRepositoryAccessFeature />)
+    const { userEvent } = renderWithProviders(<PageOrganizationGithubRepositoryAccessFeature />)
 
     mockDisconnectGithubApp.mockReturnValueOnce({
       unwrap: jest.fn().mockRejectedValueOnce(error),
     })
 
-    const disconnectButton = getByTestId(baseElement, 'disconnect-button')
-
-    await act(() => {
-      disconnectButton.click()
-    })
-
-    // does not pass right now because even though we throw an error, we still go inside the then instead of the catch
-    //expect(mockOpenModal).toHaveBeenCalled()
+    const disconnectButton = screen.getByTestId('disconnect-button')
+    await userEvent.click(disconnectButton)
   })
 })

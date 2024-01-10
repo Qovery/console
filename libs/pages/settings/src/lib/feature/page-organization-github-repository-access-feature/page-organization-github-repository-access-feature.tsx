@@ -1,22 +1,10 @@
+import { useAuth0 } from '@auth0/auth0-react'
 import { type GitAuthProvider, GitProviderEnum } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import {
-  disconnectGithubApp,
-  fetchAuthProvider,
-  fetchRepository,
-  getAuthProviderState,
-  getRepositoryState,
-  repositorySlice,
-  selectAllAuthProvider,
-  selectAllRepository,
-} from '@qovery/domains/organization'
-import { useAuth } from '@qovery/shared/auth'
-import { type LoadingStatus, type RepositoryEntity } from '@qovery/shared/interfaces'
+import { useAuthProviders, useDisconnectGithubApp, useRepositories } from '@qovery/domains/organizations/feature'
 import { useModal } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { type AppDispatch, type RootState } from '@qovery/state/store'
 import DisconnectionConfirmModal from '../../ui/page-organization-github-repository-access/disconnection-confirm-modal/disconnection-confirm-modal'
 import PageOrganizationGithubRepositoryAccess from '../../ui/page-organization-github-repository-access/page-organization-github-repository-access'
 
@@ -26,42 +14,40 @@ export function PageOrganizationGithubRepositoryAccessFeature() {
 
   const githubConnectUrl = `https://github.com/apps/qovery-github-app/installations/new?state=${organizationId}`
 
-  const dispatch = useDispatch<AppDispatch>()
-  const authProviderLoadingStatus = useSelector<RootState, LoadingStatus>(
-    (state) => getAuthProviderState(state).loadingStatus
-  )
-  const authProviders = useSelector<RootState, GitAuthProvider[]>((state) => selectAllAuthProvider(state))
+  const { getAccessTokenSilently } = useAuth0()
+  const {
+    refetch: refetchAuthProviders,
+    data: authProviders = [],
+    isLoading: isLoadingAuthProviders,
+  } = useAuthProviders({ organizationId })
   const [githubAuthProvider, setGithubAuthProvider] = useState<GitAuthProvider>()
 
-  const repositories = useSelector<RootState, RepositoryEntity[]>((state) => selectAllRepository(state))
-  const repositoriesLoadingStatus = useSelector<RootState, LoadingStatus>(
-    (state) => getRepositoryState(state).loadingStatus
-  )
-
-  const { getAccessTokenSilently } = useAuth()
+  const { data: repositories = [], isLoading: isLoadingRepositories } = useRepositories({
+    organizationId,
+    gitProvider: GitProviderEnum.GITHUB,
+  })
+  const { mutateAsync: mutateAsyncDisconnectGithubApp, isLoading: isLoadingDisconnectGithubApp } =
+    useDisconnectGithubApp()
   const { openModal, closeModal } = useModal()
 
-  const [forceLoading, setForceLoading] = useState(false)
-
   useEffect(() => {
-    getAccessTokenSilently({
-      ignoreCache: true,
-    }).then(() => {
-      dispatch(fetchAuthProvider({ organizationId }))
-    })
-  }, [getAccessTokenSilently, dispatch, organizationId])
+    // Reset the cache to force the refresh of the auth providers
+    // We already invalid token on the success for connexion and disconnect requests
+    // Maybe its not necessary to do the same thing here (need to be clean)
+    async function refetchAuthProvidersWithNewToken() {
+      await getAccessTokenSilently({
+        ignoreCache: true,
+      })
+      refetchAuthProviders()
+    }
+    refetchAuthProvidersWithNewToken()
+  }, [refetchAuthProviders, getAccessTokenSilently])
 
   useEffect(() => {
     authProviders.forEach((authProvider) => {
       authProvider.name === 'GITHUB' && setGithubAuthProvider(authProvider)
     })
   }, [authProviders])
-
-  useEffect(() => {
-    if (githubAuthProvider?.use_bot) {
-      dispatch(fetchRepository({ organizationId: organizationId, gitProvider: GitProviderEnum.GITHUB }))
-    }
-  }, [githubAuthProvider, dispatch, organizationId])
 
   const onConfigure = () => {
     window.open(githubConnectUrl, '_blank')
@@ -77,48 +63,28 @@ export function PageOrganizationGithubRepositoryAccessFeature() {
   // if the user has some apps that used some repositories of github app. If it fails, we open a modal to confirm the disconnection
   // and we force the disconnection with force parameter set to true. To put simply: if the user does not use any app
   // he can disconnect without modal, if he uses some apps, he has to confirm the disconnection
-  const onDisconnect = (force?: boolean) => {
-    setForceLoading(true)
-    dispatch(
-      disconnectGithubApp({
+  const onDisconnect = async (force?: boolean) => {
+    try {
+      await mutateAsyncDisconnectGithubApp({
         organizationId,
         force: force,
       })
-    )
-      .unwrap()
-      .then(() => {
-        getAccessTokenSilently({
-          ignoreCache: true,
-        })
-          .then(() => {
-            dispatch(fetchAuthProvider({ organizationId }))
-            setForceLoading(false)
-          })
-          .catch(() => {
-            setForceLoading(false)
-          })
-        // removing all entities is not an async action, there are no api call, and we don't need to wait for the result
-        dispatch(repositorySlice.actions.removeAll())
-      })
-      .catch((error) => {
-        setForceLoading(false)
-
-        if ((error.name === 'Bad Request' || error.code === '400') && error.message.includes('This git provider is')) {
-          onDisconnectWithModal()
-        }
-      })
+    } catch (error) {
+      console.error(error)
+      onDisconnectWithModal()
+    }
   }
 
   return (
     <PageOrganizationGithubRepositoryAccess
       githubConnectURL={githubConnectUrl}
       githubAuthProvider={githubAuthProvider}
-      authProviderLoading={authProviderLoadingStatus !== 'loaded'}
+      authProviderLoading={isLoadingAuthProviders}
       repositories={repositories}
-      repositoriesLoading={repositoriesLoadingStatus === 'loading'}
+      repositoriesLoading={isLoadingRepositories}
       onConfigure={onConfigure}
       onDisconnect={onDisconnect}
-      forceLoading={forceLoading}
+      forceLoading={isLoadingDisconnectGithubApp}
     />
   )
 }

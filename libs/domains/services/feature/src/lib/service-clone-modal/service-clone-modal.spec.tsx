@@ -20,7 +20,7 @@ jest.mock('../hooks/use-service/use-service', () => ({
 }))
 
 jest.mock('@qovery/domains/environment', () => ({
-  ...jest.requireActual('@qovery/domains/organization'),
+  ...jest.requireActual('@qovery/domains/environment'),
   useFetchEnvironments: () => ({ data: mockEnvironments, isLoading: false }),
 }))
 
