@@ -125,26 +125,30 @@ export function PageOrganizationGithubRepositoryAccess(props: PageOrganizationGi
           </BlockContent>
         </Section>
 
-        {props.repositoriesLoading ? (
-          <div className="flex justify-center">
-            <LoaderSpinner className="w-5" />
+        {props.githubAuthProvider?.use_bot && (
+          <div>
+            {props.repositoriesLoading ? (
+              <div className="flex justify-center">
+                <LoaderSpinner className="w-5" />
+              </div>
+            ) : (
+              props.repositories &&
+              props.repositories?.length > 0 && (
+                <BlockContent title="Authorized Repositories">
+                  <ul className="flex flex-col gap-2">
+                    {props.repositories.map((repository) => (
+                      <li key={repository.id} className="flex items-center justify-between">
+                        <div className="flex gap-3">
+                          <Icon name={IconEnum.GITHUB} className="text-neutral-400 w-4" />
+                          <ExternalLink href={repository.url}>{repository.name}</ExternalLink>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </BlockContent>
+              )
+            )}
           </div>
-        ) : (
-          props.repositories &&
-          props.repositories?.length > 0 && (
-            <BlockContent title="Authorized Repositories">
-              <ul className="flex flex-col gap-2">
-                {props.repositories.map((repository) => (
-                  <li key={repository.id} className="flex items-center justify-between">
-                    <div className="flex gap-3">
-                      <Icon name={IconEnum.GITHUB} className="text-neutral-400 w-4" />
-                      <ExternalLink href={repository.url}>{repository.name}</ExternalLink>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </BlockContent>
-          )
         )}
       </div>
       <HelpSection

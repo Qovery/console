@@ -1,3 +1,4 @@
+import { useAuth0 } from '@auth0/auth0-react'
 import { type GitAuthProvider, GitProviderEnum } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
@@ -13,7 +14,12 @@ export function PageOrganizationGithubRepositoryAccessFeature() {
 
   const githubConnectUrl = `https://github.com/apps/qovery-github-app/installations/new?state=${organizationId}`
 
-  const { data: authProviders = [], isLoading: isLoadingAuthProviders } = useAuthProviders({ organizationId })
+  const { getAccessTokenSilently } = useAuth0()
+  const {
+    refetch: refetchAuthProviders,
+    data: authProviders = [],
+    isLoading: isLoadingAuthProviders,
+  } = useAuthProviders({ organizationId })
   const [githubAuthProvider, setGithubAuthProvider] = useState<GitAuthProvider>()
 
   const { data: repositories = [], isLoading: isLoadingRepositories } = useRepositories({
@@ -25,16 +31,17 @@ export function PageOrganizationGithubRepositoryAccessFeature() {
   const { openModal, closeModal } = useModal()
 
   useEffect(() => {
+    // Reset the cache to force the refresh of the auth providers
+    getAccessTokenSilently({
+      ignoreCache: true,
+    }).then(() => refetchAuthProviders())
+  }, [refetchAuthProviders, getAccessTokenSilently])
+
+  useEffect(() => {
     authProviders.forEach((authProvider) => {
       authProvider.name === 'GITHUB' && setGithubAuthProvider(authProvider)
     })
   }, [authProviders])
-
-  // useEffect(() => {
-  //   if (githubAuthProvider?.use_bot) {
-  //     dispatch(fetchRepository({ organizationId: organizationId, gitProvider: GitProviderEnum.GITHUB }))
-  //   }
-  // }, [githubAuthProvider, dispatch, organizationId])
 
   const onConfigure = () => {
     window.open(githubConnectUrl, '_blank')
@@ -58,9 +65,7 @@ export function PageOrganizationGithubRepositoryAccessFeature() {
       })
     } catch (error) {
       console.error(error)
-      // if ((error.name === 'Bad Request' || error.code === '400') && error.message.includes('This git provider is')) {
       onDisconnectWithModal()
-      // }
     }
   }
 

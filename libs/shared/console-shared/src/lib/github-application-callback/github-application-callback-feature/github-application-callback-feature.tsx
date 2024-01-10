@@ -10,7 +10,7 @@ export function GithubApplicationCallbackFeature() {
   const { search } = useLocation()
   const dispatch = useDispatch<AppDispatch>()
   const navigate = useNavigate()
-  const { mutateAsync: mutateAsyncConnectGithubApp, isLoading: isLoadingConnectGithubApp } = useConnectGithubApp()
+  const { mutateAsync: mutateAsyncConnectGithubApp } = useConnectGithubApp()
 
   useEffect(() => {
     async function connectGithubApp() {

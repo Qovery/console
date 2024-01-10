@@ -1,14 +1,20 @@
+import { useAuth0 } from '@auth0/auth0-react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { mutations } from '@qovery/domains/organizations/data-access'
 import { queries } from '@qovery/state/util-queries'
 
 export function useConnectGithubApp() {
   const queryClient = useQueryClient()
+  const { getAccessTokenSilently } = useAuth0()
 
   return useMutation(mutations.connectGithubApp, {
-    onSuccess() {
+    async onSuccess(_, { organizationId }) {
+      await getAccessTokenSilently({
+        ignoreCache: true,
+      })
+
       queryClient.invalidateQueries({
-        queryKey: queries.organizations.list.queryKey,
+        queryKey: queries.organizations.authProviders({ organizationId }).queryKey,
       })
     },
     meta: {
