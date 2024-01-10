@@ -98,7 +98,8 @@ export function StepGeneral(props: StepGeneralProps) {
                     <div>
                       <span className="text-neutral-400 font-medium">Self-Managed (BETA)</span>
                       <p className="text-neutral-350">
-                        You will manage the infrastructure, including any update/upgrade.
+                        You will manage the infrastructure, including any update/ upgrade. Advanced Kubernetes knowledge
+                        required.
                       </p>
                     </div>
                   </label>
