@@ -91,7 +91,7 @@ export function StepGeneral(props: StepGeneralProps) {
         />
 
         <BlockContent title="Database mode" className="mb-6">
-          <div className="flex gap-4 justify-center">
+          <div className={`flex gap-4 ${props.cloudProvider === CloudProviderEnum.AWS ? 'justify-center' : ''}`}>
             <Controller
               name="mode"
               control={control}

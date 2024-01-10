@@ -2,6 +2,7 @@ import { type DatabaseConfiguration, DatabaseModeEnum, KubernetesEnum } from 'qo
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
+import { cloudProviders } from '@qovery/domains/cloud-providers/data-access'
 import { useCluster } from '@qovery/domains/clusters/feature'
 import { useFetchDatabaseConfiguration, useFetchEnvironment } from '@qovery/domains/environment'
 import { type Value } from '@qovery/shared/interfaces'
@@ -117,8 +118,14 @@ export function StepGeneralFeature() {
     setCurrentStep(1)
   }, [setCurrentStep])
 
+  const cloudProvider = environment?.cloud_provider.provider
+
   const methods = useForm<GeneralData>({
-    defaultValues: generalData ? generalData : { mode: DatabaseModeEnum.MANAGED },
+    defaultValues: generalData
+      ? generalData
+      : cloudProvider === 'AWS'
+      ? { mode: DatabaseModeEnum.MANAGED }
+      : { mode: DatabaseModeEnum.CONTAINER },
     mode: 'onChange',
   })
 
@@ -149,7 +156,7 @@ export function StepGeneralFeature() {
     <FunnelFlowBody helpSection={funnelCardHelp}>
       <FormProvider {...methods}>
         <StepGeneral
-          cloudProvider={environment?.cloud_provider.provider}
+          cloudProvider={cloudProvider}
           onSubmit={onSubmit}
           databaseTypeOptions={databaseTypeOptions}
           databaseVersionOptions={databaseVersionOptions}
