@@ -1,4 +1,6 @@
 import { type ReactNode, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
+import { APPLICATION_SETTINGS_DOMAIN_URL, APPLICATION_SETTINGS_URL, APPLICATION_URL } from '@qovery/shared/routes'
 import { Button, Callout, type CalloutRootProps, Icon, IconAwesomeEnum } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { useRunningStatus } from '../hooks/use-running-status/use-running-status'
@@ -10,6 +12,8 @@ export interface PodStatusesCalloutProps {
 }
 
 export function PodStatusesCallout({ environmentId, serviceId }: PodStatusesCalloutProps) {
+  const navigate = useNavigate()
+  const { organizationId = '', projectId = '' } = useParams()
   const { data: runningStatuses, isLoading: isRunningStatusesLoading } = useRunningStatus({ environmentId, serviceId })
   const { data: serviceType, isLoading: isServiceTypeLoading } = useServiceType({ environmentId, serviceId })
   const [activeIndex, setActiveIndex] = useState(0)
@@ -71,7 +75,19 @@ export function PodStatusesCallout({ environmentId, serviceId }: PodStatusesCall
             </ul>
             Ensure you have configured the right domain and check your DNS configuration.
             <br />
-            <Button type="button" color="neutral" variant="outline">
+            <Button
+              type="button"
+              color="neutral"
+              variant="outline"
+              className="mt-2"
+              onClick={() =>
+                navigate(
+                  APPLICATION_URL(organizationId, projectId, environmentId, serviceId) +
+                    APPLICATION_SETTINGS_URL +
+                    APPLICATION_SETTINGS_DOMAIN_URL
+                )
+              }
+            >
               Domain settings
             </Button>
           </>

@@ -32,6 +32,7 @@ import {
   HelmActionsApi,
   type HelmAdvancedSettings,
   HelmConfigurationApi,
+  HelmCustomDomainApi,
   type HelmDeployRequest,
   HelmDeploymentHistoryApi,
   HelmDeploymentRestrictionApi,
@@ -98,6 +99,7 @@ const jobConfigurationApi = new JobConfigurationApi()
 
 const customDomainApplicationApi = new CustomDomainApi()
 const customDomainContainerApi = new ContainerCustomDomainApi()
+const customDomainHelmApi = new HelmCustomDomainApi()
 
 // Prefer this type in param instead of ServiceTypeEnum
 // to suppport string AND enum as param.
@@ -419,7 +421,7 @@ export const services = createQueryKeys('services', {
     serviceType,
   }: {
     serviceId: string
-    serviceType: Extract<ServiceType, 'APPLICATION' | 'CONTAINER'>
+    serviceType: Extract<ServiceType, 'APPLICATION' | 'CONTAINER' | 'HELM'>
   }) => ({
     queryKey: [serviceId],
     async queryFn() {
@@ -430,6 +432,10 @@ export const services = createQueryKeys('services', {
         }))
         .with('CONTAINER', (serviceType) => ({
           query: customDomainContainerApi.listContainerCustomDomain.bind(customDomainContainerApi),
+          serviceType,
+        }))
+        .with('HELM', (serviceType) => ({
+          query: customDomainHelmApi.listHelmCustomDomain.bind(customDomainHelmApi),
           serviceType,
         }))
         .exhaustive()
@@ -826,7 +832,7 @@ export const mutations = {
     payload,
   }: {
     serviceId: string
-    serviceType: Extract<ServiceType, 'APPLICATION' | 'CONTAINER'>
+    serviceType: Extract<ServiceType, 'APPLICATION' | 'CONTAINER' | 'HELM'>
     payload: CustomDomainRequest
   }) {
     const { mutation } = match(serviceType)
@@ -836,6 +842,10 @@ export const mutations = {
       }))
       .with('CONTAINER', () => ({
         mutation: customDomainContainerApi.createContainerCustomDomain.bind(customDomainContainerApi),
+        serviceType,
+      }))
+      .with('HELM', () => ({
+        mutation: customDomainHelmApi.createHelmCustomDomain.bind(customDomainHelmApi),
         serviceType,
       }))
       .exhaustive()
@@ -849,7 +859,7 @@ export const mutations = {
     payload,
   }: {
     serviceId: string
-    serviceType: Extract<ServiceType, 'APPLICATION' | 'CONTAINER'>
+    serviceType: Extract<ServiceType, 'APPLICATION' | 'CONTAINER' | 'HELM'>
     customDomainId: string
     payload: CustomDomainRequest
   }) {
@@ -862,6 +872,10 @@ export const mutations = {
         mutation: customDomainContainerApi.editContainerCustomDomain.bind(customDomainContainerApi),
         serviceType,
       }))
+      .with('HELM', () => ({
+        mutation: customDomainHelmApi.editHelmCustomDomain.bind(customDomainHelmApi),
+        serviceType,
+      }))
       .exhaustive()
     const response = await mutation(serviceId, customDomainId, payload)
     return response.data
@@ -872,16 +886,20 @@ export const mutations = {
     customDomainId,
   }: {
     serviceId: string
-    serviceType: Extract<ServiceType, 'APPLICATION' | 'CONTAINER'>
+    serviceType: Extract<ServiceType, 'APPLICATION' | 'CONTAINER' | 'HELM'>
     customDomainId: string
   }) {
     const { mutation } = match(serviceType)
       .with('APPLICATION', (serviceType) => ({
-        mutation: customDomainApplicationApi.deleteCustomDomain.bind(applicationMainCallsApi),
+        mutation: customDomainApplicationApi.deleteCustomDomain.bind(customDomainApplicationApi),
         serviceType,
       }))
       .with('CONTAINER', (serviceType) => ({
-        mutation: customDomainContainerApi.deleteContainerCustomDomain.bind(containerMainCallsApi),
+        mutation: customDomainContainerApi.deleteContainerCustomDomain.bind(customDomainContainerApi),
+        serviceType,
+      }))
+      .with('HELM', (serviceType) => ({
+        mutation: customDomainHelmApi.deleteHelmCustomDomain.bind(customDomainHelmApi),
         serviceType,
       }))
       .exhaustive()
