@@ -32,7 +32,7 @@ export function PageClustersGeneral(props: PageClustersGeneralProps) {
             <LoaderSpinner className="w-6" />
           </div>
         ) : clusters && clusters.length > 0 ? (
-          <div className="grid grid-cols-3 gap-5">
+          <div className="grid lg:grid-cols-2 xl:grid-cols-3 gap-5">
             {clusters.map((cluster) => (
               <CardCluster key={cluster.id} cluster={cluster} organizationId={organizationId} />
             ))}

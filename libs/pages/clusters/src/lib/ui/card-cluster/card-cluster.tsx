@@ -1,7 +1,6 @@
 import { type Cluster, ClusterStateEnum } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
-import { ClusterType, useClusterStatus } from '@qovery/domains/clusters/feature'
-import { ClusterButtonsActions } from '@qovery/shared/console-shared'
+import { ClusterActionToolbar, ClusterType, useClusterStatus } from '@qovery/domains/clusters/feature'
 import { Badge, Icon, Skeleton, StatusChip } from '@qovery/shared/ui'
 import { getStatusClusterMessage } from '@qovery/shared/util-js'
 
@@ -63,7 +62,9 @@ export function CardCluster({ organizationId, cluster }: CardClusterProps) {
           </div>
         </div>
         <Skeleton height={32} width={146} show={isClusterStatusLoading}>
-          <ClusterButtonsActions cluster={cluster} />
+          {clusterStatus && (
+            <ClusterActionToolbar cluster={cluster} organizationId={organizationId} clusterStatus={clusterStatus} />
+          )}
         </Skeleton>
       </div>
       <div className="flex flex-wrap gap-2">
