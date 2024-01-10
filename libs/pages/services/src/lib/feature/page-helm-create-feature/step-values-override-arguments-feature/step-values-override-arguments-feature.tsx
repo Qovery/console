@@ -1,16 +1,47 @@
+import { type HelmRequestAllOfSourceOneOf, type HelmRequestAllOfSourceOneOf1 } from 'qovery-typescript-axios'
 import { FormProvider } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
+import { match } from 'ts-pattern'
 import { ValuesOverrideArgumentsSetting } from '@qovery/domains/service-helm/feature'
 import { SERVICES_HELM_CREATION_NETWORKING_URL, SERVICES_HELM_CREATION_URL, SERVICES_URL } from '@qovery/shared/routes'
 import { Button, FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
+import { getGitTokenValue } from '@qovery/shared/util-git'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { buildGitRepoUrl } from '@qovery/shared/util-js'
 import { useHelmCreateContext } from '../page-helm-create-feature'
 
 export function StepValuesOverrideArgumentsFeature() {
   useDocumentTitle('General - Values override as arguments')
 
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
-  const { setCurrentStep, valuesOverrideArgumentsForm } = useHelmCreateContext()
+  const { generalForm, setCurrentStep, valuesOverrideArgumentsForm } = useHelmCreateContext()
+
+  const generalData = generalForm.getValues()
+
+  const source = match(generalData.source_provider)
+    .with('GIT', (): HelmRequestAllOfSourceOneOf => {
+      const gitToken = getGitTokenValue(generalData.provider ?? '')
+
+      return {
+        git_repository: {
+          url: buildGitRepoUrl(gitToken?.type ?? generalData.provider ?? '', generalData.repository),
+          branch: generalData.branch,
+          root_path: generalData.root_path,
+          git_token_id: gitToken?.id,
+        },
+      }
+    })
+    .with(
+      'HELM_REPOSITORY',
+      (): HelmRequestAllOfSourceOneOf1 => ({
+        helm_repository: {
+          repository: generalData.repository,
+          chart_name: generalData.chart_name,
+          chart_version: generalData.chart_version,
+        },
+      })
+    )
+    .exhaustive()
 
   const navigate = useNavigate()
   setCurrentStep(3)
@@ -44,7 +75,7 @@ export function StepValuesOverrideArgumentsFeature() {
   return (
     <FunnelFlowBody helpSection={funnelCardHelp}>
       <FormProvider {...valuesOverrideArgumentsForm}>
-        <ValuesOverrideArgumentsSetting methods={valuesOverrideArgumentsForm} onSubmit={onSubmit}>
+        <ValuesOverrideArgumentsSetting methods={valuesOverrideArgumentsForm} onSubmit={onSubmit} source={source}>
           <div className="flex justify-between mt-10">
             <Button type="button" size="lg" variant="surface" color="neutral" onClick={() => navigate(-1)}>
               Back

@@ -20,7 +20,7 @@ exports[`ValuesOverrideFilesSetting should match snapshot with GIT_REPOSITORY ty
         aria-controls="radix-:rk:"
         aria-expanded="false"
         aria-haspopup="dialog"
-        class="text-sm cursor-pointer text-brand-500 hover:text-brand-600 transition font-medium mb-5"
+        class="text-sm cursor-pointer text-brand-500 hover:text-brand-600 transition font-medium mb-6"
         data-state="closed"
         type="button"
       >
@@ -30,15 +30,45 @@ exports[`ValuesOverrideFilesSetting should match snapshot with GIT_REPOSITORY ty
           role="img"
         />
       </span>
-      <button
-        class="inline-flex items-center shrink-0 font-medium transition text-sm h-10 px-4 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 mb-10"
+      <div
+        class="flex flex-row items-baseline gap-x-3 p-3 border rounded border-yellow-600 bg-yellow-50 text-yellow-700 mb-6 text-xs"
+        data-accent-color="yellow"
       >
-        See default values.yaml 
-        <span
-          class="icon-solid-arrow-up-right-from-square shrink-0 text-xs ml-2"
-          role="img"
-        />
-      </button>
+        <div
+          class="-order-2 text-base"
+        >
+          <span
+            class="icon-solid-triangle-exclamation shrink-0 "
+            role="img"
+          />
+        </div>
+        <div
+          class="-order-1 mr-auto gap-x-3 text-neutral-400"
+        >
+          <p
+            class="font-medium mb-1"
+          >
+            Add the Qovery macros to your override
+          </p>
+          <p
+            class="mb-1"
+          >
+            To get all the Qovery functionalities (Logs, Statuses, Helm stop and restart), add the macro “qovery.labels.service” and "qovery.annotations.service" within the field managing the labels/annotations assigned to the deployed Pods/Deployments/Services/Jobs.
+          </p>
+          <a
+            class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-sky-500 hover:text-sky-600 text-xs"
+            href="https://hub.qovery.com/docs/using-qovery/configuration/helm/#values"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Click here for more details
+            <span
+              class="icon-solid-arrow-up-right-from-square shrink-0 text-2xs leading-4"
+              role="img"
+            />
+          </a>
+        </div>
+      </div>
       <form
         class="w-full"
       >
@@ -185,7 +215,7 @@ exports[`ValuesOverrideFilesSetting should match snapshot with NONE type 1`] = `
         aria-controls="radix-:r6:"
         aria-expanded="false"
         aria-haspopup="dialog"
-        class="text-sm cursor-pointer text-brand-500 hover:text-brand-600 transition font-medium mb-5"
+        class="text-sm cursor-pointer text-brand-500 hover:text-brand-600 transition font-medium mb-6"
         data-state="closed"
         type="button"
       >
@@ -195,15 +225,45 @@ exports[`ValuesOverrideFilesSetting should match snapshot with NONE type 1`] = `
           role="img"
         />
       </span>
-      <button
-        class="inline-flex items-center shrink-0 font-medium transition text-sm h-10 px-4 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 mb-10"
+      <div
+        class="flex flex-row items-baseline gap-x-3 p-3 border rounded border-yellow-600 bg-yellow-50 text-yellow-700 mb-6 text-xs"
+        data-accent-color="yellow"
       >
-        See default values.yaml 
-        <span
-          class="icon-solid-arrow-up-right-from-square shrink-0 text-xs ml-2"
-          role="img"
-        />
-      </button>
+        <div
+          class="-order-2 text-base"
+        >
+          <span
+            class="icon-solid-triangle-exclamation shrink-0 "
+            role="img"
+          />
+        </div>
+        <div
+          class="-order-1 mr-auto gap-x-3 text-neutral-400"
+        >
+          <p
+            class="font-medium mb-1"
+          >
+            Add the Qovery macros to your override
+          </p>
+          <p
+            class="mb-1"
+          >
+            To get all the Qovery functionalities (Logs, Statuses, Helm stop and restart), add the macro “qovery.labels.service” and "qovery.annotations.service" within the field managing the labels/annotations assigned to the deployed Pods/Deployments/Services/Jobs.
+          </p>
+          <a
+            class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-sky-500 hover:text-sky-600 text-xs"
+            href="https://hub.qovery.com/docs/using-qovery/configuration/helm/#values"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Click here for more details
+            <span
+              class="icon-solid-arrow-up-right-from-square shrink-0 text-2xs leading-4"
+              role="img"
+            />
+          </a>
+        </div>
+      </div>
       <form
         class="w-full"
       >
@@ -329,7 +389,7 @@ exports[`ValuesOverrideFilesSetting should match snapshot with YAML type 1`] = `
         aria-controls="radix-:rd:"
         aria-expanded="false"
         aria-haspopup="dialog"
-        class="text-sm cursor-pointer text-brand-500 hover:text-brand-600 transition font-medium mb-5"
+        class="text-sm cursor-pointer text-brand-500 hover:text-brand-600 transition font-medium mb-6"
         data-state="closed"
         type="button"
       >
@@ -339,15 +399,45 @@ exports[`ValuesOverrideFilesSetting should match snapshot with YAML type 1`] = `
           role="img"
         />
       </span>
-      <button
-        class="inline-flex items-center shrink-0 font-medium transition text-sm h-10 px-4 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 mb-10"
+      <div
+        class="flex flex-row items-baseline gap-x-3 p-3 border rounded border-yellow-600 bg-yellow-50 text-yellow-700 mb-6 text-xs"
+        data-accent-color="yellow"
       >
-        See default values.yaml 
-        <span
-          class="icon-solid-arrow-up-right-from-square shrink-0 text-xs ml-2"
-          role="img"
-        />
-      </button>
+        <div
+          class="-order-2 text-base"
+        >
+          <span
+            class="icon-solid-triangle-exclamation shrink-0 "
+            role="img"
+          />
+        </div>
+        <div
+          class="-order-1 mr-auto gap-x-3 text-neutral-400"
+        >
+          <p
+            class="font-medium mb-1"
+          >
+            Add the Qovery macros to your override
+          </p>
+          <p
+            class="mb-1"
+          >
+            To get all the Qovery functionalities (Logs, Statuses, Helm stop and restart), add the macro “qovery.labels.service” and "qovery.annotations.service" within the field managing the labels/annotations assigned to the deployed Pods/Deployments/Services/Jobs.
+          </p>
+          <a
+            class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-sky-500 hover:text-sky-600 text-xs"
+            href="https://hub.qovery.com/docs/using-qovery/configuration/helm/#values"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Click here for more details
+            <span
+              class="icon-solid-arrow-up-right-from-square shrink-0 text-2xs leading-4"
+              role="img"
+            />
+          </a>
+        </div>
+      </div>
       <form
         class="w-full"
       >

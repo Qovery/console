@@ -1,3 +1,4 @@
+import { type HelmRequestAllOfSource } from 'qovery-typescript-axios'
 import { type PropsWithChildren, useState } from 'react'
 import {
   Controller,
@@ -6,6 +7,8 @@ import {
   useFieldArray,
   useFormContext,
 } from 'react-hook-form'
+import { useParams } from 'react-router-dom'
+import { PREVIEW_CODE } from '@qovery/shared/routes'
 import {
   Button,
   CodeEditor,
@@ -18,6 +21,7 @@ import {
   Popover,
   Section,
 } from '@qovery/shared/ui'
+import useHelmDefaultValues from '../hooks/use-helm-default-values/use-helm-default-values'
 
 export type ArgumentTypes = 'json' | 'generic' | 'string'
 
@@ -31,6 +35,7 @@ export interface HelmValuesArgumentsData {
 }
 
 export interface ValuesOverrideArgumentsSettingProps extends PropsWithChildren {
+  source: HelmRequestAllOfSource
   methods: UseFormReturn<HelmValuesArgumentsData>
   onSubmit: () => void
 }
@@ -141,11 +146,30 @@ function Row({ key, index, remove }: { key: string; index: number; remove: UseFi
   )
 }
 
-export function ValuesOverrideArgumentsSetting({ methods, children, onSubmit }: ValuesOverrideArgumentsSettingProps) {
+export function ValuesOverrideArgumentsSetting({
+  methods,
+  children,
+  onSubmit,
+  source,
+}: ValuesOverrideArgumentsSettingProps) {
+  const { environmentId = '' } = useParams()
+
+  const { refetch: refetchHelmDefaultValues, isFetching: isLoadingHelmDefaultValues } = useHelmDefaultValues({
+    environmentId,
+    helmDefaultValuesRequest: {
+      source,
+    },
+    enabled: false,
+  })
   const { fields, append, remove } = useFieldArray({
     control: methods.control,
     name: 'arguments',
   })
+
+  const createHelmDefaultValuesMutation = async () => {
+    const { data: helmDefaultValues } = await refetchHelmDefaultValues()
+    if (helmDefaultValues) window.open(`${PREVIEW_CODE}?code=${encodeURIComponent(helmDefaultValues)}`, '_blank')
+  }
 
   return (
     <Section className="items-start">
@@ -171,7 +195,7 @@ export function ValuesOverrideArgumentsSetting({ methods, children, onSubmit }: 
       </div>
       <Popover.Root>
         <Popover.Trigger>
-          <span className="text-sm cursor-pointer text-brand-500 hover:text-brand-600 transition font-medium mb-10">
+          <span className="text-sm cursor-pointer text-brand-500 hover:text-brand-600 transition font-medium mb-6">
             How it works <Icon className="text-xs" name={IconAwesomeEnum.CIRCLE_QUESTION} />
           </span>
         </Popover.Trigger>
@@ -202,6 +226,16 @@ export function ValuesOverrideArgumentsSetting({ methods, children, onSubmit }: 
           </Popover.Close>
         </Popover.Content>
       </Popover.Root>
+      <Button
+        size="lg"
+        variant="surface"
+        color="neutral"
+        className="mb-10"
+        loading={isLoadingHelmDefaultValues}
+        onClick={() => createHelmDefaultValuesMutation()}
+      >
+        See default values.yaml <Icon className="text-xs ml-2" name={IconAwesomeEnum.ARROW_UP_RIGHT_FROM_SQUARE} />
+      </Button>
       <form onSubmit={onSubmit} className="w-full">
         {fields.length > 0 ? (
           <ul>
