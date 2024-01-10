@@ -1,8 +1,7 @@
 import { type Cluster, ClusterDeploymentStatusEnum } from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
-import { ClusterType, useClusterStatus } from '@qovery/domains/clusters/feature'
-import { ClusterButtonsActions } from '@qovery/shared/console-shared'
+import { ClusterActionToolbar, ClusterType, useClusterStatus } from '@qovery/domains/clusters/feature'
 import { CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
 import { Badge, Header, Icon, IconAwesomeEnum, Section, Skeleton, Tabs } from '@qovery/shared/ui'
 import NeedRedeployFlag from '../need-redeploy-flag/need-redeploy-flag'
@@ -16,7 +15,7 @@ export function Container({ children, cluster, deployCluster }: PropsWithChildre
   const { organizationId = '', clusterId = '' } = useParams()
   const { pathname } = useLocation()
 
-  const { isLoading } = useClusterStatus({ organizationId, clusterId })
+  const { data: clusterStatus, isLoading } = useClusterStatus({ organizationId, clusterId })
 
   const headerActions = (
     <div className="flex flex-col gap-3">
@@ -53,7 +52,16 @@ export function Container({ children, cluster, deployCluster }: PropsWithChildre
         </Skeleton>
       </div>
       <Skeleton width={150} height={32} show={isLoading}>
-        {cluster ? <ClusterButtonsActions cluster={cluster} noSettings /> : <div />}
+        {cluster && clusterStatus ? (
+          <ClusterActionToolbar
+            cluster={cluster}
+            clusterStatus={clusterStatus}
+            organizationId={organizationId}
+            noSettings
+          />
+        ) : (
+          <div />
+        )}
       </Skeleton>
     </div>
   )
