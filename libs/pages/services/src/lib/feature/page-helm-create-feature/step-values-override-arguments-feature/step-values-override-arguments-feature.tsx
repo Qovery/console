@@ -1,3 +1,4 @@
+import { type HelmRequestAllOfSourceOneOf, type HelmRequestAllOfSourceOneOf1 } from 'qovery-typescript-axios'
 import { FormProvider } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
@@ -18,7 +19,7 @@ export function StepValuesOverrideArgumentsFeature() {
   const generalData = generalForm.getValues()
 
   const source = match(generalData.source_provider)
-    .with('GIT', () => {
+    .with('GIT', (): HelmRequestAllOfSourceOneOf => {
       const gitToken = getGitTokenValue(generalData.provider ?? '')
 
       return {
@@ -29,13 +30,16 @@ export function StepValuesOverrideArgumentsFeature() {
         },
       }
     })
-    .with('HELM_REPOSITORY', () => ({
-      helm_repository: {
-        repository: generalData.repository,
-        chart_name: generalData.chart_name,
-        chart_version: generalData.chart_version,
-      },
-    }))
+    .with(
+      'HELM_REPOSITORY',
+      (): HelmRequestAllOfSourceOneOf1 => ({
+        helm_repository: {
+          repository: generalData.repository,
+          chart_name: generalData.chart_name,
+          chart_version: generalData.chart_version,
+        },
+      })
+    )
     .exhaustive()
 
   const navigate = useNavigate()
