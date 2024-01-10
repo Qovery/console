@@ -32,9 +32,13 @@ export function PageOrganizationGithubRepositoryAccessFeature() {
 
   useEffect(() => {
     // Reset the cache to force the refresh of the auth providers
-    getAccessTokenSilently({
-      ignoreCache: true,
-    }).then(() => refetchAuthProviders())
+    async function refetchAuthProvidersWithNewToken() {
+      await getAccessTokenSilently({
+        ignoreCache: true,
+      })
+      refetchAuthProviders()
+    }
+    refetchAuthProvidersWithNewToken()
   }, [refetchAuthProviders, getAccessTokenSilently])
 
   useEffect(() => {
