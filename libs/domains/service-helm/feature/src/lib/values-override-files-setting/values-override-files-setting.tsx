@@ -1,10 +1,7 @@
 import { type GitProviderEnum, type HelmRequestAllOfSource } from 'qovery-typescript-axios'
 import { type PropsWithChildren, type ReactNode } from 'react'
 import { Controller, type UseFormReturn } from 'react-hook-form'
-import { useParams } from 'react-router-dom'
-import { PREVIEW_CODE } from '@qovery/shared/routes'
-import { Button, ExternalLink, Heading, Icon, IconAwesomeEnum, InputSelect, Popover, Section } from '@qovery/shared/ui'
-import useHelmDefaultValues from '../hooks/use-helm-default-values/use-helm-default-values'
+import { Callout, ExternalLink, Heading, Icon, IconAwesomeEnum, InputSelect, Popover, Section } from '@qovery/shared/ui'
 import ValuesOverrideYamlSetting from '../values-override-yaml-setting/values-override-yaml-setting'
 
 export type ValuesOverrideTypes = 'GIT_REPOSITORY' | 'YAML' | 'NONE'
@@ -34,21 +31,6 @@ export function ValuesOverrideFilesSetting({
   gitRepositorySettings,
   onSubmit,
 }: PropsWithChildren<ValuesOverrideFilesSettingProps>) {
-  const { environmentId = '' } = useParams()
-
-  const { refetch: refetchHelmDefaultValues, isFetching: isLoadingHelmDefaultValues } = useHelmDefaultValues({
-    environmentId,
-    helmDefaultValuesRequest: {
-      source,
-    },
-    enabled: false,
-  })
-
-  const createHelmDefaultValuesMutation = async () => {
-    const { data: helmDefaultValues } = await refetchHelmDefaultValues()
-    if (helmDefaultValues) window.open(`${PREVIEW_CODE}?code=${encodeURIComponent(helmDefaultValues)}`, '_blank')
-  }
-
   return (
     <Section className="items-start">
       <Heading className="mb-2">Values override as file</Heading>
@@ -60,7 +42,7 @@ export function ValuesOverrideFilesSetting({
       </p>
       <Popover.Root>
         <Popover.Trigger>
-          <span className="text-sm cursor-pointer text-brand-500 hover:text-brand-600 transition font-medium mb-5">
+          <span className="text-sm cursor-pointer text-brand-500 hover:text-brand-600 transition font-medium mb-6">
             How it works <Icon className="text-xs" name={IconAwesomeEnum.CIRCLE_QUESTION} />
           </span>
         </Popover.Trigger>
@@ -100,16 +82,22 @@ export function ValuesOverrideFilesSetting({
           </Popover.Close>
         </Popover.Content>
       </Popover.Root>
-      <Button
-        size="lg"
-        variant="surface"
-        color="neutral"
-        className="mb-10"
-        loading={isLoadingHelmDefaultValues}
-        onClick={() => createHelmDefaultValuesMutation()}
-      >
-        See default values.yaml <Icon className="text-xs ml-2" name={IconAwesomeEnum.ARROW_UP_RIGHT_FROM_SQUARE} />
-      </Button>
+      <Callout.Root className="mb-6 text-xs" color="yellow">
+        <Callout.Icon>
+          <Icon name={IconAwesomeEnum.TRIANGLE_EXCLAMATION} />
+        </Callout.Icon>
+        <Callout.Text>
+          <p className="font-medium mb-1">Add the Qovery macros to your override</p>
+          <p className="mb-1">
+            To get all the Qovery functionalities (Logs, Statuses, Helm stop and restart), add the macro
+            “qovery.labels.service” and "qovery.annotations.service" within the field managing the labels/annotations
+            assigned to the deployed Pods/Deployments/Services/Jobs.
+          </p>
+          <ExternalLink size="xs" href="https://hub.qovery.com/docs/using-qovery/configuration/helm/#values">
+            Click here for more details
+          </ExternalLink>
+        </Callout.Text>
+      </Callout.Root>
       <form onSubmit={onSubmit} className="w-full">
         <Controller
           name="type"

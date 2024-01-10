@@ -46,15 +46,6 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
                 role="img"
               />
             </span>
-            <button
-              class="inline-flex items-center shrink-0 font-medium transition text-sm h-10 px-4 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 mb-10"
-            >
-              See default values.yaml 
-              <span
-                class="icon-solid-arrow-up-right-from-square shrink-0 text-xs ml-2"
-                role="img"
-              />
-            </button>
             <form
               class="w-full"
             >
@@ -488,15 +479,6 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a yaml 1`] = `
                 role="img"
               />
             </span>
-            <button
-              class="inline-flex items-center shrink-0 font-medium transition text-sm h-10 px-4 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 mb-10"
-            >
-              See default values.yaml 
-              <span
-                class="icon-solid-arrow-up-right-from-square shrink-0 text-xs ml-2"
-                role="img"
-              />
-            </button>
             <form
               class="w-full"
             >
