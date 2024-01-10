@@ -435,8 +435,7 @@ export const services = createQueryKeys('services', {
           serviceType,
         }))
         .with('HELM', (serviceType) => ({
-          // TODO fix open-api -- query: customDomainHelmApi.listHelmCustomDomain.bind(customDomainHelmApi),
-          query: () => ({ data: { results: [] } }),
+          query: customDomainHelmApi.listHelmCustomDomain.bind(customDomainHelmApi),
           serviceType,
         }))
         .exhaustive()
@@ -845,9 +844,8 @@ export const mutations = {
         mutation: customDomainContainerApi.createContainerCustomDomain.bind(customDomainContainerApi),
         serviceType,
       }))
-      // TODO fix open-api
       .with('HELM', () => ({
-        mutation: customDomainContainerApi.createContainerCustomDomain.bind(customDomainContainerApi),
+        mutation: customDomainHelmApi.createHelmCustomDomain.bind(customDomainHelmApi),
         serviceType,
       }))
       .exhaustive()
