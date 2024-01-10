@@ -32,6 +32,8 @@ export function PageOrganizationGithubRepositoryAccessFeature() {
 
   useEffect(() => {
     // Reset the cache to force the refresh of the auth providers
+    // We already invalid token on the success for connexion and disconnect requests
+    // Maybe its not necessary to do the same thing here (need to be clean)
     async function refetchAuthProvidersWithNewToken() {
       await getAccessTokenSilently({
         ignoreCache: true,
