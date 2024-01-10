@@ -12,13 +12,13 @@ export function useCustomDomains({ serviceId, serviceType }: UseCustomDomainsPro
   return useQuery({
     ...queries.services.customDomains({
       serviceId,
-      serviceType: serviceType as Extract<ServiceType, 'APPLICATION' | 'CONTAINER'>,
+      serviceType: serviceType as Extract<ServiceType, 'APPLICATION' | 'CONTAINER' | 'HELM'>,
     }),
     select(data) {
       return data?.sort((a, b) => a.domain.localeCompare(b.domain))
     },
     enabled: match(serviceType)
-      .with('APPLICATION', 'CONTAINER', () => true)
+      .with('APPLICATION', 'CONTAINER', 'HELM', () => true)
       .otherwise(() => false),
   })
 }

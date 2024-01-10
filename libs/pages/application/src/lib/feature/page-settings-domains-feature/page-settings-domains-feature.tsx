@@ -18,6 +18,8 @@ export function PageSettingsDomainsFeature() {
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
 
+  console.log('customDomains', customDomains)
+
   return match(service)
     .with({ serviceType: 'APPLICATION' }, { serviceType: 'CONTAINER' }, { serviceType: 'HELM' }, (s) => (
       <PageSettingsDomains
