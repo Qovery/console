@@ -68,16 +68,7 @@ export function StepKubeconfig({ onSubmit }: StepKubeconfigProps) {
           ) : (
             <div {...getRootProps({ className: 'dropzone' })}>
               <input data-testid="drop-input" {...getInputProps} />
-              <Dropzone
-                isDragActive={isDragActive}
-                description={
-                  <p>
-                    Click to import your kubeconfig file or
-                    <br />
-                    drag and drop it
-                  </p>
-                }
-              />
+              <Dropzone isDragActive={isDragActive} typeFile="kubeconfig" />
             </div>
           )}
         </div>
