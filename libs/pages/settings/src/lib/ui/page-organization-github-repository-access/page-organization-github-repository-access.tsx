@@ -1,8 +1,7 @@
-import { type GitAuthProvider } from 'qovery-typescript-axios'
+import { type GitAuthProvider, type GitRepository } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
 import { GitTokenCreateEditModal, GitTokenList } from '@qovery/domains/organizations/feature'
 import { IconEnum } from '@qovery/shared/enums'
-import { type RepositoryEntity } from '@qovery/shared/interfaces'
 import {
   BlockContent,
   Button,
@@ -23,7 +22,7 @@ export interface PageOrganizationGithubRepositoryAccessProps {
   githubConnectURL?: string
   githubAuthProvider?: GitAuthProvider
   authProviderLoading?: boolean
-  repositories?: RepositoryEntity[]
+  repositories?: GitRepository[]
   repositoriesLoading?: boolean
   onConfigure?: () => void
   onDisconnect?: (force: boolean) => void
@@ -135,7 +134,7 @@ export function PageOrganizationGithubRepositoryAccess(props: PageOrganizationGi
           props.repositories?.length > 0 && (
             <BlockContent title="Authorized Repositories">
               <ul className="flex flex-col gap-2">
-                {props.repositories.map((repository: RepositoryEntity) => (
+                {props.repositories.map((repository) => (
                   <li key={repository.id} className="flex items-center justify-between">
                     <div className="flex gap-3">
                       <Icon name={IconEnum.GITHUB} className="text-neutral-400 w-4" />

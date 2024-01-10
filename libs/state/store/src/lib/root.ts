@@ -1,21 +1,8 @@
 import { type PreloadedState, combineReducers, configureStore } from '@reduxjs/toolkit'
 // eslint-disable-next-line @nx/enforce-module-boundaries
-import {
-  authProviderReducer,
-  initialAuthProviderState,
-  initialRepositoryState,
-  repositoryReducer,
-} from '@qovery/domains/organization'
-// eslint-disable-next-line @nx/enforce-module-boundaries
 import { initialUserSignUpState, initialUserState, userReducer, userSignUp } from '@qovery/domains/users/data-access'
 
-export const organizationReducer = combineReducers({
-  authProvider: authProviderReducer,
-  repository: repositoryReducer,
-})
-
 export const rootReducer = combineReducers({
-  organization: organizationReducer,
   user: userReducer,
   userSignUp: userSignUp,
 })
@@ -37,10 +24,6 @@ export type AppStore = ReturnType<typeof setupStore>
 export type AppDispatch = AppStore['dispatch']
 
 export const initialRootState = (): RootState => ({
-  organization: {
-    authProvider: initialAuthProviderState,
-    repository: initialRepositoryState,
-  },
   user: initialUserState,
   userSignUp: initialUserSignUpState,
 })

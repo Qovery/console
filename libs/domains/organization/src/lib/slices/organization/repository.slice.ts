@@ -1,189 +1,189 @@
-import { type Update, createAsyncThunk, createEntityAdapter, createSelector, createSlice } from '@reduxjs/toolkit'
-import {
-  GitProviderEnum,
-  type GitRepositoryBranch,
-  OrganizationAccountGitRepositoriesApi,
-} from 'qovery-typescript-axios'
-import { type LoadingStatus, type RepositoryEntity, type RepositoryState } from '@qovery/shared/interfaces'
-import { toastError } from '@qovery/shared/ui'
-import { type RootState } from '@qovery/state/store'
+// import { type Update, createAsyncThunk, createEntityAdapter, createSelector, createSlice } from '@reduxjs/toolkit'
+// import {
+//   GitProviderEnum,
+//   type GitRepositoryBranch,
+//   OrganizationAccountGitRepositoriesApi,
+// } from 'qovery-typescript-axios'
+// import { type LoadingStatus, type RepositoryEntity, type RepositoryState } from '@qovery/shared/interfaces'
+// import { toastError } from '@qovery/shared/ui'
+// import { type RootState } from '@qovery/state/store'
 
-export const REPOSITORY_FEATURE_KEY = 'repository'
+// export const REPOSITORY_FEATURE_KEY = 'repository'
 
-const repositoryApi = new OrganizationAccountGitRepositoriesApi()
+// const repositoryApi = new OrganizationAccountGitRepositoriesApi()
 
-export const repositoryAdapter = createEntityAdapter<RepositoryEntity>()
+// export const repositoryAdapter = createEntityAdapter<RepositoryEntity>()
 
-/**
- * @deprecated This should be migrated to the new `use-repositories` hook
- */
-export const fetchRepository = createAsyncThunk(
-  'repository/fetch',
-  async (payload: { organizationId: string; gitProvider: GitProviderEnum; gitToken?: string }) => {
-    if (payload.gitProvider === GitProviderEnum.GITHUB) {
-      const response = await repositoryApi.getOrganizationGithubRepositories(payload.organizationId, payload.gitToken)
-      return response.data.results as RepositoryEntity[]
-    }
-    if (payload.gitProvider === GitProviderEnum.GITLAB) {
-      const response = await repositoryApi.getOrganizationGitlabRepositories(payload.organizationId, payload.gitToken)
-      return response.data.results as RepositoryEntity[]
-    }
-    if (payload.gitProvider === GitProviderEnum.BITBUCKET) {
-      const response = await repositoryApi.getOrganizationBitbucketRepositories(
-        payload.organizationId,
-        payload.gitToken
-      )
-      return response.data.results as RepositoryEntity[]
-    }
+// /**
+//  * @deprecated This should be migrated to the new `use-repositories` hook
+//  */
+// export const fetchRepository = createAsyncThunk(
+//   'repository/fetch',
+//   async (payload: { organizationId: string; gitProvider: GitProviderEnum; gitToken?: string }) => {
+//     if (payload.gitProvider === GitProviderEnum.GITHUB) {
+//       const response = await repositoryApi.getOrganizationGithubRepositories(payload.organizationId, payload.gitToken)
+//       return response.data.results as RepositoryEntity[]
+//     }
+//     if (payload.gitProvider === GitProviderEnum.GITLAB) {
+//       const response = await repositoryApi.getOrganizationGitlabRepositories(payload.organizationId, payload.gitToken)
+//       return response.data.results as RepositoryEntity[]
+//     }
+//     if (payload.gitProvider === GitProviderEnum.BITBUCKET) {
+//       const response = await repositoryApi.getOrganizationBitbucketRepositories(
+//         payload.organizationId,
+//         payload.gitToken
+//       )
+//       return response.data.results as RepositoryEntity[]
+//     }
 
-    return Promise.all([])
-  }
-)
+//     return Promise.all([])
+//   }
+// )
 
-/**
- * @deprecated This should be migrated to the new `use-branches` hook
- */
-export const fetchBranches = createAsyncThunk(
-  'branch/fetch',
-  async (payload: {
-    organizationId: string
-    gitProvider: GitProviderEnum
-    name: string
-    gitToken?: string
-    id?: string
-  }) => {
-    if (payload.gitProvider === GitProviderEnum.GITHUB) {
-      const response = await repositoryApi.getOrganizationGithubRepositoryBranches(
-        payload.organizationId,
-        payload.gitToken,
-        payload.name
-      )
-      return response.data.results as GitRepositoryBranch[]
-    }
-    if (payload.gitProvider === GitProviderEnum.GITLAB) {
-      const response = await repositoryApi.getOrganizationGitlabRepositoryBranches(
-        payload.organizationId,
-        payload.gitToken,
-        payload.name
-      )
-      return response.data.results as GitRepositoryBranch[]
-    }
-    if (payload.gitProvider === GitProviderEnum.BITBUCKET) {
-      const response = await repositoryApi.getOrganizationBitbucketRepositoryBranches(
-        payload.organizationId,
-        payload.gitToken,
-        payload.name
-      )
-      return response.data.results as GitRepositoryBranch[]
-    }
+// /**
+//  * @deprecated This should be migrated to the new `use-branches` hook
+//  */
+// export const fetchBranches = createAsyncThunk(
+//   'branch/fetch',
+//   async (payload: {
+//     organizationId: string
+//     gitProvider: GitProviderEnum
+//     name: string
+//     gitToken?: string
+//     id?: string
+//   }) => {
+//     if (payload.gitProvider === GitProviderEnum.GITHUB) {
+//       const response = await repositoryApi.getOrganizationGithubRepositoryBranches(
+//         payload.organizationId,
+//         payload.gitToken,
+//         payload.name
+//       )
+//       return response.data.results as GitRepositoryBranch[]
+//     }
+//     if (payload.gitProvider === GitProviderEnum.GITLAB) {
+//       const response = await repositoryApi.getOrganizationGitlabRepositoryBranches(
+//         payload.organizationId,
+//         payload.gitToken,
+//         payload.name
+//       )
+//       return response.data.results as GitRepositoryBranch[]
+//     }
+//     if (payload.gitProvider === GitProviderEnum.BITBUCKET) {
+//       const response = await repositoryApi.getOrganizationBitbucketRepositoryBranches(
+//         payload.organizationId,
+//         payload.gitToken,
+//         payload.name
+//       )
+//       return response.data.results as GitRepositoryBranch[]
+//     }
 
-    return Promise.all([])
-  }
-)
+//     return Promise.all([])
+//   }
+// )
 
-export const initialRepositoryState: RepositoryState = repositoryAdapter.getInitialState({
-  loadingStatus: 'not loaded',
-  error: null,
-})
+// export const initialRepositoryState: RepositoryState = repositoryAdapter.getInitialState({
+//   loadingStatus: 'not loaded',
+//   error: null,
+// })
 
-export const repositorySlice = createSlice({
-  name: REPOSITORY_FEATURE_KEY,
-  initialState: initialRepositoryState,
-  reducers: {
-    removeAll: repositoryAdapter.removeAll, // we need this action which is not an async action
-  },
-  extraReducers: (builder) => {
-    builder
-      // fetch repositories
-      .addCase(fetchRepository.pending, (state: RepositoryState) => {
-        state.loadingStatus = 'loading'
-      })
-      .addCase(fetchRepository.fulfilled, (state: RepositoryState, action) => {
-        const extendedRepositories = action.payload.map((repository) => ({
-          ...repository,
-          provider: action.meta.arg.gitProvider,
-        }))
-        repositoryAdapter.setAll(state, extendedRepositories)
-        state.loadingStatus = 'loaded'
-      })
-      .addCase(fetchRepository.rejected, (state: RepositoryState, action) => {
-        state.loadingStatus = 'error'
-        state.error = action.error.message
-        // reset repository
-        repositoryAdapter.setAll(state, [])
-        toastError(action.error)
-      })
-      // fetch branches by repository
-      .addCase(fetchBranches.pending, (state: RepositoryState, action) => {
-        const id = action.meta.arg.id
-        if (id) {
-          const update: Update<RepositoryEntity> = {
-            id: id,
-            changes: {
-              branches: {
-                loadingStatus: 'loading',
-              },
-            },
-          }
-          repositoryAdapter.updateOne(state, update)
-        }
-      })
-      .addCase(fetchBranches.fulfilled, (state: RepositoryState, action) => {
-        const id = action.meta.arg.id
-        if (id) {
-          const update: Update<RepositoryEntity> = {
-            id: id,
-            changes: {
-              branches: {
-                loadingStatus: 'loaded',
-                items: action.payload,
-              },
-            },
-          }
-          repositoryAdapter.updateOne(state, update)
-          state.error = null
-        }
-      })
-      .addCase(fetchBranches.rejected, (state: RepositoryState, action) => {
-        const id = action.meta.arg.id
-        if (id) {
-          const update: Update<RepositoryEntity> = {
-            id: id,
-            changes: {
-              branches: {
-                loadingStatus: 'error',
-              },
-            },
-          }
-          repositoryAdapter.updateOne(state, update)
-        }
-        state.error = action.error.message
-        toastError(action.error)
-      })
-  },
-})
+// export const repositorySlice = createSlice({
+//   name: REPOSITORY_FEATURE_KEY,
+//   initialState: initialRepositoryState,
+//   reducers: {
+//     removeAll: repositoryAdapter.removeAll, // we need this action which is not an async action
+//   },
+//   extraReducers: (builder) => {
+//     builder
+//       // fetch repositories
+//       .addCase(fetchRepository.pending, (state: RepositoryState) => {
+//         state.loadingStatus = 'loading'
+//       })
+//       .addCase(fetchRepository.fulfilled, (state: RepositoryState, action) => {
+//         const extendedRepositories = action.payload.map((repository) => ({
+//           ...repository,
+//           provider: action.meta.arg.gitProvider,
+//         }))
+//         repositoryAdapter.setAll(state, extendedRepositories)
+//         state.loadingStatus = 'loaded'
+//       })
+//       .addCase(fetchRepository.rejected, (state: RepositoryState, action) => {
+//         state.loadingStatus = 'error'
+//         state.error = action.error.message
+//         // reset repository
+//         repositoryAdapter.setAll(state, [])
+//         toastError(action.error)
+//       })
+//       // fetch branches by repository
+//       .addCase(fetchBranches.pending, (state: RepositoryState, action) => {
+//         const id = action.meta.arg.id
+//         if (id) {
+//           const update: Update<RepositoryEntity> = {
+//             id: id,
+//             changes: {
+//               branches: {
+//                 loadingStatus: 'loading',
+//               },
+//             },
+//           }
+//           repositoryAdapter.updateOne(state, update)
+//         }
+//       })
+//       .addCase(fetchBranches.fulfilled, (state: RepositoryState, action) => {
+//         const id = action.meta.arg.id
+//         if (id) {
+//           const update: Update<RepositoryEntity> = {
+//             id: id,
+//             changes: {
+//               branches: {
+//                 loadingStatus: 'loaded',
+//                 items: action.payload,
+//               },
+//             },
+//           }
+//           repositoryAdapter.updateOne(state, update)
+//           state.error = null
+//         }
+//       })
+//       .addCase(fetchBranches.rejected, (state: RepositoryState, action) => {
+//         const id = action.meta.arg.id
+//         if (id) {
+//           const update: Update<RepositoryEntity> = {
+//             id: id,
+//             changes: {
+//               branches: {
+//                 loadingStatus: 'error',
+//               },
+//             },
+//           }
+//           repositoryAdapter.updateOne(state, update)
+//         }
+//         state.error = action.error.message
+//         toastError(action.error)
+//       })
+//   },
+// })
 
-export const repositoryReducer = repositorySlice.reducer
+// export const repositoryReducer = repositorySlice.reducer
 
-export const repositoryActions = repositorySlice.actions
+// export const repositoryActions = repositorySlice.actions
 
-const { selectAll, selectEntities } = repositoryAdapter.getSelectors()
+// const { selectAll, selectEntities } = repositoryAdapter.getSelectors()
 
-export const getRepositoryState = (rootState: RootState): RepositoryState =>
-  rootState.organization[REPOSITORY_FEATURE_KEY]
+// export const getRepositoryState = (rootState: RootState): RepositoryState =>
+//   rootState.organization[REPOSITORY_FEATURE_KEY]
 
-export const selectAllRepository = createSelector(getRepositoryState, selectAll)
+// export const selectAllRepository = createSelector(getRepositoryState, selectAll)
 
-export const selectRepositoriesByProvider = createSelector(
-  [getRepositoryState, (state, gitProvider: GitProviderEnum) => gitProvider],
-  (state, gitProvider) => {
-    const repositories = selectAll(state)
-    return repositories.filter((repo) => {
-      return repo.provider === gitProvider
-    })
-  }
-)
+// export const selectRepositoriesByProvider = createSelector(
+//   [getRepositoryState, (state, gitProvider: GitProviderEnum) => gitProvider],
+//   (state, gitProvider) => {
+//     const repositories = selectAll(state)
+//     return repositories.filter((repo) => {
+//       return repo.provider === gitProvider
+//     })
+//   }
+// )
 
-export const repositoryLoadingStatus = (state: RootState): LoadingStatus => getRepositoryState(state).loadingStatus
+// export const repositoryLoadingStatus = (state: RootState): LoadingStatus => getRepositoryState(state).loadingStatus
 
-export const selectRepositoryEntities = createSelector(getRepositoryState, selectEntities)
+// export const selectRepositoryEntities = createSelector(getRepositoryState, selectEntities)
