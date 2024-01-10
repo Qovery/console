@@ -90,7 +90,7 @@ export function StepGeneral(props: StepGeneralProps) {
           )}
         />
 
-        <BlockContent title="Select the mode for you database" className="mb-6">
+        <BlockContent title="Database mode" className="mb-6">
           <div className="flex gap-4 justify-center">
             <Controller
               name="mode"
