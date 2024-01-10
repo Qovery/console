@@ -10,6 +10,7 @@ export enum IconEnum {
   CONTAINER = 'CONTAINER',
   AWS = 'AWS',
   AWS_GRAY = 'AWS_GRAY',
+  DO = 'DO',
   SCW = 'SCW',
   SCW_GRAY = 'SCW_GRAY',
   GCP = 'GCP',

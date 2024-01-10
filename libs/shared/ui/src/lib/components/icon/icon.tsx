@@ -14,6 +14,7 @@ import { ContainerIcon } from './icons/container'
 import CronJobIcon from './icons/cron-job'
 import CronJobStrokeIcon from './icons/cron-job-stroke-icon'
 import DatabaseIcon from './icons/database'
+import DOIcon from './icons/do'
 import DockerIcon from './icons/docker'
 import DopplerIcon from './icons/doppler'
 import EnvironmentIcon from './icons/environment'
@@ -71,6 +72,8 @@ export function Icon(props: IconProps) {
       return <AWSIcon {...formattedProps} />
     case IconEnum.AWS_GRAY:
       return <AWSGrayIcon {...formattedProps} />
+    case IconEnum.DO:
+      return <DOIcon {...formattedProps} />
     case IconEnum.SCW:
       return <ScalewayIcon {...formattedProps} />
     case IconEnum.SCW_GRAY:

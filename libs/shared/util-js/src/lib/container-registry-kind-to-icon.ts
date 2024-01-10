@@ -13,5 +13,6 @@ export function containerRegistryKindToIcon(
     .with('GENERIC_CR', () => IconEnum.GENERIC_REGISTRY)
     .with('ECR', 'PUBLIC_ECR', () => IconEnum.AWS)
     .with('GCP_ARTIFACT_REGISTRY', () => IconEnum.GCP_ARTIFACT_REGISTRY)
+    .with('DOCR', () => IconEnum.DO)
     .exhaustive()
 }
