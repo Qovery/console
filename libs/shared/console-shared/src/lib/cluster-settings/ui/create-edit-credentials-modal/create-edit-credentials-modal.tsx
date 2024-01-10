@@ -19,6 +19,7 @@ export function CreateEditCredentialsModal(props: CreateEditCredentialsModalProp
 
   const [fileDetails, setFileDetails] = useState<{ name: string; size: number }>()
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    maxFiles: 1,
     onDrop: (acceptedFiles) => {
       const file = acceptedFiles?.[0]
       if (!file || file.type !== 'application/json') return
