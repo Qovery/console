@@ -1,8 +1,8 @@
-import { act, getByTestId, render } from '__tests__/utils/setup-jest'
 import { CloudProviderEnum } from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
 import * as cloudProvidersDomain from '@qovery/domains/cloud-providers/feature'
 import * as clustersDomain from '@qovery/domains/clusters/feature'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ClusterContainerCreateContext } from '../page-clusters-create-feature'
 import StepSummaryFeature from './step-summary-feature'
 
@@ -47,7 +47,7 @@ jest.mock('react-router-dom', () => ({
 const STATIC_IP = 'STATIC_IP'
 
 const mockSetResourcesData = jest.fn()
-const ContextWrapper = (props: { children: ReactNode }) => {
+const ContextWrapper = (props: { installation_type?: 'MANAGED' | 'SELF_MANAGED'; children: ReactNode }) => {
   return (
     <ClusterContainerCreateContext.Provider
       value={{
@@ -61,7 +61,7 @@ const ContextWrapper = (props: { children: ReactNode }) => {
           region: 'region',
           credentials: '1',
           credentials_name: 'name',
-          installation_type: 'MANAGED',
+          installation_type: props.installation_type ?? 'MANAGED',
         },
         setGeneralData: jest.fn(),
         resourcesData: {
@@ -83,6 +83,12 @@ const ContextWrapper = (props: { children: ReactNode }) => {
           },
         },
         setFeaturesData: jest.fn(),
+        kubeconfigData: {
+          file_content: 'file_content',
+          file_size: 1234,
+          file_name: 'file_name.yml',
+        },
+        setKubeconfigData: jest.fn(),
       }}
     >
       {props.children}
@@ -107,7 +113,7 @@ describe('StepSummaryFeature', () => {
   })
 
   it('should render successfully', () => {
-    const { baseElement } = render(
+    const { baseElement } = renderWithProviders(
       <ContextWrapper>
         <StepSummaryFeature />
       </ContextWrapper>
@@ -119,17 +125,13 @@ describe('StepSummaryFeature', () => {
     createCluster.mockReturnValue({
       id: '42',
     })
-    const { baseElement } = render(
+    const { userEvent } = renderWithProviders(
       <ContextWrapper>
         <StepSummaryFeature />
       </ContextWrapper>
     )
 
-    const button = getByTestId(baseElement, 'button-create-deploy')
-
-    await act(() => {
-      button.click()
-    })
+    await userEvent.click(screen.getByTestId('button-create-deploy'))
 
     expect(createCluster).toHaveBeenCalledWith({
       organizationId: '1',
@@ -164,6 +166,34 @@ describe('StepSummaryFeature', () => {
           name: 'name',
         },
         region: 'region',
+      },
+    })
+  })
+
+  it('should post the request with expected form values - self managed', async () => {
+    createCluster.mockReturnValue({
+      id: '42',
+    })
+    const { userEvent } = renderWithProviders(
+      <ContextWrapper installation_type="SELF_MANAGED">
+        <StepSummaryFeature />
+      </ContextWrapper>
+    )
+
+    await userEvent.click(screen.getByTestId('button-create'))
+
+    expect(createCluster).toHaveBeenCalledWith({
+      organizationId: '1',
+      clusterRequest: {
+        name: 'test',
+        description: 'description',
+        production: true,
+        cloud_provider: CloudProviderEnum.AWS,
+        region: 'region',
+        kubeconfig: 'file_content',
+        kubernetes: 'SELF_MANAGED',
+        ssh_keys: [],
+        features: [],
       },
     })
   })
