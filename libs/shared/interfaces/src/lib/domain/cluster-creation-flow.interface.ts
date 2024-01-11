@@ -14,6 +14,7 @@ export interface ClusterGeneralData {
 export interface ClusterKubeconfigData {
   file_name: string
   file_content: string
+  file_size: number
 }
 
 export interface ClusterResourcesData {
