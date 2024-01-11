@@ -67,7 +67,7 @@ export function Deployments(props: PageDeploymentsProps) {
         <EmptyState
           className="w-[420px] m-auto mt-12"
           title="No deployment yet"
-          description="You need to deploy a service to see this tab."
+          description="You need to deploy your service to see this tab."
         />
       </div>
     )
