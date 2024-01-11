@@ -1,9 +1,9 @@
 import { type FormEventHandler, useCallback } from 'react'
 import { useDropzone } from 'react-dropzone'
-import { useFormContext } from 'react-hook-form'
+import { useController, useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { type ClusterKubeconfigData } from '@qovery/shared/interfaces'
-import { CLUSTERS_URL } from '@qovery/shared/routes'
+import { CLUSTERS_CREATION_GENERAL_URL, CLUSTERS_CREATION_URL, CLUSTERS_URL } from '@qovery/shared/routes'
 import { Button, Dropzone, Icon, IconAwesomeEnum } from '@qovery/shared/ui'
 
 export interface StepKubeconfigProps {
@@ -13,9 +13,17 @@ export interface StepKubeconfigProps {
 export function StepKubeconfig({ onSubmit }: StepKubeconfigProps) {
   const navigate = useNavigate()
   const { organizationId = '' } = useParams()
-  const { setValue, watch, reset } = useFormContext<ClusterKubeconfigData>()
-
-  const fileName = watch('file_name')
+  const { control, formState } = useFormContext<ClusterKubeconfigData>()
+  const { field: fileName } = useController<ClusterKubeconfigData>({
+    name: 'file_name',
+    control,
+    rules: { required: true },
+  })
+  const { field: fileContent } = useController<ClusterKubeconfigData>({
+    name: 'file_content',
+    control,
+    rules: { required: true },
+  })
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     acceptedFiles.forEach((file) => {
@@ -24,8 +32,8 @@ export function StepKubeconfig({ onSubmit }: StepKubeconfigProps) {
       reader.onabort = () => console.log('file reading was aborted')
       reader.onerror = () => console.log('file reading has failed')
       reader.onload = () => {
-        setValue('file_name', file.name)
-        setValue('file_content', reader.result as string)
+        fileName.onChange(file.name)
+        fileContent.onChange(reader.result)
       }
       reader.readAsText(file)
     })
@@ -39,7 +47,8 @@ export function StepKubeconfig({ onSubmit }: StepKubeconfigProps) {
   })
 
   const handleDelete = () => {
-    reset()
+    fileName.onChange(null)
+    fileContent.onChange(null)
   }
 
   return (
@@ -50,13 +59,13 @@ export function StepKubeconfig({ onSubmit }: StepKubeconfigProps) {
       </div>
       <form onSubmit={onSubmit}>
         <div className="mb-10">
-          {fileName ? (
+          {fileName.value ? (
             <div className="flex border border-neutral-200 p-3 gap-2 rounded items-center">
               <div className="p-2">
                 <Icon name={IconAwesomeEnum.FILE_LINES} />
               </div>
               <div className="flex flex-col text-xs grow">
-                <span className="text-neutral-400 font-medium">{fileName}</span>
+                <span className="text-neutral-400 font-medium">{fileName.value}</span>
                 <span className="text-neutral-350"></span>
               </div>
               <div>
@@ -78,11 +87,13 @@ export function StepKubeconfig({ onSubmit }: StepKubeconfigProps) {
             type="button"
             variant="surface"
             color="neutral"
-            onClick={() => navigate(CLUSTERS_URL(organizationId))}
+            onClick={() =>
+              navigate(`${CLUSTERS_URL(organizationId)}${CLUSTERS_CREATION_URL}${CLUSTERS_CREATION_GENERAL_URL}`)
+            }
           >
-            Cancel
+            Back
           </Button>
-          <Button size="lg" data-testid="button-submit" type="submit" disabled={!fileName}>
+          <Button size="lg" data-testid="button-submit" type="submit" disabled={!formState.isValid}>
             Continue
           </Button>
         </div>

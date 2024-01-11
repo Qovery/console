@@ -71,6 +71,10 @@ export function StepSummaryFeature() {
   }
 
   const onBack = () => {
+    if (generalData?.installation_type === 'SELF_MANAGED') {
+      goToKubeconfig()
+      return
+    }
     return match(generalData?.cloud_provider)
       .with('AWS', () => {
         if (resourcesData?.cluster_type === KubernetesEnum.K3_S) {
