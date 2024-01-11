@@ -9,9 +9,9 @@ export function HelmDefaultValuesPreview() {
   const params = new URLSearchParams(search)
   const payload = params.get('payload')!
 
-  const { data: defaultValues } = useHelmDefaultValues({ ...JSON.parse(payload), enabled: Boolean(payload) })
+  const { data: defaultValues, isLoading } = useHelmDefaultValues({ ...JSON.parse(payload), enabled: Boolean(payload) })
 
-  return <CodeEditor language="yaml" value={defaultValues} height="100vh" readOnly />
+  return <CodeEditor language="yaml" value={defaultValues} loading={isLoading} height="100vh" readOnly />
 }
 
 export default HelmDefaultValuesPreview
