@@ -136,12 +136,15 @@ export function PageSettingsValuesOverrideFileFeature() {
           source={buildEditServicePayload({ service: service! }).source}
           gitRepositorySettings={gitRepositorySettings}
           onSubmit={onSubmit}
+          isSetting
         >
-          <div className="flex justify-end mt-10">
-            <Button type="submit" size="lg" loading={isLoadingEditService} disabled={disabledContinueButton}>
-              Save
-            </Button>
-          </div>
+          {methods.watch('type') !== 'YAML' && (
+            <div className="flex justify-end mt-10">
+              <Button type="submit" size="lg" loading={isLoadingEditService} disabled={disabledContinueButton}>
+                Save
+              </Button>
+            </div>
+          )}
         </ValuesOverrideFilesSetting>
       </FormProvider>
     </div>

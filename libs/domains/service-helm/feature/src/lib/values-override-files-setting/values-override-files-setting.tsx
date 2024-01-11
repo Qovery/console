@@ -21,6 +21,7 @@ export interface ValuesOverrideFilesSettingProps {
   watchFieldType: ValuesOverrideTypes
   gitRepositorySettings: ReactNode
   onSubmit: () => void
+  isSetting?: boolean
 }
 
 export function ValuesOverrideFilesSetting({
@@ -30,6 +31,7 @@ export function ValuesOverrideFilesSetting({
   children,
   gitRepositorySettings,
   onSubmit,
+  isSetting,
 }: PropsWithChildren<ValuesOverrideFilesSettingProps>) {
   return (
     <Section className="items-start">
@@ -135,7 +137,10 @@ export function ValuesOverrideFilesSetting({
             <div className="flex flex-col gap-3">
               <ValuesOverrideYamlSetting
                 content={methods.getValues('content')}
-                onSubmit={(value) => methods.setValue('content', value)}
+                onSubmit={(value) => {
+                  methods.setValue('content', value)
+                  isSetting && onSubmit()
+                }}
                 source={source}
               />
             </div>
