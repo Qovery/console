@@ -1,5 +1,5 @@
-import { useCopyToClipboard } from '@uidotdev/usehooks'
 import { Button, Callout, ExternalLink, Icon, IconAwesomeEnum, Skeleton } from '@qovery/shared/ui'
+import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import { useInstallationHelmValues } from '../hooks/use-installation-helm-values/use-installation-helm-values'
 
 export interface ClusterInstallationGuideModalProps {
