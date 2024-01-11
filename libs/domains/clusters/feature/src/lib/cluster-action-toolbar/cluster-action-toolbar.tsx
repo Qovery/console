@@ -4,8 +4,8 @@ import {
   EnvironmentModeEnum,
   OrganizationEventTargetType,
 } from 'qovery-typescript-axios'
-import { type ReactNode } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { type ReactNode, useEffect } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { AUDIT_LOGS_PARAMS_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL, INFRA_LOGS_URL } from '@qovery/shared/routes'
 import {
   ActionToolbar,
@@ -129,6 +129,8 @@ function MenuOtherActions({
   organizationId: string
 }) {
   const navigate = useNavigate()
+  const showSelfManagedGuideKey = 'showSelfManagedGuide'
+  const [searchParams, setSearchParams] = useSearchParams()
   const { openModal, closeModal } = useModal()
   const [, copyToClipboard] = useCopyToClipboard()
   const { mutate: downloadKubeconfig } = useDownloadKubeconfig()
@@ -144,9 +146,24 @@ function MenuOtherActions({
   const mutationInstallationGuide = () =>
     openModal({
       content: (
-        <ClusterInstallationGuideModal organizationId={organizationId} clusterId={cluster.id} onClose={closeModal} />
+        <ClusterInstallationGuideModal
+          organizationId={organizationId}
+          clusterId={cluster.id}
+          onClose={() => {
+            searchParams.delete(showSelfManagedGuideKey)
+            setSearchParams(searchParams)
+            closeModal()
+          }}
+        />
       ),
     })
+
+  useEffect(() => {
+    if (searchParams.has(showSelfManagedGuideKey) && cluster.kubernetes === 'SELF_MANAGED') {
+      mutationInstallationGuide()
+    }
+    return () => closeModal()
+  }, [searchParams, setSearchParams, cluster.kubernetes])
 
   return (
     <DropdownMenu.Root>

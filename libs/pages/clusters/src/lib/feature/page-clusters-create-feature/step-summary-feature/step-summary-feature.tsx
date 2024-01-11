@@ -11,6 +11,7 @@ import {
   CLUSTERS_CREATION_REMOTE_URL,
   CLUSTERS_CREATION_RESOURCES_URL,
   CLUSTERS_CREATION_URL,
+  CLUSTERS_GENERAL_URL,
   CLUSTERS_URL,
 } from '@qovery/shared/routes'
 import { FunnelFlowBody } from '@qovery/shared/ui'
@@ -110,7 +111,10 @@ export function StepSummaryFeature() {
             features: [],
           },
         })
-        navigate(CLUSTERS_URL(organizationId))
+        navigate({
+          pathname: CLUSTERS_URL(organizationId) + CLUSTERS_GENERAL_URL,
+          search: '?showSelfManagedGuide',
+        })
       } catch (e) {
         console.error(e)
       }
