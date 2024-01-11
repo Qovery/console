@@ -98,7 +98,7 @@ export function PageSettingsGeneral({
               render={({ field, fieldState: { error } }) => (
                 <div className="mb-3">
                   <InputSelect
-                    label="Mode"
+                    label="Database mode"
                     options={databasesMode}
                     onChange={field.onChange}
                     value={field.value}

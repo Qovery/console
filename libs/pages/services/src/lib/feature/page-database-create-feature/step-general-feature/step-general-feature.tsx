@@ -117,8 +117,14 @@ export function StepGeneralFeature() {
     setCurrentStep(1)
   }, [setCurrentStep])
 
+  const cloudProvider = environment?.cloud_provider.provider
+
   const methods = useForm<GeneralData>({
-    defaultValues: generalData ? generalData : { mode: DatabaseModeEnum.MANAGED },
+    defaultValues: generalData
+      ? generalData
+      : cloudProvider === 'AWS'
+      ? { mode: DatabaseModeEnum.MANAGED }
+      : { mode: DatabaseModeEnum.CONTAINER },
     mode: 'onChange',
   })
 
@@ -149,7 +155,7 @@ export function StepGeneralFeature() {
     <FunnelFlowBody helpSection={funnelCardHelp}>
       <FormProvider {...methods}>
         <StepGeneral
-          cloudProvider={environment?.cloud_provider.provider}
+          cloudProvider={cloudProvider}
           onSubmit={onSubmit}
           databaseTypeOptions={databaseTypeOptions}
           databaseVersionOptions={databaseVersionOptions}
