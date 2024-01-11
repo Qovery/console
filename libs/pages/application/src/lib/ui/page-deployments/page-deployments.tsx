@@ -1,6 +1,13 @@
 import { type DeploymentHistoryApplication } from 'qovery-typescript-axios'
 import { memo, useEffect, useState } from 'react'
-import { type BaseLink, HelpSection, Table, type TableFilterProps, TableRowDeployment } from '@qovery/shared/ui'
+import {
+  type BaseLink,
+  EmptyState,
+  HelpSection,
+  Table,
+  type TableFilterProps,
+  TableRowDeployment,
+} from '@qovery/shared/ui'
 
 export interface PageDeploymentsProps {
   deployments?: DeploymentHistoryApplication[]
@@ -53,6 +60,17 @@ export function Deployments(props: PageDeploymentsProps) {
       className: 'px-4 py-2 border-b-neutral-200 border-l h-full bg-white',
     },
   ]
+
+  if (!isLoading && deployments.length === 0)
+    return (
+      <div className="bg-neutral-50 mt-2 h-full rounded-t-sm">
+        <EmptyState
+          className="w-[420px] m-auto mt-12"
+          title="No deployment yet"
+          description="You need to deploy a service to see this tab."
+        />
+      </div>
+    )
 
   return (
     <>
