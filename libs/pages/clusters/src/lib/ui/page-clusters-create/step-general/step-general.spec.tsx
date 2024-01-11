@@ -1,6 +1,6 @@
-import { act, fireEvent, render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { CloudProviderEnum } from 'qovery-typescript-axios'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import StepGeneral, { type StepGeneralProps } from './step-general'
 
 const currentCloudProviders = {
@@ -22,12 +22,12 @@ const props: StepGeneralProps = {
 
 describe('StepGeneral', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(wrapWithReactHookForm(<StepGeneral {...props} />))
+    const { baseElement } = renderWithProviders(wrapWithReactHookForm(<StepGeneral {...props} />))
     expect(baseElement).toBeTruthy()
   })
 
   it('should render the form with fields', async () => {
-    const { getByDisplayValue, getByTestId } = render(
+    renderWithProviders(
       wrapWithReactHookForm(<StepGeneral {...props} />, {
         defaultValues: {
           name: 'my-cluster',
@@ -37,14 +37,14 @@ describe('StepGeneral', () => {
       })
     )
 
-    getByDisplayValue('my-cluster')
-    getByDisplayValue('test')
-    getByDisplayValue('false')
-    getByTestId('input-cloud-provider')
+    screen.getByDisplayValue('my-cluster')
+    screen.getByDisplayValue('test')
+    screen.getByDisplayValue('false')
+    screen.getByTestId('input-cloud-provider')
   })
 
   it('should submit the form on click', async () => {
-    const { getByTestId } = render(
+    const { userEvent } = renderWithProviders(
       wrapWithReactHookForm(<StepGeneral {...props} />, {
         defaultValues: {
           name: 'my-cluster',
@@ -57,16 +57,11 @@ describe('StepGeneral', () => {
       })
     )
 
-    const button = getByTestId('button-submit')
+    await userEvent.type(screen.getByTestId('input-name'), 'text')
+    await userEvent.click(screen.getByLabelText(/Qovery Managed/i))
 
-    await act(() => {
-      const input = getByTestId('input-name')
-      fireEvent.input(input, { target: { value: 'test' } })
-    })
-
-    await act(() => {
-      button?.click()
-    })
+    const button = screen.getByTestId('button-submit')
+    await userEvent.click(button)
 
     expect(button).not.toBeDisabled()
     expect(props.onSubmit).toHaveBeenCalled()

@@ -61,6 +61,7 @@ const ContextWrapper = (props: { children: ReactNode }) => {
           region: 'region',
           credentials: '1',
           credentials_name: 'name',
+          installation_type: 'MANAGED',
         },
         setGeneralData: jest.fn(),
         resourcesData: {

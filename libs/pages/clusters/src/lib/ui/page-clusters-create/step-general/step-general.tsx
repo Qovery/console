@@ -80,28 +80,28 @@ export function StepGeneral(props: StepGeneralProps) {
               <BlockContent title="Installation type">
                 <RadioGroup.Root className="flex flex-col gap-4" defaultValue={field.value} onChange={field.onChange}>
                   <label className="flex gap-3">
-                    <div>
+                    <span>
                       <RadioGroup.Item value="MANAGED" />
-                    </div>
-                    <div>
+                    </span>
+                    <span>
                       <span className="text-neutral-400 font-medium">Qovery Managed</span>
                       <p className="text-neutral-350">
                         Qovery will install and manage the Kubernetes cluster and the underlying infrastructure on your
                         cloud provider account.
                       </p>
-                    </div>
+                    </span>
                   </label>
                   <label className="flex gap-3">
-                    <div>
+                    <span>
                       <RadioGroup.Item value="SELF_MANAGED" />
-                    </div>
-                    <div>
+                    </span>
+                    <span>
                       <span className="text-neutral-400 font-medium">Self-Managed (BETA)</span>
                       <p className="text-neutral-350">
                         You will manage the infrastructure, including any update/ upgrade. Advanced Kubernetes knowledge
                         required.
                       </p>
-                    </div>
+                    </span>
                   </label>
                 </RadioGroup.Root>
               </BlockContent>
