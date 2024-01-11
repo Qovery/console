@@ -24,6 +24,11 @@ export function StepKubeconfig({ onSubmit }: StepKubeconfigProps) {
     control,
     rules: { required: true },
   })
+  const { field: fileSize } = useController<ClusterKubeconfigData>({
+    name: 'file_size',
+    control,
+    rules: { required: true },
+  })
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     acceptedFiles.forEach((file) => {
@@ -32,6 +37,7 @@ export function StepKubeconfig({ onSubmit }: StepKubeconfigProps) {
       reader.onabort = () => console.log('file reading was aborted')
       reader.onerror = () => console.log('file reading has failed')
       reader.onload = () => {
+        fileSize.onChange(file.size / 1000)
         fileName.onChange(file.name)
         fileContent.onChange(reader.result)
       }
@@ -66,7 +72,7 @@ export function StepKubeconfig({ onSubmit }: StepKubeconfigProps) {
               </div>
               <div className="flex flex-col text-xs grow">
                 <span className="text-neutral-400 font-medium">{fileName.value}</span>
-                <span className="text-neutral-350"></span>
+                <span className="text-neutral-350">{fileSize.value} Ko</span>
               </div>
               <div>
                 <Button type="button" variant="outline" color="neutral" onClick={handleDelete}>
