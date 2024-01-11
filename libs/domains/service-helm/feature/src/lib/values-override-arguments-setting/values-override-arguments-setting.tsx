@@ -165,7 +165,7 @@ export function ValuesOverrideArgumentsSetting({
         source,
       },
     }
-    window.open(`${HELM_DEFAULT_VALUES_PREVIEW_CODE}?code=${encodeURIComponent(JSON.stringify(payload))}`, '_blank')
+    window.open(`${HELM_DEFAULT_VALUES_PREVIEW_CODE}?payload=${encodeURIComponent(JSON.stringify(payload))}`, '_blank')
   }
 
   return (

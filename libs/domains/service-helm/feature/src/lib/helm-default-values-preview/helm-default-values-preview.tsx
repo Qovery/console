@@ -7,7 +7,7 @@ export function HelmDefaultValuesPreview() {
   useDocumentTitle('Qovery - Helm default values')
   const { search } = useLocation()
   const params = new URLSearchParams(search)
-  const payload = params.get('code')!
+  const payload = params.get('payload')!
 
   const { data: defaultValues } = useHelmDefaultValues({ ...JSON.parse(payload), enabled: Boolean(payload) })
 
