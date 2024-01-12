@@ -1,11 +1,8 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import { useCallback } from 'react'
-import { useDispatch } from 'react-redux'
-import { userActions } from '@qovery/domains/users/data-access'
 
 export function useAuth() {
   const { loginWithRedirect, logout, user, getAccessTokenSilently, isLoading } = useAuth0()
-  const dispatch = useDispatch()
 
   /**
    * Authentification login
@@ -22,12 +19,10 @@ export function useAuth() {
    * Authentification logout
    */
   const authLogout = useCallback(async () => {
-    dispatch(userActions.remove())
-
     return await logout({
       returnTo: window.location.origin,
     })
-  }, [logout, dispatch])
+  }, [logout])
 
   /**
    * Create authentification cookies

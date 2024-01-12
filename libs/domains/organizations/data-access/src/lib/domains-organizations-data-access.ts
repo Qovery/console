@@ -248,6 +248,13 @@ export const organizations = createQueryKeys('organizations', {
       return response.data.results
     },
   }),
+  memberInvitation: ({ organizationId, inviteId }: { organizationId: string; inviteId: string }) => ({
+    queryKey: [organizationId, inviteId],
+    async queryFn() {
+      const response = await membersApi.getMemberInvitation(organizationId, inviteId)
+      return response.data
+    },
+  }),
 })
 
 export const mutations = {
@@ -524,6 +531,10 @@ export const mutations = {
   },
   async disconnectGithubApp({ organizationId, force }: { organizationId: string; force?: boolean }) {
     const response = await githubAppApi.organizationGithubAppDisconnect(organizationId, force)
+    return response.data
+  },
+  async acceptInviteMember({ organizationId, inviteId }: { organizationId: string; inviteId: string }) {
+    const response = await membersApi.postAcceptInviteMember(organizationId, inviteId)
     return response.data
   },
 }
