@@ -99,9 +99,10 @@ export function PodDetails({ pod, serviceId, serviceType }: PodDetailsProps) {
                     <Dt className={last_terminated_state ? 'mb-2' : ''}>Current status:</Dt>
                     <Dd className={last_terminated_state ? 'mb-2' : ''}>
                       {current_state?.state === 'RUNNING' ? (
-                        <span className="text-green-500">Running</span>
+                        <span>✅ Running</span>
                       ) : (
-                        <span className={current_state?.state === 'ERROR' ? 'text-red-500' : ''}>
+                        <span>
+                          {pod.state === 'ERROR' ? '❌ ' : ''}
                           {current_state?.state_reason}
                           {current_state?.state_message ? `:${current_state.state_message}` : ''}
                           {restart_count && !last_terminated_state ? (
@@ -154,9 +155,10 @@ export function PodDetails({ pod, serviceId, serviceType }: PodDetailsProps) {
           <Dt>Current status:</Dt>
           <Dd>
             {pod.state === 'RUNNING' ? (
-              <span className="text-green-500">Running</span>
+              <span>✅ Running</span>
             ) : (
-              <span className={pod.state === 'ERROR' ? 'text-red-500' : ''}>
+              <span>
+                {pod.state === 'ERROR' ? '❌ ' : ''}
                 {pod.state_reason}
                 {pod.state_message ? `:${pod.state_message}` : ''}
                 {pod.restart_count ? (
