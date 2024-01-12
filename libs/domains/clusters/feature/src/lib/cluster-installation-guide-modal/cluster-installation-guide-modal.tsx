@@ -24,7 +24,7 @@ export function ClusterInstallationGuideModal({
       <h2 className="h4 text-neutral-400 max-w-sm truncate">Installation guide</h2>
 
       <ol className="ml-4 list-outside list-decimal" type="1">
-        <li className="mb-4">
+        <li className="mb-6">
           <span>Save the following yaml, it contains the Qovery configuration assigned to your cluster.</span>
           <br />
           <span className="inline-block mt-2">
@@ -38,7 +38,10 @@ export function ClusterInstallationGuideModal({
         <li>
           <span>Follow the instruction described in this documentation</span>
           <br />
-          <ExternalLink className="mt-2" href="">
+          <ExternalLink
+            className="mt-2"
+            href="https://hub.qovery.com/docs/getting-started/install-qovery/kubernetes/quickstart/"
+          >
             Documentation
           </ExternalLink>
         </li>
