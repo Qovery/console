@@ -6,13 +6,14 @@ import { useCallback, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { useIntercom } from 'react-use-intercom'
+import { HelmDefaultValuesPreview } from '@qovery/domains/service-helm/feature'
 import { selectUser } from '@qovery/domains/users/data-access'
 import { DarkModeEnabler, Layout } from '@qovery/pages/layout'
 import { PageLogin, PageLogoutFeature } from '@qovery/pages/login'
 import { useAuth, useInviteMember } from '@qovery/shared/auth'
 import { type UserInterface } from '@qovery/shared/interfaces'
 import { ProtectedRoute } from '@qovery/shared/router'
-import { LOGIN_URL, LOGOUT_URL, PREVIEW_CODE } from '@qovery/shared/routes'
+import { HELM_DEFAULT_VALUES, LOGIN_URL, LOGOUT_URL, PREVIEW_CODE } from '@qovery/shared/routes'
 import { LoadingScreen } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { useAuthInterceptor } from '@qovery/shared/utils'
@@ -95,6 +96,7 @@ export function App() {
         <Route path={`${LOGIN_URL}/*`} element={<PageLogin />} />
         <Route path={LOGOUT_URL} element={<PageLogoutFeature />} />
         <Route path={PREVIEW_CODE} element={<PreviewCode />} />
+        <Route path={HELM_DEFAULT_VALUES} element={<HelmDefaultValuesPreview />} />
         {ROUTER.map((route) =>
           route.layout ? (
             <Route

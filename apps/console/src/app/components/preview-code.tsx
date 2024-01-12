@@ -4,17 +4,11 @@ import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
 function PreviewCode() {
   useDocumentTitle('Preview Code')
-  const { search } = useLocation()
-  const params = new URLSearchParams(search)
+  const {
+    state: { code, language },
+  } = useLocation()
 
-  return (
-    <CodeEditor
-      language={params.get('language') ?? 'yaml'}
-      defaultValue={params.get('code') ?? ''}
-      height="100vh"
-      readOnly
-    />
-  )
+  return <CodeEditor language={language ?? 'yaml'} defaultValue={code ?? ''} height="100vh" readOnly />
 }
 
 export default PreviewCode

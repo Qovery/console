@@ -8,7 +8,7 @@ import {
   useFormContext,
 } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
-import { PREVIEW_CODE } from '@qovery/shared/routes'
+import { HELM_DEFAULT_VALUES } from '@qovery/shared/routes'
 import {
   Button,
   CodeEditor,
@@ -21,7 +21,6 @@ import {
   Popover,
   Section,
 } from '@qovery/shared/ui'
-import useHelmDefaultValues from '../hooks/use-helm-default-values/use-helm-default-values'
 
 export type ArgumentTypes = 'json' | 'generic' | 'string'
 
@@ -154,21 +153,19 @@ export function ValuesOverrideArgumentsSetting({
 }: ValuesOverrideArgumentsSettingProps) {
   const { environmentId = '' } = useParams()
 
-  const { refetch: refetchHelmDefaultValues, isFetching: isLoadingHelmDefaultValues } = useHelmDefaultValues({
-    environmentId,
-    helmDefaultValuesRequest: {
-      source,
-    },
-    enabled: false,
-  })
   const { fields, append, remove } = useFieldArray({
     control: methods.control,
     name: 'arguments',
   })
 
-  const createHelmDefaultValuesMutation = async () => {
-    const { data: helmDefaultValues } = await refetchHelmDefaultValues()
-    if (helmDefaultValues) window.open(`${PREVIEW_CODE}?code=${encodeURIComponent(helmDefaultValues)}`, '_blank')
+  const createHelmDefaultValuesMutation = () => {
+    const payload = {
+      environmentId,
+      helmDefaultValuesRequest: {
+        source,
+      },
+    }
+    window.open(`${HELM_DEFAULT_VALUES}?payload=${encodeURIComponent(JSON.stringify(payload))}`, '_blank')
   }
 
   return (
@@ -231,7 +228,6 @@ export function ValuesOverrideArgumentsSetting({
         variant="surface"
         color="neutral"
         className="mb-10"
-        loading={isLoadingHelmDefaultValues}
         onClick={() => createHelmDefaultValuesMutation()}
       >
         See default values.yaml <Icon className="text-xs ml-2" name={IconAwesomeEnum.ARROW_UP_RIGHT_FROM_SQUARE} />
