@@ -1,4 +1,9 @@
-import { type ClusterRequestFeaturesInner, KubernetesEnum } from 'qovery-typescript-axios'
+import {
+  type ClusterCloudProviderInfoRequest,
+  type ClusterRequest,
+  type ClusterRequestFeaturesInner,
+  KubernetesEnum,
+} from 'qovery-typescript-axios'
 import { useCallback, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
@@ -133,13 +138,24 @@ export function StepSummaryFeature() {
           )
           .filter(Boolean)
 
+      const cloud_provider_credentials: ClusterCloudProviderInfoRequest = {
+        cloud_provider: generalData.cloud_provider,
+        credentials: {
+          id: generalData.credentials,
+          name: generalData.credentials_name,
+        },
+        region: generalData.region,
+      }
+
       const clusterRequest = match(generalData.cloud_provider)
+        .returnType<ClusterRequest>()
         .with('GCP', () => ({
           name: generalData.name,
           description: generalData.description || '',
           production: generalData.production,
           cloud_provider: generalData.cloud_provider,
           region: generalData.region,
+          cloud_provider_credentials,
         }))
         .otherwise(() => ({
           name: generalData.name,
@@ -154,6 +170,7 @@ export function StepSummaryFeature() {
           kubernetes: resourcesData.cluster_type as KubernetesEnum,
           features: formatFeatures as ClusterRequestFeaturesInner[],
           ssh_keys: remoteData?.ssh_key ? [remoteData?.ssh_key] : undefined,
+          cloud_provider_credentials,
         }))
 
       try {
@@ -164,14 +181,7 @@ export function StepSummaryFeature() {
         await editCloudProviderInfo({
           organizationId,
           clusterId: cluster.id,
-          cloudProviderInfoRequest: {
-            cloud_provider: generalData.cloud_provider,
-            credentials: {
-              id: generalData.credentials,
-              name: generalData.credentials_name,
-            },
-            region: generalData.region,
-          },
+          cloudProviderInfoRequest: cloud_provider_credentials,
         })
 
         if (withDeploy) {

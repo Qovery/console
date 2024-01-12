@@ -153,6 +153,14 @@ describe('StepSummaryFeature', () => {
             value: 'test',
           },
         ],
+        cloud_provider_credentials: {
+          cloud_provider: CloudProviderEnum.AWS,
+          credentials: {
+            id: '1',
+            name: 'name',
+          },
+          region: 'region',
+        },
       },
     })
 
