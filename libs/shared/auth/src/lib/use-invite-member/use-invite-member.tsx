@@ -1,3 +1,4 @@
+import { useAuth0 } from '@auth0/auth0-react'
 import { type InviteMember } from 'qovery-typescript-axios'
 import { useCallback, useState } from 'react'
 import { useDispatch } from 'react-redux'
@@ -15,10 +16,11 @@ export function useInviteMember() {
   const [inviteDetail, setInviteDetail] = useState<InviteMember | undefined>()
   const { search, pathname } = useLocation()
   const navigate = useNavigate()
-  const { getAccessTokenSilently, checkIsAuthenticated } = useAuth()
+  const { isAuthenticated } = useAuth0()
+  const { getAccessTokenSilently } = useAuth()
   const dispatch = useDispatch<AppDispatch>()
   const { refetch: refetchOrganizations } = useOrganizations({
-    enabled: checkIsAuthenticated,
+    enabled: isAuthenticated,
   })
 
   const checkTokenInStorage = useCallback(() => {
