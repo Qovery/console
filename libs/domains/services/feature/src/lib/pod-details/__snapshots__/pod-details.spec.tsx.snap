@@ -150,10 +150,8 @@ exports[`PodDetails should match snapshot with container based pod and with mult
               <dd
                 class="text-neutral-400 font-medium dark:text-white dark:font-normal"
               >
-                <span
-                  class="text-green-500"
-                >
-                  Running
+                <span>
+                  ✅ Running
                 </span>
               </dd>
             </dl>
@@ -289,10 +287,8 @@ exports[`PodDetails should match snapshot with git based pod and with last_termi
               <dd
                 class="text-neutral-400 font-medium dark:text-white dark:font-normal mb-2"
               >
-                <span
-                  class="text-green-500"
-                >
-                  Running
+                <span>
+                  ✅ Running
                 </span>
               </dd>
               <div
@@ -460,10 +456,8 @@ exports[`PodDetails should match snapshot with git based pod and without last_te
               <dd
                 class="text-neutral-400 font-medium dark:text-white dark:font-normal"
               >
-                <span
-                  class="text-green-500"
-                >
-                  Running
+                <span>
+                  ✅ Running
                 </span>
               </dd>
             </dl>
@@ -531,9 +525,8 @@ exports[`PodDetails should match snapshot with pod error with 0 containers 1`] =
         <dd
           class="text-neutral-400 font-medium dark:text-white dark:font-normal"
         >
-          <span
-            class="text-red-500"
-          >
+          <span>
+            ❌ 
             Evicted
             :Pod was rejected: The node had condition: [DiskPressure]. 
           </span>
