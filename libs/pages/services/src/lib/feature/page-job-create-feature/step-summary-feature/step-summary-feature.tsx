@@ -194,7 +194,7 @@ export function StepSummaryFeature() {
         if (withDeploy) {
           deployService({
             serviceId: service.id,
-            serviceType: 'APPLICATION',
+            serviceType: 'JOB',
           })
           setLoadingCreateAndDeploy(false)
         }
