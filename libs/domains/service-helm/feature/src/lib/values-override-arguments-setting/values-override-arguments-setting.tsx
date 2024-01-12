@@ -8,7 +8,7 @@ import {
   useFormContext,
 } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
-import { HELM_DEFAULT_VALUES_PREVIEW_CODE } from '@qovery/shared/routes'
+import { HELM_DEFAULT_VALUES } from '@qovery/shared/routes'
 import {
   Button,
   CodeEditor,
@@ -165,7 +165,7 @@ export function ValuesOverrideArgumentsSetting({
         source,
       },
     }
-    window.open(`${HELM_DEFAULT_VALUES_PREVIEW_CODE}?payload=${encodeURIComponent(JSON.stringify(payload))}`, '_blank')
+    window.open(`${HELM_DEFAULT_VALUES}?payload=${encodeURIComponent(JSON.stringify(payload))}`, '_blank')
   }
 
   return (

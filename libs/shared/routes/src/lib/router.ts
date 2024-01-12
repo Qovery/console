@@ -16,7 +16,8 @@ export * from './sub-router/audit-logs.router'
 export * from './sub-router/user.router'
 
 export const INDEX_URL = '/'
-export const HELM_DEFAULT_VALUES_PREVIEW_CODE = '/helm-default-values/preview-code'
+export const PREVIEW_CODE = '/preview-code'
+export const HELM_DEFAULT_VALUES = '/helm-default-values'
 export const ACCEPT_INVITATION_URL = `/accept-invitation`
 export const GITHUB_APPLICATION_CALLBACK_URL = `/github-application-callback`
 export const ORGANIZATION_URL = (organizationId = ':organizationId') => `/organization/${organizationId}`
