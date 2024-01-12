@@ -16,6 +16,7 @@ import { useEditService } from '@qovery/domains/services/feature'
 import { CrudModal, defaultLivenessProbe, isMatchingHealthCheck } from '@qovery/shared/console-shared'
 import { ProbeTypeEnum } from '@qovery/shared/enums'
 import { useModal } from '@qovery/shared/ui'
+import { buildEditServicePayload } from '@qovery/shared/util-services'
 
 export interface CrudModalFeatureProps {
   onClose: () => void
@@ -150,14 +151,18 @@ export function CrudModalFeature({ service, onClose, port }: CrudModalFeaturePro
 
   const onSubmit = methods.handleSubmit(async (data) => {
     const payload = match(service)
-      .with({ serviceType: 'APPLICATION' }, (s) => ({
-        ...handleSubmit(data, s, port),
-        serviceType: s.serviceType,
-      }))
-      .with({ serviceType: 'CONTAINER' }, (s) => ({
-        ...handleSubmit(data, s, port),
-        serviceType: s.serviceType,
-      }))
+      .with({ serviceType: 'APPLICATION' }, (service) =>
+        buildEditServicePayload({
+          service,
+          request: handleSubmit(data, service, port),
+        })
+      )
+      .with({ serviceType: 'CONTAINER' }, (service) =>
+        buildEditServicePayload({
+          service,
+          request: handleSubmit(data, service, port),
+        })
+      )
       .exhaustive()
 
     try {

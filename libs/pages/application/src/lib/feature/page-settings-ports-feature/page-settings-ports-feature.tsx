@@ -12,6 +12,7 @@ import { useEditService, useService } from '@qovery/domains/services/feature'
 import { ProbeTypeEnum } from '@qovery/shared/enums'
 import { type PortData } from '@qovery/shared/interfaces'
 import { useModal, useModalConfirmation } from '@qovery/shared/ui'
+import { buildEditServicePayload } from '@qovery/shared/util-services'
 import PageSettingsPorts from '../../ui/page-settings-ports/page-settings-ports'
 import CrudModalFeature from './crud-modal-feature/crud-modal-feature'
 
@@ -95,14 +96,18 @@ export function SettingsPortsFeature({ service }: { service: Application | Conta
           action: () => {
             const cloneApplication = deletePort(service, (port as ServicePort).id)
             const payload = match(service)
-              .with({ serviceType: 'APPLICATION' }, (s) => ({
-                ...(cloneApplication as ApplicationEditRequest),
-                serviceType: s.serviceType,
-              }))
-              .with({ serviceType: 'CONTAINER' }, (s) => ({
-                ...(cloneApplication as ContainerRequest),
-                serviceType: s.serviceType,
-              }))
+              .with({ serviceType: 'APPLICATION' }, (service) =>
+                buildEditServicePayload({
+                  service,
+                  request: cloneApplication as ApplicationEditRequest,
+                })
+              )
+              .with({ serviceType: 'CONTAINER' }, (service) =>
+                buildEditServicePayload({
+                  service,
+                  request: cloneApplication as ContainerRequest,
+                })
+              )
               .otherwise(() => undefined)
 
             if (!payload) return
