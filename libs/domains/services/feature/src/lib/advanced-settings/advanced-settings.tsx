@@ -13,7 +13,7 @@ import {
   type AdvancedSettings as _AdvancedSettings,
 } from '@qovery/domains/services/data-access'
 import {
-  CopyToClipboard,
+  CopyToClipboardButtonIcon,
   InputTextSmall,
   InputToggle,
   StickyActionFormToaster,
@@ -166,7 +166,10 @@ export function AdvancedSettings({
               <Tooltip classNameTrigger="truncate" content={defaultValue}>
                 <div>{defaultValue}</div>
               </Tooltip>
-              <CopyToClipboard className="ml-2 text-neutral-300 invisible group-hover:visible" content={defaultValue} />
+              <CopyToClipboardButtonIcon
+                className="ml-2 text-neutral-300 invisible group-hover:visible"
+                content={defaultValue}
+              />
             </div>
           )
         },

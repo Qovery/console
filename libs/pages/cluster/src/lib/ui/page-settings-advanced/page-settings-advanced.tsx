@@ -3,7 +3,7 @@ import { type ClusterAdvancedSettings } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import {
-  CopyToClipboard,
+  CopyToClipboardButtonIcon,
   HelpSection,
   InputTextSmall,
   InputToggle,
@@ -85,7 +85,7 @@ export function PageSettingsAdvanced(props: PageSettingsAdvancedProps) {
                     >
                       <div className="inline whitespace-nowrap overflow-hidden text-ellipsis">{displayValue}</div>
                     </Tooltip>
-                    <CopyToClipboard
+                    <CopyToClipboardButtonIcon
                       className="ml-2 text-neutral-300 invisible group-hover:visible"
                       content={
                         (props.defaultAdvancedSettings &&

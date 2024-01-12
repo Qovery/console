@@ -1,5 +1,5 @@
 import { useCluster, useClusterStatus } from '@qovery/domains/clusters/feature'
-import { CopyToClipboard, Icon, StatusChip } from '@qovery/shared/ui'
+import { CopyToClipboardButtonIcon, Icon, StatusChip } from '@qovery/shared/ui'
 
 export interface CardClusterProps {
   clusterId: string
@@ -35,7 +35,7 @@ export function CardCluster({ clusterId, organizationId }: CardClusterProps) {
                 <span className="text-neutral-300 w-16 mr-3">Cluster ID</span>
                 <div className="flex">
                   <span className="text-sky-400">{splitId(cluster.id)}</span>
-                  <CopyToClipboard content={cluster.id} className="text-neutral-300 ml-1" />
+                  <CopyToClipboardButtonIcon content={cluster.id} className="text-neutral-300 ml-1" />
                 </div>
               </li>
               {clusterStatus?.last_execution_id && (
@@ -43,7 +43,10 @@ export function CardCluster({ clusterId, organizationId }: CardClusterProps) {
                   <span className="text-neutral-300 w-16 mr-3">Exec. ID</span>
                   <div className="flex">
                     <span className="text-sky-400">{splitId(clusterStatus?.last_execution_id)}</span>
-                    <CopyToClipboard content={clusterStatus?.last_execution_id} className="text-neutral-300 ml-1" />
+                    <CopyToClipboardButtonIcon
+                      content={clusterStatus?.last_execution_id}
+                      className="text-neutral-300 ml-1"
+                    />
                   </div>
                 </li>
               )}
@@ -55,7 +58,7 @@ export function CardCluster({ clusterId, organizationId }: CardClusterProps) {
                 <span className="text-neutral-300 w-16 mr-3">Org. ID</span>
                 <div className="flex">
                   <span className="text-sky-400">{splitId(organizationId)}</span>
-                  <CopyToClipboard content={organizationId} className="text-neutral-300 ml-1" />
+                  <CopyToClipboardButtonIcon content={organizationId} className="text-neutral-300 ml-1" />
                 </div>
               </li>
             </ul>

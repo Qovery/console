@@ -5,14 +5,14 @@ import Icon from '../icon/icon'
 import { IconAwesomeEnum } from '../icon/icon-awesome.enum'
 import Tooltip from '../tooltip/tooltip'
 
-export interface CopyToClipboardProps {
+export interface CopyToClipboardButtonIconProps {
   content: string
   className?: string
   iconClassName?: string
   tooltipContent?: string
 }
 
-export function CopyToClipboard(props: CopyToClipboardProps) {
+export function CopyToClipboardButtonIcon(props: CopyToClipboardButtonIconProps) {
   const { content, className = '', iconClassName = '', tooltipContent = 'Copy' } = props
 
   const [icon, setIcon] = useState(IconAwesomeEnum.COPY)
@@ -39,4 +39,4 @@ export function CopyToClipboard(props: CopyToClipboardProps) {
   )
 }
 
-export default CopyToClipboard
+export default CopyToClipboardButtonIcon

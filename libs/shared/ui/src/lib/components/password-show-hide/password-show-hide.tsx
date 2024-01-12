@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import CopyToClipboard from '../copy-to-clipboard/copy-to-clipboard'
+import CopyToClipboardButtonIcon from '../copy-to-clipboard-button-icon/copy-to-clipboard-button-icon'
 import Icon from '../icon/icon'
 import Tooltip from '../tooltip/tooltip'
 
@@ -55,7 +55,7 @@ export function PasswordShowHide(props: PasswordShowHideProps) {
             />
           )}
         </Tooltip>
-        {!isSecret && canCopy && <CopyToClipboard className="ml-2" data-testid="copy" content={value} />}
+        {!isSecret && canCopy && <CopyToClipboardButtonIcon className="ml-2" data-testid="copy" content={value} />}
       </div>
     </div>
   )

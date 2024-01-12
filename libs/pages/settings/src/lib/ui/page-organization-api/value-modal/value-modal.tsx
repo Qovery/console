@@ -1,4 +1,4 @@
-import { ButtonLegacy, ButtonLegacySize, CopyToClipboard, InputText } from '@qovery/shared/ui'
+import { ButtonLegacy, ButtonLegacySize, CopyToClipboardButtonIcon, InputText } from '@qovery/shared/ui'
 
 export interface ValueModalProps {
   onClose: () => void
@@ -16,7 +16,7 @@ export function ValueModal(props: ValueModalProps) {
         value={props.token}
         disabled
         className="mb-1"
-        rightElement={<CopyToClipboard className="text-neutral-400 text-sm" content={props.token} />}
+        rightElement={<CopyToClipboardButtonIcon className="text-neutral-400 text-sm" content={props.token} />}
       />
       <p className="ml-4 text-xs text-neutral-350">
         <strong className="text-neutral-400">Please keep this key safe</strong>, you will not be able to retrieve it

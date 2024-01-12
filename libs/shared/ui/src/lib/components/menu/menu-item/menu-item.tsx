@@ -1,7 +1,7 @@
 import { type ClickEvent, MenuItem as Item } from '@szhsin/react-menu'
 import { type ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { CopyToClipboard } from '../../copy-to-clipboard/copy-to-clipboard'
+import { CopyToClipboardButtonIcon } from '../../copy-to-clipboard-button-icon/copy-to-clipboard-button-icon'
 import { Tooltip } from '../../tooltip/tooltip'
 import { Truncate } from '../../truncate/truncate'
 
@@ -52,7 +52,7 @@ export function MenuItem(props: MenuItemProps) {
       <div className={`flex items-center truncate ${className}`}>
         {copy && (
           <div onClick={(e) => e.preventDefault()}>
-            <CopyToClipboard
+            <CopyToClipboardButtonIcon
               content={copy}
               tooltipContent={copyTooltip}
               className="mr-4 text-neutral-400 dark:text-neutral-100"

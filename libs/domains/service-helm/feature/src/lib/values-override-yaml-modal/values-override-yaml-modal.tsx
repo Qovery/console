@@ -3,7 +3,7 @@ import { Controller, FormProvider, useForm } from 'react-hook-form'
 import {
   BlockContent,
   CodeEditor,
-  CopyToClipboard,
+  CopyToClipboardButtonIcon,
   Icon,
   IconAwesomeEnum,
   LoaderSpinner,
@@ -72,7 +72,9 @@ export function ValuesOverrideYamlModal({
             title="Default values.yaml"
             className="mb-0 rounded-l-none"
             classNameContent="p-0"
-            headRight={<CopyToClipboard className="text-xs hover:text-neutral-400" content={helmDefaultValues!} />}
+            headRight={
+              <CopyToClipboardButtonIcon className="text-xs hover:text-neutral-400" content={helmDefaultValues!} />
+            }
           >
             {isErrorHelmDefaultValues && (
               <div className="text-center py-14 px-5">
