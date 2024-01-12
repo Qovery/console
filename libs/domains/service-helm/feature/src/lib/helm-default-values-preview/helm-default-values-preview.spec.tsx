@@ -6,6 +6,7 @@ jest.mock('../hooks/use-helm-default-values/use-helm-default-values', () => {
     ...jest.requireActual('../hooks/use-helm-default-values/use-helm-default-values'),
     useHelmDefaultValues: () => ({
       data: 'my-yaml-content',
+      isLoading: true,
     }),
   }
 })
