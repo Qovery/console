@@ -1,5 +1,5 @@
+import download from 'downloadjs'
 import { Button, Callout, ExternalLink, Icon, IconAwesomeEnum, Skeleton } from '@qovery/shared/ui'
-import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import { useInstallationHelmValues } from '../hooks/use-installation-helm-values/use-installation-helm-values'
 
 export interface ClusterInstallationGuideModalProps {
@@ -13,10 +13,9 @@ export function ClusterInstallationGuideModal({
   organizationId,
   onClose,
 }: ClusterInstallationGuideModalProps) {
-  const [, copyToClipboard] = useCopyToClipboard()
   const { data: installationHelmValues, isLoading } = useInstallationHelmValues({ organizationId, clusterId })
-  const copyInstallationValues = () => {
-    installationHelmValues && copyToClipboard(installationHelmValues)
+  const downloadInstallationValues = () => {
+    download(installationHelmValues ?? '', `cluster-installation-guide-${clusterId}.yaml`, 'text/plain')
   }
 
   return (
@@ -29,8 +28,8 @@ export function ClusterInstallationGuideModal({
           <br />
           <span className="inline-block mt-2">
             <Skeleton height={40} width={110} show={isLoading}>
-              <Button size="lg" variant="outline" color="neutral" onClick={copyInstallationValues}>
-                Click here to copy
+              <Button size="lg" variant="outline" color="neutral" onClick={downloadInstallationValues}>
+                Click here to download
               </Button>
             </Skeleton>
           </span>
