@@ -1,43 +1,16 @@
 {
-  "name": "domains-users-sign-up-data-access",
+  "name": "domains-service-users-sign-up-data-access",
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/domains/users-sign-up/data-access/src",
   "projectType": "library",
   "targets": {
-    "build": {
-      "executor": "@nx/js:tsc",
-      "outputs": ["{options.outputPath}"],
-      "options": {
-        "outputPath": "dist/libs/domains/users-sign-up/data-access",
-        "main": "libs/domains/users-sign-up/data-access/src/index.ts",
-        "tsConfig": "libs/domains/users-sign-up/data-access/tsconfig.lib.json",
-        "assets": ["libs/domains/users-sign-up/data-access/*.md"]
-      }
-    },
     "lint": {
       "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": [
-          "libs/domains/users-sign-up/data-access/**/*.ts",
-          "libs/domains/users-sign-up/data-access/package.json"
-        ]
-      }
-    },
-    "test": {
-      "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
-      "options": {
-        "jestConfig": "libs/domains/users-sign-up/data-access/jest.config.ts",
-        "passWithNoTests": true
-      },
-      "configurations": {
-        "ci": {
-          "ci": true,
-          "codeCoverage": true
-        }
+        "lintFilePatterns": ["libs/domains/users-sign-up/data-access/**/*.ts"]
       }
     }
   },
-  "tags": []
+  "tags": ["scope:domain", "type:data-access"]
 }
