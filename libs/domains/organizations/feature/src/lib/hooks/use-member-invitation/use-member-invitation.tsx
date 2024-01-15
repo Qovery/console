@@ -10,7 +10,7 @@ export interface UseMemberInvitationProps {
 export function useMemberInvitation({ organizationId, inviteId, enabled = true }: UseMemberInvitationProps) {
   return useQuery({
     ...queries.organizations.memberInvitation({ organizationId: organizationId!, inviteId: inviteId! }),
-    enabled: !!organizationId || !!inviteId || enabled,
+    enabled: !!organizationId && !!inviteId && enabled,
   })
 }
 
