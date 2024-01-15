@@ -5,7 +5,7 @@ import {
   ButtonLegacy,
   ButtonLegacySize,
   ButtonLegacyStyle,
-  CopyToClipboard,
+  CopyToClipboardButtonIcon,
   ExternalLink,
   Icon,
   Tabs,
@@ -106,7 +106,7 @@ export function TabsClusterLogs(props: TabsClusterLogsProps) {
                           <span className="text-2xs relative -top-px mr-1">{errors[errors.length - 1].index}</span>
                           <Icon name="icon-solid-arrow-circle-right" className="cursor-pointer" />
                         </p>
-                        <CopyToClipboard
+                        <CopyToClipboardButtonIcon
                           className="text-neutral-300 hover:text-neutral-50"
                           content={`Transmitter: ${
                             (errors[0].error as ClusterLogsError).event_details?.transmitter?.name

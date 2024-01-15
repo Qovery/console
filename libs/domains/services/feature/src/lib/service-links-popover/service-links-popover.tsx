@@ -2,7 +2,7 @@ import { type Link as LinkProps } from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
 import { APPLICATION_SETTINGS_DOMAIN_URL, APPLICATION_SETTINGS_URL, APPLICATION_URL } from '@qovery/shared/routes'
 import {
-  CopyToClipboard,
+  CopyToClipboardButtonIcon,
   Icon,
   IconAwesomeEnum,
   Link,
@@ -71,7 +71,10 @@ export function ServiceLinksPopover({
         <ul>
           {filteredLinks.map((link: LinkProps) => (
             <li key={link.url} className="flex p-2">
-              <CopyToClipboard className="text-brand-500 hover:text-brand-600 mr-2" content={link.url ?? ''} />
+              <CopyToClipboardButtonIcon
+                className="text-brand-500 hover:text-brand-600 mr-2"
+                content={link.url ?? ''}
+              />
               <a
                 className="transition flex items-center justify-between w-full text-neutral-400 hover:text-brand-500"
                 href={link.url}

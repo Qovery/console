@@ -2,7 +2,7 @@ import { type EnvironmentLogs } from 'qovery-typescript-axios'
 import { useContext } from 'react'
 import { UpdateTimeContext } from '@qovery/shared/console-shared'
 import { LogsType } from '@qovery/shared/enums'
-import { Ansi, CopyToClipboard } from '@qovery/shared/ui'
+import { Ansi, CopyToClipboardButtonIcon } from '@qovery/shared/ui'
 import { dateFullFormat } from '@qovery/shared/util-dates'
 
 export interface RowDeploymentProps {
@@ -55,7 +55,7 @@ export function RowDeployment(props: RowDeploymentProps) {
             <Ansi>{data.message?.safe_message}</Ansi>
           )}
         </span>
-        <CopyToClipboard
+        <CopyToClipboardButtonIcon
           className="opacity-0 group-hover:opacity-100 text-white !absolute right-2 top-1"
           content={error ? (data.error?.user_log_message as string) : (data.message?.safe_message as string)}
         />

@@ -1,6 +1,6 @@
 import { type ClusterLogs, ClusterLogsStepEnum } from 'qovery-typescript-axios'
 import { LogsType } from '@qovery/shared/enums'
-import { CopyToClipboard } from '@qovery/shared/ui'
+import { CopyToClipboardButtonIcon } from '@qovery/shared/ui'
 import { dateDifference } from '@qovery/shared/util-dates'
 
 export interface RowProps {
@@ -59,7 +59,7 @@ export function Row(props: RowProps) {
         </div>
       </div>
       <div className={`flex whitespace-nowrap py-1 px-2 ${colorsCellClassName()}`}>
-        <CopyToClipboard
+        <CopyToClipboardButtonIcon
           className="opacity-0 group-hover:opacity-100 mr-4 text-white"
           content={
             type === LogsType.ERROR ? (data.error?.user_log_message as string) : (data.message?.safe_message as string)

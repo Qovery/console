@@ -1,14 +1,38 @@
-import { type Meta, type Story } from '@storybook/react'
-import { CopyToClipboard, type CopyToClipboardProps } from './copy-to-clipboard'
+import type { Meta } from '@storybook/react'
+import { Button } from '../button/button'
+import { CopyToClipboard } from './copy-to-clipboard'
 
-export default {
+const Story: Meta<typeof CopyToClipboard> = {
   component: CopyToClipboard,
-  title: 'Copy To Clipboard',
-} as Meta
+  title: 'CopyToClipboard',
+  decorators: [
+    (Story) => (
+      <div style={{ background: 'white', padding: '3em' }}>
+        <Story />
+      </div>
+    ),
+  ],
+}
+export default Story
 
-const Template: Story<CopyToClipboardProps> = (args) => <CopyToClipboard {...args} />
-
-export const Primary = Template.bind({})
-Primary.args = {
-  content: 'text to copy',
+export const Primary = {
+  render: () => (
+    <>
+      <CopyToClipboard text="foobar">
+        <Button type="button" color="brand">
+          Click to copy
+        </Button>
+      </CopyToClipboard>
+      <CopyToClipboard text="foobar">
+        <Button type="button" color="neutral" variant="surface" size="md">
+          Click to copy
+        </Button>
+      </CopyToClipboard>
+      <CopyToClipboard text="foobar">
+        <Button type="button" color="neutral" variant="outline" size="lg">
+          Click to copy
+        </Button>
+      </CopyToClipboard>
+    </>
+  ),
 }

@@ -1,41 +1,40 @@
-import { useState } from 'react'
+import { Slot } from '@radix-ui/react-slot'
+import { Children, type ReactElement, type ReactNode, cloneElement, useState } from 'react'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
-import { twMerge } from '@qovery/shared/util-js'
-import Icon from '../icon/icon'
+import { Icon } from '../icon/icon'
 import { IconAwesomeEnum } from '../icon/icon-awesome.enum'
-import Tooltip from '../tooltip/tooltip'
 
-export interface CopyToClipboardProps {
-  content: string
-  className?: string
-  iconClassName?: string
-  tooltipContent?: string
-}
+export type CopyToClipboardProps = { text: string; children: ReactNode }
 
-export function CopyToClipboard(props: CopyToClipboardProps) {
-  const { content, className = '', iconClassName = '', tooltipContent = 'Copy' } = props
-
-  const [icon, setIcon] = useState(IconAwesomeEnum.COPY)
+export function CopyToClipboard({ text, children }: CopyToClipboardProps) {
   const [, copyToClipboard] = useCopyToClipboard()
+  const [copied, setCopied] = useState(false)
 
-  const onClickCopyToClipboard = () => {
-    copyToClipboard(content)
-    setIcon(IconAwesomeEnum.CHECK)
-    setTimeout(() => {
-      setIcon(IconAwesomeEnum.COPY)
-    }, 1000)
-  }
+  Children.only(children)
+
+  const child = children as ReactElement
 
   return (
-    <Tooltip content={tooltipContent}>
-      <span
-        onClick={onClickCopyToClipboard}
-        className={twMerge('bigger-click-zone cursor-pointer', className)}
-        data-testid="copy-container"
-      >
-        <Icon name={icon} className={iconClassName} />
-      </span>
-    </Tooltip>
+    <Slot
+      onClick={(event) => {
+        if (!event.defaultPrevented) {
+          copyToClipboard(text)
+          setCopied(true)
+          setTimeout(() => {
+            setCopied(false)
+          }, 1000)
+        }
+      }}
+    >
+      {copied
+        ? cloneElement(
+            child,
+            { ...child.props, color: 'green', variant: 'solid' },
+            <Icon name={IconAwesomeEnum.CHECK} className="mr-2" />,
+            'Copied'
+          )
+        : child}
+    </Slot>
   )
 }
 

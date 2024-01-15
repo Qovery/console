@@ -1,5 +1,5 @@
 import { type Meta, type Story } from '@storybook/react'
-import CopyToClipboard from '../../copy-to-clipboard/copy-to-clipboard'
+import CopyToClipboardButtonIcon from '../../copy-to-clipboard-button-icon/copy-to-clipboard-button-icon'
 import { InputText, type InputTextProps } from './input-text'
 
 export default {
@@ -31,5 +31,5 @@ Time.args = {
 export const WithRightElement = Template.bind({})
 WithRightElement.args = {
   ...defaultProps,
-  rightElement: <CopyToClipboard content="Copy to clipboard" />,
+  rightElement: <CopyToClipboardButtonIcon content="Copy to clipboard" />,
 }

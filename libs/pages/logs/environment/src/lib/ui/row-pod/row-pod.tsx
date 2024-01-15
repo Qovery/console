@@ -3,7 +3,7 @@ import { useContext } from 'react'
 import { UpdateTimeContext } from '@qovery/shared/console-shared'
 import { Ansi } from '@qovery/shared/ui'
 import {
-  CopyToClipboard,
+  CopyToClipboardButtonIcon,
   Icon,
   IconAwesomeEnum,
   type TableFilterProps,
@@ -58,7 +58,7 @@ export function RowPod({ data, filter, index, podNameToColor }: RowPodProps) {
               {data.pod_name && data.pod_name.length > 23
                 ? `${data.pod_name?.substring(0, 10)}...${data.pod_name?.slice(-10)}`
                 : data.pod_name}
-              <CopyToClipboard className="opacity-50" content={data.pod_name} />
+              <CopyToClipboardButtonIcon className="opacity-50" content={data.pod_name} />
             </span>
           )}
           {!data.pod_name && !data.message.includes('No pods found' || '') && <span className="block">NGINX</span>}
@@ -69,7 +69,10 @@ export function RowPod({ data, filter, index, podNameToColor }: RowPodProps) {
             <span className="group/version">
               <Icon name={IconAwesomeEnum.CODE_COMMIT} className="mr-1" />
               {formatVersion(data.version)}
-              <CopyToClipboard className="opacity-0 ml-1 group-hover/version:opacity-80" content={data.version} />
+              <CopyToClipboardButtonIcon
+                className="opacity-0 ml-1 group-hover/version:opacity-80"
+                content={data.version}
+              />
             </span>
           )}
         </div>
