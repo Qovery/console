@@ -118,7 +118,7 @@ export function StepSummaryFeature() {
         })
         navigate({
           pathname: CLUSTERS_URL(organizationId) + CLUSTERS_GENERAL_URL,
-          search: '?showSelfManagedGuide',
+          search: '?show-self-managed-guide',
         })
       } catch (e) {
         console.error(e)

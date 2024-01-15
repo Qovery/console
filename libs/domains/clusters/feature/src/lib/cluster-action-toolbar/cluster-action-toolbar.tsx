@@ -129,7 +129,7 @@ function MenuOtherActions({
   organizationId: string
 }) {
   const navigate = useNavigate()
-  const showSelfManagedGuideKey = 'showSelfManagedGuide'
+  const showSelfManagedGuideKey = 'show-self-managed-guide'
   const [searchParams, setSearchParams] = useSearchParams()
   const { openModal, closeModal } = useModal()
   const [, copyToClipboard] = useCopyToClipboard()
