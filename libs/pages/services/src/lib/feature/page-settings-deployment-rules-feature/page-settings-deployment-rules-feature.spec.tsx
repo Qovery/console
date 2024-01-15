@@ -1,22 +1,14 @@
 import { mockUseQueryResult } from '__tests__/utils/mock-use-query-result'
 import { act, render } from '__tests__/utils/setup-jest'
 import { type EnvironmentDeploymentRule, WeekdayEnum } from 'qovery-typescript-axios'
-import * as redux from 'react-redux'
 import * as environmentDomain from '@qovery/domains/environment'
 import { weekdaysValues } from '@qovery/shared/enums'
 import { environmentFactoryMock } from '@qovery/shared/factories'
 import PageSettingsDeploymentRulesFeature, { handleSubmit } from './page-settings-deployment-rules-feature'
 
-import SpyInstance = jest.SpyInstance
-
 const environmentDeploymentRules = environmentFactoryMock(1)[0].deploymentRules
 
 const useFetchEnvironmentDeploymentRuleSpy = jest.spyOn(environmentDomain, 'useFetchEnvironmentDeploymentRule')
-
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useDispatch: () => jest.fn(),
-}))
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -24,24 +16,7 @@ jest.mock('react-router-dom', () => ({
 }))
 
 describe('PageSettingsDeploymentRulesFeature', () => {
-  let useSelectorSpy: SpyInstance
-
-  const customDeployment = {
-    id: '1',
-    updated_at: '2020-01-01T00:00:00Z',
-    created_at: '2020-01-01T00:00:00Z',
-    auto_stop: true,
-    auto_preview: true,
-    timezone: 'UTC',
-    start_time: '1970-01-01T08:00:00.000Z',
-    stop_time: '1970-01-01T18:00:00.000Z',
-    weekdays: [WeekdayEnum.MONDAY, WeekdayEnum.FRIDAY],
-  }
-
   beforeEach(() => {
-    useSelectorSpy = jest.spyOn(redux, 'useSelector')
-    useSelectorSpy.mockReturnValue(environmentDeploymentRules).mockReturnValue(customDeployment)
-
     useFetchEnvironmentDeploymentRuleSpy.mockReturnValue(
       mockUseQueryResult<EnvironmentDeploymentRule>({
         auto_stop: true,

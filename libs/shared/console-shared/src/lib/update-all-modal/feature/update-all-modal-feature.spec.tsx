@@ -32,12 +32,6 @@ const mockApplications = applicationFactoryMock(3).map((app): OutdatedService =>
   }
 })
 
-const mockDispatch = jest.fn()
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useDispatch: () => mockDispatch,
-}))
-
 jest.mock('@qovery/domains/services/feature', () => ({
   useOutdatedServices: () => ({
     data: mockApplications,

@@ -13,11 +13,6 @@ jest.mock('react-router-dom', () => ({
   useNavigate: () => mockNavigate,
 }))
 
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useDispatch: () => jest.fn(),
-}))
-
 const ContextWrapper = (props: { children: ReactNode }) => {
   return (
     <DatabaseCreateContext.Provider

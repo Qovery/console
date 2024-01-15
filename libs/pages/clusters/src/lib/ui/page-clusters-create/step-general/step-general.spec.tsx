@@ -20,12 +20,6 @@ const props: StepGeneralProps = {
   cloudProviders: [currentCloudProviders],
 }
 
-const mockDispatch = jest.fn()
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useDispatch: () => mockDispatch,
-}))
-
 describe('StepGeneral', () => {
   it('should render successfully', () => {
     const { baseElement } = render(wrapWithReactHookForm(<StepGeneral {...props} />))

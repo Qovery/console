@@ -8,11 +8,12 @@ import {
   type KubernetesEnum,
   type ScalewayCredentialsRequest,
 } from 'qovery-typescript-axios'
-import { type DistributiveOmit } from 'react-redux'
 import { match } from 'ts-pattern'
 
 const cloudProviderApi = new CloudProviderApi()
 const cloudProviderCredentialsApi = new CloudProviderCredentialsApi()
+
+type DistributiveOmit<T, K extends keyof T> = T extends unknown ? Omit<T, K> : never
 
 type CredentialRequest =
   | {
