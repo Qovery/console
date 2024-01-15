@@ -9,11 +9,10 @@ import {
   type ScalewayCredentialsRequest,
 } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
+import { type DistributiveOmit } from '@qovery/shared/util-types'
 
 const cloudProviderApi = new CloudProviderApi()
 const cloudProviderCredentialsApi = new CloudProviderCredentialsApi()
-
-type DistributiveOmit<T, K extends keyof T> = T extends unknown ? Omit<T, K> : never
 
 type CredentialRequest =
   | {

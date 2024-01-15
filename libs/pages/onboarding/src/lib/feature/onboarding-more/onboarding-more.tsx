@@ -85,7 +85,7 @@ export function OnboardingMore() {
 
         if (newUserSignUp?.dx_auth) {
           navigate(`${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`)
-        } else if (!userSignUp?.dx_auth) {
+        } else {
           // redirect to Thanks page if user not authorized by the dx team
           // dx_auth must be updated in the bdd
           navigate(`${ONBOARDING_URL}${ONBOARDING_THANKS_URL}`)
