@@ -24,7 +24,9 @@ export function ClusterInstallationGuideModal({
 
       <ol className="ml-4 list-outside list-decimal" type="1">
         <li className="mb-6">
-          <span>Save the following yaml, it contains the Qovery configuration assigned to your cluster.</span>
+          <span className="text-sm font-medium">
+            Save the following yaml, it contains the Qovery configuration assigned to your cluster.
+          </span>
           <br />
           <span className="inline-block mt-2">
             <Skeleton height={40} width={110} show={isLoading}>
@@ -35,7 +37,7 @@ export function ClusterInstallationGuideModal({
           </span>
         </li>
         <li>
-          <span>Follow the instruction described in this documentation</span>
+          <span className="text-sm font-medium">Follow the instruction described in this documentation</span>
           <br />
           <ExternalLink
             className="mt-2"
