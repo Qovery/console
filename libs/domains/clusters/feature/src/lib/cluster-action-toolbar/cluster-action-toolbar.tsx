@@ -163,7 +163,7 @@ function MenuOtherActions({
       openInstallationGuideModal()
     }
     return () => closeModal()
-  }, [searchParams, setSearchParams, cluster.kubernetes])
+  }, [searchParams, setSearchParams, cluster.kubernetes, closeModal])
 
   return (
     <DropdownMenu.Root>
