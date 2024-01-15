@@ -49,14 +49,13 @@ export function FormUser(props: FormUserProps) {
   const { organization_name, project_name, setContextValue } = useContext(ContextOnboarding)
 
   const onSubmit = handleSubmit(async (data) => {
-    if (!userSignUp) return
-
     if (data) {
-      const checkIfCompany = data['type_of_use'].toLowerCase() === 'work'
+      const checkIfCompany = data['type_of_use'].toLowerCase() === TypeOfUseEnum.WORK
       if (checkIfCompany) {
         setStepCompany(true)
 
         await createUserSignUp({
+          qovery_usage: userSignUp?.qovery_usage ?? '',
           ...userSignUp,
           ...data,
         })
@@ -77,6 +76,7 @@ export function FormUser(props: FormUserProps) {
           })
 
         await createUserSignUp({
+          qovery_usage: userSignUp?.qovery_usage ?? '',
           ...userSignUp,
           ...data,
           ...resetCompany,
