@@ -4,7 +4,7 @@ import {
   type EnvironmentLogs,
   type Status,
 } from 'qovery-typescript-axios'
-import { memo, useCallback, useContext, useEffect, useState } from 'react'
+import { memo, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import useWebSocket from 'react-use-websocket'
 import { match } from 'ts-pattern'
@@ -77,6 +77,8 @@ export function DeploymentLogsFeature({ environment, statusStages }: DeploymentL
   const { data: deploymentHistory } = useEnvironmentDeploymentHistory(projectId, environmentId)
   const { data: deploymentStatus } = useDeploymentStatus({ environmentId, serviceId })
 
+  const now = useMemo(() => Date.now(), [])
+  const [showPreviousLogs, setShowPreviousLogs] = useState<boolean>(false)
   const [logs, setLogs] = useState<EnvironmentLogs[]>([])
   const [loadingStatusDeploymentLogs, setLoadingStatusDeploymentLogs] = useState<LoadingStatus>('not loaded')
   const [messageChunks, setMessageChunks] = useState<EnvironmentLogs[][]>([])
@@ -146,19 +148,25 @@ export function DeploymentLogsFeature({ environment, statusStages }: DeploymentL
   // Filter deployment logs by serviceId and stageId
   // Display entries when the name is "delete" or stageId is empty or equal with current stageId
   // Filter by the same transmitter ID and "Environment" or "TaskManager" type
-  const logsByServiceId = logs.filter((currentData: EnvironmentLogs) => {
-    const { stage, transmitter } = currentData.details
-    const isDeleteStage = stage?.name === 'delete'
-    const isEmptyOrEqualStageId = !stage?.id || stage?.id === stageId
-    const isMatchingTransmitter =
-      transmitter?.type === 'Environment' || transmitter?.type === 'TaskManager' || transmitter?.id === serviceId
+  const logsByServiceId = useMemo(
+    () =>
+      logs
+        .filter((currentData: EnvironmentLogs) => {
+          const { stage, transmitter } = currentData.details
+          const isDeleteStage = stage?.name === 'delete'
+          const isEmptyOrEqualStageId = !stage?.id || stage?.id === stageId
+          const isMatchingTransmitter =
+            transmitter?.type === 'Environment' || transmitter?.type === 'TaskManager' || transmitter?.id === serviceId
 
-    // Include the entry if any of the following conditions are true:
-    // 1. The stage name is "delete".
-    // 2. stageId is empty or equal with current stageId.
-    // 3. The transmitter matches serviceId and has a type of "Environment" or "TaskManager".
-    return (isDeleteStage || isEmptyOrEqualStageId) && isMatchingTransmitter
-  })
+          // Include the entry if any of the following conditions are true:
+          // 1. The stage name is "delete".
+          // 2. stageId is empty or equal with current stageId.
+          // 3. The transmitter matches serviceId and has a type of "Environment" or "TaskManager".
+          return (isDeleteStage || isEmptyOrEqualStageId) && isMatchingTransmitter
+        })
+        .filter((log, index, array) => (showPreviousLogs || index >= array.length - 500 ? true : +log.timestamp > now)),
+    [logs, stageId, serviceId, now, showPreviousLogs]
+  )
 
   const errors = logsByServiceId
     .map((log: EnvironmentLogs, index: number) => ({
@@ -199,6 +207,8 @@ export function DeploymentLogsFeature({ environment, statusStages }: DeploymentL
       hideDeploymentLogs={hideDeploymentLogsBoolean}
       dataDeploymentHistory={deploymentHistory}
       isDeploymentProgressing={isDeploymentProgressing}
+      showPreviousLogs={showPreviousLogs}
+      setShowPreviousLogs={setShowPreviousLogs}
     />
   )
 }
