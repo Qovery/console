@@ -159,10 +159,13 @@ function MenuOtherActions({
     })
 
   useEffect(() => {
-    if (searchParams.has(showSelfManagedGuideKey) && cluster.kubernetes === 'SELF_MANAGED') {
+    const bool = searchParams.has(showSelfManagedGuideKey) && cluster.kubernetes === 'SELF_MANAGED'
+    if (bool) {
+      searchParams.delete(showSelfManagedGuideKey)
+      setSearchParams(searchParams)
       openInstallationGuideModal()
     }
-    return () => closeModal()
+    return () => (bool ? closeModal() : undefined)
   }, [searchParams, setSearchParams, cluster.kubernetes, closeModal])
 
   return (
