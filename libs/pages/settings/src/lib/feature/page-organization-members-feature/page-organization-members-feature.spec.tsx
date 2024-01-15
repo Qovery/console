@@ -17,15 +17,6 @@ const useAvailableRolesMockSpy = jest.spyOn(organizationsDomain, 'useAvailableRo
 // https://github.com/Qovery/console/blob/b2a922b8bf94b31e9f9e49449ff124785667b875/libs/pages/settings/src/lib/ui/page-organization-members/page-organization-members.tsx#L144
 const mockMembers = [...membersMock(1, 'Owner', '10'), ...membersMock(1, 'Admin', '11')]
 
-jest.mock('@qovery/domains/users/data-access', () => {
-  return {
-    ...jest.requireActual('@qovery/domains/users/data-access'),
-    selectUser: () => ({
-      sub: '0',
-    }),
-  }
-})
-
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useParams: () => ({ organizationId: '0' }),
