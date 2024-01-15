@@ -1,14 +1,11 @@
 import { useEffect } from 'react'
-import { useDispatch } from 'react-redux'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useConnectGithubApp } from '@qovery/domains/organizations/feature'
 import { SETTINGS_GIT_REPOSITORY_ACCESS_URL, SETTINGS_URL } from '@qovery/shared/routes'
 import { ToastEnum, toast } from '@qovery/shared/ui'
-import { type AppDispatch } from '@qovery/state/store'
 
 export function GithubApplicationCallbackFeature() {
   const { search } = useLocation()
-  const dispatch = useDispatch<AppDispatch>()
   const navigate = useNavigate()
   const { mutateAsync: mutateAsyncConnectGithubApp } = useConnectGithubApp()
 
@@ -36,7 +33,7 @@ export function GithubApplicationCallbackFeature() {
       }
     }
     connectGithubApp()
-  }, [mutateAsyncConnectGithubApp, search, dispatch, navigate])
+  }, [mutateAsyncConnectGithubApp, search, navigate])
 
   return null
 }

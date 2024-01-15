@@ -1,7 +1,13 @@
 import { useAuth0 } from '@auth0/auth0-react'
-import { type SerializedError } from '@reduxjs/toolkit'
 import { type AxiosInstance, type AxiosRequestConfig, type AxiosResponse } from 'axios'
 import { useEffect } from 'react'
+
+export interface SerializedError {
+  name?: string
+  message?: string
+  stack?: string
+  code?: string
+}
 
 export function useAuthInterceptor(axiosInstance: AxiosInstance, apiUrl: string) {
   const { getAccessTokenSilently } = useAuth0()

@@ -8,7 +8,6 @@ import { useCreateDeploymentRule } from '@qovery/domains/projects/feature'
 import { weekdaysValues } from '@qovery/shared/enums'
 import { ENVIRONMENTS_DEPLOYMENT_RULES_URL, ENVIRONMENTS_URL } from '@qovery/shared/routes'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { type AppDispatch } from '@qovery/state/store'
 import PageCreateEditDeploymentRule from '../../ui/page-create-edit-deployment-rule/page-create-edit-deployment-rule'
 
 export function PageCreateDeploymentRuleFeature() {
@@ -17,7 +16,6 @@ export function PageCreateDeploymentRuleFeature() {
 
   const { control, handleSubmit, setValue } = useForm()
 
-  const dispatch = useDispatch<AppDispatch>()
   const navigate = useNavigate()
 
   const { mutateAsync: createDeploymentRule } = useCreateDeploymentRule()
@@ -30,7 +28,7 @@ export function PageCreateDeploymentRuleFeature() {
     setValue('mode', 'PRODUCTION')
     setValue('auto_stop', false)
     setValue('weekdays', weekdaysValues)
-  }, [setValue, dispatch, organizationId])
+  }, [setValue, organizationId])
 
   const onSubmit = handleSubmit(async (data) => {
     if (data) {

@@ -12,13 +12,11 @@ import posthog from 'posthog-js'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 // import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-import { Provider } from 'react-redux'
 import { BrowserRouter } from 'react-router-dom'
 import { IntercomProvider } from 'react-use-intercom'
 import { LOGIN_AUTH_REDIRECT_URL, LOGIN_URL } from '@qovery/shared/routes'
 import { ModalProvider, ToastBehavior, toastError } from '@qovery/shared/ui'
 import { ToastEnum, toast } from '@qovery/shared/ui'
-import { setupStore } from '@qovery/state/store'
 import App from './app/app'
 import { environment } from './environments/environment'
 
@@ -133,8 +131,6 @@ const queryClient = new QueryClient({
   }),
 })
 
-const store = setupStore()
-
 root.render(
   <StrictMode>
     <IntercomProvider appId={environment.intercom} autoBoot>
@@ -148,16 +144,14 @@ root.render(
         skipRedirectCallback={window.location.pathname !== LOGIN_URL + LOGIN_AUTH_REDIRECT_URL}
       >
         <QueryClientProvider client={queryClient}>
-          <Provider store={store}>
-            <BrowserRouter>
-              <TooltipProvider>
-                <ModalProvider>
-                  <App />
-                  <ToastBehavior />
-                </ModalProvider>
-              </TooltipProvider>
-            </BrowserRouter>
-          </Provider>
+          <BrowserRouter>
+            <TooltipProvider>
+              <ModalProvider>
+                <App />
+                <ToastBehavior />
+              </ModalProvider>
+            </TooltipProvider>
+          </BrowserRouter>
           {/* <ReactQueryDevtools initialIsOpen={false} /> */}
         </QueryClientProvider>
       </Auth0Provider>
