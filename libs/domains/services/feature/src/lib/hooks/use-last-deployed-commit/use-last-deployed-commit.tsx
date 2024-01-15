@@ -1,15 +1,12 @@
 import { type ApplicationGitRepository, type Commit } from 'qovery-typescript-axios'
-import { type ServiceType } from '@qovery/domains/services/data-access'
-import { useCommits } from '../use-commits/use-commits'
+import { type UseCommitsProps, useCommits } from '../use-commits/use-commits'
 
-export interface UseLastDeployedCommitProps {
+export type UseLastDeployedCommitProps = {
   gitRepository: ApplicationGitRepository
-  serviceId: string
-  serviceType: Extract<ServiceType, 'APPLICATION' | 'JOB' | 'CRON_JOB' | 'LIFECYCLE_JOB' | 'HELM'>
-}
+} & UseCommitsProps
 
-export function useLastDeployedCommit({ gitRepository, serviceId, serviceType }: UseLastDeployedCommitProps) {
-  const { data: commits, ...props } = useCommits({ serviceId, serviceType })
+export function useLastDeployedCommit({ gitRepository, ...useCommitsProps }: UseLastDeployedCommitProps) {
+  const { data: commits, ...props } = useCommits(useCommitsProps)
 
   const delta = commits?.findIndex(({ git_commit_id }) => git_commit_id === gitRepository.deployed_commit_id) ?? 0
   const defaultCommitInfo: Commit = {

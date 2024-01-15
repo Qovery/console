@@ -269,31 +269,42 @@ export const services = createQueryKeys('services', {
       return service
     },
   }),
-  listCommits: ({
-    serviceId,
-    serviceType,
-  }: {
-    serviceId: string
-    serviceType: Extract<ServiceType, 'APPLICATION' | 'JOB' | 'CRON_JOB' | 'LIFECYCLE_JOB' | 'HELM'>
-  }) => ({
-    queryKey: [serviceId],
+  listCommits: (
+    props:
+      | {
+          serviceId: string
+          serviceType: Extract<ServiceType, 'APPLICATION' | 'JOB' | 'CRON_JOB' | 'LIFECYCLE_JOB'>
+        }
+      | {
+          serviceId: string
+          serviceType: Extract<ServiceType, 'HELM'>
+          of?: 'values' | 'chart'
+        }
+  ) => ({
+    queryKey: [props.serviceId, props.serviceType === 'HELM' ? props.of ?? 'chart' : undefined],
     async queryFn() {
-      const { query } = match(serviceType)
-        .with('APPLICATION', (serviceType) => ({
-          query: applicationMainCallsApi.listApplicationCommit.bind(applicationMainCallsApi),
+      const { results: commits } = await match(props)
+        .with({ serviceType: 'APPLICATION' }, async ({ serviceId, serviceType }) => ({
+          results: (await applicationMainCallsApi.listApplicationCommit(serviceId)).data.results,
           serviceType,
         }))
-        .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', (serviceType) => ({
-          query: jobMainCallsApi.listJobCommit.bind(jobMainCallsApi),
-          serviceType,
-        }))
-        .with('HELM', (serviceType) => ({
-          query: helmMainCallsApi.listHelmCommit.bind(helmMainCallsApi),
-          serviceType,
-        }))
+        .with(
+          { serviceType: 'JOB' },
+          { serviceType: 'CRON_JOB' },
+          { serviceType: 'LIFECYCLE_JOB' },
+          async ({ serviceId, serviceType }) => ({
+            results: (await jobMainCallsApi.listJobCommit(serviceId)).data.results,
+            serviceType,
+          })
+        )
+        .with({ serviceType: 'HELM' }, async ({ serviceId, serviceType, of }) => {
+          return {
+            results: (await helmMainCallsApi.listHelmCommit(serviceId, of)).data.results,
+            serviceType,
+          }
+        })
         .exhaustive()
-      const response = await query(serviceId)
-      return response.data.results
+      return commits
     },
   }),
   deploymentHistory: ({ serviceId, serviceType }: { serviceId: string; serviceType: ServiceType }) => ({
