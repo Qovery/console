@@ -143,7 +143,7 @@ function MenuOtherActions({
 
   const canDelete = clusterStatus.status && isDeleteAvailable(clusterStatus.status)
 
-  const mutationInstallationGuide = () =>
+  const openInstallationGuideModal = () =>
     openModal({
       content: (
         <ClusterInstallationGuideModal
@@ -160,7 +160,7 @@ function MenuOtherActions({
 
   useEffect(() => {
     if (searchParams.has(showSelfManagedGuideKey) && cluster.kubernetes === 'SELF_MANAGED') {
-      mutationInstallationGuide()
+      openInstallationGuideModal()
     }
     return () => closeModal()
   }, [searchParams, setSearchParams, cluster.kubernetes])
@@ -200,7 +200,7 @@ function MenuOtherActions({
           Get Kubeconfig
         </DropdownMenu.Item>
         {cluster.kubernetes === 'SELF_MANAGED' && (
-          <DropdownMenu.Item icon={<Icon name={IconAwesomeEnum.CIRCLE_INFO} />} onClick={mutationInstallationGuide}>
+          <DropdownMenu.Item icon={<Icon name={IconAwesomeEnum.CIRCLE_INFO} />} onClick={openInstallationGuideModal}>
             Installation guide
           </DropdownMenu.Item>
         )}
