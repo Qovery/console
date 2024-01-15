@@ -1,7 +1,6 @@
 import { type ProjectDeploymentRuleRequest, type Value } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import { useDispatch } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useClusters } from '@qovery/domains/clusters/feature'
 import { useCreateDeploymentRule } from '@qovery/domains/projects/feature'
