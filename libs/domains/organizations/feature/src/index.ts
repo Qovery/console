@@ -54,3 +54,5 @@ export * from './lib/hooks/use-transfer-ownership-member-role/use-transfer-owner
 export * from './lib/hooks/use-webhooks/use-webhooks'
 export * from './lib/hooks/use-connect-github-app/use-connect-github-app'
 export * from './lib/hooks/use-disconnect-github-app/use-disconnect-github-app'
+export * from './lib/hooks/use-member-invitation/use-member-invitation'
+export * from './lib/hooks/use-accept-invite-member/use-accept-invite-member'

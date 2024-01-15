@@ -1,6 +1,6 @@
+import { useAuth0 } from '@auth0/auth0-react'
 import { EnvironmentModeEnum, type InviteMemberRequest, type Member } from 'qovery-typescript-axios'
 import { useState } from 'react'
-import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import {
   useAvailableRoles,
@@ -12,11 +12,9 @@ import {
   useMembers,
   useTransferOwnershipMemberRole,
 } from '@qovery/domains/organizations/feature'
-import { selectUser } from '@qovery/domains/users/data-access'
 import { membersMock } from '@qovery/shared/factories'
 import { useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { type RootState } from '@qovery/state/store'
 import PageOrganizationMembers from '../../ui/page-organization-members/page-organization-members'
 import CreateModalFeature from './create-modal-feature/create-modal-feature'
 
@@ -38,7 +36,7 @@ export function PageOrganizationMembersFeature() {
   const { mutateAsync: transferOwnershipMemberRole } = useTransferOwnershipMemberRole()
   const { mutateAsync: createInviteMember } = useCreateInviteMember()
 
-  const userSub = useSelector((state: RootState) => selectUser(state)?.sub)
+  const { user } = useAuth0()
 
   const { openModal, closeModal } = useModal()
   const [loadingUpdateRole, setLoadingUpdateRole] = useState({ userId: '', loading: false })
@@ -100,7 +98,7 @@ export function PageOrganizationMembersFeature() {
 
   return (
     <PageOrganizationMembers
-      userId={userSub}
+      userId={user?.sub}
       members={members}
       isFetchedMembers={isFetchedMembers}
       inviteMembers={inviteMembers}

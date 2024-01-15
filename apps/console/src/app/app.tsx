@@ -1,17 +1,15 @@
+import { type User, useAuth0 } from '@auth0/auth0-react'
 import { GTMProvider } from '@elgorditosalsero/react-gtm-hook'
 import axios from 'axios'
 import LogRocket from 'logrocket'
 import posthog from 'posthog-js'
 import { useCallback, useEffect } from 'react'
-import { useSelector } from 'react-redux'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { useIntercom } from 'react-use-intercom'
 import { HelmDefaultValuesPreview } from '@qovery/domains/service-helm/feature'
-import { selectUser } from '@qovery/domains/users/data-access'
 import { DarkModeEnabler, Layout } from '@qovery/pages/layout'
 import { PageLogin, PageLogoutFeature } from '@qovery/pages/login'
 import { useAuth, useInviteMember } from '@qovery/shared/auth'
-import { type UserInterface } from '@qovery/shared/interfaces'
 import { ProtectedRoute } from '@qovery/shared/router'
 import { HELM_DEFAULT_VALUES, LOGIN_URL, LOGOUT_URL, PREVIEW_CODE } from '@qovery/shared/routes'
 import { LoadingScreen } from '@qovery/shared/ui'
@@ -41,11 +39,11 @@ export function App() {
 
   const gtmParams = { id: environment.gtm }
 
-  const user = useSelector(selectUser)
+  const { user } = useAuth0()
   const { update: updateIntercom } = useIntercom()
 
   const initMonitorings = useCallback(
-    (user: UserInterface) => {
+    (user: User) => {
       if (!user || !user.sub) return
 
       posthog.identify(user.sub, {

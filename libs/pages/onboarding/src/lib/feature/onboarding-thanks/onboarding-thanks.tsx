@@ -1,11 +1,12 @@
+import { useAuth0 } from '@auth0/auth0-react'
 import { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { useIntercom } from 'react-use-intercom'
-import { selectUser, selectUserSignUp } from '@qovery/domains/users/data-access'
+import { selectUserSignUp } from '@qovery/domains/users/data-access'
 import { StepThanks } from '../../ui/step-thanks/step-thanks'
 
 export function OnboardingThanks() {
-  const user = useSelector(selectUser)
+  const { user } = useAuth0()
   const userSignUp = useSelector(selectUserSignUp)
   const { update } = useIntercom()
 
@@ -14,7 +15,7 @@ export function OnboardingThanks() {
     update({
       email: userSignUp?.user_email,
       name: `${userSignUp?.first_name} ${userSignUp?.last_name}`,
-      userId: user.sub,
+      userId: user?.sub,
     })
   }, [user, userSignUp, update])
 

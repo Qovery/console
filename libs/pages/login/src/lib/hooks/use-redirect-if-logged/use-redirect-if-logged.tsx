@@ -1,3 +1,4 @@
+import { useAuth0 } from '@auth0/auth0-react'
 import { useGTMDispatch } from '@elgorditosalsero/react-gtm-hook'
 import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
@@ -22,11 +23,12 @@ import {
 
 export function useRedirectIfLogged() {
   const navigate = useNavigate()
-  const { createAuthCookies, checkIsAuthenticated, user } = useAuth()
+  const { createAuthCookies, user } = useAuth()
+  const { isAuthenticated } = useAuth0()
   const dispatch = useDispatch<AppDispatch>()
   const sendDataToGTM = useGTMDispatch()
   const { data: organizations = [], isFetched: isFetchedOrganizations } = useOrganizations({
-    enabled: checkIsAuthenticated,
+    enabled: isAuthenticated,
   })
   const { data: projects = [] } = useProjects({ organizationId: organizations[0]?.id })
 
@@ -53,7 +55,7 @@ export function useRedirectIfLogged() {
       }
     }
 
-    if (checkIsAuthenticated) {
+    if (isAuthenticated) {
       const currentOrganization = getCurrentOrganizationIdFromStorage()
       const currentProject = getCurrentProjectIdFromStorage()
       const redirectLoginUri = getRedirectLoginUriFromStorage()
@@ -73,7 +75,7 @@ export function useRedirectIfLogged() {
     }
   }, [
     navigate,
-    checkIsAuthenticated,
+    isAuthenticated,
     createAuthCookies,
     dispatch,
     sendDataToGTM,

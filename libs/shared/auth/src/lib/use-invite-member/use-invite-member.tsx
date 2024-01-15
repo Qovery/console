@@ -1,11 +1,9 @@
+import { useAuth0 } from '@auth0/auth0-react'
 import { type InviteMember } from 'qovery-typescript-axios'
 import { useCallback, useState } from 'react'
-import { useDispatch } from 'react-redux'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { useOrganizations } from '@qovery/domains/organizations/feature'
-import { acceptMembershipInvitation, fetchMemberInvitation } from '@qovery/domains/users/data-access'
+import { useAcceptInviteMember, useMemberInvitation, useOrganizations } from '@qovery/domains/organizations/feature'
 import { ACCEPT_INVITATION_URL, LOGIN_URL, LOGOUT_URL } from '@qovery/shared/routes'
-import { type AppDispatch } from '@qovery/state/store'
 import useAuth from '../use-auth/use-auth'
 
 export function useInviteMember() {
@@ -15,10 +13,12 @@ export function useInviteMember() {
   const [inviteDetail, setInviteDetail] = useState<InviteMember | undefined>()
   const { search, pathname } = useLocation()
   const navigate = useNavigate()
-  const { getAccessTokenSilently, checkIsAuthenticated } = useAuth()
-  const dispatch = useDispatch<AppDispatch>()
+  const { isAuthenticated } = useAuth0()
+  const { getAccessTokenSilently } = useAuth()
+  const { mutateAsync: mutateAcceptInviteMember } = useAcceptInviteMember()
+  const { refetch: refetchMemberInvitation } = useMemberInvitation({ organizationId, inviteId, enabled: false })
   const { refetch: refetchOrganizations } = useOrganizations({
-    enabled: checkIsAuthenticated,
+    enabled: isAuthenticated,
   })
 
   const checkTokenInStorage = useCallback(() => {
@@ -70,48 +70,42 @@ export function useInviteMember() {
   }
 
   const acceptInvitation = async () => {
-    if (organizationId && inviteId)
-      dispatch(acceptMembershipInvitation({ organizationId, inviteId }))
-        .unwrap()
-        .then(
-          async () => {
-            cleanInvitation()
-            try {
-              await getAccessTokenSilently({ ignoreCache: true })
-              await refetchOrganizations()
-              window.location.assign(`/organization/${organizationId}`)
-            } catch (e) {
-              navigate(LOGOUT_URL)
-            }
-          },
-          () => {
-            setDisplayInvitation(false)
-            cleanInvitation()
-            setTimeout(() => {
-              window.location.assign(`/`)
-            })
-          }
-        )
+    if (organizationId && inviteId) {
+      try {
+        await mutateAcceptInviteMember({ organizationId, inviteId })
+        cleanInvitation()
+
+        await getAccessTokenSilently({ ignoreCache: true })
+        await refetchOrganizations()
+        window.location.assign(`/organization/${organizationId}`)
+      } catch (e) {
+        console.error(e)
+        setDisplayInvitation(false)
+        cleanInvitation()
+        setTimeout(() => {
+          window.location.assign(`/`)
+        })
+
+        navigate(LOGOUT_URL)
+      }
+    }
   }
 
   const fetchInvitationDetail = useCallback(async () => {
     if (organizationId && inviteId) {
-      dispatch(fetchMemberInvitation({ organizationId, inviteId }))
-        .unwrap()
-        .then(
-          (invitationDetails) => {
-            if (invitationDetails) setInviteDetail(invitationDetails.data)
-          },
-          () => {
-            setDisplayInvitation(false)
-            cleanInvitation()
-            setTimeout(() => {
-              window.location.assign(`/`)
-            })
-          }
-        )
+      try {
+        const invitationDetails = await refetchMemberInvitation()
+        setInviteDetail(invitationDetails.data)
+      } catch (e) {
+        console.error(e)
+        setDisplayInvitation(false)
+        cleanInvitation()
+        setTimeout(() => {
+          window.location.assign(`/`)
+        })
+      }
     }
-  }, [organizationId, inviteId, dispatch])
+  }, [organizationId, inviteId, refetchMemberInvitation])
 
   return {
     displayInvitation,

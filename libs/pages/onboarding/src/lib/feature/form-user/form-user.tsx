@@ -1,9 +1,10 @@
+import { useAuth0 } from '@auth0/auth0-react'
 import { type SignUpRequest } from 'qovery-typescript-axios'
 import { type Dispatch, type SetStateAction, useContext, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { postUserSignUp, selectUser, selectUserSignUp } from '@qovery/domains/users/data-access'
+import { postUserSignUp, selectUserSignUp } from '@qovery/domains/users/data-access'
 import { useAuth } from '@qovery/shared/auth'
 import { ONBOARDING_MORE_URL, ONBOARDING_URL } from '@qovery/shared/routes'
 import { type AppDispatch } from '@qovery/state/store'
@@ -32,7 +33,7 @@ export interface FormUserProps {
 export function FormUser(props: FormUserProps) {
   const { setStepCompany } = props
   const navigate = useNavigate()
-  const user = useSelector(selectUser)
+  const { user } = useAuth0()
   const userSignUp = useSelector(selectUserSignUp)
   const dispatch = useDispatch<AppDispatch>()
   const { authLogout } = useAuth()
@@ -41,10 +42,10 @@ export function FormUser(props: FormUserProps) {
   const { organization_name, project_name, setContextValue } = useContext(ContextOnboarding)
 
   useEffect(() => {
-    const { email, name } = user
-
     // adding default values by oAuth
-    if (name && email) {
+    if (user) {
+      const { email = '', name = '' } = user
+
       setValue('first_name', userSignUp.first_name ? userSignUp.first_name : name?.split(' ')[0])
       setValue('last_name', userSignUp.last_name ? userSignUp.last_name : name?.split(' ')[1])
       setValue('user_email', userSignUp.user_email ? userSignUp.user_email : email)

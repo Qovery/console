@@ -1,15 +1,8 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import { useCallback } from 'react'
-import { useDispatch } from 'react-redux'
-import { type UserInterface, userActions } from '@qovery/domains/users/data-access'
 
 export function useAuth() {
-  const { loginWithRedirect, logout, user, getAccessTokenSilently, isAuthenticated, isLoading } = useAuth0()
-  const dispatch = useDispatch()
-
-  const checkIsAuthenticated = useCallback(() => {
-    return isAuthenticated
-  }, [isAuthenticated])()
+  const { loginWithRedirect, logout, user, getAccessTokenSilently, isLoading } = useAuth0()
 
   /**
    * Authentification login
@@ -26,40 +19,10 @@ export function useAuth() {
    * Authentification logout
    */
   const authLogout = useCallback(async () => {
-    dispatch(userActions.remove())
-
     return await logout({
       returnTo: window.location.origin,
     })
-  }, [logout, dispatch])
-
-  /**
-   * Get current user with auth0
-   * @deprecated This should be migrated to the new `use-user-account` hook or you need to use `user` directly from `useAuth()`
-   */
-  const getCurrentUser = useCallback(async () => {
-    try {
-      const token = await getAccessTokenSilently()
-
-      if (user) {
-        const userInfos: UserInterface = {
-          name: user.name,
-          email: user.email,
-          sub: user.sub,
-          picture: user.picture,
-          isAuthenticated,
-          isLoading,
-          token,
-        }
-        dispatch(userActions.add(userInfos))
-        return userInfos
-      }
-
-      return null
-    } catch (error) {
-      return error
-    }
-  }, [user, getAccessTokenSilently, dispatch, isLoading, isAuthenticated])
+  }, [logout])
 
   /**
    * Create authentification cookies
@@ -103,11 +66,9 @@ export function useAuth() {
     user,
     authLogin,
     authLogout,
-    getCurrentUser,
     isLoading,
     getAccessTokenSilently,
     createAuthCookies,
-    checkIsAuthenticated,
   }
 }
 
