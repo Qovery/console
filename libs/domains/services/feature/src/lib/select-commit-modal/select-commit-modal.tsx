@@ -1,8 +1,6 @@
 import { clsx } from 'clsx'
-import { type ApplicationGitRepository } from 'qovery-typescript-axios'
 import { type Commit } from 'qovery-typescript-axios'
-import { type ComponentPropsWithoutRef, useMemo, useState } from 'react'
-import { type ServiceType } from '@qovery/domains/services/data-access'
+import { type ReactNode, useMemo, useState } from 'react'
 import {
   Avatar,
   AvatarStyle,
@@ -16,30 +14,30 @@ import {
 } from '@qovery/shared/ui'
 import { dateToFormat, timeAgo } from '@qovery/shared/util-dates'
 import { pluralize, twMerge } from '@qovery/shared/util-js'
-import { useLastDeployedCommit } from '../hooks/use-last-deployed-commit/use-last-deployed-commit'
+import {
+  type UseLastDeployedCommitProps,
+  useLastDeployedCommit,
+} from '../hooks/use-last-deployed-commit/use-last-deployed-commit'
 
-export interface SelectCommitModalProps extends Omit<ComponentPropsWithoutRef<'div'>, 'onSubmit'> {
+export type SelectCommitModalProps = {
+  title: string
   description: string
   submitLabel: string
-  gitRepository: ApplicationGitRepository
-  serviceId: string
-  serviceType: Extract<ServiceType, 'APPLICATION' | 'JOB' | 'CRON_JOB' | 'LIFECYCLE_JOB' | 'HELM'>
+  children: ReactNode
   onCancel: () => void
   onSubmit: (targetCommitId: string) => void
-}
+} & UseLastDeployedCommitProps
 
 export function SelectCommitModal({
   title,
   description,
   submitLabel,
-  gitRepository,
-  serviceId,
-  serviceType,
   children,
   onCancel,
   onSubmit,
+  ...props
 }: SelectCommitModalProps) {
-  const { data, isLoading } = useLastDeployedCommit({ gitRepository, serviceId, serviceType })
+  const { data, isLoading } = useLastDeployedCommit(props)
 
   const [search, setSearch] = useState('')
   const [targetCommitId, setTargetCommitId] = useState<string | undefined>()
