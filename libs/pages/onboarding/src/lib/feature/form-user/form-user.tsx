@@ -50,7 +50,8 @@ export function FormUser(props: FormUserProps) {
 
   const onSubmit = handleSubmit(async (data) => {
     if (data) {
-      const checkIfCompany = data['type_of_use'].toLowerCase() === TypeOfUseEnum.WORK
+      const checkIfCompany = data['type_of_use'] === TypeOfUseEnum.WORK
+
       if (checkIfCompany) {
         setStepCompany(true)
 
