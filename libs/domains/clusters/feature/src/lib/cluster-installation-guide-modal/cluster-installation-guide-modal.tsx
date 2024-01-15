@@ -20,7 +20,7 @@ export function ClusterInstallationGuideModal({
 
   return (
     <div className="p-6 flex flex-col gap-6">
-      <h2 className="h4 text-neutral-400 max-w-sm truncate">Installation guide</h2>
+      <h2 className="h4 text-neutral-400">Installation guide</h2>
 
       <ol className="ml-4 list-outside list-decimal" type="1">
         <li className="mb-6">
