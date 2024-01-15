@@ -200,11 +200,7 @@ function MenuOtherActions({
           Get Kubeconfig
         </DropdownMenu.Item>
         {cluster.kubernetes === 'SELF_MANAGED' && (
-          <DropdownMenu.Item
-            key="3"
-            icon={<Icon name={IconAwesomeEnum.CIRCLE_INFO} />}
-            onClick={mutationInstallationGuide}
-          >
+          <DropdownMenu.Item icon={<Icon name={IconAwesomeEnum.CIRCLE_INFO} />} onClick={mutationInstallationGuide}>
             Installation guide
           </DropdownMenu.Item>
         )}
