@@ -1,10 +1,6 @@
 import { type PreloadedState, combineReducers, configureStore } from '@reduxjs/toolkit'
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import { initialUserSignUpState, userSignUp } from '@qovery/domains/users/data-access'
 
-export const rootReducer = combineReducers({
-  userSignUp: userSignUp,
-})
+export const rootReducer = combineReducers({})
 
 export function setupStore(preloadedState?: PreloadedState<RootState>) {
   return configureStore({
@@ -22,6 +18,4 @@ export type RootState = ReturnType<typeof rootReducer>
 export type AppStore = ReturnType<typeof setupStore>
 export type AppDispatch = AppStore['dispatch']
 
-export const initialRootState = (): RootState => ({
-  userSignUp: initialUserSignUpState,
-})
+export const initialRootState = (): RootState => ({})

@@ -16,6 +16,7 @@ export const usersSignUp = createQueryKeys('usersSignUp', {
 export const mutations = {
   async createUserSignup(payload: SignUpRequest) {
     const response = await usersSignUpApi.createUserSignUp(payload)
+    // API doesn't return the data updated
     return response.data
   },
 }
