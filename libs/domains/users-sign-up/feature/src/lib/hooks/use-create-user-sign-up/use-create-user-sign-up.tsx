@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { mutations } from '@qovery/domains/users-sign-up/data-access'
 import { queries } from '@qovery/state/util-queries'
 
-export function useCreateSignUp() {
+export function useCreateUserSignUp() {
   const queryClient = useQueryClient()
 
   return useMutation(mutations.createUserSignup, {
@@ -17,4 +17,4 @@ export function useCreateSignUp() {
   })
 }
 
-export default useCreateSignUp
+export default useCreateUserSignUp
