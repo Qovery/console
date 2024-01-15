@@ -13,8 +13,9 @@ export function ClusterInstallationGuideModal({
   organizationId,
   onClose,
 }: ClusterInstallationGuideModalProps) {
-  const { data: installationHelmValues, isLoading } = useInstallationHelmValues({ organizationId, clusterId })
-  const downloadInstallationValues = () => {
+  const { mutateAsync: getInstallationHelmValues } = useInstallationHelmValues()
+  const downloadInstallationValues = async () => {
+    const installationHelmValues = await getInstallationHelmValues({ organizationId, clusterId })
     download(installationHelmValues ?? '', `cluster-installation-guide-${clusterId}.yaml`, 'text/plain')
   }
 
@@ -29,11 +30,9 @@ export function ClusterInstallationGuideModal({
           </span>
           <br />
           <span className="inline-block mt-2">
-            <Skeleton height={40} width={110} show={isLoading}>
-              <Button size="lg" variant="outline" color="neutral" onClick={downloadInstallationValues}>
-                Click here to download
-              </Button>
-            </Skeleton>
+            <Button size="lg" variant="outline" color="neutral" onClick={downloadInstallationValues}>
+              Click here to download
+            </Button>
           </span>
         </li>
         <li>

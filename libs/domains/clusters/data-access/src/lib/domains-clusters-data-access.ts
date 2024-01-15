@@ -67,13 +67,6 @@ export const clusters = createQueryKeys('clusters', {
       return response.data.results
     },
   }),
-  installationHelmValues: ({ organizationId, clusterId }: { organizationId: string; clusterId: string }) => ({
-    queryKey: [organizationId, clusterId],
-    async queryFn() {
-      const response = await clusterApi.getInstallationHelmValues(organizationId, clusterId)
-      return response.data
-    },
-  }),
 })
 
 export const mutations = {
@@ -155,6 +148,10 @@ export const mutations = {
   },
   async kubeconfig({ organizationId, clusterId }: { organizationId: string; clusterId: string }) {
     const response = await clusterApi.getClusterKubeconfig(organizationId, clusterId)
+    return response.data
+  },
+  async installationHelmValues({ organizationId, clusterId }: { organizationId: string; clusterId: string }) {
+    const response = await clusterApi.getInstallationHelmValues(organizationId, clusterId)
     return response.data
   },
 }
