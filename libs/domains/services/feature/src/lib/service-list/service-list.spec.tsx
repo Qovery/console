@@ -228,6 +228,7 @@ jest.mock('../hooks/use-services/use-services', () => ({
           cronjob: {
             arguments: ['python', 'cronjob.py'],
             scheduled_at: '* * * * *',
+            timezone: 'Etc/UTC',
           },
         },
         maximum_cpu: 16000,

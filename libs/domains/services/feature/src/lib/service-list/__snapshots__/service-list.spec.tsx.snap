@@ -1083,7 +1083,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 <span
                   class="text-xs text-neutral-350 font-normal"
                 >
-                  Every minute (UTC)
+                  Every minute (Etc/UTC)
                 </span>
               </span>
               <div>
