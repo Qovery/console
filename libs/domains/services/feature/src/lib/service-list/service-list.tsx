@@ -48,6 +48,7 @@ import {
   Truncate,
 } from '@qovery/shared/ui'
 import { dateFullFormat, timeAgo } from '@qovery/shared/util-dates'
+import { buildGitProviderUrl } from '@qovery/shared/util-git'
 import { formatCronExpression, twMerge } from '@qovery/shared/util-js'
 import { containerRegistryKindToIcon } from '@qovery/shared/util-js'
 import { useServices } from '../hooks/use-services/use-services'
@@ -268,13 +269,17 @@ export function ServiceList({ organizationId, projectId, environmentId, classNam
                 <LastCommitAuthor gitRepository={gitRepository} serviceId={service.id} serviceType={serviceType} />
                 <div className="flex flex-col gap-1">
                   <LastCommit gitRepository={gitRepository} serviceId={service.id} serviceType={serviceType} />
-                  {gitRepository.branch && (
-                    <div>
+                  {gitRepository.branch && gitRepository.url && (
+                    <a
+                      href={buildGitProviderUrl(gitRepository.url, gitRepository.branch)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
                       <Badge variant="surface" size="xs" className="gap-1">
                         <Icon name={IconAwesomeEnum.CODE_BRANCH} height={14} width={14} />
                         <Truncate text={gitRepository.branch} truncateLimit={18} />
                       </Badge>
-                    </div>
+                    </a>
                   )}
                 </div>
               </div>

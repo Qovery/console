@@ -363,7 +363,11 @@ exports[`ServiceList should match snapshot 1`] = `
                   2f74448
                 </button>
               </span>
-              <div>
+              <a
+                href="https://github.com/acarranoqovery/javascript-tetris/tree/master/"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
                 <span
                   class="inline-flex items-center shrink-0 font-medium border text-xs px-1 py-0.5 rounded bg-neutral-100 border-neutral-200 text-neutral-400 gap-1"
                 >
@@ -373,7 +377,7 @@ exports[`ServiceList should match snapshot 1`] = `
                   />
                   master
                 </span>
-              </div>
+              </a>
             </div>
           </div>
         </td>
@@ -1259,7 +1263,11 @@ exports[`ServiceList should match snapshot 1`] = `
                   10ad354
                 </button>
               </span>
-              <div>
+              <a
+                href="https://github.com/acarranoqovery/test_script/tree/main/"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
                 <span
                   class="inline-flex items-center shrink-0 font-medium border text-xs px-1 py-0.5 rounded bg-neutral-100 border-neutral-200 text-neutral-400 gap-1"
                 >
@@ -1269,7 +1277,7 @@ exports[`ServiceList should match snapshot 1`] = `
                   />
                   main
                 </span>
-              </div>
+              </a>
             </div>
           </div>
         </td>
@@ -1652,7 +1660,11 @@ exports[`ServiceList should match snapshot 1`] = `
                   10ad354
                 </button>
               </span>
-              <div>
+              <a
+                href="https://github.com/acarranoqovery/test_script/tree/main/"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
                 <span
                   class="inline-flex items-center shrink-0 font-medium border text-xs px-1 py-0.5 rounded bg-neutral-100 border-neutral-200 text-neutral-400 gap-1"
                 >
@@ -1662,7 +1674,7 @@ exports[`ServiceList should match snapshot 1`] = `
                   />
                   main
                 </span>
-              </div>
+              </a>
             </div>
           </div>
         </td>

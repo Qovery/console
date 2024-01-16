@@ -11,9 +11,10 @@ import {
   isJobGitSource,
 } from '@qovery/shared/enums'
 import {
+  APPLICATION_SETTINGS_GENERAL_URL,
   APPLICATION_SETTINGS_RESOURCES_URL,
   APPLICATION_SETTINGS_URL,
-  APPLICATION_SETTINGS_VALUES_URL,
+  APPLICATION_SETTINGS_VALUES_OVERRIDE_FILE_URL,
 } from '@qovery/shared/routes'
 import {
   Badge,
@@ -31,8 +32,10 @@ import {
   toast,
 } from '@qovery/shared/ui'
 import { dateFullFormat, timeAgo } from '@qovery/shared/util-dates'
+import { buildGitProviderUrl } from '@qovery/shared/util-git'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import { containerRegistryKindToIcon, formatCronExpression, formatMetric, twMerge } from '@qovery/shared/util-js'
+import useDeploymentStatus from '../hooks/use-deployment-status/use-deployment-status'
 import useMasterCredentials from '../hooks/use-master-credentials/use-master-credentials'
 import { useService } from '../hooks/use-service/use-service'
 import { LastCommitAuthor } from '../last-commit-author/last-commit-author'
@@ -54,7 +57,7 @@ function GitRepository({
         <>
           <Dt>Repository:</Dt>
           <Dd>
-            <a href={gitRepository.url} target="_blank" rel="noopener noreferrer">
+            <a href={buildGitProviderUrl(gitRepository.url)} target="_blank" rel="noopener noreferrer">
               <Badge variant="surface" size="xs" className="gap-1">
                 <Icon
                   name={
@@ -73,14 +76,20 @@ function GitRepository({
           </Dd>
         </>
       )}
-      {gitRepository.branch && (
+      {gitRepository.branch && gitRepository.url && (
         <>
           <Dt>Branch:</Dt>
           <Dd>
-            <Badge variant="surface" size="xs" className="gap-1">
-              <Icon name={IconAwesomeEnum.CODE_BRANCH} height={14} width={14} />
-              <Truncate text={gitRepository.branch} truncateLimit={18} />
-            </Badge>
+            <a
+              href={buildGitProviderUrl(gitRepository.url, gitRepository.branch)}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Badge variant="surface" size="xs" className="gap-1">
+                <Icon name={IconAwesomeEnum.CODE_BRANCH} height={14} width={14} />
+                <Truncate text={gitRepository.branch} truncateLimit={18} />
+              </Badge>
+            </a>
           </Dd>
         </>
       )}
@@ -105,6 +114,11 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
     environmentId,
     serviceId,
   })
+  const { data: deploymentStatus } = useDeploymentStatus({
+    environmentId,
+    serviceId,
+  })
+
   const { data: masterCredentials } = useMasterCredentials({ serviceId, serviceType: service?.serviceType })
   const [, copyToClipboard] = useCopyToClipboard()
 
@@ -248,12 +262,25 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
   return (
     <div className={twMerge('flex flex-col shrink-0 gap-5 py-8 text-sm', className)} {...props}>
       <Section className={sectionClassName}>
-        {/* XXX: Should be Heading, typography & design wanted */}
-        <span className="text-neutral-400 font-medium">About</span>
+        <div className="flex flex-row justify-between">
+          {/* XXX: Should be Heading, typography & design wanted */}
+          <span className="text-neutral-400 font-medium">About</span>
+          <Link color="current" to={`..${APPLICATION_SETTINGS_URL + APPLICATION_SETTINGS_GENERAL_URL}`} relative="path">
+            <Icon name={IconAwesomeEnum.WHEEL} className="text-base text-neutral-300" />
+          </Link>
+        </div>
         <p>{service.description || 'No description provided yet'}</p>
         <Dl>
-          <Dt>Created:</Dt>
-          <Dd>{dateFullFormat(service.created_at)}</Dd>
+          {deploymentStatus?.last_deployment_date && (
+            <>
+              <Dt>Last deployment:</Dt>
+              <Dd>
+                <Tooltip content={dateFullFormat(deploymentStatus.last_deployment_date)}>
+                  <span>{timeAgo(new Date(deploymentStatus.last_deployment_date))}</span>
+                </Tooltip>
+              </Dd>
+            </>
+          )}
           {service.updated_at && (
             <>
               <Dt>Last edit:</Dt>
@@ -264,12 +291,19 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
               </Dd>
             </>
           )}
+          <Dt>Created:</Dt>
+          <Dd>{dateFullFormat(service.created_at)}</Dd>
         </Dl>
       </Section>
       <hr />
       <Section className={sectionClassName}>
-        {/* XXX: Should be Heading, typography & design wanted */}
-        <span className="text-neutral-400 font-medium">Source</span>
+        <div className="flex flex-row justify-between">
+          {/* XXX: Should be Heading, typography & design wanted */}
+          <span className="text-neutral-400 font-medium">Source</span>
+          <Link color="current" to={`..${APPLICATION_SETTINGS_URL + APPLICATION_SETTINGS_GENERAL_URL}`} relative="path">
+            <Icon name={IconAwesomeEnum.WHEEL} className="text-base text-neutral-300" />
+          </Link>
+        </div>
         {match(service)
           .with(
             { serviceType: 'APPLICATION' },
@@ -416,7 +450,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
               <span className="flex items-center gap-1 text-neutral-400 font-medium">Values override</span>
               <Link
                 color="current"
-                to={`..${APPLICATION_SETTINGS_URL + APPLICATION_SETTINGS_VALUES_URL}`}
+                to={`..${APPLICATION_SETTINGS_URL + APPLICATION_SETTINGS_VALUES_OVERRIDE_FILE_URL}`}
                 relative="path"
               >
                 <Icon name={IconAwesomeEnum.WHEEL} className="text-base text-neutral-300" />

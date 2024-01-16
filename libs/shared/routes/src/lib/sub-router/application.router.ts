@@ -17,7 +17,6 @@ export const APPLICATION_SETTINGS_VALUES_OVERRIDE_ARGUMENTS_URL = '/values-overr
 export const APPLICATION_SETTINGS_NETWORKING_URL = '/networking'
 export const APPLICATION_SETTINGS_STORAGE_URL = '/storage'
 export const APPLICATION_SETTINGS_DOMAIN_URL = '/domain'
-export const APPLICATION_SETTINGS_VALUES_URL = '/values'
 export const APPLICATION_SETTINGS_HEALTHCHECKS_URL = '/health-checks'
 export const APPLICATION_SETTINGS_PORT_URL = '/port'
 export const APPLICATION_SETTINGS_DEPLOYMENT_RESTRICTIONS = '/deployment-restrictions'
