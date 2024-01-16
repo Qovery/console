@@ -85,11 +85,11 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
             {clusterBanner && (
               <Banner
                 color="brand"
-                onClickButton={() => navigate(INFRA_LOGS_URL(organizationId, clusters[0].id))}
+                onClickButton={() => navigate(INFRA_LOGS_URL(organizationId, clusters[0]?.id))}
                 buttonLabel="See logs"
               >
-                Installation of the cluster <span className="block font-bold mx-1">{clusters[0].name}</span> is ongoing,
-                you can follow it from logs
+                Installation of the cluster <span className="block font-bold mx-1">{clusters[0]?.name}</span> is
+                ongoing, you can follow it from logs
               </Banner>
             )}
             {topBar && <TopBar />}
