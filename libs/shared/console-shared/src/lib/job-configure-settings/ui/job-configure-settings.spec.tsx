@@ -82,7 +82,7 @@ describe('JobConfigureSettings', () => {
         fireEvent.change(inputSchedule, { target: { value: '9 * * * *' } })
       })
 
-      getByText(baseElement, 'At 9 minutes past the hour (UTC)')
+      getByText(baseElement, 'At 9 minutes past the hour (Etc/UTC)')
 
       expect(baseElement).toBeTruthy()
     })
