@@ -31,7 +31,8 @@
       "@qovery/domains/service-helm/feature": ["libs/domains/service-helm/feature/src/index.ts"],
       "@qovery/domains/services/data-access": ["libs/domains/services/data-access/src/index.ts"],
       "@qovery/domains/services/feature": ["libs/domains/services/feature/src/index.ts"],
-      "@qovery/domains/users/data-access": ["libs/domains/users/data-access/src/index.ts"],
+      "@qovery/domains/users-sign-up/data-access": ["libs/domains/users-sign-up/data-access/src/index.ts"],
+      "@qovery/domains/users-sign-up/feature": ["libs/domains/users-sign-up/feature/src/index.ts"],
       "@qovery/domains/variables/data-access": ["libs/domains/variables/data-access/src/index.ts"],
       "@qovery/domains/variables/feature": ["libs/domains/variables/feature/src/index.ts"],
       "@qovery/domains/variables/util": ["libs/domains/variables/util/src/index.ts"],
@@ -71,7 +72,6 @@
       "@qovery/shared/util-types": ["libs/shared/util-types/src/index.ts"],
       "@qovery/shared/util-web-sockets": ["libs/shared/util-web-sockets/src/index.ts"],
       "@qovery/shared/utils": ["libs/shared/utils/src/index.ts"],
-      "@qovery/state/store": ["libs/state/store/src/index.ts"],
       "@qovery/state/util-queries": ["libs/state/util-queries/src/index.ts"]
     }
   },

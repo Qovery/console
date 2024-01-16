@@ -1,12 +1,10 @@
 import { type CompanySizeEnum } from 'qovery-typescript-axios'
-import { type Dispatch, type SetStateAction, useEffect } from 'react'
+import { type Dispatch, type SetStateAction } from 'react'
 import { useForm } from 'react-hook-form'
-import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { postUserSignUp, selectUserSignUp } from '@qovery/domains/users/data-access'
+import { useCreateUserSignUp, useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { type Value } from '@qovery/shared/interfaces'
 import { ONBOARDING_MORE_URL, ONBOARDING_URL } from '@qovery/shared/routes'
-import { type AppDispatch } from '@qovery/state/store'
 import { StepCompany } from '../../ui/step-company/step-company'
 
 const dataSize: Value[] = [
@@ -90,29 +88,34 @@ export interface FormCompanyProps {
 export function FormCompany(props: FormCompanyProps) {
   const { setStepCompany } = props
   const navigate = useNavigate()
-  const dispatch = useDispatch<AppDispatch>()
-  const userSignUp = useSelector(selectUserSignUp)
-  const { handleSubmit, control, setValue } = useForm<{
+  const { data: userSignUp } = useUserSignUp()
+  const { mutateAsync: createUserSignUp } = useCreateUserSignUp()
+
+  const { handleSubmit, control } = useForm<{
     company_name?: string
     company_size?: CompanySizeEnum
     user_role?: string
-  }>()
+  }>({
+    defaultValues: {
+      company_name: userSignUp?.company_name ?? undefined,
+      company_size: userSignUp?.company_size ?? undefined,
+      user_role: userSignUp?.user_role ?? undefined,
+    },
+  })
 
-  useEffect(() => {
-    setValue('company_name', userSignUp?.company_name || undefined)
-    setValue('company_size', userSignUp?.company_size || undefined)
-    setValue('user_role', userSignUp?.user_role || undefined)
-  }, [setValue, userSignUp])
+  const onSubmit = handleSubmit(async (data) => {
+    if (!userSignUp) return
 
-  const onSubmit = handleSubmit((data) => {
     if (data) {
-      dispatch(
-        postUserSignUp({
+      try {
+        await createUserSignUp({
           ...userSignUp,
           ...data,
         })
-      )
-      navigate(`${ONBOARDING_URL}${ONBOARDING_MORE_URL}`)
+        navigate(`${ONBOARDING_URL}${ONBOARDING_MORE_URL}`)
+      } catch (error) {
+        console.error(error)
+      }
     }
   })
 

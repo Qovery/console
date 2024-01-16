@@ -5,18 +5,6 @@ import PageUserGeneralFeature from './page-user-general-feature'
 const useEditUserAccountMockSpy = jest.spyOn(domainUserFeature, 'useEditUserAccount') as jest.Mock
 const useUserAccountMockSky = jest.spyOn(domainUserFeature, 'useUserAccount') as jest.Mock
 
-jest.mock('@qovery/domains/users/data-access', () => {
-  return {
-    ...jest.requireActual('@qovery/domains/users/data-access'),
-    postUserSignUp: jest.fn(),
-    selectUser: () => {
-      return {
-        sub: 'github|123456',
-      }
-    },
-  }
-})
-
 describe('PageUserGeneral', () => {
   beforeEach(() => {
     useEditUserAccountMockSpy.mockReturnValue({

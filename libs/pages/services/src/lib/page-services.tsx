@@ -1,10 +1,8 @@
 import { useEffect } from 'react'
-import { useDispatch } from 'react-redux'
 import { Navigate, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useFetchEnvironment } from '@qovery/domains/environment'
 import { APPLICATION_GENERAL_URL, SERVICES_GENERAL_URL, SERVICES_URL } from '@qovery/shared/routes'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { type AppDispatch } from '@qovery/state/store'
 import { ROUTER_SERVICES } from './router/router'
 import Container from './ui/container/container'
 
@@ -16,13 +14,11 @@ export function PageServices() {
 
   const { data: environment } = useFetchEnvironment(projectId, environmentId)
 
-  const dispatch = useDispatch<AppDispatch>()
-
   useEffect(() => {
     if (location.pathname === SERVICES_URL(organizationId, projectId, environmentId)) {
       navigate(`${SERVICES_URL(organizationId, projectId, environmentId)}${APPLICATION_GENERAL_URL}`)
     }
-  }, [location, navigate, projectId, organizationId, environmentId, dispatch])
+  }, [location, navigate, projectId, organizationId, environmentId])
 
   return (
     <Container environment={environment}>

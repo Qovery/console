@@ -1,33 +1,30 @@
-import { type SignUp } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
-import { useDispatch } from 'react-redux'
 import { Route, Routes, useNavigate, useParams } from 'react-router-dom'
-import { fetchUserSignUp } from '@qovery/domains/users/data-access'
+import { useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { ONBOARDING_PERSONALIZE_URL, ONBOARDING_URL } from '@qovery/shared/routes'
 import { LoadingScreen } from '@qovery/shared/ui'
-import { type AppDispatch } from '@qovery/state/store'
 import { Container } from './feature/container/container'
 import { ROUTER_ONBOARDING_STEP_1, ROUTER_ONBOARDING_STEP_2 } from './router/router'
 
 export function PageOnboarding() {
   const navigate = useNavigate()
-  const dispatch = useDispatch<AppDispatch>()
   const params = useParams()
+  const { refetch: refetchUserSignUp } = useUserSignUp({ enabled: false })
 
   const firstStep = !!ROUTER_ONBOARDING_STEP_1.find((currentRoute) => currentRoute.path === `/${params['*']}`)
 
   useEffect(() => {
     async function fetchData() {
       if (params['*'] === '') {
-        const user: SignUp = await dispatch(fetchUserSignUp()).unwrap()
+        const { data: userSignUp } = await refetchUserSignUp()
         // check if user request work before redirect
-        if (user) {
+        if (userSignUp) {
           navigate(`${ONBOARDING_URL}${ONBOARDING_PERSONALIZE_URL}`)
         }
       }
     }
     fetchData()
-  }, [dispatch, navigate, params])
+  }, [refetchUserSignUp, navigate, params])
 
   if (params['*'] === '') {
     return <LoadingScreen />

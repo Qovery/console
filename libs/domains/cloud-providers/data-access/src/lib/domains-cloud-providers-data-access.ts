@@ -8,8 +8,8 @@ import {
   type KubernetesEnum,
   type ScalewayCredentialsRequest,
 } from 'qovery-typescript-axios'
-import { type DistributiveOmit } from 'react-redux'
 import { match } from 'ts-pattern'
+import { type DistributiveOmit } from '@qovery/shared/util-types'
 
 const cloudProviderApi = new CloudProviderApi()
 const cloudProviderCredentialsApi = new CloudProviderCredentialsApi()

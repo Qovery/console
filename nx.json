@@ -13,15 +13,33 @@
       "inputs": [
         "production",
         "^production",
-        { "env": "NX_GTM" },
-        { "env": "NX_INTERCOM" },
-        { "env": "NX_LOGROCKET" },
-        { "env": "NX_OAUTH_AUDIENCE" },
-        { "env": "NX_OAUTH_DOMAIN" },
-        { "env": "NX_OAUTH_KEY" },
-        { "env": "NX_POSTHOG" },
-        { "env": "NX_POSTHOG_APIHOST" },
-        { "env": "NX_QOVERY_API" }
+        {
+          "env": "NX_GTM"
+        },
+        {
+          "env": "NX_INTERCOM"
+        },
+        {
+          "env": "NX_LOGROCKET"
+        },
+        {
+          "env": "NX_OAUTH_AUDIENCE"
+        },
+        {
+          "env": "NX_OAUTH_DOMAIN"
+        },
+        {
+          "env": "NX_OAUTH_KEY"
+        },
+        {
+          "env": "NX_POSTHOG"
+        },
+        {
+          "env": "NX_POSTHOG_APIHOST"
+        },
+        {
+          "env": "NX_QOVERY_API"
+        }
       ],
       "cache": true
     },

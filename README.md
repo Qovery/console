@@ -20,7 +20,7 @@
 </p>
 
 <p align="center">
-    At Qovery for our Console, we use a couple of technologies, like <a href="https://nx.dev" target="_blank">NX</a>, <a href="https://reactjs.org" target="_blank">React</a>, <a href="https://redux-toolkit.js.org" target="_blank">Redux</a>, <a href="https://tailwindcss.com" target="_blank">Tailwind</a>, and <a href="https://storybook.js.org" target="_blank">Storybook</a>.
+    At Qovery for our Console, we use a couple of technologies, like <a href="https://nx.dev" target="_blank">NX</a>, <a href="https://reactjs.org" target="_blank">React</a>, <a href="https://tanstack.com/query/v3/" target="_blank">React Query</a>, <a href="https://tailwindcss.com" target="_blank">Tailwind</a>, and <a href="https://storybook.js.org" target="_blank">Storybook</a>.
 </p>
 <br />
 

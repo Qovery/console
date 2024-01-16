@@ -1,11 +1,10 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import { useGTMDispatch } from '@elgorditosalsero/react-gtm-hook'
 import { useEffect } from 'react'
-import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { useOrganizations } from '@qovery/domains/organizations/feature'
 import { useProjects } from '@qovery/domains/projects/feature'
-import { fetchUserSignUp } from '@qovery/domains/users/data-access'
+import { useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { useAuth } from '@qovery/shared/auth'
 import {
   ONBOARDING_PERSONALIZE_URL,
@@ -14,7 +13,6 @@ import {
   ORGANIZATION_URL,
   OVERVIEW_URL,
 } from '@qovery/shared/routes'
-import { type AppDispatch } from '@qovery/state/store'
 import {
   getCurrentOrganizationIdFromStorage,
   getCurrentProjectIdFromStorage,
@@ -25,12 +23,12 @@ export function useRedirectIfLogged() {
   const navigate = useNavigate()
   const { createAuthCookies, user } = useAuth()
   const { isAuthenticated } = useAuth0()
-  const dispatch = useDispatch<AppDispatch>()
   const sendDataToGTM = useGTMDispatch()
   const { data: organizations = [], isFetched: isFetchedOrganizations } = useOrganizations({
     enabled: isAuthenticated,
   })
   const { data: projects = [] } = useProjects({ organizationId: organizations[0]?.id })
+  const { refetch: refetchUserSignUp } = useUserSignUp({ enabled: false })
 
   useEffect(() => {
     async function fetchData() {
@@ -45,8 +43,8 @@ export function useRedirectIfLogged() {
         if (projects.length > 0) navigate(OVERVIEW_URL(organizationId, projects[0].id))
         else navigate(ORGANIZATION_URL(organizationId))
       } else {
-        const userSignUp = await dispatch(fetchUserSignUp()).unwrap()
-        if (userSignUp.dx_auth) {
+        const { data: userSignUp } = await refetchUserSignUp()
+        if (userSignUp?.dx_auth) {
           navigate(ONBOARDING_URL + ONBOARDING_PROJECT_URL)
         } else {
           sendDataToGTM({ event: 'new_signup', value: user?.email })
@@ -77,8 +75,8 @@ export function useRedirectIfLogged() {
     navigate,
     isAuthenticated,
     createAuthCookies,
-    dispatch,
     sendDataToGTM,
+    refetchUserSignUp,
     user?.email,
     organizations,
     projects,

@@ -1,28 +1,26 @@
 import { useAuth0 } from '@auth0/auth0-react'
-import { type SignUpRequest } from 'qovery-typescript-axios'
-import { type Dispatch, type SetStateAction, useContext, useEffect } from 'react'
+import { type SignUpRequest, TypeOfUseEnum } from 'qovery-typescript-axios'
+import { type Dispatch, type SetStateAction, useContext } from 'react'
 import { useForm } from 'react-hook-form'
-import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { postUserSignUp, selectUserSignUp } from '@qovery/domains/users/data-access'
+import { useCreateUserSignUp, useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { useAuth } from '@qovery/shared/auth'
 import { ONBOARDING_MORE_URL, ONBOARDING_URL } from '@qovery/shared/routes'
-import { type AppDispatch } from '@qovery/state/store'
 import { StepPersonalize } from '../../ui/step-personalize/step-personalize'
 import { ContextOnboarding } from '../container/container'
 
 const dataTypes = [
   {
     label: 'Personal',
-    value: 'personal',
+    value: TypeOfUseEnum.PERSONAL,
   },
   {
     label: 'Work',
-    value: 'work',
+    value: TypeOfUseEnum.WORK,
   },
   {
     label: 'School',
-    value: 'school',
+    value: TypeOfUseEnum.SCHOOL,
   },
 ]
 
@@ -34,37 +32,34 @@ export function FormUser(props: FormUserProps) {
   const { setStepCompany } = props
   const navigate = useNavigate()
   const { user } = useAuth0()
-  const userSignUp = useSelector(selectUserSignUp)
-  const dispatch = useDispatch<AppDispatch>()
   const { authLogout } = useAuth()
-  const { handleSubmit, control, setValue } =
-    useForm<Pick<SignUpRequest, 'first_name' | 'last_name' | 'user_email' | 'type_of_use'>>()
+
+  const { data: userSignUp } = useUserSignUp()
+  const { mutateAsync: createUserSignUp } = useCreateUserSignUp()
+  const { handleSubmit, control } = useForm<
+    Pick<SignUpRequest, 'first_name' | 'last_name' | 'user_email' | 'type_of_use'>
+  >({
+    defaultValues: {
+      first_name: userSignUp?.first_name ? userSignUp.first_name : user?.name?.split(' ')[0],
+      last_name: userSignUp?.last_name ? userSignUp.last_name : user?.name?.split(' ')[1],
+      user_email: userSignUp?.user_email ? userSignUp.user_email : user?.email,
+      type_of_use: userSignUp?.type_of_use ?? TypeOfUseEnum.PERSONAL,
+    },
+  })
   const { organization_name, project_name, setContextValue } = useContext(ContextOnboarding)
-
-  useEffect(() => {
-    // adding default values by oAuth
-    if (user) {
-      const { email = '', name = '' } = user
-
-      setValue('first_name', userSignUp.first_name ? userSignUp.first_name : name?.split(' ')[0])
-      setValue('last_name', userSignUp.last_name ? userSignUp.last_name : name?.split(' ')[1])
-      setValue('user_email', userSignUp.user_email ? userSignUp.user_email : email)
-      setValue('type_of_use', userSignUp.type_of_use)
-    }
-  }, [user, setValue, userSignUp])
 
   const onSubmit = handleSubmit(async (data) => {
     if (data) {
-      const checkIfCompany = data['type_of_use'].toLowerCase() === 'work'
+      const checkIfCompany = data['type_of_use'] === TypeOfUseEnum.WORK
+
       if (checkIfCompany) {
         setStepCompany(true)
 
-        await dispatch(
-          postUserSignUp({
-            ...userSignUp,
-            ...data,
-          })
-        )
+        await createUserSignUp({
+          qovery_usage: userSignUp?.qovery_usage ?? '',
+          ...userSignUp,
+          ...data,
+        })
       } else {
         navigate(`${ONBOARDING_URL}${ONBOARDING_MORE_URL}`)
 
@@ -81,7 +76,12 @@ export function FormUser(props: FormUserProps) {
             admin_email: data['user_email'],
           })
 
-        await dispatch(postUserSignUp({ ...userSignUp, ...data, ...resetCompany }))
+        await createUserSignUp({
+          qovery_usage: userSignUp?.qovery_usage ?? '',
+          ...userSignUp,
+          ...data,
+          ...resetCompany,
+        })
       }
     }
   })
