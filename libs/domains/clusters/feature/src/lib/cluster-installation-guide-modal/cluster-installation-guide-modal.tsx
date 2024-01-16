@@ -24,10 +24,8 @@ export function ClusterInstallationGuideModal({
       <h2 className="h4 text-neutral-400">Installation guide</h2>
 
       <ol className="ml-4 list-outside list-decimal" type="1">
-        <li className="mb-6">
-          <span className="text-sm font-medium">
-            Save the following yaml, it contains the Qovery configuration assigned to your cluster.
-          </span>
+        <li className="mb-6 text-sm font-medium">
+          <span>Save the following yaml, it contains the Qovery configuration assigned to your cluster.</span>
           <br />
           <span className="inline-block mt-2">
             <Button size="lg" variant="outline" color="neutral" onClick={downloadInstallationValues}>
@@ -35,8 +33,8 @@ export function ClusterInstallationGuideModal({
             </Button>
           </span>
         </li>
-        <li>
-          <span className="text-sm font-medium">Follow the instruction described in this documentation</span>
+        <li className="text-sm font-medium">
+          <span>Follow the instruction described in this documentation</span>
           <br />
           <ExternalLink
             className="mt-2"
