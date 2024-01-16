@@ -13,7 +13,7 @@ export function ClusterInstallationGuideModal({
   organizationId,
   onClose,
 }: ClusterInstallationGuideModalProps) {
-  const { mutateAsync: getInstallationHelmValues } = useInstallationHelmValues()
+  const { mutateAsync: getInstallationHelmValues, isLoading } = useInstallationHelmValues()
   const downloadInstallationValues = async () => {
     const installationHelmValues = await getInstallationHelmValues({ organizationId, clusterId })
     download(installationHelmValues ?? '', `cluster-installation-guide-${clusterId}.yaml`, 'text/plain')
@@ -28,7 +28,13 @@ export function ClusterInstallationGuideModal({
           <span>Save the following yaml, it contains the Qovery configuration assigned to your cluster.</span>
           <br />
           <span className="inline-block mt-2">
-            <Button size="lg" variant="outline" color="neutral" onClick={downloadInstallationValues}>
+            <Button
+              size="lg"
+              variant="outline"
+              color="neutral"
+              onClick={downloadInstallationValues}
+              loading={isLoading}
+            >
               Click here to download
             </Button>
           </span>
