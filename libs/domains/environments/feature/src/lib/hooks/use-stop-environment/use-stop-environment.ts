@@ -2,13 +2,13 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { mutations } from '@qovery/domains/environments/data-access'
 import { queries } from '@qovery/state/util-queries'
 
-export function useStopEnvironment() {
+export function useStopEnvironment({ projectId }: { projectId: string }) {
   const queryClient = useQueryClient()
 
   return useMutation(mutations.stopEnvironment, {
-    onSuccess(_, { environmentId }) {
+    onSuccess() {
       queryClient.invalidateQueries({
-        queryKey: queries.environments.listStatuses(environmentId).queryKey,
+        queryKey: queries.environments.listStatuses(projectId).queryKey,
       })
     },
     meta: {
