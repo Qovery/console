@@ -62,8 +62,6 @@ export function PageSettingsConfigureJobFeature() {
   const onSubmit = methods.handleSubmit((data) => {
     if (!service) return
 
-    console.log(data.timezone)
-
     try {
       const schedule = match(service)
         .with({ job_type: 'CRON' }, () => {
