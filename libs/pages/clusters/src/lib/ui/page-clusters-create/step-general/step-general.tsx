@@ -69,7 +69,7 @@ export function StepGeneral(props: StepGeneralProps) {
           <h4 className="mb-4 text-neutral-400 text-sm">General</h4>
           <ClusterGeneralSettings />
         </div>
-        <div className="text-sm mb-10">
+        <div className="text-sm mb-10 hidden">
           <Controller
             name="installation_type"
             control={control}
