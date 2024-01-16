@@ -225,14 +225,6 @@ export function PodsMetrics({ environmentId, serviceId, children }: PodsMetricsP
           ])
           .exhaustive()
       })
-      .with({ serviceType: ServiceTypeEnum.JOB }, () => [
-        startedAtColumn('Job executions (UTC)', 'absolute'),
-        statusColumn,
-        versionColumn,
-        memoryColumn,
-        cpuColumn,
-        podsColumn,
-      ])
       .with({ serviceType: ServiceTypeEnum.DATABASE }, () => [
         podsColumn,
         statusColumn,

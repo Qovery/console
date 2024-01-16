@@ -4,6 +4,9 @@ import { queries } from '@qovery/state/util-queries'
 export function useListTimezone() {
   return useQuery({
     ...queries.services.listTimezone,
+    meta: {
+      notifyOnError: true,
+    },
   })
 }
 
