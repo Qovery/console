@@ -4,8 +4,8 @@ import {
   EnvironmentModeEnum,
   OrganizationEventTargetType,
 } from 'qovery-typescript-axios'
-import { type ReactNode } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { type ReactNode, useEffect } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { AUDIT_LOGS_PARAMS_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL, INFRA_LOGS_URL } from '@qovery/shared/routes'
 import {
   ActionToolbar,
@@ -25,6 +25,7 @@ import {
   isUpdateAvailable,
 } from '@qovery/shared/util-js'
 import { ClusterDeleteModal } from '../cluster-delete-modal/cluster-delete-modal'
+import { ClusterInstallationGuideModal } from '../cluster-installation-guide-modal/cluster-installation-guide-modal'
 import { useDeployCluster } from '../hooks/use-deploy-cluster/use-deploy-cluster'
 import { useDownloadKubeconfig } from '../hooks/use-download-kubeconfig/use-download-kubeconfig'
 import { useStopCluster } from '../hooks/use-stop-cluster/use-stop-cluster'
@@ -128,7 +129,9 @@ function MenuOtherActions({
   organizationId: string
 }) {
   const navigate = useNavigate()
-  const { openModal } = useModal()
+  const showSelfManagedGuideKey = 'show-self-managed-guide'
+  const [searchParams, setSearchParams] = useSearchParams()
+  const { openModal, closeModal } = useModal()
   const [, copyToClipboard] = useCopyToClipboard()
   const { mutate: downloadKubeconfig } = useDownloadKubeconfig()
 
@@ -139,6 +142,31 @@ function MenuOtherActions({
   }
 
   const canDelete = clusterStatus.status && isDeleteAvailable(clusterStatus.status)
+
+  const openInstallationGuideModal = () =>
+    openModal({
+      content: (
+        <ClusterInstallationGuideModal
+          organizationId={organizationId}
+          clusterId={cluster.id}
+          onClose={() => {
+            searchParams.delete(showSelfManagedGuideKey)
+            setSearchParams(searchParams)
+            closeModal()
+          }}
+        />
+      ),
+    })
+
+  useEffect(() => {
+    const bool = searchParams.has(showSelfManagedGuideKey) && cluster.kubernetes === 'SELF_MANAGED'
+    if (bool) {
+      searchParams.delete(showSelfManagedGuideKey)
+      setSearchParams(searchParams)
+      openInstallationGuideModal()
+    }
+    return () => (bool ? closeModal() : undefined)
+  }, [searchParams, setSearchParams, cluster.kubernetes, closeModal])
 
   return (
     <DropdownMenu.Root>
@@ -174,6 +202,11 @@ function MenuOtherActions({
         >
           Get Kubeconfig
         </DropdownMenu.Item>
+        {cluster.kubernetes === 'SELF_MANAGED' && (
+          <DropdownMenu.Item icon={<Icon name={IconAwesomeEnum.CIRCLE_INFO} />} onClick={openInstallationGuideModal}>
+            Installation guide
+          </DropdownMenu.Item>
+        )}
         {canDelete && (
           <>
             <DropdownMenu.Separator />

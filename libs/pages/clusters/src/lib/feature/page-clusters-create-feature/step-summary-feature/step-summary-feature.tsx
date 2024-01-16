@@ -1,4 +1,9 @@
-import { CloudProviderEnum, type ClusterRequestFeaturesInner, KubernetesEnum } from 'qovery-typescript-axios'
+import {
+  type ClusterCloudProviderInfoRequest,
+  type ClusterRequest,
+  type ClusterRequestFeaturesInner,
+  KubernetesEnum,
+} from 'qovery-typescript-axios'
 import { useCallback, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
@@ -7,9 +12,11 @@ import { useCreateCluster, useDeployCluster, useEditCloudProviderInfo } from '@q
 import {
   CLUSTERS_CREATION_FEATURES_URL,
   CLUSTERS_CREATION_GENERAL_URL,
+  CLUSTERS_CREATION_KUBECONFIG_URL,
   CLUSTERS_CREATION_REMOTE_URL,
   CLUSTERS_CREATION_RESOURCES_URL,
   CLUSTERS_CREATION_URL,
+  CLUSTERS_GENERAL_URL,
   CLUSTERS_URL,
 } from '@qovery/shared/routes'
 import { FunnelFlowBody } from '@qovery/shared/ui'
@@ -19,7 +26,8 @@ import { steps, useClusterContainerCreateContext } from '../page-clusters-create
 
 export function StepSummaryFeature() {
   useDocumentTitle('Summary - Create Database')
-  const { generalData, resourcesData, featuresData, remoteData, setCurrentStep } = useClusterContainerCreateContext()
+  const { generalData, kubeconfigData, resourcesData, featuresData, remoteData, setCurrentStep } =
+    useClusterContainerCreateContext()
   const navigate = useNavigate()
   const { organizationId = '' } = useParams()
 
@@ -29,24 +37,28 @@ export function StepSummaryFeature() {
   const { mutateAsync: editCloudProviderInfo } = useEditCloudProviderInfo({ silently: true })
   const { mutateAsync: deployCluster, isLoading: isDeployClusterLoading } = useDeployCluster()
   const { data: cloudProviderInstanceTypes } = useCloudProviderInstanceTypes(
-    match(generalData?.cloud_provider || CloudProviderEnum.AWS)
-      .with('AWS', (cloudProvider) => ({
-        cloudProvider,
+    match(generalData)
+      .with({ cloud_provider: 'AWS', installation_type: 'MANAGED' }, ({ cloud_provider, region }) => ({
+        cloudProvider: cloud_provider,
         clusterType: (resourcesData?.cluster_type ?? 'MANAGED') as (typeof KubernetesEnum)[keyof typeof KubernetesEnum],
-        region: generalData?.region || '',
+        region,
       }))
-      .with('SCW', (cloudProvider) => ({
-        cloudProvider,
+      .with({ cloud_provider: 'SCW', installation_type: 'MANAGED' }, ({ cloud_provider, region }) => ({
+        cloudProvider: cloud_provider,
         clusterType: 'MANAGED' as const,
-        region: generalData?.region || '',
+        region: region,
       }))
-      .with('GCP', (cloudProvider) => ({
-        cloudProvider,
+      .with({ cloud_provider: 'GCP', installation_type: 'MANAGED' }, ({ cloud_provider }) => ({
+        cloudProvider: cloud_provider,
         clusterType: 'MANAGED' as const,
       }))
-      .exhaustive()
+      .otherwise(() => ({ enabled: false }))
   )
   const detailInstanceType = cloudProviderInstanceTypes?.find(({ type }) => type === resourcesData?.instance_type)
+
+  const goToKubeconfig = useCallback(() => {
+    navigate(pathCreate + CLUSTERS_CREATION_KUBECONFIG_URL)
+  }, [navigate, pathCreate])
 
   const goToFeatures = useCallback(() => {
     navigate(pathCreate + CLUSTERS_CREATION_FEATURES_URL)
@@ -65,6 +77,10 @@ export function StepSummaryFeature() {
   }
 
   const onBack = () => {
+    if (generalData?.installation_type === 'SELF_MANAGED') {
+      goToKubeconfig()
+      return
+    }
     return match(generalData?.cloud_provider)
       .with('AWS', () => {
         if (resourcesData?.cluster_type === KubernetesEnum.K3_S) {
@@ -84,6 +100,31 @@ export function StepSummaryFeature() {
   }, [pathCreate, generalData, navigate, organizationId])
 
   const onSubmit = async (withDeploy: boolean) => {
+    if (generalData && generalData.installation_type === 'SELF_MANAGED' && kubeconfigData) {
+      try {
+        await createCluster({
+          organizationId,
+          clusterRequest: {
+            name: generalData.name,
+            description: generalData.description,
+            region: generalData.region,
+            cloud_provider: generalData.cloud_provider,
+            kubernetes: 'SELF_MANAGED',
+            production: true,
+            ssh_keys: [],
+            kubeconfig: kubeconfigData.file_content,
+            features: [],
+          },
+        })
+        navigate({
+          pathname: CLUSTERS_URL(organizationId) + CLUSTERS_GENERAL_URL,
+          search: '?show-self-managed-guide',
+        })
+      } catch (e) {
+        console.error(e)
+      }
+      return
+    }
     if (generalData && resourcesData) {
       const formatFeatures =
         featuresData &&
@@ -97,13 +138,24 @@ export function StepSummaryFeature() {
           )
           .filter(Boolean)
 
+      const cloud_provider_credentials: ClusterCloudProviderInfoRequest = {
+        cloud_provider: generalData.cloud_provider,
+        credentials: {
+          id: generalData.credentials,
+          name: generalData.credentials_name,
+        },
+        region: generalData.region,
+      }
+
       const clusterRequest = match(generalData.cloud_provider)
+        .returnType<ClusterRequest>()
         .with('GCP', () => ({
           name: generalData.name,
           description: generalData.description || '',
           production: generalData.production,
           cloud_provider: generalData.cloud_provider,
           region: generalData.region,
+          cloud_provider_credentials,
         }))
         .otherwise(() => ({
           name: generalData.name,
@@ -118,6 +170,7 @@ export function StepSummaryFeature() {
           kubernetes: resourcesData.cluster_type as KubernetesEnum,
           features: formatFeatures as ClusterRequestFeaturesInner[],
           ssh_keys: remoteData?.ssh_key ? [remoteData?.ssh_key] : undefined,
+          cloud_provider_credentials,
         }))
 
       try {
@@ -128,14 +181,7 @@ export function StepSummaryFeature() {
         await editCloudProviderInfo({
           organizationId,
           clusterId: cluster.id,
-          cloudProviderInfoRequest: {
-            cloud_provider: generalData.cloud_provider,
-            credentials: {
-              id: generalData.credentials,
-              name: generalData.credentials_name,
-            },
-            region: generalData.region,
-          },
+          cloudProviderInfoRequest: cloud_provider_credentials,
         })
 
         if (withDeploy) {
@@ -149,10 +195,8 @@ export function StepSummaryFeature() {
   }
 
   useEffect(() => {
-    setCurrentStep(
-      steps(generalData?.cloud_provider, resourcesData?.cluster_type).findIndex((step) => step.key === 'summary') + 1
-    )
-  }, [setCurrentStep, generalData?.cloud_provider, resourcesData?.cluster_type])
+    setCurrentStep(steps(generalData, resourcesData?.cluster_type).findIndex((step) => step.key === 'summary') + 1)
+  }, [setCurrentStep, generalData?.cloud_provider, generalData?.installation_type, resourcesData?.cluster_type])
 
   return (
     <FunnelFlowBody>
@@ -163,6 +207,7 @@ export function StepSummaryFeature() {
           onSubmit={onSubmit}
           onPrevious={onBack}
           generalData={generalData}
+          kubeconfigData={kubeconfigData}
           resourcesData={resourcesData}
           featuresData={featuresData}
           remoteData={remoteData}
@@ -170,6 +215,7 @@ export function StepSummaryFeature() {
           goToResources={goToResources}
           goToGeneral={goToGeneral}
           goToFeatures={goToFeatures}
+          goToKubeconfig={goToKubeconfig}
           goToRemote={goToRemote}
         />
       )}

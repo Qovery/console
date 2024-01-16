@@ -14,6 +14,7 @@ const props: StepSummaryProps = {
     region: 'region',
     credentials: '1',
     credentials_name: 'name',
+    installation_type: 'MANAGED',
   },
   resourcesData: {
     cluster_type: 'MANAGED',

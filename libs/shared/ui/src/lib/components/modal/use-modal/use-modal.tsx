@@ -1,4 +1,4 @@
-import { type ReactNode, useContext, useEffect, useState } from 'react'
+import { type ReactNode, useCallback, useContext, useEffect, useState } from 'react'
 import { ModalContext, defaultContext } from '../modal-root'
 
 export interface UseModalProps {
@@ -12,6 +12,9 @@ export interface UseModalProps {
 export function useModal() {
   const [modal, openModal] = useState<UseModalProps>()
   const { setOpenModal, setContentModal, setOptionsModal, enableAlertClickOutside } = useContext(ModalContext)
+  const closeModal = useCallback(() => {
+    setOpenModal(false)
+  }, [setOpenModal])
 
   useEffect(() => {
     if (modal) {
@@ -29,7 +32,7 @@ export function useModal() {
     }
   }, [modal, setContentModal, setOpenModal, setOptionsModal])
 
-  return { openModal, closeModal: () => setOpenModal(false), enableAlertClickOutside }
+  return { openModal, closeModal, enableAlertClickOutside }
 }
 
 export default useModal

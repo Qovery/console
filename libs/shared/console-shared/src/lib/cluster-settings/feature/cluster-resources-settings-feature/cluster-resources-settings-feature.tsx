@@ -22,7 +22,7 @@ export function ClusterResourcesSettingsFeature(props: ClusterResourcesSettingsF
     match(props.cloudProvider || CloudProviderEnum.AWS)
       .with('AWS', (cloudProvider) => ({
         cloudProvider,
-        clusterType: (watchClusterType ?? 'MANAGED') as (typeof KubernetesEnum)[keyof typeof KubernetesEnum],
+        clusterType: (watchClusterType || 'MANAGED') as (typeof KubernetesEnum)[keyof typeof KubernetesEnum],
         region: props.clusterRegion || '',
       }))
       .with('SCW', (cloudProvider) => ({

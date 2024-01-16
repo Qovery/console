@@ -1,26 +1,29 @@
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
-import { type ClusterRemoteData } from '@qovery/shared/interfaces'
+import { type ClusterKubeconfigData } from '@qovery/shared/interfaces'
 import { CLUSTERS_CREATION_SUMMARY_URL, CLUSTERS_CREATION_URL, CLUSTERS_URL } from '@qovery/shared/routes'
 import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import StepRemote from '../../../ui/page-clusters-create/step-remote/step-remote'
-import { steps, useClusterContainerCreateContext } from '../page-clusters-create-feature'
+import { StepKubeconfig } from '../../../ui/page-clusters-create/step-kubeconfig/step-kubeconfig'
+import { useClusterContainerCreateContext } from '../page-clusters-create-feature'
 
-export function StepRemoteFeature() {
-  useDocumentTitle('SSH Key - Create Cluster')
-  const { remoteData, setRemoteData, setCurrentStep, generalData, resourcesData } = useClusterContainerCreateContext()
+export function StepKubeconfigFeature() {
+  useDocumentTitle('Kubeconfig - Create Cluster')
+  const { setKubeconfigData, kubeconfigData, setCurrentStep } = useClusterContainerCreateContext()
   const navigate = useNavigate()
   const { organizationId = '' } = useParams()
+  const methods = useForm<ClusterKubeconfigData>({
+    defaultValues: kubeconfigData,
+    mode: 'onChange',
+  })
 
   const funnelCardHelp = (
     <FunnelFlowHelpCard
-      title="Cluster"
+      title="Kubeconfig"
       items={[
-        'A Kubernetes cluster is necessary to run your application and the Qovery services',
-        'Since it runs on your cloud provider account, credentials are necessary to create and manage the cluster and the applications that will run on it',
-        'The production flag allows to easily identify if you are running your production environment on this cluster',
+        'A Kubeconfig file is necessary to access your Kubernetes cluster and manage the deployment of your resources.',
+        'The file is securely stored within the Qovery infrastructure.',
       ]}
       helpSectionProps={{
         description: 'Need help? You may find these links useful',
@@ -36,16 +39,12 @@ export function StepRemoteFeature() {
   )
 
   useEffect(() => {
-    setCurrentStep(steps(generalData, resourcesData?.cluster_type).findIndex((step) => step.key === 'remote') + 1)
-  }, [setCurrentStep, generalData?.cloud_provider, generalData?.installation_type, resourcesData?.cluster_type])
-
-  const methods = useForm<ClusterRemoteData>({
-    defaultValues: remoteData,
-    mode: 'onChange',
-  })
+    setCurrentStep(2)
+  }, [setCurrentStep])
 
   const onSubmit = methods.handleSubmit((data) => {
-    setRemoteData(data)
+    setKubeconfigData(data)
+
     const pathCreate = `${CLUSTERS_URL(organizationId)}${CLUSTERS_CREATION_URL}`
     navigate(pathCreate + CLUSTERS_CREATION_SUMMARY_URL)
   })
@@ -53,10 +52,10 @@ export function StepRemoteFeature() {
   return (
     <FunnelFlowBody helpSection={funnelCardHelp}>
       <FormProvider {...methods}>
-        <StepRemote onSubmit={onSubmit} />
+        <StepKubeconfig onSubmit={onSubmit} />
       </FormProvider>
     </FunnelFlowBody>
   )
 }
 
-export default StepRemoteFeature
+export default StepKubeconfigFeature

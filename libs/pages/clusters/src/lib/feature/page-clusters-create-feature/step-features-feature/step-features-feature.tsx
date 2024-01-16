@@ -54,10 +54,8 @@ export function StepFeaturesFeature() {
   }
 
   useEffect(() => {
-    setCurrentStep(
-      steps(generalData?.cloud_provider, resourcesData?.cluster_type).findIndex((step) => step.key === 'features') + 1
-    )
-  }, [setCurrentStep, generalData?.cloud_provider, resourcesData?.cluster_type])
+    setCurrentStep(steps(generalData, resourcesData?.cluster_type).findIndex((step) => step.key === 'features') + 1)
+  }, [setCurrentStep, generalData?.cloud_provider, generalData?.installation_type, resourcesData?.cluster_type])
 
   useEffect(() => {
     !resourcesData?.cluster_type && navigate(CLUSTERS_CREATION_URL + CLUSTERS_CREATION_GENERAL_URL)

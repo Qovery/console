@@ -31,6 +31,7 @@ const ContextWrapper = (props: { children: ReactNode }) => {
           region: 'Paris',
           credentials: '000-000-000',
           credentials_name: 'my-credential',
+          installation_type: 'MANAGED',
         },
         setGeneralData: mockSetGeneralData,
       }}
@@ -93,6 +94,7 @@ describe('StepGeneralFeature', () => {
       description: 'hello',
       production: false,
       cloud_provider: CloudProviderEnum.AWS,
+      installation_type: 'MANAGED',
       region: 'Paris',
       credentials: '000-000-000',
       credentials_name: 'my-credential',

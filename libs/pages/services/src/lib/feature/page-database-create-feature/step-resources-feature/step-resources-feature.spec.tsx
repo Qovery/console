@@ -1,7 +1,7 @@
 import { DatabaseAccessibilityEnum, DatabaseModeEnum, DatabaseTypeEnum } from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
 import selectEvent from 'react-select-event'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { DatabaseCreateContext } from '../page-database-create-feature'
 import StepResourcesFeature from './step-resources-feature'
 
@@ -107,6 +107,7 @@ describe('PageDatabaseCreateResourcesFeature', () => {
 
     const realSelect = screen.getByLabelText('Instance type')
     await selectEvent.select(realSelect, 'db.t3.medium')
+    await waitFor(() => expect(screen.getAllByText('db.t3.medium')).toHaveLength(1))
 
     expect(screen.getByText('db.t3.medium')).toBeInTheDocument()
 

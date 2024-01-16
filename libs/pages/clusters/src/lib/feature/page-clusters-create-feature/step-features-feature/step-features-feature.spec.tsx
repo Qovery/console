@@ -41,6 +41,7 @@ const ContextWrapper = (props: { children: ReactNode }) => {
           region: 'Paris',
           credentials: '111-111-111',
           credentials_name: 'name',
+          installation_type: 'MANAGED',
         },
         setGeneralData: jest.fn(),
         setFeaturesData: mockSetFeaturesData,

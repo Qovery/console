@@ -1,10 +1,11 @@
-import { type CloudProviderEnum, KubernetesEnum } from 'qovery-typescript-axios'
+import { KubernetesEnum } from 'qovery-typescript-axios'
 import { createContext, useContext, useState } from 'react'
 import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import {
   type ClusterFeaturesData,
   type ClusterGeneralData,
+  type ClusterKubeconfigData,
   type ClusterRemoteData,
   type ClusterResourcesData,
 } from '@qovery/shared/interfaces'
@@ -24,6 +25,8 @@ export interface ClusterContainerCreateContextInterface {
   setFeaturesData: (data: ClusterFeaturesData | undefined) => void
   remoteData: ClusterRemoteData | undefined
   setRemoteData: (data: ClusterRemoteData) => void
+  kubeconfigData: ClusterKubeconfigData | undefined
+  setKubeconfigData: (data: ClusterKubeconfigData) => void
 }
 
 export const ClusterContainerCreateContext = createContext<ClusterContainerCreateContextInterface | undefined>(
@@ -38,18 +41,23 @@ export const useClusterContainerCreateContext = () => {
   return clusterContainerCreateContext
 }
 
-export const steps = (cloudProvider: CloudProviderEnum = 'AWS', clusterType?: string) => {
-  return match(cloudProvider)
-    .with('SCW', () => [
+export const steps = (clusterGeneralData?: ClusterGeneralData, clusterType?: string) => {
+  return match(clusterGeneralData)
+    .with({ installation_type: 'SELF_MANAGED' }, () => [
+      { title: 'Create new cluster', key: 'general' },
+      { title: 'Kubeconfig', key: 'kubeconfig' },
+      { title: 'Ready to install', key: 'summary' },
+    ])
+    .with({ installation_type: 'MANAGED', cloud_provider: 'SCW' }, () => [
       { title: 'Create new cluster', key: 'general' },
       { title: 'Set resources', key: 'resources' },
       { title: 'Ready to install', key: 'summary' },
     ])
-    .with('GCP', () => [
+    .with({ installation_type: 'MANAGED', cloud_provider: 'GCP' }, () => [
       { title: 'Create new cluster', key: 'general' },
       { title: 'Ready to install', key: 'summary' },
     ])
-    .with('AWS', () => {
+    .with({ installation_type: 'MANAGED', cloud_provider: 'AWS' }, undefined, () => {
       if (clusterType === KubernetesEnum.K3_S) {
         return [
           { title: 'Create new cluster', key: 'general' },
@@ -87,6 +95,7 @@ export function PageClusterCreateFeature() {
   })
   const [resourcesData, setResourcesData] = useState<ClusterResourcesData | undefined>(defaultResourcesData)
   const [featuresData, setFeaturesData] = useState<ClusterFeaturesData | undefined>()
+  const [kubeconfigData, setKubeconfigData] = useState<ClusterKubeconfigData | undefined>()
 
   const navigate = useNavigate()
 
@@ -107,15 +116,17 @@ export function PageClusterCreateFeature() {
         setRemoteData,
         featuresData,
         setFeaturesData,
+        kubeconfigData,
+        setKubeconfigData,
       }}
     >
       <FunnelFlow
         onExit={() => {
           navigate(CLUSTERS_URL(organizationId))
         }}
-        totalSteps={steps(generalData?.cloud_provider, resourcesData?.cluster_type).length}
+        totalSteps={steps(generalData, resourcesData?.cluster_type).length}
         currentStep={currentStep}
-        currentTitle={steps(generalData?.cloud_provider, resourcesData?.cluster_type)[currentStep - 1]?.title}
+        currentTitle={steps(generalData, resourcesData?.cluster_type)[currentStep - 1]?.title}
         portal
       >
         <Routes>
