@@ -57,7 +57,7 @@ export const steps = (clusterGeneralData?: ClusterGeneralData, clusterType?: str
       { title: 'Create new cluster', key: 'general' },
       { title: 'Ready to install', key: 'summary' },
     ])
-    .with({ installation_type: 'MANAGED', cloud_provider: 'AWS' }, () => {
+    .with({ installation_type: 'MANAGED', cloud_provider: 'AWS' }, undefined, () => {
       if (clusterType === KubernetesEnum.K3_S) {
         return [
           { title: 'Create new cluster', key: 'general' },
