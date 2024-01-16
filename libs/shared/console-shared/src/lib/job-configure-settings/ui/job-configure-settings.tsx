@@ -2,6 +2,7 @@
 // eslint-disable-next-line @typescript-eslint/no-restricted-imports
 import cronstrue from 'cronstrue'
 import { Controller, useFormContext } from 'react-hook-form'
+import { TimezoneSetting } from '@qovery/domains/services/feature'
 import { type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
 import { type JobConfigureData } from '@qovery/shared/interfaces'
 import { EnableBox, ExternalLink, InputText, LoaderSpinner } from '@qovery/shared/ui'
@@ -18,6 +19,7 @@ export function JobConfigureSettings(props: JobConfigureSettingsProps) {
   const { control, watch } = useFormContext<JobConfigureData>()
 
   const watchSchedule = watch('schedule')
+  const watchTimezone = watch('timezone') ?? 'Etc/UTC'
 
   return loading ? (
     <LoaderSpinner />
@@ -51,12 +53,13 @@ export function JobConfigureSettings(props: JobConfigureSettingsProps) {
           />
           <div className="mb-3 flex justify-between">
             <p className="text-neutral-400 text-xs">
-              {formatCronExpression(watchSchedule) ? formatCronExpression(watchSchedule) + ' (UTC)' : ''}
+              {formatCronExpression(watchSchedule) ? formatCronExpression(watchSchedule) + ` (${watchTimezone})` : ''}
             </p>
-            <ExternalLink href="https://crontab.guru" size="xs" className="text-neutral-350">
+            <ExternalLink href="https://crontab.guru" size="xs">
               CRON expression builder
             </ExternalLink>
           </div>
+          <TimezoneSetting className="mb-3" />
           <EntrypointCmdInputs />
         </>
       ) : (

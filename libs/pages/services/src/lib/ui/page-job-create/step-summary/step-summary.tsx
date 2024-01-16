@@ -196,6 +196,9 @@ export function StepSummary(props: StepSummaryProps) {
                   <li>
                     <span className="font-medium">Scheduled at:</span> {props.configureData.schedule}
                   </li>
+                  <li>
+                    <span className="font-medium">Timezone:</span> {props.configureData.timezone}
+                  </li>
                   {props.configureData.image_entry_point && (
                     <li>
                       <span className="font-medium">Entrypoint:</span> {props.configureData.image_entry_point}

@@ -204,8 +204,28 @@ export function PodsMetrics({ environmentId, serviceId, children }: PodsMetricsP
         },
       })
 
-    return match(service?.serviceType)
-      .with(ServiceTypeEnum.JOB, () => [
+    return match(service)
+      .with({ serviceType: ServiceTypeEnum.JOB }, (job) => {
+        return match(job)
+          .with({ job_type: 'CRON' }, ({ schedule }) => [
+            startedAtColumn(`Job executions (${schedule.cronjob?.timezone})`, 'absolute'),
+            statusColumn,
+            versionColumn,
+            memoryColumn,
+            cpuColumn,
+            podsColumn,
+          ])
+          .with({ job_type: 'LIFECYCLE' }, () => [
+            startedAtColumn('Job executions (UTC)', 'absolute'),
+            statusColumn,
+            versionColumn,
+            memoryColumn,
+            cpuColumn,
+            podsColumn,
+          ])
+          .exhaustive()
+      })
+      .with({ serviceType: ServiceTypeEnum.JOB }, () => [
         startedAtColumn('Job executions (UTC)', 'absolute'),
         statusColumn,
         versionColumn,
@@ -213,7 +233,7 @@ export function PodsMetrics({ environmentId, serviceId, children }: PodsMetricsP
         cpuColumn,
         podsColumn,
       ])
-      .with(ServiceTypeEnum.DATABASE, () => [
+      .with({ serviceType: ServiceTypeEnum.DATABASE }, () => [
         podsColumn,
         statusColumn,
         memoryColumn,

@@ -136,7 +136,8 @@ export function ServiceList({ organizationId, projectId, environmentId, classNam
                         {match(job)
                           .with(
                             { job_type: 'CRON' },
-                            ({ schedule }) => `${formatCronExpression(schedule.cronjob?.scheduled_at)} (UTC)`
+                            ({ schedule }) =>
+                              `${formatCronExpression(schedule.cronjob?.scheduled_at)} (${schedule.cronjob?.timezone})`
                           )
                           .with(
                             { job_type: 'LIFECYCLE' },
