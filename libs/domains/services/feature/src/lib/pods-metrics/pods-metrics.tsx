@@ -11,7 +11,16 @@ import { type ServiceStateDto } from 'qovery-ws-typescript-axios'
 import { Fragment, type PropsWithChildren, useEffect, useMemo, useState } from 'react'
 import { P, match } from 'ts-pattern'
 import { ServiceTypeEnum, isJobContainerSource } from '@qovery/shared/enums'
-import { Badge, Icon, IconAwesomeEnum, StatusChip, TablePrimitives, Tooltip } from '@qovery/shared/ui'
+import {
+  Badge,
+  Button,
+  CopyToClipboard,
+  Icon,
+  IconAwesomeEnum,
+  StatusChip,
+  TablePrimitives,
+  Tooltip,
+} from '@qovery/shared/ui'
 import { dateFullFormat, timeAgo } from '@qovery/shared/util-dates'
 import { formatMetric, twMerge } from '@qovery/shared/util-js'
 import { useMetrics } from '../hooks/use-metrics/use-metrics'
@@ -80,14 +89,20 @@ export function PodsMetrics({ environmentId, serviceId, children }: PodsMetricsP
         const podName = info.getValue()
         return podName.length > 23 ? (
           <Tooltip content={podName}>
-            <Badge size="xs" variant="surface">
-              {podName.substring(0, 10)}...{podName.slice(-10)}
-            </Badge>
+            <div className="inline-block">
+              <CopyToClipboard text={podName}>
+                <Button size="xs" variant="surface" color="neutral" onClick={(e) => e.stopPropagation()}>
+                  {podName.substring(0, 10)}...{podName.slice(-10)}
+                </Button>
+              </CopyToClipboard>
+            </div>
           </Tooltip>
         ) : (
-          <Badge size="xs" variant="surface">
-            {podName}
-          </Badge>
+          <CopyToClipboard text={podName}>
+            <Button size="xs" variant="surface" color="neutral" onClick={(e) => e.stopPropagation()}>
+              {podName}
+            </Button>
+          </CopyToClipboard>
         )
       },
     })
