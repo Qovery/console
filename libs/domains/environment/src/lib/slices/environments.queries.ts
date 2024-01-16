@@ -30,6 +30,9 @@ const environmentDeploymentRulesApi = new EnvironmentDeploymentRuleApi()
 const environmentExport = new EnvironmentExportApi()
 const databasesApi = new DatabasesApi()
 
+/*
+ * @deprecated use `useEnvironments` from `@qovery/domains/environments/feature` instead of `useFetchEnvironments`
+ */
 export const useFetchEnvironments = <TData = Environment[]>(
   projectId: string,
   select?: (data: Environment[]) => TData
