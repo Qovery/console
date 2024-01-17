@@ -10,6 +10,7 @@ import {
   ButtonLegacyStyle,
   Callout,
   ExternalLink,
+  Heading,
   HelpSection,
   Icon,
   IconAwesomeEnum,
@@ -34,35 +35,35 @@ export function PageOrganizationGithubRepositoryAccess(props: PageOrganizationGi
   const { organizationId = '' } = useParams()
 
   return (
-    <Section className="justify-between w-full">
+    <div className="justify-between w-full">
       <div className="p-8 max-w-content-with-navigation-left">
-        <div className="flex justify-between mb-8">
-          <div className="mr-5">
-            {/* TODO: Fix need to use <Heading /> component */}
-            <h1 className="h5 text-neutral-400 mb-2">Github Repository Access</h1>
-            <p className="text-neutral-400 text-xs">
-              By default Qovery has access to all the repositories linked to your git account. If you want to give
-              Qovery access to additional repositories and manage the access from one place, you can configure a git
-              token.
-            </p>
+        <Section>
+          <div className="flex justify-between mb-8">
+            <div className="mr-5">
+              <Heading className="mb-2">Github Repository Access</Heading>
+              <p className="text-neutral-400 text-xs">
+                By default Qovery has access to all the repositories linked to your git account. If you want to give
+                Qovery access to additional repositories and manage the access from one place, you can configure a git
+                token.
+              </p>
+            </div>
+            <Button
+              size="lg"
+              onClick={() => {
+                openModal({
+                  content: <GitTokenCreateEditModal organizationId={organizationId} onClose={closeModal} />,
+                })
+              }}
+            >
+              Add new token
+              <Icon name={IconAwesomeEnum.CIRCLE_PLUS} className="ml-2" />
+            </Button>
           </div>
-          <Button
-            size="lg"
-            onClick={() => {
-              openModal({
-                content: <GitTokenCreateEditModal organizationId={organizationId} onClose={closeModal} />,
-              })
-            }}
-          >
-            Add new token
-            <Icon name={IconAwesomeEnum.CIRCLE_PLUS} className="ml-2" />
-          </Button>
-        </div>
-        <GitTokenList />
+          <GitTokenList />
+        </Section>
 
         <Section>
-          {/* TODO: Fix need to use <Heading /> component */}
-          <h2 className="h5 text-neutral-400 mb-2">Qovery GitHub App</h2>
+          <Heading className="mb-2">Qovery GitHub App</Heading>
           <p className="text-neutral-400 text-xs mb-8">
             By default Qovery has access to all your repositories. If you are using Github, you can restrict the Qovery
             accesses by installing the Qovery Github App on your GitHub organization.
@@ -160,7 +161,7 @@ export function PageOrganizationGithubRepositoryAccess(props: PageOrganizationGi
           },
         ]}
       />
-    </Section>
+    </div>
   )
 }
 

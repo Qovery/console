@@ -3,10 +3,12 @@ import { IconEnum } from '@qovery/shared/enums'
 import {
   BlockContent,
   Button,
+  Heading,
   HelpSection,
   Icon,
   IconAwesomeEnum,
   LoaderSpinner,
+  Section,
   Tooltip,
   Truncate,
 } from '@qovery/shared/ui'
@@ -28,10 +30,10 @@ export function PageOrganizationHelmRepositories({
 }: PageOrganizationHelmRepositoriesProps) {
   return (
     <div className="flex flex-col justify-between w-full">
-      <div className="p-8 max-w-content-with-navigation-left">
+      <Section className="p-8 max-w-content-with-navigation-left">
         <div className="flex justify-between mb-8">
           <div>
-            <h1 className="h5 text-neutral-400 mb-2">Helm repositories</h1>
+            <Heading className="mb-2">Helm repositories</Heading>
             <p className="text-neutral-400 text-xs">
               Define and manage the helm repository to be used within your organization to deploy applications.
             </p>
@@ -90,7 +92,7 @@ export function PageOrganizationHelmRepositories({
             </div>
           )}
         </BlockContent>
-      </div>
+      </Section>
       <HelpSection
         description="Need help? You may find these links useful"
         links={[

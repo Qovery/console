@@ -6,8 +6,10 @@ import {
   ButtonLegacy,
   ButtonLegacySize,
   ButtonLegacyStyle,
+  Heading,
   InputSelect,
   InputText,
+  Section,
 } from '@qovery/shared/ui'
 
 export interface PageUserGeneralProps {
@@ -22,8 +24,8 @@ export function PageUserGeneral({ onSubmit, loading, picture, accountOptions }: 
 
   return (
     <div className="flex flex-col justify-between w-full">
-      <div className="p-8 max-w-content-with-navigation-left">
-        <h1 className="h5 mb-10 text-neutral-400">General account settings</h1>
+      <Section className="p-8 max-w-content-with-navigation-left">
+        <Heading className="mb-10">General account settings</Heading>
         <form onSubmit={onSubmit}>
           <BlockContent title="User profile">
             <div className="flex items-center">
@@ -122,7 +124,7 @@ export function PageUserGeneral({ onSubmit, loading, picture, accountOptions }: 
             </ButtonLegacy>
           </div>
         </form>
-      </div>
+      </Section>
     </div>
   )
 }

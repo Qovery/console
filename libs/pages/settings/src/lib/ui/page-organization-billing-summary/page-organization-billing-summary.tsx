@@ -6,8 +6,10 @@ import {
   ButtonLegacy,
   ButtonLegacyStyle,
   ExternalLink,
+  Heading,
   HelpSection,
   Link,
+  Section,
   Skeleton,
   imagesCreditCart,
 } from '@qovery/shared/ui'
@@ -30,11 +32,9 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
 
   return (
     <div className="flex flex-col justify-between w-full max-w-[832px]">
-      <div className="p-8">
+      <Section className="p-8">
         <div className="flex justify-between mb-8">
-          <div>
-            <h1 className="h5 text-neutral-400 mb-2">Plan details</h1>
-          </div>
+          <Heading className="mb-2">Plan details</Heading>
           <div className="flex gap-3">
             <ButtonLegacy
               style={ButtonLegacyStyle.STROKED}
@@ -155,7 +155,7 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
           </div>
         </div>
         <InvoicesListFeature />
-      </div>
+      </Section>
 
       <HelpSection
         data-testid="help-section"
