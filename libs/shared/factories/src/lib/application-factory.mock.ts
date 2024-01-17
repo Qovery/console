@@ -47,6 +47,9 @@ export const applicationFactoryMock = (howMany: number): Application[] =>
     git_repository: {
       id: chance.guid(),
       url: chance.url(),
+      provider: 'GITHUB',
+      owner: chance.name(),
+      name: chance.name(),
       branch: chance.word({ length: 5 }),
       root_path: chance.word({ length: 5 }),
       git_token_id: chance.guid(),

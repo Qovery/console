@@ -4,6 +4,9 @@ import { urlCodeEditor } from './url-code-editor'
 const gitRepository: ApplicationGitRepository = {
   url: 'https://github.com/benamib/go-http-server.git',
   branch: 'main',
+  provider: 'GITHUB',
+  name: 'Github Repo',
+  owner: 'Foobar',
 }
 
 describe('Build url for code editor', () => {
