@@ -44,7 +44,7 @@ function MenuManageDeployment({
   const { openModalConfirmation } = useModalConfirmation()
   const { mutate: deployEnvironment } = useDeployEnvironment({ projectId: environment.project.id })
   const { mutate: stopEnvironment } = useStopEnvironment({ projectId: environment.project.id })
-  const { mutate: cancelDeploymentEnvironment } = useCancelDeploymentEnvironment({ projectId: environment.project })
+  const { mutate: cancelDeploymentEnvironment } = useCancelDeploymentEnvironment({ projectId: environment.project.id })
 
   const mutationDeploy = () =>
     deployEnvironment({
