@@ -9,7 +9,6 @@ import {
   Popover,
   type PopoverContentProps,
   Skeleton,
-  Tooltip,
   Truncate,
 } from '@qovery/shared/ui'
 import { pluralize } from '@qovery/shared/util-js'
@@ -50,9 +49,7 @@ export function ServiceLinksPopover({
 
   return (
     <Popover.Root modal={true}>
-      <Tooltip content="Links">
-        <Popover.Trigger className={filteredLinks.length === 0 ? 'hidden' : ''}>{children}</Popover.Trigger>
-      </Tooltip>
+      <Popover.Trigger className={filteredLinks.length === 0 ? 'hidden' : ''}>{children}</Popover.Trigger>
       <Popover.Content
         side={side}
         className="p-2 text-neutral-350 text-sm border-transparent max-w-[280px]"

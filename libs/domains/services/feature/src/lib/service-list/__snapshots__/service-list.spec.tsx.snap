@@ -204,18 +204,23 @@ exports[`ServiceList should match snapshot 1`] = `
                   aria-controls="radix-:r23:"
                   aria-expanded="false"
                   aria-haspopup="dialog"
-                  class="inline-flex shrink-0 font-medium transition text-xs px-1 py-0.5 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 items-center gap-1"
+                  class="inline-flex items-center shrink-0 font-medium transition text-xs px-1 py-0.5 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550"
                   data-state="closed"
                   type="button"
                 >
-                  <span
-                    class="icon-solid-link shrink-0 "
-                    role="img"
-                  />
-                  <span
-                    class="icon-solid-angle-down shrink-0 "
-                    role="img"
-                  />
+                  <div
+                    class="flex items-center gap-1"
+                    data-state="closed"
+                  >
+                    <span
+                      class="icon-solid-link shrink-0 "
+                      role="img"
+                    />
+                    <span
+                      class="icon-solid-angle-down shrink-0 "
+                      role="img"
+                    />
+                  </div>
                 </button>
               </div>
             </span>
@@ -499,18 +504,23 @@ exports[`ServiceList should match snapshot 1`] = `
                   aria-controls="radix-:r2c:"
                   aria-expanded="false"
                   aria-haspopup="dialog"
-                  class="inline-flex shrink-0 font-medium transition text-xs px-1 py-0.5 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 items-center gap-1"
+                  class="inline-flex items-center shrink-0 font-medium transition text-xs px-1 py-0.5 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550"
                   data-state="closed"
                   type="button"
                 >
-                  <span
-                    class="icon-solid-link shrink-0 "
-                    role="img"
-                  />
-                  <span
-                    class="icon-solid-angle-down shrink-0 "
-                    role="img"
-                  />
+                  <div
+                    class="flex items-center gap-1"
+                    data-state="closed"
+                  >
+                    <span
+                      class="icon-solid-link shrink-0 "
+                      role="img"
+                    />
+                    <span
+                      class="icon-solid-angle-down shrink-0 "
+                      role="img"
+                    />
+                  </div>
                 </button>
               </div>
             </span>
@@ -1095,18 +1105,23 @@ exports[`ServiceList should match snapshot 1`] = `
                   aria-controls="radix-:r2k:"
                   aria-expanded="false"
                   aria-haspopup="dialog"
-                  class="inline-flex shrink-0 font-medium transition text-xs px-1 py-0.5 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 items-center gap-1"
+                  class="inline-flex items-center shrink-0 font-medium transition text-xs px-1 py-0.5 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550"
                   data-state="closed"
                   type="button"
                 >
-                  <span
-                    class="icon-solid-link shrink-0 "
-                    role="img"
-                  />
-                  <span
-                    class="icon-solid-angle-down shrink-0 "
-                    role="img"
-                  />
+                  <div
+                    class="flex items-center gap-1"
+                    data-state="closed"
+                  >
+                    <span
+                      class="icon-solid-link shrink-0 "
+                      role="img"
+                    />
+                    <span
+                      class="icon-solid-angle-down shrink-0 "
+                      role="img"
+                    />
+                  </div>
                 </button>
               </div>
             </span>
@@ -1492,18 +1507,23 @@ exports[`ServiceList should match snapshot 1`] = `
                   aria-controls="radix-:r2u:"
                   aria-expanded="false"
                   aria-haspopup="dialog"
-                  class="inline-flex shrink-0 font-medium transition text-xs px-1 py-0.5 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 items-center gap-1"
+                  class="inline-flex items-center shrink-0 font-medium transition text-xs px-1 py-0.5 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550"
                   data-state="closed"
                   type="button"
                 >
-                  <span
-                    class="icon-solid-link shrink-0 "
-                    role="img"
-                  />
-                  <span
-                    class="icon-solid-angle-down shrink-0 "
-                    role="img"
-                  />
+                  <div
+                    class="flex items-center gap-1"
+                    data-state="closed"
+                  >
+                    <span
+                      class="icon-solid-link shrink-0 "
+                      role="img"
+                    />
+                    <span
+                      class="icon-solid-angle-down shrink-0 "
+                      role="img"
+                    />
+                  </div>
                 </button>
               </div>
             </span>

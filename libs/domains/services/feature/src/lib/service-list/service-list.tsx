@@ -159,9 +159,13 @@ export function ServiceList({ organizationId, projectId, environmentId, classNam
                     serviceId={service.id}
                     align="start"
                   >
-                    <Button className="items-center gap-1" size="xs" variant="surface" color="neutral" radius="full">
-                      <Icon name={IconAwesomeEnum.LINK} />
-                      <Icon name={IconAwesomeEnum.ANGLE_DOWN} />
+                    <Button size="xs" variant="surface" color="neutral" radius="full">
+                      <Tooltip content="Links">
+                        <div className="flex items-center gap-1">
+                          <Icon name={IconAwesomeEnum.LINK} />
+                          <Icon name={IconAwesomeEnum.ANGLE_DOWN} />
+                        </div>
+                      </Tooltip>
                     </Button>
                   </ServiceLinksPopover>
                 </div>
