@@ -39,7 +39,7 @@
     "@uidotdev/usehooks": "^2.2.0",
     "ansi-to-react": "^6.1.6",
     "autoprefixer": "10.4.13",
-    "axios": "^0.27.2",
+    "axios": "^1.6.5",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "cronstrue": "^2.21.0",
@@ -72,7 +72,7 @@
     "tslib": "^2.3.0"
   },
   "resolutions": {
-    "axios": "0.27.2"
+    "axios": "1.6.5"
   },
   "devDependencies": {
     "@babel/core": "^7.18.13",
