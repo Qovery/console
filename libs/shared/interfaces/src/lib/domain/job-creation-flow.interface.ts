@@ -24,6 +24,7 @@ export interface JobGeneralData {
 }
 
 export interface JobConfigureData {
+  timezone?: string
   schedule?: string
   event?: string
   nb_restarts?: number

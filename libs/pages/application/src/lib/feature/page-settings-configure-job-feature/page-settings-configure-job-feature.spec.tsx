@@ -59,6 +59,7 @@ describe('PageSettingsPortsFeature with CRON JOB service', () => {
         arguments: undefined,
         entrypoint: 'some new text value',
         scheduled_at: '9 * * * *',
+        timezone: 'UTC',
       },
     })
     expect(mockEditService.mock.calls[0][0].payload.max_duration_seconds).toBe('123')

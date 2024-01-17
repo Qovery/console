@@ -206,7 +206,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
             .with({ job_type: 'CRON' }, ({ schedule }) => (
               <ResourceUnit
                 value={formatCronExpression(schedule.cronjob?.scheduled_at)}
-                description="Scheduling (UTC)"
+                description={`Scheduling (${schedule.cronjob?.timezone})`}
               />
             ))
             .exhaustive()}

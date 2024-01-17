@@ -53,6 +53,7 @@ function prepareJobRequest(
         entrypoint: configureData.image_entry_point,
         scheduled_at: configureData.schedule || '',
         arguments: configureData.cmd,
+        timezone: configureData.timezone,
       },
     }
   } else {

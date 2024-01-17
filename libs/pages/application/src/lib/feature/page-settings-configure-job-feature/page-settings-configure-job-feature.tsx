@@ -18,6 +18,7 @@ export function PageSettingsConfigureJobFeature() {
       const { cronjob } = s.schedule
       return {
         schedule: cronjob?.scheduled_at,
+        timezone: cronjob?.timezone,
         cmd_arguments:
           cronjob?.arguments && cronjob?.arguments.length > 0 ? JSON.stringify(cronjob?.arguments) : undefined,
         image_entry_point: cronjob?.entrypoint,
@@ -68,6 +69,7 @@ export function PageSettingsConfigureJobFeature() {
             cronjob: {
               scheduled_at: data.schedule || '',
               entrypoint: data.image_entry_point,
+              timezone: data.timezone,
               // thread `eval`: https://qovery.slack.com/archives/C02NPSG2HBL/p1664352927296669
               arguments: data.cmd_arguments ? eval(data.cmd_arguments) : undefined,
             },
