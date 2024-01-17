@@ -59,10 +59,12 @@ export function PageSettingsValuesOverrideFileFeature() {
         const gitToken = getGitTokenValue(data['provider']!)
 
         return {
-          git_repository: {
-            url: buildGitRepoUrl(data['provider']!, data['repository']!),
-            branch: data['branch'] ?? '',
-            git_token_id: gitToken?.id,
+          git: {
+            git_repository: {
+              url: buildGitRepoUrl(data['provider']!, data['repository']!),
+              branch: data['branch'] ?? '',
+              git_token_id: gitToken?.id,
+            },
             paths: data['paths']?.split(',') ?? [],
           },
         }

@@ -21,6 +21,9 @@ export const helmFactoryMock = (howMany: number): Helm[] =>
       git: {
         git_repository: {
           url: '',
+          provider: 'GITHUB',
+          owner: chance.name(),
+          name: chance.name(),
           branch: '',
           root_path: '',
         },

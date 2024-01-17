@@ -80,6 +80,9 @@ function refactoApplication({ service: application, request = {} }: applicationP
   // refacto because we can't send all git data
   if (application.git_repository) {
     application.git_repository = {
+      name: application.git_repository.name,
+      provider: application.git_repository.provider,
+      owner: application.git_repository.owner,
       url: application.git_repository.url,
       branch: application.git_repository.branch,
       root_path: application.git_repository.root_path,
@@ -167,6 +170,9 @@ function refactoJob({ service: job, request = {} }: jobProps): JobRequest {
       docker: {
         dockerfile_path: job.source.docker?.dockerfile_path,
         git_repository: {
+          provider: job.source.docker?.git_repository?.provider,
+          owner: job.source.docker?.git_repository?.owner,
+          name: job.source.docker?.git_repository?.name,
           url: job.source.docker?.git_repository?.url || '',
           branch: job.source.docker?.git_repository?.branch,
           root_path: job.source.docker?.git_repository?.root_path,

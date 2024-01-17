@@ -75,13 +75,15 @@ export function StepSummaryFeature() {
         const gitToken = getGitTokenValue(valuesOverrideFileData.provider ?? '')
 
         return {
-          git_repository: {
-            url: buildGitRepoUrl(
-              gitToken?.type ?? valuesOverrideFileData.provider ?? '',
-              valuesOverrideFileData.repository!
-            ),
-            branch: valuesOverrideFileData.branch!,
-            git_token_id: gitToken?.id,
+          git: {
+            git_repository: {
+              url: buildGitRepoUrl(
+                gitToken?.type ?? valuesOverrideFileData.provider ?? '',
+                valuesOverrideFileData.repository!
+              ),
+              branch: valuesOverrideFileData.branch!,
+              git_token_id: gitToken?.id,
+            },
             paths: valuesOverrideFileData.paths?.split(',') ?? [],
           },
         }
