@@ -9,27 +9,30 @@ exports[`ServiceDetails should match application snapshot 1`] = `
       <section
         class="flex flex-col text-neutral-350 gap-4 pl-8 pr-5"
       >
-        <span
-          class="text-neutral-400 font-medium"
+        <div
+          class="flex flex-row justify-between"
         >
-          About
-        </span>
+          <span
+            class="text-neutral-400 font-medium"
+          >
+            About
+          </span>
+          <a
+            class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-current hover:brightness-75 text-sm"
+            href="/settings/general"
+          >
+            <span
+              class="icon-solid-wheel shrink-0 text-base text-neutral-300"
+              role="img"
+            />
+          </a>
+        </div>
         <p>
           React Application the Qovery Console
         </p>
         <dl
           class="grid grid-cols-2 gap-2"
         >
-          <dt
-            class="text-neutral-350 dark:text-neutral-300"
-          >
-            Created:
-          </dt>
-          <dd
-            class="text-neutral-400 font-medium dark:text-white dark:font-normal"
-          >
-            12 Apr, 08:48:51
-          </dd>
           <dt
             class="text-neutral-350 dark:text-neutral-300"
           >
@@ -45,17 +48,40 @@ exports[`ServiceDetails should match application snapshot 1`] = `
               17 hours
             </span>
           </dd>
+          <dt
+            class="text-neutral-350 dark:text-neutral-300"
+          >
+            Created:
+          </dt>
+          <dd
+            class="text-neutral-400 font-medium dark:text-white dark:font-normal"
+          >
+            12 Apr, 08:48:51
+          </dd>
         </dl>
       </section>
       <hr />
       <section
         class="flex flex-col text-neutral-350 gap-4 pl-8 pr-5"
       >
-        <span
-          class="text-neutral-400 font-medium"
+        <div
+          class="flex flex-row justify-between"
         >
-          Source
-        </span>
+          <span
+            class="text-neutral-400 font-medium"
+          >
+            Source
+          </span>
+          <a
+            class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-current hover:brightness-75 text-sm"
+            href="/settings/general"
+          >
+            <span
+              class="icon-solid-wheel shrink-0 text-base text-neutral-300"
+              role="img"
+            />
+          </a>
+        </div>
       </section>
     </div>
   </div>
@@ -71,27 +97,30 @@ exports[`ServiceDetails should match database snapshot 1`] = `
       <section
         class="flex flex-col text-neutral-350 gap-4 pl-8 pr-5"
       >
-        <span
-          class="text-neutral-400 font-medium"
+        <div
+          class="flex flex-row justify-between"
         >
-          About
-        </span>
+          <span
+            class="text-neutral-400 font-medium"
+          >
+            About
+          </span>
+          <a
+            class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-current hover:brightness-75 text-sm"
+            href="/settings/general"
+          >
+            <span
+              class="icon-solid-wheel shrink-0 text-base text-neutral-300"
+              role="img"
+            />
+          </a>
+        </div>
         <p>
           No description provided yet
         </p>
         <dl
           class="grid grid-cols-2 gap-2"
         >
-          <dt
-            class="text-neutral-350 dark:text-neutral-300"
-          >
-            Created:
-          </dt>
-          <dd
-            class="text-neutral-400 font-medium dark:text-white dark:font-normal"
-          >
-            28 Jul, 14:50:09
-          </dd>
           <dt
             class="text-neutral-350 dark:text-neutral-300"
           >
@@ -107,17 +136,40 @@ exports[`ServiceDetails should match database snapshot 1`] = `
               2 months
             </span>
           </dd>
+          <dt
+            class="text-neutral-350 dark:text-neutral-300"
+          >
+            Created:
+          </dt>
+          <dd
+            class="text-neutral-400 font-medium dark:text-white dark:font-normal"
+          >
+            28 Jul, 14:50:09
+          </dd>
         </dl>
       </section>
       <hr />
       <section
         class="flex flex-col text-neutral-350 gap-4 pl-8 pr-5"
       >
-        <span
-          class="text-neutral-400 font-medium"
+        <div
+          class="flex flex-row justify-between"
         >
-          Source
-        </span>
+          <span
+            class="text-neutral-400 font-medium"
+          >
+            Source
+          </span>
+          <a
+            class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-current hover:brightness-75 text-sm"
+            href="/settings/general"
+          >
+            <span
+              class="icon-solid-wheel shrink-0 text-base text-neutral-300"
+              role="img"
+            />
+          </a>
+        </div>
       </section>
     </div>
   </div>
@@ -133,27 +185,30 @@ exports[`ServiceDetails should match job snapshot 1`] = `
       <section
         class="flex flex-col text-neutral-350 gap-4 pl-8 pr-5"
       >
-        <span
-          class="text-neutral-400 font-medium"
+        <div
+          class="flex flex-row justify-between"
         >
-          About
-        </span>
+          <span
+            class="text-neutral-400 font-medium"
+          >
+            About
+          </span>
+          <a
+            class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-current hover:brightness-75 text-sm"
+            href="/settings/general"
+          >
+            <span
+              class="icon-solid-wheel shrink-0 text-base text-neutral-300"
+              role="img"
+            />
+          </a>
+        </div>
         <p>
           No description provided yet
         </p>
         <dl
           class="grid grid-cols-2 gap-2"
         >
-          <dt
-            class="text-neutral-350 dark:text-neutral-300"
-          >
-            Created:
-          </dt>
-          <dd
-            class="text-neutral-400 font-medium dark:text-white dark:font-normal"
-          >
-            12 Sep, 10:08:39
-          </dd>
           <dt
             class="text-neutral-350 dark:text-neutral-300"
           >
@@ -169,17 +224,40 @@ exports[`ServiceDetails should match job snapshot 1`] = `
               1 day
             </span>
           </dd>
+          <dt
+            class="text-neutral-350 dark:text-neutral-300"
+          >
+            Created:
+          </dt>
+          <dd
+            class="text-neutral-400 font-medium dark:text-white dark:font-normal"
+          >
+            12 Sep, 10:08:39
+          </dd>
         </dl>
       </section>
       <hr />
       <section
         class="flex flex-col text-neutral-350 gap-4 pl-8 pr-5"
       >
-        <span
-          class="text-neutral-400 font-medium"
+        <div
+          class="flex flex-row justify-between"
         >
-          Source
-        </span>
+          <span
+            class="text-neutral-400 font-medium"
+          >
+            Source
+          </span>
+          <a
+            class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-current hover:brightness-75 text-sm"
+            href="/settings/general"
+          >
+            <span
+              class="icon-solid-wheel shrink-0 text-base text-neutral-300"
+              role="img"
+            />
+          </a>
+        </div>
       </section>
     </div>
   </div>
