@@ -454,13 +454,6 @@ export const services = createQueryKeys('services', {
       return response.data.results
     },
   }),
-  listTimezone: {
-    queryKey: null,
-    async queryFn() {
-      const response = await fetch('https://worldtimeapi.org/api/timezones')
-      return (await response.json()) as string[]
-    },
-  },
 })
 
 type CloneServiceRequest = {
