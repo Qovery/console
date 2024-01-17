@@ -2,7 +2,7 @@ import { type CloudProviderEnum } from 'qovery-typescript-axios'
 import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { ClusterResourcesSettingsFeature } from '@qovery/shared/console-shared'
-import { ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle, HelpSection } from '@qovery/shared/ui'
+import { ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle, Heading, HelpSection, Section } from '@qovery/shared/ui'
 
 export interface PageSettingsResourcesProps {
   loading?: boolean
@@ -16,8 +16,8 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
   const { formState } = useFormContext()
   return (
     <div className="flex flex-col justify-between w-full">
-      <div className="p-8 max-w-content-with-navigation-left">
-        <h2 className="h5 mb-8 text-neutral-400">Resources settings</h2>
+      <Section className="p-8 max-w-content-with-navigation-left">
+        <Heading className="mb-8">Resources settings</Heading>
         <form onSubmit={onSubmit}>
           <ClusterResourcesSettingsFeature
             cloudProvider={props.cloudProvider}
@@ -38,7 +38,7 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
             </ButtonLegacy>
           </div>
         </form>
-      </div>
+      </Section>
       <HelpSection
         description="Need help? You may find these links useful"
         links={[

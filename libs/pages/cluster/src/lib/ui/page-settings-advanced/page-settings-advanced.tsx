@@ -4,10 +4,12 @@ import { useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import {
   CopyToClipboardButtonIcon,
+  Heading,
   HelpSection,
   InputTextSmall,
   InputToggle,
   LoaderSpinner,
+  Section,
   StickyActionFormToaster,
   TableEdition,
   type TableEditionRow,
@@ -137,10 +139,10 @@ export function PageSettingsAdvanced(props: PageSettingsAdvancedProps) {
 
   return (
     <div className="flex flex-col justify-between w-full">
-      <div className="p-8 ">
+      <Section className="p-8">
         <div className="flex justify-between mb-4">
           <div>
-            <h1 className="h5 text-neutral-400 mb-2">Advanced Settings</h1>
+            <Heading className="mb-2">Advanced Settings</Heading>
             <p className="text-sm text-neutral-400 max-w-content-with-navigation-left">
               Any change to this section will be applied after triggering a cluster update.
             </p>
@@ -174,7 +176,7 @@ export function PageSettingsAdvanced(props: PageSettingsAdvancedProps) {
             />
           </div>
         </form>
-      </div>
+      </Section>
       <HelpSection
         description="Need help? You may find these links useful"
         links={[
