@@ -9,10 +9,12 @@ import {
   ButtonLegacy,
   ButtonLegacySize,
   ButtonLegacyStyle,
+  Heading,
   InputRadio,
   InputSelect,
   InputText,
   InputTextArea,
+  Section,
 } from '@qovery/shared/ui'
 import { type GeneralData } from '../../../feature/page-database-create-feature/database-creation-flow.interface'
 
@@ -48,9 +50,9 @@ export function StepGeneral(props: StepGeneralProps) {
   }
 
   return (
-    <div>
+    <Section>
       <div className="mb-10">
-        <h3 className="text-neutral-400 text-lg mb-2">General information</h3>
+        <Heading className="mb-2">General information</Heading>
         <p className="text-neutral-400 text-sm mb-2">
           General settings allow you to set up your application name, git repository or container settings.
         </p>
@@ -194,7 +196,7 @@ export function StepGeneral(props: StepGeneralProps) {
           </ButtonLegacy>
         </div>
       </form>
-    </div>
+    </Section>
   )
 }
 

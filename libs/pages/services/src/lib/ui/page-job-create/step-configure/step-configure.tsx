@@ -3,7 +3,7 @@ import { useFormContext } from 'react-hook-form'
 import { JobConfigureSettings } from '@qovery/shared/console-shared'
 import { type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
 import { type JobConfigureData } from '@qovery/shared/interfaces'
-import { ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle } from '@qovery/shared/ui'
+import { ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle, Heading, Section } from '@qovery/shared/ui'
 
 export interface StepConfigureProps {
   onSubmit: FormEventHandler<HTMLFormElement>
@@ -22,9 +22,9 @@ export function StepConfigure(props: StepConfigureProps) {
   })
 
   return (
-    <div>
+    <Section>
       <div className="mb-10">
-        <h3 className="text-neutral-400 text-lg mb-2">Job configuration</h3>
+        <Heading className="mb-2">Job configuration</Heading>
         <p className="text-neutral-400 text-sm mb-2">
           Job configuration allows you to control the behaviour of your job
         </p>
@@ -54,7 +54,7 @@ export function StepConfigure(props: StepConfigureProps) {
           </ButtonLegacy>
         </div>
       </form>
-    </div>
+    </Section>
   )
 }
 

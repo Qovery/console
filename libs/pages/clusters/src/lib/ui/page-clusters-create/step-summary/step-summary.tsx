@@ -7,7 +7,17 @@ import {
   type ClusterRemoteData,
   type ClusterResourcesData,
 } from '@qovery/shared/interfaces'
-import { Button, ButtonIcon, ButtonIconStyle, Callout, ExternalLink, Icon, IconAwesomeEnum } from '@qovery/shared/ui'
+import {
+  Button,
+  ButtonIcon,
+  ButtonIconStyle,
+  Callout,
+  ExternalLink,
+  Heading,
+  Icon,
+  IconAwesomeEnum,
+  Section,
+} from '@qovery/shared/ui'
 import { trimId } from '@qovery/shared/util-js'
 
 export interface StepSummaryProps {
@@ -44,11 +54,9 @@ export function StepSummary(props: StepSummaryProps) {
   }
 
   return (
-    <div>
+    <Section>
       <div className="mb-10">
-        <div className="flex justify-between mb-2 items-center">
-          <h3 className="text-neutral-400 text-lg">Ready to install your cluster</h3>
-        </div>
+        <Heading className="mb-2">Ready to install your cluster</Heading>
         <p className="text-xs text-neutral-400 mb-2">
           Here is what we will deploy, this action can take up to 30 minutes.
         </p>
@@ -289,7 +297,7 @@ export function StepSummary(props: StepSummaryProps) {
           </div>
         </div>
       </div>
-    </div>
+    </Section>
   )
 }
 

@@ -56,8 +56,8 @@ export function StepGeneralFeature() {
   return (
     <FunnelFlowBody helpSection={funnelCardHelp}>
       <FormProvider {...generalForm}>
-        <form onSubmit={onSubmit}>
-          <Section>
+        <Section>
+          <form onSubmit={onSubmit}>
             <Heading className="mb-2">General Data</Heading>
             <p className="text-sm text-neutral-350">
               General settings allow you to set up the service name, the source and deployment parameters.
@@ -88,22 +88,22 @@ export function StepGeneralFeature() {
               <DeploymentSetting />
               {watchFieldProvider === 'GIT' && <AutoDeploySetting source="GIT" className="mt-5" />}
             </Section>
-          </Section>
-          <div className="flex justify-between mt-10">
-            <Button
-              type="button"
-              size="lg"
-              color="neutral"
-              variant="surface"
-              onClick={() => navigate(SERVICES_URL(organizationId, projectId, environmentId))}
-            >
-              Cancel
-            </Button>
-            <Button type="submit" size="lg" disabled={!(generalForm.formState.isValid && isGitSettingsValid)}>
-              Continue
-            </Button>
-          </div>
-        </form>
+            <div className="flex justify-between mt-10">
+              <Button
+                type="button"
+                size="lg"
+                color="neutral"
+                variant="surface"
+                onClick={() => navigate(SERVICES_URL(organizationId, projectId, environmentId))}
+              >
+                Cancel
+              </Button>
+              <Button type="submit" size="lg" disabled={!(generalForm.formState.isValid && isGitSettingsValid)}>
+                Continue
+              </Button>
+            </div>
+          </form>
+        </Section>
       </FormProvider>
     </FunnelFlowBody>
   )

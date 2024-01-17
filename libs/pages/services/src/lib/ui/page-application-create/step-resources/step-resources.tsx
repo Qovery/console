@@ -2,7 +2,7 @@ import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { ApplicationSettingsResources } from '@qovery/shared/console-shared'
 import { type ApplicationResourcesData } from '@qovery/shared/interfaces'
-import { ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle } from '@qovery/shared/ui'
+import { ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle, Heading, Section } from '@qovery/shared/ui'
 
 export interface StepResourcesProps {
   onBack: () => void
@@ -14,9 +14,9 @@ export function StepResources({ maximumInstances, onSubmit, onBack }: StepResour
   const { formState } = useFormContext<ApplicationResourcesData>()
 
   return (
-    <>
+    <Section>
       <div className="mb-10">
-        <h3 className="text-neutral-400 text-lg mb-2">Set resources</h3>
+        <Heading className="mb-2">Set resources</Heading>
       </div>
 
       <form onSubmit={onSubmit}>
@@ -43,7 +43,7 @@ export function StepResources({ maximumInstances, onSubmit, onBack }: StepResour
           </ButtonLegacy>
         </div>
       </form>
-    </>
+    </Section>
   )
 }
 

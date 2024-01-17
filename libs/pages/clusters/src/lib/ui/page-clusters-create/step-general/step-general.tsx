@@ -10,12 +10,14 @@ import {
   Button,
   Callout,
   ExternalLink,
+  Heading,
   Icon,
   IconAwesomeEnum,
   IconFlag,
   InputSelect,
   LoaderSpinner,
   RadioGroup,
+  Section,
 } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { defaultResourcesData } from '../../../feature/page-clusters-create-feature/page-clusters-create-feature'
@@ -58,9 +60,9 @@ export function StepGeneral(props: StepGeneralProps) {
   )
 
   return (
-    <div>
+    <Section>
       <div className="mb-10">
-        <h3 className="text-neutral-400 text-lg mb-2">General information</h3>
+        <Heading className="mb-2">General information</Heading>
         <p className="text-neutral-400 text-sm mb-2">Provide here some general information for your cluster.</p>
       </div>
 
@@ -211,7 +213,7 @@ export function StepGeneral(props: StepGeneralProps) {
           </Button>
         </div>
       </form>
-    </div>
+    </Section>
   )
 }
 

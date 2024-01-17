@@ -1,7 +1,7 @@
 import { type Healthcheck, type ServicePort } from 'qovery-typescript-axios'
 import { FlowCreatePort } from '@qovery/shared/console-shared'
 import { type PortData } from '@qovery/shared/interfaces'
-import { HelpSection, Section } from '@qovery/shared/ui'
+import { HelpSection } from '@qovery/shared/ui'
 
 export interface PageSettingsPortsProps {
   onAddPort: () => void
@@ -14,7 +14,7 @@ export interface PageSettingsPortsProps {
 export function PageSettingsPorts({ healthchecks, ports, onAddPort, onEdit, onDelete }: PageSettingsPortsProps) {
   return (
     <div className="flex flex-col justify-between w-full">
-      <Section className="p-8  max-w-content-with-navigation-left">
+      <div className="p-8  max-w-content-with-navigation-left">
         <FlowCreatePort
           isSetting
           healthchecks={healthchecks}
@@ -23,7 +23,7 @@ export function PageSettingsPorts({ healthchecks, ports, onAddPort, onEdit, onDe
           onRemovePort={onDelete}
           onEdit={onEdit}
         />
-      </Section>
+      </div>
       <HelpSection
         description="Need help? You may find these links useful"
         links={[

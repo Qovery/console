@@ -12,8 +12,10 @@ import {
   ButtonLegacy,
   ButtonLegacySize,
   ButtonLegacyStyle,
+  Heading,
   Icon,
   IconAwesomeEnum,
+  Section,
 } from '@qovery/shared/ui'
 
 export interface StepSummaryProps {
@@ -35,13 +37,11 @@ export interface StepSummaryProps {
 
 export function StepSummary(props: StepSummaryProps) {
   return (
-    <div>
+    <Section>
       <div className="mb-10">
-        <div className="flex justify-between mb-2 items-center">
-          <h3 className="text-neutral-400 text-lg">
-            Ready to create your {props.jobType === 'CRON_JOB' ? 'Cron' : 'Lifecycle'} job
-          </h3>
-        </div>
+        <Heading className="mb-2">
+          Ready to create your {props.jobType === 'CRON_JOB' ? 'Cron' : 'Lifecycle'} job
+        </Heading>
         <p className="text-xs text-neutral-400 mb-2">
           The basic application setup is done, you can now deploy your application or move forward with some advanced
           setup.
@@ -328,7 +328,7 @@ export function StepSummary(props: StepSummaryProps) {
           </ButtonLegacy>
         </div>
       </div>
-    </div>
+    </Section>
   )
 }
 

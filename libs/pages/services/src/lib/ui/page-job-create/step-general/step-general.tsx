@@ -7,7 +7,15 @@ import { JobGeneralSettings } from '@qovery/shared/console-shared'
 import { type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
 import { type JobGeneralData } from '@qovery/shared/interfaces'
 import { SERVICES_URL } from '@qovery/shared/routes'
-import { ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle, InputText, InputTextArea } from '@qovery/shared/ui'
+import {
+  ButtonLegacy,
+  ButtonLegacySize,
+  ButtonLegacyStyle,
+  Heading,
+  InputText,
+  InputTextArea,
+  Section,
+} from '@qovery/shared/ui'
 
 export interface StepGeneralProps {
   onSubmit: FormEventHandler<HTMLFormElement>
@@ -25,11 +33,11 @@ export function StepGeneral(props: StepGeneralProps) {
   const isGitSettingsValid = watchServiceType === 'APPLICATION' ? watch('branch') : true
 
   return (
-    <div>
+    <Section>
       <div className="mb-10">
-        <h3 className="text-neutral-400 text-lg mb-2">
+        <Heading className="mb-2">
           {props.jobType === ServiceTypeEnum.CRON_JOB ? 'Cron' : 'Lifecycle'} job information
-        </h3>
+        </Heading>
         <p className="text-neutral-400 text-sm mb-2">
           General settings allow you to set up your application name, git repository or container settings.
         </p>
@@ -98,7 +106,7 @@ export function StepGeneral(props: StepGeneralProps) {
           </ButtonLegacy>
         </div>
       </form>
-    </div>
+    </Section>
   )
 }
 

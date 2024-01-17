@@ -28,7 +28,7 @@ export function FlowCreatePort({
   const readinessType = healthchecks?.readiness_probe?.type
 
   return (
-    <div>
+    <Section>
       <div className="flex justify-between mb-10">
         <div>
           <Heading className="mb-2">{isSetting ? 'Port' : 'Set port'}</Heading>
@@ -158,7 +158,7 @@ export function FlowCreatePort({
           </Button>
         </div>
       )}
-    </div>
+    </Section>
   )
 }
 

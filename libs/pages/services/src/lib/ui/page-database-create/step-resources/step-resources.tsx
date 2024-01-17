@@ -2,7 +2,7 @@ import { type DatabaseTypeEnum } from 'qovery-typescript-axios'
 import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { DatabaseSettingsResources } from '@qovery/shared/console-shared'
-import { ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle } from '@qovery/shared/ui'
+import { ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle, Heading, Section } from '@qovery/shared/ui'
 import { type ResourcesData } from '../../../feature/page-database-create-feature/database-creation-flow.interface'
 
 export interface StepResourcesProps {
@@ -16,9 +16,9 @@ export function StepResources({ onSubmit, isManaged, onBack, databaseType }: Ste
   const { formState } = useFormContext<ResourcesData>()
 
   return (
-    <>
+    <Section>
       <div className="mb-10">
-        <h3 className="text-neutral-400 text-lg mb-2">Set resources</h3>
+        <Heading className="mb-2">Set resources</Heading>
         <p className="text-sm text-neutral-400 max-w-content-with-navigation-left">
           You can customize some of the resources assigned to the database.
         </p>
@@ -48,7 +48,7 @@ export function StepResources({ onSubmit, isManaged, onBack, databaseType }: Ste
           </ButtonLegacy>
         </div>
       </form>
-    </>
+    </Section>
   )
 }
 
