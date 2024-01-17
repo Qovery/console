@@ -48,7 +48,7 @@ export function ServiceLinksPopover({
   }
 
   return (
-    <Popover.Root>
+    <Popover.Root modal={true}>
       <Popover.Trigger className={filteredLinks.length === 0 ? 'hidden' : ''}>{children}</Popover.Trigger>
       <Popover.Content
         side={side}
