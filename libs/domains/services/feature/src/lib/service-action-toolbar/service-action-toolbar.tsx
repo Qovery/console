@@ -24,6 +24,9 @@ import {
   APPLICATION_SETTINGS_URL,
   APPLICATION_URL,
   AUDIT_LOGS_PARAMS_URL,
+  DATABASE_SETTINGS_GENERAL_URL,
+  DATABASE_SETTINGS_URL,
+  DATABASE_URL,
   DEPLOYMENT_LOGS_URL,
   ENVIRONMENT_LOGS_URL,
   SERVICES_GENERAL_URL,
@@ -522,8 +525,27 @@ function MenuOtherActions({
           icon={<Icon name={IconAwesomeEnum.WHEEL} />}
           onClick={() =>
             navigate(
-              `${APPLICATION_URL(organizationId, projectId, environmentId, service.id)}${APPLICATION_SETTINGS_URL}`
-            ) + APPLICATION_SETTINGS_GENERAL_URL
+              match(service?.serviceType)
+                .with(
+                  'DATABASE',
+                  () =>
+                    `${DATABASE_URL(
+                      organizationId,
+                      projectId,
+                      environmentId,
+                      service.id
+                    )}${DATABASE_SETTINGS_URL}${DATABASE_SETTINGS_GENERAL_URL}`
+                )
+                .otherwise(
+                  () =>
+                    `${APPLICATION_URL(
+                      organizationId,
+                      projectId,
+                      environmentId,
+                      service.id
+                    )}${APPLICATION_SETTINGS_URL}${APPLICATION_SETTINGS_GENERAL_URL}`
+                )
+            )
           }
         >
           Open settings
