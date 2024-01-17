@@ -7,9 +7,11 @@ import {
   ButtonLegacy,
   ButtonLegacySize,
   ButtonLegacyStyle,
+  Heading,
   HelpSection,
   InputSelect,
   InputText,
+  Section,
 } from '@qovery/shared/ui'
 
 export interface PageSettingsGeneralProps {
@@ -34,11 +36,9 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
 
   return (
     <div className="flex flex-col justify-between w-full">
-      <div className="p-8  max-w-content-with-navigation-left">
+      <Section className="p-8  max-w-content-with-navigation-left">
         <div className="flex justify-between mb-8">
-          <div>
-            <h2 className="h5 text-neutral-400 mb-2">General</h2>
-          </div>
+          <Heading className="mb-2">General</Heading>
         </div>
         <form onSubmit={onSubmit}>
           <BlockContent title="General information">
@@ -105,7 +105,7 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
             </ButtonLegacy>
           </div>
         </form>
-      </div>
+      </Section>
       <HelpSection
         description="Need help? You may find these links useful"
         links={[
