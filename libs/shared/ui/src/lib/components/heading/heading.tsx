@@ -9,12 +9,12 @@ const headingVariants = cva(['text-neutral-400'], {
   variants: {
     level: {
       0: [], // not really possible
-      1: ['text-3xl'],
-      2: ['text-2xl'],
-      3: ['text-xl'],
-      4: ['text-lg'],
-      5: ['text-base'],
-      6: ['text-sm'],
+      1: ['text-xl'],
+      2: ['text-base'],
+      3: ['text-sm'],
+      4: ['text-xs'],
+      5: ['text-xs'],
+      6: ['text-xs'],
     },
     weight: {
       medium: ['font-medium'],
