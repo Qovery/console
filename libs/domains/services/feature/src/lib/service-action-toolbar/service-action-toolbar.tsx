@@ -2,6 +2,7 @@ import { type ApplicationGitRepository, type Environment, StateEnum } from 'qove
 import { useNavigate, useParams } from 'react-router-dom'
 import { P, match } from 'ts-pattern'
 import { useActionCancelEnvironment } from '@qovery/domains/environment'
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import {
   type AnyService,

@@ -1,28 +1,30 @@
-import { ClusterStateEnum, type ClusterStatusGet } from 'qovery-typescript-axios'
-import { clusterFactoryMock } from '@qovery/shared/factories'
+import { environmentFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import { ClusterActionToolbar } from './cluster-action-toolbar'
+import { EnvironmentActionToolbar } from './environment-action-toolbar'
 
-const mockCluster = clusterFactoryMock(1)[0]
-const mockClusterStatus: ClusterStatusGet = {
-  cluster_id: mockCluster.id,
-  status: ClusterStateEnum.DEPLOYED,
-  is_deployed: true,
-}
+const mockEnvironment = environmentFactoryMock(1)[0]
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useNavigate: () => jest.fn(),
 }))
 
-describe('ClusterActionToolbar', () => {
+jest.mock('../hooks/use-deployment-status/use-deployment-status', () => {
+  return {
+    ...jest.requireActual('../hooks/use-deployment-status/use-deployment-status'),
+    useDeploymentStatus: () => ({
+      data: {
+        state: 'DEPLOYED',
+      },
+    }),
+  }
+})
+
+describe('EnvironmentActionToolbar', () => {
   it('should match manage deployment snapshot', async () => {
-    const { userEvent, baseElement } = renderWithProviders(
-      <ClusterActionToolbar cluster={mockCluster} organizationId="1" clusterStatus={mockClusterStatus} />,
-      {
-        container: document.body,
-      }
-    )
+    const { userEvent, baseElement } = renderWithProviders(<EnvironmentActionToolbar environment={mockEnvironment} />, {
+      container: document.body,
+    })
     const buttonManageDeployment = screen.getByLabelText(/manage deployment/i)
     await userEvent.click(buttonManageDeployment)
 
@@ -30,12 +32,9 @@ describe('ClusterActionToolbar', () => {
   })
 
   it('should match other actions snapshot', async () => {
-    const { userEvent, baseElement } = renderWithProviders(
-      <ClusterActionToolbar cluster={mockCluster} organizationId="1" clusterStatus={mockClusterStatus} />,
-      {
-        container: document.body,
-      }
-    )
+    const { userEvent, baseElement } = renderWithProviders(<EnvironmentActionToolbar environment={mockEnvironment} />, {
+      container: document.body,
+    })
     const buttonOtherActions = screen.getByLabelText(/other actions/i)
     await userEvent.click(buttonOtherActions)
 

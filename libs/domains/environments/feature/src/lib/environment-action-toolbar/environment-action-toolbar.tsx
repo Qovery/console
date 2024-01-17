@@ -1,63 +1,101 @@
-import { type StateEnum } from 'qovery-typescript-axios'
+import { type Environment, OrganizationEventTargetType, StateEnum } from 'qovery-typescript-axios'
 import { useNavigate, useParams } from 'react-router-dom'
-import { ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
-import { ActionToolbar, DropdownMenu, Icon, IconAwesomeEnum, Tooltip, useModalConfirmation } from '@qovery/shared/ui'
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import {
+  CreateCloneEnvironmentModalFeature,
+  TerraformExportModalFeature,
+  UpdateAllModalFeature,
+} from '@qovery/shared/console-shared'
+import { AUDIT_LOGS_PARAMS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
+import {
+  ActionToolbar,
+  DropdownMenu,
+  Icon,
+  IconAwesomeEnum,
+  Skeleton,
+  Tooltip,
+  useModal,
+  useModalConfirmation,
+} from '@qovery/shared/ui'
+import { useCopyToClipboard } from '@qovery/shared/util-hooks'
+import {
+  isCancelBuildAvailable,
   isDeleteAvailable,
   isDeployAvailable,
   isRedeployAvailable,
   isStopAvailable,
-  isUpdateAvailable,
 } from '@qovery/shared/util-js'
+import { useCancelDeploymentEnvironment } from '../hooks/use-cancel-deployment-environment/use-cancel-deployment-environment'
+import { useDeleteEnvironment } from '../hooks/use-delete-environment/use-delete-environment'
 import { useDeployEnvironment } from '../hooks/use-deploy-environment/use-deploy-environment'
-import { useEnvironment } from '../hooks/use-environment/use-environment'
+import { useDeploymentStatus } from '../hooks/use-deployment-status/use-deployment-status'
 import { useStopEnvironment } from '../hooks/use-stop-environment/use-stop-environment'
 
 function MenuManageDeployment({
+  environment,
   state,
-  environmentId,
-  projectId,
+  organizationId,
 }: {
+  environment: Environment
   state: StateEnum
-  environmentId: string
-  projectId: string
+  organizationId: string
 }) {
+  const { openModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
-  const { mutate: deployCluster } = useDeployEnvironment({ projectId })
-  const { mutate: stopCluster } = useStopEnvironment({ projectId })
+  const { mutate: deployEnvironment } = useDeployEnvironment({ projectId: environment.project.id })
+  const { mutate: stopEnvironment } = useStopEnvironment({ projectId: environment.project.id })
+  const { mutate: cancelDeploymentEnvironment } = useCancelDeploymentEnvironment({ projectId: environment.project })
 
   const mutationDeploy = () =>
-    deployCluster({
-      environmentId,
+    deployEnvironment({
+      environmentId: environment.id,
     })
 
-  // const mutationUpdate = () =>
-  //   openModalConfirmation({
-  //     mode: EnvironmentModeEnum.PRODUCTION,
-  //     title: 'Confirm update',
-  //     description: 'To confirm the update of your cluster, please type the name:',
-  //     name: cluster.name,
-  //     action: () =>
-  //       deployCluster({
-  //         organizationId,
-  //         clusterId: cluster.id,
-  //       }),
-  //   })
+  const mutationRedeploy = () => {
+    openModalConfirmation({
+      mode: environment.mode,
+      title: 'Confirm redeploy',
+      description: 'To confirm the redeploy of your environment, please type the name:',
+      name: environment.name,
+      action: () => deployEnvironment({ environmentId: environment.id }),
+    })
+  }
 
-  // const mutationStop = () =>
-  //   openModalConfirmation({
-  //     mode: EnvironmentModeEnum.PRODUCTION,
-  //     title: 'Confirm stop',
-  //     description: 'To confirm the stop of your cluster, please type the name:',
-  //     warning:
-  //       'Please note that by stopping your cluster, some resources will still be used on your cloud provider account and still be added to your bill. To completely remove them, please use the “Remove” feature.',
-  //     name: cluster.name,
-  //     action: () =>
-  //       stopCluster({
-  //         organizationId,
-  //         clusterId: cluster.id,
-  //       }),
-  //   })
+  const mutationStop = () => {
+    openModalConfirmation({
+      mode: environment.mode,
+      title: 'Confirm stop',
+      description: 'To confirm the stopping of your environment, please type the name:',
+      name: environment.name,
+      action: () => stopEnvironment({ environmentId: environment.id }),
+    })
+  }
+
+  const mutationCancelDeployment = () => {
+    openModalConfirmation({
+      mode: environment.mode,
+      title: 'Confirm cancel',
+      description:
+        'Stopping a deployment may take a while, as a safe point needs to be reached. Some operations cannot be stopped (i.e: terraform actions) and need to be completed before stopping the deployment. Any action performed before won’t be rolled back. To confirm the cancellation of your deployment, please type the name of the environment:',
+      name: environment.name,
+      action: () => cancelDeploymentEnvironment({ environmentId: environment.id }),
+    })
+  }
+
+  const openUpdateAllModal = () => {
+    openModal({
+      content: (
+        <UpdateAllModalFeature
+          organizationId={organizationId}
+          environmentId={environment.id}
+          projectId={environment.project.id}
+        />
+      ),
+      options: {
+        width: 676,
+      },
+    })
+  }
 
   return (
     <DropdownMenu.Root>
@@ -72,107 +110,157 @@ function MenuManageDeployment({
         </ActionToolbar.Button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content>
+        {isCancelBuildAvailable(state) && (
+          <DropdownMenu.Item icon={<Icon name={IconAwesomeEnum.XMARK} />} onClick={mutationCancelDeployment}>
+            {state === StateEnum.DELETE_QUEUED || state === StateEnum.DELETING ? 'Cancel delete' : 'Cancel deployment'}
+          </DropdownMenu.Item>
+        )}
         {isDeployAvailable(state) && (
           <DropdownMenu.Item icon={<Icon name={IconAwesomeEnum.PLAY} />} onClick={mutationDeploy}>
             Deploy
           </DropdownMenu.Item>
+        )}
+        {isRedeployAvailable(state) && (
+          <DropdownMenu.Item icon={<Icon name={IconAwesomeEnum.ROTATE_RIGHT} />} onClick={mutationRedeploy}>
+            Redeploy
+          </DropdownMenu.Item>
+        )}
+        {isStopAvailable(state) && (
+          <DropdownMenu.Item icon={<Icon name={IconAwesomeEnum.CIRCLE_STOP} />} onClick={mutationStop}>
+            Stop
+          </DropdownMenu.Item>
+        )}
+        <DropdownMenu.Separator />
+        <DropdownMenu.Item icon={<Icon name={IconAwesomeEnum.ROTATE} />} onClick={openUpdateAllModal}>
+          Deploy latest version for..
+        </DropdownMenu.Item>
+      </DropdownMenu.Content>
+    </DropdownMenu.Root>
+  )
+}
+
+function MenuOtherActions({
+  state,
+  environment,
+  organizationId,
+}: {
+  state: StateEnum
+  environment: Environment
+  organizationId: string
+}) {
+  const navigate = useNavigate()
+  const { openModal, closeModal } = useModal()
+  const { openModalConfirmation } = useModalConfirmation()
+  const { mutate: deleteEnvironment } = useDeleteEnvironment({ projectId: environment.project.id })
+  const [, copyToClipboard] = useCopyToClipboard()
+  const copyContent = `Cluster ID: ${environment.cluster_id}\nOrganization ID: ${organizationId}\nProject ID: ${environment.project.id}\nEnvironment ID: ${environment.id}`
+
+  const mutationDeleteEnvironment = () => {
+    openModalConfirmation({
+      title: 'Delete environment',
+      name: environment.name,
+      isDelete: true,
+      action: () => deleteEnvironment({ environmentId: environment.id }),
+    })
+  }
+
+  const openTerraformExportModal = () => {
+    openModal({
+      content: <TerraformExportModalFeature closeModal={closeModal} environmentId={environment.id} />,
+    })
+  }
+
+  const openCloneModal = () => {
+    openModal({
+      content: (
+        <CreateCloneEnvironmentModalFeature
+          onClose={closeModal}
+          projectId={environment.project.id}
+          organizationId={organizationId}
+          environmentToClone={environment}
+        />
+      ),
+    })
+  }
+
+  return (
+    <DropdownMenu.Root>
+      <DropdownMenu.Trigger asChild>
+        <ActionToolbar.Button aria-label="Other actions">
+          <Tooltip content="Other actions">
+            <div className="flex items-center w-full h-full">
+              <Icon name={IconAwesomeEnum.ELLIPSIS_V} />
+            </div>
+          </Tooltip>
+        </ActionToolbar.Button>
+      </DropdownMenu.Trigger>
+      <DropdownMenu.Content>
+        <DropdownMenu.Item
+          icon={<Icon name={IconAwesomeEnum.SCROLL} />}
+          onClick={() => navigate(ENVIRONMENT_LOGS_URL(organizationId, environment.project.id, environment.id))}
+        >
+          Logs
+        </DropdownMenu.Item>
+        <DropdownMenu.Item
+          icon={<Icon name={IconAwesomeEnum.CLOCK_ROTATE_LEFT} />}
+          onClick={() =>
+            navigate(
+              AUDIT_LOGS_PARAMS_URL(organizationId, {
+                targetType: OrganizationEventTargetType.ENVIRONMENT,
+                projectId: environment.project.id,
+                targetId: environment.id,
+              })
+            )
+          }
+        >
+          See audit logs
+        </DropdownMenu.Item>
+        <DropdownMenu.Item icon={<Icon name={IconAwesomeEnum.COPY} />} onClick={() => copyToClipboard(copyContent)}>
+          Copy identifier
+        </DropdownMenu.Item>
+        <DropdownMenu.Item icon={<Icon name={IconAwesomeEnum.FILE_EXPORT} />} onClick={openTerraformExportModal}>
+          Export as Terraform
+        </DropdownMenu.Item>
+        <DropdownMenu.Item icon={<Icon name={IconAwesomeEnum.COPY} />} onClick={openCloneModal}>
+          Clone
+        </DropdownMenu.Item>
+        {isDeleteAvailable(state) && (
+          <>
+            <DropdownMenu.Separator />
+            <DropdownMenu.Item
+              color="red"
+              icon={<Icon name={IconAwesomeEnum.TRASH} />}
+              onClick={mutationDeleteEnvironment}
+            >
+              Delete environment
+            </DropdownMenu.Item>
+          </>
         )}
       </DropdownMenu.Content>
     </DropdownMenu.Root>
   )
 }
 
-// function MenuOtherActions({
-//   cluster,
-//   clusterStatus,
-//   organizationId,
-// }: {
-//   cluster: Cluster
-//   clusterStatus: ClusterStatusGet
-//   organizationId: string
-// }) {
-//   const navigate = useNavigate()
-//   const { openModal } = useModal()
-//   const [, copyToClipboard] = useCopyToClipboard()
-//   const { mutate: downloadKubeconfig } = useDownloadKubeconfig()
-
-//   const removeCluster = (id: string, name: string) => {
-//     openModal({
-//       content: <ClusterDeleteModal organizationId={organizationId} clusterId={id} name={name} />,
-//     })
-//   }
-
-//   const canDelete = clusterStatus.status && isDeleteAvailable(clusterStatus.status)
-
-//   return (
-//     <DropdownMenu.Root>
-//       <DropdownMenu.Trigger asChild>
-//         <ActionToolbar.Button aria-label="Other actions">
-//           <Tooltip content="Other actions">
-//             <div className="flex items-center w-full h-full">
-//               <Icon name={IconAwesomeEnum.ELLIPSIS_V} />
-//             </div>
-//           </Tooltip>
-//         </ActionToolbar.Button>
-//       </DropdownMenu.Trigger>
-//       <DropdownMenu.Content>
-//         <DropdownMenu.Item
-//           icon={<Icon name={IconAwesomeEnum.CLOCK_ROTATE_LEFT} />}
-//           onClick={() =>
-//             navigate(
-//               AUDIT_LOGS_PARAMS_URL(organizationId, {
-//                 targetType: OrganizationEventTargetType.CLUSTER,
-//                 targetId: cluster.id,
-//               })
-//             )
-//           }
-//         >
-//           See audit logs
-//         </DropdownMenu.Item>
-//         <DropdownMenu.Item icon={<Icon name={IconAwesomeEnum.COPY} />} onClick={() => copyToClipboard(cluster.id)}>
-//           Copy identifier
-//         </DropdownMenu.Item>
-//         <DropdownMenu.Item
-//           icon={<Icon name={IconAwesomeEnum.DOWNLOAD} />}
-//           onClick={() => downloadKubeconfig({ organizationId, clusterId: cluster.id })}
-//         >
-//           Get Kubeconfig
-//         </DropdownMenu.Item>
-//         {canDelete && (
-//           <>
-//             <DropdownMenu.Separator />
-//             <DropdownMenu.Item
-//               color="red"
-//               icon={<Icon name={IconAwesomeEnum.TRASH} />}
-//               onClick={() => removeCluster(cluster.id, cluster.name)}
-//             >
-//               Delete cluster
-//             </DropdownMenu.Item>
-//           </>
-//         )}
-//       </DropdownMenu.Content>
-//     </DropdownMenu.Root>
-//   )
-// }
-
 export interface EnvironmentActionToolbarProps {
-  environmentId: string
+  environment: Environment
 }
 
-export function EnvironmentActionToolbar({ environmentId }: EnvironmentActionToolbarProps) {
+export function EnvironmentActionToolbar({ environment }: EnvironmentActionToolbarProps) {
   const navigate = useNavigate()
   const { organizationId = '', projectId = '' } = useParams()
-  const { data: environment } = useEnvironment({ environmentId })
+  const { data: deploymentStatus } = useDeploymentStatus({ environmentId: environment.id })
+
+  if (!deploymentStatus) return <Skeleton height={32} width={115} />
 
   return (
     <ActionToolbar.Root>
-      <MenuManageDeployment projectId={projectId} environmentId={environmentId} />
+      <MenuManageDeployment environment={environment} state={deploymentStatus.state} organizationId={organizationId} />
       <Tooltip content="Logs">
-        <ActionToolbar.Button onClick={() => navigate(ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId))}>
+        <ActionToolbar.Button onClick={() => navigate(ENVIRONMENT_LOGS_URL(organizationId, projectId, environment.id))}>
           <Icon name={IconAwesomeEnum.SCROLL} />
         </ActionToolbar.Button>
       </Tooltip>
-      {/* <MenuOtherActions organizationId={organizationId} cluster={cluster} clusterStatus={clusterStatus} /> */}
+      <MenuOtherActions environment={environment} state={deploymentStatus.state} organizationId={organizationId} />
     </ActionToolbar.Root>
   )
 }

@@ -54,7 +54,7 @@ export const mutations = {
     const result = await environmentActionApi.stopEnvironment(environmentId)
     return result.data
   },
-  async cancelEnvironment({ environmentId }: { environmentId: string }) {
+  async cancelDeploymentEnvironment({ environmentId }: { environmentId: string }) {
     const result = await environmentActionApi.cancelEnvironmentDeployment(environmentId)
     return result.data
   },
