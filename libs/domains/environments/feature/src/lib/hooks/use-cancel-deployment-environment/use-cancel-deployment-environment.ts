@@ -2,10 +2,10 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { mutations } from '@qovery/domains/environments/data-access'
 import { queries } from '@qovery/state/util-queries'
 
-export function useCancelEnvironment({ projectId }: { projectId: string }) {
+export function useCancelDeploymentEnvironment({ projectId }: { projectId: string }) {
   const queryClient = useQueryClient()
 
-  return useMutation(mutations.cancelEnvironment, {
+  return useMutation(mutations.cancelDeploymentEnvironment, {
     onSuccess() {
       queryClient.invalidateQueries({
         queryKey: queries.environments.listStatuses(projectId).queryKey,
@@ -20,4 +20,4 @@ export function useCancelEnvironment({ projectId }: { projectId: string }) {
   })
 }
 
-export default useCancelEnvironment
+export default useCancelDeploymentEnvironment

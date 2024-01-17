@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ClusterActionToolbar should match manage deployment snapshot 1`] = `
+exports[`EnvironmentActionToolbar should match manage deployment snapshot 1`] = `
 <body
   style="pointer-events: none;"
 >
@@ -62,19 +62,6 @@ exports[`ClusterActionToolbar should match manage deployment snapshot 1`] = `
       />
     </button>
     <button
-      class="inline-flex items-center shrink-0 font-medium transition h-8 px-3 border border-neutral-250 dark:border-neutral-350 dark:text-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent first:rounded-l last:rounded-r first:border-x border-l-0 hover:[&:not(:active)]:border-neutral-250 text-neutral-350 hover:bg-neutral-150 hover:text-brand-400 data-[state=open]:bg-neutral-150 data-[state=open]:text-brand-400 text-2xs outline-0"
-      data-orientation="horizontal"
-      data-radix-collection-item=""
-      data-state="closed"
-      tabindex="-1"
-      type="button"
-    >
-      <span
-        class="icon-solid-wheel shrink-0 "
-        role="img"
-      />
-    </button>
-    <button
       aria-expanded="false"
       aria-haspopup="menu"
       aria-label="Other actions"
@@ -82,7 +69,7 @@ exports[`ClusterActionToolbar should match manage deployment snapshot 1`] = `
       data-orientation="horizontal"
       data-radix-collection-item=""
       data-state="closed"
-      id="radix-:re:"
+      id="radix-:rc:"
       tabindex="-1"
       type="button"
     >
@@ -144,7 +131,7 @@ exports[`ClusterActionToolbar should match manage deployment snapshot 1`] = `
           class="icon-solid-rotate-right shrink-0 text-sm mr-3 text-brand-400"
           role="img"
         />
-        Update
+        Redeploy
       </div>
       <div
         class="px-3 flex items-center h-9 text-sm font-medium cursor-pointer rounded-sm outline-none text-neutral-400 dark:text-neutral-100 hover:bg-brand-50 data-[highlighted]:bg-brand-50 hover:text-brand-500 data-[highlighted]:text-brand-500"
@@ -159,6 +146,24 @@ exports[`ClusterActionToolbar should match manage deployment snapshot 1`] = `
         />
         Stop
       </div>
+      <div
+        aria-orientation="horizontal"
+        class="w-full h-[1px] bg-neutral-200 dark:bg-neutral-600 my-2"
+        role="separator"
+      />
+      <div
+        class="px-3 flex items-center h-9 text-sm font-medium cursor-pointer rounded-sm outline-none text-neutral-400 dark:text-neutral-100 hover:bg-brand-50 data-[highlighted]:bg-brand-50 hover:text-brand-500 data-[highlighted]:text-brand-500"
+        data-orientation="vertical"
+        data-radix-collection-item=""
+        role="menuitem"
+        tabindex="-1"
+      >
+        <span
+          class="icon-solid-rotate shrink-0 text-sm mr-3 text-brand-400"
+          role="img"
+        />
+        Deploy latest version for..
+      </div>
     </div>
   </div>
   <span
@@ -171,7 +176,7 @@ exports[`ClusterActionToolbar should match manage deployment snapshot 1`] = `
 </body>
 `;
 
-exports[`ClusterActionToolbar should match other actions snapshot 1`] = `
+exports[`EnvironmentActionToolbar should match other actions snapshot 1`] = `
 <body
   style="pointer-events: none;"
 >
@@ -200,7 +205,7 @@ exports[`ClusterActionToolbar should match other actions snapshot 1`] = `
       data-orientation="horizontal"
       data-radix-collection-item=""
       data-state="closed"
-      id="radix-:rq:"
+      id="radix-:rp:"
       tabindex="-1"
       type="button"
     >
@@ -232,20 +237,7 @@ exports[`ClusterActionToolbar should match other actions snapshot 1`] = `
       />
     </button>
     <button
-      class="inline-flex items-center shrink-0 font-medium transition h-8 px-3 border border-neutral-250 dark:border-neutral-350 dark:text-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent first:rounded-l last:rounded-r first:border-x border-l-0 hover:[&:not(:active)]:border-neutral-250 text-neutral-350 hover:bg-neutral-150 hover:text-brand-400 data-[state=open]:bg-neutral-150 data-[state=open]:text-brand-400 text-2xs outline-0"
-      data-orientation="horizontal"
-      data-radix-collection-item=""
-      data-state="closed"
-      tabindex="-1"
-      type="button"
-    >
-      <span
-        class="icon-solid-wheel shrink-0 "
-        role="img"
-      />
-    </button>
-    <button
-      aria-controls="radix-:r13:"
+      aria-controls="radix-:r10:"
       aria-expanded="true"
       aria-haspopup="menu"
       aria-label="Other actions"
@@ -253,7 +245,7 @@ exports[`ClusterActionToolbar should match other actions snapshot 1`] = `
       data-orientation="horizontal"
       data-radix-collection-item=""
       data-state="open"
-      id="radix-:r12:"
+      id="radix-:rv:"
       tabindex="-1"
       type="button"
     >
@@ -274,7 +266,7 @@ exports[`ClusterActionToolbar should match other actions snapshot 1`] = `
     style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 12px); min-width: max-content; --radix-popper-available-width: 0px; --radix-popper-available-height: -12px; --radix-popper-anchor-width: 0px; --radix-popper-anchor-height: 0px; --radix-popper-transform-origin: 0px 0px;"
   >
     <div
-      aria-labelledby="radix-:r12:"
+      aria-labelledby="radix-:rv:"
       aria-orientation="vertical"
       class="flex flex-col gap-1 w-[258px] p-3 bg-neutral-50 shadow-[0_0_32px_rgba(0,0,0,0.08)] rounded-md data-[state=open]:data-[side=top]:animate-slidein-down-md-faded data-[state=open]:data-[side=right]:animate-slidein-left-md-faded data-[state=open]:data-[side=bottom]:animate-slidein-up-md-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded"
       data-align="start"
@@ -283,7 +275,7 @@ exports[`ClusterActionToolbar should match other actions snapshot 1`] = `
       data-side="bottom"
       data-state="open"
       dir="ltr"
-      id="radix-:r13:"
+      id="radix-:r10:"
       role="menu"
       style="outline: none; --radix-dropdown-menu-content-transform-origin: var(--radix-popper-transform-origin); --radix-dropdown-menu-content-available-width: var(--radix-popper-available-width); --radix-dropdown-menu-content-available-height: var(--radix-popper-available-height); --radix-dropdown-menu-trigger-width: var(--radix-popper-anchor-width); --radix-dropdown-menu-trigger-height: var(--radix-popper-anchor-height); pointer-events: auto;"
       tabindex="-1"
@@ -304,6 +296,19 @@ exports[`ClusterActionToolbar should match other actions snapshot 1`] = `
           />
         </svg>
       </span>
+      <div
+        class="px-3 flex items-center h-9 text-sm font-medium cursor-pointer rounded-sm outline-none text-neutral-400 dark:text-neutral-100 hover:bg-brand-50 data-[highlighted]:bg-brand-50 hover:text-brand-500 data-[highlighted]:text-brand-500"
+        data-orientation="vertical"
+        data-radix-collection-item=""
+        role="menuitem"
+        tabindex="-1"
+      >
+        <span
+          class="icon-solid-scroll shrink-0 text-sm mr-3 text-brand-400"
+          role="img"
+        />
+        Logs
+      </div>
       <div
         class="px-3 flex items-center h-9 text-sm font-medium cursor-pointer rounded-sm outline-none text-neutral-400 dark:text-neutral-100 hover:bg-brand-50 data-[highlighted]:bg-brand-50 hover:text-brand-500 data-[highlighted]:text-brand-500"
         data-orientation="vertical"
@@ -338,10 +343,23 @@ exports[`ClusterActionToolbar should match other actions snapshot 1`] = `
         tabindex="-1"
       >
         <span
-          class="icon-solid-download shrink-0 text-sm mr-3 text-brand-400"
+          class="icon-solid-file-export shrink-0 text-sm mr-3 text-brand-400"
           role="img"
         />
-        Get Kubeconfig
+        Export as Terraform
+      </div>
+      <div
+        class="px-3 flex items-center h-9 text-sm font-medium cursor-pointer rounded-sm outline-none text-neutral-400 dark:text-neutral-100 hover:bg-brand-50 data-[highlighted]:bg-brand-50 hover:text-brand-500 data-[highlighted]:text-brand-500"
+        data-orientation="vertical"
+        data-radix-collection-item=""
+        role="menuitem"
+        tabindex="-1"
+      >
+        <span
+          class="icon-solid-copy shrink-0 text-sm mr-3 text-brand-400"
+          role="img"
+        />
+        Clone
       </div>
       <div
         aria-orientation="horizontal"
@@ -359,7 +377,7 @@ exports[`ClusterActionToolbar should match other actions snapshot 1`] = `
           class="icon-solid-trash shrink-0 text-sm mr-3 text-red-600"
           role="img"
         />
-        Delete cluster
+        Delete environment
       </div>
     </div>
   </div>
