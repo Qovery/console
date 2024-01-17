@@ -10,6 +10,9 @@ export function useDeleteEnvironment({ projectId }: { projectId: string }) {
       queryClient.invalidateQueries({
         queryKey: queries.environments.listStatuses(projectId).queryKey,
       })
+      queryClient.invalidateQueries({
+        queryKey: queries.environments.list({ projectId }).queryKey,
+      })
     },
     meta: {
       notifyOnSuccess: {
