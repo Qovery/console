@@ -1,6 +1,6 @@
 import { type Healthcheck, type ServicePort } from 'qovery-typescript-axios'
 import { type PortData } from '@qovery/shared/interfaces'
-import { BlockContent, Button, EmptyState, Icon, IconAwesomeEnum, Tooltip } from '@qovery/shared/ui'
+import { BlockContent, Button, EmptyState, Heading, Icon, IconAwesomeEnum, Section, Tooltip } from '@qovery/shared/ui'
 import { isMatchingHealthCheck } from '../../utils/port-healthcheck'
 
 export interface FlowCreatePortProps {
@@ -31,9 +31,7 @@ export function FlowCreatePort({
     <div>
       <div className="flex justify-between mb-10">
         <div>
-          <div className="flex justify-between mb-2 items-center">
-            <h3 className="text-neutral-400 text-lg">{isSetting ? 'Port' : 'Set port'}</h3>
-          </div>
+          <Heading className="mb-2">{isSetting ? 'Port' : 'Set port'}</Heading>
 
           <p className={isSetting ? 'text-sm text-neutral-400 max-w-lg' : 'text-xs text-neutral-400'}>
             Declare TCP/UDP ports used by your application. Declared ports are accessible from other applications within

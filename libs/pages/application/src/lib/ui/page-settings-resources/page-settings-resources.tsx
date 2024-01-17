@@ -2,7 +2,7 @@ import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { type AnyService, type Database, type Helm } from '@qovery/domains/services/data-access'
 import { ApplicationSettingsResources } from '@qovery/shared/console-shared'
-import { Button, HelpSection } from '@qovery/shared/ui'
+import { Button, Heading, HelpSection, Section } from '@qovery/shared/ui'
 
 export interface PageSettingsResourcesProps {
   onSubmit: FormEventHandler<HTMLFormElement>
@@ -17,8 +17,8 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
 
   return (
     <div className="flex flex-col justify-between w-full">
-      <div className="p-8 max-w-content-with-navigation-left">
-        <h2 className="h5 text-neutral-400 mb-2">Resources</h2>
+      <Section className="p-8 max-w-content-with-navigation-left">
+        <Heading className="mb-2">Resources</Heading>
         <p className="text-sm text-neutral-400 max-w-content-with-navigation-left mb-8">
           Manage the resources assigned to the service.
         </p>
@@ -30,7 +30,7 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
             </Button>
           </div>
         </form>
-      </div>
+      </Section>
       <HelpSection
         description="Need help? You may find these links useful"
         links={[

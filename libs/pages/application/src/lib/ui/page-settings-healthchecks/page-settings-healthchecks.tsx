@@ -1,7 +1,7 @@
 import { EnvironmentModeEnum, type ServicePort } from 'qovery-typescript-axios'
 import { useFormContext } from 'react-hook-form'
 import { ApplicationSettingsHealthchecks } from '@qovery/shared/console-shared'
-import { Button, Callout, HelpSection, Icon, IconAwesomeEnum, Link } from '@qovery/shared/ui'
+import { Button, Callout, Heading, HelpSection, Icon, IconAwesomeEnum, Link, Section } from '@qovery/shared/ui'
 
 export interface PageSettingsHealthchecksProps {
   loading: boolean
@@ -28,7 +28,7 @@ export function PageSettingsHealthchecks({
 
   return (
     <div className="flex flex-col justify-between w-full text-ssm">
-      <div className="p-8 max-w-content-with-navigation-left">
+      <Section className="p-8 max-w-content-with-navigation-left">
         {environmentMode === EnvironmentModeEnum.PRODUCTION && minRunningInstances === 1 && (
           <Callout.Root color="yellow" className="mb-2">
             <Callout.Icon>
@@ -44,7 +44,7 @@ export function PageSettingsHealthchecks({
             </Callout.Text>
           </Callout.Root>
         )}
-        <h2 className="h5 text-neutral-400 mb-2">Health checks</h2>
+        <Heading className="mb-2">Health checks</Heading>
         <p className="text-xs text-neutral-400 mb-8">
           Health checks are automatic ways for Kubernetes to check the status of your application and decide if it can
           receive traffic or needs to be restarted (during the deployment and run phases). These checks are managed by
@@ -66,7 +66,7 @@ export function PageSettingsHealthchecks({
             </div>
           </div>
         </form>
-      </div>
+      </Section>
       <HelpSection
         description="Need help? You may find these links useful"
         links={[
