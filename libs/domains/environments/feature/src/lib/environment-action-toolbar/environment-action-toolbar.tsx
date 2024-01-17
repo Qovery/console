@@ -247,7 +247,7 @@ export interface EnvironmentActionToolbarProps {
 
 export function EnvironmentActionToolbar({ environment }: EnvironmentActionToolbarProps) {
   const navigate = useNavigate()
-  const { organizationId = '', projectId = '' } = useParams()
+  const { organizationId = '' } = useParams()
   const { data: deploymentStatus } = useDeploymentStatus({ environmentId: environment.id })
 
   if (!deploymentStatus) return <Skeleton height={32} width={115} />
@@ -256,7 +256,9 @@ export function EnvironmentActionToolbar({ environment }: EnvironmentActionToolb
     <ActionToolbar.Root>
       <MenuManageDeployment environment={environment} state={deploymentStatus.state} organizationId={organizationId} />
       <Tooltip content="Logs">
-        <ActionToolbar.Button onClick={() => navigate(ENVIRONMENT_LOGS_URL(organizationId, projectId, environment.id))}>
+        <ActionToolbar.Button
+          onClick={() => navigate(ENVIRONMENT_LOGS_URL(organizationId, environment.project.id, environment.id))}
+        >
           <Icon name={IconAwesomeEnum.SCROLL} />
         </ActionToolbar.Button>
       </Tooltip>
