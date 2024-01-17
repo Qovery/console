@@ -18,6 +18,7 @@ import type {
 import { type ComponentProps, Fragment, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { P, match } from 'ts-pattern'
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import {
