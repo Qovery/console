@@ -12,6 +12,7 @@ import {
   ButtonIconStyle,
   ButtonLegacy,
   ButtonLegacySize,
+  Heading,
   HelpSection,
   Icon,
   IconAwesomeEnum,
@@ -19,6 +20,7 @@ import {
   Menu,
   MenuAlign,
   type MenuData,
+  Section,
   Tooltip,
   Truncate,
 } from '@qovery/shared/ui'
@@ -81,18 +83,21 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
 
   return (
     <div className="w-[calc(100vw-368px)]">
-      <div className="flex flex-col w-full h-[calc(100%-128px)] bg-neutral-100 rounded-tr-sm">
+      <Section className="flex flex-col w-full h-[calc(100%-128px)] rounded-tr-sm">
         <div className="flex justify-between items-center px-5 my-5">
-          <p className="text-xs text-neutral-400">
-            Stages allow to define deployment order within the deployment pipeline of your environment. Default stages
-            are available based on the service type, you can edit/remove them based on your need.
-            <span className="block text-2xs mt-1">
-              <span role="img" aria-label="light">
-                💡
-              </span>{' '}
-              Tips: You can drag & drop
-            </span>
-          </p>
+          <div>
+            <Heading>Pipeline</Heading>
+            <p className="text-xs text-neutral-400">
+              Stages allow to define deployment order within the deployment pipeline of your environment. Default stages
+              are available based on the service type, you can edit/remove them based on your need.
+              <span className="block text-2xs mt-1">
+                <span role="img" aria-label="light">
+                  💡
+                </span>{' '}
+                Tips: You can drag & drop
+              </span>
+            </p>
+          </div>
           <ButtonLegacy
             dataTestId="btn-add-stage"
             className="shrink-0 ml-5"
@@ -202,7 +207,7 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
             </div>
           )}
         </div>
-      </div>
+      </Section>
       <HelpSection
         description="Need help? You may find these links useful"
         links={[
