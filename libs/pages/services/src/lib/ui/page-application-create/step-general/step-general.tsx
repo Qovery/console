@@ -34,6 +34,9 @@ export function StepGeneral(props: StepGeneralProps) {
   const watchServiceType = watch('serviceType')
   const watchBuildMode = watch('build_mode')
 
+  // NOTE: Validation corner case where git settings can be in loading state
+  const isGitSettingsValid = watchServiceType === 'APPLICATION' ? watch('branch') : true
+
   return (
     <div>
       <div className="mb-10">
@@ -128,7 +131,7 @@ export function StepGeneral(props: StepGeneralProps) {
           <ButtonLegacy
             dataTestId="button-submit"
             type="submit"
-            disabled={!formState.isValid}
+            disabled={!(formState.isValid && isGitSettingsValid)}
             size={ButtonLegacySize.XLARGE}
             style={ButtonLegacyStyle.BASIC}
           >

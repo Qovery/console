@@ -50,6 +50,9 @@ export function StepGeneralFeature() {
   const watchFieldGitProvider = generalForm.watch('provider')
   const watchFieldGitRepository = generalForm.watch('repository')
 
+  // NOTE: Validation corner case where git settings can be in loading state
+  const isGitSettingsValid = watchFieldProvider === 'GIT' ? generalForm.watch('branch') : true
+
   return (
     <FunnelFlowBody helpSection={funnelCardHelp}>
       <FormProvider {...generalForm}>
@@ -96,7 +99,7 @@ export function StepGeneralFeature() {
             >
               Cancel
             </Button>
-            <Button type="submit" size="lg" disabled={!generalForm.formState.isValid}>
+            <Button type="submit" size="lg" disabled={!(generalForm.formState.isValid && isGitSettingsValid)}>
               Continue
             </Button>
           </div>
