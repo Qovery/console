@@ -23,7 +23,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
             class="flex flex-col items-start"
           >
             <h1
-              class="text-neutral-400 text-3xl font-bold mb-2"
+              class="text-neutral-400 text-xl font-bold mb-2"
             >
               Values override as file
             </h1>
@@ -188,7 +188,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
                 class="flex flex-col"
               >
                 <h2
-                  class="text-neutral-400 text-2xl font-bold mt-10 mb-2"
+                  class="text-neutral-400 text-base font-bold mt-10 mb-2"
                 >
                   Override from repository
                 </h2>
@@ -386,8 +386,8 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
           class="bg-neutral-50 p-8 border-neutral-200 border-b border-l rounded max-w-[22.5rem] "
           data-testid="funnel-body-help"
         >
-          <div
-            class=""
+          <section
+            class="flex flex-col"
           >
             <svg
               class="shrink-0 w-7 h-7 mb-4"
@@ -409,11 +409,11 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
                 fill="#fff"
               />
             </svg>
-            <h5
-              class="text-lg font-medium neutral-400 mb-4"
+            <h1
+              class="text-neutral-400 text-xl font-bold mb-4"
             >
               Using values overrides
-            </h5>
+            </h1>
             <ul
               class="list-disc pl-4 text-neutral-400 text-sm mb-8"
             >
@@ -464,7 +464,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
                 </a>
               </div>
             </div>
-          </div>
+          </section>
         </div>
       </aside>
     </div>
@@ -495,7 +495,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a yaml 1`] = `
             class="flex flex-col items-start"
           >
             <h1
-              class="text-neutral-400 text-3xl font-bold mb-2"
+              class="text-neutral-400 text-xl font-bold mb-2"
             >
               Values override as file
             </h1>
@@ -660,7 +660,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a yaml 1`] = `
                 class="flex flex-col"
               >
                 <h2
-                  class="text-neutral-400 text-2xl font-bold mt-10 mb-2"
+                  class="text-neutral-400 text-base font-bold mt-10 mb-2"
                 >
                   Override with raw Yaml
                 </h2>
@@ -747,8 +747,8 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a yaml 1`] = `
           class="bg-neutral-50 p-8 border-neutral-200 border-b border-l rounded max-w-[22.5rem] "
           data-testid="funnel-body-help"
         >
-          <div
-            class=""
+          <section
+            class="flex flex-col"
           >
             <svg
               class="shrink-0 w-7 h-7 mb-4"
@@ -770,11 +770,11 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a yaml 1`] = `
                 fill="#fff"
               />
             </svg>
-            <h5
-              class="text-lg font-medium neutral-400 mb-4"
+            <h1
+              class="text-neutral-400 text-xl font-bold mb-4"
             >
               Using values overrides
-            </h5>
+            </h1>
             <ul
               class="list-disc pl-4 text-neutral-400 text-sm mb-8"
             >
@@ -825,7 +825,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a yaml 1`] = `
                 </a>
               </div>
             </div>
-          </div>
+          </section>
         </div>
       </aside>
     </div>

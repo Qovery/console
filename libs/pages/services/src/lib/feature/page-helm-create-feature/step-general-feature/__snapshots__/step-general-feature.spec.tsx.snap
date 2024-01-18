@@ -18,12 +18,12 @@ exports[`StepGeneralFeature should submit a form with a git repository 1`] = `
           class="px-12 mx-auto relative pb-14 max-w-content-with-navigation-left"
           data-testid="funnel-body-content"
         >
-          <form>
-            <section
-              class="flex flex-col"
-            >
+          <section
+            class="flex flex-col"
+          >
+            <form>
               <h1
-                class="text-neutral-400 text-3xl font-bold mb-2"
+                class="text-neutral-400 text-xl font-bold mb-2"
               >
                 General Data
               </h1>
@@ -36,7 +36,7 @@ exports[`StepGeneralFeature should submit a form with a git repository 1`] = `
                 class="flex flex-col"
               >
                 <h2
-                  class="text-neutral-400 text-2xl font-bold mt-10 mb-3"
+                  class="text-neutral-400 text-base font-bold mt-10 mb-3"
                 >
                   General
                 </h2>
@@ -97,7 +97,7 @@ exports[`StepGeneralFeature should submit a form with a git repository 1`] = `
                 class="flex flex-col"
               >
                 <h2
-                  class="text-neutral-400 text-2xl font-bold mt-10 mb-2"
+                  class="text-neutral-400 text-base font-bold mt-10 mb-2"
                 >
                   Source
                 </h2>
@@ -329,7 +329,7 @@ exports[`StepGeneralFeature should submit a form with a git repository 1`] = `
                 class="flex flex-col"
               >
                 <h2
-                  class="text-neutral-400 text-2xl font-bold mt-10 mb-2"
+                  class="text-neutral-400 text-base font-bold mt-10 mb-2"
                 >
                   Deployment
                 </h2>
@@ -495,25 +495,25 @@ exports[`StepGeneralFeature should submit a form with a git repository 1`] = `
                   </div>
                 </div>
               </section>
-            </section>
-            <div
-              class="flex justify-between mt-10"
-            >
-              <button
-                class="inline-flex items-center shrink-0 font-medium transition text-sm h-10 px-4 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550"
-                type="button"
+              <div
+                class="flex justify-between mt-10"
               >
-                Cancel
-              </button>
-              <button
-                class="inline-flex items-center shrink-0 font-medium transition text-sm h-10 px-4 rounded bg-brand-500 hover:bg-brand-600 text-white disabled:text-brand-300 disabled:bg-brand-100 disabled:border-none"
-                disabled=""
-                type="submit"
-              >
-                Continue
-              </button>
-            </div>
-          </form>
+                <button
+                  class="inline-flex items-center shrink-0 font-medium transition text-sm h-10 px-4 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550"
+                  type="button"
+                >
+                  Cancel
+                </button>
+                <button
+                  class="inline-flex items-center shrink-0 font-medium transition text-sm h-10 px-4 rounded bg-brand-500 hover:bg-brand-600 text-white disabled:text-brand-300 disabled:bg-brand-100 disabled:border-none"
+                  disabled=""
+                  type="submit"
+                >
+                  Continue
+                </button>
+              </div>
+            </form>
+          </section>
         </div>
       </section>
       <aside
@@ -523,8 +523,8 @@ exports[`StepGeneralFeature should submit a form with a git repository 1`] = `
           class="bg-neutral-50 p-8 border-neutral-200 border-b border-l rounded max-w-[22.5rem] "
           data-testid="funnel-body-help"
         >
-          <div
-            class=""
+          <section
+            class="flex flex-col"
           >
             <svg
               class="shrink-0 w-7 h-7 mb-4"
@@ -546,11 +546,11 @@ exports[`StepGeneralFeature should submit a form with a git repository 1`] = `
                 fill="#fff"
               />
             </svg>
-            <h5
-              class="text-lg font-medium neutral-400 mb-4"
+            <h1
+              class="text-neutral-400 text-xl font-bold mb-4"
             >
               Deploying a Helm Chart
-            </h5>
+            </h1>
             <ul
               class="list-disc pl-4 text-neutral-400 text-sm mb-8"
             >
@@ -601,7 +601,7 @@ exports[`StepGeneralFeature should submit a form with a git repository 1`] = `
                 </a>
               </div>
             </div>
-          </div>
+          </section>
         </div>
       </aside>
     </div>
@@ -627,12 +627,12 @@ exports[`StepGeneralFeature should submit a form with a helm repository and matc
           class="px-12 mx-auto relative pb-14 max-w-content-with-navigation-left"
           data-testid="funnel-body-content"
         >
-          <form>
-            <section
-              class="flex flex-col"
-            >
+          <section
+            class="flex flex-col"
+          >
+            <form>
               <h1
-                class="text-neutral-400 text-3xl font-bold mb-2"
+                class="text-neutral-400 text-xl font-bold mb-2"
               >
                 General Data
               </h1>
@@ -645,7 +645,7 @@ exports[`StepGeneralFeature should submit a form with a helm repository and matc
                 class="flex flex-col"
               >
                 <h2
-                  class="text-neutral-400 text-2xl font-bold mt-10 mb-3"
+                  class="text-neutral-400 text-base font-bold mt-10 mb-3"
                 >
                   General
                 </h2>
@@ -708,7 +708,7 @@ exports[`StepGeneralFeature should submit a form with a helm repository and matc
                 class="flex flex-col"
               >
                 <h2
-                  class="text-neutral-400 text-2xl font-bold mt-10 mb-2"
+                  class="text-neutral-400 text-base font-bold mt-10 mb-2"
                 >
                   Source
                 </h2>
@@ -834,7 +834,7 @@ exports[`StepGeneralFeature should submit a form with a helm repository and matc
                 class="flex flex-col"
               >
                 <h2
-                  class="text-neutral-400 text-2xl font-bold mt-10 mb-2"
+                  class="text-neutral-400 text-base font-bold mt-10 mb-2"
                 >
                   Deployment
                 </h2>
@@ -962,25 +962,25 @@ exports[`StepGeneralFeature should submit a form with a helm repository and matc
                   </div>
                 </div>
               </section>
-            </section>
-            <div
-              class="flex justify-between mt-10"
-            >
-              <button
-                class="inline-flex items-center shrink-0 font-medium transition text-sm h-10 px-4 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550"
-                type="button"
+              <div
+                class="flex justify-between mt-10"
               >
-                Cancel
-              </button>
-              <button
-                class="inline-flex items-center shrink-0 font-medium transition text-sm h-10 px-4 rounded bg-brand-500 hover:bg-brand-600 text-white disabled:text-brand-300 disabled:bg-brand-100 disabled:border-none"
-                disabled=""
-                type="submit"
-              >
-                Continue
-              </button>
-            </div>
-          </form>
+                <button
+                  class="inline-flex items-center shrink-0 font-medium transition text-sm h-10 px-4 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550"
+                  type="button"
+                >
+                  Cancel
+                </button>
+                <button
+                  class="inline-flex items-center shrink-0 font-medium transition text-sm h-10 px-4 rounded bg-brand-500 hover:bg-brand-600 text-white disabled:text-brand-300 disabled:bg-brand-100 disabled:border-none"
+                  disabled=""
+                  type="submit"
+                >
+                  Continue
+                </button>
+              </div>
+            </form>
+          </section>
         </div>
       </section>
       <aside
@@ -990,8 +990,8 @@ exports[`StepGeneralFeature should submit a form with a helm repository and matc
           class="bg-neutral-50 p-8 border-neutral-200 border-b border-l rounded max-w-[22.5rem] "
           data-testid="funnel-body-help"
         >
-          <div
-            class=""
+          <section
+            class="flex flex-col"
           >
             <svg
               class="shrink-0 w-7 h-7 mb-4"
@@ -1013,11 +1013,11 @@ exports[`StepGeneralFeature should submit a form with a helm repository and matc
                 fill="#fff"
               />
             </svg>
-            <h5
-              class="text-lg font-medium neutral-400 mb-4"
+            <h1
+              class="text-neutral-400 text-xl font-bold mb-4"
             >
               Deploying a Helm Chart
-            </h5>
+            </h1>
             <ul
               class="list-disc pl-4 text-neutral-400 text-sm mb-8"
             >
@@ -1068,7 +1068,7 @@ exports[`StepGeneralFeature should submit a form with a helm repository and matc
                 </a>
               </div>
             </div>
-          </div>
+          </section>
         </div>
       </aside>
     </div>

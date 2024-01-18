@@ -11,7 +11,7 @@ exports[`NetworkingSetting should match snapshot in empty state 1`] = `
       >
         <div>
           <h1
-            class="text-neutral-400 text-3xl font-bold mb-2"
+            class="text-neutral-400 text-xl font-bold mb-2"
           >
             Networking
           </h1>
@@ -92,7 +92,7 @@ exports[`NetworkingSetting should match snapshot with ports 1`] = `
       >
         <div>
           <h1
-            class="text-neutral-400 text-3xl font-bold mb-2"
+            class="text-neutral-400 text-xl font-bold mb-2"
           >
             Networking
           </h1>
