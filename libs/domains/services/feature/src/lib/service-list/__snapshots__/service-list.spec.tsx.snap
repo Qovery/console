@@ -15,7 +15,7 @@ exports[`ServiceList should match snapshot 1`] = `
             class="inline-block relative"
           >
             <button
-              aria-controls="radix-:r1s:"
+              aria-controls="radix-:r8:"
               aria-expanded="false"
               aria-haspopup="dialog"
               class="inline-flex items-center shrink-0 font-medium transition h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 text-xs gap-1"
@@ -38,7 +38,7 @@ exports[`ServiceList should match snapshot 1`] = `
             class="inline-block relative"
           >
             <button
-              aria-controls="radix-:r1v:"
+              aria-controls="radix-:rb:"
               aria-expanded="false"
               aria-haspopup="dialog"
               class="inline-flex items-center shrink-0 font-medium transition h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 text-xs gap-1"
@@ -61,7 +61,7 @@ exports[`ServiceList should match snapshot 1`] = `
             class="inline-block relative"
           >
             <button
-              aria-controls="radix-:r22:"
+              aria-controls="radix-:re:"
               aria-expanded="false"
               aria-haspopup="dialog"
               class="inline-flex items-center shrink-0 font-medium transition h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 text-xs gap-1"
@@ -201,7 +201,7 @@ exports[`ServiceList should match snapshot 1`] = `
               FRONT-END
               <div>
                 <button
-                  aria-controls="radix-:r23:"
+                  aria-controls="radix-:rf:"
                   aria-expanded="false"
                   aria-haspopup="dialog"
                   class="inline-flex items-center shrink-0 font-medium transition text-xs px-1 py-0.5 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550"
@@ -353,9 +353,9 @@ exports[`ServiceList should match snapshot 1`] = `
                 class="relative"
                 data-state="closed"
               >
-                <button
-                  class="inline-flex items-center shrink-0 font-medium transition text-xs px-1 py-0.5 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 group justify-between gap-1"
-                  type="button"
+                <span
+                  class="inline-flex items-center shrink-0 font-medium border text-xs px-1 py-0.5 rounded bg-neutral-100 border-neutral-200 text-neutral-400 group justify-between"
+                  data-accent-color="neutral"
                 >
                   <span
                     class="icon-solid-copy shrink-0 hidden group-hover:inline w-4"
@@ -366,7 +366,7 @@ exports[`ServiceList should match snapshot 1`] = `
                     role="img"
                   />
                   2f74448
-                </button>
+                </span>
               </span>
               <a
                 href="https://github.com/acarranoqovery/javascript-tetris/tree/master/"
@@ -501,7 +501,7 @@ exports[`ServiceList should match snapshot 1`] = `
               back-end-A
               <div>
                 <button
-                  aria-controls="radix-:r2c:"
+                  aria-controls="radix-:ro:"
                   aria-expanded="false"
                   aria-haspopup="dialog"
                   class="inline-flex items-center shrink-0 font-medium transition text-xs px-1 py-0.5 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550"
@@ -1102,7 +1102,7 @@ exports[`ServiceList should match snapshot 1`] = `
               </span>
               <div>
                 <button
-                  aria-controls="radix-:r2k:"
+                  aria-controls="radix-:r10:"
                   aria-expanded="false"
                   aria-haspopup="dialog"
                   class="inline-flex items-center shrink-0 font-medium transition text-xs px-1 py-0.5 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550"
@@ -1263,9 +1263,9 @@ exports[`ServiceList should match snapshot 1`] = `
                 class="relative"
                 data-state="closed"
               >
-                <button
-                  class="inline-flex items-center shrink-0 font-medium transition text-xs px-1 py-0.5 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 group justify-between gap-1"
-                  type="button"
+                <span
+                  class="inline-flex items-center shrink-0 font-medium border text-xs px-1 py-0.5 rounded bg-neutral-100 border-neutral-200 text-neutral-400 group justify-between"
+                  data-accent-color="neutral"
                 >
                   <span
                     class="icon-solid-copy shrink-0 hidden group-hover:inline w-4"
@@ -1276,7 +1276,7 @@ exports[`ServiceList should match snapshot 1`] = `
                     role="img"
                   />
                   10ad354
-                </button>
+                </span>
               </span>
               <a
                 href="https://github.com/acarranoqovery/test_script/tree/main/"
@@ -1504,7 +1504,7 @@ exports[`ServiceList should match snapshot 1`] = `
               </span>
               <div>
                 <button
-                  aria-controls="radix-:r2u:"
+                  aria-controls="radix-:r1a:"
                   aria-expanded="false"
                   aria-haspopup="dialog"
                   class="inline-flex items-center shrink-0 font-medium transition text-xs px-1 py-0.5 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550"
@@ -1665,9 +1665,9 @@ exports[`ServiceList should match snapshot 1`] = `
                 class="relative"
                 data-state="closed"
               >
-                <button
-                  class="inline-flex items-center shrink-0 font-medium transition text-xs px-1 py-0.5 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 group justify-between gap-1"
-                  type="button"
+                <span
+                  class="inline-flex items-center shrink-0 font-medium border text-xs px-1 py-0.5 rounded bg-neutral-100 border-neutral-200 text-neutral-400 group justify-between"
+                  data-accent-color="neutral"
                 >
                   <span
                     class="icon-solid-copy shrink-0 hidden group-hover:inline w-4"
@@ -1678,7 +1678,7 @@ exports[`ServiceList should match snapshot 1`] = `
                     role="img"
                   />
                   10ad354
-                </button>
+                </span>
               </span>
               <a
                 href="https://github.com/acarranoqovery/test_script/tree/main/"
