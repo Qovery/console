@@ -69,7 +69,6 @@ export function PageDatabaseCreateFeature() {
         totalSteps={3}
         currentStep={currentStep}
         currentTitle={steps[currentStep - 1].title}
-        portal
       >
         <Routes>
           {ROUTER_SERVICE_DATABASE_CREATION.map((route) => (

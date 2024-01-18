@@ -113,7 +113,6 @@ export function PageJobCreateFeature() {
         totalSteps={5}
         currentStep={currentStep}
         currentTitle={steps[currentStep - 1].title}
-        portal
       >
         <Routes>
           {ROUTER_SERVICE_JOB_CREATION.map((route) => (

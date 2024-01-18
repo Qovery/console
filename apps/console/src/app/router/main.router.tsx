@@ -1,7 +1,7 @@
 import { type ReactElement } from 'react'
 import { PageApplication } from '@qovery/pages/application'
 import { PagesCluster } from '@qovery/pages/cluster'
-import { PageClusters } from '@qovery/pages/clusters'
+import { PageClusterCreateFeature, PageClusters } from '@qovery/pages/clusters'
 import { PageDatabase } from '@qovery/pages/database'
 import { PageEnvironments } from '@qovery/pages/environments'
 import { PageEvents } from '@qovery/pages/events'
@@ -9,7 +9,13 @@ import { PageEnvironmentLogs } from '@qovery/pages/logs/environment'
 import { PageInfraLogs } from '@qovery/pages/logs/infra'
 import { PageOnboarding } from '@qovery/pages/onboarding'
 import { OverviewPage } from '@qovery/pages/overview/feature'
-import { PageServices } from '@qovery/pages/services'
+import {
+  PageApplicationCreateFeature,
+  PageDatabaseCreateFeature,
+  PageHelmCreateFeature,
+  PageJobCreateFeature,
+  PageServices,
+} from '@qovery/pages/services'
 import { PageSettings } from '@qovery/pages/settings'
 import { PageUser } from '@qovery/pages/user'
 import { AcceptInvitationFeature, GithubApplicationCallbackFeature } from '@qovery/shared/console-shared'
@@ -17,6 +23,7 @@ import {
   ACCEPT_INVITATION_URL,
   APPLICATION_URL,
   AUDIT_LOGS_URL,
+  CLUSTERS_CREATION_URL,
   CLUSTERS_URL,
   CLUSTER_URL,
   DATABASE_URL,
@@ -27,6 +34,11 @@ import {
   ONBOARDING_URL,
   ORGANIZATION_URL,
   OVERVIEW_URL,
+  SERVICES_APPLICATION_CREATION_URL,
+  SERVICES_CRONJOB_CREATION_URL,
+  SERVICES_DATABASE_CREATION_URL,
+  SERVICES_HELM_CREATION_URL,
+  SERVICES_LIFECYCLE_CREATION_URL,
   SERVICES_URL,
   SETTINGS_URL,
   USER_URL,
@@ -107,6 +119,36 @@ export const ROUTER: RouterProps[] = [
     layout: true,
   },
   {
+    path: `${SERVICES_URL()}${SERVICES_DATABASE_CREATION_URL}/*`,
+    component: <PageDatabaseCreateFeature />,
+    protected: true,
+    layout: false,
+  },
+  {
+    path: `${SERVICES_URL()}${SERVICES_CRONJOB_CREATION_URL}/*`,
+    component: <PageJobCreateFeature />,
+    protected: true,
+    layout: false,
+  },
+  {
+    path: `${SERVICES_URL()}${SERVICES_LIFECYCLE_CREATION_URL}/*`,
+    component: <PageJobCreateFeature />,
+    protected: true,
+    layout: false,
+  },
+  {
+    path: `${SERVICES_URL()}${SERVICES_APPLICATION_CREATION_URL}/*`,
+    component: <PageApplicationCreateFeature />,
+    protected: true,
+    layout: false,
+  },
+  {
+    path: `${SERVICES_URL()}${SERVICES_HELM_CREATION_URL}/*`,
+    component: <PageHelmCreateFeature />,
+    protected: true,
+    layout: false,
+  },
+  {
     path: `${APPLICATION_URL()}/*`,
     component: <PageApplication />,
     protected: true,
@@ -124,6 +166,12 @@ export const ROUTER: RouterProps[] = [
     protected: true,
     layout: true,
     topBar: false,
+  },
+  {
+    path: `${CLUSTERS_URL()}${CLUSTERS_CREATION_URL}/*`,
+    component: <PageClusterCreateFeature />,
+    protected: true,
+    layout: false,
   },
   {
     path: `${CLUSTER_URL()}/*`,

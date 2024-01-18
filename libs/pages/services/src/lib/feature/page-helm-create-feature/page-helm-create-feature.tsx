@@ -92,7 +92,6 @@ export function PageHelmCreateFeature() {
         totalSteps={steps.length}
         currentStep={currentStep}
         currentTitle={steps[currentStep - 1].title}
-        portal
       >
         <Routes>
           {ROUTER_SERVICE_HELM_CREATION.map((route) => (

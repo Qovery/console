@@ -5,11 +5,9 @@ import {
   CLUSTERS_CREATION_REMOTE_URL,
   CLUSTERS_CREATION_RESOURCES_URL,
   CLUSTERS_CREATION_SUMMARY_URL,
-  CLUSTERS_CREATION_URL,
   CLUSTERS_GENERAL_URL,
   type Route,
 } from '@qovery/shared/routes'
-import { PageClusterCreateFeature } from '../feature/page-clusters-create-feature/page-clusters-create-feature'
 import StepFeaturesFeature from '../feature/page-clusters-create-feature/step-features-feature/step-features-feature'
 import StepGeneralFeature from '../feature/page-clusters-create-feature/step-general-feature/step-general-feature'
 import StepKubeconfigFeature from '../feature/page-clusters-create-feature/step-kubeconfig-feature/step-kubeconfig-feature'
@@ -22,10 +20,6 @@ export const ROUTER_CLUSTERS: Route[] = [
   {
     path: CLUSTERS_GENERAL_URL,
     component: <PageClustersGeneralFeature />,
-  },
-  {
-    path: `${CLUSTERS_CREATION_URL}/*`,
-    component: <PageClusterCreateFeature />,
   },
 ]
 
