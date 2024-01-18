@@ -273,7 +273,13 @@ export function ServiceList({ organizationId, projectId, environmentId, classNam
               <div className="flex flex-row items-center gap-2" onClick={(e) => e.stopPropagation()}>
                 <LastCommitAuthor gitRepository={gitRepository} serviceId={service.id} serviceType={serviceType} />
                 <div className="flex flex-col gap-1">
-                  <LastCommit gitRepository={gitRepository} serviceId={service.id} serviceType={serviceType} />
+                  <LastCommit
+                    environmentId={environmentId}
+                    gitRepository={gitRepository}
+                    serviceName={service.name}
+                    serviceId={service.id}
+                    serviceType={serviceType}
+                  />
                   {gitRepository.branch && gitRepository.url && (
                     <a
                       href={buildGitProviderUrl(gitRepository.url, gitRepository.branch)}

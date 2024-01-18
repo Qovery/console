@@ -14,6 +14,7 @@ const badgeVariants = cva(['inline-flex', 'items-center', 'shrink-0', 'font-medi
       brand: ['text-brand-500'],
     },
     variant: {
+      solid: ['bg', 'border'],
       outline: ['border'],
       surface: ['border'],
     },
@@ -99,6 +100,11 @@ const badgeVariants = cva(['inline-flex', 'items-center', 'shrink-0', 'font-medi
       variant: ['surface', 'outline'],
       color: 'green',
       className: ['border-green-500'],
+    },
+    {
+      variant: 'solid',
+      color: 'green',
+      className: ['bg-green-500', 'border-green-500', 'text-white'],
     },
     {
       variant: 'surface',

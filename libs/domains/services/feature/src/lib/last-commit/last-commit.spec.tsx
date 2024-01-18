@@ -46,7 +46,13 @@ const gitRepository: ApplicationGitRepository = {
 describe('LastCommit', () => {
   it('should match snapshot', () => {
     const { baseElement } = renderWithProviders(
-      <LastCommit gitRepository={gitRepository} serviceId="1" serviceType="APPLICATION" />
+      <LastCommit
+        environmentId="1"
+        gitRepository={gitRepository}
+        serviceName="my-service"
+        serviceId="1"
+        serviceType="APPLICATION"
+      />
     )
     expect(baseElement).toMatchSnapshot()
   })

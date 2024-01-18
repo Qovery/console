@@ -43,10 +43,14 @@ import { LastCommit } from '../last-commit/last-commit'
 import { ServiceDetailsSkeleton } from './service-details-skeleton'
 
 function GitRepository({
+  environmentId,
+  serviceName,
   serviceId,
   serviceType,
   gitRepository,
 }: {
+  environmentId: string
+  serviceName: string
   serviceId: string
   serviceType: Extract<ServiceType, 'APPLICATION' | 'JOB' | 'CRON_JOB' | 'LIFECYCLE_JOB' | 'HELM'>
   gitRepository: ApplicationGitRepository
@@ -97,7 +101,13 @@ function GitRepository({
       <Dd>
         <div className="inline-flex items-center gap-2">
           <LastCommitAuthor gitRepository={gitRepository} serviceId={serviceId} serviceType={serviceType} />
-          <LastCommit gitRepository={gitRepository} serviceId={serviceId} serviceType={serviceType} />
+          <LastCommit
+            environmentId={environmentId}
+            gitRepository={gitRepository}
+            serviceName={serviceName}
+            serviceId={serviceId}
+            serviceType={serviceType}
+          />
         </div>
       </Dd>
     </>
@@ -233,7 +243,13 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
           <Dl>
             <Dt>Type:</Dt>
             <Dd>Git repository</Dd>
-            <GitRepository serviceId={serviceId} serviceType={serviceType} gitRepository={file.git.git_repository} />
+            <GitRepository
+              environmentId={environmentId}
+              serviceName={service.name}
+              serviceId={serviceId}
+              serviceType={serviceType}
+              gitRepository={file.git.git_repository}
+            />
             {overrideWithArguments}
           </Dl>
         )
@@ -329,6 +345,8 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
               return (
                 <Dl>
                   <GitRepository
+                    environmentId={environmentId}
+                    serviceName={service.name}
                     serviceId={serviceId}
                     serviceType={service.serviceType}
                     gitRepository={gitRepository}

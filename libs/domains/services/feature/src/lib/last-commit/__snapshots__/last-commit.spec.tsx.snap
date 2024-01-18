@@ -7,9 +7,9 @@ exports[`LastCommit should match snapshot 1`] = `
       class="relative"
       data-state="closed"
     >
-      <button
-        class="inline-flex items-center shrink-0 font-medium transition text-xs px-1 py-0.5 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 group justify-between gap-1"
-        type="button"
+      <span
+        class="inline-flex items-center shrink-0 font-medium border text-xs px-1 py-0.5 rounded bg-neutral-100 border-neutral-200 text-neutral-400 group justify-between"
+        data-accent-color="neutral"
       >
         <span
           class="icon-solid-copy shrink-0 hidden group-hover:inline w-4"
@@ -20,7 +20,7 @@ exports[`LastCommit should match snapshot 1`] = `
           role="img"
         />
         ddd1cee
-      </button>
+      </span>
     </span>
   </div>
 </body>
