@@ -1,6 +1,7 @@
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { useCustomDomains, useDeleteCustomDomain, useService } from '@qovery/domains/services/feature'
+import { useCustomDomains, useDeleteCustomDomain } from '@qovery/domains/custom-domains/data-access'
+import { useService } from '@qovery/domains/services/feature'
 import { useModal, useModalConfirmation } from '@qovery/shared/ui'
 import PageSettingsDomains from '../../ui/page-settings-domains/page-settings-domains'
 import CrudModalFeature from './crud-modal-feature/crud-modal-feature'

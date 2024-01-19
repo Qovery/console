@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { mutations } from '@qovery/domains/services/data-access'
+import { useDeployService } from '@qovery/domains/services/feature'
 import { queries } from '@qovery/state/util-queries'
-import { useDeployService } from '../use-deploy-service/use-deploy-service'
 
 export function useCreateCustomDomain({ environmentId }: { environmentId: string }) {
   const queryClient = useQueryClient()

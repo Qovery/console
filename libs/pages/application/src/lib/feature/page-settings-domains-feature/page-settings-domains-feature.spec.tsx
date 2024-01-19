@@ -9,6 +9,9 @@ jest.mock('@qovery/domains/services/feature', () => ({
   useService: () => ({
     data: mockApplication,
   }),
+}))
+
+jest.mock('@qovery/domains/custom-domains/data-access', () => ({
   useCustomDomains: () => ({
     data: [
       {

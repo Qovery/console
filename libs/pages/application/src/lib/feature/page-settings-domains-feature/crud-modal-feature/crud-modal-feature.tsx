@@ -1,8 +1,9 @@
 import { type CustomDomain } from 'qovery-typescript-axios'
 import { useEffect, useMemo } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
+import { useCreateCustomDomain, useEditCustomDomain } from '@qovery/domains/custom-domains/data-access'
 import { type Application, type Container, type Helm } from '@qovery/domains/services/data-access'
-import { useCreateCustomDomain, useEditCustomDomain, useLinks } from '@qovery/domains/services/feature'
+import { useLinks } from '@qovery/domains/services/feature'
 import { useModal } from '@qovery/shared/ui'
 import CrudModal from '../../../ui/page-settings-domains/crud-modal/crud-modal'
 
