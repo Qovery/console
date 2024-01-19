@@ -1623,6 +1623,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/runtime@npm:^7.16.7":
+  version: 7.23.8
+  resolution: "@babel/runtime@npm:7.23.8"
+  dependencies:
+    regenerator-runtime: ^0.14.0
+  checksum: 0bd5543c26811153822a9f382fd39886f66825ff2a397a19008011376533747cd05c33a91f6248c0b8b0edf0448d7c167ebfba34786088f1b7eb11c65be7dfc3
+  languageName: node
+  linkType: hard
+
 "@babel/template@npm:^7.16.7, @babel/template@npm:^7.22.15, @babel/template@npm:^7.22.5, @babel/template@npm:^7.3.3":
   version: 7.22.15
   resolution: "@babel/template@npm:7.22.15"
@@ -3734,7 +3743,9 @@ __metadata:
     "@tanstack/eslint-plugin-query": ^5.6.0
     "@tanstack/react-query": ^4.32.6
     "@tanstack/react-query-devtools": ^4.32.6
+    "@tanstack/react-router": ^1.6.0
     "@tanstack/react-table": ^8.10.3
+    "@tanstack/router-cli": ^1.6.0
     "@testing-library/jest-dom": ^5.16.5
     "@testing-library/react": 14.0.0
     "@testing-library/user-event": ^14.4.3
@@ -6506,6 +6517,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tanstack/history@npm:1.6.0":
+  version: 1.6.0
+  resolution: "@tanstack/history@npm:1.6.0"
+  checksum: 669e0ae499f94cf22190666af199a71dbad7477244d78632e37fdb535aad6900707ed9fa43aa0e957467df2a4142d0f4a43b970df95459a01131db59968dde37
+  languageName: node
+  linkType: hard
+
 "@tanstack/match-sorter-utils@npm:^8.7.0":
   version: 8.8.4
   resolution: "@tanstack/match-sorter-utils@npm:8.8.4"
@@ -6556,6 +6574,36 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tanstack/react-router@npm:^1.6.0":
+  version: 1.6.0
+  resolution: "@tanstack/react-router@npm:1.6.0"
+  dependencies:
+    "@babel/runtime": ^7.16.7
+    "@tanstack/history": 1.6.0
+    "@tanstack/react-store": ^0.2.1
+    "@tanstack/store": ^0.1.3
+    tiny-invariant: ^1.3.1
+    tiny-warning: ^1.0.3
+  peerDependencies:
+    react: ">=16"
+    react-dom: ">=16"
+  checksum: c41fa442135579164e6aea7d5d3296e44d8f0238afe4bd3746b426addc7805daeed84f38ca2c1f79f6cf7cfffe607480ce599d9427e944a0939604e5a2e1a83c
+  languageName: node
+  linkType: hard
+
+"@tanstack/react-store@npm:^0.2.1":
+  version: 0.2.1
+  resolution: "@tanstack/react-store@npm:0.2.1"
+  dependencies:
+    "@tanstack/store": 0.1.3
+    use-sync-external-store: ^1.2.0
+  peerDependencies:
+    react: ">=16"
+    react-dom: ">=16"
+  checksum: 44e1ff82cee4d963eb926f5976f938da089446e8613315117629b2c99f0dca35259529a1203e88d3507ede6cc44dc53cf2913a25f45e2210f78ee9603d20b6e1
+  languageName: node
+  linkType: hard
+
 "@tanstack/react-table@npm:^8.10.3":
   version: 8.10.3
   resolution: "@tanstack/react-table@npm:8.10.3"
@@ -6565,6 +6613,36 @@ __metadata:
     react: ">=16"
     react-dom: ">=16"
   checksum: 1e1fd58434c19658824d0929416dbf1286de702326a3cac60b628ba484db0e71f510d121f7fc168b1348827a47480d586be36ac6dfc39f48cd6902d615f27e6e
+  languageName: node
+  linkType: hard
+
+"@tanstack/router-cli@npm:^1.6.0":
+  version: 1.6.0
+  resolution: "@tanstack/router-cli@npm:1.6.0"
+  dependencies:
+    "@tanstack/router-generator": 1.6.0
+    chokidar: ^3.5.3
+    yargs: ^17.6.2
+  bin:
+    tsr: bin/tsr.js
+  checksum: 517df5785da42a9a0b0b43e63b5092dcddaa847f5337d82c4173bff158f4d9bfc53b3549ad2ea3a0f496e878984e4e5d5a637bd5d36cc3bd01df0b1987c73cef
+  languageName: node
+  linkType: hard
+
+"@tanstack/router-generator@npm:1.6.0":
+  version: 1.6.0
+  resolution: "@tanstack/router-generator@npm:1.6.0"
+  dependencies:
+    prettier: ^3.0.2
+    zod: ^3.19.1
+  checksum: 6a039b13edb2bf9daf06091253e3c2bb64b652c4954db9ad4d2c5826b1914f3efa842d900dffa1be474f8dc14befe0f4d97e642f7d67eed31735d60570e93e5e
+  languageName: node
+  linkType: hard
+
+"@tanstack/store@npm:0.1.3, @tanstack/store@npm:^0.1.3":
+  version: 0.1.3
+  resolution: "@tanstack/store@npm:0.1.3"
+  checksum: 47f6a6d2e0cd7e896eb838f25081761e3fbbc5988b826f54136c23dd00971247d0493117efa4fe3c870df6598c1d48e1d47d1dab959a9b911bae5935dcc01f4b
   languageName: node
   linkType: hard
 
@@ -18598,6 +18676,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"prettier@npm:^3.0.2":
+  version: 3.2.4
+  resolution: "prettier@npm:3.2.4"
+  bin:
+    prettier: bin/prettier.cjs
+  checksum: 6ec9385a836e0b9bac549e585101c086d1521c31d7b882d5c8bb7d7646da0693da5f31f4fff6dc080710e5e2d34c85e6fb2f8766876b3645c8be2f33b9c3d1a3
+  languageName: node
+  linkType: hard
+
 "pretty-bytes@npm:^5.6.0":
   version: 5.6.0
   resolution: "pretty-bytes@npm:5.6.0"
@@ -21494,6 +21581,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"tiny-warning@npm:^1.0.3":
+  version: 1.0.3
+  resolution: "tiny-warning@npm:1.0.3"
+  checksum: da62c4acac565902f0624b123eed6dd3509bc9a8d30c06e017104bedcf5d35810da8ff72864400ad19c5c7806fc0a8323c68baf3e326af7cb7d969f846100d71
+  languageName: node
+  linkType: hard
+
 "tmp@npm:^0.0.33":
   version: 0.0.33
   resolution: "tmp@npm:0.0.33"
@@ -23030,5 +23124,12 @@ __metadata:
   version: 0.1.0
   resolution: "yocto-queue@npm:0.1.0"
   checksum: f77b3d8d00310def622123df93d4ee654fc6a0096182af8bd60679ddcdfb3474c56c6c7190817c84a2785648cdee9d721c0154eb45698c62176c322fb46fc700
+  languageName: node
+  linkType: hard
+
+"zod@npm:^3.19.1":
+  version: 3.22.4
+  resolution: "zod@npm:3.22.4"
+  checksum: 80bfd7f8039b24fddeb0718a2ec7c02aa9856e4838d6aa4864335a047b6b37a3273b191ef335bf0b2002e5c514ef261ffcda5a589fb084a48c336ffc4cdbab7f
   languageName: node
   linkType: hard
