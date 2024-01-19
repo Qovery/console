@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { useCustomDomains, useDeleteCustomDomain } from '@qovery/domains/custom-domains/data-access'
+import { useCustomDomains, useDeleteCustomDomain } from '@qovery/domains/custom-domains/feature'
 import { useService } from '@qovery/domains/services/feature'
 import { useModal, useModalConfirmation } from '@qovery/shared/ui'
 import PageSettingsDomains from '../../ui/page-settings-domains/page-settings-domains'

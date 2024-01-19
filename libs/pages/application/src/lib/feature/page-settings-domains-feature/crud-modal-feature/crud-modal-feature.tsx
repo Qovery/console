@@ -1,7 +1,7 @@
 import { type CustomDomain } from 'qovery-typescript-axios'
 import { useEffect, useMemo } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useCreateCustomDomain, useEditCustomDomain } from '@qovery/domains/custom-domains/data-access'
+import { useCreateCustomDomain, useEditCustomDomain } from '@qovery/domains/custom-domains/feature'
 import { type Application, type Container, type Helm } from '@qovery/domains/services/data-access'
 import { useLinks } from '@qovery/domains/services/feature'
 import { useModal } from '@qovery/shared/ui'

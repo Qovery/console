@@ -7,7 +7,7 @@ import CrudModalFeature, { type CrudModalFeatureProps } from './crud-modal-featu
 const mockMutateEditCustomDomain = jest.fn()
 const mockMutateCreateCustomDomain = jest.fn()
 
-jest.mock('@qovery/domains/custom-domains/data-access', () => ({
+jest.mock('@qovery/domains/custom-domains/feature', () => ({
   useEditCustomDomain: () => ({
     mutateAsync: mockMutateEditCustomDomain,
   }),

@@ -11,7 +11,7 @@ jest.mock('@qovery/domains/services/feature', () => ({
   }),
 }))
 
-jest.mock('@qovery/domains/custom-domains/data-access', () => ({
+jest.mock('@qovery/domains/custom-domains/feature', () => ({
   useCustomDomains: () => ({
     data: [
       {
