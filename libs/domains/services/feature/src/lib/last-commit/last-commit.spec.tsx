@@ -32,13 +32,6 @@ jest.mock('../hooks/use-commits/use-commits', () => ({
   }),
 }))
 
-jest.mock('../hooks/use-service/use-service', () => ({
-  useService: () => ({
-    data: mockApplication,
-    isLoading: false,
-  }),
-}))
-
 const gitRepository: ApplicationGitRepository = {
   has_access: true,
   deployed_commit_id: 'ddd1cee35762e9b4bb95633c22193393ca3bb384',
@@ -55,7 +48,7 @@ const gitRepository: ApplicationGitRepository = {
 
 describe('LastCommit', () => {
   it('should match snapshot', () => {
-    const { baseElement } = renderWithProviders(<LastCommit gitRepository={gitRepository} serviceId="1" />)
+    const { baseElement } = renderWithProviders(<LastCommit gitRepository={gitRepository} service={mockApplication} />)
     expect(baseElement).toMatchSnapshot()
   })
 })

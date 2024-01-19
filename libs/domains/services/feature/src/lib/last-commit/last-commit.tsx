@@ -1,21 +1,19 @@
 import { type ApplicationGitRepository } from 'qovery-typescript-axios'
 import { type MouseEvent } from 'react'
-import { match } from 'ts-pattern'
 import { type Application, type Helm, type Job } from '@qovery/domains/services/data-access'
 import { Button, CopyToClipboard, Icon, IconAwesomeEnum, Tooltip, Truncate, useModal } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import { useDeployService } from '../hooks/use-deploy-service/use-deploy-service'
 import { useLastDeployedCommit } from '../hooks/use-last-deployed-commit/use-last-deployed-commit'
-import { useService } from '../hooks/use-service/use-service'
 import SelectCommitModal from '../select-commit-modal/select-commit-modal'
 
-export interface LastCommitElementProps {
+export interface LastCommitProps {
   className?: string
-  service: Application | Job | Helm
+  service: Pick<Application | Job | Helm, 'id' | 'name' | 'serviceType' | 'environment'>
   gitRepository: ApplicationGitRepository
 }
 
-export function LastCommitElement({ className, service, gitRepository }: LastCommitElementProps) {
+export function LastCommit({ className, service, gitRepository }: LastCommitProps) {
   const {
     data: { deployedCommit, delta },
   } = useLastDeployedCommit({ gitRepository, serviceId: service.id, serviceType: service.serviceType })
@@ -107,22 +105,6 @@ export function LastCommitElement({ className, service, gitRepository }: LastCom
       </span>
     </Tooltip>
   )
-}
-
-export interface LastCommitProps {
-  className?: string
-  serviceId: string
-  gitRepository: ApplicationGitRepository
-}
-
-export function LastCommit({ serviceId, className, gitRepository }: LastCommitProps) {
-  const { data: service } = useService({ serviceId })
-
-  return match(service)
-    .with({ serviceType: 'APPLICATION' }, { serviceType: 'JOB' }, { serviceType: 'HELM' }, (s) => (
-      <LastCommitElement service={s} className={className} gitRepository={gitRepository} />
-    ))
-    .otherwise(() => null)
 }
 
 export default LastCommit

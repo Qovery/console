@@ -1,7 +1,7 @@
 import { type ApplicationGitRepository, type Credentials } from 'qovery-typescript-axios'
 import { type ComponentPropsWithoutRef } from 'react'
 import { P, match } from 'ts-pattern'
-import { type ServiceType } from '@qovery/domains/services/data-access'
+import { type Application, type Helm, type Job } from '@qovery/domains/services/data-access'
 import {
   IconEnum,
   ServiceTypeEnum,
@@ -43,12 +43,10 @@ import { LastCommit } from '../last-commit/last-commit'
 import { ServiceDetailsSkeleton } from './service-details-skeleton'
 
 function GitRepository({
-  serviceId,
-  serviceType,
+  service,
   gitRepository,
 }: {
-  serviceId: string
-  serviceType: Extract<ServiceType, 'APPLICATION' | 'JOB' | 'CRON_JOB' | 'LIFECYCLE_JOB' | 'HELM'>
+  service: Application | Job | Helm
   gitRepository: ApplicationGitRepository
 }) {
   return (
@@ -96,8 +94,8 @@ function GitRepository({
       <Dt>Commit:</Dt>
       <Dd>
         <div className="inline-flex items-center gap-2">
-          <LastCommitAuthor gitRepository={gitRepository} serviceId={serviceId} serviceType={serviceType} />
-          <LastCommit gitRepository={gitRepository} serviceId={serviceId} />
+          <LastCommitAuthor gitRepository={gitRepository} serviceId={service.id} serviceType={service.serviceType} />
+          <LastCommit gitRepository={gitRepository} service={service} />
         </div>
       </Dd>
     </>
@@ -221,7 +219,10 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
     .otherwise(() => null)
 
   const valuesOverride = match(service)
-    .with({ serviceType: 'HELM' }, ({ serviceType, values_override: { file, set, set_json, set_string } }) => {
+    .with({ serviceType: 'HELM' }, (service) => {
+      const {
+        values_override: { file, set, set_json, set_string },
+      } = service
       const overrideWithArguments = (
         <>
           <Dt>Override with arguments:</Dt>
@@ -233,7 +234,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
           <Dl>
             <Dt>Type:</Dt>
             <Dd>Git repository</Dd>
-            <GitRepository serviceId={serviceId} serviceType={serviceType} gitRepository={file.git.git_repository} />
+            <GitRepository service={service} gitRepository={file.git.git_repository} />
             {overrideWithArguments}
           </Dl>
         )
@@ -328,11 +329,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
 
               return (
                 <Dl>
-                  <GitRepository
-                    serviceId={serviceId}
-                    serviceType={service.serviceType}
-                    gitRepository={gitRepository}
-                  />
+                  <GitRepository service={service} gitRepository={gitRepository} />
                 </Dl>
               )
             }
