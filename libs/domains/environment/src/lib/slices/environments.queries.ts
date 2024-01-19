@@ -220,6 +220,9 @@ export const useFetchDatabaseConfiguration = (projectId: string, environmentId: 
   )
 }
 
+/*
+ * @deprecated use `useEnvironmentExportTerraform` from `@qovery/domains/environments/feature` instead of `useFetchEnvironmentExportTerraform`
+ */
 export const useFetchEnvironmentExportTerraform = (projectId: string, environmentId: string) => {
   return useMutation(
     ['project', projectId, 'environments', environmentId, 'terraformExport'],

@@ -1,11 +1,7 @@
 import { type Environment, OrganizationEventTargetType, StateEnum } from 'qovery-typescript-axios'
 import { useNavigate, useParams } from 'react-router-dom'
 // eslint-disable-next-line @nx/enforce-module-boundaries
-import {
-  CreateCloneEnvironmentModalFeature,
-  TerraformExportModalFeature,
-  UpdateAllModalFeature,
-} from '@qovery/shared/console-shared'
+import { CreateCloneEnvironmentModalFeature, UpdateAllModalFeature } from '@qovery/shared/console-shared'
 import { AUDIT_LOGS_PARAMS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import {
   ActionToolbar,
@@ -30,6 +26,7 @@ import { useDeleteEnvironment } from '../hooks/use-delete-environment/use-delete
 import { useDeployEnvironment } from '../hooks/use-deploy-environment/use-deploy-environment'
 import { useDeploymentStatus } from '../hooks/use-deployment-status/use-deployment-status'
 import { useStopEnvironment } from '../hooks/use-stop-environment/use-stop-environment'
+import TerraformExportModal from '../terraform-export-modal/terraform-export-modal'
 
 function MenuManageDeployment({
   environment,
@@ -166,7 +163,7 @@ function MenuOtherActions({
 
   const openTerraformExportModal = () => {
     openModal({
-      content: <TerraformExportModalFeature closeModal={closeModal} environmentId={environment.id} />,
+      content: <TerraformExportModal environmentId={environment.id} />,
     })
   }
 

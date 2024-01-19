@@ -1,0 +1,88 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TerraformExportModal should match with snapshots 1`] = `
+<body>
+  <div>
+    <div
+      class="p-6"
+    >
+      <h2
+        class="h4 text-neutral-400 max-w-sm truncate"
+      >
+        Export as Terraform
+      </h2>
+      <p
+        class="mt-2 text-neutral-350 text-sm"
+      >
+        Export full environment & resources into Terraform manifests (only for Admin).
+      </p>
+      <form
+        class="mt-6"
+      >
+        <div
+          class="flex  items-start  "
+          data-testid="input-toggle"
+        >
+          <div
+            aria-label="toggle-btn"
+            class="inline-flex justify-between items-center cursor-pointer"
+            data-testid="input-toggle-button"
+          >
+            <input
+              class="hidden"
+              type="checkbox"
+              value=""
+            />
+            <div
+              aria-label="bg"
+              class="w-8 h-4.5 flex items-center rounded-full p-0.5  bg-neutral-300"
+            >
+              <div
+                aria-label="circle"
+                class="w-3.5 h-3.5 bg-white rounded-full shadow-lg transform  "
+              />
+            </div>
+          </div>
+          <div
+            class="relative -top-1 ml-3 cursor-pointer"
+          >
+            <p
+              class="text-neutral-400 text-ssm font-medium"
+            >
+              Export secrets
+            </p>
+            <div
+              class="text-xs text-neutral-350"
+            >
+              An optional toggle for secure secrets.
+            </div>
+          </div>
+        </div>
+        <div
+          class="flex gap-3 justify-end mt-6"
+        >
+          <button
+            class="btn btn--xlarge btn--stroked btn--no-min-w "
+            data-testid="cancel-button"
+            type="button"
+          >
+            <span>
+              Cancel
+            </span>
+          </button>
+          <button
+            class="btn btn--xlarge btn--basic btn--disabled btn--no-min-w "
+            data-testid="submit-button"
+            disabled=""
+            type="submit"
+          >
+            <span>
+              Export
+            </span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+`;

@@ -8,6 +8,9 @@ export interface TerraformExportModalFeatureProps {
   environmentId: string
 }
 
+/*
+ * @deprecated use `TerraformExportModal` from `@qovery/domains/environments/feature` instead of `TerraformExportModalFeature`
+ */
 export function TerraformExportModalFeature({ closeModal, environmentId }: TerraformExportModalFeatureProps) {
   const { projectId = '' } = useParams()
 

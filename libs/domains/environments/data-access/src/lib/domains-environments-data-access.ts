@@ -1,10 +1,16 @@
 import { createQueryKeys, type inferQueryKeys } from '@lukemorales/query-key-factory'
-import { EnvironmentActionsApi, EnvironmentMainCallsApi, EnvironmentsApi } from 'qovery-typescript-axios'
+import {
+  EnvironmentActionsApi,
+  EnvironmentExportApi,
+  EnvironmentMainCallsApi,
+  EnvironmentsApi,
+} from 'qovery-typescript-axios'
 import { type RunningState } from '@qovery/shared/enums'
 
 const environmentsApi = new EnvironmentsApi()
 const environmentMainCallsApi = new EnvironmentMainCallsApi()
 const environmentActionApi = new EnvironmentActionsApi()
+const environmentExportApi = new EnvironmentExportApi()
 
 export const environments = createQueryKeys('environments', {
   // NOTE: Value is set by WebSocket
@@ -60,6 +66,16 @@ export const mutations = {
   },
   async deleteEnvironment({ environmentId }: { environmentId: string }) {
     const result = await environmentMainCallsApi.deleteEnvironment(environmentId)
+    return result.data
+  },
+  async exportTerraform({ environmentId, exportSecrets }: { environmentId: string; exportSecrets: boolean }) {
+    const result = await environmentExportApi.exportEnvironmentConfigurationIntoTerraform(
+      environmentId,
+      exportSecrets,
+      {
+        responseType: 'blob',
+      }
+    )
     return result.data
   },
 }
