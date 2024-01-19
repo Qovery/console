@@ -32,7 +32,7 @@ exports[`ValuesOverrideAsYamlSetting should match snapshot 1`] = `
             No override defined.
           </p>
           <button
-            class="inline-flex items-center shrink-0 font-medium transition text-xs h-8 px-3 rounded bg-brand-500 hover:bg-brand-600 text-white disabled:text-brand-300 disabled:bg-brand-100 disabled:border-none"
+            class="inline-flex items-center shrink-0 font-medium transition border text-xs h-8 px-3 rounded bg-brand-500 border-brand-500 hover:border-brand-600 hover:bg-brand-600 text-white disabled:text-brand-300 disabled:bg-brand-100 disabled:border-none"
             type="button"
           >
             Create override 
