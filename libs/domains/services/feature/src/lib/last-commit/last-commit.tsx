@@ -4,9 +4,9 @@ import { match } from 'ts-pattern'
 import { type Application, type Helm, type Job } from '@qovery/domains/services/data-access'
 import { Button, CopyToClipboard, Icon, IconAwesomeEnum, Tooltip, Truncate, useModal } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
-import useDeployService from '../hooks/use-deploy-service/use-deploy-service'
+import { useDeployService } from '../hooks/use-deploy-service/use-deploy-service'
 import { useLastDeployedCommit } from '../hooks/use-last-deployed-commit/use-last-deployed-commit'
-import useService from '../hooks/use-service/use-service'
+import { useService } from '../hooks/use-service/use-service'
 import SelectCommitModal from '../select-commit-modal/select-commit-modal'
 
 export interface LastCommitElementProps {
