@@ -546,11 +546,11 @@ exports[`StepGeneralFeature should submit a form with a git repository 1`] = `
                 fill="#fff"
               />
             </svg>
-            <h1
-              class="text-neutral-400 text-xl font-bold mb-4"
+            <h2
+              class="text-neutral-400 text-base font-bold mb-4"
             >
               Deploying a Helm Chart
-            </h1>
+            </h2>
             <ul
               class="list-disc pl-4 text-neutral-400 text-sm mb-8"
             >
@@ -1013,11 +1013,11 @@ exports[`StepGeneralFeature should submit a form with a helm repository and matc
                 fill="#fff"
               />
             </svg>
-            <h1
-              class="text-neutral-400 text-xl font-bold mb-4"
+            <h2
+              class="text-neutral-400 text-base font-bold mb-4"
             >
               Deploying a Helm Chart
-            </h1>
+            </h2>
             <ul
               class="list-disc pl-4 text-neutral-400 text-sm mb-8"
             >

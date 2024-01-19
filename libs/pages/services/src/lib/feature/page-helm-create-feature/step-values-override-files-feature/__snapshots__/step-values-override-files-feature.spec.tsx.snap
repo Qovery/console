@@ -409,11 +409,11 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
                 fill="#fff"
               />
             </svg>
-            <h1
-              class="text-neutral-400 text-xl font-bold mb-4"
+            <h2
+              class="text-neutral-400 text-base font-bold mb-4"
             >
               Using values overrides
-            </h1>
+            </h2>
             <ul
               class="list-disc pl-4 text-neutral-400 text-sm mb-8"
             >
@@ -770,11 +770,11 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a yaml 1`] = `
                 fill="#fff"
               />
             </svg>
-            <h1
-              class="text-neutral-400 text-xl font-bold mb-4"
+            <h2
+              class="text-neutral-400 text-base font-bold mb-4"
             >
               Using values overrides
-            </h1>
+            </h2>
             <ul
               class="list-disc pl-4 text-neutral-400 text-sm mb-8"
             >

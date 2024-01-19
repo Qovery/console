@@ -86,7 +86,7 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
       <Section className="flex flex-col w-full h-[calc(100%-128px)] rounded-tr-sm">
         <div className="flex justify-between items-center px-5 my-5">
           <div>
-            <Heading>Pipeline</Heading>
+            <Heading className="mb-2">Pipeline</Heading>
             <p className="text-xs text-neutral-400">
               Stages allow to define deployment order within the deployment pipeline of your environment. Default stages
               are available based on the service type, you can edit/remove them based on your need.

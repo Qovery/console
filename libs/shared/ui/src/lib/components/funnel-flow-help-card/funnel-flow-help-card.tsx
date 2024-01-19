@@ -15,7 +15,10 @@ export function FunnelFlowHelpCard(props: FunnelFlowHelpCardProps) {
   return (
     <Section className={`${props.className || ''}`}>
       <Icon name={IconEnum.INFORMATION} viewBox="0 0 28 28" className="w-7 h-7 mb-4" />
-      <Heading className="mb-4">{props.title}</Heading>
+      {/* Hardcoded h2 here because help card should never be the main content */}
+      <Heading className="mb-4" level={2}>
+        {props.title}
+      </Heading>
       <ul className={`list-disc pl-4 text-neutral-400 text-sm ${props.helpSectionProps && 'mb-8'}`}>
         {props.items.map((item, index) => (
           <li className="mb-3" key={index}>
