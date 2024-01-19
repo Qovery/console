@@ -26,5 +26,5 @@
       }
     }
   },
-  "tags": []
+  "tags": ["scope:domain", "type:data-access", "slice:custom-domains"]
 }
