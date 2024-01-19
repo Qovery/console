@@ -1,0 +1,5 @@
+{
+  "routesDirectory": "./libs/shared/routes/src/lib/routes",
+  "generatedRouteTree": "./libs/shared/routes/src/lib/route-tree.gen.ts",
+  "quoteStyle": "single"
+}
