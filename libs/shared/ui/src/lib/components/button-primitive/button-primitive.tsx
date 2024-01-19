@@ -5,7 +5,7 @@ import { twMerge } from '@qovery/shared/util-js'
 export const buttonVariants = cva(['inline-flex', 'items-center', 'shrink-0', 'font-medium', 'transition'], {
   variants: {
     variant: {
-      solid: [],
+      solid: ['border'],
       surface: [],
       outline: [],
     },
@@ -61,6 +61,8 @@ export const buttonVariants = cva(['inline-flex', 'items-center', 'shrink-0', 'f
         className: [
           `bg-${color}-500`,
           `hover:bg-${color}-600`,
+          `border-${color}-500`,
+          'hover:border-${color}-600'`
           'text-white',
           'disabled:text-brand-300',
           `disabled:text-${color}-300`,
@@ -74,6 +76,8 @@ export const buttonVariants = cva(['inline-flex', 'items-center', 'shrink-0', 'f
       color: 'brand',
       className: [
         'bg-brand-500',
+        'border-brand-500',
+        'hover:border-brand-600',
         'hover:bg-brand-600',
         'text-white',
         'disabled:text-brand-300',
@@ -87,6 +91,8 @@ export const buttonVariants = cva(['inline-flex', 'items-center', 'shrink-0', 'f
       color: 'neutral',
       className: [
         'bg-neutral-500',
+        'border-neutral-500',
+        'hover:border-neutral-600',
         'hover:bg-neutral-600',
         'text-white',
         'disabled:text-brand-300',
@@ -100,6 +106,8 @@ export const buttonVariants = cva(['inline-flex', 'items-center', 'shrink-0', 'f
       color: 'green',
       className: [
         'bg-green-500',
+        'border-green-500',
+        'hover:border-green-600',
         'hover:bg-green-600',
         'text-white',
         'disabled:text-brand-300',

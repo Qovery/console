@@ -1,6 +1,9 @@
 import { type ApplicationGitRepository, GitProviderEnum } from 'qovery-typescript-axios'
+import { applicationFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders } from '@qovery/shared/util-tests'
 import LastCommit from './last-commit'
+
+const mockApplication = applicationFactoryMock(1)[0]
 
 jest.mock('../hooks/use-commits/use-commits', () => ({
   useCommits: () => ({
@@ -45,9 +48,7 @@ const gitRepository: ApplicationGitRepository = {
 
 describe('LastCommit', () => {
   it('should match snapshot', () => {
-    const { baseElement } = renderWithProviders(
-      <LastCommit gitRepository={gitRepository} serviceId="1" serviceType="APPLICATION" />
-    )
+    const { baseElement } = renderWithProviders(<LastCommit gitRepository={gitRepository} service={mockApplication} />)
     expect(baseElement).toMatchSnapshot()
   })
 })

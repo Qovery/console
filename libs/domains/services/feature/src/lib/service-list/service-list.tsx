@@ -19,7 +19,7 @@ import { type ComponentProps, Fragment, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { P, match } from 'ts-pattern'
 import { useEnvironment } from '@qovery/domains/environments/feature'
-import { type AnyService } from '@qovery/domains/services/data-access'
+import { type AnyService, type Application, type Helm, type Job } from '@qovery/domains/services/data-access'
 import {
   IconEnum,
   ServiceTypeEnum,
@@ -265,15 +265,16 @@ export function ServiceList({ organizationId, projectId, environmentId, classNam
         cell: (info) => {
           const service = info.row.original
 
-          const gitInfo = (
-            serviceType: ServiceTypeEnum.APPLICATION | ServiceTypeEnum.JOB | ServiceTypeEnum.HELM,
-            gitRepository?: ApplicationGitRepository
-          ) =>
+          const gitInfo = (service: Application | Job | Helm, gitRepository?: ApplicationGitRepository) =>
             gitRepository && (
               <div className="flex flex-row items-center gap-2" onClick={(e) => e.stopPropagation()}>
-                <LastCommitAuthor gitRepository={gitRepository} serviceId={service.id} serviceType={serviceType} />
+                <LastCommitAuthor
+                  gitRepository={gitRepository}
+                  serviceId={service.id}
+                  serviceType={service.serviceType}
+                />
                 <div className="flex flex-col gap-1">
-                  <LastCommit gitRepository={gitRepository} serviceId={service.id} serviceType={serviceType} />
+                  <LastCommit gitRepository={gitRepository} service={service} />
                   {gitRepository.branch && gitRepository.url && (
                     <a
                       href={buildGitProviderUrl(gitRepository.url, gitRepository.branch)}
@@ -346,7 +347,7 @@ export function ServiceList({ organizationId, projectId, environmentId, classNam
                     {
                       source: P.when(isJobGitSource),
                     },
-                    ({ source: { docker } }) => gitInfo(service.serviceType, docker?.git_repository)
+                    ({ source: { docker } }) => gitInfo(service, docker?.git_repository)
                   )
                   .with(
                     {
@@ -356,9 +357,7 @@ export function ServiceList({ organizationId, projectId, environmentId, classNam
                   )
                   .otherwise(() => null)
             )
-            .with({ serviceType: ServiceTypeEnum.APPLICATION }, ({ serviceType, git_repository }) =>
-              gitInfo(serviceType, git_repository)
-            )
+            .with({ serviceType: ServiceTypeEnum.APPLICATION }, (service) => gitInfo(service, service.git_repository))
             .with({ serviceType: ServiceTypeEnum.CONTAINER }, ({ image_name, tag, registry }) =>
               containerInfo({ image_name, tag, registry })
             )
@@ -371,7 +370,7 @@ export function ServiceList({ organizationId, projectId, environmentId, classNam
                   {
                     source: P.when(isHelmGitSource),
                   },
-                  ({ source: { git } }) => gitInfo(service.serviceType, git?.git_repository)
+                  ({ source: { git } }) => gitInfo(service, git?.git_repository)
                 )
                 .with(
                   {
