@@ -5,7 +5,7 @@ import { twMerge } from '@qovery/shared/util-js'
 export const buttonVariants = cva(['inline-flex', 'items-center', 'shrink-0', 'font-medium', 'transition'], {
   variants: {
     variant: {
-      solid: [],
+      solid: ['border'],
       surface: [],
       outline: [],
     },
@@ -100,6 +100,8 @@ export const buttonVariants = cva(['inline-flex', 'items-center', 'shrink-0', 'f
       color: 'green',
       className: [
         'bg-green-500',
+        'border-green-500',
+        'hover:border-green-600',
         'hover:bg-green-600',
         'text-white',
         'disabled:text-brand-300',

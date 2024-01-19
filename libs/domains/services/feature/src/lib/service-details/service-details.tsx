@@ -101,13 +101,7 @@ function GitRepository({
       <Dd>
         <div className="inline-flex items-center gap-2">
           <LastCommitAuthor gitRepository={gitRepository} serviceId={serviceId} serviceType={serviceType} />
-          <LastCommit
-            environmentId={environmentId}
-            gitRepository={gitRepository}
-            serviceName={serviceName}
-            serviceId={serviceId}
-            serviceType={serviceType}
-          />
+          <LastCommit gitRepository={gitRepository} serviceId={serviceId} />
         </div>
       </Dd>
     </>
