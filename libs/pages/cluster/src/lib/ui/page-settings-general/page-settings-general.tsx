@@ -1,7 +1,15 @@
 import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { ClusterGeneralSettings } from '@qovery/shared/console-shared'
-import { BlockContent, ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle, HelpSection } from '@qovery/shared/ui'
+import {
+  BlockContent,
+  ButtonLegacy,
+  ButtonLegacySize,
+  ButtonLegacyStyle,
+  Heading,
+  HelpSection,
+  Section,
+} from '@qovery/shared/ui'
 
 export interface PageSettingsGeneralProps {
   onSubmit: FormEventHandler<HTMLFormElement>
@@ -14,8 +22,8 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
 
   return (
     <div className="flex flex-col justify-between w-full">
-      <div className="p-8 max-w-content-with-navigation-left">
-        <h2 className="h5 mb-8 text-neutral-400">General settings</h2>
+      <Section className="p-8 max-w-content-with-navigation-left">
+        <Heading className="mb-8">General settings</Heading>
         <form onSubmit={onSubmit}>
           <BlockContent title="General information">
             <ClusterGeneralSettings fromDetail />
@@ -34,7 +42,7 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
             </ButtonLegacy>
           </div>
         </form>
-      </div>
+      </Section>
       <HelpSection
         description="Need help? You may find these links useful"
         links={[

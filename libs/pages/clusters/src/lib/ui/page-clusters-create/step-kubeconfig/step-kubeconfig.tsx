@@ -4,7 +4,7 @@ import { useController, useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { type ClusterKubeconfigData } from '@qovery/shared/interfaces'
 import { CLUSTERS_CREATION_GENERAL_URL, CLUSTERS_CREATION_URL, CLUSTERS_URL } from '@qovery/shared/routes'
-import { Button, Dropzone, Icon, IconAwesomeEnum } from '@qovery/shared/ui'
+import { Button, Dropzone, Heading, Icon, IconAwesomeEnum, Section } from '@qovery/shared/ui'
 
 export interface StepKubeconfigProps {
   onSubmit: FormEventHandler<HTMLFormElement>
@@ -58,9 +58,9 @@ export function StepKubeconfig({ onSubmit }: StepKubeconfigProps) {
   }
 
   return (
-    <div>
+    <Section>
       <div className="mb-10">
-        <h3 className="text-neutral-400 text-lg mb-2">Kubeconfig</h3>
+        <Heading className="mb-2">Kubeconfig</Heading>
         <p className="text-neutral-350">Upload your Kubeconfig file here.</p>
       </div>
       <form onSubmit={onSubmit}>
@@ -104,7 +104,7 @@ export function StepKubeconfig({ onSubmit }: StepKubeconfigProps) {
           </Button>
         </div>
       </form>
-    </div>
+    </Section>
   )
 }
 

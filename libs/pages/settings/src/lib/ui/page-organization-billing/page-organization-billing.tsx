@@ -4,12 +4,14 @@ import {
   ButtonIcon,
   ButtonIconStyle,
   ButtonLegacy,
+  Heading,
   HelpSection,
   Icon,
   IconAwesomeEnum,
   InputCreditCard,
   InputText,
   LoaderSpinner,
+  Section,
 } from '@qovery/shared/ui'
 import BillingDetailsFeature from '../../feature/page-organization-billing-feature/billing-details-feature/billing-details-feature'
 
@@ -23,11 +25,9 @@ export interface PageOrganizationBillingProps {
 export function PageOrganizationBilling(props: PageOrganizationBillingProps) {
   return (
     <div className="flex flex-col justify-between w-full max-w-content-with-navigation-left">
-      <div className="p-8">
+      <Section className="p-8">
         <div className="flex justify-between mb-8">
-          <div>
-            <h1 className="h5 text-neutral-400 mb-2">Payment method</h1>
-          </div>
+          <Heading className="mb-2">Payment method</Heading>
           <ButtonLegacy
             dataTestId="add-new-card-button"
             onClick={props.openNewCreditCardModal}
@@ -90,7 +90,7 @@ export function PageOrganizationBilling(props: PageOrganizationBillingProps) {
         </BlockContent>
 
         <BillingDetailsFeature />
-      </div>
+      </Section>
 
       <HelpSection
         data-testid="help-section"

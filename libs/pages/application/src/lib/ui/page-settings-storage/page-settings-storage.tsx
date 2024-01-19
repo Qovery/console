@@ -5,9 +5,11 @@ import {
   ButtonIconStyle,
   ButtonLegacy,
   EmptyState,
+  Heading,
   HelpSection,
   IconAwesomeEnum,
   InputText,
+  Section,
 } from '@qovery/shared/ui'
 
 export interface PageSettingsStorageProps {
@@ -20,10 +22,10 @@ export interface PageSettingsStorageProps {
 export function PageSettingsStorage(props: PageSettingsStorageProps) {
   return (
     <div className="flex flex-col justify-between w-full">
-      <div className="p-8 max-w-content-with-navigation-left">
+      <Section className="p-8 max-w-content-with-navigation-left">
         <div className="flex justify-between mb-8">
           <div>
-            <h1 className="h5 text-neutral-400 mb-2">Storage</h1>
+            <Heading className="mb-2">Storage</Heading>
             <p className="text-sm text-neutral-400">Add persistent local storage for your application.</p>
           </div>
 
@@ -87,7 +89,7 @@ export function PageSettingsStorage(props: PageSettingsStorageProps) {
             description="Qovery applications can use storage to store data that persists across deploys and restarts, making it easy to deploy stateful applications"
           />
         )}
-      </div>
+      </Section>
       <HelpSection
         description="Need help? You may find these links useful"
         links={[

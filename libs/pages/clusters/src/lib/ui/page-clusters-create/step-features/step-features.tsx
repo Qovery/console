@@ -7,9 +7,11 @@ import {
   ButtonLegacySize,
   ButtonLegacyStyle,
   Callout,
+  Heading,
   Icon,
   IconAwesomeEnum,
   LoaderSpinner,
+  Section,
 } from '@qovery/shared/ui'
 
 export interface StepFeaturesProps {
@@ -24,9 +26,9 @@ export function StepFeatures(props: StepFeaturesProps) {
   const { formState, getValues, setValue, control } = useFormContext()
 
   return (
-    <div>
+    <Section>
       <div className="mb-10">
-        <h3 className="text-neutral-400 text-lg mb-2">Features</h3>
+        <Heading className="mb-2">Features</Heading>
         <p className="text-neutral-400 text-sm mb-2">Additional features available on your cluster.</p>
       </div>
 
@@ -84,7 +86,7 @@ export function StepFeatures(props: StepFeaturesProps) {
           </ButtonLegacy>
         </div>
       </form>
-    </div>
+    </Section>
   )
 }
 

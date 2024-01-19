@@ -1,22 +1,18 @@
 import {
   type Route,
-  SERVICES_APPLICATION_CREATION_URL,
   SERVICES_CREATION_GENERAL_URL,
   SERVICES_CREATION_HEALTHCHECKS_URL,
   SERVICES_CREATION_PORTS_URL,
   SERVICES_CREATION_POST_URL,
   SERVICES_CREATION_RESOURCES_URL,
-  SERVICES_CRONJOB_CREATION_URL,
   SERVICES_DATABASE_CREATION_GENERAL_URL,
   SERVICES_DATABASE_CREATION_POST_URL,
   SERVICES_DATABASE_CREATION_RESOURCES_URL,
-  SERVICES_DATABASE_CREATION_URL,
   SERVICES_DEPLOYMENTS_URL,
   SERVICES_GENERAL_URL,
   SERVICES_HELM_CREATION_GENERAL_URL,
   SERVICES_HELM_CREATION_NETWORKING_URL,
   SERVICES_HELM_CREATION_SUMMARY_URL,
-  SERVICES_HELM_CREATION_URL,
   SERVICES_HELM_CREATION_VALUES_STEP_1_URL,
   SERVICES_HELM_CREATION_VALUES_STEP_2_URL,
   SERVICES_JOB_CREATION_CONFIGURE_URL,
@@ -24,7 +20,6 @@ import {
   SERVICES_JOB_CREATION_POST_URL,
   SERVICES_JOB_CREATION_RESOURCES_URL,
   SERVICES_JOB_CREATION_VARIABLE_URL,
-  SERVICES_LIFECYCLE_CREATION_URL,
   SERVICES_SETTINGS_DANGER_ZONE_URL,
   SERVICES_SETTINGS_GENERAL_URL,
   SERVICES_SETTINGS_PIPELINE_URL,
@@ -32,25 +27,21 @@ import {
   SERVICES_SETTINGS_RULES_URL,
   SERVICES_SETTINGS_URL,
 } from '@qovery/shared/routes'
-import { PageApplicationCreateFeature } from '../feature/page-application-create-feature/page-application-create-feature'
 import { StepGeneralFeature as ApplicationStepGeneralFeature } from '../feature/page-application-create-feature/step-general-feature/step-general-feature'
 import { StepHealthchecksFeature as ApplicationStepHealthchecksFeature } from '../feature/page-application-create-feature/step-healthchecks-feature/step-healthchecks-feature'
 import { StepPortFeature as ApplicationStepPortFeature } from '../feature/page-application-create-feature/step-port-feature/step-port-feature'
 import { StepResourcesFeature as ApplicationStepResourcesFeature } from '../feature/page-application-create-feature/step-resources-feature/step-resources-feature'
 import { StepSummaryFeature as ApplicationStepSummaryFeature } from '../feature/page-application-create-feature/step-summary-feature/step-summary-feature'
-import { PageDatabaseCreateFeature } from '../feature/page-database-create-feature/page-database-create-feature'
 import { StepGeneralFeature as DatabaseStepGeneralFeature } from '../feature/page-database-create-feature/step-general-feature/step-general-feature'
 import { StepResourcesFeature as DatabaseStepResourcesFeature } from '../feature/page-database-create-feature/step-resources-feature/step-resources-feature'
 import { StepSummaryFeature as DatabaseStepSummaryFeature } from '../feature/page-database-create-feature/step-summary-feature/step-summary-feature'
 import PageDeploymentsFeature from '../feature/page-deployments-feature/page-deployments-feature'
 import PageGeneralFeature from '../feature/page-general-feature/page-general-feature'
-import PageHelmCreateFeature from '../feature/page-helm-create-feature/page-helm-create-feature'
 import { StepGeneralFeature as HelmStepGeneralFeature } from '../feature/page-helm-create-feature/step-general-feature/step-general-feature'
 import { StepNetworkingFeature as HelmStepNetworkingFeature } from '../feature/page-helm-create-feature/step-networking-feature/step-networking-feature'
 import { StepSummaryFeature as HelmStepSummaryFeature } from '../feature/page-helm-create-feature/step-summary-feature/step-summary-feature'
 import { StepValuesOverrideArgumentsFeature as HelmStepValuesOverrideArgumentsFeature } from '../feature/page-helm-create-feature/step-values-override-arguments-feature/step-values-override-arguments-feature'
 import { StepValuesOverrideFilesFeature as HelmStepValuesOverrideFilesFeature } from '../feature/page-helm-create-feature/step-values-override-files-feature/step-values-override-files-feature'
-import { PageJobCreateFeature } from '../feature/page-job-create-feature/page-job-create-feature'
 import StepConfigureFeature from '../feature/page-job-create-feature/step-configure-feature/step-configure-feature'
 import { StepGeneralFeature } from '../feature/page-job-create-feature/step-general-feature/step-general-feature'
 import { StepResourcesFeature } from '../feature/page-job-create-feature/step-resources-feature/step-resources-feature'
@@ -75,26 +66,6 @@ export const ROUTER_SERVICES: Route[] = [
   {
     path: `${SERVICES_SETTINGS_URL}/*`,
     component: <PageSettingsFeature />,
-  },
-  {
-    path: `${SERVICES_DATABASE_CREATION_URL}/*`,
-    component: <PageDatabaseCreateFeature />,
-  },
-  {
-    path: `${SERVICES_CRONJOB_CREATION_URL}/*`,
-    component: <PageJobCreateFeature />,
-  },
-  {
-    path: `${SERVICES_LIFECYCLE_CREATION_URL}/*`,
-    component: <PageJobCreateFeature />,
-  },
-  {
-    path: `${SERVICES_APPLICATION_CREATION_URL}/*`,
-    component: <PageApplicationCreateFeature />,
-  },
-  {
-    path: `${SERVICES_HELM_CREATION_URL}/*`,
-    component: <PageHelmCreateFeature />,
   },
 ]
 

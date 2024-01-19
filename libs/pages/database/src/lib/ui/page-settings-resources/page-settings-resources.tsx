@@ -8,9 +8,11 @@ import {
   ButtonLegacySize,
   ButtonLegacyStyle,
   Callout,
+  Heading,
   HelpSection,
   Icon,
   IconAwesomeEnum,
+  Section,
 } from '@qovery/shared/ui'
 
 export interface PageSettingsResourcesProps {
@@ -33,8 +35,8 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
 
   return (
     <div className="flex flex-col justify-between w-full">
-      <div className="p-8 max-w-content-with-navigation-left">
-        <h2 className="h5 text-neutral-400 mb-2">Resources</h2>
+      <Section className="p-8 max-w-content-with-navigation-left">
+        <Heading className="mb-2">Resources</Heading>
         <p className="text-sm text-neutral-400 max-w-content-with-navigation-left mb-8">
           Manage the database's resources
         </p>
@@ -77,7 +79,7 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
             </ButtonLegacy>
           </div>
         </form>
-      </div>
+      </Section>
       <HelpSection
         description="Need help? You may find these links useful"
         links={[

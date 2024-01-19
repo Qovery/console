@@ -5,10 +5,12 @@ import {
   ButtonLegacy,
   ButtonLegacySize,
   ButtonLegacyStyle,
+  Heading,
   HelpSection,
   InputSelect,
   InputText,
   InputToggle,
+  Section,
 } from '@qovery/shared/ui'
 
 export interface PageSettingsDeploymentRulesProps {
@@ -23,11 +25,9 @@ export function PageSettingsDeploymentRules(props: PageSettingsDeploymentRulesPr
 
   return (
     <div className="flex flex-col justify-between w-full">
-      <div className="p-8  max-w-content-with-navigation-left">
+      <Section className="p-8  max-w-content-with-navigation-left">
         <div className="flex justify-between mb-8">
-          <div>
-            <h2 className="h5 text-neutral-400 mb-2">Deployment rules</h2>
-          </div>
+          <Heading className="mb-2">Deployment rules</Heading>
         </div>
         <form onSubmit={onSubmit}>
           <BlockContent title="Start & stop">
@@ -135,7 +135,7 @@ export function PageSettingsDeploymentRules(props: PageSettingsDeploymentRulesPr
             </ButtonLegacy>
           </div>
         </form>
-      </div>
+      </Section>
       <HelpSection
         description="Need help? You may find these links useful"
         links={[

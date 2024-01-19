@@ -1,6 +1,6 @@
 import { type CloudProviderEnum, type ClusterFeature } from 'qovery-typescript-axios'
 import { CardClusterFeature } from '@qovery/shared/console-shared'
-import { BlockContent, HelpSection, LoaderSpinner } from '@qovery/shared/ui'
+import { BlockContent, Heading, HelpSection, LoaderSpinner, Section } from '@qovery/shared/ui'
 
 export interface PageSettingsFeaturesProps {
   loading: boolean
@@ -13,8 +13,8 @@ export function PageSettingsFeatures(props: PageSettingsFeaturesProps) {
 
   return (
     <div className="flex flex-col justify-between w-full">
-      <div className="p-8 max-w-content-with-navigation-left">
-        <h2 className="h5 mb-8 text-neutral-400">Features</h2>
+      <Section className="p-8 max-w-content-with-navigation-left">
+        <Heading className="mb-8">Features</Heading>
         <BlockContent title="Configured features" classNameContent="p-0">
           {loading && (
             <div className="flex justify-center p-5">
@@ -25,7 +25,7 @@ export function PageSettingsFeatures(props: PageSettingsFeaturesProps) {
             <CardClusterFeature key={feature.id} feature={feature} cloudProvider={cloudProvider} disabled />
           ))}
         </BlockContent>
-      </div>
+      </Section>
       <HelpSection
         description="Need help? You may find these links useful"
         links={[

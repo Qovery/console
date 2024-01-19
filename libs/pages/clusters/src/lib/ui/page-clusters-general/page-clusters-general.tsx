@@ -1,7 +1,15 @@
 import { type Cluster } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
 import { CLUSTERS_CREATION_GENERAL_URL, CLUSTERS_CREATION_URL, CLUSTERS_URL } from '@qovery/shared/routes'
-import { ButtonLegacy, EmptyState, HelpSection, IconAwesomeEnum, LoaderSpinner } from '@qovery/shared/ui'
+import {
+  ButtonLegacy,
+  EmptyState,
+  Heading,
+  HelpSection,
+  IconAwesomeEnum,
+  LoaderSpinner,
+  Section,
+} from '@qovery/shared/ui'
 import CardCluster from '../card-cluster/card-cluster'
 
 export interface PageClustersGeneralProps {
@@ -17,10 +25,10 @@ export function PageClustersGeneral(props: PageClustersGeneralProps) {
 
   return (
     <div className="flex flex-col justify-between w-full">
-      <div className="p-8">
+      <Section className="p-8">
         <div className="flex justify-between mb-8">
           <div>
-            <h1 className="h5 text-neutral-400 mb-2">Manage your clusters</h1>
+            <Heading className="mb-2">Manage your clusters</Heading>
             <p className="text-neutral-400 text-xs">Manage your infrastructure across different Cloud providers.</p>
           </div>
           <ButtonLegacy iconRight={IconAwesomeEnum.CIRCLE_PLUS} link={goToCreateCluster}>
@@ -50,7 +58,7 @@ export function PageClustersGeneral(props: PageClustersGeneralProps) {
             </EmptyState>
           )
         )}
-      </div>
+      </Section>
       <HelpSection
         description="Need help? You may find these links useful"
         links={[

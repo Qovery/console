@@ -12,7 +12,7 @@ import {
   JobGeneralSettings,
 } from '@qovery/shared/console-shared'
 import { ServiceTypeEnum, isJobGitSource } from '@qovery/shared/enums'
-import { BlockContent, Button, HelpSection, InputSelect, InputText } from '@qovery/shared/ui'
+import { BlockContent, Button, Heading, HelpSection, InputSelect, InputText, Section } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
 export interface PageSettingsGeneralProps {
@@ -99,8 +99,8 @@ export function PageSettingsGeneral({
 
   return (
     <div className="flex flex-col justify-between w-full">
-      <div className="p-8 max-w-content-with-navigation-left">
-        <h2 className="h5 mb-8 text-neutral-400">General settings</h2>
+      <Section className="p-8 max-w-content-with-navigation-left">
+        <Heading className="mb-8">General settings</Heading>
         <form onSubmit={onSubmit}>
           <BlockContent title="General information">
             <GeneralSetting label="Application name" />
@@ -180,7 +180,7 @@ export function PageSettingsGeneral({
             </Button>
           </div>
         </form>
-      </div>
+      </Section>
       <HelpSection
         description="Need help? You may find these links useful"
         links={match(service?.serviceType)

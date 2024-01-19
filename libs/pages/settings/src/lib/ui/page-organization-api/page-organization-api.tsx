@@ -5,10 +5,12 @@ import {
   ButtonIconStyle,
   ButtonLegacy,
   ButtonLegacySize,
+  Heading,
   HelpSection,
   Icon,
   IconAwesomeEnum,
   LoaderSpinner,
+  Section,
   Tooltip,
   Truncate,
 } from '@qovery/shared/ui'
@@ -27,10 +29,10 @@ export function PageOrganizationApi(props: PageOrganizationApiProps) {
 
   return (
     <div className="flex flex-col justify-between w-full">
-      <div className="p-8 max-w-content-with-navigation-left">
+      <Section className="p-8 max-w-content-with-navigation-left">
         <div className="flex justify-between mb-8">
           <div>
-            <h1 className="h5 text-neutral-400 mb-2">API Token</h1>
+            <Heading className="h5 text-neutral-400 mb-2">API Token</Heading>
             <p className="text-neutral-400 text-xs">
               API token allows third-party applications or script to access your organization via the Qovery API (CI/CD,
               Terraform script, Pulumi etc..). A role can be assigned to limit the Token permission.
@@ -96,7 +98,7 @@ export function PageOrganizationApi(props: PageOrganizationApiProps) {
             </div>
           )}
         </BlockContent>
-      </div>
+      </Section>
       <HelpSection
         description="Need help? You may find these links useful"
         links={[

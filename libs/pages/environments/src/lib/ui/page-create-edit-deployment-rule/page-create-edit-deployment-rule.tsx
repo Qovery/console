@@ -11,12 +11,14 @@ import {
   ButtonLegacy,
   ButtonLegacySize,
   ButtonLegacyStyle,
+  Heading,
   HelpSection,
   Icon,
   InputSelect,
   InputText,
   InputTextArea,
   InputToggle,
+  Section,
 } from '@qovery/shared/ui'
 import HelpSidebar from '../help-sidebar/help-sidebar'
 
@@ -61,7 +63,7 @@ export function PageCreateEditDeploymentRule(props: PageCreateEditDeploymentRule
     <div className="mt-2 bg-white rounded">
       <div className="flex">
         <div className="flex-grow overflow-y-auto">
-          <div className="py-7 px-10">
+          <Section className="py-7 px-10">
             <div className="max-w-[620px]">
               <ButtonLegacy
                 size={ButtonLegacySize.TINY}
@@ -75,7 +77,7 @@ export function PageCreateEditDeploymentRule(props: PageCreateEditDeploymentRule
                 Back
               </ButtonLegacy>
 
-              <h1 className="font-bold text-xl text-neutral-400 mb-2">{title}</h1>
+              <Heading className="mb-2">{title}</Heading>
 
               <div className="mb-10">
                 <p className="text-neutral-400 text-xs leading-5">
@@ -268,7 +270,7 @@ export function PageCreateEditDeploymentRule(props: PageCreateEditDeploymentRule
                 </div>
               </form>
             </div>
-          </div>
+          </Section>
           <div className="bg-white rounded-b w-full">
             <HelpSection description="Need help? You may find these links useful" links={listHelpfulLinks} />
           </div>

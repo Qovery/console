@@ -2,7 +2,7 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { IconEnum } from '@qovery/shared/enums'
-import { BlockContent, Button, HelpSection, Icon, InputToggle } from '@qovery/shared/ui'
+import { BlockContent, Button, Heading, HelpSection, Icon, InputToggle, Section } from '@qovery/shared/ui'
 
 export interface PageSettingsPreviewEnvironmentsProps {
   onSubmit: () => void
@@ -25,11 +25,9 @@ export function PageSettingsPreviewEnvironments(props: PageSettingsPreviewEnviro
 
   return (
     <div className="flex flex-col justify-between w-full">
-      <div className="p-8 max-w-content-with-navigation-left">
+      <Section className="p-8 max-w-content-with-navigation-left">
         <div className="flex justify-between mb-8">
-          <div>
-            <h2 className="h5 text-neutral-400 mb-2">Preview environments</h2>
-          </div>
+          <Heading className="mb-2">Preview environments</Heading>
         </div>
         <form onSubmit={onSubmit}>
           <BlockContent title="Global settings">
@@ -110,7 +108,7 @@ export function PageSettingsPreviewEnvironments(props: PageSettingsPreviewEnviro
             </Button>
           </div>
         </form>
-      </div>
+      </Section>
       <HelpSection
         description="Need help? You may find these links useful"
         links={[

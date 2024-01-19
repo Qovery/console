@@ -5,7 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { ClusterResourcesSettingsFeature } from '@qovery/shared/console-shared'
 import { type ApplicationGeneralData } from '@qovery/shared/interfaces'
 import { CLUSTERS_CREATION_GENERAL_URL, CLUSTERS_CREATION_URL, CLUSTERS_URL } from '@qovery/shared/routes'
-import { ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle } from '@qovery/shared/ui'
+import { ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle, Heading, Section } from '@qovery/shared/ui'
 
 export interface StepResourcesProps {
   onSubmit: FormEventHandler<HTMLFormElement>
@@ -19,9 +19,9 @@ export function StepResources(props: StepResourcesProps) {
   const navigate = useNavigate()
 
   return (
-    <div>
+    <Section>
       <div className="mb-10">
-        <h3 className="text-neutral-400 text-lg mb-2">Set resources</h3>
+        <Heading className="mb-2">Set resources</Heading>
       </div>
 
       <form onSubmit={props.onSubmit}>
@@ -54,7 +54,7 @@ export function StepResources(props: StepResourcesProps) {
           </ButtonLegacy>
         </div>
       </form>
-    </div>
+    </Section>
   )
 }
 

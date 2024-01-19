@@ -2,7 +2,7 @@ import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { ApplicationSettingsHealthchecks } from '@qovery/shared/console-shared'
 import { type PortData } from '@qovery/shared/interfaces'
-import { ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle } from '@qovery/shared/ui'
+import { ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle, Heading, Section } from '@qovery/shared/ui'
 
 export interface StepHealthchecksProps {
   onBack: () => void
@@ -14,9 +14,9 @@ export function StepHealthchecks({ ports, onSubmit, onBack }: StepHealthchecksPr
   const { formState } = useFormContext()
 
   return (
-    <>
+    <Section>
       <div className="mb-10">
-        <h3 className="text-neutral-400 text-lg mb-2">Health checks</h3>
+        <Heading className="mb-2">Health checks</Heading>
         <p className="text-neutral-400 text-xs">
           Health checks are automatic ways for Kubernetes to check the status of your application and decide if it can
           receive traffic or needs to be restarted (during the deployment and run phases). These checks are managed by
@@ -50,7 +50,7 @@ export function StepHealthchecks({ ports, onSubmit, onBack }: StepHealthchecksPr
           </ButtonLegacy>
         </div>
       </form>
-    </>
+    </Section>
   )
 }
 

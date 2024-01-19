@@ -2,7 +2,7 @@ import { type APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { type FlowVariableData, type VariableData } from '@qovery/shared/interfaces'
-import { ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle } from '@qovery/shared/ui'
+import { ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle, Heading, Section } from '@qovery/shared/ui'
 import VariableRow from '../variable-row/variable-row'
 
 export interface FlowCreateVariableProps {
@@ -19,10 +19,10 @@ export function FlowCreateVariable(props: FlowCreateVariableProps) {
   const gridTemplateColumns = '6fr 6fr 204px 2fr 1fr'
 
   return (
-    <div>
+    <Section>
       <div className="mb-10">
         <div className="flex justify-between mb-2 items-center">
-          <h3 className="text-neutral-400 text-lg">Set environment variables</h3>
+          <Heading>Set environment variables</Heading>
           <ButtonLegacy size={ButtonLegacySize.TINY} className="btn--no-min-w" onClick={props.onAdd}>
             Add variable
           </ButtonLegacy>
@@ -75,7 +75,7 @@ export function FlowCreateVariable(props: FlowCreateVariableProps) {
           </ButtonLegacy>
         </div>
       </form>
-    </div>
+    </Section>
   )
 }
 

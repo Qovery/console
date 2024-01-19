@@ -127,7 +127,6 @@ export function PageClusterCreateFeature() {
         totalSteps={steps(generalData, resourcesData?.cluster_type).length}
         currentStep={currentStep}
         currentTitle={steps(generalData, resourcesData?.cluster_type)[currentStep - 1]?.title}
-        portal
       >
         <Routes>
           {ROUTER_CLUSTER_CREATION.map((route) => (

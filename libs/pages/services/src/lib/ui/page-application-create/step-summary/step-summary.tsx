@@ -11,8 +11,10 @@ import {
   ButtonLegacy,
   ButtonLegacySize,
   ButtonLegacyStyle,
+  Heading,
   Icon,
   IconAwesomeEnum,
+  Section,
   Truncate,
 } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
@@ -45,11 +47,9 @@ export function StepSummary({
   selectedRegistryName,
 }: StepSummaryProps) {
   return (
-    <div>
+    <Section>
       <div className="mb-10">
-        <div className="flex justify-between mb-2 items-center">
-          <h3 className="text-neutral-400 text-lg">Ready to install your Application</h3>
-        </div>
+        <Heading className="mb-2">Ready to install your Application</Heading>
         <p className="text-xs text-neutral-400 mb-2">
           The basic application setup is done, you can now deploy your application or move forward with some advanced
           setup.
@@ -315,7 +315,7 @@ export function StepSummary({
           </ButtonLegacy>
         </div>
       </div>
-    </div>
+    </Section>
   )
 }
 

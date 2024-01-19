@@ -6,8 +6,10 @@ import {
   ButtonLegacySize,
   ButtonLegacyStyle,
   Callout,
+  Heading,
   Icon,
   IconAwesomeEnum,
+  Section,
 } from '@qovery/shared/ui'
 import {
   type GeneralData,
@@ -28,10 +30,10 @@ export interface StepSummaryProps {
 
 export function StepSummary(props: StepSummaryProps) {
   return (
-    <div>
+    <Section>
       <div className="mb-10">
         <div className="flex justify-between mb-2 items-center">
-          <h3 className="text-neutral-400 text-lg">Ready to install your database</h3>
+          <Heading className="text-neutral-400 text-lg">Ready to install your database</Heading>
         </div>
         <p className="text-xs text-neutral-400 mb-2">
           The basic database setup is done, you can now deploy your database or move forward with some advanced setup.
@@ -153,7 +155,7 @@ export function StepSummary(props: StepSummaryProps) {
           </div>
         </div>
       </div>
-    </div>
+    </Section>
   )
 }
 

@@ -4,7 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { ClusterRemoteSettings } from '@qovery/shared/console-shared'
 import { type ClusterGeneralData } from '@qovery/shared/interfaces'
 import { CLUSTERS_CREATION_RESOURCES_URL, CLUSTERS_CREATION_URL, CLUSTERS_URL } from '@qovery/shared/routes'
-import { ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle, ExternalLink } from '@qovery/shared/ui'
+import { ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle, ExternalLink, Heading, Section } from '@qovery/shared/ui'
 
 export interface StepRemoteProps {
   onSubmit: FormEventHandler<HTMLFormElement>
@@ -17,9 +17,9 @@ export function StepRemote(props: StepRemoteProps) {
   const navigate = useNavigate()
 
   return (
-    <div>
+    <Section>
       <div className="mb-10">
-        <h3 className="text-neutral-400 text-lg mb-2">Set SSH Key</h3>
+        <Heading className="mb-2">Set SSH Key</Heading>
         <p className="text-neutral-400 text-sm mb-2">
           Specify an SSH key to access your EC2 instance remotely. You can also do this later in the cluster settings,
           but we recommend doing it now to avoid downtime.
@@ -57,7 +57,7 @@ export function StepRemote(props: StepRemoteProps) {
           </ButtonLegacy>
         </div>
       </form>
-    </div>
+    </Section>
   )
 }
 

@@ -8,10 +8,12 @@ import {
   ButtonIconStyle,
   ButtonLegacy,
   ButtonLegacySize,
+  Heading,
   HelpSection,
   Icon,
   IconAwesomeEnum,
   LoaderSpinner,
+  Section,
 } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { RolesIcons } from '../page-organization-members/row-member/row-member'
@@ -49,10 +51,10 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
 
   return (
     <div className="flex flex-col justify-between w-full max-w-content-with-navigation-left">
-      <div className="p-8">
+      <Section className="p-8">
         <div className="flex justify-between mb-8">
           <div>
-            <h1 className="h5 text-neutral-400 mb-2">Manage your roles</h1>
+            <Heading className="mb-2">Manage your roles</Heading>
             <p className="text-neutral-400 text-xs">Manage the existing custom roles or create a new one.</p>
           </div>
           <ButtonLegacy onClick={onAddRole} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>
@@ -129,7 +131,7 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
             </BlockContent>
           )
         )}
-      </div>
+      </Section>
       <HelpSection
         description="Need help? You may find these links useful"
         links={[

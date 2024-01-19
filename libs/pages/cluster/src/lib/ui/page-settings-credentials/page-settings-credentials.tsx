@@ -2,7 +2,15 @@ import { type CloudProviderEnum } from 'qovery-typescript-axios'
 import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { ClusterCredentialsSettingsFeature } from '@qovery/shared/console-shared'
-import { BlockContent, ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle, HelpSection } from '@qovery/shared/ui'
+import {
+  BlockContent,
+  ButtonLegacy,
+  ButtonLegacySize,
+  ButtonLegacyStyle,
+  Heading,
+  HelpSection,
+  Section,
+} from '@qovery/shared/ui'
 
 export interface PageSettingsCredentialsProps {
   onSubmit: FormEventHandler<HTMLFormElement>
@@ -16,8 +24,8 @@ export function PageSettingsCredentials(props: PageSettingsCredentialsProps) {
 
   return (
     <div className="flex flex-col justify-between w-full">
-      <div className="p-8 max-w-content-with-navigation-left">
-        <h2 className="h5 mb-8 text-neutral-400">Credentials</h2>
+      <Section className="p-8 max-w-content-with-navigation-left">
+        <Heading className="mb-8">Credentials</Heading>
         <form onSubmit={onSubmit}>
           <BlockContent title="Configured credentials">
             <ClusterCredentialsSettingsFeature cloudProvider={cloudProvider} />
@@ -36,7 +44,7 @@ export function PageSettingsCredentials(props: PageSettingsCredentialsProps) {
             </ButtonLegacy>
           </div>
         </form>
-      </div>
+      </Section>
       <HelpSection
         description="Need help? You may find these links useful"
         links={[

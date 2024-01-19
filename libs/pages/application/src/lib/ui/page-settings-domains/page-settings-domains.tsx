@@ -22,8 +22,8 @@ export interface PageSettingsDomainsProps {
 
 export function PageSettingsDomains(props: PageSettingsDomainsProps) {
   return (
-    <Section className="justify-between w-full">
-      <div className="p-8  max-w-content-with-navigation-left">
+    <div className="justify-between w-full">
+      <Section className="p-8  max-w-content-with-navigation-left">
         <div className="flex justify-between mb-8">
           <div>
             <Heading className="mb-2">Domain</Heading>
@@ -84,7 +84,7 @@ export function PageSettingsDomains(props: PageSettingsDomainsProps) {
         ) : (
           <EmptyState title="No domains are set" description="Define a custom domain for your application" />
         )}
-      </div>
+      </Section>
       <HelpSection
         description="Need help? You may find these links useful"
         links={[
@@ -94,7 +94,7 @@ export function PageSettingsDomains(props: PageSettingsDomainsProps) {
           },
         ]}
       />
-    </Section>
+    </div>
   )
 }
 

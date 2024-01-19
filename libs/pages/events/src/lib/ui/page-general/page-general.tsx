@@ -1,10 +1,12 @@
 import { OrganizationEventOrigin, type OrganizationEventResponse, OrganizationEventType } from 'qovery-typescript-axios'
 import { type Dispatch, type SetStateAction } from 'react'
 import {
+  Heading,
   HelpSection,
   Icon,
   IconAwesomeEnum,
   Pagination,
+  Section,
   Table,
   type TableFilterProps,
   type TableHeadProps,
@@ -86,10 +88,8 @@ export function PageGeneral({
 
   return (
     <>
-      <div className="px-5">
-        <div className="py-6 flex justify-between">
-          <h2 className="h5 text-neutral-400">Audit Logs</h2>
-        </div>
+      <Section className="px-5">
+        <Heading className="py-6 flex justify-between">Audit Logs</Heading>
         <div className="flex items-center mb-4 h-9">
           <CustomFilterFeature handleClearFilter={handleClearFilter} />
         </div>
@@ -133,7 +133,7 @@ export function PageGeneral({
           pageSize={pageSize}
           onPageSizeChange={onPageSizeChange}
         />
-      </div>
+      </Section>
       <HelpSection
         description="Need help? You may find these links useful"
         links={[

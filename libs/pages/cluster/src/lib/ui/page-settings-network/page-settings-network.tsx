@@ -5,9 +5,11 @@ import {
   ButtonIconStyle,
   ButtonLegacy,
   EmptyState,
+  Heading,
   HelpSection,
   IconAwesomeEnum,
   LoaderSpinner,
+  Section,
   Tooltip,
 } from '@qovery/shared/ui'
 
@@ -22,10 +24,10 @@ export interface PageSettingsNetworkProps {
 export function PageSettingsNetwork(props: PageSettingsNetworkProps) {
   return (
     <div className="flex flex-col justify-between w-full">
-      <div className="p-8  max-w-content-with-navigation-left">
+      <Section className="p-8 max-w-content-with-navigation-left">
         <div className="flex justify-between mb-8">
           <div>
-            <h1 className="h5 text-neutral-400 mb-2">Network</h1>
+            <Heading className="mb-2">Network</Heading>
             <p className="text-sm text-neutral-400 max-w-lg">
               The Network tab in your cluster settings allows you to update your Qovery VPC route table so that you can
               perform VPC peering.
@@ -97,7 +99,7 @@ export function PageSettingsNetwork(props: PageSettingsNetworkProps) {
         ) : (
           <EmptyState title="No network are set" description="Define a network for your cluster" />
         )}
-      </div>
+      </Section>
       <HelpSection
         description="Need help? You may find these links useful"
         links={[

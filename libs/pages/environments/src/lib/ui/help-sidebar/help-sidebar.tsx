@@ -1,4 +1,4 @@
-import { ExternalLink, Icon } from '@qovery/shared/ui'
+import { ExternalLink, Heading, Icon, Section } from '@qovery/shared/ui'
 
 export function HelpSidebar() {
   const LIST = [
@@ -7,13 +7,13 @@ export function HelpSidebar() {
   ]
 
   return (
-    <div className="w-right-help-sidebar border-l border-neutral-200 relative">
+    <Section className="w-right-help-sidebar border-l border-neutral-200 relative">
       <div className="sticky top-14">
         <div className="p-10 border-b border-neutral-200">
           <span className="flex justify-center items-center rounded bg-purple-500 w-7 h-7 text-sm text-white">
             <Icon name="icon-solid-lightbulb" />
           </span>
-          <h2 className="h5 text-neutral-400 mt-5 mb-5">Why using Deployment Rule?</h2>
+          <Heading className="my-5">Why using Deployment Rule?</Heading>
           <ul className="text-sm ml-2">
             {LIST.map((l, index) => (
               <li
@@ -36,7 +36,7 @@ export function HelpSidebar() {
           </ExternalLink>
         </div>
       </div>
-    </div>
+    </Section>
   )
 }
 

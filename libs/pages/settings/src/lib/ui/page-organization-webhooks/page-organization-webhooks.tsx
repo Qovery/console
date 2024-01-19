@@ -6,11 +6,13 @@ import {
   ButtonIconStyle,
   ButtonLegacy,
   ButtonLegacySize,
+  Heading,
   HelpSection,
   Icon,
   IconAwesomeEnum,
   InputToggle,
   LoaderSpinner,
+  Section,
   Tooltip,
   Truncate,
 } from '@qovery/shared/ui'
@@ -29,10 +31,10 @@ export interface PageOrganizationWebhooksProps {
 export function PageOrganizationWebhooks(props: PageOrganizationWebhooksProps) {
   return (
     <div className="flex flex-col justify-between w-full">
-      <div className="p-8 max-w-content-with-navigation-left">
+      <Section className="p-8 max-w-content-with-navigation-left">
         <div className="flex justify-between mb-8 gap-3">
           <div>
-            <h1 className="h5 text-neutral-400 mb-2">Webhook</h1>
+            <Heading className="mb-2">Webhook</Heading>
             <p className="text-neutral-400 text-xs">
               Qovery allows you to create webhooks at organization-level so that, when an event happens on an
               environment within your organization, you can get notified on external applications (for instance, Slack).
@@ -124,7 +126,7 @@ export function PageOrganizationWebhooks(props: PageOrganizationWebhooksProps) {
             </div>
           )}
         </BlockContent>
-      </div>
+      </Section>
       <HelpSection
         description="Need help? You may find these links useful"
         links={[

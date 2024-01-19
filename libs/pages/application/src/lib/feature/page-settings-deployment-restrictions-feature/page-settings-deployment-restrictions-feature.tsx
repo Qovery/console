@@ -12,10 +12,12 @@ import {
   ButtonIconStyle,
   ButtonLegacy,
   EmptyState,
+  Heading,
   HelpSection,
   IconAwesomeEnum,
   InputText,
   LoaderSpinner,
+  Section,
   useModal,
   useModalConfirmation,
 } from '@qovery/shared/ui'
@@ -39,12 +41,10 @@ export function PageSettingsDeploymentRestrictionsFeature() {
 
   return (
     <div className="flex flex-col justify-between w-full">
-      <div className="p-8 max-w-content-with-navigation-left">
+      <Section className="p-8 max-w-content-with-navigation-left">
         <div className="flex justify-between mb-8">
           <div>
-            <div className="flex justify-between mb-2 items-center">
-              <h3 className="text-neutral-400 text-lg">Deployment Restrictions</h3>
-            </div>
+            <Heading className="mb-2">Deployment Restrictions</Heading>
 
             <p className="text-sm text-neutral-400 max-w-lg">
               Specify which changes in your repository should trigger or not an auto-deploy of your application
@@ -72,7 +72,7 @@ export function PageSettingsDeploymentRestrictionsFeature() {
             <LoaderSpinner className="w-6" />
           </div>
         )}
-      </div>
+      </Section>
       <HelpSection
         description="Need help? You may find these links useful"
         links={[

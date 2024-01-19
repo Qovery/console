@@ -5,9 +5,11 @@ import {
   ButtonLegacy,
   ButtonLegacySize,
   ButtonLegacyStyle,
+  Heading,
   HelpSection,
   InputText,
   InputTextArea,
+  Section,
 } from '@qovery/shared/ui'
 
 export interface PageProjectGeneralProps {
@@ -21,8 +23,8 @@ export function PageProjectGeneral(props: PageProjectGeneralProps) {
 
   return (
     <div key={getValues().toString()} className="flex flex-col justify-between w-full">
-      <div className="p-8 max-w-content-with-navigation-left">
-        <h1 className="h5 mb-10 text-neutral-400">General</h1>
+      <Section className="p-8 max-w-content-with-navigation-left">
+        <Heading className="mb-10">General</Heading>
         <form onSubmit={onSubmit}>
           <BlockContent title="Project settings">
             <Controller
@@ -69,7 +71,7 @@ export function PageProjectGeneral(props: PageProjectGeneralProps) {
             </ButtonLegacy>
           </div>
         </form>
-      </div>
+      </Section>
       <HelpSection
         description="Need help? You may find these links useful"
         links={[
