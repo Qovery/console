@@ -1,13 +1,6 @@
 import { Auth0Provider } from '@auth0/auth0-react'
 import { Provider as TooltipProvider } from '@radix-ui/react-tooltip'
-import {
-  type Mutation,
-  MutationCache,
-  type Query,
-  QueryCache,
-  QueryClient,
-  QueryClientProvider,
-} from '@tanstack/react-query'
+import { QueryClientProvider } from '@tanstack/react-query'
 import posthog from 'posthog-js'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
@@ -17,8 +10,7 @@ import { BrowserRouter } from 'react-router-dom'
 import { IntercomProvider } from 'react-use-intercom'
 import { InstantSearchProvider } from '@qovery/shared/assistant/feature'
 import { LOGIN_AUTH_REDIRECT_URL, LOGIN_URL } from '@qovery/shared/routes'
-import { ModalProvider, ToastBehavior, toastError } from '@qovery/shared/ui'
-import { ToastEnum, toast } from '@qovery/shared/ui'
+import { ModalProvider, ToastBehavior } from '@qovery/shared/ui'
 import {
   INTERCOM,
   OAUTH_AUDIENCE,
@@ -28,39 +20,7 @@ import {
   POSTHOG_APIHOST,
 } from '@qovery/shared/util-node-env'
 import App from './app/app'
-
-type ToastArgs = {
-  status?: ToastEnum
-  title: string
-  description?: string
-  callback?: () => void
-  iconAction?: string
-  labelAction?: string
-  externalLink?: string
-}
-
-interface _QueryMeta {
-  notifyOnSuccess?: boolean | ((data: unknown, query: Query<unknown, unknown, unknown>) => ToastArgs) | ToastArgs
-  notifyOnError?: boolean | { title: string; description?: string }
-}
-
-interface _MutationMeta {
-  notifyOnSuccess?:
-    | boolean
-    | ((
-        data: unknown,
-        variables: unknown,
-        context: unknown,
-        mutation: Mutation<unknown, unknown, unknown>
-      ) => ToastArgs)
-    | ToastArgs
-  notifyOnError?: boolean | { title: string; description?: string }
-}
-
-declare module '@tanstack/react-query' {
-  interface MutationMeta extends _MutationMeta {}
-  interface QueryMeta extends _QueryMeta {}
-}
+import { queryClient } from './query-client'
 
 // posthog init
 posthog.init(POSTHOG, {
@@ -69,76 +29,6 @@ posthog.init(POSTHOG, {
 
 const container = document.getElementById('root') || document.createElement('div')
 const root = createRoot(container)
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 60_000,
-    },
-  },
-  mutationCache: new MutationCache({
-    onSuccess(data, variables, context, mutation) {
-      if (mutation.meta?.notifyOnSuccess) {
-        if (mutation.meta.notifyOnSuccess === true) {
-          toast(ToastEnum.SUCCESS, JSON.stringify(data))
-        } else {
-          const {
-            status = ToastEnum.SUCCESS,
-            title,
-            description,
-            callback,
-            iconAction,
-            labelAction,
-            externalLink,
-          } = typeof mutation.meta.notifyOnSuccess === 'function'
-            ? mutation.meta.notifyOnSuccess(data, variables, context, mutation)
-            : mutation.meta.notifyOnSuccess
-          toast(status, title, description, callback, iconAction, labelAction, externalLink)
-        }
-      }
-    },
-    onError(error, _variables, _context, mutation) {
-      if (mutation.meta?.notifyOnError) {
-        if (mutation.meta.notifyOnError === true) {
-          toastError(error as Error)
-        } else {
-          toastError(error as Error, mutation.meta.notifyOnError.title, mutation.meta.notifyOnError.description)
-        }
-      }
-    },
-  }),
-  queryCache: new QueryCache({
-    onSuccess(data, query) {
-      if (query.meta?.notifyOnSuccess) {
-        if (query.meta.notifyOnSuccess === true) {
-          toast(ToastEnum.SUCCESS, JSON.stringify(data))
-        } else {
-          const {
-            status = ToastEnum.SUCCESS,
-            title,
-            description,
-            callback,
-            iconAction,
-            labelAction,
-            externalLink,
-          } = typeof query.meta.notifyOnSuccess === 'function'
-            ? query.meta.notifyOnSuccess(data, query)
-            : query.meta.notifyOnSuccess
-          toast(status, title, description, callback, iconAction, labelAction, externalLink)
-        }
-      }
-    },
-    onError(error, query) {
-      if (query.meta?.notifyOnError) {
-        if (query.meta.notifyOnError === true) {
-          toastError(error as Error)
-        } else {
-          toastError(error as Error, query.meta.notifyOnError.title, query.meta.notifyOnError.description)
-        }
-      }
-    },
-  }),
-})
 
 root.render(
   <StrictMode>
