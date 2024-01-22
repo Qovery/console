@@ -206,7 +206,10 @@ export function groupBy<T>(
  */
 export function TableHeadFilter<T>({ title, dataHead, defaultData, filter, setFilter }: TableHeadFilterProps<T>) {
   const [currentFilter, setCurrentFilter] = useState(ALL)
-  const [dataFilterNumber, setDataFilterNumber] = useState(0)
+
+  const hasFilter = filter?.some((item) => item.key === dataHead.filter?.[0].key && item.value !== ALL)
+
+  const [dataFilterNumber, setDataFilterNumber] = useState(hasFilter ? defaultData.length : 0)
   const [isOpen, setOpen] = useState(false)
 
   const key = dataHead.filter?.[0].key || ''
@@ -237,7 +240,6 @@ export function TableHeadFilter<T>({ title, dataHead, defaultData, filter, setFi
   )
 
   const hideFilterNumber: boolean = dataHead.filter?.some((item) => item.hideFilterNumber) || false
-  const hasFilter = filter?.some((item) => item.key === dataHead.filter?.[0].key && item.value !== ALL)
   const isDark = document.documentElement.classList.contains('dark')
 
   return (
