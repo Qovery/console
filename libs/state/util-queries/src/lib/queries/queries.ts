@@ -1,6 +1,7 @@
 import { type inferQueryKeyStore, mergeQueryKeys } from '@lukemorales/query-key-factory'
 import { cloudProviders } from '@qovery/domains/cloud-providers/data-access'
 import { clusters } from '@qovery/domains/clusters/data-access'
+import { customDomains } from '@qovery/domains/custom-domains/data-access'
 import { environments } from '@qovery/domains/environments/data-access'
 import { organizations } from '@qovery/domains/organizations/data-access'
 import { projects } from '@qovery/domains/projects/data-access'
@@ -20,7 +21,8 @@ export const queries = mergeQueryKeys(
   services,
   user,
   usersSignUp,
-  variables
+  variables,
+  customDomains
 )
 
 export type QueryKeys = inferQueryKeyStore<typeof queries>
