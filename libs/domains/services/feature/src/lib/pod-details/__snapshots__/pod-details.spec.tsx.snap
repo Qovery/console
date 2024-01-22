@@ -477,7 +477,7 @@ exports[`PodDetails should match snapshot with pod error with 0 containers 1`] =
     >
       <a
         class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-sky-500 hover:text-sky-600 text-sm absolute top-2 right-2"
-        href="/organization//project//environment//logs/1/live-logs"
+        href="/organization//project//environment//logs/1/live-logs?pod_name=app-z0fb41d62-5c7fdb6f5f-44wpd"
       >
         <button
           class="inline-flex items-center shrink-0 font-medium transition text-xs h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 gap-2"

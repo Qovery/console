@@ -51,7 +51,7 @@ export function PodDetails({ pod, serviceId, serviceType }: PodDetailsProps) {
   return (
     <div className="pl-4 pb-4 pt-3 pr-20 relative">
       <Link
-        to={ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + SERVICE_LOGS_URL(serviceId)}
+        to={ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + SERVICE_LOGS_URL(serviceId, pod.name)}
         className="absolute top-2 right-2"
       >
         <Button type="button" size="sm" color="neutral" variant="surface" className="gap-2">

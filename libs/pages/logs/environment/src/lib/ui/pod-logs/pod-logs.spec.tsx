@@ -26,6 +26,8 @@ describe('PodLogs', () => {
     pauseStatusLogs: false,
     setPauseStatusLogs: jest.fn(),
     service: applicationFactoryMock(1)[0],
+    filter: [],
+    setFilter: jest.fn(),
   }
 
   it('should render successfully', () => {
@@ -47,7 +49,6 @@ describe('PodLogs', () => {
     const filterPod1 = screen.getAllByTestId('menuItem')[0]
     await userEvent.click(filterPod1)
 
-    const logRows = screen.getAllByTestId('pod-log-row')
-    expect(logRows.length).toBe(1)
+    expect(props.setFilter).toHaveBeenCalled()
   })
 })
