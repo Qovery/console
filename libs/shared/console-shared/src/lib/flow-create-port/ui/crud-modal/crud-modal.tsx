@@ -71,10 +71,7 @@ export function CrudModal({
     .filter((option) =>
       match(cloudProvider)
         .with(CloudProviderEnum.SCW, () => option.value !== PortProtocolEnum.UDP)
-        .with(
-          CloudProviderEnum.GCP,
-          () => option.value === PortProtocolEnum.HTTP || option.value === PortProtocolEnum.GRPC
-        )
+        .with(CloudProviderEnum.GCP, () => true)
         .with(CloudProviderEnum.AWS, () => true)
         .otherwise(() => false)
     )
