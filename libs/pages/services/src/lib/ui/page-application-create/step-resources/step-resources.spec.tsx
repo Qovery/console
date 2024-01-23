@@ -1,5 +1,5 @@
-import { act, render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import StepResources, { type StepResourcesProps } from './step-resources'
 
 const props: StepResourcesProps = {
@@ -9,11 +9,11 @@ const props: StepResourcesProps = {
 
 describe('StepResources', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(
+    const { baseElement } = renderWithProviders(
       wrapWithReactHookForm(<StepResources {...props} />, {
         defaultValues: {
           memory: 1024,
-          cpu: [1],
+          cpu: 500,
           instances: [1, 12],
         },
       })
@@ -22,26 +22,21 @@ describe('StepResources', () => {
   })
 
   it('should submit the form on click', async () => {
-    const { getByTestId } = render(
+    const { userEvent } = renderWithProviders(
       wrapWithReactHookForm(<StepResources {...props} />, {
         defaultValues: {
           memory: 1024,
-          cpu: [1],
+          cpu: 500,
           instances: [1, 12],
         },
       })
     )
 
-    const button = getByTestId('button-submit')
-    // wait one cycle that the button becomes enabled
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    await act(() => {})
+    // https://react-hook-form.com/advanced-usage#TransformandParse
+    const button = await screen.findByRole('button', { name: /continue/i })
+    expect(button).toBeInTheDocument()
 
-    await act(() => {
-      button.click()
-    })
-
-    expect(button).not.toBeDisabled()
+    await userEvent.click(button)
     expect(props.onSubmit).toHaveBeenCalled()
   })
 })

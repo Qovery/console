@@ -1,6 +1,8 @@
 import { type DatabaseTypeEnum } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
+import { match } from 'ts-pattern'
+import { useEnvironment } from '@qovery/domains/environments/feature'
 import { type Database } from '@qovery/domains/services/data-access'
 import { CLUSTER_SETTINGS_RESOURCES_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
 import {
@@ -34,13 +36,23 @@ export function DatabaseSettingsResources({
   displayStorageWarning = false,
 }: DatabaseSettingsResourcesProps) {
   const { control } = useFormContext()
-  const { organizationId = '' } = useParams()
+  const { organizationId = '', environmentId } = useParams()
+  const { data: environment } = useEnvironment({ environmentId })
 
   const maxMemoryBySize = database?.maximum_memory
+  const cloudProvider = environment?.cloud_provider.provider
 
   if (database) {
     databaseType = database.type
   }
+
+  const minVCpu = match(cloudProvider)
+    .with('GCP', () => 250)
+    .otherwise(() => 10)
+
+  const minMemory = match(cloudProvider)
+    .with('GCP', () => 512)
+    .otherwise(() => 1)
 
   return (
     <div>
@@ -50,36 +62,44 @@ export function DatabaseSettingsResources({
             <Controller
               name="cpu"
               control={control}
-              render={({ field }) => (
+              rules={{
+                min: minVCpu,
+              }}
+              render={({ field, fieldState: { error } }) => (
                 <InputText
                   type="number"
                   name={field.name}
                   label="Size (in milli vCPU)"
                   value={field.value}
                   onChange={field.onChange}
+                  error={error?.type === 'min' ? `Minimum allowed ${field.name} is: ${minVCpu} milli vCPU.` : undefined}
                 />
               )}
             />
-            {database && (
-              <p className="text-neutral-350 text-xs mt-3">
-                Minimum value is 10 milli vCPU. Maximum value allowed based on the selected cluster instance type:{' '}
-                {database?.maximum_cpu} mili vCPU.{' '}
-                {clusterId && (
-                  <Link
-                    to={CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_RESOURCES_URL}
-                    size="xs"
-                  >
-                    Edit node
-                  </Link>
-                )}
-              </p>
-            )}
+            <p className="text-neutral-350 text-xs mt-3">
+              Minimum value is {minVCpu} milli vCPU.{' '}
+              {database && (
+                <>
+                  Maximum value allowed based on the selected cluster instance type: {database?.maximum_cpu} milli vCPU.{' '}
+                  {clusterId && (
+                    <Link
+                      to={
+                        CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_RESOURCES_URL
+                      }
+                      size="xs"
+                    >
+                      Edit node
+                    </Link>
+                  )}
+                </>
+              )}
+            </p>
           </BlockContent>
           <BlockContent title="Memory">
             <Controller
               name="memory"
               control={control}
-              rules={inputSizeUnitRules(maxMemoryBySize)}
+              rules={inputSizeUnitRules(maxMemoryBySize, minMemory)}
               render={({ field, fieldState: { error } }) => (
                 <InputText
                   dataTestId="input-memory-memory"
@@ -92,26 +112,33 @@ export function DatabaseSettingsResources({
                     error?.type === 'required'
                       ? 'Please enter a size.'
                       : error?.type === 'max'
-                      ? `Maximum allowed ${field.name} is: ${maxMemoryBySize} MB.`
+                      ? `Maximum allowed ${field.name} is: ${maxMemoryBySize} MiB.`
+                      : error?.type === 'min'
+                      ? `Minimum allowed ${field.name} is: ${minMemory} MiB.`
                       : undefined
                   }
                 />
               )}
             />
-            {database && (
-              <p className="text-neutral-350 text-xs mt-3">
-                Minimum value is 1 MiB. Maximum value allowed based on the selected cluster instance type:{' '}
-                {database?.maximum_memory} MiB.{' '}
-                {clusterId && (
-                  <Link
-                    to={CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_RESOURCES_URL}
-                    size="xs"
-                  >
-                    Edit node
-                  </Link>
-                )}
-              </p>
-            )}
+
+            <p className="text-neutral-350 text-xs mt-3">
+              Minimum value is {minMemory} MiB.{' '}
+              {database && (
+                <>
+                  Maximum value allowed based on the selected cluster instance type: {database?.maximum_memory} MiB.{' '}
+                  {clusterId && (
+                    <Link
+                      to={
+                        CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_RESOURCES_URL
+                      }
+                      size="xs"
+                    >
+                      Edit node
+                    </Link>
+                  )}
+                </>
+              )}
+            </p>
           </BlockContent>
         </>
       )}

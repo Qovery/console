@@ -15,6 +15,8 @@ describe('PageSettingsGeneral', () => {
     mode: DatabaseModeEnum.CONTAINER,
     accessibility: DatabaseAccessibilityEnum.PUBLIC,
     version: '12',
+    cpu: 512,
+    memory: 1024,
   }
 
   it('should render successfully', async () => {
@@ -30,8 +32,9 @@ describe('PageSettingsGeneral', () => {
         defaultValues: defaultValues,
       })
     )
-
-    const button = screen.getByRole('button', { name: /save/i })
+    // https://react-hook-form.com/advanced-usage#TransformandParse
+    const button = await screen.findByRole('button', { name: /save/i })
+    expect(button).toBeInTheDocument()
 
     await userEvent.click(button)
     expect(spy).toHaveBeenCalled()
