@@ -1,17 +1,8 @@
-import {
-  act,
-  fireEvent,
-  getByDisplayValue,
-  getByLabelText,
-  getByTestId,
-  getByText,
-  render,
-  waitFor,
-} from '__tests__/utils/setup-jest'
 import { KubernetesEnum } from 'qovery-typescript-axios'
 import * as cloudProvidersDomain from '@qovery/domains/cloud-providers/feature'
 import * as clustersDomain from '@qovery/domains/clusters/feature'
 import { clusterFactoryMock } from '@qovery/shared/factories'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import PageSettingsResourcesFeature, { handleSubmit } from './page-settings-resources-feature'
 
 const useClusterMockSpy = jest.spyOn(clustersDomain, 'useCluster') as jest.Mock
@@ -70,35 +61,30 @@ describe('PageSettingsResourcesFeature', () => {
   })
 
   it('should render successfully', () => {
-    const { baseElement } = render(<PageSettingsResourcesFeature />)
+    const { baseElement } = renderWithProviders(<PageSettingsResourcesFeature />)
     expect(baseElement).toBeTruthy()
   })
 
   it('should init the value in the inputs', async () => {
-    const { baseElement } = render(<PageSettingsResourcesFeature />)
+    renderWithProviders(<PageSettingsResourcesFeature />)
 
-    getByDisplayValue(baseElement, mockCluster.disk_size?.toString() || '')
-    getByText(baseElement, `min ${mockCluster?.min_running_nodes} - max ${mockCluster?.max_running_nodes}`)
+    screen.getByDisplayValue(mockCluster.disk_size?.toString() || '')
+    screen.getByText(`min ${mockCluster?.min_running_nodes} - max ${mockCluster?.max_running_nodes}`)
 
-    await waitFor(() => {
-      getByText(baseElement, 't2.micro (1CPU - 1GB RAM - arm64)')
-    })
+    await screen.findByText('t2.micro (1CPU - 1GB RAM - arm64)')
   })
 
   it('should submit the values', async () => {
-    const { baseElement } = render(<PageSettingsResourcesFeature />)
-    const button = getByTestId(baseElement, 'submit-button')
+    const { userEvent } = renderWithProviders(<PageSettingsResourcesFeature />)
+    const button = screen.getByTestId('submit-button')
 
     expect(button).toBeDisabled()
 
-    const input = getByLabelText(baseElement, 'Disk size (GB)')
-    await act(() => {
-      fireEvent.input(input, { target: { value: 24 } })
-    })
+    const input = screen.getByLabelText('Disk size (GB)')
+    await userEvent.clear(input)
+    await userEvent.type(input, '24')
 
-    await waitFor(() => {
-      expect(button).not.toBeDisabled()
-    })
+    expect(button).not.toBeDisabled()
 
     const cloneCluster = handleSubmit(
       {
@@ -109,14 +95,12 @@ describe('PageSettingsResourcesFeature', () => {
       mockCluster
     )
 
-    await waitFor(() => {
-      button.click()
+    await userEvent.click(button)
 
-      expect(editCluster).toBeCalledWith({
-        organizationId: '0',
-        clusterId: mockCluster.id,
-        clusterRequest: cloneCluster,
-      })
+    expect(editCluster).toBeCalledWith({
+      organizationId: '0',
+      clusterId: mockCluster.id,
+      clusterRequest: cloneCluster,
     })
   })
 })

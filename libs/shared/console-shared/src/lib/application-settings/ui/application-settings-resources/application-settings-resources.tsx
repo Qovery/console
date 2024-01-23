@@ -50,10 +50,18 @@ export function ApplicationSettingsResources({
 
   const watchInstances = watch('instances')
 
+  const minVCpu = match(cloudProvider)
+    .with('GCP', () => 250)
+    .otherwise(() => 10)
+
+  const minMemory = match(cloudProvider)
+    .with('GCP', () => 512)
+    .otherwise(() => 1)
+
   const hintCPU = match(cloudProvider)
     .with('GCP', () => (
       <>
-        Minimum value is 250 milli vCPU. Note that resources might be rounded up automatically by GCP.
+        Minimum value is {minVCpu} milli vCPU. Note that resources might be rounded up automatically by GCP.
         <ExternalLink
           size="xs"
           href="https://cloud.google.com/kubernetes-engine/docs/concepts/autopilot-resource-requests"
@@ -64,15 +72,19 @@ export function ApplicationSettingsResources({
     ))
     .otherwise(() => (
       <>
-        Minimum value is 10 milli vCPU. Maximum value allowed based on the selected cluster instance type:{' '}
-        {service?.maximum_cpu} mili vCPU.{' '}
-        {clusterId && (
-          <Link
-            to={CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_RESOURCES_URL}
-            size="xs"
-          >
-            Edit node
-          </Link>
+        Minimum value is {minVCpu} milli vCPU.{' '}
+        {service && (
+          <>
+            Maximum value allowed based on the selected cluster instance type: {service.maximum_cpu} milli vCPU.{' '}
+            {clusterId && (
+              <Link
+                to={CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_RESOURCES_URL}
+                size="xs"
+              >
+                Edit node
+              </Link>
+            )}
+          </>
         )}
       </>
     ))
@@ -80,7 +92,7 @@ export function ApplicationSettingsResources({
   const hintMemory = match(cloudProvider)
     .with('GCP', () => (
       <>
-        Minimum value is 512 MiB. Note that resources might be rounded up automatically by GCP.{' '}
+        Minimum value is {minMemory} MiB. Note that resources might be rounded up automatically by GCP.{' '}
         <ExternalLink
           size="xs"
           href="https://cloud.google.com/kubernetes-engine/docs/concepts/autopilot-resource-requests"
@@ -91,15 +103,19 @@ export function ApplicationSettingsResources({
     ))
     .otherwise(() => (
       <>
-        Minimum value is 1 MiB. Maximum value allowed based on the selected cluster instance type:{' '}
-        {service?.maximum_memory} MiB.{' '}
-        {clusterId && (
-          <Link
-            to={CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_RESOURCES_URL}
-            size="xs"
-          >
-            Edit node
-          </Link>
+        Minimum value is {minMemory} MiB.{' '}
+        {service && (
+          <>
+            Maximum value allowed based on the selected cluster instance type: {service.maximum_memory} MiB.{' '}
+            {clusterId && (
+              <Link
+                to={CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_RESOURCES_URL}
+                size="xs"
+              >
+                Edit node
+              </Link>
+            )}
+          </>
         )}
       </>
     ))
@@ -110,17 +126,21 @@ export function ApplicationSettingsResources({
         <Controller
           name="cpu"
           control={control}
-          render={({ field }) => (
+          rules={{
+            min: minVCpu,
+          }}
+          render={({ field, fieldState: { error } }) => (
             <InputText
               type="number"
               name={field.name}
               label="Size (in milli vCPU)"
               value={field.value}
               onChange={field.onChange}
+              error={error?.type === 'min' ? `Minimum allowed ${field.name} is: ${minVCpu} milli vCPU.` : undefined}
             />
           )}
         />
-        {service && <p className="text-neutral-350 text-xs mt-3">{hintCPU}</p>}
+        <p className="text-neutral-350 text-xs mt-3">{hintCPU}</p>
         {displayWarningCpu && (
           <Callout.Root color="red" className="mt-3" data-testid="banner-box">
             <Callout.Icon>
@@ -139,7 +159,7 @@ export function ApplicationSettingsResources({
         <Controller
           name="memory"
           control={control}
-          rules={inputSizeUnitRules(maxMemoryBySize)}
+          rules={inputSizeUnitRules(maxMemoryBySize, minMemory)}
           render={({ field, fieldState: { error } }) => (
             <InputText
               dataTestId="input-memory-memory"
@@ -152,13 +172,15 @@ export function ApplicationSettingsResources({
                 error?.type === 'required'
                   ? 'Please enter a size.'
                   : error?.type === 'max'
-                  ? `Maximum allowed ${field.name} is: ${maxMemoryBySize} MB.`
+                  ? `Maximum allowed ${field.name} is: ${maxMemoryBySize} MiB.`
+                  : error?.type === 'min'
+                  ? `Minimum allowed ${field.name} is: ${minMemory} MiB.`
                   : undefined
               }
             />
           )}
         />
-        {service && <p className="text-neutral-350 text-xs mt-3">{hintMemory}</p>}
+        <p className="text-neutral-350 text-xs mt-3">{hintMemory}</p>
       </BlockContent>
 
       {service?.serviceType !== 'JOB' && watchInstances && (

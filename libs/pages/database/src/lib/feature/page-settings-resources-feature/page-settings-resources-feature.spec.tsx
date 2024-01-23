@@ -62,6 +62,8 @@ describe('PageSettingsResourcesFeature', () => {
     // https://react-hook-form.com/advanced-usage#TransformandParse
     const submitButton = await screen.findByRole('button', { name: /save/i })
 
+    await userEvent.clear(screen.getByLabelText(/vcpu/i))
+    await userEvent.type(screen.getByLabelText(/vcpu/i), '512')
     await userEvent.clear(screen.getByTestId('input-memory-memory'))
     await userEvent.type(screen.getByTestId('input-memory-memory'), '512')
     await userEvent.clear(screen.getByTestId('input-memory-storage'))
@@ -75,7 +77,7 @@ describe('PageSettingsResourcesFeature', () => {
       serviceId: mockDatabase.id,
       payload: handleSubmit(
         {
-          cpu: 1,
+          cpu: '512',
           memory: 512,
           storage: 512,
           instance_type: 't2.micro',
