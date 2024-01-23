@@ -11,7 +11,6 @@ import {
   SERVICES_DEPLOYMENTS_URL,
   SERVICES_GENERAL_URL,
   SERVICES_HELM_CREATION_GENERAL_URL,
-  SERVICES_HELM_CREATION_NETWORKING_URL,
   SERVICES_HELM_CREATION_SUMMARY_URL,
   SERVICES_HELM_CREATION_VALUES_STEP_1_URL,
   SERVICES_HELM_CREATION_VALUES_STEP_2_URL,
@@ -38,7 +37,6 @@ import { StepSummaryFeature as DatabaseStepSummaryFeature } from '../feature/pag
 import PageDeploymentsFeature from '../feature/page-deployments-feature/page-deployments-feature'
 import PageGeneralFeature from '../feature/page-general-feature/page-general-feature'
 import { StepGeneralFeature as HelmStepGeneralFeature } from '../feature/page-helm-create-feature/step-general-feature/step-general-feature'
-import { StepNetworkingFeature as HelmStepNetworkingFeature } from '../feature/page-helm-create-feature/step-networking-feature/step-networking-feature'
 import { StepSummaryFeature as HelmStepSummaryFeature } from '../feature/page-helm-create-feature/step-summary-feature/step-summary-feature'
 import { StepValuesOverrideArgumentsFeature as HelmStepValuesOverrideArgumentsFeature } from '../feature/page-helm-create-feature/step-values-override-arguments-feature/step-values-override-arguments-feature'
 import { StepValuesOverrideFilesFeature as HelmStepValuesOverrideFilesFeature } from '../feature/page-helm-create-feature/step-values-override-files-feature/step-values-override-files-feature'
@@ -166,10 +164,6 @@ export const ROUTER_SERVICE_HELM_CREATION: Route[] = [
   {
     path: SERVICES_HELM_CREATION_VALUES_STEP_2_URL,
     component: <HelmStepValuesOverrideArgumentsFeature />,
-  },
-  {
-    path: SERVICES_HELM_CREATION_NETWORKING_URL,
-    component: <HelmStepNetworkingFeature />,
   },
   {
     path: SERVICES_HELM_CREATION_SUMMARY_URL,
