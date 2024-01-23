@@ -2,6 +2,7 @@ import {
   type DeploymentHistoryEnvironment,
   type EnvironmentLogs,
   type ServiceDeploymentStatusEnum,
+  type Status,
 } from 'qovery-typescript-axios'
 import { useMemo } from 'react'
 import { Link, useParams } from 'react-router-dom'
@@ -24,6 +25,7 @@ export interface DeploymentLogsProps {
   serviceDeploymentStatus?: ServiceDeploymentStatusEnum
   dataDeploymentHistory?: DeploymentHistoryEnvironment[]
   service?: AnyService
+  serviceStatus: Status
   isDeploymentProgressing?: boolean
   setShowPreviousLogs?: (showPreviousLogs: boolean) => void
   showPreviousLogs?: boolean
@@ -35,10 +37,10 @@ export function DeploymentLogs({
   hideDeploymentLogs,
   pauseStatusLogs,
   setPauseStatusLogs,
-  serviceDeploymentStatus,
   loadingStatus,
   dataDeploymentHistory,
   service,
+  serviceStatus: { service_deployment_status: serviceDeploymentStatus, state: serviceState },
   isDeploymentProgressing,
   setShowPreviousLogs,
   showPreviousLogs,
@@ -46,8 +48,16 @@ export function DeploymentLogs({
   const { organizationId = '', projectId = '', environmentId = '', serviceId = '', versionId = '' } = useParams()
 
   const memoRow = useMemo(
-    () => logs?.map((log: EnvironmentLogs, index: number) => <RowDeployment key={index} index={index} data={log} />),
-    [logs]
+    () =>
+      logs
+        // Hide Environment deployment error if selected service is the one in error
+        .filter(({ details: { transmitter, stage } }) =>
+          transmitter?.type === 'Environment' && stage?.step === 'DeployedError'
+            ? serviceState !== 'DEPLOYMENT_ERROR'
+            : true
+        )
+        .map((log: EnvironmentLogs, index: number) => <RowDeployment key={index} index={index} data={log} />),
+    [logs, serviceDeploymentStatus]
   )
 
   const deploymentsByServiceId = mergeDeploymentServices(dataDeploymentHistory).filter(

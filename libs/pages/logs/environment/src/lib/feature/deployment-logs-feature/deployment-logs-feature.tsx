@@ -23,7 +23,7 @@ export interface DeploymentLogsFeatureProps {
 
 const DeploymentLogs = memo(_DeploymentLogs)
 
-export function getServiceStatuesById(services?: DeploymentStageWithServicesStatuses[], serviceId = '') {
+export function getServiceStatusesById(services?: DeploymentStageWithServicesStatuses[], serviceId = '') {
   if (services) {
     for (const service of services) {
       if (service.stage?.id === serviceId) {
@@ -143,7 +143,8 @@ export function DeploymentLogsFeature({ environment, statusStages }: DeploymentL
     }
   }, [messageChunks, pauseStatusLogs])
 
-  const hideDeploymentLogsBoolean = !(getServiceStatuesById(statusStages, serviceId) as Status)?.is_part_last_deployment
+  const serviceStatus = getServiceStatusesById(statusStages, serviceId)
+  const hideDeploymentLogsBoolean = !(serviceStatus as Status)?.is_part_last_deployment
 
   // Filter deployment logs by serviceId and stageId
   // Display entries when the name is "delete" or stageId is empty or equal with current stageId
@@ -196,20 +197,22 @@ export function DeploymentLogsFeature({ environment, statusStages }: DeploymentL
     : false
 
   return (
-    <DeploymentLogs
-      loadingStatus={loadingStatusDeploymentLogs}
-      logs={logsByServiceId}
-      errors={errors}
-      pauseStatusLogs={pauseStatusLogs}
-      setPauseStatusLogs={setPauseStatusLogs}
-      serviceDeploymentStatus={(getServiceStatuesById(statusStages, serviceId) as Status)?.service_deployment_status}
-      service={service}
-      hideDeploymentLogs={hideDeploymentLogsBoolean}
-      dataDeploymentHistory={deploymentHistory}
-      isDeploymentProgressing={isDeploymentProgressing}
-      showPreviousLogs={showPreviousLogs}
-      setShowPreviousLogs={setShowPreviousLogs}
-    />
+    serviceStatus && (
+      <DeploymentLogs
+        loadingStatus={loadingStatusDeploymentLogs}
+        logs={logsByServiceId}
+        errors={errors}
+        pauseStatusLogs={pauseStatusLogs}
+        setPauseStatusLogs={setPauseStatusLogs}
+        service={service}
+        serviceStatus={serviceStatus as Status}
+        hideDeploymentLogs={hideDeploymentLogsBoolean}
+        dataDeploymentHistory={deploymentHistory}
+        isDeploymentProgressing={isDeploymentProgressing}
+        showPreviousLogs={showPreviousLogs}
+        setShowPreviousLogs={setShowPreviousLogs}
+      />
+    )
   )
 }
 
