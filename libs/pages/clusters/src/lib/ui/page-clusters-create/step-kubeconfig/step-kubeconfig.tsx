@@ -82,7 +82,7 @@ export function StepKubeconfig({ onSubmit }: StepKubeconfigProps) {
             </div>
           ) : (
             <div {...getRootProps({ className: 'dropzone' })}>
-              <input data-testid="drop-input" {...getInputProps} />
+              <input data-testid="drop-input" {...getInputProps()} />
               <Dropzone isDragActive={isDragActive} typeFile="kubeconfig" />
             </div>
           )}
