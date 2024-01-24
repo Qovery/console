@@ -8,7 +8,7 @@ import { Route, Routes } from 'react-router-dom'
 import { LogsType } from '@qovery/shared/enums'
 import DeploymentLogsFeature, {
   type DeploymentLogsFeatureProps,
-  getServiceStatuesById,
+  getServiceStatusesById,
 } from './deployment-logs-feature'
 
 const services: DeploymentStageWithServicesStatuses[] = [
@@ -82,6 +82,6 @@ describe('DeploymentLogsFeature', () => {
       last_deployment_date: '2023-04-14T09:40:37.451334Z',
       is_part_last_deployment: false,
     }
-    expect(getServiceStatuesById(services, serviceId)).toEqual(expectedService)
+    expect(getServiceStatusesById(services, serviceId)).toEqual(expectedService)
   })
 })

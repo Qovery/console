@@ -1,4 +1,4 @@
-import { ClusterLogsStepEnum, ServiceDeploymentStatusEnum } from 'qovery-typescript-axios'
+import { ClusterLogsStepEnum, ServiceDeploymentStatusEnum, StateEnum } from 'qovery-typescript-axios'
 import { applicationFactoryMock, deploymentLogFactoryMock } from '@qovery/shared/factories'
 import { dateFullFormat } from '@qovery/shared/util-dates'
 import { trimId } from '@qovery/shared/util-js'
@@ -26,7 +26,11 @@ describe('DeploymentLogs', () => {
       },
     ],
     hideDeploymentLogs: false,
-    serviceDeploymentStatus: ServiceDeploymentStatusEnum.NEVER_DEPLOYED,
+    serviceStatus: {
+      id: '',
+      state: StateEnum.READY,
+      service_deployment_status: ServiceDeploymentStatusEnum.NEVER_DEPLOYED,
+    },
     setPauseStatusLogs: jest.fn(),
     pauseStatusLogs: false,
     service: mockApplication,
@@ -47,7 +51,11 @@ describe('DeploymentLogs', () => {
   it('should render a placeholder with a deployment history', () => {
     props.hideDeploymentLogs = true
     props.loadingStatus = 'loaded'
-    props.serviceDeploymentStatus = ServiceDeploymentStatusEnum.OUT_OF_DATE
+    props.serviceStatus = {
+      id: '',
+      state: StateEnum.DEPLOYED,
+      service_deployment_status: ServiceDeploymentStatusEnum.OUT_OF_DATE,
+    }
 
     const name = mockApplication.name
 
