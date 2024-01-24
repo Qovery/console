@@ -45,6 +45,7 @@ export function StorageModalFeature({ service, storage, onClose }: StorageModalF
         serviceId: service.id,
         payload,
       })
+      onClose()
     } catch (error) {
       console.error(error)
     }
