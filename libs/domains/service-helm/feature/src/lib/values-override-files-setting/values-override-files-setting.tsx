@@ -13,6 +13,7 @@ export interface HelmValuesFileData {
   branch?: string
   paths?: string
   content?: string
+  auto_deploy?: boolean
 }
 
 export interface ValuesOverrideFilesSettingProps {

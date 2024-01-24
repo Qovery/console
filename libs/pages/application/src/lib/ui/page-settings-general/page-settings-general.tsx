@@ -12,7 +12,18 @@ import {
   JobGeneralSettings,
 } from '@qovery/shared/console-shared'
 import { ServiceTypeEnum, isJobGitSource } from '@qovery/shared/enums'
-import { BlockContent, Button, Heading, HelpSection, InputSelect, InputText, Section } from '@qovery/shared/ui'
+import {
+  BlockContent,
+  Button,
+  Callout,
+  Heading,
+  HelpSection,
+  Icon,
+  IconAwesomeEnum,
+  InputSelect,
+  InputText,
+  Section,
+} from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
 export interface PageSettingsGeneralProps {
@@ -169,6 +180,18 @@ export function PageSettingsGeneral({
                 <BlockContent title="Deploy">
                   <DeploymentSetting />
                   {watchFieldProvider === 'GIT' && <AutoDeploySetting source="GIT" className="mt-5" />}
+                  {watchFieldProvider === 'HELM_REPOSITORY' && (
+                    <Callout.Root color="sky" className="mt-5">
+                      <Callout.Icon>
+                        <Icon name={IconAwesomeEnum.CIRCLE_INFO} />
+                      </Callout.Icon>
+                      <Callout.Text className="text-xs">
+                        <Callout.TextHeading>
+                          Auto-deploy is not available for helms coming from helm repositories
+                        </Callout.TextHeading>
+                      </Callout.Text>
+                    </Callout.Root>
+                  )}
                 </BlockContent>
               </>
             ))

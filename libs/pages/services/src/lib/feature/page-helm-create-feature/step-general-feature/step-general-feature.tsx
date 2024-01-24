@@ -8,7 +8,16 @@ import {
   SERVICES_HELM_CREATION_VALUES_STEP_1_URL,
   SERVICES_URL,
 } from '@qovery/shared/routes'
-import { Button, FunnelFlowBody, FunnelFlowHelpCard, Heading, Section } from '@qovery/shared/ui'
+import {
+  Button,
+  Callout,
+  FunnelFlowBody,
+  FunnelFlowHelpCard,
+  Heading,
+  Icon,
+  IconAwesomeEnum,
+  Section,
+} from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { useHelmCreateContext } from '../page-helm-create-feature'
 
@@ -87,6 +96,18 @@ export function StepGeneralFeature() {
               <p className="text-sm text-neutral-350 mb-3">Define the deployment configuration of your service.</p>
               <DeploymentSetting />
               {watchFieldProvider === 'GIT' && <AutoDeploySetting source="GIT" className="mt-5" />}
+              {watchFieldProvider === 'HELM_REPOSITORY' && (
+                <Callout.Root color="sky" className="mt-5">
+                  <Callout.Icon>
+                    <Icon name={IconAwesomeEnum.CIRCLE_INFO} />
+                  </Callout.Icon>
+                  <Callout.Text className="text-xs">
+                    <Callout.TextHeading>
+                      Auto-deploy is not available for helms coming from helm repositories
+                    </Callout.TextHeading>
+                  </Callout.Text>
+                </Callout.Root>
+              )}
             </Section>
             <div className="flex justify-between mt-10">
               <Button

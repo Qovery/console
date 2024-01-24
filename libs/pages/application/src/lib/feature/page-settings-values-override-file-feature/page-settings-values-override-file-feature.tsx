@@ -4,8 +4,9 @@ import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { GitBranchSettings, GitProviderSetting, GitRepositorySetting } from '@qovery/domains/organizations/feature'
 import { type HelmValuesFileData, ValuesOverrideFilesSetting } from '@qovery/domains/service-helm/feature'
-import { useEditService, useService } from '@qovery/domains/services/feature'
-import { Button, InputText } from '@qovery/shared/ui'
+import { AutoDeploySetting, useEditService, useService } from '@qovery/domains/services/feature'
+import { isHelmRepositorySource } from '@qovery/shared/enums'
+import { Button, Callout, Icon, IconAwesomeEnum, InputText } from '@qovery/shared/ui'
 import { getGitTokenValue, guessGitProvider } from '@qovery/shared/util-git'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
@@ -82,6 +83,8 @@ export function PageSettingsValuesOverrideFileFeature() {
       .with('NONE', () => undefined)
       .exhaustive()
 
+    service.auto_deploy ||= data.auto_deploy ?? false
+
     editService({
       serviceId: applicationId,
       payload: buildEditServicePayload({
@@ -124,6 +127,29 @@ export function PageSettingsValuesOverrideFileFeature() {
               Specify multiple paths by separating them with a semi-colon
             </p>
           </div>
+          {isHelmRepositorySource(service?.source) ? (
+            <AutoDeploySetting source="GIT" className="mt-3" />
+          ) : service?.auto_deploy ? (
+            <Callout.Root color="sky" className="mt-3">
+              <Callout.Icon>
+                <Icon name={IconAwesomeEnum.CIRCLE_INFO} />
+              </Callout.Icon>
+
+              <Callout.Text className="text-xs">
+                <Callout.TextHeading>Auto-deploy is activated</Callout.TextHeading>
+                The service will be automatically updated on every new commit on the branch.
+              </Callout.Text>
+            </Callout.Root>
+          ) : (
+            <Callout.Root color="sky" className="mt-3">
+              <Callout.Icon>
+                <Icon name={IconAwesomeEnum.CIRCLE_INFO} />
+              </Callout.Icon>
+              <Callout.Text className="text-xs">
+                <Callout.TextHeading>Auto-deploy is not activated</Callout.TextHeading>
+              </Callout.Text>
+            </Callout.Root>
+          )}
         </>
       )}
     </>

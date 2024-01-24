@@ -353,6 +353,28 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
                       Specify multiple paths by separating them with a semi-colon
                     </p>
                   </div>
+                  <div
+                    class="flex flex-row items-baseline gap-x-3 p-3 border rounded text-sm border-sky-500 bg-sky-50 text-sky-500 mt-3"
+                    data-accent-color="sky"
+                  >
+                    <div
+                      class="-order-2 text-base"
+                    >
+                      <span
+                        class="icon-solid-circle-info shrink-0 "
+                        role="img"
+                      />
+                    </div>
+                    <div
+                      class="-order-1 mr-auto gap-x-3 text-neutral-400 text-xs"
+                    >
+                      <span
+                        class="block font-medium mb-0.5"
+                      >
+                        Auto-deploy is not activated
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </section>
               <div
