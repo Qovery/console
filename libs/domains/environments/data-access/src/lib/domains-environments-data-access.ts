@@ -1,5 +1,7 @@
 import { createQueryKeys, type inferQueryKeys } from '@lukemorales/query-key-factory'
 import {
+  type CloneEnvironmentRequest,
+  type CreateEnvironmentRequest,
   EnvironmentActionsApi,
   EnvironmentExportApi,
   EnvironmentMainCallsApi,
@@ -52,6 +54,14 @@ export const environments = createQueryKeys('environments', {
 })
 
 export const mutations = {
+  async createEnvironment({ projectId, payload }: { projectId: string; payload: CreateEnvironmentRequest }) {
+    const result = await environmentsApi.createEnvironment(projectId, payload)
+    return result.data
+  },
+  async cloneEnvironment({ environmentId, payload }: { environmentId: string; payload: CloneEnvironmentRequest }) {
+    const result = await environmentActionApi.cloneEnvironment(environmentId, payload)
+    return result.data
+  },
   async deployEnvironment({ environmentId }: { environmentId: string }) {
     const result = await environmentActionApi.deployEnvironment(environmentId)
     return result.data
