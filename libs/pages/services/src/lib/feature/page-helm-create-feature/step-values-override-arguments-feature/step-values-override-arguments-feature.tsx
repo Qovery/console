@@ -3,7 +3,7 @@ import { FormProvider } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { ValuesOverrideArgumentsSetting } from '@qovery/domains/service-helm/feature'
-import { SERVICES_HELM_CREATION_NETWORKING_URL, SERVICES_HELM_CREATION_URL, SERVICES_URL } from '@qovery/shared/routes'
+import { SERVICES_HELM_CREATION_SUMMARY_URL, SERVICES_HELM_CREATION_URL, SERVICES_URL } from '@qovery/shared/routes'
 import { Button, FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
 import { getGitTokenValue } from '@qovery/shared/util-git'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
@@ -69,7 +69,7 @@ export function StepValuesOverrideArgumentsFeature() {
 
   const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_HELM_CREATION_URL}`
   const onSubmit = valuesOverrideArgumentsForm.handleSubmit((data) => {
-    navigate(pathCreate + SERVICES_HELM_CREATION_NETWORKING_URL)
+    navigate(pathCreate + SERVICES_HELM_CREATION_SUMMARY_URL)
   })
 
   return (

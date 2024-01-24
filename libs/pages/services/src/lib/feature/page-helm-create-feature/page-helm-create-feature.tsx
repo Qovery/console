@@ -1,4 +1,4 @@
-import { type GitProviderEnum, type HelmPortRequestPortsInner, type HelmRequest } from 'qovery-typescript-axios'
+import { type GitProviderEnum, type HelmRequest } from 'qovery-typescript-axios'
 import { createContext, useContext, useState } from 'react'
 import { type UseFormReturn, useForm } from 'react-hook-form'
 import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
@@ -11,7 +11,6 @@ export const steps: { title: string }[] = [
   { title: 'General data' },
   { title: 'Values override as file' },
   { title: 'Values override as arguments' },
-  { title: 'Networking' },
   { title: 'Summary' },
 ]
 export interface HelmGeneralData extends Omit<HelmRequest, 'source' | 'ports' | 'values_override' | 'arguments'> {
@@ -25,17 +24,12 @@ export interface HelmGeneralData extends Omit<HelmRequest, 'source' | 'ports' | 
   arguments: string
 }
 
-export interface HelmNetworkingData {
-  ports: HelmPortRequestPortsInner[]
-}
-
 interface HelmCreateContextInterface {
   currentStep: number
   setCurrentStep: (step: number) => void
   generalForm: UseFormReturn<HelmGeneralData>
   valuesOverrideFileForm: UseFormReturn<HelmValuesFileData>
   valuesOverrideArgumentsForm: UseFormReturn<HelmValuesArgumentsData>
-  networkingForm: UseFormReturn<HelmNetworkingData>
 }
 
 export const HelmCreateContext = createContext<HelmCreateContextInterface | undefined>(undefined)
@@ -67,13 +61,6 @@ export function PageHelmCreateFeature() {
     mode: 'onChange',
   })
 
-  const networkingForm = useForm<HelmNetworkingData>({
-    mode: 'onChange',
-    defaultValues: {
-      ports: [],
-    },
-  })
-
   const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_HELM_CREATION_URL}`
 
   return (
@@ -84,7 +71,6 @@ export function PageHelmCreateFeature() {
         generalForm,
         valuesOverrideFileForm,
         valuesOverrideArgumentsForm,
-        networkingForm,
       }}
     >
       <FunnelFlow
