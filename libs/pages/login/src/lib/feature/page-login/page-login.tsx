@@ -1,5 +1,5 @@
 import { useCallback } from 'react'
-import { AuthEnum, useAuth } from '@qovery/shared/auth'
+import { useAuth } from '@qovery/shared/auth'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import useRedirectIfLogged from '../../hooks/use-redirect-if-logged/use-redirect-if-logged'
 import LayoutLogin from '../../ui/layout-login/layout-login'
@@ -20,12 +20,7 @@ export function PageLoginFeature() {
 
   return (
     <LayoutLogin>
-      <Login
-        onClickAuthLogin={onClickAuthLogin}
-        githubType={AuthEnum.GITHUB}
-        gitlabType={AuthEnum.GITLAB}
-        bitbucketType={AuthEnum.BITBUCKET}
-      />
+      <Login onClickAuthLogin={onClickAuthLogin} />
     </LayoutLogin>
   )
 }

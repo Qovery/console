@@ -1,5 +1,4 @@
 import { queryByTestId, render, waitFor } from '__tests__/utils/setup-jest'
-import { AuthEnum } from '@qovery/shared/auth'
 import Login, { type ILoginProps } from './login'
 
 describe('Login', () => {
@@ -7,9 +6,6 @@ describe('Login', () => {
     onClickAuthLogin: (provider: string) => {
       return
     },
-    githubType: AuthEnum.GITHUB,
-    gitlabType: AuthEnum.GITLAB,
-    bitbucketType: AuthEnum.BITBUCKET,
   }
 
   it('should render successfully', () => {

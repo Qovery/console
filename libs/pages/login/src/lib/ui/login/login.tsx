@@ -1,18 +1,14 @@
 import { useEffect } from 'react'
-import { type AuthEnum, useInviteMember } from '@qovery/shared/auth'
+import { AuthEnum, useInviteMember } from '@qovery/shared/auth'
 import { InviteDetailsFeature } from '@qovery/shared/console-shared'
 import { IconEnum } from '@qovery/shared/enums'
 import { Icon } from '@qovery/shared/ui'
 
 export interface ILoginProps {
   onClickAuthLogin: (provider: string) => void
-  githubType: AuthEnum
-  gitlabType: AuthEnum
-  bitbucketType: AuthEnum
 }
 
-export function Login(props: ILoginProps) {
-  const { onClickAuthLogin, githubType, gitlabType, bitbucketType } = props
+export function Login({ onClickAuthLogin }: ILoginProps) {
   const { displayInvitation, checkTokenInStorage } = useInviteMember()
 
   useEffect(() => {
@@ -40,17 +36,21 @@ export function Login(props: ILoginProps) {
             </a>
             .
           </p>
-          <button className="btn-login btn-login--github mb-3" onClick={() => onClickAuthLogin(githubType)}>
+          <button className="btn-login btn-login--github mb-3" onClick={() => onClickAuthLogin(AuthEnum.GITHUB)}>
             <Icon className="absolute left-3" width="20" name={IconEnum.GITHUB_WHITE} />
             Sign in with Github
           </button>
-          <button className="btn-login btn-login--default mb-3" onClick={() => onClickAuthLogin(gitlabType)}>
+          <button className="btn-login btn-login--default mb-3" onClick={() => onClickAuthLogin(AuthEnum.GITLAB)}>
             <Icon className="absolute left-3" width="20" name={IconEnum.GITLAB} />
             Sign in with Gitlab
           </button>
-          <button className="btn-login btn-login--default mb-3" onClick={() => onClickAuthLogin(bitbucketType)}>
+          <button className="btn-login btn-login--default mb-3" onClick={() => onClickAuthLogin(AuthEnum.BITBUCKET)}>
             <Icon className="absolute left-3" width="20" name={IconEnum.BITBUCKET} />
             Sign in with Bitbucket
+          </button>
+          <button className="btn-login btn-login--default mb-3" onClick={() => onClickAuthLogin(AuthEnum.GOOGLE_SSO)}>
+            <Icon className="absolute left-3" width="20" name={IconEnum.GCP} />
+            Sign in with Google SSO
           </button>
         </div>
       </div>
