@@ -3,4 +3,5 @@ export const enum AuthEnum {
   GITLAB = 'Gitlab',
   BITBUCKET = 'bitbucket',
   GOOGLE_SSO = 'google-oauth2',
+  MICROSOFT = 'windowslive',
 }

@@ -52,6 +52,10 @@ export function Login({ onClickAuthLogin }: ILoginProps) {
             <Icon className="absolute left-3" width="20" name={IconEnum.GCP} />
             Sign in with Google SSO
           </button>
+          <button className="btn-login btn-login--default mb-3" onClick={() => onClickAuthLogin(AuthEnum.MICROSOFT)}>
+            <Icon className="absolute left-3" width="20" name={IconEnum.APPLICATION} />
+            Sign in with Microsoft
+          </button>
         </div>
       </div>
       <div className="hidden xl:block flex-[1_1_0%] bg-neutral-150 px-20 before:absolute before:top-0 before:w-full before:h-full before:bg-neutral-150">
