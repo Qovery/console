@@ -31,11 +31,11 @@ exports[`ValuesOverrideFilesSetting should match snapshot with GIT_REPOSITORY ty
         />
       </span>
       <div
-        class="flex flex-row items-baseline gap-x-3 p-3 border rounded border-yellow-600 bg-yellow-50 text-yellow-700 mb-6 text-xs"
+        class="flex flex-row gap-x-3 p-3 border rounded border-yellow-600 bg-yellow-50 text-yellow-700 mb-6 text-xs"
         data-accent-color="yellow"
       >
         <div
-          class="-order-2 text-base"
+          class="-order-2 text-base leading-6"
         >
           <span
             class="icon-solid-triangle-exclamation shrink-0 "
@@ -45,11 +45,11 @@ exports[`ValuesOverrideFilesSetting should match snapshot with GIT_REPOSITORY ty
         <div
           class="-order-1 mr-auto gap-x-3 text-neutral-400"
         >
-          <p
-            class="font-medium mb-1"
+          <span
+            class="block font-medium leading-6"
           >
             Add the Qovery macros to your override
-          </p>
+          </span>
           <p
             class="mb-1"
           >
@@ -226,11 +226,11 @@ exports[`ValuesOverrideFilesSetting should match snapshot with NONE type 1`] = `
         />
       </span>
       <div
-        class="flex flex-row items-baseline gap-x-3 p-3 border rounded border-yellow-600 bg-yellow-50 text-yellow-700 mb-6 text-xs"
+        class="flex flex-row gap-x-3 p-3 border rounded border-yellow-600 bg-yellow-50 text-yellow-700 mb-6 text-xs"
         data-accent-color="yellow"
       >
         <div
-          class="-order-2 text-base"
+          class="-order-2 text-base leading-6"
         >
           <span
             class="icon-solid-triangle-exclamation shrink-0 "
@@ -240,11 +240,11 @@ exports[`ValuesOverrideFilesSetting should match snapshot with NONE type 1`] = `
         <div
           class="-order-1 mr-auto gap-x-3 text-neutral-400"
         >
-          <p
-            class="font-medium mb-1"
+          <span
+            class="block font-medium leading-6"
           >
             Add the Qovery macros to your override
-          </p>
+          </span>
           <p
             class="mb-1"
           >
@@ -400,11 +400,11 @@ exports[`ValuesOverrideFilesSetting should match snapshot with YAML type 1`] = `
         />
       </span>
       <div
-        class="flex flex-row items-baseline gap-x-3 p-3 border rounded border-yellow-600 bg-yellow-50 text-yellow-700 mb-6 text-xs"
+        class="flex flex-row gap-x-3 p-3 border rounded border-yellow-600 bg-yellow-50 text-yellow-700 mb-6 text-xs"
         data-accent-color="yellow"
       >
         <div
-          class="-order-2 text-base"
+          class="-order-2 text-base leading-6"
         >
           <span
             class="icon-solid-triangle-exclamation shrink-0 "
@@ -414,11 +414,11 @@ exports[`ValuesOverrideFilesSetting should match snapshot with YAML type 1`] = `
         <div
           class="-order-1 mr-auto gap-x-3 text-neutral-400"
         >
-          <p
-            class="font-medium mb-1"
+          <span
+            class="block font-medium leading-6"
           >
             Add the Qovery macros to your override
-          </p>
+          </span>
           <p
             class="mb-1"
           >
