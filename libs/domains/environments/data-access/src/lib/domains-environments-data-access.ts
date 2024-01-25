@@ -2,6 +2,7 @@ import { createQueryKeys, type inferQueryKeys } from '@lukemorales/query-key-fac
 import {
   type CloneEnvironmentRequest,
   type CreateEnvironmentRequest,
+  type DeployAllRequest,
   EnvironmentActionsApi,
   EnvironmentExportApi,
   EnvironmentMainCallsApi,
@@ -64,6 +65,10 @@ export const mutations = {
   },
   async deployEnvironment({ environmentId }: { environmentId: string }) {
     const result = await environmentActionApi.deployEnvironment(environmentId)
+    return result.data
+  },
+  async deployAllServices({ environmentId, payload }: { environmentId: string; payload: DeployAllRequest }) {
+    const result = await environmentActionApi.deployAllServices(environmentId, payload)
     return result.data
   },
   async stopEnvironment({ environmentId }: { environmentId: string }) {
