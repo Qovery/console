@@ -3,12 +3,21 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { GitBranchSettings, GitProviderSetting, GitRepositorySetting } from '@qovery/domains/organizations/feature'
 import { ValuesOverrideFilesSetting } from '@qovery/domains/service-helm/feature'
+import { AutoDeploySetting } from '@qovery/domains/services/feature'
 import {
   SERVICES_HELM_CREATION_URL,
   SERVICES_HELM_CREATION_VALUES_STEP_2_URL,
   SERVICES_URL,
 } from '@qovery/shared/routes'
-import { Button, FunnelFlowBody, FunnelFlowHelpCard, InputText } from '@qovery/shared/ui'
+import {
+  Button,
+  Callout,
+  FunnelFlowBody,
+  FunnelFlowHelpCard,
+  Icon,
+  IconAwesomeEnum,
+  InputText,
+} from '@qovery/shared/ui'
 import { getGitTokenValue } from '@qovery/shared/util-git'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
@@ -117,6 +126,29 @@ export function StepValuesOverrideFilesFeature() {
               Specify multiple paths by separating them with a semi-colon
             </p>
           </div>
+          {generalData.source_provider === 'HELM_REPOSITORY' ? (
+            <AutoDeploySetting source="GIT" className="mt-3" />
+          ) : generalData.auto_deploy ? (
+            <Callout.Root color="sky" className="mt-3">
+              <Callout.Icon>
+                <Icon name={IconAwesomeEnum.CIRCLE_INFO} />
+              </Callout.Icon>
+
+              <Callout.Text className="text-xs">
+                <Callout.TextHeading>Auto-deploy is activated</Callout.TextHeading>
+                The service will be automatically updated on every new commit on the branch.
+              </Callout.Text>
+            </Callout.Root>
+          ) : (
+            <Callout.Root color="sky" className="mt-3">
+              <Callout.Icon>
+                <Icon name={IconAwesomeEnum.CIRCLE_INFO} />
+              </Callout.Icon>
+              <Callout.Text className="text-xs">
+                <Callout.TextHeading>Auto-deploy is not activated</Callout.TextHeading>
+              </Callout.Text>
+            </Callout.Root>
+          )}
         </>
       )}
     </>

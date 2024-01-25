@@ -111,7 +111,7 @@ export function StepSummaryFeature() {
           allow_cluster_wide_resources: generalData.allow_cluster_wide_resources,
           arguments: JSON.parse(generalData.arguments),
           timeout_sec: generalData.timeout_sec,
-          auto_deploy: generalData.auto_deploy,
+          auto_deploy: generalData.auto_deploy || (valuesOverrideFileData.auto_deploy ?? false),
           values_override: {
             set: getValuesByType('generic'),
             set_string: getValuesByType('string'),
@@ -208,11 +208,26 @@ export function StepSummaryFeature() {
                 <span className="font-medium">Allow cluster-wide resources:</span>{' '}
                 {Boolean(generalData.allow_cluster_wide_resources).toString()}
               </li>
-              {generalData.source_provider === 'GIT' && (
-                <li>
-                  <span className="font-medium">Auto-deploy:</span> {Boolean(generalData.auto_deploy).toString()}
-                </li>
-              )}
+              <li>
+                <span className="font-medium">Auto-deploy:</span>{' '}
+                {match({ generalData, valuesOverrideFileData })
+                  .with(
+                    {
+                      generalData: { source_provider: 'GIT', auto_deploy: true },
+                      valuesOverrideFileData: { type: 'GIT_REPOSITORY' },
+                    },
+                    () => 'On (chart and values)'
+                  )
+                  .with({ generalData: { source_provider: 'GIT', auto_deploy: true } }, () => 'On (chart)')
+                  .with(
+                    {
+                      generalData: { source_provider: 'HELM_REPOSITORY' },
+                      valuesOverrideFileData: { auto_deploy: true },
+                    },
+                    () => 'On (values)'
+                  )
+                  .otherwise(() => 'Off')}
+              </li>
             </ul>
           </div>
 

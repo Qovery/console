@@ -961,6 +961,28 @@ exports[`StepGeneralFeature should submit a form with a helm repository and matc
                     </div>
                   </div>
                 </div>
+                <div
+                  class="flex flex-row gap-x-3 p-3 border rounded text-sm border-sky-500 bg-sky-50 text-sky-500 mt-5"
+                  data-accent-color="sky"
+                >
+                  <div
+                    class="-order-2 text-base leading-6"
+                  >
+                    <span
+                      class="icon-solid-circle-info shrink-0 "
+                      role="img"
+                    />
+                  </div>
+                  <div
+                    class="-order-1 mr-auto gap-x-3 text-neutral-400 text-xs"
+                  >
+                    <span
+                      class="block font-medium leading-6"
+                    >
+                      Auto-deploy is not available for helms coming from helm repositories
+                    </span>
+                  </div>
+                </div>
               </section>
               <div
                 class="flex justify-between mt-10"
