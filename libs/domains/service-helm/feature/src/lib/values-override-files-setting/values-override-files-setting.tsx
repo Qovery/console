@@ -90,7 +90,7 @@ export function ValuesOverrideFilesSetting({
           <Icon name={IconAwesomeEnum.TRIANGLE_EXCLAMATION} />
         </Callout.Icon>
         <Callout.Text>
-          <p className="font-medium mb-1">Add the Qovery macros to your override</p>
+          <Callout.TextHeading>Add the Qovery macros to your override</Callout.TextHeading>
           <p className="mb-1">
             To get all the Qovery functionalities (Logs, Statuses, Helm stop and restart), add the macro
             “qovery.labels.service” and "qovery.annotations.service" within the field managing the labels/annotations
