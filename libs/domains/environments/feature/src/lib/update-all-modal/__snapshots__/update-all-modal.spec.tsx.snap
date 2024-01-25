@@ -1,0 +1,405 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
+<body>
+  <div>
+    <div
+      class="p-6"
+    >
+      <h2
+        class="h4 text-neutral-400 max-w-sm truncate mb-1"
+      >
+        Deploy latest version for..
+      </h2>
+      <p
+        class="mb-4 text-neutral-350 text-sm"
+      >
+        Select the services you want to update to the latest version
+      </p>
+      <div
+        class="text-neutral-400 text-sm mb-4 flex justify-between items-center"
+      >
+        <p>
+          For
+           
+          <strong
+            class="text-neutral-400 font-medium"
+          >
+            Kyle Cross
+          </strong>
+        </p>
+        <button
+          class="inline-flex items-center shrink-0 font-medium transition text-xs h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550"
+          data-testid="deselect-all"
+        >
+          Deselect All
+        </button>
+      </div>
+      <div
+        class="relative overflow-y-auto pr-[1px] max-h-[440px]"
+        data-testid="scroll-shadow-wrapper"
+      >
+        <div
+          class="sticky top-0 bg-scroll-shadow-up w-full h-4 -mb-4 pointer-events-none transition-opacity duration-300 opacity-0"
+          data-testid="scroll-shadow-top"
+        />
+        <ul>
+          <li
+            class="rounded-t  border border-b-0  p-4 flex justify-between bg-brand-50 border border-brand-500 false"
+            data-testid="outdated-service-row"
+          >
+            <div
+              class="text-neutral-400 font-medium flex"
+            >
+              <div
+                class="flex gap-2 items-center mr-4"
+              >
+                <input
+                  class="input-checkbox relative font-icons w-0 h-0 appearance-none before:absolute before:flex before:justify-center before:items-center before:text-white before:top-0 before:left-0 before:-translate-y-1/2 before:rounded-sm before:bg-white dark:before:bg-neutral-500 mr-5 before:w-4 before:h-4 before:border-neutral-350 cursor-pointer before:border-2 before:font-black before:text-xs before:leading-none before:content-[''] before:transition-all"
+                  data-testid="input-checkbox"
+                  id="0"
+                  name="0"
+                  type="checkbox"
+                  value="0"
+                />
+              </div>
+              Amy Maxwell
+            </div>
+            <div
+              class="flex ml-auto"
+            >
+              <div
+                class="flex items-center opacity-50"
+                data-testid="current-commit-block"
+              >
+                <div
+                  class="block rounded-full relative border border-neutral-200  mr-2"
+                  data-state="closed"
+                  data-testid="avatar"
+                  style="width: 28px; height: 28px;"
+                >
+                  <div
+                    class="w-full h-full rounded-full bg-neutral-200 text-center flex justify-center items-center"
+                  >
+                    <span
+                      class="text-xs text-neutral-400 font-medium relative"
+                    >
+                      U
+                    </span>
+                  </div>
+                </div>
+                <div
+                  class="block w-fit cursor-pointer"
+                  data-state="closed"
+                  data-testid="tag-commit"
+                >
+                  <span
+                    class="rounded text-xs items-center inline-flex font-bold h-7 px-2   border font-medium flex items-center justify-center bg-white border-neutral-250 text-neutral-350 hover:bg-neutral-200 w-[90px]"
+                    data-testid="tag"
+                  >
+                    <div
+                      class="w-4 mr-1"
+                    >
+                      <span
+                        class="icon-solid-code-commit shrink-0 mr-1"
+                        role="img"
+                      />
+                    </div>
+                    commit0
+                  </span>
+                </div>
+              </div>
+              <span
+                class="icon-solid-arrow-left shrink-0 -scale-100 text-neutral-400 mx-2"
+                role="img"
+              />
+              <div
+                class="flex items-center "
+                data-testid="last-commit-block"
+              >
+                <div
+                  class="block rounded-full relative border border-neutral-200  mr-2"
+                  data-state="closed"
+                  data-testid="avatar"
+                  style="width: 28px; height: 28px;"
+                >
+                  <div
+                    class="w-full h-full rounded-full bg-neutral-200 text-center flex justify-center items-center"
+                  >
+                    <span
+                      class="text-xs text-neutral-400 font-medium relative"
+                    />
+                  </div>
+                </div>
+                <div
+                  class="block w-fit cursor-pointer"
+                  data-state="closed"
+                  data-testid="tag-commit"
+                >
+                  <span
+                    class="rounded text-xs items-center inline-flex font-bold h-7 px-2   border font-medium flex items-center justify-center bg-white border-neutral-250 text-neutral-350 hover:bg-neutral-200 w-[90px]"
+                    data-testid="tag"
+                  >
+                    <div
+                      class="w-4 mr-1"
+                    >
+                      <span
+                        class="icon-solid-code-commit shrink-0 mr-1"
+                        role="img"
+                      />
+                    </div>
+                    commit1
+                  </span>
+                </div>
+              </div>
+            </div>
+          </li>
+          <li
+            class="  border border-b-0  p-4 flex justify-between border-neutral-250 border-t-brand-500"
+            data-testid="outdated-service-row"
+          >
+            <div
+              class="text-neutral-400 font-medium flex"
+            >
+              <div
+                class="flex gap-2 items-center mr-4"
+              >
+                <input
+                  class="input-checkbox relative font-icons w-0 h-0 appearance-none before:absolute before:flex before:justify-center before:items-center before:text-white before:top-0 before:left-0 before:-translate-y-1/2 before:rounded-sm before:bg-white dark:before:bg-neutral-500 mr-5 before:w-4 before:h-4 before:border-neutral-350 cursor-pointer before:border-2 before:font-black before:text-xs before:leading-none before:content-[''] before:transition-all"
+                  data-testid="input-checkbox"
+                  id="1"
+                  name="1"
+                  type="checkbox"
+                  value="1"
+                />
+              </div>
+              Zachary Russell
+            </div>
+            <div
+              class="flex ml-auto"
+            >
+              <div
+                class="flex items-center "
+                data-testid="current-commit-block"
+              >
+                <div
+                  class="block rounded-full relative border border-neutral-200  mr-2"
+                  data-state="closed"
+                  data-testid="avatar"
+                  style="width: 28px; height: 28px;"
+                >
+                  <div
+                    class="w-full h-full rounded-full bg-neutral-200 text-center flex justify-center items-center"
+                  >
+                    <span
+                      class="text-xs text-neutral-400 font-medium relative"
+                    >
+                      U
+                    </span>
+                  </div>
+                </div>
+                <div
+                  class="block w-fit cursor-pointer"
+                  data-state="closed"
+                  data-testid="tag-commit"
+                >
+                  <span
+                    class="rounded text-xs items-center inline-flex font-bold h-7 px-2   border font-medium flex items-center justify-center bg-white border-neutral-250 text-neutral-350 hover:bg-neutral-200 w-[90px]"
+                    data-testid="tag"
+                  >
+                    <div
+                      class="w-4 mr-1"
+                    >
+                      <span
+                        class="icon-solid-code-commit shrink-0 mr-1"
+                        role="img"
+                      />
+                    </div>
+                    commit0
+                  </span>
+                </div>
+              </div>
+              <span
+                class="icon-solid-arrow-left shrink-0 -scale-100 text-neutral-400 mx-2"
+                role="img"
+              />
+              <div
+                class="flex items-center opacity-50"
+                data-testid="last-commit-block"
+              >
+                <div
+                  class="block rounded-full relative border border-neutral-200  mr-2"
+                  data-state="closed"
+                  data-testid="avatar"
+                  style="width: 28px; height: 28px;"
+                >
+                  <div
+                    class="w-full h-full rounded-full bg-neutral-200 text-center flex justify-center items-center"
+                  >
+                    <span
+                      class="text-xs text-neutral-400 font-medium relative"
+                    />
+                  </div>
+                </div>
+                <div
+                  class="block w-fit cursor-pointer"
+                  data-state="closed"
+                  data-testid="tag-commit"
+                >
+                  <span
+                    class="rounded text-xs items-center inline-flex font-bold h-7 px-2   border font-medium flex items-center justify-center bg-white border-neutral-250 text-neutral-350 hover:bg-neutral-200 w-[90px]"
+                    data-testid="tag"
+                  >
+                    <div
+                      class="w-4 mr-1"
+                    >
+                      <span
+                        class="icon-solid-code-commit shrink-0 mr-1"
+                        role="img"
+                      />
+                    </div>
+                    commit1
+                  </span>
+                </div>
+              </div>
+            </div>
+          </li>
+          <li
+            class=" rounded-b !border-b border border-b-0  p-4 flex justify-between border-neutral-250 false"
+            data-testid="outdated-service-row"
+          >
+            <div
+              class="text-neutral-400 font-medium flex"
+            >
+              <div
+                class="flex gap-2 items-center mr-4"
+              >
+                <input
+                  class="input-checkbox relative font-icons w-0 h-0 appearance-none before:absolute before:flex before:justify-center before:items-center before:text-white before:top-0 before:left-0 before:-translate-y-1/2 before:rounded-sm before:bg-white dark:before:bg-neutral-500 mr-5 before:w-4 before:h-4 before:border-neutral-350 cursor-pointer before:border-2 before:font-black before:text-xs before:leading-none before:content-[''] before:transition-all"
+                  data-testid="input-checkbox"
+                  id="2"
+                  name="2"
+                  type="checkbox"
+                  value="2"
+                />
+              </div>
+              Joseph Morgan
+            </div>
+            <div
+              class="flex ml-auto"
+            >
+              <div
+                class="flex items-center "
+                data-testid="current-commit-block"
+              >
+                <div
+                  class="block rounded-full relative border border-neutral-200  mr-2"
+                  data-state="closed"
+                  data-testid="avatar"
+                  style="width: 28px; height: 28px;"
+                >
+                  <div
+                    class="w-full h-full rounded-full bg-neutral-200 text-center flex justify-center items-center"
+                  >
+                    <span
+                      class="text-xs text-neutral-400 font-medium relative"
+                    >
+                      U
+                    </span>
+                  </div>
+                </div>
+                <div
+                  class="block w-fit cursor-pointer"
+                  data-state="closed"
+                  data-testid="tag-commit"
+                >
+                  <span
+                    class="rounded text-xs items-center inline-flex font-bold h-7 px-2   border font-medium flex items-center justify-center bg-white border-neutral-250 text-neutral-350 hover:bg-neutral-200 w-[90px]"
+                    data-testid="tag"
+                  >
+                    <div
+                      class="w-4 mr-1"
+                    >
+                      <span
+                        class="icon-solid-code-commit shrink-0 mr-1"
+                        role="img"
+                      />
+                    </div>
+                    commit0
+                  </span>
+                </div>
+              </div>
+              <span
+                class="icon-solid-arrow-left shrink-0 -scale-100 text-neutral-400 mx-2"
+                role="img"
+              />
+              <div
+                class="flex items-center opacity-50"
+                data-testid="last-commit-block"
+              >
+                <div
+                  class="block rounded-full relative border border-neutral-200  mr-2"
+                  data-state="closed"
+                  data-testid="avatar"
+                  style="width: 28px; height: 28px;"
+                >
+                  <div
+                    class="w-full h-full rounded-full bg-neutral-200 text-center flex justify-center items-center"
+                  >
+                    <span
+                      class="text-xs text-neutral-400 font-medium relative"
+                    />
+                  </div>
+                </div>
+                <div
+                  class="block w-fit cursor-pointer"
+                  data-state="closed"
+                  data-testid="tag-commit"
+                >
+                  <span
+                    class="rounded text-xs items-center inline-flex font-bold h-7 px-2   border font-medium flex items-center justify-center bg-white border-neutral-250 text-neutral-350 hover:bg-neutral-200 w-[90px]"
+                    data-testid="tag"
+                  >
+                    <div
+                      class="w-4 mr-1"
+                    >
+                      <span
+                        class="icon-solid-code-commit shrink-0 mr-1"
+                        role="img"
+                      />
+                    </div>
+                    commit1
+                  </span>
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+        <div
+          class="sticky bottom-0 bg-scroll-shadow-bottom w-full h-4 -mt-4 pointer-events-none rotate-180 transition-opacity duration-300 opacity-0"
+          data-testid="scroll-shadow-bottom"
+        />
+      </div>
+      <div
+        class="flex gap-3 justify-end -mb-6 py-6 bg-white sticky bottom-0"
+      >
+        <button
+          class="inline-flex items-center shrink-0 font-medium transition text-sm h-10 px-4 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550"
+          data-testid="cancel-button"
+        >
+          Cancel
+        </button>
+        <button
+          class="inline-flex items-center shrink-0 font-medium transition border text-sm h-10 px-4 rounded bg-brand-500 border-brand-500 hover:border-brand-600 hover:bg-brand-600 text-white disabled:text-brand-300 disabled:bg-brand-100 disabled:border-none"
+          data-testid="submit-button"
+          type="submit"
+        >
+          Update 
+          1
+           service
+        </button>
+      </div>
+    </div>
+  </div>
+</body>
+`;

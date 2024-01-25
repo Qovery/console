@@ -1,7 +1,5 @@
 import { type Environment, OrganizationEventTargetType, StateEnum } from 'qovery-typescript-axios'
 import { useNavigate, useParams } from 'react-router-dom'
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import { UpdateAllModalFeature } from '@qovery/shared/console-shared'
 import { AUDIT_LOGS_PARAMS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import {
   ActionToolbar,
@@ -28,6 +26,7 @@ import { useDeployEnvironment } from '../hooks/use-deploy-environment/use-deploy
 import { useDeploymentStatus } from '../hooks/use-deployment-status/use-deployment-status'
 import { useStopEnvironment } from '../hooks/use-stop-environment/use-stop-environment'
 import { TerraformExportModal } from '../terraform-export-modal/terraform-export-modal'
+import { UpdateAllModal } from '../update-all-modal/update-all-modal'
 
 function MenuManageDeployment({
   environment,
@@ -83,7 +82,7 @@ function MenuManageDeployment({
   const openUpdateAllModal = () => {
     openModal({
       content: (
-        <UpdateAllModalFeature
+        <UpdateAllModal
           organizationId={organizationId}
           environmentId={environment.id}
           projectId={environment.project.id}
@@ -241,9 +240,10 @@ function MenuOtherActions({
 
 export interface EnvironmentActionToolbarProps {
   environment: Environment
+  hasServices?: boolean
 }
 
-export function EnvironmentActionToolbar({ environment }: EnvironmentActionToolbarProps) {
+export function EnvironmentActionToolbar({ environment, hasServices = false }: EnvironmentActionToolbarProps) {
   const navigate = useNavigate()
   const { organizationId = '' } = useParams()
   const { data: deploymentStatus } = useDeploymentStatus({ environmentId: environment.id })
@@ -252,7 +252,13 @@ export function EnvironmentActionToolbar({ environment }: EnvironmentActionToolb
 
   return (
     <ActionToolbar.Root>
-      <MenuManageDeployment environment={environment} state={deploymentStatus.state} organizationId={organizationId} />
+      {hasServices && (
+        <MenuManageDeployment
+          environment={environment}
+          state={deploymentStatus.state}
+          organizationId={organizationId}
+        />
+      )}
       <Tooltip content="Logs">
         <ActionToolbar.Button
           onClick={() => navigate(ENVIRONMENT_LOGS_URL(organizationId, environment.project.id, environment.id))}
