@@ -1,11 +1,14 @@
 import { type Commit, ServiceTypeEnum } from 'qovery-typescript-axios'
-import { type OutdatedService } from '@qovery/domains/services/feature'
 import { applicationFactoryMock, environmentFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { useDeployAllServices } from '../hooks/use-deploy-all-services/use-deploy-all-services'
+import { type OutdatedService } from '../hooks/use-outdated-services/use-outdated-services'
 import { UpdateAllModal, type UpdateAllModalProps } from './update-all-modal'
 
-const [mockEnvironment] = environmentFactoryMock(1)
+const [mockEnvironment1, mockEnvironment2] = environmentFactoryMock(2).map((env, index) => ({
+  ...env,
+  id: `env${index + 1}`,
+}))
 
 const mockApplications = applicationFactoryMock(3).map((app): OutdatedService => {
   return {
@@ -31,14 +34,12 @@ const mockApplications = applicationFactoryMock(3).map((app): OutdatedService =>
   }
 })
 
-jest.mock('@qovery/domains/services/feature', () => ({
-  useOutdatedServices: ({ environmentId }: { environmentId: string }) => {
-    return {
-      data: environmentId === 'env1' ? mockApplications : [],
-      isLoading: false,
-      error: {},
-    }
-  },
+jest.mock('../hooks/use-outdated-services/use-outdated-services', () => ({
+  useOutdatedServices: ({ environmentId }: { environmentId: string }) => ({
+    data: environmentId === 'env1' ? mockApplications : [],
+    isLoading: false,
+    error: {},
+  }),
 }))
 
 jest.mock('../hooks/use-deploy-all-services/use-deploy-all-services', () => {
@@ -53,22 +54,10 @@ jest.mock('../hooks/use-deploy-all-services/use-deploy-all-services', () => {
   }
 })
 
-jest.mock('../hooks/use-environment/use-environment', () => {
-  return {
-    ...jest.requireActual('../hooks/use-environment/use-environment'),
-    useEnvironment: () => ({
-      data: mockEnvironment,
-      isLoading: false,
-      error: {},
-    }),
-  }
-})
-
 describe('UpdateAllModal', () => {
   const props: UpdateAllModalProps = {
     organizationId: 'org1',
-    environmentId: 'env1',
-    projectId: 'project1',
+    environment: mockEnvironment1,
   }
 
   it('should render successfully', () => {
@@ -175,7 +164,7 @@ describe('UpdateAllModal', () => {
   })
 
   it('should display empty state', async () => {
-    renderWithProviders(<UpdateAllModal {...props} environmentId="env2" />)
+    renderWithProviders(<UpdateAllModal {...props} environment={mockEnvironment2} />)
 
     screen.getByTestId('empty-state')
   })

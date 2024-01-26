@@ -17,12 +17,6 @@ jest.mock('../hooks/use-service/use-service', () => ({
   }),
 }))
 
-jest.mock('@qovery/domains/environments/feature', () => ({
-  useEnvironment: () => ({
-    data: mockEnvironment,
-  }),
-}))
-
 jest.mock('../hooks/use-deployment-status/use-deployment-status', () => {
   return {
     ...jest.requireActual('../hooks/use-deployment-status/use-deployment-status'),
@@ -36,9 +30,12 @@ jest.mock('../hooks/use-deployment-status/use-deployment-status', () => {
 
 describe('ServiceActionToolbar', () => {
   it('should match manage deployment snapshot', async () => {
-    const { userEvent, baseElement } = renderWithProviders(<ServiceActionToolbar serviceId={mockHelm.id} />, {
-      container: document.body,
-    })
+    const { userEvent, baseElement } = renderWithProviders(
+      <ServiceActionToolbar serviceId={mockHelm.id} environment={mockEnvironment} />,
+      {
+        container: document.body,
+      }
+    )
     const buttonManageDeployment = screen.getByLabelText(/manage deployment/i)
     await userEvent.click(buttonManageDeployment)
 
@@ -46,9 +43,12 @@ describe('ServiceActionToolbar', () => {
   })
 
   it('should match other actions snapshot', async () => {
-    const { userEvent, baseElement } = renderWithProviders(<ServiceActionToolbar serviceId={mockHelm.id} />, {
-      container: document.body,
-    })
+    const { userEvent, baseElement } = renderWithProviders(
+      <ServiceActionToolbar serviceId={mockHelm.id} environment={mockEnvironment} />,
+      {
+        container: document.body,
+      }
+    )
     const buttonOtherActions = screen.getByLabelText(/other actions/i)
     await userEvent.click(buttonOtherActions)
 

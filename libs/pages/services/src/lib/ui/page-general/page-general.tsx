@@ -1,4 +1,5 @@
 import { useParams } from 'react-router-dom'
+import { useEnvironment } from '@qovery/domains/environments/feature'
 import { ServiceList } from '@qovery/domains/services/feature'
 import { type BaseLink, HelpSection } from '@qovery/shared/ui'
 
@@ -7,17 +8,19 @@ export interface PageGeneralProps {
 }
 
 export function PageGeneral({ listHelpfulLinks }: PageGeneralProps) {
-  const { organizationId = '', projectId = '', environmentId = '' } = useParams()
+  const { organizationId = '', environmentId = '' } = useParams()
+  const { data: environment } = useEnvironment({ environmentId })
 
   return (
     <>
       <div className="mt-2 bg-white rounded-t-sm rounded-b-none flex-grow overflow-y-auto min-h-0">
-        <ServiceList
-          className="border-b-neutral-200 border-b"
-          organizationId={organizationId}
-          projectId={projectId}
-          environmentId={environmentId}
-        />
+        {environment && (
+          <ServiceList
+            className="border-b-neutral-200 border-b"
+            organizationId={organizationId}
+            environment={environment}
+          />
+        )}
       </div>
 
       <div className="bg-white rounded-b flex flex-col justify-end">

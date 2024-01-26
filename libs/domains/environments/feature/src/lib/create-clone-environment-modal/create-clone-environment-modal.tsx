@@ -1,4 +1,4 @@
-import { type CreateEnvironmentModeEnum, Environment, EnvironmentModeEnum } from 'qovery-typescript-axios'
+import { type CreateEnvironmentModeEnum, type Environment, EnvironmentModeEnum } from 'qovery-typescript-axios'
 import { type FormEvent } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'

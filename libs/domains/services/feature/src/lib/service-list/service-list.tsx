@@ -13,13 +13,12 @@ import type {
   ApplicationGitRepository,
   ContainerResponse,
   Database,
+  Environment,
   HelmResponseAllOfSourceOneOf1Repository,
 } from 'qovery-typescript-axios'
 import { type ComponentProps, Fragment, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { P, match } from 'ts-pattern'
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import { useEnvironment } from '@qovery/domains/environments/feature'
 import { type AnyService, type Application, type Helm, type Job } from '@qovery/domains/services/data-access'
 import {
   IconEnum,
@@ -55,31 +54,120 @@ import { containerRegistryKindToIcon } from '@qovery/shared/util-js'
 import { useServices } from '../hooks/use-services/use-services'
 import { LastCommitAuthor } from '../last-commit-author/last-commit-author'
 import { LastCommit } from '../last-commit/last-commit'
-import ServiceActionToolbar from '../service-action-toolbar/service-action-toolbar'
+import { ServiceActionToolbar } from '../service-action-toolbar/service-action-toolbar'
 import { ServiceLinksPopover } from '../service-links-popover/service-links-popover'
 import { ServiceListFilter } from './service-list-filter'
 import { ServiceListSkeleton } from './service-list-skeleton'
 
 const { Table } = TablePrimitives
 
-export interface ServiceListProps extends ComponentProps<typeof Table.Root> {
-  organizationId: string
-  projectId: string
-  environmentId: string
+function getServiceIcon(service: AnyService) {
+  return match(service)
+    .with({ serviceType: 'HELM' }, () => IconEnum.HELM)
+    .with({ serviceType: 'DATABASE' }, () => IconEnum.DATABASE)
+    .with({ serviceType: 'JOB' }, (s) => (s.job_type === 'LIFECYCLE' ? IconEnum.LIFECYCLE_JOB : IconEnum.CRON_JOB))
+    .otherwise(() => IconEnum.APPLICATION)
 }
 
-export function ServiceList({ organizationId, projectId, environmentId, className, ...props }: ServiceListProps) {
+function ServiceNameCell({
+  organizationId,
+  projectId,
+  service,
+  environment,
+}: {
+  organizationId: string
+  projectId: string
+  service: AnyService
+  environment: Environment
+}) {
+  return (
+    <div className="flex items-center justify-between">
+      <span className="flex items-center gap-4 font-medium text-sm text-neutral-400">
+        <Icon name={getServiceIcon(service)} width="20" />
+        {match(service)
+          .with({ serviceType: 'DATABASE' }, (db) => {
+            return (
+              <span className="flex flex-col">
+                <span>{service.name}</span>
+                <span className="text-xs text-neutral-350 font-normal">
+                  {match(db.mode)
+                    .with('CONTAINER', () => 'Container DB')
+                    .with('MANAGED', () => 'Cloud Managed DB')
+                    .exhaustive()}
+                </span>
+              </span>
+            )
+          })
+          .with({ serviceType: 'JOB' }, (job) => (
+            <span className="flex flex-col">
+              <span>{service.name}</span>
+              <span className="text-xs text-neutral-350 font-normal">
+                {match(job)
+                  .with(
+                    { job_type: 'CRON' },
+                    ({ schedule }) =>
+                      `${formatCronExpression(schedule.cronjob?.scheduled_at)} (${schedule.cronjob?.timezone})`
+                  )
+                  .with(
+                    { job_type: 'LIFECYCLE' },
+                    ({ schedule }) =>
+                      [schedule.on_start && 'Start', schedule.on_stop && 'Stop', schedule.on_delete && 'Delete']
+                        .filter(Boolean)
+                        .join(' - ') || undefined
+                  )
+                  .exhaustive()}
+              </span>
+            </span>
+          ))
+          .otherwise(() => service.name)}
+        <div onClick={(e) => e.stopPropagation()}>
+          <ServiceLinksPopover
+            organizationId={organizationId}
+            projectId={projectId}
+            environmentId={environment.id}
+            serviceId={service.id}
+            align="start"
+          >
+            <Button size="xs" variant="surface" color="neutral" radius="full">
+              <Tooltip content="Links">
+                <div className="flex items-center gap-1">
+                  <Icon name={IconAwesomeEnum.LINK} />
+                  <Icon name={IconAwesomeEnum.ANGLE_DOWN} />
+                </div>
+              </Tooltip>
+            </Button>
+          </ServiceLinksPopover>
+        </div>
+      </span>
+      <div className="flex items-center gap-4">
+        {'auto_deploy' in service && service.auto_deploy && (
+          <Tooltip content="Auto-deploy">
+            <span>
+              <Icon className="text-neutral-300" name={IconAwesomeEnum.ARROWS_ROTATE} />
+            </span>
+          </Tooltip>
+        )}
+        <div onClick={(e) => e.stopPropagation()}>
+          <ServiceActionToolbar serviceId={service.id} environment={environment} />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export interface ServiceListProps extends ComponentProps<typeof Table.Root> {
+  organizationId: string
+  environment: Environment
+}
+
+export function ServiceList({ organizationId, environment, className, ...props }: ServiceListProps) {
+  const {
+    id: environmentId,
+    project: { id: projectId },
+  } = environment
   const { data: services = [], isLoading: isServicesLoading } = useServices({ environmentId })
-  const { data: environment, isLoading: isEnvironmentLoading } = useEnvironment({ environmentId })
   const [sorting, setSorting] = useState<SortingState>([])
   const navigate = useNavigate()
-
-  const getServiceIcon = (service: AnyService) =>
-    match(service)
-      .with({ serviceType: 'HELM' }, () => IconEnum.HELM)
-      .with({ serviceType: 'DATABASE' }, () => IconEnum.DATABASE)
-      .with({ serviceType: 'JOB' }, (s) => (s.job_type === 'LIFECYCLE' ? IconEnum.LIFECYCLE_JOB : IconEnum.CRON_JOB))
-      .otherwise(() => IconEnum.APPLICATION)
 
   const columnHelper = createColumnHelper<(typeof services)[number]>()
   const columns = useMemo(
@@ -106,85 +194,13 @@ export function ServiceList({ organizationId, projectId, environmentId, classNam
           },
         },
         cell: (info) => {
-          const serviceName = info.getValue()
-          const service = info.row.original
-
-          if (!environment) {
-            return null
-          }
-
           return (
-            <div className="flex items-center justify-between">
-              <span className="flex items-center gap-4 font-medium text-sm text-neutral-400">
-                <Icon name={getServiceIcon(service)} width="20" />
-                {match(service)
-                  .with({ serviceType: 'DATABASE' }, (db) => {
-                    return (
-                      <span className="flex flex-col">
-                        <span>{serviceName}</span>
-                        <span className="text-xs text-neutral-350 font-normal">
-                          {match(db.mode)
-                            .with('CONTAINER', () => 'Container DB')
-                            .with('MANAGED', () => 'Cloud Managed DB')
-                            .exhaustive()}
-                        </span>
-                      </span>
-                    )
-                  })
-                  .with({ serviceType: 'JOB' }, (job) => (
-                    <span className="flex flex-col">
-                      <span>{serviceName}</span>
-                      <span className="text-xs text-neutral-350 font-normal">
-                        {match(job)
-                          .with(
-                            { job_type: 'CRON' },
-                            ({ schedule }) =>
-                              `${formatCronExpression(schedule.cronjob?.scheduled_at)} (${schedule.cronjob?.timezone})`
-                          )
-                          .with(
-                            { job_type: 'LIFECYCLE' },
-                            ({ schedule }) =>
-                              [schedule.on_start && 'Start', schedule.on_stop && 'Stop', schedule.on_delete && 'Delete']
-                                .filter(Boolean)
-                                .join(' - ') || undefined
-                          )
-                          .exhaustive()}
-                      </span>
-                    </span>
-                  ))
-                  .otherwise(() => serviceName)}
-                <div onClick={(e) => e.stopPropagation()}>
-                  <ServiceLinksPopover
-                    organizationId={organizationId}
-                    projectId={projectId}
-                    environmentId={environmentId}
-                    serviceId={service.id}
-                    align="start"
-                  >
-                    <Button size="xs" variant="surface" color="neutral" radius="full">
-                      <Tooltip content="Links">
-                        <div className="flex items-center gap-1">
-                          <Icon name={IconAwesomeEnum.LINK} />
-                          <Icon name={IconAwesomeEnum.ANGLE_DOWN} />
-                        </div>
-                      </Tooltip>
-                    </Button>
-                  </ServiceLinksPopover>
-                </div>
-              </span>
-              <div className="flex items-center gap-4">
-                {'auto_deploy' in service && service.auto_deploy && (
-                  <Tooltip content="Auto-deploy">
-                    <span>
-                      <Icon className="text-neutral-300" name={IconAwesomeEnum.ARROWS_ROTATE} />
-                    </span>
-                  </Tooltip>
-                )}
-                <div onClick={(e) => e.stopPropagation()}>
-                  <ServiceActionToolbar serviceId={service.id} />
-                </div>
-              </div>
-            </div>
+            <ServiceNameCell
+              organizationId={organizationId}
+              projectId={projectId}
+              service={info.row.original}
+              environment={environment}
+            />
           )
         },
       }),
@@ -403,7 +419,7 @@ export function ServiceList({ organizationId, projectId, environmentId, classNam
         },
       }),
     ],
-    [columnHelper, environment, organizationId, projectId, environmentId, navigate]
+    [columnHelper, organizationId, projectId, environmentId, navigate]
   )
 
   const table = useReactTable({
@@ -426,7 +442,7 @@ export function ServiceList({ organizationId, projectId, environmentId, classNam
     },
   })
 
-  if ((services.length === 0 && isServicesLoading) || isEnvironmentLoading) {
+  if (services.length === 0 && isServicesLoading) {
     return <ServiceListSkeleton />
   }
 

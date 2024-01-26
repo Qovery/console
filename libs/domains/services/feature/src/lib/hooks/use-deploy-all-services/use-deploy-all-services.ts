@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
-import { mutations } from '@qovery/domains/environments/data-access'
+import { mutations } from '@qovery/domains/services/data-access'
 import { ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { queries } from '@qovery/state/util-queries'
 

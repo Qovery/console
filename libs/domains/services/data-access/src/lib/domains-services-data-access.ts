@@ -28,6 +28,8 @@ import {
   DatabaseMainCallsApi,
   type DatabaseRequest,
   DatabasesApi,
+  type DeployAllRequest,
+  EnvironmentActionsApi,
   EnvironmentMainCallsApi,
   HelmActionsApi,
   type HelmAdvancedSettings,
@@ -62,6 +64,8 @@ import {
 import { type ApplicationStatusDto, type DatabaseStatusDto, type ServiceMetricsDto } from 'qovery-ws-typescript-axios'
 import { match } from 'ts-pattern'
 import { type ServiceTypeEnum } from '@qovery/shared/enums'
+
+const environmentActionApi = new EnvironmentActionsApi()
 
 const applicationsApi = new ApplicationsApi()
 const containersApi = new ContainersApi()
@@ -757,6 +761,10 @@ export const mutations = {
       .exhaustive()
     const response = await mutation(serviceId)
     return response.data
+  },
+  async deployAllServices({ environmentId, payload }: { environmentId: string; payload: DeployAllRequest }) {
+    const result = await environmentActionApi.deployAllServices(environmentId, payload)
+    return result.data
   },
   async deployService(props: DeployRequest) {
     const { mutation } = match(props)

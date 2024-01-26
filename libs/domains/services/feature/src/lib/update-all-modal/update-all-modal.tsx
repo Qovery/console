@@ -1,7 +1,6 @@
-import { type Commit, type DeployAllRequest } from 'qovery-typescript-axios'
+import { type Commit, type DeployAllRequest, type Environment } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { P, match } from 'ts-pattern'
-import { type OutdatedService, useOutdatedServices } from '@qovery/domains/services/feature'
 import { isJobGitSource } from '@qovery/shared/enums'
 import {
   Avatar,
@@ -17,21 +16,21 @@ import {
   useModal,
 } from '@qovery/shared/ui'
 import { useDeployAllServices } from '../hooks/use-deploy-all-services/use-deploy-all-services'
-import { useEnvironment } from '../hooks/use-environment/use-environment'
+import { type OutdatedService, useOutdatedServices } from '../hooks/use-outdated-services/use-outdated-services'
 
 export interface UpdateAllModalProps {
   organizationId: string
-  environmentId: string
-  projectId: string
+  environment: Environment
 }
 
-export function UpdateAllModal({ organizationId, environmentId, projectId }: UpdateAllModalProps) {
+export function UpdateAllModal({ organizationId, environment }: UpdateAllModalProps) {
   const { closeModal } = useModal()
-  const { data: outdatedServices = [], isLoading: isOutdatedServicesLoading } = useOutdatedServices({ environmentId })
-  const { data: environment } = useEnvironment({ environmentId })
+  const { data: outdatedServices = [], isLoading: isOutdatedServicesLoading } = useOutdatedServices({
+    environmentId: environment.id,
+  })
   const [selectedServiceIds, setSelectedServiceIds] = useState<string[]>([])
   const { mutate: deployAllServices, isLoading: isDeployAllServicesLoading } = useDeployAllServices({
-    projectId,
+    projectId: environment.project.id,
     organizationId,
   })
 
@@ -75,7 +74,7 @@ export function UpdateAllModal({ organizationId, environmentId, projectId }: Upd
         jobs: jobsToUpdate,
       }
 
-      deployAllServices({ environmentId, payload: deployRequest })
+      deployAllServices({ environmentId: environment.id, payload: deployRequest })
       closeModal()
     }
   }
