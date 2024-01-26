@@ -197,6 +197,14 @@ describe('StepSummaryFeature', () => {
         description: 'description',
         production: true,
         cloud_provider: CloudProviderEnum.AWS,
+        cloud_provider_credentials: {
+          cloud_provider: 'AWS',
+          credentials: {
+            id: '1',
+            name: 'name',
+          },
+          region: 'region',
+        },
         region: 'region',
         kubeconfig: 'file_content',
         kubernetes: 'SELF_MANAGED',
