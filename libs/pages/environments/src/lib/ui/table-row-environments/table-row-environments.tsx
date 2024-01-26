@@ -1,10 +1,10 @@
 import { type Environment } from 'qovery-typescript-axios'
 import {
+  EnvironmentActionToolbar,
   EnvironmentDeploymentStatusLabel,
   EnvironmentMode,
   EnvironmentStateChip,
 } from '@qovery/domains/environments/feature'
-import { EnvironmentButtonsActions } from '@qovery/shared/console-shared'
 import { Icon, Skeleton, type TableFilterProps, type TableHeadProps, TableRow, Tooltip } from '@qovery/shared/ui'
 
 export interface TableRowEnvironmentsProps {
@@ -57,7 +57,7 @@ export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
           <Skeleton show={isLoading} width={200} height={16}>
             <div className="flex items-center gap-3">
               <EnvironmentDeploymentStatusLabel environmentId={data.id} />
-              <EnvironmentButtonsActions environment={data} hasServices={true} />
+              <EnvironmentActionToolbar environment={data} hasServices={true} />
             </div>
           </Skeleton>
         </div>
