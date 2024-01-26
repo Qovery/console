@@ -47,9 +47,6 @@ export function StepKubeconfig({ onSubmit }: StepKubeconfigProps) {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     maxFiles: 1,
-    accept: {
-      'text/plain': ['.yml', '.yaml'],
-    },
   })
 
   const handleDelete = () => {
