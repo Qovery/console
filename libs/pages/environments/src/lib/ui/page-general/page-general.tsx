@@ -1,7 +1,7 @@
 import { type Environment } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { CreateCloneEnvironmentModalFeature } from '@qovery/shared/console-shared'
+import { CreateCloneEnvironmentModal } from '@qovery/domains/environments/feature'
 import {
   CLUSTERS_CREATION_GENERAL_URL,
   CLUSTERS_CREATION_URL,
@@ -132,7 +132,7 @@ export function PageGeneral(props: PageGeneralProps) {
                 clusterAvailable &&
                   openModal({
                     content: (
-                      <CreateCloneEnvironmentModalFeature
+                      <CreateCloneEnvironmentModal
                         onClose={closeModal}
                         projectId={projectId}
                         organizationId={organizationId}
