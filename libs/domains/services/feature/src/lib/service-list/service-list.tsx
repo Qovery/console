@@ -69,17 +69,7 @@ function getServiceIcon(service: AnyService) {
     .otherwise(() => IconEnum.APPLICATION)
 }
 
-function ServiceNameCell({
-  organizationId,
-  projectId,
-  service,
-  environment,
-}: {
-  organizationId: string
-  projectId: string
-  service: AnyService
-  environment: Environment
-}) {
+function ServiceNameCell({ service, environment }: { service: AnyService; environment: Environment }) {
   return (
     <div className="flex items-center justify-between">
       <span className="flex items-center gap-4 font-medium text-sm text-neutral-400">
@@ -122,8 +112,8 @@ function ServiceNameCell({
           .otherwise(() => service.name)}
         <div onClick={(e) => e.stopPropagation()}>
           <ServiceLinksPopover
-            organizationId={organizationId}
-            projectId={projectId}
+            organizationId={environment.organization.id}
+            projectId={environment.project.id}
             environmentId={environment.id}
             serviceId={service.id}
             align="start"
@@ -156,14 +146,14 @@ function ServiceNameCell({
 }
 
 export interface ServiceListProps extends ComponentProps<typeof Table.Root> {
-  organizationId: string
   environment: Environment
 }
 
-export function ServiceList({ organizationId, environment, className, ...props }: ServiceListProps) {
+export function ServiceList({ environment, className, ...props }: ServiceListProps) {
   const {
     id: environmentId,
     project: { id: projectId },
+    organization: { id: organizationId },
   } = environment
   const { data: services = [], isLoading: isServicesLoading } = useServices({ environmentId })
   const [sorting, setSorting] = useState<SortingState>([])
@@ -194,14 +184,7 @@ export function ServiceList({ organizationId, environment, className, ...props }
           },
         },
         cell: (info) => {
-          return (
-            <ServiceNameCell
-              organizationId={organizationId}
-              projectId={projectId}
-              service={info.row.original}
-              environment={environment}
-            />
-          )
+          return <ServiceNameCell service={info.row.original} environment={environment} />
         },
       }),
       columnHelper.accessor('runningStatus.stateLabel', {
