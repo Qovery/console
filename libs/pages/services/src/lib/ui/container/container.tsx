@@ -2,9 +2,8 @@ import { type Environment } from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useCluster } from '@qovery/domains/clusters/feature'
-import { EnvironmentMode, EnvironmentStateChip } from '@qovery/domains/environments/feature'
+import { EnvironmentActionToolbar, EnvironmentMode, EnvironmentStateChip } from '@qovery/domains/environments/feature'
 import { useDeploymentStatus, useServices } from '@qovery/domains/services/feature'
-import { EnvironmentButtonsActions } from '@qovery/shared/console-shared'
 import { IconEnum } from '@qovery/shared/enums'
 import {
   SERVICES_APPLICATION_CREATION_URL,
@@ -73,7 +72,7 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
       </div>
       <Skeleton width={150} height={32} show={!environment}>
         {environment ? (
-          <EnvironmentButtonsActions environment={environment} hasServices={Boolean(services?.length)} />
+          <EnvironmentActionToolbar environment={environment} hasServices={Boolean(services?.length)} />
         ) : (
           <div />
         )}

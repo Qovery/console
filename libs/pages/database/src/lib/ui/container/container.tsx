@@ -43,7 +43,9 @@ export function Container({ service, environment, children }: PropsWithChildren<
         </Skeleton>
       </div>
       <Skeleton width={150} height={32} show={!service}>
-        <div className="flex">{environment && service && <ServiceActionToolbar serviceId={service.id} />}</div>
+        <div className="flex">
+          {environment && service && <ServiceActionToolbar serviceId={service.id} environment={environment} />}
+        </div>
       </Skeleton>
     </div>
   )

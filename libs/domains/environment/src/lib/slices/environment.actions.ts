@@ -9,6 +9,9 @@ import {
 const environmentActionApi = new EnvironmentActionsApi()
 const environmentMainCallsApi = new EnvironmentMainCallsApi()
 
+/*
+ * @deprecated use `useDeployEnvironment` from `@qovery/domains/environments/feature` instead of `useActionRedeployEnvironment`
+ */
 export const useActionRedeployEnvironment = (
   projectId: string,
   environmentId: string,
@@ -44,6 +47,9 @@ export const useActionRedeployEnvironment = (
   )
 }
 
+/*
+ * @deprecated use `useDeployEnvironment` from `@qovery/domains/environments/feature` instead of `useActionRedeployEnvironment`
+ */
 export const useActionDeployEnvironment = (
   projectId: string,
   environmentId: string,
@@ -105,6 +111,9 @@ export const useActionDeployAllEnvironment = (
   )
 }
 
+/*
+ * @deprecated use `useStopEnvironment` from `@qovery/domains/environments/feature` instead of `useActionStopEnvironment`
+ */
 export const useActionStopEnvironment = (
   projectId: string,
   environmentId: string,
@@ -140,6 +149,9 @@ export const useActionStopEnvironment = (
   )
 }
 
+/*
+ * @deprecated use `useCancelEnvironment` from `@qovery/domains/environments/feature` instead of `useActionCancelEnvironment`
+ */
 export const useActionCancelEnvironment = (
   projectId: string,
   environmentId: string,
@@ -175,6 +187,9 @@ export const useActionCancelEnvironment = (
   )
 }
 
+/*
+ * @deprecated use `useDeleteEnvironment` from `@qovery/domains/environments/feature` instead of `useDeleteEnvironment`
+ */
 export const useDeleteEnvironment = (
   projectId: string,
   environmentId: string,

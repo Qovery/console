@@ -2,7 +2,6 @@ import { type ApplicationGitRepository, type Environment, StateEnum } from 'qove
 import { useNavigate, useParams } from 'react-router-dom'
 import { P, match } from 'ts-pattern'
 import { useActionCancelEnvironment } from '@qovery/domains/environment'
-import { useEnvironment } from '@qovery/domains/environments/feature'
 import {
   type AnyService,
   type Application,
@@ -407,23 +406,24 @@ function MenuManageDeployment({
 function MenuOtherActions({
   state,
   organizationId,
-  projectId,
-  environmentId,
+  environment,
   service,
   environmentLogsLink,
 }: {
   state: StateEnum
   organizationId: string
-  projectId: string
-  environmentId: string
+  environment: Environment
   service: AnyService
   environmentLogsLink: string
 }) {
+  const {
+    id: environmentId,
+    project: { id: projectId },
+  } = environment
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
   const navigate = useNavigate()
   const { mutateAsync: deleteService } = useDeleteService({ environmentId })
-  const { data: environment } = useEnvironment({ environmentId })
 
   const [, copyToClipboard] = useCopyToClipboard()
   const copyContent = `Cluster ID: ${environment?.cluster_id}\nOrganization ID: ${organizationId}\nProject ID: ${projectId}\nEnvironment ID: ${environmentId}\nService ID: ${service.id}`
@@ -566,14 +566,13 @@ function MenuOtherActions({
   )
 }
 
-export function ServiceActionToolbar({ serviceId }: { serviceId: string }) {
+export function ServiceActionToolbar({ environment, serviceId }: { environment: Environment; serviceId: string }) {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const navigate = useNavigate()
-  const { data: environment } = useEnvironment({ environmentId })
   const { data: service } = useService({ environmentId, serviceId })
   const { data: deploymentStatus } = useDeploymentStatus({ environmentId, serviceId })
 
-  if (!service || !deploymentStatus || !environment) return <Skeleton height={32} width={115} />
+  if (!service || !deploymentStatus) return <Skeleton height={32} width={115} />
 
   const environmentLogsLink = ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId)
 
@@ -593,8 +592,7 @@ export function ServiceActionToolbar({ serviceId }: { serviceId: string }) {
       <MenuOtherActions
         state={deploymentStatus.state}
         organizationId={organizationId}
-        projectId={projectId}
-        environmentId={environmentId}
+        environment={environment}
         service={service}
         environmentLogsLink={environmentLogsLink}
       />

@@ -321,29 +321,6 @@ jest.mock('../hooks/use-services/use-services', () => ({
   }),
 }))
 
-jest.mock('@qovery/domains/environments/feature', () => ({
-  useEnvironment: () => ({
-    data: {
-      id: '55867c71-56f9-4b4f-ab22-5904c9dbafda',
-      created_at: '2023-10-25T08:52:25.777048Z',
-      updated_at: '2023-10-25T08:52:25.77705Z',
-      name: 'production',
-      project: {
-        id: 'cf021d82-2c5e-41de-96eb-eb69c022eddc',
-      },
-      cloud_provider: {
-        provider: 'AWS',
-        cluster: 'eu-west-3',
-      },
-      mode: 'PRODUCTION',
-      cluster_id: 'c531a994-603f-4edf-86cd-bdaea66a46a9',
-      cluster_name: 'Undeletable_cluster',
-    },
-    isLoading: false,
-    error: {},
-  }),
-}))
-
 jest.mock('../hooks/use-commits/use-commits', () => ({
   useCommits: () => ({
     data: [
@@ -396,8 +373,22 @@ jest.mock('react-router-dom', () => ({
 
 const serviceListProps: ServiceListProps = {
   organizationId: '1',
-  projectId: '2',
-  environmentId: '3',
+  environment: {
+    id: '55867c71-56f9-4b4f-ab22-5904c9dbafda',
+    created_at: '2023-10-25T08:52:25.777048Z',
+    updated_at: '2023-10-25T08:52:25.77705Z',
+    name: 'production',
+    project: {
+      id: 'cf021d82-2c5e-41de-96eb-eb69c022eddc',
+    },
+    cloud_provider: {
+      provider: 'AWS',
+      cluster: 'eu-west-3',
+    },
+    mode: 'PRODUCTION',
+    cluster_id: 'c531a994-603f-4edf-86cd-bdaea66a46a9',
+    cluster_name: 'Undeletable_cluster',
+  },
 }
 
 describe('ServiceList', () => {
@@ -431,7 +422,7 @@ describe('ServiceList', () => {
     await userEvent.click(rows[1])
 
     expect(mockNavigate).toHaveBeenCalledWith(
-      '/organization/1/project/2/environment/3/application/037c9e87-e098-4970-8b1f-9a5ffe9e4b89/services/general'
+      '/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/application/037c9e87-e098-4970-8b1f-9a5ffe9e4b89/services/general'
     )
   })
   it('should navigate to service live logs on service status click', async () => {
@@ -439,7 +430,7 @@ describe('ServiceList', () => {
     await userEvent.click(screen.getAllByRole('button', { name: /stopped/i })[0])
 
     expect(mockNavigate).toHaveBeenCalledWith(
-      '/organization/1/project/2/environment/3/application/037c9e87-e098-4970-8b1f-9a5ffe9e4b89/services/general'
+      '/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/application/037c9e87-e098-4970-8b1f-9a5ffe9e4b89/services/general'
     )
   })
   it('should navigate to service deployment logs on service deployment status click', async () => {
@@ -447,7 +438,7 @@ describe('ServiceList', () => {
     await userEvent.click(screen.getAllByRole('button', { name: /stopped/i })[1])
 
     expect(mockNavigate).toHaveBeenCalledWith(
-      '/organization/1/project/2/environment/3/logs/037c9e87-e098-4970-8b1f-9a5ffe9e4b89/deployment-logs'
+      '/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/logs/037c9e87-e098-4970-8b1f-9a5ffe9e4b89/deployment-logs'
     )
   })
 })

@@ -1,18 +1,17 @@
 import { EnvironmentModeEnum } from 'qovery-typescript-axios'
 import selectEvent from 'react-select-event'
 import * as clustersDomain from '@qovery/domains/clusters/feature'
-import * as environmentDomains from '@qovery/domains/environment'
 import { clusterFactoryMock, environmentFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import CreateCloneEnvironmentModalFeature, {
-  type CreateCloneEnvironmentModalFeatureProps,
-} from './create-clone-environment-modal-feature'
+import * as useCloneEnvironment from '../hooks/use-clone-environment/use-clone-environment'
+import * as useCreateEnvironment from '../hooks/use-create-environment/use-create-environment'
+import CreateCloneEnvironmentModal, { type CreateCloneEnvironmentModalProps } from './create-clone-environment-modal'
 
-let props: CreateCloneEnvironmentModalFeatureProps
+let props: CreateCloneEnvironmentModalProps
 
 const useClustersMockSpy = jest.spyOn(clustersDomain, 'useClusters') as jest.Mock
-const useCreateEnvironmentMockSpy = jest.spyOn(environmentDomains, 'useCreateEnvironment') as jest.Mock
-const useCloneEnvironmentMockSpy = jest.spyOn(environmentDomains, 'useCloneEnvironment') as jest.Mock
+const useCloneEnvironmentMockSpy = jest.spyOn(useCloneEnvironment, 'useCloneEnvironment') as jest.Mock
+const useCreateEnvironmentMockSpy = jest.spyOn(useCreateEnvironment, 'useCreateEnvironment') as jest.Mock
 
 const mockClusters = clusterFactoryMock(3)
 
@@ -21,7 +20,7 @@ jest.mock('react-router-dom', () => ({
   useParams: () => ({ projectId: '1', organizationId: '0' }),
 }))
 
-describe('CreateCloneEnvironmentModalFeature', () => {
+describe('CreateCloneEnvironmentModal', () => {
   beforeEach(() => {
     props = {
       onClose: jest.fn(),
@@ -30,22 +29,30 @@ describe('CreateCloneEnvironmentModalFeature', () => {
       projectId: '1',
     }
 
-    useCreateEnvironmentMockSpy.mockReturnValue({
-      mutate: jest.fn(),
-    })
     useClustersMockSpy.mockReturnValue({
       data: mockClusters,
+    })
+    useCloneEnvironmentMockSpy.mockReturnValue({
+      mutateAsync: jest.fn(() => Promise.resolve({ id: '1' })),
+    })
+    useCreateEnvironmentMockSpy.mockReturnValue({
+      mutateAsync: jest.fn(() => Promise.resolve({ id: '1' })),
     })
   })
 
   it('should render successfully', () => {
-    const { baseElement } = renderWithProviders(<CreateCloneEnvironmentModalFeature {...props} />)
+    const { baseElement } = renderWithProviders(<CreateCloneEnvironmentModal {...props} />)
     expect(baseElement).toBeTruthy()
+  })
+
+  it('should match snapshots', () => {
+    const { baseElement } = renderWithProviders(<CreateCloneEnvironmentModal {...props} />)
+    expect(baseElement).toMatchSnapshot()
   })
 
   describe('creation mode', function () {
     it('should submit form on click on button', async () => {
-      const { userEvent } = renderWithProviders(<CreateCloneEnvironmentModalFeature {...props} />)
+      const { userEvent } = renderWithProviders(<CreateCloneEnvironmentModal {...props} />)
 
       const input = screen.getByTestId('input-text')
 
@@ -60,9 +67,9 @@ describe('CreateCloneEnvironmentModalFeature', () => {
       const submitButton = screen.getByTestId('submit-button')
       await userEvent.click(submitButton)
 
-      expect(useCreateEnvironmentMockSpy().mutate).toHaveBeenCalledWith({
+      expect(useCreateEnvironmentMockSpy().mutateAsync).toHaveBeenCalledWith({
         projectId: '1',
-        data: {
+        payload: {
           cluster: mockClusters[2].id,
           mode: EnvironmentModeEnum.STAGING,
           name: 'test',
@@ -73,14 +80,8 @@ describe('CreateCloneEnvironmentModalFeature', () => {
 
   describe('cloning mode', function () {
     it('should submit form on click on button', async () => {
-      useCloneEnvironmentMockSpy.mockReturnValue({
-        mutate: jest.fn(),
-      })
-
       const mockEnv = environmentFactoryMock(1)[0]
-      const { userEvent } = renderWithProviders(
-        <CreateCloneEnvironmentModalFeature {...props} environmentToClone={mockEnv} />
-      )
+      const { userEvent } = renderWithProviders(<CreateCloneEnvironmentModal {...props} environmentToClone={mockEnv} />)
 
       const inputs = screen.getAllByTestId('input-text')
 
@@ -96,9 +97,9 @@ describe('CreateCloneEnvironmentModalFeature', () => {
       const submitButton = screen.getByTestId('submit-button')
       await userEvent.click(submitButton)
 
-      expect(useCloneEnvironmentMockSpy().mutate).toHaveBeenCalledWith({
+      expect(useCloneEnvironmentMockSpy().mutateAsync).toHaveBeenCalledWith({
         environmentId: mockEnv.id,
-        data: {
+        payload: {
           cluster_id: mockClusters[2].id,
           mode: EnvironmentModeEnum.STAGING,
           name: 'test',

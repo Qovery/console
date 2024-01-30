@@ -30,6 +30,9 @@ const environmentDeploymentRulesApi = new EnvironmentDeploymentRuleApi()
 const environmentExport = new EnvironmentExportApi()
 const databasesApi = new DatabasesApi()
 
+/*
+ * @deprecated use `useEnvironments` from `@qovery/domains/environments/feature` instead of `useFetchEnvironments`
+ */
 export const useFetchEnvironments = <TData = Environment[]>(
   projectId: string,
   select?: (data: Environment[]) => TData
@@ -217,6 +220,9 @@ export const useFetchDatabaseConfiguration = (projectId: string, environmentId: 
   )
 }
 
+/*
+ * @deprecated use `useEnvironmentExportTerraform` from `@qovery/domains/environments/feature` instead of `useFetchEnvironmentExportTerraform`
+ */
 export const useFetchEnvironmentExportTerraform = (projectId: string, environmentId: string) => {
   return useMutation(
     ['project', projectId, 'environments', environmentId, 'terraformExport'],

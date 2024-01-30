@@ -1,23 +1,14 @@
 import { type Project } from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
-import { CreateCloneEnvironmentModalFeature } from '@qovery/shared/console-shared'
+import { CreateCloneEnvironmentModal } from '@qovery/domains/environments/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import {
   ENVIRONMENTS_DEPLOYMENT_RULES_CREATE_URL,
   ENVIRONMENTS_DEPLOYMENT_RULES_URL,
   ENVIRONMENTS_URL,
 } from '@qovery/shared/routes'
-import {
-  ButtonLegacy,
-  ButtonLegacySize,
-  Header,
-  Icon,
-  IconAwesomeEnum,
-  Section,
-  Tabs,
-  useModal,
-} from '@qovery/shared/ui'
+import { Button, Header, Icon, IconAwesomeEnum, Section, Tabs, useModal } from '@qovery/shared/ui'
 
 export interface ContainerProps {
   project?: Project
@@ -51,24 +42,21 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
 
   const contentTabs = (
     <div className="flex justify-center items-center px-5 border-l h-14 border-neutral-200">
-      <ButtonLegacy
-        size={ButtonLegacySize.LARGE}
-        iconRight={IconAwesomeEnum.CIRCLE_PLUS}
+      <Button
+        size="lg"
+        className="gap-2"
         disabled={!clusterAvailable}
         onClick={() => {
           openModal({
             content: (
-              <CreateCloneEnvironmentModalFeature
-                onClose={closeModal}
-                projectId={projectId}
-                organizationId={organizationId}
-              />
+              <CreateCloneEnvironmentModal onClose={closeModal} projectId={projectId} organizationId={organizationId} />
             ),
           })
         }}
       >
         New environment
-      </ButtonLegacy>
+        <Icon name={IconAwesomeEnum.CIRCLE_PLUS} className="text-xs" />
+      </Button>
     </div>
   )
 
