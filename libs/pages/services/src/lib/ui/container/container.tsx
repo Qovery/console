@@ -3,7 +3,7 @@ import { type PropsWithChildren } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useCluster } from '@qovery/domains/clusters/feature'
 import { EnvironmentActionToolbar, EnvironmentMode, EnvironmentStateChip } from '@qovery/domains/environments/feature'
-import { useDeploymentStatus, useServices } from '@qovery/domains/services/feature'
+import { useDeploymentStatus } from '@qovery/domains/services/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import {
   SERVICES_APPLICATION_CREATION_URL,
@@ -46,7 +46,6 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
     environmentId: environment?.id,
   })
 
-  const { data: services } = useServices({ environmentId: environment?.id })
   const { data: cluster } = useCluster({ organizationId, clusterId: environment?.cluster_id ?? '' })
 
   const matchSettingsRoute = location.pathname.includes(
@@ -71,11 +70,7 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
         </Skeleton>
       </div>
       <Skeleton width={150} height={32} show={!environment}>
-        {environment ? (
-          <EnvironmentActionToolbar environment={environment} hasServices={Boolean(services?.length)} />
-        ) : (
-          <div />
-        )}
+        {environment ? <EnvironmentActionToolbar environment={environment} /> : <div />}
       </Skeleton>
     </div>
   )

@@ -56,7 +56,6 @@ jest.mock('../hooks/use-deploy-all-services/use-deploy-all-services', () => {
 
 describe('UpdateAllModal', () => {
   const props: UpdateAllModalProps = {
-    organizationId: 'org1',
     environment: mockEnvironment1,
   }
 

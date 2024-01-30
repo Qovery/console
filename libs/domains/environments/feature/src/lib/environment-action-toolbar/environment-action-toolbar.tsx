@@ -1,6 +1,6 @@
 import { type Environment, OrganizationEventTargetType, StateEnum } from 'qovery-typescript-axios'
-import { useNavigate, useParams } from 'react-router-dom'
-import { UpdateAllModal } from '@qovery/domains/services/feature'
+import { useNavigate } from 'react-router-dom'
+import { UpdateAllModal, useServices } from '@qovery/domains/services/feature'
 import { AUDIT_LOGS_PARAMS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import {
   ActionToolbar,
@@ -28,15 +28,7 @@ import { useDeploymentStatus } from '../hooks/use-deployment-status/use-deployme
 import { useStopEnvironment } from '../hooks/use-stop-environment/use-stop-environment'
 import { TerraformExportModal } from '../terraform-export-modal/terraform-export-modal'
 
-function MenuManageDeployment({
-  environment,
-  state,
-  organizationId,
-}: {
-  environment: Environment
-  state: StateEnum
-  organizationId: string
-}) {
+function MenuManageDeployment({ environment, state }: { environment: Environment; state: StateEnum }) {
   const { openModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
   const { mutate: deployEnvironment } = useDeployEnvironment({ projectId: environment.project.id })
@@ -81,7 +73,7 @@ function MenuManageDeployment({
 
   const openUpdateAllModal = () => {
     openModal({
-      content: <UpdateAllModal organizationId={organizationId} environment={environment} />,
+      content: <UpdateAllModal environment={environment} />,
       options: {
         width: 676,
       },
@@ -130,21 +122,13 @@ function MenuManageDeployment({
   )
 }
 
-function MenuOtherActions({
-  state,
-  environment,
-  organizationId,
-}: {
-  state: StateEnum
-  environment: Environment
-  organizationId: string
-}) {
+function MenuOtherActions({ state, environment }: { state: StateEnum; environment: Environment }) {
   const navigate = useNavigate()
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
   const { mutate: deleteEnvironment } = useDeleteEnvironment({ projectId: environment.project.id })
   const [, copyToClipboard] = useCopyToClipboard()
-  const copyContent = `Cluster ID: ${environment.cluster_id}\nOrganization ID: ${organizationId}\nProject ID: ${environment.project.id}\nEnvironment ID: ${environment.id}`
+  const copyContent = `Cluster ID: ${environment.cluster_id}\nOrganization ID: ${environment.organization.id}\nProject ID: ${environment.project.id}\nEnvironment ID: ${environment.id}`
 
   const mutationDeleteEnvironment = () => {
     openModalConfirmation({
@@ -167,7 +151,7 @@ function MenuOtherActions({
         <CreateCloneEnvironmentModal
           onClose={closeModal}
           projectId={environment.project.id}
-          organizationId={organizationId}
+          organizationId={environment.organization.id}
           environmentToClone={environment}
         />
       ),
@@ -188,7 +172,9 @@ function MenuOtherActions({
       <DropdownMenu.Content>
         <DropdownMenu.Item
           icon={<Icon name={IconAwesomeEnum.SCROLL} />}
-          onClick={() => navigate(ENVIRONMENT_LOGS_URL(organizationId, environment.project.id, environment.id))}
+          onClick={() =>
+            navigate(ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id))
+          }
         >
           Logs
         </DropdownMenu.Item>
@@ -196,7 +182,7 @@ function MenuOtherActions({
           icon={<Icon name={IconAwesomeEnum.CLOCK_ROTATE_LEFT} />}
           onClick={() =>
             navigate(
-              AUDIT_LOGS_PARAMS_URL(organizationId, {
+              AUDIT_LOGS_PARAMS_URL(environment.organization.id, {
                 targetType: OrganizationEventTargetType.ENVIRONMENT,
                 projectId: environment.project.id,
                 targetId: environment.id,
@@ -234,33 +220,29 @@ function MenuOtherActions({
 
 export interface EnvironmentActionToolbarProps {
   environment: Environment
-  hasServices?: boolean
 }
 
-export function EnvironmentActionToolbar({ environment, hasServices = false }: EnvironmentActionToolbarProps) {
+export function EnvironmentActionToolbar({ environment }: EnvironmentActionToolbarProps) {
   const navigate = useNavigate()
-  const { organizationId = '' } = useParams()
+  const { data: services } = useServices({ environmentId: environment.id })
   const { data: deploymentStatus } = useDeploymentStatus({ environmentId: environment.id })
+  const hasServices = Boolean(services?.length)
 
   if (!deploymentStatus) return <Skeleton height={32} width={115} />
 
   return (
     <ActionToolbar.Root>
-      {hasServices && (
-        <MenuManageDeployment
-          environment={environment}
-          state={deploymentStatus.state}
-          organizationId={organizationId}
-        />
-      )}
+      {hasServices && <MenuManageDeployment environment={environment} state={deploymentStatus.state} />}
       <Tooltip content="Logs">
         <ActionToolbar.Button
-          onClick={() => navigate(ENVIRONMENT_LOGS_URL(organizationId, environment.project.id, environment.id))}
+          onClick={() =>
+            navigate(ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id))
+          }
         >
           <Icon name={IconAwesomeEnum.SCROLL} />
         </ActionToolbar.Button>
       </Tooltip>
-      <MenuOtherActions environment={environment} state={deploymentStatus.state} organizationId={organizationId} />
+      <MenuOtherActions environment={environment} state={deploymentStatus.state} />
     </ActionToolbar.Root>
   )
 }

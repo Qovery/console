@@ -57,7 +57,7 @@ export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
           <Skeleton show={isLoading} width={200} height={16}>
             <div className="flex items-center gap-3">
               <EnvironmentDeploymentStatusLabel environmentId={data.id} />
-              <EnvironmentActionToolbar environment={data} hasServices={true} />
+              <EnvironmentActionToolbar environment={data} />
             </div>
           </Skeleton>
         </div>
