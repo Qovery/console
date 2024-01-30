@@ -1,13 +1,18 @@
 import { render } from '__tests__/utils/setup-jest'
-import { type EnvironmentStatus } from 'qovery-typescript-axios'
-import * as domainsEnvironmentsFeature from '@qovery/domains/environments/feature'
+import * as domainsProjectsFeature from '@qovery/domains/projects/feature'
+import { projectsFactoryMock } from '@qovery/shared/factories'
 import PageGeneralFeature from './page-general-feature'
+
+const project = projectsFactoryMock(1)[0]
+
+jest.spyOn(domainsProjectsFeature, 'useProject').mockReturnValue({
+  data: project,
+  isError: false,
+  isLoading: false,
+})
 
 describe('PageGeneralFeature', () => {
   it('should render successfully', () => {
-    jest.spyOn(domainsEnvironmentsFeature, 'useListStatuses').mockReturnValue({
-      data: [] as EnvironmentStatus[],
-    })
     const { baseElement } = render(<PageGeneralFeature />)
     expect(baseElement).toBeTruthy()
   })
