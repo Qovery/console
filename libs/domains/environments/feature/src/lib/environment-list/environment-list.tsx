@@ -31,6 +31,7 @@ import {
   StatusChip,
   TablePrimitives,
   Tooltip,
+  Truncate,
   useModal,
 } from '@qovery/shared/ui'
 import { dateFullFormat, timeAgo } from '@qovery/shared/util-dates'
@@ -46,7 +47,7 @@ const { Table } = TablePrimitives
 function EnvironmentNameCell({ environment }: { environment: Environment }) {
   return (
     <div className="flex items-center justify-between">
-      <span className="flex items-center gap-4 font-medium text-sm text-neutral-400">
+      <span className="flex items-center gap-4 font-medium text-sm text-neutral-400 min-w-0">
         {match(environment.mode)
           .with('DEVELOPMENT', () => (
             <Badge
@@ -74,12 +75,14 @@ function EnvironmentNameCell({ environment }: { environment: Environment }) {
             </Badge>
           ))
           .exhaustive()}
-        <span className="flex flex-col">
-          <span>{environment.name}</span>
+        <span className="flex flex-col shrink truncate min-w-0">
+          <span className="truncate">
+            <Truncate text={environment.name} truncateLimit={90} />
+          </span>
           <span className="text-xs text-neutral-350 font-normal">{upperCaseFirstLetter(environment.mode)}</span>
         </span>
       </span>
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 shrink-0">
         <div onClick={(e) => e.stopPropagation()}>
           <EnvironmentActionToolbar environment={environment} />
         </div>
@@ -135,7 +138,7 @@ export function EnvironmentList({ project, clusterAvailable, className, ...props
           return (
             <Tooltip content="See overview">
               <Button
-                className="text-xs gap-2"
+                className="text-xs gap-2 whitespace-nowrap"
                 size="md"
                 color="neutral"
                 variant="outline"
@@ -168,7 +171,7 @@ export function EnvironmentList({ project, clusterAvailable, className, ...props
           return (
             <Tooltip content="See logs">
               <Button
-                className="text-xs gap-2"
+                className="text-xs gap-2 whitespace-nowrap"
                 size="md"
                 color="neutral"
                 variant="outline"
@@ -191,9 +194,9 @@ export function EnvironmentList({ project, clusterAvailable, className, ...props
         enableColumnFilter: true,
         enableSorting: false,
         filterFn: 'arrIncludesSome',
-        size: 15,
+        size: 20,
         cell: (info) => {
-          const value = info.getValue()
+          const value = info.getValue() ?? ''
           const environment = info.row.original
           return (
             <Tooltip content={`${environment.cluster_name} (${environment.cloud_provider.cluster})`}>
@@ -207,7 +210,7 @@ export function EnvironmentList({ project, clusterAvailable, className, ...props
                 }}
               >
                 <Icon className="mr-2" name={environment.cloud_provider.provider} width="16" />
-                {value}
+                <Truncate text={value} truncateLimit={30} />
               </Button>
             </Tooltip>
           )
@@ -222,7 +225,7 @@ export function EnvironmentList({ project, clusterAvailable, className, ...props
           const value = info.getValue()
           return value ? (
             <Tooltip content={dateFullFormat(value)}>
-              <span className="text-xs text-neutral-350">{timeAgo(new Date(value))}</span>
+              <span className="text-xs text-neutral-350 whitespace-nowrap">{timeAgo(new Date(value))}</span>
             </Tooltip>
           ) : (
             <Icon name={IconAwesomeEnum.CIRCLE_QUESTION} className="text-sm text-neutral-300" />
