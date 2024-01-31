@@ -36,7 +36,7 @@ export function ServiceListFilter({ column }: { column: Column<any, unknown> }) 
         <div className="inline-block relative">
           <Popover.Trigger>
             <Button
-              className={twMerge('text-xs gap-1', column.getIsFiltered() ? 'pr-6' : '')}
+              className={twMerge('text-xs gap-1 whitespace-nowrap', column.getIsFiltered() ? 'pr-6' : '')}
               color={column.getIsFiltered() ? 'brand' : 'neutral'}
               variant={column.getIsFiltered() ? 'solid' : 'surface'}
             >
