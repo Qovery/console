@@ -72,7 +72,10 @@ function getServiceIcon(service: AnyService) {
 function ServiceNameCell({ service, environment }: { service: AnyService; environment: Environment }) {
   return (
     <div className="flex items-center justify-between">
-      <span className="flex items-center gap-4 font-medium text-sm text-neutral-400 min-w-0">
+      <label className="absolute flex items-center inset-y-0 left-0 p-4" onClick={(e) => e.stopPropagation()}>
+        <input type="checkbox" />
+      </label>
+      <span className="flex items-center gap-4 font-medium text-sm text-neutral-400 min-w-0 ml-6">
         <Icon name={getServiceIcon(service)} width="20" />
         {match(service)
           .with({ serviceType: 'DATABASE' }, (db) => {
@@ -505,7 +508,11 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
               }}
             >
               {row.getVisibleCells().map((cell) => (
-                <Table.Cell key={cell.id} className="first:border-r" style={{ width: `${cell.column.getSize()}%` }}>
+                <Table.Cell
+                  key={cell.id}
+                  className="first:border-r first:relative"
+                  style={{ width: `${cell.column.getSize()}%` }}
+                >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </Table.Cell>
               ))}
