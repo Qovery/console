@@ -1,28 +1,79 @@
 import * as RadioGroupPrimitive from '@radix-ui/react-radio-group'
+import { type VariantProps, cva } from 'class-variance-authority'
 import { type ComponentPropsWithoutRef, type ElementRef, forwardRef } from 'react'
 import { twMerge } from '@qovery/shared/util-js'
+import Icon from '../icon/icon'
+import { IconAwesomeEnum } from '../icon/icon-awesome.enum'
 
-const RadioGroupItem = forwardRef<
-  ElementRef<typeof RadioGroupPrimitive.Item>,
-  Omit<ComponentPropsWithoutRef<typeof RadioGroupPrimitive.Item>, 'children'>
->(function RadioGroupItem({ className, ...props }, ref) {
-  return (
-    <RadioGroupPrimitive.Item
-      {...props}
-      className={twMerge(
-        'group transition',
-        'bg-neutral-100 border border-neutral-300 w-[20px] h-[20px] rounded-full',
-        'hover:border-2 hover:border-brand-500',
-        'data-[state=checked]:border-2 data-[state=checked]:border-brand-500',
-        'disabled:hover:border disabled:bg-neutral-150 disabled:border-neutral-250 disabled:data-[state=checked]:hover:border-2 disabled:data-[state=checked]:border-neutral-350',
-        className
-      )}
-      ref={ref}
-    >
-      <RadioGroupPrimitive.Indicator className="flex items-center justify-center w-full h-full relative after:content-[''] after:block after:w-[10px] after:h-[10px] after:rounded-[50%] after:bg-brand-500 after:absolute group-disabled:after:bg-neutral-350" />
-    </RadioGroupPrimitive.Item>
-  )
+const itemVariants = cva(
+  [
+    'group',
+    'transition',
+    'bg-neutral-100',
+    'border',
+    'border-neutral-300',
+    'w-[20px]',
+    'h-[20px]',
+    'rounded-full',
+    'hover:border-2',
+    'hover:border-brand-500',
+    'data-[state=checked]:bg-brand-500',
+    'data-[state=checked]:border-brand-500',
+    'disabled:hover:border',
+    'disabled:bg-neutral-150',
+    'disabled:border-neutral-250',
+    'disabled:data-[state=checked]:hover:border-2',
+    'disabled:data-[state=checked]:border-brand-300',
+    'disabled:data-[state=checked]:bg-brand-300',
+  ],
+  {
+    variants: {
+      variant: {
+        check: [],
+        default: [],
+      },
+    },
+    defaultVariants: {
+      variant: 'default',
+    },
+  }
+)
+
+const indicatorVariants = cva(['flex', 'items-center', 'justify-center', 'w-full', 'h-full', 'relative'], {
+  variants: {
+    variant: {
+      check: [],
+      default: [
+        "after:content-['']",
+        'after:block',
+        'after:w-[6px]',
+        'after:h-[6px]',
+        'after:rounded-[50%]',
+        'after:bg-white',
+        'after:absolute',
+      ],
+    },
+  },
+  defaultVariants: {
+    variant: 'default',
+  },
 })
+
+export interface RadioGroupItemProps
+  extends Omit<ComponentPropsWithoutRef<typeof RadioGroupPrimitive.Item>, 'children'>,
+    VariantProps<typeof itemVariants> {}
+
+const RadioGroupItem = forwardRef<ElementRef<typeof RadioGroupPrimitive.Item>, RadioGroupItemProps>(
+  function RadioGroupItem({ className, variant, ...props }, ref) {
+    return (
+      <RadioGroupPrimitive.Item {...props} className={twMerge(itemVariants({ variant }), className)} ref={ref}>
+        <RadioGroupPrimitive.Indicator className={indicatorVariants({ variant })}>
+          {variant === 'check' && <Icon name={IconAwesomeEnum.CHECK} className="text-xs text-white" />}
+        </RadioGroupPrimitive.Indicator>
+      </RadioGroupPrimitive.Item>
+    )
+  }
+)
 
 const RadioGroup = Object.assign(
   {},
