@@ -1,4 +1,4 @@
-import { CloudProviderEnum, DatabaseAccessibilityEnum, DatabaseModeEnum } from 'qovery-typescript-axios'
+import { CloudProviderEnum, type Cluster, DatabaseAccessibilityEnum, DatabaseModeEnum } from 'qovery-typescript-axios'
 import { type FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -23,6 +23,7 @@ export interface StepGeneralProps {
   databaseTypeOptions?: Value[]
   databaseVersionOptions?: { [Key: string]: Value[] }
   cloudProvider?: string
+  cluster: Cluster
   publicOptionNotAvailable?: boolean
 }
 
@@ -30,7 +31,7 @@ export function StepGeneral(props: StepGeneralProps) {
   const { control, formState, watch } = useFormContext<GeneralData>()
   const { organizationId = '', environmentId = '', projectId = '' } = useParams()
   const navigate = useNavigate()
-  const { databaseTypeOptions, databaseVersionOptions = {}, publicOptionNotAvailable } = props
+  const { databaseTypeOptions, databaseVersionOptions = {}, publicOptionNotAvailable, cluster } = props
 
   const watchType = watch('type')
   const watchMode = watch('mode')
@@ -99,7 +100,7 @@ export function StepGeneral(props: StepGeneralProps) {
               control={control}
               render={({ field }) => (
                 <>
-                  {props.cloudProvider === CloudProviderEnum.AWS && (
+                  {props.cloudProvider === CloudProviderEnum.AWS && cluster.kubernetes !== 'SELF_MANAGED' && (
                     <InputRadio
                       className="mb-3"
                       value={DatabaseModeEnum.MANAGED}
