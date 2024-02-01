@@ -122,7 +122,7 @@ export function StepGeneralFeature() {
   const methods = useForm<GeneralData>({
     defaultValues: generalData
       ? generalData
-      : cloudProvider === 'AWS'
+      : cloudProvider === 'AWS' && cluster?.kubernetes !== 'SELF_MANAGED'
       ? { mode: DatabaseModeEnum.MANAGED }
       : { mode: DatabaseModeEnum.CONTAINER },
     mode: 'onChange',
@@ -152,17 +152,20 @@ export function StepGeneralFeature() {
   })
 
   return (
-    <FunnelFlowBody helpSection={funnelCardHelp}>
-      <FormProvider {...methods}>
-        <StepGeneral
-          cloudProvider={cloudProvider}
-          onSubmit={onSubmit}
-          databaseTypeOptions={databaseTypeOptions}
-          databaseVersionOptions={databaseVersionOptions}
-          publicOptionNotAvailable={publicOptionNotAvailable}
-        />
-      </FormProvider>
-    </FunnelFlowBody>
+    cluster && (
+      <FunnelFlowBody helpSection={funnelCardHelp}>
+        <FormProvider {...methods}>
+          <StepGeneral
+            cloudProvider={cloudProvider}
+            cluster={cluster}
+            onSubmit={onSubmit}
+            databaseTypeOptions={databaseTypeOptions}
+            databaseVersionOptions={databaseVersionOptions}
+            publicOptionNotAvailable={publicOptionNotAvailable}
+          />
+        </FormProvider>
+      </FunnelFlowBody>
+    )
   )
 }
 
