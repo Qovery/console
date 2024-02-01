@@ -15,7 +15,7 @@ declare module '@tanstack/table-core' {
 // NOTE: This component can be standardize in our design system,
 // however we are waiting for other feature / designs example to show off
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function ServiceListFilter({ column }: { column: Column<any, unknown> }) {
+export function EnvironmentListFilter({ column }: { column: Column<any, unknown> }) {
   const [open, setOpen] = useState(false)
   const sortedUniqueValues = useMemo(
     () => Array.from(column.getFacetedUniqueValues().entries()).sort(([a], [b]) => a?.localeCompare?.(b) ?? 0),
@@ -94,4 +94,4 @@ export function ServiceListFilter({ column }: { column: Column<any, unknown> }) 
   )
 }
 
-export default ServiceListFilter
+export default EnvironmentListFilter

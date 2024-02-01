@@ -6,6 +6,9 @@ const chance = new Chance('123')
 export const clusterFactoryMock = (howMany: number, customCloudProvider?: CloudProviderEnum): Cluster[] =>
   Array.from({ length: howMany }).map((_, index) => ({
     id: `${index}`,
+    organization: {
+      id: '123',
+    },
     created_at: new Date().toString(),
     updated_at: new Date().toString(),
     name: chance.name(),

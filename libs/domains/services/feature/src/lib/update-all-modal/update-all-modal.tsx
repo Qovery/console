@@ -19,11 +19,10 @@ import { useDeployAllServices } from '../hooks/use-deploy-all-services/use-deplo
 import { type OutdatedService, useOutdatedServices } from '../hooks/use-outdated-services/use-outdated-services'
 
 export interface UpdateAllModalProps {
-  organizationId: string
   environment: Environment
 }
 
-export function UpdateAllModal({ organizationId, environment }: UpdateAllModalProps) {
+export function UpdateAllModal({ environment }: UpdateAllModalProps) {
   const { closeModal } = useModal()
   const { data: outdatedServices = [], isLoading: isOutdatedServicesLoading } = useOutdatedServices({
     environmentId: environment.id,
@@ -31,7 +30,7 @@ export function UpdateAllModal({ organizationId, environment }: UpdateAllModalPr
   const [selectedServiceIds, setSelectedServiceIds] = useState<string[]>([])
   const { mutate: deployAllServices, isLoading: isDeployAllServicesLoading } = useDeployAllServices({
     projectId: environment.project.id,
-    organizationId,
+    organizationId: environment.organization.id,
   })
 
   const checkService = (serviceId: string) => {

@@ -69,26 +69,18 @@ function getServiceIcon(service: AnyService) {
     .otherwise(() => IconEnum.APPLICATION)
 }
 
-function ServiceNameCell({
-  organizationId,
-  projectId,
-  service,
-  environment,
-}: {
-  organizationId: string
-  projectId: string
-  service: AnyService
-  environment: Environment
-}) {
+function ServiceNameCell({ service, environment }: { service: AnyService; environment: Environment }) {
   return (
     <div className="flex items-center justify-between">
-      <span className="flex items-center gap-4 font-medium text-sm text-neutral-400">
+      <span className="flex items-center gap-4 font-medium text-sm text-neutral-400 min-w-0">
         <Icon name={getServiceIcon(service)} width="20" />
         {match(service)
           .with({ serviceType: 'DATABASE' }, (db) => {
             return (
-              <span className="flex flex-col">
-                <span>{service.name}</span>
+              <span className="flex flex-col shrink truncate min-w-0 pr-2">
+                <span className="truncate">
+                  <Truncate text={service.name} truncateLimit={90} />
+                </span>
                 <span className="text-xs text-neutral-350 font-normal">
                   {match(db.mode)
                     .with('CONTAINER', () => 'Container DB')
@@ -99,8 +91,10 @@ function ServiceNameCell({
             )
           })
           .with({ serviceType: 'JOB' }, (job) => (
-            <span className="flex flex-col">
-              <span>{service.name}</span>
+            <span className="flex flex-col shrink truncate min-w-0 pr-2">
+              <span className="truncate">
+                <Truncate text={service.name} truncateLimit={90} />
+              </span>
               <span className="text-xs text-neutral-350 font-normal">
                 {match(job)
                   .with(
@@ -119,11 +113,17 @@ function ServiceNameCell({
               </span>
             </span>
           ))
-          .otherwise(() => service.name)}
+          .otherwise(() => (
+            <span className="flex flex-col shrink truncate min-w-0 pr-2">
+              <span className="truncate">
+                <Truncate text={service.name} truncateLimit={90} />
+              </span>
+            </span>
+          ))}
         <div onClick={(e) => e.stopPropagation()}>
           <ServiceLinksPopover
-            organizationId={organizationId}
-            projectId={projectId}
+            organizationId={environment.organization.id}
+            projectId={environment.project.id}
             environmentId={environment.id}
             serviceId={service.id}
             align="start"
@@ -139,7 +139,7 @@ function ServiceNameCell({
           </ServiceLinksPopover>
         </div>
       </span>
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 shrink-0">
         {'auto_deploy' in service && service.auto_deploy && (
           <Tooltip content="Auto-deploy">
             <span>
@@ -156,14 +156,14 @@ function ServiceNameCell({
 }
 
 export interface ServiceListProps extends ComponentProps<typeof Table.Root> {
-  organizationId: string
   environment: Environment
 }
 
-export function ServiceList({ organizationId, environment, className, ...props }: ServiceListProps) {
+export function ServiceList({ environment, className, ...props }: ServiceListProps) {
   const {
     id: environmentId,
     project: { id: projectId },
+    organization: { id: organizationId },
   } = environment
   const { data: services = [], isLoading: isServicesLoading } = useServices({ environmentId })
   const [sorting, setSorting] = useState<SortingState>([])
@@ -194,14 +194,7 @@ export function ServiceList({ organizationId, environment, className, ...props }
           },
         },
         cell: (info) => {
-          return (
-            <ServiceNameCell
-              organizationId={organizationId}
-              projectId={projectId}
-              service={info.row.original}
-              environment={environment}
-            />
-          )
+          return <ServiceNameCell service={info.row.original} environment={environment} />
         },
       }),
       columnHelper.accessor('runningStatus.stateLabel', {
@@ -217,7 +210,7 @@ export function ServiceList({ organizationId, environment, className, ...props }
           return (
             <Tooltip content="See overview">
               <Button
-                className="text-xs gap-2"
+                className="text-xs gap-2 whitespace-nowrap"
                 size="md"
                 color="neutral"
                 variant="outline"
@@ -255,7 +248,7 @@ export function ServiceList({ organizationId, environment, className, ...props }
           return (
             <Tooltip content="See logs">
               <Button
-                className="text-xs gap-2"
+                className="text-xs gap-2 whitespace-nowrap"
                 size="md"
                 color="neutral"
                 variant="outline"
@@ -298,7 +291,7 @@ export function ServiceList({ organizationId, environment, className, ...props }
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      <Badge variant="surface" size="xs" className="gap-1">
+                      <Badge variant="surface" size="xs" className="gap-1 whitespace-nowrap">
                         <Icon name={IconAwesomeEnum.CODE_BRANCH} height={14} width={14} />
                         <Truncate text={gitRepository.branch} truncateLimit={18} />
                       </Badge>
@@ -311,13 +304,13 @@ export function ServiceList({ organizationId, environment, className, ...props }
             containerImage && (
               <div className="flex flex-col gap-1 ml-7" onClick={(e) => e.stopPropagation()}>
                 <a href={containerImage.registry.url} target="_blank" rel="noopener noreferrer">
-                  <Badge variant="surface" size="xs" className="items-center gap-1 capitalize">
+                  <Badge variant="surface" size="xs" className="items-center gap-1 capitalize whitespace-nowrap">
                     <Icon width={16} name={containerRegistryKindToIcon(containerImage.registry.kind)} />
                     <Truncate text={containerImage.registry.name.toLowerCase()} truncateLimit={18} />
                   </Badge>
                 </a>
                 <div>
-                  <Badge variant="surface" size="xs" className="gap-1">
+                  <Badge variant="surface" size="xs" className="gap-1 whitespace-nowrap">
                     <Icon width={16} name={IconEnum.CONTAINER} />
                     <Truncate text={`${containerImage.image_name}:${containerImage.tag}`} truncateLimit={35} />
                   </Badge>
@@ -327,7 +320,7 @@ export function ServiceList({ organizationId, environment, className, ...props }
 
           const datasourceInfo = (datasource?: Pick<Database, 'accessibility' | 'mode' | 'type' | 'version'>) =>
             datasource && (
-              <Badge size="xs" variant="surface" className="items-center gap-1 ml-7">
+              <Badge size="xs" variant="surface" className="items-center gap-1 ml-7 whitespace-nowrap">
                 <Icon name={datasource.type} className="max-w-[12px] max-h-[12px]" height={12} width={12} />
                 {datasource.version}
               </Badge>
@@ -337,13 +330,13 @@ export function ServiceList({ organizationId, environment, className, ...props }
             helmRepository && (
               <div className="flex flex-col gap-1 ml-7" onClick={(e) => e.stopPropagation()}>
                 <a href={helmRepository.repository?.url} target="_blank" rel="noopener noreferrer">
-                  <Badge variant="surface" size="xs" className="items-center gap-1">
+                  <Badge variant="surface" size="xs" className="items-center gap-1 whitespace-nowrap">
                     <Icon width={16} name={IconEnum.HELM_OFFICIAL} />
                     <Truncate text={(helmRepository.repository?.name ?? '').toLowerCase()} truncateLimit={18} />
                   </Badge>
                 </a>
                 <div>
-                  <Badge variant="surface" size="xs" className="gap-1">
+                  <Badge variant="surface" size="xs" className="gap-1 whitespace-nowrap">
                     <Icon width={16} name={IconEnum.HELM_OFFICIAL} />
                     {helmRepository.chart_name}:{helmRepository.chart_version}
                   </Badge>

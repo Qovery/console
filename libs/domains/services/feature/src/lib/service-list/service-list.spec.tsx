@@ -372,12 +372,14 @@ jest.mock('react-router-dom', () => ({
 }))
 
 const serviceListProps: ServiceListProps = {
-  organizationId: '1',
   environment: {
     id: '55867c71-56f9-4b4f-ab22-5904c9dbafda',
     created_at: '2023-10-25T08:52:25.777048Z',
     updated_at: '2023-10-25T08:52:25.77705Z',
     name: 'production',
+    organization: {
+      id: '1',
+    },
     project: {
       id: 'cf021d82-2c5e-41de-96eb-eb69c022eddc',
     },

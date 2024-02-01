@@ -18,7 +18,7 @@ exports[`ServiceList should match snapshot 1`] = `
               aria-controls="radix-:r1s:"
               aria-expanded="false"
               aria-haspopup="dialog"
-              class="inline-flex items-center shrink-0 font-medium transition h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 text-xs gap-1"
+              class="inline-flex items-center shrink-0 font-medium transition h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 text-xs gap-1 whitespace-nowrap"
               data-state="closed"
               type="button"
             >
@@ -41,7 +41,7 @@ exports[`ServiceList should match snapshot 1`] = `
               aria-controls="radix-:r1v:"
               aria-expanded="false"
               aria-haspopup="dialog"
-              class="inline-flex items-center shrink-0 font-medium transition h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 text-xs gap-1"
+              class="inline-flex items-center shrink-0 font-medium transition h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 text-xs gap-1 whitespace-nowrap"
               data-state="closed"
               type="button"
             >
@@ -64,7 +64,7 @@ exports[`ServiceList should match snapshot 1`] = `
               aria-controls="radix-:r22:"
               aria-expanded="false"
               aria-haspopup="dialog"
-              class="inline-flex items-center shrink-0 font-medium transition h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 text-xs gap-1"
+              class="inline-flex items-center shrink-0 font-medium transition h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 text-xs gap-1 whitespace-nowrap"
               data-state="closed"
               type="button"
             >
@@ -109,7 +109,7 @@ exports[`ServiceList should match snapshot 1`] = `
             class="flex items-center justify-between"
           >
             <span
-              class="flex items-center gap-4 font-medium text-sm text-neutral-400"
+              class="flex items-center gap-4 font-medium text-sm text-neutral-400 min-w-0"
             >
               <svg
                 class="shrink-0 "
@@ -198,7 +198,15 @@ exports[`ServiceList should match snapshot 1`] = `
                   </lineargradient>
                 </defs>
               </svg>
-              FRONT-END
+              <span
+                class="flex flex-col shrink truncate min-w-0 pr-2"
+              >
+                <span
+                  class="truncate"
+                >
+                  FRONT-END
+                </span>
+              </span>
               <div>
                 <button
                   aria-controls="radix-:r23:"
@@ -225,7 +233,7 @@ exports[`ServiceList should match snapshot 1`] = `
               </div>
             </span>
             <div
-              class="flex items-center gap-4"
+              class="flex items-center gap-4 shrink-0"
             >
               <div>
                 <div
@@ -242,7 +250,7 @@ exports[`ServiceList should match snapshot 1`] = `
           style="width: 15%;"
         >
           <button
-            class="inline-flex items-center shrink-0 font-medium transition h-8 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent text-xs gap-2"
+            class="inline-flex items-center shrink-0 font-medium transition h-8 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent text-xs gap-2 whitespace-nowrap"
             data-state="closed"
           >
             <div
@@ -285,7 +293,7 @@ exports[`ServiceList should match snapshot 1`] = `
           style="width: 15%;"
         >
           <button
-            class="inline-flex items-center shrink-0 font-medium transition h-8 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent text-xs gap-2"
+            class="inline-flex items-center shrink-0 font-medium transition h-8 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent text-xs gap-2 whitespace-nowrap"
             data-state="closed"
           >
             <div
@@ -374,7 +382,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 target="_blank"
               >
                 <span
-                  class="inline-flex items-center shrink-0 font-medium border text-xs px-1 py-0.5 rounded bg-neutral-100 border-neutral-200 text-neutral-400 gap-1"
+                  class="inline-flex items-center shrink-0 font-medium border text-xs px-1 py-0.5 rounded bg-neutral-100 border-neutral-200 text-neutral-400 gap-1 whitespace-nowrap"
                 >
                   <span
                     class="icon-solid-code-branch shrink-0 "
@@ -409,7 +417,7 @@ exports[`ServiceList should match snapshot 1`] = `
             class="flex items-center justify-between"
           >
             <span
-              class="flex items-center gap-4 font-medium text-sm text-neutral-400"
+              class="flex items-center gap-4 font-medium text-sm text-neutral-400 min-w-0"
             >
               <svg
                 class="shrink-0 "
@@ -498,7 +506,15 @@ exports[`ServiceList should match snapshot 1`] = `
                   </lineargradient>
                 </defs>
               </svg>
-              back-end-A
+              <span
+                class="flex flex-col shrink truncate min-w-0 pr-2"
+              >
+                <span
+                  class="truncate"
+                >
+                  back-end-A
+                </span>
+              </span>
               <div>
                 <button
                   aria-controls="radix-:r2c:"
@@ -525,7 +541,7 @@ exports[`ServiceList should match snapshot 1`] = `
               </div>
             </span>
             <div
-              class="flex items-center gap-4"
+              class="flex items-center gap-4 shrink-0"
             >
               <span
                 class=""
@@ -551,7 +567,7 @@ exports[`ServiceList should match snapshot 1`] = `
           style="width: 15%;"
         >
           <button
-            class="inline-flex items-center shrink-0 font-medium transition h-8 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent text-xs gap-2"
+            class="inline-flex items-center shrink-0 font-medium transition h-8 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent text-xs gap-2 whitespace-nowrap"
             data-state="closed"
           >
             <div
@@ -594,7 +610,7 @@ exports[`ServiceList should match snapshot 1`] = `
           style="width: 15%;"
         >
           <button
-            class="inline-flex items-center shrink-0 font-medium transition h-8 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent text-xs gap-2"
+            class="inline-flex items-center shrink-0 font-medium transition h-8 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent text-xs gap-2 whitespace-nowrap"
             data-state="closed"
           >
             <div
@@ -645,7 +661,7 @@ exports[`ServiceList should match snapshot 1`] = `
               target="_blank"
             >
               <span
-                class="inline-flex shrink-0 font-medium border text-xs px-1 py-0.5 rounded bg-neutral-100 border-neutral-200 text-neutral-400 items-center gap-1 capitalize"
+                class="inline-flex shrink-0 font-medium border text-xs px-1 py-0.5 rounded bg-neutral-100 border-neutral-200 text-neutral-400 items-center gap-1 capitalize whitespace-nowrap"
               >
                 <svg
                   class="shrink-0 "
@@ -666,7 +682,7 @@ exports[`ServiceList should match snapshot 1`] = `
             </a>
             <div>
               <span
-                class="inline-flex items-center shrink-0 font-medium border text-xs px-1 py-0.5 rounded bg-neutral-100 border-neutral-200 text-neutral-400 gap-1"
+                class="inline-flex items-center shrink-0 font-medium border text-xs px-1 py-0.5 rounded bg-neutral-100 border-neutral-200 text-neutral-400 gap-1 whitespace-nowrap"
               >
                 <svg
                   class="shrink-0 "
@@ -710,7 +726,7 @@ exports[`ServiceList should match snapshot 1`] = `
             class="flex items-center justify-between"
           >
             <span
-              class="flex items-center gap-4 font-medium text-sm text-neutral-400"
+              class="flex items-center gap-4 font-medium text-sm text-neutral-400 min-w-0"
             >
               <svg
                 class="shrink-0 "
@@ -1089,9 +1105,11 @@ exports[`ServiceList should match snapshot 1`] = `
                 </defs>
               </svg>
               <span
-                class="flex flex-col"
+                class="flex flex-col shrink truncate min-w-0 pr-2"
               >
-                <span>
+                <span
+                  class="truncate"
+                >
                   CRONJOB
                 </span>
                 <span
@@ -1126,7 +1144,7 @@ exports[`ServiceList should match snapshot 1`] = `
               </div>
             </span>
             <div
-              class="flex items-center gap-4"
+              class="flex items-center gap-4 shrink-0"
             >
               <span
                 class=""
@@ -1152,7 +1170,7 @@ exports[`ServiceList should match snapshot 1`] = `
           style="width: 15%;"
         >
           <button
-            class="inline-flex items-center shrink-0 font-medium transition h-8 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent text-xs gap-2"
+            class="inline-flex items-center shrink-0 font-medium transition h-8 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent text-xs gap-2 whitespace-nowrap"
             data-state="closed"
           >
             <div
@@ -1195,7 +1213,7 @@ exports[`ServiceList should match snapshot 1`] = `
           style="width: 15%;"
         >
           <button
-            class="inline-flex items-center shrink-0 font-medium transition h-8 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent text-xs gap-2"
+            class="inline-flex items-center shrink-0 font-medium transition h-8 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent text-xs gap-2 whitespace-nowrap"
             data-state="closed"
           >
             <div
@@ -1284,7 +1302,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 target="_blank"
               >
                 <span
-                  class="inline-flex items-center shrink-0 font-medium border text-xs px-1 py-0.5 rounded bg-neutral-100 border-neutral-200 text-neutral-400 gap-1"
+                  class="inline-flex items-center shrink-0 font-medium border text-xs px-1 py-0.5 rounded bg-neutral-100 border-neutral-200 text-neutral-400 gap-1 whitespace-nowrap"
                 >
                   <span
                     class="icon-solid-code-branch shrink-0 "
@@ -1319,7 +1337,7 @@ exports[`ServiceList should match snapshot 1`] = `
             class="flex items-center justify-between"
           >
             <span
-              class="flex items-center gap-4 font-medium text-sm text-neutral-400"
+              class="flex items-center gap-4 font-medium text-sm text-neutral-400 min-w-0"
             >
               <svg
                 class="shrink-0 "
@@ -1491,9 +1509,11 @@ exports[`ServiceList should match snapshot 1`] = `
                 </defs>
               </svg>
               <span
-                class="flex flex-col"
+                class="flex flex-col shrink truncate min-w-0 pr-2"
               >
-                <span>
+                <span
+                  class="truncate"
+                >
                   seed_script
                 </span>
                 <span
@@ -1528,7 +1548,7 @@ exports[`ServiceList should match snapshot 1`] = `
               </div>
             </span>
             <div
-              class="flex items-center gap-4"
+              class="flex items-center gap-4 shrink-0"
             >
               <span
                 class=""
@@ -1554,7 +1574,7 @@ exports[`ServiceList should match snapshot 1`] = `
           style="width: 15%;"
         >
           <button
-            class="inline-flex items-center shrink-0 font-medium transition h-8 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent text-xs gap-2"
+            class="inline-flex items-center shrink-0 font-medium transition h-8 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent text-xs gap-2 whitespace-nowrap"
             data-state="closed"
           >
             <div
@@ -1597,7 +1617,7 @@ exports[`ServiceList should match snapshot 1`] = `
           style="width: 15%;"
         >
           <button
-            class="inline-flex items-center shrink-0 font-medium transition h-8 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent text-xs gap-2"
+            class="inline-flex items-center shrink-0 font-medium transition h-8 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent text-xs gap-2 whitespace-nowrap"
             data-state="closed"
           >
             <div
@@ -1686,7 +1706,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 target="_blank"
               >
                 <span
-                  class="inline-flex items-center shrink-0 font-medium border text-xs px-1 py-0.5 rounded bg-neutral-100 border-neutral-200 text-neutral-400 gap-1"
+                  class="inline-flex items-center shrink-0 font-medium border text-xs px-1 py-0.5 rounded bg-neutral-100 border-neutral-200 text-neutral-400 gap-1 whitespace-nowrap"
                 >
                   <span
                     class="icon-solid-code-branch shrink-0 "

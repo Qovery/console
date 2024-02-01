@@ -52,6 +52,9 @@ export const environmentFactoryMock = (howMany: number, noStatus = false, noDepl
   return Array.from({ length: howMany }).map((_, index) => ({
     id: `${ids[index]}`,
     project: { id: '123' },
+    organization: {
+      id: '123',
+    },
     created_at: chance.date().toString(),
     updated_at: chance.date().toString(),
     name: chance.name(),

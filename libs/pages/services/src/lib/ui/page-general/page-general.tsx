@@ -8,19 +8,13 @@ export interface PageGeneralProps {
 }
 
 export function PageGeneral({ listHelpfulLinks }: PageGeneralProps) {
-  const { organizationId = '', environmentId = '' } = useParams()
+  const { environmentId = '' } = useParams()
   const { data: environment } = useEnvironment({ environmentId })
 
   return (
     <>
       <div className="mt-2 bg-white rounded-t-sm rounded-b-none flex-grow overflow-y-auto min-h-0">
-        {environment && (
-          <ServiceList
-            className="border-b-neutral-200 border-b"
-            organizationId={organizationId}
-            environment={environment}
-          />
-        )}
+        {environment && <ServiceList className="border-b-neutral-200 border-b" environment={environment} />}
       </div>
 
       <div className="bg-white rounded-b flex flex-col justify-end">
