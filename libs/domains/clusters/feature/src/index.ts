@@ -1,6 +1,7 @@
 export * from './lib/cluster-type/cluster-type'
 export * from './lib/cluster-delete-modal/cluster-delete-modal'
 export * from './lib/cluster-action-toolbar/cluster-action-toolbar'
+export * from './lib/kubeconfig-preview/kubeconfig-preview'
 export * from './lib/hooks/use-cluster-cloud-provider-info/use-cluster-cloud-provider-info'
 export * from './lib/hooks/use-cluster-routing-table/use-cluster-routing-table'
 export * from './lib/hooks/use-cluster-kubeconfig/use-cluster-kubeconfig'
