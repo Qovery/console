@@ -1,6 +1,6 @@
-import { act, fireEvent, render } from '__tests__/utils/setup-jest'
 import * as clustersDomain from '@qovery/domains/clusters/feature'
 import { clusterFactoryMock } from '@qovery/shared/factories'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import PageSettingsGeneralFeature, { handleSubmit } from './page-settings-general-feature'
 
 const mockCluster = clusterFactoryMock(1)[0]
@@ -26,7 +26,7 @@ describe('PageSettingsGeneralFeature', () => {
   })
 
   it('should render successfully', () => {
-    const { baseElement } = render(<PageSettingsGeneralFeature />)
+    const { baseElement } = renderWithProviders(<PageSettingsGeneralFeature />)
     expect(baseElement).toBeTruthy()
   })
 
@@ -45,18 +45,14 @@ describe('PageSettingsGeneralFeature', () => {
   })
 
   it('should edit Cluster if form is submitted', async () => {
-    const { getByTestId } = render(<PageSettingsGeneralFeature />)
+    const { userEvent } = renderWithProviders(<PageSettingsGeneralFeature />)
 
-    await act(() => {
-      const input = getByTestId('input-name')
-      fireEvent.input(input, { target: { value: 'hello' } })
-    })
+    await userEvent.clear(screen.getByTestId('input-name'))
+    await userEvent.type(screen.getByTestId('input-name'), 'hello')
 
-    expect(getByTestId('submit-button')).not.toBeDisabled()
+    expect(screen.getByTestId('submit-button')).not.toBeDisabled()
 
-    await act(() => {
-      getByTestId('submit-button').click()
-    })
+    await userEvent.click(screen.getByTestId('submit-button'))
 
     const cloneCluster = handleSubmit(
       { name: 'hello', description: mockCluster.description, production: mockCluster.production },

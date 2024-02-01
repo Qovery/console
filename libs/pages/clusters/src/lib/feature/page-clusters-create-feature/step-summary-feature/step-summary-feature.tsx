@@ -100,9 +100,21 @@ export function StepSummaryFeature() {
   }, [pathCreate, generalData, navigate, organizationId])
 
   const onSubmit = async (withDeploy: boolean) => {
-    if (generalData && generalData.installation_type === 'SELF_MANAGED' && kubeconfigData) {
+    if (!generalData) {
+      throw new Error('Invalid generalData')
+    }
+    const cloud_provider_credentials: ClusterCloudProviderInfoRequest = {
+      cloud_provider: generalData.cloud_provider,
+      credentials: {
+        id: generalData.credentials,
+        name: generalData.credentials_name,
+      },
+      region: generalData.region,
+    }
+
+    if (generalData.installation_type === 'SELF_MANAGED' && kubeconfigData) {
       try {
-        await createCluster({
+        const cluster = await createCluster({
           organizationId,
           clusterRequest: {
             name: generalData.name,
@@ -114,7 +126,13 @@ export function StepSummaryFeature() {
             ssh_keys: [],
             kubeconfig: kubeconfigData.file_content,
             features: [],
+            cloud_provider_credentials,
           },
+        })
+        await editCloudProviderInfo({
+          organizationId,
+          clusterId: cluster.id,
+          cloudProviderInfoRequest: cloud_provider_credentials,
         })
         navigate({
           pathname: CLUSTERS_URL(organizationId) + CLUSTERS_GENERAL_URL,
@@ -125,7 +143,7 @@ export function StepSummaryFeature() {
       }
       return
     }
-    if (generalData && resourcesData) {
+    if (resourcesData) {
       const formatFeatures =
         featuresData &&
         Object.keys(featuresData)
@@ -137,15 +155,6 @@ export function StepSummaryFeature() {
               }
           )
           .filter(Boolean)
-
-      const cloud_provider_credentials: ClusterCloudProviderInfoRequest = {
-        cloud_provider: generalData.cloud_provider,
-        credentials: {
-          id: generalData.credentials,
-          name: generalData.credentials_name,
-        },
-        region: generalData.region,
-      }
 
       const clusterRequest = match(generalData.cloud_provider)
         .returnType<ClusterRequest>()

@@ -1,5 +1,5 @@
-import { render, waitFor } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import PageSettingsGeneral, { type PageSettingsGeneralProps } from './page-settings-general'
 
 describe('PageSettingsGeneral', () => {
@@ -15,34 +15,34 @@ describe('PageSettingsGeneral', () => {
   }
 
   it('should render successfully', async () => {
-    const { baseElement } = render(wrapWithReactHookForm(<PageSettingsGeneral {...props} />))
+    const { baseElement } = renderWithProviders(wrapWithReactHookForm(<PageSettingsGeneral {...props} />))
     expect(baseElement).toBeTruthy()
   })
 
   it('should render the form with fields', async () => {
-    const { getByDisplayValue } = render(
+    renderWithProviders(
       wrapWithReactHookForm(<PageSettingsGeneral {...props} />, {
         defaultValues: defaultValues,
       })
     )
 
-    getByDisplayValue('hello-world')
-    getByDisplayValue('desc')
-    getByDisplayValue('true')
+    screen.getByDisplayValue('hello-world')
+    screen.getByDisplayValue('desc')
+    screen.getByDisplayValue('true')
   })
 
   it('should submit the form', async () => {
-    const { getByTestId } = render(
+    const { userEvent } = renderWithProviders(
       wrapWithReactHookForm(<PageSettingsGeneral {...props} />, {
         defaultValues: defaultValues,
       })
     )
 
-    const button = getByTestId('submit-button')
-
-    await waitFor(() => {
-      button.click()
-      expect(props.onSubmit).toHaveBeenCalled()
-    })
+    const button = await screen.findByTestId('submit-button')
+    // https://react-hook-form.com/advanced-usage#TransformandParse
+    expect(button).toBeInTheDocument()
+    expect(button).not.toBeDisabled()
+    await userEvent.click(button)
+    expect(props.onSubmit).toHaveBeenCalled()
   })
 })

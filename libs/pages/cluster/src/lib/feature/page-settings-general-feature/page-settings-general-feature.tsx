@@ -1,5 +1,4 @@
 import { type Cluster } from 'qovery-typescript-axios'
-import { useEffect } from 'react'
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { useCluster, useEditCluster } from '@qovery/domains/clusters/feature'
@@ -14,15 +13,15 @@ export const handleSubmit = (data: FieldValues, cluster: Cluster) => {
   }
 }
 
-export function PageSettingsGeneralFeature() {
-  const { organizationId = '', clusterId = '' } = useParams()
+export function SettingsGeneralFeature({ cluster, organizationId }: { cluster: Cluster; organizationId: string }) {
+  const { mutateAsync: editCluster, isLoading: isEditClusterLoading } = useEditCluster()
 
   const methods = useForm({
     mode: 'onChange',
+    defaultValues: {
+      ...cluster,
+    },
   })
-
-  const { data: cluster } = useCluster({ organizationId, clusterId })
-  const { mutateAsync: editCluster, isLoading: isEditClusterLoading } = useEditCluster()
 
   const onSubmit = methods.handleSubmit((data) => {
     if (data && cluster) {
@@ -30,23 +29,25 @@ export function PageSettingsGeneralFeature() {
 
       editCluster({
         organizationId,
-        clusterId,
+        clusterId: cluster.id,
         clusterRequest: cloneCluster,
       })
     }
   })
-
-  useEffect(() => {
-    methods.setValue('name', cluster?.name)
-    methods.setValue('description', cluster?.description)
-    methods.setValue('production', cluster?.production)
-  }, [methods, cluster?.name, cluster?.description, cluster?.production])
 
   return (
     <FormProvider {...methods}>
       <PageSettingsGeneral onSubmit={onSubmit} loading={isEditClusterLoading} />
     </FormProvider>
   )
+}
+
+export function PageSettingsGeneralFeature() {
+  const { organizationId = '', clusterId = '' } = useParams()
+
+  const { data: cluster } = useCluster({ organizationId, clusterId })
+
+  return cluster && <SettingsGeneralFeature cluster={cluster} organizationId={organizationId} />
 }
 
 export default PageSettingsGeneralFeature

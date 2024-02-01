@@ -71,14 +71,14 @@ export function StepGeneral(props: StepGeneralProps) {
           <h4 className="mb-4 text-neutral-400 text-sm">General</h4>
           <ClusterGeneralSettings />
         </div>
-        <div className="text-sm mb-10 hidden">
+        <div className="text-sm mb-10">
           <Controller
             name="installation_type"
             control={control}
             rules={{
               required: 'Please select an installation type.',
             }}
-            render={({ field, fieldState: { error } }) => (
+            render={({ field }) => (
               <BlockContent title="Installation type">
                 <RadioGroup.Root className="flex flex-col gap-4" defaultValue={field.value} onChange={field.onChange}>
                   <label className="flex gap-3">

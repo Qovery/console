@@ -1,4 +1,3 @@
-import { KubernetesEnum } from 'qovery-typescript-axios'
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useCluster } from '@qovery/domains/clusters/feature'
@@ -77,7 +76,8 @@ export function PageSettingsFeature() {
   }
 
   const links = match(cluster)
-    .with({ cloud_provider: 'AWS' }, () => [
+    .with({ kubernetes: 'SELF_MANAGED' }, () => [generalLink, credentialsLink, dangerZoneLink])
+    .with({ cloud_provider: 'AWS', kubernetes: 'MANAGED' }, () => [
       generalLink,
       credentialsLink,
       resourcesLink,
@@ -86,7 +86,7 @@ export function PageSettingsFeature() {
       advancedSettingsLink,
       dangerZoneLink,
     ])
-    .with({ cloud_provider: 'AWS', kubernetes: KubernetesEnum.K3_S }, () => [
+    .with({ cloud_provider: 'AWS', kubernetes: 'K3S' }, () => [
       generalLink,
       credentialsLink,
       resourcesLink,

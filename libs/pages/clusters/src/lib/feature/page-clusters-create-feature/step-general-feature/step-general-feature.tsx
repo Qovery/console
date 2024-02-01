@@ -44,7 +44,7 @@ export function StepGeneralFeature() {
         description: 'Need help? You may find these links useful',
         links: [
           {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/clusters/#managing-your-clusters-with-qovery',
+            link: 'https://hub.qovery.com/docs/getting-started/install-qovery/',
             linkLabel: 'How to configure my cluster',
           },
           { link: 'https://discuss.qovery.com/', linkLabel: 'Still need help? Ask on our Forum' },
