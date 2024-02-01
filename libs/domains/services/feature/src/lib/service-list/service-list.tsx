@@ -77,7 +77,7 @@ function ServiceNameCell({ service, environment }: { service: AnyService; enviro
         {match(service)
           .with({ serviceType: 'DATABASE' }, (db) => {
             return (
-              <span className="flex flex-col shrink truncate min-w-0">
+              <span className="flex flex-col shrink truncate min-w-0 pr-2">
                 <span className="truncate">
                   <Truncate text={service.name} truncateLimit={90} />
                 </span>
@@ -91,7 +91,7 @@ function ServiceNameCell({ service, environment }: { service: AnyService; enviro
             )
           })
           .with({ serviceType: 'JOB' }, (job) => (
-            <span className="flex flex-col shrink truncate min-w-0">
+            <span className="flex flex-col shrink truncate min-w-0 pr-2">
               <span className="truncate">
                 <Truncate text={service.name} truncateLimit={90} />
               </span>
@@ -114,7 +114,7 @@ function ServiceNameCell({ service, environment }: { service: AnyService; enviro
             </span>
           ))
           .otherwise(() => (
-            <span className="flex flex-col shrink truncate min-w-0">
+            <span className="flex flex-col shrink truncate min-w-0 pr-2">
               <span className="truncate">
                 <Truncate text={service.name} truncateLimit={90} />
               </span>

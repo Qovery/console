@@ -48,34 +48,46 @@ function EnvironmentNameCell({ environment }: { environment: Environment }) {
   return (
     <div className="flex items-center justify-between">
       <span className="flex items-center gap-4 font-medium text-sm text-neutral-400 min-w-0">
-        {match(environment.mode)
-          .with('DEVELOPMENT', () => (
-            <Badge
-              variant="outline"
-              color="neutral"
-              size="xs"
-              className="flex w-4 h-4 justify-center p-0 font-semibold"
-            >
-              D
-            </Badge>
-          ))
-          .with('PREVIEW', () => (
-            <Badge variant="surface" color="purple" size="xs" className="flex w-4 h-4 justify-center p-0 font-semibold">
-              V
-            </Badge>
-          ))
-          .with('PRODUCTION', () => (
-            <Badge variant="surface" color="red" size="xs" className="flex w-4 h-4 justify-center p-0 font-semibold">
-              P
-            </Badge>
-          ))
-          .with('STAGING', () => (
-            <Badge variant="surface" color="green" size="xs" className="flex w-4 h-4 justify-center p-0 font-semibold">
-              S
-            </Badge>
-          ))
-          .exhaustive()}
-        <span className="flex flex-col shrink truncate min-w-0">
+        <Tooltip content={upperCaseFirstLetter(environment.mode)}>
+          {match(environment.mode)
+            .with('DEVELOPMENT', () => (
+              <Badge
+                variant="outline"
+                color="neutral"
+                size="xs"
+                className="flex w-4 h-4 justify-center p-0 font-semibold"
+              >
+                D
+              </Badge>
+            ))
+            .with('PREVIEW', () => (
+              <Badge
+                variant="surface"
+                color="purple"
+                size="xs"
+                className="flex w-4 h-4 justify-center p-0 font-semibold"
+              >
+                V
+              </Badge>
+            ))
+            .with('PRODUCTION', () => (
+              <Badge variant="surface" color="red" size="xs" className="flex w-4 h-4 justify-center p-0 font-semibold">
+                P
+              </Badge>
+            ))
+            .with('STAGING', () => (
+              <Badge
+                variant="surface"
+                color="green"
+                size="xs"
+                className="flex w-4 h-4 justify-center p-0 font-semibold"
+              >
+                S
+              </Badge>
+            ))
+            .exhaustive()}
+        </Tooltip>
+        <span className="flex flex-col shrink truncate min-w-0 pr-2">
           <span className="truncate">
             <Truncate text={environment.name} truncateLimit={90} />
           </span>

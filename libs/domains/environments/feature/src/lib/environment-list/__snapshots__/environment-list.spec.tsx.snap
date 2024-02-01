@@ -15,7 +15,7 @@ exports[`EnvironmentList should match snapshot 1`] = `
             class="inline-block relative"
           >
             <button
-              aria-controls="radix-:r1i:"
+              aria-controls="radix-:r1m:"
               aria-expanded="false"
               aria-haspopup="dialog"
               class="inline-flex items-center shrink-0 font-medium transition h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 text-xs gap-1 whitespace-nowrap"
@@ -38,7 +38,7 @@ exports[`EnvironmentList should match snapshot 1`] = `
             class="inline-block relative"
           >
             <button
-              aria-controls="radix-:r1l:"
+              aria-controls="radix-:r1p:"
               aria-expanded="false"
               aria-haspopup="dialog"
               class="inline-flex items-center shrink-0 font-medium transition h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 text-xs gap-1 whitespace-nowrap"
@@ -61,7 +61,7 @@ exports[`EnvironmentList should match snapshot 1`] = `
             class="inline-block relative"
           >
             <button
-              aria-controls="radix-:r1o:"
+              aria-controls="radix-:r1s:"
               aria-expanded="false"
               aria-haspopup="dialog"
               class="inline-flex items-center shrink-0 font-medium transition h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 text-xs gap-1 whitespace-nowrap"
@@ -84,7 +84,7 @@ exports[`EnvironmentList should match snapshot 1`] = `
             class="inline-block relative"
           >
             <button
-              aria-controls="radix-:r1r:"
+              aria-controls="radix-:r1v:"
               aria-expanded="false"
               aria-haspopup="dialog"
               class="inline-flex items-center shrink-0 font-medium transition h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 text-xs gap-1 whitespace-nowrap"
@@ -131,11 +131,12 @@ exports[`EnvironmentList should match snapshot 1`] = `
               <span
                 class="items-center shrink-0 border text-xs rounded border-neutral-250 text-neutral-350 dark:border-neutral-350 flex w-4 h-4 justify-center p-0 font-semibold"
                 data-accent-color="neutral"
+                data-state="closed"
               >
                 D
               </span>
               <span
-                class="flex flex-col shrink truncate min-w-0"
+                class="flex flex-col shrink truncate min-w-0 pr-2"
               >
                 <span
                   class="truncate"
@@ -311,11 +312,12 @@ exports[`EnvironmentList should match snapshot 1`] = `
               <span
                 class="items-center shrink-0 text-red-500 border text-xs rounded bg-red-50 border-red-500 flex w-4 h-4 justify-center p-0 font-semibold"
                 data-accent-color="red"
+                data-state="closed"
               >
                 P
               </span>
               <span
-                class="flex flex-col shrink truncate min-w-0"
+                class="flex flex-col shrink truncate min-w-0 pr-2"
               >
                 <span
                   class="truncate"
@@ -470,11 +472,12 @@ exports[`EnvironmentList should match snapshot 1`] = `
               <span
                 class="items-center shrink-0 border text-xs rounded border-neutral-250 text-neutral-350 dark:border-neutral-350 flex w-4 h-4 justify-center p-0 font-semibold"
                 data-accent-color="neutral"
+                data-state="closed"
               >
                 D
               </span>
               <span
-                class="flex flex-col shrink truncate min-w-0"
+                class="flex flex-col shrink truncate min-w-0 pr-2"
               >
                 <span
                   class="truncate"
@@ -629,11 +632,12 @@ exports[`EnvironmentList should match snapshot 1`] = `
               <span
                 class="items-center shrink-0 border text-xs rounded border-neutral-250 text-neutral-350 dark:border-neutral-350 flex w-4 h-4 justify-center p-0 font-semibold"
                 data-accent-color="neutral"
+                data-state="closed"
               >
                 D
               </span>
               <span
-                class="flex flex-col shrink truncate min-w-0"
+                class="flex flex-col shrink truncate min-w-0 pr-2"
               >
                 <span
                   class="truncate"

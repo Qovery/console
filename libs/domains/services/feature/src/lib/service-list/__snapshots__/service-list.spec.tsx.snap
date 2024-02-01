@@ -199,7 +199,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 </defs>
               </svg>
               <span
-                class="flex flex-col shrink truncate min-w-0"
+                class="flex flex-col shrink truncate min-w-0 pr-2"
               >
                 <span
                   class="truncate"
@@ -507,7 +507,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 </defs>
               </svg>
               <span
-                class="flex flex-col shrink truncate min-w-0"
+                class="flex flex-col shrink truncate min-w-0 pr-2"
               >
                 <span
                   class="truncate"
@@ -1105,7 +1105,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 </defs>
               </svg>
               <span
-                class="flex flex-col shrink truncate min-w-0"
+                class="flex flex-col shrink truncate min-w-0 pr-2"
               >
                 <span
                   class="truncate"
@@ -1509,7 +1509,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 </defs>
               </svg>
               <span
-                class="flex flex-col shrink truncate min-w-0"
+                class="flex flex-col shrink truncate min-w-0 pr-2"
               >
                 <span
                   class="truncate"
