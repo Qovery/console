@@ -67,6 +67,13 @@ export const clusters = createQueryKeys('clusters', {
       return response.data.results
     },
   }),
+  kubeconfig: ({ organizationId, clusterId }: { organizationId: string; clusterId: string }) => ({
+    queryKey: [organizationId, clusterId],
+    async queryFn() {
+      const response = await clusterApi.getClusterKubeconfig(organizationId, clusterId)
+      return response.data
+    },
+  }),
 })
 
 export const mutations = {
