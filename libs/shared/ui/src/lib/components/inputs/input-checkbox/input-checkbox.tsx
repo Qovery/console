@@ -15,6 +15,9 @@ export interface InputCheckboxProps {
   big?: boolean
 }
 
+/*
+ * @deprecated Use Checkbox instead
+ */
 export function InputCheckbox(props: InputCheckboxProps) {
   const {
     name,
