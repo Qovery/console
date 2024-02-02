@@ -1,4 +1,6 @@
 import {
+  type Row,
+  RowSelectionState,
   type SortingState,
   createColumnHelper,
   flexRender,
@@ -39,6 +41,7 @@ import {
 import {
   Badge,
   Button,
+  Checkbox,
   EmptyState,
   Icon,
   IconAwesomeEnum,
@@ -69,12 +72,10 @@ function getServiceIcon(service: AnyService) {
     .otherwise(() => IconEnum.APPLICATION)
 }
 
-function ServiceNameCell({ service, environment }: { service: AnyService; environment: Environment }) {
+function ServiceNameCell({ row, environment }: { row: Row<AnyService>; environment: Environment }) {
+  const { original: service } = row
   return (
     <div className="flex items-center justify-between">
-      <label className="absolute flex items-center inset-y-0 left-0 p-4" onClick={(e) => e.stopPropagation()}>
-        <input type="checkbox" />
-      </label>
       <span className="flex items-center gap-4 font-medium text-sm text-neutral-400 min-w-0 ml-6">
         <Icon name={getServiceIcon(service)} width="20" />
         {match(service)
@@ -170,11 +171,32 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
   } = environment
   const { data: services = [], isLoading: isServicesLoading } = useServices({ environmentId })
   const [sorting, setSorting] = useState<SortingState>([])
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({ '1': true })
   const navigate = useNavigate()
 
   const columnHelper = createColumnHelper<(typeof services)[number]>()
   const columns = useMemo(
     () => [
+      {
+        id: 'select',
+        enableColumnFilter: false,
+        enableSorting: false,
+        header: ({ table }) => (
+          <Checkbox
+            checked={table.getIsSomeRowsSelected() ? 'indeterminate' : table.getIsAllRowsSelected()}
+            onChange={table.getToggleAllRowsSelectedHandler()}
+          />
+        ),
+        cell: ({ row }) => (
+          <div onClick={(e) => e.stopPropagation()}>
+            <Checkbox
+              checked={row.getIsSelected()}
+              disabled={!row.getCanSelect()}
+              onChange={row.getToggleSelectedHandler()}
+            />
+          </div>
+        ),
+      },
       columnHelper.accessor('name', {
         header: 'Name',
         enableColumnFilter: true,
@@ -197,7 +219,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
           },
         },
         cell: (info) => {
-          return <ServiceNameCell service={info.row.original} environment={environment} />
+          return <ServiceNameCell row={info.row} environment={environment} />
         },
       }),
       columnHelper.accessor('runningStatus.stateLabel', {
@@ -423,8 +445,11 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
     columns,
     state: {
       sorting,
+      rowSelection,
     },
+    enableRowSelection: true,
     onSortingChange: setSorting,
+    onRowSelectionChange: setRowSelection,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
