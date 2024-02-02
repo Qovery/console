@@ -4,7 +4,7 @@ import { useDropzone } from 'react-dropzone'
 import { KUBECONFIG } from '@qovery/shared/routes'
 import { Button, Heading, HelpSection, Icon, IconAwesomeEnum, Link, Section } from '@qovery/shared/ui'
 
-interface PageSettingsKubeconfigProps {
+export interface PageSettingsKubeconfigProps {
   cluster: Cluster
   onSubmit: (cluster: Cluster, kubeconfig: string) => void
 }
