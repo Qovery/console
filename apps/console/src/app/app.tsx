@@ -6,12 +6,13 @@ import posthog from 'posthog-js'
 import { useCallback, useEffect } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { useIntercom } from 'react-use-intercom'
+import { KubeconfigPreview } from '@qovery/domains/clusters/feature'
 import { HelmDefaultValuesPreview } from '@qovery/domains/service-helm/feature'
 import { DarkModeEnabler, Layout } from '@qovery/pages/layout'
 import { PageLogin, PageLogoutFeature } from '@qovery/pages/login'
 import { useAuth, useInviteMember } from '@qovery/shared/auth'
 import { ProtectedRoute } from '@qovery/shared/router'
-import { HELM_DEFAULT_VALUES, LOGIN_URL, LOGOUT_URL, PREVIEW_CODE } from '@qovery/shared/routes'
+import { HELM_DEFAULT_VALUES, KUBECONFIG, LOGIN_URL, LOGOUT_URL, PREVIEW_CODE } from '@qovery/shared/routes'
 import { LoadingScreen } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { useAuthInterceptor } from '@qovery/shared/utils'
@@ -95,6 +96,7 @@ export function App() {
         <Route path={LOGOUT_URL} element={<PageLogoutFeature />} />
         <Route path={PREVIEW_CODE} element={<PreviewCode />} />
         <Route path={HELM_DEFAULT_VALUES} element={<HelmDefaultValuesPreview />} />
+        <Route path={KUBECONFIG} element={<KubeconfigPreview />} />
         {ROUTER.map((route) =>
           route.layout ? (
             <Route

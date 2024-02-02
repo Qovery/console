@@ -7,6 +7,7 @@ import {
   CLUSTER_SETTINGS_DANGER_ZONE_URL,
   CLUSTER_SETTINGS_FEATURES_URL,
   CLUSTER_SETTINGS_GENERAL_URL,
+  CLUSTER_SETTINGS_KUBECONFIG_URL,
   CLUSTER_SETTINGS_NETWORK_URL,
   CLUSTER_SETTINGS_REMOTE_ACCESS_URL,
   CLUSTER_SETTINGS_RESOURCES_URL,
@@ -69,6 +70,12 @@ export function PageSettingsFeature() {
     url: pathSettings + CLUSTER_SETTINGS_ADVANCED_SETTINGS_URL,
   }
 
+  const kubeconfigLink = {
+    title: 'Kubeconfig',
+    icon: IconAwesomeEnum.GEARS,
+    url: pathSettings + CLUSTER_SETTINGS_KUBECONFIG_URL,
+  }
+
   const dangerZoneLink = {
     title: 'Danger zone',
     icon: IconAwesomeEnum.SKULL,
@@ -76,7 +83,7 @@ export function PageSettingsFeature() {
   }
 
   const links = match(cluster)
-    .with({ kubernetes: 'SELF_MANAGED' }, () => [generalLink, credentialsLink, dangerZoneLink])
+    .with({ kubernetes: 'SELF_MANAGED' }, () => [generalLink, credentialsLink, kubeconfigLink, dangerZoneLink])
     .with({ cloud_provider: 'AWS', kubernetes: 'MANAGED' }, () => [
       generalLink,
       credentialsLink,

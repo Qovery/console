@@ -8,9 +8,12 @@ export function useEditCluster() {
   const { mutateAsync: deployCluster } = useDeployCluster()
 
   return useMutation(mutations.editCluster, {
-    onSuccess(_, { organizationId }) {
+    onSuccess(_, { organizationId, clusterId }) {
       queryClient.invalidateQueries({
         queryKey: queries.clusters.list({ organizationId }).queryKey,
+      })
+      queryClient.invalidateQueries({
+        queryKey: queries.clusters.kubeconfig({ organizationId, clusterId }).queryKey,
       })
     },
     meta: {
