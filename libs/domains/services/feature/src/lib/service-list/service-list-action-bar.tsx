@@ -19,7 +19,7 @@ export function ServiceListActionBar({ rowSelection, resetRowSelection }: Servic
     >
       <div
         className={twMerge(
-          'flex items-center justify-between h-12 bg-neutral-500 text-white font-medium pl-5 pr-2 rounded',
+          'flex items-center justify-between h-12 bg-neutral-500 shadow-xl text-white font-medium pl-5 pr-2 rounded',
           Boolean(selectedRowIndexes.length) ? 'animate-action-bar-fade-in' : 'animate-action-bar-fade-out'
         )}
       >

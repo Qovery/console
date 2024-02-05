@@ -529,7 +529,10 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
           {table.getRowModel().rows.map((row) => (
             <Fragment key={row.id}>
               <Table.Row
-                className="hover:bg-neutral-100 h-16 cursor-pointer"
+                className={twMerge(
+                  'hover:bg-neutral-100 h-16 cursor-pointer',
+                  row.getIsSelected() ? 'bg-neutral-100' : ''
+                )}
                 onClick={() => {
                   const link = match(row.original)
                     .with(
