@@ -171,7 +171,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
   } = environment
   const { data: services = [], isLoading: isServicesLoading } = useServices({ environmentId })
   const [sorting, setSorting] = useState<SortingState>([])
-  const [rowSelection, setRowSelection] = useState<RowSelectionState>({ '1': true })
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
   const navigate = useNavigate()
 
   const columnHelper = createColumnHelper<(typeof services)[number]>()
@@ -184,7 +184,12 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
         header: ({ table }) => (
           <Checkbox
             checked={table.getIsSomeRowsSelected() ? 'indeterminate' : table.getIsAllRowsSelected()}
-            onChange={table.getToggleAllRowsSelectedHandler()}
+            onCheckedChange={(checked) => {
+              if (checked === 'indeterminate') {
+                return
+              }
+              table.toggleAllRowsSelected(checked)
+            }}
           />
         ),
         cell: ({ row }) => (
@@ -192,7 +197,12 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
             <Checkbox
               checked={row.getIsSelected()}
               disabled={!row.getCanSelect()}
-              onChange={row.getToggleSelectedHandler()}
+              onCheckedChange={(checked) => {
+                if (checked === 'indeterminate') {
+                  return
+                }
+                row.toggleSelected(checked)
+              }}
             />
           </div>
         ),
