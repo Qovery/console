@@ -52,13 +52,13 @@ import {
 } from '@qovery/shared/ui'
 import { dateFullFormat, timeAgo } from '@qovery/shared/util-dates'
 import { buildGitProviderUrl } from '@qovery/shared/util-git'
-import { formatCronExpression, twMerge } from '@qovery/shared/util-js'
-import { containerRegistryKindToIcon } from '@qovery/shared/util-js'
+import { containerRegistryKindToIcon, formatCronExpression, twMerge } from '@qovery/shared/util-js'
 import { useServices } from '../hooks/use-services/use-services'
 import { LastCommitAuthor } from '../last-commit-author/last-commit-author'
 import { LastCommit } from '../last-commit/last-commit'
 import { ServiceActionToolbar } from '../service-action-toolbar/service-action-toolbar'
 import { ServiceLinksPopover } from '../service-links-popover/service-links-popover'
+import { ServiceListActionBar } from './service-list-action-bar'
 import { ServiceListFilter } from './service-list-filter'
 import { ServiceListSkeleton } from './service-list-skeleton'
 
@@ -488,74 +488,77 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
   }
 
   return (
-    <Table.Root className={twMerge('w-full text-xs min-w-[800px] table-auto', className)} {...props}>
-      <Table.Header>
-        {table.getHeaderGroups().map((headerGroup) => (
-          <Table.Row key={headerGroup.id}>
-            {headerGroup.headers.map((header, i) => (
-              <Table.ColumnHeaderCell
-                className={`${i === 1 ? 'border-r pl-0' : ''} font-medium`}
-                key={header.id}
-                style={{ width: i === 0 ? '20px' : `${header.getSize()}%` }}
-              >
-                {header.column.getCanFilter() ? (
-                  <ServiceListFilter column={header.column} />
-                ) : header.column.getCanSort() ? (
-                  <button
-                    type="button"
-                    className={twMerge(
-                      'flex items-center gap-1',
-                      header.column.getCanSort() ? 'cursor-pointer select-none' : ''
-                    )}
-                    onClick={header.column.getToggleSortingHandler()}
-                  >
-                    {flexRender(header.column.columnDef.header, header.getContext())}
-                    {match(header.column.getIsSorted())
-                      .with('asc', () => <Icon className="text-xs" name={IconAwesomeEnum.ARROW_DOWN} />)
-                      .with('desc', () => <Icon className="text-xs" name={IconAwesomeEnum.ARROW_UP} />)
-                      .with(false, () => null)
-                      .exhaustive()}
-                  </button>
-                ) : (
-                  flexRender(header.column.columnDef.header, header.getContext())
-                )}
-              </Table.ColumnHeaderCell>
-            ))}
-          </Table.Row>
-        ))}
-      </Table.Header>
-      <Table.Body>
-        {table.getRowModel().rows.map((row) => (
-          <Fragment key={row.id}>
-            <Table.Row
-              className="hover:bg-neutral-100 h-16 cursor-pointer"
-              onClick={() => {
-                const link = match(row.original)
-                  .with(
-                    { serviceType: ServiceTypeEnum.DATABASE },
-                    ({ id }) => DATABASE_URL(organizationId, projectId, environmentId, id) + DATABASE_GENERAL_URL
-                  )
-                  .otherwise(
-                    ({ id }) => APPLICATION_URL(organizationId, projectId, environmentId, id) + SERVICES_GENERAL_URL
-                  )
-
-                navigate(link)
-              }}
-            >
-              {row.getVisibleCells().map((cell, i) => (
-                <Table.Cell
-                  key={cell.id}
-                  className={`${i === 1 ? 'border-r pl-0' : ''} first:relative`}
-                  style={{ width: i === 0 ? '20px' : `${cell.column.getSize()}%` }}
+    <>
+      <Table.Root className={twMerge('w-full text-xs min-w-[800px] table-auto', className)} {...props}>
+        <Table.Header>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <Table.Row key={headerGroup.id}>
+              {headerGroup.headers.map((header, i) => (
+                <Table.ColumnHeaderCell
+                  className={`${i === 1 ? 'border-r pl-0' : ''} font-medium`}
+                  key={header.id}
+                  style={{ width: i === 0 ? '20px' : `${header.getSize()}%` }}
                 >
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </Table.Cell>
+                  {header.column.getCanFilter() ? (
+                    <ServiceListFilter column={header.column} />
+                  ) : header.column.getCanSort() ? (
+                    <button
+                      type="button"
+                      className={twMerge(
+                        'flex items-center gap-1',
+                        header.column.getCanSort() ? 'cursor-pointer select-none' : ''
+                      )}
+                      onClick={header.column.getToggleSortingHandler()}
+                    >
+                      {flexRender(header.column.columnDef.header, header.getContext())}
+                      {match(header.column.getIsSorted())
+                        .with('asc', () => <Icon className="text-xs" name={IconAwesomeEnum.ARROW_DOWN} />)
+                        .with('desc', () => <Icon className="text-xs" name={IconAwesomeEnum.ARROW_UP} />)
+                        .with(false, () => null)
+                        .exhaustive()}
+                    </button>
+                  ) : (
+                    flexRender(header.column.columnDef.header, header.getContext())
+                  )}
+                </Table.ColumnHeaderCell>
               ))}
             </Table.Row>
-          </Fragment>
-        ))}
-      </Table.Body>
-    </Table.Root>
+          ))}
+        </Table.Header>
+        <Table.Body>
+          {table.getRowModel().rows.map((row) => (
+            <Fragment key={row.id}>
+              <Table.Row
+                className="hover:bg-neutral-100 h-16 cursor-pointer"
+                onClick={() => {
+                  const link = match(row.original)
+                    .with(
+                      { serviceType: ServiceTypeEnum.DATABASE },
+                      ({ id }) => DATABASE_URL(organizationId, projectId, environmentId, id) + DATABASE_GENERAL_URL
+                    )
+                    .otherwise(
+                      ({ id }) => APPLICATION_URL(organizationId, projectId, environmentId, id) + SERVICES_GENERAL_URL
+                    )
+
+                  navigate(link)
+                }}
+              >
+                {row.getVisibleCells().map((cell, i) => (
+                  <Table.Cell
+                    key={cell.id}
+                    className={`${i === 1 ? 'border-r pl-0' : ''} first:relative`}
+                    style={{ width: i === 0 ? '20px' : `${cell.column.getSize()}%` }}
+                  >
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </Table.Cell>
+                ))}
+              </Table.Row>
+            </Fragment>
+          ))}
+        </Table.Body>
+      </Table.Root>
+      <ServiceListActionBar rowSelection={rowSelection} resetRowSelection={() => table.resetRowSelection()} />
+    </>
   )
 }
 

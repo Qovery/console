@@ -13,7 +13,7 @@ export function PageGeneral({ listHelpfulLinks }: PageGeneralProps) {
 
   return (
     <>
-      <div className="mt-2 bg-white rounded-t-sm rounded-b-none flex-grow overflow-y-auto min-h-0">
+      <div className="mt-2 bg-white rounded-t-sm rounded-b-none flex-grow overflow-y-auto min-h-0 relative">
         {environment && <ServiceList className="border-b-neutral-200 border-b" environment={environment} />}
       </div>
 
