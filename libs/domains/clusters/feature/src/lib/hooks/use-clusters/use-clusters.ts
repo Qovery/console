@@ -8,6 +8,10 @@ interface UseClustersProps {
 export function useClusters({ organizationId }: UseClustersProps) {
   return useQuery({
     ...queries.clusters.list({ organizationId }),
+    select(clusters) {
+      clusters?.sort(({ name: nameA }, { name: nameB }) => nameA.localeCompare(nameB))
+      return clusters
+    },
   })
 }
 

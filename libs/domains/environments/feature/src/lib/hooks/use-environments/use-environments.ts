@@ -11,6 +11,10 @@ export interface UseEnvironmentsProps {
 export function useEnvironments({ projectId }: UseEnvironmentsProps) {
   const { data: environments, isLoading: isEnvironmentsLoading } = useQuery({
     ...queries.environments.list({ projectId }),
+    select(environments) {
+      environments?.sort(({ name: nameA }, { name: nameB }) => nameA.localeCompare(nameB))
+      return environments
+    },
   })
 
   const runningStatusResults = useQueries({
