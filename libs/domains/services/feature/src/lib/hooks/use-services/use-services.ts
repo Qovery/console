@@ -11,6 +11,10 @@ export interface UseServicesProps {
 export function useServices({ environmentId }: UseServicesProps) {
   const { data: services, isLoading: isServicesLoading } = useQuery({
     ...queries.services.list(environmentId!),
+    select(services) {
+      services.sort(({ name: nameA }, { name: nameB }) => nameA.localeCompare(nameB))
+      return services
+    },
     enabled: Boolean(environmentId),
   })
 
