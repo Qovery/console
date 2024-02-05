@@ -76,7 +76,7 @@ function ServiceNameCell({ row, environment }: { row: Row<AnyService>; environme
   const { original: service } = row
   return (
     <div className="flex items-center justify-between">
-      <span className="flex items-center gap-4 font-medium text-sm text-neutral-400 min-w-0 ml-6">
+      <span className="flex items-center gap-4 font-medium text-sm text-neutral-400 min-w-0">
         <Icon name={getServiceIcon(service)} width="20" />
         {match(service)
           .with({ serviceType: 'DATABASE' }, (db) => {
@@ -193,7 +193,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
           />
         ),
         cell: ({ row }) => (
-          <div onClick={(e) => e.stopPropagation()}>
+          <label className="absolute flex items-center inset-y-0 left-0 p-4" onClick={(e) => e.stopPropagation()}>
             <Checkbox
               checked={row.getIsSelected()}
               disabled={!row.getCanSelect()}
@@ -204,7 +204,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
                 row.toggleSelected(checked)
               }}
             />
-          </div>
+          </label>
         ),
       },
       columnHelper.accessor('name', {
@@ -492,11 +492,11 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
       <Table.Header>
         {table.getHeaderGroups().map((headerGroup) => (
           <Table.Row key={headerGroup.id}>
-            {headerGroup.headers.map((header) => (
+            {headerGroup.headers.map((header, i) => (
               <Table.ColumnHeaderCell
-                className="first:border-r font-medium"
+                className={`${i === 1 ? 'border-r pl-0' : ''} font-medium`}
                 key={header.id}
-                style={{ width: `${header.getSize()}%` }}
+                style={{ width: i === 0 ? '20px' : `${header.getSize()}%` }}
               >
                 {header.column.getCanFilter() ? (
                   <ServiceListFilter column={header.column} />
@@ -542,11 +542,11 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
                 navigate(link)
               }}
             >
-              {row.getVisibleCells().map((cell) => (
+              {row.getVisibleCells().map((cell, i) => (
                 <Table.Cell
                   key={cell.id}
-                  className="first:border-r first:relative"
-                  style={{ width: `${cell.column.getSize()}%` }}
+                  className={`${i === 1 ? 'border-r pl-0' : ''} first:relative`}
+                  style={{ width: i === 0 ? '20px' : `${cell.column.getSize()}%` }}
                 >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </Table.Cell>
