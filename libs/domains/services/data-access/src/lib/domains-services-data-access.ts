@@ -31,6 +31,7 @@ import {
   type DeployAllRequest,
   EnvironmentActionsApi,
   EnvironmentMainCallsApi,
+  type EnvironmentServiceIdsAllRequest,
   HelmActionsApi,
   type HelmAdvancedSettings,
   HelmConfigurationApi,
@@ -53,6 +54,7 @@ import {
   JobMainCallsApi,
   type JobRequest,
   JobsApi,
+  type RebootServicesRequest,
   type Status,
   type Application as _Application,
   type CloneServiceRequest as _CloneServiceRequest,
@@ -661,6 +663,16 @@ export const mutations = {
     const response = await mutation(serviceId, deploymentRestrictionId)
     return response.data
   },
+  async deleteAllServices({
+    environmentId,
+    payload,
+  }: {
+    environmentId: string
+    payload: EnvironmentServiceIdsAllRequest
+  }) {
+    const response = await environmentActionApi.deleteSelectedServices(environmentId, payload)
+    return response.data
+  },
   async deleteService({ serviceId, serviceType }: { serviceId: string; serviceType: ServiceType }) {
     const { mutation } = match(serviceType)
       .with('APPLICATION', (serviceType) => ({
@@ -736,6 +748,10 @@ export const mutations = {
     const response = await mutation()
     return response.data
   },
+  async restartAllServices({ environmentId, payload }: { environmentId: string; payload: RebootServicesRequest }) {
+    const response = await environmentActionApi.rebootServices(environmentId, payload)
+    return response.data
+  },
   async restartService({ serviceId, serviceType }: { serviceId: string; serviceType: ServiceType }) {
     const { mutation } = match(serviceType)
       .with('APPLICATION', (serviceType) => ({
@@ -790,6 +806,16 @@ export const mutations = {
       }))
       .exhaustive()
     const response = await mutation()
+    return response.data
+  },
+  async stopAllServices({
+    environmentId,
+    payload,
+  }: {
+    environmentId: string
+    payload: EnvironmentServiceIdsAllRequest
+  }) {
+    const response = await environmentActionApi.stopSelectedServices(environmentId, payload)
     return response.data
   },
   async stopService({ serviceId, serviceType }: { serviceId: string; serviceType: ServiceType }) {
