@@ -85,9 +85,11 @@ export function CardCluster({ organizationId, cluster }: CardClusterProps) {
         <Badge size="xs" color="neutral" data-testid="tag-version">
           {cluster.version}
         </Badge>
-        <Badge size="xs" color="neutral" data-testid="tag-instance">
-          {cluster.instance_type?.replace('_', '.').toLowerCase()}
-        </Badge>
+        {cluster.instance_type && (
+          <Badge size="xs" color="neutral" data-testid="tag-instance">
+            {cluster.instance_type.replace('_', '.').toLowerCase()}
+          </Badge>
+        )}
       </div>
     </div>
   )
