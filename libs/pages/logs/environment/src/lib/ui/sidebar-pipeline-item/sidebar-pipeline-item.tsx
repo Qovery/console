@@ -88,7 +88,7 @@ export function SidebarPipelineItem({ currentStage, index, serviceId, versionId,
                         : 'text-neutral-100 hover:bg-neutral-600'
                     } ${service.is_part_last_deployment ? '!text-brand-400' : ''}`}
                   >
-                    <span className="flex">
+                    <div className="flex truncate">
                       <ServiceIcon
                         service={currentApplication(service.id)!}
                         className="mr-2.5 mt-0.5"
@@ -96,8 +96,8 @@ export function SidebarPipelineItem({ currentStage, index, serviceId, versionId,
                         padding="0"
                         notRounded
                       />
-                      <span className="truncate max-w-[190px]">{currentApplication(service.id)?.name}</span>
-                    </span>
+                      <span className="truncate">{currentApplication(service.id)?.name}</span>
+                    </div>
                     <StatusChip status={service.state} />
                   </Link>
                 )}
