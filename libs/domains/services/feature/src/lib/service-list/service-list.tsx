@@ -488,7 +488,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
   }
 
   return (
-    <>
+    <div className="flex flex-col grow justify-between">
       <Table.Root className={twMerge('w-full text-xs min-w-[800px] table-auto', className)} {...props}>
         <Table.Header>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -561,7 +561,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
         </Table.Body>
       </Table.Root>
       <ServiceListActionBar rowSelection={rowSelection} resetRowSelection={() => table.resetRowSelection()} />
-    </>
+    </div>
   )
 }
 
