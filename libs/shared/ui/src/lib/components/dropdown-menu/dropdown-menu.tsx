@@ -4,23 +4,38 @@ import { type ComponentPropsWithoutRef, type ElementRef, type ReactElement, clon
 import { twMerge } from '@qovery/shared/util-js'
 
 const dropdownMenuItemVariants = cva(
-  ['px-3', 'flex', 'items-center', 'h-9', 'text-sm', 'font-medium', 'cursor-pointer', 'rounded-sm', 'outline-none'],
+  ['px-3', 'flex', 'items-center', 'h-9', 'text-sm', 'font-medium', 'rounded-sm', 'outline-none'],
   {
     variants: {
       color: {
         brand: [
           'text-neutral-400',
           'dark:text-neutral-100',
-          'hover:bg-brand-50',
           'data-[highlighted]:bg-brand-50',
-          'hover:text-brand-500',
           'data-[highlighted]:text-brand-500',
         ],
         red: ['hover:bg-red-50', 'data-[highlighted]:bg-red-50', 'text-red-600', 'data-[highlighted]:text-red-600'],
       },
+      disabled: {
+        true: [],
+        false: ['cursor-pointer'],
+      },
     },
+    compoundVariants: [
+      {
+        color: 'brand',
+        disabled: true,
+        className: ['text-neutral-350'],
+      },
+      {
+        color: 'brand',
+        disabled: false,
+        className: ['hover:bg-brand-50', 'hover:text-brand-500'],
+      },
+    ],
     defaultVariants: {
       color: 'brand',
+      disabled: false,
     },
   }
 )
@@ -31,27 +46,40 @@ const dropdownMenuItemIconVariants = cva(['text-sm', 'mr-3'], {
       brand: ['text-brand-400'],
       red: ['text-red-600'],
     },
+    disabled: {
+      true: [],
+      false: [],
+    },
   },
+  compoundVariants: [
+    {
+      color: 'brand',
+      disabled: true,
+      className: ['text-brand-300'],
+    },
+  ],
   defaultVariants: {
     color: 'brand',
+    disabled: false,
   },
 })
 
 interface DropdownMenuItemProps
-  extends VariantProps<typeof dropdownMenuItemVariants>,
+  extends Omit<VariantProps<typeof dropdownMenuItemVariants>, 'disabled'>,
     Omit<ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Item>, 'color'> {
   icon?: ReactElement
 }
 
 const DropdownMenuItem = forwardRef<ElementRef<typeof DropdownMenuPrimitive.Item>, DropdownMenuItemProps>(
-  function DropdownMenuItem({ color, icon, children, className, ...props }, ref) {
+  function DropdownMenuItem({ color, icon, children, className, disabled, ...props }, ref) {
     return (
       <DropdownMenuPrimitive.Item
         {...props}
-        className={twMerge(dropdownMenuItemVariants({ color }), className)}
+        disabled={disabled}
+        className={twMerge(dropdownMenuItemVariants({ color, disabled }), className)}
         ref={ref}
       >
-        {icon && cloneElement(icon, { className: dropdownMenuItemIconVariants({ color }) })}
+        {icon && cloneElement(icon, { className: dropdownMenuItemIconVariants({ color, disabled }) })}
         {children}
       </DropdownMenuPrimitive.Item>
     )
