@@ -487,6 +487,8 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
     )
   }
 
+  const selectedRows = table.getSelectedRowModel().rows.map(({ original }) => original)
+
   return (
     <div className="flex flex-col grow justify-between">
       <Table.Root className={twMerge('w-full text-xs min-w-[800px] table-auto', className)} {...props}>
@@ -560,7 +562,11 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
           ))}
         </Table.Body>
       </Table.Root>
-      <ServiceListActionBar rowSelection={rowSelection} resetRowSelection={() => table.resetRowSelection()} />
+      <ServiceListActionBar
+        environment={environment}
+        selectedRows={selectedRows}
+        resetRowSelection={() => table.resetRowSelection()}
+      />
     </div>
   )
 }
