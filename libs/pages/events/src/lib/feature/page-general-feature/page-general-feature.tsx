@@ -45,6 +45,7 @@ export const hasEnvironment = (targetType?: string) =>
   targetType === OrganizationEventTargetType.APPLICATION ||
   targetType === OrganizationEventTargetType.CONTAINER ||
   targetType === OrganizationEventTargetType.DATABASE ||
+  targetType === OrganizationEventTargetType.HELM ||
   targetType === OrganizationEventTargetType.JOB
 
 export const hasProject = (targetType?: string) =>
