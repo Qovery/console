@@ -101,7 +101,7 @@ export function PlaceholderLogs({
           {!loadingStatus || loadingStatus === 'not loaded' ? (
             defaultLoader
           ) : (
-            <p className="text-neutral-50 font-medium mb-1">No logs available.</p>
+            <p className="text-neutral-50 font-medium mb-1">No logs available (yet).</p>
           )}
         </div>
       )}

@@ -73,6 +73,6 @@ describe('PlaceholderLogs', () => {
     props.loadingStatus = 'loaded'
     renderWithProviders(<PlaceholderLogs {...props} />)
 
-    screen.getByText('No logs available.')
+    screen.getByText('No logs available (yet).')
   })
 })
