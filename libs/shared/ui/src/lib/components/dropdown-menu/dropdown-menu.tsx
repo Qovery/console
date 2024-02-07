@@ -17,7 +17,7 @@ const dropdownMenuItemVariants = cva(
         red: ['hover:bg-red-50', 'data-[highlighted]:bg-red-50', 'text-red-600', 'data-[highlighted]:text-red-600'],
       },
       disabled: {
-        true: [],
+        true: ['cursor-not-allowed'],
         false: ['cursor-pointer'],
       },
     },
