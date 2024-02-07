@@ -1,5 +1,14 @@
 import { type Environment } from 'qovery-typescript-axios'
-import { Button, DropdownMenu, Icon, IconAwesomeEnum, Tooltip, useModal, useModalConfirmation } from '@qovery/shared/ui'
+import {
+  Button,
+  Callout,
+  DropdownMenu,
+  Icon,
+  IconAwesomeEnum,
+  Tooltip,
+  useModal,
+  useModalConfirmation,
+} from '@qovery/shared/ui'
 import {
   isDeleteAvailable,
   isDeployAvailable,
@@ -17,21 +26,45 @@ import { useStopAllServices } from '../hooks/use-stop-all-services/use-stop-all-
 
 function ConfirmationModal({
   verb,
-  count,
+  impactedRows,
+  selectedRows,
   onCancel,
   onSubmit,
 }: {
   verb: string
-  count: number
+  impactedRows: ReturnType<typeof useServices>['data']
+  selectedRows: ReturnType<typeof useServices>['data']
   onCancel: () => void
   onSubmit: () => void
 }) {
+  const count = impactedRows.length
+  const selectedRowsCount = selectedRows.length
+
   return (
     <div className="p-6">
       <h2 className="h4 text-neutral-400 max-w-sm truncate">Confirm</h2>
-      <p className="mt-2 text-neutral-350 text-sm">
+      <p className="my-2 text-neutral-350 text-sm">
         You are going to {verb} {count} {pluralize(count, 'service')}. Are you sure?
       </p>
+      {selectedRowsCount !== count && (
+        <Callout.Root color="yellow">
+          <Callout.Icon>
+            <Icon name={IconAwesomeEnum.TRIANGLE_EXCLAMATION} />
+          </Callout.Icon>
+          <Callout.Text>
+            <Callout.TextHeading>Some services will not be impacted:</Callout.TextHeading>
+            <Callout.TextDescription className="text-xs">
+              <ul className="list-disc pl-4">
+                {selectedRows
+                  .filter(({ id: selectedId }) => !impactedRows.find(({ id }) => id === selectedId))
+                  .map(({ id, name }) => (
+                    <li key={id}>{name}</li>
+                  ))}
+              </ul>
+            </Callout.TextDescription>
+          </Callout.Text>
+        </Callout.Root>
+      )}
       <div className="flex gap-3 justify-end mt-6">
         <Button size="lg" variant="surface" color="neutral" onClick={onCancel}>
           Cancel
@@ -85,7 +118,8 @@ export function ServiceListActionBar({ environment, selectedRows, resetRowSelect
       content: (
         <ConfirmationModal
           verb="deploy"
-          count={deployableServices.length}
+          impactedRows={deployableServices}
+          selectedRows={selectedRows}
           onSubmit={async () => {
             try {
               await deployAllServices({
@@ -122,7 +156,8 @@ export function ServiceListActionBar({ environment, selectedRows, resetRowSelect
       content: (
         <ConfirmationModal
           verb="restart"
-          count={restartableServices.length}
+          impactedRows={restartableServices}
+          selectedRows={selectedRows}
           onSubmit={async () => {
             try {
               await restartAllServices({
@@ -155,7 +190,8 @@ export function ServiceListActionBar({ environment, selectedRows, resetRowSelect
       content: (
         <ConfirmationModal
           verb="stop"
-          count={stoppableServices.length}
+          impactedRows={stoppableServices}
+          selectedRows={selectedRows}
           onSubmit={async () => {
             try {
               await stopAllServices({
