@@ -1,5 +1,5 @@
 import { type Environment } from 'qovery-typescript-axios'
-import { Button, DropdownMenu, Icon, IconAwesomeEnum, useModal, useModalConfirmation } from '@qovery/shared/ui'
+import { Button, DropdownMenu, Icon, IconAwesomeEnum, Tooltip, useModal, useModalConfirmation } from '@qovery/shared/ui'
 import {
   isDeleteAvailable,
   isDeployAvailable,
@@ -236,45 +236,53 @@ export function ServiceListActionBar({ environment, selectedRows, resetRowSelect
               Clear selection
             </button>
             <div className="flex gap-2">
-              <Button
-                color="brand"
-                size="md"
-                className="items-center gap-1"
-                onClick={() => handleDeployAllServices()}
-                disabled={deployableServices.length === 0}
-              >
-                Deploy selected <Icon name={IconAwesomeEnum.PLAY} />
-              </Button>
+              <Tooltip content="No deployable services" disabled={deployableServices.length !== 0}>
+                <Button
+                  color="brand"
+                  size="md"
+                  className="items-center gap-1"
+                  onClick={() => handleDeployAllServices()}
+                  disabled={deployableServices.length === 0}
+                >
+                  Deploy selected <Icon name={IconAwesomeEnum.PLAY} />
+                </Button>
+              </Tooltip>
               <DropdownMenu.Root modal={false}>
                 <DropdownMenu.Trigger asChild>
-                  <Button color="neutral" size="md" className="items-center gap-1">
+                  <Button color="neutral" size="md" variant="surface" className="items-center gap-1">
                     More <Icon name={IconAwesomeEnum.ANGLE_DOWN} />
                   </Button>
                 </DropdownMenu.Trigger>
                 <DropdownMenu.Content>
-                  <DropdownMenu.Item
-                    icon={<Icon name={IconAwesomeEnum.ROTATE_RIGHT} />}
-                    onSelect={handleRestartAllServices}
-                    disabled={restartableServices.length === 0}
-                  >
-                    Restart selected
-                  </DropdownMenu.Item>
-                  <DropdownMenu.Item
-                    icon={<Icon name={IconAwesomeEnum.CIRCLE_STOP} />}
-                    onSelect={handleStopAllServices}
-                    disabled={stoppableServices.length === 0}
-                  >
-                    Stop selected
-                  </DropdownMenu.Item>
+                  <Tooltip content="No restartable services" disabled={restartableServices.length !== 0}>
+                    <DropdownMenu.Item
+                      icon={<Icon name={IconAwesomeEnum.ROTATE_RIGHT} />}
+                      onSelect={handleRestartAllServices}
+                      disabled={restartableServices.length === 0}
+                    >
+                      Restart selected
+                    </DropdownMenu.Item>
+                  </Tooltip>
+                  <Tooltip content="No stoppable services" disabled={stoppableServices.length !== 0}>
+                    <DropdownMenu.Item
+                      icon={<Icon name={IconAwesomeEnum.CIRCLE_STOP} />}
+                      onSelect={handleStopAllServices}
+                      disabled={stoppableServices.length === 0}
+                    >
+                      Stop selected
+                    </DropdownMenu.Item>
+                  </Tooltip>
                   <DropdownMenu.Separator />
-                  <DropdownMenu.Item
-                    color="red"
-                    icon={<Icon name={IconAwesomeEnum.TRASH} />}
-                    onSelect={handleDeleteAllServices}
-                    disabled={deletableServices.length === 0}
-                  >
-                    Delete environment
-                  </DropdownMenu.Item>
+                  <Tooltip content="No deletable services" disabled={deletableServices.length !== 0}>
+                    <DropdownMenu.Item
+                      color="red"
+                      icon={<Icon name={IconAwesomeEnum.TRASH} />}
+                      onSelect={handleDeleteAllServices}
+                      disabled={deletableServices.length === 0}
+                    >
+                      Delete environment
+                    </DropdownMenu.Item>
+                  </Tooltip>
                 </DropdownMenu.Content>
               </DropdownMenu.Root>
             </div>
