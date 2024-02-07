@@ -136,6 +136,7 @@ export function ServiceListActionBar({ environment, selectedRows, resetRowSelect
                   databases: deployableServices
                     .filter(({ serviceType }) => serviceType === 'DATABASE')
                     .map(({ id }) => id),
+                  jobs: deployableServices.filter(({ serviceType }) => serviceType === 'JOB').map(({ id }) => ({ id })),
                   helms: deployableServices
                     .filter(({ serviceType }) => serviceType === 'HELM')
                     .map(({ id }) => ({ id })),
