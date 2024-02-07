@@ -12,6 +12,7 @@ import {
 import {
   isDeleteAvailable,
   isDeployAvailable,
+  isRedeployAvailable,
   isRestartAvailable,
   isStopAvailable,
   pluralize,
@@ -107,7 +108,8 @@ export function ServiceListActionBar({ environment, selectedRows, resetRowSelect
     ({ deploymentStatus }) => deploymentStatus && isDeleteAvailable(deploymentStatus.state)
   )
   const deployableServices = selectedRows.filter(
-    ({ deploymentStatus }) => deploymentStatus && isDeployAvailable(deploymentStatus.state)
+    ({ deploymentStatus }) =>
+      deploymentStatus && (isDeployAvailable(deploymentStatus.state) || isRedeployAvailable(deploymentStatus.state))
   )
   const stoppableServices = selectedRows.filter(
     ({ deploymentStatus }) => deploymentStatus && isStopAvailable(deploymentStatus.state)
@@ -316,7 +318,7 @@ export function ServiceListActionBar({ environment, selectedRows, resetRowSelect
                       onSelect={handleDeleteAllServices}
                       disabled={deletableServices.length === 0}
                     >
-                      Delete environment
+                      Delete selected
                     </DropdownMenu.Item>
                   </Tooltip>
                 </DropdownMenu.Content>
