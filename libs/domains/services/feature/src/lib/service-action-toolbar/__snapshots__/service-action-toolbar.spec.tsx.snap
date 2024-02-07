@@ -373,7 +373,7 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
         role="separator"
       />
       <div
-        class="px-3 flex items-center h-9 text-sm font-medium rounded-sm outline-none hover:bg-red-50 data-[highlighted]:bg-red-50 text-red-600 data-[highlighted]:text-red-600 cursor-pointer"
+        class="px-3 flex items-center h-9 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-red-50 data-[highlighted]:text-red-600 cursor-pointer hover:bg-red-50 text-red-600"
         data-orientation="vertical"
         data-radix-collection-item=""
         role="menuitem"
