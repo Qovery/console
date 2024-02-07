@@ -80,7 +80,11 @@ export function StepGeneral(props: StepGeneralProps) {
             }}
             render={({ field }) => (
               <BlockContent title="Installation type">
-                <RadioGroup.Root className="flex flex-col gap-4" defaultValue={field.value} onChange={field.onChange}>
+                <RadioGroup.Root
+                  className="flex flex-col gap-4"
+                  defaultValue={field.value}
+                  onValueChange={field.onChange}
+                >
                   <label className="flex gap-3">
                     <span>
                       <RadioGroup.Item value="MANAGED" />

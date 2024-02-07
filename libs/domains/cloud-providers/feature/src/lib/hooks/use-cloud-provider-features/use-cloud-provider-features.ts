@@ -9,6 +9,10 @@ interface UseCloudProviderFeaturesProps {
 export function useCloudProviderFeatures({ cloudProvider }: UseCloudProviderFeaturesProps) {
   return useQuery({
     ...queries.cloudProviders.features({ cloudProvider }),
+    select(features) {
+      // TODO: hide existing VPC feature for now
+      return features?.filter(({ id }) => id !== 'EXISTING_VPC')
+    },
   })
 }
 
