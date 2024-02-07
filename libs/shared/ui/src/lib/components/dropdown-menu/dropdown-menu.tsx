@@ -8,12 +8,7 @@ const dropdownMenuItemVariants = cva(
   {
     variants: {
       color: {
-        brand: [
-          'text-neutral-400',
-          'dark:text-neutral-100',
-          'data-[highlighted]:bg-brand-50',
-          'data-[highlighted]:text-brand-500',
-        ],
+        brand: ['dark:text-neutral-100', 'data-[highlighted]:bg-brand-50', 'data-[highlighted]:text-brand-500'],
         red: ['data-[highlighted]:bg-red-50', 'data-[highlighted]:text-red-600'],
       },
       disabled: {
@@ -30,7 +25,7 @@ const dropdownMenuItemVariants = cva(
       {
         color: 'brand',
         disabled: false,
-        className: ['hover:bg-brand-50', 'hover:text-brand-500'],
+        className: ['text-neutral-400', 'hover:bg-brand-50', 'hover:text-brand-500'],
       },
       {
         color: 'red',
@@ -53,8 +48,8 @@ const dropdownMenuItemVariants = cva(
 const dropdownMenuItemIconVariants = cva(['text-sm', 'mr-3'], {
   variants: {
     color: {
-      brand: ['text-brand-400'],
-      red: ['text-red-600'],
+      brand: [],
+      red: [],
     },
     disabled: {
       true: [],
@@ -68,9 +63,19 @@ const dropdownMenuItemIconVariants = cva(['text-sm', 'mr-3'], {
       className: ['text-brand-300'],
     },
     {
+      color: 'brand',
+      disabled: false,
+      className: ['text-brand-400'],
+    },
+    {
       color: 'red',
       disabled: true,
       className: ['text-red-400'],
+    },
+    {
+      color: 'red',
+      disabled: false,
+      className: ['text-red-600'],
     },
   ],
   defaultVariants: {
