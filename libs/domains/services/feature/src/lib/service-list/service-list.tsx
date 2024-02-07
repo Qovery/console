@@ -1,6 +1,6 @@
 import {
   type Row,
-  RowSelectionState,
+  type RowSelectionState,
   type SortingState,
   createColumnHelper,
   flexRender,
