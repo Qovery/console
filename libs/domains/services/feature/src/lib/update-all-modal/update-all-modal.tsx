@@ -28,10 +28,7 @@ export function UpdateAllModal({ environment }: UpdateAllModalProps) {
     environmentId: environment.id,
   })
   const [selectedServiceIds, setSelectedServiceIds] = useState<string[]>([])
-  const { mutate: deployAllServices, isLoading: isDeployAllServicesLoading } = useDeployAllServices({
-    projectId: environment.project.id,
-    organizationId: environment.organization.id,
-  })
+  const { mutate: deployAllServices, isLoading: isDeployAllServicesLoading } = useDeployAllServices()
 
   const checkService = (serviceId: string) => {
     if (selectedServiceIds.includes(serviceId)) {
@@ -73,7 +70,7 @@ export function UpdateAllModal({ environment }: UpdateAllModalProps) {
         jobs: jobsToUpdate,
       }
 
-      deployAllServices({ environmentId: environment.id, payload: deployRequest })
+      deployAllServices({ environment, payload: deployRequest })
       closeModal()
     }
   }

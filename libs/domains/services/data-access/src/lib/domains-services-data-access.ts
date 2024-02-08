@@ -29,6 +29,7 @@ import {
   type DatabaseRequest,
   DatabasesApi,
   type DeployAllRequest,
+  type Environment,
   EnvironmentActionsApi,
   EnvironmentMainCallsApi,
   type EnvironmentServiceIdsAllRequest,
@@ -664,13 +665,13 @@ export const mutations = {
     return response.data
   },
   async deleteAllServices({
-    environmentId,
+    environment,
     payload,
   }: {
-    environmentId: string
+    environment: Environment
     payload: EnvironmentServiceIdsAllRequest
   }) {
-    const response = await environmentActionApi.deleteSelectedServices(environmentId, payload)
+    const response = await environmentActionApi.deleteSelectedServices(environment.id, payload)
     return response.data
   },
   async deleteService({ serviceId, serviceType }: { serviceId: string; serviceType: ServiceType }) {
@@ -748,8 +749,8 @@ export const mutations = {
     const response = await mutation()
     return response.data
   },
-  async restartAllServices({ environmentId, payload }: { environmentId: string; payload: RebootServicesRequest }) {
-    const response = await environmentActionApi.rebootServices(environmentId, payload)
+  async restartAllServices({ environment, payload }: { environment: Environment; payload: RebootServicesRequest }) {
+    const response = await environmentActionApi.rebootServices(environment.id, payload)
     return response.data
   },
   async restartService({ serviceId, serviceType }: { serviceId: string; serviceType: ServiceType }) {
@@ -778,8 +779,8 @@ export const mutations = {
     const response = await mutation(serviceId)
     return response.data
   },
-  async deployAllServices({ environmentId, payload }: { environmentId: string; payload: DeployAllRequest }) {
-    const result = await environmentActionApi.deployAllServices(environmentId, payload)
+  async deployAllServices({ environment, payload }: { environment: Environment; payload: DeployAllRequest }) {
+    const result = await environmentActionApi.deployAllServices(environment.id, payload)
     return result.data
   },
   async deployService(props: DeployRequest) {
@@ -809,13 +810,13 @@ export const mutations = {
     return response.data
   },
   async stopAllServices({
-    environmentId,
+    environment,
     payload,
   }: {
-    environmentId: string
+    environment: Environment
     payload: EnvironmentServiceIdsAllRequest
   }) {
-    const response = await environmentActionApi.stopSelectedServices(environmentId, payload)
+    const response = await environmentActionApi.stopSelectedServices(environment.id, payload)
     return response.data
   },
   async stopService({ serviceId, serviceType }: { serviceId: string; serviceType: ServiceType }) {

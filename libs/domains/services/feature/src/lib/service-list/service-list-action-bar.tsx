@@ -87,18 +87,13 @@ export interface ServiceListActionBarProps {
 export function ServiceListActionBar({ environment, selectedRows, resetRowSelection }: ServiceListActionBarProps) {
   const hasSelection = Boolean(selectedRows.length)
 
-  const { mutateAsync: deployAllServices } = useDeployAllServices({
-    organizationId: environment.organization.id,
-    projectId: environment.project.id,
-  })
+  const { mutateAsync: deployAllServices } = useDeployAllServices()
   const { mutateAsync: restartAllServices } = useRestartAllServices()
   const { mutateAsync: deleteAllServices } = useDeleteAllServices()
   const { mutateAsync: stopAllServices } = useStopAllServices()
 
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
-
-  const environmentId = environment.id
 
   const restartableServices = selectedRows.filter(
     ({ deploymentStatus, runningStatus }) =>
@@ -125,7 +120,7 @@ export function ServiceListActionBar({ environment, selectedRows, resetRowSelect
           onSubmit={async () => {
             try {
               await deployAllServices({
-                environmentId,
+                environment,
                 payload: {
                   applications: deployableServices
                     .filter(({ serviceType }) => serviceType === 'APPLICATION')
@@ -164,7 +159,7 @@ export function ServiceListActionBar({ environment, selectedRows, resetRowSelect
           onSubmit={async () => {
             try {
               await restartAllServices({
-                environmentId,
+                environment,
                 payload: {
                   applicationIds: restartableServices
                     .filter(({ serviceType }) => serviceType === 'APPLICATION')
@@ -198,7 +193,7 @@ export function ServiceListActionBar({ environment, selectedRows, resetRowSelect
           onSubmit={async () => {
             try {
               await stopAllServices({
-                environmentId,
+                environment,
                 payload: {
                   application_ids: stoppableServices
                     .filter(({ serviceType }) => serviceType === 'APPLICATION')
@@ -227,11 +222,12 @@ export function ServiceListActionBar({ environment, selectedRows, resetRowSelect
   const handleDeleteAllServices = () =>
     openModalConfirmation({
       title: `Delete ${deletableServices.length} ${pluralize(deletableServices.length, 'service')}`,
+      name: 'these services',
       isDelete: true,
       action: async () => {
         try {
           await deleteAllServices({
-            environmentId,
+            environment,
             payload: {
               application_ids: deletableServices
                 .filter(({ serviceType }) => serviceType === 'APPLICATION')

@@ -79,8 +79,8 @@ describe('UpdateAllModal', () => {
 
     await userEvent.click(submitButton)
 
-    expect(useDeployAllServices({ organizationId: '1', projectId: '1' }).mutate).toHaveBeenCalledWith({
-      environmentId: 'env1',
+    expect(useDeployAllServices().mutate).toHaveBeenCalledWith({
+      environment: mockEnvironment1,
       payload: {
         applications: [
           {
@@ -106,8 +106,8 @@ describe('UpdateAllModal', () => {
 
     await userEvent.click(submitButton)
 
-    expect(useDeployAllServices({ organizationId: '1', projectId: '1' }).mutate).toHaveBeenCalledWith({
-      environmentId: 'env1',
+    expect(useDeployAllServices().mutate).toHaveBeenCalledWith({
+      environment: mockEnvironment1,
       payload: {
         applications: [
           {

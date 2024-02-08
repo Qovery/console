@@ -4,19 +4,14 @@ import { mutations } from '@qovery/domains/services/data-access'
 import { ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { queries } from '@qovery/state/util-queries'
 
-export interface UseDeployAllServicesProps {
-  organizationId: string
-  projectId: string
-}
-
-export function useDeployAllServices({ organizationId, projectId }: UseDeployAllServicesProps) {
+export function useDeployAllServices() {
   const queryClient = useQueryClient()
   const navigate = useNavigate()
 
   return useMutation(mutations.deployAllServices, {
-    onSuccess(_, { environmentId, payload }) {
+    onSuccess(_, { environment, payload }) {
       queryClient.invalidateQueries({
-        queryKey: queries.services.listStatuses(environmentId).queryKey,
+        queryKey: queries.services.listStatuses(environment.id).queryKey,
       })
       // NOTE: This is to invalidate deployed git_commit_id cache
       for (const { application_id: serviceId } of payload.applications ?? []) {
@@ -51,9 +46,15 @@ export function useDeployAllServices({ organizationId, projectId }: UseDeployAll
     },
     meta: {
       notifyOnSuccess(_: unknown, variables: unknown) {
-        const { environmentId } = variables as Parameters<typeof mutations.deployAllServices>[0]
+        const {
+          environment: {
+            id: environmentId,
+            organization: { id: organizationId },
+            project: { id: projectId },
+          },
+        } = variables as Parameters<typeof mutations.deployAllServices>[0]
         return {
-          title: 'Your environment are being updated',
+          title: 'Your services are being updated',
           labelAction: 'See Deployment Logs',
           callback() {
             navigate(ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId))
