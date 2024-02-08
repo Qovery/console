@@ -8,7 +8,6 @@ import {
   JobsApi,
   ProjectsApi,
 } from 'qovery-typescript-axios'
-import { isCronJob } from '@qovery/shared/enums'
 
 const projectsApi = new ProjectsApi()
 const environmentsApi = new EnvironmentsApi()
@@ -123,7 +122,7 @@ export const spotlight = createQueryKeys('spotlight', {
                   environmentId: env.id,
                   environmentName: env.name,
                   suggestionType: 'SERVICE' as const,
-                  serviceType: isCronJob(proj) ? 'CRON_JOB' : ('LIFECYCLE_JOB' as const),
+                  serviceType: job.job_type === 'CRON' ? 'CRON_JOB' : ('LIFECYCLE_JOB' as const),
                 })
               }
             })
