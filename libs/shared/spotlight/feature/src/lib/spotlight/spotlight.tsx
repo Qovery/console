@@ -1,20 +1,58 @@
 import { type ChangeEvent, type KeyboardEvent, useCallback, useDeferredValue, useState } from 'react'
 import { Hits, SearchBox, useInstantSearch } from 'react-instantsearch'
+import { useNavigate, useParams } from 'react-router-dom'
 import { useIntercom } from 'react-use-intercom'
-import { Command, type CommandDialogProps, Icon, IconAwesomeEnum, commandInputStyle } from '@qovery/shared/ui'
-import { twMerge } from '@qovery/shared/util-js'
+import { IconEnum } from '@qovery/shared/enums'
+import {
+  APPLICATION_URL,
+  DATABASE_GENERAL_URL,
+  DATABASE_URL,
+  ENVIRONMENTS_URL,
+  SERVICES_URL,
+} from '@qovery/shared/routes'
+import {
+  Badge,
+  Command,
+  type CommandDialogProps,
+  Icon,
+  IconAwesomeEnum,
+  LoaderSpinner,
+  commandInputStyle,
+} from '@qovery/shared/ui'
+import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import Hit from '../hit/hit'
+import useSuggestions from '../hooks/use-suggestions/use-suggestions'
 
 export interface SpotlightProps extends Pick<CommandDialogProps, 'open' | 'onOpenChange'> {}
 
 export function Spotlight({ open, onOpenChange }: SpotlightProps) {
   const [value, setValue] = useState('')
+  const { organizationId } = useParams()
+  const navigate = useNavigate()
   const [pages, setPages] = useState<string[]>(['home'])
   const activePage = pages[pages.length - 1]
+
+  const { data = [], isFetched } = useSuggestions({
+    organizationId,
+    search: value,
+    enabled: Boolean(open) && Boolean(value),
+  })
 
   const { setIndexUiState, indexUiState } = useInstantSearch()
   const { showMessages: showIntercomMessenger } = useIntercom()
   const valueDoc = useDeferredValue(indexUiState.query ?? '')
+
+  const closeSpotlight = (url: string) => {
+    navigate(url)
+    onOpenChange?.(false)
+    setValue('')
+    setIndexUiState((prevIndexUiState) => {
+      return {
+        ...prevIndexUiState,
+        query: '',
+      }
+    })
+  }
 
   const popPage = useCallback(() => {
     setPages((pages) => {
@@ -23,6 +61,10 @@ export function Spotlight({ open, onOpenChange }: SpotlightProps) {
       return x
     })
   }, [])
+
+  const dataProjects = data.filter(({ suggestionType }) => suggestionType === 'PROJECT')
+  const dataEnvironments = data.filter(({ suggestionType }) => suggestionType === 'ENVIRONMENT')
+  const dataServices = data.filter((service) => service.serviceType)
 
   return (
     <Command.Dialog
@@ -92,6 +134,89 @@ export function Spotlight({ open, onOpenChange }: SpotlightProps) {
                 Contact support
               </Command.Item>
             </Command.Group>
+            {value.length > 0 && (
+              <>
+                {!isFetched && (
+                  <div className="py-2">
+                    <LoaderSpinner className="w-4 mx-auto" />
+                  </div>
+                )}
+                {isFetched && (
+                  <>
+                    <Command.Empty>No results found</Command.Empty>
+                    {dataProjects.length > 0 && (
+                      <Command.Group heading="Projects">
+                        {dataProjects.map(({ id, name }) => (
+                          <Command.Item key={id} onSelect={() => closeSpotlight(ENVIRONMENTS_URL(organizationId, id))}>
+                            <span className="inline-flex items-center w-6 h-5">
+                              <Icon className="text-xs text-center w-6" name={IconEnum.ENVIRONMENT} />
+                            </span>
+                            {name}
+                          </Command.Item>
+                        ))}
+                      </Command.Group>
+                    )}
+                    {dataEnvironments.length > 0 && (
+                      <Command.Group heading="Environments">
+                        {dataEnvironments.map(({ id, name, projectId, projectName, environmentMode }) => (
+                          <Command.Item
+                            key={id}
+                            className="justify-between"
+                            onSelect={() => closeSpotlight(SERVICES_URL(organizationId, projectId, id))}
+                          >
+                            <div className="flex items-center gap-2">
+                              <span className="inline-flex items-center w-4 h-5">
+                                <Icon className="text-xs text-center" name={IconAwesomeEnum.LAYER_GROUP} />
+                              </span>
+                              <span className="text-neutral-350">{projectName}</span>
+                              <Icon
+                                name={IconAwesomeEnum.CHEVRON_RIGHT}
+                                className="text-2xs relative top-[1px] text-neutral-350"
+                              />
+                              <span>{name}</span>
+                            </div>
+                            <Badge variant="surface" color="neutral" size="xs">
+                              {upperCaseFirstLetter(environmentMode)}
+                            </Badge>
+                          </Command.Item>
+                        ))}
+                      </Command.Group>
+                    )}
+                    {dataServices.length > 0 && (
+                      <Command.Group heading="Services">
+                        {dataServices.map(
+                          ({ id, name, environmentId, projectId, serviceType, projectName, environmentName }) => (
+                            <Command.Item
+                              key={id}
+                              onSelect={() =>
+                                closeSpotlight(
+                                  serviceType === 'DATABASE'
+                                    ? DATABASE_URL(organizationId, projectId, environmentId, id) + DATABASE_GENERAL_URL
+                                    : APPLICATION_URL(organizationId, projectId, environmentId, id)
+                                )
+                              }
+                            >
+                              <Icon name={serviceType} className="w-4 h-5" width={16} />
+                              <span className="text-neutral-350">{projectName}</span>
+                              <Icon
+                                name={IconAwesomeEnum.CHEVRON_RIGHT}
+                                className="text-2xs relative top-[1px] text-neutral-350"
+                              />
+                              <span className="text-neutral-350">{environmentName}</span>
+                              <Icon
+                                name={IconAwesomeEnum.CHEVRON_RIGHT}
+                                className="text-2xs relative top-[1px] text-neutral-350"
+                              />
+                              <span>{name}</span>
+                            </Command.Item>
+                          )
+                        )}
+                      </Command.Group>
+                    )}
+                  </>
+                )}
+              </>
+            )}
           </>
         )}
       </Command.List>

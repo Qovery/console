@@ -63,6 +63,7 @@
       "@qovery/shared/interfaces": ["libs/shared/interfaces/src/index.ts"],
       "@qovery/shared/router": ["libs/shared/router/src/index.ts"],
       "@qovery/shared/routes": ["libs/shared/routes/src/index.ts"],
+      "@qovery/shared/spotlight/data-access": ["libs/shared/spotlight/data-access/src/index.ts"],
       "@qovery/shared/spotlight/feature": ["libs/shared/spotlight/feature/src/index.ts"],
       "@qovery/shared/toast": ["libs/shared/toast/src/index.ts"],
       "@qovery/shared/ui": ["libs/shared/ui/src/index.ts"],
