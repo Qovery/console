@@ -1,4 +1,4 @@
-import { Command as CmdK } from 'carloslfu-cmdk-internal'
+import { Command as CmdK } from 'cmdk'
 import { type ComponentPropsWithoutRef, type ElementRef, forwardRef } from 'react'
 import { twMerge } from '@qovery/shared/util-js'
 
