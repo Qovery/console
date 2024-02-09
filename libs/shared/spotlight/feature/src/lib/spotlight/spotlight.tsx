@@ -1,6 +1,7 @@
 import { type ChangeEvent, type KeyboardEvent, useCallback, useDeferredValue, useState } from 'react'
 import { Hits, SearchBox, useInstantSearch } from 'react-instantsearch'
 import { useNavigate, useParams } from 'react-router-dom'
+import { useIntercom } from 'react-use-intercom'
 import { IconEnum } from '@qovery/shared/enums'
 import {
   APPLICATION_URL,
@@ -38,6 +39,7 @@ export function Spotlight({ open, onOpenChange }: SpotlightProps) {
   })
 
   const { setIndexUiState, indexUiState } = useInstantSearch()
+  const { showMessages: showIntercomMessenger } = useIntercom()
   const valueDoc = useDeferredValue(indexUiState.query ?? '')
 
   const closeSpotlight = (url: string) => {
@@ -126,6 +128,10 @@ export function Spotlight({ open, onOpenChange }: SpotlightProps) {
               >
                 <Icon className="text-xs text-center w-6" name={IconAwesomeEnum.BOOK} />
                 Search documentation
+              </Command.Item>
+              <Command.Item onSelect={showIntercomMessenger}>
+                <Icon className="text-xs text-center w-6" name={IconAwesomeEnum.CIRCLE_QUESTION} />
+                Contact support
               </Command.Item>
             </Command.Group>
             {value.length > 0 && (
