@@ -10,6 +10,7 @@ import { services } from '@qovery/domains/services/data-access'
 import { usersSignUp } from '@qovery/domains/users-sign-up/data-access'
 import { variables } from '@qovery/domains/variables/data-access'
 import { user } from '@qovery/shared/iam/data-access'
+import { spotlight } from '@qovery/shared/spotlight/data-access'
 
 export const queries = mergeQueryKeys(
   cloudProviders,
@@ -22,7 +23,8 @@ export const queries = mergeQueryKeys(
   user,
   usersSignUp,
   variables,
-  customDomains
+  customDomains,
+  spotlight
 )
 
 export type QueryKeys = inferQueryKeyStore<typeof queries>
