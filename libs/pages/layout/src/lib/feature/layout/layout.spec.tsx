@@ -3,11 +3,6 @@ import { createElement } from 'react'
 import { setCurrentOrganizationIdOnStorage, setCurrentProjectIdOnStorage } from '../../utils/utils'
 import Layout, { type LayoutProps } from './layout'
 
-jest.mock('@qovery/shared/spotlight/feature', () => ({
-  ...jest.requireActual('@qovery/shared/spotlight/feature'),
-  Spotlight: () => <></>,
-}))
-
 jest.mock('../../utils/utils')
 
 describe('Layout', () => {
