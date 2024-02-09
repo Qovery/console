@@ -1,11 +1,11 @@
 import { useParams } from 'react-router-dom'
 import { useClusters } from '@qovery/domains/clusters/feature'
-import { useFetchEnvironments } from '@qovery/domains/environment'
+import { useEnvironments } from '@qovery/domains/environments/feature'
 import { useOrganization, useOrganizations } from '@qovery/domains/organizations/feature'
 import { useProjects } from '@qovery/domains/projects/feature'
 import { CreateProjectModalFeature } from '@qovery/shared/console-shared'
 import { useModal } from '@qovery/shared/ui'
-import { Breadcrumb } from '../../ui/breadcrumb/breadcrumb'
+import { BreadcrumbMemo } from '../../ui/breadcrumb/breadcrumb'
 
 export function BreadcrumbFeature() {
   const { organizationId = '', projectId = '' } = useParams()
@@ -14,7 +14,7 @@ export function BreadcrumbFeature() {
   const { data: clusters } = useClusters({ organizationId })
 
   const { data: projects = [] } = useProjects({ organizationId })
-  const { data: environments } = useFetchEnvironments(projectId)
+  const { data: environments } = useEnvironments({ projectId })
 
   const { openModal, closeModal } = useModal()
 
@@ -31,7 +31,7 @@ export function BreadcrumbFeature() {
       : organizations
 
   return (
-    <Breadcrumb
+    <BreadcrumbMemo
       clusters={clusters}
       organizations={allOrganizations}
       environments={environments}
@@ -41,4 +41,4 @@ export function BreadcrumbFeature() {
   )
 }
 
-export default Breadcrumb
+export default BreadcrumbFeature
