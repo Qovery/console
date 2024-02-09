@@ -5,7 +5,7 @@ import { useOrganization, useOrganizations } from '@qovery/domains/organizations
 import { useProjects } from '@qovery/domains/projects/feature'
 import { CreateProjectModalFeature } from '@qovery/shared/console-shared'
 import { useModal } from '@qovery/shared/ui'
-import { Breadcrumb } from '../../ui/breadcrumb/breadcrumb'
+import { BreadcrumbMemo } from '../../ui/breadcrumb/breadcrumb'
 
 export function BreadcrumbFeature() {
   const { organizationId = '', projectId = '' } = useParams()
@@ -31,7 +31,7 @@ export function BreadcrumbFeature() {
       : organizations
 
   return (
-    <Breadcrumb
+    <BreadcrumbMemo
       clusters={clusters}
       organizations={allOrganizations}
       environments={environments}
@@ -41,4 +41,4 @@ export function BreadcrumbFeature() {
   )
 }
 
-export default Breadcrumb
+export default BreadcrumbFeature

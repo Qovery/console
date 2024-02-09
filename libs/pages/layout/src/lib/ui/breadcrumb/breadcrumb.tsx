@@ -39,7 +39,7 @@ export interface BreadcrumbProps {
   environments?: Environment[]
 }
 
-export function BreadcrumbMemo(props: BreadcrumbProps) {
+export function Breadcrumb(props: BreadcrumbProps) {
   const { organizations, clusters, projects, environments, createProjectModal } = props
   const { organizationId, projectId, environmentId, applicationId, databaseId, clusterId } = useParams()
 
@@ -288,6 +288,6 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
   )
 }
 
-export const Breadcrumb = memo(BreadcrumbMemo, (prevProps, nextProps) => {
+export const BreadcrumbMemo = memo(Breadcrumb, (prevProps, nextProps) => {
   return equal(prevProps, nextProps)
 })
