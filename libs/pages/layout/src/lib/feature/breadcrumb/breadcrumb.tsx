@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom'
 import { useClusters } from '@qovery/domains/clusters/feature'
-import { useFetchEnvironments } from '@qovery/domains/environment'
+import { useEnvironments } from '@qovery/domains/environments/feature'
 import { useOrganization, useOrganizations } from '@qovery/domains/organizations/feature'
 import { useProjects } from '@qovery/domains/projects/feature'
 import { CreateProjectModalFeature } from '@qovery/shared/console-shared'
@@ -14,7 +14,7 @@ export function BreadcrumbFeature() {
   const { data: clusters } = useClusters({ organizationId })
 
   const { data: projects = [] } = useProjects({ organizationId })
-  const { data: environments } = useFetchEnvironments(projectId)
+  const { data: environments } = useEnvironments({ projectId })
 
   const { openModal, closeModal } = useModal()
 

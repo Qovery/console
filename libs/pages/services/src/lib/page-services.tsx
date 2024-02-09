@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { Navigate, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom'
-import { useFetchEnvironment } from '@qovery/domains/environment'
+import { useEnvironment } from '@qovery/domains/environments/feature'
 import { APPLICATION_GENERAL_URL, SERVICES_GENERAL_URL, SERVICES_URL } from '@qovery/shared/routes'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { ROUTER_SERVICES } from './router/router'
@@ -12,7 +12,7 @@ export function PageServices() {
   const location = useLocation()
   const navigate = useNavigate()
 
-  const { data: environment } = useFetchEnvironment(projectId, environmentId)
+  const { data: environment } = useEnvironment({ environmentId })
 
   useEffect(() => {
     if (location.pathname === SERVICES_URL(organizationId, projectId, environmentId)) {
