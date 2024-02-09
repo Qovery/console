@@ -1,9 +1,9 @@
-import { render } from '@testing-library/react'
-import Spotlight from './spotlight'
+import { renderWithProviders } from '@qovery/shared/util-tests'
+import { Spotlight } from './spotlight'
 
 describe('Spotlight', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<Spotlight />)
+    const { baseElement } = renderWithProviders(<Spotlight />)
     expect(baseElement).toBeTruthy()
   })
 })

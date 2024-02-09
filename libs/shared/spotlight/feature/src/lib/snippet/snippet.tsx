@@ -1,5 +1,6 @@
 import { createElement } from 'react'
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function getPropertyByPath(object: Record<string, any>, path: string): any {
   const parts = path.split('.')
 

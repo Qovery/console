@@ -1,9 +1,9 @@
-import { render } from '@testing-library/react'
-import Snippet from './snippet'
+import { renderWithProviders } from '@qovery/shared/util-tests'
+import { Snippet } from './snippet'
 
 describe('Snippet', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<Snippet />)
+    const { baseElement } = renderWithProviders(<Snippet />)
     expect(baseElement).toBeTruthy()
   })
 })

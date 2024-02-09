@@ -2,17 +2,11 @@ import { type PropsWithChildren } from 'react'
 import { Command, Icon, IconAwesomeEnum } from '@qovery/shared/ui'
 import Snippet from '../snippet/snippet'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function Wrapper({ children }: PropsWithChildren) {
   return <div className="flex flex-col gap-0.5">{children}</div>
 }
 
-// export function Hits({ hits }: any) {
-//   return <div>
-
-//   </div>
-// }
-
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function Hit({ hit: item }: any) {
   return (
     <Command.Item onSelect={() => window.open(item.url, '_blank')}>
