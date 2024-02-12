@@ -1,0 +1,64 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ServiceListActionBar should match snapshot 1`] = `
+<body>
+  <div>
+    <div
+      class="sticky bottom-4"
+    >
+      <div
+        class="relative"
+      >
+        <div
+          class="absolute w-[520px] bottom-4 left-1/2 -translate-x-1/2"
+        >
+          <div
+            class="flex items-center justify-between h-12 bg-neutral-500 shadow-xl text-white font-medium pl-5 pr-2 rounded animate-action-bar-fade-in"
+          >
+            <span
+              class="text-sm"
+            >
+              1
+               selected 
+              service
+            </span>
+            <button
+              class="h-8 px-3 text-xs underline"
+              type="button"
+            >
+              Clear selection
+            </button>
+            <div
+              class="flex gap-2"
+            >
+              <button
+                class="inline-flex shrink-0 font-medium transition border text-xs h-8 px-3 rounded bg-brand-500 border-brand-500 hover:border-brand-600 hover:bg-brand-600 text-white disabled:text-brand-300 disabled:bg-brand-100 disabled:border-none items-center gap-1"
+              >
+                Deploy selected 
+                <span
+                  class="icon-solid-play shrink-0 "
+                  role="img"
+                />
+              </button>
+              <button
+                aria-expanded="false"
+                aria-haspopup="menu"
+                class="inline-flex shrink-0 font-medium transition text-xs h-8 px-3 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 items-center gap-1"
+                data-state="closed"
+                id="radix-:rf:"
+                type="button"
+              >
+                More 
+                <span
+                  class="icon-solid-angle-down shrink-0 "
+                  role="img"
+                />
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+`;
