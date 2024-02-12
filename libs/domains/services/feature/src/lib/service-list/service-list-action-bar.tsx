@@ -161,13 +161,13 @@ export function ServiceListActionBar({ environment, selectedRows, resetRowSelect
               await restartAllServices({
                 environment,
                 payload: {
-                  applicationIds: restartableServices
+                  application_ids: restartableServices
                     .filter(({ serviceType }) => serviceType === 'APPLICATION')
                     .map(({ id }) => id),
-                  containerIds: restartableServices
+                  container_ids: restartableServices
                     .filter(({ serviceType }) => serviceType === 'CONTAINER')
                     .map(({ id }) => id),
-                  databaseIds: restartableServices
+                  database_ids: restartableServices
                     .filter(({ serviceType }) => serviceType === 'DATABASE')
                     .map(({ id }) => id),
                 },

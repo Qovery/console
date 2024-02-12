@@ -13,22 +13,22 @@ export function useRestartAllServices() {
       queryClient.invalidateQueries({
         queryKey: queries.services.listStatuses(environment.id).queryKey,
       })
-      for (const serviceId of payload.applicationIds ?? []) {
+      for (const serviceId of payload.application_ids ?? []) {
         queryClient.invalidateQueries({
           queryKey: queries.services.details({ serviceId, serviceType: 'APPLICATION' }).queryKey,
         })
       }
-      for (const serviceId of payload.containerIds ?? []) {
+      for (const serviceId of payload.container_ids ?? []) {
         queryClient.invalidateQueries({
           queryKey: queries.services.details({ serviceId, serviceType: 'CONTAINER' }).queryKey,
         })
       }
-      for (const serviceId of payload.databaseIds ?? []) {
+      for (const serviceId of payload.database_ids ?? []) {
         queryClient.invalidateQueries({
           queryKey: queries.services.details({ serviceId, serviceType: 'DATABASE' }).queryKey,
         })
       }
-      // TODO : invalidate helm ids
+      // JOB & HELM cannot be restarted / reboot
     },
     meta: {
       notifyOnSuccess(_: unknown, variables: unknown) {
