@@ -9,6 +9,7 @@ describe('StepPersonalize', () => {
   beforeEach(() => {
     props = {
       dataTypes: [{ label: 'some-label', value: 'some-value' }],
+      dataCloudProviders: [{ label: 'some-label', value: 'some-value', icon: <div>some-icon</div> }],
       onSubmit: jest.fn(),
       authLogout: jest.fn(),
     }
@@ -19,6 +20,7 @@ describe('StepPersonalize', () => {
         last_name: string
         user_email: string
         type_of_use: TypeOfUseEnum
+        infrastructure_hosting: string
       }>()
 
       props.control = control
