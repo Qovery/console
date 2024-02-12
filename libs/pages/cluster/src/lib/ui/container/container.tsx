@@ -53,12 +53,7 @@ export function Container({ children, cluster, deployCluster }: PropsWithChildre
       </div>
       <Skeleton width={150} height={32} show={isLoading}>
         {cluster && clusterStatus ? (
-          <ClusterActionToolbar
-            cluster={cluster}
-            clusterStatus={clusterStatus}
-            organizationId={organizationId}
-            noSettings
-          />
+          <ClusterActionToolbar cluster={cluster} clusterStatus={clusterStatus} noSettings />
         ) : (
           <div />
         )}

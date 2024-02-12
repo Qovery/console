@@ -62,9 +62,7 @@ export function CardCluster({ organizationId, cluster }: CardClusterProps) {
           </div>
         </div>
         <Skeleton height={32} width={146} show={isClusterStatusLoading}>
-          {clusterStatus && (
-            <ClusterActionToolbar cluster={cluster} organizationId={organizationId} clusterStatus={clusterStatus} />
-          )}
+          {clusterStatus && <ClusterActionToolbar cluster={cluster} clusterStatus={clusterStatus} />}
         </Skeleton>
       </div>
       <div className="flex flex-wrap gap-2">

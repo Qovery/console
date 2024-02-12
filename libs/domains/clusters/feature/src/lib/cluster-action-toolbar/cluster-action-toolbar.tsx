@@ -30,15 +30,7 @@ import { useDeployCluster } from '../hooks/use-deploy-cluster/use-deploy-cluster
 import { useDownloadKubeconfig } from '../hooks/use-download-kubeconfig/use-download-kubeconfig'
 import { useStopCluster } from '../hooks/use-stop-cluster/use-stop-cluster'
 
-function MenuManageDeployment({
-  cluster,
-  clusterStatus,
-  organizationId,
-}: {
-  cluster: Cluster
-  clusterStatus: ClusterStatusGet
-  organizationId: string
-}) {
+function MenuManageDeployment({ cluster, clusterStatus }: { cluster: Cluster; clusterStatus: ClusterStatusGet }) {
   const { openModalConfirmation } = useModalConfirmation()
   const { mutate: deployCluster } = useDeployCluster()
   const { mutate: stopCluster } = useStopCluster()
@@ -54,7 +46,7 @@ function MenuManageDeployment({
 
   const mutationDeploy = () =>
     deployCluster({
-      organizationId,
+      organizationId: cluster.organization.id,
       clusterId: cluster.id,
     })
   const mutationUpdate = () =>
@@ -65,7 +57,7 @@ function MenuManageDeployment({
       name: cluster.name,
       action: () =>
         deployCluster({
-          organizationId,
+          organizationId: cluster.organization.id,
           clusterId: cluster.id,
         }),
     })
@@ -79,7 +71,7 @@ function MenuManageDeployment({
       name: cluster.name,
       action: () =>
         stopCluster({
-          organizationId,
+          organizationId: cluster.organization.id,
           clusterId: cluster.id,
         }),
     })
@@ -119,15 +111,7 @@ function MenuManageDeployment({
   ) : null
 }
 
-function MenuOtherActions({
-  cluster,
-  clusterStatus,
-  organizationId,
-}: {
-  cluster: Cluster
-  clusterStatus: ClusterStatusGet
-  organizationId: string
-}) {
+function MenuOtherActions({ cluster, clusterStatus }: { cluster: Cluster; clusterStatus: ClusterStatusGet }) {
   const navigate = useNavigate()
   const showSelfManagedGuideKey = 'show-self-managed-guide'
   const [searchParams, setSearchParams] = useSearchParams()
@@ -147,7 +131,7 @@ function MenuOtherActions({
     openModal({
       content: (
         <ClusterInstallationGuideModal
-          organizationId={organizationId}
+          organizationId={cluster.organization.id}
           clusterId={cluster.id}
           onClose={() => {
             searchParams.delete(showSelfManagedGuideKey)
@@ -184,7 +168,7 @@ function MenuOtherActions({
           icon={<Icon name={IconAwesomeEnum.CLOCK_ROTATE_LEFT} />}
           onClick={() =>
             navigate(
-              AUDIT_LOGS_PARAMS_URL(organizationId, {
+              AUDIT_LOGS_PARAMS_URL(cluster.organization.id, {
                 targetType: OrganizationEventTargetType.CLUSTER,
                 targetId: cluster.id,
               })
@@ -198,7 +182,7 @@ function MenuOtherActions({
         </DropdownMenu.Item>
         <DropdownMenu.Item
           icon={<Icon name={IconAwesomeEnum.DOWNLOAD} />}
-          onClick={() => downloadKubeconfig({ organizationId, clusterId: cluster.id })}
+          onClick={() => downloadKubeconfig({ organizationId: cluster.organization.id, clusterId: cluster.id })}
         >
           Get Kubeconfig
         </DropdownMenu.Item>
@@ -225,38 +209,32 @@ function MenuOtherActions({
 }
 
 export interface ClusterActionToolbarProps {
-  organizationId: string
   cluster: Cluster
   clusterStatus: ClusterStatusGet
   noSettings?: boolean
 }
 
-export function ClusterActionToolbar({
-  organizationId,
-  cluster,
-  clusterStatus,
-  noSettings,
-}: ClusterActionToolbarProps) {
+export function ClusterActionToolbar({ cluster, clusterStatus, noSettings }: ClusterActionToolbarProps) {
   const navigate = useNavigate()
 
   return (
     <ActionToolbar.Root>
-      <MenuManageDeployment clusterStatus={clusterStatus} cluster={cluster} organizationId={organizationId} />
+      <MenuManageDeployment cluster={cluster} clusterStatus={clusterStatus} />
       <Tooltip content="Logs">
-        <ActionToolbar.Button onClick={() => navigate(INFRA_LOGS_URL(organizationId, cluster.id))}>
+        <ActionToolbar.Button onClick={() => navigate(INFRA_LOGS_URL(cluster.organization.id, cluster.id))}>
           <Icon name={IconAwesomeEnum.SCROLL} />
         </ActionToolbar.Button>
       </Tooltip>
       {!noSettings && (
         <Tooltip content="Settings">
           <ActionToolbar.Button
-            onClick={() => navigate(CLUSTER_URL(organizationId, cluster.id) + CLUSTER_SETTINGS_URL)}
+            onClick={() => navigate(CLUSTER_URL(cluster.organization.id, cluster.id) + CLUSTER_SETTINGS_URL)}
           >
             <Icon name={IconAwesomeEnum.WHEEL} />
           </ActionToolbar.Button>
         </Tooltip>
       )}
-      <MenuOtherActions organizationId={organizationId} cluster={cluster} clusterStatus={clusterStatus} />
+      <MenuOtherActions cluster={cluster} clusterStatus={clusterStatus} />
     </ActionToolbar.Root>
   )
 }
