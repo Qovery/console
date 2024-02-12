@@ -220,11 +220,13 @@ export function ClusterActionToolbar({ cluster, clusterStatus, noSettings }: Clu
   return (
     <ActionToolbar.Root>
       <MenuManageDeployment cluster={cluster} clusterStatus={clusterStatus} />
-      <Tooltip content="Logs">
-        <ActionToolbar.Button onClick={() => navigate(INFRA_LOGS_URL(cluster.organization.id, cluster.id))}>
-          <Icon name={IconAwesomeEnum.SCROLL} />
-        </ActionToolbar.Button>
-      </Tooltip>
+      {cluster.kubernetes !== 'SELF_MANAGED' && (
+        <Tooltip content="Logs">
+          <ActionToolbar.Button onClick={() => navigate(INFRA_LOGS_URL(cluster.organization.id, cluster.id))}>
+            <Icon name={IconAwesomeEnum.SCROLL} />
+          </ActionToolbar.Button>
+        </Tooltip>
+      )}
       {!noSettings && (
         <Tooltip content="Settings">
           <ActionToolbar.Button
