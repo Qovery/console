@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom'
 import { useCreateUserSignUp, useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { useAuth } from '@qovery/shared/auth'
 import { ONBOARDING_MORE_URL, ONBOARDING_URL } from '@qovery/shared/routes'
+import { Icon } from '@qovery/shared/ui'
 import { StepPersonalize } from '../../ui/step-personalize/step-personalize'
 import { ContextOnboarding } from '../container/container'
 
@@ -24,6 +25,34 @@ const dataTypes = [
   },
 ]
 
+const dataCloudProviders = [
+  {
+    label: 'Amazon Web Service (AWS)',
+    value: 'AWS',
+    icon: <Icon width={16} height={16} name="AWS" />,
+  },
+  {
+    label: 'Google Cloud Patform (GCP)',
+    value: 'GCP',
+    icon: <Icon width={16} height={16} name="GCP" />,
+  },
+  {
+    label: 'Scaleway',
+    value: 'SCW',
+    icon: <Icon width={16} height={16} name="SCW" />,
+  },
+  {
+    label: 'Azure',
+    value: 'AZURE',
+    icon: <Icon width={16} height={16} name="AZURE" />,
+  },
+  {
+    label: 'Other',
+    value: 'OTHER',
+    icon: <Icon width={16} height={16} name="OTHER" />,
+  },
+]
+
 export interface FormUserProps {
   setStepCompany: Dispatch<SetStateAction<boolean>>
 }
@@ -37,13 +66,14 @@ export function FormUser(props: FormUserProps) {
   const { data: userSignUp } = useUserSignUp()
   const { mutateAsync: createUserSignUp } = useCreateUserSignUp()
   const { handleSubmit, control } = useForm<
-    Pick<SignUpRequest, 'first_name' | 'last_name' | 'user_email' | 'type_of_use'>
+    Pick<SignUpRequest, 'first_name' | 'last_name' | 'user_email' | 'type_of_use' | 'infrastructure_hosting'>
   >({
     defaultValues: {
       first_name: userSignUp?.first_name ? userSignUp.first_name : user?.name?.split(' ')[0],
       last_name: userSignUp?.last_name ? userSignUp.last_name : user?.name?.split(' ')[1],
       user_email: userSignUp?.user_email ? userSignUp.user_email : user?.email,
       type_of_use: userSignUp?.type_of_use ?? TypeOfUseEnum.PERSONAL,
+      infrastructure_hosting: userSignUp?.infrastructure_hosting,
     },
   })
   const { organization_name, project_name, setContextValue } = useContext(ContextOnboarding)
@@ -86,7 +116,15 @@ export function FormUser(props: FormUserProps) {
     }
   })
 
-  return <StepPersonalize dataTypes={dataTypes} onSubmit={onSubmit} control={control} authLogout={authLogout} />
+  return (
+    <StepPersonalize
+      dataTypes={dataTypes}
+      dataCloudProviders={dataCloudProviders}
+      onSubmit={onSubmit}
+      control={control}
+      authLogout={authLogout}
+    />
+  )
 }
 
 export default FormUser
