@@ -379,54 +379,51 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
               </div>
             )
 
-          // XXX: there is bug in ts-pattern where pattern matching against discriminated union + P.when doesn't work as expected
-          // so JOB and HELM case should be tackle independantly
-          const cell = match(service)
+          const cell = match({ service })
             .with(
-              {
-                serviceType: ServiceTypeEnum.JOB,
-              },
-              (service) =>
-                match(service)
-                  .with(
-                    {
-                      source: P.when(isJobGitSource),
-                    },
-                    ({ source: { docker } }) => gitInfo(service, docker?.git_repository)
-                  )
-                  .with(
-                    {
-                      source: P.when(isJobContainerSource),
-                    },
-                    ({ source: { image } }) => containerInfo(image)
-                  )
-                  .otherwise(() => null)
+              { service: P.intersection({ serviceType: 'JOB' }, { source: P.when(isJobGitSource) }) },
+              ({ service }) => {
+                const {
+                  source: { docker },
+                } = service
+                return gitInfo(service, docker?.git_repository)
+              }
             )
-            .with({ serviceType: ServiceTypeEnum.APPLICATION }, (service) => gitInfo(service, service.git_repository))
-            .with({ serviceType: ServiceTypeEnum.CONTAINER }, ({ image_name, tag, registry }) =>
+            .with(
+              { service: P.intersection({ serviceType: 'JOB' }, { source: P.when(isJobContainerSource) }) },
+              ({
+                service: {
+                  source: { image },
+                },
+              }) => containerInfo(image)
+            )
+            .with({ service: { serviceType: 'APPLICATION' } }, ({ service }) =>
+              gitInfo(service, service.git_repository)
+            )
+            .with({ service: { serviceType: 'CONTAINER' } }, ({ service: { image_name, tag, registry } }) =>
               containerInfo({ image_name, tag, registry })
             )
-            .with({ serviceType: ServiceTypeEnum.DATABASE }, ({ accessibility, mode, type, version }) =>
+            .with({ service: { serviceType: 'DATABASE' } }, ({ service: { accessibility, mode, type, version } }) =>
               datasourceInfo({ accessibility, mode, type, version })
             )
-            .with({ serviceType: ServiceTypeEnum.HELM }, (service) =>
-              match(service)
-                .with(
-                  {
-                    source: P.when(isHelmGitSource),
-                  },
-                  ({ source: { git } }) => gitInfo(service, git?.git_repository)
-                )
-                .with(
-                  {
-                    source: P.when(isHelmRepositorySource),
-                  },
-                  ({ source: { repository } }) => helmInfo(repository)
-                )
-                .otherwise(() => null)
+            .with(
+              { service: P.intersection({ serviceType: 'HELM' }, { source: P.when(isHelmGitSource) }) },
+              ({ service }) => {
+                const {
+                  source: { git },
+                } = service
+                return gitInfo(service, git?.git_repository)
+              }
             )
-            .otherwise(() => null)
-
+            .with(
+              { service: P.intersection({ serviceType: 'HELM' }, { source: P.when(isHelmRepositorySource) }) },
+              ({
+                service: {
+                  source: { repository },
+                },
+              }) => helmInfo(repository)
+            )
+            .exhaustive()
           return cell
         },
       }),
