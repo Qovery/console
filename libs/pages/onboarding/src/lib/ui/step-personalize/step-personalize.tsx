@@ -77,6 +77,7 @@ export function StepPersonalize(props: StepPersonalizeProps) {
           rules={{ required: 'Please enter your type of use.' }}
           render={({ field, fieldState: { error } }) => (
             <InputSelect
+              className="mb-3"
               label="Type of use"
               options={dataTypes}
               onChange={field.onChange}

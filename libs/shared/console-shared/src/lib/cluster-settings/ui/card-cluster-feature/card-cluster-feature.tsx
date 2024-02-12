@@ -60,7 +60,12 @@ export function CardClusterFeature(props: CardClusterFeatureProps) {
             )}
           />
         ) : (
-          <InputToggle disabled small className="relative top-[2px]" value={getValue(feature?.value || false)} />
+          <InputToggle
+            disabled
+            small
+            className="relative top-[2px]"
+            value={getValue(Boolean(feature?.value) || false)}
+          />
         )}
         <div className="basis-full">
           <h4 className="flex justify-between text-ssm text-neutral-400 mb-1 font-medium">

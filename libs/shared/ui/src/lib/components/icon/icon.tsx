@@ -8,6 +8,7 @@ import GitlabIcon from './icons-git/gitlab'
 import ApplicationIcon from './icons/application'
 import AWSIcon from './icons/aws'
 import AWSGrayIcon from './icons/aws-gray'
+import AzureIcon from './icons/azure'
 import BuildpacksIcon from './icons/buildpacks'
 import ChildrenArrow from './icons/children-arrow'
 import { ContainerIcon } from './icons/container'
@@ -84,6 +85,8 @@ export function Icon(props: IconProps) {
       return <GCPGrayIcon {...formattedProps} />
     case IconEnum.APPLICATION:
       return <ApplicationIcon {...formattedProps} />
+    case IconEnum.AZURE:
+      return <AzureIcon {...formattedProps} />
     case IconEnum.DATABASE:
       return <DatabaseIcon {...formattedProps} />
     case IconEnum.CONTAINER:
