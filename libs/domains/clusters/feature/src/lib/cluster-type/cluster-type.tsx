@@ -10,12 +10,12 @@ export interface ClusterTypeProps extends Omit<BadgeProps, 'color'> {
 export function ClusterType({ cloudProvider, kubernetes, ...props }: ClusterTypeProps) {
   const clusterType = match([cloudProvider, kubernetes])
     .with(['AWS', KubernetesEnum.K3_S], () => 'EC2 (K3S)')
-    .with(['AWS', KubernetesEnum.MANAGED], ['AWS', undefined], () => 'Managed (EKS)')
+    .with(['AWS', KubernetesEnum.MANAGED], ['AWS', undefined], () => 'EKS')
     .with(['AWS', KubernetesEnum.SELF_MANAGED], ['AWS', undefined], () => 'Self-managed')
     // Scaleway
-    .with(['SCW', P._], () => 'Managed (Kapsule)')
+    .with(['SCW', P._], () => 'Kapsule')
     // Google GCP
-    .with(['GCP', P._], () => 'Managed (GKE)')
+    .with(['GCP', P._], () => 'GKE (Autopilot)')
     .exhaustive()
   return (
     <Badge color="neutral" {...props}>
