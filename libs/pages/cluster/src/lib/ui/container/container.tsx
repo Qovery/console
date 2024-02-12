@@ -55,14 +55,18 @@ export function Container({ children, cluster, deployCluster }: PropsWithChildre
           </Badge>
         </Skeleton>
         <Skeleton width={120} height={22} show={!cluster}>
-          <Badge size="xs" color="neutral">
-            {cluster?.version}
-          </Badge>
+          {cluster?.version && (
+            <Badge size="xs" color="neutral">
+              {cluster?.version}
+            </Badge>
+          )}
         </Skeleton>
         <Skeleton width={120} height={22} show={!cluster}>
-          <Badge size="xs" color="neutral">
-            {cluster?.instance_type?.toLowerCase().replace('_', '.')}
-          </Badge>
+          {cluster?.instance_type && (
+            <Badge size="xs" color="neutral">
+              {cluster?.instance_type?.toLowerCase().replace('_', '.')}
+            </Badge>
+          )}
         </Skeleton>
       </div>
       <Skeleton width={150} height={32} show={isLoading}>
