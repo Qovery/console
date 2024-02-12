@@ -86,7 +86,7 @@
     "@nx/cypress": "17.0.1",
     "@nx/devkit": "17.0.1",
     "@nx/eslint": "17.0.1",
-    "@nx/eslint-plugin": "17.0.1",
+    "@nx/eslint-plugin": "18.0.4",
     "@nx/jest": "17.0.1",
     "@nx/js": "17.0.1",
     "@nx/react": "17.0.1",
