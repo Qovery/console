@@ -8,10 +8,12 @@ export function useAuth() {
    * Authentification login
    * Gitlab uppercase is needed
    */
-  const authLogin = async (provider: string) => {
+  const authLogin = async (provider?: string) => {
     await loginWithRedirect({
-      connection: provider,
-      login: 'login',
+      authorizationParams: {
+        connection: provider,
+        login_hint: 'login',
+      },
     })
   }
 
@@ -20,7 +22,9 @@ export function useAuth() {
    */
   const authLogout = useCallback(async () => {
     return await logout({
-      returnTo: window.location.origin,
+      logoutParams: {
+        returnTo: window.location.origin,
+      },
     })
   }, [logout])
 

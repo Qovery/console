@@ -75,7 +75,7 @@ export function useInviteMember() {
         await mutateAcceptInviteMember({ organizationId, inviteId })
         cleanInvitation()
 
-        await getAccessTokenSilently({ ignoreCache: true })
+        await getAccessTokenSilently({ cacheMode: 'off' })
         await refetchOrganizations()
         window.location.assign(`/organization/${organizationId}`)
       } catch (e) {

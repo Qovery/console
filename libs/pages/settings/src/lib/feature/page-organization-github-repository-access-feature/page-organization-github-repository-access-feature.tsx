@@ -35,9 +35,7 @@ export function PageOrganizationGithubRepositoryAccessFeature() {
     // We already invalid token on the success for connexion and disconnect requests
     // Maybe its not necessary to do the same thing here (need to be clean)
     async function refetchAuthProvidersWithNewToken() {
-      await getAccessTokenSilently({
-        ignoreCache: true,
-      })
+      await getAccessTokenSilently({ cacheMode: 'off' })
       refetchAuthProviders()
     }
     refetchAuthProvidersWithNewToken()

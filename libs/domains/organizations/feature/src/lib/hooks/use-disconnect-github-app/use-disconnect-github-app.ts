@@ -9,9 +9,7 @@ export function useDisconnectGithubApp() {
 
   return useMutation(mutations.disconnectGithubApp, {
     async onSuccess(_, { organizationId }) {
-      await getAccessTokenSilently({
-        ignoreCache: true,
-      })
+      await getAccessTokenSilently({ cacheMode: 'off' })
 
       queryClient.invalidateQueries({
         queryKey: queries.organizations.authProviders({ organizationId }).queryKey,

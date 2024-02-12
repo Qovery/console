@@ -2,10 +2,10 @@ import { useEffect } from 'react'
 import { AuthEnum, useInviteMember } from '@qovery/shared/auth'
 import { InviteDetailsFeature } from '@qovery/shared/console-shared'
 import { IconEnum } from '@qovery/shared/enums'
-import { Icon } from '@qovery/shared/ui'
+import { Button, Icon } from '@qovery/shared/ui'
 
 export interface ILoginProps {
-  onClickAuthLogin: (provider: string) => void
+  onClickAuthLogin: (provider?: string) => void
 }
 
 export function Login({ onClickAuthLogin }: ILoginProps) {
@@ -36,32 +36,51 @@ export function Login({ onClickAuthLogin }: ILoginProps) {
             </a>
             .
           </p>
-          <button className="btn-login btn-login--github mb-3" onClick={() => onClickAuthLogin(AuthEnum.GITHUB)}>
-            <Icon className="absolute left-3" width="20" name={IconEnum.GITHUB_WHITE} />
-            Sign in with Github
-          </button>
-          <button className="btn-login btn-login--default mb-3" onClick={() => onClickAuthLogin(AuthEnum.GITLAB)}>
-            <Icon className="absolute left-3" width="20" name={IconEnum.GITLAB} />
-            Sign in with Gitlab
-          </button>
-          <button className="btn-login btn-login--default mb-3" onClick={() => onClickAuthLogin(AuthEnum.BITBUCKET)}>
-            <Icon className="absolute left-3" width="20" name={IconEnum.BITBUCKET} />
-            Sign in with Bitbucket
-          </button>
-          <button className="btn-login btn-login--default mb-3" onClick={() => onClickAuthLogin(AuthEnum.GOOGLE_SSO)}>
-            <Icon className="absolute left-3" width="20" name={IconEnum.GCP} />
-            Sign in with Google SSO
-          </button>
-          <button className="btn-login btn-login--default mb-3" onClick={() => onClickAuthLogin(AuthEnum.MICROSOFT)}>
-            <Icon className="absolute left-3" width="20" name={IconEnum.APPLICATION} />
-            Sign in with Microsoft
-          </button>
+          <div className="flex flex-col gap-3">
+            <Button
+              variant="surface"
+              color="neutral"
+              size="lg"
+              className="w-full justify-center"
+              onClick={() => onClickAuthLogin(AuthEnum.GITHUB)}
+            >
+              <Icon width="16" className="mr-3" name={IconEnum.GITHUB} />
+              Sign in with Github
+            </Button>
+            <Button
+              variant="surface"
+              color="neutral"
+              size="lg"
+              className="w-full justify-center"
+              onClick={() => onClickAuthLogin(AuthEnum.GOOGLE_SSO)}
+            >
+              <Icon width="16" className="mr-3" name={IconEnum.GOOGLE} />
+              Sign in with Google
+            </Button>
+            <span className="my-2 flex items-center text-neutral-500 text-2xs font-bold before:bg-neutral-200 before:w-full before:h-[1px] before:block before:mr-1 after:ml-1 after:bg-neutral-200 after:w-full after:h-[1px] after:block">
+              OR
+            </span>
+            <Button
+              variant="surface"
+              color="neutral"
+              size="lg"
+              className="w-full justify-center"
+              onClick={() => onClickAuthLogin()}
+            >
+              Sign in with other provider
+            </Button>
+          </div>
         </div>
       </div>
       <div className="hidden xl:block flex-[1_1_0%] bg-neutral-150 px-20 before:absolute before:top-0 before:w-full before:h-full before:bg-neutral-150">
         <div className="max-w-md relative">
           <h2 className="h1 text-neutral-400 mt-44 mb-6">Deliver Self-Service Infrastructure, Faster!</h2>
-          <p className="text-neutral-400 mb-6 text-sm">Built for DevOps, Loved by Developers ✨</p>
+          <p className="text-neutral-400 mb-6 text-sm">
+            Built for DevOps, Loved by Developers{' '}
+            <span role="img" aria-label="stars">
+              ✨
+            </span>
+          </p>
           <ul className="list-disc pl-4 text-sm">
             <li className="font-bold text-neutral-400 mb-2">Fast Environment Provisioning</li>
             <li className="font-bold text-neutral-400 mb-2">

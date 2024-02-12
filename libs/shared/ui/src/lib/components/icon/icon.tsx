@@ -24,6 +24,7 @@ import GcpArtifactRegistryIcon from './icons/gcp-artifact-registry'
 import GCPGrayIcon from './icons/gcp-gray'
 import GenericRegistryIcon from './icons/generic-registry'
 import GitIcon from './icons/git'
+import GoogleIcon from './icons/google'
 import HelmOfficialIcon from './icons/helm-official'
 import HelmServiceIcon from './icons/helm-service'
 import InformationIcon from './icons/information'
@@ -66,6 +67,8 @@ export function Icon(props: IconProps) {
       return <ChildrenArrow {...formattedProps} />
     case IconEnum.GITLAB:
       return <GitlabIcon {...formattedProps} />
+    case IconEnum.GOOGLE:
+      return <GoogleIcon {...formattedProps} />
     case IconEnum.BITBUCKET:
       return <BitbucketIcon {...formattedProps} />
     case IconEnum.ENVIRONMENT:

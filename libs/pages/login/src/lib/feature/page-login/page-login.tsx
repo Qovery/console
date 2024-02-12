@@ -12,7 +12,7 @@ export function PageLoginFeature() {
 
   useRedirectIfLogged()
   const onClickAuthLogin = useCallback(
-    async (provider: string) => {
+    async (provider?: string) => {
       await authLogin(provider)
     },
     [authLogin]
