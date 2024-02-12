@@ -1,11 +1,13 @@
+import { clusterFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders } from '@qovery/shared/util-tests'
 import ClusterDeleteModal, { type ClusterDeleteModalProps } from './cluster-delete-modal'
 
+const [mockCluster] = clusterFactoryMock(1)
+
 describe('ClusterDeleteModal', () => {
+  mockCluster.name = 'my-cluster'
   const props: ClusterDeleteModalProps = {
-    organizationId: '0',
-    clusterId: '1',
-    name: 'my-cluster',
+    cluster: mockCluster,
   }
 
   it('should render successfully', () => {
