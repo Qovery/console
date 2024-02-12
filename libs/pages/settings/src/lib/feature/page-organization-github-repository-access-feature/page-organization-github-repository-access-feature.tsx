@@ -9,7 +9,7 @@ import DisconnectionConfirmModal from '../../ui/page-organization-github-reposit
 import PageOrganizationGithubRepositoryAccess from '../../ui/page-organization-github-repository-access/page-organization-github-repository-access'
 
 export function PageOrganizationGithubRepositoryAccessFeature() {
-  useDocumentTitle('Github Repository Access - Organization settings')
+  useDocumentTitle('Git Repository Access - Organization settings')
   const { organizationId = '' } = useParams()
 
   const githubConnectUrl = `https://github.com/apps/qovery-github-app/installations/new?state=${organizationId}`

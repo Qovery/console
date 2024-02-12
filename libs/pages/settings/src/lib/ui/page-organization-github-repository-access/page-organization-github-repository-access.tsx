@@ -40,7 +40,7 @@ export function PageOrganizationGithubRepositoryAccess(props: PageOrganizationGi
         <Section>
           <div className="flex justify-between mb-8">
             <div className="mr-5">
-              <Heading className="mb-2">Github Repository Access</Heading>
+              <Heading className="mb-2">Git Repository Access</Heading>
               <p className="text-neutral-400 text-xs">
                 By default Qovery has access to all the repositories linked to your git account. If you want to give
                 Qovery access to additional repositories and manage the access from one place, you can configure a git
