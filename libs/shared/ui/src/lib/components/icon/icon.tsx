@@ -26,6 +26,7 @@ import GitIcon from './icons/git'
 import HelmOfficialIcon from './icons/helm-official'
 import HelmServiceIcon from './icons/helm-service'
 import InformationIcon from './icons/information'
+import KubernetesIcon from './icons/kubernetes'
 import LifecycleJobIcon from './icons/lifecycle-job'
 import LifecycleJobStrokeIcon from './icons/lifecycle-job-stroke-icon'
 import MongoDBIcon from './icons/mongodb'
@@ -130,6 +131,8 @@ export function Icon(props: IconProps) {
       return <HelmServiceIcon {...formattedProps} />
     case IconEnum.HELM_OFFICIAL:
       return <HelmOfficialIcon {...formattedProps} />
+    case IconEnum.KUBERNETES:
+      return <KubernetesIcon {...formattedProps} />
     default:
       return <IconFa {...formattedProps} />
   }

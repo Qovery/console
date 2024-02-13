@@ -2,6 +2,7 @@ import { type Cluster, ClusterDeploymentStatusEnum } from 'qovery-typescript-axi
 import { type PropsWithChildren } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
 import { ClusterActionToolbar, ClusterType, useClusterStatus } from '@qovery/domains/clusters/feature'
+import { IconEnum } from '@qovery/shared/enums'
 import { CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
 import { Badge, Header, Icon, IconAwesomeEnum, Section, Skeleton, Tabs } from '@qovery/shared/ui'
 import NeedRedeployFlag from '../need-redeploy-flag/need-redeploy-flag'
@@ -31,7 +32,20 @@ export function Container({ children, cluster, deployCluster }: PropsWithChildre
           </Badge>
         )}
         {cluster ? (
-          <ClusterType size="xs" cloudProvider={cluster.cloud_provider} kubernetes={cluster.kubernetes} />
+          cluster.kubernetes === 'SELF_MANAGED' ? (
+            <Badge size="xs" color="neutral">
+              <Icon name={IconEnum.KUBERNETES} height={16} width={16} className="mr-1" />
+              Self managed
+            </Badge>
+          ) : (
+            <>
+              <Badge size="xs" color="neutral">
+                <Icon name={IconEnum.QOVERY} height={16} width={16} className="mr-1" />
+                Qovery managed
+              </Badge>
+              <ClusterType size="xs" cloudProvider={cluster.cloud_provider} kubernetes={cluster.kubernetes} />
+            </>
+          )
         ) : (
           <Skeleton width={120} height={22} show />
         )}
@@ -41,24 +55,23 @@ export function Container({ children, cluster, deployCluster }: PropsWithChildre
           </Badge>
         </Skeleton>
         <Skeleton width={120} height={22} show={!cluster}>
-          <Badge size="xs" color="neutral">
-            {cluster?.version}
-          </Badge>
+          {cluster?.version && (
+            <Badge size="xs" color="neutral">
+              {cluster?.version}
+            </Badge>
+          )}
         </Skeleton>
         <Skeleton width={120} height={22} show={!cluster}>
-          <Badge size="xs" color="neutral">
-            {cluster?.instance_type?.toLowerCase().replace('_', '.')}
-          </Badge>
+          {cluster?.instance_type && (
+            <Badge size="xs" color="neutral">
+              {cluster?.instance_type?.toLowerCase().replace('_', '.')}
+            </Badge>
+          )}
         </Skeleton>
       </div>
       <Skeleton width={150} height={32} show={isLoading}>
         {cluster && clusterStatus ? (
-          <ClusterActionToolbar
-            cluster={cluster}
-            clusterStatus={clusterStatus}
-            organizationId={organizationId}
-            noSettings
-          />
+          <ClusterActionToolbar cluster={cluster} clusterStatus={clusterStatus} noSettings />
         ) : (
           <div />
         )}

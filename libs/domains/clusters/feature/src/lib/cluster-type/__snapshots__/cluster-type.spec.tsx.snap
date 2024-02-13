@@ -7,7 +7,7 @@ exports[`ClusterType should render as EKS 1`] = `
       class="inline-flex items-center shrink-0 font-medium border text-sm py-1 px-2 rounded border-neutral-250 text-neutral-350 dark:border-neutral-350"
       data-accent-color="neutral"
     >
-      Managed (EKS)
+      EKS
     </span>
   </div>
 </body>
@@ -20,7 +20,7 @@ exports[`ClusterType should render as GCP 1`] = `
       class="inline-flex items-center shrink-0 font-medium border text-sm py-1 px-2 rounded border-neutral-250 text-neutral-350 dark:border-neutral-350"
       data-accent-color="neutral"
     >
-      Managed (GKE)
+      GKE (Autopilot)
     </span>
   </div>
 </body>
@@ -46,7 +46,7 @@ exports[`ClusterType should render as SCW 1`] = `
       class="inline-flex items-center shrink-0 font-medium border text-sm py-1 px-2 rounded border-neutral-250 text-neutral-350 dark:border-neutral-350"
       data-accent-color="neutral"
     >
-      Managed (Kapsule)
+      Kapsule
     </span>
   </div>
 </body>

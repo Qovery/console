@@ -1,6 +1,7 @@
 import { type Cluster, ClusterStateEnum } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
 import { ClusterActionToolbar, ClusterType, useClusterStatus } from '@qovery/domains/clusters/feature'
+import { IconEnum } from '@qovery/shared/enums'
 import { Badge, Icon, Skeleton, StatusChip } from '@qovery/shared/ui'
 import { getStatusClusterMessage } from '@qovery/shared/util-js'
 
@@ -62,9 +63,7 @@ export function CardCluster({ organizationId, cluster }: CardClusterProps) {
           </div>
         </div>
         <Skeleton height={32} width={146} show={isClusterStatusLoading}>
-          {clusterStatus && (
-            <ClusterActionToolbar cluster={cluster} organizationId={organizationId} clusterStatus={clusterStatus} />
-          )}
+          {clusterStatus && <ClusterActionToolbar cluster={cluster} clusterStatus={clusterStatus} />}
         </Skeleton>
       </div>
       <div className="flex flex-wrap gap-2">
@@ -78,13 +77,28 @@ export function CardCluster({ organizationId, cluster }: CardClusterProps) {
             Default
           </Badge>
         )}
-        <ClusterType size="xs" cloudProvider={cluster.cloud_provider} kubernetes={cluster.kubernetes} />
+        {cluster.kubernetes === 'SELF_MANAGED' ? (
+          <Badge size="xs" color="neutral">
+            <Icon name={IconEnum.KUBERNETES} height={16} width={16} className="mr-1" />
+            Self managed
+          </Badge>
+        ) : (
+          <>
+            <Badge size="xs" color="neutral">
+              <Icon name={IconEnum.QOVERY} height={16} width={16} className="mr-1" />
+              Qovery managed
+            </Badge>
+            <ClusterType size="xs" cloudProvider={cluster.cloud_provider} kubernetes={cluster.kubernetes} />
+          </>
+        )}
         <Badge size="xs" color="neutral" data-testid="tag-region">
           {cluster.region}
         </Badge>
-        <Badge size="xs" color="neutral" data-testid="tag-version">
-          {cluster.version}
-        </Badge>
+        {cluster.version && (
+          <Badge size="xs" color="neutral" data-testid="tag-version">
+            {cluster.version}
+          </Badge>
+        )}
         {cluster.instance_type && (
           <Badge size="xs" color="neutral" data-testid="tag-instance">
             {cluster.instance_type.replace('_', '.').toLowerCase()}
