@@ -121,7 +121,7 @@ exports[`EnvironmentActionToolbar should match manage deployment snapshot 1`] = 
         </svg>
       </span>
       <div
-        class="px-3 flex items-center h-9 text-sm font-medium cursor-pointer rounded-sm outline-none text-neutral-400 dark:text-neutral-100 hover:bg-brand-50 data-[highlighted]:bg-brand-50 hover:text-brand-500 data-[highlighted]:text-brand-500"
+        class="px-3 flex items-center h-9 text-sm font-medium rounded-sm outline-none dark:text-neutral-100 data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500"
         data-orientation="vertical"
         data-radix-collection-item=""
         role="menuitem"
@@ -134,7 +134,7 @@ exports[`EnvironmentActionToolbar should match manage deployment snapshot 1`] = 
         Redeploy
       </div>
       <div
-        class="px-3 flex items-center h-9 text-sm font-medium cursor-pointer rounded-sm outline-none text-neutral-400 dark:text-neutral-100 hover:bg-brand-50 data-[highlighted]:bg-brand-50 hover:text-brand-500 data-[highlighted]:text-brand-500"
+        class="px-3 flex items-center h-9 text-sm font-medium rounded-sm outline-none dark:text-neutral-100 data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500"
         data-orientation="vertical"
         data-radix-collection-item=""
         role="menuitem"
@@ -152,7 +152,7 @@ exports[`EnvironmentActionToolbar should match manage deployment snapshot 1`] = 
         role="separator"
       />
       <div
-        class="px-3 flex items-center h-9 text-sm font-medium cursor-pointer rounded-sm outline-none text-neutral-400 dark:text-neutral-100 hover:bg-brand-50 data-[highlighted]:bg-brand-50 hover:text-brand-500 data-[highlighted]:text-brand-500"
+        class="px-3 flex items-center h-9 text-sm font-medium rounded-sm outline-none dark:text-neutral-100 data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500"
         data-orientation="vertical"
         data-radix-collection-item=""
         role="menuitem"
@@ -297,7 +297,7 @@ exports[`EnvironmentActionToolbar should match other actions snapshot 1`] = `
         </svg>
       </span>
       <div
-        class="px-3 flex items-center h-9 text-sm font-medium cursor-pointer rounded-sm outline-none text-neutral-400 dark:text-neutral-100 hover:bg-brand-50 data-[highlighted]:bg-brand-50 hover:text-brand-500 data-[highlighted]:text-brand-500"
+        class="px-3 flex items-center h-9 text-sm font-medium rounded-sm outline-none dark:text-neutral-100 data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500"
         data-orientation="vertical"
         data-radix-collection-item=""
         role="menuitem"
@@ -310,7 +310,7 @@ exports[`EnvironmentActionToolbar should match other actions snapshot 1`] = `
         Logs
       </div>
       <div
-        class="px-3 flex items-center h-9 text-sm font-medium cursor-pointer rounded-sm outline-none text-neutral-400 dark:text-neutral-100 hover:bg-brand-50 data-[highlighted]:bg-brand-50 hover:text-brand-500 data-[highlighted]:text-brand-500"
+        class="px-3 flex items-center h-9 text-sm font-medium rounded-sm outline-none dark:text-neutral-100 data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500"
         data-orientation="vertical"
         data-radix-collection-item=""
         role="menuitem"
@@ -323,7 +323,7 @@ exports[`EnvironmentActionToolbar should match other actions snapshot 1`] = `
         See audit logs
       </div>
       <div
-        class="px-3 flex items-center h-9 text-sm font-medium cursor-pointer rounded-sm outline-none text-neutral-400 dark:text-neutral-100 hover:bg-brand-50 data-[highlighted]:bg-brand-50 hover:text-brand-500 data-[highlighted]:text-brand-500"
+        class="px-3 flex items-center h-9 text-sm font-medium rounded-sm outline-none dark:text-neutral-100 data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500"
         data-orientation="vertical"
         data-radix-collection-item=""
         role="menuitem"
@@ -336,7 +336,7 @@ exports[`EnvironmentActionToolbar should match other actions snapshot 1`] = `
         Copy identifier
       </div>
       <div
-        class="px-3 flex items-center h-9 text-sm font-medium cursor-pointer rounded-sm outline-none text-neutral-400 dark:text-neutral-100 hover:bg-brand-50 data-[highlighted]:bg-brand-50 hover:text-brand-500 data-[highlighted]:text-brand-500"
+        class="px-3 flex items-center h-9 text-sm font-medium rounded-sm outline-none dark:text-neutral-100 data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500"
         data-orientation="vertical"
         data-radix-collection-item=""
         role="menuitem"
@@ -349,7 +349,7 @@ exports[`EnvironmentActionToolbar should match other actions snapshot 1`] = `
         Export as Terraform
       </div>
       <div
-        class="px-3 flex items-center h-9 text-sm font-medium cursor-pointer rounded-sm outline-none text-neutral-400 dark:text-neutral-100 hover:bg-brand-50 data-[highlighted]:bg-brand-50 hover:text-brand-500 data-[highlighted]:text-brand-500"
+        class="px-3 flex items-center h-9 text-sm font-medium rounded-sm outline-none dark:text-neutral-100 data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500"
         data-orientation="vertical"
         data-radix-collection-item=""
         role="menuitem"
@@ -367,7 +367,7 @@ exports[`EnvironmentActionToolbar should match other actions snapshot 1`] = `
         role="separator"
       />
       <div
-        class="px-3 flex items-center h-9 text-sm font-medium cursor-pointer rounded-sm outline-none hover:bg-red-50 data-[highlighted]:bg-red-50 text-red-600 data-[highlighted]:text-red-600"
+        class="px-3 flex items-center h-9 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-red-50 data-[highlighted]:text-red-600 cursor-pointer hover:bg-red-50 text-red-600"
         data-orientation="vertical"
         data-radix-collection-item=""
         role="menuitem"

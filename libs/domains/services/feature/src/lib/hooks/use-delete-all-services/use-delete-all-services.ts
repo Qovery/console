@@ -4,39 +4,38 @@ import { mutations } from '@qovery/domains/services/data-access'
 import { ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { queries } from '@qovery/state/util-queries'
 
-export function useDeployAllServices() {
+export function useDeleteAllServices() {
   const queryClient = useQueryClient()
   const navigate = useNavigate()
 
-  return useMutation(mutations.deployAllServices, {
+  return useMutation(mutations.deleteAllServices, {
     onSuccess(_, { environment, payload }) {
       queryClient.invalidateQueries({
         queryKey: queries.services.listStatuses(environment.id).queryKey,
       })
-      // NOTE: This is to invalidate deployed git_commit_id cache
-      for (const { application_id: serviceId } of payload.applications ?? []) {
+      for (const serviceId of payload.application_ids ?? []) {
         queryClient.invalidateQueries({
           queryKey: queries.services.details({ serviceId, serviceType: 'APPLICATION' }).queryKey,
         })
       }
-      for (const { id: serviceId } of payload.containers ?? []) {
+      for (const serviceId of payload.container_ids ?? []) {
         queryClient.invalidateQueries({
           queryKey: queries.services.details({ serviceId, serviceType: 'CONTAINER' }).queryKey,
         })
       }
-      for (const id of payload.databases ?? []) {
+      for (const serviceId of payload.database_ids ?? []) {
         queryClient.invalidateQueries({
-          queryKey: queries.services.details({ serviceId: id, serviceType: 'DATABASE' }).queryKey,
+          queryKey: queries.services.details({ serviceId, serviceType: 'DATABASE' }).queryKey,
         })
       }
-      for (const { id: serviceId } of payload.helms ?? []) {
+      for (const serviceId of payload.helm_ids ?? []) {
         if (serviceId) {
           queryClient.invalidateQueries({
             queryKey: queries.services.details({ serviceId, serviceType: 'HELM' }).queryKey,
           })
         }
       }
-      for (const { id: serviceId } of payload.jobs ?? []) {
+      for (const serviceId of payload.job_ids ?? []) {
         if (serviceId) {
           queryClient.invalidateQueries({
             queryKey: queries.services.details({ serviceId, serviceType: 'JOB' }).queryKey,
@@ -52,7 +51,7 @@ export function useDeployAllServices() {
             organization: { id: organizationId },
             project: { id: projectId },
           },
-        } = variables as Parameters<typeof mutations.deployAllServices>[0]
+        } = variables as Parameters<typeof mutations.deleteAllServices>[0]
         return {
           title: 'Your services are being updated',
           labelAction: 'See Deployment Logs',
@@ -66,4 +65,4 @@ export function useDeployAllServices() {
   })
 }
 
-export default useDeployAllServices
+export default useDeleteAllServices

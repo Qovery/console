@@ -4,45 +4,31 @@ import { mutations } from '@qovery/domains/services/data-access'
 import { ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { queries } from '@qovery/state/util-queries'
 
-export function useDeployAllServices() {
+export function useRestartAllServices() {
   const queryClient = useQueryClient()
   const navigate = useNavigate()
 
-  return useMutation(mutations.deployAllServices, {
+  return useMutation(mutations.restartAllServices, {
     onSuccess(_, { environment, payload }) {
       queryClient.invalidateQueries({
         queryKey: queries.services.listStatuses(environment.id).queryKey,
       })
-      // NOTE: This is to invalidate deployed git_commit_id cache
-      for (const { application_id: serviceId } of payload.applications ?? []) {
+      for (const serviceId of payload.application_ids ?? []) {
         queryClient.invalidateQueries({
           queryKey: queries.services.details({ serviceId, serviceType: 'APPLICATION' }).queryKey,
         })
       }
-      for (const { id: serviceId } of payload.containers ?? []) {
+      for (const serviceId of payload.container_ids ?? []) {
         queryClient.invalidateQueries({
           queryKey: queries.services.details({ serviceId, serviceType: 'CONTAINER' }).queryKey,
         })
       }
-      for (const id of payload.databases ?? []) {
+      for (const serviceId of payload.database_ids ?? []) {
         queryClient.invalidateQueries({
-          queryKey: queries.services.details({ serviceId: id, serviceType: 'DATABASE' }).queryKey,
+          queryKey: queries.services.details({ serviceId, serviceType: 'DATABASE' }).queryKey,
         })
       }
-      for (const { id: serviceId } of payload.helms ?? []) {
-        if (serviceId) {
-          queryClient.invalidateQueries({
-            queryKey: queries.services.details({ serviceId, serviceType: 'HELM' }).queryKey,
-          })
-        }
-      }
-      for (const { id: serviceId } of payload.jobs ?? []) {
-        if (serviceId) {
-          queryClient.invalidateQueries({
-            queryKey: queries.services.details({ serviceId, serviceType: 'JOB' }).queryKey,
-          })
-        }
-      }
+      // JOB & HELM cannot be restarted / reboot
     },
     meta: {
       notifyOnSuccess(_: unknown, variables: unknown) {
@@ -52,7 +38,7 @@ export function useDeployAllServices() {
             organization: { id: organizationId },
             project: { id: projectId },
           },
-        } = variables as Parameters<typeof mutations.deployAllServices>[0]
+        } = variables as Parameters<typeof mutations.restartAllServices>[0]
         return {
           title: 'Your services are being updated',
           labelAction: 'See Deployment Logs',
@@ -66,4 +52,4 @@ export function useDeployAllServices() {
   })
 }
 
-export default useDeployAllServices
+export default useRestartAllServices

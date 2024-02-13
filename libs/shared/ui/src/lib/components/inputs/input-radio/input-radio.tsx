@@ -14,6 +14,9 @@ export interface InputRadioProps {
   big?: boolean
 }
 
+/*
+ * @deprecated Use RadioGroup instead
+ */
 export function InputRadio(props: InputRadioProps) {
   const {
     name,

@@ -26,6 +26,7 @@ export interface TooltipProps extends VariantProps<typeof tooltipContentVariants
   side?: 'top' | 'right' | 'bottom' | 'left'
   align?: 'center' | 'start' | 'end'
   classNameTrigger?: string
+  disabled?: boolean
 }
 
 export const Tooltip = forwardRef<ElementRef<typeof TooltipPrimitive.Trigger>, TooltipProps>(function Tooltip(
@@ -41,10 +42,13 @@ export const Tooltip = forwardRef<ElementRef<typeof TooltipPrimitive.Trigger>, T
     delayDuration = 200,
     classNameTrigger = '',
     color = 'neutral',
+    disabled = false,
   },
   forwardedRef
 ) {
-  return (
+  return disabled ? (
+    children
+  ) : (
     <TooltipPrimitive.Root
       open={open}
       defaultOpen={defaultOpen}

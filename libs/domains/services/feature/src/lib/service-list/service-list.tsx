@@ -1,4 +1,6 @@
 import {
+  type Row,
+  type RowSelectionState,
   type SortingState,
   createColumnHelper,
   flexRender,
@@ -39,6 +41,7 @@ import {
 import {
   Badge,
   Button,
+  Checkbox,
   EmptyState,
   Icon,
   IconAwesomeEnum,
@@ -49,13 +52,13 @@ import {
 } from '@qovery/shared/ui'
 import { dateFullFormat, timeAgo } from '@qovery/shared/util-dates'
 import { buildGitProviderUrl } from '@qovery/shared/util-git'
-import { formatCronExpression, twMerge } from '@qovery/shared/util-js'
-import { containerRegistryKindToIcon } from '@qovery/shared/util-js'
+import { containerRegistryKindToIcon, formatCronExpression, twMerge } from '@qovery/shared/util-js'
 import { useServices } from '../hooks/use-services/use-services'
 import { LastCommitAuthor } from '../last-commit-author/last-commit-author'
 import { LastCommit } from '../last-commit/last-commit'
 import { ServiceActionToolbar } from '../service-action-toolbar/service-action-toolbar'
 import { ServiceLinksPopover } from '../service-links-popover/service-links-popover'
+import { ServiceListActionBar } from './service-list-action-bar'
 import { ServiceListFilter } from './service-list-filter'
 import { ServiceListSkeleton } from './service-list-skeleton'
 
@@ -69,7 +72,8 @@ function getServiceIcon(service: AnyService) {
     .otherwise(() => IconEnum.APPLICATION)
 }
 
-function ServiceNameCell({ service, environment }: { service: AnyService; environment: Environment }) {
+function ServiceNameCell({ row, environment }: { row: Row<AnyService>; environment: Environment }) {
+  const { original: service } = row
   return (
     <div className="flex items-center justify-between">
       <span className="flex items-center gap-4 font-medium text-sm text-neutral-400 min-w-0">
@@ -167,11 +171,45 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
   } = environment
   const { data: services = [], isLoading: isServicesLoading } = useServices({ environmentId })
   const [sorting, setSorting] = useState<SortingState>([])
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
   const navigate = useNavigate()
 
   const columnHelper = createColumnHelper<(typeof services)[number]>()
   const columns = useMemo(
     () => [
+      {
+        id: 'select',
+        enableColumnFilter: false,
+        enableSorting: false,
+        header: ({ table }) => (
+          <div className="h-5">
+            {/** XXX: fix css weird 1px vertical shift when checked/unchecked **/}
+            <Checkbox
+              checked={table.getIsSomeRowsSelected() ? 'indeterminate' : table.getIsAllRowsSelected()}
+              onCheckedChange={(checked) => {
+                if (checked === 'indeterminate') {
+                  return
+                }
+                table.toggleAllRowsSelected(checked)
+              }}
+            />
+          </div>
+        ),
+        cell: ({ row }) => (
+          <label className="absolute flex items-center inset-y-0 left-0 p-4" onClick={(e) => e.stopPropagation()}>
+            <Checkbox
+              checked={row.getIsSelected()}
+              disabled={!row.getCanSelect()}
+              onCheckedChange={(checked) => {
+                if (checked === 'indeterminate') {
+                  return
+                }
+                row.toggleSelected(checked)
+              }}
+            />
+          </label>
+        ),
+      },
       columnHelper.accessor('name', {
         header: 'Name',
         enableColumnFilter: true,
@@ -194,7 +232,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
           },
         },
         cell: (info) => {
-          return <ServiceNameCell service={info.row.original} environment={environment} />
+          return <ServiceNameCell row={info.row} environment={environment} />
         },
       }),
       columnHelper.accessor('runningStatus.stateLabel', {
@@ -344,54 +382,51 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
               </div>
             )
 
-          // XXX: there is bug in ts-pattern where pattern matching against discriminated union + P.when doesn't work as expected
-          // so JOB and HELM case should be tackle independantly
-          const cell = match(service)
+          const cell = match({ service })
             .with(
-              {
-                serviceType: ServiceTypeEnum.JOB,
-              },
-              (service) =>
-                match(service)
-                  .with(
-                    {
-                      source: P.when(isJobGitSource),
-                    },
-                    ({ source: { docker } }) => gitInfo(service, docker?.git_repository)
-                  )
-                  .with(
-                    {
-                      source: P.when(isJobContainerSource),
-                    },
-                    ({ source: { image } }) => containerInfo(image)
-                  )
-                  .otherwise(() => null)
+              { service: P.intersection({ serviceType: 'JOB' }, { source: P.when(isJobGitSource) }) },
+              ({ service }) => {
+                const {
+                  source: { docker },
+                } = service
+                return gitInfo(service, docker?.git_repository)
+              }
             )
-            .with({ serviceType: ServiceTypeEnum.APPLICATION }, (service) => gitInfo(service, service.git_repository))
-            .with({ serviceType: ServiceTypeEnum.CONTAINER }, ({ image_name, tag, registry }) =>
+            .with(
+              { service: P.intersection({ serviceType: 'JOB' }, { source: P.when(isJobContainerSource) }) },
+              ({
+                service: {
+                  source: { image },
+                },
+              }) => containerInfo(image)
+            )
+            .with({ service: { serviceType: 'APPLICATION' } }, ({ service }) =>
+              gitInfo(service, service.git_repository)
+            )
+            .with({ service: { serviceType: 'CONTAINER' } }, ({ service: { image_name, tag, registry } }) =>
               containerInfo({ image_name, tag, registry })
             )
-            .with({ serviceType: ServiceTypeEnum.DATABASE }, ({ accessibility, mode, type, version }) =>
+            .with({ service: { serviceType: 'DATABASE' } }, ({ service: { accessibility, mode, type, version } }) =>
               datasourceInfo({ accessibility, mode, type, version })
             )
-            .with({ serviceType: ServiceTypeEnum.HELM }, (service) =>
-              match(service)
-                .with(
-                  {
-                    source: P.when(isHelmGitSource),
-                  },
-                  ({ source: { git } }) => gitInfo(service, git?.git_repository)
-                )
-                .with(
-                  {
-                    source: P.when(isHelmRepositorySource),
-                  },
-                  ({ source: { repository } }) => helmInfo(repository)
-                )
-                .otherwise(() => null)
+            .with(
+              { service: P.intersection({ serviceType: 'HELM' }, { source: P.when(isHelmGitSource) }) },
+              ({ service }) => {
+                const {
+                  source: { git },
+                } = service
+                return gitInfo(service, git?.git_repository)
+              }
             )
-            .otherwise(() => null)
-
+            .with(
+              { service: P.intersection({ serviceType: 'HELM' }, { source: P.when(isHelmRepositorySource) }) },
+              ({
+                service: {
+                  source: { repository },
+                },
+              }) => helmInfo(repository)
+            )
+            .exhaustive()
           return cell
         },
       }),
@@ -420,8 +455,11 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
     columns,
     state: {
       sorting,
+      rowSelection,
     },
+    enableRowSelection: true,
     onSortingChange: setSorting,
+    onRowSelectionChange: setRowSelection,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -449,71 +487,87 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
     )
   }
 
-  return (
-    <Table.Root className={twMerge('w-full text-xs min-w-[800px] table-auto', className)} {...props}>
-      <Table.Header>
-        {table.getHeaderGroups().map((headerGroup) => (
-          <Table.Row key={headerGroup.id}>
-            {headerGroup.headers.map((header) => (
-              <Table.ColumnHeaderCell
-                className="first:border-r font-medium"
-                key={header.id}
-                style={{ width: `${header.getSize()}%` }}
-              >
-                {header.column.getCanFilter() ? (
-                  <ServiceListFilter column={header.column} />
-                ) : header.column.getCanSort() ? (
-                  <button
-                    type="button"
-                    className={twMerge(
-                      'flex items-center gap-1',
-                      header.column.getCanSort() ? 'cursor-pointer select-none' : ''
-                    )}
-                    onClick={header.column.getToggleSortingHandler()}
-                  >
-                    {flexRender(header.column.columnDef.header, header.getContext())}
-                    {match(header.column.getIsSorted())
-                      .with('asc', () => <Icon className="text-xs" name={IconAwesomeEnum.ARROW_DOWN} />)
-                      .with('desc', () => <Icon className="text-xs" name={IconAwesomeEnum.ARROW_UP} />)
-                      .with(false, () => null)
-                      .exhaustive()}
-                  </button>
-                ) : (
-                  flexRender(header.column.columnDef.header, header.getContext())
-                )}
-              </Table.ColumnHeaderCell>
-            ))}
-          </Table.Row>
-        ))}
-      </Table.Header>
-      <Table.Body>
-        {table.getRowModel().rows.map((row) => (
-          <Fragment key={row.id}>
-            <Table.Row
-              className="hover:bg-neutral-100 h-16 cursor-pointer"
-              onClick={() => {
-                const link = match(row.original)
-                  .with(
-                    { serviceType: ServiceTypeEnum.DATABASE },
-                    ({ id }) => DATABASE_URL(organizationId, projectId, environmentId, id) + DATABASE_GENERAL_URL
-                  )
-                  .otherwise(
-                    ({ id }) => APPLICATION_URL(organizationId, projectId, environmentId, id) + SERVICES_GENERAL_URL
-                  )
+  const selectedRows = table.getSelectedRowModel().rows.map(({ original }) => original)
 
-                navigate(link)
-              }}
-            >
-              {row.getVisibleCells().map((cell) => (
-                <Table.Cell key={cell.id} className="first:border-r" style={{ width: `${cell.column.getSize()}%` }}>
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </Table.Cell>
+  return (
+    <div className="flex flex-col grow justify-between">
+      <Table.Root className={twMerge('w-full text-xs min-w-[800px] table-auto', className)} {...props}>
+        <Table.Header>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <Table.Row key={headerGroup.id}>
+              {headerGroup.headers.map((header, i) => (
+                <Table.ColumnHeaderCell
+                  className={`${i === 1 ? 'border-r pl-0' : ''} font-medium`}
+                  key={header.id}
+                  style={{ width: i === 0 ? '20px' : `${header.getSize()}%` }}
+                >
+                  {header.column.getCanFilter() ? (
+                    <ServiceListFilter column={header.column} />
+                  ) : header.column.getCanSort() ? (
+                    <button
+                      type="button"
+                      className={twMerge(
+                        'flex items-center gap-1',
+                        header.column.getCanSort() ? 'cursor-pointer select-none' : ''
+                      )}
+                      onClick={header.column.getToggleSortingHandler()}
+                    >
+                      {flexRender(header.column.columnDef.header, header.getContext())}
+                      {match(header.column.getIsSorted())
+                        .with('asc', () => <Icon className="text-xs" name={IconAwesomeEnum.ARROW_DOWN} />)
+                        .with('desc', () => <Icon className="text-xs" name={IconAwesomeEnum.ARROW_UP} />)
+                        .with(false, () => null)
+                        .exhaustive()}
+                    </button>
+                  ) : (
+                    flexRender(header.column.columnDef.header, header.getContext())
+                  )}
+                </Table.ColumnHeaderCell>
               ))}
             </Table.Row>
-          </Fragment>
-        ))}
-      </Table.Body>
-    </Table.Root>
+          ))}
+        </Table.Header>
+        <Table.Body>
+          {table.getRowModel().rows.map((row) => (
+            <Fragment key={row.id}>
+              <Table.Row
+                className={twMerge(
+                  'hover:bg-neutral-100 h-16 cursor-pointer',
+                  row.getIsSelected() ? 'bg-neutral-100' : ''
+                )}
+                onClick={() => {
+                  const link = match(row.original)
+                    .with(
+                      { serviceType: ServiceTypeEnum.DATABASE },
+                      ({ id }) => DATABASE_URL(organizationId, projectId, environmentId, id) + DATABASE_GENERAL_URL
+                    )
+                    .otherwise(
+                      ({ id }) => APPLICATION_URL(organizationId, projectId, environmentId, id) + SERVICES_GENERAL_URL
+                    )
+
+                  navigate(link)
+                }}
+              >
+                {row.getVisibleCells().map((cell, i) => (
+                  <Table.Cell
+                    key={cell.id}
+                    className={`${i === 1 ? 'border-r pl-0' : ''} first:relative`}
+                    style={{ width: i === 0 ? '20px' : `${cell.column.getSize()}%` }}
+                  >
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </Table.Cell>
+                ))}
+              </Table.Row>
+            </Fragment>
+          ))}
+        </Table.Body>
+      </Table.Root>
+      <ServiceListActionBar
+        environment={environment}
+        selectedRows={selectedRows}
+        resetRowSelection={() => table.resetRowSelection()}
+      />
+    </div>
   )
 }
 
