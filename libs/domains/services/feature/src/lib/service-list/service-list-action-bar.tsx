@@ -254,20 +254,20 @@ export function ServiceListActionBar({ environment, selectedRows, resetRowSelect
       <div className="relative">
         <div
           className={twMerge(
-            'absolute w-[520px] bottom-4 left-1/2 -translate-x-1/2',
+            'absolute w-[448px] bottom-4 left-1/2 -translate-x-1/2',
             hasSelection ? '' : 'overflow-hidden h-0'
           )}
         >
           <div
             className={twMerge(
-              'flex items-center justify-between h-[52px] bg-neutral-500 shadow-xl text-white font-medium pl-5 pr-2 rounded',
+              'flex items-center justify-between h-[52px] bg-neutral-500 shadow-xl text-white text-xs font-medium pl-5 pr-2 rounded',
               hasSelection ? 'animate-action-bar-fade-in' : 'animate-action-bar-fade-out'
             )}
           >
-            <span className="text-sm">
+            <span>
               {selectedRows.length} selected {pluralize(selectedRows.length, 'service')}
             </span>
-            <button className="h-8 px-3 text-sm underline" type="button" onClick={() => resetRowSelection()}>
+            <button className="h-8 px-3 underline" type="button" onClick={() => resetRowSelection()}>
               Deselect
             </button>
             <div className="flex gap-3">

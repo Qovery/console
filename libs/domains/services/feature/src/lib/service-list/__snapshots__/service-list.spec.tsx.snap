@@ -1827,20 +1827,18 @@ exports[`ServiceList should match snapshot 1`] = `
         class="relative"
       >
         <div
-          class="absolute w-[520px] bottom-4 left-1/2 -translate-x-1/2 overflow-hidden h-0"
+          class="absolute w-[448px] bottom-4 left-1/2 -translate-x-1/2 overflow-hidden h-0"
         >
           <div
-            class="flex items-center justify-between h-[52px] bg-neutral-500 shadow-xl text-white font-medium pl-5 pr-2 rounded animate-action-bar-fade-out"
+            class="flex items-center justify-between h-[52px] bg-neutral-500 shadow-xl text-white text-xs font-medium pl-5 pr-2 rounded animate-action-bar-fade-out"
           >
-            <span
-              class="text-sm"
-            >
+            <span>
               0
                selected 
               services
             </span>
             <button
-              class="h-8 px-3 text-sm underline"
+              class="h-8 px-3 underline"
               type="button"
             >
               Deselect
