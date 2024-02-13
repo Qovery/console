@@ -182,15 +182,18 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
         enableColumnFilter: false,
         enableSorting: false,
         header: ({ table }) => (
-          <Checkbox
-            checked={table.getIsSomeRowsSelected() ? 'indeterminate' : table.getIsAllRowsSelected()}
-            onCheckedChange={(checked) => {
-              if (checked === 'indeterminate') {
-                return
-              }
-              table.toggleAllRowsSelected(checked)
-            }}
-          />
+          <div className="h-5">
+            {/** XXX: fix css weird 1px vertical shift when checked/unchecked **/}
+            <Checkbox
+              checked={table.getIsSomeRowsSelected() ? 'indeterminate' : table.getIsAllRowsSelected()}
+              onCheckedChange={(checked) => {
+                if (checked === 'indeterminate') {
+                  return
+                }
+                table.toggleAllRowsSelected(checked)
+              }}
+            />
+          </div>
         ),
         cell: ({ row }) => (
           <label className="absolute flex items-center inset-y-0 left-0 p-4" onClick={(e) => e.stopPropagation()}>
