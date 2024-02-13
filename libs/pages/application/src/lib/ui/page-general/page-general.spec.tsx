@@ -1,11 +1,11 @@
-import { render } from '__tests__/utils/setup-jest'
-import PageGeneral, { type PageGeneralProps } from './page-general'
-
-let props: PageGeneralProps
+import { renderWithProviders } from '@qovery/shared/util-tests'
+import { PageGeneral } from './page-general'
 
 describe('General', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<PageGeneral {...props} />)
+    const { baseElement } = renderWithProviders(
+      <PageGeneral serviceId="1" environmentId="1" isCronJob={false} listHelpfulLinks={[]} />
+    )
     expect(baseElement).toBeTruthy()
   })
 })

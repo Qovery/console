@@ -31,10 +31,14 @@ export function PageGeneralFeature() {
 
   return (
     <>
-      <PageGeneral
-        isCronJob={service?.serviceType === 'JOB' && service.job_type === 'CRON'}
-        listHelpfulLinks={listHelpfulLinks}
-      />
+      {Boolean(applicationId) && Boolean(environmentId) && (
+        <PageGeneral
+          serviceId={applicationId}
+          environmentId={environmentId}
+          isCronJob={service?.serviceType === 'JOB' && service.job_type === 'CRON'}
+          listHelpfulLinks={listHelpfulLinks}
+        />
+      )}
       {service && environment && (
         <WebSocketListenerMemo
           organizationId={organizationId}
