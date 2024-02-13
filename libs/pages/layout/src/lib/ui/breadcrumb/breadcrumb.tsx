@@ -1,12 +1,13 @@
 import equal from 'fast-deep-equal'
 import { type Cluster, type Environment, type Organization, type Project } from 'qovery-typescript-axios'
-import { memo, useEffect } from 'react'
+import { memo, useCallback, useEffect } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { ServiceStateChip, useServices } from '@qovery/domains/services/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import {
   APPLICATION_GENERAL_URL,
   APPLICATION_URL,
+  CLUSTERS_URL,
   CLUSTER_URL,
   DATABASE_GENERAL_URL,
   DATABASE_URL,
@@ -170,16 +171,29 @@ export function Breadcrumb(props: BreadcrumbProps) {
     </div>
   )
 
+  const handleCloseLogs = useCallback(() => {
+    const linkToCloseLogs = locationIsClusterLogs
+      ? CLUSTERS_URL(organizationId)
+      : SERVICES_URL(organizationId, projectId, environmentId)
+
+    const doesAnyHistoryEntryExist = location.key !== 'default'
+    if (doesAnyHistoryEntryExist) {
+      navigate(-1)
+    } else {
+      navigate(linkToCloseLogs)
+    }
+  }, [environmentId, location, locationIsClusterLogs, navigate, organizationId, projectId])
+
   useEffect(() => {
     const bindTouch = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && matchLogsRoute) navigate(-1)
+      if (event.key === 'Escape' && matchLogsRoute) handleCloseLogs()
     }
     document.addEventListener('keydown', bindTouch, false)
 
     return () => {
       document.removeEventListener('keydown', bindTouch, false)
     }
-  }, [navigate, matchLogsRoute])
+  }, [handleCloseLogs, matchLogsRoute])
 
   if (organizations?.length === 0) return <div />
 
@@ -275,7 +289,7 @@ export function Breadcrumb(props: BreadcrumbProps) {
             icon={IconAwesomeEnum.XMARK}
             style={ButtonIconStyle.DARK}
             size={ButtonLegacySize.LARGE}
-            onClick={() => navigate(-1)}
+            onClick={() => handleCloseLogs()}
           />
         </div>
       )}
