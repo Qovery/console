@@ -1,10 +1,16 @@
-import { type CreateEnvironmentModeEnum, type Environment, EnvironmentModeEnum } from 'qovery-typescript-axios'
+import {
+  type CreateEnvironmentModeEnum,
+  type Environment,
+  EnvironmentModeEnum,
+  KubernetesEnum,
+} from 'qovery-typescript-axios'
 import { type FormEvent } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
+import { P, match } from 'ts-pattern'
 import { useClusters } from '@qovery/domains/clusters/feature'
 import { SERVICES_GENERAL_URL, SERVICES_URL } from '@qovery/shared/routes'
-import { ExternalLink, InputSelect, InputText, ModalCrud, useModal } from '@qovery/shared/ui'
+import { Badge, ExternalLink, Icon, InputSelect, InputText, ModalCrud, useModal } from '@qovery/shared/ui'
 import { useCloneEnvironment } from '../hooks/use-clone-environment/use-clone-environment'
 import { useCreateEnvironment } from '../hooks/use-create-environment/use-create-environment'
 
@@ -63,9 +69,33 @@ export function CreateCloneEnvironmentModal({
   })
 
   const environmentModes = [
-    { value: EnvironmentModeEnum.DEVELOPMENT, label: 'Development' },
-    { value: EnvironmentModeEnum.STAGING, label: 'Staging' },
-    { value: EnvironmentModeEnum.PRODUCTION, label: 'Production' },
+    {
+      value: EnvironmentModeEnum.DEVELOPMENT,
+      label: 'Development',
+      icon: (
+        <Badge variant="outline" color="neutral" size="xs" className="flex w-4 h-4 justify-center p-0 font-semibold">
+          D
+        </Badge>
+      ),
+    },
+    {
+      value: EnvironmentModeEnum.STAGING,
+      label: 'Staging',
+      icon: (
+        <Badge variant="surface" color="green" size="xs" className="flex w-4 h-4 justify-center p-0 font-semibold">
+          S
+        </Badge>
+      ),
+    },
+    {
+      value: EnvironmentModeEnum.PRODUCTION,
+      label: 'Production',
+      icon: (
+        <Badge variant="surface" color="red" size="xs" className="flex w-4 h-4 justify-center p-0 font-semibold">
+          P
+        </Badge>
+      ),
+    },
   ]
 
   return (
@@ -169,7 +199,23 @@ export function CreateCloneEnvironmentModal({
               value={field.value}
               label="Cluster"
               error={error?.message}
-              options={clusters?.map((c) => ({ value: c.id, label: c.name })) ?? []}
+              options={
+                clusters?.map((c) => {
+                  const clusterType = match([c.cloud_provider, c.kubernetes])
+                    .with(['AWS', KubernetesEnum.K3_S], () => 'EC2 (K3S)')
+                    .with(['AWS', KubernetesEnum.MANAGED], ['AWS', undefined], () => 'Managed (EKS)')
+                    .with(['AWS', KubernetesEnum.SELF_MANAGED], ['AWS', undefined], () => 'Self-managed (EKS)')
+                    .with(['SCW', P._], () => 'Managed (Kapsule)')
+                    .with(['GCP', P._], () => 'GKE (Autopilot)')
+                    .exhaustive()
+
+                  return {
+                    value: c.id,
+                    label: `${c.name} - ${clusterType}`,
+                    icon: <Icon width={16} height={16} name={c.cloud_provider} />,
+                  }
+                }) ?? []
+              }
               portal={true}
             />
           )}

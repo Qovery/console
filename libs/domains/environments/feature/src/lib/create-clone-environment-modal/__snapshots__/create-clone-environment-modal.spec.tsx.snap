@@ -167,11 +167,22 @@ exports[`CreateCloneEnvironmentModal should match snapshots 1`] = `
           class="mb-6"
         >
           <div
-            class="input input--select    "
+            class="input input--select input--has-icon   "
             data-testid="input-select-mode"
           >
+            <div
+              class="w-12 h-full absolute left-0 top-0 flex items-center justify-center"
+              data-testid="selected-icon"
+            >
+              <span
+                class="items-center shrink-0 border text-xs rounded border-neutral-250 text-neutral-350 dark:border-neutral-350 flex w-4 h-4 justify-center p-0 font-semibold"
+                data-accent-color="neutral"
+              >
+                D
+              </span>
+            </div>
             <label
-              class="!text-xs !translate-y-0"
+              class="!text-xs !translate-y-0 ml-8"
               for="Type"
             >
               Type
