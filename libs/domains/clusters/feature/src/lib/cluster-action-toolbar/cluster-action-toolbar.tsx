@@ -135,9 +135,9 @@ function MenuOtherActions({
   const [, copyToClipboard] = useCopyToClipboard()
   const { mutate: downloadKubeconfig } = useDownloadKubeconfig()
 
-  const removeCluster = (id: string, name: string) => {
+  const removeCluster = (cluster: Cluster) => {
     openModal({
-      content: <ClusterDeleteModal organizationId={organizationId} clusterId={id} name={name} />,
+      content: <ClusterDeleteModal cluster={cluster} />,
     })
   }
 
@@ -213,7 +213,7 @@ function MenuOtherActions({
             <DropdownMenu.Item
               color="red"
               icon={<Icon name={IconAwesomeEnum.TRASH} />}
-              onClick={() => removeCluster(cluster.id, cluster.name)}
+              onClick={() => removeCluster(cluster)}
             >
               Delete cluster
             </DropdownMenu.Item>

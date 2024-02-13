@@ -1,3 +1,4 @@
+import { type Cluster } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
 import { ClusterDeleteModal, useCluster } from '@qovery/domains/clusters/feature'
 import { useModal } from '@qovery/shared/ui'
@@ -9,13 +10,13 @@ export function PageSettingsDangerZoneFeature() {
   const { data: cluster } = useCluster({ organizationId, clusterId })
   const { openModal } = useModal()
 
-  const deleteCluster = () => {
+  const deleteCluster = (cluster: Cluster) => {
     openModal({
-      content: <ClusterDeleteModal organizationId={organizationId} clusterId={clusterId} name={cluster?.name ?? ''} />,
+      content: <ClusterDeleteModal cluster={cluster} />,
     })
   }
 
-  return <PageSettingsDangerZone deleteCluster={deleteCluster} />
+  return cluster && <PageSettingsDangerZone deleteCluster={() => deleteCluster(cluster)} />
 }
 
 export default PageSettingsDangerZoneFeature

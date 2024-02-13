@@ -1,4 +1,4 @@
-import { ClusterDeleteMode } from 'qovery-typescript-axios'
+import { type Cluster, ClusterDeleteMode } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { CLUSTERS_URL } from '@qovery/shared/routes'
@@ -7,12 +7,15 @@ import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import useDeleteCluster from '../hooks/use-delete-cluster/use-delete-cluster'
 
 export interface ClusterDeleteModalProps {
-  organizationId: string
-  clusterId: string
-  name: string
+  cluster: Cluster
 }
 
-export function ClusterDeleteModal({ organizationId, clusterId, name }: ClusterDeleteModalProps) {
+export function ClusterDeleteModal({ cluster }: ClusterDeleteModalProps) {
+  const {
+    organization: { id: organizationId },
+    name,
+    id: clusterId,
+  } = cluster
   const { mutateAsync } = useDeleteCluster()
   const [clusterDeleteMode, setClusterDeleteMode] = useState<ClusterDeleteMode>(ClusterDeleteMode.DEFAULT)
 
@@ -45,10 +48,12 @@ export function ClusterDeleteModal({ organizationId, clusterId, name }: ClusterD
         <InputSelect
           className="mb-3"
           label="Delete mode"
-          options={Object.values(ClusterDeleteMode).map((mode) => ({
-            label: formattedClusterDeleteMode(mode),
-            value: mode,
-          }))}
+          options={Object.values(ClusterDeleteMode)
+            .filter((e) => !(e === 'DELETE_CLUSTER_AND_QOVERY_CONFIG' && cluster.kubernetes === 'SELF_MANAGED'))
+            .map((mode) => ({
+              label: formattedClusterDeleteMode(mode),
+              value: mode,
+            }))}
           onChange={(value) => setClusterDeleteMode(value as ClusterDeleteMode)}
           value={clusterDeleteMode}
         />
