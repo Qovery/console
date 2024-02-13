@@ -260,22 +260,22 @@ export function ServiceListActionBar({ environment, selectedRows, resetRowSelect
         >
           <div
             className={twMerge(
-              'flex items-center justify-between h-12 bg-neutral-500 shadow-xl text-white font-medium pl-5 pr-2 rounded',
+              'flex items-center justify-between h-[52px] bg-neutral-500 shadow-xl text-white font-medium pl-5 pr-2 rounded',
               hasSelection ? 'animate-action-bar-fade-in' : 'animate-action-bar-fade-out'
             )}
           >
             <span className="text-sm">
               {selectedRows.length} selected {pluralize(selectedRows.length, 'service')}
             </span>
-            <button className="h-8 px-3 text-xs underline" type="button" onClick={() => resetRowSelection()}>
-              Clear selection
+            <button className="h-8 px-3 text-sm underline" type="button" onClick={() => resetRowSelection()}>
+              Deselect
             </button>
-            <div className="flex gap-2">
+            <div className="flex gap-3">
               <Tooltip content="No deployable services" disabled={deployableServices.length !== 0}>
                 <Button
                   color="brand"
                   size="md"
-                  className="items-center gap-1"
+                  className="items-center gap-2"
                   onClick={() => handleDeployAllServices()}
                   disabled={deployableServices.length === 0}
                 >
@@ -284,7 +284,7 @@ export function ServiceListActionBar({ environment, selectedRows, resetRowSelect
               </Tooltip>
               <DropdownMenu.Root modal={false}>
                 <DropdownMenu.Trigger asChild>
-                  <Button color="neutral" size="md" variant="surface" className="items-center gap-1">
+                  <Button color="neutral" size="md" variant="surface" className="items-center gap-2">
                     More <Icon name={IconAwesomeEnum.ANGLE_DOWN} />
                   </Button>
                 </DropdownMenu.Trigger>
