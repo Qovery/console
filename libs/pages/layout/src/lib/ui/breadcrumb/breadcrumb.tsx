@@ -7,7 +7,6 @@ import { IconEnum } from '@qovery/shared/enums'
 import {
   APPLICATION_GENERAL_URL,
   APPLICATION_URL,
-  CLUSTERS_URL,
   CLUSTER_URL,
   DATABASE_GENERAL_URL,
   DATABASE_URL,
@@ -171,20 +170,16 @@ export function Breadcrumb(props: BreadcrumbProps) {
     </div>
   )
 
-  const linkToCloseLogs = locationIsClusterLogs
-    ? CLUSTERS_URL(organizationId)
-    : SERVICES_URL(organizationId, projectId, environmentId)
-
   useEffect(() => {
     const bindTouch = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && matchLogsRoute) navigate(linkToCloseLogs)
+      if (event.key === 'Escape' && matchLogsRoute) navigate(-1)
     }
     document.addEventListener('keydown', bindTouch, false)
 
     return () => {
       document.removeEventListener('keydown', bindTouch, false)
     }
-  }, [linkToCloseLogs, navigate, matchLogsRoute])
+  }, [navigate, matchLogsRoute])
 
   if (organizations?.length === 0) return <div />
 
@@ -280,7 +275,7 @@ export function Breadcrumb(props: BreadcrumbProps) {
             icon={IconAwesomeEnum.XMARK}
             style={ButtonIconStyle.DARK}
             size={ButtonLegacySize.LARGE}
-            link={linkToCloseLogs}
+            onClick={() => navigate(-1)}
           />
         </div>
       )}
