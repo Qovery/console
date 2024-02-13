@@ -204,7 +204,7 @@ export function CreateCloneEnvironmentModal({
                   const clusterType = match([c.cloud_provider, c.kubernetes])
                     .with(['AWS', KubernetesEnum.K3_S], () => 'EC2 (K3S)')
                     .with(['AWS', KubernetesEnum.MANAGED], ['AWS', undefined], () => 'Managed (EKS)')
-                    .with(['AWS', KubernetesEnum.SELF_MANAGED], ['AWS', undefined], () => 'Self-managed (EKS)')
+                    .with(['AWS', KubernetesEnum.SELF_MANAGED], ['AWS', undefined], () => 'Self-managed')
                     .with(['SCW', P._], () => 'Managed (Kapsule)')
                     .with(['GCP', P._], () => 'GKE (Autopilot)')
                     .exhaustive()
