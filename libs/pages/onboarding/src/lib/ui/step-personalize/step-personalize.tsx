@@ -5,18 +5,20 @@ import { ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle, InputSelect, InputTe
 
 export interface StepPersonalizeProps {
   dataTypes: Array<Value>
+  dataCloudProviders: Array<Value>
   onSubmit: () => void
   control: Control<{
     first_name: string
     last_name: string
     user_email: string
     type_of_use: TypeOfUseEnum
+    infrastructure_hosting: string
   }>
   authLogout: () => void
 }
 
 export function StepPersonalize(props: StepPersonalizeProps) {
-  const { dataTypes, onSubmit, control, authLogout } = props
+  const { dataTypes, onSubmit, control, authLogout, dataCloudProviders } = props
 
   return (
     <div className="pb-10">
@@ -75,8 +77,23 @@ export function StepPersonalize(props: StepPersonalizeProps) {
           rules={{ required: 'Please enter your type of use.' }}
           render={({ field, fieldState: { error } }) => (
             <InputSelect
+              className="mb-3"
               label="Type of use"
               options={dataTypes}
+              onChange={field.onChange}
+              value={field.value}
+              error={error?.message}
+            />
+          )}
+        />
+        <Controller
+          name="infrastructure_hosting"
+          control={control}
+          rules={{ required: 'Please enter your infrastructure hosting.' }}
+          render={({ field, fieldState: { error } }) => (
+            <InputSelect
+              label="Current infrastructure hosting"
+              options={dataCloudProviders}
               onChange={field.onChange}
               value={field.value}
               error={error?.message}
