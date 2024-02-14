@@ -497,7 +497,7 @@ function MenuOtherActions({
           icon={<Icon name={IconAwesomeEnum.SCROLL} />}
           onClick={() => {
             navigate(environmentLogsLink + SERVICE_LOGS_URL(service.id), {
-              state: { prevLogsUrl: pathname },
+              state: { prevUrl: pathname },
             })
           }}
         >
@@ -594,7 +594,7 @@ export function ServiceActionToolbar({ environment, serviceId }: { environment: 
         <ActionToolbar.Button
           onClick={() => {
             navigate(environmentLogsLink + SERVICE_LOGS_URL(service.id), {
-              state: { prevLogsUrl: pathname },
+              state: { prevUrl: pathname },
             })
           }}
         >

@@ -171,11 +171,11 @@ export function Breadcrumb(props: BreadcrumbProps) {
     </div>
   )
 
-  const [prevLogsUrl, setPrevLogsUrl] = useState<string | null>()
+  const [prevUrl, setPrevUrl] = useState<string | null>()
   useEffect(() => {
     // We keep track of the previous logs url to be able to navigate back to it
-    if (location.state?.prevLogsUrl) setPrevLogsUrl(location.state.prevLogsUrl)
-  }, [location.state?.prevLogsUrl])
+    if (location.state?.prevUrl) setPrevUrl(location.state.prevUrl)
+  }, [location.state?.prevUrl])
 
   const handleCloseLogs = useCallback(() => {
     const linkToCloseLogs = locationIsClusterLogs
@@ -183,12 +183,12 @@ export function Breadcrumb(props: BreadcrumbProps) {
       : SERVICES_URL(organizationId, projectId, environmentId)
 
     const doesAnyHistoryEntryExist = location.key !== 'default'
-    if (prevLogsUrl && doesAnyHistoryEntryExist) {
-      navigate(prevLogsUrl)
+    if (prevUrl && doesAnyHistoryEntryExist) {
+      navigate(prevUrl)
     } else {
       navigate(linkToCloseLogs)
     }
-  }, [environmentId, location, locationIsClusterLogs, navigate, organizationId, projectId, prevLogsUrl])
+  }, [environmentId, location, locationIsClusterLogs, navigate, organizationId, projectId, prevUrl])
 
   useEffect(() => {
     const bindTouch = (event: KeyboardEvent) => {

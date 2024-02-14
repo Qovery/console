@@ -175,7 +175,7 @@ function MenuOtherActions({ state, environment }: { state: StateEnum; environmen
           icon={<Icon name={IconAwesomeEnum.SCROLL} />}
           onClick={() =>
             navigate(ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id), {
-              state: { prevLogsUrl: pathname },
+              state: { prevUrl: pathname },
             })
           }
         >
@@ -241,7 +241,7 @@ export function EnvironmentActionToolbar({ environment }: EnvironmentActionToolb
         <ActionToolbar.Button
           onClick={() =>
             navigate(ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id), {
-              state: { prevLogsUrl: pathname },
+              state: { prevUrl: pathname },
             })
           }
         >

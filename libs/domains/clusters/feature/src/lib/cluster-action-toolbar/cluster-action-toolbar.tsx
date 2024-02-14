@@ -174,7 +174,7 @@ function MenuOtherActions({ cluster, clusterStatus }: { cluster: Cluster; cluste
                 targetId: cluster.id,
               }),
               {
-                state: { prevLogsUrl: pathname },
+                state: { prevUrl: pathname },
               }
             )
           }
@@ -230,7 +230,7 @@ export function ClusterActionToolbar({ cluster, clusterStatus, noSettings }: Clu
           <ActionToolbar.Button
             onClick={() =>
               navigate(INFRA_LOGS_URL(cluster.organization.id, cluster.id), {
-                state: { prevLogsUrl: pathname },
+                state: { prevUrl: pathname },
               })
             }
           >
