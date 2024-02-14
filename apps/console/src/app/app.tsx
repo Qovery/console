@@ -4,7 +4,7 @@ import axios from 'axios'
 import LogRocket from 'logrocket'
 import posthog from 'posthog-js'
 import { useCallback, useEffect } from 'react'
-import { Navigate, Route, Routes } from 'react-router-dom'
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { useIntercom } from 'react-use-intercom'
 import { KubeconfigPreview } from '@qovery/domains/clusters/feature'
 import { HelmDefaultValuesPreview } from '@qovery/domains/service-helm/feature'
@@ -14,7 +14,7 @@ import { useAuth, useInviteMember } from '@qovery/shared/auth'
 import { ProtectedRoute } from '@qovery/shared/router'
 import { HELM_DEFAULT_VALUES, KUBECONFIG, LOGIN_URL, LOGOUT_URL, PREVIEW_CODE } from '@qovery/shared/routes'
 import { LoadingScreen } from '@qovery/shared/ui'
-import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { useDocumentTitle, useMyHistory } from '@qovery/shared/util-hooks'
 import { useAuthInterceptor } from '@qovery/shared/utils'
 import { environment } from '../environments/environment'
 import PreviewCode from './components/preview-code'
@@ -25,6 +25,15 @@ export function App() {
   useDocumentTitle('Loading...')
   const { isLoading } = useAuth()
   const { redirectToAcceptPageGuard, onSearchUpdate, checkTokenInStorage } = useInviteMember()
+
+  const { push } = useMyHistory()
+  const location = useLocation()
+
+  useEffect(() => {
+    push({
+      pathname: location.pathname,
+    })
+  }, [location.pathname])
 
   useEffect(() => {
     onSearchUpdate()

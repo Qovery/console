@@ -29,6 +29,7 @@ import {
   type MenuItemProps,
   Tooltip,
 } from '@qovery/shared/ui'
+import { useMyHistory } from '@qovery/shared/util-hooks'
 import BreadcrumbItem from '../breadcrumb-item/breadcrumb-item'
 
 export interface BreadcrumbProps {
@@ -43,6 +44,7 @@ export function Breadcrumb(props: BreadcrumbProps) {
   const { organizations, clusters, projects, environments, createProjectModal } = props
   const { organizationId, projectId, environmentId, applicationId, databaseId, clusterId } = useParams()
 
+  const { myHistory } = useMyHistory()
   const location = useLocation()
   const navigate = useNavigate()
   const currentOrganization = organizations?.find((organization) => organizationId === organization.id)
@@ -172,17 +174,24 @@ export function Breadcrumb(props: BreadcrumbProps) {
   )
 
   const handleCloseLogs = useCallback(() => {
+    const lastNonLogUrl =
+      myHistory
+        .slice()
+        .reverse()
+        .find((entry) => !entry.pathname.includes('logs'))?.pathname ?? false
+
     const linkToCloseLogs = locationIsClusterLogs
       ? CLUSTERS_URL(organizationId)
       : SERVICES_URL(organizationId, projectId, environmentId)
 
     const doesAnyHistoryEntryExist = location.key !== 'default'
-    if (doesAnyHistoryEntryExist) {
-      navigate(-1)
+
+    if (lastNonLogUrl && doesAnyHistoryEntryExist) {
+      navigate(lastNonLogUrl)
     } else {
       navigate(linkToCloseLogs)
     }
-  }, [environmentId, location, locationIsClusterLogs, navigate, organizationId, projectId])
+  }, [environmentId, location, locationIsClusterLogs, navigate, organizationId, projectId, myHistory])
 
   useEffect(() => {
     const bindTouch = (event: KeyboardEvent) => {

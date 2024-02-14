@@ -17,6 +17,7 @@ import { IntercomProvider } from 'react-use-intercom'
 import { LOGIN_AUTH_REDIRECT_URL, LOGIN_URL } from '@qovery/shared/routes'
 import { ModalProvider, ToastBehavior, toastError } from '@qovery/shared/ui'
 import { ToastEnum, toast } from '@qovery/shared/ui'
+import { MyHistoryProvider } from '@qovery/shared/util-hooks'
 import App from './app/app'
 import { environment } from './environments/environment'
 
@@ -144,14 +145,16 @@ root.render(
         skipRedirectCallback={window.location.pathname !== LOGIN_URL + LOGIN_AUTH_REDIRECT_URL}
       >
         <QueryClientProvider client={queryClient}>
-          <BrowserRouter>
-            <TooltipProvider>
-              <ModalProvider>
-                <App />
-                <ToastBehavior />
-              </ModalProvider>
-            </TooltipProvider>
-          </BrowserRouter>
+          <MyHistoryProvider>
+            <BrowserRouter>
+              <TooltipProvider>
+                <ModalProvider>
+                  <App />
+                  <ToastBehavior />
+                </ModalProvider>
+              </TooltipProvider>
+            </BrowserRouter>
+          </MyHistoryProvider>
           {/* <ReactQueryDevtools initialIsOpen={false} /> */}
         </QueryClientProvider>
       </Auth0Provider>
