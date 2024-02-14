@@ -1,5 +1,5 @@
 import { type ApplicationGitRepository, type Environment, StateEnum } from 'qovery-typescript-axios'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { P, match } from 'ts-pattern'
 import { useActionCancelEnvironment } from '@qovery/domains/environment'
 import {
@@ -423,6 +423,7 @@ function MenuOtherActions({
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
   const navigate = useNavigate()
+  const { pathname } = useLocation()
   const { mutateAsync: deleteService } = useDeleteService({ environmentId })
 
   const [, copyToClipboard] = useCopyToClipboard()
@@ -494,7 +495,11 @@ function MenuOtherActions({
       <DropdownMenu.Content>
         <DropdownMenu.Item
           icon={<Icon name={IconAwesomeEnum.SCROLL} />}
-          onClick={() => navigate(environmentLogsLink + SERVICE_LOGS_URL(service.id))}
+          onClick={() => {
+            navigate(environmentLogsLink + SERVICE_LOGS_URL(service.id), {
+              state: { prevUrl: pathname },
+            })
+          }}
         >
           Logs
         </DropdownMenu.Item>
@@ -569,6 +574,7 @@ function MenuOtherActions({
 export function ServiceActionToolbar({ environment, serviceId }: { environment: Environment; serviceId: string }) {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const navigate = useNavigate()
+  const { pathname } = useLocation()
   const { data: service } = useService({ environmentId, serviceId })
   const { data: deploymentStatus } = useDeploymentStatus({ environmentId, serviceId })
 
@@ -585,7 +591,13 @@ export function ServiceActionToolbar({ environment, serviceId }: { environment: 
         environmentLogsLink={environmentLogsLink}
       />
       <Tooltip content="Logs">
-        <ActionToolbar.Button onClick={() => navigate(environmentLogsLink + SERVICE_LOGS_URL(service.id))}>
+        <ActionToolbar.Button
+          onClick={() => {
+            navigate(environmentLogsLink + SERVICE_LOGS_URL(service.id), {
+              state: { prevUrl: pathname },
+            })
+          }}
+        >
           <Icon name={IconAwesomeEnum.SCROLL} />
         </ActionToolbar.Button>
       </Tooltip>

@@ -1,6 +1,6 @@
 import equal from 'fast-deep-equal'
 import { type Cluster, type Environment, type Organization, type Project } from 'qovery-typescript-axios'
-import { memo, useCallback, useEffect } from 'react'
+import { memo, useCallback, useEffect, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { ServiceStateChip, useServices } from '@qovery/domains/services/feature'
 import { IconEnum } from '@qovery/shared/enums'
@@ -171,18 +171,24 @@ export function Breadcrumb(props: BreadcrumbProps) {
     </div>
   )
 
+  const [prevUrl, setPrevUrl] = useState<string | null>()
+  useEffect(() => {
+    // We keep track of the previous logs url to be able to navigate back to it
+    if (location.state?.prevUrl) setPrevUrl(location.state.prevUrl)
+  }, [location.state?.prevUrl])
+
   const handleCloseLogs = useCallback(() => {
     const linkToCloseLogs = locationIsClusterLogs
       ? CLUSTERS_URL(organizationId)
       : SERVICES_URL(organizationId, projectId, environmentId)
 
     const doesAnyHistoryEntryExist = location.key !== 'default'
-    if (doesAnyHistoryEntryExist) {
-      navigate(-1)
+    if (prevUrl && doesAnyHistoryEntryExist) {
+      navigate(prevUrl)
     } else {
       navigate(linkToCloseLogs)
     }
-  }, [environmentId, location, locationIsClusterLogs, navigate, organizationId, projectId])
+  }, [environmentId, location, locationIsClusterLogs, navigate, organizationId, projectId, prevUrl])
 
   useEffect(() => {
     const bindTouch = (event: KeyboardEvent) => {
