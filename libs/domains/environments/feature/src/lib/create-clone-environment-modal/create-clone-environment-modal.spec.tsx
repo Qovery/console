@@ -13,7 +13,7 @@ const useClustersMockSpy = jest.spyOn(clustersDomain, 'useClusters') as jest.Moc
 const useCloneEnvironmentMockSpy = jest.spyOn(useCloneEnvironment, 'useCloneEnvironment') as jest.Mock
 const useCreateEnvironmentMockSpy = jest.spyOn(useCreateEnvironment, 'useCreateEnvironment') as jest.Mock
 
-const mockClusters = clusterFactoryMock(3)
+const mockClusters = clusterFactoryMock(3, 'AWS')
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -58,7 +58,7 @@ describe('CreateCloneEnvironmentModal', () => {
 
       await userEvent.type(input, 'test')
 
-      await selectEvent.select(screen.getByLabelText('Cluster'), mockClusters[2].name, {
+      await selectEvent.select(screen.getByLabelText('Cluster'), `${mockClusters[2].name} - Managed (EKS)`, {
         container: document.body,
       })
 
@@ -88,7 +88,7 @@ describe('CreateCloneEnvironmentModal', () => {
       await userEvent.clear(inputs[1])
       await userEvent.type(inputs[1], 'test')
 
-      await selectEvent.select(screen.getByLabelText('Cluster'), mockClusters[2].name, {
+      await selectEvent.select(screen.getByLabelText('Cluster'), `${mockClusters[2].name} - Managed (EKS)`, {
         container: document.body,
       })
 
