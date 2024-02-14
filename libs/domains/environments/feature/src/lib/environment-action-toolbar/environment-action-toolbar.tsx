@@ -1,5 +1,5 @@
 import { type Environment, OrganizationEventTargetType, StateEnum } from 'qovery-typescript-axios'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { UpdateAllModal, useServices } from '@qovery/domains/services/feature'
 import { AUDIT_LOGS_PARAMS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import {
@@ -124,6 +124,7 @@ function MenuManageDeployment({ environment, state }: { environment: Environment
 
 function MenuOtherActions({ state, environment }: { state: StateEnum; environment: Environment }) {
   const navigate = useNavigate()
+  const { pathname } = useLocation()
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
   const { mutate: deleteEnvironment } = useDeleteEnvironment({ projectId: environment.project.id })
@@ -173,7 +174,9 @@ function MenuOtherActions({ state, environment }: { state: StateEnum; environmen
         <DropdownMenu.Item
           icon={<Icon name={IconAwesomeEnum.SCROLL} />}
           onClick={() =>
-            navigate(ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id))
+            navigate(ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id), {
+              state: { prevLogsUrl: pathname },
+            })
           }
         >
           Logs
@@ -224,6 +227,7 @@ export interface EnvironmentActionToolbarProps {
 
 export function EnvironmentActionToolbar({ environment }: EnvironmentActionToolbarProps) {
   const navigate = useNavigate()
+  const { pathname } = useLocation()
   const { data: services } = useServices({ environmentId: environment.id })
   const { data: deploymentStatus } = useDeploymentStatus({ environmentId: environment.id })
   const hasServices = Boolean(services?.length)
@@ -236,7 +240,9 @@ export function EnvironmentActionToolbar({ environment }: EnvironmentActionToolb
       <Tooltip content="Logs">
         <ActionToolbar.Button
           onClick={() =>
-            navigate(ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id))
+            navigate(ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id), {
+              state: { prevLogsUrl: pathname },
+            })
           }
         >
           <Icon name={IconAwesomeEnum.SCROLL} />

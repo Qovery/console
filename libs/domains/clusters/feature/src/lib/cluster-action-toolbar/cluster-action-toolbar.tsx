@@ -5,7 +5,7 @@ import {
   OrganizationEventTargetType,
 } from 'qovery-typescript-axios'
 import { type ReactNode, useEffect } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { AUDIT_LOGS_PARAMS_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL, INFRA_LOGS_URL } from '@qovery/shared/routes'
 import {
   ActionToolbar,
@@ -115,6 +115,7 @@ function MenuOtherActions({ cluster, clusterStatus }: { cluster: Cluster; cluste
   const navigate = useNavigate()
   const showSelfManagedGuideKey = 'show-self-managed-guide'
   const [searchParams, setSearchParams] = useSearchParams()
+  const { pathname } = useLocation()
   const { openModal, closeModal } = useModal()
   const [, copyToClipboard] = useCopyToClipboard()
   const { mutate: downloadKubeconfig } = useDownloadKubeconfig()
@@ -171,7 +172,10 @@ function MenuOtherActions({ cluster, clusterStatus }: { cluster: Cluster; cluste
               AUDIT_LOGS_PARAMS_URL(cluster.organization.id, {
                 targetType: OrganizationEventTargetType.CLUSTER,
                 targetId: cluster.id,
-              })
+              }),
+              {
+                state: { prevLogsUrl: pathname },
+              }
             )
           }
         >
@@ -216,13 +220,20 @@ export interface ClusterActionToolbarProps {
 
 export function ClusterActionToolbar({ cluster, clusterStatus, noSettings }: ClusterActionToolbarProps) {
   const navigate = useNavigate()
+  const { pathname } = useLocation()
 
   return (
     <ActionToolbar.Root>
       <MenuManageDeployment cluster={cluster} clusterStatus={clusterStatus} />
       {cluster.kubernetes !== 'SELF_MANAGED' && (
         <Tooltip content="Logs">
-          <ActionToolbar.Button onClick={() => navigate(INFRA_LOGS_URL(cluster.organization.id, cluster.id))}>
+          <ActionToolbar.Button
+            onClick={() =>
+              navigate(INFRA_LOGS_URL(cluster.organization.id, cluster.id), {
+                state: { prevLogsUrl: pathname },
+              })
+            }
+          >
             <Icon name={IconAwesomeEnum.SCROLL} />
           </ActionToolbar.Button>
         </Tooltip>
