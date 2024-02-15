@@ -1,10 +1,13 @@
 import { type ContainerRegistryResponse } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
-import { useContainerRegistries, useDeleteContainerRegistry } from '@qovery/domains/organizations/feature'
+import {
+  ContainerRegistryCreateEditModal,
+  useContainerRegistries,
+  useDeleteContainerRegistry,
+} from '@qovery/domains/organizations/feature'
 import { useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import PageOrganizationContainerRegistries from '../../ui/page-organization-container-registries/page-organization-container-registries'
-import CrudModalFeature from './crud-modal-feature/crud-modal-feature'
 
 export function PageOrganizationContainerRegistriesFeature() {
   const { organizationId = '' } = useParams()
@@ -24,11 +27,19 @@ export function PageOrganizationContainerRegistriesFeature() {
       containerRegistries={containerRegistries}
       isFetched={isFetchedContainerRegistries}
       onAddRegistry={() => {
-        openModal({ content: <CrudModalFeature organizationId={organizationId} onClose={closeModal} /> })
+        openModal({
+          content: <ContainerRegistryCreateEditModal organizationId={organizationId} onClose={closeModal} />,
+        })
       }}
       onEdit={(registry: ContainerRegistryResponse) => {
         openModal({
-          content: <CrudModalFeature organizationId={organizationId} onClose={closeModal} registry={registry} />,
+          content: (
+            <ContainerRegistryCreateEditModal
+              organizationId={organizationId}
+              onClose={closeModal}
+              registry={registry}
+            />
+          ),
         })
       }}
       onDelete={(registry: ContainerRegistryResponse) => {

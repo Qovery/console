@@ -1,8 +1,8 @@
 import { type Organization } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
-import { useContainerRegistries } from '@qovery/domains/organizations/feature'
+import { ContainerRegistryCreateEditModal, useContainerRegistries } from '@qovery/domains/organizations/feature'
 import { SETTINGS_CONTAINER_REGISTRIES_URL, SETTINGS_URL } from '@qovery/shared/routes'
-import { InputSelect, InputText, Link } from '@qovery/shared/ui'
+import { InputSelect, InputText, Link, useModal } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 
 export interface GeneralContainerSettingsProps {
@@ -16,6 +16,7 @@ export function GeneralContainerSettings({ organization, className }: GeneralCon
     image_name?: string
     image_tag?: string
   }>()
+  const { openModal, closeModal } = useModal()
   const { data: containerRegistries = [] } = useContainerRegistries({ organizationId: organization?.id ?? '' })
 
   return (
@@ -39,6 +40,18 @@ export function GeneralContainerSettings({ organization, className }: GeneralCon
               }))}
               label="Registry"
               error={error?.message}
+              menuListButton={{
+                title: 'Select registry',
+                label: 'New registry',
+                onClick: () => {
+                  openModal({
+                    content: organization && (
+                      <ContainerRegistryCreateEditModal organizationId={organization.id} onClose={closeModal} />
+                    ),
+                  })
+                },
+              }}
+              isSearchable
             />
           )}
         />
