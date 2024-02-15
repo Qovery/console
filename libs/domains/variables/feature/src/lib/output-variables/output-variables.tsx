@@ -10,8 +10,7 @@ import {
 import { type VariableResponse as Variable } from 'qovery-typescript-axios'
 import { type ComponentProps, Fragment, useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
-import { Icon, IconAwesomeEnum, TablePrimitives, Tooltip } from '@qovery/shared/ui'
-import { useCopyToClipboard } from '@qovery/shared/util-hooks'
+import { CopyToClipboardButtonIcon, Icon, IconAwesomeEnum, TablePrimitives, Tooltip } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import { useVariables } from '../hooks/use-variables/use-variables'
 
@@ -19,16 +18,6 @@ const { Table } = TablePrimitives
 
 function VariableValue({ variable }: { variable: Variable }) {
   const [visible, setVisible] = useState(false)
-  const [icon, setIcon] = useState(IconAwesomeEnum.COPY)
-  const [, copyToClipboard] = useCopyToClipboard()
-
-  const onClickCopyToClipboard = (content: string) => {
-    copyToClipboard(content)
-    setIcon(IconAwesomeEnum.CHECK)
-    setTimeout(() => {
-      setIcon(IconAwesomeEnum.COPY)
-    }, 1000)
-  }
 
   return variable.is_secret ? (
     <span className="flex items-center gap-2 text-sm text-neutral-300">
@@ -50,14 +39,7 @@ function VariableValue({ variable }: { variable: Variable }) {
         <>
           <span className="text-brand-500">{variable.value}</span>
           {Boolean(variable.value) && (
-            <Tooltip content="Copy">
-              <button
-                className="text-brand-500"
-                onClick={() => variable.value !== null && onClickCopyToClipboard(variable.value)}
-              >
-                <Icon name={icon} />
-              </button>
-            </Tooltip>
+            <CopyToClipboardButtonIcon content={variable.value!} iconClassName="text-brand-500" />
           )}
         </>
       ) : (
@@ -134,6 +116,10 @@ export function OutputVariables({ serviceId, className, ...props }: JobOutputVar
     getExpandedRowModel: getExpandedRowModel(),
     getSortedRowModel: getSortedRowModel(),
   })
+
+  if (variables.length === 0) {
+    return null
+  }
 
   return (
     <div className="border rounded overflow-hidden">
