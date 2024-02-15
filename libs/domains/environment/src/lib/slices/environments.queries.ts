@@ -76,7 +76,7 @@ export const useEditEnvironment = (projectId: string, onSettledCallback: () => v
     },
     {
       onSuccess: (result, variables) => {
-        // Needed to invalidate the environment quey with new format
+        // Needed to invalidate the environment query with new data access
         queryClient.invalidateQueries({
           queryKey: queries.environments.detail(variables.environmentId).queryKey,
         })
