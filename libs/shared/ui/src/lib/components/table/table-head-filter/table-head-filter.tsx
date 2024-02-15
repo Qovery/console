@@ -192,7 +192,11 @@ export function groupBy<T>(
           // reset with default filter
           setCurrentFilter(defaultValue)
           setDataFilterNumber(0)
-          setFilter && setFilter((prev) => prev.filter((currentValue) => currentValue.key !== property))
+          setFilter &&
+            setFilter((prev) => {
+              const result = prev.filter((currentValue) => currentValue.key !== property)
+              return [...result, { key: property, value: defaultValue }]
+            })
         }
       },
     }))
