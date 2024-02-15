@@ -59,7 +59,7 @@ export function PageSettingsKubeconfig({ cluster, onSubmit }: PageSettingsKubeco
               View <Icon name={IconAwesomeEnum.EYE} />
             </Link>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 hidden">
             <Button type="button" variant="outline" {...getRootProps()} color="neutral">
               <input {...getInputProps()} />
               <Icon name={IconAwesomeEnum.ARROWS_ROTATE} />
