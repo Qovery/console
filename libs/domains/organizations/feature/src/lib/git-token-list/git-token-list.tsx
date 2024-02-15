@@ -10,7 +10,7 @@ import {
   useModal,
   useModalConfirmation,
 } from '@qovery/shared/ui'
-import { dateYearMonthDayHourMinuteSecond, timeAgo } from '@qovery/shared/util-dates'
+import { dateMediumLocalFormat, dateUTCString, timeAgo } from '@qovery/shared/util-dates'
 import GitTokenCreateEditModal from '../git-token-create-edit-modal/git-token-create-edit-modal'
 import { useDeleteGitToken } from '../hooks/use-delete-git-token/use-delete-git-token'
 import { useGitTokens } from '../hooks/use-git-tokens/use-git-tokens'
@@ -49,13 +49,20 @@ export function GitTokenList() {
                     )}
                   </p>
                   <p className="text-xs text-neutral-350">
-                    <span className="inline-block">Last updated {timeAgo(new Date(gitToken.updated_at ?? ''))}</span>
-                    <span className="inline-block ml-3">
-                      Created since {dateYearMonthDayHourMinuteSecond(new Date(gitToken.created_at ?? ''), false)}
-                    </span>
+                    {gitToken.updated_at && (
+                      <span className="inline-block" title={dateUTCString(gitToken.updated_at)}>
+                        Last updated {timeAgo(new Date(gitToken.updated_at))}
+                      </span>
+                    )}
+
+                    {gitToken.created_at && (
+                      <span className="inline-block ml-3" title={dateUTCString(gitToken.created_at)}>
+                        Created since {dateMediumLocalFormat(gitToken.created_at)}
+                      </span>
+                    )}
                     {gitToken.expired_at && (
-                      <span className="inline-block ml-3">
-                        Expiration: {dateYearMonthDayHourMinuteSecond(new Date(gitToken.expired_at ?? ''), false)}
+                      <span className="inline-block ml-3" title={dateUTCString(gitToken.expired_at)}>
+                        Expiration: {dateMediumLocalFormat(gitToken.expired_at)}
                       </span>
                     )}
                   </p>

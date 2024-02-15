@@ -16,7 +16,7 @@ import {
   Tooltip,
   Truncate,
 } from '@qovery/shared/ui'
-import { timeAgo } from '@qovery/shared/util-dates'
+import { dateUTCString, timeAgo } from '@qovery/shared/util-dates'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
 export interface PageOrganizationWebhooksProps {
@@ -83,7 +83,11 @@ export function PageOrganizationWebhooks(props: PageOrganizationWebhooksProps) {
                         />{' '}
                         {upperCaseFirstLetter(webhook.kind)}
                       </span>
-                      {webhook.updated_at && <span>Last updated {timeAgo(new Date(webhook.updated_at))} ago</span>}
+                      {webhook.updated_at && (
+                        <span title={dateUTCString(webhook.updated_at)}>
+                          Last updated {timeAgo(new Date(webhook.updated_at))} ago
+                        </span>
+                      )}
                     </div>
                   </div>
                   <div className="flex items-center">

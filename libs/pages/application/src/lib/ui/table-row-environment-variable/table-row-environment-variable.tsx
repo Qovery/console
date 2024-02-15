@@ -18,7 +18,7 @@ import {
   TableRow,
   Tooltip,
 } from '@qovery/shared/ui'
-import { dateYearMonthDayHourMinuteSecond, timeAgo } from '@qovery/shared/util-dates'
+import { dateUTCString, timeAgo } from '@qovery/shared/util-dates'
 import { environmentVariableFile, getEnvironmentVariableFileMountPath } from '@qovery/shared/util-js'
 
 export interface TableRowEnvironmentVariableProps {
@@ -111,9 +111,7 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
                 <p className="flex items-center leading-7 text-neutral-350 text-sm">
                   <Tooltip
                     content={
-                      variable.updated_at
-                        ? dateYearMonthDayHourMinuteSecond(new Date(variable.updated_at))
-                        : dateYearMonthDayHourMinuteSecond(new Date(variable.created_at))
+                      variable.updated_at ? dateUTCString(variable.updated_at) : dateUTCString(variable.created_at)
                     }
                   >
                     <span className="text-xs text-neutral-300 mx-3 font-medium">

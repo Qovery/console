@@ -10,7 +10,7 @@ import {
   type TableHeadProps,
   TableRow,
 } from '@qovery/shared/ui'
-import { dateToFormat } from '@qovery/shared/util-dates'
+import { dateMediumLocalFormat } from '@qovery/shared/util-dates'
 import { costToHuman } from '@qovery/shared/util-js'
 
 export interface TableRowInvoiceProps {
@@ -59,7 +59,7 @@ export function TableRowInvoice(props: TableRowInvoiceProps) {
       className="border-b last-of-type:border-b-0 bg-white"
     >
       <>
-        <div className="px-4 text-xs text-neutral-400 font-medium">{dateToFormat(data.created_at, 'MMM dd, Y')}</div>
+        <div className="px-4 text-xs text-neutral-400 font-medium">{dateMediumLocalFormat(data.created_at)}</div>
         <div className="px-4 text-xs text-neutral-400 font-medium">{badge}</div>
         <div className="px-4 text-xs text-neutral-400 font-medium">
           {costToHuman(data.total_in_cents / 100, data.currency_code)}

@@ -1,6 +1,6 @@
 import { type EnvironmentStatus } from 'qovery-typescript-axios'
 import { Icon, StatusChip, Tooltip } from '@qovery/shared/ui'
-import { dateFullFormat } from '@qovery/shared/util-dates'
+import { dateFullFormat, dateUTCString } from '@qovery/shared/util-dates'
 
 export interface SidebarStatusProps {
   environmentStatus?: EnvironmentStatus
@@ -31,7 +31,9 @@ export function SidebarStatus(props: SidebarStatusProps) {
       {environmentStatus?.last_deployment_date && (
         <p className="flex items-center justify-between text-neutral-300 text-xs">
           Deployment start time:
-          <span className="text-neutral-50">{dateFullFormat(environmentStatus?.last_deployment_date || '')}</span>
+          <span className="text-neutral-50" title={dateUTCString(environmentStatus.last_deployment_date)}>
+            {dateFullFormat(environmentStatus.last_deployment_date)}
+          </span>
         </p>
       )}
       <p className="flex items-center justify-between text-neutral-300 text-xs mt-2">

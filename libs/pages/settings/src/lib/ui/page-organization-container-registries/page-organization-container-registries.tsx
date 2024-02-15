@@ -12,7 +12,7 @@ import {
   Tooltip,
   Truncate,
 } from '@qovery/shared/ui'
-import { dateYearMonthDayHourMinuteSecond, timeAgo } from '@qovery/shared/util-dates'
+import { dateMediumLocalFormat, dateUTCString, timeAgo } from '@qovery/shared/util-dates'
 import { containerRegistryKindToIcon } from '@qovery/shared/util-js'
 
 export interface PageOrganizationContainerRegistriesProps {
@@ -73,12 +73,16 @@ export function PageOrganizationContainerRegistries(props: PageOrganizationConta
                       </h2>
                       <p className="text-xs text-neutral-350">
                         {registry.kind}{' '}
-                        <span className="inline-block ml-3">
-                          Last updated {timeAgo(new Date(registry.updated_at || ''))}
-                        </span>{' '}
-                        <span className="inline-block ml-3">
-                          Created since {dateYearMonthDayHourMinuteSecond(new Date(registry.created_at || ''), false)}
-                        </span>
+                        {registry.updated_at && (
+                          <span className="inline-block ml-3" title={dateUTCString(registry.updated_at)}>
+                            Last updated {timeAgo(new Date(registry.updated_at))}
+                          </span>
+                        )}{' '}
+                        {registry.created_at && (
+                          <span className="inline-block ml-3" title={dateUTCString(registry.created_at)}>
+                            Created since {dateMediumLocalFormat(registry.created_at)}
+                          </span>
+                        )}
                       </p>
                     </div>
                   </div>

@@ -50,7 +50,7 @@ import {
   Tooltip,
   Truncate,
 } from '@qovery/shared/ui'
-import { dateFullFormat, timeAgo } from '@qovery/shared/util-dates'
+import { dateUTCString, timeAgo } from '@qovery/shared/util-dates'
 import { buildGitProviderUrl } from '@qovery/shared/util-git'
 import { containerRegistryKindToIcon, formatCronExpression, twMerge } from '@qovery/shared/util-js'
 import { useServices } from '../hooks/use-services/use-services'
@@ -438,7 +438,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
         cell: (info) => {
           const value = info.getValue()
           return value ? (
-            <Tooltip content={dateFullFormat(value)}>
+            <Tooltip content={dateUTCString(value)}>
               <span className="text-xs text-neutral-350">{timeAgo(new Date(value))}</span>
             </Tooltip>
           ) : (

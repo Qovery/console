@@ -10,7 +10,7 @@ import {
   TableRowFilter,
   Tooltip,
 } from '@qovery/shared/ui'
-import { dateFullFormat } from '@qovery/shared/util-dates'
+import { dateFullFormat, dateUTCString } from '@qovery/shared/util-dates'
 
 export const formatVersion = (version: string) => {
   if (version.length < 6) {
@@ -76,8 +76,12 @@ export function RowPod({ data, filter, index, podNameToColor }: RowPodProps) {
             </span>
           )}
         </div>
-        <div data-testid="cell-date" className="px-4 pt-0.5 text-neutral-350 whitespace-nowrap">
-          {dateFullFormat(data.created_at, utc ? 'UTC' : timeZone, 'dd MMM, HH:mm:ss:SS')}
+        <div
+          data-testid="cell-date"
+          className="px-4 pt-0.5 text-neutral-350 whitespace-nowrap"
+          title={dateUTCString(data.created_at)}
+        >
+          {dateFullFormat(data.created_at, utc ? 'UTC' : timeZone, 'dd MMM, HH:mm:ss.SS')}
         </div>
         <Ansi
           data-testid="cell-msg"

@@ -1,7 +1,7 @@
 import { type ClusterLogs, ClusterLogsStepEnum } from 'qovery-typescript-axios'
 import { LogsType } from '@qovery/shared/enums'
 import { CopyToClipboardButtonIcon } from '@qovery/shared/ui'
-import { dateDifference } from '@qovery/shared/util-dates'
+import { dateDifference, dateFullFormat, dateUTCString } from '@qovery/shared/util-dates'
 
 export interface RowProps {
   data: ClusterLogs
@@ -65,7 +65,11 @@ export function Row(props: RowProps) {
             type === LogsType.ERROR ? (data.error?.user_log_message as string) : (data.message?.safe_message as string)
           }
         />
-        {data.timestamp}
+        {data.timestamp && (
+          <span title={dateUTCString(data.timestamp)}>
+            {dateFullFormat(data.timestamp, undefined, 'dd MMM, HH:mm:ss.SS')}
+          </span>
+        )}
       </div>
     </div>
   )

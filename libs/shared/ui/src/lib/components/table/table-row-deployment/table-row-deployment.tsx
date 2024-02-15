@@ -18,7 +18,7 @@ import {
   ENVIRONMENT_LOGS_URL,
   SERVICE_LOGS_URL,
 } from '@qovery/shared/routes'
-import { timeAgo } from '@qovery/shared/util-dates'
+import { dateUTCString, timeAgo } from '@qovery/shared/util-dates'
 import { trimId, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { Badge } from '../../badge/badge'
 import ButtonIcon, { ButtonIconStyle } from '../../buttons/button-icon/button-icon'
@@ -152,9 +152,15 @@ export function TableRowDeployment({
           <Skeleton show={isLoading} width={80} height={20}>
             <>
               <p className="flex items-center leading-7 text-neutral-350 text-sm">
-                <span className="text-xs text-neutral-300 mx-3 font-medium">
-                  {timeAgo(data?.updated_at ? new Date(data?.updated_at) : new Date(data?.created_at || ''))} ago
-                </span>
+                <Tooltip
+                  content={
+                    data?.updated_at ? dateUTCString(data.updated_at) : dateUTCString(data?.created_at ?? Date.now())
+                  }
+                >
+                  <span className="text-xs text-neutral-300 mx-3 font-medium">
+                    {timeAgo(data?.updated_at ? new Date(data?.updated_at) : new Date(data?.created_at || ''))} ago
+                  </span>
+                </Tooltip>
               </p>
               <ButtonIcon
                 dataTestId="btn-logs"

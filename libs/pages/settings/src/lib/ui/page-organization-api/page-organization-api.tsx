@@ -14,7 +14,7 @@ import {
   Tooltip,
   Truncate,
 } from '@qovery/shared/ui'
-import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
+import { dateMediumLocalFormat, dateUTCString } from '@qovery/shared/util-dates'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
 export interface PageOrganizationApiProps {
@@ -69,9 +69,11 @@ export function PageOrganizationApi(props: PageOrganizationApiProps) {
                       </h2>
                       <p className="text-xs text-neutral-350">
                         <span className="inline-block mr-3">Role: {upperCaseFirstLetter(token.role_name)}</span>
-                        <span className="inline-block">
-                          Created since {dateYearMonthDayHourMinuteSecond(new Date(token.created_at || ''), false)}
-                        </span>
+                        {token.created_at && (
+                          <span className="inline-block" title={dateUTCString(token.created_at)}>
+                            Created since {dateMediumLocalFormat(token.created_at)}
+                          </span>
+                        )}
                       </p>
                     </div>
                   </div>

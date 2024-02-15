@@ -11,6 +11,7 @@ import {
   InputText,
   InputTextArea,
 } from '@qovery/shared/ui'
+import { dateMediumLocalFormat } from '@qovery/shared/util-dates'
 
 export interface PageOrganizationGeneralProps {
   onSubmit: FormEventHandler<HTMLFormElement>
@@ -38,7 +39,9 @@ export function PageOrganizationGeneral(props: PageOrganizationGeneralProps) {
               />
               <div className="ml-3">
                 <p className="text-neutral-400 font-medium mb-1">{watch('name')}</p>
-                <span className="block text-xs text-neutral-350">Created since {created_at.split('T')[0]}</span>
+                <span className="block text-xs text-neutral-350">
+                  Created since {dateMediumLocalFormat(created_at)}
+                </span>
               </div>
             </div>
             <hr className="my-5 border-0 border-b border-neutral-250 relative -left-5 w-[calc(100%+41px)]" />
