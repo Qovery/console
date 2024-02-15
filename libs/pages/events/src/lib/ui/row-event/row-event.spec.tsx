@@ -1,7 +1,7 @@
 import { act, getAllByTestId, getByTestId, getByText, queryByTestId, render } from '__tests__/utils/setup-jest'
 import { type OrganizationEventResponse } from 'qovery-typescript-axios'
 import { eventsFactoryMock } from '@qovery/shared/factories'
-import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
+import { dateFullFormat } from '@qovery/shared/util-dates'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import RowEvent, { type RowEventProps } from './row-event'
@@ -31,15 +31,10 @@ describe('RowEvent', () => {
     expect(getAllByTestId(baseElement, 'skeleton')).toHaveLength(7)
   })
 
-  it('should render 7 skeletons while loading', () => {
-    const { baseElement } = render(<RowEvent {...props} isPlaceholder />)
-    expect(getAllByTestId(baseElement, 'skeleton')).toHaveLength(7)
-  })
-
   it('should render 7 cells with good content', () => {
     const { baseElement } = render(<RowEvent {...props} />)
 
-    getByText(baseElement, dateYearMonthDayHourMinuteSecond(new Date(mockEvent.timestamp || '')))
+    getByText(baseElement, dateFullFormat(mockEvent.timestamp!))
     getByTestId(baseElement, 'tag')
     getByText(baseElement, upperCaseFirstLetter(mockEvent.target_type)!)
     getByText(baseElement, mockEvent.target_name)

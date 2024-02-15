@@ -22,7 +22,7 @@ describe('RowDeployment', () => {
   it('should have success index color', () => {
     props.data = {
       type: LogsType.INFO,
-      timestamp: new Date().toString(),
+      timestamp: '2024-02-15T13:51:01.685342358Z',
       details: {
         stage: {
           step: 'Deployed',
@@ -40,7 +40,7 @@ describe('RowDeployment', () => {
   it('should have error index color', () => {
     props.data = {
       type: LogsType.ERROR,
-      timestamp: new Date().toString(),
+      timestamp: '2024-02-15T13:51:01.685342358Z',
       details: {
         stage: {
           step: 'DeployedError',
@@ -58,7 +58,7 @@ describe('RowDeployment', () => {
   it('should have error cell date color', () => {
     props.data = {
       type: LogsType.ERROR,
-      timestamp: new Date().toString(),
+      timestamp: '2024-02-15T13:51:01.685342358Z',
       details: {
         stage: {
           step: 'DeployedError',
@@ -94,7 +94,7 @@ describe('RowDeployment', () => {
   it('should have cell success message', () => {
     props.data = {
       type: LogsType.INFO,
-      timestamp: new Date().toString(),
+      timestamp: '2024-02-15T13:51:01.685342358Z',
       details: {
         stage: {
           step: 'Deployed',
@@ -115,7 +115,7 @@ describe('RowDeployment', () => {
   it('should have cell error message', () => {
     props.data = {
       type: LogsType.ERROR,
-      timestamp: new Date().toString(),
+      timestamp: '2024-02-15T13:51:01.685342358Z',
       details: {
         stage: {
           step: 'DeployedError',
@@ -133,7 +133,7 @@ describe('RowDeployment', () => {
   it('should have cell message with ANSI colors and links', () => {
     props.data = {
       type: LogsType.INFO,
-      timestamp: new Date().toString(),
+      timestamp: '2024-02-15T13:51:01.685342358Z',
       details: {
         stage: {
           step: 'Deployed',
