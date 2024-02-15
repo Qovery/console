@@ -1,7 +1,7 @@
 import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { ClusterRemoteSettings } from '@qovery/shared/console-shared'
-import { ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle, HelpSection } from '@qovery/shared/ui'
+import { ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle, Heading, HelpSection, Section } from '@qovery/shared/ui'
 
 export interface PageSettingsRemoteProps {
   onSubmit: FormEventHandler<HTMLFormElement>
@@ -14,8 +14,8 @@ export function PageSettingsRemote(props: PageSettingsRemoteProps) {
 
   return (
     <div className="flex flex-col justify-between w-full">
-      <div className="p-8 max-w-content-with-navigation-left">
-        <h2 className="h5 mb-2 text-neutral-400">Remote access</h2>
+      <Section className="p-8 max-w-content-with-navigation-left">
+        <Heading className="mb-8">Remote access</Heading>
         <form onSubmit={onSubmit}>
           <ClusterRemoteSettings fromDetail />
           <div className="flex justify-end">
@@ -32,7 +32,7 @@ export function PageSettingsRemote(props: PageSettingsRemoteProps) {
             </ButtonLegacy>
           </div>
         </form>
-      </div>
+      </Section>
       <HelpSection
         description="Need help? You may find these links useful"
         links={[
