@@ -1,0 +1,125 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`OutputVariables should match snapshot 1`] = `
+<body>
+  <div>
+    <div
+      class="border rounded overflow-hidden"
+    >
+      <table
+        class="divide-y divide-neutral-200 text-neutral-400 w-full text-xs min-w-[800px] table-auto"
+      >
+        <thead>
+          <tr>
+            <th
+              class="h-11 px-4 text-left font-medium"
+              style="width: 50%;"
+            >
+              <button
+                class="flex items-center gap-1 cursor-pointer select-none"
+                type="button"
+              >
+                Job output variables
+                <span
+                  class=""
+                  data-state="closed"
+                >
+                  <span
+                    class="icon-solid-circle-info shrink-0 text-neutral-350"
+                    role="img"
+                  />
+                </span>
+              </button>
+            </th>
+            <th
+              class="h-11 px-4 text-left font-medium"
+              style="width: 50%;"
+            >
+              Value
+            </th>
+          </tr>
+        </thead>
+        <tbody
+          class="divide-y divide-neutral-200"
+        >
+          <tr
+            class="h-12"
+          >
+            <td
+              class="h-14 px-4 py-0"
+              style="width: 50%;"
+            >
+              <span
+                class="text-sm text-neutral-350"
+              >
+                DB_PASSWORD
+              </span>
+            </td>
+            <td
+              class="h-14 px-4 py-0"
+              style="width: 50%;"
+            >
+              <span
+                class="flex items-center gap-2 text-sm text-neutral-300"
+              >
+                <span
+                  class=""
+                  data-state="closed"
+                >
+                  <span
+                    class="icon-solid-lock shrink-0 block w-4"
+                    role="img"
+                  />
+                </span>
+                <span
+                  class="text-2xl font-medium pt-1.5"
+                >
+                  *************
+                </span>
+              </span>
+            </td>
+          </tr>
+          <tr
+            class="h-12"
+          >
+            <td
+              class="h-14 px-4 py-0"
+              style="width: 50%;"
+            >
+              <span
+                class="text-sm text-neutral-350"
+              >
+                DB_USERNAME
+              </span>
+            </td>
+            <td
+              class="h-14 px-4 py-0"
+              style="width: 50%;"
+            >
+              <span
+                class="flex items-center gap-2 text-sm"
+              >
+                <button
+                  class="w-4 text-brand-500"
+                  data-state="closed"
+                  type="button"
+                >
+                  <span
+                    class="icon-solid-eye shrink-0 "
+                    role="img"
+                  />
+                </button>
+                <span
+                  class="text-neutral-350 text-2xl font-medium pt-1.5"
+                >
+                  *************
+                </span>
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+`;

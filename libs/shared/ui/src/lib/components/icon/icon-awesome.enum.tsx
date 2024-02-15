@@ -111,5 +111,6 @@ export enum IconAwesomeEnum {
   CLOCK = 'icon-regular-clock',
   SHIELD_CHECK = 'icon-solid-shield-check',
   HOUSE = 'icon-solid-house',
+  LOCK = 'icon-solid-lock',
   // schema: favicons name
 }
