@@ -19,6 +19,7 @@ import {
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
 import { refactoPayload } from '@qovery/shared/util-js'
+import { queries } from '@qovery/state/util-queries'
 
 export const ENVIRONMENTS_FEATURE_KEY = 'environments'
 
@@ -75,6 +76,11 @@ export const useEditEnvironment = (projectId: string, onSettledCallback: () => v
     },
     {
       onSuccess: (result, variables) => {
+        // Needed to invalidate the environment query with new data access
+        queryClient.invalidateQueries({
+          queryKey: queries.environments.detail(variables.environmentId).queryKey,
+        })
+
         queryClient.setQueryData<Environment[] | undefined>(['project', projectId, 'environments'], (old) => {
           return old?.map((environment) => (environment.id === variables.environmentId ? result : environment))
         })
