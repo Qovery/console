@@ -295,20 +295,18 @@ describe('ContainerRegistryCreateEditModal', () => {
 
   it('should submit the form to edit a registry', async () => {
     const { userEvent } = renderWithProviders(
-      wrapWithReactHookForm(
-        <ContainerRegistryCreateEditModal
-          {...props}
-          isEdit
-          registry={{
-            id: '1111-1111-1111',
-            created_at: '',
-            updated_at: '',
-            name: 'my-registry',
-            kind: ContainerRegistryKindEnum.DOCR,
-            url: 'https://docker.io',
-          }}
-        />
-      )
+      <ContainerRegistryCreateEditModal
+        {...props}
+        isEdit
+        registry={{
+          id: '1111-1111-1111',
+          created_at: '',
+          updated_at: '',
+          name: 'my-registry',
+          kind: ContainerRegistryKindEnum.DOCR,
+          url: 'https://docker.io',
+        }}
+      />
     )
 
     const inputName = screen.getByLabelText('Registry name')
