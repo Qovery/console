@@ -195,7 +195,7 @@ export function PodsMetrics({ environmentId, serviceId, children }: PodsMetricsP
           return value ? (
             <Tooltip content={dateUTCString(value)}>
               <span className="text-xs text-neutral-350">
-                {dateFormat === 'relative' ? timeAgo(new Date(value)) : dateFullFormat(value, 'UTC')}
+                {dateFormat === 'relative' ? timeAgo(new Date(value)) : dateFullFormat(value)}
               </span>
             </Tooltip>
           ) : (
@@ -207,8 +207,8 @@ export function PodsMetrics({ environmentId, serviceId, children }: PodsMetricsP
     return match(service)
       .with({ serviceType: ServiceTypeEnum.JOB }, (job) => {
         return match(job)
-          .with({ job_type: 'CRON' }, ({ schedule }) => [
-            startedAtColumn(`Job executions (${schedule.cronjob?.timezone})`, 'absolute'),
+          .with({ job_type: 'CRON' }, () => [
+            startedAtColumn(`Job executions`, 'absolute'),
             statusColumn,
             versionColumn,
             memoryColumn,
@@ -216,7 +216,7 @@ export function PodsMetrics({ environmentId, serviceId, children }: PodsMetricsP
             podsColumn,
           ])
           .with({ job_type: 'LIFECYCLE' }, () => [
-            startedAtColumn('Job executions (UTC)', 'absolute'),
+            startedAtColumn('Job executions', 'absolute'),
             statusColumn,
             versionColumn,
             memoryColumn,
