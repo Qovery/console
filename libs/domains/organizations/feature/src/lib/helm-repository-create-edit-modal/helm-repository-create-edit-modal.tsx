@@ -24,7 +24,7 @@ export function HelmRepositoryCreateEditModal({
   const { mutateAsync: createHelmRepository, isLoading: isCreateHelmRepositoryLoading } = useCreateHelmRepository()
   const loading = isEditHelmRepositoryLoading || isCreateHelmRepositoryLoading
 
-  const methods = useForm({
+  const methods = useForm<HelmRepositoryRequest>({
     defaultValues: {
       name: repository?.name,
       description: repository?.description,
@@ -46,18 +46,18 @@ export function HelmRepositoryCreateEditModal({
 
   const watchKind = methods.watch('kind')
 
-  const onSubmit = methods.handleSubmit(async (data) => {
+  const onSubmit = methods.handleSubmit(async (helmRepositoryRequest) => {
     try {
       if (repository) {
         await editHelmRepository({
           organizationId: organizationId,
           helmRepositoryId: repository.id,
-          helmRepositoryRequest: data as HelmRepositoryRequest,
+          helmRepositoryRequest,
         })
       } else {
         await createHelmRepository({
           organizationId: organizationId,
-          helmRepositoryRequest: data as HelmRepositoryRequest,
+          helmRepositoryRequest,
         })
       }
       onClose()
