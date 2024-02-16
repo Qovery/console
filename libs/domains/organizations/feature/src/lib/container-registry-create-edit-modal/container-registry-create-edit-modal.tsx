@@ -8,7 +8,6 @@ import { useEffect } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { match } from 'ts-pattern'
 import { IconEnum } from '@qovery/shared/enums'
-import { type Value } from '@qovery/shared/interfaces'
 import { ExternalLink, Icon, InputSelect, InputText, InputTextArea, ModalCrud } from '@qovery/shared/ui'
 import { containerRegistryKindToIcon } from '@qovery/shared/util-js'
 import { useAvailableContainerRegistries } from '../hooks/use-available-container-registries/use-available-container-registries'
@@ -22,26 +21,20 @@ export interface ContainerRegistryCreateEditModalProps {
   registry?: ContainerRegistryResponse
 }
 
-export const getOptionsContainerRegistry = (containerRegistry: AvailableContainerRegistryResponse[]) => {
-  if (containerRegistry.length > 0) {
-    const options = containerRegistry
-      .map((containerRegistry: AvailableContainerRegistryResponse) => ({
-        label: containerRegistry.kind || '',
-        value: containerRegistry.kind || '',
-        icon: (
-          <Icon
-            name={containerRegistry.kind ? containerRegistryKindToIcon(containerRegistry.kind) : IconEnum.AWS}
-            width="16px"
-            height="16px"
-          />
-        ),
-      }))
-      .filter(Boolean)
-    return options as Value[]
-  } else {
-    return []
-  }
-}
+export const getOptionsContainerRegistry = (containerRegistry: AvailableContainerRegistryResponse[]) =>
+  containerRegistry
+    .map((containerRegistry: AvailableContainerRegistryResponse) => ({
+      label: containerRegistry.kind || '',
+      value: containerRegistry.kind || '',
+      icon: (
+        <Icon
+          name={containerRegistry.kind ? containerRegistryKindToIcon(containerRegistry.kind) : IconEnum.AWS}
+          width="16px"
+          height="16px"
+        />
+      ),
+    }))
+    .filter(Boolean)
 
 export function ContainerRegistryCreateEditModal({
   isEdit,
