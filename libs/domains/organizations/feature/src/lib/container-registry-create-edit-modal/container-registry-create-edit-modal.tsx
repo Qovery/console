@@ -49,7 +49,7 @@ export function ContainerRegistryCreateEditModal({
   organizationId,
   onClose,
 }: ContainerRegistryCreateEditModalProps) {
-  const methods = useForm({
+  const methods = useForm<ContainerRegistryRequest>({
     mode: 'onChange',
     defaultValues: {
       name: registry?.name,
@@ -77,19 +77,19 @@ export function ContainerRegistryCreateEditModal({
     setTimeout(() => methods.clearErrors('config'), 0)
   }, [methods])
 
-  const onSubmit = methods.handleSubmit(async (data) => {
+  const onSubmit = methods.handleSubmit(async (containerRegistryRequest) => {
     try {
       if (registry) {
         await editContainerRegistry({
           organizationId: organizationId,
           containerRegistryId: registry.id,
-          containerRegistryRequest: data as ContainerRegistryRequest,
+          containerRegistryRequest,
         })
         onClose()
       } else {
         await createContainerRegistry({
           organizationId: organizationId,
-          containerRegistryRequest: data as ContainerRegistryRequest,
+          containerRegistryRequest,
         })
         onClose()
       }
