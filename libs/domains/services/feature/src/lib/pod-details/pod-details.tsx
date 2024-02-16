@@ -1,5 +1,6 @@
 import { type PodStatusDto, type ServiceMetricsDto } from 'qovery-ws-typescript-axios'
 import { useParams } from 'react-router-dom'
+import { match } from 'ts-pattern'
 import { type ServiceType } from '@qovery/domains/services/data-access'
 import { ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
 import {
@@ -51,7 +52,17 @@ export function PodDetails({ pod, serviceId, serviceType }: PodDetailsProps) {
   return (
     <div className="pl-4 pb-4 pt-3 pr-20 relative">
       <Link
-        to={ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + SERVICE_LOGS_URL(serviceId)}
+        to={
+          ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
+          SERVICE_LOGS_URL(
+            serviceId,
+            match(serviceType)
+              // TODO: Job are a bit quirky because job_name and pod_name are mixed up and we are not able to filter by job_name currently.
+              // So we chose to disable log filter by pod for Jobs
+              .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', () => undefined)
+              .otherwise(() => pod.name)
+          )
+        }
         className="absolute top-2 right-2"
       >
         <Button type="button" size="sm" color="neutral" variant="surface" className="gap-2">

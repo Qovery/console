@@ -5,10 +5,11 @@ import {
   type ServiceLogResponseDto,
   ServiceStateDto,
 } from 'qovery-ws-typescript-axios'
-import { memo, useCallback, useMemo, useRef, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useParams, useSearchParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useRunningStatus, useService } from '@qovery/domains/services/feature'
+import { type TableFilterProps } from '@qovery/shared/ui'
 import { useDebounce, useDocumentTitle } from '@qovery/shared/util-hooks'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
 import _PodLogs from '../../ui/pod-logs/pod-logs'
@@ -21,6 +22,39 @@ const PodLogs = memo(_PodLogs)
 
 export function PodLogsFeature({ clusterId }: PodLogsFeatureProps) {
   const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams()
+  const [filter, setFilter] = useState<TableFilterProps[]>([])
+  const [searchParams, setSearchParams] = useSearchParams()
+
+  const POD_NAME_KEY = 'pod_name'
+  useEffect(() => {
+    const podFilter = filter.find(({ key }) => key === POD_NAME_KEY)
+    const searchParamValue = searchParams.get(POD_NAME_KEY)
+
+    if (podFilter?.value) {
+      if (podFilter.value !== 'ALL') {
+        if (searchParams.get(POD_NAME_KEY) !== podFilter.value) {
+          setSearchParams((params) => {
+            params.set(POD_NAME_KEY, podFilter.value!)
+            return params
+          })
+        }
+      } else {
+        setSearchParams((params) => {
+          params.delete(POD_NAME_KEY)
+          return params
+        })
+      }
+    } else if (searchParamValue) {
+      setFilter((filter) => {
+        const podFilter = filter.find(({ key }) => key === POD_NAME_KEY)
+        if (podFilter) {
+          return filter.map((f) => (f.key === POD_NAME_KEY ? { key: f.key, value: searchParamValue } : f))
+        } else {
+          return [...filter, { key: POD_NAME_KEY, value: searchParamValue }]
+        }
+      })
+    }
+  }, [searchParams, setSearchParams, filter, setFilter])
 
   const debounceTime = 400
   const [pauseStatusLogs, setPauseStatusLogs] = useState<boolean>(false)
@@ -32,16 +66,14 @@ export function PodLogsFeature({ clusterId }: PodLogsFeatureProps) {
   const debouncedInfraMessages = useDebounce(infraMessages, debounceTime)
   const logCounter = useRef(0)
   const now = useMemo(() => Date.now(), [])
-  const logs = useMemo(
-    () =>
-      debouncedServiceMessages
-        .concat(
-          enabledNginx ? debouncedInfraMessages.map((message) => ({ ...message, version: '', pod_name: '' })) : []
-        )
-        .filter((log, index, array) => (showPreviousLogs || array.length - 1 === index ? true : log.created_at > now))
-        .sort((a, b) => (a.created_at && b.created_at ? a.created_at - b.created_at : 0)),
-    [debouncedServiceMessages, debouncedInfraMessages, enabledNginx, showPreviousLogs, now]
-  )
+  const logs = useMemo(() => {
+    const podFilter = filter.find(({ key }) => key === POD_NAME_KEY)
+    return debouncedServiceMessages
+      .filter(({ pod_name }) => (podFilter && podFilter.value !== 'ALL' ? podFilter.value === pod_name : true))
+      .concat(enabledNginx ? debouncedInfraMessages.map((message) => ({ ...message, version: '', pod_name: '' })) : [])
+      .filter((log, index, array) => (showPreviousLogs || array.length - 1 === index ? true : log.created_at > now))
+      .sort((a, b) => (a.created_at && b.created_at ? a.created_at - b.created_at : 0))
+  }, [debouncedServiceMessages, debouncedInfraMessages, enabledNginx, showPreviousLogs, now, filter])
   const debouncedLogs = useDebounce(logs, debounceTime)
   const pausedLogs = useMemo(() => debouncedLogs, [pauseStatusLogs])
 
@@ -123,6 +155,8 @@ export function PodLogsFeature({ clusterId }: PodLogsFeatureProps) {
       setShowPreviousLogs={setShowPreviousLogs}
       countNginx={infraMessages.length}
       isProgressing={isProgressing}
+      filter={filter}
+      setFilter={setFilter}
     />
   )
 }

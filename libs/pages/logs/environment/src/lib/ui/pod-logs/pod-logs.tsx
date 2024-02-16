@@ -1,5 +1,5 @@
 import { type ServiceLogResponseDto } from 'qovery-ws-typescript-axios'
-import { useMemo, useState } from 'react'
+import { type Dispatch, type SetStateAction, useMemo } from 'react'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { useRunningStatus } from '@qovery/domains/services/feature'
 import { LayoutLogs } from '@qovery/shared/console-shared'
@@ -19,6 +19,8 @@ export interface PodLogsProps {
   setShowPreviousLogs?: (showPreviousLogs: boolean) => void
   countNginx?: number
   isProgressing?: boolean
+  filter: TableFilterProps[]
+  setFilter: Dispatch<SetStateAction<TableFilterProps[]>>
 }
 
 const COLORS = [
@@ -66,8 +68,9 @@ export function PodLogs({
   setShowPreviousLogs,
   countNginx,
   isProgressing,
+  filter,
+  setFilter,
 }: PodLogsProps) {
-  const [filter, setFilter] = useState<TableFilterProps[]>([])
   const publiclyExposedPort =
     (service?.serviceType === 'APPLICATION' || service?.serviceType === 'CONTAINER') &&
     Boolean(service?.ports?.find((port) => port.publicly_accessible))
