@@ -36,6 +36,9 @@ ENV NX_GTM $NX_GTM
 ARG NX_ONBOARDING
 ENV NX_ONBOARDING $NX_ONBOARDING
 
+ARG NPM_TOKEN
+ENV NPM_TOKEN $NPM_TOKEN
+
 # Cache and Install dependencies
 COPY package.json .
 COPY yarn.lock .

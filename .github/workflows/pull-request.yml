@@ -18,3 +18,4 @@ jobs:
     secrets:
       organization-id: ${{ secrets.QOVERY_ORGANIZATION_ID }}
       api-token: ${{ secrets.QOVERY_API_TOKEN }}
+      fontawesome-package-token: ${{ secrets.FONTAWESOME_PACKAGE_TOKEN }}

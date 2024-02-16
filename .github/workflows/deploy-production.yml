@@ -25,6 +25,7 @@ jobs:
       s3-bucket-name: 'console.qovery.com'
       cloudflare-zone: ${{ secrets.CLOUDFLARE_ZONE }}
       cloudflare-token: ${{ secrets.CLOUDFLARE_TOKEN }}
+      fontawesome-package-token: ${{ secrets.FONTAWESOME_PACKAGE_TOKEN }}
 
       # Qovery secrets
       organization-id: ${{ secrets.QOVERY_ORGANIZATION_ID }}

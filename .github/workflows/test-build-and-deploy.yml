@@ -39,6 +39,8 @@ on:
         required: false
       cloudflare-token:
         required: false
+      fontawesome-package-token:
+        required: false
 
       # Qovery secrets
       organization-id:
@@ -79,6 +81,8 @@ jobs:
     needs: [env-vars]
     name: Nx Cloud - Main Job
     uses: nrwl/ci/.github/workflows/nx-cloud-main.yml@v0.13.0
+    secrets:
+      NPM_TOKEN: ${{ secrets.fontawesome-package-token }}
     with:
       environment-variables: |
         ${{ needs.env-vars.outputs.variables }}
@@ -104,6 +108,8 @@ jobs:
     needs: [env-vars]
     name: Nx Cloud - Agents
     uses: nrwl/ci/.github/workflows/nx-cloud-agents.yml@v0.13.0
+    secrets:
+      NPM_TOKEN: ${{ secrets.fontawesome-package-token }}
     with:
       number-of-agents: 3
       environment-variables: |
