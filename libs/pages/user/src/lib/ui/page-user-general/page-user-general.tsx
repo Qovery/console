@@ -19,6 +19,9 @@ export interface PageUserGeneralProps {
   accountOptions: Value[]
 }
 
+const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
+const timezoneOffset = new Date().getTimezoneOffset() / -60
+
 export function PageUserGeneral({ onSubmit, loading, picture, accountOptions }: PageUserGeneralProps) {
   const { control, formState, watch } = useFormContext()
 
@@ -109,6 +112,15 @@ export function PageUserGeneral({ onSubmit, loading, picture, accountOptions }: 
                 />
               )}
             />
+            <InputText
+              name="timezone"
+              value={`${timeZone} (UTC${Math.sign(timezoneOffset) === -1 ? '-' : '+'}${timezoneOffset})`}
+              label="Timezone (auto-detected by browser)"
+              disabled
+            />
+            <p className="text-neutral-350 text-xs mt-1 mb-3">
+              Timezone used to display timestamp within the interface
+            </p>
           </BlockContent>
           <div className="flex justify-end">
             <ButtonLegacy
