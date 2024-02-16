@@ -157,6 +157,18 @@ export const mutations = {
     const response = await clusterApi.getClusterKubeconfig(organizationId, clusterId)
     return response.data
   },
+  async editKubeconfig({
+    organizationId,
+    clusterId,
+    payload,
+  }: {
+    organizationId: string
+    clusterId: string
+    payload: string
+  }) {
+    const response = await clusterApi.editClusterKubeconfig(organizationId, clusterId, payload)
+    return response.data
+  },
   async installationHelmValues({ organizationId, clusterId }: { organizationId: string; clusterId: string }) {
     const response = await clusterApi.getInstallationHelmValues(organizationId, clusterId)
     return response.data
