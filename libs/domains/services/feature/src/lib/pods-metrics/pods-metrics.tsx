@@ -21,7 +21,7 @@ import {
   TablePrimitives,
   Tooltip,
 } from '@qovery/shared/ui'
-import { dateFullFormat, timeAgo } from '@qovery/shared/util-dates'
+import { dateFullFormat, dateUTCString, timeAgo } from '@qovery/shared/util-dates'
 import { formatMetric, twMerge } from '@qovery/shared/util-js'
 import { useMetrics } from '../hooks/use-metrics/use-metrics'
 import { useRunningStatus } from '../hooks/use-running-status/use-running-status'
@@ -193,7 +193,7 @@ export function PodsMetrics({ environmentId, serviceId, children }: PodsMetricsP
         cell: (info) => {
           const value = info.getValue()
           return value ? (
-            <Tooltip content={dateFullFormat(value)}>
+            <Tooltip content={dateUTCString(value)}>
               <span className="text-xs text-neutral-350">
                 {dateFormat === 'relative' ? timeAgo(new Date(value)) : dateFullFormat(value, 'UTC')}
               </span>
