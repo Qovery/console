@@ -12,7 +12,6 @@ export function useAuth() {
     await loginWithRedirect({
       authorizationParams: {
         connection: provider,
-        login_hint: 'login',
       },
     })
   }
