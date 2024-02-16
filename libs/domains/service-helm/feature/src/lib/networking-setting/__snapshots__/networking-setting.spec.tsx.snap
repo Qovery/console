@@ -36,7 +36,7 @@ exports[`NetworkingSetting should match snapshot in empty state 1`] = `
           </span>
         </div>
         <button
-          class="inline-flex items-center shrink-0 font-medium transition border text-sm h-10 px-4 rounded bg-brand-500 border-brand-500 hover:border-brand-600 hover:bg-brand-600 text-white disabled:text-brand-300 disabled:bg-brand-100 disabled:border-none"
+          class="inline-flex items-center shrink-0 font-medium transition border text-sm h-11 px-5 rounded bg-brand-500 border-brand-500 hover:border-brand-600 hover:bg-brand-600 text-white disabled:text-brand-300 disabled:bg-brand-100 disabled:border-none"
         >
           Add port
         </button>
@@ -117,7 +117,7 @@ exports[`NetworkingSetting should match snapshot with ports 1`] = `
           </span>
         </div>
         <button
-          class="inline-flex items-center shrink-0 font-medium transition border text-sm h-10 px-4 rounded bg-brand-500 border-brand-500 hover:border-brand-600 hover:bg-brand-600 text-white disabled:text-brand-300 disabled:bg-brand-100 disabled:border-none"
+          class="inline-flex items-center shrink-0 font-medium transition border text-sm h-11 px-5 rounded bg-brand-500 border-brand-500 hover:border-brand-600 hover:bg-brand-600 text-white disabled:text-brand-300 disabled:bg-brand-100 disabled:border-none"
         >
           Add port
         </button>

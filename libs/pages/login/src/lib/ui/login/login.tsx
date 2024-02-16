@@ -44,8 +44,28 @@ export function Login({ onClickAuthLogin }: ILoginProps) {
               className="w-full justify-center"
               onClick={() => onClickAuthLogin(AuthEnum.GITHUB)}
             >
-              <Icon width="16" className="mr-3" name={IconEnum.GITHUB} />
-              Sign in with Github
+              <Icon width="20" className="mr-3" name={IconEnum.GITHUB} />
+              Continue with Github
+            </Button>
+            <Button
+              variant="surface"
+              color="neutral"
+              size="lg"
+              className="w-full justify-center"
+              onClick={() => onClickAuthLogin(AuthEnum.GITLAB)}
+            >
+              <Icon width="20" className="mr-3" name={IconEnum.GITLAB} />
+              Continue with Gitlab
+            </Button>
+            <Button
+              variant="surface"
+              color="neutral"
+              size="lg"
+              className="w-full justify-center"
+              onClick={() => onClickAuthLogin(AuthEnum.BITBUCKET)}
+            >
+              <Icon width="20" className="mr-3" name={IconEnum.BITBUCKET} />
+              Continue with Bitbucket
             </Button>
             <Button
               variant="surface"
@@ -54,20 +74,18 @@ export function Login({ onClickAuthLogin }: ILoginProps) {
               className="w-full justify-center"
               onClick={() => onClickAuthLogin(AuthEnum.GOOGLE_SSO)}
             >
-              <Icon width="16" className="mr-3" name={IconEnum.GOOGLE} />
-              Sign in with Google
+              <Icon width="20" className="mr-3" name={IconEnum.GOOGLE} />
+              Continue with Google
             </Button>
-            <span className="my-2 flex items-center text-neutral-500 text-2xs font-bold before:bg-neutral-200 before:w-full before:h-[1px] before:block before:mr-1 after:ml-1 after:bg-neutral-200 after:w-full after:h-[1px] after:block">
-              OR
-            </span>
             <Button
               variant="surface"
               color="neutral"
               size="lg"
               className="w-full justify-center"
-              onClick={() => onClickAuthLogin()}
+              onClick={() => onClickAuthLogin(AuthEnum.MICROSOFT)}
             >
-              Sign in with other provider
+              <Icon width="20" className="mr-3" name={IconEnum.MICROSOFT} />
+              Continue with Microsoft
             </Button>
           </div>
         </div>

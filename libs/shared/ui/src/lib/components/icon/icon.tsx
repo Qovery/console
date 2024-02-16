@@ -31,6 +31,7 @@ import InformationIcon from './icons/information'
 import KubernetesIcon from './icons/kubernetes'
 import LifecycleJobIcon from './icons/lifecycle-job'
 import LifecycleJobStrokeIcon from './icons/lifecycle-job-stroke-icon'
+import MicrosoftIcon from './icons/microsoft'
 import MongoDBIcon from './icons/mongodb'
 import MysqlIcon from './icons/mysql'
 import PostgresqlIcon from './icons/postgresql'
@@ -139,6 +140,8 @@ export function Icon(props: IconProps) {
       return <HelmOfficialIcon {...formattedProps} />
     case IconEnum.KUBERNETES:
       return <KubernetesIcon {...formattedProps} />
+    case IconEnum.MICROSOFT:
+      return <MicrosoftIcon {...formattedProps} />
     default:
       return <IconFa {...formattedProps} />
   }
