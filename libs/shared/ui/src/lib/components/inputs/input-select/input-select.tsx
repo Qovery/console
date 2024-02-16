@@ -116,6 +116,7 @@ export function InputSelect({
               <span className="text-neutral-350 font-medium text-sm">{menuListButton.title}</span>
             )}
             <button
+              type="button"
               data-testid="input-menu-list-button"
               className="text-brand-500 hover:text-brand-600 text-sm transition duration-100 font-medium inline-flex items-center gap-1"
               onClick={menuListButton.onClick}
