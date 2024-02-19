@@ -3,7 +3,7 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { Icon, InputSelect, useModal } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
-import GitTokenCreateEditModal from '../git-token-create-edit-modal/git-token-create-edit-modal'
+import { GitTokenCreateEditModal } from '../git-token-create-edit-modal/git-token-create-edit-modal'
 import { useAuthProviders } from '../hooks/use-auth-providers/use-auth-providers'
 import { useGitTokens } from '../hooks/use-git-tokens/use-git-tokens'
 
