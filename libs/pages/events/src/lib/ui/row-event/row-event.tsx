@@ -24,7 +24,7 @@ import {
   SETTINGS_WEBHOOKS,
 } from '@qovery/shared/routes'
 import { Badge, Icon, IconAwesomeEnum, Skeleton, Tooltip } from '@qovery/shared/ui'
-import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
+import { dateFullFormat, dateUTCString } from '@qovery/shared/util-dates'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import CopyButton from '../copy-button/copy-button'
 
@@ -169,9 +169,11 @@ export function RowEvent(props: RowEventProps) {
                 name={IconAwesomeEnum.ANGLE_DOWN}
                 className={`text-xs cursor-pointer block ${expanded ? 'rotate-180' : ''}`}
               />
-              <Tooltip content={dateYearMonthDayHourMinuteSecond(new Date(event.timestamp || ''))}>
-                <span className="truncate">{dateYearMonthDayHourMinuteSecond(new Date(event.timestamp || ''))}</span>
-              </Tooltip>
+              {event.timestamp && (
+                <Tooltip content={dateUTCString(event.timestamp)}>
+                  <span className="truncate">{dateFullFormat(event.timestamp)}</span>
+                </Tooltip>
+              )}
             </div>
           </Skeleton>
         </div>

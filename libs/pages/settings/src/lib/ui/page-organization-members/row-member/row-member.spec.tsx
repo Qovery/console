@@ -1,5 +1,5 @@
 import { inviteMembersMock, membersMock } from '@qovery/shared/factories'
-import { dateYearMonthDayHourMinuteSecond, timeAgo } from '@qovery/shared/util-dates'
+import { dateMediumLocalFormat, timeAgo } from '@qovery/shared/util-dates'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import RowMember, { type RowMemberProps } from './row-member'
 
@@ -69,9 +69,7 @@ describe('RowMember', () => {
     const dateCreatedAt = screen.getByTestId('created-at')
 
     expect(dateLastActivity.textContent).toBe(`${timeAgo(new Date(props.member.last_activity_at || ''))} ago`)
-    expect(dateCreatedAt.textContent).toBe(
-      dateYearMonthDayHourMinuteSecond(new Date(props.member.created_at || ''), false)
-    )
+    expect(dateCreatedAt.textContent).toBe(dateMediumLocalFormat(props.member.created_at))
   })
 
   it('should have menu with edit member role action', async () => {

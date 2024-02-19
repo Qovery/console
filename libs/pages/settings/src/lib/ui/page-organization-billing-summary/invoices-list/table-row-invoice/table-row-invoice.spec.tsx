@@ -55,7 +55,7 @@ describe('TableRowDeployment', () => {
   it('should render the different cells correctly', () => {
     const { baseElement } = render(<TableRowInvoice {...props} />)
 
-    getByText(baseElement, 'Jan 01, 2021')
+    getByText(baseElement, 'Jan 1, 2021')
     getByText(baseElement, 'UNKNOWN')
     getByText(baseElement, '€100')
     getByTestId(baseElement, 'download-invoice-btn')

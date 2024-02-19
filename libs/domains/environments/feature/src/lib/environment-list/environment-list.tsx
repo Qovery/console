@@ -34,7 +34,7 @@ import {
   Truncate,
   useModal,
 } from '@qovery/shared/ui'
-import { dateFullFormat, timeAgo } from '@qovery/shared/util-dates'
+import { dateUTCString, timeAgo } from '@qovery/shared/util-dates'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { CreateCloneEnvironmentModal } from '../create-clone-environment-modal/create-clone-environment-modal'
 import { EnvironmentActionToolbar } from '../environment-action-toolbar/environment-action-toolbar'
@@ -236,7 +236,7 @@ export function EnvironmentList({ project, clusterAvailable, className, ...props
         cell: (info) => {
           const value = info.getValue()
           return value ? (
-            <Tooltip content={dateFullFormat(value)}>
+            <Tooltip content={dateUTCString(value)}>
               <span className="text-xs text-neutral-350 whitespace-nowrap">{timeAgo(new Date(value))}</span>
             </Tooltip>
           ) : (

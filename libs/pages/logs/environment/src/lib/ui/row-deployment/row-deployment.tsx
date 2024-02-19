@@ -3,7 +3,7 @@ import { useContext } from 'react'
 import { UpdateTimeContext } from '@qovery/shared/console-shared'
 import { LogsType } from '@qovery/shared/enums'
 import { Ansi, CopyToClipboardButtonIcon } from '@qovery/shared/ui'
-import { dateFullFormat } from '@qovery/shared/util-dates'
+import { dateFullFormat, dateUTCString } from '@qovery/shared/util-dates'
 
 export interface RowDeploymentProps {
   data: EnvironmentLogs
@@ -41,8 +41,12 @@ export function RowDeployment(props: RowDeploymentProps) {
       <div data-testid="index" className={indexClassName}>
         <div className="text-right w-10 h-6 py-1 px-2 font-code">{index + 1}</div>
       </div>
-      <div data-testid="cell-date" className={`py-1 pl-2 pr-3 font-code shrink-0 w-[158px] ${colorsCellClassName()}`}>
-        {dateFullFormat(data.timestamp, utc ? 'UTC' : undefined, 'dd MMM, HH:mm:ss:SS')}
+      <div
+        data-testid="cell-date"
+        className={`py-1 pl-2 pr-3 font-code shrink-0 w-[158px] ${colorsCellClassName()}`}
+        title={dateUTCString(data.timestamp)}
+      >
+        {dateFullFormat(data.timestamp, utc ? 'UTC' : undefined, 'dd MMM, HH:mm:ss.SS')}
       </div>
       <div
         data-testid="cell-msg"

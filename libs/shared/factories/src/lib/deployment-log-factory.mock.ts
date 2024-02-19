@@ -7,7 +7,7 @@ const chance = new Chance('123')
 export const deploymentLogFactoryMock = (howMany: number, withError?: boolean): EnvironmentLogs[] =>
   Array.from({ length: howMany }).map(() => ({
     type: chance.pickone(Object.values(LogsType)),
-    timestamp: new Date().toString(),
+    timestamp: chance.date().toString(),
     details: {
       organization_id: '141c07c8',
       cluster_id: 'a8ad0659',

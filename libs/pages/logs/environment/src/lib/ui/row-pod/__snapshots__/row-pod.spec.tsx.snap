@@ -65,6 +65,7 @@ exports[`RowPod should match snapshot 1`] = `
     <div
       class="px-4 pt-0.5 text-neutral-350 whitespace-nowrap"
       data-testid="cell-date"
+      title="Mon, 07 Nov 2022 15:18:36 GMT"
     />
     <code
       class="code-ansi select-text pr-6 pt-0.5 text-neutral-50 relative w-full whitespace-pre-wrap break-all"

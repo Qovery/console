@@ -47,13 +47,19 @@ export function dateYearMonthDayHourMinuteSecond(date: Date, withTime = true, wi
   return `${year}-${month}-${day}${withTime ? ` ${hour}:${minute}${withSecond ? `:${second}` : ''}` : ''}`
 }
 
-// 15 Sep, 10:23:20:20
-export const dateFullFormat = (date: string | number, timeZone?: string, customFormat = 'dd MMM, HH:mm:ss') => {
+// 15 Sep, 10:23:20
+export const dateFullFormat = (date: string | number, timeZone?: string, customFormat = 'dd MMM, Y, HH:mm:ss') => {
   return formatInTimeZone(
     new Date(date),
     customFormat,
     timeZone ? timeZone : Intl.DateTimeFormat().resolvedOptions().timeZone
   )
+}
+
+export const dateMediumLocalFormat = (date: string) => {
+  return new Intl.DateTimeFormat('en-US', {
+    dateStyle: 'medium',
+  }).format(new Date(date))
 }
 
 export const dateToFormat = (date: string, format: string) => {
@@ -63,4 +69,10 @@ export const dateToFormat = (date: string, format: string) => {
 export function convertDatetoTimestamp(strDate: string) {
   const datum = Date.parse(strDate)
   return datum / 1000
+}
+
+// Mon, 16 Oct 2023 13:27:34 GMT
+// Standard full format used in HTML tooltip and title attribute
+export function dateUTCString(date: string | number) {
+  return new Date(date).toUTCString()
 }

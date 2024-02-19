@@ -31,7 +31,7 @@ import {
   Truncate,
   toast,
 } from '@qovery/shared/ui'
-import { dateFullFormat, timeAgo } from '@qovery/shared/util-dates'
+import { dateUTCString, timeAgo } from '@qovery/shared/util-dates'
 import { buildGitProviderUrl } from '@qovery/shared/util-git'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import { containerRegistryKindToIcon, formatCronExpression, formatMetric, twMerge } from '@qovery/shared/util-js'
@@ -276,7 +276,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
             <>
               <Dt>Last deployment:</Dt>
               <Dd>
-                <Tooltip content={dateFullFormat(deploymentStatus.last_deployment_date)}>
+                <Tooltip content={dateUTCString(deploymentStatus.last_deployment_date)}>
                   <span>{timeAgo(new Date(deploymentStatus.last_deployment_date))}</span>
                 </Tooltip>
               </Dd>
@@ -286,14 +286,18 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
             <>
               <Dt>Last edit:</Dt>
               <Dd>
-                <Tooltip content={dateFullFormat(service.updated_at)}>
+                <Tooltip content={dateUTCString(service.updated_at)}>
                   <span>{timeAgo(new Date(service.updated_at))}</span>
                 </Tooltip>
               </Dd>
             </>
           )}
           <Dt>Created:</Dt>
-          <Dd>{dateFullFormat(service.created_at)}</Dd>
+          <Dd>
+            <Tooltip content={dateUTCString(service.created_at)}>
+              <span>{timeAgo(new Date(service.created_at))}</span>
+            </Tooltip>
+          </Dd>
         </Dl>
       </Section>
       <hr />

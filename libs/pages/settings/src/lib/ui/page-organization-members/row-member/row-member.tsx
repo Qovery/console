@@ -20,10 +20,11 @@ import {
   type TableFilterProps,
   TableRowFilter,
   ToastEnum,
+  Tooltip,
   toast,
   useModalConfirmation,
 } from '@qovery/shared/ui'
-import { dateYearMonthDayHourMinuteSecond, timeAgo } from '@qovery/shared/util-dates'
+import { dateMediumLocalFormat, dateUTCString, timeAgo } from '@qovery/shared/util-dates'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
@@ -265,9 +266,11 @@ export function RowMember(props: RowMemberProps) {
         <div className="flex items-center px-4 text-neutral-400 text-xs font-medium">
           <Skeleton className="shrink-0" show={loading} width={64} height={16}>
             {(member as Member).last_activity_at ? (
-              <span data-testid="last-activity">
-                {timeAgo(new Date((member as Member).last_activity_at || ''))} ago
-              </span>
+              <Tooltip content={dateUTCString((member as Member).last_activity_at!)}>
+                <span data-testid="last-activity">
+                  {timeAgo(new Date((member as Member).last_activity_at || ''))} ago
+                </span>
+              </Tooltip>
             ) : (
               <span>{upperCaseFirstLetter((member as InviteMember).invitation_status)}</span>
             )}
@@ -275,9 +278,9 @@ export function RowMember(props: RowMemberProps) {
         </div>
         <div className="flex items-center px-4 text-neutral-400 text-xs font-medium">
           <Skeleton className="shrink-0" show={loading} width={64} height={16}>
-            <span data-testid="created-at">
-              {dateYearMonthDayHourMinuteSecond(new Date(member.created_at || ''), false)}
-            </span>
+            <Tooltip content={dateUTCString(member.created_at)}>
+              <span data-testid="created-at">{dateMediumLocalFormat(member.created_at)}</span>
+            </Tooltip>
           </Skeleton>
         </div>
       </div>
