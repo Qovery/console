@@ -1,6 +1,6 @@
 [class^='icon-'],
 [class*=' icon-'] {
-  font-family: 'FontAwesome';
+  font-family: 'Font Awesome 6 Pro';
 }
 
 [class^='icon-solid'],
@@ -8,490 +8,470 @@
   font-weight: 900;
 }
 
-.icon-solid-star:before {
-  content: '\f005';
+.icon-solid-star {
+  @include fa-icon-solid($fa-var-star);
 }
 
-.icon-solid-plus:before {
-  content: '\2b';
+.icon-solid-plus {
+  @include fa-icon-solid($fa-var-plus);
 }
 
-.icon-solid-check:before {
-  content: '\f00c';
+.icon-solid-check {
+  @include fa-icon-solid($fa-var-check);
 }
 
-.icon-solid-circle-plus:before {
-  content: '\f055';
+.icon-solid-circle-plus {
+  @include fa-icon-solid($fa-var-circle-plus);
 }
 
-.icon-solid-arrow-left:before {
-  content: '\f060';
+.icon-solid-arrow-left {
+  @include fa-icon-solid($fa-var-arrow-left);
 }
 
-.icon-solid-angle-down:before {
-  content: '\f107';
+.icon-solid-angle-down {
+  @include fa-icon-solid($fa-var-angle-down);
 }
 
-.icon-solid-arrow-up-right-from-square:before {
-  content: '\f08e';
+.icon-solid-arrow-up-right-from-square {
+  @include fa-icon-solid($fa-var-arrow-up-right-from-square);
 }
 
-.icon-solid-arrows-rotate:before {
-  content: '\f021';
+.icon-solid-arrows-rotate {
+  @include fa-icon-solid($fa-var-arrows-rotate);
 }
 
-.icon-solid-infinity:before {
-  content: '\f534';
+.icon-solid-infinity {
+  @include fa-icon-solid($fa-var-infinity);
 }
 
-.icon-solid-angle-down:before {
-  content: '\f107';
+.icon-solid-gauge-high {
+  @include fa-icon-solid($fa-var-gauge-high);
 }
 
-.icon-solid-gauge-high:before {
-  content: '\f625';
+.icon-solid-layer-group {
+  @include fa-icon-solid($fa-var-layer-group);
 }
 
-.icon-solid-layer-group:before {
-  content: '\f5fd';
+.icon-solid-clock-rotate-left {
+  @include fa-icon-solid($fa-var-clock-rotate-left);
 }
 
-.icon-solid-clock-rotate-left:before {
-  content: '\f1da';
+.icon-solid-rocket {
+  @include fa-icon-solid($fa-var-rocket);
 }
 
-.icon-solid-rocket:before {
-  content: '\f135';
+.icon-solid-bell {
+  @include fa-icon-solid($fa-var-bell);
 }
 
-.icon-solid-bell:before {
-  content: '\f0f3';
+.icon-solid-wheel {
+  @include fa-icon-solid($fa-var-gear);
 }
 
-.icon-solid-wheel:before {
-  content: '\f013';
+.icon-solid-circle-info {
+  @include fa-icon-solid($fa-var-circle-info);
 }
 
-.icon-solid-circle-info:before {
-  content: '\f05a';
+.icon-regular-circle-question {
+  @include fa-icon-regular($fa-var-circle-question);
 }
 
-.icon-regular-circle-question:before {
-  content: '\f059';
+.icon-regular-circle-check {
+  @include fa-icon-regular($fa-var-circle-check);
 }
 
-.icon-regular-circle-check:before {
-  content: '\f058';
+.icon-solid-magnifying-glass {
+  @include fa-icon-solid($fa-var-magnifying-glass);
 }
 
-.icon-solid-magnifying-glass:before {
-  content: '\f002';
+.icon-solid-xmark {
+  @include fa-icon-solid($fa-var-xmark);
 }
 
-.icon-solid-xmark:before {
-  content: '\f00d';
+.icon-solid-envelope {
+  @include fa-icon-solid($fa-var-envelope);
 }
 
-.icon-solid-envelope:before {
-  content: '\f0e0';
+.icon-solid-keyboard {
+  @include fa-icon-solid($fa-var-keyboard);
 }
 
-.icon-solid-keyboard:before {
-  content: '\f11c';
+.icon-solid-wave-pulse {
+  @include fa-icon-solid($fa-var-wave-pulse);
 }
 
-.icon-solid-wave-pulse:before {
-  content: '\f5f8';
+.icon-solid-book {
+  @include fa-icon-solid($fa-var-book);
 }
 
-.icon-solid-book:before {
-  content: '\f02d';
+.icon-solid-arrow-right {
+  @include fa-icon-solid($fa-var-arrow-right);
 }
 
-.icon-solid-arrow-right:before {
-  content: '\f061';
+.icon-solid-globe {
+  @include fa-icon-solid($fa-var-globe);
 }
 
-.icon-solid-globe:before {
-  content: '\f0ac';
+.icon-solid-cloud {
+  @include fa-icon-solid($fa-var-cloud);
 }
 
-.icon-solid-cloud:before {
-  content: '\f0c2';
+.icon-solid-arrow-right-from-bracket {
+  @include fa-icon-solid($fa-var-arrow-right-from-bracket);
 }
 
-.icon-solid-arrow-right-from-bracket:before {
-  content: '\f08b';
+.icon-solid-camera {
+  @include fa-icon-solid($fa-var-camera);
 }
 
-.icon-solid-camera:before {
-  content: '\f030';
+.icon-solid-caret-down {
+  @include fa-icon-solid($fa-var-caret-down);
 }
 
-.icon-solid-caret-down:before {
-  content: '\f0d7';
+.icon-solid-terminal {
+  @include fa-icon-solid($fa-var-terminal);
 }
 
-.icon-solid-terminal:before {
-  content: '\f120';
+.icon-solid-scroll {
+  @include fa-icon-solid($fa-var-scroll);
 }
 
-.icon-solid-scroll:before {
-  content: '\f70e';
+.icon-solid-copy {
+  @include fa-icon-solid($fa-var-copy);
 }
 
-.icon-solid-copy:before {
-  content: '\f0c5';
+.icon-solid-play {
+  @include fa-icon-solid($fa-var-play);
 }
 
-.icon-solid-play:before {
-  content: '\f04b';
+.icon-solid-circle-stop {
+  @include fa-icon-solid($fa-var-circle-stop);
 }
 
-.icon-solid-circle-stop:before {
-  content: '\f28d';
+.icon-solid-circle-exclamation {
+  @include fa-icon-solid($fa-var-circle-exclamation);
 }
 
-.icon-solid-circle-exclamation:before {
-  content: '\f06a';
+.icon-solid-rotate-right {
+  @include fa-icon-solid($fa-var-rotate-right);
 }
 
-.icon-solid-rotate-right:before {
-  content: '\f2f9';
+.icon-solid-rotate {
+  @include fa-icon-solid($fa-var-rotate);
 }
 
-.icon-solid-rotate:before {
-  content: '\f2f1';
+.icon-solid-link {
+  @include fa-icon-solid($fa-var-link);
 }
 
-.icon-solid-link:before {
-  content: '\f0c1';
+.icon-solid-ellipsis-v {
+  @include fa-icon-solid($fa-var-ellipsis-vertical);
 }
 
-.icon-solid-ellipsis-v:before {
-  content: '\f142';
+.icon-solid-clock {
+  @include fa-icon-solid($fa-var-clock);
 }
 
-.icon-solid-clock:before {
-  content: '\f017';
+.icon-solid-browser {
+  @include fa-icon-solid($fa-var-browser);
 }
 
-.icon-solid-browser:before {
-  content: '\f37e';
+.icon-solid-ellipsis-vertical {
+  @include fa-icon-solid($fa-var-ellipsis-vertical);
 }
 
-.icon-solid-ellipsis-vertical:before {
-  content: '\f142';
+.icon-solid-chart-area {
+  @include fa-icon-solid($fa-var-chart-area);
 }
 
-.icon-solid-chart-area:before {
-  content: '\f1fe';
+.icon-solid-circle-xmark {
+  @include fa-icon-solid($fa-var-circle-xmark);
 }
 
-.icon-solid-circle-xmark:before {
-  content: '\f057';
+.icon-solid-arrow-down {
+  @include fa-icon-solid($fa-var-arrow-down);
 }
 
-.icon-solid-arrow-down:before {
-  content: '\f063';
+.icon-solid-arrow-up {
+  @include fa-icon-solid($fa-var-arrow-up);
 }
 
-.icon-solid-arrow-up:before {
-  content: '\f062';
+.icon-solid-trash {
+  @include fa-icon-solid($fa-var-trash);
 }
 
-.icon-solid-trash:before {
-  content: '\f1f8';
+.icon-solid-code-commit {
+  @include fa-icon-solid($fa-var-code-commit);
 }
 
-.icon-solid-code-commit:before {
-  content: '\f386';
+.icon-solid-pen {
+  @include fa-icon-solid($fa-var-pen);
 }
 
-.icon-solid-pen:before {
-  content: '\f304';
+.icon-solid-grip-lines {
+  @include fa-icon-solid($fa-var-grip-lines);
 }
 
-.icon-solid-grip-lines:before {
-  content: '\f7a4';
+.icon-solid-arrow-left {
+  @include fa-icon-solid($fa-var-arrow-left);
 }
 
-.icon-solid-arrow-left:before {
-  content: '\f060';
+.icon-solid-key {
+  @include fa-icon-solid($fa-var-key);
 }
 
-.icon-solid-key:before {
-  content: '\f084';
+.icon-solid-cloud-arrow-down {
+  @include fa-icon-solid($fa-var-cloud-arrow-down);
 }
 
-.icon-solid-cloud-arrow-down:before {
-  content: '\f0ed';
+.icon-solid-arrow-down-to-line {
+  @include fa-icon-solid($fa-var-arrow-down-to-line);
 }
 
-.icon-solid-arrow-down-to-line:before {
-  content: '\f33d';
+.icon-solid-arrow-up-to-line {
+  @include fa-icon-solid($fa-var-arrow-up-to-line);
 }
 
-.icon-solid-arrow-up-to-line:before {
-  content: '\f341';
+.icon-solid-triangle-exclamation {
+  @include fa-icon-solid($fa-var-triangle-exclamation);
 }
 
-.icon-solid-triangle-exclamation:before {
-  content: '\f071';
+.icon-solid-eye {
+  @include fa-icon-solid($fa-var-eye);
 }
 
-.icon-solid-eye:before {
-  content: '\f06e';
+.icon-solid-eye-slash {
+  @include fa-icon-solid($fa-var-eye-slash);
 }
 
-.icon-solid-eye-slash:before {
-  content: '\f070';
+.icon-solid-user-secret {
+  @include fa-icon-solid($fa-var-user-secret);
 }
 
-.icon-solid-user-secret:before {
-  content: '\f21b';
+.icon-solid-arrow-circle-right {
+  @include fa-icon-solid($fa-var-circle-arrow-right);
 }
 
-.icon-solid-arrow-circle-right:before {
-  content: '\f0a9';
+.icon-solid-lightbulb {
+  @include fa-icon-solid($fa-var-lightbulb);
 }
 
-.icon-solid-lightbulb:before {
-  content: '\f0eb';
+.icon-solid-skull {
+  @include fa-icon-solid($fa-var-skull);
 }
 
-.icon-solid-skull:before {
-  content: '\f54c';
+.icon-solid-gears {
+  @include fa-icon-solid($fa-var-gears);
 }
 
-.icon-solid-gears:before {
-  content: '\f085';
+.icon-solid-cart-flatbed {
+  @include fa-icon-solid($fa-var-cart-flatbed);
 }
 
-.icon-solid-cart-flatbed:before {
-  content: '\f474';
+.icon-solid-plug {
+  @include fa-icon-solid($fa-var-plug);
 }
 
-.icon-solid-plug:before {
-  content: '\f1e6';
+.icon-solid-earth-americas {
+  @include fa-icon-solid($fa-var-earth-americas);
 }
 
-.icon-solid-earth-americas:before {
-  content: '\f57d';
+.icon-solid-hard-drive {
+  @include fa-icon-solid($fa-var-hard-drive);
 }
 
-.icon-solid-hard-drive:before {
-  content: '\f0a0';
+.icon-solid-chart-bullet {
+  @include fa-icon-solid($fa-var-chart-bullet);
 }
 
-.icon-solid-chart-bullet:before {
-  content: '\e0e1';
+.icon-solid-cloud-arrow-up {
+  @include fa-icon-solid($fa-var-cloud-arrow-up);
 }
 
-.icon-solid-cloud-arrow-up:before {
-  content: '\f0ee';
+.icon-solid-cloud-arrow-down {
+  @include fa-icon-solid($fa-var-cloud-arrow-down);
 }
 
-.icon-solid-cloud-arrow-down:before {
-  content: '\f0ed';
+.icon-solid-pen-line {
+  @include fa-icon-solid($fa-var-pen-line);
 }
 
-.icon-solid-pen-line:before {
-  content: '\e212';
+.icon-solid-pen-swirl {
+  @include fa-icon-solid($fa-var-pen-swirl);
 }
 
-.icon-solid-pen-swirl:before {
-  content: '\e214';
+.icon-solid-file-arrow-down {
+  @include fa-icon-solid($fa-var-file-arrow-down);
 }
 
-.icon-solid-file-arrow-down:before {
-  content: '\f56d';
+.icon-solid-file-arrow-up {
+  @include fa-icon-solid($fa-var-file-arrow-up);
 }
 
-.icon-solid-file-arrow-up:before {
-  content: 'f574';
+.icon-solid-people {
+  @include fa-icon-solid($fa-var-people);
 }
 
-.icon-solid-file-arrow-up:before {
-  content: '\f574';
+.icon-solid-road {
+  @include fa-icon-solid($fa-var-road);
 }
 
-.icon-solid-file-arrow-up:before {
-  content: '\f574';
+.icon-solid-code {
+  @include fa-icon-solid($fa-var-code);
 }
 
-.icon-solid-file-arrow-up:before {
-  content: '\f574';
+.icon-solid-credit-card {
+  @include fa-icon-solid($fa-var-credit-card);
 }
 
-.icon-solid-xmark:before {
-  content: '\f00d';
+.icon-solid-user-group {
+  @include fa-icon-solid($fa-var-user-group);
 }
 
-.icon-solid-people:before {
-  content: '\e216';
+.icon-solid-code-branch {
+  @include fa-icon-solid($fa-var-code-branch);
 }
 
-.icon-solid-road:before {
-  content: '\f018';
+.icon-solid-database {
+  @include fa-icon-solid($fa-var-database);
 }
 
-.icon-solid-code:before {
-  content: '\f121';
+.icon-solid-box {
+  @include fa-icon-solid($fa-var-box);
 }
 
-.icon-solid-credit-card:before {
-  content: '\f09d';
+.icon-solid-user {
+  @include fa-icon-solid($fa-var-user);
 }
 
-.icon-solid-user-group:before {
-  content: '\f500';
+.icon-solid-user-crown {
+  @include fa-icon-solid($fa-var-user-crown);
 }
 
-.icon-solid-code-branch:before {
-  content: '\f126';
+.icon-solid-ban {
+  @include fa-icon-solid($fa-var-ban);
 }
 
-.icon-solid-database:before {
-  content: '\f1c0';
+.icon-solid-right-left {
+  @include fa-icon-solid($fa-var-right-left);
 }
 
-.icon-solid-box:before {
-  content: '\f466';
+.icon-solid-wallet {
+  @include fa-icon-solid($fa-var-wallet);
 }
 
-.icon-solid-user:before {
-  content: '\f007';
+.icon-solid-paper-plane {
+  @include fa-icon-solid($fa-var-paper-plane);
 }
 
-.icon-solid-user-crown:before {
-  content: '\f6a4';
+.icon-solid-square-plus {
+  @include fa-icon-solid($fa-var-square-plus);
 }
 
-.icon-solid-ban:before {
-  content: '\f05e';
+.icon-solid-square-minus {
+  @include fa-icon-solid($fa-var-square-minus);
 }
 
-.icon-solid-right-left:before {
-  content: '\f362';
+.icon-solid-pause {
+  @include fa-icon-solid($fa-var-pause);
 }
 
-.icon-solid-wallet:before {
-  content: '\f555';
+.icon-solid-filter {
+  @include fa-icon-solid($fa-var-filter);
 }
 
-.icon-solid-paper-plane:before {
-  content: '\f1d8';
+.icon-solid-cloud-word {
+  @include fa-icon-solid($fa-var-cloud-word);
 }
 
-.icon-solid-square-plus:before {
-  content: '\f0fe';
+.icon-solid-puzzle-piece {
+  @include fa-icon-solid($fa-var-puzzle-piece);
 }
 
-.icon-solid-square-minus:before {
-  content: '\f146';
+.icon-solid-file-lock {
+  @include fa-icon-solid($fa-var-file-lock);
 }
 
-.icon-solid-pause:before {
-  content: '\f04c';
+.icon-solid-file-lines {
+  @include fa-icon-solid($fa-var-file-lines);
 }
 
-.icon-solid-filter:before {
-  content: '\f0b0';
+.icon-solid-feather-pointed {
+  @include fa-icon-solid($fa-var-feather-pointed);
 }
 
-.icon-solid-cloud-word:before {
-  content: '\e138';
+.icon-solid-ellipsis {
+  @include fa-icon-solid($fa-var-ellipsis);
 }
 
-.icon-solid-puzzle-piece:before {
-  content: '\f12e';
+.icon-solid-arrow-down-1-9 {
+  @include fa-icon-solid($fa-var-arrow-down-1-9);
 }
 
-.icon-solid-file-lock:before {
-  content: '\e3a6';
+.icon-solid-download {
+  @include fa-icon-solid($fa-var-download);
 }
 
-.icon-solid-file-lines:before {
-  content: '\f15c';
+.icon-solid-webhook {
+  @include fa-icon-solid($fa-var-webhook);
 }
 
-.icon-solid-feather-pointed:before {
-  content: '\f56b';
+.icon-solid-tower-broadcast {
+  @include fa-icon-solid($fa-var-tower-broadcast);
 }
 
-.icon-solid-ellipsis:before {
-  content: '\f141';
+.icon-solid-cloud-check {
+  @include fa-icon-solid($fa-var-cloud-check);
 }
 
-.icon-solid-arrow-down-1-9:before {
-  content: '\f162';
+.icon-solid-wrench {
+  @include fa-icon-solid($fa-var-wrench);
 }
 
-.icon-solid-download:before {
-  content: '\f019';
+.icon-solid-hammer {
+  @include fa-icon-solid($fa-var-hammer);
 }
 
-.icon-solid-webhook:before {
-  content: '\e5d5';
+.icon-solid-eraser {
+  @include fa-icon-solid($fa-var-eraser);
 }
 
-.icon-solid-tower-broadcast:before {
-  content: '\f519';
+.icon-solid-chevron-left {
+  @include fa-icon-solid($fa-var-chevron-left);
 }
 
-.icon-solid-cloud-check:before {
-  content: '\e35c';
+.icon-solid-chevron-right {
+  @include fa-icon-solid($fa-var-chevron-right);
 }
 
-.icon-solid-wrench:before {
-  content: '\f0ad';
+.icon-solid-chevron-down {
+  @include fa-icon-solid($fa-var-chevron-down);
 }
 
-.icon-solid-hammer:before {
-  content: '\f6e3';
+.icon-solid-chevron-up {
+  @include fa-icon-solid($fa-var-chevron-up);
 }
 
-.icon-solid-eraser:before {
-  content: '\f12d';
+.icon-solid-chevrons-right {
+  @include fa-icon-solid($fa-var-chevrons-right);
 }
 
-.icon-solid-chevron-left:before {
-  content: '\f053';
+.icon-regular-clock {
+  @include fa-icon-regular($fa-var-clock);
 }
 
-.icon-solid-chevron-right:before {
-  content: '\f054';
+.icon-solid-shield-check {
+  @include fa-icon-solid($fa-var-shield-check);
 }
 
-.icon-solid-chevron-down:before {
-  content: '\f078';
+.icon-solid-file-export {
+  @include fa-icon-solid($fa-var-file-export);
 }
 
-.icon-solid-chevron-up:before {
-  content: '\f077';
+.icon-solid-house {
+  @include fa-icon-solid($fa-var-house);
 }
 
-.icon-solid-chevrons-right:before {
-  content: '\f324';
-}
-
-.icon-regular-clock:before {
-  content: '\f017';
-}
-
-.icon-solid-shield-check:before {
-  content: '\f2f7';
-}
-
-.icon-solid-file-export:before {
-  content: '\f56e';
-}
-
-.icon-solid-house:before {
-  content: '\f015';
-}
-
-.icon-solid-lock:before {
-  content: '\f023';
+.icon-solid-lock {
+  @include fa-icon-solid($fa-var-lock);
 }
