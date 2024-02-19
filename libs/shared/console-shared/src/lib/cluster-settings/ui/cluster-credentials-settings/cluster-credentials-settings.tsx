@@ -42,7 +42,8 @@ export function ClusterCredentialsSettings(props: ClusterCredentialsSettingsProp
               error={error?.message}
               isSearchable
               menuListButton={{
-                label: 'New credentials',
+                title: 'Select credential',
+                label: 'New credential',
                 icon: <IconFa name={IconAwesomeEnum.CIRCLE_PLUS} className="text-brand-500" />,
                 onClick: () => openCredentialsModal(),
               }}

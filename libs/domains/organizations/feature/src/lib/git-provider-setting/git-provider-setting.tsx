@@ -1,8 +1,9 @@
 import { type GitAuthProvider, type GitTokenResponse } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
-import { Icon, InputSelect } from '@qovery/shared/ui'
+import { Icon, InputSelect, useModal } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
+import { GitTokenCreateEditModal } from '../git-token-create-edit-modal/git-token-create-edit-modal'
 import { useAuthProviders } from '../hooks/use-auth-providers/use-auth-providers'
 import { useGitTokens } from '../hooks/use-git-tokens/use-git-tokens'
 
@@ -29,6 +30,7 @@ export const mergeProviders = (authProviders: GitAuthProvider[] = [], gitTokens:
 export function GitProviderSetting({ disabled }: GitProviderSettingProps) {
   const { control, watch, setValue } = useFormContext()
   const { organizationId = '' } = useParams()
+  const { openModal, closeModal } = useModal()
 
   const { data: authProviders = [] } = useAuthProviders({ organizationId, enabled: !disabled })
   const { data: gitTokens = [] } = useGitTokens({ organizationId, enabled: !disabled })
@@ -64,9 +66,19 @@ export function GitProviderSetting({ disabled }: GitProviderSettingProps) {
             setValue('repository', undefined)
             setValue('branch', undefined)
           }}
+          menuListButton={{
+            title: 'Select repository',
+            label: 'New git access',
+            onClick: () => {
+              openModal({
+                content: <GitTokenCreateEditModal organizationId={organizationId} onClose={closeModal} />,
+              })
+            },
+          }}
           value={field.value}
           error={error?.message}
           disabled={disabled}
+          isSearchable
         />
       )}
     />

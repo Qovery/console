@@ -1,10 +1,13 @@
 import { type HelmRepositoryResponse } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
-import { useDeleteHelmRepository, useHelmRepositories } from '@qovery/domains/organizations/feature'
+import {
+  HelmRepositoryCreateEditModal,
+  useDeleteHelmRepository,
+  useHelmRepositories,
+} from '@qovery/domains/organizations/feature'
 import { useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { PageOrganizationHelmRepositories } from '../../ui/page-organization-helm-repositories/page-organization-helm-repositories'
-import { CrudModalFeature } from './crud-modal-feature/crud-modal-feature'
 
 export function PageOrganizationHelmRepositoriesFeature() {
   const { organizationId = '' } = useParams()
@@ -24,11 +27,17 @@ export function PageOrganizationHelmRepositoriesFeature() {
       helmRepositories={helmRepositories}
       isFetched={isFetchedHelmRepositories}
       onAddRepository={() => {
-        openModal({ content: <CrudModalFeature organizationId={organizationId} onClose={closeModal} /> })
+        openModal({ content: <HelmRepositoryCreateEditModal organizationId={organizationId} onClose={closeModal} /> })
       }}
       onEdit={(repository: HelmRepositoryResponse) => {
         openModal({
-          content: <CrudModalFeature organizationId={organizationId} onClose={closeModal} repository={repository} />,
+          content: (
+            <HelmRepositoryCreateEditModal
+              organizationId={organizationId}
+              onClose={closeModal}
+              repository={repository}
+            />
+          ),
         })
       }}
       onDelete={(repository: HelmRepositoryResponse) => {

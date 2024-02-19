@@ -15,7 +15,6 @@ import { type Value } from '@qovery/shared/interfaces'
 import IconFa from '../../icon-fa/icon-fa'
 import Icon from '../../icon/icon'
 import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
-import Tooltip from '../../tooltip/tooltip'
 
 export interface InputSelectProps {
   className?: string
@@ -34,6 +33,7 @@ export interface InputSelectProps {
     label: string
     onClick: () => void
     icon?: ReactNode
+    title?: string
   }
   isFilter?: boolean
   autoFocus?: boolean
@@ -110,21 +110,23 @@ export function InputSelect({
   const MenuList = (props: MenuListProps<Value, true, GroupBase<Value>>) => (
     <div role="listbox">
       <components.MenuList {...props}>
-        {props.children}
         {menuListButton && (
-          <button
-            data-testid="input-menu-list-button"
-            type="button"
-            tabIndex={-1}
-            className="input-select__button w-full mt-4 relative before:content-[''] before:w-full before:h-[1px] before:block before:bg-neutral-150 before:absolute before:-top-2 before:left-0"
-            onClick={menuListButton.onClick}
-          >
-            <div className="w-4 h-full flex items-center justify-center">{menuListButton.icon}</div>
-            <Tooltip content={menuListButton.label}>
-              <label className="ml-2 truncate">{menuListButton.label}</label>
-            </Tooltip>
-          </button>
+          <div className={`flex items-start h-9 p-1 ${menuListButton.title ? 'justify-between' : 'justify-end'}`}>
+            {menuListButton.title && (
+              <span className="text-neutral-350 font-medium text-sm">{menuListButton.title}</span>
+            )}
+            <button
+              type="button"
+              data-testid="input-menu-list-button"
+              className="text-brand-500 hover:text-brand-600 text-sm transition duration-100 font-medium inline-flex items-center gap-1"
+              onClick={menuListButton.onClick}
+            >
+              {menuListButton.label}
+              <Icon name={IconAwesomeEnum.CIRCLE_PLUS} className="text-xs leading-5" />
+            </button>
+          </div>
         )}
+        {props.children}
       </components.MenuList>
     </div>
   )
