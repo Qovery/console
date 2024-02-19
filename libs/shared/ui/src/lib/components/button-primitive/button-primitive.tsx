@@ -18,7 +18,7 @@ export const buttonVariants = cva(['inline-flex', 'items-center', 'shrink-0', 'f
       xs: ['text-xs', 'px-1', 'py-0.5'],
       sm: ['text-xs', 'h-7', 'px-2'],
       md: ['text-xs', 'h-8', 'px-3'],
-      lg: ['text-sm', 'h-10', 'px-4'],
+      lg: ['text-sm', 'h-11', 'px-5'],
     },
     radius: {
       none: [],

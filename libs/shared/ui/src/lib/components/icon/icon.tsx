@@ -24,12 +24,14 @@ import GcpArtifactRegistryIcon from './icons/gcp-artifact-registry'
 import GCPGrayIcon from './icons/gcp-gray'
 import GenericRegistryIcon from './icons/generic-registry'
 import GitIcon from './icons/git'
+import GoogleIcon from './icons/google'
 import HelmOfficialIcon from './icons/helm-official'
 import HelmServiceIcon from './icons/helm-service'
 import InformationIcon from './icons/information'
 import KubernetesIcon from './icons/kubernetes'
 import LifecycleJobIcon from './icons/lifecycle-job'
 import LifecycleJobStrokeIcon from './icons/lifecycle-job-stroke-icon'
+import MicrosoftIcon from './icons/microsoft'
 import MongoDBIcon from './icons/mongodb'
 import MysqlIcon from './icons/mysql'
 import PostgresqlIcon from './icons/postgresql'
@@ -66,6 +68,8 @@ export function Icon(props: IconProps) {
       return <ChildrenArrow {...formattedProps} />
     case IconEnum.GITLAB:
       return <GitlabIcon {...formattedProps} />
+    case IconEnum.GOOGLE:
+      return <GoogleIcon {...formattedProps} />
     case IconEnum.BITBUCKET:
       return <BitbucketIcon {...formattedProps} />
     case IconEnum.ENVIRONMENT:
@@ -136,6 +140,8 @@ export function Icon(props: IconProps) {
       return <HelmOfficialIcon {...formattedProps} />
     case IconEnum.KUBERNETES:
       return <KubernetesIcon {...formattedProps} />
+    case IconEnum.MICROSOFT:
+      return <MicrosoftIcon {...formattedProps} />
     default:
       return <IconFa {...formattedProps} />
   }

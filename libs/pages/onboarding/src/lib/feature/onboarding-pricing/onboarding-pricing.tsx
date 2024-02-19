@@ -88,7 +88,7 @@ export function OnboardingPricing() {
       })
 
       // refresh token needed after created an organization
-      await getAccessTokenSilently({ ignoreCache: true })
+      await getAccessTokenSilently({ cacheMode: 'off' })
 
       const project = await createProject({
         organizationId: organization.id,
