@@ -5,10 +5,11 @@ import { IconEnum } from '@qovery/shared/enums'
 import { Button, Icon } from '@qovery/shared/ui'
 
 export interface ILoginProps {
-  onClickAuthLogin: (provider?: string) => void
+  onClickAuthLogin: (provider: string) => void
+  loading?: { provider: string; active: boolean }
 }
 
-export function Login({ onClickAuthLogin }: ILoginProps) {
+export function Login({ onClickAuthLogin, loading }: ILoginProps) {
   const { displayInvitation, checkTokenInStorage } = useInviteMember()
 
   useEffect(() => {
@@ -43,8 +44,13 @@ export function Login({ onClickAuthLogin }: ILoginProps) {
               size="lg"
               className="w-full justify-center"
               onClick={() => onClickAuthLogin(AuthEnum.GITHUB)}
+              loading={loading?.provider === AuthEnum.GITHUB ? loading.active : false}
             >
-              <Icon width="20" className="mr-3" name={IconEnum.GITHUB} />
+              <Icon
+                width="20"
+                className={`mr-3 ${loading?.provider === AuthEnum.GITHUB ? 'opacity-0' : ''}`}
+                name={IconEnum.GITHUB}
+              />
               Continue with Github
             </Button>
             <Button
@@ -53,8 +59,13 @@ export function Login({ onClickAuthLogin }: ILoginProps) {
               size="lg"
               className="w-full justify-center"
               onClick={() => onClickAuthLogin(AuthEnum.GITLAB)}
+              loading={loading?.provider === AuthEnum.GITLAB ? loading.active : false}
             >
-              <Icon width="20" className="mr-3" name={IconEnum.GITLAB} />
+              <Icon
+                width="20"
+                className={`mr-3 ${loading?.provider === AuthEnum.GITLAB ? 'opacity-0' : ''}`}
+                name={IconEnum.GITLAB}
+              />
               Continue with Gitlab
             </Button>
             <Button
@@ -63,8 +74,13 @@ export function Login({ onClickAuthLogin }: ILoginProps) {
               size="lg"
               className="w-full justify-center"
               onClick={() => onClickAuthLogin(AuthEnum.BITBUCKET)}
+              loading={loading?.provider === AuthEnum.BITBUCKET ? loading.active : false}
             >
-              <Icon width="20" className="mr-3" name={IconEnum.BITBUCKET} />
+              <Icon
+                width="20"
+                className={`mr-3 ${loading?.provider === AuthEnum.BITBUCKET ? 'opacity-0' : ''}`}
+                name={IconEnum.BITBUCKET}
+              />
               Continue with Bitbucket
             </Button>
             <Button
@@ -73,8 +89,13 @@ export function Login({ onClickAuthLogin }: ILoginProps) {
               size="lg"
               className="w-full justify-center"
               onClick={() => onClickAuthLogin(AuthEnum.GOOGLE_SSO)}
+              loading={loading?.provider === AuthEnum.GOOGLE_SSO ? loading.active : false}
             >
-              <Icon width="20" className="mr-3" name={IconEnum.GOOGLE} />
+              <Icon
+                width="20"
+                className={`mr-3 ${loading?.provider === AuthEnum.GOOGLE_SSO ? 'opacity-0' : ''}`}
+                name={IconEnum.GOOGLE}
+              />
               Continue with Google
             </Button>
             <Button
@@ -83,8 +104,13 @@ export function Login({ onClickAuthLogin }: ILoginProps) {
               size="lg"
               className="w-full justify-center"
               onClick={() => onClickAuthLogin(AuthEnum.MICROSOFT)}
+              loading={loading?.provider === AuthEnum.MICROSOFT ? loading.active : false}
             >
-              <Icon width="20" className="mr-3" name={IconEnum.MICROSOFT} />
+              <Icon
+                width="20"
+                className={`mr-3 ${loading?.provider === AuthEnum.MICROSOFT ? 'opacity-0' : ''}`}
+                name={IconEnum.MICROSOFT}
+              />
               Continue with Microsoft
             </Button>
           </div>
