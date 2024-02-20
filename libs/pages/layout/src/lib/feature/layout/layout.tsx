@@ -1,3 +1,4 @@
+import { useAuth0 } from '@auth0/auth0-react'
 import { type PropsWithChildren, memo, useEffect } from 'react'
 import { redirect, useParams } from 'react-router-dom'
 import { useClusters } from '@qovery/domains/clusters/feature'
@@ -6,7 +7,7 @@ import { useOrganization, useOrganizations } from '@qovery/domains/organizations
 import { ORGANIZATION_URL } from '@qovery/shared/routes'
 import { StatusWebSocketListener } from '@qovery/shared/util-web-sockets'
 import LayoutPage from '../../ui/layout-page/layout-page'
-import { setCurrentOrganizationIdOnStorage, setCurrentProjectIdOnStorage } from '../../utils/utils'
+import { setCurrentOrganizationIdOnStorage, setCurrentProjectIdOnStorage, setCurrentProvider } from '../../utils/utils'
 
 export interface LayoutProps {
   topBar?: boolean
@@ -18,6 +19,7 @@ const StatusWebSocketListenerMemo = memo(StatusWebSocketListener)
 export function Layout(props: PropsWithChildren<LayoutProps>) {
   const { children, topBar } = props
   const { organizationId = '', projectId = '', environmentId = '', versionId } = useParams()
+  const { user } = useAuth0()
 
   const { data: clusters = [] } = useClusters({ organizationId })
   const { data: organizations = [] } = useOrganizations()
@@ -47,7 +49,8 @@ export function Layout(props: PropsWithChildren<LayoutProps>) {
   useEffect(() => {
     setCurrentOrganizationIdOnStorage(organizationId)
     setCurrentProjectIdOnStorage(projectId)
-  }, [organizationId, projectId])
+    setCurrentProvider(user?.sub ?? '')
+  }, [user, organizationId, projectId])
 
   return (
     <LayoutPage topBar={topBar} clusters={clusters} defaultOrganizationId={organizations[0]?.id}>

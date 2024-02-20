@@ -5,3 +5,7 @@ export function setCurrentOrganizationIdOnStorage(organizationId: string) {
 export function setCurrentProjectIdOnStorage(projectId: string) {
   localStorage.setItem('currentProjectId', projectId)
 }
+
+export function setCurrentProvider(provider: string) {
+  localStorage.setItem('currentProvider', provider)
+}

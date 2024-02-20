@@ -16,6 +16,7 @@ import {
 import {
   getCurrentOrganizationIdFromStorage,
   getCurrentProjectIdFromStorage,
+  getCurrentProvider,
   getRedirectLoginUriFromStorage,
 } from './utils/utils'
 
@@ -55,18 +56,23 @@ export function useRedirectIfLogged() {
       const currentOrganization = getCurrentOrganizationIdFromStorage()
       const currentProject = getCurrentProjectIdFromStorage()
       const redirectLoginUri = getRedirectLoginUriFromStorage()
+      const currentProvider = getCurrentProvider()
 
-      if (redirectLoginUri) {
-        navigate(redirectLoginUri)
-        localStorage.removeItem('redirectLoginUri')
-        return
+      if (currentProvider === user?.sub) {
+        if (redirectLoginUri) {
+          navigate(redirectLoginUri)
+          localStorage.removeItem('redirectLoginUri')
+          return
+        }
+
+        if (currentOrganization && currentProject) {
+          navigate(OVERVIEW_URL(currentOrganization, currentProject))
+          return
+        }
       }
 
-      if (currentOrganization && currentProject) {
-        navigate(OVERVIEW_URL(currentOrganization, currentProject))
-        return
-      }
-
+      localStorage.removeItem('currentOrganizationId')
+      localStorage.removeItem('currentProjectId')
       fetchData()
     }
   }, [
@@ -74,7 +80,7 @@ export function useRedirectIfLogged() {
     isAuthenticated,
     sendDataToGTM,
     refetchUserSignUp,
-    user?.email,
+    user,
     organizations,
     projects,
     isFetchedOrganizations,
