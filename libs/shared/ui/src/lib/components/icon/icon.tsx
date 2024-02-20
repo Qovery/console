@@ -1,4 +1,5 @@
-import { type SVGAttributes } from 'react'
+import { type IconName, type IconStyle } from '@fortawesome/fontawesome-common-types'
+import { type ComponentPropsWithoutRef, type SVGAttributes } from 'react'
 import { IconEnum } from '@qovery/shared/enums'
 import IconFa from '../icon-fa/icon-fa'
 import { type IconAwesomeEnum } from './icon-awesome.enum'
@@ -48,11 +49,21 @@ export interface IconProps extends SVGAttributes<SVGElement> {
   pathColor?: string
 }
 
+interface FontAwesomeIconProps extends Omit<ComponentPropsWithoutRef<'i'>, 'icon'> {
+  iconStyle?: IconStyle
+  iconName: IconName
+}
+
 export interface IconSVGProps extends SVGAttributes<SVGElement> {
   children?: never
 }
 
-export function Icon(props: IconProps) {
+export function Icon(props: IconProps | FontAwesomeIconProps) {
+  if ('iconName' in props) {
+    const { iconStyle = 'solid', iconName, className, ...rest } = props
+    return <i aria-hidden className={`fa-${iconStyle} fa-${iconName} ${className ? className : ''}`} {...rest} />
+  }
+
   const formattedProps = { ...props }
 
   formattedProps.width = formattedProps.width || '1.5rem'

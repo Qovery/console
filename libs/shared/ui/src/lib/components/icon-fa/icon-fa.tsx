@@ -3,6 +3,10 @@ export interface IconFaProps {
   className?: string
 }
 
+/**
+ * @deprecated Use <Icon iconStyle iconName /> instead
+ * cf adr/fontawesome-icons.md
+ */
 export function IconFa(props: IconFaProps) {
   const { name, className = '' } = props
 
