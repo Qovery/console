@@ -3758,7 +3758,7 @@ __metadata:
     css-loader: ^6.8.1
     cypress: ^9.1.0
     date-fns: ^2.29.3
-    date-fns-tz: ^1.3.7
+    date-fns-tz: ^2.0.0
     downloadjs: ^1.4.7
     eslint: ^8.49.0
     eslint-config-prettier: 9.0.0
@@ -3802,7 +3802,7 @@ __metadata:
     react-select: ^5.3.2
     react-select-event: ^5.5.1
     react-syntax-highlighter: ^15.5.0
-    react-use-intercom: ^1.5.2
+    react-use-intercom: ^5.3.0
     react-use-websocket: ^4.2.0
     semantic-release: ^19.0.5
     storybook-tailwind-dark-mode: ^1.0.22
@@ -10659,12 +10659,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"date-fns-tz@npm:^1.3.7":
-  version: 1.3.8
-  resolution: "date-fns-tz@npm:1.3.8"
+"date-fns-tz@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "date-fns-tz@npm:2.0.0"
   peerDependencies:
     date-fns: ">=2.0.0"
-  checksum: dbf17cb88de7c7b71a9f86b815ac62ebdbf725c030e78d2421309456b5001a85284a5b6763f4af0ba660183f12e876c165e725a0723f642edb7846407db03133
+  checksum: a6553603a9d26dd9669326c99a58a2335ac550bc060c74b86a5ad9e1de73c9d4e3e5236f0f552f990e616e4e8dcc2b6a637913a04d2e04396e6a9f8ae83c73da
   languageName: node
   linkType: hard
 
@@ -19388,13 +19388,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-use-intercom@npm:^1.5.2":
-  version: 1.5.2
-  resolution: "react-use-intercom@npm:1.5.2"
+"react-use-intercom@npm:^5.3.0":
+  version: 5.3.0
+  resolution: "react-use-intercom@npm:5.3.0"
   peerDependencies:
     react: ">=16.8.0"
     react-dom: ">=16.8.0"
-  checksum: 86e3e573557230a7002cf6e9b44d683e7ef7549f7de02d38eb389cdcb615fab8f3d15414ca67a6146fdfff90ec6527e6bee660ba647b3fdec96000f0866ed10e
+  checksum: b08e1aa92b93ebeea01aa89f799eaed51d27887026a5983458800e13a7cf20fc267b59b3d12e78eb04335428f3000ceb779c92b4cbd4348cd70811c733d12d8c
   languageName: node
   linkType: hard
 
