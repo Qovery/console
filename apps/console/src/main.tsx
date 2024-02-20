@@ -140,8 +140,9 @@ root.render(
         authorizationParams={{
           redirect_uri: `${window.location.origin}${LOGIN_URL}${LOGIN_AUTH_REDIRECT_URL}`,
           audience: environment.oauth_audience,
-          useRefreshTokens: true,
         }}
+        useRefreshTokensFallback={true}
+        useRefreshTokens={true}
         cacheLocation="localstorage"
         skipRedirectCallback={window.location.pathname !== LOGIN_URL + LOGIN_AUTH_REDIRECT_URL}
       >
