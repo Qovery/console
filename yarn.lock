@@ -3758,7 +3758,7 @@ __metadata:
     css-loader: ^6.8.1
     cypress: ^9.1.0
     date-fns: ^2.29.3
-    date-fns-tz: ^1.3.7
+    date-fns-tz: ^2.0.0
     downloadjs: ^1.4.7
     eslint: ^8.49.0
     eslint-config-prettier: 9.0.0
@@ -10659,12 +10659,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"date-fns-tz@npm:^1.3.7":
-  version: 1.3.8
-  resolution: "date-fns-tz@npm:1.3.8"
+"date-fns-tz@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "date-fns-tz@npm:2.0.0"
   peerDependencies:
     date-fns: ">=2.0.0"
-  checksum: dbf17cb88de7c7b71a9f86b815ac62ebdbf725c030e78d2421309456b5001a85284a5b6763f4af0ba660183f12e876c165e725a0723f642edb7846407db03133
+  checksum: a6553603a9d26dd9669326c99a58a2335ac550bc060c74b86a5ad9e1de73c9d4e3e5236f0f552f990e616e4e8dcc2b6a637913a04d2e04396e6a9f8ae83c73da
   languageName: node
   linkType: hard
 
