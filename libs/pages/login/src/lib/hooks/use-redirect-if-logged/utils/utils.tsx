@@ -9,3 +9,7 @@ export function getCurrentOrganizationIdFromStorage(): string | null {
 export function getCurrentProjectIdFromStorage(): string | null {
   return localStorage.getItem('currentProjectId')
 }
+
+export function getCurrentProvider(): string | null {
+  return localStorage.getItem('currentProvider')
+}

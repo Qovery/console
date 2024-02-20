@@ -16,12 +16,13 @@ import {
 import {
   getCurrentOrganizationIdFromStorage,
   getCurrentProjectIdFromStorage,
+  getCurrentProvider,
   getRedirectLoginUriFromStorage,
 } from './utils/utils'
 
 export function useRedirectIfLogged() {
   const navigate = useNavigate()
-  const { createAuthCookies, user } = useAuth()
+  const { user } = useAuth()
   const { isAuthenticated } = useAuth0()
   const sendDataToGTM = useGTMDispatch()
   const { data: organizations = [], isFetched: isFetchedOrganizations } = useOrganizations({
@@ -32,8 +33,6 @@ export function useRedirectIfLogged() {
 
   useEffect(() => {
     async function fetchData() {
-      await createAuthCookies()
-
       if (!isFetchedOrganizations) {
         return
       }
@@ -57,27 +56,31 @@ export function useRedirectIfLogged() {
       const currentOrganization = getCurrentOrganizationIdFromStorage()
       const currentProject = getCurrentProjectIdFromStorage()
       const redirectLoginUri = getRedirectLoginUriFromStorage()
+      const currentProvider = getCurrentProvider()
 
-      if (redirectLoginUri) {
-        navigate(redirectLoginUri)
-        localStorage.removeItem('redirectLoginUri')
-        return
+      if (currentProvider === user?.sub) {
+        if (redirectLoginUri) {
+          navigate(redirectLoginUri)
+          localStorage.removeItem('redirectLoginUri')
+          return
+        }
+
+        if (currentOrganization && currentProject) {
+          navigate(OVERVIEW_URL(currentOrganization, currentProject))
+          return
+        }
       }
 
-      if (currentOrganization && currentProject) {
-        navigate(OVERVIEW_URL(currentOrganization, currentProject))
-        return
-      }
-
+      localStorage.removeItem('currentOrganizationId')
+      localStorage.removeItem('currentProjectId')
       fetchData()
     }
   }, [
     navigate,
     isAuthenticated,
-    createAuthCookies,
     sendDataToGTM,
     refetchUserSignUp,
-    user?.email,
+    user,
     organizations,
     projects,
     isFetchedOrganizations,

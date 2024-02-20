@@ -70,7 +70,7 @@ export function OnboardingPricing() {
   const { showNewMessages } = useIntercom()
   const { user } = useAuth0()
   const { organization_name, project_name, admin_email } = useContext(ContextOnboarding)
-  const { createAuthCookies, getAccessTokenSilently } = useAuth()
+  const { getAccessTokenSilently } = useAuth()
   const [loading, setLoading] = useState('')
   const { mutateAsync: createOrganization } = useCreateOrganization()
   const { mutateAsync: createProject } = useCreateProject()
@@ -97,7 +97,6 @@ export function OnboardingPricing() {
         },
       })
       if (project) {
-        await createAuthCookies()
         // redirect on the project page
         navigate(ENVIRONMENTS_URL(organization.id, project.id) + ENVIRONMENTS_GENERAL_URL)
       }
