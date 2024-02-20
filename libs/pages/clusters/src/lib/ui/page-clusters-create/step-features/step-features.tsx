@@ -1,6 +1,6 @@
 import { type CloudProviderEnum, type ClusterFeature } from 'qovery-typescript-axios'
 import { type FormEventHandler } from 'react'
-import { useFormContext } from 'react-hook-form'
+import { Controller, useFormContext } from 'react-hook-form'
 import { CardClusterFeature } from '@qovery/shared/console-shared'
 import {
   ButtonLegacy,
@@ -10,6 +10,7 @@ import {
   Heading,
   Icon,
   IconAwesomeEnum,
+  InputSelect,
   LoaderSpinner,
   Section,
 } from '@qovery/shared/ui'
@@ -36,9 +37,9 @@ export function StepFeatures(props: StepFeaturesProps) {
         <div className="mb-10">
           {features && features.length > 0 ? (
             <div>
-              <Callout.Root className="mb-5" color="yellow">
+              <Callout.Root className="mb-4" color="yellow">
                 <Callout.Icon>
-                  <Icon name={IconAwesomeEnum.TRIANGLE_EXCLAMATION} />
+                  <Icon name={IconAwesomeEnum.CIRCLE_EXCLAMATION} />
                 </Callout.Icon>
                 <Callout.Text>
                   <Callout.TextHeading>Choose wisely</Callout.TextHeading>
@@ -47,6 +48,30 @@ export function StepFeatures(props: StepFeaturesProps) {
                   </Callout.TextDescription>
                 </Callout.Text>
               </Callout.Root>
+              <Controller
+                name="vpc_mode"
+                defaultValue="default"
+                control={control}
+                render={({ field }) => (
+                  <InputSelect
+                    className="mb-4"
+                    label="VPC mode"
+                    options={[
+                      {
+                        label: 'Default (managed by Qovery)',
+                        value: 'default',
+                      },
+                      {
+                        label: 'Deploy on my existing VPC',
+                        value: 'existing-vpc',
+                      },
+                    ]}
+                    onChange={field.onChange}
+                    value={field.value}
+                    portal={true}
+                  />
+                )}
+              />
               {features.map((feature) => (
                 <CardClusterFeature
                   key={feature.id}
