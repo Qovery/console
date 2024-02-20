@@ -165,7 +165,7 @@ function MenuOtherActions({ state, environment }: { state: StateEnum; environmen
         <ActionToolbar.Button aria-label="Other actions">
           <Tooltip content="Other actions">
             <div className="flex items-center w-full h-full">
-              <Icon name={IconAwesomeEnum.ELLIPSIS_V} />
+              <Icon iconName="ellipsis-v" iconStyle="solid" />
             </div>
           </Tooltip>
         </ActionToolbar.Button>
