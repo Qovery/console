@@ -41,6 +41,8 @@ describe('UseRedirectIfLogged', () => {
 
   it('should redirect to the stored localStorage last visited URL', () => {
     const mockRedirect = getRedirectLoginUriFromStorage as jest.Mock<string | null>
+    const mockGetCurrentProvider = getCurrentProvider as jest.Mock<string | null>
+    mockGetCurrentProvider.mockImplementation(() => 'github')
     mockRedirect.mockImplementation(() => '/login')
     renderHook(useRedirectIfLogged, { wrapper: Wrapper })
     expect(mockedUsedNavigate).toHaveBeenCalledWith('/login')
