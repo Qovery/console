@@ -21,7 +21,7 @@ import {
 
 export function useRedirectIfLogged() {
   const navigate = useNavigate()
-  const { createAuthCookies, user } = useAuth()
+  const { user } = useAuth()
   const { isAuthenticated } = useAuth0()
   const sendDataToGTM = useGTMDispatch()
   const { data: organizations = [], isFetched: isFetchedOrganizations } = useOrganizations({
@@ -32,8 +32,6 @@ export function useRedirectIfLogged() {
 
   useEffect(() => {
     async function fetchData() {
-      await createAuthCookies()
-
       if (!isFetchedOrganizations) {
         return
       }
@@ -74,7 +72,6 @@ export function useRedirectIfLogged() {
   }, [
     navigate,
     isAuthenticated,
-    createAuthCookies,
     sendDataToGTM,
     refetchUserSignUp,
     user?.email,
