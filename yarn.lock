@@ -3802,7 +3802,7 @@ __metadata:
     react-select: ^5.3.2
     react-select-event: ^5.5.1
     react-syntax-highlighter: ^15.5.0
-    react-use-intercom: ^1.5.2
+    react-use-intercom: ^5.3.0
     react-use-websocket: ^4.2.0
     semantic-release: ^19.0.5
     storybook-tailwind-dark-mode: ^1.0.22
@@ -19388,13 +19388,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-use-intercom@npm:^1.5.2":
-  version: 1.5.2
-  resolution: "react-use-intercom@npm:1.5.2"
+"react-use-intercom@npm:^5.3.0":
+  version: 5.3.0
+  resolution: "react-use-intercom@npm:5.3.0"
   peerDependencies:
     react: ">=16.8.0"
     react-dom: ">=16.8.0"
-  checksum: 86e3e573557230a7002cf6e9b44d683e7ef7549f7de02d38eb389cdcb615fab8f3d15414ca67a6146fdfff90ec6527e6bee660ba647b3fdec96000f0866ed10e
+  checksum: b08e1aa92b93ebeea01aa89f799eaed51d27887026a5983458800e13a7cf20fc267b59b3d12e78eb04335428f3000ceb779c92b4cbd4348cd70811c733d12d8c
   languageName: node
   linkType: hard
 

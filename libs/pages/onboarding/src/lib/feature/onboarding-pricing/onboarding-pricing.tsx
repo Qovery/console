@@ -67,7 +67,7 @@ export function OnboardingPricing() {
   useDocumentTitle('Onboarding Pricing - Qovery')
 
   const navigate = useNavigate()
-  const { showNewMessages } = useIntercom()
+  const { showNewMessage } = useIntercom()
   const { user } = useAuth0()
   const { organization_name, project_name, admin_email } = useContext(ContextOnboarding)
   const { getAccessTokenSilently } = useAuth()
@@ -107,7 +107,7 @@ export function OnboardingPricing() {
     setLoading('')
   }
 
-  const onClickContact = () => showNewMessages()
+  const onClickContact = () => showNewMessage()
 
   return <StepPricing plans={PLANS} onSubmit={onSubmit} loading={loading} onClickContact={onClickContact} />
 }
