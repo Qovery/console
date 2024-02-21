@@ -21,9 +21,14 @@ export function PageSettingsFeatures(props: PageSettingsFeaturesProps) {
               <LoaderSpinner className="w-4" />
             </div>
           )}
-          {features?.map((feature: ClusterFeature) => (
-            <CardClusterFeature key={feature.id} feature={feature} cloudProvider={cloudProvider} disabled />
-          ))}
+          {
+            // TODO: hide existing VPC feature for now
+            features
+              ?.filter(({ id }) => id !== 'EXISTING_VPC')
+              .map((feature: ClusterFeature) => (
+                <CardClusterFeature key={feature.id} feature={feature} cloudProvider={cloudProvider} disabled />
+              ))
+          }
         </BlockContent>
       </Section>
       <HelpSection
