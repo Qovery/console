@@ -1,4 +1,4 @@
-import { type CloudProviderEnum } from 'qovery-typescript-axios'
+import { type CloudProviderEnum, type ClusterFeatureAwsExistingVpc } from 'qovery-typescript-axios'
 
 export interface ClusterGeneralData {
   name: string
@@ -28,11 +28,14 @@ export interface ClusterRemoteData {
   ssh_key: string
 }
 
-export interface ClusterFeaturesData {
+export type ClusterFeaturesData = {
+  vpc_mode?: 'DEFAULT' | 'EXISTING-VPC'
+} & {
   [id: string]: {
     id: string
     title: string
     value: boolean
+    awsExistingVpc?: ClusterFeatureAwsExistingVpc
     extendedValue?: string
   }
 }

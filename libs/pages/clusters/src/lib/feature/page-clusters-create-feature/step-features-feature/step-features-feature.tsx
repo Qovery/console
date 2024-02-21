@@ -67,13 +67,15 @@ export function StepFeaturesFeature() {
   })
 
   const onSubmit = methods.handleSubmit((data) => {
+    console.log(data)
     if (data && features) {
-      let cloneData = {}
+      if (data['vpc_mode'] === 'DEFAULT') {
+        let cloneData = {}
 
-      for (let i = 0; i < Object.keys(data).length; i++) {
-        const id = Object.keys(data)[i]
-        const featureData = features.find((f) => f.id === id)
-        const currentFeature = data[id]
+        for (let i = 0; i < Object.keys(data).length; i++) {
+          const id = Object.keys(data)[i]
+          const featureData = features.find((f) => f.id === id)
+          const currentFeature = data[id]
 
         cloneData = {
           ...cloneData,
@@ -83,12 +85,13 @@ export function StepFeaturesFeature() {
             extendedValue: currentFeature?.extendedValue || false,
           },
         }
+
+        setFeaturesData(cloneData)
+
+        const pathCreate = `${CLUSTERS_URL(organizationId)}${CLUSTERS_CREATION_URL}`
+        navigate(pathCreate + CLUSTERS_CREATION_SUMMARY_URL)
+      } else {
       }
-
-      setFeaturesData(cloneData)
-
-      const pathCreate = `${CLUSTERS_URL(organizationId)}${CLUSTERS_CREATION_URL}`
-      navigate(pathCreate + CLUSTERS_CREATION_SUMMARY_URL)
     }
   })
 

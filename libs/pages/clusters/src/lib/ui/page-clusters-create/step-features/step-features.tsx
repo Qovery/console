@@ -62,11 +62,11 @@ export function StepFeatures(props: StepFeaturesProps) {
                 options={[
                   {
                     label: 'Default (managed by Qovery)',
-                    value: 'default',
+                    value: 'DEFAULT',
                   },
                   {
                     label: 'Deploy on my existing VPC',
-                    value: 'existing-vpc',
+                    value: 'EXISTING-VPC',
                   },
                 ]}
                 onChange={field.onChange}
@@ -124,7 +124,7 @@ export function StepFeatures(props: StepFeaturesProps) {
               <h4 className="text-neutral-400 text-sm font-medium mb-1">Deploy on an existing VPC</h4>
               <p className="text-neutral-350 text-sm mb-4">In your VPC settings, you must enable the DNS hostnames.</p>
               <Controller
-                name="vpc_id"
+                name="aws_vpc_eks_id"
                 control={control}
                 render={({ field }) => (
                   <>
@@ -140,25 +140,25 @@ export function StepFeatures(props: StepFeaturesProps) {
                 )}
               />
               <h4 className="text-neutral-400 text-sm font-medium mb-3">EKS subnet IDs</h4>
-              <ButtonPopoverSubnets name="eks">EKS</ButtonPopoverSubnets>
+              <ButtonPopoverSubnets name="eks_subnets_zone">EKS</ButtonPopoverSubnets>
               <hr className="my-3" />
               <h4 className="text-neutral-400 text-sm font-medium mb-3">
                 Subnets IDs for managed databases (optional)
               </h4>
               <div className="flex gap-3">
-                <ButtonPopoverSubnets name="mongodb">
+                <ButtonPopoverSubnets name="mongodb_subnets_zone">
                   <Icon name={IconEnum.MONGODB} width="16" className="mr-2" />
                   MongoDB
                 </ButtonPopoverSubnets>
-                <ButtonPopoverSubnets name="mysql">
+                <ButtonPopoverSubnets name="mysql_subnets_zone">
                   <Icon name={IconEnum.MYSQL} width="16" className="mr-2" />
                   MySQL
                 </ButtonPopoverSubnets>
-                <ButtonPopoverSubnets name="mysql">
+                <ButtonPopoverSubnets name="postgresql_subnets_zone">
                   <Icon name={IconEnum.POSTGRESQL} width="16" className="mr-2" />
                   PostgreSQL
                 </ButtonPopoverSubnets>
-                <ButtonPopoverSubnets name="mysql">
+                <ButtonPopoverSubnets name="redis_subnets_zone">
                   <Icon name={IconEnum.REDIS} width="16" className="mr-2" />
                   Redis
                 </ButtonPopoverSubnets>
