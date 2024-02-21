@@ -1,5 +1,5 @@
 import { type CloudProviderEnum, type ClusterFeature } from 'qovery-typescript-axios'
-import { useEffect, useState } from 'react'
+import { type ReactNode, useEffect, useState } from 'react'
 import {
   type Control,
   Controller,
@@ -16,11 +16,18 @@ export interface CardClusterFeatureProps {
   getValues?: UseFormGetValues<FieldValues>
   setValue?: UseFormSetValue<FieldValues>
   control?: Control<FieldValues>
+  callout?: ReactNode
 }
 
-export function CardClusterFeature(props: CardClusterFeatureProps) {
-  const { feature, cloudProvider, disabled = false, getValues, setValue, control } = props
-
+export function CardClusterFeature({
+  feature,
+  cloudProvider,
+  disabled = false,
+  getValues,
+  setValue,
+  control,
+  callout,
+}: CardClusterFeatureProps) {
   const [currentDisabled, setCurrentDisabled] = useState<boolean>(disabled)
 
   const getValue = (value: boolean | string) => {
@@ -39,9 +46,9 @@ export function CardClusterFeature(props: CardClusterFeatureProps) {
   return (
     <div
       data-testid="feature"
-      className={`flex justify-between px-4 py-3 ${
+      className={`flex flex-col justify-between px-4 py-3 ${
         control ? 'rounded border bg-neutral-100' : 'border-b last:border-0'
-      } border-neutral-250 mb-3 last:mb-0`}
+      } border-neutral-250 mb-4 last:mb-0`}
       onClick={() => {
         if (feature.id && !disabled && getValues && setValue && control) {
           const active = getValues()[feature.id].value
@@ -121,6 +128,7 @@ export function CardClusterFeature(props: CardClusterFeatureProps) {
           </ExternalLink>
         </div>
       </div>
+      {callout && callout}
     </div>
   )
 }

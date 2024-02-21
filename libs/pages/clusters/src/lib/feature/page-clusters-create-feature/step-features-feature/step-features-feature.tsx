@@ -79,8 +79,8 @@ export function StepFeaturesFeature() {
           ...cloneData,
           [id]: {
             title: featureData?.title,
-            value: currentFeature.value || false,
-            extendedValue: currentFeature.extendedValue || false,
+            value: currentFeature?.value || false,
+            extendedValue: currentFeature?.extendedValue || false,
           },
         }
       }
