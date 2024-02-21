@@ -178,7 +178,7 @@ exports[`PodsMetrics should match snapshot with data 1`] = `
           >
             <i
               aria-hidden="true"
-              class="fa-solid fa-circle-question text-sm text-neutral-300"
+              class="fa-regular fa-circle-question text-sm text-neutral-300"
             />
           </td>
         </tr>

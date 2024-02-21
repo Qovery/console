@@ -43,7 +43,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
               How it works 
               <i
                 aria-hidden="true"
-                class="fa-solid fa-circle-question text-xs"
+                class="fa-regular fa-circle-question text-xs"
               />
             </span>
             <div
@@ -546,7 +546,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a yaml 1`] = `
               How it works 
               <i
                 aria-hidden="true"
-                class="fa-solid fa-circle-question text-xs"
+                class="fa-regular fa-circle-question text-xs"
               />
             </span>
             <div

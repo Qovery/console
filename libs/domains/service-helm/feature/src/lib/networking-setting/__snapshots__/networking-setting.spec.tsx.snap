@@ -31,7 +31,7 @@ exports[`NetworkingSetting should match snapshot in empty state 1`] = `
             How it works 
             <i
               aria-hidden="true"
-              class="fa-solid fa-circle-question text-xs"
+              class="fa-regular fa-circle-question text-xs"
             />
           </span>
         </div>
@@ -112,7 +112,7 @@ exports[`NetworkingSetting should match snapshot with ports 1`] = `
             How it works 
             <i
               aria-hidden="true"
-              class="fa-solid fa-circle-question text-xs"
+              class="fa-regular fa-circle-question text-xs"
             />
           </span>
         </div>

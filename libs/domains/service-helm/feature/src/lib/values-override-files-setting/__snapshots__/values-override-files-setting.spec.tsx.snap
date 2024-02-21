@@ -27,7 +27,7 @@ exports[`ValuesOverrideFilesSetting should match snapshot with GIT_REPOSITORY ty
         How it works 
         <i
           aria-hidden="true"
-          class="fa-solid fa-circle-question text-xs"
+          class="fa-regular fa-circle-question text-xs"
         />
       </span>
       <div
@@ -222,7 +222,7 @@ exports[`ValuesOverrideFilesSetting should match snapshot with NONE type 1`] = `
         How it works 
         <i
           aria-hidden="true"
-          class="fa-solid fa-circle-question text-xs"
+          class="fa-regular fa-circle-question text-xs"
         />
       </span>
       <div
@@ -396,7 +396,7 @@ exports[`ValuesOverrideFilesSetting should match snapshot with YAML type 1`] = `
         How it works 
         <i
           aria-hidden="true"
-          class="fa-solid fa-circle-question text-xs"
+          class="fa-regular fa-circle-question text-xs"
         />
       </span>
       <div
