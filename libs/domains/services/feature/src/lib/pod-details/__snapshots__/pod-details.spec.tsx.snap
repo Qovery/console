@@ -15,9 +15,9 @@ exports[`PodDetails should match snapshot with container based pod and with mult
           type="button"
         >
           Logs
-          <span
-            class="icon-solid-scroll shrink-0 "
-            role="img"
+          <i
+            aria-hidden="true"
+            class="fa-solid fa-scroll "
           />
         </button>
       </a>
@@ -188,9 +188,9 @@ exports[`PodDetails should match snapshot with git based pod and with last_termi
           type="button"
         >
           Logs
-          <span
-            class="icon-solid-scroll shrink-0 "
-            role="img"
+          <i
+            aria-hidden="true"
+            class="fa-solid fa-scroll "
           />
         </button>
       </a>
@@ -360,9 +360,9 @@ exports[`PodDetails should match snapshot with git based pod and without last_te
           type="button"
         >
           Logs
-          <span
-            class="icon-solid-scroll shrink-0 "
-            role="img"
+          <i
+            aria-hidden="true"
+            class="fa-solid fa-scroll "
           />
         </button>
       </a>
@@ -484,9 +484,9 @@ exports[`PodDetails should match snapshot with pod error with 0 containers 1`] =
           type="button"
         >
           Logs
-          <span
-            class="icon-solid-scroll shrink-0 "
-            role="img"
+          <i
+            aria-hidden="true"
+            class="fa-solid fa-scroll "
           />
         </button>
       </a>

@@ -33,9 +33,9 @@ exports[`ServiceListActionBar should match snapshot 1`] = `
                 class="inline-flex shrink-0 font-medium transition border text-xs h-8 px-3 rounded bg-brand-500 border-brand-500 hover:border-brand-600 hover:bg-brand-600 text-white disabled:text-brand-300 disabled:bg-brand-100 disabled:border-none items-center gap-2"
               >
                 Deploy selected 
-                <span
-                  class="icon-solid-play shrink-0 "
-                  role="img"
+                <i
+                  aria-hidden="true"
+                  class="fa-solid fa-play "
                 />
               </button>
               <button
@@ -47,9 +47,9 @@ exports[`ServiceListActionBar should match snapshot 1`] = `
                 type="button"
               >
                 More 
-                <span
-                  class="icon-solid-angle-down shrink-0 "
-                  role="img"
+                <i
+                  aria-hidden="true"
+                  class="fa-solid fa-angle-down "
                 />
               </button>
             </div>

@@ -21,9 +21,9 @@ exports[`ServiceDetails should match application snapshot 1`] = `
             class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-current hover:brightness-75 text-sm"
             href="/settings/general"
           >
-            <span
-              class="icon-solid-wheel shrink-0 text-base text-neutral-300"
-              role="img"
+            <i
+              aria-hidden="true"
+              class="fa-solid fa-gear text-base text-neutral-300"
             />
           </a>
         </div>
@@ -81,9 +81,9 @@ exports[`ServiceDetails should match application snapshot 1`] = `
             class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-current hover:brightness-75 text-sm"
             href="/settings/general"
           >
-            <span
-              class="icon-solid-wheel shrink-0 text-base text-neutral-300"
-              role="img"
+            <i
+              aria-hidden="true"
+              class="fa-solid fa-gear text-base text-neutral-300"
             />
           </a>
         </div>
@@ -114,9 +114,9 @@ exports[`ServiceDetails should match database snapshot 1`] = `
             class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-current hover:brightness-75 text-sm"
             href="/settings/general"
           >
-            <span
-              class="icon-solid-wheel shrink-0 text-base text-neutral-300"
-              role="img"
+            <i
+              aria-hidden="true"
+              class="fa-solid fa-gear text-base text-neutral-300"
             />
           </a>
         </div>
@@ -174,9 +174,9 @@ exports[`ServiceDetails should match database snapshot 1`] = `
             class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-current hover:brightness-75 text-sm"
             href="/settings/general"
           >
-            <span
-              class="icon-solid-wheel shrink-0 text-base text-neutral-300"
-              role="img"
+            <i
+              aria-hidden="true"
+              class="fa-solid fa-gear text-base text-neutral-300"
             />
           </a>
         </div>
@@ -207,9 +207,9 @@ exports[`ServiceDetails should match job snapshot 1`] = `
             class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-current hover:brightness-75 text-sm"
             href="/settings/general"
           >
-            <span
-              class="icon-solid-wheel shrink-0 text-base text-neutral-300"
-              role="img"
+            <i
+              aria-hidden="true"
+              class="fa-solid fa-gear text-base text-neutral-300"
             />
           </a>
         </div>
@@ -267,9 +267,9 @@ exports[`ServiceDetails should match job snapshot 1`] = `
             class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-current hover:brightness-75 text-sm"
             href="/settings/general"
           >
-            <span
-              class="icon-solid-wheel shrink-0 text-base text-neutral-300"
-              role="img"
+            <i
+              aria-hidden="true"
+              class="fa-solid fa-gear text-base text-neutral-300"
             />
           </a>
         </div>

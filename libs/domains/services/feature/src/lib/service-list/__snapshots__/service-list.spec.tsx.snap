@@ -43,9 +43,9 @@ exports[`ServiceList should match snapshot 1`] = `
                 type="button"
               >
                 Name
-                <span
-                  class="icon-solid-angle-down shrink-0 "
-                  role="img"
+                <i
+                  aria-hidden="true"
+                  class="fa-solid fa-angle-down "
                 />
               </button>
             </div>
@@ -66,9 +66,9 @@ exports[`ServiceList should match snapshot 1`] = `
                 type="button"
               >
                 Service status
-                <span
-                  class="icon-solid-angle-down shrink-0 "
-                  role="img"
+                <i
+                  aria-hidden="true"
+                  class="fa-solid fa-angle-down "
                 />
               </button>
             </div>
@@ -89,9 +89,9 @@ exports[`ServiceList should match snapshot 1`] = `
                 type="button"
               >
                 Last deployment
-                <span
-                  class="icon-solid-angle-down shrink-0 "
-                  role="img"
+                <i
+                  aria-hidden="true"
+                  class="fa-solid fa-angle-down "
                 />
               </button>
             </div>
@@ -257,13 +257,13 @@ exports[`ServiceList should match snapshot 1`] = `
                       class="flex items-center gap-1"
                       data-state="closed"
                     >
-                      <span
-                        class="icon-solid-link shrink-0 "
-                        role="img"
+                      <i
+                        aria-hidden="true"
+                        class="fa-solid fa-link "
                       />
-                      <span
-                        class="icon-solid-angle-down shrink-0 "
-                        role="img"
+                      <i
+                        aria-hidden="true"
+                        class="fa-solid fa-angle-down "
                       />
                     </div>
                   </button>
@@ -402,13 +402,13 @@ exports[`ServiceList should match snapshot 1`] = `
                     class="inline-flex items-center shrink-0 font-medium transition text-xs px-1 py-0.5 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 group justify-between"
                     type="button"
                   >
-                    <span
-                      class="icon-solid-copy shrink-0 hidden group-hover:inline w-4"
-                      role="img"
+                    <i
+                      aria-hidden="true"
+                      class="fa-solid fa-copy hidden group-hover:inline w-4"
                     />
-                    <span
-                      class="icon-solid-code-commit shrink-0 group-hover:hidden w-4"
-                      role="img"
+                    <i
+                      aria-hidden="true"
+                      class="fa-solid fa-code-commit group-hover:hidden w-4"
                     />
                     2f74448
                   </button>
@@ -421,9 +421,11 @@ exports[`ServiceList should match snapshot 1`] = `
                   <span
                     class="inline-flex items-center shrink-0 font-medium border text-xs px-1 py-0.5 rounded bg-neutral-100 border-neutral-200 text-neutral-400 gap-1 whitespace-nowrap"
                   >
-                    <span
-                      class="icon-solid-code-branch shrink-0 "
-                      role="img"
+                    <i
+                      aria-hidden="true"
+                      class="fa-solid fa-code-branch "
+                      height="14"
+                      width="14"
                     />
                     master
                   </span>
@@ -582,13 +584,13 @@ exports[`ServiceList should match snapshot 1`] = `
                       class="flex items-center gap-1"
                       data-state="closed"
                     >
-                      <span
-                        class="icon-solid-link shrink-0 "
-                        role="img"
+                      <i
+                        aria-hidden="true"
+                        class="fa-solid fa-link "
                       />
-                      <span
-                        class="icon-solid-angle-down shrink-0 "
-                        role="img"
+                      <i
+                        aria-hidden="true"
+                        class="fa-solid fa-angle-down "
                       />
                     </div>
                   </button>
@@ -601,9 +603,9 @@ exports[`ServiceList should match snapshot 1`] = `
                   class=""
                   data-state="closed"
                 >
-                  <span
-                    class="icon-solid-arrows-rotate shrink-0 text-neutral-300"
-                    role="img"
+                  <i
+                    aria-hidden="true"
+                    class="fa-solid fa-arrows-rotate text-neutral-300"
                   />
                 </span>
                 <div>
@@ -1202,13 +1204,13 @@ exports[`ServiceList should match snapshot 1`] = `
                       class="flex items-center gap-1"
                       data-state="closed"
                     >
-                      <span
-                        class="icon-solid-link shrink-0 "
-                        role="img"
+                      <i
+                        aria-hidden="true"
+                        class="fa-solid fa-link "
                       />
-                      <span
-                        class="icon-solid-angle-down shrink-0 "
-                        role="img"
+                      <i
+                        aria-hidden="true"
+                        class="fa-solid fa-angle-down "
                       />
                     </div>
                   </button>
@@ -1221,9 +1223,9 @@ exports[`ServiceList should match snapshot 1`] = `
                   class=""
                   data-state="closed"
                 >
-                  <span
-                    class="icon-solid-arrows-rotate shrink-0 text-neutral-300"
-                    role="img"
+                  <i
+                    aria-hidden="true"
+                    class="fa-solid fa-arrows-rotate text-neutral-300"
                   />
                 </span>
                 <div>
@@ -1356,13 +1358,13 @@ exports[`ServiceList should match snapshot 1`] = `
                     class="inline-flex items-center shrink-0 font-medium transition text-xs px-1 py-0.5 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 group justify-between"
                     type="button"
                   >
-                    <span
-                      class="icon-solid-copy shrink-0 hidden group-hover:inline w-4"
-                      role="img"
+                    <i
+                      aria-hidden="true"
+                      class="fa-solid fa-copy hidden group-hover:inline w-4"
                     />
-                    <span
-                      class="icon-solid-code-commit shrink-0 group-hover:hidden w-4"
-                      role="img"
+                    <i
+                      aria-hidden="true"
+                      class="fa-solid fa-code-commit group-hover:hidden w-4"
                     />
                     10ad354
                   </button>
@@ -1375,9 +1377,11 @@ exports[`ServiceList should match snapshot 1`] = `
                   <span
                     class="inline-flex items-center shrink-0 font-medium border text-xs px-1 py-0.5 rounded bg-neutral-100 border-neutral-200 text-neutral-400 gap-1 whitespace-nowrap"
                   >
-                    <span
-                      class="icon-solid-code-branch shrink-0 "
-                      role="img"
+                    <i
+                      aria-hidden="true"
+                      class="fa-solid fa-code-branch "
+                      height="14"
+                      width="14"
                     />
                     main
                   </span>
@@ -1623,13 +1627,13 @@ exports[`ServiceList should match snapshot 1`] = `
                       class="flex items-center gap-1"
                       data-state="closed"
                     >
-                      <span
-                        class="icon-solid-link shrink-0 "
-                        role="img"
+                      <i
+                        aria-hidden="true"
+                        class="fa-solid fa-link "
                       />
-                      <span
-                        class="icon-solid-angle-down shrink-0 "
-                        role="img"
+                      <i
+                        aria-hidden="true"
+                        class="fa-solid fa-angle-down "
                       />
                     </div>
                   </button>
@@ -1642,9 +1646,9 @@ exports[`ServiceList should match snapshot 1`] = `
                   class=""
                   data-state="closed"
                 >
-                  <span
-                    class="icon-solid-arrows-rotate shrink-0 text-neutral-300"
-                    role="img"
+                  <i
+                    aria-hidden="true"
+                    class="fa-solid fa-arrows-rotate text-neutral-300"
                   />
                 </span>
                 <div>
@@ -1777,13 +1781,13 @@ exports[`ServiceList should match snapshot 1`] = `
                     class="inline-flex items-center shrink-0 font-medium transition text-xs px-1 py-0.5 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 group justify-between"
                     type="button"
                   >
-                    <span
-                      class="icon-solid-copy shrink-0 hidden group-hover:inline w-4"
-                      role="img"
+                    <i
+                      aria-hidden="true"
+                      class="fa-solid fa-copy hidden group-hover:inline w-4"
                     />
-                    <span
-                      class="icon-solid-code-commit shrink-0 group-hover:hidden w-4"
-                      role="img"
+                    <i
+                      aria-hidden="true"
+                      class="fa-solid fa-code-commit group-hover:hidden w-4"
                     />
                     10ad354
                   </button>
@@ -1796,9 +1800,11 @@ exports[`ServiceList should match snapshot 1`] = `
                   <span
                     class="inline-flex items-center shrink-0 font-medium border text-xs px-1 py-0.5 rounded bg-neutral-100 border-neutral-200 text-neutral-400 gap-1 whitespace-nowrap"
                   >
-                    <span
-                      class="icon-solid-code-branch shrink-0 "
-                      role="img"
+                    <i
+                      aria-hidden="true"
+                      class="fa-solid fa-code-branch "
+                      height="14"
+                      width="14"
                     />
                     main
                   </span>
@@ -1852,9 +1858,9 @@ exports[`ServiceList should match snapshot 1`] = `
                 disabled=""
               >
                 Deploy selected 
-                <span
-                  class="icon-solid-play shrink-0 "
-                  role="img"
+                <i
+                  aria-hidden="true"
+                  class="fa-solid fa-play "
                 />
               </button>
               <button
@@ -1866,9 +1872,9 @@ exports[`ServiceList should match snapshot 1`] = `
                 type="button"
               >
                 More 
-                <span
-                  class="icon-solid-angle-down shrink-0 "
-                  role="img"
+                <i
+                  aria-hidden="true"
+                  class="fa-solid fa-angle-down "
                 />
               </button>
             </div>

@@ -18,9 +18,9 @@ exports[`PodsMetrics should match snapshot with data 1`] = `
               type="button"
             >
               Pods
-              <span
-                class="icon-solid-arrow-down shrink-0 text-xs"
-                role="img"
+              <i
+                aria-hidden="true"
+                class="fa-solid fa-arrow-down text-xs"
               />
             </button>
           </th>
@@ -176,9 +176,9 @@ exports[`PodsMetrics should match snapshot with data 1`] = `
           <td
             class="h-14 px-4 py-0"
           >
-            <span
-              class="icon-regular-circle-question shrink-0 text-sm text-neutral-300"
-              role="img"
+            <i
+              aria-hidden="true"
+              class="fa-solid fa-circle-question text-sm text-neutral-300"
             />
           </td>
         </tr>

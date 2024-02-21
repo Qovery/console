@@ -41,9 +41,9 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
               type="button"
             >
               How it works 
-              <span
-                class="icon-regular-circle-question shrink-0 text-xs"
-                role="img"
+              <i
+                aria-hidden="true"
+                class="fa-solid fa-circle-question text-xs"
               />
             </span>
             <div
@@ -53,9 +53,9 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
               <div
                 class="-order-2 text-base leading-6"
               >
-                <span
-                  class="icon-solid-triangle-exclamation shrink-0 "
-                  role="img"
+                <i
+                  aria-hidden="true"
+                  class="fa-solid fa-triangle-exclamation "
                 />
               </div>
               <div
@@ -78,9 +78,9 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
                   target="_blank"
                 >
                   Click here for more details
-                  <span
-                    class="icon-solid-arrow-up-right-from-square shrink-0 text-2xs leading-4"
-                    role="img"
+                  <i
+                    aria-hidden="true"
+                    class="fa-solid fa-arrow-up-right-from-square text-2xs leading-4"
                   />
                 </a>
               </div>
@@ -369,9 +369,9 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
                     <div
                       class="-order-2 text-base leading-6"
                     >
-                      <span
-                        class="icon-solid-circle-info shrink-0 "
-                        role="img"
+                      <i
+                        aria-hidden="true"
+                        class="fa-solid fa-circle-info "
                       />
                     </div>
                     <div
@@ -488,9 +488,9 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
                   target="_blank"
                 >
                   How to configure my Helm chart
-                  <span
-                    class="icon-solid-arrow-up-right-from-square shrink-0 text-xs leading-5"
-                    role="img"
+                  <i
+                    aria-hidden="true"
+                    class="fa-solid fa-arrow-up-right-from-square text-xs leading-5"
                   />
                 </a>
               </div>
@@ -544,9 +544,9 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a yaml 1`] = `
               type="button"
             >
               How it works 
-              <span
-                class="icon-regular-circle-question shrink-0 text-xs"
-                role="img"
+              <i
+                aria-hidden="true"
+                class="fa-solid fa-circle-question text-xs"
               />
             </span>
             <div
@@ -556,9 +556,9 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a yaml 1`] = `
               <div
                 class="-order-2 text-base leading-6"
               >
-                <span
-                  class="icon-solid-triangle-exclamation shrink-0 "
-                  role="img"
+                <i
+                  aria-hidden="true"
+                  class="fa-solid fa-triangle-exclamation "
                 />
               </div>
               <div
@@ -581,9 +581,9 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a yaml 1`] = `
                   target="_blank"
                 >
                   Click here for more details
-                  <span
-                    class="icon-solid-arrow-up-right-from-square shrink-0 text-2xs leading-4"
-                    role="img"
+                  <i
+                    aria-hidden="true"
+                    class="fa-solid fa-arrow-up-right-from-square text-2xs leading-4"
                   />
                 </a>
               </div>
@@ -719,9 +719,9 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a yaml 1`] = `
                         class="inline-flex items-center shrink-0 font-medium transition text-xs px-1 py-0.5 rounded hover:text-neutral-400"
                         type="button"
                       >
-                        <span
-                          class="icon-solid-pen shrink-0 "
-                          role="img"
+                        <i
+                          aria-hidden="true"
+                          class="fa-solid fa-pen "
                         />
                       </button>
                     </div>
@@ -849,9 +849,9 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a yaml 1`] = `
                   target="_blank"
                 >
                   How to configure my Helm chart
-                  <span
-                    class="icon-solid-arrow-up-right-from-square shrink-0 text-xs leading-5"
-                    role="img"
+                  <i
+                    aria-hidden="true"
+                    class="fa-solid fa-arrow-up-right-from-square text-xs leading-5"
                   />
                 </a>
               </div>

@@ -24,9 +24,9 @@ exports[`OutputVariables should match snapshot 1`] = `
                   class=""
                   data-state="closed"
                 >
-                  <span
-                    class="icon-solid-circle-info shrink-0 text-neutral-350"
-                    role="img"
+                  <i
+                    aria-hidden="true"
+                    class="fa-solid fa-circle-info text-neutral-350"
                   />
                 </span>
               </button>
@@ -66,9 +66,9 @@ exports[`OutputVariables should match snapshot 1`] = `
                   class=""
                   data-state="closed"
                 >
-                  <span
-                    class="icon-solid-lock shrink-0 block w-4"
-                    role="img"
+                  <i
+                    aria-hidden="true"
+                    class="fa-solid fa-lock block w-4"
                   />
                 </span>
                 <span
@@ -104,9 +104,9 @@ exports[`OutputVariables should match snapshot 1`] = `
                   data-state="closed"
                   type="button"
                 >
-                  <span
-                    class="icon-solid-eye shrink-0 "
-                    role="img"
+                  <i
+                    aria-hidden="true"
+                    class="fa-solid fa-eye "
                   />
                 </button>
                 <span

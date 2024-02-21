@@ -24,9 +24,9 @@ exports[`ServiceCloneModal should match snapshot 1`] = `
       type="button"
     >
       Show how it works 
-      <span
-        class="icon-regular-circle-question shrink-0 text-xs"
-        role="img"
+      <i
+        aria-hidden="true"
+        class="fa-solid fa-circle-question text-xs"
       />
     </span>
     <form

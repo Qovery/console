@@ -63,7 +63,7 @@ describe('PageSettingsResources', () => {
   it('should render warning box and icon for cpu', async () => {
     props.displayWarningCpu = true
 
-    renderWithProviders(
+    const { container } = renderWithProviders(
       wrapWithReactHookForm(<PageSettingsResources {...props} />, {
         defaultValues: { cpu: 10, instances: [1, 1], memory: 323 },
       })
@@ -73,10 +73,7 @@ describe('PageSettingsResources', () => {
     // https://react-hook-form.com/advanced-usage#TransformandParse
     expect(submitButton).toBeInTheDocument()
 
-    const img = screen.getAllByRole('img')[0]
-
-    screen.getByTestId('banner-box')
-    expect(img.classList.contains(IconAwesomeEnum.TRIANGLE_EXCLAMATION)).toBe(true)
+    expect(container).toMatchSnapshot()
   })
 
   it('should submit the form', async () => {

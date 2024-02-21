@@ -22,9 +22,9 @@ exports[`ValuesOverrideAsYamlSetting should match snapshot 1`] = `
         <div
           class="text-center my-4 py-5 px-10"
         >
-          <span
-            class="icon-solid-wave-pulse shrink-0 text-neutral-350"
-            role="img"
+          <i
+            aria-hidden="true"
+            class="fa-solid fa-wave-pulse text-neutral-350"
           />
           <p
             class="text-neutral-350 font-medium text-xs mt-1 mb-3"
@@ -36,9 +36,9 @@ exports[`ValuesOverrideAsYamlSetting should match snapshot 1`] = `
             type="button"
           >
             Create override 
-            <span
-              class="icon-solid-pen shrink-0 ml-2"
-              role="img"
+            <i
+              aria-hidden="true"
+              class="fa-solid fa-pen ml-2"
             />
           </button>
         </div>
