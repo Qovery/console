@@ -1,5 +1,5 @@
 import download from 'downloadjs'
-import { Button, Callout, ExternalLink, Icon, IconAwesomeEnum } from '@qovery/shared/ui'
+import { Button, Callout, ExternalLink, Icon } from '@qovery/shared/ui'
 import { useInstallationHelmValues } from '../hooks/use-installation-helm-values/use-installation-helm-values'
 
 export interface ClusterInstallationGuideModalProps {

@@ -4,7 +4,7 @@ import { useLocation, useParams } from 'react-router-dom'
 import { ClusterActionToolbar, ClusterType, useClusterStatus } from '@qovery/domains/clusters/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import { CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
-import { Badge, Header, Icon, IconAwesomeEnum, Section, Skeleton, Tabs } from '@qovery/shared/ui'
+import { Badge, Header, Icon, Section, Skeleton, Tabs } from '@qovery/shared/ui'
 import NeedRedeployFlag from '../need-redeploy-flag/need-redeploy-flag'
 
 export interface ContainerProps {

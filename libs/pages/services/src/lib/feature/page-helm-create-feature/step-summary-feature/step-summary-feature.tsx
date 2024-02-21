@@ -11,7 +11,7 @@ import {
   SERVICES_HELM_CREATION_VALUES_STEP_1_URL,
   SERVICES_URL,
 } from '@qovery/shared/routes'
-import { Button, FunnelFlowBody, Heading, Icon, IconAwesomeEnum, Section, truncateText } from '@qovery/shared/ui'
+import { Button, FunnelFlowBody, Heading, Icon, Section, truncateText } from '@qovery/shared/ui'
 import { getGitTokenValue } from '@qovery/shared/util-git'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'

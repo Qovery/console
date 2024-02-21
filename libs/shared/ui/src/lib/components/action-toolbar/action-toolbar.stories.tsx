@@ -2,7 +2,6 @@ import type { Meta } from '@storybook/react'
 import { ActionToolbar } from '../action-toolbar/action-toolbar'
 import { DropdownMenu } from '../dropdown-menu/dropdown-menu'
 import Icon from '../icon/icon'
-import { IconAwesomeEnum } from '../icon/icon-awesome.enum'
 
 const Story: Meta<typeof ActionToolbar.Root> = {
   component: ActionToolbar.Root,

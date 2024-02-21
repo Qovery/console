@@ -4,7 +4,6 @@ import {
   Heading,
   HelpSection,
   Icon,
-  IconAwesomeEnum,
   Pagination,
   Section,
   Table,

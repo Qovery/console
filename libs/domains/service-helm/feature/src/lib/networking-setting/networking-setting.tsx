@@ -6,7 +6,6 @@ import {
   ExternalLink,
   Heading,
   Icon,
-  IconAwesomeEnum,
   Popover,
   Section,
   useModal,

@@ -2,7 +2,6 @@ import * as CheckboxPrimitive from '@radix-ui/react-checkbox'
 import { cva } from 'class-variance-authority'
 import { type ComponentPropsWithoutRef, type ElementRef, forwardRef } from 'react'
 import Icon from '../icon/icon'
-import { IconAwesomeEnum } from '../icon/icon-awesome.enum'
 
 const checkboxVariants = cva([
   'group',

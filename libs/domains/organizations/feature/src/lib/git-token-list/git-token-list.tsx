@@ -3,7 +3,6 @@ import {
   BlockContent,
   Button,
   Icon,
-  IconAwesomeEnum,
   LoaderSpinner,
   Tooltip,
   Truncate,

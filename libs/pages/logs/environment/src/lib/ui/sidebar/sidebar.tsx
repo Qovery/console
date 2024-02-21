@@ -6,7 +6,7 @@ import {
 } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { type AnyService } from '@qovery/domains/services/data-access'
-import { Icon, IconAwesomeEnum } from '@qovery/shared/ui'
+import { Icon } from '@qovery/shared/ui'
 import SidebarHistoryFeature from '../../feature/sidebar-history-feature/sidebar-history-feature'
 import SidebarPipeline from '../sidebar-pipeline/sidebar-pipeline'
 import SidebarStatus from '../sidebar-status/sidebar-status'

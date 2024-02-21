@@ -11,7 +11,7 @@ import {
   ENVIRONMENT_LOGS_URL,
   SERVICE_LOGS_URL,
 } from '@qovery/shared/routes'
-import { Icon, IconAwesomeEnum } from '@qovery/shared/ui'
+import { Icon } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import DeploymentLogsFeature from './feature/deployment-logs-feature/deployment-logs-feature'
 import PodLogsFeature from './feature/pod-logs-feature/pod-logs-feature'

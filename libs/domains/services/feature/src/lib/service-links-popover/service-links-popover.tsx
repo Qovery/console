@@ -4,7 +4,6 @@ import { APPLICATION_SETTINGS_DOMAIN_URL, APPLICATION_SETTINGS_URL, APPLICATION_
 import {
   CopyToClipboardButtonIcon,
   Icon,
-  IconAwesomeEnum,
   Link,
   Popover,
   type PopoverContentProps,

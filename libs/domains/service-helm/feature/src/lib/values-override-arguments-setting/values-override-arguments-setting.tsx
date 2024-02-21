@@ -15,7 +15,6 @@ import {
   EmptyState,
   Heading,
   Icon,
-  IconAwesomeEnum,
   InputSelectSmall,
   InputTextSmall,
   Popover,

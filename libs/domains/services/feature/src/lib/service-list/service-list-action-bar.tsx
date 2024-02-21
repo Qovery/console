@@ -1,14 +1,5 @@
 import { type Environment } from 'qovery-typescript-axios'
-import {
-  Button,
-  Callout,
-  DropdownMenu,
-  Icon,
-  IconAwesomeEnum,
-  Tooltip,
-  useModal,
-  useModalConfirmation,
-} from '@qovery/shared/ui'
+import { Button, Callout, DropdownMenu, Icon, Tooltip, useModal, useModalConfirmation } from '@qovery/shared/ui'
 import {
   isDeleteAvailable,
   isDeployAvailable,

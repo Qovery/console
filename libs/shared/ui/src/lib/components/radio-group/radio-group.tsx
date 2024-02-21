@@ -3,7 +3,6 @@ import { type VariantProps, cva } from 'class-variance-authority'
 import { type ComponentPropsWithoutRef, type ElementRef, forwardRef } from 'react'
 import { twMerge } from '@qovery/shared/util-js'
 import Icon from '../icon/icon'
-import { IconAwesomeEnum } from '../icon/icon-awesome.enum'
 
 const itemVariants = cva(
   [

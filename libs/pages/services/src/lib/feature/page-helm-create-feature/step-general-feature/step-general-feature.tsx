@@ -8,16 +8,7 @@ import {
   SERVICES_HELM_CREATION_VALUES_STEP_1_URL,
   SERVICES_URL,
 } from '@qovery/shared/routes'
-import {
-  Button,
-  Callout,
-  FunnelFlowBody,
-  FunnelFlowHelpCard,
-  Heading,
-  Icon,
-  IconAwesomeEnum,
-  Section,
-} from '@qovery/shared/ui'
+import { Button, Callout, FunnelFlowBody, FunnelFlowHelpCard, Heading, Icon, Section } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { useHelmCreateContext } from '../page-helm-create-feature'
 

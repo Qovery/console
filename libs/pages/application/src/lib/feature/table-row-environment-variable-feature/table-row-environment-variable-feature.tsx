@@ -11,7 +11,6 @@ import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes
 import {
   type ButtonIconActionElementProps,
   Icon,
-  IconAwesomeEnum,
   type MenuItemProps,
   type TableFilterProps,
   type TableHeadProps,

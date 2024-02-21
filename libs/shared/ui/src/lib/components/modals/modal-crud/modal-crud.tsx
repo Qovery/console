@@ -2,7 +2,6 @@ import { type FormEventHandler, type ReactNode, useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle } from '../../buttons/button-legacy/button-legacy'
 import Icon from '../../icon/icon'
-import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
 import { Popover } from '../../popover/popover'
 import Truncate from '../../truncate/truncate'
 

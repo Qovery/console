@@ -1,7 +1,7 @@
 import { EnvironmentModeEnum, type ServicePort } from 'qovery-typescript-axios'
 import { useFormContext } from 'react-hook-form'
 import { ApplicationSettingsHealthchecks } from '@qovery/shared/console-shared'
-import { Button, Callout, Heading, HelpSection, Icon, IconAwesomeEnum, Link, Section } from '@qovery/shared/ui'
+import { Button, Callout, Heading, HelpSection, Icon, Link, Section } from '@qovery/shared/ui'
 
 export interface PageSettingsHealthchecksProps {
   loading: boolean

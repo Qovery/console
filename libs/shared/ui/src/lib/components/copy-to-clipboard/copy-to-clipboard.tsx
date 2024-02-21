@@ -2,7 +2,6 @@ import { Slot } from '@radix-ui/react-slot'
 import { Children, type ReactElement, type ReactNode, cloneElement, useState } from 'react'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import { Icon } from '../icon/icon'
-import { IconAwesomeEnum } from '../icon/icon-awesome.enum'
 
 export type CopyToClipboardProps = { text: string; children: ReactNode }
 

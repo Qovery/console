@@ -11,7 +11,6 @@ import {
   Callout,
   ExternalLink,
   Icon,
-  IconAwesomeEnum,
   InputText,
   Link,
   Slider,

@@ -9,7 +9,6 @@ import {
   ButtonIconAction,
   type ButtonIconActionElementProps,
   Icon,
-  IconAwesomeEnum,
   PasswordShowHide,
   ScrollIntoView,
   Skeleton,

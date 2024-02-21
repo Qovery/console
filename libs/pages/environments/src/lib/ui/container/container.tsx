@@ -8,7 +8,7 @@ import {
   ENVIRONMENTS_DEPLOYMENT_RULES_URL,
   ENVIRONMENTS_URL,
 } from '@qovery/shared/routes'
-import { Button, Header, Icon, IconAwesomeEnum, Section, Tabs, useModal } from '@qovery/shared/ui'
+import { Button, Header, Icon, Section, Tabs, useModal } from '@qovery/shared/ui'
 
 export interface ContainerProps {
   project?: Project

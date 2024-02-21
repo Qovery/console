@@ -1,6 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
 import { Icon } from '../icon/icon'
-import { IconAwesomeEnum } from '../icon/icon-awesome.enum'
 import NavigationLeftSubLink from './navigation-left-sub-link/navigation-left-sub-link'
 
 export interface NavigationLeftProps {

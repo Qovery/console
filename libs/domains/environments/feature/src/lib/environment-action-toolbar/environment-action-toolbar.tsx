@@ -2,16 +2,7 @@ import { type Environment, OrganizationEventTargetType, StateEnum } from 'qovery
 import { useLocation, useNavigate } from 'react-router-dom'
 import { UpdateAllModal, useServices } from '@qovery/domains/services/feature'
 import { AUDIT_LOGS_PARAMS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
-import {
-  ActionToolbar,
-  DropdownMenu,
-  Icon,
-  IconAwesomeEnum,
-  Skeleton,
-  Tooltip,
-  useModal,
-  useModalConfirmation,
-} from '@qovery/shared/ui'
+import { ActionToolbar, DropdownMenu, Icon, Skeleton, Tooltip, useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import {
   isCancelBuildAvailable,

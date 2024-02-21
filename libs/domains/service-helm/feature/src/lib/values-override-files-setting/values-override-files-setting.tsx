@@ -1,7 +1,7 @@
 import { type GitProviderEnum, type HelmRequestAllOfSource } from 'qovery-typescript-axios'
 import { type PropsWithChildren, type ReactNode } from 'react'
 import { Controller, type UseFormReturn } from 'react-hook-form'
-import { Callout, ExternalLink, Heading, Icon, IconAwesomeEnum, InputSelect, Popover, Section } from '@qovery/shared/ui'
+import { Callout, ExternalLink, Heading, Icon, InputSelect, Popover, Section } from '@qovery/shared/ui'
 import ValuesOverrideYamlSetting from '../values-override-yaml-setting/values-override-yaml-setting'
 
 export type ValuesOverrideTypes = 'GIT_REPOSITORY' | 'YAML' | 'NONE'

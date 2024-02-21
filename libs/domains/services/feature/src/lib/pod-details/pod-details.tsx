@@ -9,7 +9,6 @@ import {
   DescriptionListRoot as Dl,
   DescriptionTerm as Dt,
   Icon,
-  IconAwesomeEnum,
   Link,
   TabsPrimitives,
 } from '@qovery/shared/ui'

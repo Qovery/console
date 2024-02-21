@@ -19,7 +19,6 @@ import {
   Heading,
   HelpSection,
   Icon,
-  IconAwesomeEnum,
   InputSelect,
   InputText,
   Section,

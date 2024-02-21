@@ -5,7 +5,6 @@ import {
   ButtonLegacy,
   ButtonLegacyStyle,
   Icon,
-  IconAwesomeEnum,
   InputSelect,
   InputText,
   InputTextArea,

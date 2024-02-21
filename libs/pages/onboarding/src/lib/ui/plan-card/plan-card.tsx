@@ -1,5 +1,5 @@
 import { PlanEnum } from 'qovery-typescript-axios'
-import { ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle, Icon, IconAwesomeEnum } from '@qovery/shared/ui'
+import { ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle, Icon } from '@qovery/shared/ui'
 
 export interface PlanCardProps {
   title: string

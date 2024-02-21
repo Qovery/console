@@ -6,7 +6,6 @@ import {
   Heading,
   HelpSection,
   Icon,
-  IconAwesomeEnum,
   LoaderSpinner,
   Section,
   Tooltip,

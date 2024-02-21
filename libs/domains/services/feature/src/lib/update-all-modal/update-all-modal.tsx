@@ -7,7 +7,6 @@ import {
   AvatarStyle,
   Button,
   Icon,
-  IconAwesomeEnum,
   InputCheckbox,
   LoaderSpinner,
   ScrollShadowWrapper,

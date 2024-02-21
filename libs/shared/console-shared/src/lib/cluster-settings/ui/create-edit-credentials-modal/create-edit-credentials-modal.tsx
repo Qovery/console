@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { Controller, useFormContext } from 'react-hook-form'
 import { match } from 'ts-pattern'
-import { Button, Dropzone, ExternalLink, Icon, IconAwesomeEnum, InputText, ModalCrud } from '@qovery/shared/ui'
+import { Button, Dropzone, ExternalLink, Icon, InputText, ModalCrud } from '@qovery/shared/ui'
 
 export interface CreateEditCredentialsModalProps {
   cloudProvider: CloudProviderEnum

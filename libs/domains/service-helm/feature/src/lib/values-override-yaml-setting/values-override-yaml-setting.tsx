@@ -1,6 +1,6 @@
 import { type HelmRequestAllOfSource } from 'qovery-typescript-axios'
 import { useParams } from 'react-router'
-import { BlockContent, Button, CodeEditor, Icon, IconAwesomeEnum, useModal } from '@qovery/shared/ui'
+import { BlockContent, Button, CodeEditor, Icon, useModal } from '@qovery/shared/ui'
 import ValuesOverrideYamlModal from '../values-override-yaml-modal/values-override-yaml-modal'
 
 export interface ValuesOverrideYamlSettingProps {

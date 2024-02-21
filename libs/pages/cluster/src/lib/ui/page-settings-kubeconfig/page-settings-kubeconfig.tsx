@@ -2,7 +2,7 @@ import { type Cluster } from 'qovery-typescript-axios'
 import { useCallback } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { KUBECONFIG } from '@qovery/shared/routes'
-import { Button, Heading, HelpSection, Icon, IconAwesomeEnum, Link, Section } from '@qovery/shared/ui'
+import { Button, Heading, HelpSection, Icon, Link, Section } from '@qovery/shared/ui'
 
 export interface PageSettingsKubeconfigProps {
   cluster: Cluster

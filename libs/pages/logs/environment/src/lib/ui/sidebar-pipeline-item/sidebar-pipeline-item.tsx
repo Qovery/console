@@ -3,7 +3,7 @@ import { useContext, useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
-import { BadgeDeploymentOrder, Icon, IconAwesomeEnum, ServiceIcon, StatusChip } from '@qovery/shared/ui'
+import { BadgeDeploymentOrder, Icon, ServiceIcon, StatusChip } from '@qovery/shared/ui'
 import { ServiceStageIdsContext } from '../../feature/service-stage-ids-context/service-stage-ids-context'
 
 export function mergeServices(

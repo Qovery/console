@@ -32,16 +32,7 @@ import {
   SERVICES_URL,
   SERVICE_LOGS_URL,
 } from '@qovery/shared/routes'
-import {
-  ActionToolbar,
-  DropdownMenu,
-  Icon,
-  IconAwesomeEnum,
-  Skeleton,
-  Tooltip,
-  useModal,
-  useModalConfirmation,
-} from '@qovery/shared/ui'
+import { ActionToolbar, DropdownMenu, Icon, Skeleton, Tooltip, useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import {
   isCancelBuildAvailable,

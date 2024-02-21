@@ -11,7 +11,6 @@ import {
   Heading,
   HelpSection,
   Icon,
-  IconAwesomeEnum,
   Section,
 } from '@qovery/shared/ui'
 

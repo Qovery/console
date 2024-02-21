@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
 import Icon from '../../icon/icon'
-import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
 
 export interface InputFileProps {
   value: string | undefined

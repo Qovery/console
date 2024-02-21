@@ -23,7 +23,6 @@ import {
   DescriptionListRoot as Dl,
   DescriptionTerm as Dt,
   Icon,
-  IconAwesomeEnum,
   Link,
   Section,
   ToastEnum,

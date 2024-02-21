@@ -1,6 +1,6 @@
 import { PodStatusesCallout, PodsMetrics, ServiceDetails } from '@qovery/domains/services/feature'
 import { OutputVariables } from '@qovery/domains/variables/feature'
-import { type BaseLink, ExternalLink, HelpSection, Icon, IconAwesomeEnum } from '@qovery/shared/ui'
+import { type BaseLink, ExternalLink, HelpSection, Icon } from '@qovery/shared/ui'
 
 export interface PageGeneralProps {
   serviceId: string

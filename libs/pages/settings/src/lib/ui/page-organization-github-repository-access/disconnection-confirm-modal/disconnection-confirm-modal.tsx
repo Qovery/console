@@ -1,4 +1,4 @@
-import { ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle, Callout, Icon, IconAwesomeEnum } from '@qovery/shared/ui'
+import { ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle, Callout, Icon } from '@qovery/shared/ui'
 
 export interface DisconnectionConfirmModalProps {
   onSubmit: (force: boolean) => void

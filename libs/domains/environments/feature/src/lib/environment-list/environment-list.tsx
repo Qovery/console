@@ -27,7 +27,6 @@ import {
   Button,
   EmptyState,
   Icon,
-  IconAwesomeEnum,
   StatusChip,
   TablePrimitives,
   Tooltip,

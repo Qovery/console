@@ -4,7 +4,6 @@ import { useState } from 'react'
 import { environmentFactoryMock } from '@qovery/shared/factories'
 import ButtonLegacy from '../buttons/button-legacy/button-legacy'
 import Icon from '../icon/icon'
-import { IconAwesomeEnum } from '../icon/icon-awesome.enum'
 import { Table, type TableFilterProps, type TableProps } from './table'
 import { TableRow } from './table-row/table-row'
 

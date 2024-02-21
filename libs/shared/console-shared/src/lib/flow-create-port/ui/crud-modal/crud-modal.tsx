@@ -2,16 +2,7 @@ import { CloudProviderEnum, PortProtocolEnum } from 'qovery-typescript-axios'
 import { type FormEvent } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { match } from 'ts-pattern'
-import {
-  Callout,
-  Icon,
-  IconAwesomeEnum,
-  InputSelect,
-  InputText,
-  InputToggle,
-  ModalCrud,
-  Tooltip,
-} from '@qovery/shared/ui'
+import { Callout, Icon, InputSelect, InputText, InputToggle, ModalCrud, Tooltip } from '@qovery/shared/ui'
 
 export interface CrudModalProps {
   cloudProvider?: CloudProviderEnum

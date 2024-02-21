@@ -9,7 +9,6 @@ import {
   Callout,
   Heading,
   Icon,
-  IconAwesomeEnum,
   LoaderSpinner,
   Section,
 } from '@qovery/shared/ui'

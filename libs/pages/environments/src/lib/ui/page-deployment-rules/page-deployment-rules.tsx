@@ -9,7 +9,7 @@ import {
   type DroppableProvided,
 } from 'react-beautiful-dnd'
 import { useNavigate } from 'react-router-dom'
-import { type BaseLink, Button, HelpSection, Icon, IconAwesomeEnum } from '@qovery/shared/ui'
+import { type BaseLink, Button, HelpSection, Icon } from '@qovery/shared/ui'
 import DeploymentRuleItem from '../deployment-rule-item/deployment-rule-item'
 import PlaceholderNoRules from '../placeholder-no-rules/placeholder-no-rules'
 

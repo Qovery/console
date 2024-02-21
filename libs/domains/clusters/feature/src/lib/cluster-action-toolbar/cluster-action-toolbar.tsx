@@ -7,15 +7,7 @@ import {
 import { type ReactNode, useEffect } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { AUDIT_LOGS_PARAMS_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL, INFRA_LOGS_URL } from '@qovery/shared/routes'
-import {
-  ActionToolbar,
-  DropdownMenu,
-  Icon,
-  IconAwesomeEnum,
-  Tooltip,
-  useModal,
-  useModalConfirmation,
-} from '@qovery/shared/ui'
+import { ActionToolbar, DropdownMenu, Icon, Tooltip, useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import {
   isDeleteAvailable,

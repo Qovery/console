@@ -4,7 +4,7 @@ import { useController, useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { type ClusterKubeconfigData } from '@qovery/shared/interfaces'
 import { CLUSTERS_CREATION_GENERAL_URL, CLUSTERS_CREATION_URL, CLUSTERS_URL } from '@qovery/shared/routes'
-import { Button, Dropzone, Heading, Icon, IconAwesomeEnum, Section } from '@qovery/shared/ui'
+import { Button, Dropzone, Heading, Icon, Section } from '@qovery/shared/ui'
 
 export interface StepKubeconfigProps {
   onSubmit: FormEventHandler<HTMLFormElement>

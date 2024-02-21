@@ -6,7 +6,7 @@ import { GitBranchSettings, GitProviderSetting, GitRepositorySetting } from '@qo
 import { type HelmValuesFileData, ValuesOverrideFilesSetting } from '@qovery/domains/service-helm/feature'
 import { AutoDeploySetting, useEditService, useService } from '@qovery/domains/services/feature'
 import { isHelmRepositorySource } from '@qovery/shared/enums'
-import { Button, Callout, Icon, IconAwesomeEnum, InputText } from '@qovery/shared/ui'
+import { Button, Callout, Icon, InputText } from '@qovery/shared/ui'
 import { getGitTokenValue, guessGitProvider } from '@qovery/shared/util-git'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
 import { buildEditServicePayload } from '@qovery/shared/util-services'

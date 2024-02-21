@@ -1,6 +1,6 @@
 import { Controller, useFormContext } from 'react-hook-form'
 import { type Value } from '@qovery/shared/interfaces'
-import { BlockContent, Callout, ExternalLink, Icon, IconAwesomeEnum, InputSelect } from '@qovery/shared/ui'
+import { BlockContent, Callout, ExternalLink, Icon, InputSelect } from '@qovery/shared/ui'
 
 export interface SettingsResourcesInstanceTypesProps {
   databaseInstanceTypes?: Value[]

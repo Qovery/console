@@ -12,7 +12,6 @@ import {
   ExternalLink,
   Heading,
   Icon,
-  IconAwesomeEnum,
   IconFlag,
   InputSelect,
   LoaderSpinner,

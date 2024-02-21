@@ -2,14 +2,7 @@ import { type ServiceLogResponseDto } from 'qovery-ws-typescript-axios'
 import { useContext } from 'react'
 import { UpdateTimeContext } from '@qovery/shared/console-shared'
 import { Ansi } from '@qovery/shared/ui'
-import {
-  CopyToClipboardButtonIcon,
-  Icon,
-  IconAwesomeEnum,
-  type TableFilterProps,
-  TableRowFilter,
-  Tooltip,
-} from '@qovery/shared/ui'
+import { CopyToClipboardButtonIcon, Icon, type TableFilterProps, TableRowFilter, Tooltip } from '@qovery/shared/ui'
 import { dateFullFormat, dateUTCString } from '@qovery/shared/util-dates'
 
 export const formatVersion = (version: string) => {

@@ -10,7 +10,7 @@ import {
 import { type VariableResponse as Variable } from 'qovery-typescript-axios'
 import { type ComponentProps, Fragment, useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
-import { CopyToClipboardButtonIcon, Icon, IconAwesomeEnum, TablePrimitives, Tooltip } from '@qovery/shared/ui'
+import { CopyToClipboardButtonIcon, Icon, TablePrimitives, Tooltip } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import { useVariables } from '../hooks/use-variables/use-variables'
 

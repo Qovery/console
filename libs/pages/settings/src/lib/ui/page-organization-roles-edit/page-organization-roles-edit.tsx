@@ -13,7 +13,6 @@ import {
   ButtonLegacyStyle,
   HelpSection,
   Icon,
-  IconAwesomeEnum,
   InputText,
   InputTextArea,
   LoaderSpinner,
