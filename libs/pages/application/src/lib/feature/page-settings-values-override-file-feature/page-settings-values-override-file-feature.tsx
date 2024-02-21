@@ -132,7 +132,7 @@ export function PageSettingsValuesOverrideFileFeature() {
           ) : service?.auto_deploy ? (
             <Callout.Root color="sky" className="mt-3">
               <Callout.Icon>
-                <Icon name={IconAwesomeEnum.CIRCLE_INFO} />
+                <Icon iconName="circle-info" />
               </Callout.Icon>
 
               <Callout.Text className="text-xs">
@@ -143,7 +143,7 @@ export function PageSettingsValuesOverrideFileFeature() {
           ) : (
             <Callout.Root color="sky" className="mt-3">
               <Callout.Icon>
-                <Icon name={IconAwesomeEnum.CIRCLE_INFO} />
+                <Icon iconName="circle-info" />
               </Callout.Icon>
               <Callout.Text className="text-xs">
                 <Callout.TextHeading>Auto-deploy is not activated</Callout.TextHeading>

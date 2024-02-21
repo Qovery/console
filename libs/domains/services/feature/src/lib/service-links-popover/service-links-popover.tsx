@@ -63,7 +63,7 @@ export function ServiceLinksPopover({
             <Popover.Close>
               <Link to={pathDomainsSetting} color="brand" className="text-ssm">
                 Customize
-                <Icon name={IconAwesomeEnum.CIRCLE_PLUS} className="text-xs" />
+                <Icon iconName="circle-plus" className="text-xs" />
               </Link>
             </Popover.Close>
           )}

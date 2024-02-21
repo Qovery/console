@@ -63,7 +63,7 @@ export function SidebarPipelineItem({ currentStage, index, serviceId, versionId,
       >
         <BadgeDeploymentOrder className="mr-3" order={index} />
         {currentStage?.stage?.name}
-        <Icon name={IconAwesomeEnum.CARET_DOWN} className={`ml-3 text-neutral-350 ${!openStage ? '-rotate-90' : ''}`} />
+        <Icon iconName="caret-down" className={`ml-3 text-neutral-350 ${!openStage ? '-rotate-90' : ''}`} />
       </div>
       {openStage && (
         <div>
@@ -105,7 +105,7 @@ export function SidebarPipelineItem({ currentStage, index, serviceId, versionId,
             ))
           ) : (
             <div className="text-center pt-1 pb-3">
-              <Icon name={IconAwesomeEnum.WAVE_PULSE} className="text-neutral-350" />
+              <Icon iconName="wave-pulse" className="text-neutral-350" />
               <p className="text-neutral-350 font-medium text-xs mt-1">No service for this stage</p>
             </div>
           )}

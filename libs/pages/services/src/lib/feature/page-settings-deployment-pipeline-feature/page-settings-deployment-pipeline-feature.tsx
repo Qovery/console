@@ -62,7 +62,7 @@ export function PageSettingsDeploymentPipelineFeature() {
             openModal({
               content: <StageModalFeature onClose={closeModal} environmentId={environmentId} stage={stage} />,
             }),
-          contentLeft: <Icon name={IconAwesomeEnum.PEN} className="text-sm text-brand-500" />,
+          contentLeft: <Icon iconName="pen" className="text-sm text-brand-500" />,
         },
         {
           name: 'Edit order',
@@ -70,7 +70,7 @@ export function PageSettingsDeploymentPipelineFeature() {
             openModal({
               content: <StageOrderModalFeature onClose={closeModal} stages={stages} />,
             }),
-          contentLeft: <Icon name={IconAwesomeEnum.ARROW_DOWN_19} className="text-sm text-brand-500" />,
+          contentLeft: <Icon iconName="arrow-down-19" className="text-sm text-brand-500" />,
         },
       ],
     },
@@ -85,7 +85,7 @@ export function PageSettingsDeploymentPipelineFeature() {
               name: stage.name,
               action: () => deleteEnvironmentDeploymentStage.mutate({ stageId: stage.id }),
             }),
-          contentLeft: <Icon name={IconAwesomeEnum.TRASH} className="text-sm text-red-600" />,
+          contentLeft: <Icon iconName="trash" className="text-sm text-red-600" />,
           containerClassName: 'text-red-600',
         },
       ],

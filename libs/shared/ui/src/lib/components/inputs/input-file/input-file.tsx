@@ -78,7 +78,7 @@ export function InputFile(props: InputFileProps) {
             }}
             className="w-5 h-5 flex justify-center items-center absolute z-30 -top-2 -right-2 bg-brand-50 hover:bg-brand-100 text-neutral-350 hover:text-brand-500 ease-out duration-150 rounded-full"
           >
-            <Icon name={IconAwesomeEnum.XMARK} className="text-xs" />
+            <Icon iconName="xmark" className="text-xs" />
           </span>
         </>
       ) : (

@@ -122,7 +122,7 @@ export function InputSelect({
               onClick={menuListButton.onClick}
             >
               {menuListButton.label}
-              <Icon name={IconAwesomeEnum.CIRCLE_PLUS} className="text-xs leading-5" />
+              <Icon iconName="circle-plus" className="text-xs leading-5" />
             </button>
           </div>
         )}
@@ -138,14 +138,14 @@ export function InputSelect({
         <components.Option {...props}>
           {isMulti ? (
             <span className="input-select__checkbox">
-              {props.isSelected && <Icon name={IconAwesomeEnum.CHECK} className="text-xs" />}
+              {props.isSelected && <Icon iconName="check" className="text-xs" />}
             </span>
           ) : props.isSelected ? (
-            <Icon name={IconAwesomeEnum.CHECK} className="text-green-500" />
+            <Icon iconName="check" className="text-green-500" />
           ) : props.data.icon ? (
             <div className="w-4 h-full flex items-center justify-center">{props.data.icon}</div>
           ) : (
-            <Icon name={IconAwesomeEnum.CHECK} className="opacity-0" />
+            <Icon iconName="check" className="opacity-0" />
           )}
           <label id={id} className="ml-2 truncate">
             {props.label}
@@ -170,7 +170,7 @@ export function InputSelect({
     return (
       <components.NoOptionsMessage {...props}>
         <div className="text-center px-3 py-6">
-          <Icon name={IconAwesomeEnum.WAVE_PULSE} className="text-neutral-350" />
+          <Icon iconName="wave-pulse" className="text-neutral-350" />
           <p className="text-neutral-350 font-medium text-xs mt-1">No result for this search</p>
         </div>{' '}
       </components.NoOptionsMessage>
@@ -275,7 +275,7 @@ export function InputSelect({
               currentIcon.onClickEditable && currentIcon.onClickEditable()
             }}
           >
-            <IconFa name={IconAwesomeEnum.PEN} />
+            <IconFa iconName="pen" />
           </div>
         )}
       </div>

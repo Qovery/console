@@ -67,7 +67,7 @@ export function RowPod({ data, filter, index, podNameToColor }: RowPodProps) {
         <div data-testid="cell-version" className="pt-0.5 flex whitespace-nowrap text-neutral-50 min-w-[85px]">
           {data.version && (
             <span className="group/version">
-              <Icon name={IconAwesomeEnum.CODE_COMMIT} className="mr-1" />
+              <Icon iconName="code-commit" className="mr-1" />
               {formatVersion(data.version)}
               <CopyToClipboardButtonIcon
                 className="opacity-0 ml-1 group-hover/version:opacity-80"

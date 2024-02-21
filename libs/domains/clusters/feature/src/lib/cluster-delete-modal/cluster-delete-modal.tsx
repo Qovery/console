@@ -87,7 +87,7 @@ export function ClusterDeleteModal({ cluster }: ClusterDeleteModalProps) {
         {clusterDeleteMode !== ClusterDeleteMode.DELETE_QOVERY_CONFIG && (
           <Callout.Root className="mt-3 text-xs" color="yellow">
             <Callout.Icon>
-              <Icon name={IconAwesomeEnum.TRIANGLE_EXCLAMATION} />
+              <Icon iconName="triangle-exclamation" />
             </Callout.Icon>
             <Callout.Text>
               <p>Please note that you will have to manually delete on your cloud account:</p>

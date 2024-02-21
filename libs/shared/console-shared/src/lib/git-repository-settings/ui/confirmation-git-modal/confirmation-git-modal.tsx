@@ -18,7 +18,7 @@ export function ConfirmationGitModal({
       <h2 className="h4 text-neutral-400 max-w-sm truncate mb-6">Change repository</h2>
       <Callout.Root className="mb-5" color="yellow">
         <Callout.Icon>
-          <Icon name={IconAwesomeEnum.CIRCLE_INFO} />
+          <Icon iconName="circle-info" />
         </Callout.Icon>
         <Callout.Text>
           <Callout.TextHeading>Access to the current repository</Callout.TextHeading>
@@ -31,7 +31,7 @@ export function ConfirmationGitModal({
       <div className="relative flex items-center w-full h-[52px] px-4 py-2 border rounded">
         <Icon name={currentProvider} className="mr-3 w-4 h-4" width="16px" height="16px" />
         <p className="text-sm text-neutral-400">{currentRepository}</p>
-        <Icon name={IconAwesomeEnum.TRIANGLE_EXCLAMATION} className="absolute top-3 right-4 text-yellow-500" />
+        <Icon iconName="triangle-exclamation" className="absolute top-3 right-4 text-yellow-500" />
       </div>
       <div className="flex gap-3 justify-end mt-6">
         <ButtonLegacy

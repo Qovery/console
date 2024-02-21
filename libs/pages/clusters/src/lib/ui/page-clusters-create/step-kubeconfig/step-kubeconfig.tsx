@@ -65,7 +65,7 @@ export function StepKubeconfig({ onSubmit }: StepKubeconfigProps) {
           {fileName.value ? (
             <div className="flex border border-neutral-200 p-3 gap-2 rounded items-center">
               <div className="p-2">
-                <Icon name={IconAwesomeEnum.FILE_LINES} />
+                <Icon iconName="file-lines" />
               </div>
               <div className="flex flex-col text-xs grow">
                 <span className="text-neutral-400 font-medium">{fileName.value}</span>
@@ -73,7 +73,7 @@ export function StepKubeconfig({ onSubmit }: StepKubeconfigProps) {
               </div>
               <div>
                 <Button type="button" variant="outline" color="neutral" onClick={handleDelete}>
-                  <Icon name={IconAwesomeEnum.TRASH} />
+                  <Icon iconName="trash" />
                 </Button>
               </div>
             </div>

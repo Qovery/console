@@ -46,7 +46,7 @@ export function ValuesOverrideFilesSetting({
       <Popover.Root>
         <Popover.Trigger>
           <span className="text-sm cursor-pointer text-brand-500 hover:text-brand-600 transition font-medium mb-6">
-            How it works <Icon className="text-xs" name={IconAwesomeEnum.CIRCLE_QUESTION} />
+            How it works <Icon className="text-xs" iconName="circle-question" />
           </span>
         </Popover.Trigger>
         <Popover.Content side="left" className="text-neutral-350 text-sm relative" style={{ width: 440 }}>
@@ -80,14 +80,14 @@ export function ValuesOverrideFilesSetting({
           </ExternalLink>
           <Popover.Close className="absolute top-4 right-4">
             <button type="button">
-              <Icon name={IconAwesomeEnum.XMARK} className="text-lg leading-4 text-neutral-400" />
+              <Icon iconName="xmark" className="text-lg leading-4 text-neutral-400" />
             </button>
           </Popover.Close>
         </Popover.Content>
       </Popover.Root>
       <Callout.Root className="mb-6 text-xs" color="yellow">
         <Callout.Icon>
-          <Icon name={IconAwesomeEnum.TRIANGLE_EXCLAMATION} />
+          <Icon iconName="triangle-exclamation" />
         </Callout.Icon>
         <Callout.Text>
           <Callout.TextHeading>Add the Qovery macros to your override</Callout.TextHeading>

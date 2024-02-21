@@ -68,7 +68,7 @@ export function NetworkingSetting({ ports, onUpdatePorts, children }: Networking
           <Popover.Root>
             <Popover.Trigger>
               <span className="text-sm cursor-pointer text-brand-500 hover:text-brand-600 transition font-medium mb-5">
-                How it works <Icon className="text-xs" name={IconAwesomeEnum.CIRCLE_QUESTION} />
+                How it works <Icon className="text-xs" iconName="circle-question" />
               </span>
             </Popover.Trigger>
             <Popover.Content side="left" className="text-neutral-350 text-sm relative" style={{ width: 440 }}>
@@ -83,7 +83,7 @@ export function NetworkingSetting({ ports, onUpdatePorts, children }: Networking
               </ExternalLink>
               <Popover.Close className="absolute top-4 right-4">
                 <button type="button">
-                  <Icon name={IconAwesomeEnum.XMARK} className="text-lg leading-4 text-neutral-400" />
+                  <Icon iconName="xmark" className="text-lg leading-4 text-neutral-400" />
                 </button>
               </Popover.Close>
             </Popover.Content>
@@ -120,7 +120,7 @@ export function NetworkingSetting({ ports, onUpdatePorts, children }: Networking
                       type="button"
                       data-testid="edit-port"
                     >
-                      <Icon name={IconAwesomeEnum.WHEEL} />
+                      <Icon iconName="wheel" />
                     </Button>
                     <Button
                       size="md"
@@ -130,7 +130,7 @@ export function NetworkingSetting({ ports, onUpdatePorts, children }: Networking
                       type="button"
                       data-testid="remove-port"
                     >
-                      <Icon name={IconAwesomeEnum.TRASH} />
+                      <Icon iconName="trash" />
                     </Button>
                   </div>
                 </div>
@@ -138,7 +138,7 @@ export function NetworkingSetting({ ports, onUpdatePorts, children }: Networking
             })
           ) : (
             <div className="text-center my-4 py-5 px-10">
-              <Icon name={IconAwesomeEnum.WAVE_PULSE} className="text-neutral-300" />
+              <Icon iconName="wave-pulse" className="text-neutral-300" />
               <p className="text-neutral-350 font-medium text-xs mt-1 mb-3">No port are set.</p>
             </div>
           )}

@@ -39,15 +39,15 @@ export interface RowEventProps {
 export const getSourceIcon = (origin?: OrganizationEventOrigin) => {
   switch (origin) {
     case OrganizationEventOrigin.GIT:
-      return <Icon name={IconAwesomeEnum.CODE_BRANCH} />
+      return <Icon iconName="code-branch" />
     case OrganizationEventOrigin.CONSOLE:
-      return <Icon name={IconAwesomeEnum.BROWSER} />
+      return <Icon iconName="browser" />
     case OrganizationEventOrigin.QOVERY_INTERNAL:
-      return <Icon name={IconAwesomeEnum.WAVE_PULSE} />
+      return <Icon iconName="wave-pulse" />
     case OrganizationEventOrigin.API:
-      return <Icon name={IconAwesomeEnum.CLOUD_ARROW_UP} />
+      return <Icon iconName="cloud-arrow-up" />
     case OrganizationEventOrigin.CLI:
-      return <Icon name={IconAwesomeEnum.TERMINAL} />
+      return <Icon iconName="terminal" />
     case OrganizationEventOrigin.TERRAFORM_PROVIDER:
       return <Icon name={IconEnum.TERRAFORM} width="12" />
     default:
@@ -104,52 +104,52 @@ export function RowEvent(props: RowEventProps) {
   const badge = match(event.event_type)
     .with(OrganizationEventType.ACCEPT, () => (
       <Badge size="xs" color="green">
-        Accept <Icon name={IconAwesomeEnum.CHECK} className="ml-1" />
+        Accept <Icon iconName="check" className="ml-1" />
       </Badge>
     ))
     .with(OrganizationEventType.CREATE, () => (
       <Badge size="xs" color="green">
-        Create <Icon name={IconAwesomeEnum.CHECK} className="ml-1" />
+        Create <Icon iconName="check" className="ml-1" />
       </Badge>
     ))
     .with(OrganizationEventType.DELETE, () => (
       <Badge size="xs" color="neutral">
-        Delete <Icon name={IconAwesomeEnum.ERASER} className="ml-1" />
+        Delete <Icon iconName="eraser" className="ml-1" />
       </Badge>
     ))
     .with(OrganizationEventType.UPDATE, () => (
       <Badge size="xs" color="sky">
-        Update <Icon name={IconAwesomeEnum.ROTATE} className="ml-1" />
+        Update <Icon iconName="rotate" className="ml-1" />
       </Badge>
     ))
     .with(OrganizationEventType.TRIGGER_CANCEL, () => (
       <Badge size="xs" color="neutral">
-        Trigger Cancel <Icon name={IconAwesomeEnum.XMARK} className="ml-1" />
+        Trigger Cancel <Icon iconName="xmark" className="ml-1" />
       </Badge>
     ))
     .with(OrganizationEventType.TRIGGER_DELETE, () => (
       <Badge size="xs" color="neutral">
-        Trigger Delete <Icon name={IconAwesomeEnum.ERASER} className="ml-1" />
+        Trigger Delete <Icon iconName="eraser" className="ml-1" />
       </Badge>
     ))
     .with(OrganizationEventType.TRIGGER_DEPLOY, () => (
       <Badge size="xs" color="neutral">
-        Trigger Deploy <Icon name={IconAwesomeEnum.CHECK} className="ml-1" />
+        Trigger Deploy <Icon iconName="check" className="ml-1" />
       </Badge>
     ))
     .with(OrganizationEventType.TRIGGER_REDEPLOY, () => (
       <Badge size="xs" color="neutral">
-        Trigger Redeploy <Icon name={IconAwesomeEnum.CHECK} className="ml-1" />
+        Trigger Redeploy <Icon iconName="check" className="ml-1" />
       </Badge>
     ))
     .with(OrganizationEventType.TRIGGER_STOP, () => (
       <Badge size="xs" color="sky">
-        Trigger Stop <Icon name={IconAwesomeEnum.XMARK} className="ml-1" />
+        Trigger Stop <Icon iconName="xmark" className="ml-1" />
       </Badge>
     ))
     .with(OrganizationEventType.TRIGGER_RESTART, () => (
       <Badge size="xs" color="sky">
-        Trigger Restart <Icon name={IconAwesomeEnum.ROTATE_RIGHT} className="ml-1" />
+        Trigger Restart <Icon iconName="rotate-right" className="ml-1" />
       </Badge>
     ))
     .otherwise(() => '-')

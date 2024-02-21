@@ -79,7 +79,7 @@ const dataHead = [
           const isActive = currentFilter === data.mode
           return (
             <p>
-              {isActive ? <Icon name={IconAwesomeEnum.CHECK} /> : ''}
+              {isActive ? <Icon iconName="check" /> : ''}
               {data.status.state} {data.mode}
             </p>
           )

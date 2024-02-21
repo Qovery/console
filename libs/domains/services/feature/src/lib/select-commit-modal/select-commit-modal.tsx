@@ -179,7 +179,7 @@ export function SelectCommitModal({
         </RadioGroup.Root>
       ) : (
         <div className="text-center px-3 py-6">
-          <Icon name={IconAwesomeEnum.WAVE_PULSE} className="text-neutral-350" />
+          <Icon iconName="wave-pulse" className="text-neutral-350" />
           <p className="text-neutral-350 font-medium text-xs mt-1">No result for this search</p>
         </div>
       )}

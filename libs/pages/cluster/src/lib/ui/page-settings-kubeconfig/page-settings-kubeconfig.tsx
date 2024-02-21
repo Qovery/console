@@ -43,7 +43,7 @@ export function PageSettingsKubeconfig({ cluster, onSubmit }: PageSettingsKubeco
         </div>
         <div className="flex border border-neutral-200 p-3 gap-2 rounded items-center">
           <div className="p-2">
-            <Icon name={IconAwesomeEnum.FILE_LINES} />
+            <Icon iconName="file-lines" />
           </div>
           <div className="flex flex-col text-xs grow">
             <span className="text-neutral-400 font-medium">Kubeconfig</span>
@@ -56,13 +56,13 @@ export function PageSettingsKubeconfig({ cluster, onSubmit }: PageSettingsKubeco
               target="_blank"
               rel="noopener noreferrer"
             >
-              View <Icon name={IconAwesomeEnum.EYE} />
+              View <Icon iconName="eye" />
             </Link>
           </div>
           <div className="flex gap-2">
             <Button type="button" variant="outline" {...getRootProps()} color="neutral">
               <input {...getInputProps()} />
-              <Icon name={IconAwesomeEnum.ARROWS_ROTATE} />
+              <Icon iconName="arrows-rotate" />
             </Button>
           </div>
         </div>

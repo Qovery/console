@@ -78,17 +78,17 @@ function MenuManageDeployment({ cluster, clusterStatus }: { cluster: Cluster; cl
 
   const entries: ReactNode[] = [
     isDeployAvailable(clusterStatus.status) && (
-      <DropdownMenu.Item key="0" icon={<Icon name={IconAwesomeEnum.PLAY} />} onClick={mutationDeploy}>
+      <DropdownMenu.Item key="0" icon={<Icon iconName="play" />} onClick={mutationDeploy}>
         {clusterStatus.is_deployed ? 'Deploy' : 'Install'}
       </DropdownMenu.Item>
     ),
     isRedeployAvailable(clusterStatus.status) && (
-      <DropdownMenu.Item key="1" icon={<Icon name={IconAwesomeEnum.ROTATE_RIGHT} />} onClick={mutationUpdate}>
+      <DropdownMenu.Item key="1" icon={<Icon iconName="rotate-right" />} onClick={mutationUpdate}>
         Update
       </DropdownMenu.Item>
     ),
     cluster.cloud_provider !== 'GCP' && isStopAvailable(clusterStatus.status) && (
-      <DropdownMenu.Item key="2" icon={<Icon name={IconAwesomeEnum.CIRCLE_STOP} />} onClick={mutationStop}>
+      <DropdownMenu.Item key="2" icon={<Icon iconName="circle-stop" />} onClick={mutationStop}>
         Stop
       </DropdownMenu.Item>
     ),
@@ -100,8 +100,8 @@ function MenuManageDeployment({ cluster, clusterStatus }: { cluster: Cluster; cl
         <ActionToolbar.Button aria-label="Manage Deployment">
           <Tooltip content="Manage Deployment">
             <div className="flex items-center w-full h-full">
-              <Icon name={IconAwesomeEnum.PLAY} className="mr-3" />
-              <Icon name={IconAwesomeEnum.ANGLE_DOWN} />
+              <Icon iconName="play" className="mr-3" />
+              <Icon iconName="angle-down" />
             </div>
           </Tooltip>
         </ActionToolbar.Button>
@@ -159,14 +159,14 @@ function MenuOtherActions({ cluster, clusterStatus }: { cluster: Cluster; cluste
         <ActionToolbar.Button aria-label="Other actions">
           <Tooltip content="Other actions">
             <div className="flex items-center w-full h-full">
-              <Icon name={IconAwesomeEnum.ELLIPSIS_V} />
+              <Icon iconName="ellipsis-v" />
             </div>
           </Tooltip>
         </ActionToolbar.Button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content>
         <DropdownMenu.Item
-          icon={<Icon name={IconAwesomeEnum.CLOCK_ROTATE_LEFT} />}
+          icon={<Icon iconName="clock-rotate-left" />}
           onClick={() =>
             navigate(
               AUDIT_LOGS_PARAMS_URL(cluster.organization.id, {
@@ -181,28 +181,24 @@ function MenuOtherActions({ cluster, clusterStatus }: { cluster: Cluster; cluste
         >
           See audit logs
         </DropdownMenu.Item>
-        <DropdownMenu.Item icon={<Icon name={IconAwesomeEnum.COPY} />} onClick={() => copyToClipboard(cluster.id)}>
+        <DropdownMenu.Item icon={<Icon iconName="copy" />} onClick={() => copyToClipboard(cluster.id)}>
           Copy identifier
         </DropdownMenu.Item>
         <DropdownMenu.Item
-          icon={<Icon name={IconAwesomeEnum.DOWNLOAD} />}
+          icon={<Icon iconName="download" />}
           onClick={() => downloadKubeconfig({ organizationId: cluster.organization.id, clusterId: cluster.id })}
         >
           Get Kubeconfig
         </DropdownMenu.Item>
         {cluster.kubernetes === 'SELF_MANAGED' && (
-          <DropdownMenu.Item icon={<Icon name={IconAwesomeEnum.CIRCLE_INFO} />} onClick={openInstallationGuideModal}>
+          <DropdownMenu.Item icon={<Icon iconName="circle-info" />} onClick={openInstallationGuideModal}>
             Installation guide
           </DropdownMenu.Item>
         )}
         {canDelete && (
           <>
             <DropdownMenu.Separator />
-            <DropdownMenu.Item
-              color="red"
-              icon={<Icon name={IconAwesomeEnum.TRASH} />}
-              onClick={() => removeCluster(cluster)}
-            >
+            <DropdownMenu.Item color="red" icon={<Icon iconName="trash" />} onClick={() => removeCluster(cluster)}>
               Delete cluster
             </DropdownMenu.Item>
           </>
@@ -234,7 +230,7 @@ export function ClusterActionToolbar({ cluster, clusterStatus, noSettings }: Clu
               })
             }
           >
-            <Icon name={IconAwesomeEnum.SCROLL} />
+            <Icon iconName="scroll" />
           </ActionToolbar.Button>
         </Tooltip>
       )}
@@ -243,7 +239,7 @@ export function ClusterActionToolbar({ cluster, clusterStatus, noSettings }: Clu
           <ActionToolbar.Button
             onClick={() => navigate(CLUSTER_URL(cluster.organization.id, cluster.id) + CLUSTER_SETTINGS_URL)}
           >
-            <Icon name={IconAwesomeEnum.WHEEL} />
+            <Icon iconName="wheel" />
           </ActionToolbar.Button>
         </Tooltip>
       )}

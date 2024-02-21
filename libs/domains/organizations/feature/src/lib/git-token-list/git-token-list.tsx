@@ -43,7 +43,7 @@ export function GitTokenList() {
                     {gitToken.description && (
                       <Tooltip content={gitToken.description}>
                         <div className="ml-1 cursor-pointer">
-                          <Icon name={IconAwesomeEnum.CIRCLE_INFO} className="text-neutral-350" />
+                          <Icon iconName="circle-info" className="text-neutral-350" />
                         </div>
                       </Tooltip>
                     )}
@@ -87,7 +87,7 @@ export function GitTokenList() {
                     })
                   }}
                 >
-                  <Icon name={IconAwesomeEnum.WHEEL} />
+                  <Icon iconName="wheel" />
                 </Button>
                 <Button
                   variant="outline"
@@ -108,7 +108,7 @@ export function GitTokenList() {
                     })
                   }}
                 >
-                  <Icon name={IconAwesomeEnum.TRASH} />
+                  <Icon iconName="trash" />
                 </Button>
               </div>
             </li>
@@ -116,7 +116,7 @@ export function GitTokenList() {
         </ul>
       ) : (
         <div className="text-center py-4 px-5">
-          <Icon name={IconAwesomeEnum.WAVE_PULSE} className="text-neutral-350" />
+          <Icon iconName="wave-pulse" className="text-neutral-350" />
           <p className="text-neutral-350 font-medium text-xs mt-1">
             No Git Tokens found. <br /> Please add one.
           </p>

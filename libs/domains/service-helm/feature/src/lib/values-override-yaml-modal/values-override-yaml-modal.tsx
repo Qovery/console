@@ -78,7 +78,7 @@ export function ValuesOverrideYamlModal({
           >
             {isErrorHelmDefaultValues && (
               <div className="text-center py-14 px-5">
-                <Icon name={IconAwesomeEnum.WAVE_PULSE} className="text-neutral-350" />
+                <Icon iconName="wave-pulse" className="text-neutral-350" />
                 <p className="text-neutral-350 font-medium text-xs mt-1 mb-3">No default values.yaml available</p>
               </div>
             )}

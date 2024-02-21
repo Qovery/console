@@ -131,7 +131,7 @@ export function PodStatusesCallout({ environmentId, serviceId }: PodStatusesCall
                     disabled={activeIndex === 0}
                     onClick={() => setActiveIndex((index) => index - 1)}
                   >
-                    <Icon className="px-1" name={IconAwesomeEnum.CHEVRON_LEFT} />
+                    <Icon className="px-1" iconName="chevron-left" />
                   </Button>
                   <Button
                     type="button"
@@ -140,7 +140,7 @@ export function PodStatusesCallout({ environmentId, serviceId }: PodStatusesCall
                     disabled={activeIndex === callouts.length - 1}
                     onClick={() => setActiveIndex((index) => index + 1)}
                   >
-                    <Icon className="px-1" name={IconAwesomeEnum.CHEVRON_RIGHT} />
+                    <Icon className="px-1" iconName="chevron-right" />
                   </Button>
                 </>
               )}

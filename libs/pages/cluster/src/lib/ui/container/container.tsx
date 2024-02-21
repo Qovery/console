@@ -81,7 +81,7 @@ export function Container({ children, cluster, deployCluster }: PropsWithChildre
 
   const tabsItems = [
     {
-      icon: <Icon name={IconAwesomeEnum.WHEEL} className="w-4 mt-0.5" />,
+      icon: <Icon iconName="wheel" className="w-4 mt-0.5" />,
       name: 'Settings',
       active: pathname.includes(CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL),
       link: `${CLUSTER_URL(organizationId, clusterId)}${CLUSTER_SETTINGS_URL}`,

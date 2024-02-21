@@ -42,7 +42,7 @@ export function MenuAccount(props: MenuAccountProps) {
       title: 'Organizations',
       sortAlphabetically: true,
       button: {
-        label: <Icon name={IconAwesomeEnum.CIRCLE_PLUS} className="text-brand-500 link !text-base mr-3" />,
+        label: <Icon iconName="circle-plus" className="text-brand-500 link !text-base mr-3" />,
         onClick: () => navigate(ONBOARDING_URL + ONBOARDING_PROJECT_URL),
       },
       items: organizations.map((organization: Organization) => ({
@@ -85,7 +85,7 @@ export function MenuAccount(props: MenuAccountProps) {
         {
           itemContentCustom: (
             <div className="text-neutral-400 dark:text-neutral-100 text-ssm font-medium">
-              <Icon name={IconAwesomeEnum.ARROW_RIGHT_FROM_BRACKET} className="text-brand-500 mr-3" />
+              <Icon iconName="arrow-right-from-bracket" className="text-brand-500 mr-3" />
               Logout
             </div>
           ),

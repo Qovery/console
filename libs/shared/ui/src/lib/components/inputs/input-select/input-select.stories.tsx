@@ -41,7 +41,7 @@ Single.args = {
   isSearchable: false,
   menuListButton: {
     label: 'New element',
-    icon: <IconFa name={IconAwesomeEnum.CIRCLE_PLUS} className="text-brand-500" />,
+    icon: <IconFa iconName="circle-plus" className="text-brand-500" />,
     onClick: () => console.log('new element'),
   },
 }

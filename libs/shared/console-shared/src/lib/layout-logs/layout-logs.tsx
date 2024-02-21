@@ -192,7 +192,7 @@ export function LayoutLogs({
                         href="https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/log-format/"
                         target="_blank"
                       >
-                        <IconFa name={IconAwesomeEnum.CIRCLE_INFO} />
+                        <IconFa iconName="circle-info" />
                       </a>
                     </Tooltip>
                   </div>

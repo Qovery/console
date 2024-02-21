@@ -279,7 +279,7 @@ export function TableHeadFilter<T>({ title, dataHead, defaultData, filter, setFi
           className="flex items-center h-6 px-2 relative -left-6 text-neutral-50 text-xs cursor-pointer"
           onClick={(event) => cleanFilter(event)}
         >
-          <Icon name={IconAwesomeEnum.XMARK} />
+          <Icon iconName="xmark" />
         </span>
       )}
     </div>

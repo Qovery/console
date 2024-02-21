@@ -38,7 +38,7 @@ export function PageOrganizationContainerRegistries(props: PageOrganizationConta
           </div>
           <Button className="gap-2" size="lg" onClick={() => onAddRegistry()}>
             Add registry
-            <Icon name={IconAwesomeEnum.CIRCLE_PLUS} />
+            <Icon iconName="circle-plus" />
           </Button>
         </div>
         <BlockContent title="Container registries" classNameContent="p-0">
@@ -66,7 +66,7 @@ export function PageOrganizationContainerRegistries(props: PageOrganizationConta
                         {registry.description && (
                           <Tooltip content={registry.description}>
                             <div className="ml-1 cursor-pointer">
-                              <Icon name={IconAwesomeEnum.CIRCLE_INFO} className="text-neutral-350" />
+                              <Icon iconName="circle-info" className="text-neutral-350" />
                             </div>
                           </Tooltip>
                         )}
@@ -88,10 +88,10 @@ export function PageOrganizationContainerRegistries(props: PageOrganizationConta
                   </div>
                   <div className="flex gap-2">
                     <Button size="md" variant="outline" color="neutral" onClick={() => onEdit(registry)}>
-                      <Icon name={IconAwesomeEnum.WHEEL} />
+                      <Icon iconName="wheel" />
                     </Button>
                     <Button size="md" variant="outline" color="neutral" onClick={() => onDelete(registry)}>
-                      <Icon name={IconAwesomeEnum.TRASH} />
+                      <Icon iconName="trash" />
                     </Button>
                   </div>
                 </li>
@@ -99,7 +99,7 @@ export function PageOrganizationContainerRegistries(props: PageOrganizationConta
             </ul>
           ) : (
             <div className="text-center my-4 px-5">
-              <Icon name={IconAwesomeEnum.WAVE_PULSE} className="text-neutral-350" />
+              <Icon iconName="wave-pulse" className="text-neutral-350" />
               <p className="text-neutral-350 font-medium text-xs mt-1">
                 No container registry found. <br /> Please add one.
               </p>

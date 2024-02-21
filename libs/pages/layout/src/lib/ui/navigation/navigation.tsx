@@ -59,7 +59,7 @@ export function Navigation({ defaultOrganizationId, clusterNotification }: Navig
             url: 'https://discuss.qovery.com/',
             external: true,
           },
-          contentLeft: <Icon name={IconAwesomeEnum.PEOPLE} className="text-sm text-brand-400" />,
+          contentLeft: <Icon iconName="people" className="text-sm text-brand-400" />,
         },
         {
           name: 'Roadmap',
@@ -67,7 +67,7 @@ export function Navigation({ defaultOrganizationId, clusterNotification }: Navig
             url: 'https://roadmap.qovery.com/b/5m13y5v6/feature-ideas',
             external: true,
           },
-          contentLeft: <Icon name={IconAwesomeEnum.ROAD} className="text-sm text-brand-400" />,
+          contentLeft: <Icon iconName="road" className="text-sm text-brand-400" />,
         },
         {
           name: 'Contact us',

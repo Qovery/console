@@ -27,7 +27,7 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
 
   const tabsItems = [
     {
-      icon: <Icon name={IconAwesomeEnum.LAYER_GROUP} />,
+      icon: <Icon iconName="layer-group" />,
       name: 'Environments',
       active: pathname === `${ENVIRONMENTS_URL(organizationId, projectId)}/general`,
       link: `${ENVIRONMENTS_URL(organizationId, projectId)}/general`,
@@ -55,7 +55,7 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
         }}
       >
         New environment
-        <Icon name={IconAwesomeEnum.CIRCLE_PLUS} className="text-xs" />
+        <Icon iconName="circle-plus" className="text-xs" />
       </Button>
     </div>
   )

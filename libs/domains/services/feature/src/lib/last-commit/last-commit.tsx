@@ -80,8 +80,8 @@ export function LastCommit({ className, service, gitRepository }: LastCommitProp
             className={twMerge(`group justify-between ${delta > 0 ? 'w-[98px] pr-[26px]' : 'gap-1'}`, className)}
             onClick={deployCommitVersion}
           >
-            <Icon name={IconAwesomeEnum.ROTATE_RIGHT} className="hidden group-hover:inline w-4" />
-            <Icon name={IconAwesomeEnum.CODE_COMMIT} className="group-hover:hidden w-4" />
+            <Icon iconName="rotate-right" className="hidden group-hover:inline w-4" />
+            <Icon iconName="code-commit" className="group-hover:hidden w-4" />
             {deployedCommit.git_commit_id.substring(0, 7)}
             <span className="absolute right-0 inset-y-0 bg-brand-500 text-white px-1 rounded-tr rounded-br flex items-center min-w-[22px] justify-center">
               {delta}
@@ -96,8 +96,8 @@ export function LastCommit({ className, service, gitRepository }: LastCommitProp
               size="xs"
               className={twMerge('group justify-between', className)}
             >
-              <Icon name={IconAwesomeEnum.COPY} className="hidden group-hover:inline w-4" />
-              <Icon name={IconAwesomeEnum.CODE_COMMIT} className="group-hover:hidden w-4" />
+              <Icon iconName="copy" className="hidden group-hover:inline w-4" />
+              <Icon iconName="code-commit" className="group-hover:hidden w-4" />
               {deployedCommit.git_commit_id.substring(0, 7)}
             </Button>
           </CopyToClipboard>

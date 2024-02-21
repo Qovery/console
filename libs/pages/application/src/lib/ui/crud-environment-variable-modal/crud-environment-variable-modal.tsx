@@ -161,7 +161,7 @@ export function CrudEnvironmentVariableModal(props: CrudEnvironmentVariableModal
                 rightElement={
                   <Tooltip content="Scope can’t be changed. Re-create the var with the right scope." side="left">
                     <div>
-                      <Icon name={IconAwesomeEnum.CIRCLE_INFO} className="text-neutral-350 text-sm" />
+                      <Icon iconName="circle-info" className="text-neutral-350 text-sm" />
                     </div>
                   </Tooltip>
                 }

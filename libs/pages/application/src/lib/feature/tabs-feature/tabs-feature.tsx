@@ -71,7 +71,7 @@ function ContentRightEnvVariable({
         },
         {
           name: 'Import from Doppler',
-          contentLeft: <Icon name={IconAwesomeEnum.ROTATE} className="text-sm text-brand-500" />,
+          contentLeft: <Icon iconName="rotate" className="text-sm text-brand-500" />,
           contentRight: (
             <Tooltip content="Documentation">
               <a
@@ -80,7 +80,7 @@ function ContentRightEnvVariable({
                 href="https://hub.qovery.com/docs/using-qovery/integration/secret-manager/doppler/"
                 target="_blank"
               >
-                <IconFa name={IconAwesomeEnum.CIRCLE_INFO} className="text-neutral-400 text-sm" />
+                <IconFa iconName="circle-info" className="text-neutral-400 text-sm" />
               </a>
             </Tooltip>
           ),
@@ -98,7 +98,7 @@ function ContentRightEnvVariable({
       items: [
         {
           name: 'Variable',
-          contentLeft: <Icon name={IconAwesomeEnum.FEATHER} className="text-sm text-brand-500" />,
+          contentLeft: <Icon iconName="feather" className="text-sm text-brand-500" />,
           onClick: (e: ClickEvent) => {
             openModal({
               content: (
@@ -118,7 +118,7 @@ function ContentRightEnvVariable({
         },
         {
           name: 'Variable as file',
-          contentLeft: <Icon name={IconAwesomeEnum.FILE_LINES} className="text-sm text-brand-500" />,
+          contentLeft: <Icon iconName="file-lines" className="text-sm text-brand-500" />,
           onClick: (e: ClickEvent) => {
             openModal({
               content: (
@@ -225,9 +225,9 @@ export function TabsFeature() {
               serviceId={applicationId}
             >
               <Button className="gap-2" size="lg" color="neutral" variant="surface">
-                <Icon name={IconAwesomeEnum.ANGLE_DOWN} />
+                <Icon iconName="angle-down" />
                 Links
-                <Icon name={IconAwesomeEnum.LINK} />
+                <Icon iconName="link" />
               </Button>
             </ServiceLinksPopover>
           )}

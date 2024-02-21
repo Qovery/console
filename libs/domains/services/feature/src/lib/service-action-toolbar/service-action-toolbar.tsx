@@ -249,31 +249,31 @@ function MenuManageDeployment({
         <ActionToolbar.Button aria-label="Manage Deployment">
           <Tooltip content="Manage Deployment">
             <div className="flex items-center w-full h-full">
-              <Icon name={IconAwesomeEnum.PLAY} className="mr-3" />
-              <Icon name={IconAwesomeEnum.ANGLE_DOWN} />
+              <Icon iconName="play" className="mr-3" />
+              <Icon iconName="angle-down" />
             </div>
           </Tooltip>
         </ActionToolbar.Button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content>
         {isCancelBuildAvailable(state) && (
-          <DropdownMenu.Item icon={<Icon name={IconAwesomeEnum.XMARK} />} onClick={mutationCancelBuild}>
+          <DropdownMenu.Item icon={<Icon iconName="xmark" />} onClick={mutationCancelBuild}>
             {state === StateEnum.DELETE_QUEUED || state === StateEnum.DELETING ? 'Cancel delete' : 'Cancel deployment'}
           </DropdownMenu.Item>
         )}
         {isDeployAvailable(state) && (
-          <DropdownMenu.Item icon={<Icon name={IconAwesomeEnum.PLAY} />} onClick={mutationDeploy}>
+          <DropdownMenu.Item icon={<Icon iconName="play" />} onClick={mutationDeploy}>
             Deploy
           </DropdownMenu.Item>
         )}
         {isRedeployAvailable(state) && (
-          <DropdownMenu.Item icon={<Icon name={IconAwesomeEnum.ROTATE_RIGHT} />} onClick={mutationRedeploy}>
+          <DropdownMenu.Item icon={<Icon iconName="rotate-right" />} onClick={mutationRedeploy}>
             Redeploy
           </DropdownMenu.Item>
         )}
         {runningState && service.serviceType !== 'JOB' && isRestartAvailable(runningState.state, state) && (
           <DropdownMenu.Item
-            icon={<Icon name={IconAwesomeEnum.ROTATE_RIGHT} />}
+            icon={<Icon iconName="rotate-right" />}
             onClick={() => restartService({ serviceId: service.id, serviceType: service.serviceType })}
           >
             Restart Service
@@ -281,7 +281,7 @@ function MenuManageDeployment({
         )}
         {service.serviceType === 'JOB' && (
           <DropdownMenu.Item
-            icon={<Icon name={IconAwesomeEnum.PLAY} />}
+            icon={<Icon iconName="play" />}
             onClick={() =>
               openModal({
                 content: <ForceRunModalFeature service={service} />,
@@ -292,7 +292,7 @@ function MenuManageDeployment({
           </DropdownMenu.Item>
         )}
         {isStopAvailable(state) && (
-          <DropdownMenu.Item icon={<Icon name={IconAwesomeEnum.CIRCLE_STOP} />} onClick={mutationStop}>
+          <DropdownMenu.Item icon={<Icon iconName="circle-stop" />} onClick={mutationStop}>
             Stop
           </DropdownMenu.Item>
         )}
@@ -310,7 +310,7 @@ function MenuManageDeployment({
                   <DropdownMenu.Separator />
                   {gitRepository && (
                     <DropdownMenu.Item
-                      icon={<Icon name={IconAwesomeEnum.CLOCK_ROTATE_LEFT} />}
+                      icon={<Icon iconName="clock-rotate-left" />}
                       onClick={() => deployCommitVersion(service, gitRepository, 'Deploy another version')}
                     >
                       Deploy another version
@@ -333,7 +333,7 @@ function MenuManageDeployment({
                   <>
                     <DropdownMenu.Separator />
                     <DropdownMenu.Item
-                      icon={<Icon name={IconAwesomeEnum.CLOCK_ROTATE_LEFT} />}
+                      icon={<Icon iconName="clock-rotate-left" />}
                       onClick={() => deployTagVersion(service, version)}
                     >
                       Deploy another version
@@ -352,7 +352,7 @@ function MenuManageDeployment({
                   <DropdownMenu.Separator />
                   {gitRepository && (
                     <DropdownMenu.Item
-                      icon={<Icon name={IconAwesomeEnum.CLOCK_ROTATE_LEFT} />}
+                      icon={<Icon iconName="clock-rotate-left" />}
                       onClick={() => deployCommitVersion(service, gitRepository, 'Deploy another chart version')}
                     >
                       Deploy another chart version
@@ -371,7 +371,7 @@ function MenuManageDeployment({
                   <>
                     <DropdownMenu.Separator />
                     <DropdownMenu.Item
-                      icon={<Icon name={IconAwesomeEnum.CLOCK_ROTATE_LEFT} />}
+                      icon={<Icon iconName="clock-rotate-left" />}
                       onClick={() => deployHelmChartVersion(service, version)}
                     >
                       Deploy another chart version
@@ -389,7 +389,7 @@ function MenuManageDeployment({
             return (
               gitRepository && (
                 <DropdownMenu.Item
-                  icon={<Icon name={IconAwesomeEnum.CLOCK_ROTATE_LEFT} />}
+                  icon={<Icon iconName="clock-rotate-left" />}
                   onClick={() => deployHelmOverrideVersion(service, gitRepository)}
                 >
                   Deploy another override version
@@ -487,14 +487,14 @@ function MenuOtherActions({
         <ActionToolbar.Button aria-label="Other actions">
           <Tooltip content="Other actions">
             <div className="flex items-center w-full h-full">
-              <Icon name={IconAwesomeEnum.ELLIPSIS_V} />
+              <Icon iconName="ellipsis-v" />
             </div>
           </Tooltip>
         </ActionToolbar.Button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content>
         <DropdownMenu.Item
-          icon={<Icon name={IconAwesomeEnum.SCROLL} />}
+          icon={<Icon iconName="scroll" />}
           onClick={() => {
             navigate(environmentLogsLink + SERVICE_LOGS_URL(service.id), {
               state: { prevUrl: pathname },
@@ -505,11 +505,11 @@ function MenuOtherActions({
         </DropdownMenu.Item>
         {editCodeUrl && (
           <a href={editCodeUrl} target="_blank" rel="noreferrer">
-            <DropdownMenu.Item icon={<Icon name={IconAwesomeEnum.CODE} />}>Edit code</DropdownMenu.Item>
+            <DropdownMenu.Item icon={<Icon iconName="code" />}>Edit code</DropdownMenu.Item>
           </a>
         )}
         <DropdownMenu.Item
-          icon={<Icon name={IconAwesomeEnum.CLOCK_ROTATE_LEFT} />}
+          icon={<Icon iconName="clock-rotate-left" />}
           onClick={() =>
             navigate(
               AUDIT_LOGS_PARAMS_URL(organizationId, {
@@ -523,11 +523,11 @@ function MenuOtherActions({
         >
           See audit logs
         </DropdownMenu.Item>
-        <DropdownMenu.Item icon={<Icon name={IconAwesomeEnum.COPY} />} onClick={() => copyToClipboard(copyContent)}>
+        <DropdownMenu.Item icon={<Icon iconName="copy" />} onClick={() => copyToClipboard(copyContent)}>
           Copy identifiers
         </DropdownMenu.Item>
         <DropdownMenu.Item
-          icon={<Icon name={IconAwesomeEnum.WHEEL} />}
+          icon={<Icon iconName="wheel" />}
           onClick={() =>
             navigate(
               match(service?.serviceType)
@@ -555,13 +555,13 @@ function MenuOtherActions({
         >
           Open settings
         </DropdownMenu.Item>
-        <DropdownMenu.Item icon={<Icon name={IconAwesomeEnum.COPY} />} onClick={() => openServiceCloneModal()}>
+        <DropdownMenu.Item icon={<Icon iconName="copy" />} onClick={() => openServiceCloneModal()}>
           Clone
         </DropdownMenu.Item>
         {isDeleteAvailable(state) && (
           <>
             <DropdownMenu.Separator />
-            <DropdownMenu.Item color="red" icon={<Icon name={IconAwesomeEnum.TRASH} />} onClick={mutationDelete}>
+            <DropdownMenu.Item color="red" icon={<Icon iconName="trash" />} onClick={mutationDelete}>
               Delete service
             </DropdownMenu.Item>
           </>
@@ -598,7 +598,7 @@ export function ServiceActionToolbar({ environment, serviceId }: { environment: 
             })
           }}
         >
-          <Icon name={IconAwesomeEnum.SCROLL} />
+          <Icon iconName="scroll" />
         </ActionToolbar.Button>
       </Tooltip>
       <MenuOtherActions

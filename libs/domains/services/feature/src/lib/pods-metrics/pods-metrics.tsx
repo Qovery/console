@@ -71,7 +71,7 @@ export function PodsMetrics({ environmentId, serviceId, children }: PodsMetricsP
   }, [metrics, runningStatuses])
 
   const columnHelper = createColumnHelper<Pod>()
-  const placeholder = <Icon name={IconAwesomeEnum.CIRCLE_QUESTION} className="text-sm text-neutral-300" />
+  const placeholder = <Icon iconName="circle-question" className="text-sm text-neutral-300" />
 
   const containerImage = match(service)
     .with({ serviceType: ServiceTypeEnum.JOB, source: P.when(isJobContainerSource) }, ({ source }) => source.image)
@@ -148,7 +148,7 @@ export function PodsMetrics({ environmentId, serviceId, children }: PodsMetricsP
                 </div>
               ) : (
                 <span className="max-w-full truncate">
-                  <Icon className="mr-2" name={IconAwesomeEnum.CODE_COMMIT} />
+                  <Icon className="mr-2" iconName="code-commit" />
                   {value.substring(0, 7)}
                 </span>
               )}
@@ -282,7 +282,7 @@ export function PodsMetrics({ environmentId, serviceId, children }: PodsMetricsP
   ) {
     return (
       <div className="flex flex-col items-center gap-1 py-10 bg-neutral-100 text-sm text-neutral-350 border border-neutral-200">
-        <Icon className="text-md text-neutral-300" name={IconAwesomeEnum.CIRCLE_QUESTION} />
+        <Icon className="text-md text-neutral-300" iconName="circle-question" />
         <span className="font-medium">Metrics for pods are not available, try again</span>
         <span>There is a technical issue on retrieving the pod metrics.</span>
       </div>
@@ -310,8 +310,8 @@ export function PodsMetrics({ environmentId, serviceId, children }: PodsMetricsP
                     >
                       {flexRender(header.column.columnDef.header, header.getContext())}
                       {match(header.column.getIsSorted())
-                        .with('asc', () => <Icon className="text-xs" name={IconAwesomeEnum.ARROW_DOWN} />)
-                        .with('desc', () => <Icon className="text-xs" name={IconAwesomeEnum.ARROW_UP} />)
+                        .with('asc', () => <Icon className="text-xs" iconName="arrow-down" />)
+                        .with('desc', () => <Icon className="text-xs" iconName="arrow-up" />)
                         .with(false, () => null)
                         .exhaustive()}
                     </button>

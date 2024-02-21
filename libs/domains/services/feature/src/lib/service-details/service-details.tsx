@@ -84,7 +84,7 @@ function GitRepository({
               rel="noopener noreferrer"
             >
               <Badge variant="surface" size="xs" className="gap-1">
-                <Icon name={IconAwesomeEnum.CODE_BRANCH} height={14} width={14} />
+                <Icon iconName="code-branch" height={14} width={14} />
                 <Truncate text={gitRepository.branch} truncateLimit={18} />
               </Badge>
             </a>
@@ -267,7 +267,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
           {/* XXX: Should be Heading, typography & design wanted */}
           <span className="text-neutral-400 font-medium">About</span>
           <Link color="current" to={`..${APPLICATION_SETTINGS_URL + APPLICATION_SETTINGS_GENERAL_URL}`} relative="path">
-            <Icon name={IconAwesomeEnum.WHEEL} className="text-base text-neutral-300" />
+            <Icon iconName="wheel" className="text-base text-neutral-300" />
           </Link>
         </div>
         <p>{service.description || 'No description provided yet'}</p>
@@ -306,7 +306,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
           {/* XXX: Should be Heading, typography & design wanted */}
           <span className="text-neutral-400 font-medium">Source</span>
           <Link color="current" to={`..${APPLICATION_SETTINGS_URL + APPLICATION_SETTINGS_GENERAL_URL}`} relative="path">
-            <Icon name={IconAwesomeEnum.WHEEL} className="text-base text-neutral-300" />
+            <Icon iconName="wheel" className="text-base text-neutral-300" />
           </Link>
         </div>
         {match(service)
@@ -407,7 +407,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
                       handleCopyCredentials(databaseSource.masterCredentials!)
                     }
                   >
-                    <Icon name={IconAwesomeEnum.KEY} className="mr-2" />
+                    <Icon iconName="key" className="mr-2" />
                     Connection URI
                   </Button>
                 </Dd>
@@ -426,7 +426,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
                 Resources
                 <Tooltip content="This is based on the configuration of your service">
                   <span className="flex items-center">
-                    <Icon name={IconAwesomeEnum.CIRCLE_INFO} className="text-xs text-neutral-350" />
+                    <Icon iconName="circle-info" className="text-xs text-neutral-350" />
                   </span>
                 </Tooltip>
               </span>
@@ -435,7 +435,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
                 to={`..${APPLICATION_SETTINGS_URL + APPLICATION_SETTINGS_RESOURCES_URL}`}
                 relative="path"
               >
-                <Icon name={IconAwesomeEnum.WHEEL} className="text-base text-neutral-300" />
+                <Icon iconName="wheel" className="text-base text-neutral-300" />
               </Link>
             </div>
             <div className="grid grid-cols-2 gap-2">{resources}</div>
@@ -454,7 +454,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
                 to={`..${APPLICATION_SETTINGS_URL + APPLICATION_SETTINGS_VALUES_OVERRIDE_FILE_URL}`}
                 relative="path"
               >
-                <Icon name={IconAwesomeEnum.WHEEL} className="text-base text-neutral-300" />
+                <Icon iconName="wheel" className="text-base text-neutral-300" />
               </Link>
             </div>
             <div className="grid grid-cols-2 gap-2">{valuesOverride}</div>

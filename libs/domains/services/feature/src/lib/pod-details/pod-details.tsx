@@ -67,7 +67,7 @@ export function PodDetails({ pod, serviceId, serviceType }: PodDetailsProps) {
       >
         <Button type="button" size="sm" color="neutral" variant="surface" className="gap-2">
           Logs
-          <Icon name={IconAwesomeEnum.SCROLL} />
+          <Icon iconName="scroll" />
         </Button>
       </Link>
       {containers.length ? (

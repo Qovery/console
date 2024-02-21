@@ -62,7 +62,7 @@ export function PageOrganizationApi(props: PageOrganizationApiProps) {
                         {token.description && (
                           <Tooltip content={token.description}>
                             <div className="ml-1 cursor-pointer">
-                              <Icon name={IconAwesomeEnum.CIRCLE_INFO} className="text-neutral-350" />
+                              <Icon iconName="circle-info" className="text-neutral-350" />
                             </div>
                           </Tooltip>
                         )}
@@ -93,7 +93,7 @@ export function PageOrganizationApi(props: PageOrganizationApiProps) {
             </ul>
           ) : (
             <div className="text-center py-4 px-5">
-              <Icon name={IconAwesomeEnum.WAVE_PULSE} className="text-neutral-350" />
+              <Icon iconName="wave-pulse" className="text-neutral-350" />
               <p className="text-neutral-350 font-medium text-xs mt-1">
                 No Api Token found. <br /> Please add one.
               </p>

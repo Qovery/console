@@ -44,7 +44,7 @@ export function ClusterCredentialsSettings(props: ClusterCredentialsSettingsProp
               menuListButton={{
                 title: 'Select credential',
                 label: 'New credential',
-                icon: <IconFa name={IconAwesomeEnum.CIRCLE_PLUS} className="text-brand-500" />,
+                icon: <IconFa iconName="circle-plus" className="text-brand-500" />,
                 onClick: () => openCredentialsModal(),
               }}
             />

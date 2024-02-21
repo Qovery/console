@@ -135,8 +135,8 @@ function ServiceNameCell({ row, environment }: { row: Row<AnyService>; environme
             <Button size="xs" variant="surface" color="neutral" radius="full">
               <Tooltip content="Links">
                 <div className="flex items-center gap-1">
-                  <Icon name={IconAwesomeEnum.LINK} />
-                  <Icon name={IconAwesomeEnum.ANGLE_DOWN} />
+                  <Icon iconName="link" />
+                  <Icon iconName="angle-down" />
                 </div>
               </Tooltip>
             </Button>
@@ -147,7 +147,7 @@ function ServiceNameCell({ row, environment }: { row: Row<AnyService>; environme
         {'auto_deploy' in service && service.auto_deploy && (
           <Tooltip content="Auto-deploy">
             <span>
-              <Icon className="text-neutral-300" name={IconAwesomeEnum.ARROWS_ROTATE} />
+              <Icon className="text-neutral-300" iconName="arrows-rotate" />
             </span>
           </Tooltip>
         )}
@@ -330,7 +330,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
                       rel="noopener noreferrer"
                     >
                       <Badge variant="surface" size="xs" className="gap-1 whitespace-nowrap">
-                        <Icon name={IconAwesomeEnum.CODE_BRANCH} height={14} width={14} />
+                        <Icon iconName="code-branch" height={14} width={14} />
                         <Truncate text={gitRepository.branch} truncateLimit={18} />
                       </Badge>
                     </a>
@@ -442,7 +442,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
               <span className="text-xs text-neutral-350">{timeAgo(new Date(value))}</span>
             </Tooltip>
           ) : (
-            <Icon name={IconAwesomeEnum.CIRCLE_QUESTION} className="text-sm text-neutral-300" />
+            <Icon iconName="circle-question" className="text-sm text-neutral-300" />
           )
         },
       }),
@@ -514,8 +514,8 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
                     >
                       {flexRender(header.column.columnDef.header, header.getContext())}
                       {match(header.column.getIsSorted())
-                        .with('asc', () => <Icon className="text-xs" name={IconAwesomeEnum.ARROW_DOWN} />)
-                        .with('desc', () => <Icon className="text-xs" name={IconAwesomeEnum.ARROW_UP} />)
+                        .with('asc', () => <Icon className="text-xs" iconName="arrow-down" />)
+                        .with('desc', () => <Icon className="text-xs" iconName="arrow-up" />)
                         .with(false, () => null)
                         .exhaustive()}
                     </button>

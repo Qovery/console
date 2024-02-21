@@ -21,7 +21,7 @@ export const Primary = {
   render: () => (
     <Callout.Root color="green">
       <Callout.Icon>
-        <Icon name={IconAwesomeEnum.TRIANGLE_EXCLAMATION} />
+        <Icon iconName="triangle-exclamation" />
       </Callout.Icon>
       <Callout.Text>
         <Callout.TextHeading>Lorem ipsum</Callout.TextHeading>
@@ -39,7 +39,7 @@ export const WithButtons = {
   render: () => (
     <Callout.Root color="red">
       <Callout.Icon>
-        <Icon name={IconAwesomeEnum.TRIANGLE_EXCLAMATION} />
+        <Icon iconName="triangle-exclamation" />
       </Callout.Icon>
       <Callout.Text>
         <Callout.TextHeading>Lorem ipsum</Callout.TextHeading>
@@ -51,10 +51,10 @@ export const WithButtons = {
       </Callout.Text>
       <div className="flex flex-row gap-1.5">
         <Button type="button" color="neutral" variant="outline">
-          <Icon className="px-1" name={IconAwesomeEnum.CHEVRON_LEFT} />
+          <Icon className="px-1" iconName="chevron-left" />
         </Button>
         <Button type="button" color="neutral" variant="outline">
-          <Icon className="px-1" name={IconAwesomeEnum.CHEVRON_RIGHT} />
+          <Icon className="px-1" iconName="chevron-right" />
         </Button>
       </div>
     </Callout.Root>

@@ -23,30 +23,30 @@ export const Primary = {
       <DropdownMenu.Root>
         <DropdownMenu.Trigger asChild>
           <ActionToolbar.Button>
-            <Icon name={IconAwesomeEnum.PLAY} className="mr-3" />
-            <Icon name={IconAwesomeEnum.ANGLE_DOWN} />
+            <Icon iconName="play" className="mr-3" />
+            <Icon iconName="angle-down" />
           </ActionToolbar.Button>
         </DropdownMenu.Trigger>
         <DropdownMenu.Content>
           <DropdownMenu.Item>
-            <Icon name={IconAwesomeEnum.PLAY} className="text-sm mr-3 text-brand-400" />
+            <Icon iconName="play" className="text-sm mr-3 text-brand-400" />
             Deploy
           </DropdownMenu.Item>
           <DropdownMenu.Separator />
           <DropdownMenu.Item color="red">
-            <Icon name={IconAwesomeEnum.TRASH} className="text-sm mr-3 text-red-600" />
+            <Icon iconName="trash" className="text-sm mr-3 text-red-600" />
             Delete service
           </DropdownMenu.Item>
         </DropdownMenu.Content>
       </DropdownMenu.Root>
       <ActionToolbar.Button>
-        <Icon name={IconAwesomeEnum.SCROLL} />
+        <Icon iconName="scroll" />
       </ActionToolbar.Button>
       <ActionToolbar.Button>
-        <Icon name={IconAwesomeEnum.SCROLL} />
+        <Icon iconName="scroll" />
       </ActionToolbar.Button>
       <ActionToolbar.Button>
-        <Icon name={IconAwesomeEnum.WHEEL} />
+        <Icon iconName="wheel" />
       </ActionToolbar.Button>
     </ActionToolbar.Root>
   ),

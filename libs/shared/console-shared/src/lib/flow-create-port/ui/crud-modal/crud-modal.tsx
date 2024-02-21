@@ -121,7 +121,7 @@ export function CrudModal({
               isMatchingHealthCheck && (
                 <Tooltip side="left" content="A health check is running on this port">
                   <div>
-                    <Icon name={IconAwesomeEnum.SHIELD_CHECK} className="text-green-500 hover:text-green-700" />
+                    <Icon iconName="shield-check" className="text-green-500 hover:text-green-700" />
                   </div>
                 </Tooltip>
               )
@@ -186,7 +186,7 @@ export function CrudModal({
                   watchProtocol !== PortProtocolEnum.UDP && (
                     <Tooltip content="You cannot configure the port used externally" side="left">
                       <div>
-                        <Icon name={IconAwesomeEnum.CIRCLE_INFO} className="text-neutral-350" />
+                        <Icon iconName="circle-info" className="text-neutral-350" />
                       </div>
                     </Tooltip>
                   )
@@ -220,7 +220,7 @@ export function CrudModal({
       {(watchProtocol === PortProtocolEnum.TCP || watchProtocol === PortProtocolEnum.UDP) && watchPublicly && (
         <Callout.Root className="mt-4" color="yellow">
           <Callout.Icon>
-            <Icon name={IconAwesomeEnum.CIRCLE_INFO} />
+            <Icon iconName="circle-info" />
           </Callout.Icon>
           <Callout.Text className="text-xs">
             Activating this feature will add an extra cost to your cloud provider bill (a Network Load Balancer will be
@@ -231,7 +231,7 @@ export function CrudModal({
       {isMatchingHealthCheck && currentProtocol === watchProtocol && (
         <Callout.Root className="mt-4" color="yellow">
           <Callout.Icon>
-            <Icon name={IconAwesomeEnum.CIRCLE_INFO} />
+            <Icon iconName="circle-info" />
           </Callout.Icon>
           <Callout.Text className="text-xs">The health check will be updated to use the new port value.</Callout.Text>
         </Callout.Root>
@@ -239,7 +239,7 @@ export function CrudModal({
       {isMatchingHealthCheck && currentProtocol !== watchProtocol && (
         <Callout.Root className="mt-4" color="yellow">
           <Callout.Icon>
-            <Icon name={IconAwesomeEnum.CIRCLE_INFO} />
+            <Icon iconName="circle-info" />
           </Callout.Icon>
           <Callout.Text className="text-xs">Please verify the health check configuration.</Callout.Text>
         </Callout.Root>

@@ -44,7 +44,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
     <div>
       <Callout.Root className="mb-5" color="yellow">
         <Callout.Icon>
-          <Icon name={IconAwesomeEnum.TRIANGLE_EXCLAMATION} />
+          <Icon iconName="triangle-exclamation" />
         </Callout.Icon>
         <Callout.Text>
           <Callout.TextHeading>Qovery manages this resource for you</Callout.TextHeading>
@@ -122,7 +122,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
               {warningInstance && (
                 <Callout.Root className="mb-3" color="yellow" data-testid="warning-instance">
                   <Callout.Icon>
-                    <Icon name={IconAwesomeEnum.TRIANGLE_EXCLAMATION} />
+                    <Icon iconName="triangle-exclamation" />
                   </Callout.Icon>
                   <Callout.Text>
                     <Callout.TextHeading>Be careful</Callout.TextHeading>
@@ -163,7 +163,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
         {warningClusterNodes && (
           <Callout.Root color="yellow">
             <Callout.Icon className="text-xs">
-              <Icon name={IconAwesomeEnum.CIRCLE_EXCLAMATION} />
+              <Icon iconName="circle-exclamation" />
             </Callout.Icon>
             <Callout.Text className="text-xs">
               <Callout.TextHeading>

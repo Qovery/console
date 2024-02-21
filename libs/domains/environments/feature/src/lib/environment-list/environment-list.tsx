@@ -240,7 +240,7 @@ export function EnvironmentList({ project, clusterAvailable, className, ...props
               <span className="text-xs text-neutral-350 whitespace-nowrap">{timeAgo(new Date(value))}</span>
             </Tooltip>
           ) : (
-            <Icon name={IconAwesomeEnum.CIRCLE_QUESTION} className="text-sm text-neutral-300" />
+            <Icon iconName="circle-question" className="text-sm text-neutral-300" />
           )
         },
       }),
@@ -299,8 +299,7 @@ export function EnvironmentList({ project, clusterAvailable, className, ...props
               : navigate(CLUSTERS_URL(project.organization?.id) + CLUSTERS_CREATION_URL + CLUSTERS_CREATION_GENERAL_URL)
           }}
         >
-          {clusterAvailable ? 'New environment' : 'Create a Cluster'}{' '}
-          <Icon className="ml-2" name={IconAwesomeEnum.CIRCLE_PLUS} />
+          {clusterAvailable ? 'New environment' : 'Create a Cluster'} <Icon className="ml-2" iconName="circle-plus" />
         </Button>
       </EmptyState>
     )
@@ -330,8 +329,8 @@ export function EnvironmentList({ project, clusterAvailable, className, ...props
                   >
                     {flexRender(header.column.columnDef.header, header.getContext())}
                     {match(header.column.getIsSorted())
-                      .with('asc', () => <Icon className="text-xs" name={IconAwesomeEnum.ARROW_DOWN} />)
-                      .with('desc', () => <Icon className="text-xs" name={IconAwesomeEnum.ARROW_UP} />)
+                      .with('asc', () => <Icon className="text-xs" iconName="arrow-down" />)
+                      .with('desc', () => <Icon className="text-xs" iconName="arrow-up" />)
                       .with(false, () => null)
                       .exhaustive()}
                   </button>

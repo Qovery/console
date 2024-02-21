@@ -56,7 +56,7 @@ export const ExternalLink = forwardRef<HTMLAnchorElement, ExternalLinkProps>(fun
       {...props}
     >
       {children}
-      <Icon name={IconAwesomeEnum.ARROW_UP_RIGHT_FROM_SQUARE} className={iconVariants({ size })} />
+      <Icon iconName="arrow-up-right-from-square" className={iconVariants({ size })} />
     </a>
   )
 })

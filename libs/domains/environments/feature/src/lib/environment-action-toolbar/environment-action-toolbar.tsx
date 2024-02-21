@@ -86,35 +86,35 @@ function MenuManageDeployment({ environment, state }: { environment: Environment
         <ActionToolbar.Button aria-label="Manage Deployment">
           <Tooltip content="Manage Deployment">
             <div className="flex items-center w-full h-full">
-              <Icon name={IconAwesomeEnum.PLAY} className="mr-3" />
-              <Icon name={IconAwesomeEnum.ANGLE_DOWN} />
+              <Icon iconName="play" className="mr-3" />
+              <Icon iconName="angle-down" />
             </div>
           </Tooltip>
         </ActionToolbar.Button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content>
         {isCancelBuildAvailable(state) && (
-          <DropdownMenu.Item icon={<Icon name={IconAwesomeEnum.XMARK} />} onClick={mutationCancelDeployment}>
+          <DropdownMenu.Item icon={<Icon iconName="xmark" />} onClick={mutationCancelDeployment}>
             {state === StateEnum.DELETE_QUEUED || state === StateEnum.DELETING ? 'Cancel delete' : 'Cancel deployment'}
           </DropdownMenu.Item>
         )}
         {isDeployAvailable(state) && (
-          <DropdownMenu.Item icon={<Icon name={IconAwesomeEnum.PLAY} />} onClick={mutationDeploy}>
+          <DropdownMenu.Item icon={<Icon iconName="play" />} onClick={mutationDeploy}>
             Deploy
           </DropdownMenu.Item>
         )}
         {isRedeployAvailable(state) && (
-          <DropdownMenu.Item icon={<Icon name={IconAwesomeEnum.ROTATE_RIGHT} />} onClick={mutationRedeploy}>
+          <DropdownMenu.Item icon={<Icon iconName="rotate-right" />} onClick={mutationRedeploy}>
             Redeploy
           </DropdownMenu.Item>
         )}
         {isStopAvailable(state) && (
-          <DropdownMenu.Item icon={<Icon name={IconAwesomeEnum.CIRCLE_STOP} />} onClick={mutationStop}>
+          <DropdownMenu.Item icon={<Icon iconName="circle-stop" />} onClick={mutationStop}>
             Stop
           </DropdownMenu.Item>
         )}
         <DropdownMenu.Separator />
-        <DropdownMenu.Item icon={<Icon name={IconAwesomeEnum.ROTATE} />} onClick={openUpdateAllModal}>
+        <DropdownMenu.Item icon={<Icon iconName="rotate" />} onClick={openUpdateAllModal}>
           Deploy latest version for..
         </DropdownMenu.Item>
       </DropdownMenu.Content>
@@ -172,7 +172,7 @@ function MenuOtherActions({ state, environment }: { state: StateEnum; environmen
       </DropdownMenu.Trigger>
       <DropdownMenu.Content>
         <DropdownMenu.Item
-          icon={<Icon name={IconAwesomeEnum.SCROLL} />}
+          icon={<Icon iconName="scroll" />}
           onClick={() =>
             navigate(ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id), {
               state: { prevUrl: pathname },
@@ -182,7 +182,7 @@ function MenuOtherActions({ state, environment }: { state: StateEnum; environmen
           Logs
         </DropdownMenu.Item>
         <DropdownMenu.Item
-          icon={<Icon name={IconAwesomeEnum.CLOCK_ROTATE_LEFT} />}
+          icon={<Icon iconName="clock-rotate-left" />}
           onClick={() =>
             navigate(
               AUDIT_LOGS_PARAMS_URL(environment.organization.id, {
@@ -195,23 +195,19 @@ function MenuOtherActions({ state, environment }: { state: StateEnum; environmen
         >
           See audit logs
         </DropdownMenu.Item>
-        <DropdownMenu.Item icon={<Icon name={IconAwesomeEnum.COPY} />} onClick={() => copyToClipboard(copyContent)}>
+        <DropdownMenu.Item icon={<Icon iconName="copy" />} onClick={() => copyToClipboard(copyContent)}>
           Copy identifier
         </DropdownMenu.Item>
-        <DropdownMenu.Item icon={<Icon name={IconAwesomeEnum.FILE_EXPORT} />} onClick={openTerraformExportModal}>
+        <DropdownMenu.Item icon={<Icon iconName="file-export" />} onClick={openTerraformExportModal}>
           Export as Terraform
         </DropdownMenu.Item>
-        <DropdownMenu.Item icon={<Icon name={IconAwesomeEnum.COPY} />} onClick={openCloneModal}>
+        <DropdownMenu.Item icon={<Icon iconName="copy" />} onClick={openCloneModal}>
           Clone
         </DropdownMenu.Item>
         {isDeleteAvailable(state) && (
           <>
             <DropdownMenu.Separator />
-            <DropdownMenu.Item
-              color="red"
-              icon={<Icon name={IconAwesomeEnum.TRASH} />}
-              onClick={mutationDeleteEnvironment}
-            >
+            <DropdownMenu.Item color="red" icon={<Icon iconName="trash" />} onClick={mutationDeleteEnvironment}>
               Delete environment
             </DropdownMenu.Item>
           </>
@@ -245,7 +241,7 @@ export function EnvironmentActionToolbar({ environment }: EnvironmentActionToolb
             })
           }
         >
-          <Icon name={IconAwesomeEnum.SCROLL} />
+          <Icon iconName="scroll" />
         </ActionToolbar.Button>
       </Tooltip>
       <MenuOtherActions environment={environment} state={deploymentStatus.state} />

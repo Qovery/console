@@ -44,7 +44,7 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
           {database.mode === DatabaseModeEnum.MANAGED && (
             <Callout.Root className="mb-5" color="yellow">
               <Callout.Icon>
-                <Icon name={IconAwesomeEnum.TRIANGLE_EXCLAMATION} />
+                <Icon iconName="triangle-exclamation" />
               </Callout.Icon>
               <Callout.Text>
                 <Callout.TextHeading>Qovery manages this resource for you </Callout.TextHeading>

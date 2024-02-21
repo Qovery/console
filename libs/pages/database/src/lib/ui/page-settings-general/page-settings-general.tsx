@@ -65,7 +65,7 @@ export function PageSettingsGeneral({
           {databaseMode === DatabaseModeEnum.MANAGED && (
             <Callout.Root className="mb-5" color="yellow">
               <Callout.Icon>
-                <Icon name={IconAwesomeEnum.TRIANGLE_EXCLAMATION} />
+                <Icon iconName="triangle-exclamation" />
               </Callout.Icon>
               <Callout.Text>
                 <Callout.TextHeading>Qovery manages this resource for you </Callout.TextHeading>
@@ -139,7 +139,7 @@ export function PageSettingsGeneral({
                 />
                 <Callout.Root className="mt-3" color="yellow">
                   <Callout.Icon>
-                    <Icon name={IconAwesomeEnum.CIRCLE_INFO} />
+                    <Icon iconName="circle-info" />
                   </Callout.Icon>
                   {databaseMode === DatabaseModeEnum.CONTAINER ? (
                     <Callout.Text className="text-xs">

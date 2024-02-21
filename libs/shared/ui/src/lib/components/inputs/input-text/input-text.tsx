@@ -91,7 +91,7 @@ export function InputText(props: InputTextProps) {
             />
             {isInputDate && (
               <div className="absolute top-1/2 -translate-y-1/2 right-4">
-                <Icon name={IconAwesomeEnum.ANGLE_DOWN} className="text-sm text-neutral-400" />
+                <Icon iconName="angle-down" className="text-sm text-neutral-400" />
               </div>
             )}
             {(currentValue as string)?.length > 0 && type === 'password' && (
@@ -99,8 +99,8 @@ export function InputText(props: InputTextProps) {
                 className="absolute top-1/2 -translate-y-1/2 right-4 transition-colors text-neutral-400 hover:text-neutral-400"
                 onClick={() => (currentType === 'password' ? setCurrentType('text') : setCurrentType('password'))}
               >
-                {currentType === 'password' && <Icon name={IconAwesomeEnum.EYE} className="text-sm" />}
-                {currentType !== 'password' && <Icon name={IconAwesomeEnum.EYE_SLASH} className="text-sm" />}
+                {currentType === 'password' && <Icon iconName="eye" className="text-sm" />}
+                {currentType !== 'password' && <Icon iconName="eye-slash" className="text-sm" />}
               </div>
             )}
           </div>

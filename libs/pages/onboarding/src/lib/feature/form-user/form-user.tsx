@@ -50,7 +50,7 @@ const dataCloudProviders = [
   {
     label: 'Other',
     value: 'OTHER',
-    icon: <IconFa className="text-xs text-neutral-500" name={IconAwesomeEnum.CLOUD} />,
+    icon: <IconFa className="text-xs text-neutral-500" iconName="cloud" />,
   },
 ]
 

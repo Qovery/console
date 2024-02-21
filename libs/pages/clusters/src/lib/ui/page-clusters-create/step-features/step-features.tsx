@@ -38,7 +38,7 @@ export function StepFeatures(props: StepFeaturesProps) {
             <div>
               <Callout.Root className="mb-5" color="yellow">
                 <Callout.Icon>
-                  <Icon name={IconAwesomeEnum.TRIANGLE_EXCLAMATION} />
+                  <Icon iconName="triangle-exclamation" />
                 </Callout.Icon>
                 <Callout.Text>
                   <Callout.TextHeading>Choose wisely</Callout.TextHeading>

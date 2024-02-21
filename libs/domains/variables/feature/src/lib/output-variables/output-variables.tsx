@@ -23,7 +23,7 @@ function VariableValue({ variable }: { variable: Variable }) {
     <span className="flex items-center gap-2 text-sm text-neutral-300">
       <Tooltip content="Secret variable">
         <span>
-          <Icon className="block w-4" name={IconAwesomeEnum.LOCK} />
+          <Icon className="block w-4" iconName="lock" />
         </span>
       </Tooltip>
       <span className="text-2xl font-medium pt-1.5">*************</span>
@@ -32,7 +32,7 @@ function VariableValue({ variable }: { variable: Variable }) {
     <span className="flex items-center gap-2 text-sm">
       <Tooltip content={visible ? 'Hide variable' : 'View variable'}>
         <button type="button" className="w-4 text-brand-500" onClick={() => setVisible((visible) => !visible)}>
-          {visible ? <Icon name={IconAwesomeEnum.EYE_SLASH} /> : <Icon name={IconAwesomeEnum.EYE} />}
+          {visible ? <Icon iconName="eye-slash" /> : <Icon iconName="eye" />}
         </button>
       </Tooltip>
       {visible ? (
@@ -80,7 +80,7 @@ export function OutputVariables({ serviceId, className, ...props }: JobOutputVar
               }
             >
               <span>
-                <Icon name={IconAwesomeEnum.CIRCLE_INFO} className="text-neutral-350" />
+                <Icon iconName="circle-info" className="text-neutral-350" />
               </span>
             </Tooltip>
           </>
@@ -144,8 +144,8 @@ export function OutputVariables({ serviceId, className, ...props }: JobOutputVar
                     >
                       {flexRender(header.column.columnDef.header, header.getContext())}
                       {match(header.column.getIsSorted())
-                        .with('asc', () => <Icon className="text-xs" name={IconAwesomeEnum.ARROW_DOWN} />)
-                        .with('desc', () => <Icon className="text-xs" name={IconAwesomeEnum.ARROW_UP} />)
+                        .with('asc', () => <Icon className="text-xs" iconName="arrow-down" />)
+                        .with('desc', () => <Icon className="text-xs" iconName="arrow-up" />)
                         .with(false, () => null)
                         .exhaustive()}
                     </button>

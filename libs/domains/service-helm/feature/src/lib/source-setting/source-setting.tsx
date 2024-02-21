@@ -75,7 +75,7 @@ export function SourceSetting({ disabled = false }: { disabled?: boolean }) {
                     menuListButton={{
                       title: 'Select helm repository',
                       label: 'New helm repository',
-                      icon: <IconFa name={IconAwesomeEnum.CIRCLE_PLUS} className="text-brand-500" />,
+                      icon: <IconFa iconName="circle-plus" className="text-brand-500" />,
                       onClick: () => {
                         openModal({
                           content: (

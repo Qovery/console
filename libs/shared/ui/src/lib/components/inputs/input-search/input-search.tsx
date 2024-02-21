@@ -61,7 +61,7 @@ export function InputSearch(props: InputSearchProps) {
         />
         {toggleDelete && (
           <button className="absolute right-3 top-1/2 -translate-y-1/2" onClick={deleteValue}>
-            <Icon className="text-neutral-350 text-sm" name={IconAwesomeEnum.CIRCLE_XMARK} />
+            <Icon className="text-neutral-350 text-sm" iconName="circle-xmark" />
           </button>
         )}
       </div>
@@ -71,7 +71,7 @@ export function InputSearch(props: InputSearchProps) {
             emptyContent
           ) : (
             <div className="text-center px-3 py-6">
-              <Icon name={IconAwesomeEnum.WAVE_PULSE} className="text-neutral-350" />
+              <Icon iconName="wave-pulse" className="text-neutral-350" />
               <p className="text-neutral-350 font-medium text-xs mt-1">No result for this search</p>
             </div>
           )}

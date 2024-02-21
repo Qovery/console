@@ -56,7 +56,7 @@ export function NavigationLeft(props: NavigationLeftProps) {
         {link && (
           <span className="link cursor-pointer text-sm text-brand-500 font-medium" onClick={() => link.onClick()}>
             {link.title}
-            <Icon name={IconAwesomeEnum.CIRCLE_PLUS} className="ml-1" />
+            <Icon iconName="circle-plus" className="ml-1" />
           </span>
         )}
       </div>

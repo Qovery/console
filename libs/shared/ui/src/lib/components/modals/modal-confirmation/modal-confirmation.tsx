@@ -50,7 +50,7 @@ export function ModalConfirmation({
       {warning && (
         <Callout.Root className="mb-2" color="yellow">
           <Callout.Icon>
-            <Icon name={IconAwesomeEnum.TRIANGLE_EXCLAMATION} />
+            <Icon iconName="triangle-exclamation" />
           </Callout.Icon>
           <Callout.Text>{warning}</Callout.Text>
         </Callout.Root>

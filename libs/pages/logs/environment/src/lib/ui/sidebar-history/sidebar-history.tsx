@@ -87,7 +87,7 @@ export function SidebarHistory({ data, serviceId, versionId, pathLogs, environme
           size={ButtonLegacySize.TINY}
           link={pathLogs}
         >
-          <Icon name={IconAwesomeEnum.HOUSE} />
+          <Icon iconName="house" />
         </ButtonLegacy>
         <Menu
           width={300}

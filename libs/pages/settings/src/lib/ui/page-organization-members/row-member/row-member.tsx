@@ -116,7 +116,7 @@ export function RowMember(props: RowMemberProps) {
         {
           name: 'Create new role',
           onClick: () => navigate(`${SETTINGS_URL(organizationId)}${SETTINGS_ROLES_URL}`),
-          contentLeft: <Icon name={IconAwesomeEnum.CIRCLE_PLUS} className="text-brand-500" />,
+          contentLeft: <Icon iconName="circle-plus" className="text-brand-500" />,
         },
       ],
     },
@@ -124,7 +124,7 @@ export function RowMember(props: RowMemberProps) {
 
   const buttonActionMember = [
     {
-      iconLeft: <Icon name={IconAwesomeEnum.ELLIPSIS_V} />,
+      iconLeft: <Icon iconName="ellipsis-v" />,
       menus: [
         {
           items: userIsOwner
@@ -132,7 +132,7 @@ export function RowMember(props: RowMemberProps) {
                 {
                   name: 'Transfer ownership',
                   onClick: () => transferOwnership && transferOwnership(member),
-                  contentLeft: <Icon name={IconAwesomeEnum.RIGHT_LEFT} className="text-sm text-brand-500" />,
+                  contentLeft: <Icon iconName="right-left" className="text-sm text-brand-500" />,
                 },
               ]
             : [],
@@ -149,7 +149,7 @@ export function RowMember(props: RowMemberProps) {
                   action: () => deleteMember && deleteMember(member.id),
                 })
               },
-              contentLeft: <Icon name={IconAwesomeEnum.BAN} className="text-sm text-red-600" />,
+              contentLeft: <Icon iconName="ban" className="text-sm text-red-600" />,
               containerClassName: 'text-red-600',
             },
           ],
@@ -160,20 +160,20 @@ export function RowMember(props: RowMemberProps) {
 
   const buttonActionInviteMember = [
     {
-      iconLeft: <Icon name={IconAwesomeEnum.ELLIPSIS_V} />,
+      iconLeft: <Icon iconName="ellipsis-v" />,
       menus: [
         {
           items: [
             {
               name: 'Resend invite',
-              contentLeft: <Icon name={IconAwesomeEnum.PAPER_PLANE} className="text-sm text-brand-500" />,
+              contentLeft: <Icon iconName="paper-plane" className="text-sm text-brand-500" />,
               onClick: () => {
                 resendInvite && resendInvite(member.id, { email: member.email, role_id: member.role_id })
               },
             },
             {
               name: 'Copy invitation link',
-              contentLeft: <Icon name={IconAwesomeEnum.COPY} className="text-sm text-brand-500" />,
+              contentLeft: <Icon iconName="copy" className="text-sm text-brand-500" />,
               onClick: () => {
                 copyToClipboard((member as InviteMember).invitation_link)
                 toast(ToastEnum.SUCCESS, 'Copied to your clipboard!')
@@ -193,7 +193,7 @@ export function RowMember(props: RowMemberProps) {
                   action: () => deleteInviteMember && deleteInviteMember(member.id),
                 })
               },
-              contentLeft: <Icon name={IconAwesomeEnum.BAN} className="text-sm text-red-600" />,
+              contentLeft: <Icon iconName="ban" className="text-sm text-red-600" />,
               containerClassName: 'text-red-600',
             },
           ],

@@ -42,7 +42,7 @@ export function Sidebar({ services, statusStages, environmentStatus, versionId, 
           openSidebar ? 'border-l' : ''
         } `}
       >
-        <Icon name={IconAwesomeEnum.ANGLE_DOWN} className={`text-sm ${openSidebar ? 'rotate-90' : '-rotate-90'}`} />
+        <Icon iconName="angle-down" className={`text-sm ${openSidebar ? 'rotate-90' : '-rotate-90'}`} />
       </div>
     </div>
   )

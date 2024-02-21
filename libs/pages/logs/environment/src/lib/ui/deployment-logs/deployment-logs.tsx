@@ -135,7 +135,7 @@ export function DeploymentLogs({
           onClick={() => setShowPreviousLogs?.(true)}
         >
           Load previous logs
-          <Icon name={IconAwesomeEnum.ARROW_UP} className="ml-1.5" />
+          <Icon iconName="arrow-up" className="ml-1.5" />
         </button>
       )}
       <div className="pb-8">{memoRow}</div>

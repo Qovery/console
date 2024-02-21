@@ -106,7 +106,7 @@ export function PodLogs({
                 <span className="block text-2xs text-neutral-350 mr-2">
                   {data.version && (
                     <>
-                      <Icon name={IconAwesomeEnum.CODE_COMMIT} className="mr-2 text-neutral-50" />
+                      <Icon iconName="code-commit" className="mr-2 text-neutral-50" />
                       {data.version?.substring(0, 6)}
                     </>
                   )}
@@ -193,7 +193,7 @@ export function PodLogs({
             onClick={() => setShowPreviousLogs?.(true)}
           >
             Load previous logs
-            <Icon name={IconAwesomeEnum.ARROW_UP} className="ml-1.5" />
+            <Icon iconName="arrow-up" className="ml-1.5" />
           </button>
         )}
         <div className="pt-1 pb-8">{memoRow}</div>

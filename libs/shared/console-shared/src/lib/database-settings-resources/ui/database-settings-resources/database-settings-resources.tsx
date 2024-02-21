@@ -172,7 +172,7 @@ export function DatabaseSettingsResources({
         {displayStorageWarning && (
           <Callout.Root className="mt-3" color="yellow">
             <Callout.Icon>
-              <Icon name={IconAwesomeEnum.CIRCLE_INFO} />
+              <Icon iconName="circle-info" />
             </Callout.Icon>
             <Callout.Text className="text-xs text-neutral-350">
               Once triggered, the update will be managed by your cloud provider and applied during the configured

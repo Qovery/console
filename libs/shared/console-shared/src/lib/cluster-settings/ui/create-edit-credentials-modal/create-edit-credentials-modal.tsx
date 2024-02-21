@@ -201,7 +201,7 @@ export function CreateEditCredentialsModal(props: CreateEditCredentialsModalProp
               ) : fileDetails ? (
                 <div className="flex items-center justify-between border border-neutral-200 p-4 rounded mb-[90px]">
                   <div className="flex items-center pl-2 text-neutral-400">
-                    <Icon name={IconAwesomeEnum.FILE_ARROW_DOWN} className="mr-4" />
+                    <Icon iconName="file-arrow-down" className="mr-4" />
                     <p className="flex flex-col gap-1">
                       <span className="text-xs font-medium">{fileDetails.name}</span>
                       <span className="text-xs text-neutral-350">{fileDetails.size} Ko</span>
@@ -214,7 +214,7 @@ export function CreateEditCredentialsModal(props: CreateEditCredentialsModalProp
                     className="justify-center w-7 h-7"
                     onClick={() => field.onChange(undefined)}
                   >
-                    <Icon name={IconAwesomeEnum.TRASH} />
+                    <Icon iconName="trash" />
                   </Button>
                 </div>
               ) : (

@@ -47,7 +47,7 @@ export function EnvironmentListFilter({ column }: { column: Column<any, unknown>
               ) : (
                 <>
                   {column.columnDef.header?.toString()}
-                  <Icon name={IconAwesomeEnum.ANGLE_DOWN} />
+                  <Icon iconName="angle-down" />
                 </>
               )}
             </Button>
@@ -58,7 +58,7 @@ export function EnvironmentListFilter({ column }: { column: Column<any, unknown>
               className="absolute right-0 px-2 text-white cursor-pointer h-7 text-center leading-7"
               onClick={() => column.setFilterValue([])}
             >
-              <Icon name={IconAwesomeEnum.XMARK} />
+              <Icon iconName="xmark" />
             </button>
           ) : null}
         </div>
