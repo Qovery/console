@@ -281,18 +281,16 @@ export function StepSummary(props: StepSummaryProps) {
                 </Button>
               </>
             ) : (
-              <>
-                <Button
-                  data-testid="button-create"
-                  loading={props.isLoadingCreate}
-                  onClick={() => props.onSubmit(false)}
-                  size="lg"
-                  color="brand"
-                  variant="solid"
-                >
-                  Create
-                </Button>
-              </>
+              <Button
+                data-testid="button-create"
+                loading={props.isLoadingCreate}
+                onClick={() => props.onSubmit(false)}
+                size="lg"
+                color="brand"
+                variant="solid"
+              >
+                Create
+              </Button>
             )}
           </div>
         </div>

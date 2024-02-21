@@ -41,9 +41,7 @@ export function EnvironmentListFilter({ column }: { column: Column<any, unknown>
               variant={column.getIsFiltered() ? 'solid' : 'surface'}
             >
               {column.getIsFiltered() ? (
-                <>
-                  <Truncate text={(column.getFilterValue() as string[]).join(', ')} truncateLimit={18} />
-                </>
+                <Truncate text={(column.getFilterValue() as string[]).join(', ')} truncateLimit={18} />
               ) : (
                 <>
                   {column.columnDef.header?.toString()}
