@@ -239,7 +239,7 @@ export function EnvironmentList({ project, clusterAvailable, className, ...props
               <span className="text-xs text-neutral-350 whitespace-nowrap">{timeAgo(new Date(value))}</span>
             </Tooltip>
           ) : (
-            <Icon iconName="circle-question" className="text-sm text-neutral-300" />
+            <Icon iconStyle="regular" iconName="circle-question" className="text-sm text-neutral-300" />
           )
         },
       }),

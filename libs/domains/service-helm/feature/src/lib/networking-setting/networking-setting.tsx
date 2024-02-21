@@ -67,7 +67,7 @@ export function NetworkingSetting({ ports, onUpdatePorts, children }: Networking
           <Popover.Root>
             <Popover.Trigger>
               <span className="text-sm cursor-pointer text-brand-500 hover:text-brand-600 transition font-medium mb-5">
-                How it works <Icon className="text-xs" iconName="circle-question" />
+                How it works <Icon className="text-xs" iconStyle="regular" iconName="circle-question" />
               </span>
             </Popover.Trigger>
             <Popover.Content side="left" className="text-neutral-350 text-sm relative" style={{ width: 440 }}>

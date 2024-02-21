@@ -71,7 +71,7 @@ export function PodsMetrics({ environmentId, serviceId, children }: PodsMetricsP
   }, [metrics, runningStatuses])
 
   const columnHelper = createColumnHelper<Pod>()
-  const placeholder = <Icon iconName="circle-question" className="text-sm text-neutral-300" />
+  const placeholder = <Icon iconStyle="regular" iconName="circle-question" className="text-sm text-neutral-300" />
 
   const containerImage = match(service)
     .with({ serviceType: ServiceTypeEnum.JOB, source: P.when(isJobContainerSource) }, ({ source }) => source.image)
@@ -282,7 +282,7 @@ export function PodsMetrics({ environmentId, serviceId, children }: PodsMetricsP
   ) {
     return (
       <div className="flex flex-col items-center gap-1 py-10 bg-neutral-100 text-sm text-neutral-350 border border-neutral-200">
-        <Icon className="text-md text-neutral-300" iconName="circle-question" />
+        <Icon className="text-md text-neutral-300" iconStyle="regular" iconName="circle-question" />
         <span className="font-medium">Metrics for pods are not available, try again</span>
         <span>There is a technical issue on retrieving the pod metrics.</span>
       </div>
