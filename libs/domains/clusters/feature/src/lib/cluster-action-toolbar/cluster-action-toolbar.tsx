@@ -239,7 +239,7 @@ export function ClusterActionToolbar({ cluster, clusterStatus, noSettings }: Clu
           <ActionToolbar.Button
             onClick={() => navigate(CLUSTER_URL(cluster.organization.id, cluster.id) + CLUSTER_SETTINGS_URL)}
           >
-            <Icon iconName="wheel" />
+            <Icon iconName="gear" />
           </ActionToolbar.Button>
         </Tooltip>
       )}

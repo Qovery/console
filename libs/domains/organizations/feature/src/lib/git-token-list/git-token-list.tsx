@@ -87,7 +87,7 @@ export function GitTokenList() {
                     })
                   }}
                 >
-                  <Icon iconName="wheel" />
+                  <Icon iconName="gear" />
                 </Button>
                 <Button
                   variant="outline"

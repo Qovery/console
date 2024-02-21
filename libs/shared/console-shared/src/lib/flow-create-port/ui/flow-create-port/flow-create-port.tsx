@@ -108,7 +108,7 @@ export function FlowCreatePort({
                         className="justify-center w-9 h-9 mr-2"
                         onClick={() => onEdit(customPort)}
                       >
-                        <Icon iconName="wheel" />
+                        <Icon iconName="gear" />
                       </Button>
                     )}
                     {onRemovePort && (

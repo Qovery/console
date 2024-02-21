@@ -236,7 +236,7 @@ export function StepSummaryFeature() {
             variant="surface"
             onClick={() => navigate(pathCreate + SERVICES_CREATION_GENERAL_URL)}
           >
-            <Icon iconName="wheel" />
+            <Icon iconName="gear" />
           </Button>
         </div>
 
@@ -287,7 +287,7 @@ export function StepSummaryFeature() {
               variant="surface"
               onClick={() => navigate(pathCreate + SERVICES_HELM_CREATION_VALUES_STEP_1_URL)}
             >
-              <Icon iconName="wheel" />
+              <Icon iconName="gear" />
             </Button>
           </div>
         )}

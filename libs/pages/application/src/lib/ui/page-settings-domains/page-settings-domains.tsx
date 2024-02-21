@@ -66,7 +66,7 @@ export function PageSettingsDomains(props: PageSettingsDomainsProps) {
                     className="justify-center w-[52px] h-[52px]"
                     onClick={() => props.onEdit(customDomain)}
                   >
-                    <Icon iconName="wheel" />
+                    <Icon iconName="gear" />
                   </Button>
                   <Button
                     data-testid="delete-button"

@@ -267,7 +267,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
           {/* XXX: Should be Heading, typography & design wanted */}
           <span className="text-neutral-400 font-medium">About</span>
           <Link color="current" to={`..${APPLICATION_SETTINGS_URL + APPLICATION_SETTINGS_GENERAL_URL}`} relative="path">
-            <Icon iconName="wheel" className="text-base text-neutral-300" />
+            <Icon iconName="gear" className="text-base text-neutral-300" />
           </Link>
         </div>
         <p>{service.description || 'No description provided yet'}</p>
@@ -306,7 +306,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
           {/* XXX: Should be Heading, typography & design wanted */}
           <span className="text-neutral-400 font-medium">Source</span>
           <Link color="current" to={`..${APPLICATION_SETTINGS_URL + APPLICATION_SETTINGS_GENERAL_URL}`} relative="path">
-            <Icon iconName="wheel" className="text-base text-neutral-300" />
+            <Icon iconName="gear" className="text-base text-neutral-300" />
           </Link>
         </div>
         {match(service)
@@ -435,7 +435,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
                 to={`..${APPLICATION_SETTINGS_URL + APPLICATION_SETTINGS_RESOURCES_URL}`}
                 relative="path"
               >
-                <Icon iconName="wheel" className="text-base text-neutral-300" />
+                <Icon iconName="gear" className="text-base text-neutral-300" />
               </Link>
             </div>
             <div className="grid grid-cols-2 gap-2">{resources}</div>
@@ -454,7 +454,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
                 to={`..${APPLICATION_SETTINGS_URL + APPLICATION_SETTINGS_VALUES_OVERRIDE_FILE_URL}`}
                 relative="path"
               >
-                <Icon iconName="wheel" className="text-base text-neutral-300" />
+                <Icon iconName="gear" className="text-base text-neutral-300" />
               </Link>
             </div>
             <div className="grid grid-cols-2 gap-2">{valuesOverride}</div>

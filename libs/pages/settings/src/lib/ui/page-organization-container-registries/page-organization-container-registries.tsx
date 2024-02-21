@@ -88,7 +88,7 @@ export function PageOrganizationContainerRegistries(props: PageOrganizationConta
                   </div>
                   <div className="flex gap-2">
                     <Button size="md" variant="outline" color="neutral" onClick={() => onEdit(registry)}>
-                      <Icon iconName="wheel" />
+                      <Icon iconName="gear" />
                     </Button>
                     <Button size="md" variant="outline" color="neutral" onClick={() => onDelete(registry)}>
                       <Icon iconName="trash" />

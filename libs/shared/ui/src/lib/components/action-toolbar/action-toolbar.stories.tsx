@@ -46,7 +46,7 @@ export const Primary = {
         <Icon iconName="scroll" />
       </ActionToolbar.Button>
       <ActionToolbar.Button>
-        <Icon iconName="wheel" />
+        <Icon iconName="gear" />
       </ActionToolbar.Button>
     </ActionToolbar.Root>
   ),

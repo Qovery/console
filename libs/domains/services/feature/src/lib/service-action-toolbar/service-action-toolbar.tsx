@@ -527,7 +527,7 @@ function MenuOtherActions({
           Copy identifiers
         </DropdownMenu.Item>
         <DropdownMenu.Item
-          icon={<Icon iconName="wheel" />}
+          icon={<Icon iconName="gear" />}
           onClick={() =>
             navigate(
               match(service?.serviceType)

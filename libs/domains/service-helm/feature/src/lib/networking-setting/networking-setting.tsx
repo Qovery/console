@@ -120,7 +120,7 @@ export function NetworkingSetting({ ports, onUpdatePorts, children }: Networking
                       type="button"
                       data-testid="edit-port"
                     >
-                      <Icon iconName="wheel" />
+                      <Icon iconName="gear" />
                     </Button>
                     <Button
                       size="md"
