@@ -1,6 +1,6 @@
 import { type ClusterCredentials } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
-import { IconAwesomeEnum, IconFa, InputSelect, LoaderSpinner } from '@qovery/shared/ui'
+import { Icon, InputSelect, LoaderSpinner } from '@qovery/shared/ui'
 
 export interface ClusterCredentialsSettingsProps {
   credentials?: ClusterCredentials[]
@@ -44,7 +44,7 @@ export function ClusterCredentialsSettings(props: ClusterCredentialsSettingsProp
               menuListButton={{
                 title: 'Select credential',
                 label: 'New credential',
-                icon: <IconFa iconName="circle-plus" className="text-brand-500" />,
+                icon: <Icon iconName="circle-plus" className="text-brand-500" />,
                 onClick: () => openCredentialsModal(),
               }}
             />

@@ -7,7 +7,7 @@ import { useCreateUserSignUp, useUserSignUp } from '@qovery/domains/users-sign-u
 import { useAuth } from '@qovery/shared/auth'
 import { IconEnum } from '@qovery/shared/enums'
 import { ONBOARDING_MORE_URL, ONBOARDING_URL } from '@qovery/shared/routes'
-import { Icon, IconAwesomeEnum, IconFa } from '@qovery/shared/ui'
+import { Icon } from '@qovery/shared/ui'
 import { StepPersonalize } from '../../ui/step-personalize/step-personalize'
 import { ContextOnboarding } from '../container/container'
 
@@ -50,7 +50,7 @@ const dataCloudProviders = [
   {
     label: 'Other',
     value: 'OTHER',
-    icon: <IconFa className="text-xs text-neutral-500" iconName="cloud" />,
+    icon: <Icon className="text-xs text-neutral-500" iconName="cloud" />,
   },
 ]
 

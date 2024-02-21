@@ -15,7 +15,7 @@ import { ServiceStateChip } from '@qovery/domains/services/feature'
 import { type LoadingStatus } from '@qovery/shared/interfaces'
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
-import { Icon, IconAwesomeEnum, IconFa, InputCheckbox, Tooltip } from '@qovery/shared/ui'
+import { Icon, InputCheckbox, Tooltip } from '@qovery/shared/ui'
 import { scrollParentToChild } from '@qovery/shared/util-js'
 import ButtonsActionsLogs from './buttons-actions-logs/buttons-actions-logs'
 import MenuTimeFormat from './menu-time-format/menu-time-format'
@@ -192,7 +192,7 @@ export function LayoutLogs({
                         href="https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/log-format/"
                         target="_blank"
                       >
-                        <IconFa iconName="circle-info" />
+                        <Icon iconName="circle-info" />
                       </a>
                     </Tooltip>
                   </div>

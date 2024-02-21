@@ -1,7 +1,7 @@
 import { Controller, useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { HelmRepositoryCreateEditModal } from '@qovery/domains/organizations/feature'
-import { IconAwesomeEnum, IconFa, InputSelect, InputText, LoaderSpinner, useModal } from '@qovery/shared/ui'
+import { Icon, InputSelect, InputText, LoaderSpinner, useModal } from '@qovery/shared/ui'
 import { useHelmRepositories } from '../hooks/use-helm-repositories/use-helm-repositories'
 
 export function SourceSetting({ disabled = false }: { disabled?: boolean }) {
@@ -75,7 +75,7 @@ export function SourceSetting({ disabled = false }: { disabled?: boolean }) {
                     menuListButton={{
                       title: 'Select helm repository',
                       label: 'New helm repository',
-                      icon: <IconFa iconName="circle-plus" className="text-brand-500" />,
+                      icon: <Icon iconName="circle-plus" className="text-brand-500" />,
                       onClick: () => {
                         openModal({
                           content: (

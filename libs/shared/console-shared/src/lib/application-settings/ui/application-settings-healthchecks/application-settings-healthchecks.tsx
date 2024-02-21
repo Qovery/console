@@ -1,14 +1,6 @@
 import { Controller, useFormContext } from 'react-hook-form'
 import { ProbeTypeEnum } from '@qovery/shared/enums'
-import {
-  IconAwesomeEnum,
-  IconFa,
-  InputSelectSmall,
-  InputTextSmall,
-  TableEdition,
-  type TableEditionRow,
-  Tooltip,
-} from '@qovery/shared/ui'
+import { Icon, InputSelectSmall, InputTextSmall, TableEdition, type TableEditionRow, Tooltip } from '@qovery/shared/ui'
 
 export const defaultReadinessProbe = {
   initial_delay_seconds: 30,
@@ -51,7 +43,7 @@ export function ApplicationSettingsHealthchecks({ ports, jobPort, isJob }: Appli
               Liveness
               <Tooltip content="Verifies if the container is operating and it is not in a broken state. If the probe fails, the container is killed and restarted.">
                 <span>
-                  <IconFa className="text-neutral-350" iconName="circle-info" />
+                  <Icon className="text-neutral-350" iconName="circle-info" />
                 </span>
               </Tooltip>
             </div>
@@ -63,7 +55,7 @@ export function ApplicationSettingsHealthchecks({ ports, jobPort, isJob }: Appli
               Readiness
               <Tooltip content="Verifies if the application is ready to receive traffic. If the probe fails, no traffic is sent to the application.">
                 <span>
-                  <IconFa className="text-neutral-350" iconName="circle-info" />
+                  <Icon className="text-neutral-350" iconName="circle-info" />
                 </span>
               </Tooltip>
             </div>
@@ -84,7 +76,7 @@ export function ApplicationSettingsHealthchecks({ ports, jobPort, isJob }: Appli
               Type
               <Tooltip content='Select the type of probe to use. "NONE" disables the probe, which we strongly advise against, as Kubernetes is then unable to check the state of your application.'>
                 <span>
-                  <IconFa className="text-neutral-350" iconName="circle-info" />
+                  <Icon className="text-neutral-350" iconName="circle-info" />
                 </span>
               </Tooltip>
             </div>
@@ -149,7 +141,7 @@ export function ApplicationSettingsHealthchecks({ ports, jobPort, isJob }: Appli
               Port
               <Tooltip content="When configuring an HTTP probe, this advanced setting allows you to set the path to access on the HTTP/HTTPS server to perform the health check.">
                 <span>
-                  <IconFa className="text-neutral-350" iconName="circle-info" />
+                  <Icon className="text-neutral-350" iconName="circle-info" />
                 </span>
               </Tooltip>
             </div>
@@ -248,7 +240,7 @@ export function ApplicationSettingsHealthchecks({ ports, jobPort, isJob }: Appli
               Path
               <Tooltip content="Allows to define the path to be used to run the probe check.">
                 <span>
-                  <IconFa className="text-neutral-350" iconName="circle-info" />
+                  <Icon className="text-neutral-350" iconName="circle-info" />
                 </span>
               </Tooltip>
             </div>
@@ -311,7 +303,7 @@ export function ApplicationSettingsHealthchecks({ ports, jobPort, isJob }: Appli
               Command
               <Tooltip content='Allows you to specify the command to run within your container to verify the status of your application. Expected format: ["cat", "/tmp/healthy"].'>
                 <span>
-                  <IconFa className="text-neutral-350" iconName="circle-info" />
+                  <Icon className="text-neutral-350" iconName="circle-info" />
                 </span>
               </Tooltip>
             </div>
@@ -372,7 +364,7 @@ export function ApplicationSettingsHealthchecks({ ports, jobPort, isJob }: Appli
               Service
               <Tooltip content="Allows you to specify a different service name to be used for the health check. This lets you use the same endpoint for different kinds of container health check.">
                 <span>
-                  <IconFa className="text-neutral-350" iconName="circle-info" />
+                  <Icon className="text-neutral-350" iconName="circle-info" />
                 </span>
               </Tooltip>
             </div>
@@ -433,7 +425,7 @@ export function ApplicationSettingsHealthchecks({ ports, jobPort, isJob }: Appli
               Initial Delay (in seconds)
               <Tooltip content="Allows you to specify an interval, in seconds, between the application container start and the first check.">
                 <span>
-                  <IconFa className="text-neutral-350" iconName="circle-info" />
+                  <Icon className="text-neutral-350" iconName="circle-info" />
                 </span>
               </Tooltip>
             </div>
@@ -493,7 +485,7 @@ export function ApplicationSettingsHealthchecks({ ports, jobPort, isJob }: Appli
               Period (in seconds)
               <Tooltip content="Allows you to specify an interval, in seconds, between each liveness probe.">
                 <span>
-                  <IconFa className="text-neutral-350" iconName="circle-info" />
+                  <Icon className="text-neutral-350" iconName="circle-info" />
                 </span>
               </Tooltip>
             </div>
@@ -553,7 +545,7 @@ export function ApplicationSettingsHealthchecks({ ports, jobPort, isJob }: Appli
               Timeout (in seconds)
               <Tooltip content="Allows you to specify the interval, in seconds, after which the probe times out.">
                 <span>
-                  <IconFa className="text-neutral-350" iconName="circle-info" />
+                  <Icon className="text-neutral-350" iconName="circle-info" />
                 </span>
               </Tooltip>
             </div>
@@ -613,7 +605,7 @@ export function ApplicationSettingsHealthchecks({ ports, jobPort, isJob }: Appli
               Success Threshold
               <Tooltip content="Allows you to specify how many consecutive successes are needed, as a minimum, for the probe to be considered successful after having failed previously. Kubernetes force this value to 1">
                 <span>
-                  <IconFa className="text-neutral-350" iconName="circle-info" />
+                  <Icon className="text-neutral-350" iconName="circle-info" />
                 </span>
               </Tooltip>
             </div>
@@ -673,7 +665,7 @@ export function ApplicationSettingsHealthchecks({ ports, jobPort, isJob }: Appli
               Failure Threshold
               <Tooltip content="Allows you to specify how many consecutive failures are needed, as a minimum, for the probe to be considered failed after having succeeded previously.">
                 <span>
-                  <IconFa className="text-neutral-350" iconName="circle-info" />
+                  <Icon className="text-neutral-350" iconName="circle-info" />
                 </span>
               </Tooltip>
             </div>

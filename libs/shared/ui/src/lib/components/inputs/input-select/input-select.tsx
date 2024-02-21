@@ -12,9 +12,7 @@ import Select, {
   components,
 } from 'react-select'
 import { type Value } from '@qovery/shared/interfaces'
-import IconFa from '../../icon-fa/icon-fa'
-import Icon from '../../icon/icon'
-import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
+import { Icon } from '../../icon/icon'
 
 export interface InputSelectProps {
   className?: string
@@ -275,7 +273,7 @@ export function InputSelect({
               currentIcon.onClickEditable && currentIcon.onClickEditable()
             }}
           >
-            <IconFa iconName="pen" />
+            <Icon iconName="pen" />
           </div>
         )}
       </div>

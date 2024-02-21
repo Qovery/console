@@ -17,7 +17,6 @@ import {
   ButtonLegacyStyle,
   Icon,
   IconAwesomeEnum,
-  IconFa,
   type MenuData,
   Tabs,
   type TabsItem,
@@ -80,7 +79,7 @@ function ContentRightEnvVariable({
                 href="https://hub.qovery.com/docs/using-qovery/integration/secret-manager/doppler/"
                 target="_blank"
               >
-                <IconFa iconName="circle-info" className="text-neutral-400 text-sm" />
+                <Icon iconName="circle-info" className="text-neutral-400 text-sm" />
               </a>
             </Tooltip>
           ),
