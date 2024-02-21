@@ -70,7 +70,7 @@ export function PageSettingsDeploymentPipelineFeature() {
             openModal({
               content: <StageOrderModalFeature onClose={closeModal} stages={stages} />,
             }),
-          contentLeft: <Icon iconName="arrow-down-19" className="text-sm text-brand-500" />,
+          contentLeft: <Icon iconName="arrow-down-1-9" className="text-sm text-brand-500" />,
         },
       ],
     },
