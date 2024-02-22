@@ -68,7 +68,7 @@ export function ServiceLinksPopover({
             </Popover.Close>
           )}
         </div>
-        <ul>
+        <ul className="max-h-96 overflow-y-auto">
           {filteredLinks.map((link: LinkProps) => (
             <li key={link.url} className="flex p-2">
               <CopyToClipboardButtonIcon

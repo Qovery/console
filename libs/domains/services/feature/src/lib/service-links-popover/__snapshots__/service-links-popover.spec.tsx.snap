@@ -60,7 +60,9 @@ exports[`ServiceLinksPopover should match snapshot 1`] = `
           />
         </a>
       </div>
-      <ul>
+      <ul
+        class="max-h-96 overflow-y-auto"
+      >
         <li
           class="flex p-2"
         >
