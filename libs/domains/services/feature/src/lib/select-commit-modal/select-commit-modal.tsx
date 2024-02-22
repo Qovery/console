@@ -122,7 +122,7 @@ export function SelectCommitModal({
                             {!isCurrentDeployedCommit ? (
                               <RadioGroup.Item value={git_commit_id} />
                             ) : (
-                              <div className="pr-5" />
+                              <RadioGroup.Item value={git_commit_id} disabled checked variant="check" />
                             )}
                           </div>
                           <div className="flex flex-col items-start flex-1 min-w-0 text-sm gap-1">
