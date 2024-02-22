@@ -306,7 +306,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
         },
       }),
       columnHelper.accessor('version', {
-        header: 'Version',
+        header: 'Target version',
         enableColumnFilter: false,
         enableSorting: false,
         size: 20,
