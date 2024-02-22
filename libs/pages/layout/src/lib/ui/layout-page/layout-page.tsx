@@ -35,13 +35,15 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
   const { data: clusterStatuses } = useClusterStatuses({ organizationId })
 
   const matchLogInfraRoute = pathname.includes(INFRA_LOGS_URL(organizationId, clusterStatuses?.[0]?.cluster_id))
-  const clusterIsDeployed = clusterStatuses?.[0]?.is_deployed
+
+  // Clusters need to be sorted to find the first created cluster
+  clusters?.sort(({ created_at: a }, { created_at: b }) => new Date(a).getTime() - new Date(b).getTime())
+  const firstCluster = clusters?.[0]
+  const firstClusterStatus = firstCluster && clusterStatuses?.find(({ cluster_id }) => firstCluster.id === cluster_id)
+  const clusterIsDeployed = firstClusterStatus?.is_deployed
 
   const clusterBanner =
-    !matchLogInfraRoute &&
-    clusters &&
-    displayClusterDeploymentBanner(clusterStatuses?.[0]?.status) &&
-    !clusterIsDeployed
+    !matchLogInfraRoute && clusters && displayClusterDeploymentBanner(firstClusterStatus?.status) && !clusterIsDeployed
 
   const invalidCluster = clusters?.find(
     ({ id }) =>
@@ -85,10 +87,10 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
             {clusterBanner && (
               <Banner
                 color="brand"
-                onClickButton={() => navigate(INFRA_LOGS_URL(organizationId, clusters[0]?.id))}
+                onClickButton={() => navigate(INFRA_LOGS_URL(organizationId, firstCluster?.id))}
                 buttonLabel="See logs"
               >
-                Installation of the cluster <span className="block font-bold mx-1">{clusters[0]?.name}</span> is
+                Installation of the cluster <span className="block font-bold mx-1">{firstCluster?.name}</span> is
                 ongoing, you can follow it from logs
               </Banner>
             )}
