@@ -173,9 +173,29 @@ exports[`SelectCommitModal should match snapshot 1`] = `
               class="flex flex-row gap-3 w-full p-3 border border-neutral-250 -mt-px first:rounded-t-md last:rounded-b-md bg-neutral-100"
             >
               <div>
-                <div
-                  class="pr-5"
-                />
+                <button
+                  aria-checked="true"
+                  class="group transition bg-neutral-100 border border-neutral-300 w-[20px] h-[20px] rounded-full hover:border-2 hover:border-brand-500 data-[state=checked]:bg-brand-500 data-[state=checked]:border-brand-500 disabled:hover:border disabled:bg-neutral-150 disabled:border-neutral-250 disabled:data-[state=checked]:hover:border-2 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300"
+                  data-disabled=""
+                  data-radix-collection-item=""
+                  data-state="checked"
+                  disabled=""
+                  role="radio"
+                  tabindex="-1"
+                  type="button"
+                  value="456"
+                >
+                  <span
+                    class="flex items-center justify-center w-full h-full relative"
+                    data-disabled=""
+                    data-state="checked"
+                  >
+                    <span
+                      class="icon-solid-check shrink-0 text-xs text-white"
+                      role="img"
+                    />
+                  </span>
+                </button>
               </div>
               <div
                 class="flex flex-col items-start flex-1 min-w-0 text-sm gap-1"
