@@ -100,7 +100,7 @@ exports[`ServiceList should match snapshot 1`] = `
             class="h-11 px-4 text-left font-medium"
             style="width: 20%;"
           >
-            Version
+            Target version
           </th>
           <th
             class="h-11 px-4 text-left font-medium"

@@ -91,7 +91,7 @@ function GitRepository({
           </Dd>
         </>
       )}
-      <Dt>Commit:</Dt>
+      <Dt>Target commit:</Dt>
       <Dd>
         <div className="inline-flex items-center gap-2">
           <LastCommitAuthor gitRepository={gitRepository} serviceId={service.id} serviceType={service.serviceType} />
@@ -377,7 +377,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
             )}
             <Dt>Chart name:</Dt>
             <Dd>{helmRepository.chart_name}</Dd>
-            <Dt>Version:</Dt>
+            <Dt>Target version:</Dt>
             <Dd>{helmRepository.chart_version}</Dd>
           </Dl>
         )}
