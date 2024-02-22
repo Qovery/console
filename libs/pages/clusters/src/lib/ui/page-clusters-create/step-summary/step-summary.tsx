@@ -43,9 +43,11 @@ export function StepSummary(props: StepSummaryProps) {
     const feature = []
 
     if (props.featuresData) {
-      for (let i = 0; i < Object.keys(props.featuresData).length; i++) {
-        const id = Object.keys(props.featuresData)[i]
-        const currentFeature = props.featuresData[id]
+      if (props.featuresData?.aws_existing_vpc) return true
+
+      for (let i = 0; i < Object.keys(props.featuresData.features).length; i++) {
+        const id = Object.keys(props.featuresData.features)[i]
+        const currentFeature = props.featuresData.features[id]
         if (currentFeature.value) feature.push(id)
       }
     }
@@ -229,8 +231,13 @@ export function StepSummary(props: StepSummaryProps) {
             <div className="flex-grow mr-2">
               <div className="text-sm text-neutral-400 font-bold mb-2">Features</div>
               <ul className="text-neutral-350 text-sm list-none">
-                {Object.keys(props.featuresData).map((id: string) => {
-                  const currentFeature = props.featuresData && props.featuresData[id]
+                {props.featuresData.aws_existing_vpc && (
+                  <li>
+                    Deploy on an existing VPC: <strong className="font-medium">test</strong>
+                  </li>
+                )}
+                {Object.keys(props.featuresData.features).map((id: string) => {
+                  const currentFeature = props.featuresData && props.featuresData.features[id]
 
                   if (!currentFeature?.value) return null
 

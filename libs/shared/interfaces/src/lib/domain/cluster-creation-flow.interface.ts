@@ -1,4 +1,4 @@
-import { type CloudProviderEnum, type ClusterFeatureAwsExistingVpc } from 'qovery-typescript-axios'
+import { type CloudProviderEnum } from 'qovery-typescript-axios'
 
 export interface ClusterGeneralData {
   name: string
@@ -28,14 +28,28 @@ export interface ClusterRemoteData {
   ssh_key: string
 }
 
+type Subnets = {
+  A: string
+  B: string
+  C: string
+}
+
 export type ClusterFeaturesData = {
-  vpc_mode?: 'DEFAULT' | 'EXISTING-VPC'
-} & {
-  [id: string]: {
-    id: string
-    title: string
-    value: boolean
-    awsExistingVpc?: ClusterFeatureAwsExistingVpc
-    extendedValue?: string
+  vpc_mode: 'DEFAULT' | 'EXISTING_VPC'
+  aws_existing_vpc?: {
+    aws_vpc_eks_id: string
+    eks_subnets?: Subnets[]
+    mongodb_subnets?: Subnets[]
+    mysql_subnets?: Subnets[]
+    postgresql_subnets?: Subnets[]
+    redis_subnets?: Subnets[]
+  }
+  features: {
+    [id: string]: {
+      id: string
+      title: string
+      value: boolean
+      extendedValue?: string
+    }
   }
 }

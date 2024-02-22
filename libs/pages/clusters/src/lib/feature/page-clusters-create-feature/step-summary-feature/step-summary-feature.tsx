@@ -25,7 +25,7 @@ import StepSummary from '../../../ui/page-clusters-create/step-summary/step-summ
 import { steps, useClusterContainerCreateContext } from '../page-clusters-create-feature'
 
 export function StepSummaryFeature() {
-  useDocumentTitle('Summary - Create Database')
+  useDocumentTitle('Summary - Create Cluster')
   const { generalData, kubeconfigData, resourcesData, featuresData, remoteData, setCurrentStep } =
     useClusterContainerCreateContext()
   const navigate = useNavigate()
@@ -149,9 +149,9 @@ export function StepSummaryFeature() {
         Object.keys(featuresData)
           .map(
             (id: string) =>
-              featuresData[id].value && {
+              featuresData.features[id].value && {
                 id: id,
-                value: featuresData[id].extendedValue || featuresData[id].value,
+                value: featuresData.features[id].extendedValue || featuresData.features[id].value,
               }
           )
           .filter(Boolean)

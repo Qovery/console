@@ -53,7 +53,7 @@ export function StepFeatures(props: StepFeaturesProps) {
           </Callout.Root>
           <Controller
             name="vpc_mode"
-            defaultValue="default"
+            defaultValue="DEFAULT"
             control={control}
             render={({ field }) => (
               <InputSelect
@@ -66,7 +66,7 @@ export function StepFeatures(props: StepFeaturesProps) {
                   },
                   {
                     label: 'Deploy on my existing VPC',
-                    value: 'EXISTING-VPC',
+                    value: 'EXISTING_VPC',
                   },
                 ]}
                 onChange={field.onChange}
@@ -75,7 +75,7 @@ export function StepFeatures(props: StepFeaturesProps) {
               />
             )}
           />
-          {watchVpcMode === 'default' ? (
+          {watchVpcMode === 'DEFAULT' ? (
             <div>
               {features && features.length > 0 ? (
                 features.map((feature) => (
@@ -95,9 +95,9 @@ export function StepFeatures(props: StepFeaturesProps) {
                           <Callout.Text className="text-xs">
                             <Callout.TextHeading>Warning</Callout.TextHeading>
                             <Callout.TextDescription>
-                              This feature has been activated by default. Since February 1, 2024, AWS charge public IPv4
-                              Addresses. Disabling it may cost you more, depending on the number of nodes in your
-                              cluster.
+                              This feature has been activated by default. Since February 1, 2024, aws_existing_vpccharge
+                              public IPv4 Addresses. Disabling it may cost you more, depending on the number of nodes in
+                              your cluster.
                               <br />
                               <ExternalLink
                                 size="xs"
@@ -124,7 +124,8 @@ export function StepFeatures(props: StepFeaturesProps) {
               <h4 className="text-neutral-400 text-sm font-medium mb-1">Deploy on an existing VPC</h4>
               <p className="text-neutral-350 text-sm mb-4">In your VPC settings, you must enable the DNS hostnames.</p>
               <Controller
-                name="aws_vpc_eks_id"
+                name="aws_existing_vpc.aws_vpc_eks_id"
+                rules={{ required: true }}
                 control={control}
                 render={({ field }) => (
                   <>
@@ -140,25 +141,27 @@ export function StepFeatures(props: StepFeaturesProps) {
                 )}
               />
               <h4 className="text-neutral-400 text-sm font-medium mb-3">EKS subnet IDs</h4>
-              <ButtonPopoverSubnets name="eks_subnets_zone">EKS</ButtonPopoverSubnets>
+              <ButtonPopoverSubnets title="EKS subnets IDs" name="aws_existing_vpc.eks_subnets">
+                EKS
+              </ButtonPopoverSubnets>
               <hr className="my-3" />
               <h4 className="text-neutral-400 text-sm font-medium mb-3">
                 Subnets IDs for managed databases (optional)
               </h4>
               <div className="flex gap-3">
-                <ButtonPopoverSubnets name="mongodb_subnets_zone">
+                <ButtonPopoverSubnets title="MongoDB subnets IDs" name="aws_existing_vpc.mongodb_subnets">
                   <Icon name={IconEnum.MONGODB} width="16" className="mr-2" />
                   MongoDB
                 </ButtonPopoverSubnets>
-                <ButtonPopoverSubnets name="mysql_subnets_zone">
+                <ButtonPopoverSubnets title="MySQL subnets IDs" name="aws_existing_vpc.mysql_subnets">
                   <Icon name={IconEnum.MYSQL} width="16" className="mr-2" />
                   MySQL
                 </ButtonPopoverSubnets>
-                <ButtonPopoverSubnets name="postgresql_subnets_zone">
+                <ButtonPopoverSubnets title="PostgreSQL subnets IDs" name="aws_existing_vpc.postgresql_subnets">
                   <Icon name={IconEnum.POSTGRESQL} width="16" className="mr-2" />
                   PostgreSQL
                 </ButtonPopoverSubnets>
-                <ButtonPopoverSubnets name="redis_subnets_zone">
+                <ButtonPopoverSubnets title="Redis subnets IDs" name="aws_existing_vpc.redis_subnets">
                   <Icon name={IconEnum.REDIS} width="16" className="mr-2" />
                   Redis
                 </ButtonPopoverSubnets>

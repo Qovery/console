@@ -3,16 +3,17 @@ import { Controller, type UseFieldArrayRemove, useFieldArray, useFormContext } f
 import { Button, Icon, IconAwesomeEnum, InputTextSmall, Popover } from '@qovery/shared/ui'
 
 export interface ButtonPopoverSubnetsProps extends PropsWithChildren {
+  title: string
   name: string
 }
 
-function Row({ key, index, remove }: { key: string; index: number; remove: UseFieldArrayRemove }) {
+function Row({ key, index, remove, name }: { key: string; index: number; remove: UseFieldArrayRemove; name: string }) {
   const { control } = useFormContext()
 
   return (
-    <li className="grid grid-cols-[6fr_6fr_6fr_1fr] gap-x-2 items-center" key={key}>
+    <li key={key} className="grid grid-cols-[6fr_6fr_6fr_1fr] gap-x-2 items-center">
       <Controller
-        name={`zone.${index}.A`}
+        name={`${name}.${index}.A`}
         control={control}
         render={({ field, fieldState: { error } }) => (
           <InputTextSmall
@@ -25,7 +26,7 @@ function Row({ key, index, remove }: { key: string; index: number; remove: UseFi
         )}
       />
       <Controller
-        name={`zone.${index}.B`}
+        name={`${name}.${index}.B`}
         control={control}
         render={({ field, fieldState: { error } }) => (
           <InputTextSmall
@@ -38,7 +39,7 @@ function Row({ key, index, remove }: { key: string; index: number; remove: UseFi
         )}
       />
       <Controller
-        name={`zone.${index}.C`}
+        name={`${name}.${index}.C`}
         control={control}
         render={({ field, fieldState: { error } }) => (
           <InputTextSmall
@@ -64,7 +65,7 @@ function Row({ key, index, remove }: { key: string; index: number; remove: UseFi
   )
 }
 
-export function ButtonPopoverSubnets({ name, children }: ButtonPopoverSubnetsProps) {
+export function ButtonPopoverSubnets({ name, children, title }: ButtonPopoverSubnetsProps) {
   const { control } = useFormContext()
   const { fields, append, remove } = useFieldArray({
     control,
@@ -93,7 +94,7 @@ export function ButtonPopoverSubnets({ name, children }: ButtonPopoverSubnetsPro
         </Button>
       </Popover.Trigger>
       <Popover.Content side="bottom" className="text-neutral-350 text-sm relative" style={{ width: 648 }}>
-        <h6 className="text-neutral-400 font-medium mb-4">EKS subnets IDs</h6>
+        <h6 className="text-neutral-400 font-medium mb-4">{title}</h6>
         {fields.length > 0 && (
           <ul className="flex flex-col gap-3 mb-3">
             <li className="grid grid-cols-[6fr_6fr_6fr_1fr] gap-x-2 items-center">
@@ -103,7 +104,7 @@ export function ButtonPopoverSubnets({ name, children }: ButtonPopoverSubnetsPro
               <span></span>
             </li>
             {fields.map((field, index) => (
-              <Row key={field.id} index={index} remove={remove} />
+              <Row key={field.id} index={index} remove={remove} name={name} />
             ))}
           </ul>
         )}
