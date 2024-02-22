@@ -19,11 +19,6 @@
           "apps/console/src/favicon.ico",
           "apps/console/src/assets",
           {
-            "glob": "*",
-            "input": "node_modules/@awesome.me/kit-c4457d1be4/icons/webfonts",
-            "output": "assets/fonts/font-awesome"
-          },
-          {
             "glob": "**/*",
             "input": "libs/shared/ui/src/lib/assets",
             "output": "/assets"

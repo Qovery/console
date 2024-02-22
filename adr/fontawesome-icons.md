@@ -49,6 +49,10 @@ However we need to bring an architecture which doesn't vendor lock us to FontAwe
 ## Consequences
 
 FontAwesome provides "Kit" with can handle custom icons and subsetting the whole bundle.
-Kit can be installed as node_modules and provides necessary typescript types.
+Kit can be "freeze" to one FontAwesome version and @fortawesome/fontawesome-common-types provides necessary typescript types.
 In addition "Kit" comes with both SVG and Web Font assets, so even if currently rely on Web Font it will allow you to transition to SVG if we want/need to.
 However we heavily rely on typescript types to allow compilation check and have our backs if we need to move aways from FontAwesome.
+
+Kit are available either as Self-Hosted and via FontAwesome CDN. It worth mentioning that FontAwesome pricing is bound to CDN page view.
+Self-Hosted can be used as node_modules be it requires us to add an `NPM_TOKEN` which limit open-source project characteristic.
+We chose FontAwesome CDN but we are aware it can leads us to our increase FontAwesome billing.
