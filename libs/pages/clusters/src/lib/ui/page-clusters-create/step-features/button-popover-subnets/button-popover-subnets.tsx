@@ -1,5 +1,6 @@
 import { type PropsWithChildren } from 'react'
 import { Controller, type UseFieldArrayRemove, useFieldArray, useFormContext } from 'react-hook-form'
+import { type Subnets } from '@qovery/shared/interfaces'
 import { Button, Icon, IconAwesomeEnum, InputTextSmall, Popover } from '@qovery/shared/ui'
 
 export interface ButtonPopoverSubnetsProps extends PropsWithChildren {
@@ -66,13 +67,14 @@ function Row({ key, index, remove, name }: { key: string; index: number; remove:
 }
 
 export function ButtonPopoverSubnets({ name, children, title }: ButtonPopoverSubnetsProps) {
-  const { control } = useFormContext()
+  const { control, watch } = useFormContext()
   const { fields, append, remove } = useFieldArray({
     control,
     name,
   })
 
-  console.log('fields', fields)
+  const watchSubnets: Subnets[] = watch(name)
+  const getFieldsWithValues = () => watchSubnets.filter((field) => field.A !== '' || field.B !== '' || field.C !== '')
 
   return (
     <Popover.Root>
@@ -82,7 +84,7 @@ export function ButtonPopoverSubnets({ name, children, title }: ButtonPopoverSub
           radius="full"
           color="neutral"
           variant="outline"
-          className="self-start"
+          className={`self-start ${getFieldsWithValues().length > 0 ? 'bg-white border-green-500' : ''}`}
           onClick={() =>
             fields.length === 0 &&
             append({

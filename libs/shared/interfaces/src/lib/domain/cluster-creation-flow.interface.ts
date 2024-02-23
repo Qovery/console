@@ -28,7 +28,7 @@ export interface ClusterRemoteData {
   ssh_key: string
 }
 
-type Subnets = {
+export type Subnets = {
   A: string
   B: string
   C: string

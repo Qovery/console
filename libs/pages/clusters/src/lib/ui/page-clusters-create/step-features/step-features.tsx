@@ -142,6 +142,7 @@ export function StepFeatures(props: StepFeaturesProps) {
               />
               <h4 className="text-neutral-400 text-sm font-medium mb-3">EKS subnet IDs</h4>
               <ButtonPopoverSubnets title="EKS subnets IDs" name="aws_existing_vpc.eks_subnets">
+                <Icon name={IconEnum.EKS} width="16" className="mr-2" />
                 EKS
               </ButtonPopoverSubnets>
               <hr className="my-3" />
