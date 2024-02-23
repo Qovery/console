@@ -109,6 +109,7 @@ jobs:
       number-of-agents: 3
       environment-variables: |
         ${{ needs.env-vars.outputs.variables }}
+        GIT_SHA=${{ inputs.application-commit-id }}
 
   codecoverage:
     runs-on: ubuntu-latest
