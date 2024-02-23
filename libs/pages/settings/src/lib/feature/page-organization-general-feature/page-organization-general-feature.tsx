@@ -60,6 +60,8 @@ export function PageOrganizationGeneralFeature() {
     }
   })
 
+  if (!organization) return null
+
   return (
     <FormProvider {...methods}>
       <PageOrganizationGeneral
