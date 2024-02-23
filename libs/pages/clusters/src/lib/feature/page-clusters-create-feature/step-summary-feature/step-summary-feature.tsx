@@ -174,10 +174,24 @@ export function StepSummaryFeature() {
               eks_subnets_zone_a_ids: getValueByKey('A', featuresData?.aws_existing_vpc?.eks_subnets)!,
               eks_subnets_zone_b_ids: getValueByKey('B', featuresData?.aws_existing_vpc?.eks_subnets)!,
               eks_subnets_zone_c_ids: getValueByKey('C', featuresData?.aws_existing_vpc?.eks_subnets)!,
-              // mongodb_subnets: featuresData?.aws_existing_vpc?.mongodb_subnets ?? '',
-              // mysql_subnets: featuresData?.aws_existing_vpc?.mysql_subnets ?? '',
-              // postgresql_subnets: featuresData?.aws_existing_vpc?.postgresql_subnets ?? '',
-              // redis_subnets: featuresData?.aws_existing_vpc?.redis_subnets ?? '',
+              // Those are the name that AWS give them
+              // MongoDB => documentdb
+              documentdb_subnets_zone_a_ids: getValueByKey('A', featuresData?.aws_existing_vpc?.mongodb_subnets)!,
+              documentdb_subnets_zone_b_ids: getValueByKey('B', featuresData?.aws_existing_vpc?.mongodb_subnets)!,
+              documentdb_subnets_zone_c_ids: getValueByKey('C', featuresData?.aws_existing_vpc?.mongodb_subnets)!,
+              // Redis => elasticache
+              elasticache_subnets_zone_a_ids: getValueByKey('A', featuresData?.aws_existing_vpc?.redis_subnets)!,
+              elasticache_subnets_zone_b_ids: getValueByKey('B', featuresData?.aws_existing_vpc?.redis_subnets)!,
+              elasticache_subnets_zone_c_ids: getValueByKey('C', featuresData?.aws_existing_vpc?.redis_subnets)!,
+              // MySQL and PostgreSQL => rds
+              rds_subnets_zone_a_ids: getValueByKey(
+                'A',
+                featuresData?.aws_existing_vpc?.mysql_subnets &&
+                  featuresData?.aws_existing_vpc?.redis_subnets && [
+                    ...featuresData.aws_existing_vpc.mysql_subnets,
+                    ...featuresData.aws_existing_vpc.redis_subnets,
+                  ]
+              )!,
             },
           },
         ]
