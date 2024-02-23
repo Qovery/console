@@ -16,6 +16,7 @@ import {
   IconFlag,
   InputSelect,
   LoaderSpinner,
+  Popover,
   RadioGroup,
   Section,
 } from '@qovery/shared/ui'
@@ -80,8 +81,36 @@ export function StepGeneral(props: StepGeneralProps) {
             }}
             render={({ field }) => (
               <BlockContent title="Installation type">
+                <Popover.Root>
+                  <Popover.Trigger>
+                    <span className="text-sm cursor-pointer text-brand-500 hover:text-brand-600 transition font-medium">
+                      Which should I choose? <Icon className="text-xs" name={IconAwesomeEnum.CIRCLE_QUESTION} />
+                    </span>
+                  </Popover.Trigger>
+                  <Popover.Content side="left" className="text-neutral-350 text-sm relative" style={{ width: 440 }}>
+                    <span className="text-neutral-400 font-medium mb-2">How to choose the installation type</span>
+                    <p>
+                      <ul className="list-disc pl-4">
+                        <li>
+                          Choose Qovery Managed if you are not familiar with Kubernetes or you don't want to bother with
+                          it and delegate infrastructure management to Qovery. Additional Qovery Managed clusters have
+                          an impact to your bill (depending on your contract type).
+                        </li>
+                        <li>
+                          Choose Self-Managed otherwise. Note that you will have to manage any upgrade on your
+                          Kubernetes cluster and the Helm charts deployed within it (including the Qovery applications).{' '}
+                        </li>
+                      </ul>
+                    </p>
+                    <Popover.Close className="absolute top-4 right-4">
+                      <button type="button">
+                        <Icon name="icon-solid-xmark text-lg leading-4 font-thin text-neutral-400" />
+                      </button>
+                    </Popover.Close>
+                  </Popover.Content>
+                </Popover.Root>
                 <RadioGroup.Root
-                  className="flex flex-col gap-4"
+                  className="flex flex-col gap-4 mt-3"
                   defaultValue={field.value}
                   onValueChange={field.onChange}
                 >
