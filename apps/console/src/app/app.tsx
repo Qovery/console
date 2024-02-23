@@ -72,7 +72,9 @@ export function App() {
   useEffect(() => {
     // init logrocket
     if (process.env['NODE_ENV'] === 'production') {
-      LogRocket.init(environment.logrocket)
+      LogRocket.init(environment.logrocket, {
+        release: process.env['GIT_SHA'],
+      })
     }
   }, [])
 
