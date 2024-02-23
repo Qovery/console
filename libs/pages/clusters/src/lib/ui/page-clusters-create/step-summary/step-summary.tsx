@@ -233,7 +233,8 @@ export function StepSummary(props: StepSummaryProps) {
               <ul className="text-neutral-350 text-sm list-none">
                 {props.featuresData.aws_existing_vpc && (
                   <li>
-                    Deploy on an existing VPC: <strong className="font-medium">test</strong>
+                    VPC ID:{' '}
+                    <strong className="font-medium">{props.featuresData.aws_existing_vpc.aws_vpc_eks_id}</strong>
                   </li>
                 )}
                 {Object.keys(props.featuresData.features).map((id: string) => {
