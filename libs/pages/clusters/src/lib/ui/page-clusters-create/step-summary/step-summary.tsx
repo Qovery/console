@@ -19,6 +19,7 @@ import {
   Section,
 } from '@qovery/shared/ui'
 import { trimId } from '@qovery/shared/util-js'
+import { getValueByKey } from '../../../feature/page-clusters-create-feature/step-summary-feature/step-summary-feature'
 
 export interface StepSummaryProps {
   onSubmit: (withDeploy: boolean) => void
@@ -232,10 +233,30 @@ export function StepSummary(props: StepSummaryProps) {
               <div className="text-sm text-neutral-400 font-bold mb-2">Features</div>
               <ul className="text-neutral-350 text-sm list-none">
                 {props.featuresData.aws_existing_vpc && (
-                  <li>
-                    VPC ID:{' '}
-                    <strong className="font-medium">{props.featuresData.aws_existing_vpc.aws_vpc_eks_id}</strong>
-                  </li>
+                  <>
+                    <li>
+                      VPC ID:{' '}
+                      <strong className="font-medium">{props.featuresData.aws_existing_vpc.aws_vpc_eks_id}</strong>
+                    </li>
+                    <li>
+                      EKS subnets ids zone A:{' '}
+                      <strong className="font-medium">
+                        {getValueByKey('A', props.featuresData.aws_existing_vpc.eks_subnets)}
+                      </strong>
+                    </li>
+                    <li>
+                      EKS subnets ids zone B:{' '}
+                      <strong className="font-medium">
+                        {getValueByKey('B', props.featuresData.aws_existing_vpc.eks_subnets)}
+                      </strong>
+                    </li>
+                    <li>
+                      EKS subnets ids zone C:{' '}
+                      <strong className="font-medium">
+                        {getValueByKey('C', props.featuresData.aws_existing_vpc.eks_subnets)}
+                      </strong>
+                    </li>
+                  </>
                 )}
                 {Object.keys(props.featuresData.features).map((id: string) => {
                   const currentFeature = props.featuresData && props.featuresData.features[id]

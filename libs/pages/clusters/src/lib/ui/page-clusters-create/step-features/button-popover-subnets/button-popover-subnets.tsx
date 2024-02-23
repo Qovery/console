@@ -72,6 +72,8 @@ export function ButtonPopoverSubnets({ name, children, title }: ButtonPopoverSub
     name,
   })
 
+  console.log('fields', fields)
+
   return (
     <Popover.Root>
       <Popover.Trigger>

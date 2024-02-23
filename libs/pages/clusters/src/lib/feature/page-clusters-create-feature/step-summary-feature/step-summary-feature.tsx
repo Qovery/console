@@ -24,6 +24,16 @@ import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import StepSummary from '../../../ui/page-clusters-create/step-summary/step-summary'
 import { steps, useClusterContainerCreateContext } from '../page-clusters-create-feature'
 
+export function getValueByKey(key: string, data: { [key: string]: string }[] = []): string[] {
+  const result: string[] = []
+  data.forEach((obj) => {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      result.push(obj[key])
+    }
+  })
+  return result
+}
+
 export function StepSummaryFeature() {
   useDocumentTitle('Summary - Create Cluster')
   const { generalData, kubeconfigData, resourcesData, featuresData, remoteData, setCurrentStep } =
@@ -144,9 +154,9 @@ export function StepSummaryFeature() {
       return
     }
     if (resourcesData) {
-      const formatFeatures =
-        featuresData &&
-        Object.keys(featuresData)
+      let formatFeatures: ClusterRequestFeaturesInner[] | undefined
+      if (featuresData && featuresData.vpc_mode === 'DEFAULT') {
+        formatFeatures = Object.keys(featuresData)
           .map(
             (id: string) =>
               featuresData.features[id].value && {
@@ -154,7 +164,24 @@ export function StepSummaryFeature() {
                 value: featuresData.features[id].extendedValue || featuresData.features[id].value,
               }
           )
-          .filter(Boolean)
+          .filter(Boolean) as ClusterRequestFeaturesInner[]
+      } else {
+        formatFeatures = [
+          {
+            id: 'EXISTING_VPC',
+            value: {
+              aws_vpc_eks_id: featuresData?.aws_existing_vpc?.aws_vpc_eks_id ?? '',
+              eks_subnets_zone_a_ids: getValueByKey('A', featuresData?.aws_existing_vpc?.eks_subnets)!,
+              eks_subnets_zone_b_ids: getValueByKey('B', featuresData?.aws_existing_vpc?.eks_subnets)!,
+              eks_subnets_zone_c_ids: getValueByKey('C', featuresData?.aws_existing_vpc?.eks_subnets)!,
+              // mongodb_subnets: featuresData?.aws_existing_vpc?.mongodb_subnets ?? '',
+              // mysql_subnets: featuresData?.aws_existing_vpc?.mysql_subnets ?? '',
+              // postgresql_subnets: featuresData?.aws_existing_vpc?.postgresql_subnets ?? '',
+              // redis_subnets: featuresData?.aws_existing_vpc?.redis_subnets ?? '',
+            },
+          },
+        ]
+      }
 
       const clusterRequest = match(generalData.cloud_provider)
         .returnType<ClusterRequest>()
