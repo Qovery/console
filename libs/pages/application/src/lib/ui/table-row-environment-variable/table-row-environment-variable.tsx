@@ -144,7 +144,7 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
                       {getEnvironmentVariableFileMountPath(variable)}
                     </span>
                   </div>
-                ) : variable.value !== null ? (
+                ) : variable.variable_type === 'ALIAS' ? null : variable.value !== null ? (
                   <PasswordShowHide
                     value={variable.value || ''}
                     defaultVisible={defaultShowHidePassword}
