@@ -101,7 +101,7 @@ export function StepFeatures(props: StepFeaturesProps) {
                               <br />
                               <ExternalLink
                                 size="xs"
-                                href="https://aws.amazon.com/fr/blogs/aws/new-aws-public-ipv4-address-charge-public-ip-insights/"
+                                href="https://hub.qovery.com/docs/using-qovery/configuration/clusters/#use-existing-vpc"
                                 className="mt-1"
                               >
                                 Check this link for more information

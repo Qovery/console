@@ -121,7 +121,7 @@ export function ButtonPopoverSubnets({ name, children, title }: ButtonPopoverSub
             variant="surface"
             onClick={() => append({ A: '', B: '', C: '' })}
           >
-            Add subnet
+            Add subnets
             <Icon name={IconAwesomeEnum.PLUS} className="ml-2 text-base relative -top-[2px]" />
           </Button>
           <div>
