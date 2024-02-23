@@ -238,24 +238,30 @@ export function StepSummary(props: StepSummaryProps) {
                       VPC ID:{' '}
                       <strong className="font-medium">{props.featuresData.aws_existing_vpc.aws_vpc_eks_id}</strong>
                     </li>
-                    <li>
-                      EKS subnets ids zone A:{' '}
-                      <strong className="font-medium">
-                        {getValueByKey('A', props.featuresData.aws_existing_vpc.eks_subnets)}
-                      </strong>
-                    </li>
-                    <li>
-                      EKS subnets ids zone B:{' '}
-                      <strong className="font-medium">
-                        {getValueByKey('B', props.featuresData.aws_existing_vpc.eks_subnets)}
-                      </strong>
-                    </li>
-                    <li>
-                      EKS subnets ids zone C:{' '}
-                      <strong className="font-medium">
-                        {getValueByKey('C', props.featuresData.aws_existing_vpc.eks_subnets)}
-                      </strong>
-                    </li>
+                    {getValueByKey('A', props.featuresData.aws_existing_vpc.eks_subnets) && (
+                      <li>
+                        EKS subnets ids zone A:{' '}
+                        <strong className="font-medium">
+                          {getValueByKey('A', props.featuresData.aws_existing_vpc.eks_subnets)}
+                        </strong>
+                      </li>
+                    )}
+                    {getValueByKey('B', props.featuresData.aws_existing_vpc.eks_subnets) && (
+                      <li>
+                        EKS subnets ids zone B:{' '}
+                        <strong className="font-medium">
+                          {getValueByKey('B', props.featuresData.aws_existing_vpc.eks_subnets)}
+                        </strong>
+                      </li>
+                    )}
+                    {getValueByKey('C', props.featuresData.aws_existing_vpc.eks_subnets).length > 0 && (
+                      <li>
+                        EKS subnets ids zone C:{' '}
+                        <strong className="font-medium">
+                          {getValueByKey('C', props.featuresData.aws_existing_vpc.eks_subnets)}
+                        </strong>
+                      </li>
+                    )}
                   </>
                 )}
                 {Object.keys(props.featuresData.features).map((id: string) => {

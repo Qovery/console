@@ -2,6 +2,7 @@ import { type PropsWithChildren } from 'react'
 import { Controller, type UseFieldArrayRemove, useFieldArray, useFormContext } from 'react-hook-form'
 import { type Subnets } from '@qovery/shared/interfaces'
 import { Button, Icon, IconAwesomeEnum, InputTextSmall, Popover } from '@qovery/shared/ui'
+import { removeEmptySubnet } from '../../../../feature/page-clusters-create-feature/step-features-feature/step-features-feature'
 
 export interface ButtonPopoverSubnetsProps extends PropsWithChildren {
   title: string
@@ -73,8 +74,7 @@ export function ButtonPopoverSubnets({ name, children, title }: ButtonPopoverSub
     name,
   })
 
-  const watchSubnets: Subnets[] = watch(name)
-  const getFieldsWithValues = () => watchSubnets.filter((field) => field.A !== '' || field.B !== '' || field.C !== '')
+  const watchSubnets: Subnets[] | undefined = removeEmptySubnet(watch(name))
 
   return (
     <Popover.Root>
@@ -84,7 +84,7 @@ export function ButtonPopoverSubnets({ name, children, title }: ButtonPopoverSub
           radius="full"
           color="neutral"
           variant="outline"
-          className={`self-start ${getFieldsWithValues().length > 0 ? 'bg-white border-green-500' : ''}`}
+          className={`self-start ${watchSubnets && watchSubnets.length > 0 ? 'bg-white border-green-500' : ''}`}
           onClick={() =>
             fields.length === 0 &&
             append({

@@ -3,7 +3,7 @@ import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useCloudProviderFeatures } from '@qovery/domains/cloud-providers/feature'
-import { type ClusterFeaturesData } from '@qovery/shared/interfaces'
+import { type ClusterFeaturesData, type Subnets } from '@qovery/shared/interfaces'
 import {
   CLUSTERS_CREATION_GENERAL_URL,
   CLUSTERS_CREATION_REMOTE_URL,
@@ -16,6 +16,9 @@ import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import StepFeatures from '../../../ui/page-clusters-create/step-features/step-features'
 import { steps, useClusterContainerCreateContext } from '../page-clusters-create-feature'
+
+export const removeEmptySubnet = (objects?: Subnets[]) =>
+  objects?.filter((field) => field.A !== '' || field.B !== '' || field.C !== '')
 
 export function StepFeaturesFeature() {
   useDocumentTitle('Features - Create Cluster')
@@ -96,11 +99,11 @@ export function StepFeaturesFeature() {
           vpc_mode: 'EXISTING_VPC',
           aws_existing_vpc: {
             aws_vpc_eks_id: existingVpcData?.aws_vpc_eks_id ?? '',
-            eks_subnets: existingVpcData?.eks_subnets,
-            mongodb_subnets: existingVpcData?.mongodb_subnets,
-            mysql_subnets: existingVpcData?.mysql_subnets,
-            postgresql_subnets: existingVpcData?.postgresql_subnets,
-            redis_subnets: existingVpcData?.redis_subnets,
+            eks_subnets: removeEmptySubnet(existingVpcData?.eks_subnets),
+            mongodb_subnets: removeEmptySubnet(existingVpcData?.mongodb_subnets),
+            mysql_subnets: removeEmptySubnet(existingVpcData?.mysql_subnets),
+            postgresql_subnets: removeEmptySubnet(existingVpcData?.postgresql_subnets),
+            redis_subnets: removeEmptySubnet(existingVpcData?.redis_subnets),
           },
           features: {},
         })
