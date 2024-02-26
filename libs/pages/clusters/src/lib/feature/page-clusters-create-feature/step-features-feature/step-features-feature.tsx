@@ -74,7 +74,7 @@ export function StepFeaturesFeature() {
       if (data.vpc_mode === 'DEFAULT') {
         let cloneData = {}
 
-        for (let i = 0; i < Object.keys(data).length; i++) {
+        for (let i = 0; i < Object.keys(data.features).length; i++) {
           const id = Object.keys(data.features)[i]
           const featureData = features.find((f) => f.id === id)
           const currentFeature = data.features[id]
@@ -87,8 +87,6 @@ export function StepFeaturesFeature() {
             extendedValue: currentFeature?.extendedValue || false,
           },
         }
-
-        console.log(cloneData)
 
         setFeaturesData({
           vpc_mode: 'DEFAULT',

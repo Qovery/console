@@ -17,13 +17,6 @@ const mockFeatures = [
     value: 'my-value',
     accepted_values: ['test', 'my-value'],
   },
-  {
-    id: 'CUSTOM_VPC',
-    title: 'feature-2',
-    cost_per_month: 23,
-    value: 'my-value',
-    accepted_values: ['test', 'my-value'],
-  },
 ]
 
 const useCloudProviderFeaturesMockSpy = jest.spyOn(cloudProvidersDomain, 'useCloudProviderFeatures') as jest.Mock
@@ -84,7 +77,7 @@ describe('StepFeaturesFeature', () => {
   })
 
   it('should submit form and navigate', async () => {
-    const { userEvent, baseElement, debug } = renderWithProviders(
+    const { userEvent } = renderWithProviders(
       <ContextWrapper>
         <StepFeaturesFeature />
       </ContextWrapper>
