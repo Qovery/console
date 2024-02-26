@@ -10,11 +10,11 @@ export interface ButtonPopoverSubnetsProps extends PropsWithChildren {
   callout?: ReactNode
 }
 
-function Row({ key, index, remove, name }: { key: string; index: number; remove: UseFieldArrayRemove; name: string }) {
+function Row({ index, remove, name }: { index: number; remove: UseFieldArrayRemove; name: string }) {
   const { control } = useFormContext()
 
   return (
-    <li key={key} className="grid grid-cols-[6fr_6fr_6fr_1fr] gap-x-2 items-center">
+    <li className="grid grid-cols-[6fr_6fr_6fr_1fr] gap-x-2 items-center">
       <Controller
         name={`${name}.${index}.A`}
         control={control}
