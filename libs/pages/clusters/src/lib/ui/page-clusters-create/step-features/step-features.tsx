@@ -141,7 +141,22 @@ export function StepFeatures(props: StepFeaturesProps) {
                 )}
               />
               <h4 className="text-neutral-400 text-sm font-medium mb-3">EKS subnet IDs</h4>
-              <ButtonPopoverSubnets title="EKS subnets IDs" name="aws_existing_vpc.eks_subnets">
+              <ButtonPopoverSubnets
+                title="EKS subnets IDs"
+                name="aws_existing_vpc.eks_subnets"
+                callout={
+                  <Callout.Root className="mb-4" color="sky">
+                    <Callout.Icon>
+                      <Icon className="text-xs" name={IconAwesomeEnum.CIRCLE_EXCLAMATION} />
+                    </Callout.Icon>
+                    <Callout.Text className="text-xs">
+                      <Callout.TextHeading>
+                        You must enable auto-assign public IPv4 address in the subnets settings for EKS
+                      </Callout.TextHeading>
+                    </Callout.Text>
+                  </Callout.Root>
+                }
+              >
                 <Icon name={IconEnum.EKS} width="16" className="mr-2" />
                 EKS
               </ButtonPopoverSubnets>

@@ -1,4 +1,4 @@
-import { type PropsWithChildren } from 'react'
+import { type PropsWithChildren, type ReactNode } from 'react'
 import { Controller, type UseFieldArrayRemove, useFieldArray, useFormContext } from 'react-hook-form'
 import { type Subnets } from '@qovery/shared/interfaces'
 import { Button, Icon, IconAwesomeEnum, InputTextSmall, Popover } from '@qovery/shared/ui'
@@ -7,6 +7,7 @@ import { removeEmptySubnet } from '../../../../feature/page-clusters-create-feat
 export interface ButtonPopoverSubnetsProps extends PropsWithChildren {
   title: string
   name: string
+  callout?: ReactNode
 }
 
 function Row({ key, index, remove, name }: { key: string; index: number; remove: UseFieldArrayRemove; name: string }) {
@@ -67,7 +68,7 @@ function Row({ key, index, remove, name }: { key: string; index: number; remove:
   )
 }
 
-export function ButtonPopoverSubnets({ name, children, title }: ButtonPopoverSubnetsProps) {
+export function ButtonPopoverSubnets({ name, children, title, callout }: ButtonPopoverSubnetsProps) {
   const { control, watch } = useFormContext()
   const { fields, append, remove } = useFieldArray({
     control,
@@ -99,6 +100,7 @@ export function ButtonPopoverSubnets({ name, children, title }: ButtonPopoverSub
       </Popover.Trigger>
       <Popover.Content side="bottom" className="text-neutral-350 text-sm relative" style={{ width: 648 }}>
         <h6 className="text-neutral-400 font-medium mb-4">{title}</h6>
+        {callout && <div className="mb-4">{callout}</div>}
         {fields.length > 0 && (
           <ul className="flex flex-col gap-3 mb-3">
             <li className="grid grid-cols-[6fr_6fr_6fr_1fr] gap-x-2 items-center">

@@ -1,0 +1,172 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ButtonPopoverSubnets should match snapshot 1`] = `
+<body>
+  <span
+    data-radix-focus-guard=""
+    style="outline: none; opacity: 0; position: fixed; pointer-events: none;"
+    tabindex="0"
+  />
+  <button
+    aria-controls="radix-:rd:"
+    aria-expanded="true"
+    aria-haspopup="dialog"
+    class="inline-flex items-center shrink-0 font-medium transition text-xs h-7 px-2 rounded-full border dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none self-start bg-white border-green-500"
+    data-state="open"
+    type="button"
+  >
+    EKS
+  </button>
+  <div
+    data-radix-popper-content-wrapper=""
+    style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 8px); min-width: max-content; --radix-popper-available-width: -20px; --radix-popper-available-height: -18px; --radix-popper-anchor-width: 0px; --radix-popper-anchor-height: 0px; --radix-popper-transform-origin: 0% 0px;"
+  >
+    <div
+      class="bg-white p-4 shadow-xl rounded border border-neutral-200 outline-none data-[state=open]:data-[side=top]:animate-slidein-down-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-sm-faded data-[state=open]:data-[side=bottom]:animate-slidein-up-sm-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded text-neutral-350 text-sm relative"
+      data-align="start"
+      data-side="bottom"
+      data-state="open"
+      id="radix-:rd:"
+      role="dialog"
+      style="width: 648px; --radix-popover-content-transform-origin: var(--radix-popper-transform-origin); --radix-popover-content-available-width: var(--radix-popper-available-width); --radix-popover-content-available-height: var(--radix-popper-available-height); --radix-popover-trigger-width: var(--radix-popper-anchor-width); --radix-popover-trigger-height: var(--radix-popper-anchor-height);"
+      tabindex="-1"
+    >
+      <h6
+        class="text-neutral-400 font-medium mb-4"
+      >
+        EKS subnets
+      </h6>
+      <ul
+        class="flex flex-col gap-3 mb-3"
+      >
+        <li
+          class="grid grid-cols-[6fr_6fr_6fr_1fr] gap-x-2 items-center"
+        >
+          <span
+            class="text-sm text-neutral-350 font-medium"
+          >
+            IDs zone A
+          </span>
+          <span
+            class="text-sm text-neutral-350 font-medium"
+          >
+            IDs zone B
+          </span>
+          <span
+            class="text-sm text-neutral-350 font-medium"
+          >
+            IDs zone C
+          </span>
+          <span />
+        </li>
+        <li
+          class="grid grid-cols-[6fr_6fr_6fr_1fr] gap-x-2 items-center"
+        >
+          <div
+            class="w-full "
+            data-testid="input-small-wrapper"
+          >
+            <div
+              class="input input--small flex-grow  input--focused "
+              data-testid="input"
+            >
+              <label
+                class="hidden"
+              />
+              <input
+                class="absolute text-sm top-0 left-0 h-full w-full text-neutral-400 placeholder:text-neutral-350 rounded px-2 "
+                data-testid="input-value"
+                name="eks_subnets.0.A"
+                type="text"
+                value="test"
+              />
+            </div>
+          </div>
+          <div
+            class="w-full "
+            data-testid="input-small-wrapper"
+          >
+            <div
+              class="input input--small flex-grow   "
+              data-testid="input"
+            >
+              <label
+                class="hidden"
+              />
+              <input
+                class="absolute text-sm top-0 left-0 h-full w-full text-neutral-400 placeholder:text-neutral-350 rounded px-2 "
+                data-testid="input-value"
+                name="eks_subnets.0.B"
+                type="text"
+                value="test"
+              />
+            </div>
+          </div>
+          <div
+            class="w-full "
+            data-testid="input-small-wrapper"
+          >
+            <div
+              class="input input--small flex-grow   "
+              data-testid="input"
+            >
+              <label
+                class="hidden"
+              />
+              <input
+                class="absolute text-sm top-0 left-0 h-full w-full text-neutral-400 placeholder:text-neutral-350 rounded px-2 "
+                data-testid="input-value"
+                name="eks_subnets.0.C"
+                type="text"
+                value="test"
+              />
+            </div>
+          </div>
+          <button
+            class="inline-flex items-center shrink-0 font-medium transition text-xs px-3 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent w-full h-[36px]"
+            type="button"
+          >
+            <span
+              class="icon-solid-trash shrink-0 text-neutral-400"
+              role="img"
+            />
+          </button>
+        </li>
+      </ul>
+      <div
+        class="flex flex-col gap-4 text-right text-base"
+      >
+        <button
+          class="inline-flex items-center shrink-0 font-medium transition text-xs h-8 px-3 rounded self-end"
+          type="button"
+        >
+          Add subnets
+          <span
+            class="icon-solid-plus shrink-0 ml-2 text-base relative -top-[2px]"
+            role="img"
+          />
+        </button>
+        <div>
+          <button
+            class="inline-flex items-center shrink-0 font-medium transition text-xs h-8 px-3 rounded"
+            type="button"
+          >
+            Cancel
+          </button>
+          <button
+            class="inline-flex items-center shrink-0 font-medium transition border text-xs h-8 px-3 rounded bg-brand-500 border-brand-500 hover:border-brand-600 hover:bg-brand-600 text-white disabled:text-brand-300 disabled:bg-brand-100 disabled:border-none"
+            type="button"
+          >
+            Confirm
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <span
+    data-radix-focus-guard=""
+    style="outline: none; opacity: 0; position: fixed; pointer-events: none;"
+    tabindex="0"
+  />
+</body>
+`;
