@@ -1,7 +1,6 @@
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { applicationFactoryMock } from '@qovery/shared/factories'
 import { type ApplicationResourcesData } from '@qovery/shared/interfaces'
-import { IconAwesomeEnum } from '@qovery/shared/ui'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import PageSettingsResources, { type PageSettingsResourcesProps } from './page-settings-resources'
 
