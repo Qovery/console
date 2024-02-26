@@ -156,10 +156,10 @@ export function StepSummaryFeature() {
     if (resourcesData) {
       let formatFeatures: ClusterRequestFeaturesInner[] | undefined
       if (featuresData && featuresData.vpc_mode === 'DEFAULT') {
-        formatFeatures = Object.keys(featuresData)
+        formatFeatures = Object.keys(featuresData.features)
           .map(
             (id: string) =>
-              featuresData.features[id].value && {
+              featuresData.features[id]?.value && {
                 id: id,
                 value: featuresData.features[id].extendedValue || featuresData.features[id].value,
               }

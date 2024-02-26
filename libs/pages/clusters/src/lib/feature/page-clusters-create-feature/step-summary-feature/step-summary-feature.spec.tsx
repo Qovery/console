@@ -4,7 +4,7 @@ import * as cloudProvidersDomain from '@qovery/domains/cloud-providers/feature'
 import * as clustersDomain from '@qovery/domains/clusters/feature'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ClusterContainerCreateContext } from '../page-clusters-create-feature'
-import StepSummaryFeature from './step-summary-feature'
+import StepSummaryFeature, { getValueByKey } from './step-summary-feature'
 
 const useCreateClusterMockSpy = jest.spyOn(clustersDomain, 'useCreateCluster') as jest.Mock
 const useEditCloudProviderInfoMockSpy = jest.spyOn(clustersDomain, 'useEditCloudProviderInfo') as jest.Mock
@@ -76,10 +76,13 @@ const ContextWrapper = (props: { installation_type?: 'MANAGED' | 'SELF_MANAGED';
         },
         setRemoteData: jest.fn(),
         featuresData: {
-          [STATIC_IP]: {
-            id: STATIC_IP,
-            value: true,
-            extendedValue: 'test',
+          vpc_mode: 'DEFAULT',
+          features: {
+            STATIC_IP: {
+              id: STATIC_IP,
+              value: true,
+              extendedValue: 'test',
+            },
           },
         },
         setFeaturesData: jest.fn(),
@@ -212,5 +215,22 @@ describe('StepSummaryFeature', () => {
         features: [],
       },
     })
+  })
+
+  it('should return correct values for different scenarios', () => {
+    // Test case 1: Empty data
+    expect(getValueByKey('key', [])).toEqual([])
+
+    // Test case 2: Key not found in any object
+    const data1 = [{ a: '1' }, { b: '2' }, { c: '3' }]
+    expect(getValueByKey('key', data1)).toEqual([])
+
+    // Test case 3: Empty key
+    const data2 = [
+      { a: '1', key: 'value1' },
+      { b: '2', key: 'value2' },
+      { c: '3', key: 'value3' },
+    ]
+    expect(getValueByKey('', data2)).toEqual([])
   })
 })
