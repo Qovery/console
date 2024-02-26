@@ -1,4 +1,4 @@
-import { type PropsWithChildren, type ReactNode } from 'react'
+import { FormEvent, type PropsWithChildren, type ReactNode } from 'react'
 import { Controller, type UseFieldArrayRemove, useFieldArray, useFormContext } from 'react-hook-form'
 import { type Subnets } from '@qovery/shared/interfaces'
 import { Button, Icon, IconAwesomeEnum, InputTextSmall, Popover } from '@qovery/shared/ui'
@@ -23,7 +23,10 @@ function Row({ index, remove, name }: { index: number; remove: UseFieldArrayRemo
             className="w-full"
             name={field.name}
             value={field.value}
-            onChange={field.onChange}
+            onChange={(e: FormEvent<HTMLInputElement>) => {
+              const value = e.currentTarget.value.replace(/\s/g, '')
+              field.onChange({ target: { value } })
+            }}
             error={error?.message}
           />
         )}
@@ -36,7 +39,10 @@ function Row({ index, remove, name }: { index: number; remove: UseFieldArrayRemo
             className="w-full"
             name={field.name}
             value={field.value}
-            onChange={field.onChange}
+            onChange={(e: FormEvent<HTMLInputElement>) => {
+              const value = e.currentTarget.value.trim()
+              field.onChange({ target: { value } })
+            }}
             error={error?.message}
           />
         )}
@@ -49,7 +55,10 @@ function Row({ index, remove, name }: { index: number; remove: UseFieldArrayRemo
             className="w-full"
             name={field.name}
             value={field.value}
-            onChange={field.onChange}
+            onChange={(e: FormEvent<HTMLInputElement>) => {
+              const value = e.currentTarget.value.trim()
+              field.onChange({ target: { value } })
+            }}
             error={error?.message}
           />
         )}

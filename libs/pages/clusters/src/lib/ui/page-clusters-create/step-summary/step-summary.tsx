@@ -41,10 +41,10 @@ export interface StepSummaryProps {
 }
 
 function renderSubnets(title: string, key: string, subnets?: Subnets[]) {
-  if (!subnets) return
+  if (!subnets) return null
   const value = getValueByKey(key, subnets)
 
-  if (value[0].length === 0) return
+  if (value[0]?.length === 0 || value.length === 0) return null
 
   return (
     <li>
@@ -260,38 +260,46 @@ export function StepSummary(props: StepSummaryProps) {
                         {renderSubnets('Zone C:', 'C', props.featuresData.aws_existing_vpc.eks_subnets)}
                       </ul>
                     </li>
-                    <li className="mb-2">
-                      MongoDB subnets ids:
-                      <ul className="list-disc ml-4">
-                        {renderSubnets('Zone A:', 'A', props.featuresData.aws_existing_vpc.mongodb_subnets)}
-                        {renderSubnets('Zone A:', 'B', props.featuresData.aws_existing_vpc.mongodb_subnets)}
-                        {renderSubnets('Zone A:', 'C', props.featuresData.aws_existing_vpc.mongodb_subnets)}
-                      </ul>
-                    </li>
-                    <li className="mb-2">
-                      Redis subnets ids:
-                      <ul className="list-disc ml-4">
-                        {renderSubnets('Zone A:', 'A', props.featuresData.aws_existing_vpc.redis_subnets)}
-                        {renderSubnets('Zone A:', 'B', props.featuresData.aws_existing_vpc.redis_subnets)}
-                        {renderSubnets('Zone A:', 'C', props.featuresData.aws_existing_vpc.redis_subnets)}
-                      </ul>
-                    </li>
-                    <li className="mb-2">
-                      MySQL subnets ids:
-                      <ul className="list-disc ml-4">
-                        {renderSubnets('Zone A:', 'A', props.featuresData.aws_existing_vpc.mysql_subnets)}
-                        {renderSubnets('Zone A:', 'B', props.featuresData.aws_existing_vpc.mysql_subnets)}
-                        {renderSubnets('Zone A:', 'C', props.featuresData.aws_existing_vpc.mysql_subnets)}
-                      </ul>
-                    </li>
-                    <li>
-                      PostgreSQL subnets ids:
-                      <ul className="list-disc ml-4">
-                        {renderSubnets('Zone A:', 'A', props.featuresData.aws_existing_vpc.postgresql_subnets)}
-                        {renderSubnets('Zone A:', 'B', props.featuresData.aws_existing_vpc.postgresql_subnets)}
-                        {renderSubnets('Zone A:', 'C', props.featuresData.aws_existing_vpc.postgresql_subnets)}
-                      </ul>
-                    </li>
+                    {props.featuresData.aws_existing_vpc.mongodb_subnets?.length !== 0 && (
+                      <li className="mb-2">
+                        MongoDB subnets ids:
+                        <ul className="list-disc ml-4">
+                          {renderSubnets('Zone A:', 'A', props.featuresData.aws_existing_vpc.mongodb_subnets)}
+                          {renderSubnets('Zone B:', 'B', props.featuresData.aws_existing_vpc.mongodb_subnets)}
+                          {renderSubnets('Zone C:', 'C', props.featuresData.aws_existing_vpc.mongodb_subnets)}
+                        </ul>
+                      </li>
+                    )}
+                    {props.featuresData.aws_existing_vpc.redis_subnets?.length !== 0 && (
+                      <li className="mb-2">
+                        Redis subnets ids:
+                        <ul className="list-disc ml-4">
+                          {renderSubnets('Zone A:', 'A', props.featuresData.aws_existing_vpc.redis_subnets)}
+                          {renderSubnets('Zone B:', 'B', props.featuresData.aws_existing_vpc.redis_subnets)}
+                          {renderSubnets('Zone C:', 'C', props.featuresData.aws_existing_vpc.redis_subnets)}
+                        </ul>
+                      </li>
+                    )}
+                    {props.featuresData.aws_existing_vpc.mysql_subnets?.length !== 0 && (
+                      <li className="mb-2">
+                        MySQL subnets ids:
+                        <ul className="list-disc ml-4">
+                          {renderSubnets('Zone A:', 'A', props.featuresData.aws_existing_vpc.mysql_subnets)}
+                          {renderSubnets('Zone B:', 'B', props.featuresData.aws_existing_vpc.mysql_subnets)}
+                          {renderSubnets('Zone C:', 'C', props.featuresData.aws_existing_vpc.mysql_subnets)}
+                        </ul>
+                      </li>
+                    )}
+                    {props.featuresData.aws_existing_vpc.postgresql_subnets?.length !== 0 && (
+                      <li>
+                        PostgreSQL subnets ids:
+                        <ul className="list-disc ml-4">
+                          {renderSubnets('Zone A:', 'A', props.featuresData.aws_existing_vpc.postgresql_subnets)}
+                          {renderSubnets('Zone B:', 'B', props.featuresData.aws_existing_vpc.postgresql_subnets)}
+                          {renderSubnets('Zone C:', 'C', props.featuresData.aws_existing_vpc.postgresql_subnets)}
+                        </ul>
+                      </li>
+                    )}
                   </>
                 )}
                 {Object.keys(props.featuresData.features).map((id: string) => {
