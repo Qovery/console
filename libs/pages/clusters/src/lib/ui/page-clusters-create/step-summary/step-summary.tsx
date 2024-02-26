@@ -44,7 +44,7 @@ export function StepSummary(props: StepSummaryProps) {
     const feature = []
 
     if (props.featuresData) {
-      if (props.featuresData?.aws_existing_vpc) return true
+      if (props.featuresData?.vpc_mode === 'EXISTING_VPC') return true
 
       for (let i = 0; i < Object.keys(props.featuresData.features).length; i++) {
         const id = Object.keys(props.featuresData.features)[i]

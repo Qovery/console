@@ -192,6 +192,22 @@ export function StepSummaryFeature() {
                     ...featuresData.aws_existing_vpc.redis_subnets,
                   ]
               )!,
+              rds_subnets_zone_b_ids: getValueByKey(
+                'B',
+                featuresData?.aws_existing_vpc?.mysql_subnets &&
+                  featuresData?.aws_existing_vpc?.redis_subnets && [
+                    ...featuresData.aws_existing_vpc.mysql_subnets,
+                    ...featuresData.aws_existing_vpc.redis_subnets,
+                  ]
+              )!,
+              rds_subnets_zone_c_ids: getValueByKey(
+                'C',
+                featuresData?.aws_existing_vpc?.mysql_subnets &&
+                  featuresData?.aws_existing_vpc?.redis_subnets && [
+                    ...featuresData.aws_existing_vpc.mysql_subnets,
+                    ...featuresData.aws_existing_vpc.redis_subnets,
+                  ]
+              )!,
             },
           },
         ]

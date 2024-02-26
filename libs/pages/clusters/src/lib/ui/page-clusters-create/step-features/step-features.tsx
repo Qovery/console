@@ -27,7 +27,7 @@ export interface StepFeaturesProps {
 
 export function StepFeatures(props: StepFeaturesProps) {
   const { onSubmit, features, cloudProvider, goToBack } = props
-  const { formState, getValues, setValue, control, watch } = useFormContext()
+  const { formState, setValue, control, watch } = useFormContext()
 
   const watchVpcMode = watch('vpc_mode')
 
@@ -84,7 +84,7 @@ export function StepFeatures(props: StepFeaturesProps) {
                     feature={feature}
                     cloudProvider={cloudProvider}
                     control={control}
-                    getValues={getValues}
+                    watch={watch}
                     setValue={setValue}
                     callout={
                       feature.id === 'STATIC_IP' && (

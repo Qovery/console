@@ -1,6 +1,6 @@
 import { type IconProps } from '../icon'
 
-export function HelmServiceIcon(props: IconProps) {
+export function EKSIcon(props: IconProps) {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" {...props} fill="none" viewBox="0 0 17 16">
       <g clipPath="url(#clip0_21710_26738)">
@@ -26,4 +26,4 @@ export function HelmServiceIcon(props: IconProps) {
   )
 }
 
-export default HelmServiceIcon
+export default EKSIcon
