@@ -77,9 +77,9 @@ exports[`EnvironmentActionToolbar should match manage deployment snapshot 1`] = 
         class="flex items-center w-full h-full"
         data-state="closed"
       >
-        <span
-          class="icon-solid-ellipsis-v shrink-0 "
-          role="img"
+        <i
+          aria-hidden="true"
+          class="fa-solid fa-ellipsis-v "
         />
       </div>
     </button>
@@ -253,9 +253,9 @@ exports[`EnvironmentActionToolbar should match other actions snapshot 1`] = `
         class="flex items-center w-full h-full"
         data-state="closed"
       >
-        <span
-          class="icon-solid-ellipsis-v shrink-0 "
-          role="img"
+        <i
+          aria-hidden="true"
+          class="fa-solid fa-ellipsis-v "
         />
       </div>
     </button>

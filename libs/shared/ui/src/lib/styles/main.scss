@@ -1,3 +1,9 @@
+$fa-font-path: '/assets/fonts/font-awesome';
+@import '~@awesome.me/kit-c4457d1be4/icons/scss/fontawesome.scss';
+@import '~@awesome.me/kit-c4457d1be4/icons/scss/solid.scss';
+@import '~@awesome.me/kit-c4457d1be4/icons/scss/regular.scss';
+@import '~@awesome.me/kit-c4457d1be4/icons/scss/brands.scss';
+
 @tailwind components;
 @tailwind base;
 @tailwind utilities;

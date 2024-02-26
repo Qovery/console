@@ -59,6 +59,11 @@ Run end-to-end tests with Cypress
 Qovery Console V3 is in its early stage of development and we need some help, you are welcome to contribute. To better synchronize consider joining our #v3 channel on our [Discord](https://discord.qovery.com).
 Otherwise, you can directly propose improvements from the [issues](https://github.com/Qovery/console/issues) pages or add them directly from your pull request for the changes.
 
+## Architecture Decision Records
+
+We try to document our architecture decisions using [Architecture Decision Record](https://github.com/joelparkerhenderson/architecture-decision-record) principle.
+You can find our [ADR documents here](https://github.com/Qovery/console/tree/staging/adr) and the template used follows [this one](https://github.com/joelparkerhenderson/architecture-decision-record/tree/ab49e5ecad09b0e80c6ebeaf4f41c7958a2ad291/locales/en/templates/decision-record-template-by-michael-nygard)
+
 ## Community support
 
 For help, you can use one of the channels to ask a question:
