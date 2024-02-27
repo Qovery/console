@@ -1,7 +1,9 @@
 import { type VariantProps, cva } from 'class-variance-authority'
 import { type ComponentPropsWithoutRef, forwardRef } from 'react'
 import { Link as ReactLink, type LinkProps as ReactLinkProps } from 'react-router-dom'
+import { match } from 'ts-pattern'
 import { twMerge } from '@qovery/shared/util-js'
+import { buttonVariants } from '../button-primitive/button-primitive'
 import Icon from '../icon/icon'
 
 const linkVariants = cva(
@@ -38,37 +40,58 @@ const iconVariants = cva([], {
   },
 })
 
-export interface ExternalLinkProps
-  extends Omit<ComponentPropsWithoutRef<'a'>, 'color'>,
-    VariantProps<typeof linkVariants> {}
+export type ExternalLinkProps =
+  | (Omit<ComponentPropsWithoutRef<'a'>, 'color'> & VariantProps<typeof linkVariants>)
+  | (Omit<ComponentPropsWithoutRef<'a'>, 'color'> & VariantProps<typeof buttonVariants> & { as: 'button' })
 
 export const ExternalLink = forwardRef<HTMLAnchorElement, ExternalLinkProps>(function ExternalLink(
-  { children, color, size, className, ...props },
+  props,
   forwardedRef
 ) {
-  return (
-    <a
-      ref={forwardedRef}
-      className={twMerge(linkVariants({ color, size }), className)}
-      target="_blank"
-      rel="noopener noreferrer"
-      {...props}
-    >
-      {children}
-      <Icon iconName="arrow-up-right-from-square" className={iconVariants({ size })} />
-    </a>
-  )
+  return match(props)
+    .with({ as: 'button' }, ({ className, children, color, radius, size, variant, ...rest }) => (
+      <a
+        ref={forwardedRef}
+        className={twMerge(buttonVariants({ color, radius, size, variant }), className)}
+        target="_blank"
+        rel="noopener noreferrer"
+        {...rest}
+      >
+        {children}
+      </a>
+    ))
+    .otherwise(({ children, color, size, className, ...rest }) => (
+      <a
+        ref={forwardedRef}
+        className={twMerge(linkVariants({ color, size }), className)}
+        target="_blank"
+        rel="noopener noreferrer"
+        {...rest}
+      >
+        {children}
+        <Icon iconName="arrow-up-right-from-square" className={iconVariants({ size })} />
+      </a>
+    ))
 })
 
-export interface LinkProps extends Omit<ReactLinkProps, 'color'>, VariantProps<typeof linkVariants> {}
+export type LinkProps =
+  | (Omit<ReactLinkProps, 'color'> & VariantProps<typeof linkVariants>)
+  | (Omit<ReactLinkProps, 'color'> & VariantProps<typeof buttonVariants> & { as: 'button' })
 
-export const Link = forwardRef<HTMLAnchorElement, LinkProps>(function Link(
-  { children, color, size, className, ...props },
-  forwardedRef
-) {
-  return (
-    <ReactLink ref={forwardedRef} className={twMerge(linkVariants({ color, size }), className)} {...props}>
-      {children}
-    </ReactLink>
-  )
+export const Link = forwardRef<HTMLAnchorElement, LinkProps>(function Link(props, forwardedRef) {
+  return match(props)
+    .with({ as: 'button' }, ({ className, children, color, radius, size, variant, ...rest }) => (
+      <ReactLink
+        ref={forwardedRef}
+        className={twMerge(buttonVariants({ color, radius, size, variant }), className)}
+        {...rest}
+      >
+        {children}
+      </ReactLink>
+    ))
+    .otherwise(({ className, children, color, size, ...rest }) => (
+      <ReactLink ref={forwardedRef} className={twMerge(linkVariants({ color, size }), className)} {...rest}>
+        {children}
+      </ReactLink>
+    ))
 })
