@@ -36,7 +36,7 @@ export function PageSettingsFeatures(props: PageSettingsFeaturesProps) {
       <Section className="p-8 max-w-content-with-navigation-left">
         <Heading className="mb-8">Features</Heading>
 
-        {!loading && featureExistingVpc && (
+        {!loading && featureExistingVpcValue && (
           <div className="flex flex-col justify-between p-4 rounded border bg-neutral-100 border-neutral-250 mb-5">
             <h4 className="text-neutral-400 text-sm font-medium mb-1">Deploy on an existing VPC</h4>
             <p className="text-neutral-350 text-sm mb-4">In your VPC settings, you have enable the DNS hostnames.</p>
