@@ -17,6 +17,7 @@ import {
   OrganizationApiTokenApi,
   type OrganizationApiTokenCreateRequest,
   OrganizationApiTokenScope,
+  type OrganizationBillingUsageReportRequest,
   OrganizationCustomRoleApi,
   type OrganizationCustomRoleCreateRequest,
   type OrganizationCustomRoleUpdateRequest,
@@ -372,6 +373,16 @@ export const mutations = {
       // Role for token is not available in the API
       scope: OrganizationApiTokenScope.ADMIN,
     })
+    return response.data
+  },
+  async generateBillingUsageReport({
+    organizationId,
+    usageReportRequest,
+  }: {
+    organizationId: string
+    usageReportRequest: OrganizationBillingUsageReportRequest
+  }) {
+    const response = await billingApi.generateBillingUsageReport(organizationId, usageReportRequest)
     return response.data
   },
   async createWebhook({
