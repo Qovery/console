@@ -3,7 +3,7 @@ import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useCloudProviderFeatures } from '@qovery/domains/cloud-providers/feature'
-import { type ClusterFeaturesData } from '@qovery/shared/interfaces'
+import { type ClusterFeaturesData, type Subnets } from '@qovery/shared/interfaces'
 import {
   CLUSTERS_CREATION_GENERAL_URL,
   CLUSTERS_CREATION_REMOTE_URL,
@@ -16,6 +16,9 @@ import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import StepFeatures from '../../../ui/page-clusters-create/step-features/step-features'
 import { steps, useClusterContainerCreateContext } from '../page-clusters-create-feature'
+
+export const removeEmptySubnet = (objects?: Subnets[]) =>
+  objects?.filter((field) => field.A !== '' || field.B !== '' || field.C !== '')
 
 export function StepFeaturesFeature() {
   useDocumentTitle('Features - Create Cluster')
@@ -68,24 +71,43 @@ export function StepFeaturesFeature() {
 
   const onSubmit = methods.handleSubmit((data) => {
     if (data && features) {
-      let cloneData = {}
+      if (data.vpc_mode === 'DEFAULT') {
+        let cloneData = {}
 
-      for (let i = 0; i < Object.keys(data).length; i++) {
-        const id = Object.keys(data)[i]
-        const featureData = features.find((f) => f.id === id)
-        const currentFeature = data[id]
+        for (let i = 0; i < Object.keys(data.features).length; i++) {
+          const id = Object.keys(data.features)[i]
+          const featureData = features.find((f) => f.id === id)
+          const currentFeature = data.features[id]
 
-        cloneData = {
-          ...cloneData,
-          [id]: {
-            title: featureData?.title,
-            value: currentFeature.value || false,
-            extendedValue: currentFeature.extendedValue || false,
-          },
+          cloneData = {
+            ...cloneData,
+            [id]: {
+              title: featureData?.title,
+              value: currentFeature?.value || false,
+              extendedValue: currentFeature?.extendedValue || false,
+            },
+          }
         }
-      }
 
-      setFeaturesData(cloneData)
+        setFeaturesData({
+          vpc_mode: 'DEFAULT',
+          features: cloneData,
+        })
+      } else {
+        const existingVpcData = data.aws_existing_vpc
+
+        setFeaturesData({
+          vpc_mode: 'EXISTING_VPC',
+          aws_existing_vpc: {
+            aws_vpc_eks_id: existingVpcData?.aws_vpc_eks_id ?? '',
+            eks_subnets: removeEmptySubnet(existingVpcData?.eks_subnets),
+            mongodb_subnets: removeEmptySubnet(existingVpcData?.mongodb_subnets),
+            rds_subnets: removeEmptySubnet(existingVpcData?.rds_subnets),
+            redis_subnets: removeEmptySubnet(existingVpcData?.redis_subnets),
+          },
+          features: {},
+        })
+      }
 
       const pathCreate = `${CLUSTERS_URL(organizationId)}${CLUSTERS_CREATION_URL}`
       navigate(pathCreate + CLUSTERS_CREATION_SUMMARY_URL)

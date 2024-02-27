@@ -1,8 +1,8 @@
-import { act, render, waitFor } from '__tests__/utils/setup-jest'
 import { CloudProviderEnum } from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
 import selectEvent from 'react-select-event'
 import * as cloudProvidersDomain from '@qovery/domains/cloud-providers/feature'
+import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { ClusterContainerCreateContext } from '../page-clusters-create-feature'
 import StepFeaturesFeature from './step-features-feature'
 
@@ -33,7 +33,10 @@ const ContextWrapper = (props: { children: ReactNode }) => {
       value={{
         currentStep: 1,
         setCurrentStep: jest.fn(),
-        featuresData: undefined,
+        featuresData: {
+          vpc_mode: 'DEFAULT',
+          features: {},
+        },
         generalData: {
           name: 'test',
           production: false,
@@ -65,7 +68,7 @@ describe('StepFeaturesFeature', () => {
   })
 
   it('should render successfully', () => {
-    const { baseElement } = render(
+    const { baseElement } = renderWithProviders(
       <ContextWrapper>
         <StepFeaturesFeature />
       </ContextWrapper>
@@ -74,36 +77,36 @@ describe('StepFeaturesFeature', () => {
   })
 
   it('should submit form and navigate', async () => {
-    const { getByTestId, getByLabelText } = render(
+    const { userEvent } = renderWithProviders(
       <ContextWrapper>
         <StepFeaturesFeature />
       </ContextWrapper>
     )
 
-    await waitFor(() => {
-      const feature = getByTestId('feature')
-      feature.click()
+    await waitFor(async () => {
+      const feature = screen.getByTestId('feature')
+      await userEvent.click(feature)
     })
 
-    const selectMenu = getByLabelText('VPC Subnet address')
+    const selectMenu = screen.getByLabelText('VPC Subnet address')
     await selectEvent.select(selectMenu, mockFeatures[0].accepted_values[0], {
       container: document.body,
     })
 
-    const button = getByTestId('button-submit')
+    const button = screen.getByTestId('button-submit')
     expect(button).not.toBeDisabled()
-
-    await act(() => {
-      button.click()
-    })
+    await userEvent.click(button)
 
     const STATIC_IP = 'STATIC_IP'
 
     expect(mockSetFeaturesData).toHaveBeenCalledWith({
-      [STATIC_IP]: {
-        title: 'feature-1',
-        value: true,
-        extendedValue: 'test',
+      vpc_mode: 'DEFAULT',
+      features: {
+        [STATIC_IP]: {
+          title: 'feature-1',
+          value: true,
+          extendedValue: 'test',
+        },
       },
     })
 

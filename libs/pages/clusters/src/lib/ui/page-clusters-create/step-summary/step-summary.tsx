@@ -6,6 +6,7 @@ import {
   type ClusterKubeconfigData,
   type ClusterRemoteData,
   type ClusterResourcesData,
+  type Subnets,
 } from '@qovery/shared/interfaces'
 import {
   Button,
@@ -19,6 +20,7 @@ import {
   Section,
 } from '@qovery/shared/ui'
 import { trimId } from '@qovery/shared/util-js'
+import { getValueByKey } from '../../../feature/page-clusters-create-feature/step-summary-feature/step-summary-feature'
 
 export interface StepSummaryProps {
   onSubmit: (withDeploy: boolean) => void
@@ -38,14 +40,29 @@ export interface StepSummaryProps {
   detailInstanceType?: ClusterInstanceTypeResponseListResultsInner
 }
 
+function SubnetsList({ title, index, subnets }: { title: string; index: string; subnets?: Subnets[] }) {
+  if (!subnets) return null
+  const value = getValueByKey(index, subnets)
+
+  if (value[0]?.length === 0 || value.length === 0) return null
+
+  return (
+    <li>
+      {title} <strong className="font-medium">{value.join(', ')}</strong>
+    </li>
+  )
+}
+
 export function StepSummary(props: StepSummaryProps) {
   const checkIfFeaturesAvailable = () => {
     const feature = []
 
     if (props.featuresData) {
-      for (let i = 0; i < Object.keys(props.featuresData).length; i++) {
-        const id = Object.keys(props.featuresData)[i]
-        const currentFeature = props.featuresData[id]
+      if (props.featuresData?.vpc_mode === 'EXISTING_VPC') return true
+
+      for (let i = 0; i < Object.keys(props.featuresData.features).length; i++) {
+        const id = Object.keys(props.featuresData.features)[i]
+        const currentFeature = props.featuresData.features[id]
         if (currentFeature.value) feature.push(id)
       }
     }
@@ -229,8 +246,102 @@ export function StepSummary(props: StepSummaryProps) {
             <div className="flex-grow mr-2">
               <div className="text-sm text-neutral-400 font-bold mb-2">Features</div>
               <ul className="text-neutral-350 text-sm list-none">
-                {Object.keys(props.featuresData).map((id: string) => {
-                  const currentFeature = props.featuresData && props.featuresData[id]
+                {props.featuresData.aws_existing_vpc && (
+                  <>
+                    <li className="mb-2">
+                      VPC ID:{' '}
+                      <strong className="font-medium">{props.featuresData.aws_existing_vpc.aws_vpc_eks_id}</strong>
+                    </li>
+                    <li className="mb-2">
+                      EKS subnets ids:{' '}
+                      <ul className="list-disc ml-4">
+                        <SubnetsList
+                          title="zone A:"
+                          index="A"
+                          subnets={props.featuresData.aws_existing_vpc.eks_subnets}
+                        />
+                        <SubnetsList
+                          title="zone B:"
+                          index="B"
+                          subnets={props.featuresData.aws_existing_vpc.eks_subnets}
+                        />
+                        <SubnetsList
+                          title="zone C:"
+                          index="C"
+                          subnets={props.featuresData.aws_existing_vpc.eks_subnets}
+                        />
+                      </ul>
+                    </li>
+                    {props.featuresData.aws_existing_vpc.mongodb_subnets?.length !== 0 && (
+                      <li className="mb-2">
+                        MongoDB subnets ids:
+                        <ul className="list-disc ml-4">
+                          <SubnetsList
+                            title="zone A:"
+                            index="A"
+                            subnets={props.featuresData.aws_existing_vpc.mongodb_subnets}
+                          />
+                          <SubnetsList
+                            title="zone B:"
+                            index="B"
+                            subnets={props.featuresData.aws_existing_vpc.mongodb_subnets}
+                          />
+                          <SubnetsList
+                            title="zone C:"
+                            index="C"
+                            subnets={props.featuresData.aws_existing_vpc.mongodb_subnets}
+                          />
+                        </ul>
+                      </li>
+                    )}
+                    {props.featuresData.aws_existing_vpc.redis_subnets?.length !== 0 && (
+                      <li className="mb-2">
+                        Redis subnets ids:
+                        <ul className="list-disc ml-4">
+                          <SubnetsList
+                            title="zone A:"
+                            index="A"
+                            subnets={props.featuresData.aws_existing_vpc.redis_subnets}
+                          />
+                          <SubnetsList
+                            title="zone B:"
+                            index="B"
+                            subnets={props.featuresData.aws_existing_vpc.redis_subnets}
+                          />
+                          <SubnetsList
+                            title="zone C:"
+                            index="C"
+                            subnets={props.featuresData.aws_existing_vpc.redis_subnets}
+                          />
+                        </ul>
+                      </li>
+                    )}
+                    {props.featuresData.aws_existing_vpc.rds_subnets?.length !== 0 && (
+                      <li className="mb-2">
+                        MySQL/PostgreSQL subnets ids:
+                        <ul className="list-disc ml-4">
+                          <SubnetsList
+                            title="zone A:"
+                            index="A"
+                            subnets={props.featuresData.aws_existing_vpc.rds_subnets}
+                          />
+                          <SubnetsList
+                            title="zone B:"
+                            index="B"
+                            subnets={props.featuresData.aws_existing_vpc.rds_subnets}
+                          />
+                          <SubnetsList
+                            title="zone C:"
+                            index="C"
+                            subnets={props.featuresData.aws_existing_vpc.rds_subnets}
+                          />
+                        </ul>
+                      </li>
+                    )}
+                  </>
+                )}
+                {Object.keys(props.featuresData.features).map((id: string) => {
+                  const currentFeature = props.featuresData && props.featuresData.features[id]
 
                   if (!currentFeature?.value) return null
 

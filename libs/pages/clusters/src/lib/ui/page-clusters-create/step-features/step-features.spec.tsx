@@ -1,6 +1,6 @@
-import { act, render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { CloudProviderEnum } from 'qovery-typescript-axios'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import StepFeatures, { type StepFeaturesProps } from './step-features'
 
 const STATIC_IP = 'STATIC_IP'
@@ -23,49 +23,53 @@ const props: StepFeaturesProps = {
 
 describe('StepFeatures', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(wrapWithReactHookForm(<StepFeatures {...props} />))
+    const { baseElement } = renderWithProviders(wrapWithReactHookForm(<StepFeatures {...props} />))
     expect(baseElement).toBeTruthy()
   })
 
   it('should render the form with fields', async () => {
-    const { getByDisplayValue, getAllByDisplayValue } = render(
+    const { userEvent } = renderWithProviders(
       wrapWithReactHookForm(<StepFeatures {...props} />, {
         defaultValues: {
-          [STATIC_IP]: {
-            value: true,
-            extendedValue: 'my-value',
+          vpc_mode: 'DEFAULT',
+          feature: {
+            [STATIC_IP]: {
+              value: false,
+              extendedValue: 'my-value',
+            },
           },
         },
       })
     )
 
-    getByDisplayValue('true')
+    const input = screen.getByTestId('feature')
+    await userEvent.click(input)
+
     // all because we have two inputs on the inputs select with search
-    getAllByDisplayValue('my-value')
+    screen.getAllByDisplayValue('my-value')
   })
 
   it('should submit the form on click', async () => {
-    const { getByTestId } = render(
+    const { userEvent } = renderWithProviders(
       wrapWithReactHookForm(<StepFeatures {...props} />, {
         defaultValues: {
-          [STATIC_IP]: {
-            value: true,
-            extendedValue: 'my-value',
+          vpc_mode: 'DEFAULT',
+          feature: {
+            [STATIC_IP]: {
+              value: true,
+              extendedValue: 'my-value',
+            },
           },
         },
       })
     )
 
-    const button = getByTestId('button-submit')
+    const button = screen.getByTestId('button-submit')
 
-    await act(() => {
-      const input = getByTestId('feature')
-      input.click()
-    })
+    const input = screen.getByTestId('feature')
 
-    await act(() => {
-      button?.click()
-    })
+    await userEvent.click(input)
+    await userEvent.click(button)
 
     expect(button).not.toBeDisabled()
     expect(props.onSubmit).toHaveBeenCalled()

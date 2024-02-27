@@ -94,7 +94,10 @@ export function PageClusterCreateFeature() {
     ssh_key: '',
   })
   const [resourcesData, setResourcesData] = useState<ClusterResourcesData | undefined>(defaultResourcesData)
-  const [featuresData, setFeaturesData] = useState<ClusterFeaturesData | undefined>()
+  const [featuresData, setFeaturesData] = useState<ClusterFeaturesData | undefined>({
+    vpc_mode: 'DEFAULT',
+    features: {},
+  })
   const [kubeconfigData, setKubeconfigData] = useState<ClusterKubeconfigData | undefined>()
 
   const navigate = useNavigate()

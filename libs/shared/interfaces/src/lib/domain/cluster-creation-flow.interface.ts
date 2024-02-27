@@ -28,11 +28,27 @@ export interface ClusterRemoteData {
   ssh_key: string
 }
 
-export interface ClusterFeaturesData {
-  [id: string]: {
-    id: string
-    title: string
-    value: boolean
-    extendedValue?: string
+export type Subnets = {
+  A: string
+  B: string
+  C: string
+}
+
+export type ClusterFeaturesData = {
+  vpc_mode: 'DEFAULT' | 'EXISTING_VPC'
+  aws_existing_vpc?: {
+    aws_vpc_eks_id: string
+    eks_subnets?: Subnets[]
+    mongodb_subnets?: Subnets[]
+    rds_subnets?: Subnets[]
+    redis_subnets?: Subnets[]
+  }
+  features: {
+    [id: string]: {
+      id: string
+      title: string
+      value: boolean
+      extendedValue?: string
+    }
   }
 }

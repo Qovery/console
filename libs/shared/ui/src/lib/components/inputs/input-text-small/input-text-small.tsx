@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { type ChangeEventHandler, useEffect, useState } from 'react'
 import Icon from '../../icon/icon'
 import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
 import Tooltip from '../../tooltip/tooltip'
@@ -6,7 +6,7 @@ import Tooltip from '../../tooltip/tooltip'
 export interface InputTextSmallProps {
   name: string
   type?: string
-  onChange?: () => void
+  onChange?: ChangeEventHandler<HTMLInputElement>
   value?: string
   placeholder?: string
   error?: string

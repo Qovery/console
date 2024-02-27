@@ -1,27 +1,29 @@
 import { type CloudProviderEnum, type ClusterFeature } from 'qovery-typescript-axios'
-import { useEffect, useState } from 'react'
-import {
-  type Control,
-  Controller,
-  type FieldValues,
-  type UseFormGetValues,
-  type UseFormSetValue,
-} from 'react-hook-form'
+import { type PropsWithChildren, useEffect, useState } from 'react'
+import { type Control, Controller, type FieldValues, type UseFormSetValue, type UseFormWatch } from 'react-hook-form'
 import { ExternalLink, InputSelect, InputToggle } from '@qovery/shared/ui'
 
-export interface CardClusterFeatureProps {
+export interface CardClusterFeatureProps extends PropsWithChildren {
   feature: ClusterFeature
   cloudProvider?: CloudProviderEnum
   disabled?: boolean
-  getValues?: UseFormGetValues<FieldValues>
   setValue?: UseFormSetValue<FieldValues>
+  watch?: UseFormWatch<FieldValues>
   control?: Control<FieldValues>
 }
 
-export function CardClusterFeature(props: CardClusterFeatureProps) {
-  const { feature, cloudProvider, disabled = false, getValues, setValue, control } = props
-
+export function CardClusterFeature({
+  feature,
+  cloudProvider,
+  disabled = false,
+  watch,
+  setValue,
+  control,
+  children,
+}: CardClusterFeatureProps) {
   const [currentDisabled, setCurrentDisabled] = useState<boolean>(disabled)
+
+  const name = watch && watch(`features.${feature.id}.value`)
 
   const getValue = (value: boolean | string) => {
     if (typeof value === 'string') {
@@ -31,29 +33,28 @@ export function CardClusterFeature(props: CardClusterFeatureProps) {
   }
 
   useEffect(() => {
-    if (feature.id && getValues) {
-      if (getValues()[feature.id]?.value) setCurrentDisabled(true)
+    if (feature.id) {
+      if (name) setCurrentDisabled(true)
     }
-  }, [feature.id, getValues])
+  }, [feature.id, name])
 
   return (
     <div
       data-testid="feature"
-      className={`flex justify-between px-4 py-3 ${
+      className={`flex flex-col justify-between px-4 py-3 ${
         control ? 'rounded border bg-neutral-100' : 'border-b last:border-0'
-      } border-neutral-250 mb-3 last:mb-0`}
+      } border-neutral-250 mb-4 last:mb-0`}
       onClick={() => {
-        if (feature.id && !disabled && getValues && setValue && control) {
-          const active = getValues()[feature.id].value
-          setValue(`${feature.id}.value`, !active)
-          setCurrentDisabled(!active)
+        if (feature.id && !disabled && setValue) {
+          setValue(`features.${feature.id}.value`, !name)
+          setCurrentDisabled(!name)
         }
       }}
     >
       <div className="flex w-full">
         {control ? (
           <Controller
-            name={`${feature.id}.value`}
+            name={`features.${feature.id}.value`}
             control={control}
             render={({ field }) => (
               <InputToggle disabled={disabled} small className="relative top-[2px]" value={field.value} />
@@ -79,7 +80,7 @@ export function CardClusterFeature(props: CardClusterFeatureProps) {
             <div onClick={(e) => e.stopPropagation()}>
               {control ? (
                 <Controller
-                  name={`${feature.id}.extendedValue`}
+                  name={`features.${feature.id}.extendedValue`}
                   control={control}
                   defaultValue={feature.value}
                   render={({ field }) => (
@@ -121,6 +122,7 @@ export function CardClusterFeature(props: CardClusterFeatureProps) {
           </ExternalLink>
         </div>
       </div>
+      {children}
     </div>
   )
 }

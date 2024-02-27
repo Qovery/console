@@ -24,8 +24,15 @@ import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import StepSummary from '../../../ui/page-clusters-create/step-summary/step-summary'
 import { steps, useClusterContainerCreateContext } from '../page-clusters-create-feature'
 
+export function getValueByKey(key: string, data: { [key: string]: string }[] = []): string[] {
+  return data.reduce((result: string[], obj) => {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) result.push(obj[key])
+    return result
+  }, [])
+}
+
 export function StepSummaryFeature() {
-  useDocumentTitle('Summary - Create Database')
+  useDocumentTitle('Summary - Create Cluster')
   const { generalData, kubeconfigData, resourcesData, featuresData, remoteData, setCurrentStep } =
     useClusterContainerCreateContext()
   const navigate = useNavigate()
@@ -144,17 +151,43 @@ export function StepSummaryFeature() {
       return
     }
     if (resourcesData) {
-      const formatFeatures =
-        featuresData &&
-        Object.keys(featuresData)
+      let formatFeatures: ClusterRequestFeaturesInner[] | undefined
+      if (featuresData && featuresData.vpc_mode === 'DEFAULT') {
+        formatFeatures = Object.keys(featuresData.features)
           .map(
             (id: string) =>
-              featuresData[id].value && {
+              featuresData.features[id]?.value && {
                 id: id,
-                value: featuresData[id].extendedValue || featuresData[id].value,
+                value: featuresData.features[id].extendedValue || featuresData.features[id].value,
               }
           )
-          .filter(Boolean)
+          .filter(Boolean) as ClusterRequestFeaturesInner[]
+      } else {
+        formatFeatures = [
+          {
+            id: 'EXISTING_VPC',
+            value: {
+              aws_vpc_eks_id: featuresData?.aws_existing_vpc?.aws_vpc_eks_id ?? '',
+              eks_subnets_zone_a_ids: getValueByKey('A', featuresData?.aws_existing_vpc?.eks_subnets)!,
+              eks_subnets_zone_b_ids: getValueByKey('B', featuresData?.aws_existing_vpc?.eks_subnets)!,
+              eks_subnets_zone_c_ids: getValueByKey('C', featuresData?.aws_existing_vpc?.eks_subnets)!,
+              // Those are the name that AWS give them
+              // MongoDB => documentdb
+              documentdb_subnets_zone_a_ids: getValueByKey('A', featuresData?.aws_existing_vpc?.mongodb_subnets)!,
+              documentdb_subnets_zone_b_ids: getValueByKey('B', featuresData?.aws_existing_vpc?.mongodb_subnets)!,
+              documentdb_subnets_zone_c_ids: getValueByKey('C', featuresData?.aws_existing_vpc?.mongodb_subnets)!,
+              // Redis => elasticache
+              elasticache_subnets_zone_a_ids: getValueByKey('A', featuresData?.aws_existing_vpc?.redis_subnets)!,
+              elasticache_subnets_zone_b_ids: getValueByKey('B', featuresData?.aws_existing_vpc?.redis_subnets)!,
+              elasticache_subnets_zone_c_ids: getValueByKey('C', featuresData?.aws_existing_vpc?.redis_subnets)!,
+              // MySQL and PostgreSQL => rds
+              rds_subnets_zone_a_ids: getValueByKey('A', featuresData?.aws_existing_vpc?.rds_subnets)!,
+              rds_subnets_zone_b_ids: getValueByKey('B', featuresData?.aws_existing_vpc?.rds_subnets)!,
+              rds_subnets_zone_c_ids: getValueByKey('C', featuresData?.aws_existing_vpc?.rds_subnets)!,
+            },
+          },
+        ]
+      }
 
       const clusterRequest = match(generalData.cloud_provider)
         .returnType<ClusterRequest>()

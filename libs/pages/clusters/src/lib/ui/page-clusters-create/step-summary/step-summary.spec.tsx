@@ -23,9 +23,12 @@ const props: StepSummaryProps = {
     disk_size: 50,
   },
   featuresData: {
-    [STATIC_IP]: {
-      id: 'STATIC_IP',
-      value: true,
+    vpc_mode: 'DEFAULT',
+    features: {
+      [STATIC_IP]: {
+        id: 'STATIC_IP',
+        value: true,
+      },
     },
   },
   remoteData: {
