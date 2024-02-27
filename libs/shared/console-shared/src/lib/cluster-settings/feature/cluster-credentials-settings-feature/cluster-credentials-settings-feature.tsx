@@ -17,7 +17,7 @@ export function ClusterCredentialsSettingsFeature({ cloudProvider }: ClusterCred
     cloudProvider,
   })
 
-  const openCredentialsModal = (id?: string) => {
+  const openCredentialsModal = (id?: string, onChange?: (e: string | string[]) => void) => {
     openModal({
       content: (
         <CreateEditCredentialsModalFeature
@@ -25,6 +25,7 @@ export function ClusterCredentialsSettingsFeature({ cloudProvider }: ClusterCred
           cloudProvider={cloudProvider!}
           onClose={closeModal}
           organizationId={organizationId}
+          onChange={onChange}
         />
       ),
     })

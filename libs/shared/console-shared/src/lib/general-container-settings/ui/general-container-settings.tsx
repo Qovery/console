@@ -46,7 +46,11 @@ export function GeneralContainerSettings({ organization, className }: GeneralCon
                 onClick: () => {
                   openModal({
                     content: organization && (
-                      <ContainerRegistryCreateEditModal organizationId={organization.id} onClose={closeModal} />
+                      <ContainerRegistryCreateEditModal
+                        organizationId={organization.id}
+                        onClose={closeModal}
+                        onChange={field.onChange}
+                      />
                     ),
                   })
                 },

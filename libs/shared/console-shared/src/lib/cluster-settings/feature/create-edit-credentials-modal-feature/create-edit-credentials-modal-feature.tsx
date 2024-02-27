@@ -15,6 +15,7 @@ export interface CreateEditCredentialsModalFeatureProps {
   cloudProvider: CloudProviderEnum
   organizationId: string
   currentCredential?: ClusterCredentials
+  onChange?: (e: string | string[]) => void
 }
 
 export const handleSubmit = (data: FieldValues, cloudProvider: CloudProviderEnum) => {
@@ -52,7 +53,7 @@ export const handleSubmit = (data: FieldValues, cloudProvider: CloudProviderEnum
 }
 
 export function CreateEditCredentialsModalFeature(props: CreateEditCredentialsModalFeatureProps) {
-  const { cloudProvider, onClose, currentCredential, organizationId } = props
+  const { cloudProvider, onClose, currentCredential, organizationId, onChange } = props
   const [loading, setLoading] = useState(false)
 
   const { enableAlertClickOutside } = useModal()
@@ -84,10 +85,11 @@ export function CreateEditCredentialsModalFeature(props: CreateEditCredentialsMo
         })
         onClose()
       } else {
-        await createCloudProviderCredential({
+        const response = await createCloudProviderCredential({
           organizationId,
           ...credentials,
         })
+        onChange && onChange(response.id)
         onClose()
       }
     } catch (error) {

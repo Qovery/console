@@ -10,9 +10,16 @@ export interface GitTokenCreateEditModalProps {
   organizationId: string
   isEdit?: boolean
   gitToken?: GitTokenResponse
+  onChange?: (e: string | string[]) => void
 }
 
-export function GitTokenCreateEditModal({ isEdit, gitToken, organizationId, onClose }: GitTokenCreateEditModalProps) {
+export function GitTokenCreateEditModal({
+  isEdit,
+  gitToken,
+  organizationId,
+  onClose,
+  onChange,
+}: GitTokenCreateEditModalProps) {
   const methods = useForm({
     mode: 'onChange',
     defaultValues: {
@@ -37,10 +44,11 @@ export function GitTokenCreateEditModal({ isEdit, gitToken, organizationId, onCl
           gitTokenRequest: data,
         })
       } else {
-        await createGitToken({
+        const response = await createGitToken({
           organizationId,
           gitTokenRequest: data,
         })
+        onChange && onChange(response.id)
       }
       onClose()
     } catch (error) {

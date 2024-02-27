@@ -79,7 +79,11 @@ export function SourceSetting({ disabled = false }: { disabled?: boolean }) {
                       onClick: () => {
                         openModal({
                           content: (
-                            <HelmRepositoryCreateEditModal organizationId={organizationId} onClose={closeModal} />
+                            <HelmRepositoryCreateEditModal
+                              organizationId={organizationId}
+                              onClose={closeModal}
+                              onChange={field.onChange}
+                            />
                           ),
                         })
                       },

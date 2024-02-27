@@ -19,6 +19,7 @@ export interface ContainerRegistryCreateEditModalProps {
   organizationId: string
   isEdit?: boolean
   registry?: ContainerRegistryResponse
+  onChange?: (e: string | string[]) => void
 }
 
 export const getOptionsContainerRegistry = (containerRegistry: AvailableContainerRegistryResponse[]) =>
@@ -41,6 +42,7 @@ export function ContainerRegistryCreateEditModal({
   registry,
   organizationId,
   onClose,
+  onChange,
 }: ContainerRegistryCreateEditModalProps) {
   const methods = useForm<ContainerRegistryRequest>({
     mode: 'onChange',
@@ -80,10 +82,11 @@ export function ContainerRegistryCreateEditModal({
         })
         onClose()
       } else {
-        await createContainerRegistry({
+        const response = await createContainerRegistry({
           organizationId: organizationId,
           containerRegistryRequest,
         })
+        onChange && onChange(response.id)
         onClose()
       }
     } catch (error) {

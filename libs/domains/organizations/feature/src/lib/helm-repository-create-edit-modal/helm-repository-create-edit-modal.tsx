@@ -9,6 +9,7 @@ import { useEditHelmRepository } from '../hooks/use-edit-helm-repository/use-edi
 export interface HelmRepositoryCreateEditModalProps {
   onClose: () => void
   organizationId: string
+  onChange?: (e: string | string[]) => void
   isEdit?: boolean
   repository?: HelmRepositoryResponse
 }
@@ -18,6 +19,7 @@ export function HelmRepositoryCreateEditModal({
   repository,
   organizationId,
   onClose,
+  onChange,
 }: HelmRepositoryCreateEditModalProps) {
   const { data: availableHelmRepositories = [] } = useAvailableHelmRepositories()
   const { mutateAsync: editHelmRepository, isLoading: isEditHelmRepositoryLoading } = useEditHelmRepository()
@@ -55,10 +57,12 @@ export function HelmRepositoryCreateEditModal({
           helmRepositoryRequest,
         })
       } else {
-        await createHelmRepository({
+        const response = await createHelmRepository({
           organizationId: organizationId,
           helmRepositoryRequest,
         })
+        // Update input select value with the new repository id
+        onChange && onChange(response.id)
       }
       onClose()
     } catch (error) {

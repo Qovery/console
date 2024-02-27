@@ -1,5 +1,5 @@
 import { type GitAuthProvider, type GitTokenResponse } from 'qovery-typescript-axios'
-import { Controller, useFormContext } from 'react-hook-form'
+import { Controller, type ControllerRenderProps, type FieldValues, useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { Icon, InputSelect, useModal } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
@@ -49,6 +49,13 @@ export function GitProviderSetting({ disabled }: GitProviderSettingProps) {
       ]
     : mergeProviders(authProviders, gitTokens)
 
+  const onChange = (field: ControllerRenderProps<FieldValues, 'provider'>, event: string | string[]) => {
+    field.onChange(event)
+    // Reset children fields
+    setValue('repository', undefined)
+    setValue('branch', undefined)
+  }
+
   return (
     <Controller
       name="provider"
@@ -60,18 +67,19 @@ export function GitProviderSetting({ disabled }: GitProviderSettingProps) {
         <InputSelect
           label="Git repository"
           options={providerOptions}
-          onChange={(event) => {
-            field.onChange(event)
-            // Reset children fields
-            setValue('repository', undefined)
-            setValue('branch', undefined)
-          }}
+          onChange={(event) => onChange(field, event)}
           menuListButton={{
             title: 'Select repository',
             label: 'New git access',
             onClick: () => {
               openModal({
-                content: <GitTokenCreateEditModal organizationId={organizationId} onClose={closeModal} />,
+                content: (
+                  <GitTokenCreateEditModal
+                    organizationId={organizationId}
+                    onClose={closeModal}
+                    onChange={(event) => onChange(field, event)}
+                  />
+                ),
               })
             },
           }}
