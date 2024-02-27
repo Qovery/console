@@ -427,19 +427,17 @@ describe('ServiceList', () => {
       '/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/application/037c9e87-e098-4970-8b1f-9a5ffe9e4b89/services/general'
     )
   })
-  it('should navigate to service live logs on service status click', async () => {
-    const { userEvent } = renderWithProviders(<ServiceList {...serviceListProps} />)
-    await userEvent.click(screen.getAllByRole('button', { name: /stopped/i })[0])
-
-    expect(mockNavigate).toHaveBeenCalledWith(
+  it('should navigate to service live logs on service status click', () => {
+    renderWithProviders(<ServiceList {...serviceListProps} />)
+    expect(screen.getAllByRole('link', { name: /stopped/i })[0]).toHaveAttribute(
+      'href',
       '/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/application/037c9e87-e098-4970-8b1f-9a5ffe9e4b89/services/general'
     )
   })
-  it('should navigate to service deployment logs on service deployment status click', async () => {
-    const { userEvent } = renderWithProviders(<ServiceList {...serviceListProps} />)
-    await userEvent.click(screen.getAllByRole('button', { name: /stopped/i })[1])
-
-    expect(mockNavigate).toHaveBeenCalledWith(
+  it('should navigate to service deployment logs on service deployment status click', () => {
+    renderWithProviders(<ServiceList {...serviceListProps} />)
+    expect(screen.getAllByRole('link', { name: /stopped/i })[1]).toHaveAttribute(
+      'href',
       '/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/logs/037c9e87-e098-4970-8b1f-9a5ffe9e4b89/deployment-logs'
     )
   })

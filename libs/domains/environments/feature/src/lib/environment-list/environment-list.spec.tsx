@@ -243,19 +243,17 @@ describe('EnvironmentList', () => {
       '/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/a021261e-4318-4f2f-b480-169ab62efc28/environment/893c68cb-d1f7-498b-9e00-be841c8d38c3/services/general'
     )
   })
-  it('should navigate to environment live logs on environment status click', async () => {
-    const { userEvent } = renderWithProviders(<EnvironmentList {...environmentListProps} />)
-    await userEvent.click(screen.getAllByRole('button', { name: /stopped/i })[0])
-
-    expect(mockNavigate).toHaveBeenCalledWith(
+  it('should navigate to environment live logs on environment status click', () => {
+    renderWithProviders(<EnvironmentList {...environmentListProps} />)
+    expect(screen.getAllByRole('link', { name: /stopped/i })[0]).toHaveAttribute(
+      'href',
       '/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/a021261e-4318-4f2f-b480-169ab62efc28/environment/893c68cb-d1f7-498b-9e00-be841c8d38c3/services/general'
     )
   })
-  it('should navigate to environment deployment logs on environment deployment status click', async () => {
-    const { userEvent } = renderWithProviders(<EnvironmentList {...environmentListProps} />)
-    await userEvent.click(screen.getAllByRole('button', { name: /deployed/i })[1])
-
-    expect(mockNavigate).toHaveBeenCalledWith(
+  it('should navigate to environment deployment logs on environment deployment status click', () => {
+    renderWithProviders(<EnvironmentList {...environmentListProps} />)
+    expect(screen.getAllByRole('link', { name: /deployed/i })[1]).toHaveAttribute(
+      'href',
       '/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/a021261e-4318-4f2f-b480-169ab62efc28/environment/c1567d73-b9cd-4664-8aa0-5c71e2bfd74a/logs'
     )
   })

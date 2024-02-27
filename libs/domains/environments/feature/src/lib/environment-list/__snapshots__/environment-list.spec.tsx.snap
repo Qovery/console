@@ -18,7 +18,7 @@ exports[`EnvironmentList should match snapshot 1`] = `
               aria-controls="radix-:r1m:"
               aria-expanded="false"
               aria-haspopup="dialog"
-              class="inline-flex items-center shrink-0 font-medium transition h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 text-xs gap-1 whitespace-nowrap"
+              class="inline-flex items-center shrink-0 font-medium transition shadow-sm disabled:shadow-none active:shadow-none h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 text-xs gap-1 whitespace-nowrap"
               data-state="closed"
               type="button"
             >
@@ -41,7 +41,7 @@ exports[`EnvironmentList should match snapshot 1`] = `
               aria-controls="radix-:r1p:"
               aria-expanded="false"
               aria-haspopup="dialog"
-              class="inline-flex items-center shrink-0 font-medium transition h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 text-xs gap-1 whitespace-nowrap"
+              class="inline-flex items-center shrink-0 font-medium transition shadow-sm disabled:shadow-none active:shadow-none h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 text-xs gap-1 whitespace-nowrap"
               data-state="closed"
               type="button"
             >
@@ -64,7 +64,7 @@ exports[`EnvironmentList should match snapshot 1`] = `
               aria-controls="radix-:r1s:"
               aria-expanded="false"
               aria-haspopup="dialog"
-              class="inline-flex items-center shrink-0 font-medium transition h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 text-xs gap-1 whitespace-nowrap"
+              class="inline-flex items-center shrink-0 font-medium transition shadow-sm disabled:shadow-none active:shadow-none h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 text-xs gap-1 whitespace-nowrap"
               data-state="closed"
               type="button"
             >
@@ -87,7 +87,7 @@ exports[`EnvironmentList should match snapshot 1`] = `
               aria-controls="radix-:r1v:"
               aria-expanded="false"
               aria-haspopup="dialog"
-              class="inline-flex items-center shrink-0 font-medium transition h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 text-xs gap-1 whitespace-nowrap"
+              class="inline-flex items-center shrink-0 font-medium transition shadow-sm disabled:shadow-none active:shadow-none h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 text-xs gap-1 whitespace-nowrap"
               data-state="closed"
               type="button"
             >
@@ -167,9 +167,11 @@ exports[`EnvironmentList should match snapshot 1`] = `
           class="h-14 px-4 py-0 first:border-r"
           style="width: 15%;"
         >
-          <button
-            class="inline-flex items-center shrink-0 font-medium transition h-8 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent text-xs gap-2 whitespace-nowrap"
+          <a
+            as="button"
+            class="inline-flex items-center shrink-0 font-medium transition shadow-sm disabled:shadow-none active:shadow-none h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent text-xs gap-2 whitespace-nowrap"
             data-state="closed"
+            href="/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/a021261e-4318-4f2f-b480-169ab62efc28/environment/893c68cb-d1f7-498b-9e00-be841c8d38c3/services/general"
           >
             <div
               class=""
@@ -204,15 +206,17 @@ exports[`EnvironmentList should match snapshot 1`] = `
               </svg>
             </div>
             Stopped
-          </button>
+          </a>
         </td>
         <td
           class="h-14 px-4 py-0 first:border-r"
           style="width: 15%;"
         >
-          <button
-            class="inline-flex items-center shrink-0 font-medium transition h-8 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent text-xs gap-2 whitespace-nowrap"
+          <a
+            as="button"
+            class="inline-flex items-center shrink-0 font-medium transition shadow-sm disabled:shadow-none active:shadow-none h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent text-xs gap-2 whitespace-nowrap"
             data-state="closed"
+            href="/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/a021261e-4318-4f2f-b480-169ab62efc28/environment/893c68cb-d1f7-498b-9e00-be841c8d38c3/logs"
           >
             <div
               class=""
@@ -247,15 +251,17 @@ exports[`EnvironmentList should match snapshot 1`] = `
               </svg>
             </div>
             Never deployed
-          </button>
+          </a>
         </td>
         <td
           class="h-14 px-4 py-0 first:border-r"
           style="width: 20%;"
         >
-          <button
-            class="inline-flex items-center shrink-0 font-medium transition text-xs px-1 py-0.5 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550"
+          <a
+            as="button"
+            class="inline-flex items-center shrink-0 font-medium transition shadow-sm disabled:shadow-none active:shadow-none text-xs h-5 px-1 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550"
             data-state="closed"
+            href="/organization/3d542888-3d2c-474a-b1ad-712556db66da/cluster/28480911-95f9-48c9-8e58-2685dbfc9004"
           >
             <svg
               class="shrink-0 mr-2"
@@ -282,7 +288,7 @@ exports[`EnvironmentList should match snapshot 1`] = `
               />
             </svg>
             GCP cluster
-          </button>
+          </a>
         </td>
         <td
           class="h-14 px-4 py-0 first:border-r"
@@ -348,9 +354,11 @@ exports[`EnvironmentList should match snapshot 1`] = `
           class="h-14 px-4 py-0 first:border-r"
           style="width: 15%;"
         >
-          <button
-            class="inline-flex items-center shrink-0 font-medium transition h-8 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent text-xs gap-2 whitespace-nowrap"
+          <a
+            as="button"
+            class="inline-flex items-center shrink-0 font-medium transition shadow-sm disabled:shadow-none active:shadow-none h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent text-xs gap-2 whitespace-nowrap"
             data-state="closed"
+            href="/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/a021261e-4318-4f2f-b480-169ab62efc28/environment/2fe51760-af0b-4f2f-b752-88a813e1375d/services/general"
           >
             <div
               class=""
@@ -385,15 +393,17 @@ exports[`EnvironmentList should match snapshot 1`] = `
               </svg>
             </div>
             Stopped
-          </button>
+          </a>
         </td>
         <td
           class="h-14 px-4 py-0 first:border-r"
           style="width: 15%;"
         >
-          <button
-            class="inline-flex items-center shrink-0 font-medium transition h-8 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent text-xs gap-2 whitespace-nowrap"
+          <a
+            as="button"
+            class="inline-flex items-center shrink-0 font-medium transition shadow-sm disabled:shadow-none active:shadow-none h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent text-xs gap-2 whitespace-nowrap"
             data-state="closed"
+            href="/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/a021261e-4318-4f2f-b480-169ab62efc28/environment/2fe51760-af0b-4f2f-b752-88a813e1375d/logs"
           >
             <div
               class=""
@@ -414,15 +424,17 @@ exports[`EnvironmentList should match snapshot 1`] = `
               </svg>
             </div>
             Canceled
-          </button>
+          </a>
         </td>
         <td
           class="h-14 px-4 py-0 first:border-r"
           style="width: 20%;"
         >
-          <button
-            class="inline-flex items-center shrink-0 font-medium transition text-xs px-1 py-0.5 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550"
+          <a
+            as="button"
+            class="inline-flex items-center shrink-0 font-medium transition shadow-sm disabled:shadow-none active:shadow-none text-xs h-5 px-1 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550"
             data-state="closed"
+            href="/organization/3d542888-3d2c-474a-b1ad-712556db66da/cluster/c531a994-603f-4edf-86cd-bdaea66a46a9"
           >
             <svg
               class="shrink-0 mr-2"
@@ -442,7 +454,7 @@ exports[`EnvironmentList should match snapshot 1`] = `
               />
             </svg>
             Undeletable_cluster
-          </button>
+          </a>
         </td>
         <td
           class="h-14 px-4 py-0 first:border-r"
@@ -508,9 +520,11 @@ exports[`EnvironmentList should match snapshot 1`] = `
           class="h-14 px-4 py-0 first:border-r"
           style="width: 15%;"
         >
-          <button
-            class="inline-flex items-center shrink-0 font-medium transition h-8 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent text-xs gap-2 whitespace-nowrap"
+          <a
+            as="button"
+            class="inline-flex items-center shrink-0 font-medium transition shadow-sm disabled:shadow-none active:shadow-none h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent text-xs gap-2 whitespace-nowrap"
             data-state="closed"
+            href="/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/a021261e-4318-4f2f-b480-169ab62efc28/environment/0cd5d05e-0839-48ff-be67-ca3f4fcf8250/services/general"
           >
             <div
               class=""
@@ -545,15 +559,17 @@ exports[`EnvironmentList should match snapshot 1`] = `
               </svg>
             </div>
             Stopped
-          </button>
+          </a>
         </td>
         <td
           class="h-14 px-4 py-0 first:border-r"
           style="width: 15%;"
         >
-          <button
-            class="inline-flex items-center shrink-0 font-medium transition h-8 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent text-xs gap-2 whitespace-nowrap"
+          <a
+            as="button"
+            class="inline-flex items-center shrink-0 font-medium transition shadow-sm disabled:shadow-none active:shadow-none h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent text-xs gap-2 whitespace-nowrap"
             data-state="closed"
+            href="/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/a021261e-4318-4f2f-b480-169ab62efc28/environment/0cd5d05e-0839-48ff-be67-ca3f4fcf8250/logs"
           >
             <div
               class=""
@@ -574,15 +590,17 @@ exports[`EnvironmentList should match snapshot 1`] = `
               </svg>
             </div>
             Canceled
-          </button>
+          </a>
         </td>
         <td
           class="h-14 px-4 py-0 first:border-r"
           style="width: 20%;"
         >
-          <button
-            class="inline-flex items-center shrink-0 font-medium transition text-xs px-1 py-0.5 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550"
+          <a
+            as="button"
+            class="inline-flex items-center shrink-0 font-medium transition shadow-sm disabled:shadow-none active:shadow-none text-xs h-5 px-1 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550"
             data-state="closed"
+            href="/organization/3d542888-3d2c-474a-b1ad-712556db66da/cluster/c531a994-603f-4edf-86cd-bdaea66a46a9"
           >
             <svg
               class="shrink-0 mr-2"
@@ -602,7 +620,7 @@ exports[`EnvironmentList should match snapshot 1`] = `
               />
             </svg>
             Undeletable_cluster
-          </button>
+          </a>
         </td>
         <td
           class="h-14 px-4 py-0 first:border-r"
@@ -668,9 +686,11 @@ exports[`EnvironmentList should match snapshot 1`] = `
           class="h-14 px-4 py-0 first:border-r"
           style="width: 15%;"
         >
-          <button
-            class="inline-flex items-center shrink-0 font-medium transition h-8 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent text-xs gap-2 whitespace-nowrap"
+          <a
+            as="button"
+            class="inline-flex items-center shrink-0 font-medium transition shadow-sm disabled:shadow-none active:shadow-none h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent text-xs gap-2 whitespace-nowrap"
             data-state="closed"
+            href="/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/a021261e-4318-4f2f-b480-169ab62efc28/environment/c1567d73-b9cd-4664-8aa0-5c71e2bfd74a/services/general"
           >
             <div
               class=""
@@ -705,15 +725,17 @@ exports[`EnvironmentList should match snapshot 1`] = `
               </svg>
             </div>
             Stopped
-          </button>
+          </a>
         </td>
         <td
           class="h-14 px-4 py-0 first:border-r"
           style="width: 15%;"
         >
-          <button
-            class="inline-flex items-center shrink-0 font-medium transition h-8 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent text-xs gap-2 whitespace-nowrap"
+          <a
+            as="button"
+            class="inline-flex items-center shrink-0 font-medium transition shadow-sm disabled:shadow-none active:shadow-none h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent text-xs gap-2 whitespace-nowrap"
             data-state="closed"
+            href="/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/a021261e-4318-4f2f-b480-169ab62efc28/environment/c1567d73-b9cd-4664-8aa0-5c71e2bfd74a/logs"
           >
             <div
               class=""
@@ -748,15 +770,17 @@ exports[`EnvironmentList should match snapshot 1`] = `
               </svg>
             </div>
             Deployed
-          </button>
+          </a>
         </td>
         <td
           class="h-14 px-4 py-0 first:border-r"
           style="width: 20%;"
         >
-          <button
-            class="inline-flex items-center shrink-0 font-medium transition text-xs px-1 py-0.5 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550"
+          <a
+            as="button"
+            class="inline-flex items-center shrink-0 font-medium transition shadow-sm disabled:shadow-none active:shadow-none text-xs h-5 px-1 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550"
             data-state="closed"
+            href="/organization/3d542888-3d2c-474a-b1ad-712556db66da/cluster/c531a994-603f-4edf-86cd-bdaea66a46a9"
           >
             <svg
               class="shrink-0 mr-2"
@@ -776,7 +800,7 @@ exports[`EnvironmentList should match snapshot 1`] = `
               />
             </svg>
             Undeletable_cluster
-          </button>
+          </a>
         </td>
         <td
           class="h-14 px-4 py-0 first:border-r"
