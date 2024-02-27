@@ -1,9 +1,9 @@
 import { type CreditCard } from 'qovery-typescript-axios'
 import {
   BlockContent,
+  Button,
   ButtonIcon,
   ButtonIconStyle,
-  ButtonLegacy,
   Heading,
   HelpSection,
   Icon,
@@ -28,13 +28,10 @@ export function PageOrganizationBilling(props: PageOrganizationBillingProps) {
       <Section className="p-8">
         <div className="flex justify-between mb-8">
           <Heading className="mb-2">Payment method</Heading>
-          <ButtonLegacy
-            dataTestId="add-new-card-button"
-            onClick={props.openNewCreditCardModal}
-            iconRight={IconAwesomeEnum.CIRCLE_PLUS}
-          >
+          <Button onClick={props.openNewCreditCardModal} size="lg" className="gap-2" data-testid="add-new-card-button">
             Add new card
-          </ButtonLegacy>
+            <Icon iconName="circle-plus" />
+          </Button>
         </div>
 
         <BlockContent title="Credit cards">

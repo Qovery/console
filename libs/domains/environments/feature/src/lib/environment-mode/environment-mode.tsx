@@ -9,22 +9,22 @@ export interface EnvironmentModeProps extends Omit<BadgeProps, 'color'> {
 export function EnvironmentMode({ mode, ...props }: EnvironmentModeProps) {
   return match(mode)
     .with('PRODUCTION', () => (
-      <Badge variant="surface" color="red" {...props}>
+      <Badge variant="outline" color="red" {...props}>
         Production
       </Badge>
     ))
     .with('DEVELOPMENT', () => (
-      <Badge variant="surface" color="neutral" {...props}>
+      <Badge variant="outline" color="neutral" {...props}>
         Development
       </Badge>
     ))
     .with('PREVIEW', () => (
-      <Badge variant="surface" color="purple" {...props}>
+      <Badge variant="outline" color="purple" {...props}>
         Preview
       </Badge>
     ))
     .with('STAGING', () => (
-      <Badge variant="surface" color="neutral" {...props}>
+      <Badge variant="outline" color="neutral" {...props}>
         Staging
       </Badge>
     ))

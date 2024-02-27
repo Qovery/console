@@ -27,6 +27,7 @@ import {
   Button,
   EmptyState,
   Icon,
+  Link,
   StatusChip,
   TablePrimitives,
   Tooltip,
@@ -148,23 +149,22 @@ export function EnvironmentList({ project, clusterAvailable, className, ...props
           const environment = info.row.original
           return (
             <Tooltip content="See overview">
-              <Button
+              <Link
+                as="button"
+                to={
+                  SERVICES_URL(environment.organization.id, environment.project.id, environment.id) +
+                  SERVICES_GENERAL_URL
+                }
+                onClick={(e) => e.stopPropagation()}
                 className="text-xs gap-2 whitespace-nowrap"
                 size="md"
                 color="neutral"
                 variant="outline"
                 radius="full"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  navigate(
-                    SERVICES_URL(environment.organization.id, environment.project.id, environment.id) +
-                      SERVICES_GENERAL_URL
-                  )
-                }}
               >
                 <StatusChip status={environment.runningStatus?.state} />
                 {value}
-              </Button>
+              </Link>
             </Tooltip>
           )
         },
@@ -181,20 +181,19 @@ export function EnvironmentList({ project, clusterAvailable, className, ...props
           const environment = info.row.original
           return (
             <Tooltip content="See logs">
-              <Button
+              <Link
+                as="button"
+                to={ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id)}
+                onClick={(e) => e.stopPropagation()}
                 className="text-xs gap-2 whitespace-nowrap"
                 size="md"
                 color="neutral"
                 variant="outline"
                 radius="full"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  navigate(ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id))
-                }}
               >
                 <StatusChip status={environment.deploymentStatus?.state} />
                 {value}
-              </Button>
+              </Link>
             </Tooltip>
           )
         },
@@ -211,18 +210,17 @@ export function EnvironmentList({ project, clusterAvailable, className, ...props
           const environment = info.row.original
           return (
             <Tooltip content={`${environment.cluster_name} (${environment.cloud_provider.cluster})`}>
-              <Button
+              <Link
+                as="button"
+                to={CLUSTER_URL(environment.organization.id, environment.cluster_id)}
+                onClick={(e) => e.stopPropagation()}
                 color="neutral"
                 variant="surface"
                 size="xs"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  navigate(CLUSTER_URL(environment.organization.id, environment.cluster_id))
-                }}
               >
                 <Icon className="mr-2" name={environment.cloud_provider.provider} width="16" />
                 <Truncate text={value} truncateLimit={30} />
-              </Button>
+              </Link>
             </Tooltip>
           )
         },

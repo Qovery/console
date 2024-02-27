@@ -7,7 +7,8 @@ import { EnvironmentMode } from '@qovery/domains/environments/feature'
 import { type AnyService, type Database } from '@qovery/domains/services/data-access'
 import { NeedRedeployFlag, ServiceActionToolbar } from '@qovery/domains/services/feature'
 import { IconEnum } from '@qovery/shared/enums'
-import { Badge, Header, Icon, Section, Skeleton, Tooltip } from '@qovery/shared/ui'
+import { CLUSTER_URL } from '@qovery/shared/routes'
+import { Header, Icon, Link, Section, Skeleton, Tooltip } from '@qovery/shared/ui'
 import TabsFeature from '../../feature/tabs-feature/tabs-feature'
 
 export const ApplicationContext = createContext<{
@@ -39,10 +40,16 @@ export function Container({ service, environment, children }: PropsWithChildren<
         )}
         <Skeleton width={120} height={22} show={!cluster}>
           <Tooltip content={cluster?.name ?? ''}>
-            <Badge size="xs" variant="outline">
+            <Link
+              as="button"
+              color="neutral"
+              variant="surface"
+              size="xs"
+              to={CLUSTER_URL(environment?.organization.id, environment?.cluster_id)}
+            >
               <Icon name={environment?.cloud_provider.provider as IconEnum} width="16" />
               <p className="ml-1.5 max-w-[200px] truncate">{cluster?.name}</p>
-            </Badge>
+            </Link>
           </Tooltip>
         </Skeleton>
       </div>

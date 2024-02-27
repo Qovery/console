@@ -6,6 +6,7 @@ import { EnvironmentActionToolbar, EnvironmentMode, EnvironmentStateChip } from 
 import { useDeploymentStatus } from '@qovery/domains/services/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import {
+  CLUSTER_URL,
   SERVICES_APPLICATION_CREATION_URL,
   SERVICES_CRONJOB_CREATION_URL,
   SERVICES_DATABASE_CREATION_URL,
@@ -17,12 +18,10 @@ import {
   SERVICES_URL,
 } from '@qovery/shared/routes'
 import {
-  Badge,
-  ButtonLegacy,
-  ButtonLegacySize,
+  Button,
   Header,
   Icon,
-  IconAwesomeEnum,
+  Link,
   Menu,
   MenuAlign,
   type MenuData,
@@ -62,10 +61,16 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
         )}
         <Skeleton width={120} height={22} show={!cluster}>
           <Tooltip content={cluster?.name ?? ''}>
-            <Badge size="xs" variant="outline">
+            <Link
+              as="button"
+              color="neutral"
+              variant="surface"
+              size="xs"
+              to={CLUSTER_URL(environment?.organization.id, environment?.cluster_id)}
+            >
               <Icon name={environment?.cloud_provider.provider as IconEnum} width="16" />
               <p className="ml-1.5 max-w-[200px] truncate">{cluster?.name}</p>
-            </Badge>
+            </Link>
           </Tooltip>
         </Skeleton>
       </div>
@@ -150,9 +155,10 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
       <Skeleton width={154} height={40} show={isLoadingDeploymentStatus}>
         <Menu
           trigger={
-            <ButtonLegacy size={ButtonLegacySize.LARGE} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>
+            <Button size="lg" className="gap-2">
               New service
-            </ButtonLegacy>
+              <Icon iconName="circle-plus" />
+            </Button>
           }
           menus={newServicesMenu}
           arrowAlign={MenuAlign.START}

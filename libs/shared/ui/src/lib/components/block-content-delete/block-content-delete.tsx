@@ -1,4 +1,4 @@
-import ButtonLegacy, { ButtonLegacyStyle } from '../buttons/button-legacy/button-legacy'
+import { Button } from '../button/button'
 import Icon from '../icon/icon'
 import useModalConfirmation from '../modals/modal-confirmation/use-modal-confirmation/use-modal-confirmation'
 
@@ -52,7 +52,7 @@ export function BlockContentDelete(props: BlockContentDeleteProps) {
           </p>
         ))}
         <div className="flex justify-end">
-          <ButtonLegacy
+          <Button
             className="mt-3 ml-auto"
             loading={ctaLoading}
             onClick={() => {
@@ -66,10 +66,11 @@ export function BlockContentDelete(props: BlockContentDeleteProps) {
                     isDelete: true,
                   })
             }}
-            style={ButtonLegacyStyle.ERROR}
+            color="red"
+            size="md"
           >
             {ctaLabel}
-          </ButtonLegacy>
+          </Button>
         </div>
       </div>
     </div>

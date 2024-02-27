@@ -43,7 +43,9 @@ import {
   Button,
   Checkbox,
   EmptyState,
+  ExternalLink,
   Icon,
+  Link,
   StatusChip,
   TablePrimitives,
   Tooltip,
@@ -244,30 +246,27 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
         cell: (info) => {
           const value = info.getValue()
           const service = info.row.original
+          const link = match(service)
+            .with(
+              { serviceType: ServiceTypeEnum.DATABASE },
+              ({ id }) => DATABASE_URL(organizationId, projectId, environmentId, id) + DATABASE_GENERAL_URL
+            )
+            .otherwise(({ id }) => APPLICATION_URL(organizationId, projectId, environmentId, id) + SERVICES_GENERAL_URL)
           return (
             <Tooltip content="See overview">
-              <Button
+              <Link
+                as="button"
+                to={link}
+                onClick={(e) => e.stopPropagation()}
                 className="text-xs gap-2 whitespace-nowrap"
                 size="md"
                 color="neutral"
                 variant="outline"
                 radius="full"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  const link = match(service)
-                    .with(
-                      { serviceType: ServiceTypeEnum.DATABASE },
-                      ({ id }) => DATABASE_URL(organizationId, projectId, environmentId, id) + DATABASE_GENERAL_URL
-                    )
-                    .otherwise(
-                      ({ id }) => APPLICATION_URL(organizationId, projectId, environmentId, id) + SERVICES_GENERAL_URL
-                    )
-                  navigate(link)
-                }}
               >
                 <StatusChip status={service.runningStatus?.state} />
                 {value}
-              </Button>
+              </Link>
             </Tooltip>
           )
         },
@@ -284,22 +283,19 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
           const service = info.row.original
           return (
             <Tooltip content="See logs">
-              <Button
+              <Link
+                as="button"
+                to={ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(service.id)}
+                onClick={(e) => e.stopPropagation()}
                 className="text-xs gap-2 whitespace-nowrap"
                 size="md"
                 color="neutral"
                 variant="outline"
                 radius="full"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  navigate(
-                    ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(service.id)
-                  )
-                }}
               >
                 <StatusChip status={service.deploymentStatus?.state} />
                 {value}
-              </Button>
+              </Link>
             </Tooltip>
           )
         },
@@ -323,16 +319,20 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
                 <div className="flex flex-col gap-1">
                   <LastCommit gitRepository={gitRepository} service={service} />
                   {gitRepository.branch && gitRepository.url && (
-                    <a
-                      href={buildGitProviderUrl(gitRepository.url, gitRepository.branch)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <Badge variant="surface" size="xs" className="gap-1 whitespace-nowrap">
+                    <span className="inline-block">
+                      <ExternalLink
+                        as="button"
+                        href={buildGitProviderUrl(gitRepository.url, gitRepository.branch)}
+                        onClick={(e) => e.stopPropagation()}
+                        color="neutral"
+                        variant="surface"
+                        size="xs"
+                        className="gap-1 whitespace-nowrap"
+                      >
                         <Icon iconName="code-branch" height={14} width={14} />
                         <Truncate text={gitRepository.branch} truncateLimit={18} />
-                      </Badge>
-                    </a>
+                      </ExternalLink>
+                    </span>
                   )}
                 </div>
               </div>
@@ -340,12 +340,20 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
           const containerInfo = (containerImage?: Pick<ContainerResponse, 'image_name' | 'tag' | 'registry'>) =>
             containerImage && (
               <div className="flex flex-col gap-1 ml-7" onClick={(e) => e.stopPropagation()}>
-                <a href={containerImage.registry.url} target="_blank" rel="noopener noreferrer">
-                  <Badge variant="surface" size="xs" className="items-center gap-1 capitalize whitespace-nowrap">
+                <span className="inline-block">
+                  <ExternalLink
+                    as="button"
+                    href={containerImage.registry.url}
+                    onClick={(e) => e.stopPropagation()}
+                    color="neutral"
+                    variant="surface"
+                    size="xs"
+                    className="items-center gap-1 capitalize whitespace-nowrap"
+                  >
                     <Icon width={16} name={containerRegistryKindToIcon(containerImage.registry.kind)} />
                     <Truncate text={containerImage.registry.name.toLowerCase()} truncateLimit={18} />
-                  </Badge>
-                </a>
+                  </ExternalLink>
+                </span>
                 <div>
                   <Badge variant="surface" size="xs" className="gap-1 whitespace-nowrap">
                     <Icon width={16} name={IconEnum.CONTAINER} />
@@ -366,12 +374,20 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
           const helmInfo = (helmRepository?: HelmResponseAllOfSourceOneOf1Repository) =>
             helmRepository && (
               <div className="flex flex-col gap-1 ml-7" onClick={(e) => e.stopPropagation()}>
-                <a href={helmRepository.repository?.url} target="_blank" rel="noopener noreferrer">
-                  <Badge variant="surface" size="xs" className="items-center gap-1 whitespace-nowrap">
+                <span className="inline-block">
+                  <ExternalLink
+                    as="button"
+                    href={helmRepository.repository?.url}
+                    onClick={(e) => e.stopPropagation()}
+                    color="neutral"
+                    variant="surface"
+                    size="xs"
+                    className="items-center gap-1 whitespace-nowrap"
+                  >
                     <Icon width={16} name={IconEnum.HELM_OFFICIAL} />
                     <Truncate text={(helmRepository.repository?.name ?? '').toLowerCase()} truncateLimit={18} />
-                  </Badge>
-                </a>
+                  </ExternalLink>
+                </span>
                 <div>
                   <Badge variant="surface" size="xs" className="gap-1 whitespace-nowrap">
                     <Icon width={16} name={IconEnum.HELM_OFFICIAL} />

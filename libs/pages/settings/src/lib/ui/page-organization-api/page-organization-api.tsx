@@ -1,9 +1,9 @@
 import { type OrganizationApiToken } from 'qovery-typescript-axios'
 import {
   BlockContent,
+  Button,
   ButtonIcon,
   ButtonIconStyle,
-  ButtonLegacy,
   ButtonLegacySize,
   Heading,
   HelpSection,
@@ -38,9 +38,10 @@ export function PageOrganizationApi(props: PageOrganizationApiProps) {
               Terraform script, Pulumi etc..). A role can be assigned to limit the Token permission.
             </p>
           </div>
-          <ButtonLegacy className="shrink-0" onClick={() => onAddToken()} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>
+          <Button className="shrink-0 gap-2" size="lg" onClick={() => onAddToken()}>
             Add new
-          </ButtonLegacy>
+            <Icon iconName="circle-plus" />
+          </Button>
         </div>
         <BlockContent title="Token List" classNameContent="p-0">
           {!isFetched ? (
