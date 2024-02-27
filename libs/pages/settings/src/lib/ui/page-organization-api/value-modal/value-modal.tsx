@@ -8,7 +8,7 @@ export interface ValueModalProps {
 export function ValueModal(props: ValueModalProps) {
   return (
     <div className="p-6">
-      <h2 className="h4 text-neutral-400 max-w-sm truncate mb-6">You new API Token!</h2>
+      <h2 className="h4 text-neutral-400 max-w-sm truncate mb-6">Your API Token!</h2>
 
       <InputText
         name="token"

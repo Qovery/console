@@ -8,19 +8,10 @@ import PageOrganizationBillingSummary, {
 const props: PageOrganizationBillingSummaryProps = {
   creditCard: creditCardsFactoryMock(1)[0],
   numberOfClusters: 130,
-  numberOfRunningClusters: 88,
   currentCost: {
     plan: PlanEnum.ENTERPRISE,
     cost: { total: 56000, currency_code: 'USD', total_in_cents: 5600000 },
-    paid_usage: {
-      renewal_at: '2021-01-01',
-      remaining_deployments: 10,
-      consumed_deployments: 999,
-      max_deployments_per_month: 1345,
-      deployments_exceeded: true,
-      monthly_plan_cost: 10,
-      monthly_plan_cost_in_cents: 10000,
-    },
+    renewal_at: '2021-01-01',
   },
   onPromoCodeClick: jest.fn(),
   openIntercom: jest.fn(),
@@ -37,15 +28,8 @@ describe('PageOrganizationBillingSummary', () => {
     screen.getByText('Current plan')
     screen.getByText('Enterprise plan')
 
-    screen.getByText('Current monthly bill')
+    screen.getByText('Current bill')
     screen.getByText('$56,000')
-
-    screen.getByText('Seats')
-    screen.getByText('N/A')
-
-    screen.getByText('Cluster')
-    screen.getByText('88')
-    screen.getByText('/ 130')
   })
 
   it('should say that no cluster was found', () => {
@@ -76,21 +60,13 @@ describe('PageOrganizationBillingSummary', () => {
   it('should display not display the payment method box', () => {
     props.currentCost = {
       plan: PlanEnum.FREE,
+      renewal_at: '2021-01-01',
       cost: { total: 56000, currency_code: 'USD', total_in_cents: 5600000 },
-      paid_usage: {
-        renewal_at: '2021-01-01',
-        remaining_deployments: 10,
-        consumed_deployments: 999,
-        max_deployments_per_month: 1345,
-        deployments_exceeded: true,
-        monthly_plan_cost: 10,
-        monthly_plan_cost_in_cents: 10000,
-      },
     }
 
     renderWithProviders(<PageOrganizationBillingSummary {...props} />)
     screen.getByText('Current plan')
-    screen.getByText('Current monthly bill')
+    screen.getByText('Current bill')
     expect(screen.queryByText('Payment method')).toBeNull()
   })
 })
