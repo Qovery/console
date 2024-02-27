@@ -141,7 +141,7 @@ export function ButtonPopoverSubnets({ name, children, title, callout }: ButtonP
                 type="button"
                 size="md"
                 variant="surface"
-                onClick={() => remove(Array.from({ length: fields.length }, (_, index) => index + 1))}
+                onClick={() => remove(Array.from({ length: fields.length }, (_, index) => index))}
               >
                 Cancel
               </Button>
