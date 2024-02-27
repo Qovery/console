@@ -85,7 +85,7 @@ export const handleJobSubmit = (data: FieldValues, job: Job): JobRequest => {
       url: buildGitRepoUrl(gitToken?.type ?? data['provider'], data['repository']),
       branch: data['branch'],
       root_path: data['root_path'],
-      git_token_id: gitToken ? gitToken.id : undefined,
+      git_token_id: gitToken ? gitToken.id : job.source.docker?.git_repository?.git_token_id,
     }
 
     return {
