@@ -70,7 +70,11 @@ export function PodLogsFeature({ clusterId }: PodLogsFeatureProps) {
     const podFilter = filter.find(({ key }) => key === POD_NAME_KEY)
     return debouncedServiceMessages
       .filter(({ pod_name }) => (podFilter && podFilter.value !== 'ALL' ? podFilter.value === pod_name : true))
-      .concat(enabledNginx ? debouncedInfraMessages.map((message) => ({ ...message, version: '', pod_name: '' })) : [])
+      .concat(
+        enabledNginx
+          ? debouncedInfraMessages.map((message) => ({ version: '', pod_name: '', container_name: '', ...message }))
+          : []
+      )
       .filter((log, index, array) => (showPreviousLogs || array.length - 1 === index ? true : log.created_at > now))
       .sort((a, b) => (a.created_at && b.created_at ? a.created_at - b.created_at : 0))
   }, [debouncedServiceMessages, debouncedInfraMessages, enabledNginx, showPreviousLogs, now, filter])
