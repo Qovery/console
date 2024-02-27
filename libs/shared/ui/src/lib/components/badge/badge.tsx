@@ -18,9 +18,10 @@ const badgeVariants = cva(['inline-flex', 'items-center', 'shrink-0', 'font-medi
       surface: ['border'],
     },
     size: {
-      xs: ['text-xs', 'px-1', 'py-0.5'],
-      sm: ['text-sm', 'py-1', 'px-2'],
-      md: ['text-base', 'py-1.5', 'px-3'],
+      xs: ['text-xs', 'h-5', 'px-1'],
+      sm: ['text-xs', 'h-7', 'px-2'],
+      md: ['text-xs', 'h-9', 'px-3'],
+      lg: ['text-sm', 'h-11', 'px-5'],
     },
     radius: {
       rounded: ['rounded'],
