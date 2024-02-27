@@ -190,9 +190,9 @@ exports[`SelectCommitModal should match snapshot 1`] = `
                     data-disabled=""
                     data-state="checked"
                   >
-                    <span
-                      class="icon-solid-check shrink-0 text-xs text-white"
-                      role="img"
+                    <i
+                      aria-hidden="true"
+                      class="fa-solid fa-check text-xs text-white"
                     />
                   </span>
                 </button>

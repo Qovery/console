@@ -9,15 +9,7 @@ import {
   SERVICES_HELM_CREATION_VALUES_STEP_2_URL,
   SERVICES_URL,
 } from '@qovery/shared/routes'
-import {
-  Button,
-  Callout,
-  FunnelFlowBody,
-  FunnelFlowHelpCard,
-  Icon,
-  IconAwesomeEnum,
-  InputText,
-} from '@qovery/shared/ui'
+import { Button, Callout, FunnelFlowBody, FunnelFlowHelpCard, Icon, InputText } from '@qovery/shared/ui'
 import { getGitTokenValue } from '@qovery/shared/util-git'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
@@ -131,7 +123,7 @@ export function StepValuesOverrideFilesFeature() {
           ) : generalData.auto_deploy ? (
             <Callout.Root color="sky" className="mt-3">
               <Callout.Icon>
-                <Icon name={IconAwesomeEnum.CIRCLE_INFO} />
+                <Icon iconName="circle-info" />
               </Callout.Icon>
 
               <Callout.Text className="text-xs">
@@ -142,7 +134,7 @@ export function StepValuesOverrideFilesFeature() {
           ) : (
             <Callout.Root color="sky" className="mt-3">
               <Callout.Icon>
-                <Icon name={IconAwesomeEnum.CIRCLE_INFO} />
+                <Icon iconName="circle-info" />
               </Callout.Icon>
               <Callout.Text className="text-xs">
                 <Callout.TextHeading>Auto-deploy is not activated</Callout.TextHeading>

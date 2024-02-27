@@ -1,9 +1,7 @@
 import { type Meta, type Story } from '@storybook/react'
 import { IconEnum } from '@qovery/shared/enums'
 import { type Value } from '@qovery/shared/interfaces'
-import IconFa from '../../icon-fa/icon-fa'
-import Icon from '../../icon/icon'
-import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
+import { Icon } from '../../icon/icon'
 import { InputSelect, type InputSelectProps } from './input-select'
 
 export default {
@@ -41,7 +39,7 @@ Single.args = {
   isSearchable: false,
   menuListButton: {
     label: 'New element',
-    icon: <IconFa name={IconAwesomeEnum.CIRCLE_PLUS} className="text-brand-500" />,
+    icon: <Icon iconName="circle-plus" className="text-brand-500" />,
     onClick: () => console.log('new element'),
   },
 }

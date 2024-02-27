@@ -1,7 +1,6 @@
 import type { Meta } from '@storybook/react'
 import { Button } from '../button/button'
 import { Icon } from '../icon/icon'
-import { IconAwesomeEnum } from '../icon/icon-awesome.enum'
 import Truncate from '../truncate/truncate'
 import { DropdownMenu } from './dropdown-menu'
 
@@ -27,13 +26,13 @@ export const Primary = {
         </Button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content>
-        <DropdownMenu.Item icon={<Icon name={IconAwesomeEnum.PLAY} />}>Deploy</DropdownMenu.Item>
+        <DropdownMenu.Item icon={<Icon iconName="play" />}>Deploy</DropdownMenu.Item>
         <DropdownMenu.Item>Deploy latest version</DropdownMenu.Item>
-        <DropdownMenu.Item icon={<Icon name={IconAwesomeEnum.WHEEL} />}>
+        <DropdownMenu.Item icon={<Icon iconName="gear" />}>
           <Truncate text="Super long text that should be truncated at some point" truncateLimit={27} />
         </DropdownMenu.Item>
         <DropdownMenu.Separator />
-        <DropdownMenu.Item color="red" icon={<Icon name={IconAwesomeEnum.TRASH} />}>
+        <DropdownMenu.Item color="red" icon={<Icon iconName="trash" />}>
           Delete service
         </DropdownMenu.Item>
       </DropdownMenu.Content>

@@ -54,9 +54,9 @@ exports[`ServiceLinksPopover should match snapshot 1`] = `
           type="button"
         >
           Customize
-          <span
-            class="icon-solid-circle-plus shrink-0 text-xs"
-            role="img"
+          <i
+            aria-hidden="true"
+            class="fa-solid fa-circle-plus text-xs"
           />
         </a>
       </div>

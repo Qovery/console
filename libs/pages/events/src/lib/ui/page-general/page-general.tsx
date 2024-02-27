@@ -4,7 +4,6 @@ import {
   Heading,
   HelpSection,
   Icon,
-  IconAwesomeEnum,
   Pagination,
   Section,
   Table,
@@ -111,7 +110,7 @@ export function PageGeneral({
             ) : events && events.length === 0 ? (
               <div className="flex items-center justify-center text-center py-4 px-5 h-[30vh]">
                 <div>
-                  <Icon name={IconAwesomeEnum.WAVE_PULSE} className="text-neutral-350" />
+                  <Icon iconName="wave-pulse" className="text-neutral-350" />
                   <p className="text-neutral-350 font-medium text-xs mt-1" data-testid="empty-result">
                     No events found, we retain logs for a maximum of 30 days <br /> Try to change your filters.
                   </p>

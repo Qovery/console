@@ -38,13 +38,13 @@ exports[`ServiceActionToolbar should match manage deployment snapshot 1`] = `
         class="flex items-center w-full h-full"
         data-state="closed"
       >
-        <span
-          class="icon-solid-play shrink-0 mr-3"
-          role="img"
+        <i
+          aria-hidden="true"
+          class="fa-solid fa-play mr-3"
         />
-        <span
-          class="icon-solid-angle-down shrink-0 "
-          role="img"
+        <i
+          aria-hidden="true"
+          class="fa-solid fa-angle-down "
         />
       </div>
     </button>
@@ -56,9 +56,9 @@ exports[`ServiceActionToolbar should match manage deployment snapshot 1`] = `
       tabindex="-1"
       type="button"
     >
-      <span
-        class="icon-solid-scroll shrink-0 "
-        role="img"
+      <i
+        aria-hidden="true"
+        class="fa-solid fa-scroll "
       />
     </button>
     <button
@@ -77,9 +77,9 @@ exports[`ServiceActionToolbar should match manage deployment snapshot 1`] = `
         class="flex items-center w-full h-full"
         data-state="closed"
       >
-        <span
-          class="icon-solid-ellipsis-v shrink-0 "
-          role="img"
+        <i
+          aria-hidden="true"
+          class="fa-solid fa-ellipsis-v "
         />
       </div>
     </button>
@@ -127,9 +127,9 @@ exports[`ServiceActionToolbar should match manage deployment snapshot 1`] = `
         role="menuitem"
         tabindex="-1"
       >
-        <span
-          class="icon-solid-play shrink-0 text-sm mr-3 text-brand-400"
-          role="img"
+        <i
+          aria-hidden="true"
+          class="fa-solid fa-play text-sm mr-3 text-brand-400"
         />
         Deploy
       </div>
@@ -145,9 +145,9 @@ exports[`ServiceActionToolbar should match manage deployment snapshot 1`] = `
         role="menuitem"
         tabindex="-1"
       >
-        <span
-          class="icon-solid-clock-rotate-left shrink-0 text-sm mr-3 text-brand-400"
-          role="img"
+        <i
+          aria-hidden="true"
+          class="fa-solid fa-clock-rotate-left text-sm mr-3 text-brand-400"
         />
         Deploy another chart version
       </div>
@@ -200,13 +200,13 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
         class="flex items-center w-full h-full"
         data-state="closed"
       >
-        <span
-          class="icon-solid-play shrink-0 mr-3"
-          role="img"
+        <i
+          aria-hidden="true"
+          class="fa-solid fa-play mr-3"
         />
-        <span
-          class="icon-solid-angle-down shrink-0 "
-          role="img"
+        <i
+          aria-hidden="true"
+          class="fa-solid fa-angle-down "
         />
       </div>
     </button>
@@ -218,9 +218,9 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
       tabindex="-1"
       type="button"
     >
-      <span
-        class="icon-solid-scroll shrink-0 "
-        role="img"
+      <i
+        aria-hidden="true"
+        class="fa-solid fa-scroll "
       />
     </button>
     <button
@@ -240,9 +240,9 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
         class="flex items-center w-full h-full"
         data-state="closed"
       >
-        <span
-          class="icon-solid-ellipsis-v shrink-0 "
-          role="img"
+        <i
+          aria-hidden="true"
+          class="fa-solid fa-ellipsis-v "
         />
       </div>
     </button>
@@ -290,9 +290,9 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
         role="menuitem"
         tabindex="-1"
       >
-        <span
-          class="icon-solid-scroll shrink-0 text-sm mr-3 text-brand-400"
-          role="img"
+        <i
+          aria-hidden="true"
+          class="fa-solid fa-scroll text-sm mr-3 text-brand-400"
         />
         Logs
       </div>
@@ -308,9 +308,9 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
           role="menuitem"
           tabindex="-1"
         >
-          <span
-            class="icon-solid-code shrink-0 text-sm mr-3 text-brand-400"
-            role="img"
+          <i
+            aria-hidden="true"
+            class="fa-solid fa-code text-sm mr-3 text-brand-400"
           />
           Edit code
         </div>
@@ -322,9 +322,9 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
         role="menuitem"
         tabindex="-1"
       >
-        <span
-          class="icon-solid-clock-rotate-left shrink-0 text-sm mr-3 text-brand-400"
-          role="img"
+        <i
+          aria-hidden="true"
+          class="fa-solid fa-clock-rotate-left text-sm mr-3 text-brand-400"
         />
         See audit logs
       </div>
@@ -335,9 +335,9 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
         role="menuitem"
         tabindex="-1"
       >
-        <span
-          class="icon-solid-copy shrink-0 text-sm mr-3 text-brand-400"
-          role="img"
+        <i
+          aria-hidden="true"
+          class="fa-solid fa-copy text-sm mr-3 text-brand-400"
         />
         Copy identifiers
       </div>
@@ -348,9 +348,9 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
         role="menuitem"
         tabindex="-1"
       >
-        <span
-          class="icon-solid-wheel shrink-0 text-sm mr-3 text-brand-400"
-          role="img"
+        <i
+          aria-hidden="true"
+          class="fa-solid fa-gear text-sm mr-3 text-brand-400"
         />
         Open settings
       </div>
@@ -361,9 +361,9 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
         role="menuitem"
         tabindex="-1"
       >
-        <span
-          class="icon-solid-copy shrink-0 text-sm mr-3 text-brand-400"
-          role="img"
+        <i
+          aria-hidden="true"
+          class="fa-solid fa-copy text-sm mr-3 text-brand-400"
         />
         Clone
       </div>
@@ -379,9 +379,9 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
         role="menuitem"
         tabindex="-1"
       >
-        <span
-          class="icon-solid-trash shrink-0 text-sm mr-3 text-red-600"
-          role="img"
+        <i
+          aria-hidden="true"
+          class="fa-solid fa-trash text-sm mr-3 text-red-600"
         />
         Delete service
       </div>

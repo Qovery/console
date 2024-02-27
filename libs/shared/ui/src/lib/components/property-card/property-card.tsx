@@ -27,7 +27,7 @@ export function PropertyCard(props: PropertyCardProps) {
             {helperText && (
               <Tooltip side="right" content={helperText}>
                 <div data-testid="icon-helper" className="ml-1 flex text-neutral-350 items-center">
-                  <Icon name={IconAwesomeEnum.CIRCLE_INFO} />
+                  <Icon iconName="circle-info" />
                 </div>
               </Tooltip>
             )}

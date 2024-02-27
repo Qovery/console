@@ -1,6 +1,6 @@
 import { Controller, useFormContext } from 'react-hook-form'
 import { type Value } from '@qovery/shared/interfaces'
-import { BlockContent, Callout, ExternalLink, Icon, IconAwesomeEnum, InputSelect } from '@qovery/shared/ui'
+import { BlockContent, Callout, ExternalLink, Icon, InputSelect } from '@qovery/shared/ui'
 
 export interface SettingsResourcesInstanceTypesProps {
   databaseInstanceTypes?: Value[]
@@ -40,7 +40,7 @@ export function SettingsResourcesInstanceTypes({
       {displayWarning && (
         <Callout.Root className="mt-3" color="yellow" data-testid="settings-resources-instance-types-warning">
           <Callout.Icon>
-            <Icon name={IconAwesomeEnum.CIRCLE_INFO} />
+            <Icon iconName="circle-info" />
           </Callout.Icon>
           <Callout.Text className="text-xs text-neutral-350">
             Once triggered, the update will be managed by your cloud provider and applied during the configured

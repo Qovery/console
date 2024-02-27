@@ -3,7 +3,6 @@ import { Controller, useForm } from 'react-hook-form'
 import ButtonLegacy, { ButtonLegacyStyle } from '../../buttons/button-legacy/button-legacy'
 import { Callout } from '../../callout/callout'
 import { Icon } from '../../icon/icon'
-import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
 import InputTextSmall from '../../inputs/input-text-small/input-text-small'
 import useModal from '../../modal/use-modal/use-modal'
 import { Tooltip } from '../../tooltip/tooltip'
@@ -50,7 +49,7 @@ export function ModalConfirmation({
       {warning && (
         <Callout.Root className="mb-2" color="yellow">
           <Callout.Icon>
-            <Icon name={IconAwesomeEnum.TRIANGLE_EXCLAMATION} />
+            <Icon iconName="triangle-exclamation" />
           </Callout.Icon>
           <Callout.Text>{warning}</Callout.Text>
         </Callout.Root>

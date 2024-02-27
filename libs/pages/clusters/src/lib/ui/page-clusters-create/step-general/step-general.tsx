@@ -12,7 +12,6 @@ import {
   ExternalLink,
   Heading,
   Icon,
-  IconAwesomeEnum,
   IconFlag,
   InputSelect,
   LoaderSpinner,
@@ -84,7 +83,7 @@ export function StepGeneral(props: StepGeneralProps) {
                 <Popover.Root>
                   <Popover.Trigger>
                     <span className="text-sm cursor-pointer text-brand-500 hover:text-brand-600 transition font-medium">
-                      Which should I choose? <Icon className="text-xs" name={IconAwesomeEnum.CIRCLE_QUESTION} />
+                      Which should I choose? <Icon className="text-xs" name="circle-question" />
                     </span>
                   </Popover.Trigger>
                   <Popover.Content side="left" className="text-neutral-350 text-sm relative" style={{ width: 440 }}>
@@ -150,7 +149,7 @@ export function StepGeneral(props: StepGeneralProps) {
               {watch('cloud_provider') === CloudProviderEnum.GCP && (
                 <Callout.Root color="yellow" className="mb-2">
                   <Callout.Icon>
-                    <Icon name={IconAwesomeEnum.TRIANGLE_EXCLAMATION} />
+                    <Icon iconName="triangle-exclamation" />
                   </Callout.Icon>
                   <Callout.Text className="text-xs">
                     GCP integration is beta, keep an eye on your cluster costs and report any bugs and/or weird

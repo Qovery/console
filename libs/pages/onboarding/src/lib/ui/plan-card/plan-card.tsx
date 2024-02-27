@@ -1,5 +1,5 @@
 import { PlanEnum } from 'qovery-typescript-axios'
-import { ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle, Icon, IconAwesomeEnum } from '@qovery/shared/ui'
+import { ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle, Icon } from '@qovery/shared/ui'
 
 export interface PlanCardProps {
   title: string
@@ -39,7 +39,7 @@ export function PlanCard(props: PlanCardProps) {
       <ul>
         {list.map((line: string, index: number) => (
           <li key={index} className="text-neutral-400 text-xs mb-2 last:mb-10">
-            <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-1.5" />
+            <Icon iconName="check" className="text-green-500 mr-1.5" />
             {line}
           </li>
         ))}

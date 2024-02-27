@@ -43,7 +43,7 @@ export function FlowCreatePort({
         {isSetting && (
           <Button size="lg" variant="solid" color="brand" data-testid="add-button" onClick={() => onAddPort()}>
             Add Port
-            <Icon name={IconAwesomeEnum.CIRCLE_PLUS} className="ml-2" />
+            <Icon iconName="circle-plus" className="ml-2" />
           </Button>
         )}
       </div>
@@ -108,7 +108,7 @@ export function FlowCreatePort({
                         className="justify-center w-9 h-9 mr-2"
                         onClick={() => onEdit(customPort)}
                       >
-                        <Icon name={IconAwesomeEnum.WHEEL} />
+                        <Icon iconName="gear" />
                       </Button>
                     )}
                     {onRemovePort && (
@@ -128,7 +128,7 @@ export function FlowCreatePort({
                           )
                         }
                       >
-                        <Icon name={IconAwesomeEnum.TRASH} />
+                        <Icon iconName="trash" />
                       </Button>
                     )}
                   </div>
@@ -138,7 +138,7 @@ export function FlowCreatePort({
               <div className="flex justify-end items-center py-3 px-4">
                 <Button onClick={onAddPort}>
                   Add port
-                  <Icon name={IconAwesomeEnum.CIRCLE_PLUS} className="ml-2" />
+                  <Icon iconName="circle-plus" className="ml-2" />
                 </Button>
               </div>
             )}

@@ -3,7 +3,6 @@ import { type VariantProps, cva } from 'class-variance-authority'
 import { type ComponentPropsWithoutRef, type ElementRef, forwardRef } from 'react'
 import { twMerge } from '@qovery/shared/util-js'
 import Icon from '../icon/icon'
-import { IconAwesomeEnum } from '../icon/icon-awesome.enum'
 
 const itemVariants = cva(
   [
@@ -68,7 +67,7 @@ const RadioGroupItem = forwardRef<ElementRef<typeof RadioGroupPrimitive.Item>, R
     return (
       <RadioGroupPrimitive.Item {...props} className={twMerge(itemVariants({ variant }), className)} ref={ref}>
         <RadioGroupPrimitive.Indicator className={indicatorVariants({ variant })}>
-          {variant === 'check' && <Icon name={IconAwesomeEnum.CHECK} className="text-xs text-white" />}
+          {variant === 'check' && <Icon iconName="check" className="text-xs text-white" />}
         </RadioGroupPrimitive.Indicator>
       </RadioGroupPrimitive.Item>
     )

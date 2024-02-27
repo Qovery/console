@@ -109,9 +109,9 @@ exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
                   </span>
                 </div>
               </div>
-              <span
-                class="icon-solid-arrow-left shrink-0 -scale-100 text-neutral-400 mx-2"
-                role="img"
+              <i
+                aria-hidden="true"
+                class="fa-solid fa-arrow-left -scale-100 text-neutral-400 mx-2"
               />
               <div
                 class="flex items-center "
@@ -219,9 +219,9 @@ exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
                   </span>
                 </div>
               </div>
-              <span
-                class="icon-solid-arrow-left shrink-0 -scale-100 text-neutral-400 mx-2"
-                role="img"
+              <i
+                aria-hidden="true"
+                class="fa-solid fa-arrow-left -scale-100 text-neutral-400 mx-2"
               />
               <div
                 class="flex items-center opacity-50"
@@ -329,9 +329,9 @@ exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
                   </span>
                 </div>
               </div>
-              <span
-                class="icon-solid-arrow-left shrink-0 -scale-100 text-neutral-400 mx-2"
-                role="img"
+              <i
+                aria-hidden="true"
+                class="fa-solid fa-arrow-left -scale-100 text-neutral-400 mx-2"
               />
               <div
                 class="flex items-center opacity-50"

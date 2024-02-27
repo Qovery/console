@@ -66,7 +66,7 @@ export function StepSummary(props: StepSummaryProps) {
         {props.generalData.installation_type === 'MANAGED' && (
           <Callout.Root color="yellow" className="mb-5">
             <Callout.Icon>
-              <Icon name={IconAwesomeEnum.TRIANGLE_EXCLAMATION} />
+              <Icon iconName="triangle-exclamation" />
             </Callout.Icon>
             <Callout.Text>
               <Callout.TextHeading>Qovery manages this resource for you</Callout.TextHeading>
@@ -89,7 +89,7 @@ export function StepSummary(props: StepSummaryProps) {
           data-testid="summary-general"
           className="flex p-4 w-full border rounded border-neutral-250 bg-neutral-100 mb-2"
         >
-          <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
+          <Icon iconName="check" className="text-green-500 mr-2" />
           <div className="flex-grow mr-2">
             <div className="text-sm text-neutral-400 font-bold mb-2">General information</div>
             <ul className="text-neutral-350 text-sm list-none">
@@ -139,7 +139,7 @@ export function StepSummary(props: StepSummaryProps) {
                 data-testid="summary-resources"
                 className="flex p-4 w-full border rounded border-neutral-250 bg-neutral-100 mb-2"
               >
-                <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
+                <Icon iconName="check" className="text-green-500 mr-2" />
                 <div className="flex-grow mr-2">
                   <div className="text-sm text-neutral-400 font-bold mb-2">Resources</div>
                   <ul className="text-neutral-350 text-sm list-none">
@@ -178,7 +178,7 @@ export function StepSummary(props: StepSummaryProps) {
               data-testid="summary-kubeconfig"
               className="flex p-4 w-full border rounded border-neutral-250 bg-neutral-100 mb-2"
             >
-              <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
+              <Icon iconName="check" className="text-green-500 mr-2" />
               <div className="flex-grow mr-2">
                 <div className="text-sm text-neutral-400 font-bold mb-2">Kubeconfig</div>
                 <ul className="text-neutral-350 text-sm list-none">
@@ -202,7 +202,7 @@ export function StepSummary(props: StepSummaryProps) {
             data-testid="summary-remote"
             className="flex p-4 w-full border rounded border-neutral-250 bg-neutral-100 mb-2"
           >
-            <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
+            <Icon iconName="check" className="text-green-500 mr-2" />
             <div className="flex-grow mr-2">
               <div className="text-sm text-neutral-400 font-bold mb-2">Remote access</div>
               <ul className="text-neutral-350 text-sm list-none">
@@ -225,7 +225,7 @@ export function StepSummary(props: StepSummaryProps) {
             data-testid="summary-features"
             className="flex p-4 w-full border rounded border-neutral-250 bg-neutral-100 mb-2"
           >
-            <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
+            <Icon iconName="check" className="text-green-500 mr-2" />
             <div className="flex-grow mr-2">
               <div className="text-sm text-neutral-400 font-bold mb-2">Features</div>
               <ul className="text-neutral-350 text-sm list-none">
@@ -281,18 +281,16 @@ export function StepSummary(props: StepSummaryProps) {
                 </Button>
               </>
             ) : (
-              <>
-                <Button
-                  data-testid="button-create"
-                  loading={props.isLoadingCreate}
-                  onClick={() => props.onSubmit(false)}
-                  size="lg"
-                  color="brand"
-                  variant="solid"
-                >
-                  Create
-                </Button>
-              </>
+              <Button
+                data-testid="button-create"
+                loading={props.isLoadingCreate}
+                onClick={() => props.onSubmit(false)}
+                size="lg"
+                color="brand"
+                variant="solid"
+              >
+                Create
+              </Button>
             )}
           </div>
         </div>

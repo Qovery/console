@@ -104,14 +104,14 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
       items: [
         {
           name: 'Create application',
-          contentLeft: <Icon name={IconAwesomeEnum.LAYER_GROUP} className="text-brand-500 text-sm" />,
+          contentLeft: <Icon iconName="layer-group" className="text-brand-500 text-sm" />,
           onClick: () => {
             navigate(`${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_APPLICATION_CREATION_URL}`)
           },
         },
         {
           name: 'Create database',
-          contentLeft: <Icon name={IconAwesomeEnum.DATABASE} className="text-brand-500 text-sm" />,
+          contentLeft: <Icon iconName="database" className="text-brand-500 text-sm" />,
           onClick: () => {
             navigate(`${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_DATABASE_CREATION_URL}`)
           },

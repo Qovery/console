@@ -36,18 +36,18 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
         type="button"
       >
         How it works 
-        <span
-          class="icon-regular-circle-question shrink-0 text-xs"
-          role="img"
+        <i
+          aria-hidden="true"
+          class="fa-regular fa-circle-question text-xs"
         />
       </span>
       <button
         class="inline-flex items-center shrink-0 font-medium transition text-sm h-11 px-5 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 mb-10"
       >
         See default values.yaml 
-        <span
-          class="icon-solid-arrow-up-right-from-square shrink-0 text-xs ml-2"
-          role="img"
+        <i
+          aria-hidden="true"
+          class="fa-solid fa-arrow-up-right-from-square text-xs ml-2"
         />
       </button>
       <form
@@ -153,9 +153,9 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                 class="inline-flex items-center shrink-0 font-medium transition text-xs px-3 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent w-full h-[36px]"
                 type="button"
               >
-                <span
-                  class="icon-solid-trash shrink-0 text-neutral-400"
-                  role="img"
+                <i
+                  aria-hidden="true"
+                  class="fa-solid fa-trash text-neutral-400"
                 />
               </button>
             </div>
@@ -220,18 +220,18 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                 type="button"
               >
                 Close json
-                <span
-                  class="icon-solid-angle-down shrink-0 text-neutral-400"
-                  role="img"
+                <i
+                  aria-hidden="true"
+                  class="fa-solid fa-angle-down text-neutral-400"
                 />
               </button>
               <button
                 class="inline-flex items-center shrink-0 font-medium transition text-xs px-3 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent w-full h-[36px]"
                 type="button"
               >
-                <span
-                  class="icon-solid-trash shrink-0 text-neutral-400"
-                  role="img"
+                <i
+                  aria-hidden="true"
+                  class="fa-solid fa-trash text-neutral-400"
                 />
               </button>
             </div>
@@ -331,9 +331,9 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                 class="inline-flex items-center shrink-0 font-medium transition text-xs px-3 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent w-full h-[36px]"
                 type="button"
               >
-                <span
-                  class="icon-solid-trash shrink-0 text-neutral-400"
-                  role="img"
+                <i
+                  aria-hidden="true"
+                  class="fa-solid fa-trash text-neutral-400"
                 />
               </button>
             </div>

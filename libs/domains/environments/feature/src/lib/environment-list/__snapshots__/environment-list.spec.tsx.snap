@@ -23,9 +23,9 @@ exports[`EnvironmentList should match snapshot 1`] = `
               type="button"
             >
               Environment
-              <span
-                class="icon-solid-angle-down shrink-0 "
-                role="img"
+              <i
+                aria-hidden="true"
+                class="fa-solid fa-angle-down "
               />
             </button>
           </div>
@@ -46,9 +46,9 @@ exports[`EnvironmentList should match snapshot 1`] = `
               type="button"
             >
               Environment status
-              <span
-                class="icon-solid-angle-down shrink-0 "
-                role="img"
+              <i
+                aria-hidden="true"
+                class="fa-solid fa-angle-down "
               />
             </button>
           </div>
@@ -69,9 +69,9 @@ exports[`EnvironmentList should match snapshot 1`] = `
               type="button"
             >
               Last deployment
-              <span
-                class="icon-solid-angle-down shrink-0 "
-                role="img"
+              <i
+                aria-hidden="true"
+                class="fa-solid fa-angle-down "
               />
             </button>
           </div>
@@ -92,9 +92,9 @@ exports[`EnvironmentList should match snapshot 1`] = `
               type="button"
             >
               Cluster
-              <span
-                class="icon-solid-angle-down shrink-0 "
-                role="img"
+              <i
+                aria-hidden="true"
+                class="fa-solid fa-angle-down "
               />
             </button>
           </div>

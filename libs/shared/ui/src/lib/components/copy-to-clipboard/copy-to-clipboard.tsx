@@ -2,7 +2,6 @@ import { Slot } from '@radix-ui/react-slot'
 import { Children, type ReactElement, type ReactNode, cloneElement, useState } from 'react'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import { Icon } from '../icon/icon'
-import { IconAwesomeEnum } from '../icon/icon-awesome.enum'
 
 export type CopyToClipboardProps = { text: string; children: ReactNode }
 
@@ -30,7 +29,7 @@ export function CopyToClipboard({ text, children }: CopyToClipboardProps) {
         ? cloneElement(
             child,
             { ...child.props, color: 'green', variant: 'solid' },
-            <Icon name={IconAwesomeEnum.CHECK} className="mr-2" />,
+            <Icon iconName="check" className="mr-2" />,
             'Copied'
           )
         : child}

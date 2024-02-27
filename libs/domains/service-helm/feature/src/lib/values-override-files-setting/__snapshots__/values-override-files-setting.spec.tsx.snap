@@ -25,9 +25,9 @@ exports[`ValuesOverrideFilesSetting should match snapshot with GIT_REPOSITORY ty
         type="button"
       >
         How it works 
-        <span
-          class="icon-regular-circle-question shrink-0 text-xs"
-          role="img"
+        <i
+          aria-hidden="true"
+          class="fa-regular fa-circle-question text-xs"
         />
       </span>
       <div
@@ -37,9 +37,9 @@ exports[`ValuesOverrideFilesSetting should match snapshot with GIT_REPOSITORY ty
         <div
           class="-order-2 text-base leading-6"
         >
-          <span
-            class="icon-solid-triangle-exclamation shrink-0 "
-            role="img"
+          <i
+            aria-hidden="true"
+            class="fa-solid fa-triangle-exclamation "
           />
         </div>
         <div
@@ -62,9 +62,9 @@ exports[`ValuesOverrideFilesSetting should match snapshot with GIT_REPOSITORY ty
             target="_blank"
           >
             Click here for more details
-            <span
-              class="icon-solid-arrow-up-right-from-square shrink-0 text-2xs leading-4"
-              role="img"
+            <i
+              aria-hidden="true"
+              class="fa-solid fa-arrow-up-right-from-square text-2xs leading-4"
             />
           </a>
         </div>
@@ -220,9 +220,9 @@ exports[`ValuesOverrideFilesSetting should match snapshot with NONE type 1`] = `
         type="button"
       >
         How it works 
-        <span
-          class="icon-regular-circle-question shrink-0 text-xs"
-          role="img"
+        <i
+          aria-hidden="true"
+          class="fa-regular fa-circle-question text-xs"
         />
       </span>
       <div
@@ -232,9 +232,9 @@ exports[`ValuesOverrideFilesSetting should match snapshot with NONE type 1`] = `
         <div
           class="-order-2 text-base leading-6"
         >
-          <span
-            class="icon-solid-triangle-exclamation shrink-0 "
-            role="img"
+          <i
+            aria-hidden="true"
+            class="fa-solid fa-triangle-exclamation "
           />
         </div>
         <div
@@ -257,9 +257,9 @@ exports[`ValuesOverrideFilesSetting should match snapshot with NONE type 1`] = `
             target="_blank"
           >
             Click here for more details
-            <span
-              class="icon-solid-arrow-up-right-from-square shrink-0 text-2xs leading-4"
-              role="img"
+            <i
+              aria-hidden="true"
+              class="fa-solid fa-arrow-up-right-from-square text-2xs leading-4"
             />
           </a>
         </div>
@@ -394,9 +394,9 @@ exports[`ValuesOverrideFilesSetting should match snapshot with YAML type 1`] = `
         type="button"
       >
         How it works 
-        <span
-          class="icon-regular-circle-question shrink-0 text-xs"
-          role="img"
+        <i
+          aria-hidden="true"
+          class="fa-regular fa-circle-question text-xs"
         />
       </span>
       <div
@@ -406,9 +406,9 @@ exports[`ValuesOverrideFilesSetting should match snapshot with YAML type 1`] = `
         <div
           class="-order-2 text-base leading-6"
         >
-          <span
-            class="icon-solid-triangle-exclamation shrink-0 "
-            role="img"
+          <i
+            aria-hidden="true"
+            class="fa-solid fa-triangle-exclamation "
           />
         </div>
         <div
@@ -431,9 +431,9 @@ exports[`ValuesOverrideFilesSetting should match snapshot with YAML type 1`] = `
             target="_blank"
           >
             Click here for more details
-            <span
-              class="icon-solid-arrow-up-right-from-square shrink-0 text-2xs leading-4"
-              role="img"
+            <i
+              aria-hidden="true"
+              class="fa-solid fa-arrow-up-right-from-square text-2xs leading-4"
             />
           </a>
         </div>
@@ -572,9 +572,9 @@ exports[`ValuesOverrideFilesSetting should match snapshot with YAML type 1`] = `
                 <div
                   class="text-center my-4 py-5 px-10"
                 >
-                  <span
-                    class="icon-solid-wave-pulse shrink-0 text-neutral-350"
-                    role="img"
+                  <i
+                    aria-hidden="true"
+                    class="fa-solid fa-wave-pulse text-neutral-350"
                   />
                   <p
                     class="text-neutral-350 font-medium text-xs mt-1 mb-3"
@@ -586,9 +586,9 @@ exports[`ValuesOverrideFilesSetting should match snapshot with YAML type 1`] = `
                     type="button"
                   >
                     Create override 
-                    <span
-                      class="icon-solid-pen shrink-0 ml-2"
-                      role="img"
+                    <i
+                      aria-hidden="true"
+                      class="fa-solid fa-pen ml-2"
                     />
                   </button>
                 </div>

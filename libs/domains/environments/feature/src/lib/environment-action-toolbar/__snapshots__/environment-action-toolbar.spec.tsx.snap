@@ -38,13 +38,13 @@ exports[`EnvironmentActionToolbar should match manage deployment snapshot 1`] = 
         class="flex items-center w-full h-full"
         data-state="closed"
       >
-        <span
-          class="icon-solid-play shrink-0 mr-3"
-          role="img"
+        <i
+          aria-hidden="true"
+          class="fa-solid fa-play mr-3"
         />
-        <span
-          class="icon-solid-angle-down shrink-0 "
-          role="img"
+        <i
+          aria-hidden="true"
+          class="fa-solid fa-angle-down "
         />
       </div>
     </button>
@@ -56,9 +56,9 @@ exports[`EnvironmentActionToolbar should match manage deployment snapshot 1`] = 
       tabindex="-1"
       type="button"
     >
-      <span
-        class="icon-solid-scroll shrink-0 "
-        role="img"
+      <i
+        aria-hidden="true"
+        class="fa-solid fa-scroll "
       />
     </button>
     <button
@@ -127,9 +127,9 @@ exports[`EnvironmentActionToolbar should match manage deployment snapshot 1`] = 
         role="menuitem"
         tabindex="-1"
       >
-        <span
-          class="icon-solid-rotate-right shrink-0 text-sm mr-3 text-brand-400"
-          role="img"
+        <i
+          aria-hidden="true"
+          class="fa-solid fa-rotate-right text-sm mr-3 text-brand-400"
         />
         Redeploy
       </div>
@@ -140,9 +140,9 @@ exports[`EnvironmentActionToolbar should match manage deployment snapshot 1`] = 
         role="menuitem"
         tabindex="-1"
       >
-        <span
-          class="icon-solid-circle-stop shrink-0 text-sm mr-3 text-brand-400"
-          role="img"
+        <i
+          aria-hidden="true"
+          class="fa-solid fa-circle-stop text-sm mr-3 text-brand-400"
         />
         Stop
       </div>
@@ -158,9 +158,9 @@ exports[`EnvironmentActionToolbar should match manage deployment snapshot 1`] = 
         role="menuitem"
         tabindex="-1"
       >
-        <span
-          class="icon-solid-rotate shrink-0 text-sm mr-3 text-brand-400"
-          role="img"
+        <i
+          aria-hidden="true"
+          class="fa-solid fa-rotate text-sm mr-3 text-brand-400"
         />
         Deploy latest version for..
       </div>
@@ -213,13 +213,13 @@ exports[`EnvironmentActionToolbar should match other actions snapshot 1`] = `
         class="flex items-center w-full h-full"
         data-state="closed"
       >
-        <span
-          class="icon-solid-play shrink-0 mr-3"
-          role="img"
+        <i
+          aria-hidden="true"
+          class="fa-solid fa-play mr-3"
         />
-        <span
-          class="icon-solid-angle-down shrink-0 "
-          role="img"
+        <i
+          aria-hidden="true"
+          class="fa-solid fa-angle-down "
         />
       </div>
     </button>
@@ -231,9 +231,9 @@ exports[`EnvironmentActionToolbar should match other actions snapshot 1`] = `
       tabindex="-1"
       type="button"
     >
-      <span
-        class="icon-solid-scroll shrink-0 "
-        role="img"
+      <i
+        aria-hidden="true"
+        class="fa-solid fa-scroll "
       />
     </button>
     <button
@@ -303,9 +303,9 @@ exports[`EnvironmentActionToolbar should match other actions snapshot 1`] = `
         role="menuitem"
         tabindex="-1"
       >
-        <span
-          class="icon-solid-scroll shrink-0 text-sm mr-3 text-brand-400"
-          role="img"
+        <i
+          aria-hidden="true"
+          class="fa-solid fa-scroll text-sm mr-3 text-brand-400"
         />
         Logs
       </div>
@@ -316,9 +316,9 @@ exports[`EnvironmentActionToolbar should match other actions snapshot 1`] = `
         role="menuitem"
         tabindex="-1"
       >
-        <span
-          class="icon-solid-clock-rotate-left shrink-0 text-sm mr-3 text-brand-400"
-          role="img"
+        <i
+          aria-hidden="true"
+          class="fa-solid fa-clock-rotate-left text-sm mr-3 text-brand-400"
         />
         See audit logs
       </div>
@@ -329,9 +329,9 @@ exports[`EnvironmentActionToolbar should match other actions snapshot 1`] = `
         role="menuitem"
         tabindex="-1"
       >
-        <span
-          class="icon-solid-copy shrink-0 text-sm mr-3 text-brand-400"
-          role="img"
+        <i
+          aria-hidden="true"
+          class="fa-solid fa-copy text-sm mr-3 text-brand-400"
         />
         Copy identifier
       </div>
@@ -342,9 +342,9 @@ exports[`EnvironmentActionToolbar should match other actions snapshot 1`] = `
         role="menuitem"
         tabindex="-1"
       >
-        <span
-          class="icon-solid-file-export shrink-0 text-sm mr-3 text-brand-400"
-          role="img"
+        <i
+          aria-hidden="true"
+          class="fa-solid fa-file-export text-sm mr-3 text-brand-400"
         />
         Export as Terraform
       </div>
@@ -355,9 +355,9 @@ exports[`EnvironmentActionToolbar should match other actions snapshot 1`] = `
         role="menuitem"
         tabindex="-1"
       >
-        <span
-          class="icon-solid-copy shrink-0 text-sm mr-3 text-brand-400"
-          role="img"
+        <i
+          aria-hidden="true"
+          class="fa-solid fa-copy text-sm mr-3 text-brand-400"
         />
         Clone
       </div>
@@ -373,9 +373,9 @@ exports[`EnvironmentActionToolbar should match other actions snapshot 1`] = `
         role="menuitem"
         tabindex="-1"
       >
-        <span
-          class="icon-solid-trash shrink-0 text-sm mr-3 text-red-600"
-          role="img"
+        <i
+          aria-hidden="true"
+          class="fa-solid fa-trash text-sm mr-3 text-red-600"
         />
         Delete environment
       </div>

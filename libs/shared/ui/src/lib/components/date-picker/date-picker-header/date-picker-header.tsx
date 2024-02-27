@@ -1,7 +1,6 @@
 import { getMonth, getYear } from 'date-fns'
 import { type ReactDatePickerCustomHeaderProps } from 'react-datepicker'
-import IconFa from '../../icon-fa/icon-fa'
-import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
+import { Icon } from '../../icon/icon'
 
 export type DatePickerHeaderProps = Omit<
   ReactDatePickerCustomHeaderProps,
@@ -50,7 +49,7 @@ export function DatePickerHeader({
           disabled={prevMonthButtonDisabled}
           data-testid="date-picker-header-previous-btn"
         >
-          <IconFa name={IconAwesomeEnum.CHEVRON_LEFT} />
+          <Icon iconName="chevron-left" />
         </button>
         <button
           className="inline-flex items-center justify-center text-sm w-5 h-5 transition-colors text-neutral-400 hover:text-brand-500 disabled:text-neutral-100"
@@ -58,7 +57,7 @@ export function DatePickerHeader({
           disabled={nextMonthButtonDisabled}
           data-testid="date-picker-header-next-btn"
         >
-          <IconFa name={IconAwesomeEnum.CHEVRON_RIGHT} />
+          <Icon iconName="chevron-right" />
         </button>
       </div>
     </div>

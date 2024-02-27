@@ -41,9 +41,9 @@ exports[`DeploymentSetting should match snapshot 1`] = `
             target="_blank"
           >
             See documentation
-            <span
-              class="icon-solid-arrow-up-right-from-square shrink-0 text-2xs leading-4"
-              role="img"
+            <i
+              aria-hidden="true"
+              class="fa-solid fa-arrow-up-right-from-square text-2xs leading-4"
             />
           </a>
         </p>

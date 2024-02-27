@@ -4,7 +4,6 @@ import { APPLICATION_SETTINGS_DOMAIN_URL, APPLICATION_SETTINGS_URL, APPLICATION_
 import {
   CopyToClipboardButtonIcon,
   Icon,
-  IconAwesomeEnum,
   Link,
   Popover,
   type PopoverContentProps,
@@ -63,7 +62,7 @@ export function ServiceLinksPopover({
             <Popover.Close>
               <Link to={pathDomainsSetting} color="brand" className="text-ssm">
                 Customize
-                <Icon name={IconAwesomeEnum.CIRCLE_PLUS} className="text-xs" />
+                <Icon iconName="circle-plus" className="text-xs" />
               </Link>
             </Popover.Close>
           )}

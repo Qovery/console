@@ -1,5 +1,5 @@
 import download from 'downloadjs'
-import { Button, Callout, ExternalLink, Icon, IconAwesomeEnum } from '@qovery/shared/ui'
+import { Button, Callout, ExternalLink, Icon } from '@qovery/shared/ui'
 import { useInstallationHelmValues } from '../hooks/use-installation-helm-values/use-installation-helm-values'
 
 export interface ClusterInstallationGuideModalProps {
@@ -37,7 +37,7 @@ export function ClusterInstallationGuideModal({
               className="gap-1"
             >
               Download configuration
-              <Icon name={IconAwesomeEnum.DOWNLOAD} />
+              <Icon iconName="download" />
             </Button>
           </span>
         </li>
@@ -55,7 +55,7 @@ export function ClusterInstallationGuideModal({
 
       <Callout.Root color="sky">
         <Callout.Icon>
-          <Icon name={IconAwesomeEnum.CIRCLE_INFO} />
+          <Icon iconName="circle-info" />
         </Callout.Icon>
         <Callout.Text className="text-xs">
           Note: You can access again this installation guide and the configuration file by opening the “Installation

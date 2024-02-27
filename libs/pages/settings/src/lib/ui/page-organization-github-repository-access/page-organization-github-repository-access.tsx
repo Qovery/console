@@ -56,7 +56,7 @@ export function PageOrganizationGithubRepositoryAccess(props: PageOrganizationGi
               }}
             >
               Add new token
-              <Icon name={IconAwesomeEnum.CIRCLE_PLUS} className="ml-2" />
+              <Icon iconName="circle-plus" className="ml-2" />
             </Button>
           </div>
           <GitTokenList />
@@ -70,7 +70,7 @@ export function PageOrganizationGithubRepositoryAccess(props: PageOrganizationGi
           </p>
           <Callout.Root className="mb-5" color="yellow">
             <Callout.Icon>
-              <Icon name={IconAwesomeEnum.CIRCLE_INFO} />
+              <Icon iconName="circle-info" />
             </Callout.Icon>
             <Callout.Text className="text-xs">
               The Qovery GitHub app is being deprecated, please use the Git tokens.

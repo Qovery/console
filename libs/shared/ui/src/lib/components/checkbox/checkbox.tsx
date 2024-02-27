@@ -2,7 +2,6 @@ import * as CheckboxPrimitive from '@radix-ui/react-checkbox'
 import { cva } from 'class-variance-authority'
 import { type ComponentPropsWithoutRef, type ElementRef, forwardRef } from 'react'
 import Icon from '../icon/icon'
-import { IconAwesomeEnum } from '../icon/icon-awesome.enum'
 
 const checkboxVariants = cva([
   'group',
@@ -41,7 +40,7 @@ const Checkbox = forwardRef<ElementRef<typeof CheckboxPrimitive.Root>, CheckboxP
           {props.checked === 'indeterminate' ? (
             <span className="w-[10px] h-[10px] bg-brand-500 group-disabled:bg-brand-300" />
           ) : (
-            <Icon name={IconAwesomeEnum.CHECK} className="text-xs text-white leading-[18px]" />
+            <Icon iconName="check" className="text-xs text-white leading-[18px]" />
           )}
         </span>
       </CheckboxPrimitive.Indicator>

@@ -11,7 +11,6 @@ import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes
 import {
   type ButtonIconActionElementProps,
   Icon,
-  IconAwesomeEnum,
   type MenuItemProps,
   type TableFilterProps,
   type TableHeadProps,
@@ -148,7 +147,7 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
 
   const rowActions: ButtonIconActionElementProps[] = [
     {
-      iconLeft: <Icon name={IconAwesomeEnum.ELLIPSIS_V} />,
+      iconLeft: <Icon iconName="ellipsis-v" />,
       menus: [
         {
           items:
@@ -156,9 +155,7 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
               ? [
                   {
                     name: 'Edit in Doppler',
-                    contentLeft: (
-                      <Icon name={IconAwesomeEnum.ARROW_UP_RIGHT_FROM_SQUARE} className="text-sm text-brand-500" />
-                    ),
+                    contentLeft: <Icon iconName="arrow-up-right-from-square" className="text-sm text-brand-500" />,
                     link: {
                       url: 'https://dashboard.doppler.com',
                       external: true,
@@ -200,7 +197,7 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
               },
             })
           },
-          contentLeft: <Icon name={IconAwesomeEnum.TRASH} className="text-sm text-red-600" />,
+          contentLeft: <Icon iconName="trash" className="text-sm text-red-600" />,
         },
       ],
     })

@@ -4,7 +4,6 @@ import { useState } from 'react'
 import { environmentFactoryMock } from '@qovery/shared/factories'
 import ButtonLegacy from '../buttons/button-legacy/button-legacy'
 import Icon from '../icon/icon'
-import { IconAwesomeEnum } from '../icon/icon-awesome.enum'
 import { Table, type TableFilterProps, type TableProps } from './table'
 import { TableRow } from './table-row/table-row'
 
@@ -79,7 +78,7 @@ const dataHead = [
           const isActive = currentFilter === data.mode
           return (
             <p>
-              {isActive ? <Icon name={IconAwesomeEnum.CHECK} /> : ''}
+              {isActive ? <Icon iconName="check" /> : ''}
               {data.status.state} {data.mode}
             </p>
           )

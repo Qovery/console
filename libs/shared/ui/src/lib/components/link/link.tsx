@@ -3,7 +3,6 @@ import { type ComponentPropsWithoutRef, forwardRef } from 'react'
 import { Link as ReactLink, type LinkProps as ReactLinkProps } from 'react-router-dom'
 import { twMerge } from '@qovery/shared/util-js'
 import Icon from '../icon/icon'
-import { IconAwesomeEnum } from '../icon/icon-awesome.enum'
 
 const linkVariants = cva(
   ['cursor-pointer', 'transition', 'duration-100', 'font-medium', 'inline-flex', 'items-center', 'gap-1'],
@@ -56,7 +55,7 @@ export const ExternalLink = forwardRef<HTMLAnchorElement, ExternalLinkProps>(fun
       {...props}
     >
       {children}
-      <Icon name={IconAwesomeEnum.ARROW_UP_RIGHT_FROM_SQUARE} className={iconVariants({ size })} />
+      <Icon iconName="arrow-up-right-from-square" className={iconVariants({ size })} />
     </a>
   )
 })

@@ -11,7 +11,7 @@ import {
   SERVICES_HELM_CREATION_VALUES_STEP_1_URL,
   SERVICES_URL,
 } from '@qovery/shared/routes'
-import { Button, FunnelFlowBody, Heading, Icon, IconAwesomeEnum, Section, truncateText } from '@qovery/shared/ui'
+import { Button, FunnelFlowBody, Heading, Icon, Section, truncateText } from '@qovery/shared/ui'
 import { getGitTokenValue } from '@qovery/shared/util-git'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
@@ -143,7 +143,7 @@ export function StepSummaryFeature() {
         </p>
 
         <div className="flex p-4 w-full border rounded border-neutral-250 bg-neutral-100 mb-2">
-          <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
+          <Icon iconName="check" className="text-green-500 mr-2" />
           <div className="flex-grow mr-2">
             <div className="text-sm text-neutral-400 font-bold mb-5">Helm General Data</div>
 
@@ -236,13 +236,13 @@ export function StepSummaryFeature() {
             variant="surface"
             onClick={() => navigate(pathCreate + SERVICES_CREATION_GENERAL_URL)}
           >
-            <Icon name={IconAwesomeEnum.WHEEL} />
+            <Icon iconName="gear" />
           </Button>
         </div>
 
         {(valuesOverrideFileData.type !== 'NONE' || valuesOverrideArgumentData.arguments.length > 0) && (
           <div className="flex p-4 w-full border rounded border-neutral-250 bg-neutral-100">
-            <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
+            <Icon iconName="check" className="text-green-500 mr-2" />
             <div className="flex-grow mr-2">
               <div className="text-sm text-neutral-400 font-bold mb-5">Variables</div>
 
@@ -287,7 +287,7 @@ export function StepSummaryFeature() {
               variant="surface"
               onClick={() => navigate(pathCreate + SERVICES_HELM_CREATION_VALUES_STEP_1_URL)}
             >
-              <Icon name={IconAwesomeEnum.WHEEL} />
+              <Icon iconName="gear" />
             </Button>
           </div>
         )}

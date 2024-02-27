@@ -6,7 +6,6 @@ import {
   Heading,
   HelpSection,
   Icon,
-  IconAwesomeEnum,
   InputText,
   LoaderSpinner,
   Section,
@@ -32,7 +31,7 @@ export function PageSettingsDomains(props: PageSettingsDomainsProps) {
 
           <Button size="lg" variant="solid" color="brand" onClick={() => props.onAddDomain()}>
             Add Domain
-            <Icon name={IconAwesomeEnum.CIRCLE_PLUS} className="ml-2" />
+            <Icon iconName="circle-plus" className="ml-2" />
           </Button>
         </div>
 
@@ -66,7 +65,7 @@ export function PageSettingsDomains(props: PageSettingsDomainsProps) {
                     className="justify-center w-[52px] h-[52px]"
                     onClick={() => props.onEdit(customDomain)}
                   >
-                    <Icon name={IconAwesomeEnum.WHEEL} />
+                    <Icon iconName="gear" />
                   </Button>
                   <Button
                     data-testid="delete-button"
@@ -76,7 +75,7 @@ export function PageSettingsDomains(props: PageSettingsDomainsProps) {
                     className="justify-center w-[52px] h-[52px]"
                     onClick={() => props.onDelete(customDomain)}
                   >
-                    <Icon name={IconAwesomeEnum.TRASH} />
+                    <Icon iconName="trash" />
                   </Button>
                 </div>
               ))}

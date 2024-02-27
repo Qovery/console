@@ -25,9 +25,9 @@ exports[`CreateCloneEnvironmentModal should match snapshots 1`] = `
         type="button"
       >
         Show how it works 
-        <span
-          class="icon-regular-circle-question shrink-0 text-xs"
-          role="img"
+        <i
+          aria-hidden="true"
+          class="fa-regular fa-circle-question text-xs"
         />
       </span>
       <form

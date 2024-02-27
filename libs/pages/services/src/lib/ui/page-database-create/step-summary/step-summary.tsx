@@ -44,7 +44,7 @@ export function StepSummary(props: StepSummaryProps) {
         {props.generalData.mode == DatabaseModeEnum.MANAGED && (
           <Callout.Root className="mb-5" color="yellow">
             <Callout.Icon>
-              <Icon name={IconAwesomeEnum.TRIANGLE_EXCLAMATION} />
+              <Icon iconName="triangle-exclamation" />
             </Callout.Icon>
             <Callout.Text>
               <Callout.TextHeading>Qovery manages this resource for you</Callout.TextHeading>
@@ -57,7 +57,7 @@ export function StepSummary(props: StepSummaryProps) {
           </Callout.Root>
         )}
         <div className="flex p-4 w-full border rounded border-neutral-250 bg-neutral-100 mb-2">
-          <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
+          <Icon iconName="check" className="text-green-500 mr-2" />
           <div className="flex-grow mr-2">
             <div className="text-sm text-neutral-400 font-bold mb-2">General information</div>
             <ul className="text-neutral-350 text-sm list-none">
@@ -91,7 +91,7 @@ export function StepSummary(props: StepSummaryProps) {
         </div>
 
         <div className="flex p-4 w-full border rounded border-neutral-250 bg-neutral-100 mb-10">
-          <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
+          <Icon iconName="check" className="text-green-500 mr-2" />
           <div className="flex-grow mr-2">
             <div className="text-sm text-neutral-400 font-bold mb-2">Resources</div>
             <ul className="text-neutral-350 text-sm list-none">

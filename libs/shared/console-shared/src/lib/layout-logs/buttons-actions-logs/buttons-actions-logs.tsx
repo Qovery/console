@@ -71,7 +71,7 @@ export function ButtonsActionsLogs(props: ButtonsActionsLogsProps) {
         className="btn btn-icon btn-icon--small btn-icon--dark"
         onClick={(event) => downloadJSON(event)}
       >
-        <Icon name={IconAwesomeEnum.CLOUD_ARROW_DOWN} />
+        <Icon iconName="cloud-arrow-down" />
       </a>
     </>
   )

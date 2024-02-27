@@ -5,16 +5,7 @@ import { match } from 'ts-pattern'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { type Database } from '@qovery/domains/services/data-access'
 import { CLUSTER_SETTINGS_RESOURCES_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
-import {
-  BlockContent,
-  Callout,
-  ExternalLink,
-  Icon,
-  IconAwesomeEnum,
-  InputText,
-  Link,
-  inputSizeUnitRules,
-} from '@qovery/shared/ui'
+import { BlockContent, Callout, ExternalLink, Icon, InputText, Link, inputSizeUnitRules } from '@qovery/shared/ui'
 import SettingsResourcesInstanceTypesFeature from '../../feature/settings-resources-instance-types-feature/setting-resources-instance-types-feature'
 
 export interface DatabaseSettingsResourcesProps {
@@ -172,7 +163,7 @@ export function DatabaseSettingsResources({
         {displayStorageWarning && (
           <Callout.Root className="mt-3" color="yellow">
             <Callout.Icon>
-              <Icon name={IconAwesomeEnum.CIRCLE_INFO} />
+              <Icon iconName="circle-info" />
             </Callout.Icon>
             <Callout.Text className="text-xs text-neutral-350">
               Once triggered, the update will be managed by your cloud provider and applied during the configured

@@ -9,7 +9,7 @@ import {
   useFetchEnvironment,
 } from '@qovery/domains/environment'
 import { useServices } from '@qovery/domains/services/feature'
-import { Icon, IconAwesomeEnum, useModal, useModalConfirmation } from '@qovery/shared/ui'
+import { Icon, useModal, useModalConfirmation } from '@qovery/shared/ui'
 import PageSettingsDeploymentPipeline from '../../ui/page-settings-deployment-pipeline/page-settings-deployment-pipeline'
 import StageModalFeature from './stage-modal-feature/stage-modal-feature'
 import StageOrderModalFeature from './stage-order-modal-feature/stage-order-modal-feature'
@@ -62,7 +62,7 @@ export function PageSettingsDeploymentPipelineFeature() {
             openModal({
               content: <StageModalFeature onClose={closeModal} environmentId={environmentId} stage={stage} />,
             }),
-          contentLeft: <Icon name={IconAwesomeEnum.PEN} className="text-sm text-brand-500" />,
+          contentLeft: <Icon iconName="pen" className="text-sm text-brand-500" />,
         },
         {
           name: 'Edit order',
@@ -70,7 +70,7 @@ export function PageSettingsDeploymentPipelineFeature() {
             openModal({
               content: <StageOrderModalFeature onClose={closeModal} stages={stages} />,
             }),
-          contentLeft: <Icon name={IconAwesomeEnum.ARROW_DOWN_19} className="text-sm text-brand-500" />,
+          contentLeft: <Icon iconName="arrow-down-1-9" className="text-sm text-brand-500" />,
         },
       ],
     },
@@ -85,7 +85,7 @@ export function PageSettingsDeploymentPipelineFeature() {
               name: stage.name,
               action: () => deleteEnvironmentDeploymentStage.mutate({ stageId: stage.id }),
             }),
-          contentLeft: <Icon name={IconAwesomeEnum.TRASH} className="text-sm text-red-600" />,
+          contentLeft: <Icon iconName="trash" className="text-sm text-red-600" />,
           containerClassName: 'text-red-600',
         },
       ],

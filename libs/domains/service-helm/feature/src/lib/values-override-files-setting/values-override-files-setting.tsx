@@ -1,7 +1,7 @@
 import { type GitProviderEnum, type HelmRequestAllOfSource } from 'qovery-typescript-axios'
 import { type PropsWithChildren, type ReactNode } from 'react'
 import { Controller, type UseFormReturn } from 'react-hook-form'
-import { Callout, ExternalLink, Heading, Icon, IconAwesomeEnum, InputSelect, Popover, Section } from '@qovery/shared/ui'
+import { Callout, ExternalLink, Heading, Icon, InputSelect, Popover, Section } from '@qovery/shared/ui'
 import ValuesOverrideYamlSetting from '../values-override-yaml-setting/values-override-yaml-setting'
 
 export type ValuesOverrideTypes = 'GIT_REPOSITORY' | 'YAML' | 'NONE'
@@ -46,7 +46,7 @@ export function ValuesOverrideFilesSetting({
       <Popover.Root>
         <Popover.Trigger>
           <span className="text-sm cursor-pointer text-brand-500 hover:text-brand-600 transition font-medium mb-6">
-            How it works <Icon className="text-xs" name={IconAwesomeEnum.CIRCLE_QUESTION} />
+            How it works <Icon className="text-xs" iconStyle="regular" iconName="circle-question" />
           </span>
         </Popover.Trigger>
         <Popover.Content side="left" className="text-neutral-350 text-sm relative" style={{ width: 440 }}>
@@ -80,14 +80,14 @@ export function ValuesOverrideFilesSetting({
           </ExternalLink>
           <Popover.Close className="absolute top-4 right-4">
             <button type="button">
-              <Icon name={IconAwesomeEnum.XMARK} className="text-lg leading-4 text-neutral-400" />
+              <Icon iconName="xmark" className="text-lg leading-4 text-neutral-400" />
             </button>
           </Popover.Close>
         </Popover.Content>
       </Popover.Root>
       <Callout.Root className="mb-6 text-xs" color="yellow">
         <Callout.Icon>
-          <Icon name={IconAwesomeEnum.TRIANGLE_EXCLAMATION} />
+          <Icon iconName="triangle-exclamation" />
         </Callout.Icon>
         <Callout.Text>
           <Callout.TextHeading>Add the Qovery macros to your override</Callout.TextHeading>

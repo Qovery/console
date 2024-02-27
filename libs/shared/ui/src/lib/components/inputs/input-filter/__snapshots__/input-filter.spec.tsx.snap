@@ -36,9 +36,9 @@ exports[`InputFilter should match input filter with value 1`] = `
           data-testid="clear-btn"
           role="button"
         >
-          <span
-            class="icon-solid-xmark shrink-0 "
-            role="img"
+          <i
+            aria-hidden="true"
+            class="fa-solid fa-xmark "
           />
         </span>
       </span>

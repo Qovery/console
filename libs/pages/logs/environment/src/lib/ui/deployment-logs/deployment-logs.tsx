@@ -10,7 +10,7 @@ import { type AnyService } from '@qovery/domains/services/data-access'
 import { type ErrorLogsProps, LayoutLogs } from '@qovery/shared/console-shared'
 import { type DeploymentService, type LoadingStatus } from '@qovery/shared/interfaces'
 import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
-import { Icon, IconAwesomeEnum, StatusChip } from '@qovery/shared/ui'
+import { Icon, StatusChip } from '@qovery/shared/ui'
 import { dateFullFormat } from '@qovery/shared/util-dates'
 import { mergeDeploymentServices, trimId } from '@qovery/shared/util-js'
 import RowDeployment from '../row-deployment/row-deployment'
@@ -135,7 +135,7 @@ export function DeploymentLogs({
           onClick={() => setShowPreviousLogs?.(true)}
         >
           Load previous logs
-          <Icon name={IconAwesomeEnum.ARROW_UP} className="ml-1.5" />
+          <Icon iconName="arrow-up" className="ml-1.5" />
         </button>
       )}
       <div className="pb-8">{memoRow}</div>

@@ -8,16 +8,7 @@ import {
   SERVICES_HELM_CREATION_VALUES_STEP_1_URL,
   SERVICES_URL,
 } from '@qovery/shared/routes'
-import {
-  Button,
-  Callout,
-  FunnelFlowBody,
-  FunnelFlowHelpCard,
-  Heading,
-  Icon,
-  IconAwesomeEnum,
-  Section,
-} from '@qovery/shared/ui'
+import { Button, Callout, FunnelFlowBody, FunnelFlowHelpCard, Heading, Icon, Section } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { useHelmCreateContext } from '../page-helm-create-feature'
 
@@ -99,7 +90,7 @@ export function StepGeneralFeature() {
               {watchFieldProvider === 'HELM_REPOSITORY' && (
                 <Callout.Root color="sky" className="mt-5">
                   <Callout.Icon>
-                    <Icon name={IconAwesomeEnum.CIRCLE_INFO} />
+                    <Icon iconName="circle-info" />
                   </Callout.Icon>
                   <Callout.Text className="text-xs">
                     <Callout.TextHeading>

@@ -11,7 +11,6 @@ import {
   Callout,
   ExternalLink,
   Icon,
-  IconAwesomeEnum,
   InputText,
   Link,
   Slider,
@@ -144,7 +143,7 @@ export function ApplicationSettingsResources({
         {displayWarningCpu && (
           <Callout.Root color="red" className="mt-3" data-testid="banner-box">
             <Callout.Icon>
-              <Icon name={IconAwesomeEnum.TRIANGLE_EXCLAMATION} />
+              <Icon iconName="triangle-exclamation" />
             </Callout.Icon>
             <Callout.Text>
               <Callout.TextHeading>Not enough resources</Callout.TextHeading>
@@ -206,7 +205,7 @@ export function ApplicationSettingsResources({
           {environmentMode === EnvironmentModeEnum.PRODUCTION && watchInstances[0] === 1 && (
             <Callout.Root color="yellow" className="mt-3" data-testid="banner-box">
               <Callout.Icon>
-                <Icon name={IconAwesomeEnum.TRIANGLE_EXCLAMATION} />
+                <Icon iconName="triangle-exclamation" />
               </Callout.Icon>
               <Callout.Text>
                 We strongly discourage running your production environment with only one instance. This setup might

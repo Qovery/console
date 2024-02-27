@@ -2,7 +2,7 @@ import { type Cluster, ClusterDeleteMode } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { CLUSTERS_URL } from '@qovery/shared/routes'
-import { Callout, Icon, IconAwesomeEnum, InputSelect, ModalConfirmation } from '@qovery/shared/ui'
+import { Callout, Icon, InputSelect, ModalConfirmation } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import useDeleteCluster from '../hooks/use-delete-cluster/use-delete-cluster'
 
@@ -87,7 +87,7 @@ export function ClusterDeleteModal({ cluster }: ClusterDeleteModalProps) {
         {clusterDeleteMode !== ClusterDeleteMode.DELETE_QOVERY_CONFIG && (
           <Callout.Root className="mt-3 text-xs" color="yellow">
             <Callout.Icon>
-              <Icon name={IconAwesomeEnum.TRIANGLE_EXCLAMATION} />
+              <Icon iconName="triangle-exclamation" />
             </Callout.Icon>
             <Callout.Text>
               <p>Please note that you will have to manually delete on your cloud account:</p>

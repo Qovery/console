@@ -13,7 +13,6 @@ import {
   ButtonLegacyStyle,
   HelpSection,
   Icon,
-  IconAwesomeEnum,
   InputText,
   InputTextArea,
   LoaderSpinner,
@@ -55,7 +54,7 @@ export function PageOrganizationRolesEdit(props: PageOrganizationRolesEditProps)
                     onClick={() => navigate(SETTINGS_URL(organizationId) + SETTINGS_ROLES_URL)}
                     className="!px-0 mb-1"
                   >
-                    <Icon name={IconAwesomeEnum.ARROW_LEFT} className="mr-1 text-xs" />
+                    <Icon iconName="arrow-left" className="mr-1 text-xs" />
                     Back
                   </ButtonLegacy>
                   <h1 className="h5 text-neutral-400 mb-2">Edit your custom role: {currentRole.name}</h1>

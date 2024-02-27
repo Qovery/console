@@ -7,7 +7,6 @@ import {
   AvatarStyle,
   Button,
   Icon,
-  IconAwesomeEnum,
   InputCheckbox,
   LoaderSpinner,
   ScrollShadowWrapper,
@@ -176,7 +175,7 @@ export function UpdateAllModal({ environment }: UpdateAllModalProps) {
                       />
                       <TagCommit withBackground commitId={gitRepository?.deployed_commit_id} />
                     </div>
-                    <Icon name={IconAwesomeEnum.ARROW_LEFT} className="-scale-100 text-neutral-400 mx-2" />
+                    <Icon iconName="arrow-left" className="-scale-100 text-neutral-400 mx-2" />
                     {application.commits && Boolean(application.commits.length) && (
                       <div
                         data-testid="last-commit-block"
@@ -201,7 +200,7 @@ export function UpdateAllModal({ environment }: UpdateAllModalProps) {
         </ScrollShadowWrapper>
       ) : (
         <div className="text-center px-3 py-6" data-testid="empty-state">
-          <Icon name={IconAwesomeEnum.WAVE_PULSE} className="text-neutral-350" />
+          <Icon iconName="wave-pulse" className="text-neutral-350" />
           <p className="text-neutral-350 font-medium text-xs mt-1">No outdated services found</p>
         </div>
       )}

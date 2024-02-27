@@ -11,7 +11,7 @@ import {
   ENVIRONMENT_LOGS_URL,
   SERVICE_LOGS_URL,
 } from '@qovery/shared/routes'
-import { Icon, IconAwesomeEnum } from '@qovery/shared/ui'
+import { Icon } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import DeploymentLogsFeature from './feature/deployment-logs-feature/deployment-logs-feature'
 import PodLogsFeature from './feature/pod-logs-feature/pod-logs-feature'
@@ -96,7 +96,7 @@ export function PageEnvironmentLogs() {
         location.pathname === ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId)) && (
         <div className="flex justify-center w-[calc(100%-8px)] min-h-full bg-neutral-650 m-1 rounded">
           <div className="flex flex-col items-center mt-12">
-            <Icon name={IconAwesomeEnum.WRENCH} className="text-neutral-300" />
+            <Icon iconName="wrench" className="text-neutral-300" />
             <div className="text-neutral-300 font-medium">
               Please select a service on the left menu to access its deployment logs or live logs.
               <p>

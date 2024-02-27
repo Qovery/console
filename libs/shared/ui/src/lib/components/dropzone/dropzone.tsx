@@ -1,6 +1,5 @@
 import { twMerge } from '@qovery/shared/util-js'
 import Icon from '../icon/icon'
-import { IconAwesomeEnum } from '../icon/icon-awesome.enum'
 
 export interface DropzoneProps {
   isDragActive: boolean
@@ -20,7 +19,7 @@ export function Dropzone({ isDragActive, typeFile = '.env', className }: Dropzon
       )}
     >
       <div className="flex items-center h-full justify-center flex-col text-center">
-        <Icon name={IconAwesomeEnum.FILE_ARROW_DOWN} className="text-xl mb-2" />
+        <Icon iconName="file-arrow-down" className="text-xl mb-2" />
         {!isDragActive ? (
           <p>
             Click to import your {typeFile} file or

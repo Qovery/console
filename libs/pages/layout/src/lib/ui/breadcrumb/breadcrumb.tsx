@@ -93,7 +93,7 @@ export function Breadcrumb(props: BreadcrumbProps) {
       button: {
         label: (
           <span>
-            New <Icon name={IconAwesomeEnum.CIRCLE_PLUS} className="ml-0.5" />
+            New <Icon iconName="circle-plus" className="ml-0.5" />
           </span>
         ),
         onClick: () => createProjectModal(),

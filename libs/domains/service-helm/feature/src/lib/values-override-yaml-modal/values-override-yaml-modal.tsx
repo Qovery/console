@@ -1,14 +1,6 @@
 import { type HelmRequestAllOfSource } from 'qovery-typescript-axios'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
-import {
-  BlockContent,
-  CodeEditor,
-  CopyToClipboardButtonIcon,
-  Icon,
-  IconAwesomeEnum,
-  LoaderSpinner,
-  ModalCrud,
-} from '@qovery/shared/ui'
+import { BlockContent, CodeEditor, CopyToClipboardButtonIcon, Icon, LoaderSpinner, ModalCrud } from '@qovery/shared/ui'
 import useHelmDefaultValues from '../hooks/use-helm-default-values/use-helm-default-values'
 
 export interface ValuesOverrideYamlModalProps {
@@ -78,7 +70,7 @@ export function ValuesOverrideYamlModal({
           >
             {isErrorHelmDefaultValues && (
               <div className="text-center py-14 px-5">
-                <Icon name={IconAwesomeEnum.WAVE_PULSE} className="text-neutral-350" />
+                <Icon iconName="wave-pulse" className="text-neutral-350" />
                 <p className="text-neutral-350 font-medium text-xs mt-1 mb-3">No default values.yaml available</p>
               </div>
             )}

@@ -22,9 +22,9 @@ exports[`HelpSection should match snapshot 1`] = `
           target="_blank"
         >
           How to configure my application
-          <span
-            class="icon-solid-arrow-up-right-from-square shrink-0 text-xs leading-5"
-            role="img"
+          <i
+            aria-hidden="true"
+            class="fa-solid fa-arrow-up-right-from-square text-xs leading-5"
           />
         </a>
         <a
@@ -34,9 +34,9 @@ exports[`HelpSection should match snapshot 1`] = `
           target="_blank"
         >
           How to delete my application
-          <span
-            class="icon-solid-arrow-up-right-from-square shrink-0 text-xs leading-5"
-            role="img"
+          <i
+            aria-hidden="true"
+            class="fa-solid fa-arrow-up-right-from-square text-xs leading-5"
           />
         </a>
       </div>

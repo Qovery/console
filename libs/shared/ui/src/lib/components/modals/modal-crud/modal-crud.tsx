@@ -2,7 +2,6 @@ import { type FormEventHandler, type ReactNode, useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle } from '../../buttons/button-legacy/button-legacy'
 import Icon from '../../icon/icon'
-import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
 import { Popover } from '../../popover/popover'
 import Truncate from '../../truncate/truncate'
 
@@ -60,7 +59,7 @@ export function ModalCrud(props: ModalCrudProps) {
         <Popover.Root>
           <Popover.Trigger>
             <span className="text-sm cursor-pointer text-brand-500 hover:text-brand-600 transition font-medium mt-2">
-              Show how it works <Icon className="text-xs" name={IconAwesomeEnum.CIRCLE_QUESTION} />
+              Show how it works <Icon className="text-xs" iconStyle="regular" iconName="circle-question" />
             </span>
           </Popover.Trigger>
           <Popover.Content side="left" className="text-neutral-350 text-sm relative" style={{ width: 440 }}>

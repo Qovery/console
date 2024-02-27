@@ -1,6 +1,6 @@
 import { type HelmRequestAllOfSource } from 'qovery-typescript-axios'
 import { useParams } from 'react-router'
-import { BlockContent, Button, CodeEditor, Icon, IconAwesomeEnum, useModal } from '@qovery/shared/ui'
+import { BlockContent, Button, CodeEditor, Icon, useModal } from '@qovery/shared/ui'
 import ValuesOverrideYamlModal from '../values-override-yaml-modal/values-override-yaml-modal'
 
 export interface ValuesOverrideYamlSettingProps {
@@ -43,7 +43,7 @@ export function ValuesOverrideYamlSetting({ onSubmit, content, source }: ValuesO
             onClick={openModalValuesOverrideYaml}
             className="hover:text-neutral-400"
           >
-            <Icon name={IconAwesomeEnum.PEN} />
+            <Icon iconName="pen" />
           </Button>
         )
       }
@@ -52,10 +52,10 @@ export function ValuesOverrideYamlSetting({ onSubmit, content, source }: ValuesO
         <CodeEditor value={content} readOnly height="300px" language="yaml" />
       ) : (
         <div className="text-center my-4 py-5 px-10">
-          <Icon name={IconAwesomeEnum.WAVE_PULSE} className="text-neutral-350" />
+          <Icon iconName="wave-pulse" className="text-neutral-350" />
           <p className="text-neutral-350 font-medium text-xs mt-1 mb-3">No override defined.</p>
           <Button type="button" size="md" onClick={openModalValuesOverrideYaml}>
-            Create override <Icon name={IconAwesomeEnum.PEN} className="ml-2" />
+            Create override <Icon iconName="pen" className="ml-2" />
           </Button>
         </div>
       )}

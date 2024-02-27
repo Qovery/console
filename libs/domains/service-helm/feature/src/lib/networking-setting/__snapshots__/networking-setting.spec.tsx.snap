@@ -29,9 +29,9 @@ exports[`NetworkingSetting should match snapshot in empty state 1`] = `
             type="button"
           >
             How it works 
-            <span
-              class="icon-regular-circle-question shrink-0 text-xs"
-              role="img"
+            <i
+              aria-hidden="true"
+              class="fa-regular fa-circle-question text-xs"
             />
           </span>
         </div>
@@ -63,9 +63,9 @@ exports[`NetworkingSetting should match snapshot in empty state 1`] = `
             <div
               class="text-center my-4 py-5 px-10"
             >
-              <span
-                class="icon-solid-wave-pulse shrink-0 text-neutral-300"
-                role="img"
+              <i
+                aria-hidden="true"
+                class="fa-solid fa-wave-pulse text-neutral-300"
               />
               <p
                 class="text-neutral-350 font-medium text-xs mt-1 mb-3"
@@ -110,9 +110,9 @@ exports[`NetworkingSetting should match snapshot with ports 1`] = `
             type="button"
           >
             How it works 
-            <span
-              class="icon-regular-circle-question shrink-0 text-xs"
-              role="img"
+            <i
+              aria-hidden="true"
+              class="fa-regular fa-circle-question text-xs"
             />
           </span>
         </div>
@@ -177,9 +177,9 @@ exports[`NetworkingSetting should match snapshot with ports 1`] = `
                   data-testid="edit-port"
                   type="button"
                 >
-                  <span
-                    class="icon-solid-wheel shrink-0 "
-                    role="img"
+                  <i
+                    aria-hidden="true"
+                    class="fa-solid fa-gear "
                   />
                 </button>
                 <button
@@ -187,9 +187,9 @@ exports[`NetworkingSetting should match snapshot with ports 1`] = `
                   data-testid="remove-port"
                   type="button"
                 >
-                  <span
-                    class="icon-solid-trash shrink-0 "
-                    role="img"
+                  <i
+                    aria-hidden="true"
+                    class="fa-solid fa-trash "
                   />
                 </button>
               </div>
@@ -229,9 +229,9 @@ exports[`NetworkingSetting should match snapshot with ports 1`] = `
                   data-testid="edit-port"
                   type="button"
                 >
-                  <span
-                    class="icon-solid-wheel shrink-0 "
-                    role="img"
+                  <i
+                    aria-hidden="true"
+                    class="fa-solid fa-gear "
                   />
                 </button>
                 <button
@@ -239,9 +239,9 @@ exports[`NetworkingSetting should match snapshot with ports 1`] = `
                   data-testid="remove-port"
                   type="button"
                 >
-                  <span
-                    class="icon-solid-trash shrink-0 "
-                    role="img"
+                  <i
+                    aria-hidden="true"
+                    class="fa-solid fa-trash "
                   />
                 </button>
               </div>

@@ -19,7 +19,6 @@ import {
   Heading,
   HelpSection,
   Icon,
-  IconAwesomeEnum,
   InputSelect,
   InputText,
   Section,
@@ -183,7 +182,7 @@ export function PageSettingsGeneral({
                   {watchFieldProvider === 'HELM_REPOSITORY' && (
                     <Callout.Root color="sky" className="mt-5">
                       <Callout.Icon>
-                        <Icon name={IconAwesomeEnum.CIRCLE_INFO} />
+                        <Icon iconName="circle-info" />
                       </Callout.Icon>
                       <Callout.Text className="text-xs">
                         <Callout.TextHeading>

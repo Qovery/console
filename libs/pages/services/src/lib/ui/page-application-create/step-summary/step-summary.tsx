@@ -58,7 +58,7 @@ export function StepSummary({
 
       <div className="mb-10">
         <div className="flex p-4 w-full border rounded border-neutral-250 bg-neutral-100 mb-2">
-          <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
+          <Icon iconName="check" className="text-green-500 mr-2" />
           <div className="flex-grow mr-2">
             <div className="text-sm text-neutral-400 font-bold mb-2">General information</div>
             <ul className="text-neutral-350 text-sm list-none">
@@ -130,7 +130,7 @@ export function StepSummary({
         </div>
 
         <div className="flex p-4 w-full border rounded border-neutral-250 bg-neutral-100 mb-2">
-          <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
+          <Icon iconName="check" className="text-green-500 mr-2" />
           <div className="flex-grow mr-2">
             <div className="text-sm text-neutral-400 font-bold mb-2">Resources</div>
             <ul className="text-neutral-350 text-sm list-none">
@@ -158,7 +158,7 @@ export function StepSummary({
         </div>
 
         <div className="flex p-4 w-full border rounded border-neutral-250 bg-neutral-100 mb-2">
-          <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
+          <Icon iconName="check" className="text-green-500 mr-2" />
           <div className="flex-grow mr-2">
             <div className="text-sm text-neutral-400 font-bold mb-2">Ports</div>
             <ul className="text-neutral-350 text-sm">

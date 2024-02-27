@@ -1,7 +1,7 @@
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import type { Column, Row, RowData } from '@tanstack/react-table'
 import { Fragment, type ReactNode, useMemo, useState } from 'react'
-import { Button, Icon, IconAwesomeEnum, Popover, Truncate } from '@qovery/shared/ui'
+import { Button, Icon, Popover, Truncate } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 
 declare module '@tanstack/table-core' {
@@ -41,13 +41,11 @@ export function ServiceListFilter({ column }: { column: Column<any, unknown> }) 
               variant={column.getIsFiltered() ? 'solid' : 'surface'}
             >
               {column.getIsFiltered() ? (
-                <>
-                  <Truncate text={(column.getFilterValue() as string[]).join(', ')} truncateLimit={18} />
-                </>
+                <Truncate text={(column.getFilterValue() as string[]).join(', ')} truncateLimit={18} />
               ) : (
                 <>
                   {column.columnDef.header?.toString()}
-                  <Icon name={IconAwesomeEnum.ANGLE_DOWN} />
+                  <Icon iconName="angle-down" />
                 </>
               )}
             </Button>
@@ -58,7 +56,7 @@ export function ServiceListFilter({ column }: { column: Column<any, unknown> }) 
               className="absolute right-0 px-2 text-white cursor-pointer h-7 text-center leading-7"
               onClick={() => column.setFilterValue([])}
             >
-              <Icon name={IconAwesomeEnum.XMARK} />
+              <Icon iconName="xmark" />
             </button>
           ) : null}
         </div>

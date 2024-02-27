@@ -1,14 +1,5 @@
 import { type Environment } from 'qovery-typescript-axios'
-import {
-  Button,
-  Callout,
-  DropdownMenu,
-  Icon,
-  IconAwesomeEnum,
-  Tooltip,
-  useModal,
-  useModalConfirmation,
-} from '@qovery/shared/ui'
+import { Button, Callout, DropdownMenu, Icon, Tooltip, useModal, useModalConfirmation } from '@qovery/shared/ui'
 import {
   isDeleteAvailable,
   isDeployAvailable,
@@ -50,7 +41,7 @@ function ConfirmationModal({
       {selectedRowsCount !== count && (
         <Callout.Root color="yellow">
           <Callout.Icon>
-            <Icon name={IconAwesomeEnum.TRIANGLE_EXCLAMATION} />
+            <Icon iconName="triangle-exclamation" />
           </Callout.Icon>
           <Callout.Text>
             <Callout.TextHeading>Some services will not be impacted:</Callout.TextHeading>
@@ -279,19 +270,19 @@ export function ServiceListActionBar({ environment, selectedRows, resetRowSelect
                   onClick={() => handleDeployAllServices()}
                   disabled={deployableServices.length === 0}
                 >
-                  Deploy selected <Icon name={IconAwesomeEnum.PLAY} />
+                  Deploy selected <Icon iconName="play" />
                 </Button>
               </Tooltip>
               <DropdownMenu.Root modal={false}>
                 <DropdownMenu.Trigger asChild>
                   <Button color="neutral" size="md" variant="surface" className="items-center gap-2">
-                    More <Icon name={IconAwesomeEnum.ANGLE_DOWN} />
+                    More <Icon iconName="angle-down" />
                   </Button>
                 </DropdownMenu.Trigger>
                 <DropdownMenu.Content>
                   <Tooltip content="No restartable services" disabled={restartableServices.length !== 0}>
                     <DropdownMenu.Item
-                      icon={<Icon name={IconAwesomeEnum.ROTATE_RIGHT} />}
+                      icon={<Icon iconName="rotate-right" />}
                       onSelect={handleRestartAllServices}
                       disabled={restartableServices.length === 0}
                     >
@@ -300,7 +291,7 @@ export function ServiceListActionBar({ environment, selectedRows, resetRowSelect
                   </Tooltip>
                   <Tooltip content="No stoppable services" disabled={stoppableServices.length !== 0}>
                     <DropdownMenu.Item
-                      icon={<Icon name={IconAwesomeEnum.CIRCLE_STOP} />}
+                      icon={<Icon iconName="circle-stop" />}
                       onSelect={handleStopAllServices}
                       disabled={stoppableServices.length === 0}
                     >
@@ -311,7 +302,7 @@ export function ServiceListActionBar({ environment, selectedRows, resetRowSelect
                   <Tooltip content="No deletable services" disabled={deletableServices.length !== 0}>
                     <DropdownMenu.Item
                       color="red"
-                      icon={<Icon name={IconAwesomeEnum.TRASH} />}
+                      icon={<Icon iconName="trash" />}
                       onSelect={handleDeleteAllServices}
                       disabled={deletableServices.length === 0}
                     >

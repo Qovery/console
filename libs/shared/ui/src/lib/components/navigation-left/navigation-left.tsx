@@ -1,6 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
 import { Icon } from '../icon/icon'
-import { IconAwesomeEnum } from '../icon/icon-awesome.enum'
 import NavigationLeftSubLink from './navigation-left-sub-link/navigation-left-sub-link'
 
 export interface NavigationLeftProps {
@@ -56,7 +55,7 @@ export function NavigationLeft(props: NavigationLeftProps) {
         {link && (
           <span className="link cursor-pointer text-sm text-brand-500 font-medium" onClick={() => link.onClick()}>
             {link.title}
-            <Icon name={IconAwesomeEnum.CIRCLE_PLUS} className="ml-1" />
+            <Icon iconName="circle-plus" className="ml-1" />
           </span>
         )}
       </div>

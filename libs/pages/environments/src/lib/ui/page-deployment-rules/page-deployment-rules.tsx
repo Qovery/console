@@ -9,7 +9,7 @@ import {
   type DroppableProvided,
 } from 'react-beautiful-dnd'
 import { useNavigate } from 'react-router-dom'
-import { type BaseLink, Button, HelpSection, Icon, IconAwesomeEnum } from '@qovery/shared/ui'
+import { type BaseLink, Button, HelpSection, Icon } from '@qovery/shared/ui'
 import DeploymentRuleItem from '../deployment-rule-item/deployment-rule-item'
 import PlaceholderNoRules from '../placeholder-no-rules/placeholder-no-rules'
 
@@ -64,7 +64,7 @@ export function PageDeploymentRules({
               Configure your default deployment rules. Drag & drop rules to prioritize them.
             </p>
             <Button size="lg" onClick={() => navigate(linkNewRule)}>
-              Add rule <Icon className="ml-2" name={IconAwesomeEnum.CIRCLE_PLUS} />
+              Add rule <Icon className="ml-2" iconName="circle-plus" />
             </Button>
           </div>
 

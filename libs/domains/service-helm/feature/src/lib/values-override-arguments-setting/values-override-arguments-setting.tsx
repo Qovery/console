@@ -15,7 +15,6 @@ import {
   EmptyState,
   Heading,
   Icon,
-  IconAwesomeEnum,
   InputSelectSmall,
   InputTextSmall,
   Popover,
@@ -98,7 +97,7 @@ function Row({ key, index, remove }: { key: string; index: number; remove: UseFi
             onClick={() => setOpenEditor(!openEditor)}
           >
             {openEditor ? 'Close json' : 'Open json'}
-            <Icon name={IconAwesomeEnum.ANGLE_DOWN} className="text-neutral-400" />
+            <Icon iconName="angle-down" className="text-neutral-400" />
           </Button>
         ) : (
           <Controller
@@ -120,7 +119,7 @@ function Row({ key, index, remove }: { key: string; index: number; remove: UseFi
           className="w-full h-[36px]"
           onClick={() => remove(index)}
         >
-          <Icon name={IconAwesomeEnum.TRASH} className="text-neutral-400" />
+          <Icon iconName="trash" className="text-neutral-400" />
         </Button>
       </div>
       {valueTypeJson && openEditor && (
@@ -193,7 +192,7 @@ export function ValuesOverrideArgumentsSetting({
       <Popover.Root>
         <Popover.Trigger>
           <span className="text-sm cursor-pointer text-brand-500 hover:text-brand-600 transition font-medium mb-6">
-            How it works <Icon className="text-xs" name={IconAwesomeEnum.CIRCLE_QUESTION} />
+            How it works <Icon className="text-xs" iconStyle="regular" iconName="circle-question" />
           </span>
         </Popover.Trigger>
         <Popover.Content side="left" className="text-neutral-350 text-sm relative" style={{ width: 440 }}>
@@ -218,7 +217,7 @@ export function ValuesOverrideArgumentsSetting({
           </p>
           <Popover.Close className="absolute top-4 right-4">
             <button type="button">
-              <Icon name={IconAwesomeEnum.XMARK} className="text-lg leading-4 text-neutral-400" />
+              <Icon iconName="xmark" className="text-lg leading-4 text-neutral-400" />
             </button>
           </Popover.Close>
         </Popover.Content>
@@ -230,7 +229,7 @@ export function ValuesOverrideArgumentsSetting({
         className="mb-10"
         onClick={() => createHelmDefaultValuesMutation()}
       >
-        See default values.yaml <Icon className="text-xs ml-2" name={IconAwesomeEnum.ARROW_UP_RIGHT_FROM_SQUARE} />
+        See default values.yaml <Icon className="text-xs ml-2" iconName="arrow-up-right-from-square" />
       </Button>
       <form onSubmit={onSubmit} className="w-full">
         {fields.length > 0 ? (

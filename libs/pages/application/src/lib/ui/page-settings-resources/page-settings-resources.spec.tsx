@@ -1,7 +1,6 @@
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { applicationFactoryMock } from '@qovery/shared/factories'
 import { type ApplicationResourcesData } from '@qovery/shared/interfaces'
-import { IconAwesomeEnum } from '@qovery/shared/ui'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import PageSettingsResources, { type PageSettingsResourcesProps } from './page-settings-resources'
 
@@ -63,7 +62,7 @@ describe('PageSettingsResources', () => {
   it('should render warning box and icon for cpu', async () => {
     props.displayWarningCpu = true
 
-    renderWithProviders(
+    const { container } = renderWithProviders(
       wrapWithReactHookForm(<PageSettingsResources {...props} />, {
         defaultValues: { cpu: 10, instances: [1, 1], memory: 323 },
       })
@@ -73,10 +72,7 @@ describe('PageSettingsResources', () => {
     // https://react-hook-form.com/advanced-usage#TransformandParse
     expect(submitButton).toBeInTheDocument()
 
-    const img = screen.getAllByRole('img')[0]
-
-    screen.getByTestId('banner-box')
-    expect(img.classList.contains(IconAwesomeEnum.TRIANGLE_EXCLAMATION)).toBe(true)
+    expect(container).toMatchSnapshot()
   })
 
   it('should submit the form', async () => {
