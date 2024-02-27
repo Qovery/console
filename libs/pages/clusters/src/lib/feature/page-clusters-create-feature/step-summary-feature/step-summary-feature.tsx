@@ -25,13 +25,10 @@ import StepSummary from '../../../ui/page-clusters-create/step-summary/step-summ
 import { steps, useClusterContainerCreateContext } from '../page-clusters-create-feature'
 
 export function getValueByKey(key: string, data: { [key: string]: string }[] = []): string[] {
-  const result: string[] = []
-  data.forEach((obj) => {
-    if (Object.prototype.hasOwnProperty.call(obj, key)) {
-      result.push(obj[key])
-    }
-  })
-  return result
+  return data.reduce((result: string[], obj) => {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) result.push(obj[key])
+    return result
+  }, [])
 }
 
 export function StepSummaryFeature() {
