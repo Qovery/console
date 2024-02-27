@@ -51,7 +51,7 @@ export function PageSettingsFeatures(props: PageSettingsFeaturesProps) {
               <Subnets
                 title="EKS subnet IDs A"
                 value={featureExistingVpcValue.eks_subnets_zone_a_ids}
-                icon={IconEnum.HELM}
+                icon={IconEnum.EKS}
               />
               <Subnets title="zone B" value={featureExistingVpcValue.eks_subnets_zone_b_ids} />
               <Subnets title="zone C" value={featureExistingVpcValue.eks_subnets_zone_c_ids} />
