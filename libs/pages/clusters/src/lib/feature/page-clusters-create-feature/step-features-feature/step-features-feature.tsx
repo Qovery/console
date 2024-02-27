@@ -79,13 +79,14 @@ export function StepFeaturesFeature() {
           const featureData = features.find((f) => f.id === id)
           const currentFeature = data.features[id]
 
-        cloneData = {
-          ...cloneData,
-          [id]: {
-            title: featureData?.title,
-            value: currentFeature?.value || false,
-            extendedValue: currentFeature?.extendedValue || false,
-          },
+          cloneData = {
+            ...cloneData,
+            [id]: {
+              title: featureData?.title,
+              value: currentFeature?.value || false,
+              extendedValue: currentFeature?.extendedValue || false,
+            },
+          }
         }
 
         setFeaturesData({
