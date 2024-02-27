@@ -3781,6 +3781,7 @@ __metadata:
     chance: ^1.1.8
     class-variance-authority: ^0.7.0
     clsx: ^2.1.0
+    core-js: ^3.36.0
     cronstrue: ^2.21.0
     css-loader: ^6.8.1
     cypress: ^9.1.0
@@ -10249,6 +10250,13 @@ __metadata:
   version: 3.28.0
   resolution: "core-js-pure@npm:3.28.0"
   checksum: 8bef96a435783ea7e62b2bd4d6cc3d427a7bfeb053954aadabb33b5dba14a85c6297f7638bba9676a144f9cd7a5a0185a576d41d67baaae15227a4c9982a8cef
+  languageName: node
+  linkType: hard
+
+"core-js@npm:^3.36.0":
+  version: 3.36.0
+  resolution: "core-js@npm:3.36.0"
+  checksum: 48c807d5055ad0424f52d13583e96ddca2efcdc4e3cd9c479d60f269c8fe225191cd4e26a4593f43f7ef6dba08d161091147ecf8ae0300c15bc648a4f555217b
   languageName: node
   linkType: hard
 
