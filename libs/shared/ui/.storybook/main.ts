@@ -7,7 +7,10 @@ const config: StorybookConfig = {
     name: '@storybook/react-webpack5',
     options: {},
   },
-  staticDirs: ['../src/lib'],
+  staticDirs: [
+    '../src/lib',
+    { from: '../../../../node_modules/@awesome.me/kit-c4457d1be4/icons/webfonts', to: '/assets/fonts/font-awesome' },
+  ],
 }
 
 export default config
