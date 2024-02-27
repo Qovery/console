@@ -48,6 +48,7 @@ export function GitTokenCreateEditModal({
           organizationId,
           gitTokenRequest: data,
         })
+        // Update input select value with the new git token id
         onChange && onChange(response.id)
       }
       onClose()

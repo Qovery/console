@@ -89,6 +89,7 @@ export function CreateEditCredentialsModalFeature(props: CreateEditCredentialsMo
           organizationId,
           ...credentials,
         })
+        // Update input select value with the new credential id
         onChange && onChange(response.id)
         onClose()
       }

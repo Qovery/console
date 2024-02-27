@@ -86,6 +86,7 @@ export function ContainerRegistryCreateEditModal({
           organizationId: organizationId,
           containerRegistryRequest,
         })
+        // Update input select value with the new container registry id
         onChange && onChange(response.id)
         onClose()
       }
