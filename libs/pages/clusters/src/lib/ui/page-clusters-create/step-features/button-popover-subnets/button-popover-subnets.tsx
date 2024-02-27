@@ -143,7 +143,7 @@ export function ButtonPopoverSubnets({ name, children, title, callout }: ButtonP
                 variant="surface"
                 onClick={() => remove(Array.from({ length: fields.length }, (_, index) => index))}
               >
-                Cancel
+                Clear
               </Button>
             </Popover.Close>
             <Popover.Close>
