@@ -40,9 +40,9 @@ export interface StepSummaryProps {
   detailInstanceType?: ClusterInstanceTypeResponseListResultsInner
 }
 
-function renderSubnets(title: string, key: string, subnets?: Subnets[]) {
+function SubnetsList({ title, index, subnets }: { title: string; index: string; subnets?: Subnets[] }) {
   if (!subnets) return null
-  const value = getValueByKey(key, subnets)
+  const value = getValueByKey(index, subnets)
 
   if (value[0]?.length === 0 || value.length === 0) return null
 
@@ -255,18 +255,42 @@ export function StepSummary(props: StepSummaryProps) {
                     <li className="mb-2">
                       EKS subnets ids:{' '}
                       <ul className="list-disc ml-4">
-                        {renderSubnets('Zone A:', 'A', props.featuresData.aws_existing_vpc.eks_subnets)}
-                        {renderSubnets('Zone B:', 'B', props.featuresData.aws_existing_vpc.eks_subnets)}
-                        {renderSubnets('Zone C:', 'C', props.featuresData.aws_existing_vpc.eks_subnets)}
+                        <SubnetsList
+                          title="zone A:"
+                          index="A"
+                          subnets={props.featuresData.aws_existing_vpc.eks_subnets}
+                        />
+                        <SubnetsList
+                          title="zone B:"
+                          index="B"
+                          subnets={props.featuresData.aws_existing_vpc.eks_subnets}
+                        />
+                        <SubnetsList
+                          title="zone C:"
+                          index="C"
+                          subnets={props.featuresData.aws_existing_vpc.eks_subnets}
+                        />
                       </ul>
                     </li>
                     {props.featuresData.aws_existing_vpc.mongodb_subnets?.length !== 0 && (
                       <li className="mb-2">
                         MongoDB subnets ids:
                         <ul className="list-disc ml-4">
-                          {renderSubnets('Zone A:', 'A', props.featuresData.aws_existing_vpc.mongodb_subnets)}
-                          {renderSubnets('Zone B:', 'B', props.featuresData.aws_existing_vpc.mongodb_subnets)}
-                          {renderSubnets('Zone C:', 'C', props.featuresData.aws_existing_vpc.mongodb_subnets)}
+                          <SubnetsList
+                            title="zone A:"
+                            index="A"
+                            subnets={props.featuresData.aws_existing_vpc.mongodb_subnets}
+                          />
+                          <SubnetsList
+                            title="zone B:"
+                            index="B"
+                            subnets={props.featuresData.aws_existing_vpc.mongodb_subnets}
+                          />
+                          <SubnetsList
+                            title="zone C:"
+                            index="C"
+                            subnets={props.featuresData.aws_existing_vpc.mongodb_subnets}
+                          />
                         </ul>
                       </li>
                     )}
@@ -274,9 +298,21 @@ export function StepSummary(props: StepSummaryProps) {
                       <li className="mb-2">
                         Redis subnets ids:
                         <ul className="list-disc ml-4">
-                          {renderSubnets('Zone A:', 'A', props.featuresData.aws_existing_vpc.redis_subnets)}
-                          {renderSubnets('Zone B:', 'B', props.featuresData.aws_existing_vpc.redis_subnets)}
-                          {renderSubnets('Zone C:', 'C', props.featuresData.aws_existing_vpc.redis_subnets)}
+                          <SubnetsList
+                            title="zone A:"
+                            index="A"
+                            subnets={props.featuresData.aws_existing_vpc.redis_subnets}
+                          />
+                          <SubnetsList
+                            title="zone B:"
+                            index="B"
+                            subnets={props.featuresData.aws_existing_vpc.redis_subnets}
+                          />
+                          <SubnetsList
+                            title="zone C:"
+                            index="C"
+                            subnets={props.featuresData.aws_existing_vpc.redis_subnets}
+                          />
                         </ul>
                       </li>
                     )}
@@ -284,9 +320,21 @@ export function StepSummary(props: StepSummaryProps) {
                       <li className="mb-2">
                         MySQL subnets ids:
                         <ul className="list-disc ml-4">
-                          {renderSubnets('Zone A:', 'A', props.featuresData.aws_existing_vpc.mysql_subnets)}
-                          {renderSubnets('Zone B:', 'B', props.featuresData.aws_existing_vpc.mysql_subnets)}
-                          {renderSubnets('Zone C:', 'C', props.featuresData.aws_existing_vpc.mysql_subnets)}
+                          <SubnetsList
+                            title="zone A:"
+                            index="A"
+                            subnets={props.featuresData.aws_existing_vpc.mysql_subnets}
+                          />
+                          <SubnetsList
+                            title="zone B:"
+                            index="B"
+                            subnets={props.featuresData.aws_existing_vpc.mysql_subnets}
+                          />
+                          <SubnetsList
+                            title="zone C:"
+                            index="C"
+                            subnets={props.featuresData.aws_existing_vpc.mysql_subnets}
+                          />
                         </ul>
                       </li>
                     )}
@@ -294,9 +342,21 @@ export function StepSummary(props: StepSummaryProps) {
                       <li>
                         PostgreSQL subnets ids:
                         <ul className="list-disc ml-4">
-                          {renderSubnets('Zone A:', 'A', props.featuresData.aws_existing_vpc.postgresql_subnets)}
-                          {renderSubnets('Zone B:', 'B', props.featuresData.aws_existing_vpc.postgresql_subnets)}
-                          {renderSubnets('Zone C:', 'C', props.featuresData.aws_existing_vpc.postgresql_subnets)}
+                          <SubnetsList
+                            title="zone A:"
+                            index="A"
+                            subnets={props.featuresData.aws_existing_vpc.postgresql_subnets}
+                          />
+                          <SubnetsList
+                            title="zone B:"
+                            index="B"
+                            subnets={props.featuresData.aws_existing_vpc.postgresql_subnets}
+                          />
+                          <SubnetsList
+                            title="zone C:"
+                            index="C"
+                            subnets={props.featuresData.aws_existing_vpc.postgresql_subnets}
+                          />
                         </ul>
                       </li>
                     )}

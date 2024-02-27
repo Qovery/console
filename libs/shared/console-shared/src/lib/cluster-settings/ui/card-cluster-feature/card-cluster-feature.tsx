@@ -1,16 +1,15 @@
 import { type CloudProviderEnum, type ClusterFeature } from 'qovery-typescript-axios'
-import { type ReactNode, useEffect, useState } from 'react'
+import { type PropsWithChildren, useEffect, useState } from 'react'
 import { type Control, Controller, type FieldValues, type UseFormSetValue, type UseFormWatch } from 'react-hook-form'
 import { ExternalLink, InputSelect, InputToggle } from '@qovery/shared/ui'
 
-export interface CardClusterFeatureProps {
+export interface CardClusterFeatureProps extends PropsWithChildren {
   feature: ClusterFeature
   cloudProvider?: CloudProviderEnum
   disabled?: boolean
   setValue?: UseFormSetValue<FieldValues>
   watch?: UseFormWatch<FieldValues>
   control?: Control<FieldValues>
-  callout?: ReactNode
 }
 
 export function CardClusterFeature({
@@ -20,7 +19,7 @@ export function CardClusterFeature({
   watch,
   setValue,
   control,
-  callout,
+  children,
 }: CardClusterFeatureProps) {
   const [currentDisabled, setCurrentDisabled] = useState<boolean>(disabled)
 
@@ -123,7 +122,7 @@ export function CardClusterFeature({
           </ExternalLink>
         </div>
       </div>
-      {callout && callout}
+      {children}
     </div>
   )
 }

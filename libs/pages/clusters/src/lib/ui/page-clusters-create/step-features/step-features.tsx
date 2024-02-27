@@ -86,32 +86,31 @@ export function StepFeatures(props: StepFeaturesProps) {
                     control={control}
                     watch={watch}
                     setValue={setValue}
-                    callout={
-                      feature.id === 'STATIC_IP' && (
-                        <Callout.Root color="yellow" className="mt-4">
-                          <Callout.Icon>
-                            <Icon className="text-xs" iconName="triangle-exclamation" />
-                          </Callout.Icon>
-                          <Callout.Text className="text-xs">
-                            <Callout.TextHeading>Warning</Callout.TextHeading>
-                            <Callout.TextDescription>
-                              This feature has been activated by default. Since February 1, 2024, aws_existing_vpccharge
-                              public IPv4 Addresses. Disabling it may cost you more, depending on the number of nodes in
-                              your cluster.
-                              <br />
-                              <ExternalLink
-                                size="xs"
-                                href="https://hub.qovery.com/docs/using-qovery/configuration/clusters/#use-existing-vpc"
-                                className="mt-1"
-                              >
-                                Check this link for more information
-                              </ExternalLink>
-                            </Callout.TextDescription>
-                          </Callout.Text>
-                        </Callout.Root>
-                      )
-                    }
-                  />
+                  >
+                    {feature.id === 'STATIC_IP' && (
+                      <Callout.Root color="yellow" className="mt-4">
+                        <Callout.Icon>
+                          <Icon className="text-xs" iconName="triangle-exclamation" />
+                        </Callout.Icon>
+                        <Callout.Text className="text-xs">
+                          <Callout.TextHeading>Warning</Callout.TextHeading>
+                          <Callout.TextDescription>
+                            This feature has been activated by default. Since February 1, 2024, aws_existing_vpccharge
+                            public IPv4 Addresses. Disabling it may cost you more, depending on the number of nodes in
+                            your cluster.
+                            <br />
+                            <ExternalLink
+                              size="xs"
+                              href="https://hub.qovery.com/docs/using-qovery/configuration/clusters/#use-existing-vpc"
+                              className="mt-1"
+                            >
+                              Check this link for more information
+                            </ExternalLink>
+                          </Callout.TextDescription>
+                        </Callout.Text>
+                      </Callout.Root>
+                    )}
+                  </CardClusterFeature>
                 ))
               ) : (
                 <div className="flex justify-center mt-2">
@@ -147,7 +146,7 @@ export function StepFeatures(props: StepFeaturesProps) {
                 callout={
                   <Callout.Root className="mb-4" color="sky">
                     <Callout.Icon>
-                      <Icon className="text-xs" name={IconAwesomeEnum.CIRCLE_EXCLAMATION} />
+                      <Icon className="text-xs" iconName="triangle-exclamation" />
                     </Callout.Icon>
                     <Callout.Text className="text-xs">
                       <Callout.TextHeading>
