@@ -2,7 +2,7 @@ import { type IconProps } from '../icon'
 
 function RedisIcon(props: IconProps) {
   return (
-    <svg {...props} xmlns="http://www.w3.org/2000/svg" width={24} height={24} preserveAspectRatio="xMinYMin meet">
+    <svg {...props} xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin meet">
       <g clipPath="url(#a)">
         <path
           d="M22.787 17.17c-1.28.633-7.916 3.217-9.328 3.915-1.413.698-2.197.691-3.313.186-1.116-.506-8.177-3.208-9.449-3.784-.635-.287-.97-.53-.97-.76v-2.298s9.192-1.896 10.676-2.4c1.484-.505 2-.523 3.262-.085 1.263.438 8.814 1.73 10.062 2.162v2.266c0 .227-.288.476-.94.798Z"

@@ -168,11 +168,10 @@ export function StepFeatures(props: StepFeaturesProps) {
                   <Icon name={IconEnum.MONGODB} width="16" className="mr-2" />
                   MongoDB
                 </ButtonPopoverSubnets>
-                <ButtonPopoverSubnets title="MySQL subnets IDs" name="aws_existing_vpc.mysql_subnets">
+                <ButtonPopoverSubnets title="MySQL subnets IDs" name="aws_existing_vpc.rds_subnets">
                   <Icon name={IconEnum.MYSQL} width="16" className="mr-2" />
                   MySQL
-                </ButtonPopoverSubnets>
-                <ButtonPopoverSubnets title="PostgreSQL subnets IDs" name="aws_existing_vpc.postgresql_subnets">
+                  <span className="px-2">|</span>
                   <Icon name={IconEnum.POSTGRESQL} width="16" className="mr-2" />
                   PostgreSQL
                 </ButtonPopoverSubnets>

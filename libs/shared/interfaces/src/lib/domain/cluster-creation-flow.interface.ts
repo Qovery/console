@@ -40,8 +40,7 @@ export type ClusterFeaturesData = {
     aws_vpc_eks_id: string
     eks_subnets?: Subnets[]
     mongodb_subnets?: Subnets[]
-    mysql_subnets?: Subnets[]
-    postgresql_subnets?: Subnets[]
+    rds_subnets?: Subnets[]
     redis_subnets?: Subnets[]
   }
   features: {

@@ -316,46 +316,24 @@ export function StepSummary(props: StepSummaryProps) {
                         </ul>
                       </li>
                     )}
-                    {props.featuresData.aws_existing_vpc.mysql_subnets?.length !== 0 && (
+                    {props.featuresData.aws_existing_vpc.rds_subnets?.length !== 0 && (
                       <li className="mb-2">
-                        MySQL subnets ids:
+                        MySQL/PostgreSQL subnets ids:
                         <ul className="list-disc ml-4">
                           <SubnetsList
                             title="zone A:"
                             index="A"
-                            subnets={props.featuresData.aws_existing_vpc.mysql_subnets}
+                            subnets={props.featuresData.aws_existing_vpc.rds_subnets}
                           />
                           <SubnetsList
                             title="zone B:"
                             index="B"
-                            subnets={props.featuresData.aws_existing_vpc.mysql_subnets}
+                            subnets={props.featuresData.aws_existing_vpc.rds_subnets}
                           />
                           <SubnetsList
                             title="zone C:"
                             index="C"
-                            subnets={props.featuresData.aws_existing_vpc.mysql_subnets}
-                          />
-                        </ul>
-                      </li>
-                    )}
-                    {props.featuresData.aws_existing_vpc.postgresql_subnets?.length !== 0 && (
-                      <li>
-                        PostgreSQL subnets ids:
-                        <ul className="list-disc ml-4">
-                          <SubnetsList
-                            title="zone A:"
-                            index="A"
-                            subnets={props.featuresData.aws_existing_vpc.postgresql_subnets}
-                          />
-                          <SubnetsList
-                            title="zone B:"
-                            index="B"
-                            subnets={props.featuresData.aws_existing_vpc.postgresql_subnets}
-                          />
-                          <SubnetsList
-                            title="zone C:"
-                            index="C"
-                            subnets={props.featuresData.aws_existing_vpc.postgresql_subnets}
+                            subnets={props.featuresData.aws_existing_vpc.rds_subnets}
                           />
                         </ul>
                       </li>
