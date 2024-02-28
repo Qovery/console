@@ -55,7 +55,7 @@ export function StepGeneral(props: StepGeneralProps) {
       <div className="mb-10">
         <Heading className="mb-2">General information</Heading>
         <p className="text-neutral-400 text-sm mb-2">
-          General settings allow you to set up your application name, git repository or container settings.
+          These general settings allow you to set up the database name, type and version.
         </p>
       </div>
 

@@ -1,4 +1,10 @@
-import { type DatabaseConfiguration, DatabaseModeEnum, KubernetesEnum } from 'qovery-typescript-axios'
+import {
+  type ClusterFeatureAwsExistingVpc,
+  type DatabaseConfiguration,
+  DatabaseModeEnum,
+  type DatabaseTypeEnum,
+  KubernetesEnum,
+} from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -16,7 +22,37 @@ import StepGeneral from '../../../ui/page-database-create/step-general/step-gene
 import { type GeneralData } from '../database-creation-flow.interface'
 import { useDatabaseCreateContext } from '../page-database-create-feature'
 
-export const generateDatabasesTypesAndVersionOptions = (databaseConfigs: DatabaseConfiguration[]) => {
+function getDatabaseType(databaseTypes: Value[], type: DatabaseTypeEnum) {
+  return databaseTypes.find((db) => db.label === type)
+}
+
+export function filterDatabaseTypes(databaseTypes: Value[], clusterVpc: ClusterFeatureAwsExistingVpc) {
+  if (!clusterVpc) return []
+
+  const dbTypeMappings: { [key: string]: DatabaseTypeEnum[] } = {
+    documentdb_subnets_zone_: ['MONGODB'],
+    elasticache_subnets_zone_: ['REDIS'],
+    rds_subnets_zone_: ['POSTGRESQL', 'MYSQL'],
+  }
+
+  return Object.entries(clusterVpc).reduce((filteredTypes: Value[], [key, value]) => {
+    const dbType = Object.keys(dbTypeMappings).find((prefix) => key.startsWith(prefix))
+
+    if (dbType && value.length > 0) {
+      dbTypeMappings[dbType].forEach((dbType) => {
+        const databaseType = getDatabaseType(databaseTypes, dbType)
+        if (databaseType) filteredTypes.push(databaseType)
+      })
+    }
+
+    return filteredTypes.filter((type, index) => filteredTypes.indexOf(type) === index)
+  }, [])
+}
+
+export const generateDatabasesTypesAndVersionOptions = (
+  databaseConfigs: DatabaseConfiguration[],
+  clusterVpc?: ClusterFeatureAwsExistingVpc | null
+) => {
   const databaseVersionOptions: { [Key: string]: Value[] } = {}
 
   const databaseTypeOptions: Value[] = databaseConfigs.map((config) => {
@@ -64,7 +100,7 @@ export const generateDatabasesTypesAndVersionOptions = (databaseConfigs: Databas
   })
 
   return {
-    databaseTypeOptions,
+    databaseTypeOptions: clusterVpc ? filterDatabaseTypes(databaseTypeOptions, clusterVpc) : databaseTypeOptions,
     databaseVersionOptions,
   }
 }
@@ -76,22 +112,24 @@ export function StepGeneralFeature() {
   const navigate = useNavigate()
 
   const { data: environment } = useFetchEnvironment(projectId, environmentId)
-
   const { data: cluster } = useCluster({ organizationId, clusterId: environment?.cluster_id ?? '' })
 
   const { data: databaseConfigurations } = useFetchDatabaseConfiguration(projectId, environmentId)
 
   const [databaseTypeOptions, setDatabaseTypeOptions] = useState<Value[]>()
   const [databaseVersionOptions, setDatabaseVersionOptions] = useState<{ [Key: string]: Value[] }>()
+  const clusterVpc = cluster?.features?.find(({ id }) => id === 'EXISTING_VPC')?.value as ClusterFeatureAwsExistingVpc
 
   useEffect(() => {
     if (databaseConfigurations && databaseConfigurations.length && !databaseTypeOptions && !databaseVersionOptions) {
-      const { databaseTypeOptions, databaseVersionOptions } =
-        generateDatabasesTypesAndVersionOptions(databaseConfigurations)
+      const { databaseTypeOptions, databaseVersionOptions } = generateDatabasesTypesAndVersionOptions(
+        databaseConfigurations,
+        clusterVpc
+      )
       setDatabaseTypeOptions(databaseTypeOptions)
       setDatabaseVersionOptions(databaseVersionOptions)
     }
-  }, [databaseConfigurations, environment, environmentId])
+  }, [databaseConfigurations, environment, environmentId, clusterVpc])
 
   const funnelCardHelp = (
     <FunnelFlowHelpCard
