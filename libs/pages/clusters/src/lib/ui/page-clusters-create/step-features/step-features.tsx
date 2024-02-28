@@ -28,14 +28,13 @@ export interface StepFeaturesProps {
   goToBack?: () => void
 }
 
-export function checkSubnetsNotEmpty(subnets?: Subnets[]): boolean {
+export function areSubnetsEmpty(subnets?: Subnets[]): boolean {
   if (!subnets) return false
-  if (removeEmptySubnet(subnets)?.length === 0) return false
-  return true
+  return removeEmptySubnet(subnets)?.length !== 0
 }
 
 function TooltipContentSubnets({ children, subnets }: PropsWithChildren & { subnets?: Subnets[] }) {
-  if (!subnets || subnets.length === 0 || !checkSubnetsNotEmpty(subnets)) return null
+  if (!subnets || subnets.length === 0 || !areSubnetsEmpty(subnets)) return null
 
   return (
     <div className="flex items-start">
@@ -91,21 +90,14 @@ export function StepFeatures(props: StepFeaturesProps) {
 
   const watchVpcMode = watch('vpc_mode')
 
-  const checkIfTooltipIsAvailable = () => {
+  const isTooltipAvailable = () => {
     const vpcValues = getValues('aws_existing_vpc')
     if (!vpcValues) return false
     const { eks_subnets, mongodb_subnets, rds_subnets, redis_subnets } = vpcValues
 
-    if (
-      removeEmptySubnet(eks_subnets)?.length === 0 &&
-      removeEmptySubnet(mongodb_subnets)?.length === 0 &&
-      removeEmptySubnet(rds_subnets)?.length === 0 &&
-      removeEmptySubnet(redis_subnets)?.length === 0
-    ) {
-      return false
-    }
-
-    return true
+    return [eks_subnets, mongodb_subnets, rds_subnets, redis_subnets]
+      .map(removeEmptySubnet)
+      .some((subnets) => subnets && subnets.length > 0)
   }
 
   return (
@@ -204,7 +196,7 @@ export function StepFeatures(props: StepFeaturesProps) {
                     In your VPC settings, you must enable the DNS hostnames.
                   </p>
                 </div>
-                {checkIfTooltipIsAvailable() && (
+                {isTooltipAvailable() && (
                   <Tooltip content={<TooltipContent values={getValues('aws_existing_vpc')} />}>
                     <span className="text-sm text-brand-500 font-medium">
                       My VPC subnets summary <Icon iconName="eye" className="ml-1" />

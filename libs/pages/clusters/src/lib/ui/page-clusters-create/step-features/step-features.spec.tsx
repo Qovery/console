@@ -1,7 +1,7 @@
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { CloudProviderEnum } from 'qovery-typescript-axios'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import StepFeatures, { type StepFeaturesProps, checkSubnetsNotEmpty } from './step-features'
+import StepFeatures, { type StepFeaturesProps, areSubnetsEmpty } from './step-features'
 
 const STATIC_IP = 'STATIC_IP'
 
@@ -77,11 +77,11 @@ describe('StepFeatures', () => {
 
   it('returns false if subnet has empty A, B, or C properties', () => {
     const subnets = [{ A: '', B: '', C: '' }]
-    expect(checkSubnetsNotEmpty(subnets)).toBe(false)
+    expect(areSubnetsEmpty(subnets)).toBe(false)
   })
 
   it('returns true if subnet has non-empty A, B, and C properties', () => {
     const subnets = [{ A: 'subnet1A', B: 'subnet1B', C: '' }]
-    expect(checkSubnetsNotEmpty(subnets)).toBe(true)
+    expect(areSubnetsEmpty(subnets)).toBe(true)
   })
 })
