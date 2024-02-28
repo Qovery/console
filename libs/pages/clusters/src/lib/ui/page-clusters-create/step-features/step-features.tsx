@@ -18,6 +18,7 @@ import {
   Section,
   Tooltip,
 } from '@qovery/shared/ui'
+import { removeEmptySubnet } from '../../../feature/page-clusters-create-feature/step-features-feature/step-features-feature'
 import ButtonPopoverSubnets from './button-popover-subnets/button-popover-subnets'
 
 export interface StepFeaturesProps {
@@ -29,11 +30,7 @@ export interface StepFeaturesProps {
 
 export function checkSubnetsNotEmpty(subnets?: Subnets[]): boolean {
   if (!subnets) return false
-
-  for (const subnetArray of Object.values(subnets)) {
-    if (subnetArray?.A === '' && subnetArray?.B === '' && subnetArray?.C === '') return false
-  }
-
+  if (removeEmptySubnet(subnets)?.length === 0) return false
   return true
 }
 
@@ -93,6 +90,23 @@ export function StepFeatures(props: StepFeaturesProps) {
   const { formState, setValue, control, watch, getValues } = useFormContext()
 
   const watchVpcMode = watch('vpc_mode')
+
+  const checkIfTooltipIsAvailable = () => {
+    const vpcValues = getValues('aws_existing_vpc')
+    if (!vpcValues) return false
+    const { eks_subnets, mongodb_subnets, rds_subnets, redis_subnets } = vpcValues
+
+    if (
+      removeEmptySubnet(eks_subnets)?.length === 0 &&
+      removeEmptySubnet(mongodb_subnets)?.length === 0 &&
+      removeEmptySubnet(rds_subnets)?.length === 0 &&
+      removeEmptySubnet(redis_subnets)?.length === 0
+    ) {
+      return false
+    }
+
+    return true
+  }
 
   return (
     <Section>
@@ -190,11 +204,13 @@ export function StepFeatures(props: StepFeaturesProps) {
                     In your VPC settings, you must enable the DNS hostnames.
                   </p>
                 </div>
-                <Tooltip content={<TooltipContent values={getValues('aws_existing_vpc')} />}>
-                  <span className="text-sm text-brand-500 font-medium">
-                    My VPC subnets summary <Icon iconName="eye" className="ml-1" />
-                  </span>
-                </Tooltip>
+                {checkIfTooltipIsAvailable() && (
+                  <Tooltip content={<TooltipContent values={getValues('aws_existing_vpc')} />}>
+                    <span className="text-sm text-brand-500 font-medium">
+                      My VPC subnets summary <Icon iconName="eye" className="ml-1" />
+                    </span>
+                  </Tooltip>
+                )}
               </div>
               <Controller
                 name="aws_existing_vpc.aws_vpc_eks_id"
