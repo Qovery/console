@@ -61,7 +61,7 @@ describe('PageApplicationCreateGeneralFeature', () => {
           arguments: [
             {
               variable: 'test',
-              type: 'generic',
+              type: '--set',
               value: 'test',
             },
           ],

@@ -24,7 +24,7 @@ const generateArguments = (
       value,
     }
 
-    if (type === 'json') {
+    if (type === '--set-json') {
       argument.json = value
     }
 
@@ -41,9 +41,9 @@ export function PageSettingsValuesOverrideArgumentsFeature() {
     mode: 'onChange',
     defaultValues: {
       arguments: [
-        ...generateArguments('generic', service?.values_override.set),
-        ...generateArguments('string', service?.values_override.set_string),
-        ...generateArguments('json', service?.values_override.set_json),
+        ...generateArguments('--set', service?.values_override.set),
+        ...generateArguments('--set-string', service?.values_override.set_string),
+        ...generateArguments('--set-json', service?.values_override.set_json),
       ],
     },
   })
@@ -63,9 +63,9 @@ export function PageSettingsValuesOverrideArgumentsFeature() {
         service,
         request: {
           values_override: {
-            set: getValuesByType('generic'),
-            set_string: getValuesByType('string'),
-            set_json: getValuesByType('json'),
+            set: getValuesByType('--set'),
+            set_string: getValuesByType('--set-string'),
+            set_json: getValuesByType('--set-json'),
             file: service.values_override.file,
           },
         },

@@ -109,9 +109,9 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                   name="arguments.0.type"
                 >
                   <option
-                    value="generic"
+                    value="--set"
                   >
-                    Generic
+                    --set
                   </option>
                   <option
                     value="string"
@@ -195,17 +195,17 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                   name="arguments.1.type"
                 >
                   <option
-                    value="generic"
+                    value="--set"
                   >
-                    Generic
+                    --set
                   </option>
                   <option
-                    value="string"
+                    value="--set-string"
                   >
-                    String
+                    --set-string
                   </option>
                   <option
-                    value="json"
+                    value="--set-json"
                   >
                     Json
                   </option>
@@ -287,17 +287,17 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                   name="arguments.2.type"
                 >
                   <option
-                    value="generic"
+                    value="--set"
                   >
-                    Generic
+                    --set
                   </option>
                   <option
-                    value="string"
+                    value="--set-string"
                   >
                     String
                   </option>
                   <option
-                    value="json"
+                    value="--set-json"
                   >
                     Json
                   </option>

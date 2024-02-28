@@ -33,18 +33,18 @@ describe('ValuesOverrideArgumentsSetting', () => {
           arguments: [
             {
               key: 'test',
-              type: 'generic',
+              type: '--set',
               value: 'test',
             },
             {
               key: 'test2',
-              type: 'json',
+              type: '--set-json',
               value: 'test',
               json: '{"test": "test"}',
             },
             {
               key: 'test3',
-              type: 'string',
+              type: '--set-string',
               value: 'test',
               json: 'test',
             },

@@ -21,7 +21,7 @@ import {
   Section,
 } from '@qovery/shared/ui'
 
-export type ArgumentTypes = 'json' | 'generic' | 'string'
+export type ArgumentTypes = '--set-json' | '--set' | '--set-string'
 
 export interface HelmValuesArgumentsData {
   arguments: {
@@ -42,25 +42,15 @@ function Row({ key, index, remove }: { key: string; index: number; remove: UseFi
   const { watch, control } = useFormContext()
 
   const [openEditor, setOpenEditor] = useState(true)
-  const valueTypeJson = watch(`arguments.${index}.type`) === 'json'
+  const valueTypeJson = watch(`arguments.${index}.type`) === '--set-json'
 
   return (
     <li key={key} className="mb-3 last:mb-0">
       <div className="grid grid-cols-[6fr_6fr_6fr_1fr] gap-x-2 items-center">
         <Controller
-          name={`arguments.${index}.key`}
-          control={control}
-          rules={{
-            required: true,
-          }}
-          render={({ field, fieldState: { error } }) => (
-            <InputTextSmall name={field.name} value={field.value} onChange={field.onChange} error={error?.message} />
-          )}
-        />
-        <Controller
           name={`arguments.${index}.type`}
           control={control}
-          defaultValue="generic"
+          defaultValue="--set"
           rules={{
             required: true,
           }}
@@ -72,19 +62,29 @@ function Row({ key, index, remove }: { key: string; index: number; remove: UseFi
               inputClassName="bg-neutral-50"
               items={[
                 {
-                  label: 'Generic',
-                  value: 'generic',
+                  label: '--set',
+                  value: '--set',
                 },
                 {
-                  label: 'String',
-                  value: 'string',
+                  label: '--set-string',
+                  value: '--set-string',
                 },
                 {
-                  label: 'Json',
-                  value: 'json',
+                  label: '--set-json',
+                  value: '--set-json',
                 },
               ]}
             />
+          )}
+        />
+        <Controller
+          name={`arguments.${index}.key`}
+          control={control}
+          rules={{
+            required: true,
+          }}
+          render={({ field, fieldState: { error } }) => (
+            <InputTextSmall name={field.name} value={field.value} onChange={field.onChange} error={error?.message} />
           )}
         />
         {valueTypeJson ? (
@@ -181,7 +181,7 @@ export function ValuesOverrideArgumentsSetting({
           onClick={() =>
             append({
               key: '',
-              type: 'generic',
+              type: '--set',
               value: '',
             })
           }
@@ -202,7 +202,7 @@ export function ValuesOverrideArgumentsSetting({
               <li>
                 Specify each override by declaring the variable name, value and its type. These will be passed via the
                 --set, --set-string and --set-json helm argument depending on the selected type (Generic, String or
-                Json).
+                Json). Please refer to the Helm documentation for more information on which one you should use.
               </li>
               <li>
                 Values set here have an higher override priority compared to the ones defined in the values as file
@@ -235,8 +235,8 @@ export function ValuesOverrideArgumentsSetting({
         {fields.length > 0 ? (
           <ul>
             <li className="grid grid-cols-[6fr_6fr_6fr_1fr] gap-x-2 mb-3">
+              <span className="text-sm text-neutral-400 font-medium">Override type</span>
               <span className="text-sm text-neutral-400 font-medium">Variable</span>
-              <span className="text-sm text-neutral-400 font-medium">Value type</span>
               <span className="text-sm text-neutral-400 font-medium">Value</span>
               <span></span>
             </li>
