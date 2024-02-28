@@ -114,14 +114,14 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                     --set
                   </option>
                   <option
-                    value="string"
+                    value="--set-string"
                   >
-                    String
+                    --set-string
                   </option>
                   <option
-                    value="json"
+                    value="--set-json"
                   >
-                    Json
+                    --set-json
                   </option>
                 </select>
                 <span
@@ -207,7 +207,7 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                   <option
                     value="--set-json"
                   >
-                    Json
+                    --set-json
                   </option>
                 </select>
                 <span
@@ -294,12 +294,12 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                   <option
                     value="--set-string"
                   >
-                    String
+                    --set-string
                   </option>
                   <option
                     value="--set-json"
                   >
-                    Json
+                    --set-json
                   </option>
                 </select>
                 <span
