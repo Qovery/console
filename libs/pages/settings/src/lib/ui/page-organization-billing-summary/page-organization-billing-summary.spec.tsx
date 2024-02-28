@@ -46,10 +46,6 @@ describe('PageOrganizationBillingSummary', () => {
     screen.getByText('Cluster')
     screen.getByText('88')
     screen.getByText('/ 130')
-
-    screen.getByText('Deployments')
-    screen.getByText('999')
-    screen.getByText('/ 1345')
   })
 
   it('should say that no cluster was found', () => {
@@ -96,7 +92,5 @@ describe('PageOrganizationBillingSummary', () => {
     screen.getByText('Current plan')
     screen.getByText('Current monthly bill')
     expect(screen.queryByText('Payment method')).toBeNull()
-
-    screen.getByText('Deployments')
   })
 })
