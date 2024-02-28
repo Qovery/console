@@ -236,10 +236,17 @@ export function PageSettingsGeneralFeature() {
         ...handleContainerSubmit(data, s),
         serviceType: s.serviceType,
       }))
-      .with({ serviceType: 'HELM' }, (s) => ({
-        ...handleHelmSubmit(data, s),
-        serviceType: s.serviceType,
-      }))
+      .with({ serviceType: 'HELM' }, (s) => {
+        try {
+          return {
+            ...handleHelmSubmit(data, s),
+            serviceType: s.serviceType,
+          }
+        } catch (e: unknown) {
+          toastError(e as Error, 'Invalid Helm arguments')
+          return
+        }
+      })
       .otherwise(() => undefined)
 
     if (!payload) return null

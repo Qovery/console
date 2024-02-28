@@ -8,7 +8,16 @@ import {
   SERVICES_HELM_CREATION_VALUES_STEP_1_URL,
   SERVICES_URL,
 } from '@qovery/shared/routes'
-import { Button, Callout, FunnelFlowBody, FunnelFlowHelpCard, Heading, Icon, Section } from '@qovery/shared/ui'
+import {
+  Button,
+  Callout,
+  FunnelFlowBody,
+  FunnelFlowHelpCard,
+  Heading,
+  Icon,
+  Section,
+  toastError,
+} from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { useHelmCreateContext } from '../page-helm-create-feature'
 
@@ -41,7 +50,16 @@ export function StepGeneralFeature() {
     />
   )
 
-  const onSubmit = generalForm.handleSubmit(() => {
+  const onSubmit = generalForm.handleSubmit((data) => {
+    if (data.arguments) {
+      try {
+        eval(data.arguments)
+      } catch (e: unknown) {
+        toastError(e as Error, 'Invalid Helm arguments')
+        return
+      }
+    }
+
     const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_HELM_CREATION_URL}`
     navigate(pathCreate + SERVICES_HELM_CREATION_VALUES_STEP_1_URL)
   })
