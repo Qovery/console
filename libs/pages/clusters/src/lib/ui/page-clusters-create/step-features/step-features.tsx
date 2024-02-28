@@ -1,5 +1,5 @@
 import { type CloudProviderEnum, type ClusterFeature } from 'qovery-typescript-axios'
-import { type FormEventHandler } from 'react'
+import { type FormEventHandler, type PropsWithChildren } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { CardClusterFeature } from '@qovery/shared/console-shared'
 import { IconEnum } from '@qovery/shared/enums'
@@ -27,18 +27,28 @@ export interface StepFeaturesProps {
   goToBack?: () => void
 }
 
-function TooltipContentSubnets({ icon, subnets }: { icon: IconEnum; subnets?: Subnets[] }) {
-  if (!subnets || subnets.length === 0) return null
+export function checkSubnetsNotEmpty(subnets?: Subnets[]): boolean {
+  if (!subnets) return false
+
+  for (const subnetArray of Object.values(subnets)) {
+    if (subnetArray?.A === '' && subnetArray?.B === '' && subnetArray?.C === '') return false
+  }
+
+  return true
+}
+
+function TooltipContentSubnets({ children, subnets }: PropsWithChildren & { subnets?: Subnets[] }) {
+  if (!subnets || subnets.length === 0 || !checkSubnetsNotEmpty(subnets)) return null
 
   return (
     <div className="flex items-start">
-      <Icon name={icon} width="16" className="mr-2" />
+      <div className="flex flex-col">{children}</div>
       <div>
         {subnets.map((item, index) => (
           <p key={index}>
-            <span className="inline-block w-[165px]">A: {item.A}</span>
-            <span className="inline-block w-[165px]">B: {item.B}</span>
-            <span className="inline-block w-[165px]">C: {item.C}</span>
+            {item.A !== '' && <span className="inline-block w-[165px]">A: {item.A}</span>}
+            {item.B !== '' && <span className="inline-block w-[165px]">B: {item.B}</span>}
+            {item.C !== '' && <span className="inline-block w-[165px]">C: {item.C}</span>}
           </p>
         ))}
       </div>
@@ -61,10 +71,19 @@ function TooltipContent({
 
   return (
     <div className="grid gap-2 p-2">
-      <TooltipContentSubnets icon={IconEnum.EKS} subnets={eks_subnets} />
-      <TooltipContentSubnets icon={IconEnum.MONGODB} subnets={mongodb_subnets} />
-      <TooltipContentSubnets icon={IconEnum.REDIS} subnets={redis_subnets} />
-      <TooltipContentSubnets icon={IconEnum.MYSQL} subnets={rds_subnets} />
+      <TooltipContentSubnets subnets={eks_subnets}>
+        <Icon name={IconEnum.EKS} width="16" className="mr-2" />
+      </TooltipContentSubnets>
+      <TooltipContentSubnets subnets={mongodb_subnets}>
+        <Icon name={IconEnum.MONGODB} width="16" className="mr-2" />
+      </TooltipContentSubnets>
+      <TooltipContentSubnets subnets={redis_subnets}>
+        <Icon name={IconEnum.REDIS} width="16" className="mr-2" />
+      </TooltipContentSubnets>
+      <TooltipContentSubnets subnets={rds_subnets}>
+        <Icon name={IconEnum.MYSQL} width="16" className="mr-2" />
+        <Icon name={IconEnum.POSTGRESQL} width="16" className="mr-2" />
+      </TooltipContentSubnets>
     </div>
   )
 }
