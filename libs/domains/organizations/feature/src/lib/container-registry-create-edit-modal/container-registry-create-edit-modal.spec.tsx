@@ -256,8 +256,6 @@ describe('ContainerRegistryCreateEditModal', () => {
   })
 
   it('should submit the form to create a registry', async () => {
-    props.onClose = jest.fn((e?: string | string[]) => {})
-
     const { userEvent } = renderWithProviders(<ContainerRegistryCreateEditModal {...props} />)
 
     const inputType = screen.getByLabelText('Type')
