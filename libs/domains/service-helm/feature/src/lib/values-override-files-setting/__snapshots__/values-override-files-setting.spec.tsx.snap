@@ -209,7 +209,7 @@ exports[`ValuesOverrideFilesSetting should match snapshot with NONE type 1`] = `
       <p
         class="text-sm text-neutral-350 mb-2"
       >
-        Define the YAML file(s) to be applied as override to the default values.yaml delivered with the chart.
+        Define the YAML file(s) to be applied as override to the default values.yaml delivered with the chart. It is highly recommended to store the override file(s) in a git repository.
       </p>
       <span
         aria-controls="radix-:r6:"
