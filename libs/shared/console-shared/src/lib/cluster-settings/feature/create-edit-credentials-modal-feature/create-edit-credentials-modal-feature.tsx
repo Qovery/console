@@ -11,11 +11,10 @@ import { useModal } from '@qovery/shared/ui'
 import CreateEditCredentialsModal from '../../ui/create-edit-credentials-modal/create-edit-credentials-modal'
 
 export interface CreateEditCredentialsModalFeatureProps {
-  onClose: () => void
+  onClose: (e?: string | string[]) => void
   cloudProvider: CloudProviderEnum
   organizationId: string
   currentCredential?: ClusterCredentials
-  onChange?: (e: string | string[]) => void
 }
 
 export const handleSubmit = (data: FieldValues, cloudProvider: CloudProviderEnum) => {
@@ -53,7 +52,7 @@ export const handleSubmit = (data: FieldValues, cloudProvider: CloudProviderEnum
 }
 
 export function CreateEditCredentialsModalFeature(props: CreateEditCredentialsModalFeatureProps) {
-  const { cloudProvider, onClose, currentCredential, organizationId, onChange } = props
+  const { cloudProvider, onClose, currentCredential, organizationId } = props
   const [loading, setLoading] = useState(false)
 
   const { enableAlertClickOutside } = useModal()
@@ -89,9 +88,8 @@ export function CreateEditCredentialsModalFeature(props: CreateEditCredentialsMo
           organizationId,
           ...credentials,
         })
-        // Update input select value with the new credential id
-        onChange && onChange(response.id)
-        onClose()
+        // Update input select value with the new credential id and close modal
+        onClose(response.id)
       }
     } catch (error) {
       console.error(error)

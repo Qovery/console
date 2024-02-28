@@ -7,9 +7,8 @@ import { useCreateHelmRepository } from '../hooks/use-create-helm-repository/use
 import { useEditHelmRepository } from '../hooks/use-edit-helm-repository/use-edit-helm-repository'
 
 export interface HelmRepositoryCreateEditModalProps {
-  onClose: () => void
+  onClose: (e?: string | string[]) => void
   organizationId: string
-  onChange?: (e: string | string[]) => void
   isEdit?: boolean
   repository?: HelmRepositoryResponse
 }
@@ -19,7 +18,6 @@ export function HelmRepositoryCreateEditModal({
   repository,
   organizationId,
   onClose,
-  onChange,
 }: HelmRepositoryCreateEditModalProps) {
   const { data: availableHelmRepositories = [] } = useAvailableHelmRepositories()
   const { mutateAsync: editHelmRepository, isLoading: isEditHelmRepositoryLoading } = useEditHelmRepository()
@@ -56,13 +54,14 @@ export function HelmRepositoryCreateEditModal({
           helmRepositoryId: repository.id,
           helmRepositoryRequest,
         })
+        onClose()
       } else {
         const response = await createHelmRepository({
           organizationId: organizationId,
           helmRepositoryRequest,
         })
-        // Update input select value with the new repository id
-        onChange && onChange(response.id)
+        // Update input select value with the new repository id and close modal
+        onClose(response.id)
       }
       onClose()
     } catch (error) {

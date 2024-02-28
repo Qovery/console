@@ -6,20 +6,13 @@ import { useCreateGitToken } from '../hooks/use-create-git-token/use-create-git-
 import { useEditGitToken } from '../hooks/use-edit-git-token/use-edit-git-token'
 
 export interface GitTokenCreateEditModalProps {
-  onClose: () => void
+  onClose: (e?: string | string[]) => void
   organizationId: string
   isEdit?: boolean
   gitToken?: GitTokenResponse
-  onChange?: (e: string | string[]) => void
 }
 
-export function GitTokenCreateEditModal({
-  isEdit,
-  gitToken,
-  organizationId,
-  onClose,
-  onChange,
-}: GitTokenCreateEditModalProps) {
+export function GitTokenCreateEditModal({ isEdit, gitToken, organizationId, onClose }: GitTokenCreateEditModalProps) {
   const methods = useForm({
     mode: 'onChange',
     defaultValues: {
@@ -43,15 +36,15 @@ export function GitTokenCreateEditModal({
           gitTokenId: gitToken?.id ?? '',
           gitTokenRequest: data,
         })
+        onClose()
       } else {
         const response = await createGitToken({
           organizationId,
           gitTokenRequest: data,
         })
-        // Update input select value with the new git token id
-        onChange && onChange(response.id)
+        // Update input select value with the new git token id and close modal
+        onClose(response.id)
       }
-      onClose()
     } catch (error) {
       console.error(error)
     }

@@ -15,11 +15,10 @@ import { useCreateContainerRegistry } from '../hooks/use-create-container-regist
 import { useEditContainerRegistry } from '../hooks/use-edit-container-registry/use-edit-container-registry'
 
 export interface ContainerRegistryCreateEditModalProps {
-  onClose: () => void
+  onClose: (e?: string | string[]) => void
   organizationId: string
   isEdit?: boolean
   registry?: ContainerRegistryResponse
-  onChange?: (e: string | string[]) => void
 }
 
 export const getOptionsContainerRegistry = (containerRegistry: AvailableContainerRegistryResponse[]) =>
@@ -42,7 +41,6 @@ export function ContainerRegistryCreateEditModal({
   registry,
   organizationId,
   onClose,
-  onChange,
 }: ContainerRegistryCreateEditModalProps) {
   const methods = useForm<ContainerRegistryRequest>({
     mode: 'onChange',
@@ -86,9 +84,8 @@ export function ContainerRegistryCreateEditModal({
           organizationId: organizationId,
           containerRegistryRequest,
         })
-        // Update input select value with the new container registry id
-        onChange && onChange(response.id)
-        onClose()
+        // Update input select value with the new container registry id and close modal
+        onClose(response.id)
       }
     } catch (error) {
       console.error(error)
