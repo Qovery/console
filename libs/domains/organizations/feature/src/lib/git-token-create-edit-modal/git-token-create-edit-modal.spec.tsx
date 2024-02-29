@@ -17,7 +17,7 @@ const props: GitTokenCreateEditModalProps = {
 describe('GitTokenCreateEditModal', () => {
   beforeEach(() => {
     useCreateGitTokenMockSpy.mockReturnValue({
-      mutateAsync: jest.fn(),
+      mutateAsync: jest.fn().mockResolvedValue({ id: '000' }),
     })
     useEditGitTokenMockSpy.mockReturnValue({
       mutateAsync: jest.fn(),
@@ -59,7 +59,7 @@ describe('GitTokenCreateEditModal', () => {
       },
     })
 
-    expect(props.onClose).toHaveBeenCalled()
+    expect(props.onClose).toHaveBeenCalledWith({ id: '000' })
   })
 
   it('should submit the form to edit a git token', async () => {

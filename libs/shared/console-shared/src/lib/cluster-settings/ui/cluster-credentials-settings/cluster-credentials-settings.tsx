@@ -4,7 +4,7 @@ import { Icon, InputSelect, LoaderSpinner } from '@qovery/shared/ui'
 
 export interface ClusterCredentialsSettingsProps {
   credentials?: ClusterCredentials[]
-  openCredentialsModal: (id?: string) => void
+  openCredentialsModal: (id?: string, onChange?: (e: string | string[]) => void) => void
   loading: boolean
 }
 
@@ -45,7 +45,7 @@ export function ClusterCredentialsSettings(props: ClusterCredentialsSettingsProp
                 title: 'Select credential',
                 label: 'New credential',
                 icon: <Icon iconName="circle-plus" className="text-brand-500" />,
-                onClick: () => openCredentialsModal(),
+                onClick: () => openCredentialsModal(undefined, field.onChange),
               }}
             />
           )}

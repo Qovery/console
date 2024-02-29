@@ -27,7 +27,7 @@ const props: ContainerRegistryCreateEditModalProps = {
 describe('ContainerRegistryCreateEditModal', () => {
   beforeEach(() => {
     useCreateContainerRegistryMockSpy.mockReturnValue({
-      mutateAsync: jest.fn(),
+      mutateAsync: jest.fn().mockResolvedValue({ id: '000' }),
     })
     useEditContainerRegistryMockSpy.mockReturnValue({
       mutateAsync: jest.fn(),
@@ -290,7 +290,7 @@ describe('ContainerRegistryCreateEditModal', () => {
       },
     })
 
-    expect(props.onClose).toHaveBeenCalled()
+    expect(props.onClose).toHaveBeenCalledWith({ id: '000' })
   })
 
   it('should submit the form to edit a registry', async () => {
