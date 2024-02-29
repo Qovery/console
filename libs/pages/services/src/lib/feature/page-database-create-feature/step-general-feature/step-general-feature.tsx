@@ -5,7 +5,7 @@ import {
   type DatabaseTypeEnum,
   KubernetesEnum,
 } from 'qovery-typescript-axios'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useCluster } from '@qovery/domains/clusters/feature'
@@ -46,9 +46,15 @@ export function filterDatabaseTypes(databaseTypes: Value[], clusterVpc: ClusterF
 }
 
 export const generateDatabasesTypesAndVersionOptions = (
-  databaseConfigs: DatabaseConfiguration[],
+  databaseConfigs?: DatabaseConfiguration[],
   clusterVpc?: ClusterFeatureAwsExistingVpc | null
 ) => {
+  if (!databaseConfigs)
+    return {
+      databaseTypeOptions: [],
+      databaseVersionOptions: undefined,
+    }
+
   const databaseVersionOptions: { [Key: string]: Value[] } = {}
 
   const databaseTypeOptions: Value[] = databaseConfigs.map((config) => {
@@ -95,6 +101,9 @@ export const generateDatabasesTypesAndVersionOptions = (
     }
   })
 
+  console.log('databaseTypeOptions: ', databaseTypeOptions)
+  console.log('clusterVPC: ', clusterVpc)
+
   return {
     databaseTypeOptions: clusterVpc ? filterDatabaseTypes(databaseTypeOptions, clusterVpc) : databaseTypeOptions,
     databaseVersionOptions,
@@ -112,9 +121,6 @@ export function StepGeneralFeature() {
 
   const { data: databaseConfigurations } = useFetchDatabaseConfiguration(projectId, environmentId)
 
-  const [databaseTypeOptions, setDatabaseTypeOptions] = useState<Value[]>()
-  const [databaseVersionOptions, setDatabaseVersionOptions] = useState<{ [Key: string]: Value[] }>()
-
   const cloudProvider = environment?.cloud_provider.provider
   const clusterVpc = cluster?.features?.find(({ id }) => id === 'EXISTING_VPC')?.value as ClusterFeatureAwsExistingVpc
 
@@ -130,16 +136,10 @@ export function StepGeneralFeature() {
   const watchModeDatabase = methods.watch('mode')
   const watchTypeDatabase = methods.watch('type')
 
-  useEffect(() => {
-    if (databaseConfigurations && databaseConfigurations.length && !databaseTypeOptions && !databaseVersionOptions) {
-      const { databaseTypeOptions, databaseVersionOptions } = generateDatabasesTypesAndVersionOptions(
-        databaseConfigurations,
-        watchModeDatabase === 'MANAGED' ? clusterVpc : undefined
-      )
-      setDatabaseTypeOptions(databaseTypeOptions)
-      setDatabaseVersionOptions(databaseVersionOptions)
-    }
-  }, [databaseConfigurations, environment, environmentId, clusterVpc])
+  const { databaseTypeOptions, databaseVersionOptions } = generateDatabasesTypesAndVersionOptions(
+    databaseConfigurations,
+    watchModeDatabase === 'MANAGED' ? clusterVpc : undefined
+  )
 
   const funnelCardHelp = (
     <FunnelFlowHelpCard
