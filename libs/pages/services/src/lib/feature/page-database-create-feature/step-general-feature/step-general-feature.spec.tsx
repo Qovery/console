@@ -106,7 +106,7 @@ describe('StepGeneralFeature', () => {
 
     const filteredTypes = filterDatabaseTypes(databaseTypes, clusterVpc)
 
-    // Expect only MYSQL and POSTGRESQL to be present in the filtered array
+    // Expect only MYSQL, POSTGRESQL and REDIS to be present in the filtered array
     expect(filteredTypes).toEqual([
       { label: 'REDIS', value: 'REDIS' },
       { label: 'POSTGRESQL', value: 'POSTGRESQL' },
