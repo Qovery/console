@@ -15,7 +15,7 @@ import { useCreateContainerRegistry } from '../hooks/use-create-container-regist
 import { useEditContainerRegistry } from '../hooks/use-edit-container-registry/use-edit-container-registry'
 
 export interface ContainerRegistryCreateEditModalProps {
-  onClose: (e?: string | string[]) => void
+  onClose: (response?: ContainerRegistryResponse) => void
   organizationId: string
   isEdit?: boolean
   registry?: ContainerRegistryResponse
@@ -73,19 +73,18 @@ export function ContainerRegistryCreateEditModal({
   const onSubmit = methods.handleSubmit(async (containerRegistryRequest) => {
     try {
       if (registry) {
-        await editContainerRegistry({
+        const response = await editContainerRegistry({
           organizationId: organizationId,
           containerRegistryId: registry.id,
           containerRegistryRequest,
         })
-        onClose()
+        onClose(response)
       } else {
         const response = await createContainerRegistry({
           organizationId: organizationId,
           containerRegistryRequest,
         })
-        // Update input select value with the new container registry id and close modal
-        onClose(response.id)
+        onClose(response)
       }
     } catch (error) {
       console.error(error)

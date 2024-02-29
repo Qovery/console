@@ -76,8 +76,8 @@ export function GitProviderSetting({ disabled }: GitProviderSettingProps) {
                 content: (
                   <GitTokenCreateEditModal
                     organizationId={organizationId}
-                    onClose={(e) => {
-                      e && onChange(field, e)
+                    onClose={(response) => {
+                      response && onChange(field, response.id)
                       closeModal()
                     }}
                   />

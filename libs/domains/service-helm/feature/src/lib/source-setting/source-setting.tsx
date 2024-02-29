@@ -81,8 +81,8 @@ export function SourceSetting({ disabled = false }: { disabled?: boolean }) {
                           content: (
                             <HelmRepositoryCreateEditModal
                               organizationId={organizationId}
-                              onClose={(e) => {
-                                e && field.onChange(e)
+                              onClose={(response) => {
+                                response && field.onChange(response.id)
                                 closeModal()
                               }}
                             />

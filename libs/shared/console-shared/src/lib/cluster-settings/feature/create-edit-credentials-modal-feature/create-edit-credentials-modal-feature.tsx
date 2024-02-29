@@ -11,7 +11,7 @@ import { useModal } from '@qovery/shared/ui'
 import CreateEditCredentialsModal from '../../ui/create-edit-credentials-modal/create-edit-credentials-modal'
 
 export interface CreateEditCredentialsModalFeatureProps {
-  onClose: (e?: string | string[]) => void
+  onClose: (response?: ClusterCredentials) => void
   cloudProvider: CloudProviderEnum
   organizationId: string
   currentCredential?: ClusterCredentials
@@ -77,19 +77,18 @@ export function CreateEditCredentialsModalFeature(props: CreateEditCredentialsMo
 
     try {
       if (currentCredential) {
-        await editCloudProviderCredential({
+        const response = await editCloudProviderCredential({
           organizationId,
           credentialId: currentCredential.id,
           ...credentials,
         })
-        onClose()
+        onClose(response)
       } else {
         const response = await createCloudProviderCredential({
           organizationId,
           ...credentials,
         })
-        // Update input select value with the new credential id and close modal
-        onClose(response.id)
+        onClose(response)
       }
     } catch (error) {
       console.error(error)

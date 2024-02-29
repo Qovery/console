@@ -290,7 +290,7 @@ describe('ContainerRegistryCreateEditModal', () => {
       },
     })
 
-    expect(props.onClose).toHaveBeenCalledWith('000')
+    expect(props.onClose).toHaveBeenCalledWith({ id: '000' })
   })
 
   it('should submit the form to edit a registry', async () => {

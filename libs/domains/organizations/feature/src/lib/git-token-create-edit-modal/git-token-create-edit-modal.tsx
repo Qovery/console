@@ -6,7 +6,7 @@ import { useCreateGitToken } from '../hooks/use-create-git-token/use-create-git-
 import { useEditGitToken } from '../hooks/use-edit-git-token/use-edit-git-token'
 
 export interface GitTokenCreateEditModalProps {
-  onClose: (e?: string | string[]) => void
+  onClose: (response?: GitTokenResponse) => void
   organizationId: string
   isEdit?: boolean
   gitToken?: GitTokenResponse
@@ -31,19 +31,18 @@ export function GitTokenCreateEditModal({ isEdit, gitToken, organizationId, onCl
   const onSubmit = methods.handleSubmit(async (data) => {
     try {
       if (isEdit) {
-        await editGitToken({
+        const response = await editGitToken({
           organizationId,
           gitTokenId: gitToken?.id ?? '',
           gitTokenRequest: data,
         })
-        onClose()
+        onClose(response)
       } else {
         const response = await createGitToken({
           organizationId,
           gitTokenRequest: data,
         })
-        // Update input select value with the new git token id and close modal
-        onClose(response.id)
+        onClose(response)
       }
     } catch (error) {
       console.error(error)

@@ -48,8 +48,8 @@ export function GeneralContainerSettings({ organization, className }: GeneralCon
                     content: organization && (
                       <ContainerRegistryCreateEditModal
                         organizationId={organization.id}
-                        onClose={(e) => {
-                          field.onChange(e)
+                        onClose={(response) => {
+                          response && field.onChange(response.id)
                           closeModal()
                         }}
                       />

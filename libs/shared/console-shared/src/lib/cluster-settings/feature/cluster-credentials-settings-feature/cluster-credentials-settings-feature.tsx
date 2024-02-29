@@ -23,8 +23,8 @@ export function ClusterCredentialsSettingsFeature({ cloudProvider }: ClusterCred
         <CreateEditCredentialsModalFeature
           currentCredential={credentials.find((currentCredentials: ClusterCredentials) => currentCredentials.id === id)}
           cloudProvider={cloudProvider!}
-          onClose={(e) => {
-            e && onChange?.(e)
+          onClose={(response) => {
+            response && onChange?.(response.id)
             closeModal()
           }}
           organizationId={organizationId}
