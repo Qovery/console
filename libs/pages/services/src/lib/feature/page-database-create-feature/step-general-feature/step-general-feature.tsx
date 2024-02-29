@@ -101,9 +101,6 @@ export const generateDatabasesTypesAndVersionOptions = (
     }
   })
 
-  console.log('databaseTypeOptions: ', databaseTypeOptions)
-  console.log('clusterVPC: ', clusterVpc)
-
   return {
     databaseTypeOptions: clusterVpc ? filterDatabaseTypes(databaseTypeOptions, clusterVpc) : databaseTypeOptions,
     databaseVersionOptions,

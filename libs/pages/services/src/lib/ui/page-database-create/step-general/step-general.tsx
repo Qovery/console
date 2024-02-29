@@ -152,7 +152,7 @@ export function StepGeneral({
             <Callout.Text>
               <Callout.TextHeading>Action needed</Callout.TextHeading>
               Add the following tag on your VPC ({clusterVpc.aws_vpc_eks_id}) in AWS: <br />
-              Key: <strong>ClusterId</strong> Value: <strong>{cluster.id}</strong>
+              Key: <strong>ClusterId</strong> Value: <strong>z{cluster.id.split('-')[0]}</strong>
             </Callout.Text>
           </Callout.Root>
         )}
