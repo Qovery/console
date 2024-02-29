@@ -16,7 +16,7 @@ import { dateMediumLocalFormat } from '@qovery/shared/util-dates'
 export interface PageOrganizationGeneralProps {
   onSubmit: FormEventHandler<HTMLFormElement>
   loading: boolean
-  created_at: string
+  created_at?: string
 }
 
 export function PageOrganizationGeneral(props: PageOrganizationGeneralProps) {
@@ -40,7 +40,7 @@ export function PageOrganizationGeneral(props: PageOrganizationGeneralProps) {
               <div className="ml-3">
                 <p className="text-neutral-400 font-medium mb-1">{watch('name')}</p>
                 <span className="block text-xs text-neutral-350">
-                  Created since {dateMediumLocalFormat(created_at)}
+                  Created since {created_at ? dateMediumLocalFormat(created_at) : null}
                 </span>
               </div>
             </div>

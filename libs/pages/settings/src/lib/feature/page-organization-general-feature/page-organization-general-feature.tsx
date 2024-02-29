@@ -67,7 +67,7 @@ export function PageOrganizationGeneralFeature() {
       <PageOrganizationGeneral
         onSubmit={onSubmit}
         loading={isLoadingEditOrganization}
-        created_at={organization?.created_at || ''}
+        created_at={organization?.created_at}
       />
     </FormProvider>
   )
