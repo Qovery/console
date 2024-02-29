@@ -18,6 +18,7 @@ import {
 } from '@qovery/shared/routes'
 import { FunnelFlowBody, FunnelFlowHelpCard, Icon } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { type ValueOf } from '@qovery/shared/util-types'
 import StepGeneral from '../../../ui/page-database-create/step-general/step-general'
 import { type GeneralData } from '../database-creation-flow.interface'
 import { useDatabaseCreateContext } from '../page-database-create-feature'
@@ -25,24 +26,21 @@ import { useDatabaseCreateContext } from '../page-database-create-feature'
 export function filterDatabaseTypes(databaseTypes: Value[], clusterVpc: ClusterFeatureAwsExistingVpc) {
   if (!clusterVpc) return []
 
-  const dbTypeMappings: { [key: string]: DatabaseTypeEnum[] } = {
-    documentdb_subnets_zone_: ['MONGODB'],
-    elasticache_subnets_zone_: ['REDIS'],
-    rds_subnets_zone_: ['POSTGRESQL', 'MYSQL'],
+  type DB_TYPES = keyof typeof DatabaseTypeEnum
+
+  const dbTypeMappings: Record<DB_TYPES, string> = {
+    MONGODB: 'documentdb_subnets_zone_',
+    REDIS: 'elasticache_subnets_zone_',
+    MYSQL: 'rds_subnets_zone_',
+    POSTGRESQL: 'rds_subnets_zone_',
   }
 
-  return Object.entries(clusterVpc).reduce((filteredTypes: Value[], [key, value]) => {
-    const dbType = Object.keys(dbTypeMappings).find((prefix) => key.startsWith(prefix))
-
-    if (dbType && value.length > 0) {
-      dbTypeMappings[dbType].forEach((dbType) => {
-        const databaseType = databaseTypes.find((db) => db.value === dbType)
-        if (databaseType) filteredTypes.push(databaseType)
-      })
-    }
-
-    return filteredTypes.filter((type, index) => filteredTypes.indexOf(type) === index)
-  }, [])
+  return databaseTypes.filter(({ value: dbType }) =>
+    Object.entries(clusterVpc).some(
+      ([key, subnets]: [string, ValueOf<ClusterFeatureAwsExistingVpc>]) =>
+        key.startsWith(dbTypeMappings[dbType as DB_TYPES]) && Array.isArray(subnets) && subnets.length > 0
+    )
+  )
 }
 
 export const generateDatabasesTypesAndVersionOptions = (

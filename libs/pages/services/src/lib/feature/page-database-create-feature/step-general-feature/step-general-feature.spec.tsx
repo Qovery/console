@@ -113,4 +113,33 @@ describe('StepGeneralFeature', () => {
       { label: 'MYSQL', value: 'MYSQL' },
     ])
   })
+
+  it('should return filtered array when none of the databases are present in cluster vpc', () => {
+    const databaseTypes = [
+      { label: 'MONGODB', value: 'MONGODB' },
+      { label: 'REDIS', value: 'REDIS' },
+      { label: 'POSTGRESQL', value: 'POSTGRESQL' },
+      { label: 'MYSQL', value: 'MYSQL' },
+    ]
+
+    const clusterVpc = {
+      aws_vpc_eks_id: 'vpc-1',
+      eks_subnets_zone_a_ids: [],
+      eks_subnets_zone_b_ids: [],
+      eks_subnets_zone_c_ids: [],
+      documentdb_subnets_zone_a_ids: [],
+      documentdb_subnets_zone_b_ids: [],
+      documentdb_subnets_zone_c_ids: [],
+      elasticache_subnets_zone_a_ids: [],
+      elasticache_subnets_zone_b_ids: [],
+      elasticache_subnets_zone_c_ids: [],
+      rds_subnets_zone_a_ids: [],
+      rds_subnets_zone_b_ids: [],
+      rds_subnets_zone_c_ids: [],
+    }
+
+    const filteredTypes = filterDatabaseTypes(databaseTypes, clusterVpc)
+
+    expect(filteredTypes).toEqual([])
+  })
 })
