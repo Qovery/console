@@ -113,9 +113,9 @@ export function StepSummaryFeature() {
           timeout_sec: generalData.timeout_sec,
           auto_deploy: generalData.auto_deploy || (valuesOverrideFileData.auto_deploy ?? false),
           values_override: {
-            set: getValuesByType('generic'),
-            set_string: getValuesByType('string'),
-            set_json: getValuesByType('json'),
+            set: getValuesByType('--set'),
+            set_string: getValuesByType('--set-string'),
+            set_json: getValuesByType('--set-json'),
             file: valuesOverrideFile,
           },
         },

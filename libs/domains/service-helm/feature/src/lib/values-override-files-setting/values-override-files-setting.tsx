@@ -39,9 +39,7 @@ export function ValuesOverrideFilesSetting({
       <Heading className="mb-2">Values override as file</Heading>
       <p className="text-sm text-neutral-350 mb-2">
         Define the YAML file(s) to be applied as override to the default values.yaml delivered with the chart. It is
-        highly recommended to store the override file(s) in a git repository. To get all the Qovery functionalities, add
-        the macro “qovery.labels.service” and "qovery.annotations.service" within the field managing the
-        labels/annotations assigned to the deployed Pods/Deployments/Services/Jobs.
+        highly recommended to store the override file(s) in a git repository.
       </p>
       <Popover.Root>
         <Popover.Trigger>
