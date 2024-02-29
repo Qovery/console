@@ -1,18 +1,6 @@
-import { buildGitProviderUrl, getGitTokenValue, guessGitProvider } from './util-git'
+import { buildGitProviderUrl, guessGitProvider } from './util-git'
 
 describe('util-git', () => {
-  it('should parse a valid token value', () => {
-    const tokenValue = 'TOKEN_github_123'
-    const result = getGitTokenValue(tokenValue)
-    expect(result).toEqual({ type: 'github', id: '123' })
-  })
-
-  it('should return null for an invalid token value', () => {
-    const tokenValue = 'INVALID'
-    const result = getGitTokenValue(tokenValue)
-    expect(result).toBeNull()
-  })
-
   it('should return GITHUB for a valid GitHub URL', () => {
     const url = 'https://github.com/user/my-repo'
     expect(guessGitProvider(url)).toBe('GITHUB')

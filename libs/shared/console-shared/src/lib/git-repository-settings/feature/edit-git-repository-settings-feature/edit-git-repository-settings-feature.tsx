@@ -23,10 +23,11 @@ export function EditGitRepositorySettingsFeature({ withBlockWrapper = true }: Ed
 
   const { setValue } = useFormContext<{
     provider: string
-    repository: string | undefined
-    branch: string | undefined
-    root_path: string | undefined
+    repository?: string
+    branch?: string
+    root_path?: string
     git_token_name?: string
+    git_token_id?: string | null
   }>()
 
   const [gitDisabled, setGitDisabled] = useState(true)
@@ -39,6 +40,7 @@ export function EditGitRepositorySettingsFeature({ withBlockWrapper = true }: Ed
       setValue('branch', gitRepository?.branch ?? '')
       setValue('root_path', gitRepository?.root_path ?? '/')
       setValue('git_token_name', gitRepository?.git_token_name ?? undefined)
+      setValue('git_token_id', gitRepository?.git_token_id)
     }
   }, [gitDisabled, gitRepository, setValue])
 

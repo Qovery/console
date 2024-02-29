@@ -12,7 +12,6 @@ import {
   SERVICES_URL,
 } from '@qovery/shared/routes'
 import { Button, FunnelFlowBody, Heading, Icon, Section, truncateText } from '@qovery/shared/ui'
-import { getGitTokenValue } from '@qovery/shared/util-git'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
 import { useHelmCreateContext } from '../page-helm-create-feature'
@@ -46,14 +45,12 @@ export function StepSummaryFeature() {
 
     const source = match(generalData.source_provider)
       .with('GIT', () => {
-        const gitToken = getGitTokenValue(generalData.provider ?? '')
-
         return {
           git_repository: {
-            url: buildGitRepoUrl(gitToken?.type ?? generalData.provider ?? '', generalData.repository),
+            url: buildGitRepoUrl(generalData.provider ?? '', generalData.repository),
             branch: generalData.branch,
             root_path: generalData.root_path,
-            git_token_id: gitToken?.id,
+            git_token_id: generalData.git_token_id,
           },
         }
       })
@@ -68,17 +65,12 @@ export function StepSummaryFeature() {
 
     const valuesOverrideFile = match(valuesOverrideFileData.type)
       .with('GIT_REPOSITORY', () => {
-        const gitToken = getGitTokenValue(valuesOverrideFileData.provider ?? '')
-
         return {
           git: {
             git_repository: {
-              url: buildGitRepoUrl(
-                gitToken?.type ?? valuesOverrideFileData.provider ?? '',
-                valuesOverrideFileData.repository!
-              ),
+              url: buildGitRepoUrl(valuesOverrideFileData.provider ?? '', valuesOverrideFileData.repository!),
               branch: valuesOverrideFileData.branch!,
-              git_token_id: gitToken?.id,
+              git_token_id: valuesOverrideFileData.git_token_id,
             },
             paths: valuesOverrideFileData.paths?.split(',') ?? [],
           },
@@ -110,7 +102,7 @@ export function StepSummaryFeature() {
           source,
           allow_cluster_wide_resources: generalData.allow_cluster_wide_resources,
           arguments: JSON.parse(generalData.arguments),
-          timeout_sec: generalData.timeout_sec,
+          timeout_sec: parseInt(generalData.timeout_sec, 10),
           auto_deploy: generalData.auto_deploy || (valuesOverrideFileData.auto_deploy ?? false),
           values_override: {
             set: getValuesByType('--set'),

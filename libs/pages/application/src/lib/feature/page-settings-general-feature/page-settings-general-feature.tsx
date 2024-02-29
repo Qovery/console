@@ -8,47 +8,49 @@ import {
   type HelmRequestAllOfSourceOneOf1,
   type JobRequest,
 } from 'qovery-typescript-axios'
-import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
+import { FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { P, match } from 'ts-pattern'
 import { useOrganization } from '@qovery/domains/organizations/feature'
 import { type Application, type Container, type Helm, type Job } from '@qovery/domains/services/data-access'
 import { useEditService, useService } from '@qovery/domains/services/feature'
+import { type HelmGeneralData } from '@qovery/pages/services'
 import { isHelmGitSource, isHelmRepositorySource, isJobContainerSource, isJobGitSource } from '@qovery/shared/enums'
+import { type ApplicationGeneralData, type JobGeneralData } from '@qovery/shared/interfaces'
 import { toastError } from '@qovery/shared/ui'
-import { getGitTokenValue } from '@qovery/shared/util-git'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
 import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-general'
 
-export const handleGitApplicationSubmit = (data: FieldValues, application: Application): ApplicationEditRequest => {
+export const handleGitApplicationSubmit = (
+  data: ApplicationGeneralData,
+  application: Application
+): ApplicationEditRequest => {
   let cloneApplication: ApplicationEditRequest = {
     ...application,
     dockerfile_path: undefined,
     git_repository: undefined,
-    name: data['name'],
-    description: data['description'] || '',
-    auto_deploy: data['auto_deploy'],
+    name: data.name,
+    description: data.description || '',
+    auto_deploy: data.auto_deploy,
   }
-  cloneApplication.auto_deploy = data['auto_deploy']
+  cloneApplication.auto_deploy = data.auto_deploy
 
   if ('build_mode' in cloneApplication) {
-    cloneApplication.build_mode = data['build_mode']
+    cloneApplication.build_mode = data.build_mode
 
-    if (data['build_mode'] === BuildModeEnum.DOCKER) {
-      cloneApplication.dockerfile_path = data['dockerfile_path']
+    if (data.build_mode === BuildModeEnum.DOCKER) {
+      cloneApplication.dockerfile_path = data.dockerfile_path
       cloneApplication.buildpack_language = null
     } else {
-      cloneApplication.buildpack_language = data['buildpack_language']
+      cloneApplication.buildpack_language = data.buildpack_language
       cloneApplication.dockerfile_path = undefined
     }
 
-    const gitToken = getGitTokenValue(data['provider'])
-
     const git_repository = {
-      url: buildGitRepoUrl(gitToken?.type ?? data['provider'], data['repository']),
-      branch: data['branch'],
-      root_path: data['root_path'],
-      git_token_id: gitToken ? gitToken.id : application.git_repository?.git_token_id,
+      url: buildGitRepoUrl(data.provider ?? '', data.repository ?? ''),
+      branch: data.branch,
+      root_path: data.root_path,
+      git_token_id: data.git_token_id,
     }
 
     cloneApplication.git_repository = git_repository
@@ -56,79 +58,75 @@ export const handleGitApplicationSubmit = (data: FieldValues, application: Appli
 
   cloneApplication = {
     ...cloneApplication,
-    arguments: (data['cmd_arguments'] && data['cmd_arguments'].length && eval(data['cmd_arguments'])) || [],
-    entrypoint: data['image_entry_point'] || '',
+    arguments: (data.cmd_arguments && data.cmd_arguments.length && eval(data.cmd_arguments)) || [],
+    entrypoint: data.image_entry_point || '',
   }
 
   return cloneApplication
 }
 
-export const handleContainerSubmit = (data: FieldValues, container: Container): ContainerRequest => {
+export const handleContainerSubmit = (data: ApplicationGeneralData, container: Container): ContainerRequest => {
   return {
     ...container,
-    name: data['name'],
-    description: data['description'] || '',
-    auto_deploy: data['auto_deploy'],
-    tag: data['image_tag'] || '',
-    image_name: data['image_name'] || '',
-    arguments: (data['cmd_arguments'] && data['cmd_arguments'].length && eval(data['cmd_arguments'])) || [],
-    entrypoint: data['image_entry_point'] || '',
+    name: data.name,
+    description: data.description || '',
+    auto_deploy: data.auto_deploy,
+    tag: data.image_tag || '',
+    image_name: data.image_name || '',
+    arguments: (data.cmd_arguments && data.cmd_arguments.length && eval(data.cmd_arguments)) || [],
+    entrypoint: data.image_entry_point || '',
     registry_id: data['registry'] || '',
   }
 }
 
-export const handleJobSubmit = (data: FieldValues, job: Job): JobRequest => {
+export const handleJobSubmit = (data: JobGeneralData, job: Job): JobRequest => {
   if (isJobGitSource(job.source)) {
-    const gitToken = getGitTokenValue(data['provider'])
-
     const git_repository = {
-      url: buildGitRepoUrl(gitToken?.type ?? data['provider'], data['repository']),
-      branch: data['branch'],
-      root_path: data['root_path'],
-      git_token_id: gitToken ? gitToken.id : job.source.docker?.git_repository?.git_token_id,
+      url: buildGitRepoUrl(data.provider ?? '', data.repository ?? ''),
+      branch: data.branch,
+      root_path: data.root_path,
+      git_token_id: data.git_token_id,
     }
 
     return {
       ...job,
-      name: data['name'],
-      description: data['description'],
-      auto_deploy: data['auto_deploy'],
+      name: data.name,
+      description: data.description,
+      auto_deploy: data.auto_deploy,
       source: {
         docker: {
           git_repository,
-          dockerfile_path: data['dockerfile_path'],
+          dockerfile_path: data.dockerfile_path,
         },
       },
     }
   } else {
     return {
       ...job,
-      name: data['name'],
-      description: data['description'],
-      auto_deploy: data['auto_deploy'],
+      name: data.name,
+      description: data.description,
+      auto_deploy: data.auto_deploy,
       source: {
         image: {
-          tag: data['image_tag'] || '',
-          image_name: data['image_name'] || '',
-          registry_id: data['registry'] || '',
+          tag: data.image_tag || '',
+          image_name: data.image_name || '',
+          registry_id: data.registry || '',
         },
       },
     }
   }
 }
 
-export const handleHelmSubmit = (data: FieldValues, helm: Helm): HelmRequest => {
+export const handleHelmSubmit = (data: HelmGeneralData, helm: Helm): HelmRequest => {
   const sourceProvider: 'HELM_REPOSITORY' | 'GIT' = data['source_provider']
   const source: HelmRequestAllOfSource = match(sourceProvider)
     .with('GIT', (): HelmRequestAllOfSourceOneOf => {
-      const gitToken = getGitTokenValue(data['provider'] ?? '')
-
       return {
         git_repository: {
-          url: buildGitRepoUrl(gitToken?.type ?? data['provider'] ?? '', data['repository']),
-          branch: data['branch'],
-          root_path: data['root_path'],
-          git_token_id: gitToken?.id,
+          url: buildGitRepoUrl(data.provider ?? '', data.repository ?? ''),
+          branch: data.branch,
+          root_path: data.root_path,
+          git_token_id: data.git_token_id,
         },
       }
     })
@@ -136,9 +134,9 @@ export const handleHelmSubmit = (data: FieldValues, helm: Helm): HelmRequest => 
       'HELM_REPOSITORY',
       (): HelmRequestAllOfSourceOneOf1 => ({
         helm_repository: {
-          repository: data['repository'],
-          chart_name: data['chart_name'],
-          chart_version: data['chart_version'],
+          repository: data.repository,
+          chart_name: data.chart_name,
+          chart_version: data.chart_version,
         },
       })
     )
@@ -146,13 +144,13 @@ export const handleHelmSubmit = (data: FieldValues, helm: Helm): HelmRequest => 
 
   return {
     ...helm,
-    name: data['name'],
-    description: data['description'],
+    name: data.name,
+    description: data.description,
     source,
-    allow_cluster_wide_resources: data['allow_cluster_wide_resources'],
-    arguments: JSON.parse(data['arguments']),
-    timeout_sec: parseInt(data['timeout_sec'], 10),
-    auto_deploy: data['auto_deploy'] ?? false,
+    allow_cluster_wide_resources: data.allow_cluster_wide_resources,
+    arguments: JSON.parse(data.arguments),
+    timeout_sec: parseInt(data.timeout_sec, 10),
+    auto_deploy: data.auto_deploy ?? false,
   }
 }
 
@@ -211,7 +209,7 @@ export function PageSettingsGeneralFeature() {
     }))
     .otherwise(() => undefined)
 
-  const methods = useForm({
+  const methods = useForm<ApplicationGeneralData | JobGeneralData | HelmGeneralData>({
     mode: 'onChange',
     defaultValues: {
       name: service?.name,
@@ -225,21 +223,21 @@ export function PageSettingsGeneralFeature() {
 
     const payload = match(service)
       .with({ serviceType: 'APPLICATION' }, (s) => ({
-        ...handleGitApplicationSubmit(data, s),
+        ...handleGitApplicationSubmit(data as ApplicationGeneralData, s),
         serviceType: s.serviceType,
       }))
       .with({ serviceType: 'JOB' }, (s) => ({
-        ...handleJobSubmit(data, s),
+        ...handleJobSubmit(data as JobGeneralData, s),
         serviceType: s.serviceType,
       }))
       .with({ serviceType: 'CONTAINER' }, (s) => ({
-        ...handleContainerSubmit(data, s),
+        ...handleContainerSubmit(data as ApplicationGeneralData, s),
         serviceType: s.serviceType,
       }))
       .with({ serviceType: 'HELM' }, (s) => {
         try {
           return {
-            ...handleHelmSubmit(data, s),
+            ...handleHelmSubmit(data as HelmGeneralData, s),
             serviceType: s.serviceType,
           }
         } catch (e: unknown) {

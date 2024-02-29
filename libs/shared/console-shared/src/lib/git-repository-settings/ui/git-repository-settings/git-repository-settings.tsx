@@ -27,23 +27,31 @@ export function GitRepositorySettings({
   withBlockWrapper = true,
 }: GitRepositorySettingsProps) {
   const { watch } = useFormContext<{
-    provider: string
+    provider: keyof typeof GitProviderEnum
     repository: string
     branch: string
     root_path: string
     git_token_name: string
+    git_token_id?: string
   }>()
   const { openModal, closeModal } = useModal()
 
-  const watchFieldProvider = watch('provider') as GitProviderEnum
+  const watchFieldProvider = watch('provider')
   const watchFieldRepository = watch('repository')
+  const watchFieldGitTokenId = watch('git_token_id')
 
   const children = (
     <div className="flex flex-col gap-3">
       <GitProviderSetting disabled={gitDisabled} />
-      {watchFieldProvider && <GitRepositorySetting disabled={gitDisabled} gitProvider={watchFieldProvider} />}
+      {watchFieldProvider && (
+        <GitRepositorySetting
+          disabled={gitDisabled}
+          gitProvider={watchFieldProvider}
+          gitTokenId={watchFieldGitTokenId}
+        />
+      )}
       {watchFieldProvider && watchFieldRepository && (
-        <GitBranchSettings disabled={gitDisabled} gitProvider={watchFieldProvider} />
+        <GitBranchSettings disabled={gitDisabled} gitProvider={watchFieldProvider} gitTokenId={watchFieldGitTokenId} />
       )}
       {gitDisabled && editGitSettings && currentProvider && currentRepository && (
         <div className="flex justify-end">

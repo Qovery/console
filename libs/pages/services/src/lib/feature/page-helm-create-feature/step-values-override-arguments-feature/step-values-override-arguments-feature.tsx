@@ -5,7 +5,6 @@ import { match } from 'ts-pattern'
 import { ValuesOverrideArgumentsSetting } from '@qovery/domains/service-helm/feature'
 import { SERVICES_HELM_CREATION_SUMMARY_URL, SERVICES_HELM_CREATION_URL, SERVICES_URL } from '@qovery/shared/routes'
 import { Button, FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
-import { getGitTokenValue } from '@qovery/shared/util-git'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
 import { useHelmCreateContext } from '../page-helm-create-feature'
@@ -20,14 +19,12 @@ export function StepValuesOverrideArgumentsFeature() {
 
   const source = match(generalData.source_provider)
     .with('GIT', (): HelmRequestAllOfSourceOneOf => {
-      const gitToken = getGitTokenValue(generalData.provider ?? '')
-
       return {
         git_repository: {
-          url: buildGitRepoUrl(gitToken?.type ?? generalData.provider ?? '', generalData.repository),
+          url: buildGitRepoUrl(generalData.provider ?? '', generalData.repository),
           branch: generalData.branch,
           root_path: generalData.root_path,
-          git_token_id: gitToken?.id,
+          git_token_id: generalData.git_token_id,
         },
       }
     })

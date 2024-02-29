@@ -7,7 +7,7 @@ import { type HelmValuesFileData, ValuesOverrideFilesSetting } from '@qovery/dom
 import { AutoDeploySetting, useEditService, useService } from '@qovery/domains/services/feature'
 import { isHelmRepositorySource } from '@qovery/shared/enums'
 import { Button, Callout, Icon, InputText } from '@qovery/shared/ui'
-import { getGitTokenValue, guessGitProvider } from '@qovery/shared/util-git'
+import { guessGitProvider } from '@qovery/shared/util-git'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
 
@@ -29,6 +29,10 @@ export function PageSettingsValuesOverrideFileFeature() {
       type: currentType,
       content: valuesOverrideFile?.raw?.values?.[0]?.content ?? '',
       provider: guessGitProvider(valuesOverrideFile?.git?.git_repository?.url ?? ''),
+      git_token_id:
+        valuesOverrideFile?.git?.git_repository?.git_token_id === null
+          ? undefined
+          : valuesOverrideFile?.git?.git_repository?.git_token_id,
       repository:
         valuesOverrideFile?.git?.git_repository?.name ?? valuesOverrideFile?.git?.git_repository?.git_token_id,
       branch: valuesOverrideFile?.git?.git_repository?.branch,
@@ -38,6 +42,7 @@ export function PageSettingsValuesOverrideFileFeature() {
 
   const watchFieldType = methods.watch('type')
   const watchFieldGitProvider = methods.watch('provider')
+  const watchFieldGitTokenId = methods.watch('git_token_id')
   const watchFieldGitRepository = methods.watch('repository')
 
   const disabledContinueButton = match(watchFieldType)
@@ -57,14 +62,12 @@ export function PageSettingsValuesOverrideFileFeature() {
 
     const valuesOverrideFile: HelmRequestAllOfValuesOverrideFile | undefined = match(watchFieldType)
       .with('GIT_REPOSITORY', () => {
-        const gitToken = getGitTokenValue(data['provider']!)
-
         return {
           git: {
             git_repository: {
               url: buildGitRepoUrl(data['provider']!, data['repository']!),
               branch: data['branch'] ?? '',
-              git_token_id: gitToken?.id,
+              git_token_id: data['git_token_id'],
             },
             paths: data['paths']?.split(',') ?? [],
           },
@@ -102,10 +105,12 @@ export function PageSettingsValuesOverrideFileFeature() {
   const gitRepositorySettings = (
     <>
       <GitProviderSetting />
-      {watchFieldGitProvider && <GitRepositorySetting gitProvider={watchFieldGitProvider} />}
+      {watchFieldGitProvider && (
+        <GitRepositorySetting gitProvider={watchFieldGitProvider} gitTokenId={watchFieldGitTokenId} />
+      )}
       {watchFieldGitProvider && watchFieldGitRepository && (
         <>
-          <GitBranchSettings gitProvider={watchFieldGitProvider} hideRootPath />
+          <GitBranchSettings gitProvider={watchFieldGitProvider} gitTokenId={watchFieldGitTokenId} hideRootPath />
           <div>
             <Controller
               name="paths"

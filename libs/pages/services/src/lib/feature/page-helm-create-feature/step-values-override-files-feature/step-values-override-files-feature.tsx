@@ -10,7 +10,6 @@ import {
   SERVICES_URL,
 } from '@qovery/shared/routes'
 import { Button, Callout, FunnelFlowBody, FunnelFlowHelpCard, Icon, InputText } from '@qovery/shared/ui'
-import { getGitTokenValue } from '@qovery/shared/util-git'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
 import { useHelmCreateContext } from '../page-helm-create-feature'
@@ -25,13 +24,12 @@ export function StepValuesOverrideFilesFeature() {
 
   const source = match(generalData.source_provider)
     .with('GIT', () => {
-      const gitToken = getGitTokenValue(generalData.provider ?? '')
-
       return {
         git_repository: {
-          url: buildGitRepoUrl(gitToken?.type ?? generalData.provider ?? '', generalData.repository),
+          url: buildGitRepoUrl(generalData.provider ?? '', generalData.repository),
           branch: generalData.branch,
           root_path: generalData.root_path,
+          git_token_id: generalData.git_token_id,
         },
       }
     })
@@ -76,6 +74,7 @@ export function StepValuesOverrideFilesFeature() {
 
   const watchFieldType = valuesOverrideFileForm.watch('type')
   const watchFieldGitProvider = valuesOverrideFileForm.watch('provider')
+  const watchFieldGitTokenId = valuesOverrideFileForm.watch('git_token_id')
   const watchFieldGitRepository = valuesOverrideFileForm.watch('repository')
 
   const disabledContinueButton = match(watchFieldType)
@@ -93,10 +92,12 @@ export function StepValuesOverrideFilesFeature() {
   const gitRepositorySettings = (
     <>
       <GitProviderSetting />
-      {watchFieldGitProvider && <GitRepositorySetting gitProvider={watchFieldGitProvider} />}
+      {watchFieldGitProvider && (
+        <GitRepositorySetting gitProvider={watchFieldGitProvider} gitTokenId={watchFieldGitTokenId} />
+      )}
       {watchFieldGitProvider && watchFieldGitRepository && (
         <>
-          <GitBranchSettings gitProvider={watchFieldGitProvider} hideRootPath />
+          <GitBranchSettings gitProvider={watchFieldGitProvider} gitTokenId={watchFieldGitTokenId} hideRootPath />
           <div>
             <Controller
               name="paths"

@@ -91,7 +91,7 @@ export function CreateGeneralGitApplication(props: PageSettingsGeneralProps) {
                 dataTestId="input-text-dockerfile"
                 name={field.name}
                 onChange={field.onChange}
-                value={field.value}
+                value={field.value ?? ''}
                 label="Dockerfile path"
                 error={error?.message}
               />

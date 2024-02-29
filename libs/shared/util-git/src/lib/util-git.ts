@@ -1,10 +1,4 @@
-import { type GitProviderEnum } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
-
-export const getGitTokenValue = (value: string) => {
-  if (value?.includes('TOKEN')) return { type: value.split('_')[1] as GitProviderEnum, id: value.split('_')[2] }
-  return null
-}
 
 export const guessGitProvider = (url: string) => {
   const githubRegex = /^(https?:\/\/)?(www\.)?github\.com\/.*$/

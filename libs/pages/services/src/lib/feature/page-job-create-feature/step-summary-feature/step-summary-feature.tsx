@@ -19,7 +19,6 @@ import {
   SERVICES_URL,
 } from '@qovery/shared/routes'
 import { FunnelFlowBody } from '@qovery/shared/ui'
-import { getGitTokenValue } from '@qovery/shared/util-git'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
 import StepSummary from '../../../ui/page-job-create/step-summary/step-summary'
@@ -94,16 +93,14 @@ function prepareJobRequest(
       },
     }
   } else {
-    const gitToken = getGitTokenValue(generalData.provider ?? '')
-
     jobRequest.source = {
       docker: {
         dockerfile_path: generalData.dockerfile_path,
         git_repository: {
-          url: buildGitRepoUrl(gitToken?.type ?? generalData.provider ?? '', generalData.repository || ''),
+          url: buildGitRepoUrl(generalData.provider ?? '', generalData.repository || ''),
           root_path: generalData.root_path,
           branch: generalData.branch,
-          git_token_id: gitToken?.id,
+          git_token_id: generalData.git_token_id,
         },
       },
     }
