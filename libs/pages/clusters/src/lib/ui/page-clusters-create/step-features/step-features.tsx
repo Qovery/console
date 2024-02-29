@@ -29,12 +29,12 @@ export interface StepFeaturesProps {
 }
 
 export function areSubnetsEmpty(subnets?: Subnets[]): boolean {
-  if (!subnets) return false
-  return removeEmptySubnet(subnets)?.length !== 0
+  if (!subnets) return true
+  return removeEmptySubnet(subnets)?.length === 0
 }
 
 function TooltipContentSubnets({ children, subnets }: PropsWithChildren & { subnets?: Subnets[] }) {
-  if (!subnets || subnets.length === 0 || !areSubnetsEmpty(subnets)) return null
+  if (!subnets || subnets.length === 0 || areSubnetsEmpty(subnets)) return null
 
   return (
     <div className="flex items-start">

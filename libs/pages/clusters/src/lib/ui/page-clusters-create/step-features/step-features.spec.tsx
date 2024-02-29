@@ -77,11 +77,11 @@ describe('StepFeatures', () => {
 
   it('returns false if subnet has empty A, B, or C properties', () => {
     const subnets = [{ A: '', B: '', C: '' }]
-    expect(areSubnetsEmpty(subnets)).toBe(false)
+    expect(areSubnetsEmpty(subnets)).toBe(true)
   })
 
   it('returns true if subnet has non-empty A, B, and C properties', () => {
     const subnets = [{ A: 'subnet1A', B: 'subnet1B', C: '' }]
-    expect(areSubnetsEmpty(subnets)).toBe(true)
+    expect(areSubnetsEmpty(subnets)).toBe(false)
   })
 })
