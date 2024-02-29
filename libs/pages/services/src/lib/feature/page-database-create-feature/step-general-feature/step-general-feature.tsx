@@ -22,10 +22,6 @@ import StepGeneral from '../../../ui/page-database-create/step-general/step-gene
 import { type GeneralData } from '../database-creation-flow.interface'
 import { useDatabaseCreateContext } from '../page-database-create-feature'
 
-function getDatabaseType(databaseTypes: Value[], type: DatabaseTypeEnum) {
-  return databaseTypes.find((db) => db.label === type)
-}
-
 export function filterDatabaseTypes(databaseTypes: Value[], clusterVpc: ClusterFeatureAwsExistingVpc) {
   if (!clusterVpc) return []
 
@@ -40,7 +36,7 @@ export function filterDatabaseTypes(databaseTypes: Value[], clusterVpc: ClusterF
 
     if (dbType && value.length > 0) {
       dbTypeMappings[dbType].forEach((dbType) => {
-        const databaseType = getDatabaseType(databaseTypes, dbType)
+        const databaseType = databaseTypes.find((db) => db.value === dbType)
         if (databaseType) filteredTypes.push(databaseType)
       })
     }
