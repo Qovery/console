@@ -196,6 +196,7 @@ export function StepGeneralFeature() {
             databaseTypeOptions={databaseTypeOptions}
             databaseVersionOptions={databaseVersionOptions}
             publicOptionNotAvailable={publicOptionNotAvailable}
+            clusterVpc={clusterVpc}
           />
         </FormProvider>
       </FunnelFlowBody>
