@@ -130,8 +130,6 @@ export function StepGeneralFeature() {
   const watchModeDatabase = methods.watch('mode')
   const watchTypeDatabase = methods.watch('type')
 
-  console.log(watchModeDatabase)
-
   useEffect(() => {
     if (databaseConfigurations && databaseConfigurations.length && !databaseTypeOptions && !databaseVersionOptions) {
       const { databaseTypeOptions, databaseVersionOptions } = generateDatabasesTypesAndVersionOptions(
