@@ -82,8 +82,7 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
               <p className="text-neutral-350 text-xs font-medium">
                 Next invoice{' '}
                 <strong className="text-neutral-400">
-                  {props.currentCost?.paid_usage?.renewal_at &&
-                    dateToFormat(props.currentCost?.paid_usage.renewal_at, 'MMM dd, Y')}
+                  {props.currentCost?.renewal_at && dateToFormat(props.currentCost?.renewal_at, 'MMM dd, Y')}
                 </strong>
               </p>
             )}
@@ -139,19 +138,6 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
             <Link to={CLUSTERS_URL(organizationId)} size="xs">
               Manage clusters
             </Link>
-          </div>
-          <div className="flex-1 p-5  h-[114px]">
-            <div className="text-neutral-350 text-xs mb-1 font-medium">Deployments</div>
-            <Skeleton height={20} width={100} show={!props.currentCost?.plan}>
-              <div className="h-5">
-                <strong className="text-neutral-400 font-bold text-sm">
-                  {props.currentCost?.paid_usage?.consumed_deployments}
-                </strong>{' '}
-                <span className="text-neutral-350 text-xs">
-                  / {props.currentCost?.paid_usage?.max_deployments_per_month}
-                </span>
-              </div>
-            </Skeleton>
           </div>
         </div>
         <InvoicesListFeature />
