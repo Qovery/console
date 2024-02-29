@@ -22,7 +22,7 @@ export const Primary = {
       <DropdownMenu.Root>
         <DropdownMenu.Trigger asChild>
           <ActionToolbar.Button>
-            <Icon iconName="play" className="mr-3" />
+            <Icon iconName="play" className="mr-4" />
             <Icon iconName="angle-down" />
           </ActionToolbar.Button>
         </DropdownMenu.Trigger>

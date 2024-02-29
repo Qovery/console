@@ -77,7 +77,7 @@ function MenuManageDeployment({ environment, state }: { environment: Environment
         <ActionToolbar.Button aria-label="Manage Deployment">
           <Tooltip content="Manage Deployment">
             <div className="flex items-center w-full h-full">
-              <Icon iconName="play" className="mr-3" />
+              <Icon iconName="play" className="mr-4" />
               <Icon iconName="angle-down" />
             </div>
           </Tooltip>

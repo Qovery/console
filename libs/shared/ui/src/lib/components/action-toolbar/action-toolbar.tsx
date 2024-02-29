@@ -16,7 +16,7 @@ const ToolbarButton = forwardRef<ElementRef<typeof Toolbar.Button>, ToolbarButto
     <Toolbar.Button
       className={twMerge(
         buttonVariants({ color, radius, size, variant }),
-        'first:rounded-l last:rounded-r first:border-r-0 first:border-x border-l-0 hover:[&:not(:active)]:border-neutral-250 text-neutral-350 hover:bg-neutral-150 hover:text-brand-400 data-[state=open]:bg-neutral-150 data-[state=open]:text-brand-400 text-2xs outline-0',
+        'first:rounded-l last:rounded-r first:border-r-0 first:border-x border-l-0 hover:[&:not(:active)]:border-neutral-250 text-neutral-350 hover:bg-neutral-150 hover:text-brand-400 data-[state=open]:bg-neutral-150 data-[state=open]:text-brand-400 text-xs outline-0',
         className
       )}
       {...props}
