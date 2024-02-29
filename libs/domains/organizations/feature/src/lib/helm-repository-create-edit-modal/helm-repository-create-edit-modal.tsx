@@ -63,7 +63,6 @@ export function HelmRepositoryCreateEditModal({
         // Update input select value with the new repository id and close modal
         onClose(response.id)
       }
-      onClose()
     } catch (error) {
       console.error(error)
     }
