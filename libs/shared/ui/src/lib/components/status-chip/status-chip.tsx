@@ -65,9 +65,16 @@ export function StatusChip(props: StatusChipProps) {
     .with('UNKNOWN', () => <UnknownIcon />)
     .with('BUILD_ERROR', () => <BuildErrorIcon />)
     .with('WARNING', () => <WarningIcon />)
-    .with('DEPLOYMENT_ERROR', 'STOP_ERROR', 'DELETE_ERROR', 'RESTART_ERROR', 'ERROR', 'INVALID_CREDENTIALS', () => (
-      <ErrorIcon />
-    ))
+    .with(
+      'DEPLOYMENT_ERROR',
+      'STOP_ERROR',
+      'DELETE_ERROR',
+      'RESTART_ERROR',
+      'ERROR',
+      'INVALID_CREDENTIALS',
+      'RECAP',
+      () => <ErrorIcon />
+    )
     .exhaustive()
 
   return (
