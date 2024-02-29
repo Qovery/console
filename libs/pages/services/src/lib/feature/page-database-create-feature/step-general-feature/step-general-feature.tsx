@@ -118,13 +118,29 @@ export function StepGeneralFeature() {
 
   const [databaseTypeOptions, setDatabaseTypeOptions] = useState<Value[]>()
   const [databaseVersionOptions, setDatabaseVersionOptions] = useState<{ [Key: string]: Value[] }>()
+
+  const cloudProvider = environment?.cloud_provider.provider
   const clusterVpc = cluster?.features?.find(({ id }) => id === 'EXISTING_VPC')?.value as ClusterFeatureAwsExistingVpc
+
+  const methods = useForm<GeneralData>({
+    defaultValues: generalData
+      ? generalData
+      : cloudProvider === 'AWS' && cluster?.kubernetes !== 'SELF_MANAGED'
+      ? { mode: DatabaseModeEnum.MANAGED }
+      : { mode: DatabaseModeEnum.CONTAINER },
+    mode: 'onChange',
+  })
+
+  const watchModeDatabase = methods.watch('mode')
+  const watchTypeDatabase = methods.watch('type')
+
+  console.log(watchModeDatabase)
 
   useEffect(() => {
     if (databaseConfigurations && databaseConfigurations.length && !databaseTypeOptions && !databaseVersionOptions) {
       const { databaseTypeOptions, databaseVersionOptions } = generateDatabasesTypesAndVersionOptions(
         databaseConfigurations,
-        clusterVpc
+        watchModeDatabase === 'MANAGED' ? clusterVpc : undefined
       )
       setDatabaseTypeOptions(databaseTypeOptions)
       setDatabaseVersionOptions(databaseVersionOptions)
@@ -154,20 +170,6 @@ export function StepGeneralFeature() {
   useEffect(() => {
     setCurrentStep(1)
   }, [setCurrentStep])
-
-  const cloudProvider = environment?.cloud_provider.provider
-
-  const methods = useForm<GeneralData>({
-    defaultValues: generalData
-      ? generalData
-      : cloudProvider === 'AWS' && cluster?.kubernetes !== 'SELF_MANAGED'
-      ? { mode: DatabaseModeEnum.MANAGED }
-      : { mode: DatabaseModeEnum.CONTAINER },
-    mode: 'onChange',
-  })
-
-  const watchModeDatabase = methods.watch('mode')
-  const watchTypeDatabase = methods.watch('type')
 
   const publicOptionNotAvailable =
     cluster?.kubernetes === KubernetesEnum.K3_S && watchModeDatabase === DatabaseModeEnum.CONTAINER
