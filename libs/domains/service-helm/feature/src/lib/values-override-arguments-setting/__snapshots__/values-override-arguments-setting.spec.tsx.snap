@@ -60,12 +60,12 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
             <span
               class="text-sm text-neutral-400 font-medium"
             >
-              Variable
+              Override type
             </span>
             <span
               class="text-sm text-neutral-400 font-medium"
             >
-              Value type
+              Variable
             </span>
             <span
               class="text-sm text-neutral-400 font-medium"
@@ -80,26 +80,6 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
             <div
               class="grid grid-cols-[6fr_6fr_6fr_1fr] gap-x-2 items-center"
             >
-              <div
-                class=" "
-                data-testid="input-small-wrapper"
-              >
-                <div
-                  class="input input--small flex-grow   "
-                  data-testid="input"
-                >
-                  <label
-                    class="hidden"
-                  />
-                  <input
-                    class="absolute text-sm top-0 left-0 h-full w-full text-neutral-400 placeholder:text-neutral-350 rounded px-2 "
-                    data-testid="input-value"
-                    name="arguments.0.key"
-                    type="text"
-                    value="test"
-                  />
-                </div>
-              </div>
               <div
                 class=" relative flex gap-4 items-center"
               >
@@ -143,6 +123,26 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                   <input
                     class="absolute text-sm top-0 left-0 h-full w-full text-neutral-400 placeholder:text-neutral-350 rounded px-2 "
                     data-testid="input-value"
+                    name="arguments.0.key"
+                    type="text"
+                    value="test"
+                  />
+                </div>
+              </div>
+              <div
+                class=" "
+                data-testid="input-small-wrapper"
+              >
+                <div
+                  class="input input--small flex-grow   "
+                  data-testid="input"
+                >
+                  <label
+                    class="hidden"
+                  />
+                  <input
+                    class="absolute text-sm top-0 left-0 h-full w-full text-neutral-400 placeholder:text-neutral-350 rounded px-2 "
+                    data-testid="input-value"
                     name="arguments.0.value"
                     type="text"
                     value="test"
@@ -166,26 +166,6 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
             <div
               class="grid grid-cols-[6fr_6fr_6fr_1fr] gap-x-2 items-center"
             >
-              <div
-                class=" "
-                data-testid="input-small-wrapper"
-              >
-                <div
-                  class="input input--small flex-grow   "
-                  data-testid="input"
-                >
-                  <label
-                    class="hidden"
-                  />
-                  <input
-                    class="absolute text-sm top-0 left-0 h-full w-full text-neutral-400 placeholder:text-neutral-350 rounded px-2 "
-                    data-testid="input-value"
-                    name="arguments.1.key"
-                    type="text"
-                    value="test2"
-                  />
-                </div>
-              </div>
               <div
                 class=" relative flex gap-4 items-center"
               >
@@ -214,6 +194,26 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                   class="icon-solid-chevron-down shrink-0 absolute top-2.5 right-4 text-xs text-neutral-400 leading-3 translate-y-0.5 pointer-events-none"
                   role="img"
                 />
+              </div>
+              <div
+                class=" "
+                data-testid="input-small-wrapper"
+              >
+                <div
+                  class="input input--small flex-grow   "
+                  data-testid="input"
+                >
+                  <label
+                    class="hidden"
+                  />
+                  <input
+                    class="absolute text-sm top-0 left-0 h-full w-full text-neutral-400 placeholder:text-neutral-350 rounded px-2 "
+                    data-testid="input-value"
+                    name="arguments.1.key"
+                    type="text"
+                    value="test2"
+                  />
+                </div>
               </div>
               <button
                 class="inline-flex items-center shrink-0 font-medium transition text-xs px-3 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 justify-between h-[36px]"
@@ -259,26 +259,6 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
               class="grid grid-cols-[6fr_6fr_6fr_1fr] gap-x-2 items-center"
             >
               <div
-                class=" "
-                data-testid="input-small-wrapper"
-              >
-                <div
-                  class="input input--small flex-grow   "
-                  data-testid="input"
-                >
-                  <label
-                    class="hidden"
-                  />
-                  <input
-                    class="absolute text-sm top-0 left-0 h-full w-full text-neutral-400 placeholder:text-neutral-350 rounded px-2 "
-                    data-testid="input-value"
-                    name="arguments.2.key"
-                    type="text"
-                    value="test3"
-                  />
-                </div>
-              </div>
-              <div
                 class=" relative flex gap-4 items-center"
               >
                 <select
@@ -306,6 +286,26 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                   class="icon-solid-chevron-down shrink-0 absolute top-2.5 right-4 text-xs text-neutral-400 leading-3 translate-y-0.5 pointer-events-none"
                   role="img"
                 />
+              </div>
+              <div
+                class=" "
+                data-testid="input-small-wrapper"
+              >
+                <div
+                  class="input input--small flex-grow   "
+                  data-testid="input"
+                >
+                  <label
+                    class="hidden"
+                  />
+                  <input
+                    class="absolute text-sm top-0 left-0 h-full w-full text-neutral-400 placeholder:text-neutral-350 rounded px-2 "
+                    data-testid="input-value"
+                    name="arguments.2.key"
+                    type="text"
+                    value="test3"
+                  />
+                </div>
               </div>
               <div
                 class=" "
