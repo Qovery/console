@@ -68,11 +68,12 @@ exports[`OutputVariables should match snapshot 1`] = `
                 >
                   <i
                     aria-hidden="true"
-                    class="fa-solid fa-lock block w-4"
+                    class="fa-solid fa-lock-keyhole block w-4"
                   />
                 </span>
                 <span
-                  class="text-2xl font-medium pt-1.5"
+                  class="text-xl tracking-widest font-medium pt-1.5"
+                  data-testid="hide_value_secret"
                 >
                   *************
                 </span>
@@ -102,6 +103,7 @@ exports[`OutputVariables should match snapshot 1`] = `
                 <button
                   class="w-4 text-brand-500"
                   data-state="closed"
+                  data-testid="toggle-button"
                   type="button"
                 >
                   <i
@@ -110,7 +112,9 @@ exports[`OutputVariables should match snapshot 1`] = `
                   />
                 </button>
                 <span
-                  class="text-neutral-350 text-2xl font-medium pt-1.5"
+                  class="text-neutral-350 text-xl tracking-widest font-medium pt-1.5"
+                  data-state="closed"
+                  data-testid="hide_value"
                 >
                   *************
                 </span>

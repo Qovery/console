@@ -144,13 +144,9 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
                     </span>
                   </div>
                 ) : variable.variable_type === 'ALIAS' ? null : variable.value !== null ? (
-                  <PasswordShowHide
-                    value={variable.value || ''}
-                    defaultVisible={defaultShowHidePassword}
-                    canCopy={true}
-                  />
+                  <PasswordShowHide value={variable.value} defaultVisible={defaultShowHidePassword} />
                 ) : (
-                  <PasswordShowHide value="" defaultVisible={false} isSecret={true} />
+                  <PasswordShowHide value="" isSecret={true} />
                 )}
               </div>
             </Skeleton>
