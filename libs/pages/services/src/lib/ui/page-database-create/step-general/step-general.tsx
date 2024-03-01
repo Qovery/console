@@ -22,12 +22,14 @@ import {
   InputSelect,
   InputText,
   InputTextArea,
+  LoaderSpinner,
   Section,
 } from '@qovery/shared/ui'
 import { type GeneralData } from '../../../feature/page-database-create-feature/database-creation-flow.interface'
 
 export interface StepGeneralProps {
   onSubmit: FormEventHandler<HTMLFormElement>
+  showManagedWithVpcOptions?: boolean
   databaseTypeOptions?: Value[]
   databaseVersionOptions?: { [Key: string]: Value[] }
   cloudProvider?: string
@@ -44,6 +46,7 @@ export function StepGeneral({
   clusterVpc,
   onSubmit,
   cloudProvider,
+  showManagedWithVpcOptions,
 }: StepGeneralProps) {
   const { control, formState, watch } = useFormContext<GeneralData>()
   const { organizationId = '', environmentId = '', projectId = '' } = useParams()
@@ -110,36 +113,44 @@ export function StepGeneral({
         />
 
         <BlockContent title="Database mode" className="mb-6">
-          <div className={`flex gap-4 ${cloudProvider === CloudProviderEnum.AWS ? 'justify-center' : ''}`}>
-            <Controller
-              name="mode"
-              control={control}
-              render={({ field }) => (
-                <>
-                  {cloudProvider === CloudProviderEnum.AWS && cluster.kubernetes !== 'SELF_MANAGED' && (
+          {!cluster || !cloudProvider || showManagedWithVpcOptions === undefined ? (
+            <div className="flex justify-center p-5">
+              <LoaderSpinner className="w-5" />
+            </div>
+          ) : (
+            <div className={`flex gap-4 ${cloudProvider === CloudProviderEnum.AWS ? 'justify-center' : ''}`}>
+              <Controller
+                name="mode"
+                control={control}
+                render={({ field }) => (
+                  <>
+                    {showManagedWithVpcOptions &&
+                      cloudProvider === CloudProviderEnum.AWS &&
+                      cluster.kubernetes !== 'SELF_MANAGED' && (
+                        <InputRadio
+                          className="mb-3"
+                          value={DatabaseModeEnum.MANAGED}
+                          name={field.name}
+                          description="Managed by your cloud provider. Back-ups and snapshots will be periodically created."
+                          onChange={field.onChange}
+                          formValue={field.value}
+                          label="Managed mode"
+                        />
+                      )}
                     <InputRadio
+                      value={DatabaseModeEnum.CONTAINER}
                       className="mb-3"
-                      value={DatabaseModeEnum.MANAGED}
                       name={field.name}
-                      description="Managed by your cloud provider. Back-ups and snapshots will be periodically created."
+                      description="Deployed on your Kubernetes cluster. Not for production purposes, no back-ups nor snapshots."
                       onChange={field.onChange}
                       formValue={field.value}
-                      label="Managed mode"
+                      label="Container mode"
                     />
-                  )}
-                  <InputRadio
-                    value={DatabaseModeEnum.CONTAINER}
-                    className="mb-3"
-                    name={field.name}
-                    description="Deployed on your Kubernetes cluster. Not for production purposes, no back-ups nor snapshots."
-                    onChange={field.onChange}
-                    formValue={field.value}
-                    label="Container mode"
-                  />
-                </>
-              )}
-            />
-          </div>
+                  </>
+                )}
+              />
+            </div>
+          )}
         </BlockContent>
 
         <div className="h-[1px] bg-neutral-200 w-full my-6"></div>

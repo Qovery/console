@@ -118,6 +118,8 @@ export function StepGeneralFeature() {
 
   const cloudProvider = environment?.cloud_provider.provider
   const clusterVpc = cluster?.features?.find(({ id }) => id === 'EXISTING_VPC')?.value as ClusterFeatureAwsExistingVpc
+  const showManagedWithVpcOptions =
+    generateDatabasesTypesAndVersionOptions(databaseConfigurations, clusterVpc).databaseTypeOptions.length > 0
 
   const methods = useForm<GeneralData>({
     defaultValues: generalData
@@ -192,6 +194,7 @@ export function StepGeneralFeature() {
             databaseVersionOptions={databaseVersionOptions}
             publicOptionNotAvailable={publicOptionNotAvailable}
             clusterVpc={clusterVpc}
+            showManagedWithVpcOptions={showManagedWithVpcOptions}
           />
         </FormProvider>
       </FunnelFlowBody>
