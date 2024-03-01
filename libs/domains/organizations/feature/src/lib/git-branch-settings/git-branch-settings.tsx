@@ -2,21 +2,19 @@ import { type GitProviderEnum } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { InputSelect, InputText, LoaderSpinner } from '@qovery/shared/ui'
-import { getGitTokenValue } from '@qovery/shared/util-git'
 import { useBranches } from '../hooks/use-branches/use-branches'
 
 export interface GitBranchSettingsProps {
-  gitProvider: GitProviderEnum
+  gitProvider: keyof typeof GitProviderEnum
+  gitTokenId?: string
   disabled?: boolean
   hideRootPath?: boolean
 }
 
-export function GitBranchSettings({ disabled, gitProvider, hideRootPath }: GitBranchSettingsProps) {
+export function GitBranchSettings({ disabled, gitProvider, gitTokenId, hideRootPath }: GitBranchSettingsProps) {
   const { control, watch } = useFormContext()
   const { organizationId = '' } = useParams()
 
-  const gitToken = getGitTokenValue(gitProvider)
-  const provider = gitToken ? gitToken?.type : gitProvider
   const watchFieldRepository = watch('repository')
   const watchFieldBranch = watch('branch')
 
@@ -27,9 +25,9 @@ export function GitBranchSettings({ disabled, gitProvider, hideRootPath }: GitBr
     isRefetching,
   } = useBranches({
     organizationId,
-    gitProvider: provider,
+    gitProvider,
     name: watchFieldRepository,
-    gitToken: gitToken?.id,
+    gitToken: gitTokenId,
     enabled: !disabled,
   })
 

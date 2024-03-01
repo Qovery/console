@@ -2,21 +2,19 @@ import { type GitProviderEnum } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { InputSelect, LoaderSpinner } from '@qovery/shared/ui'
-import { getGitTokenValue } from '@qovery/shared/util-git'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { useRepositories } from '../hooks/use-repositories/use-repositories'
 
 export interface GitRepositorySettingProps {
-  gitProvider: GitProviderEnum
+  gitProvider: keyof typeof GitProviderEnum
+  gitTokenId?: string
   disabled?: boolean
 }
 
-export function GitRepositorySetting({ disabled, gitProvider }: GitRepositorySettingProps) {
+export function GitRepositorySetting({ disabled, gitProvider, gitTokenId }: GitRepositorySettingProps) {
   const { control, setValue, watch } = useFormContext()
   const { organizationId = '' } = useParams()
 
-  const gitToken = getGitTokenValue(gitProvider)
-  const gitProviderOrTokenType = gitToken ? gitToken?.type : gitProvider
   const watchFieldRepository = watch('repository')
 
   const {
@@ -26,8 +24,8 @@ export function GitRepositorySetting({ disabled, gitProvider }: GitRepositorySet
     isError,
   } = useRepositories({
     organizationId,
-    gitProvider: gitProviderOrTokenType,
-    gitToken: gitToken?.id,
+    gitProvider,
+    gitToken: gitTokenId,
     enabled: !disabled,
   })
 

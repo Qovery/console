@@ -1,4 +1,4 @@
-import { type GitProviderEnum, type HelmRequest } from 'qovery-typescript-axios'
+import { type GitProviderEnum, type GitTokenResponse, type HelmRequest } from 'qovery-typescript-axios'
 import { createContext, useContext, useState } from 'react'
 import { type UseFormReturn, useForm } from 'react-hook-form'
 import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
@@ -13,15 +13,18 @@ export const steps: { title: string }[] = [
   { title: 'Values override as arguments' },
   { title: 'Summary' },
 ]
-export interface HelmGeneralData extends Omit<HelmRequest, 'source' | 'ports' | 'values_override' | 'arguments'> {
+export interface HelmGeneralData
+  extends Omit<HelmRequest, 'source' | 'ports' | 'values_override' | 'arguments' | 'timeout_sec'> {
   source_provider: 'HELM_REPOSITORY' | 'GIT'
   repository: string
   provider?: GitProviderEnum
+  git_token_id?: GitTokenResponse['id']
   branch?: string
   root_path?: string
   chart_name?: string
   chart_version?: string
   arguments: string
+  timeout_sec: string
 }
 
 interface HelmCreateContextInterface {

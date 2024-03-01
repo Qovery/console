@@ -1,3 +1,9 @@
+import {
+  type BuildModeEnum,
+  type BuildPackLanguageEnum,
+  type GitProviderEnum,
+  type GitTokenResponse,
+} from 'qovery-typescript-axios'
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { type ServiceTypeEnum } from '@qovery/shared/enums'
 
@@ -14,12 +20,13 @@ export interface JobGeneralData {
   image_entry_point?: string
 
   // application
-  build_mode?: string
+  build_mode?: keyof typeof BuildModeEnum
   branch?: string
   repository?: string
-  provider?: string
+  provider?: keyof typeof GitProviderEnum
+  git_token_id?: GitTokenResponse['id']
   root_path?: string
-  buildpack_language?: string
+  buildpack_language?: keyof typeof BuildPackLanguageEnum
   dockerfile_path?: string
 }
 

@@ -1,5 +1,5 @@
 import { type GitAuthProvider, type GitTokenResponse } from 'qovery-typescript-axios'
-import { Controller, type ControllerRenderProps, type FieldValues, useFormContext } from 'react-hook-form'
+import { Controller, useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { Icon, InputSelect, useModal } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
@@ -19,8 +19,8 @@ export const mergeProviders = (authProviders: GitAuthProvider[] = [], gitTokens:
   }))
 
   const currentGitTokens = gitTokens.map((token) => ({
-    label: upperCaseFirstLetter(token.name),
-    value: `TOKEN_${token.type}_${token.id}`,
+    label: `${upperCaseFirstLetter(token.type)} (${token.name})`,
+    value: token.id,
     icon: <Icon width={16} height={16} name={token.type} />,
   }))
 
@@ -36,59 +36,82 @@ export function GitProviderSetting({ disabled }: GitProviderSettingProps) {
   const { data: gitTokens = [] } = useGitTokens({ organizationId, enabled: !disabled })
   const watchFieldProvider = watch('provider')
   const watchFieldGitTokenName = watch('git_token_name')
+  const watchFieldGitTokenId = watch('git_token_id')
 
   const providerOptions = disabled
     ? [
-        {
-          label: watchFieldProvider
-            ? `${watchFieldProvider}${watchFieldGitTokenName ? ` (${watchFieldGitTokenName})` : ''}`
-            : '',
-          value: watchFieldProvider ?? '',
-          icon: <Icon name={`${watchFieldProvider?.split(' ')[0].toUpperCase()}`} />,
-        },
+        watchFieldGitTokenId
+          ? {
+              label: `${watchFieldProvider ?? ''}${watchFieldGitTokenName ? ` (${watchFieldGitTokenName})` : ''}`,
+              value: watchFieldGitTokenId ?? '',
+              icon: <Icon name={`${watchFieldProvider?.split(' ')[0].toUpperCase()}`} />,
+            }
+          : {
+              label: watchFieldProvider ?? '',
+              value: watchFieldProvider ?? '',
+              icon: <Icon name={`${watchFieldProvider?.split(' ')[0].toUpperCase()}`} />,
+            },
       ]
     : mergeProviders(authProviders, gitTokens)
 
-  const onChange = (field: ControllerRenderProps<FieldValues, 'provider'>, event: string | string[]) => {
-    field.onChange(event)
+  const onChange = (value: string) => {
+    /**
+     * As we have merged providers (user personal account) and git tokens, we need transform it back as 2 separate fields
+     */
+    const token = gitTokens.find(({ id }) => id === value)
+    if (token) {
+      setValue('git_token_id', token.id)
+      setValue('git_token_name', token.name)
+      setValue('provider', token.type)
+    } else {
+      setValue('git_token_id', null)
+      setValue('git_token_name', null)
+      setValue('provider', value)
+    }
     // Reset children fields
-    setValue('repository', undefined)
-    setValue('branch', undefined)
+    setValue('repository', null)
+    setValue('branch', null)
   }
 
   return (
     <Controller
-      name="provider"
+      name="git_token_id"
       control={control}
-      rules={{
-        required: 'Please select a provider.',
-      }}
-      render={({ field, fieldState: { error } }) => (
-        <InputSelect
-          label="Git repository"
-          options={providerOptions}
-          onChange={(event) => onChange(field, event)}
-          menuListButton={{
-            title: 'Select repository',
-            label: 'New git access',
-            onClick: () => {
-              openModal({
-                content: (
-                  <GitTokenCreateEditModal
-                    organizationId={organizationId}
-                    onClose={(response) => {
-                      response && onChange(field, response.id)
-                      closeModal()
-                    }}
-                  />
-                ),
-              })
-            },
+      render={({ field: { value: gitTokenId } }) => (
+        <Controller
+          name="provider"
+          control={control}
+          rules={{
+            required: 'Please select a provider.',
           }}
-          value={field.value}
-          error={error?.message}
-          disabled={disabled}
-          isSearchable
+          render={({ field: { value: provider }, fieldState: { error } }) => (
+            <InputSelect
+              label="Git repository"
+              options={providerOptions}
+              onChange={(value) => onChange(value as string)}
+              menuListButton={{
+                title: 'Select repository',
+                label: 'New git access',
+                onClick: () => {
+                  openModal({
+                    content: (
+                      <GitTokenCreateEditModal
+                        organizationId={organizationId}
+                        onClose={(response) => {
+                          response && onChange(response.id)
+                          closeModal()
+                        }}
+                      />
+                    ),
+                  })
+                },
+              }}
+              value={gitTokenId ?? provider}
+              error={error?.message}
+              disabled={disabled}
+              isSearchable
+            />
+          )}
         />
       )}
     />

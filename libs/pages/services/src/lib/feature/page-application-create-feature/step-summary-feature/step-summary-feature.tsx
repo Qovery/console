@@ -17,7 +17,6 @@ import {
   SERVICES_URL,
 } from '@qovery/shared/routes'
 import { FunnelFlowBody } from '@qovery/shared/ui'
-import { getGitTokenValue } from '@qovery/shared/util-git'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
 import StepSummary from '../../../ui/page-application-create/step-summary/step-summary'
@@ -70,8 +69,6 @@ export function StepSummaryFeature() {
       const memory = Number(resourcesData['memory'])
       const cpu = resourcesData['cpu']
 
-      const gitToken = getGitTokenValue(generalData?.provider ?? '')
-
       if (generalData.serviceType === 'APPLICATION') {
         const applicationRequest: ApplicationRequest = {
           name: generalData.name,
@@ -90,10 +87,10 @@ export function StepSummaryFeature() {
           max_running_instances: resourcesData.instances[1],
           build_mode: generalData.build_mode as BuildModeEnum,
           git_repository: {
-            url: buildGitRepoUrl(gitToken?.type ?? generalData.provider ?? '', generalData.repository || ''),
+            url: buildGitRepoUrl(generalData.provider ?? '', generalData.repository || ''),
             root_path: generalData.root_path,
             branch: generalData.branch,
-            git_token_id: gitToken?.id,
+            git_token_id: generalData.git_token_id,
           },
           arguments: generalData.cmd,
           entrypoint: generalData.image_entry_point || '',

@@ -66,6 +66,7 @@ export function StepGeneralFeature() {
 
   const watchFieldProvider = generalForm.watch('source_provider')
   const watchFieldGitProvider = generalForm.watch('provider')
+  const watchFieldGitTokenId = generalForm.watch('git_token_id')
   const watchFieldGitRepository = generalForm.watch('repository')
 
   // NOTE: Validation corner case where git settings can be in loading state
@@ -93,9 +94,11 @@ export function StepGeneralFeature() {
               {watchFieldProvider === 'GIT' && (
                 <div className="flex flex-col gap-3 mt-3">
                   <GitProviderSetting />
-                  {watchFieldGitProvider && <GitRepositorySetting gitProvider={watchFieldGitProvider} />}
+                  {watchFieldGitProvider && (
+                    <GitRepositorySetting gitProvider={watchFieldGitProvider} gitTokenId={watchFieldGitTokenId} />
+                  )}
                   {watchFieldGitProvider && watchFieldGitRepository && (
-                    <GitBranchSettings gitProvider={watchFieldGitProvider} />
+                    <GitBranchSettings gitProvider={watchFieldGitProvider} gitTokenId={watchFieldGitTokenId} />
                   )}
                 </div>
               )}
