@@ -1,4 +1,10 @@
-import { CloudProviderEnum, type Cluster, DatabaseAccessibilityEnum, DatabaseModeEnum } from 'qovery-typescript-axios'
+import {
+  CloudProviderEnum,
+  type Cluster,
+  type ClusterFeatureAwsExistingVpc,
+  DatabaseAccessibilityEnum,
+  DatabaseModeEnum,
+} from 'qovery-typescript-axios'
 import { type FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -9,29 +15,42 @@ import {
   ButtonLegacy,
   ButtonLegacySize,
   ButtonLegacyStyle,
+  Callout,
   Heading,
+  Icon,
   InputRadio,
   InputSelect,
   InputText,
   InputTextArea,
+  LoaderSpinner,
   Section,
 } from '@qovery/shared/ui'
 import { type GeneralData } from '../../../feature/page-database-create-feature/database-creation-flow.interface'
 
 export interface StepGeneralProps {
   onSubmit: FormEventHandler<HTMLFormElement>
+  showManagedWithVpcOptions?: boolean
   databaseTypeOptions?: Value[]
   databaseVersionOptions?: { [Key: string]: Value[] }
   cloudProvider?: string
   cluster: Cluster
+  clusterVpc?: ClusterFeatureAwsExistingVpc
   publicOptionNotAvailable?: boolean
 }
 
-export function StepGeneral(props: StepGeneralProps) {
+export function StepGeneral({
+  databaseTypeOptions,
+  databaseVersionOptions = {},
+  publicOptionNotAvailable,
+  cluster,
+  clusterVpc,
+  onSubmit,
+  cloudProvider,
+  showManagedWithVpcOptions,
+}: StepGeneralProps) {
   const { control, formState, watch } = useFormContext<GeneralData>()
   const { organizationId = '', environmentId = '', projectId = '' } = useParams()
   const navigate = useNavigate()
-  const { databaseTypeOptions, databaseVersionOptions = {}, publicOptionNotAvailable, cluster } = props
 
   const watchType = watch('type')
   const watchMode = watch('mode')
@@ -55,11 +74,11 @@ export function StepGeneral(props: StepGeneralProps) {
       <div className="mb-10">
         <Heading className="mb-2">General information</Heading>
         <p className="text-neutral-400 text-sm mb-2">
-          General settings allow you to set up your application name, git repository or container settings.
+          These general settings allow you to set up the database name, type and version.
         </p>
       </div>
 
-      <form onSubmit={props.onSubmit}>
+      <form onSubmit={onSubmit}>
         <Controller
           name="name"
           control={control}
@@ -94,39 +113,60 @@ export function StepGeneral(props: StepGeneralProps) {
         />
 
         <BlockContent title="Database mode" className="mb-6">
-          <div className={`flex gap-4 ${props.cloudProvider === CloudProviderEnum.AWS ? 'justify-center' : ''}`}>
-            <Controller
-              name="mode"
-              control={control}
-              render={({ field }) => (
-                <>
-                  {props.cloudProvider === CloudProviderEnum.AWS && cluster.kubernetes !== 'SELF_MANAGED' && (
+          {!cluster || !cloudProvider || showManagedWithVpcOptions === undefined ? (
+            <div className="flex justify-center p-5">
+              <LoaderSpinner className="w-5" />
+            </div>
+          ) : (
+            <div className={`flex gap-4 ${cloudProvider === CloudProviderEnum.AWS ? 'justify-center' : ''}`}>
+              <Controller
+                name="mode"
+                control={control}
+                render={({ field }) => (
+                  <>
+                    {showManagedWithVpcOptions &&
+                      cloudProvider === CloudProviderEnum.AWS &&
+                      cluster.kubernetes !== 'SELF_MANAGED' && (
+                        <InputRadio
+                          className="mb-3"
+                          value={DatabaseModeEnum.MANAGED}
+                          name={field.name}
+                          description="Managed by your cloud provider. Back-ups and snapshots will be periodically created."
+                          onChange={field.onChange}
+                          formValue={field.value}
+                          label="Managed mode"
+                        />
+                      )}
                     <InputRadio
+                      value={DatabaseModeEnum.CONTAINER}
                       className="mb-3"
-                      value={DatabaseModeEnum.MANAGED}
                       name={field.name}
-                      description="Managed by your cloud provider. Back-ups and snapshots will be periodically created."
+                      description="Deployed on your Kubernetes cluster. Not for production purposes, no back-ups nor snapshots."
                       onChange={field.onChange}
                       formValue={field.value}
-                      label="Managed mode"
+                      label="Container mode"
                     />
-                  )}
-                  <InputRadio
-                    value={DatabaseModeEnum.CONTAINER}
-                    className="mb-3"
-                    name={field.name}
-                    description="Deployed on your Kubernetes cluster. Not for production purposes, no back-ups nor snapshots."
-                    onChange={field.onChange}
-                    formValue={field.value}
-                    label="Container mode"
-                  />
-                </>
-              )}
-            />
-          </div>
+                  </>
+                )}
+              />
+            </div>
+          )}
         </BlockContent>
 
         <div className="h-[1px] bg-neutral-200 w-full my-6"></div>
+
+        {watchMode === DatabaseModeEnum.MANAGED && clusterVpc && (
+          <Callout.Root className="mb-3 text-xs" color="yellow">
+            <Callout.Icon>
+              <Icon className="text-xs" iconName="circle-info" />
+            </Callout.Icon>
+            <Callout.Text>
+              <Callout.TextHeading>Action needed</Callout.TextHeading>
+              Add the following tag on your VPC ({clusterVpc.aws_vpc_eks_id}) in AWS: <br />
+              Key: <strong>ClusterId</strong> Value: <strong>z{cluster.id.split('-')[0]}</strong>
+            </Callout.Text>
+          </Callout.Root>
+        )}
 
         <Controller
           name="type"
