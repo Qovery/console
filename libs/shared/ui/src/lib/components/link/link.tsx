@@ -49,7 +49,7 @@ export const ExternalLink = forwardRef<HTMLAnchorElement, ExternalLinkProps>(fun
   forwardedRef
 ) {
   return match(props)
-    .with({ as: 'button' }, ({ className, children, color, radius, size, variant, ...rest }) => (
+    .with({ as: 'button' }, ({ className, children, color, radius, size, variant, as, ...rest }) => (
       <a
         ref={forwardedRef}
         className={twMerge(buttonVariants({ color, radius, size, variant }), className)}
@@ -80,7 +80,7 @@ export type LinkProps =
 
 export const Link = forwardRef<HTMLAnchorElement, LinkProps>(function Link(props, forwardedRef) {
   return match(props)
-    .with({ as: 'button' }, ({ className, children, color, radius, size, variant, ...rest }) => (
+    .with({ as: 'button' }, ({ className, children, color, radius, size, variant, as, ...rest }) => (
       <ReactLink
         ref={forwardedRef}
         className={twMerge(buttonVariants({ color, radius, size, variant }), className)}
