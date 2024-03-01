@@ -10,44 +10,11 @@ import {
 import { type VariableResponse as Variable } from 'qovery-typescript-axios'
 import { type ComponentProps, Fragment, useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
-import { CopyToClipboardButtonIcon, Icon, TablePrimitives, Tooltip } from '@qovery/shared/ui'
+import { Icon, PasswordShowHide, TablePrimitives, Tooltip } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import { useVariables } from '../hooks/use-variables/use-variables'
 
 const { Table } = TablePrimitives
-
-function VariableValue({ variable }: { variable: Variable }) {
-  const [visible, setVisible] = useState(false)
-
-  return variable.is_secret ? (
-    <span className="flex items-center gap-2 text-sm text-neutral-300">
-      <Tooltip content="Secret variable">
-        <span>
-          <Icon className="block w-4" iconName="lock" />
-        </span>
-      </Tooltip>
-      <span className="text-2xl font-medium pt-1.5">*************</span>
-    </span>
-  ) : (
-    <span className="flex items-center gap-2 text-sm">
-      <Tooltip content={visible ? 'Hide variable' : 'View variable'}>
-        <button type="button" className="w-4 text-brand-500" onClick={() => setVisible((visible) => !visible)}>
-          {visible ? <Icon iconName="eye-slash" /> : <Icon iconName="eye" />}
-        </button>
-      </Tooltip>
-      {visible ? (
-        <>
-          <span className="text-brand-500">{variable.value}</span>
-          {Boolean(variable.value) && (
-            <CopyToClipboardButtonIcon content={variable.value!} iconClassName="text-brand-500" />
-          )}
-        </>
-      ) : (
-        <span className="text-neutral-350 text-2xl font-medium pt-1.5">*************</span>
-      )}
-    </span>
-  )
-}
 
 interface JobOutputVariablesProps extends ComponentProps<typeof Table.Root> {
   serviceId: string
@@ -97,7 +64,8 @@ export function OutputVariables({ serviceId, className, ...props }: JobOutputVar
         enableSorting: false,
         size: 50,
         cell: (info) => {
-          return <VariableValue variable={info.row.original} />
+          const { is_secret, value } = info.row.original
+          return <PasswordShowHide value={value ?? ''} isSecret={is_secret} />
         },
       }),
     ],
