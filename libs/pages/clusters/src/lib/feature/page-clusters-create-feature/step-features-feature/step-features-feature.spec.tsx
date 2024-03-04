@@ -104,7 +104,7 @@ describe('StepFeaturesFeature', () => {
       features: {
         [STATIC_IP]: {
           title: 'feature-1',
-          value: true,
+          value: false,
           extendedValue: 'test',
         },
       },
