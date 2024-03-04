@@ -2,7 +2,7 @@ import { type VariantProps, cva } from 'class-variance-authority'
 import { type ComponentPropsWithoutRef, type ElementRef, forwardRef } from 'react'
 import { twMerge } from '@qovery/shared/util-js'
 
-export const buttonVariants = cva(
+const _buttonVariants = cva(
   [
     'inline-flex',
     'items-center',
@@ -152,6 +152,20 @@ export const buttonVariants = cva(
     },
   }
 )
+
+/**
+ * We need have different default color depending on the variant.
+ * Here are the current default color rules:
+ * - solid = brand
+ * - outline = neutral
+ * - surface = neutral
+ */
+export function buttonVariants(props: Parameters<typeof _buttonVariants>[0]) {
+  if (props?.variant === 'surface' || props?.variant === 'outline') {
+    props.color ??= 'neutral'
+  }
+  return _buttonVariants(props)
+}
 
 export interface ButtonPrimitiveProps
   extends Omit<ComponentPropsWithoutRef<'button'>, 'color'>,

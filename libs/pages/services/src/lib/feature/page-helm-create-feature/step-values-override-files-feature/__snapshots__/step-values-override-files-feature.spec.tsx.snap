@@ -716,7 +716,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a yaml 1`] = `
                         Raw YAML
                       </h2>
                       <button
-                        class="inline-flex items-center shrink-0 font-medium transition shadow-sm disabled:shadow-none active:shadow-none text-xs h-5 px-1 rounded hover:text-neutral-400"
+                        class="inline-flex items-center shrink-0 font-medium transition shadow-sm disabled:shadow-none active:shadow-none text-xs h-5 px-1 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent hover:text-neutral-400"
                         type="button"
                       >
                         <i
