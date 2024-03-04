@@ -11,7 +11,7 @@ const mockNavigate = jest.fn()
 
 const mockFeatures = [
   {
-    id: 'STATIC_IP',
+    id: 'FEATURE',
     title: 'feature-1',
     cost_per_month: 23,
     value: 'my-value',
@@ -97,14 +97,14 @@ describe('StepFeaturesFeature', () => {
     expect(button).not.toBeDisabled()
     await userEvent.click(button)
 
-    const STATIC_IP = 'STATIC_IP'
+    const FEATURE = 'FEATURE'
 
     expect(mockSetFeaturesData).toHaveBeenCalledWith({
       vpc_mode: 'DEFAULT',
       features: {
-        [STATIC_IP]: {
+        [FEATURE]: {
           title: 'feature-1',
-          value: false,
+          value: true,
           extendedValue: 'test',
         },
       },
