@@ -43,6 +43,11 @@ export type ClusterFeaturesData = {
     rds_subnets?: Subnets[]
     redis_subnets?: Subnets[]
   }
+  gcp_existing_vpc?: {
+    project_id: string
+    vpc_name: string
+    vpc_mode: 'AUTOMATIC' | 'CUSTOM'
+  }
   features: {
     [id: string]: {
       id: string
