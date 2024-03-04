@@ -84,7 +84,7 @@ export function GCPVpcFeature() {
       {!openOptions && (
         <Button
           type="button"
-          className="justify-center mt-4"
+          className="justify-center"
           variant="outline"
           size="md"
           onClick={() => setOpenOptions(!openOptions)}
