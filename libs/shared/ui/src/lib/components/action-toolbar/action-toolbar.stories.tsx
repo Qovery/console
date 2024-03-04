@@ -50,3 +50,38 @@ export const Primary = {
     </ActionToolbar.Root>
   ),
 }
+
+export const Brand = {
+  render: () => (
+    <ActionToolbar.Root>
+      <DropdownMenu.Root>
+        <DropdownMenu.Trigger asChild>
+          <ActionToolbar.Button color="brand" variant="solid">
+            <Icon iconName="play" className="mr-4" />
+            <Icon iconName="angle-down" />
+          </ActionToolbar.Button>
+        </DropdownMenu.Trigger>
+        <DropdownMenu.Content>
+          <DropdownMenu.Item>
+            <Icon iconName="play" className="text-sm mr-3 text-brand-400" />
+            Deploy
+          </DropdownMenu.Item>
+          <DropdownMenu.Separator />
+          <DropdownMenu.Item color="red">
+            <Icon iconName="trash" className="text-sm mr-3 text-red-600" />
+            Delete service
+          </DropdownMenu.Item>
+        </DropdownMenu.Content>
+      </DropdownMenu.Root>
+      <ActionToolbar.Button color="brand" variant="solid">
+        <Icon iconName="scroll" />
+      </ActionToolbar.Button>
+      <ActionToolbar.Button color="brand" variant="solid">
+        <Icon iconName="scroll" />
+      </ActionToolbar.Button>
+      <ActionToolbar.Button color="brand" variant="solid">
+        <Icon iconName="gear" />
+      </ActionToolbar.Button>
+    </ActionToolbar.Root>
+  ),
+}

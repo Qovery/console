@@ -1,8 +1,61 @@
 import * as Toolbar from '@radix-ui/react-toolbar'
-import { type VariantProps } from 'class-variance-authority'
+import { type VariantProps, cva } from 'class-variance-authority'
 import { type ComponentPropsWithoutRef, type ElementRef, forwardRef } from 'react'
 import { twMerge } from '@qovery/shared/util-js'
 import { buttonVariants } from '../button-primitive/button-primitive'
+
+const toolbarButtonVariants = cva([], {
+  variants: {
+    variant: {
+      outline: [],
+      surface: [],
+      solid: [],
+      plain: [],
+    },
+    color: {
+      brand: [],
+      neutral: [],
+      green: [],
+      red: [],
+    },
+  },
+  compoundVariants: [
+    {
+      variant: 'outline',
+      color: 'neutral',
+      className: [
+        'first:rounded-l',
+        'last:rounded-r',
+        'first:border-r-0',
+        'first:border-x',
+        'border-l-0',
+        'hover:[&:not(:active)]:border-neutral-250',
+        'text-neutral-350',
+        'hover:bg-neutral-150',
+        'hover:text-brand-400',
+        'data-[state=open]:bg-neutral-150',
+        'data-[state=open]:text-brand-400',
+        'text-sm',
+        'outline-0',
+        'min-w-[36px]',
+      ],
+    },
+    {
+      variant: 'solid',
+      color: 'brand',
+      className: [
+        'first:rounded-l',
+        'last:rounded-r',
+        'hover:bg-brand-600',
+        'data-[state=open]:bg-brand-600',
+        'text-sm',
+        'outline-0',
+        'min-w-[36px]',
+      ],
+    },
+  ],
+  defaultVariants: {},
+})
 
 interface ToolbarButtonProps
   extends Omit<ComponentPropsWithoutRef<typeof Toolbar.Button>, 'color'>,
@@ -16,7 +69,7 @@ const ToolbarButton = forwardRef<ElementRef<typeof Toolbar.Button>, ToolbarButto
     <Toolbar.Button
       className={twMerge(
         buttonVariants({ color, radius, size, variant }),
-        'first:rounded-l last:rounded-r first:border-r-0 first:border-x border-l-0 hover:[&:not(:active)]:border-neutral-250 text-neutral-350 hover:bg-neutral-150 hover:text-brand-400 data-[state=open]:bg-neutral-150 data-[state=open]:text-brand-400 text-sm outline-0 min-w-[36px]',
+        toolbarButtonVariants({ color, variant }),
         className
       )}
       {...props}
