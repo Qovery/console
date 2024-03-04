@@ -55,6 +55,7 @@ export const steps = (clusterGeneralData?: ClusterGeneralData, clusterType?: str
     ])
     .with({ installation_type: 'MANAGED', cloud_provider: 'GCP' }, () => [
       { title: 'Create new cluster', key: 'general' },
+      { title: 'Set features', key: 'features' },
       { title: 'Ready to install', key: 'summary' },
     ])
     .with({ installation_type: 'MANAGED', cloud_provider: 'AWS' }, undefined, () => {

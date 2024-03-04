@@ -1,20 +1,20 @@
+import { useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { ExternalLink, InputSelect, InputText } from '@qovery/shared/ui'
+import { Button, ExternalLink, InputSelect, InputText } from '@qovery/shared/ui'
 
 export function GCPVpcFeature() {
-  const { control } = useFormContext()
+  const { control, watch } = useFormContext()
+
+  const watchVpcMode = watch('gcp_existing_vpc.vpc_mode')
+  const [openOptions, setOpenOptions] = useState(false)
 
   return (
     <div className="flex flex-col justify-between p-4 rounded border bg-neutral-100 border-neutral-250">
       <div className="flex justify-between">
         <div>
           <h4 className="text-neutral-400 text-sm font-medium mb-1">Deploy on an existing VPC</h4>
-          <p className="text-neutral-350 text-sm mb-4">In your VPC settings, you must enable the DNS hostnames.</p>
-          <ExternalLink
-            size="xs"
-            href="https://hub.qovery.com/docs/using-qovery/configuration/clusters/"
-            className="mt-1 ml-4 mb-4"
-          >
+          <p className="text-neutral-350 text-sm mb-2">In your VPC settings, you must enable the DNS hostnames.</p>
+          <ExternalLink href="https://hub.qovery.com/docs/using-qovery/configuration/clusters/" className="mb-4">
             How to configure existing VPC
           </ExternalLink>
         </div>
@@ -37,7 +37,13 @@ export function GCPVpcFeature() {
         rules={{ required: true }}
         control={control}
         render={({ field }) => (
-          <InputText label="VPC Name" name={field.name} value={field.value} onChange={field.onChange} />
+          <InputText
+            className="mb-3"
+            label="VPC Name"
+            name={field.name}
+            value={field.value}
+            onChange={field.onChange}
+          />
         )}
       />
       <Controller
@@ -46,6 +52,7 @@ export function GCPVpcFeature() {
         control={control}
         render={({ field, fieldState: { error } }) => (
           <InputSelect
+            className="mb-3"
             onChange={field.onChange}
             value={field.value}
             label="VPC Mode"
@@ -64,6 +71,74 @@ export function GCPVpcFeature() {
           />
         )}
       />
+      {watchVpcMode === 'CUSTOM' && (
+        <Controller
+          name="gcp_existing_vpc.subnetwork_name"
+          rules={{ required: true }}
+          control={control}
+          render={({ field }) => (
+            <InputText label="Subnetwork range name" name={field.name} value={field.value} onChange={field.onChange} />
+          )}
+        />
+      )}
+      {!openOptions && (
+        <Button
+          type="button"
+          className="justify-center mt-4"
+          variant="outline"
+          size="md"
+          onClick={() => setOpenOptions(!openOptions)}
+        >
+          Set additional ranges
+        </Button>
+      )}
+      {openOptions && (
+        <>
+          <hr className="my-4" />
+          <h4 className="text-neutral-400 text-sm font-medium mb-4">Additional ranges (optional)</h4>
+          <Controller
+            name="gcp_existing_vpc.pod_ipv4_address"
+            rules={{ required: true }}
+            control={control}
+            render={({ field }) => (
+              <InputText
+                className="mb-4"
+                label="Pod IPv4 address range name (optional)"
+                name={field.name}
+                value={field.value}
+                onChange={field.onChange}
+              />
+            )}
+          />
+          <Controller
+            name="gcp_existing_vpc.pod_ipv4_ranges"
+            rules={{ required: true }}
+            control={control}
+            render={({ field }) => (
+              <InputText
+                className="mb-4"
+                label="Cluster Pod IPv4 ranges names (optional)"
+                name={field.name}
+                value={field.value}
+                onChange={field.onChange}
+              />
+            )}
+          />
+          <Controller
+            name="gcp_existing_vpc.pod_ipv4_ranges"
+            rules={{ required: true }}
+            control={control}
+            render={({ field }) => (
+              <InputText
+                label="Cluster Pod IPv4 ranges names (optional)"
+                name={field.name}
+                value={field.value}
+                onChange={field.onChange}
+              />
+            )}
+          />
+        </>
+      )}
     </div>
   )
 }

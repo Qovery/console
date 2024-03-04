@@ -2,6 +2,7 @@ import { KubernetesEnum } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
+import { match } from 'ts-pattern'
 import { useCloudProviderFeatures } from '@qovery/domains/cloud-providers/feature'
 import { type ClusterFeaturesData, type Subnets } from '@qovery/shared/interfaces'
 import {
@@ -25,7 +26,10 @@ export function StepFeaturesFeature() {
   const { organizationId = '' } = useParams()
   const { setFeaturesData, generalData, featuresData, resourcesData, setCurrentStep } =
     useClusterContainerCreateContext()
-  const { data: features } = useCloudProviderFeatures({ cloudProvider: generalData?.cloud_provider ?? 'AWS' })
+  const { data: features } = useCloudProviderFeatures({
+    cloudProvider: generalData?.cloud_provider ?? 'AWS',
+    enabled: generalData?.cloud_provider === 'GCP',
+  })
   const navigate = useNavigate()
 
   const funnelCardHelp = (
@@ -49,11 +53,17 @@ export function StepFeaturesFeature() {
   )
 
   const goToBack = () => {
-    if (resourcesData?.cluster_type === KubernetesEnum.K3_S) {
-      navigate(`${CLUSTERS_URL(organizationId)}${CLUSTERS_CREATION_URL}${CLUSTERS_CREATION_REMOTE_URL}`)
-    } else {
-      navigate(`${CLUSTERS_URL(organizationId)}${CLUSTERS_CREATION_URL}${CLUSTERS_CREATION_RESOURCES_URL}`)
-    }
+    const path = CLUSTERS_URL(organizationId) + CLUSTERS_CREATION_URL
+
+    match(generalData?.cloud_provider)
+      .with('GCP', () => navigate(path + CLUSTERS_CREATION_GENERAL_URL))
+      .otherwise(() => {
+        if (resourcesData?.cluster_type === KubernetesEnum.K3_S) {
+          navigate(path + CLUSTERS_CREATION_REMOTE_URL)
+        } else {
+          navigate(path + CLUSTERS_CREATION_RESOURCES_URL)
+        }
+      })
   }
 
   useEffect(() => {
@@ -61,8 +71,10 @@ export function StepFeaturesFeature() {
   }, [setCurrentStep, generalData?.cloud_provider, generalData?.installation_type, resourcesData?.cluster_type])
 
   useEffect(() => {
-    !resourcesData?.cluster_type && navigate(CLUSTERS_CREATION_URL + CLUSTERS_CREATION_GENERAL_URL)
-  }, [resourcesData?.cluster_type, navigate, organizationId])
+    generalData?.cloud_provider !== 'GCP' &&
+      !resourcesData?.cluster_type &&
+      navigate(CLUSTERS_CREATION_URL + CLUSTERS_CREATION_GENERAL_URL)
+  }, [generalData?.cloud_provider, resourcesData?.cluster_type, navigate, organizationId])
 
   const methods = useForm<ClusterFeaturesData>({
     defaultValues: featuresData,

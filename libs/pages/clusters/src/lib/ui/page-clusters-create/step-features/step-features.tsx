@@ -15,6 +15,7 @@ import {
   Section,
 } from '@qovery/shared/ui'
 import AWSVpcFeature from './aws-vpc-feature/aws-vpc-feature'
+import GCPVpcFeature from './gcp-vpc-feature/gcp-vpc-feature'
 
 export interface StepFeaturesProps {
   onSubmit: FormEventHandler<HTMLFormElement>
@@ -49,27 +50,31 @@ export function StepFeatures(props: StepFeaturesProps) {
               </Callout.TextDescription>
             </Callout.Text>
           </Callout.Root>
-          <Controller
-            name="vpc_mode"
-            defaultValue="DEFAULT"
-            control={control}
-            render={({ field }) => (
-              <InputSelect
-                className="mb-4"
-                label="VPC mode"
-                options={[
-                  {
-                    label: 'Default (managed by Qovery)',
-                    value: 'DEFAULT',
-                  },
-                  {
-                    label: 'Deploy on my existing VPC',
-                    value: 'EXISTING_VPC',
-                  },
-                ]}
-                onChange={field.onChange}
-                value={field.value}
-                portal={true}
+          {cloudProvider === 'AWS' && (
+            <>
+              <Controller
+                name="vpc_mode"
+                defaultValue="DEFAULT"
+                control={control}
+                render={({ field }) => (
+                  <InputSelect
+                    className="mb-4"
+                    label="VPC mode"
+                    options={[
+                      {
+                        label: 'Default (managed by Qovery)',
+                        value: 'DEFAULT',
+                      },
+                      {
+                        label: 'Deploy on my existing VPC',
+                        value: 'EXISTING_VPC',
+                      },
+                    ]}
+                    onChange={field.onChange}
+                    value={field.value}
+                    portal={true}
+                  />
+                )}
               />
             )}
           />
@@ -113,11 +118,12 @@ export function StepFeatures(props: StepFeaturesProps) {
                 <div className="flex justify-center mt-2">
                   <LoaderSpinner className="w-4" />
                 </div>
+              ) : (
+                <AWSVpcFeature />
               )}
-            </div>
-          ) : (
-            <AWSVpcFeature />
+            </>
           )}
+          {cloudProvider === 'GCP' && <GCPVpcFeature />}
         </div>
 
         <div className="flex justify-between">
