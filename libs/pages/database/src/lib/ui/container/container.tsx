@@ -7,12 +7,13 @@ import { type AnyService } from '@qovery/domains/services/data-access'
 import { NeedRedeployFlag, ServiceActionToolbar, ServiceStateChip } from '@qovery/domains/services/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import {
+  CLUSTER_URL,
   DATABASE_DEPLOYMENTS_URL,
   DATABASE_GENERAL_URL,
   DATABASE_SETTINGS_URL,
   DATABASE_URL,
 } from '@qovery/shared/routes'
-import { Badge, Header, Icon, Section, Skeleton, Tabs, Tooltip } from '@qovery/shared/ui'
+import { Header, Icon, Link, Section, Skeleton, Tabs, Tooltip } from '@qovery/shared/ui'
 
 export interface ContainerProps {
   service?: AnyService
@@ -35,10 +36,16 @@ export function Container({ service, environment, children }: PropsWithChildren<
         )}
         <Skeleton width={120} height={22} show={!cluster}>
           <Tooltip content={cluster?.name ?? ''}>
-            <Badge size="xs" variant="outline">
+            <Link
+              as="button"
+              color="neutral"
+              variant="surface"
+              size="xs"
+              to={CLUSTER_URL(environment?.organization.id, environment?.cluster_id)}
+            >
               <Icon name={environment?.cloud_provider.provider as IconEnum} width="16" />
               <p className="ml-1.5 max-w-[200px] truncate">{cluster?.name}</p>
-            </Badge>
+            </Link>
           </Tooltip>
         </Skeleton>
       </div>

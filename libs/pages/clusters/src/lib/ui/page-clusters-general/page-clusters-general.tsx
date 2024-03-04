@@ -1,15 +1,7 @@
 import { type Cluster } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
 import { CLUSTERS_CREATION_GENERAL_URL, CLUSTERS_CREATION_URL, CLUSTERS_URL } from '@qovery/shared/routes'
-import {
-  ButtonLegacy,
-  EmptyState,
-  Heading,
-  HelpSection,
-  IconAwesomeEnum,
-  LoaderSpinner,
-  Section,
-} from '@qovery/shared/ui'
+import { EmptyState, Heading, HelpSection, Icon, Link, LoaderSpinner, Section } from '@qovery/shared/ui'
 import CardCluster from '../card-cluster/card-cluster'
 
 export interface PageClustersGeneralProps {
@@ -31,9 +23,10 @@ export function PageClustersGeneral(props: PageClustersGeneralProps) {
             <Heading className="mb-2">Manage your clusters</Heading>
             <p className="text-neutral-400 text-xs">Manage your infrastructure across different Cloud providers.</p>
           </div>
-          <ButtonLegacy iconRight={IconAwesomeEnum.CIRCLE_PLUS} link={goToCreateCluster}>
+          <Link as="button" to={goToCreateCluster} className="gap-2" size="lg">
             Add Cluster
-          </ButtonLegacy>
+            <Icon iconName="circle-plus" />
+          </Link>
         </div>
         {loading && clusters?.length === 0 ? (
           <div data-testid="clusters-loader" className="flex justify-center">
@@ -52,9 +45,9 @@ export function PageClustersGeneral(props: PageClustersGeneralProps) {
               title="No cluster set"
               description="A cluster is necessary to run your applications with Qovery"
             >
-              <ButtonLegacy className="mt-5" link={goToCreateCluster}>
+              <Link as="button" to={goToCreateCluster} className="mt-5" size="md">
                 Add Cluster
-              </ButtonLegacy>
+              </Link>
             </EmptyState>
           )
         )}

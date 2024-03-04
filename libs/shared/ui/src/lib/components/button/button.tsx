@@ -1,9 +1,9 @@
-import { type ElementRef, forwardRef } from 'react'
+import { type ComponentPropsWithoutRef, type ElementRef, forwardRef } from 'react'
 import { twMerge } from '@qovery/shared/util-js'
 import ButtonPrimitive from '../button-primitive/button-primitive'
 import LoaderSpinner from '../loader-spinner/loader-spinner'
 
-export interface ButtonProps extends React.ComponentPropsWithoutRef<typeof ButtonPrimitive> {
+export interface ButtonProps extends ComponentPropsWithoutRef<typeof ButtonPrimitive> {
   loading?: boolean
 }
 

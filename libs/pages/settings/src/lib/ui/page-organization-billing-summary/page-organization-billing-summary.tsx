@@ -3,8 +3,7 @@ import { type CardImages } from 'react-payment-inputs/images'
 import { useParams } from 'react-router-dom'
 import { CLUSTERS_URL, SETTINGS_BILLING_URL, SETTINGS_URL } from '@qovery/shared/routes'
 import {
-  ButtonLegacy,
-  ButtonLegacyStyle,
+  Button,
   ExternalLink,
   Heading,
   HelpSection,
@@ -36,16 +35,18 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
         <div className="flex justify-between mb-8">
           <Heading className="mb-2">Plan details</Heading>
           <div className="flex gap-3">
-            <ButtonLegacy
-              style={ButtonLegacyStyle.STROKED}
-              dataTestId="promo-code-button"
+            <Button
+              variant="surface"
+              color="neutral"
+              size="lg"
+              data-testid="promo-code-button"
               onClick={props.onPromoCodeClick}
             >
               Promo code
-            </ButtonLegacy>
-            <ButtonLegacy dataTestId="upgrade-button" onClick={props.openIntercom}>
+            </Button>
+            <Button size="lg" data-testid="upgrade-button" onClick={props.openIntercom}>
               Upgrade plan
-            </ButtonLegacy>
+            </Button>
           </div>
         </div>
 

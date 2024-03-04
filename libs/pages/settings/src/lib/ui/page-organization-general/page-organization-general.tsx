@@ -1,16 +1,6 @@
 import { type FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import {
-  BlockContent,
-  ButtonLegacy,
-  ButtonLegacySize,
-  ButtonLegacyStyle,
-  HelpSection,
-  InputFile,
-  InputTags,
-  InputText,
-  InputTextArea,
-} from '@qovery/shared/ui'
+import { BlockContent, Button, HelpSection, InputFile, InputTags, InputText, InputTextArea } from '@qovery/shared/ui'
 import { dateMediumLocalFormat } from '@qovery/shared/util-dates'
 
 export interface PageOrganizationGeneralProps {
@@ -116,17 +106,9 @@ export function PageOrganizationGeneral(props: PageOrganizationGeneralProps) {
             </p>
           </BlockContent>
           <div className="flex justify-end">
-            <ButtonLegacy
-              dataTestId="submit-button"
-              className="btn--no-min-w"
-              size={ButtonLegacySize.LARGE}
-              style={ButtonLegacyStyle.BASIC}
-              type="submit"
-              disabled={!formState.isValid}
-              loading={loading}
-            >
+            <Button data-testid="submit-button" size="lg" type="submit" disabled={!formState.isValid} loading={loading}>
               Save
-            </ButtonLegacy>
+            </Button>
           </div>
         </form>
       </div>

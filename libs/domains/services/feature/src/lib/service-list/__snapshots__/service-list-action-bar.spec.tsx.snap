@@ -30,7 +30,7 @@ exports[`ServiceListActionBar should match snapshot 1`] = `
               class="flex gap-3"
             >
               <button
-                class="inline-flex shrink-0 font-medium transition border text-xs h-8 px-3 rounded bg-brand-500 border-brand-500 hover:border-brand-600 hover:bg-brand-600 text-white disabled:text-brand-300 disabled:bg-brand-100 disabled:border-none items-center gap-2"
+                class="inline-flex shrink-0 font-medium transition shadow-sm disabled:shadow-none active:shadow-none border text-xs h-9 px-3 rounded bg-brand-500 border-brand-500 hover:border-brand-600 hover:bg-brand-600 text-white disabled:text-brand-300 disabled:bg-brand-100 disabled:border-none items-center gap-2"
               >
                 Deploy selected 
                 <i
@@ -41,7 +41,7 @@ exports[`ServiceListActionBar should match snapshot 1`] = `
               <button
                 aria-expanded="false"
                 aria-haspopup="menu"
-                class="inline-flex shrink-0 font-medium transition text-xs h-8 px-3 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 items-center gap-2"
+                class="inline-flex shrink-0 font-medium transition shadow-sm disabled:shadow-none active:shadow-none text-xs h-9 px-3 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 items-center gap-2"
                 data-state="closed"
                 id="radix-:rf:"
                 type="button"

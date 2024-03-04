@@ -70,7 +70,7 @@ exports[`GitTokenList should match snapshot 1`] = `
             </div>
             <div>
               <button
-                class="inline-flex items-center shrink-0 font-medium transition text-xs h-8 px-3 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent mr-2"
+                class="inline-flex items-center shrink-0 font-medium transition shadow-sm disabled:shadow-none active:shadow-none text-xs h-9 px-3 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent mr-2"
               >
                 <i
                   aria-hidden="true"
@@ -78,7 +78,7 @@ exports[`GitTokenList should match snapshot 1`] = `
                 />
               </button>
               <button
-                class="inline-flex items-center shrink-0 font-medium transition text-xs h-8 px-3 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent"
+                class="inline-flex items-center shrink-0 font-medium transition shadow-sm disabled:shadow-none active:shadow-none text-xs h-9 px-3 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent"
               >
                 <i
                   aria-hidden="true"
@@ -175,7 +175,7 @@ exports[`GitTokenList should match snapshot 1`] = `
             </div>
             <div>
               <button
-                class="inline-flex items-center shrink-0 font-medium transition text-xs h-8 px-3 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent mr-2"
+                class="inline-flex items-center shrink-0 font-medium transition shadow-sm disabled:shadow-none active:shadow-none text-xs h-9 px-3 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent mr-2"
               >
                 <i
                   aria-hidden="true"
@@ -183,7 +183,7 @@ exports[`GitTokenList should match snapshot 1`] = `
                 />
               </button>
               <button
-                class="inline-flex items-center shrink-0 font-medium transition text-xs h-8 px-3 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent"
+                class="inline-flex items-center shrink-0 font-medium transition shadow-sm disabled:shadow-none active:shadow-none text-xs h-9 px-3 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent"
               >
                 <i
                   aria-hidden="true"

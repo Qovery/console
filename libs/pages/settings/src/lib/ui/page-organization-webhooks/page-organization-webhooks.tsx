@@ -2,9 +2,9 @@ import { OrganizationWebhookKindEnum, type OrganizationWebhookResponse } from 'q
 import { IconEnum } from '@qovery/shared/enums'
 import {
   BlockContent,
+  Button,
   ButtonIcon,
   ButtonIconStyle,
-  ButtonLegacy,
   ButtonLegacySize,
   Heading,
   HelpSection,
@@ -40,14 +40,10 @@ export function PageOrganizationWebhooks(props: PageOrganizationWebhooksProps) {
               environment within your organization, you can get notified on external applications (for instance, Slack).
             </p>
           </div>
-          <ButtonLegacy
-            dataTestId="add-new"
-            onClick={props.openAddNew}
-            iconRight={IconAwesomeEnum.CIRCLE_PLUS}
-            className="shrink-0"
-          >
+          <Button data-testid="add-new" onClick={props.openAddNew} size="lg" className="gap-2 shrink-0">
             Add new
-          </ButtonLegacy>
+            <Icon iconName="circle-plus" />
+          </Button>
         </div>
         <BlockContent title="Webhook" classNameContent="p-0">
           {props.webhookLoading ? (

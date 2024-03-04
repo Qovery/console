@@ -55,7 +55,7 @@ function GitRepository({
           <Dt>Repository:</Dt>
           <Dd>
             <a href={buildGitProviderUrl(gitRepository.url)} target="_blank" rel="noopener noreferrer">
-              <Badge variant="surface" size="xs" className="gap-1">
+              <Button color="neutral" variant="surface" size="xs" className="gap-1">
                 <Icon
                   name={
                     gitRepository.url.includes('//github')
@@ -68,7 +68,7 @@ function GitRepository({
                   width={14}
                 />
                 <Truncate text={gitRepository.name} truncateLimit={18} />
-              </Badge>
+              </Button>
             </a>
           </Dd>
         </>
@@ -82,10 +82,10 @@ function GitRepository({
               target="_blank"
               rel="noopener noreferrer"
             >
-              <Badge variant="surface" size="xs" className="gap-1">
+              <Button color="neutral" variant="surface" size="xs" className="gap-1">
                 <Icon iconName="code-branch" height={14} width={14} />
                 <Truncate text={gitRepository.branch} truncateLimit={18} />
-              </Badge>
+              </Button>
             </a>
           </Dd>
         </>
