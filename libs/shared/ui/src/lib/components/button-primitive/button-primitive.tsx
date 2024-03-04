@@ -9,22 +9,22 @@ const _buttonVariants = cva(
     'shrink-0',
     'font-medium',
     'transition',
-    'shadow-sm',
-    'disabled:shadow-none',
-    'active:shadow-none',
+    'focus-visible:[&:not(:active)]:outline-2',
+    'outline-0',
   ],
   {
     variants: {
       variant: {
-        solid: ['border'],
-        surface: [],
-        outline: [],
+        solid: ['shadow-sm', 'disabled:shadow-none', 'active:shadow-none'],
+        surface: ['shadow-sm', 'disabled:shadow-none', 'active:shadow-none'],
+        outline: ['shadow-sm', 'disabled:shadow-none', 'active:shadow-none'],
+        plain: ['hover:[&:not(:focus-visible):not(:disabled)]:shadow-sm', 'active:[&:not(:focus-visible)]:shadow-none'],
       },
       color: {
-        brand: [],
-        neutral: [],
-        green: [],
-        red: [],
+        brand: ['outline-neutral-500'],
+        neutral: ['outline-brand-500'],
+        green: ['outline-neutral-500'],
+        red: ['outline-neutral-500'],
       },
       size: {
         xs: ['text-xs', 'h-5', 'px-1'],
@@ -51,51 +51,68 @@ const _buttonVariants = cva(
           'hover:[&:not(:active)]:border-neutral-300',
           'active:bg-neutral-150',
           'disabled:text-neutral-300',
-          'disabled:bg-neutral-150',
+          'disabled:bg-neutral-100',
           'disabled:border-none',
         ],
       },
       {
         variant: 'surface',
         color: 'neutral',
-        className: ['bg-neutral-100', 'dark:bg-neutral-500', 'dark:hover:bg-neutral-550'],
+        className: [
+          'bg-neutral-100',
+          'dark:bg-neutral-500',
+          'dark:hover:bg-neutral-550',
+          'hover:[&:not(:active):not(:disabled)]:bg-transparent',
+        ],
       },
       {
         variant: 'outline',
         color: 'neutral',
         className: ['bg-transparent'],
       },
+      {
+        variant: 'plain',
+        color: 'neutral',
+        className: [
+          'border',
+          'border-transparent',
+          'text-neutral-350',
+          'hover:[&:not(:active):not(:focus-visible)]:border-neutral-300',
+          'hover:[&:not(:disabled)]:text-neutral-400',
+          'focus-visible:text-neutral-400',
+          'active:bg-neutral-150',
+          'active:text-neutral-400',
+          'disabled:text-neutral-300',
+          'disabled:bg-neutral-150',
+          'disabled:border-none',
+        ],
+      },
       /*
     // Generate all colors
-      ...['brand' as const, 'neutral' as const, 'green' as const].map((color) => ({
-        variant: 'solid' as const,
+      ...['brand', 'neutral', 'green', 'red'].map((color) => ({
+        variant: 'solid',
         color,
         className: [
           `bg-${color}-500`,
-          `hover:bg-${color}-600`,
-          `border-${color}-500`,
-          'hover:border-${color}-600'`
+          `active:bg-${color}-600`,
+          `hover:bg-${color}-400`,
           'text-white',
-          'disabled:text-brand-300',
-          `disabled:text-${color}-300`,
+          'disabled:text-${color}-300',
           `disabled:bg-${color}-100`,
-          `disabled:border-none`,
         ],
       })),
     */
+
       {
         variant: 'solid',
         color: 'brand',
         className: [
           'bg-brand-500',
-          'border-brand-500',
-          'hover:border-brand-600',
-          'hover:bg-brand-600',
+          'active:bg-brand-600',
+          'hover:bg-brand-400',
           'text-white',
           'disabled:text-brand-300',
-          'disabled:text-brand-300',
           'disabled:bg-brand-100',
-          'disabled:border-none',
         ],
       },
       {
@@ -103,14 +120,11 @@ const _buttonVariants = cva(
         color: 'neutral',
         className: [
           'bg-neutral-500',
-          'border-neutral-500',
-          'hover:border-neutral-600',
-          'hover:bg-neutral-600',
+          'active:bg-neutral-600',
+          'hover:bg-neutral-400',
           'text-white',
-          'disabled:text-brand-300',
           'disabled:text-neutral-300',
           'disabled:bg-neutral-100',
-          'disabled:border-none',
         ],
       },
       {
@@ -118,14 +132,11 @@ const _buttonVariants = cva(
         color: 'green',
         className: [
           'bg-green-500',
-          'border-green-500',
-          'hover:border-green-600',
-          'hover:bg-green-600',
+          'active:bg-green-600',
+          'hover:bg-green-400',
           'text-white',
-          'disabled:text-brand-300',
           'disabled:text-green-300',
           'disabled:bg-green-100',
-          'disabled:border-none',
         ],
       },
       {
@@ -133,14 +144,11 @@ const _buttonVariants = cva(
         color: 'red',
         className: [
           'bg-red-500',
-          'border-red-500',
-          'hover:border-red-600',
-          'hover:bg-red-600',
+          'active:bg-red-600',
+          'hover:bg-red-400',
           'text-white',
-          'disabled:text-brand-300',
           'disabled:text-red-300',
           'disabled:bg-red-100',
-          'disabled:border-none',
         ],
       },
     ],
@@ -161,7 +169,7 @@ const _buttonVariants = cva(
  * - surface = neutral
  */
 export function buttonVariants(props: Parameters<typeof _buttonVariants>[0]) {
-  if (props?.variant === 'surface' || props?.variant === 'outline') {
+  if (props?.variant === 'surface' || props?.variant === 'outline' || props?.variant === 'plain') {
     props.color ??= 'neutral'
   }
   return _buttonVariants(props)
