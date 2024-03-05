@@ -1,4 +1,5 @@
 import { type FormEvent, useEffect, useState } from 'react'
+import Icon from '../../icon/icon'
 
 export interface InputCheckboxProps {
   name: string
@@ -51,7 +52,7 @@ export function InputCheckbox(props: InputCheckboxProps) {
   }
 
   return (
-    <div className={`flex gap-2 items-center ${className}`}>
+    <div className={`relative flex gap-2 items-center ${className}`}>
       <input
         data-testid={dataTestId}
         id={id}
@@ -65,7 +66,7 @@ export function InputCheckbox(props: InputCheckboxProps) {
           disabled
             ? 'before:border-neutral-250 dark:before:border-neutral-350'
             : 'before:border-neutral-350 cursor-pointer'
-        } before:border-2 before:font-black before:text-xs before:leading-none before:content-[''] before:transition-all`}
+        } before:border-2 before:font-black before:text-xs before:leading-none before:content-[''] before:transition-all checked:before:bg-brand-500 checked:before:border-brand-500`}
       />
       {label && (
         <label
@@ -77,6 +78,7 @@ export function InputCheckbox(props: InputCheckboxProps) {
           {label}
         </label>
       )}
+      {check && <Icon iconName="check" className="text-white absolute -top-[7px] left-[3.5px] text-2xs" />}
     </div>
   )
 }
