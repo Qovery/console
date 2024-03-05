@@ -22,7 +22,7 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
           </p>
         </div>
         <button
-          class="inline-flex items-center shrink-0 font-medium transition shadow-sm disabled:shadow-none active:shadow-none border text-sm h-11 px-5 rounded bg-brand-500 border-brand-500 hover:border-brand-600 hover:bg-brand-600 text-white disabled:text-brand-300 disabled:bg-brand-100 disabled:border-none"
+          class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-neutral-500 text-sm h-11 px-5 rounded bg-brand-500 active:bg-brand-600 hover:bg-brand-400 text-white disabled:text-brand-300 disabled:bg-brand-100"
         >
           Add variable
         </button>
@@ -42,7 +42,7 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
         />
       </span>
       <button
-        class="inline-flex items-center shrink-0 font-medium transition shadow-sm disabled:shadow-none active:shadow-none text-sm h-11 px-5 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 mb-10"
+        class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-sm h-11 px-5 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent mb-10"
       >
         See default values.yaml 
         <i
@@ -150,7 +150,7 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                 </div>
               </div>
               <button
-                class="inline-flex items-center shrink-0 font-medium transition shadow-sm disabled:shadow-none active:shadow-none text-xs px-3 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent w-full h-[36px]"
+                class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs px-3 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-transparent w-full h-[36px]"
                 type="button"
               >
                 <i
@@ -216,7 +216,7 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                 </div>
               </div>
               <button
-                class="inline-flex items-center shrink-0 font-medium transition shadow-sm disabled:shadow-none active:shadow-none text-xs px-3 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 justify-between h-[36px]"
+                class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs px-3 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent justify-between h-[36px]"
                 type="button"
               >
                 Close json
@@ -226,7 +226,7 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                 />
               </button>
               <button
-                class="inline-flex items-center shrink-0 font-medium transition shadow-sm disabled:shadow-none active:shadow-none text-xs px-3 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent w-full h-[36px]"
+                class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs px-3 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-transparent w-full h-[36px]"
                 type="button"
               >
                 <i
@@ -328,7 +328,7 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                 </div>
               </div>
               <button
-                class="inline-flex items-center shrink-0 font-medium transition shadow-sm disabled:shadow-none active:shadow-none text-xs px-3 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent w-full h-[36px]"
+                class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs px-3 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-transparent w-full h-[36px]"
                 type="button"
               >
                 <i

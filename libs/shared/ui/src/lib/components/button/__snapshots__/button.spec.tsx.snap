@@ -4,7 +4,7 @@ exports[`Button should match snapshot 1`] = `
 <body>
   <div>
     <button
-      class="inline-flex items-center shrink-0 font-medium transition shadow-sm disabled:shadow-none active:shadow-none border text-xs h-7 px-2 rounded bg-brand-500 border-brand-500 hover:border-brand-600 hover:bg-brand-600 text-white disabled:text-brand-300 disabled:bg-brand-100 disabled:border-none"
+      class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-neutral-500 text-xs h-7 px-2 rounded bg-brand-500 active:bg-brand-600 hover:bg-brand-400 text-white disabled:text-brand-300 disabled:bg-brand-100"
       type="button"
     >
       Foobar
@@ -17,7 +17,7 @@ exports[`Button should match snapshot with loading 1`] = `
 <body>
   <div>
     <button
-      class="inline-flex items-center shrink-0 font-medium transition shadow-sm disabled:shadow-none active:shadow-none border text-xs h-7 px-2 rounded bg-brand-500 border-brand-500 hover:border-brand-600 hover:bg-brand-600 disabled:text-brand-300 disabled:bg-brand-100 disabled:border-none relative pointer-events-none text-transparent"
+      class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-neutral-500 text-xs h-7 px-2 rounded bg-brand-500 active:bg-brand-600 hover:bg-brand-400 disabled:text-brand-300 disabled:bg-brand-100 relative pointer-events-none text-transparent"
       type="button"
     >
       <div

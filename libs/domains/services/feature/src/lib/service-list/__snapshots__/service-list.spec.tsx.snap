@@ -38,7 +38,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 aria-controls="radix-:r1v:"
                 aria-expanded="false"
                 aria-haspopup="dialog"
-                class="inline-flex items-center shrink-0 font-medium transition shadow-sm disabled:shadow-none active:shadow-none h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 text-xs gap-1 whitespace-nowrap"
+                class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent text-xs gap-1 whitespace-nowrap"
                 data-state="closed"
                 type="button"
               >
@@ -61,7 +61,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 aria-controls="radix-:r22:"
                 aria-expanded="false"
                 aria-haspopup="dialog"
-                class="inline-flex items-center shrink-0 font-medium transition shadow-sm disabled:shadow-none active:shadow-none h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 text-xs gap-1 whitespace-nowrap"
+                class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent text-xs gap-1 whitespace-nowrap"
                 data-state="closed"
                 type="button"
               >
@@ -84,7 +84,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 aria-controls="radix-:r25:"
                 aria-expanded="false"
                 aria-haspopup="dialog"
-                class="inline-flex items-center shrink-0 font-medium transition shadow-sm disabled:shadow-none active:shadow-none h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 text-xs gap-1 whitespace-nowrap"
+                class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent text-xs gap-1 whitespace-nowrap"
                 data-state="closed"
                 type="button"
               >
@@ -249,7 +249,7 @@ exports[`ServiceList should match snapshot 1`] = `
                     aria-controls="radix-:r26:"
                     aria-expanded="false"
                     aria-haspopup="dialog"
-                    class="inline-flex items-center shrink-0 font-medium transition shadow-sm disabled:shadow-none active:shadow-none text-xs h-5 px-1 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550"
+                    class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-5 px-1 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent"
                     data-state="closed"
                     type="button"
                   >
@@ -287,7 +287,7 @@ exports[`ServiceList should match snapshot 1`] = `
             style="width: 15%;"
           >
             <a
-              class="inline-flex items-center shrink-0 font-medium transition shadow-sm disabled:shadow-none active:shadow-none h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent text-xs gap-2 whitespace-nowrap"
+              class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-transparent text-xs gap-2 whitespace-nowrap"
               data-state="closed"
               href="/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/application/037c9e87-e098-4970-8b1f-9a5ffe9e4b89/services/general"
             >
@@ -331,7 +331,7 @@ exports[`ServiceList should match snapshot 1`] = `
             style="width: 15%;"
           >
             <a
-              class="inline-flex items-center shrink-0 font-medium transition shadow-sm disabled:shadow-none active:shadow-none h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent text-xs gap-2 whitespace-nowrap"
+              class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-transparent text-xs gap-2 whitespace-nowrap"
               data-state="closed"
               href="/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/logs/037c9e87-e098-4970-8b1f-9a5ffe9e4b89/deployment-logs"
             >
@@ -401,7 +401,7 @@ exports[`ServiceList should match snapshot 1`] = `
                   data-state="closed"
                 >
                   <button
-                    class="inline-flex items-center shrink-0 font-medium transition shadow-sm disabled:shadow-none active:shadow-none text-xs h-5 px-1 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 group justify-between"
+                    class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-5 px-1 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent group justify-between"
                     type="button"
                   >
                     <i
@@ -419,7 +419,7 @@ exports[`ServiceList should match snapshot 1`] = `
                   class="inline-block"
                 >
                   <a
-                    class="inline-flex items-center shrink-0 font-medium transition shadow-sm disabled:shadow-none active:shadow-none text-xs h-5 px-1 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 gap-1 whitespace-nowrap"
+                    class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-5 px-1 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent gap-1 whitespace-nowrap"
                     href="https://github.com/acarranoqovery/javascript-tetris/tree/master/"
                     rel="noopener noreferrer"
                     target="_blank"
@@ -579,7 +579,7 @@ exports[`ServiceList should match snapshot 1`] = `
                     aria-controls="radix-:r2f:"
                     aria-expanded="false"
                     aria-haspopup="dialog"
-                    class="inline-flex items-center shrink-0 font-medium transition shadow-sm disabled:shadow-none active:shadow-none text-xs h-5 px-1 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550"
+                    class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-5 px-1 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent"
                     data-state="closed"
                     type="button"
                   >
@@ -626,7 +626,7 @@ exports[`ServiceList should match snapshot 1`] = `
             style="width: 15%;"
           >
             <a
-              class="inline-flex items-center shrink-0 font-medium transition shadow-sm disabled:shadow-none active:shadow-none h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent text-xs gap-2 whitespace-nowrap"
+              class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-transparent text-xs gap-2 whitespace-nowrap"
               data-state="closed"
               href="/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/application/04308de2-af27-405f-9e95-570fa94ed577/services/general"
             >
@@ -670,7 +670,7 @@ exports[`ServiceList should match snapshot 1`] = `
             style="width: 15%;"
           >
             <a
-              class="inline-flex items-center shrink-0 font-medium transition shadow-sm disabled:shadow-none active:shadow-none h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent text-xs gap-2 whitespace-nowrap"
+              class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-transparent text-xs gap-2 whitespace-nowrap"
               data-state="closed"
               href="/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/logs/04308de2-af27-405f-9e95-570fa94ed577/deployment-logs"
             >
@@ -720,7 +720,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 class="inline-block"
               >
                 <a
-                  class="inline-flex shrink-0 font-medium transition shadow-sm disabled:shadow-none active:shadow-none text-xs h-5 px-1 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 items-center gap-1 capitalize whitespace-nowrap"
+                  class="inline-flex shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-5 px-1 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent items-center gap-1 capitalize whitespace-nowrap"
                   href="https://docker.io"
                   rel="noopener noreferrer"
                   target="_blank"
@@ -1202,7 +1202,7 @@ exports[`ServiceList should match snapshot 1`] = `
                     aria-controls="radix-:r2n:"
                     aria-expanded="false"
                     aria-haspopup="dialog"
-                    class="inline-flex items-center shrink-0 font-medium transition shadow-sm disabled:shadow-none active:shadow-none text-xs h-5 px-1 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550"
+                    class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-5 px-1 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent"
                     data-state="closed"
                     type="button"
                   >
@@ -1249,7 +1249,7 @@ exports[`ServiceList should match snapshot 1`] = `
             style="width: 15%;"
           >
             <a
-              class="inline-flex items-center shrink-0 font-medium transition shadow-sm disabled:shadow-none active:shadow-none h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent text-xs gap-2 whitespace-nowrap"
+              class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-transparent text-xs gap-2 whitespace-nowrap"
               data-state="closed"
               href="/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/application/ebd8be35-d7a2-4d4f-ad82-de4378a83ef4/services/general"
             >
@@ -1293,7 +1293,7 @@ exports[`ServiceList should match snapshot 1`] = `
             style="width: 15%;"
           >
             <a
-              class="inline-flex items-center shrink-0 font-medium transition shadow-sm disabled:shadow-none active:shadow-none h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent text-xs gap-2 whitespace-nowrap"
+              class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-transparent text-xs gap-2 whitespace-nowrap"
               data-state="closed"
               href="/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/logs/ebd8be35-d7a2-4d4f-ad82-de4378a83ef4/deployment-logs"
             >
@@ -1363,7 +1363,7 @@ exports[`ServiceList should match snapshot 1`] = `
                   data-state="closed"
                 >
                   <button
-                    class="inline-flex items-center shrink-0 font-medium transition shadow-sm disabled:shadow-none active:shadow-none text-xs h-5 px-1 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 group justify-between"
+                    class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-5 px-1 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent group justify-between"
                     type="button"
                   >
                     <i
@@ -1381,7 +1381,7 @@ exports[`ServiceList should match snapshot 1`] = `
                   class="inline-block"
                 >
                   <a
-                    class="inline-flex items-center shrink-0 font-medium transition shadow-sm disabled:shadow-none active:shadow-none text-xs h-5 px-1 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 gap-1 whitespace-nowrap"
+                    class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-5 px-1 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent gap-1 whitespace-nowrap"
                     href="https://github.com/acarranoqovery/test_script/tree/main/"
                     rel="noopener noreferrer"
                     target="_blank"
@@ -1628,7 +1628,7 @@ exports[`ServiceList should match snapshot 1`] = `
                     aria-controls="radix-:r31:"
                     aria-expanded="false"
                     aria-haspopup="dialog"
-                    class="inline-flex items-center shrink-0 font-medium transition shadow-sm disabled:shadow-none active:shadow-none text-xs h-5 px-1 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550"
+                    class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-5 px-1 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent"
                     data-state="closed"
                     type="button"
                   >
@@ -1675,7 +1675,7 @@ exports[`ServiceList should match snapshot 1`] = `
             style="width: 15%;"
           >
             <a
-              class="inline-flex items-center shrink-0 font-medium transition shadow-sm disabled:shadow-none active:shadow-none h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent text-xs gap-2 whitespace-nowrap"
+              class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-transparent text-xs gap-2 whitespace-nowrap"
               data-state="closed"
               href="/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/application/33962e52-7883-42fd-8613-85e04229a9b6/services/general"
             >
@@ -1719,7 +1719,7 @@ exports[`ServiceList should match snapshot 1`] = `
             style="width: 15%;"
           >
             <a
-              class="inline-flex items-center shrink-0 font-medium transition shadow-sm disabled:shadow-none active:shadow-none h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-transparent text-xs gap-2 whitespace-nowrap"
+              class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-transparent text-xs gap-2 whitespace-nowrap"
               data-state="closed"
               href="/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/logs/33962e52-7883-42fd-8613-85e04229a9b6/deployment-logs"
             >
@@ -1789,7 +1789,7 @@ exports[`ServiceList should match snapshot 1`] = `
                   data-state="closed"
                 >
                   <button
-                    class="inline-flex items-center shrink-0 font-medium transition shadow-sm disabled:shadow-none active:shadow-none text-xs h-5 px-1 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 group justify-between"
+                    class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-5 px-1 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent group justify-between"
                     type="button"
                   >
                     <i
@@ -1807,7 +1807,7 @@ exports[`ServiceList should match snapshot 1`] = `
                   class="inline-block"
                 >
                   <a
-                    class="inline-flex items-center shrink-0 font-medium transition shadow-sm disabled:shadow-none active:shadow-none text-xs h-5 px-1 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 gap-1 whitespace-nowrap"
+                    class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-5 px-1 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent gap-1 whitespace-nowrap"
                     href="https://github.com/acarranoqovery/test_script/tree/main/"
                     rel="noopener noreferrer"
                     target="_blank"
@@ -1865,7 +1865,7 @@ exports[`ServiceList should match snapshot 1`] = `
               class="flex gap-3"
             >
               <button
-                class="inline-flex shrink-0 font-medium transition shadow-sm disabled:shadow-none active:shadow-none border text-xs h-9 px-3 rounded bg-brand-500 border-brand-500 hover:border-brand-600 hover:bg-brand-600 text-white disabled:text-brand-300 disabled:bg-brand-100 disabled:border-none items-center gap-2"
+                class="inline-flex shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-neutral-500 text-xs h-9 px-3 rounded bg-brand-500 active:bg-brand-600 hover:bg-brand-400 text-white disabled:text-brand-300 disabled:bg-brand-100 items-center gap-2"
                 data-state="closed"
                 disabled=""
               >
@@ -1878,7 +1878,7 @@ exports[`ServiceList should match snapshot 1`] = `
               <button
                 aria-expanded="false"
                 aria-haspopup="menu"
-                class="inline-flex shrink-0 font-medium transition shadow-sm disabled:shadow-none active:shadow-none text-xs h-9 px-3 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 items-center gap-2"
+                class="inline-flex shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-9 px-3 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent items-center gap-2"
                 data-state="closed"
                 id="radix-:r3c:"
                 type="button"
