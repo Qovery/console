@@ -164,7 +164,7 @@ export function StepFeatures(props: StepFeaturesProps) {
                         <Callout.Text className="text-xs">
                           <Callout.TextHeading>Warning</Callout.TextHeading>
                           <Callout.TextDescription>
-                            This feature has been activated by default. Since February 1, 2024, AWS public IPv4
+                            This feature has been activated by default. Since February 1, 2024, AWS charge public IPv4
                             Addresses. Disabling it may cost you more, depending on the number of nodes in your cluster.
                             <br />
                             <ExternalLink
