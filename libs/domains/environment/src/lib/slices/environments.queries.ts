@@ -1,18 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import download from 'downloadjs'
 import {
-  type CloneEnvironmentRequest,
-  type CreateEnvironmentRequest,
   type DatabaseConfiguration,
   DatabasesApi,
   type DeploymentHistoryEnvironment,
   type Environment,
-  EnvironmentActionsApi,
   EnvironmentDeploymentHistoryApi,
   type EnvironmentDeploymentRule,
   EnvironmentDeploymentRuleApi,
   type EnvironmentEditRequest,
-  EnvironmentExportApi,
   EnvironmentMainCallsApi,
   EnvironmentsApi,
 } from 'qovery-typescript-axios'
@@ -24,11 +19,9 @@ import { queries } from '@qovery/state/util-queries'
 export const ENVIRONMENTS_FEATURE_KEY = 'environments'
 
 const environmentsApi = new EnvironmentsApi()
-const environmentsActionsApi = new EnvironmentActionsApi()
 const environmentMainCallsApi = new EnvironmentMainCallsApi()
 const environmentDeploymentsApi = new EnvironmentDeploymentHistoryApi()
 const environmentDeploymentRulesApi = new EnvironmentDeploymentRuleApi()
-const environmentExport = new EnvironmentExportApi()
 const databasesApi = new DatabasesApi()
 
 /*
@@ -159,59 +152,6 @@ export const useEnvironmentDeploymentHistory = (projectId: string, environmentId
   )
 }
 
-export const useCreateEnvironment = (
-  onSuccessCallback?: (result: Environment) => void,
-  onSettledCallback?: () => void
-) => {
-  const queryClient = useQueryClient()
-
-  return useMutation(
-    async ({ projectId, data }: { projectId: string; data: CreateEnvironmentRequest }) => {
-      const response = await environmentsApi.createEnvironment(projectId, data)
-      return response.data
-    },
-    {
-      onSuccess: (result, variables) => {
-        queryClient.setQueryData<Environment[] | undefined>(['project', variables.projectId, 'environments'], (old) => {
-          return old ? [...old, result] : old
-        })
-
-        toast(ToastEnum.SUCCESS, 'Your environment has been successfully created')
-        onSuccessCallback && onSuccessCallback(result)
-      },
-      onError: (err) => toastError(err as Error),
-      onSettled: () => onSettledCallback && onSettledCallback(),
-    }
-  )
-}
-
-export const useCloneEnvironment = (
-  projectId: string,
-  onSuccessCallback?: (result: Environment) => void,
-  onSettledCallback?: () => void
-) => {
-  const queryClient = useQueryClient()
-
-  return useMutation(
-    async ({ environmentId, data }: { environmentId: string; data: CloneEnvironmentRequest }) => {
-      const response = await environmentsActionsApi.cloneEnvironment(environmentId, data)
-      return response.data
-    },
-    {
-      onSuccess: (result) => {
-        queryClient.setQueryData<Environment[] | undefined>(['project', projectId, 'environments'], (old) => {
-          return old ? [...old, result] : old
-        })
-
-        toast(ToastEnum.SUCCESS, 'Your environment has been successfully cloned')
-        onSuccessCallback && onSuccessCallback(result)
-      },
-      onError: (err) => toastError(err as Error),
-      onSettled: () => onSettledCallback && onSettledCallback(),
-    }
-  )
-}
-
 export const useFetchDatabaseConfiguration = (projectId: string, environmentId: string, enabled = true) => {
   return useQuery<DatabaseConfiguration[], Error>(
     ['project', projectId, 'environments', environmentId, 'databaseConfiguration'],
@@ -222,31 +162,6 @@ export const useFetchDatabaseConfiguration = (projectId: string, environmentId: 
     {
       onError: (err) => toastError(err),
       enabled: enabled,
-    }
-  )
-}
-
-/*
- * @deprecated use `useEnvironmentExportTerraform` from `@qovery/domains/environments/feature` instead of `useFetchEnvironmentExportTerraform`
- */
-export const useFetchEnvironmentExportTerraform = (projectId: string, environmentId: string) => {
-  return useMutation(
-    ['project', projectId, 'environments', environmentId, 'terraformExport'],
-    async ({ exportSecrets }: { exportSecrets: boolean }) => {
-      const response = await environmentExport.exportEnvironmentConfigurationIntoTerraform(
-        environmentId,
-        exportSecrets,
-        {
-          responseType: 'blob',
-        }
-      )
-      return response.data
-    },
-    {
-      onSuccess: (data) => {
-        download(data, `terraform-manifest-${environmentId}.zip`, 'application/zip')
-      },
-      onError: (err) => toastError(err as Error),
     }
   )
 }
