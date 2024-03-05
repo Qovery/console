@@ -87,6 +87,23 @@ const _buttonVariants = cva(
           'disabled:border-none',
         ],
       },
+      {
+        variant: 'plain',
+        color: 'brand',
+        className: [
+          'border',
+          'border-transparent',
+          'text-brand-500',
+          'hover:[&:not(:active):not(:focus-visible)]:border-neutral-300',
+          'hover:[&:not(:disabled)]:text-brand-700',
+          'focus-visible:text-brand-700',
+          'active:bg-neutral-150',
+          'active:text-brand-700',
+          'disabled:text-neutral-300',
+          'disabled:bg-neutral-150',
+          'disabled:border-none',
+        ],
+      },
       /*
     // Generate all colors
       ...['brand', 'neutral', 'green', 'red'].map((color) => ({
