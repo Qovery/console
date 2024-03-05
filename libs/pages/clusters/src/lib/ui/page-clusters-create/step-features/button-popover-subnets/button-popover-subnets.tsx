@@ -129,7 +129,7 @@ export function ButtonPopoverSubnets({ name, children, title, callout }: ButtonP
             className="self-end"
             type="button"
             size="md"
-            variant="surface"
+            variant="plain"
             onClick={() => append({ A: '', B: '', C: '' })}
           >
             Add subnets
@@ -140,7 +140,7 @@ export function ButtonPopoverSubnets({ name, children, title, callout }: ButtonP
               <Button
                 type="button"
                 size="md"
-                variant="surface"
+                variant="plain"
                 onClick={() => remove(Array.from({ length: fields.length }, (_, index) => index))}
               >
                 Clear
