@@ -1,8 +1,8 @@
-import { type ClickEvent } from '@szhsin/react-menu'
 import { useContext } from 'react'
 import { matchPath, useLocation, useParams } from 'react-router-dom'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { ServiceLinksPopover, ServiceStateChip, useService } from '@qovery/domains/services/feature'
+import { VariablesActionToolbar } from '@qovery/domains/variables/feature'
 import {
   APPLICATION_DEPLOYMENTS_URL,
   APPLICATION_GENERAL_URL,
@@ -10,19 +10,7 @@ import {
   APPLICATION_URL,
   APPLICATION_VARIABLES_URL,
 } from '@qovery/shared/routes'
-import {
-  Button,
-  ButtonActionLegacy,
-  ButtonLegacy,
-  ButtonLegacyStyle,
-  Icon,
-  IconAwesomeEnum,
-  type MenuData,
-  Tabs,
-  type TabsItem,
-  Tooltip,
-  useModal,
-} from '@qovery/shared/ui'
+import { Button, Icon, Tabs, type TabsItem, useModal } from '@qovery/shared/ui'
 import { ApplicationContext } from '../../ui/container/container'
 import CrudEnvironmentVariableModalFeature, {
   EnvironmentVariableCrudMode,
@@ -46,116 +34,70 @@ function ContentRightEnvVariable({
   const { openModal, closeModal } = useModal()
   const serviceType = service?.serviceType
 
-  const menuForContentRight: MenuData = [
-    {
-      items: [
-        {
-          name: 'Import from .env file',
-          onClick: (e: ClickEvent) => {
-            openModal({
-              content: (
-                <ImportEnvironmentVariableModalFeature
-                  environmentId={environmentId}
-                  closeModal={closeModal}
-                  applicationId={service.id}
-                  serviceType={serviceType}
-                />
-              ),
-              options: {
-                width: 750,
-              },
-            })
-          },
-          contentLeft: <Icon name="icon-solid-cloud-arrow-up" className="text-sm text-brand-500" />,
-        },
-        {
-          name: 'Import from Doppler',
-          contentLeft: <Icon iconName="rotate" className="text-sm text-brand-500" />,
-          contentRight: (
-            <Tooltip content="Documentation">
-              <a
-                className="ml-2"
-                rel="noreferrer"
-                href="https://hub.qovery.com/docs/using-qovery/integration/secret-manager/doppler/"
-                target="_blank"
-              >
-                <Icon iconName="circle-info" className="text-neutral-400 text-sm" />
-              </a>
-            </Tooltip>
-          ),
-          link: {
-            url: 'https://dashboard.doppler.com',
-            external: true,
-          },
-        },
-      ],
-    },
-  ]
-
-  const dropdown: MenuData = [
-    {
-      items: [
-        {
-          name: 'Variable',
-          contentLeft: <Icon iconName="feather" className="text-sm text-brand-500" />,
-          onClick: (e: ClickEvent) => {
-            openModal({
-              content: (
-                <CrudEnvironmentVariableModalFeature
-                  closeModal={closeModal}
-                  type={EnvironmentVariableType.NORMAL}
-                  mode={EnvironmentVariableCrudMode.CREATION}
-                  organizationId={organizationId}
-                  applicationId={service.id}
-                  environmentId={environmentId}
-                  projectId={projectId}
-                  serviceType={serviceType}
-                />
-              ),
-            })
-          },
-        },
-        {
-          name: 'Variable as file',
-          contentLeft: <Icon iconName="file-lines" className="text-sm text-brand-500" />,
-          onClick: (e: ClickEvent) => {
-            openModal({
-              content: (
-                <CrudEnvironmentVariableModalFeature
-                  closeModal={closeModal}
-                  type={EnvironmentVariableType.NORMAL}
-                  mode={EnvironmentVariableCrudMode.CREATION}
-                  organizationId={organizationId}
-                  applicationId={service.id}
-                  environmentId={environmentId}
-                  projectId={projectId}
-                  serviceType={serviceType}
-                  isFile
-                />
-              ),
-            })
-          },
-        },
-      ],
-    },
-  ]
-
   return (
-    <>
-      <ButtonLegacy
-        className="mr-2"
-        style={ButtonLegacyStyle.FLAT}
-        iconLeft={!globalShowHideValue ? IconAwesomeEnum.EYE : IconAwesomeEnum.EYE_SLASH}
+    <div className="flex items-center gap-2">
+      <Button
+        color="brand"
+        variant="plain"
+        className="gap-2"
         onClick={() => {
           setShowHideAllEnvironmentVariablesValues(!globalShowHideValue)
         }}
       >
+        <Icon iconName={!globalShowHideValue ? 'eye' : 'eye-slash'} />
         {globalShowHideValue ? 'Hide all' : 'Show all'}
-      </ButtonLegacy>
-      <ButtonActionLegacy iconRight={IconAwesomeEnum.CIRCLE_PLUS} menus={menuForContentRight} dropdown={dropdown}>
-        New variable
-      </ButtonActionLegacy>
-    </>
+      </Button>
+      <VariablesActionToolbar
+        onImportEnvFile={() =>
+          openModal({
+            content: (
+              <ImportEnvironmentVariableModalFeature
+                environmentId={environmentId}
+                closeModal={closeModal}
+                applicationId={service.id}
+                serviceType={serviceType}
+              />
+            ),
+            options: {
+              width: 750,
+            },
+          })
+        }
+        onCreateVariable={() =>
+          openModal({
+            content: (
+              <CrudEnvironmentVariableModalFeature
+                closeModal={closeModal}
+                type={EnvironmentVariableType.NORMAL}
+                mode={EnvironmentVariableCrudMode.CREATION}
+                organizationId={organizationId}
+                applicationId={service.id}
+                environmentId={environmentId}
+                projectId={projectId}
+                serviceType={serviceType}
+              />
+            ),
+          })
+        }
+        onCreateVariableFile={() =>
+          openModal({
+            content: (
+              <CrudEnvironmentVariableModalFeature
+                closeModal={closeModal}
+                type={EnvironmentVariableType.NORMAL}
+                mode={EnvironmentVariableCrudMode.CREATION}
+                organizationId={organizationId}
+                applicationId={service.id}
+                environmentId={environmentId}
+                projectId={projectId}
+                serviceType={serviceType}
+                isFile
+              />
+            ),
+          })
+        }
+      />
+    </div>
   )
 }
 
