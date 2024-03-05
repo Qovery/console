@@ -1,4 +1,4 @@
-import { queryByTestId, render, waitFor } from '__tests__/utils/setup-jest'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import Login, { type ILoginProps } from './login'
 
 describe('Login', () => {
@@ -9,17 +9,14 @@ describe('Login', () => {
   }
 
   it('should render successfully', () => {
-    const { baseElement } = render(<Login {...props} />)
+    const { baseElement } = renderWithProviders(<Login {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
   it('should call invitation detail if token are in the localStorage', async () => {
     localStorage.setItem('inviteToken', 'token')
-    const { baseElement } = render(<Login {...props} />)
+    renderWithProviders(<Login {...props} />)
 
-    const title = queryByTestId(baseElement, 'welcome-title')
-    await waitFor(() => {
-      expect(title).toBeNull()
-    })
+    expect(screen.queryByText('Connect to Qovery')).toBeNull()
   })
 })
