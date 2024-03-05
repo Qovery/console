@@ -164,13 +164,12 @@ export function StepFeatures(props: StepFeaturesProps) {
                         <Callout.Text className="text-xs">
                           <Callout.TextHeading>Warning</Callout.TextHeading>
                           <Callout.TextDescription>
-                            This feature has been activated by default. Since February 1, 2024, aws_existing_vpccharge
-                            public IPv4 Addresses. Disabling it may cost you more, depending on the number of nodes in
-                            your cluster.
+                            This feature has been activated by default. Since February 1, 2024, AWS public IPv4
+                            Addresses. Disabling it may cost you more, depending on the number of nodes in your cluster.
                             <br />
                             <ExternalLink
                               size="xs"
-                              href="https://hub.qovery.com/docs/using-qovery/configuration/clusters/#use-existing-vpc"
+                              href="https://aws.amazon.com/blogs/aws/new-aws-public-ipv4-address-charge-public-ip-insights/"
                               className="mt-1"
                             >
                               Check this link for more information
@@ -213,7 +212,7 @@ export function StepFeatures(props: StepFeaturesProps) {
                     <InputText label="VPC ID" name={field.name} value={field.value} onChange={field.onChange} />
                     <ExternalLink
                       size="xs"
-                      href="https://hub.qovery.com/docs/using-qovery/configuration/clusters/"
+                      href="https://hub.qovery.com/docs/using-qovery/configuration/clusters/#use-existing-vpc"
                       className="mt-1 ml-4 mb-4"
                     >
                       How to configure your VPC

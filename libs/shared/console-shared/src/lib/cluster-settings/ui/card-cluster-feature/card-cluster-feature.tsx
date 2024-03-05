@@ -56,6 +56,8 @@ export function CardClusterFeature({
           <Controller
             name={`features.${feature.id}.value`}
             control={control}
+            // Update value for STATIC_IP feature because the back-end can't return `true` by default
+            defaultValue={feature.id === 'STATIC_IP' ? true : false}
             render={({ field }) => (
               <InputToggle disabled={disabled} small className="relative top-[2px]" value={field.value} />
             )}
