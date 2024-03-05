@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { useAuth } from '@qovery/shared/auth'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import useRedirectIfLogged from '../../hooks/use-redirect-if-logged/use-redirect-if-logged'
-import LayoutLogin from '../../ui/layout-login/layout-login'
 import Login from '../../ui/login/login'
 
 export function PageLoginFeature() {
@@ -25,11 +24,7 @@ export function PageLoginFeature() {
     }
   }
 
-  return (
-    <LayoutLogin>
-      <Login onClickAuthLogin={onClickAuthLogin} loading={loading} />
-    </LayoutLogin>
-  )
+  return <Login onClickAuthLogin={onClickAuthLogin} loading={loading} />
 }
 
 export default PageLoginFeature

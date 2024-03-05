@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { AuthEnum, useInviteMember } from '@qovery/shared/auth'
 import { InviteDetailsFeature } from '@qovery/shared/console-shared'
 import { IconEnum } from '@qovery/shared/enums'
-import { Button, Icon } from '@qovery/shared/ui'
+import { Button, Icon, Section } from '@qovery/shared/ui'
 
 export interface ILoginProps {
   onClickAuthLogin: (provider: string) => void
@@ -17,8 +17,8 @@ export function Login({ onClickAuthLogin, loading }: ILoginProps) {
   }, [checkTokenInStorage])
 
   return (
-    <div className="flex h-full max-w-screen-2xl ml-auto mr-auto bg-white">
-      <div className="flex-[2_1_0%] px-4 md:px-20">
+    <div className="flex h-screen max-w-screen-2xl ml-auto mr-auto bg-white">
+      <Section className="w-1/2 px-4 md:px-20">
         <div className="max-w-lg mt-28 mx-auto">
           {!displayInvitation ? (
             <h1 className="h3 text-neutral-400 mb-3" data-testid="welcome-title">
@@ -115,8 +115,8 @@ export function Login({ onClickAuthLogin, loading }: ILoginProps) {
             </Button>
           </div>
         </div>
-      </div>
-      <div className="hidden xl:block flex-[1_1_0%] bg-neutral-150 px-20 before:absolute before:top-0 before:w-full before:h-full before:bg-neutral-150">
+      </Section>
+      <Section className="hidden xl:block w-1/2 bg-neutral-150 px-20 before:absolute before:top-0 before:w-full before:h-full before:bg-neutral-150">
         <div className="max-w-md relative">
           <h2 className="h1 text-neutral-400 mt-44 mb-6">Deliver Self-Service Infrastructure, Faster!</h2>
           <p className="text-neutral-400 mb-6 text-sm">
@@ -143,7 +143,7 @@ export function Login({ onClickAuthLogin, loading }: ILoginProps) {
             </li>
           </ul>
         </div>
-      </div>
+      </Section>
     </div>
   )
 }
