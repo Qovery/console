@@ -37,7 +37,7 @@ export const environments = createQueryKeys('environments', {
       return new Promise<{ state: RunningState } | null>(() => {})
     },
   }),
-  detail: (environmentId: string) => ({
+  details: (environmentId: string) => ({
     queryKey: [environmentId],
     async queryFn() {
       const result = await environmentMainCallsApi.getEnvironment(environmentId)
