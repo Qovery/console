@@ -7,6 +7,7 @@ import {
   type DeploymentStageRequest,
   EnvironmentActionsApi,
   EnvironmentDeploymentHistoryApi,
+  type EnvironmentEditRequest,
   EnvironmentExportApi,
   EnvironmentMainCallsApi,
   EnvironmentsApi,
@@ -84,6 +85,10 @@ export const environments = createQueryKeys('environments', {
 export const mutations = {
   async createEnvironment({ projectId, payload }: { projectId: string; payload: CreateEnvironmentRequest }) {
     const result = await environmentsApi.createEnvironment(projectId, payload)
+    return result.data
+  },
+  async editEnvironment({ environmentId, payload }: { environmentId: string; payload: EnvironmentEditRequest }) {
+    const result = await environmentMainCallsApi.editEnvironment(environmentId, payload)
     return result.data
   },
   async cloneEnvironment({ environmentId, payload }: { environmentId: string; payload: CloneEnvironmentRequest }) {
