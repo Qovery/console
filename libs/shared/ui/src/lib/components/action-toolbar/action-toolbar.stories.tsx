@@ -27,13 +27,9 @@ export const Primary = {
           </ActionToolbar.Button>
         </DropdownMenu.Trigger>
         <DropdownMenu.Content>
-          <DropdownMenu.Item>
-            <Icon iconName="play" className="text-sm mr-3 text-brand-400" />
-            Deploy
-          </DropdownMenu.Item>
+          <DropdownMenu.Item icon={<Icon iconName="play" />}>Deploy</DropdownMenu.Item>
           <DropdownMenu.Separator />
-          <DropdownMenu.Item color="red">
-            <Icon iconName="trash" className="text-sm mr-3 text-red-600" />
+          <DropdownMenu.Item color="red" icon={<Icon iconName="trash" />}>
             Delete service
           </DropdownMenu.Item>
         </DropdownMenu.Content>
@@ -62,13 +58,9 @@ export const Brand = {
           </ActionToolbar.Button>
         </DropdownMenu.Trigger>
         <DropdownMenu.Content>
-          <DropdownMenu.Item>
-            <Icon iconName="play" className="text-sm mr-3 text-brand-400" />
-            Deploy
-          </DropdownMenu.Item>
+          <DropdownMenu.Item icon={<Icon iconName="play" />}>Deploy</DropdownMenu.Item>
           <DropdownMenu.Separator />
-          <DropdownMenu.Item color="red">
-            <Icon iconName="trash" className="text-sm mr-3 text-red-600" />
+          <DropdownMenu.Item color="red" icon={<Icon iconName="trash" />}>
             Delete service
           </DropdownMenu.Item>
         </DropdownMenu.Content>
