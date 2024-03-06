@@ -12,7 +12,7 @@ export function VariablesActionToolbar({
   onCreateVariableFile,
 }: VariablesActionToolbarProps) {
   return (
-    <ActionToolbar.Root>
+    <ActionToolbar.Root className="flex">
       <DropdownMenu.Root>
         <DropdownMenu.Trigger asChild>
           <ActionToolbar.Button color="brand" variant="solid" className="justify-center border-r border-brand-400">
@@ -20,13 +20,11 @@ export function VariablesActionToolbar({
           </ActionToolbar.Button>
         </DropdownMenu.Trigger>
         <DropdownMenu.Content align="end">
-          <DropdownMenu.Item onClick={onImportEnvFile}>
-            <Icon iconName="cloud-upload" className="text-sm mr-3 text-brand-500" />
+          <DropdownMenu.Item onClick={onImportEnvFile} icon={<Icon iconName="cloud-upload" />}>
             Import from .env file
           </DropdownMenu.Item>
-          <DropdownMenu.Item asChild>
+          <DropdownMenu.Item asChild icon={<Icon iconName="rotate" />}>
             <a href="https://dashboard.doppler.com" target="_blank" rel="noopener noreferrer">
-              <Icon iconName="rotate" className="text-sm mr-3 text-brand-500" />
               Import from Doppler
               <Tooltip content="Documentation">
                 <a
@@ -50,12 +48,10 @@ export function VariablesActionToolbar({
           </ActionToolbar.Button>
         </DropdownMenu.Trigger>
         <DropdownMenu.Content>
-          <DropdownMenu.Item onClick={onCreateVariable}>
-            <Icon iconName="feather" className="text-sm mr-3 text-brand-500" />
+          <DropdownMenu.Item onClick={onCreateVariable} icon={<Icon iconName="feather" />}>
             Variable
           </DropdownMenu.Item>
-          <DropdownMenu.Item onClick={onCreateVariableFile}>
-            <Icon iconName="file-lines" className="text-sm mr-3 text-brand-500" />
+          <DropdownMenu.Item onClick={onCreateVariableFile} icon={<Icon iconName="file-lines" />}>
             Variable as file
           </DropdownMenu.Item>
         </DropdownMenu.Content>
