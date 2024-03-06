@@ -7,6 +7,8 @@ import {
   type DeploymentStageRequest,
   EnvironmentActionsApi,
   EnvironmentDeploymentHistoryApi,
+  EnvironmentDeploymentRuleApi,
+  type EnvironmentDeploymentRuleEditRequest,
   type EnvironmentEditRequest,
   EnvironmentExportApi,
   EnvironmentMainCallsApi,
@@ -19,6 +21,7 @@ const environmentMainCallsApi = new EnvironmentMainCallsApi()
 const environmentDeploymentsApi = new EnvironmentDeploymentHistoryApi()
 const environmentActionApi = new EnvironmentActionsApi()
 const environmentExportApi = new EnvironmentExportApi()
+const environmentDeploymentRulesApi = new EnvironmentDeploymentRuleApi()
 const databasesApi = new DatabasesApi()
 const deploymentStageMainCallApi = new DeploymentStageMainCallsApi()
 
@@ -78,6 +81,13 @@ export const environments = createQueryKeys('environments', {
     async queryFn() {
       const result = await databasesApi.listEnvironmentDatabaseConfig(environmentId)
       return result.data.results
+    },
+  }),
+  deploymentRule: ({ environmentId }: { environmentId: string }) => ({
+    queryKey: [environmentId],
+    async queryFn() {
+      const result = await environmentDeploymentRulesApi.getEnvironmentDeploymentRule(environmentId)
+      return result.data
     },
   }),
 })
@@ -159,6 +169,22 @@ export const mutations = {
   },
   async deleteDeploymentStage({ stageId }: { stageId: string }) {
     const result = await deploymentStageMainCallApi.deleteDeploymentStage(stageId)
+    return result.data
+  },
+  async editDeploymentRule({
+    environmentId,
+    deploymentRuleId,
+    payload,
+  }: {
+    environmentId: string
+    deploymentRuleId: string
+    payload: EnvironmentDeploymentRuleEditRequest
+  }) {
+    const result = await environmentDeploymentRulesApi.editEnvironmentDeploymentRule(
+      environmentId,
+      deploymentRuleId,
+      payload
+    )
     return result.data
   },
 }

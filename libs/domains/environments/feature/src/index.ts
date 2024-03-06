@@ -19,3 +19,5 @@ export * from './lib/hooks/use-attach-service-to-deployment-stage/use-attach-ser
 export * from './lib/hooks/use-move-deployment-stage/use-move-deployment-stage'
 export * from './lib/hooks/use-deployment-history/use-deployment-history'
 export * from './lib/hooks/use-list-database-configurations/use-list-database-configurations'
+export * from './lib/hooks/use-deployment-rule/use-deployment-rule'
+export * from './lib/hooks/use-edit-deployment-rule/use-edit-deployment-rule'
