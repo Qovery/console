@@ -5,6 +5,7 @@ import {
   DeploymentStageMainCallsApi,
   type DeploymentStageRequest,
   EnvironmentActionsApi,
+  EnvironmentDeploymentHistoryApi,
   EnvironmentExportApi,
   EnvironmentMainCallsApi,
   EnvironmentsApi,
@@ -13,6 +14,7 @@ import { type RunningState } from '@qovery/shared/enums'
 
 const environmentsApi = new EnvironmentsApi()
 const environmentMainCallsApi = new EnvironmentMainCallsApi()
+const environmentDeploymentsApi = new EnvironmentDeploymentHistoryApi()
 const environmentActionApi = new EnvironmentActionsApi()
 const environmentExportApi = new EnvironmentExportApi()
 const deploymentStageMainCallApi = new DeploymentStageMainCallsApi()
@@ -58,6 +60,13 @@ export const environments = createQueryKeys('environments', {
     queryKey: [environmentId],
     async queryFn() {
       const result = await deploymentStageMainCallApi.listEnvironmentDeploymentStage(environmentId)
+      return result.data.results
+    },
+  }),
+  deploymentHistory: ({ environmentId }: { environmentId: string }) => ({
+    queryKey: [environmentId],
+    async queryFn() {
+      const result = await environmentDeploymentsApi.listEnvironmentDeploymentHistory(environmentId)
       return result.data.results
     },
   }),
