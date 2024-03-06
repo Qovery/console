@@ -218,7 +218,7 @@ export function EnvironmentList({ project, clusterAvailable, className, ...props
                 variant="surface"
                 size="xs"
               >
-                <Icon className="mr-2" name={environment.cloud_provider.provider} width="16" />
+                <Icon className="mr-2" name={environment.cloud_provider.provider} width={16} height={16} />
                 <Truncate text={value} truncateLimit={30} />
               </Link>
             </Tooltip>
