@@ -291,7 +291,7 @@ export function Login({ onClickAuthLogin, loading }: ILoginProps) {
             </ul>
           </div>
           <svg
-            className="w-[90%] absolute right-0 -bottom-[14%] select-none pointer-events-none motion-safe:opacity-0 motion-safe:animate-[fadein_1.5s_ease-in-out_forwards_200ms]"
+            className="w-[80%] absolute right-0 -bottom-[14%] select-none pointer-events-none motion-safe:opacity-0 motion-safe:animate-[fadein_1.5s_ease-in-out_forwards_200ms]"
             xmlns="http://www.w3.org/2000/svg"
             width="100%"
             height="100%"
