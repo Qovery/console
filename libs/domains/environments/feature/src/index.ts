@@ -18,3 +18,4 @@ export * from './lib/hooks/use-list-deployment-stages/use-list-deployment-stages
 export * from './lib/hooks/use-attach-service-to-deployment-stage/use-attach-service-to-deployment-stage'
 export * from './lib/hooks/use-move-deployment-stage/use-move-deployment-stage'
 export * from './lib/hooks/use-deployment-history/use-deployment-history'
+export * from './lib/hooks/use-list-database-configurations/use-list-database-configurations'

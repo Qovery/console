@@ -2,6 +2,7 @@ import { createQueryKeys, type inferQueryKeys } from '@lukemorales/query-key-fac
 import {
   type CloneEnvironmentRequest,
   type CreateEnvironmentRequest,
+  DatabasesApi,
   DeploymentStageMainCallsApi,
   type DeploymentStageRequest,
   EnvironmentActionsApi,
@@ -17,6 +18,7 @@ const environmentMainCallsApi = new EnvironmentMainCallsApi()
 const environmentDeploymentsApi = new EnvironmentDeploymentHistoryApi()
 const environmentActionApi = new EnvironmentActionsApi()
 const environmentExportApi = new EnvironmentExportApi()
+const databasesApi = new DatabasesApi()
 const deploymentStageMainCallApi = new DeploymentStageMainCallsApi()
 
 export const environments = createQueryKeys('environments', {
@@ -67,6 +69,13 @@ export const environments = createQueryKeys('environments', {
     queryKey: [environmentId],
     async queryFn() {
       const result = await environmentDeploymentsApi.listEnvironmentDeploymentHistory(environmentId)
+      return result.data.results
+    },
+  }),
+  listDatabaseConfigurations: ({ environmentId }: { environmentId: string }) => ({
+    queryKey: [environmentId],
+    async queryFn() {
+      const result = await databasesApi.listEnvironmentDatabaseConfig(environmentId)
       return result.data.results
     },
   }),
