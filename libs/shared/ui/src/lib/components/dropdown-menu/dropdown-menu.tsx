@@ -1,4 +1,5 @@
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu'
+import { Slottable } from '@radix-ui/react-slot'
 import { type VariantProps, cva } from 'class-variance-authority'
 import { type ComponentPropsWithoutRef, type ElementRef, type ReactElement, cloneElement, forwardRef } from 'react'
 import { twMerge } from '@qovery/shared/util-js'
@@ -100,7 +101,7 @@ const DropdownMenuItem = forwardRef<ElementRef<typeof DropdownMenuPrimitive.Item
         ref={ref}
       >
         {icon && cloneElement(icon, { className: dropdownMenuItemIconVariants({ color, disabled }) })}
-        {children}
+        <Slottable>{children}</Slottable>
       </DropdownMenuPrimitive.Item>
     )
   }
