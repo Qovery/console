@@ -112,6 +112,13 @@ export const organizations = createQueryKeys('organizations', {
       return response.data.results
     },
   }),
+  gitTokenAssociatedServices: ({ organizationId, gitTokenId }: { organizationId: string; gitTokenId: string }) => ({
+    queryKey: [organizationId, gitTokenId],
+    async queryFn() {
+      const response = await organizationApi.getGitTokenAssociatedServices(organizationId, gitTokenId)
+      return response.data.results
+    },
+  }),
   authProviders: ({ organizationId }: { organizationId: string }) => ({
     queryKey: [organizationId],
     async queryFn() {

@@ -11,6 +11,7 @@ import {
 } from '@qovery/shared/ui'
 import { dateMediumLocalFormat, dateUTCString, timeAgo } from '@qovery/shared/util-dates'
 import GitTokenCreateEditModal from '../git-token-create-edit-modal/git-token-create-edit-modal'
+import GitTokenServicesListModal from '../git-token-services-list-modal/git-token-services-list-modal'
 import { useDeleteGitToken } from '../hooks/use-delete-git-token/use-delete-git-token'
 import { useGitTokens } from '../hooks/use-git-tokens/use-git-tokens'
 
@@ -68,6 +69,30 @@ export function GitTokenList() {
                 </div>
               </div>
               <div>
+                <Button
+                  variant="outline"
+                  color="neutral"
+                  size="md"
+                  className="relative mr-2"
+                  disabled={gitToken.associated_services_count === 0}
+                  onClick={() => {
+                    openModal({
+                      content: (
+                        <GitTokenServicesListModal
+                          organizationId={organizationId}
+                          gitTokenId={gitToken.id}
+                          onClose={closeModal}
+                          associatedServicesCount={gitToken.associated_services_count}
+                        />
+                      ),
+                    })
+                  }}
+                >
+                  <span className="flex items-center justify-center bg-brand-500 w-3 h-3 rounded-full font-bold text-3xs text-white absolute -top-1 -right-1">
+                    {gitToken.associated_services_count}
+                  </span>
+                  <Icon iconName="layer-group" />
+                </Button>
                 <Button
                   variant="outline"
                   color="neutral"
