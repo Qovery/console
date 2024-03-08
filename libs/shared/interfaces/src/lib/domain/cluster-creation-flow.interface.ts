@@ -50,6 +50,7 @@ export type ClusterFeaturesData = {
     ip_range_services_name?: string
     ip_range_pods_name?: string
     additional_ip_range_pods_names?: string
+    subnetwork_name?: string
   }
   features: {
     [id: string]: {

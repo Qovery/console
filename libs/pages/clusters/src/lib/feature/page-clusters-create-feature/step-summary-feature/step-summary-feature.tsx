@@ -201,6 +201,7 @@ export function StepSummaryFeature() {
               vpc_project_id: featuresData?.gcp_existing_vpc?.vpc_project_id,
               ip_range_services_name: featuresData?.gcp_existing_vpc?.ip_range_services_name,
               ip_range_pods_name: featuresData?.gcp_existing_vpc?.ip_range_pods_name,
+              subnetwork_name: featuresData?.gcp_existing_vpc?.subnetwork_name,
               additional_ip_range_pods_names:
                 featuresData?.gcp_existing_vpc?.additional_ip_range_pods_names?.split(','),
             },
