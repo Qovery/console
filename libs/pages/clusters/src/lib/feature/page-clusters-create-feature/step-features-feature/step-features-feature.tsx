@@ -82,13 +82,13 @@ export function StepFeaturesFeature() {
   })
 
   const onSubmit = methods.handleSubmit((data) => {
-    if (data && features) {
+    if (generalData?.cloud_provider === 'AWS') {
       if (data.vpc_mode === 'DEFAULT') {
         let cloneData = {}
 
         for (let i = 0; i < Object.keys(data.features).length; i++) {
           const id = Object.keys(data.features)[i]
-          const featureData = features.find((f) => f.id === id)
+          const featureData = features?.find((f) => f.id === id)
           const currentFeature = data.features[id]
 
           cloneData = {
@@ -120,10 +120,25 @@ export function StepFeaturesFeature() {
           features: {},
         })
       }
+    } else {
+      const existingVpcData = data.gcp_existing_vpc
 
-      const pathCreate = `${CLUSTERS_URL(organizationId)}${CLUSTERS_CREATION_URL}`
-      navigate(pathCreate + CLUSTERS_CREATION_SUMMARY_URL)
+      setFeaturesData({
+        vpc_mode: 'EXISTING_VPC',
+        gcp_existing_vpc: {
+          vpc_name: existingVpcData?.vpc_name ?? '',
+          vpc_mode: existingVpcData?.vpc_mode ?? 'AUTOMATIC',
+          vpc_project_id: existingVpcData?.vpc_project_id,
+          ip_range_services_name: existingVpcData?.ip_range_services_name,
+          ip_range_pods_name: existingVpcData?.ip_range_pods_name,
+          additional_ip_range_pods_names: existingVpcData?.additional_ip_range_pods_names,
+        },
+        features: {},
+      })
     }
+
+    const pathCreate = `${CLUSTERS_URL(organizationId)}${CLUSTERS_CREATION_URL}`
+    navigate(pathCreate + CLUSTERS_CREATION_SUMMARY_URL)
   })
 
   return (

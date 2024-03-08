@@ -99,7 +99,7 @@ export function AWSVpcFeature() {
             <InputText label="VPC ID" name={field.name} value={field.value} onChange={field.onChange} />
             <ExternalLink
               size="xs"
-              href="https://hub.qovery.com/docs/using-qovery/configuration/clusters/"
+              href="https://hub.qovery.com/docs/using-qovery/configuration/clusters/#use-existing-vpc"
               className="mt-1 ml-4 mb-4"
             >
               How to configure your VPC

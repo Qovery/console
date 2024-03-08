@@ -20,7 +20,7 @@ export function GCPVpcFeature() {
         </div>
       </div>
       <Controller
-        name="gcp_existing_vpc.project_id"
+        name="gcp_existing_vpc.vpc_project_id"
         rules={{ required: true }}
         control={control}
         render={({ field }) => (
@@ -97,7 +97,7 @@ export function GCPVpcFeature() {
           <hr className="my-4" />
           <h4 className="text-neutral-400 text-sm font-medium mb-4">Additional ranges (optional)</h4>
           <Controller
-            name="gcp_existing_vpc.pod_ipv4_address"
+            name="gcp_existing_vpc.ip_range_pods_name"
             rules={{ required: true }}
             control={control}
             render={({ field }) => (
@@ -111,13 +111,13 @@ export function GCPVpcFeature() {
             )}
           />
           <Controller
-            name="gcp_existing_vpc.pod_ipv4_ranges"
+            name="gcp_existing_vpc.additional_ip_range_pods_names"
             rules={{ required: true }}
             control={control}
             render={({ field }) => (
               <InputText
                 className="mb-4"
-                label="Cluster Pod IPv4 ranges names (optional)"
+                label="Cluster Pod IPv4 ranges names (additional) (optional)"
                 name={field.name}
                 value={field.value}
                 onChange={field.onChange}
@@ -125,12 +125,12 @@ export function GCPVpcFeature() {
             )}
           />
           <Controller
-            name="gcp_existing_vpc.pod_ipv4_ranges"
+            name="gcp_existing_vpc.ip_range_services_name"
             rules={{ required: true }}
             control={control}
             render={({ field }) => (
               <InputText
-                label="Cluster Pod IPv4 ranges names (optional)"
+                label="IPv4 service range name (optional)"
                 name={field.name}
                 value={field.value}
                 onChange={field.onChange}

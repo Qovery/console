@@ -76,47 +76,47 @@ export function StepFeatures(props: StepFeaturesProps) {
                   />
                 )}
               />
-            )}
-          />
-          {watchVpcMode === 'DEFAULT' ? (
-            <div>
-              {features && features.length > 0 ? (
-                features.map((feature) => (
-                  <CardClusterFeature
-                    key={feature.id}
-                    feature={feature}
-                    cloudProvider={cloudProvider}
-                    control={control}
-                    watch={watch}
-                    setValue={setValue}
-                  >
-                    {feature.id === 'STATIC_IP' && (
-                      <Callout.Root color="yellow" className="mt-4">
-                        <Callout.Icon>
-                          <Icon className="text-xs" iconName="triangle-exclamation" />
-                        </Callout.Icon>
-                        <Callout.Text className="text-xs">
-                          <Callout.TextHeading>Warning</Callout.TextHeading>
-                          <Callout.TextDescription>
-                            This feature has been activated by default. Since February 1, 2024, AWS charge public IPv4
-                            Addresses. Disabling it may cost you more, depending on the number of nodes in your cluster.
-                            <br />
-                            <ExternalLink
-                              size="xs"
-                              href="https://aws.amazon.com/blogs/aws/new-aws-public-ipv4-address-charge-public-ip-insights/"
-                              className="mt-1"
-                            >
-                              Check this link for more information
-                            </ExternalLink>
-                          </Callout.TextDescription>
-                        </Callout.Text>
-                      </Callout.Root>
-                    )}
-                  </CardClusterFeature>
-                ))
-              ) : (
-                <div className="flex justify-center mt-2">
-                  <LoaderSpinner className="w-4" />
+              {watchVpcMode === 'DEFAULT' ? (
+                <div>
+                  {features && features.length > 0 ? (
+                    features.map((feature) => (
+                      <CardClusterFeature
+                        key={feature.id}
+                        feature={feature}
+                        cloudProvider={cloudProvider}
+                        control={control}
+                        watch={watch}
+                        setValue={setValue}
+                      >
+                        {feature.id === 'STATIC_IP' && (
+                          <Callout.Root color="yellow" className="mt-4">
+                            <Callout.Icon>
+                              <Icon className="text-xs" iconName="triangle-exclamation" />
+                            </Callout.Icon>
+                            <Callout.Text className="text-xs">
+                              <Callout.TextHeading>Warning</Callout.TextHeading>
+                              <Callout.TextDescription>
+                                This feature has been activated by default. Since February 1, 2024, AWS charge public
+                                IPv4 Addresses. Disabling it may cost you more, depending on the number of nodes in your
+                                cluster. <br />
+                                <ExternalLink
+                                  size="xs"
+                                  href="https://aws.amazon.com/blogs/aws/new-aws-public-ipv4-address-charge-public-ip-insights/"
+                                  className="mt-1"
+                                >
+                                  Check this link for more information
+                                </ExternalLink>
+                              </Callout.TextDescription>
+                            </Callout.Text>
+                          </Callout.Root>
+                        )}
+                      </CardClusterFeature>
+                    ))
+                  ) : (
+                    <div className="flex justify-center mt-2">
+                      <LoaderSpinner className="w-4" />
+                    </div>
+                  )}
                 </div>
               ) : (
                 <AWSVpcFeature />
