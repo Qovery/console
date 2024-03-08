@@ -68,14 +68,17 @@ export const useEditEnvironment = (projectId: string, onSettledCallback: () => v
       return response.data
     },
     {
-      onSuccess: (result, variables) => {
+      onSuccess: (result, { environmentId }) => {
         // Needed to invalidate the environment query with new data access
         queryClient.invalidateQueries({
-          queryKey: queries.environments.details(variables.environmentId).queryKey,
+          queryKey: queries.environments.details({ environmentId }).queryKey,
+        })
+        queryClient.invalidateQueries({
+          queryKey: queries.environments.list({ projectId }).queryKey,
         })
 
         queryClient.setQueryData<Environment[] | undefined>(['project', projectId, 'environments'], (old) => {
-          return old?.map((environment) => (environment.id === variables.environmentId ? result : environment))
+          return old?.map((environment) => (environment.id === environmentId ? result : environment))
         })
         toast(ToastEnum.SUCCESS, 'Your environment is updated')
       },
