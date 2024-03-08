@@ -44,7 +44,7 @@ const data = [
     environment_name: 'Staging',
     service_id: '201',
     service_name: 'Service 3',
-    service_type: GitTokenAssociatedServiceType.JOB,
+    service_type: GitTokenAssociatedServiceType.CRON,
   },
 ]
 

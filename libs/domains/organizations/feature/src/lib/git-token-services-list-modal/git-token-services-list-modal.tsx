@@ -148,7 +148,7 @@ export function GitTokenServicesListModal({
                                   >
                                     <Icon
                                       name={match(service.service_type)
-                                        .with('JOB', () => `${service.service_type}_JOB`)
+                                        .with('CRON', 'LIFECYCLE', () => `${service.service_type}_JOB`)
                                         .otherwise(() => service.service_type)}
                                       width={20}
                                       className="mr-2"
