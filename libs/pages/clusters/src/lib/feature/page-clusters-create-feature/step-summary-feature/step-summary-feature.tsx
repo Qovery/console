@@ -213,21 +213,40 @@ export function StepSummaryFeature() {
           ssh_keys: remoteData?.ssh_key ? [remoteData?.ssh_key] : undefined,
           cloud_provider_credentials,
         }))
-        .otherwise(() => ({
-          name: generalData.name,
-          description: generalData.description || '',
-          production: generalData.production,
-          cloud_provider: generalData.cloud_provider,
-          region: generalData.region,
-          min_running_nodes: resourcesData.nodes[0],
-          max_running_nodes: resourcesData.nodes[1],
-          disk_size: resourcesData.disk_size,
-          instance_type: resourcesData.instance_type,
-          kubernetes: resourcesData.cluster_type as KubernetesEnum,
-          features: formatFeatures as ClusterRequestFeaturesInner[],
-          ssh_keys: remoteData?.ssh_key ? [remoteData?.ssh_key] : undefined,
-          cloud_provider_credentials,
-        }))
+        .otherwise(() => {
+          if (resourcesData.cluster_type === KubernetesEnum.K3_S) {
+            return {
+              name: generalData.name,
+              description: generalData.description || '',
+              production: generalData.production,
+              cloud_provider: generalData.cloud_provider,
+              region: generalData.region,
+              min_running_nodes: resourcesData.nodes[0],
+              max_running_nodes: resourcesData.nodes[1],
+              disk_size: resourcesData.disk_size,
+              instance_type: resourcesData.instance_type,
+              kubernetes: resourcesData.cluster_type as KubernetesEnum,
+              ssh_keys: remoteData?.ssh_key ? [remoteData?.ssh_key] : undefined,
+              cloud_provider_credentials,
+            }
+          } else {
+            return {
+              name: generalData.name,
+              description: generalData.description || '',
+              production: generalData.production,
+              cloud_provider: generalData.cloud_provider,
+              region: generalData.region,
+              min_running_nodes: resourcesData.nodes[0],
+              max_running_nodes: resourcesData.nodes[1],
+              disk_size: resourcesData.disk_size,
+              instance_type: resourcesData.instance_type,
+              kubernetes: resourcesData.cluster_type as KubernetesEnum,
+              features: formatFeatures as ClusterRequestFeaturesInner[],
+              ssh_keys: remoteData?.ssh_key ? [remoteData?.ssh_key] : undefined,
+              cloud_provider_credentials,
+            }
+          }
+        })
 
       try {
         const cluster = await createCluster({
