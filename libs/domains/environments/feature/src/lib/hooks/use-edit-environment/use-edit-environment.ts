@@ -11,7 +11,7 @@ export function useEditEnvironment() {
         queryKey: queries.environments.list({ projectId }).queryKey,
       })
       queryClient.invalidateQueries({
-        queryKey: queries.environments.details(environmentId).queryKey,
+        queryKey: queries.environments.details({ environmentId }).queryKey,
       })
     },
     meta: {
