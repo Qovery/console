@@ -842,6 +842,10 @@ export const mutations = {
     const response = await mutation(serviceId)
     return response.data
   },
+  async cancelDeploymentService({ environmentId }: { environmentId: string }) {
+    const result = await environmentActionApi.cancelEnvironmentDeployment(environmentId)
+    return result.data
+  },
   async editAdvancedSettings({ serviceId, payload }: EditAdvancedSettingsRequest) {
     const { mutation } = match(payload)
       .with({ serviceType: 'APPLICATION' }, ({ serviceType, ...payload }) => ({
