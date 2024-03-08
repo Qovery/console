@@ -98,7 +98,6 @@ export function GCPVpcFeature() {
           <h4 className="text-neutral-400 text-sm font-medium mb-4">Additional ranges (optional)</h4>
           <Controller
             name="gcp_existing_vpc.ip_range_pods_name"
-            rules={{ required: true }}
             control={control}
             render={({ field }) => (
               <InputText
@@ -112,7 +111,6 @@ export function GCPVpcFeature() {
           />
           <Controller
             name="gcp_existing_vpc.additional_ip_range_pods_names"
-            rules={{ required: true }}
             control={control}
             render={({ field }) => (
               <InputText
@@ -126,7 +124,6 @@ export function GCPVpcFeature() {
           />
           <Controller
             name="gcp_existing_vpc.ip_range_services_name"
-            rules={{ required: true }}
             control={control}
             render={({ field }) => (
               <InputText
