@@ -50,32 +50,32 @@ export function StepFeatures(props: StepFeaturesProps) {
               </Callout.TextDescription>
             </Callout.Text>
           </Callout.Root>
-          {cloudProvider === 'AWS' && (
-            <>
-              <Controller
-                name="vpc_mode"
-                defaultValue="DEFAULT"
-                control={control}
-                render={({ field }) => (
-                  <InputSelect
-                    className="mb-4"
-                    label="VPC mode"
-                    options={[
-                      {
-                        label: 'Default (managed by Qovery)',
-                        value: 'DEFAULT',
-                      },
-                      {
-                        label: 'Deploy on my existing VPC',
-                        value: 'EXISTING_VPC',
-                      },
-                    ]}
-                    onChange={field.onChange}
-                    value={field.value}
-                    portal={true}
-                  />
-                )}
+          <Controller
+            name="vpc_mode"
+            defaultValue="DEFAULT"
+            control={control}
+            render={({ field }) => (
+              <InputSelect
+                className="mb-4"
+                label="VPC mode"
+                options={[
+                  {
+                    label: 'Default (managed by Qovery)',
+                    value: 'DEFAULT',
+                  },
+                  {
+                    label: 'Deploy on my existing VPC',
+                    value: 'EXISTING_VPC',
+                  },
+                ]}
+                onChange={field.onChange}
+                value={field.value}
+                portal={true}
               />
+            )}
+          />
+          {cloudProvider === 'AWS' && (
+            <div>
               {watchVpcMode === 'DEFAULT' ? (
                 <div>
                   {features && features.length > 0 ? (
@@ -121,9 +121,9 @@ export function StepFeatures(props: StepFeaturesProps) {
               ) : (
                 <AWSVpcFeature />
               )}
-            </>
+            </div>
           )}
-          {cloudProvider === 'GCP' && <GCPVpcFeature />}
+          {cloudProvider === 'GCP' && watchVpcMode !== 'DEFAULT' && <GCPVpcFeature />}
         </div>
 
         <div className="flex justify-between">
