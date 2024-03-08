@@ -13,6 +13,9 @@ export function useStopService({ environmentId }: { environmentId: string }) {
       queryClient.invalidateQueries({
         queryKey: queries.services.status({ id: serviceId, serviceType }).queryKey,
       })
+      queryClient.invalidateQueries({
+        queryKey: queries.services.deploymentHistory({ serviceId, serviceType }).queryKey,
+      })
     },
     meta: {
       notifyOnSuccess: {

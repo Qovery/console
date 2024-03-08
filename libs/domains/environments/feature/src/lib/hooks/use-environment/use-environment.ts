@@ -8,7 +8,7 @@ export interface UseEnvironmentProps {
 export function useEnvironment({ environmentId }: UseEnvironmentProps) {
   return useQuery({
     // eslint-disable-next-line @typescript-eslint/no-extra-non-null-assertion
-    ...queries.environments.detail(environmentId!!),
+    ...queries.environments.details({ environmentId: environmentId!! }),
     enabled: Boolean(environmentId),
   })
 }

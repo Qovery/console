@@ -13,6 +13,9 @@ export function useDeployService({ environmentId }: { environmentId: string }) {
       queryClient.invalidateQueries({
         queryKey: queries.services.status({ id: serviceId, serviceType }).queryKey,
       })
+      queryClient.invalidateQueries({
+        queryKey: queries.services.deploymentHistory({ serviceId, serviceType }).queryKey,
+      })
       // NOTE: We need to invalidate current commit from service and from the commit list from the repository
       // This is to invalidate deployed git_commit_id cache
       queryClient.invalidateQueries({
