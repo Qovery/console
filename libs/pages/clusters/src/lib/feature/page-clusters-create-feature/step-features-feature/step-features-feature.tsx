@@ -127,7 +127,6 @@ export function StepFeaturesFeature() {
         vpc_mode: 'EXISTING_VPC',
         gcp_existing_vpc: {
           vpc_name: existingVpcData?.vpc_name ?? '',
-          vpc_mode: existingVpcData?.vpc_mode ?? 'AUTOMATIC',
           vpc_project_id: existingVpcData?.vpc_project_id,
           subnetwork_name: existingVpcData?.subnetwork_name,
           ip_range_services_name: existingVpcData?.ip_range_services_name,

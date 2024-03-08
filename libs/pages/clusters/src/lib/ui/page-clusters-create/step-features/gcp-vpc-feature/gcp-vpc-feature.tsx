@@ -46,41 +46,6 @@ export function GCPVpcFeature() {
           />
         )}
       />
-      <Controller
-        name="gcp_existing_vpc.vpc_mode"
-        defaultValue="AUTOMATIC"
-        control={control}
-        render={({ field, fieldState: { error } }) => (
-          <InputSelect
-            className="mb-3"
-            onChange={field.onChange}
-            value={field.value}
-            label="VPC Mode"
-            error={error?.message}
-            options={[
-              {
-                label: 'Automatic',
-                value: 'AUTOMATIC',
-              },
-              {
-                label: 'Custom',
-                value: 'CUSTOM',
-              },
-            ]}
-            portal
-          />
-        )}
-      />
-      {watchVpcMode === 'CUSTOM' && (
-        <Controller
-          name="gcp_existing_vpc.subnetwork_name"
-          rules={{ required: true }}
-          control={control}
-          render={({ field }) => (
-            <InputText label="Subnetwork range name" name={field.name} value={field.value} onChange={field.onChange} />
-          )}
-        />
-      )}
       {!openOptions && (
         <Button
           type="button"
@@ -96,6 +61,20 @@ export function GCPVpcFeature() {
         <>
           <hr className="my-4" />
           <h4 className="text-neutral-400 text-sm font-medium mb-4">Additional ranges (optional)</h4>
+          <Controller
+            name="gcp_existing_vpc.subnetwork_name"
+            rules={{ required: true }}
+            control={control}
+            render={({ field }) => (
+              <InputText
+                className="mb-4"
+                label="Subnetwork range name (optional)"
+                name={field.name}
+                value={field.value}
+                onChange={field.onChange}
+              />
+            )}
+          />
           <Controller
             name="gcp_existing_vpc.ip_range_pods_name"
             control={control}

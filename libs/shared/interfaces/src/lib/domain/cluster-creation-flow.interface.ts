@@ -45,7 +45,6 @@ export type ClusterFeaturesData = {
   }
   gcp_existing_vpc?: {
     vpc_name: string
-    vpc_mode: 'AUTOMATIC' | 'CUSTOM'
     vpc_project_id?: string
     ip_range_services_name?: string
     ip_range_pods_name?: string
