@@ -1,9 +1,11 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useNavigate } from 'react-router-dom'
 import { mutations } from '@qovery/domains/environments/data-access'
 import { queries } from '@qovery/state/util-queries'
 
-export function useDeployEnvironment({ projectId }: { projectId: string }) {
+export function useDeployEnvironment({ projectId, logsLink }: { projectId: string; logsLink?: string }) {
   const queryClient = useQueryClient()
+  const navigate = useNavigate()
 
   return useMutation(mutations.deployEnvironment, {
     onSuccess(_, { environmentId }) {
@@ -21,6 +23,12 @@ export function useDeployEnvironment({ projectId }: { projectId: string }) {
     meta: {
       notifyOnSuccess: {
         title: 'Your environment is redeploying',
+        ...(logsLink
+          ? {
+              labelAction: 'See Deployment Logs',
+              callback: () => navigate(logsLink),
+            }
+          : {}),
       },
       notifyOnError: true,
     },
