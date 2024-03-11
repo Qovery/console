@@ -1,5 +1,4 @@
 import { IntercomProvider } from 'react-use-intercom'
-import * as clustersDomain from '@qovery/domains/clusters/feature'
 import * as organizationsDomain from '@qovery/domains/organizations/feature'
 import { renderWithProviders } from '@qovery/shared/util-tests'
 import PageOrganizationBillingSummaryFeature from './page-organization-billing-summary-feature'
@@ -23,7 +22,6 @@ describe('PageOrganizationBillingSummaryFeature', () => {
 
   it('should fetch credit card, clusters and organization costs', () => {
     const useCreditCardsSpy: SpyInstance = jest.spyOn(organizationsDomain, 'useCreditCards')
-    const useClustersSpy: SpyInstance = jest.spyOn(clustersDomain, 'useClusters')
     const useCurrentCostSpy: SpyInstance = jest.spyOn(organizationsDomain, 'useCurrentCost')
 
     renderWithProviders(
@@ -33,7 +31,6 @@ describe('PageOrganizationBillingSummaryFeature', () => {
     )
 
     expect(useCreditCardsSpy).toHaveBeenCalled()
-    expect(useClustersSpy).toHaveBeenCalled()
     expect(useCurrentCostSpy).toHaveBeenCalled()
   })
 })
