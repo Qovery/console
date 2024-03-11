@@ -1,7 +1,7 @@
 import { type Organization } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useOrganization } from '@qovery/domains/organizations/feature'
-import { InputSelect, InputText, ModalCrud } from '@qovery/shared/ui'
+import { Callout, Icon, InputSelect, InputText, ModalCrud } from '@qovery/shared/ui'
 
 export interface ShowUsageModalProps {
   organizationId: string
@@ -132,6 +132,14 @@ export function ShowUsageModal({ organizationId, renewalAt, onSubmit, onClose, l
       onClose={onClose}
       loading={loading}
     >
+      <Callout.Root className="text-xs mb-5" color="yellow">
+        <Callout.Icon>
+          <Icon iconName="triangle-exclamation" />
+        </Callout.Icon>
+        <Callout.Text className="flex items-center">
+          The report generation could take a few seconds, please be patient.
+        </Callout.Text>
+      </Callout.Root>
       <Controller
         name="report_period"
         control={control}
@@ -139,7 +147,7 @@ export function ShowUsageModal({ organizationId, renewalAt, onSubmit, onClose, l
           <InputSelect
             dataTestId="input-select-report-period"
             label="Report period"
-            className="mb-6"
+            className="mb-5"
             options={reportPeriods.map((rp) => ({ label: rp.option.label, value: rp.option.value }))}
             onChange={field.onChange}
             value={field.value}
