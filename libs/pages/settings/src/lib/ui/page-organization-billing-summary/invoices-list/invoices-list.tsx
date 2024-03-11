@@ -44,7 +44,7 @@ export function InvoicesList(props: InvoicesListProps) {
             items={props.yearsForSorting || []}
             name="year"
             inputClassName="h-9 !py-[0.4rem]"
-            className="w-[200px] relative"
+            className="w-[200px]"
             onChange={(value) => {
               props.onFilterByYear && props.onFilterByYear(value)
             }}
