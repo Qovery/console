@@ -1,12 +1,4 @@
-import {
-  ButtonLegacy,
-  ButtonLegacySize,
-  Callout,
-  CopyToClipboardButtonIcon,
-  Icon,
-  IconAwesomeEnum,
-  InputText,
-} from '@qovery/shared/ui'
+import { Button, Callout, CopyToClipboardButtonIcon, Icon, IconAwesomeEnum, InputText } from '@qovery/shared/ui'
 
 export interface ShowUsageValueModalProps {
   onClose: () => void
@@ -17,7 +9,12 @@ export interface ShowUsageValueModalProps {
 export function ShowUsageValueModal(props: ShowUsageValueModalProps) {
   return (
     <div className="p-6">
-      <h2 className="h4 text-neutral-400 max-w-sm truncate mb-6">Your report is ready 🎊</h2>
+      <h2 className="h4 text-neutral-400 max-w-sm truncate mb-6">
+        Your report is ready{' '}
+        <span role="img" aria-label="congrats">
+          🎊
+        </span>
+      </h2>
 
       <Callout.Root className="mb-5" color="yellow">
         <Callout.Icon>
@@ -37,14 +34,9 @@ export function ShowUsageValueModal(props: ShowUsageValueModalProps) {
         rightElement={<CopyToClipboardButtonIcon className="text-neutral-400 text-sm" content={props.url} />}
       />
       <div className="flex gap-3 justify-end mt-6">
-        <ButtonLegacy
-          dataTestId="submit-button"
-          className="btn--no-min-w"
-          onClick={props.onClose}
-          size={ButtonLegacySize.XLARGE}
-        >
+        <Button data-testid="close-button" variant="surface" color="neutral" size="lg" onClick={props.onClose}>
           Close
-        </ButtonLegacy>
+        </Button>
       </div>
     </div>
   )

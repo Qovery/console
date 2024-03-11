@@ -1,4 +1,3 @@
-import { type OrganizationCurrentCost } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
 import { useIntercom } from 'react-use-intercom'
 import { useCreditCards, useCurrentCost } from '@qovery/domains/organizations/feature'
@@ -27,9 +26,7 @@ export function PageOrganizationBillingSummaryFeature() {
 
   const openShowUsageModal = () => {
     openModal({
-      content: (
-        <ShowUsageModalFeature organizationId={organizationId} currentCost={currentCost as OrganizationCurrentCost} />
-      ),
+      content: currentCost && <ShowUsageModalFeature organizationId={organizationId} currentCost={currentCost} />,
     })
   }
 
