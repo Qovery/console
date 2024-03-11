@@ -1,4 +1,4 @@
-import { differenceInMinutes, formatDistanceToNowStrict } from 'date-fns'
+import { differenceInMinutes, formatDistanceToNowStrict, getDaysInMonth } from 'date-fns'
 import { format, utcToZonedTime } from 'date-fns-tz'
 
 export const timeAgo = (date: Date) => formatDistanceToNowStrict(date)
@@ -75,4 +75,10 @@ export function convertDatetoTimestamp(strDate: string) {
 // Standard full format used in HTML tooltip and title attribute
 export function dateUTCString(date: string | number) {
   return new Date(date).toUTCString()
+}
+
+// Set day of the month in a given day, limited to max number of days in month
+export function setDayOfTheMonth(date: Date, dayOfTheMonth: number) {
+  date.setMonth(date.getMonth(), Math.min(dayOfTheMonth, getDaysInMonth(date)))
+  return date
 }

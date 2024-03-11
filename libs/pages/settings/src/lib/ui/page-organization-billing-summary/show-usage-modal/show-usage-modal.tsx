@@ -1,7 +1,9 @@
+import { eachMonthOfInterval, isAfter } from 'date-fns'
 import { type Organization } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useOrganization } from '@qovery/domains/organizations/feature'
 import { Callout, Icon, InputSelect, InputText, ModalCrud } from '@qovery/shared/ui'
+import { setDayOfTheMonth } from '@qovery/shared/util-dates'
 
 export interface ShowUsageModalProps {
   organizationId: string
@@ -11,91 +13,64 @@ export interface ShowUsageModalProps {
   loading?: boolean
 }
 
-export class ReportPeriod {
-  from: string
-  to: string
-  option: ReportPeriodOption
-
-  constructor(from: string, to: string, option: ReportPeriodOption) {
-    this.from = from
-    this.to = to
-    this.option = option
-  }
-}
-
-export class ReportPeriodOption {
-  label: string
-  value: string
-
-  constructor(label: string, value: string) {
-    this.label = label
-    this.value = value
-  }
-}
-
-export function getReportPeriods(organization?: Organization, orgRenewalAt?: string | null): ReportPeriod[] {
+function getReportPeriods({
+  organization,
+  orgRenewalAt,
+}: {
+  organization?: Organization
+  orgRenewalAt?: string | null
+}) {
   if (!organization) return []
 
-  const date = new Date()
-  date.setMonth(date.getMonth(), new Date(orgRenewalAt ? orgRenewalAt : organization.created_at).getDate())
-  date.setHours(0, 0, 0, 0)
+  const orgCreatedAt = new Date(organization.created_at)
+  const renewalDayOfTheMonth = new Date(orgRenewalAt ? orgRenewalAt : organization.created_at).getDate()
 
-  const currentDateStr = new Intl.DateTimeFormat('en-US', {
-    dateStyle: 'medium',
-  }).format(date)
+  const start = orgCreatedAt
+  const now = new Date()
 
-  const reportPeriods = [
-    new ReportPeriod(
-      date.toISOString(),
-      new Date().toISOString(),
-      new ReportPeriodOption(`${currentDateStr} to Now`, 'current_month')
-    ),
-  ]
+  const formatDate = (date: Date) =>
+    new Intl.DateTimeFormat('en-US', {
+      dateStyle: 'medium',
+    }).format(date)
 
-  if (orgRenewalAt) {
-    const orgCreatedAtDate = new Date(organization.created_at)
+  const periods = eachMonthOfInterval({
+    start,
+    end: now,
+  })
 
-    // get last 12 months from renewalAt - 1 month if the month date is greater than org.created_at
-    for (let i = 1; i <= 12; i++) {
-      const renewalAtDate = new Date(orgRenewalAt)
-      const date = new Date()
-      date.setMonth(date.getMonth() - i, renewalAtDate.getDate())
-      date.setHours(0, 0, 0, 0)
-
-      if (date.getTime() < orgCreatedAtDate.getTime()) {
-        break
-      }
-
-      const nextMonthDate = new Date(date)
-      nextMonthDate.setMonth(nextMonthDate.getMonth() + 1)
-
-      // date formatting to Month, Day, Year
-      const dateToFormatx = new Intl.DateTimeFormat('en-US', {
-        dateStyle: 'medium',
-      }).format(new Date(date))
-
-      const nextMonthDateToFormat = new Intl.DateTimeFormat('en-US', {
-        dateStyle: 'medium',
-      }).format(new Date(nextMonthDate))
-
-      reportPeriods.push(
-        new ReportPeriod(
-          date.toISOString(),
-          nextMonthDate.toISOString(),
-          new ReportPeriodOption(`${dateToFormatx} to ${nextMonthDateToFormat}`, date.toISOString())
-        )
-      )
-    }
-  }
-
-  return reportPeriods
+  return (
+    periods
+      .map((p) => setDayOfTheMonth(p, renewalDayOfTheMonth))
+      // First renewal date can be below the creation date in some case like:
+      // - Creation date: 31 Mars
+      // - Renewal date: 4 April
+      .filter((p) => isAfter(p, orgCreatedAt))
+      .map((p, index, arr) => {
+        return index === arr.length - 1
+          ? {
+              label: `${formatDate(p)} to now`,
+              value: JSON.stringify({
+                from: p.toISOString(),
+              }),
+            }
+          : {
+              label: `${formatDate(p)} to ${formatDate(arr[index + 1])}`,
+              value: JSON.stringify({
+                from: p.toISOString(),
+                to: arr[index + 1].toISOString(),
+              }),
+            }
+      })
+      .slice(-12)
+      .reverse()
+  )
 }
 
 export function ShowUsageModal({ organizationId, renewalAt, onSubmit, onClose, loading }: ShowUsageModalProps) {
   const { control } = useFormContext()
 
   const { data: organization } = useOrganization({ organizationId })
-  const reportPeriods = getReportPeriods(organization, renewalAt)
+  const reportPeriods = getReportPeriods({ organization, orgRenewalAt: renewalAt })
 
   return (
     <ModalCrud
@@ -143,12 +118,13 @@ export function ShowUsageModal({ organizationId, renewalAt, onSubmit, onClose, l
       <Controller
         name="report_period"
         control={control}
+        defaultValue={reportPeriods[0]?.value}
         render={({ field, fieldState: { error } }) => (
           <InputSelect
             dataTestId="input-select-report-period"
             label="Report period"
             className="mb-5"
-            options={reportPeriods.map((rp) => ({ label: rp.option.label, value: rp.option.value }))}
+            options={reportPeriods}
             onChange={field.onChange}
             value={field.value}
             error={error?.message}

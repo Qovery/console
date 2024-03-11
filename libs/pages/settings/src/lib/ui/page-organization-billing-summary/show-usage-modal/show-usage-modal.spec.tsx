@@ -35,7 +35,6 @@ describe('ShowUsageModal', () => {
       wrapWithReactHookForm(<ShowUsageModal {...props} onSubmit={spy} />, {
         defaultValues: {
           expires: 24,
-          report_period: 'current_month',
         },
       })
     )
