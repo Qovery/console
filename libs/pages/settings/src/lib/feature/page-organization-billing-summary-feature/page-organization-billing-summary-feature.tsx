@@ -1,4 +1,4 @@
-import { OrganizationCurrentCost } from 'qovery-typescript-axios'
+import { type OrganizationCurrentCost } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
 import { useIntercom } from 'react-use-intercom'
 import { useCreditCards, useCurrentCost } from '@qovery/domains/organizations/feature'

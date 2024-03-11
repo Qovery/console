@@ -1,5 +1,4 @@
-import { Organization, type OrganizationCurrentCost } from 'qovery-typescript-axios'
-import { useState } from 'react'
+import { type OrganizationCurrentCost } from 'qovery-typescript-axios'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useGenerateBillingUsageReport, useOrganization } from '@qovery/domains/organizations/feature'
 import { useModal } from '@qovery/shared/ui'
@@ -23,20 +22,17 @@ export function ShowUsageModalFeature({ organizationId, currentCost }: ShowUsage
   })
 
   const { data: organization } = useOrganization({ organizationId })
-  const { mutateAsync: usageBillingReport } = useGenerateBillingUsageReport()
+  const { mutateAsync: usageBillingReport, isLoading: isLoadingUsageBillingReport } = useGenerateBillingUsageReport()
   const { openModal, closeModal } = useModal()
-  const [loading, setLoading] = useState(false)
 
   const onSubmit = methods.handleSubmit(async (data) => {
-    setLoading(true)
+    if (!organization) return
 
-    const reportPeriods = getReportPeriods(organization as Organization, currentCost?.renewal_at)
+    const reportPeriods = getReportPeriods(organization, currentCost?.renewal_at)
     const selectedReportPeriod = reportPeriods.find((rp) => rp.option.value === data.report_period)
 
     if (selectedReportPeriod !== undefined) {
       try {
-        console.log(selectedReportPeriod)
-
         const res = await usageBillingReport({
           organizationId,
           usageReportRequest: {
@@ -56,8 +52,6 @@ export function ShowUsageModalFeature({ organizationId, currentCost }: ShowUsage
     } else {
       console.error('Selected report period is undefined')
     }
-
-    setLoading(false)
   })
 
   return (
@@ -67,7 +61,7 @@ export function ShowUsageModalFeature({ organizationId, currentCost }: ShowUsage
         renewalAt={currentCost?.renewal_at}
         onSubmit={onSubmit}
         onClose={closeModal}
-        loading={loading}
+        loading={isLoadingUsageBillingReport}
       />
     </FormProvider>
   )
