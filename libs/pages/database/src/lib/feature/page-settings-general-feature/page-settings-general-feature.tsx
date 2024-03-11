@@ -2,20 +2,20 @@ import { DatabaseModeEnum, KubernetesEnum } from 'qovery-typescript-axios'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { useCluster } from '@qovery/domains/clusters/feature'
-import { useFetchDatabaseConfiguration, useFetchEnvironment } from '@qovery/domains/environment'
+import { useEnvironment, useListDatabaseConfigurations } from '@qovery/domains/environments/feature'
 import { useEditService, useService } from '@qovery/domains/services/feature'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
 import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-general'
 
 export function PageSettingsGeneralFeature() {
-  const { organizationId = '', environmentId = '', projectId = '', databaseId = '' } = useParams()
+  const { organizationId = '', environmentId = '', databaseId = '' } = useParams()
 
   const { data: database } = useService({ serviceId: databaseId, serviceType: 'DATABASE' })
   const { mutate: editService, isLoading: isLoadingService } = useEditService({ environmentId })
-  const { data: environment } = useFetchEnvironment(projectId, environmentId)
+  const { data: environment } = useEnvironment({ environmentId })
   const { data: cluster } = useCluster({ organizationId, clusterId: environment?.cluster_id ?? '' })
 
-  const { data: databaseConfigurations, isLoading } = useFetchDatabaseConfiguration(projectId, environmentId)
+  const { data: databaseConfigurations, isLoading } = useListDatabaseConfigurations({ environmentId })
 
   const databaseVersionOptions = databaseConfigurations
     ?.find((c) => c.database_type === database?.type)

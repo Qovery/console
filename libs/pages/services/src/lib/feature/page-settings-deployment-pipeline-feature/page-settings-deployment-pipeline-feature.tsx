@@ -3,11 +3,11 @@ import { useEffect, useState } from 'react'
 import { toast as toastAction } from 'react-hot-toast'
 import { useParams } from 'react-router-dom'
 import {
-  useAddServiceToDeploymentStage,
-  useDeleteEnvironmentDeploymentStage,
-  useFetchDeploymentStageList,
-  useFetchEnvironment,
-} from '@qovery/domains/environment'
+  useAttachServiceToDeploymentStage,
+  useDeleteDeploymentStage,
+  useEnvironment,
+  useListDeploymentStages,
+} from '@qovery/domains/environments/feature'
 import { useServices } from '@qovery/domains/services/feature'
 import { Icon, useModal, useModalConfirmation } from '@qovery/shared/ui'
 import PageSettingsDeploymentPipeline from '../../ui/page-settings-deployment-pipeline/page-settings-deployment-pipeline'
@@ -15,14 +15,14 @@ import StageModalFeature from './stage-modal-feature/stage-modal-feature'
 import StageOrderModalFeature from './stage-order-modal-feature/stage-order-modal-feature'
 
 export interface StageRequest {
-  deploymentStageId: string
+  stageId: string
   serviceId: string
 }
 
 export function PageSettingsDeploymentPipelineFeature() {
-  const { projectId = '', environmentId = '' } = useParams()
+  const { environmentId = '' } = useParams()
 
-  const { data: environment } = useFetchEnvironment(projectId, environmentId)
+  const { data: environment } = useEnvironment({ environmentId })
   const { data: services } = useServices({ environmentId })
 
   const { openModal, closeModal } = useModal()
@@ -30,9 +30,9 @@ export function PageSettingsDeploymentPipelineFeature() {
 
   const [stages, setStages] = useState<DeploymentStageResponse[] | undefined>()
 
-  const { data: deploymentStageList } = useFetchDeploymentStageList(environmentId)
-  const addServiceToDeploymentStage = useAddServiceToDeploymentStage(environmentId)
-  const deleteEnvironmentDeploymentStage = useDeleteEnvironmentDeploymentStage(environmentId)
+  const { data: deploymentStageList } = useListDeploymentStages({ environmentId })
+  const { mutate: addServiceToDeploymentStage } = useAttachServiceToDeploymentStage()
+  const { mutate: deleteEnvironmentDeploymentStage } = useDeleteDeploymentStage({ environmentId })
 
   useEffect(() => {
     if (deploymentStageList) {
@@ -45,8 +45,8 @@ export function PageSettingsDeploymentPipelineFeature() {
       // remove current toast to avoid flood of multiple toasts
       toastAction.remove()
       // mutate action
-      addServiceToDeploymentStage.mutate({
-        deploymentStageId: newStage.deploymentStageId,
+      addServiceToDeploymentStage({
+        stageId: newStage.stageId,
         serviceId: newStage.serviceId,
         prevStage,
       })
@@ -83,7 +83,7 @@ export function PageSettingsDeploymentPipelineFeature() {
               title: 'Delete this stage',
               isDelete: true,
               name: stage.name,
-              action: () => deleteEnvironmentDeploymentStage.mutate({ stageId: stage.id }),
+              action: () => deleteEnvironmentDeploymentStage({ stageId: stage.id }),
             }),
           contentLeft: <Icon iconName="trash" className="text-sm text-red-600" />,
           containerClassName: 'text-red-600',

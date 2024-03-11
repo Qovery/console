@@ -2,7 +2,7 @@ import { type DeploymentStageWithServicesStatuses, type EnvironmentStatus } from
 import { useCallback, useState } from 'react'
 import { Route, Routes, matchPath, useLocation, useParams } from 'react-router-dom'
 import useWebSocket from 'react-use-websocket'
-import { useFetchEnvironment } from '@qovery/domains/environment'
+import { useEnvironment } from '@qovery/domains/environments/feature'
 import { useServices } from '@qovery/domains/services/feature'
 import { useAuth } from '@qovery/shared/auth'
 import {
@@ -21,7 +21,7 @@ import Sidebar from './ui/sidebar/sidebar'
 export function PageEnvironmentLogs() {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
 
-  const { data: environment } = useFetchEnvironment(projectId, environmentId)
+  const { data: environment } = useEnvironment({ environmentId })
 
   useDocumentTitle(`Environment logs ${environment ? `- ${environment?.name}` : '- Loading...'}`)
 

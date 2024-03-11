@@ -1,14 +1,14 @@
 import { mockUseQueryResult } from '__tests__/utils/mock-use-query-result'
 import { act, render } from '__tests__/utils/setup-jest'
 import { type EnvironmentDeploymentRule, WeekdayEnum } from 'qovery-typescript-axios'
-import * as environmentDomain from '@qovery/domains/environment'
+import * as environmentDomain from '@qovery/domains/environments/feature'
 import { weekdaysValues } from '@qovery/shared/enums'
 import { environmentFactoryMock } from '@qovery/shared/factories'
 import PageSettingsDeploymentRulesFeature, { handleSubmit } from './page-settings-deployment-rules-feature'
 
 const environmentDeploymentRules = environmentFactoryMock(1)[0].deploymentRules
 
-const useFetchEnvironmentDeploymentRuleSpy = jest.spyOn(environmentDomain, 'useFetchEnvironmentDeploymentRule')
+const useFetchEnvironmentDeploymentRuleSpy = jest.spyOn(environmentDomain, 'useDeploymentRule')
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -37,7 +37,7 @@ describe('PageSettingsDeploymentRulesFeature', () => {
     const { baseElement } = render(<PageSettingsDeploymentRulesFeature />)
     expect(baseElement).toBeTruthy()
 
-    expect(useFetchEnvironmentDeploymentRuleSpy).toHaveBeenCalledWith('', '1')
+    expect(useFetchEnvironmentDeploymentRuleSpy).toHaveBeenCalledWith({ environmentId: '1' })
 
     await act(async () => {
       await promise

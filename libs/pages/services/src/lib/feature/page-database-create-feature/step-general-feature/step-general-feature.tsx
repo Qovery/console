@@ -9,7 +9,7 @@ import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useCluster } from '@qovery/domains/clusters/feature'
-import { useFetchDatabaseConfiguration, useFetchEnvironment } from '@qovery/domains/environment'
+import { useEnvironment, useListDatabaseConfigurations } from '@qovery/domains/environments/feature'
 import { type Value } from '@qovery/shared/interfaces'
 import {
   SERVICES_DATABASE_CREATION_RESOURCES_URL,
@@ -111,10 +111,10 @@ export function StepGeneralFeature() {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const navigate = useNavigate()
 
-  const { data: environment } = useFetchEnvironment(projectId, environmentId)
+  const { data: environment } = useEnvironment({ environmentId })
   const { data: cluster } = useCluster({ organizationId, clusterId: environment?.cluster_id ?? '' })
 
-  const { data: databaseConfigurations } = useFetchDatabaseConfiguration(projectId, environmentId)
+  const { data: databaseConfigurations } = useListDatabaseConfigurations({ environmentId })
 
   const cloudProvider = environment?.cloud_provider.provider
   const clusterVpc = cluster?.features?.find(({ id }) => id === 'EXISTING_VPC')?.value as ClusterFeatureAwsExistingVpc

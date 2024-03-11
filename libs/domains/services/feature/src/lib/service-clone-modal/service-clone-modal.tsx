@@ -2,11 +2,11 @@ import { type Environment } from 'qovery-typescript-axios'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { useFetchEnvironments } from '@qovery/domains/environment'
 import { useProjects } from '@qovery/domains/projects/feature'
 import { APPLICATION_GENERAL_URL, APPLICATION_URL, DATABASE_GENERAL_URL, DATABASE_URL } from '@qovery/shared/routes'
 import { ExternalLink, InputSelect, InputText, LoaderSpinner, ModalCrud, useModal } from '@qovery/shared/ui'
 import { useCloneService } from '../hooks/use-clone-service/use-clone-service'
+import { useEnvironments } from '../hooks/use-environments/use-environments'
 import { useService } from '../hooks/use-service/use-service'
 
 export interface ServiceCloneModalProps {
@@ -35,7 +35,7 @@ export function ServiceCloneModal({ onClose, organizationId, projectId, serviceI
 
   const selectedProjectId = methods.watch('project')
   const environments: Environment[] = []
-  const { data = [], isLoading: isFetchEnvironmentsLoading } = useFetchEnvironments(selectedProjectId)
+  const { data = [], isLoading: isFetchEnvironmentsLoading } = useEnvironments({ projectId: selectedProjectId })
   // Avoid array ref mutation to prevent re-rendering
   environments.splice(0, environments.length)
   environments.push(...data)

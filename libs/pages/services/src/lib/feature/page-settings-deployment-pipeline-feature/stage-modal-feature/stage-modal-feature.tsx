@@ -1,7 +1,7 @@
 import { type DeploymentStageRequest, type DeploymentStageResponse } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useCreateEnvironmentDeploymentStage, useEditEnvironmentDeploymentStage } from '@qovery/domains/environment'
+import { useCreateDeploymentStage, useEditDeploymentStage } from '@qovery/domains/environments/feature'
 import StageModal from '../../../ui/page-settings-deployment-pipeline/stage-modal/stage-modal'
 
 export interface StageModalFeatureProps {
@@ -21,15 +21,10 @@ export function StageModalFeature(props: StageModalFeatureProps) {
 
   const [loading, setLoading] = useState(false)
 
-  const createEnvironmentDeploymentStage = useCreateEnvironmentDeploymentStage(props.environmentId, props.onClose, () =>
-    setLoading(false)
-  )
+  const { mutateAsync: createEnvironmentDeploymentStage } = useCreateDeploymentStage()
+  const { mutateAsync: editEnvironmentDeploymentStage } = useEditDeploymentStage()
 
-  const editEnvironmentDeploymentStage = useEditEnvironmentDeploymentStage(props.environmentId, props.onClose, () =>
-    setLoading(false)
-  )
-
-  const onSubmit = methods.handleSubmit((data) => {
+  const onSubmit = methods.handleSubmit(async (data) => {
     if (!data) {
       return
     }
@@ -40,12 +35,17 @@ export function StageModalFeature(props: StageModalFeatureProps) {
       description: data['description'],
     }
 
-    if (props.stage) {
-      // edit stage
-      editEnvironmentDeploymentStage.mutate({ stageId: props.stage.id, data: currentData })
-    } else {
-      // create stage
-      createEnvironmentDeploymentStage.mutate({ data: currentData })
+    try {
+      if (props.stage) {
+        // edit stage
+        await editEnvironmentDeploymentStage({ stageId: props.stage.id, payload: currentData })
+      } else {
+        // create stage
+        await createEnvironmentDeploymentStage({ environmentId: props.environmentId, payload: currentData })
+      }
+      props.onClose()
+    } finally {
+      setLoading(false)
     }
   })
 

@@ -3,19 +3,20 @@ import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { useEditEnvironmentDeploymentRule, useFetchEnvironmentDeploymentRule } from '@qovery/domains/environment'
+import { useDeploymentRule, useEditDeploymentRule } from '@qovery/domains/environments/feature'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { useEditService, useServices } from '@qovery/domains/services/feature'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
 import { PageSettingsPreviewEnvironments } from '../../ui/page-settings-preview-environments/page-settings-preview-environments'
 
 export function SettingsPreviewEnvironmentsFeature({ services }: { services: AnyService[] }) {
-  const { projectId = '', environmentId = '' } = useParams()
+  const { environmentId = '' } = useParams()
   const [loading, setLoading] = useState(false)
 
-  const { isFetched: loadingStatusEnvironmentDeploymentRules, data: environmentDeploymentRules } =
-    useFetchEnvironmentDeploymentRule(projectId, environmentId)
-  const editEnvironmentDeploymentRule = useEditEnvironmentDeploymentRule(projectId, environmentId)
+  const { isFetched: loadingStatusEnvironmentDeploymentRules, data: environmentDeploymentRules } = useDeploymentRule({
+    environmentId,
+  })
+  const { mutate: editEnvironmentDeploymentRule } = useEditDeploymentRule()
   const { mutateAsync: editService } = useEditService({ environmentId, silently: true })
 
   const methods = useForm({
@@ -30,10 +31,10 @@ export function SettingsPreviewEnvironmentsFeature({ services }: { services: Any
       cloneEnvironmentDeploymentRules.auto_preview = data['auto_preview']
       cloneEnvironmentDeploymentRules.on_demand_preview = data['on_demand_preview']
 
-      editEnvironmentDeploymentRule.mutate({
+      editEnvironmentDeploymentRule({
         environmentId,
         deploymentRuleId: environmentDeploymentRules?.id || '',
-        data: cloneEnvironmentDeploymentRules,
+        payload: cloneEnvironmentDeploymentRules,
       })
 
       services.forEach(async (service: AnyService) => {

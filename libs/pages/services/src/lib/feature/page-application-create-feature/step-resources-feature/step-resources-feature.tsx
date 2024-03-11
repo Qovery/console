@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useCluster } from '@qovery/domains/clusters/feature'
-import { useFetchEnvironment } from '@qovery/domains/environment'
+import { useEnvironment } from '@qovery/domains/environments/feature'
 import { type ApplicationResourcesData } from '@qovery/shared/interfaces'
 import {
   SERVICES_APPLICATION_CREATION_URL,
@@ -23,7 +23,7 @@ export function StepResourcesFeature() {
   const navigate = useNavigate()
   const [maxInstances, setMaxInstance] = useState(50)
 
-  const { data: environment } = useFetchEnvironment(projectId, environmentId)
+  const { data: environment } = useEnvironment({ environmentId })
 
   const { data: cluster } = useCluster({ organizationId, clusterId: environment?.cluster_id ?? '' })
 

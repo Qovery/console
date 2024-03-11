@@ -61,13 +61,13 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
 
       // new stage for final request
       const newStageRequest: StageRequest = {
-        deploymentStageId: stages[destinationIndex].id,
+        stageId: stages[destinationIndex].id,
         serviceId: draggableId,
       }
 
       // previous stage for final request if undo
       const prevStageRequest: StageRequest = {
-        deploymentStageId: stages[sourceIndex].id,
+        stageId: stages[sourceIndex].id,
         serviceId: draggableId,
       }
 
