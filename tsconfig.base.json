@@ -21,7 +21,6 @@
       "@qovery/domains/clusters/feature": ["libs/domains/clusters/feature/src/index.ts"],
       "@qovery/domains/custom-domains/data-access": ["libs/domains/custom-domains/data-access/src/index.ts"],
       "@qovery/domains/custom-domains/feature": ["libs/domains/custom-domains/feature/src/index.ts"],
-      "@qovery/domains/environment": ["libs/domains/environment/src/index.ts"],
       "@qovery/domains/environments/data-access": ["libs/domains/environments/data-access/src/index.ts"],
       "@qovery/domains/environments/feature": ["libs/domains/environments/feature/src/index.ts"],
       "@qovery/domains/event": ["libs/domains/event/src/index.ts"],
