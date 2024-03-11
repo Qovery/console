@@ -1,3 +1,4 @@
+import { eachMonthOfInterval } from 'date-fns'
 import { type Organization } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useOrganization } from '@qovery/domains/organizations/feature'
@@ -11,91 +12,50 @@ export interface ShowUsageModalProps {
   loading?: boolean
 }
 
-export class ReportPeriod {
-  from: string
-  to: string
-  option: ReportPeriodOption
-
-  constructor(from: string, to: string, option: ReportPeriodOption) {
-    this.from = from
-    this.to = to
-    this.option = option
-  }
-}
-
-export class ReportPeriodOption {
-  label: string
-  value: string
-
-  constructor(label: string, value: string) {
-    this.label = label
-    this.value = value
-  }
-}
-
-export function getReportPeriods(organization?: Organization, orgRenewalAt?: string | null): ReportPeriod[] {
+function getReportPeriods(organization?: Organization) {
   if (!organization) return []
 
-  const date = new Date()
-  date.setMonth(date.getMonth(), new Date(orgRenewalAt ? orgRenewalAt : organization.created_at).getDate())
-  date.setHours(0, 0, 0, 0)
+  const start = new Date(organization.created_at)
+  const now = new Date()
 
-  const currentDateStr = new Intl.DateTimeFormat('en-US', {
-    dateStyle: 'medium',
-  }).format(date)
+  const formatDate = (date: Date) =>
+    new Intl.DateTimeFormat('en-US', {
+      dateStyle: 'medium',
+    }).format(date)
 
-  const reportPeriods = [
-    new ReportPeriod(
-      date.toISOString(),
-      new Date().toISOString(),
-      new ReportPeriodOption(`${currentDateStr} to Now`, 'current_month')
-    ),
-  ]
+  const months = eachMonthOfInterval({
+    start,
+    end: now,
+  })
 
-  if (orgRenewalAt) {
-    const orgCreatedAtDate = new Date(organization.created_at)
+  months.splice(0, 1, start)
 
-    // get last 12 months from renewalAt - 1 month if the month date is greater than org.created_at
-    for (let i = 1; i <= 12; i++) {
-      const renewalAtDate = new Date(orgRenewalAt)
-      const date = new Date()
-      date.setMonth(date.getMonth() - i, renewalAtDate.getDate())
-      date.setHours(0, 0, 0, 0)
-
-      if (date.getTime() < orgCreatedAtDate.getTime()) {
-        break
-      }
-
-      const nextMonthDate = new Date(date)
-      nextMonthDate.setMonth(nextMonthDate.getMonth() + 1)
-
-      // date formatting to Month, Day, Year
-      const dateToFormatx = new Intl.DateTimeFormat('en-US', {
-        dateStyle: 'medium',
-      }).format(new Date(date))
-
-      const nextMonthDateToFormat = new Intl.DateTimeFormat('en-US', {
-        dateStyle: 'medium',
-      }).format(new Date(nextMonthDate))
-
-      reportPeriods.push(
-        new ReportPeriod(
-          date.toISOString(),
-          nextMonthDate.toISOString(),
-          new ReportPeriodOption(`${dateToFormatx} to ${nextMonthDateToFormat}`, date.toISOString())
-        )
-      )
-    }
-  }
-
-  return reportPeriods
+  return months
+    .map((month, index, arr) => {
+      return index === arr.length - 1
+        ? {
+            label: `${formatDate(month)} to now`,
+            value: JSON.stringify({
+              from: month.toISOString(),
+            }),
+          }
+        : {
+            label: `${formatDate(month)} to ${formatDate(arr[index + 1])}`,
+            value: JSON.stringify({
+              from: month.toISOString(),
+              to: arr[index + 1].toISOString(),
+            }),
+          }
+    })
+    .slice(-12)
+    .reverse()
 }
 
-export function ShowUsageModal({ organizationId, renewalAt, onSubmit, onClose, loading }: ShowUsageModalProps) {
+export function ShowUsageModal({ organizationId, onSubmit, onClose, loading }: ShowUsageModalProps) {
   const { control } = useFormContext()
 
   const { data: organization } = useOrganization({ organizationId })
-  const reportPeriods = getReportPeriods(organization, renewalAt)
+  const reportPeriods = getReportPeriods(organization)
 
   return (
     <ModalCrud
@@ -143,12 +103,13 @@ export function ShowUsageModal({ organizationId, renewalAt, onSubmit, onClose, l
       <Controller
         name="report_period"
         control={control}
+        defaultValue={reportPeriods[0]?.value}
         render={({ field, fieldState: { error } }) => (
           <InputSelect
             dataTestId="input-select-report-period"
             label="Report period"
             className="mb-5"
-            options={reportPeriods.map((rp) => ({ label: rp.option.label, value: rp.option.value }))}
+            options={reportPeriods}
             onChange={field.onChange}
             value={field.value}
             error={error?.message}

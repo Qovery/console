@@ -1,3 +1,4 @@
+import { differenceInYears } from 'date-fns'
 import { type CreditCard, type OrganizationCurrentCost, PlanEnum } from 'qovery-typescript-axios'
 import { type CardImages } from 'react-payment-inputs/images'
 import { useParams } from 'react-router-dom'
@@ -17,20 +18,6 @@ import { dateToFormat } from '@qovery/shared/util-dates'
 import { costToHuman, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import InvoicesListFeature from '../../feature/page-organization-billing-summary-feature/invoices-list-feature/invoices-list-feature'
 
-// this function is used to get the billing recurrence word to display based on the renewal date.
-// it's not so accurate, but it's a good enough approximation for now
-function getBillingRecurrenceStr(renewalAt: string | null | undefined): string {
-  if (renewalAt === null || renewalAt === undefined) return 'month'
-
-  const now = new Date()
-  const renewalDate = new Date(renewalAt)
-  // if the renewal date is in less than 1 month, we display "month"
-
-  if (renewalDate.getTime() - now.getTime() > 30 * 24 * 60 * 60 * 1000) return 'year'
-
-  return 'month'
-}
-
 export interface PageOrganizationBillingSummaryProps {
   currentCost?: OrganizationCurrentCost
   creditCard?: CreditCard
@@ -42,6 +29,13 @@ export interface PageOrganizationBillingSummaryProps {
 
 export function PageOrganizationBillingSummary(props: PageOrganizationBillingSummaryProps) {
   const { organizationId = '' } = useParams()
+
+  // Get the billing recurrence word to display based on the renewal date.
+  // It's not so accurate, but it's a good enough approximation for now
+  const billingRecurrence =
+    props.currentCost?.renewal_at && differenceInYears(new Date(), new Date(props.currentCost?.renewal_at)) > 0
+      ? 'month'
+      : 'year'
 
   return (
     <div className="flex flex-col justify-between w-full max-w-[832px]">
@@ -84,9 +78,7 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
                   <strong className="text-neutral-400 font-bold text-sm">
                     {costToHuman(props.currentCost?.cost?.total || 0, props.currentCost?.cost?.currency_code || 'USD')}
                   </strong>{' '}
-                  <span className="text-neutral-350 text-xs">
-                    / {getBillingRecurrenceStr(props.currentCost?.renewal_at)}
-                  </span>
+                  <span className="text-neutral-350 text-xs">/ {billingRecurrence}</span>
                 </div>
               </Skeleton>
             </div>
