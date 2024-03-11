@@ -2,7 +2,7 @@ import * as organizationsDomain from '@qovery/domains/organizations/feature'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import PromoCodeModalFeature, { type PromocodeModalFeatureProps } from './promo-code-modal-feature'
 
-const useAddCreditCodeSpy = jest.spyOn(organizationsDomain, 'useAddCreditCode')
+const useAddCreditCodeSpy = jest.spyOn(organizationsDomain, 'useAddCreditCode') as jest.Mock
 
 const props: PromocodeModalFeatureProps = {
   closeModal: jest.fn(),

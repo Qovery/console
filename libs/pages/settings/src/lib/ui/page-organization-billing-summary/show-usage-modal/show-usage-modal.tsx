@@ -140,9 +140,7 @@ export function ShowUsageModal({ organizationId, renewalAt, onSubmit, onClose, l
             dataTestId="input-select-report-period"
             label="Report period"
             className="mb-6"
-            options={reportPeriods.map((rp) => {
-              return { label: rp.option.label, value: rp.option.value }
-            })}
+            options={reportPeriods.map((rp) => ({ label: rp.option.label, value: rp.option.value }))}
             onChange={field.onChange}
             value={field.value}
             error={error?.message}

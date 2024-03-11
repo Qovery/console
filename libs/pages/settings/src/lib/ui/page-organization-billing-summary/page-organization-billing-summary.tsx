@@ -8,7 +8,6 @@ import {
   Heading,
   HelpSection,
   Icon,
-  IconAwesomeEnum,
   Link,
   Section,
   Skeleton,
@@ -17,6 +16,20 @@ import {
 import { dateToFormat } from '@qovery/shared/util-dates'
 import { costToHuman, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import InvoicesListFeature from '../../feature/page-organization-billing-summary-feature/invoices-list-feature/invoices-list-feature'
+
+// this function is used to get the billing recurrence word to display based on the renewal date.
+// it's not so accurate, but it's a good enough approximation for now
+function getBillingRecurrenceStr(renewalAt: string | null | undefined): string {
+  if (renewalAt === null || renewalAt === undefined) return 'month'
+
+  const now = new Date()
+  const renewalDate = new Date(renewalAt)
+  // if the renewal date is in less than 1 month, we display "month"
+
+  if (renewalDate.getTime() - now.getTime() > 30 * 24 * 60 * 60 * 1000) return 'year'
+
+  return 'month'
+}
 
 export interface PageOrganizationBillingSummaryProps {
   currentCost?: OrganizationCurrentCost
@@ -38,7 +51,7 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
           <div className="flex gap-3">
             <Button variant="surface" color="neutral" size="lg" onClick={props.onShowUsageClick}>
               Show usage
-              <Icon name={IconAwesomeEnum.GAUGE_HIGH} className="ml-1 text-xs" />
+              <Icon iconName="gauge-high" className="ml-2 text-xs" />
             </Button>
             <Button variant="surface" color="neutral" size="lg" onClick={props.onPromoCodeClick}>
               Promo code
@@ -127,20 +140,6 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
       />
     </div>
   )
-}
-
-// this function is used to get the billing recurrence word to display based on the renewal date.
-// it's not so accurate, but it's a good enough approximation for now
-function getBillingRecurrenceStr(renewalAt: string | null | undefined): string {
-  if (renewalAt === null || renewalAt === undefined) return 'month'
-
-  const now = new Date()
-  const renewalDate = new Date(renewalAt)
-  // if the renewal date is in less than 1 month, we display "month"
-
-  if (renewalDate.getTime() - now.getTime() > 30 * 24 * 60 * 60 * 1000) return 'year'
-
-  return 'month'
 }
 
 export default PageOrganizationBillingSummary

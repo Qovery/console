@@ -1,4 +1,4 @@
-import { Button, Callout, CopyToClipboardButtonIcon, Icon, IconAwesomeEnum, InputText } from '@qovery/shared/ui'
+import { Button, Callout, CopyToClipboardButtonIcon, Icon, InputText } from '@qovery/shared/ui'
 
 export interface ShowUsageValueModalProps {
   onClose: () => void
@@ -18,7 +18,7 @@ export function ShowUsageValueModal(props: ShowUsageValueModalProps) {
 
       <Callout.Root className="mb-5" color="yellow">
         <Callout.Icon>
-          <Icon name={IconAwesomeEnum.TRIANGLE_EXCLAMATION} />
+          <Icon iconName="triangle-exclamation" />
         </Callout.Icon>
         <Callout.Text className="text-xs">
           Please keep this URL safe! It is publicly accessible to anyone who use it. This link expires in{' '}
@@ -34,7 +34,7 @@ export function ShowUsageValueModal(props: ShowUsageValueModalProps) {
         rightElement={<CopyToClipboardButtonIcon className="text-neutral-400 text-sm" content={props.url} />}
       />
       <div className="flex gap-3 justify-end mt-6">
-        <Button data-testid="close-button" variant="surface" color="neutral" size="lg" onClick={props.onClose}>
+        <Button variant="surface" color="neutral" size="lg" onClick={props.onClose}>
           Close
         </Button>
       </div>
