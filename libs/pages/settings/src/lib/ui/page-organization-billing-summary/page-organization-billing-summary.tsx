@@ -36,26 +36,14 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
         <div className="flex justify-between mb-8">
           <Heading className="mb-2">Plan details</Heading>
           <div className="flex gap-3">
-            <Button
-              variant="surface"
-              color="neutral"
-              size="lg"
-              data-testid="promo-code-button"
-              onClick={props.onShowUsageClick}
-            >
+            <Button variant="surface" color="neutral" size="lg" onClick={props.onShowUsageClick}>
               Show usage
               <Icon name={IconAwesomeEnum.GAUGE_HIGH} className="ml-1 text-xs" />
             </Button>
-            <Button
-              variant="surface"
-              color="neutral"
-              size="lg"
-              data-testid="promo-code-button"
-              onClick={props.onPromoCodeClick}
-            >
+            <Button variant="surface" color="neutral" size="lg" onClick={props.onPromoCodeClick}>
               Promo code
             </Button>
-            <Button size="lg" data-testid="upgrade-button" onClick={props.openIntercom}>
+            <Button size="lg" onClick={props.openIntercom}>
               Upgrade plan
             </Button>
           </div>

@@ -1,39 +1,47 @@
-import { act, getByTestId, render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
+import * as organizationsDomain from '@qovery/domains/organizations/feature'
+import { organizationFactoryMock } from '@qovery/shared/factories'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import ShowUsageModal, { type ShowUsageModalProps } from './show-usage-modal'
 
+const useOrganizationsSpy: SpyInstance = jest.spyOn(organizationsDomain, 'useOrganizations')
+
 const props: ShowUsageModalProps = {
-  isSubmitting: false,
+  organizationId: '0',
+  renewalAt: '2022-01-01T00:00:00Z',
   onClose: jest.fn(),
-  onSubmit: jest.fn((e) => e.preventDefault()),
+  onSubmit: jest.fn(),
+  loading: true,
 }
 
 describe('ShowUsageModal', () => {
+  beforeEach(() => {
+    useOrganizationsSpy.mockReturnValue({
+      data: organizationFactoryMock(1)[0],
+    })
+  })
+
   it('should render successfully', () => {
-    const { baseElement } = render(wrapWithReactHookForm<{ code: string }>(<ShowUsageModal {...props} />))
+    const { baseElement } = renderWithProviders(wrapWithReactHookForm<{ code: string }>(<ShowUsageModal {...props} />))
     expect(baseElement).toBeTruthy()
   })
 
-  it('should show spinner', () => {
-    const { baseElement } = render(
-      wrapWithReactHookForm<{ code: string }>(<ShowUsageModal {...props} isSubmitting={true} />)
-    )
-    getByTestId(baseElement, 'spinner')
-  })
-
-  it('should call on Submit', async () => {
-    const spy = jest.fn((e) => e.preventDefault())
+  it('should call on submit', async () => {
+    const spy = jest.fn()
+    props.loading = false
     props.onSubmit = spy
 
-    const { baseElement } = render(
-      wrapWithReactHookForm<{ code: string }>(<ShowUsageModal {...props} onSubmit={spy} />, {
-        defaultValues: { code: 'test' },
+    const { userEvent } = renderWithProviders(
+      wrapWithReactHookForm(<ShowUsageModal {...props} onSubmit={spy} />, {
+        defaultValues: {
+          expires: 24,
+          report_period: 'current_month',
+        },
       })
     )
-    const button = getByTestId(baseElement, 'submit-button')
-    await act(() => {
-      button.click()
-    })
+
+    const button = screen.getByTestId('submit-button')
+    await userEvent.click(button)
 
     expect(spy).toHaveBeenCalled()
   })

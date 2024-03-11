@@ -33,7 +33,9 @@ export class ReportPeriodOption {
   }
 }
 
-export function getReportPeriods(organization: Organization, orgRenewalAt: string | null | undefined): ReportPeriod[] {
+export function getReportPeriods(organization?: Organization, orgRenewalAt?: string | null): ReportPeriod[] {
+  if (!organization) return []
+
   const date = new Date()
   date.setMonth(date.getMonth(), new Date(orgRenewalAt ? orgRenewalAt : organization.created_at).getDate())
   date.setHours(0, 0, 0, 0)
@@ -93,7 +95,7 @@ export function ShowUsageModal({ organizationId, renewalAt, onSubmit, onClose, l
   const { control } = useFormContext()
 
   const { data: organization } = useOrganization({ organizationId })
-  const reportPeriods = getReportPeriods(organization as Organization, renewalAt)
+  const reportPeriods = getReportPeriods(organization, renewalAt)
 
   return (
     <ModalCrud
