@@ -258,7 +258,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
                 as="button"
                 to={link}
                 onClick={(e) => e.stopPropagation()}
-                className="text-xs gap-2 whitespace-nowrap"
+                className="text-sm gap-2 whitespace-nowrap"
                 size="md"
                 color="neutral"
                 variant="outline"
@@ -287,7 +287,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
                 as="button"
                 to={ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(service.id)}
                 onClick={(e) => e.stopPropagation()}
-                className="text-xs gap-2 whitespace-nowrap"
+                className="text-sm gap-2 whitespace-nowrap"
                 size="md"
                 color="neutral"
                 variant="outline"

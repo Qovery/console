@@ -156,7 +156,7 @@ export function EnvironmentList({ project, clusterAvailable, className, ...props
                   SERVICES_GENERAL_URL
                 }
                 onClick={(e) => e.stopPropagation()}
-                className="text-xs gap-2 whitespace-nowrap"
+                className="text-sm gap-2 whitespace-nowrap"
                 size="md"
                 color="neutral"
                 variant="outline"
@@ -185,7 +185,7 @@ export function EnvironmentList({ project, clusterAvailable, className, ...props
                 as="button"
                 to={ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id)}
                 onClick={(e) => e.stopPropagation()}
-                className="text-xs gap-2 whitespace-nowrap"
+                className="text-sm gap-2 whitespace-nowrap"
                 size="md"
                 color="neutral"
                 variant="outline"
