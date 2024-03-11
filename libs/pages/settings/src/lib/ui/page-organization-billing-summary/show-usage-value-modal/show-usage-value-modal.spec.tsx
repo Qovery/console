@@ -1,25 +1,26 @@
-import { getByDisplayValue, getByTestId, render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ShowUsageValueModal, type ShowUsageValueModalProps } from './show-usage-value-modal'
 
 const props: ShowUsageValueModalProps = {
   onClose: jest.fn(),
-  token: 'token',
+  url: 'http://example.com',
+  url_expires_in_hours: 1,
 }
 
 describe('ShowUsageValueModal', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(wrapWithReactHookForm(<ShowUsageValueModal {...props} />))
+    const { baseElement } = renderWithProviders(wrapWithReactHookForm(<ShowUsageValueModal {...props} />))
     expect(baseElement).toBeTruthy()
   })
 
   it('should render copy paste widget', () => {
-    const { baseElement } = render(wrapWithReactHookForm(<ShowUsageValueModal {...props} />))
-    getByTestId(baseElement, 'copy-container')
+    renderWithProviders(wrapWithReactHookForm(<ShowUsageValueModal {...props} />))
+    screen.getByTestId('copy-container')
   })
 
   it('should render token value', () => {
-    const { baseElement } = render(wrapWithReactHookForm(<ShowUsageValueModal {...props} />))
-    getByDisplayValue(baseElement, 'token')
+    renderWithProviders(wrapWithReactHookForm(<ShowUsageValueModal {...props} />))
+    screen.getByDisplayValue(props.url)
   })
 })
