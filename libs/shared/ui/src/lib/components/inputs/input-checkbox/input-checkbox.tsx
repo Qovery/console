@@ -78,7 +78,12 @@ export function InputCheckbox(props: InputCheckboxProps) {
           {label}
         </label>
       )}
-      {check && <Icon iconName="check" className="text-white absolute -top-[7px] left-[3.5px] text-2xs" />}
+      {check && (
+        <Icon
+          iconName="check"
+          className={`text-white absolute text-2xs ${big ? 'left-1.5' : '-top-[7px] left-[3.5px]'}`}
+        />
+      )}
     </div>
   )
 }
