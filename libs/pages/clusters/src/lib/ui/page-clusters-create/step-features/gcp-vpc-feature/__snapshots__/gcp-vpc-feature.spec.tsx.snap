@@ -186,14 +186,14 @@ exports[`ButtonPopoverSubnets should match snapshots 1`] = `
             >
               <label
                 class="text-sm translate-y-2"
-                for="Cluster Pod IPv4 ranges names (additional) (optional)"
+                for="Additional cluster Pod IPv4 ranges names (separated with a comma) (optional)"
               >
-                Cluster Pod IPv4 ranges names (additional) (optional)
+                Additional cluster Pod IPv4 ranges names (separated with a comma) (optional)
               </label>
               <input
                 class="input__value "
                 data-testid="input-text"
-                id="Cluster Pod IPv4 ranges names (additional) (optional)"
+                id="Additional cluster Pod IPv4 ranges names (separated with a comma) (optional)"
                 name="gcp_existing_vpc.additional_ip_range_pods_names"
                 type="text"
                 value=""

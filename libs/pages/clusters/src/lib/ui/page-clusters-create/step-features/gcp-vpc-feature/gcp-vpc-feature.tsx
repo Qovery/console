@@ -6,6 +6,11 @@ export function GCPVpcFeature() {
   const { control } = useFormContext()
   const [openOptions, setOpenOptions] = useState(false)
 
+  const pattern = {
+    value: /^[a-z0-9-]+$/i,
+    message: 'Invalid name format (lowercase letters, numbers, and dashes only)',
+  }
+
   return (
     <div className="flex flex-col justify-between p-4 rounded border bg-neutral-100 border-neutral-250">
       <div className="flex justify-between">
@@ -64,51 +69,67 @@ export function GCPVpcFeature() {
           <h4 className="text-neutral-400 text-sm font-medium mb-4">Additional ranges (optional)</h4>
           <Controller
             name="gcp_existing_vpc.subnetwork_name"
+            rules={{
+              pattern,
+            }}
             control={control}
-            render={({ field }) => (
+            render={({ field, fieldState: { error } }) => (
               <InputText
                 className="mb-4"
                 label="Subnetwork range name (optional)"
                 name={field.name}
                 value={field.value}
+                error={error?.message}
                 onChange={field.onChange}
               />
             )}
           />
           <Controller
             name="gcp_existing_vpc.ip_range_pods_name"
+            rules={{
+              pattern,
+            }}
             control={control}
-            render={({ field }) => (
+            render={({ field, fieldState: { error } }) => (
               <InputText
                 className="mb-4"
                 label="Pod IPv4 address range name (optional)"
                 name={field.name}
                 value={field.value}
+                error={error?.message}
                 onChange={field.onChange}
               />
             )}
           />
           <Controller
             name="gcp_existing_vpc.additional_ip_range_pods_names"
+            rules={{
+              pattern,
+            }}
             control={control}
-            render={({ field }) => (
+            render={({ field, fieldState: { error } }) => (
               <InputText
                 className="mb-4"
-                label="Cluster Pod IPv4 ranges names (additional) (optional)"
+                label="Additional cluster Pod IPv4 ranges names (separated with a comma) (optional)"
                 name={field.name}
                 value={field.value}
+                error={error?.message}
                 onChange={field.onChange}
               />
             )}
           />
           <Controller
             name="gcp_existing_vpc.ip_range_services_name"
+            rules={{
+              pattern,
+            }}
             control={control}
-            render={({ field }) => (
+            render={({ field, fieldState: { error } }) => (
               <InputText
                 label="IPv4 service range name (optional)"
                 name={field.name}
                 value={field.value}
+                error={error?.message}
                 onChange={field.onChange}
               />
             )}
