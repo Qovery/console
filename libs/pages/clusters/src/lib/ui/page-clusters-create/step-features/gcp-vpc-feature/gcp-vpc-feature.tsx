@@ -11,25 +11,11 @@ export function GCPVpcFeature() {
       <div className="flex justify-between">
         <div>
           <h4 className="text-neutral-400 text-sm font-medium mb-1">Deploy on an existing VPC</h4>
-          <p className="text-neutral-350 text-sm mb-2">In your VPC settings, you must enable the DNS hostnames.</p>
           <ExternalLink href="https://hub.qovery.com/docs/using-qovery/configuration/clusters/" className="mb-4">
             How to configure existing VPC
           </ExternalLink>
         </div>
       </div>
-      <Controller
-        name="gcp_existing_vpc.vpc_project_id"
-        rules={{ required: true }}
-        control={control}
-        render={({ field }) => (
-          <>
-            <InputText label="External project id" name={field.name} value={field.value} onChange={field.onChange} />
-            <p className="text-neutral-350 text-xs ml-4 mt-1 mb-3">
-              By default: the project id used is the one specified in the credentials file
-            </p>
-          </>
-        )}
-      />
       <Controller
         name="gcp_existing_vpc.vpc_name"
         rules={{ required: true }}
@@ -42,6 +28,23 @@ export function GCPVpcFeature() {
             value={field.value}
             onChange={field.onChange}
           />
+        )}
+      />
+      <Controller
+        name="gcp_existing_vpc.vpc_project_id"
+        control={control}
+        render={({ field }) => (
+          <>
+            <InputText
+              label="External project id (optional)"
+              name={field.name}
+              value={field.value}
+              onChange={field.onChange}
+            />
+            <p className="text-neutral-350 text-xs ml-4 mt-1 mb-3">
+              By default: the project id used is the one specified in the credentials file
+            </p>
+          </>
         )}
       />
       {!openOptions && (

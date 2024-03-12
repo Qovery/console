@@ -70,6 +70,11 @@ export function StepSummary(props: StepSummaryProps) {
     return feature.length > 0
   }
 
+  const showFeaturesSection = match(props.generalData.cloud_provider)
+    .with('AWS', () => checkIfFeaturesAvailable())
+    .with('GCP', () => props.featuresData?.vpc_mode === 'EXISTING_VPC')
+    .with('SCW', () => false)
+
   return (
     <Section>
       <div className="mb-10">
@@ -237,7 +242,7 @@ export function StepSummary(props: StepSummaryProps) {
           </div>
         )}
 
-        {props.featuresData && checkIfFeaturesAvailable() && (
+        {props.featuresData && showFeaturesSection && (
           <div
             data-testid="summary-features"
             className="flex p-4 w-full border rounded border-neutral-250 bg-neutral-100 mb-2"
@@ -343,12 +348,14 @@ export function StepSummary(props: StepSummaryProps) {
                 {props.featuresData.gcp_existing_vpc && (
                   <>
                     <li>
-                      VPC Project ID:{' '}
-                      <strong className="font-medium">{props.featuresData.gcp_existing_vpc.vpc_project_id}</strong>
-                    </li>
-                    <li>
                       VPC name: <strong className="font-medium">{props.featuresData.gcp_existing_vpc.vpc_name}</strong>
                     </li>
+                    {props.featuresData.gcp_existing_vpc.vpc_project_id && (
+                      <li>
+                        VPC Project ID:{' '}
+                        <strong className="font-medium">{props.featuresData.gcp_existing_vpc.vpc_project_id}</strong>
+                      </li>
+                    )}
                     {props.featuresData.gcp_existing_vpc.subnetwork_name && (
                       <li>
                         Subnetwork range name:{' '}
