@@ -1,5 +1,5 @@
 import { inviteMembersMock, membersMock } from '@qovery/shared/factories'
-import { dateMediumLocalFormat, timeAgo } from '@qovery/shared/util-dates'
+import { dateMediumLocalFormat } from '@qovery/shared/util-dates'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import RowMember, { type RowMemberProps } from './row-member'
 
@@ -68,7 +68,7 @@ describe('RowMember', () => {
     const dateLastActivity = screen.getByTestId('last-activity')
     const dateCreatedAt = screen.getByTestId('created-at')
 
-    expect(dateLastActivity.textContent).toBe(`${timeAgo(new Date(props.member.last_activity_at || ''))} ago`)
+    expect(dateLastActivity.textContent).toMatch(/[0|1] second[s]* ago/)
     expect(dateCreatedAt.textContent).toBe(dateMediumLocalFormat(props.member.created_at))
   })
 
