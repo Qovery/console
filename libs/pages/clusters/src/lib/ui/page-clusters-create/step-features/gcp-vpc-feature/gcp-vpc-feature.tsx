@@ -1,11 +1,9 @@
 import { useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { Button, ExternalLink, InputSelect, InputText } from '@qovery/shared/ui'
+import { Button, ExternalLink, InputText } from '@qovery/shared/ui'
 
 export function GCPVpcFeature() {
-  const { control, watch } = useFormContext()
-
-  const watchVpcMode = watch('gcp_existing_vpc.vpc_mode')
+  const { control } = useFormContext()
   const [openOptions, setOpenOptions] = useState(false)
 
   return (
@@ -63,7 +61,6 @@ export function GCPVpcFeature() {
           <h4 className="text-neutral-400 text-sm font-medium mb-4">Additional ranges (optional)</h4>
           <Controller
             name="gcp_existing_vpc.subnetwork_name"
-            rules={{ required: true }}
             control={control}
             render={({ field }) => (
               <InputText

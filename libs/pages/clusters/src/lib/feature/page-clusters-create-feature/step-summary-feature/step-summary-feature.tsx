@@ -96,9 +96,7 @@ export function StepSummaryFeature() {
           goToFeatures()
         }
       })
-      .with('GCP', () => {
-        goToGeneral()
-      })
+      .with('GCP', () => goToFeatures())
       .otherwise(() => goToResources())
   }
 
