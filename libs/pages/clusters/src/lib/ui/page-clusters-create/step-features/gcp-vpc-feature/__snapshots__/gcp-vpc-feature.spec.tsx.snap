@@ -1,0 +1,240 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ButtonPopoverSubnets should match snapshots 1`] = `
+<body>
+  <div>
+    <div
+      class="flex flex-col justify-between p-4 rounded border bg-neutral-100 border-neutral-250"
+    >
+      <div
+        class="flex justify-between"
+      >
+        <div>
+          <h4
+            class="text-neutral-400 text-sm font-medium mb-1"
+          >
+            Deploy on an existing VPC
+          </h4>
+          <a
+            class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-sky-500 hover:text-sky-600 text-sm mb-4"
+            href="https://hub.qovery.com/docs/using-qovery/configuration/clusters/"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            How to configure existing VPC
+            <i
+              aria-hidden="true"
+              class="fa-solid fa-arrow-up-right-from-square text-xs leading-5"
+            />
+          </a>
+        </div>
+      </div>
+      <div
+        class="mb-3"
+        data-testid="input-text-wrapper"
+      >
+        <div
+          class="relative"
+        >
+          <div
+            aria-label="input-container"
+            class="input     "
+          >
+            <div
+              class=""
+            >
+              <label
+                class="text-sm translate-y-2"
+                for="VPC Name"
+              >
+                VPC Name
+              </label>
+              <input
+                class="input__value "
+                data-testid="input-text"
+                id="VPC Name"
+                name="gcp_existing_vpc.vpc_name"
+                type="text"
+                value=""
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class=""
+        data-testid="input-text-wrapper"
+      >
+        <div
+          class="relative"
+        >
+          <div
+            aria-label="input-container"
+            class="input     "
+          >
+            <div
+              class=""
+            >
+              <label
+                class="text-sm translate-y-2"
+                for="External project id (optional)"
+              >
+                External project id (optional)
+              </label>
+              <input
+                class="input__value "
+                data-testid="input-text"
+                id="External project id (optional)"
+                name="gcp_existing_vpc.vpc_project_id"
+                type="text"
+                value=""
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <p
+        class="text-neutral-350 text-xs ml-4 mt-1 mb-3"
+      >
+        By default: the project id used is the one specified in the credentials file
+      </p>
+      <hr
+        class="my-4"
+      />
+      <h4
+        class="text-neutral-400 text-sm font-medium mb-4"
+      >
+        Additional ranges (optional)
+      </h4>
+      <div
+        class="mb-4"
+        data-testid="input-text-wrapper"
+      >
+        <div
+          class="relative"
+        >
+          <div
+            aria-label="input-container"
+            class="input     "
+          >
+            <div
+              class=""
+            >
+              <label
+                class="text-sm translate-y-2"
+                for="Subnetwork range name (optional)"
+              >
+                Subnetwork range name (optional)
+              </label>
+              <input
+                class="input__value "
+                data-testid="input-text"
+                id="Subnetwork range name (optional)"
+                name="gcp_existing_vpc.subnetwork_name"
+                type="text"
+                value=""
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="mb-4"
+        data-testid="input-text-wrapper"
+      >
+        <div
+          class="relative"
+        >
+          <div
+            aria-label="input-container"
+            class="input     "
+          >
+            <div
+              class=""
+            >
+              <label
+                class="text-sm translate-y-2"
+                for="Pod IPv4 address range name (optional)"
+              >
+                Pod IPv4 address range name (optional)
+              </label>
+              <input
+                class="input__value "
+                data-testid="input-text"
+                id="Pod IPv4 address range name (optional)"
+                name="gcp_existing_vpc.ip_range_pods_name"
+                type="text"
+                value=""
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="mb-4"
+        data-testid="input-text-wrapper"
+      >
+        <div
+          class="relative"
+        >
+          <div
+            aria-label="input-container"
+            class="input     "
+          >
+            <div
+              class=""
+            >
+              <label
+                class="text-sm translate-y-2"
+                for="Cluster Pod IPv4 ranges names (additional) (optional)"
+              >
+                Cluster Pod IPv4 ranges names (additional) (optional)
+              </label>
+              <input
+                class="input__value "
+                data-testid="input-text"
+                id="Cluster Pod IPv4 ranges names (additional) (optional)"
+                name="gcp_existing_vpc.additional_ip_range_pods_names"
+                type="text"
+                value=""
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class=""
+        data-testid="input-text-wrapper"
+      >
+        <div
+          class="relative"
+        >
+          <div
+            aria-label="input-container"
+            class="input     "
+          >
+            <div
+              class=""
+            >
+              <label
+                class="text-sm translate-y-2"
+                for="IPv4 service range name (optional)"
+              >
+                IPv4 service range name (optional)
+              </label>
+              <input
+                class="input__value "
+                data-testid="input-text"
+                id="IPv4 service range name (optional)"
+                name="gcp_existing_vpc.ip_range_services_name"
+                type="text"
+                value=""
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+`;
