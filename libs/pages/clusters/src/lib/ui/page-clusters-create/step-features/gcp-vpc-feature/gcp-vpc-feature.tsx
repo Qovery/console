@@ -7,7 +7,7 @@ export function GCPVpcFeature() {
   const [openOptions, setOpenOptions] = useState(false)
 
   const pattern = {
-    value: /^[a-z0-9-]+$/i,
+    value: /^[a-z0-9-,]+$/i,
     message: 'Invalid name format (lowercase letters, numbers, and dashes only)',
   }
 
