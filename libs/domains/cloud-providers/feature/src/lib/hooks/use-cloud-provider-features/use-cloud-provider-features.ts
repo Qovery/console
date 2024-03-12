@@ -4,17 +4,15 @@ import { queries } from '@qovery/state/util-queries'
 
 interface UseCloudProviderFeaturesProps {
   cloudProvider: CloudProviderEnum
-  enabled?: boolean
 }
 
-export function useCloudProviderFeatures({ cloudProvider, enabled = true }: UseCloudProviderFeaturesProps) {
+export function useCloudProviderFeatures({ cloudProvider }: UseCloudProviderFeaturesProps) {
   return useQuery({
     ...queries.cloudProviders.features({ cloudProvider }),
     select(features) {
       // TODO: hide existing VPC feature for now
       return features?.filter(({ id }) => id !== 'EXISTING_VPC')
     },
-    enabled,
   })
 }
 

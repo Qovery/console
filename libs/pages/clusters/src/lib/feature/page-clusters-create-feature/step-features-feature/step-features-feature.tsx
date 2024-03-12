@@ -28,7 +28,6 @@ export function StepFeaturesFeature() {
     useClusterContainerCreateContext()
   const { data: features } = useCloudProviderFeatures({
     cloudProvider: generalData?.cloud_provider ?? 'AWS',
-    enabled: generalData?.cloud_provider === 'GCP',
   })
   const navigate = useNavigate()
 
