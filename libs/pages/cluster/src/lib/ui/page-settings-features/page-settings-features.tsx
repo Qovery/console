@@ -28,6 +28,8 @@ export function PageSettingsFeatures(props: PageSettingsFeaturesProps) {
   const featureExistingVpc = features?.find(({ id }) => id === 'EXISTING_VPC')
   const featureExistingVpcValue = featureExistingVpc?.value as ClusterFeatureAwsExistingVpc
 
+  console.log(featureExistingVpcValue)
+
   return (
     <div className="flex flex-col justify-between w-full">
       <Section className="p-8 max-w-content-with-navigation-left">
