@@ -340,6 +340,47 @@ export function StepSummary(props: StepSummaryProps) {
                     )}
                   </>
                 )}
+                {props.featuresData.gcp_existing_vpc && (
+                  <>
+                    <li>
+                      VPC Project ID:{' '}
+                      <strong className="font-medium">{props.featuresData.gcp_existing_vpc.vpc_project_id}</strong>
+                    </li>
+                    <li>
+                      VPC name: <strong className="font-medium">{props.featuresData.gcp_existing_vpc.vpc_name}</strong>
+                    </li>
+                    {props.featuresData.gcp_existing_vpc.subnetwork_name && (
+                      <li>
+                        Subnetwork range name:{' '}
+                        <strong className="font-medium">{props.featuresData.gcp_existing_vpc.subnetwork_name}</strong>
+                      </li>
+                    )}
+                    {props.featuresData.gcp_existing_vpc.ip_range_pods_name && (
+                      <li>
+                        Pod IPv4 address range name:{' '}
+                        <strong className="font-medium">
+                          {props.featuresData.gcp_existing_vpc.ip_range_pods_name}
+                        </strong>
+                      </li>
+                    )}
+                    {props.featuresData.gcp_existing_vpc.additional_ip_range_pods_names && (
+                      <li>
+                        Cluster Pod IPv4 ranges names (additional):{' '}
+                        <strong className="font-medium">
+                          {props.featuresData.gcp_existing_vpc.additional_ip_range_pods_names}
+                        </strong>
+                      </li>
+                    )}
+                    {props.featuresData.gcp_existing_vpc.ip_range_services_name && (
+                      <li>
+                        IPv4 service range name:{' '}
+                        <strong className="font-medium">
+                          {props.featuresData.gcp_existing_vpc.ip_range_services_name}
+                        </strong>
+                      </li>
+                    )}
+                  </>
+                )}
                 {Object.keys(props.featuresData.features).map((id: string) => {
                   const currentFeature = props.featuresData && props.featuresData.features[id]
 
