@@ -1,12 +1,14 @@
+import { differenceInYears } from 'date-fns'
 import { type CreditCard, type OrganizationCurrentCost, PlanEnum } from 'qovery-typescript-axios'
 import { type CardImages } from 'react-payment-inputs/images'
 import { useParams } from 'react-router-dom'
-import { CLUSTERS_URL, SETTINGS_BILLING_URL, SETTINGS_URL } from '@qovery/shared/routes'
+import { SETTINGS_BILLING_URL, SETTINGS_URL } from '@qovery/shared/routes'
 import {
   Button,
   ExternalLink,
   Heading,
   HelpSection,
+  Icon,
   Link,
   Section,
   Skeleton,
@@ -19,15 +21,21 @@ import InvoicesListFeature from '../../feature/page-organization-billing-summary
 export interface PageOrganizationBillingSummaryProps {
   currentCost?: OrganizationCurrentCost
   creditCard?: CreditCard
-  numberOfRunningClusters?: number
-  numberOfClusters?: number
   creditCardLoading?: boolean
   onPromoCodeClick?: () => void
+  onShowUsageClick?: () => void
   openIntercom?: () => void
 }
 
 export function PageOrganizationBillingSummary(props: PageOrganizationBillingSummaryProps) {
   const { organizationId = '' } = useParams()
+
+  // Get the billing recurrence word to display based on the renewal date.
+  // It's not so accurate, but it's a good enough approximation for now
+  const billingRecurrence =
+    props.currentCost?.renewal_at && differenceInYears(new Date(), new Date(props.currentCost?.renewal_at)) > 0
+      ? 'month'
+      : 'year'
 
   return (
     <div className="flex flex-col justify-between w-full max-w-[832px]">
@@ -35,16 +43,14 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
         <div className="flex justify-between mb-8">
           <Heading className="mb-2">Plan details</Heading>
           <div className="flex gap-3">
-            <Button
-              variant="surface"
-              color="neutral"
-              size="lg"
-              data-testid="promo-code-button"
-              onClick={props.onPromoCodeClick}
-            >
+            <Button variant="surface" color="neutral" size="lg" onClick={props.onShowUsageClick}>
+              Show usage
+              <Icon iconName="gauge-high" className="ml-2 text-xs" />
+            </Button>
+            <Button variant="surface" color="neutral" size="lg" onClick={props.onPromoCodeClick}>
               Promo code
             </Button>
-            <Button size="lg" data-testid="upgrade-button" onClick={props.openIntercom}>
+            <Button size="lg" onClick={props.openIntercom}>
               Upgrade plan
             </Button>
           </div>
@@ -60,28 +66,25 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
                 </div>
               </Skeleton>
             </div>
-            <ExternalLink
-              href="https://hub.qovery.com/docs/using-qovery/configuration/organization/#organization-members"
-              size="xs"
-            >
+            <ExternalLink href="https://www.qovery.com/pricing" size="xs">
               See details
             </ExternalLink>
           </div>
           <div className="flex-1  h-[114px]  border  p-5 border-neutral-200 rounded">
-            <div className="text-neutral-350 text-xs mb-1 font-medium">Current monthly bill</div>
+            <div className="text-neutral-350 text-xs mb-1 font-medium">Current bill</div>
             <div className="mb-2">
               <Skeleton height={20} width={100} show={!props.currentCost?.plan}>
                 <div className="h-5">
                   <strong className="text-neutral-400 font-bold text-sm">
                     {costToHuman(props.currentCost?.cost?.total || 0, props.currentCost?.cost?.currency_code || 'USD')}
                   </strong>{' '}
-                  <span className="text-neutral-350 text-xs">/ m</span>
+                  <span className="text-neutral-350 text-xs">/ {billingRecurrence}</span>
                 </div>
               </Skeleton>
             </div>
             {props.currentCost?.plan !== PlanEnum.FREE && (
               <p className="text-neutral-350 text-xs font-medium">
-                Next invoice{' '}
+                Next invoice:{' '}
                 <strong className="text-neutral-400">
                   {props.currentCost?.renewal_at && dateToFormat(props.currentCost?.renewal_at, 'MMM dd, Y')}
                 </strong>
@@ -113,33 +116,6 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
               </Link>
             </div>
           )}
-        </div>
-
-        <div className="flex w-full border gap-2 mb-8 border-neutral-200 rounded">
-          <div className="flex-1 p-5 h-[114px]">
-            <div className="text-neutral-350 text-xs mb-1 font-medium">Seats</div>
-            <div className="text-neutral-400 font-bold text-sm mb-1">N/A</div>
-          </div>
-          <div className="flex-1 p-5 h-[114px]">
-            <div className="text-neutral-350 text-xs mb-1 font-medium">Cluster</div>
-            <div className="mb-1">
-              <Skeleton height={20} width={100} show={!props.numberOfClusters === undefined}>
-                <div className="h-5">
-                  {props.numberOfClusters !== undefined && props.numberOfClusters > 0 ? (
-                    <>
-                      <strong className="text-neutral-400 font-bold text-sm">{props.numberOfRunningClusters}</strong>{' '}
-                      <span className="text-neutral-350 text-xs">/ {props.numberOfClusters}</span>
-                    </>
-                  ) : (
-                    <strong className="text-neutral-400 font-medium text-sm">No cluster found</strong>
-                  )}
-                </div>
-              </Skeleton>
-            </div>
-            <Link to={CLUSTERS_URL(organizationId)} size="xs">
-              Manage clusters
-            </Link>
-          </div>
         </div>
         <InvoicesListFeature />
       </Section>

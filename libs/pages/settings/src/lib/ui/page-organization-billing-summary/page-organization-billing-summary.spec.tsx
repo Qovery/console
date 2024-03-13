@@ -7,22 +7,14 @@ import PageOrganizationBillingSummary, {
 
 const props: PageOrganizationBillingSummaryProps = {
   creditCard: creditCardsFactoryMock(1)[0],
-  numberOfClusters: 130,
-  numberOfRunningClusters: 88,
+  creditCardLoading: false,
   currentCost: {
     plan: PlanEnum.ENTERPRISE,
     cost: { total: 56000, currency_code: 'USD', total_in_cents: 5600000 },
-    paid_usage: {
-      renewal_at: '2021-01-01',
-      remaining_deployments: 10,
-      consumed_deployments: 999,
-      max_deployments_per_month: 1345,
-      deployments_exceeded: true,
-      monthly_plan_cost: 10,
-      monthly_plan_cost_in_cents: 10000,
-    },
+    renewal_at: '2021-01-01',
   },
   onPromoCodeClick: jest.fn(),
+  onShowUsageClick: jest.fn(),
   openIntercom: jest.fn(),
 }
 
@@ -37,20 +29,8 @@ describe('PageOrganizationBillingSummary', () => {
     screen.getByText('Current plan')
     screen.getByText('Enterprise plan')
 
-    screen.getByText('Current monthly bill')
+    screen.getByText('Current bill')
     screen.getByText('$56,000')
-
-    screen.getByText('Seats')
-    screen.getByText('N/A')
-
-    screen.getByText('Cluster')
-    screen.getByText('88')
-    screen.getByText('/ 130')
-  })
-
-  it('should say that no cluster was found', () => {
-    renderWithProviders(<PageOrganizationBillingSummary {...props} numberOfClusters={0} />)
-    screen.getByText('No cluster found')
   })
 
   it('should say that no credit card was found', () => {
@@ -58,9 +38,17 @@ describe('PageOrganizationBillingSummary', () => {
     screen.getByText('No credit card provided')
   })
 
+  it('should say call show usage modal on click', async () => {
+    const { userEvent } = renderWithProviders(<PageOrganizationBillingSummary {...props} />)
+    const button = screen.getByText(/show usage/i)
+    await userEvent.click(button)
+
+    expect(props.onShowUsageClick).toHaveBeenCalled()
+  })
+
   it('should say call intercom on click on upgrade', async () => {
     const { userEvent } = renderWithProviders(<PageOrganizationBillingSummary {...props} />)
-    const button = screen.getByTestId('upgrade-button')
+    const button = screen.getByText(/upgrade plan/i)
     await userEvent.click(button)
 
     expect(props.openIntercom).toHaveBeenCalled()
@@ -68,29 +56,22 @@ describe('PageOrganizationBillingSummary', () => {
 
   it('should say call onPromoCodeClick on click on add promo code', async () => {
     const { userEvent } = renderWithProviders(<PageOrganizationBillingSummary {...props} />)
-    const button = screen.getByTestId('promo-code-button')
+    const button = screen.getByText(/promo code/i)
     await userEvent.click(button)
+
     expect(props.onPromoCodeClick).toHaveBeenCalled()
   })
 
   it('should display not display the payment method box', () => {
     props.currentCost = {
       plan: PlanEnum.FREE,
+      renewal_at: '2021-01-01',
       cost: { total: 56000, currency_code: 'USD', total_in_cents: 5600000 },
-      paid_usage: {
-        renewal_at: '2021-01-01',
-        remaining_deployments: 10,
-        consumed_deployments: 999,
-        max_deployments_per_month: 1345,
-        deployments_exceeded: true,
-        monthly_plan_cost: 10,
-        monthly_plan_cost_in_cents: 10000,
-      },
     }
 
     renderWithProviders(<PageOrganizationBillingSummary {...props} />)
     screen.getByText('Current plan')
-    screen.getByText('Current monthly bill')
+    screen.getByText('Current bill')
     expect(screen.queryByText('Payment method')).toBeNull()
   })
 })
