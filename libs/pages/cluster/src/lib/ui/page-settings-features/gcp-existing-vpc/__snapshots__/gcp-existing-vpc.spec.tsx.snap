@@ -1,0 +1,215 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`GcpExistingVPC should match snapshots 1`] = `
+<body>
+  <div>
+    <div
+      class="flex flex-col gap-4 justify-between p-4 rounded border bg-neutral-100 border-neutral-250"
+    >
+      <h4
+        class="text-neutral-400 text-sm font-medium"
+      >
+        Deploy on an existing VPC
+      </h4>
+      <div
+        class=""
+        data-testid="input-text-wrapper"
+      >
+        <div
+          class="relative"
+        >
+          <div
+            aria-label="input-container"
+            class="input input--disabled input--disabled !border-neutral-250  input--label-up "
+          >
+            <div
+              class="pointer-events-none"
+            >
+              <label
+                class="text-sm translate-y-2"
+                for="VPC Name"
+              >
+                VPC Name
+              </label>
+              <input
+                class="input__value "
+                data-testid="input-text"
+                disabled=""
+                id="VPC Name"
+                name="vpc_id"
+                type="text"
+                value="test"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class=""
+        data-testid="input-text-wrapper"
+      >
+        <div
+          class="relative"
+        >
+          <div
+            aria-label="input-container"
+            class="input input--disabled input--disabled !border-neutral-250  input--label-up "
+          >
+            <div
+              class="pointer-events-none"
+            >
+              <label
+                class="text-sm translate-y-2"
+                for="External project id"
+              >
+                External project id
+              </label>
+              <input
+                class="input__value "
+                data-testid="input-text"
+                disabled=""
+                id="External project id"
+                name="vpc_project_id"
+                type="text"
+                value="test"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class=""
+        data-testid="input-text-wrapper"
+      >
+        <div
+          class="relative"
+        >
+          <div
+            aria-label="input-container"
+            class="input input--disabled input--disabled !border-neutral-250  input--label-up "
+          >
+            <div
+              class="pointer-events-none"
+            >
+              <label
+                class="text-sm translate-y-2"
+                for="Subnetwork range name"
+              >
+                Subnetwork range name
+              </label>
+              <input
+                class="input__value "
+                data-testid="input-text"
+                disabled=""
+                id="Subnetwork range name"
+                name="subnetwork_name"
+                type="text"
+                value="test"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class=""
+        data-testid="input-text-wrapper"
+      >
+        <div
+          class="relative"
+        >
+          <div
+            aria-label="input-container"
+            class="input input--disabled input--disabled !border-neutral-250  input--label-up "
+          >
+            <div
+              class="pointer-events-none"
+            >
+              <label
+                class="text-sm translate-y-2"
+                for="Pod IPv4 address range name"
+              >
+                Pod IPv4 address range name
+              </label>
+              <input
+                class="input__value "
+                data-testid="input-text"
+                disabled=""
+                id="Pod IPv4 address range name"
+                name="ip_range_pods_name"
+                type="text"
+                value="test"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class=""
+        data-testid="input-text-wrapper"
+      >
+        <div
+          class="relative"
+        >
+          <div
+            aria-label="input-container"
+            class="input input--disabled input--disabled !border-neutral-250  input--label-up "
+          >
+            <div
+              class="pointer-events-none"
+            >
+              <label
+                class="text-sm translate-y-2"
+                for="Additional cluster Pod IPv4 ranges names"
+              >
+                Additional cluster Pod IPv4 ranges names
+              </label>
+              <input
+                class="input__value "
+                data-testid="input-text"
+                disabled=""
+                id="Additional cluster Pod IPv4 ranges names"
+                name="additional_ip_range_pods_names"
+                type="text"
+                value="test"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class=""
+        data-testid="input-text-wrapper"
+      >
+        <div
+          class="relative"
+        >
+          <div
+            aria-label="input-container"
+            class="input input--disabled input--disabled !border-neutral-250  input--label-up "
+          >
+            <div
+              class="pointer-events-none"
+            >
+              <label
+                class="text-sm translate-y-2"
+                for="IPv4 service range name"
+              >
+                IPv4 service range name
+              </label>
+              <input
+                class="input__value "
+                data-testid="input-text"
+                disabled=""
+                id="IPv4 service range name"
+                name="ip_range_services_name"
+                type="text"
+                value="test"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+`;

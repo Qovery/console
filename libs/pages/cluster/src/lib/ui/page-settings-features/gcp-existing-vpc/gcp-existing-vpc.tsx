@@ -1,82 +1,53 @@
 import { type ClusterFeatureGcpExistingVpc } from 'qovery-typescript-axios'
-import { InputText } from '@qovery/shared/ui'
+import { ExternalLink, InputText } from '@qovery/shared/ui'
 
 export interface GcpExistingVPCProps {
   feature: ClusterFeatureGcpExistingVpc
 }
 
-export function GcpExistingVPC(props: GcpExistingVPCProps) {
-  const { feature } = props
-
+export function GcpExistingVPC({ feature }: GcpExistingVPCProps) {
   return (
-    <div className="flex flex-col justify-between p-4 rounded border bg-neutral-100 border-neutral-250 mb-5">
-      <h4 className="text-neutral-400 text-sm font-medium mb-4">Deploy on an existing VPC</h4>
-      <InputText name="vpc_id" label="VPC Name" value={feature.vpc_name} className="mb-4" disabled />
+    <div className="flex flex-col gap-4 justify-between p-4 rounded border bg-neutral-100 border-neutral-250">
+      <div>
+        <h4 className="text-neutral-400 text-sm font-medium">Deploy on an existing VPC</h4>
+        <ExternalLink
+          size="xs"
+          href="https://hub.qovery.com/docs/using-qovery/configuration/clusters/#use-existing-vpc"
+        >
+          How to configure your VPC
+        </ExternalLink>
+      </div>
+      <InputText name="vpc_id" label="VPC Name" value={feature.vpc_name} disabled />
       {feature.vpc_project_id && (
         <InputText name="vpc_project_id" label="External project id" value={feature.vpc_project_id} disabled />
       )}
       {feature.subnetwork_name && (
-        <InputText
-          name="subnetwork_name"
-          className="mb-4"
-          label="Subnetwork range name (optional)"
-          value={feature.subnetwork_name}
-        />
+        <InputText name="subnetwork_name" label="Subnetwork range name" value={feature.subnetwork_name} disabled />
       )}
       {feature.ip_range_pods_name && (
         <InputText
           name="ip_range_pods_name"
-          className="mb-4"
-          label="Subnetwork range name (optional)"
+          label="Pod IPv4 address range name"
           value={feature.ip_range_pods_name}
+          disabled
         />
       )}
-      {feature.ip_range_pods_name && (
+      {feature.additional_ip_range_pods_names && (
         <InputText
-          name="ip_range_pods_name"
-          className="mb-4"
-          label="Additional cluster Pod IPv4 ranges names (separated with a comma) (optional)"
-          value={feature.ip_range_pods_name}
+          name="additional_ip_range_pods_names"
+          label="Additional cluster Pod IPv4 ranges names"
+          value={feature.additional_ip_range_pods_names.join()}
+          disabled
         />
       )}
-
-      {/* {openOptions && (
-        <>
-          <Controller
-            name="gcp_existing_vpc.additional_ip_range_pods_names"
-            rules={{
-              pattern,
-            }}
-            control={control}
-            render={({ field, fieldState: { error } }) => (
-              <InputText
-                className="mb-4"
-                label="Additional cluster Pod IPv4 ranges names (separated with a comma) (optional)"
-                name={field.name}
-                value={field.value}
-                error={error?.message}
-                onChange={field.onChange}
-              />
-            )}
-          />
-          <Controller
-            name="gcp_existing_vpc.ip_range_services_name"
-            rules={{
-              pattern,
-            }}
-            control={control}
-            render={({ field, fieldState: { error } }) => (
-              <InputText
-                label="IPv4 service range name (optional)"
-                name={field.name}
-                value={field.value}
-                error={error?.message}
-                onChange={field.onChange}
-              />
-            )}
-          />
-        </> */}
-      {/* )} */}
+      {feature.ip_range_services_name && (
+        <InputText
+          name="ip_range_services_name"
+          label="IPv4 service range name"
+          value={feature.ip_range_services_name}
+          disabled
+        />
+      )}
     </div>
   )
 }
