@@ -6,7 +6,7 @@ import {
 } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
 import { CardClusterFeature } from '@qovery/shared/console-shared'
-import { BlockContent, Heading, HelpSection, LoaderSpinner, Section } from '@qovery/shared/ui'
+import { BlockContent, EmptyState, Heading, HelpSection, LoaderSpinner, Section } from '@qovery/shared/ui'
 import AWSExistingVPC from './aws-existing-vpc/aws-existing-vpc'
 import GcpExistingVPC from './gcp-existing-vpc/gcp-existing-vpc'
 
@@ -33,6 +33,8 @@ export function PageSettingsFeatures(props: PageSettingsFeaturesProps) {
         <Heading className="mb-8">Features</Heading>
 
         {!loading && featureExistingVpcValue && featureExistingVpcContent}
+
+        {cloudProvider === 'GCP' && !featureExistingVpcValue && <EmptyState title="No feature configured" />}
 
         {!featureExistingVpcValue && cloudProvider === 'AWS' && (
           <BlockContent title="Configured features" classNameContent="p-0">
