@@ -1,36 +1,32 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ButtonPopoverSubnets should match snapshots 1`] = `
+exports[`GcpExistingVPC should match snapshots 1`] = `
 <body>
   <div>
     <div
-      class="flex flex-col justify-between p-4 rounded border bg-neutral-100 border-neutral-250"
+      class="flex flex-col gap-4 justify-between p-4 rounded border bg-neutral-100 border-neutral-250"
     >
-      <div
-        class="flex justify-between"
-      >
-        <div>
-          <h4
-            class="text-neutral-400 text-sm font-medium mb-1"
-          >
-            Deploy on an existing VPC
-          </h4>
-          <a
-            class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-sky-500 hover:text-sky-600 text-sm mb-4"
-            href="https://hub.qovery.com/docs/using-qovery/configuration/clusters/#use-existing-vpc"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            How to configure existing VPC
-            <i
-              aria-hidden="true"
-              class="fa-solid fa-arrow-up-right-from-square text-xs leading-5"
-            />
-          </a>
-        </div>
+      <div>
+        <h4
+          class="text-neutral-400 text-sm font-medium"
+        >
+          Deploy on an existing VPC
+        </h4>
+        <a
+          class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-sky-500 hover:text-sky-600 text-xs"
+          href="https://hub.qovery.com/docs/using-qovery/configuration/clusters/#use-existing-vpc"
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          How to configure your VPC
+          <i
+            aria-hidden="true"
+            class="fa-solid fa-arrow-up-right-from-square text-2xs leading-4"
+          />
+        </a>
       </div>
       <div
-        class="mb-3"
+        class=""
         data-testid="input-text-wrapper"
       >
         <div
@@ -38,10 +34,10 @@ exports[`ButtonPopoverSubnets should match snapshots 1`] = `
         >
           <div
             aria-label="input-container"
-            class="input     "
+            class="input input--disabled input--disabled !border-neutral-250  input--label-up "
           >
             <div
-              class=""
+              class="pointer-events-none"
             >
               <label
                 class="text-sm translate-y-2"
@@ -52,10 +48,11 @@ exports[`ButtonPopoverSubnets should match snapshots 1`] = `
               <input
                 class="input__value "
                 data-testid="input-text"
+                disabled=""
                 id="VPC Name"
-                name="gcp_existing_vpc.vpc_name"
+                name="vpc_id"
                 type="text"
-                value=""
+                value="test"
               />
             </div>
           </div>
@@ -70,133 +67,25 @@ exports[`ButtonPopoverSubnets should match snapshots 1`] = `
         >
           <div
             aria-label="input-container"
-            class="input     "
+            class="input input--disabled input--disabled !border-neutral-250  input--label-up "
           >
             <div
-              class=""
+              class="pointer-events-none"
             >
               <label
                 class="text-sm translate-y-2"
-                for="External project id (optional)"
+                for="External project id"
               >
-                External project id (optional)
+                External project id
               </label>
               <input
                 class="input__value "
                 data-testid="input-text"
-                id="External project id (optional)"
-                name="gcp_existing_vpc.vpc_project_id"
+                disabled=""
+                id="External project id"
+                name="vpc_project_id"
                 type="text"
-                value=""
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-      <p
-        class="text-neutral-350 text-xs ml-4 mt-1 mb-3"
-      >
-        By default: the project id used is the one specified in the credentials file
-      </p>
-      <hr
-        class="my-4"
-      />
-      <h4
-        class="text-neutral-400 text-sm font-medium mb-4"
-      >
-        Additional ranges (optional)
-      </h4>
-      <div
-        class="mb-4"
-        data-testid="input-text-wrapper"
-      >
-        <div
-          class="relative"
-        >
-          <div
-            aria-label="input-container"
-            class="input     "
-          >
-            <div
-              class=""
-            >
-              <label
-                class="text-sm translate-y-2"
-                for="Subnetwork range name (optional)"
-              >
-                Subnetwork range name (optional)
-              </label>
-              <input
-                class="input__value "
-                data-testid="input-text"
-                id="Subnetwork range name (optional)"
-                name="gcp_existing_vpc.subnetwork_name"
-                type="text"
-                value=""
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-      <div
-        class="mb-4"
-        data-testid="input-text-wrapper"
-      >
-        <div
-          class="relative"
-        >
-          <div
-            aria-label="input-container"
-            class="input     "
-          >
-            <div
-              class=""
-            >
-              <label
-                class="text-sm translate-y-2"
-                for="Pod IPv4 address range name (optional)"
-              >
-                Pod IPv4 address range name (optional)
-              </label>
-              <input
-                class="input__value "
-                data-testid="input-text"
-                id="Pod IPv4 address range name (optional)"
-                name="gcp_existing_vpc.ip_range_pods_name"
-                type="text"
-                value=""
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-      <div
-        class="mb-4"
-        data-testid="input-text-wrapper"
-      >
-        <div
-          class="relative"
-        >
-          <div
-            aria-label="input-container"
-            class="input     "
-          >
-            <div
-              class=""
-            >
-              <label
-                class="text-sm translate-y-2"
-                for="Additional cluster Pod IPv4 ranges names (separated with a comma) (optional)"
-              >
-                Additional cluster Pod IPv4 ranges names (separated with a comma) (optional)
-              </label>
-              <input
-                class="input__value "
-                data-testid="input-text"
-                id="Additional cluster Pod IPv4 ranges names (separated with a comma) (optional)"
-                name="gcp_existing_vpc.additional_ip_range_pods_names"
-                type="text"
-                value=""
+                value="test"
               />
             </div>
           </div>
@@ -211,24 +100,124 @@ exports[`ButtonPopoverSubnets should match snapshots 1`] = `
         >
           <div
             aria-label="input-container"
-            class="input     "
+            class="input input--disabled input--disabled !border-neutral-250  input--label-up "
           >
             <div
-              class=""
+              class="pointer-events-none"
             >
               <label
                 class="text-sm translate-y-2"
-                for="IPv4 service range name (optional)"
+                for="Subnetwork range name"
               >
-                IPv4 service range name (optional)
+                Subnetwork range name
               </label>
               <input
                 class="input__value "
                 data-testid="input-text"
-                id="IPv4 service range name (optional)"
-                name="gcp_existing_vpc.ip_range_services_name"
+                disabled=""
+                id="Subnetwork range name"
+                name="subnetwork_name"
                 type="text"
-                value=""
+                value="test"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class=""
+        data-testid="input-text-wrapper"
+      >
+        <div
+          class="relative"
+        >
+          <div
+            aria-label="input-container"
+            class="input input--disabled input--disabled !border-neutral-250  input--label-up "
+          >
+            <div
+              class="pointer-events-none"
+            >
+              <label
+                class="text-sm translate-y-2"
+                for="Pod IPv4 address range name"
+              >
+                Pod IPv4 address range name
+              </label>
+              <input
+                class="input__value "
+                data-testid="input-text"
+                disabled=""
+                id="Pod IPv4 address range name"
+                name="ip_range_pods_name"
+                type="text"
+                value="test"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class=""
+        data-testid="input-text-wrapper"
+      >
+        <div
+          class="relative"
+        >
+          <div
+            aria-label="input-container"
+            class="input input--disabled input--disabled !border-neutral-250  input--label-up "
+          >
+            <div
+              class="pointer-events-none"
+            >
+              <label
+                class="text-sm translate-y-2"
+                for="Additional cluster Pod IPv4 ranges names"
+              >
+                Additional cluster Pod IPv4 ranges names
+              </label>
+              <input
+                class="input__value "
+                data-testid="input-text"
+                disabled=""
+                id="Additional cluster Pod IPv4 ranges names"
+                name="additional_ip_range_pods_names"
+                type="text"
+                value="test"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class=""
+        data-testid="input-text-wrapper"
+      >
+        <div
+          class="relative"
+        >
+          <div
+            aria-label="input-container"
+            class="input input--disabled input--disabled !border-neutral-250  input--label-up "
+          >
+            <div
+              class="pointer-events-none"
+            >
+              <label
+                class="text-sm translate-y-2"
+                for="IPv4 service range name"
+              >
+                IPv4 service range name
+              </label>
+              <input
+                class="input__value "
+                data-testid="input-text"
+                disabled=""
+                id="IPv4 service range name"
+                name="ip_range_services_name"
+                type="text"
+                value="test"
               />
             </div>
           </div>

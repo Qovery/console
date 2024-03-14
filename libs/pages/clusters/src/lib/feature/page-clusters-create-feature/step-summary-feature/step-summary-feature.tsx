@@ -191,20 +191,23 @@ export function StepSummaryFeature() {
       }
 
       if (generalData.cloud_provider === 'GCP') {
-        formatFeatures = [
-          {
-            id: 'EXISTING_VPC',
-            value: {
-              vpc_name: featuresData?.gcp_existing_vpc?.vpc_name ?? '',
-              vpc_project_id: featuresData?.gcp_existing_vpc?.vpc_project_id,
-              ip_range_services_name: featuresData?.gcp_existing_vpc?.ip_range_services_name,
-              ip_range_pods_name: featuresData?.gcp_existing_vpc?.ip_range_pods_name,
-              subnetwork_name: featuresData?.gcp_existing_vpc?.subnetwork_name,
-              additional_ip_range_pods_names:
-                featuresData?.gcp_existing_vpc?.additional_ip_range_pods_names?.split(','),
-            },
-          },
-        ]
+        formatFeatures =
+          featuresData?.vpc_mode === 'EXISTING_VPC'
+            ? [
+                {
+                  id: 'EXISTING_VPC',
+                  value: {
+                    vpc_name: featuresData?.gcp_existing_vpc?.vpc_name ?? '',
+                    vpc_project_id: featuresData?.gcp_existing_vpc?.vpc_project_id,
+                    ip_range_services_name: featuresData?.gcp_existing_vpc?.ip_range_services_name,
+                    ip_range_pods_name: featuresData?.gcp_existing_vpc?.ip_range_pods_name,
+                    subnetwork_name: featuresData?.gcp_existing_vpc?.subnetwork_name,
+                    additional_ip_range_pods_names:
+                      featuresData?.gcp_existing_vpc?.additional_ip_range_pods_names?.split(','),
+                  },
+                },
+              ]
+            : undefined
       }
 
       const clusterRequest = match(generalData.cloud_provider)

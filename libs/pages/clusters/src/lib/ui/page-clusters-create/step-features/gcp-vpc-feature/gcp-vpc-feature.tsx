@@ -16,7 +16,10 @@ export function GCPVpcFeature() {
       <div className="flex justify-between">
         <div>
           <h4 className="text-neutral-400 text-sm font-medium mb-1">Deploy on an existing VPC</h4>
-          <ExternalLink href="https://hub.qovery.com/docs/using-qovery/configuration/clusters/" className="mb-4">
+          <ExternalLink
+            href="https://hub.qovery.com/docs/using-qovery/configuration/clusters/#use-existing-vpc"
+            className="mb-4"
+          >
             How to configure existing VPC
           </ExternalLink>
         </div>
