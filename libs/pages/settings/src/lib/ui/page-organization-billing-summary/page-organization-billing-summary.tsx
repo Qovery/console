@@ -1,4 +1,3 @@
-import { differenceInYears } from 'date-fns'
 import { type CreditCard, type OrganizationCurrentCost, PlanEnum } from 'qovery-typescript-axios'
 import { type CardImages } from 'react-payment-inputs/images'
 import { useParams } from 'react-router-dom'
@@ -27,15 +26,26 @@ export interface PageOrganizationBillingSummaryProps {
   openIntercom?: () => void
 }
 
+// this function is used to get the billing recurrence word to display based on the renewal date.
+// it's not so accurate, but it's a good enough approximation for now
+function getBillingRecurrenceStr(renewalAt: string | null | undefined): string {
+  if (renewalAt === null || renewalAt === undefined) return 'month'
+
+  const now = new Date()
+  const renewalDate = new Date(renewalAt)
+  // if the renewal date is in less than 1 month, we display "month"
+
+  if (renewalDate.getTime() - now.getTime() > 30 * 24 * 60 * 60 * 1000) return 'year'
+
+  return 'month'
+}
+
 export function PageOrganizationBillingSummary(props: PageOrganizationBillingSummaryProps) {
   const { organizationId = '' } = useParams()
 
   // Get the billing recurrence word to display based on the renewal date.
   // It's not so accurate, but it's a good enough approximation for now
-  const billingRecurrence =
-    props.currentCost?.renewal_at && differenceInYears(new Date(), new Date(props.currentCost?.renewal_at)) > 0
-      ? 'month'
-      : 'year'
+  const billingRecurrence = getBillingRecurrenceStr(props.currentCost?.renewal_at)
 
   return (
     <div className="flex flex-col justify-between w-full max-w-[832px]">
