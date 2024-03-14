@@ -109,7 +109,7 @@ export function PageSettingsFeature() {
       advancedSettingsLink,
       dangerZoneLink,
     ])
-    .with({ cloud_provider: 'GCP' }, () => [generalLink, credentialsLink, dangerZoneLink])
+    .with({ cloud_provider: 'GCP' }, () => [generalLink, credentialsLink, advancedSettingsLink, dangerZoneLink])
     .otherwise(() => [])
 
   return (
