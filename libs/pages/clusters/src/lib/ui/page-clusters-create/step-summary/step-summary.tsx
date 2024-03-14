@@ -70,6 +70,11 @@ export function StepSummary(props: StepSummaryProps) {
     return feature.length > 0
   }
 
+  const showFeaturesSection = match(props.generalData.cloud_provider)
+    .with('AWS', () => checkIfFeaturesAvailable())
+    .with('GCP', () => props.featuresData?.vpc_mode === 'EXISTING_VPC')
+    .with('SCW', () => false)
+
   return (
     <Section>
       <div className="mb-10">
@@ -237,7 +242,7 @@ export function StepSummary(props: StepSummaryProps) {
           </div>
         )}
 
-        {props.featuresData && checkIfFeaturesAvailable() && (
+        {props.featuresData && showFeaturesSection && (
           <div
             data-testid="summary-features"
             className="flex p-4 w-full border rounded border-neutral-250 bg-neutral-100 mb-2"
@@ -336,6 +341,49 @@ export function StepSummary(props: StepSummaryProps) {
                             subnets={props.featuresData.aws_existing_vpc.rds_subnets}
                           />
                         </ul>
+                      </li>
+                    )}
+                  </>
+                )}
+                {props.featuresData.gcp_existing_vpc && (
+                  <>
+                    <li>
+                      VPC name: <strong className="font-medium">{props.featuresData.gcp_existing_vpc.vpc_name}</strong>
+                    </li>
+                    {props.featuresData.gcp_existing_vpc.vpc_project_id && (
+                      <li>
+                        VPC Project ID:{' '}
+                        <strong className="font-medium">{props.featuresData.gcp_existing_vpc.vpc_project_id}</strong>
+                      </li>
+                    )}
+                    {props.featuresData.gcp_existing_vpc.subnetwork_name && (
+                      <li>
+                        Subnetwork range name:{' '}
+                        <strong className="font-medium">{props.featuresData.gcp_existing_vpc.subnetwork_name}</strong>
+                      </li>
+                    )}
+                    {props.featuresData.gcp_existing_vpc.ip_range_pods_name && (
+                      <li>
+                        Pod IPv4 address range name:{' '}
+                        <strong className="font-medium">
+                          {props.featuresData.gcp_existing_vpc.ip_range_pods_name}
+                        </strong>
+                      </li>
+                    )}
+                    {props.featuresData.gcp_existing_vpc.additional_ip_range_pods_names && (
+                      <li>
+                        Cluster Pod IPv4 ranges names (additional):{' '}
+                        <strong className="font-medium">
+                          {props.featuresData.gcp_existing_vpc.additional_ip_range_pods_names}
+                        </strong>
+                      </li>
+                    )}
+                    {props.featuresData.gcp_existing_vpc.ip_range_services_name && (
+                      <li>
+                        IPv4 service range name:{' '}
+                        <strong className="font-medium">
+                          {props.featuresData.gcp_existing_vpc.ip_range_services_name}
+                        </strong>
                       </li>
                     )}
                   </>

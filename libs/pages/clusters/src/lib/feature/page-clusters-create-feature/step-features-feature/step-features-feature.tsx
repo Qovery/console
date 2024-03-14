@@ -2,6 +2,7 @@ import { KubernetesEnum } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
+import { match } from 'ts-pattern'
 import { useCloudProviderFeatures } from '@qovery/domains/cloud-providers/feature'
 import { type ClusterFeaturesData, type Subnets } from '@qovery/shared/interfaces'
 import {
@@ -25,7 +26,9 @@ export function StepFeaturesFeature() {
   const { organizationId = '' } = useParams()
   const { setFeaturesData, generalData, featuresData, resourcesData, setCurrentStep } =
     useClusterContainerCreateContext()
-  const { data: features } = useCloudProviderFeatures({ cloudProvider: generalData?.cloud_provider ?? 'AWS' })
+  const { data: features } = useCloudProviderFeatures({
+    cloudProvider: generalData?.cloud_provider ?? 'AWS',
+  })
   const navigate = useNavigate()
 
   const funnelCardHelp = (
@@ -49,11 +52,17 @@ export function StepFeaturesFeature() {
   )
 
   const goToBack = () => {
-    if (resourcesData?.cluster_type === KubernetesEnum.K3_S) {
-      navigate(`${CLUSTERS_URL(organizationId)}${CLUSTERS_CREATION_URL}${CLUSTERS_CREATION_REMOTE_URL}`)
-    } else {
-      navigate(`${CLUSTERS_URL(organizationId)}${CLUSTERS_CREATION_URL}${CLUSTERS_CREATION_RESOURCES_URL}`)
-    }
+    const path = CLUSTERS_URL(organizationId) + CLUSTERS_CREATION_URL
+
+    match(generalData?.cloud_provider)
+      .with('GCP', () => navigate(path + CLUSTERS_CREATION_GENERAL_URL))
+      .otherwise(() => {
+        if (resourcesData?.cluster_type === KubernetesEnum.K3_S) {
+          navigate(path + CLUSTERS_CREATION_REMOTE_URL)
+        } else {
+          navigate(path + CLUSTERS_CREATION_RESOURCES_URL)
+        }
+      })
   }
 
   useEffect(() => {
@@ -61,8 +70,10 @@ export function StepFeaturesFeature() {
   }, [setCurrentStep, generalData?.cloud_provider, generalData?.installation_type, resourcesData?.cluster_type])
 
   useEffect(() => {
-    !resourcesData?.cluster_type && navigate(CLUSTERS_CREATION_URL + CLUSTERS_CREATION_GENERAL_URL)
-  }, [resourcesData?.cluster_type, navigate, organizationId])
+    generalData?.cloud_provider !== 'GCP' &&
+      !resourcesData?.cluster_type &&
+      navigate(CLUSTERS_CREATION_URL + CLUSTERS_CREATION_GENERAL_URL)
+  }, [generalData?.cloud_provider, resourcesData?.cluster_type, navigate, organizationId])
 
   const methods = useForm<ClusterFeaturesData>({
     defaultValues: featuresData,
@@ -70,13 +81,13 @@ export function StepFeaturesFeature() {
   })
 
   const onSubmit = methods.handleSubmit((data) => {
-    if (data && features) {
+    if (generalData?.cloud_provider === 'AWS') {
       if (data.vpc_mode === 'DEFAULT') {
         let cloneData = {}
 
         for (let i = 0; i < Object.keys(data.features).length; i++) {
           const id = Object.keys(data.features)[i]
-          const featureData = features.find((f) => f.id === id)
+          const featureData = features?.find((f) => f.id === id)
           const currentFeature = data.features[id]
 
           cloneData = {
@@ -108,10 +119,25 @@ export function StepFeaturesFeature() {
           features: {},
         })
       }
+    } else {
+      const existingVpcData = data.gcp_existing_vpc
 
-      const pathCreate = `${CLUSTERS_URL(organizationId)}${CLUSTERS_CREATION_URL}`
-      navigate(pathCreate + CLUSTERS_CREATION_SUMMARY_URL)
+      setFeaturesData({
+        vpc_mode: 'EXISTING_VPC',
+        gcp_existing_vpc: {
+          vpc_name: existingVpcData?.vpc_name ?? '',
+          vpc_project_id: existingVpcData?.vpc_project_id,
+          subnetwork_name: existingVpcData?.subnetwork_name,
+          ip_range_services_name: existingVpcData?.ip_range_services_name,
+          ip_range_pods_name: existingVpcData?.ip_range_pods_name,
+          additional_ip_range_pods_names: existingVpcData?.additional_ip_range_pods_names,
+        },
+        features: {},
+      })
     }
+
+    const pathCreate = `${CLUSTERS_URL(organizationId)}${CLUSTERS_CREATION_URL}`
+    navigate(pathCreate + CLUSTERS_CREATION_SUMMARY_URL)
   })
 
   return (

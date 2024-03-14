@@ -5,9 +5,9 @@ import { match } from 'ts-pattern'
 import { useCloudProviderCredentials, useCloudProviders } from '@qovery/domains/cloud-providers/feature'
 import { type ClusterGeneralData } from '@qovery/shared/interfaces'
 import {
+  CLUSTERS_CREATION_FEATURES_URL,
   CLUSTERS_CREATION_KUBECONFIG_URL,
   CLUSTERS_CREATION_RESOURCES_URL,
-  CLUSTERS_CREATION_SUMMARY_URL,
   CLUSTERS_CREATION_URL,
   CLUSTERS_URL,
 } from '@qovery/shared/routes'
@@ -69,7 +69,7 @@ export function StepGeneralFeature() {
       match(data)
         .with({ installation_type: 'SELF_MANAGED' }, () => navigate(pathCreate + CLUSTERS_CREATION_KUBECONFIG_URL))
         .with({ installation_type: 'MANAGED', cloud_provider: 'GCP' }, () =>
-          navigate(pathCreate + CLUSTERS_CREATION_SUMMARY_URL)
+          navigate(pathCreate + CLUSTERS_CREATION_FEATURES_URL)
         )
         .otherwise(() => navigate(pathCreate + CLUSTERS_CREATION_RESOURCES_URL))
     }
