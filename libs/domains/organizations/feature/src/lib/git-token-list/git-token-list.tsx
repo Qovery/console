@@ -69,31 +69,30 @@ export function GitTokenList() {
                 </div>
               </div>
               <div>
-                {gitToken.associated_services_count > 0 && (
-                  <Button
-                    variant="outline"
-                    color="neutral"
-                    size="md"
-                    className="relative mr-2"
-                    onClick={() => {
-                      openModal({
-                        content: (
-                          <GitTokenServicesListModal
-                            organizationId={organizationId}
-                            gitTokenId={gitToken.id}
-                            onClose={closeModal}
-                            associatedServicesCount={gitToken.associated_services_count}
-                          />
-                        ),
-                      })
-                    }}
-                  >
-                    <span className="flex items-center justify-center bg-brand-500 w-3 h-3 rounded-full font-bold text-3xs text-white absolute -top-1 -right-1">
-                      {gitToken.associated_services_count}
-                    </span>
-                    <Icon iconName="layer-group" />
-                  </Button>
-                )}
+                <Button
+                  variant="outline"
+                  color="neutral"
+                  size="md"
+                  className="relative mr-2"
+                  disabled={gitToken.associated_services_count === 0}
+                  onClick={() => {
+                    openModal({
+                      content: (
+                        <GitTokenServicesListModal
+                          organizationId={organizationId}
+                          gitTokenId={gitToken.id}
+                          onClose={closeModal}
+                          associatedServicesCount={gitToken.associated_services_count}
+                        />
+                      ),
+                    })
+                  }}
+                >
+                  <span className="flex items-center justify-center bg-brand-500 w-3 h-3 rounded-full font-bold text-3xs text-white absolute -top-1 -right-1">
+                    {gitToken.associated_services_count}
+                  </span>
+                  <Icon iconName="layer-group" />
+                </Button>
                 <Button
                   variant="outline"
                   color="neutral"

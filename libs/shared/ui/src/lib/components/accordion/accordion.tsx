@@ -2,7 +2,6 @@ import * as AccordionPrimitive from '@radix-ui/react-accordion'
 import { type ComponentPropsWithoutRef, type ElementRef, forwardRef } from 'react'
 import { twMerge } from '@qovery/shared/util-js'
 import { Icon } from '../icon/icon'
-import { IconAwesomeEnum } from '../icon/icon-awesome.enum'
 
 interface AccordionItemProps extends ComponentPropsWithoutRef<typeof AccordionPrimitive.Item> {}
 
@@ -22,21 +21,16 @@ interface AccordionTriggerProps extends ComponentPropsWithoutRef<typeof Accordio
 
 const AccordionTrigger = forwardRef<ElementRef<typeof AccordionPrimitive.Trigger>, AccordionTriggerProps>(
   ({ children, className, ...props }, forwardedRef) => (
-    <AccordionPrimitive.Trigger
-      className={twMerge(
-        'group flex h-14 flex-1 cursor-pointer items-center bg-white px-5 text-sm outline-none',
-        className
-      )}
-      {...props}
-      ref={forwardedRef}
-    >
-      <Icon
-        name={IconAwesomeEnum.CHEVRON_DOWN}
-        className="text-neutral-350 mr-4 ease-[cubic-bezier(0.87,_0,_0.13,_1)] transition-transform duration-300 group-data-[state=open]:rotate-180"
-        aria-hidden
-      />
+    <div className={twMerge('group w-full px-5 py-2 text-sm outline-none', className)}>
+      <AccordionPrimitive.Trigger
+        className="inline-flex items-center justify-center border border-neutral-250 w-4 h-4 rounded mr-5"
+        {...props}
+        ref={forwardedRef}
+      >
+        <Icon iconName="plus" className="text-neutral-350 text-3xs" aria-hidden />
+      </AccordionPrimitive.Trigger>
       {children}
-    </AccordionPrimitive.Trigger>
+    </div>
   )
 )
 
