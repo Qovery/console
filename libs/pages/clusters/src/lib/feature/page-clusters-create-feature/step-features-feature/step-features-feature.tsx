@@ -123,15 +123,17 @@ export function StepFeaturesFeature() {
       const existingVpcData = data.gcp_existing_vpc
 
       setFeaturesData({
-        vpc_mode: 'EXISTING_VPC',
-        gcp_existing_vpc: {
-          vpc_name: existingVpcData?.vpc_name ?? '',
-          vpc_project_id: existingVpcData?.vpc_project_id,
-          subnetwork_name: existingVpcData?.subnetwork_name,
-          ip_range_services_name: existingVpcData?.ip_range_services_name,
-          ip_range_pods_name: existingVpcData?.ip_range_pods_name,
-          additional_ip_range_pods_names: existingVpcData?.additional_ip_range_pods_names,
-        },
+        vpc_mode: data.vpc_mode,
+        gcp_existing_vpc: existingVpcData?.vpc_name
+          ? {
+              vpc_name: existingVpcData?.vpc_name ?? '',
+              vpc_project_id: existingVpcData?.vpc_project_id,
+              subnetwork_name: existingVpcData?.subnetwork_name,
+              ip_range_services_name: existingVpcData?.ip_range_services_name,
+              ip_range_pods_name: existingVpcData?.ip_range_pods_name,
+              additional_ip_range_pods_names: existingVpcData?.additional_ip_range_pods_names,
+            }
+          : undefined,
         features: {},
       })
     }

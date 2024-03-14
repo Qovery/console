@@ -6,11 +6,25 @@ exports[`GcpExistingVPC should match snapshots 1`] = `
     <div
       class="flex flex-col gap-4 justify-between p-4 rounded border bg-neutral-100 border-neutral-250"
     >
-      <h4
-        class="text-neutral-400 text-sm font-medium"
-      >
-        Deploy on an existing VPC
-      </h4>
+      <div>
+        <h4
+          class="text-neutral-400 text-sm font-medium"
+        >
+          Deploy on an existing VPC
+        </h4>
+        <a
+          class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-sky-500 hover:text-sky-600 text-xs"
+          href="https://hub.qovery.com/docs/using-qovery/configuration/clusters/#use-existing-vpc"
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          How to configure your VPC
+          <i
+            aria-hidden="true"
+            class="fa-solid fa-arrow-up-right-from-square text-2xs leading-4"
+          />
+        </a>
+      </div>
       <div
         class=""
         data-testid="input-text-wrapper"

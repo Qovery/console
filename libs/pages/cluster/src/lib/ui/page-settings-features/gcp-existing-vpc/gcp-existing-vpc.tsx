@@ -1,11 +1,13 @@
 import { type ClusterFeatureGcpExistingVpc } from 'qovery-typescript-axios'
-import { ExternalLink, InputText } from '@qovery/shared/ui'
+import { EmptyState, ExternalLink, InputText } from '@qovery/shared/ui'
 
 export interface GcpExistingVPCProps {
   feature: ClusterFeatureGcpExistingVpc
 }
 
 export function GcpExistingVPC({ feature }: GcpExistingVPCProps) {
+  if (feature.vpc_name === '') return <EmptyState title="No feature configured" />
+
   return (
     <div className="flex flex-col gap-4 justify-between p-4 rounded border bg-neutral-100 border-neutral-250">
       <div>

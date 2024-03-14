@@ -34,7 +34,7 @@ export function PageSettingsFeatures(props: PageSettingsFeaturesProps) {
 
         {!loading && featureExistingVpcValue && featureExistingVpcContent}
 
-        {!featureExistingVpc?.value && (
+        {!featureExistingVpcValue && cloudProvider === 'AWS' && (
           <BlockContent title="Configured features" classNameContent="p-0">
             {loading && (
               <div className="flex justify-center p-5">
