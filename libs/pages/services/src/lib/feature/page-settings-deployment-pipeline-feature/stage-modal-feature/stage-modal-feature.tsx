@@ -44,6 +44,8 @@ export function StageModalFeature(props: StageModalFeatureProps) {
         await createEnvironmentDeploymentStage({ environmentId: props.environmentId, payload: currentData })
       }
       props.onClose()
+    } catch (e) {
+      console.error(e)
     } finally {
       setLoading(false)
     }
