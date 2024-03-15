@@ -88,7 +88,7 @@ export function GitTokenList() {
                     })
                   }}
                 >
-                  <span className="flex items-center justify-center bg-brand-500 w-3 h-3 rounded-full font-bold text-3xs text-white leading-none absolute -top-1 -right-1">
+                  <span className="flex items-center justify-center bg-brand-500 w-3 h-3 rounded-full font-bold text-3xs text-white leading-[0] absolute -top-1 -right-1">
                     {gitToken.associated_services_count}
                   </span>
                   <Icon iconName="layer-group" />
