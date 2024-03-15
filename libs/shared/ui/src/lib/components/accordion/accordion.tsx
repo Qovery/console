@@ -1,8 +1,7 @@
 import * as AccordionPrimitive from '@radix-ui/react-accordion'
-import { type ComponentPropsWithoutRef, type ElementRef, forwardRef } from 'react'
+import { type ComponentPropsWithoutRef, type ElementRef, forwardRef, useState } from 'react'
 import { twMerge } from '@qovery/shared/util-js'
 import { Icon } from '../icon/icon'
-import { IconAwesomeEnum } from '../icon/icon-awesome.enum'
 
 interface AccordionItemProps extends ComponentPropsWithoutRef<typeof AccordionPrimitive.Item> {}
 
@@ -21,23 +20,24 @@ const AccordionItem = forwardRef<ElementRef<typeof AccordionPrimitive.Item>, Acc
 interface AccordionTriggerProps extends ComponentPropsWithoutRef<typeof AccordionPrimitive.Trigger> {}
 
 const AccordionTrigger = forwardRef<ElementRef<typeof AccordionPrimitive.Trigger>, AccordionTriggerProps>(
-  ({ children, className, ...props }, forwardedRef) => (
-    <AccordionPrimitive.Trigger
-      className={twMerge(
-        'group flex h-14 flex-1 cursor-default items-center bg-white px-5 text-sm outline-none',
-        className
-      )}
-      {...props}
-      ref={forwardedRef}
-    >
-      <Icon
-        name={IconAwesomeEnum.CHEVRON_DOWN}
-        className="text-neutral-350 mr-4 ease-[cubic-bezier(0.87,_0,_0.13,_1)] transition-transform duration-300 group-data-[state=open]:rotate-180"
-        aria-hidden
-      />
-      {children}
-    </AccordionPrimitive.Trigger>
-  )
+  ({ children, className, ...props }, forwardedRef) => {
+    const [isOpen, setIsOpen] = useState(false)
+    const iconName = isOpen ? 'minus' : 'plus'
+
+    return (
+      <div className={twMerge('flex items-center w-full pr-5 py-2 text-sm outline-none text-neutral-400', className)}>
+        <AccordionPrimitive.Trigger
+          className="cursor-pointer inline-flex items-center justify-center border border-neutral-250 text-3xs w-4 h-4 rounded mr-5"
+          onClick={() => setIsOpen(!isOpen)}
+          {...props}
+          ref={forwardedRef}
+        >
+          <Icon iconName={iconName} />
+        </AccordionPrimitive.Trigger>
+        {children}
+      </div>
+    )
+  }
 )
 
 interface AccordionContentProps extends ComponentPropsWithoutRef<typeof AccordionPrimitive.Content> {
@@ -45,18 +45,16 @@ interface AccordionContentProps extends ComponentPropsWithoutRef<typeof Accordio
 }
 
 const AccordionContent = forwardRef<ElementRef<typeof AccordionPrimitive.Content>, AccordionContentProps>(
-  ({ children, className, dark = false, ...props }, forwardedRef) => (
+  ({ children, className, ...props }, forwardedRef) => (
     <AccordionPrimitive.Content
       className={twMerge(
-        `${
-          dark ? 'dark' : ''
-        } data-[state=open]:animate-slidein-down-sm-faded data-[state=closed]:slidein-up-sm-faded overflow-hidden`,
+        'data-[state=open]:animate-slidein-down-sm-faded data-[state=closed]:slidein-up-sm-faded ml-2 pl-[26px] overflow-hidden border-l border-neutral-200',
         className
       )}
       {...props}
       ref={forwardedRef}
     >
-      <div className="dark:bg-neutral-550 dark:text-neutral-300 pt-3 pb-4 px-4">{children}</div>
+      {children}
     </AccordionPrimitive.Content>
   )
 )

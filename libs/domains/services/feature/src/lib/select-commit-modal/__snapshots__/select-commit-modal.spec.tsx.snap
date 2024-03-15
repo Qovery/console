@@ -24,11 +24,11 @@ exports[`SelectCommitModal should match snapshot 1`] = `
       class="relative w-full "
     >
       <span
-        class="icon-solid-magnifying-glass shrink-0 absolute left-3 top-1/2 -translate-y-1/2 block text-xs text-neutral-350 leading-none"
+        class="icon-solid-magnifying-glass shrink-0 absolute left-3 top-1/2 -translate-y-1/2 block text-xs text-neutral-400 leading-none"
         role="img"
       />
       <input
-        class="w-full rounded border border-neutral-250 dark:border-neutral-400 bg-neutral-150 dark:bg-neutral-700 text-neutral-400 dark:text-neutral-350 placeholder:text-neutral-350 pl-8 pr-6 leading-none focus:outline-none focus:border-brand-400 focus:transition-[border-color] h-9 text-xs"
+        class="w-full rounded border border-neutral-250 dark:border-neutral-400 dark:bg-neutral-700 text-neutral-400 dark:text-neutral-350 placeholder:text-neutral-350 pl-8 pr-6 leading-none focus:outline-none focus:border-brand-400 focus:transition-[border-color] h-9 text-xs"
         data-testid="input-search"
         name="search"
         placeholder="Search by commit message or commit id"
