@@ -83,8 +83,9 @@ describe('GitTokenServicesListModal', () => {
   it('should match snapshots', async () => {
     const { baseElement, userEvent } = renderWithProviders(<GitTokenServicesListModal {...props} />)
 
-    const triggerProject = screen.getByText(/project 1/i)
-    await userEvent.click(triggerProject)
+    const triggers = screen.getAllByRole('button')
+    screen.getByText(/project 1/i)
+    await userEvent.click(triggers[0])
 
     const triggerEnvironment = screen.getByText(/development/i).parentElement
     await userEvent.click(triggerEnvironment!)

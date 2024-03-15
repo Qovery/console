@@ -31,7 +31,6 @@ const AccordionTrigger = forwardRef<ElementRef<typeof AccordionPrimitive.Trigger
           onClick={() => setIsOpen(!isOpen)}
           {...props}
           ref={forwardedRef}
-          asChild
         >
           <Icon iconName={iconName} />
         </AccordionPrimitive.Trigger>
