@@ -149,6 +149,7 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
                           )}
                         </div>
                         <Menu
+                          key={JSON.stringify(stages)}
                           width={256}
                           trigger={
                             <ButtonIcon
