@@ -26,7 +26,7 @@ export interface PageOrganizationBillingSummaryProps {
   openIntercom?: () => void
 }
 
-// this function is used to get the billing recurrence word to display based on the renewal date.
+// This function is used to get the billing recurrence word to display based on the renewal date.
 // it's not so accurate, but it's a good enough approximation for now
 function getBillingRecurrenceStr(renewalAt: string | null | undefined): string {
   if (renewalAt === null || renewalAt === undefined) return 'month'
