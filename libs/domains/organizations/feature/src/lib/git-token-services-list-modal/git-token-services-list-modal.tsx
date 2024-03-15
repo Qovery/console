@@ -5,7 +5,7 @@ import {
 } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { match } from 'ts-pattern'
-import { APPLICATION_URL, SERVICES_URL } from '@qovery/shared/routes'
+import { APPLICATION_URL, SERVICES_GENERAL_URL, SERVICES_URL } from '@qovery/shared/routes'
 import { Accordion, Heading, Icon, InputSearch, Link, LoaderSpinner, Section } from '@qovery/shared/ui'
 import { useGitTokenAssociatedServices } from '../hooks/use-git-token-associated-services/use-git-token-associated-services'
 
@@ -119,7 +119,10 @@ export function GitTokenServicesListModal({
                             <Link
                               color="brand"
                               onClick={() => onClose()}
-                              to={SERVICES_URL(organizationId, project.project_id, environment.environment_id)}
+                              to={
+                                SERVICES_URL(organizationId, project.project_id, environment.environment_id) +
+                                SERVICES_GENERAL_URL
+                              }
                               className="text-sm"
                             >
                               {environment.environment_name}
