@@ -106,37 +106,31 @@ export function GitTokenServicesListModal({
             <Accordion.Root
               type="single"
               collapsible
-              className="bg-neutral-100 border-x border-t border-neutral-200 rounded-sm"
+              className="border border-neutral-250 bg-neutral-100 py-2 px-4 rounded"
             >
               {data.map((project) => (
-                <Accordion.Item key={project.project_id} value={project.project_name} className="bg-neutral-100">
-                  <Accordion.Trigger className="w-full bg-transparent flex-row-reverse justify-between h-9 border-b border-neutral-200 font-medium text-xs pl-4 pr-0">
-                    {project.project_name}
-                  </Accordion.Trigger>
-                  <Accordion.Content className="p-0">
+                <Accordion.Item key={project.project_id} value={project.project_name}>
+                  <Accordion.Trigger>{project.project_name}</Accordion.Trigger>
+                  <Accordion.Content>
                     {project.environments.map((environment) => (
                       <Accordion.Root key={environment.environment_id} type="single" collapsible>
                         <Accordion.Item value={environment.environment_name}>
-                          <Accordion.Trigger className="w-full bg-transparent flex-row-reverse justify-between h-9 border-b border-neutral-200 font-medium text-xs pl-10 pr-0">
+                          <Accordion.Trigger>
                             <Link
                               color="brand"
-                              size="xs"
                               onClick={() => onClose()}
                               to={SERVICES_URL(organizationId, project.project_id, environment.environment_id)}
+                              className="text-sm"
                             >
                               {environment.environment_name}
                             </Link>
                           </Accordion.Trigger>
-                          <Accordion.Content className="p-0 border-b border-neutral-200">
+                          <Accordion.Content>
                             <ul>
                               {environment.services.map((service) => (
-                                <li
-                                  key={service.service_id}
-                                  className="w-full flex items-center h-9 border-b last:border-b-0 last:rounded-sm border-neutral-200"
-                                >
+                                <li key={service.service_id} className=" border-l border-neutral">
                                   <Link
                                     color="brand"
-                                    size="xs"
                                     onClick={() => onClose()}
                                     to={APPLICATION_URL(
                                       organizationId,
@@ -144,7 +138,7 @@ export function GitTokenServicesListModal({
                                       environment.environment_id,
                                       service.service_id
                                     )}
-                                    className="pl-16"
+                                    className="flex items-center py-1.5 pl-5 text-sm"
                                   >
                                     <Icon
                                       name={match(service.service_type)

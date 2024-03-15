@@ -27,7 +27,7 @@ const AccordionTrigger = forwardRef<ElementRef<typeof AccordionPrimitive.Trigger
     return (
       <div className={twMerge('flex items-center w-full pr-5 py-2 text-sm outline-none text-neutral-400', className)}>
         <AccordionPrimitive.Trigger
-          className="cursor-pointer inline-flex items-center justify-center border border-neutral-250 text-neutral-350 text-3xs w-4 h-4 rounded mr-5"
+          className="cursor-pointer inline-flex items-center justify-center border border-neutral-250 text-3xs w-4 h-4 rounded mr-5"
           onClick={() => setIsOpen(!isOpen)}
           {...props}
           ref={forwardedRef}
