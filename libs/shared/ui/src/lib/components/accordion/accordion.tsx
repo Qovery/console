@@ -1,5 +1,5 @@
 import * as AccordionPrimitive from '@radix-ui/react-accordion'
-import { type ComponentPropsWithoutRef, type ElementRef, forwardRef } from 'react'
+import { type ComponentPropsWithoutRef, type ElementRef, forwardRef, useState } from 'react'
 import { twMerge } from '@qovery/shared/util-js'
 import { Icon } from '../icon/icon'
 
@@ -20,18 +20,25 @@ const AccordionItem = forwardRef<ElementRef<typeof AccordionPrimitive.Item>, Acc
 interface AccordionTriggerProps extends ComponentPropsWithoutRef<typeof AccordionPrimitive.Trigger> {}
 
 const AccordionTrigger = forwardRef<ElementRef<typeof AccordionPrimitive.Trigger>, AccordionTriggerProps>(
-  ({ children, className, ...props }, forwardedRef) => (
-    <div className={twMerge('group w-full px-5 py-2 text-sm outline-none', className)}>
-      <AccordionPrimitive.Trigger
-        className="inline-flex items-center justify-center border border-neutral-250 w-4 h-4 rounded mr-5"
-        {...props}
-        ref={forwardedRef}
-      >
-        <Icon iconName="plus" className="text-neutral-350 text-3xs" aria-hidden />
-      </AccordionPrimitive.Trigger>
-      {children}
-    </div>
-  )
+  ({ children, className, ...props }, forwardedRef) => {
+    const [isOpen, setIsOpen] = useState(false)
+    const iconName = isOpen ? 'minus' : 'plus'
+
+    return (
+      <div className={twMerge('flex items-center w-full pr-5 py-2 text-sm outline-none text-neutral-400', className)}>
+        <AccordionPrimitive.Trigger
+          className="cursor-pointer inline-flex items-center justify-center border border-neutral-250 text-neutral-350 text-3xs w-4 h-4 rounded mr-5"
+          onClick={() => setIsOpen(!isOpen)}
+          {...props}
+          ref={forwardedRef}
+          asChild
+        >
+          <Icon iconName={iconName} />
+        </AccordionPrimitive.Trigger>
+        {children}
+      </div>
+    )
+  }
 )
 
 interface AccordionContentProps extends ComponentPropsWithoutRef<typeof AccordionPrimitive.Content> {
@@ -39,12 +46,10 @@ interface AccordionContentProps extends ComponentPropsWithoutRef<typeof Accordio
 }
 
 const AccordionContent = forwardRef<ElementRef<typeof AccordionPrimitive.Content>, AccordionContentProps>(
-  ({ children, className, dark = false, ...props }, forwardedRef) => (
+  ({ children, className, ...props }, forwardedRef) => (
     <AccordionPrimitive.Content
       className={twMerge(
-        `${
-          dark ? 'bg-neutral-550 text-neutral-300' : ''
-        } pt-3 pb-4 px-4 data-[state=open]:animate-slidein-down-sm-faded data-[state=closed]:slidein-up-sm-faded overflow-hidden`,
+        'data-[state=open]:animate-slidein-down-sm-faded data-[state=closed]:slidein-up-sm-faded ml-2 pl-[26px] overflow-hidden border-l border-neutral-200',
         className
       )}
       {...props}

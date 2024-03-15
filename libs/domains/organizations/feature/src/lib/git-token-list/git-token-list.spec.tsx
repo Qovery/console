@@ -1,5 +1,8 @@
+import * as utilDates from '@qovery/shared/util-dates'
 import { renderWithProviders } from '@qovery/shared/util-tests'
 import GitTokenList from './git-token-list'
+
+// Importez toutes les fonctions du module
 
 jest.mock('../hooks/use-git-tokens/use-git-tokens', () => {
   return {
@@ -35,6 +38,8 @@ describe('GitTokenList', () => {
   })
 
   it('should match snapshot', () => {
+    jest.spyOn(utilDates, 'timeAgo').mockReturnValue('1 month')
+
     const { baseElement } = renderWithProviders(<GitTokenList />)
     expect(baseElement).toMatchSnapshot()
   })
