@@ -111,6 +111,7 @@ export function AWSVpcFeature() {
       <ButtonPopoverSubnets
         title="EKS subnets IDs"
         name="aws_existing_vpc.eks_subnets"
+        required
         callout={
           <Callout.Root className="mb-4" color="sky">
             <Callout.Icon>
