@@ -1,5 +1,5 @@
 import { DeploymentRestrictionModeEnum, DeploymentRestrictionTypeEnum, WeekdayEnum } from 'qovery-typescript-axios'
-import * as environmentDomain from '@qovery/domains/environment'
+import * as environmentDomain from '@qovery/domains/environments/feature'
 import * as servicesDomains from '@qovery/domains/services/feature'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
@@ -34,7 +34,7 @@ describe('PageSettingsDeploymentRestrictionsFeature', () => {
       isLoading: false,
       error: {},
     })
-    jest.spyOn(environmentDomain, 'useFetchEnvironmentDeploymentRule').mockReturnValue({
+    jest.spyOn(environmentDomain, 'useDeploymentRule').mockReturnValue({
       data: {
         auto_stop: true,
         auto_preview: true,

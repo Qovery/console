@@ -90,7 +90,6 @@ export function StepPortFeature() {
                 port={port}
                 portData={portData}
                 setPortData={setPortData}
-                projectId={projectId}
                 environmentId={environmentId}
               />
             ),
@@ -103,7 +102,6 @@ export function StepPortFeature() {
                 onClose={closeModal}
                 portData={portData}
                 setPortData={setPortData}
-                projectId={projectId}
                 environmentId={environmentId}
               />
             ),

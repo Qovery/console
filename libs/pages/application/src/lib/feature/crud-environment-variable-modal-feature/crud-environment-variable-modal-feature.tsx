@@ -1,9 +1,8 @@
 import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useNavigate } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { useActionRedeployEnvironment } from '@qovery/domains/environment'
+import { useDeployEnvironment } from '@qovery/domains/environments/feature'
 import { type ServiceType } from '@qovery/domains/services/data-access'
 import { useDeployService } from '@qovery/domains/services/feature'
 import {
@@ -65,12 +64,12 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
   } = props
   const [loading, setLoading] = useState(false)
   const { enableAlertClickOutside } = useModal()
-  const navigate = useNavigate()
 
   const { mutate: deployService } = useDeployService({ environmentId })
-  const actionRedeployEnvironment = useActionRedeployEnvironment(projectId, environmentId, false, undefined, () =>
-    navigate(ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(applicationId))
-  )
+  const { mutate: deployEnvironment } = useDeployEnvironment({
+    projectId,
+    logsLink: ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(applicationId),
+  })
 
   const { mutateAsync: createVariable } = useCreateVariable()
   const { mutateAsync: createVariableAlias } = useCreateVariableAlias()
@@ -196,7 +195,7 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
               serviceType: data.scope,
             })
           } else {
-            actionRedeployEnvironment.mutate()
+            deployEnvironment({ environmentId })
           }
         }
 

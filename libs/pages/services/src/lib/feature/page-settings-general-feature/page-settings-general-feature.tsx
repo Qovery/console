@@ -2,12 +2,12 @@ import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { useClusters } from '@qovery/domains/clusters/feature'
-import { useEditEnvironment, useFetchEnvironment } from '@qovery/domains/environment'
+import { useEditEnvironment, useEnvironment } from '@qovery/domains/environments/feature'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-general'
 
 export function PageSettingsGeneralFeature() {
-  const { organizationId = '', projectId = '', environmentId = '' } = useParams()
+  const { organizationId = '', environmentId = '' } = useParams()
   useDocumentTitle('Environment General - Settings - Qovery')
   const methods = useForm({
     mode: 'onChange',
@@ -15,8 +15,8 @@ export function PageSettingsGeneralFeature() {
 
   const { data: clusters = [] } = useClusters({ organizationId })
 
-  const { data: environment } = useFetchEnvironment(projectId, environmentId)
-  const editEnvironment = useEditEnvironment(projectId, () => setLoading(false))
+  const { data: environment } = useEnvironment({ environmentId })
+  const { mutateAsync: editEnvironment } = useEditEnvironment()
 
   const [loading, setLoading] = useState(false)
 
@@ -25,7 +25,8 @@ export function PageSettingsGeneralFeature() {
 
     if (data) {
       delete data['cluster_id']
-      editEnvironment.mutate({ environmentId, data })
+      await editEnvironment({ environmentId, payload: data })
+      setLoading(false)
     }
   })
 

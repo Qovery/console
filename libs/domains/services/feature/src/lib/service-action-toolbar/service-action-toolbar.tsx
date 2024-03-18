@@ -1,7 +1,6 @@
 import { type ApplicationGitRepository, type Environment, StateEnum } from 'qovery-typescript-axios'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { P, match } from 'ts-pattern'
-import { useActionCancelEnvironment } from '@qovery/domains/environment'
 import {
   type AnyService,
   type Application,
@@ -43,6 +42,7 @@ import {
   isStopAvailable,
   urlCodeEditor,
 } from '@qovery/shared/util-js'
+import { useCancelDeploymentService } from '../hooks/use-cancel-deployment-service/use-cancel-deployment-service'
 import { useDeleteService } from '../hooks/use-delete-service/use-delete-service'
 import { useDeployService } from '../hooks/use-deploy-service/use-deploy-service'
 import { useDeploymentStatus } from '../hooks/use-deployment-status/use-deployment-status'
@@ -65,7 +65,6 @@ function MenuManageDeployment({
   service: AnyService
   environmentLogsLink: string
 }) {
-  const navigate = useNavigate()
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
 
@@ -73,13 +72,10 @@ function MenuManageDeployment({
   const { mutate: deployService } = useDeployService({ environmentId: environment.id })
   const { mutate: restartService } = useRestartService({ environmentId: environment.id })
   const { mutate: stopService } = useStopService({ environmentId: environment.id })
-  const { mutate: cancelBuild } = useActionCancelEnvironment(
-    environment.project.id,
-    environment.id,
-    true,
-    undefined,
-    () => navigate(environmentLogsLink + DEPLOYMENT_LOGS_URL(service.id))
-  )
+  const { mutateAsync: cancelBuild } = useCancelDeploymentService({
+    projectId: environment.project.id,
+    logsLink: environmentLogsLink + DEPLOYMENT_LOGS_URL(service.id),
+  })
 
   const mutationDeploy = () => deployService({ serviceId: service.id, serviceType: service.serviceType })
 
@@ -110,7 +106,7 @@ function MenuManageDeployment({
       description:
         'Stopping a deployment for your service will stop the deployment of the whole environment. It may take a while, as a safe point needs to be reached. Some operations cannot be stopped (i.e: terraform actions) and need to be completed before stopping the deployment. Any action performed before won’t be rolled back. To confirm the cancellation of your deployment, please type the name of the application:',
       name: service.name,
-      action: () => cancelBuild(),
+      action: () => cancelBuild({ environmentId: environment.id }),
     })
   }
 

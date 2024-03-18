@@ -8,7 +8,7 @@ import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useCloudProviderDatabaseInstanceTypes } from '@qovery/domains/cloud-providers/feature'
 import { useCluster } from '@qovery/domains/clusters/feature'
-import { useFetchEnvironment } from '@qovery/domains/environment'
+import { useEnvironment } from '@qovery/domains/environments/feature'
 import SettingsResourcesInstanceTypes from '../../ui/settings-resources-instance-types/setting-resources-instance-types'
 
 export interface SettingsResourcesInstanceTypesFeatureProps {
@@ -20,9 +20,9 @@ export function SettingsResourcesInstanceTypesFeature({
   databaseType,
   displayWarning,
 }: SettingsResourcesInstanceTypesFeatureProps) {
-  const { organizationId = '', projectId = '', environmentId = '' } = useParams()
+  const { organizationId = '', environmentId = '' } = useParams()
 
-  const { data: environment } = useFetchEnvironment(projectId, environmentId)
+  const { data: environment } = useEnvironment({ environmentId })
   const { data: cluster } = useCluster({ organizationId, clusterId: environment?.cluster_id ?? '' })
   const { data: databaseInstanceTypes } = useCloudProviderDatabaseInstanceTypes(
     match(cluster?.cloud_provider || CloudProviderEnum.AWS)

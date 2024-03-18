@@ -1,8 +1,8 @@
 import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { useContext } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { useActionRedeployEnvironment } from '@qovery/domains/environment'
+import { useDeployEnvironment } from '@qovery/domains/environments/feature'
 import { type ServiceType } from '@qovery/domains/services/data-access'
 import { useDeleteVariable } from '@qovery/domains/variables/feature'
 import { ExternalServiceEnum } from '@qovery/shared/enums'
@@ -42,12 +42,11 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
   const { organizationId = '', applicationId = '', projectId = '', environmentId = '' } = useParams()
   const { openModalConfirmation } = useModalConfirmation()
   const { showHideAllEnvironmentVariablesValues: defaultShowHideValue } = useContext(ApplicationContext)
-  const navigate = useNavigate()
 
-  const actionRedeployEnvironment = useActionRedeployEnvironment(projectId, environmentId, false, undefined, () =>
-    navigate(ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(applicationId))
-  )
-
+  const { mutate: actionRedeployEnvironment } = useDeployEnvironment({
+    projectId,
+    logsLink: ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(applicationId),
+  })
   const { mutateAsync: deleteVariable } = useDeleteVariable()
 
   const edit = (type: EnvironmentVariableType) => ({
@@ -185,7 +184,7 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
                 if (name && name.length > 30) {
                   name = name.substring(0, 30) + '...'
                 }
-                const toasterCallback = () => actionRedeployEnvironment.mutate()
+                const toasterCallback = () => actionRedeployEnvironment({ environmentId })
                 toast(
                   ToastEnum.SUCCESS,
                   'Deletion success',

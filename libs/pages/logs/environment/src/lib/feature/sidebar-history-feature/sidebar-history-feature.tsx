@@ -1,5 +1,5 @@
 import { useLocation, useParams } from 'react-router-dom'
-import { useEnvironmentDeploymentHistory } from '@qovery/domains/environment'
+import { useDeploymentHistory } from '@qovery/domains/environments/feature'
 import { useDeploymentStatus } from '@qovery/domains/environments/feature'
 import { useServices } from '@qovery/domains/services/feature'
 import { ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
@@ -12,7 +12,7 @@ export interface SidebarHistoryFeatureProps {
 
 export function SidebarHistoryFeature({ versionId, serviceId }: SidebarHistoryFeatureProps) {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
-  const { data } = useEnvironmentDeploymentHistory(projectId, environmentId)
+  const { data } = useDeploymentHistory({ environmentId })
   const { data: services } = useServices({ environmentId })
   const { data: deploymentStatus } = useDeploymentStatus({ environmentId })
 

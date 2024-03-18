@@ -78,6 +78,7 @@ export function useEnvironments({ projectId }: UseEnvironmentsProps) {
       ]),
     ]
   )
+  environments?.sort(({ name: nameA }, { name: nameB }) => nameA.localeCompare(nameB))
 
   return {
     data,

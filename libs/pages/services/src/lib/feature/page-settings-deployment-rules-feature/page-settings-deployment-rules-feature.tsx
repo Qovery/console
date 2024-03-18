@@ -2,7 +2,7 @@ import { type EnvironmentDeploymentRule } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
-import { useEditEnvironmentDeploymentRule, useFetchEnvironmentDeploymentRule } from '@qovery/domains/environment'
+import { useDeploymentRule, useEditDeploymentRule } from '@qovery/domains/environments/feature'
 import { dateToHours } from '@qovery/shared/util-dates'
 import PageSettingsDeployment from '../../ui/page-settings-deployment-rules/page-settings-deployment-rules'
 
@@ -17,13 +17,11 @@ export const handleSubmit = (data: FieldValues, environmentDeploymentRules?: Env
 }
 
 export function PageSettingsDeploymentRulesFeature() {
-  const { projectId = '', environmentId = '' } = useParams()
+  const { environmentId = '' } = useParams()
   const [loading, setLoading] = useState(false)
 
-  const { data: environmentDeploymentRules } = useFetchEnvironmentDeploymentRule(projectId, environmentId)
-  const editEnvironmentDeploymentRule = useEditEnvironmentDeploymentRule(projectId, environmentId, () =>
-    setLoading(false)
-  )
+  const { data: environmentDeploymentRules } = useDeploymentRule({ environmentId })
+  const { mutateAsync: editEnvironmentDeploymentRule } = useEditDeploymentRule()
 
   const methods = useForm({
     mode: 'onChange',
@@ -47,11 +45,12 @@ export function PageSettingsDeploymentRulesFeature() {
       setLoading(true)
       const cloneEnvironmentDeploymentRules = handleSubmit(data, environmentDeploymentRules)
 
-      editEnvironmentDeploymentRule.mutate({
+      await editEnvironmentDeploymentRule({
         environmentId,
         deploymentRuleId: environmentDeploymentRules?.id || '',
-        data: cloneEnvironmentDeploymentRules,
+        payload: cloneEnvironmentDeploymentRules,
       })
+      setLoading(false)
     }
   })
 

@@ -8,7 +8,7 @@ import { memo, useCallback, useContext, useEffect, useMemo, useState } from 'rea
 import { useParams } from 'react-router-dom'
 import useWebSocket from 'react-use-websocket'
 import { match } from 'ts-pattern'
-import { useEnvironmentDeploymentHistory } from '@qovery/domains/environment'
+import { useDeploymentHistory } from '@qovery/domains/environments/feature'
 import { useDeploymentStatus, useService } from '@qovery/domains/services/feature'
 import { useAuth } from '@qovery/shared/auth'
 import { type LoadingStatus } from '@qovery/shared/interfaces'
@@ -74,7 +74,7 @@ export function DeploymentLogsFeature({ environment, statusStages }: DeploymentL
   const { stageId } = useContext(ServiceStageIdsContext)
 
   const { data: service } = useService({ environmentId, serviceId })
-  const { data: deploymentHistory } = useEnvironmentDeploymentHistory(projectId, environmentId)
+  const { data: deploymentHistory } = useDeploymentHistory({ environmentId })
   const { data: deploymentStatus } = useDeploymentStatus({ environmentId, serviceId })
 
   const now = useMemo(() => Date.now(), [])

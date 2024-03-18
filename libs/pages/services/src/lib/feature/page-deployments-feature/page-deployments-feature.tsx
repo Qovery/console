@@ -1,17 +1,16 @@
 import { useParams } from 'react-router-dom'
-import { useEnvironmentDeploymentHistory } from '@qovery/domains/environment'
+import { useDeploymentHistory } from '@qovery/domains/environments/feature'
 import { deploymentMock } from '@qovery/shared/factories'
 import { type BaseLink } from '@qovery/shared/ui'
 import { mergeDeploymentServices } from '@qovery/shared/util-js'
 import PageDeployments from '../../ui/page-deployments/page-deployments'
 
 export function PageDeploymentsFeature() {
-  const { projectId = '', environmentId = '' } = useParams()
+  const { environmentId = '' } = useParams()
 
-  const { isLoading: loadingStatusDeployments, data: environmentDeploymentHistory } = useEnvironmentDeploymentHistory(
-    projectId,
-    environmentId
-  )
+  const { isLoading: loadingStatusDeployments, data: environmentDeploymentHistory } = useDeploymentHistory({
+    environmentId,
+  })
 
   const listHelpfulLinks: BaseLink[] = [
     {

@@ -1,13 +1,20 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
-import { mutations } from '@qovery/domains/environments/data-access'
+import { mutations } from '@qovery/domains/services/data-access'
 import { queries } from '@qovery/state/util-queries'
 
-export function useDeployEnvironment({ projectId, logsLink }: { projectId: string; logsLink?: string }) {
+/**
+ * This is a mostly a copy paste from version of useCancelDeploymentEnvironment of `@qovery/domains/environments/feature`
+ * Separation of concerns between domains (services and environment) prevent us from reusing
+ * the one from `environments` domain.
+ * This is a limitation from our current API which do not let us cancel only one service.
+ * It probably gonna evolve over time and that's why it's acceptable at the moment.
+ **/
+export function useCancelDeploymentService({ projectId, logsLink }: { projectId: string; logsLink?: string }) {
   const queryClient = useQueryClient()
   const navigate = useNavigate()
 
-  return useMutation(mutations.deployEnvironment, {
+  return useMutation(mutations.cancelDeploymentService, {
     onSuccess(_, { environmentId }) {
       queryClient.invalidateQueries({
         queryKey: queries.environments.listStatuses(projectId).queryKey,
@@ -22,7 +29,7 @@ export function useDeployEnvironment({ projectId, logsLink }: { projectId: strin
     },
     meta: {
       notifyOnSuccess: {
-        title: 'Your environment is redeploying',
+        title: 'Your environment deployment is cancelling',
         ...(logsLink
           ? {
               labelAction: 'See Deployment Logs',
@@ -35,4 +42,4 @@ export function useDeployEnvironment({ projectId, logsLink }: { projectId: strin
   })
 }
 
-export default useDeployEnvironment
+export default useCancelDeploymentService
