@@ -38,6 +38,7 @@
     "@tanstack/react-query-devtools": "^4.32.6",
     "@tanstack/react-table": "^8.10.3",
     "@uidotdev/usehooks": "^2.2.0",
+    "@xterm/xterm": "^5.4.0",
     "ansi-to-react": "^6.1.6",
     "autoprefixer": "10.4.13",
     "axios": "^0.27.2",

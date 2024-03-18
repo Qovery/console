@@ -3617,6 +3617,7 @@ __metadata:
     "@typescript-eslint/eslint-plugin": ^6.2.0
     "@typescript-eslint/parser": ^6.2.0
     "@uidotdev/usehooks": ^2.2.0
+    "@xterm/xterm": ^5.4.0
     ansi-to-react: ^6.1.6
     autoprefixer: 10.4.13
     axios: ^0.27.2
@@ -7574,6 +7575,13 @@ __metadata:
   version: 0.8.6
   resolution: "@xmldom/xmldom@npm:0.8.6"
   checksum: f17ac6d99a971a6aeb831fcfc5cfa86f367664e45815046548814b2deb17ccc421fef4e0d5ba29e66179d112b552f6caa5680064f8e7bd8a389b788a60404c8e
+  languageName: node
+  linkType: hard
+
+"@xterm/xterm@npm:^5.4.0":
+  version: 5.4.0
+  resolution: "@xterm/xterm@npm:5.4.0"
+  checksum: 6d61cbd476591cdf1b86d5014bdc3b9656fb44c4f0d966dacd8856f06394aab60e8c3d502707f9f94c0336657341f0b9ee944a89d73edb0ec4280e0e1a4b775e
   languageName: node
   linkType: hard
 
