@@ -7,6 +7,11 @@ import App from './app'
 
 import SpyInstance = jest.SpyInstance
 
+jest.mock('@qovery/shared/spotlight/feature', () => ({
+  ...jest.requireActual('@qovery/shared/spotlight/feature'),
+  Spotlight: () => <></>,
+}))
+
 const useOrganizationsSpy: SpyInstance = jest.spyOn(organizationsDomain, 'useOrganizations')
 
 const mockOrganizations: Organization[] = organizationFactoryMock(1)

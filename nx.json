@@ -95,7 +95,16 @@
         "projectNameAndRootFormat": "derived",
         "style": "none",
         "linter": "eslint",
-        "unitTestRunner": "jest"
+        "unitTestRunner": "jest",
+        "bundler": "none"
+      }
+    },
+    "@nx/js": {
+      "library": {
+        "style": "none",
+        "linter": "eslint",
+        "unitTestRunner": "jest",
+        "bundler": "none"
       }
     },
     "@nx/js": {

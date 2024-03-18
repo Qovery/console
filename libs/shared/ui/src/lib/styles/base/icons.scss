@@ -475,3 +475,7 @@
 .icon-solid-lock {
   @include fa-icon-solid($fa-var-lock);
 }
+
+.icon-solid-wand-magic-sparkles:before {
+  content: '\e2ca';
+}
