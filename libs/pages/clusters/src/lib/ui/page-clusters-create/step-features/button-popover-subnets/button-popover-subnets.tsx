@@ -1,7 +1,7 @@
 import { type FormEvent, type PropsWithChildren, type ReactNode } from 'react'
 import { Controller, type UseFieldArrayRemove, useFieldArray, useFormContext } from 'react-hook-form'
 import { type Subnets } from '@qovery/shared/interfaces'
-import { Button, Icon, IconAwesomeEnum, InputTextSmall, Popover } from '@qovery/shared/ui'
+import { Button, Icon, InputTextSmall, Popover } from '@qovery/shared/ui'
 import { removeEmptySubnet } from '../../../../feature/page-clusters-create-feature/step-features-feature/step-features-feature'
 
 export interface ButtonPopoverSubnetsProps extends PropsWithChildren {
@@ -63,15 +63,8 @@ function Row({ index, remove, name }: { index: number; remove: UseFieldArrayRemo
           />
         )}
       />
-      <Button
-        size="md"
-        color="neutral"
-        variant="outline"
-        type="button"
-        className="w-full h-[36px]"
-        onClick={() => remove(index)}
-      >
-        <Icon name={IconAwesomeEnum.TRASH} className="text-neutral-400" />
+      <Button size="md" variant="plain" type="button" className="w-full" onClick={() => remove(index)}>
+        <Icon iconName="trash-can" iconStyle="regular" className="text-base" />
       </Button>
     </li>
   )
@@ -133,7 +126,7 @@ export function ButtonPopoverSubnets({ name, children, title, callout }: ButtonP
             onClick={() => append({ A: '', B: '', C: '' })}
           >
             Add subnets
-            <Icon name={IconAwesomeEnum.PLUS} className="ml-2 text-base relative -top-[2px]" />
+            <Icon iconName="plus" className="ml-2 text-base" />
           </Button>
           <div>
             <Popover.Close>
