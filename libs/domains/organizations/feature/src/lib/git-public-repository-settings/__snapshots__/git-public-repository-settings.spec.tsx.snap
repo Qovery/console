@@ -1,0 +1,129 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`GitPublicRepositorySettings should match snapshot 1`] = `
+<body>
+  <div>
+    <div
+      class=""
+      data-testid="input-text-wrapper"
+    >
+      <div
+        class="relative"
+      >
+        <div
+          aria-label="input-container"
+          class="input     "
+        >
+          <div
+            class=""
+          >
+            <label
+              class="text-sm translate-y-2"
+              for="Public repository URL (.git)"
+            >
+              Public repository URL (.git)
+            </label>
+            <input
+              class="input__value "
+              data-testid="input-text"
+              id="Public repository URL (.git)"
+              name="repository"
+              type="text"
+              value=""
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class=""
+      data-testid="input-text-wrapper"
+    >
+      <div
+        class="relative"
+      >
+        <div
+          aria-label="input-container"
+          class="input     "
+        >
+          <div
+            class=""
+          >
+            <label
+              class="text-sm translate-y-2"
+              for="Branch"
+            >
+              Branch
+            </label>
+            <input
+              class="input__value "
+              data-testid="input-text"
+              id="Branch"
+              name="branch"
+              type="text"
+              value=""
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div
+        class=""
+        data-testid="input-text-wrapper"
+      >
+        <div
+          class="relative"
+        >
+          <div
+            aria-label="input-container"
+            class="input    input--label-up "
+          >
+            <div
+              class=""
+            >
+              <label
+                class="text-sm translate-y-2"
+                for="Root application path"
+              >
+                Root application path
+              </label>
+              <input
+                class="input__value "
+                data-testid="input-text"
+                id="Root application path"
+                name="root_path"
+                type="text"
+                value="/"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <p
+        class="text-xs ml-4 mt-1 text-neutral-350"
+      >
+        Provide the path in the repository where the application is located
+      </p>
+    </div>
+    <div
+      class="flex flex-row gap-x-3 p-3 border rounded border-yellow-600 bg-yellow-50 text-yellow-700 text-xs items-center"
+      data-accent-color="yellow"
+    >
+      <div
+        class="-order-2 text-base leading-6"
+      >
+        <i
+          aria-hidden="true"
+          class="fa-regular fa-info-circle "
+        />
+      </div>
+      <div
+        class="-order-1 mr-auto gap-x-3 text-neutral-400"
+      >
+        Git automations are disabled when using public repos (auto-deploy, automatic preview environments)
+      </div>
+    </div>
+  </div>
+</body>
+`;

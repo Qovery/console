@@ -137,4 +137,49 @@ describe('StepGeneralFeature', () => {
 
     expect(baseElement).toMatchSnapshot()
   })
+
+  it('should submit a form with a git repository', async () => {
+    const { result } = renderHook(() =>
+      useForm<HelmGeneralData>({
+        mode: 'onChange',
+        defaultValues: {
+          name: 'my-helm-app',
+          source_provider: 'GIT',
+          arguments: `['--wait']`,
+          timeout_sec: 600,
+          allow_cluster_wide_resources: false,
+          provider: 'GITHUB',
+          auto_deploy: false,
+          is_public_repository: true,
+          repository: 'https://github.com/Qovery/console.git',
+          branch: 'main',
+          root_path: '/',
+        },
+      })
+    )
+
+    const { baseElement, userEvent } = renderWithProviders(
+      wrapWithReactHookForm(
+        <HelmCreateContext.Provider
+          value={{
+            currentStep: 1,
+            setCurrentStep: jest.fn(),
+            generalForm: result.current,
+          }}
+        >
+          <StepGeneralFeature />
+        </HelmCreateContext.Provider>
+      )
+    )
+
+    const button = screen.getByRole('button', { name: 'Continue' })
+
+    // wait for form to be valid because we have selects (necessary with react hook form)
+    waitFor(async () => {
+      expect(button).not.toBeDisabled()
+      await userEvent.click(button)
+    })
+
+    expect(baseElement).toMatchSnapshot()
+  })
 })
