@@ -187,9 +187,11 @@ export function ContainerRegistryCreateEditModal({
             name="url"
             control={methods.control}
             rules={{
-              // eslint-disable-next-line no-useless-escape
-              pattern: /^(http(s)?:\/\/)[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/gm,
               required: 'Please enter a registry url.',
+              validate: (input) =>
+                // eslint-disable-next-line no-useless-escape
+                input?.match(/^(http(s)?:\/\/)[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:\/?#[\]@!\$&'\(\)\*\+,;=.]+$/gm) !==
+                  null || 'Invalid registry URL',
             }}
             render={({ field, fieldState: { error } }) => (
               <InputText

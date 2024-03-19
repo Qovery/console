@@ -160,13 +160,16 @@ export function HelmRepositoryCreateEditModal({
             name="url"
             control={methods.control}
             rules={{
-              pattern: new RegExp(
-                `^(${
-                  watchKind === 'HTTPS' ? 'http(s)' : 'oci'
-                }?:\\/\\/)[\\w.-]+(?:\\.[\\w\\.-]+)+[\\w\\-\\._~:/?#[\\]@!\\$&'\\(\\)\\*\\+,;=.]+$`,
-                'gm'
-              ),
               required: 'Please enter a repository url.',
+              validate: (input) => {
+                const regex = new RegExp(
+                  `^(${
+                    watchKind === 'HTTPS' ? 'http(s)' : 'oci'
+                  }?:\\/\\/)[\\w.-]+(?:\\.[\\w\\.-]+)+[\\w\\-\\._~:/?#[\\]@!\\$&'\\(\\)\\*\\+,;=.]+$`,
+                  'gm'
+                )
+                return input?.match(regex) !== null || 'Invalid repository URL'
+              },
             }}
             render={({ field, fieldState: { error } }) => (
               <InputText
