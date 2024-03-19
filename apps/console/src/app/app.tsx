@@ -56,11 +56,13 @@ export function App() {
           ...user,
         })
       }
+      const INTERCOM_HASH_KEY = 'https://qovery.com/intercom_hash'
 
       updateIntercom({
         email: user.email,
         name: user.name,
         userId: user.sub,
+        userHash: user[INTERCOM_HASH_KEY],
       })
     },
     [updateIntercom]
