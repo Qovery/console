@@ -1,4 +1,4 @@
-import { eachMonthOfInterval, isAfter, isEqual } from 'date-fns'
+import { eachMonthOfInterval, isAfter, isBefore, isEqual } from 'date-fns'
 import { type Organization } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useOrganization } from '@qovery/domains/organizations/feature'
@@ -45,7 +45,7 @@ function getReportPeriods({
       // First renewal date can be below the creation date in some case like:
       // - Creation date: 31 Mars
       // - Renewal date: 4 April
-      .filter((p) => isAfter(p, orgCreatedAt) || isEqual(p, orgCreatedAt))
+      .filter((p) => (isAfter(p, orgCreatedAt) || isEqual(p, orgCreatedAt)) && isBefore(p, now))
       .map((p, index, arr) => {
         return index === arr.length - 1
           ? {
