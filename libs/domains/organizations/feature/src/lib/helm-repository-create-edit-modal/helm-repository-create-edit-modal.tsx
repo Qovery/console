@@ -142,6 +142,7 @@ export function HelmRepositoryCreateEditModal({
                 onChange={(value) => {
                   methods.resetField('config')
                   field.onChange(value)
+                  methods.clearErrors('url')
                 }}
                 value={field.value}
                 label="Kind"
@@ -168,7 +169,10 @@ export function HelmRepositoryCreateEditModal({
                   }?:\\/\\/)[\\w.-]+(?:\\.[\\w\\.-]+)+[\\w\\-\\._~:/?#[\\]@!\\$&'\\(\\)\\*\\+,;=.]+$`,
                   'gm'
                 )
-                return input?.match(regex) !== null || 'Invalid repository URL'
+                return (
+                  input?.match(regex) !== null ||
+                  `URL must start with «${watchKind === 'HTTPS' ? 'http(s)' : 'oci'}://»`
+                )
               },
             }}
             render={({ field, fieldState: { error } }) => (
