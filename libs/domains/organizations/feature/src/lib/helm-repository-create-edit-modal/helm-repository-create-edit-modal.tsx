@@ -142,6 +142,7 @@ export function HelmRepositoryCreateEditModal({
                 onChange={(value) => {
                   methods.resetField('config')
                   field.onChange(value)
+                  methods.setValue('url', '')
                   methods.clearErrors('url')
                 }}
                 value={field.value}
@@ -171,7 +172,7 @@ export function HelmRepositoryCreateEditModal({
                 )
                 return (
                   input?.match(regex) !== null ||
-                  `URL must start with «${watchKind === 'HTTPS' ? 'http(s)' : 'oci'}://»`
+                  `URL must be valid and start with «${watchKind === 'HTTPS' ? 'http(s)' : 'oci'}://»`
                 )
               },
             }}

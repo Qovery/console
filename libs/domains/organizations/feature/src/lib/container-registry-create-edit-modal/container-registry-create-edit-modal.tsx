@@ -191,7 +191,7 @@ export function ContainerRegistryCreateEditModal({
               validate: (input) =>
                 // eslint-disable-next-line no-useless-escape
                 input?.match(/^(http(s)?:\/\/)[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:\/?#[\]@!\$&'\(\)\*\+,;=.]+$/gm) !==
-                  null || 'URL must start with «http(s)://»',
+                  null || 'URL must be valid and start with «http(s)://»',
             }}
             render={({ field, fieldState: { error } }) => (
               <InputText

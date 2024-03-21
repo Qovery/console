@@ -28,7 +28,7 @@ export function GitPublicRepositorySettings({ disabled = false, hideRootPath }: 
           validate: (input) =>
             // eslint-disable-next-line no-useless-escape
             input.match(/^(http(s)?:\/\/)[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:\/?#[\]@!\$&'\(\)\*\+,;=.]+.git$/gm) !==
-              null || 'URL must start with «http(s)://»',
+              null || 'URL must be valid, start with «http(s)://» and end with «.git»',
         }}
         render={({ field, fieldState: { error } }) => (
           <InputText
