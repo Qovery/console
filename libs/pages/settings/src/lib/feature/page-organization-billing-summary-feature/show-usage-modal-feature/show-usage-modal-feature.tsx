@@ -33,7 +33,7 @@ export function ShowUsageModalFeature({ organizationId, currentCost }: ShowUsage
         usageReportRequest: {
           from: selectedReportPeriod.from,
           to: selectedReportPeriod.to ?? new Date().toISOString(),
-          report_expiration_in_seconds: methods.getValues('expires'),
+          report_expiration_in_seconds: methods.getValues('expires') * 60 * 60, // hours to seconds
         },
       })
       openModal({
