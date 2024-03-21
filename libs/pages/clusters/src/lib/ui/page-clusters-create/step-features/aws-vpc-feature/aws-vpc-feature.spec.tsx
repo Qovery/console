@@ -2,7 +2,7 @@ import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form
 import { renderWithProviders } from '@qovery/shared/util-tests'
 import { AWSVpcFeature, areSubnetsEmpty } from './aws-vpc-feature'
 
-describe('ButtonPopoverSubnets', () => {
+describe('AwsVpcFeature', () => {
   it('should render successfully', () => {
     const { baseElement } = renderWithProviders(wrapWithReactHookForm(<AWSVpcFeature />))
     expect(baseElement).toBeTruthy()
