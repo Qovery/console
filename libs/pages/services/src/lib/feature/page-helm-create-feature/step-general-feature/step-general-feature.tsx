@@ -1,6 +1,11 @@
 import { FormProvider } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
-import { GitBranchSettings, GitProviderSetting, GitRepositorySetting } from '@qovery/domains/organizations/feature'
+import {
+  GitBranchSettings,
+  GitProviderSetting,
+  GitPublicRepositorySettings,
+  GitRepositorySetting,
+} from '@qovery/domains/organizations/feature'
 import { DeploymentSetting, SourceSetting } from '@qovery/domains/service-helm/feature'
 import { AutoDeploySetting, GeneralSetting } from '@qovery/domains/services/feature'
 import {
@@ -68,6 +73,7 @@ export function StepGeneralFeature() {
   const watchFieldGitProvider = generalForm.watch('provider')
   const watchFieldGitTokenId = generalForm.watch('git_token_id')
   const watchFieldGitRepository = generalForm.watch('repository')
+  const watchFieldIsPublicRepository = generalForm.watch('is_public_repository')
 
   // NOTE: Validation corner case where git settings can be in loading state
   const isGitSettingsValid = watchFieldProvider === 'GIT' ? generalForm.watch('branch') : true
@@ -94,11 +100,17 @@ export function StepGeneralFeature() {
               {watchFieldProvider === 'GIT' && (
                 <div className="flex flex-col gap-3 mt-3">
                   <GitProviderSetting />
-                  {watchFieldGitProvider && (
-                    <GitRepositorySetting gitProvider={watchFieldGitProvider} gitTokenId={watchFieldGitTokenId} />
-                  )}
-                  {watchFieldGitProvider && watchFieldGitRepository && (
-                    <GitBranchSettings gitProvider={watchFieldGitProvider} gitTokenId={watchFieldGitTokenId} />
+                  {watchFieldIsPublicRepository ? (
+                    <GitPublicRepositorySettings />
+                  ) : (
+                    <>
+                      {watchFieldGitProvider && (
+                        <GitRepositorySetting gitProvider={watchFieldGitProvider} gitTokenId={watchFieldGitTokenId} />
+                      )}
+                      {watchFieldGitProvider && watchFieldGitRepository && (
+                        <GitBranchSettings gitProvider={watchFieldGitProvider} gitTokenId={watchFieldGitTokenId} />
+                      )}
+                    </>
                   )}
                 </div>
               )}

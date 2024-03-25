@@ -47,6 +47,7 @@ export function GitRepositorySetting({ disabled, gitProvider, gitTokenId }: GitR
       control={control}
       rules={{
         required: 'Please select a repository.',
+        validate: () => true,
       }}
       render={({ field, fieldState: { error } }) => (
         <InputSelect

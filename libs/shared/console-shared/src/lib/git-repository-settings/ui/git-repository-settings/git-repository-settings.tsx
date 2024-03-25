@@ -1,6 +1,11 @@
 import { type GitProviderEnum } from 'qovery-typescript-axios'
 import { useFormContext } from 'react-hook-form'
-import { GitBranchSettings, GitProviderSetting, GitRepositorySetting } from '@qovery/domains/organizations/feature'
+import {
+  GitBranchSettings,
+  GitProviderSetting,
+  GitPublicRepositorySettings,
+  GitRepositorySetting,
+} from '@qovery/domains/organizations/feature'
 import {
   BlockContent,
   ButtonLegacy,
@@ -28,6 +33,7 @@ export function GitRepositorySettings({
 }: GitRepositorySettingsProps) {
   const { watch } = useFormContext<{
     provider: keyof typeof GitProviderEnum
+    is_public_repository?: boolean
     repository: string
     branch: string
     root_path: string
@@ -37,21 +43,32 @@ export function GitRepositorySettings({
   const { openModal, closeModal } = useModal()
 
   const watchFieldProvider = watch('provider')
+  const watchFieldIsPublicRepository = watch('is_public_repository')
   const watchFieldRepository = watch('repository')
   const watchFieldGitTokenId = watch('git_token_id')
 
   const children = (
     <div className="flex flex-col gap-3">
       <GitProviderSetting disabled={gitDisabled} />
-      {watchFieldProvider && (
-        <GitRepositorySetting
-          disabled={gitDisabled}
-          gitProvider={watchFieldProvider}
-          gitTokenId={watchFieldGitTokenId}
-        />
-      )}
-      {watchFieldProvider && watchFieldRepository && (
-        <GitBranchSettings disabled={gitDisabled} gitProvider={watchFieldProvider} gitTokenId={watchFieldGitTokenId} />
+      {watchFieldIsPublicRepository ? (
+        <GitPublicRepositorySettings disabled={gitDisabled} />
+      ) : (
+        <>
+          {watchFieldProvider && (
+            <GitRepositorySetting
+              disabled={gitDisabled}
+              gitProvider={watchFieldProvider}
+              gitTokenId={watchFieldGitTokenId}
+            />
+          )}
+          {watchFieldProvider && watchFieldRepository && (
+            <GitBranchSettings
+              disabled={gitDisabled}
+              gitProvider={watchFieldProvider}
+              gitTokenId={watchFieldGitTokenId}
+            />
+          )}
+        </>
       )}
       {gitDisabled && editGitSettings && currentProvider && currentRepository && (
         <div className="flex justify-end">

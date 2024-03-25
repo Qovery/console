@@ -25,6 +25,7 @@ export interface ApplicationGeneralData {
   build_mode?: keyof typeof BuildModeEnum
   branch?: string
   repository?: string
+  is_public_repository?: boolean
   provider?: keyof typeof GitProviderEnum
   git_token_id?: GitTokenResponse['id']
   root_path?: string

@@ -28,12 +28,13 @@ export const mergeProviders = (authProviders: GitAuthProvider[] = [], gitTokens:
 }
 
 export function GitProviderSetting({ disabled }: GitProviderSettingProps) {
-  const { control, watch, setValue } = useFormContext()
+  const { control, watch, setValue, clearErrors } = useFormContext()
   const { organizationId = '' } = useParams()
   const { openModal, closeModal } = useModal()
 
   const { data: authProviders = [] } = useAuthProviders({ organizationId, enabled: !disabled })
   const { data: gitTokens = [] } = useGitTokens({ organizationId, enabled: !disabled })
+  const watchFieldIsPublicRepository = watch('is_public_repository')
   const watchFieldProvider = watch('provider')
   const watchFieldGitTokenName = watch('git_token_name')
   const watchFieldGitTokenId = watch('git_token_id')
@@ -52,7 +53,14 @@ export function GitProviderSetting({ disabled }: GitProviderSettingProps) {
               icon: <Icon name={`${watchFieldProvider?.split(' ')[0].toUpperCase()}`} />,
             },
       ]
-    : mergeProviders(authProviders, gitTokens)
+    : [
+        ...mergeProviders(authProviders, gitTokens),
+        {
+          label: 'Public repository (Github, Gitlab, Bitbucket)',
+          value: 'PUBLIC',
+          icon: <Icon iconName="folder-closed" iconStyle="regular" width={16} height={16} />,
+        },
+      ]
 
   const onChange = (value: string) => {
     /**
@@ -63,14 +71,18 @@ export function GitProviderSetting({ disabled }: GitProviderSettingProps) {
       setValue('git_token_id', token.id)
       setValue('git_token_name', token.name)
       setValue('provider', token.type)
+      setValue('is_public_repository', false)
     } else {
+      const isPublicRepo = value === 'PUBLIC'
       setValue('git_token_id', null)
       setValue('git_token_name', null)
-      setValue('provider', value)
+      setValue('provider', isPublicRepo ? null : value)
+      setValue('is_public_repository', isPublicRepo)
     }
     // Reset children fields
-    setValue('repository', null)
-    setValue('branch', null)
+    setValue('repository', '')
+    setValue('branch', '')
+    clearErrors('repository')
   }
 
   return (
@@ -106,7 +118,7 @@ export function GitProviderSetting({ disabled }: GitProviderSettingProps) {
                   })
                 },
               }}
-              value={gitTokenId ?? provider}
+              value={gitTokenId ?? (watchFieldIsPublicRepository ? 'PUBLIC' : provider)}
               error={error?.message}
               disabled={disabled}
               isSearchable
