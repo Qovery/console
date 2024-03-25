@@ -8,8 +8,8 @@ export interface TerminalProps {
   addons?: ITerminalAddon[]
   onBinary?(data: string): void
   onCursorMove?(): void
-  onData?(data: string): void
-  onKey?(event: { key: string; domEvent: KeyboardEvent }): void
+  onData?(terminal: XTerminal, data: string): void
+  onKey?: (terminal: XTerminal, event: { key: string; domEvent: KeyboardEvent }) => void
   onLineFeed?(): void
   onScroll?(newPosition: number): void
   onSelectionChange?(): void
@@ -39,7 +39,7 @@ export function Terminal({
   const terminal = useRef<XTerminal | null>(null)
 
   useEffect(() => {
-    // Setup the XTerm terminal.
+    // Setup the XTerm terminal
     terminal.current = new XTerminal(options)
 
     // Load addons if the prop exists
@@ -53,14 +53,15 @@ export function Terminal({
     if (terminalRef.current) {
       if (onBinary) terminal.current.onBinary(onBinary)
       if (onCursorMove) terminal.current.onCursorMove(onCursorMove)
-      if (onData) terminal.current.onData(onData)
-      if (onKey) terminal.current.onKey(onKey)
       if (onLineFeed) terminal.current.onLineFeed(onLineFeed)
       if (onScroll) terminal.current.onScroll(onScroll)
       if (onSelectionChange) terminal.current.onSelectionChange(onSelectionChange)
       if (onRender) terminal.current.onRender(onRender)
       if (onResize) terminal.current.onResize(onResize)
       if (onTitleChange) terminal.current.onTitleChange(onTitleChange)
+
+      if (onKey) terminal.current.onKey((event) => onKey(terminal.current!, event))
+      if (onData) terminal.current.onData((data) => onData(terminal.current!, data))
 
       // Add Custom Key Event Handler
       if (customKeyEventHandler) {
@@ -75,7 +76,21 @@ export function Terminal({
       // When the component unmounts dispose of the terminal and all of its listeners
       terminal.current!.dispose()
     }
-  }, [])
+  }, [
+    addons,
+    customKeyEventHandler,
+    onBinary,
+    onData,
+    onKey,
+    onCursorMove,
+    onLineFeed,
+    onRender,
+    onResize,
+    onScroll,
+    onSelectionChange,
+    onTitleChange,
+    options,
+  ])
 
   return <div className={className} ref={terminalRef} />
 }

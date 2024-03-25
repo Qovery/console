@@ -5,7 +5,7 @@ import { match } from 'ts-pattern'
 import { useCluster } from '@qovery/domains/clusters/feature'
 import { EnvironmentMode } from '@qovery/domains/environments/feature'
 import { type AnyService, type Database } from '@qovery/domains/services/data-access'
-import { NeedRedeployFlag, ServiceActionToolbar } from '@qovery/domains/services/feature'
+import { NeedRedeployFlag, ServiceActionToolbar, ServiceTerminal } from '@qovery/domains/services/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import { CLUSTER_URL } from '@qovery/shared/routes'
 import { Header, Icon, Link, Section, Skeleton, Tooltip } from '@qovery/shared/ui'
@@ -74,6 +74,15 @@ export function Container({ service, environment, children }: PropsWithChildren<
         <NeedRedeployFlag />
         {children}
       </Section>
+      {environment && service && service.serviceType === 'CONTAINER' && (
+        <ServiceTerminal
+          organizationId={environment.organization.id}
+          clusterId={environment.cluster_id}
+          projectId={environment.project.id}
+          environmentId={environment.id}
+          serviceId={service.id}
+        />
+      )}
     </ApplicationContext.Provider>
   )
 }

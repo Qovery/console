@@ -5,9 +5,9 @@ const Story: Meta<typeof Terminal> = {
   component: Terminal,
   title: 'Terminal',
   decorators: [
-    (Story) => (
+    () => (
       <div style={{ background: 'white', padding: '3em' }}>
-        <Story />
+        <Terminal onData={(terminal, data) => terminal.write(data)} />
       </div>
     ),
   ],
