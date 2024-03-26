@@ -34,6 +34,10 @@ export function ClusterResourcesSettingsFeature(props: ClusterResourcesSettingsF
         cloudProvider,
         clusterType: 'MANAGED' as const,
       }))
+      .with('ON_PREMISE', (cloudProvider) => ({
+        cloudProvider,
+        clusterType: 'MANAGED' as const,
+      }))
       .exhaustive()
   )
   const instanceTypeOptions = listInstanceTypeFormatter(cloudProviderInstanceTypes ?? [])

@@ -16,6 +16,8 @@ export function ClusterType({ cloudProvider, kubernetes, ...props }: ClusterType
     .with(['SCW', P._], () => 'Kapsule')
     // Google GCP
     .with(['GCP', P._], () => 'GKE (Autopilot)')
+    // BYOK
+    .with(['ON_PREMISE', P._], () => 'On-premise')
     .exhaustive()
   return (
     <Badge color="neutral" {...props}>

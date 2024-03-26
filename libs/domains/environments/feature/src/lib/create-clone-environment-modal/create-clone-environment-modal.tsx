@@ -207,6 +207,7 @@ export function CreateCloneEnvironmentModal({
                     .with(['AWS', KubernetesEnum.SELF_MANAGED], ['AWS', undefined], () => 'Self-managed')
                     .with(['SCW', P._], () => 'Managed (Kapsule)')
                     .with(['GCP', P._], () => 'GKE (Autopilot)')
+                    .with(['ON_PREMISE', P._], () => 'On-premise')
                     .exhaustive()
 
                   return {

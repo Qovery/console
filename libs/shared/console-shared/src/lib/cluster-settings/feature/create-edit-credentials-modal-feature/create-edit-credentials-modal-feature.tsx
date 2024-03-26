@@ -48,6 +48,10 @@ export const handleSubmit = (data: FieldValues, cloudProvider: CloudProviderEnum
         gcp_credentials: data['gcp_credentials'],
       },
     }))
+    .with(CloudProviderEnum.ON_PREMISE, (cp) => ({
+      cloudProvider: cp,
+      payload: undefined,
+    }))
     .exhaustive()
 }
 
