@@ -1,8 +1,7 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import { AttachAddon } from '@xterm/addon-attach'
-import { FitAddon } from '@xterm/addon-fit'
 import { useCallback, useEffect, useState } from 'react'
-import { Terminal } from '@qovery/shared/ui'
+import { Button, Icon, Terminal, useTerminal } from '@qovery/shared/ui'
 
 export interface ServiceTerminalProps {
   organizationId: string
@@ -19,6 +18,8 @@ export function ServiceTerminal({
   environmentId,
   serviceId,
 }: ServiceTerminalProps) {
+  const [openTerminal, setOpenTerminal] = useState<boolean>(false)
+  const { instance } = useTerminal()
   const [attachAddon, setAttachAddon] = useState<AttachAddon | undefined>(undefined)
   const { getAccessTokenSilently } = useAuth0()
 
@@ -34,6 +35,8 @@ export function ServiceTerminal({
 
     socket.addEventListener('open', () => {
       console.log('WebSocket opened')
+
+      setOpenTerminal(true)
       setAttachAddon(new AttachAddon(socket))
     })
 
@@ -51,20 +54,30 @@ export function ServiceTerminal({
   }, [fetchShellUrl])
 
   useEffect(() => {
-    onInit()
-  }, [onInit])
+    if (instance) onInit()
+  }, [instance, onInit])
 
-  if (!attachAddon) {
+  if (!attachAddon || !openTerminal) {
     return null
   }
 
   return (
-    <div className="fixed bottom-0 w-full">
-      <div className="h-11 px-4 py-2 bg-neutral-650">
+    <div className="dark fixed bottom-0 left-0 w-full">
+      <div className="flex justify-between h-11 px-4 py-2 bg-neutral-650">
         <span className="text-neutral-100">Search pod name</span>
+        <Button
+          color="neutral"
+          onClick={() => {
+            setOpenTerminal(false)
+            instance.dispose()
+          }}
+        >
+          Close shell
+          <Icon iconName="xmark" className="ml-2 text-sm" />
+        </Button>
       </div>
       <div className="bg-neutral-700 px-4 py-2">
-        <Terminal addons={[new FitAddon(), attachAddon]} />
+        <Terminal addons={[attachAddon]} />
       </div>
     </div>
   )

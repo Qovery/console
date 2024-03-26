@@ -1,15 +1,61 @@
 import { type ITerminalAddon, type ITerminalOptions, Terminal as XTerminal } from '@xterm/xterm'
 import '@xterm/xterm/css/xterm.css'
-import { useEffect, useRef } from 'react'
+import { type ReactNode, createContext, useEffect, useMemo, useRef } from 'react'
+
+// export const TerminalContext = createContext<any | undefined>({
+//   options: {
+//     allowTransparency: true,
+//     fontFamily: 'operator mono,SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace',
+//     fontSize: 14,
+//     theme: {
+//       background: 'transparent',
+//     },
+//     cursorStyle: 'underline',
+//     cursorBlink: false,
+//   },
+// })
+
+// export function TerminalProvider({ options = {}, children }: { options?: ITerminalOptions; children: ReactNode }) {
+//   return (
+//     <TerminalContext.Provider
+//       value={{
+//         options,
+//       }}
+//     >
+//       {children}
+//     </TerminalContext.Provider>
+//   )
+// }
+
+export function useTerminal({ options }: { options?: ITerminalOptions } = {}) {
+  const terminalRef = useRef<XTerminal | null>(null)
+
+  if (!terminalRef.current) {
+    terminalRef.current = new XTerminal({
+      allowTransparency: true,
+      fontFamily: 'operator mono,SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace',
+      fontSize: 14,
+      theme: {
+        background: 'transparent',
+      },
+      cursorStyle: 'underline',
+      cursorBlink: false,
+      ...options,
+    })
+  }
+
+  return {
+    instance: terminalRef.current,
+  }
+}
 
 export interface TerminalProps {
   className?: string
-  options?: ITerminalOptions
   addons?: ITerminalAddon[]
   onBinary?(data: string): void
   onCursorMove?(): void
-  onData?(terminal: XTerminal, data: string): void
-  onKey?: (terminal: XTerminal, event: { key: string; domEvent: KeyboardEvent }) => void
+  onData?(data: string): void
+  onKey?: (event: { key: string; domEvent: KeyboardEvent }) => void
   onLineFeed?(): void
   onScroll?(newPosition: number): void
   onSelectionChange?(): void
@@ -21,7 +67,6 @@ export interface TerminalProps {
 
 export function Terminal({
   className = '',
-  options = {},
   addons,
   onBinary,
   onCursorMove,
@@ -35,58 +80,45 @@ export function Terminal({
   onTitleChange,
   customKeyEventHandler,
 }: TerminalProps) {
+  const { instance } = useTerminal()
   const terminalRef = useRef<HTMLDivElement>(null)
-  const terminal = useRef<XTerminal | null>(null)
 
   useEffect(() => {
-    // Setup the XTerm terminal
-    terminal.current = new XTerminal({
-      allowTransparency: true,
-      fontFamily: 'operator mono,SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace',
-      fontSize: 14,
-      theme: {
-        background: '#15171C',
-      },
-      cursorStyle: 'underline',
-      cursorBlink: false,
-      ...options,
-    })
-
     // Load addons if the prop exists
     if (addons) {
       addons.forEach((addon) => {
-        terminal.current!.loadAddon(addon)
+        instance.loadAddon(addon)
       })
     }
 
     // Listeners
     if (terminalRef.current) {
-      if (onBinary) terminal.current.onBinary(onBinary)
-      if (onCursorMove) terminal.current.onCursorMove(onCursorMove)
-      if (onLineFeed) terminal.current.onLineFeed(onLineFeed)
-      if (onScroll) terminal.current.onScroll(onScroll)
-      if (onSelectionChange) terminal.current.onSelectionChange(onSelectionChange)
-      if (onRender) terminal.current.onRender(onRender)
-      if (onResize) terminal.current.onResize(onResize)
-      if (onTitleChange) terminal.current.onTitleChange(onTitleChange)
-
-      if (onKey) terminal.current.onKey((event) => onKey(terminal.current!, event))
-      if (onData) terminal.current.onData((data) => onData(terminal.current!, data))
+      if (onBinary) instance.onBinary(onBinary)
+      if (onCursorMove) instance.onCursorMove(onCursorMove)
+      if (onLineFeed) instance.onLineFeed(onLineFeed)
+      if (onScroll) instance.onScroll(onScroll)
+      if (onSelectionChange) instance.onSelectionChange(onSelectionChange)
+      if (onRender) instance.onRender(onRender)
+      if (onResize) instance.onResize(onResize)
+      if (onTitleChange) instance.onTitleChange(onTitleChange)
+      if (onKey) instance.onKey((event) => onKey(event))
+      if (onData) instance.onData((data) => onData(data))
 
       // Add Custom Key Event Handler
       if (customKeyEventHandler) {
-        terminal.current.attachCustomKeyEventHandler(customKeyEventHandler)
+        instance.attachCustomKeyEventHandler(customKeyEventHandler)
       }
 
       // Mount terminal
-      terminal.current.open(terminalRef.current)
+      instance.open(terminalRef.current)
     }
 
     return () => {
       // When the component unmounts dispose of the terminal and all of its listeners
-      terminal.current!.dispose()
+      instance.dispose()
     }
   }, [
+    instance,
     addons,
     customKeyEventHandler,
     onBinary,
@@ -99,7 +131,7 @@ export function Terminal({
     onScroll,
     onSelectionChange,
     onTitleChange,
-    options,
+    terminalRef,
   ])
 
   return <div className={className} ref={terminalRef} />

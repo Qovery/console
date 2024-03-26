@@ -1,6 +1,6 @@
 import { type Environment } from 'qovery-typescript-axios'
 import { type PropsWithChildren, createContext, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useCluster } from '@qovery/domains/clusters/feature'
 import { EnvironmentMode } from '@qovery/domains/environments/feature'
@@ -26,6 +26,8 @@ export interface ContainerProps {
 
 export function Container({ service, environment, children }: PropsWithChildren<ContainerProps>) {
   const { organizationId = '' } = useParams()
+  const { state } = useLocation()
+
   const [showHideAllEnvironmentVariablesValues, setShowHideAllEnvironmentVariablesValues] = useState<boolean>(false)
 
   const { data: cluster } = useCluster({ organizationId, clusterId: environment?.cluster_id ?? '' })
@@ -74,7 +76,7 @@ export function Container({ service, environment, children }: PropsWithChildren<
         <NeedRedeployFlag />
         {children}
       </Section>
-      {environment && service && service.serviceType === 'CONTAINER' && (
+      {state?.hasShell && environment && service && service.serviceType === 'CONTAINER' && (
         <ServiceTerminal
           organizationId={environment.organization.id}
           clusterId={environment.cluster_id}

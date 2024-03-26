@@ -18,6 +18,7 @@ import {
   isJobGitSource,
 } from '@qovery/shared/enums'
 import {
+  APPLICATION_GENERAL_URL,
   APPLICATION_SETTINGS_GENERAL_URL,
   APPLICATION_SETTINGS_URL,
   APPLICATION_URL,
@@ -579,15 +580,35 @@ export function ServiceActionToolbar({ environment, serviceId }: { environment: 
       />
       <Tooltip content="Logs">
         <ActionToolbar.Button
-          onClick={() => {
+          onClick={() =>
             navigate(environmentLogsLink + SERVICE_LOGS_URL(service.id), {
               state: { prevUrl: pathname },
             })
-          }}
+          }
         >
           <Icon iconName="scroll" />
         </ActionToolbar.Button>
       </Tooltip>
+      {service.serviceType === 'CONTAINER' && (
+        <Tooltip content="Qovery cloud shell">
+          <ActionToolbar.Button
+            onClick={() =>
+              navigate(
+                APPLICATION_URL(environment.organization.id, environment.project.id, environment.id, service.id) +
+                  APPLICATION_GENERAL_URL,
+                {
+                  state: {
+                    hasShell: true,
+                  },
+                }
+              )
+            }
+          >
+            <Icon iconName="terminal" />
+          </ActionToolbar.Button>
+        </Tooltip>
+      )}
+
       <MenuOtherActions
         state={deploymentStatus.state}
         organizationId={organizationId}
