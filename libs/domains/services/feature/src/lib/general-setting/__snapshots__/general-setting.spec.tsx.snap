@@ -4,7 +4,7 @@ exports[`GeneralSetting should match snapshot 1`] = `
 <body>
   <div>
     <div
-      class="mb-3"
+      class=""
       data-testid="input-text-wrapper"
     >
       <div
