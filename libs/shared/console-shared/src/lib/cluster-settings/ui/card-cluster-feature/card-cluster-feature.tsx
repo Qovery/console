@@ -84,7 +84,7 @@ export function CardClusterFeature({
           </h4>
           <p className="text-xs text-neutral-350 max-w-lg">{feature.description}</p>
           {typeof feature.value === 'string' && (
-            <div>
+            <div onClick={(e) => e.stopPropagation()}>
               {control ? (
                 <Controller
                   name={`features.${feature.id}.extendedValue`}
