@@ -107,8 +107,8 @@ exports[`GitPublicRepositorySettings should match snapshot 1`] = `
       </p>
     </div>
     <div
-      class="flex flex-row gap-x-3 p-3 border rounded border-yellow-600 bg-yellow-50 text-yellow-700 text-xs items-center"
-      data-accent-color="yellow"
+      class="flex flex-row gap-x-3 p-3 border rounded border-sky-500 bg-sky-50 text-sky-500 text-xs items-center"
+      data-accent-color="sky"
     >
       <div
         class="-order-2 text-base leading-6"
