@@ -127,7 +127,7 @@ export function StepSummaryFeature() {
             region: generalData.region,
             cloud_provider: generalData.cloud_provider,
             kubernetes: 'SELF_MANAGED',
-            production: true,
+            production: generalData.production,
             ssh_keys: [],
             kubeconfig: kubeconfigData.file_content,
             features: [],
