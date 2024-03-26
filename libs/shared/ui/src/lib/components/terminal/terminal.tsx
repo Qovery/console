@@ -21,7 +21,7 @@ export interface TerminalProps {
 
 export function Terminal({
   className = '',
-  options,
+  options = {},
   addons,
   onBinary,
   onCursorMove,
@@ -40,7 +40,17 @@ export function Terminal({
 
   useEffect(() => {
     // Setup the XTerm terminal
-    terminal.current = new XTerminal(options)
+    terminal.current = new XTerminal({
+      allowTransparency: true,
+      fontFamily: 'operator mono,SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace',
+      fontSize: 14,
+      theme: {
+        background: '#15171C',
+      },
+      cursorStyle: 'underline',
+      cursorBlink: false,
+      ...options,
+    })
 
     // Load addons if the prop exists
     if (addons) {

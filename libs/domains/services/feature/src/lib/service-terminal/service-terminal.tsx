@@ -1,5 +1,6 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import { AttachAddon } from '@xterm/addon-attach'
+import { FitAddon } from '@xterm/addon-fit'
 import { useCallback, useEffect, useState } from 'react'
 import { Terminal } from '@qovery/shared/ui'
 
@@ -59,7 +60,12 @@ export function ServiceTerminal({
 
   return (
     <div className="fixed bottom-0 w-full">
-      <Terminal addons={[attachAddon]} />
+      <div className="h-11 px-4 py-2 bg-neutral-650">
+        <span className="text-neutral-100">Search pod name</span>
+      </div>
+      <div className="bg-neutral-700 px-4 py-2">
+        <Terminal addons={[new FitAddon(), attachAddon]} />
+      </div>
     </div>
   )
 }
