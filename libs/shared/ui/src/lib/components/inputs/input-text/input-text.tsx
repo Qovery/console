@@ -8,6 +8,7 @@ export interface InputTextProps {
   type?: 'text' | 'number' | 'password' | 'email' | 'date' | 'datetime' | 'time'
   className?: string
   onChange?: ChangeEventHandler<HTMLInputElement>
+  hint?: ReactNode
   error?: string
   disabled?: boolean
   dataTestId?: string
@@ -22,6 +23,7 @@ export function InputText(props: InputTextProps) {
     value = '',
     onChange,
     type = 'text',
+    hint,
     error,
     className = '',
     disabled,
@@ -110,7 +112,8 @@ export function InputText(props: InputTextProps) {
           </div>
         )}
       </div>
-      {error && <p className="px-4 mt-1 font-medium text-xs text-red-500">{error}</p>}
+      {hint && <p className="px-4 mt-0.5 font-normal text-xs text-neutral-350">{hint}</p>}
+      {error && <p className="px-4 mt-0.5 font-medium text-xs text-red-500">{error}</p>}
     </div>
   )
 }

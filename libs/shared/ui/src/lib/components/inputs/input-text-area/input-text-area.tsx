@@ -1,4 +1,4 @@
-import { type FormEvent, useEffect, useRef, useState } from 'react'
+import { type FormEvent, type ReactNode, useEffect, useRef, useState } from 'react'
 
 export interface InputTextAreaProps {
   label: string
@@ -7,12 +7,13 @@ export interface InputTextAreaProps {
   onChange?: (e: FormEvent<HTMLTextAreaElement>) => void
   className?: string
   disabled?: boolean
+  hint?: ReactNode
   error?: string
   dataTestId?: string
 }
 
 export function InputTextArea(props: InputTextAreaProps) {
-  const { label, value = '', name, onChange, className, error, dataTestId = 'input-textarea' } = props
+  const { label, value = '', name, onChange, className, hint, error, dataTestId = 'input-textarea' } = props
 
   const [currentValue, setCurrentValue] = useState(value)
 
@@ -59,6 +60,7 @@ export function InputTextArea(props: InputTextAreaProps) {
           disabled={props.disabled}
         />
       </div>
+      {hint && <p className="px-4 mt-0.5 font-normal text-xs text-neutral-350">{hint}</p>}
       {error && <p className="px-4 mt-1 font-medium text-xs text-red-500">{error}</p>}
     </div>
   )
