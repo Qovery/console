@@ -49,6 +49,10 @@ export function StepSummaryFeature() {
     navigate(pathCreate + SERVICES_CREATION_PORTS_URL)
   }
 
+  const gotoHealthchecks = () => {
+    navigate(pathCreate + SERVICES_CREATION_HEALTHCHECKS_URL)
+  }
+
   const onPrevious = () => {
     if (portData?.ports && portData?.ports.length > 0) {
       navigate(pathCreate + SERVICES_CREATION_HEALTHCHECKS_URL)
@@ -197,6 +201,7 @@ export function StepSummaryFeature() {
           gotoResources={gotoResources}
           gotoGlobalInformation={gotoGlobalInformations}
           gotoPorts={gotoPorts}
+          gotoHealthchecks={gotoHealthchecks}
           selectedRegistryName={containerRegistry?.name}
         />
       )}

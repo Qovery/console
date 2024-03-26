@@ -1,6 +1,6 @@
 import { type PropsWithChildren } from 'react'
 import { createPortal } from 'react-dom'
-import ButtonLegacy, { ButtonLegacyStyle } from '../buttons/button-legacy/button-legacy'
+import { Button } from '../button/button'
 import Icon from '../icon/icon'
 
 export interface FunnelFlowProps extends PropsWithChildren {
@@ -21,7 +21,7 @@ const FunnelFlowContent = (props: FunnelFlowProps) => {
             <img className="w-[90px] shrink-0" src="assets/logos/logo-black.svg" alt="Qovery logo black" />
           </div>
           <div className="flex h-full items-center gap-4 pl-4 border-l border-l-neutral-200">
-            <div className="h-5 px-1 bg-neutral-200 font-medium rounded-sm text-neutral-350 text-xs flex items-center">
+            <div className="h-5 px-1 bg-brand-500 font-medium rounded-md text-white text-2xs flex items-center">
               {props.currentStep}/{props.totalSteps}
             </div>
             <h4 className="text-neutral-400 text-sm font-medium">{props.currentTitle}</h4>
@@ -29,9 +29,9 @@ const FunnelFlowContent = (props: FunnelFlowProps) => {
         </div>
         {props.onExit && (
           <div className="border-l border-l-neutral-200 pl-5 h-full flex items-center">
-            <ButtonLegacy onClick={props.onExit} style={ButtonLegacyStyle.STROKED} className="btn--no-min-w">
-              Close <Icon iconName="xmark" className="ml-2" />
-            </ButtonLegacy>
+            <Button onClick={props.onExit} variant="surface" size="md">
+              Close <Icon iconName="xmark" iconStyle="regular" className="text-xl ml-2" />
+            </Button>
           </div>
         )}
       </header>

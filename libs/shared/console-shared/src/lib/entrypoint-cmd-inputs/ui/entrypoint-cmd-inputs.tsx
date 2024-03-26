@@ -36,7 +36,7 @@ export function EntrypointCmdInputs({
   const { control, watch } = useFormContext()
 
   return (
-    <div className={twMerge('mb-6 flex flex-col gap-3', className)}>
+    <div className={twMerge('flex flex-col gap-3', className)}>
       <div>
         <Controller
           name={imageEntryPointFieldName}

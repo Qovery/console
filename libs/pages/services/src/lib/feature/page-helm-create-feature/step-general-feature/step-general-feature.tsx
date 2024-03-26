@@ -82,23 +82,21 @@ export function StepGeneralFeature() {
     <FunnelFlowBody helpSection={funnelCardHelp}>
       <FormProvider {...generalForm}>
         <Section>
-          <form onSubmit={onSubmit}>
-            <Heading className="mb-2">General Data</Heading>
+          <Heading className="mb-2">General information</Heading>
+
+          <form className="flex flex-col gap-10" onSubmit={onSubmit}>
             <p className="text-sm text-neutral-350">
-              General settings allow you to set up the service name, the source and deployment parameters.
+              These general settings allow you to set up the service name, its source and deployment parameters.
             </p>
-            <Section>
-              <Heading className="mt-10 mb-3">General</Heading>
+            <Section className="gap-4">
+              <Heading>General</Heading>
               <GeneralSetting label="Helm chart name" />
             </Section>
-            <Section>
-              <Heading className="mt-10 mb-2">Source</Heading>
-              <p className="text-sm text-neutral-350 mb-3">
-                Deploy your helm chart from a Git repository or from a Helm repository.
-              </p>
+            <Section className="gap-4">
+              <Heading>Source</Heading>
               <SourceSetting />
               {watchFieldProvider === 'GIT' && (
-                <div className="flex flex-col gap-3 mt-3">
+                <div className="flex flex-col gap-3">
                   <GitProviderSetting />
                   {watchFieldIsPublicRepository ? (
                     <GitPublicRepositorySettings />
@@ -115,11 +113,10 @@ export function StepGeneralFeature() {
                 </div>
               )}
             </Section>
-            <Section>
-              <Heading className="mt-10 mb-2">Deployment</Heading>
-              <p className="text-sm text-neutral-350 mb-3">Define the deployment configuration of your service.</p>
+            <Section className="gap-4">
+              <Heading>Deploy</Heading>
               <DeploymentSetting />
-              {watchFieldProvider === 'GIT' && <AutoDeploySetting source="GIT" className="mt-5" />}
+              {watchFieldProvider === 'GIT' && <AutoDeploySetting source="GIT" />}
               {watchFieldProvider === 'HELM_REPOSITORY' && (
                 <Callout.Root color="sky" className="mt-5">
                   <Callout.Icon>
@@ -133,7 +130,7 @@ export function StepGeneralFeature() {
                 </Callout.Root>
               )}
             </Section>
-            <div className="flex justify-between mt-10">
+            <div className="flex justify-between">
               <Button
                 type="button"
                 size="lg"

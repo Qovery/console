@@ -150,7 +150,7 @@ export function FlowCreatePort({
 
       {!isSetting && (
         <div className="flex justify-between">
-          <Button variant="surface" color="neutral" size="lg" onClick={onBack}>
+          <Button variant="plain" color="neutral" size="lg" onClick={onBack}>
             Back
           </Button>
           <Button data-testid="button-submit" size="lg" onClick={onSubmit}>

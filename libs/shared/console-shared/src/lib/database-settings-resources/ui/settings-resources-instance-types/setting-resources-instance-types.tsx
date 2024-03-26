@@ -1,6 +1,6 @@
 import { Controller, useFormContext } from 'react-hook-form'
 import { type Value } from '@qovery/shared/interfaces'
-import { BlockContent, Callout, ExternalLink, Icon, InputSelect } from '@qovery/shared/ui'
+import { Callout, ExternalLink, Icon, InputSelect } from '@qovery/shared/ui'
 
 export interface SettingsResourcesInstanceTypesProps {
   databaseInstanceTypes?: Value[]
@@ -14,7 +14,7 @@ export function SettingsResourcesInstanceTypes({
   const { control } = useFormContext()
 
   return (
-    <BlockContent title="Instance Type">
+    <>
       <Controller
         name="instance_type"
         control={control}
@@ -22,19 +22,15 @@ export function SettingsResourcesInstanceTypes({
           required: 'Please select an instance type',
         }}
         render={({ field, fieldState: { error } }) => (
-          <div>
-            <InputSelect
-              isSearchable
-              onChange={field.onChange}
-              value={field.value}
-              label="Instance type"
-              error={error?.message}
-              options={databaseInstanceTypes}
-            />
-            <p className="text-neutral-350 text-xs mt-3">
-              The chosen instance type has a direct impact on your cloud provider cost.
-            </p>
-          </div>
+          <InputSelect
+            isSearchable
+            onChange={field.onChange}
+            value={field.value}
+            label="Instance type"
+            error={error?.message}
+            options={databaseInstanceTypes}
+            hint="The chosen instance type has a direct impact on your cloud provider cost."
+          />
         )}
       />
       {displayWarning && (
@@ -55,7 +51,7 @@ export function SettingsResourcesInstanceTypes({
           </Callout.Text>
         </Callout.Root>
       )}
-    </BlockContent>
+    </>
   )
 }
 

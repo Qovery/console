@@ -18,7 +18,6 @@ export function GeneralSetting({ label = 'Name' }: GeneralSettingProps) {
         }}
         render={({ field, fieldState: { error } }) => (
           <InputText
-            className="mb-3"
             name={field.name}
             onChange={field.onChange}
             value={field.value}

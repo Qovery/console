@@ -5,7 +5,7 @@ import { match } from 'ts-pattern'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { type Database } from '@qovery/domains/services/data-access'
 import { CLUSTER_SETTINGS_RESOURCES_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
-import { BlockContent, Callout, ExternalLink, Icon, InputText, Link, inputSizeUnitRules } from '@qovery/shared/ui'
+import { Callout, ExternalLink, Icon, InputText, Link, inputSizeUnitRules } from '@qovery/shared/ui'
 import SettingsResourcesInstanceTypesFeature from '../../feature/settings-resources-instance-types-feature/setting-resources-instance-types-feature'
 
 export interface DatabaseSettingsResourcesProps {
@@ -46,91 +46,96 @@ export function DatabaseSettingsResources({
     .otherwise(() => 1)
 
   return (
-    <div>
+    <>
       {!isManaged && (
         <>
-          <BlockContent title="vCPU">
-            <Controller
-              name="cpu"
-              control={control}
-              rules={{
-                min: minVCpu,
-              }}
-              render={({ field, fieldState: { error } }) => (
-                <InputText
-                  type="number"
-                  name={field.name}
-                  label="Size (in milli vCPU)"
-                  value={field.value}
-                  onChange={field.onChange}
-                  error={error?.type === 'min' ? `Minimum allowed ${field.name} is: ${minVCpu} milli vCPU.` : undefined}
-                />
-              )}
-            />
-            <p className="text-neutral-350 text-xs mt-3">
-              Minimum value is {minVCpu} milli vCPU.{' '}
-              {database && (
-                <>
-                  Maximum value allowed based on the selected cluster instance type: {database?.maximum_cpu} milli vCPU.{' '}
-                  {clusterId && (
-                    <Link
-                      to={
-                        CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_RESOURCES_URL
-                      }
-                      size="xs"
-                    >
-                      Edit node
-                    </Link>
-                  )}
-                </>
-              )}
-            </p>
-          </BlockContent>
-          <BlockContent title="Memory">
-            <Controller
-              name="memory"
-              control={control}
-              rules={inputSizeUnitRules(maxMemoryBySize, minMemory)}
-              render={({ field, fieldState: { error } }) => (
-                <InputText
-                  dataTestId="input-memory-memory"
-                  type="number"
-                  name={field.name}
-                  label="Size in MiB"
-                  value={field.value}
-                  onChange={field.onChange}
-                  error={
-                    error?.type === 'required'
-                      ? 'Please enter a size.'
-                      : error?.type === 'max'
-                      ? `Maximum allowed ${field.name} is: ${maxMemoryBySize} MiB.`
-                      : error?.type === 'min'
-                      ? `Minimum allowed ${field.name} is: ${minMemory} MiB.`
-                      : undefined
-                  }
-                />
-              )}
-            />
-
-            <p className="text-neutral-350 text-xs mt-3">
-              Minimum value is {minMemory} MiB.{' '}
-              {database && (
-                <>
-                  Maximum value allowed based on the selected cluster instance type: {database?.maximum_memory} MiB.{' '}
-                  {clusterId && (
-                    <Link
-                      to={
-                        CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_RESOURCES_URL
-                      }
-                      size="xs"
-                    >
-                      Edit node
-                    </Link>
-                  )}
-                </>
-              )}
-            </p>
-          </BlockContent>
+          <Controller
+            name="cpu"
+            control={control}
+            rules={{
+              min: minVCpu,
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <InputText
+                type="number"
+                name={field.name}
+                label="vCPU (milli)"
+                value={field.value}
+                onChange={field.onChange}
+                hint={
+                  <>
+                    Minimum value is {minVCpu} milli vCPU.{' '}
+                    {database && (
+                      <>
+                        Maximum value allowed based on the selected cluster instance type: {database?.maximum_cpu} milli
+                        vCPU.{' '}
+                        {clusterId && (
+                          <Link
+                            to={
+                              CLUSTER_URL(organizationId, clusterId) +
+                              CLUSTER_SETTINGS_URL +
+                              CLUSTER_SETTINGS_RESOURCES_URL
+                            }
+                            size="xs"
+                          >
+                            Edit node
+                          </Link>
+                        )}
+                      </>
+                    )}
+                  </>
+                }
+                error={error?.type === 'min' ? `Minimum allowed ${field.name} is: ${minVCpu} milli vCPU.` : undefined}
+              />
+            )}
+          />
+          <Controller
+            name="memory"
+            control={control}
+            rules={inputSizeUnitRules(maxMemoryBySize, minMemory)}
+            render={({ field, fieldState: { error } }) => (
+              <InputText
+                dataTestId="input-memory-memory"
+                type="number"
+                name={field.name}
+                label="Memory (MiB)"
+                value={field.value}
+                onChange={field.onChange}
+                hint={
+                  <>
+                    Minimum value is {minMemory} MiB.{' '}
+                    {database && (
+                      <>
+                        Maximum value allowed based on the selected cluster instance type: {database?.maximum_memory}{' '}
+                        MiB.{' '}
+                        {clusterId && (
+                          <Link
+                            to={
+                              CLUSTER_URL(organizationId, clusterId) +
+                              CLUSTER_SETTINGS_URL +
+                              CLUSTER_SETTINGS_RESOURCES_URL
+                            }
+                            size="xs"
+                          >
+                            Edit node
+                          </Link>
+                        )}
+                      </>
+                    )}
+                  </>
+                }
+                error={
+                  error?.type === 'required'
+                    ? 'Please enter a size.'
+                    : error?.type === 'max'
+                    ? `Maximum allowed ${field.name} is: ${maxMemoryBySize} MiB.`
+                    : error?.type === 'min'
+                    ? `Minimum allowed ${field.name} is: ${minMemory} MiB.`
+                    : undefined
+                }
+              />
+            )}
+          />
         </>
       )}
       {isManaged && databaseType && (
@@ -139,47 +144,45 @@ export function DatabaseSettingsResources({
           displayWarning={displayInstanceTypesWarning}
         />
       )}
-      <BlockContent title="Storage">
-        <Controller
-          name="storage"
-          control={control}
-          rules={{
-            pattern: {
-              value: /^[0-9]+$/,
-              message: 'Please enter a number.',
-            },
-          }}
-          render={({ field, fieldState: { error } }) => (
-            <InputText
-              dataTestId="input-memory-storage"
-              name={field.name}
-              label="Size in GiB"
-              value={field.value}
-              onChange={field.onChange}
-              error={error?.message}
-            />
-          )}
-        />
-        {displayStorageWarning && (
-          <Callout.Root className="mt-3" color="yellow">
-            <Callout.Icon>
-              <Icon iconName="circle-info" />
-            </Callout.Icon>
-            <Callout.Text className="text-xs text-neutral-350">
-              Once triggered, the update will be managed by your cloud provider and applied during the configured
-              maintenance window. Moreover, the operation might cause a service interruption.{' '}
-              <ExternalLink
-                className="mt-1"
-                href="https://hub.qovery.com/docs/using-qovery/configuration/database/#applying-changes-to-a-managed-database"
-                size="xs"
-              >
-                Have a look at the documentation first
-              </ExternalLink>
-            </Callout.Text>
-          </Callout.Root>
+      <Controller
+        name="storage"
+        control={control}
+        rules={{
+          pattern: {
+            value: /^[0-9]+$/,
+            message: 'Please enter a number.',
+          },
+        }}
+        render={({ field, fieldState: { error } }) => (
+          <InputText
+            dataTestId="input-memory-storage"
+            name={field.name}
+            label="Storage (GiB)"
+            value={field.value}
+            onChange={field.onChange}
+            error={error?.message}
+          />
         )}
-      </BlockContent>
-    </div>
+      />
+      {displayStorageWarning && (
+        <Callout.Root className="mt-3" color="yellow">
+          <Callout.Icon>
+            <Icon iconName="circle-info" />
+          </Callout.Icon>
+          <Callout.Text className="text-xs text-neutral-350">
+            Once triggered, the update will be managed by your cloud provider and applied during the configured
+            maintenance window. Moreover, the operation might cause a service interruption.{' '}
+            <ExternalLink
+              className="mt-1"
+              href="https://hub.qovery.com/docs/using-qovery/configuration/database/#applying-changes-to-a-managed-database"
+              size="xs"
+            >
+              Have a look at the documentation first
+            </ExternalLink>
+          </Callout.Text>
+        </Callout.Root>
+      )}
+    </>
   )
 }
 

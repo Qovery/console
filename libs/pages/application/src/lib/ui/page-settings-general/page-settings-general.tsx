@@ -112,7 +112,7 @@ export function PageSettingsGeneral({
       <Section className="p-8 max-w-content-with-navigation-left">
         <Heading className="mb-8">General settings</Heading>
         <form onSubmit={onSubmit}>
-          <BlockContent title="General information">
+          <BlockContent title="General information" classNameContent="flex flex-col gap-3">
             <GeneralSetting label="Application name" />
           </BlockContent>
           {match(service)
