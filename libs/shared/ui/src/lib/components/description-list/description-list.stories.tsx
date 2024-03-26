@@ -14,14 +14,48 @@ const Story: Meta<typeof DescriptionList.Root> = {
 }
 export default Story
 
-export const Primary = {
+export const HighlightDetails = {
   render: () => (
-    <DescriptionList.Root>
-      <DescriptionList.Term>Name:</DescriptionList.Term>
-      <DescriptionList.Details>Foobar</DescriptionList.Details>
+    <>
+      <div className="dark bg-neutral-550">
+        <DescriptionList.Root>
+          <DescriptionList.Term>Name:</DescriptionList.Term>
+          <DescriptionList.Details>Foobar</DescriptionList.Details>
 
-      <DescriptionList.Term>Version:</DescriptionList.Term>
-      <DescriptionList.Details>1.2.3</DescriptionList.Details>
-    </DescriptionList.Root>
+          <DescriptionList.Term>Version:</DescriptionList.Term>
+          <DescriptionList.Details>1.2.3</DescriptionList.Details>
+        </DescriptionList.Root>
+      </div>
+      <DescriptionList.Root>
+        <DescriptionList.Term>Name:</DescriptionList.Term>
+        <DescriptionList.Details>Foobar</DescriptionList.Details>
+
+        <DescriptionList.Term>Version:</DescriptionList.Term>
+        <DescriptionList.Details>1.2.3</DescriptionList.Details>
+      </DescriptionList.Root>
+    </>
+  ),
+}
+
+export const HighlightTerm = {
+  render: () => (
+    <>
+      <div className="dark bg-neutral-550">
+        <DescriptionList.Root hightlight="term">
+          <DescriptionList.Term>Name:</DescriptionList.Term>
+          <DescriptionList.Details>Foobar</DescriptionList.Details>
+
+          <DescriptionList.Term>Version:</DescriptionList.Term>
+          <DescriptionList.Details>1.2.3</DescriptionList.Details>
+        </DescriptionList.Root>
+      </div>
+      <DescriptionList.Root hightlight="term">
+        <DescriptionList.Term>Name:</DescriptionList.Term>
+        <DescriptionList.Details>Foobar</DescriptionList.Details>
+
+        <DescriptionList.Term>Version:</DescriptionList.Term>
+        <DescriptionList.Details>1.2.3</DescriptionList.Details>
+      </DescriptionList.Root>
+    </>
   ),
 }

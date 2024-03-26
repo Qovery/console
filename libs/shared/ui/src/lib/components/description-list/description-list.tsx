@@ -1,16 +1,24 @@
-import { type ComponentPropsWithoutRef, type ElementRef, forwardRef } from 'react'
+import { type ComponentPropsWithoutRef, type ElementRef, createContext, forwardRef, useContext } from 'react'
 import { twMerge } from '@qovery/shared/util-js'
 
-interface DescriptionListRootProps extends ComponentPropsWithoutRef<'dl'> {}
+type Highlight = 'term' | 'details'
+
+const HighlightContext = createContext<Highlight>('details')
+
+interface DescriptionListRootProps extends ComponentPropsWithoutRef<'dl'> {
+  hightlight?: Highlight
+}
 
 const DescriptionListRoot = forwardRef<ElementRef<'dl'>, DescriptionListRootProps>(function DescriptionListRoot(
-  { children, className, ...rest },
+  { children, className, hightlight, ...rest },
   ref
 ) {
   return (
-    <dl ref={ref} className={twMerge('grid grid-cols-2 gap-2', className)} {...rest}>
-      {children}
-    </dl>
+    <HighlightContext.Provider value={hightlight ?? 'details'}>
+      <dl ref={ref} className={twMerge('grid grid-cols-2 gap-2', className)} {...rest}>
+        {children}
+      </dl>
+    </HighlightContext.Provider>
   )
 })
 
@@ -20,8 +28,18 @@ const DescriptionTerm = forwardRef<ElementRef<'dt'>, DescriptionTermProps>(funct
   { children, className, ...rest },
   ref
 ) {
+  const highlight = useContext(HighlightContext)
   return (
-    <dt ref={ref} className={twMerge('text-neutral-350 dark:text-neutral-300', className)} {...rest}>
+    <dt
+      ref={ref}
+      className={twMerge(
+        highlight === 'term'
+          ? 'text-neutral-400 font-medium dark:text-white dark:font-normal'
+          : 'text-neutral-350 dark:text-neutral-300',
+        className
+      )}
+      {...rest}
+    >
       {children}
     </dt>
   )
@@ -33,10 +51,16 @@ const DescriptionDetails = forwardRef<ElementRef<'dd'>, DescriptionDetailsProps>
   { children, className, ...rest },
   ref
 ) {
+  const highlight = useContext(HighlightContext)
   return (
     <dd
       ref={ref}
-      className={twMerge('text-neutral-400 font-medium dark:text-white dark:font-normal', className)}
+      className={twMerge(
+        highlight === 'details'
+          ? 'text-neutral-400 font-medium dark:text-white dark:font-normal'
+          : 'text-neutral-350 dark:text-neutral-300',
+        className
+      )}
       {...rest}
     >
       {children}
