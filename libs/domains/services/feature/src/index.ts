@@ -1,6 +1,7 @@
 export * from './lib/auto-deploy-setting/auto-deploy-setting'
 export * from './lib/advanced-settings/advanced-settings'
 export * from './lib/general-setting/general-setting'
+export * from './lib/build-settings/build-settings'
 export * from './lib/timezone-setting/timezone-setting'
 export * from './lib/hooks/use-clone-service/use-clone-service'
 export * from './lib/hooks/use-commits/use-commits'

@@ -31,7 +31,7 @@ export function FlowCreatePort({
     <Section>
       <div className="flex justify-between mb-10">
         <div>
-          <Heading className="mb-2">{isSetting ? 'Port' : 'Set port'}</Heading>
+          <Heading className="mb-2">Ports</Heading>
 
           <p className={isSetting ? 'text-sm text-neutral-400 max-w-lg' : 'text-xs text-neutral-400'}>
             Declare TCP/UDP ports used by your application. Declared ports are accessible from other applications within
@@ -43,7 +43,7 @@ export function FlowCreatePort({
         {isSetting && (
           <Button size="lg" variant="solid" color="brand" data-testid="add-button" onClick={() => onAddPort()}>
             Add Port
-            <Icon iconName="circle-plus" className="ml-2" />
+            <Icon iconName="circle-plus" iconStyle="regular" className="ml-2" />
           </Button>
         )}
       </div>
@@ -150,7 +150,7 @@ export function FlowCreatePort({
 
       {!isSetting && (
         <div className="flex justify-between">
-          <Button variant="surface" color="neutral" size="lg" onClick={onBack}>
+          <Button variant="plain" color="neutral" size="lg" onClick={onBack}>
             Back
           </Button>
           <Button data-testid="button-submit" size="lg" onClick={onSubmit}>

@@ -1,12 +1,13 @@
 import { type ServiceStorageStorageInner } from 'qovery-typescript-axios'
 import {
   BlockContent,
+  Button,
   ButtonIcon,
   ButtonIconStyle,
-  ButtonLegacy,
   EmptyState,
   Heading,
   HelpSection,
+  Icon,
   IconAwesomeEnum,
   InputText,
   Section,
@@ -29,9 +30,10 @@ export function PageSettingsStorage(props: PageSettingsStorageProps) {
             <p className="text-sm text-neutral-400">Add persistent local storage for your application.</p>
           </div>
 
-          <ButtonLegacy onClick={() => props.onAddStorage()} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>
+          <Button className="gap-2" size="lg" onClick={() => props.onAddStorage()}>
             Add Storage
-          </ButtonLegacy>
+            <Icon iconName="plus-circle" iconStyle="regular" />
+          </Button>
         </div>
 
         {props.storages?.length > 0 ? (

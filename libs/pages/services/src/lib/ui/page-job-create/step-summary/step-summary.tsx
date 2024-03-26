@@ -6,17 +6,8 @@ import {
   type JobGeneralData,
   type JobResourcesData,
 } from '@qovery/shared/interfaces'
-import {
-  ButtonIcon,
-  ButtonIconStyle,
-  ButtonLegacy,
-  ButtonLegacySize,
-  ButtonLegacyStyle,
-  Heading,
-  Icon,
-  IconAwesomeEnum,
-  Section,
-} from '@qovery/shared/ui'
+import { Button, Heading, Icon, Section } from '@qovery/shared/ui'
+import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
 export interface StepSummaryProps {
   onSubmit: (withDeploy: boolean) => void
@@ -38,296 +29,251 @@ export interface StepSummaryProps {
 export function StepSummary(props: StepSummaryProps) {
   return (
     <Section>
-      <div className="mb-10">
-        <Heading className="mb-2">
-          Ready to create your {props.jobType === 'CRON_JOB' ? 'Cron' : 'Lifecycle'} job
-        </Heading>
-        <p className="text-xs text-neutral-400 mb-2">
+      <Heading className="mb-2">Ready to create your {props.jobType === 'CRON_JOB' ? 'Cron' : 'Lifecycle'} job</Heading>
+      <form className="space-y-10">
+        <p className="text-neutral-350 text-sm">
           The basic application setup is done, you can now deploy your application or move forward with some advanced
           setup.
         </p>
-      </div>
 
-      <div className="mb-10">
-        <div className="flex p-4 w-full border rounded border-neutral-250 bg-neutral-100 mb-2">
-          <Icon iconName="check" className="text-green-500 mr-2" />
-          <div className="flex-grow mr-2">
-            <div className="text-sm text-neutral-400 font-bold mb-5">General information</div>
-
-            <div className="text-neutral-400 text-ssm mb-2 font-medium">General</div>
-
-            <ul className="text-neutral-350 text-sm list-none">
+        <div className="flex flex-col gap-6">
+          <Section className="p-4 border rounded border-neutral-250 bg-neutral-100">
+            <div className="flex justify-between">
+              <Heading>General information</Heading>
+              <Button type="button" variant="plain" size="md" onClick={props.gotoGlobalInformation}>
+                <Icon className="text-base" iconName="gear-complex" />
+              </Button>
+            </div>
+            <ul className="flex flex-col gap-2 text-neutral-400 text-sm list-none">
               <li>
-                <span className="font-medium">Name:</span> {props.generalData.name}
+                <strong className="font-medium">Name:</strong> {props.generalData.name}
               </li>
-              <li>
-                <span className="font-medium">Description:</span> {props.generalData.description}
-              </li>
-            </ul>
+              {props.generalData.description && (
+                <li>
+                  <strong className="font-medium">Description:</strong>
+                  <br />
+                  {props.generalData.description}
+                </li>
+              )}
+              <div className="py-2">
+                <hr className="border-t border-dashed border-neutral-250" />
+              </div>
 
-            <div className="my-4 border-b border-neutral-250 border-dashed" />
-
-            {props.generalData.serviceType === ServiceTypeEnum.APPLICATION && (
-              <ul className="text-neutral-350 text-sm list-none">
-                <li>
-                  <span className="font-medium">Repository:</span> {props.generalData.repository}
-                </li>
-                <li>
-                  <span className="font-medium">Branch:</span> {props.generalData.branch}
-                </li>
-                <li>
-                  <span className="font-medium">Root path:</span> {props.generalData.root_path}
-                </li>
-                {props.generalData.build_mode === BuildModeEnum.DOCKER && (
+              {props.generalData.serviceType === ServiceTypeEnum.APPLICATION && (
+                <>
                   <li>
-                    <span className="font-medium">Dockerfile path:</span> {props.generalData.dockerfile_path}
+                    <strong className="font-medium">Repository:</strong> {props.generalData.repository}
                   </li>
-                )}
-                <li>
-                  <span className="font-medium">Auto-deploy:</span> {props.generalData.auto_deploy.toString()}
-                </li>
-              </ul>
-            )}
-            {props.generalData.serviceType === ServiceTypeEnum.CONTAINER && (
-              <ul className="text-neutral-350 text-sm list-none">
-                <li>
-                  <span className="font-medium">Registry:</span> {props.selectedRegistryName}
-                </li>
-                <li>
-                  <span className="font-medium">Image name:</span> {props.generalData.image_name}
-                </li>
-                <li>
-                  <span className="font-medium">Image tag:</span> {props.generalData.image_tag}
-                </li>
-                <li>
-                  <span className="font-medium">Image entrypoint:</span> {props.generalData.image_entry_point}
-                </li>
-                <li>
-                  <span className="font-medium">CMD arguments:</span> {props.configureData.cmd_arguments}
-                </li>
-                <li>
-                  <span className="font-medium">Auto-deploy:</span> {props.generalData.auto_deploy.toString()}
-                </li>
-              </ul>
-            )}
-          </div>
+                  <li>
+                    <strong className="font-medium">Branch:</strong> {props.generalData.branch}
+                  </li>
+                  <li>
+                    <strong className="font-medium">Root path:</strong> {props.generalData.root_path}
+                  </li>
+                  {props.generalData.build_mode === BuildModeEnum.DOCKER && (
+                    <li>
+                      <strong className="font-medium">Dockerfile path:</strong> {props.generalData.dockerfile_path}
+                    </li>
+                  )}
+                  <li>
+                    <strong className="font-medium">Auto-deploy:</strong> {props.generalData.auto_deploy.toString()}
+                  </li>
+                </>
+              )}
+              {props.generalData.serviceType === ServiceTypeEnum.CONTAINER && (
+                <>
+                  <li>
+                    <strong className="font-medium">Registry:</strong> {props.selectedRegistryName}
+                  </li>
+                  <li>
+                    <strong className="font-medium">Image name:</strong> {props.generalData.image_name}
+                  </li>
+                  <li>
+                    <strong className="font-medium">Image tag:</strong> {props.generalData.image_tag}
+                  </li>
+                  {props.jobType === ServiceTypeEnum.CRON_JOB && (
+                    <>
+                      {props.generalData.image_entry_point && (
+                        <li>
+                          <strong className="font-medium">Image entrypoint:</strong>{' '}
+                          {props.generalData.image_entry_point}
+                        </li>
+                      )}
+                      {props.generalData.cmd_arguments && (
+                        <li>
+                          <strong className="font-medium">CMD arguments:</strong> {props.generalData.cmd_arguments}
+                        </li>
+                      )}
+                    </>
+                  )}
+                  <li>
+                    <strong className="font-medium">Auto-deploy:</strong> {props.generalData.auto_deploy.toString()}
+                  </li>
+                </>
+              )}
+            </ul>
+          </Section>
 
-          <ButtonIcon
-            onClick={props.gotoGlobalInformation}
-            icon={IconAwesomeEnum.WHEEL}
-            style={ButtonIconStyle.FLAT}
-            className="text-neutral-400 hover:text-neutral-400"
-          />
-        </div>
-
-        <div className="flex p-4 w-full border rounded border-neutral-250 bg-neutral-100 mb-2">
-          <Icon iconName="check" className="text-green-500 mr-2" />
-          <div className="flex-grow mr-2">
-            <div className="text-sm text-neutral-400 font-bold mb-5">Configure job</div>
-
+          <Section className="p-4 border rounded border-neutral-250 bg-neutral-100">
+            <div className="flex justify-between">
+              <Heading>Job configuration</Heading>
+              <Button type="button" variant="plain" size="md" onClick={props.gotoConfigureJob}>
+                <Icon className="text-base" iconName="gear-complex" />
+              </Button>
+            </div>
             {props.jobType === ServiceTypeEnum.LIFECYCLE_JOB && (
               <>
                 {props.configureData.on_start?.enabled && (
                   <>
-                    <ul className="text-neutral-350 text-sm list-none">
+                    <ul className="flex flex-col gap-2 text-neutral-400 text-sm list-none">
                       <li>
-                        <div className="font-medium text-ssm text-neutral-400">
-                          <span className="mr-2 inline-block">Events</span>Environment Start
-                        </div>
+                        <strong className="font-medium">Events:</strong> Environment Start
                       </li>
                       <li>
-                        <span className="font-medium">Entrypoint:</span>{' '}
+                        <strong className="font-medium">Entrypoint:</strong>{' '}
                         {props.configureData.on_start?.entrypoint || 'null'}
                       </li>
                       <li>
-                        <span className="font-medium">CMD Arguments:</span>{' '}
+                        <strong className="font-medium">CMD Arguments:</strong>{' '}
                         {props.configureData.on_start?.arguments || 'null'}
                       </li>
                     </ul>
-                    <div className="my-4 border-b border-neutral-250 border-dashed" />
+                    <hr className="my-4 border-t border-dashed border-neutral-250" />
                   </>
                 )}
                 {props.configureData.on_stop?.enabled && (
                   <>
-                    <ul className="text-neutral-350 text-sm list-none">
+                    <ul className="flex flex-col gap-2 text-neutral-400 text-sm list-none">
                       <li>
-                        <div className="font-medium text-ssm text-neutral-400">
-                          <span className="mr-2 inline-block">Events</span>Environment Stop
-                        </div>
+                        <strong className="font-medium">Events:</strong> Environment Stop
                       </li>
                       <li>
-                        <span className="font-medium">Entrypoint:</span>{' '}
+                        <strong className="font-medium">Entrypoint:</strong>{' '}
                         {props.configureData.on_stop?.entrypoint || 'null'}
                       </li>
                       <li>
-                        <span className="font-medium">CMD Arguments:</span>{' '}
+                        <strong className="font-medium">CMD Arguments:</strong>{' '}
                         {props.configureData.on_stop?.arguments || 'null'}
                       </li>
                     </ul>
-                    <div className="my-4 border-b border-neutral-250 border-dashed" />
+                    <hr className="my-4 border-t border-dashed border-neutral-250" />
                   </>
                 )}
                 {props.configureData.on_delete?.enabled && (
                   <>
-                    <ul className="text-neutral-350 text-sm list-none">
+                    <ul className="flex flex-col gap-2 text-neutral-400 text-sm list-none">
                       <li>
-                        <div className="font-medium text-ssm text-neutral-400">
-                          <span className="mr-2 inline-block">Events</span>Environment Delete
-                        </div>
+                        <strong className="font-medium">Events:</strong> Environment Delete
                       </li>
                       <li>
-                        <span className="font-medium">Entrypoint:</span>{' '}
+                        <strong className="font-medium">Entrypoint:</strong>{' '}
                         {props.configureData.on_delete?.entrypoint || 'null'}
                       </li>
                       <li>
-                        <span className="font-medium">CMD Arguments:</span>{' '}
+                        <strong className="font-medium">CMD Arguments:</strong>{' '}
                         {props.configureData.on_delete?.arguments || 'null'}
                       </li>
                     </ul>
-                    <div className="my-4 border-b border-neutral-250 border-dashed" />
+                    <hr className="my-4 border-t border-dashed border-neutral-250" />
                   </>
                 )}
               </>
             )}
-
             {props.jobType === ServiceTypeEnum.CRON_JOB && (
               <>
-                <ul className="text-neutral-350 text-sm list-none">
+                <ul className="flex flex-col gap-2 text-neutral-400 text-sm list-none">
                   <li>
-                    <span className="font-medium">Scheduled at:</span> {props.configureData.schedule}
+                    <strong className="font-medium">Scheduled at:</strong> {props.configureData.schedule}
                   </li>
                   <li>
-                    <span className="font-medium">Timezone:</span> {props.configureData.timezone}
+                    <strong className="font-medium">Timezone:</strong> {props.configureData.timezone}
                   </li>
-                  {props.configureData.image_entry_point && (
-                    <li>
-                      <span className="font-medium">Entrypoint:</span> {props.configureData.image_entry_point}
-                    </li>
-                  )}
-                  {props.configureData.cmd_arguments && (
-                    <li>
-                      <span className="font-medium">CMD arguments:</span> {props.configureData.cmd_arguments}
-                    </li>
-                  )}
                 </ul>
-                <div className="my-4 border-b border-neutral-250 border-dashed" />
+                <hr className="my-4 border-t border-dashed border-neutral-250" />
               </>
             )}
-
-            <div className="text-neutral-400 text-ssm mb-2 font-medium">Parameters</div>
-
-            <ul className="text-neutral-350 text-sm list-none">
+            <ul className="flex flex-col gap-2 text-neutral-400 text-sm list-none">
               <li>
-                <span className="font-medium">Max restarts:</span> {props.configureData.nb_restarts}
+                <strong className="font-medium">Max restarts:</strong> {props.configureData.nb_restarts}
               </li>
               <li>
-                <span className="font-medium">Max duration:</span> {props.configureData.max_duration}
+                <strong className="font-medium">Max duration:</strong> {props.configureData.max_duration}
               </li>
               <li>
-                <span className="font-medium">Port:</span> {props.configureData.port}
+                <strong className="font-medium">Port:</strong> {props.configureData.port}
               </li>
             </ul>
-          </div>
+          </Section>
 
-          <ButtonIcon
-            onClick={props.gotoConfigureJob}
-            icon={IconAwesomeEnum.WHEEL}
-            style={ButtonIconStyle.FLAT}
-            className="text-neutral-400 hover:text-neutral-400"
-          />
-        </div>
-
-        <div className="flex p-4 w-full border rounded border-neutral-250 bg-neutral-100 mb-2">
-          <Icon iconName="check" className="text-green-500 mr-2" />
-          <div className="flex-grow mr-2">
-            <div className="text-sm text-neutral-400 font-bold mb-5">Resources</div>
-
-            <div className="text-neutral-400 text-ssm mb-2 font-medium">Parameters</div>
-            <ul className="text-neutral-350 text-sm list-none">
-              <li>
-                <span className="font-medium">CPU:</span> {props.resourcesData['cpu']}
-              </li>
-              <li>
-                <span className="font-medium">Memory:</span> {props.resourcesData.memory} MB
-              </li>
-            </ul>
-          </div>
-
-          <ButtonIcon
-            onClick={props.gotoResources}
-            icon={IconAwesomeEnum.WHEEL}
-            style={ButtonIconStyle.FLAT}
-            className="text-neutral-400 hover:text-neutral-400"
-          />
-        </div>
-
-        <div className="flex p-4 w-full border rounded border-neutral-250 bg-neutral-100 mb-2">
-          <Icon iconName="check" className="text-green-500 mr-2" />
-          <div className="flex-grow mr-2">
-            <div className="text-sm text-neutral-400 font-bold mb-5">Environment variables</div>
-
-            <div className="text-neutral-400 text-ssm mb-2 font-medium">
-              Parameters{' '}
-              {props.variableData.variables && props.variableData.variables.length
-                ? `(${props.variableData.variables.length})`
-                : ''}
+          <Section className="p-4 border rounded border-neutral-250 bg-neutral-100">
+            <div className="flex justify-between">
+              <Heading>Resources</Heading>
+              <Button type="button" variant="plain" size="md" onClick={props.gotoResources}>
+                <Icon className="text-base" iconName="gear-complex" />
+              </Button>
             </div>
-            <ul className="text-neutral-350 text-sm">
+            <ul className="flex flex-col gap-2 text-neutral-400 text-sm list-none">
+              <li>
+                <strong className="font-medium">CPU:</strong> {props.resourcesData['cpu']}
+              </li>
+              <li>
+                <strong className="font-medium">Memory:</strong> {props.resourcesData.memory} MB
+              </li>
+            </ul>
+          </Section>
+          <Section className="p-4 border rounded border-neutral-250 bg-neutral-100">
+            <div className="flex justify-between">
+              <Heading>Environment variables</Heading>
+              <Button type="button" variant="plain" size="md" onClick={props.gotoVariables}>
+                <Icon className="text-base" iconName="gear-complex" />
+              </Button>
+            </div>
+            <ul className="flex flex-col gap-2 text-neutral-400 text-sm list-none">
               {props.variableData.variables && props.variableData.variables.length > 0 ? (
                 props.variableData.variables?.map((variable, index) => (
-                  <li key={index}>
-                    <strong className="font-medium">{variable.variable}</strong> ={' '}
-                    <strong className="font-medium">{variable.isSecret ? '********' : variable.value}</strong> – Secret:{' '}
-                    <strong className="font-medium">{variable.isSecret ? 'Yes' : 'No'}</strong>
+                  <li className="grid grid-cols-3" key={index}>
+                    <strong className="font-medium truncate">
+                      {variable.variable} = {variable.isSecret ? '********' : variable.value}
+                    </strong>
+                    <span>
+                      <strong className="font-medium">Scope:</strong> {upperCaseFirstLetter(variable.scope)}
+                    </span>
+                    <span>{variable.isSecret ? 'Secret' : 'Public'}</span>
                   </li>
                 ))
               ) : (
                 <li>No variable declared</li>
               )}
             </ul>
+          </Section>
+        </div>
+        <div className="flex justify-between">
+          <Button onClick={props.onPrevious} type="button" size="lg" variant="plain">
+            Back
+          </Button>
+          <div className="flex gap-2">
+            <Button
+              data-testid="button-create"
+              loading={props.isLoadingCreate}
+              onClick={() => props.onSubmit(false)}
+              size="lg"
+              type="button"
+              variant="surface"
+            >
+              Create
+            </Button>
+            <Button
+              data-testid="button-create-deploy"
+              loading={props.isLoadingCreateAndDeploy}
+              onClick={() => props.onSubmit(true)}
+              type="button"
+              size="lg"
+            >
+              Create and deploy
+            </Button>
           </div>
-
-          <ButtonIcon
-            onClick={props.gotoVariables}
-            icon={IconAwesomeEnum.WHEEL}
-            style={ButtonIconStyle.FLAT}
-            className="text-neutral-400 hover:text-neutral-400"
-          />
         </div>
-      </div>
-
-      <div className="flex justify-between">
-        <ButtonLegacy
-          onClick={props.onPrevious}
-          className="btn--no-min-w"
-          type="button"
-          size={ButtonLegacySize.XLARGE}
-          style={ButtonLegacyStyle.STROKED}
-        >
-          Back
-        </ButtonLegacy>
-        <div className="flex gap-2">
-          <ButtonLegacy
-            dataTestId="button-create"
-            loading={props.isLoadingCreate}
-            onClick={() => props.onSubmit(false)}
-            size={ButtonLegacySize.XLARGE}
-            style={ButtonLegacyStyle.STROKED}
-            className="btn--no-min-w"
-          >
-            Create
-          </ButtonLegacy>
-          <ButtonLegacy
-            dataTestId="button-create-deploy"
-            loading={props.isLoadingCreateAndDeploy}
-            onClick={() => props.onSubmit(true)}
-            size={ButtonLegacySize.XLARGE}
-            style={ButtonLegacyStyle.BASIC}
-          >
-            Create and deploy
-          </ButtonLegacy>
-        </div>
-      </div>
+      </form>
     </Section>
   )
 }

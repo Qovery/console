@@ -49,9 +49,9 @@ function prepareJobRequest(
   if (jobType === ServiceTypeEnum.CRON_JOB) {
     jobRequest.schedule = {
       cronjob: {
-        entrypoint: configureData.image_entry_point,
+        entrypoint: generalData.image_entry_point,
         scheduled_at: configureData.schedule || '',
-        arguments: configureData.cmd,
+        arguments: generalData.cmd,
         timezone: configureData.timezone,
       },
     }

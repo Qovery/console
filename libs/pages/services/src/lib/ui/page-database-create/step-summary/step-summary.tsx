@@ -1,16 +1,5 @@
 import { DatabaseModeEnum } from 'qovery-typescript-axios'
-import {
-  ButtonIcon,
-  ButtonIconStyle,
-  ButtonLegacy,
-  ButtonLegacySize,
-  ButtonLegacyStyle,
-  Callout,
-  Heading,
-  Icon,
-  IconAwesomeEnum,
-  Section,
-} from '@qovery/shared/ui'
+import { Button, Callout, Heading, Icon, Section } from '@qovery/shared/ui'
 import {
   type GeneralData,
   type ResourcesData,
@@ -31,130 +20,119 @@ export interface StepSummaryProps {
 export function StepSummary(props: StepSummaryProps) {
   return (
     <Section>
-      <div className="mb-10">
-        <div className="flex justify-between mb-2 items-center">
-          <Heading className="text-neutral-400 text-lg">Ready to install your database</Heading>
-        </div>
-        <p className="text-xs text-neutral-400 mb-2">
-          The basic database setup is done, you can now deploy your database or move forward with some advanced setup.
-        </p>
-      </div>
+      <Heading className="mb-2">Ready to create your Database</Heading>
 
-      <div className="mb-10">
-        {props.generalData.mode == DatabaseModeEnum.MANAGED && (
-          <Callout.Root className="mb-5" color="yellow">
-            <Callout.Icon>
-              <Icon iconName="triangle-exclamation" />
-            </Callout.Icon>
-            <Callout.Text>
-              <Callout.TextHeading>Qovery manages this resource for you</Callout.TextHeading>
-              <Callout.TextDescription className="text-xs">
-                Use exclusively the Qovery console to update the resources managed by Qovery on your cloud account.
-                <br /> Do not manually update or upgrade them on the cloud provider console, otherwise you will risk a
-                drift in the configuration.
-              </Callout.TextDescription>
-            </Callout.Text>
-          </Callout.Root>
-        )}
-        <div className="flex p-4 w-full border rounded border-neutral-250 bg-neutral-100 mb-2">
-          <Icon iconName="check" className="text-green-500 mr-2" />
-          <div className="flex-grow mr-2">
-            <div className="text-sm text-neutral-400 font-bold mb-2">General information</div>
-            <ul className="text-neutral-350 text-sm list-none">
+      <form className="space-y-10">
+        <div>
+          <p className="text-neutral-350 text-sm">
+            The basic database setup is done, you can now deploy your database or move forward with some advanced setup.
+          </p>
+          {props.generalData.mode == DatabaseModeEnum.MANAGED && (
+            <Callout.Root className="mb-5" color="yellow">
+              <Callout.Icon>
+                <Icon iconName="triangle-exclamation" />
+              </Callout.Icon>
+              <Callout.Text>
+                <Callout.TextHeading>Qovery manages this resource for you</Callout.TextHeading>
+                <Callout.TextDescription className="text-xs">
+                  Use exclusively the Qovery console to update the resources managed by Qovery on your cloud account.
+                  <br /> Do not manually update or upgrade them on the cloud provider console, otherwise you will risk a
+                  drift in the configuration.
+                </Callout.TextDescription>
+              </Callout.Text>
+            </Callout.Root>
+          )}
+        </div>
+
+        <div className="flex flex-col gap-6">
+          <Section className="p-4 border rounded border-neutral-250 bg-neutral-100">
+            <div className="flex justify-between">
+              <Heading>General information</Heading>
+              <Button type="button" variant="plain" size="md" onClick={props.gotoGlobalInformation}>
+                <Icon className="text-base" iconName="gear-complex" />
+              </Button>
+            </div>
+            <ul className="space-y-2 text-neutral-400 text-sm list-none">
               <li>
-                Name: <strong className="font-medium">{props.generalData.name}</strong>
+                <strong className="font-medium">Name:</strong> {props.generalData.name}
+              </li>
+              {props.generalData.description && (
+                <li>
+                  <strong className="font-medium">Description:</strong>
+                  <br />
+                  {props.generalData.description}
+                </li>
+              )}
+              <li>
+                <strong className="font-medium">Mode:</strong>{' '}
+                {props.generalData.mode === DatabaseModeEnum.MANAGED ? 'Managed' : 'Container'}
               </li>
               <li>
-                Mode:{' '}
-                <strong className="font-medium">
-                  {props.generalData.mode === DatabaseModeEnum.MANAGED ? 'Managed' : 'Container'}
-                </strong>
+                <strong className="font-medium">Database type:</strong> {props.generalData.type}
               </li>
               <li>
-                Database type: <strong className="font-medium">{props.generalData.type}</strong>
+                <strong className="font-medium">Version:</strong> {props.generalData.version}
               </li>
               <li>
-                Version: <strong className="font-medium">{props.generalData.version}</strong>
-              </li>
-              <li>
-                Accessibility: <strong className="font-medium">{props.generalData.accessibility}</strong>
+                <strong className="font-medium">Accessibility:</strong> {props.generalData.accessibility}
               </li>
             </ul>
-          </div>
+          </Section>
 
-          <ButtonIcon
-            onClick={props.gotoGlobalInformation}
-            icon={IconAwesomeEnum.WHEEL}
-            style={ButtonIconStyle.FLAT}
-            className="text-neutral-400 hover:text-neutral-400"
-          />
-        </div>
-
-        <div className="flex p-4 w-full border rounded border-neutral-250 bg-neutral-100 mb-10">
-          <Icon iconName="check" className="text-green-500 mr-2" />
-          <div className="flex-grow mr-2">
-            <div className="text-sm text-neutral-400 font-bold mb-2">Resources</div>
-            <ul className="text-neutral-350 text-sm list-none">
+          <Section className="p-4 border rounded border-neutral-250 bg-neutral-100">
+            <div className="flex justify-between">
+              <Heading>Resources</Heading>
+              <Button type="button" variant="plain" size="md" onClick={props.gotoResources}>
+                <Icon className="text-base" iconName="gear-complex" />
+              </Button>
+            </div>
+            <ul className="space-y-2 text-neutral-400 text-sm list-none">
               {props.generalData.mode !== DatabaseModeEnum.MANAGED ? (
                 <>
                   <li>
-                    CPU: <strong className="font-medium">{props.resourcesData['cpu']}</strong>
+                    <strong className="font-medium">CPU:</strong> {props.resourcesData['cpu']}
                   </li>
                   <li>
-                    Memory: <strong className="font-medium">{props.resourcesData.memory} MB</strong>
+                    <strong className="font-medium">Memory:</strong> {props.resourcesData.memory} MB
                   </li>
                 </>
               ) : (
                 <li>
-                  Instance type: <strong className="font-medium">{props.resourcesData.instance_type}</strong>
+                  <strong className="font-medium">Instance type:</strong> {props.resourcesData.instance_type}
                 </li>
               )}
               <li>
-                Storage: <strong className="font-medium">{props.resourcesData.storage} GB</strong>
+                <strong className="font-medium">Storage:</strong> {props.resourcesData.storage} GB
               </li>
             </ul>
-          </div>
-          <ButtonIcon
-            onClick={props.gotoResources}
-            icon={IconAwesomeEnum.WHEEL}
-            style={ButtonIconStyle.FLAT}
-            className="text-neutral-400 hover:text-neutral-400"
-          />
+          </Section>
         </div>
 
-        <div className="flex justify-between mt-10">
-          <ButtonLegacy
-            onClick={props.onPrevious}
-            className="btn--no-min-w"
-            type="button"
-            size={ButtonLegacySize.XLARGE}
-            style={ButtonLegacyStyle.STROKED}
-          >
+        <div className="flex justify-between">
+          <Button onClick={props.onPrevious} type="button" size="lg" variant="plain">
             Back
-          </ButtonLegacy>
+          </Button>
           <div className="flex gap-2">
-            <ButtonLegacy
-              dataTestId="button-create"
+            <Button
+              data-testid="button-create"
               loading={props.isLoadingCreate}
               onClick={() => props.onSubmit(false)}
-              size={ButtonLegacySize.XLARGE}
-              style={ButtonLegacyStyle.STROKED}
-              className="btn--no-min-w"
+              size="lg"
+              variant="outline"
             >
               Create
-            </ButtonLegacy>
-            <ButtonLegacy
-              dataTestId="button-create-deploy"
+            </Button>
+            <Button
+              data-testid="button-create-deploy"
               loading={props.isLoadingCreateAndDeploy}
               onClick={() => props.onSubmit(true)}
-              size={ButtonLegacySize.XLARGE}
-              style={ButtonLegacyStyle.BASIC}
+              size="lg"
             >
               Create and deploy
-            </ButtonLegacy>
+            </Button>
           </div>
         </div>
-      </div>
+      </form>
     </Section>
   )
 }

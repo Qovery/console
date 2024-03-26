@@ -2,26 +2,12 @@ import { BuildModeEnum, type Organization } from 'qovery-typescript-axios'
 import { type FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
-import { AutoDeploySetting } from '@qovery/domains/services/feature'
-import {
-  CreateGeneralGitApplication,
-  EntrypointCmdInputs,
-  GeneralContainerSettings,
-} from '@qovery/shared/console-shared'
+import { AutoDeploySetting, BuildSettings, GeneralSetting } from '@qovery/domains/services/feature'
+import { EntrypointCmdInputs, GeneralContainerSettings, GitRepositorySettings } from '@qovery/shared/console-shared'
 import { IconEnum, ServiceTypeEnum } from '@qovery/shared/enums'
 import { type ApplicationGeneralData } from '@qovery/shared/interfaces'
 import { SERVICES_URL } from '@qovery/shared/routes'
-import {
-  ButtonLegacy,
-  ButtonLegacySize,
-  ButtonLegacyStyle,
-  Heading,
-  Icon,
-  InputSelect,
-  InputText,
-  InputTextArea,
-  Section,
-} from '@qovery/shared/ui'
+import { Button, Heading, Icon, InputSelect, Section } from '@qovery/shared/ui'
 
 export interface StepGeneralProps {
   onSubmit: FormEventHandler<HTMLFormElement>
@@ -41,104 +27,79 @@ export function StepGeneral(props: StepGeneralProps) {
 
   return (
     <Section>
-      <div className="mb-10">
-        <Heading className="mb-2">General information</Heading>
-        <p className="text-neutral-400 text-sm mb-2">
-          General settings allow you to set up your application name, git repository or container settings.
+      <Heading className="mb-2">General information</Heading>
+
+      <form className="space-y-10" onSubmit={props.onSubmit}>
+        <p className="text-neutral-350 text-sm">
+          These general settings allow you to set up the service name, its source and deployment parameters.
         </p>
-      </div>
 
-      <form onSubmit={props.onSubmit}>
-        <Controller
-          name="name"
-          control={control}
-          rules={{
-            required: 'Please enter a name.',
-          }}
-          render={({ field, fieldState: { error } }) => (
-            <InputText
-              className="mb-3"
-              name={field.name}
-              onChange={field.onChange}
-              value={field.value}
-              label="Application name"
-              error={error?.message}
-            />
-          )}
-        />
-        <Controller
-          name="description"
-          control={control}
-          render={({ field }) => (
-            <InputTextArea
-              className="mb-3"
-              name={field.name}
-              onChange={field.onChange}
-              value={field.value}
-              label="Description"
-            />
-          )}
-        />
-        <Controller
-          name="serviceType"
-          control={control}
-          rules={{
-            required: 'Please select a source.',
-          }}
-          render={({ field, fieldState: { error } }) => (
-            <InputSelect
-              dataTestId="input-select-source"
-              className="mb-6"
-              onChange={field.onChange}
-              value={field.value}
-              options={[
-                {
-                  value: ServiceTypeEnum.APPLICATION,
-                  label: 'Git provider',
-                  icon: <Icon name={IconEnum.GIT} className="w-4" />,
-                },
-                {
-                  value: ServiceTypeEnum.CONTAINER,
-                  label: 'Container Registry',
-                  icon: <Icon name={IconEnum.CONTAINER} className="w-4" />,
-                },
-              ]}
-              label="Application source"
-              error={error?.message}
-            />
-          )}
-        />
+        <Section className="gap-4">
+          <Heading>General</Heading>
+          <GeneralSetting label="Application name" />
+        </Section>
 
-        <div className="border-b border-b-neutral-200 mb-6"></div>
-        {watchServiceType === 'APPLICATION' && <CreateGeneralGitApplication />}
+        <Section className="gap-4">
+          <Heading>Source</Heading>
+          <Controller
+            name="serviceType"
+            control={control}
+            rules={{
+              required: 'Please select a source.',
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <InputSelect
+                dataTestId="input-select-source"
+                onChange={field.onChange}
+                value={field.value}
+                options={[
+                  {
+                    value: ServiceTypeEnum.APPLICATION,
+                    label: 'Git provider',
+                    icon: <Icon name={IconEnum.GIT} className="w-4" />,
+                  },
+                  {
+                    value: ServiceTypeEnum.CONTAINER,
+                    label: 'Container Registry',
+                    icon: <Icon name={IconEnum.CONTAINER} className="w-4" />,
+                  },
+                ]}
+                label="Application source"
+                error={error?.message}
+              />
+            )}
+          />
 
-        {watchServiceType === 'CONTAINER' && <GeneralContainerSettings organization={props.organization} />}
-
-        {(watchBuildMode === BuildModeEnum.DOCKER || watchServiceType === 'CONTAINER') && <EntrypointCmdInputs />}
+          {watchServiceType === 'APPLICATION' && <GitRepositorySettings withBlockWrapper={false} gitDisabled={false} />}
+          {watchServiceType === 'CONTAINER' && <GeneralContainerSettings organization={props.organization} />}
+        </Section>
 
         {watchServiceType && (
-          <AutoDeploySetting source={watchServiceType === ServiceTypeEnum.CONTAINER ? 'CONTAINER_REGISTRY' : 'GIT'} />
+          <Section className="gap-4">
+            <Heading>{watchServiceType === ServiceTypeEnum.APPLICATION ? 'Build and deploy' : 'Deploy'}</Heading>
+            {watchServiceType === ServiceTypeEnum.APPLICATION && <BuildSettings />}
+            {(watchBuildMode === BuildModeEnum.DOCKER || watchServiceType === 'CONTAINER') && <EntrypointCmdInputs />}
+            <AutoDeploySetting source={watchServiceType === ServiceTypeEnum.CONTAINER ? 'CONTAINER_REGISTRY' : 'GIT'} />
+          </Section>
         )}
 
-        <div className="flex justify-between mt-6">
-          <ButtonLegacy
+        <div className="flex justify-between">
+          <Button
             onClick={() => navigate(SERVICES_URL(organizationId, projectId, environmentId))}
             type="button"
-            className="btn--no-min-w"
-            size={ButtonLegacySize.XLARGE}
-            style={ButtonLegacyStyle.STROKED}
+            variant="plain"
+            size="lg"
           >
             Cancel
-          </ButtonLegacy>
-          <ButtonLegacy
-            dataTestId="button-submit"
+          </Button>
+          <Button
+            data-testid="button-submit"
             type="submit"
             disabled={!(formState.isValid && isGitSettingsValid)}
-            size={ButtonLegacySize.XLARGE}
-            style={ButtonLegacyStyle.BASIC}
+            size="lg"
           >
             Continue
-          </ButtonLegacy>
+          </Button>
         </div>
       </form>
     </Section>

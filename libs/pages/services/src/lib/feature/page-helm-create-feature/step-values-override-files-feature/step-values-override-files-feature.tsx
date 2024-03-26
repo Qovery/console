@@ -161,7 +161,7 @@ export function StepValuesOverrideFilesFeature() {
           gitRepositorySettings={gitRepositorySettings}
           onSubmit={onSubmit}
         >
-          <div className="flex justify-between mt-10">
+          <div className="flex justify-between">
             <Button type="button" size="lg" variant="surface" color="neutral" onClick={() => navigate(-1)}>
               Back
             </Button>

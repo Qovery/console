@@ -2,7 +2,7 @@ import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { ApplicationSettingsResources } from '@qovery/shared/console-shared'
 import { type ApplicationResourcesData } from '@qovery/shared/interfaces'
-import { ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle, Heading, Section } from '@qovery/shared/ui'
+import { Button, Heading, Section } from '@qovery/shared/ui'
 
 export interface StepResourcesProps {
   onBack: () => void
@@ -15,32 +15,19 @@ export function StepResources({ maximumInstances, onSubmit, onBack }: StepResour
 
   return (
     <Section>
-      <div className="mb-10">
-        <Heading className="mb-2">Set resources</Heading>
-      </div>
+      <Heading className="mb-2">Resources</Heading>
 
-      <form onSubmit={onSubmit}>
+      <form className="space-y-10" onSubmit={onSubmit}>
+        <p className="text-neutral-350 text-sm">Customize the resources assigned to the service.</p>
         <ApplicationSettingsResources maxInstances={maximumInstances} displayWarningCpu={false} />
 
         <div className="flex justify-between">
-          <ButtonLegacy
-            onClick={onBack}
-            className="btn--no-min-w"
-            type="button"
-            size={ButtonLegacySize.XLARGE}
-            style={ButtonLegacyStyle.STROKED}
-          >
+          <Button onClick={onBack} type="button" size="lg" variant="plain">
             Back
-          </ButtonLegacy>
-          <ButtonLegacy
-            dataTestId="button-submit"
-            type="submit"
-            disabled={!formState.isValid}
-            size={ButtonLegacySize.XLARGE}
-            style={ButtonLegacyStyle.BASIC}
-          >
+          </Button>
+          <Button data-testid="button-submit" type="submit" disabled={!formState.isValid} size="lg">
             Continue
-          </ButtonLegacy>
+          </Button>
         </div>
       </form>
     </Section>

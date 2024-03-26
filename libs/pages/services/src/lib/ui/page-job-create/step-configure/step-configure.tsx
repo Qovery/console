@@ -3,7 +3,7 @@ import { useFormContext } from 'react-hook-form'
 import { JobConfigureSettings } from '@qovery/shared/console-shared'
 import { type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
 import { type JobConfigureData } from '@qovery/shared/interfaces'
-import { ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle, Heading, Section } from '@qovery/shared/ui'
+import { Button, Heading, Section } from '@qovery/shared/ui'
 
 export interface StepConfigureProps {
   onSubmit: FormEventHandler<HTMLFormElement>
@@ -23,35 +23,20 @@ export function StepConfigure(props: StepConfigureProps) {
 
   return (
     <Section>
-      <div className="mb-10">
-        <Heading className="mb-2">Job configuration</Heading>
-        <p className="text-neutral-400 text-sm mb-2">
-          Job configuration allows you to control the behaviour of your job
-        </p>
-      </div>
+      <Heading className="mb-2">Job configuration</Heading>
 
-      <JobConfigureSettings jobType={props.jobType} />
+      <form className="space-y-10" onSubmit={props.onSubmit}>
+        <p className="text-neutral-350 text-sm">Job configuration allows you to control the behaviour of your job</p>
 
-      <form onSubmit={props.onSubmit}>
+        <JobConfigureSettings jobType={props.jobType} />
+
         <div className="flex justify-between">
-          <ButtonLegacy
-            onClick={props.onBack}
-            type="button"
-            className="btn--no-min-w"
-            size={ButtonLegacySize.XLARGE}
-            style={ButtonLegacyStyle.STROKED}
-          >
+          <Button onClick={props.onBack} type="button" size="lg" variant="plain">
             Back
-          </ButtonLegacy>
-          <ButtonLegacy
-            dataTestId="button-submit"
-            type="submit"
-            disabled={!(formState.isValid && isValid)}
-            size={ButtonLegacySize.XLARGE}
-            style={ButtonLegacyStyle.BASIC}
-          >
+          </Button>
+          <Button data-testid="button-submit" type="submit" disabled={!(formState.isValid && isValid)} size="lg">
             Continue
-          </ButtonLegacy>
+          </Button>
         </div>
       </form>
     </Section>

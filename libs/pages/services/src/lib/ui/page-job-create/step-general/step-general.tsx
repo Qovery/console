@@ -1,21 +1,13 @@
-import { type Organization } from 'qovery-typescript-axios'
+import { BuildModeEnum, type Organization } from 'qovery-typescript-axios'
 import { type FormEventHandler } from 'react'
-import { Controller, useFormContext } from 'react-hook-form'
+import { useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
-import { AutoDeploySetting } from '@qovery/domains/services/feature'
-import { JobGeneralSettings } from '@qovery/shared/console-shared'
+import { AutoDeploySetting, BuildSettings, GeneralSetting } from '@qovery/domains/services/feature'
+import { EntrypointCmdInputs, JobGeneralSettings } from '@qovery/shared/console-shared'
 import { type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
 import { type JobGeneralData } from '@qovery/shared/interfaces'
 import { SERVICES_URL } from '@qovery/shared/routes'
-import {
-  ButtonLegacy,
-  ButtonLegacySize,
-  ButtonLegacyStyle,
-  Heading,
-  InputText,
-  InputTextArea,
-  Section,
-} from '@qovery/shared/ui'
+import { Button, Heading, Section } from '@qovery/shared/ui'
 
 export interface StepGeneralProps {
   onSubmit: FormEventHandler<HTMLFormElement>
@@ -26,84 +18,61 @@ export interface StepGeneralProps {
 export function StepGeneral(props: StepGeneralProps) {
   const { organizationId = '', environmentId = '', projectId = '' } = useParams()
   const navigate = useNavigate()
-  const { formState, control, watch } = useFormContext<JobGeneralData>()
+  const { formState, watch } = useFormContext<JobGeneralData>()
   const watchServiceType = watch('serviceType')
+  const watchBuildMode = watch('build_mode')
 
   // NOTE: Validation corner case where git settings can be in loading state
   const isGitSettingsValid = watchServiceType === 'APPLICATION' ? watch('branch') : true
 
   return (
     <Section>
-      <div className="mb-10">
-        <Heading className="mb-2">
-          {props.jobType === ServiceTypeEnum.CRON_JOB ? 'Cron' : 'Lifecycle'} job information
-        </Heading>
-        <p className="text-neutral-400 text-sm mb-2">
+      <Heading className="mb-2">
+        {props.jobType === ServiceTypeEnum.CRON_JOB ? 'Cron' : 'Lifecycle'} job information
+      </Heading>
+
+      <form className="space-y-10" onSubmit={props.onSubmit}>
+        <p className="text-neutral-350 text-sm">
           General settings allow you to set up your application name, git repository or container settings.
         </p>
-      </div>
+        <Section className="gap-4">
+          <Heading>General</Heading>
+          <GeneralSetting label="Application name" />
+        </Section>
 
-      <h3 className="text-sm font-semibold mb-3">General</h3>
+        <Section className="gap-4">
+          <Heading>Source</Heading>
+          <JobGeneralSettings jobType={props.jobType} organization={props.organization} isEdition={false} />
+        </Section>
 
-      <form onSubmit={props.onSubmit}>
-        <Controller
-          name="name"
-          control={control}
-          rules={{
-            required: 'Please enter a name.',
-          }}
-          render={({ field, fieldState: { error } }) => (
-            <InputText
-              className="mb-3"
-              name={field.name}
-              onChange={field.onChange}
-              value={field.value}
-              label="Application name"
-              error={error?.message}
-            />
-          )}
-        />
-
-        <Controller
-          name="description"
-          control={control}
-          render={({ field, fieldState: { error } }) => (
-            <InputTextArea
-              dataTestId="input-textarea-description"
-              name="description"
-              className="mb-3"
-              onChange={field.onChange}
-              value={field.value}
-              label="Description (optional)"
-              error={error?.message}
-            />
-          )}
-        />
-
-        <JobGeneralSettings jobType={props.jobType} organization={props.organization} isEdition={false} />
         {watchServiceType && (
-          <AutoDeploySetting source={watchServiceType === ServiceTypeEnum.CONTAINER ? 'CONTAINER_REGISTRY' : 'GIT'} />
+          <Section className="gap-4">
+            <Heading>{watchServiceType === ServiceTypeEnum.APPLICATION ? 'Build and deploy' : 'Deploy'}</Heading>
+            {watchServiceType === ServiceTypeEnum.APPLICATION && <BuildSettings buildModeDisabled />}
+            {props.jobType === ServiceTypeEnum.CRON_JOB && watchBuildMode === BuildModeEnum.DOCKER && (
+              <EntrypointCmdInputs />
+            )}
+            <AutoDeploySetting source={watchServiceType === ServiceTypeEnum.CONTAINER ? 'CONTAINER_REGISTRY' : 'GIT'} />
+          </Section>
         )}
 
-        <div className="flex justify-between mt-6">
-          <ButtonLegacy
+        <div className="flex justify-between">
+          <Button
             onClick={() => navigate(SERVICES_URL(organizationId, projectId, environmentId))}
             type="button"
-            className="btn--no-min-w"
-            size={ButtonLegacySize.XLARGE}
-            style={ButtonLegacyStyle.STROKED}
+            size="lg"
+            variant="plain"
           >
             Cancel
-          </ButtonLegacy>
-          <ButtonLegacy
-            dataTestId="button-submit"
+          </Button>
+          <Button
+            data-testid="button-submit"
             type="submit"
             disabled={!(formState.isValid && isGitSettingsValid)}
-            size={ButtonLegacySize.XLARGE}
-            style={ButtonLegacyStyle.BASIC}
+            size="lg"
           >
             Continue
-          </ButtonLegacy>
+          </Button>
         </div>
       </form>
     </Section>

@@ -5,18 +5,7 @@ import {
   type ApplicationResourcesData,
   type FlowPortData,
 } from '@qovery/shared/interfaces'
-import {
-  ButtonIcon,
-  ButtonIconStyle,
-  ButtonLegacy,
-  ButtonLegacySize,
-  ButtonLegacyStyle,
-  Heading,
-  Icon,
-  IconAwesomeEnum,
-  Section,
-  Truncate,
-} from '@qovery/shared/ui'
+import { Button, Heading, Icon, Section, Truncate } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
 export interface StepSummaryProps {
@@ -28,6 +17,7 @@ export interface StepSummaryProps {
   gotoGlobalInformation: () => void
   gotoResources: () => void
   gotoPorts: () => void
+  gotoHealthchecks: () => void
   isLoadingCreate: boolean
   isLoadingCreateAndDeploy: boolean
   selectedRegistryName?: string
@@ -41,6 +31,7 @@ export function StepSummary({
   portsData,
   gotoGlobalInformation,
   gotoResources,
+  gotoHealthchecks,
   gotoPorts,
   isLoadingCreate,
   isLoadingCreateAndDeploy,
@@ -48,45 +39,55 @@ export function StepSummary({
 }: StepSummaryProps) {
   return (
     <Section>
-      <div className="mb-10">
-        <Heading className="mb-2">Ready to install your Application</Heading>
-        <p className="text-xs text-neutral-400 mb-2">
+      <Heading className="mb-2">Ready to create your Application</Heading>
+
+      <form className="space-y-10">
+        <p className="text-neutral-350 text-sm">
           The basic application setup is done, you can now deploy your application or move forward with some advanced
           setup.
         </p>
-      </div>
 
-      <div className="mb-10">
-        <div className="flex p-4 w-full border rounded border-neutral-250 bg-neutral-100 mb-2">
-          <Icon iconName="check" className="text-green-500 mr-2" />
-          <div className="flex-grow mr-2">
-            <div className="text-sm text-neutral-400 font-bold mb-2">General information</div>
-            <ul className="text-neutral-350 text-sm list-none">
+        <div className="flex flex-col gap-6">
+          <Section className="p-4 border rounded border-neutral-250 bg-neutral-100">
+            <div className="flex justify-between">
+              <Heading>General information</Heading>
+              <Button type="button" variant="plain" size="md" onClick={gotoGlobalInformation}>
+                <Icon className="text-base" iconName="gear-complex" />
+              </Button>
+            </div>
+            <ul className="space-y-2 text-neutral-400 text-sm list-none">
               <li>
-                Name: <strong className="font-medium">{generalData.name}</strong>
+                <strong className="font-medium">Name:</strong> {generalData.name}
               </li>
+              {generalData.description && (
+                <li>
+                  <strong className="font-medium">Description:</strong>
+                  <br />
+                  {generalData.description}
+                </li>
+              )}
               {generalData.serviceType === 'APPLICATION' && (
                 <>
                   <li>
-                    Repository: <strong className="font-medium">{generalData.repository}</strong>
+                    <strong className="font-medium">Repository:</strong> {generalData.repository}
                   </li>
                   <li>
-                    Branch: <strong>{generalData.branch}</strong>
+                    <strong className="font-medium">Branch:</strong> {generalData.branch}
                   </li>
                   <li>
-                    Root application path: <strong>{generalData.root_path}</strong>
+                    <strong className="font-medium">Root application path:</strong> {generalData.root_path}
                   </li>
                   <li>
-                    Build mode: <strong>{upperCaseFirstLetter(generalData.build_mode)}</strong>
+                    <strong className="font-medium">Build mode:</strong> {upperCaseFirstLetter(generalData.build_mode)}
                   </li>
                   {generalData.build_mode === BuildModeEnum.BUILDPACKS && (
                     <li>
-                      Buildpack language: <strong>{generalData.buildpack_language}</strong>
+                      <strong className="font-medium">Buildpack language:</strong> {generalData.buildpack_language}
                     </li>
                   )}
                   {generalData.build_mode === BuildModeEnum.DOCKER && (
                     <li>
-                      Dockerfile path: <strong>{generalData.dockerfile_path}</strong>
+                      <strong className="font-medium">Dockerfile path:</strong> {generalData.dockerfile_path}
                     </li>
                   )}
                 </>
@@ -94,227 +95,213 @@ export function StepSummary({
               {generalData.serviceType === 'CONTAINER' && (
                 <>
                   <li>
-                    Registry: <strong className="font-medium">{selectedRegistryName}</strong>
+                    <strong className="font-medium">Registry:</strong> {selectedRegistryName}
                   </li>
                   <li>
-                    Image name: <strong>{generalData.image_name}</strong>
+                    <strong className="font-medium">Image name:</strong> {generalData.image_name}
                   </li>
                   <li>
-                    Image tag: <strong>{generalData.image_tag}</strong>
+                    <strong className="font-medium">Image tag:</strong> {generalData.image_tag}
                   </li>
                 </>
               )}
               <li>
-                Image entrypoint: <strong>{generalData.image_entry_point}</strong>
+                <strong className="font-medium">Image entrypoint:</strong> {generalData.image_entry_point}
               </li>
               {generalData.cmd_arguments && (
                 <li>
-                  CMD arguments:{' '}
-                  <strong>
-                    <Truncate text={generalData.cmd_arguments} truncateLimit={120} />
-                  </strong>
+                  <strong className="font-medium">CMD arguments:</strong>{' '}
+                  <Truncate text={generalData.cmd_arguments} truncateLimit={120} />
                 </li>
               )}
               <li>
-                Auto-deploy: <strong>{generalData.auto_deploy.toString()}</strong>
+                <strong className="font-medium">Auto-deploy:</strong> {generalData.auto_deploy.toString()}
               </li>
             </ul>
-          </div>
+          </Section>
 
-          <ButtonIcon
-            onClick={gotoGlobalInformation}
-            icon={IconAwesomeEnum.WHEEL}
-            style={ButtonIconStyle.FLAT}
-            className="text-neutral-400 hover:text-neutral-400"
-          />
-        </div>
-
-        <div className="flex p-4 w-full border rounded border-neutral-250 bg-neutral-100 mb-2">
-          <Icon iconName="check" className="text-green-500 mr-2" />
-          <div className="flex-grow mr-2">
-            <div className="text-sm text-neutral-400 font-bold mb-2">Resources</div>
-            <ul className="text-neutral-350 text-sm list-none">
+          <Section className="p-4 border rounded border-neutral-250 bg-neutral-100">
+            <div className="flex justify-between">
+              <Heading>Resources</Heading>
+              <Button type="button" variant="plain" size="md" onClick={gotoResources}>
+                <Icon className="text-base" iconName="gear-complex" />
+              </Button>
+            </div>
+            <ul className="space-y-2 text-neutral-400 text-sm list-none">
               <li>
-                CPU: <strong className="font-medium">{resourcesData['cpu']}</strong>
+                <strong className="font-medium">CPU:</strong> {resourcesData['cpu']}
               </li>
               <li>
-                Memory: <strong className="font-medium">{resourcesData.memory} MB</strong>
+                <strong className="font-medium">Memory:</strong> {resourcesData.memory} MB
               </li>
               <li>
-                Instances:{' '}
-                <strong className="font-medium">
-                  {resourcesData.instances[0]} - {resourcesData.instances[1]}
-                </strong>
+                <strong className="font-medium">Instances:</strong> {resourcesData.instances[0]} -{' '}
+                {resourcesData.instances[1]}
               </li>
             </ul>
-          </div>
+          </Section>
 
-          <ButtonIcon
-            onClick={gotoResources}
-            icon={IconAwesomeEnum.WHEEL}
-            style={ButtonIconStyle.FLAT}
-            className="text-neutral-400 hover:text-neutral-400"
-          />
-        </div>
-
-        <div className="flex p-4 w-full border rounded border-neutral-250 bg-neutral-100 mb-2">
-          <Icon iconName="check" className="text-green-500 mr-2" />
-          <div className="flex-grow mr-2">
-            <div className="text-sm text-neutral-400 font-bold mb-2">Ports</div>
-            <ul className="text-neutral-350 text-sm">
+          <Section className="p-4 border rounded border-neutral-250 bg-neutral-100">
+            <div className="flex justify-between">
+              <Heading>Ports</Heading>
+              <Button type="button" variant="plain" size="md" onClick={gotoPorts}>
+                <Icon className="text-base" iconName="gear-complex" />
+              </Button>
+            </div>
+            <ul className="flex flex-col gap-2 text-neutral-400 text-sm list-none">
               {portsData.ports && portsData.ports.length > 0 ? (
                 <>
                   {portsData.ports?.map((port, index) => (
-                    <li key={index}>
-                      Application port: <strong className="font-medium">{port.application_port}</strong>– Protocol:{' '}
-                      <strong className="font-medium">{port.protocol}</strong>
-                      {port.is_public && (
-                        <>
-                          – Public port: <strong className="font-medium">{port.external_port}</strong>
-                        </>
-                      )}{' '}
-                      {port.is_public && (
-                        <>
-                          – Port name: <strong className="font-medium">{port.name}</strong>
-                        </>
-                      )}{' '}
-                      – Public: <strong className="font-medium">{port.is_public ? 'Yes' : 'No'}</strong>
-                    </li>
-                  ))}
-                  {portsData.healthchecks?.item && portsData.healthchecks?.item.readiness_probe && (
                     <>
-                      {portsData.healthchecks.item.liveness_probe &&
-                        portsData.healthchecks.typeLiveness !== ProbeTypeEnum.NONE && (
-                          <li className="flex flex-col mt-1">
-                            <span className="font-bold text-neutral-400">Liveness</span>
-                            <ul className="relative border-l border-neutral-250 mt-2 mb-1">
-                              <li className="pl-5">
-                                Type: <strong className="font-medium">{portsData.healthchecks.typeLiveness}</strong>
-                              </li>
-                              <li className="pl-5 mt-1">
-                                Initial Delay:{' '}
-                                <strong className="font-medium">
-                                  {portsData.healthchecks.item.liveness_probe.initial_delay_seconds} seconds
-                                </strong>
-                              </li>
-                              <li className="pl-5 mt-1">
-                                Period:{' '}
-                                <strong className="font-medium">
-                                  {portsData.healthchecks.item.liveness_probe.period_seconds} seconds
-                                </strong>
-                              </li>
-                              <li className="pl-5 mt-1">
-                                Timeout:{' '}
-                                <strong className="font-medium">
-                                  {portsData.healthchecks.item.liveness_probe.timeout_seconds} seconds
-                                </strong>
-                              </li>
-                              <li className="pl-5 mt-1">
-                                Success Threshold:{' '}
-                                <strong className="font-medium">
-                                  {portsData.healthchecks.item.liveness_probe.success_threshold}
-                                </strong>
-                              </li>
-                              <li className="pl-5 mt-1">
-                                Failure Threshold:{' '}
-                                <strong className="font-medium">
-                                  {portsData.healthchecks.item.liveness_probe.failure_threshold}
-                                </strong>
-                              </li>
-                            </ul>
-                          </li>
-                        )}
-                      {portsData.healthchecks.item.readiness_probe &&
-                        portsData.healthchecks.typeReadiness !== ProbeTypeEnum.NONE && (
-                          <li className="flex flex-col mt-1">
-                            <span className="font-bold text-neutral-400">Readiness</span>
-                            <ul className="relative border-l border-neutral-250 mt-2 mb-1">
-                              <li className="pl-5">
-                                Type: <strong className="font-medium">{portsData.healthchecks.typeReadiness}</strong>
-                              </li>
-                              <li className="pl-5 mt-1">
-                                Initial Delay:{' '}
-                                <strong className="font-medium">
-                                  {portsData.healthchecks.item.readiness_probe.initial_delay_seconds} seconds
-                                </strong>
-                              </li>
-                              <li className="pl-5 mt-1">
-                                Period:{' '}
-                                <strong className="font-medium">
-                                  {portsData.healthchecks.item.readiness_probe.period_seconds} seconds
-                                </strong>
-                              </li>
-                              <li className="pl-5 mt-1">
-                                Timeout:{' '}
-                                <strong className="font-medium">
-                                  {portsData.healthchecks.item.readiness_probe.timeout_seconds} seconds
-                                </strong>
-                              </li>
-                              <li className="pl-5 mt-1">
-                                Success Threshold:{' '}
-                                <strong className="font-medium">
-                                  {portsData.healthchecks.item.readiness_probe.success_threshold}
-                                </strong>
-                              </li>
-                              <li className="pl-5 mt-1">
-                                Failure Threshold:{' '}
-                                <strong className="font-medium">
-                                  {portsData.healthchecks.item.readiness_probe.failure_threshold}
-                                </strong>
-                              </li>
-                            </ul>
-                          </li>
-                        )}
+                      {!!index && <hr className="border-t border-dashed border-neutral-250" />}
+                      <li key={index} className="grid grid-cols-2 grid-flow-col gap-2 my-2">
+                        <div>
+                          <strong className="font-medium">Application port:</strong> {port.application_port}
+                        </div>
+                        <div className="space-y-2">
+                          <p>
+                            <strong className="font-medium">Protocol:</strong> {port.protocol}
+                          </p>
+                          {port.is_public && (
+                            <p>
+                              <strong className="font-medium">Public port:</strong> {port.external_port}
+                            </p>
+                          )}{' '}
+                          {port.is_public && (
+                            <p>
+                              <strong className="font-medium">Port name:</strong> {port.name}
+                            </p>
+                          )}{' '}
+                          <p>
+                            <strong className="font-medium">Public:</strong> {port.is_public ? 'Yes' : 'No'}
+                          </p>
+                        </div>
+                      </li>
                     </>
-                  )}
+                  ))}
                 </>
               ) : (
                 <li>No port declared</li>
               )}
             </ul>
+          </Section>
+
+          {portsData.ports &&
+            portsData.ports.length > 0 &&
+            portsData.healthchecks?.item &&
+            portsData.healthchecks?.item.readiness_probe && (
+              <Section className="p-4 border rounded border-neutral-250 bg-neutral-100">
+                <div className="flex justify-between">
+                  <Heading>Health checks</Heading>
+                  <Button type="button" variant="plain" size="md" onClick={gotoHealthchecks}>
+                    <Icon className="text-base" iconName="gear-complex" />
+                  </Button>
+                </div>
+                <ul className="flex flex-col gap-2 text-neutral-400 text-sm list-none">
+                  {portsData.healthchecks.item.liveness_probe &&
+                    portsData.healthchecks.typeLiveness !== ProbeTypeEnum.NONE && (
+                      <li className="grid grid-cols-2 grid-flow-col gap-2 my-2">
+                        <div>
+                          <strong className="font-medium">Liveness</strong>
+                        </div>
+                        <div className="space-y-2">
+                          <p>
+                            <strong className="font-medium">Type:</strong> {portsData.healthchecks.typeLiveness}
+                          </p>
+                          <p>
+                            <strong className="font-medium">Initial Delay:</strong>{' '}
+                            {portsData.healthchecks.item.liveness_probe.initial_delay_seconds} seconds
+                          </p>
+                          <p>
+                            <strong className="font-medium">Period:</strong>{' '}
+                            {portsData.healthchecks.item.liveness_probe.period_seconds} seconds
+                          </p>
+                          <p>
+                            <strong className="font-medium">Timeout:</strong>{' '}
+                            {portsData.healthchecks.item.liveness_probe.timeout_seconds} seconds
+                          </p>
+                          <p>
+                            <strong className="font-medium">Success Threshold:</strong>{' '}
+                            {portsData.healthchecks.item.liveness_probe.success_threshold}
+                          </p>
+                          <p>
+                            <strong className="font-medium">Failure Threshold:</strong>{' '}
+                            {portsData.healthchecks.item.liveness_probe.failure_threshold}
+                          </p>
+                        </div>
+                      </li>
+                    )}
+                  {portsData.healthchecks.item.readiness_probe &&
+                    portsData.healthchecks.typeReadiness !== ProbeTypeEnum.NONE && (
+                      <>
+                        {portsData.healthchecks.item.liveness_probe &&
+                          portsData.healthchecks.typeLiveness !== ProbeTypeEnum.NONE && (
+                            <hr className="border-t border-dashed border-neutral-250" />
+                          )}
+                        <li className="grid grid-cols-2 grid-flow-col gap-2 my-2">
+                          <div>
+                            <strong className="font-medium">Readiness</strong>
+                          </div>
+                          <div className="space-y-2">
+                            <p>
+                              <strong className="font-medium">Type:</strong> {portsData.healthchecks.typeReadiness}
+                            </p>
+                            <p>
+                              <strong className="font-medium">Initial Delay:</strong>{' '}
+                              {portsData.healthchecks.item.readiness_probe.initial_delay_seconds} seconds
+                            </p>
+                            <p>
+                              <strong className="font-medium">Period:</strong>{' '}
+                              {portsData.healthchecks.item.readiness_probe.period_seconds} seconds
+                            </p>
+                            <p>
+                              <strong className="font-medium">Timeout:</strong>{' '}
+                              {portsData.healthchecks.item.readiness_probe.timeout_seconds} seconds
+                            </p>
+                            <p>
+                              <strong className="font-medium">Success Threshold:</strong>{' '}
+                              {portsData.healthchecks.item.readiness_probe.success_threshold}
+                            </p>
+                            <p>
+                              <strong className="font-medium">Failure Threshold:</strong>{' '}
+                              {portsData.healthchecks.item.readiness_probe.failure_threshold}
+                            </p>
+                          </div>
+                        </li>
+                      </>
+                    )}
+                </ul>
+              </Section>
+            )}
+        </div>
+
+        <div className="flex justify-between">
+          <Button onClick={onPrevious} type="button" size="lg" variant="plain">
+            Back
+          </Button>
+          <div className="flex gap-2">
+            <Button
+              data-testid="button-create"
+              loading={isLoadingCreate}
+              onClick={() => onSubmit(false)}
+              size="lg"
+              variant="outline"
+              type="button"
+            >
+              Create
+            </Button>
+            <Button
+              data-testid="button-create-deploy"
+              loading={isLoadingCreateAndDeploy}
+              onClick={() => onSubmit(true)}
+              size="lg"
+              type="button"
+            >
+              Create and deploy
+            </Button>
           </div>
-
-          <ButtonIcon
-            onClick={gotoPorts}
-            icon={IconAwesomeEnum.WHEEL}
-            style={ButtonIconStyle.FLAT}
-            className="text-neutral-400 hover:text-neutral-400"
-          />
         </div>
-      </div>
-
-      <div className="flex justify-between">
-        <ButtonLegacy
-          onClick={onPrevious}
-          className="btn--no-min-w"
-          type="button"
-          size={ButtonLegacySize.XLARGE}
-          style={ButtonLegacyStyle.STROKED}
-        >
-          Back
-        </ButtonLegacy>
-        <div className="flex gap-2">
-          <ButtonLegacy
-            dataTestId="button-create"
-            loading={isLoadingCreate}
-            onClick={() => onSubmit(false)}
-            size={ButtonLegacySize.XLARGE}
-            style={ButtonLegacyStyle.STROKED}
-            className="btn--no-min-w"
-          >
-            Create
-          </ButtonLegacy>
-          <ButtonLegacy
-            dataTestId="button-create-deploy"
-            loading={isLoadingCreateAndDeploy}
-            onClick={() => onSubmit(true)}
-            size={ButtonLegacySize.XLARGE}
-            style={ButtonLegacyStyle.BASIC}
-          >
-            Create and deploy
-          </ButtonLegacy>
-        </div>
-      </div>
+      </form>
     </Section>
   )
 }

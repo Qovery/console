@@ -132,187 +132,182 @@ export function StepSummaryFeature() {
     <FunnelFlowBody>
       <Section>
         <Heading className="mb-2">Ready to create your Helm chart</Heading>
-        <p className="text-sm text-neutral-350 mb-10">
-          The setup is done, you can now create and deploy your Helm chart.
-        </p>
 
-        <div className="flex p-4 w-full border rounded border-neutral-250 bg-neutral-100 mb-2">
-          <Icon iconName="check" className="text-green-500 mr-2" />
-          <div className="flex-grow mr-2">
-            <div className="text-sm text-neutral-400 font-bold mb-5">Helm General Data</div>
+        <form className="space-y-10">
+          <p className="text-neutral-350 text-sm">
+            The basic application setup is done, you can now deploy your application or move forward with some advanced
+            setup.
+          </p>
 
-            <div className="text-neutral-400 text-ssm mb-2 font-medium">Helm chart general</div>
-
-            <ul className="text-neutral-350 text-sm list-none">
-              <li>
-                <span className="font-medium">Name:</span> {generalData.name}
-              </li>
-              {generalData.description && (
+          <div className="flex flex-col gap-6">
+            <Section className="p-4 border rounded border-neutral-250 bg-neutral-100">
+              <div className="flex justify-between">
+                <Heading>General information</Heading>
+                <Button
+                  type="button"
+                  variant="plain"
+                  size="md"
+                  onClick={() => navigate(pathCreate + SERVICES_CREATION_GENERAL_URL)}
+                >
+                  <Icon className="text-base" iconName="gear-complex" />
+                </Button>
+              </div>
+              <ul className="space-y-2 text-neutral-400 text-sm list-none">
                 <li>
-                  <span className="font-medium">Description:</span> {generalData.description}
+                  <strong className="font-medium">Name:</strong> {generalData.name}
                 </li>
+                {generalData.description && (
+                  <li>
+                    <strong className="font-medium">Description:</strong>
+                    <br />
+                    {generalData.description}
+                  </li>
+                )}
+              </ul>
+              <hr className="my-4 border-t border-dashed border-neutral-250" />
+              {generalData.source_provider === 'GIT' && (
+                <ul className="space-y-2 text-neutral-400 text-sm list-none">
+                  <li>
+                    <strong className="font-medium">Repository:</strong> {generalData.repository}
+                  </li>
+                  <li>
+                    <strong className="font-medium">Branch:</strong> {generalData.branch}
+                  </li>
+                  <li>
+                    <strong className="font-medium">Root path:</strong> {generalData.root_path}
+                  </li>
+                </ul>
               )}
-            </ul>
 
-            <div className="my-4 border-b border-neutral-250 border-dashed" />
-
-            <div className="text-neutral-400 text-ssm mb-2 font-medium">Source</div>
-
-            {generalData.source_provider === 'GIT' && (
-              <ul className="text-neutral-350 text-sm list-none">
+              {generalData.source_provider === 'HELM_REPOSITORY' && (
+                <ul className="space-y-2 text-neutral-400 text-sm list-none">
+                  <li>
+                    <strong className="font-medium">Repository:</strong>{' '}
+                    {helmRepositories.find(({ id }) => id === generalData.repository)?.name}
+                  </li>
+                  <li>
+                    <strong className="font-medium">Chart name:</strong> {generalData.chart_name}
+                  </li>
+                  <li>
+                    <strong className="font-medium">Version:</strong> {generalData.chart_version}
+                  </li>
+                </ul>
+              )}
+              <hr className="my-4 border-t border-dashed border-neutral-250" />
+              <ul className="space-y-2 text-neutral-400 text-sm list-none">
                 <li>
-                  <span className="font-medium">Repository:</span> {generalData.repository}
+                  <span className="font-medium">Helm parameters:</span> {generalData.arguments?.toString()}
                 </li>
                 <li>
-                  <span className="font-medium">Branch:</span> {generalData.branch}
+                  <span className="font-medium">Helm timeout:</span> {generalData.timeout_sec}
                 </li>
                 <li>
-                  <span className="font-medium">Root path:</span> {generalData.root_path}
+                  <span className="font-medium">Allow cluster-wide resources:</span>{' '}
+                  {Boolean(generalData.allow_cluster_wide_resources).toString()}
+                </li>
+                <li>
+                  <span className="font-medium">Auto-deploy:</span>{' '}
+                  {match({ generalData, valuesOverrideFileData })
+                    .with(
+                      {
+                        generalData: { source_provider: 'GIT', auto_deploy: true },
+                        valuesOverrideFileData: { type: 'GIT_REPOSITORY' },
+                      },
+                      () => 'On (chart and values)'
+                    )
+                    .with({ generalData: { source_provider: 'GIT', auto_deploy: true } }, () => 'On (chart)')
+                    .with(
+                      {
+                        generalData: { source_provider: 'HELM_REPOSITORY' },
+                        valuesOverrideFileData: { auto_deploy: true },
+                      },
+                      () => 'On (values)'
+                    )
+                    .otherwise(() => 'Off')}
                 </li>
               </ul>
+            </Section>
+
+            {(valuesOverrideFileData.type !== 'NONE' || valuesOverrideArgumentData.arguments.length > 0) && (
+              <Section className="p-4 border rounded border-neutral-250 bg-neutral-100">
+                <div className="flex justify-between">
+                  <Heading>Values</Heading>
+                  <Button
+                    type="button"
+                    variant="plain"
+                    size="md"
+                    onClick={() => navigate(pathCreate + SERVICES_HELM_CREATION_VALUES_STEP_1_URL)}
+                  >
+                    <Icon className="text-base" iconName="gear-complex" />
+                  </Button>
+                </div>
+                {valuesOverrideFileData.type === 'GIT_REPOSITORY' && (
+                  <ul className="space-y-2 text-neutral-400 text-sm list-none">
+                    <li>
+                      <strong className="font-medium">From Git Provider:</strong> {valuesOverrideFileData.provider}
+                    </li>
+                    <li>
+                      <strong className="font-medium">Repository:</strong> {valuesOverrideFileData.repository}
+                    </li>
+                    <li>
+                      <strong className="font-medium">Branch:</strong> {valuesOverrideFileData.branch}
+                    </li>
+                    <li>
+                      <strong className="font-medium">Overrides path:</strong> {valuesOverrideFileData.paths}
+                    </li>
+                  </ul>
+                )}
+
+                {valuesOverrideFileData.type === 'YAML' && (
+                  <ul className="space-y-2 text-neutral-400 text-sm list-none">
+                    <li>
+                      <strong className="font-medium">From YAML:</strong>{' '}
+                      {truncateText(valuesOverrideFileData.content!, 50)}
+                      ...
+                    </li>
+                  </ul>
+                )}
+
+                {valuesOverrideArgumentData.arguments.length > 0 && (
+                  <ul className="space-y-2 text-neutral-400 text-sm list-none">
+                    <li>
+                      <strong className="font-medium">Manual:</strong> {valuesOverrideArgumentData.arguments.length}{' '}
+                      variables added
+                    </li>
+                  </ul>
+                )}
+              </Section>
             )}
-
-            {generalData.source_provider === 'HELM_REPOSITORY' && (
-              <ul className="text-neutral-350 text-sm list-none">
-                <li>
-                  <span className="font-medium">Repository:</span>{' '}
-                  {helmRepositories.find(({ id }) => id === generalData.repository)?.name}
-                </li>
-                <li>
-                  <span className="font-medium">Chart name:</span> {generalData.chart_name}
-                </li>
-                <li>
-                  <span className="font-medium">Version:</span> {generalData.chart_version}
-                </li>
-              </ul>
-            )}
-
-            <div className="my-4 border-b border-neutral-250 border-dashed" />
-
-            <div className="text-neutral-400 text-ssm mb-2 font-medium">Build and deploy</div>
-
-            <ul className="text-neutral-350 text-sm list-none">
-              <li>
-                <span className="font-medium">Helm parameters:</span> {generalData.arguments?.toString()}
-              </li>
-              <li>
-                <span className="font-medium">Helm timeout:</span> {generalData.timeout_sec}
-              </li>
-              <li>
-                <span className="font-medium">Allow cluster-wide resources:</span>{' '}
-                {Boolean(generalData.allow_cluster_wide_resources).toString()}
-              </li>
-              <li>
-                <span className="font-medium">Auto-deploy:</span>{' '}
-                {match({ generalData, valuesOverrideFileData })
-                  .with(
-                    {
-                      generalData: { source_provider: 'GIT', auto_deploy: true },
-                      valuesOverrideFileData: { type: 'GIT_REPOSITORY' },
-                    },
-                    () => 'On (chart and values)'
-                  )
-                  .with({ generalData: { source_provider: 'GIT', auto_deploy: true } }, () => 'On (chart)')
-                  .with(
-                    {
-                      generalData: { source_provider: 'HELM_REPOSITORY' },
-                      valuesOverrideFileData: { auto_deploy: true },
-                    },
-                    () => 'On (values)'
-                  )
-                  .otherwise(() => 'Off')}
-              </li>
-            </ul>
           </div>
 
-          <Button
-            color="neutral"
-            variant="surface"
-            onClick={() => navigate(pathCreate + SERVICES_CREATION_GENERAL_URL)}
-          >
-            <Icon iconName="gear" />
-          </Button>
-        </div>
-
-        {(valuesOverrideFileData.type !== 'NONE' || valuesOverrideArgumentData.arguments.length > 0) && (
-          <div className="flex p-4 w-full border rounded border-neutral-250 bg-neutral-100">
-            <Icon iconName="check" className="text-green-500 mr-2" />
-            <div className="flex-grow mr-2">
-              <div className="text-sm text-neutral-400 font-bold mb-5">Variables</div>
-
-              {valuesOverrideFileData.type === 'GIT_REPOSITORY' && (
-                <ul className="text-neutral-350 text-sm list-none">
-                  <li>
-                    <span className="font-medium">From Git Provider:</span> {valuesOverrideFileData.provider}
-                  </li>
-                  <li>
-                    <span className="font-medium">Repository:</span> {valuesOverrideFileData.repository}
-                  </li>
-                  <li>
-                    <span className="font-medium">Branch:</span> {valuesOverrideFileData.branch}
-                  </li>
-                  <li>
-                    <span className="font-medium">Overrides path:</span> {valuesOverrideFileData.paths}
-                  </li>
-                </ul>
-              )}
-
-              {valuesOverrideFileData.type === 'YAML' && (
-                <ul className="text-neutral-350 text-sm list-none">
-                  <li>
-                    <span className="font-medium">From YAML:</span> {truncateText(valuesOverrideFileData.content!, 50)}
-                    ...
-                  </li>
-                </ul>
-              )}
-
-              {valuesOverrideArgumentData.arguments.length > 0 && (
-                <ul className="text-neutral-350 text-sm list-none">
-                  <li>
-                    <span className="font-medium">Manual:</span> {valuesOverrideArgumentData.arguments.length} variables
-                    added
-                  </li>
-                </ul>
-              )}
+          <div className="flex justify-between mt-10">
+            <Button type="button" size="lg" variant="plain" onClick={() => navigate(-1)}>
+              Back
+            </Button>
+            <div className="flex gap-2">
+              <Button
+                type="submit"
+                size="lg"
+                variant="surface"
+                color="neutral"
+                disabled={isLoadingCreateAndDeploy}
+                onClick={() => onSubmit(false)}
+                loading={isLoadingCreate}
+              >
+                Create
+              </Button>
+              <Button
+                type="submit"
+                size="lg"
+                disabled={isLoadingCreate}
+                onClick={() => onSubmit(true)}
+                loading={isLoadingCreateAndDeploy}
+              >
+                Create and deploy
+              </Button>
             </div>
-
-            <Button
-              color="neutral"
-              variant="surface"
-              onClick={() => navigate(pathCreate + SERVICES_HELM_CREATION_VALUES_STEP_1_URL)}
-            >
-              <Icon iconName="gear" />
-            </Button>
           </div>
-        )}
-
-        <div className="flex justify-between mt-10">
-          <Button type="button" size="lg" variant="surface" color="neutral" onClick={() => navigate(-1)}>
-            Back
-          </Button>
-          <div className="flex gap-2">
-            <Button
-              type="submit"
-              size="lg"
-              variant="surface"
-              color="neutral"
-              disabled={isLoadingCreateAndDeploy}
-              onClick={() => onSubmit(false)}
-              loading={isLoadingCreate}
-            >
-              Create
-            </Button>
-            <Button
-              type="submit"
-              size="lg"
-              disabled={isLoadingCreate}
-              onClick={() => onSubmit(true)}
-              loading={isLoadingCreateAndDeploy}
-            >
-              Create and deploy
-            </Button>
-          </div>
-        </div>
+        </form>
       </Section>
     </FunnelFlowBody>
   )
