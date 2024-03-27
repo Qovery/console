@@ -241,6 +241,7 @@ export function CreateEditCredentialsModal(props: CreateEditCredentialsModalProp
             () =>
               'https://hub.qovery.com/docs/getting-started/install-qovery/gcp/cluster-managed-by-qovery/create-credentials/'
           )
+          .with('ON_PREMISE', () => '')
           .exhaustive()}
         size="sm"
       >

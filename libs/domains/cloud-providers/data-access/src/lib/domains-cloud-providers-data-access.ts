@@ -33,6 +33,12 @@ type CredentialRequest =
       payload: GcpCredentialsRequest
       credentialId: string
     }
+  | {
+      organizationId: string
+      cloudProvider: Extract<CloudProviderEnum, 'ON_PREMISE'>
+      payload: undefined
+      credentialId: string
+    }
 
 export const cloudProviders = createQueryKeys('cloudProviders', {
   list: {
@@ -49,6 +55,7 @@ export const cloudProviders = createQueryKeys('cloudProviders', {
         .with('AWS', () => cloudProviderApi.listAWSFeatures())
         .with('SCW', () => cloudProviderApi.listScalewayFeatures())
         .with('GCP', () => cloudProviderApi.listGcpFeatures())
+        .with('ON_PREMISE', () => Promise.resolve({ data: { results: [] } }))
         .exhaustive()
       return response.data.results
     },
@@ -69,6 +76,10 @@ export const cloudProviders = createQueryKeys('cloudProviders', {
           cloudProvider: Extract<CloudProviderEnum, 'GCP'>
           clusterType: Extract<KubernetesEnum, 'MANAGED'>
         }
+      | {
+          cloudProvider: Extract<CloudProviderEnum, 'ON_PREMISE'>
+          clusterType: Extract<KubernetesEnum, 'MANAGED'>
+        }
   ) => ({
     queryKey: [args.cloudProvider, args.clusterType],
     async queryFn() {
@@ -84,6 +95,7 @@ export const cloudProviders = createQueryKeys('cloudProviders', {
         )
         .with({ cloudProvider: 'SCW' }, ({ region }) => cloudProviderApi.listScalewayKapsuleInstanceType(region))
         .with({ cloudProvider: 'GCP' }, () => Promise.resolve({ data: { results: [] } }))
+        .with({ cloudProvider: 'ON_PREMISE' }, () => Promise.resolve({ data: { results: [] } }))
         .exhaustive()
       return response.data.results
     },
@@ -104,6 +116,7 @@ export const cloudProviders = createQueryKeys('cloudProviders', {
           const response = await cloudProviderCredentialsApi.listGcpCredentials(organizationId)
           return response.data.results
         })
+        .with('ON_PREMISE', async () => undefined)
         .exhaustive()
 
       return cloudProviders
@@ -124,6 +137,10 @@ export const cloudProviders = createQueryKeys('cloudProviders', {
           cloudProvider: Extract<CloudProviderEnum, 'GCP'>
           databaseType: string
         }
+      | {
+          cloudProvider: Extract<CloudProviderEnum, 'ON_PREMISE'>
+          databaseType: string
+        }
   ) => ({
     queryKey: [args.cloudProvider, args.databaseType],
     async queryFn() {
@@ -139,6 +156,7 @@ export const cloudProviders = createQueryKeys('cloudProviders', {
             (await cloudProviderApi.listSCWManagedDatabaseInstanceType(databaseType)).data.results
         )
         .with({ cloudProvider: 'GCP' }, () => undefined)
+        .with({ cloudProvider: 'ON_PREMISE' }, () => undefined)
         .exhaustive()
     },
   }),
@@ -159,6 +177,7 @@ export const mutations = {
         const response = await cloudProviderCredentialsApi.createGcpCredentials(organizationId, payload)
         return response.data
       })
+      .with({ cloudProvider: 'ON_PREMISE' }, () => undefined)
       .exhaustive()
 
     return cloudProviderCredential
@@ -181,6 +200,7 @@ export const mutations = {
         const response = await cloudProviderCredentialsApi.editGcpCredentials(organizationId, credentialId, payload)
         return response.data
       })
+      .with({ cloudProvider: 'ON_PREMISE' }, () => undefined)
       .exhaustive()
 
     return cloudProviderCredential
@@ -199,6 +219,7 @@ export const mutations = {
         const response = await cloudProviderCredentialsApi.deleteGcpCredentials(credentialId, organizationId)
         return response.data
       })
+      .with({ cloudProvider: 'ON_PREMISE' }, () => undefined)
       .exhaustive()
 
     return cloudProviderCredential

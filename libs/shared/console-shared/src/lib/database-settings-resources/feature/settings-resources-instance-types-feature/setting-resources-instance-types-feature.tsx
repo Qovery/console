@@ -39,6 +39,10 @@ export function SettingsResourcesInstanceTypesFeature({
         cloudProvider,
         databaseType,
       }))
+      .with('ON_PREMISE', (cloudProvider) => ({
+        cloudProvider,
+        databaseType,
+      }))
       .exhaustive()
   )
 
