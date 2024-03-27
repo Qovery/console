@@ -55,7 +55,7 @@ function GitRepository({
           <Dt>Repository:</Dt>
           <Dd>
             <a href={buildGitProviderUrl(gitRepository.url)} target="_blank" rel="noopener noreferrer">
-              <Button color="neutral" variant="surface" size="xs" className="gap-1">
+              <Button color="neutral" variant="surface" size="xs" className="gap-1 text-nowrap">
                 <Icon
                   name={
                     gitRepository.url.includes('//github')
@@ -366,7 +366,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
                 <Dt>Repository:</Dt>
                 <Dd>
                   <a href={helmRepository.repository.url} target="_blank" rel="noopener noreferrer">
-                    <Badge variant="surface" size="xs" className="items-center gap-1 capitalize">
+                    <Badge variant="surface" size="xs" className="items-center gap-1 capitalize text-nowrap">
                       <Icon width={16} name={IconEnum.HELM_OFFICIAL} />
                       <Truncate text={helmRepository.repository.name ?? ''} truncateLimit={18} />
                     </Badge>
@@ -456,7 +456,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
                 <Icon iconName="gear" className="text-base text-neutral-300" />
               </Link>
             </div>
-            <div className="grid grid-cols-2 gap-2">{valuesOverride}</div>
+            {valuesOverride}
           </Section>
         </>
       )}
