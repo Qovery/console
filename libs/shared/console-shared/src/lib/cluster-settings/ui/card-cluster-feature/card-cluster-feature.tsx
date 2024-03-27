@@ -46,6 +46,11 @@ export function CardClusterFeature({
       } border-neutral-250 mb-4 last:mb-0`}
       onClick={() => {
         if (feature.id && !disabled && setValue) {
+          // Specific case for STATIC_IP because the back-end can't return `true` by default
+          if (feature.id === 'STATIC_IP' && feature.value === 'undefined') {
+            setValue(`features.${feature.id}.value`, false)
+          }
+
           setValue(`features.${feature.id}.value`, !name)
           setCurrentDisabled(!name)
         }
