@@ -97,14 +97,15 @@ export function ServiceTerminal({
   }
 
   return (
-    <div className="fixed bottom-0 left-0 w-full">
+    <div className="fixed bottom-0 left-0 w-full animate-slidein-up-md-faded">
       <div className="flex justify-between h-11 px-4 py-2 bg-neutral-650">
+        <span></span>
         <Button color="neutral" onClick={() => setOpen(false)}>
           Close shell
           <Icon iconName="xmark" className="ml-2 text-sm" />
         </Button>
       </div>
-      <div className="bg-neutral-700 px-4 py-2">
+      <div className="bg-neutral-700 px-4 py-2  min-h-[272px]">
         {haveMessage ? (
           <XTerm addons={[attachAddon]} />
         ) : (

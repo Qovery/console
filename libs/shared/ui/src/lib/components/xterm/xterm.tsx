@@ -33,6 +33,8 @@ export function useXTerm({ options, addons, listeners }: UseXTermProps = {}) {
       },
       cursorStyle: 'underline',
       cursorBlink: false,
+      rows: 15,
+      cols: 100,
       ...options,
     })
 
