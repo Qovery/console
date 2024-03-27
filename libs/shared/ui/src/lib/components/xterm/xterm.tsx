@@ -2,7 +2,7 @@ import { type ITerminalAddon, type ITerminalOptions, Terminal } from '@xterm/xte
 import '@xterm/xterm/css/xterm.css'
 import { type ComponentPropsWithoutRef, useEffect, useRef, useState } from 'react'
 
-export interface UseTerminalProps {
+export interface UseXTermProps {
   addons?: ITerminalAddon[]
   options?: ITerminalOptions
   listeners?: {
@@ -20,17 +20,16 @@ export interface UseTerminalProps {
   }
 }
 
-function useXTerm({ options, addons, listeners }: UseTerminalProps) {
+export function useXTerm({ options, addons, listeners }: UseXTermProps = {}) {
   const terminalRef = useRef<HTMLDivElement>(null)
   const [terminalInstance, setTerminalInstance] = useState<Terminal | null>(null)
 
   useEffect(() => {
     const instance = new Terminal({
-      allowTransparency: true,
       fontFamily: 'operator mono,SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace',
       fontSize: 14,
       theme: {
-        background: 'transparent',
+        background: '#101420',
       },
       cursorStyle: 'underline',
       cursorBlink: false,
@@ -98,11 +97,9 @@ function useXTerm({ options, addons, listeners }: UseTerminalProps) {
   }
 }
 
-export interface TerminalProps
-  extends Omit<ComponentPropsWithoutRef<'div'>, 'onResize' | 'onScroll'>,
-    UseTerminalProps {}
+export interface XTermProps extends Omit<ComponentPropsWithoutRef<'div'>, 'onResize' | 'onScroll'>, UseXTermProps {}
 
-export function XTerm({ className = '', options, addons, listeners, ...props }: TerminalProps) {
+export function XTerm({ className = '', options, addons, listeners, ...props }: XTermProps) {
   const { ref } = useXTerm({
     options,
     addons,

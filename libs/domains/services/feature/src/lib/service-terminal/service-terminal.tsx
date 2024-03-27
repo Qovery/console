@@ -1,7 +1,7 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import { AttachAddon } from '@xterm/addon-attach'
 import { useContext, useEffect, useState } from 'react'
-import { Button, Icon, XTerm } from '@qovery/shared/ui'
+import { Button, Icon, LoaderSpinner, XTerm } from '@qovery/shared/ui'
 import { ServiceTerminalContext } from './service-terminal-provider'
 
 export interface ServiceTerminalProps {
@@ -21,6 +21,7 @@ export function ServiceTerminal({
 }: ServiceTerminalProps) {
   const { setOpen } = useContext(ServiceTerminalContext)
   const [attachAddon, setAttachAddon] = useState<AttachAddon | undefined>(undefined)
+  const [haveMessage, setHaveMessage] = useState(false)
   const { getAccessTokenSilently } = useAuth0()
 
   // Initialization WS for Shell
@@ -59,6 +60,7 @@ export function ServiceTerminal({
     }
     const listenerMessage = (event: MessageEvent) => {
       console.log('Message from server:', event.data)
+      setHaveMessage(true)
     }
     const listenerError = (errorEvent: Event): void => {
       console.log('WebSocket error:', errorEvent)
@@ -95,16 +97,21 @@ export function ServiceTerminal({
   }
 
   return (
-    <div className="dark fixed bottom-0 left-0 w-full">
+    <div className="fixed bottom-0 left-0 w-full">
       <div className="flex justify-between h-11 px-4 py-2 bg-neutral-650">
-        <span className="text-neutral-100"></span>
         <Button color="neutral" onClick={() => setOpen(false)}>
           Close shell
           <Icon iconName="xmark" className="ml-2 text-sm" />
         </Button>
       </div>
       <div className="bg-neutral-700 px-4 py-2">
-        <XTerm addons={[attachAddon]} />
+        {haveMessage ? (
+          <XTerm addons={[attachAddon]} />
+        ) : (
+          <div className="flex items-start justify-center p-5 h-40">
+            <LoaderSpinner />
+          </div>
+        )}
       </div>
     </div>
   )

@@ -1,9 +1,9 @@
 import { renderWithProviders } from '@qovery/shared/util-tests'
-import Terminal from './terminal'
+import XTerm from './xterm'
 
-describe('Terminal', () => {
+describe('XTerm', () => {
   it('should render successfully', () => {
-    const { baseElement } = renderWithProviders(<Terminal />)
+    const { baseElement } = renderWithProviders(<XTerm />)
     expect(baseElement).toBeTruthy()
   })
 })
