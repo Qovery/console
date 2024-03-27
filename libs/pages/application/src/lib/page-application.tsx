@@ -1,16 +1,29 @@
-import { Navigate, Route, Routes, useParams } from 'react-router-dom'
+import { useContext, useEffect } from 'react'
+import { Navigate, Route, Routes, useLocation, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useEnvironment } from '@qovery/domains/environments/feature'
-import { ServiceTerminalProvider, useService } from '@qovery/domains/services/feature'
+import {
+  ServiceTerminal,
+  ServiceTerminalContext,
+  ServiceTerminalProvider,
+  useService,
+} from '@qovery/domains/services/feature'
 import { APPLICATION_GENERAL_URL, APPLICATION_URL } from '@qovery/shared/routes'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { ROUTER_APPLICATION } from './router/router'
 import Container from './ui/container/container'
 
-export function PageApplication() {
+function PageApplicationWrapped() {
   const { applicationId = '', environmentId = '', organizationId = '', projectId = '' } = useParams()
+  const { state } = useLocation()
+  const { open, setOpen } = useContext(ServiceTerminalContext)
   const { data: environment } = useEnvironment({ environmentId })
   const { data: service } = useService({ environmentId, serviceId: applicationId })
+
+  // Display shell from services page
+  useEffect(() => {
+    if (state?.hasShell) setOpen(true)
+  }, [state, setOpen])
 
   useDocumentTitle(`${service?.name || 'Application'} - Qovery`)
 
@@ -18,7 +31,7 @@ export function PageApplication() {
     .with({ serviceType: 'DATABASE' }, () => null)
     .otherwise((service) => {
       return (
-        <ServiceTerminalProvider>
+        <>
           <Container service={service} environment={environment}>
             <Routes>
               {ROUTER_APPLICATION.map((route) => (
@@ -37,9 +50,26 @@ export function PageApplication() {
               />
             </Routes>
           </Container>
-        </ServiceTerminalProvider>
+          {open && environment && service && service.serviceType === 'CONTAINER' && (
+            <ServiceTerminal
+              organizationId={environment.organization.id}
+              clusterId={environment.cluster_id}
+              projectId={environment.project.id}
+              environmentId={environment.id}
+              serviceId={service.id}
+            />
+          )}
+        </>
       )
     })
+}
+
+export function PageApplication() {
+  return (
+    <ServiceTerminalProvider>
+      <PageApplicationWrapped />
+    </ServiceTerminalProvider>
+  )
 }
 
 export default PageApplication

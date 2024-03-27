@@ -1,7 +1,7 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import { AttachAddon } from '@xterm/addon-attach'
 import { useContext, useEffect, useState } from 'react'
-import { Button, Icon, LoaderSpinner, XTerm } from '@qovery/shared/ui'
+import { Button, Icon, LoaderSpinner, XTerm, toast } from '@qovery/shared/ui'
 import { ServiceTerminalContext } from './service-terminal-provider'
 
 export interface ServiceTerminalProps {
@@ -54,19 +54,12 @@ export function ServiceTerminal({
       return url + `&bearer_token=${token}`
     }
 
-    const listenerOpen = () => {
-      console.log('WebSocket opened')
-      setAttachAddon(new AttachAddon(socket))
-    }
-    const listenerMessage = (event: MessageEvent) => {
-      console.log('Message from server:', event.data)
-      setHaveMessage(true)
-    }
-    const listenerError = (errorEvent: Event): void => {
-      console.log('WebSocket error:', errorEvent)
-    }
-    const listenerClose = (closeEvent: CloseEvent): void => {
-      console.log('WebSocket closed:', closeEvent)
+    const listenerOpen = () => setAttachAddon(new AttachAddon(socket))
+    const listenerMessage = () => setHaveMessage(true)
+    const listenerError = (errorEvent: Event) => console.error('WebSocket error:', errorEvent)
+    const listenerClose = (closeEvent: CloseEvent) => {
+      toast('WARNING', 'Not available', closeEvent.reason)
+      setOpen(false)
     }
 
     const onInit = async () => {
@@ -90,7 +83,7 @@ export function ServiceTerminal({
         socket.close()
       }
     }
-  }, [clusterId, environmentId, getAccessTokenSilently, organizationId, projectId, serviceId])
+  }, [clusterId, environmentId, getAccessTokenSilently, organizationId, projectId, serviceId, setOpen])
 
   if (!attachAddon) {
     return null

@@ -604,7 +604,11 @@ export function ServiceActionToolbar({ environment, serviceId }: { environment: 
               )
               // Detect if services list page
               if (!pathname.includes(serviceUrl)) {
-                navigate(serviceUrl + APPLICATION_GENERAL_URL)
+                navigate(serviceUrl + APPLICATION_GENERAL_URL, {
+                  state: {
+                    hasShell: true,
+                  },
+                })
               } else {
                 setOpen(true)
               }
