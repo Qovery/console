@@ -325,7 +325,7 @@ export function PodsMetrics({ environmentId, serviceId, children }: PodsMetricsP
               <Fragment key={row.id}>
                 <Table.Row className="hover:bg-neutral-100" onClick={row.getToggleExpandedHandler()}>
                   {row.getVisibleCells().map((cell, index) => (
-                    <Table.Cell key={cell.id}>
+                    <Table.Cell key={cell.id} className={index === 0 ? 'text-nowrap' : ''}>
                       {index === 0 && (
                         <button
                           className="inline-flex items-center justify-start h-14 text-md w-9 pointer text-neutral-350"
