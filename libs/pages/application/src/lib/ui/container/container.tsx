@@ -1,11 +1,16 @@
 import { type Environment } from 'qovery-typescript-axios'
-import { type PropsWithChildren, createContext, useState } from 'react'
-import { useLocation, useParams } from 'react-router-dom'
+import { type PropsWithChildren, createContext, useContext, useState } from 'react'
+import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useCluster } from '@qovery/domains/clusters/feature'
 import { EnvironmentMode } from '@qovery/domains/environments/feature'
 import { type AnyService, type Database } from '@qovery/domains/services/data-access'
-import { NeedRedeployFlag, ServiceActionToolbar, ServiceTerminal } from '@qovery/domains/services/feature'
+import {
+  NeedRedeployFlag,
+  ServiceActionToolbar,
+  ServiceTerminal,
+  ServiceTerminalContext,
+} from '@qovery/domains/services/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import { CLUSTER_URL } from '@qovery/shared/routes'
 import { Header, Icon, Link, Section, Skeleton, Tooltip } from '@qovery/shared/ui'
@@ -26,8 +31,7 @@ export interface ContainerProps {
 
 export function Container({ service, environment, children }: PropsWithChildren<ContainerProps>) {
   const { organizationId = '' } = useParams()
-  const { state } = useLocation()
-
+  const { open } = useContext(ServiceTerminalContext)
   const [showHideAllEnvironmentVariablesValues, setShowHideAllEnvironmentVariablesValues] = useState<boolean>(false)
 
   const { data: cluster } = useCluster({ organizationId, clusterId: environment?.cluster_id ?? '' })
@@ -67,16 +71,18 @@ export function Container({ service, environment, children }: PropsWithChildren<
     .otherwise(() => IconEnum.APPLICATION)
 
   return (
-    <ApplicationContext.Provider
-      value={{ showHideAllEnvironmentVariablesValues, setShowHideAllEnvironmentVariablesValues }}
-    >
-      <Section className="flex-1">
-        <Header title={service?.name} icon={headerIcon} actions={headerActions} />
-        <TabsFeature />
-        <NeedRedeployFlag />
-        {children}
-      </Section>
-      {state?.hasShell && environment && service && service.serviceType === 'CONTAINER' && (
+    <>
+      <ApplicationContext.Provider
+        value={{ showHideAllEnvironmentVariablesValues, setShowHideAllEnvironmentVariablesValues }}
+      >
+        <Section className="flex-1">
+          <Header title={service?.name} icon={headerIcon} actions={headerActions} />
+          <TabsFeature />
+          <NeedRedeployFlag />
+          {children}
+        </Section>
+      </ApplicationContext.Provider>
+      {open && environment && service && service.serviceType === 'CONTAINER' && (
         <ServiceTerminal
           organizationId={environment.organization.id}
           clusterId={environment.cluster_id}
@@ -85,7 +91,7 @@ export function Container({ service, environment, children }: PropsWithChildren<
           serviceId={service.id}
         />
       )}
-    </ApplicationContext.Provider>
+    </>
   )
 }
 

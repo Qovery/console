@@ -1,7 +1,8 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import { AttachAddon } from '@xterm/addon-attach'
-import { useCallback, useEffect, useState } from 'react'
-import { Button, Icon, Terminal, useTerminal } from '@qovery/shared/ui'
+import { useContext, useEffect, useState } from 'react'
+import { Button, Icon, XTerm } from '@qovery/shared/ui'
+import { ServiceTerminalContext } from './service-terminal-provider'
 
 export interface ServiceTerminalProps {
   organizationId: string
@@ -18,66 +19,92 @@ export function ServiceTerminal({
   environmentId,
   serviceId,
 }: ServiceTerminalProps) {
-  const [openTerminal, setOpenTerminal] = useState<boolean>(false)
-  const { instance } = useTerminal()
+  const { setOpen } = useContext(ServiceTerminalContext)
   const [attachAddon, setAttachAddon] = useState<AttachAddon | undefined>(undefined)
   const { getAccessTokenSilently } = useAuth0()
 
-  const fetchShellUrl = useCallback(async () => {
-    const url = `wss://ws.qovery.com/shell/exec?organization=${organizationId}&cluster=${clusterId}&project=${projectId}&environment=${environmentId}&service=${serviceId}`
-    const token = await getAccessTokenSilently()
-    return url + `&bearer_token=${token}`
-  }, [organizationId, clusterId, projectId, environmentId, serviceId, getAccessTokenSilently])
-
-  const onInit = useCallback(async () => {
-    const shellUrl = await fetchShellUrl()
-    const socket = new WebSocket(shellUrl)
-
-    socket.addEventListener('open', () => {
-      console.log('WebSocket opened')
-
-      setOpenTerminal(true)
-      setAttachAddon(new AttachAddon(socket))
-    })
-
-    socket.addEventListener('message', (event: MessageEvent) => {
-      console.log('Message from server:', event.data)
-    })
-
-    socket.addEventListener('error', (errorEvent) => {
-      console.log('WebSocket error:', errorEvent)
-    })
-
-    socket.addEventListener('close', (closeEvent) => {
-      console.log('WebSocket closed:', closeEvent)
-    })
-  }, [fetchShellUrl])
+  // Initialization WS for Shell
+  // useReactQueryWsSubscription({
+  //   url: 'wss://ws.qovery.com/shell/exec',
+  //   urlSearchParams: {
+  //     organization: organizationId,
+  //     cluster: clusterId,
+  //     project: projectId,
+  //     environment: environmentId,
+  //     service: serviceId,
+  //   },
+  // onOpen: (_, event, webSocket) => {
+  //   if (event) setAttachAddon(new AttachAddon(webSocket))
+  // },
+  // onMessage: (_, event) => {
+  //   console.log('Message from server:', event.data)
+  // },
+  // onError: (_, event) => {
+  //   console.log('WebSocket error:', event)
+  // },
+  // })
 
   useEffect(() => {
-    if (instance) onInit()
-  }, [instance, onInit])
+    let socket: WebSocket
 
-  if (!attachAddon || !openTerminal) {
+    const fetchShellUrl = async () => {
+      const url = `wss://ws.qovery.com/shell/exec?organization=${organizationId}&cluster=${clusterId}&project=${projectId}&environment=${environmentId}&service=${serviceId}`
+      const token = await getAccessTokenSilently()
+      return url + `&bearer_token=${token}`
+    }
+
+    const listenerOpen = () => {
+      console.log('WebSocket opened')
+      setAttachAddon(new AttachAddon(socket))
+    }
+    const listenerMessage = (event: MessageEvent) => {
+      console.log('Message from server:', event.data)
+    }
+    const listenerError = (errorEvent: Event): void => {
+      console.log('WebSocket error:', errorEvent)
+    }
+    const listenerClose = (closeEvent: CloseEvent): void => {
+      console.log('WebSocket closed:', closeEvent)
+    }
+
+    const onInit = async () => {
+      const shellUrl = await fetchShellUrl()
+      socket = new WebSocket(shellUrl)
+
+      socket.addEventListener('open', listenerOpen)
+      socket.addEventListener('message', listenerMessage)
+      socket.addEventListener('error', listenerError)
+      socket.addEventListener('close', listenerClose)
+    }
+
+    onInit()
+
+    return () => {
+      if (socket) {
+        socket.removeEventListener('open', listenerOpen)
+        socket.removeEventListener('message', listenerMessage)
+        socket.removeEventListener('error', listenerError)
+        socket.removeEventListener('close', listenerClose)
+        socket.close()
+      }
+    }
+  }, [clusterId, environmentId, getAccessTokenSilently, organizationId, projectId, serviceId])
+
+  if (!attachAddon) {
     return null
   }
 
   return (
     <div className="dark fixed bottom-0 left-0 w-full">
       <div className="flex justify-between h-11 px-4 py-2 bg-neutral-650">
-        <span className="text-neutral-100">Search pod name</span>
-        <Button
-          color="neutral"
-          onClick={() => {
-            setOpenTerminal(false)
-            instance.dispose()
-          }}
-        >
+        <span className="text-neutral-100"></span>
+        <Button color="neutral" onClick={() => setOpen(false)}>
           Close shell
           <Icon iconName="xmark" className="ml-2 text-sm" />
         </Button>
       </div>
       <div className="bg-neutral-700 px-4 py-2">
-        <Terminal addons={[attachAddon]} />
+        <XTerm addons={[attachAddon]} />
       </div>
     </div>
   )

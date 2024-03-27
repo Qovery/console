@@ -13,7 +13,7 @@ export interface UseReactQueryWsSubscriptionProps {
   /** WebSocket onmessage will be automatically handled if they are aligned with the expected format (https://tkdodo.eu/blog/using-web-sockets-with-react-query#consuming-data) otherwise you should provide an handler */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onMessage?: (queryClient: QueryClient, data: any) => void
-  onOpen?: (queryClient: QueryClient, event: Event) => void
+  onOpen?: (queryClient: QueryClient, event: Event, websocket: WebSocket) => void
   onError?: (queryClient: QueryClient, event: Event) => void
   enabled?: boolean
 }
@@ -69,10 +69,15 @@ export function useReactQueryWsSubscription({
       websocket = new WebSocket(`${url}?${searchParams.toString()}`)
 
       websocket.onopen = async (event) => {
-        onOpen?.(queryClient, event)
+        onOpen?.(queryClient, event, websocket!)
       }
       websocket.onmessage = async (event) => {
-        const data = JSON.parse(event.data)
+        let data = event.data
+        try {
+          data = JSON.parse(event.data)
+        } catch {
+          return
+        }
         if (isInvalidateOperation(data)) {
           const queryKey = [...data.entity, data.id].filter(Boolean)
           queryClient.invalidateQueries({ queryKey })

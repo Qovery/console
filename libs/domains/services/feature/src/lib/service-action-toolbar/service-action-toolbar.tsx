@@ -1,4 +1,5 @@
 import { type ApplicationGitRepository, type Environment, StateEnum } from 'qovery-typescript-axios'
+import { useContext } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { P, match } from 'ts-pattern'
 import {
@@ -43,6 +44,7 @@ import {
   isStopAvailable,
   urlCodeEditor,
 } from '@qovery/shared/util-js'
+import { ServiceTerminalContext } from '../..'
 import { useCancelDeploymentService } from '../hooks/use-cancel-deployment-service/use-cancel-deployment-service'
 import { useDeleteService } from '../hooks/use-delete-service/use-delete-service'
 import { useDeployService } from '../hooks/use-deploy-service/use-deploy-service'
@@ -561,6 +563,7 @@ function MenuOtherActions({
 
 export function ServiceActionToolbar({ environment, serviceId }: { environment: Environment; serviceId: string }) {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
+  const { setOpen } = useContext(ServiceTerminalContext)
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const { data: service } = useService({ environmentId, serviceId })
@@ -592,17 +595,20 @@ export function ServiceActionToolbar({ environment, serviceId }: { environment: 
       {service.serviceType === 'CONTAINER' && (
         <Tooltip content="Qovery cloud shell">
           <ActionToolbar.Button
-            onClick={() =>
-              navigate(
-                APPLICATION_URL(environment.organization.id, environment.project.id, environment.id, service.id) +
-                  APPLICATION_GENERAL_URL,
-                {
-                  state: {
-                    hasShell: true,
-                  },
-                }
+            onClick={() => {
+              const serviceUrl = APPLICATION_URL(
+                environment.organization.id,
+                environment.project.id,
+                environment.id,
+                service.id
               )
-            }
+              // Detect if services list page
+              if (!pathname.includes(serviceUrl)) {
+                navigate(serviceUrl + APPLICATION_GENERAL_URL)
+              } else {
+                setOpen(true)
+              }
+            }}
           >
             <Icon iconName="terminal" />
           </ActionToolbar.Button>
