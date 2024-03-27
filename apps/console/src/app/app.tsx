@@ -76,6 +76,10 @@ export function App() {
     if (process.env['NODE_ENV'] === 'production') {
       LogRocket.init(environment.logrocket, {
         release: process.env['NX_GIT_SHA'],
+        dom: {
+          inputSanitizer: true,
+          textSanitizer: true,
+        },
       })
     }
   }, [])
