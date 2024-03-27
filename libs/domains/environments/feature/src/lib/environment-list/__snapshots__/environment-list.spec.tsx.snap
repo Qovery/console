@@ -3,7 +3,7 @@
 exports[`EnvironmentList should match snapshot 1`] = `
 <div>
   <table
-    class="divide-y divide-neutral-200 text-neutral-400 w-full text-xs min-w-[800px] table-auto"
+    class="divide-y divide-neutral-200 text-neutral-400 w-full text-xs min-w-[800px]"
   >
     <thead>
       <tr>

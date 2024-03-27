@@ -6,7 +6,7 @@ exports[`ServiceList should match snapshot 1`] = `
     class="flex flex-col grow justify-between"
   >
     <table
-      class="divide-y divide-neutral-200 text-neutral-400 w-full text-xs min-w-[800px] table-auto"
+      class="divide-y divide-neutral-200 text-neutral-400 w-full text-xs min-w-[800px]"
     >
       <thead>
         <tr>
