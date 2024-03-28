@@ -7,6 +7,7 @@ import {
   type JobResourcesData,
 } from '@qovery/shared/interfaces'
 import { Button, Heading, Icon, Section } from '@qovery/shared/ui'
+import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
 export interface StepSummaryProps {
   onSubmit: (withDeploy: boolean) => void
@@ -227,10 +228,14 @@ export function StepSummary(props: StepSummaryProps) {
             <ul className="flex flex-col gap-2 text-neutral-400 text-sm list-none">
               {props.variableData.variables && props.variableData.variables.length > 0 ? (
                 props.variableData.variables?.map((variable, index) => (
-                  <li key={index}>
-                    <strong className="font-medium">{variable.variable}</strong> ={' '}
-                    <strong className="font-medium">{variable.isSecret ? '********' : variable.value}</strong> – Secret:{' '}
-                    <strong className="font-medium">{variable.isSecret ? 'Yes' : 'No'}</strong>
+                  <li className="grid grid-cols-3" key={index}>
+                    <strong className="font-medium truncate">
+                      {variable.variable} = {variable.isSecret ? '********' : variable.value}
+                    </strong>
+                    <span>
+                      <strong className="font-medium">Scope:</strong> {upperCaseFirstLetter(variable.scope)}
+                    </span>
+                    <span>{variable.isSecret ? 'Secret' : 'Public'}</span>
                   </li>
                 ))
               ) : (
