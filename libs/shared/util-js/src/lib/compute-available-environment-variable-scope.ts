@@ -31,7 +31,7 @@ export const computeAvailableScope = (
   const scopeByServiceType = match(serviceType)
     .with('APPLICATION', () => APIVariableScopeEnum.APPLICATION)
     .with('CONTAINER', () => APIVariableScopeEnum.CONTAINER)
-    .with('JOB', () => APIVariableScopeEnum.JOB)
+    .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', () => APIVariableScopeEnum.JOB)
     .with('HELM', () => APIVariableScopeEnum.HELM)
     .otherwise(() => APIVariableScopeEnum.APPLICATION)
 
