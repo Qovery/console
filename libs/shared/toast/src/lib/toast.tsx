@@ -8,7 +8,7 @@ export enum ToastEnum {
 }
 
 export const toast = (
-  status: ToastEnum,
+  status: ToastEnum | keyof typeof ToastEnum,
   title: string,
   description?: string,
   callback?: () => void,

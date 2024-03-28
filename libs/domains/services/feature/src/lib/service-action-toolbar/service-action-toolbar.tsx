@@ -1,4 +1,5 @@
 import { type ApplicationGitRepository, type Environment, StateEnum } from 'qovery-typescript-axios'
+import { useContext } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { P, match } from 'ts-pattern'
 import {
@@ -18,6 +19,7 @@ import {
   isJobGitSource,
 } from '@qovery/shared/enums'
 import {
+  APPLICATION_GENERAL_URL,
   APPLICATION_SETTINGS_GENERAL_URL,
   APPLICATION_SETTINGS_URL,
   APPLICATION_URL,
@@ -42,6 +44,7 @@ import {
   isStopAvailable,
   urlCodeEditor,
 } from '@qovery/shared/util-js'
+import { ServiceTerminalContext } from '../..'
 import { useCancelDeploymentService } from '../hooks/use-cancel-deployment-service/use-cancel-deployment-service'
 import { useDeleteService } from '../hooks/use-delete-service/use-delete-service'
 import { useDeployService } from '../hooks/use-deploy-service/use-deploy-service'
@@ -560,12 +563,13 @@ function MenuOtherActions({
 
 export function ServiceActionToolbar({ environment, serviceId }: { environment: Environment; serviceId: string }) {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
+  const { setOpen } = useContext(ServiceTerminalContext)
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const { data: service } = useService({ environmentId, serviceId })
   const { data: deploymentStatus } = useDeploymentStatus({ environmentId, serviceId })
 
-  if (!service || !deploymentStatus) return <Skeleton height={32} width={115} />
+  if (!service || !deploymentStatus) return <Skeleton height={36} width={115} />
 
   const environmentLogsLink = ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId)
 
@@ -579,15 +583,42 @@ export function ServiceActionToolbar({ environment, serviceId }: { environment: 
       />
       <Tooltip content="Logs">
         <ActionToolbar.Button
-          onClick={() => {
+          onClick={() =>
             navigate(environmentLogsLink + SERVICE_LOGS_URL(service.id), {
               state: { prevUrl: pathname },
             })
-          }}
+          }
         >
           <Icon iconName="scroll" />
         </ActionToolbar.Button>
       </Tooltip>
+      {service.serviceType === 'CONTAINER' && (
+        <Tooltip content="Qovery cloud shell">
+          <ActionToolbar.Button
+            onClick={() => {
+              const serviceUrl = APPLICATION_URL(
+                environment.organization.id,
+                environment.project.id,
+                environment.id,
+                service.id
+              )
+              // Detect if services list page
+              if (!pathname.includes(serviceUrl)) {
+                navigate(serviceUrl + APPLICATION_GENERAL_URL, {
+                  state: {
+                    hasShell: true,
+                  },
+                })
+              } else {
+                setOpen(true)
+              }
+            }}
+          >
+            <Icon iconName="terminal" />
+          </ActionToolbar.Button>
+        </Tooltip>
+      )}
+
       <MenuOtherActions
         state={deploymentStatus.state}
         organizationId={organizationId}

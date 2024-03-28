@@ -62,7 +62,7 @@ export function CardCluster({ organizationId, cluster }: CardClusterProps) {
             </Skeleton>
           </div>
         </div>
-        <Skeleton height={32} width={146} show={isClusterStatusLoading}>
+        <Skeleton height={36} width={146} show={isClusterStatusLoading}>
           {clusterStatus && <ClusterActionToolbar cluster={cluster} clusterStatus={clusterStatus} />}
         </Skeleton>
       </div>
