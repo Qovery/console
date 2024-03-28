@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useHelmRepositories } from '@qovery/domains/organizations/feature'
@@ -26,9 +26,11 @@ export function StepSummaryFeature() {
   const generalData = generalForm.getValues()
   const valuesOverrideFileData = valuesOverrideFileForm.getValues()
   const valuesOverrideArgumentData = valuesOverrideArgumentsForm.getValues()
-  setCurrentStep(4)
-
   const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_HELM_CREATION_URL}`
+
+  useEffect(() => {
+    setCurrentStep(4)
+  }, [setCurrentStep])
 
   const { mutateAsync: createHelmService } = useCreateHelmService()
   const { mutateAsync: deployService } = useDeployService({ environmentId })
