@@ -5,9 +5,7 @@ import { useXTerm } from './xterm'
 const MyComponent = () => {
   const { instance, ref } = useXTerm()
 
-  instance?.onData((data) => {
-    instance?.write(data)
-  })
+  instance?.onData((data) => instance?.write(data))
 
   return (
     <div>

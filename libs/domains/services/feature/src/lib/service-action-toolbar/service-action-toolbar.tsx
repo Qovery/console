@@ -569,7 +569,7 @@ export function ServiceActionToolbar({ environment, serviceId }: { environment: 
   const { data: service } = useService({ environmentId, serviceId })
   const { data: deploymentStatus } = useDeploymentStatus({ environmentId, serviceId })
 
-  if (!service || !deploymentStatus) return <Skeleton height={32} width={115} />
+  if (!service || !deploymentStatus) return <Skeleton height={36} width={115} />
 
   const environmentLogsLink = ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId)
 

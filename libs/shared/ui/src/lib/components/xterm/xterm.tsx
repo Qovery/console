@@ -26,7 +26,7 @@ export function useXTerm({ options, addons, listeners }: UseXTermProps = {}) {
 
   useEffect(() => {
     const instance = new Terminal({
-      fontFamily: 'operator mono,SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace',
+      fontFamily: 'Hack,operator mono,SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace',
       fontSize: 14,
       theme: {
         background: '#101420',
@@ -67,6 +67,7 @@ export function useXTerm({ options, addons, listeners }: UseXTermProps = {}) {
     if (terminalRef.current) {
       // Mount terminal
       instance.open(terminalRef.current)
+      instance.focus()
     }
 
     setTerminalInstance(instance)

@@ -15,6 +15,7 @@ export interface UseReactQueryWsSubscriptionProps {
   onMessage?: (queryClient: QueryClient, data: any) => void
   onOpen?: (queryClient: QueryClient, event: Event) => void
   onError?: (queryClient: QueryClient, event: Event) => void
+  onClose?: (QueryClient: QueryClient, event: CloseEvent) => void
   enabled?: boolean
 }
 
@@ -28,12 +29,14 @@ function isInvalidateOperation(data: any): data is InvalidateOperation {
   return Array.isArray(data?.entity)
 }
 
+// TODO: Add better naming for the hook we can use it without ReactQuery
 export function useReactQueryWsSubscription({
   url,
   urlSearchParams,
   onMessage = (_, data) => console.error('Unhandled websocket onmessage, data:', data),
   onOpen,
   onError,
+  onClose,
   enabled = true,
 }: UseReactQueryWsSubscriptionProps) {
   const queryClient = useQueryClient()
@@ -61,9 +64,7 @@ export function useReactQueryWsSubscription({
     }
     let websocket: WebSocket | undefined
 
-      // XXX: This sounds ugly but its recommended by Auth0 ¯\_(ツ)_/¯
-      // https://github.com/auth0/auth0-react/issues/97#issuecomment-677690436
-    ;(async () => {
+    async function initWebsocket() {
       const token = await getAccessTokenSilently()
       searchParams.append('bearer_token', token)
       websocket = new WebSocket(`${url}?${searchParams.toString()}`)
@@ -72,7 +73,8 @@ export function useReactQueryWsSubscription({
         onOpen?.(queryClient, event)
       }
       websocket.onmessage = async (event) => {
-        const data = typeof JSON.parse(event.data) === 'object' ? JSON.parse(event.data) : event.data
+        const data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data
+
         if (isInvalidateOperation(data)) {
           const queryKey = [...data.entity, data.id].filter(Boolean)
           queryClient.invalidateQueries({ queryKey })
@@ -84,14 +86,19 @@ export function useReactQueryWsSubscription({
       websocket.onerror = async (event) => {
         onError?.(queryClient, event)
       }
-    })()
+      websocket.onclose = async (event) => {
+        onClose?.(queryClient, event)
+      }
+    }
+
+    initWebsocket()
 
     return () => {
       if (websocket) {
         websocket.close()
       }
     }
-  }, [queryClient, getAccessTokenSilently, onMessage, url, searchParams.toString(), enabled])
+  }, [queryClient, getAccessTokenSilently, onOpen, onMessage, onClose, url, searchParams.toString(), enabled])
 }
 
 export default useReactQueryWsSubscription

@@ -53,7 +53,7 @@ export function Container({ service, environment, children }: PropsWithChildren<
           </Tooltip>
         </Skeleton>
       </div>
-      <Skeleton width={150} height={32} show={!service || !environment}>
+      <Skeleton width={150} height={36} show={!service || !environment}>
         {service && environment && <ServiceActionToolbar serviceId={service.id} environment={environment} />}
       </Skeleton>
     </div>

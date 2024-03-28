@@ -69,7 +69,7 @@ export function Container({ children, cluster, deployCluster }: PropsWithChildre
           )}
         </Skeleton>
       </div>
-      <Skeleton width={150} height={32} show={isLoading}>
+      <Skeleton width={150} height={36} show={isLoading}>
         {cluster && clusterStatus ? (
           <ClusterActionToolbar cluster={cluster} clusterStatus={clusterStatus} noSettings />
         ) : (
