@@ -38,6 +38,7 @@ export function PageOrganizationContainerRegistriesFeature() {
               organizationId={organizationId}
               onClose={closeModal}
               registry={registry}
+              isEdit
             />
           ),
         })
