@@ -1,4 +1,5 @@
 import { type HelmRequestAllOfSourceOneOf, type HelmRequestAllOfSourceOneOf1 } from 'qovery-typescript-axios'
+import { useEffect } from 'react'
 import { FormProvider } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
@@ -41,7 +42,10 @@ export function StepValuesOverrideArgumentsFeature() {
     .exhaustive()
 
   const navigate = useNavigate()
-  setCurrentStep(3)
+
+  useEffect(() => {
+    setCurrentStep(3)
+  }, [setCurrentStep])
 
   const funnelCardHelp = (
     <FunnelFlowHelpCard

@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Controller, FormProvider } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
@@ -43,7 +44,10 @@ export function StepValuesOverrideFilesFeature() {
     .exhaustive()
 
   const navigate = useNavigate()
-  setCurrentStep(2)
+
+  useEffect(() => {
+    setCurrentStep(2)
+  }, [setCurrentStep])
 
   const funnelCardHelp = (
     <FunnelFlowHelpCard

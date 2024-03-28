@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { FormProvider } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import {
@@ -32,7 +33,10 @@ export function StepGeneralFeature() {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const { generalForm, setCurrentStep } = useHelmCreateContext()
   const navigate = useNavigate()
-  setCurrentStep(1)
+
+  useEffect(() => {
+    setCurrentStep(1)
+  }, [setCurrentStep])
 
   const funnelCardHelp = (
     <FunnelFlowHelpCard
