@@ -23,15 +23,15 @@ export function ServiceTerminal({
 }: ServiceTerminalProps) {
   const { setOpen } = useContext(ServiceTerminalContext)
   const [attachAddon, setAttachAddon] = useState<AttachAddon | undefined>(undefined)
-  const [haveMessage, setHaveMessage] = useState(false)
+  const [websocketOpen, setWebsocketOpen] = useState(false)
 
   const onOpenHandler = useCallback(
     (_: QueryClient, event: Event) => {
       const websocket = event.target as WebSocket
       setAttachAddon((prev) => (!prev ? new AttachAddon(websocket) : prev))
-      setHaveMessage(true)
+      setWebsocketOpen(true)
     },
-    [setAttachAddon]
+    [setWebsocketOpen, setAttachAddon]
   )
 
   const onCloseHandler = useCallback(
@@ -68,7 +68,7 @@ export function ServiceTerminal({
         </Button>
       </div>
       <div className="bg-neutral-700 px-4 py-2  min-h-[272px]">
-        {attachAddon && haveMessage ? (
+        {attachAddon && websocketOpen ? (
           <XTerm addons={[attachAddon]} />
         ) : (
           <div className="flex items-start justify-center p-5 h-40">
