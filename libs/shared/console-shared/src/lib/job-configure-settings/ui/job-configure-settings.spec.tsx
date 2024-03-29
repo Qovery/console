@@ -9,14 +9,14 @@ import {
 } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
-import { type JobConfigureData } from '@qovery/shared/interfaces'
+import { type JobConfigureData, type JobGeneralData } from '@qovery/shared/interfaces'
 import JobConfigureSettings, { type JobConfigureSettingsProps } from './job-configure-settings'
 
 const props: JobConfigureSettingsProps = {
   jobType: ServiceTypeEnum.CRON_JOB,
 }
 
-const defaultValues: JobConfigureData = {
+const defaultValues: JobConfigureData & Pick<JobGeneralData, 'image_entry_point' | 'cmd_arguments' | 'cmd'> = {
   port: 80,
   cmd: ['test'],
   nb_restarts: 0,
@@ -58,9 +58,12 @@ describe('JobConfigureSettings', () => {
 
     it('should render 5 input and 1 textarea', async () => {
       const { baseElement } = render(
-        wrapWithReactHookForm<JobConfigureData>(<JobConfigureSettings jobType={ServiceTypeEnum.CRON_JOB} />, {
-          defaultValues,
-        })
+        wrapWithReactHookForm<JobConfigureData>(
+          <JobConfigureSettings jobType={ServiceTypeEnum.CRON_JOB} legacyMode />,
+          {
+            defaultValues,
+          }
+        )
       )
 
       expect(getAllByTestId(baseElement, 'input-text')).toHaveLength(4)

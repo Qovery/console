@@ -42,11 +42,11 @@ describe('SettingsResourcesFeature', () => {
   it('should edit an APPLICATION', async () => {
     const { userEvent } = renderWithProviders(wrapWithReactHookForm(<SettingsResourcesFeature {...props} />))
 
-    const inputCPU = screen.getByLabelText('Size (in milli vCPU)')
+    const inputCPU = screen.getByLabelText('vCPU (milli)')
     await userEvent.clear(inputCPU)
     await userEvent.type(inputCPU, '1000')
 
-    const inputMemory = screen.getByLabelText('Size in MiB')
+    const inputMemory = screen.getByLabelText('Memory (MiB)')
     await userEvent.clear(inputMemory)
     await userEvent.type(inputMemory, '2048')
 
