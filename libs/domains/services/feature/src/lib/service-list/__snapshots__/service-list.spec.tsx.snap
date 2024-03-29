@@ -276,7 +276,7 @@ exports[`ServiceList should match snapshot 1`] = `
                   <div
                     class="skeleton rounded"
                     data-testid="skeleton"
-                    style="width: 115px; height: 32px;"
+                    style="width: 115px; height: 36px;"
                   />
                 </div>
               </div>
@@ -615,7 +615,7 @@ exports[`ServiceList should match snapshot 1`] = `
                   <div
                     class="skeleton rounded"
                     data-testid="skeleton"
-                    style="width: 115px; height: 32px;"
+                    style="width: 115px; height: 36px;"
                   />
                 </div>
               </div>
@@ -1238,7 +1238,7 @@ exports[`ServiceList should match snapshot 1`] = `
                   <div
                     class="skeleton rounded"
                     data-testid="skeleton"
-                    style="width: 115px; height: 32px;"
+                    style="width: 115px; height: 36px;"
                   />
                 </div>
               </div>
@@ -1664,7 +1664,7 @@ exports[`ServiceList should match snapshot 1`] = `
                   <div
                     class="skeleton rounded"
                     data-testid="skeleton"
-                    style="width: 115px; height: 32px;"
+                    style="width: 115px; height: 36px;"
                   />
                 </div>
               </div>

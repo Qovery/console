@@ -15,7 +15,7 @@ export interface ToastProps {
 }
 
 export const ToastContent = (
-  status: ToastEnum,
+  status: ToastEnum | keyof typeof ToastEnum,
   options?: Toast,
   title?: string,
   description?: string,

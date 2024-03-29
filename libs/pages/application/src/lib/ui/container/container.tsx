@@ -1,11 +1,11 @@
 import { type Environment } from 'qovery-typescript-axios'
-import { type PropsWithChildren, createContext, useState } from 'react'
+import { type PropsWithChildren, createContext, useContext, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useCluster } from '@qovery/domains/clusters/feature'
 import { EnvironmentMode } from '@qovery/domains/environments/feature'
 import { type AnyService, type Database } from '@qovery/domains/services/data-access'
-import { NeedRedeployFlag, ServiceActionToolbar } from '@qovery/domains/services/feature'
+import { NeedRedeployFlag, ServiceActionToolbar, ServiceTerminalContext } from '@qovery/domains/services/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import { CLUSTER_URL } from '@qovery/shared/routes'
 import { Header, Icon, Link, Section, Skeleton, Tooltip } from '@qovery/shared/ui'
@@ -26,6 +26,7 @@ export interface ContainerProps {
 
 export function Container({ service, environment, children }: PropsWithChildren<ContainerProps>) {
   const { organizationId = '' } = useParams()
+  const { setOpen } = useContext(ServiceTerminalContext)
   const [showHideAllEnvironmentVariablesValues, setShowHideAllEnvironmentVariablesValues] = useState<boolean>(false)
 
   const { data: cluster } = useCluster({ organizationId, clusterId: environment?.cluster_id ?? '' })
@@ -53,8 +54,10 @@ export function Container({ service, environment, children }: PropsWithChildren<
           </Tooltip>
         </Skeleton>
       </div>
-      <Skeleton width={150} height={32} show={!service || !environment}>
-        {service && environment && <ServiceActionToolbar serviceId={service.id} environment={environment} />}
+      <Skeleton width={150} height={36} show={!service || !environment}>
+        {service && environment && (
+          <ServiceActionToolbar serviceId={service.id} environment={environment} shellAction={() => setOpen(true)} />
+        )}
       </Skeleton>
     </div>
   )

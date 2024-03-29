@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ServiceTerminal should match snapshot 1`] = `
+<body>
+  <div />
+  <div
+    class="fixed bottom-0 left-0 w-full animate-slidein-up-md-faded"
+  >
+    <div
+      class="flex justify-between h-11 px-4 py-2 bg-neutral-650"
+    >
+      <span />
+      <button
+        class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded bg-neutral-500 active:bg-neutral-600 hover:bg-neutral-400 text-white disabled:text-neutral-300 disabled:bg-neutral-100"
+      >
+        Close shell
+        <i
+          aria-hidden="true"
+          class="fa-solid fa-xmark ml-2 text-sm"
+        />
+      </button>
+    </div>
+    <div
+      class="bg-neutral-700 px-4 py-2  min-h-[272px]"
+    >
+      <div
+        class="flex items-start justify-center p-5 h-40"
+      >
+        <div
+          class="aspect-square border-2  rounded-full border-solid border-r-neutral-500 animate-spin w-4 "
+          data-testid="spinner"
+        />
+      </div>
+    </div>
+  </div>
+</body>
+`;

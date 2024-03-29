@@ -558,14 +558,22 @@ function MenuOtherActions({
   )
 }
 
-export function ServiceActionToolbar({ environment, serviceId }: { environment: Environment; serviceId: string }) {
+export function ServiceActionToolbar({
+  environment,
+  serviceId,
+  shellAction,
+}: {
+  environment: Environment
+  serviceId: string
+  shellAction?: () => void
+}) {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const { data: service } = useService({ environmentId, serviceId })
   const { data: deploymentStatus } = useDeploymentStatus({ environmentId, serviceId })
 
-  if (!service || !deploymentStatus) return <Skeleton height={32} width={115} />
+  if (!service || !deploymentStatus) return <Skeleton height={36} width={115} />
 
   const environmentLogsLink = ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId)
 
@@ -579,15 +587,22 @@ export function ServiceActionToolbar({ environment, serviceId }: { environment: 
       />
       <Tooltip content="Logs">
         <ActionToolbar.Button
-          onClick={() => {
+          onClick={() =>
             navigate(environmentLogsLink + SERVICE_LOGS_URL(service.id), {
               state: { prevUrl: pathname },
             })
-          }}
+          }
         >
           <Icon iconName="scroll" />
         </ActionToolbar.Button>
       </Tooltip>
+      {shellAction && (
+        <Tooltip content="Qovery cloud shell">
+          <ActionToolbar.Button onClick={shellAction}>
+            <Icon iconName="terminal" />
+          </ActionToolbar.Button>
+        </Tooltip>
+      )}
       <MenuOtherActions
         state={deploymentStatus.state}
         organizationId={organizationId}
