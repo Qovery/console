@@ -46,7 +46,7 @@ function PageApplicationWrapped() {
               />
             </Routes>
           </Container>
-          {open && environment && service && service.serviceType === 'CONTAINER' && (
+          {open && environment && service && (
             <ServiceTerminalMemo
               organizationId={environment.organization.id}
               clusterId={environment.cluster_id}

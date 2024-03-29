@@ -592,7 +592,7 @@ export function ServiceActionToolbar({ environment, serviceId }: { environment: 
           <Icon iconName="scroll" />
         </ActionToolbar.Button>
       </Tooltip>
-      {service.serviceType === 'CONTAINER' && (
+      {service.serviceType !== 'DATABASE' && (
         <Tooltip content="Qovery cloud shell">
           <ActionToolbar.Button
             onClick={() => {
@@ -618,7 +618,6 @@ export function ServiceActionToolbar({ environment, serviceId }: { environment: 
           </ActionToolbar.Button>
         </Tooltip>
       )}
-
       <MenuOtherActions
         state={deploymentStatus.state}
         organizationId={organizationId}
