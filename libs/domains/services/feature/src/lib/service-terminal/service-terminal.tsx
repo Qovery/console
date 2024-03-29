@@ -28,12 +28,11 @@ export function ServiceTerminal({
   const onOpenHandler = useCallback(
     (_: QueryClient, event: Event) => {
       const websocket = event.target as WebSocket
-      !attachAddon && setAttachAddon(new AttachAddon(websocket))
+      setAttachAddon((prev) => (!prev ? new AttachAddon(websocket) : prev))
+      setHaveMessage(true)
     },
-    [attachAddon, setAttachAddon]
+    [setAttachAddon]
   )
-
-  const onMessageHandler = useCallback(() => setHaveMessage(true), [setHaveMessage])
 
   const onCloseHandler = useCallback(
     (_: QueryClient, event: CloseEvent) => {
@@ -56,7 +55,6 @@ export function ServiceTerminal({
     },
     onOpen: onOpenHandler,
     onClose: onCloseHandler,
-    onMessage: onMessageHandler,
   })
 
   return createPortal(

@@ -33,7 +33,7 @@ function isInvalidateOperation(data: any): data is InvalidateOperation {
 export function useReactQueryWsSubscription({
   url,
   urlSearchParams,
-  onMessage = (_, data) => console.error('Unhandled websocket onmessage, data:', data),
+  onMessage,
   onOpen,
   onError,
   onClose,
@@ -66,7 +66,7 @@ export function useReactQueryWsSubscription({
 
     async function initWebsocket() {
       const token = await getAccessTokenSilently()
-      searchParams.append('bearer_token', token)
+      searchParams.set('bearer_token', token)
       websocket = new WebSocket(`${url}?${searchParams.toString()}`)
 
       websocket.onopen = async (event) => {
@@ -80,7 +80,7 @@ export function useReactQueryWsSubscription({
           queryClient.invalidateQueries({ queryKey })
         } else {
           // XXX: Don't know how to handle it, let the caller handle it
-          onMessage(queryClient, data)
+          onMessage?.(queryClient, data)
         }
       }
       websocket.onerror = async (event) => {

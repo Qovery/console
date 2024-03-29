@@ -1,4 +1,5 @@
 import { type PropsWithChildren, createContext, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 
 export const ServiceTerminalContext = createContext<{
   open: boolean
@@ -9,7 +10,8 @@ export const ServiceTerminalContext = createContext<{
 })
 
 export const ServiceTerminalProvider = ({ children }: PropsWithChildren) => {
-  const [open, setOpen] = useState(false)
+  const { state } = useLocation()
+  const [open, setOpen] = useState(state?.hasShell || false)
 
   return (
     <ServiceTerminalContext.Provider

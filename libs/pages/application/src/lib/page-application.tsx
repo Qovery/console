@@ -1,5 +1,5 @@
-import { useContext, useEffect } from 'react'
-import { Navigate, Route, Routes, useLocation, useParams } from 'react-router-dom'
+import { memo, useContext } from 'react'
+import { Navigate, Route, Routes, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import {
@@ -13,17 +13,13 @@ import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { ROUTER_APPLICATION } from './router/router'
 import Container from './ui/container/container'
 
+const ServiceTerminalMemo = memo(ServiceTerminal)
+
 function PageApplicationWrapped() {
   const { applicationId = '', environmentId = '', organizationId = '', projectId = '' } = useParams()
-  const { state } = useLocation()
-  const { open, setOpen } = useContext(ServiceTerminalContext)
+  const { open } = useContext(ServiceTerminalContext)
   const { data: environment } = useEnvironment({ environmentId })
   const { data: service } = useService({ environmentId, serviceId: applicationId })
-
-  // Display shell from services page
-  useEffect(() => {
-    if (state?.hasShell) setOpen(true)
-  }, [state, setOpen])
 
   useDocumentTitle(`${service?.name || 'Application'} - Qovery`)
 
@@ -51,7 +47,7 @@ function PageApplicationWrapped() {
             </Routes>
           </Container>
           {open && environment && service && service.serviceType === 'CONTAINER' && (
-            <ServiceTerminal
+            <ServiceTerminalMemo
               organizationId={environment.organization.id}
               clusterId={environment.cluster_id}
               projectId={environment.project.id}
