@@ -31,6 +31,7 @@ import {
   isJobGitSource,
 } from '@qovery/shared/enums'
 import {
+  APPLICATION_GENERAL_URL,
   APPLICATION_URL,
   DATABASE_GENERAL_URL,
   DATABASE_URL,
@@ -75,6 +76,8 @@ function getServiceIcon(service: AnyService) {
 
 function ServiceNameCell({ row, environment }: { row: Row<AnyService>; environment: Environment }) {
   const { original: service } = row
+  const navigate = useNavigate()
+
   return (
     <div className="flex items-center justify-between">
       <span className="flex items-center gap-4 font-medium text-sm text-neutral-400 min-w-0">
@@ -153,7 +156,24 @@ function ServiceNameCell({ row, environment }: { row: Row<AnyService>; environme
           </Tooltip>
         )}
         <div onClick={(e) => e.stopPropagation()}>
-          <ServiceActionToolbar serviceId={service.id} environment={environment} />
+          <ServiceActionToolbar
+            serviceId={service.id}
+            environment={environment}
+            shellAction={
+              service.serviceType !== 'DATABASE'
+                ? () =>
+                    navigate(
+                      APPLICATION_URL(environment.organization.id, environment.project.id, environment.id, service.id) +
+                        APPLICATION_GENERAL_URL,
+                      {
+                        state: {
+                          hasShell: true,
+                        },
+                      }
+                    )
+                : undefined
+            }
+          />
         </div>
       </div>
     </div>
