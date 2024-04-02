@@ -1,0 +1,62 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`InputSearch should match snapshot 1`] = `
+<body>
+  <div>
+    <div
+      class="relative z-10"
+    >
+      <button
+        class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded bg-neutral-500 active:bg-neutral-600 hover:bg-neutral-400 text-white disabled:text-neutral-300 disabled:bg-neutral-100"
+      >
+        my-value
+        <span>
+          <i
+            aria-hidden="true"
+            class="fa-solid fa-xmark ml-2 text-sm"
+          />
+        </span>
+      </button>
+    </div>
+  </div>
+</body>
+`;
+
+exports[`InputSearch should match with snapshot 1`] = `
+<body>
+  <div>
+    <div
+      class="relative z-10"
+    >
+      <i
+        aria-hidden="true"
+        class="fa-solid fa-magnifying-glass text-neutral-50 absolute left-2.5 top-1.5 text-xs"
+      />
+      <input
+        class="w-56 h-7 bg-transparent text-xs text-neutral-250 rounded pl-7 pr-2 border border-neutral-350 focus:outline-none focus:border-brand-400"
+        placeholder="placeholder"
+        value="my-value"
+      />
+      <div
+        class="mt-1 bg-neutral-600 p-2 rounded w-56 max-h-40"
+      >
+        <ul>
+          <li>
+            <button
+              class="flex w-full h-9 items-center justify-between px-2 text-neutral-50 text-xs text-medium hover:text-neutral-200 outline-brand-400 transition"
+            >
+              my-value
+              ...
+              my-value
+              <i
+                aria-hidden="true"
+                class="fa-solid fa-check "
+              />
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</body>
+`;
