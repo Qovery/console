@@ -19,8 +19,16 @@ export function Container({ children, cluster, deployCluster }: PropsWithChildre
   const { data: clusterStatus, isLoading } = useClusterStatus({ organizationId, clusterId })
 
   const headerActions = (
-    <div className="flex flex-col gap-3">
-      <div className="flex flex-row gap-2">
+    <div className="flex flex-row items-center gap-4">
+      <Skeleton width={150} height={36} show={isLoading}>
+        {cluster && clusterStatus ? (
+          <ClusterActionToolbar cluster={cluster} clusterStatus={clusterStatus} noSettings />
+        ) : (
+          <div />
+        )}
+      </Skeleton>
+      <div className="w-px h-4 bg-neutral-250" />
+      <div className="flex flex-row items-center gap-2">
         {cluster?.production && (
           <Badge size="xs" color="neutral">
             Production
@@ -69,13 +77,6 @@ export function Container({ children, cluster, deployCluster }: PropsWithChildre
           )}
         </Skeleton>
       </div>
-      <Skeleton width={150} height={36} show={isLoading}>
-        {cluster && clusterStatus ? (
-          <ClusterActionToolbar cluster={cluster} clusterStatus={clusterStatus} noSettings />
-        ) : (
-          <div />
-        )}
-      </Skeleton>
     </div>
   )
 
