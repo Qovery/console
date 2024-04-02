@@ -2,8 +2,12 @@ import { type Environment } from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useCluster } from '@qovery/domains/clusters/feature'
-import { EnvironmentActionToolbar, EnvironmentMode, EnvironmentStateChip } from '@qovery/domains/environments/feature'
-import { useDeploymentStatus } from '@qovery/domains/services/feature'
+import {
+  EnvironmentActionToolbar,
+  EnvironmentMode,
+  EnvironmentStateChip,
+  useDeploymentStatus,
+} from '@qovery/domains/environments/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import {
   CLUSTER_URL,
@@ -18,6 +22,7 @@ import {
   SERVICES_URL,
 } from '@qovery/shared/routes'
 import {
+  Banner,
   Button,
   Header,
   Icon,
@@ -41,7 +46,7 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
   const location = useLocation()
   const navigate = useNavigate()
 
-  const { isLoading: isLoadingDeploymentStatus } = useDeploymentStatus({
+  const { isLoading: isLoadingDeploymentStatus, data: deploymentStatus } = useDeploymentStatus({
     environmentId: environment?.id,
   })
 
@@ -167,10 +172,13 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
     </div>
   )
 
+  const cancelOnGoing = deploymentStatus?.state === 'CANCELING'
+
   return (
     <Section className="flex-1">
       <Header title={environment?.name} icon={IconEnum.SERVICES} actions={headerActions} />
       <Tabs items={tabsItems} contentRight={contentTabs} />
+      {cancelOnGoing && <Banner color="yellow">Deployment cancel ongoing...</Banner>}
       {children}
     </Section>
   )
