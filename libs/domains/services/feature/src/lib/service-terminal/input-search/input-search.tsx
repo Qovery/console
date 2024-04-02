@@ -7,9 +7,10 @@ export interface InputSearchProps {
   onChange: (value: string) => void
   placeholder: string
   value?: string
+  trimLabel?: boolean
 }
 
-export function InputSearch({ data, value, onChange, placeholder }: InputSearchProps) {
+export function InputSearch({ data, value, onChange, placeholder, trimLabel }: InputSearchProps) {
   const [search, setSearch] = useState(value)
   const [isOpen, setIsOpen] = useState(false)
   const filteredData = search && data.filter((item) => item.toLowerCase().includes(search.toLowerCase()))
@@ -60,7 +61,7 @@ export function InputSearch({ data, value, onChange, placeholder }: InputSearchP
                       setSearch(v)
                     }}
                   >
-                    {v.substring(0, 10)}...{v.slice(-10)}
+                    {trimLabel ? `${v.substring(0, 10)}...${v.slice(-10)}` : v}
                     {v === value && <Icon iconName="check" />}
                   </button>
                 </li>

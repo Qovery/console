@@ -30,6 +30,7 @@ export function ServiceTerminal({
   const [websocketOpen, setWebsocketOpen] = useState(false)
 
   const [selectedPod, setSelectedPod] = useState<string | undefined>()
+  const [selectedContainer, setSelectedContainer] = useState<string | undefined>()
 
   const onOpenHandler = useCallback(
     (_: QueryClient, event: Event) => {
@@ -59,6 +60,7 @@ export function ServiceTerminal({
       environment: environmentId,
       service: serviceId,
       pod_name: selectedPod,
+      container_name: selectedContainer,
     },
     onOpen: onOpenHandler,
     onClose: onCloseHandler,
@@ -67,13 +69,24 @@ export function ServiceTerminal({
   return createPortal(
     <div className="dark fixed bottom-0 left-0 w-full animate-slidein-up-md-faded">
       <div className="flex justify-between h-11 px-4 py-2 bg-neutral-650 border-y border-neutral-500">
-        <div>
+        <div className="flex gap-2">
           {runningStatuses && runningStatuses.pods.length > 0 && (
             <InputSearch
               value={selectedPod}
               onChange={setSelectedPod}
               data={runningStatuses.pods.map((pod) => pod.name)}
-              placeholder="Search pod name"
+              placeholder="Search by pod"
+              trimLabel
+            />
+          )}
+          {runningStatuses && selectedPod && (
+            <InputSearch
+              value={selectedContainer}
+              onChange={setSelectedContainer}
+              data={runningStatuses.pods
+                .filter((pod) => selectedPod === pod.name)[0]
+                .containers.map((container) => container.name)}
+              placeholder="Search by container"
             />
           )}
         </div>

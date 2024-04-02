@@ -46,8 +46,6 @@ exports[`InputSearch should match with snapshot 1`] = `
               class="flex w-full h-9 items-center justify-between px-2 text-neutral-50 text-xs text-medium hover:text-neutral-200 outline-brand-400 transition"
             >
               my-value
-              ...
-              my-value
               <i
                 aria-hidden="true"
                 class="fa-solid fa-check "
