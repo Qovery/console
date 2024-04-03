@@ -83,9 +83,11 @@ export function ServiceTerminal({
             <InputSearch
               value={selectedContainer}
               onChange={setSelectedContainer}
-              data={runningStatuses.pods
-                .filter((pod) => selectedPod === pod.name)[0]
-                .containers.map((container) => container.name)}
+              data={
+                runningStatuses.pods
+                  .find((pod) => selectedPod === pod?.name)
+                  ?.containers.map((container) => container?.name) || []
+              }
               placeholder="Search by container"
             />
           )}
