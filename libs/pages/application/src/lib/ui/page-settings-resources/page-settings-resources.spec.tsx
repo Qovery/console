@@ -28,7 +28,8 @@ describe('PageSettingsResources', () => {
 
   beforeEach(() => {
     defaultValues = {
-      instances: [1, 18],
+      min_running_instances: 1,
+      max_running_instances: 18,
       cpu: 3,
       memory: 1024,
     }
@@ -48,15 +49,13 @@ describe('PageSettingsResources', () => {
       })
     )
 
-    const inputs = screen.getAllByRole('slider') as HTMLSpanElement[]
-
     const submitButton = await screen.findByRole('button', { name: /save/i })
     // https://react-hook-form.com/advanced-usage#TransformandParse
     expect(submitButton).toBeInTheDocument()
 
     screen.getByDisplayValue(1024)
-    expect(inputs[0].getAttribute('aria-valuenow')).toBe('1')
-    expect(inputs[1].getAttribute('aria-valuenow')).toBe('18')
+    expect(screen.getByLabelText('Instances min')).toHaveValue(1)
+    expect(screen.getByLabelText('Instances max')).toHaveValue(18)
   })
 
   it('should render warning box and icon for cpu', async () => {
@@ -64,7 +63,7 @@ describe('PageSettingsResources', () => {
 
     const { container } = renderWithProviders(
       wrapWithReactHookForm(<PageSettingsResources {...props} />, {
-        defaultValues: { cpu: 10, instances: [1, 1], memory: 323 },
+        defaultValues: { cpu: 10, min_running_instances: 1, max_running_instances: 1, memory: 323 },
       })
     )
 

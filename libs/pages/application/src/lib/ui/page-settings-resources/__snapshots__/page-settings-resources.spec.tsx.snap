@@ -154,75 +154,73 @@ exports[`PageSettingsResources should render warning box and icon for cpu 1`] = 
           >
             Instances
           </h2>
-          <p
-            class="text-neutral-400 mb-3 font-medium"
-          >
-            undefined - undefined
-          </p>
           <div
-            class="w-full "
-            data-testid="input-slider"
+            class="grid grid-cols-2 gap-4"
           >
-            <span
-              aria-disabled="false"
-              class="relative flex w-full h-1 bg-neutral-300 rounded cursor-pointer"
-              data-orientation="horizontal"
-              dir="ltr"
-              style="--radix-slider-thumb-transform: translateX(-50%);"
+            <div
+              class=""
+              data-testid="input-text-wrapper"
             >
-              <span
-                class="relative flex flex-grow h-1 bg-neutral-300 rounded-full"
-                data-orientation="horizontal"
+              <div
+                class="relative"
               >
-                <span
-                  class="absolute bg-brand-500 rounded-full h-full"
-                  data-orientation="horizontal"
-                  style="left: 0%; right: 100%;"
-                />
-              </span>
-              <span
-                style="transform: var(--radix-slider-thumb-transform); position: absolute; left: calc(0% + 0px);"
+                <div
+                  aria-label="input-container"
+                  class="input    input--label-up "
+                >
+                  <div
+                    class=""
+                  >
+                    <label
+                      class="text-sm translate-y-2"
+                      for="Instances min"
+                    >
+                      Instances min
+                    </label>
+                    <input
+                      class="input__value "
+                      data-testid="input-text"
+                      id="Instances min"
+                      name="min_running_instances"
+                      type="number"
+                      value="1"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              class=""
+              data-testid="input-text-wrapper"
+            >
+              <div
+                class="relative"
               >
-                <span
-                  aria-label="Minimum"
-                  aria-orientation="horizontal"
-                  aria-valuemax="50"
-                  aria-valuemin="1"
-                  aria-valuenow="1"
-                  class="block h-4 w-4 -mt-1.5 bg-brand-500 transition-all ease-in-out duration-600 hover:bg-brand-600 focus:shadow-2xl focus-visible:outline-none rounded-full cursor-grab focus-visible:cursor-grabbing"
-                  data-orientation="horizontal"
-                  data-radix-collection-item=""
-                  role="slider"
-                  style=""
-                  tabindex="0"
-                />
-              </span>
-              <span
-                style="transform: var(--radix-slider-thumb-transform); position: absolute; left: calc(0% + 0px);"
-              >
-                <span
-                  aria-label="Maximum"
-                  aria-orientation="horizontal"
-                  aria-valuemax="50"
-                  aria-valuemin="1"
-                  aria-valuenow="1"
-                  class="block h-4 w-4 -mt-1.5 bg-brand-500 transition-all ease-in-out duration-600 hover:bg-brand-600 focus:shadow-2xl focus-visible:outline-none rounded-full cursor-grab focus-visible:cursor-grabbing"
-                  data-orientation="horizontal"
-                  data-radix-collection-item=""
-                  role="slider"
-                  style=""
-                  tabindex="0"
-                />
-              </span>
-            </span>
-            <input
-              style="display: none;"
-              value="1"
-            />
-            <input
-              style="display: none;"
-              value="1"
-            />
+                <div
+                  aria-label="input-container"
+                  class="input    input--label-up "
+                >
+                  <div
+                    class=""
+                  >
+                    <label
+                      class="text-sm translate-y-2"
+                      for="Instances max"
+                    >
+                      Instances max
+                    </label>
+                    <input
+                      class="input__value "
+                      data-testid="input-text"
+                      id="Instances max"
+                      name="max_running_instances"
+                      type="number"
+                      value="1"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
           <p
             class="text-neutral-350 text-xs mt-3"
