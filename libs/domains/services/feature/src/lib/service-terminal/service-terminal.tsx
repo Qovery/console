@@ -1,5 +1,6 @@
 import { type QueryClient } from '@tanstack/react-query'
 import { AttachAddon } from '@xterm/addon-attach'
+import { FitAddon } from '@xterm/addon-fit'
 import { useCallback, useContext, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Button, Icon, LoaderSpinner, XTerm, toast } from '@qovery/shared/ui'
@@ -27,6 +28,7 @@ export function ServiceTerminal({
 
   const { setOpen } = useContext(ServiceTerminalContext)
   const [attachAddon, setAttachAddon] = useState<AttachAddon | undefined>(undefined)
+  const fitAddon = new FitAddon()
   const [websocketOpen, setWebsocketOpen] = useState(false)
 
   const [selectedPod, setSelectedPod] = useState<string | undefined>()
@@ -66,8 +68,34 @@ export function ServiceTerminal({
     onClose: onCloseHandler,
   })
 
+  const [parentHeight, setParentHeight] = useState(340)
+
+  const handler = (mouseDownEvent: any) => {
+    const startYPosition = mouseDownEvent.pageY
+    const startHeight = parentHeight
+
+    function onMouseMove(mouseMoveEvent: any) {
+      const deltaY = mouseMoveEvent.pageY - startYPosition
+      setParentHeight(startHeight - deltaY)
+    }
+
+    function onMouseUp() {
+      // Resize the terminal to fit the new height
+      fitAddon.fit()
+
+      document.body.removeEventListener('mousemove', onMouseMove)
+      document.body.removeEventListener('mouseup', onMouseUp)
+    }
+
+    document.body.addEventListener('mousemove', onMouseMove)
+    document.body.addEventListener('mouseup', onMouseUp)
+  }
+
   return createPortal(
-    <div className="fixed bottom-0 left-0 w-full animate-slidein-up-md-faded">
+    <div className="fixed bottom-0 left-0 w-full animate-slidein-up-md-faded" style={{ height: parentHeight }}>
+      <button type="button" onMouseDown={handler}>
+        Resize
+      </button>
       <div className="flex justify-between h-11 px-4 py-2 bg-neutral-650 border-y border-neutral-500">
         <div className="flex gap-2">
           {runningStatuses && runningStatuses.pods.length > 0 && (
@@ -97,9 +125,9 @@ export function ServiceTerminal({
           <Icon iconName="xmark" className="ml-2 text-sm" />
         </Button>
       </div>
-      <div className="bg-neutral-700 px-4 py-2 min-h-[272px]">
+      <div className="bg-neutral-700 px-4 py-2 min-h-[272px] h-full">
         {attachAddon && websocketOpen && !isRunningStatusesLoading ? (
-          <XTerm addons={[attachAddon]} />
+          <XTerm className="h-full" addons={[attachAddon, fitAddon]} />
         ) : (
           <div className="flex items-start justify-center p-5 h-40">
             <LoaderSpinner />
