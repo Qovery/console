@@ -6,7 +6,7 @@ import { useOrganization } from '@qovery/domains/organizations/feature'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { type JobGeneralData } from '@qovery/shared/interfaces'
 import { SERVICES_JOB_CREATION_CONFIGURE_URL, SERVICES_URL } from '@qovery/shared/routes'
-import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
+import { FunnelFlowBody, FunnelFlowHelpCard, toastError } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import StepGeneral from '../../../ui/page-job-create/step-general/step-general'
 import { useJobContainerCreateContext } from '../page-job-create-feature'
@@ -46,6 +46,17 @@ export function StepGeneralFeature() {
   const onSubmit = methods.handleSubmit((data) => {
     const cloneData = {
       ...data,
+    }
+
+    if (jobType === ServiceTypeEnum.CRON_JOB) {
+      if (data.cmd_arguments) {
+        try {
+          cloneData.cmd = eval(data.cmd_arguments)
+        } catch (e: unknown) {
+          toastError(e as Error, 'Invalid CMD array')
+          return
+        }
+      }
     }
 
     setGeneralData(cloneData)

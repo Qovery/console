@@ -5,13 +5,14 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { TimezoneSetting } from '@qovery/domains/services/feature'
 import { type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
 import { type JobConfigureData } from '@qovery/shared/interfaces'
-import { EnableBox, ExternalLink, InputText, LoaderSpinner } from '@qovery/shared/ui'
+import { EnableBox, ExternalLink, Heading, InputText, LoaderSpinner, Section } from '@qovery/shared/ui'
 import { formatCronExpression } from '@qovery/shared/util-js'
 import EntrypointCmdInputs from '../../entrypoint-cmd-inputs/ui/entrypoint-cmd-inputs'
 
 export interface JobConfigureSettingsProps {
   jobType: JobType
   loading?: boolean
+  legacyMode?: boolean
 }
 
 export function JobConfigureSettings(props: JobConfigureSettingsProps) {
@@ -24,10 +25,15 @@ export function JobConfigureSettings(props: JobConfigureSettingsProps) {
   return loading ? (
     <LoaderSpinner />
   ) : (
-    <div>
+    <>
       {props.jobType === ServiceTypeEnum.CRON_JOB ? (
-        <>
-          <h3 className="text-sm font-semibold mb-3">CRON</h3>
+        <Section className="gap-4">
+          <div className="flex justify-between">
+            <Heading>CRON</Heading>
+            <ExternalLink href="https://crontab.guru" size="sm">
+              CRON expression builder
+            </ExternalLink>
+          </div>
           <Controller
             name="schedule"
             control={control}
@@ -42,39 +48,34 @@ export function JobConfigureSettings(props: JobConfigureSettingsProps) {
             }}
             render={({ field, fieldState: { error } }) => (
               <InputText
-                className="mb-2"
                 name={field.name}
                 onChange={field.onChange}
                 value={field.value}
                 label="Schedule - Cron expression"
+                hint={
+                  formatCronExpression(watchSchedule) ? formatCronExpression(watchSchedule) + ` (${watchTimezone})` : ''
+                }
                 error={error?.message}
               />
             )}
           />
-          <div className="mb-3 flex justify-between">
-            <p className="text-neutral-400 text-xs">
-              {formatCronExpression(watchSchedule) ? formatCronExpression(watchSchedule) + ` (${watchTimezone})` : ''}
-            </p>
-            <ExternalLink href="https://crontab.guru" size="xs">
-              CRON expression builder
-            </ExternalLink>
-          </div>
-          <TimezoneSetting className="mb-3" />
-          <EntrypointCmdInputs />
-        </>
+          <TimezoneSetting />
+          {/* XXX: This should be migrated to general settings page */}
+          {props.legacyMode && <EntrypointCmdInputs />}
+        </Section>
       ) : (
-        <div className="mb-10">
-          <h3 className="text-sm font-semibold mb-1">Event</h3>
-          <p className="text-neutral-400 text-sm mb-3">
+        <Section className="gap-4">
+          <Heading>Event</Heading>
+          <p className="text-neutral-350 text-sm">
             Select one or more environment event where the job should be executed
           </p>
 
           <Controller
             name="on_start.enabled"
             control={control}
-            render={({ field, fieldState: { error } }) => (
+            render={({ field }) => (
               <EnableBox
-                className="mb-3"
+                className="flex flex-col gap-4"
                 checked={field.value}
                 title="Start"
                 name="on_start"
@@ -82,7 +83,6 @@ export function JobConfigureSettings(props: JobConfigureSettingsProps) {
                 setChecked={field.onChange}
               >
                 <EntrypointCmdInputs
-                  className="mt-4"
                   cmdArgumentsFieldName="on_start.arguments_string"
                   imageEntryPointFieldName="on_start.entrypoint"
                 />
@@ -93,9 +93,9 @@ export function JobConfigureSettings(props: JobConfigureSettingsProps) {
           <Controller
             name="on_stop.enabled"
             control={control}
-            render={({ field, fieldState: { error } }) => (
+            render={({ field }) => (
               <EnableBox
-                className="mb-3"
+                className="flex flex-col gap-4"
                 checked={field.value}
                 title="Stop"
                 name="on_stop"
@@ -103,7 +103,6 @@ export function JobConfigureSettings(props: JobConfigureSettingsProps) {
                 setChecked={field.onChange}
               >
                 <EntrypointCmdInputs
-                  className="mt-4"
                   cmdArgumentsFieldName="on_stop.arguments_string"
                   imageEntryPointFieldName="on_stop.entrypoint"
                 />
@@ -114,9 +113,9 @@ export function JobConfigureSettings(props: JobConfigureSettingsProps) {
           <Controller
             name="on_delete.enabled"
             control={control}
-            render={({ field, fieldState: { error } }) => (
+            render={({ field }) => (
               <EnableBox
-                className="mb-3"
+                className="flex flex-col gap-4"
                 checked={field.value}
                 title="Delete"
                 name="on_delete"
@@ -124,82 +123,72 @@ export function JobConfigureSettings(props: JobConfigureSettingsProps) {
                 setChecked={field.onChange}
               >
                 <EntrypointCmdInputs
-                  className="mt-4"
                   cmdArgumentsFieldName="on_delete.arguments_string"
                   imageEntryPointFieldName="on_delete.entrypoint"
                 />
               </EnableBox>
             )}
           />
-        </div>
+        </Section>
       )}
 
-      <h3 className="text-sm font-semibold mb-3 mt-8">Parameters</h3>
-      <Controller
-        name="nb_restarts"
-        control={control}
-        rules={{
-          required: 'Value required',
-        }}
-        render={({ field, fieldState: { error } }) => (
-          <InputText
-            type="number"
-            className="mb-2"
-            name={field.name}
-            onChange={field.onChange}
-            value={field.value}
-            label="Number of restarts"
-            error={error?.message}
-          />
-        )}
-      />
-      <p className="text-neutral-350 text-xs mb-3">
-        Maximum number of restarts allowed in case of job failure (0 means no failure)
-      </p>
+      <Section className="gap-4">
+        <Heading>Parameters</Heading>
+        <Controller
+          name="nb_restarts"
+          control={control}
+          rules={{
+            required: 'Value required',
+          }}
+          render={({ field, fieldState: { error } }) => (
+            <InputText
+              type="number"
+              name={field.name}
+              onChange={field.onChange}
+              value={field.value}
+              label="Number of restarts"
+              hint="Maximum number of restarts allowed in case of job failure (0 means no failure)"
+              error={error?.message}
+            />
+          )}
+        />
 
-      <Controller
-        name="max_duration"
-        control={control}
-        rules={{
-          required: 'Value required',
-        }}
-        render={({ field, fieldState: { error } }) => (
-          <InputText
-            type="number"
-            className="mb-2"
-            name={field.name}
-            onChange={field.onChange}
-            value={field.value}
-            label="Max duration in seconds"
-            error={error?.message}
-          />
-        )}
-      />
+        <Controller
+          name="max_duration"
+          control={control}
+          rules={{
+            required: 'Value required',
+          }}
+          render={({ field, fieldState: { error } }) => (
+            <InputText
+              type="number"
+              name={field.name}
+              onChange={field.onChange}
+              value={field.value}
+              label="Max duration in seconds"
+              hint="Maximum duration allowed for the job to run before killing it and mark it as failed"
+              error={error?.message}
+            />
+          )}
+        />
 
-      <p className="text-neutral-350 text-xs mb-3">
-        Maximum duration allowed for the job to run before killing it and mark it as failed
-      </p>
-
-      <Controller
-        name="port"
-        control={control}
-        render={({ field, fieldState: { error } }) => (
-          <InputText
-            type="number"
-            className="mb-2"
-            name={field.name}
-            onChange={field.onChange}
-            value={field.value}
-            label="Port"
-            error={error?.message}
-          />
-        )}
-      />
-
-      <p className="text-neutral-350 text-xs mb-3">
-        Port where to run readiness and liveliness probes checks. The port will not be exposed externally
-      </p>
-    </div>
+        <Controller
+          name="port"
+          control={control}
+          render={({ field, fieldState: { error } }) => (
+            <InputText
+              type="number"
+              name={field.name}
+              onChange={field.onChange}
+              value={field.value}
+              label="Port"
+              hint="Port where to run readiness and liveliness probes checks. The port will not be exposed externally"
+              error={error?.message}
+            />
+          )}
+        />
+      </Section>
+    </>
   )
 }
 

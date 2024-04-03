@@ -20,6 +20,7 @@ export interface InputSelectProps {
   value?: string | string[]
   options: Value[]
   disabled?: boolean
+  hint?: ReactNode
   error?: string
   onChange?: (e: string | string[]) => void
   dataTestId?: string
@@ -45,6 +46,7 @@ export function InputSelect({
   value,
   options,
   disabled,
+  hint,
   error,
   portal,
   onChange,
@@ -277,7 +279,8 @@ export function InputSelect({
           </div>
         )}
       </div>
-      {error && <p className="px-4 mt-1 font-medium text-xs text-red-500">{error}</p>}
+      {hint && <p className="px-4 mt-0.5 font-normal text-xs text-neutral-350">{hint}</p>}
+      {error && <p className="px-4 mt-0.5 font-medium text-xs text-red-500">{error}</p>}
     </div>
   )
 }

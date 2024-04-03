@@ -7,12 +7,13 @@ import { type AnyService, type Database, type Helm } from '@qovery/domains/servi
 import { useRunningStatus } from '@qovery/domains/services/feature'
 import { CLUSTER_SETTINGS_RESOURCES_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
 import {
-  BlockContent,
   Callout,
   ExternalLink,
+  Heading,
   Icon,
   InputText,
   Link,
+  Section,
   Slider,
   inputSizeUnitRules,
 } from '@qovery/shared/ui'
@@ -120,8 +121,9 @@ export function ApplicationSettingsResources({
     ))
 
   return (
-    <div>
-      <BlockContent title="vCPU">
+    <>
+      <Section className="gap-4">
+        <Heading>Resources configuration</Heading>
         <Controller
           name="cpu"
           control={control}
@@ -132,14 +134,14 @@ export function ApplicationSettingsResources({
             <InputText
               type="number"
               name={field.name}
-              label="Size (in milli vCPU)"
+              label="vCPU (milli)"
               value={field.value}
               onChange={field.onChange}
+              hint={hintCPU}
               error={error?.type === 'min' ? `Minimum allowed ${field.name} is: ${minVCpu} milli vCPU.` : undefined}
             />
           )}
         />
-        <p className="text-neutral-350 text-xs mt-3">{hintCPU}</p>
         {displayWarningCpu && (
           <Callout.Root color="red" className="mt-3" data-testid="banner-box">
             <Callout.Icon>
@@ -153,8 +155,6 @@ export function ApplicationSettingsResources({
             </Callout.Text>
           </Callout.Root>
         )}
-      </BlockContent>
-      <BlockContent title="Memory">
         <Controller
           name="memory"
           control={control}
@@ -164,9 +164,10 @@ export function ApplicationSettingsResources({
               dataTestId="input-memory-memory"
               type="number"
               name={field.name}
-              label="Size in MiB"
+              label="Memory (MiB)"
               value={field.value}
               onChange={field.onChange}
+              hint={hintMemory}
               error={
                 error?.type === 'required'
                   ? 'Please enter a size.'
@@ -179,11 +180,11 @@ export function ApplicationSettingsResources({
             />
           )}
         />
-        <p className="text-neutral-350 text-xs mt-3">{hintMemory}</p>
-      </BlockContent>
+      </Section>
 
       {service?.serviceType !== 'JOB' && watchInstances && (
-        <BlockContent title="Instances">
+        <Section className="gap-4">
+          <Heading>Instances</Heading>
           <p className="text-neutral-400 mb-3 font-medium">{`${watchInstances[0]} - ${watchInstances[1]}`}</p>
           <Controller
             name="instances"
@@ -214,9 +215,9 @@ export function ApplicationSettingsResources({
               </Callout.Text>
             </Callout.Root>
           )}
-        </BlockContent>
+        </Section>
       )}
-    </div>
+    </>
   )
 }
 

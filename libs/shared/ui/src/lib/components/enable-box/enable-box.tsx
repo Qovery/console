@@ -44,16 +44,18 @@ export function EnableBox(props: EnableBoxProps) {
         if (!currentChecked) setCurrentChecked(!currentChecked)
       }}
     >
-      <InputCheckbox
-        className="mb-1"
-        onChange={(e) => setCurrentChecked((e as FormEvent<HTMLInputElement>).currentTarget.checked)}
-        name={name}
-        label={title}
-        value={name}
-        isChecked={currentChecked}
-        big
-      />
-      {description && <p className="ml-8 text-neutral-400 text-sm">{description}</p>}
+      <div>
+        <InputCheckbox
+          className="mb-1"
+          onChange={(e) => setCurrentChecked((e as FormEvent<HTMLInputElement>).currentTarget.checked)}
+          name={name}
+          label={title}
+          value={name}
+          isChecked={currentChecked}
+          big
+        />
+        {description && <p className="ml-8 text-neutral-400 text-sm">{description}</p>}
+      </div>
 
       {currentChecked && children}
     </div>

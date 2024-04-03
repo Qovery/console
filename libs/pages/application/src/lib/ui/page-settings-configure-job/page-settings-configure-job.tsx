@@ -17,10 +17,11 @@ export function PageSettingsConfigureJob({ service, loading, onSubmit }: PageSet
     <div className="flex flex-col justify-between w-full">
       <div className="p-8 max-w-content-with-navigation-left">
         <form onSubmit={onSubmit}>
-          <BlockContent title="Configuration job">
+          <BlockContent title="Configuration job" classNameContent="space-y-10">
             <JobConfigureSettings
               loading={!service}
               jobType={service.job_type === 'CRON' ? ServiceTypeEnum.CRON_JOB : ServiceTypeEnum.LIFECYCLE_JOB}
+              legacyMode
             />
           </BlockContent>
           <div className="flex justify-end">

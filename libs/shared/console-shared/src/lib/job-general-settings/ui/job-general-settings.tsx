@@ -3,9 +3,9 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { IconEnum, type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
 import { type JobGeneralData } from '@qovery/shared/interfaces'
 import { BlockContent, Icon, InputSelect, InputText } from '@qovery/shared/ui'
-import CreateGeneralGitApplication from '../../create-general-git-application/ui/create-general-git-application'
 import GeneralContainerSettings from '../../general-container-settings/ui/general-container-settings'
 import EditGitRepositorySettingsFeature from '../../git-repository-settings/feature/edit-git-repository-settings-feature/edit-git-repository-settings-feature'
+import GitRepositorySettings from '../../git-repository-settings/ui/git-repository-settings/git-repository-settings'
 
 export interface JobGeneralSettingProps {
   organization?: Organization
@@ -29,7 +29,6 @@ export function JobGeneralSettings(props: JobGeneralSettingProps) {
           render={({ field, fieldState: { error } }) => (
             <InputSelect
               dataTestId="input-select-source"
-              className="mb-12"
               onChange={field.onChange}
               value={field.value}
               options={[
@@ -69,7 +68,6 @@ export function JobGeneralSettings(props: JobGeneralSettingProps) {
                       <InputSelect
                         dataTestId="input-select-mode"
                         label="Mode"
-                        className="mb-3"
                         disabled={true}
                         options={[{ label: 'Docker', value: BuildModeEnum.DOCKER }]}
                         onChange={field.onChange}
@@ -102,13 +100,13 @@ export function JobGeneralSettings(props: JobGeneralSettingProps) {
                 </BlockContent>
               </div>
             ) : (
-              <CreateGeneralGitApplication buildModeDisabled={true} />
+              <GitRepositorySettings withBlockWrapper={false} gitDisabled={false} />
             ))}
 
           {watchServiceType === 'CONTAINER' &&
             (props.isEdition ? (
               <div data-testid="container-fields">
-                <BlockContent title="Container Settings">
+                <BlockContent title="Container Settings" classNameContent="space-y-4">
                   <GeneralContainerSettings organization={props.organization} />
                 </BlockContent>
               </div>

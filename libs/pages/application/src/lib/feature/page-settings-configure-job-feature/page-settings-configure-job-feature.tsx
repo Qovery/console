@@ -2,7 +2,7 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useEditService, useService } from '@qovery/domains/services/feature'
-import { type JobConfigureData } from '@qovery/shared/interfaces'
+import { type JobConfigureData, type JobGeneralData } from '@qovery/shared/interfaces'
 import { toastError } from '@qovery/shared/ui'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
 import PageSettingsConfigureJob from '../../ui/page-settings-configure-job/page-settings-configure-job'
@@ -49,7 +49,7 @@ export function PageSettingsConfigureJobFeature() {
     })
     .otherwise(() => undefined)
 
-  const methods = useForm<JobConfigureData>({
+  const methods = useForm<JobConfigureData & Pick<JobGeneralData, 'image_entry_point' | 'cmd_arguments' | 'cmd'>>({
     mode: 'onChange',
     defaultValues: {
       max_duration: service?.max_duration_seconds,

@@ -18,254 +18,218 @@ exports[`PageSettingsResources should render warning box and icon for cpu 1`] = 
       >
         Manage the resources assigned to the service.
       </p>
-      <form>
-        <div>
+      <form
+        class="space-y-10"
+      >
+        <section
+          class="flex flex-col gap-4"
+        >
+          <h2
+            class="text-neutral-400 text-base font-bold"
+          >
+            Resources configuration
+          </h2>
           <div
-            class="border border-neutral-250 bg-neutral-100 rounded mb-5 w-full"
-            data-testid="block-content"
+            class=""
+            data-testid="input-text-wrapper"
           >
             <div
-              class="flex items-center justify-between h-9 px-4 border-b border-neutral-250"
-            >
-              <h2
-                class="font-medium text-neutral-400 text-ssm"
-              >
-                vCPU
-              </h2>
-            </div>
-            <div
-              class="p-5"
+              class="relative"
             >
               <div
-                class=""
-                data-testid="input-text-wrapper"
+                aria-label="input-container"
+                class="input    input--label-up "
               >
                 <div
-                  class="relative"
+                  class=""
                 >
-                  <div
-                    aria-label="input-container"
-                    class="input    input--label-up "
+                  <label
+                    class="text-sm translate-y-2"
+                    for="vCPU (milli)"
                   >
-                    <div
-                      class=""
-                    >
-                      <label
-                        class="text-sm translate-y-2"
-                        for="Size (in milli vCPU)"
-                      >
-                        Size (in milli vCPU)
-                      </label>
-                      <input
-                        class="input__value "
-                        data-testid="input-text"
-                        id="Size (in milli vCPU)"
-                        name="cpu"
-                        type="number"
-                        value="10"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <p
-                class="text-neutral-350 text-xs mt-3"
-              >
-                Minimum value is 
-                10
-                 milli vCPU.
-                 
-                Maximum value allowed based on the selected cluster instance type: 
-                10
-                 milli vCPU.
-                 
-              </p>
-              <div
-                class="flex flex-row gap-x-3 p-3 border rounded text-sm border-red-500 bg-red-50 text-red-500 mt-3"
-                data-accent-color="red"
-                data-testid="banner-box"
-              >
-                <div
-                  class="-order-2 text-base leading-6"
-                >
-                  <i
-                    aria-hidden="true"
-                    class="fa-solid fa-triangle-exclamation "
+                    vCPU (milli)
+                  </label>
+                  <input
+                    class="input__value "
+                    data-testid="input-text"
+                    id="vCPU (milli)"
+                    name="cpu"
+                    type="number"
+                    value="10"
                   />
                 </div>
-                <div
-                  class="-order-1 mr-auto gap-x-3 text-neutral-400"
-                >
-                  <span
-                    class="block font-medium leading-6"
-                  >
-                    Not enough resources
-                  </span>
-                  <span
-                    class="text-neutral-350"
-                  >
-                    Increase the capacity of your cluster nodes or reduce the service consumption.
-                  </span>
-                </div>
               </div>
+            </div>
+            <p
+              class="px-4 mt-0.5 font-normal text-xs text-neutral-350"
+            >
+              Minimum value is 
+              10
+               milli vCPU.
+               
+              Maximum value allowed based on the selected cluster instance type: 
+              10
+               milli vCPU.
+               
+            </p>
+          </div>
+          <div
+            class="flex flex-row gap-x-3 p-3 border rounded text-sm border-red-500 bg-red-50 text-red-500 mt-3"
+            data-accent-color="red"
+            data-testid="banner-box"
+          >
+            <div
+              class="-order-2 text-base leading-6"
+            >
+              <i
+                aria-hidden="true"
+                class="fa-solid fa-triangle-exclamation "
+              />
+            </div>
+            <div
+              class="-order-1 mr-auto gap-x-3 text-neutral-400"
+            >
+              <span
+                class="block font-medium leading-6"
+              >
+                Not enough resources
+              </span>
+              <span
+                class="text-neutral-350"
+              >
+                Increase the capacity of your cluster nodes or reduce the service consumption.
+              </span>
             </div>
           </div>
           <div
-            class="border border-neutral-250 bg-neutral-100 rounded mb-5 w-full"
-            data-testid="block-content"
+            class=""
+            data-testid="input-memory-memory-wrapper"
           >
             <div
-              class="flex items-center justify-between h-9 px-4 border-b border-neutral-250"
-            >
-              <h2
-                class="font-medium text-neutral-400 text-ssm"
-              >
-                Memory
-              </h2>
-            </div>
-            <div
-              class="p-5"
+              class="relative"
             >
               <div
-                class=""
-                data-testid="input-memory-memory-wrapper"
+                aria-label="input-container"
+                class="input    input--label-up "
               >
                 <div
-                  class="relative"
+                  class=""
                 >
-                  <div
-                    aria-label="input-container"
-                    class="input    input--label-up "
+                  <label
+                    class="text-sm translate-y-2"
+                    for="Memory (MiB)"
                   >
-                    <div
-                      class=""
-                    >
-                      <label
-                        class="text-sm translate-y-2"
-                        for="Size in MiB"
-                      >
-                        Size in MiB
-                      </label>
-                      <input
-                        class="input__value "
-                        data-testid="input-memory-memory"
-                        id="Size in MiB"
-                        name="memory"
-                        type="number"
-                        value="323"
-                      />
-                    </div>
-                  </div>
+                    Memory (MiB)
+                  </label>
+                  <input
+                    class="input__value "
+                    data-testid="input-memory-memory"
+                    id="Memory (MiB)"
+                    name="memory"
+                    type="number"
+                    value="323"
+                  />
                 </div>
               </div>
-              <p
-                class="text-neutral-350 text-xs mt-3"
-              >
-                Minimum value is 
-                1
-                 MiB.
-                 
-                Maximum value allowed based on the selected cluster instance type: 
-                10
-                 MiB.
-                 
-              </p>
             </div>
+            <p
+              class="px-4 mt-0.5 font-normal text-xs text-neutral-350"
+            >
+              Minimum value is 
+              1
+               MiB.
+               
+              Maximum value allowed based on the selected cluster instance type: 
+              10
+               MiB.
+               
+            </p>
           </div>
-          <div
-            class="border border-neutral-250 bg-neutral-100 rounded mb-5 w-full"
-            data-testid="block-content"
+        </section>
+        <section
+          class="flex flex-col gap-4"
+        >
+          <h2
+            class="text-neutral-400 text-base font-bold"
           >
-            <div
-              class="flex items-center justify-between h-9 px-4 border-b border-neutral-250"
+            Instances
+          </h2>
+          <p
+            class="text-neutral-400 mb-3 font-medium"
+          >
+            undefined - undefined
+          </p>
+          <div
+            class="w-full "
+            data-testid="input-slider"
+          >
+            <span
+              aria-disabled="false"
+              class="relative flex w-full h-1 bg-neutral-300 rounded cursor-pointer"
+              data-orientation="horizontal"
+              dir="ltr"
+              style="--radix-slider-thumb-transform: translateX(-50%);"
             >
-              <h2
-                class="font-medium text-neutral-400 text-ssm"
-              >
-                Instances
-              </h2>
-            </div>
-            <div
-              class="p-5"
-            >
-              <p
-                class="text-neutral-400 mb-3 font-medium"
-              >
-                undefined - undefined
-              </p>
-              <div
-                class="w-full "
-                data-testid="input-slider"
+              <span
+                class="relative flex flex-grow h-1 bg-neutral-300 rounded-full"
+                data-orientation="horizontal"
               >
                 <span
-                  aria-disabled="false"
-                  class="relative flex w-full h-1 bg-neutral-300 rounded cursor-pointer"
+                  class="absolute bg-brand-500 rounded-full h-full"
                   data-orientation="horizontal"
-                  dir="ltr"
-                  style="--radix-slider-thumb-transform: translateX(-50%);"
-                >
-                  <span
-                    class="relative flex flex-grow h-1 bg-neutral-300 rounded-full"
-                    data-orientation="horizontal"
-                  >
-                    <span
-                      class="absolute bg-brand-500 rounded-full h-full"
-                      data-orientation="horizontal"
-                      style="left: 0%; right: 100%;"
-                    />
-                  </span>
-                  <span
-                    style="transform: var(--radix-slider-thumb-transform); position: absolute; left: calc(0% + 0px);"
-                  >
-                    <span
-                      aria-label="Minimum"
-                      aria-orientation="horizontal"
-                      aria-valuemax="50"
-                      aria-valuemin="1"
-                      aria-valuenow="1"
-                      class="block h-4 w-4 -mt-1.5 bg-brand-500 transition-all ease-in-out duration-600 hover:bg-brand-600 focus:shadow-2xl focus-visible:outline-none rounded-full cursor-grab focus-visible:cursor-grabbing"
-                      data-orientation="horizontal"
-                      data-radix-collection-item=""
-                      role="slider"
-                      style=""
-                      tabindex="0"
-                    />
-                  </span>
-                  <span
-                    style="transform: var(--radix-slider-thumb-transform); position: absolute; left: calc(0% + 0px);"
-                  >
-                    <span
-                      aria-label="Maximum"
-                      aria-orientation="horizontal"
-                      aria-valuemax="50"
-                      aria-valuemin="1"
-                      aria-valuenow="1"
-                      class="block h-4 w-4 -mt-1.5 bg-brand-500 transition-all ease-in-out duration-600 hover:bg-brand-600 focus:shadow-2xl focus-visible:outline-none rounded-full cursor-grab focus-visible:cursor-grabbing"
-                      data-orientation="horizontal"
-                      data-radix-collection-item=""
-                      role="slider"
-                      style=""
-                      tabindex="0"
-                    />
-                  </span>
-                </span>
-                <input
-                  style="display: none;"
-                  value="1"
+                  style="left: 0%; right: 100%;"
                 />
-                <input
-                  style="display: none;"
-                  value="1"
-                />
-              </div>
-              <p
-                class="text-neutral-350 text-xs mt-3"
+              </span>
+              <span
+                style="transform: var(--radix-slider-thumb-transform); position: absolute; left: calc(0% + 0px);"
               >
-                Application auto-scaling is based on real-time CPU consumption. When your app goes above 60% (default) of CPU consumption for 5 minutes, your app will be auto-scaled and more instances will be added.
-              </p>
-            </div>
+                <span
+                  aria-label="Minimum"
+                  aria-orientation="horizontal"
+                  aria-valuemax="50"
+                  aria-valuemin="1"
+                  aria-valuenow="1"
+                  class="block h-4 w-4 -mt-1.5 bg-brand-500 transition-all ease-in-out duration-600 hover:bg-brand-600 focus:shadow-2xl focus-visible:outline-none rounded-full cursor-grab focus-visible:cursor-grabbing"
+                  data-orientation="horizontal"
+                  data-radix-collection-item=""
+                  role="slider"
+                  style=""
+                  tabindex="0"
+                />
+              </span>
+              <span
+                style="transform: var(--radix-slider-thumb-transform); position: absolute; left: calc(0% + 0px);"
+              >
+                <span
+                  aria-label="Maximum"
+                  aria-orientation="horizontal"
+                  aria-valuemax="50"
+                  aria-valuemin="1"
+                  aria-valuenow="1"
+                  class="block h-4 w-4 -mt-1.5 bg-brand-500 transition-all ease-in-out duration-600 hover:bg-brand-600 focus:shadow-2xl focus-visible:outline-none rounded-full cursor-grab focus-visible:cursor-grabbing"
+                  data-orientation="horizontal"
+                  data-radix-collection-item=""
+                  role="slider"
+                  style=""
+                  tabindex="0"
+                />
+              </span>
+            </span>
+            <input
+              style="display: none;"
+              value="1"
+            />
+            <input
+              style="display: none;"
+              value="1"
+            />
           </div>
-        </div>
+          <p
+            class="text-neutral-350 text-xs mt-3"
+          >
+            Application auto-scaling is based on real-time CPU consumption. When your app goes above 60% (default) of CPU consumption for 5 minutes, your app will be auto-scaled and more instances will be added.
+          </p>
+        </section>
         <div
           class="flex justify-end"
         >

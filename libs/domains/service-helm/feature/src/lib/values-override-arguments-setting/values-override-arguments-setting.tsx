@@ -177,6 +177,7 @@ export function ValuesOverrideArgumentsSetting({
           </p>
         </div>
         <Button
+          className="gap-2"
           size="lg"
           onClick={() =>
             append({
@@ -187,6 +188,7 @@ export function ValuesOverrideArgumentsSetting({
           }
         >
           Add variable
+          <Icon iconName="plus-circle" iconStyle="regular" />
         </Button>
       </div>
       <Popover.Root>
@@ -223,7 +225,7 @@ export function ValuesOverrideArgumentsSetting({
         </Popover.Content>
       </Popover.Root>
       <Button
-        size="lg"
+        size="md"
         variant="surface"
         color="neutral"
         className="mb-10"

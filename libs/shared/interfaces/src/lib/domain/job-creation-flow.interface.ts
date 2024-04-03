@@ -18,6 +18,8 @@ export interface JobGeneralData {
   image_name?: string
   image_tag?: string
   image_entry_point?: string
+  cmd_arguments?: string
+  cmd?: string[]
 
   // application
   build_mode?: keyof typeof BuildModeEnum
@@ -38,10 +40,6 @@ export interface JobConfigureData {
   nb_restarts?: number
   max_duration?: number
   port?: number
-
-  cmd_arguments?: string
-  cmd?: string[]
-  image_entry_point?: string
 
   on_stop?: {
     enabled?: boolean

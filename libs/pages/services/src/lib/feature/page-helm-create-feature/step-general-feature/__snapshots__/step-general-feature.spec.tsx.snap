@@ -21,27 +21,29 @@ exports[`StepGeneralFeature should submit a form with a git repository 1`] = `
           <section
             class="flex flex-col"
           >
-            <form>
-              <h1
-                class="text-neutral-400 text-xl font-bold mb-2"
-              >
-                General Data
-              </h1>
+            <h1
+              class="text-neutral-400 text-xl font-bold mb-2"
+            >
+              General information
+            </h1>
+            <form
+              class="space-y-10"
+            >
               <p
                 class="text-sm text-neutral-350"
               >
-                General settings allow you to set up the service name, the source and deployment parameters.
+                These general settings allow you to set up the service name, its source and deployment parameters.
               </p>
               <section
-                class="flex flex-col"
+                class="flex flex-col gap-4"
               >
                 <h2
-                  class="text-neutral-400 text-base font-bold mt-10 mb-3"
+                  class="text-neutral-400 text-base font-bold"
                 >
                   General
                 </h2>
                 <div
-                  class="mb-3"
+                  class=""
                   data-testid="input-text-wrapper"
                 >
                   <div
@@ -56,14 +58,14 @@ exports[`StepGeneralFeature should submit a form with a git repository 1`] = `
                       >
                         <label
                           class="text-sm translate-y-2"
-                          for="Helm chart name"
+                          for="Service name"
                         >
-                          Helm chart name
+                          Service name
                         </label>
                         <input
                           class="input__value "
                           data-testid="input-text"
-                          id="Helm chart name"
+                          id="Service name"
                           name="name"
                           type="text"
                           value="my-helm-app"
@@ -94,18 +96,13 @@ exports[`StepGeneralFeature should submit a form with a git repository 1`] = `
                 </div>
               </section>
               <section
-                class="flex flex-col"
+                class="flex flex-col gap-4"
               >
                 <h2
-                  class="text-neutral-400 text-base font-bold mt-10 mb-2"
+                  class="text-neutral-400 text-base font-bold"
                 >
                   Source
                 </h2>
-                <p
-                  class="text-sm text-neutral-350 mb-3"
-                >
-                  Deploy your helm chart from a Git repository or from a Helm repository.
-                </p>
                 <div
                   class="flex flex-col gap-3"
                 >
@@ -207,7 +204,7 @@ exports[`StepGeneralFeature should submit a form with a git repository 1`] = `
                   </div>
                 </div>
                 <div
-                  class="flex flex-col gap-3 mt-3"
+                  class="flex flex-col gap-3"
                 >
                   <div
                     class=""
@@ -335,18 +332,13 @@ exports[`StepGeneralFeature should submit a form with a git repository 1`] = `
                 </div>
               </section>
               <section
-                class="flex flex-col"
+                class="flex flex-col gap-4"
               >
                 <h2
-                  class="text-neutral-400 text-base font-bold mt-10 mb-2"
+                  class="text-neutral-400 text-base font-bold"
                 >
-                  Deployment
+                  Deploy
                 </h2>
-                <p
-                  class="text-sm text-neutral-350 mb-3"
-                >
-                  Define the deployment configuration of your service.
-                </p>
                 <div
                   class="flex flex-col gap-3"
                 >
@@ -465,7 +457,7 @@ exports[`StepGeneralFeature should submit a form with a git repository 1`] = `
                   </div>
                 </div>
                 <div
-                  class="flex  items-start mt-5 "
+                  class="flex  items-start  "
                   data-testid="input-toggle"
                 >
                   <div
@@ -505,10 +497,10 @@ exports[`StepGeneralFeature should submit a form with a git repository 1`] = `
                 </div>
               </section>
               <div
-                class="flex justify-between mt-10"
+                class="flex justify-between"
               >
                 <button
-                  class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-sm h-11 px-5 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent"
+                  class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 hover:[&:not(:focus-visible):not(:disabled)]:shadow-sm active:[&:not(:focus-visible)]:shadow-none outline-brand-500 text-sm h-11 px-5 rounded border border-transparent text-neutral-350 hover:[&:not(:active):not(:focus-visible)]:border-neutral-300 hover:[&:not(:disabled)]:text-neutral-400 focus-visible:text-neutral-400 active:bg-neutral-150 active:text-neutral-400 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none"
                   type="button"
                 >
                   Cancel
@@ -639,27 +631,29 @@ exports[`StepGeneralFeature should submit a form with a git repository 2`] = `
           <section
             class="flex flex-col"
           >
-            <form>
-              <h1
-                class="text-neutral-400 text-xl font-bold mb-2"
-              >
-                General Data
-              </h1>
+            <h1
+              class="text-neutral-400 text-xl font-bold mb-2"
+            >
+              General information
+            </h1>
+            <form
+              class="space-y-10"
+            >
               <p
                 class="text-sm text-neutral-350"
               >
-                General settings allow you to set up the service name, the source and deployment parameters.
+                These general settings allow you to set up the service name, its source and deployment parameters.
               </p>
               <section
-                class="flex flex-col"
+                class="flex flex-col gap-4"
               >
                 <h2
-                  class="text-neutral-400 text-base font-bold mt-10 mb-3"
+                  class="text-neutral-400 text-base font-bold"
                 >
                   General
                 </h2>
                 <div
-                  class="mb-3"
+                  class=""
                   data-testid="input-text-wrapper"
                 >
                   <div
@@ -674,14 +668,14 @@ exports[`StepGeneralFeature should submit a form with a git repository 2`] = `
                       >
                         <label
                           class="text-sm translate-y-2"
-                          for="Helm chart name"
+                          for="Service name"
                         >
-                          Helm chart name
+                          Service name
                         </label>
                         <input
                           class="input__value "
                           data-testid="input-text"
-                          id="Helm chart name"
+                          id="Service name"
                           name="name"
                           type="text"
                           value="my-helm-app"
@@ -712,18 +706,13 @@ exports[`StepGeneralFeature should submit a form with a git repository 2`] = `
                 </div>
               </section>
               <section
-                class="flex flex-col"
+                class="flex flex-col gap-4"
               >
                 <h2
-                  class="text-neutral-400 text-base font-bold mt-10 mb-2"
+                  class="text-neutral-400 text-base font-bold"
                 >
                   Source
                 </h2>
-                <p
-                  class="text-sm text-neutral-350 mb-3"
-                >
-                  Deploy your helm chart from a Git repository or from a Helm repository.
-                </p>
                 <div
                   class="flex flex-col gap-3"
                 >
@@ -825,7 +814,7 @@ exports[`StepGeneralFeature should submit a form with a git repository 2`] = `
                   </div>
                 </div>
                 <div
-                  class="flex flex-col gap-3 mt-3"
+                  class="flex flex-col gap-3"
                 >
                   <div
                     class=""
@@ -1047,8 +1036,8 @@ exports[`StepGeneralFeature should submit a form with a git repository 2`] = `
                     </p>
                   </div>
                   <div
-                    class="flex flex-row gap-x-3 p-3 border rounded border-yellow-600 bg-yellow-50 text-yellow-700 text-xs items-center"
-                    data-accent-color="yellow"
+                    class="flex flex-row gap-x-3 p-3 border rounded border-sky-500 bg-sky-50 text-sky-500 text-xs items-center"
+                    data-accent-color="sky"
                   >
                     <div
                       class="-order-2 text-base leading-6"
@@ -1067,18 +1056,13 @@ exports[`StepGeneralFeature should submit a form with a git repository 2`] = `
                 </div>
               </section>
               <section
-                class="flex flex-col"
+                class="flex flex-col gap-4"
               >
                 <h2
-                  class="text-neutral-400 text-base font-bold mt-10 mb-2"
+                  class="text-neutral-400 text-base font-bold"
                 >
-                  Deployment
+                  Deploy
                 </h2>
-                <p
-                  class="text-sm text-neutral-350 mb-3"
-                >
-                  Define the deployment configuration of your service.
-                </p>
                 <div
                   class="flex flex-col gap-3"
                 >
@@ -1197,7 +1181,7 @@ exports[`StepGeneralFeature should submit a form with a git repository 2`] = `
                   </div>
                 </div>
                 <div
-                  class="flex  items-start mt-5 "
+                  class="flex  items-start  "
                   data-testid="input-toggle"
                 >
                   <div
@@ -1237,10 +1221,10 @@ exports[`StepGeneralFeature should submit a form with a git repository 2`] = `
                 </div>
               </section>
               <div
-                class="flex justify-between mt-10"
+                class="flex justify-between"
               >
                 <button
-                  class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-sm h-11 px-5 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent"
+                  class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 hover:[&:not(:focus-visible):not(:disabled)]:shadow-sm active:[&:not(:focus-visible)]:shadow-none outline-brand-500 text-sm h-11 px-5 rounded border border-transparent text-neutral-350 hover:[&:not(:active):not(:focus-visible)]:border-neutral-300 hover:[&:not(:disabled)]:text-neutral-400 focus-visible:text-neutral-400 active:bg-neutral-150 active:text-neutral-400 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none"
                   type="button"
                 >
                   Cancel
@@ -1371,27 +1355,29 @@ exports[`StepGeneralFeature should submit a form with a helm repository and matc
           <section
             class="flex flex-col"
           >
-            <form>
-              <h1
-                class="text-neutral-400 text-xl font-bold mb-2"
-              >
-                General Data
-              </h1>
+            <h1
+              class="text-neutral-400 text-xl font-bold mb-2"
+            >
+              General information
+            </h1>
+            <form
+              class="space-y-10"
+            >
               <p
                 class="text-sm text-neutral-350"
               >
-                General settings allow you to set up the service name, the source and deployment parameters.
+                These general settings allow you to set up the service name, its source and deployment parameters.
               </p>
               <section
-                class="flex flex-col"
+                class="flex flex-col gap-4"
               >
                 <h2
-                  class="text-neutral-400 text-base font-bold mt-10 mb-3"
+                  class="text-neutral-400 text-base font-bold"
                 >
                   General
                 </h2>
                 <div
-                  class="mb-3"
+                  class=""
                   data-testid="input-text-wrapper"
                 >
                   <div
@@ -1406,14 +1392,14 @@ exports[`StepGeneralFeature should submit a form with a helm repository and matc
                       >
                         <label
                           class="text-sm translate-y-2"
-                          for="Helm chart name"
+                          for="Service name"
                         >
-                          Helm chart name
+                          Service name
                         </label>
                         <input
                           class="input__value "
                           data-testid="input-text"
-                          id="Helm chart name"
+                          id="Service name"
                           name="name"
                           type="text"
                           value="my-helm-app"
@@ -1446,18 +1432,13 @@ exports[`StepGeneralFeature should submit a form with a helm repository and matc
                 </div>
               </section>
               <section
-                class="flex flex-col"
+                class="flex flex-col gap-4"
               >
                 <h2
-                  class="text-neutral-400 text-base font-bold mt-10 mb-2"
+                  class="text-neutral-400 text-base font-bold"
                 >
                   Source
                 </h2>
-                <p
-                  class="text-sm text-neutral-350 mb-3"
-                >
-                  Deploy your helm chart from a Git repository or from a Helm repository.
-                </p>
                 <div
                   class="flex flex-col gap-3"
                 >
@@ -1572,18 +1553,13 @@ exports[`StepGeneralFeature should submit a form with a helm repository and matc
                 </div>
               </section>
               <section
-                class="flex flex-col"
+                class="flex flex-col gap-4"
               >
                 <h2
-                  class="text-neutral-400 text-base font-bold mt-10 mb-2"
+                  class="text-neutral-400 text-base font-bold"
                 >
-                  Deployment
+                  Deploy
                 </h2>
-                <p
-                  class="text-sm text-neutral-350 mb-3"
-                >
-                  Define the deployment configuration of your service.
-                </p>
                 <div
                   class="flex flex-col gap-3"
                 >
@@ -1703,7 +1679,7 @@ exports[`StepGeneralFeature should submit a form with a helm repository and matc
                   </div>
                 </div>
                 <div
-                  class="flex flex-row gap-x-3 p-3 border rounded text-sm border-sky-500 bg-sky-50 text-sky-500 mt-5"
+                  class="flex flex-row gap-x-3 p-3 border rounded border-sky-500 bg-sky-50 text-sky-500 mt-5 text-xs items-center"
                   data-accent-color="sky"
                 >
                   <div
@@ -1711,25 +1687,25 @@ exports[`StepGeneralFeature should submit a form with a helm repository and matc
                   >
                     <i
                       aria-hidden="true"
-                      class="fa-solid fa-circle-info "
+                      class="fa-regular fa-circle-info "
                     />
                   </div>
                   <div
-                    class="-order-1 mr-auto gap-x-3 text-neutral-400 text-xs"
+                    class="-order-1 mr-auto gap-x-3 text-neutral-400"
                   >
                     <span
                       class="block font-medium leading-6"
                     >
-                      Auto-deploy is not available for helms coming from helm repositories
+                      Git automations are disabled when using Helm repositories (auto-deploy, automatic preview environments)
                     </span>
                   </div>
                 </div>
               </section>
               <div
-                class="flex justify-between mt-10"
+                class="flex justify-between"
               >
                 <button
-                  class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-sm h-11 px-5 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent"
+                  class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 hover:[&:not(:focus-visible):not(:disabled)]:shadow-sm active:[&:not(:focus-visible)]:shadow-none outline-brand-500 text-sm h-11 px-5 rounded border border-transparent text-neutral-350 hover:[&:not(:active):not(:focus-visible)]:border-neutral-300 hover:[&:not(:disabled)]:text-neutral-400 focus-visible:text-neutral-400 active:bg-neutral-150 active:text-neutral-400 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none"
                   type="button"
                 >
                   Cancel

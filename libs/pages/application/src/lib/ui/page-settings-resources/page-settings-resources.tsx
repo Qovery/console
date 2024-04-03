@@ -22,7 +22,7 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
         <p className="text-sm text-neutral-400 max-w-content-with-navigation-left mb-8">
           Manage the resources assigned to the service.
         </p>
-        <form onSubmit={onSubmit}>
+        <form className="space-y-10" onSubmit={onSubmit}>
           <ApplicationSettingsResources displayWarningCpu={displayWarningCpu} service={service} />
           <div className="flex justify-end">
             <Button type="submit" size="lg" loading={loading} disabled={!formState.isValid}>

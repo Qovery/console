@@ -86,7 +86,7 @@ export function GitPublicRepositorySettings({ disabled = false, hideRootPath }: 
           Provide the path in the repository where the application is located
         </p>
       </div>
-      <Callout.Root color="yellow" className="text-xs items-center">
+      <Callout.Root color="sky" className="text-xs items-center">
         <Callout.Icon>
           <Icon iconName="info-circle" iconStyle="regular" />
         </Callout.Icon>

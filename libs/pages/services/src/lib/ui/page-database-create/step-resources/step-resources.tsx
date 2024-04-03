@@ -2,7 +2,7 @@ import { type DatabaseTypeEnum } from 'qovery-typescript-axios'
 import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { DatabaseSettingsResources } from '@qovery/shared/console-shared'
-import { ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle, Heading, Section } from '@qovery/shared/ui'
+import { Button, Heading, Section } from '@qovery/shared/ui'
 import { type ResourcesData } from '../../../feature/page-database-create-feature/database-creation-flow.interface'
 
 export interface StepResourcesProps {
@@ -17,35 +17,22 @@ export function StepResources({ onSubmit, isManaged, onBack, databaseType }: Ste
 
   return (
     <Section>
-      <div className="mb-10">
-        <Heading className="mb-2">Set resources</Heading>
-        <p className="text-sm text-neutral-400 max-w-content-with-navigation-left">
-          You can customize some of the resources assigned to the database.
-        </p>
-      </div>
+      <Heading className="mb-2">General information</Heading>
+      <form className="space-y-10" onSubmit={onSubmit}>
+        <p className="text-neutral-350 text-sm">Customize the resources assigned to the service.</p>
 
-      <form onSubmit={onSubmit}>
-        <DatabaseSettingsResources isDatabase isManaged={isManaged} databaseType={databaseType} />
+        <Section className="gap-4">
+          <Heading>Resources configuration</Heading>
+          <DatabaseSettingsResources isDatabase isManaged={isManaged} databaseType={databaseType} />
+        </Section>
 
         <div className="flex justify-between">
-          <ButtonLegacy
-            onClick={onBack}
-            className="btn--no-min-w"
-            type="button"
-            size={ButtonLegacySize.XLARGE}
-            style={ButtonLegacyStyle.STROKED}
-          >
+          <Button onClick={onBack} type="button" size="lg" variant="plain">
             Back
-          </ButtonLegacy>
-          <ButtonLegacy
-            dataTestId="button-submit"
-            type="submit"
-            disabled={!formState.isValid}
-            size={ButtonLegacySize.XLARGE}
-            style={ButtonLegacyStyle.BASIC}
-          >
+          </Button>
+          <Button data-testid="button-submit" type="submit" disabled={!formState.isValid} size="lg">
             Continue
-          </ButtonLegacy>
+          </Button>
         </div>
       </form>
     </Section>

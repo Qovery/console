@@ -88,8 +88,9 @@ export function NetworkingSetting({ ports, onUpdatePorts, children }: Networking
             </Popover.Content>
           </Popover.Root>
         </div>
-        <Button size="lg" variant="solid" color="brand" onClick={onAddPort}>
+        <Button className="gap-2" size="lg" variant="solid" color="brand" onClick={onAddPort}>
           Add port
+          <Icon iconName="plus-circle" iconStyle="regular" />
         </Button>
       </div>
       <form className="w-full">

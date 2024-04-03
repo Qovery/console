@@ -3,14 +3,12 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { ContainerRegistryCreateEditModal, useContainerRegistries } from '@qovery/domains/organizations/feature'
 import { SETTINGS_CONTAINER_REGISTRIES_URL, SETTINGS_URL } from '@qovery/shared/routes'
 import { InputSelect, InputText, Link, useModal } from '@qovery/shared/ui'
-import { twMerge } from '@qovery/shared/util-js'
 
 export interface GeneralContainerSettingsProps {
   organization?: Organization
-  className?: string
 }
 
-export function GeneralContainerSettings({ organization, className }: GeneralContainerSettingsProps) {
+export function GeneralContainerSettings({ organization }: GeneralContainerSettingsProps) {
   const { control } = useFormContext<{
     registry?: string
     image_name?: string
@@ -20,7 +18,7 @@ export function GeneralContainerSettings({ organization, className }: GeneralCon
   const { data: containerRegistries = [] } = useContainerRegistries({ organizationId: organization?.id ?? '' })
 
   return (
-    <div className={twMerge('mb-6 flex flex-col gap-3', className)}>
+    <>
       <div>
         <Controller
           name="registry"
@@ -67,46 +65,42 @@ export function GeneralContainerSettings({ organization, className }: GeneralCon
           </Link>
         </p>
       </div>
-      <div>
-        <Controller
-          name="image_name"
-          control={control}
-          rules={{
-            required: 'Please type a value.',
-          }}
-          render={({ field, fieldState: { error } }) => (
-            <InputText
-              dataTestId="input-text-image-name"
-              name="image_name"
-              onChange={field.onChange}
-              value={field.value}
-              label="Image name"
-              error={error?.message}
-            />
-          )}
-        />
-      </div>
-      <div>
-        <Controller
-          name="image_tag"
-          control={control}
-          rules={{
-            required: 'Please type a value.',
-          }}
-          render={({ field, fieldState: { error } }) => (
-            <InputText
-              dataTestId="input-text-image-tag"
-              name="image_tag"
-              onChange={field.onChange}
-              value={field.value}
-              label="Image tag"
-              error={error?.message}
-            />
-          )}
-        />
-        <p className="text-xs ml-4 mt-1 text-neutral-350">Image tag shall be unique (no ‘main’, ‘dev’, ‘master’)</p>
-      </div>
-    </div>
+      <Controller
+        name="image_name"
+        control={control}
+        rules={{
+          required: 'Please type a value.',
+        }}
+        render={({ field, fieldState: { error } }) => (
+          <InputText
+            dataTestId="input-text-image-name"
+            name="image_name"
+            onChange={field.onChange}
+            value={field.value}
+            label="Image name"
+            error={error?.message}
+          />
+        )}
+      />
+      <Controller
+        name="image_tag"
+        control={control}
+        rules={{
+          required: 'Please type a value.',
+        }}
+        render={({ field, fieldState: { error } }) => (
+          <InputText
+            dataTestId="input-text-image-tag"
+            name="image_tag"
+            onChange={field.onChange}
+            value={field.value}
+            label="Image tag"
+            hint="Image tag shall be unique (no ‘main’, ‘dev’, ‘master’)"
+            error={error?.message}
+          />
+        )}
+      />
+    </>
   )
 }
 

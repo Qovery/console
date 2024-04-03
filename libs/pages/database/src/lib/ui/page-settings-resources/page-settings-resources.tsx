@@ -3,16 +3,7 @@ import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { type Database } from '@qovery/domains/services/data-access'
 import { DatabaseSettingsResources } from '@qovery/shared/console-shared'
-import {
-  ButtonLegacy,
-  ButtonLegacySize,
-  ButtonLegacyStyle,
-  Callout,
-  Heading,
-  HelpSection,
-  Icon,
-  Section,
-} from '@qovery/shared/ui'
+import { Button, Callout, Heading, HelpSection, Icon, Section } from '@qovery/shared/ui'
 
 export interface PageSettingsResourcesProps {
   onSubmit: FormEventHandler<HTMLFormElement>
@@ -39,9 +30,9 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
         <p className="text-sm text-neutral-400 max-w-content-with-navigation-left mb-8">
           Manage the database's resources
         </p>
-        <form onSubmit={onSubmit}>
+        <form className="space-y-10" onSubmit={onSubmit}>
           {database.mode === DatabaseModeEnum.MANAGED && (
-            <Callout.Root className="mb-5" color="yellow">
+            <Callout.Root color="yellow">
               <Callout.Icon>
                 <Icon iconName="triangle-exclamation" />
               </Callout.Icon>
@@ -56,26 +47,21 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
             </Callout.Root>
           )}
 
-          <DatabaseSettingsResources
-            database={database}
-            clusterId={clusterId}
-            isManaged={database.mode === DatabaseModeEnum.MANAGED}
-            displayInstanceTypesWarning={displayInstanceTypesWarning}
-            displayStorageWarning={displayStorageWarning}
-          />
+          <Section className="gap-4">
+            <Heading>Resources configuration</Heading>
+            <DatabaseSettingsResources
+              database={database}
+              clusterId={clusterId}
+              isManaged={database.mode === DatabaseModeEnum.MANAGED}
+              displayInstanceTypesWarning={displayInstanceTypesWarning}
+              displayStorageWarning={displayStorageWarning}
+            />
+          </Section>
 
           <div className="flex justify-end">
-            <ButtonLegacy
-              dataTestId="submit-button"
-              className="btn--no-min-w"
-              size={ButtonLegacySize.LARGE}
-              style={ButtonLegacyStyle.BASIC}
-              type="submit"
-              disabled={!formState.isValid}
-              loading={loading}
-            >
+            <Button data-testid="submit-button" size="lg" type="submit" disabled={!formState.isValid} loading={loading}>
               Save
-            </ButtonLegacy>
+            </Button>
           </div>
         </form>
       </Section>

@@ -76,14 +76,13 @@ export function PageSettingsGeneral({
               </Callout.Text>
             </Callout.Root>
           )}
-          <BlockContent title="General information">
+          <BlockContent title="General information" classNameContent="flex flex-col gap-3">
             <GeneralSetting label="Database name" />
             <Controller
               name="type"
               control={control}
               render={({ field, fieldState: { error } }) => (
                 <InputSelect
-                  className="my-3"
                   label="Type"
                   options={databasesType}
                   onChange={field.onChange}
@@ -97,7 +96,7 @@ export function PageSettingsGeneral({
               name="mode"
               control={control}
               render={({ field, fieldState: { error } }) => (
-                <div className="mb-3">
+                <div>
                   <InputSelect
                     label="Database mode"
                     options={databasesMode}
@@ -121,7 +120,7 @@ export function PageSettingsGeneral({
                 <LoaderSpinner className="w-4" />
               </div>
             ) : (
-              <div className="mb-3">
+              <>
                 <Controller
                   name="version"
                   control={control}
@@ -136,7 +135,7 @@ export function PageSettingsGeneral({
                     />
                   )}
                 />
-                <Callout.Root className="mt-3" color="yellow">
+                <Callout.Root color="yellow">
                   <Callout.Icon>
                     <Icon iconName="circle-info" />
                   </Callout.Icon>
@@ -159,7 +158,7 @@ export function PageSettingsGeneral({
                     </Callout.Text>
                   )}
                 </Callout.Root>
-              </div>
+              </>
             )}
             <Controller
               name="accessibility"

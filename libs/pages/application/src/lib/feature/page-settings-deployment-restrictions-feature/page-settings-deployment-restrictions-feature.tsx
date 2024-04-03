@@ -8,12 +8,13 @@ import {
 } from '@qovery/domains/services/feature'
 import {
   BlockContent,
+  Button,
   ButtonIcon,
   ButtonIconStyle,
-  ButtonLegacy,
   EmptyState,
   Heading,
   HelpSection,
+  Icon,
   IconAwesomeEnum,
   InputText,
   LoaderSpinner,
@@ -51,17 +52,19 @@ export function PageSettingsDeploymentRestrictionsFeature() {
             </p>
           </div>
           {!isLoadingServiceType && isValidServiceType && (
-            <ButtonLegacy
-              dataTestId="add-button"
+            <Button
+              data-testid="add-button"
+              size="lg"
+              className="gap-2"
               onClick={() => {
                 openModal({
                   content: <CrudModalFeature onClose={closeModal} serviceId={serviceId} serviceType={serviceType} />,
                 })
               }}
-              iconRight={IconAwesomeEnum.CIRCLE_PLUS}
             >
               New Restriction
-            </ButtonLegacy>
+              <Icon iconName="plus-circle" iconStyle="regular" />
+            </Button>
           )}
         </div>
 

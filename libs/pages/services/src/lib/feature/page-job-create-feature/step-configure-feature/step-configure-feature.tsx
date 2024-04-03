@@ -67,17 +67,6 @@ export function StepConfigureFeature() {
       ...data,
     }
 
-    if (jobType === ServiceTypeEnum.CRON_JOB) {
-      if (data.cmd_arguments) {
-        try {
-          cloneData.cmd = eval(data.cmd_arguments)
-        } catch (e: unknown) {
-          toastError(e as Error, 'Invalid CMD array')
-          return
-        }
-      }
-    }
-
     if (jobType === ServiceTypeEnum.LIFECYCLE_JOB) {
       if (cloneData.on_start?.enabled && cloneData.on_start?.arguments_string) {
         try {

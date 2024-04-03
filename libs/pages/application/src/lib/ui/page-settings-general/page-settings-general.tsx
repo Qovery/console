@@ -89,20 +89,23 @@ export function PageSettingsGeneral({
           )}
         />
       ) : (
-        <Controller
-          name="dockerfile_path"
-          control={control}
-          render={({ field, fieldState: { error } }) => (
-            <InputText
-              dataTestId="input-text-dockerfile"
-              name={field.name}
-              onChange={field.onChange}
-              value={field.value}
-              label="Dockerfile path"
-              error={error?.message}
-            />
-          )}
-        />
+        <>
+          <Controller
+            name="dockerfile_path"
+            control={control}
+            render={({ field, fieldState: { error } }) => (
+              <InputText
+                dataTestId="input-text-dockerfile"
+                name={field.name}
+                onChange={field.onChange}
+                value={field.value}
+                label="Dockerfile path"
+                error={error?.message}
+              />
+            )}
+          />
+          {service?.serviceType === 'JOB' && service.job_type === 'CRON' && <EntrypointCmdInputs />}
+        </>
       )}
     </BlockContent>
   )
@@ -112,7 +115,7 @@ export function PageSettingsGeneral({
       <Section className="p-8 max-w-content-with-navigation-left">
         <Heading className="mb-8">General settings</Heading>
         <form onSubmit={onSubmit}>
-          <BlockContent title="General information">
+          <BlockContent title="General information" classNameContent="flex flex-col gap-3">
             <GeneralSetting label="Application name" />
           </BlockContent>
           {match(service)
@@ -129,7 +132,7 @@ export function PageSettingsGeneral({
                     {blockContentBuildDeploy}
                   </>
                 ) : (
-                  <BlockContent title="Container Settings">
+                  <BlockContent title="Container Settings" classNameContent="space-y-4">
                     <GeneralContainerSettings organization={organization} />
                   </BlockContent>
                 )}
@@ -143,7 +146,7 @@ export function PageSettingsGeneral({
                 <EditGitRepositorySettingsFeature />
                 {blockContentBuildDeploy}
                 {watchBuildMode === BuildModeEnum.DOCKER && (
-                  <BlockContent title="Entrypoint and arguments">
+                  <BlockContent title="Entrypoint and arguments" classNameContent="space-y-4">
                     <EntrypointCmdInputs />
                   </BlockContent>
                 )}
@@ -155,10 +158,10 @@ export function PageSettingsGeneral({
             ))
             .with({ serviceType: 'CONTAINER' }, () => (
               <>
-                <BlockContent title="Container Settings">
+                <BlockContent title="Container Settings" classNameContent="space-y-4">
                   <GeneralContainerSettings organization={organization} />
                 </BlockContent>
-                <BlockContent title="Entrypoint and arguments">
+                <BlockContent title="Entrypoint and arguments" classNameContent="space-y-4">
                   <EntrypointCmdInputs />
                 </BlockContent>
                 <BlockContent title="Auto-deploy">
@@ -180,13 +183,14 @@ export function PageSettingsGeneral({
                   <DeploymentSetting />
                   {watchFieldProvider === 'GIT' && <AutoDeploySetting source="GIT" className="mt-5" />}
                   {watchFieldProvider === 'HELM_REPOSITORY' && (
-                    <Callout.Root color="sky" className="mt-5">
+                    <Callout.Root color="sky" className="mt-5 text-xs items-center">
                       <Callout.Icon>
-                        <Icon iconName="circle-info" />
+                        <Icon iconName="circle-info" iconStyle="regular" />
                       </Callout.Icon>
-                      <Callout.Text className="text-xs">
+                      <Callout.Text>
                         <Callout.TextHeading>
-                          Auto-deploy is not available for helms coming from helm repositories
+                          Git automations are disabled when using Helm repositories (auto-deploy, automatic preview
+                          environments)
                         </Callout.TextHeading>
                       </Callout.Text>
                     </Callout.Root>
