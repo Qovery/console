@@ -37,7 +37,7 @@ export function InputSearch({ data, value, onChange, placeholder, trimLabel }: I
         onClick={() => {
           reset()
           onChange(undefined)
-          // set timeout is necessary to allow focused input
+          // Timeout is necessary to allow focused input
           setTimeout(() => inputRef.current?.focus(), 50)
         }}
       >
