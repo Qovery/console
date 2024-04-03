@@ -27,8 +27,14 @@ export function Container({ service, environment, children }: PropsWithChildren<
   const { data: cluster } = useCluster({ organizationId, clusterId: environment?.cluster_id || '' })
 
   const headerActions = (
-    <div className="flex flex-col gap-3">
-      <div className="flex flex-row gap-2">
+    <div className="flex flex-row items-center gap-4">
+      <Skeleton width={150} height={36} show={!service}>
+        <div className="flex">
+          {environment && service && <ServiceActionToolbar serviceId={service.id} environment={environment} />}
+        </div>
+      </Skeleton>
+      <div className="w-px h-4 bg-neutral-250" />
+      <div className="flex flex-row items-center gap-2">
         {environment && (
           <Skeleton width={80} height={22} show={!environment?.mode}>
             <EnvironmentMode size="xs" mode={environment.mode} />
@@ -49,11 +55,6 @@ export function Container({ service, environment, children }: PropsWithChildren<
           </Tooltip>
         </Skeleton>
       </div>
-      <Skeleton width={150} height={36} show={!service}>
-        <div className="flex">
-          {environment && service && <ServiceActionToolbar serviceId={service.id} environment={environment} />}
-        </div>
-      </Skeleton>
     </div>
   )
 
