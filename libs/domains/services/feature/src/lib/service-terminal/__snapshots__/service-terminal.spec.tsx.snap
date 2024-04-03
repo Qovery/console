@@ -7,9 +7,11 @@ exports[`ServiceTerminal should match snapshot 1`] = `
     class="fixed bottom-0 left-0 w-full animate-slidein-up-md-faded"
   >
     <div
-      class="flex justify-between h-11 px-4 py-2 bg-neutral-650"
+      class="flex justify-between h-11 px-4 py-2 bg-neutral-650 border-y border-neutral-500"
     >
-      <span />
+      <div
+        class="flex gap-2"
+      />
       <button
         class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded bg-neutral-500 active:bg-neutral-600 hover:bg-neutral-400 text-white disabled:text-neutral-300 disabled:bg-neutral-100"
       >
@@ -21,7 +23,7 @@ exports[`ServiceTerminal should match snapshot 1`] = `
       </button>
     </div>
     <div
-      class="bg-neutral-700 px-4 py-2  min-h-[272px]"
+      class="bg-neutral-700 px-4 py-2 min-h-[272px]"
     >
       <div
         class="flex items-start justify-center p-5 h-40"

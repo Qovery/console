@@ -1,0 +1,119 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`InputSearch should match snapshot 1`] = `
+<body>
+  <div>
+    <div
+      class="relative z-10"
+    >
+      <button
+        class="items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded bg-neutral-500 active:bg-neutral-600 hover:bg-neutral-400 text-white disabled:text-neutral-300 disabled:bg-neutral-100 hidden"
+      >
+        my-value
+        <span>
+          <i
+            aria-hidden="true"
+            class="fa-solid fa-xmark ml-2 text-sm"
+          />
+        </span>
+      </button>
+      <div
+        class=""
+      >
+        <i
+          aria-hidden="true"
+          class="fa-solid fa-magnifying-glass text-neutral-50 absolute left-2.5 top-1.5 text-xs"
+        />
+        <input
+          aria-activedescendant=""
+          aria-autocomplete="list"
+          aria-controls="downshift-:r6:-menu"
+          aria-expanded="false"
+          aria-labelledby="downshift-:r6:-label"
+          autocomplete="off"
+          class="w-56 h-7 bg-transparent text-xs text-neutral-250 rounded pl-7 pr-2 border border-neutral-350 focus:outline-none focus:border-brand-400"
+          id="downshift-:r6:-input"
+          placeholder="placeholder"
+          role="combobox"
+          value=""
+        />
+      </div>
+      <div
+        class="mt-1 bg-neutral-600 p-2 rounded w-full max-h-40 overflow-hidden min-w-56 hidden"
+      >
+        <ul
+          aria-labelledby="downshift-:r6:-label"
+          class="overflow-scroll"
+          id="downshift-:r6:-menu"
+          role="listbox"
+        >
+          <p
+            class="w-full text-center text-neutral-50 text-xs text-medium"
+          >
+            No results found
+          </p>
+        </ul>
+      </div>
+    </div>
+  </div>
+</body>
+`;
+
+exports[`InputSearch should match with snapshot 1`] = `
+<body>
+  <div>
+    <div
+      class="relative z-10"
+    >
+      <button
+        class="items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded bg-neutral-500 active:bg-neutral-600 hover:bg-neutral-400 text-white disabled:text-neutral-300 disabled:bg-neutral-100 hidden"
+      >
+        my-value
+        <span>
+          <i
+            aria-hidden="true"
+            class="fa-solid fa-xmark ml-2 text-sm"
+          />
+        </span>
+      </button>
+      <div
+        class=""
+      >
+        <i
+          aria-hidden="true"
+          class="fa-solid fa-magnifying-glass text-neutral-50 absolute left-2.5 top-1.5 text-xs"
+        />
+        <input
+          aria-activedescendant=""
+          aria-autocomplete="list"
+          aria-controls="downshift-:rd:-menu"
+          aria-expanded="false"
+          aria-labelledby="downshift-:rd:-label"
+          autocomplete="off"
+          class="w-56 h-7 bg-transparent text-xs text-neutral-250 rounded pl-7 pr-2 border border-neutral-350 focus:outline-none focus:border-brand-400"
+          id="downshift-:rd:-input"
+          placeholder="placeholder"
+          role="combobox"
+          value=""
+        />
+      </div>
+      <div
+        class="mt-1 bg-neutral-600 p-2 rounded w-full max-h-40 overflow-hidden min-w-56 hidden"
+      >
+        <ul
+          aria-labelledby="downshift-:rd:-label"
+          class="overflow-scroll"
+          id="downshift-:rd:-menu"
+          role="listbox"
+        >
+          <p
+            class="w-full text-center text-neutral-50 text-xs text-medium"
+          >
+            No results found
+          </p>
+        </ul>
+      </div>
+    </div>
+  </div>
+</body>
+`;

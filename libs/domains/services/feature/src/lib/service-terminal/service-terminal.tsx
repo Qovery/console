@@ -4,6 +4,8 @@ import { useCallback, useContext, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Button, Icon, LoaderSpinner, XTerm, toast } from '@qovery/shared/ui'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
+import { useRunningStatus } from '../..'
+import { InputSearch } from './input-search/input-search'
 import { ServiceTerminalContext } from './service-terminal-provider'
 
 export interface ServiceTerminalProps {
@@ -21,9 +23,14 @@ export function ServiceTerminal({
   environmentId,
   serviceId,
 }: ServiceTerminalProps) {
+  const { data: runningStatuses, isLoading: isRunningStatusesLoading } = useRunningStatus({ environmentId, serviceId })
+
   const { setOpen } = useContext(ServiceTerminalContext)
   const [attachAddon, setAttachAddon] = useState<AttachAddon | undefined>(undefined)
   const [websocketOpen, setWebsocketOpen] = useState(false)
+
+  const [selectedPod, setSelectedPod] = useState<string | undefined>()
+  const [selectedContainer, setSelectedContainer] = useState<string | undefined>()
 
   const onOpenHandler = useCallback(
     (_: QueryClient, event: Event) => {
@@ -52,6 +59,8 @@ export function ServiceTerminal({
       project: projectId,
       environment: environmentId,
       service: serviceId,
+      pod_name: selectedPod,
+      container_name: selectedContainer,
     },
     onOpen: onOpenHandler,
     onClose: onCloseHandler,
@@ -59,16 +68,37 @@ export function ServiceTerminal({
 
   return createPortal(
     <div className="fixed bottom-0 left-0 w-full animate-slidein-up-md-faded">
-      <div className="flex justify-between h-11 px-4 py-2 bg-neutral-650">
-        {/* TODO: add pod_name select */}
-        <span></span>
+      <div className="flex justify-between h-11 px-4 py-2 bg-neutral-650 border-y border-neutral-500">
+        <div className="flex gap-2">
+          {runningStatuses && runningStatuses.pods.length > 0 && (
+            <InputSearch
+              value={selectedPod}
+              onChange={setSelectedPod}
+              data={runningStatuses.pods.map((pod) => pod.name)}
+              placeholder="Search by pod"
+              trimLabel
+            />
+          )}
+          {runningStatuses && selectedPod && (
+            <InputSearch
+              value={selectedContainer}
+              onChange={setSelectedContainer}
+              data={
+                runningStatuses.pods
+                  .find((pod) => selectedPod === pod?.name)
+                  ?.containers.map((container) => container?.name) || []
+              }
+              placeholder="Search by container"
+            />
+          )}
+        </div>
         <Button color="neutral" onClick={() => setOpen(false)}>
           Close shell
           <Icon iconName="xmark" className="ml-2 text-sm" />
         </Button>
       </div>
-      <div className="bg-neutral-700 px-4 py-2  min-h-[272px]">
-        {attachAddon && websocketOpen ? (
+      <div className="bg-neutral-700 px-4 py-2 min-h-[272px]">
+        {attachAddon && websocketOpen && !isRunningStatusesLoading ? (
           <XTerm addons={[attachAddon]} />
         ) : (
           <div className="flex items-start justify-center p-5 h-40">
