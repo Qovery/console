@@ -78,7 +78,7 @@ export function StepValuesOverrideArgumentsFeature() {
       <FormProvider {...valuesOverrideArgumentsForm}>
         <ValuesOverrideArgumentsSetting methods={valuesOverrideArgumentsForm} onSubmit={onSubmit} source={source}>
           <div className="flex justify-between mt-10">
-            <Button type="button" size="lg" variant="surface" color="neutral" onClick={() => navigate(-1)}>
+            <Button type="button" size="lg" variant="plain" color="neutral" onClick={() => navigate(-1)}>
               Back
             </Button>
             <div className="flex gap-3">

@@ -77,7 +77,7 @@ export function StepGeneral({
 
         <Section className="gap-4">
           <Heading>General</Heading>
-          <GeneralSetting label="Database name" />
+          <GeneralSetting label="Service name" />
         </Section>
 
         <BlockContent title="Database mode" className="mb-0">

@@ -66,6 +66,10 @@ export function StepSummary({
                   {generalData.description}
                 </li>
               )}
+              <div className="py-2">
+                <hr className="border-t border-dashed border-neutral-250" />
+              </div>
+
               {generalData.serviceType === 'APPLICATION' && (
                 <>
                   <li>

@@ -94,7 +94,7 @@ export function StepGeneralFeature() {
             </p>
             <Section className="gap-4">
               <Heading>General</Heading>
-              <GeneralSetting label="Helm chart name" />
+              <GeneralSetting label="Service name" />
             </Section>
             <Section className="gap-4">
               <Heading>Source</Heading>
@@ -140,7 +140,7 @@ export function StepGeneralFeature() {
                 type="button"
                 size="lg"
                 color="neutral"
-                variant="surface"
+                variant="plain"
                 onClick={() => navigate(SERVICES_URL(organizationId, projectId, environmentId))}
               >
                 Cancel

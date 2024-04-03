@@ -58,14 +58,14 @@ exports[`StepGeneralFeature should submit a form with a git repository 1`] = `
                       >
                         <label
                           class="text-sm translate-y-2"
-                          for="Helm chart name"
+                          for="Service name"
                         >
-                          Helm chart name
+                          Service name
                         </label>
                         <input
                           class="input__value "
                           data-testid="input-text"
-                          id="Helm chart name"
+                          id="Service name"
                           name="name"
                           type="text"
                           value="my-helm-app"
@@ -500,7 +500,7 @@ exports[`StepGeneralFeature should submit a form with a git repository 1`] = `
                 class="flex justify-between"
               >
                 <button
-                  class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-sm h-11 px-5 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent"
+                  class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 hover:[&:not(:focus-visible):not(:disabled)]:shadow-sm active:[&:not(:focus-visible)]:shadow-none outline-brand-500 text-sm h-11 px-5 rounded border border-transparent text-neutral-350 hover:[&:not(:active):not(:focus-visible)]:border-neutral-300 hover:[&:not(:disabled)]:text-neutral-400 focus-visible:text-neutral-400 active:bg-neutral-150 active:text-neutral-400 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none"
                   type="button"
                 >
                   Cancel
@@ -668,14 +668,14 @@ exports[`StepGeneralFeature should submit a form with a git repository 2`] = `
                       >
                         <label
                           class="text-sm translate-y-2"
-                          for="Helm chart name"
+                          for="Service name"
                         >
-                          Helm chart name
+                          Service name
                         </label>
                         <input
                           class="input__value "
                           data-testid="input-text"
-                          id="Helm chart name"
+                          id="Service name"
                           name="name"
                           type="text"
                           value="my-helm-app"
@@ -1224,7 +1224,7 @@ exports[`StepGeneralFeature should submit a form with a git repository 2`] = `
                 class="flex justify-between"
               >
                 <button
-                  class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-sm h-11 px-5 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent"
+                  class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 hover:[&:not(:focus-visible):not(:disabled)]:shadow-sm active:[&:not(:focus-visible)]:shadow-none outline-brand-500 text-sm h-11 px-5 rounded border border-transparent text-neutral-350 hover:[&:not(:active):not(:focus-visible)]:border-neutral-300 hover:[&:not(:disabled)]:text-neutral-400 focus-visible:text-neutral-400 active:bg-neutral-150 active:text-neutral-400 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none"
                   type="button"
                 >
                   Cancel
@@ -1392,14 +1392,14 @@ exports[`StepGeneralFeature should submit a form with a helm repository and matc
                       >
                         <label
                           class="text-sm translate-y-2"
-                          for="Helm chart name"
+                          for="Service name"
                         >
-                          Helm chart name
+                          Service name
                         </label>
                         <input
                           class="input__value "
                           data-testid="input-text"
-                          id="Helm chart name"
+                          id="Service name"
                           name="name"
                           type="text"
                           value="my-helm-app"
@@ -1705,7 +1705,7 @@ exports[`StepGeneralFeature should submit a form with a helm repository and matc
                 class="flex justify-between"
               >
                 <button
-                  class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-sm h-11 px-5 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent"
+                  class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 hover:[&:not(:focus-visible):not(:disabled)]:shadow-sm active:[&:not(:focus-visible)]:shadow-none outline-brand-500 text-sm h-11 px-5 rounded border border-transparent text-neutral-350 hover:[&:not(:active):not(:focus-visible)]:border-neutral-300 hover:[&:not(:disabled)]:text-neutral-400 focus-visible:text-neutral-400 active:bg-neutral-150 active:text-neutral-400 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none"
                   type="button"
                 >
                   Cancel

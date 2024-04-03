@@ -30,7 +30,7 @@ const FunnelFlowContent = (props: FunnelFlowProps) => {
         {props.onExit && (
           <div className="border-l border-l-neutral-200 pl-5 h-full flex items-center">
             <Button onClick={props.onExit} variant="surface" size="md">
-              Close <Icon iconName="xmark" iconStyle="regular" className="text-xl ml-2" />
+              Close <Icon iconName="xmark" iconStyle="regular" className="text-base ml-2" />
             </Button>
           </div>
         )}

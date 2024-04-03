@@ -36,7 +36,7 @@ export function StepGeneral(props: StepGeneralProps) {
 
         <Section className="gap-4">
           <Heading>General</Heading>
-          <GeneralSetting label="Application name" />
+          <GeneralSetting label="Service name" />
         </Section>
 
         <Section className="gap-4">

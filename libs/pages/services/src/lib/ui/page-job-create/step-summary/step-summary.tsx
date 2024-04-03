@@ -44,7 +44,7 @@ export function StepSummary(props: StepSummaryProps) {
                 <Icon className="text-base" iconName="gear-complex" />
               </Button>
             </div>
-            <ul className="flex flex-col gap-2 text-neutral-400 text-sm list-none">
+            <ul className="space-y-2 text-neutral-400 text-sm list-none">
               <li>
                 <strong className="font-medium">Name:</strong> {props.generalData.name}
               </li>

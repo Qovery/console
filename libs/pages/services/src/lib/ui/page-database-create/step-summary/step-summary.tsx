@@ -23,26 +23,24 @@ export function StepSummary(props: StepSummaryProps) {
       <Heading className="mb-2">Ready to create your Database</Heading>
 
       <form className="space-y-10">
-        <div>
-          <p className="text-neutral-350 text-sm">
-            The basic database setup is done, you can now deploy your database or move forward with some advanced setup.
-          </p>
-          {props.generalData.mode == DatabaseModeEnum.MANAGED && (
-            <Callout.Root className="mb-5" color="yellow">
-              <Callout.Icon>
-                <Icon iconName="triangle-exclamation" />
-              </Callout.Icon>
-              <Callout.Text>
-                <Callout.TextHeading>Qovery manages this resource for you</Callout.TextHeading>
-                <Callout.TextDescription className="text-xs">
-                  Use exclusively the Qovery console to update the resources managed by Qovery on your cloud account.
-                  <br /> Do not manually update or upgrade them on the cloud provider console, otherwise you will risk a
-                  drift in the configuration.
-                </Callout.TextDescription>
-              </Callout.Text>
-            </Callout.Root>
-          )}
-        </div>
+        <p className="text-neutral-350 text-sm">
+          The basic database setup is done, you can now deploy your database or move forward with some advanced setup.
+        </p>
+        {props.generalData.mode == DatabaseModeEnum.MANAGED && (
+          <Callout.Root color="yellow">
+            <Callout.Icon>
+              <Icon iconName="triangle-exclamation" />
+            </Callout.Icon>
+            <Callout.Text>
+              <Callout.TextHeading>Qovery manages this resource for you</Callout.TextHeading>
+              <Callout.TextDescription className="text-xs">
+                Use exclusively the Qovery console to update the resources managed by Qovery on your cloud account.
+                <br /> Do not manually update or upgrade them on the cloud provider console, otherwise you will risk a
+                drift in the configuration.
+              </Callout.TextDescription>
+            </Callout.Text>
+          </Callout.Root>
+        )}
 
         <div className="flex flex-col gap-6">
           <Section className="p-4 border rounded border-neutral-250 bg-neutral-100">
@@ -63,6 +61,9 @@ export function StepSummary(props: StepSummaryProps) {
                   {props.generalData.description}
                 </li>
               )}
+              <div className="py-2">
+                <hr className="border-t border-dashed border-neutral-250" />
+              </div>
               <li>
                 <strong className="font-medium">Mode:</strong>{' '}
                 {props.generalData.mode === DatabaseModeEnum.MANAGED ? 'Managed' : 'Container'}
