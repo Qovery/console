@@ -50,7 +50,8 @@ export function PageApplicationCreateFeature() {
   const [resourcesData, setResourcesData] = useState<ApplicationResourcesData | undefined>({
     memory: 512,
     cpu: 500,
-    instances: [1, 2],
+    min_running_instances: 1,
+    max_running_instances: 2,
   })
 
   const [portData, setPortData] = useState<FlowPortData | undefined>({

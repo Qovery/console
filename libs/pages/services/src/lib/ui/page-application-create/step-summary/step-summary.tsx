@@ -139,8 +139,8 @@ export function StepSummary({
                 <strong className="font-medium">Memory:</strong> {resourcesData.memory} MB
               </li>
               <li>
-                <strong className="font-medium">Instances:</strong> {resourcesData.instances[0]} -{' '}
-                {resourcesData.instances[1]}
+                <strong className="font-medium">Instances:</strong> {resourcesData.min_running_instances} -{' '}
+                {resourcesData.max_running_instances}
               </li>
             </ul>
           </Section>
