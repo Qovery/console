@@ -4,7 +4,7 @@ exports[`ServiceTerminal should match snapshot 1`] = `
 <body>
   <div />
   <div
-    class="dark fixed bottom-0 left-0 w-full animate-slidein-up-md-faded"
+    class="fixed bottom-0 left-0 w-full animate-slidein-up-md-faded"
   >
     <div
       class="flex justify-between h-11 px-4 py-2 bg-neutral-650 border-y border-neutral-500"

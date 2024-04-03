@@ -67,7 +67,7 @@ export function ServiceTerminal({
   })
 
   return createPortal(
-    <div className="dark fixed bottom-0 left-0 w-full animate-slidein-up-md-faded">
+    <div className="fixed bottom-0 left-0 w-full animate-slidein-up-md-faded">
       <div className="flex justify-between h-11 px-4 py-2 bg-neutral-650 border-y border-neutral-500">
         <div className="flex gap-2">
           {runningStatuses && runningStatuses.pods.length > 0 && (
