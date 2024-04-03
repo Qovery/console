@@ -112,10 +112,7 @@ interface DropdownMenuContentProps extends ComponentPropsWithoutRef<typeof Dropd
 }
 
 const DropdownMenuContent = forwardRef<ElementRef<typeof DropdownMenuPrimitive.Content>, DropdownMenuContentProps>(
-  function DropdownMenuContent(
-    { children, sideOffset = 12, align = 'start', className, hasArrow = true, ...props },
-    ref
-  ) {
+  function DropdownMenuContent({ children, sideOffset = 12, align = 'start', className, ...props }, ref) {
     return (
       <DropdownMenuPrimitive.Portal>
         <DropdownMenuPrimitive.Content
@@ -128,7 +125,7 @@ const DropdownMenuContent = forwardRef<ElementRef<typeof DropdownMenuPrimitive.C
           )}
           ref={ref}
         >
-          {hasArrow && <DropdownMenuArrow />}
+          <DropdownMenuArrow />
           {children}
         </DropdownMenuPrimitive.Content>
       </DropdownMenuPrimitive.Portal>

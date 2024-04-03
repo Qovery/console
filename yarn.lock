@@ -1624,6 +1624,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/runtime@npm:^7.22.15":
+  version: 7.24.1
+  resolution: "@babel/runtime@npm:7.24.1"
+  dependencies:
+    regenerator-runtime: ^0.14.0
+  checksum: 5c8f3b912ba949865f03b3cf8395c60e1f4ebd1033fbd835bdfe81b6cac8a87d85bc3c7aded5fcdf07be044c9ab8c818f467abe0deca50020c72496782639572
+  languageName: node
+  linkType: hard
+
 "@babel/template@npm:^7.16.7, @babel/template@npm:^7.22.15, @babel/template@npm:^7.22.5, @babel/template@npm:^7.3.3":
   version: 7.22.15
   resolution: "@babel/template@npm:7.22.15"
@@ -3634,6 +3643,7 @@ __metadata:
     date-fns: ^2.29.3
     date-fns-tz: ^2.0.0
     downloadjs: ^1.4.7
+    downshift: ^9.0.3
     eslint: ^8.49.0
     eslint-config-prettier: 9.0.0
     eslint-plugin-cypress: 2.15.1
@@ -9690,6 +9700,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"compute-scroll-into-view@npm:^3.0.3":
+  version: 3.1.0
+  resolution: "compute-scroll-into-view@npm:3.1.0"
+  checksum: 224549d6dd1d40342230de5c6d69cac5c3ed5c2f6a4437310f959aadc8db1d20b03da44a6e0de14d9419c6f9130ce51ec99a91b11bde55d4640f10551c89c213
+  languageName: node
+  linkType: hard
+
 "concat-map@npm:0.0.1":
   version: 0.0.1
   resolution: "concat-map@npm:0.0.1"
@@ -10876,6 +10893,21 @@ __metadata:
   version: 1.4.7
   resolution: "downloadjs@npm:1.4.7"
   checksum: 4c546a28e7adcb1c290685f923add84e89582549f93502fa1b028194492522f716abb95a70f6ae464067a767e967806970d2a03e6262f8ccbcf3dd68e950d1da
+  languageName: node
+  linkType: hard
+
+"downshift@npm:^9.0.3":
+  version: 9.0.3
+  resolution: "downshift@npm:9.0.3"
+  dependencies:
+    "@babel/runtime": ^7.22.15
+    compute-scroll-into-view: ^3.0.3
+    prop-types: ^15.8.1
+    react-is: ^18.2.0
+    tslib: ^2.6.2
+  peerDependencies:
+    react: ">=16.12.0"
+  checksum: 5867fa54d90588e00bf899308e957ecfe7ff43fd8513a9cc314251c12388aab71b5ff8047bb0f91a57f38c1647891de006271f40c4f015f3a8a39f2c923addfe
   languageName: node
   linkType: hard
 
@@ -18727,7 +18759,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-is@npm:^18.0.0":
+"react-is@npm:^18.0.0, react-is@npm:^18.2.0":
   version: 18.2.0
   resolution: "react-is@npm:18.2.0"
   checksum: e72d0ba81b5922759e4aff17e0252bd29988f9642ed817f56b25a3e217e13eea8a7f2322af99a06edb779da12d5d636e9fda473d620df9a3da0df2a74141d53e
@@ -21327,7 +21359,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tslib@npm:^2.5.0":
+"tslib@npm:^2.5.0, tslib@npm:^2.6.2":
   version: 2.6.2
   resolution: "tslib@npm:2.6.2"
   checksum: 329ea56123005922f39642318e3d1f0f8265d1e7fcb92c633e0809521da75eeaca28d2cf96d7248229deb40e5c19adf408259f4b9640afd20d13aecc1430f3ad

@@ -132,6 +132,7 @@
     "core-js": "^3.36.0",
     "css-loader": "^6.8.1",
     "cypress": "^9.1.0",
+    "downshift": "^9.0.3",
     "eslint": "^8.49.0",
     "eslint-config-prettier": "9.0.0",
     "eslint-plugin-cypress": "2.15.1",

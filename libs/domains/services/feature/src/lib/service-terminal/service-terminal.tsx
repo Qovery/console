@@ -95,7 +95,7 @@ export function ServiceTerminal({
           <Icon iconName="xmark" className="ml-2 text-sm" />
         </Button>
       </div>
-      <div className="bg-neutral-700 px-4 py-2  min-h-[272px]">
+      <div className="bg-neutral-700 px-4 py-2 min-h-[272px]">
         {attachAddon && websocketOpen && !isRunningStatusesLoading ? (
           <XTerm addons={[attachAddon]} />
         ) : (

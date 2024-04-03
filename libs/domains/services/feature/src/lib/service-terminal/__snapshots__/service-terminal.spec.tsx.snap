@@ -23,7 +23,7 @@ exports[`ServiceTerminal should match snapshot 1`] = `
       </button>
     </div>
     <div
-      class="bg-neutral-700 px-4 py-2  min-h-[272px]"
+      class="bg-neutral-700 px-4 py-2 min-h-[272px]"
     >
       <div
         class="flex items-start justify-center p-5 h-40"
