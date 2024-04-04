@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
 import { Spotlight } from '@qovery/shared/spotlight/feature'
 import { Icon, Kbd } from '@qovery/shared/ui'
 import { useFormatHotkeys } from '@qovery/shared/util-hooks'
@@ -6,6 +7,7 @@ import { useFormatHotkeys } from '@qovery/shared/util-hooks'
 export function SpotlightTrigger() {
   const [openSpotlight, setOpenSpotlight] = useState(false)
   const metaKey = useFormatHotkeys('meta')
+  const { organizationId = '' } = useParams()
 
   // Toggle the menu when ⌘K is pressed
   useEffect(() => {
@@ -33,7 +35,7 @@ export function SpotlightTrigger() {
           <Kbd>K</Kbd>
         </div>
       </button>
-      <Spotlight open={openSpotlight} onOpenChange={setOpenSpotlight} />
+      <Spotlight organizationId={organizationId} open={openSpotlight} onOpenChange={setOpenSpotlight} />
     </>
   )
 }
