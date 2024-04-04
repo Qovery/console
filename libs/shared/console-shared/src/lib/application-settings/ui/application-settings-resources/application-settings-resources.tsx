@@ -182,6 +182,7 @@ export function ApplicationSettingsResources({
               rules={{
                 required: true,
                 min: minInstances,
+                max: maxInstances,
               }}
               render={({ field, fieldState: { error } }) => (
                 <InputText
@@ -198,6 +199,8 @@ export function ApplicationSettingsResources({
                   error={
                     error?.type === 'required'
                       ? 'Please enter a size.'
+                      : error?.type === 'max'
+                      ? `Maximum allowed is: ${maxInstances}.`
                       : error?.type === 'min'
                       ? `Minimum allowed is: ${minInstances}.`
                       : undefined
@@ -211,6 +214,7 @@ export function ApplicationSettingsResources({
               rules={{
                 required: true,
                 max: maxInstances,
+                min: minRunningInstances,
               }}
               render={({ field, fieldState: { error } }) => (
                 <InputText
@@ -229,13 +233,15 @@ export function ApplicationSettingsResources({
                       ? 'Please enter a size.'
                       : error?.type === 'max'
                       ? `Maximum allowed is: ${maxInstances}.`
+                      : error?.type === 'min'
+                      ? `Minimum allowed is: ${minRunningInstances}.`
                       : undefined
                   }
                 />
               )}
             />
           </div>
-          <p className="text-neutral-350 text-xs mt-3">
+          <p className="text-neutral-350 text-xs">
             {runningStatuses?.pods && (
               <span className="flex mb-1">
                 Current consumption: {runningStatuses.pods.length} instance
