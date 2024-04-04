@@ -35,7 +35,7 @@ export function ServiceTerminal({
   const onOpenHandler = useCallback(
     (_: QueryClient, event: Event) => {
       const websocket = event.target as WebSocket
-      setAttachAddon((prev) => (!prev ? new AttachAddon(websocket) : prev))
+      setAttachAddon(new AttachAddon(websocket))
       setWebsocketOpen(true)
     },
     [setWebsocketOpen, setAttachAddon]
