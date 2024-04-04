@@ -10,6 +10,7 @@ import LayoutPage from '../../ui/layout-page/layout-page'
 import { setCurrentOrganizationIdOnStorage, setCurrentProjectIdOnStorage, setCurrentProvider } from '../../utils/utils'
 
 export interface LayoutProps {
+  spotlight?: boolean
   topBar?: boolean
 }
 
@@ -17,7 +18,7 @@ export interface LayoutProps {
 const StatusWebSocketListenerMemo = memo(StatusWebSocketListener)
 
 export function Layout(props: PropsWithChildren<LayoutProps>) {
-  const { children, topBar } = props
+  const { children, spotlight, topBar } = props
   const { organizationId = '', projectId = '', environmentId = '', versionId } = useParams()
   const { user } = useAuth0()
 
@@ -53,7 +54,7 @@ export function Layout(props: PropsWithChildren<LayoutProps>) {
   }, [user, organizationId, projectId])
 
   return (
-    <LayoutPage topBar={topBar} clusters={clusters} defaultOrganizationId={organizations[0]?.id}>
+    <LayoutPage spotlight={spotlight} topBar={topBar} clusters={clusters} defaultOrganizationId={organizations[0]?.id}>
       <>
         {
           /**

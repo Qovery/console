@@ -19,7 +19,6 @@ import { useAuthInterceptor } from '@qovery/shared/utils'
 import { environment } from '../environments/environment'
 import PreviewCode from './components/preview-code'
 import ScrollToTop from './components/scroll-to-top'
-import { SpotlightTrigger } from './components/spotlight-trigger'
 import { ROUTER } from './router/main.router'
 
 export function App() {
@@ -119,7 +118,9 @@ export function App() {
                 ) : (
                   <ProtectedRoute>
                     <DarkModeEnabler isDarkMode={route.darkMode}>
-                      <Layout topBar={route.topBar}>{route.component}</Layout>
+                      <Layout topBar={route.topBar} spotlight={route.spotlight}>
+                        {route.component}
+                      </Layout>
                     </DarkModeEnabler>
                   </ProtectedRoute>
                 )
@@ -135,7 +136,6 @@ export function App() {
         )}
         <Route path="*" element={<Navigate replace to={LOGIN_URL} />} />
       </Routes>
-      <SpotlightTrigger />
     </GTMProvider>
   )
 }

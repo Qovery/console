@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
 import { Spotlight } from '@qovery/shared/spotlight/feature'
-import { Button, Icon, IconAwesomeEnum } from '@qovery/shared/ui'
+import { Icon, Kbd } from '@qovery/shared/ui'
+import { useFormatHotkeys } from '@qovery/shared/util-hooks'
 
 export function SpotlightTrigger() {
   const [openSpotlight, setOpenSpotlight] = useState(false)
+  const metaKey = useFormatHotkeys('meta')
 
   // Toggle the menu when ⌘K is pressed
   useEffect(() => {
@@ -20,15 +22,17 @@ export function SpotlightTrigger() {
 
   return (
     <>
-      <Button
-        variant="solid"
-        color="brand"
-        size="lg"
-        className="fixed bottom-4 right-4 rounded-full shadow-2xl"
+      <button
+        className="w-60 flex items-center gap-2 py-2 px-3 bg-white border border-neutral-300 rounded text-sm"
         onClick={() => setOpenSpotlight(!openSpotlight)}
       >
-        <Icon name={IconAwesomeEnum.WAND_MAGIC_SPARKLES} className="text-lg" />
-      </Button>
+        <Icon iconName="magnifying-glass" className="text-neutral-400" />
+        <span className="text-neutral-350">Search</span>
+        <div className="ml-auto flex gap-1 text-neutral-350">
+          <Kbd>{metaKey}</Kbd>
+          <Kbd>K</Kbd>
+        </div>
+      </button>
       <Spotlight open={openSpotlight} onOpenChange={setOpenSpotlight} />
     </>
   )

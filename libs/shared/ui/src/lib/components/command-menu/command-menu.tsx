@@ -11,10 +11,10 @@ const CommandDialog = forwardRef<ElementRef<typeof CmdK.Dialog>, CommandDialogPr
   return (
     <CmdK.Dialog
       ref={ref}
-      contentClassName="modal__content fixed top-[84px] left-1/2 z-40"
-      overlayClassName="modal__overlay fixed w-full h-screen top-0 left-0 z-30 bg-neutral-700/20"
+      contentClassName="modal__content fixed top-[84px] left-1/2"
+      overlayClassName="modal__overlay fixed w-full h-screen top-0 left-0 bg-neutral-700/20"
       className={twMerge(
-        'rounded-lg w-[640px] p-2 mx-auto shadow-[0_16px_70px_rgba(0,0,0,0.2)] bg-white overflow-hidden transition-transform duration-100 border border-neutral-150',
+        'rounded-lg w-[640px] mx-auto shadow-[0_16px_70px_rgba(0,0,0,0.2)] bg-white overflow-hidden transition-transform duration-100 border border-neutral-150',
         className
       )}
       {...props}
@@ -25,7 +25,7 @@ const CommandDialog = forwardRef<ElementRef<typeof CmdK.Dialog>, CommandDialogPr
 interface CommandInputProps extends ComponentPropsWithoutRef<typeof CmdK.Input> {}
 
 export const commandInputStyle =
-  'w-full text-base text-neutral-550 mb-4 rounded-none px-2 pt-2 pb-3 border-b border-neutral-200 outline-none'
+  'w-full text-base text-neutral-550 rounded-none p-4 border-b border-neutral-200 outline-none'
 
 const CommandInput = forwardRef<ElementRef<typeof CmdK.Input>, CommandInputProps>(function CommandInput(
   { className, ...props },
@@ -43,7 +43,10 @@ const CommandList = forwardRef<ElementRef<typeof CmdK.List>, CommandListProps>(f
   return (
     <CmdK.List
       ref={ref}
-      className={twMerge('transition-all duration-100 max-h-[400px] overscroll-y-contain overflow-auto', className)}
+      className={twMerge(
+        'mx-2 my-3 transition-all duration-100 max-h-[400px] overscroll-y-contain overflow-auto',
+        className
+      )}
       style={{
         height: 'min(300px, var(--cmdk-list-height))',
       }}
@@ -67,7 +70,16 @@ const CommandGroup = forwardRef<ElementRef<typeof CmdK.Group>, CommandGroupProps
   { className, ...props },
   ref
 ) {
-  return <CmdK.Group ref={ref} className={twMerge('text-xs text-neutral-350', className)} {...props} />
+  return (
+    <CmdK.Group
+      ref={ref}
+      className={twMerge(
+        'text-sm text-neutral-350 [&>[cmdk-group-heading]]:mx-1.5 [&>[cmdk-group-heading]]:py-1',
+        className
+      )}
+      {...props}
+    />
+  )
 })
 
 interface CommandItemProps extends ComponentPropsWithoutRef<typeof CmdK.Item> {}
@@ -80,7 +92,7 @@ const CommandItem = forwardRef<ElementRef<typeof CmdK.Item>, CommandItemProps>(f
     <CmdK.Item
       ref={ref}
       className={twMerge(
-        'flex items-center mt-1 first:mt-2 cursor-pointer text-sm rounded gap-2 px-2 h-10 data-[selected]:bg-brand-50 data-[selected]:text-brand-500 text-neutral-400 font-medium',
+        'flex items-center cursor-pointer text-sm rounded gap-2 px-2 h-9 data-[selected]:bg-brand-50 data-[selected]:text-brand-500 text-neutral-400 font-medium',
         className
       )}
       {...props}
