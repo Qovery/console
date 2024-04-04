@@ -6,17 +6,7 @@ import { useEnvironment } from '@qovery/domains/environments/feature'
 import { type AnyService, type Database, type Helm } from '@qovery/domains/services/data-access'
 import { useRunningStatus } from '@qovery/domains/services/feature'
 import { CLUSTER_SETTINGS_RESOURCES_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
-import {
-  Callout,
-  ExternalLink,
-  Heading,
-  Icon,
-  InputText,
-  Link,
-  Section,
-  Slider,
-  inputSizeUnitRules,
-} from '@qovery/shared/ui'
+import { Callout, ExternalLink, Heading, Icon, InputText, Link, Section, inputSizeUnitRules } from '@qovery/shared/ui'
 
 export interface ApplicationSettingsResourcesProps {
   displayWarningCpu: boolean
@@ -29,7 +19,7 @@ export function ApplicationSettingsResources({
   displayWarningCpu,
   service,
   minInstances = 1,
-  maxInstances = 50,
+  maxInstances = 1000,
 }: ApplicationSettingsResourcesProps) {
   const { control, watch } = useFormContext()
   const { organizationId = '', environmentId = '', applicationId = '' } = useParams()
@@ -48,7 +38,7 @@ export function ApplicationSettingsResources({
     maxMemoryBySize = 128000
   }
 
-  const watchInstances = watch('instances')
+  const minRunningInstances = watch('min_running_instances')
 
   const minVCpu = match(cloudProvider)
     .with('GCP', () => 250)
@@ -182,18 +172,76 @@ export function ApplicationSettingsResources({
         />
       </Section>
 
-      {service?.serviceType !== 'JOB' && watchInstances && (
+      {service?.serviceType !== 'JOB' && (
         <Section className="gap-4">
           <Heading>Instances</Heading>
-          <p className="text-neutral-400 mb-3 font-medium">{`${watchInstances[0]} - ${watchInstances[1]}`}</p>
-          <Controller
-            name="instances"
-            control={control}
-            render={({ field }) => (
-              <Slider min={minInstances} max={maxInstances} step={1} onChange={field.onChange} value={field.value} />
-            )}
-          />
-          <p className="text-neutral-350 text-xs mt-3">
+          <div className="grid grid-cols-2 gap-4">
+            <Controller
+              name="min_running_instances"
+              control={control}
+              rules={{
+                required: true,
+                min: minInstances,
+                max: maxInstances,
+              }}
+              render={({ field, fieldState: { error } }) => (
+                <InputText
+                  type="number"
+                  label="Instances min"
+                  name={field.name}
+                  value={isNaN(field.value) || field.value === 0 ? '' : field.value.toString()}
+                  onChange={(e) => {
+                    // https://react-hook-form.com/advanced-usage#TransformandParse
+                    const output = parseInt(e.target.value, 10)
+                    const value = isNaN(output) ? 0 : output
+                    field.onChange(value)
+                  }}
+                  error={
+                    error?.type === 'required'
+                      ? 'Please enter a size.'
+                      : error?.type === 'max'
+                      ? `Maximum allowed is: ${maxInstances}.`
+                      : error?.type === 'min'
+                      ? `Minimum allowed is: ${minInstances}.`
+                      : undefined
+                  }
+                />
+              )}
+            />
+            <Controller
+              name="max_running_instances"
+              control={control}
+              rules={{
+                required: true,
+                max: maxInstances,
+                min: minRunningInstances,
+              }}
+              render={({ field, fieldState: { error } }) => (
+                <InputText
+                  type="number"
+                  label="Instances max"
+                  name={field.name}
+                  value={isNaN(field.value) || field.value === 0 ? '' : field.value.toString()}
+                  onChange={(e) => {
+                    // https://react-hook-form.com/advanced-usage#TransformandParse
+                    const output = parseInt(e.target.value, 10)
+                    const value = isNaN(output) ? 0 : output
+                    field.onChange(value)
+                  }}
+                  error={
+                    error?.type === 'required'
+                      ? 'Please enter a size.'
+                      : error?.type === 'max'
+                      ? `Maximum allowed is: ${maxInstances}.`
+                      : error?.type === 'min'
+                      ? `Minimum allowed is: ${minRunningInstances}.`
+                      : undefined
+                  }
+                />
+              )}
+            />
+          </div>
+          <p className="text-neutral-350 text-xs">
             {runningStatuses?.pods && (
               <span className="flex mb-1">
                 Current consumption: {runningStatuses.pods.length} instance
@@ -203,7 +251,7 @@ export function ApplicationSettingsResources({
             Application auto-scaling is based on real-time CPU consumption. When your app goes above 60% (default) of
             CPU consumption for 5 minutes, your app will be auto-scaled and more instances will be added.
           </p>
-          {environmentMode === EnvironmentModeEnum.PRODUCTION && watchInstances[0] === 1 && (
+          {environmentMode === EnvironmentModeEnum.PRODUCTION && minRunningInstances === 1 && (
             <Callout.Root color="yellow" className="mt-3" data-testid="banner-box">
               <Callout.Icon>
                 <Icon iconName="triangle-exclamation" />

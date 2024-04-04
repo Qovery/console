@@ -14,7 +14,8 @@ describe('StepResources', () => {
         defaultValues: {
           memory: 1024,
           cpu: 500,
-          instances: [1, 12],
+          min_running_instances: 1,
+          max_running_instances: 12,
         },
       })
     )
@@ -27,7 +28,8 @@ describe('StepResources', () => {
         defaultValues: {
           memory: 1024,
           cpu: 500,
-          instances: [1, 12],
+          min_running_instances: 1,
+          max_running_instances: 12,
         },
       })
     )

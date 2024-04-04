@@ -21,7 +21,7 @@ export function StepResourcesFeature() {
   const { setCurrentStep, resourcesData, setResourcesData, generalData } = useApplicationContainerCreateContext()
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const navigate = useNavigate()
-  const [maxInstances, setMaxInstance] = useState(50)
+  const [maxInstances, setMaxInstance] = useState(1000)
 
   const { data: environment } = useEnvironment({ environmentId })
 
@@ -69,7 +69,8 @@ export function StepResourcesFeature() {
   useEffect(() => {
     if (cluster?.kubernetes === KubernetesEnum.K3_S) {
       setMaxInstance(1)
-      methods.setValue('instances', [1, 1])
+      methods.setValue('min_running_instances', 1)
+      methods.setValue('max_running_instances', 1)
     }
   }, [methods, cluster])
 

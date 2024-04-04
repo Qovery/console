@@ -26,7 +26,8 @@ const mockContext: Required<ApplicationContainerCreateContextInterface> = {
   resourcesData: {
     memory: 512,
     cpu: 500,
-    instances: [1, 12],
+    min_running_instances: 1,
+    max_running_instances: 12,
   },
   setResourcesData: jest.fn(),
   setPortData: jest.fn(),

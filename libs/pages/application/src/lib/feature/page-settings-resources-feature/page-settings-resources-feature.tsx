@@ -17,15 +17,18 @@ export function SettingsResourcesFeature({ service, environment }: SettingsResou
   const { mutate: editService, isLoading: isLoadingService } = useEditService({ environmentId: environment.id })
 
   const defaultInstances = match(service)
-    .with({ serviceType: 'JOB' }, () => undefined)
-    .otherwise((s) => [s.min_running_instances || 1, s.max_running_instances || 1])
+    .with({ serviceType: 'JOB' }, () => {})
+    .otherwise((s) => ({
+      min_running_instances: s.min_running_instances || 1,
+      max_running_instances: s.max_running_instances || 1,
+    }))
 
   const methods = useForm({
     mode: 'onChange',
     defaultValues: {
       memory: service.memory,
       cpu: service.cpu,
-      instances: defaultInstances,
+      ...defaultInstances,
     },
   })
 
@@ -39,7 +42,10 @@ export function SettingsResourcesFeature({ service, environment }: SettingsResou
     if (service.serviceType !== 'JOB') {
       requestWithInstances = {
         ...request,
-        ...{ min_running_instances: data['instances'][0], max_running_instances: data['instances'][1] },
+        ...{
+          min_running_instances: data['min_running_instances'],
+          max_running_instances: data['max_running_instances'],
+        },
       }
     }
 
