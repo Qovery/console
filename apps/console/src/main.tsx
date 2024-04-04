@@ -8,11 +8,9 @@ import {
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query'
-import algoliasearch from 'algoliasearch/lite'
 import posthog from 'posthog-js'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { Configure, InstantSearch } from 'react-instantsearch'
 // import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { BrowserRouter } from 'react-router-dom'
 import { IntercomProvider } from 'react-use-intercom'
@@ -133,8 +131,6 @@ const queryClient = new QueryClient({
   }),
 })
 
-const searchClient = algoliasearch('FT65SBJ2DA', '02604e8b2e0918e90edd1d9eb8e30f5e')
-
 root.render(
   <StrictMode>
     <IntercomProvider appId={environment.intercom} autoBoot>
@@ -151,40 +147,14 @@ root.render(
         skipRedirectCallback={window.location.pathname !== LOGIN_URL + LOGIN_AUTH_REDIRECT_URL}
       >
         <QueryClientProvider client={queryClient}>
-          <InstantSearch searchClient={searchClient} indexName="qovery">
-            <Configure
-              maxValuesPerFacet={10}
-              attributesToRetrieve={[
-                'hierarchy.lvl0',
-                'hierarchy.lvl1',
-                'hierarchy.lvl2',
-                'hierarchy.lvl3',
-                'hierarchy.lvl4',
-                'hierarchy.lvl5',
-                'hierarchy.lvl6',
-                'content',
-                'type',
-                'url',
-              ]}
-              attributesToSnippet={[
-                `hierarchy.lvl1:10`,
-                `hierarchy.lvl2:10`,
-                `hierarchy.lvl3:10`,
-                `hierarchy.lvl4:10`,
-                `hierarchy.lvl5:10`,
-                `hierarchy.lvl6:10`,
-                `content:10`,
-              ]}
-            />
-            <BrowserRouter>
-              <TooltipProvider>
-                <ModalProvider>
-                  <App />
-                  <ToastBehavior />
-                </ModalProvider>
-              </TooltipProvider>
-            </BrowserRouter>
-          </InstantSearch>
+          <BrowserRouter>
+            <TooltipProvider>
+              <ModalProvider>
+                <App />
+                <ToastBehavior />
+              </ModalProvider>
+            </TooltipProvider>
+          </BrowserRouter>
           {/* <ReactQueryDevtools initialIsOpen={false} /> */}
         </QueryClientProvider>
       </Auth0Provider>
