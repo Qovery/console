@@ -223,7 +223,7 @@ exports[`PageSettingsResources should render warning box and icon for cpu 1`] = 
             </div>
           </div>
           <p
-            class="text-neutral-350 text-xs mt-3"
+            class="text-neutral-350 text-xs"
           >
             Application auto-scaling is based on real-time CPU consumption. When your app goes above 60% (default) of CPU consumption for 5 minutes, your app will be auto-scaled and more instances will be added.
           </p>
