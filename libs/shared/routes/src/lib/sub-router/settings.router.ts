@@ -7,6 +7,7 @@ export const SETTINGS_API_URL = '/api'
 export const SETTINGS_GIT_REPOSITORY_ACCESS_URL = '/git-repository-access'
 export const SETTINGS_MEMBERS_URL = '/members'
 export const SETTINGS_ROLES_URL = '/roles'
+export const SETTINGS_LABELS_ANNOTATIONS_URL = '/labels-annotations'
 
 export const SETTINGS_ROLES_EDIT_URL = (roleId = ':roleId') => `/roles/edit/${roleId}`
 export const SETTINGS_BILLING_URL = '/billing-detail'

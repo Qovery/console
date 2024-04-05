@@ -10,6 +10,7 @@ import {
   SETTINGS_GENERAL_URL,
   SETTINGS_GIT_REPOSITORY_ACCESS_URL,
   SETTINGS_HELM_REPOSITORIES_URL,
+  SETTINGS_LABELS_ANNOTATIONS_URL,
   SETTINGS_MEMBERS_URL,
   SETTINGS_PROJECT_DANGER_ZONE_URL,
   SETTINGS_PROJECT_GENERAL_URL,
@@ -18,7 +19,7 @@ import {
   SETTINGS_URL,
   SETTINGS_WEBHOOKS,
 } from '@qovery/shared/routes'
-import { IconAwesomeEnum } from '@qovery/shared/ui'
+import { IconAwesomeEnum, type NavigationLeftLinkProps } from '@qovery/shared/ui'
 import { ROUTER_SETTINGS } from './router/router'
 import { Container } from './ui/container/container'
 
@@ -28,7 +29,7 @@ export function PageSettings() {
   const pathSettings = SETTINGS_URL(organizationId)
   const { data: projects = [] } = useProjects({ organizationId })
 
-  const organizationLinks = [
+  const organizationLinks: NavigationLeftLinkProps[] = [
     {
       title: 'General',
       icon: IconAwesomeEnum.WHEEL,
@@ -61,6 +62,11 @@ export function PageSettings() {
           url: pathSettings + SETTINGS_BILLING_URL,
         },
       ],
+    },
+    {
+      title: 'Annotations',
+      iconName: 'tags',
+      url: pathSettings + SETTINGS_LABELS_ANNOTATIONS_URL,
     },
     {
       title: 'Container registries',
