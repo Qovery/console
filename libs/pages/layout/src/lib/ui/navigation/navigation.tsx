@@ -10,17 +10,7 @@ import {
   OVERVIEW_URL,
   SETTINGS_URL,
 } from '@qovery/shared/routes'
-import {
-  ButtonIcon,
-  ButtonIconStyle,
-  ButtonLegacySize,
-  Icon,
-  IconAwesomeEnum,
-  Menu,
-  MenuAlign,
-  MenuDirection,
-  Tooltip,
-} from '@qovery/shared/ui'
+import { ButtonIcon, ButtonIconStyle, ButtonLegacySize, IconAwesomeEnum, Tooltip } from '@qovery/shared/ui'
 import MenuAccountFeature from '../../feature/menu-account-feature/menu-account-feature'
 
 export interface NavigationProps {
@@ -40,46 +30,6 @@ export function Navigation({ defaultOrganizationId, clusterNotification }: Navig
     pathname.includes(CLUSTERS_URL(organizationId)) ||
     matchLogInfraRoute ||
     pathname.includes(CLUSTER_URL(organizationId, clusterId))
-
-  const infosMenu = [
-    {
-      title: 'Need help?',
-      items: [
-        {
-          name: 'See documentation',
-          link: {
-            url: 'https://hub.qovery.com/',
-            external: true,
-          },
-          contentLeft: <Icon name="icon-solid-book" className="text-sm text-brand-400" />,
-        },
-        {
-          name: 'Community Forum',
-          link: {
-            url: 'https://discuss.qovery.com/',
-            external: true,
-          },
-          contentLeft: <Icon iconName="people" className="text-sm text-brand-400" />,
-        },
-        {
-          name: 'Roadmap',
-          link: {
-            url: 'https://roadmap.qovery.com/b/5m13y5v6/feature-ideas',
-            external: true,
-          },
-          contentLeft: <Icon iconName="road" className="text-sm text-brand-400" />,
-        },
-        {
-          name: 'Contact us',
-          link: {
-            url: 'https://discord.qovery.com/',
-            external: true,
-          },
-          contentLeft: <Icon name="icon-solid-envelope" className="text-sm text-brand-400" />,
-        },
-      ],
-    },
-  ]
 
   return (
     <div className="w-16 h-screen dark:bg-neutral-650 bg-white flex flex-col">
@@ -137,22 +87,6 @@ export function Navigation({ defaultOrganizationId, clusterNotification }: Navig
                   style={ButtonIconStyle.ALT}
                   size={ButtonLegacySize.XLARGE}
                   link={SETTINGS_URL(organizationId)}
-                />
-              </div>
-            </Tooltip>
-            <Tooltip content="Help" side="right">
-              <div>
-                <Menu
-                  trigger={
-                    <ButtonIcon
-                      icon={IconAwesomeEnum.CIRCLE_INFO}
-                      style={ButtonIconStyle.ALT}
-                      size={ButtonLegacySize.XLARGE}
-                    />
-                  }
-                  direction={MenuDirection.RIGHT}
-                  arrowAlign={MenuAlign.END}
-                  menus={infosMenu}
                 />
               </div>
             </Tooltip>

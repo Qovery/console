@@ -1,4 +1,4 @@
-import { memo, useContext } from 'react'
+import { memo, useContext, useEffect } from 'react'
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useEnvironment } from '@qovery/domains/environments/feature'
@@ -8,7 +8,15 @@ import {
   ServiceTerminalProvider,
   useService,
 } from '@qovery/domains/services/feature'
-import { APPLICATION_GENERAL_URL, APPLICATION_URL } from '@qovery/shared/routes'
+import {
+  APPLICATION_GENERAL_URL,
+  APPLICATION_URL,
+  AUDIT_LOGS_PARAMS_URL,
+  DEPLOYMENT_LOGS_URL,
+  ENVIRONMENT_LOGS_URL,
+  SERVICE_LOGS_URL,
+} from '@qovery/shared/routes'
+import { SpotlightContext } from '@qovery/shared/spotlight/feature'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { ROUTER_APPLICATION } from './router/router'
 import Container from './ui/container/container'
@@ -22,6 +30,36 @@ function PageApplicationWrapped() {
   const { data: service } = useService({ environmentId, serviceId: applicationId })
 
   useDocumentTitle(`${service?.name || 'Application'} - Qovery`)
+
+  const { setQuickActions } = useContext(SpotlightContext)
+  useEffect(() => {
+    if (!service) {
+      return
+    }
+
+    setQuickActions([
+      {
+        label: 'See deployment logs',
+        iconName: 'scroll',
+        link: ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(service.id),
+      },
+      {
+        label: 'See live logs',
+        iconName: 'scroll',
+        link: ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + SERVICE_LOGS_URL(service.id),
+      },
+      {
+        label: 'See audit logs',
+        iconName: 'clock-rotate-left',
+        link: AUDIT_LOGS_PARAMS_URL(organizationId, {
+          targetId: service.id,
+          targetType: service.serviceType,
+          projectId,
+          environmentId,
+        }),
+      },
+    ])
+  }, [service, projectId, environmentId, organizationId])
 
   return match(service)
     .with({ serviceType: 'DATABASE' }, () => null)

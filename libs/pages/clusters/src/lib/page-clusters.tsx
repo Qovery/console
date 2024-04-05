@@ -1,10 +1,17 @@
+import { useContext, useEffect } from 'react'
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
 import { CLUSTERS_GENERAL_URL, CLUSTERS_URL } from '@qovery/shared/routes'
+import { SpotlightContext } from '@qovery/shared/spotlight/feature'
 import { ROUTER_CLUSTERS } from './router/router'
 import Container from './ui/container/container'
 
 export function PageClusters() {
   const { organizationId = '' } = useParams()
+
+  const { setQuickActions } = useContext(SpotlightContext)
+  useEffect(() => {
+    setQuickActions([])
+  }, [])
 
   return (
     <Container>

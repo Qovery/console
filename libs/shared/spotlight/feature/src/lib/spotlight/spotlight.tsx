@@ -1,3 +1,4 @@
+import { useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useIntercom } from 'react-use-intercom'
 import { IconEnum } from '@qovery/shared/enums'
@@ -12,6 +13,7 @@ import {
   USER_URL,
 } from '@qovery/shared/routes'
 import { Command, type CommandDialogProps, Icon } from '@qovery/shared/ui'
+import { SpotlightContext } from './spotlight-provider'
 
 export interface SpotlightProps extends Pick<CommandDialogProps, 'open' | 'onOpenChange'> {
   organizationId: string
@@ -20,6 +22,8 @@ export interface SpotlightProps extends Pick<CommandDialogProps, 'open' | 'onOpe
 export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps) {
   const navigate = useNavigate()
   const { showMessages: showIntercomMessenger } = useIntercom()
+  const { quickActions } = useContext(SpotlightContext)
+
   const iconClassName = 'text-brand-500 text-base text-center w-6'
   const navigateTo = (link: string) => () => navigate(link)
   const openExternalLink = (externalLink: string) => () => {
@@ -30,6 +34,17 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
     <Command.Dialog label="Console Spotlight" open={open} onOpenChange={onOpenChange}>
       <Command.Input autoFocus placeholder="What do you need?" />
       <Command.List>
+        {quickActions.length > 0 && (
+          <Command.Group heading="Quick actions">
+            {quickActions.map(({ label, iconName, link }) => (
+              <Command.Item key={link} onSelect={navigateTo(link)}>
+                <Icon className={iconClassName} iconName={iconName} />
+                {label}
+              </Command.Item>
+            ))}
+          </Command.Group>
+        )}
+
         <Command.Group heading="Settings">
           <Command.Item onSelect={navigateTo(SETTINGS_URL(organizationId) + SETTINGS_CONTAINER_REGISTRIES_URL)}>
             <Icon className={iconClassName} iconName="box" />
