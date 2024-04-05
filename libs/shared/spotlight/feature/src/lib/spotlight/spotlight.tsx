@@ -34,6 +34,12 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
     <Command.Dialog label="Console Spotlight" open={open} onOpenChange={onOpenChange}>
       <Command.Input autoFocus placeholder="What do you need?" />
       <Command.List>
+        <Command.Empty>
+          <div className="text-center px-3 py-6">
+            <Icon iconName="wave-pulse" className="text-neutral-350" />
+            <p className="text-neutral-350 font-medium text-xs mt-1">No result for this search</p>
+          </div>
+        </Command.Empty>
         {quickActions.length > 0 && (
           <Command.Group heading="Quick actions">
             {quickActions.map(({ label, iconName, link }) => (
