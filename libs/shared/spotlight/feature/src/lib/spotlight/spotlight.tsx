@@ -22,6 +22,9 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
   const { showMessages: showIntercomMessenger } = useIntercom()
   const iconClassName = 'text-brand-500 text-base text-center w-6'
   const navigateTo = (link: string) => () => navigate(link)
+  const openExternalLink = (externalLink: string) => () => {
+    window.open(externalLink, '_blank')
+  }
 
   return (
     <Command.Dialog label="Console Spotlight" open={open} onOpenChange={onOpenChange}>
@@ -61,6 +64,14 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
           <Command.Item>
             <Icon className={iconClassName} iconName="book-open" />
             Go to documentation
+          </Command.Item>
+          <Command.Item onSelect={openExternalLink('https://discuss.qovery.com/')}>
+            <Icon className={iconClassName} iconName="people" />
+            Community Forum
+          </Command.Item>
+          <Command.Item onSelect={openExternalLink('https://roadmap.qovery.com/b/5m13y5v6/feature-ideas')}>
+            <Icon className={iconClassName} iconName="road" />
+            Roadmap
           </Command.Item>
           <Command.Item onSelect={showIntercomMessenger}>
             <Icon className={iconClassName} iconName="robot" />
