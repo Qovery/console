@@ -35,7 +35,7 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
       <Command.Input autoFocus placeholder="What do you need?" />
       <Command.List>
         <Command.Empty>
-          <div className="text-center px-3 py-6">
+          <div className="text-center px-3 pt-6 pb-4">
             <Icon iconName="wave-pulse" className="text-neutral-350" />
             <p className="text-neutral-350 font-medium text-xs mt-1">No result for this search</p>
           </div>
