@@ -82,7 +82,7 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
           </Command.Item>
         </Command.Group>
         <Command.Group heading="Help">
-          <Command.Item>
+          <Command.Item onSelect={openExternalLink('https://hub.qovery.com/')}>
             <Icon className={iconClassName} iconName="book-open" />
             Go to documentation
           </Command.Item>
