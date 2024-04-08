@@ -1,3 +1,4 @@
+export * from './lib/annotation-create-edit-modal/annotation-create-edit-modal'
 export * from './lib/git-branch-settings/git-branch-settings'
 export * from './lib/git-provider-setting/git-provider-setting'
 export * from './lib/git-repository-setting/git-repository-setting'

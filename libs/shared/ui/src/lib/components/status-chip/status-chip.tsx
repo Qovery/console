@@ -50,7 +50,18 @@ export function StatusChip(props: StatusChipProps) {
     .with('DEPLOYED', 'RUNNING', 'COMPLETED', () => <DeployedIcon />)
     .with('RESTARTED', () => <RestartedIcon />)
     // spinner
-    .with('QUEUED', 'DELETE_QUEUED', 'DEPLOYMENT_QUEUED', 'RESTART_QUEUED', 'STOP_QUEUED', () => <QueuedIcon />)
+    .with(
+      'QUEUED',
+      'DELETE_QUEUED',
+      'DEPLOYMENT_QUEUED',
+      'RESTART_QUEUED',
+      'STOP_QUEUED',
+      'WAITING_DELETING',
+      'WAITING_RESTARTING',
+      'WAITING_RUNNING',
+      'WAITING_STOPPING',
+      () => <QueuedIcon />
+    )
     .with('DEPLOYING', 'STARTING', () => <DeployingIcon />)
     .with('RESTARTING', () => <RestartingIcon />)
     .with('BUILDING', () => <BuildingIcon />)

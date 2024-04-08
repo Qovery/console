@@ -1,5 +1,10 @@
 import { useParams } from 'react-router-dom'
-import { useDeleteWebhook, useEditWebhook, useWebhooks } from '@qovery/domains/organizations/feature'
+import {
+  AnnotationCreateEditModal,
+  useDeleteWebhook,
+  useEditWebhook,
+  useWebhooks,
+} from '@qovery/domains/organizations/feature'
 import {
   BlockContent,
   Button,
@@ -22,17 +27,19 @@ export function PageOrganizationLabelsAnnotationsFeature() {
   const { openModalConfirmation } = useModalConfirmation()
   const { mutateAsync: editWebhook } = useEditWebhook()
 
-  // const openAddNew = () => {
-  // openModal({
-  //   content: <WebhookCrudModalFeature organizationId={organizationId} closeModal={closeModal} />,
-  // })
-  // }
+  const openAddNew = () => {
+    openModal({
+      content: <AnnotationCreateEditModal organizationId={organizationId} closeModal={closeModal} />,
+    })
+  }
 
-  // const openEdit = (webhook: OrganizationWebhookResponse) => {
-  // openModal({
-  //   content: <WebhookCrudModalFeature organizationId={organizationId} webhook={webhook} closeModal={closeModal} />,
-  // })
-  // }
+  const openEdit = (annotation: any) => {
+    openModal({
+      content: (
+        <AnnotationCreateEditModal organizationId={organizationId} webhook={annotation} closeModal={closeModal} />
+      ),
+    })
+  }
 
   // const onDelete = (webhook: OrganizationWebhookResponse) => {
   //   openModalConfirmation({
@@ -59,7 +66,7 @@ export function PageOrganizationLabelsAnnotationsFeature() {
               Define and manage the annotations to be used within your organization.
             </p>
           </div>
-          <Button size="lg" className="gap-2 shrink-0">
+          <Button size="lg" className="gap-2 shrink-0" onClick={openAddNew}>
             Add new
             <Icon iconName="circle-plus" />
           </Button>
