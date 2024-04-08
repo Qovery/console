@@ -27,59 +27,46 @@ export interface AnnotationCreateEditModalProps {
   onClose: () => void
   organizationId: string
   isEdit?: boolean
-  annotationsGroup?: OrganizationAnnotationsGroupResponse
+  gitToken?: GitTokenResponse
 }
 
 export function AnnotationCreateEditModal({
   isEdit,
-  annotationsGroup,
+  gitToken,
   organizationId,
   onClose,
 }: AnnotationCreateEditModalProps) {
   const methods = useForm({
     mode: 'onChange',
     defaultValues: {
-      name: annotationsGroup?.name ?? '',
-      annotations: annotationsGroup?.annotations ?? [
-        {
-          key: '',
-          value: '',
-        },
-      ],
-      scopes: convertScopeEnumToObject(annotationsGroup?.scopes ?? []),
+      type: gitToken?.type ?? GitProviderEnum.GITHUB,
+      name: gitToken?.name ?? '',
+      description: gitToken?.description ?? '',
+      workspace: gitToken?.workspace ?? undefined,
+      token: '',
     },
   })
 
-  const { fields, append, remove } = useFieldArray({
-    control: methods.control,
-    name: 'annotations',
-  })
-
-  const { mutateAsync: editAnnotationsGroup, isLoading: isLoadingEditAnnotationsGroup } = useEditAnnotationsGroup()
-  const { mutateAsync: createAnnotationsGroup, isLoading: isLoadingCreateAnnotationsGroup } =
-    useCreateAnnotationsGroup()
+  const { mutateAsync: editGitToken, isLoading: isLoadingEditGitToken } = useEditGitToken()
+  const { mutateAsync: createGitToken, isLoading: isLoadingCreateGitToken } = useCreateGitToken()
+  const gitType = methods.watch('type')
 
   const onSubmit = methods.handleSubmit(async (data) => {
     try {
       if (isEdit) {
-        await editAnnotationsGroup({
+        const response = await editGitToken({
           organizationId,
-          annotationsGroupId: annotationsGroup?.id ?? '',
-          annotationsGroupRequest: {
-            ...data,
-            scopes: convertScopeObjectToEnum(data.scopes),
-          },
+          gitTokenId: gitToken?.id ?? '',
+          gitTokenRequest: data,
         })
+        onClose()
       } else {
-        await createAnnotationsGroup({
+        const response = await createGitToken({
           organizationId,
-          annotationsGroupRequest: {
-            ...data,
-            scopes: convertScopeObjectToEnum(data.scopes),
-          },
+          gitTokenRequest: data,
         })
+        onClose()
       }
-      onClose()
     } catch (error) {
       console.error(error)
     }
@@ -88,23 +75,73 @@ export function AnnotationCreateEditModal({
   return (
     <FormProvider {...methods}>
       <ModalCrud
-        title={isEdit ? 'Edit annotation group' : 'Create annotation group'}
-        description="You will have the possibility to modify the parameters once created."
+        title={isEdit ? 'Edit git token' : 'Add git token'}
         onClose={onClose}
         onSubmit={onSubmit}
-        loading={isLoadingEditAnnotationsGroup || isLoadingCreateAnnotationsGroup}
+        loading={isLoadingEditGitToken || isLoadingCreateGitToken}
         isEdit={isEdit}
+        howItWorks={
+          <>
+            <p>
+              Git tokens allow Qovery to access any git repository within your git organization. By default Qovery uses
+              your own git account to retrieve the access but if you want to manage the accesses in a centralized way,
+              create dedicated git tokens.
+            </p>
+            <p>How to configure it:</p>
+            <ol className="list-disc ml-3 mb-2">
+              <li>
+                Create a token within your git account (procedures depends on the git provider, see linked
+                documentation)
+              </li>
+              <li>Add the token within this page</li>
+              <li>
+                When creating an application from a git provider, select the git token you want to use to access the
+                repository.
+              </li>
+            </ol>
+            <p className="mb-2">A workspace is necessary for bitbucket tokens</p>
+            <ExternalLink href="https://hub.qovery.com/docs/using-qovery/configuration/organization/git-repository-access">
+              Documentation
+            </ExternalLink>
+          </>
+        }
       >
+        <Controller
+          name="type"
+          control={methods.control}
+          rules={{
+            required: 'Please enter a git type.',
+          }}
+          render={({ field, fieldState: { error } }) => (
+            <div className="mb-5">
+              <InputSelect
+                label="Type"
+                onChange={(event) => {
+                  field.onChange(event)
+                  methods.setValue('workspace', undefined)
+                }}
+                value={field.value}
+                error={error?.message}
+                options={Object.keys(GitProviderEnum).map((key) => ({
+                  label: upperCaseFirstLetter(key),
+                  value: key,
+                  icon: <Icon name={key} width="16px" height="16px" />,
+                }))}
+                portal
+              />
+            </div>
+          )}
+        />
         <Controller
           name="name"
           control={methods.control}
           rules={{
-            required: 'Please enter a group name.',
+            required: 'Please enter a token name.',
           }}
           render={({ field, fieldState: { error } }) => (
             <InputText
               className="mb-5"
-              label="Group name"
+              label="Token name"
               name={field.name}
               onChange={field.onChange}
               value={field.value}
@@ -112,97 +149,56 @@ export function AnnotationCreateEditModal({
             />
           )}
         />
-        <span className="block text-neutral-400 text-sm mb-2">Add annotation key value</span>
-        <div className="bg-neutral-100 border border-neutral-250 px-4 py-3 rounded">
-          <ul>
-            <li className="grid grid-cols-[6fr_6fr_1fr] gap-x-2 mb-3">
-              <span className="text-sm text-neutral-350 font-medium">Annotation keys</span>
-              <span className="text-sm text-neutral-350 font-medium">Value</span>
-              <span></span>
-            </li>
-            {fields.map((field, index) => (
-              <li key={field.id} className="mb-3 last:mb-0">
-                <div className="grid grid-cols-[6fr_6fr_1fr] gap-x-2 items-center">
-                  <Controller
-                    name={`annotations.${index}.key`}
-                    control={methods.control}
-                    rules={{
-                      required: true,
-                    }}
-                    render={({ field, fieldState: { error } }) => (
-                      <InputTextSmall
-                        dataTestId={`annotations.${index}.key`}
-                        name={field.name}
-                        value={field.value}
-                        onChange={field.onChange}
-                        error={error?.message}
-                      />
-                    )}
-                  />
-                  <Controller
-                    name={`annotations.${index}.value`}
-                    control={methods.control}
-                    rules={{
-                      required: true,
-                    }}
-                    render={({ field, fieldState: { error } }) => (
-                      <InputTextSmall
-                        dataTestId={`annotations.${index}.value`}
-                        name={field.name}
-                        value={field.value}
-                        onChange={field.onChange}
-                        error={error?.message}
-                      />
-                    )}
-                  />
-                  <Button size="md" variant="plain" type="button" onClick={() => remove(index)}>
-                    <Icon iconName="trash" className="text-neutral-400" />
-                  </Button>
-                </div>
-              </li>
-            ))}
-          </ul>
-          <Button
-            size="sm"
-            type="button"
-            className="mt-3"
-            onClick={() =>
-              append({
-                key: '',
-                value: '',
-              })
-            }
-          >
-            Add annotation
-            <Icon iconName="plus" className="ml-2" />
-          </Button>
-        </div>
-        <span className="block text-neutral-400 text-sm mb-2 mt-4">Select scope (Kubernetes objects)</span>
-        <div className="bg-neutral-100 border border-neutral-250 px-4 py-3 rounded h-[194px] overflow-y-auto">
-          {Object.keys(OrganizationAnnotationsGroupScopeEnum)
-            .sort()
-            .map((key) => (
-              <Controller
-                key={key}
-                name={`scopes.${key}`}
-                control={methods.control}
-                render={({ field }) => (
-                  <div className="flex items-center mb-2 last:mb-0">
-                    <Checkbox
-                      id={key}
-                      className="mr-3 w-4 h-4"
-                      name={field.name}
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                    <label className="text-neutral-400 font-medium text-sm" htmlFor={key}>
-                      {key}
-                    </label>
-                  </div>
-                )}
+        <Controller
+          name="description"
+          control={methods.control}
+          render={({ field, fieldState: { error } }) => (
+            <InputTextArea
+              className="mb-5"
+              label="Description"
+              name={field.name}
+              onChange={field.onChange}
+              value={field.value}
+              error={error?.message}
+            />
+          )}
+        />
+        <Controller
+          name="token"
+          control={methods.control}
+          rules={{
+            required: true,
+          }}
+          render={({ field, fieldState: { error } }) => (
+            <InputText
+              className="mb-5"
+              label="Token value"
+              name={field.name}
+              onChange={field.onChange}
+              value={field.value}
+              error={error?.message}
+            />
+          )}
+        />
+        {gitType === GitProviderEnum.BITBUCKET && (
+          <Controller
+            name="workspace"
+            control={methods.control}
+            rules={{
+              required: 'Please enter a correct workspace.',
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <InputText
+                className="mb-5"
+                label="Workspace"
+                name={field.name}
+                onChange={field.onChange}
+                value={field.value}
+                error={error?.message}
               />
-            ))}
-        </div>
+            )}
+          />
+        )}
       </ModalCrud>
     </FormProvider>
   )
