@@ -1,4 +1,3 @@
-import { useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useIntercom } from 'react-use-intercom'
 import { IconEnum } from '@qovery/shared/enums'
@@ -13,7 +12,7 @@ import {
   USER_URL,
 } from '@qovery/shared/routes'
 import { Command, type CommandDialogProps, Icon } from '@qovery/shared/ui'
-import { SpotlightContext } from './spotlight-provider'
+import useQuickActions from '../hooks/use-quick-actions/use-quick-actions'
 
 export interface SpotlightProps extends Pick<CommandDialogProps, 'open' | 'onOpenChange'> {
   organizationId: string
@@ -22,7 +21,7 @@ export interface SpotlightProps extends Pick<CommandDialogProps, 'open' | 'onOpe
 export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps) {
   const navigate = useNavigate()
   const { showMessages: showIntercomMessenger } = useIntercom()
-  const { quickActions } = useContext(SpotlightContext)
+  const quickActions = useQuickActions()
 
   const iconClassName = 'text-brand-500 text-base text-center w-6'
   const navigateTo = (link: string) => () => navigate(link)

@@ -15,7 +15,6 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import { IntercomProvider } from 'react-use-intercom'
 import { LOGIN_AUTH_REDIRECT_URL, LOGIN_URL } from '@qovery/shared/routes'
-import { SpotlightProvider } from '@qovery/shared/spotlight/feature'
 import { ModalProvider, ToastBehavior, toastError } from '@qovery/shared/ui'
 import { ToastEnum, toast } from '@qovery/shared/ui'
 import App from './app/app'
@@ -148,17 +147,15 @@ root.render(
         skipRedirectCallback={window.location.pathname !== LOGIN_URL + LOGIN_AUTH_REDIRECT_URL}
       >
         <QueryClientProvider client={queryClient}>
-          <SpotlightProvider>
-            <BrowserRouter>
-              <TooltipProvider>
-                <ModalProvider>
-                  <App />
-                  <ToastBehavior />
-                </ModalProvider>
-              </TooltipProvider>
-            </BrowserRouter>
-            {/* <ReactQueryDevtools initialIsOpen={false} /> */}
-          </SpotlightProvider>
+          <BrowserRouter>
+            <TooltipProvider>
+              <ModalProvider>
+                <App />
+                <ToastBehavior />
+              </ModalProvider>
+            </TooltipProvider>
+          </BrowserRouter>
+          {/* <ReactQueryDevtools initialIsOpen={false} /> */}
         </QueryClientProvider>
       </Auth0Provider>
     </IntercomProvider>
