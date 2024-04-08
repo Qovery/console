@@ -112,6 +112,5 @@ export enum IconAwesomeEnum {
   SHIELD_CHECK = 'icon-solid-shield-check',
   HOUSE = 'icon-solid-house',
   LOCK = 'icon-solid-lock',
-  WAND_MAGIC_SPARKLES = 'icon-solid-wand-magic-sparkles',
   // schema: favicons name
 }
