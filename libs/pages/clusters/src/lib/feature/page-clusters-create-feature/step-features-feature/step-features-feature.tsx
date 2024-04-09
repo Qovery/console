@@ -142,6 +142,18 @@ export function StepFeaturesFeature() {
     navigate(pathCreate + CLUSTERS_CREATION_SUMMARY_URL)
   })
 
+  useEffect(() => {
+    // XXX: If this is the initial render, force the value of static IP feature to `true`.
+    // Backend is currently able to directly return `true` so we must force it frontend side
+    // https://qovery.atlassian.net/browse/FRT-1002
+    if (features && Object.keys(featuresData?.features ?? {}).length === 0) {
+      const staticIp = features.find(({ id }) => id === 'STATIC_IP')
+      if (staticIp && staticIp.value === false) {
+        methods.setValue('features.STATIC_IP.value', true)
+      }
+    }
+  }, [features, featuresData])
+
   return (
     <FunnelFlowBody helpSection={funnelCardHelp}>
       <FormProvider {...methods}>
