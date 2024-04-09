@@ -92,7 +92,7 @@ export function AWSVpcFeature() {
       </div>
       <Controller
         name="aws_existing_vpc.aws_vpc_eks_id"
-        rules={{ required: true }}
+        rules={{ required: true, shouldUnregister: true }}
         control={control}
         render={({ field }) => (
           <>

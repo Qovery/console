@@ -86,6 +86,7 @@ export function ButtonPopoverSubnets({ name, children, title, callout, required 
     rules: {
       validate: (data) => isFieldValid({ subnets: removeEmptySubnet(data as Subnets[]), required }),
     },
+    shouldUnregister: true,
   })
 
   const watchSubnets = removeEmptySubnet(watch(name))
