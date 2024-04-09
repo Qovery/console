@@ -177,28 +177,30 @@ export function AnnotationCreateEditModal({
           </Button>
         </div>
         <span className="block text-neutral-400 text-sm mb-2 mt-4">Select scope (Kubernetes objects)</span>
-        <div className="bg-neutral-100 border border-neutral-250 px-4 py-3 rounded">
-          {Object.keys(OrganizationAnnotationsGroupScopeEnum).map((key) => (
-            <Controller
-              key={key}
-              name={`scopes.${key}`}
-              control={methods.control}
-              render={({ field }) => (
-                <div className="flex items-center mb-2 last:mb-0">
-                  <Checkbox
-                    id={key}
-                    className="mr-3 w-4 h-4"
-                    name={field.name}
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                  <label className="text-neutral-400 font-medium text-sm" htmlFor={key}>
-                    {key}
-                  </label>
-                </div>
-              )}
-            />
-          ))}
+        <div className="bg-neutral-100 border border-neutral-250 px-4 py-3 rounded h-[194px] overflow-y-auto">
+          {Object.keys(OrganizationAnnotationsGroupScopeEnum)
+            .sort()
+            .map((key) => (
+              <Controller
+                key={key}
+                name={`scopes.${key}`}
+                control={methods.control}
+                render={({ field }) => (
+                  <div className="flex items-center mb-2 last:mb-0">
+                    <Checkbox
+                      id={key}
+                      className="mr-3 w-4 h-4"
+                      name={field.name}
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                    <label className="text-neutral-400 font-medium text-sm" htmlFor={key}>
+                      {key}
+                    </label>
+                  </div>
+                )}
+              />
+            ))}
         </div>
       </ModalCrud>
     </FormProvider>
