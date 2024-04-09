@@ -27,26 +27,26 @@ export interface AnnotationCreateEditModalProps {
   onClose: () => void
   organizationId: string
   isEdit?: boolean
-  annotation?: OrganizationAnnotationsGroupResponse
+  annotationsGroup?: OrganizationAnnotationsGroupResponse
 }
 
 export function AnnotationCreateEditModal({
   isEdit,
-  annotation,
+  annotationsGroup,
   organizationId,
   onClose,
 }: AnnotationCreateEditModalProps) {
   const methods = useForm({
     mode: 'onChange',
     defaultValues: {
-      name: annotation?.name ?? '',
-      annotations: annotation?.annotations ?? [
+      name: annotationsGroup?.name ?? '',
+      annotations: annotationsGroup?.annotations ?? [
         {
           key: '',
           value: '',
         },
       ],
-      scopes: convertScopeEnumToObject(annotation?.scopes ?? []),
+      scopes: convertScopeEnumToObject(annotationsGroup?.scopes ?? []),
     },
   })
 
@@ -64,13 +64,16 @@ export function AnnotationCreateEditModal({
       if (isEdit) {
         await editAnnotationsGroup({
           organizationId,
-          annotationId: annotation?.id ?? '',
-          annotationRequest: data as any,
+          annotationsGroupId: annotationsGroup?.id ?? '',
+          annotationsGroupRequest: {
+            ...data,
+            scopes: convertScopeObjectToEnum(data.scopes),
+          },
         })
       } else {
         await createAnnotationsGroup({
           organizationId,
-          annotationRequest: {
+          annotationsGroupRequest: {
             ...data,
             scopes: convertScopeObjectToEnum(data.scopes),
           },
@@ -128,6 +131,7 @@ export function AnnotationCreateEditModal({
                     }}
                     render={({ field, fieldState: { error } }) => (
                       <InputTextSmall
+                        dataTestId={`annotations.${index}.key`}
                         name={field.name}
                         value={field.value}
                         onChange={field.onChange}
@@ -143,6 +147,7 @@ export function AnnotationCreateEditModal({
                     }}
                     render={({ field, fieldState: { error } }) => (
                       <InputTextSmall
+                        dataTestId={`annotations.${index}.value`}
                         name={field.name}
                         value={field.value}
                         onChange={field.onChange}

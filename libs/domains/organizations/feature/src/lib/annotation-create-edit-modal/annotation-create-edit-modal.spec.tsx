@@ -1,13 +1,16 @@
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import { GitProviderEnum } from 'qovery-typescript-axios'
-import selectEvent from 'react-select-event'
+import { OrganizationAnnotationsGroupScopeEnum } from 'qovery-typescript-axios'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import * as useCreateGitToken from '../hooks/use-create-git-token/use-create-git-token'
-import * as useEditGitToken from '../hooks/use-edit-git-token/use-edit-git-token'
-import AnnotationCreateEditModal, { type AnnotationCreateEditModalProps } from './annotation-create-edit-modal'
+import * as useCreateAnnotationsGroup from '../hooks/use-create-annotations-group/use-create-annotations-group'
+import * as useEditAnnotationsGroup from '../hooks/use-edit-annotations-group/use-edit-annotations-group'
+import AnnotationCreateEditModal, {
+  type AnnotationCreateEditModalProps,
+  convertScopeEnumToObject,
+  convertScopeObjectToEnum,
+} from './annotation-create-edit-modal'
 
-const useCreateGitTokenMockSpy = jest.spyOn(useCreateGitToken, 'useCreateGitToken') as jest.Mock
-const useEditGitTokenMockSpy = jest.spyOn(useEditGitToken, 'useEditGitToken') as jest.Mock
+const useCreateAnnotationsGroupMockSpy = jest.spyOn(useCreateAnnotationsGroup, 'useCreateAnnotationsGroup') as jest.Mock
+const useEditAnnotationsGroupMockSpy = jest.spyOn(useEditAnnotationsGroup, 'useEditAnnotationsGroup') as jest.Mock
 
 const props: AnnotationCreateEditModalProps = {
   organizationId: '0000-0000-0000',
@@ -16,17 +19,17 @@ const props: AnnotationCreateEditModalProps = {
 
 describe('AnnotationCreateEditModal', () => {
   beforeEach(() => {
-    useCreateGitTokenMockSpy.mockReturnValue({
+    useCreateAnnotationsGroupMockSpy.mockReturnValue({
       mutateAsync: jest.fn().mockResolvedValue({ id: '000' }),
     })
-    useEditGitTokenMockSpy.mockReturnValue({
+    useEditAnnotationsGroupMockSpy.mockReturnValue({
       mutateAsync: jest.fn(),
     })
   })
 
-  it('should render successfully', () => {
+  it('should match with snatpshot', () => {
     const { baseElement } = renderWithProviders(wrapWithReactHookForm(<AnnotationCreateEditModal {...props} />))
-    expect(baseElement).toBeTruthy()
+    expect(baseElement).toMatchSnapshot()
   })
 
   it('should correctly convert array of enums to object', () => {
@@ -44,13 +47,11 @@ describe('AnnotationCreateEditModal', () => {
   it('should submit the form to create a annotation group', async () => {
     const { userEvent } = renderWithProviders(wrapWithReactHookForm(<AnnotationCreateEditModal {...props} />))
 
-    const inputType = screen.getByLabelText('Type')
-    await selectEvent.select(inputType, ['Gitlab'], {
-      container: document.body,
-    })
+    const inputName = screen.getByLabelText('Group name')
+    await userEvent.type(inputName, 'my-name')
 
-    const inputName = screen.getByLabelText('Token name')
-    await userEvent.type(inputName, 'my-token-name')
+    const inputKey = screen.getByTestId('annotations.0.key')
+    await userEvent.type(inputKey, 'key')
 
     const inputValue = screen.getByTestId('annotations.0.value')
     await userEvent.type(inputValue, 'value')
@@ -63,7 +64,7 @@ describe('AnnotationCreateEditModal', () => {
 
     await userEvent.click(btn)
 
-    expect(useCreateGitTokenMockSpy().mutateAsync).toHaveBeenCalledWith({
+    expect(useCreateAnnotationsGroupMockSpy().mutateAsync).toHaveBeenCalledWith({
       organizationId: '0000-0000-0000',
       annotationsGroupRequest: {
         name: 'my-name',
@@ -77,16 +78,16 @@ describe('AnnotationCreateEditModal', () => {
       },
     })
 
-    expect(props.onClose).toHaveBeenCalledWith({ id: '000' })
+    expect(props.onClose).toHaveBeenCalled()
   })
 
-  it('should submit the form to edit a git token', async () => {
+  it('should submit the form to edit a annotations group', async () => {
     const { userEvent } = renderWithProviders(
       wrapWithReactHookForm(
         <AnnotationCreateEditModal
           {...props}
           isEdit
-          gitToken={{
+          annotationsGroup={{
             id: '1111-1111-1111',
             created_at: '',
             updated_at: '',
@@ -103,19 +104,16 @@ describe('AnnotationCreateEditModal', () => {
       )
     )
 
-    const inputName = screen.getByLabelText('Token name')
+    const inputName = screen.getByLabelText('Group name')
     await userEvent.clear(inputName)
-    await userEvent.type(inputName, 'my-token-name')
-
-    const inputTokenValue = screen.getByLabelText('Token value')
-    await userEvent.type(inputTokenValue, 'my-token-value')
+    await userEvent.type(inputName, 'my-name')
 
     const btn = screen.getByRole('button', { name: 'Confirm' })
     expect(btn).not.toBeDisabled()
 
     await userEvent.click(btn)
 
-    expect(useEditGitTokenMockSpy().mutateAsync).toHaveBeenCalledWith({
+    expect(useEditAnnotationsGroupMockSpy().mutateAsync).toHaveBeenCalledWith({
       organizationId: '0000-0000-0000',
       annotationsGroupId: '1111-1111-1111',
       annotationsGroupRequest: {

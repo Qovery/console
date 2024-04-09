@@ -150,7 +150,7 @@ exports[`AnnotationCreateEditModal should match with snatpshot 1`] = `
           Select scope (Kubernetes objects)
         </span>
         <div
-          class="bg-neutral-100 border border-neutral-250 px-4 py-3 rounded h-[194px] overflow-y-auto"
+          class="bg-neutral-100 border border-neutral-250 px-4 py-3 rounded"
         >
           <div
             class="flex items-center mb-2 last:mb-0"
@@ -328,7 +328,7 @@ exports[`AnnotationCreateEditModal should match with snatpshot 1`] = `
             />
             <input
               aria-hidden="true"
-              name="scopes.SECRETS"
+              name="scopes.DEPLOYMENTS"
               style="transform: translateX(-100%); position: absolute; pointer-events: none; opacity: 0; margin: 0px; width: 0px; height: 0px;"
               tabindex="-1"
               type="checkbox"
@@ -336,9 +336,36 @@ exports[`AnnotationCreateEditModal should match with snatpshot 1`] = `
             />
             <label
               class="text-neutral-400 font-medium text-sm"
-              for="SECRETS"
+              for="DEPLOYMENTS"
             >
-              SECRETS
+              DEPLOYMENTS
+            </label>
+          </div>
+          <div
+            class="flex items-center mb-2 last:mb-0"
+          >
+            <button
+              aria-checked="false"
+              class="group transition bg-neutral-100 border border-neutral-300 rounded-sm hover:border-2 hover:border-brand-500 data-[state=checked]:bg-brand-500 data-[state=checked]:border data-[state=checked]:border-brand-500 data-[state=indeterminate]:border-2 data-[state=indeterminate]:border-brand-500 disabled:border disabled:border-neutral-250 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300 disabled:data-[state=indeterminate]:border-brand-300 mr-3 w-4 h-4"
+              data-state="unchecked"
+              id="STATEFUL_SETS"
+              role="checkbox"
+              type="button"
+              value="on"
+            />
+            <input
+              aria-hidden="true"
+              name="scopes.STATEFUL_SETS"
+              style="transform: translateX(-100%); position: absolute; pointer-events: none; opacity: 0; margin: 0px; width: 0px; height: 0px;"
+              tabindex="-1"
+              type="checkbox"
+              value="on"
+            />
+            <label
+              class="text-neutral-400 font-medium text-sm"
+              for="STATEFUL_SETS"
+            >
+              STATEFUL_SETS
             </label>
           </div>
           <div
@@ -375,14 +402,14 @@ exports[`AnnotationCreateEditModal should match with snatpshot 1`] = `
               aria-checked="false"
               class="group transition bg-neutral-100 border border-neutral-300 rounded-sm hover:border-2 hover:border-brand-500 data-[state=checked]:bg-brand-500 data-[state=checked]:border data-[state=checked]:border-brand-500 data-[state=indeterminate]:border-2 data-[state=indeterminate]:border-brand-500 disabled:border disabled:border-neutral-250 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300 disabled:data-[state=indeterminate]:border-brand-300 mr-3 w-4 h-4"
               data-state="unchecked"
-              id="STATEFUL_SETS"
+              id="INGRESS"
               role="checkbox"
               type="button"
               value="on"
             />
             <input
               aria-hidden="true"
-              name="scopes.STATEFUL_SETS"
+              name="scopes.INGRESS"
               style="transform: translateX(-100%); position: absolute; pointer-events: none; opacity: 0; margin: 0px; width: 0px; height: 0px;"
               tabindex="-1"
               type="checkbox"
@@ -390,9 +417,225 @@ exports[`AnnotationCreateEditModal should match with snatpshot 1`] = `
             />
             <label
               class="text-neutral-400 font-medium text-sm"
-              for="STATEFUL_SETS"
+              for="INGRESS"
             >
-              STATEFUL_SETS
+              INGRESS
+            </label>
+          </div>
+          <div
+            class="flex items-center mb-2 last:mb-0"
+          >
+            <button
+              aria-checked="false"
+              class="group transition bg-neutral-100 border border-neutral-300 rounded-sm hover:border-2 hover:border-brand-500 data-[state=checked]:bg-brand-500 data-[state=checked]:border data-[state=checked]:border-brand-500 data-[state=indeterminate]:border-2 data-[state=indeterminate]:border-brand-500 disabled:border disabled:border-neutral-250 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300 disabled:data-[state=indeterminate]:border-brand-300 mr-3 w-4 h-4"
+              data-state="unchecked"
+              id="HPA"
+              role="checkbox"
+              type="button"
+              value="on"
+            />
+            <input
+              aria-hidden="true"
+              name="scopes.HPA"
+              style="transform: translateX(-100%); position: absolute; pointer-events: none; opacity: 0; margin: 0px; width: 0px; height: 0px;"
+              tabindex="-1"
+              type="checkbox"
+              value="on"
+            />
+            <label
+              class="text-neutral-400 font-medium text-sm"
+              for="HPA"
+            >
+              HPA
+            </label>
+          </div>
+          <div
+            class="flex items-center mb-2 last:mb-0"
+          >
+            <button
+              aria-checked="false"
+              class="group transition bg-neutral-100 border border-neutral-300 rounded-sm hover:border-2 hover:border-brand-500 data-[state=checked]:bg-brand-500 data-[state=checked]:border data-[state=checked]:border-brand-500 data-[state=indeterminate]:border-2 data-[state=indeterminate]:border-brand-500 disabled:border disabled:border-neutral-250 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300 disabled:data-[state=indeterminate]:border-brand-300 mr-3 w-4 h-4"
+              data-state="unchecked"
+              id="ENDPOINTS"
+              role="checkbox"
+              type="button"
+              value="on"
+            />
+            <input
+              aria-hidden="true"
+              name="scopes.ENDPOINTS"
+              style="transform: translateX(-100%); position: absolute; pointer-events: none; opacity: 0; margin: 0px; width: 0px; height: 0px;"
+              tabindex="-1"
+              type="checkbox"
+              value="on"
+            />
+            <label
+              class="text-neutral-400 font-medium text-sm"
+              for="ENDPOINTS"
+            >
+              ENDPOINTS
+            </label>
+          </div>
+          <div
+            class="flex items-center mb-2 last:mb-0"
+          >
+            <button
+              aria-checked="false"
+              class="group transition bg-neutral-100 border border-neutral-300 rounded-sm hover:border-2 hover:border-brand-500 data-[state=checked]:bg-brand-500 data-[state=checked]:border data-[state=checked]:border-brand-500 data-[state=indeterminate]:border-2 data-[state=indeterminate]:border-brand-500 disabled:border disabled:border-neutral-250 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300 disabled:data-[state=indeterminate]:border-brand-300 mr-3 w-4 h-4"
+              data-state="unchecked"
+              id="PODS"
+              role="checkbox"
+              type="button"
+              value="on"
+            />
+            <input
+              aria-hidden="true"
+              name="scopes.PODS"
+              style="transform: translateX(-100%); position: absolute; pointer-events: none; opacity: 0; margin: 0px; width: 0px; height: 0px;"
+              tabindex="-1"
+              type="checkbox"
+              value="on"
+            />
+            <label
+              class="text-neutral-400 font-medium text-sm"
+              for="PODS"
+            >
+              PODS
+            </label>
+          </div>
+          <div
+            class="flex items-center mb-2 last:mb-0"
+          >
+            <button
+              aria-checked="false"
+              class="group transition bg-neutral-100 border border-neutral-300 rounded-sm hover:border-2 hover:border-brand-500 data-[state=checked]:bg-brand-500 data-[state=checked]:border data-[state=checked]:border-brand-500 data-[state=indeterminate]:border-2 data-[state=indeterminate]:border-brand-500 disabled:border disabled:border-neutral-250 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300 disabled:data-[state=indeterminate]:border-brand-300 mr-3 w-4 h-4"
+              data-state="unchecked"
+              id="PERSISTENT_VOLUMES"
+              role="checkbox"
+              type="button"
+              value="on"
+            />
+            <input
+              aria-hidden="true"
+              name="scopes.PERSISTENT_VOLUMES"
+              style="transform: translateX(-100%); position: absolute; pointer-events: none; opacity: 0; margin: 0px; width: 0px; height: 0px;"
+              tabindex="-1"
+              type="checkbox"
+              value="on"
+            />
+            <label
+              class="text-neutral-400 font-medium text-sm"
+              for="PERSISTENT_VOLUMES"
+            >
+              PERSISTENT_VOLUMES
+            </label>
+          </div>
+          <div
+            class="flex items-center mb-2 last:mb-0"
+          >
+            <button
+              aria-checked="false"
+              class="group transition bg-neutral-100 border border-neutral-300 rounded-sm hover:border-2 hover:border-brand-500 data-[state=checked]:bg-brand-500 data-[state=checked]:border data-[state=checked]:border-brand-500 data-[state=indeterminate]:border-2 data-[state=indeterminate]:border-brand-500 disabled:border disabled:border-neutral-250 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300 disabled:data-[state=indeterminate]:border-brand-300 mr-3 w-4 h-4"
+              data-state="unchecked"
+              id="SECRETS"
+              role="checkbox"
+              type="button"
+              value="on"
+            />
+            <input
+              aria-hidden="true"
+              name="scopes.SECRETS"
+              style="transform: translateX(-100%); position: absolute; pointer-events: none; opacity: 0; margin: 0px; width: 0px; height: 0px;"
+              tabindex="-1"
+              type="checkbox"
+              value="on"
+            />
+            <label
+              class="text-neutral-400 font-medium text-sm"
+              for="SECRETS"
+            >
+              SECRETS
+            </label>
+          </div>
+          <div
+            class="flex items-center mb-2 last:mb-0"
+          >
+            <button
+              aria-checked="false"
+              class="group transition bg-neutral-100 border border-neutral-300 rounded-sm hover:border-2 hover:border-brand-500 data-[state=checked]:bg-brand-500 data-[state=checked]:border data-[state=checked]:border-brand-500 data-[state=indeterminate]:border-2 data-[state=indeterminate]:border-brand-500 disabled:border disabled:border-neutral-250 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300 disabled:data-[state=indeterminate]:border-brand-300 mr-3 w-4 h-4"
+              data-state="unchecked"
+              id="CONFIG_MAPS"
+              role="checkbox"
+              type="button"
+              value="on"
+            />
+            <input
+              aria-hidden="true"
+              name="scopes.CONFIG_MAPS"
+              style="transform: translateX(-100%); position: absolute; pointer-events: none; opacity: 0; margin: 0px; width: 0px; height: 0px;"
+              tabindex="-1"
+              type="checkbox"
+              value="on"
+            />
+            <label
+              class="text-neutral-400 font-medium text-sm"
+              for="CONFIG_MAPS"
+            >
+              CONFIG_MAPS
+            </label>
+          </div>
+          <div
+            class="flex items-center mb-2 last:mb-0"
+          >
+            <button
+              aria-checked="false"
+              class="group transition bg-neutral-100 border border-neutral-300 rounded-sm hover:border-2 hover:border-brand-500 data-[state=checked]:bg-brand-500 data-[state=checked]:border data-[state=checked]:border-brand-500 data-[state=indeterminate]:border-2 data-[state=indeterminate]:border-brand-500 disabled:border disabled:border-neutral-250 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300 disabled:data-[state=indeterminate]:border-brand-300 mr-3 w-4 h-4"
+              data-state="unchecked"
+              id="JOBS"
+              role="checkbox"
+              type="button"
+              value="on"
+            />
+            <input
+              aria-hidden="true"
+              name="scopes.JOBS"
+              style="transform: translateX(-100%); position: absolute; pointer-events: none; opacity: 0; margin: 0px; width: 0px; height: 0px;"
+              tabindex="-1"
+              type="checkbox"
+              value="on"
+            />
+            <label
+              class="text-neutral-400 font-medium text-sm"
+              for="JOBS"
+            >
+              JOBS
+            </label>
+          </div>
+          <div
+            class="flex items-center mb-2 last:mb-0"
+          >
+            <button
+              aria-checked="false"
+              class="group transition bg-neutral-100 border border-neutral-300 rounded-sm hover:border-2 hover:border-brand-500 data-[state=checked]:bg-brand-500 data-[state=checked]:border data-[state=checked]:border-brand-500 data-[state=indeterminate]:border-2 data-[state=indeterminate]:border-brand-500 disabled:border disabled:border-neutral-250 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300 disabled:data-[state=indeterminate]:border-brand-300 mr-3 w-4 h-4"
+              data-state="unchecked"
+              id="CRON_JOBS"
+              role="checkbox"
+              type="button"
+              value="on"
+            />
+            <input
+              aria-hidden="true"
+              name="scopes.CRON_JOBS"
+              style="transform: translateX(-100%); position: absolute; pointer-events: none; opacity: 0; margin: 0px; width: 0px; height: 0px;"
+              tabindex="-1"
+              type="checkbox"
+              value="on"
+            />
+            <label
+              class="text-neutral-400 font-medium text-sm"
+              for="CRON_JOBS"
+            >
+              CRON_JOBS
             </label>
           </div>
         </div>
