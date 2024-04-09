@@ -51,6 +51,7 @@ interface RouterProps {
   protected: boolean
   layout: boolean
   darkMode?: boolean
+  spotlight?: boolean
   topBar?: boolean
 }
 
@@ -185,6 +186,7 @@ export const ROUTER: RouterProps[] = [
     protected: true,
     layout: true,
     darkMode: true,
+    spotlight: false,
   },
   {
     path: `${ENVIRONMENT_LOGS_URL()}/*`,
@@ -192,5 +194,6 @@ export const ROUTER: RouterProps[] = [
     protected: true,
     layout: true,
     darkMode: true,
+    spotlight: false,
   },
 ]

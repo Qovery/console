@@ -118,7 +118,9 @@ export function App() {
                 ) : (
                   <ProtectedRoute>
                     <DarkModeEnabler isDarkMode={route.darkMode}>
-                      <Layout topBar={route.topBar}>{route.component}</Layout>
+                      <Layout topBar={route.topBar} spotlight={route.spotlight}>
+                        {route.component}
+                      </Layout>
                     </DarkModeEnabler>
                   </ProtectedRoute>
                 )

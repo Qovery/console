@@ -10,12 +10,14 @@ import {
   INFRA_LOGS_URL,
 } from '@qovery/shared/routes'
 import { Banner, WarningScreenMobile } from '@qovery/shared/ui'
+import SpotlightTrigger from '../../feature/spotlight-trigger/spotlight-trigger'
 import Navigation from '../navigation/navigation'
 import TopBar from '../top-bar/top-bar'
 
 export interface LayoutPageProps {
   defaultOrganizationId: string
   topBar?: boolean
+  spotlight?: boolean
   organization?: Organization
   clusters?: Cluster[]
 }
@@ -27,7 +29,7 @@ export const displayClusterDeploymentBanner = (status?: ClusterStateEnum): boole
 }
 
 export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
-  const { children, topBar = true, clusters, defaultOrganizationId } = props
+  const { children, topBar = true, spotlight = true, clusters, defaultOrganizationId } = props
 
   const { organizationId = '' } = useParams()
   const { pathname } = useLocation()
@@ -94,7 +96,7 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
                 ongoing, you can follow it from logs
               </Banner>
             )}
-            {topBar && <TopBar />}
+            {topBar && <TopBar>{spotlight && <SpotlightTrigger />}</TopBar>}
           </div>
         </div>
       </main>
