@@ -13,13 +13,8 @@ export interface NavigationLeftProps {
   className?: string
 }
 
-export interface NavigationLeftLinkProps {
+export type NavigationLeftLinkProps = {
   title: string
-  /**
-   * @deprecated please use `iconName` instead `icon`
-   */
-  icon?: string
-  iconName?: IconName
   url?: string
   onClick?: () => void
   subLinks?: {
@@ -28,7 +23,19 @@ export interface NavigationLeftLinkProps {
     onClick?: () => void
     badge?: string
   }[]
-}
+} & (
+  | {
+      /**
+       * @deprecated please use `iconName` instead `icon`
+       */
+      icon?: string
+      iconName?: never
+    }
+  | {
+      iconName?: IconName
+      icon?: never
+    }
+)
 
 export const linkClassName = (pathname: string, url?: string, badge?: string) =>
   `flex items-center py-2 px-3 text-ssm rounded font-medium cursor-pointer mt-0.5 transition ease-out duration-300 truncate ${

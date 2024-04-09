@@ -10,8 +10,6 @@ export * from './lib/container-registry-create-edit-modal/container-registry-cre
 export * from './lib/hooks/use-add-credit-card/use-add-credit-card'
 export * from './lib/hooks/use-add-credit-code/use-add-credit-code'
 export * from './lib/hooks/use-annotations-groups/use-annotations-groups'
-export * from './lib/hooks/use-create-annotations-group/use-create-annotations-group'
-export * from './lib/hooks/use-edit-annotations-group/use-edit-annotations-group'
 export * from './lib/hooks/use-delete-annotations-group/use-delete-annotations-group'
 export * from './lib/hooks/use-api-tokens/use-api-tokens'
 export * from './lib/hooks/use-auth-providers/use-auth-providers'
