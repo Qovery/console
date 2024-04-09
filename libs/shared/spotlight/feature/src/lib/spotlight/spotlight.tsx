@@ -1,3 +1,4 @@
+import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { useNavigate } from 'react-router-dom'
 import { useIntercom } from 'react-use-intercom'
 import { IconEnum } from '@qovery/shared/enums'
@@ -14,6 +15,18 @@ import {
 import { Command, type CommandDialogProps, Icon } from '@qovery/shared/ui'
 import useQuickActions from '../hooks/use-quick-actions/use-quick-actions'
 
+type Item =
+  | {
+      label: string
+      onSelect: (value: string) => void
+      iconName: IconName
+    }
+  | {
+      label: string
+      onSelect: (value: string) => void
+      iconEnum: IconEnum
+    }
+
 export interface SpotlightProps extends Pick<CommandDialogProps, 'open' | 'onOpenChange'> {
   organizationId: string
 }
@@ -28,6 +41,65 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
   const openExternalLink = (externalLink: string) => () => {
     window.open(externalLink, '_blank')
   }
+  const settingsItems: Item[] = [
+    {
+      label: 'View my container registries',
+      onSelect: navigateTo(SETTINGS_URL(organizationId) + SETTINGS_CONTAINER_REGISTRIES_URL),
+      iconName: 'box',
+    },
+    {
+      label: 'View my helm repositories',
+      onSelect: navigateTo(SETTINGS_URL(organizationId) + SETTINGS_HELM_REPOSITORIES_URL),
+      iconEnum: IconEnum.HELM_OFFICIAL,
+    },
+    {
+      label: 'View my git tokens',
+      onSelect: navigateTo(SETTINGS_URL(organizationId) + SETTINGS_GIT_REPOSITORY_ACCESS_URL),
+      iconName: 'key',
+    },
+    {
+      label: 'View my webhooks',
+      onSelect: navigateTo(SETTINGS_URL(organizationId) + SETTINGS_WEBHOOKS),
+      iconName: 'tower-broadcast',
+    },
+    {
+      label: 'View my API tokens',
+      onSelect: navigateTo(SETTINGS_URL(organizationId) + SETTINGS_API_URL),
+      iconName: 'cloud-arrow-up',
+    },
+    {
+      label: 'View my team members',
+      onSelect: navigateTo(SETTINGS_URL(organizationId) + SETTINGS_MEMBERS_URL),
+      iconName: 'user-group',
+    },
+    {
+      label: 'Go to personal settings',
+      onSelect: navigateTo(USER_URL),
+      iconName: 'gear-complex',
+    },
+  ]
+  const helpItems: Item[] = [
+    {
+      label: 'Go to documentation',
+      onSelect: openExternalLink('https://hub.qovery.com/'),
+      iconName: 'book-open',
+    },
+    {
+      label: 'Community Forum',
+      onSelect: openExternalLink('https://discuss.qovery.com/'),
+      iconName: 'people',
+    },
+    {
+      label: 'Roadmap',
+      onSelect: openExternalLink('https://roadmap.qovery.com/b/5m13y5v6/feature-ideas'),
+      iconName: 'road',
+    },
+    {
+      label: 'Get help',
+      onSelect: showIntercomMessenger,
+      iconName: 'robot',
+    },
+  ]
 
   return (
     <Command.Dialog label="Console Spotlight" open={open} onOpenChange={onOpenChange}>
@@ -51,52 +123,28 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
         )}
 
         <Command.Group heading="Settings">
-          <Command.Item onSelect={navigateTo(SETTINGS_URL(organizationId) + SETTINGS_CONTAINER_REGISTRIES_URL)}>
-            <Icon className={iconClassName} iconName="box" />
-            View my container registries
-          </Command.Item>
-          <Command.Item onSelect={navigateTo(SETTINGS_URL(organizationId) + SETTINGS_HELM_REPOSITORIES_URL)}>
-            <Icon className={iconClassName} name={IconEnum.HELM_OFFICIAL} />
-            View my helm repositories
-          </Command.Item>
-          <Command.Item onSelect={navigateTo(SETTINGS_URL(organizationId) + SETTINGS_GIT_REPOSITORY_ACCESS_URL)}>
-            <Icon className={iconClassName} iconName="key" />
-            View my git tokens
-          </Command.Item>
-          <Command.Item onSelect={navigateTo(SETTINGS_URL(organizationId) + SETTINGS_WEBHOOKS)}>
-            <Icon className={iconClassName} iconName="tower-broadcast" />
-            View my webhooks
-          </Command.Item>
-          <Command.Item onSelect={navigateTo(SETTINGS_URL(organizationId) + SETTINGS_API_URL)}>
-            <Icon className={iconClassName} iconName="cloud-arrow-up" />
-            View my API tokens
-          </Command.Item>
-          <Command.Item onSelect={navigateTo(SETTINGS_URL(organizationId) + SETTINGS_MEMBERS_URL)}>
-            <Icon className={iconClassName} iconName="box" />
-            View my team members
-          </Command.Item>
-          <Command.Item onSelect={navigateTo(USER_URL)}>
-            <Icon className={iconClassName} iconName="gear-complex" />
-            Go to personal settings
-          </Command.Item>
+          {settingsItems.map(({ label, onSelect, ...props }) => (
+            <Command.Item key={label} onSelect={onSelect}>
+              <Icon
+                className={iconClassName}
+                name={'iconEnum' in props ? props.iconEnum : undefined}
+                iconName={'iconName' in props ? props.iconName : undefined}
+              />
+              {label}
+            </Command.Item>
+          ))}
         </Command.Group>
         <Command.Group heading="Help">
-          <Command.Item onSelect={openExternalLink('https://hub.qovery.com/')}>
-            <Icon className={iconClassName} iconName="book-open" />
-            Go to documentation
-          </Command.Item>
-          <Command.Item onSelect={openExternalLink('https://discuss.qovery.com/')}>
-            <Icon className={iconClassName} iconName="people" />
-            Community Forum
-          </Command.Item>
-          <Command.Item onSelect={openExternalLink('https://roadmap.qovery.com/b/5m13y5v6/feature-ideas')}>
-            <Icon className={iconClassName} iconName="road" />
-            Roadmap
-          </Command.Item>
-          <Command.Item onSelect={showIntercomMessenger}>
-            <Icon className={iconClassName} iconName="robot" />
-            Get help
-          </Command.Item>
+          {helpItems.map(({ label, onSelect, ...props }) => (
+            <Command.Item key={label} onSelect={onSelect}>
+              <Icon
+                className={iconClassName}
+                name={'iconEnum' in props ? props.iconEnum : undefined}
+                iconName={'iconName' in props ? props.iconName : undefined}
+              />
+              {label}
+            </Command.Item>
+          ))}
         </Command.Group>
       </Command.List>
     </Command.Dialog>
