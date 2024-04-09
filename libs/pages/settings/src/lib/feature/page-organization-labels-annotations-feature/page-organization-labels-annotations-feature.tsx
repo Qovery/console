@@ -35,22 +35,27 @@ export function PageOrganizationLabelsAnnotationsFeature() {
     })
   }
 
-  const openEditModal = (annotation: OrganizationAnnotationsGroupResponse) => {
+  const openEditModal = (annotationsGroup: OrganizationAnnotationsGroupResponse) => {
     openModal({
       content: (
-        <AnnotationCreateEditModal organizationId={organizationId} annotation={annotation} onClose={closeModal} />
+        <AnnotationCreateEditModal
+          isEdit
+          organizationId={organizationId}
+          annotationsGroup={annotationsGroup}
+          onClose={closeModal}
+        />
       ),
     })
   }
 
-  const openDeleteModal = (annotation: OrganizationAnnotationsGroupResponse) => {
+  const openDeleteModal = (annotationsGroup: OrganizationAnnotationsGroupResponse) => {
     openModalConfirmation({
       title: 'Delete webhook',
       isDelete: true,
-      name: annotation.name,
+      name: annotationsGroup.name,
       action: () => {
         try {
-          deleteAnnotationsGroup({ organizationId, annotationId: annotation.id })
+          deleteAnnotationsGroup({ organizationId, annotationsGroupId: annotationsGroup.id })
         } catch (error) {
           console.error(error)
         }

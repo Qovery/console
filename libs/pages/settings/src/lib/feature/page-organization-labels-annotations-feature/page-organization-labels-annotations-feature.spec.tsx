@@ -1,30 +1,40 @@
 import * as organizationsDomain from '@qovery/domains/organizations/feature'
-import { webhookFactoryMock } from '@qovery/shared/factories'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import PageOrganizationWeFeature from './page-organization-labels-annotations-feature'
+import { renderWithProviders } from '@qovery/shared/util-tests'
+import PageOrganizationLabelsAnnotationsFeature from './page-organization-labels-annotations-feature'
 
-const useWebhooksMockSpy = jest.spyOn(organizationsDomain, 'useWebhooks') as jest.Mock
-const useEditWebhooksMockSpy = jest.spyOn(organizationsDomain, 'useEditWebhook') as jest.Mock
+const useAnnotationsGroupsMockSpy = jest.spyOn(organizationsDomain, 'useAnnotationsGroups') as jest.Mock
 
-const mockWebhooks = webhookFactoryMock(1)
+const mockAnnotationsGroup = [
+  {
+    id: '0',
+    created_at: '2024-04-08T18:51:39.836359Z',
+    updated_at: '2024-04-09T08:05:09.470801Z',
+    name: 'test',
+    annotations: [
+      {
+        key: 'key',
+        value: 'value',
+      },
+    ],
+    scopes: ['PERSISTENT_VOLUME_CLAIMS', 'REPLICA_SETS', 'INGRESS'],
+  },
+]
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useParams: () => ({ organizationId: '1' }),
 }))
 
-describe('PageOrganizationWeFeature', () => {
+describe('PageOrganizationLabelsAnnotationsFeature', () => {
   beforeEach(() => {
-    useWebhooksMockSpy.mockReturnValue({
-      data: mockWebhooks,
-    })
-    useEditWebhooksMockSpy.mockReturnValue({
-      mutateAsync: jest.fn(),
+    useAnnotationsGroupsMockSpy.mockReturnValue({
+      data: mockAnnotationsGroup,
+      isFetched: true,
     })
   })
 
-  it('should render successfully', () => {
-    const { baseElement } = renderWithProviders(<PageOrganizationWeFeature />)
-    expect(baseElement).toBeTruthy()
+  it('should match snapshot', () => {
+    const { baseElement } = renderWithProviders(<PageOrganizationLabelsAnnotationsFeature />)
+    expect(baseElement).toMatchSnapshot()
   })
 })

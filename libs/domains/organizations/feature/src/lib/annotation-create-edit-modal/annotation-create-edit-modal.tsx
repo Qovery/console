@@ -4,18 +4,19 @@ import {
 } from 'qovery-typescript-axios'
 import { Controller, FormProvider, useFieldArray, useForm } from 'react-hook-form'
 import { Button, Checkbox, Icon, InputText, InputTextSmall, ModalCrud } from '@qovery/shared/ui'
-import { useCreateAnnotationsGroup, useEditAnnotationsGroup } from '../..'
+import { useCreateAnnotationsGroup } from '../hooks/use-create-annotations-group/use-create-annotations-group'
+import { useEditAnnotationsGroup } from '../hooks/use-edit-annotations-group/use-edit-annotations-group'
 
 type ScopeEnum = keyof typeof OrganizationAnnotationsGroupScopeEnum
 
-function convertScopeEnumToObject(scopes: OrganizationAnnotationsGroupScopeEnum[]): { [key: string]: boolean } {
+export function convertScopeEnumToObject(scopes: OrganizationAnnotationsGroupScopeEnum[]): { [key: string]: boolean } {
   return Object.keys(OrganizationAnnotationsGroupScopeEnum).reduce((acc, key) => {
     acc[key] = scopes.includes(OrganizationAnnotationsGroupScopeEnum[key as ScopeEnum])
     return acc
   }, {} as { [key: string]: boolean })
 }
 
-function convertScopeObjectToEnum(obj: { [key: string]: boolean }): OrganizationAnnotationsGroupScopeEnum[] {
+export function convertScopeObjectToEnum(obj: { [key: string]: boolean }): OrganizationAnnotationsGroupScopeEnum[] {
   return Object.keys(obj)
     .filter((key) => obj[key])
     .map((key) => OrganizationAnnotationsGroupScopeEnum[key as ScopeEnum])
@@ -25,26 +26,26 @@ export interface AnnotationCreateEditModalProps {
   onClose: () => void
   organizationId: string
   isEdit?: boolean
-  annotation?: OrganizationAnnotationsGroupResponse
+  annotationsGroup?: OrganizationAnnotationsGroupResponse
 }
 
 export function AnnotationCreateEditModal({
   isEdit,
-  annotation,
+  annotationsGroup,
   organizationId,
   onClose,
 }: AnnotationCreateEditModalProps) {
   const methods = useForm({
     mode: 'onChange',
     defaultValues: {
-      name: annotation?.name ?? '',
-      annotations: annotation?.annotations ?? [
+      name: annotationsGroup?.name ?? '',
+      annotations: annotationsGroup?.annotations ?? [
         {
           key: '',
           value: '',
         },
       ],
-      scopes: convertScopeEnumToObject(annotation?.scopes ?? []),
+      scopes: convertScopeEnumToObject(annotationsGroup?.scopes ?? []),
     },
   })
 
@@ -62,13 +63,16 @@ export function AnnotationCreateEditModal({
       if (isEdit) {
         await editAnnotationsGroup({
           organizationId,
-          annotationId: annotation?.id ?? '',
-          annotationRequest: data as any,
+          annotationsGroupId: annotationsGroup?.id ?? '',
+          annotationsGroupRequest: {
+            ...data,
+            scopes: convertScopeObjectToEnum(data.scopes),
+          },
         })
       } else {
         await createAnnotationsGroup({
           organizationId,
-          annotationRequest: {
+          annotationsGroupRequest: {
             ...data,
             scopes: convertScopeObjectToEnum(data.scopes),
           },
@@ -126,6 +130,7 @@ export function AnnotationCreateEditModal({
                     }}
                     render={({ field, fieldState: { error } }) => (
                       <InputTextSmall
+                        dataTestId={`annotations.${index}.key`}
                         name={field.name}
                         value={field.value}
                         onChange={field.onChange}
@@ -141,6 +146,7 @@ export function AnnotationCreateEditModal({
                     }}
                     render={({ field, fieldState: { error } }) => (
                       <InputTextSmall
+                        dataTestId={`annotations.${index}.value`}
                         name={field.name}
                         value={field.value}
                         onChange={field.onChange}

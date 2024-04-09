@@ -276,30 +276,43 @@ export const organizations = createQueryKeys('organizations', {
 })
 
 export const mutations = {
-  async deleteAnnotationsGroup({ organizationId, annotationId }: { organizationId: string; annotationId: string }) {
-    const response = await annotationsGroupApi.deleteOrganizationAnnotationsGroup(organizationId, annotationId)
+  async deleteAnnotationsGroup({
+    organizationId,
+    annotationsGroupId,
+  }: {
+    organizationId: string
+    annotationsGroupId: string
+  }) {
+    const response = await annotationsGroupApi.deleteOrganizationAnnotationsGroup(organizationId, annotationsGroupId)
     return response.data
   },
   async createAnnotationsGroup({
     organizationId,
-    annotationRequest,
+    annotationsGroupRequest,
   }: {
     organizationId: string
-    annotationRequest: OrganizationAnnotationsGroupCreateRequest
+    annotationsGroupRequest: OrganizationAnnotationsGroupCreateRequest
   }) {
-    const response = await annotationsGroupApi.createOrganizationAnnotationsGroup(organizationId, annotationRequest)
+    const response = await annotationsGroupApi.createOrganizationAnnotationsGroup(
+      organizationId,
+      annotationsGroupRequest
+    )
     return response.data
   },
   async editAnnotationsGroup({
     organizationId,
-    annotationId,
-    annotationRequest,
+    annotationsGroupId,
+    annotationsGroupRequest,
   }: {
     organizationId: string
-    annotationId: string
-    annotationRequest: OrganizationAnnotationsGroupCreateRequest
+    annotationsGroupId: string
+    annotationsGroupRequest: OrganizationAnnotationsGroupCreateRequest
   }) {
-    const response = await annotationsGroupApi.editOrganizationAnnotationsGroup(organizationId, annotationId)
+    const response = await annotationsGroupApi.editOrganizationAnnotationsGroup(
+      organizationId,
+      annotationsGroupId,
+      annotationsGroupRequest
+    )
     return response.data
   },
   async editHelmRepository({
