@@ -15,17 +15,17 @@ import {
 import { Command, type CommandDialogProps, Icon } from '@qovery/shared/ui'
 import useQuickActions from '../hooks/use-quick-actions/use-quick-actions'
 
-type Item =
+type Item = {
+  label: string
+  onSelect: (value: string) => void
+} & (
   | {
-      label: string
-      onSelect: (value: string) => void
       iconName: IconName
     }
   | {
-      label: string
-      onSelect: (value: string) => void
       iconEnum: IconEnum
     }
+)
 
 export interface SpotlightProps extends Pick<CommandDialogProps, 'open' | 'onOpenChange'> {
   organizationId: string
@@ -125,11 +125,11 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
         <Command.Group heading="Settings">
           {settingsItems.map(({ label, onSelect, ...props }) => (
             <Command.Item key={label} onSelect={onSelect}>
-              <Icon
-                className={iconClassName}
-                name={'iconEnum' in props ? props.iconEnum : undefined}
-                iconName={'iconName' in props ? props.iconName : undefined}
-              />
+              {'iconName' in props ? (
+                <Icon className={iconClassName} iconName={props.iconName} />
+              ) : (
+                <Icon className={iconClassName} name={props.iconEnum} />
+              )}
               {label}
             </Command.Item>
           ))}
@@ -137,11 +137,11 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
         <Command.Group heading="Help">
           {helpItems.map(({ label, onSelect, ...props }) => (
             <Command.Item key={label} onSelect={onSelect}>
-              <Icon
-                className={iconClassName}
-                name={'iconEnum' in props ? props.iconEnum : undefined}
-                iconName={'iconName' in props ? props.iconName : undefined}
-              />
+              {'iconName' in props ? (
+                <Icon className={iconClassName} iconName={props.iconName} />
+              ) : (
+                <Icon className={iconClassName} name={props.iconEnum} />
+              )}
               {label}
             </Command.Item>
           ))}
