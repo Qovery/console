@@ -126,7 +126,7 @@ exports[`PageOrganizationLabelsAnnotationsFeature should match snapshot 1`] = `
         >
           <a
             class="cursor-pointer transition duration-100 font-medium items-center gap-1 text-sky-500 hover:text-sky-600 text-sm flex"
-            href="https://hub.qovery.com/docs/using-qovery/integration/webhook/"
+            href="https://hub.qovery.com/docs/using-qovery/configuration/organization/labels-annotations/"
             rel="noopener noreferrer"
             target="_blank"
           >

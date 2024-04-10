@@ -137,7 +137,7 @@ export function PageOrganizationLabelsAnnotationsFeature() {
         description="Need help? You may find these links useful"
         links={[
           {
-            link: 'https://hub.qovery.com/docs/using-qovery/integration/webhook/',
+            link: 'https://hub.qovery.com/docs/using-qovery/configuration/organization/labels-annotations/',
             linkLabel: 'How to configure my annotations',
           },
         ]}
