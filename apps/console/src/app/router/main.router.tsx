@@ -166,7 +166,7 @@ export const ROUTER: RouterProps[] = [
     component: <PageClusters />,
     protected: true,
     layout: true,
-    topBar: false,
+    topBar: true,
   },
   {
     path: `${CLUSTERS_URL()}${CLUSTERS_CREATION_URL}/*`,
