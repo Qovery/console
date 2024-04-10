@@ -105,7 +105,7 @@ export const ROUTER: RouterProps[] = [
     component: <PageSettings />,
     protected: true,
     layout: true,
-    topBar: false,
+    topBar: true,
   },
   {
     path: `${ENVIRONMENTS_URL()}/*`,

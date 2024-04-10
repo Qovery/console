@@ -51,7 +51,7 @@ export function NavigationLeftSubLink(props: NavigationLeftSubLinkProps) {
       {link.subLinks && (
         <div
           data-testid="sub-links"
-          className={`w-full ${open ? 'opacity-100 h-full' : 'opacity-0 h-0 pointer-events-none'}`}
+          className={`w-full ${open ? 'opacity-100 h-full' : 'opacity-0 hidden pointer-events-none'}`}
         >
           {link.subLinks.map((subLink, index) =>
             subLink.onClick ? (
