@@ -37,7 +37,10 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
   const quickActions = useQuickActions()
 
   const iconClassName = 'text-brand-500 text-base text-center w-6'
-  const navigateTo = (link: string) => () => navigate(link)
+  const navigateTo = (link: string) => () => {
+    navigate(link)
+    onOpenChange?.(false)
+  }
   const openExternalLink = (externalLink: string) => () => {
     window.open(externalLink, '_blank')
   }
