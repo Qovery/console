@@ -92,7 +92,7 @@ export const ROUTER: RouterProps[] = [
     component: <PageEvents />,
     protected: true,
     layout: true,
-    topBar: false,
+    topBar: true,
   },
   {
     path: OVERVIEW_URL(),

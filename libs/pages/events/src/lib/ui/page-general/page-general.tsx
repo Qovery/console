@@ -87,7 +87,7 @@ export function PageGeneral({
 
   return (
     <>
-      <Section className="px-5">
+      <Section className="grow px-5">
         <Heading className="py-6 flex justify-between">Audit Logs</Heading>
         <div className="flex items-center mb-4 h-9">
           <CustomFilterFeature handleClearFilter={handleClearFilter} />
