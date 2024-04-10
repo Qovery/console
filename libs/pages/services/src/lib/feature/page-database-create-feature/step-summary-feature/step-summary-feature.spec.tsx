@@ -17,6 +17,9 @@ jest.mock('@qovery/domains/services/feature', () => ({
   useCreateService: () => ({
     mutateAsync: mockCreateService,
   }),
+  useAddAnnotationsGroup: () => ({
+    mutate: jest.fn(),
+  }),
   useDeployService: () => ({
     mutate: jest.fn(),
   }),

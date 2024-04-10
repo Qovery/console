@@ -12,6 +12,7 @@ export interface ApplicationGeneralData {
   description?: string
   serviceType: ServiceTypeEnum
   auto_deploy: boolean
+  annotations_groups?: string[]
 
   // container
   registry?: string

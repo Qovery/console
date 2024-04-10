@@ -2,6 +2,7 @@ import { BuildModeEnum, type Organization } from 'qovery-typescript-axios'
 import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
+import { AnnotationSetting } from '@qovery/domains/organizations/feature'
 import { AutoDeploySetting, BuildSettings, GeneralSetting } from '@qovery/domains/services/feature'
 import { EntrypointCmdInputs, JobGeneralSettings } from '@qovery/shared/console-shared'
 import { type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
@@ -55,6 +56,11 @@ export function StepGeneral(props: StepGeneralProps) {
             <AutoDeploySetting source={watchServiceType === ServiceTypeEnum.CONTAINER ? 'CONTAINER_REGISTRY' : 'GIT'} />
           </Section>
         )}
+
+        <Section className="gap-4">
+          <Heading>Extra annotations</Heading>
+          <AnnotationSetting />
+        </Section>
 
         <div className="flex justify-between">
           <Button

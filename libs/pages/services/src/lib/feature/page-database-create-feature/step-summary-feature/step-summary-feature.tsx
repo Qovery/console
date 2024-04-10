@@ -1,7 +1,8 @@
 import { DatabaseModeEnum, type DatabaseRequest } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { useCreateService, useDeployService } from '@qovery/domains/services/feature'
+import { useAnnotationsGroups } from '@qovery/domains/organizations/feature'
+import { useAddAnnotationsGroup, useCreateService, useDeployService } from '@qovery/domains/services/feature'
 import {
   SERVICES_DATABASE_CREATION_GENERAL_URL,
   SERVICES_DATABASE_CREATION_RESOURCES_URL,
@@ -21,8 +22,10 @@ export function StepSummaryFeature() {
   const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_DATABASE_CREATION_URL}`
   const [loadingCreate, setLoadingCreate] = useState(false)
   const [loadingCreateAndDeploy, setLoadingCreateAndDeploy] = useState(false)
+  const { data: annotationsGroup = [] } = useAnnotationsGroups({ organizationId })
 
   const { mutateAsync: createDatabase } = useCreateService()
+  const { mutateAsync: addAnnotationsGroup } = useAddAnnotationsGroup()
   const { mutate: deployDatabase } = useDeployService({ environmentId })
 
   const gotoGlobalInformations = () => {
@@ -72,6 +75,16 @@ export function StepSummaryFeature() {
           },
         })
 
+        if (generalData.annotations_groups) {
+          for (const annotationsGroup of generalData.annotations_groups) {
+            await addAnnotationsGroup({
+              serviceId: database.id,
+              serviceType: 'DATABASE',
+              annotationsGroupId: annotationsGroup,
+            })
+          }
+        }
+
         if (withDeploy) {
           deployDatabase({
             serviceId: database.id,
@@ -105,6 +118,7 @@ export function StepSummaryFeature() {
           resourcesData={resourcesData}
           gotoResources={gotoResources}
           gotoGlobalInformation={gotoGlobalInformations}
+          annotationsGroup={annotationsGroup}
           isManaged={generalData.mode === DatabaseModeEnum.MANAGED}
         />
       )}
