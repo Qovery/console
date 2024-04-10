@@ -1,4 +1,4 @@
-import { DatabaseModeEnum } from 'qovery-typescript-axios'
+import { DatabaseModeEnum, type OrganizationAnnotationsGroupResponse } from 'qovery-typescript-axios'
 import { Button, Callout, Heading, Icon, Section } from '@qovery/shared/ui'
 import {
   type GeneralData,
@@ -14,6 +14,7 @@ export interface StepSummaryProps {
   gotoResources: () => void
   isLoadingCreate: boolean
   isLoadingCreateAndDeploy: boolean
+  annotationsGroup?: OrganizationAnnotationsGroupResponse[]
   isManaged?: boolean
 }
 
@@ -77,6 +78,17 @@ export function StepSummary(props: StepSummaryProps) {
               <li>
                 <strong className="font-medium">Accessibility:</strong> {props.generalData.accessibility}
               </li>
+              {props.annotationsGroup &&
+                props.generalData.annotations_groups &&
+                props.generalData.annotations_groups.length > 0 && (
+                  <li>
+                    <strong className="font-medium">Annotations group:</strong>{' '}
+                    {props.annotationsGroup
+                      .filter((annotation) => props.generalData.annotations_groups?.includes(annotation.id))
+                      .map((annotation) => annotation.name)
+                      .join(', ')}
+                  </li>
+                )}
             </ul>
           </Section>
 

@@ -6,8 +6,8 @@ import {
 } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { useContainerRegistry } from '@qovery/domains/organizations/feature'
-import { useCreateService, useDeployService } from '@qovery/domains/services/feature'
+import { useAnnotationsGroups, useContainerRegistry } from '@qovery/domains/organizations/feature'
+import { useAddAnnotationsGroup, useCreateService, useDeployService } from '@qovery/domains/services/feature'
 import {
   SERVICES_APPLICATION_CREATION_URL,
   SERVICES_CREATION_GENERAL_URL,
@@ -34,7 +34,10 @@ export function StepSummaryFeature() {
     organizationId,
     containerRegistryId: generalData?.registry,
   })
+  const { data: annotationsGroup = [] } = useAnnotationsGroups({ organizationId })
+
   const { mutateAsync: createService } = useCreateService()
+  const { mutateAsync: addAnnotationsGroup } = useAddAnnotationsGroup()
   const { mutate: deployService } = useDeployService({ environmentId })
 
   const gotoGlobalInformations = () => {
@@ -117,6 +120,16 @@ export function StepSummaryFeature() {
             },
           })
 
+          if (generalData.annotations_groups) {
+            for (const annotationsGroup of generalData.annotations_groups) {
+              await addAnnotationsGroup({
+                serviceId: service.id,
+                serviceType: 'APPLICATION',
+                annotationsGroupId: annotationsGroup,
+              })
+            }
+          }
+
           if (withDeploy) {
             deployService({
               serviceId: service.id,
@@ -165,6 +178,16 @@ export function StepSummaryFeature() {
             },
           })
 
+          if (generalData.annotations_groups) {
+            for (const annotationsGroup of generalData.annotations_groups) {
+              await addAnnotationsGroup({
+                serviceId: service.id,
+                serviceType: 'APPLICATION',
+                annotationsGroupId: annotationsGroup,
+              })
+            }
+          }
+
           if (withDeploy) {
             deployService({
               serviceId: service.id,
@@ -203,6 +226,7 @@ export function StepSummaryFeature() {
           gotoPorts={gotoPorts}
           gotoHealthchecks={gotoHealthchecks}
           selectedRegistryName={containerRegistry?.name}
+          annotationsGroup={annotationsGroup}
         />
       )}
     </FunnelFlowBody>

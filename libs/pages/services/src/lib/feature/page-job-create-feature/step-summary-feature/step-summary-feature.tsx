@@ -1,8 +1,8 @@
 import { APIVariableScopeEnum, type JobRequest, type VariableImportRequest } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { useContainerRegistry } from '@qovery/domains/organizations/feature'
-import { useCreateService, useDeployService } from '@qovery/domains/services/feature'
+import { useAnnotationsGroups, useContainerRegistry } from '@qovery/domains/organizations/feature'
+import { useAddAnnotationsGroup, useCreateService, useDeployService } from '@qovery/domains/services/feature'
 import { useImportVariables } from '@qovery/domains/variables/feature'
 import { type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
 import {
@@ -138,6 +138,9 @@ export function StepSummaryFeature() {
     organizationId,
     containerRegistryId: generalData?.registry,
   })
+  const { data: annotationsGroup = [] } = useAnnotationsGroups({ organizationId })
+
+  const { mutateAsync: addAnnotationsGroup } = useAddAnnotationsGroup()
   const { mutateAsync: createService } = useCreateService()
   const { mutate: deployService } = useDeployService({ environmentId })
 
@@ -180,6 +183,16 @@ export function StepSummaryFeature() {
             ...jobRequest,
           },
         })
+
+        if (generalData.annotations_groups) {
+          for (const annotationsGroup of generalData.annotations_groups) {
+            await addAnnotationsGroup({
+              serviceId: service.id,
+              serviceType: 'JOB',
+              annotationsGroupId: annotationsGroup,
+            })
+          }
+        }
 
         if (variableImportRequest) {
           importVariables({
@@ -233,6 +246,7 @@ export function StepSummaryFeature() {
           selectedRegistryName={containerRegistry?.name}
           jobType={jobType}
           gotoConfigureJob={gotoConfigureJob}
+          annotationsGroup={annotationsGroup}
         />
       )}
     </FunnelFlowBody>

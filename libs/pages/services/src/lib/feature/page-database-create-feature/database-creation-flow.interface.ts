@@ -7,6 +7,7 @@ export interface GeneralData {
   type: DatabaseTypeEnum
   version: string
   accessibility?: DatabaseAccessibilityEnum
+  annotations_groups?: string[]
 }
 
 export interface ResourcesData {

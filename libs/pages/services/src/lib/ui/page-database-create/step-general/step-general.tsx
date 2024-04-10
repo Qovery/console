@@ -8,6 +8,7 @@ import {
 import { type FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
+import { AnnotationSetting } from '@qovery/domains/organizations/feature'
 import { GeneralSetting } from '@qovery/domains/services/feature'
 import { type Value } from '@qovery/shared/interfaces'
 import { SERVICES_URL } from '@qovery/shared/routes'
@@ -181,6 +182,11 @@ export function StepGeneral({
               />
             )}
           />
+        </Section>
+
+        <Section className="gap-4">
+          <Heading>Extra annotations</Heading>
+          <AnnotationSetting />
         </Section>
 
         <div className="flex justify-between">

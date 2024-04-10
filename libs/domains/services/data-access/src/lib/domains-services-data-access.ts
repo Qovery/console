@@ -2,6 +2,7 @@ import { createQueryKeys, type inferQueryKeys } from '@lukemorales/query-key-fac
 import {
   ApplicationActionsApi,
   type ApplicationAdvancedSettings,
+  ApplicationAnnotationsGroupApi,
   ApplicationConfigurationApi,
   type DeployRequest as ApplicationDeployRequest,
   ApplicationDeploymentHistoryApi,
@@ -13,6 +14,7 @@ import {
   ApplicationsApi,
   ContainerActionsApi,
   type ContainerAdvancedSettings,
+  ContainerAnnotationsGroupApi,
   ContainerConfigurationApi,
   ContainerCustomDomainApi,
   type ContainerDeployRequest,
@@ -23,6 +25,7 @@ import {
   CustomDomainApi,
   type CustomDomainRequest,
   DatabaseActionsApi,
+  DatabaseAnnotationsGroupApi,
   DatabaseDeploymentHistoryApi,
   type DatabaseEditRequest,
   DatabaseMainCallsApi,
@@ -46,6 +49,7 @@ import {
   HelmsApi,
   JobActionsApi,
   type JobAdvancedSettings,
+  JobAnnotationsGroupApi,
   JobConfigurationApi,
   type JobDeployRequest,
   JobDeploymentHistoryApi,
@@ -107,6 +111,11 @@ const jobConfigurationApi = new JobConfigurationApi()
 const customDomainApplicationApi = new CustomDomainApi()
 const customDomainContainerApi = new ContainerCustomDomainApi()
 const customDomainHelmApi = new HelmCustomDomainApi()
+
+const applicationAnnotationsGroupApi = new ApplicationAnnotationsGroupApi()
+const containerAnnotationsGroupApi = new ContainerAnnotationsGroupApi()
+const jobAnnotationsGroupApi = new JobAnnotationsGroupApi()
+const databaseAnnotationsGroupApi = new DatabaseAnnotationsGroupApi()
 
 // Prefer this type in param instead of ServiceTypeEnum
 // to suppport string AND enum as param.
@@ -957,6 +966,36 @@ export const mutations = {
       }))
       .exhaustive()
     const response = await mutation(serviceId, customDomainId)
+    return response.data
+  },
+  async addAnnotationsGroup({
+    serviceId,
+    serviceType,
+    annotationsGroupId,
+  }: {
+    serviceId: string
+    serviceType: Extract<ServiceType, 'APPLICATION' | 'CONTAINER' | 'JOB' | 'DATABASE'>
+    annotationsGroupId: string
+  }) {
+    const { mutation } = match(serviceType)
+      .with('APPLICATION', (serviceType) => ({
+        mutation: applicationAnnotationsGroupApi.addAnnotationsGroupToApplication.bind(applicationAnnotationsGroupApi),
+        serviceType,
+      }))
+      .with('CONTAINER', (serviceType) => ({
+        mutation: containerAnnotationsGroupApi.addAnnotationsGroupToContainer.bind(containerAnnotationsGroupApi),
+        serviceType,
+      }))
+      .with('JOB', (serviceType) => ({
+        mutation: jobAnnotationsGroupApi.addAnnotationsGroupToJob.bind(jobAnnotationsGroupApi),
+        serviceType,
+      }))
+      .with('DATABASE', (serviceType) => ({
+        mutation: databaseAnnotationsGroupApi.addAnnotationsGroupToDatabase.bind(jobAnnotationsGroupApi),
+        serviceType,
+      }))
+      .exhaustive()
+    const response = await mutation(serviceId, annotationsGroupId)
     return response.data
   },
 }
