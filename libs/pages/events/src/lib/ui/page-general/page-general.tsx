@@ -1,7 +1,6 @@
 import { OrganizationEventOrigin, type OrganizationEventResponse, OrganizationEventType } from 'qovery-typescript-axios'
 import { type Dispatch, type SetStateAction } from 'react'
 import {
-  Heading,
   HelpSection,
   Icon,
   Pagination,
@@ -87,8 +86,7 @@ export function PageGeneral({
 
   return (
     <>
-      <Section className="grow px-5">
-        <Heading className="py-6 flex justify-between">Audit Logs</Heading>
+      <Section className="grow p-8">
         <div className="flex items-center mb-4 h-9">
           <CustomFilterFeature handleClearFilter={handleClearFilter} />
         </div>
