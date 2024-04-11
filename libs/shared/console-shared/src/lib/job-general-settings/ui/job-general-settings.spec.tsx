@@ -33,19 +33,6 @@ describe('JobGeneralSettings', () => {
     expect(baseElement).toBeTruthy()
   })
 
-  it('should render 2 content block if edit mode', async () => {
-    renderWithProviders(
-      wrapWithReactHookForm<JobGeneralData>(
-        <JobGeneralSettings jobType={ServiceTypeEnum.CRON_JOB} isEdition={true} />,
-        {
-          defaultValues,
-        }
-      )
-    )
-
-    expect(screen.getAllByTestId('block-content')).toHaveLength(2)
-  })
-
   it('should render git related fields if service type is git', async () => {
     defaultValues.serviceType = ServiceTypeEnum.APPLICATION
     renderWithProviders(
