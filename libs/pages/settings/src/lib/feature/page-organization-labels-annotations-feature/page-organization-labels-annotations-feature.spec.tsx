@@ -1,4 +1,5 @@
 import * as organizationsDomain from '@qovery/domains/organizations/feature'
+import * as utilDates from '@qovery/shared/util-dates'
 import { renderWithProviders } from '@qovery/shared/util-tests'
 import PageOrganizationLabelsAnnotationsFeature from './page-organization-labels-annotations-feature'
 
@@ -34,6 +35,8 @@ describe('PageOrganizationLabelsAnnotationsFeature', () => {
   })
 
   it('should match snapshot', () => {
+    jest.spyOn(utilDates, 'timeAgo').mockReturnValue('1 month')
+
     const { baseElement } = renderWithProviders(<PageOrganizationLabelsAnnotationsFeature />)
     expect(baseElement).toMatchSnapshot()
   })
