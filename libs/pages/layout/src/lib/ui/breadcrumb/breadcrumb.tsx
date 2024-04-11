@@ -211,7 +211,7 @@ export function Breadcrumb(props: BreadcrumbProps) {
   return (
     <div className="flex justify-between w-full">
       <div className="flex h-full items-center">
-        {organizationId && (projectId || clusterId) && (
+        {organizationId && (projectId || clusterId || matchAuditLogs || matchClusters || matchSettings) && (
           <Tooltip content={currentOrganization?.name || ''}>
             <div className="mr-2">
               {currentOrganization?.logo_url ? (
@@ -295,30 +295,30 @@ export function Breadcrumb(props: BreadcrumbProps) {
         )}
         {matchAuditLogs && (
           <BreadcrumbItem
-            label="Audit Logs"
-            data={organizations.map(({ id, name }) => ({ id, name }))}
+            label={organizations.find(({ id }) => id === organizationId)?.name}
+            data={[{ id: '0', name: 'Audit Logs' }]}
             menuItems={[]}
-            paramId={organizationId ?? ''}
+            paramId="0"
             isLast
             link=""
           />
         )}
         {matchSettings && (
           <BreadcrumbItem
-            label="Settings"
-            data={organizations.map(({ id, name }) => ({ id, name }))}
+            label={organizations.find(({ id }) => id === organizationId)?.name}
+            data={[{ id: '0', name: 'Settings' }]}
             menuItems={[]}
-            paramId={organizationId ?? ''}
+            paramId="0"
             isLast
             link=""
           />
         )}
         {matchClusters && (
           <BreadcrumbItem
-            label="Clusters"
-            data={organizations.map(({ id, name }) => ({ id, name }))}
+            label={organizations.find(({ id }) => id === organizationId)?.name}
+            data={[{ id: '0', name: 'Clusters' }]}
             menuItems={[]}
-            paramId={organizationId ?? ''}
+            paramId="0"
             isLast
             link=""
           />
