@@ -473,6 +473,37 @@ export const services = createQueryKeys('services', {
       return response.data.results
     },
   }),
+  annotationsGroup: ({
+    serviceId,
+    serviceType,
+  }: {
+    serviceId: string
+    serviceType: Extract<ServiceType, 'APPLICATION' | 'CONTAINER' | 'JOB' | 'DATABASE'>
+  }) => ({
+    queryKey: [serviceId],
+    async queryFn() {
+      const { query } = match(serviceType)
+        .with('APPLICATION', (serviceType) => ({
+          query: applicationAnnotationsGroupApi.listApplicationAnnotationsGroup.bind(applicationAnnotationsGroupApi),
+          serviceType,
+        }))
+        .with('CONTAINER', (serviceType) => ({
+          query: containerAnnotationsGroupApi.listContainerAnnotationsGroup.bind(containerAnnotationsGroupApi),
+          serviceType,
+        }))
+        .with('JOB', (serviceType) => ({
+          query: jobAnnotationsGroupApi.listJobAnnotationsGroup.bind(jobAnnotationsGroupApi),
+          serviceType,
+        }))
+        .with('DATABASE', (serviceType) => ({
+          query: databaseAnnotationsGroupApi.listDatabaseAnnotationsGroup.bind(databaseAnnotationsGroupApi),
+          serviceType,
+        }))
+        .exhaustive()
+      const response = await query(serviceId)
+      return response.data
+    },
+  }),
 })
 
 type CloneServiceRequest = {
@@ -992,6 +1023,37 @@ export const mutations = {
       }))
       .with('DATABASE', (serviceType) => ({
         mutation: databaseAnnotationsGroupApi.addAnnotationsGroupToDatabase.bind(jobAnnotationsGroupApi),
+        serviceType,
+      }))
+      .exhaustive()
+    const response = await mutation(serviceId, annotationsGroupId)
+    return response.data
+  },
+  async deleteAnnotationsGroup({
+    serviceId,
+    serviceType,
+    annotationsGroupId,
+  }: {
+    serviceId: string
+    serviceType: Extract<ServiceType, 'APPLICATION' | 'CONTAINER' | 'JOB' | 'DATABASE'>
+    annotationsGroupId: string
+  }) {
+    const { mutation } = match(serviceType)
+      .with('APPLICATION', (serviceType) => ({
+        mutation:
+          applicationAnnotationsGroupApi.deleteAnnotationsGroupToApplication.bind(applicationAnnotationsGroupApi),
+        serviceType,
+      }))
+      .with('CONTAINER', (serviceType) => ({
+        mutation: containerAnnotationsGroupApi.deleteAnnotationsGroupToContainer.bind(containerAnnotationsGroupApi),
+        serviceType,
+      }))
+      .with('JOB', (serviceType) => ({
+        mutation: jobAnnotationsGroupApi.deleteAnnotationsGroupToJob.bind(jobAnnotationsGroupApi),
+        serviceType,
+      }))
+      .with('DATABASE', (serviceType) => ({
+        mutation: databaseAnnotationsGroupApi.deleteAnnotationsGroupToDatabase.bind(jobAnnotationsGroupApi),
         serviceType,
       }))
       .exhaustive()
