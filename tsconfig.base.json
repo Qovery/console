@@ -53,6 +53,7 @@
       "@qovery/pages/services": ["libs/pages/services/src/index.ts"],
       "@qovery/pages/settings": ["libs/pages/settings/src/index.ts"],
       "@qovery/pages/user": ["libs/pages/user/src/index.ts"],
+      "@qovery/shared/assistant/feature": ["libs/shared/assistant/feature/src/index.ts"],
       "@qovery/shared/auth": ["libs/shared/auth/src/index.ts"],
       "@qovery/shared/console-shared": ["libs/shared/console-shared/src/index.ts"],
       "@qovery/shared/enums": ["libs/shared/enums/src/index.ts"],
