@@ -14,6 +14,8 @@ import {
   type MemberRoleUpdateRequest,
   MembersApi,
   OrganizationAccountGitRepositoriesApi,
+  OrganizationAnnotationsGroupApi,
+  type OrganizationAnnotationsGroupCreateRequest,
   OrganizationApiTokenApi,
   type OrganizationApiTokenCreateRequest,
   OrganizationApiTokenScope,
@@ -31,6 +33,7 @@ import {
 import { match } from 'ts-pattern'
 import { refactoOrganizationCustomRolePayload, refactoOrganizationPayload } from '@qovery/shared/util-js'
 
+const annotationsGroupApi = new OrganizationAnnotationsGroupApi()
 const containerRegistriesApi = new ContainerRegistriesApi()
 const helmRepositoriesApi = new HelmRepositoriesApi()
 const organizationApi = new OrganizationMainCallsApi()
@@ -186,6 +189,13 @@ export const organizations = createQueryKeys('organizations', {
       return branches
     },
   }),
+  annotationsGroups: ({ organizationId }: { organizationId: string }) => ({
+    queryKey: [organizationId],
+    async queryFn() {
+      const response = await annotationsGroupApi.listOrganizationAnnotationsGroup(organizationId)
+      return response.data.results
+    },
+  }),
   apiTokens: ({ organizationId }: { organizationId: string }) => ({
     queryKey: [organizationId],
     async queryFn() {
@@ -266,6 +276,45 @@ export const organizations = createQueryKeys('organizations', {
 })
 
 export const mutations = {
+  async deleteAnnotationsGroup({
+    organizationId,
+    annotationsGroupId,
+  }: {
+    organizationId: string
+    annotationsGroupId: string
+  }) {
+    const response = await annotationsGroupApi.deleteOrganizationAnnotationsGroup(organizationId, annotationsGroupId)
+    return response.data
+  },
+  async createAnnotationsGroup({
+    organizationId,
+    annotationsGroupRequest,
+  }: {
+    organizationId: string
+    annotationsGroupRequest: OrganizationAnnotationsGroupCreateRequest
+  }) {
+    const response = await annotationsGroupApi.createOrganizationAnnotationsGroup(
+      organizationId,
+      annotationsGroupRequest
+    )
+    return response.data
+  },
+  async editAnnotationsGroup({
+    organizationId,
+    annotationsGroupId,
+    annotationsGroupRequest,
+  }: {
+    organizationId: string
+    annotationsGroupId: string
+    annotationsGroupRequest: OrganizationAnnotationsGroupCreateRequest
+  }) {
+    const response = await annotationsGroupApi.editOrganizationAnnotationsGroup(
+      organizationId,
+      annotationsGroupId,
+      annotationsGroupRequest
+    )
+    return response.data
+  },
   async editHelmRepository({
     organizationId,
     helmRepositoryId,

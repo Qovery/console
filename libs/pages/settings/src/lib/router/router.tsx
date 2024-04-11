@@ -8,6 +8,7 @@ import {
   SETTINGS_GENERAL_URL,
   SETTINGS_GIT_REPOSITORY_ACCESS_URL,
   SETTINGS_HELM_REPOSITORIES_URL,
+  SETTINGS_LABELS_ANNOTATIONS_URL,
   SETTINGS_MEMBERS_URL,
   SETTINGS_PROJECT_DANGER_ZONE_URL,
   SETTINGS_PROJECT_GENERAL_URL,
@@ -22,14 +23,15 @@ import PageOrganizationBillingSummaryFeature from '../feature/page-organization-
 import { PageOrganizationContainerRegistriesFeature } from '../feature/page-organization-container-registries-feature/page-organization-container-registries-feature'
 import { PageOrganizationDangerZoneFeature } from '../feature/page-organization-danger-zone-feature/page-organization-danger-zone-feature'
 import { PageOrganizationGeneralFeature } from '../feature/page-organization-general-feature/page-organization-general-feature'
-import PageOrganizationGithubRepositoryAccessFeature from '../feature/page-organization-github-repository-access-feature/page-organization-github-repository-access-feature'
+import { PageOrganizationGithubRepositoryAccessFeature } from '../feature/page-organization-github-repository-access-feature/page-organization-github-repository-access-feature'
 import { PageOrganizationHelmRepositoriesFeature } from '../feature/page-organization-helm-repositories-feature/page-organization-helm-repositories-feature'
+import { PageOrganizationLabelsAnnotationsFeature } from '../feature/page-organization-labels-annotations-feature/page-organization-labels-annotations-feature'
 import { PageOrganizationMembersFeature } from '../feature/page-organization-members-feature/page-organization-members-feature'
 import { PageOrganizationRolesEditFeature } from '../feature/page-organization-roles-edit-feature/page-organization-roles-edit-feature'
 import { PageOrganizationRolesFeature } from '../feature/page-organization-roles-feature/page-organization-roles-feature'
-import PageOrganizationWebhooksFeature from '../feature/page-organization-webhooks-feature/page-organization-webhooks-feature'
-import PageProjectDangerZoneFeature from '../feature/page-project-danger-zone-feature/page-project-danger-zone-feature'
-import PageProjectGeneralFeature from '../feature/page-project-general-feature/page-project-general-feature'
+import { PageOrganizationWebhooksFeature } from '../feature/page-organization-webhooks-feature/page-organization-webhooks-feature'
+import { PageProjectDangerZoneFeature } from '../feature/page-project-danger-zone-feature/page-project-danger-zone-feature'
+import { PageProjectGeneralFeature } from '../feature/page-project-general-feature/page-project-general-feature'
 
 export const ROUTER_SETTINGS: Route[] = [
   {
@@ -63,6 +65,10 @@ export const ROUTER_SETTINGS: Route[] = [
   {
     path: SETTINGS_CONTAINER_REGISTRIES_URL,
     component: <PageOrganizationContainerRegistriesFeature />,
+  },
+  {
+    path: SETTINGS_LABELS_ANNOTATIONS_URL,
+    component: <PageOrganizationLabelsAnnotationsFeature />,
   },
   {
     path: SETTINGS_HELM_REPOSITORIES_URL,

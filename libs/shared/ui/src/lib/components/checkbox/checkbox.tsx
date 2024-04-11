@@ -1,6 +1,7 @@
 import * as CheckboxPrimitive from '@radix-ui/react-checkbox'
 import { cva } from 'class-variance-authority'
 import { type ComponentPropsWithoutRef, type ElementRef, forwardRef } from 'react'
+import { twMerge } from '@qovery/shared/util-js'
 import Icon from '../icon/icon'
 
 const checkboxVariants = cva([
@@ -34,7 +35,12 @@ const Checkbox = forwardRef<ElementRef<typeof CheckboxPrimitive.Root>, CheckboxP
   forwardedRef
 ) {
   return (
-    <CheckboxPrimitive.Root {...props} asChild={false} ref={forwardedRef} className={checkboxVariants()}>
+    <CheckboxPrimitive.Root
+      {...props}
+      asChild={false}
+      ref={forwardedRef}
+      className={twMerge(checkboxVariants(), className)}
+    >
       <CheckboxPrimitive.Indicator asChild>
         <span className="flex items-center justify-center w-full h-full">
           {props.checked === 'indeterminate' ? (

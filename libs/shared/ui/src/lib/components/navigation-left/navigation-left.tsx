@@ -1,3 +1,4 @@
+import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { Link, useLocation } from 'react-router-dom'
 import { Icon } from '../icon/icon'
 import NavigationLeftSubLink from './navigation-left-sub-link/navigation-left-sub-link'
@@ -12,9 +13,8 @@ export interface NavigationLeftProps {
   className?: string
 }
 
-export interface NavigationLeftLinkProps {
+export type NavigationLeftLinkProps = {
   title: string
-  icon?: string
   url?: string
   onClick?: () => void
   subLinks?: {
@@ -23,7 +23,19 @@ export interface NavigationLeftLinkProps {
     onClick?: () => void
     badge?: string
   }[]
-}
+} & (
+  | {
+      /**
+       * @deprecated please use `iconName` instead `icon`
+       */
+      icon?: string
+      iconName?: never
+    }
+  | {
+      iconName?: IconName
+      icon?: never
+    }
+)
 
 export const linkClassName = (pathname: string, url?: string, badge?: string) =>
   `flex items-center py-2 px-3 text-ssm rounded font-medium cursor-pointer mt-0.5 transition ease-out duration-300 truncate ${
@@ -39,9 +51,14 @@ export function NavigationLeft(props: NavigationLeftProps) {
 
   const linkContent = (link: NavigationLeftLinkProps) => (
     <>
-      {link.icon && (
+      {(link.icon || link.iconName) && (
         <div className="flex items-center mr-4">
-          <Icon name={link.icon} className="inline-block w-3" />
+          {link.iconName ? (
+            // Prepared for migration to use iconName instead of name
+            <Icon iconName={link.iconName as IconName} className="inline-block w-3" />
+          ) : (
+            <Icon name={link.icon} className="inline-block w-3" />
+          )}
         </div>
       )}
       {link.title}
