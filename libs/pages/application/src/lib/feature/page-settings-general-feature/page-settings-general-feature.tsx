@@ -221,6 +221,8 @@ export function PageSettingsGeneralFeature() {
   const onSubmit = methods.handleSubmit((data) => {
     if (!service) return
 
+    console.log(data)
+
     const payload = match(service)
       .with({ serviceType: 'APPLICATION' }, (s) => ({
         ...handleGitApplicationSubmit(data as ApplicationGeneralData, s),
