@@ -6,7 +6,7 @@ import {
 } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
 import { CardClusterFeature } from '@qovery/shared/console-shared'
-import { BlockContent, EmptyState, Heading, HelpSection, LoaderSpinner, Section } from '@qovery/shared/ui'
+import { BlockContent, Heading, HelpSection, LoaderSpinner, Section } from '@qovery/shared/ui'
 import AWSExistingVPC from './aws-existing-vpc/aws-existing-vpc'
 import GcpExistingVPC from './gcp-existing-vpc/gcp-existing-vpc'
 
