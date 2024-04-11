@@ -51,25 +51,27 @@ export function PageSettingsGeneralFeature() {
       mode: database?.mode,
       version: database?.version,
       accessibility: database?.accessibility,
-      annotations_groups: annotationsGroup.map((group) => group.id),
+      annotations_groups: annotationsGroup.map((group) => group.id) ?? [],
     },
   })
 
   const onSubmit = methods.handleSubmit((data) => {
     if (data && database) {
+      const { annotations_groups, ...dataWithoutAnnotationsGroups } = data
+
       editService({
         serviceId: databaseId,
-        payload: buildEditServicePayload({ service: database, request: data }),
+        payload: buildEditServicePayload({ service: database, request: dataWithoutAnnotationsGroups }),
       })
 
       const annotationsGroupIds = annotationsGroup.map(({ id }) => id) ?? []
-      const addedAnnotationsGroup = data['annotations_groups'].filter((id) => !annotationsGroupIds.includes(id))
+      const addedAnnotationsGroup = annotations_groups.filter((id) => !annotationsGroupIds.includes(id))
       addedAnnotationsGroup.length > 0 &&
         addedAnnotationsGroup.forEach((id) =>
           addAnnotationsGroup({ serviceId: databaseId, serviceType: 'DATABASE', annotationsGroupId: id })
         )
 
-      const deletedAnnotationGroup = annotationsGroupIds.filter((id) => !data['annotations_groups'].includes(id))
+      const deletedAnnotationGroup = annotationsGroupIds.filter((id) => !annotations_groups.includes(id))
       deletedAnnotationGroup.length > 0 &&
         deletedAnnotationGroup.forEach((id) =>
           deleteAnnotationGroup({ serviceId: databaseId, serviceType: 'DATABASE', annotationsGroupId: id })

@@ -58,14 +58,14 @@ describe('PageSettingsGeneralFeature', () => {
 
     await userEvent.click(button)
 
-    const cloneApplication = buildEditServicePayload({
+    const cloneDatabase = buildEditServicePayload({
       service: mockDatabase,
       request: { name: 'hello', accessibility: DatabaseAccessibilityEnum.PRIVATE, version: '12' },
     })
 
     expect(useEditServiceSpy().mutate).toHaveBeenCalledWith({
       serviceId: '0',
-      payload: cloneApplication,
+      payload: cloneDatabase,
     })
   })
 })
