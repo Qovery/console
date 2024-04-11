@@ -1,10 +1,10 @@
 import { DatabaseAccessibilityEnum, DatabaseModeEnum, DatabaseTypeEnum } from 'qovery-typescript-axios'
 import { type FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
+import { AnnotationSetting } from '@qovery/domains/organizations/feature'
 import { GeneralSetting } from '@qovery/domains/services/feature'
 import { type Value } from '@qovery/shared/interfaces'
 import {
-  BlockContent,
   Button,
   Callout,
   ExternalLink,
@@ -168,7 +168,7 @@ export function PageSettingsGeneral({
               control={control}
               rules={{ required: true }}
               render={({ field, fieldState: { error } }) => (
-                <>
+                <div>
                   <InputSelect
                     dataTestId="input-select-accessibility"
                     label="Accessibility"
@@ -184,11 +184,15 @@ export function PageSettingsGeneral({
                   >
                     Learn more
                   </ExternalLink>
-                </>
+                </div>
               )}
             />
           </Section>
-          <div className="flex justify-end">
+          <Section className="gap-4 mt-10">
+            <Heading>Extra annotations</Heading>
+            <AnnotationSetting />
+          </Section>
+          <div className="flex justify-end mt-10">
             <Button type="submit" size="lg" loading={loading} disabled={!formState.isValid}>
               Save
             </Button>

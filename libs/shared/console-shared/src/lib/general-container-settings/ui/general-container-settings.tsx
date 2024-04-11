@@ -75,7 +75,6 @@ export function GeneralContainerSettings({ organization }: GeneralContainerSetti
           <InputText
             dataTestId="input-text-image-name"
             name="image_name"
-            className="mt-4"
             onChange={field.onChange}
             value={field.value}
             label="Image name"
@@ -93,7 +92,6 @@ export function GeneralContainerSettings({ organization }: GeneralContainerSetti
           <InputText
             dataTestId="input-text-image-tag"
             name="image_tag"
-            className="mt-4"
             onChange={field.onChange}
             value={field.value}
             label="Image tag"

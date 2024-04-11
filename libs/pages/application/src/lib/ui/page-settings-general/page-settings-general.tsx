@@ -2,6 +2,7 @@ import { BuildModeEnum, BuildPackLanguageEnum, type Organization } from 'qovery-
 import { type FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { match } from 'ts-pattern'
+import { AnnotationSetting } from '@qovery/domains/organizations/feature'
 import { DeploymentSetting, SourceSetting } from '@qovery/domains/service-helm/feature'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { AutoDeploySetting, GeneralSetting } from '@qovery/domains/services/feature'
@@ -12,7 +13,7 @@ import {
   JobGeneralSettings,
 } from '@qovery/shared/console-shared'
 import { ServiceTypeEnum, isJobGitSource } from '@qovery/shared/enums'
-import { BlockContent, Button, Callout, Heading, Icon, InputSelect, InputText, Section } from '@qovery/shared/ui'
+import { Button, Callout, Heading, Icon, InputSelect, InputText, Section } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
 export interface PageSettingsGeneralProps {
@@ -133,6 +134,10 @@ export function PageSettingsGeneral({
                   {blockContentBuildDeploy}
                   <AutoDeploySetting source={watchServiceType === 'CONTAINER' ? 'CONTAINER_REGISTRY' : 'GIT'} />
                 </Section>
+                <Section className="gap-4 mt-10">
+                  <Heading>Extra annotations</Heading>
+                  <AnnotationSetting />
+                </Section>
               </>
             ))
             .with({ serviceType: 'APPLICATION' }, () => (
@@ -151,6 +156,10 @@ export function PageSettingsGeneral({
                     </>
                   )}
                 </Section>
+                <Section className="gap-4 mt-10">
+                  <Heading>Extra annotations</Heading>
+                  <AnnotationSetting />
+                </Section>
               </>
             ))
             .with({ serviceType: 'CONTAINER' }, () => (
@@ -163,6 +172,10 @@ export function PageSettingsGeneral({
                   <Heading>Deploy</Heading>
                   <EntrypointCmdInputs />
                   <AutoDeploySetting source="CONTAINER_REGISTRY" />
+                </Section>
+                <Section className="gap-4 mt-10">
+                  <Heading>Extra annotations</Heading>
+                  <AnnotationSetting />
                 </Section>
               </>
             ))
