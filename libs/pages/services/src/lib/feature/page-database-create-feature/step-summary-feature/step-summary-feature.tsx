@@ -72,6 +72,8 @@ export function StepSummaryFeature() {
           },
         })
 
+        console.log(database)
+
         if (withDeploy) {
           deployDatabase({
             serviceId: database.id,
