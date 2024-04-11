@@ -15,11 +15,6 @@ export interface NavigationLeftProps {
 
 export type NavigationLeftLinkProps = {
   title: string
-  /**
-   * @deprecated please use `iconName` instead `icon`
-   */
-  icon?: string
-  iconName?: IconName
   url?: string
   onClick?: () => void
   subLinks?: {
