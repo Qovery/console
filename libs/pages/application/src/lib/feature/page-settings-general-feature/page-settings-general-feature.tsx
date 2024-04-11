@@ -12,8 +12,20 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { P, match } from 'ts-pattern'
 import { useOrganization } from '@qovery/domains/organizations/feature'
-import { type Application, type Container, type Helm, type Job } from '@qovery/domains/services/data-access'
-import { useEditService, useService } from '@qovery/domains/services/feature'
+import {
+  type Application,
+  type Container,
+  type Helm,
+  type Job,
+  type ServiceType,
+} from '@qovery/domains/services/data-access'
+import {
+  useAddAnnotationsGroup,
+  useAnnotationsGroup,
+  useDeleteAnnotationsGroup,
+  useEditService,
+  useService,
+} from '@qovery/domains/services/feature'
 import { type HelmGeneralData } from '@qovery/pages/services'
 import { isHelmGitSource, isHelmRepositorySource, isJobContainerSource, isJobGitSource } from '@qovery/shared/enums'
 import { type ApplicationGeneralData, type JobGeneralData } from '@qovery/shared/interfaces'
@@ -159,6 +171,14 @@ export function PageSettingsGeneralFeature() {
 
   const { data: organization } = useOrganization({ organizationId })
   const { data: service } = useService({ environmentId, serviceId: applicationId })
+
+  const { data: annotationsGroup = [] } = useAnnotationsGroup({
+    serviceId: applicationId,
+    serviceType: service?.serviceType !== 'HELM' ? service?.serviceType : 'APPLICATION',
+  })
+  const { mutate: deleteAnnotationGroup } = useDeleteAnnotationsGroup()
+  const { mutate: addAnnotationsGroup } = useAddAnnotationsGroup()
+
   const { mutate: editService, isLoading: isLoadingEditService } = useEditService({ environmentId })
 
   const helmRepository = match(service)
@@ -175,6 +195,7 @@ export function PageSettingsGeneralFeature() {
       build_mode: service.build_mode,
       image_entry_point: service.entrypoint,
       cmd_arguments: (service.arguments && service.arguments.length && JSON.stringify(service.arguments)) || '',
+      annotations_groups: annotationsGroup.map((group) => group.id),
     }))
     .with({ serviceType: 'CONTAINER' }, (service) => ({
       registry: service.registry?.id,
@@ -183,6 +204,7 @@ export function PageSettingsGeneralFeature() {
       image_entry_point: service.entrypoint,
       auto_deploy: service.auto_deploy,
       cmd_arguments: (service.arguments && service.arguments.length && JSON.stringify(service.arguments)) || '',
+      annotations_groups: annotationsGroup.map((group) => group.id),
     }))
     .with({ serviceType: 'JOB' }, (service) => {
       const jobContainerSource = isJobContainerSource(service.source) ? service.source.image : undefined
@@ -194,6 +216,7 @@ export function PageSettingsGeneralFeature() {
         registry: jobContainerSource?.registry_id,
         image_name: jobContainerSource?.image_name,
         image_tag: jobContainerSource?.tag,
+        annotations_groups: annotationsGroup.map((group) => group.id),
       }
     })
     .with({ serviceType: 'HELM' }, (service) => ({
@@ -220,8 +243,6 @@ export function PageSettingsGeneralFeature() {
 
   const onSubmit = methods.handleSubmit((data) => {
     if (!service) return
-
-    console.log(data)
 
     const payload = match(service)
       .with({ serviceType: 'APPLICATION' }, (s) => ({
@@ -262,6 +283,38 @@ export function PageSettingsGeneralFeature() {
       }
       return
     }
+
+    /* 
+      Process annotations to trigger delete and add annotations group for services
+    */
+    function processAnnotations(
+      data: ApplicationGeneralData | JobGeneralData,
+      serviceId: string,
+      serviceType: Extract<ServiceType, 'APPLICATION' | 'CONTAINER' | 'JOB'>
+    ) {
+      const annotationsGroupIds = annotationsGroup.map(({ id }) => id) ?? []
+      const dataAnnotationsGroupIds = data['annotations_groups'] ?? []
+
+      const addedAnnotationsGroup = dataAnnotationsGroupIds.filter((id) => !annotationsGroupIds.includes(id))
+      addedAnnotationsGroup.length > 0 &&
+        addedAnnotationsGroup.forEach((id) => addAnnotationsGroup({ serviceId, serviceType, annotationsGroupId: id }))
+
+      const deletedAnnotationGroup = annotationsGroupIds.filter((id) => !dataAnnotationsGroupIds.includes(id))
+      deletedAnnotationGroup.length > 0 &&
+        deletedAnnotationGroup.forEach((id) =>
+          deleteAnnotationGroup({ serviceId, serviceType, annotationsGroupId: id })
+        )
+    }
+
+    match(service)
+      .with({ serviceType: 'APPLICATION' }, { serviceType: 'CONTAINER' }, (s) => {
+        processAnnotations(data as ApplicationGeneralData, s.id, s.serviceType)
+      })
+      .with({ serviceType: 'JOB' }, (s) => {
+        processAnnotations(data as JobGeneralData, s.id, s.serviceType)
+      })
+      .with({ serviceType: 'HELM' }, () => undefined)
+      .otherwise(() => undefined)
 
     return null
   })

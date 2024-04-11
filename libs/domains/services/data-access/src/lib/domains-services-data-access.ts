@@ -501,7 +501,7 @@ export const services = createQueryKeys('services', {
         }))
         .exhaustive()
       const response = await query(serviceId)
-      return response.data
+      return response.data.results
     },
   }),
 })
