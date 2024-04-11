@@ -18,7 +18,7 @@ export function StepResources({ onBack, onSubmit }: StepResourcesProps) {
 
       <form className="space-y-10" onSubmit={onSubmit}>
         <p className="text-neutral-350 text-sm">Customize the resources assigned to the service.</p>
-        <ApplicationSettingsResources displayWarningCpu={false} />
+        <ApplicationSettingsResources displayWarningCpu={false} displayInstanceLimits={false} />
 
         <div className="flex justify-between">
           <Button onClick={onBack} type="button" size="lg" variant="plain">
