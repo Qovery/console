@@ -100,18 +100,14 @@
       }
     },
     "@nx/js": {
-      "library": {
-        "style": "none",
-        "linter": "eslint",
-        "unitTestRunner": "jest",
-        "bundler": "none"
-      }
-    },
-    "@nx/js": {
       "application": {
         "projectNameAndRootFormat": "derived"
       },
       "library": {
+        "style": "none",
+        "linter": "eslint",
+        "unitTestRunner": "jest",
+        "bundler": "none",
         "projectNameAndRootFormat": "derived"
       }
     }
