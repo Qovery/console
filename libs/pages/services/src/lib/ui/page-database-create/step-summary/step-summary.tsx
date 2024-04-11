@@ -26,7 +26,7 @@ export function StepSummary(props: StepSummaryProps) {
         <p className="text-neutral-350 text-sm">
           The basic database setup is done, you can now deploy your database or move forward with some advanced setup.
         </p>
-        {props.generalData.mode == DatabaseModeEnum.MANAGED && (
+        {props.generalData.mode === DatabaseModeEnum.MANAGED && (
           <Callout.Root color="yellow">
             <Callout.Icon>
               <Icon iconName="triangle-exclamation" />
@@ -119,6 +119,7 @@ export function StepSummary(props: StepSummaryProps) {
               loading={props.isLoadingCreate}
               onClick={() => props.onSubmit(false)}
               size="lg"
+              type="button"
               variant="outline"
             >
               Create
@@ -127,6 +128,7 @@ export function StepSummary(props: StepSummaryProps) {
               data-testid="button-create-deploy"
               loading={props.isLoadingCreateAndDeploy}
               onClick={() => props.onSubmit(true)}
+              type="button"
               size="lg"
             >
               Create and deploy
