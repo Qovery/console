@@ -1,11 +1,17 @@
 import { useQuery } from '@tanstack/react-query'
+import { type ServiceType } from '@qovery/domains/services/data-access'
 import { queries } from '@qovery/state/util-queries'
 
-export type UseAnnotationsGroupProps = Parameters<typeof queries.services.annotationsGroup>[0]
+export type UseAnnotationsGroupProps = {
+  serviceId?: string
+  serviceType?: Extract<ServiceType, 'APPLICATION' | 'CONTAINER' | 'JOB' | 'DATABASE'>
+}
 
-export function useAnnotationsGroup(props: UseAnnotationsGroupProps) {
+export function useAnnotationsGroup({ serviceId, serviceType }: UseAnnotationsGroupProps) {
   return useQuery({
-    ...queries.services.annotationsGroup(props),
+    // eslint-disable-next-line @typescript-eslint/no-extra-non-null-assertion
+    ...queries.services.annotationsGroup({ serviceId: serviceId!!, serviceType: serviceType!! }),
+    enabled: Boolean(serviceId) && Boolean(serviceType),
   })
 }
 
