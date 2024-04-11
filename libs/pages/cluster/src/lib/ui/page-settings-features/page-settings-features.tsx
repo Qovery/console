@@ -34,9 +34,7 @@ export function PageSettingsFeatures(props: PageSettingsFeaturesProps) {
 
         {!loading && featureExistingVpcValue && featureExistingVpcContent}
 
-        {cloudProvider === 'GCP' && !featureExistingVpcValue && <EmptyState title="No feature configured" />}
-
-        {!featureExistingVpcValue && cloudProvider === 'AWS' && (
+        {!featureExistingVpcValue && (
           <BlockContent title="Configured features" classNameContent="p-0">
             {loading && (
               <div className="flex justify-center p-5">

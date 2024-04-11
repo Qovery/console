@@ -123,7 +123,30 @@ export function StepFeatures(props: StepFeaturesProps) {
               )}
             </div>
           )}
-          {cloudProvider === 'GCP' && watchVpcMode !== 'DEFAULT' && <GCPVpcFeature />}
+          {cloudProvider === 'GCP' && (
+            <div>
+              {watchVpcMode === 'DEFAULT' ? (
+                features && features.length > 0 ? (
+                  features.map((feature) => (
+                    <CardClusterFeature
+                      key={feature.id}
+                      feature={feature}
+                      cloudProvider={cloudProvider}
+                      control={control}
+                      watch={watch}
+                      setValue={setValue}
+                    />
+                  ))
+                ) : (
+                  <div className="flex justify-center mt-2">
+                    <LoaderSpinner className="w-4" />
+                  </div>
+                )
+              ) : (
+                <GCPVpcFeature />
+              )}
+            </div>
+          )}
         </div>
 
         <div className="flex justify-between">

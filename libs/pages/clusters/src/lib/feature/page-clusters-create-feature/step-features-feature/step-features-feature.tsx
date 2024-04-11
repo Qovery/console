@@ -81,7 +81,7 @@ export function StepFeaturesFeature() {
   })
 
   const onSubmit = methods.handleSubmit((data) => {
-    if (generalData?.cloud_provider === 'AWS') {
+    if (generalData?.cloud_provider === 'AWS' || generalData?.cloud_provider === 'GCP') {
       if (data.vpc_mode === 'DEFAULT') {
         let cloneData = {}
 
@@ -105,37 +105,40 @@ export function StepFeaturesFeature() {
           features: cloneData,
         })
       } else {
-        const existingVpcData = data.aws_existing_vpc
+        if (generalData?.cloud_provider === 'AWS') {
+          const existingVpcData = data.aws_existing_vpc
 
-        setFeaturesData({
-          vpc_mode: 'EXISTING_VPC',
-          aws_existing_vpc: {
-            aws_vpc_eks_id: existingVpcData?.aws_vpc_eks_id ?? '',
-            eks_subnets: removeEmptySubnet(existingVpcData?.eks_subnets),
-            mongodb_subnets: removeEmptySubnet(existingVpcData?.mongodb_subnets),
-            rds_subnets: removeEmptySubnet(existingVpcData?.rds_subnets),
-            redis_subnets: removeEmptySubnet(existingVpcData?.redis_subnets),
-          },
-          features: {},
-        })
+          setFeaturesData({
+            vpc_mode: 'EXISTING_VPC',
+            aws_existing_vpc: {
+              aws_vpc_eks_id: existingVpcData?.aws_vpc_eks_id ?? '',
+              eks_subnets: removeEmptySubnet(existingVpcData?.eks_subnets),
+              mongodb_subnets: removeEmptySubnet(existingVpcData?.mongodb_subnets),
+              rds_subnets: removeEmptySubnet(existingVpcData?.rds_subnets),
+              redis_subnets: removeEmptySubnet(existingVpcData?.redis_subnets),
+            },
+            features: {},
+          })
+        }
+        if (generalData.cloud_provider === 'GCP') {
+          const existingVpcData = data.gcp_existing_vpc
+
+          setFeaturesData({
+            vpc_mode: data.vpc_mode,
+            gcp_existing_vpc: existingVpcData?.vpc_name
+              ? {
+                  vpc_name: existingVpcData?.vpc_name ?? '',
+                  vpc_project_id: existingVpcData?.vpc_project_id,
+                  subnetwork_name: existingVpcData?.subnetwork_name,
+                  ip_range_services_name: existingVpcData?.ip_range_services_name,
+                  ip_range_pods_name: existingVpcData?.ip_range_pods_name,
+                  additional_ip_range_pods_names: existingVpcData?.additional_ip_range_pods_names,
+                }
+              : undefined,
+            features: {},
+          })
+        }
       }
-    } else {
-      const existingVpcData = data.gcp_existing_vpc
-
-      setFeaturesData({
-        vpc_mode: data.vpc_mode,
-        gcp_existing_vpc: existingVpcData?.vpc_name
-          ? {
-              vpc_name: existingVpcData?.vpc_name ?? '',
-              vpc_project_id: existingVpcData?.vpc_project_id,
-              subnetwork_name: existingVpcData?.subnetwork_name,
-              ip_range_services_name: existingVpcData?.ip_range_services_name,
-              ip_range_pods_name: existingVpcData?.ip_range_pods_name,
-              additional_ip_range_pods_names: existingVpcData?.additional_ip_range_pods_names,
-            }
-          : undefined,
-        features: {},
-      })
     }
 
     const pathCreate = `${CLUSTERS_URL(organizationId)}${CLUSTERS_CREATION_URL}`
