@@ -48,8 +48,6 @@ export function PodDetails({ pod, serviceId, serviceType }: PodDetailsProps) {
   const QOVERY_SIDECAR_NAME = 'qovery-wait-container-output' as const
   const { containers = [] } = pod
 
-  console.log(containers)
-
   return (
     <div className="pl-4 pb-4 pt-3 pr-20 relative">
       <Link

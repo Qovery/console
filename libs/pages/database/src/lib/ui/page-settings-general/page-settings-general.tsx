@@ -58,7 +58,10 @@ export function PageSettingsGeneral({
   return (
     <div className="flex flex-col justify-between w-full">
       <Section className="p-8 max-w-content-with-navigation-left">
-        <Heading className="mb-8">General settings</Heading>
+        <Heading className="mb-2">General settings</Heading>
+        <p className="text-sm text-neutral-400 mb-5">
+          These general settings allow you to set up the database name, type and version.
+        </p>
         <form onSubmit={onSubmit}>
           {databaseMode === DatabaseModeEnum.MANAGED && (
             <Callout.Root className="mb-5" color="yellow">
@@ -75,7 +78,8 @@ export function PageSettingsGeneral({
               </Callout.Text>
             </Callout.Root>
           )}
-          <BlockContent title="General information" classNameContent="flex flex-col gap-3">
+          <Section className="gap-4">
+            <Heading>General</Heading>
             <GeneralSetting label="Database name" />
             <Controller
               name="type"
@@ -183,7 +187,7 @@ export function PageSettingsGeneral({
                 </>
               )}
             />
-          </BlockContent>
+          </Section>
           <div className="flex justify-end">
             <Button type="submit" size="lg" loading={loading} disabled={!formState.isValid}>
               Save

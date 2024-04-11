@@ -17,7 +17,6 @@ describe('GitRepositorySettings', () => {
     editGitSettings: jest.fn(),
     currentProvider: 'GITHUB',
     currentRepository: 'qovery/console',
-    withBlockWrapper: false,
   }
 
   const defaultValues = {
@@ -52,7 +51,7 @@ describe('GitRepositorySettings', () => {
       })
     )
 
-    const buttonEdit = screen.getByTestId('button-edit')
+    const buttonEdit = screen.getByText('Edit')
     await userEvent.click(buttonEdit)
 
     expect(mockOpenModal).toHaveBeenCalled()

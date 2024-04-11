@@ -7,11 +7,7 @@ import { isHelmGitSource, isJobGitSource } from '@qovery/shared/enums'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import GitRepositorySettings from '../../ui/git-repository-settings/git-repository-settings'
 
-export interface EditGitRepositorySettingsFeatureProps {
-  withBlockWrapper?: boolean
-}
-
-export function EditGitRepositorySettingsFeature({ withBlockWrapper = true }: EditGitRepositorySettingsFeatureProps) {
+export function EditGitRepositorySettingsFeature() {
   const { applicationId = '' } = useParams()
   const { data: service } = useService({ serviceId: applicationId })
 
@@ -58,7 +54,6 @@ export function EditGitRepositorySettingsFeature({ withBlockWrapper = true }: Ed
       editGitSettings={editGitSettings}
       currentProvider={gitRepository?.provider}
       currentRepository={gitRepository?.name}
-      withBlockWrapper={withBlockWrapper}
     />
   )
 }

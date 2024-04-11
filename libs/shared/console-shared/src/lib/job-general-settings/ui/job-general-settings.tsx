@@ -100,7 +100,7 @@ export function JobGeneralSettings(props: JobGeneralSettingProps) {
                 </BlockContent>
               </div>
             ) : (
-              <GitRepositorySettings withBlockWrapper={false} gitDisabled={false} />
+              <GitRepositorySettings gitDisabled={false} />
             ))}
 
           {watchServiceType === 'CONTAINER' &&
