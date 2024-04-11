@@ -286,7 +286,7 @@ export function StepSummaryFeature() {
             </Button>
             <div className="flex gap-2">
               <Button
-                type="submit"
+                type="button"
                 size="lg"
                 variant="surface"
                 color="neutral"
@@ -297,7 +297,7 @@ export function StepSummaryFeature() {
                 Create
               </Button>
               <Button
-                type="submit"
+                type="button"
                 size="lg"
                 disabled={isLoadingCreate}
                 onClick={() => onSubmit(true)}
