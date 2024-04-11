@@ -149,12 +149,8 @@ export function PageSettingsGeneral({
                 <Section className="gap-4 mt-10">
                   <Heading>Build and deploy</Heading>
                   {blockContentBuildDeploy}
-                  {watchBuildMode === BuildModeEnum.DOCKER && (
-                    <>
-                      <EntrypointCmdInputs />
-                      <AutoDeploySetting source="GIT" />
-                    </>
-                  )}
+                  {watchBuildMode === BuildModeEnum.DOCKER && <EntrypointCmdInputs />}
+                  <AutoDeploySetting source="GIT" />
                 </Section>
                 <Section className="gap-4 mt-10">
                   <Heading>Extra annotations</Heading>

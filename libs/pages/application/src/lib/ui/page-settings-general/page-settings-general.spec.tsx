@@ -89,12 +89,11 @@ describe('PageSettingsGeneral', () => {
       })
     )
 
-    expect(screen.getByText('General information')).toBeInTheDocument()
-    expect(screen.getByText('Build & deploy')).toBeInTheDocument()
-    expect(screen.getByText('Entrypoint and arguments')).toBeInTheDocument()
+    expect(screen.getByText('General')).toBeInTheDocument()
+    expect(screen.getByText('Build and deploy')).toBeInTheDocument()
     // Necessary to get sub-component
     waitFor(() => {
-      expect(screen.getByText('Git repository')).toBeInTheDocument()
+      expect(screen.getByText('Source')).toBeInTheDocument()
       expect(screen.getByText('Auto-deploy')).toBeInTheDocument()
     })
   })
@@ -106,9 +105,9 @@ describe('PageSettingsGeneral', () => {
       })
     )
 
-    expect(screen.getByText('General information')).toBeInTheDocument()
-    expect(screen.getByText('Container Settings')).toBeInTheDocument()
-    expect(screen.getByText('Entrypoint and arguments')).toBeInTheDocument()
+    expect(screen.getByText('General')).toBeInTheDocument()
+    expect(screen.getByText('Source')).toBeInTheDocument()
+    expect(screen.getByText('Deploy')).toBeInTheDocument()
     // Necessary to get sub-component
     waitFor(() => {
       expect(screen.getByText('Auto-deploy')).toBeInTheDocument()
@@ -122,7 +121,7 @@ describe('PageSettingsGeneral', () => {
       })
     )
 
-    expect(screen.getByText('General information')).toBeInTheDocument()
+    expect(screen.getByText('General')).toBeInTheDocument()
     // Necessary to get sub-component
     waitFor(() => {
       expect(screen.getByText('Git repository')).toBeInTheDocument()
@@ -137,7 +136,7 @@ describe('PageSettingsGeneral', () => {
       })
     )
 
-    expect(screen.getByText('General information')).toBeInTheDocument()
+    expect(screen.getByText('General')).toBeInTheDocument()
     // Necessary to get sub-component
     waitFor(() => {
       expect(screen.getByText('Source')).toBeInTheDocument()
