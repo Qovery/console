@@ -6,14 +6,7 @@ import {
   GitPublicRepositorySettings,
   GitRepositorySetting,
 } from '@qovery/domains/organizations/feature'
-import {
-  BlockContent,
-  ButtonLegacy,
-  ButtonLegacySize,
-  ButtonLegacyStyle,
-  IconAwesomeEnum,
-  useModal,
-} from '@qovery/shared/ui'
+import { Button, Icon, useModal } from '@qovery/shared/ui'
 import ConfirmationGitModal from '../confirmation-git-modal/confirmation-git-modal'
 
 export interface GitRepositorySettingsProps {
@@ -21,7 +14,6 @@ export interface GitRepositorySettingsProps {
   currentProvider?: string
   currentRepository?: string
   editGitSettings?: () => void
-  withBlockWrapper?: boolean
 }
 
 export function GitRepositorySettings({
@@ -29,7 +21,6 @@ export function GitRepositorySettings({
   editGitSettings,
   currentRepository,
   currentProvider,
-  withBlockWrapper = true,
 }: GitRepositorySettingsProps) {
   const { watch } = useFormContext<{
     provider: keyof typeof GitProviderEnum
@@ -47,8 +38,8 @@ export function GitRepositorySettings({
   const watchFieldRepository = watch('repository')
   const watchFieldGitTokenId = watch('git_token_id')
 
-  const children = (
-    <div className="flex flex-col gap-3">
+  return (
+    <div className="flex flex-col gap-4">
       <GitProviderSetting disabled={gitDisabled} />
       {watchFieldIsPublicRepository ? (
         <GitPublicRepositorySettings disabled={gitDisabled} />
@@ -72,13 +63,10 @@ export function GitRepositorySettings({
       )}
       {gitDisabled && editGitSettings && currentProvider && currentRepository && (
         <div className="flex justify-end">
-          <ButtonLegacy
-            dataTestId="button-edit"
-            className="btn--no-min-w"
-            size={ButtonLegacySize.REGULAR}
-            style={ButtonLegacyStyle.STROKED}
-            iconRight={IconAwesomeEnum.TRIANGLE_EXCLAMATION}
-            iconRightClassName="text-yellow-500 text-sm"
+          <Button
+            type="button"
+            variant="surface"
+            size="md"
             onClick={() =>
               openModal({
                 content: (
@@ -93,13 +81,12 @@ export function GitRepositorySettings({
             }
           >
             Edit
-          </ButtonLegacy>
+            <Icon iconName="triangle-exclamation" className="text-yellow-500 text-sm ml-2" />
+          </Button>
         </div>
       )}
     </div>
   )
-
-  return withBlockWrapper ? <BlockContent title="Git repository">{children}</BlockContent> : children
 }
 
 export default GitRepositorySettings
