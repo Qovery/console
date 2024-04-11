@@ -10,6 +10,7 @@ import { Callout, ExternalLink, Heading, Icon, InputText, Link, Section, inputSi
 
 export interface ApplicationSettingsResourcesProps {
   displayWarningCpu: boolean
+  displayInstanceLimits?: boolean
   service?: Exclude<AnyService, Helm | Database>
   minInstances?: number
   maxInstances?: number
@@ -17,6 +18,7 @@ export interface ApplicationSettingsResourcesProps {
 
 export function ApplicationSettingsResources({
   displayWarningCpu,
+  displayInstanceLimits = true,
   service,
   minInstances = 1,
   maxInstances = 1000,
@@ -172,7 +174,7 @@ export function ApplicationSettingsResources({
         />
       </Section>
 
-      {service?.serviceType !== 'JOB' && (
+      {service?.serviceType !== 'JOB' && displayInstanceLimits && (
         <Section className="gap-4">
           <Heading>Instances</Heading>
           <div className="grid grid-cols-2 gap-4">
