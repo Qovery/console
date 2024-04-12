@@ -94,7 +94,7 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
     },
     {
       label: 'Roadmap',
-      onSelect: openExternalLink('https://roadmap.qovery.com/b/5m13y5v6/feature-ideas'),
+      onSelect: openExternalLink('https://roadmap.qovery.com/roadmap'),
       iconName: 'road',
     },
     {
