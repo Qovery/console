@@ -15,8 +15,8 @@ export function Container(props: ContainerProps) {
   const { openModal, closeModal } = useModal()
 
   return (
-    <div className="bg-white flex rounded-t">
-      <div className="w-72 border-r border-neutral-200 relative shrink-0 min-h-[calc(100vh-10px)] pb-10">
+    <div className="bg-white flex flex-1 rounded-t">
+      <div className="w-72 border-r border-neutral-200 relative shrink-0 pb-10">
         <div className="sticky top-12">
           <NavigationLeft title="Organization" links={organizationLinks} className="py-6" />
           <NavigationLeft
@@ -34,7 +34,7 @@ export function Container(props: ContainerProps) {
           />
         </div>
       </div>
-      <div className="flex flex-grow min-h-[calc(100vh-10px)]">{children}</div>
+      <div className="flex grow">{children}</div>
     </div>
   )
 }
