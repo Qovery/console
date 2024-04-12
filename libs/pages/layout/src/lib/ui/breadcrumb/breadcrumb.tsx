@@ -1,12 +1,13 @@
 import equal from 'fast-deep-equal'
 import { type Cluster, type Environment, type Organization, type Project } from 'qovery-typescript-axios'
 import { memo, useCallback, useEffect, useState } from 'react'
-import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { useLocation, useMatch, useNavigate, useParams } from 'react-router-dom'
 import { ServiceStateChip, useServices } from '@qovery/domains/services/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import {
   APPLICATION_GENERAL_URL,
   APPLICATION_URL,
+  AUDIT_LOGS_URL,
   CLUSTERS_URL,
   CLUSTER_URL,
   DATABASE_GENERAL_URL,
@@ -18,6 +19,7 @@ import {
   OVERVIEW_URL,
   SERVICES_GENERAL_URL,
   SERVICES_URL,
+  SETTINGS_URL,
 } from '@qovery/shared/routes'
 import {
   ButtonIcon,
@@ -43,6 +45,9 @@ export function Breadcrumb(props: BreadcrumbProps) {
   const { organizations, clusters, projects, environments, createProjectModal } = props
   const { organizationId, projectId, environmentId, applicationId, databaseId, clusterId } = useParams()
 
+  const matchAuditLogs = useMatch({ path: AUDIT_LOGS_URL(), end: false })
+  const matchSettings = useMatch({ path: SETTINGS_URL(), end: false })
+  const matchClusters = useMatch({ path: CLUSTERS_URL(), end: false })
   const location = useLocation()
   const navigate = useNavigate()
   const currentOrganization = organizations?.find((organization) => organizationId === organization.id)
@@ -206,7 +211,7 @@ export function Breadcrumb(props: BreadcrumbProps) {
   return (
     <div className="flex justify-between w-full">
       <div className="flex h-full items-center">
-        {organizationId && (projectId || clusterId) && (
+        {organizationId && (projectId || clusterId || matchAuditLogs || matchClusters || matchSettings) && (
           <Tooltip content={currentOrganization?.name || ''}>
             <div className="mr-2">
               {currentOrganization?.logo_url ? (
@@ -287,6 +292,36 @@ export function Breadcrumb(props: BreadcrumbProps) {
               LOGS
             </div>
           </div>
+        )}
+        {matchAuditLogs && (
+          <BreadcrumbItem
+            label={organizations.find(({ id }) => id === organizationId)?.name}
+            data={[{ id: '0', name: 'Audit Logs' }]}
+            menuItems={[]}
+            paramId="0"
+            isLast
+            link=""
+          />
+        )}
+        {matchSettings && (
+          <BreadcrumbItem
+            label={organizations.find(({ id }) => id === organizationId)?.name}
+            data={[{ id: '0', name: 'Settings' }]}
+            menuItems={[]}
+            paramId="0"
+            isLast
+            link=""
+          />
+        )}
+        {matchClusters && (
+          <BreadcrumbItem
+            label={organizations.find(({ id }) => id === organizationId)?.name}
+            data={[{ id: '0', name: 'Clusters' }]}
+            menuItems={[]}
+            paramId="0"
+            isLast
+            link=""
+          />
         )}
       </div>
       {(locationIsApplicationLogs || locationIsDeploymentLogs || locationIsClusterLogs) && (

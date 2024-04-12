@@ -16,7 +16,7 @@ export function PageClustersGeneral(props: PageClustersGeneralProps) {
   const goToCreateCluster = CLUSTERS_URL(organizationId) + CLUSTERS_CREATION_URL + CLUSTERS_CREATION_GENERAL_URL
 
   return (
-    <div className="flex flex-col justify-between w-full">
+    <div className="flex flex-col flex-1 justify-between w-full">
       <Section className="p-8">
         <div className="flex justify-between mb-8">
           <div>

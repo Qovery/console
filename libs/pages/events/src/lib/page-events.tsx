@@ -6,7 +6,7 @@ export function PageEvents() {
   const { organizationId = '' } = useParams()
 
   return (
-    <div className="-mt-2 -ml-2 -mr-2 bg-white border-l border-l-bg-neutral-200 min-h-screen">
+    <div className="flex flex-col flex-1 bg-white rounded-t">
       <Routes>
         {ROUTER_EVENTS.map((route) => (
           <Route key={route.path} path={route.path} element={route.component} />

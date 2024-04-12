@@ -92,7 +92,7 @@ export const ROUTER: RouterProps[] = [
     component: <PageEvents />,
     protected: true,
     layout: true,
-    topBar: false,
+    topBar: true,
   },
   {
     path: OVERVIEW_URL(),
@@ -105,7 +105,7 @@ export const ROUTER: RouterProps[] = [
     component: <PageSettings />,
     protected: true,
     layout: true,
-    topBar: false,
+    topBar: true,
   },
   {
     path: `${ENVIRONMENTS_URL()}/*`,
@@ -166,7 +166,7 @@ export const ROUTER: RouterProps[] = [
     component: <PageClusters />,
     protected: true,
     layout: true,
-    topBar: false,
+    topBar: true,
   },
   {
     path: `${CLUSTERS_URL()}${CLUSTERS_CREATION_URL}/*`,
