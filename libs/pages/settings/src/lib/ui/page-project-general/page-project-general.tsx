@@ -6,7 +6,6 @@ import {
   ButtonLegacySize,
   ButtonLegacyStyle,
   Heading,
-  HelpSection,
   InputText,
   InputTextArea,
   Section,
@@ -72,15 +71,6 @@ export function PageProjectGeneral(props: PageProjectGeneralProps) {
           </div>
         </form>
       </Section>
-      <HelpSection
-        description="Need help? You may find these links useful"
-        links={[
-          {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/project/#edit-project-general-settings',
-            linkLabel: 'How to configure my project',
-          },
-        ]}
-      />
     </div>
   )
 }

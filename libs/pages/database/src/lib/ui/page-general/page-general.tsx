@@ -1,15 +1,13 @@
 import { DatabaseModeEnum } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
 import { PodStatusesCallout, PodsMetrics, ServiceDetails } from '@qovery/domains/services/feature'
-import { type BaseLink, HelpSection } from '@qovery/shared/ui'
 
 export interface PageGeneralProps {
   databaseMode?: DatabaseModeEnum
-  listHelpfulLinks: BaseLink[]
 }
 
 export function PageGeneral(props: PageGeneralProps) {
-  const { databaseMode, listHelpfulLinks } = props
+  const { databaseMode } = props
   const { environmentId = '', databaseId = '' } = useParams()
 
   return (
@@ -34,7 +32,6 @@ export function PageGeneral(props: PageGeneralProps) {
           </div>
           <ServiceDetails className="w-[360px] border-l" environmentId={environmentId} serviceId={databaseId} />
         </div>
-        <HelpSection description="Need help? You may find these links useful" links={listHelpfulLinks}></HelpSection>
       </div>
     </div>
   )

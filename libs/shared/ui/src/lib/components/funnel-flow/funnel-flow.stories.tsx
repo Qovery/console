@@ -1,6 +1,5 @@
 import { type ComponentMeta, type ComponentStory } from '@storybook/react'
 import FunnelFlowBody from '../funnel-flow-body/funnel-flow-body'
-import FunnelFlowHelpCard from '../funnel-flow-help-card/funnel-flow-help-card'
 import InputSelect from '../inputs/input-select/input-select'
 import { FunnelFlow } from './funnel-flow'
 
@@ -9,19 +8,8 @@ export default {
   title: 'FunnelFlow/FunnelFlow',
 } as ComponentMeta<typeof FunnelFlow>
 
-const helpCard = (
-  <FunnelFlowHelpCard
-    title="What are the benefits"
-    items={[
-      'An environment help you to amet minim mollit non deserunt.',
-      'An environment help you to amet minim mollit non deserunt.',
-      'An environment help you to amet minim mollit non deserunt.',
-    ]}
-  />
-)
-
 const children = (
-  <FunnelFlowBody helpSection={helpCard}>
+  <FunnelFlowBody>
     <h1>FunnelFlowBody</h1>
 
     <InputSelect

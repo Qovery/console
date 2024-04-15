@@ -6,7 +6,7 @@ import {
 } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { MemberRoleEnum } from '@qovery/shared/enums'
-import { Button, Heading, HelpSection, Icon, Section, Table, type TableFilterProps } from '@qovery/shared/ui'
+import { Button, Heading, Icon, Section, Table, type TableFilterProps } from '@qovery/shared/ui'
 import RowMember from './row-member/row-member'
 
 export interface PageOrganizationMembersProps {
@@ -183,16 +183,6 @@ export function PageOrganizationMembers(props: PageOrganizationMembersProps) {
           </Table>
         )}
       </Section>
-      <HelpSection
-        data-testid="help-section"
-        description="Need help? You may find these links useful"
-        links={[
-          {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/organization/members-rbac/#organization-members',
-            linkLabel: 'How to configure my organization members',
-          },
-        ]}
-      />
     </div>
   )
 }

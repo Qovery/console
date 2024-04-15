@@ -9,12 +9,11 @@ import {
   type DroppableProvided,
 } from 'react-beautiful-dnd'
 import { useNavigate } from 'react-router-dom'
-import { type BaseLink, Button, HelpSection, Icon } from '@qovery/shared/ui'
+import { Button, Icon } from '@qovery/shared/ui'
 import DeploymentRuleItem from '../deployment-rule-item/deployment-rule-item'
 import PlaceholderNoRules from '../placeholder-no-rules/placeholder-no-rules'
 
 export interface PageDeploymentRulesProps {
-  listHelpfulLinks: BaseLink[]
   deploymentRules: ProjectDeploymentRule[]
   updateDeploymentRulesOrder: (list: ProjectDeploymentRule[]) => void
   deleteDeploymentRule: (rule: string) => void
@@ -23,7 +22,6 @@ export interface PageDeploymentRulesProps {
 }
 
 export function PageDeploymentRules({
-  listHelpfulLinks,
   deploymentRules,
   updateDeploymentRulesOrder,
   isLoading = false,
@@ -108,9 +106,6 @@ export function PageDeploymentRules({
           </div>
         </div>
       )}
-      <div className="bg-white rounded-b">
-        <HelpSection description="Need help? You may find these links useful" links={listHelpfulLinks} />
-      </div>
     </div>
   )
 }

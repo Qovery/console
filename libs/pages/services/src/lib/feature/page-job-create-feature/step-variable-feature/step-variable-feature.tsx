@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { FlowCreateVariable } from '@qovery/shared/console-shared'
-import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { type FlowVariableData, type VariableData } from '@qovery/shared/interfaces'
 import {
   SERVICES_JOB_CREATION_GENERAL_URL,
@@ -11,7 +10,7 @@ import {
   SERVICES_JOB_CREATION_RESOURCES_URL,
   SERVICES_URL,
 } from '@qovery/shared/routes'
-import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
+import { FunnelFlowBody } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { computeAvailableScope } from '@qovery/shared/util-js'
 import { useJobContainerCreateContext } from '../page-job-create-feature'
@@ -30,16 +29,6 @@ export function StepVariableFeature() {
       navigate(`${SERVICES_URL(organizationId, projectId, environmentId)}${jobURL}` + SERVICES_JOB_CREATION_GENERAL_URL)
   }, [generalData, navigate, environmentId, organizationId, projectId, jobURL])
 
-  const funnelCardHelp = (
-    <FunnelFlowHelpCard
-      title={`${jobType === ServiceTypeEnum.CRON_JOB ? 'Cron' : 'Lifecycle'} job variables`}
-      items={[
-        'Define the environment variables required by your job',
-        'Note: variables declared in this screen are injected together with the one already defined within your environment (see environment variables section)',
-        'Any additional environment variable can be added later from the environment variable section',
-      ]}
-    />
-  )
   const methods = useForm<FlowVariableData>({
     defaultValues: variableData,
     mode: 'onChange',
@@ -84,7 +73,7 @@ export function StepVariableFeature() {
   }, [setCurrentStep, variableData])
 
   return (
-    <FunnelFlowBody helpSection={funnelCardHelp}>
+    <FunnelFlowBody>
       <FormProvider {...methods}>
         <FlowCreateVariable
           availableScopes={availableScopes}

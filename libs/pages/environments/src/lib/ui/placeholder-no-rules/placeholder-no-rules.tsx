@@ -1,6 +1,5 @@
 import { useNavigate } from 'react-router-dom'
 import { Button } from '@qovery/shared/ui'
-import HelpSidebar from '../help-sidebar/help-sidebar'
 
 export interface PlaceholderNoRulesProps {
   linkNewRule: string
@@ -26,7 +25,6 @@ export function PlaceholderNoRules({ linkNewRule }: PlaceholderNoRulesProps) {
           </Button>
         </div>
       </div>
-      <HelpSidebar />
     </div>
   )
 }

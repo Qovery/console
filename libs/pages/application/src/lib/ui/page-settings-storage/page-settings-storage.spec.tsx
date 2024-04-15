@@ -59,12 +59,6 @@ describe('PageSettingsStorage', () => {
     })
   })
 
-  it('should have an help section', async () => {
-    const { baseElement } = render(<PageSettingsStorage {...props} />)
-
-    await findByTestId(baseElement, 'help-section')
-  })
-
   it('should have an add button and a click handler', async () => {
     const spy = jest.fn()
     props.onAddStorage = spy

@@ -13,7 +13,6 @@ import {
   ButtonLegacy,
   ButtonLegacySize,
   Heading,
-  HelpSection,
   Icon,
   IconAwesomeEnum,
   LoaderSpinner,
@@ -83,7 +82,7 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
 
   return (
     <div className="w-[calc(100vw-368px)]">
-      <Section className="flex flex-col w-full h-[calc(100%-128px)] rounded-tr-sm">
+      <Section className="flex flex-col w-full rounded-tr-sm">
         <div className="flex justify-between items-center px-5 my-5">
           <div>
             <Heading className="mb-2">Pipeline</Heading>
@@ -107,7 +106,7 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
             Add stage
           </ButtonLegacy>
         </div>
-        <div className="h-full overflow-x-scroll">
+        <div className="h-full overflow-x-auto">
           {!stages && !services ? (
             <div data-testid="stages-loader" className="flex justify-center max-w-4xl">
               <LoaderSpinner className="w-4 mt-5" />
@@ -209,15 +208,6 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
           )}
         </div>
       </Section>
-      <HelpSection
-        description="Need help? You may find these links useful"
-        links={[
-          {
-            link: 'https://hub.qovery.com/docs/using-qovery/deployment/deployment-pipeline/',
-            linkLabel: 'How to configure my deployment group',
-          },
-        ]}
-      />
     </div>
   )
 }

@@ -11,7 +11,7 @@ import {
   SERVICES_CREATION_RESOURCES_URL,
   SERVICES_URL,
 } from '@qovery/shared/routes'
-import { FunnelFlowBody, FunnelFlowHelpCard, useModal } from '@qovery/shared/ui'
+import { FunnelFlowBody, useModal } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { useApplicationContainerCreateContext } from '../page-application-create-feature'
 import CrudModalFeature from './crud-modal-feature/crud-modal-feature'
@@ -32,28 +32,6 @@ export function StepPortFeature() {
           SERVICES_CREATION_GENERAL_URL
       )
   }, [generalData, navigate, environmentId, organizationId, projectId])
-
-  const funnelCardHelp = (
-    <FunnelFlowHelpCard
-      title="Configuring the application port"
-      items={[
-        'Declare the ports used internally by your application',
-        'Declared ports are accessible from other applications within the same environment',
-        'You can also expose them on the internet by making them public.',
-        'Declared ports are also used to check the liveness/readiness of your application.',
-      ]}
-      helpSectionProps={{
-        description: 'Need help? You may find these links useful',
-        links: [
-          {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/application/#ports',
-            linkLabel: 'How to configure my application',
-          },
-          { link: 'https://discuss.qovery.com/', linkLabel: 'Still need help? Ask on our Forum' },
-        ],
-      }}
-    />
-  )
 
   useEffect(() => {
     setCurrentStep(3)
@@ -79,7 +57,7 @@ export function StepPortFeature() {
   }
 
   return (
-    <FunnelFlowBody helpSection={funnelCardHelp}>
+    <FunnelFlowBody>
       <FlowCreatePort
         onBack={onBack}
         onEdit={(port: PortData | ServicePort) => {

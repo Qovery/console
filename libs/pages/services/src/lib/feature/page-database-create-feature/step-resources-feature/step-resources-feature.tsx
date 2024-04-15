@@ -8,7 +8,7 @@ import {
   SERVICES_DATABASE_CREATION_URL,
   SERVICES_URL,
 } from '@qovery/shared/routes'
-import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
+import { FunnelFlowBody } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import StepResources from '../../../ui/page-database-create/step-resources/step-resources'
 import { type ResourcesData } from '../database-creation-flow.interface'
@@ -29,27 +29,6 @@ export function StepResourcesFeature() {
       )
   }, [generalData, navigate, environmentId, organizationId, projectId])
 
-  const funnelCardHelp = (
-    <FunnelFlowHelpCard
-      title="Setting the right resources"
-      items={[
-        'Databases are deployed as containers on your Kubernetes cluster',
-        'Set the vCPU/RAM based on your application need',
-        'You can’t go beyond the resources available on your cluster',
-      ]}
-      helpSectionProps={{
-        description: 'Need help? You may find these links useful',
-        links: [
-          {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/database/#resources',
-            linkLabel: 'How to configure my database',
-          },
-          { link: 'https://discuss.qovery.com/', linkLabel: 'Still need help? Ask on our Forum' },
-        ],
-      }}
-    />
-  )
-
   useEffect(() => {
     setCurrentStep(2)
   }, [setCurrentStep])
@@ -69,7 +48,7 @@ export function StepResourcesFeature() {
   }
 
   return (
-    <FunnelFlowBody helpSection={funnelCardHelp}>
+    <FunnelFlowBody>
       <FormProvider {...methods}>
         <StepResources
           isManaged={generalData?.mode === DatabaseModeEnum.MANAGED}

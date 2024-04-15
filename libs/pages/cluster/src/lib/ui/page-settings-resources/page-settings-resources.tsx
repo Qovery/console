@@ -2,7 +2,7 @@ import { type CloudProviderEnum } from 'qovery-typescript-axios'
 import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { ClusterResourcesSettingsFeature } from '@qovery/shared/console-shared'
-import { ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle, Heading, HelpSection, Section } from '@qovery/shared/ui'
+import { ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle, Heading, Section } from '@qovery/shared/ui'
 
 export interface PageSettingsResourcesProps {
   loading?: boolean
@@ -39,15 +39,6 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
           </div>
         </form>
       </Section>
-      <HelpSection
-        description="Need help? You may find these links useful"
-        links={[
-          {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/clusters/#what-is-a-cluster',
-            linkLabel: 'How to configure my cluster',
-          },
-        ]}
-      />
     </div>
   )
 }

@@ -8,7 +8,6 @@ import {
   ButtonLegacySize,
   ButtonLegacyStyle,
   Heading,
-  HelpSection,
   InputSelect,
   InputText,
   Section,
@@ -106,15 +105,6 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
           </div>
         </form>
       </Section>
-      <HelpSection
-        description="Need help? You may find these links useful"
-        links={[
-          {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/environment/',
-            linkLabel: 'How to configure my environment',
-          },
-        ]}
-      />
     </div>
   )
 }

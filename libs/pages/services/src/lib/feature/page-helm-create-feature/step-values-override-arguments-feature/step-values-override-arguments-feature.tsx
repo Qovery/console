@@ -5,7 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { ValuesOverrideArgumentsSetting } from '@qovery/domains/service-helm/feature'
 import { SERVICES_HELM_CREATION_SUMMARY_URL, SERVICES_HELM_CREATION_URL, SERVICES_URL } from '@qovery/shared/routes'
-import { Button, FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
+import { Button, FunnelFlowBody } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
 import { useHelmCreateContext } from '../page-helm-create-feature'
@@ -47,34 +47,13 @@ export function StepValuesOverrideArgumentsFeature() {
     setCurrentStep(3)
   }, [setCurrentStep])
 
-  const funnelCardHelp = (
-    <FunnelFlowHelpCard
-      title="Values override as arguments"
-      items={[
-        'You can define additional overrides by passing one by one them in this section.',
-        'Specify each override by declaring the variable name, value and its type. These will be passed via the --set, --set-string and --set-json helm argument depending on the selected type (Generic, String or Json).',
-        'Values set here have the higher override priority.',
-        'Overrides can be passed in the “Helm arguments” field as well but we recommend to use this section.',
-      ]}
-      helpSectionProps={{
-        description: 'Need help? You may find these links useful',
-        links: [
-          {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/helm/#values',
-            linkLabel: 'How to configure my Helm chart',
-          },
-        ],
-      }}
-    />
-  )
-
   const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_HELM_CREATION_URL}`
   const onSubmit = valuesOverrideArgumentsForm.handleSubmit((data) => {
     navigate(pathCreate + SERVICES_HELM_CREATION_SUMMARY_URL)
   })
 
   return (
-    <FunnelFlowBody helpSection={funnelCardHelp}>
+    <FunnelFlowBody>
       <FormProvider {...valuesOverrideArgumentsForm}>
         <ValuesOverrideArgumentsSetting methods={valuesOverrideArgumentsForm} onSubmit={onSubmit} source={source}>
           <div className="flex justify-between mt-10">

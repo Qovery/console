@@ -1,5 +1,5 @@
 import { type Environment } from 'qovery-typescript-axios'
-import { BlockContentDelete, HelpSection } from '@qovery/shared/ui'
+import { BlockContentDelete } from '@qovery/shared/ui'
 
 export interface PageSettingsDangerZoneProps {
   deleteEnvironment: () => void
@@ -31,15 +31,6 @@ export function PageSettingsDangerZone(props: PageSettingsDangerZoneProps) {
           }}
         />
       </div>
-      <HelpSection
-        description="Need help? You may find these links useful"
-        links={[
-          {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/environment/#delete-an-environment',
-            linkLabel: 'How to delete my environment',
-          },
-        ]}
-      />
     </div>
   )
 }

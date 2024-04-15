@@ -14,16 +14,7 @@ import {
   SERVICES_HELM_CREATION_VALUES_STEP_1_URL,
   SERVICES_URL,
 } from '@qovery/shared/routes'
-import {
-  Button,
-  Callout,
-  FunnelFlowBody,
-  FunnelFlowHelpCard,
-  Heading,
-  Icon,
-  Section,
-  toastError,
-} from '@qovery/shared/ui'
+import { Button, Callout, FunnelFlowBody, Heading, Icon, Section, toastError } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { useHelmCreateContext } from '../page-helm-create-feature'
 
@@ -37,27 +28,6 @@ export function StepGeneralFeature() {
   useEffect(() => {
     setCurrentStep(1)
   }, [setCurrentStep])
-
-  const funnelCardHelp = (
-    <FunnelFlowHelpCard
-      title="Deploying a Helm Chart"
-      items={[
-        'You can deploy a Helm chart from a Helm repository or from a git repository.',
-        'Helm repositories can be private or public. Repositories are managed at organization level by the admin.',
-        'Deploying the chart from your private git repository allows you to benefit from the auto-deploy feature and deploy it at every new commit.',
-        'By default resources are deployed on the namespace of the Qovery environment. You can deploy outside this namespace by enabling the flag “Allow cluster-wide resources”',
-      ]}
-      helpSectionProps={{
-        description: 'Need help? You may find these links useful',
-        links: [
-          {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/helm/',
-            linkLabel: 'How to configure my Helm chart',
-          },
-        ],
-      }}
-    />
-  )
 
   const onSubmit = generalForm.handleSubmit((data) => {
     if (data.arguments) {
@@ -83,7 +53,7 @@ export function StepGeneralFeature() {
   const isGitSettingsValid = watchFieldProvider === 'GIT' ? generalForm.watch('branch') : true
 
   return (
-    <FunnelFlowBody helpSection={funnelCardHelp}>
+    <FunnelFlowBody>
       <FormProvider {...generalForm}>
         <Section>
           <Heading className="mb-2">General information</Heading>

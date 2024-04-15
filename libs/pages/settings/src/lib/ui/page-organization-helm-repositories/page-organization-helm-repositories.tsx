@@ -1,16 +1,6 @@
 import { type HelmRepositoryResponse } from 'qovery-typescript-axios'
 import { IconEnum } from '@qovery/shared/enums'
-import {
-  BlockContent,
-  Button,
-  Heading,
-  HelpSection,
-  Icon,
-  LoaderSpinner,
-  Section,
-  Tooltip,
-  Truncate,
-} from '@qovery/shared/ui'
+import { BlockContent, Button, Heading, Icon, LoaderSpinner, Section, Tooltip, Truncate } from '@qovery/shared/ui'
 
 export interface PageOrganizationHelmRepositoriesProps {
   onAddRepository: () => void
@@ -92,15 +82,6 @@ export function PageOrganizationHelmRepositories({
           )}
         </BlockContent>
       </Section>
-      <HelpSection
-        description="Need help? You may find these links useful"
-        links={[
-          {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/organization/helm-repository',
-            linkLabel: 'How to configure my helm repository',
-          },
-        ]}
-      />
     </div>
   )
 }

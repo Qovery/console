@@ -13,7 +13,6 @@ import {
   ButtonIconStyle,
   EmptyState,
   Heading,
-  HelpSection,
   Icon,
   IconAwesomeEnum,
   InputText,
@@ -76,15 +75,6 @@ export function PageSettingsDeploymentRestrictionsFeature() {
           </div>
         )}
       </Section>
-      <HelpSection
-        description="Need help? You may find these links useful"
-        links={[
-          {
-            link: 'https://hub.qovery.com/docs/using-qovery/deployment/deploying-with-auto-deploy/#filtering-commits-triggering-the-auto-deploy',
-            linkLabel: 'How to configure the deployment restrictions',
-          },
-        ]}
-      />
     </div>
   )
 }

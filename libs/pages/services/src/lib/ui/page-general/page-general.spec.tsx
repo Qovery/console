@@ -25,11 +25,6 @@ beforeEach(() => {
         action: jest.fn(),
       },
     ],
-    listHelpfulLinks: [
-      {
-        link: 'my-link',
-      },
-    ],
   }
 })
 

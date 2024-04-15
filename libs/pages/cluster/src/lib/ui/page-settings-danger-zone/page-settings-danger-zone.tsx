@@ -1,4 +1,4 @@
-import { BlockContentDelete, HelpSection } from '@qovery/shared/ui'
+import { BlockContentDelete } from '@qovery/shared/ui'
 
 export interface PageSettingsDangerZoneProps {
   deleteCluster: () => void
@@ -15,15 +15,6 @@ export function PageSettingsDangerZone(props: PageSettingsDangerZoneProps) {
           customModalConfirmation={deleteCluster}
         />
       </div>
-      <HelpSection
-        description="Need help? You may find these links useful"
-        links={[
-          {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/clusters/#deleting-a-cluster',
-            linkLabel: 'How to delete my cluster',
-          },
-        ]}
-      />
     </div>
   )
 }

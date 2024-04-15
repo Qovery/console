@@ -11,7 +11,6 @@ import {
   Callout,
   ExternalLink,
   Heading,
-  HelpSection,
   Icon,
   IconAwesomeEnum,
   LoaderSpinner,
@@ -152,15 +151,6 @@ export function PageOrganizationGithubRepositoryAccess(props: PageOrganizationGi
           </div>
         )}
       </div>
-      <HelpSection
-        description="Need help? You may find these links useful"
-        links={[
-          {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/organization/git-repository-access',
-            linkLabel: 'How to configure the git repository access',
-          },
-        ]}
-      />
     </div>
   )
 }

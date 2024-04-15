@@ -1,7 +1,6 @@
 import { type Healthcheck, type ServicePort } from 'qovery-typescript-axios'
 import { FlowCreatePort } from '@qovery/shared/console-shared'
 import { type PortData } from '@qovery/shared/interfaces'
-import { HelpSection } from '@qovery/shared/ui'
 
 export interface PageSettingsPortsProps {
   onAddPort: () => void
@@ -24,15 +23,6 @@ export function PageSettingsPorts({ healthchecks, ports, onAddPort, onEdit, onDe
           onEdit={onEdit}
         />
       </div>
-      <HelpSection
-        description="Need help? You may find these links useful"
-        links={[
-          {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/application/#ports',
-            linkLabel: 'How to configure my application',
-          },
-        ]}
-      />
     </div>
   )
 }

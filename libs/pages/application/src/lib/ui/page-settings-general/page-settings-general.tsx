@@ -12,17 +12,7 @@ import {
   JobGeneralSettings,
 } from '@qovery/shared/console-shared'
 import { ServiceTypeEnum, isJobGitSource } from '@qovery/shared/enums'
-import {
-  BlockContent,
-  Button,
-  Callout,
-  Heading,
-  HelpSection,
-  Icon,
-  InputSelect,
-  InputText,
-  Section,
-} from '@qovery/shared/ui'
+import { BlockContent, Button, Callout, Heading, Icon, InputSelect, InputText, Section } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
 export interface PageSettingsGeneralProps {
@@ -207,22 +197,6 @@ export function PageSettingsGeneral({
           </div>
         </form>
       </Section>
-      <HelpSection
-        description="Need help? You may find these links useful"
-        links={match(service?.serviceType)
-          .with('HELM', () => [
-            {
-              link: 'https://hub.qovery.com/docs/using-qovery/configuration/helm/',
-              linkLabel: 'How to manage my Helm chart',
-            },
-          ])
-          .otherwise(() => [
-            {
-              link: 'https://hub.qovery.com/docs/using-qovery/configuration/application',
-              linkLabel: 'How to manage my application',
-            },
-          ])}
-      />
     </div>
   )
 }

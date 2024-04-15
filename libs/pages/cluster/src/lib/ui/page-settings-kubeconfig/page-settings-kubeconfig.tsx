@@ -2,7 +2,7 @@ import { type Cluster } from 'qovery-typescript-axios'
 import { useCallback } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { KUBECONFIG } from '@qovery/shared/routes'
-import { Button, Heading, HelpSection, Icon, Link, Section } from '@qovery/shared/ui'
+import { Button, Heading, Icon, Link, Section } from '@qovery/shared/ui'
 
 export interface PageSettingsKubeconfigProps {
   cluster: Cluster
@@ -67,15 +67,6 @@ export function PageSettingsKubeconfig({ cluster, onSubmit }: PageSettingsKubeco
           </div>
         </div>
       </Section>
-      <HelpSection
-        description="Need help? You may find these links useful"
-        links={[
-          {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/clusters/#what-is-a-cluster',
-            linkLabel: 'How to configure my cluster',
-          },
-        ]}
-      />
     </div>
   )
 }

@@ -1,5 +1,5 @@
 import { EnvironmentModeEnum, type Project } from 'qovery-typescript-axios'
-import { BlockContentDelete, HelpSection, IconAwesomeEnum } from '@qovery/shared/ui'
+import { BlockContentDelete, IconAwesomeEnum } from '@qovery/shared/ui'
 
 export interface PageProjectDangerZoneProps {
   deleteProject: () => void
@@ -38,15 +38,6 @@ export function PageProjectDangerZone(props: PageProjectDangerZoneProps) {
           }}
         />
       </div>
-      <HelpSection
-        description="Need help? You may find these links useful"
-        links={[
-          {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/project/',
-            linkLabel: 'How to delete my project',
-          },
-        ]}
-      />
     </div>
   )
 }

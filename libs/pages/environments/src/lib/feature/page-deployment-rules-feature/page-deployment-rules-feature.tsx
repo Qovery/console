@@ -6,7 +6,6 @@ import {
   useListDeploymentRules,
 } from '@qovery/domains/projects/feature'
 import { ENVIRONMENTS_DEPLOYMENT_RULES_CREATE_URL, ENVIRONMENTS_URL } from '@qovery/shared/routes'
-import { type BaseLink } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import PageDeploymentRules from '../../ui/page-deployment-rules/page-deployment-rules'
 
@@ -17,13 +16,6 @@ export function PageDeploymentRulesFeature() {
   const { data: deploymentRules = [], isLoading: isLoadingDeploymentRules } = useListDeploymentRules({ projectId })
   const { mutate: deleteDeploymentRule } = useDeleteDeploymentRule()
   const { mutate: deploymentRuleOrder } = useEditDeploymentRulesPriorityOrder()
-
-  const listHelpfulLinks: BaseLink[] = [
-    {
-      link: 'https://hub.qovery.com/docs/using-qovery/configuration/deployment-rule/',
-      linkLabel: 'How to configure my deployment rule',
-    },
-  ]
 
   const updateDeploymentRulesOrder = (deploymentRules: ProjectDeploymentRule[]) => {
     deploymentRuleOrder({
@@ -42,7 +34,6 @@ export function PageDeploymentRulesFeature() {
 
   return (
     <PageDeploymentRules
-      listHelpfulLinks={listHelpfulLinks}
       deploymentRules={deploymentRules}
       updateDeploymentRulesOrder={updateDeploymentRulesOrder}
       isLoading={isLoadingDeploymentRules}

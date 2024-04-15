@@ -2,17 +2,7 @@ import { type CreditCard, type OrganizationCurrentCost, PlanEnum } from 'qovery-
 import { type CardImages } from 'react-payment-inputs/images'
 import { useParams } from 'react-router-dom'
 import { SETTINGS_BILLING_URL, SETTINGS_URL } from '@qovery/shared/routes'
-import {
-  Button,
-  ExternalLink,
-  Heading,
-  HelpSection,
-  Icon,
-  Link,
-  Section,
-  Skeleton,
-  imagesCreditCart,
-} from '@qovery/shared/ui'
+import { Button, ExternalLink, Heading, Icon, Link, Section, Skeleton, imagesCreditCart } from '@qovery/shared/ui'
 import { dateToFormat } from '@qovery/shared/util-dates'
 import { costToHuman, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import InvoicesListFeature from '../../feature/page-organization-billing-summary-feature/invoices-list-feature/invoices-list-feature'
@@ -129,17 +119,6 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
         </div>
         <InvoicesListFeature />
       </Section>
-
-      <HelpSection
-        data-testid="help-section"
-        description="Need help? You may find these links useful"
-        links={[
-          {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/organization/#billing',
-            linkLabel: 'Learn more about billing',
-          },
-        ]}
-      />
     </div>
   )
 }

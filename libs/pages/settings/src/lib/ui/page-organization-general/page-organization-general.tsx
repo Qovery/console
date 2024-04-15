@@ -1,6 +1,6 @@
 import { type FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { BlockContent, Button, HelpSection, InputFile, InputTags, InputText, InputTextArea } from '@qovery/shared/ui'
+import { BlockContent, Button, InputFile, InputTags, InputText, InputTextArea } from '@qovery/shared/ui'
 import { dateMediumLocalFormat } from '@qovery/shared/util-dates'
 
 export interface PageOrganizationGeneralProps {
@@ -112,15 +112,6 @@ export function PageOrganizationGeneral(props: PageOrganizationGeneralProps) {
           </div>
         </form>
       </div>
-      <HelpSection
-        description="Need help? You may find these links useful"
-        links={[
-          {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/organization/#creating-an-organization',
-            linkLabel: 'How to configure my organization',
-          },
-        ]}
-      />
     </div>
   )
 }
