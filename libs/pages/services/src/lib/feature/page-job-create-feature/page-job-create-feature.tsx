@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { Navigate, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom'
+import { AssistantTrigger } from '@qovery/shared/assistant/feature'
 import { type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
 import {
   type FlowVariableData,
@@ -122,6 +123,7 @@ export function PageJobCreateFeature() {
             <Route path="*" element={<Navigate replace to={pathCreate + SERVICES_JOB_CREATION_GENERAL_URL} />} />
           )}
         </Routes>
+        <AssistantTrigger />
       </FunnelFlow>
     </JobContainerCreateContext.Provider>
   )

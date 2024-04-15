@@ -1,5 +1,6 @@
 import { createContext, useContext, useState } from 'react'
 import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
+import { AssistantTrigger } from '@qovery/shared/assistant/feature'
 import {
   SERVICES_DATABASE_CREATION_GENERAL_URL,
   SERVICES_DATABASE_CREATION_URL,
@@ -76,6 +77,7 @@ export function PageDatabaseCreateFeature() {
           ))}
           <Route path="*" element={<Navigate replace to={pathCreate + SERVICES_DATABASE_CREATION_GENERAL_URL} />} />
         </Routes>
+        <AssistantTrigger />
       </FunnelFlow>
     </DatabaseCreateContext.Provider>
   )
