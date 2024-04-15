@@ -1,7 +1,7 @@
 import { type QueryClient } from '@tanstack/react-query'
 import { AttachAddon } from '@xterm/addon-attach'
 import { FitAddon } from '@xterm/addon-fit'
-import { useCallback, useContext, useEffect, useState } from 'react'
+import { useCallback, useContext, useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Button, Icon, LoaderSpinner, XTerm, toast } from '@qovery/shared/ui'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
@@ -29,7 +29,6 @@ export function ServiceTerminal({
   const { setOpen } = useContext(ServiceTerminalContext)
   const [attachAddon, setAttachAddon] = useState<AttachAddon | undefined>(undefined)
   const [fitAddon, setFitAddon] = useState<FitAddon | undefined>(undefined)
-  const [websocketOpen, setWebsocketOpen] = useState(false)
 
   const [selectedPod, setSelectedPod] = useState<string | undefined>()
   const [selectedContainer, setSelectedContainer] = useState<string | undefined>()
@@ -38,13 +37,12 @@ export function ServiceTerminal({
     (_: QueryClient, event: Event) => {
       const websocket = event.target as WebSocket
       setAttachAddon(new AttachAddon(websocket))
-      setWebsocketOpen(true)
       // Resize the terminal to fit the new height
       const fitAddon = new FitAddon()
       setFitAddon(fitAddon)
       fitAddon.fit()
     },
-    [setWebsocketOpen, setAttachAddon]
+    [setFitAddon, setAttachAddon]
   )
 
   const onCloseHandler = useCallback(
@@ -72,23 +70,22 @@ export function ServiceTerminal({
     onClose: onCloseHandler,
   })
 
-  const [terminalparentHeight, setTerminalParentHeight] = useState(232)
+  const [terminalParentHeight, setTerminalParentHeight] = useState(248)
+  /* 
+    Document height without navbar height and terminal header
+    64px: navbar
+    60px: terminal header
+  */
+  const maxTerminalHeight = document.body.scrollHeight - 64 - 60
 
   const handler = (mouseDownEvent: any) => {
     const startYPosition = mouseDownEvent.pageY
-    const startHeight = terminalparentHeight
+    const startHeight = terminalParentHeight
 
     function onMouseMove(mouseMoveEvent: any) {
       const deltaY = mouseMoveEvent.pageY - startYPosition
 
       const newParentHeight = startHeight - deltaY
-      /* 
-        Document height without navbar height and terminal header
-        64px: navbar
-        60px: terminal header
-        16px: terminal y padding
-       */
-      const maxTerminalHeight = document.body.scrollHeight - 64 - 60 - 16
 
       if (newParentHeight >= maxTerminalHeight) {
         setTerminalParentHeight(maxTerminalHeight)
@@ -109,6 +106,23 @@ export function ServiceTerminal({
     document.body.addEventListener('mousemove', onMouseMove)
     document.body.addEventListener('mouseup', onMouseUp)
   }
+
+  const TerminalMemorized = useMemo(
+    () =>
+      attachAddon &&
+      fitAddon && (
+        <XTerm
+          className="h-full"
+          onKeyUp={(event) => event.key === 'Escape' && setOpen(false)}
+          addons={[attachAddon, fitAddon]}
+          options={{
+            rows: 14,
+            cols: 80,
+          }}
+        />
+      ),
+    [attachAddon, fitAddon, setOpen]
+  )
 
   return createPortal(
     <div className="fixed bottom-0 left-0 w-full bg-neutral-650 animate-slidein-up-md-faded">
@@ -148,22 +162,30 @@ export function ServiceTerminal({
             />
           )}
         </div>
-        <Button color="neutral" onClick={() => setOpen(false)}>
-          Close shell
-          <Icon iconName="xmark" className="ml-2 text-sm" />
-        </Button>
+        <div className="flex items-center gap-1">
+          {attachAddon && fitAddon && (
+            <Button
+              color="neutral"
+              onClick={() => {
+                terminalParentHeight === maxTerminalHeight
+                  ? setTerminalParentHeight(248)
+                  : setTerminalParentHeight(maxTerminalHeight)
+                // Delay needed to fit the terminal after the height change
+                setTimeout(() => fitAddon.fit(), 0)
+              }}
+            >
+              <Icon iconName={terminalParentHeight === maxTerminalHeight ? 'minus' : 'plus'} className="text-sm" />
+            </Button>
+          )}
+          <Button color="neutral" onClick={() => setOpen(false)}>
+            Close shell
+            <Icon iconName="xmark" className="ml-2 text-sm" />
+          </Button>
+        </div>
       </div>
-      <div className="bg-neutral-700 px-4 py-2 min-h-[248px]">
-        {attachAddon && fitAddon && websocketOpen && !isRunningStatusesLoading ? (
-          <XTerm
-            style={{ height: terminalparentHeight }}
-            onKeyUp={(event) => event.key === 'Escape' && setOpen(false)}
-            addons={[attachAddon, fitAddon]}
-            options={{
-              rows: 14,
-              cols: 80,
-            }}
-          />
+      <div className="bg-neutral-700 px-4 py-2 min-h-[248px]" style={{ height: terminalParentHeight }}>
+        {attachAddon && fitAddon && !isRunningStatusesLoading ? (
+          TerminalMemorized
         ) : (
           <div className="flex items-start justify-center p-5 h-40">
             <LoaderSpinner />
