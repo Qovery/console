@@ -11,9 +11,11 @@ import {
 import posthog from 'posthog-js'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { FlatProviders, makeProvider } from 'react-flat-providers'
 // import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { BrowserRouter } from 'react-router-dom'
 import { IntercomProvider } from 'react-use-intercom'
+import { InstantSearchProvider } from '@qovery/shared/assistant/feature'
 import { LOGIN_AUTH_REDIRECT_URL, LOGIN_URL } from '@qovery/shared/routes'
 import { ModalProvider, ToastBehavior, toastError } from '@qovery/shared/ui'
 import { ToastEnum, toast } from '@qovery/shared/ui'
@@ -133,31 +135,34 @@ const queryClient = new QueryClient({
 
 root.render(
   <StrictMode>
-    <IntercomProvider appId={environment.intercom} autoBoot>
-      <Auth0Provider
-        domain={environment.oauth_domain}
-        clientId={environment.oauth_key}
-        authorizationParams={{
-          redirect_uri: `${window.location.origin}${LOGIN_URL}${LOGIN_AUTH_REDIRECT_URL}`,
-          audience: environment.oauth_audience,
-        }}
-        useRefreshTokensFallback={true}
-        useRefreshTokens={true}
-        cacheLocation="localstorage"
-        skipRedirectCallback={window.location.pathname !== LOGIN_URL + LOGIN_AUTH_REDIRECT_URL}
-      >
-        <QueryClientProvider client={queryClient}>
-          <BrowserRouter>
-            <TooltipProvider>
-              <ModalProvider>
-                <App />
-                <ToastBehavior />
-              </ModalProvider>
-            </TooltipProvider>
-          </BrowserRouter>
-          {/* <ReactQueryDevtools initialIsOpen={false} /> */}
-        </QueryClientProvider>
-      </Auth0Provider>
-    </IntercomProvider>
+    <FlatProviders
+      providers={[
+        makeProvider(IntercomProvider, { appId: environment.intercom, autoBoot: true }),
+        makeProvider(Auth0Provider, {
+          domain: environment.oauth_domain,
+          clientId: environment.oauth_key,
+          authorizationParams: {
+            redirect_uri: `${window.location.origin}${LOGIN_URL}${LOGIN_AUTH_REDIRECT_URL}`,
+            audience: environment.oauth_audience,
+          },
+          useRefreshTokensFallback: true,
+          useRefreshTokens: true,
+          cacheLocation: 'localstorage',
+          skipRedirectCallback: window.location.pathname !== LOGIN_URL + LOGIN_AUTH_REDIRECT_URL,
+        }),
+        makeProvider(QueryClientProvider, { client: queryClient }),
+        InstantSearchProvider,
+      ]}
+    >
+      <BrowserRouter>
+        <TooltipProvider>
+          <ModalProvider>
+            <App />
+            <ToastBehavior />
+          </ModalProvider>
+        </TooltipProvider>
+      </BrowserRouter>
+      {/* <ReactQueryDevtools initialIsOpen={false} /> */}
+    </FlatProviders>
   </StrictMode>
 )
