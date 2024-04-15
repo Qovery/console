@@ -1,5 +1,6 @@
 import { type PropsWithChildren, createContext, useEffect, useState } from 'react'
 import { type Params, useNavigate } from 'react-router-dom'
+import { AssistantTrigger } from '@qovery/shared/assistant/feature'
 import { ONBOARDING_PRICING_URL, ONBOARDING_PROJECT_URL, type Route } from '@qovery/shared/routes'
 import { FunnelFlow, FunnelFlowBody } from '@qovery/shared/ui'
 import { ROUTER_ONBOARDING_STEP_1, ROUTER_ONBOARDING_STEP_2 } from '../../router/router'
@@ -69,6 +70,7 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
         >
           {children}
         </FunnelFlowBody>
+        <AssistantTrigger />
       </FunnelFlow>
     </ContextOnboarding.Provider>
   )

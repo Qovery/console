@@ -3,6 +3,7 @@ import { type PropsWithChildren } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useClusterStatuses } from '@qovery/domains/clusters/feature'
+import { AssistantTrigger } from '@qovery/shared/assistant/feature'
 import {
   CLUSTER_SETTINGS_CREDENTIALS_URL,
   CLUSTER_SETTINGS_URL,
@@ -62,13 +63,16 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
           <div className="h-full sticky top-0">
             <Navigation defaultOrganizationId={defaultOrganizationId} clusterNotification={clusterCredentialError} />
           </div>
-          <div className="w-full flex flex-col-reverse">
-            <div
-              className={`relative flex flex-col pt-2 px-2 dark:pt-0 dark:px-0 ${
-                clusterCredentialError || clusterBanner ? 'min-h-page-container-wbanner' : 'min-h-page-container'
-              }`}
-            >
-              {children}
+          <div className="w-full flex flex-col-reverse grow">
+            <div>
+              <div
+                className={`flex relative ${
+                  clusterCredentialError || clusterBanner ? 'min-h-page-container-wbanner' : 'min-h-page-container'
+                }`}
+              >
+                <div className="flex flex-col grow pt-2 px-2 dark:pt-0 dark:px-0">{children}</div>
+                <AssistantTrigger />
+              </div>
             </div>
             {clusterCredentialError && (
               <Banner
