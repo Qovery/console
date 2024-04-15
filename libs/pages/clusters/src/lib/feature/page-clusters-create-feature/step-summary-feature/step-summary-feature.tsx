@@ -151,8 +151,10 @@ export function StepSummaryFeature() {
     if (resourcesData) {
       let formatFeatures: ClusterRequestFeaturesInner[] | undefined
 
-      if (generalData.cloud_provider === 'AWS') {
+      if (generalData.cloud_provider === 'AWS' || generalData.cloud_provider === 'GCP') {
         if (featuresData && featuresData.vpc_mode === 'DEFAULT') {
+          console.log(featuresData && featuresData.features)
+
           formatFeatures = Object.keys(featuresData.features)
             .map(
               (id: string) =>
@@ -163,51 +165,50 @@ export function StepSummaryFeature() {
             )
             .filter(Boolean) as ClusterRequestFeaturesInner[]
         } else {
-          formatFeatures = [
-            {
-              id: 'EXISTING_VPC',
-              value: {
-                aws_vpc_eks_id: featuresData?.aws_existing_vpc?.aws_vpc_eks_id ?? '',
-                eks_subnets_zone_a_ids: getValueByKey('A', featuresData?.aws_existing_vpc?.eks_subnets)!,
-                eks_subnets_zone_b_ids: getValueByKey('B', featuresData?.aws_existing_vpc?.eks_subnets)!,
-                eks_subnets_zone_c_ids: getValueByKey('C', featuresData?.aws_existing_vpc?.eks_subnets)!,
-                // Those are the name that AWS give them
-                // MongoDB => documentdb
-                documentdb_subnets_zone_a_ids: getValueByKey('A', featuresData?.aws_existing_vpc?.mongodb_subnets)!,
-                documentdb_subnets_zone_b_ids: getValueByKey('B', featuresData?.aws_existing_vpc?.mongodb_subnets)!,
-                documentdb_subnets_zone_c_ids: getValueByKey('C', featuresData?.aws_existing_vpc?.mongodb_subnets)!,
-                // Redis => elasticache
-                elasticache_subnets_zone_a_ids: getValueByKey('A', featuresData?.aws_existing_vpc?.redis_subnets)!,
-                elasticache_subnets_zone_b_ids: getValueByKey('B', featuresData?.aws_existing_vpc?.redis_subnets)!,
-                elasticache_subnets_zone_c_ids: getValueByKey('C', featuresData?.aws_existing_vpc?.redis_subnets)!,
-                // MySQL and PostgreSQL => rds
-                rds_subnets_zone_a_ids: getValueByKey('A', featuresData?.aws_existing_vpc?.rds_subnets)!,
-                rds_subnets_zone_b_ids: getValueByKey('B', featuresData?.aws_existing_vpc?.rds_subnets)!,
-                rds_subnets_zone_c_ids: getValueByKey('C', featuresData?.aws_existing_vpc?.rds_subnets)!,
-              },
-            },
-          ]
-        }
-      }
-
-      if (generalData.cloud_provider === 'GCP') {
-        formatFeatures =
-          featuresData?.vpc_mode === 'EXISTING_VPC'
-            ? [
-                {
-                  id: 'EXISTING_VPC',
-                  value: {
-                    vpc_name: featuresData?.gcp_existing_vpc?.vpc_name ?? '',
-                    vpc_project_id: featuresData?.gcp_existing_vpc?.vpc_project_id,
-                    ip_range_services_name: featuresData?.gcp_existing_vpc?.ip_range_services_name,
-                    ip_range_pods_name: featuresData?.gcp_existing_vpc?.ip_range_pods_name,
-                    subnetwork_name: featuresData?.gcp_existing_vpc?.subnetwork_name,
-                    additional_ip_range_pods_names:
-                      featuresData?.gcp_existing_vpc?.additional_ip_range_pods_names?.split(','),
-                  },
+          if (generalData.cloud_provider === 'AWS') {
+            formatFeatures = [
+              {
+                id: 'EXISTING_VPC',
+                value: {
+                  aws_vpc_eks_id: featuresData?.aws_existing_vpc?.aws_vpc_eks_id ?? '',
+                  eks_subnets_zone_a_ids: getValueByKey('A', featuresData?.aws_existing_vpc?.eks_subnets)!,
+                  eks_subnets_zone_b_ids: getValueByKey('B', featuresData?.aws_existing_vpc?.eks_subnets)!,
+                  eks_subnets_zone_c_ids: getValueByKey('C', featuresData?.aws_existing_vpc?.eks_subnets)!,
+                  // Those are the name that AWS give them
+                  // MongoDB => documentdb
+                  documentdb_subnets_zone_a_ids: getValueByKey('A', featuresData?.aws_existing_vpc?.mongodb_subnets)!,
+                  documentdb_subnets_zone_b_ids: getValueByKey('B', featuresData?.aws_existing_vpc?.mongodb_subnets)!,
+                  documentdb_subnets_zone_c_ids: getValueByKey('C', featuresData?.aws_existing_vpc?.mongodb_subnets)!,
+                  // Redis => elasticache
+                  elasticache_subnets_zone_a_ids: getValueByKey('A', featuresData?.aws_existing_vpc?.redis_subnets)!,
+                  elasticache_subnets_zone_b_ids: getValueByKey('B', featuresData?.aws_existing_vpc?.redis_subnets)!,
+                  elasticache_subnets_zone_c_ids: getValueByKey('C', featuresData?.aws_existing_vpc?.redis_subnets)!,
+                  // MySQL and PostgreSQL => rds
+                  rds_subnets_zone_a_ids: getValueByKey('A', featuresData?.aws_existing_vpc?.rds_subnets)!,
+                  rds_subnets_zone_b_ids: getValueByKey('B', featuresData?.aws_existing_vpc?.rds_subnets)!,
+                  rds_subnets_zone_c_ids: getValueByKey('C', featuresData?.aws_existing_vpc?.rds_subnets)!,
                 },
-              ]
-            : undefined
+              },
+            ]
+          }
+
+          if (generalData.cloud_provider === 'GCP') {
+            formatFeatures = [
+              {
+                id: 'EXISTING_VPC',
+                value: {
+                  vpc_name: featuresData?.gcp_existing_vpc?.vpc_name ?? '',
+                  vpc_project_id: featuresData?.gcp_existing_vpc?.vpc_project_id,
+                  ip_range_services_name: featuresData?.gcp_existing_vpc?.ip_range_services_name,
+                  ip_range_pods_name: featuresData?.gcp_existing_vpc?.ip_range_pods_name,
+                  subnetwork_name: featuresData?.gcp_existing_vpc?.subnetwork_name,
+                  additional_ip_range_pods_names:
+                    featuresData?.gcp_existing_vpc?.additional_ip_range_pods_names?.split(','),
+                },
+              },
+            ]
+          }
+        }
       }
 
       const clusterRequest = match(generalData.cloud_provider)
