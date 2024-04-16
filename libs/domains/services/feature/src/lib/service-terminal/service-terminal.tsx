@@ -174,7 +174,10 @@ export function ServiceTerminal({
                 setTimeout(() => fitAddon.fit(), 0)
               }}
             >
-              <Icon iconName={terminalParentHeight === maxTerminalHeight ? 'minus' : 'plus'} className="text-sm" />
+              <Icon
+                iconName={terminalParentHeight === maxTerminalHeight ? 'chevron-down' : 'chevron-up'}
+                className="text-sm"
+              />
             </Button>
           )}
           <Button color="neutral" onClick={() => setOpen(false)}>
