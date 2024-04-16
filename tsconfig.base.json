@@ -70,6 +70,7 @@
       "@qovery/shared/util-git": ["libs/shared/util-git/src/index.ts"],
       "@qovery/shared/util-hooks": ["libs/shared/util-hooks/src/index.ts"],
       "@qovery/shared/util-js": ["libs/shared/util-js/src/index.ts"],
+      "@qovery/shared/util-node-env": ["libs/shared/util-node-env/src/index.ts"],
       "@qovery/shared/util-services": ["libs/shared/util-services/src/index.ts"],
       "@qovery/shared/util-tests": ["libs/shared/util-tests/src/index.ts"],
       "@qovery/shared/util-types": ["libs/shared/util-types/src/index.ts"],

@@ -3,6 +3,7 @@ import { Hits, SearchBox, useInstantSearch } from 'react-instantsearch'
 import { useIntercom } from 'react-use-intercom'
 import { match } from 'ts-pattern'
 import { ExternalLink, Icon, InputSearch } from '@qovery/shared/ui'
+import { INSTATUS_APP_ID } from '@qovery/shared/util-node-env'
 import { DotStatus } from '../dot-status/dot-status'
 import { Hit } from '../hit/hit'
 import { useContextualDocLinks } from '../hooks/use-contextual-doc-links/use-contextual-doc-links'
@@ -19,8 +20,6 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
   const docLinks = useContextualDocLinks()
   const valueDoc = useDeferredValue(indexUiState.query ?? '')
 
-  // TODO turn into env var
-  const INSTATUS_APP_ID = 'ckufh5o901496598atoppn8ub2lk'
   const QOVERY_FORUM_URL = 'https://discuss.qovery.com/'
   const QOVERY_STATUS_URL = 'https://status.qovery.com/'
   const appStatus = data?.find(({ id }) => id === INSTATUS_APP_ID)

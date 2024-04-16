@@ -19,8 +19,15 @@ import { InstantSearchProvider } from '@qovery/shared/assistant/feature'
 import { LOGIN_AUTH_REDIRECT_URL, LOGIN_URL } from '@qovery/shared/routes'
 import { ModalProvider, ToastBehavior, toastError } from '@qovery/shared/ui'
 import { ToastEnum, toast } from '@qovery/shared/ui'
+import {
+  INTERCOM,
+  OAUTH_AUDIENCE,
+  OAUTH_DOMAIN,
+  OAUTH_KEY,
+  POSTHOG,
+  POSTHOG_APIHOST,
+} from '@qovery/shared/util-node-env'
 import App from './app/app'
-import { environment } from './environments/environment'
 
 type ToastArgs = {
   status?: ToastEnum
@@ -56,8 +63,8 @@ declare module '@tanstack/react-query' {
 }
 
 // posthog init
-posthog.init(environment.posthog, {
-  api_host: environment.posthog_apihost,
+posthog.init(POSTHOG, {
+  api_host: POSTHOG_APIHOST,
 })
 
 const container = document.getElementById('root') || document.createElement('div')
@@ -137,13 +144,13 @@ root.render(
   <StrictMode>
     <FlatProviders
       providers={[
-        makeProvider(IntercomProvider, { appId: environment.intercom, autoBoot: true }),
+        makeProvider(IntercomProvider, { appId: INTERCOM, autoBoot: true }),
         makeProvider(Auth0Provider, {
-          domain: environment.oauth_domain,
-          clientId: environment.oauth_key,
+          domain: OAUTH_DOMAIN,
+          clientId: OAUTH_KEY,
           authorizationParams: {
             redirect_uri: `${window.location.origin}${LOGIN_URL}${LOGIN_AUTH_REDIRECT_URL}`,
-            audience: environment.oauth_audience,
+            audience: OAUTH_AUDIENCE,
           },
           useRefreshTokensFallback: true,
           useRefreshTokens: true,

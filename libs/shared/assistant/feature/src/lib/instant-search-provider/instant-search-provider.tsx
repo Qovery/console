@@ -1,10 +1,8 @@
 import algoliasearch from 'algoliasearch/lite'
 import { type ReactNode } from 'react'
 import { Configure, InstantSearch } from 'react-instantsearch'
+import { ALGOLIA_API_KEY, ALGOLIA_APP_ID } from '@qovery/shared/util-node-env'
 
-// TODO turn into env var
-const ALGOLIA_APP_ID = 'FT65SBJ2DA'
-const ALGOLIA_API_KEY = '02604e8b2e0918e90edd1d9eb8e30f5e'
 const searchClient = algoliasearch(ALGOLIA_APP_ID, ALGOLIA_API_KEY)
 
 export function InstantSearchProvider({ children }: { children: ReactNode }) {

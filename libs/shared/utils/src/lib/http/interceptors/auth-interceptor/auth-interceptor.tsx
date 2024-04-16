@@ -1,6 +1,7 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import { type AxiosInstance, type AxiosRequestConfig, type AxiosResponse } from 'axios'
 import { useEffect } from 'react'
+import { NODE_ENV } from '@qovery/shared/util-node-env'
 
 export interface SerializedError {
   name?: string
@@ -40,7 +41,7 @@ export function useAuthInterceptor(axiosInstance: AxiosInstance, apiUrl: string)
         return response
       },
       (error) => {
-        if (process.env['NODE_ENV'] !== 'production') {
+        if (NODE_ENV !== 'production') {
           console.error(
             error.response?.data?.error || error.code || 'Error',
             error.response?.data?.message || error.message
