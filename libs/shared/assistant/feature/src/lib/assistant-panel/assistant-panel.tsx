@@ -59,12 +59,10 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
             className="mb-5"
             placeholder="Search documentation..."
             onChange={(value: string) => {
-              setIndexUiState((prevIndexUiState) => {
-                return {
-                  ...prevIndexUiState,
-                  query: value,
-                }
-              })
+              setIndexUiState((prevIndexUiState) => ({
+                ...prevIndexUiState,
+                query: value,
+              }))
             }}
           />
           {valueDoc.length > 0 && (
