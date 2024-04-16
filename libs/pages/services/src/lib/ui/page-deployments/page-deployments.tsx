@@ -1,22 +1,14 @@
 import { memo, useEffect, useState } from 'react'
 import { type DeploymentService } from '@qovery/shared/interfaces'
-import {
-  type BaseLink,
-  EmptyState,
-  HelpSection,
-  Table,
-  type TableFilterProps,
-  TableRowDeployment,
-} from '@qovery/shared/ui'
+import { EmptyState, Table, type TableFilterProps, TableRowDeployment } from '@qovery/shared/ui'
 
 export interface PageDeploymentsProps {
   deployments?: DeploymentService[]
-  listHelpfulLinks: BaseLink[]
   isLoading?: boolean
 }
 
 export function PageDeploymentsMemo(props: PageDeploymentsProps) {
-  const { deployments = [], listHelpfulLinks, isLoading } = props
+  const { deployments = [], isLoading } = props
 
   const [data, setData] = useState<DeploymentService[]>([])
   const [filter, setFilter] = useState<TableFilterProps[]>([])
@@ -113,9 +105,6 @@ export function PageDeploymentsMemo(props: PageDeploymentsProps) {
           ))}
         </div>
       </Table>
-      <div className="bg-white rounded-b flex flex-col justify-end w-full">
-        <HelpSection description="Need help? You may find these links useful" links={listHelpfulLinks} />
-      </div>
     </>
   )
 }

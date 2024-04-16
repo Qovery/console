@@ -8,7 +8,7 @@ import {
   SERVICES_JOB_CREATION_RESOURCES_URL,
   SERVICES_URL,
 } from '@qovery/shared/routes'
-import { FunnelFlowBody, FunnelFlowHelpCard, toastError } from '@qovery/shared/ui'
+import { FunnelFlowBody, toastError } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import StepConfigure from '../../../ui/page-job-create/step-configure/step-configure'
 import { useJobContainerCreateContext } from '../page-job-create-feature'
@@ -19,25 +19,6 @@ export function StepConfigureFeature() {
     useJobContainerCreateContext()
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const navigate = useNavigate()
-
-  const funnelCardHelpItems =
-    jobType === ServiceTypeEnum.CRON_JOB
-      ? [
-          'You can customize the job behaviour by defining an entrypoint and arguments to be used at running time',
-          'For long running job it is recommended to properly set the max duration and a port to test the job liveness',
-        ]
-      : [
-          'Define if the job shall be triggered when the environment Starts, Stops or is being deleted',
-          'You can customize the job behaviour by defining an entrypoint and arguments to be used at running time',
-          'For long running job it is recommended to properly set the max duration and a port to test the job liveness',
-        ]
-
-  const funnelCardHelp = (
-    <FunnelFlowHelpCard
-      title={`${jobType === ServiceTypeEnum.CRON_JOB ? 'Cron' : 'Lifecycle'} job Information`}
-      items={funnelCardHelpItems}
-    />
-  )
 
   useEffect(() => {
     !generalData?.name &&
@@ -107,7 +88,7 @@ export function StepConfigureFeature() {
   }
 
   return (
-    <FunnelFlowBody helpSection={funnelCardHelp}>
+    <FunnelFlowBody>
       <FormProvider {...methods}>
         <StepConfigure onSubmit={onSubmit} onBack={onBack} jobType={jobType} />
       </FormProvider>

@@ -1,22 +1,14 @@
 import { type DeploymentHistoryApplication } from 'qovery-typescript-axios'
 import { memo, useEffect, useState } from 'react'
-import {
-  type BaseLink,
-  EmptyState,
-  HelpSection,
-  Table,
-  type TableFilterProps,
-  TableRowDeployment,
-} from '@qovery/shared/ui'
+import { EmptyState, Table, type TableFilterProps, TableRowDeployment } from '@qovery/shared/ui'
 
 export interface PageDeploymentsProps {
   deployments?: DeploymentHistoryApplication[]
-  listHelpfulLinks: BaseLink[]
   isLoading?: boolean
 }
 
 export function Deployments(props: PageDeploymentsProps) {
-  const { deployments = [], listHelpfulLinks, isLoading = true } = props
+  const { deployments = [], isLoading = true } = props
 
   const [data, setData] = useState<DeploymentHistoryApplication[]>(deployments)
   const [filter, setFilter] = useState<TableFilterProps[]>([])
@@ -95,9 +87,6 @@ export function Deployments(props: PageDeploymentsProps) {
           ))}
         </div>
       </Table>
-      <div className="bg-white rounded-b flex flex-col justify-end">
-        <HelpSection description="Need help? You may find these links useful" links={listHelpfulLinks} />
-      </div>
     </>
   )
 }

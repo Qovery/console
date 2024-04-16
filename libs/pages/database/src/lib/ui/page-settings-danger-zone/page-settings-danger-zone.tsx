@@ -1,5 +1,5 @@
 import { type EnvironmentModeEnum } from 'qovery-typescript-axios'
-import { BlockContentDelete, HelpSection } from '@qovery/shared/ui'
+import { BlockContentDelete } from '@qovery/shared/ui'
 
 export interface PageSettingsDangerZoneProps {
   deleteDatabase: () => void
@@ -23,15 +23,6 @@ export function PageSettingsDangerZone(props: PageSettingsDangerZoneProps) {
           }}
         />
       </div>
-      <HelpSection
-        description="Need help? You may find these links useful"
-        links={[
-          {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/database/#delete-your-database-instance',
-            linkLabel: 'How to delete my database',
-          },
-        ]}
-      />
     </div>
   )
 }

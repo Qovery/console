@@ -112,32 +112,6 @@ exports[`PageOrganizationLabelsAnnotationsFeature should match snapshot 1`] = `
           </div>
         </div>
       </section>
-      <div
-        class="py-8 px-10 border-t border-neutral-200"
-        data-testid="help-section"
-      >
-        <p
-          class="text-neutral-400 text-sm mb-5"
-        >
-          Need help? You may find these links useful
-        </p>
-        <div
-          class="flex flex-col gap-2"
-        >
-          <a
-            class="cursor-pointer transition duration-100 font-medium items-center gap-1 text-sky-500 hover:text-sky-600 text-sm flex"
-            href="https://hub.qovery.com/docs/using-qovery/configuration/organization/labels-annotations/"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            How to configure my annotations
-            <i
-              aria-hidden="true"
-              class="fa-solid fa-arrow-up-right-from-square text-xs leading-5"
-            />
-          </a>
-        </div>
-      </div>
     </div>
   </div>
 </body>

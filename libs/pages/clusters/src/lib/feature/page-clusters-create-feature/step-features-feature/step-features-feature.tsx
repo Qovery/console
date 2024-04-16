@@ -13,7 +13,7 @@ import {
   CLUSTERS_CREATION_URL,
   CLUSTERS_URL,
 } from '@qovery/shared/routes'
-import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
+import { FunnelFlowBody } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import StepFeatures from '../../../ui/page-clusters-create/step-features/step-features'
 import { steps, useClusterContainerCreateContext } from '../page-clusters-create-feature'
@@ -30,26 +30,6 @@ export function StepFeaturesFeature() {
     cloudProvider: generalData?.cloud_provider ?? 'AWS',
   })
   const navigate = useNavigate()
-
-  const funnelCardHelp = (
-    <FunnelFlowHelpCard
-      title="Cluster features"
-      items={[
-        'A list of additional features is available depending on the cloud provider of your choice',
-        'These features cannot be modified after cluster creation',
-      ]}
-      helpSectionProps={{
-        description: 'Need help? You may find these links useful',
-        links: [
-          {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/clusters/#managing-your-clusters-with-qovery',
-            linkLabel: 'How to configure my cluster',
-          },
-          { link: 'https://discuss.qovery.com/', linkLabel: 'Still need help? Ask on our Forum' },
-        ],
-      }}
-    />
-  )
 
   const goToBack = () => {
     const path = CLUSTERS_URL(organizationId) + CLUSTERS_CREATION_URL
@@ -158,7 +138,7 @@ export function StepFeaturesFeature() {
   }, [features, featuresData])
 
   return (
-    <FunnelFlowBody helpSection={funnelCardHelp}>
+    <FunnelFlowBody>
       <FormProvider {...methods}>
         <StepFeatures
           onSubmit={onSubmit}

@@ -1,7 +1,7 @@
 import { EnvironmentModeEnum, type ServicePort } from 'qovery-typescript-axios'
 import { useFormContext } from 'react-hook-form'
 import { ApplicationSettingsHealthchecks } from '@qovery/shared/console-shared'
-import { Button, Callout, Heading, HelpSection, Icon, Link, Section } from '@qovery/shared/ui'
+import { Button, Callout, Heading, Icon, Link, Section } from '@qovery/shared/ui'
 
 export interface PageSettingsHealthchecksProps {
   loading: boolean
@@ -67,15 +67,6 @@ export function PageSettingsHealthchecks({
           </div>
         </form>
       </Section>
-      <HelpSection
-        description="Need help? You may find these links useful"
-        links={[
-          {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/service-health-checks/',
-            linkLabel: 'How to configure my health checks',
-          },
-        ]}
-      />
     </div>
   )
 }

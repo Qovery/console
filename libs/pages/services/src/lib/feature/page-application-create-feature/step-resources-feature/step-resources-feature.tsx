@@ -11,7 +11,7 @@ import {
   SERVICES_CREATION_PORTS_URL,
   SERVICES_URL,
 } from '@qovery/shared/routes'
-import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
+import { FunnelFlowBody } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import StepResources from '../../../ui/page-application-create/step-resources/step-resources'
 import { useApplicationContainerCreateContext } from '../page-application-create-feature'
@@ -34,28 +34,6 @@ export function StepResourcesFeature() {
           SERVICES_CREATION_GENERAL_URL
       )
   }, [generalData, navigate, environmentId, organizationId, projectId])
-
-  const funnelCardHelp = (
-    <FunnelFlowHelpCard
-      title="Setting the right resources"
-      items={[
-        'Application are deployed as containers on your Kubernetes cluster',
-        'Set the vCPU/RAM based on your application need',
-        'You can’t go beyond the resources available on your cluster',
-        'To avoid application downtime in case of issue, set the minimum number of instances to at least 2',
-      ]}
-      helpSectionProps={{
-        description: 'Need help? You may find these links useful',
-        links: [
-          {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/application/#resources',
-            linkLabel: 'How to configure my application',
-          },
-          { link: 'https://discuss.qovery.com/', linkLabel: 'Still need help? Ask on our Forum' },
-        ],
-      }}
-    />
-  )
 
   useEffect(() => {
     setCurrentStep(2)
@@ -86,7 +64,7 @@ export function StepResourcesFeature() {
   }
 
   return (
-    <FunnelFlowBody helpSection={funnelCardHelp}>
+    <FunnelFlowBody>
       <FormProvider {...methods}>
         <StepResources maximumInstances={maxInstances} onBack={onBack} onSubmit={onSubmit} />
       </FormProvider>

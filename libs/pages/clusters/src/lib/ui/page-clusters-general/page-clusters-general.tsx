@@ -1,7 +1,7 @@
 import { type Cluster } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
 import { CLUSTERS_CREATION_GENERAL_URL, CLUSTERS_CREATION_URL, CLUSTERS_URL } from '@qovery/shared/routes'
-import { EmptyState, Heading, HelpSection, Icon, Link, LoaderSpinner, Section } from '@qovery/shared/ui'
+import { EmptyState, Heading, Icon, Link, LoaderSpinner, Section } from '@qovery/shared/ui'
 import CardCluster from '../card-cluster/card-cluster'
 
 export interface PageClustersGeneralProps {
@@ -52,15 +52,6 @@ export function PageClustersGeneral(props: PageClustersGeneralProps) {
           )
         )}
       </Section>
-      <HelpSection
-        description="Need help? You may find these links useful"
-        links={[
-          {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/clusters/',
-            linkLabel: 'How to configure my cluster',
-          },
-        ]}
-      />
     </div>
   )
 }

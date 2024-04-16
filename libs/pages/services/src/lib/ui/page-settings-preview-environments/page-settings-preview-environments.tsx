@@ -2,7 +2,7 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { IconEnum } from '@qovery/shared/enums'
-import { BlockContent, Button, Heading, HelpSection, Icon, InputToggle, Section } from '@qovery/shared/ui'
+import { BlockContent, Button, Heading, Icon, InputToggle, Section } from '@qovery/shared/ui'
 
 export interface PageSettingsPreviewEnvironmentsProps {
   onSubmit: () => void
@@ -109,15 +109,6 @@ export function PageSettingsPreviewEnvironments(props: PageSettingsPreviewEnviro
           </div>
         </form>
       </Section>
-      <HelpSection
-        description="Need help? You may find these links useful"
-        links={[
-          {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/environment/#preview-environment',
-            linkLabel: 'How to set your preview environment',
-          },
-        ]}
-      />
     </div>
   )
 }

@@ -9,7 +9,6 @@ import {
   Callout,
   ExternalLink,
   Heading,
-  HelpSection,
   Icon,
   InputSelect,
   LoaderSpinner,
@@ -192,15 +191,6 @@ export function PageSettingsGeneral({
           </div>
         </form>
       </Section>
-      <HelpSection
-        description="Need help? You may find these links useful"
-        links={[
-          {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/database',
-            linkLabel: 'How to configure my database',
-          },
-        ]}
-      />
     </div>
   )
 }

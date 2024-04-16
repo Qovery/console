@@ -9,7 +9,6 @@ import {
   BlockContent,
   Button,
   Heading,
-  HelpSection,
   Icon,
   LoaderSpinner,
   Section,
@@ -133,15 +132,6 @@ export function PageOrganizationLabelsAnnotationsFeature() {
           )}
         </BlockContent>
       </Section>
-      <HelpSection
-        description="Need help? You may find these links useful"
-        links={[
-          {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/organization/labels-annotations/',
-            linkLabel: 'How to configure my annotations',
-          },
-        ]}
-      />
     </div>
   )
 }

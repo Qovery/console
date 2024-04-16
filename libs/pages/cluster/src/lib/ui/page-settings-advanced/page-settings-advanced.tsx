@@ -5,7 +5,6 @@ import { Controller, useFormContext } from 'react-hook-form'
 import {
   CopyToClipboardButtonIcon,
   Heading,
-  HelpSection,
   InputTextSmall,
   InputToggle,
   LoaderSpinner,
@@ -177,15 +176,6 @@ export function PageSettingsAdvanced(props: PageSettingsAdvancedProps) {
           </div>
         </form>
       </Section>
-      <HelpSection
-        description="Need help? You may find these links useful"
-        links={[
-          {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/cluster-advanced-settings/',
-            linkLabel: 'How to configure my cluster',
-          },
-        ]}
-      />
     </div>
   )
 }

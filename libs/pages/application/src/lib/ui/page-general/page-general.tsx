@@ -1,15 +1,14 @@
 import { PodStatusesCallout, PodsMetrics, ServiceDetails } from '@qovery/domains/services/feature'
 import { OutputVariables } from '@qovery/domains/variables/feature'
-import { type BaseLink, ExternalLink, HelpSection, Icon } from '@qovery/shared/ui'
+import { ExternalLink, Icon } from '@qovery/shared/ui'
 
 export interface PageGeneralProps {
   serviceId: string
   environmentId: string
-  listHelpfulLinks: BaseLink[]
   isCronJob: boolean
 }
 
-export function PageGeneral({ serviceId, environmentId, isCronJob, listHelpfulLinks }: PageGeneralProps) {
+export function PageGeneral({ serviceId, environmentId, isCronJob }: PageGeneralProps) {
   return (
     <div className="mt-2 bg-white rounded flex flex-grow min-h-0">
       <div className="flex flex-col grow">
@@ -36,9 +35,6 @@ export function PageGeneral({ serviceId, environmentId, isCronJob, listHelpfulLi
             <OutputVariables serviceId={serviceId} />
           </div>
           <ServiceDetails className="w-[360px] border-l" environmentId={environmentId} serviceId={serviceId} />
-        </div>
-        <div className="bg-white rounded-b flex flex-col justify-end">
-          <HelpSection description="Need help? You may find these links useful" links={listHelpfulLinks} />
         </div>
       </div>
     </div>

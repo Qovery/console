@@ -6,7 +6,7 @@ import { useOrganization } from '@qovery/domains/organizations/feature'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { type JobGeneralData } from '@qovery/shared/interfaces'
 import { SERVICES_JOB_CREATION_CONFIGURE_URL, SERVICES_URL } from '@qovery/shared/routes'
-import { FunnelFlowBody, FunnelFlowHelpCard, toastError } from '@qovery/shared/ui'
+import { FunnelFlowBody, toastError } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import StepGeneral from '../../../ui/page-job-create/step-general/step-general'
 import { useJobContainerCreateContext } from '../page-job-create-feature'
@@ -18,17 +18,6 @@ export function StepGeneralFeature() {
   const navigate = useNavigate()
 
   const { data: organization } = useOrganization({ organizationId })
-
-  const funnelCardHelp = (
-    <FunnelFlowHelpCard
-      title={`${jobType === ServiceTypeEnum.CRON_JOB ? 'Cron' : 'Lifecycle'} job creation`}
-      items={[
-        'You can deploy an application from a git repository or a container registry',
-        'Git Repository: Qovery will pull the repository, build the application and deploy it on your kubernetes cluster',
-        'Container Registry: Qovery will pull the image from container registry and deploy it on your kubernetes cluster',
-      ]}
-    />
-  )
 
   useEffect(() => {
     setCurrentStep(1)
@@ -65,7 +54,7 @@ export function StepGeneralFeature() {
   })
 
   return (
-    <FunnelFlowBody helpSection={funnelCardHelp}>
+    <FunnelFlowBody>
       <FormProvider {...methods}>
         <StepGeneral organization={organization} onSubmit={onSubmit} jobType={jobType} />
       </FormProvider>

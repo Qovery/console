@@ -9,7 +9,6 @@ import {
   ButtonIconStyle,
   ButtonLegacySize,
   Heading,
-  HelpSection,
   Icon,
   IconAwesomeEnum,
   LoaderSpinner,
@@ -133,15 +132,6 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
           )
         )}
       </Section>
-      <HelpSection
-        description="Need help? You may find these links useful"
-        links={[
-          {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/organization/members-rbac/#roles-based-access-control-rbac',
-            linkLabel: 'How to configure my custom roles',
-          },
-        ]}
-      />
     </div>
   )
 }

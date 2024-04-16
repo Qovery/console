@@ -6,13 +6,11 @@ import { environmentModeValues, timezoneValues, weekdaysValues } from '@qovery/s
 import { type Value } from '@qovery/shared/interfaces'
 import { ENVIRONMENTS_DEPLOYMENT_RULES_URL, ENVIRONMENTS_URL } from '@qovery/shared/routes'
 import {
-  type BaseLink,
   BlockContent,
   ButtonLegacy,
   ButtonLegacySize,
   ButtonLegacyStyle,
   Heading,
-  HelpSection,
   Icon,
   InputSelect,
   InputText,
@@ -20,7 +18,6 @@ import {
   InputToggle,
   Section,
 } from '@qovery/shared/ui'
-import HelpSidebar from '../help-sidebar/help-sidebar'
 
 export interface PageCreateEditDeploymentRuleProps {
   title: string
@@ -39,13 +36,6 @@ export function PageCreateEditDeploymentRule(props: PageCreateEditDeploymentRule
   useEffect(() => {
     setAutoStop(defaultAutoStop)
   }, [defaultAutoStop])
-
-  const listHelpfulLinks: BaseLink[] = [
-    {
-      link: 'https://hub.qovery.com/docs/using-qovery/configuration/deployment-rule/',
-      linkLabel: 'How to configure my deployment rule',
-    },
-  ]
 
   const navigate = useNavigate()
 
@@ -271,11 +261,7 @@ export function PageCreateEditDeploymentRule(props: PageCreateEditDeploymentRule
               </form>
             </div>
           </Section>
-          <div className="bg-white rounded-b w-full">
-            <HelpSection description="Need help? You may find these links useful" links={listHelpfulLinks} />
-          </div>
         </div>
-        <HelpSidebar />
       </div>
     </div>
   )

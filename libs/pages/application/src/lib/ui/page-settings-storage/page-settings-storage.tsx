@@ -6,7 +6,6 @@ import {
   ButtonIconStyle,
   EmptyState,
   Heading,
-  HelpSection,
   Icon,
   IconAwesomeEnum,
   InputText,
@@ -92,15 +91,6 @@ export function PageSettingsStorage(props: PageSettingsStorageProps) {
           />
         )}
       </Section>
-      <HelpSection
-        description="Need help? You may find these links useful"
-        links={[
-          {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/application/#storage',
-            linkLabel: 'How to configure my application',
-          },
-        ]}
-      />
     </div>
   )
 }
