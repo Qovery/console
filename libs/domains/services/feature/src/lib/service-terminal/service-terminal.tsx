@@ -1,7 +1,7 @@
 import { type QueryClient } from '@tanstack/react-query'
 import { AttachAddon } from '@xterm/addon-attach'
 import { FitAddon } from '@xterm/addon-fit'
-import { useCallback, useContext, useMemo, useState } from 'react'
+import { type MouseEvent as MouseDownEvent, useCallback, useContext, useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Button, Icon, LoaderSpinner, XTerm, toast } from '@qovery/shared/ui'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
@@ -37,7 +37,7 @@ export function ServiceTerminal({
     (_: QueryClient, event: Event) => {
       const websocket = event.target as WebSocket
       setAttachAddon(new AttachAddon(websocket))
-      // Resize the terminal to fit the new height
+
       const fitAddon = new FitAddon()
       setFitAddon(fitAddon)
       fitAddon.fit()
@@ -71,27 +71,24 @@ export function ServiceTerminal({
   })
 
   const [terminalParentHeight, setTerminalParentHeight] = useState(248)
-  /* 
-    Document height without navbar height and terminal header
-    64px: navbar
-    60px: terminal header
-  */
-  const maxTerminalHeight = document.body.scrollHeight - 64 - 60
+  const maxTerminalHeight = document.body.scrollHeight - 64 - 60 // 64 (navbar) + 60 (terminal header)
 
-  const handler = (mouseDownEvent: any) => {
+  const handler = (mouseDownEvent: MouseDownEvent<HTMLButtonElement>) => {
     const startYPosition = mouseDownEvent.pageY
     const startHeight = terminalParentHeight
 
-    function onMouseMove(mouseMoveEvent: any) {
+    function onMouseMove(mouseMoveEvent: MouseEvent) {
       const deltaY = mouseMoveEvent.pageY - startYPosition
-
       const newParentHeight = startHeight - deltaY
 
       if (newParentHeight >= maxTerminalHeight) {
+        // Expand terminal height
         setTerminalParentHeight(maxTerminalHeight)
       } else if (newParentHeight <= 248) {
+        // Shrink terminal height
         setTerminalParentHeight(248)
       } else {
+        // Resize terminal height
         setTerminalParentHeight(newParentHeight)
       }
 
@@ -107,22 +104,22 @@ export function ServiceTerminal({
     document.body.addEventListener('mouseup', onMouseUp)
   }
 
-  const TerminalMemorized = useMemo(
-    () =>
-      attachAddon &&
-      fitAddon && (
-        <XTerm
-          className="h-full"
-          onKeyUp={(event) => event.key === 'Escape' && setOpen(false)}
-          addons={[attachAddon, fitAddon]}
-          options={{
-            rows: 14,
-            cols: 80,
-          }}
-        />
-      ),
-    [attachAddon, fitAddon, setOpen]
-  )
+  // `useMemo` necessary to avoid re-render after terminal resize
+  const TerminalMemorized = useMemo(() => {
+    if (!attachAddon || !fitAddon || isRunningStatusesLoading) return null
+
+    // Delay needed to fit the terminal after the height change
+    setTimeout(() => fitAddon.fit(), 0)
+
+    return (
+      <XTerm
+        className="h-full"
+        onKeyUp={(event) => event.key === 'Escape' && setOpen(false)}
+        addons={[attachAddon, fitAddon]}
+        options={{ rows: 14 }}
+      />
+    )
+  }, [attachAddon, fitAddon, isRunningStatusesLoading, setOpen])
 
   return createPortal(
     <div className="fixed bottom-0 left-0 w-full bg-neutral-650 animate-slidein-up-md-faded">
@@ -163,13 +160,14 @@ export function ServiceTerminal({
           )}
         </div>
         <div className="flex items-center gap-1">
-          {attachAddon && fitAddon && (
+          {fitAddon && (
             <Button
               color="neutral"
               onClick={() => {
                 terminalParentHeight === maxTerminalHeight
                   ? setTerminalParentHeight(248)
                   : setTerminalParentHeight(maxTerminalHeight)
+
                 // Delay needed to fit the terminal after the height change
                 setTimeout(() => fitAddon.fit(), 0)
               }}
@@ -187,9 +185,7 @@ export function ServiceTerminal({
         </div>
       </div>
       <div className="bg-neutral-700 px-4 py-2 min-h-[248px]" style={{ height: terminalParentHeight }}>
-        {attachAddon && fitAddon && !isRunningStatusesLoading ? (
-          TerminalMemorized
-        ) : (
+        {TerminalMemorized || (
           <div className="flex items-start justify-center p-5 h-40">
             <LoaderSpinner />
           </div>
