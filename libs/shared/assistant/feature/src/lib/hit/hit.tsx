@@ -5,6 +5,7 @@ function Wrapper({ children }: PropsWithChildren) {
   return <span className="flex flex-col gap-0.5">{children}</span>
 }
 
+// Inspired by https://github.com/algolia/docsearch/blob/6462d11826eea334e2fad1738d396571ea158035/packages/docsearch-react/src/Results.tsx#L116
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function Hit({ hit: item }: any) {
   return (
