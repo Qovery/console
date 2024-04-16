@@ -84,7 +84,7 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
           )}
         </div>
         <button
-          className="flex justify-center items-center gap-1.5 px-5 py-4 text-neutral-400 font-medium"
+          className="flex justify-center items-center gap-1.5 px-5 py-4 text-neutral-400 font-medium hover:bg-neutral-150 transition"
           type="button"
           onClick={() => showIntercomMessenger()}
         >
@@ -92,20 +92,20 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
           <span className="text-sm">Contact support</span>
         </button>
         <a
+          className="flex justify-center items-center gap-1.5 px-5 py-4 text-neutral-400 font-medium hover:bg-neutral-150 transition"
           href={QOVERY_FORUM_URL}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex justify-center items-center gap-1.5 px-5 py-4 text-neutral-400 font-medium"
         >
           <Icon iconName="user-group" className="text-brand-500" />
           <span className="text-sm">Community forum</span>
         </a>
         {appStatus && appStatus.status && (
           <a
+            className="flex items-center justify-center gap-2 px-5 py-2.5 text-xs text-neutral-350 hover:bg-neutral-150 transition"
             href={QOVERY_STATUS_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 px-5 py-2.5 text-xs text-neutral-350"
           >
             <span>
               {match(appStatus)
