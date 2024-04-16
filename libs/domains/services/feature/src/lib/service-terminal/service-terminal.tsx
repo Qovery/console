@@ -55,6 +55,10 @@ export function ServiceTerminal({
     [setOpen]
   )
 
+  // Necesssary to calculate the number of rows and columns (tty) for the terminal
+  const rows = Math.ceil(document.body.clientHeight / 18)
+  const cols = Math.ceil(document.body.clientWidth / 8)
+
   useReactQueryWsSubscription({
     url: 'wss://ws.qovery.com/shell/exec',
     urlSearchParams: {
@@ -65,6 +69,8 @@ export function ServiceTerminal({
       service: serviceId,
       pod_name: selectedPod,
       container_name: selectedContainer,
+      tty_height: rows.toString(),
+      tty_width: cols.toString(),
     },
     onOpen: onOpenHandler,
     onClose: onCloseHandler,
@@ -116,7 +122,6 @@ export function ServiceTerminal({
         className="h-full"
         onKeyUp={(event) => event.key === 'Escape' && setOpen(false)}
         addons={[attachAddon, fitAddon]}
-        options={{ rows: 14 }}
       />
     )
   }, [attachAddon, fitAddon, isRunningStatusesLoading, setOpen])
