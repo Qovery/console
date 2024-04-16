@@ -1,4 +1,4 @@
-import { useDeferredValue } from 'react'
+import { useDeferredValue, useEffect } from 'react'
 import { Hits, SearchBox, useInstantSearch } from 'react-instantsearch'
 import { useIntercom } from 'react-use-intercom'
 import { match } from 'ts-pattern'
@@ -24,8 +24,19 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
   const QOVERY_STATUS_URL = 'https://status.qovery.com/'
   const appStatus = data?.find(({ id }) => id === INSTATUS_APP_ID)
 
+  useEffect(() => {
+    const down = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        onClose()
+      }
+    }
+
+    document.addEventListener('keydown', down)
+    return () => document.removeEventListener('keydown', down)
+  }, [])
+
   return (
-    <div className="flex flex-col bg-white border-l border-neutral-200 w-[368px] min-h-page-container fixed right-0 top-[4rem] shadow-sm">
+    <div className="flex flex-col bg-white border-l border-neutral-200 w-[368px] min-h-page-container fixed right-0 top-[4rem] shadow-sm animate-slidein-right-md-faded">
       <div className="flex justify-between px-5 pt-5">
         <div className="flex gap-3 font-bold">
           <span className="flex justify-center items-center rounded bg-purple-500 w-6 h-6 text-sm text-white">
