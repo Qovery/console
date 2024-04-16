@@ -55,11 +55,11 @@ export function InputSearch({ data, value, onChange, placeholder, trimLabel }: I
         />
       </div>
       <div
-        className={clsx('mt-1 bg-neutral-600 p-2 rounded w-full max-h-40 overflow-hidden min-w-56', {
-          hidden: !(isOpen && items.length),
+        className={clsx('mt-1 bg-neutral-600 p-2 rounded w-full max-h-40 overflow-y-auto min-w-56', {
+          hidden: !isOpen,
         })}
       >
-        <ul className="overflow-scroll" {...getMenuProps()}>
+        <ul {...getMenuProps()}>
           {isOpen && items.length > 0 ? (
             items.map((v, index) => (
               <li
@@ -77,7 +77,10 @@ export function InputSearch({ data, value, onChange, placeholder, trimLabel }: I
               </li>
             ))
           ) : (
-            <p className="w-full text-center text-neutral-50 text-xs text-medium">No results found</p>
+            <p className="flex flex-col w-full text-center text-neutral-50 text-xs text-medium py-2">
+              <Icon iconName="wave-pulse" className="block mb-1" />
+              No results found
+            </p>
           )}
         </ul>
       </div>
