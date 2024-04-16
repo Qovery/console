@@ -1,4 +1,5 @@
 import { type PropsWithChildren } from 'react'
+import { ExternalLink } from '@qovery/shared/ui'
 import Snippet from '../snippet/snippet'
 
 function Wrapper({ children }: PropsWithChildren) {
@@ -9,7 +10,7 @@ function Wrapper({ children }: PropsWithChildren) {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function Hit({ hit: item }: any) {
   return (
-    <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-sky-500">
+    <ExternalLink href={item.url} withIcon={false}>
       {item.hierarchy[item.type] && item.type === 'lvl1' && (
         <Wrapper>
           <Snippet className="font-medium text-sm [&>mark]:text-sky-500" hit={item} attribute="hierarchy.lvl1" />
@@ -41,7 +42,7 @@ export function Hit({ hit: item }: any) {
           <Snippet className="text-xs text-sky-400 [&>mark]:text-sky-400" hit={item} attribute="hierarchy.lvl1" />
         </Wrapper>
       )}
-    </a>
+    </ExternalLink>
   )
 }
 
