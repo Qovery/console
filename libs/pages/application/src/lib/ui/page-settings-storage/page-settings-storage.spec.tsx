@@ -2,7 +2,6 @@ import {
   act,
   findAllByTestId,
   findByDisplayValue,
-  findByTestId,
   findByText,
   fireEvent,
   render,
