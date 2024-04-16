@@ -3,9 +3,15 @@ import { type ReactNode } from 'react'
 import { Configure, InstantSearch } from 'react-instantsearch'
 import { ALGOLIA_API_KEY, ALGOLIA_APP_ID } from '@qovery/shared/util-node-env'
 
-const searchClient = algoliasearch(ALGOLIA_APP_ID, ALGOLIA_API_KEY)
+let searchClient: ReturnType<typeof algoliasearch> | undefined
+if (ALGOLIA_APP_ID && ALGOLIA_API_KEY) {
+  searchClient = algoliasearch(ALGOLIA_APP_ID, ALGOLIA_API_KEY)
+}
 
 export function InstantSearchProvider({ children }: { children: ReactNode }) {
+  if (!searchClient) {
+    return <>{children}</>
+  }
   return (
     <InstantSearch searchClient={searchClient} indexName="qovery">
       <Configure
