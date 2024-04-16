@@ -72,8 +72,9 @@ export function PodLogs({
   setFilter,
 }: PodLogsProps) {
   const publiclyExposedPort =
-    (service?.serviceType === 'APPLICATION' || service?.serviceType === 'CONTAINER') &&
-    Boolean(service?.ports?.find((port) => port.publicly_accessible))
+    ((service?.serviceType === 'APPLICATION' || service?.serviceType === 'CONTAINER') &&
+      Boolean(service.ports?.find((port) => port.publicly_accessible))) ||
+    (service?.serviceType === 'HELM' && Boolean((service.ports ?? []).length > 0))
 
   const { data: serviceRunningStatus } = useRunningStatus({
     environmentId: service?.environment?.id,
