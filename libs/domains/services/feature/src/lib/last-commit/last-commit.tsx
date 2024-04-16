@@ -77,13 +77,16 @@ export function LastCommit({ className, service, gitRepository }: LastCommitProp
             variant="surface"
             color="neutral"
             size="xs"
-            className={twMerge(`group justify-between ${delta > 0 ? 'w-[98px] pr-[26px]' : 'gap-1'}`, className)}
+            className={twMerge(
+              `group justify-between relative ${delta > 0 ? 'w-[98px] pr-[26px]' : 'gap-1'}`,
+              className
+            )}
             onClick={deployCommitVersion}
           >
             <Icon iconName="rotate-right" className="hidden group-hover:inline w-4" />
             <Icon iconName="code-commit" className="group-hover:hidden w-4" />
             {deployedCommit.git_commit_id.substring(0, 7)}
-            <span className="absolute right-0 inset-y-0 bg-brand-500 text-white px-1 rounded-tr rounded-br flex items-center min-w-[22px] justify-center">
+            <span className="absolute -right-[1px] -top-[1px] bottom-0 min-w-[22px] h-[calc(100%+2px)] bg-brand-500 text-white px-1 rounded-tr rounded-br flex items-center justify-center">
               {delta}
             </span>
           </Button>
