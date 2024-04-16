@@ -64,7 +64,7 @@ exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
                 />
                 <i
                   aria-hidden="true"
-                  class="fa-solid fa-check text-white absolute text-2xs -top-[7px] left-[3.5px]"
+                  class="fa-solid fa-check text-white absolute text-2xs left-1"
                 />
               </div>
               Amy Maxwell
