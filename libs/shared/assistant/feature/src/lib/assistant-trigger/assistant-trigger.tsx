@@ -2,8 +2,12 @@ import { useState } from 'react'
 import { Button, Icon } from '@qovery/shared/ui'
 import { AssistantPanel } from '../assistant-panel/assistant-panel'
 
-export function AssistantTrigger() {
-  const [openAssistant, setOpenAssistant] = useState(false)
+export interface AssistantTriggerProps {
+  defaultOpen?: boolean
+}
+
+export function AssistantTrigger({ defaultOpen = false }: AssistantTriggerProps) {
+  const [openAssistant, setOpenAssistant] = useState(defaultOpen)
 
   return (
     <>

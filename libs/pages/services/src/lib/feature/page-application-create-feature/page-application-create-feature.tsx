@@ -93,7 +93,7 @@ export function PageApplicationCreateFeature() {
           ))}
           <Route path="*" element={<Navigate replace to={pathCreate + SERVICES_CREATION_GENERAL_URL} />} />
         </Routes>
-        <AssistantTrigger />
+        <AssistantTrigger defaultOpen />
       </FunnelFlow>
     </ApplicationContainerCreateContext.Provider>
   )

@@ -77,7 +77,7 @@ export function PageDatabaseCreateFeature() {
           ))}
           <Route path="*" element={<Navigate replace to={pathCreate + SERVICES_DATABASE_CREATION_GENERAL_URL} />} />
         </Routes>
-        <AssistantTrigger />
+        <AssistantTrigger defaultOpen />
       </FunnelFlow>
     </DatabaseCreateContext.Provider>
   )

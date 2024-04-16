@@ -123,7 +123,7 @@ export function PageJobCreateFeature() {
             <Route path="*" element={<Navigate replace to={pathCreate + SERVICES_JOB_CREATION_GENERAL_URL} />} />
           )}
         </Routes>
-        <AssistantTrigger />
+        <AssistantTrigger defaultOpen />
       </FunnelFlow>
     </JobContainerCreateContext.Provider>
   )

@@ -90,7 +90,7 @@ export function PageHelmCreateFeature() {
           ))}
           <Route path="*" element={<Navigate replace to={pathCreate + SERVICES_HELM_CREATION_GENERAL_URL} />} />
         </Routes>
-        <AssistantTrigger />
+        <AssistantTrigger defaultOpen />
       </FunnelFlow>
     </HelmCreateContext.Provider>
   )
