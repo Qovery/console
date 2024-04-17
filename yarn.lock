@@ -3688,7 +3688,6 @@ __metadata:
     react-select-event: ^5.5.1
     react-syntax-highlighter: ^15.5.0
     react-use-intercom: ^5.3.0
-    react-use-websocket: ^4.2.0
     semantic-release: ^19.0.5
     storybook-tailwind-dark-mode: ^1.0.22
     style-loader: ^3.3.0
@@ -19174,16 +19173,6 @@ __metadata:
     react: ">=16.8.0"
     react-dom: ">=16.8.0"
   checksum: b08e1aa92b93ebeea01aa89f799eaed51d27887026a5983458800e13a7cf20fc267b59b3d12e78eb04335428f3000ceb779c92b4cbd4348cd70811c733d12d8c
-  languageName: node
-  linkType: hard
-
-"react-use-websocket@npm:^4.2.0":
-  version: 4.3.1
-  resolution: "react-use-websocket@npm:4.3.1"
-  peerDependencies:
-    react: ">= 18.0.0"
-    react-dom: ">= 18.0.0"
-  checksum: 6febb76b462e68fddc8021f155f914124afce6dad42ed3807794532a208263a4946a69f1783d81faf0aba83677bd14f973b4ebdbd79dcd35a6f67b679d199c51
   languageName: node
   linkType: hard
 

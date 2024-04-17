@@ -1,3 +1,4 @@
+import { type QueryClient } from '@tanstack/react-query'
 import {
   type DeploymentStageWithServicesStatuses,
   type Environment,
@@ -6,13 +7,12 @@ import {
 } from 'qovery-typescript-axios'
 import { memo, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import useWebSocket from 'react-use-websocket'
 import { match } from 'ts-pattern'
 import { useDeploymentHistory } from '@qovery/domains/environments/feature'
 import { useDeploymentStatus, useService } from '@qovery/domains/services/feature'
-import { useAuth } from '@qovery/shared/auth'
 import { type LoadingStatus } from '@qovery/shared/interfaces'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
 import _DeploymentLogs from '../../ui/deployment-logs/deployment-logs'
 import { ServiceStageIdsContext } from '../service-stage-ids-context/service-stage-ids-context'
 
@@ -89,36 +89,35 @@ export function DeploymentLogsFeature({ environment, statusStages }: DeploymentL
     `Deployment logs ${loadingStatusDeploymentLogs === 'loaded' ? `- ${service?.name}` : '- Loading...'}`
   )
 
-  const { getAccessTokenSilently } = useAuth()
   const chunkSize = 500
 
-  const deploymentLogsUrl: () => Promise<string> = useCallback(async () => {
-    // reset current Logs
-    setLogs([])
-
-    const url = `wss://ws.qovery.com/deployment/logs?organization=${organizationId}&cluster=${environment?.cluster_id}&project=${projectId}&environment=${environmentId}&version=${versionId}`
-    const token = await getAccessTokenSilently()
-
-    return new Promise((resolve) => {
-      environment?.cluster_id && resolve(url + `&bearer_token=${token}`)
-    })
-  }, [organizationId, environment?.cluster_id, projectId, environmentId, versionId, getAccessTokenSilently])
-
-  useWebSocket(deploymentLogsUrl, {
-    onMessage: (message) => {
+  const messageHandler = useCallback(
+    (_: QueryClient, message: EnvironmentLogs[]) => {
       setLoadingStatusDeploymentLogs('loaded')
-
-      const newLog = JSON.parse(message?.data)
-
       setMessageChunks((prevChunks) => {
         const lastChunk = prevChunks[prevChunks.length - 1] || []
         if (lastChunk.length < chunkSize) {
-          return [...prevChunks.slice(0, -1), [...lastChunk, ...newLog]]
+          return [...prevChunks.slice(0, -1), [...lastChunk, ...message]]
         } else {
-          return [...prevChunks, [...newLog]]
+          return [...prevChunks, [...message]]
         }
       })
     },
+    [setLoadingStatusDeploymentLogs, setMessageChunks]
+  )
+
+  useReactQueryWsSubscription({
+    url: 'wss://ws.qovery.com/deployment/logs',
+    urlSearchParams: {
+      organization: organizationId,
+      cluster: environment?.cluster_id,
+      project: projectId,
+      environment: environmentId,
+      version: versionId,
+    },
+    enabled:
+      Boolean(organizationId) && Boolean(environment?.cluster_id) && Boolean(projectId) && Boolean(environmentId),
+    onMessage: messageHandler,
   })
 
   useEffect(() => {

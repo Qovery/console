@@ -66,8 +66,7 @@ export function useReactQueryWsSubscription({
 
     async function initWebsocket() {
       const token = await getAccessTokenSilently()
-      searchParams.set('bearer_token', token)
-      websocket = new WebSocket(`${url}?${searchParams.toString()}`)
+      websocket = new WebSocket(`${url}?${searchParams.toString()}`, ['v1', 'auth.bearer.' + token])
 
       websocket.onopen = async (event) => {
         onOpen?.(queryClient, event)

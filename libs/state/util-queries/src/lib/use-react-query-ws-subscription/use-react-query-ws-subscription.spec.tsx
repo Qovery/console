@@ -38,7 +38,9 @@ describe('useReactQueryWsSubscription', () => {
 
     const connection = await server.connected
     expect([WebSocket.CONNECTING, WebSocket.OPEN]).toContain(connection.readyState)
-    expect(connection.url).toBe('ws://localhost:1234/?bearer_token=my-secret-token')
+    expect(connection.url).toBe('ws://localhost:1234/?')
+    // Bearer token value cannot be verify with `connection` object
+    expect(connection.protocol).toBe('v1')
 
     connection.close()
     unmount()
@@ -60,7 +62,9 @@ describe('useReactQueryWsSubscription', () => {
 
     const connection = await server.connected
     expect([WebSocket.CONNECTING, WebSocket.OPEN]).toContain(connection.readyState)
-    expect(connection.url).toBe('ws://localhost:1234/?foo=bar&baz=1&bearer_token=my-secret-token')
+    expect(connection.url).toBe('ws://localhost:1234/?foo=bar&baz=1')
+    // Bearer token value cannot be verify with `connection` object
+    expect(connection.protocol).toBe('v1')
 
     connection.close()
     unmount()
