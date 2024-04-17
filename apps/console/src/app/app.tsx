@@ -80,6 +80,29 @@ export function App() {
           inputSanitizer: true,
           textSanitizer: true,
         },
+        network: {
+          requestSanitizer(request) {
+            request.headers['Authorization'] = undefined
+            if (
+              ['secret', 'credential', 'password', 'private'].some((field) =>
+                request.body?.toLowerCase().includes(field)
+              )
+            ) {
+              delete request.body
+            }
+            return request
+          },
+          responseSanitizer(response) {
+            if (
+              ['secret', 'credential', 'password', 'private'].some((field) =>
+                response.body?.toLowerCase().includes(field)
+              )
+            ) {
+              delete response.body
+            }
+            return response
+          },
+        },
       })
     }
   }, [])
