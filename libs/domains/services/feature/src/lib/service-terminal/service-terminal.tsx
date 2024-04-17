@@ -28,7 +28,7 @@ export function ServiceTerminal({
 
   const { setOpen } = useContext(ServiceTerminalContext)
   const MIN_TERMINAL_HEIGHT = 248
-  const MAX_TERMINAL_HEIGHT = document.body.scrollHeight - 64 - 60 // 64 (navbar) + 60 (terminal header)
+  const MAX_TERMINAL_HEIGHT = document.body.clientHeight - 64 - 60 // 64 (navbar) + 60 (terminal header)
   const [terminalParentHeight, setTerminalParentHeight] = useState(MIN_TERMINAL_HEIGHT)
   const [attachAddon, setAttachAddon] = useState<AttachAddon | undefined>(undefined)
   const [fitAddon, setFitAddon] = useState<FitAddon | undefined>(undefined)
