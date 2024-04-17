@@ -52,8 +52,8 @@ export function ServiceTerminal({
     (_: QueryClient, event: Event) => {
       const websocket = event.target as WebSocket
       const fitAddon = new FitAddon()
-      // As WS are open twice in dev mode / strict mode, we need to keep the same array ref to properly memoize
-      setAddons((addons) => addons.splice(0, addons.length, fitAddon, new AttachAddon(websocket)))
+      // As WS are open twice in dev mode / strict mode it doesn't happens in production
+      setAddons([fitAddon, new AttachAddon(websocket)])
     },
     [setAddons]
   )
