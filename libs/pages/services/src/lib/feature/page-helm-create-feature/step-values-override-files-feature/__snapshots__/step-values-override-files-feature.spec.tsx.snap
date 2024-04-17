@@ -55,45 +55,6 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
                 class="flex flex-col gap-4"
               >
                 <div
-                  class="flex flex-row gap-x-3 p-3 border rounded border-yellow-600 bg-yellow-50 text-yellow-700 text-xs"
-                  data-accent-color="yellow"
-                >
-                  <div
-                    class="-order-2 text-base leading-6"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="fa-regular fa-info-circle "
-                    />
-                  </div>
-                  <div
-                    class="-order-1 mr-auto gap-x-3 text-neutral-400"
-                  >
-                    <span
-                      class="block font-medium leading-6"
-                    >
-                      Add the Qovery macros to your override
-                    </span>
-                    <p
-                      class="mb-1"
-                    >
-                      To get all the Qovery functionalities (Logs, Statuses, Helm stop and restart), add the macro “qovery.labels.service” and "qovery.annotations.service" within the field managing the labels/annotations assigned to the deployed Pods/Deployments/Services/Jobs.
-                    </p>
-                    <a
-                      class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-sky-500 hover:text-sky-600 text-xs"
-                      href="https://hub.qovery.com/docs/using-qovery/configuration/helm/#values"
-                      rel="noopener noreferrer"
-                      target="_blank"
-                    >
-                      Click here for more details
-                      <i
-                        aria-hidden="true"
-                        class="fa-solid fa-arrow-up-right-from-square text-2xs leading-4"
-                      />
-                    </a>
-                  </div>
-                </div>
-                <div
                   class=""
                 >
                   <div
@@ -563,45 +524,6 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a yaml 1`] = `
               <div
                 class="flex flex-col gap-4"
               >
-                <div
-                  class="flex flex-row gap-x-3 p-3 border rounded border-yellow-600 bg-yellow-50 text-yellow-700 text-xs"
-                  data-accent-color="yellow"
-                >
-                  <div
-                    class="-order-2 text-base leading-6"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="fa-regular fa-info-circle "
-                    />
-                  </div>
-                  <div
-                    class="-order-1 mr-auto gap-x-3 text-neutral-400"
-                  >
-                    <span
-                      class="block font-medium leading-6"
-                    >
-                      Add the Qovery macros to your override
-                    </span>
-                    <p
-                      class="mb-1"
-                    >
-                      To get all the Qovery functionalities (Logs, Statuses, Helm stop and restart), add the macro “qovery.labels.service” and "qovery.annotations.service" within the field managing the labels/annotations assigned to the deployed Pods/Deployments/Services/Jobs.
-                    </p>
-                    <a
-                      class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-sky-500 hover:text-sky-600 text-xs"
-                      href="https://hub.qovery.com/docs/using-qovery/configuration/helm/#values"
-                      rel="noopener noreferrer"
-                      target="_blank"
-                    >
-                      Click here for more details
-                      <i
-                        aria-hidden="true"
-                        class="fa-solid fa-arrow-up-right-from-square text-2xs leading-4"
-                      />
-                    </a>
-                  </div>
-                </div>
                 <div
                   class=""
                 >
