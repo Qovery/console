@@ -3,6 +3,8 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/design-system-e2e/src",
   "projectType": "application",
+  "tags": [],
+  "implicitDependencies": ["shared-ui"],
   "targets": {
     "e2e": {
       "executor": "@nx/cypress:cypress",
@@ -18,12 +20,7 @@
     },
     "lint": {
       "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["apps/design-system-e2e/**/*.{js,ts}"]
-      }
+      "outputs": ["{options.outputFile}"]
     }
-  },
-  "tags": [],
-  "implicitDependencies": ["shared-ui"]
+  }
 }

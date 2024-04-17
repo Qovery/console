@@ -3,14 +3,11 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/domains/service-helm/data-access/src",
   "projectType": "library",
+  "tags": ["scope:domain", "type:data-access", "slice:services"],
   "targets": {
     "lint": {
       "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["libs/domains/service-helm/data-access/**/*.ts"]
-      }
+      "outputs": ["{options.outputFile}"]
     }
-  },
-  "tags": ["scope:domain", "type:data-access", "slice:services"]
+  }
 }
