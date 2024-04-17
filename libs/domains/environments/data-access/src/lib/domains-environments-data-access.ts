@@ -38,6 +38,7 @@ export const environments = createQueryKeys('environments', {
   runningStatus: (environmentId: string) => ({
     queryKey: [environmentId],
     queryFn() {
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
       return new Promise<{ state: RunningState } | null>(() => {})
     },
   }),

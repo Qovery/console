@@ -10,9 +10,11 @@ jest.mock('react-router-dom', () => ({
   useLocation: jest.fn(),
 }))
 
+const useLocationMock = useLocation as jest.Mock
+
 describe('GithubApplicationCallbackFeature', () => {
   beforeEach(() => {
-    ;(useLocation as jest.Mock).mockReturnValue({
+    useLocationMock.mockReturnValue({
       search:
         '?code=2228e6d764186b620824&installation_id=34409858&setup_action=install&state=7575b658-9a86-488c-b308-a79fb8050d21',
       pathname: 'login',
@@ -25,7 +27,7 @@ describe('GithubApplicationCallbackFeature', () => {
   })
 
   it('should navigate to root if a query param is missing', async () => {
-    ;(useLocation as jest.Mock).mockReturnValue({
+    useLocationMock.mockReturnValue({
       search: '?state=7575b658-9a86-488c-b308-a79fb8050d21',
       pathname: 'login',
     })

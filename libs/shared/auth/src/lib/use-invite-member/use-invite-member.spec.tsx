@@ -12,6 +12,8 @@ jest.mock('react-router-dom', () => ({
   useLocation: jest.fn(),
 }))
 
+const useLocationMock = useLocation as jest.Mock
+
 describe('useInviteMember Hook', () => {
   beforeEach(() => {
     localStorage.clear()
@@ -19,7 +21,7 @@ describe('useInviteMember Hook', () => {
 
   it('should store the tokens from the query inside localstorage and remove redirection from localStorage', async () => {
     localStorage.setItem('redirectLoginUri', '/organization/123')
-    ;(useLocation as jest.Mock).mockReturnValue({
+    useLocationMock.mockReturnValue({
       search: '?inviteToken=123&organization=456',
       pathname: 'login',
     })
@@ -39,7 +41,7 @@ describe('useInviteMember Hook', () => {
   it('should redirect to the acceptation page if token found in localStorage', async () => {
     localStorage.setItem('inviteToken', '123')
     localStorage.setItem('inviteOrganizationId', '456')
-    ;(useLocation as jest.Mock).mockReturnValue({
+    useLocationMock.mockReturnValue({
       search: '',
       pathname: '/organization',
     })
@@ -60,7 +62,7 @@ describe('useInviteMember Hook', () => {
   })
 
   it('should not redirect if we are already on login', async () => {
-    ;(useLocation as jest.Mock).mockReturnValue({
+    useLocationMock.mockReturnValue({
       search: '?inviteToken=123&organization=456',
       pathname: LOGIN_URL,
     })
@@ -81,7 +83,7 @@ describe('useInviteMember Hook', () => {
   })
 
   it('should not redirect if we are already on accept page', async () => {
-    ;(useLocation as jest.Mock).mockReturnValue({
+    useLocationMock.mockReturnValue({
       search: '?inviteToken=123&organization=456',
       pathname: ACCEPT_INVITATION_URL,
     })
@@ -105,7 +107,7 @@ describe('useInviteMember Hook', () => {
   it('should remove the inviteToken from localStorage', async () => {
     localStorage.setItem('inviteToken', '123')
     localStorage.setItem('inviteOrganizationId', '456')
-    ;(useLocation as jest.Mock).mockReturnValue({
+    useLocationMock.mockReturnValue({
       search: '?inviteToken=123&organization=456',
       pathname: ACCEPT_INVITATION_URL,
     })

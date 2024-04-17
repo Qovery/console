@@ -6,6 +6,7 @@ export const ServiceTerminalContext = createContext<{
   setOpen: (open: boolean) => void
 }>({
   open: false,
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   setOpen: () => {},
 })
 

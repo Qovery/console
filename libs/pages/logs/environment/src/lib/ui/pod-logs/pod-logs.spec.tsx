@@ -2,7 +2,7 @@ import { applicationFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import PodLogs, { type PodLogsProps } from './pod-logs'
 
-window.HTMLElement.prototype.scroll = function () {}
+window.HTMLElement.prototype.scroll = jest.fn()
 
 describe('PodLogs', () => {
   const props: PodLogsProps = {

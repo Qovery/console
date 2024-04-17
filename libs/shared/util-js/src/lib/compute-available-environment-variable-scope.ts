@@ -26,7 +26,7 @@ export const computeAvailableScope = (
   scope?: APIVariableScopeEnum,
   includeBuiltIn?: boolean,
   serviceType?: ServiceType,
-  excludeCurrentScope: boolean = false
+  excludeCurrentScope = false
 ): APIVariableScopeEnum[] => {
   const scopeByServiceType = match(serviceType)
     .with('APPLICATION', () => APIVariableScopeEnum.APPLICATION)
