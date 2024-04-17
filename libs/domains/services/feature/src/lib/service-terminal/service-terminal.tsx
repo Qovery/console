@@ -71,7 +71,9 @@ export function ServiceTerminal({
   const onKeyUpHandler = useCallback((event: KeyboardEvent) => event.key === 'Escape' && setOpen(false), [setOpen])
 
   // Necesssary to calculate the number of rows and columns (tty) for the terminal
-  const rows = Math.ceil(document.body.clientHeight / 18)
+  // https://github.com/xtermjs/xterm.js/issues/1412#issuecomment-724421101
+  // 16 is the font height
+  const rows = Math.ceil(document.body.clientHeight / 16)
   const cols = Math.ceil(document.body.clientWidth / 8)
 
   useReactQueryWsSubscription({
