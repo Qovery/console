@@ -7,7 +7,7 @@ const mockCluster = clusterFactoryMock(1)[0]
 describe('PageSettingsKubeconfig', () => {
   const props: PageSettingsKubeconfigProps = {
     cluster: mockCluster,
-    onSubmit: () => {},
+    onSubmit: jest.fn(),
   }
 
   it('should render successfully', async () => {

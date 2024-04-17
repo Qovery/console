@@ -187,7 +187,7 @@ export function PodsMetrics({ environmentId, serviceId, children }: PodsMetricsP
       },
     })
 
-    const startedAtColumn = (header: string = 'Age', dateFormat: 'relative' | 'absolute' = 'relative') =>
+    const startedAtColumn = (header = 'Age', dateFormat: 'relative' | 'absolute' = 'relative') =>
       columnHelper.accessor('started_at', {
         header,
         cell: (info) => {

@@ -27,17 +27,21 @@ export const defaultContext = {
   openModal: false,
   setOpenModal: () => true,
   setContentModal: () => <></>,
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   setOptionsModal: () => {},
   optionsModal: {
     width: 488,
     fullScreen: false,
   },
   alertClickOutside: false,
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   enableAlertClickOutside: () => {},
   modalAlertOpen: false,
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   setModalAlertOpen: () => {},
 
   alertModalChoice: undefined,
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   setAlertModalChoice: () => {},
 }
 

@@ -26,7 +26,7 @@ export function CustomFilterFeature({ handleClearFilter }: CustomFilterFeaturePr
   const { data: environments } = useEnvironments({ projectId })
 
   // NOTE: - ENVIRONMENT: we don't display target input if no project selected
-  const displayEventTargets: boolean = Boolean(
+  const displayEventTargets = Boolean(
     targetType &&
       (targetType === OrganizationEventTargetType.ENVIRONMENT
         ? !!projectId

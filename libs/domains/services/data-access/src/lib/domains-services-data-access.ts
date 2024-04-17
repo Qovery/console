@@ -159,6 +159,7 @@ export const services = createQueryKeys('services', {
     queryKey: [environmentId, serviceId],
     // NOTE: Value is set by WebSocket
     queryFn() {
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
       return new Promise<Status | null>(() => {})
     },
   }),
@@ -166,6 +167,7 @@ export const services = createQueryKeys('services', {
     queryKey: [environmentId, serviceId],
     // NOTE: Value is set by WebSocket
     queryFn() {
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
       return new Promise<ApplicationStatusDto | DatabaseStatusDto | null>(() => {})
     },
   }),
@@ -173,6 +175,7 @@ export const services = createQueryKeys('services', {
     queryKey: [environmentId, serviceId],
     // NOTE: Value is set by WebSocket
     queryFn() {
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
       return new Promise<Array<ServiceMetricsDto> | null>(() => {})
     },
   }),

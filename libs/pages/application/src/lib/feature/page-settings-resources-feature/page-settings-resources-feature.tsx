@@ -17,7 +17,7 @@ export function SettingsResourcesFeature({ service, environment }: SettingsResou
   const { mutate: editService, isLoading: isLoadingService } = useEditService({ environmentId: environment.id })
 
   const defaultInstances = match(service)
-    .with({ serviceType: 'JOB' }, () => {})
+    .with({ serviceType: 'JOB' }, () => ({}))
     .otherwise((s) => ({
       min_running_instances: s.min_running_instances || 1,
       max_running_instances: s.max_running_instances || 1,

@@ -16,6 +16,7 @@ export const ApplicationContext = createContext<{
   setShowHideAllEnvironmentVariablesValues: (b: boolean) => void
 }>({
   showHideAllEnvironmentVariablesValues: false,
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   setShowHideAllEnvironmentVariablesValues: (b: boolean) => {},
 })
 

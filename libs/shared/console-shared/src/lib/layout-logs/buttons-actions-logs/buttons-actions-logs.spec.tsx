@@ -2,7 +2,7 @@ import { act, render } from '__tests__/utils/setup-jest'
 import { type RefObject } from 'react'
 import ButtonsActionsLogs, { type ButtonsActionsLogsProps } from './buttons-actions-logs'
 
-window.HTMLElement.prototype.scroll = function () {}
+window.HTMLElement.prototype.scroll = jest.fn()
 
 const refScrollSection: RefObject<HTMLDivElement> = {
   current: document.createElement('div'),

@@ -146,13 +146,13 @@ const rows = [
 describe('ServiceListActionBar', () => {
   it('should render successfully', () => {
     const { baseElement } = renderWithProviders(
-      <ServiceListActionBar environment={environmentMock} selectedRows={[]} resetRowSelection={() => {}} />
+      <ServiceListActionBar environment={environmentMock} selectedRows={[]} resetRowSelection={jest.fn()} />
     )
     expect(baseElement).toBeTruthy()
   })
   it('should match snapshot', () => {
     const { baseElement } = renderWithProviders(
-      <ServiceListActionBar environment={environmentMock} selectedRows={rows} resetRowSelection={() => {}} />
+      <ServiceListActionBar environment={environmentMock} selectedRows={rows} resetRowSelection={jest.fn()} />
     )
     expect(baseElement).toMatchSnapshot()
   })

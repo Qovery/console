@@ -4,9 +4,9 @@ interface ServiceStageIdsContextValues {
   stageId: string
   updateStageId: (stageId: string) => void
 }
-
 export const ServiceStageIdsContext = createContext<ServiceStageIdsContextValues>({
   stageId: '',
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   updateStageId: () => {},
 })
 
