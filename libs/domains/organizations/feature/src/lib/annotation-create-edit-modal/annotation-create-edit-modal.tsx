@@ -9,6 +9,7 @@ import { useEditAnnotationsGroup } from '../hooks/use-edit-annotations-group/use
 
 type ScopeEnum = keyof typeof OrganizationAnnotationsGroupScopeEnum
 
+// Convert scope for default values
 export function convertScopeEnumToObject(scopes: OrganizationAnnotationsGroupScopeEnum[]): { [key: string]: boolean } {
   return Object.keys(OrganizationAnnotationsGroupScopeEnum).reduce((acc, key) => {
     acc[key] = scopes.includes(OrganizationAnnotationsGroupScopeEnum[key as ScopeEnum])
