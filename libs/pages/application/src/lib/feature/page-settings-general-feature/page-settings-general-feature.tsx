@@ -8,6 +8,7 @@ import {
   type HelmRequestAllOfSourceOneOf1,
   type JobRequest,
 } from 'qovery-typescript-axios'
+import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { P, match } from 'ts-pattern'
@@ -172,7 +173,7 @@ export function PageSettingsGeneralFeature() {
   const { data: organization } = useOrganization({ organizationId })
   const { data: service } = useService({ environmentId, serviceId: applicationId })
 
-  const { data: annotationsGroup = [] } = useAnnotationsGroup({
+  const { data: annotationsGroup } = useAnnotationsGroup({
     serviceId: applicationId,
     serviceType: service?.serviceType !== 'HELM' ? service?.serviceType : 'APPLICATION',
   })
@@ -195,7 +196,7 @@ export function PageSettingsGeneralFeature() {
       build_mode: service.build_mode,
       image_entry_point: service.entrypoint,
       cmd_arguments: (service.arguments && service.arguments.length && JSON.stringify(service.arguments)) || '',
-      annotations_groups: annotationsGroup.map((group) => group.id),
+      annotations_groups: annotationsGroup?.map((group) => group.id),
     }))
     .with({ serviceType: 'CONTAINER' }, (service) => ({
       registry: service.registry?.id,
@@ -204,7 +205,7 @@ export function PageSettingsGeneralFeature() {
       image_entry_point: service.entrypoint,
       auto_deploy: service.auto_deploy,
       cmd_arguments: (service.arguments && service.arguments.length && JSON.stringify(service.arguments)) || '',
-      annotations_groups: annotationsGroup.map((group) => group.id),
+      annotations_groups: annotationsGroup?.map((group) => group.id),
     }))
     .with({ serviceType: 'JOB' }, (service) => {
       const jobContainerSource = isJobContainerSource(service.source) ? service.source.image : undefined
@@ -216,7 +217,7 @@ export function PageSettingsGeneralFeature() {
         registry: jobContainerSource?.registry_id,
         image_name: jobContainerSource?.image_name,
         image_tag: jobContainerSource?.tag,
-        annotations_groups: annotationsGroup.map((group) => group.id),
+        annotations_groups: annotationsGroup?.map((group) => group.id),
       }
     })
     .with({ serviceType: 'HELM' }, (service) => ({
@@ -240,6 +241,13 @@ export function PageSettingsGeneralFeature() {
       ...defaultValues,
     },
   })
+
+  useEffect(() => {
+    methods.setValue(
+      'annotations_groups',
+      annotationsGroup?.map((group) => group.id)
+    )
+  }, [methods, annotationsGroup])
 
   const onSubmit = methods.handleSubmit((data) => {
     if (!service) return
@@ -292,7 +300,7 @@ export function PageSettingsGeneralFeature() {
       serviceId: string,
       serviceType: Extract<ServiceType, 'APPLICATION' | 'CONTAINER' | 'JOB'>
     ) {
-      const annotationsGroupIds = annotationsGroup.map(({ id }) => id) ?? []
+      const annotationsGroupIds = annotationsGroup?.map(({ id }) => id) || []
       const dataAnnotationsGroupIds = data['annotations_groups'] ?? []
 
       const addedAnnotationsGroup = dataAnnotationsGroupIds.filter((id) => !annotationsGroupIds.includes(id))
