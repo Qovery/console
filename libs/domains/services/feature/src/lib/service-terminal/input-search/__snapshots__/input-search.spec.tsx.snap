@@ -39,17 +39,20 @@ exports[`InputSearch should match snapshot 1`] = `
         />
       </div>
       <div
-        class="mt-1 bg-neutral-600 p-2 rounded w-full max-h-40 overflow-hidden min-w-56 hidden"
+        class="mt-1 bg-neutral-600 p-2 rounded w-full max-h-40 overflow-y-auto min-w-56 hidden"
       >
         <ul
           aria-labelledby="downshift-:r6:-label"
-          class="overflow-scroll"
           id="downshift-:r6:-menu"
           role="listbox"
         >
           <p
-            class="w-full text-center text-neutral-50 text-xs text-medium"
+            class="flex flex-col w-full text-center text-neutral-50 text-xs text-medium py-2"
           >
+            <i
+              aria-hidden="true"
+              class="fa-solid fa-wave-pulse block mb-1"
+            />
             No results found
           </p>
         </ul>
@@ -98,17 +101,20 @@ exports[`InputSearch should match with snapshot 1`] = `
         />
       </div>
       <div
-        class="mt-1 bg-neutral-600 p-2 rounded w-full max-h-40 overflow-hidden min-w-56 hidden"
+        class="mt-1 bg-neutral-600 p-2 rounded w-full max-h-40 overflow-y-auto min-w-56 hidden"
       >
         <ul
           aria-labelledby="downshift-:rd:-label"
-          class="overflow-scroll"
           id="downshift-:rd:-menu"
           role="listbox"
         >
           <p
-            class="w-full text-center text-neutral-50 text-xs text-medium"
+            class="flex flex-col w-full text-center text-neutral-50 text-xs text-medium py-2"
           >
+            <i
+              aria-hidden="true"
+              class="fa-solid fa-wave-pulse block mb-1"
+            />
             No results found
           </p>
         </ul>

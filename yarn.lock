@@ -3627,6 +3627,7 @@ __metadata:
     "@typescript-eslint/parser": ^6.2.0
     "@uidotdev/usehooks": ^2.2.0
     "@xterm/addon-attach": ^0.10.0
+    "@xterm/addon-fit": ^0.9.0
     "@xterm/xterm": ^5.4.0
     ansi-to-react: ^6.1.6
     autoprefixer: 10.4.13
@@ -7741,6 +7742,15 @@ __metadata:
   peerDependencies:
     "@xterm/xterm": ^5.0.0
   checksum: e9238294c16334dcdc58d7cbafc56837cb5b523ec03755c4d14226931ba94ec2303ca912c441d471e8fcfb8b05a02f5a3988dc5f24c305f2340b21f86491e296
+  languageName: node
+  linkType: hard
+
+"@xterm/addon-fit@npm:^0.9.0":
+  version: 0.9.0
+  resolution: "@xterm/addon-fit@npm:0.9.0"
+  peerDependencies:
+    "@xterm/xterm": ^5.0.0
+  checksum: 2417b3f9a6e2cd671aac179df6d71570aed81f27a9e4fa704a7af002dc754dce7a8f28c9d7d5865d79b4ae45c3be099ea0aa8cac6bd093dd5cd56ad883d81800
   languageName: node
   linkType: hard
 

@@ -1,10 +1,10 @@
-import { type ITerminalAddon, type ITerminalOptions, Terminal } from '@xterm/xterm'
+import { type ITerminalAddon, type ITerminalInitOnlyOptions, type ITerminalOptions, Terminal } from '@xterm/xterm'
 import '@xterm/xterm/css/xterm.css'
 import { type ComponentPropsWithoutRef, useEffect, useRef, useState } from 'react'
 
 export interface UseXTermProps {
   addons?: ITerminalAddon[]
-  options?: ITerminalOptions
+  options?: ITerminalOptions & ITerminalInitOnlyOptions
   listeners?: {
     onBinary?(data: string): void
     onCursorMove?(): void
@@ -33,8 +33,6 @@ export function useXTerm({ options, addons, listeners }: UseXTermProps = {}) {
       },
       cursorStyle: 'underline',
       cursorBlink: false,
-      rows: 15,
-      cols: 100,
       ...options,
     })
 

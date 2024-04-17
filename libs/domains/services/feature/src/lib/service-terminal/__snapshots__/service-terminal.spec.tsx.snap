@@ -4,26 +4,40 @@ exports[`ServiceTerminal should match snapshot 1`] = `
 <body>
   <div />
   <div
-    class="fixed bottom-0 left-0 w-full animate-slidein-up-md-faded"
+    class="fixed bottom-0 left-0 w-full bg-neutral-650 animate-slidein-up-md-faded"
   >
+    <button
+      class="flex items-center justify-center h-4 w-full transition-colors bg-neutral-550 hover:bg-neutral-650 border-t border-neutral-500"
+      type="button"
+    >
+      <i
+        aria-hidden="true"
+        class="fa-regular fa-grip-lines text-white"
+      />
+    </button>
     <div
-      class="flex justify-between h-11 px-4 py-2 bg-neutral-650 border-y border-neutral-500"
+      class="flex justify-between h-11 px-4 py-2 border-y border-neutral-500"
     >
       <div
         class="flex gap-2"
       />
-      <button
-        class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded bg-neutral-500 active:bg-neutral-600 hover:bg-neutral-400 text-white disabled:text-neutral-300 disabled:bg-neutral-100"
+      <div
+        class="flex items-center gap-1"
       >
-        Close shell
-        <i
-          aria-hidden="true"
-          class="fa-solid fa-xmark ml-2 text-sm"
-        />
-      </button>
+        <button
+          class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded bg-neutral-500 active:bg-neutral-600 hover:bg-neutral-400 text-white disabled:text-neutral-300 disabled:bg-neutral-100"
+        >
+          Close shell
+          <i
+            aria-hidden="true"
+            class="fa-solid fa-xmark ml-2 text-sm"
+          />
+        </button>
+      </div>
     </div>
     <div
-      class="bg-neutral-700 px-4 py-2 min-h-[272px]"
+      class="bg-neutral-700 px-4 py-2 min-h-[248px]"
+      style="height: 248px;"
     >
       <div
         class="flex items-start justify-center p-5 h-40"
