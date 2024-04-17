@@ -33,17 +33,14 @@ describe('AnnotationCreateEditModal', () => {
   })
 
   it('should correctly convert array of enums to object', () => {
-    const input = [OrganizationAnnotationsGroupScopeEnum.CONFIG_MAPS, OrganizationAnnotationsGroupScopeEnum.CRON_JOBS]
+    const input = [OrganizationAnnotationsGroupScopeEnum.HPA, OrganizationAnnotationsGroupScopeEnum.CRON_JOBS]
     const expected = { CONFIG_MAPS: true, CRON_JOBS: true }
     expect(convertScopeEnumToObject(input)).toMatchObject(expected)
   })
 
   it('should correctly convert object to array of enums', () => {
     const input = { CONFIG_MAPS: true, CRON_JOBS: true }
-    const expected = [
-      OrganizationAnnotationsGroupScopeEnum.CONFIG_MAPS,
-      OrganizationAnnotationsGroupScopeEnum.CRON_JOBS,
-    ]
+    const expected = [OrganizationAnnotationsGroupScopeEnum.HPA, OrganizationAnnotationsGroupScopeEnum.CRON_JOBS]
     expect(convertScopeObjectToEnum(input)).toEqual(expected)
   })
 
