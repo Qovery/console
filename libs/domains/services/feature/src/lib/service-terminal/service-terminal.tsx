@@ -27,6 +27,9 @@ export function ServiceTerminal({
   const { data: runningStatuses, isLoading: isRunningStatusesLoading } = useRunningStatus({ environmentId, serviceId })
 
   const { setOpen } = useContext(ServiceTerminalContext)
+  const MIN_TERMINAL_HEIGHT = 248
+  const MAX_TERMINAL_HEIGHT = document.body.scrollHeight - 64 - 60 // 64 (navbar) + 60 (terminal header)
+  const [terminalParentHeight, setTerminalParentHeight] = useState(MIN_TERMINAL_HEIGHT)
   const [attachAddon, setAttachAddon] = useState<AttachAddon | undefined>(undefined)
   const [fitAddon, setFitAddon] = useState<FitAddon | undefined>(undefined)
 
@@ -76,10 +79,7 @@ export function ServiceTerminal({
     onClose: onCloseHandler,
   })
 
-  const [terminalParentHeight, setTerminalParentHeight] = useState(248)
-  const maxTerminalHeight = document.body.scrollHeight - 64 - 60 // 64 (navbar) + 60 (terminal header)
-
-  const handler = (mouseDownEvent: MouseDownEvent<HTMLButtonElement>) => {
+  const handleMouseDown = (mouseDownEvent: MouseDownEvent<HTMLButtonElement>) => {
     const startYPosition = mouseDownEvent.pageY
     const startHeight = terminalParentHeight
 
@@ -87,16 +87,7 @@ export function ServiceTerminal({
       const deltaY = mouseMoveEvent.pageY - startYPosition
       const newParentHeight = startHeight - deltaY
 
-      if (newParentHeight >= maxTerminalHeight) {
-        // Expand terminal height
-        setTerminalParentHeight(maxTerminalHeight)
-      } else if (newParentHeight <= 248) {
-        // Shrink terminal height
-        setTerminalParentHeight(248)
-      } else {
-        // Resize terminal height
-        setTerminalParentHeight(newParentHeight)
-      }
+      setTerminalParentHeight(Math.max(Math.min(newParentHeight, MAX_TERMINAL_HEIGHT), MIN_TERMINAL_HEIGHT))
 
       fitAddon && fitAddon.fit()
     }
@@ -131,7 +122,7 @@ export function ServiceTerminal({
       <button
         className="flex items-center justify-center h-4 w-full transition-colors bg-neutral-550 hover:bg-neutral-650 border-t border-neutral-500"
         type="button"
-        onMouseDown={handler}
+        onMouseDown={handleMouseDown}
       >
         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none" viewBox="0 0 12 12">
           <path
@@ -169,16 +160,16 @@ export function ServiceTerminal({
             <Button
               color="neutral"
               onClick={() => {
-                terminalParentHeight === maxTerminalHeight
-                  ? setTerminalParentHeight(248)
-                  : setTerminalParentHeight(maxTerminalHeight)
+                terminalParentHeight === MAX_TERMINAL_HEIGHT
+                  ? setTerminalParentHeight(MIN_TERMINAL_HEIGHT)
+                  : setTerminalParentHeight(MAX_TERMINAL_HEIGHT)
 
                 // Delay needed to fit the terminal after the height change
                 setTimeout(() => fitAddon.fit(), 0)
               }}
             >
               <Icon
-                iconName={terminalParentHeight === maxTerminalHeight ? 'chevron-down' : 'chevron-up'}
+                iconName={terminalParentHeight === MAX_TERMINAL_HEIGHT ? 'chevron-down' : 'chevron-up'}
                 className="text-sm"
               />
             </Button>
