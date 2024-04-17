@@ -1,13 +1,24 @@
 import { type QueryClient } from '@tanstack/react-query'
 import { AttachAddon } from '@xterm/addon-attach'
 import { FitAddon } from '@xterm/addon-fit'
-import { type MouseEvent as MouseDownEvent, useCallback, useContext, useMemo, useState } from 'react'
+import { type ITerminalAddon } from '@xterm/xterm'
+import {
+  type KeyboardEvent,
+  type MouseEvent as MouseDownEvent,
+  memo,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
 import { createPortal } from 'react-dom'
 import { Button, Icon, LoaderSpinner, XTerm, toast } from '@qovery/shared/ui'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
 import { useRunningStatus } from '../..'
 import { InputSearch } from './input-search/input-search'
 import { ServiceTerminalContext } from './service-terminal-provider'
+
+const MemoizedXTerm = memo(XTerm)
 
 export interface ServiceTerminalProps {
   organizationId: string
@@ -30,8 +41,9 @@ export function ServiceTerminal({
   const MIN_TERMINAL_HEIGHT = 248
   const MAX_TERMINAL_HEIGHT = document.body.clientHeight - 64 - 60 // 64 (navbar) + 60 (terminal header)
   const [terminalParentHeight, setTerminalParentHeight] = useState(MIN_TERMINAL_HEIGHT)
-  const [attachAddon, setAttachAddon] = useState<AttachAddon | undefined>(undefined)
-  const [fitAddon, setFitAddon] = useState<FitAddon | undefined>(undefined)
+  const [addons, setAddons] = useState<Array<ITerminalAddon>>([])
+  const isTerminalLoading = addons.length < 2 || isRunningStatusesLoading
+  const fitAddon = addons[0] as FitAddon | undefined
 
   const [selectedPod, setSelectedPod] = useState<string | undefined>()
   const [selectedContainer, setSelectedContainer] = useState<string | undefined>()
@@ -39,13 +51,11 @@ export function ServiceTerminal({
   const onOpenHandler = useCallback(
     (_: QueryClient, event: Event) => {
       const websocket = event.target as WebSocket
-      setAttachAddon(new AttachAddon(websocket))
-
       const fitAddon = new FitAddon()
-      setFitAddon(fitAddon)
-      fitAddon.fit()
+      // As WS are open twice in dev mode / strict mode, we need to keep the same array ref to properly memoize
+      setAddons((addons) => addons.splice(0, addons.length, fitAddon, new AttachAddon(websocket)))
     },
-    [setFitAddon, setAttachAddon]
+    [setAddons]
   )
 
   const onCloseHandler = useCallback(
@@ -57,6 +67,8 @@ export function ServiceTerminal({
     },
     [setOpen]
   )
+
+  const onKeyUpHandler = useCallback((event: KeyboardEvent) => event.key === 'Escape' && setOpen(false), [setOpen])
 
   // Necesssary to calculate the number of rows and columns (tty) for the terminal
   const rows = Math.ceil(document.body.clientHeight / 18)
@@ -79,6 +91,12 @@ export function ServiceTerminal({
     onClose: onCloseHandler,
   })
 
+  useEffect(() => {
+    if (fitAddon) {
+      setTimeout(() => fitAddon.fit(), 0)
+    }
+  }, [terminalParentHeight, fitAddon])
+
   const handleMouseDown = (mouseDownEvent: MouseDownEvent<HTMLButtonElement>) => {
     const startYPosition = mouseDownEvent.pageY
     const startHeight = terminalParentHeight
@@ -88,8 +106,6 @@ export function ServiceTerminal({
       const newParentHeight = startHeight - deltaY
 
       setTerminalParentHeight(Math.max(Math.min(newParentHeight, MAX_TERMINAL_HEIGHT), MIN_TERMINAL_HEIGHT))
-
-      fitAddon && fitAddon.fit()
     }
 
     function onMouseUp() {
@@ -100,22 +116,6 @@ export function ServiceTerminal({
     document.body.addEventListener('mousemove', onMouseMove)
     document.body.addEventListener('mouseup', onMouseUp)
   }
-
-  // `useMemo` necessary to avoid re-render after terminal resize
-  const TerminalMemoized = useMemo(() => {
-    if (!attachAddon || !fitAddon || isRunningStatusesLoading) return null
-
-    // Delay needed to fit the terminal after the height change
-    setTimeout(() => fitAddon.fit(), 0)
-
-    return (
-      <XTerm
-        className="h-full"
-        onKeyUp={(event) => event.key === 'Escape' && setOpen(false)}
-        addons={[attachAddon, fitAddon]}
-      />
-    )
-  }, [attachAddon, fitAddon, isRunningStatusesLoading, setOpen])
 
   return createPortal(
     <div className="fixed bottom-0 left-0 w-full bg-neutral-650 animate-slidein-up-md-faded">
@@ -158,9 +158,6 @@ export function ServiceTerminal({
                 terminalParentHeight === MAX_TERMINAL_HEIGHT
                   ? setTerminalParentHeight(MIN_TERMINAL_HEIGHT)
                   : setTerminalParentHeight(MAX_TERMINAL_HEIGHT)
-
-                // Delay needed to fit the terminal after the height change
-                setTimeout(() => fitAddon.fit(), 0)
               }}
             >
               <Icon
@@ -176,10 +173,12 @@ export function ServiceTerminal({
         </div>
       </div>
       <div className="bg-neutral-700 px-4 py-2 min-h-[248px]" style={{ height: terminalParentHeight }}>
-        {TerminalMemoized || (
+        {isTerminalLoading ? (
           <div className="flex items-start justify-center p-5 h-40">
             <LoaderSpinner />
           </div>
+        ) : (
+          <MemoizedXTerm className="h-full" onKeyUp={onKeyUpHandler} addons={addons} />
         )}
       </div>
     </div>,
