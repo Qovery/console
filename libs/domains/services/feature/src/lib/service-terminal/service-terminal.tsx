@@ -124,12 +124,7 @@ export function ServiceTerminal({
         type="button"
         onMouseDown={handleMouseDown}
       >
-        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none" viewBox="0 0 12 12">
-          <path
-            fill="#fff"
-            d="M12 4.286a.43.43 0 00-.429-.429H.43A.43.43 0 000 4.286a.43.43 0 00.429.429H11.57A.43.43 0 0012 4.286zm0 3.429a.43.43 0 00-.429-.429H.43A.43.43 0 000 7.715a.43.43 0 00.429.428H11.57A.43.43 0 0012 7.715z"
-          ></path>
-        </svg>
+        <Icon iconName="grip-lines" iconStyle="regular" className="text-white" />
       </button>
       <div className="flex justify-between h-11 px-4 py-2 border-y border-neutral-500">
         <div className="flex gap-2">

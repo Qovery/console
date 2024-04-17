@@ -10,18 +10,10 @@ exports[`ServiceTerminal should match snapshot 1`] = `
       class="flex items-center justify-center h-4 w-full transition-colors bg-neutral-550 hover:bg-neutral-650 border-t border-neutral-500"
       type="button"
     >
-      <svg
-        fill="none"
-        height="12"
-        viewBox="0 0 12 12"
-        width="12"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M12 4.286a.43.43 0 00-.429-.429H.43A.43.43 0 000 4.286a.43.43 0 00.429.429H11.57A.43.43 0 0012 4.286zm0 3.429a.43.43 0 00-.429-.429H.43A.43.43 0 000 7.715a.43.43 0 00.429.428H11.57A.43.43 0 0012 7.715z"
-          fill="#fff"
-        />
-      </svg>
+      <i
+        aria-hidden="true"
+        class="fa-regular fa-grip-lines text-white"
+      />
     </button>
     <div
       class="flex justify-between h-11 px-4 py-2 border-y border-neutral-500"
