@@ -111,7 +111,7 @@ export function ServiceTerminal({
   }
 
   // `useMemo` necessary to avoid re-render after terminal resize
-  const TerminalMemorized = useMemo(() => {
+  const TerminalMemoized = useMemo(() => {
     if (!attachAddon || !fitAddon || isRunningStatusesLoading) return null
 
     // Delay needed to fit the terminal after the height change
@@ -190,7 +190,7 @@ export function ServiceTerminal({
         </div>
       </div>
       <div className="bg-neutral-700 px-4 py-2 min-h-[248px]" style={{ height: terminalParentHeight }}>
-        {TerminalMemorized || (
+        {TerminalMemoized || (
           <div className="flex items-start justify-center p-5 h-40">
             <LoaderSpinner />
           </div>
