@@ -33,17 +33,14 @@ describe('AnnotationCreateEditModal', () => {
   })
 
   it('should correctly convert array of enums to object', () => {
-    const input = [OrganizationAnnotationsGroupScopeEnum.CONFIG_MAPS, OrganizationAnnotationsGroupScopeEnum.CRON_JOBS]
-    const expected = { CONFIG_MAPS: true, CRON_JOBS: true }
+    const input = [OrganizationAnnotationsGroupScopeEnum.HPA, OrganizationAnnotationsGroupScopeEnum.CRON_JOBS]
+    const expected = { HPA: true, CRON_JOBS: true }
     expect(convertScopeEnumToObject(input)).toMatchObject(expected)
   })
 
   it('should correctly convert object to array of enums', () => {
-    const input = { CONFIG_MAPS: true, CRON_JOBS: true }
-    const expected = [
-      OrganizationAnnotationsGroupScopeEnum.CONFIG_MAPS,
-      OrganizationAnnotationsGroupScopeEnum.CRON_JOBS,
-    ]
+    const input = { HPA: true, CRON_JOBS: true }
+    const expected = [OrganizationAnnotationsGroupScopeEnum.HPA, OrganizationAnnotationsGroupScopeEnum.CRON_JOBS]
     expect(convertScopeObjectToEnum(input)).toEqual(expected)
   })
 
@@ -59,7 +56,7 @@ describe('AnnotationCreateEditModal', () => {
     const inputValue = screen.getByTestId('annotations.0.value')
     await userEvent.type(inputValue, 'value')
 
-    const checkboxScope = screen.getByText('CONFIG_MAPS')
+    const checkboxScope = screen.getByText('HPA')
     await userEvent.click(checkboxScope)
 
     const btn = screen.getByRole('button', { name: 'Create' })
@@ -77,7 +74,7 @@ describe('AnnotationCreateEditModal', () => {
             value: 'value',
           },
         ],
-        scopes: ['CONFIG_MAPS'],
+        scopes: ['HPA'],
       },
     })
 
@@ -101,7 +98,7 @@ describe('AnnotationCreateEditModal', () => {
                 value: 'value',
               },
             ],
-            scopes: ['CONFIG_MAPS', 'CRON_JOBS'],
+            scopes: ['HPA', 'CRON_JOBS'],
           }}
         />
       )
@@ -127,7 +124,7 @@ describe('AnnotationCreateEditModal', () => {
             value: 'value',
           },
         ],
-        scopes: ['CONFIG_MAPS', 'CRON_JOBS'],
+        scopes: ['HPA', 'CRON_JOBS'],
       },
     })
 
