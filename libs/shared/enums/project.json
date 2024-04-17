@@ -7,17 +7,13 @@
   "targets": {
     "lint": {
       "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["libs/shared/enums/**/*.{ts,tsx,js,jsx}"]
-      }
+      "outputs": ["{options.outputFile}"]
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/shared/enums"],
       "options": {
-        "jestConfig": "libs/shared/enums/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/shared/enums/jest.config.ts"
       }
     }
   }

@@ -7,17 +7,13 @@
   "targets": {
     "lint": {
       "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["libs/pages/logs/infra/**/*.{ts,tsx,js,jsx}"]
-      }
+      "outputs": ["{options.outputFile}"]
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/pages/logs/infra"],
       "options": {
-        "jestConfig": "libs/pages/logs/infra/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/pages/logs/infra/jest.config.ts"
       }
     }
   }
