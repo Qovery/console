@@ -1,7 +1,7 @@
 import { type GitProviderEnum, type GitTokenResponse, type HelmRequestAllOfSource } from 'qovery-typescript-axios'
 import { type PropsWithChildren, type ReactNode } from 'react'
 import { Controller, type UseFormReturn } from 'react-hook-form'
-import { Callout, ExternalLink, Heading, Icon, InputSelect, Popover, Section } from '@qovery/shared/ui'
+import { ExternalLink, Heading, Icon, InputSelect, Popover, Section } from '@qovery/shared/ui'
 import ValuesOverrideYamlSetting from '../values-override-yaml-setting/values-override-yaml-setting'
 
 export type ValuesOverrideTypes = 'GIT_REPOSITORY' | 'YAML' | 'NONE'
@@ -73,9 +73,8 @@ export function ValuesOverrideFilesSetting({
                   placeholders at deployment time.
                 </li>
                 <li>
-                  To get all the Qovery functionalities, add the macro “qovery.labels.service” and
-                  "qovery.annotations.service" within the field managing the labels/annotations assigned to the deployed
-                  pods. Qovery will automatically replace the macro with a dedicated set of labels/annotations.
+                  To let you access every Qovery functionality, additional Qovery labels and annotations are
+                  automatically injected in some of the Kubernetes objects deployed within your helm.
                 </li>
               </ul>
               <ExternalLink href="https://hub.qovery.com/docs/using-qovery/configuration/helm/#values">
@@ -90,22 +89,6 @@ export function ValuesOverrideFilesSetting({
           </Popover.Root>
         </div>
         <div className="flex flex-col gap-4">
-          <Callout.Root className="text-xs" color="yellow">
-            <Callout.Icon>
-              <Icon iconName="info-circle" iconStyle="regular" />
-            </Callout.Icon>
-            <Callout.Text>
-              <Callout.TextHeading>Add the Qovery macros to your override</Callout.TextHeading>
-              <p className="mb-1">
-                To get all the Qovery functionalities (Logs, Statuses, Helm stop and restart), add the macro
-                “qovery.labels.service” and "qovery.annotations.service" within the field managing the
-                labels/annotations assigned to the deployed Pods/Deployments/Services/Jobs.
-              </p>
-              <ExternalLink size="xs" href="https://hub.qovery.com/docs/using-qovery/configuration/helm/#values">
-                Click here for more details
-              </ExternalLink>
-            </Callout.Text>
-          </Callout.Root>
           <Controller
             name="type"
             control={methods.control}
