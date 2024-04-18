@@ -45,7 +45,7 @@ export function EnvironmentListFilter({ column }: { column: Column<any, unknown>
               ) : (
                 <>
                   {column.columnDef.header?.toString()}
-                  <Icon iconName="angle-down" />
+                  <Icon iconName="chevron-down" />
                 </>
               )}
             </Button>
