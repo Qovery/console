@@ -1,10 +1,9 @@
+import { type QueryClient } from '@tanstack/react-query'
 import { type DeploymentStageWithServicesStatuses, type EnvironmentStatus } from 'qovery-typescript-axios'
 import { useCallback, useState } from 'react'
 import { Route, Routes, matchPath, useLocation, useParams } from 'react-router-dom'
-import useWebSocket from 'react-use-websocket'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { useServices } from '@qovery/domains/services/feature'
-import { useAuth } from '@qovery/shared/auth'
 import {
   DEPLOYMENT_LOGS_URL,
   DEPLOYMENT_LOGS_VERSION_URL,
@@ -13,6 +12,7 @@ import {
 } from '@qovery/shared/routes'
 import { Icon } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
 import DeploymentLogsFeature from './feature/deployment-logs-feature/deployment-logs-feature'
 import PodLogsFeature from './feature/pod-logs-feature/pod-logs-feature'
 import { ServiceStageIdsProvider } from './feature/service-stage-ids-context/service-stage-ids-context'
@@ -50,22 +50,28 @@ export function PageEnvironmentLogs() {
   const [statusStages, setStatusStages] = useState<DeploymentStageWithServicesStatuses[]>()
   const [environmentStatus, setEnvironmentStatus] = useState<EnvironmentStatus>()
 
-  const { getAccessTokenSilently } = useAuth()
-
-  const deploymentStatusWithVersionIdUrl: () => Promise<string> = useCallback(async () => {
-    const url = `wss://ws.qovery.com/deployment/status?organization=${organizationId}&cluster=${
-      environment?.cluster_id
-    }&project=${projectId}&environment=${environmentId}${versionId ? `&version=${versionId}` : ''}`
-    const token = await getAccessTokenSilently()
-
-    return new Promise((resolve) => environment?.cluster_id && resolve(url + `&bearer_token=${token}`))
-  }, [organizationId, environment?.cluster_id, projectId, environmentId, getAccessTokenSilently, versionId])
-
-  useWebSocket(deploymentStatusWithVersionIdUrl, {
-    onMessage: (message) => {
-      setStatusStages(JSON.parse(message?.data).stages)
-      setEnvironmentStatus(JSON.parse(message?.data).environment)
+  const messageHandler = useCallback(
+    (
+      _: QueryClient,
+      { stages, environment }: { stages: DeploymentStageWithServicesStatuses[]; environment: EnvironmentStatus }
+    ) => {
+      setStatusStages(stages)
+      setEnvironmentStatus(environment)
     },
+    [setStatusStages, setEnvironmentStatus]
+  )
+  useReactQueryWsSubscription({
+    url: 'wss://ws.qovery.com/deployment/status',
+    urlSearchParams: {
+      organization: organizationId,
+      cluster: environment?.cluster_id,
+      project: projectId,
+      environment: environmentId,
+      version: versionId,
+    },
+    enabled:
+      Boolean(organizationId) && Boolean(environment?.cluster_id) && Boolean(projectId) && Boolean(environmentId),
+    onMessage: messageHandler,
   })
 
   if (!environment) return
