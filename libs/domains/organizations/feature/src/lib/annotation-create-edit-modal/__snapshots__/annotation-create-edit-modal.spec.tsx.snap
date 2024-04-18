@@ -456,60 +456,6 @@ exports[`AnnotationCreateEditModal should match with snatpshot 1`] = `
               aria-checked="false"
               class="group transition bg-neutral-100 border border-neutral-300 rounded-sm hover:border-2 hover:border-brand-500 data-[state=checked]:bg-brand-500 data-[state=checked]:border data-[state=checked]:border-brand-500 data-[state=indeterminate]:border-2 data-[state=indeterminate]:border-brand-500 disabled:border disabled:border-neutral-250 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300 disabled:data-[state=indeterminate]:border-brand-300 mr-3 w-4 h-4"
               data-state="unchecked"
-              id="PERSISTENT_VOLUMES"
-              role="checkbox"
-              type="button"
-              value="on"
-            />
-            <input
-              aria-hidden="true"
-              name="scopes.PERSISTENT_VOLUMES"
-              style="transform: translateX(-100%); position: absolute; pointer-events: none; opacity: 0; margin: 0px; width: 0px; height: 0px;"
-              tabindex="-1"
-              type="checkbox"
-              value="on"
-            />
-            <label
-              class="text-neutral-400 font-medium text-sm"
-              for="PERSISTENT_VOLUMES"
-            >
-              PERSISTENT_VOLUMES
-            </label>
-          </div>
-          <div
-            class="flex items-center mb-2 last:mb-0"
-          >
-            <button
-              aria-checked="false"
-              class="group transition bg-neutral-100 border border-neutral-300 rounded-sm hover:border-2 hover:border-brand-500 data-[state=checked]:bg-brand-500 data-[state=checked]:border data-[state=checked]:border-brand-500 data-[state=indeterminate]:border-2 data-[state=indeterminate]:border-brand-500 disabled:border disabled:border-neutral-250 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300 disabled:data-[state=indeterminate]:border-brand-300 mr-3 w-4 h-4"
-              data-state="unchecked"
-              id="PERSISTENT_VOLUME_CLAIMS"
-              role="checkbox"
-              type="button"
-              value="on"
-            />
-            <input
-              aria-hidden="true"
-              name="scopes.PERSISTENT_VOLUME_CLAIMS"
-              style="transform: translateX(-100%); position: absolute; pointer-events: none; opacity: 0; margin: 0px; width: 0px; height: 0px;"
-              tabindex="-1"
-              type="checkbox"
-              value="on"
-            />
-            <label
-              class="text-neutral-400 font-medium text-sm"
-              for="PERSISTENT_VOLUME_CLAIMS"
-            >
-              PERSISTENT_VOLUME_CLAIMS
-            </label>
-          </div>
-          <div
-            class="flex items-center mb-2 last:mb-0"
-          >
-            <button
-              aria-checked="false"
-              class="group transition bg-neutral-100 border border-neutral-300 rounded-sm hover:border-2 hover:border-brand-500 data-[state=checked]:bg-brand-500 data-[state=checked]:border data-[state=checked]:border-brand-500 data-[state=indeterminate]:border-2 data-[state=indeterminate]:border-brand-500 disabled:border disabled:border-neutral-250 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300 disabled:data-[state=indeterminate]:border-brand-300 mr-3 w-4 h-4"
-              data-state="unchecked"
               id="PODS"
               role="checkbox"
               type="button"
@@ -528,33 +474,6 @@ exports[`AnnotationCreateEditModal should match with snatpshot 1`] = `
               for="PODS"
             >
               PODS
-            </label>
-          </div>
-          <div
-            class="flex items-center mb-2 last:mb-0"
-          >
-            <button
-              aria-checked="false"
-              class="group transition bg-neutral-100 border border-neutral-300 rounded-sm hover:border-2 hover:border-brand-500 data-[state=checked]:bg-brand-500 data-[state=checked]:border data-[state=checked]:border-brand-500 data-[state=indeterminate]:border-2 data-[state=indeterminate]:border-brand-500 disabled:border disabled:border-neutral-250 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300 disabled:data-[state=indeterminate]:border-brand-300 mr-3 w-4 h-4"
-              data-state="unchecked"
-              id="REPLICA_SETS"
-              role="checkbox"
-              type="button"
-              value="on"
-            />
-            <input
-              aria-hidden="true"
-              name="scopes.REPLICA_SETS"
-              style="transform: translateX(-100%); position: absolute; pointer-events: none; opacity: 0; margin: 0px; width: 0px; height: 0px;"
-              tabindex="-1"
-              type="checkbox"
-              value="on"
-            />
-            <label
-              class="text-neutral-400 font-medium text-sm"
-              for="REPLICA_SETS"
-            >
-              REPLICA_SETS
             </label>
           </div>
           <div
