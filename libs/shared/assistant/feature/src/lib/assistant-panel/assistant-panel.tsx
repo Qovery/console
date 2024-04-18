@@ -93,7 +93,10 @@ export function AssistantPanel({ smaller = false, onClose }: AssistantPanelProps
         <button
           className="flex justify-center items-center gap-1.5 px-5 py-4 text-neutral-400 font-medium hover:bg-neutral-150 transition"
           type="button"
-          onClick={() => showIntercomMessenger()}
+          onClick={() => {
+            showIntercomMessenger()
+            onClose()
+          }}
         >
           <Icon iconName="robot" className="text-brand-500" />
           <span className="text-sm">Contact support</span>
