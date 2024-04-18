@@ -23,7 +23,7 @@ export const Primary = {
         <DropdownMenu.Trigger asChild>
           <ActionToolbar.Button>
             <Icon iconName="play" className="mr-4" />
-            <Icon iconName="angle-down" />
+            <Icon iconName="chevron-down" />
           </ActionToolbar.Button>
         </DropdownMenu.Trigger>
         <DropdownMenu.Content>
@@ -54,7 +54,7 @@ export const Brand = {
         <DropdownMenu.Trigger asChild>
           <ActionToolbar.Button color="brand" variant="solid">
             <Icon iconName="play" className="mr-4" />
-            <Icon iconName="angle-down" />
+            <Icon iconName="chevron-down" />
           </ActionToolbar.Button>
         </DropdownMenu.Trigger>
         <DropdownMenu.Content>

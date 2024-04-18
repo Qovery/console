@@ -237,7 +237,7 @@ function MenuManageDeployment({
           <Tooltip content="Manage Deployment">
             <div className="flex items-center justify-center w-full h-full">
               <Icon iconName="play" className="mr-4" />
-              <Icon iconName="angle-down" />
+              <Icon iconName="chevron-down" />
             </div>
           </Tooltip>
         </ActionToolbar.Button>

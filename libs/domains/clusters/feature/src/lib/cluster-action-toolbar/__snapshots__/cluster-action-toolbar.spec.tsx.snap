@@ -44,7 +44,7 @@ exports[`ClusterActionToolbar should match manage deployment snapshot 1`] = `
         />
         <i
           aria-hidden="true"
-          class="fa-solid fa-angle-down "
+          class="fa-solid fa-chevron-down "
         />
       </div>
     </button>
@@ -215,7 +215,7 @@ exports[`ClusterActionToolbar should match other actions snapshot 1`] = `
         />
         <i
           aria-hidden="true"
-          class="fa-solid fa-angle-down "
+          class="fa-solid fa-chevron-down "
         />
       </div>
     </button>

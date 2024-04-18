@@ -45,7 +45,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 Name
                 <i
                   aria-hidden="true"
-                  class="fa-solid fa-angle-down "
+                  class="fa-solid fa-chevron-down "
                 />
               </button>
             </div>
@@ -68,7 +68,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 Service status
                 <i
                   aria-hidden="true"
-                  class="fa-solid fa-angle-down "
+                  class="fa-solid fa-chevron-down "
                 />
               </button>
             </div>
@@ -91,7 +91,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 Last deployment
                 <i
                   aria-hidden="true"
-                  class="fa-solid fa-angle-down "
+                  class="fa-solid fa-chevron-down "
                 />
               </button>
             </div>
