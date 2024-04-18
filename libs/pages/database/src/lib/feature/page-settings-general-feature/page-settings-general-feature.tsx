@@ -1,4 +1,5 @@
 import { DatabaseModeEnum, KubernetesEnum } from 'qovery-typescript-axios'
+import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { useCluster } from '@qovery/domains/clusters/feature'
@@ -51,9 +52,18 @@ export function PageSettingsGeneralFeature() {
       mode: database?.mode,
       version: database?.version,
       accessibility: database?.accessibility,
-      annotations_groups: annotationsGroup.map((group) => group.id) ?? [],
+      annotations_groups: annotationsGroup.map(({ id }) => id) ?? [],
     },
   })
+
+  useEffect(() => {
+    // We are a separate request to get annotations group
+    // To join default values with Service request with need this useEffect
+    methods.setValue(
+      'annotations_groups',
+      annotationsGroup?.map(({ id }) => id)
+    )
+  }, [methods, annotationsGroup])
 
   const onSubmit = methods.handleSubmit((data) => {
     if (data && database) {
@@ -66,16 +76,14 @@ export function PageSettingsGeneralFeature() {
 
       const annotationsGroupIds = annotationsGroup.map(({ id }) => id) ?? []
       const addedAnnotationsGroup = annotations_groups.filter((id) => !annotationsGroupIds.includes(id))
-      addedAnnotationsGroup.length > 0 &&
-        addedAnnotationsGroup.forEach((id) =>
-          addAnnotationsGroup({ serviceId: databaseId, serviceType: 'DATABASE', annotationsGroupId: id })
-        )
+      addedAnnotationsGroup.forEach((id) =>
+        addAnnotationsGroup({ serviceId: databaseId, serviceType: 'DATABASE', annotationsGroupId: id })
+      )
 
       const deletedAnnotationGroup = annotationsGroupIds.filter((id) => !annotations_groups.includes(id))
-      deletedAnnotationGroup.length > 0 &&
-        deletedAnnotationGroup.forEach((id) =>
-          deleteAnnotationGroup({ serviceId: databaseId, serviceType: 'DATABASE', annotationsGroupId: id })
-        )
+      deletedAnnotationGroup.forEach((id) =>
+        deleteAnnotationGroup({ serviceId: databaseId, serviceType: 'DATABASE', annotationsGroupId: id })
+      )
     }
   })
 
