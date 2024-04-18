@@ -1,0 +1,765 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ServiceList should match snapshot 1`] = `
+<div>
+  <table
+    class="divide-y divide-neutral-200 text-neutral-400 w-full text-xs min-w-[800px]"
+  >
+    <thead>
+      <tr>
+        <th
+          class="h-11 px-4 text-left font-medium"
+          style="width: 40%;"
+        >
+          <button
+            class="flex items-center gap-1 cursor-pointer select-none"
+            type="button"
+          >
+            6 variables
+          </button>
+        </th>
+        <th
+          class="h-11 px-4 text-left border-r pl-0 font-medium"
+          style="width: 3%;"
+        />
+        <th
+          class="h-11 px-4 text-left font-medium"
+          style="width: 20%;"
+        >
+          <div
+            class="inline-block relative"
+          >
+            <button
+              aria-controls="radix-:r1k:"
+              aria-expanded="false"
+              aria-haspopup="dialog"
+              class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent text-xs gap-1 whitespace-nowrap"
+              data-state="closed"
+              type="button"
+            >
+              Value
+              <i
+                aria-hidden="true"
+                class="fa-solid fa-chevron-down "
+              />
+            </button>
+          </div>
+        </th>
+        <th
+          class="h-11 px-4 text-left font-medium"
+          style="width: 15%;"
+        >
+          <div
+            class="inline-block relative"
+          >
+            <button
+              aria-controls="radix-:r1n:"
+              aria-expanded="false"
+              aria-haspopup="dialog"
+              class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent text-xs gap-1 whitespace-nowrap"
+              data-state="closed"
+              type="button"
+            >
+              Service link
+              <i
+                aria-hidden="true"
+                class="fa-solid fa-chevron-down "
+              />
+            </button>
+          </div>
+        </th>
+        <th
+          class="h-11 px-4 text-left font-medium"
+          style="width: 10%;"
+        >
+          <div
+            class="inline-block relative"
+          >
+            <button
+              aria-controls="radix-:r1q:"
+              aria-expanded="false"
+              aria-haspopup="dialog"
+              class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent text-xs gap-1 whitespace-nowrap"
+              data-state="closed"
+              type="button"
+            >
+              Scope
+              <i
+                aria-hidden="true"
+                class="fa-solid fa-chevron-down "
+              />
+            </button>
+          </div>
+        </th>
+        <th
+          class="h-11 px-4 text-left font-medium"
+          style="width: 12%;"
+        >
+          <button
+            class="flex items-center gap-1 cursor-pointer select-none"
+            type="button"
+          >
+            Last update
+          </button>
+        </th>
+      </tr>
+    </thead>
+    <tbody
+      class="divide-y divide-neutral-200"
+    >
+      <tr
+        class="hover:bg-neutral-100 h-16 cursor-pointer"
+      >
+        <td
+          class="h-14 px-4 py-0 first:relative"
+        >
+           
+          <span
+            class="truncate text-sm font-medium"
+            data-state="closed"
+          >
+            QOVERY_OUTPUT_JOB_Z33962E52_DB_USERNAME
+          </span>
+        </td>
+        <td
+          class="h-14 px-4 py-0 border-r pl-0 first:relative"
+        >
+          <button
+            aria-expanded="false"
+            aria-haspopup="menu"
+            aria-label="actions"
+            class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-9 px-3 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-transparent"
+            data-state="closed"
+            id="radix-:r1s:"
+            type="button"
+          >
+            <i
+              aria-hidden="true"
+              class="fa-regular fa-ellipsis-vertical mx-1"
+            />
+          </button>
+        </td>
+        <td
+          class="h-14 px-4 py-0 first:relative"
+        >
+          <span
+            class="flex items-center gap-2 text-sm"
+          >
+            <button
+              class="w-4 text-brand-500"
+              data-state="closed"
+              data-testid="toggle-button"
+              type="button"
+            >
+              <i
+                aria-hidden="true"
+                class="fa-solid fa-eye "
+              />
+            </button>
+            <span
+              class="text-neutral-350 text-xl tracking-widest font-medium pt-1.5"
+              data-state="closed"
+              data-testid="hide_value"
+            >
+              *************
+            </span>
+          </span>
+        </td>
+        <td
+          class="h-14 px-4 py-0 first:relative"
+        >
+          <a
+            class="flex gap-2 items-center text-sm font-medium"
+            href="/organization//project//environment//application/33962e52-7883-42fd-8613-85e04229a9b6/general"
+          >
+            rds_terraform
+          </a>
+        </td>
+        <td
+          class="h-14 px-4 py-0 first:relative"
+        >
+          <span
+            class="capitalize text-sm font-medium"
+          >
+            built_in
+          </span>
+        </td>
+        <td
+          class="h-14 px-4 py-0 first:relative"
+        >
+          <span
+            class="text-xs text-neutral-300"
+            data-state="closed"
+          >
+            13 days
+             ago
+          </span>
+        </td>
+      </tr>
+      <tr
+        class="hover:bg-neutral-100 h-16 cursor-pointer"
+      >
+        <td
+          class="h-14 px-4 py-0 first:relative"
+        >
+           
+          <i
+            aria-hidden="true"
+            class="fa-regular fa-arrow-turn-down-right mr-2 ml-1 text-2xs text-neutral-300"
+          />
+          <span
+            class="bg-teal-500 font-bold rounded-sm text-2xs text-neutral-50 px-1 inline-flex items-center h-4 mr-2"
+          >
+            ALIAS
+          </span>
+          <span
+            class="truncate text-sm font-medium"
+            data-state="closed"
+          >
+            DB_USERNAME
+          </span>
+        </td>
+        <td
+          class="h-14 px-4 py-0 border-r pl-0 first:relative"
+        >
+          <button
+            aria-expanded="false"
+            aria-haspopup="menu"
+            aria-label="actions"
+            class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-9 px-3 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-transparent"
+            data-state="closed"
+            id="radix-:r22:"
+            type="button"
+          >
+            <i
+              aria-hidden="true"
+              class="fa-regular fa-ellipsis-vertical mx-1"
+            />
+          </button>
+        </td>
+        <td
+          class="h-14 px-4 py-0 first:relative"
+        />
+        <td
+          class="h-14 px-4 py-0 first:relative"
+        />
+        <td
+          class="h-14 px-4 py-0 first:relative"
+        >
+          <span
+            class="capitalize text-sm font-medium"
+          >
+            environment
+          </span>
+        </td>
+        <td
+          class="h-14 px-4 py-0 first:relative"
+        >
+          <span
+            class="text-xs text-neutral-300"
+            data-state="closed"
+          >
+            6 months
+             ago
+          </span>
+        </td>
+      </tr>
+      <tr
+        class="hover:bg-neutral-100 h-16 cursor-pointer"
+      >
+        <td
+          class="h-14 px-4 py-0 first:relative"
+        >
+           
+          <i
+            aria-hidden="true"
+            class="fa-regular fa-arrow-turn-down-right mr-2 ml-1 text-2xs text-neutral-300"
+          />
+          <span
+            class="bg-teal-500 font-bold rounded-sm text-2xs text-neutral-50 px-1 inline-flex items-center h-4 mr-2"
+          >
+            ALIAS
+          </span>
+          <span
+            class="truncate text-sm font-medium"
+            data-state="closed"
+          >
+            DB_HOST
+          </span>
+        </td>
+        <td
+          class="h-14 px-4 py-0 border-r pl-0 first:relative"
+        >
+          <button
+            aria-expanded="false"
+            aria-haspopup="menu"
+            aria-label="actions"
+            class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-9 px-3 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-transparent"
+            data-state="closed"
+            id="radix-:r26:"
+            type="button"
+          >
+            <i
+              aria-hidden="true"
+              class="fa-regular fa-ellipsis-vertical mx-1"
+            />
+          </button>
+        </td>
+        <td
+          class="h-14 px-4 py-0 first:relative"
+        />
+        <td
+          class="h-14 px-4 py-0 first:relative"
+        />
+        <td
+          class="h-14 px-4 py-0 first:relative"
+        >
+          <span
+            class="capitalize text-sm font-medium"
+          >
+            environment
+          </span>
+        </td>
+        <td
+          class="h-14 px-4 py-0 first:relative"
+        >
+          <span
+            class="text-xs text-neutral-300"
+            data-state="closed"
+          >
+            2 months
+             ago
+          </span>
+        </td>
+      </tr>
+      <tr
+        class="hover:bg-neutral-100 h-16 cursor-pointer"
+      >
+        <td
+          class="h-14 px-4 py-0 first:relative"
+        >
+           
+          <span
+            class="bg-purple-500 font-bold rounded-sm text-2xs text-neutral-50 px-1 inline-flex items-center h-4 mr-2"
+          >
+            FILE
+          </span>
+          <span
+            class="truncate text-sm font-medium"
+            data-state="closed"
+          >
+            grafana_config
+          </span>
+        </td>
+        <td
+          class="h-14 px-4 py-0 border-r pl-0 first:relative"
+        >
+          <button
+            aria-expanded="false"
+            aria-haspopup="menu"
+            aria-label="actions"
+            class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-9 px-3 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-transparent"
+            data-state="closed"
+            id="radix-:r2a:"
+            type="button"
+          >
+            <i
+              aria-hidden="true"
+              class="fa-regular fa-ellipsis-vertical mx-1"
+            />
+          </button>
+        </td>
+        <td
+          class="h-14 px-4 py-0 first:relative"
+        >
+          <div
+            class="flex items-center gap-3"
+          >
+            <i
+              aria-hidden="true"
+              class="fa-solid fa-file-lines ml-0.5 text-neutral-400"
+            />
+            <span
+              class="text-sky-500 hover:underline cursor-pointer"
+            >
+              /tmp/config
+            </span>
+          </div>
+        </td>
+        <td
+          class="h-14 px-4 py-0 first:relative"
+        >
+          <a
+            class="flex gap-2 items-center text-sm font-medium"
+            href="/organization//project//environment//application/037c9e87-e098-4970-8b1f-9a5ffe9e4b89/general"
+          >
+            <svg
+              class="shrink-0 w-4"
+              fill="none"
+              name="APPLICATION"
+              viewBox="0 0 20 20"
+              width="1.5rem"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M8.651 18.034h.001c.416.232.88.35 1.35.34a2.64 2.64 0 001.347-.34h.001l7.051-4.295a.9.9 0 00.43-.343.975.975 0 000-1.086.9.9 0 00-.43-.343l-7.05-4.294h0l-.003-.002a2.858 2.858 0 00-1.347-.339c-.469 0-.93.116-1.348.34h0-.002l-7.049 4.296c-.164.078-.305.2-.41.355a1.101 1.101 0 00-.182.525h0v.007c.016.189.08.37.184.525.104.155.244.279.408.358l7.05 4.296zm9.654-4.492v-.001l-.008.005-7.05 4.303a2.649 2.649 0 01-1.246.313c-.433 0-.86-.107-1.247-.313l-7.05-4.303v-.001l-.008-.003a.697.697 0 01-.343-.266.763.763 0 010-.86.697.697 0 01.343-.267v.001l.008-.004 7.05-4.296a2.648 2.648 0 011.247-.314c.433 0 .86.108 1.246.314l7.05 4.296h0l.008.003a.697.697 0 01.343.267.763.763 0 010 .86.697.697 0 01-.343.266z"
+                fill="#42E8E0"
+                stroke="#42E8E0"
+                stroke-width="0.083"
+              />
+              <path
+                d="M19.166 11.203V8.656l-.442-.26c-.124.794-1.008 1.321-1.753 1.43l-5.052 3.115-2.206.843L2.676 9.95l.164-.097c-.602-.298-.927-.979-1.25-1.596l-.475.298-.282.082v2.593c.019.196.086.384.195.544.109.16.256.288.426.37L8.5 16.44c.464.247.977.376 1.497.376.52 0 1.033-.129 1.497-.376l7.051-4.296c.167-.08.312-.206.42-.363.108-.156.176-.34.197-.533v-.045h.003z"
+                fill="#42E8E0"
+                opacity="0.4"
+              />
+              <path
+                d="M19.166 8.938V7.253l-.442-.26c-.124.794-1.008 1.32-1.753 1.43l-5.052 3.119-2.206.839-7.037-3.834.164-.098c-.602-.297-.927-.974-1.25-1.595l-.475.297-.282.087v1.727c.019.196.086.384.195.544.109.16.256.288.426.37L8.5 14.175c.464.247.977.376 1.497.376.52 0 1.033-.129 1.497-.376l7.051-4.296c.168-.081.313-.207.42-.364.109-.158.176-.342.197-.535v-.042h.003z"
+                fill="url(#paint0_linear_10141_398872)"
+              />
+              <path
+                d="M16.971 8.423l-5.05 3.119-1.919.73v2.28a2.929 2.929 0 001.498-.377l7.05-4.296c.168-.081.313-.207.42-.364.109-.158.177-.342.197-.535V7.253l-.403-.237h-.042c-.136.782-1.013 1.298-1.75 1.407z"
+                fill="#0F054C"
+                opacity="0.3"
+              />
+              <path
+                d="M8.502 12.452L1.454 8.163c-.827-.5-.827-1.32 0-1.824l7.048-4.297a3.188 3.188 0 011.497-.375c.52 0 1.033.128 1.497.375l7.05 4.297c.824.504.824 1.324 0 1.824l-7.046 4.29a3.168 3.168 0 01-2.998 0z"
+                fill="url(#paint1_linear_10141_398872)"
+              />
+              <path
+                d="M18.55 8.163l-7.05 4.29a3.168 3.168 0 01-1.498.378c-.52 0-1.033-.13-1.497-.378l-7.051-4.29a1.116 1.116 0 01-.396-.327 1.195 1.195 0 01-.217-.478c-.05.377.153.753.613 1.016L8.5 12.671c.464.248.977.378 1.497.378.52 0 1.034-.13 1.498-.378l7.05-4.297c.189-.082.348-.224.457-.406a1.09 1.09 0 00.153-.61c-.036.174-.11.337-.215.477-.105.14-.239.252-.391.328z"
+                fill="#fff"
+              />
+              <defs>
+                <lineargradient
+                  gradientUnits="userSpaceOnUse"
+                  id="paint0_linear_10141_398872"
+                  x1="4723.62"
+                  x2="5068.67"
+                  y1="801.697"
+                  y2="1276.19"
+                >
+                  <stop
+                    stop-color="#BCBEFF"
+                  />
+                  <stop
+                    offset="0.23"
+                    stop-color="#AAADF8"
+                  />
+                  <stop
+                    offset="0.68"
+                    stop-color="#7C83E5"
+                  />
+                  <stop
+                    offset="1"
+                    stop-color="#5761D7"
+                  />
+                </lineargradient>
+                <lineargradient
+                  gradientUnits="userSpaceOnUse"
+                  id="paint1_linear_10141_398872"
+                  x1="4629.08"
+                  x2="5571.81"
+                  y1="1254.11"
+                  y2="1254.11"
+                >
+                  <stop
+                    stop-color="#E9E9FD"
+                  />
+                  <stop
+                    offset="0.36"
+                    stop-color="#D3D2F9"
+                  />
+                  <stop
+                    offset="0.71"
+                    stop-color="#C5C4F7"
+                  />
+                  <stop
+                    offset="1"
+                    stop-color="#C0BFF6"
+                  />
+                </lineargradient>
+              </defs>
+            </svg>
+            FRONT-END
+          </a>
+        </td>
+        <td
+          class="h-14 px-4 py-0 first:relative"
+        >
+          <span
+            class="capitalize text-sm font-medium"
+          >
+            application
+          </span>
+        </td>
+        <td
+          class="h-14 px-4 py-0 first:relative"
+        >
+          <span
+            class="text-xs text-neutral-300"
+            data-state="closed"
+          >
+            6 months
+             ago
+          </span>
+        </td>
+      </tr>
+      <tr
+        class="hover:bg-neutral-100 h-16 cursor-pointer"
+      >
+        <td
+          class="h-14 px-4 py-0 first:relative"
+        >
+           
+          <span
+            class="truncate text-sm font-medium"
+            data-state="closed"
+          >
+            myvar_project
+          </span>
+        </td>
+        <td
+          class="h-14 px-4 py-0 border-r pl-0 first:relative"
+        >
+          <button
+            aria-expanded="false"
+            aria-haspopup="menu"
+            aria-label="actions"
+            class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-9 px-3 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-transparent"
+            data-state="closed"
+            id="radix-:r2e:"
+            type="button"
+          >
+            <i
+              aria-hidden="true"
+              class="fa-regular fa-ellipsis-vertical mx-1"
+            />
+          </button>
+        </td>
+        <td
+          class="h-14 px-4 py-0 first:relative"
+        >
+          <span
+            class="flex items-center gap-2 text-sm"
+          >
+            <button
+              class="w-4 text-brand-500"
+              data-state="closed"
+              data-testid="toggle-button"
+              type="button"
+            >
+              <i
+                aria-hidden="true"
+                class="fa-solid fa-eye "
+              />
+            </button>
+            <span
+              class="text-neutral-350 text-xl tracking-widest font-medium pt-1.5"
+              data-state="closed"
+              data-testid="hide_value"
+            >
+              *************
+            </span>
+          </span>
+        </td>
+        <td
+          class="h-14 px-4 py-0 first:relative"
+        />
+        <td
+          class="h-14 px-4 py-0 first:relative"
+        >
+          <span
+            class="capitalize text-sm font-medium"
+          >
+            project
+          </span>
+        </td>
+        <td
+          class="h-14 px-4 py-0 first:relative"
+        >
+          <span
+            class="text-xs text-neutral-300"
+            data-state="closed"
+          >
+            10 months
+             ago
+          </span>
+        </td>
+      </tr>
+      <tr
+        class="hover:bg-neutral-100 h-16 cursor-pointer"
+      >
+        <td
+          class="h-14 px-4 py-0 first:relative"
+        >
+           
+          <span
+            class="truncate text-sm font-medium"
+            data-state="closed"
+          >
+            variable_name
+          </span>
+        </td>
+        <td
+          class="h-14 px-4 py-0 border-r pl-0 first:relative"
+        >
+          <button
+            aria-expanded="false"
+            aria-haspopup="menu"
+            aria-label="actions"
+            class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-9 px-3 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-transparent"
+            data-state="closed"
+            id="radix-:r2k:"
+            type="button"
+          >
+            <i
+              aria-hidden="true"
+              class="fa-regular fa-ellipsis-vertical mx-1"
+            />
+          </button>
+        </td>
+        <td
+          class="h-14 px-4 py-0 first:relative"
+        >
+          <span
+            class="flex items-center gap-2 text-sm text-neutral-300"
+          >
+            <span
+              class=""
+              data-state="closed"
+            >
+              <i
+                aria-hidden="true"
+                class="fa-solid fa-lock-keyhole block w-4"
+              />
+            </span>
+            <span
+              class="text-xl tracking-widest font-medium pt-1.5"
+              data-testid="hide_value_secret"
+            >
+              *************
+            </span>
+          </span>
+        </td>
+        <td
+          class="h-14 px-4 py-0 first:relative"
+        >
+          <a
+            class="flex gap-2 items-center text-sm font-medium"
+            href="/organization//project//environment//application/037c9e87-e098-4970-8b1f-9a5ffe9e4b89/general"
+          >
+            <svg
+              class="shrink-0 w-4"
+              fill="none"
+              name="APPLICATION"
+              viewBox="0 0 20 20"
+              width="1.5rem"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M8.651 18.034h.001c.416.232.88.35 1.35.34a2.64 2.64 0 001.347-.34h.001l7.051-4.295a.9.9 0 00.43-.343.975.975 0 000-1.086.9.9 0 00-.43-.343l-7.05-4.294h0l-.003-.002a2.858 2.858 0 00-1.347-.339c-.469 0-.93.116-1.348.34h0-.002l-7.049 4.296c-.164.078-.305.2-.41.355a1.101 1.101 0 00-.182.525h0v.007c.016.189.08.37.184.525.104.155.244.279.408.358l7.05 4.296zm9.654-4.492v-.001l-.008.005-7.05 4.303a2.649 2.649 0 01-1.246.313c-.433 0-.86-.107-1.247-.313l-7.05-4.303v-.001l-.008-.003a.697.697 0 01-.343-.266.763.763 0 010-.86.697.697 0 01.343-.267v.001l.008-.004 7.05-4.296a2.648 2.648 0 011.247-.314c.433 0 .86.108 1.246.314l7.05 4.296h0l.008.003a.697.697 0 01.343.267.763.763 0 010 .86.697.697 0 01-.343.266z"
+                fill="#42E8E0"
+                stroke="#42E8E0"
+                stroke-width="0.083"
+              />
+              <path
+                d="M19.166 11.203V8.656l-.442-.26c-.124.794-1.008 1.321-1.753 1.43l-5.052 3.115-2.206.843L2.676 9.95l.164-.097c-.602-.298-.927-.979-1.25-1.596l-.475.298-.282.082v2.593c.019.196.086.384.195.544.109.16.256.288.426.37L8.5 16.44c.464.247.977.376 1.497.376.52 0 1.033-.129 1.497-.376l7.051-4.296c.167-.08.312-.206.42-.363.108-.156.176-.34.197-.533v-.045h.003z"
+                fill="#42E8E0"
+                opacity="0.4"
+              />
+              <path
+                d="M19.166 8.938V7.253l-.442-.26c-.124.794-1.008 1.32-1.753 1.43l-5.052 3.119-2.206.839-7.037-3.834.164-.098c-.602-.297-.927-.974-1.25-1.595l-.475.297-.282.087v1.727c.019.196.086.384.195.544.109.16.256.288.426.37L8.5 14.175c.464.247.977.376 1.497.376.52 0 1.033-.129 1.497-.376l7.051-4.296c.168-.081.313-.207.42-.364.109-.158.176-.342.197-.535v-.042h.003z"
+                fill="url(#paint0_linear_10141_398872)"
+              />
+              <path
+                d="M16.971 8.423l-5.05 3.119-1.919.73v2.28a2.929 2.929 0 001.498-.377l7.05-4.296c.168-.081.313-.207.42-.364.109-.158.177-.342.197-.535V7.253l-.403-.237h-.042c-.136.782-1.013 1.298-1.75 1.407z"
+                fill="#0F054C"
+                opacity="0.3"
+              />
+              <path
+                d="M8.502 12.452L1.454 8.163c-.827-.5-.827-1.32 0-1.824l7.048-4.297a3.188 3.188 0 011.497-.375c.52 0 1.033.128 1.497.375l7.05 4.297c.824.504.824 1.324 0 1.824l-7.046 4.29a3.168 3.168 0 01-2.998 0z"
+                fill="url(#paint1_linear_10141_398872)"
+              />
+              <path
+                d="M18.55 8.163l-7.05 4.29a3.168 3.168 0 01-1.498.378c-.52 0-1.033-.13-1.497-.378l-7.051-4.29a1.116 1.116 0 01-.396-.327 1.195 1.195 0 01-.217-.478c-.05.377.153.753.613 1.016L8.5 12.671c.464.248.977.378 1.497.378.52 0 1.034-.13 1.498-.378l7.05-4.297c.189-.082.348-.224.457-.406a1.09 1.09 0 00.153-.61c-.036.174-.11.337-.215.477-.105.14-.239.252-.391.328z"
+                fill="#fff"
+              />
+              <defs>
+                <lineargradient
+                  gradientUnits="userSpaceOnUse"
+                  id="paint0_linear_10141_398872"
+                  x1="4723.62"
+                  x2="5068.67"
+                  y1="801.697"
+                  y2="1276.19"
+                >
+                  <stop
+                    stop-color="#BCBEFF"
+                  />
+                  <stop
+                    offset="0.23"
+                    stop-color="#AAADF8"
+                  />
+                  <stop
+                    offset="0.68"
+                    stop-color="#7C83E5"
+                  />
+                  <stop
+                    offset="1"
+                    stop-color="#5761D7"
+                  />
+                </lineargradient>
+                <lineargradient
+                  gradientUnits="userSpaceOnUse"
+                  id="paint1_linear_10141_398872"
+                  x1="4629.08"
+                  x2="5571.81"
+                  y1="1254.11"
+                  y2="1254.11"
+                >
+                  <stop
+                    stop-color="#E9E9FD"
+                  />
+                  <stop
+                    offset="0.36"
+                    stop-color="#D3D2F9"
+                  />
+                  <stop
+                    offset="0.71"
+                    stop-color="#C5C4F7"
+                  />
+                  <stop
+                    offset="1"
+                    stop-color="#C0BFF6"
+                  />
+                </lineargradient>
+              </defs>
+            </svg>
+            FRONT-END
+          </a>
+        </td>
+        <td
+          class="h-14 px-4 py-0 first:relative"
+        >
+          <span
+            class="capitalize text-sm font-medium"
+          >
+            application
+          </span>
+        </td>
+        <td
+          class="h-14 px-4 py-0 first:relative"
+        >
+          <span
+            class="text-xs text-neutral-300"
+            data-state="closed"
+          >
+            6 months
+             ago
+          </span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+`;

@@ -3,7 +3,7 @@ import { useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useService } from '@qovery/domains/services/feature'
-import { useVariables } from '@qovery/domains/variables/feature'
+import { VariableList, useVariables } from '@qovery/domains/variables/feature'
 import { environmentVariableFactoryMock } from '@qovery/shared/factories'
 import { type EnvironmentVariableSecretOrPublic } from '@qovery/shared/interfaces'
 import { type TableHeadProps } from '@qovery/shared/ui'
@@ -101,23 +101,26 @@ export function PageVariablesFeature() {
   ]
 
   return (
-    <PageVariables
-      key={data.length}
-      tableHead={tableHead}
-      variables={
-        !isLoading
-          ? data.map((variable) => ({
-              ...variable,
-              // XXX: this is needed to comply with the current table implementation.
-              // It should be removed when migrating to tanstack-table
-              variable_kind: variable.is_secret ? ('secret' as const) : ('public' as const),
-            }))
-          : placeholder
-      }
-      setData={setData}
-      isLoading={isLoading}
-      serviceType={serviceType}
-    />
+    <>
+      <PageVariables
+        key={data.length}
+        tableHead={tableHead}
+        variables={
+          !isLoading
+            ? data.map((variable) => ({
+                ...variable,
+                // XXX: this is needed to comply with the current table implementation.
+                // It should be removed when migrating to tanstack-table
+                variable_kind: variable.is_secret ? ('secret' as const) : ('public' as const),
+              }))
+            : placeholder
+        }
+        setData={setData}
+        isLoading={isLoading}
+        serviceType={serviceType}
+      />
+      {scope && <VariableList currentScope={scope} parentId={applicationId} className="bg-white" />}
+    </>
   )
 }
 
