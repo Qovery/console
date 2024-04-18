@@ -18,6 +18,7 @@ import {
   type Container,
   type Helm,
   type Job,
+  JobType,
   type ServiceType,
 } from '@qovery/domains/services/data-access'
 import {
@@ -93,6 +94,19 @@ export const handleContainerSubmit = (data: ApplicationGeneralData, container: C
 }
 
 export const handleJobSubmit = (data: JobGeneralData, job: Job): JobRequest => {
+  const schedule = match(job)
+    .with({ job_type: 'CRON' }, (j) => {
+      const { cronjob } = j.schedule
+      return {
+        cronjob: {
+          ...cronjob,
+          entrypoint: data.image_entry_point,
+          arguments: (data.cmd_arguments && data.cmd_arguments.length && eval(data.cmd_arguments)) || [],
+        },
+      }
+    })
+    .otherwise(() => undefined)
+
   if (isJobGitSource(job.source)) {
     const git_repository = {
       url: buildGitRepoUrl(data.provider ?? '', data.repository ?? ''),
@@ -112,7 +126,9 @@ export const handleJobSubmit = (data: JobGeneralData, job: Job): JobRequest => {
           dockerfile_path: data.dockerfile_path,
         },
       },
-    }
+      schedule,
+      // `as` is necessary to fix inconsistent type with schedule between response and request
+    } as JobRequest
   } else {
     return {
       ...job,
@@ -126,7 +142,9 @@ export const handleJobSubmit = (data: JobGeneralData, job: Job): JobRequest => {
           registry_id: data.registry || '',
         },
       },
-    }
+      schedule,
+      // `as` is necessary to fix inconsistent type with schedule between response and request
+    } as JobRequest
   }
 }
 
@@ -210,6 +228,17 @@ export function PageSettingsGeneralFeature() {
     .with({ serviceType: 'JOB' }, (service) => {
       const jobContainerSource = isJobContainerSource(service.source) ? service.source.image : undefined
 
+      const schedule = match(service)
+        .with({ job_type: 'CRON' }, (s) => {
+          const { cronjob } = s.schedule
+          return {
+            cmd_arguments:
+              cronjob?.arguments && cronjob?.arguments.length > 0 ? JSON.stringify(cronjob?.arguments) : undefined,
+            image_entry_point: cronjob?.entrypoint,
+          }
+        })
+        .otherwise(() => undefined)
+
       return {
         auto_deploy: service.auto_deploy,
         build_mode: BuildModeEnum.DOCKER,
@@ -218,6 +247,7 @@ export function PageSettingsGeneralFeature() {
         image_name: jobContainerSource?.image_name,
         image_tag: jobContainerSource?.tag,
         annotations_groups: annotationsGroup?.map(({ id }) => id),
+        ...schedule,
       }
     })
     .with({ serviceType: 'HELM' }, (service) => ({
@@ -255,18 +285,39 @@ export function PageSettingsGeneralFeature() {
     if (!service) return
 
     const payload = match(service)
-      .with({ serviceType: 'APPLICATION' }, (s) => ({
-        ...handleGitApplicationSubmit(data as ApplicationGeneralData, s),
-        serviceType: s.serviceType,
-      }))
-      .with({ serviceType: 'JOB' }, (s) => ({
-        ...handleJobSubmit(data as JobGeneralData, s),
-        serviceType: s.serviceType,
-      }))
-      .with({ serviceType: 'CONTAINER' }, (s) => ({
-        ...handleContainerSubmit(data as ApplicationGeneralData, s),
-        serviceType: s.serviceType,
-      }))
+      .with({ serviceType: 'APPLICATION' }, (s) => {
+        try {
+          return {
+            ...handleGitApplicationSubmit(data as ApplicationGeneralData, s),
+            serviceType: s.serviceType,
+          }
+        } catch (e: unknown) {
+          toastError(e as Error, 'Invalid CMD array')
+          return
+        }
+      })
+      .with({ serviceType: 'JOB' }, (s) => {
+        try {
+          return {
+            ...handleJobSubmit(data as JobGeneralData, s),
+            serviceType: s.serviceType,
+          }
+        } catch (e: unknown) {
+          toastError(e as Error, 'Invalid CMD array')
+          return
+        }
+      })
+      .with({ serviceType: 'CONTAINER' }, (s) => {
+        try {
+          return {
+            ...handleContainerSubmit(data as ApplicationGeneralData, s),
+            serviceType: s.serviceType,
+          }
+        } catch (e: unknown) {
+          toastError(e as Error, 'Invalid CMD array')
+          return
+        }
+      })
       .with({ serviceType: 'HELM' }, (s) => {
         try {
           return {
@@ -282,17 +333,10 @@ export function PageSettingsGeneralFeature() {
 
     if (!payload) return null
 
-    try {
-      editService({
-        serviceId: applicationId,
-        payload,
-      })
-    } catch (e: unknown) {
-      if (payload.serviceType === 'CONTAINER') {
-        toastError(e as Error, 'Invalid CMD array')
-      }
-      return
-    }
+    editService({
+      serviceId: applicationId,
+      payload,
+    })
 
     // Process annotations to trigger delete and add annotations group for services
     function processAnnotations(
