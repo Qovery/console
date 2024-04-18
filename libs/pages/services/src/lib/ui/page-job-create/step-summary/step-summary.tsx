@@ -116,8 +116,8 @@ export function StepSummary(props: StepSummaryProps) {
                       <li>
                         <strong className="font-medium">Annotations group:</strong>{' '}
                         {props.annotationsGroup
-                          .filter((annotation) => props.generalData.annotations_groups?.includes(annotation.id))
-                          .map((annotation) => annotation.name)
+                          .filter(({ id }) => props.generalData.annotations_groups?.includes(id))
+                          .map(({ name }) => name)
                           .join(', ')}
                       </li>
                     )}

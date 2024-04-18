@@ -76,8 +76,8 @@ export function StepSummaryFeature() {
         })
 
         if (generalData.annotations_groups) {
-          for (const annotationsGroup of generalData.annotations_groups) {
-            await addAnnotationsGroup({
+          for await (const annotationsGroup of generalData.annotations_groups) {
+            addAnnotationsGroup({
               serviceId: database.id,
               serviceType: 'DATABASE',
               annotationsGroupId: annotationsGroup,

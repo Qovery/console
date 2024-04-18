@@ -175,7 +175,7 @@ export function PageSettingsGeneralFeature() {
 
   const { data: annotationsGroup } = useAnnotationsGroup({
     serviceId: applicationId,
-    serviceType: service?.serviceType !== 'HELM' ? service?.serviceType : 'APPLICATION',
+    serviceType: service?.serviceType !== 'HELM' ? service?.serviceType : undefined,
   })
   const { mutate: deleteAnnotationGroup } = useDeleteAnnotationsGroup()
   const { mutate: addAnnotationsGroup } = useAddAnnotationsGroup()
@@ -217,7 +217,7 @@ export function PageSettingsGeneralFeature() {
         registry: jobContainerSource?.registry_id,
         image_name: jobContainerSource?.image_name,
         image_tag: jobContainerSource?.tag,
-        annotations_groups: annotationsGroup?.map((group) => group.id),
+        annotations_groups: annotationsGroup?.map(({ id }) => id),
       }
     })
     .with({ serviceType: 'HELM' }, (service) => ({
@@ -243,9 +243,11 @@ export function PageSettingsGeneralFeature() {
   })
 
   useEffect(() => {
+    // We are a separate request to get annotations group
+    // To join default values with Service request with need this useEffect
     methods.setValue(
       'annotations_groups',
-      annotationsGroup?.map((group) => group.id)
+      annotationsGroup?.map(({ id }) => id)
     )
   }, [methods, annotationsGroup])
 
@@ -292,9 +294,7 @@ export function PageSettingsGeneralFeature() {
       return
     }
 
-    /* 
-      Process annotations to trigger delete and add annotations group for services
-    */
+    // Process annotations to trigger delete and add annotations group for services
     function processAnnotations(
       data: ApplicationGeneralData | JobGeneralData,
       serviceId: string,
@@ -304,14 +304,10 @@ export function PageSettingsGeneralFeature() {
       const dataAnnotationsGroupIds = data['annotations_groups'] ?? []
 
       const addedAnnotationsGroup = dataAnnotationsGroupIds.filter((id) => !annotationsGroupIds.includes(id))
-      addedAnnotationsGroup.length > 0 &&
-        addedAnnotationsGroup.forEach((id) => addAnnotationsGroup({ serviceId, serviceType, annotationsGroupId: id }))
+      addedAnnotationsGroup.forEach((id) => addAnnotationsGroup({ serviceId, serviceType, annotationsGroupId: id }))
 
       const deletedAnnotationGroup = annotationsGroupIds.filter((id) => !dataAnnotationsGroupIds.includes(id))
-      deletedAnnotationGroup.length > 0 &&
-        deletedAnnotationGroup.forEach((id) =>
-          deleteAnnotationGroup({ serviceId, serviceType, annotationsGroupId: id })
-        )
+      deletedAnnotationGroup.forEach((id) => deleteAnnotationGroup({ serviceId, serviceType, annotationsGroupId: id }))
     }
 
     match(service)

@@ -127,8 +127,8 @@ export function StepSummary({
                 <li>
                   <strong className="font-medium">Annotations group:</strong>{' '}
                   {annotationsGroup
-                    .filter((annotation) => generalData.annotations_groups?.includes(annotation.id))
-                    .map((annotation) => annotation.name)
+                    .filter(({ id }) => generalData.annotations_groups?.includes(id))
+                    .map(({ name }) => name)
                     .join(', ')}
                 </li>
               )}
