@@ -43,7 +43,7 @@ describe('CrudModalFeature', () => {
             healthchecks: undefined,
           }}
           setPortData={setPortDataMock}
-          onClose={() => {}}
+          onClose={jest.fn()}
         />,
         {
           defaultValues: { internal_port: 99, external_port: 420, publicly_accessible: true },

@@ -33,7 +33,7 @@ describe('useReactQueryWsSubscription', () => {
 
   it('should connect to the given url using bearer token', async () => {
     const { unmount } = renderHook(() =>
-      useReactQueryWsSubscription({ url: 'ws://localhost:1234', onMessage: () => {} })
+      useReactQueryWsSubscription({ url: 'ws://localhost:1234', onMessage: jest.fn() })
     )
 
     const connection = await server.connected
@@ -56,7 +56,7 @@ describe('useReactQueryWsSubscription', () => {
           bar: undefined,
           qux: '',
         },
-        onMessage: () => {},
+        onMessage: jest.fn(),
       })
     )
 
@@ -72,7 +72,7 @@ describe('useReactQueryWsSubscription', () => {
 
   it('should invalidate query keys on invalidate operation message', async () => {
     const { unmount } = renderHook(() =>
-      useReactQueryWsSubscription({ url: 'ws://localhost:1234', onMessage: () => {} })
+      useReactQueryWsSubscription({ url: 'ws://localhost:1234', onMessage: jest.fn() })
     )
     const queryClient = useQueryClient()
     const connection = await server.connected

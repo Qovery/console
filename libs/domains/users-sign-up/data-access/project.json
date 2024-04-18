@@ -3,14 +3,11 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/domains/users-sign-up/data-access/src",
   "projectType": "library",
+  "tags": ["scope:domain", "type:data-access"],
   "targets": {
     "lint": {
       "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["libs/domains/users-sign-up/data-access/**/*.ts"]
-      }
+      "outputs": ["{options.outputFile}"]
     }
-  },
-  "tags": ["scope:domain", "type:data-access"]
+  }
 }

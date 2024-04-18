@@ -3,6 +3,7 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/console/src",
   "projectType": "application",
+  "tags": [],
   "targets": {
     "build": {
       "executor": "@nx/webpack:webpack",
@@ -32,8 +33,7 @@
         "styles": ["apps/console/src/styles.scss"],
         "scripts": [],
         "webpackConfig": "apps/console/webpack.config.js",
-        "postcssConfig": "apps/console/postcss.config.js",
-        "isolatedConfig": true
+        "postcssConfig": "apps/console/postcss.config.js"
       },
       "configurations": {
         "production": {
@@ -84,19 +84,14 @@
     },
     "lint": {
       "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["apps/console/**/*.{ts,tsx,js,jsx}"]
-      }
+      "outputs": ["{options.outputFile}"]
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/console"],
       "options": {
-        "jestConfig": "apps/console/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/console/jest.config.ts"
       }
     }
-  },
-  "tags": []
+  }
 }

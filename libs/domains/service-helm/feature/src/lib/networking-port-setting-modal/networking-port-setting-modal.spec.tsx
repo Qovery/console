@@ -4,7 +4,7 @@ import { NetworkingPortSettingModal } from './networking-port-setting-modal'
 
 describe('NetworkingPortSettingModal', () => {
   it('should match snapshot in create state', () => {
-    const { baseElement } = renderWithProviders(<NetworkingPortSettingModal onSubmit={() => {}} onClose={() => {}} />)
+    const { baseElement } = renderWithProviders(<NetworkingPortSettingModal onSubmit={jest.fn()} onClose={jest.fn()} />)
     screen.getByText(/create/i)
     expect(baseElement).toMatchSnapshot()
   })
@@ -20,8 +20,8 @@ describe('NetworkingPortSettingModal', () => {
           protocol: 'HTTP',
           name: 'My service-p1234',
         }}
-        onSubmit={() => {}}
-        onClose={() => {}}
+        onSubmit={jest.fn()}
+        onClose={jest.fn()}
       />
     )
     screen.getByText(/edit/i)
@@ -29,13 +29,13 @@ describe('NetworkingPortSettingModal', () => {
   })
   it('should close on cancel', async () => {
     const onClose = jest.fn()
-    const { userEvent } = renderWithProviders(<NetworkingPortSettingModal onSubmit={() => {}} onClose={onClose} />)
+    const { userEvent } = renderWithProviders(<NetworkingPortSettingModal onSubmit={jest.fn()} onClose={onClose} />)
     await userEvent.click(screen.getByText(/cancel/i))
     expect(onClose).toHaveBeenCalled()
   })
   it('should submit port', async () => {
     const onSubmit = jest.fn()
-    const { userEvent } = renderWithProviders(<NetworkingPortSettingModal onSubmit={onSubmit} onClose={() => {}} />)
+    const { userEvent } = renderWithProviders(<NetworkingPortSettingModal onSubmit={onSubmit} onClose={jest.fn()} />)
     await userEvent.click(screen.getByText(/cancel/i))
 
     await userEvent.type(screen.getByLabelText(/service name/i), 'foo')

@@ -7,17 +7,13 @@
   "targets": {
     "lint": {
       "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["libs/pages/clusters/**/*.{ts,tsx,js,jsx}"]
-      }
+      "outputs": ["{options.outputFile}"]
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/pages/clusters"],
       "options": {
-        "jestConfig": "libs/pages/clusters/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/pages/clusters/jest.config.ts"
       }
     }
   }

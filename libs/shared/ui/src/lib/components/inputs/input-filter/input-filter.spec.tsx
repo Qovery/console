@@ -9,14 +9,14 @@ describe('InputFilter', () => {
   ]
 
   it('renders the button with the provided name', () => {
-    renderWithProviders(<InputFilter name="Filter" nameKey="filter" options={options} onChange={() => {}} />)
+    renderWithProviders(<InputFilter name="Filter" nameKey="filter" options={options} onChange={jest.fn()} />)
 
     expect(screen.getByText('Filter')).toBeInTheDocument()
   })
 
   it('opens the select input on button click', async () => {
     const { userEvent } = renderWithProviders(
-      <InputFilter name="Filter" nameKey="filter" options={options} onChange={() => {}} />
+      <InputFilter name="Filter" nameKey="filter" options={options} onChange={jest.fn()} />
     )
 
     const button = screen.getByText('Filter')

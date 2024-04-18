@@ -4,7 +4,7 @@ import { NetworkingSetting } from './networking-setting'
 
 describe('NetworkingSetting', () => {
   it('should match snapshot in empty state', () => {
-    const { baseElement } = renderWithProviders(<NetworkingSetting ports={[]} onUpdatePorts={() => {}} />)
+    const { baseElement } = renderWithProviders(<NetworkingSetting ports={[]} onUpdatePorts={jest.fn()} />)
     expect(baseElement).toMatchSnapshot()
   })
   it('should match snapshot with ports', () => {
@@ -28,7 +28,7 @@ describe('NetworkingSetting', () => {
             name: 'My service 2-p4321',
           },
         ]}
-        onUpdatePorts={() => {}}
+        onUpdatePorts={jest.fn()}
       />
     )
     expect(baseElement).toMatchSnapshot()

@@ -6,7 +6,7 @@ const props: PageVariablesProps = {
   variables: secretEnvironmentVariableFactoryMock(3, false, false),
   filterData: secretEnvironmentVariableFactoryMock(3, false, false),
   listHelpfulLinks: [],
-  setFilterData: () => {},
+  setFilterData: jest.fn(),
   tableHead: [],
 }
 
