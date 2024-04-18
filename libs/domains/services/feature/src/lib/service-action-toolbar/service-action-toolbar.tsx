@@ -1,4 +1,10 @@
-import { type ApplicationGitRepository, type Environment, StateEnum } from 'qovery-typescript-axios'
+import {
+  type ApplicationGitRepository,
+  type Environment,
+  ServiceDeploymentStatusEnum,
+  StateEnum,
+  type Status,
+} from 'qovery-typescript-axios'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { P, match } from 'ts-pattern'
 import {
@@ -55,12 +61,12 @@ import { SelectVersionModal } from '../select-version-modal/select-version-modal
 import ServiceCloneModal from '../service-clone-modal/service-clone-modal'
 
 function MenuManageDeployment({
-  state,
+  deploymentStatus,
   environment,
   service,
   environmentLogsLink,
 }: {
-  state: StateEnum
+  deploymentStatus: Status
   environment: Environment
   service: AnyService
   environmentLogsLink: string
@@ -76,6 +82,9 @@ function MenuManageDeployment({
     projectId: environment.project.id,
     logsLink: environmentLogsLink + DEPLOYMENT_LOGS_URL(service.id),
   })
+
+  const { state, service_deployment_status } = deploymentStatus
+  const serviceNeedUpdate = service_deployment_status !== ServiceDeploymentStatusEnum.UP_TO_DATE
 
   const mutationDeploy = () => deployService({ serviceId: service.id, serviceType: service.serviceType })
 
@@ -233,7 +242,7 @@ function MenuManageDeployment({
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
-        <ActionToolbar.Button aria-label="Manage Deployment">
+        <ActionToolbar.Button aria-label="Manage Deployment" color={serviceNeedUpdate ? 'yellow' : 'neutral'}>
           <Tooltip content="Manage Deployment">
             <div className="flex items-center justify-center w-full h-full">
               <Icon iconName="play" className="mr-4" />
@@ -580,7 +589,7 @@ export function ServiceActionToolbar({
   return (
     <ActionToolbar.Root>
       <MenuManageDeployment
-        state={deploymentStatus.state}
+        deploymentStatus={deploymentStatus}
         environment={environment}
         service={service}
         environmentLogsLink={environmentLogsLink}

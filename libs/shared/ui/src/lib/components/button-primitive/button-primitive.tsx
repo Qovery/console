@@ -25,6 +25,7 @@ const _buttonVariants = cva(
         neutral: ['outline-brand-500'],
         green: ['outline-neutral-500'],
         red: ['outline-neutral-500'],
+        yellow: ['outline-yellow-600'],
       },
       size: {
         xs: ['text-xs', 'h-5', 'px-1'],
