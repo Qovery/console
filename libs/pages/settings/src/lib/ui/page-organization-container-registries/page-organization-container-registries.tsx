@@ -1,16 +1,6 @@
 import { type ContainerRegistryResponse } from 'qovery-typescript-axios'
 import { IconEnum } from '@qovery/shared/enums'
-import {
-  BlockContent,
-  Button,
-  Heading,
-  HelpSection,
-  Icon,
-  LoaderSpinner,
-  Section,
-  Tooltip,
-  Truncate,
-} from '@qovery/shared/ui'
+import { BlockContent, Button, Heading, Icon, LoaderSpinner, Section, Tooltip, Truncate } from '@qovery/shared/ui'
 import { dateMediumLocalFormat, dateUTCString, timeAgo } from '@qovery/shared/util-dates'
 import { containerRegistryKindToIcon } from '@qovery/shared/util-js'
 
@@ -106,15 +96,6 @@ export function PageOrganizationContainerRegistries(props: PageOrganizationConta
           )}
         </BlockContent>
       </Section>
-      <HelpSection
-        description="Need help? You may find these links useful"
-        links={[
-          {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/organization/container-registry',
-            linkLabel: 'How to configure my container registry',
-          },
-        ]}
-      />
     </div>
   )
 }

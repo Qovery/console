@@ -1,5 +1,6 @@
 import { createContext, useContext, useState } from 'react'
 import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
+import { AssistantTrigger } from '@qovery/shared/assistant/feature'
 import {
   type ApplicationGeneralData,
   type ApplicationResourcesData,
@@ -92,6 +93,7 @@ export function PageApplicationCreateFeature() {
           ))}
           <Route path="*" element={<Navigate replace to={pathCreate + SERVICES_CREATION_GENERAL_URL} />} />
         </Routes>
+        <AssistantTrigger defaultOpen />
       </FunnelFlow>
     </ApplicationContainerCreateContext.Provider>
   )

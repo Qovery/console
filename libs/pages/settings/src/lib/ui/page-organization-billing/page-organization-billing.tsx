@@ -5,7 +5,6 @@ import {
   ButtonIcon,
   ButtonIconStyle,
   Heading,
-  HelpSection,
   Icon,
   IconAwesomeEnum,
   InputCreditCard,
@@ -88,17 +87,6 @@ export function PageOrganizationBilling(props: PageOrganizationBillingProps) {
 
         <BillingDetailsFeature />
       </Section>
-
-      <HelpSection
-        data-testid="help-section"
-        description="Need help? You may find these links useful"
-        links={[
-          {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/organization/#billing',
-            linkLabel: 'Learn more about billing',
-          },
-        ]}
-      />
     </div>
   )
 }

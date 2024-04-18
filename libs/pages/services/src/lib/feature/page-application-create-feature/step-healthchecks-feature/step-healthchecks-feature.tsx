@@ -11,7 +11,7 @@ import {
   SERVICES_CREATION_POST_URL,
   SERVICES_URL,
 } from '@qovery/shared/routes'
-import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
+import { FunnelFlowBody } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import StepHealthchecks from '../../../ui/page-application-create/step-healthchecks/step-healthchecks'
 import { useApplicationContainerCreateContext } from '../page-application-create-feature'
@@ -30,28 +30,6 @@ export function StepHealthchecksFeature() {
           SERVICES_CREATION_GENERAL_URL
       )
   }, [generalData, navigate, environmentId, organizationId, projectId])
-
-  const funnelCardHelp = (
-    <FunnelFlowHelpCard
-      title="Configuring the Health Checks"
-      items={[
-        'Health checks are automatic ways for Kubernetes to check the status of your application and decide if it can receive traffic or needs to be restarted (during the deployment and run phases)',
-        'Liveness Probe: it verifies if the application has an healthy state. If it fails, the application is restarted',
-        'Readiness Probe: it verifies if the application is ready to receive traffic',
-        'If your application has special processing requirements (long start-up phase, re-load operations during the run) you can customize the liveness and readiness probes to match your needs (have a look at the documentation)',
-      ]}
-      helpSectionProps={{
-        description: 'Need help? You may find these links useful',
-        links: [
-          {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/service-health-checks/',
-            linkLabel: 'How to configure my health checks',
-          },
-          { link: 'https://discuss.qovery.com/', linkLabel: 'Still need help? Ask on our Forum' },
-        ],
-      }}
-    />
-  )
 
   useEffect(() => {
     setCurrentStep(4)
@@ -123,7 +101,7 @@ export function StepHealthchecksFeature() {
   }
 
   return (
-    <FunnelFlowBody helpSection={funnelCardHelp}>
+    <FunnelFlowBody>
       <FormProvider {...methods}>
         <StepHealthchecks ports={portData?.ports} onBack={onBack} onSubmit={onSubmit} />
       </FormProvider>

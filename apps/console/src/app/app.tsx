@@ -15,8 +15,8 @@ import { ProtectedRoute } from '@qovery/shared/router'
 import { HELM_DEFAULT_VALUES, KUBECONFIG, LOGIN_URL, LOGOUT_URL, PREVIEW_CODE } from '@qovery/shared/routes'
 import { LoadingScreen } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { GTM, LOGROCKET, NODE_ENV, NX_GIT_SHA, QOVERY_API } from '@qovery/shared/util-node-env'
 import { useAuthInterceptor } from '@qovery/shared/utils'
-import { environment } from '../environments/environment'
 import PreviewCode from './components/preview-code'
 import ScrollToTop from './components/scroll-to-top'
 import { ROUTER } from './router/main.router'
@@ -38,7 +38,7 @@ export function App() {
     redirectToAcceptPageGuard()
   }, [redirectToAcceptPageGuard])
 
-  const gtmParams = { id: environment.gtm }
+  const gtmParams = { id: GTM }
 
   const { user } = useAuth0()
   const { update: updateIntercom } = useIntercom()
@@ -51,7 +51,7 @@ export function App() {
         ...user,
       })
 
-      if (process.env['NODE_ENV'] === 'production') {
+      if (NODE_ENV === 'production') {
         LogRocket.identify(user.sub, {
           ...user,
         })
@@ -69,13 +69,13 @@ export function App() {
   )
 
   // init axios interceptor
-  useAuthInterceptor(axios, environment.api)
+  useAuthInterceptor(axios, QOVERY_API)
 
   useEffect(() => {
     // init logrocket
-    if (process.env['NODE_ENV'] === 'production') {
-      LogRocket.init(environment.logrocket, {
-        release: process.env['NX_GIT_SHA'],
+    if (NODE_ENV === 'production') {
+      LogRocket.init(LOGROCKET, {
+        release: NX_GIT_SHA,
         dom: {
           inputSanitizer: true,
           textSanitizer: true,
@@ -109,7 +109,7 @@ export function App() {
 
   useEffect(() => {
     if (user && user.sub) {
-      if (process.env['NODE_ENV'] === 'production') {
+      if (NODE_ENV === 'production') {
         initMonitorings(user)
       }
     }

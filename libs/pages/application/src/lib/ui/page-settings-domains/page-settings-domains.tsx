@@ -1,15 +1,5 @@
 import { type CustomDomain } from 'qovery-typescript-axios'
-import {
-  BlockContent,
-  Button,
-  EmptyState,
-  Heading,
-  HelpSection,
-  Icon,
-  InputText,
-  LoaderSpinner,
-  Section,
-} from '@qovery/shared/ui'
+import { BlockContent, Button, EmptyState, Heading, Icon, InputText, LoaderSpinner, Section } from '@qovery/shared/ui'
 
 export interface PageSettingsDomainsProps {
   onAddDomain: () => void
@@ -84,15 +74,6 @@ export function PageSettingsDomains(props: PageSettingsDomainsProps) {
           <EmptyState title="No domains are set" description="Define a custom domain for your application" />
         )}
       </Section>
-      <HelpSection
-        description="Need help? You may find these links useful"
-        links={[
-          {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/application/#domains',
-            linkLabel: 'How to configure my application',
-          },
-        ]}
-      />
     </div>
   )
 }

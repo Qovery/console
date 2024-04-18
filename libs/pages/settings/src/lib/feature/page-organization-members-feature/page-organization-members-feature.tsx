@@ -15,6 +15,7 @@ import {
 import { membersMock } from '@qovery/shared/factories'
 import { useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { NODE_ENV } from '@qovery/shared/util-node-env'
 import PageOrganizationMembers from '../../ui/page-organization-members/page-organization-members'
 import CreateModalFeature from './create-modal-feature/create-modal-feature'
 
@@ -76,7 +77,7 @@ export function PageOrganizationMembersFeature() {
       title: 'Confirm ownership transfer',
       description: 'Confirm by entering the member name',
       name: user?.name,
-      mode: process.env['NODE_ENV'] === 'production' ? EnvironmentModeEnum.PRODUCTION : EnvironmentModeEnum.DEVELOPMENT,
+      mode: NODE_ENV === 'production' ? EnvironmentModeEnum.PRODUCTION : EnvironmentModeEnum.DEVELOPMENT,
       action: async () => {
         try {
           await transferOwnershipMemberRole({ organizationId, userId: user.id })

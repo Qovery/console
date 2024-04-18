@@ -2,15 +2,7 @@ import { type CloudProviderEnum } from 'qovery-typescript-axios'
 import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { ClusterCredentialsSettingsFeature } from '@qovery/shared/console-shared'
-import {
-  BlockContent,
-  ButtonLegacy,
-  ButtonLegacySize,
-  ButtonLegacyStyle,
-  Heading,
-  HelpSection,
-  Section,
-} from '@qovery/shared/ui'
+import { BlockContent, ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle, Heading, Section } from '@qovery/shared/ui'
 
 export interface PageSettingsCredentialsProps {
   onSubmit: FormEventHandler<HTMLFormElement>
@@ -45,15 +37,6 @@ export function PageSettingsCredentials(props: PageSettingsCredentialsProps) {
           </div>
         </form>
       </Section>
-      <HelpSection
-        description="Need help? You may find these links useful"
-        links={[
-          {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/clusters/#credentials',
-            linkLabel: 'How to configure my credentials cluster',
-          },
-        ]}
-      />
     </div>
   )
 }

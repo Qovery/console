@@ -10,7 +10,7 @@ import {
   SERVICES_HELM_CREATION_VALUES_STEP_2_URL,
   SERVICES_URL,
 } from '@qovery/shared/routes'
-import { Button, Callout, FunnelFlowBody, FunnelFlowHelpCard, Icon, InputText } from '@qovery/shared/ui'
+import { Button, Callout, FunnelFlowBody, Icon, InputText } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
 import { useHelmCreateContext } from '../page-helm-create-feature'
@@ -48,27 +48,6 @@ export function StepValuesOverrideFilesFeature() {
   useEffect(() => {
     setCurrentStep(2)
   }, [setCurrentStep])
-
-  const funnelCardHelp = (
-    <FunnelFlowHelpCard
-      title="Using values overrides"
-      items={[
-        'Your helm chart might have already a variables.yaml file with some basic configuration. In this section you can define your own overrides to customize the helm chart behaviour.',
-        'You can define the overrides by selecting a YAML file from a git repository (preferred) or by passing a raw YAML file.',
-        'You can use the Qovery environment variables as overrides by using the placeholder "qovery.env.ENV_VAR_NAME” (Example: qovery.env.DB_URL. Qovery will manage the replacement of those placeholders at deployment time.',
-        'To get all the Qovery functionalities, add the macro “qovery.labels.service” and "qovery.annotations.service" within the field managing the labels/annotations assigned to the deployed Pods/Deployments/Services/Jobs. Qovery will automatically replace the macro with a dedicated set of labels/annotations.',
-      ]}
-      helpSectionProps={{
-        description: 'Need help? You may find these links useful',
-        links: [
-          {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/helm/',
-            linkLabel: 'How to configure my Helm chart',
-          },
-        ],
-      }}
-    />
-  )
 
   const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_HELM_CREATION_URL}`
 
@@ -152,7 +131,7 @@ export function StepValuesOverrideFilesFeature() {
   )
 
   return (
-    <FunnelFlowBody helpSection={funnelCardHelp}>
+    <FunnelFlowBody>
       <FormProvider {...valuesOverrideFileForm}>
         <ValuesOverrideFilesSetting
           methods={valuesOverrideFileForm}

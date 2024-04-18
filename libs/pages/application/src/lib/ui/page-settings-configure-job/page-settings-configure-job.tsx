@@ -2,7 +2,7 @@ import { useFormContext } from 'react-hook-form'
 import { type Job } from '@qovery/domains/services/data-access'
 import { JobConfigureSettings } from '@qovery/shared/console-shared'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
-import { BlockContent, Button, HelpSection } from '@qovery/shared/ui'
+import { BlockContent, Button } from '@qovery/shared/ui'
 
 export interface PageSettingsConfigureJobProps {
   service: Job
@@ -31,19 +31,6 @@ export function PageSettingsConfigureJob({ service, loading, onSubmit }: PageSet
           </div>
         </form>
       </div>
-      <HelpSection
-        description="Need help? You may find these links useful"
-        links={[
-          {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/cronjob/',
-            linkLabel: 'How to configure my cron job',
-          },
-          {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/lifecycle-job/',
-            linkLabel: 'How to configure my lifecycle job',
-          },
-        ]}
-      />
     </div>
   )
 }

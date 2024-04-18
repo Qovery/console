@@ -6,7 +6,7 @@ import {
   useDefaultAdvancedSettings,
   useService,
 } from '@qovery/domains/services/feature'
-import { Heading, HelpSection, Section } from '@qovery/shared/ui'
+import { Heading, Section } from '@qovery/shared/ui'
 
 interface SettingsAdvancedFeatureProps {
   service: Exclude<AnyService, Database>
@@ -40,15 +40,6 @@ function SettingsAdvancedFeature({ service }: SettingsAdvancedFeatureProps) {
           advancedSettings={advancedSettings}
         />
       </Section>
-      <HelpSection
-        description="Need help? You may find these links useful"
-        links={[
-          {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/advanced-settings/',
-            linkLabel: 'How to configure my application',
-          },
-        ]}
-      />
     </div>
   )
 }

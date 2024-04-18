@@ -10,12 +10,6 @@ beforeEach(() => {
   props = {
     clusterAvailable: true,
     project,
-    listHelpfulLinks: [
-      {
-        link: 'https://hub.qovery.com/docs/using-qovery/configuration/environment',
-        linkLabel: 'How to manage my environment',
-      },
-    ],
   }
 })
 

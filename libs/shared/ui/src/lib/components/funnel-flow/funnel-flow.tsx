@@ -15,7 +15,7 @@ export interface FunnelFlowProps extends PropsWithChildren {
 const FunnelFlowContent = (props: FunnelFlowProps) => {
   return (
     <div className="absolute top-0 left-0 inset-0 bg-neutral-150 scroll-auto flex flex-col min-h-0">
-      <header className="h-16 px-5 bg-white flex shrink-0 items-center justify-between">
+      <header className="h-16 px-5 bg-white flex shrink-0 items-center justify-between border-b border-neutral-200">
         <div className="flex items-center h-full">
           <div className="pr-4">
             <img className="w-[90px] shrink-0" src="assets/logos/logo-black.svg" alt="Qovery logo black" />

@@ -16,7 +16,7 @@ import {
   SERVICES_DATABASE_CREATION_URL,
   SERVICES_URL,
 } from '@qovery/shared/routes'
-import { FunnelFlowBody, FunnelFlowHelpCard, Icon } from '@qovery/shared/ui'
+import { FunnelFlowBody, Icon } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { type ValueOf } from '@qovery/shared/util-types'
 import StepGeneral from '../../../ui/page-database-create/step-general/step-general'
@@ -138,26 +138,6 @@ export function StepGeneralFeature() {
     watchModeDatabase === 'MANAGED' ? clusterVpc : undefined
   )
 
-  const funnelCardHelp = (
-    <FunnelFlowHelpCard
-      title="Database creation flow"
-      items={[
-        'Qovery supports out of the box a list of major databases.',
-        'Select the right “mode” based on your needs (production or development)',
-        'You can access your DB from outside your cluster by chaing its accessibility to public.',
-      ]}
-      helpSectionProps={{
-        description: 'Need help? You may find these links useful',
-        links: [
-          {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/database/#create-a-database',
-            linkLabel: 'How to configure my database',
-          },
-          { link: 'https://discuss.qovery.com/', linkLabel: 'Still need help? Ask on our Forum' },
-        ],
-      }}
-    />
-  )
   useEffect(() => {
     setCurrentStep(1)
   }, [setCurrentStep])
@@ -184,7 +164,7 @@ export function StepGeneralFeature() {
 
   return (
     cluster && (
-      <FunnelFlowBody helpSection={funnelCardHelp}>
+      <FunnelFlowBody>
         <FormProvider {...methods}>
           <StepGeneral
             cloudProvider={cloudProvider}

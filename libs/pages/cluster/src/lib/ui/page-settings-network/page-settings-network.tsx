@@ -6,7 +6,6 @@ import {
   ButtonLegacy,
   EmptyState,
   Heading,
-  HelpSection,
   IconAwesomeEnum,
   LoaderSpinner,
   Section,
@@ -100,15 +99,6 @@ export function PageSettingsNetwork(props: PageSettingsNetworkProps) {
           <EmptyState title="No network are set" description="Define a network for your cluster" />
         )}
       </Section>
-      <HelpSection
-        description="Need help? You may find these links useful"
-        links={[
-          {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/clusters/#network',
-            linkLabel: 'How to configure my cluster',
-          },
-        ]}
-      />
     </div>
   )
 }

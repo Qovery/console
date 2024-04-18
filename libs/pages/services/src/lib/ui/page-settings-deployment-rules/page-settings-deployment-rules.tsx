@@ -6,7 +6,6 @@ import {
   ButtonLegacySize,
   ButtonLegacyStyle,
   Heading,
-  HelpSection,
   InputSelect,
   InputText,
   InputToggle,
@@ -136,15 +135,6 @@ export function PageSettingsDeploymentRules(props: PageSettingsDeploymentRulesPr
           </div>
         </form>
       </Section>
-      <HelpSection
-        description="Need help? You may find these links useful"
-        links={[
-          {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/environment/#edit-environment-general-settings',
-            linkLabel: 'How to set your deployment',
-          },
-        ]}
-      />
     </div>
   )
 }

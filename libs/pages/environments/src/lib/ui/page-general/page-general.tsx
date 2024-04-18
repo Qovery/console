@@ -1,14 +1,12 @@
 import { type Project } from 'qovery-typescript-axios'
 import { EnvironmentList } from '@qovery/domains/environments/feature'
-import { type BaseLink, HelpSection } from '@qovery/shared/ui'
 
 export interface PageGeneralProps {
   clusterAvailable: boolean
   project: Project
-  listHelpfulLinks: BaseLink[]
 }
 
-export function PageGeneral({ clusterAvailable, project, listHelpfulLinks }: PageGeneralProps) {
+export function PageGeneral({ clusterAvailable, project }: PageGeneralProps) {
   return (
     <>
       <div className="mt-2 bg-white rounded-t-sm rounded-b-none flex-grow overflow-y-auto min-h-0">
@@ -19,9 +17,6 @@ export function PageGeneral({ clusterAvailable, project, listHelpfulLinks }: Pag
             clusterAvailable={clusterAvailable ?? false}
           />
         )}
-      </div>
-      <div className="bg-white rounded-b flex flex-col justify-end">
-        <HelpSection description="Need help? You may find these links useful" links={listHelpfulLinks} />
       </div>
     </>
   )

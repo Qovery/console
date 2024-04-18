@@ -6,7 +6,7 @@ import {
 } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
 import { CardClusterFeature } from '@qovery/shared/console-shared'
-import { BlockContent, Heading, HelpSection, LoaderSpinner, Section } from '@qovery/shared/ui'
+import { BlockContent, Heading, LoaderSpinner, Section } from '@qovery/shared/ui'
 import AWSExistingVPC from './aws-existing-vpc/aws-existing-vpc'
 import GcpExistingVPC from './gcp-existing-vpc/gcp-existing-vpc'
 
@@ -49,15 +49,6 @@ export function PageSettingsFeatures(props: PageSettingsFeaturesProps) {
           </BlockContent>
         )}
       </Section>
-      <HelpSection
-        description="Need help? You may find these links useful"
-        links={[
-          {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/clusters/#creating-an-eks-cluster-multiple-node-cluster',
-            linkLabel: 'How to configure my cluster',
-          },
-        ]}
-      />
     </div>
   )
 }

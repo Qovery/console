@@ -1,14 +1,6 @@
 import { OrganizationEventOrigin, type OrganizationEventResponse, OrganizationEventType } from 'qovery-typescript-axios'
 import { type Dispatch, type SetStateAction } from 'react'
-import {
-  HelpSection,
-  Icon,
-  Pagination,
-  Section,
-  Table,
-  type TableFilterProps,
-  type TableHeadProps,
-} from '@qovery/shared/ui'
+import { Icon, Pagination, Section, Table, type TableFilterProps, type TableHeadProps } from '@qovery/shared/ui'
 import CustomFilterFeature from '../../feature/custom-filter-feature/custom-filter-feature'
 import RowEventFeature from '../../feature/row-event-feature/row-event-feature'
 
@@ -131,15 +123,6 @@ export function PageGeneral({
           onPageSizeChange={onPageSizeChange}
         />
       </Section>
-      <HelpSection
-        description="Need help? You may find these links useful"
-        links={[
-          {
-            link: 'https://hub.qovery.com/docs/using-qovery/audit-logs/',
-            linkLabel: 'How the audit logs work',
-          },
-        ]}
-      />
     </>
   )
 }

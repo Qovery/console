@@ -1,7 +1,7 @@
 import { type Dispatch, type SetStateAction, memo, useState } from 'react'
 import { type ServiceType } from '@qovery/domains/services/data-access'
 import { type EnvironmentVariableSecretOrPublic } from '@qovery/shared/interfaces'
-import { HelpSection, Table, type TableFilterProps, type TableHeadProps } from '@qovery/shared/ui'
+import { Table, type TableFilterProps, type TableHeadProps } from '@qovery/shared/ui'
 import TableRowEnvironmentVariableFeature from '../../feature/table-row-environment-variable-feature/table-row-environment-variable-feature'
 
 export interface PageVariablesProps {
@@ -40,18 +40,6 @@ export function PageVariablesMemo(props: PageVariablesProps) {
             serviceType={props.serviceType}
           />
         ))}
-
-        <div className="bg-white rounded-b flex flex-col justify-end">
-          <HelpSection
-            description="Need help? You may find these links useful"
-            links={[
-              {
-                link: 'https://hub.qovery.com/docs/using-qovery/configuration/environment-variable/',
-                linkLabel: 'How to configure my environment variables',
-              },
-            ]}
-          />
-        </div>
       </>
     </Table>
   )

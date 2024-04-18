@@ -18,9 +18,4 @@ describe('PageOrganizationMembers', () => {
     const { baseElement } = renderWithProviders(<PageOrganizationMembers {...props} />)
     expect(baseElement).toBeTruthy()
   })
-
-  it('should have help section', () => {
-    const { getByTestId } = renderWithProviders(<PageOrganizationMembers {...props} />)
-    getByTestId('help-section')
-  })
 })

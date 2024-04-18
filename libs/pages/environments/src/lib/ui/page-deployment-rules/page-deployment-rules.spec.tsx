@@ -6,12 +6,6 @@ let props: PageDeploymentRulesProps
 
 beforeEach(() => {
   props = {
-    listHelpfulLinks: [
-      {
-        link: 'my-link.com',
-        linkLabel: 'hello',
-      },
-    ],
     deploymentRules: deploymentRulesFactoryMock(2),
     isLoading: 'loading',
     updateDeploymentRulesOrder: jest.fn(),

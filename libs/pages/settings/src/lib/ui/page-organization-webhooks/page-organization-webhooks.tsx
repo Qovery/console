@@ -7,7 +7,6 @@ import {
   ButtonIconStyle,
   ButtonLegacySize,
   Heading,
-  HelpSection,
   Icon,
   IconAwesomeEnum,
   InputToggle,
@@ -127,15 +126,6 @@ export function PageOrganizationWebhooks(props: PageOrganizationWebhooksProps) {
           )}
         </BlockContent>
       </Section>
-      <HelpSection
-        description="Need help? You may find these links useful"
-        links={[
-          {
-            link: 'https://hub.qovery.com/docs/using-qovery/integration/webhook/',
-            linkLabel: 'Managing your Webhooks',
-          },
-        ]}
-      />
     </div>
   )
 }

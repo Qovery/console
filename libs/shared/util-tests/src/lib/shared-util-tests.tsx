@@ -13,6 +13,7 @@ import { type RenderOptions, queries, render, screen, within } from '@testing-li
 import userEvent from '@testing-library/user-event'
 import { type PropsWithChildren, type ReactElement } from 'react'
 import { useChainProviders } from 'react-flat-providers'
+import { InstantSearch } from 'react-instantsearch'
 import { MemoryRouter } from 'react-router-dom'
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { ModalProvider } from '@qovery/shared/ui'
@@ -41,6 +42,29 @@ function renderWithProviders(
       .add(TooltipProvider)
       .add(ModalProvider)
       .add(MemoryRouter)
+      .add(InstantSearch, {
+        // Mock InstantSearch client
+        // Inspired from https://github.com/algolia/react-instantsearch/issues/3609#issuecomment-1239027418
+        searchClient: {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          async search(queries: any) {
+            return {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              results: queries.map(({ indexName, params }: any) => ({
+                hits: [],
+                page: 0,
+                nbHits: 0,
+                nbPages: 0,
+                hitsPerPage: 0,
+                processingTimeMS: 1,
+                exhaustiveNbHits: true,
+                query: params.query,
+                params: '',
+              })),
+            }
+          },
+        },
+      })
       .make()
 
     return <FlatChainedProviders>{children}</FlatChainedProviders>

@@ -4,7 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { useOrganization } from '@qovery/domains/organizations/feature'
 import { type ApplicationGeneralData } from '@qovery/shared/interfaces'
 import { SERVICES_APPLICATION_CREATION_URL, SERVICES_CREATION_RESOURCES_URL, SERVICES_URL } from '@qovery/shared/routes'
-import { FunnelFlowBody, FunnelFlowHelpCard, toastError } from '@qovery/shared/ui'
+import { FunnelFlowBody, toastError } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import StepGeneral from '../../../ui/page-application-create/step-general/step-general'
 import { useApplicationContainerCreateContext } from '../page-application-create-feature'
@@ -16,26 +16,6 @@ export function StepGeneralFeature() {
   const navigate = useNavigate()
   const { data: organization } = useOrganization({ organizationId })
 
-  const funnelCardHelp = (
-    <FunnelFlowHelpCard
-      title="Application creation flow"
-      items={[
-        'You can deploy an application from a git repository or a container registry',
-        'Git Repository: Qovery will pull the repository, build the application and deploy it on your kubernetes cluster',
-        'Container Registry: Qovery will pull the image from container registry and deploy it on your kubernetes cluster',
-      ]}
-      helpSectionProps={{
-        description: 'Need help? You may find these links useful',
-        links: [
-          {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/application/#general',
-            linkLabel: 'How to configure my application',
-          },
-          { link: 'https://discuss.qovery.com/', linkLabel: 'Still need help? Ask on our Forum' },
-        ],
-      }}
-    />
-  )
   useEffect(() => {
     setCurrentStep(1)
   }, [setCurrentStep])
@@ -65,7 +45,7 @@ export function StepGeneralFeature() {
   })
 
   return (
-    <FunnelFlowBody helpSection={funnelCardHelp}>
+    <FunnelFlowBody>
       <FormProvider {...methods}>
         <StepGeneral organization={organization} onSubmit={onSubmit} />
       </FormProvider>

@@ -1,5 +1,5 @@
 import { EnvironmentModeEnum, type Organization } from 'qovery-typescript-axios'
-import { BlockContentDelete, HelpSection, IconAwesomeEnum } from '@qovery/shared/ui'
+import { BlockContentDelete, IconAwesomeEnum } from '@qovery/shared/ui'
 
 export interface PageOrganizationDangerZoneProps {
   deleteOrganization: () => void
@@ -42,15 +42,6 @@ export function PageOrganizationDangerZone(props: PageOrganizationDangerZoneProp
           }}
         />
       </div>
-      <HelpSection
-        description="Need help? You may find these links useful"
-        links={[
-          {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/organization/#delete-an-organization',
-            linkLabel: 'How to delete my organization',
-          },
-        ]}
-      />
     </div>
   )
 }

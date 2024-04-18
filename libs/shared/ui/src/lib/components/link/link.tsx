@@ -41,7 +41,7 @@ const iconVariants = cva([], {
 })
 
 export type ExternalLinkProps =
-  | (Omit<ComponentPropsWithoutRef<'a'>, 'color'> & VariantProps<typeof linkVariants>)
+  | ((Omit<ComponentPropsWithoutRef<'a'>, 'color'> & VariantProps<typeof linkVariants>) & { withIcon?: boolean })
   | (Omit<ComponentPropsWithoutRef<'a'>, 'color'> & VariantProps<typeof buttonVariants> & { as: 'button' })
 
 export const ExternalLink = forwardRef<HTMLAnchorElement, ExternalLinkProps>(function ExternalLink(
@@ -60,7 +60,7 @@ export const ExternalLink = forwardRef<HTMLAnchorElement, ExternalLinkProps>(fun
         {children}
       </a>
     ))
-    .otherwise(({ children, color, size, className, ...rest }) => (
+    .otherwise(({ children, color, size, className, withIcon = true, ...rest }) => (
       <a
         ref={forwardedRef}
         className={twMerge(linkVariants({ color, size }), className)}
@@ -69,7 +69,7 @@ export const ExternalLink = forwardRef<HTMLAnchorElement, ExternalLinkProps>(fun
         {...rest}
       >
         {children}
-        <Icon iconName="arrow-up-right-from-square" className={iconVariants({ size })} />
+        {withIcon && <Icon iconName="arrow-up-right-from-square" className={iconVariants({ size })} />}
       </a>
     ))
 })

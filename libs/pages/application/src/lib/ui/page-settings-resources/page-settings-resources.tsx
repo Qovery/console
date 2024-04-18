@@ -2,7 +2,7 @@ import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { type AnyService, type Database, type Helm } from '@qovery/domains/services/data-access'
 import { ApplicationSettingsResources } from '@qovery/shared/console-shared'
-import { Button, Heading, HelpSection, Section } from '@qovery/shared/ui'
+import { Button, Heading, Section } from '@qovery/shared/ui'
 
 export interface PageSettingsResourcesProps {
   onSubmit: FormEventHandler<HTMLFormElement>
@@ -31,15 +31,6 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
           </div>
         </form>
       </Section>
-      <HelpSection
-        description="Need help? You may find these links useful"
-        links={[
-          {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/application/#resources',
-            linkLabel: 'How to configure my application',
-          },
-        ]}
-      />
     </div>
   )
 }

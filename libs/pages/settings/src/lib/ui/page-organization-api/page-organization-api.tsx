@@ -6,7 +6,6 @@ import {
   ButtonIconStyle,
   ButtonLegacySize,
   Heading,
-  HelpSection,
   Icon,
   IconAwesomeEnum,
   LoaderSpinner,
@@ -102,15 +101,6 @@ export function PageOrganizationApi(props: PageOrganizationApiProps) {
           )}
         </BlockContent>
       </Section>
-      <HelpSection
-        description="Need help? You may find these links useful"
-        links={[
-          {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/organization/api-token',
-            linkLabel: 'How to configure the Token API',
-          },
-        ]}
-      />
     </div>
   )
 }

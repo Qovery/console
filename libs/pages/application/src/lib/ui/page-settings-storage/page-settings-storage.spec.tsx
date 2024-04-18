@@ -2,7 +2,6 @@ import {
   act,
   findAllByTestId,
   findByDisplayValue,
-  findByTestId,
   findByText,
   fireEvent,
   render,
@@ -57,12 +56,6 @@ describe('PageSettingsStorage', () => {
       // todo uncomment when select component is fixed
       // await findByDisplayValue(formRows[0], 'FAST_SSD')
     })
-  })
-
-  it('should have an help section', async () => {
-    const { baseElement } = render(<PageSettingsStorage {...props} />)
-
-    await findByTestId(baseElement, 'help-section')
   })
 
   it('should have an add button and a click handler', async () => {
