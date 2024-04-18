@@ -4,16 +4,7 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { AnnotationSetting } from '@qovery/domains/organizations/feature'
 import { GeneralSetting } from '@qovery/domains/services/feature'
 import { type Value } from '@qovery/shared/interfaces'
-import {
-  Button,
-  Callout,
-  ExternalLink,
-  Heading,
-  Icon,
-  InputSelect,
-  LoaderSpinner,
-  Section,
-} from '@qovery/shared/ui'
+import { Button, Callout, ExternalLink, Heading, Icon, InputSelect, LoaderSpinner, Section } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
 export interface PageSettingsGeneralProps {
