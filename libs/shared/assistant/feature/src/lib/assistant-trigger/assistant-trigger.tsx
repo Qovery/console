@@ -20,7 +20,8 @@ export function AssistantTrigger({ defaultOpen = false }: AssistantTriggerProps)
       >
         <Icon iconName="question" className="text-lg" />
       </Button>
-      {openAssistant && <AssistantPanel onClose={() => setOpenAssistant(false)} />}
+      {/* XXX: rely on defaultOpen boolean for `smaller` prop as all funnel flows require smaller panel */}
+      {openAssistant && <AssistantPanel onClose={() => setOpenAssistant(false)} smaller={defaultOpen} />}
     </>
   )
 }

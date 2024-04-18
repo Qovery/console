@@ -3,6 +3,7 @@ import { Hits, SearchBox, useInstantSearch } from 'react-instantsearch'
 import { useIntercom } from 'react-use-intercom'
 import { match } from 'ts-pattern'
 import { ExternalLink, Icon, InputSearch } from '@qovery/shared/ui'
+import { twMerge } from '@qovery/shared/util-js'
 import { INSTATUS_APP_ID } from '@qovery/shared/util-node-env'
 import { DotStatus } from '../dot-status/dot-status'
 import { Hit } from '../hit/hit'
@@ -11,9 +12,10 @@ import { useQoveryStatus } from '../hooks/use-qovery-status/use-qovery-status'
 
 export interface AssistantPanelProps {
   onClose: () => void
+  smaller?: boolean
 }
 
-export function AssistantPanel({ onClose }: AssistantPanelProps) {
+export function AssistantPanel({ smaller = false, onClose }: AssistantPanelProps) {
   const { data } = useQoveryStatus()
   const { showMessages: showIntercomMessenger } = useIntercom()
   const { setIndexUiState, indexUiState } = useInstantSearch()
@@ -36,7 +38,12 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
   }, [])
 
   return (
-    <div className="flex flex-col bg-white border-l border-neutral-200 w-[368px] min-h-page-container fixed right-0 top-[4rem] shadow-sm animate-slidein-right-md-faded">
+    <div
+      className={twMerge(
+        'flex flex-col bg-white border-l border-neutral-200 w-[368px] fixed right-0 shadow-sm animate-slidein-right-md-faded',
+        smaller ? 'min-h-page-container-wprogressbar top-[70px]' : 'min-h-page-container top-[4rem]'
+      )}
+    >
       <div className="flex justify-between px-5 pt-5">
         <div className="flex gap-3 font-bold">
           <span className="flex justify-center items-center rounded bg-purple-500 w-6 h-6 text-sm text-white">

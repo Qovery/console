@@ -104,6 +104,7 @@ module.exports = {
       minHeight: {
         'page-container': 'calc(100vh - theme(spacing.navbar-height))',
         'page-container-wbanner': 'calc(100vh - theme(spacing.navbar-height) - 40px)',
+        'page-container-wprogressbar': 'calc(100vh - theme(spacing.navbar-height) - 6px)',
       },
       fontFamily: {
         sans: ['Roboto', 'Helvetica', 'sans-serif'],
