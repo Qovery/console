@@ -85,6 +85,13 @@ function MenuManageDeployment({
 
   const { state, service_deployment_status } = deploymentStatus
   const serviceNeedUpdate = service_deployment_status !== ServiceDeploymentStatusEnum.UP_TO_DATE
+  const tooltipServiceNeedUpdate = serviceNeedUpdate && (
+    <Tooltip side="bottom" content="Configuration has changed and needs to be applied">
+      <div className="absolute right-2">
+        <Icon iconName="circle-exclamation" />
+      </div>
+    </Tooltip>
+  )
 
   const mutationDeploy = () => deployService({ serviceId: service.id, serviceType: service.serviceType })
 
@@ -258,13 +265,25 @@ function MenuManageDeployment({
           </DropdownMenu.Item>
         )}
         {isDeployAvailable(state) && (
-          <DropdownMenu.Item icon={<Icon iconName="play" />} onClick={mutationDeploy}>
+          <DropdownMenu.Item
+            icon={<Icon iconName="play" />}
+            onClick={mutationDeploy}
+            className="relative"
+            color={serviceNeedUpdate ? 'yellow' : 'brand'}
+          >
             Deploy
+            {tooltipServiceNeedUpdate}
           </DropdownMenu.Item>
         )}
         {isRedeployAvailable(state) && (
-          <DropdownMenu.Item icon={<Icon iconName="rotate-right" />} onClick={mutationRedeploy}>
+          <DropdownMenu.Item
+            icon={<Icon iconName="rotate-right" />}
+            onClick={mutationRedeploy}
+            className="relative"
+            color={serviceNeedUpdate ? 'yellow' : 'brand'}
+          >
             Redeploy
+            {tooltipServiceNeedUpdate}
           </DropdownMenu.Item>
         )}
         {runningState && service.serviceType !== 'JOB' && isRestartAvailable(runningState.state, state) && (
