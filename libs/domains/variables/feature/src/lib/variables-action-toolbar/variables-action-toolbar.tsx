@@ -20,7 +20,7 @@ export function VariablesActionToolbar({
           </ActionToolbar.Button>
         </DropdownMenu.Trigger>
         <DropdownMenu.Content align="end">
-          <DropdownMenu.Item onClick={onImportEnvFile} icon={<Icon iconName="cloud-upload" />}>
+          <DropdownMenu.Item onSelect={onImportEnvFile} icon={<Icon iconName="cloud-upload" />}>
             Import from .env file
           </DropdownMenu.Item>
           <DropdownMenu.Item asChild icon={<Icon iconName="rotate" />}>
@@ -48,10 +48,10 @@ export function VariablesActionToolbar({
           </ActionToolbar.Button>
         </DropdownMenu.Trigger>
         <DropdownMenu.Content>
-          <DropdownMenu.Item onClick={onCreateVariable} icon={<Icon iconName="feather" />}>
+          <DropdownMenu.Item onSelect={onCreateVariable} icon={<Icon iconName="feather" />}>
             Variable
           </DropdownMenu.Item>
-          <DropdownMenu.Item onClick={onCreateVariableFile} icon={<Icon iconName="file-lines" />}>
+          <DropdownMenu.Item onSelect={onCreateVariableFile} icon={<Icon iconName="file-lines" />}>
             Variable as file
           </DropdownMenu.Item>
         </DropdownMenu.Content>

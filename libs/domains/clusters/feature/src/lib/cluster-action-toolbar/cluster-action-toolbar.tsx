@@ -70,17 +70,17 @@ function MenuManageDeployment({ cluster, clusterStatus }: { cluster: Cluster; cl
 
   const entries: ReactNode[] = [
     isDeployAvailable(clusterStatus.status) && (
-      <DropdownMenu.Item key="0" icon={<Icon iconName="play" />} onClick={mutationDeploy}>
+      <DropdownMenu.Item key="0" icon={<Icon iconName="play" />} onSelect={mutationDeploy}>
         {clusterStatus.is_deployed ? 'Deploy' : 'Install'}
       </DropdownMenu.Item>
     ),
     isRedeployAvailable(clusterStatus.status) && (
-      <DropdownMenu.Item key="1" icon={<Icon iconName="rotate-right" />} onClick={mutationUpdate}>
+      <DropdownMenu.Item key="1" icon={<Icon iconName="rotate-right" />} onSelect={mutationUpdate}>
         Update
       </DropdownMenu.Item>
     ),
     cluster.cloud_provider !== 'GCP' && isStopAvailable(clusterStatus.status) && (
-      <DropdownMenu.Item key="2" icon={<Icon iconName="circle-stop" />} onClick={mutationStop}>
+      <DropdownMenu.Item key="2" icon={<Icon iconName="circle-stop" />} onSelect={mutationStop}>
         Stop
       </DropdownMenu.Item>
     ),
@@ -159,7 +159,7 @@ function MenuOtherActions({ cluster, clusterStatus }: { cluster: Cluster; cluste
       <DropdownMenu.Content>
         <DropdownMenu.Item
           icon={<Icon iconName="clock-rotate-left" />}
-          onClick={() =>
+          onSelect={() =>
             navigate(
               AUDIT_LOGS_PARAMS_URL(cluster.organization.id, {
                 targetType: OrganizationEventTargetType.CLUSTER,
@@ -173,24 +173,24 @@ function MenuOtherActions({ cluster, clusterStatus }: { cluster: Cluster; cluste
         >
           See audit logs
         </DropdownMenu.Item>
-        <DropdownMenu.Item icon={<Icon iconName="copy" />} onClick={() => copyToClipboard(cluster.id)}>
+        <DropdownMenu.Item icon={<Icon iconName="copy" />} onSelect={() => copyToClipboard(cluster.id)}>
           Copy identifier
         </DropdownMenu.Item>
         <DropdownMenu.Item
           icon={<Icon iconName="download" />}
-          onClick={() => downloadKubeconfig({ organizationId: cluster.organization.id, clusterId: cluster.id })}
+          onSelect={() => downloadKubeconfig({ organizationId: cluster.organization.id, clusterId: cluster.id })}
         >
           Get Kubeconfig
         </DropdownMenu.Item>
         {cluster.kubernetes === 'SELF_MANAGED' && (
-          <DropdownMenu.Item icon={<Icon iconName="circle-info" />} onClick={openInstallationGuideModal}>
+          <DropdownMenu.Item icon={<Icon iconName="circle-info" />} onSelect={openInstallationGuideModal}>
             Installation guide
           </DropdownMenu.Item>
         )}
         {canDelete && (
           <>
             <DropdownMenu.Separator />
-            <DropdownMenu.Item color="red" icon={<Icon iconName="trash" />} onClick={() => removeCluster(cluster)}>
+            <DropdownMenu.Item color="red" icon={<Icon iconName="trash" />} onSelect={() => removeCluster(cluster)}>
               Delete cluster
             </DropdownMenu.Item>
           </>

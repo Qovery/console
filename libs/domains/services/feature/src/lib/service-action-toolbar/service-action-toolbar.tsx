@@ -260,14 +260,14 @@ function MenuManageDeployment({
       </DropdownMenu.Trigger>
       <DropdownMenu.Content>
         {isCancelBuildAvailable(state) && (
-          <DropdownMenu.Item icon={<Icon iconName="xmark" />} onClick={mutationCancelBuild}>
+          <DropdownMenu.Item icon={<Icon iconName="xmark" />} onSelect={mutationCancelBuild}>
             {state === StateEnum.DELETE_QUEUED || state === StateEnum.DELETING ? 'Cancel delete' : 'Cancel deployment'}
           </DropdownMenu.Item>
         )}
         {isDeployAvailable(state) && (
           <DropdownMenu.Item
             icon={<Icon iconName="play" />}
-            onClick={mutationDeploy}
+            onSelect={mutationDeploy}
             className="relative"
             color={serviceNeedUpdate ? 'yellow' : 'brand'}
           >
@@ -278,7 +278,7 @@ function MenuManageDeployment({
         {isRedeployAvailable(state) && (
           <DropdownMenu.Item
             icon={<Icon iconName="rotate-right" />}
-            onClick={mutationRedeploy}
+            onSelect={mutationRedeploy}
             className="relative"
             color={serviceNeedUpdate ? 'yellow' : 'brand'}
           >
@@ -289,7 +289,7 @@ function MenuManageDeployment({
         {runningState && service.serviceType !== 'JOB' && isRestartAvailable(runningState.state, state) && (
           <DropdownMenu.Item
             icon={<Icon iconName="rotate-right" />}
-            onClick={() => restartService({ serviceId: service.id, serviceType: service.serviceType })}
+            onSelect={() => restartService({ serviceId: service.id, serviceType: service.serviceType })}
           >
             Restart Service
           </DropdownMenu.Item>
@@ -297,7 +297,7 @@ function MenuManageDeployment({
         {service.serviceType === 'JOB' && (
           <DropdownMenu.Item
             icon={<Icon iconName="play" />}
-            onClick={() =>
+            onSelect={() =>
               openModal({
                 content: <ForceRunModalFeature service={service} />,
               })
@@ -307,7 +307,7 @@ function MenuManageDeployment({
           </DropdownMenu.Item>
         )}
         {isStopAvailable(state) && (
-          <DropdownMenu.Item icon={<Icon iconName="circle-stop" />} onClick={mutationStop}>
+          <DropdownMenu.Item icon={<Icon iconName="circle-stop" />} onSelect={mutationStop}>
             Stop
           </DropdownMenu.Item>
         )}
@@ -326,7 +326,7 @@ function MenuManageDeployment({
                   {gitRepository && (
                     <DropdownMenu.Item
                       icon={<Icon iconName="clock-rotate-left" />}
-                      onClick={() => deployCommitVersion(service, gitRepository, 'Deploy another version')}
+                      onSelect={() => deployCommitVersion(service, gitRepository, 'Deploy another version')}
                     >
                       Deploy another version
                     </DropdownMenu.Item>
@@ -349,7 +349,7 @@ function MenuManageDeployment({
                     <DropdownMenu.Separator />
                     <DropdownMenu.Item
                       icon={<Icon iconName="clock-rotate-left" />}
-                      onClick={() => deployTagVersion(service, version)}
+                      onSelect={() => deployTagVersion(service, version)}
                     >
                       Deploy another version
                     </DropdownMenu.Item>
@@ -368,7 +368,7 @@ function MenuManageDeployment({
                   {gitRepository && (
                     <DropdownMenu.Item
                       icon={<Icon iconName="clock-rotate-left" />}
-                      onClick={() => deployCommitVersion(service, gitRepository, 'Deploy another chart version')}
+                      onSelect={() => deployCommitVersion(service, gitRepository, 'Deploy another chart version')}
                     >
                       Deploy another chart version
                     </DropdownMenu.Item>
@@ -387,7 +387,7 @@ function MenuManageDeployment({
                     <DropdownMenu.Separator />
                     <DropdownMenu.Item
                       icon={<Icon iconName="clock-rotate-left" />}
-                      onClick={() => deployHelmChartVersion(service, version)}
+                      onSelect={() => deployHelmChartVersion(service, version)}
                     >
                       Deploy another chart version
                     </DropdownMenu.Item>
@@ -405,7 +405,7 @@ function MenuManageDeployment({
               gitRepository && (
                 <DropdownMenu.Item
                   icon={<Icon iconName="clock-rotate-left" />}
-                  onClick={() => deployHelmOverrideVersion(service, gitRepository)}
+                  onSelect={() => deployHelmOverrideVersion(service, gitRepository)}
                 >
                   Deploy another override version
                 </DropdownMenu.Item>
@@ -510,7 +510,7 @@ function MenuOtherActions({
       <DropdownMenu.Content>
         <DropdownMenu.Item
           icon={<Icon iconName="scroll" />}
-          onClick={() => {
+          onSelect={() => {
             navigate(environmentLogsLink + SERVICE_LOGS_URL(service.id), {
               state: { prevUrl: pathname },
             })
@@ -525,7 +525,7 @@ function MenuOtherActions({
         )}
         <DropdownMenu.Item
           icon={<Icon iconName="clock-rotate-left" />}
-          onClick={() =>
+          onSelect={() =>
             navigate(
               AUDIT_LOGS_PARAMS_URL(organizationId, {
                 targetId: service.id,
@@ -538,12 +538,12 @@ function MenuOtherActions({
         >
           See audit logs
         </DropdownMenu.Item>
-        <DropdownMenu.Item icon={<Icon iconName="copy" />} onClick={() => copyToClipboard(copyContent)}>
+        <DropdownMenu.Item icon={<Icon iconName="copy" />} onSelect={() => copyToClipboard(copyContent)}>
           Copy identifiers
         </DropdownMenu.Item>
         <DropdownMenu.Item
           icon={<Icon iconName="gear" />}
-          onClick={() =>
+          onSelect={() =>
             navigate(
               match(service?.serviceType)
                 .with(
@@ -570,13 +570,13 @@ function MenuOtherActions({
         >
           Open settings
         </DropdownMenu.Item>
-        <DropdownMenu.Item icon={<Icon iconName="copy" />} onClick={() => openServiceCloneModal()}>
+        <DropdownMenu.Item icon={<Icon iconName="copy" />} onSelect={() => openServiceCloneModal()}>
           Clone
         </DropdownMenu.Item>
         {isDeleteAvailable(state) && (
           <>
             <DropdownMenu.Separator />
-            <DropdownMenu.Item color="red" icon={<Icon iconName="trash" />} onClick={mutationDelete}>
+            <DropdownMenu.Item color="red" icon={<Icon iconName="trash" />} onSelect={mutationDelete}>
               Delete service
             </DropdownMenu.Item>
           </>
