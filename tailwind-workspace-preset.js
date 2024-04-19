@@ -289,6 +289,11 @@ module.exports = {
           from: { opacity: 1 },
           to: { opacity: 0 },
         },
+        shine: {
+          '0%': { left: '-100px' },
+          '20%': { left: '100%' },
+          '100%': { left: '100%' },
+        },
         ...slideEntrances(),
         ...slideExits(),
       },
