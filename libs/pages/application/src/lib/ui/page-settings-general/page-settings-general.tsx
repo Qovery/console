@@ -108,7 +108,7 @@ export function PageSettingsGeneral({
         <p className="text-sm text-neutral-400 mb-8">
           These general settings allow you to set up the service name, its source and deployment parameters.
         </p>
-        <form onSubmit={onSubmit}>
+        <form onSubmit={onSubmit} className="space-y-10">
           <Section className="gap-4">
             <Heading>General</Heading>
             <GeneralSetting label="Service name" />
@@ -121,7 +121,7 @@ export function PageSettingsGeneral({
                   jobType={job.job_type === 'CRON' ? ServiceTypeEnum.CRON_JOB : ServiceTypeEnum.LIFECYCLE_JOB}
                   organization={organization}
                 />
-                <Section className="gap-4 mt-10">
+                <Section className="gap-4">
                   <Heading>Source</Heading>
                   {isJobGitSource(job.source) ? (
                     <EditGitRepositorySettingsFeature />
@@ -129,12 +129,12 @@ export function PageSettingsGeneral({
                     <GeneralContainerSettings organization={organization} />
                   )}
                 </Section>
-                <Section className="gap-4 mt-10">
+                <Section className="gap-4">
                   <Heading>Build and deploy</Heading>
                   {blockContentBuildDeploy}
                   <AutoDeploySetting source={watchServiceType === 'CONTAINER' ? 'CONTAINER_REGISTRY' : 'GIT'} />
                 </Section>
-                <Section className="gap-4 mt-10">
+                <Section className="gap-4">
                   <Heading>Extra annotations</Heading>
                   <AnnotationSetting />
                 </Section>
@@ -142,17 +142,17 @@ export function PageSettingsGeneral({
             ))
             .with({ serviceType: 'APPLICATION' }, () => (
               <>
-                <Section className="gap-4 mt-10">
+                <Section className="gap-4">
                   <Heading>Source</Heading>
                   <EditGitRepositorySettingsFeature />
                 </Section>
-                <Section className="gap-4 mt-10">
+                <Section className="gap-4">
                   <Heading>Build and deploy</Heading>
                   {blockContentBuildDeploy}
                   {watchBuildMode === BuildModeEnum.DOCKER && <EntrypointCmdInputs />}
                   <AutoDeploySetting source="GIT" />
                 </Section>
-                <Section className="gap-4 mt-10">
+                <Section className="gap-4">
                   <Heading>Extra annotations</Heading>
                   <AnnotationSetting />
                 </Section>
@@ -160,16 +160,16 @@ export function PageSettingsGeneral({
             ))
             .with({ serviceType: 'CONTAINER' }, () => (
               <>
-                <Section className="gap-4 mt-10">
+                <Section className="gap-4">
                   <Heading>Source</Heading>
                   <GeneralContainerSettings organization={organization} />
                 </Section>
-                <Section className="gap-4 mt-10">
+                <Section className="gap-4">
                   <Heading>Deploy</Heading>
                   <EntrypointCmdInputs />
                   <AutoDeploySetting source="CONTAINER_REGISTRY" />
                 </Section>
-                <Section className="gap-4 mt-10">
+                <Section className="gap-4">
                   <Heading>Extra annotations</Heading>
                   <AnnotationSetting />
                 </Section>
@@ -177,7 +177,7 @@ export function PageSettingsGeneral({
             ))
             .with({ serviceType: 'HELM' }, () => (
               <>
-                <Section className="gap-4 mt-10">
+                <Section className="gap-4">
                   <Heading>Source</Heading>
                   <SourceSetting disabled />
                   {watchFieldProvider === 'GIT' && (
@@ -186,7 +186,7 @@ export function PageSettingsGeneral({
                     </div>
                   )}
                 </Section>
-                <Section className="gap-4 mt-10">
+                <Section className="gap-4">
                   <Heading>Deploy</Heading>
                   <DeploymentSetting />
                   {watchFieldProvider === 'GIT' && <AutoDeploySetting source="GIT" />}
