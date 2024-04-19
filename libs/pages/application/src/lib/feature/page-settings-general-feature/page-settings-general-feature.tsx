@@ -104,7 +104,7 @@ export const handleJobSubmit = (data: JobGeneralData, job: Job): JobRequest => {
         },
       }
     })
-    .otherwise(() => ({}))
+    .otherwise(() => undefined)
 
   if (isJobGitSource(job.source)) {
     const git_repository = {

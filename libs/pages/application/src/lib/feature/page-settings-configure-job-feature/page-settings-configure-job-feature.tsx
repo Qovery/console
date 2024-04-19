@@ -44,7 +44,7 @@ export function PageSettingsConfigureJobFeature() {
         },
       }
     })
-    .otherwise(() => undefined)
+    .otherwise(() => ({}))
 
   const methods = useForm<JobConfigureData & Pick<JobGeneralData, 'image_entry_point' | 'cmd_arguments' | 'cmd'>>({
     mode: 'onChange',
