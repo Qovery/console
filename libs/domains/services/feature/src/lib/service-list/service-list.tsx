@@ -1,5 +1,4 @@
 import {
-  type Row,
   type RowSelectionState,
   type SortingState,
   createColumnHelper,
@@ -74,8 +73,7 @@ function getServiceIcon(service: AnyService) {
     .otherwise(() => IconEnum.APPLICATION)
 }
 
-function ServiceNameCell({ row, environment }: { row: Row<AnyService>; environment: Environment }) {
-  const { original: service } = row
+function ServiceNameCell({ service, environment }: { service: AnyService; environment: Environment }) {
   const navigate = useNavigate()
 
   return (
@@ -253,7 +251,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
           },
         },
         cell: (info) => {
-          return <ServiceNameCell row={info.row} environment={environment} />
+          return <ServiceNameCell service={info.row.original} environment={environment} />
         },
       }),
       columnHelper.accessor('runningStatus.stateLabel', {
