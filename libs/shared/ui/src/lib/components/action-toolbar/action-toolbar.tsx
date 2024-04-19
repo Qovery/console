@@ -58,7 +58,11 @@ const toolbarButtonVariants = cva([], {
       variant: 'outline',
       color: 'yellow',
       className: [
-        'rounded-l',
+        'first:rounded-l',
+        'last:rounded-r',
+        'first:border-r-0',
+        'first:border-x',
+        'border-l-0',
         'border',
         'border-yellow-600',
         'hover:bg-neutral-150',
