@@ -95,7 +95,7 @@ export const handleContainerSubmit = (data: ApplicationGeneralData, container: C
 
 export const handleJobSubmit = (data: JobGeneralData, job: Job): JobRequest => {
   const schedule = match(job)
-    .with({ job_type: 'CRON' }, (j) => {
+    .with({ job_type: 'CRON' }, (j): JobRequest['schedule'] => {
       const { cronjob } = j.schedule
       return {
         cronjob: {
@@ -127,8 +127,7 @@ export const handleJobSubmit = (data: JobGeneralData, job: Job): JobRequest => {
         },
       },
       schedule,
-      // `as` is necessary to fix inconsistent type with schedule between response and request
-    } as JobRequest
+    }
   } else {
     return {
       ...job,
@@ -143,8 +142,7 @@ export const handleJobSubmit = (data: JobGeneralData, job: Job): JobRequest => {
         },
       },
       schedule,
-      // `as` is necessary to fix inconsistent type with schedule between response and request
-    } as JobRequest
+    }
   }
 }
 
