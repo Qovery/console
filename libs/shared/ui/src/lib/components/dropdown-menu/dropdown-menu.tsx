@@ -37,7 +37,7 @@ const dropdownMenuItemVariants = cva(
       {
         color: 'red',
         disabled: false,
-        className: ['hover:bg-red-50', 'text-neutral-350', 'text-red-600'],
+        className: ['hover:bg-red-50', 'text-red-600'],
       },
       {
         color: 'yellow',
