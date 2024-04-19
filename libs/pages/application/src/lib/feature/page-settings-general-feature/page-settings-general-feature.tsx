@@ -234,7 +234,7 @@ export function PageSettingsGeneralFeature() {
             image_entry_point: cronjob?.entrypoint,
           }
         })
-        .otherwise(() => undefined)
+        .otherwise(() => ({}))
 
       return {
         auto_deploy: service.auto_deploy,
