@@ -18,7 +18,6 @@ import {
   type Container,
   type Helm,
   type Job,
-  JobType,
   type ServiceType,
 } from '@qovery/domains/services/data-access'
 import {
@@ -105,7 +104,7 @@ export const handleJobSubmit = (data: JobGeneralData, job: Job): JobRequest => {
         },
       }
     })
-    .otherwise(() => undefined)
+    .otherwise(() => ({}))
 
   if (isJobGitSource(job.source)) {
     const git_repository = {
