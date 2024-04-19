@@ -1,8 +1,11 @@
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import type { Column, Row, RowData } from '@tanstack/react-table'
 import { Fragment, type ReactNode, useMemo, useState } from 'react'
-import { Button, Icon, Popover, Truncate } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
+import { Button } from '../button/button'
+import { Icon } from '../icon/icon'
+import { Popover } from '../popover/popover'
+import { Truncate } from '../truncate/truncate'
 
 declare module '@tanstack/table-core' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -12,10 +15,8 @@ declare module '@tanstack/table-core' {
   }
 }
 
-// NOTE: This component can be standardize in our design system,
-// however we are waiting for other feature / designs example to show off
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function ServiceListFilter({ column }: { column: Column<any, unknown> }) {
+export function TableFilter({ column }: { column: Column<any, unknown> }) {
   const [open, setOpen] = useState(false)
   const sortedUniqueValues = useMemo(
     () => Array.from(column.getFacetedUniqueValues().entries()).sort(([a], [b]) => a?.localeCompare?.(b) ?? 0),
@@ -54,14 +55,14 @@ export function ServiceListFilter({ column }: { column: Column<any, unknown> }) 
             <button
               type="button"
               className="absolute right-0 px-2 text-white cursor-pointer h-7 text-center leading-7"
-              onClick={() => column.setFilterValue([])}
+              onClick={() => column.setFilterValue(undefined)}
             >
               <Icon iconName="xmark" />
             </button>
           ) : null}
         </div>
         <DropdownMenu.Content asChild>
-          <Popover.Content className="p-2 w-60">
+          <Popover.Content className="p-2 w-60 overflow-y-auto max-h-80">
             {sortedUniqueValues.map(([value, count], index) => (
               <Fragment key={value ?? index}>
                 <Popover.Close>
@@ -92,4 +93,4 @@ export function ServiceListFilter({ column }: { column: Column<any, unknown> }) 
   )
 }
 
-export default ServiceListFilter
+export default TableFilter

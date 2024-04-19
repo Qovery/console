@@ -48,6 +48,7 @@ import {
   Icon,
   Link,
   StatusChip,
+  TableFilter,
   TablePrimitives,
   Tooltip,
   Truncate,
@@ -61,7 +62,6 @@ import { LastCommit } from '../last-commit/last-commit'
 import { ServiceActionToolbar } from '../service-action-toolbar/service-action-toolbar'
 import { ServiceLinksPopover } from '../service-links-popover/service-links-popover'
 import { ServiceListActionBar } from './service-list-action-bar'
-import { ServiceListFilter } from './service-list-filter'
 import { ServiceListSkeleton } from './service-list-skeleton'
 
 const { Table } = TablePrimitives
@@ -537,7 +537,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
                   style={{ width: i === 0 ? '20px' : `${header.getSize()}%` }}
                 >
                   {header.column.getCanFilter() ? (
-                    <ServiceListFilter column={header.column} />
+                    <TableFilter column={header.column} />
                   ) : header.column.getCanSort() ? (
                     <button
                       type="button"
