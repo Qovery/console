@@ -294,7 +294,7 @@ module.exports = {
           '50%': { transform: 'scale(0.95)' },
           '100%': { transform: 'scale(1)' },
         },
-        shine: {
+        shineAssistantTrigger: {
           from: { transform: 'translate(-200px,-50px) rotate(60deg)' },
           to: { transform: 'translate(200px,-50px) rotate(60deg)' },
         },

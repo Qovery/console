@@ -22,7 +22,7 @@ export function AssistantTrigger({ defaultOpen = false }: AssistantTriggerProps)
           iconName="question"
           className="text-2xl group-hover:animate-[shake_0.6s_cubic-bezier(.36,.07,.19,.97)_both]"
         />
-        <span className="group-hover:opacity-20 group-hover:animate-[shine_1s_linear_forwards] pointer-events-none opacity-0 absolute left-0 top-0 w-[150px] h-[150px] bg-gradient-to-b from-transparent from-0% via-neutral-50 via-50% to-transparent to-100%"></span>
+        <span className="group-hover:opacity-20 group-hover:animate-[shineAssistantTrigger_1s_linear_forwards] pointer-events-none opacity-0 absolute left-0 top-0 w-[150px] h-[150px] bg-gradient-to-b from-transparent from-0% via-neutral-50 via-50% to-transparent to-100%"></span>
       </button>
       {/* XXX: rely on defaultOpen boolean for `smaller` prop as all funnel flows require smaller panel */}
       {assistantOpen && <AssistantPanel onClose={() => setAssistantOpen(false)} smaller={defaultOpen} />}
