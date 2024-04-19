@@ -300,7 +300,7 @@ module.exports = {
         },
         shake: {
           '0%': { transform: 'rotate(0deg)' },
-          '25%': { transform: 'rotate(12deg)' },
+          '25%': { transform: 'rotate(8deg)' },
           '50%': { transform: 'rotate(0eg)' },
           '75%': { transform: 'rotate(-8deg)' },
           '100%': { transform: 'rotate(0deg)' },
