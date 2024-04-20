@@ -14,7 +14,7 @@ export function AssistantTrigger({ defaultOpen = false }: AssistantTriggerProps)
   return (
     <>
       <button
-        className="group fixed flex items-center justify-center bottom-8 right-8 rounded-full shadow-2xl w-14 h-14 outline-brand-600 bg-brand-500 hover:bg-brand-600 hover:animate-[showAssistant_0.2s_cubic-bezier(0.21,1.02,0.73,1)_forwards] transition text-neutral-50"
+        className="group overflow-hidden fixed flex items-center justify-center bottom-8 right-8 rounded-full shadow-2xl w-14 h-14 outline-brand-600 bg-brand-500 hover:bg-brand-600 hover:animate-[showAssistantTrigger_0.2s_cubic-bezier(0.21,1.02,0.73,1)_forwards] transition text-neutral-50"
         onClick={() => setAssistantOpen(!assistantOpen)}
       >
         <Icon

@@ -289,7 +289,7 @@ module.exports = {
           from: { opacity: 1 },
           to: { opacity: 0 },
         },
-        showAssistant: {
+        showAssistantTrigger: {
           '0%': { transform: 'scale(1)' },
           '50%': { transform: 'scale(0.95)' },
           '100%': { transform: 'scale(1)' },
