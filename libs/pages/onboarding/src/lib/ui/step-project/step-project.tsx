@@ -1,5 +1,6 @@
 import { type Control, Controller } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
+import { ENVIRONMENTS_URL } from '@qovery/shared/routes'
 import { ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle, IconAwesomeEnum, InputText } from '@qovery/shared/ui'
 
 export interface StepProjectProps {
@@ -71,7 +72,16 @@ export function StepProject(props: StepProjectProps) {
             </ButtonLegacy>
           ) : (
             <ButtonLegacy
-              onClick={() => navigate(-1)}
+              onClick={() =>
+                localStorage['currentOrganizationId']
+                  ? navigate(
+                      ENVIRONMENTS_URL(
+                        localStorage['currentOrganizationId'] || '',
+                        localStorage['currentProjectId'] || ''
+                      )
+                    )
+                  : navigate(-1)
+              }
               size={ButtonLegacySize.XLARGE}
               style={ButtonLegacyStyle.STROKED}
               iconLeft={IconAwesomeEnum.ARROW_LEFT}

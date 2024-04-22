@@ -11,7 +11,7 @@ exports[`StepGeneralFeature should submit a form with a git repository 1`] = `
         class="bg-white pt-14 w-full overflow-auto"
       >
         <div
-          class="px-12 mx-auto relative pb-14 max-w-content-with-navigation-left"
+          class="px-8 mx-auto relative pb-14 max-w-content-with-navigation-left"
           data-testid="funnel-body-content"
         >
           <section
@@ -529,7 +529,7 @@ exports[`StepGeneralFeature should submit a form with a git repository 2`] = `
         class="bg-white pt-14 w-full overflow-auto"
       >
         <div
-          class="px-12 mx-auto relative pb-14 max-w-content-with-navigation-left"
+          class="px-8 mx-auto relative pb-14 max-w-content-with-navigation-left"
           data-testid="funnel-body-content"
         >
           <section
@@ -1161,7 +1161,7 @@ exports[`StepGeneralFeature should submit a form with a helm repository and matc
         class="bg-white pt-14 w-full overflow-auto"
       >
         <div
-          class="px-12 mx-auto relative pb-14 max-w-content-with-navigation-left"
+          class="px-8 mx-auto relative pb-14 max-w-content-with-navigation-left"
           data-testid="funnel-body-content"
         >
           <section

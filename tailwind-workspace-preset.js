@@ -99,7 +99,7 @@ module.exports = {
         'navbar-height': '4rem',
       },
       maxWidth: {
-        'content-with-navigation-left': '46.5rem',
+        'content-with-navigation-left': '44.5rem',
       },
       minHeight: {
         'page-container': 'calc(100vh - theme(spacing.navbar-height))',
