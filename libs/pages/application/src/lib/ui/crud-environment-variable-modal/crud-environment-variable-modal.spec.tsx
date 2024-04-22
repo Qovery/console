@@ -14,7 +14,6 @@ import { FormProvider, useForm } from 'react-hook-form'
 import {
   type DataFormEnvironmentVariableInterface,
   EnvironmentVariableCrudMode,
-  EnvironmentVariableType,
 } from '../../feature/crud-environment-variable-modal-feature/crud-environment-variable-modal-feature'
 import CrudEnvironmentVariableModal, { type CrudEnvironmentVariableModalProps } from './crud-environment-variable-modal'
 
@@ -24,9 +23,10 @@ const props: CrudEnvironmentVariableModalProps = {
   description: 'Create an environment variable.',
   onSubmit: jest.fn(),
   availableScopes: [APIVariableScopeEnum.ENVIRONMENT, APIVariableScopeEnum.PROJECT],
-  setOpen: jest.fn(),
-  type: EnvironmentVariableType.NORMAL,
+  closeModal: jest.fn(),
+  type: 'VALUE',
   isFile: false,
+  loading: false,
 }
 
 const WrapperForm = ({ children }) => {
@@ -55,7 +55,7 @@ describe('CrudEnvironmentVariableModal', () => {
 
   it('should display variable near the checkbox', async () => {
     props.mode = EnvironmentVariableCrudMode.CREATION
-    props.type = EnvironmentVariableType.NORMAL
+    props.type = 'VALUE'
     const { baseElement } = render(
       <WrapperForm>
         <CrudEnvironmentVariableModal {...props} />
@@ -67,11 +67,7 @@ describe('CrudEnvironmentVariableModal', () => {
   it('should render correct input for normal variable', () => {
     const { baseElement } = render(
       <WrapperForm>
-        <CrudEnvironmentVariableModal
-          {...props}
-          mode={EnvironmentVariableCrudMode.CREATION}
-          type={EnvironmentVariableType.NORMAL}
-        />
+        <CrudEnvironmentVariableModal {...props} mode={EnvironmentVariableCrudMode.CREATION} type="VALUE" />
       </WrapperForm>
     )
     getByLabelText(baseElement, 'Variable')
@@ -82,11 +78,7 @@ describe('CrudEnvironmentVariableModal', () => {
   it('should render correct input for alias variable', () => {
     const { baseElement } = render(
       <WrapperForm>
-        <CrudEnvironmentVariableModal
-          {...props}
-          mode={EnvironmentVariableCrudMode.CREATION}
-          type={EnvironmentVariableType.ALIAS}
-        />
+        <CrudEnvironmentVariableModal {...props} mode={EnvironmentVariableCrudMode.CREATION} type="ALIAS" />
       </WrapperForm>
     )
     getByLabelText(baseElement, 'Variable')
@@ -99,11 +91,7 @@ describe('CrudEnvironmentVariableModal', () => {
   it('should render correct input for override variable', () => {
     const { baseElement } = render(
       <WrapperForm>
-        <CrudEnvironmentVariableModal
-          {...props}
-          mode={EnvironmentVariableCrudMode.CREATION}
-          type={EnvironmentVariableType.OVERRIDE}
-        />
+        <CrudEnvironmentVariableModal {...props} mode={EnvironmentVariableCrudMode.CREATION} type="VALUE" />
       </WrapperForm>
     )
     getByLabelText(baseElement, 'Variable')
@@ -150,7 +138,7 @@ describe('CrudEnvironmentVariableModal', () => {
 
     it('should display mount value field disabled for edition and normal', async () => {
       props.mode = EnvironmentVariableCrudMode.EDITION
-      props.type = EnvironmentVariableType.NORMAL
+      props.type = 'VALUE'
       const { baseElement } = render(
         <WrapperForm>
           <CrudEnvironmentVariableModal {...props} />
@@ -162,7 +150,7 @@ describe('CrudEnvironmentVariableModal', () => {
 
     it('should display mount value field disabled for edition and alias', async () => {
       props.mode = EnvironmentVariableCrudMode.EDITION
-      props.type = EnvironmentVariableType.ALIAS
+      props.type = 'ALIAS'
       const { baseElement } = render(
         <WrapperForm>
           <CrudEnvironmentVariableModal {...props} />
@@ -174,7 +162,7 @@ describe('CrudEnvironmentVariableModal', () => {
 
     it('should display mount value field disabled for edition and override', async () => {
       props.mode = EnvironmentVariableCrudMode.EDITION
-      props.type = EnvironmentVariableType.OVERRIDE
+      props.type = 'OVERRIDE'
       const { baseElement } = render(
         <WrapperForm>
           <CrudEnvironmentVariableModal {...props} />
@@ -186,7 +174,7 @@ describe('CrudEnvironmentVariableModal', () => {
 
     it('should display secret file label instead of secret variable', async () => {
       props.mode = EnvironmentVariableCrudMode.CREATION
-      props.type = EnvironmentVariableType.NORMAL
+      props.type = 'VALUE'
       const { baseElement } = render(
         <WrapperForm>
           <CrudEnvironmentVariableModal {...props} />

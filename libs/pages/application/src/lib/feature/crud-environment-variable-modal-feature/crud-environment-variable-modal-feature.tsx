@@ -1,4 +1,4 @@
-import { APIVariableScopeEnum } from 'qovery-typescript-axios'
+import { APIVariableScopeEnum, type APIVariableTypeEnum, type VariableResponse } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { match } from 'ts-pattern'
@@ -11,16 +11,16 @@ import {
   useCreateVariableOverride,
   useEditVariable,
 } from '@qovery/domains/variables/feature'
-import { type EnvironmentVariableSecretOrPublic } from '@qovery/shared/interfaces'
 import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { ToastEnum, toast, useModal } from '@qovery/shared/ui'
+import { environmentVariableFile } from '@qovery/shared/util-js'
 import { computeAvailableScope, getEnvironmentVariableFileMountPath } from '@qovery/shared/util-js'
 import CrudEnvironmentVariableModal from '../../ui/crud-environment-variable-modal/crud-environment-variable-modal'
 
 export interface CrudEnvironmentVariableModalFeatureProps {
-  variable?: EnvironmentVariableSecretOrPublic
+  variable?: VariableResponse
   mode: EnvironmentVariableCrudMode
-  type: EnvironmentVariableType
+  type: keyof typeof APIVariableTypeEnum
   closeModal: () => void
   organizationId: string
   applicationId: string
@@ -35,12 +35,6 @@ export enum EnvironmentVariableCrudMode {
   EDITION = 'EDITION',
 }
 
-export enum EnvironmentVariableType {
-  NORMAL = 'NORMAL',
-  OVERRIDE = 'OVERRIDE',
-  ALIAS = 'ALIAS',
-}
-
 export interface DataFormEnvironmentVariableInterface {
   key: string
   value: string
@@ -50,18 +44,9 @@ export interface DataFormEnvironmentVariableInterface {
 }
 
 export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariableModalFeatureProps) {
-  const {
-    variable,
-    mode,
-    type,
-    isFile = false,
-    organizationId,
-    projectId,
-    environmentId,
-    applicationId,
-    closeModal,
-    serviceType,
-  } = props
+  const { variable, mode, type, organizationId, projectId, environmentId, applicationId, closeModal, serviceType } =
+    props
+  const isFile = (variable && environmentVariableFile(variable)) || (props.isFile ?? false)
   const [loading, setLoading] = useState(false)
   const { enableAlertClickOutside } = useModal()
 
@@ -76,16 +61,11 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
   const { mutateAsync: createVariableOverride } = useCreateVariableOverride()
   const { mutateAsync: editVariable } = useEditVariable()
 
-  const availableScopes = computeAvailableScope(
-    variable?.scope,
-    false,
-    serviceType,
-    type === EnvironmentVariableType.OVERRIDE
-  )
+  const availableScopes = computeAvailableScope(variable?.scope, false, serviceType, type === 'OVERRIDE')
   const defaultScope =
     variable?.scope === APIVariableScopeEnum.BUILT_IN
       ? undefined
-      : mode === EnvironmentVariableCrudMode.CREATION && type === EnvironmentVariableType.OVERRIDE
+      : mode === EnvironmentVariableCrudMode.CREATION && type === 'OVERRIDE'
       ? availableScopes[0]
       : variable?.scope
 
@@ -127,7 +107,7 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
         setLoading(true)
 
         await match(props)
-          .with({ mode: EnvironmentVariableCrudMode.CREATION, type: EnvironmentVariableType.NORMAL }, () =>
+          .with({ mode: EnvironmentVariableCrudMode.CREATION, type: 'VALUE' }, () =>
             createVariable({
               variableRequest: {
                 is_secret: data.isSecret,
@@ -139,7 +119,7 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
               },
             })
           )
-          .with({ mode: EnvironmentVariableCrudMode.CREATION, type: EnvironmentVariableType.ALIAS }, () => {
+          .with({ mode: EnvironmentVariableCrudMode.CREATION, type: 'ALIAS' }, () => {
             if (!props.variable) {
               // TODO: Fix props type for this case to be impossible
               throw new Error('No variable to be based on')
@@ -153,7 +133,7 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
               },
             })
           })
-          .with({ mode: EnvironmentVariableCrudMode.CREATION, type: EnvironmentVariableType.OVERRIDE }, () => {
+          .with({ mode: EnvironmentVariableCrudMode.CREATION, type: 'OVERRIDE' }, () => {
             if (!props.variable) {
               // TODO: Fix props type for this case to be impossible
               throw new Error('No variable to be based on')
@@ -167,6 +147,13 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
               },
             })
           })
+          .with(
+            { mode: EnvironmentVariableCrudMode.CREATION, type: 'FILE' },
+            { mode: EnvironmentVariableCrudMode.CREATION, type: 'BUILT_IN' },
+            () => {
+              return Promise.resolve()
+            }
+          )
           .with({ mode: EnvironmentVariableCrudMode.EDITION }, () => {
             if (!props.variable) {
               // TODO: Fix props type for this case to be impossible
@@ -227,16 +214,12 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
 
   const computeTitle = (): string => {
     let title = ''
-    if (mode === EnvironmentVariableCrudMode.CREATION && type === EnvironmentVariableType.NORMAL) {
+    if (mode === EnvironmentVariableCrudMode.CREATION && type === 'VALUE') {
       title = 'New'
     } else if (mode === EnvironmentVariableCrudMode.EDITION) {
-      title =
-        'Edit ' +
-        (type === EnvironmentVariableType.ALIAS ? 'alias' : type === EnvironmentVariableType.OVERRIDE ? 'override' : '')
+      title = 'Edit ' + (type === 'ALIAS' ? 'alias' : type === 'OVERRIDE' ? 'override' : '')
     } else if (mode === EnvironmentVariableCrudMode.CREATION) {
-      title =
-        'Create ' +
-        (type === EnvironmentVariableType.ALIAS ? 'alias' : type === EnvironmentVariableType.OVERRIDE ? 'override' : '')
+      title = 'Create ' + (type === 'ALIAS' ? 'alias' : type === 'OVERRIDE' ? 'override' : '')
     }
 
     title += ' variable' + (isFile ? ' file' : '')
@@ -246,9 +229,9 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
 
   const computeDescription = (): string => {
     switch (type) {
-      case EnvironmentVariableType.ALIAS:
+      case 'ALIAS':
         return 'Aliases allow you to specify a different name for a variable on a specific scope.'
-      case EnvironmentVariableType.OVERRIDE:
+      case 'OVERRIDE':
         return 'Overrides allow you to define a different env var value on a specific scope.'
       default:
         if (isFile) {

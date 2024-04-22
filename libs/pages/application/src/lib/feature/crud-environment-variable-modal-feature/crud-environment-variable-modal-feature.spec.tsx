@@ -3,17 +3,17 @@ import { mockEnvironmentVariable } from '@qovery/shared/factories'
 import CrudEnvironmentVariableModalFeature, {
   type CrudEnvironmentVariableModalFeatureProps,
   EnvironmentVariableCrudMode,
-  EnvironmentVariableType,
 } from './crud-environment-variable-modal-feature'
 
 const props: CrudEnvironmentVariableModalFeatureProps = {
   mode: EnvironmentVariableCrudMode.CREATION,
-  type: EnvironmentVariableType.ALIAS,
+  type: 'ALIAS',
+  organizationId: 'dsd',
   projectId: 'dsd',
   applicationId: 'sds',
   environmentId: 'sds',
   variable: mockEnvironmentVariable(),
-  setOpen: jest.fn(),
+  closeModal: jest.fn(),
 }
 
 describe('CrudEnvironmentVariableModalFeature', () => {
