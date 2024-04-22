@@ -1,15 +1,7 @@
-import {
-  act,
-  fireEvent,
-  getAllByTestId,
-  getByLabelText,
-  getByTestId,
-  getByText,
-  render,
-} from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { type JobConfigureData, type JobGeneralData } from '@qovery/shared/interfaces'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import JobConfigureSettings, { type JobConfigureSettingsProps } from './job-configure-settings'
 
 const props: JobConfigureSettingsProps = {
@@ -29,8 +21,8 @@ const defaultValues: JobConfigureData & Pick<JobGeneralData, 'image_entry_point'
 
 describe('JobConfigureSettings', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(
-      wrapWithReactHookForm<JobConfigureData>(<JobConfigureSettings {...props} />, {
+    const { baseElement } = renderWithProviders(
+      wrapWithReactHookForm(<JobConfigureSettings {...props} />, {
         defaultValues,
       })
     )
@@ -41,53 +33,43 @@ describe('JobConfigureSettings', () => {
     props.jobType = ServiceTypeEnum.LIFECYCLE_JOB
 
     it('should render 3 enabled box and 3 inputs', () => {
-      const { baseElement } = render(
-        wrapWithReactHookForm<JobConfigureData>(<JobConfigureSettings jobType={ServiceTypeEnum.LIFECYCLE_JOB} />, {
+      renderWithProviders(
+        wrapWithReactHookForm(<JobConfigureSettings jobType={ServiceTypeEnum.LIFECYCLE_JOB} />, {
           defaultValues,
         })
       )
 
-      expect(getAllByTestId(baseElement, 'input-text')).toHaveLength(3)
-      expect(getAllByTestId(baseElement, 'enabled-box')).toHaveLength(3)
-      expect(baseElement).toBeTruthy()
+      expect(screen.getAllByTestId('input-text')).toHaveLength(3)
+      expect(screen.getAllByTestId('enabled-box')).toHaveLength(3)
     })
   })
 
   describe('job is a cron', () => {
     props.jobType = ServiceTypeEnum.CRON_JOB
 
-    it('should render 5 input and 1 textarea', async () => {
-      const { baseElement } = render(
-        wrapWithReactHookForm<JobConfigureData>(
-          <JobConfigureSettings jobType={ServiceTypeEnum.CRON_JOB} legacyMode />,
-          {
-            defaultValues,
-          }
-        )
-      )
-
-      expect(getAllByTestId(baseElement, 'input-text')).toHaveLength(4)
-      getByTestId(baseElement, 'input-text-image-entry-point')
-      getByTestId(baseElement, 'input-textarea-cmd-arguments')
-
-      expect(baseElement).toBeTruthy()
-    })
-
-    it('should display the cron value in a human readable way', async () => {
-      const { baseElement } = render(
-        wrapWithReactHookForm<JobConfigureData>(<JobConfigureSettings jobType={ServiceTypeEnum.CRON_JOB} />, {
+    it('should render 4 inputs and 1 select', async () => {
+      renderWithProviders(
+        wrapWithReactHookForm(<JobConfigureSettings jobType={ServiceTypeEnum.CRON_JOB} />, {
           defaultValues,
         })
       )
-      const inputSchedule = getByLabelText(baseElement, 'Schedule - Cron expression')
 
-      await act(async () => {
-        fireEvent.change(inputSchedule, { target: { value: '9 * * * *' } })
-      })
+      expect(screen.getAllByTestId('input-text')).toHaveLength(4)
+      expect(screen.getByText('Timezone')).toBeTruthy()
+    })
 
-      getByText(baseElement, 'At 9 minutes past the hour (Etc/UTC)')
+    it('should display the cron value in a human readable way', async () => {
+      const { userEvent } = renderWithProviders(
+        wrapWithReactHookForm(<JobConfigureSettings jobType={ServiceTypeEnum.CRON_JOB} />, {
+          defaultValues,
+        })
+      )
+      const inputSchedule = screen.getByLabelText('Schedule - Cron expression')
 
-      expect(baseElement).toBeTruthy()
+      userEvent.clear(inputSchedule)
+      await userEvent.type(inputSchedule, '9 * * * *')
+
+      screen.getByText('At 9 minutes past the hour (Etc/UTC)')
     })
   })
 })
