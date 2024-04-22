@@ -184,10 +184,12 @@ export function StepGeneral({
           />
         </Section>
 
-        <Section className="gap-4">
-          <Heading>Extra annotations</Heading>
-          <AnnotationSetting />
-        </Section>
+        {watchMode === DatabaseModeEnum.CONTAINER && (
+          <Section className="gap-4">
+            <Heading>Extra annotations</Heading>
+            <AnnotationSetting />
+          </Section>
+        )}
 
         <div className="flex justify-between">
           <Button
