@@ -1,6 +1,7 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
+import { useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useIntercom } from 'react-use-intercom'
+import { AssistantContext } from '@qovery/shared/assistant/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import {
   SETTINGS_API_URL,
@@ -33,8 +34,8 @@ export interface SpotlightProps extends Pick<CommandDialogProps, 'open' | 'onOpe
 
 export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps) {
   const navigate = useNavigate()
-  const { showMessages: showIntercomMessenger } = useIntercom()
   const quickActions = useQuickActions()
+  const { setAssistantOpen } = useContext(AssistantContext)
 
   const iconClassName = 'text-brand-500 text-base text-center w-6'
   const navigateTo = (link: string) => () => {
@@ -99,7 +100,10 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
     },
     {
       label: 'Get help',
-      onSelect: showIntercomMessenger,
+      onSelect: () => {
+        setAssistantOpen(true)
+        onOpenChange?.(false)
+      },
       iconName: 'robot',
     },
   ]
