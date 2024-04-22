@@ -78,19 +78,19 @@ export function Login({ onClickAuthLogin, loading }: ILoginProps) {
                 </DropdownMenu.Trigger>
                 <DropdownMenu.Content className="w-[512px]">
                   <DropdownMenu.Item
-                    onClick={() => onClickAuthLogin(AuthEnum.MICROSOFT)}
+                    onSelect={() => onClickAuthLogin(AuthEnum.MICROSOFT)}
                     icon={<Icon width="20" name={IconEnum.MICROSOFT} />}
                   >
                     Continue with Microsoft
                   </DropdownMenu.Item>
                   <DropdownMenu.Item
-                    onClick={() => onClickAuthLogin(AuthEnum.GITLAB)}
+                    onSelect={() => onClickAuthLogin(AuthEnum.GITLAB)}
                     icon={<Icon width="20" name={IconEnum.GITLAB} />}
                   >
                     Continue with Gitlab
                   </DropdownMenu.Item>
                   <DropdownMenu.Item
-                    onClick={() => onClickAuthLogin(AuthEnum.BITBUCKET)}
+                    onSelect={() => onClickAuthLogin(AuthEnum.BITBUCKET)}
                     icon={<Icon width="20" name={IconEnum.BITBUCKET} />}
                   >
                     Continue with Bitbucket

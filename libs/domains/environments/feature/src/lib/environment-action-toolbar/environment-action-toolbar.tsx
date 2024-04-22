@@ -85,27 +85,27 @@ function MenuManageDeployment({ environment, state }: { environment: Environment
       </DropdownMenu.Trigger>
       <DropdownMenu.Content>
         {isCancelBuildAvailable(state) && (
-          <DropdownMenu.Item icon={<Icon iconName="xmark" />} onClick={mutationCancelDeployment}>
+          <DropdownMenu.Item icon={<Icon iconName="xmark" />} onSelect={mutationCancelDeployment}>
             {state === StateEnum.DELETE_QUEUED || state === StateEnum.DELETING ? 'Cancel delete' : 'Cancel deployment'}
           </DropdownMenu.Item>
         )}
         {isDeployAvailable(state) && (
-          <DropdownMenu.Item icon={<Icon iconName="play" />} onClick={mutationDeploy}>
+          <DropdownMenu.Item icon={<Icon iconName="play" />} onSelect={mutationDeploy}>
             Deploy
           </DropdownMenu.Item>
         )}
         {isRedeployAvailable(state) && (
-          <DropdownMenu.Item icon={<Icon iconName="rotate-right" />} onClick={mutationRedeploy}>
+          <DropdownMenu.Item icon={<Icon iconName="rotate-right" />} onSelect={mutationRedeploy}>
             Redeploy
           </DropdownMenu.Item>
         )}
         {isStopAvailable(state) && (
-          <DropdownMenu.Item icon={<Icon iconName="circle-stop" />} onClick={mutationStop}>
+          <DropdownMenu.Item icon={<Icon iconName="circle-stop" />} onSelect={mutationStop}>
             Stop
           </DropdownMenu.Item>
         )}
         <DropdownMenu.Separator />
-        <DropdownMenu.Item icon={<Icon iconName="rotate" />} onClick={openUpdateAllModal}>
+        <DropdownMenu.Item icon={<Icon iconName="rotate" />} onSelect={openUpdateAllModal}>
           Deploy latest version for..
         </DropdownMenu.Item>
       </DropdownMenu.Content>
@@ -164,7 +164,7 @@ function MenuOtherActions({ state, environment }: { state: StateEnum; environmen
       <DropdownMenu.Content>
         <DropdownMenu.Item
           icon={<Icon iconName="scroll" />}
-          onClick={() =>
+          onSelect={() =>
             navigate(ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id), {
               state: { prevUrl: pathname },
             })
@@ -174,7 +174,7 @@ function MenuOtherActions({ state, environment }: { state: StateEnum; environmen
         </DropdownMenu.Item>
         <DropdownMenu.Item
           icon={<Icon iconName="clock-rotate-left" />}
-          onClick={() =>
+          onSelect={() =>
             navigate(
               AUDIT_LOGS_PARAMS_URL(environment.organization.id, {
                 targetType: OrganizationEventTargetType.ENVIRONMENT,
@@ -186,19 +186,19 @@ function MenuOtherActions({ state, environment }: { state: StateEnum; environmen
         >
           See audit logs
         </DropdownMenu.Item>
-        <DropdownMenu.Item icon={<Icon iconName="copy" />} onClick={() => copyToClipboard(copyContent)}>
+        <DropdownMenu.Item icon={<Icon iconName="copy" />} onSelect={() => copyToClipboard(copyContent)}>
           Copy identifier
         </DropdownMenu.Item>
-        <DropdownMenu.Item icon={<Icon iconName="file-export" />} onClick={openTerraformExportModal}>
+        <DropdownMenu.Item icon={<Icon iconName="file-export" />} onSelect={openTerraformExportModal}>
           Export as Terraform
         </DropdownMenu.Item>
-        <DropdownMenu.Item icon={<Icon iconName="copy" />} onClick={openCloneModal}>
+        <DropdownMenu.Item icon={<Icon iconName="copy" />} onSelect={openCloneModal}>
           Clone
         </DropdownMenu.Item>
         {isDeleteAvailable(state) && (
           <>
             <DropdownMenu.Separator />
-            <DropdownMenu.Item color="red" icon={<Icon iconName="trash" />} onClick={mutationDeleteEnvironment}>
+            <DropdownMenu.Item color="red" icon={<Icon iconName="trash" />} onSelect={mutationDeleteEnvironment}>
               Delete environment
             </DropdownMenu.Item>
           </>

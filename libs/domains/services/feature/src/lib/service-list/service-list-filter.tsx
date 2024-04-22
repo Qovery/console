@@ -67,7 +67,7 @@ export function ServiceListFilter({ column }: { column: Column<any, unknown> }) 
                 <Popover.Close>
                   <DropdownMenu.Item
                     className="flex items-center justify-between text-neutral-400 hover:text-brand-500 hover:bg-neutral-100 p-2 rounded gap-2 cursor-pointer"
-                    onClick={() => column.setFilterValue((arr: [] = []) => [...arr, value])}
+                    onSelect={() => column.setFilterValue((arr: [] = []) => [...arr, value])}
                   >
                     {column.columnDef.meta?.customFacetEntry ? (
                       column.columnDef.meta.customFacetEntry({
