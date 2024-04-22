@@ -26,19 +26,12 @@ describe('PageSettingsPortsFeature with CRON JOB service', () => {
     const { userEvent } = renderWithProviders(<PageSettingsConfigureJobFeature />)
 
     const inputCron = screen.getByLabelText('Schedule - Cron expression')
-    const inputImageEntrypoint = screen.getByLabelText('Image Entrypoint')
-    const inputCmdArguments = screen.getByLabelText('CMD Arguments')
     const inputNbRestarts = screen.getByLabelText('Number of restarts')
     const inputMaxDuration = screen.getByLabelText('Max duration in seconds')
     const inputPort = screen.getByLabelText('Port')
 
     await userEvent.clear(inputCron)
     await userEvent.type(inputCron, '9 * * * *')
-
-    await userEvent.clear(inputImageEntrypoint)
-    await userEvent.type(inputImageEntrypoint, 'some new text value')
-
-    await userEvent.clear(inputCmdArguments)
 
     await userEvent.clear(inputNbRestarts)
     await userEvent.type(inputNbRestarts, '12')
@@ -56,8 +49,8 @@ describe('PageSettingsPortsFeature with CRON JOB service', () => {
 
     expect(mockEditService.mock.calls[0][0].payload.schedule).toEqual({
       cronjob: {
-        arguments: undefined,
-        entrypoint: 'some new text value',
+        arguments: [],
+        entrypoint: '/',
         scheduled_at: '9 * * * *',
         timezone: 'UTC',
       },
