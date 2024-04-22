@@ -23,7 +23,7 @@ export function AWSExistingVPC({ feature }: AWSExistingVPCProps) {
   return (
     <div className="flex flex-col justify-between p-4 rounded border bg-neutral-100 border-neutral-250 mb-5">
       <h4 className="text-neutral-400 text-sm font-medium mb-1">Deploy on an existing VPC</h4>
-      <p className="text-neutral-350 text-sm mb-4">In your VPC settings, you have enable the DNS hostnames.</p>
+      <p className="text-neutral-350 text-sm mb-4">In your VPC settings, you have to enable DNS hostnames.</p>
       <InputText name="vpc_id" label="VPC ID" value={feature.aws_vpc_eks_id} className="mb-4" disabled />
       <ul className="grid gap-4">
         <li className="text-neutral-400">
