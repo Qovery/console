@@ -289,6 +289,22 @@ module.exports = {
           from: { opacity: 1 },
           to: { opacity: 0 },
         },
+        showAssistantTrigger: {
+          '0%': { transform: 'scale(1)' },
+          '50%': { transform: 'scale(0.95)' },
+          '100%': { transform: 'scale(1)' },
+        },
+        shineAssistantTrigger: {
+          from: { transform: 'translate(-200px,-50px) rotate(60deg)' },
+          to: { transform: 'translate(200px,-50px) rotate(60deg)' },
+        },
+        shake: {
+          '0%': { transform: 'rotate(0deg)' },
+          '25%': { transform: 'rotate(8deg)' },
+          '50%': { transform: 'rotate(0eg)' },
+          '75%': { transform: 'rotate(-8deg)' },
+          '100%': { transform: 'rotate(0deg)' },
+        },
         ...slideEntrances(),
         ...slideExits(),
       },
