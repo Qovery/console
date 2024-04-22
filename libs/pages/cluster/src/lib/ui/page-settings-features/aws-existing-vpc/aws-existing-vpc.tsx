@@ -10,7 +10,7 @@ function Subnets({ title, value }: { title: string; value?: string[] | null }) {
   return (
     <li className="flex flex-col text-xs gap-1">
       <span className="font-medium">{title}</span>
-      {value ? (
+      {value && value.length > 0 ? (
         value.map((subnetId: string, index: number) => <span key={index}>{subnetId}</span>)
       ) : (
         <span>Not defined</span>
@@ -37,6 +37,7 @@ export function AWSExistingVPC({ feature }: AWSExistingVPCProps) {
             <Subnets title="Zone C:" value={feature.eks_subnets_zone_c_ids} />
           </ul>
         </li>
+
         <li className="text-neutral-400">
           <span className="flex items-center font-medium text-xs mb-1">
             <Icon name={IconEnum.MONGODB} width="16" className="mr-2" />
