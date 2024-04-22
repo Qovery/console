@@ -7,7 +7,7 @@ import {
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useAnnotationsGroups, useContainerRegistry } from '@qovery/domains/organizations/feature'
-import { useAddAnnotationsGroup, useCreateService, useDeployService } from '@qovery/domains/services/feature'
+import { useCreateService, useDeployService } from '@qovery/domains/services/feature'
 import {
   SERVICES_APPLICATION_CREATION_URL,
   SERVICES_CREATION_GENERAL_URL,
@@ -37,7 +37,6 @@ export function StepSummaryFeature() {
   const { data: annotationsGroup = [] } = useAnnotationsGroups({ organizationId })
 
   const { mutateAsync: createService } = useCreateService()
-  const { mutateAsync: addAnnotationsGroup } = useAddAnnotationsGroup()
   const { mutate: deployService } = useDeployService({ environmentId })
 
   const gotoGlobalInformations = () => {
@@ -103,6 +102,7 @@ export function StepSummaryFeature() {
           entrypoint: generalData.image_entry_point || '',
           healthchecks: portData.healthchecks?.item || {},
           auto_deploy: generalData.auto_deploy,
+          annotations_group_ids: generalData.annotations_groups,
         }
 
         if (generalData.build_mode === BuildModeEnum.DOCKER) {
@@ -119,16 +119,6 @@ export function StepSummaryFeature() {
               ...applicationRequest,
             },
           })
-
-          if (generalData.annotations_groups) {
-            for await (const annotationsGroup of generalData.annotations_groups) {
-              addAnnotationsGroup({
-                serviceId: service.id,
-                serviceType: 'APPLICATION',
-                annotationsGroupId: annotationsGroup,
-              })
-            }
-          }
 
           if (withDeploy) {
             deployService({
@@ -167,6 +157,7 @@ export function StepSummaryFeature() {
           registry_id: generalData.registry || '',
           healthchecks: portData.healthchecks?.item || {},
           auto_deploy: generalData.auto_deploy,
+          annotations_group_ids: generalData.annotations_groups,
         }
 
         try {
@@ -177,16 +168,6 @@ export function StepSummaryFeature() {
               ...containerRequest,
             },
           })
-
-          if (generalData.annotations_groups) {
-            for await (const annotationsGroup of generalData.annotations_groups) {
-              addAnnotationsGroup({
-                serviceId: service.id,
-                serviceType: 'APPLICATION',
-                annotationsGroupId: annotationsGroup,
-              })
-            }
-          }
 
           if (withDeploy) {
             deployService({

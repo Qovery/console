@@ -2,7 +2,7 @@ import { DatabaseModeEnum, type DatabaseRequest } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useAnnotationsGroups } from '@qovery/domains/organizations/feature'
-import { useAddAnnotationsGroup, useCreateService, useDeployService } from '@qovery/domains/services/feature'
+import { useCreateService, useDeployService } from '@qovery/domains/services/feature'
 import {
   SERVICES_DATABASE_CREATION_GENERAL_URL,
   SERVICES_DATABASE_CREATION_RESOURCES_URL,
@@ -25,7 +25,6 @@ export function StepSummaryFeature() {
   const { data: annotationsGroup = [] } = useAnnotationsGroups({ organizationId })
 
   const { mutateAsync: createDatabase } = useCreateService()
-  const { mutateAsync: addAnnotationsGroup } = useAddAnnotationsGroup()
   const { mutate: deployDatabase } = useDeployService({ environmentId })
 
   const gotoGlobalInformations = () => {
@@ -57,6 +56,7 @@ export function StepSummaryFeature() {
         accessibility: generalData.accessibility,
         mode: generalData.mode,
         storage: storage,
+        annotations_group_ids: generalData.annotations_groups,
       }
 
       if (databaseRequest.mode !== DatabaseModeEnum.MANAGED) {
@@ -74,16 +74,6 @@ export function StepSummaryFeature() {
             ...databaseRequest,
           },
         })
-
-        if (generalData.annotations_groups) {
-          for await (const annotationsGroup of generalData.annotations_groups) {
-            addAnnotationsGroup({
-              serviceId: database.id,
-              serviceType: 'DATABASE',
-              annotationsGroupId: annotationsGroup,
-            })
-          }
-        }
 
         if (withDeploy) {
           deployDatabase({

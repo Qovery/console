@@ -2,7 +2,7 @@ import { APIVariableScopeEnum, type JobRequest, type VariableImportRequest } fro
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useAnnotationsGroups, useContainerRegistry } from '@qovery/domains/organizations/feature'
-import { useAddAnnotationsGroup, useCreateService, useDeployService } from '@qovery/domains/services/feature'
+import { useCreateService, useDeployService } from '@qovery/domains/services/feature'
 import { useImportVariables } from '@qovery/domains/variables/feature'
 import { type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
 import {
@@ -44,6 +44,7 @@ function prepareJobRequest(
     auto_preview: true,
     auto_deploy: generalData.auto_deploy,
     healthchecks: {},
+    annotations_group_ids: generalData.annotations_groups,
   }
 
   if (jobType === ServiceTypeEnum.CRON_JOB) {
@@ -140,7 +141,6 @@ export function StepSummaryFeature() {
   })
   const { data: annotationsGroup = [] } = useAnnotationsGroups({ organizationId })
 
-  const { mutateAsync: addAnnotationsGroup } = useAddAnnotationsGroup()
   const { mutateAsync: createService } = useCreateService()
   const { mutate: deployService } = useDeployService({ environmentId })
 
@@ -183,16 +183,6 @@ export function StepSummaryFeature() {
             ...jobRequest,
           },
         })
-
-        if (generalData.annotations_groups) {
-          for await (const annotationsGroup of generalData.annotations_groups) {
-            addAnnotationsGroup({
-              serviceId: service.id,
-              serviceType: 'JOB',
-              annotationsGroupId: annotationsGroup,
-            })
-          }
-        }
 
         if (variableImportRequest) {
           importVariables({

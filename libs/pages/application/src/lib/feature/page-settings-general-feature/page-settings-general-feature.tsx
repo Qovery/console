@@ -8,25 +8,12 @@ import {
   type HelmRequestAllOfSourceOneOf1,
   type JobRequest,
 } from 'qovery-typescript-axios'
-import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { P, match } from 'ts-pattern'
 import { useOrganization } from '@qovery/domains/organizations/feature'
-import {
-  type Application,
-  type Container,
-  type Helm,
-  type Job,
-  type ServiceType,
-} from '@qovery/domains/services/data-access'
-import {
-  useAddAnnotationsGroup,
-  useAnnotationsGroup,
-  useDeleteAnnotationsGroup,
-  useEditService,
-  useService,
-} from '@qovery/domains/services/feature'
+import { type Application, type Container, type Helm, type Job } from '@qovery/domains/services/data-access'
+import { useEditService, useService } from '@qovery/domains/services/feature'
 import { type HelmGeneralData } from '@qovery/pages/services'
 import { isHelmGitSource, isHelmRepositorySource, isJobContainerSource, isJobGitSource } from '@qovery/shared/enums'
 import { type ApplicationGeneralData, type JobGeneralData } from '@qovery/shared/interfaces'
@@ -73,7 +60,10 @@ export const handleGitApplicationSubmit = (
     ...cloneApplication,
     arguments: (data.cmd_arguments && data.cmd_arguments.length && eval(data.cmd_arguments)) || [],
     entrypoint: data.image_entry_point || '',
+    annotations_group_ids: data.annotations_groups,
   }
+
+  console.log(cloneApplication)
 
   return cloneApplication
 }
@@ -88,7 +78,8 @@ export const handleContainerSubmit = (data: ApplicationGeneralData, container: C
     image_name: data.image_name || '',
     arguments: (data.cmd_arguments && data.cmd_arguments.length && eval(data.cmd_arguments)) || [],
     entrypoint: data.image_entry_point || '',
-    registry_id: data['registry'] || '',
+    registry_id: data.registry || '',
+    annotations_group_ids: data.annotations_groups,
   }
 }
 
@@ -119,6 +110,7 @@ export const handleJobSubmit = (data: JobGeneralData, job: Job): JobRequest => {
       name: data.name,
       description: data.description,
       auto_deploy: data.auto_deploy,
+      annotations_group_ids: data.annotations_groups,
       source: {
         docker: {
           git_repository,
@@ -133,6 +125,7 @@ export const handleJobSubmit = (data: JobGeneralData, job: Job): JobRequest => {
       name: data.name,
       description: data.description,
       auto_deploy: data.auto_deploy,
+      annotations_group_ids: data.annotations_groups,
       source: {
         image: {
           tag: data.image_tag || '',
@@ -188,13 +181,6 @@ export function PageSettingsGeneralFeature() {
   const { data: organization } = useOrganization({ organizationId })
   const { data: service } = useService({ environmentId, serviceId: applicationId })
 
-  const { data: annotationsGroup } = useAnnotationsGroup({
-    serviceId: applicationId,
-    serviceType: service?.serviceType !== 'HELM' ? service?.serviceType : undefined,
-  })
-  const { mutate: deleteAnnotationGroup } = useDeleteAnnotationsGroup()
-  const { mutate: addAnnotationsGroup } = useAddAnnotationsGroup()
-
   const { mutate: editService, isLoading: isLoadingEditService } = useEditService({ environmentId })
 
   const helmRepository = match(service)
@@ -211,7 +197,7 @@ export function PageSettingsGeneralFeature() {
       build_mode: service.build_mode,
       image_entry_point: service.entrypoint,
       cmd_arguments: (service.arguments && service.arguments.length && JSON.stringify(service.arguments)) || '',
-      annotations_groups: annotationsGroup?.map((group) => group.id),
+      annotations_groups: service.annotations_groups?.map((group) => group.id),
     }))
     .with({ serviceType: 'CONTAINER' }, (service) => ({
       registry: service.registry?.id,
@@ -220,7 +206,7 @@ export function PageSettingsGeneralFeature() {
       image_entry_point: service.entrypoint,
       auto_deploy: service.auto_deploy,
       cmd_arguments: (service.arguments && service.arguments.length && JSON.stringify(service.arguments)) || '',
-      annotations_groups: annotationsGroup?.map((group) => group.id),
+      annotations_groups: service.annotations_groups?.map((group) => group.id),
     }))
     .with({ serviceType: 'JOB' }, (service) => {
       const jobContainerSource = isJobContainerSource(service.source) ? service.source.image : undefined
@@ -243,7 +229,7 @@ export function PageSettingsGeneralFeature() {
         registry: jobContainerSource?.registry_id,
         image_name: jobContainerSource?.image_name,
         image_tag: jobContainerSource?.tag,
-        annotations_groups: annotationsGroup?.map(({ id }) => id),
+        annotations_groups: service.annotations_groups?.map((group) => group.id),
         ...schedule,
       }
     })
@@ -268,15 +254,6 @@ export function PageSettingsGeneralFeature() {
       ...defaultValues,
     },
   })
-
-  useEffect(() => {
-    // We are a separate request to get annotations group
-    // To join default values with Service request with need this useEffect
-    methods.setValue(
-      'annotations_groups',
-      annotationsGroup?.map(({ id }) => id)
-    )
-  }, [methods, annotationsGroup])
 
   const onSubmit = methods.handleSubmit((data) => {
     if (!service) return
@@ -335,33 +312,7 @@ export function PageSettingsGeneralFeature() {
       payload,
     })
 
-    // Process annotations to trigger delete and add annotations group for services
-    function processAnnotations(
-      data: ApplicationGeneralData | JobGeneralData,
-      serviceId: string,
-      serviceType: Extract<ServiceType, 'APPLICATION' | 'CONTAINER' | 'JOB'>
-    ) {
-      const annotationsGroupIds = annotationsGroup?.map(({ id }) => id) || []
-      const dataAnnotationsGroupIds = data['annotations_groups'] ?? []
-
-      const addedAnnotationsGroup = dataAnnotationsGroupIds.filter((id) => !annotationsGroupIds.includes(id))
-      addedAnnotationsGroup.forEach((id) => addAnnotationsGroup({ serviceId, serviceType, annotationsGroupId: id }))
-
-      const deletedAnnotationGroup = annotationsGroupIds.filter((id) => !dataAnnotationsGroupIds.includes(id))
-      deletedAnnotationGroup.forEach((id) => deleteAnnotationGroup({ serviceId, serviceType, annotationsGroupId: id }))
-    }
-
-    match(service)
-      .with({ serviceType: 'APPLICATION' }, { serviceType: 'CONTAINER' }, (s) => {
-        processAnnotations(data as ApplicationGeneralData, s.id, s.serviceType)
-      })
-      .with({ serviceType: 'JOB' }, (s) => {
-        processAnnotations(data as JobGeneralData, s.id, s.serviceType)
-      })
-      .with({ serviceType: 'HELM' }, () => undefined)
-      .otherwise(() => undefined)
-
-    return null
+    return
   })
 
   return (
