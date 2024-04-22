@@ -60,7 +60,12 @@ describe('PageSettingsGeneralFeature', () => {
 
     const cloneDatabase = buildEditServicePayload({
       service: mockDatabase,
-      request: { name: 'hello', accessibility: DatabaseAccessibilityEnum.PRIVATE, version: '12' },
+      request: {
+        name: 'hello',
+        accessibility: DatabaseAccessibilityEnum.PRIVATE,
+        version: '12',
+        annotations_group_ids: [],
+      },
     })
 
     expect(useEditServiceSpy().mutate).toHaveBeenCalledWith({
