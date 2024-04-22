@@ -1,10 +1,9 @@
-import { APIVariableScopeEnum, APIVariableTypeEnum } from 'qovery-typescript-axios'
-import { type EnvironmentVariableSecretOrPublic } from '@qovery/shared/interfaces'
+import { APIVariableScopeEnum, APIVariableTypeEnum, type VariableResponse } from 'qovery-typescript-axios'
 import { environmentVariableFile, getEnvironmentVariableFileMountPath } from './environment-variable-file'
 
 describe('isEnvironmentVariableFile', () => {
   it('should return true if variable is a file', () => {
-    const variable: EnvironmentVariableSecretOrPublic = {
+    const variable: VariableResponse = {
       id: 'id',
       key: 'key',
       value: null,
@@ -19,7 +18,7 @@ describe('isEnvironmentVariableFile', () => {
   })
 
   it('should return false if variable is not a file', () => {
-    const variable: EnvironmentVariableSecretOrPublic = {
+    const variable: VariableResponse = {
       id: 'id',
       key: 'key',
       value: null,
@@ -34,7 +33,7 @@ describe('isEnvironmentVariableFile', () => {
   })
 
   it('should return true if alias parent is a file', () => {
-    const variable: EnvironmentVariableSecretOrPublic = {
+    const variable: VariableResponse = {
       id: 'id',
       key: 'key',
       value: null,
@@ -56,7 +55,7 @@ describe('isEnvironmentVariableFile', () => {
   })
 
   it('should return false if alias parent is not a file', () => {
-    const variable: EnvironmentVariableSecretOrPublic = {
+    const variable: VariableResponse = {
       id: 'id',
       key: 'key',
       value: null,
@@ -79,7 +78,7 @@ describe('isEnvironmentVariableFile', () => {
   })
 
   it('should return false if override parent is not a file', () => {
-    const variable: EnvironmentVariableSecretOrPublic = {
+    const variable: VariableResponse = {
       id: 'id',
       key: 'key',
       value: null,
@@ -101,7 +100,7 @@ describe('isEnvironmentVariableFile', () => {
   })
 
   it('should return true if override parent is a file', () => {
-    const variable: EnvironmentVariableSecretOrPublic = {
+    const variable: VariableResponse = {
       id: 'id',
       key: 'key',
       value: null,
@@ -126,7 +125,7 @@ describe('isEnvironmentVariableFile', () => {
 
 describe('getEnvironmentVariableFileMountPath', () => {
   it('should return mounthPath if variable is a file', () => {
-    const variable: EnvironmentVariableSecretOrPublic = {
+    const variable: VariableResponse = {
       id: 'id',
       key: 'key',
       value: null,
@@ -141,7 +140,7 @@ describe('getEnvironmentVariableFileMountPath', () => {
   })
 
   it('should return undefined if variable is not a file', () => {
-    const variable: EnvironmentVariableSecretOrPublic = {
+    const variable: VariableResponse = {
       id: 'id',
       key: 'key',
       value: null,
@@ -155,7 +154,7 @@ describe('getEnvironmentVariableFileMountPath', () => {
   })
 
   it('should return mountPath if alias parent is a file', () => {
-    const variable: EnvironmentVariableSecretOrPublic = {
+    const variable: VariableResponse = {
       id: 'id',
       key: 'key',
       value: null,
@@ -177,7 +176,7 @@ describe('getEnvironmentVariableFileMountPath', () => {
   })
 
   it('should return undefined if alias parent is not a file', () => {
-    const variable: EnvironmentVariableSecretOrPublic = {
+    const variable: VariableResponse = {
       id: 'id',
       key: 'key',
       value: null,
@@ -199,7 +198,7 @@ describe('getEnvironmentVariableFileMountPath', () => {
   })
 
   it('should return undefined if override parent is not a file', () => {
-    const variable: EnvironmentVariableSecretOrPublic = {
+    const variable: VariableResponse = {
       id: 'id',
       key: 'key',
       value: null,
@@ -207,6 +206,7 @@ describe('getEnvironmentVariableFileMountPath', () => {
       created_at: 'created_at',
       variable_type: APIVariableTypeEnum.OVERRIDE,
       scope: APIVariableScopeEnum.APPLICATION,
+      variable_type: APIVariableTypeEnum.OVERRIDE,
       service_name: 'service_name',
       overridden_variable: {
         id: 'id',
@@ -221,7 +221,7 @@ describe('getEnvironmentVariableFileMountPath', () => {
   })
 
   it('should return mountPath if override parent is a file', () => {
-    const variable: EnvironmentVariableSecretOrPublic = {
+    const variable: VariableResponse = {
       id: 'id',
       key: 'key',
       value: null,

@@ -1,4 +1,4 @@
-import { APIVariableScopeEnum } from 'qovery-typescript-axios'
+import { APIVariableScopeEnum, APIVariableTypeEnum } from 'qovery-typescript-axios'
 import { useContext } from 'react'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
@@ -24,7 +24,6 @@ import { ApplicationContext } from '../../ui/container/container'
 import TableRowEnvironmentVariable from '../../ui/table-row-environment-variable/table-row-environment-variable'
 import CrudEnvironmentVariableModalFeature, {
   EnvironmentVariableCrudMode,
-  EnvironmentVariableType,
 } from '../crud-environment-variable-modal-feature/crud-environment-variable-modal-feature'
 
 export interface TableRowEnvironmentVariableFeatureProps {
@@ -49,7 +48,7 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
   })
   const { mutateAsync: deleteVariable } = useDeleteVariable()
 
-  const edit = (type: EnvironmentVariableType) => ({
+  const edit = (type: APIVariableTypeEnum) => ({
     name: 'Edit',
     onClick: () => {
       openModal({
@@ -85,7 +84,7 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
           <CrudEnvironmentVariableModalFeature
             closeModal={closeModal}
             variable={variable}
-            type={EnvironmentVariableType.OVERRIDE}
+            type={'OVERRIDE'}
             mode={EnvironmentVariableCrudMode.CREATION}
             organizationId={organizationId}
             applicationId={applicationId}
@@ -108,7 +107,7 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
           <CrudEnvironmentVariableModalFeature
             closeModal={closeModal}
             variable={variable}
-            type={EnvironmentVariableType.ALIAS}
+            type="ALIAS"
             mode={EnvironmentVariableCrudMode.CREATION}
             organizationId={organizationId}
             applicationId={applicationId}
@@ -125,12 +124,12 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
 
   const computeMenuActions = (): MenuItemProps[] => {
     const menu = []
-    let variableType: EnvironmentVariableType = EnvironmentVariableType.NORMAL
+    let variableType: APIVariableTypeEnum = APIVariableTypeEnum.VALUE
 
     if (variable.overridden_variable) {
-      variableType = EnvironmentVariableType.OVERRIDE
+      variableType = APIVariableTypeEnum.OVERRIDE
     } else if (variable.aliased_variable) {
-      variableType = EnvironmentVariableType.ALIAS
+      variableType = APIVariableTypeEnum.ALIAS
     }
 
     if (variable.scope !== APIVariableScopeEnum.BUILT_IN) menu.push(edit(variableType))

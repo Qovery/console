@@ -1,4 +1,4 @@
-import { type APIVariableScopeEnum } from 'qovery-typescript-axios'
+import { type APIVariableScopeEnum, type APIVariableTypeEnum } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { IconEnum } from '@qovery/shared/enums'
 import {
@@ -15,12 +15,11 @@ import { generateScopeLabel } from '@qovery/shared/util-js'
 import {
   type DataFormEnvironmentVariableInterface,
   EnvironmentVariableCrudMode,
-  EnvironmentVariableType,
 } from '../../feature/crud-environment-variable-modal-feature/crud-environment-variable-modal-feature'
 
 export interface CrudEnvironmentVariableModalProps {
   mode: EnvironmentVariableCrudMode
-  type?: EnvironmentVariableType
+  type: keyof typeof APIVariableTypeEnum
   title: string
   description: string
   onSubmit: () => void
@@ -39,7 +38,7 @@ export function CrudEnvironmentVariableModal(props: CrudEnvironmentVariableModal
       <h2 className="h4 text-neutral-400 mb-2 max-w-sm">{props.title}</h2>
       <p className="text-neutral-350 text-sm mb-6">{props.description}</p>
       <form onSubmit={props.onSubmit}>
-        {props.type === EnvironmentVariableType.ALIAS || props.type === EnvironmentVariableType.OVERRIDE ? (
+        {props.type === 'ALIAS' || props.type === 'OVERRIDE' ? (
           <InputText className="mb-3" name="Variable" value={props.parentVariableName} label="Variable" disabled />
         ) : (
           <Controller
@@ -56,16 +55,14 @@ export function CrudEnvironmentVariableModal(props: CrudEnvironmentVariableModal
                 value={field.value}
                 label="Variable"
                 error={error?.message}
-                disabled={props.type === EnvironmentVariableType.OVERRIDE}
+                disabled={props.type === 'OVERRIDE'}
               />
             )}
           />
         )}
 
         {props.isFile &&
-          (props.type === EnvironmentVariableType.ALIAS ||
-          props.type === EnvironmentVariableType.OVERRIDE ||
-          props.mode === EnvironmentVariableCrudMode.EDITION ? (
+          (props.type === 'ALIAS' || props.type === 'OVERRIDE' || props.mode === EnvironmentVariableCrudMode.EDITION ? (
             <InputText className="mb-3" name="Path" value={getValues().mountPath} label="Path" disabled />
           ) : (
             <Controller
@@ -87,7 +84,7 @@ export function CrudEnvironmentVariableModal(props: CrudEnvironmentVariableModal
             />
           ))}
 
-        {props.type === EnvironmentVariableType.ALIAS && (
+        {props.type === 'ALIAS' && (
           <div>
             <div className="flex items-center mb-3">
               <Icon name={IconEnum.CHILDREN_ARROW} className="mr-2 ml-1" />
@@ -110,14 +107,14 @@ export function CrudEnvironmentVariableModal(props: CrudEnvironmentVariableModal
                   value={field.value}
                   label="New variable"
                   error={error?.message}
-                  disabled={props.type === EnvironmentVariableType.OVERRIDE}
+                  disabled={props.type === 'OVERRIDE'}
                 />
               )}
             />
           </div>
         )}
 
-        {props.type === EnvironmentVariableType.OVERRIDE && (
+        {props.type === 'OVERRIDE' && (
           <div className="flex items-center mb-3">
             <Icon name={IconEnum.CHILDREN_ARROW} className="mr-2 ml-1" />
             <span className="bg-brand-500 font-bold rounded-sm text-2xs text-neutral-50 px-1 inline-flex items-center h-4 mr-3">
@@ -126,7 +123,7 @@ export function CrudEnvironmentVariableModal(props: CrudEnvironmentVariableModal
           </div>
         )}
 
-        {(props.type === EnvironmentVariableType.NORMAL || props.type === EnvironmentVariableType.OVERRIDE) && (
+        {(props.type === 'VALUE' || props.type === 'FILE' || props.type === 'OVERRIDE') && (
           <Controller
             name="value"
             control={control}
@@ -138,7 +135,7 @@ export function CrudEnvironmentVariableModal(props: CrudEnvironmentVariableModal
                 value={field.value}
                 label="Value"
                 error={error?.message}
-                disabled={props.type === EnvironmentVariableType.ALIAS}
+                disabled={props.type === 'ALIAS'}
               />
             )}
           />
@@ -179,7 +176,7 @@ export function CrudEnvironmentVariableModal(props: CrudEnvironmentVariableModal
           }
         />
 
-        {props.mode === EnvironmentVariableCrudMode.CREATION && props.type === EnvironmentVariableType.NORMAL && (
+        {props.mode === EnvironmentVariableCrudMode.CREATION && props.type === 'VALUE' && (
           <div className="flex items-center gap-3 mb-8">
             <Controller
               name="isSecret"

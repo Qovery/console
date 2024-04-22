@@ -14,7 +14,6 @@ import { Button, Icon, Tabs, type TabsItem, useModal } from '@qovery/shared/ui'
 import { ApplicationContext } from '../../ui/container/container'
 import CrudEnvironmentVariableModalFeature, {
   EnvironmentVariableCrudMode,
-  EnvironmentVariableType,
 } from '../crud-environment-variable-modal-feature/crud-environment-variable-modal-feature'
 import ImportEnvironmentVariableModalFeature from '../import-environment-variable-modal-feature/import-environment-variable-modal-feature'
 
@@ -68,7 +67,7 @@ function ContentRightEnvVariable({
             content: (
               <CrudEnvironmentVariableModalFeature
                 closeModal={closeModal}
-                type={EnvironmentVariableType.NORMAL}
+                type="VALUE"
                 mode={EnvironmentVariableCrudMode.CREATION}
                 organizationId={organizationId}
                 applicationId={service.id}
@@ -84,7 +83,7 @@ function ContentRightEnvVariable({
             content: (
               <CrudEnvironmentVariableModalFeature
                 closeModal={closeModal}
-                type={EnvironmentVariableType.NORMAL}
+                type="VALUE"
                 mode={EnvironmentVariableCrudMode.CREATION}
                 organizationId={organizationId}
                 applicationId={service.id}
