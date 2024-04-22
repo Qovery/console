@@ -198,7 +198,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
   const columnHelper = createColumnHelper<(typeof services)[number]>()
   const columns = useMemo(
     () => [
-      {
+      columnHelper.display({
         id: 'select',
         enableColumnFilter: false,
         enableSorting: false,
@@ -230,7 +230,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
             />
           </label>
         ),
-      },
+      }),
       columnHelper.accessor('name', {
         header: 'Name',
         enableColumnFilter: true,
