@@ -96,6 +96,16 @@ function MenuManageDeployment({
 
   const mutationDeploy = () => deployService({ serviceId: service.id, serviceType: service.serviceType })
 
+  const mutationRedeploy = () => {
+    openModalConfirmation({
+      mode: environment?.mode,
+      title: 'Confirm redeploy',
+      description: 'To confirm the redeploy of your service, please type the name:',
+      name: service.name,
+      action: () => deployService({ serviceId: service.id, serviceType: service.serviceType }),
+    })
+  }
+
   const mutationStop = () => {
     openModalConfirmation({
       mode: environment?.mode,
@@ -270,10 +280,13 @@ function MenuManageDeployment({
         {isRedeployAvailable(state) && (
           <DropdownMenu.Item
             icon={<Icon iconName="rotate-right" />}
-            onSelect={() =>
-              openModal({
-                content: <RedeployModal service={service} />,
-              })
+            onSelect={
+              serviceNeedUpdate
+                ? mutationRedeploy
+                : () =>
+                    openModal({
+                      content: <RedeployModal service={service} />,
+                    })
             }
             className="relative"
             color={serviceNeedUpdate ? 'yellow' : 'brand'}
