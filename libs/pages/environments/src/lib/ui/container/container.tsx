@@ -7,6 +7,7 @@ import {
   ENVIRONMENTS_DEPLOYMENT_RULES_CREATE_URL,
   ENVIRONMENTS_DEPLOYMENT_RULES_URL,
   ENVIRONMENTS_URL,
+  ENVIRONMENTS_VARIABLES_URL,
 } from '@qovery/shared/routes'
 import { Button, Header, Icon, Section, Tabs, useModal } from '@qovery/shared/ui'
 
@@ -37,6 +38,12 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
       name: 'Deployment Rules',
       active: isDeploymentRulesTab,
       link: `${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_DEPLOYMENT_RULES_URL}`,
+    },
+    {
+      icon: <Icon name="icon-solid-key" />,
+      name: 'Variables',
+      active: location.pathname === ENVIRONMENTS_URL(organizationId, projectId) + ENVIRONMENTS_VARIABLES_URL,
+      link: ENVIRONMENTS_URL(organizationId, projectId) + ENVIRONMENTS_VARIABLES_URL,
     },
   ]
 

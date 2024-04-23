@@ -25,6 +25,7 @@ import {
   SERVICES_SETTINGS_PREVIEW_ENV_URL,
   SERVICES_SETTINGS_RULES_URL,
   SERVICES_SETTINGS_URL,
+  SERVICES_VARIABLES_URL,
 } from '@qovery/shared/routes'
 import { StepGeneralFeature as ApplicationStepGeneralFeature } from '../feature/page-application-create-feature/step-general-feature/step-general-feature'
 import { StepHealthchecksFeature as ApplicationStepHealthchecksFeature } from '../feature/page-application-create-feature/step-healthchecks-feature/step-healthchecks-feature'
@@ -51,6 +52,7 @@ import PageSettingsDeploymentRulesFeature from '../feature/page-settings-deploym
 import { PageSettingsFeature } from '../feature/page-settings-feature/page-settings-feature'
 import PageSettingsGeneralFeature from '../feature/page-settings-general-feature/page-settings-general-feature'
 import PageSettingsPreviewEnvironmentsFeature from '../feature/page-settings-preview-environments-feature/page-settings-preview-environments-feature'
+import { PageVariablesFeature } from '../feature/page-variables-feature/page-variables-feature'
 
 export const ROUTER_SERVICES: Route[] = [
   {
@@ -60,6 +62,10 @@ export const ROUTER_SERVICES: Route[] = [
   {
     path: SERVICES_DEPLOYMENTS_URL,
     component: <PageDeploymentsFeature />,
+  },
+  {
+    path: SERVICES_VARIABLES_URL,
+    component: <PageVariablesFeature />,
   },
   {
     path: `${SERVICES_SETTINGS_URL}/*`,

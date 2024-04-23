@@ -20,6 +20,7 @@ import {
   SERVICES_LIFECYCLE_CREATION_URL,
   SERVICES_SETTINGS_URL,
   SERVICES_URL,
+  SERVICES_VARIABLES_URL,
 } from '@qovery/shared/routes'
 import {
   Banner,
@@ -99,6 +100,12 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
       active:
         location.pathname === `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_DEPLOYMENTS_URL}`,
       link: `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_DEPLOYMENTS_URL}`,
+    },
+    {
+      icon: <Icon name="icon-solid-key" />,
+      name: 'Variables',
+      active: location.pathname === SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_VARIABLES_URL,
+      link: SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_VARIABLES_URL,
     },
     {
       icon: <Icon name="icon-solid-wheel" />,
