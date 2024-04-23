@@ -33,7 +33,8 @@ describe('PageSettingsGeneralFeature', () => {
         branch: 'main',
         root_path: '/',
       },
-      application
+      application,
+      []
     )
     expect(app.name).toBe('hello')
     expect(app.description).toBe('description')
@@ -55,7 +56,8 @@ describe('PageSettingsGeneralFeature', () => {
         branch: 'main',
         root_path: '/',
       },
-      application
+      application,
+      []
     )
     expect(app.name).toBe('hello')
     expect(app.description).toBe('description')
@@ -75,7 +77,8 @@ describe('PageSettingsGeneralFeature', () => {
         branch: 'main',
         root_path: '/',
       },
-      application
+      application,
+      []
     )
 
     expect(app.git_repository?.branch).toBe('main')
@@ -95,7 +98,8 @@ describe('PageSettingsGeneralFeature', () => {
         branch: 'main',
         root_path: '/',
       },
-      job
+      job,
+      []
     )
 
     expect(app.source?.docker?.git_repository?.branch).toBe('main')
@@ -113,7 +117,8 @@ describe('PageSettingsGeneralFeature', () => {
         image_name: 'qovery/console',
         registry: 'docker.io',
       },
-      job
+      job,
+      []
     )
 
     expect(app.source?.image?.tag).toBe('latest')

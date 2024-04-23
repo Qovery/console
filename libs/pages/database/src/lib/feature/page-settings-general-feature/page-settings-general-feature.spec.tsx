@@ -64,7 +64,7 @@ describe('PageSettingsGeneralFeature', () => {
         name: 'hello',
         accessibility: DatabaseAccessibilityEnum.PRIVATE,
         version: '12',
-        annotations_group_ids: [],
+        annotations_groups: [],
       },
     })
 

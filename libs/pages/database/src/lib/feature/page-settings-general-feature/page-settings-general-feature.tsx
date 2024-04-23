@@ -3,6 +3,7 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { useCluster } from '@qovery/domains/clusters/feature'
 import { useEnvironment, useListDatabaseConfigurations } from '@qovery/domains/environments/feature'
+import { useAnnotationsGroups } from '@qovery/domains/organizations/feature'
 import { useEditService, useService } from '@qovery/domains/services/feature'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
 import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-general'
@@ -16,6 +17,8 @@ export function PageSettingsGeneralFeature() {
   const { data: database } = useService({ serviceId: databaseId, serviceType: 'DATABASE' })
   const { mutate: editService, isLoading: isLoadingService } = useEditService({ environmentId })
   const { data: databaseConfigurations, isLoading } = useListDatabaseConfigurations({ environmentId })
+
+  const { data: annotationsGroups = [] } = useAnnotationsGroups({ organizationId })
 
   const databaseVersionOptions = databaseConfigurations
     ?.find((c) => c.database_type === database?.type)
@@ -38,7 +41,7 @@ export function PageSettingsGeneralFeature() {
       mode: database?.mode,
       version: database?.version,
       accessibility: database?.accessibility,
-      annotations_groups: database?.annotations_group_ids ?? [],
+      annotations_groups: database?.annotations_groups?.map((group) => group.id),
     },
   })
 
@@ -52,7 +55,7 @@ export function PageSettingsGeneralFeature() {
           service: database,
           request: {
             ...dataWithoutAnnotationsGroups,
-            annotations_group_ids: annotations_groups,
+            annotations_groups: annotationsGroups.filter((group) => data.annotations_groups?.includes(group.id)),
           },
         }),
       })

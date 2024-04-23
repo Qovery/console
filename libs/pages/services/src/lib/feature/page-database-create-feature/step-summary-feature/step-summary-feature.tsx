@@ -56,7 +56,7 @@ export function StepSummaryFeature() {
         accessibility: generalData.accessibility,
         mode: generalData.mode,
         storage: storage,
-        annotations_group_ids: generalData.annotations_groups,
+        annotations_groups: annotationsGroup.filter((group) => generalData.annotations_groups?.includes(group.id)),
       }
 
       if (databaseRequest.mode !== DatabaseModeEnum.MANAGED) {

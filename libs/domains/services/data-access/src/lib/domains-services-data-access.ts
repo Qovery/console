@@ -780,11 +780,11 @@ export const mutations = {
         serviceType,
       }))
       .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', (serviceType) => ({
-        mutation: jobActionsApi.restartJob.bind(jobActionsApi),
+        mutation: jobActionsApi.redeployJob.bind(jobActionsApi),
         serviceType,
       }))
       .with('HELM', (serviceType) => ({
-        mutation: helmActionsApi.restartHelm.bind(helmActionsApi),
+        mutation: helmActionsApi.redeployHelm.bind(helmActionsApi),
         serviceType,
       }))
       .exhaustive()

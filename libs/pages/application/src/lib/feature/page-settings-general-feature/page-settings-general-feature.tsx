@@ -7,11 +7,12 @@ import {
   type HelmRequestAllOfSourceOneOf,
   type HelmRequestAllOfSourceOneOf1,
   type JobRequest,
+  type OrganizationAnnotationsGroupResponse,
 } from 'qovery-typescript-axios'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { P, match } from 'ts-pattern'
-import { useOrganization } from '@qovery/domains/organizations/feature'
+import { useAnnotationsGroups, useOrganization } from '@qovery/domains/organizations/feature'
 import { type Application, type Container, type Helm, type Job } from '@qovery/domains/services/data-access'
 import { useEditService, useService } from '@qovery/domains/services/feature'
 import { type HelmGeneralData } from '@qovery/pages/services'
@@ -23,7 +24,8 @@ import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-ge
 
 export const handleGitApplicationSubmit = (
   data: ApplicationGeneralData,
-  application: Application
+  application: Application,
+  annotationsGroups: OrganizationAnnotationsGroupResponse[]
 ): ApplicationEditRequest => {
   let cloneApplication: ApplicationEditRequest = {
     ...application,
@@ -60,15 +62,17 @@ export const handleGitApplicationSubmit = (
     ...cloneApplication,
     arguments: (data.cmd_arguments && data.cmd_arguments.length && eval(data.cmd_arguments)) || [],
     entrypoint: data.image_entry_point || '',
-    annotations_group_ids: data.annotations_groups,
+    annotations_groups: annotationsGroups.filter((group) => data.annotations_groups?.includes(group.id)),
   }
-
-  console.log(cloneApplication)
 
   return cloneApplication
 }
 
-export const handleContainerSubmit = (data: ApplicationGeneralData, container: Container): ContainerRequest => {
+export const handleContainerSubmit = (
+  data: ApplicationGeneralData,
+  container: Container,
+  annotationsGroups: OrganizationAnnotationsGroupResponse[]
+): ContainerRequest => {
   return {
     ...container,
     name: data.name,
@@ -79,11 +83,15 @@ export const handleContainerSubmit = (data: ApplicationGeneralData, container: C
     arguments: (data.cmd_arguments && data.cmd_arguments.length && eval(data.cmd_arguments)) || [],
     entrypoint: data.image_entry_point || '',
     registry_id: data.registry || '',
-    annotations_group_ids: data.annotations_groups,
+    annotations_groups: annotationsGroups.filter((group) => data.annotations_groups?.includes(group.id)),
   }
 }
 
-export const handleJobSubmit = (data: JobGeneralData, job: Job): JobRequest => {
+export const handleJobSubmit = (
+  data: JobGeneralData,
+  job: Job,
+  annotationsGroups: OrganizationAnnotationsGroupResponse[]
+): JobRequest => {
   const schedule = match(job)
     .with({ job_type: 'CRON' }, (j): JobRequest['schedule'] => {
       const { cronjob } = j.schedule
@@ -110,7 +118,9 @@ export const handleJobSubmit = (data: JobGeneralData, job: Job): JobRequest => {
       name: data.name,
       description: data.description,
       auto_deploy: data.auto_deploy,
-      annotations_group_ids: data.annotations_groups,
+      annotations_groups: annotationsGroups.filter((annotationsGroups) =>
+        data.annotations_groups?.includes(annotationsGroups.id)
+      ),
       source: {
         docker: {
           git_repository,
@@ -125,7 +135,9 @@ export const handleJobSubmit = (data: JobGeneralData, job: Job): JobRequest => {
       name: data.name,
       description: data.description,
       auto_deploy: data.auto_deploy,
-      annotations_group_ids: data.annotations_groups,
+      annotations_groups: annotationsGroups.filter((annotationsGroups) =>
+        data.annotations_groups?.includes(annotationsGroups.id)
+      ),
       source: {
         image: {
           tag: data.image_tag || '',
@@ -180,6 +192,7 @@ export function PageSettingsGeneralFeature() {
 
   const { data: organization } = useOrganization({ organizationId })
   const { data: service } = useService({ environmentId, serviceId: applicationId })
+  const { data: annotationsGroups = [] } = useAnnotationsGroups({ organizationId })
 
   const { mutate: editService, isLoading: isLoadingEditService } = useEditService({ environmentId })
 
@@ -262,7 +275,7 @@ export function PageSettingsGeneralFeature() {
       .with({ serviceType: 'APPLICATION' }, (s) => {
         try {
           return {
-            ...handleGitApplicationSubmit(data as ApplicationGeneralData, s),
+            ...handleGitApplicationSubmit(data as ApplicationGeneralData, s, annotationsGroups),
             serviceType: s.serviceType,
           }
         } catch (e: unknown) {
@@ -273,7 +286,7 @@ export function PageSettingsGeneralFeature() {
       .with({ serviceType: 'JOB' }, (s) => {
         try {
           return {
-            ...handleJobSubmit(data as JobGeneralData, s),
+            ...handleJobSubmit(data as JobGeneralData, s, annotationsGroups),
             serviceType: s.serviceType,
           }
         } catch (e: unknown) {
@@ -284,7 +297,7 @@ export function PageSettingsGeneralFeature() {
       .with({ serviceType: 'CONTAINER' }, (s) => {
         try {
           return {
-            ...handleContainerSubmit(data as ApplicationGeneralData, s),
+            ...handleContainerSubmit(data as ApplicationGeneralData, s, annotationsGroups),
             serviceType: s.serviceType,
           }
         } catch (e: unknown) {

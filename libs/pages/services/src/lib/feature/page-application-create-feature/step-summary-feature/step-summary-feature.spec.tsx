@@ -106,7 +106,7 @@ describe('PageApplicationPostFeature', () => {
     })
   })
 
-  it('should createn a container with good payload', async () => {
+  it('should create a container with good payload', async () => {
     const { userEvent } = renderWithProviders(
       <ApplicationContainerCreateContext.Provider
         value={{
@@ -150,6 +150,7 @@ describe('PageApplicationPostFeature', () => {
         tag: '789',
         entrypoint: '/',
         auto_deploy: true,
+        annotations_groups: [],
       },
     })
   })
