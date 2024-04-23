@@ -3,7 +3,7 @@
 exports[`ServiceCloneModal should match snapshot 1`] = `
 <div>
   <div
-    class="p-6"
+    class="p-5"
   >
     <h2
       class="h4 text-neutral-400 max-w-sm truncate"
@@ -297,23 +297,19 @@ exports[`ServiceCloneModal should match snapshot 1`] = `
         class="flex gap-3 justify-end mt-6"
       >
         <button
-          class="btn btn--xlarge btn--stroked btn--no-min-w "
+          class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 hover:[&:not(:focus-visible):not(:disabled)]:shadow-sm active:[&:not(:focus-visible)]:shadow-none outline-brand-500 text-sm h-11 px-5 rounded border border-transparent text-neutral-350 hover:[&:not(:active):not(:focus-visible)]:border-neutral-300 hover:[&:not(:disabled)]:text-neutral-400 focus-visible:text-neutral-400 active:bg-neutral-150 active:text-neutral-400 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none"
           data-testid="cancel-button"
           type="button"
         >
-          <span>
-            Cancel
-          </span>
+          Cancel
         </button>
         <button
-          class="btn btn--xlarge btn--basic btn--disabled btn--no-min-w "
+          class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-neutral-500 text-sm h-11 px-5 rounded bg-brand-500 active:bg-brand-600 hover:bg-brand-400 text-white disabled:text-brand-300 disabled:bg-brand-100"
           data-testid="submit-button"
           disabled=""
           type="submit"
         >
-          <span>
-            Clone
-          </span>
+          Clone
         </button>
       </div>
     </form>

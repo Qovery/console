@@ -1,6 +1,6 @@
 import { type FormEventHandler, type ReactNode, useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle } from '../../buttons/button-legacy/button-legacy'
+import Button from '../../button/button'
 import Icon from '../../icon/icon'
 import { Popover } from '../../popover/popover'
 import Truncate from '../../truncate/truncate'
@@ -42,7 +42,7 @@ export function ModalCrud(props: ModalCrudProps) {
   }, [trigger, isEdit])
 
   return (
-    <div className="p-6">
+    <div className="p-5">
       <h2 className="h4 text-neutral-400 max-w-sm truncate">{title}</h2>
       {description && <p className="mt-2 text-neutral-350 text-sm">{description}</p>}
       {forServiceName && (
@@ -77,36 +77,31 @@ export function ModalCrud(props: ModalCrudProps) {
         {children}
         <div className="flex gap-3 justify-end mt-6">
           {isEdit && onDelete ? (
-            <ButtonLegacy
-              dataTestId="delete-button"
-              className="btn--no-min-w"
-              style={ButtonLegacyStyle.ERROR}
-              size={ButtonLegacySize.XLARGE}
-              onClick={() => onDelete()}
-            >
+            <Button color="red" size="lg" onClick={() => onDelete()}>
               {deleteButtonLabel || 'Delete'}
-            </ButtonLegacy>
+            </Button>
           ) : (
-            <ButtonLegacy
-              dataTestId="cancel-button"
-              className="btn--no-min-w"
-              style={ButtonLegacyStyle.STROKED}
-              size={ButtonLegacySize.XLARGE}
+            <Button
+              data-testid="cancel-button"
+              type="button"
+              variant="plain"
+              color="neutral"
+              size="lg"
               onClick={() => onClose()}
             >
               Cancel
-            </ButtonLegacy>
+            </Button>
           )}
-          <ButtonLegacy
-            dataTestId="submit-button"
-            className="btn--no-min-w"
+          <Button
+            data-testid="submit-button"
             type="submit"
-            size={ButtonLegacySize.XLARGE}
+            color="brand"
+            size="lg"
             disabled={!formState.isValid}
             loading={loading}
           >
             {submitLabel || (isEdit ? 'Confirm' : 'Create')}
-          </ButtonLegacy>
+          </Button>
         </div>
       </form>
     </div>
