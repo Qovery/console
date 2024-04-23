@@ -74,6 +74,7 @@ describe('PageApplicationPostFeature', () => {
             branch: 'master',
             root_path: '/',
             buildpack_language: 'JAVA',
+            annotations_groups: [],
           },
         }}
       >
@@ -98,10 +99,16 @@ describe('PageApplicationPostFeature', () => {
         min_running_instances: 1,
         max_running_instances: 12,
         build_mode: 'BUILDPACKS',
-        git_repository: { url: 'https://github.com/Qovery/test_http_server.git', root_path: '/', branch: 'master' },
+        git_repository: {
+          url: 'https://github.com/Qovery/test_http_server.git',
+          root_path: '/',
+          branch: 'master',
+          git_token_id: undefined,
+        },
         buildpack_language: 'JAVA',
         healthchecks: {},
         auto_deploy: true,
+        annotations_groups: [],
       },
     })
   })
@@ -122,6 +129,7 @@ describe('PageApplicationPostFeature', () => {
             image_name: '456',
             image_tag: '789',
             image_entry_point: '/',
+            annotations_groups: [],
           },
         }}
       >
