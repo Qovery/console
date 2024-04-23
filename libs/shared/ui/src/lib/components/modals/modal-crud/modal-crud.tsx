@@ -77,7 +77,7 @@ export function ModalCrud(props: ModalCrudProps) {
         {children}
         <div className="flex gap-3 justify-end mt-6">
           {isEdit && onDelete ? (
-            <Button color="red" size="lg" onClick={() => onDelete()}>
+            <Button data-testid="delete-button" color="red" size="lg" onClick={() => onDelete()}>
               {deleteButtonLabel || 'Delete'}
             </Button>
           ) : (

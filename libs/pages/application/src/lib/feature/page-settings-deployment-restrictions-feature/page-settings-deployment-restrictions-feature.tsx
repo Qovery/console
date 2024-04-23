@@ -42,7 +42,7 @@ export function PageSettingsDeploymentRestrictionsFeature() {
   return (
     <div className="flex flex-col justify-between w-full">
       <Section className="p-8 max-w-content-with-navigation-left">
-        <div className="flex justify-between mb-8">
+        <div className="flex justify-between gap-2 mb-8">
           <div>
             <Heading className="mb-2">Deployment Restrictions</Heading>
 
