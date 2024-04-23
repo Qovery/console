@@ -49,73 +49,76 @@ export function PageVariablesFeature() {
   }, [applicationId, serviceType])
 
   return (
-    <div className="mt-2 bg-white rounded-sm">
-      {scope && (
-        <VariableList
-          showAll={showHideAllEnvironmentVariablesValues}
-          currentScope={scope}
-          parentId={applicationId}
-          onCreateVariable={(variable, variableType) => {
-            openModal({
-              content: (
-                <CrudEnvironmentVariableModalFeature
-                  closeModal={closeModal}
-                  variable={variable}
-                  type={variableType}
-                  mode={EnvironmentVariableCrudMode.CREATION}
-                  organizationId={organizationId}
-                  applicationId={applicationId}
-                  projectId={projectId}
-                  environmentId={environmentId}
-                  serviceType={service?.serviceType}
-                  isFile={environmentVariableFile(variable)}
-                />
-              ),
-            })
-          }}
-          onEditVariable={(variable) => {
-            openModal({
-              content: (
-                <CrudEnvironmentVariableModalFeature
-                  closeModal={closeModal}
-                  variable={variable}
-                  mode={EnvironmentVariableCrudMode.EDITION}
-                  organizationId={organizationId}
-                  applicationId={applicationId}
-                  projectId={projectId}
-                  environmentId={environmentId}
-                  type={variable.variable_type}
-                  serviceType={service?.serviceType}
-                  isFile={environmentVariableFile(variable)}
-                />
-              ),
-            })
-          }}
-          onDeleteVariable={(variable) => {
-            openModalConfirmation({
-              title: 'Delete variable',
-              name: variable.key,
-              isDelete: true,
-              action: async () => {
-                await deleteVariable({ variableId: variable.id })
-                let name = variable.key
-                if (name && name.length > 30) {
-                  name = name.substring(0, 30) + '...'
-                }
-                const toasterCallback = () => actionRedeployEnvironment({ environmentId })
-                toast(
-                  ToastEnum.SUCCESS,
-                  'Deletion success',
-                  `${name} has been deleted. You need to redeploy your environment for your changes to be applied.`,
-                  toasterCallback,
-                  undefined,
-                  'Redeploy'
-                )
-              },
-            })
-          }}
-        />
-      )}
+    <div className="mt-2 bg-white rounded-sm flex flex-1">
+      <div className="grow">
+        {scope && (
+          <VariableList
+            className="border-b border-b-neutral-200"
+            showAll={showHideAllEnvironmentVariablesValues}
+            currentScope={scope}
+            parentId={applicationId}
+            onCreateVariable={(variable, variableType) => {
+              openModal({
+                content: (
+                  <CrudEnvironmentVariableModalFeature
+                    closeModal={closeModal}
+                    variable={variable}
+                    type={variableType}
+                    mode={EnvironmentVariableCrudMode.CREATION}
+                    organizationId={organizationId}
+                    applicationId={applicationId}
+                    projectId={projectId}
+                    environmentId={environmentId}
+                    serviceType={service?.serviceType}
+                    isFile={environmentVariableFile(variable)}
+                  />
+                ),
+              })
+            }}
+            onEditVariable={(variable) => {
+              openModal({
+                content: (
+                  <CrudEnvironmentVariableModalFeature
+                    closeModal={closeModal}
+                    variable={variable}
+                    mode={EnvironmentVariableCrudMode.EDITION}
+                    organizationId={organizationId}
+                    applicationId={applicationId}
+                    projectId={projectId}
+                    environmentId={environmentId}
+                    type={variable.variable_type}
+                    serviceType={service?.serviceType}
+                    isFile={environmentVariableFile(variable)}
+                  />
+                ),
+              })
+            }}
+            onDeleteVariable={(variable) => {
+              openModalConfirmation({
+                title: 'Delete variable',
+                name: variable.key,
+                isDelete: true,
+                action: async () => {
+                  await deleteVariable({ variableId: variable.id })
+                  let name = variable.key
+                  if (name && name.length > 30) {
+                    name = name.substring(0, 30) + '...'
+                  }
+                  const toasterCallback = () => actionRedeployEnvironment({ environmentId })
+                  toast(
+                    ToastEnum.SUCCESS,
+                    'Deletion success',
+                    `${name} has been deleted. You need to redeploy your environment for your changes to be applied.`,
+                    toasterCallback,
+                    undefined,
+                    'Redeploy'
+                  )
+                },
+              })
+            }}
+          />
+        )}
+      </div>
     </div>
   )
 }
