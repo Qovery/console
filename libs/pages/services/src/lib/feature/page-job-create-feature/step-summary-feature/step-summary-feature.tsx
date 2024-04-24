@@ -1,7 +1,12 @@
-import { APIVariableScopeEnum, type JobRequest, type VariableImportRequest } from 'qovery-typescript-axios'
+import {
+  APIVariableScopeEnum,
+  type JobRequest,
+  type OrganizationAnnotationsGroupResponse,
+  type VariableImportRequest,
+} from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { useContainerRegistry } from '@qovery/domains/organizations/feature'
+import { useAnnotationsGroups, useContainerRegistry } from '@qovery/domains/organizations/feature'
 import { useCreateService, useDeployService } from '@qovery/domains/services/feature'
 import { useImportVariables } from '@qovery/domains/variables/feature'
 import { type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
@@ -28,7 +33,8 @@ function prepareJobRequest(
   generalData: JobGeneralData,
   configureData: JobConfigureData,
   resourcesData: JobResourcesData,
-  jobType: JobType
+  jobType: JobType,
+  annotationsGroup: OrganizationAnnotationsGroupResponse[]
 ): JobRequest {
   const memory = Number(resourcesData['memory'])
   const cpu = resourcesData['cpu']
@@ -44,6 +50,7 @@ function prepareJobRequest(
     auto_preview: true,
     auto_deploy: generalData.auto_deploy,
     healthchecks: {},
+    annotations_groups: annotationsGroup.filter((group) => generalData.annotations_groups?.includes(group.id)),
   }
 
   if (jobType === ServiceTypeEnum.CRON_JOB) {
@@ -138,6 +145,8 @@ export function StepSummaryFeature() {
     organizationId,
     containerRegistryId: generalData?.registry,
   })
+  const { data: annotationsGroup = [] } = useAnnotationsGroups({ organizationId })
+
   const { mutateAsync: createService } = useCreateService()
   const { mutate: deployService } = useDeployService({ environmentId })
 
@@ -169,7 +178,13 @@ export function StepSummaryFeature() {
     if (generalData && resourcesData && variableData && configureData) {
       toggleLoading(true, withDeploy)
 
-      const jobRequest: JobRequest = prepareJobRequest(generalData, configureData, resourcesData, jobType)
+      const jobRequest: JobRequest = prepareJobRequest(
+        generalData,
+        configureData,
+        resourcesData,
+        jobType,
+        annotationsGroup
+      )
       const variableImportRequest = prepareVariableRequest(variableData)
 
       try {
@@ -233,6 +248,7 @@ export function StepSummaryFeature() {
           selectedRegistryName={containerRegistry?.name}
           jobType={jobType}
           gotoConfigureJob={gotoConfigureJob}
+          annotationsGroup={annotationsGroup}
         />
       )}
     </FunnelFlowBody>

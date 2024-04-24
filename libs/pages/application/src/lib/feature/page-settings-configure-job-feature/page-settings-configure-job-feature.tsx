@@ -19,9 +19,6 @@ export function PageSettingsConfigureJobFeature() {
       return {
         schedule: cronjob?.scheduled_at,
         timezone: cronjob?.timezone,
-        cmd_arguments:
-          cronjob?.arguments && cronjob?.arguments.length > 0 ? JSON.stringify(cronjob?.arguments) : undefined,
-        image_entry_point: cronjob?.entrypoint,
       }
     })
     .with({ job_type: 'LIFECYCLE' }, (s) => {
@@ -47,7 +44,7 @@ export function PageSettingsConfigureJobFeature() {
         },
       }
     })
-    .otherwise(() => undefined)
+    .otherwise(() => ({}))
 
   const methods = useForm<JobConfigureData & Pick<JobGeneralData, 'image_entry_point' | 'cmd_arguments' | 'cmd'>>({
     mode: 'onChange',
@@ -64,14 +61,13 @@ export function PageSettingsConfigureJobFeature() {
 
     try {
       const schedule = match(service)
-        .with({ job_type: 'CRON' }, () => {
+        .with({ job_type: 'CRON' }, (s) => {
           return {
             cronjob: {
               scheduled_at: data.schedule || '',
-              entrypoint: data.image_entry_point,
               timezone: data.timezone,
-              // thread `eval`: https://qovery.slack.com/archives/C02NPSG2HBL/p1664352927296669
-              arguments: data.cmd_arguments ? eval(data.cmd_arguments) : undefined,
+              entrypoint: s.schedule.cronjob?.entrypoint,
+              arguments: s.schedule.cronjob?.arguments,
             },
           }
         })

@@ -1,6 +1,7 @@
 import { DatabaseModeEnum, type DatabaseRequest } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import { useAnnotationsGroups } from '@qovery/domains/organizations/feature'
 import { useCreateService, useDeployService } from '@qovery/domains/services/feature'
 import {
   SERVICES_DATABASE_CREATION_GENERAL_URL,
@@ -21,6 +22,7 @@ export function StepSummaryFeature() {
   const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_DATABASE_CREATION_URL}`
   const [loadingCreate, setLoadingCreate] = useState(false)
   const [loadingCreateAndDeploy, setLoadingCreateAndDeploy] = useState(false)
+  const { data: annotationsGroup = [] } = useAnnotationsGroups({ organizationId })
 
   const { mutateAsync: createDatabase } = useCreateService()
   const { mutate: deployDatabase } = useDeployService({ environmentId })
@@ -54,6 +56,7 @@ export function StepSummaryFeature() {
         accessibility: generalData.accessibility,
         mode: generalData.mode,
         storage: storage,
+        annotations_groups: annotationsGroup.filter((group) => generalData.annotations_groups?.includes(group.id)),
       }
 
       if (databaseRequest.mode !== DatabaseModeEnum.MANAGED) {
@@ -105,6 +108,7 @@ export function StepSummaryFeature() {
           resourcesData={resourcesData}
           gotoResources={gotoResources}
           gotoGlobalInformation={gotoGlobalInformations}
+          annotationsGroup={annotationsGroup}
           isManaged={generalData.mode === DatabaseModeEnum.MANAGED}
         />
       )}

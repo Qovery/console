@@ -7,11 +7,12 @@ import {
   type HelmRequestAllOfSourceOneOf,
   type HelmRequestAllOfSourceOneOf1,
   type JobRequest,
+  type OrganizationAnnotationsGroupResponse,
 } from 'qovery-typescript-axios'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { P, match } from 'ts-pattern'
-import { useOrganization } from '@qovery/domains/organizations/feature'
+import { useAnnotationsGroups, useOrganization } from '@qovery/domains/organizations/feature'
 import { type Application, type Container, type Helm, type Job } from '@qovery/domains/services/data-access'
 import { useEditService, useService } from '@qovery/domains/services/feature'
 import { type HelmGeneralData } from '@qovery/pages/services'
@@ -23,7 +24,8 @@ import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-ge
 
 export const handleGitApplicationSubmit = (
   data: ApplicationGeneralData,
-  application: Application
+  application: Application,
+  annotationsGroups: OrganizationAnnotationsGroupResponse[]
 ): ApplicationEditRequest => {
   let cloneApplication: ApplicationEditRequest = {
     ...application,
@@ -60,12 +62,17 @@ export const handleGitApplicationSubmit = (
     ...cloneApplication,
     arguments: (data.cmd_arguments && data.cmd_arguments.length && eval(data.cmd_arguments)) || [],
     entrypoint: data.image_entry_point || '',
+    annotations_groups: annotationsGroups.filter((group) => data.annotations_groups?.includes(group.id)),
   }
 
   return cloneApplication
 }
 
-export const handleContainerSubmit = (data: ApplicationGeneralData, container: Container): ContainerRequest => {
+export const handleContainerSubmit = (
+  data: ApplicationGeneralData,
+  container: Container,
+  annotationsGroups: OrganizationAnnotationsGroupResponse[]
+): ContainerRequest => {
   return {
     ...container,
     name: data.name,
@@ -75,11 +82,29 @@ export const handleContainerSubmit = (data: ApplicationGeneralData, container: C
     image_name: data.image_name || '',
     arguments: (data.cmd_arguments && data.cmd_arguments.length && eval(data.cmd_arguments)) || [],
     entrypoint: data.image_entry_point || '',
-    registry_id: data['registry'] || '',
+    registry_id: data.registry || '',
+    annotations_groups: annotationsGroups.filter((group) => data.annotations_groups?.includes(group.id)),
   }
 }
 
-export const handleJobSubmit = (data: JobGeneralData, job: Job): JobRequest => {
+export const handleJobSubmit = (
+  data: JobGeneralData,
+  job: Job,
+  annotationsGroups: OrganizationAnnotationsGroupResponse[]
+): JobRequest => {
+  const schedule = match(job)
+    .with({ job_type: 'CRON' }, (j): JobRequest['schedule'] => {
+      const { cronjob } = j.schedule
+      return {
+        cronjob: {
+          ...cronjob,
+          entrypoint: data.image_entry_point,
+          arguments: (data.cmd_arguments && data.cmd_arguments.length && eval(data.cmd_arguments)) || [],
+        },
+      }
+    })
+    .otherwise(() => undefined)
+
   if (isJobGitSource(job.source)) {
     const git_repository = {
       url: buildGitRepoUrl(data.provider ?? '', data.repository ?? ''),
@@ -93,12 +118,16 @@ export const handleJobSubmit = (data: JobGeneralData, job: Job): JobRequest => {
       name: data.name,
       description: data.description,
       auto_deploy: data.auto_deploy,
+      annotations_groups: annotationsGroups.filter((annotationsGroups) =>
+        data.annotations_groups?.includes(annotationsGroups.id)
+      ),
       source: {
         docker: {
           git_repository,
           dockerfile_path: data.dockerfile_path,
         },
       },
+      schedule,
     }
   } else {
     return {
@@ -106,6 +135,9 @@ export const handleJobSubmit = (data: JobGeneralData, job: Job): JobRequest => {
       name: data.name,
       description: data.description,
       auto_deploy: data.auto_deploy,
+      annotations_groups: annotationsGroups.filter((annotationsGroups) =>
+        data.annotations_groups?.includes(annotationsGroups.id)
+      ),
       source: {
         image: {
           tag: data.image_tag || '',
@@ -113,6 +145,7 @@ export const handleJobSubmit = (data: JobGeneralData, job: Job): JobRequest => {
           registry_id: data.registry || '',
         },
       },
+      schedule,
     }
   }
 }
@@ -159,6 +192,8 @@ export function PageSettingsGeneralFeature() {
 
   const { data: organization } = useOrganization({ organizationId })
   const { data: service } = useService({ environmentId, serviceId: applicationId })
+  const { data: annotationsGroups = [] } = useAnnotationsGroups({ organizationId })
+
   const { mutate: editService, isLoading: isLoadingEditService } = useEditService({ environmentId })
 
   const helmRepository = match(service)
@@ -175,6 +210,7 @@ export function PageSettingsGeneralFeature() {
       build_mode: service.build_mode,
       image_entry_point: service.entrypoint,
       cmd_arguments: (service.arguments && service.arguments.length && JSON.stringify(service.arguments)) || '',
+      annotations_groups: service.annotations_groups?.map((group) => group.id),
     }))
     .with({ serviceType: 'CONTAINER' }, (service) => ({
       registry: service.registry?.id,
@@ -183,9 +219,21 @@ export function PageSettingsGeneralFeature() {
       image_entry_point: service.entrypoint,
       auto_deploy: service.auto_deploy,
       cmd_arguments: (service.arguments && service.arguments.length && JSON.stringify(service.arguments)) || '',
+      annotations_groups: service.annotations_groups?.map((group) => group.id),
     }))
     .with({ serviceType: 'JOB' }, (service) => {
       const jobContainerSource = isJobContainerSource(service.source) ? service.source.image : undefined
+
+      const schedule = match(service)
+        .with({ job_type: 'CRON' }, (s) => {
+          const { cronjob } = s.schedule
+          return {
+            cmd_arguments:
+              cronjob?.arguments && cronjob?.arguments.length > 0 ? JSON.stringify(cronjob?.arguments) : undefined,
+            image_entry_point: cronjob?.entrypoint,
+          }
+        })
+        .otherwise(() => ({}))
 
       return {
         auto_deploy: service.auto_deploy,
@@ -194,6 +242,8 @@ export function PageSettingsGeneralFeature() {
         registry: jobContainerSource?.registry_id,
         image_name: jobContainerSource?.image_name,
         image_tag: jobContainerSource?.tag,
+        annotations_groups: service.annotations_groups?.map((group) => group.id),
+        ...schedule,
       }
     })
     .with({ serviceType: 'HELM' }, (service) => ({
@@ -222,18 +272,39 @@ export function PageSettingsGeneralFeature() {
     if (!service) return
 
     const payload = match(service)
-      .with({ serviceType: 'APPLICATION' }, (s) => ({
-        ...handleGitApplicationSubmit(data as ApplicationGeneralData, s),
-        serviceType: s.serviceType,
-      }))
-      .with({ serviceType: 'JOB' }, (s) => ({
-        ...handleJobSubmit(data as JobGeneralData, s),
-        serviceType: s.serviceType,
-      }))
-      .with({ serviceType: 'CONTAINER' }, (s) => ({
-        ...handleContainerSubmit(data as ApplicationGeneralData, s),
-        serviceType: s.serviceType,
-      }))
+      .with({ serviceType: 'APPLICATION' }, (s) => {
+        try {
+          return {
+            ...handleGitApplicationSubmit(data as ApplicationGeneralData, s, annotationsGroups),
+            serviceType: s.serviceType,
+          }
+        } catch (e: unknown) {
+          toastError(e as Error, 'Invalid CMD array')
+          return
+        }
+      })
+      .with({ serviceType: 'JOB' }, (s) => {
+        try {
+          return {
+            ...handleJobSubmit(data as JobGeneralData, s, annotationsGroups),
+            serviceType: s.serviceType,
+          }
+        } catch (e: unknown) {
+          toastError(e as Error, 'Invalid CMD array')
+          return
+        }
+      })
+      .with({ serviceType: 'CONTAINER' }, (s) => {
+        try {
+          return {
+            ...handleContainerSubmit(data as ApplicationGeneralData, s, annotationsGroups),
+            serviceType: s.serviceType,
+          }
+        } catch (e: unknown) {
+          toastError(e as Error, 'Invalid CMD array')
+          return
+        }
+      })
       .with({ serviceType: 'HELM' }, (s) => {
         try {
           return {
@@ -249,19 +320,12 @@ export function PageSettingsGeneralFeature() {
 
     if (!payload) return null
 
-    try {
-      editService({
-        serviceId: applicationId,
-        payload,
-      })
-    } catch (e: unknown) {
-      if (payload.serviceType === 'CONTAINER') {
-        toastError(e as Error, 'Invalid CMD array')
-      }
-      return
-    }
+    editService({
+      serviceId: applicationId,
+      payload,
+    })
 
-    return null
+    return
   })
 
   return (

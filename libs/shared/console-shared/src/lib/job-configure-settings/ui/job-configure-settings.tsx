@@ -12,7 +12,6 @@ import EntrypointCmdInputs from '../../entrypoint-cmd-inputs/ui/entrypoint-cmd-i
 export interface JobConfigureSettingsProps {
   jobType: JobType
   loading?: boolean
-  legacyMode?: boolean
 }
 
 export function JobConfigureSettings(props: JobConfigureSettingsProps) {
@@ -60,8 +59,6 @@ export function JobConfigureSettings(props: JobConfigureSettingsProps) {
             )}
           />
           <TimezoneSetting />
-          {/* XXX: This should be migrated to general settings page */}
-          {props.legacyMode && <EntrypointCmdInputs />}
         </Section>
       ) : (
         <Section className="gap-4">

@@ -2,6 +2,7 @@ import { BuildModeEnum, BuildPackLanguageEnum, type Organization } from 'qovery-
 import { type FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { match } from 'ts-pattern'
+import { AnnotationSetting } from '@qovery/domains/organizations/feature'
 import { DeploymentSetting, SourceSetting } from '@qovery/domains/service-helm/feature'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { AutoDeploySetting, GeneralSetting } from '@qovery/domains/services/feature'
@@ -12,7 +13,7 @@ import {
   JobGeneralSettings,
 } from '@qovery/shared/console-shared'
 import { ServiceTypeEnum, isJobGitSource } from '@qovery/shared/enums'
-import { BlockContent, Button, Callout, Heading, Icon, InputSelect, InputText, Section } from '@qovery/shared/ui'
+import { Button, Callout, Heading, Icon, InputSelect, InputText, Section } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
 export interface PageSettingsGeneralProps {
@@ -44,7 +45,7 @@ export function PageSettingsGeneral({
   const watchFieldProvider = watch('source_provider')
 
   const blockContentBuildDeploy = (
-    <BlockContent classNameContent="gap-3 flex flex-col" title="Build & deploy">
+    <>
       <Controller
         name="build_mode"
         control={control}
@@ -97,17 +98,21 @@ export function PageSettingsGeneral({
           {service?.serviceType === 'JOB' && service.job_type === 'CRON' && <EntrypointCmdInputs />}
         </>
       )}
-    </BlockContent>
+    </>
   )
 
   return (
     <div className="flex flex-col justify-between w-full">
       <Section className="p-8 max-w-content-with-navigation-left">
-        <Heading className="mb-8">General settings</Heading>
-        <form onSubmit={onSubmit}>
-          <BlockContent title="General information" classNameContent="flex flex-col gap-3">
-            <GeneralSetting label="Application name" />
-          </BlockContent>
+        <Heading className="mb-2">General settings</Heading>
+        <p className="text-sm text-neutral-400 mb-8">
+          These general settings allow you to set up the service name, its source and deployment parameters.
+        </p>
+        <form onSubmit={onSubmit} className="space-y-10">
+          <Section className="gap-4">
+            <Heading>General</Heading>
+            <GeneralSetting label="Service name" />
+          </Section>
           {match(service)
             .with({ serviceType: 'JOB' }, (job) => (
               <>
@@ -116,62 +121,75 @@ export function PageSettingsGeneral({
                   jobType={job.job_type === 'CRON' ? ServiceTypeEnum.CRON_JOB : ServiceTypeEnum.LIFECYCLE_JOB}
                   organization={organization}
                 />
-                {isJobGitSource(job.source) ? (
-                  <>
+                <Section className="gap-4">
+                  <Heading>Source</Heading>
+                  {isJobGitSource(job.source) ? (
                     <EditGitRepositorySettingsFeature />
-                    {blockContentBuildDeploy}
-                  </>
-                ) : (
-                  <BlockContent title="Container Settings" classNameContent="space-y-4">
+                  ) : (
                     <GeneralContainerSettings organization={organization} />
-                  </BlockContent>
-                )}
-                <BlockContent title="Auto-deploy">
+                  )}
+                </Section>
+                <Section className="gap-4">
+                  <Heading>Build and deploy</Heading>
+                  {blockContentBuildDeploy}
                   <AutoDeploySetting source={watchServiceType === 'CONTAINER' ? 'CONTAINER_REGISTRY' : 'GIT'} />
-                </BlockContent>
+                </Section>
+                <Section className="gap-4">
+                  <Heading>Extra annotations</Heading>
+                  <AnnotationSetting />
+                </Section>
               </>
             ))
             .with({ serviceType: 'APPLICATION' }, () => (
               <>
-                <EditGitRepositorySettingsFeature />
-                {blockContentBuildDeploy}
-                {watchBuildMode === BuildModeEnum.DOCKER && (
-                  <BlockContent title="Entrypoint and arguments" classNameContent="space-y-4">
-                    <EntrypointCmdInputs />
-                  </BlockContent>
-                )}
-
-                <BlockContent title="Auto-deploy">
+                <Section className="gap-4">
+                  <Heading>Source</Heading>
+                  <EditGitRepositorySettingsFeature />
+                </Section>
+                <Section className="gap-4">
+                  <Heading>Build and deploy</Heading>
+                  {blockContentBuildDeploy}
+                  {watchBuildMode === BuildModeEnum.DOCKER && <EntrypointCmdInputs />}
                   <AutoDeploySetting source="GIT" />
-                </BlockContent>
+                </Section>
+                <Section className="gap-4">
+                  <Heading>Extra annotations</Heading>
+                  <AnnotationSetting />
+                </Section>
               </>
             ))
             .with({ serviceType: 'CONTAINER' }, () => (
               <>
-                <BlockContent title="Container Settings" classNameContent="space-y-4">
+                <Section className="gap-4">
+                  <Heading>Source</Heading>
                   <GeneralContainerSettings organization={organization} />
-                </BlockContent>
-                <BlockContent title="Entrypoint and arguments" classNameContent="space-y-4">
+                </Section>
+                <Section className="gap-4">
+                  <Heading>Deploy</Heading>
                   <EntrypointCmdInputs />
-                </BlockContent>
-                <BlockContent title="Auto-deploy">
                   <AutoDeploySetting source="CONTAINER_REGISTRY" />
-                </BlockContent>
+                </Section>
+                <Section className="gap-4">
+                  <Heading>Extra annotations</Heading>
+                  <AnnotationSetting />
+                </Section>
               </>
             ))
             .with({ serviceType: 'HELM' }, () => (
               <>
-                <BlockContent title="Source">
+                <Section className="gap-4">
+                  <Heading>Source</Heading>
                   <SourceSetting disabled />
                   {watchFieldProvider === 'GIT' && (
                     <div className="mt-3">
-                      <EditGitRepositorySettingsFeature withBlockWrapper={false} />
+                      <EditGitRepositorySettingsFeature />
                     </div>
                   )}
-                </BlockContent>
-                <BlockContent title="Deploy">
+                </Section>
+                <Section className="gap-4">
+                  <Heading>Deploy</Heading>
                   <DeploymentSetting />
-                  {watchFieldProvider === 'GIT' && <AutoDeploySetting source="GIT" className="mt-5" />}
+                  {watchFieldProvider === 'GIT' && <AutoDeploySetting source="GIT" />}
                   {watchFieldProvider === 'HELM_REPOSITORY' && (
                     <Callout.Root color="sky" className="mt-5 text-xs items-center">
                       <Callout.Icon>
@@ -185,12 +203,12 @@ export function PageSettingsGeneral({
                       </Callout.Text>
                     </Callout.Root>
                   )}
-                </BlockContent>
+                </Section>
               </>
             ))
             .otherwise(() => null)}
 
-          <div className="flex justify-end">
+          <div className="flex justify-end mt-10">
             <Button type="submit" size="lg" loading={isLoadingEditService} disabled={!formState.isValid}>
               Save
             </Button>

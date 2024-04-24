@@ -1,4 +1,4 @@
-import { BuildModeEnum } from 'qovery-typescript-axios'
+import { BuildModeEnum, type OrganizationAnnotationsGroupResponse } from 'qovery-typescript-axios'
 import { type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
 import {
   type FlowVariableData,
@@ -24,6 +24,7 @@ export interface StepSummaryProps {
   isLoadingCreateAndDeploy: boolean
   selectedRegistryName?: string
   jobType: JobType
+  annotationsGroup: OrganizationAnnotationsGroupResponse[]
 }
 
 export function StepSummary(props: StepSummaryProps) {
@@ -109,6 +110,17 @@ export function StepSummary(props: StepSummaryProps) {
                   <li>
                     <strong className="font-medium">Auto-deploy:</strong> {props.generalData.auto_deploy.toString()}
                   </li>
+                  {props.annotationsGroup &&
+                    props.generalData.annotations_groups &&
+                    props.generalData.annotations_groups.length > 0 && (
+                      <li>
+                        <strong className="font-medium">Annotations group:</strong>{' '}
+                        {props.annotationsGroup
+                          .filter(({ id }) => props.generalData.annotations_groups?.includes(id))
+                          .map(({ name }) => name)
+                          .join(', ')}
+                      </li>
+                    )}
                 </>
               )}
             </ul>

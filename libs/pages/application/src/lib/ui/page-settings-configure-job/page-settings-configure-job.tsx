@@ -21,7 +21,6 @@ export function PageSettingsConfigureJob({ service, loading, onSubmit }: PageSet
             <JobConfigureSettings
               loading={!service}
               jobType={service.job_type === 'CRON' ? ServiceTypeEnum.CRON_JOB : ServiceTypeEnum.LIFECYCLE_JOB}
-              legacyMode
             />
           </BlockContent>
           <div className="flex justify-end">

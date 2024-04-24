@@ -17,6 +17,9 @@ jest.mock('@qovery/domains/services/feature', () => ({
   useCreateService: () => ({
     mutateAsync: mockCreateService,
   }),
+  useAddAnnotationsGroup: () => ({
+    mutate: jest.fn(),
+  }),
   useDeployService: () => ({
     mutate: jest.fn(),
   }),
@@ -83,6 +86,7 @@ describe('StepSummaryFeature', () => {
         type: DatabaseTypeEnum.MYSQL,
         version: '1',
         description: '',
+        annotations_groups: [],
       },
     })
     expect(mockNavigate).toHaveBeenCalledWith('/organization/1/project/2/environment/3')

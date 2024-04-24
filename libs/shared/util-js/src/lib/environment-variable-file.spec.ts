@@ -205,6 +205,7 @@ describe('getEnvironmentVariableFileMountPath', () => {
       value: null,
       is_secret: true,
       created_at: 'created_at',
+      variable_type: APIVariableTypeEnum.OVERRIDE,
       scope: APIVariableScopeEnum.APPLICATION,
       service_name: 'service_name',
       overridden_variable: {
