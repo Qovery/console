@@ -352,7 +352,7 @@ export function VariableList({
   }
 
   return (
-    <Table.Root className={twMerge('w-full text-xs min-w-[800px]', className)}>
+    <Table.Root className={twMerge('table-fixed w-full text-xs min-w-[800px]', className)}>
       <Table.Header>
         {table.getHeaderGroups().map((headerGroup) => (
           <Table.Row key={headerGroup.id}>
