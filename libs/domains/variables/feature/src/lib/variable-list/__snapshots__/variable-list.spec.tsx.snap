@@ -1,9 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ServiceList should match snapshot 1`] = `
+exports[`VariableList should match snapshot 1`] = `
 <div>
   <table
-    class="divide-y divide-neutral-200 text-neutral-400 w-full text-xs min-w-[800px]"
+    class="divide-y divide-neutral-200 text-neutral-400 table-fixed w-full text-xs min-w-[800px]"
   >
     <thead>
       <tr>

@@ -138,7 +138,7 @@ const variableListProps: VariableListProps = {
   onDeleteVariable: jest.fn(),
 }
 
-describe('ServiceList', () => {
+describe('VariableList', () => {
   it('should render successfully', () => {
     const { baseElement } = renderWithProviders(<VariableList {...variableListProps} />)
     expect(baseElement).toBeTruthy()
@@ -167,7 +167,6 @@ describe('ServiceList', () => {
     const { userEvent } = renderWithProviders(<VariableList {...variableListProps} />)
     const actions = screen.getAllByRole('button', { name: /actions/i })
     await userEvent.click(actions[0])
-    //
     const menuItems0 = screen.getAllByRole('menuitem')
     expect(menuItems0).toHaveLength(1)
     expect(menuItems0[0]).toHaveTextContent(/alias/i)
