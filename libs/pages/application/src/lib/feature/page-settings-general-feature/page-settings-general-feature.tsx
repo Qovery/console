@@ -103,7 +103,8 @@ export const handleJobSubmit = (
         },
       }
     })
-    .otherwise(() => undefined)
+    .with({ job_type: 'LIFECYCLE' }, (s) => s.schedule)
+    .exhaustive()
 
   if (isJobGitSource(job.source)) {
     const git_repository = {
