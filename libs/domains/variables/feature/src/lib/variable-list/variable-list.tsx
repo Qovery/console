@@ -29,6 +29,7 @@ import {
   TableFilter,
   TablePrimitives,
   Tooltip,
+  Truncate,
 } from '@qovery/shared/ui'
 import { dateUTCString, timeAgo } from '@qovery/shared/util-dates'
 import {
@@ -283,6 +284,9 @@ export function VariableList({
         filterFn: 'arrIncludesSome',
         size: 10,
         meta: {
+          customFilterValue({ filterValue }) {
+            return <Truncate text={filterValue.map(upperCaseFirstLetter).join(', ')} truncateLimit={18} />
+          },
           customFacetEntry({ value, count }) {
             return (
               <>
