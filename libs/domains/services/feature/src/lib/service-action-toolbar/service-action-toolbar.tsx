@@ -56,9 +56,10 @@ import { useRestartService } from '../hooks/use-restart-service/use-restart-serv
 import { useRunningStatus } from '../hooks/use-running-status/use-running-status'
 import { useService } from '../hooks/use-service/use-service'
 import { useStopService } from '../hooks/use-stop-service/use-stop-service'
+import { RedeployModal } from '../redeploy-modal/redeploy-modal'
 import { SelectCommitModal } from '../select-commit-modal/select-commit-modal'
 import { SelectVersionModal } from '../select-version-modal/select-version-modal'
-import ServiceCloneModal from '../service-clone-modal/service-clone-modal'
+import { ServiceCloneModal } from '../service-clone-modal/service-clone-modal'
 
 function MenuManageDeployment({
   deploymentStatus,
@@ -160,6 +161,7 @@ function MenuManageDeployment({
       options: { width: 596 },
     })
   }
+
   const deployTagVersion = (service: Container | Job, version: string) => {
     openModal({
       content: (
@@ -278,7 +280,14 @@ function MenuManageDeployment({
         {isRedeployAvailable(state) && (
           <DropdownMenu.Item
             icon={<Icon iconName="rotate-right" />}
-            onSelect={mutationRedeploy}
+            onSelect={
+              serviceNeedUpdate
+                ? mutationRedeploy
+                : () =>
+                    openModal({
+                      content: <RedeployModal service={service} />,
+                    })
+            }
             className="relative"
             color={serviceNeedUpdate ? 'yellow' : 'brand'}
           >
