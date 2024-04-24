@@ -2,7 +2,6 @@ import { createQueryKeys, type inferQueryKeys } from '@lukemorales/query-key-fac
 import {
   ApplicationActionsApi,
   type ApplicationAdvancedSettings,
-  ApplicationAnnotationsGroupApi,
   ApplicationConfigurationApi,
   type DeployRequest as ApplicationDeployRequest,
   ApplicationDeploymentHistoryApi,
@@ -14,7 +13,6 @@ import {
   ApplicationsApi,
   ContainerActionsApi,
   type ContainerAdvancedSettings,
-  ContainerAnnotationsGroupApi,
   ContainerConfigurationApi,
   ContainerCustomDomainApi,
   type ContainerDeployRequest,
@@ -25,7 +23,6 @@ import {
   CustomDomainApi,
   type CustomDomainRequest,
   DatabaseActionsApi,
-  DatabaseAnnotationsGroupApi,
   DatabaseDeploymentHistoryApi,
   type DatabaseEditRequest,
   DatabaseMainCallsApi,
@@ -49,7 +46,6 @@ import {
   HelmsApi,
   JobActionsApi,
   type JobAdvancedSettings,
-  JobAnnotationsGroupApi,
   JobConfigurationApi,
   type JobDeployRequest,
   JobDeploymentHistoryApi,
@@ -111,11 +107,6 @@ const jobConfigurationApi = new JobConfigurationApi()
 const customDomainApplicationApi = new CustomDomainApi()
 const customDomainContainerApi = new ContainerCustomDomainApi()
 const customDomainHelmApi = new HelmCustomDomainApi()
-
-const applicationAnnotationsGroupApi = new ApplicationAnnotationsGroupApi()
-const containerAnnotationsGroupApi = new ContainerAnnotationsGroupApi()
-const jobAnnotationsGroupApi = new JobAnnotationsGroupApi()
-const databaseAnnotationsGroupApi = new DatabaseAnnotationsGroupApi()
 
 // Prefer this type in param instead of ServiceTypeEnum
 // to suppport string AND enum as param.
