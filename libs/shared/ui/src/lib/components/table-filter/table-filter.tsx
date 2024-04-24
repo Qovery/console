@@ -68,29 +68,34 @@ export function TableFilter({ column }: { column: Column<any, unknown> }) {
         </div>
         <DropdownMenu.Content asChild>
           <Popover.Content className="p-2 w-60 overflow-y-auto max-h-80">
-            {sortedUniqueValues.map(([value, count], index) => (
-              <Fragment key={value ?? index}>
-                <Popover.Close>
-                  <DropdownMenu.Item
-                    className="flex items-center justify-between text-neutral-400 hover:text-brand-500 hover:bg-neutral-100 p-2 rounded gap-2 cursor-pointer"
-                    onSelect={() => column.setFilterValue((arr: [] = []) => [...new Set([...arr, value])])}
-                  >
-                    {column.columnDef.meta?.customFacetEntry ? (
-                      column.columnDef.meta.customFacetEntry({
-                        value,
-                        count,
-                        row: column.getFacetedRowModel().flatRows.find((rows) => rows.getValue(column.id) === value),
-                      })
-                    ) : (
-                      <>
-                        <span className="text-sm font-medium">{value}</span>
-                        <span className="text-xs text-neutral-350">{hideCount ? null : count}</span>
-                      </>
-                    )}
-                  </DropdownMenu.Item>
-                </Popover.Close>
-              </Fragment>
-            ))}
+            {sortedUniqueValues.map(
+              ([value, count]) =>
+                value != null && (
+                  <Fragment key={value}>
+                    <Popover.Close>
+                      <DropdownMenu.Item
+                        className="flex items-center justify-between text-neutral-400 hover:text-brand-500 hover:bg-neutral-100 p-2 rounded gap-2 cursor-pointer"
+                        onSelect={() => column.setFilterValue((arr: [] = []) => [...new Set([...arr, value])])}
+                      >
+                        {column.columnDef.meta?.customFacetEntry ? (
+                          column.columnDef.meta.customFacetEntry({
+                            value,
+                            count,
+                            row: column
+                              .getFacetedRowModel()
+                              .flatRows.find((rows) => rows.getValue(column.id) === value),
+                          })
+                        ) : (
+                          <>
+                            <span className="text-sm font-medium">{value}</span>
+                            <span className="text-xs text-neutral-350">{hideCount ? null : count}</span>
+                          </>
+                        )}
+                      </DropdownMenu.Item>
+                    </Popover.Close>
+                  </Fragment>
+                )
+            )}
           </Popover.Content>
         </DropdownMenu.Content>
       </Popover.Root>
