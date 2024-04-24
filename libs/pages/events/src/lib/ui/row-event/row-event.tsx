@@ -232,13 +232,10 @@ export function RowEvent(props: RowEventProps) {
         </div>
       </div>
       {expanded && (
-        <div className="relative bg-neutral-700 max-h-[388px] overflow-y-auto" data-testid="expanded-panel">
-          <div className="sticky top-[0px] flex items-center h-7 px-4 bg-neutral-550 text-neutral-100 text-xs z-[1]">
-            Object Status after request (here you can find the JSON returned by our API)
-          </div>
-          <div className="flex justify-end sticky top-9 z-[1]">
-            <CopyButton className="mr-7" content={event.change || ''} />
-          </div>
+        <div
+          className="relative flex flex-col-reverse bg-neutral-700 max-h-[388px] overflow-y-auto"
+          data-testid="expanded-panel"
+        >
           <SyntaxHighlighter
             language="json"
             style={dark}
@@ -247,15 +244,20 @@ export function RowEvent(props: RowEventProps) {
               borderRadius: '0.25rem',
               backgroundColor: 'transparent',
               fontSize: '12px',
-              position: 'relative',
-              top: '-12px',
-              height: 'calc(100% - 12px)',
-              zIndex: 0,
+              marginTop: '28px',
             }}
             wrapLines
           >
             {JSON.stringify(JSON.parse(event.change || ''), null, 2)}
           </SyntaxHighlighter>
+          <div className="flex justify-end absolute top-9 w-full">
+            <CopyButton className="mr-7" content={event.change || ''} />
+          </div>
+          <div className="absolute top-0 w-full">
+            <div className="flex items-center h-7 px-4 bg-neutral-550 text-neutral-100 text-xs">
+              Object Status after request (here you can find the JSON returned by our API)
+            </div>
+          </div>
         </div>
       )}
     </>
