@@ -11,7 +11,8 @@ declare module '@tanstack/table-core' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface ColumnMeta<TData extends RowData, TValue> {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    customFacetEntry: ({ value, count, row }: { value: any; count: number; row?: Row<TData> }) => ReactNode
+    customFacetEntry?: ({ value, count, row }: { value: any; count: number; row?: Row<TData> }) => ReactNode
+    customFilterValue?: ({ filterValue }: { filterValue: string[] }) => ReactNode
   }
 }
 
@@ -42,7 +43,11 @@ export function TableFilter({ column }: { column: Column<any, unknown> }) {
               variant={column.getIsFiltered() ? 'solid' : 'surface'}
             >
               {column.getIsFiltered() ? (
-                <Truncate text={(column.getFilterValue() as string[]).join(', ')} truncateLimit={18} />
+                column.columnDef.meta?.customFilterValue ? (
+                  column.columnDef.meta.customFilterValue({ filterValue: column.getFilterValue() as string[] })
+                ) : (
+                  <Truncate text={(column.getFilterValue() as string[]).join(', ')} truncateLimit={18} />
+                )
               ) : (
                 <>
                   {column.columnDef.header?.toString()}
@@ -68,7 +73,7 @@ export function TableFilter({ column }: { column: Column<any, unknown> }) {
                 <Popover.Close>
                   <DropdownMenu.Item
                     className="flex items-center justify-between text-neutral-400 hover:text-brand-500 hover:bg-neutral-100 p-2 rounded gap-2 cursor-pointer"
-                    onSelect={() => column.setFilterValue((arr: [] = []) => [...arr, value])}
+                    onSelect={() => column.setFilterValue((arr: [] = []) => [...new Set([...arr, value])])}
                   >
                     {column.columnDef.meta?.customFacetEntry ? (
                       column.columnDef.meta.customFacetEntry({
