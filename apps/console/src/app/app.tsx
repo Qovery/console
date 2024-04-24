@@ -87,7 +87,7 @@ export function App() {
             request.headers['Authorization'] = undefined
             if (
               ['secret', 'credential', 'password', 'private'].some((field) =>
-                request.body?.toLowerCase().includes(field)
+                request.body?.toLowerCase?.().includes?.(field)
               )
             ) {
               delete request.body
@@ -97,7 +97,7 @@ export function App() {
           responseSanitizer(response) {
             if (
               ['secret', 'credential', 'password', 'private'].some((field) =>
-                response.body?.toLowerCase().includes(field)
+                response.body?.toLowerCase?.().includes?.(field)
               )
             ) {
               delete response.body
