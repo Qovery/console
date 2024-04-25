@@ -86,7 +86,9 @@ function MenuManageDeployment({
 
   const { state, service_deployment_status } = deploymentStatus
   const serviceNeedUpdate = service_deployment_status !== ServiceDeploymentStatusEnum.UP_TO_DATE
-  const tooltipServiceNeedUpdate = serviceNeedUpdate && (
+  const displayYellowColor = serviceNeedUpdate && state !== 'STOPPED'
+
+  const tooltipServiceNeedUpdate = displayYellowColor && (
     <Tooltip side="bottom" content="Configuration has changed and needs to be applied">
       <div className="absolute right-2">
         <Icon iconName="circle-exclamation" />
@@ -251,7 +253,7 @@ function MenuManageDeployment({
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
-        <ActionToolbar.Button aria-label="Manage Deployment" color={serviceNeedUpdate ? 'yellow' : 'neutral'}>
+        <ActionToolbar.Button aria-label="Manage Deployment" color={displayYellowColor ? 'yellow' : 'neutral'}>
           <Tooltip content="Manage Deployment">
             <div className="flex items-center justify-center w-full h-full">
               <Icon iconName="play" className="mr-4" />
@@ -271,7 +273,7 @@ function MenuManageDeployment({
             icon={<Icon iconName="play" />}
             onSelect={mutationDeploy}
             className="relative"
-            color={serviceNeedUpdate ? 'yellow' : 'brand'}
+            color={displayYellowColor ? 'yellow' : 'brand'}
           >
             Deploy
             {tooltipServiceNeedUpdate}
@@ -289,7 +291,7 @@ function MenuManageDeployment({
                     })
             }
             className="relative"
-            color={serviceNeedUpdate ? 'yellow' : 'brand'}
+            color={displayYellowColor ? 'yellow' : 'brand'}
           >
             Redeploy
             {tooltipServiceNeedUpdate}
