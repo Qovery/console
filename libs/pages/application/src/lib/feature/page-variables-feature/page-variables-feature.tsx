@@ -4,16 +4,11 @@ import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useDeployEnvironment } from '@qovery/domains/environments/feature'
 import { useService } from '@qovery/domains/services/feature'
-import { VariableList, useDeleteVariable } from '@qovery/domains/variables/feature'
+import { CreateUpdateVariableModal, VariableList, useDeleteVariable } from '@qovery/domains/variables/feature'
 import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { ToastEnum, toast, useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { environmentVariableFile } from '@qovery/shared/util-js'
 import { ApplicationContext } from '../../ui/container/container'
-import {
-  CrudEnvironmentVariableModalFeature,
-  EnvironmentVariableCrudMode,
-} from '../crud-environment-variable-modal-feature/crud-environment-variable-modal-feature'
 
 export function PageVariablesFeature() {
   useDocumentTitle('Environment Variables – Qovery')
@@ -60,17 +55,15 @@ export function PageVariablesFeature() {
             onCreateVariable={(variable, variableType) => {
               openModal({
                 content: (
-                  <CrudEnvironmentVariableModalFeature
+                  <CreateUpdateVariableModal
                     closeModal={closeModal}
                     variable={variable}
                     type={variableType}
-                    mode={EnvironmentVariableCrudMode.CREATION}
-                    organizationId={organizationId}
-                    applicationId={applicationId}
+                    mode="CREATE"
+                    serviceId={applicationId}
                     projectId={projectId}
                     environmentId={environmentId}
-                    serviceType={service?.serviceType}
-                    isFile={environmentVariableFile(variable)}
+                    scope={scope}
                   />
                 ),
               })
@@ -78,17 +71,15 @@ export function PageVariablesFeature() {
             onEditVariable={(variable) => {
               openModal({
                 content: (
-                  <CrudEnvironmentVariableModalFeature
+                  <CreateUpdateVariableModal
                     closeModal={closeModal}
                     variable={variable}
-                    mode={EnvironmentVariableCrudMode.EDITION}
-                    organizationId={organizationId}
-                    applicationId={applicationId}
+                    mode="UPDATE"
+                    serviceId={applicationId}
                     projectId={projectId}
                     environmentId={environmentId}
                     type={variable.variable_type}
-                    serviceType={service?.serviceType}
-                    isFile={environmentVariableFile(variable)}
+                    scope={scope}
                   />
                 ),
               })

@@ -1,0 +1,372 @@
+import {
+  type APIVariableScopeEnum,
+  type APIVariableTypeEnum,
+  type ServiceTypeEnum,
+  type VariableResponse,
+} from 'qovery-typescript-axios'
+import { useState } from 'react'
+import { Controller, FormProvider, useForm } from 'react-hook-form'
+import { match } from 'ts-pattern'
+import {
+  Icon,
+  InputSelect,
+  InputText,
+  InputTextArea,
+  InputToggle,
+  ModalCrud,
+  Tooltip,
+  useModal,
+} from '@qovery/shared/ui'
+import {
+  computeAvailableScope,
+  environmentVariableFile,
+  generateScopeLabel,
+  getEnvironmentVariableFileMountPath,
+} from '@qovery/shared/util-js'
+import { useCreateVariableAlias } from '../hooks/use-create-variable-alias/use-create-variable-alias'
+import { useCreateVariableOverride } from '../hooks/use-create-variable-override/use-create-variable-override'
+import { useCreateVariable } from '../hooks/use-create-variable/use-create-variable'
+import { useEditVariable } from '../hooks/use-edit-variable/use-edit-variable'
+
+export type CreateUpdateVariableModalProps = {
+  parentId: string
+  scope: Exclude<keyof typeof APIVariableScopeEnum, 'BUILT_IN'> | keyof typeof ServiceTypeEnum
+  closeModal: () => void
+  onSubmit?: (variable?: VariableResponse | void) => void
+  variable?: VariableResponse
+  mode: 'CREATE' | 'UPDATE'
+  type: keyof typeof APIVariableTypeEnum
+  isFile?: boolean
+}
+
+export function CreateUpdateVariableModal({
+  parentId,
+  scope,
+  closeModal,
+  onSubmit: _onSubmit,
+  variable,
+  mode,
+  type,
+  isFile: _isFile,
+}: CreateUpdateVariableModalProps) {
+  const isFile = (variable && environmentVariableFile(variable)) || (_isFile ?? false)
+  const { enableAlertClickOutside } = useModal()
+  const [loading, setLoading] = useState(false)
+
+  const { mutateAsync: createVariable } = useCreateVariable()
+  const { mutateAsync: createVariableAlias } = useCreateVariableAlias()
+  const { mutateAsync: createVariableOverride } = useCreateVariableOverride()
+  const { mutateAsync: editVariable } = useEditVariable()
+
+  const availableScopes = computeAvailableScope(variable?.scope, false, scope, type === 'OVERRIDE')
+
+  const defaultScope =
+    variable?.scope === 'BUILT_IN'
+      ? undefined
+      : mode === 'CREATE' && type === 'OVERRIDE'
+      ? availableScopes[0]
+      : variable?.scope
+  const mountPath = getEnvironmentVariableFileMountPath(variable)
+
+  const methods = useForm<{
+    key: string
+    value: string
+    scope: keyof typeof APIVariableScopeEnum
+    isSecret: boolean
+    mountPath?: string
+  }>({
+    defaultValues: {
+      key: variable?.key,
+      scope: defaultScope,
+      value: variable?.value ?? '',
+      isSecret: variable?.is_secret,
+      mountPath,
+    },
+    mode: 'onChange',
+  })
+
+  methods.watch(() => enableAlertClickOutside(methods.formState.isDirty))
+
+  const onSubmit = methods.handleSubmit(async (data) => {
+    if (!data.scope || data.scope === 'BUILT_IN') {
+      throw new Error('scope undefined or BUILT_IN')
+    }
+    const cloneData = { ...data }
+    data.scope
+
+    // allow empty variable value
+    if (!cloneData.value) cloneData.value = ''
+
+    if (!isFile) {
+      delete cloneData.mountPath
+    }
+
+    try {
+      setLoading(true)
+
+      const result = await match({ mode, type })
+        .with({ mode: 'CREATE', type: 'VALUE' }, () =>
+          createVariable({
+            variableRequest: {
+              is_secret: data.isSecret,
+              key: data.key,
+              value: data.value,
+              mount_path: data.mountPath || null,
+              variable_parent_id: parentId,
+              variable_scope: data.scope as APIVariableScopeEnum,
+            },
+          })
+        )
+        .with({ mode: 'CREATE', type: 'ALIAS' }, () => {
+          if (!variable) {
+            throw new Error('No variable to be based on')
+          }
+          return createVariableAlias({
+            variableId: variable.id,
+            variableAliasRequest: {
+              alias_scope: data.scope as APIVariableScopeEnum,
+              alias_parent_id: parentId,
+              key: data.key,
+            },
+          })
+        })
+        .with({ mode: 'CREATE', type: 'OVERRIDE' }, () => {
+          if (!variable) {
+            throw new Error('No variable to be based on')
+          }
+          return createVariableOverride({
+            variableId: variable.id,
+            variableOverrideRequest: {
+              override_scope: data.scope as APIVariableScopeEnum,
+              override_parent_id: parentId,
+              value: data.value,
+            },
+          })
+        })
+        .with({ mode: 'CREATE', type: 'FILE' }, { mode: 'CREATE', type: 'BUILT_IN' }, () => {
+          return Promise.resolve()
+        })
+        .with({ mode: 'UPDATE' }, () => {
+          if (!variable) {
+            throw new Error('No variable to be based on')
+          }
+
+          return editVariable({
+            variableId: variable.id,
+            variableEditRequest: {
+              key: data.key,
+              value: variable.aliased_variable?.key || data.value || '',
+            },
+          })
+        })
+        .exhaustive()
+
+      _onSubmit?.(result)
+
+      closeModal()
+    } catch (e) {
+      console.error(e)
+    } finally {
+      setLoading(false)
+    }
+  })
+
+  let title = ''
+  if (mode === 'CREATE' && type === 'VALUE') {
+    title = 'New'
+  } else if (mode === 'UPDATE') {
+    title = 'Edit ' + (type === 'ALIAS' ? 'alias' : type === 'OVERRIDE' ? 'override' : '')
+  } else if (mode === 'CREATE') {
+    title = 'Create ' + (type === 'ALIAS' ? 'alias' : type === 'OVERRIDE' ? 'override' : '')
+  }
+
+  title += ' variable' + (isFile ? ' file' : '')
+
+  const description = match({ type, isFile })
+    .with({ type: 'ALIAS' }, () => 'Aliases allow you to specify a different name for a variable on a specific scope.')
+    .with({ type: 'OVERRIDE' }, () => 'Overrides allow you to define a different env var value on a specific scope.')
+    .with(
+      { isFile: true },
+      () =>
+        'The content of the Value field will be mounted as a file in the specified “Path”. Accessing the environment variable at runtime will return the “Path” of the file.'
+    )
+    .otherwise(
+      () =>
+        'Variable are used at build/run time. Secrets are special variables, their value can only be accessed by the application.'
+    )
+
+  return (
+    <FormProvider {...methods}>
+      <ModalCrud
+        title={title}
+        description={description}
+        submitLabel="Confirm"
+        onClose={closeModal}
+        onSubmit={onSubmit}
+        loading={loading}
+      >
+        {type === 'ALIAS' || type === 'OVERRIDE' ? (
+          <InputText className="mb-3" name="Variable" value={variable?.key} label="Variable" disabled />
+        ) : (
+          <Controller
+            name="key"
+            control={methods.control}
+            rules={{
+              required: 'Please enter a variable key.',
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <InputText
+                className="mb-3"
+                name={field.name}
+                onChange={field.onChange}
+                value={field.value}
+                label="Variable"
+                error={error?.message}
+              />
+            )}
+          />
+        )}
+
+        {isFile &&
+          (type === 'ALIAS' || type === 'OVERRIDE' || mode === 'UPDATE' ? (
+            <InputText className="mb-3" name="Path" value={mountPath} label="Path" disabled />
+          ) : (
+            <Controller
+              name="mountPath"
+              control={methods.control}
+              rules={{
+                required: 'Please enter a mount path.',
+              }}
+              render={({ field, fieldState: { error } }) => (
+                <InputText
+                  className="mb-3"
+                  name={field.name}
+                  onChange={field.onChange}
+                  value={field.value}
+                  label="Path"
+                  error={error?.message}
+                />
+              )}
+            />
+          ))}
+
+        {type === 'ALIAS' && (
+          <div>
+            <div className="flex items-center mb-3">
+              <Icon
+                iconName="arrow-turn-down-right"
+                iconStyle="regular"
+                className="mr-2 ml-1 text-2xs text-neutral-300"
+              />
+              <span className="bg-teal-500 font-bold rounded-sm text-2xs text-neutral-50 px-1 inline-flex items-center h-4 mr-3">
+                ALIAS
+              </span>
+            </div>
+
+            <Controller
+              name="key"
+              control={methods.control}
+              rules={{
+                required: 'Please enter a variable key.',
+              }}
+              render={({ field, fieldState: { error } }) => (
+                <InputText
+                  className="mb-3"
+                  name={field.name}
+                  onChange={field.onChange}
+                  value={field.value}
+                  label="New variable"
+                  error={error?.message}
+                />
+              )}
+            />
+          </div>
+        )}
+
+        {type === 'OVERRIDE' && (
+          <div className="flex items-center mb-3">
+            <Icon
+              iconName="arrow-turn-down-right"
+              iconStyle="regular"
+              className="mr-2 ml-1 text-2xs text-neutral-300"
+            />
+            <span className="bg-brand-500 font-bold rounded-sm text-2xs text-neutral-50 px-1 inline-flex items-center h-4 mr-3">
+              OVERRIDE
+            </span>
+          </div>
+        )}
+
+        {(type === 'VALUE' || type === 'FILE' || type === 'OVERRIDE') && (
+          <Controller
+            name="value"
+            control={methods.control}
+            render={({ field, fieldState: { error } }) => (
+              <InputTextArea
+                className="mb-3"
+                name={field.name}
+                onChange={field.onChange}
+                value={field.value}
+                label="Value"
+                error={error?.message}
+              />
+            )}
+          />
+        )}
+
+        <Controller
+          name="scope"
+          control={methods.control}
+          rules={{
+            required: 'Please select a value.',
+          }}
+          render={({ field }) =>
+            mode === 'UPDATE' ? (
+              <InputText
+                className="mb-3"
+                name="Scope"
+                value={generateScopeLabel(field.value as APIVariableScopeEnum)}
+                label="Scope"
+                rightElement={
+                  <Tooltip content="Scope can’t be changed. Re-create the var with the right scope." side="left">
+                    <div>
+                      <Icon iconName="circle-info" className="text-neutral-350 text-sm" />
+                    </div>
+                  </Tooltip>
+                }
+                disabled
+              />
+            ) : (
+              <InputSelect
+                className="mb-4"
+                portal
+                options={availableScopes.map((s) => ({ value: s, label: generateScopeLabel(s) }))}
+                onChange={field.onChange}
+                value={field.value}
+                label="Scope"
+              />
+            )
+          }
+        />
+
+        {mode === 'CREATE' && type === 'VALUE' && (
+          <div className="flex items-center gap-3 mb-8">
+            <Controller
+              name="isSecret"
+              control={methods.control}
+              render={({ field }) => (
+                <InputToggle
+                  small
+                  value={field.value}
+                  onChange={field.onChange}
+                  title={`Secret ${isFile ? 'file' : 'variable'}`}
+                />
+              )}
+            />
+          </div>
+        )}
+      </ModalCrud>
+    </FormProvider>
+  )
+}
+
+export default CreateUpdateVariableModal
