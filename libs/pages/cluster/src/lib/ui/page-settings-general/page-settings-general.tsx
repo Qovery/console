@@ -21,7 +21,7 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
             <ClusterGeneralSettings fromDetail />
           </BlockContent>
           <div className="flex justify-end">
-            <Button type="submit" size="lg" loading={loading} disabled={!formState.isValid}>
+            <Button data-testid="submit-button" type="submit" size="lg" loading={loading} disabled={!formState.isValid}>
               Save
             </Button>
           </div>
