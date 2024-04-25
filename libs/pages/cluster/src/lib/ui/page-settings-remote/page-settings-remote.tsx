@@ -19,7 +19,7 @@ export function PageSettingsRemote(props: PageSettingsRemoteProps) {
         <form onSubmit={onSubmit}>
           <ClusterRemoteSettings fromDetail />
           <div className="flex justify-end">
-            <Button type="submit" size="lg" loading={loading} disabled={!formState.isValid}>
+            <Button data-testid="submit-button" type="submit" size="lg" loading={loading} disabled={!formState.isValid}>
               Save
             </Button>
           </div>

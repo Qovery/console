@@ -2,18 +2,7 @@ import { type CloudProviderEnum, type ClusterFeature } from 'qovery-typescript-a
 import { type FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { CardClusterFeature } from '@qovery/shared/console-shared'
-import {
-  ButtonLegacy,
-  ButtonLegacySize,
-  ButtonLegacyStyle,
-  Callout,
-  ExternalLink,
-  Heading,
-  Icon,
-  InputSelect,
-  LoaderSpinner,
-  Section,
-} from '@qovery/shared/ui'
+import { Button, Callout, ExternalLink, Heading, Icon, InputSelect, LoaderSpinner, Section } from '@qovery/shared/ui'
 import AWSVpcFeature from './aws-vpc-feature/aws-vpc-feature'
 import GCPVpcFeature from './gcp-vpc-feature/gcp-vpc-feature'
 
@@ -150,24 +139,12 @@ export function StepFeatures(props: StepFeaturesProps) {
         </div>
 
         <div className="flex justify-between">
-          <ButtonLegacy
-            onClick={goToBack}
-            type="button"
-            className="btn--no-min-w"
-            size={ButtonLegacySize.XLARGE}
-            style={ButtonLegacyStyle.STROKED}
-          >
+          <Button onClick={goToBack} type="button" variant="plain" size="lg">
             Back
-          </ButtonLegacy>
-          <ButtonLegacy
-            dataTestId="button-submit"
-            type="submit"
-            disabled={!formState.isValid}
-            size={ButtonLegacySize.XLARGE}
-            style={ButtonLegacyStyle.BASIC}
-          >
+          </Button>
+          <Button data-testid="button-submit" type="submit" disabled={!formState.isValid} size="lg">
             Continue
-          </ButtonLegacy>
+          </Button>
         </div>
       </form>
     </Section>
