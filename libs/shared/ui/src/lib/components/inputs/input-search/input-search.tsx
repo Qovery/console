@@ -45,13 +45,13 @@ export function InputSearch(props: InputSearchProps) {
       <div className={`relative w-full ${className}`}>
         <Icon
           name="icon-solid-magnifying-glass"
-          className="absolute left-3 top-1/2 -translate-y-1/2 block text-xs text-neutral-400 leading-none"
+          className="absolute left-3 top-1/2 -translate-y-1/2 block text-base text-neutral-400 dark:text-white leading-none"
         />
         <input
           data-testid="input-search"
           ref={ref}
           autoFocus={autofocus}
-          className={`w-full rounded border border-neutral-250 dark:border-neutral-400 dark:bg-neutral-700 text-neutral-400 dark:text-neutral-350 placeholder:text-neutral-350 pl-8 pr-6 leading-none focus:outline-none focus:border-brand-400 focus:transition-[border-color] ${customSize}`}
+          className={`w-full rounded border border-neutral-250 dark:border-neutral-350 dark:bg-transparent text-neutral-400 dark:text-white placeholder:text-neutral-350 dark:placeholder:text-neutral-250 pl-10 pr-6 leading-none focus:outline-none focus:border-brand-400 focus:transition-[border-color] ${customSize}`}
           type="text"
           placeholder={placeholder}
           disabled={false}
@@ -60,7 +60,7 @@ export function InputSearch(props: InputSearchProps) {
         />
         {toggleDelete && (
           <button className="absolute right-3 top-1/2 -translate-y-1/2" onClick={deleteValue}>
-            <Icon className="text-neutral-400 text-sm" iconName="circle-xmark" />
+            <Icon className="text-neutral-400 dark:text-white text-sm" iconName="circle-xmark" />
           </button>
         )}
       </div>
