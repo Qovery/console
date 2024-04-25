@@ -25,7 +25,7 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
             clusterRegion={props.clusterRegion}
           />
           <div className="flex justify-end">
-            <Button type="submit" size="lg" loading={loading} disabled={!formState.isValid}>
+            <Button data-testid="submit-button" type="submit" size="lg" loading={loading} disabled={!formState.isValid}>
               Save
             </Button>
           </div>
