@@ -1,12 +1,14 @@
 import { Controller, useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
-import { InputSelect } from '@qovery/shared/ui'
+import { InputSelect, useModal } from '@qovery/shared/ui'
+import { AnnotationCreateEditModal } from '../annotation-create-edit-modal/annotation-create-edit-modal'
 import { useAnnotationsGroups } from '../hooks/use-annotations-groups/use-annotations-groups'
 
 export function AnnotationSetting() {
   const { control } = useFormContext()
   const { organizationId = '' } = useParams()
   const { data: annotationsGroups = [] } = useAnnotationsGroups({ organizationId })
+  const { openModal, closeModal } = useModal()
 
   return (
     <Controller
@@ -19,6 +21,23 @@ export function AnnotationSetting() {
             label: group.name,
             value: group.id,
           }))}
+          menuListButton={{
+            title: 'Select annotation groups',
+            label: 'New annotation groups',
+            onClick: () => {
+              openModal({
+                content: (
+                  <AnnotationCreateEditModal
+                    organizationId={organizationId}
+                    onClose={(response) => {
+                      response && field.onChange(response.id)
+                      closeModal()
+                    }}
+                  />
+                ),
+              })
+            },
+          }}
           value={field.value}
           onChange={field.onChange}
           error={error?.message}
