@@ -14,6 +14,7 @@ import {
   USER_URL,
 } from '@qovery/shared/routes'
 import { Command, type CommandDialogProps, Icon } from '@qovery/shared/ui'
+import { QOVERY_DOCS_URL, QOVERY_FORUM_URL, QOVERY_ROADMAP_URL } from '@qovery/shared/util-const'
 import useQuickActions from '../hooks/use-quick-actions/use-quick-actions'
 
 type Item = {
@@ -85,17 +86,17 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
   const helpItems: Item[] = [
     {
       label: 'Go to documentation',
-      onSelect: openExternalLink('https://hub.qovery.com/'),
+      onSelect: openExternalLink(QOVERY_DOCS_URL),
       iconName: 'book-open',
     },
     {
       label: 'Community Forum',
-      onSelect: openExternalLink('https://discuss.qovery.com/'),
+      onSelect: openExternalLink(QOVERY_FORUM_URL),
       iconName: 'people',
     },
     {
       label: 'Roadmap',
-      onSelect: openExternalLink('https://roadmap.qovery.com/roadmap'),
+      onSelect: openExternalLink(QOVERY_ROADMAP_URL),
       iconName: 'road',
     },
     {

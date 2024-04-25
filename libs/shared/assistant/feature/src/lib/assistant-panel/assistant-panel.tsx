@@ -3,6 +3,7 @@ import { Hits, SearchBox, useInstantSearch } from 'react-instantsearch'
 import { useIntercom } from 'react-use-intercom'
 import { match } from 'ts-pattern'
 import { ExternalLink, Icon, InputSearch } from '@qovery/shared/ui'
+import { QOVERY_FEEDBACK_URL, QOVERY_FORUM_URL, QOVERY_STATUS_URL } from '@qovery/shared/util-const'
 import { twMerge } from '@qovery/shared/util-js'
 import { INSTATUS_APP_ID } from '@qovery/shared/util-node-env'
 import { DotStatus } from '../dot-status/dot-status'
@@ -22,8 +23,6 @@ export function AssistantPanel({ smaller = false, onClose }: AssistantPanelProps
   const docLinks = useContextualDocLinks()
   const valueDoc = useDeferredValue(indexUiState.query ?? '')
 
-  const QOVERY_FORUM_URL = 'https://discuss.qovery.com/'
-  const QOVERY_STATUS_URL = 'https://status.qovery.com/'
   const appStatus = data?.find(({ id }) => id === INSTATUS_APP_ID)
 
   useEffect(() => {
@@ -109,6 +108,15 @@ export function AssistantPanel({ smaller = false, onClose }: AssistantPanelProps
         >
           <Icon iconName="user-group" className="text-brand-500" />
           <span className="text-sm">Community forum</span>
+        </a>
+        <a
+          className="flex justify-center items-center gap-1.5 px-5 h-11 text-neutral-400 font-medium hover:bg-neutral-150 transition"
+          href={QOVERY_FEEDBACK_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Icon iconName="comment-lines" className="text-brand-500" />
+          <span className="text-sm">Feedback</span>
         </a>
         {appStatus && appStatus.status ? (
           <a
