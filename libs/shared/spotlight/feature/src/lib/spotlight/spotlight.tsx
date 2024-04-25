@@ -14,7 +14,7 @@ import {
   USER_URL,
 } from '@qovery/shared/routes'
 import { Command, type CommandDialogProps, Icon } from '@qovery/shared/ui'
-import { QOVERY_DOCS_URL, QOVERY_FORUM_URL, QOVERY_ROADMAP_URL } from '@qovery/shared/util-node-env'
+import { QOVERY_DOCS_URL, QOVERY_FORUM_URL, QOVERY_ROADMAP_URL } from '@qovery/shared/util-const'
 import useQuickActions from '../hooks/use-quick-actions/use-quick-actions'
 
 type Item = {
