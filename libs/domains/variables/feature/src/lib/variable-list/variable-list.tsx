@@ -9,12 +9,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import {
-  APIVariableScopeEnum,
-  type APIVariableTypeEnum,
-  LinkedServiceTypeEnum,
-  type VariableResponse,
-} from 'qovery-typescript-axios'
+import { type APIVariableScopeEnum, type APIVariableTypeEnum, type VariableResponse } from 'qovery-typescript-axios'
 import { Fragment, useMemo, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import { match } from 'ts-pattern'
@@ -30,6 +25,8 @@ import {
   TablePrimitives,
   Tooltip,
   Truncate,
+  useModal,
+  useModalConfirmation,
 } from '@qovery/shared/ui'
 import { dateUTCString, timeAgo } from '@qovery/shared/util-dates'
 import {
@@ -39,23 +36,33 @@ import {
   twMerge,
   upperCaseFirstLetter,
 } from '@qovery/shared/util-js'
+import { CreateUpdateVariableModal } from '../create-update-variable-modal/create-update-variable-modal'
+import { useDeleteVariable } from '../hooks/use-delete-variable/use-delete-variable'
 import { useVariables } from '../hooks/use-variables/use-variables'
 import { VariableListSkeleton } from './variable-list-skeleton'
 
 const { Table } = TablePrimitives
 
-export interface VariableListProps {
+type VariableScope = Exclude<keyof typeof APIVariableScopeEnum, 'BUILT_IN'>
+
+export type VariableListProps = {
   className?: string
   showAll?: boolean
   parentId: string
-  currentScope: keyof typeof APIVariableScopeEnum
-  onCreateVariable: (
-    variable: VariableResponse,
-    variableType: typeof APIVariableTypeEnum.OVERRIDE | typeof APIVariableTypeEnum.ALIAS
-  ) => void
-  onEditVariable: (variable: VariableResponse) => void
-  onDeleteVariable: (variable: VariableResponse) => void
-}
+  onCreateVariable?: (variable: VariableResponse | void) => void
+  onEditVariable?: (variable: VariableResponse | void) => void
+  onDeleteVariable?: (variable: VariableResponse) => void
+} & (
+  | {
+      currentScope: Exclude<VariableScope, 'ENVIRONMENT' | 'PROJECT'>
+      organizationId: string
+      projectId: string
+      environmentId: string
+    }
+  | {
+      currentScope: Extract<VariableScope, 'ENVIRONMENT' | 'PROJECT'>
+    }
+)
 
 export function VariableList({
   className,
@@ -65,16 +72,66 @@ export function VariableList({
   onCreateVariable,
   onEditVariable,
   onDeleteVariable,
+  ...props
 }: VariableListProps) {
+  const { openModal, closeModal } = useModal()
+  const { openModalConfirmation } = useModalConfirmation()
   const { data: variables = [], isLoading: isVariablesLoading } = useVariables({
     parentId,
     scope: currentScope,
   })
   const [sorting, setSorting] = useState<SortingState>([])
 
-  const organizationId = ''
-  const projectId = ''
-  const environmentId = ''
+  const { mutateAsync: deleteVariable } = useDeleteVariable()
+
+  const _onCreateVariable: (
+    variable: VariableResponse,
+    variableType: typeof APIVariableTypeEnum.OVERRIDE | typeof APIVariableTypeEnum.ALIAS
+  ) => void = (variable, variableType) => {
+    openModal({
+      content: (
+        <CreateUpdateVariableModal
+          closeModal={closeModal}
+          variable={variable}
+          type={variableType}
+          mode="CREATE"
+          parentId={parentId}
+          scope={currentScope}
+          onSubmit={onCreateVariable}
+        />
+      ),
+    })
+  }
+
+  const _onEditVariable: (variable: VariableResponse) => void = (variable) => {
+    openModal({
+      content: (
+        <CreateUpdateVariableModal
+          closeModal={closeModal}
+          variable={variable}
+          mode="UPDATE"
+          parentId={parentId}
+          type={variable.variable_type}
+          scope={currentScope}
+          onSubmit={onEditVariable}
+        />
+      ),
+    })
+  }
+
+  const _onDeleteVariable: VariableListProps['onDeleteVariable'] = (variable) => {
+    openModalConfirmation({
+      title: 'Delete variable',
+      name: variable.key,
+      isDelete: true,
+      action: async () => {
+        await deleteVariable({ variableId: variable.id })
+        onDeleteVariable?.(variable)
+      },
+    })
+  }
+
+  const isServiceScope = 'organizationId' in props
 
   const columnHelper = createColumnHelper<(typeof variables)[number]>()
   const columns = useMemo(
@@ -83,7 +140,7 @@ export function VariableList({
         id: 'key',
         header: `${variables.length} ${pluralize(variables.length, 'variable')}`,
         enableColumnFilter: false,
-        size: 40,
+        size: isServiceScope ? 40 : 55,
         cell: (info) => {
           const variable = info.row.original
           return (
@@ -167,8 +224,8 @@ export function VariableList({
                   </DropdownMenu.Item>
                 ) : (
                   <>
-                    {variable.scope !== APIVariableScopeEnum.BUILT_IN && (
-                      <DropdownMenu.Item icon={<Icon iconName="pen" />} onSelect={() => onEditVariable(variable)}>
+                    {variable.scope !== 'BUILT_IN' && (
+                      <DropdownMenu.Item icon={<Icon iconName="pen" />} onSelect={() => _onEditVariable(variable)}>
                         Edit
                       </DropdownMenu.Item>
                     )}
@@ -176,15 +233,15 @@ export function VariableList({
                       <>
                         <DropdownMenu.Item
                           icon={<Icon iconName="pen-swirl" />}
-                          onSelect={() => onCreateVariable(variable, 'ALIAS')}
+                          onSelect={() => _onCreateVariable(variable, 'ALIAS')}
                         >
                           Create alias
                         </DropdownMenu.Item>
-                        {variable.scope !== APIVariableScopeEnum.BUILT_IN && (
+                        {variable.scope !== 'BUILT_IN' && (
                           <DropdownMenu.Item
                             icon={<Icon iconName="pen-line" />}
                             disabled={disableOverride}
-                            onSelect={() => onCreateVariable(variable, 'OVERRIDE')}
+                            onSelect={() => _onCreateVariable(variable, 'OVERRIDE')}
                           >
                             <Tooltip
                               disabled={!disableOverride}
@@ -196,12 +253,12 @@ export function VariableList({
                         )}
                       </>
                     )}
-                    {variable.owned_by === 'QOVERY' && variable.scope !== APIVariableScopeEnum.BUILT_IN && (
+                    {variable.owned_by === 'QOVERY' && variable.scope !== 'BUILT_IN' && (
                       <>
                         <DropdownMenu.Separator />
                         <DropdownMenu.Item
                           icon={<Icon iconName="trash" />}
-                          onSelect={() => onDeleteVariable(variable)}
+                          onSelect={() => _onDeleteVariable(variable)}
                           color="red"
                         >
                           Delete
@@ -224,7 +281,7 @@ export function VariableList({
           const variable = info.row.original
           if (environmentVariableFile(variable)) {
             return (
-              <div className="flex items-center gap-3" onClick={() => onEditVariable(variable)}>
+              <div className="flex items-center gap-3" onClick={() => _onEditVariable(variable)}>
                 {variable.value !== null ? (
                   <Icon className="ml-0.5 text-neutral-400" iconName="file-lines" />
                 ) : (
@@ -245,41 +302,47 @@ export function VariableList({
           return <PasswordShowHide value="" isSecret={true} defaultVisible={showAll} />
         },
       }),
-      columnHelper.accessor('service_name', {
-        header: 'Service link',
-        enableColumnFilter: true,
-        filterFn: 'arrIncludesSome',
-        size: 15,
-        meta: {
-          customFacetEntry({ value, count }) {
-            return (
-              <>
-                <span className="text-sm font-medium">{value ? upperCaseFirstLetter(value) : 'Null'}</span>
-                <span className="text-xs text-neutral-350">{count}</span>
-              </>
-            )
-          },
-        },
-        cell: (info) => {
-          const variable = info.row.original
-          return variable.service_name && variable.service_type && variable.service_id ? (
-            <NavLink
-              className="flex gap-2 items-center text-sm font-medium"
-              to={
-                variable.service_type !== LinkedServiceTypeEnum.DATABASE
-                  ? APPLICATION_URL(organizationId, projectId, environmentId, variable.service_id) +
-                    APPLICATION_GENERAL_URL
-                  : DATABASE_URL(organizationId, projectId, environmentId, variable.service_id) + DATABASE_GENERAL_URL
-              }
-            >
-              {variable.service_type !== LinkedServiceTypeEnum.JOB && (
-                <Icon name={variable.service_type?.toString() || ''} className="w-4" />
-              )}
-              {variable.service_name}
-            </NavLink>
-          ) : null
-        },
-      }),
+      ...(isServiceScope
+        ? [
+            columnHelper.accessor('service_name', {
+              header: 'Service link',
+              enableColumnFilter: true,
+              filterFn: 'arrIncludesSome',
+              size: 15,
+              meta: {
+                customFacetEntry({ value, count }) {
+                  return (
+                    <>
+                      <span className="text-sm font-medium">{value ? upperCaseFirstLetter(value) : 'Null'}</span>
+                      <span className="text-xs text-neutral-350">{count}</span>
+                    </>
+                  )
+                },
+              },
+              cell: (info) => {
+                const variable = info.row.original
+                const { organizationId, projectId, environmentId } = props
+                return variable.service_name && variable.service_type && variable.service_id ? (
+                  <NavLink
+                    className="flex gap-2 items-center text-sm font-medium"
+                    to={
+                      variable.service_type !== 'DATABASE'
+                        ? APPLICATION_URL(organizationId, projectId, environmentId, variable.service_id) +
+                          APPLICATION_GENERAL_URL
+                        : DATABASE_URL(organizationId, projectId, environmentId, variable.service_id) +
+                          DATABASE_GENERAL_URL
+                    }
+                  >
+                    {variable.service_type !== 'JOB' && (
+                      <Icon name={variable.service_type?.toString() || ''} className="w-4" />
+                    )}
+                    {variable.service_name}
+                  </NavLink>
+                ) : null
+              },
+            }),
+          ]
+        : []),
       columnHelper.accessor('scope', {
         header: 'Scope',
         enableColumnFilter: true,
@@ -321,7 +384,7 @@ export function VariableList({
         },
       }),
     ],
-    [variables.length, onCreateVariable, onEditVariable]
+    [variables.length, _onCreateVariable, _onEditVariable, isServiceScope]
   )
   const table = useReactTable({
     data: variables,

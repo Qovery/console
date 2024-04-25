@@ -1,9 +1,4 @@
-import {
-  type APIVariableScopeEnum,
-  type APIVariableTypeEnum,
-  type ServiceTypeEnum,
-  type VariableResponse,
-} from 'qovery-typescript-axios'
+import { type APIVariableScopeEnum, type APIVariableTypeEnum, type VariableResponse } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { match } from 'ts-pattern'
@@ -30,7 +25,7 @@ import { useEditVariable } from '../hooks/use-edit-variable/use-edit-variable'
 
 export type CreateUpdateVariableModalProps = {
   parentId: string
-  scope: Exclude<keyof typeof APIVariableScopeEnum, 'BUILT_IN'> | keyof typeof ServiceTypeEnum
+  scope: Exclude<keyof typeof APIVariableScopeEnum, 'BUILT_IN'>
   closeModal: () => void
   onSubmit?: (variable?: VariableResponse | void) => void
   variable?: VariableResponse
@@ -92,7 +87,6 @@ export function CreateUpdateVariableModal({
       throw new Error('scope undefined or BUILT_IN')
     }
     const cloneData = { ...data }
-    data.scope
 
     // allow empty variable value
     if (!cloneData.value) cloneData.value = ''

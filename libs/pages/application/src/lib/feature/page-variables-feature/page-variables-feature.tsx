@@ -10,7 +10,7 @@ import { ApplicationContext } from '../../ui/container/container'
 
 export function PageVariablesFeature() {
   useDocumentTitle('Environment Variables – Qovery')
-  const { environmentId = '', applicationId = '' } = useParams()
+  const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
 
   const { data: service } = useService({
     environmentId,
@@ -54,6 +54,9 @@ export function PageVariablesFeature() {
             showAll={showHideAllEnvironmentVariablesValues}
             currentScope={scope}
             parentId={applicationId}
+            organizationId={organizationId}
+            projectId={projectId}
+            environmentId={environmentId}
             onCreateVariable={() => {
               toast(
                 'SUCCESS',
