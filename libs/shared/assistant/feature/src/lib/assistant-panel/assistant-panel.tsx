@@ -110,7 +110,7 @@ export function AssistantPanel({ smaller = false, onClose }: AssistantPanelProps
           <span className="text-sm">Community forum</span>
         </a>
         <a
-          className="flex justify-center items-center gap-1.5 px-5 h-11 text-neutral-400 font-medium hover:bg-neutral-150 transition"
+          className="flex justify-center items-center gap-1.5 px-5 h-11 text-neutral-400 dark:text-white font-medium hover:bg-neutral-150 dark:hover:bg-neutral-550 transition"
           href={QOVERY_FEEDBACK_URL}
           target="_blank"
           rel="noopener noreferrer"
