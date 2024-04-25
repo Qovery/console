@@ -1,7 +1,7 @@
 import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { ClusterGeneralSettings } from '@qovery/shared/console-shared'
-import { BlockContent, ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle, Heading, Section } from '@qovery/shared/ui'
+import { BlockContent, Button, Heading, Section } from '@qovery/shared/ui'
 
 export interface PageSettingsGeneralProps {
   onSubmit: FormEventHandler<HTMLFormElement>
@@ -21,17 +21,9 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
             <ClusterGeneralSettings fromDetail />
           </BlockContent>
           <div className="flex justify-end">
-            <ButtonLegacy
-              dataTestId="submit-button"
-              className="btn--no-min-w"
-              size={ButtonLegacySize.LARGE}
-              style={ButtonLegacyStyle.BASIC}
-              type="submit"
-              disabled={!formState.isValid}
-              loading={loading}
-            >
+            <Button type="submit" size="lg" loading={loading} disabled={!formState.isValid}>
               Save
-            </ButtonLegacy>
+            </Button>
           </div>
         </form>
       </Section>
