@@ -81,7 +81,6 @@ export function AnnotationCreateEditModal({
         })
         onClose(response)
       }
-      onClose()
     } catch (error) {
       console.error(error)
     }
