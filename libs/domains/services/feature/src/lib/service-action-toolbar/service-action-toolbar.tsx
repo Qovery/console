@@ -273,7 +273,7 @@ function MenuManageDeployment({
             icon={<Icon iconName="play" />}
             onSelect={mutationDeploy}
             className="relative"
-            color={serviceNeedUpdate && state !== 'STOPPED' ? 'yellow' : 'brand'}
+            color={displayYellowColor ? 'yellow' : 'brand'}
           >
             Deploy
             {tooltipServiceNeedUpdate}
