@@ -24,7 +24,7 @@ export function convertScopeObjectToEnum(obj: { [key: string]: boolean }): Organ
 }
 
 export interface AnnotationCreateEditModalProps {
-  onClose: () => void
+  onClose: (response?: OrganizationAnnotationsGroupResponse) => void
   organizationId: string
   isEdit?: boolean
   annotationsGroup?: OrganizationAnnotationsGroupResponse
@@ -62,7 +62,7 @@ export function AnnotationCreateEditModal({
   const onSubmit = methods.handleSubmit(async (data) => {
     try {
       if (isEdit) {
-        await editAnnotationsGroup({
+        const response = await editAnnotationsGroup({
           organizationId,
           annotationsGroupId: annotationsGroup?.id ?? '',
           annotationsGroupRequest: {
@@ -70,16 +70,17 @@ export function AnnotationCreateEditModal({
             scopes: convertScopeObjectToEnum(data.scopes),
           },
         })
+        onClose(response)
       } else {
-        await createAnnotationsGroup({
+        const response = await createAnnotationsGroup({
           organizationId,
           annotationsGroupRequest: {
             ...data,
             scopes: convertScopeObjectToEnum(data.scopes),
           },
         })
+        onClose(response)
       }
-      onClose()
     } catch (error) {
       console.error(error)
     }
