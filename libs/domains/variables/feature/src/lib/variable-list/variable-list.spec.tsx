@@ -126,6 +126,23 @@ jest.mock('../hooks/use-variables/use-variables', () => ({
         owned_by: 'QOVERY',
         is_secret: true,
       },
+      {
+        id: '831751ab-ebfb-4036-97f7-31689e3d8ed9',
+        created_at: '2024-04-25T09:32:32.493711Z',
+        updated_at: '2024-04-25T09:34:03.532389Z',
+        key: 'DOPPLER_PROJECT',
+        value: null,
+        mount_path: null,
+        scope: 'APPLICATION',
+        overridden_variable: null,
+        aliased_variable: null,
+        variable_type: 'VALUE',
+        service_id: 'ff84535f-49cc-450b-a878-f654c98c0a25',
+        service_name: 'tetris',
+        service_type: 'APPLICATION',
+        owned_by: 'DOPPLER',
+        is_secret: true,
+      },
     ],
   }),
 }))
@@ -154,7 +171,8 @@ describe('VariableList', () => {
   it('should display all variables', () => {
     renderWithProviders(<VariableList {...variableListProps} />)
     const rows = screen.getAllByRole('row')
-    expect(rows).toHaveLength(7)
+    expect(rows).toHaveLength(8)
+    expect(screen.getAllByTestId('doppler-tag')).toHaveLength(1)
   })
   it('should filter variables by name', async () => {
     const { userEvent } = renderWithProviders(<VariableList {...variableListProps} />)

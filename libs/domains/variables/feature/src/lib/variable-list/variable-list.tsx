@@ -87,7 +87,7 @@ export function VariableList({
         cell: (info) => {
           const variable = info.row.original
           return (
-            <>
+            <div className="flex items-center">
               {variable.owned_by === ExternalServiceEnum.DOPPLER && (
                 <span
                   data-testid="doppler-tag"
@@ -138,7 +138,7 @@ export function VariableList({
                   </span>
                 </Tooltip>
               )}
-            </>
+            </div>
           )
         },
       }),
