@@ -159,53 +159,56 @@ export function VariableList({
                 </Button>
               </DropdownMenu.Trigger>
               <DropdownMenu.Content>
-                {variable.owned_by === ExternalServiceEnum.DOPPLER && (
+                {variable.owned_by === ExternalServiceEnum.DOPPLER ? (
                   <DropdownMenu.Item
                     icon={<Icon iconName="arrow-up-right-from-square" />}
                     onSelect={() => window.open('https://dashboard.doppler.com', '_blank')}
                   >
                     Edit in Doppler
                   </DropdownMenu.Item>
-                )}
-                {variable.scope !== APIVariableScopeEnum.BUILT_IN && (
-                  <DropdownMenu.Item icon={<Icon iconName="pen" />} onSelect={() => onEditVariable(variable)}>
-                    Edit
-                  </DropdownMenu.Item>
-                )}
-                {!variable.overridden_variable && !variable.aliased_variable && (
+                ) : (
                   <>
-                    <DropdownMenu.Item
-                      icon={<Icon iconName="pen-swirl" />}
-                      onSelect={() => onCreateVariable(variable, 'ALIAS')}
-                    >
-                      Create alias
-                    </DropdownMenu.Item>
                     {variable.scope !== APIVariableScopeEnum.BUILT_IN && (
-                      <DropdownMenu.Item
-                        icon={<Icon iconName="pen-line" />}
-                        disabled={disableOverride}
-                        onSelect={() => onCreateVariable(variable, 'OVERRIDE')}
-                      >
-                        <Tooltip
-                          disabled={!disableOverride}
-                          content="You can’t override variables on the application scope"
-                        >
-                          <span>Create override</span>
-                        </Tooltip>
+                      <DropdownMenu.Item icon={<Icon iconName="pen" />} onSelect={() => onEditVariable(variable)}>
+                        Edit
                       </DropdownMenu.Item>
                     )}
-                  </>
-                )}
-                {variable.owned_by === 'QOVERY' && variable.scope !== APIVariableScopeEnum.BUILT_IN && (
-                  <>
-                    <DropdownMenu.Separator />
-                    <DropdownMenu.Item
-                      icon={<Icon iconName="trash" />}
-                      onSelect={() => onDeleteVariable(variable)}
-                      color="red"
-                    >
-                      Delete
-                    </DropdownMenu.Item>
+                    {!variable.overridden_variable && !variable.aliased_variable && (
+                      <>
+                        <DropdownMenu.Item
+                          icon={<Icon iconName="pen-swirl" />}
+                          onSelect={() => onCreateVariable(variable, 'ALIAS')}
+                        >
+                          Create alias
+                        </DropdownMenu.Item>
+                        {variable.scope !== APIVariableScopeEnum.BUILT_IN && (
+                          <DropdownMenu.Item
+                            icon={<Icon iconName="pen-line" />}
+                            disabled={disableOverride}
+                            onSelect={() => onCreateVariable(variable, 'OVERRIDE')}
+                          >
+                            <Tooltip
+                              disabled={!disableOverride}
+                              content="You can’t override variables on the application scope"
+                            >
+                              <span>Create override</span>
+                            </Tooltip>
+                          </DropdownMenu.Item>
+                        )}
+                      </>
+                    )}
+                    {variable.owned_by === 'QOVERY' && variable.scope !== APIVariableScopeEnum.BUILT_IN && (
+                      <>
+                        <DropdownMenu.Separator />
+                        <DropdownMenu.Item
+                          icon={<Icon iconName="trash" />}
+                          onSelect={() => onDeleteVariable(variable)}
+                          color="red"
+                        >
+                          Delete
+                        </DropdownMenu.Item>
+                      </>
+                    )}
                   </>
                 )}
               </DropdownMenu.Content>
