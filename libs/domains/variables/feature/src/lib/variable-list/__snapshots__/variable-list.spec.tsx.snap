@@ -20,7 +20,7 @@ exports[`VariableList should match snapshot 1`] = `
         </th>
         <th
           class="h-11 px-4 text-left border-r pl-0 font-medium"
-          style="width: 3%;"
+          style="width: 50px;"
         />
         <th
           class="h-11 px-4 text-left font-medium"

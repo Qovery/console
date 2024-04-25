@@ -144,7 +144,6 @@ export function VariableList({
       }),
       columnHelper.display({
         id: 'actions',
-        size: 3,
         cell: (info) => {
           const variable = info.row.original
           const disableOverride = match(variable.scope)
@@ -367,7 +366,7 @@ export function VariableList({
               <Table.ColumnHeaderCell
                 className={`${i === 1 ? 'border-r pl-0' : ''} font-medium`}
                 key={header.id}
-                style={{ width: `${header.getSize()}%` }}
+                style={{ width: i === 1 ? '50px' : `${header.getSize()}%` }}
               >
                 {header.column.getCanFilter() ? (
                   <TableFilter column={header.column} />
