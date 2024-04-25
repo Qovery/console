@@ -2,19 +2,15 @@ import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { useContext, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { useDeployEnvironment } from '@qovery/domains/environments/feature'
-import { useService } from '@qovery/domains/services/feature'
-import { CreateUpdateVariableModal, VariableList, useDeleteVariable } from '@qovery/domains/variables/feature'
-import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
-import { ToastEnum, toast, useModal, useModalConfirmation } from '@qovery/shared/ui'
+import { useDeployService, useService } from '@qovery/domains/services/feature'
+import { VariableList } from '@qovery/domains/variables/feature'
+import { toast } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { ApplicationContext } from '../../ui/container/container'
 
 export function PageVariablesFeature() {
   useDocumentTitle('Environment Variables – Qovery')
-  const { environmentId = '', organizationId = '', projectId = '', applicationId = '' } = useParams()
-  const { openModal, closeModal } = useModal()
-  const { openModalConfirmation } = useModalConfirmation()
+  const { environmentId = '', applicationId = '' } = useParams()
 
   const { data: service } = useService({
     environmentId,
@@ -28,11 +24,7 @@ export function PageVariablesFeature() {
     .with('HELM', () => APIVariableScopeEnum.HELM)
     .otherwise(() => undefined)
 
-  const { mutateAsync: deleteVariable } = useDeleteVariable()
-  const { mutate: actionRedeployEnvironment } = useDeployEnvironment({
-    projectId,
-    logsLink: ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(applicationId),
-  })
+  const { mutate: deployService } = useDeployService({ environmentId })
 
   const serviceType = service?.serviceType
 
@@ -43,6 +35,16 @@ export function PageVariablesFeature() {
     setShowHideAllEnvironmentVariablesValues(false)
   }, [applicationId, serviceType])
 
+  const toasterCallback = () => {
+    if (!service) {
+      return
+    }
+    deployService({
+      serviceId: applicationId,
+      serviceType: service.serviceType,
+    })
+  }
+
   return (
     <div className="mt-2 bg-white rounded-sm flex flex-1">
       <div className="grow">
@@ -52,60 +54,39 @@ export function PageVariablesFeature() {
             showAll={showHideAllEnvironmentVariablesValues}
             currentScope={scope}
             parentId={applicationId}
-            onCreateVariable={(variable, variableType) => {
-              openModal({
-                content: (
-                  <CreateUpdateVariableModal
-                    closeModal={closeModal}
-                    variable={variable}
-                    type={variableType}
-                    mode="CREATE"
-                    serviceId={applicationId}
-                    projectId={projectId}
-                    environmentId={environmentId}
-                    scope={scope}
-                  />
-                ),
-              })
+            onCreateVariable={() => {
+              toast(
+                'SUCCESS',
+                'Creation success',
+                'You need to redeploy your service for your changes to be applied.',
+                toasterCallback,
+                undefined,
+                'Redeploy'
+              )
             }}
-            onEditVariable={(variable) => {
-              openModal({
-                content: (
-                  <CreateUpdateVariableModal
-                    closeModal={closeModal}
-                    variable={variable}
-                    mode="UPDATE"
-                    serviceId={applicationId}
-                    projectId={projectId}
-                    environmentId={environmentId}
-                    type={variable.variable_type}
-                    scope={scope}
-                  />
-                ),
-              })
+            onEditVariable={() => {
+              toast(
+                'SUCCESS',
+                'Edition success',
+                'You need to redeploy your service for your changes to be applied.',
+                toasterCallback,
+                undefined,
+                'Redeploy'
+              )
             }}
             onDeleteVariable={(variable) => {
-              openModalConfirmation({
-                title: 'Delete variable',
-                name: variable.key,
-                isDelete: true,
-                action: async () => {
-                  await deleteVariable({ variableId: variable.id })
-                  let name = variable.key
-                  if (name && name.length > 30) {
-                    name = name.substring(0, 30) + '...'
-                  }
-                  const toasterCallback = () => actionRedeployEnvironment({ environmentId })
-                  toast(
-                    ToastEnum.SUCCESS,
-                    'Deletion success',
-                    `${name} has been deleted. You need to redeploy your environment for your changes to be applied.`,
-                    toasterCallback,
-                    undefined,
-                    'Redeploy'
-                  )
-                },
-              })
+              let name = variable.key
+              if (name && name.length > 30) {
+                name = name.substring(0, 30) + '...'
+              }
+              toast(
+                'SUCCESS',
+                'Deletion success',
+                `${name} has been deleted. You need to redeploy your service for your changes to be applied.`,
+                toasterCallback,
+                undefined,
+                'Redeploy'
+              )
             }}
           />
         )}

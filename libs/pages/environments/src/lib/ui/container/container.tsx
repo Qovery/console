@@ -42,7 +42,7 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
     {
       icon: <Icon name="icon-solid-key" />,
       name: 'Variables',
-      active: location.pathname === ENVIRONMENTS_URL(organizationId, projectId) + ENVIRONMENTS_VARIABLES_URL,
+      active: pathname === ENVIRONMENTS_URL(organizationId, projectId) + ENVIRONMENTS_VARIABLES_URL,
       link: ENVIRONMENTS_URL(organizationId, projectId) + ENVIRONMENTS_VARIABLES_URL,
     },
   ]
