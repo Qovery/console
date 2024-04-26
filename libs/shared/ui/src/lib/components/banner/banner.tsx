@@ -1,8 +1,10 @@
+import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { type VariantProps, cva } from 'class-variance-authority'
 import { type PropsWithChildren, forwardRef } from 'react'
 import { type IconEnum } from '@qovery/shared/enums'
-import ButtonLegacy, { ButtonLegacySize, ButtonLegacyStyle } from '../buttons/button-legacy/button-legacy'
-import { type IconAwesomeEnum } from '../icon/icon-awesome.enum'
+import { twMerge } from '@qovery/shared/util-js'
+import Button from '../button/button'
+import Icon from '../icon/icon'
 
 const bannerVariants = cva('flex h-10 items-center justify-center font-medium text-sm', {
   variants: {
@@ -24,7 +26,7 @@ const buttonVariants = cva('ml-4', {
 
 export interface BannerProps extends VariantProps<typeof bannerVariants> {
   buttonLabel?: string
-  buttonIconRight?: IconAwesomeEnum | IconEnum | string
+  buttonIconRight?: IconName
   onClickButton?: () => void
 }
 
@@ -36,15 +38,10 @@ export const Banner = forwardRef<HTMLDivElement, PropsWithChildren<BannerProps>>
     <div className={bannerVariants({ color })} ref={forwardedRef}>
       {children}
       {buttonLabel && (
-        <ButtonLegacy
-          style={ButtonLegacyStyle.RAISED}
-          size={ButtonLegacySize.TINY}
-          className={buttonVariants({ color })}
-          iconRight={buttonIconRight}
-          onClick={onClickButton}
-        >
+        <Button type="button" className={twMerge('gap-1', buttonVariants({ color }))} onClick={onClickButton}>
           {buttonLabel}
-        </ButtonLegacy>
+          {buttonIconRight && <Icon iconName={buttonIconRight} />}
+        </Button>
       )}
     </div>
   )

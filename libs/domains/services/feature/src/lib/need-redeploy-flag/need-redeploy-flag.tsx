@@ -1,7 +1,7 @@
 import { ServiceDeploymentStatusEnum } from 'qovery-typescript-axios'
 import { useNavigate, useParams } from 'react-router-dom'
 import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
-import { Banner, IconAwesomeEnum } from '@qovery/shared/ui'
+import { Banner } from '@qovery/shared/ui'
 import { useDeployService } from '../hooks/use-deploy-service/use-deploy-service'
 import { useDeploymentStatus } from '../hooks/use-deployment-status/use-deployment-status'
 import { useService } from '../hooks/use-service/use-service'
@@ -35,7 +35,7 @@ export function NeedRedeployFlag() {
   return (
     <Banner
       color="yellow"
-      buttonIconRight={IconAwesomeEnum.ROTATE_RIGHT}
+      buttonIconRight="rotate-right"
       buttonLabel={buttonLabel}
       onClickButton={mutationDeployService}
     >

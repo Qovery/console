@@ -25,6 +25,7 @@ export function Pagination(props: PaginationProps) {
           variant="surface"
           color="neutral"
           size="md"
+          type="button"
           disabled={props.previousDisabled}
           onClick={() => props.onPrevious()}
         >
@@ -36,6 +37,7 @@ export function Pagination(props: PaginationProps) {
           variant="surface"
           color="neutral"
           size="md"
+          type="button"
           disabled={props.nextDisabled}
           onClick={() => props.onNext()}
         >
