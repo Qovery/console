@@ -1,7 +1,9 @@
+import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { useContext } from 'react'
 import { matchPath, useLocation, useParams } from 'react-router-dom'
+import { match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
-import { ServiceLinksPopover, ServiceStateChip, useService } from '@qovery/domains/services/feature'
+import { ServiceLinksPopover, ServiceStateChip, useDeployService, useService } from '@qovery/domains/services/feature'
 import { VariablesActionToolbar } from '@qovery/domains/variables/feature'
 import {
   APPLICATION_DEPLOYMENTS_URL,
@@ -10,28 +12,33 @@ import {
   APPLICATION_URL,
   APPLICATION_VARIABLES_URL,
 } from '@qovery/shared/routes'
-import { Button, Icon, Tabs, type TabsItem, useModal } from '@qovery/shared/ui'
+import { Button, Icon, Tabs, type TabsItem, toast, useModal } from '@qovery/shared/ui'
 import { ApplicationContext } from '../../ui/container/container'
-import CrudEnvironmentVariableModalFeature, {
-  EnvironmentVariableCrudMode,
-} from '../crud-environment-variable-modal-feature/crud-environment-variable-modal-feature'
 import ImportEnvironmentVariableModalFeature from '../import-environment-variable-modal-feature/import-environment-variable-modal-feature'
 
-function ContentRightEnvVariable({
-  service,
-  organizationId,
-  environmentId,
-  projectId,
-}: {
-  service: AnyService
-  organizationId: string
-  environmentId: string
-  projectId: string
-}) {
+function ContentRightEnvVariable({ service }: { service: AnyService }) {
+  const {
+    serviceType,
+    id: serviceId,
+    environment: { id: environmentId },
+  } = service
+  const scope = match(serviceType)
+    .with('APPLICATION', () => APIVariableScopeEnum.APPLICATION)
+    .with('CONTAINER', () => APIVariableScopeEnum.CONTAINER)
+    .with('JOB', () => APIVariableScopeEnum.JOB)
+    .with('HELM', () => APIVariableScopeEnum.HELM)
+    .otherwise(() => undefined)
+
   const { showHideAllEnvironmentVariablesValues: globalShowHideValue, setShowHideAllEnvironmentVariablesValues } =
     useContext(ApplicationContext)
   const { openModal, closeModal } = useModal()
-  const serviceType = service?.serviceType
+  const { mutate: deployService } = useDeployService({ environmentId })
+  const toasterCallback = () => {
+    deployService({
+      serviceId,
+      serviceType,
+    })
+  }
 
   return (
     <div className="flex items-center gap-2">
@@ -46,56 +53,37 @@ function ContentRightEnvVariable({
         <Icon iconName={!globalShowHideValue ? 'eye' : 'eye-slash'} />
         {globalShowHideValue ? 'Hide all' : 'Show all'}
       </Button>
-      <VariablesActionToolbar
-        onImportEnvFile={() =>
-          openModal({
-            content: (
-              <ImportEnvironmentVariableModalFeature
-                environmentId={environmentId}
-                closeModal={closeModal}
-                applicationId={service.id}
-                serviceType={serviceType}
-              />
-            ),
-            options: {
-              width: 750,
-            },
-          })
-        }
-        onCreateVariable={() =>
-          openModal({
-            content: (
-              <CrudEnvironmentVariableModalFeature
-                closeModal={closeModal}
-                type="VALUE"
-                mode={EnvironmentVariableCrudMode.CREATION}
-                organizationId={organizationId}
-                applicationId={service.id}
-                environmentId={environmentId}
-                projectId={projectId}
-                serviceType={serviceType}
-              />
-            ),
-          })
-        }
-        onCreateVariableFile={() =>
-          openModal({
-            content: (
-              <CrudEnvironmentVariableModalFeature
-                closeModal={closeModal}
-                type="VALUE"
-                mode={EnvironmentVariableCrudMode.CREATION}
-                organizationId={organizationId}
-                applicationId={service.id}
-                environmentId={environmentId}
-                projectId={projectId}
-                serviceType={serviceType}
-                isFile
-              />
-            ),
-          })
-        }
-      />
+      {scope && (
+        <VariablesActionToolbar
+          scope={scope}
+          parentId={service.id}
+          onImportEnvFile={() =>
+            openModal({
+              content: (
+                <ImportEnvironmentVariableModalFeature
+                  environmentId={environmentId}
+                  closeModal={closeModal}
+                  applicationId={service.id}
+                  serviceType={serviceType}
+                />
+              ),
+              options: {
+                width: 750,
+              },
+            })
+          }
+          onCreateVariable={() =>
+            toast(
+              'SUCCESS',
+              'Creation success',
+              'You need to redeploy your service for your changes to be applied.',
+              toasterCallback,
+              undefined,
+              'Redeploy'
+            )
+          }
+        />
+      )}
     </div>
   )
 }
@@ -151,12 +139,7 @@ export function TabsFeature() {
       contentRight={
         <div className="px-5">
           {matchEnvVariableRoute && service ? (
-            <ContentRightEnvVariable
-              service={service}
-              organizationId={organizationId}
-              environmentId={environmentId}
-              projectId={projectId}
-            />
+            <ContentRightEnvVariable service={service} />
           ) : (
             <ServiceLinksPopover
               organizationId={organizationId}

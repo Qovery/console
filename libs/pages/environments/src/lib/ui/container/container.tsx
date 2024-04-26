@@ -1,7 +1,8 @@
 import { type Project } from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
-import { useLocation, useParams } from 'react-router-dom'
+import { matchPath, useLocation, useParams } from 'react-router-dom'
 import { CreateCloneEnvironmentModal } from '@qovery/domains/environments/feature'
+import { VariablesActionToolbar } from '@qovery/domains/variables/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import {
   ENVIRONMENTS_DEPLOYMENT_RULES_CREATE_URL,
@@ -9,7 +10,7 @@ import {
   ENVIRONMENTS_URL,
   ENVIRONMENTS_VARIABLES_URL,
 } from '@qovery/shared/routes'
-import { Button, Header, Icon, Section, Tabs, useModal } from '@qovery/shared/ui'
+import { Button, Header, Icon, Section, Tabs, toast, useModal } from '@qovery/shared/ui'
 
 export interface ContainerProps {
   project?: Project
@@ -47,23 +48,40 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
     },
   ]
 
+  const matchEnvVariableRoute = matchPath(
+    location.pathname || '',
+    ENVIRONMENTS_URL(organizationId, projectId) + ENVIRONMENTS_VARIABLES_URL
+  )
+
   const contentTabs = (
     <div className="flex justify-center items-center px-5 border-l h-14 border-neutral-200">
-      <Button
-        size="lg"
-        className="gap-2"
-        disabled={!clusterAvailable}
-        onClick={() => {
-          openModal({
-            content: (
-              <CreateCloneEnvironmentModal onClose={closeModal} projectId={projectId} organizationId={organizationId} />
-            ),
-          })
-        }}
-      >
-        New environment
-        <Icon iconName="circle-plus" className="text-xs" />
-      </Button>
+      {matchEnvVariableRoute ? (
+        <VariablesActionToolbar
+          scope="PROJECT"
+          parentId={projectId}
+          onCreateVariable={() => toast('SUCCESS', 'Creation success')}
+        />
+      ) : (
+        <Button
+          size="lg"
+          className="gap-2"
+          disabled={!clusterAvailable}
+          onClick={() => {
+            openModal({
+              content: (
+                <CreateCloneEnvironmentModal
+                  onClose={closeModal}
+                  projectId={projectId}
+                  organizationId={organizationId}
+                />
+              ),
+            })
+          }}
+        >
+          New environment
+          <Icon iconName="circle-plus" className="text-xs" />
+        </Button>
+      )}
     </div>
   )
 
