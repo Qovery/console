@@ -1,4 +1,5 @@
 import { type DeploymentHistoryEnvironment, type StateEnum } from 'qovery-typescript-axios'
+import { useNavigate } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { DEPLOYMENT_LOGS_VERSION_URL } from '@qovery/shared/routes'
 import { Badge, Button, Icon, Link, Menu, MenuAlign, type MenuData, StatusChip, Tooltip } from '@qovery/shared/ui'
@@ -14,6 +15,8 @@ export interface SidebarHistoryProps {
 }
 
 export function SidebarHistory({ data, serviceId, versionId, pathLogs, environmentState }: SidebarHistoryProps) {
+  const navigate = useNavigate()
+
   const menuHistory: MenuData = [
     {
       items:

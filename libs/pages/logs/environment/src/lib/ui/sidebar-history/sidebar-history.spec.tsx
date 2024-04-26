@@ -61,10 +61,11 @@ describe('SidebarHistory', () => {
   })
 
   it('should button to back logs home', async () => {
-    renderWithProviders(<SidebarHistory {...props} />)
+    const { userEvent } = renderWithProviders(<SidebarHistory {...props} />)
 
     const btn = screen.getByTestId('btn-back-logs')
-    expect(btn.getAttribute('href')).toBe('/organization/1/project/2/environment/3/logs')
+    await userEvent.click(btn)
+    expect(mockNavigate).toHaveBeenCalledWith('/organization/1/project/2/environment/3/logs')
   })
 
   it('should open the menu and navigate to the logs page', async () => {
