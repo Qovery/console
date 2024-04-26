@@ -10,7 +10,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { type APIVariableScopeEnum, type APIVariableTypeEnum, type VariableResponse } from 'qovery-typescript-axios'
-import { Fragment, useMemo, useState } from 'react'
+import { Fragment, useContext, useMemo, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { ExternalServiceEnum, IconEnum } from '@qovery/shared/enums'
@@ -39,6 +39,7 @@ import {
 import { CreateUpdateVariableModal } from '../create-update-variable-modal/create-update-variable-modal'
 import { useDeleteVariable } from '../hooks/use-delete-variable/use-delete-variable'
 import { useVariables } from '../hooks/use-variables/use-variables'
+import { VariablesContext } from '../variables-context/variables-context'
 import { VariableListSkeleton } from './variable-list-skeleton'
 
 const { Table } = TablePrimitives
@@ -47,7 +48,6 @@ type VariableScope = Exclude<keyof typeof APIVariableScopeEnum, 'BUILT_IN'>
 
 export type VariableListProps = {
   className?: string
-  showAll?: boolean
   parentId: string
   onCreateVariable?: (variable: VariableResponse | void) => void
   onEditVariable?: (variable: VariableResponse | void) => void
@@ -66,7 +66,6 @@ export type VariableListProps = {
 
 export function VariableList({
   className,
-  showAll = false,
   parentId,
   currentScope,
   onCreateVariable,
@@ -80,6 +79,7 @@ export function VariableList({
     parentId,
     scope: currentScope,
   })
+  const { showAllVariablesValues, setShowAllVariablesValues } = useContext(VariablesContext)
   const [sorting, setSorting] = useState<SortingState>([])
 
   const { mutateAsync: deleteVariable } = useDeleteVariable()
@@ -297,9 +297,15 @@ export function VariableList({
             return null
           }
           if (variable.value !== null) {
-            return <PasswordShowHide value={variable.value} isSecret={variable.is_secret} defaultVisible={showAll} />
+            return (
+              <PasswordShowHide
+                value={variable.value}
+                isSecret={variable.is_secret}
+                defaultVisible={showAllVariablesValues}
+              />
+            )
           }
-          return <PasswordShowHide value="" isSecret={true} defaultVisible={showAll} />
+          return <PasswordShowHide value="" isSecret={true} defaultVisible={showAllVariablesValues} />
         },
       }),
       ...(isServiceScope

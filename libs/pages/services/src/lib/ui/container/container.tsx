@@ -9,7 +9,7 @@ import {
   useDeployEnvironment,
   useDeploymentStatus,
 } from '@qovery/domains/environments/feature'
-import { VariablesActionToolbar } from '@qovery/domains/variables/feature'
+import { ShowAllVariablesToggle, VariablesActionToolbar, VariablesProvider } from '@qovery/domains/variables/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import {
   CLUSTER_URL,
@@ -183,20 +183,23 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
   const contentTabs = !matchSettingsRoute && (
     <div className="flex justify-center items-center px-5 border-l h-14 border-neutral-200">
       {matchEnvVariableRoute ? (
-        <VariablesActionToolbar
-          scope="ENVIRONMENT"
-          parentId={environmentId}
-          onCreateVariable={() =>
-            toast(
-              'SUCCESS',
-              'Creation success',
-              'You need to redeploy your environment for your changes to be applied.',
-              toasterCallback,
-              undefined,
-              'Redeploy'
-            )
-          }
-        />
+        <>
+          <ShowAllVariablesToggle className="mr-2" />
+          <VariablesActionToolbar
+            scope="ENVIRONMENT"
+            parentId={environmentId}
+            onCreateVariable={() =>
+              toast(
+                'SUCCESS',
+                'Creation success',
+                'You need to redeploy your environment for your changes to be applied.',
+                toasterCallback,
+                undefined,
+                'Redeploy'
+              )
+            }
+          />
+        </>
       ) : (
         <Skeleton width={154} height={40} show={isLoadingDeploymentStatus}>
           <Menu
@@ -217,12 +220,14 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
   const cancelOnGoing = deploymentStatus?.state === 'CANCELING'
 
   return (
-    <Section className="flex-1">
-      <Header title={environment?.name} icon={IconEnum.SERVICES} actions={headerActions} />
-      <Tabs items={tabsItems} contentRight={contentTabs} />
-      {cancelOnGoing && <Banner color="yellow">Deployment cancel ongoing...</Banner>}
-      {children}
-    </Section>
+    <VariablesProvider>
+      <Section className="flex-1">
+        <Header title={environment?.name} icon={IconEnum.SERVICES} actions={headerActions} />
+        <Tabs items={tabsItems} contentRight={contentTabs} />
+        {cancelOnGoing && <Banner color="yellow">Deployment cancel ongoing...</Banner>}
+        {children}
+      </Section>
+    </VariablesProvider>
   )
 }
 

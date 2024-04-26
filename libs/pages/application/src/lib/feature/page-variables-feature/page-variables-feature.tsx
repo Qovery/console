@@ -1,12 +1,10 @@
 import { APIVariableScopeEnum } from 'qovery-typescript-axios'
-import { useContext, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useDeployService, useService } from '@qovery/domains/services/feature'
 import { VariableList } from '@qovery/domains/variables/feature'
 import { toast } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { ApplicationContext } from '../../ui/container/container'
 
 export function PageVariablesFeature() {
   useDocumentTitle('Environment Variables – Qovery')
@@ -26,15 +24,6 @@ export function PageVariablesFeature() {
 
   const { mutate: deployService } = useDeployService({ environmentId })
 
-  const serviceType = service?.serviceType
-
-  const { showHideAllEnvironmentVariablesValues, setShowHideAllEnvironmentVariablesValues } =
-    useContext(ApplicationContext)
-
-  useEffect(() => {
-    setShowHideAllEnvironmentVariablesValues(false)
-  }, [applicationId, serviceType])
-
   const toasterCallback = () => {
     if (!service) {
       return
@@ -51,7 +40,6 @@ export function PageVariablesFeature() {
         {scope && (
           <VariableList
             className="border-b border-b-neutral-200"
-            showAll={showHideAllEnvironmentVariablesValues}
             currentScope={scope}
             parentId={applicationId}
             organizationId={organizationId}

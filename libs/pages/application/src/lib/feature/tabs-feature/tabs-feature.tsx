@@ -1,10 +1,9 @@
 import { APIVariableScopeEnum } from 'qovery-typescript-axios'
-import { useContext } from 'react'
 import { matchPath, useLocation, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { ServiceLinksPopover, ServiceStateChip, useDeployService, useService } from '@qovery/domains/services/feature'
-import { VariablesActionToolbar } from '@qovery/domains/variables/feature'
+import { ShowAllVariablesToggle, VariablesActionToolbar } from '@qovery/domains/variables/feature'
 import {
   APPLICATION_DEPLOYMENTS_URL,
   APPLICATION_GENERAL_URL,
@@ -13,7 +12,6 @@ import {
   APPLICATION_VARIABLES_URL,
 } from '@qovery/shared/routes'
 import { Button, Icon, Tabs, type TabsItem, toast, useModal } from '@qovery/shared/ui'
-import { ApplicationContext } from '../../ui/container/container'
 import ImportEnvironmentVariableModalFeature from '../import-environment-variable-modal-feature/import-environment-variable-modal-feature'
 
 function ContentRightEnvVariable({ service }: { service: AnyService }) {
@@ -29,8 +27,6 @@ function ContentRightEnvVariable({ service }: { service: AnyService }) {
     .with('HELM', () => APIVariableScopeEnum.HELM)
     .otherwise(() => undefined)
 
-  const { showHideAllEnvironmentVariablesValues: globalShowHideValue, setShowHideAllEnvironmentVariablesValues } =
-    useContext(ApplicationContext)
   const { openModal, closeModal } = useModal()
   const { mutate: deployService } = useDeployService({ environmentId })
   const toasterCallback = () => {
@@ -42,17 +38,7 @@ function ContentRightEnvVariable({ service }: { service: AnyService }) {
 
   return (
     <div className="flex items-center gap-2">
-      <Button
-        color="brand"
-        variant="plain"
-        className="gap-2"
-        onClick={() => {
-          setShowHideAllEnvironmentVariablesValues(!globalShowHideValue)
-        }}
-      >
-        <Icon iconName={!globalShowHideValue ? 'eye' : 'eye-slash'} />
-        {globalShowHideValue ? 'Hide all' : 'Show all'}
-      </Button>
+      <ShowAllVariablesToggle />
       {scope && (
         <VariablesActionToolbar
           scope={scope}

@@ -10,7 +10,6 @@ export function PageVariablesFeature() {
       <div className="grow">
         <VariableList
           className="border-b border-b-neutral-200"
-          showAll={false}
           currentScope="PROJECT"
           parentId={projectId}
           onCreateVariable={() => {

@@ -2,7 +2,7 @@ import { type Project } from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
 import { matchPath, useLocation, useParams } from 'react-router-dom'
 import { CreateCloneEnvironmentModal } from '@qovery/domains/environments/feature'
-import { VariablesActionToolbar } from '@qovery/domains/variables/feature'
+import { ShowAllVariablesToggle, VariablesActionToolbar, VariablesProvider } from '@qovery/domains/variables/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import {
   ENVIRONMENTS_DEPLOYMENT_RULES_CREATE_URL,
@@ -49,18 +49,21 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
   ]
 
   const matchEnvVariableRoute = matchPath(
-    location.pathname || '',
+    pathname || '',
     ENVIRONMENTS_URL(organizationId, projectId) + ENVIRONMENTS_VARIABLES_URL
   )
 
   const contentTabs = (
     <div className="flex justify-center items-center px-5 border-l h-14 border-neutral-200">
       {matchEnvVariableRoute ? (
-        <VariablesActionToolbar
-          scope="PROJECT"
-          parentId={projectId}
-          onCreateVariable={() => toast('SUCCESS', 'Creation success')}
-        />
+        <>
+          <ShowAllVariablesToggle className="mr-2" />
+          <VariablesActionToolbar
+            scope="PROJECT"
+            parentId={projectId}
+            onCreateVariable={() => toast('SUCCESS', 'Creation success')}
+          />
+        </>
       ) : (
         <Button
           size="lg"
@@ -86,11 +89,13 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
   )
 
   return (
-    <Section className="flex-1">
-      <Header title={project?.name} icon={IconEnum.ENVIRONMENT} iconClassName="w-16" />
-      <Tabs items={tabsItems} contentRight={!isDeploymentRulesTab && contentTabs} />
-      <div className="flex-grow flex-col flex">{children}</div>
-    </Section>
+    <VariablesProvider>
+      <Section className="flex-1">
+        <Header title={project?.name} icon={IconEnum.ENVIRONMENT} iconClassName="w-16" />
+        <Tabs items={tabsItems} contentRight={!isDeploymentRulesTab && contentTabs} />
+        <div className="flex-grow flex-col flex">{children}</div>
+      </Section>
+    </VariablesProvider>
   )
 }
 

@@ -1,24 +1,16 @@
 import { type Environment } from 'qovery-typescript-axios'
-import { type PropsWithChildren, createContext, useContext, useState } from 'react'
+import { type PropsWithChildren, useContext } from 'react'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useCluster } from '@qovery/domains/clusters/feature'
 import { EnvironmentMode } from '@qovery/domains/environments/feature'
 import { type AnyService, type Database } from '@qovery/domains/services/data-access'
 import { NeedRedeployFlag, ServiceActionToolbar, ServiceTerminalContext } from '@qovery/domains/services/feature'
+import { VariablesProvider } from '@qovery/domains/variables/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import { CLUSTER_URL } from '@qovery/shared/routes'
 import { Header, Icon, Link, Section, Skeleton, Tooltip } from '@qovery/shared/ui'
 import TabsFeature from '../../feature/tabs-feature/tabs-feature'
-
-export const ApplicationContext = createContext<{
-  showHideAllEnvironmentVariablesValues: boolean
-  setShowHideAllEnvironmentVariablesValues: (b: boolean) => void
-}>({
-  showHideAllEnvironmentVariablesValues: false,
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  setShowHideAllEnvironmentVariablesValues: (b: boolean) => {},
-})
 
 export interface ContainerProps {
   service?: Exclude<AnyService, Database>
@@ -28,7 +20,6 @@ export interface ContainerProps {
 export function Container({ service, environment, children }: PropsWithChildren<ContainerProps>) {
   const { organizationId = '' } = useParams()
   const { setOpen } = useContext(ServiceTerminalContext)
-  const [showHideAllEnvironmentVariablesValues, setShowHideAllEnvironmentVariablesValues] = useState<boolean>(false)
 
   const { data: cluster } = useCluster({ organizationId, clusterId: environment?.cluster_id ?? '' })
 
@@ -70,16 +61,14 @@ export function Container({ service, environment, children }: PropsWithChildren<
     .otherwise(() => IconEnum.APPLICATION)
 
   return (
-    <ApplicationContext.Provider
-      value={{ showHideAllEnvironmentVariablesValues, setShowHideAllEnvironmentVariablesValues }}
-    >
+    <VariablesProvider>
       <Section className="flex-1">
         <Header title={service?.name} icon={headerIcon} actions={headerActions} />
         <TabsFeature />
         <NeedRedeployFlag />
         {children}
       </Section>
-    </ApplicationContext.Provider>
+    </VariablesProvider>
   )
 }
 
