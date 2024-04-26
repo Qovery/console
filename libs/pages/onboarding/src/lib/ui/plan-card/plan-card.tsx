@@ -1,5 +1,5 @@
 import { PlanEnum } from 'qovery-typescript-axios'
-import { ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle, Icon } from '@qovery/shared/ui'
+import { Button, Icon } from '@qovery/shared/ui'
 
 export interface PlanCardProps {
   title: string
@@ -27,15 +27,9 @@ export function PlanCard(props: PlanCardProps) {
           <span className="h5">Custom</span>
         )}
       </p>
-      <ButtonLegacy
-        className="w-full mb-4"
-        size={ButtonLegacySize.XLARGE}
-        style={ButtonLegacyStyle.BASIC}
-        onClick={() => onClick()}
-        loading={loading === name}
-      >
+      <Button className="w-full justify-center mb-4" size="lg" onClick={() => onClick()} loading={loading === name}>
         Select plan
-      </ButtonLegacy>
+      </Button>
       <ul>
         {list.map((line: string, index: number) => (
           <li key={index} className="text-neutral-400 text-xs mb-2 last:mb-10">
