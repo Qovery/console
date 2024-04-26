@@ -1,6 +1,8 @@
+import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { useState } from 'react'
-import { ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle, IconAwesomeEnum, IconFa } from '@qovery/shared/ui'
+import { Button, Icon } from '@qovery/shared/ui'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
+import { twMerge } from '@qovery/shared/util-js'
 
 export interface CopyButtonProps {
   content: string
@@ -8,27 +10,27 @@ export interface CopyButtonProps {
 }
 
 export function CopyButton({ content, className = '' }: CopyButtonProps) {
-  const [icon, setIcon] = useState(IconAwesomeEnum.COPY)
+  const [icon, setIcon] = useState<IconName>('copy')
   const [, copyToClipboard] = useCopyToClipboard()
 
   const onClickCopyToClipboard = (content: string) => {
     copyToClipboard(content)
-    setIcon(IconAwesomeEnum.CHECK)
+    setIcon('check')
     setTimeout(() => {
-      setIcon(IconAwesomeEnum.COPY)
+      setIcon('copy')
     }, 1000)
   }
 
   return (
-    <ButtonLegacy
+    <Button
+      type="button"
+      color="neutral"
       onClick={() => onClickCopyToClipboard(content)}
-      style={ButtonLegacyStyle.DARK}
-      size={ButtonLegacySize.TINY}
-      className={`cursor-pointer font-medium ${className}`}
+      className={twMerge('cursor-pointer font-medium gap-2', className)}
     >
       Copy
-      <IconFa name={icon} className="ml-2 text-xs" />
-    </ButtonLegacy>
+      <Icon iconName={icon} className="text-xs" />
+    </Button>
   )
 }
 

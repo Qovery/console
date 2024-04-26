@@ -1,21 +1,20 @@
 import { type Cluster } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { type Control, Controller, type FieldValues } from 'react-hook-form'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { environmentModeValues, timezoneValues, weekdaysValues } from '@qovery/shared/enums'
 import { type Value } from '@qovery/shared/interfaces'
 import { ENVIRONMENTS_DEPLOYMENT_RULES_URL, ENVIRONMENTS_URL } from '@qovery/shared/routes'
 import {
   BlockContent,
-  ButtonLegacy,
-  ButtonLegacySize,
-  ButtonLegacyStyle,
+  Button,
   Heading,
   Icon,
   InputSelect,
   InputText,
   InputTextArea,
   InputToggle,
+  Link,
   Section,
 } from '@qovery/shared/ui'
 
@@ -37,8 +36,6 @@ export function PageCreateEditDeploymentRule(props: PageCreateEditDeploymentRule
     setAutoStop(defaultAutoStop)
   }, [defaultAutoStop])
 
-  const navigate = useNavigate()
-
   const clustersList: Value[] = clusters
     ? clusters?.map((cluster) => {
         const item = {
@@ -55,17 +52,15 @@ export function PageCreateEditDeploymentRule(props: PageCreateEditDeploymentRule
         <div className="flex-grow overflow-y-auto">
           <Section className="py-7 px-10">
             <div className="max-w-[620px]">
-              <ButtonLegacy
-                size={ButtonLegacySize.TINY}
-                style={ButtonLegacyStyle.FLAT}
-                onClick={() =>
-                  navigate(ENVIRONMENTS_URL(organizationId, projectId) + ENVIRONMENTS_DEPLOYMENT_RULES_URL)
-                }
-                className="!px-0 mb-1"
+              <Link
+                color="brand"
+                size="xs"
+                to={ENVIRONMENTS_URL(organizationId, projectId) + ENVIRONMENTS_DEPLOYMENT_RULES_URL}
+                className="mb-2"
               >
                 <Icon name="icon-solid-arrow-left" className="mr-1 text-xs" />
-                Back
-              </ButtonLegacy>
+                Back{' '}
+              </Link>
 
               <Heading className="mb-2">{title}</Heading>
 
@@ -249,14 +244,9 @@ export function PageCreateEditDeploymentRule(props: PageCreateEditDeploymentRule
                   </div>
                 </BlockContent>
                 <div className="flex justify-end">
-                  <ButtonLegacy
-                    className="mb-14"
-                    size={ButtonLegacySize.LARGE}
-                    style={ButtonLegacyStyle.BASIC}
-                    type="submit"
-                  >
+                  <Button className="mb-14" size="lg" type="submit">
                     {btnLabel}
-                  </ButtonLegacy>
+                  </Button>
                 </div>
               </form>
             </div>

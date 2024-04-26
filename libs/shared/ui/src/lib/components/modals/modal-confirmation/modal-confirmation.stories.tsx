@@ -1,5 +1,5 @@
 import { type Meta, type Story } from '@storybook/react'
-import { ButtonLegacy } from '../../buttons/button-legacy/button-legacy'
+import Button from '../../button/button'
 import Modal from '../../modal/modal'
 import { ModalConfirmation, type ModalConfirmationProps } from '../modal-confirmation/modal-confirmation'
 
@@ -10,7 +10,15 @@ export default {
 
 const Template: Story<ModalConfirmationProps> = (args) => (
   <div className="relative">
-    <Modal defaultOpen={true} width={488} trigger={<ButtonLegacy>Trigger</ButtonLegacy>}>
+    <Modal
+      defaultOpen={true}
+      width={488}
+      trigger={
+        <Button type="button" size="lg">
+          Trigger
+        </Button>
+      }
+    >
       <ModalConfirmation
         title={args.title}
         description={args.description}
