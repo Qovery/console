@@ -455,6 +455,10 @@ const mapping = {
       link: 'https://hub.qovery.com/docs/using-qovery/deployment/deploying-with-auto-deploy/',
       label: 'Automatically update the applications to the latest version of your git branch',
     },
+    {
+      link: 'https://hub.qovery.com/docs/using-qovery/configuration/organization/labels-annotations/',
+      label: 'How to create and apply my annotations and labels?',
+    },
   ],
   '/organization/:organizationId/project/:projectId/environment/:environmentId/services/create/resources': [
     {
@@ -513,6 +517,10 @@ const mapping = {
       link: 'https://hub.qovery.com/docs/using-qovery/configuration/database/redis/',
       label: 'Create a redis database',
     },
+    {
+      link: 'https://hub.qovery.com/docs/using-qovery/configuration/organization/labels-annotations/',
+      label: 'How to create and apply my annotations and labels?',
+    },
   ],
   '/organization/:organizationId/project/:projectId/environment/:environmentId/services/create/database/resources': [
     {
@@ -538,6 +546,10 @@ const mapping = {
     {
       link: 'https://hub.qovery.com/docs/using-qovery/configuration/lifecycle-job/#create-a-job',
       label: 'Create a new lifecycle job',
+    },
+    {
+      link: 'https://hub.qovery.com/docs/using-qovery/configuration/organization/labels-annotations/',
+      label: 'How to create and apply my annotations and labels?',
     },
   ],
   '/organization/:organizationId/project/:projectId/environment/:environmentId/create/lifecyle-job/configure': [
@@ -568,6 +580,10 @@ const mapping = {
     {
       link: 'https://hub.qovery.com/docs/using-qovery/configuration/cronjob/#create-a-cronjob',
       label: 'Create a new cronjob',
+    },
+    {
+      link: 'https://hub.qovery.com/docs/using-qovery/configuration/organization/labels-annotations/',
+      label: 'How to create and apply my annotations and labels?',
     },
   ],
   '/organization/:organizationId/project/:projectId/environment/:environmentId/create/cron-job/configure': [
