@@ -234,7 +234,7 @@ export function StepGeneral(props: StepGeneralProps) {
           <Button
             size="lg"
             type="button"
-            variant="surface"
+            variant="plain"
             color="neutral"
             onClick={() => navigate(CLUSTERS_URL(organizationId))}
           >

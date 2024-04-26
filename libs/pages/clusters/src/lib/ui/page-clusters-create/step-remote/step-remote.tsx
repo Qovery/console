@@ -4,7 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { ClusterRemoteSettings } from '@qovery/shared/console-shared'
 import { type ClusterGeneralData } from '@qovery/shared/interfaces'
 import { CLUSTERS_CREATION_RESOURCES_URL, CLUSTERS_CREATION_URL, CLUSTERS_URL } from '@qovery/shared/routes'
-import { ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle, ExternalLink, Heading, Section } from '@qovery/shared/ui'
+import { Button, ExternalLink, Heading, Section } from '@qovery/shared/ui'
 
 export interface StepRemoteProps {
   onSubmit: FormEventHandler<HTMLFormElement>
@@ -35,26 +35,19 @@ export function StepRemote(props: StepRemoteProps) {
         </div>
 
         <div className="flex justify-between">
-          <ButtonLegacy
+          <Button
             onClick={() =>
               navigate(CLUSTERS_URL(organizationId) + CLUSTERS_CREATION_URL + CLUSTERS_CREATION_RESOURCES_URL)
             }
             type="button"
-            className="btn--no-min-w"
-            size={ButtonLegacySize.XLARGE}
-            style={ButtonLegacyStyle.STROKED}
+            variant="plain"
+            size="lg"
           >
             Back
-          </ButtonLegacy>
-          <ButtonLegacy
-            dataTestId="button-submit"
-            type="submit"
-            disabled={!formState.isValid}
-            size={ButtonLegacySize.XLARGE}
-            style={ButtonLegacyStyle.BASIC}
-          >
+          </Button>
+          <Button data-testid="button-submit" type="submit" disabled={!formState.isValid} size="lg">
             Continue
-          </ButtonLegacy>
+          </Button>
         </div>
       </form>
     </Section>

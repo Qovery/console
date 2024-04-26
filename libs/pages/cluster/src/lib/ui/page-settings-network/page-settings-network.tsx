@@ -1,16 +1,5 @@
 import { type ClusterRoutingTableResultsInner } from 'qovery-typescript-axios'
-import {
-  BlockContent,
-  ButtonIcon,
-  ButtonIconStyle,
-  ButtonLegacy,
-  EmptyState,
-  Heading,
-  IconAwesomeEnum,
-  LoaderSpinner,
-  Section,
-  Tooltip,
-} from '@qovery/shared/ui'
+import { BlockContent, Button, EmptyState, Heading, Icon, LoaderSpinner, Section, Tooltip } from '@qovery/shared/ui'
 
 export interface PageSettingsNetworkProps {
   routes?: ClusterRoutingTableResultsInner[]
@@ -33,13 +22,10 @@ export function PageSettingsNetwork(props: PageSettingsNetworkProps) {
             </p>
           </div>
 
-          <ButtonLegacy
-            dataTestId="add-button"
-            onClick={() => props.onAddRoute()}
-            iconRight={IconAwesomeEnum.CIRCLE_PLUS}
-          >
+          <Button data-testid="add-button" size="lg" variant="solid" color="brand" onClick={() => props.onAddRoute()}>
             Add Network
-          </ButtonLegacy>
+            <Icon iconName="circle-plus" iconStyle="regular" className="ml-2" />
+          </Button>
         </div>
 
         {(props.loading && props.routes?.length === 0) || !props.routes ? (
@@ -65,32 +51,34 @@ export function PageSettingsNetwork(props: PageSettingsNetworkProps) {
                       Destination: <span className="text-neutral-400 font-medium">{currentRoute.destination}</span>
                     </p>
                   </div>
-                  <div className="flex items-center">
+                  <div className="flex items-center gap-2">
                     {currentRoute.description && (
                       <Tooltip side="top" content={currentRoute.description}>
-                        <div className="flex items-center">
-                          <ButtonIcon
-                            className="text-neutral-400 hover:text-neutral-400"
-                            style={ButtonIconStyle.FLAT}
-                            icon={IconAwesomeEnum.CIRCLE_INFO}
-                          />
+                        <div className="flex items-center mr-1">
+                          <Icon iconName="circle-info" className="text-sm text-neutral-400" />
                         </div>
                       </Tooltip>
                     )}
-                    <ButtonIcon
-                      className="text-neutral-400 hover:text-neutral-400"
-                      style={ButtonIconStyle.FLAT}
+                    <Button
+                      data-testid="edit-button"
+                      variant="outline"
+                      color="neutral"
+                      size="md"
+                      className="justify-center w-9 h-9"
                       onClick={() => props.onEdit(currentRoute)}
-                      dataTestId="edit-button"
-                      icon={IconAwesomeEnum.WHEEL}
-                    />
-                    <ButtonIcon
-                      className="text-neutral-400"
+                    >
+                      <Icon iconName="gear" />
+                    </Button>
+                    <Button
+                      data-testid="delete-button"
+                      variant="outline"
+                      color="neutral"
+                      size="md"
+                      className="justify-center w-9 h-9"
                       onClick={() => props.onDelete(currentRoute)}
-                      dataTestId="delete-button"
-                      icon={IconAwesomeEnum.TRASH}
-                      style={ButtonIconStyle.FLAT}
-                    />
+                    >
+                      <Icon iconName="trash" />
+                    </Button>
                   </div>
                 </div>
               ))}
