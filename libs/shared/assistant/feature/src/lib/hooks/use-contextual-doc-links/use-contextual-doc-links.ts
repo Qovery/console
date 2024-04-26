@@ -583,7 +583,7 @@ const mapping = {
     },
     {
       link: 'https://hub.qovery.com/docs/using-qovery/configuration/organization/labels-annotations/',
-      label: 'How to create and apply my annotations and labels?',d
+      label: 'How to create and apply my annotations and labels?',
     },
   ],
   '/organization/:organizationId/project/:projectId/environment/:environmentId/create/cron-job/configure': [
