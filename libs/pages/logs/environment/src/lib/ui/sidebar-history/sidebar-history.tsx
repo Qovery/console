@@ -1,8 +1,7 @@
 import { type DeploymentHistoryEnvironment, type StateEnum } from 'qovery-typescript-axios'
-import { useNavigate } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { DEPLOYMENT_LOGS_VERSION_URL } from '@qovery/shared/routes'
-import { Badge, Button, Icon, Menu, MenuAlign, type MenuData, StatusChip, Tooltip } from '@qovery/shared/ui'
+import { Badge, Button, Icon, Link, Menu, MenuAlign, type MenuData, StatusChip, Tooltip } from '@qovery/shared/ui'
 import { dateFullFormat } from '@qovery/shared/util-dates'
 import { trimId } from '@qovery/shared/util-js'
 
@@ -15,8 +14,6 @@ export interface SidebarHistoryProps {
 }
 
 export function SidebarHistory({ data, serviceId, versionId, pathLogs, environmentState }: SidebarHistoryProps) {
-  const navigate = useNavigate()
-
   const menuHistory: MenuData = [
     {
       items:
@@ -71,16 +68,17 @@ export function SidebarHistory({ data, serviceId, versionId, pathLogs, environme
   return (
     <div className="flex border-b border-neutral-500 px-4 py-3">
       <div className="flex">
-        <Button
+        <Link
+          as="button"
           data-testid="btn-back-logs"
           type="button"
           color="neutral"
           variant="surface"
           className="!border-r-0 !rounded-r-none"
-          onClick={() => navigate(pathLogs)}
+          to={pathLogs}
         >
           <Icon iconName="house" />
-        </Button>
+        </Link>
         <Menu
           width={300}
           menus={menuHistory}
@@ -100,18 +98,19 @@ export function SidebarHistory({ data, serviceId, versionId, pathLogs, environme
         {currentPosition > 0 && showNewTag && (
           <Tooltip content="New deployment available!" side="right" color="orange">
             <div>
-              <Button
+              <Link
+                as="button"
                 className="!text-orange-500 !border-orange-500 bg-neutral-500 w-[50px]"
                 type="button"
                 color="neutral"
                 variant="surface"
-                onClick={() => navigate(pathLogs + DEPLOYMENT_LOGS_VERSION_URL(serviceId, ''))}
+                to={pathLogs + DEPLOYMENT_LOGS_VERSION_URL(serviceId, '')}
               >
                 <span className="inline-flex items-center">
                   New
                   <i className="relative top-[1px] block ml-1 w-2 h-2 before:block before:absolute before:top-0.5 before:left-0.5 before:bg-orange-500 before:w-1 before:h-1 before:rounded-full after:motion-safe:animate-pulse after:block after:bg-orange-500/30 after:w-2 after:h-2 after:rounded-full" />
                 </span>
-              </Button>
+              </Link>
             </div>
           </Tooltip>
         )}
@@ -121,16 +120,17 @@ export function SidebarHistory({ data, serviceId, versionId, pathLogs, environme
           </Badge>
         )}
         {environmentState && currentPosition > 0 && !showNewTag && (
-          <Button
+          <Link
+            as="button"
             className="w-[50px] justify-center gap-1"
             type="button"
             color="neutral"
             variant="surface"
-            onClick={() => navigate(pathLogs + DEPLOYMENT_LOGS_VERSION_URL(serviceId, ''))}
+            to={pathLogs + DEPLOYMENT_LOGS_VERSION_URL(serviceId, '')}
           >
             {currentPosition}
             <Icon iconName="chevrons-right" />
-          </Button>
+          </Link>
         )}
       </div>
     </div>
