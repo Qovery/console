@@ -41,7 +41,7 @@ exports[`NetworkingSetting should match snapshot in empty state 1`] = `
           Add port
           <i
             aria-hidden="true"
-            class="fa-regular fa-plus-circle "
+            class="fa-solid fa-plus-circle "
           />
         </button>
       </div>
@@ -126,7 +126,7 @@ exports[`NetworkingSetting should match snapshot with ports 1`] = `
           Add port
           <i
             aria-hidden="true"
-            class="fa-regular fa-plus-circle "
+            class="fa-solid fa-plus-circle "
           />
         </button>
       </div>

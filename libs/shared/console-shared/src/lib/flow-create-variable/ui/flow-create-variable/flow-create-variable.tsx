@@ -24,7 +24,7 @@ export function FlowCreateVariable(props: FlowCreateVariableProps) {
         <Heading className="mb-2">Environment variables</Heading>
         <Button className="gap-2" size="lg" onClick={props.onAdd}>
           Add variable
-          <Icon iconName="plus-circle" iconStyle="regular" />
+          <Icon iconName="plus-circle" />
         </Button>
       </div>
 

@@ -43,7 +43,7 @@ export function FlowCreatePort({
         {isSetting && (
           <Button size="lg" variant="solid" color="brand" data-testid="add-button" onClick={() => onAddPort()}>
             Add Port
-            <Icon iconName="circle-plus" iconStyle="regular" className="ml-2" />
+            <Icon iconName="circle-plus" className="ml-2" />
           </Button>
         )}
       </div>

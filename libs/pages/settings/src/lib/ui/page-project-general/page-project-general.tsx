@@ -2,6 +2,7 @@ import { type FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import {
   BlockContent,
+  Button,
   ButtonLegacy,
   ButtonLegacySize,
   ButtonLegacyStyle,
@@ -57,17 +58,9 @@ export function PageProjectGeneral(props: PageProjectGeneralProps) {
             />
           </BlockContent>
           <div className="flex justify-end">
-            <ButtonLegacy
-              dataTestId="submit-button"
-              className="btn--no-min-w"
-              size={ButtonLegacySize.LARGE}
-              style={ButtonLegacyStyle.BASIC}
-              type="submit"
-              disabled={!formState.isValid}
-              loading={loading}
-            >
+            <Button data-testid="submit-button" type="submit" size="lg" disabled={!formState.isValid} loading={loading}>
               Save
-            </ButtonLegacy>
+            </Button>
           </div>
         </form>
       </Section>

@@ -24,7 +24,7 @@ export function PageSettingsNetwork(props: PageSettingsNetworkProps) {
 
           <Button data-testid="add-button" size="lg" variant="solid" color="brand" onClick={() => props.onAddRoute()}>
             Add Network
-            <Icon iconName="circle-plus" iconStyle="regular" className="ml-2" />
+            <Icon iconName="circle-plus" className="ml-2" />
           </Button>
         </div>
 

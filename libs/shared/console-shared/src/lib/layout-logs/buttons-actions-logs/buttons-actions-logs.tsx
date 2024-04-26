@@ -1,5 +1,5 @@
-import { type MouseEvent, type RefObject, useEffect } from 'react'
-import { ButtonIcon, ButtonIconStyle, ButtonLegacySize, Icon, IconAwesomeEnum, Tooltip } from '@qovery/shared/ui'
+import { type RefObject, useEffect } from 'react'
+import { Button, Icon, Tooltip } from '@qovery/shared/ui'
 import { type LayoutLogsDataProps } from '../layout-logs'
 
 export interface ButtonsActionsLogsProps {
@@ -12,11 +12,13 @@ export interface ButtonsActionsLogsProps {
 export function ButtonsActionsLogs(props: ButtonsActionsLogsProps) {
   const { refScrollSection, data, pauseLogs, setPauseLogs } = props
 
-  const downloadJSON = (event: MouseEvent) => {
+  const downloadJSON = () => {
     const file = 'text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(data?.items))
-    const target = event.currentTarget as HTMLElement
-    target?.setAttribute('href', 'data:' + file)
-    target?.setAttribute('download', `data-${Date.now()}.json`)
+    const target = document.createElement('a')
+    target.setAttribute('href', 'data:' + file)
+    target.setAttribute('download', `data-${Date.now()}.json`)
+    target.click()
+    target.remove()
   }
 
   const forcedScroll = (down?: boolean) => {
@@ -40,39 +42,44 @@ export function ButtonsActionsLogs(props: ButtonsActionsLogsProps) {
       {setPauseLogs && (
         <Tooltip side="top" content="Resume real-time logs" open={pauseLogs}>
           <div>
-            <ButtonIcon
-              dataTestId="pause-button"
-              icon={!pauseLogs ? IconAwesomeEnum.PAUSE : IconAwesomeEnum.PLAY}
-              size={ButtonLegacySize.TINY}
-              style={!pauseLogs ? ButtonIconStyle.DARK : ButtonIconStyle.BASIC}
+            <Button
+              className="w-10 justify-center"
+              type="button"
+              color={!pauseLogs ? 'neutral' : 'brand'}
               onClick={() => setPauseLogs(!pauseLogs)}
-            />
+            >
+              <Icon iconName={!pauseLogs ? 'pause' : 'play'} />
+            </Button>
           </div>
         </Tooltip>
       )}
-      <ButtonIcon
-        dataTestId="scroll-up-button"
-        icon={IconAwesomeEnum.ARROW_UP_TO_LINE}
-        className="ml-2 mr-px !rounded-tr-none !rounded-br-none"
-        size={ButtonLegacySize.TINY}
-        style={ButtonIconStyle.DARK}
+      <Button
+        data-testid="scroll-up-button"
+        className="w-10 justify-center ml-2 mr-px !rounded-tr-none !rounded-br-none"
+        type="button"
+        color="neutral"
         onClick={() => forcedScroll()}
-      />
-      <ButtonIcon
-        dataTestId="scroll-down-button"
-        icon={IconAwesomeEnum.ARROW_DOWN_TO_LINE}
-        className="mr-2 !rounded-tl-none !rounded-bl-none"
-        size={ButtonLegacySize.TINY}
-        style={ButtonIconStyle.DARK}
+      >
+        <Icon iconName="arrow-up-to-line" />
+      </Button>
+      <Button
+        data-testid="scroll-down-button"
+        className="w-10 justify-center mr-2 !rounded-tl-none !rounded-bl-none"
+        type="button"
+        color="neutral"
         onClick={() => forcedScroll(true)}
-      />
-      <a
+      >
+        <Icon iconName="arrow-down-to-line" />
+      </Button>
+      <Button
         data-testid="download"
-        className="btn btn-icon btn-icon--small btn-icon--dark"
-        onClick={(event) => downloadJSON(event)}
+        type="button"
+        color="neutral"
+        className="w-10 justify-center"
+        onClick={() => downloadJSON()}
       >
         <Icon iconName="cloud-arrow-down" />
-      </a>
+      </Button>{' '}
     </>
   )
 }
