@@ -146,7 +146,7 @@ export function VariableList({
         id: 'key',
         header: `${variables.length} ${pluralize(variables.length, 'variable')}`,
         enableColumnFilter: false,
-        size: isServiceScope ? 40 : 55,
+        size: isServiceScope ? 40 : 45,
         cell: (info) => {
           const variable = info.row.original
           return (
@@ -280,7 +280,7 @@ export function VariableList({
       }),
       columnHelper.accessor('variable_kind', {
         header: 'Value',
-        size: 20,
+        size: isServiceScope ? 20 : 25,
         enableColumnFilter: true,
         filterFn: 'arrIncludesSome',
         cell: (info) => {
@@ -358,7 +358,7 @@ export function VariableList({
         header: 'Scope',
         enableColumnFilter: true,
         filterFn: 'arrIncludesSome',
-        size: 10,
+        size: isServiceScope ? 10 : 15,
         meta: {
           customFilterValue({ filterValue }) {
             return <Truncate text={filterValue.map(upperCaseFirstLetter).join(', ')} truncateLimit={18} />
