@@ -8,10 +8,7 @@ import { DragDropContext, Draggable, type DropResult, Droppable } from 'react-be
 import { type AnyService } from '@qovery/domains/services/data-access'
 import {
   BadgeDeploymentOrder,
-  ButtonIcon,
-  ButtonIconStyle,
-  ButtonLegacy,
-  ButtonLegacySize,
+  Button,
   Heading,
   Icon,
   IconAwesomeEnum,
@@ -97,14 +94,15 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
               </span>
             </p>
           </div>
-          <ButtonLegacy
-            dataTestId="btn-add-stage"
-            className="shrink-0 ml-5"
+          <Button
+            data-testid="btn-add-stage"
+            className="gap-2 shrink-0 ml-5"
+            size="lg"
+            variant="solid"
             onClick={() => onAddStage()}
-            iconRight={IconAwesomeEnum.CIRCLE_PLUS}
           >
-            Add stage
-          </ButtonLegacy>
+            Add stage <Icon iconName="circle-plus" />
+          </Button>
         </div>
         <div className="h-full overflow-x-auto">
           {!stages && !services ? (
@@ -151,13 +149,9 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
                           key={JSON.stringify(stages)}
                           width={256}
                           trigger={
-                            <ButtonIcon
-                              dataTestId="btn-more-menu"
-                              className="text-neutral-400 !px-1 !w-7"
-                              style={ButtonIconStyle.FLAT}
-                              icon={IconAwesomeEnum.ELLIPSIS}
-                              size={ButtonLegacySize.TINY}
-                            />
+                            <Button data-testid="btn-more-menu" color="neutral" variant="plain">
+                              <Icon iconName="ellipsis" />
+                            </Button>
                           }
                           menus={menuStage(stage, stages)}
                           arrowAlign={MenuAlign.END}
