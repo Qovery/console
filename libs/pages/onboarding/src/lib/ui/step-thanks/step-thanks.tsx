@@ -1,5 +1,5 @@
 import { ONBOARDING_MORE_URL, ONBOARDING_PROJECT_URL, ONBOARDING_URL } from '@qovery/shared/routes'
-import { ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle, Icon } from '@qovery/shared/ui'
+import { ExternalLink, Icon, Link } from '@qovery/shared/ui'
 
 interface StepThanksProps {
   firstName: string
@@ -33,51 +33,40 @@ export function StepThanks(props: StepThanksProps) {
       </p>
       <p className="text-sm mb-5 text-neutral-400">
         In the meantime, have a look at{' '}
-        <a href="https://hub.qovery.com/guides/" target="_blank" rel="noreferrer" className="link text-sky-500 text-sm">
-          our guide <Icon name="icon-solid-arrow-up-right-from-square" />
-        </a>{' '}
+        <ExternalLink size="sm" href="https://hub.qovery.com/guides/" withIcon>
+          our guide
+        </ExternalLink>{' '}
         and{' '}
-        <a
-          href="https://hub.qovery.com/guides/tutorial/"
-          target="_blank"
-          rel="noreferrer"
-          className="link text-sky-500 text-sm"
-        >
-          tutorial <Icon name="icon-solid-arrow-up-right-from-square" />
-        </a>{' '}
+        <ExternalLink size="sm" href="https://hub.qovery.com/guides/tutorial/" withIcon>
+          tutorial
+        </ExternalLink>{' '}
         sections on our website, they will show you what you can achieve with Qovery and guide you step by step in your
         progress with our tool.
       </p>
       <form>
         <div className="mt-10 pt-5 flex justify-between border-t border-neutral-200">
-          <ButtonLegacy
-            link={`${ONBOARDING_URL}${ONBOARDING_MORE_URL}`}
-            size={ButtonLegacySize.XLARGE}
-            style={ButtonLegacyStyle.STROKED}
-            iconLeft="icon-solid-arrow-left"
+          <Link
+            as="button"
+            color="neutral"
+            variant="surface"
+            size="lg"
+            className="gap-2"
+            to={ONBOARDING_URL + ONBOARDING_MORE_URL}
           >
+            <Icon name="icon-solid-arrow-left" />
             Back
-          </ButtonLegacy>
+          </Link>
           {dxAuth ? (
-            <ButtonLegacy
-              link={`${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`}
-              size={ButtonLegacySize.XLARGE}
-              style={ButtonLegacyStyle.BASIC}
-            >
+            <Link as="button" size="lg" to={ONBOARDING_URL + ONBOARDING_PROJECT_URL}>
               Continue
-            </ButtonLegacy>
+            </Link>
           ) : (
-            <ButtonLegacy
-              external
-              link="https://www.youtube.com/watch?v=eX2qFMC8cFo"
-              size={ButtonLegacySize.XLARGE}
-              style={ButtonLegacyStyle.BASIC}
-            >
-              Go to Youtube{' '}
+            <ExternalLink as="button" size="lg" className="gap-2" href="https://www.youtube.com/watch?v=eX2qFMC8cFo">
+              Go to Youtube
               <span role="img" aria-label="cat">
                 🐈
               </span>
-            </ButtonLegacy>
+            </ExternalLink>
           )}
         </div>
       </form>

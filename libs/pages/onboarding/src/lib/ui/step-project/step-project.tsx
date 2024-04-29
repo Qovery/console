@@ -1,7 +1,7 @@
 import { type Control, Controller } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { ENVIRONMENTS_URL } from '@qovery/shared/routes'
-import { ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle, IconAwesomeEnum, InputText } from '@qovery/shared/ui'
+import { Button, Icon, InputText } from '@qovery/shared/ui'
 
 export interface StepProjectProps {
   onSubmit: () => void
@@ -62,16 +62,24 @@ export function StepProject(props: StepProjectProps) {
         />
         <div className="mt-10 pt-5 flex justify-between border-t border-neutral-200">
           {!backButton ? (
-            <ButtonLegacy
+            <Button
+              type="button"
+              size="lg"
+              color="neutral"
+              variant="surface"
+              className="gap-2"
               onClick={() => authLogout()}
-              size={ButtonLegacySize.XLARGE}
-              style={ButtonLegacyStyle.STROKED}
-              iconLeft={IconAwesomeEnum.ARROW_LEFT}
             >
+              <Icon name="icon-solid-arrow-left" />
               Disconnect
-            </ButtonLegacy>
+            </Button>
           ) : (
-            <ButtonLegacy
+            <Button
+              type="button"
+              size="lg"
+              color="neutral"
+              variant="surface"
+              className="gap-2"
               onClick={() =>
                 localStorage['currentOrganizationId']
                   ? navigate(
@@ -82,16 +90,14 @@ export function StepProject(props: StepProjectProps) {
                     )
                   : navigate(-1)
               }
-              size={ButtonLegacySize.XLARGE}
-              style={ButtonLegacyStyle.STROKED}
-              iconLeft={IconAwesomeEnum.ARROW_LEFT}
             >
+              <Icon name="icon-solid-arrow-left" />
               Back
-            </ButtonLegacy>
+            </Button>
           )}
-          <ButtonLegacy size={ButtonLegacySize.XLARGE} style={ButtonLegacyStyle.BASIC} type="submit">
+          <Button type="submit" size="lg">
             Continue
-          </ButtonLegacy>
+          </Button>
         </div>
       </form>
     </div>
