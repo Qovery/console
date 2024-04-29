@@ -1,6 +1,7 @@
 import { type ClusterLogsError } from 'qovery-typescript-axios'
 import { type ReactNode, useState } from 'react'
 import { useParams } from 'react-router-dom'
+import { CLUSTERS_GENERAL_URL, CLUSTERS_URL } from '@qovery/shared/routes'
 import {
   ButtonLegacy,
   ButtonLegacySize,
@@ -8,6 +9,7 @@ import {
   CopyToClipboardButtonIcon,
   ExternalLink,
   Icon,
+  Link,
   Tabs,
   Tooltip,
   Truncate,
@@ -131,26 +133,22 @@ export function TabsClusterLogs(props: TabsClusterLogsProps) {
                       <p data-testid="solution-msg" className="text-neutral-50 text-xs mb-2">
                         {currentError.hint_message}
                       </p>
-                      <ButtonLegacy
-                        className="mr-2"
-                        iconLeft="icon-solid-wheel"
-                        external
-                        link={`https://console.qovery.com/platform/organization/${organizationId}/settings/clusters`}
-                        style={ButtonLegacyStyle.BASIC}
-                        size={ButtonLegacySize.TINY}
+                      <Link
+                        as="button"
+                        color="neutral"
+                        variant="surface"
+                        size="md"
+                        to={CLUSTERS_URL(organizationId) + CLUSTERS_GENERAL_URL}
+                        className="mr-2 gap-1"
                       >
                         Cluster settings
-                      </ButtonLegacy>
+                        <Icon iconName="gear" />
+                      </Link>
                       {currentError.link && (
-                        <ButtonLegacy
-                          iconLeft="icon-solid-book"
-                          external
-                          link={currentError.link}
-                          style={ButtonLegacyStyle.STROKED}
-                          size={ButtonLegacySize.TINY}
-                        >
+                        <ExternalLink as="button" href={currentError.link} className="gap-1" size="md">
                           Documentation
-                        </ButtonLegacy>
+                          <Icon iconName="book" />
+                        </ExternalLink>
                       )}
                     </div>
                   )}
