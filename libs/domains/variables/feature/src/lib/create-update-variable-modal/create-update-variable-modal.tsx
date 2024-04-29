@@ -23,27 +23,35 @@ import { useCreateVariableOverride } from '../hooks/use-create-variable-override
 import { useCreateVariable } from '../hooks/use-create-variable/use-create-variable'
 import { useEditVariable } from '../hooks/use-edit-variable/use-edit-variable'
 
+type Scope = Exclude<keyof typeof APIVariableScopeEnum, 'BUILT_IN'>
+
 export type CreateUpdateVariableModalProps = {
-  parentId: string
-  scope: Exclude<keyof typeof APIVariableScopeEnum, 'BUILT_IN'>
   closeModal: () => void
   onSubmit?: (variable?: VariableResponse | void) => void
   variable?: VariableResponse
   mode: 'CREATE' | 'UPDATE'
   type: keyof typeof APIVariableTypeEnum
   isFile?: boolean
-}
+} & (
+  | {
+      scope: Extract<Scope, 'PROJECT'>
+      projectId: string
+    }
+  | {
+      scope: Extract<Scope, 'ENVIRONMENT'>
+      projectId: string
+      environmentId: string
+    }
+  | {
+      scope: Exclude<Scope, 'PROJECT' | 'ENVIRONMENT'>
+      projectId: string
+      environmentId: string
+      serviceId: string
+    }
+)
 
-export function CreateUpdateVariableModal({
-  parentId,
-  scope,
-  closeModal,
-  onSubmit: _onSubmit,
-  variable,
-  mode,
-  type,
-  isFile: _isFile,
-}: CreateUpdateVariableModalProps) {
+export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps) {
+  const { scope, closeModal, onSubmit: _onSubmit, variable, mode, type, isFile: _isFile } = props
   const isFile = (variable && environmentVariableFile(variable)) || (_isFile ?? false)
   const { enableAlertClickOutside } = useModal()
   const [loading, setLoading] = useState(false)
@@ -53,7 +61,7 @@ export function CreateUpdateVariableModal({
   const { mutateAsync: createVariableOverride } = useCreateVariableOverride()
   const { mutateAsync: editVariable } = useEditVariable()
 
-  const availableScopes = computeAvailableScope(variable?.scope, false, scope, type === 'OVERRIDE')
+  const availableScopes = computeAvailableScope(variable?.scope, false, scope, type === 'OVERRIDE') as Scope[]
 
   const defaultScope =
     variable?.scope === 'BUILT_IN'
@@ -66,7 +74,7 @@ export function CreateUpdateVariableModal({
   const methods = useForm<{
     key: string
     value: string
-    scope: keyof typeof APIVariableScopeEnum
+    scope: Scope
     isSecret: boolean
     mountPath?: string
   }>({
@@ -83,9 +91,6 @@ export function CreateUpdateVariableModal({
   methods.watch(() => enableAlertClickOutside(methods.formState.isDirty))
 
   const onSubmit = methods.handleSubmit(async (data) => {
-    if (!data.scope || data.scope === 'BUILT_IN') {
-      throw new Error('scope undefined or BUILT_IN')
-    }
     const cloneData = { ...data }
 
     // allow empty variable value
@@ -98,7 +103,26 @@ export function CreateUpdateVariableModal({
     try {
       setLoading(true)
 
-      const result = await match({ mode, type })
+      const parentId = match(data)
+        .with({ scope: 'PROJECT' }, () => props.projectId)
+        .with({ scope: 'ENVIRONMENT' }, () => {
+          if ('environmentId' in props) {
+            return props.environmentId
+          }
+          throw new Error('Scope mismatch')
+        })
+        .with({ scope: 'APPLICATION' }, { scope: 'CONTAINER' }, { scope: 'JOB' }, { scope: 'HELM' }, () => {
+          if ('serviceId' in props) {
+            return props.serviceId
+          }
+          throw new Error('Scope mismatch')
+        })
+        .with({ scope: undefined }, () => {
+          throw new Error('scope undefined')
+        })
+        .exhaustive()
+
+      const result = await match(props)
         .with({ mode: 'CREATE', type: 'VALUE' }, () =>
           createVariable({
             variableRequest: {
@@ -107,7 +131,7 @@ export function CreateUpdateVariableModal({
               value: data.value,
               mount_path: data.mountPath || null,
               variable_parent_id: parentId,
-              variable_scope: data.scope as APIVariableScopeEnum,
+              variable_scope: data.scope,
             },
           })
         )
@@ -118,7 +142,7 @@ export function CreateUpdateVariableModal({
           return createVariableAlias({
             variableId: variable.id,
             variableAliasRequest: {
-              alias_scope: data.scope as APIVariableScopeEnum,
+              alias_scope: data.scope,
               alias_parent_id: parentId,
               key: data.key,
             },
@@ -131,7 +155,7 @@ export function CreateUpdateVariableModal({
           return createVariableOverride({
             variableId: variable.id,
             variableOverrideRequest: {
-              override_scope: data.scope as APIVariableScopeEnum,
+              override_scope: data.scope,
               override_parent_id: parentId,
               value: data.value,
             },
@@ -318,7 +342,7 @@ export function CreateUpdateVariableModal({
               <InputText
                 className="mb-3"
                 name="Scope"
-                value={generateScopeLabel(field.value as APIVariableScopeEnum)}
+                value={generateScopeLabel(field.value)}
                 label="Scope"
                 rightElement={
                   <Tooltip content="Scope can’t be changed. Re-create the var with the right scope." side="left">

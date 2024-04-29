@@ -21,8 +21,9 @@ export function PageVariablesFeature() {
       <div className="grow">
         <VariableList
           className="border-b border-b-neutral-200"
-          currentScope="ENVIRONMENT"
-          parentId={environmentId}
+          scope="ENVIRONMENT"
+          projectId={projectId}
+          environmentId={environmentId}
           onCreateVariable={() => {
             toast(
               'SUCCESS',

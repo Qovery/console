@@ -187,7 +187,8 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
           <ShowAllVariablesToggle className="mr-2" />
           <VariablesActionToolbar
             scope="ENVIRONMENT"
-            parentId={environmentId}
+            projectId={projectId}
+            environmentId={environmentId}
             onCreateVariable={() =>
               toast(
                 'SUCCESS',

@@ -14,7 +14,7 @@ import {
 import { Button, Icon, Tabs, type TabsItem, toast, useModal } from '@qovery/shared/ui'
 import ImportEnvironmentVariableModalFeature from '../import-environment-variable-modal-feature/import-environment-variable-modal-feature'
 
-function ContentRightEnvVariable({ service }: { service: AnyService }) {
+function ContentRightEnvVariable({ projectId, service }: { projectId: string; service: AnyService }) {
   const {
     serviceType,
     id: serviceId,
@@ -42,7 +42,9 @@ function ContentRightEnvVariable({ service }: { service: AnyService }) {
       {scope && (
         <VariablesActionToolbar
           scope={scope}
-          parentId={service.id}
+          projectId={projectId}
+          environmentId={service.environment.id}
+          serviceId={service.id}
           onImportEnvFile={() =>
             openModal({
               content: (
@@ -125,7 +127,7 @@ export function TabsFeature() {
       contentRight={
         <div className="px-5">
           {matchEnvVariableRoute && service ? (
-            <ContentRightEnvVariable service={service} />
+            <ContentRightEnvVariable service={service} projectId={projectId} />
           ) : (
             <ServiceLinksPopover
               organizationId={organizationId}

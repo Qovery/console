@@ -40,8 +40,8 @@ export function PageVariablesFeature() {
         {scope && (
           <VariableList
             className="border-b border-b-neutral-200"
-            currentScope={scope}
-            parentId={applicationId}
+            scope={scope}
+            serviceId={applicationId}
             organizationId={organizationId}
             projectId={projectId}
             environmentId={environmentId}

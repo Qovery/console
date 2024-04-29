@@ -10,8 +10,8 @@ export function PageVariablesFeature() {
       <div className="grow">
         <VariableList
           className="border-b border-b-neutral-200"
-          currentScope="PROJECT"
-          parentId={projectId}
+          scope="PROJECT"
+          projectId={projectId}
           onCreateVariable={() => {
             toast('SUCCESS', 'Creation success')
           }}

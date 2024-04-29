@@ -44,40 +44,48 @@ import { VariableListSkeleton } from './variable-list-skeleton'
 
 const { Table } = TablePrimitives
 
-type VariableScope = Exclude<keyof typeof APIVariableScopeEnum, 'BUILT_IN'>
+type Scope = Exclude<keyof typeof APIVariableScopeEnum, 'BUILT_IN'>
 
 export type VariableListProps = {
   className?: string
-  parentId: string
   onCreateVariable?: (variable: VariableResponse | void) => void
   onEditVariable?: (variable: VariableResponse | void) => void
   onDeleteVariable?: (variable: VariableResponse) => void
 } & (
   | {
-      currentScope: Exclude<VariableScope, 'ENVIRONMENT' | 'PROJECT'>
-      organizationId: string
+      scope: Extract<Scope, 'PROJECT'>
+      projectId: string
+    }
+  | {
+      scope: Extract<Scope, 'ENVIRONMENT'>
       projectId: string
       environmentId: string
     }
   | {
-      currentScope: Extract<VariableScope, 'ENVIRONMENT' | 'PROJECT'>
+      scope: Exclude<Scope, 'PROJECT' | 'ENVIRONMENT'>
+      organizationId: string
+      projectId: string
+      environmentId: string
+      serviceId: string
     }
 )
 
 export function VariableList({
   className,
-  parentId,
-  currentScope,
   onCreateVariable,
   onEditVariable,
   onDeleteVariable,
   ...props
 }: VariableListProps) {
+  const parentId = match(props)
+    .with({ scope: 'PROJECT' }, ({ projectId }) => projectId)
+    .with({ scope: 'ENVIRONMENT' }, ({ environmentId }) => environmentId)
+    .otherwise(({ serviceId }) => serviceId)
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
   const { data: variables = [], isLoading: isVariablesLoading } = useVariables({
     parentId,
-    scope: currentScope,
+    scope: props.scope,
   })
   const { showAllVariablesValues } = useContext(VariablesContext)
   const [sorting, setSorting] = useState<SortingState>([])
@@ -95,9 +103,8 @@ export function VariableList({
           variable={variable}
           type={variableType}
           mode="CREATE"
-          parentId={parentId}
-          scope={currentScope}
           onSubmit={onCreateVariable}
+          {...props}
         />
       ),
     })
@@ -110,10 +117,9 @@ export function VariableList({
           closeModal={closeModal}
           variable={variable}
           mode="UPDATE"
-          parentId={parentId}
           type={variable.variable_type}
-          scope={currentScope}
           onSubmit={onEditVariable}
+          {...props}
         />
       ),
     })
@@ -131,7 +137,7 @@ export function VariableList({
     })
   }
 
-  const isServiceScope = 'organizationId' in props
+  const isServiceScope = 'serviceId' in props
 
   const columnHelper = createColumnHelper<(typeof variables)[number]>()
   const columns = useMemo(
@@ -308,47 +314,46 @@ export function VariableList({
           return <PasswordShowHide value="" isSecret={true} defaultVisible={showAllVariablesValues} />
         },
       }),
-      ...(isServiceScope
-        ? [
-            columnHelper.accessor('service_name', {
-              header: 'Service link',
-              enableColumnFilter: true,
-              filterFn: 'arrIncludesSome',
-              size: 15,
-              meta: {
-                customFacetEntry({ value, count }) {
-                  return (
-                    <>
-                      <span className="text-sm font-medium">{value ? upperCaseFirstLetter(value) : 'Null'}</span>
-                      <span className="text-xs text-neutral-350">{count}</span>
-                    </>
-                  )
-                },
+      ...match(props)
+        .with({ scope: 'ENVIRONMENT' }, { scope: 'PROJECT' }, () => [])
+        .otherwise(({ organizationId, projectId, environmentId }) => [
+          columnHelper.accessor('service_name', {
+            header: 'Service link',
+            enableColumnFilter: true,
+            filterFn: 'arrIncludesSome',
+            size: 15,
+            meta: {
+              customFacetEntry({ value, count }) {
+                return (
+                  <>
+                    <span className="text-sm font-medium">{value ? upperCaseFirstLetter(value) : 'Null'}</span>
+                    <span className="text-xs text-neutral-350">{count}</span>
+                  </>
+                )
               },
-              cell: (info) => {
-                const variable = info.row.original
-                const { organizationId, projectId, environmentId } = props
-                return variable.service_name && variable.service_type && variable.service_id ? (
-                  <NavLink
-                    className="flex gap-2 items-center text-sm font-medium"
-                    to={
-                      variable.service_type !== 'DATABASE'
-                        ? APPLICATION_URL(organizationId, projectId, environmentId, variable.service_id) +
-                          APPLICATION_GENERAL_URL
-                        : DATABASE_URL(organizationId, projectId, environmentId, variable.service_id) +
-                          DATABASE_GENERAL_URL
-                    }
-                  >
-                    {variable.service_type !== 'JOB' && (
-                      <Icon name={variable.service_type?.toString() || ''} className="w-4" />
-                    )}
-                    {variable.service_name}
-                  </NavLink>
-                ) : null
-              },
-            }),
-          ]
-        : []),
+            },
+            cell: (info) => {
+              const variable = info.row.original
+              return variable.service_name && variable.service_type && variable.service_id ? (
+                <NavLink
+                  className="flex gap-2 items-center text-sm font-medium"
+                  to={
+                    variable.service_type !== 'DATABASE'
+                      ? APPLICATION_URL(organizationId, projectId, environmentId, variable.service_id) +
+                        APPLICATION_GENERAL_URL
+                      : DATABASE_URL(organizationId, projectId, environmentId, variable.service_id) +
+                        DATABASE_GENERAL_URL
+                  }
+                >
+                  {variable.service_type !== 'JOB' && (
+                    <Icon name={variable.service_type?.toString() || ''} className="w-4" />
+                  )}
+                  {variable.service_name}
+                </NavLink>
+              ) : null
+            },
+          }),
+        ]),
       columnHelper.accessor('scope', {
         header: 'Scope',
         enableColumnFilter: true,
@@ -390,7 +395,7 @@ export function VariableList({
         },
       }),
     ],
-    [variables.length, _onCreateVariable, _onEditVariable, isServiceScope]
+    [variables.length, _onCreateVariable, _onEditVariable, props.scope]
   )
   const table = useReactTable({
     data: variables,

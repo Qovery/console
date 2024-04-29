@@ -60,7 +60,7 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
           <ShowAllVariablesToggle className="mr-2" />
           <VariablesActionToolbar
             scope="PROJECT"
-            parentId={projectId}
+            projectId={projectId}
             onCreateVariable={() => toast('SUCCESS', 'Creation success')}
           />
         </>
