@@ -1,3 +1,4 @@
+import clsx from 'clsx'
 import { Link, useLocation, useParams } from 'react-router-dom'
 import {
   AUDIT_LOGS_URL,
@@ -10,7 +11,7 @@ import {
   OVERVIEW_URL,
   SETTINGS_URL,
 } from '@qovery/shared/routes'
-import { ButtonIcon, ButtonIconStyle, ButtonLegacySize, IconAwesomeEnum, Tooltip } from '@qovery/shared/ui'
+import { Icon, Link as LinkButton, Tooltip } from '@qovery/shared/ui'
 import MenuAccountFeature from '../../feature/menu-account-feature/menu-account-feature'
 
 export interface NavigationProps {
@@ -44,36 +45,59 @@ export function Navigation({ defaultOrganizationId, clusterNotification }: Navig
         <div className="flex flex-col gap-3">
           <Tooltip content="Environments" side="right">
             <div>
-              <ButtonIcon
-                className={matchOrganizationRoute ? 'is-active' : ''}
-                icon={IconAwesomeEnum.LAYER_GROUP}
-                style={ButtonIconStyle.ALT}
-                size={ButtonLegacySize.XLARGE}
-                link={projectId ? OVERVIEW_URL(organizationId, projectId) : ORGANIZATION_URL(organizationId)}
-              />
+              <LinkButton
+                as="button"
+                color="neutral"
+                variant="plain"
+                className={clsx(
+                  'w-11 h-11 justify-center hover:!bg-neutral-100 hover:!text-brand-500 hover:!border-transparent',
+                  {
+                    'bg-neutral-100 text-brand-500': matchOrganizationRoute,
+                  }
+                )}
+                to={projectId ? OVERVIEW_URL(organizationId, projectId) : ORGANIZATION_URL(organizationId)}
+              >
+                <Icon iconName="layer-group" className="text-lg" />
+              </LinkButton>
             </div>
           </Tooltip>
           <Tooltip content="Clusters" side="right">
-            <div>
-              <ButtonIcon
-                className={matchClusterRoute ? 'is-active' : ''}
-                icon={IconAwesomeEnum.CLOUD_WORD}
-                style={ButtonIconStyle.ALT}
-                size={ButtonLegacySize.XLARGE}
-                link={CLUSTERS_URL(organizationId)}
-                notification={clusterNotification}
-              />
+            <div className="relative">
+              <LinkButton
+                as="button"
+                color="neutral"
+                variant="plain"
+                className={clsx(
+                  'w-11 h-11 justify-center hover:!bg-neutral-100 hover:!text-brand-500 hover:!border-transparent',
+                  {
+                    'bg-neutral-100 text-brand-500': matchClusterRoute,
+                  }
+                )}
+                to={CLUSTERS_URL(organizationId)}
+              >
+                <Icon iconName="cloud-word" className="text-lg" />
+              </LinkButton>
+              {clusterNotification && (
+                <span className="w-2 h-2 rounded-lg bg-red-500 absolute top-1.5 right-1.5"></span>
+              )}
             </div>
           </Tooltip>
           <Tooltip content="Audit Logs" side="right">
             <div>
-              <ButtonIcon
-                className={matchEventsRoute ? 'is-active' : ''}
-                icon={IconAwesomeEnum.CLOCK_ROTATE_LEFT}
-                style={ButtonIconStyle.ALT}
-                size={ButtonLegacySize.XLARGE}
-                link={AUDIT_LOGS_URL(organizationId)}
-              />
+              <LinkButton
+                as="button"
+                color="neutral"
+                variant="plain"
+                className={clsx(
+                  'w-11 h-11 justify-center hover:!bg-neutral-100 hover:!text-brand-500 hover:!border-transparent',
+                  {
+                    'bg-neutral-100 text-brand-500': matchEventsRoute,
+                  }
+                )}
+                to={AUDIT_LOGS_URL(organizationId)}
+              >
+                <Icon iconName="clock-rotate-left" className="text-lg" />
+              </LinkButton>
             </div>
           </Tooltip>
         </div>
@@ -81,13 +105,20 @@ export function Navigation({ defaultOrganizationId, clusterNotification }: Navig
           <div className="flex flex-col gap-3">
             <Tooltip content="Settings" side="right">
               <div>
-                <ButtonIcon
-                  className={matchSettingsRoute ? 'is-active' : ''}
-                  icon={IconAwesomeEnum.WHEEL}
-                  style={ButtonIconStyle.ALT}
-                  size={ButtonLegacySize.XLARGE}
-                  link={SETTINGS_URL(organizationId)}
-                />
+                <LinkButton
+                  as="button"
+                  color="neutral"
+                  variant="plain"
+                  className={clsx(
+                    'w-11 h-11 justify-center hover:!bg-neutral-100 hover:!text-brand-500 hover:!border-transparent',
+                    {
+                      'bg-neutral-100 text-brand-500': matchSettingsRoute,
+                    }
+                  )}
+                  to={SETTINGS_URL(organizationId)}
+                >
+                  <Icon iconName="gear" className="text-lg" />
+                </LinkButton>
               </div>
             </Tooltip>
           </div>
