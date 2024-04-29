@@ -181,7 +181,7 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
   }
 
   const contentTabs = !matchSettingsRoute && (
-    <div className="flex justify-center items-center px-5 border-l h-14 border-neutral-200">
+    <div className="flex justify-center items-center px-5 h-14">
       {matchEnvVariableRoute ? (
         <>
           <ShowAllVariablesToggle className="mr-2" />
