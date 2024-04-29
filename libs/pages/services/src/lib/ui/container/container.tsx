@@ -1,16 +1,19 @@
 import { type Environment } from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
-import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { matchPath, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useCluster } from '@qovery/domains/clusters/feature'
 import {
   EnvironmentActionToolbar,
   EnvironmentMode,
   EnvironmentStateChip,
+  useDeployEnvironment,
   useDeploymentStatus,
 } from '@qovery/domains/environments/feature'
+import { ShowAllVariablesToggle, VariablesActionToolbar, VariablesProvider } from '@qovery/domains/variables/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import {
   CLUSTER_URL,
+  ENVIRONMENT_LOGS_URL,
   SERVICES_APPLICATION_CREATION_URL,
   SERVICES_CRONJOB_CREATION_URL,
   SERVICES_DATABASE_CREATION_URL,
@@ -20,6 +23,7 @@ import {
   SERVICES_LIFECYCLE_CREATION_URL,
   SERVICES_SETTINGS_URL,
   SERVICES_URL,
+  SERVICES_VARIABLES_URL,
 } from '@qovery/shared/routes'
 import {
   Banner,
@@ -34,6 +38,7 @@ import {
   Skeleton,
   Tabs,
   Tooltip,
+  toast,
 } from '@qovery/shared/ui'
 
 export interface ContainerProps {
@@ -42,7 +47,7 @@ export interface ContainerProps {
 
 export function Container(props: PropsWithChildren<ContainerProps>) {
   const { environment, children } = props
-  const { organizationId = '', projectId, environmentId } = useParams()
+  const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const location = useLocation()
   const navigate = useNavigate()
 
@@ -51,6 +56,10 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
   })
 
   const { data: cluster } = useCluster({ organizationId, clusterId: environment?.cluster_id ?? '' })
+  const { mutate: deployEnvironment } = useDeployEnvironment({
+    projectId,
+    logsLink: ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId),
+  })
 
   const matchSettingsRoute = location.pathname.includes(
     SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_SETTINGS_URL
@@ -108,6 +117,12 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
       link: `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_DEPLOYMENTS_URL}`,
     },
     {
+      icon: <Icon name="icon-solid-key" />,
+      name: 'Variables',
+      active: location.pathname === SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_VARIABLES_URL,
+      link: SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_VARIABLES_URL,
+    },
+    {
       icon: <Icon name="icon-solid-wheel" />,
       name: 'Settings',
       active: location.pathname.includes(
@@ -163,32 +178,64 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
     },
   ]
 
+  const matchEnvVariableRoute = matchPath(
+    location.pathname || '',
+    SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_VARIABLES_URL
+  )
+
+  const toasterCallback = () => {
+    deployEnvironment({ environmentId })
+  }
+
   const contentTabs = !matchSettingsRoute && (
-    <div className="flex justify-center items-center px-5 border-l h-14 border-neutral-200">
-      <Skeleton width={154} height={40} show={isLoadingDeploymentStatus}>
-        <Menu
-          trigger={
-            <Button size="lg" className="gap-2">
-              New service
-              <Icon iconName="circle-plus" />
-            </Button>
-          }
-          menus={newServicesMenu}
-          arrowAlign={MenuAlign.START}
-        />
-      </Skeleton>
+    <div className="flex justify-center items-center px-5 h-14">
+      {matchEnvVariableRoute ? (
+        <>
+          <ShowAllVariablesToggle className="mr-2" />
+          <VariablesActionToolbar
+            scope="ENVIRONMENT"
+            projectId={projectId}
+            environmentId={environmentId}
+            onCreateVariable={() =>
+              toast(
+                'SUCCESS',
+                'Creation success',
+                'You need to redeploy your environment for your changes to be applied.',
+                toasterCallback,
+                undefined,
+                'Redeploy'
+              )
+            }
+          />
+        </>
+      ) : (
+        <Skeleton width={154} height={40} show={isLoadingDeploymentStatus}>
+          <Menu
+            trigger={
+              <Button size="lg" className="gap-2">
+                New service
+                <Icon iconName="circle-plus" />
+              </Button>
+            }
+            menus={newServicesMenu}
+            arrowAlign={MenuAlign.START}
+          />
+        </Skeleton>
+      )}
     </div>
   )
 
   const cancelOnGoing = deploymentStatus?.state === 'CANCELING'
 
   return (
-    <Section className="flex-1">
-      <Header title={environment?.name} icon={IconEnum.SERVICES} actions={headerActions} />
-      <Tabs items={tabsItems} contentRight={contentTabs} />
-      {cancelOnGoing && <Banner color="yellow">Deployment cancel ongoing...</Banner>}
-      {children}
-    </Section>
+    <VariablesProvider>
+      <Section className="flex-1">
+        <Header title={environment?.name} icon={IconEnum.SERVICES} actions={headerActions} />
+        <Tabs items={tabsItems} contentRight={contentTabs} />
+        {cancelOnGoing && <Banner color="yellow">Deployment cancel ongoing...</Banner>}
+        {children}
+      </Section>
+    </VariablesProvider>
   )
 }
 

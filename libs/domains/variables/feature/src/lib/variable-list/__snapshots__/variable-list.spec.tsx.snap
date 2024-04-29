@@ -174,7 +174,7 @@ exports[`VariableList should match snapshot 1`] = `
         >
           <a
             class="flex gap-2 items-center text-sm font-medium"
-            href="/organization//project//environment//application/33962e52-7883-42fd-8613-85e04229a9b6/general"
+            href="/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/application/33962e52-7883-42fd-8613-85e04229a9b6/general"
           >
             rds_terraform
           </a>
@@ -407,7 +407,7 @@ exports[`VariableList should match snapshot 1`] = `
         >
           <a
             class="flex gap-2 items-center text-sm font-medium"
-            href="/organization//project//environment//application/037c9e87-e098-4970-8b1f-9a5ffe9e4b89/general"
+            href="/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/application/037c9e87-e098-4970-8b1f-9a5ffe9e4b89/general"
           >
             <svg
               class="shrink-0 w-4"
@@ -670,7 +670,7 @@ exports[`VariableList should match snapshot 1`] = `
         >
           <a
             class="flex gap-2 items-center text-sm font-medium"
-            href="/organization//project//environment//application/037c9e87-e098-4970-8b1f-9a5ffe9e4b89/general"
+            href="/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/application/037c9e87-e098-4970-8b1f-9a5ffe9e4b89/general"
           >
             <svg
               class="shrink-0 w-4"
@@ -897,7 +897,7 @@ exports[`VariableList should match snapshot 1`] = `
         >
           <a
             class="flex gap-2 items-center text-sm font-medium"
-            href="/organization//project//environment//application/ff84535f-49cc-450b-a878-f654c98c0a25/general"
+            href="/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/application/ff84535f-49cc-450b-a878-f654c98c0a25/general"
           >
             <svg
               class="shrink-0 w-4"

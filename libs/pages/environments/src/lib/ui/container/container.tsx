@@ -1,14 +1,16 @@
 import { type Project } from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
-import { useLocation, useParams } from 'react-router-dom'
+import { matchPath, useLocation, useParams } from 'react-router-dom'
 import { CreateCloneEnvironmentModal } from '@qovery/domains/environments/feature'
+import { ShowAllVariablesToggle, VariablesActionToolbar, VariablesProvider } from '@qovery/domains/variables/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import {
   ENVIRONMENTS_DEPLOYMENT_RULES_CREATE_URL,
   ENVIRONMENTS_DEPLOYMENT_RULES_URL,
   ENVIRONMENTS_URL,
+  ENVIRONMENTS_VARIABLES_URL,
 } from '@qovery/shared/routes'
-import { Button, Header, Icon, Section, Tabs, useModal } from '@qovery/shared/ui'
+import { Button, Header, Icon, Section, Tabs, toast, useModal } from '@qovery/shared/ui'
 
 export interface ContainerProps {
   project?: Project
@@ -38,34 +40,62 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
       active: isDeploymentRulesTab,
       link: `${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_DEPLOYMENT_RULES_URL}`,
     },
+    {
+      icon: <Icon name="icon-solid-key" />,
+      name: 'Variables',
+      active: pathname === ENVIRONMENTS_URL(organizationId, projectId) + ENVIRONMENTS_VARIABLES_URL,
+      link: ENVIRONMENTS_URL(organizationId, projectId) + ENVIRONMENTS_VARIABLES_URL,
+    },
   ]
 
+  const matchEnvVariableRoute = matchPath(
+    pathname || '',
+    ENVIRONMENTS_URL(organizationId, projectId) + ENVIRONMENTS_VARIABLES_URL
+  )
+
   const contentTabs = (
-    <div className="flex justify-center items-center px-5 border-l h-14 border-neutral-200">
-      <Button
-        size="lg"
-        className="gap-2"
-        disabled={!clusterAvailable}
-        onClick={() => {
-          openModal({
-            content: (
-              <CreateCloneEnvironmentModal onClose={closeModal} projectId={projectId} organizationId={organizationId} />
-            ),
-          })
-        }}
-      >
-        New environment
-        <Icon iconName="circle-plus" className="text-xs" />
-      </Button>
+    <div className="flex justify-center items-center px-5 h-14">
+      {matchEnvVariableRoute ? (
+        <>
+          <ShowAllVariablesToggle className="mr-2" />
+          <VariablesActionToolbar
+            scope="PROJECT"
+            projectId={projectId}
+            onCreateVariable={() => toast('SUCCESS', 'Creation success')}
+          />
+        </>
+      ) : (
+        <Button
+          size="lg"
+          className="gap-2"
+          disabled={!clusterAvailable}
+          onClick={() => {
+            openModal({
+              content: (
+                <CreateCloneEnvironmentModal
+                  onClose={closeModal}
+                  projectId={projectId}
+                  organizationId={organizationId}
+                />
+              ),
+            })
+          }}
+        >
+          New environment
+          <Icon iconName="circle-plus" className="text-xs" />
+        </Button>
+      )}
     </div>
   )
 
   return (
-    <Section className="flex-1">
-      <Header title={project?.name} icon={IconEnum.ENVIRONMENT} iconClassName="w-16" />
-      <Tabs items={tabsItems} contentRight={!isDeploymentRulesTab && contentTabs} />
-      <div className="flex-grow flex-col flex">{children}</div>
-    </Section>
+    <VariablesProvider>
+      <Section className="flex-1">
+        <Header title={project?.name} icon={IconEnum.ENVIRONMENT} iconClassName="w-16" />
+        <Tabs items={tabsItems} contentRight={!isDeploymentRulesTab && contentTabs} />
+        <div className="flex-grow flex-col flex">{children}</div>
+      </Section>
+    </VariablesProvider>
   )
 }
 

@@ -148,8 +148,11 @@ jest.mock('../hooks/use-variables/use-variables', () => ({
 }))
 
 const variableListProps: VariableListProps = {
-  parentId: '037c9e87-e098-4970-8b1f-9a5ffe9e4b89',
-  currentScope: 'APPLICATION',
+  organizationId: '3d542888-3d2c-474a-b1ad-712556db66da',
+  projectId: 'cf021d82-2c5e-41de-96eb-eb69c022eddc',
+  environmentId: '55867c71-56f9-4b4f-ab22-5904c9dbafda',
+  serviceId: '037c9e87-e098-4970-8b1f-9a5ffe9e4b89',
+  scope: 'APPLICATION',
   onCreateVariable: jest.fn(),
   onEditVariable: jest.fn(),
   onDeleteVariable: jest.fn(),

@@ -21,6 +21,18 @@ describe('computeAvailableEnvironmentVariableScope', () => {
         APIVariableScopeEnum.APPLICATION,
       ])
     })
+    it('should return all scope with BUILT_IN - ENVIRONMENT range', () => {
+      const scopes = computeAvailableScope(undefined, true, 'ENVIRONMENT')
+      expect(scopes).toEqual([
+        APIVariableScopeEnum.BUILT_IN,
+        APIVariableScopeEnum.PROJECT,
+        APIVariableScopeEnum.ENVIRONMENT,
+      ])
+    })
+    it('should return only one PROJECT scope', () => {
+      const scopes = computeAvailableScope(undefined, false, 'PROJECT')
+      expect(scopes).toEqual([APIVariableScopeEnum.PROJECT])
+    })
   })
 
   describe('when the scope is set', () => {
@@ -28,6 +40,10 @@ describe('computeAvailableEnvironmentVariableScope', () => {
     it('should return all scope at the same level and below Environment', () => {
       const scopes = computeAvailableScope(scope, false)
       expect(scopes).toEqual([APIVariableScopeEnum.ENVIRONMENT, APIVariableScopeEnum.APPLICATION])
+    })
+    it('should return all scope at the same level', () => {
+      const scopes = computeAvailableScope(scope, false, 'ENVIRONMENT')
+      expect(scopes).toEqual([APIVariableScopeEnum.ENVIRONMENT])
     })
   })
 

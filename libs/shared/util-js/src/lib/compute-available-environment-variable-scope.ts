@@ -1,73 +1,83 @@
 import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
-import { type ServiceType } from '@qovery/domains/services/data-access'
+import { type ServiceTypeEnum } from '@qovery/shared/enums'
 import { upperCaseFirstLetter } from './uppercase-first-letter'
 
-const environmentScopes = (scope: APIVariableScopeEnum) => [
-  {
-    name: APIVariableScopeEnum.BUILT_IN,
-    hierarchy: -1,
-  },
-  {
-    name: APIVariableScopeEnum.PROJECT,
-    hierarchy: 1,
-  },
-  {
-    name: APIVariableScopeEnum.ENVIRONMENT,
-    hierarchy: 2,
-  },
-  {
-    name: scope,
-    hierarchy: 3,
-  },
-]
+function scopeHierarchy(targetScope: APIVariableScopeEnum) {
+  const baseHierarchy = [
+    {
+      name: APIVariableScopeEnum.BUILT_IN,
+      hierarchy: -1,
+    },
+    {
+      name: APIVariableScopeEnum.PROJECT,
+      hierarchy: 1,
+    },
+    {
+      name: APIVariableScopeEnum.ENVIRONMENT,
+      hierarchy: 2,
+    },
+  ]
 
-export const computeAvailableScope = (
-  scope?: APIVariableScopeEnum,
-  includeBuiltIn?: boolean,
-  serviceType?: ServiceType,
-  excludeCurrentScope = false
-): APIVariableScopeEnum[] => {
-  const scopeByServiceType = match(serviceType)
+  return match(targetScope)
+    .with('BUILT_IN', () => baseHierarchy.slice(0, 1))
+    .with('PROJECT', () => baseHierarchy.slice(0, 2))
+    .with('ENVIRONMENT', () => baseHierarchy)
+    .with('APPLICATION', 'CONTAINER', 'HELM', 'JOB', (serviceScope) => [
+      ...baseHierarchy,
+      {
+        name: serviceScope,
+        hierarchy: 3,
+      },
+    ])
+    .exhaustive()
+}
+
+function targetToScope(target: keyof typeof APIVariableScopeEnum | keyof typeof ServiceTypeEnum): APIVariableScopeEnum {
+  return match(target)
     .with('APPLICATION', () => APIVariableScopeEnum.APPLICATION)
+    .with('DATABASE', () => APIVariableScopeEnum.APPLICATION)
     .with('CONTAINER', () => APIVariableScopeEnum.CONTAINER)
     .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', () => APIVariableScopeEnum.JOB)
     .with('HELM', () => APIVariableScopeEnum.HELM)
-    .otherwise(() => APIVariableScopeEnum.APPLICATION)
-
-  if (!scope) {
-    const scopeToReturn: APIVariableScopeEnum[] = []
-
-    if (includeBuiltIn) {
-      scopeToReturn.push(APIVariableScopeEnum.BUILT_IN)
-    }
-
-    return [...scopeToReturn, APIVariableScopeEnum.PROJECT, APIVariableScopeEnum.ENVIRONMENT, scopeByServiceType]
-  }
-
-  const theScope = environmentScopes(scopeByServiceType).find((s) => s.name === scope)
-
-  return environmentScopes(scopeByServiceType)
-    .filter((scope) => {
-      return scope.hierarchy >= (theScope?.hierarchy || -1) && scope.hierarchy >= 0
-    })
-    .map((scope) => scope.name)
-    .filter((s) => (excludeCurrentScope ? s !== scope : true))
+    .with('BUILT_IN', () => APIVariableScopeEnum.BUILT_IN)
+    .with('PROJECT', () => APIVariableScopeEnum.PROJECT)
+    .with('ENVIRONMENT', () => APIVariableScopeEnum.ENVIRONMENT)
+    .exhaustive()
 }
 
-export function getScopeHierarchy(scope?: APIVariableScopeEnum, serviceType?: ServiceType): number {
-  if (!scope) return -1
+export const computeAvailableScope = (
+  base?: APIVariableScopeEnum,
+  includeBuiltIn?: boolean,
+  target?: keyof typeof APIVariableScopeEnum | keyof typeof ServiceTypeEnum,
+  excludeBaseScope = false
+): APIVariableScopeEnum[] => {
+  const baseScope = base ?? 'BUILT_IN'
+  const targetScope = targetToScope(target ?? 'APPLICATION')
+  const hierarchy = scopeHierarchy(targetScope)
 
-  const scopeByServiceType = match(serviceType)
-    .with('APPLICATION', () => APIVariableScopeEnum.APPLICATION)
-    .with('CONTAINER', () => APIVariableScopeEnum.CONTAINER)
-    .with('JOB', () => APIVariableScopeEnum.JOB)
-    .with('HELM', () => APIVariableScopeEnum.HELM)
-    .otherwise(() => APIVariableScopeEnum.APPLICATION)
+  const baseScopeHierarchy = hierarchy.find((scope) => scope.name === baseScope)?.hierarchy ?? -1
+  const targetScopeHierarchy = hierarchy.find((scope) => scope.name === targetScope)?.hierarchy ?? 3
 
-  const hierarchy = environmentScopes(scopeByServiceType).find((s) => s.name === scope)?.hierarchy
+  return hierarchy
+    .reduce<APIVariableScopeEnum[]>((acc, scope) => {
+      if (scope.hierarchy >= baseScopeHierarchy && scope.hierarchy <= targetScopeHierarchy) {
+        acc.push(scope.name)
+      }
+      return acc
+    }, [])
+    .filter((s) => (includeBuiltIn ? true : s !== 'BUILT_IN'))
+    .filter((s) => (excludeBaseScope ? s !== baseScope : true))
+}
 
-  return hierarchy || -1
+export function getScopeHierarchy(
+  base?: APIVariableScopeEnum,
+  target?: keyof typeof APIVariableScopeEnum | keyof typeof ServiceTypeEnum
+): number {
+  if (!base) return -1
+
+  const targetScope = targetToScope(target ?? 'APPLICATION')
+  return scopeHierarchy(targetScope).find((scope) => scope.name === base)?.hierarchy ?? -1
 }
 
 export function generateScopeLabel(scope: APIVariableScopeEnum): string {
