@@ -76,7 +76,7 @@ export function StageOrderModal(props: StageOrderModalProps) {
           </Droppable>
         </ScrollShadowWrapper>
         <div className="flex gap-3 justify-end mt-6">
-          <Button data-testid="cancel" size="lg" color="neutral" variant="plain" onClick={() => props.onClose()}>
+          <Button data-testid="cancel-button" size="lg" color="neutral" variant="plain" onClick={() => props.onClose()}>
             Cancel
           </Button>
         </div>
