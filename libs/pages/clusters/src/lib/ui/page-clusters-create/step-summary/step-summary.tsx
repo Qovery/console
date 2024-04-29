@@ -8,17 +8,7 @@ import {
   type ClusterResourcesData,
   type Subnets,
 } from '@qovery/shared/interfaces'
-import {
-  Button,
-  ButtonIcon,
-  ButtonIconStyle,
-  Callout,
-  ExternalLink,
-  Heading,
-  Icon,
-  IconAwesomeEnum,
-  Section,
-} from '@qovery/shared/ui'
+import { Button, Callout, ExternalLink, Heading, Icon, Section } from '@qovery/shared/ui'
 import { trimId } from '@qovery/shared/util-js'
 import { getValueByKey } from '../../../feature/page-clusters-create-feature/step-summary-feature/step-summary-feature'
 
@@ -144,12 +134,9 @@ export function StepSummary(props: StepSummaryProps) {
             </ul>
           </div>
 
-          <ButtonIcon
-            onClick={props.goToGeneral}
-            icon={IconAwesomeEnum.WHEEL}
-            style={ButtonIconStyle.FLAT}
-            className="text-neutral-400 hover:text-neutral-400"
-          />
+          <Button type="button" variant="plain" size="md" onClick={props.goToGeneral}>
+            <Icon className="text-base" iconName="gear-complex" />
+          </Button>
         </div>
 
         {match(props.generalData)
@@ -186,12 +173,9 @@ export function StepSummary(props: StepSummaryProps) {
                     </li>
                   </ul>
                 </div>
-                <ButtonIcon
-                  onClick={props.goToResources}
-                  icon={IconAwesomeEnum.WHEEL}
-                  style={ButtonIconStyle.FLAT}
-                  className="text-neutral-400 hover:text-neutral-400"
-                />
+                <Button type="button" variant="plain" size="md" onClick={props.goToResources}>
+                  <Icon className="text-base" iconName="gear-complex" />
+                </Button>
               </div>
             )
           )
@@ -209,12 +193,9 @@ export function StepSummary(props: StepSummaryProps) {
                   </li>
                 </ul>
               </div>
-              <ButtonIcon
-                onClick={props.goToKubeconfig}
-                icon={IconAwesomeEnum.WHEEL}
-                style={ButtonIconStyle.FLAT}
-                className="text-neutral-400 hover:text-neutral-400"
-              />
+              <Button type="button" variant="plain" size="md" onClick={props.goToKubeconfig}>
+                <Icon className="text-base" iconName="gear-complex" />
+              </Button>
             </div>
           ))
           .otherwise(() => null)}
@@ -233,12 +214,9 @@ export function StepSummary(props: StepSummaryProps) {
                 </li>
               </ul>
             </div>
-            <ButtonIcon
-              onClick={props.goToRemote}
-              icon={IconAwesomeEnum.WHEEL}
-              style={ButtonIconStyle.FLAT}
-              className="text-neutral-400 hover:text-neutral-400"
-            />
+            <Button type="button" variant="plain" size="md" onClick={props.goToRemote}>
+              <Icon className="text-base" iconName="gear-complex" />
+            </Button>
           </div>
         )}
 
@@ -406,12 +384,9 @@ export function StepSummary(props: StepSummaryProps) {
                 })}
               </ul>
             </div>
-            <ButtonIcon
-              onClick={props.goToFeatures}
-              icon={IconAwesomeEnum.WHEEL}
-              style={ButtonIconStyle.FLAT}
-              className="text-neutral-400 hover:text-neutral-400"
-            />
+            <Button type="button" variant="plain" size="md" onClick={props.goToFeatures}>
+              <Icon className="text-base" iconName="gear-complex" />
+            </Button>
           </div>
         )}
 
