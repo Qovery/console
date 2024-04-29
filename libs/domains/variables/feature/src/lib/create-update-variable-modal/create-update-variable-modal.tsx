@@ -51,8 +51,8 @@ export type CreateUpdateVariableModalProps = {
 )
 
 export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps) {
-  const { scope, closeModal, onSubmit: _onSubmit, variable, mode, type, isFile: _isFile } = props
-  const isFile = (variable && environmentVariableFile(variable)) || (_isFile ?? false)
+  const { scope, closeModal, onSubmit, variable, mode, type, isFile } = props
+  const _isFile = (variable && environmentVariableFile(variable)) || (isFile ?? false)
   const { enableAlertClickOutside } = useModal()
   const [loading, setLoading] = useState(false)
 
@@ -90,13 +90,13 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
 
   methods.watch(() => enableAlertClickOutside(methods.formState.isDirty))
 
-  const onSubmit = methods.handleSubmit(async (data) => {
+  const _onSubmit = methods.handleSubmit(async (data) => {
     const cloneData = { ...data }
 
     // allow empty variable value
     if (!cloneData.value) cloneData.value = ''
 
-    if (!isFile) {
+    if (!_isFile) {
       delete cloneData.mountPath
     }
 
@@ -179,7 +179,7 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
         })
         .exhaustive()
 
-      _onSubmit?.(result)
+      onSubmit?.(result)
 
       closeModal()
     } catch (e) {
@@ -198,13 +198,13 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
     title = 'Create ' + (type === 'ALIAS' ? 'alias' : type === 'OVERRIDE' ? 'override' : '')
   }
 
-  title += ' variable' + (isFile ? ' file' : '')
+  title += ' variable' + (_isFile ? ' file' : '')
 
-  const description = match({ type, isFile })
+  const description = match({ type, _isFile })
     .with({ type: 'ALIAS' }, () => 'Aliases allow you to specify a different name for a variable on a specific scope.')
     .with({ type: 'OVERRIDE' }, () => 'Overrides allow you to define a different env var value on a specific scope.')
     .with(
-      { isFile: true },
+      { _isFile: true },
       () =>
         'The content of the Value field will be mounted as a file in the specified “Path”. Accessing the environment variable at runtime will return the “Path” of the file.'
     )
@@ -220,7 +220,7 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
         description={description}
         submitLabel="Confirm"
         onClose={closeModal}
-        onSubmit={onSubmit}
+        onSubmit={_onSubmit}
         loading={loading}
       >
         {type === 'ALIAS' || type === 'OVERRIDE' ? (
@@ -245,7 +245,7 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
           />
         )}
 
-        {isFile &&
+        {_isFile &&
           (type === 'ALIAS' || type === 'OVERRIDE' || mode === 'UPDATE' ? (
             <InputText className="mb-3" name="Path" value={mountPath} label="Path" disabled />
           ) : (
@@ -376,7 +376,7 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
                   small
                   value={field.value}
                   onChange={field.onChange}
-                  title={`Secret ${isFile ? 'file' : 'variable'}`}
+                  title={`Secret ${_isFile ? 'file' : 'variable'}`}
                 />
               )}
             />
