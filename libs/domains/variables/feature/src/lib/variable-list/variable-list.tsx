@@ -79,7 +79,7 @@ export function VariableList({
     parentId,
     scope: currentScope,
   })
-  const { showAllVariablesValues, setShowAllVariablesValues } = useContext(VariablesContext)
+  const { showAllVariablesValues } = useContext(VariablesContext)
   const [sorting, setSorting] = useState<SortingState>([])
 
   const { mutateAsync: deleteVariable } = useDeleteVariable()
