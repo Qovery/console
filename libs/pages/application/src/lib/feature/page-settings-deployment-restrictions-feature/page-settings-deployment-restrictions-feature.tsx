@@ -9,12 +9,9 @@ import {
 import {
   BlockContent,
   Button,
-  ButtonIcon,
-  ButtonIconStyle,
   EmptyState,
   Heading,
   Icon,
-  IconAwesomeEnum,
   InputText,
   LoaderSpinner,
   Section,
@@ -121,69 +118,57 @@ function PageSettingsDeploymentRestrictionsFeatureInner({
   }
 
   return (
-    <>
+    <div>
       {isLoadingDeploymentRestrictions ? (
         <div className="flex justify-center">
           <LoaderSpinner className="w-6" />
         </div>
+      ) : deploymentRestrictions?.length > 0 ? (
+        <BlockContent title="Deployment restrictions">
+          <div className="flex flex-col gap-3">
+            {deploymentRestrictions.map((deploymentRestriction) => {
+              const { id, type, mode, value } = deploymentRestriction
+              return (
+                <div key={id} className="flex justify-between w-full items-center gap-3">
+                  <InputText name={`mode_${id}`} className="shrink-0 grow flex-1" label="Mode" value={mode} disabled />
+                  <InputText name={`type_${id}`} className="shrink-0 grow flex-1" label="Type" value={type} disabled />
+                  <InputText
+                    name={`value_${id}`}
+                    className="shrink-0 grow flex-1"
+                    label="Value"
+                    value={value}
+                    disabled
+                  />
+                  <Button
+                    data-testid="edit"
+                    className="w-[52px] h-[52px] justify-center"
+                    variant="surface"
+                    color="neutral"
+                    onClick={() => handleEdit(deploymentRestriction)}
+                  >
+                    <Icon iconName="gear" className="text-sm" />
+                  </Button>
+                  <Button
+                    data-testid="remove"
+                    className="w-[52px] h-[52px] justify-center"
+                    variant="surface"
+                    color="neutral"
+                    onClick={() => handleDelete(deploymentRestriction)}
+                  >
+                    <Icon iconName="trash" className="text-sm" />
+                  </Button>
+                </div>
+              )
+            })}
+          </div>
+        </BlockContent>
       ) : (
-        <>
-          {deploymentRestrictions?.length > 0 ? (
-            <BlockContent title="Deployment restrictions">
-              <div className="flex flex-col gap-3">
-                {deploymentRestrictions.map((deploymentRestriction) => {
-                  const { id, type, mode, value } = deploymentRestriction
-                  return (
-                    <div key={id} className="flex justify-between w-full items-center gap-3">
-                      <InputText
-                        name={`mode_${id}`}
-                        className="shrink-0 grow flex-1"
-                        label="Mode"
-                        value={mode}
-                        disabled
-                      />
-                      <InputText
-                        name={`type_${id}`}
-                        className="shrink-0 grow flex-1"
-                        label="Type"
-                        value={type}
-                        disabled
-                      />
-                      <InputText
-                        name={`value_${id}`}
-                        className="shrink-0 grow flex-1"
-                        label="Value"
-                        value={value}
-                        disabled
-                      />
-                      <ButtonIcon
-                        className="!bg-transparent hover:!bg-neutral-200 !w-[52px] !h-[52px]"
-                        style={ButtonIconStyle.STROKED}
-                        onClick={() => handleEdit(deploymentRestriction)}
-                        dataTestId="edit"
-                        icon={IconAwesomeEnum.WHEEL}
-                      />
-                      <ButtonIcon
-                        className="!bg-transparent hover:!bg-neutral-200 !w-[52px] !h-[52px]"
-                        onClick={() => handleDelete(deploymentRestriction)}
-                        dataTestId="remove"
-                        icon={IconAwesomeEnum.TRASH}
-                        style={ButtonIconStyle.STROKED}
-                      />
-                    </div>
-                  )
-                })}
-              </div>
-            </BlockContent>
-          ) : (
-            <EmptyState
-              title="No deployment restrictions are set"
-              description="Adding deployment restrictions allows you to control the auto-deploy feature and determine when a commit on your repository should be auto-deployed or not."
-            />
-          )}
-        </>
+        <EmptyState
+          title="No deployment restrictions are set"
+          description="Adding deployment restrictions allows you to control the auto-deploy feature and determine when a commit on your repository should be auto-deployed or not."
+        />
       )}
-    </>
+    </div>
   )
 }
 

@@ -1,16 +1,5 @@
 import { type ServiceStorageStorageInner } from 'qovery-typescript-axios'
-import {
-  BlockContent,
-  Button,
-  ButtonIcon,
-  ButtonIconStyle,
-  EmptyState,
-  Heading,
-  Icon,
-  IconAwesomeEnum,
-  InputText,
-  Section,
-} from '@qovery/shared/ui'
+import { BlockContent, Button, EmptyState, Heading, Icon, InputText, Section } from '@qovery/shared/ui'
 
 export interface PageSettingsStorageProps {
   storages: ServiceStorageStorageInner[]
@@ -67,20 +56,24 @@ export function PageSettingsStorage(props: PageSettingsStorageProps) {
                   label="Type"
                   disabled
                 />
-                <ButtonIcon
-                  className="!bg-transparent hover:!bg-neutral-200 !w-[52px] !h-[52px]"
-                  style={ButtonIconStyle.STROKED}
+                <Button
+                  data-testid="edit"
+                  className="w-[52px] h-[52px] justify-center"
+                  variant="surface"
+                  color="neutral"
                   onClick={() => props.onEdit(storage)}
-                  dataTestId="edit"
-                  icon={IconAwesomeEnum.WHEEL}
-                />
-                <ButtonIcon
-                  className="!bg-transparent hover:!bg-neutral-200 !w-[52px] !h-[52px]"
+                >
+                  <Icon iconName="gear" className="text-sm" />
+                </Button>
+                <Button
+                  data-testid="remove"
+                  className="w-[52px] h-[52px] justify-center"
+                  variant="surface"
+                  color="neutral"
                   onClick={() => props.onRemove(storage)}
-                  dataTestId="remove"
-                  icon={IconAwesomeEnum.TRASH}
-                  style={ButtonIconStyle.STROKED}
-                />
+                >
+                  <Icon iconName="trash" className="text-sm" />
+                </Button>
               </div>
             ))}
           </BlockContent>

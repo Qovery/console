@@ -3,12 +3,8 @@ import { IconEnum } from '@qovery/shared/enums'
 import {
   BlockContent,
   Button,
-  ButtonIcon,
-  ButtonIconStyle,
-  ButtonLegacySize,
   Heading,
   Icon,
-  IconAwesomeEnum,
   InputToggle,
   LoaderSpinner,
   Section,
@@ -85,7 +81,7 @@ export function PageOrganizationWebhooks(props: PageOrganizationWebhooksProps) {
                       )}
                     </div>
                   </div>
-                  <div className="flex items-center">
+                  <div className="flex items-center gap-2">
                     <InputToggle
                       title={`${webhook.enabled ? 'Enabled' : 'Disabled'}`}
                       className={`${webhook.enabled ? 'mr-5' : 'mr-4'}`}
@@ -93,25 +89,26 @@ export function PageOrganizationWebhooks(props: PageOrganizationWebhooksProps) {
                       small
                       onChange={(e) => props.onToggle(webhook.id, e)}
                     />
-
-                    <ButtonIcon
-                      icon={IconAwesomeEnum.WHEEL}
-                      style={ButtonIconStyle.STROKED}
-                      size={ButtonLegacySize.TINY}
+                    <Button
+                      data-testid="edit-webhook"
+                      type="button"
+                      variant="outline"
+                      color="neutral"
+                      size="md"
                       onClick={() => props.openEdit(webhook)}
-                      className="text-neutral-350 hover:text-neutral-400 bg-transparent !w-9 !h-8 mr-2"
-                      iconClassName="!text-xs"
-                      dataTestId="edit-webhook"
-                    />
-                    <ButtonIcon
-                      icon={IconAwesomeEnum.TRASH}
-                      style={ButtonIconStyle.STROKED}
-                      size={ButtonLegacySize.TINY}
+                    >
+                      <Icon iconName="gear" />
+                    </Button>
+                    <Button
+                      data-testid="delete-webhook"
+                      type="button"
+                      variant="outline"
+                      color="neutral"
+                      size="md"
                       onClick={() => props.onDelete(webhook)}
-                      dataTestId="delete-webhook"
-                      className="text-neutral-350 hover:text-neutral-400 bg-transparent !w-9 !h-8"
-                      iconClassName="!text-xs"
-                    />
+                    >
+                      <Icon iconName="trash" />
+                    </Button>
                   </div>
                 </li>
               ))}

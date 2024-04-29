@@ -4,7 +4,7 @@ import {
   type DeploymentHistoryHelmResponse,
 } from 'qovery-typescript-axios'
 import { type MouseEvent, useState } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { type Container } from '@qovery/domains/services/data-access'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { type DeploymentService } from '@qovery/shared/interfaces'
@@ -21,10 +21,8 @@ import {
 import { dateUTCString, timeAgo } from '@qovery/shared/util-dates'
 import { trimId, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { Badge } from '../../badge/badge'
-import ButtonIcon, { ButtonIconStyle } from '../../buttons/button-icon/button-icon'
-import { ButtonLegacySize } from '../../buttons/button-legacy/button-legacy'
 import Icon from '../../icon/icon'
-import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
+import { Link as LinkButton } from '../../link/link'
 import Skeleton from '../../skeleton/skeleton'
 import StatusChip from '../../status-chip/status-chip'
 import TagCommit from '../../tag-commit/tag-commit'
@@ -59,7 +57,6 @@ export function TableRowDeployment({
   const [copy, setCopy] = useState(false)
   const [hoverId, setHoverId] = useState(false)
   const { organizationId, projectId, environmentId, applicationId, databaseId } = useParams()
-  const navigate = useNavigate()
 
   const pathEnvironmentLogs = ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId)
 
@@ -162,22 +159,21 @@ export function TableRowDeployment({
                   </span>
                 </Tooltip>
               </p>
-              <ButtonIcon
-                dataTestId="btn-logs"
-                icon={IconAwesomeEnum.SCROLL}
-                style={ButtonIconStyle.STROKED}
-                size={ButtonLegacySize.SMALL}
-                onClick={() =>
-                  navigate(
-                    fromService
-                      ? pathEnvironmentLogs + SERVICE_LOGS_URL(serviceId)
-                      : pathEnvironmentLogs +
-                          DEPLOYMENT_LOGS_VERSION_URL(serviceId, (data as DeploymentService).execution_id)
-                  )
+              <LinkButton
+                as="button"
+                data-testid="btn-logs"
+                variant="outline"
+                color="neutral"
+                size="md"
+                to={
+                  fromService
+                    ? pathEnvironmentLogs + SERVICE_LOGS_URL(serviceId)
+                    : pathEnvironmentLogs +
+                      DEPLOYMENT_LOGS_VERSION_URL(serviceId, (data as DeploymentService).execution_id)
                 }
-                className="!w-7 !h-7 !border-r btn-icon-action__element"
-                iconClassName="!text-2xs"
-              />{' '}
+              >
+                <Icon iconName="scroll" />
+              </LinkButton>
             </>
           </Skeleton>
         </div>
