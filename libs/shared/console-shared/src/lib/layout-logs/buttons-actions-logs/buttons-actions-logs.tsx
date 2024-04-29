@@ -67,13 +67,7 @@ export function ButtonsActionsLogs(props: ButtonsActionsLogsProps) {
       >
         <Icon iconName="arrow-down-to-line" />
       </Button>
-      <Button
-        data-testid="download"
-        type="button"
-        color="neutral"
-        className="w-10 justify-center"
-        onClick={() => downloadJSON()}
-      >
+      <Button type="button" color="neutral" className="w-10 justify-center" onClick={() => downloadJSON()}>
         <Icon iconName="cloud-arrow-down" />
       </Button>
     </>
