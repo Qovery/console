@@ -41,8 +41,8 @@ export function Navigation({ defaultOrganizationId, clusterNotification }: Navig
         <img className="w-[28px]" src="/assets/logos/logo-icon.svg" alt="Qovery logo" />
       </Link>
 
-      <div className="flex flex-col justify-between px-2.5 py-5 flex-grow">
-        <div className="flex flex-col gap-3">
+      <div className="flex flex-col justify-between px-2.5 py-4 flex-grow">
+        <div className="flex flex-col gap-2">
           <Tooltip content="Environments" side="right">
             <div>
               <LinkButton
