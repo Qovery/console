@@ -1,3 +1,4 @@
+import download from 'downloadjs'
 import { type RefObject, useEffect } from 'react'
 import { Button, Icon, Tooltip } from '@qovery/shared/ui'
 import { type LayoutLogsDataProps } from '../layout-logs'
@@ -13,12 +14,7 @@ export function ButtonsActionsLogs(props: ButtonsActionsLogsProps) {
   const { refScrollSection, data, pauseLogs, setPauseLogs } = props
 
   const downloadJSON = () => {
-    const file = 'text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(data?.items))
-    const target = document.createElement('a')
-    target.setAttribute('href', 'data:' + file)
-    target.setAttribute('download', `data-${Date.now()}.json`)
-    target.click()
-    target.remove()
+    download(JSON.stringify(data?.items), `data-${Date.now()}.json`, 'text/json;charset=utf-8')
   }
 
   const forcedScroll = (down?: boolean) => {
@@ -45,10 +41,10 @@ export function ButtonsActionsLogs(props: ButtonsActionsLogsProps) {
             <Button
               className="w-10 justify-center"
               type="button"
-              color={!pauseLogs ? 'neutral' : 'brand'}
+              color={pauseLogs ? 'brand' : 'neutral'}
               onClick={() => setPauseLogs(!pauseLogs)}
             >
-              <Icon iconName={!pauseLogs ? 'pause' : 'play'} />
+              <Icon iconName={pauseLogs ? 'play' : 'pause'} />
             </Button>
           </div>
         </Tooltip>
@@ -79,7 +75,7 @@ export function ButtonsActionsLogs(props: ButtonsActionsLogsProps) {
         onClick={() => downloadJSON()}
       >
         <Icon iconName="cloud-arrow-down" />
-      </Button>{' '}
+      </Button>
     </>
   )
 }
