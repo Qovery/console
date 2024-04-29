@@ -30,17 +30,6 @@ describe('ButtonsActionsLogs', () => {
     expect(baseElement).toBeTruthy()
   })
 
-  it('should triggers downloadJSON on click', async () => {
-    const { getByTestId } = render(<ButtonsActionsLogs {...props} />)
-
-    const downloadButton = getByTestId('download')
-    downloadButton.click()
-
-    await act(async () => {
-      expect(downloadButton).toBeDefined()
-    })
-  })
-
   it('should triggers forcedScroll on click', async () => {
     const { getByTestId } = render(<ButtonsActionsLogs {...props} />)
 

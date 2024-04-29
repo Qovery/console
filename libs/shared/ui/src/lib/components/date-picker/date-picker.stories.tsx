@@ -1,7 +1,7 @@
 import { type Meta, type Story } from '@storybook/react'
 import { useState } from 'react'
 import { dateFullFormat } from '@qovery/shared/util-dates'
-import ButtonLegacy from '../buttons/button-legacy/button-legacy'
+import Button from '../button/button'
 import { DatePicker } from './date-picker'
 
 export default {
@@ -21,9 +21,9 @@ const Template: Story = () => {
   return (
     <>
       <DatePicker onChange={handleChange} isOpen={isOpen} showTimeInput>
-        <ButtonLegacy className="inline-flex" onClick={() => setIsOpen(!isOpen)}>
+        <Button type="button" size="lg" className="inline-flex" onClick={() => setIsOpen(!isOpen)}>
           Open date-picker
-        </ButtonLegacy>
+        </Button>
       </DatePicker>
       <p className="mt-1 text-neutral-400 font-medium">
         {date && dateFullFormat(date[0].toString())} - {date && dateFullFormat(date[1].toString())}

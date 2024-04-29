@@ -90,7 +90,7 @@ export function NetworkingSetting({ ports, onUpdatePorts, children }: Networking
         </div>
         <Button className="gap-2" size="lg" variant="solid" color="brand" onClick={onAddPort}>
           Add port
-          <Icon iconName="plus-circle" iconStyle="regular" />
+          <Icon iconName="plus-circle" />
         </Button>
       </div>
       <form className="w-full">

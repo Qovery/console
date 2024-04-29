@@ -27,7 +27,7 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
           Add variable
           <i
             aria-hidden="true"
-            class="fa-regular fa-plus-circle "
+            class="fa-solid fa-plus-circle "
           />
         </button>
       </div>

@@ -188,7 +188,7 @@ export function ValuesOverrideArgumentsSetting({
           }
         >
           Add variable
-          <Icon iconName="plus-circle" iconStyle="regular" />
+          <Icon iconName="plus-circle" />
         </Button>
       </div>
       <Popover.Root>

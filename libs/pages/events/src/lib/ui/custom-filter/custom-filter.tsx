@@ -6,15 +6,7 @@ import {
   type Project,
 } from 'qovery-typescript-axios'
 import { useSearchParams } from 'react-router-dom'
-import {
-  ButtonLegacy,
-  ButtonLegacySize,
-  ButtonLegacyStyle,
-  DatePicker,
-  Icon,
-  IconAwesomeEnum,
-  InputFilter,
-} from '@qovery/shared/ui'
+import { Button, DatePicker, Icon, InputFilter } from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { hasEnvironment, hasProject } from '../../feature/page-general-feature/page-general-feature'
@@ -72,22 +64,19 @@ export function CustomFilter({
           showTimeInput
         >
           {!timestamps ? (
-            <ButtonLegacy
-              dataTestId="timeframe-button"
-              className={`${isOpenTimestamp ? 'btn--active' : ''}`}
+            <Button
+              data-testid="timeframe-button"
+              type="button"
+              variant="surface"
+              color="neutral"
+              className="gap-2"
               onClick={() => setIsOpenTimestamp(!isOpenTimestamp)}
-              style={ButtonLegacyStyle.STROKED}
-              size={ButtonLegacySize.TINY}
-              iconRight={IconAwesomeEnum.CLOCK}
             >
               Timeframe
-            </ButtonLegacy>
+              <Icon iconName="clock" iconStyle="light" />
+            </Button>
           ) : (
-            <ButtonLegacy
-              dataTestId="timeframe-values"
-              onClick={() => setIsOpenTimestamp(!isOpenTimestamp)}
-              size={ButtonLegacySize.TINY}
-            >
+            <Button type="button" data-testid="timeframe-values" onClick={() => setIsOpenTimestamp(!isOpenTimestamp)}>
               from: {dateYearMonthDayHourMinuteSecond(timestamps[0], true, false)} - to:{' '}
               {dateYearMonthDayHourMinuteSecond(timestamps[1], true, false)}
               <span
@@ -101,7 +90,7 @@ export function CustomFilter({
               >
                 <Icon iconName="xmark" />
               </span>
-            </ButtonLegacy>
+            </Button>
           )}
         </DatePicker>
       </div>

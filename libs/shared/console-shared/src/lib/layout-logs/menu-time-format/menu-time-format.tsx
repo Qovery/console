@@ -1,13 +1,4 @@
-import {
-  ButtonLegacy,
-  ButtonLegacySize,
-  ButtonLegacyStyle,
-  Icon,
-  IconAwesomeEnum,
-  Menu,
-  MenuAlign,
-  type MenuData,
-} from '@qovery/shared/ui'
+import { Button, Icon, IconAwesomeEnum, Menu, MenuAlign, type MenuData } from '@qovery/shared/ui'
 
 export interface MenuTimeFormatProps {
   updateTimeContextValue: { utc: boolean }
@@ -50,14 +41,10 @@ export function MenuTimeFormat(props: MenuTimeFormatProps) {
       menus={menusTimeFormat}
       arrowAlign={MenuAlign.END}
       trigger={
-        <ButtonLegacy
-          className="mr-2"
-          size={ButtonLegacySize.TINY}
-          style={ButtonLegacyStyle.DARK}
-          iconRight={IconAwesomeEnum.ANGLE_DOWN}
-        >
+        <Button className="mr-2 gap-2" type="button" color="neutral">
           Time format
-        </ButtonLegacy>
+          <Icon iconName="angle-down" className="ml-2" />
+        </Button>
       }
     />
   )

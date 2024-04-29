@@ -21,16 +21,7 @@ import {
   SERVICES_URL,
   SETTINGS_URL,
 } from '@qovery/shared/routes'
-import {
-  ButtonIcon,
-  ButtonIconStyle,
-  ButtonLegacySize,
-  Icon,
-  IconAwesomeEnum,
-  type MenuData,
-  type MenuItemProps,
-  Tooltip,
-} from '@qovery/shared/ui'
+import { Button, Icon, type MenuData, type MenuItemProps, Tooltip } from '@qovery/shared/ui'
 import BreadcrumbItem from '../breadcrumb-item/breadcrumb-item'
 
 export interface BreadcrumbProps {
@@ -209,7 +200,7 @@ export function Breadcrumb(props: BreadcrumbProps) {
   if (organizations?.length === 0) return <div />
 
   return (
-    <div className="flex justify-between w-full">
+    <div className="flex justify-between w-full items-center">
       <div className="flex h-full items-center">
         {organizationId && (projectId || clusterId || matchAuditLogs || matchClusters || matchSettings) && (
           <Tooltip content={currentOrganization?.name || ''}>
@@ -326,12 +317,10 @@ export function Breadcrumb(props: BreadcrumbProps) {
       </div>
       {(locationIsApplicationLogs || locationIsDeploymentLogs || locationIsClusterLogs) && (
         <div className="ml-auto">
-          <ButtonIcon
-            icon={IconAwesomeEnum.XMARK}
-            style={ButtonIconStyle.DARK}
-            size={ButtonLegacySize.LARGE}
-            onClick={() => handleCloseLogs()}
-          />
+          <Button className="gap-2" type="button" color="neutral" size="md" onClick={() => handleCloseLogs()}>
+            Close
+            <Icon iconName="xmark" className="text-sm" />
+          </Button>
         </div>
       )}
     </div>

@@ -1,6 +1,5 @@
-import ButtonIcon, { ButtonIconStyle } from '../buttons/button-icon/button-icon'
-import { ButtonLegacySize } from '../buttons/button-legacy/button-legacy'
-import { IconAwesomeEnum } from '../icon/icon-awesome.enum'
+import Button from '../button/button'
+import Icon from '../icon/icon'
 import InputSelectSmall from '../inputs/input-select-small/input-select-small'
 
 export interface PaginationProps {
@@ -17,26 +16,30 @@ export function Pagination(props: PaginationProps) {
   return (
     <div className={`flex justify-between ${props.className || ''}`}>
       <div className="flex gap-0.5 items-center">
-        <ButtonIcon
-          dataTestId="button-previous-page"
-          icon={IconAwesomeEnum.CHEVRON_LEFT}
-          style={ButtonIconStyle.STROKED}
-          size={ButtonLegacySize.SMALL}
-          className="!w-8"
+        <Button
+          data-testid="button-previous-page"
+          className="justify-center w-9"
+          variant="surface"
+          color="neutral"
+          size="md"
+          type="button"
           disabled={props.previousDisabled}
           onClick={() => props.onPrevious()}
-          iconClassName="!text-xs"
-        />
-        <ButtonIcon
-          dataTestId="button-next-page"
-          icon={IconAwesomeEnum.CHEVRON_RIGHT}
-          style={ButtonIconStyle.STROKED}
-          size={ButtonLegacySize.SMALL}
-          className="!w-8"
+        >
+          <Icon iconName="chevron-left" />
+        </Button>
+        <Button
+          data-testid="button-next-page"
+          className="justify-center w-9"
+          variant="surface"
+          color="neutral"
+          size="md"
+          type="button"
           disabled={props.nextDisabled}
           onClick={() => props.onNext()}
-          iconClassName="!text-xs"
-        />
+        >
+          <Icon iconName="chevron-right" />
+        </Button>
       </div>
       <div className="flex gap-3 items-center">
         <InputSelectSmall

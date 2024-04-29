@@ -1,5 +1,5 @@
 import { type Meta, type Story } from '@storybook/react'
-import ButtonLegacy from '../buttons/button-legacy/button-legacy'
+import Button from '../button/button'
 import Modal, { type ModalContentProps, type ModalProps } from './modal'
 
 export default {
@@ -15,7 +15,9 @@ const Content = (props: ModalContentProps) => {
       <h3 className="h3 font-medium text-base text-neutral-400">Title</h3>
       <p className="text-sm text-neutral-350 mt-2 mb-6">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
       <div className="flex justify-end">
-        <ButtonLegacy onClick={() => setOpen && setOpen(false)}>Save changes</ButtonLegacy>
+        <Button type="button" size="lg" onClick={() => setOpen && setOpen(false)}>
+          Save changes
+        </Button>
       </div>
     </div>
   )
@@ -23,7 +25,14 @@ const Content = (props: ModalContentProps) => {
 
 const Template: Story<ModalProps> = (...args) => (
   <div className="relative">
-    <Modal trigger={<ButtonLegacy>Trigger</ButtonLegacy>} {...args}>
+    <Modal
+      trigger={
+        <Button type="button" size="lg">
+          Trigger
+        </Button>
+      }
+      {...args}
+    >
       <Content />
     </Modal>
   </div>

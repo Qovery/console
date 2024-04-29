@@ -4,19 +4,17 @@ exports[`InputFilter should match input filter with loading 1`] = `
 <div>
   <div>
     <button
-      class="btn btn--tiny btn--basic "
+      class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent"
       type="button"
     >
-      <span>
+      <div
+        class="flex justify-center w-12"
+      >
         <div
-          class="flex justify-center w-12"
-        >
-          <div
-            class="aspect-square border-2  rounded-full border-solid border-neutral-350 border-r-neutral-50 animate-spin w-4 "
-            data-testid="spinner"
-          />
-        </div>
-      </span>
+          class="aspect-square border-2  rounded-full border-solid border-neutral-350 border-r-neutral-50 animate-spin w-4 "
+          data-testid="spinner"
+        />
+      </div>
     </button>
   </div>
 </div>
@@ -26,21 +24,19 @@ exports[`InputFilter should match input filter with value 1`] = `
 <div>
   <div>
     <button
-      class="btn btn--tiny btn--basic "
+      class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent"
       type="button"
     >
-      <span>
-        Option 1
-        <span
-          class="px-1 py-1 relative left-1"
-          data-testid="clear-btn"
-          role="button"
-        >
-          <i
-            aria-hidden="true"
-            class="fa-solid fa-xmark "
-          />
-        </span>
+      Option 1
+      <span
+        class="px-1 py-1 relative left-1"
+        data-testid="clear-btn"
+        role="button"
+      >
+        <i
+          aria-hidden="true"
+          class="fa-solid fa-xmark "
+        />
       </span>
     </button>
   </div>
@@ -51,15 +47,13 @@ exports[`InputFilter should match input filter without value 1`] = `
 <div>
   <div>
     <button
-      class="btn btn--tiny btn--stroked "
+      class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent gap-2"
       type="button"
     >
-      <span>
-        Filter
-      </span>
-      <span
-        class="icon-solid-magnifying-glass shrink-0 "
-        role="img"
+      Filter
+      <i
+        aria-hidden="true"
+        class="fa-solid fa-magnifying-glass "
       />
     </button>
   </div>

@@ -1,6 +1,6 @@
 import { type Meta, type Story } from '@storybook/react'
 import { ToastEnum, toast } from '../../utils/toast'
-import { ButtonLegacy } from '../buttons/button-legacy/button-legacy'
+import Button from '../button/button'
 import { ToastBehavior, type ToastProps } from './toast'
 
 export default {
@@ -17,7 +17,9 @@ export default {
 const Template: Story<ToastProps> = (args) => {
   return (
     <div>
-      <ButtonLegacy
+      <Button
+        type="button"
+        size="lg"
         onClick={() =>
           toast(
             args.status,
@@ -31,7 +33,7 @@ const Template: Story<ToastProps> = (args) => {
         }
       >
         Trigger toast
-      </ButtonLegacy>
+      </Button>
       <ToastBehavior />
     </div>
   )

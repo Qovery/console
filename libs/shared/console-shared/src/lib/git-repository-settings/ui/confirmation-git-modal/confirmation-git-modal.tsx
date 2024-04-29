@@ -1,4 +1,4 @@
-import { ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle, Callout, Icon } from '@qovery/shared/ui'
+import { Button, Callout, Icon } from '@qovery/shared/ui'
 
 export interface ConfirmationGitModalProps {
   currentProvider: string
@@ -34,25 +34,27 @@ export function ConfirmationGitModal({
         <Icon iconName="triangle-exclamation" className="absolute top-4 right-4 text-yellow-500" />
       </div>
       <div className="flex gap-3 justify-end mt-6">
-        <ButtonLegacy
-          dataTestId="cancel-button"
-          className="btn--no-min-w"
-          style={ButtonLegacyStyle.STROKED}
-          size={ButtonLegacySize.XLARGE}
+        <Button
+          data-testid="cancel-button"
+          type="button"
+          color="neutral"
+          variant="plain"
+          size="lg"
           onClick={() => onClose()}
         >
           Cancel
-        </ButtonLegacy>
-        <ButtonLegacy
-          dataTestId="submit-button"
-          size={ButtonLegacySize.XLARGE}
+        </Button>
+        <Button
+          data-testid="submit-button"
+          size="lg"
+          type="button"
           onClick={() => {
             onSubmit()
             onClose()
           }}
         >
           I understand
-        </ButtonLegacy>
+        </Button>
       </div>
     </div>
   )

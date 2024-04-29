@@ -1,5 +1,4 @@
 import { type ComponentMeta, type ComponentStory } from '@storybook/react'
-import { IconAwesomeEnum } from '../icon/icon-awesome.enum'
 import { Banner } from './banner'
 
 export default {
@@ -22,5 +21,5 @@ Primary.args = {
   children,
   color: 'yellow',
   buttonLabel: 'Click me',
-  buttonIconRight: IconAwesomeEnum.ROTATE_RIGHT,
+  buttonIconRight: 'rotate-right',
 }

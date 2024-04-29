@@ -31,7 +31,7 @@ export function PageSettingsStorage(props: PageSettingsStorageProps) {
 
           <Button className="gap-2" size="lg" onClick={() => props.onAddStorage()}>
             Add Storage
-            <Icon iconName="plus-circle" iconStyle="regular" />
+            <Icon iconName="plus-circle" />
           </Button>
         </div>
 

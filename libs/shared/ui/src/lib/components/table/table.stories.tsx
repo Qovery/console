@@ -2,7 +2,7 @@ import { type Meta, type Story } from '@storybook/react'
 import { type Environment } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { environmentFactoryMock } from '@qovery/shared/factories'
-import ButtonLegacy from '../buttons/button-legacy/button-legacy'
+import Button from '../button/button'
 import Icon from '../icon/icon'
 import { Table, type TableFilterProps, type TableProps } from './table'
 import { TableRow } from './table-row/table-row'
@@ -26,9 +26,9 @@ const Template: Story<TableProps> = (args) => {
 
   return (
     <>
-      <ButtonLegacy className="mb-4" onClick={() => setData(addRow(data))}>
+      <Button type="button" size="lg" className="mb-4" onClick={() => setData(addRow(data))}>
         Add Row
-      </ButtonLegacy>
+      </Button>
       <Table {...args} data={data} setFilter={setFilter} filter={filter} setDataSort={setData}>
         <>
           {data.map((currentData, index) => (
@@ -113,9 +113,9 @@ const TemplateExpand: Story<TableProps> = (args) => {
 
   return (
     <>
-      <ButtonLegacy className="mb-4" onClick={() => setData(addRow(data))}>
+      <Button type="button" size="lg" className="mb-4" onClick={() => setData(addRow(data))}>
         Add Row
-      </ButtonLegacy>
+      </Button>
       <Table {...args} data={data} setFilter={setFilter} setDataSort={setData}>
         <>
           {data.map((currentData: Environment, index) => (
