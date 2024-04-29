@@ -1,6 +1,6 @@
 import { type PropsWithChildren, type ReactNode } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import ButtonLegacy, { ButtonLegacyStyle } from '../../buttons/button-legacy/button-legacy'
+import Button from '../../button/button'
 import { Callout } from '../../callout/callout'
 import { Icon } from '../../icon/icon'
 import InputTextSmall from '../../inputs/input-text-small/input-text-small'
@@ -102,16 +102,12 @@ export function ModalConfirmation({
         />
         {children}
         <div className="flex gap-3 justify-end">
-          <ButtonLegacy className="btn--no-min-w" style={ButtonLegacyStyle.STROKED} onClick={() => closeModal()}>
+          <Button type="button" color="neutral" variant="plain" size="lg" onClick={() => closeModal()}>
             Cancel
-          </ButtonLegacy>
-          <ButtonLegacy
-            className="btn--no-min-w"
-            style={isDelete ? ButtonLegacyStyle.ERROR : ButtonLegacyStyle.BASIC}
-            type="submit"
-          >
+          </Button>
+          <Button type="submit" size="lg" color={isDelete ? 'red' : 'brand'}>
             {ctaButton}
-          </ButtonLegacy>
+          </Button>
         </div>
       </form>
     </div>

@@ -5,14 +5,10 @@ import { IconEnum } from '@qovery/shared/enums'
 import {
   BlockContent,
   Button,
-  ButtonLegacy,
-  ButtonLegacySize,
-  ButtonLegacyStyle,
   Callout,
   ExternalLink,
   Heading,
   Icon,
-  IconAwesomeEnum,
   LoaderSpinner,
   Section,
   useModal,
@@ -92,32 +88,30 @@ export function PageOrganizationGithubRepositoryAccess(props: PageOrganizationGi
                   )}
                 </div>
                 {!props.githubAuthProvider?.use_bot ? (
-                  <ButtonLegacy
-                    dataTestId="install-button"
+                  <Button
+                    data-testid="install-button"
+                    type="button"
+                    size="md"
                     onClick={props.onConfigure}
-                    size={ButtonLegacySize.SMALL}
                     className="ml-2"
                   >
                     Install
-                  </ButtonLegacy>
+                  </Button>
                 ) : (
                   <div className="flex gap-2">
-                    <ButtonLegacy
-                      style={ButtonLegacyStyle.STROKED}
-                      size={ButtonLegacySize.SMALL}
-                      dataTestId="disconnect-button"
-                      iconRight={IconAwesomeEnum.XMARK}
+                    <Button
+                      data-testid="disconnect-button"
+                      className="gap-1"
+                      type="button"
+                      size="md"
                       onClick={() => props.onDisconnect && props.onDisconnect(false)}
                     >
                       Disconnect
-                    </ButtonLegacy>
-                    <ButtonLegacy
-                      dataTestId="permission-button"
-                      size={ButtonLegacySize.SMALL}
-                      onClick={props.onConfigure}
-                    >
+                      <Icon iconName="circle-xmark" />
+                    </Button>
+                    <Button data-testid="permission-button" type="button" size="md" onClick={props.onConfigure}>
                       Manage Permissions
-                    </ButtonLegacy>
+                    </Button>
                   </div>
                 )}
               </div>
