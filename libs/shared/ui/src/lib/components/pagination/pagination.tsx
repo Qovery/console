@@ -1,8 +1,5 @@
 import Button from '../button/button'
-import ButtonIcon, { ButtonIconStyle } from '../buttons/button-icon/button-icon'
-import { ButtonLegacySize } from '../buttons/button-legacy/button-legacy'
 import Icon from '../icon/icon'
-import { IconAwesomeEnum } from '../icon/icon-awesome.enum'
 import InputSelectSmall from '../inputs/input-select-small/input-select-small'
 
 export interface PaginationProps {
