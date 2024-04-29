@@ -39,11 +39,15 @@ export function NeedRedeployFlag() {
       buttonLabel={buttonLabel}
       onClickButton={mutationDeployService}
     >
-      <p>
-        This service needs to be{' '}
-        {serviceDeploymentStatusState === ServiceDeploymentStatusEnum.OUT_OF_DATE ? 'redeployed' : 'deployed'} to apply
-        the configuration changes
-      </p>
+      {serviceDeploymentStatusState === ServiceDeploymentStatusEnum.NEVER_DEPLOYED ? (
+        <p>This service is not running</p>
+      ) : (
+        <p>
+          This service needs to be{' '}
+          {serviceDeploymentStatusState === ServiceDeploymentStatusEnum.OUT_OF_DATE ? 'redeployed' : 'deployed'} to
+          apply the configuration changes
+        </p>
+      )}
     </Banner>
   )
 }

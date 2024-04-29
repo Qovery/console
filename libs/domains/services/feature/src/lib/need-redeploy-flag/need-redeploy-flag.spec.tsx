@@ -72,13 +72,11 @@ describe('NeedRedeployFlag', () => {
       },
     })
 
-    const { debug, userEvent } = renderWithProviders(<NeedRedeployFlag />)
+    const { userEvent } = renderWithProviders(<NeedRedeployFlag />)
 
     const button = screen.getByRole('button', { name: 'Redeploy now' })
 
     await userEvent.click(button)
-
-    debug()
 
     expect(useDeployServiceSpy().mutate).toBeCalled()
   })
