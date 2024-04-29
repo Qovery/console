@@ -15,8 +15,11 @@ export function Table(props: TableProps) {
   const { children, title, headArray, className = '' } = props
 
   return (
-    <div className={`border border-neutral-200 border-b-0 rounded text-xs text-neutral-400 ${className}`}>
-      <div className="flex h-10 sticky bg-white top-0 z-10 rounded border-neutral-200 border-b">
+    <div
+      className={`flex flex-col-reverse border border-neutral-200 border-b-0 rounded text-xs text-neutral-400 ${className}`}
+    >
+      {children}
+      <div className="flex h-10 sticky bg-white top-16 rounded border-neutral-200 border-b">
         <div className="flex items-center w-1/4 h-full flex-auto px-4 font-medium border-r border-neutral-200">
           {title}
         </div>
@@ -34,7 +37,6 @@ export function Table(props: TableProps) {
           </div>
         ))}
       </div>
-      {children}
     </div>
   )
 }
