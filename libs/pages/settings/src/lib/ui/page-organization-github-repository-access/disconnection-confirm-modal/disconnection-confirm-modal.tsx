@@ -1,4 +1,4 @@
-import { ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle, Callout, Icon } from '@qovery/shared/ui'
+import { Button, Callout, Icon } from '@qovery/shared/ui'
 
 export interface DisconnectionConfirmModalProps {
   onSubmit: (force: boolean) => void
@@ -23,26 +23,27 @@ export function DisconnectionConfirmModal(props: DisconnectionConfirmModalProps)
         </Callout.Text>
       </Callout.Root>
       <div className="flex gap-3 justify-end mt-6">
-        <ButtonLegacy
-          dataTestId="cancel-button"
-          className="btn--no-min-w"
-          style={ButtonLegacyStyle.STROKED}
-          size={ButtonLegacySize.XLARGE}
+        <Button
+          data-testid="cancel-button"
+          type="button"
+          color="neutral"
+          variant="plain"
+          size="lg"
           onClick={() => props.onClose()}
         >
           Cancel
-        </ButtonLegacy>
-        <ButtonLegacy
-          dataTestId="submit-button"
-          size={ButtonLegacySize.XLARGE}
-          style={ButtonLegacyStyle.ERROR}
+        </Button>
+        <Button
+          type="submit"
+          data-testid="submit-button"
+          color="red"
           onClick={() => {
             props.onSubmit && props.onSubmit(true)
             props.onClose()
           }}
         >
           Disconnect
-        </ButtonLegacy>
+        </Button>
       </div>
     </div>
   )

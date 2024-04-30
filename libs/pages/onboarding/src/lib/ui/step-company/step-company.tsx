@@ -2,7 +2,7 @@ import { type CompanySizeEnum } from 'qovery-typescript-axios'
 import { type Dispatch, type SetStateAction } from 'react'
 import { type Control, Controller } from 'react-hook-form'
 import { type Value } from '@qovery/shared/interfaces'
-import { ButtonLegacy, ButtonLegacySize, ButtonLegacyStyle, InputSelect, InputText } from '@qovery/shared/ui'
+import { Button, Icon, InputSelect, InputText } from '@qovery/shared/ui'
 
 export interface StepCompanyProps {
   dataSize: Array<Value>
@@ -70,17 +70,20 @@ export function StepCompany(props: StepCompanyProps) {
           )}
         />
         <div className="mt-10 pt-5 flex justify-between border-t border-neutral-200">
-          <ButtonLegacy
+          <Button
+            type="button"
+            color="neutral"
+            variant="surface"
+            size="lg"
+            className="gap-2"
             onClick={() => setStepCompany(false)}
-            size={ButtonLegacySize.XLARGE}
-            style={ButtonLegacyStyle.STROKED}
-            iconLeft="icon-solid-arrow-left"
           >
+            <Icon name="icon-solid-arrow-left" />
             Back
-          </ButtonLegacy>
-          <ButtonLegacy size={ButtonLegacySize.XLARGE} style={ButtonLegacyStyle.BASIC} type="submit">
+          </Button>
+          <Button type="submit" size="lg">
             Continue
-          </ButtonLegacy>
+          </Button>
         </div>
       </form>
     </div>

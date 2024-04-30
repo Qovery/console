@@ -1,16 +1,6 @@
 import { Controller, useFormContext } from 'react-hook-form'
 import { timezoneValues, weekdaysValues } from '@qovery/shared/enums'
-import {
-  BlockContent,
-  ButtonLegacy,
-  ButtonLegacySize,
-  ButtonLegacyStyle,
-  Heading,
-  InputSelect,
-  InputText,
-  InputToggle,
-  Section,
-} from '@qovery/shared/ui'
+import { BlockContent, Button, Heading, InputSelect, InputText, InputToggle, Section } from '@qovery/shared/ui'
 
 export interface PageSettingsDeploymentRulesProps {
   onSubmit: () => void
@@ -122,16 +112,9 @@ export function PageSettingsDeploymentRules(props: PageSettingsDeploymentRulesPr
             )}
           </BlockContent>
           <div className="flex justify-end">
-            <ButtonLegacy
-              className="mb-6 btn--no-min-w"
-              disabled={!formState.isValid}
-              size={ButtonLegacySize.LARGE}
-              style={ButtonLegacyStyle.BASIC}
-              loading={loading}
-              type="submit"
-            >
+            <Button className="mb-6" type="submit" size="lg" disabled={!formState.isValid} loading={loading}>
               Save
-            </ButtonLegacy>
+            </Button>
           </div>
         </form>
       </Section>

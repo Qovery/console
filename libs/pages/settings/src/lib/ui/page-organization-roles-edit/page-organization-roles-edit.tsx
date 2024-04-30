@@ -4,18 +4,9 @@ import {
 } from 'qovery-typescript-axios'
 import { type FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { SETTINGS_ROLES_URL, SETTINGS_URL } from '@qovery/shared/routes'
-import {
-  BlockContent,
-  ButtonLegacy,
-  ButtonLegacySize,
-  ButtonLegacyStyle,
-  Icon,
-  InputText,
-  InputTextArea,
-  LoaderSpinner,
-} from '@qovery/shared/ui'
+import { BlockContent, Button, Icon, InputText, InputTextArea, Link, LoaderSpinner } from '@qovery/shared/ui'
 import RowProject from './row-project/row-project'
 import TableClusters from './table-clusters/table-clusters'
 import Table from './table/table'
@@ -33,7 +24,6 @@ export function PageOrganizationRolesEdit(props: PageOrganizationRolesEditProps)
 
   const { control, formState } = useFormContext()
   const { organizationId = '' } = useParams()
-  const navigate = useNavigate()
 
   return (
     <div className="flex flex-col justify-between w-full">
@@ -47,15 +37,15 @@ export function PageOrganizationRolesEdit(props: PageOrganizationRolesEditProps)
             <>
               <div className="flex justify-between mb-8">
                 <div>
-                  <ButtonLegacy
-                    size={ButtonLegacySize.TINY}
-                    style={ButtonLegacyStyle.FLAT}
-                    onClick={() => navigate(SETTINGS_URL(organizationId) + SETTINGS_ROLES_URL)}
-                    className="!px-0 mb-1"
+                  <Link
+                    color="brand"
+                    size="xs"
+                    className="gap-1 mb-1"
+                    to={SETTINGS_URL(organizationId) + SETTINGS_ROLES_URL}
                   >
                     <Icon iconName="arrow-left" className="mr-1 text-xs" />
                     Back
-                  </ButtonLegacy>
+                  </Link>
                   <h1 className="h5 text-neutral-400 mb-2">Edit your custom role: {currentRole.name}</h1>
                   <p className="text-neutral-400 text-xs">
                     Set permissions for your custom role. Cluster level permissions allow you to define access
@@ -134,26 +124,25 @@ export function PageOrganizationRolesEdit(props: PageOrganizationRolesEditProps)
                     ))}
                   </Table>
                 )}
-                <div className="flex gap-3 justify-between mt-6">
-                  <ButtonLegacy
-                    dataTestId="delete-button"
-                    className="btn--no-min-w"
-                    style={ButtonLegacyStyle.ERROR}
-                    size={ButtonLegacySize.XLARGE}
+                <div className="flex gap-3 justify-between mt-6 mb-24">
+                  <Button
+                    type="button"
+                    data-testid="delete-button"
+                    color="red"
+                    size="lg"
                     onClick={() => onDeleteRole(currentRole)}
                   >
                     Delete role
-                  </ButtonLegacy>
-                  <ButtonLegacy
-                    dataTestId="submit-save-button"
-                    className="btn--no-min-w"
+                  </Button>
+                  <Button
+                    data-testid="submit-save-button"
+                    size="lg"
                     type="submit"
-                    size={ButtonLegacySize.XLARGE}
                     disabled={!formState.isValid}
                     loading={loadingForm}
                   >
                     Save
-                  </ButtonLegacy>
+                  </Button>
                 </div>
               </form>
             </>

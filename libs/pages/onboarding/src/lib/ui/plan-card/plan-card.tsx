@@ -27,7 +27,13 @@ export function PlanCard(props: PlanCardProps) {
           <span className="h5">Custom</span>
         )}
       </p>
-      <Button className="w-full justify-center mb-4" size="lg" onClick={() => onClick()} loading={loading === name}>
+      <Button
+        type="button"
+        className="w-full justify-center mb-4"
+        size="lg"
+        onClick={() => onClick()}
+        loading={loading === name}
+      >
         Select plan
       </Button>
       <ul>

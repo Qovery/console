@@ -2,16 +2,7 @@ import { type Cluster } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { environmentModeValues } from '@qovery/shared/enums'
 import { type Value } from '@qovery/shared/interfaces'
-import {
-  BlockContent,
-  ButtonLegacy,
-  ButtonLegacySize,
-  ButtonLegacyStyle,
-  Heading,
-  InputSelect,
-  InputText,
-  Section,
-} from '@qovery/shared/ui'
+import { BlockContent, Button, Heading, InputSelect, InputText, Section } from '@qovery/shared/ui'
 
 export interface PageSettingsGeneralProps {
   onSubmit: () => void
@@ -92,16 +83,9 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
             </p>
           </BlockContent>
           <div className="flex justify-end">
-            <ButtonLegacy
-              className="mb-6 btn--no-min-w"
-              disabled={!formState.isValid}
-              size={ButtonLegacySize.LARGE}
-              style={ButtonLegacyStyle.BASIC}
-              loading={loading}
-              type="submit"
-            >
+            <Button type="submit" size="lg" disabled={!formState.isValid} loading={loading}>
               Save
-            </ButtonLegacy>
+            </Button>
           </div>
         </form>
       </Section>

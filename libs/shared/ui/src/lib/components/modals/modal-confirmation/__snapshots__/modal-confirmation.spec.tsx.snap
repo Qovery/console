@@ -53,20 +53,16 @@ exports[`ModalConfirmation should match confirm mode with description 1`] = `
         class="flex gap-3 justify-end"
       >
         <button
-          class="btn btn--regular btn--stroked btn--no-min-w "
+          class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 hover:[&:not(:focus-visible):not(:disabled)]:shadow-sm active:[&:not(:focus-visible)]:shadow-none outline-brand-500 text-sm h-11 px-5 rounded border border-transparent text-neutral-350 hover:[&:not(:active):not(:focus-visible)]:border-neutral-300 hover:[&:not(:disabled)]:text-neutral-400 focus-visible:text-neutral-400 active:bg-neutral-150 active:text-neutral-400 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none"
           type="button"
         >
-          <span>
-            Cancel
-          </span>
+          Cancel
         </button>
         <button
-          class="btn btn--regular btn--basic btn--no-min-w "
+          class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-neutral-500 text-sm h-11 px-5 rounded bg-brand-500 active:bg-brand-600 hover:bg-brand-400 text-white disabled:text-brand-300 disabled:bg-brand-100"
           type="submit"
         >
-          <span>
-            Confirm
-          </span>
+          Confirm
         </button>
       </div>
     </form>
@@ -115,20 +111,16 @@ exports[`ModalConfirmation should match delete mode with description 1`] = `
         class="flex gap-3 justify-end"
       >
         <button
-          class="btn btn--regular btn--stroked btn--no-min-w "
+          class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 hover:[&:not(:focus-visible):not(:disabled)]:shadow-sm active:[&:not(:focus-visible)]:shadow-none outline-brand-500 text-sm h-11 px-5 rounded border border-transparent text-neutral-350 hover:[&:not(:active):not(:focus-visible)]:border-neutral-300 hover:[&:not(:disabled)]:text-neutral-400 focus-visible:text-neutral-400 active:bg-neutral-150 active:text-neutral-400 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none"
           type="button"
         >
-          <span>
-            Cancel
-          </span>
+          Cancel
         </button>
         <button
-          class="btn btn--regular btn--error btn--no-min-w "
+          class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-neutral-500 text-sm h-11 px-5 rounded bg-red-500 active:bg-red-600 hover:bg-red-400 text-white disabled:text-red-300 disabled:bg-red-100"
           type="submit"
         >
-          <span>
-            Confirm
-          </span>
+          Confirm
         </button>
       </div>
     </form>
@@ -181,20 +173,16 @@ exports[`ModalConfirmation should match delete mode without description 1`] = `
         class="flex gap-3 justify-end"
       >
         <button
-          class="btn btn--regular btn--stroked btn--no-min-w "
+          class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 hover:[&:not(:focus-visible):not(:disabled)]:shadow-sm active:[&:not(:focus-visible)]:shadow-none outline-brand-500 text-sm h-11 px-5 rounded border border-transparent text-neutral-350 hover:[&:not(:active):not(:focus-visible)]:border-neutral-300 hover:[&:not(:disabled)]:text-neutral-400 focus-visible:text-neutral-400 active:bg-neutral-150 active:text-neutral-400 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none"
           type="button"
         >
-          <span>
-            Cancel
-          </span>
+          Cancel
         </button>
         <button
-          class="btn btn--regular btn--error btn--no-min-w "
+          class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-neutral-500 text-sm h-11 px-5 rounded bg-red-500 active:bg-red-600 hover:bg-red-400 text-white disabled:text-red-300 disabled:bg-red-100"
           type="submit"
         >
-          <span>
-            Confirm
-          </span>
+          Confirm
         </button>
       </div>
     </form>

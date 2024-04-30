@@ -2,15 +2,7 @@ import { type BillingInfoRequest } from 'qovery-typescript-axios'
 import { type FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { type Value } from '@qovery/shared/interfaces'
-import {
-  BlockContent,
-  ButtonLegacy,
-  ButtonLegacySize,
-  ButtonLegacyStyle,
-  InputSelect,
-  InputText,
-  LoaderSpinner,
-} from '@qovery/shared/ui'
+import { BlockContent, Button, InputSelect, InputText, LoaderSpinner } from '@qovery/shared/ui'
 
 export interface BillingDetailsProps {
   onSubmit: FormEventHandler<HTMLFormElement>
@@ -173,18 +165,16 @@ export function BillingDetails(props: BillingDetailsProps) {
             />
           </div>
           <div className="flex justify-end">
-            <ButtonLegacy
-              dataTestId="submit-button"
-              className="btn--no-min-w"
-              size={ButtonLegacySize.LARGE}
-              style={ButtonLegacyStyle.BASIC}
+            <Button
+              data-testid="submit-button"
               type="submit"
+              size="lg"
               disabled={!formState.isValid}
               loading={props.editInProcess}
               onClick={props.onSubmit as () => void}
             >
               Save
-            </ButtonLegacy>
+            </Button>
           </div>
         </>
       )}
