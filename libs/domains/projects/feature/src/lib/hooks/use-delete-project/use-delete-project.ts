@@ -13,7 +13,8 @@ export function useDeleteProject() {
     },
     meta: {
       notifyOnSuccess: {
-        title: 'Your project has been deleted',
+        title:
+          'The project deletion has been started and will be completed after having deleted all environments within it.',
       },
       notifyOnError: true,
     },
