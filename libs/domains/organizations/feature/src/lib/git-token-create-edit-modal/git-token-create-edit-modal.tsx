@@ -1,6 +1,6 @@
 import { GitProviderEnum, type GitTokenResponse } from 'qovery-typescript-axios'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
-import { ExternalLink, Icon, InputSelect, InputText, InputTextArea, ModalCrud } from '@qovery/shared/ui'
+import { ExternalLink, Icon, InputSelect, InputText, InputTextArea, ModalCrud, useModal } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { useCreateGitToken } from '../hooks/use-create-git-token/use-create-git-token'
 import { useEditGitToken } from '../hooks/use-edit-git-token/use-edit-git-token'
@@ -13,6 +13,7 @@ export interface GitTokenCreateEditModalProps {
 }
 
 export function GitTokenCreateEditModal({ isEdit, gitToken, organizationId, onClose }: GitTokenCreateEditModalProps) {
+  const { enableAlertClickOutside } = useModal()
   const methods = useForm({
     mode: 'onChange',
     defaultValues: {
@@ -23,6 +24,8 @@ export function GitTokenCreateEditModal({ isEdit, gitToken, organizationId, onCl
       token: '',
     },
   })
+
+  methods.watch(() => enableAlertClickOutside(methods.formState.isDirty))
 
   const { mutateAsync: editGitToken, isLoading: isLoadingEditGitToken } = useEditGitToken()
   const { mutateAsync: createGitToken, isLoading: isLoadingCreateGitToken } = useCreateGitToken()

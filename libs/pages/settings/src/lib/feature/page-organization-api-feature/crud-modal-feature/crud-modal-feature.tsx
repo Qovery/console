@@ -16,12 +16,14 @@ export function CrudModalFeature(props: CrudModalFeatureProps) {
   const { mutateAsync: createApiToken } = useCreateApiToken()
   const { data: availableRoles = [], isFetched: isFetchedAvailableRoles } = useAvailableRoles({ organizationId })
 
-  const { openModal, closeModal } = useModal()
+  const { openModal, closeModal, enableAlertClickOutside } = useModal()
   const [loading, setLoading] = useState(false)
 
   const methods = useForm<OrganizationApiTokenCreateRequest>({
     mode: 'onChange',
   })
+
+  methods.watch(() => enableAlertClickOutside(methods.formState.isDirty))
 
   const onSubmit = methods.handleSubmit(async (data) => {
     setLoading(true)

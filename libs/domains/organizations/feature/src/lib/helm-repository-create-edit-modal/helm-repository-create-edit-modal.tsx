@@ -1,7 +1,15 @@
 import { type HelmRepositoryRequest, type HelmRepositoryResponse } from 'qovery-typescript-axios'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { match } from 'ts-pattern'
-import { ExternalLink, InputSelect, InputText, InputTextArea, InputToggle, ModalCrud } from '@qovery/shared/ui'
+import {
+  ExternalLink,
+  InputSelect,
+  InputText,
+  InputTextArea,
+  InputToggle,
+  ModalCrud,
+  useModal,
+} from '@qovery/shared/ui'
 import { useAvailableHelmRepositories } from '../hooks/use-available-helm-repositories/use-available-helm-repositories'
 import { useCreateHelmRepository } from '../hooks/use-create-helm-repository/use-create-helm-repository'
 import { useEditHelmRepository } from '../hooks/use-edit-helm-repository/use-edit-helm-repository'
@@ -19,6 +27,7 @@ export function HelmRepositoryCreateEditModal({
   organizationId,
   onClose,
 }: HelmRepositoryCreateEditModalProps) {
+  const { enableAlertClickOutside } = useModal()
   const { data: availableHelmRepositories = [] } = useAvailableHelmRepositories()
   const { mutateAsync: editHelmRepository, isLoading: isEditHelmRepositoryLoading } = useEditHelmRepository()
   const { mutateAsync: createHelmRepository, isLoading: isCreateHelmRepositoryLoading } = useCreateHelmRepository()
@@ -43,6 +52,8 @@ export function HelmRepositoryCreateEditModal({
     },
     mode: 'onChange',
   })
+
+  methods.watch(() => enableAlertClickOutside(methods.formState.isDirty))
 
   const watchKind = methods.watch('kind')
 

@@ -1,6 +1,7 @@
 import { type OrganizationWebhookCreateRequest, type OrganizationWebhookResponse } from 'qovery-typescript-axios'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useCreateWebhook, useEditWebhook } from '@qovery/domains/organizations/feature'
+import { useModal } from '@qovery/shared/ui'
 import WebhookCrudModal from '../../../ui/page-organization-webhooks/webhook-crud-modal/webhook-crud-modal'
 
 export interface WebhookCrudModalFeatureProps {
@@ -10,6 +11,7 @@ export interface WebhookCrudModalFeatureProps {
 }
 
 export function WebhookCrudModalFeature({ organizationId, closeModal, webhook }: WebhookCrudModalFeatureProps) {
+  const { enableAlertClickOutside } = useModal()
   const { mutateAsync: createWebhook, isLoading: isLoadingCreateWebhook } = useCreateWebhook()
   const { mutateAsync: editWebhook, isLoading: isLoadingEditWebhook } = useEditWebhook()
 
@@ -25,6 +27,8 @@ export function WebhookCrudModalFeature({ organizationId, closeModal, webhook }:
       target_secret: '',
     },
   })
+
+  methods.watch(() => enableAlertClickOutside(methods.formState.isDirty))
 
   const onSubmit = methods.handleSubmit(async (data) => {
     try {

@@ -3,7 +3,7 @@ import {
   OrganizationAnnotationsGroupScopeEnum,
 } from 'qovery-typescript-axios'
 import { Controller, FormProvider, useFieldArray, useForm } from 'react-hook-form'
-import { Button, Checkbox, Icon, InputText, InputTextSmall, ModalCrud } from '@qovery/shared/ui'
+import { Button, Checkbox, Icon, InputText, InputTextSmall, ModalCrud, useModal } from '@qovery/shared/ui'
 import { useCreateAnnotationsGroup } from '../hooks/use-create-annotations-group/use-create-annotations-group'
 import { useEditAnnotationsGroup } from '../hooks/use-edit-annotations-group/use-edit-annotations-group'
 
@@ -36,6 +36,7 @@ export function AnnotationCreateEditModal({
   organizationId,
   onClose,
 }: AnnotationCreateEditModalProps) {
+  const { enableAlertClickOutside } = useModal()
   const methods = useForm({
     mode: 'onChange',
     defaultValues: {
@@ -49,6 +50,8 @@ export function AnnotationCreateEditModal({
       scopes: convertScopeEnumToObject(annotationsGroup?.scopes ?? []),
     },
   })
+
+  methods.watch(() => enableAlertClickOutside(methods.formState.isDirty))
 
   const { fields, append, remove } = useFieldArray({
     control: methods.control,
