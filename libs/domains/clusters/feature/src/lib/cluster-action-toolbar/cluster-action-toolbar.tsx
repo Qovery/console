@@ -36,6 +36,17 @@ function MenuManageDeployment({ cluster, clusterStatus }: { cluster: Cluster; cl
     return null
   }
 
+  const clusterNeedUpdate = cluster.deployment_status !== 'UP_TO_DATE'
+  const displayYellowColor = clusterNeedUpdate && clusterStatus.status !== 'STOPPED'
+
+  const tooltipClusterNeedUpdate = displayYellowColor && (
+    <Tooltip side="bottom" content="Configuration has changed and needs to be applied">
+      <div className="absolute right-2">
+        <Icon iconName="circle-exclamation" />
+      </div>
+    </Tooltip>
+  )
+
   const mutationDeploy = () =>
     deployCluster({
       organizationId: cluster.organization.id,
@@ -70,13 +81,27 @@ function MenuManageDeployment({ cluster, clusterStatus }: { cluster: Cluster; cl
 
   const entries: ReactNode[] = [
     isDeployAvailable(clusterStatus.status) && (
-      <DropdownMenu.Item key="0" icon={<Icon iconName="play" />} onSelect={mutationDeploy}>
+      <DropdownMenu.Item
+        key="0"
+        icon={<Icon iconName="play" />}
+        onSelect={mutationDeploy}
+        className="relative"
+        color={displayYellowColor ? 'yellow' : 'brand'}
+      >
         {clusterStatus.is_deployed ? 'Deploy' : 'Install'}
+        {tooltipClusterNeedUpdate}
       </DropdownMenu.Item>
     ),
     isRedeployAvailable(clusterStatus.status) && (
-      <DropdownMenu.Item key="1" icon={<Icon iconName="rotate-right" />} onSelect={mutationUpdate}>
+      <DropdownMenu.Item
+        key="1"
+        icon={<Icon iconName="rotate-right" />}
+        onSelect={mutationUpdate}
+        className="relative"
+        color={displayYellowColor ? 'yellow' : 'brand'}
+      >
         Update
+        {tooltipClusterNeedUpdate}
       </DropdownMenu.Item>
     ),
     cluster.cloud_provider !== 'GCP' && isStopAvailable(clusterStatus.status) && (
@@ -89,7 +114,7 @@ function MenuManageDeployment({ cluster, clusterStatus }: { cluster: Cluster; cl
   return entries.length > 0 ? (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
-        <ActionToolbar.Button aria-label="Manage Deployment">
+        <ActionToolbar.Button aria-label="Manage Deployment" color={displayYellowColor ? 'yellow' : 'neutral'}>
           <Tooltip content="Manage Deployment">
             <div className="flex items-center justify-center w-full h-full">
               <Icon iconName="play" className="mr-4" />
