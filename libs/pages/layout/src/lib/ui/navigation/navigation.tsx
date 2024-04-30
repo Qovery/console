@@ -57,7 +57,7 @@ export function Navigation({ defaultOrganizationId, clusterNotification }: Navig
                 )}
                 to={projectId ? OVERVIEW_URL(organizationId, projectId) : ORGANIZATION_URL(organizationId)}
               >
-                <Icon iconName="layer-group" className="text-lg" />
+                <Icon iconName="layer-group" className="text-[18px]" />
               </LinkButton>
             </div>
           </Tooltip>
@@ -75,7 +75,7 @@ export function Navigation({ defaultOrganizationId, clusterNotification }: Navig
                 )}
                 to={CLUSTERS_URL(organizationId)}
               >
-                <Icon iconName="cloud-word" className="text-lg" />
+                <Icon iconName="cloud-word" className="text-[18px]" />
               </LinkButton>
               {clusterNotification && (
                 <span className="w-2 h-2 rounded-lg bg-red-500 absolute top-1.5 right-1.5"></span>
@@ -96,7 +96,7 @@ export function Navigation({ defaultOrganizationId, clusterNotification }: Navig
                 )}
                 to={AUDIT_LOGS_URL(organizationId)}
               >
-                <Icon iconName="clock-rotate-left" className="text-lg" />
+                <Icon iconName="clock-rotate-left" className="text-[18px]" />
               </LinkButton>
             </div>
           </Tooltip>
@@ -117,7 +117,7 @@ export function Navigation({ defaultOrganizationId, clusterNotification }: Navig
                   )}
                   to={SETTINGS_URL(organizationId)}
                 >
-                  <Icon iconName="gear" className="text-lg" />
+                  <Icon iconName="gear" className="text-[18px]" />
                 </LinkButton>
               </div>
             </Tooltip>
