@@ -13,7 +13,8 @@ export function useEditAnnotationsGroup() {
     },
     meta: {
       notifyOnSuccess: {
-        title: 'Your annotations group has been edited',
+        title:
+          'Your annotations group has been edited. You need to redeploy your services using it for your changes to be applied.',
       },
       notifyOnError: true,
     },
