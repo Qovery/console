@@ -1,6 +1,6 @@
 import { type Meta } from '@storybook/react'
 import { IconEnum } from '@qovery/shared/enums'
-import ButtonIcon, { ButtonIconStyle } from '../buttons/button-icon/button-icon'
+import Button from '../button/button'
 import Icon from '../icon/icon'
 import { Section } from '../section/section'
 import Tag from '../tag/tag'
@@ -22,9 +22,15 @@ export default Story
 
 const buttons = (
   <>
-    <ButtonIcon icon="icon-solid-terminal" style={ButtonIconStyle.STROKED} />
-    <ButtonIcon icon="icon-solid-scroll" style={ButtonIconStyle.STROKED} />
-    <ButtonIcon icon="icon-solid-clock-rotate-left" style={ButtonIconStyle.STROKED} />
+    <Button type="button" variant="outline" color="neutral" size="md">
+      <Icon iconName="terminal" />
+    </Button>
+    <Button type="button" variant="outline" color="neutral" size="md">
+      <Icon iconName="scroll" />
+    </Button>
+    <Button type="button" variant="outline" color="neutral" size="md">
+      <Icon iconName="clock-rotate-left" />
+    </Button>
   </>
 )
 

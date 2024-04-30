@@ -1,16 +1,15 @@
 import { type OrganizationAvailableRole, type OrganizationCustomRole } from 'qovery-typescript-axios'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { MemberRoleEnum } from '@qovery/shared/enums'
 import { SETTINGS_ROLES_EDIT_URL, SETTINGS_URL } from '@qovery/shared/routes'
 import {
   BlockContent,
   Button,
-  ButtonIcon,
-  ButtonIconStyle,
-  ButtonLegacySize,
+  ExternalLink,
   Heading,
   Icon,
   IconAwesomeEnum,
+  Link,
   LoaderSpinner,
   Section,
 } from '@qovery/shared/ui'
@@ -46,7 +45,6 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
   const { roles, onAddRole, onDeleteRole, loading } = props
 
   const { organizationId = '' } = useParams()
-  const navigate = useNavigate()
 
   return (
     <div className="flex flex-col justify-between w-full max-w-content-with-navigation-left">
@@ -95,35 +93,37 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
                       </div>
                     </div>
                     {!isDefaultRole(role.name) ? (
-                      <div data-testid={`role-actions-${role.id}`}>
-                        <ButtonIcon
-                          icon={IconAwesomeEnum.WHEEL}
-                          style={ButtonIconStyle.STROKED}
-                          size={ButtonLegacySize.TINY}
-                          onClick={() => navigate(`${SETTINGS_URL(organizationId)}${SETTINGS_ROLES_EDIT_URL(role.id)}`)}
-                          className="text-neutral-350 hover:text-neutral-400 bg-transparent !w-9 !h-8 mr-2"
-                          iconClassName="!text-xs"
-                        />
-                        <ButtonIcon
-                          icon={IconAwesomeEnum.TRASH}
-                          style={ButtonIconStyle.STROKED}
-                          size={ButtonLegacySize.TINY}
+                      <div data-testid={`role-actions-${role.id}`} className="flex gap-2">
+                        <Link
+                          as="button"
+                          variant="outline"
+                          color="neutral"
+                          size="md"
+                          to={`${SETTINGS_URL(organizationId)}${SETTINGS_ROLES_EDIT_URL(role.id)}`}
+                        >
+                          <Icon iconName="gear" />
+                        </Link>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          color="neutral"
+                          size="md"
                           onClick={() => onDeleteRole(role)}
-                          className="text-neutral-350 hover:text-neutral-400 bg-transparent !w-9 !h-8"
-                          iconClassName="!text-xs"
-                        />
+                        >
+                          <Icon iconName="trash" />
+                        </Button>
                       </div>
                     ) : (
                       <div data-testid={`role-doc-${role.id}`}>
-                        <ButtonIcon
-                          icon={IconAwesomeEnum.BOOK}
-                          style={ButtonIconStyle.STROKED}
-                          size={ButtonLegacySize.TINY}
-                          className="text-neutral-350 hover:text-neutral-400 bg-transparent !w-9 !h-8"
-                          iconClassName="!text-xs"
-                          link="https://hub.qovery.com/docs/using-qovery/configuration/organization/#roles-based-access-control-rbac"
-                          external
-                        />
+                        <ExternalLink
+                          as="button"
+                          variant="outline"
+                          color="neutral"
+                          size="md"
+                          href="https://hub.qovery.com/docs/using-qovery/configuration/organization/#roles-based-access-control-rbac"
+                        >
+                          <Icon iconName="book" />
+                        </ExternalLink>
                       </div>
                     )}
                   </div>

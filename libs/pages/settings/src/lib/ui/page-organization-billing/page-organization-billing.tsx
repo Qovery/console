@@ -2,11 +2,8 @@ import { type CreditCard } from 'qovery-typescript-axios'
 import {
   BlockContent,
   Button,
-  ButtonIcon,
-  ButtonIconStyle,
   Heading,
   Icon,
-  IconAwesomeEnum,
   InputCreditCard,
   InputText,
   LoaderSpinner,
@@ -65,13 +62,15 @@ export function PageOrganizationBilling(props: PageOrganizationBillingProps) {
                     value={`${creditCard.expiry_month} / ${creditCard.expiry_year}`}
                     disabled
                   />
-                  <ButtonIcon
-                    dataTestId="delete-credit-card"
+                  <Button
+                    data-testid="delete-credit-card"
+                    className="w-[52px] h-[52px] justify-center"
+                    variant="surface"
+                    color="neutral"
                     onClick={() => props.onDeleteCard(creditCard)}
-                    icon={IconAwesomeEnum.TRASH}
-                    style={ButtonIconStyle.STROKED}
-                    className="!w-[52px] !h-[52px] bg-transparent"
-                  />
+                  >
+                    <Icon iconName="trash" className="text-sm" />
+                  </Button>
                 </div>
               ))}
             </div>

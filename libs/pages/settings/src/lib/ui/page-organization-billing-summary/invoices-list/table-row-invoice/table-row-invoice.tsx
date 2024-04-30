@@ -1,15 +1,6 @@
 import { type Invoice, InvoiceStatusEnum } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
-import {
-  Badge,
-  ButtonIcon,
-  ButtonIconStyle,
-  ButtonLegacySize,
-  IconAwesomeEnum,
-  type TableFilterProps,
-  type TableHeadProps,
-  TableRow,
-} from '@qovery/shared/ui'
+import { Badge, Button, Icon, type TableFilterProps, type TableHeadProps, TableRow } from '@qovery/shared/ui'
 import { dateMediumLocalFormat } from '@qovery/shared/util-dates'
 import { costToHuman } from '@qovery/shared/util-js'
 
@@ -65,20 +56,20 @@ export function TableRowInvoice(props: TableRowInvoiceProps) {
           {costToHuman(data.total_in_cents / 100, data.currency_code)}
         </div>
         <div className="px-4 text-xs text-neutral-400 font-medium">
-          <ButtonIcon
-            dataTestId="download-invoice-btn"
-            className="bg-transparent !w-9 !h-8"
-            iconClassName="text-neutral-400"
-            external
+          <Button
+            data-testid="download-invoice-btn"
+            type="button"
+            variant="outline"
+            color="neutral"
+            size="md"
             loading={props.isLoading}
             onClick={() => {
               if (!downloadInvoice) return
               downloadInvoice(data?.id || '')
             }}
-            icon={IconAwesomeEnum.DOWNLOAD}
-            style={ButtonIconStyle.STROKED}
-            size={ButtonLegacySize.SMALL}
-          />
+          >
+            <Icon iconName="download" />
+          </Button>
         </div>
       </>
     </TableRow>

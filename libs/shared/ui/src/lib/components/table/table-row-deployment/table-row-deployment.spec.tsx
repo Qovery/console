@@ -5,12 +5,9 @@ import { applicationDeploymentsFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders } from '@qovery/shared/util-tests'
 import TableRowDeployment, { type TableRowDeploymentProps } from './table-row-deployment'
 
-const mockNavigate = jest.fn()
-
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useParams: () => ({ organizationId: '0', projectId: '1', environmentId: '2', applicationId: '3', databaseId: '4' }),
-  useNavigate: () => mockNavigate,
 }))
 
 describe('TableRowDeployment', () => {
@@ -62,12 +59,10 @@ describe('TableRowDeployment', () => {
 
   it('should have link to pod logs', async () => {
     props.fromService = true
-    const { userEvent } = renderWithProviders(<TableRowDeployment {...props} />)
+    renderWithProviders(<TableRowDeployment {...props} />)
 
     const btnLogs = screen.getByTestId('btn-logs')
-    await userEvent.click(btnLogs)
-
-    expect(mockNavigate).toHaveBeenCalledWith('/organization/0/project/1/environment/2/logs/3/live-logs')
+    expect(btnLogs).toHaveAttribute('href', '/organization/0/project/1/environment/2/logs/3/live-logs')
   })
 
   it('should have link to deployment logs with version', async () => {
@@ -82,12 +77,11 @@ describe('TableRowDeployment', () => {
       execution_id: 'execution-id',
     }
 
-    const { userEvent } = renderWithProviders(<TableRowDeployment {...props} />)
+    renderWithProviders(<TableRowDeployment {...props} />)
 
     const btnLogs = screen.getByTestId('btn-logs')
-    await userEvent.click(btnLogs)
-
-    expect(mockNavigate).toHaveBeenCalledWith(
+    expect(btnLogs).toHaveAttribute(
+      'href',
       '/organization/0/project/1/environment/2/logs/3/deployment-logs/execution-id'
     )
   })

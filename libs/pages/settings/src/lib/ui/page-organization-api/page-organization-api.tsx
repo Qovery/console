@@ -78,15 +78,15 @@ export function PageOrganizationApi(props: PageOrganizationApiProps) {
                     </div>
                   </div>
                   <div>
-                    <ButtonIcon
-                      icon={IconAwesomeEnum.TRASH}
-                      style={ButtonIconStyle.STROKED}
-                      size={ButtonLegacySize.TINY}
+                    <Button
+                      data-testid="delete-token"
+                      variant="outline"
+                      color="neutral"
+                      size="md"
                       onClick={() => onDelete(token)}
-                      className="text-neutral-350 hover:text-neutral-400 bg-transparent !w-9 !h-8"
-                      iconClassName="!text-xs"
-                      dataTestId="delete-token"
-                    />
+                    >
+                      <Icon iconName="trash" />
+                    </Button>
                   </div>
                 </li>
               ))}
