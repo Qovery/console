@@ -14,6 +14,7 @@ export function ClusterDeleteModal({ cluster }: ClusterDeleteModalProps) {
   const {
     organization: { id: organizationId },
     name,
+    kubernetes,
     id: clusterId,
   } = cluster
   const { mutateAsync } = useDeleteCluster()
@@ -84,7 +85,7 @@ export function ClusterDeleteModal({ cluster }: ClusterDeleteModalProps) {
           </li>
         </ul>
         <p>Use it carefully this action is irreversible.</p>
-        {clusterDeleteMode !== ClusterDeleteMode.DELETE_QOVERY_CONFIG && (
+        {kubernetes !== 'SELF_MANAGED' && clusterDeleteMode !== ClusterDeleteMode.DELETE_QOVERY_CONFIG && (
           <Callout.Root className="mt-3 text-xs" color="yellow">
             <Callout.Icon>
               <Icon iconName="triangle-exclamation" />
