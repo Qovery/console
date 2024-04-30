@@ -1,4 +1,4 @@
-import { ClusterStateEnum, type ClusterStatusGet } from 'qovery-typescript-axios'
+import { ClusterDeploymentStatusEnum, ClusterStateEnum, type ClusterStatusGet } from 'qovery-typescript-axios'
 import { clusterFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ClusterActionToolbar } from './cluster-action-toolbar'
@@ -17,6 +17,7 @@ jest.mock('react-router-dom', () => ({
 
 describe('ClusterActionToolbar', () => {
   it('should match manage deployment snapshot', async () => {
+    mockCluster.deployment_status = ClusterDeploymentStatusEnum.UP_TO_DATE
     const { userEvent, baseElement } = renderWithProviders(
       <ClusterActionToolbar cluster={mockCluster} organizationId="1" clusterStatus={mockClusterStatus} />,
       {
@@ -30,6 +31,21 @@ describe('ClusterActionToolbar', () => {
   })
 
   it('should match other actions snapshot', async () => {
+    mockCluster.deployment_status = ClusterDeploymentStatusEnum.UP_TO_DATE
+    const { userEvent, baseElement } = renderWithProviders(
+      <ClusterActionToolbar cluster={mockCluster} organizationId="1" clusterStatus={mockClusterStatus} />,
+      {
+        container: document.body,
+      }
+    )
+    const buttonOtherActions = screen.getByLabelText(/other actions/i)
+    await userEvent.click(buttonOtherActions)
+
+    expect(baseElement).toMatchSnapshot()
+  })
+
+  it('should match outdated snapshot', async () => {
+    mockCluster.deployment_status = ClusterDeploymentStatusEnum.OUT_OF_DATE
     const { userEvent, baseElement } = renderWithProviders(
       <ClusterActionToolbar cluster={mockCluster} organizationId="1" clusterStatus={mockClusterStatus} />,
       {
