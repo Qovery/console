@@ -4,7 +4,7 @@ import {
   type DeploymentHistoryHelmResponse,
 } from 'qovery-typescript-axios'
 import { type MouseEvent, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link as RouterLink, useParams } from 'react-router-dom'
 import { type Container } from '@qovery/domains/services/data-access'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { type DeploymentService } from '@qovery/shared/interfaces'
@@ -22,7 +22,7 @@ import { dateUTCString, timeAgo } from '@qovery/shared/util-dates'
 import { trimId, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { Badge } from '../../badge/badge'
 import Icon from '../../icon/icon'
-import { Link as LinkButton } from '../../link/link'
+import { Link } from '../../link/link'
 import Skeleton from '../../skeleton/skeleton'
 import StatusChip from '../../status-chip/status-chip'
 import TagCommit from '../../tag-commit/tag-commit'
@@ -128,7 +128,7 @@ export function TableRowDeployment({
         {(data as DeploymentService).type && (
           <div className="px-3">
             <Skeleton show={isLoading} width={120} height={20}>
-              <Link
+              <RouterLink
                 to={
                   (data as DeploymentService)?.type === ServiceTypeEnum.DATABASE
                     ? `${DATABASE_URL(organizationId, projectId, environmentId, data?.id) + DATABASE_GENERAL_URL}`
@@ -141,7 +141,7 @@ export function TableRowDeployment({
                   </div>
                   <p className="text-xs text-neutral-400 font-medium">{data?.name}</p>
                 </div>
-              </Link>
+              </RouterLink>
             </Skeleton>
           </div>
         )}
@@ -159,7 +159,7 @@ export function TableRowDeployment({
                   </span>
                 </Tooltip>
               </p>
-              <LinkButton
+              <Link
                 as="button"
                 data-testid="btn-logs"
                 variant="outline"
@@ -173,7 +173,7 @@ export function TableRowDeployment({
                 }
               >
                 <Icon iconName="scroll" />
-              </LinkButton>
+              </Link>
             </>
           </Skeleton>
         </div>

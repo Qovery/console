@@ -1,5 +1,5 @@
 import clsx from 'clsx'
-import { Link, useLocation, useParams } from 'react-router-dom'
+import { Link as RouterLink, useLocation, useParams } from 'react-router-dom'
 import {
   AUDIT_LOGS_URL,
   CLUSTERS_URL,
@@ -11,7 +11,7 @@ import {
   OVERVIEW_URL,
   SETTINGS_URL,
 } from '@qovery/shared/routes'
-import { Icon, Link as LinkButton, Tooltip } from '@qovery/shared/ui'
+import { Icon, Link, Tooltip } from '@qovery/shared/ui'
 import MenuAccountFeature from '../../feature/menu-account-feature/menu-account-feature'
 
 export interface NavigationProps {
@@ -34,18 +34,18 @@ export function Navigation({ defaultOrganizationId, clusterNotification }: Navig
 
   return (
     <div className="w-16 h-screen dark:bg-neutral-650 bg-white flex flex-col">
-      <Link
+      <RouterLink
         to={matchLogInfraRoute ? INFRA_LOGS_URL(organizationId, clusterId) : ORGANIZATION_URL(organizationId)}
         className="flex w-16 h-16 items-center justify-center border-b z-10 dark:border-neutral-500 border-neutral-200"
       >
         <img className="w-[28px]" src="/assets/logos/logo-icon.svg" alt="Qovery logo" />
-      </Link>
+      </RouterLink>
 
       <div className="flex flex-col justify-between px-2.5 py-4 flex-grow">
         <div className="flex flex-col gap-2">
           <Tooltip content="Environments" side="right">
             <div>
-              <LinkButton
+              <Link
                 as="button"
                 color="neutral"
                 variant="plain"
@@ -58,12 +58,12 @@ export function Navigation({ defaultOrganizationId, clusterNotification }: Navig
                 to={projectId ? OVERVIEW_URL(organizationId, projectId) : ORGANIZATION_URL(organizationId)}
               >
                 <Icon iconName="layer-group" className="text-[18px]" />
-              </LinkButton>
+              </Link>
             </div>
           </Tooltip>
           <Tooltip content="Clusters" side="right">
             <div className="relative">
-              <LinkButton
+              <Link
                 as="button"
                 color="neutral"
                 variant="plain"
@@ -76,7 +76,7 @@ export function Navigation({ defaultOrganizationId, clusterNotification }: Navig
                 to={CLUSTERS_URL(organizationId)}
               >
                 <Icon iconName="cloud-word" className="text-[18px]" />
-              </LinkButton>
+              </Link>
               {clusterNotification && (
                 <span className="w-2 h-2 rounded-lg bg-red-500 absolute top-1.5 right-1.5"></span>
               )}
@@ -84,7 +84,7 @@ export function Navigation({ defaultOrganizationId, clusterNotification }: Navig
           </Tooltip>
           <Tooltip content="Audit Logs" side="right">
             <div>
-              <LinkButton
+              <Link
                 as="button"
                 color="neutral"
                 variant="plain"
@@ -97,7 +97,7 @@ export function Navigation({ defaultOrganizationId, clusterNotification }: Navig
                 to={AUDIT_LOGS_URL(organizationId)}
               >
                 <Icon iconName="clock-rotate-left" className="text-[18px]" />
-              </LinkButton>
+              </Link>
             </div>
           </Tooltip>
         </div>
@@ -105,7 +105,7 @@ export function Navigation({ defaultOrganizationId, clusterNotification }: Navig
           <div className="flex flex-col gap-3">
             <Tooltip content="Settings" side="right">
               <div>
-                <LinkButton
+                <Link
                   as="button"
                   color="neutral"
                   variant="plain"
@@ -118,7 +118,7 @@ export function Navigation({ defaultOrganizationId, clusterNotification }: Navig
                   to={SETTINGS_URL(organizationId)}
                 >
                   <Icon iconName="gear" className="text-[18px]" />
-                </LinkButton>
+                </Link>
               </div>
             </Tooltip>
           </div>
