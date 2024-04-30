@@ -8,7 +8,7 @@ import { useEffect } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { match } from 'ts-pattern'
 import { IconEnum } from '@qovery/shared/enums'
-import { ExternalLink, Icon, InputSelect, InputText, InputTextArea, ModalCrud } from '@qovery/shared/ui'
+import { ExternalLink, Icon, InputSelect, InputText, InputTextArea, ModalCrud, useModal } from '@qovery/shared/ui'
 import { containerRegistryKindToIcon } from '@qovery/shared/util-js'
 import { useAvailableContainerRegistries } from '../hooks/use-available-container-registries/use-available-container-registries'
 import { useCreateContainerRegistry } from '../hooks/use-create-container-registry/use-create-container-registry'
@@ -42,6 +42,7 @@ export function ContainerRegistryCreateEditModal({
   organizationId,
   onClose,
 }: ContainerRegistryCreateEditModalProps) {
+  const { enableAlertClickOutside } = useModal()
   const methods = useForm<ContainerRegistryRequest>({
     mode: 'onChange',
     defaultValues: {
@@ -60,6 +61,8 @@ export function ContainerRegistryCreateEditModal({
       },
     },
   })
+
+  methods.watch(() => enableAlertClickOutside(methods.formState.isDirty))
 
   const { data: availableContainerRegistries = [] } = useAvailableContainerRegistries()
   const { mutateAsync: editContainerRegistry, isLoading: isLoadingEditContainerRegistry } = useEditContainerRegistry()
