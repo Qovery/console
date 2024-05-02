@@ -55,7 +55,14 @@ export function Container({ service, environment, children }: PropsWithChildren<
               size="xs"
               to={CLUSTER_URL(environment?.organization.id, environment?.cluster_id)}
             >
-              <Icon name={environment?.cloud_provider.provider as IconEnum} width="16" />
+              <Icon
+                name={
+                  cluster?.kubernetes === 'SELF_MANAGED'
+                    ? IconEnum.KUBERNETES
+                    : (environment?.cloud_provider.provider as IconEnum)
+                }
+                width="16"
+              />
               <p className="ml-1.5 max-w-[200px] truncate">{cluster?.name}</p>
             </Link>
           </Tooltip>
