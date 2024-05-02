@@ -72,7 +72,7 @@ export function GitPublicRepositorySettings({ disabled = false, hideRootPath }: 
             }}
             render={({ field, fieldState: { error } }) => (
               <InputText
-                label="Root application path"
+                label="Root service path"
                 name={field.name}
                 onChange={field.onChange}
                 value={field.value}
@@ -83,7 +83,7 @@ export function GitPublicRepositorySettings({ disabled = false, hideRootPath }: 
           />
         )}
         <p className="text-xs ml-4 mt-1 text-neutral-350">
-          Provide the path in the repository where the application is located
+          Provide the path in the repository where the service is located
         </p>
       </div>
       <Callout.Root color="sky" className="text-xs items-center">
