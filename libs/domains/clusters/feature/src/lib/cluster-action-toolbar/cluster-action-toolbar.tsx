@@ -130,10 +130,8 @@ function MenuManageDeployment({ cluster, clusterStatus }: { cluster: Cluster; cl
 
 function MenuOtherActions({ cluster, clusterStatus }: { cluster: Cluster; clusterStatus: ClusterStatusGet }) {
   const navigate = useNavigate()
-  const showSelfManagedGuideKey = 'show-self-managed-guide'
-  const [searchParams, setSearchParams] = useSearchParams()
   const { pathname } = useLocation()
-  const { openModal, closeModal } = useModal()
+  const { openModal } = useModal()
   const [, copyToClipboard] = useCopyToClipboard()
   const { mutate: downloadKubeconfig } = useDownloadKubeconfig()
 
@@ -144,31 +142,6 @@ function MenuOtherActions({ cluster, clusterStatus }: { cluster: Cluster; cluste
   }
 
   const canDelete = clusterStatus.status && isDeleteAvailable(clusterStatus.status)
-
-  const openInstallationGuideModal = () =>
-    openModal({
-      content: (
-        <ClusterInstallationGuideModal
-          organizationId={cluster.organization.id}
-          clusterId={cluster.id}
-          onClose={() => {
-            searchParams.delete(showSelfManagedGuideKey)
-            setSearchParams(searchParams)
-            closeModal()
-          }}
-        />
-      ),
-    })
-
-  useEffect(() => {
-    const bool = searchParams.has(showSelfManagedGuideKey) && cluster.kubernetes === 'SELF_MANAGED'
-    if (bool) {
-      searchParams.delete(showSelfManagedGuideKey)
-      setSearchParams(searchParams)
-      openInstallationGuideModal()
-    }
-    return () => (bool ? closeModal() : undefined)
-  }, [searchParams, setSearchParams, cluster.kubernetes, closeModal])
 
   return (
     <DropdownMenu.Root>
@@ -207,11 +180,6 @@ function MenuOtherActions({ cluster, clusterStatus }: { cluster: Cluster; cluste
         >
           Get Kubeconfig
         </DropdownMenu.Item>
-        {cluster.kubernetes === 'SELF_MANAGED' && (
-          <DropdownMenu.Item icon={<Icon iconName="circle-info" />} onSelect={openInstallationGuideModal}>
-            Installation guide
-          </DropdownMenu.Item>
-        )}
         {canDelete && (
           <>
             <DropdownMenu.Separator />
@@ -234,22 +202,60 @@ export interface ClusterActionToolbarProps {
 export function ClusterActionToolbar({ cluster, clusterStatus, noSettings }: ClusterActionToolbarProps) {
   const navigate = useNavigate()
   const { pathname } = useLocation()
+  const showSelfManagedGuideKey = 'show-self-managed-guide'
+  const [searchParams, setSearchParams] = useSearchParams()
+  const { openModal, closeModal } = useModal()
+
+  const openInstallationGuideModal = () =>
+    openModal({
+      content: (
+        <ClusterInstallationGuideModal
+          organizationId={cluster.organization.id}
+          clusterId={cluster.id}
+          onClose={() => {
+            searchParams.delete(showSelfManagedGuideKey)
+            setSearchParams(searchParams)
+            closeModal()
+          }}
+        />
+      ),
+    })
+
+  useEffect(() => {
+    const bool = searchParams.has(showSelfManagedGuideKey) && cluster.kubernetes === 'SELF_MANAGED'
+    if (bool) {
+      searchParams.delete(showSelfManagedGuideKey)
+      setSearchParams(searchParams)
+      openInstallationGuideModal()
+    }
+    return () => (bool ? closeModal() : undefined)
+  }, [searchParams, setSearchParams, cluster.kubernetes, closeModal])
 
   return (
     <ActionToolbar.Root>
-      <MenuManageDeployment cluster={cluster} clusterStatus={clusterStatus} />
-      {cluster.kubernetes !== 'SELF_MANAGED' && (
-        <Tooltip content="Logs">
-          <ActionToolbar.Button
-            onClick={() =>
-              navigate(INFRA_LOGS_URL(cluster.organization.id, cluster.id), {
-                state: { prevUrl: pathname },
-              })
-            }
-          >
-            <Icon iconName="scroll" />
-          </ActionToolbar.Button>
-        </Tooltip>
+      {cluster.kubernetes === 'SELF_MANAGED' ? (
+        <>
+          <Tooltip content="Installation guide">
+            <ActionToolbar.Button onClick={() => openInstallationGuideModal()}>
+              <Icon iconName="circle-info" />
+            </ActionToolbar.Button>
+          </Tooltip>
+        </>
+      ) : (
+        <>
+          <MenuManageDeployment cluster={cluster} clusterStatus={clusterStatus} />
+          <Tooltip content="Logs">
+            <ActionToolbar.Button
+              onClick={() =>
+                navigate(INFRA_LOGS_URL(cluster.organization.id, cluster.id), {
+                  state: { prevUrl: pathname },
+                })
+              }
+            >
+              <Icon iconName="scroll" />
+            </ActionToolbar.Button>
+          </Tooltip>
+        </>
       )}
       {!noSettings && (
         <Tooltip content="Settings">
