@@ -917,14 +917,14 @@ exports[`StepGeneralFeature should submit a form with a git repository 2`] = `
                           >
                             <label
                               class="text-sm translate-y-2"
-                              for="Root application path"
+                              for="Root service path"
                             >
-                              Root application path
+                              Root service path
                             </label>
                             <input
                               class="input__value "
                               data-testid="input-text"
-                              id="Root application path"
+                              id="Root service path"
                               name="root_path"
                               type="text"
                               value="/"
@@ -936,7 +936,7 @@ exports[`StepGeneralFeature should submit a form with a git repository 2`] = `
                     <p
                       class="text-xs ml-4 mt-1 text-neutral-350"
                     >
-                      Provide the path in the repository where the application is located
+                      Provide the path in the repository where the service is located
                     </p>
                   </div>
                   <div
