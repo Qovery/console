@@ -1,6 +1,7 @@
 import { match } from 'ts-pattern'
 import { Icon, IconAwesomeEnum } from '@qovery/shared/ui'
 import { useDeploymentStatus } from '../hooks/use-deployment-status/use-deployment-status'
+import { useRunningStatus } from '../hooks/use-running-status/use-running-status'
 import { useService } from '../hooks/use-service/use-service'
 
 function Box({
@@ -29,12 +30,17 @@ export interface EmptyStateProps {
 export function EmptyState({ environmentId, serviceId }: EmptyStateProps) {
   const { data: service } = useService({ environmentId, serviceId })
   const { data: deploymentStatus } = useDeploymentStatus({ serviceId, environmentId })
+  const { data: runningStatus } = useRunningStatus({ serviceId, environmentId })
 
   if (!deploymentStatus) {
     return null
   }
 
-  return match({ service, deploymentState: deploymentStatus.service_deployment_status })
+  return match({
+    service,
+    deploymentState: deploymentStatus.service_deployment_status,
+    runningState: runningStatus?.state,
+  })
     .with({ service: { serviceType: 'JOB', job_type: 'LIFECYCLE' }, deploymentState: 'NEVER_DEPLOYED' }, () => (
       <Box title="Lifecycle job not deployed" description="Deploy it first." />
     ))
@@ -44,9 +50,12 @@ export function EmptyState({ environmentId, serviceId }: EmptyStateProps) {
         description="It will be executed on the selected environment event."
       />
     ))
-    .with({ service: { serviceType: 'JOB', job_type: 'CRON' }, deploymentState: 'NEVER_DEPLOYED' }, () => (
-      <Box title="Cronjob not deployed" description="Deploy it first." />
-    ))
+    .with(
+      { service: { serviceType: 'JOB', job_type: 'CRON' }, deploymentState: 'NEVER_DEPLOYED' },
+      { service: { serviceType: 'JOB', job_type: 'CRON' }, deploymentState: 'UP_TO_DATE', runningState: 'STOPPED' },
+      { service: { serviceType: 'JOB', job_type: 'CRON' }, deploymentState: 'UP_TO_DATE', runningState: undefined },
+      () => <Box title="Cronjob not deployed" description="Deploy it first." />
+    )
     .with({ service: { serviceType: 'JOB', job_type: 'CRON' } }, () => (
       <Box
         title="Cronjob has never been executed"
