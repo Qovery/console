@@ -265,7 +265,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
         <div className="flex flex-row justify-between">
           {/* XXX: Should be Heading, typography & design wanted */}
           <span className="text-neutral-400 font-medium">About</span>
-          <Link color="current" to={`..${APPLICATION_SETTINGS_URL + APPLICATION_SETTINGS_GENERAL_URL}`}>
+          <Link color="current" to={`..${APPLICATION_SETTINGS_URL + APPLICATION_SETTINGS_GENERAL_URL}`} relative="path">
             <Icon iconName="gear" className="text-base text-neutral-300" />
           </Link>
         </div>
@@ -304,7 +304,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
         <div className="flex flex-row justify-between">
           {/* XXX: Should be Heading, typography & design wanted */}
           <span className="text-neutral-400 font-medium">Source</span>
-          <Link color="current" to={`..${APPLICATION_SETTINGS_URL + APPLICATION_SETTINGS_GENERAL_URL}`}>
+          <Link color="current" to={`..${APPLICATION_SETTINGS_URL + APPLICATION_SETTINGS_GENERAL_URL}`} relative="path">
             <Icon iconName="gear" className="text-base text-neutral-300" />
           </Link>
         </div>
@@ -431,7 +431,11 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
                   </span>
                 </Tooltip>
               </span>
-              <Link color="current" to={`..${APPLICATION_SETTINGS_URL + APPLICATION_SETTINGS_RESOURCES_URL}`}>
+              <Link
+                color="current"
+                to={`..${APPLICATION_SETTINGS_URL + APPLICATION_SETTINGS_RESOURCES_URL}`}
+                relative="path"
+              >
                 <Icon iconName="gear" className="text-base text-neutral-300" />
               </Link>
             </div>
@@ -449,6 +453,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
               <Link
                 color="current"
                 to={`..${APPLICATION_SETTINGS_URL + APPLICATION_SETTINGS_VALUES_OVERRIDE_FILE_URL}`}
+                relative="path"
               >
                 <Icon iconName="gear" className="text-base text-neutral-300" />
               </Link>
