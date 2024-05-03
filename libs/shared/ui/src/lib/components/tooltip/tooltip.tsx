@@ -1,6 +1,7 @@
 import * as TooltipPrimitive from '@radix-ui/react-tooltip'
 import { type VariantProps, cva } from 'class-variance-authority'
 import { type ComponentProps, type ElementRef, type ReactNode, forwardRef } from 'react'
+import { twMerge } from '@qovery/shared/util-js'
 
 const tooltipContentVariants = cva(['rounded-sm', 'px-2', 'py-1', 'text-xs', 'font-medium'], {
   variants: {
@@ -26,6 +27,7 @@ export interface TooltipProps extends VariantProps<typeof tooltipContentVariants
   side?: 'top' | 'right' | 'bottom' | 'left'
   align?: 'center' | 'start' | 'end'
   classNameTrigger?: string
+  classNameContent?: string
   disabled?: boolean
 }
 
@@ -41,6 +43,7 @@ export const Tooltip = forwardRef<ElementRef<typeof TooltipPrimitive.Trigger>, T
     align = 'center',
     delayDuration = 200,
     classNameTrigger = '',
+    classNameContent = '',
     color = 'neutral',
     disabled = false,
   },
@@ -60,7 +63,7 @@ export const Tooltip = forwardRef<ElementRef<typeof TooltipPrimitive.Trigger>, T
       </TooltipPrimitive.Trigger>
       <TooltipPrimitive.Portal container={container}>
         <TooltipPrimitive.Content
-          className={tooltipContentVariants({ color })}
+          className={twMerge(tooltipContentVariants({ color }), classNameContent)}
           side={side}
           sideOffset={6}
           align={align}
