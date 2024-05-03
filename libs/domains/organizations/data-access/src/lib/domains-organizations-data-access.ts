@@ -196,6 +196,22 @@ export const organizations = createQueryKeys('organizations', {
       return response.data.results
     },
   }),
+  annotationsGroupAssociatedItems: ({
+    organizationId,
+    annotationsGroupId,
+  }: {
+    organizationId: string
+    annotationsGroupId: string
+  }) => ({
+    queryKey: [organizationId, annotationsGroupId],
+    async queryFn() {
+      const response = await annotationsGroupApi.getOrganizationAnnotationsGroupAssociatedItems(
+        organizationId,
+        annotationsGroupId
+      )
+      return response.data.results
+    },
+  }),
   apiTokens: ({ organizationId }: { organizationId: string }) => ({
     queryKey: [organizationId],
     async queryFn() {
