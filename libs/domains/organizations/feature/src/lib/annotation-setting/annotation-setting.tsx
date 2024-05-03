@@ -1,6 +1,6 @@
 import { Controller, useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
-import { InputSelect, useModal } from '@qovery/shared/ui'
+import { Icon, InputSelect, Tooltip, useModal } from '@qovery/shared/ui'
 import { AnnotationCreateEditModal } from '../annotation-create-edit-modal/annotation-create-edit-modal'
 import { useAnnotationsGroups } from '../hooks/use-annotations-groups/use-annotations-groups'
 
@@ -18,7 +18,27 @@ export function AnnotationSetting() {
         <InputSelect
           label="Annotation Groups (optional)"
           options={annotationsGroups.map((group) => ({
-            label: group.name,
+            label: (
+              <span className="flex items-center gap-3">
+                <span>{group.name}</span>
+                <Tooltip
+                  classNameContent="z-10"
+                  content={
+                    <ul>
+                      {group.annotations.map(({ key, value }) => (
+                        <li key={key}>
+                          {key}: {value}
+                        </li>
+                      ))}
+                    </ul>
+                  }
+                >
+                  <span>
+                    <Icon iconName="circle-info" iconStyle="regular" className="text-base" />
+                  </span>
+                </Tooltip>
+              </span>
+            ),
             value: group.id,
           }))}
           menuListButton={{
