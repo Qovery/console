@@ -1,8 +1,8 @@
-import { type FormEvent, useEffect, useState } from 'react'
+import { type FormEvent, type ReactNode, useEffect, useState } from 'react'
 
 export interface InputRadioProps {
   name: string
-  label?: string
+  label?: ReactNode
   value: string
   isChecked?: boolean
   className?: string
