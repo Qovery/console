@@ -50,9 +50,9 @@ export function Navigation({ defaultOrganizationId, clusterNotification }: Navig
                 color="neutral"
                 variant="plain"
                 className={clsx(
-                  'w-11 h-11 justify-center hover:!bg-neutral-100 hover:!text-brand-500 hover:!border-transparent',
+                  'w-11 h-11 justify-center hover:!bg-neutral-100 hover:!text-brand-500 hover:!border-transparent dark:hover:!bg-brand-500 dark:hover:!text-neutral-100',
                   {
-                    'bg-neutral-100 text-brand-500': matchOrganizationRoute,
+                    'bg-neutral-100 text-brand-500 dark:bg-brand-500 dark:text-neutral-100': matchOrganizationRoute,
                   }
                 )}
                 to={projectId ? OVERVIEW_URL(organizationId, projectId) : ORGANIZATION_URL(organizationId)}
@@ -68,9 +68,9 @@ export function Navigation({ defaultOrganizationId, clusterNotification }: Navig
                 color="neutral"
                 variant="plain"
                 className={clsx(
-                  'w-11 h-11 justify-center hover:!bg-neutral-100 hover:!text-brand-500 hover:!border-transparent',
+                  'w-11 h-11 justify-center hover:!bg-neutral-100 hover:!text-brand-500 hover:!border-transparent dark:hover:!bg-brand-500 dark:hover:!text-neutral-100',
                   {
-                    'bg-neutral-100 text-brand-500': matchClusterRoute,
+                    'bg-neutral-100 text-brand-500 dark:bg-brand-500 dark:text-neutral-100': matchClusterRoute,
                   }
                 )}
                 to={CLUSTERS_URL(organizationId)}
@@ -89,9 +89,9 @@ export function Navigation({ defaultOrganizationId, clusterNotification }: Navig
                 color="neutral"
                 variant="plain"
                 className={clsx(
-                  'w-11 h-11 justify-center hover:!bg-neutral-100 hover:!text-brand-500 hover:!border-transparent',
+                  'w-11 h-11 justify-center hover:!bg-neutral-100 hover:!text-brand-500 hover:!border-transparent dark:hover:!bg-brand-500 dark:hover:!text-neutral-100',
                   {
-                    'bg-neutral-100 text-brand-500': matchEventsRoute,
+                    'bg-neutral-100 text-brand-500 dark:bg-brand-500 dark:text-neutral-100': matchEventsRoute,
                   }
                 )}
                 to={AUDIT_LOGS_URL(organizationId)}
@@ -110,9 +110,9 @@ export function Navigation({ defaultOrganizationId, clusterNotification }: Navig
                   color="neutral"
                   variant="plain"
                   className={clsx(
-                    'w-11 h-11 justify-center hover:!bg-neutral-100 hover:!text-brand-500 hover:!border-transparent',
+                    'w-11 h-11 justify-center hover:!bg-neutral-100 hover:!text-brand-500 hover:!border-transparent dark:hover:!bg-brand-500 dark:hover:!text-neutral-100',
                     {
-                      'bg-neutral-100 text-brand-500': matchSettingsRoute,
+                      'bg-neutral-100 text-brand-500 dark:bg-brand-500 dark:text-neutral-100': matchSettingsRoute,
                     }
                   )}
                   to={SETTINGS_URL(organizationId)}
