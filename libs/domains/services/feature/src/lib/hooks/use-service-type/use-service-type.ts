@@ -13,6 +13,7 @@ export function useServiceType({ environmentId, serviceId }: UseServiceTypeProps
       return data.find(({ id }) => id === serviceId)?.serviceType
     },
     enabled: Boolean(environmentId),
+    retry: false,
   })
 }
 

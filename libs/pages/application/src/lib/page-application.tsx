@@ -7,45 +7,52 @@ import {
   ServiceTerminalContext,
   ServiceTerminalProvider,
   useService,
+  useServiceType,
 } from '@qovery/domains/services/feature'
+import { NotFoundPage } from '@qovery/pages/layout'
 import { APPLICATION_GENERAL_URL, APPLICATION_URL } from '@qovery/shared/routes'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { ROUTER_APPLICATION } from './router/router'
-import Container from './ui/container/container'
 
 const ServiceTerminalMemo = memo(ServiceTerminal)
 
 function PageApplicationWrapped() {
-  const { applicationId = '', environmentId = '', organizationId = '', projectId = '' } = useParams()
+  const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
   const { open } = useContext(ServiceTerminalContext)
-  const { data: environment } = useEnvironment({ environmentId })
+  const { data: environment, error: environmentError } = useEnvironment({ environmentId })
+  const { data: serviceType, isSuccess: isSuccessServiceType } = useServiceType({
+    environmentId,
+    serviceId: applicationId,
+  })
   const { data: service } = useService({ environmentId, serviceId: applicationId })
 
-  useDocumentTitle(`${service?.name || 'Application'} - Qovery`)
+  useDocumentTitle(`${service?.name || 'Service'} - Qovery`)
+
+  if (environmentError || (!serviceType && isSuccessServiceType)) {
+    return <NotFoundPage error={environmentError} />
+  }
 
   return match(service)
     .with({ serviceType: 'DATABASE' }, () => null)
     .otherwise((service) => {
       return (
         <>
-          <Container service={service} environment={environment}>
-            <Routes>
-              {ROUTER_APPLICATION.map((route) => (
-                <Route key={route.path} path={route.path} element={route.component} />
-              ))}
-              <Route
-                path="*"
-                element={
-                  <Navigate
-                    replace
-                    to={
-                      APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_GENERAL_URL
-                    }
-                  />
-                }
-              />
-            </Routes>
-          </Container>
+          <Routes>
+            {ROUTER_APPLICATION.map((route) => (
+              <Route key={route.path} path={route.path} element={route.component} />
+            ))}
+            <Route
+              path="*"
+              element={
+                <Navigate
+                  replace
+                  to={
+                    APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_GENERAL_URL
+                  }
+                />
+              }
+            />
+          </Routes>
           {open && environment && service && (
             <ServiceTerminalMemo
               organizationId={environment.organization.id}

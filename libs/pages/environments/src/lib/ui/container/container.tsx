@@ -1,8 +1,8 @@
-import { type Project } from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
-import { matchPath, useLocation, useParams } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
+import { useClusters } from '@qovery/domains/clusters/feature'
 import { CreateCloneEnvironmentModal } from '@qovery/domains/environments/feature'
-import { ShowAllVariablesToggle, VariablesActionToolbar, VariablesProvider } from '@qovery/domains/variables/feature'
+import { useProject } from '@qovery/domains/projects/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import {
   ENVIRONMENTS_DEPLOYMENT_RULES_CREATE_URL,
@@ -12,20 +12,18 @@ import {
 } from '@qovery/shared/routes'
 import { Button, Header, Icon, Section, Tabs, toast, useModal } from '@qovery/shared/ui'
 
-export interface ContainerProps {
-  project?: Project
-  clusterAvailable?: boolean
-}
-
-export function Container(props: PropsWithChildren<ContainerProps>) {
-  const { children, project, clusterAvailable } = props
+export function Container({ children }: PropsWithChildren) {
   const { organizationId = '', projectId = '' } = useParams()
+  const { data: project } = useProject({ organizationId, projectId })
+  const { data: clusters = [] } = useClusters({ organizationId })
   const { pathname } = useLocation()
   const { openModal, closeModal } = useModal()
 
   const isDeploymentRulesTab =
     pathname === `${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_DEPLOYMENT_RULES_URL}` ||
     pathname === `${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_DEPLOYMENT_RULES_CREATE_URL}`
+
+  const clusterAvailable = clusters.length > 0
 
   const tabsItems = [
     {

@@ -16,6 +16,7 @@ export function useProjects({ organizationId, enabled = true }: UseProjectsProps
       return data.sort((a, b) => a.name.localeCompare(b.name))
     },
     enabled,
+    retry: false,
   })
 }
 

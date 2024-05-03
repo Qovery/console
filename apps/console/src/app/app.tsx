@@ -4,11 +4,11 @@ import axios from 'axios'
 import LogRocket from 'logrocket'
 import posthog from 'posthog-js'
 import { useCallback, useEffect, useState } from 'react'
-import { Navigate, Route, Routes } from 'react-router-dom'
+import { Route, Routes } from 'react-router-dom'
 import { useIntercom } from 'react-use-intercom'
 import { KubeconfigPreview } from '@qovery/domains/clusters/feature'
 import { HelmDefaultValuesPreview } from '@qovery/domains/service-helm/feature'
-import { DarkModeEnabler, Layout } from '@qovery/pages/layout'
+import { DarkModeEnabler, Layout, NotFoundPage } from '@qovery/pages/layout'
 import { PageLogin, PageLogoutFeature } from '@qovery/pages/login'
 import { AssistantContext } from '@qovery/shared/assistant/feature'
 import { useAuth, useInviteMember } from '@qovery/shared/auth'
@@ -158,7 +158,7 @@ export function App() {
               />
             )
           )}
-          <Route path="*" element={<Navigate replace to={LOGIN_URL} />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </AssistantContext.Provider>
     </GTMProvider>

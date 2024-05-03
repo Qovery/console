@@ -9,13 +9,18 @@ export interface UseEnvironmentsProps {
 }
 
 export function useEnvironments({ projectId }: UseEnvironmentsProps) {
-  const { data: environments, isLoading: isEnvironmentsLoading } = useQuery({
+  const {
+    data: environments,
+    isLoading: isEnvironmentsLoading,
+    error,
+  } = useQuery({
     ...queries.environments.list({ projectId }),
     select(environments) {
       environments?.sort(({ name: nameA }, { name: nameB }) => nameA.localeCompare(nameB))
       return environments
     },
     enabled: projectId !== '',
+    retry: false,
   })
 
   const runningStatusResults = useQueries({
@@ -82,6 +87,7 @@ export function useEnvironments({ projectId }: UseEnvironmentsProps) {
 
   return {
     data,
+    error: error as Error,
     isLoading:
       [...runningStatusResults, ...deploymentStatusResults].some(({ isLoading }) => isLoading) || isEnvironmentsLoading,
   }
