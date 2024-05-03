@@ -2,6 +2,7 @@ import { type OrganizationAnnotationsGroupResponse } from 'qovery-typescript-axi
 import { useParams } from 'react-router-dom'
 import {
   AnnotationCreateEditModal,
+  AnnotationItemsListModal,
   useAnnotationsGroups,
   useDeleteAnnotationsGroup,
 } from '@qovery/domains/organizations/feature'
@@ -12,6 +13,7 @@ import {
   Icon,
   LoaderSpinner,
   Section,
+  Tooltip,
   Truncate,
   useModal,
   useModalConfirmation,
@@ -107,17 +109,47 @@ export function PageOrganizationLabelsAnnotationsFeature() {
                     </div>
                   </div>
                   <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      color="neutral"
+                      size="md"
+                      className="relative mr-2"
+                      disabled={annotationsGroup.associated_items_count === 0}
+                      onClick={() => {
+                        openModal({
+                          content: (
+                            <AnnotationItemsListModal
+                              organizationId={organizationId}
+                              annotationsGroupId={annotationsGroup.id}
+                              onClose={closeModal}
+                              associatedItemsCount={annotationsGroup.associated_items_count ?? 0}
+                            />
+                          ),
+                        })
+                      }}
+                    >
+                      <span className="flex items-center justify-center bg-brand-500 w-3 h-3 rounded-full font-bold text-3xs text-white leading-[0] absolute -top-1 -right-1">
+                        {annotationsGroup.associated_items_count}
+                      </span>
+                      <Icon iconName="layer-group" />
+                    </Button>
                     <Button size="md" variant="outline" color="neutral" onClick={() => openEditModal(annotationsGroup)}>
                       <Icon iconName="gear" />
                     </Button>
-                    <Button
-                      size="md"
-                      variant="outline"
-                      color="neutral"
-                      onClick={() => openDeleteModal(annotationsGroup)}
+                    <Tooltip
+                      content="Annotations group still in used"
+                      disabled={annotationsGroup.associated_items_count === 0}
                     >
-                      <Icon iconName="trash" />
-                    </Button>
+                      <Button
+                        size="md"
+                        variant="outline"
+                        color="neutral"
+                        disabled={annotationsGroup.associated_items_count !== 0}
+                        onClick={() => openDeleteModal(annotationsGroup)}
+                      >
+                        <Icon iconName="trash" />
+                      </Button>
+                    </Tooltip>
                   </div>
                 </li>
               ))}
