@@ -1,7 +1,7 @@
 import { type CloudProviderEnum, type ClusterFeature } from 'qovery-typescript-axios'
 import { type PropsWithChildren, useEffect, useState } from 'react'
 import { type Control, Controller, type FieldValues, type UseFormSetValue, type UseFormWatch } from 'react-hook-form'
-import { ExternalLink, InputSelect, InputToggle } from '@qovery/shared/ui'
+import { ExternalLink, Icon, InputSelect, InputToggle, Tooltip } from '@qovery/shared/ui'
 
 export interface CardClusterFeatureProps extends PropsWithChildren {
   feature: ClusterFeature
@@ -71,9 +71,22 @@ export function CardClusterFeature({
         <div className="basis-full">
           <h4 className="mb-1 flex justify-between text-ssm font-medium text-neutral-400">
             <span>{feature.title}</span>
-            <span className="text-ssm font-medium text-neutral-400">
-              {feature.cost_per_month !== 0 ? `$${feature.cost_per_month}/month billed by ${cloudProvider}` : 'Free'}
-            </span>
+            {feature.is_cloud_provider_paying_feature && (
+              <Tooltip content={`Billed by ${cloudProvider}`}>
+                <ExternalLink
+                  as="button"
+                  href={feature.cloud_provider_feature_documentation ?? undefined}
+                  className="gap-1 px-1.5"
+                  color="neutral"
+                  variant="solid"
+                  size="xs"
+                  radius="full"
+                >
+                  <Icon iconName="dollar-sign" iconStyle="solid" className="text-xs text-white" />
+                  <Icon name={cloudProvider} height="16" width="16" pathColor="#FFFFFF" />
+                </ExternalLink>
+              </Tooltip>
+            )}
           </h4>
           <p className="max-w-lg text-xs text-neutral-350">{feature.description}</p>
           {typeof feature.value === 'string' && (
