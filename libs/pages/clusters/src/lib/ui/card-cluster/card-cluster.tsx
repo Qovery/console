@@ -2,7 +2,7 @@ import { type Cluster, ClusterStateEnum } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
 import { ClusterActionToolbar, ClusterType, useClusterStatus } from '@qovery/domains/clusters/feature'
 import { IconEnum } from '@qovery/shared/enums'
-import { Badge, Icon, Skeleton, StatusChip } from '@qovery/shared/ui'
+import { Badge, Icon, Skeleton, StatusChip, Tooltip } from '@qovery/shared/ui'
 import { getStatusClusterMessage } from '@qovery/shared/util-js'
 
 export interface CardClusterProps {
@@ -42,13 +42,15 @@ export function CardCluster({ organizationId, cluster }: CardClusterProps) {
 
   return (
     <div data-testid={`cluster-list-${cluster.id}`} className="border border-neutral-200 rounded p-5">
-      <div className="flex justify-between mb-5">
+      <div className="flex justify-between gap-4 mb-5">
         <div className="flex items-center">
           <Icon className="mr-3" name={cluster.cloud_provider} />
           <div className="flex flex-col">
             <div className="flex">
-              <h2 className="flex items-center text-xs text-neutral-400 font-medium">
-                <span className="block mr-2">{cluster.name}</span>
+              <h2 className="inline-flex basis-40 items-center text-xs text-neutral-400 font-medium">
+                <Tooltip content={cluster.name}>
+                  <span className="block mr-2 line-clamp-2">{cluster.name}</span>
+                </Tooltip>
                 <StatusChip status={clusterStatus?.status} />
               </h2>
             </div>
@@ -62,7 +64,7 @@ export function CardCluster({ organizationId, cluster }: CardClusterProps) {
             </Skeleton>
           </div>
         </div>
-        <Skeleton height={36} width={146} show={isClusterStatusLoading}>
+        <Skeleton className="min-w-max" height={36} width={146} show={isClusterStatusLoading}>
           {clusterStatus && <ClusterActionToolbar cluster={cluster} clusterStatus={clusterStatus} />}
         </Skeleton>
       </div>
