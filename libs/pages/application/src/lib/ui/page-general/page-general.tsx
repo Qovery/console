@@ -6,9 +6,10 @@ export interface PageGeneralProps {
   serviceId: string
   environmentId: string
   isCronJob: boolean
+  isLifecycleJob: boolean
 }
 
-export function PageGeneral({ serviceId, environmentId, isCronJob }: PageGeneralProps) {
+export function PageGeneral({ serviceId, environmentId, isCronJob, isLifecycleJob }: PageGeneralProps) {
   return (
     <div className="mt-2 bg-white rounded flex flex-grow min-h-0">
       <div className="flex flex-col grow">
@@ -32,7 +33,7 @@ export function PageGeneral({ serviceId, environmentId, isCronJob }: PageGeneral
                 </div>
               )}
             </PodsMetrics>
-            <OutputVariables serviceId={serviceId} />
+            {isLifecycleJob && <OutputVariables serviceId={serviceId} />}
           </div>
           <ServiceDetails className="w-[360px] border-l" environmentId={environmentId} serviceId={serviceId} />
         </div>
