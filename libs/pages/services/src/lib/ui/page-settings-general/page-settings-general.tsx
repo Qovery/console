@@ -1,8 +1,9 @@
 import { type Cluster } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
+import { SettingsHeading } from '@qovery/shared/console-shared'
 import { environmentModeValues } from '@qovery/shared/enums'
 import { type Value } from '@qovery/shared/interfaces'
-import { BlockContent, Button, Heading, InputSelect, InputText, Section } from '@qovery/shared/ui'
+import { BlockContent, Button, InputSelect, InputText, Section } from '@qovery/shared/ui'
 
 export interface PageSettingsGeneralProps {
   onSubmit: () => void
@@ -26,10 +27,8 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
 
   return (
     <div className="flex flex-col justify-between w-full">
-      <Section className="p-8  max-w-content-with-navigation-left">
-        <div className="flex justify-between mb-8">
-          <Heading className="mb-2">General</Heading>
-        </div>
+      <Section className="p-8 max-w-content-with-navigation-left">
+        <SettingsHeading title="General" />
         <form onSubmit={onSubmit}>
           <BlockContent title="General information">
             <Controller
