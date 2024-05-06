@@ -60,7 +60,7 @@ export function StickyActionFormToaster(props: StickyActionFormToasterProps) {
               onClick={() => onSubmit()}
               loading={props.loading}
               disabled={props.disabledValidation}
-              type="submit"
+              type="button"
             >
               {submitLabel}
             </Button>
