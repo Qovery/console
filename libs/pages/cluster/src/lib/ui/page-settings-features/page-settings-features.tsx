@@ -5,8 +5,8 @@ import {
   type ClusterFeatureGcpExistingVpc,
 } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
-import { CardClusterFeature } from '@qovery/shared/console-shared'
-import { BlockContent, Heading, LoaderSpinner, Section } from '@qovery/shared/ui'
+import { CardClusterFeature, SettingsHeading } from '@qovery/shared/console-shared'
+import { BlockContent, LoaderSpinner, Section } from '@qovery/shared/ui'
 import AWSExistingVPC from './aws-existing-vpc/aws-existing-vpc'
 import GcpExistingVPC from './gcp-existing-vpc/gcp-existing-vpc'
 
@@ -30,7 +30,7 @@ export function PageSettingsFeatures(props: PageSettingsFeaturesProps) {
   return (
     <div className="flex flex-col justify-between w-full">
       <Section className="p-8 max-w-content-with-navigation-left">
-        <Heading className="mb-8">Features</Heading>
+        <SettingsHeading title="Features" />
 
         {!loading && featureExistingVpcValue && featureExistingVpcContent}
 

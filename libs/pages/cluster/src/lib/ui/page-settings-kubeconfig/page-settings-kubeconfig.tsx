@@ -1,8 +1,9 @@
 import { type Cluster } from 'qovery-typescript-axios'
 import { useCallback } from 'react'
 import { useDropzone } from 'react-dropzone'
+import { SettingsHeading } from '@qovery/shared/console-shared'
 import { KUBECONFIG } from '@qovery/shared/routes'
-import { Button, Heading, Icon, Link, Section } from '@qovery/shared/ui'
+import { Button, Icon, Link, Section } from '@qovery/shared/ui'
 
 export interface PageSettingsKubeconfigProps {
   cluster: Cluster
@@ -35,12 +36,7 @@ export function PageSettingsKubeconfig({ cluster, onSubmit }: PageSettingsKubeco
   return (
     <div className="flex flex-col justify-between w-full">
       <Section className="p-8 max-w-content-with-navigation-left">
-        <Heading className="mb-2">Kubeconfig</Heading>
-        <div className="flex justify-between mb-4">
-          <p className="text-sm text-neutral-400 max-w-content-with-navigation-left">
-            Upload your Kubeconfig file here.
-          </p>
-        </div>
+        <SettingsHeading title="Kubeconfig" description="Upload your Kubeconfig file here." />
         <div className="flex border border-neutral-200 p-3 gap-2 rounded items-center">
           <div className="p-2">
             <Icon iconName="file-lines" />

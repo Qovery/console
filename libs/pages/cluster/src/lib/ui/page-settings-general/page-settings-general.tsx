@@ -1,7 +1,7 @@
 import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { ClusterGeneralSettings } from '@qovery/shared/console-shared'
-import { BlockContent, Button, Heading, Section } from '@qovery/shared/ui'
+import { ClusterGeneralSettings, SettingsHeading } from '@qovery/shared/console-shared'
+import { BlockContent, Button, Section } from '@qovery/shared/ui'
 
 export interface PageSettingsGeneralProps {
   onSubmit: FormEventHandler<HTMLFormElement>
@@ -15,7 +15,7 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
   return (
     <div className="flex flex-col justify-between w-full">
       <Section className="p-8 max-w-content-with-navigation-left">
-        <Heading className="mb-8">General settings</Heading>
+        <SettingsHeading title="General settings" />
         <form onSubmit={onSubmit}>
           <BlockContent title="General information">
             <ClusterGeneralSettings fromDetail />
