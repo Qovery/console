@@ -2,7 +2,7 @@ import { type Cluster, ClusterStateEnum } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
 import { ClusterActionToolbar, ClusterType, useClusterStatus } from '@qovery/domains/clusters/feature'
 import { IconEnum } from '@qovery/shared/enums'
-import { Badge, Icon, Skeleton, StatusChip, Tooltip } from '@qovery/shared/ui'
+import { Badge, Icon, Skeleton, StatusChip } from '@qovery/shared/ui'
 import { getStatusClusterMessage } from '@qovery/shared/util-js'
 
 export interface CardClusterProps {
@@ -48,9 +48,7 @@ export function CardCluster({ organizationId, cluster }: CardClusterProps) {
           <div className="flex flex-col">
             <div className="flex">
               <h2 className="inline-flex basis-40 items-center text-xs text-neutral-400 font-medium">
-                <Tooltip content={cluster.name}>
-                  <span className="block mr-2 line-clamp-2">{cluster.name}</span>
-                </Tooltip>
+                <span className="block mr-2 line-clamp-2">{cluster.name}</span>
                 <StatusChip status={clusterStatus?.status} />
               </h2>
             </div>
