@@ -21,6 +21,7 @@ export function PageGeneralFeature() {
           serviceId={applicationId}
           environmentId={environmentId}
           isCronJob={service?.serviceType === 'JOB' && service.job_type === 'CRON'}
+          isLifecycleJob={service?.serviceType === 'JOB' && service.job_type === 'LIFECYCLE'}
         />
       )}
       {service && environment && (
