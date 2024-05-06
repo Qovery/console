@@ -6,11 +6,11 @@ import {
   useDeploymentRestrictions,
   useServiceType,
 } from '@qovery/domains/services/feature'
+import { SettingsHeading } from '@qovery/shared/console-shared'
 import {
   BlockContent,
   Button,
   EmptyState,
-  Heading,
   Icon,
   InputText,
   LoaderSpinner,
@@ -39,14 +39,10 @@ export function PageSettingsDeploymentRestrictionsFeature() {
   return (
     <div className="flex flex-col justify-between w-full">
       <Section className="p-8 max-w-content-with-navigation-left">
-        <div className="flex justify-between gap-2 mb-8">
-          <div>
-            <Heading className="mb-2">Deployment Restrictions</Heading>
-
-            <p className="text-sm text-neutral-400 max-w-lg">
-              Specify which changes in your repository should trigger or not an auto-deploy of your application
-            </p>
-          </div>
+        <SettingsHeading
+          title="Deployment Restrictions"
+          description="Specify which changes in your repository should trigger or not an auto-deploy of your application"
+        >
           {!isLoadingServiceType && isValidServiceType && (
             <Button
               data-testid="add-button"
@@ -62,7 +58,7 @@ export function PageSettingsDeploymentRestrictionsFeature() {
               <Icon iconName="plus-circle" />
             </Button>
           )}
-        </div>
+        </SettingsHeading>
 
         {!isLoadingServiceType && isValidServiceType ? (
           <PageSettingsDeploymentRestrictionsFeatureInner serviceId={serviceId} serviceType={serviceType} />

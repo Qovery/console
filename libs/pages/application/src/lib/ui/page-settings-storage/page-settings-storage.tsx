@@ -1,5 +1,6 @@
 import { type ServiceStorageStorageInner } from 'qovery-typescript-axios'
-import { BlockContent, Button, EmptyState, Heading, Icon, InputText, Section } from '@qovery/shared/ui'
+import { SettingsHeading } from '@qovery/shared/console-shared'
+import { BlockContent, Button, EmptyState, Icon, InputText, Section } from '@qovery/shared/ui'
 
 export interface PageSettingsStorageProps {
   storages: ServiceStorageStorageInner[]
@@ -12,17 +13,12 @@ export function PageSettingsStorage(props: PageSettingsStorageProps) {
   return (
     <div className="flex flex-col justify-between w-full">
       <Section className="p-8 max-w-content-with-navigation-left">
-        <div className="flex justify-between mb-8">
-          <div>
-            <Heading className="mb-2">Storage</Heading>
-            <p className="text-sm text-neutral-400">Add persistent local storage for your application.</p>
-          </div>
-
+        <SettingsHeading title="Storage" description="Add persistent local storage for your application.">
           <Button className="gap-2" size="lg" onClick={() => props.onAddStorage()}>
             Add Storage
             <Icon iconName="plus-circle" />
           </Button>
-        </div>
+        </SettingsHeading>
 
         {props.storages?.length > 0 ? (
           <BlockContent title="Storage">

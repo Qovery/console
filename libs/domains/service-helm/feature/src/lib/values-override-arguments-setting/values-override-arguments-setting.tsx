@@ -8,6 +8,7 @@ import {
   useFormContext,
 } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
+import { SettingsHeading } from '@qovery/shared/console-shared'
 import { HELM_DEFAULT_VALUES } from '@qovery/shared/routes'
 import {
   Button,
@@ -36,6 +37,7 @@ export interface ValuesOverrideArgumentsSettingProps extends PropsWithChildren {
   source: HelmRequestAllOfSource
   methods: UseFormReturn<HelmValuesArgumentsData>
   onSubmit: () => void
+  isSetting?: boolean
 }
 
 function Row({ key, index, remove }: { key: string; index: number; remove: UseFieldArrayRemove }) {
@@ -149,6 +151,7 @@ export function ValuesOverrideArgumentsSetting({
   children,
   onSubmit,
   source,
+  isSetting = false,
 }: ValuesOverrideArgumentsSettingProps) {
   const { environmentId = '' } = useParams()
 
@@ -169,61 +172,85 @@ export function ValuesOverrideArgumentsSetting({
 
   return (
     <Section className="items-start">
-      <div className="flex justify-between w-full">
-        <div>
-          <Heading className="mb-2">Value override as arguments</Heading>
-          <p className="text-sm text-neutral-350 mb-2">
-            Specify each override by declaring the variable name, value and its type.
-          </p>
-        </div>
-        <Button
-          className="gap-2"
-          size="lg"
-          onClick={() =>
-            append({
-              key: '',
-              type: '--set',
-              value: '',
-            })
-          }
+      {isSetting ? (
+        <SettingsHeading
+          title="Value override as arguments"
+          description="Specify each override by declaring the variable name, value and its type."
         >
-          Add variable
-          <Icon iconName="plus-circle" />
-        </Button>
-      </div>
-      <Popover.Root>
-        <Popover.Trigger>
-          <span className="text-sm cursor-pointer text-brand-500 hover:text-brand-600 transition font-medium mb-6">
-            How it works <Icon className="text-xs" iconStyle="regular" iconName="circle-question" />
-          </span>
-        </Popover.Trigger>
-        <Popover.Content side="left" className="text-neutral-350 text-sm relative" style={{ width: 440 }}>
-          <h6 className="text-neutral-400 font-medium mb-2">How it works</h6>
-          <p>
-            <ul className="list-disc pl-4">
-              <li>
-                Specify each override by declaring the variable name, value and its type. These will be passed via the
-                --set, --set-string and --set-json helm argument depending on the selected type (Generic, String or
-                Json). Please refer to the Helm documentation for more information on which one you should use.
-              </li>
-              <li>
-                Values set here have an higher override priority compared to the ones defined in the values as file
-                section , this allows you to manage specific configurations (example: test a change in a value without
-                changing your file).
-              </li>
-              <li>
-                You can assign any environment variable by adding the macro "qovery.env.ENV_VAR_NAME" within the “Value”
-                field.
-              </li>
-            </ul>
-          </p>
-          <Popover.Close className="absolute top-4 right-4">
-            <button type="button">
-              <Icon iconName="xmark" className="text-lg leading-4 text-neutral-400" />
-            </button>
-          </Popover.Close>
-        </Popover.Content>
-      </Popover.Root>
+          <Button
+            className="gap-2"
+            size="lg"
+            onClick={() =>
+              append({
+                key: '',
+                type: '--set',
+                value: '',
+              })
+            }
+          >
+            Add variable
+            <Icon iconName="plus-circle" />
+          </Button>
+        </SettingsHeading>
+      ) : (
+        <>
+          <div className="flex justify-between w-full">
+            <div>
+              <Heading className="mb-2">Value override as arguments</Heading>
+              <p className="text-sm text-neutral-350 mb-2">
+                Specify each override by declaring the variable name, value and its type.
+              </p>
+            </div>
+            <Button
+              className="gap-2"
+              size="lg"
+              onClick={() =>
+                append({
+                  key: '',
+                  type: '--set',
+                  value: '',
+                })
+              }
+            >
+              Add variable
+              <Icon iconName="plus-circle" />
+            </Button>
+          </div>
+          <Popover.Root>
+            <Popover.Trigger>
+              <span className="text-sm cursor-pointer text-brand-500 hover:text-brand-600 transition font-medium mb-6">
+                How it works <Icon className="text-xs" iconStyle="regular" iconName="circle-question" />
+              </span>
+            </Popover.Trigger>
+            <Popover.Content side="left" className="text-neutral-350 text-sm relative" style={{ width: 440 }}>
+              <h6 className="text-neutral-400 font-medium mb-2">How it works</h6>
+              <p>
+                <ul className="list-disc pl-4">
+                  <li>
+                    Specify each override by declaring the variable name, value and its type. These will be passed via
+                    the --set, --set-string and --set-json helm argument depending on the selected type (Generic, String
+                    or Json). Please refer to the Helm documentation for more information on which one you should use.
+                  </li>
+                  <li>
+                    Values set here have an higher override priority compared to the ones defined in the values as file
+                    section , this allows you to manage specific configurations (example: test a change in a value
+                    without changing your file).
+                  </li>
+                  <li>
+                    You can assign any environment variable by adding the macro "qovery.env.ENV_VAR_NAME" within the
+                    “Value” field.
+                  </li>
+                </ul>
+              </p>
+              <Popover.Close className="absolute top-4 right-4">
+                <button type="button">
+                  <Icon iconName="xmark" className="text-lg leading-4 text-neutral-400" />
+                </button>
+              </Popover.Close>
+            </Popover.Content>
+          </Popover.Root>
+        </>
+      )}
       <Button
         size="md"
         variant="surface"

@@ -1,6 +1,7 @@
 import { type GitProviderEnum, type GitTokenResponse, type HelmRequestAllOfSource } from 'qovery-typescript-axios'
 import { type PropsWithChildren, type ReactNode } from 'react'
 import { Controller, type UseFormReturn } from 'react-hook-form'
+import { SettingsHeading } from '@qovery/shared/console-shared'
 import { ExternalLink, Heading, Icon, InputSelect, Popover, Section } from '@qovery/shared/ui'
 import ValuesOverrideYamlSetting from '../values-override-yaml-setting/values-override-yaml-setting'
 
@@ -38,56 +39,65 @@ export function ValuesOverrideFilesSetting({
 }: PropsWithChildren<ValuesOverrideFilesSettingProps>) {
   return (
     <Section>
-      <Heading className="mb-2">Values override as file</Heading>
+      {isSetting ? (
+        <SettingsHeading
+          title="Values override as file"
+          description="Define the YAML file(s) to be applied as override to the default values.yaml delivered with the chart. It is highly recommended to store the override file(s) in a git repository."
+        />
+      ) : (
+        <Heading className="mb-2">Values override as file</Heading>
+      )}
 
       <form className="space-y-10" onSubmit={onSubmit}>
-        <div>
-          <p className="text-neutral-350 text-sm">
-            Define the YAML file(s) to be applied as override to the default values.yaml delivered with the chart. It is
-            highly recommended to store the override file(s) in a git repository.
-          </p>
-          <Popover.Root>
-            <Popover.Trigger>
-              <span className="text-sm cursor-pointer text-brand-500 hover:text-brand-600 transition font-medium">
-                How it works <Icon className="text-xs" iconStyle="regular" iconName="circle-question" />
-              </span>
-            </Popover.Trigger>
-            <Popover.Content side="left" className="text-neutral-350 text-sm relative" style={{ width: 440 }}>
-              <h6 className="text-neutral-400 font-medium mb-2">How it works</h6>
-              <ul className="list-disc pl-4">
-                <li>
-                  Your helm chart might have already a variables.yaml file with some basic configuration. In this
-                  section you can define your own overrides to customize the helm chart behaviour.
-                </li>
-                <li>
-                  You can define the overrides by selecting a YAML file from a git repository (preferred) or by passing
-                  a raw YAML file.
-                </li>
-                <li>
-                  If you don’t have a file, you can skip this step and instead define the values override directly as
-                  arguments (--set).
-                </li>
-                <li>
-                  You can use the Qovery environment variables as overrides by using the placeholder
-                  “qovery.env.ENV_VAR_NAME” (Example: qovery.env.DB_URL. Qovery will manage the replacement of those
-                  placeholders at deployment time.
-                </li>
-                <li>
-                  To let you access every Qovery functionality, additional Qovery labels and annotations are
-                  automatically injected in some of the Kubernetes objects deployed within your helm.
-                </li>
-              </ul>
-              <ExternalLink href="https://hub.qovery.com/docs/using-qovery/configuration/helm/#values">
-                Documentation
-              </ExternalLink>
-              <Popover.Close className="absolute top-4 right-4">
-                <button type="button">
-                  <Icon iconName="xmark" className="text-lg leading-4 text-neutral-400" />
-                </button>
-              </Popover.Close>
-            </Popover.Content>
-          </Popover.Root>
-        </div>
+        {!isSetting && (
+          <div>
+            <p className="text-neutral-350 text-sm">
+              Define the YAML file(s) to be applied as override to the default values.yaml delivered with the chart. It
+              is highly recommended to store the override file(s) in a git repository.
+            </p>
+            <Popover.Root>
+              <Popover.Trigger>
+                <span className="text-sm cursor-pointer text-brand-500 hover:text-brand-600 transition font-medium">
+                  How it works <Icon className="text-xs" iconStyle="regular" iconName="circle-question" />
+                </span>
+              </Popover.Trigger>
+              <Popover.Content side="left" className="text-neutral-350 text-sm relative" style={{ width: 440 }}>
+                <h6 className="text-neutral-400 font-medium mb-2">How it works</h6>
+                <ul className="list-disc pl-4">
+                  <li>
+                    Your helm chart might have already a variables.yaml file with some basic configuration. In this
+                    section you can define your own overrides to customize the helm chart behaviour.
+                  </li>
+                  <li>
+                    You can define the overrides by selecting a YAML file from a git repository (preferred) or by
+                    passing a raw YAML file.
+                  </li>
+                  <li>
+                    If you don’t have a file, you can skip this step and instead define the values override directly as
+                    arguments (--set).
+                  </li>
+                  <li>
+                    You can use the Qovery environment variables as overrides by using the placeholder
+                    “qovery.env.ENV_VAR_NAME” (Example: qovery.env.DB_URL. Qovery will manage the replacement of those
+                    placeholders at deployment time.
+                  </li>
+                  <li>
+                    To let you access every Qovery functionality, additional Qovery labels and annotations are
+                    automatically injected in some of the Kubernetes objects deployed within your helm.
+                  </li>
+                </ul>
+                <ExternalLink href="https://hub.qovery.com/docs/using-qovery/configuration/helm/#values">
+                  Documentation
+                </ExternalLink>
+                <Popover.Close className="absolute top-4 right-4">
+                  <button type="button">
+                    <Icon iconName="xmark" className="text-lg leading-4 text-neutral-400" />
+                  </button>
+                </Popover.Close>
+              </Popover.Content>
+            </Popover.Root>
+          </div>
+        )}
         <div className="flex flex-col gap-4">
           <Controller
             name="type"

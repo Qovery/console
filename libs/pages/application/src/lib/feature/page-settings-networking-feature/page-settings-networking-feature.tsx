@@ -41,6 +41,7 @@ export function PageSettingsNetworkingFeature() {
             methods.setValue('ports', updatedPorts)
             onSubmit()
           }}
+          isSetting
         />
       </FormProvider>
     </div>

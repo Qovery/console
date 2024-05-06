@@ -1,5 +1,6 @@
 import { type HelmPortRequestPortsInner } from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
+import { SettingsHeading } from '@qovery/shared/console-shared'
 import {
   BlockContent,
   Button,
@@ -16,9 +17,10 @@ import { NetworkingPortSettingModal } from '../networking-port-setting-modal/net
 export interface NetworkingSettingProps extends PropsWithChildren {
   ports: HelmPortRequestPortsInner[]
   onUpdatePorts: (ports: HelmPortRequestPortsInner[]) => void
+  isSetting?: boolean
 }
 
-export function NetworkingSetting({ ports, onUpdatePorts, children }: NetworkingSettingProps) {
+export function NetworkingSetting({ ports, onUpdatePorts, isSetting = false, children }: NetworkingSettingProps) {
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
 
@@ -58,41 +60,53 @@ export function NetworkingSetting({ ports, onUpdatePorts, children }: Networking
 
   return (
     <Section className="items-start">
-      <div className="flex flex-row w-full justify-between">
-        <div>
-          <Heading className="mb-2">Networking</Heading>
-          <p className="text-sm text-neutral-350 mb-2">
-            You can expose publicly over HTTP/gRPC the Kubernetes services deployed.
-          </p>
-          <Popover.Root>
-            <Popover.Trigger>
-              <span className="text-sm cursor-pointer text-brand-500 hover:text-brand-600 transition font-medium mb-5">
-                How it works <Icon className="text-xs" iconStyle="regular" iconName="circle-question" />
-              </span>
-            </Popover.Trigger>
-            <Popover.Content side="left" className="text-neutral-350 text-sm relative" style={{ width: 440 }}>
-              <h6 className="text-neutral-400 font-medium mb-2">How it works</h6>
-              <p>
-                You can expose publicly over HTTP/gRPC the Kubernetes services deployed with this helm chart by
-                providing the service name (as defined within the chart) and the port you want to expose. Qovery will
-                take care of assigning a domain and configure the TLS for you.
-              </p>
-              <ExternalLink href="https://hub.qovery.com/docs/using-qovery/configuration/helm/#ports">
-                Documentation
-              </ExternalLink>
-              <Popover.Close className="absolute top-4 right-4">
-                <button type="button">
-                  <Icon iconName="xmark" className="text-lg leading-4 text-neutral-400" />
-                </button>
-              </Popover.Close>
-            </Popover.Content>
-          </Popover.Root>
+      {isSetting ? (
+        <SettingsHeading
+          title="Networking"
+          description="You can expose publicly over HTTP/gRPC the Kubernetes services deployed."
+        >
+          <Button className="gap-2" size="lg" variant="solid" color="brand" onClick={onAddPort}>
+            Add port
+            <Icon iconName="plus-circle" />
+          </Button>
+        </SettingsHeading>
+      ) : (
+        <div className="flex flex-row w-full justify-between">
+          <div>
+            <Heading className="mb-2">Networking</Heading>
+            <p className="text-sm text-neutral-350 mb-2">
+              You can expose publicly over HTTP/gRPC the Kubernetes services deployed.
+            </p>
+            <Popover.Root>
+              <Popover.Trigger>
+                <span className="text-sm cursor-pointer text-brand-500 hover:text-brand-600 transition font-medium mb-5">
+                  How it works <Icon className="text-xs" iconStyle="regular" iconName="circle-question" />
+                </span>
+              </Popover.Trigger>
+              <Popover.Content side="left" className="text-neutral-350 text-sm relative" style={{ width: 440 }}>
+                <h6 className="text-neutral-400 font-medium mb-2">How it works</h6>
+                <p>
+                  You can expose publicly over HTTP/gRPC the Kubernetes services deployed with this helm chart by
+                  providing the service name (as defined within the chart) and the port you want to expose. Qovery will
+                  take care of assigning a domain and configure the TLS for you.
+                </p>
+                <ExternalLink href="https://hub.qovery.com/docs/using-qovery/configuration/helm/#ports">
+                  Documentation
+                </ExternalLink>
+                <Popover.Close className="absolute top-4 right-4">
+                  <button type="button">
+                    <Icon iconName="xmark" className="text-lg leading-4 text-neutral-400" />
+                  </button>
+                </Popover.Close>
+              </Popover.Content>
+            </Popover.Root>
+          </div>
+          <Button className="gap-2" size="lg" variant="solid" color="brand" onClick={onAddPort}>
+            Add port
+            <Icon iconName="plus-circle" />
+          </Button>
         </div>
-        <Button className="gap-2" size="lg" variant="solid" color="brand" onClick={onAddPort}>
-          Add port
-          <Icon iconName="plus-circle" />
-        </Button>
-      </div>
+      )}
       <form className="w-full">
         <BlockContent title="Services exposed publicly" classNameContent="p-0">
           {ports.length > 0 ? (

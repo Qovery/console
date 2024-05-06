@@ -6,7 +6,8 @@ import {
   useDefaultAdvancedSettings,
   useService,
 } from '@qovery/domains/services/feature'
-import { Heading, Section } from '@qovery/shared/ui'
+import { SettingsHeading } from '@qovery/shared/console-shared'
+import { Section } from '@qovery/shared/ui'
 
 interface SettingsAdvancedFeatureProps {
   service: Exclude<AnyService, Database>
@@ -24,15 +25,10 @@ function SettingsAdvancedFeature({ service }: SettingsAdvancedFeatureProps) {
   return (
     <div className="flex flex-col justify-between w-full">
       <Section className="p-8">
-        <div className="flex justify-between mb-4">
-          <div>
-            <Heading className="mb-2">Advanced Settings</Heading>
-            <p className="text-sm text-neutral-400 max-w-content-with-navigation-left">
-              Settings are injected at the build and run time of your application and thus any change on this section
-              will be applied on the next manual/automatic deploy.
-            </p>
-          </div>
-        </div>
+        <SettingsHeading
+          title="Advanced Settings"
+          description="Settings are injected at the build and run time of your application and thus any change on this section will be applied on the next manual/automatic deploy."
+        />
         <AdvancedSettings
           key={JSON.stringify(advancedSettings)}
           service={service}

@@ -1,5 +1,6 @@
 import { type CustomDomain } from 'qovery-typescript-axios'
-import { BlockContent, Button, EmptyState, Heading, Icon, InputText, LoaderSpinner, Section } from '@qovery/shared/ui'
+import { SettingsHeading } from '@qovery/shared/console-shared'
+import { BlockContent, Button, EmptyState, Icon, InputText, LoaderSpinner, Section } from '@qovery/shared/ui'
 
 export interface PageSettingsDomainsProps {
   onAddDomain: () => void
@@ -13,18 +14,12 @@ export function PageSettingsDomains(props: PageSettingsDomainsProps) {
   return (
     <div className="justify-between w-full">
       <Section className="p-8  max-w-content-with-navigation-left">
-        <div className="flex justify-between mb-8">
-          <div>
-            <Heading className="mb-2">Domain</Heading>
-            <p className="text-sm text-neutral-400 mb-2">Add custom domains to your service.</p>
-          </div>
-
+        <SettingsHeading title="Domain" description="Add custom domains to your service.">
           <Button size="lg" variant="solid" color="brand" onClick={() => props.onAddDomain()}>
             Add Domain
             <Icon iconName="circle-plus" className="ml-2" />
           </Button>
-        </div>
-
+        </SettingsHeading>
         {props.loading && props.domains?.length === 0 ? (
           <div className="flex justify-center">
             <LoaderSpinner className="w-6" />
