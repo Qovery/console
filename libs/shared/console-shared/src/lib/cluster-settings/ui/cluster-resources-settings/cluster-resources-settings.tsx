@@ -35,7 +35,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
       (option) => option.value === watchInstanceType
     )
     if (instanceType) {
-      setWarningInstance(instanceType.label.indexOf('ARM') !== -1)
+      setWarningInstance(instanceType.label?.toString().indexOf('ARM') !== -1)
     }
   }, [watchInstanceType, props.instanceTypeOptions])
 

@@ -5,7 +5,7 @@ export interface InputRadioBoxProps {
   name: string
   onChange: (e: FormEvent<HTMLInputElement> | string) => void
   fieldValue: string
-  label: string
+  label: ReactNode
   value: string
   description?: ReactNode | undefined
 }
