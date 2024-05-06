@@ -33,7 +33,9 @@ export function CreateEditCredentialsModal(props: CreateEditCredentialsModalProp
       reader.readAsText(file)
       reader.onload = async () => {
         const binaryStr = reader.result
-        setValue('gcp_credentials', binaryStr?.toString().replace(/\r?\n|\r/g, ''), { shouldValidate: true })
+        setValue('gcp_credentials', binaryStr !== null ? btoa(binaryStr?.toString().replace(/\r?\n|\r/g, '')) : null, {
+          shouldValidate: true,
+        })
       }
     },
   })
