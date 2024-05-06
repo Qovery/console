@@ -154,7 +154,13 @@ export function VariableList({
           <div className="h-5">
             {/** XXX: fix css weird 1px vertical shift when checked/unchecked **/}
             <Checkbox
-              checked={table.getIsSomeRowsSelected() ? 'indeterminate' : table.getIsAllRowsSelected()}
+              checked={
+                table.getIsSomeRowsSelected()
+                  ? table.getIsAllRowsSelected()
+                    ? true
+                    : 'indeterminate'
+                  : table.getIsAllRowsSelected()
+              }
               onCheckedChange={(checked) => {
                 if (checked === 'indeterminate') {
                   return
