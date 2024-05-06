@@ -1,4 +1,5 @@
 import { type ReactElement, useRef, useState } from 'react'
+import { twMerge } from '@qovery/shared/util-js'
 import Icon from '../../icon/icon'
 
 export interface InputSearchProps {
@@ -42,7 +43,7 @@ export function InputSearch(props: InputSearchProps) {
 
   return (
     <>
-      <div className={`relative w-full ${className}`}>
+      <div className={twMerge('relative w-full', className)}>
         <Icon
           name="icon-solid-magnifying-glass"
           className="absolute left-3 top-1/2 -translate-y-1/2 block text-base text-neutral-400 dark:text-white leading-none"
@@ -51,7 +52,10 @@ export function InputSearch(props: InputSearchProps) {
           data-testid="input-search"
           ref={ref}
           autoFocus={autofocus}
-          className={`w-full rounded border border-neutral-250 dark:border-neutral-350 dark:bg-transparent text-neutral-400 dark:text-white placeholder:text-neutral-350 dark:placeholder:text-neutral-250 pl-10 pr-6 leading-none focus:outline-none focus:border-brand-400 focus:transition-[border-color] ${customSize}`}
+          className={twMerge(
+            'w-full rounded border border-neutral-250 dark:border-neutral-350 dark:bg-transparent text-neutral-400 dark:text-white placeholder:text-neutral-350 dark:placeholder:text-neutral-250 pl-10 pr-6 leading-none focus:outline-none focus:border-brand-400 focus:transition-[border-color]',
+            customSize
+          )}
           type="text"
           placeholder={placeholder}
           disabled={false}

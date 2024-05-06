@@ -3884,6 +3884,7 @@ __metadata:
     cypress: ^9.1.0
     date-fns: ^2.29.3
     date-fns-tz: ^2.0.0
+    devicon: ^2.16.0
     downloadjs: ^1.4.7
     downshift: ^9.0.3
     eslint: 8.57.0
@@ -11071,6 +11072,13 @@ __metadata:
     detect: bin/detect-port.js
     detect-port: bin/detect-port.js
   checksum: b48da9340481742547263d5d985e65d078592557863402ecf538511735e83575867e94f91fe74405ea19b61351feb99efccae7e55de9a151d5654e3417cea05b
+  languageName: node
+  linkType: hard
+
+"devicon@npm:^2.16.0":
+  version: 2.16.0
+  resolution: "devicon@npm:2.16.0"
+  checksum: 9613d72a89392a210493cc1720bddffc67dcd6f8c6d42af613fc77bfe5cd67dc069651a1a8e920d4128a08c74ea3166055b5f44965b25104eb9c9e3a3c40c057
   languageName: node
   linkType: hard
 

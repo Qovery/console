@@ -11,6 +11,7 @@ export const SERVICES_GENERAL_URL = prefix + '/general'
 export const SERVICES_DEPLOYMENTS_URL = prefix + '/deployments'
 export const SERVICES_VARIABLES_URL = prefix + '/variables'
 export const SERVICES_SETTINGS_URL = prefix + '/settings'
+export const SERVICES_NEW_URL = prefix + '/new'
 export const SERVICES_SETTINGS_GENERAL_URL = prefix + `/general`
 export const SERVICES_SETTINGS_RULES_URL = prefix + '/rules'
 export const SERVICES_SETTINGS_PIPELINE_URL = prefix + '/pipeline'

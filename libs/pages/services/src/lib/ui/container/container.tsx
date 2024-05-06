@@ -1,6 +1,5 @@
-import { type Environment } from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
-import { matchPath, useLocation, useNavigate, useParams } from 'react-router-dom'
+import { matchPath, useLocation, useParams } from 'react-router-dom'
 import { useCluster } from '@qovery/domains/clusters/feature'
 import {
   EnvironmentActionToolbar,
@@ -8,48 +7,27 @@ import {
   EnvironmentStateChip,
   useDeployEnvironment,
   useDeploymentStatus,
+  useEnvironment,
 } from '@qovery/domains/environments/feature'
 import { ShowAllVariablesToggle, VariablesActionToolbar, VariablesProvider } from '@qovery/domains/variables/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import {
   CLUSTER_URL,
   ENVIRONMENT_LOGS_URL,
-  SERVICES_APPLICATION_CREATION_URL,
-  SERVICES_CRONJOB_CREATION_URL,
-  SERVICES_DATABASE_CREATION_URL,
   SERVICES_DEPLOYMENTS_URL,
   SERVICES_GENERAL_URL,
-  SERVICES_HELM_CREATION_URL,
-  SERVICES_LIFECYCLE_CREATION_URL,
+  SERVICES_NEW_URL,
   SERVICES_SETTINGS_URL,
   SERVICES_URL,
   SERVICES_VARIABLES_URL,
 } from '@qovery/shared/routes'
-import {
-  Banner,
-  Button,
-  Header,
-  Icon,
-  Link,
-  Menu,
-  MenuAlign,
-  type MenuData,
-  Section,
-  Skeleton,
-  Tabs,
-  Tooltip,
-  toast,
-} from '@qovery/shared/ui'
+import { Banner, Header, Icon, Link, Section, Skeleton, Tabs, Tooltip, toast } from '@qovery/shared/ui'
 
-export interface ContainerProps {
-  environment?: Environment
-}
-
-export function Container(props: PropsWithChildren<ContainerProps>) {
-  const { environment, children } = props
+export function Container({ children }: PropsWithChildren) {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
+  const { data: environment } = useEnvironment({ environmentId })
+
   const location = useLocation()
-  const navigate = useNavigate()
 
   const { isLoading: isLoadingDeploymentStatus, data: deploymentStatus } = useDeploymentStatus({
     environmentId: environment?.id,
@@ -132,52 +110,6 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
     },
   ]
 
-  const newServicesMenu: MenuData = [
-    {
-      items: [
-        {
-          name: 'Create application',
-          contentLeft: <Icon iconName="layer-group" className="text-brand-500 text-sm" />,
-          onClick: () => {
-            navigate(`${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_APPLICATION_CREATION_URL}`)
-          },
-        },
-        {
-          name: 'Create database',
-          contentLeft: <Icon iconName="database" className="text-brand-500 text-sm" />,
-          onClick: () => {
-            navigate(`${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_DATABASE_CREATION_URL}`)
-          },
-        },
-        {
-          name: 'Create lifecycle job',
-          contentLeft: (
-            <Icon name={IconEnum.LIFECYCLE_JOB_STROKE} width="14" height="16" className="text-brand-500 text-sm" />
-          ),
-          onClick: () => {
-            navigate(`${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_LIFECYCLE_CREATION_URL}`)
-          },
-        },
-        {
-          name: 'Create cronjob',
-          contentLeft: (
-            <Icon name={IconEnum.CRON_JOB_STROKE} width="14" height="16" className="text-brand-500 text-sm" />
-          ),
-          onClick: () => {
-            navigate(`${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_CRONJOB_CREATION_URL}`)
-          },
-        },
-        {
-          name: 'Create helm',
-          contentLeft: <Icon name={IconEnum.HELM_OFFICIAL} width="14" height="16" className="text-brand-500 text-sm" />,
-          onClick: () => {
-            navigate(`${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_HELM_CREATION_URL}`)
-          },
-        },
-      ],
-    },
-  ]
-
   const matchEnvVariableRoute = matchPath(
     location.pathname || '',
     SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_VARIABLES_URL
@@ -210,16 +142,15 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
         </>
       ) : (
         <Skeleton width={154} height={40} show={isLoadingDeploymentStatus}>
-          <Menu
-            trigger={
-              <Button size="lg" className="gap-2">
-                New service
-                <Icon iconName="circle-plus" />
-              </Button>
-            }
-            menus={newServicesMenu}
-            arrowAlign={MenuAlign.START}
-          />
+          <Link
+            as="button"
+            size="lg"
+            className="gap-2"
+            to={`${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_NEW_URL}`}
+          >
+            New service
+            <Icon iconName="circle-plus" />
+          </Link>
         </Skeleton>
       )}
     </div>
