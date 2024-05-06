@@ -29,6 +29,7 @@ import {
   Icon,
   Link,
   StatusChip,
+  TableFilter,
   TablePrimitives,
   Tooltip,
   Truncate,
@@ -39,7 +40,6 @@ import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { CreateCloneEnvironmentModal } from '../create-clone-environment-modal/create-clone-environment-modal'
 import { EnvironmentActionToolbar } from '../environment-action-toolbar/environment-action-toolbar'
 import { useEnvironments } from '../hooks/use-environments/use-environments'
-import { EnvironmentListFilter } from './environment-list-filter'
 import { EnvironmentListSkeleton } from './environment-list-skeleton'
 
 const { Table } = TablePrimitives
@@ -314,7 +314,7 @@ export function EnvironmentList({ project, clusterAvailable, className, ...props
                 style={{ width: `${header.getSize()}%` }}
               >
                 {header.column.getCanFilter() ? (
-                  <EnvironmentListFilter column={header.column} />
+                  <TableFilter column={header.column} />
                 ) : header.column.getCanSort() ? (
                   <button
                     type="button"

@@ -22,6 +22,20 @@ export function useVariables({ parentId, scope, isSecret }: UseVariablesProps) {
         return data
       }
       return sortVariables(data)
+        .map((v) => ({
+          ...v,
+          // NOTE: This is to simplify react-table usage and filtering of `is_secret`
+          variable_kind: v.is_secret ? 'Private' : 'Public',
+        }))
+        .filter((v) => {
+          if (scope === 'PROJECT' && v.scope === 'BUILT_IN') {
+            return v.key === 'QOVERY_PROJECT_ID'
+          }
+          if (scope === 'ENVIRONMENT' && v.scope === 'BUILT_IN') {
+            return !v.service_id
+          }
+          return true
+        })
     },
     enabled: Boolean(scope),
   })

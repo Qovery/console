@@ -1,5 +1,4 @@
 import {
-  type Row,
   type RowSelectionState,
   type SortingState,
   createColumnHelper,
@@ -48,6 +47,7 @@ import {
   Icon,
   Link,
   StatusChip,
+  TableFilter,
   TablePrimitives,
   Tooltip,
   Truncate,
@@ -61,7 +61,6 @@ import { LastCommit } from '../last-commit/last-commit'
 import { ServiceActionToolbar } from '../service-action-toolbar/service-action-toolbar'
 import { ServiceLinksPopover } from '../service-links-popover/service-links-popover'
 import { ServiceListActionBar } from './service-list-action-bar'
-import { ServiceListFilter } from './service-list-filter'
 import { ServiceListSkeleton } from './service-list-skeleton'
 
 const { Table } = TablePrimitives
@@ -74,8 +73,7 @@ function getServiceIcon(service: AnyService) {
     .otherwise(() => IconEnum.APPLICATION)
 }
 
-function ServiceNameCell({ row, environment }: { row: Row<AnyService>; environment: Environment }) {
-  const { original: service } = row
+function ServiceNameCell({ service, environment }: { service: AnyService; environment: Environment }) {
   const navigate = useNavigate()
 
   return (
@@ -198,7 +196,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
   const columnHelper = createColumnHelper<(typeof services)[number]>()
   const columns = useMemo(
     () => [
-      {
+      columnHelper.display({
         id: 'select',
         enableColumnFilter: false,
         enableSorting: false,
@@ -230,7 +228,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
             />
           </label>
         ),
-      },
+      }),
       columnHelper.accessor('name', {
         header: 'Name',
         enableColumnFilter: true,
@@ -253,7 +251,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
           },
         },
         cell: (info) => {
-          return <ServiceNameCell row={info.row} environment={environment} />
+          return <ServiceNameCell service={info.row.original} environment={environment} />
         },
       }),
       columnHelper.accessor('runningStatus.stateLabel', {
@@ -537,7 +535,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
                   style={{ width: i === 0 ? '20px' : `${header.getSize()}%` }}
                 >
                   {header.column.getCanFilter() ? (
-                    <ServiceListFilter column={header.column} />
+                    <TableFilter column={header.column} />
                   ) : header.column.getCanSort() ? (
                     <button
                       type="button"

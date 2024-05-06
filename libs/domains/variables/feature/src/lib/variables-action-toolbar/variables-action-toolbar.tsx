@@ -1,16 +1,47 @@
-import { ActionToolbar, DropdownMenu, Icon, Tooltip } from '@qovery/shared/ui'
+import { type APIVariableScopeEnum, type VariableResponse } from 'qovery-typescript-axios'
+import { ActionToolbar, DropdownMenu, Icon, Tooltip, useModal } from '@qovery/shared/ui'
+import { CreateUpdateVariableModal } from '../create-update-variable-modal/create-update-variable-modal'
 
-export interface VariablesActionToolbarProps {
-  onImportEnvFile: () => void
-  onCreateVariable: () => void
-  onCreateVariableFile: () => void
-}
+type Scope = Exclude<keyof typeof APIVariableScopeEnum, 'BUILT_IN'>
 
-export function VariablesActionToolbar({
-  onImportEnvFile,
-  onCreateVariable,
-  onCreateVariableFile,
-}: VariablesActionToolbarProps) {
+export type VariablesActionToolbarProps = {
+  onCreateVariable?: (variable: VariableResponse | void) => void
+  onImportEnvFile?: () => void
+} & (
+  | {
+      scope: Extract<Scope, 'PROJECT'>
+      projectId: string
+    }
+  | {
+      scope: Extract<Scope, 'ENVIRONMENT'>
+      projectId: string
+      environmentId: string
+    }
+  | {
+      scope: Exclude<Scope, 'PROJECT' | 'ENVIRONMENT'>
+      projectId: string
+      environmentId: string
+      serviceId: string
+    }
+)
+
+export function VariablesActionToolbar({ onCreateVariable, onImportEnvFile, ...props }: VariablesActionToolbarProps) {
+  const { openModal, closeModal } = useModal()
+
+  const _onCreateVariable = (isFile?: boolean) =>
+    openModal({
+      content: (
+        <CreateUpdateVariableModal
+          closeModal={closeModal}
+          type="VALUE"
+          mode="CREATE"
+          onSubmit={onCreateVariable}
+          isFile={isFile}
+          {...props}
+        />
+      ),
+    })
+
   return (
     <ActionToolbar.Root className="flex">
       <DropdownMenu.Root>
@@ -20,9 +51,11 @@ export function VariablesActionToolbar({
           </ActionToolbar.Button>
         </DropdownMenu.Trigger>
         <DropdownMenu.Content align="end">
-          <DropdownMenu.Item onSelect={onImportEnvFile} icon={<Icon iconName="cloud-upload" />}>
-            Import from .env file
-          </DropdownMenu.Item>
+          {onImportEnvFile && (
+            <DropdownMenu.Item onSelect={onImportEnvFile} icon={<Icon iconName="cloud-upload" />}>
+              Import from .env file
+            </DropdownMenu.Item>
+          )}
           <DropdownMenu.Item asChild icon={<Icon iconName="rotate" />}>
             <a href="https://dashboard.doppler.com" target="_blank" rel="noopener noreferrer">
               Import from Doppler
@@ -48,10 +81,10 @@ export function VariablesActionToolbar({
           </ActionToolbar.Button>
         </DropdownMenu.Trigger>
         <DropdownMenu.Content>
-          <DropdownMenu.Item onSelect={onCreateVariable} icon={<Icon iconName="feather" />}>
+          <DropdownMenu.Item onSelect={() => _onCreateVariable()} icon={<Icon iconName="feather" />}>
             Variable
           </DropdownMenu.Item>
-          <DropdownMenu.Item onSelect={onCreateVariableFile} icon={<Icon iconName="file-lines" />}>
+          <DropdownMenu.Item onSelect={() => _onCreateVariable(true)} icon={<Icon iconName="file-lines" />}>
             Variable as file
           </DropdownMenu.Item>
         </DropdownMenu.Content>
