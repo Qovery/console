@@ -6,6 +6,7 @@ import {
   SERVICES_DATABASE_CREATION_URL,
   SERVICES_HELM_CREATION_URL,
   SERVICES_LIFECYCLE_CREATION_URL,
+  SERVICES_LIFECYCLE_TEMPLATE_CREATION_URL,
   SERVICES_URL,
 } from '@qovery/shared/routes'
 import { ExternalLink, Heading, Icon, InputSearch, Link, Section } from '@qovery/shared/ui'
@@ -24,10 +25,14 @@ function Card({ title, icon, link }: ServiceTemplateType) {
   )
 }
 
-function CardService({ title, icon, description, link }: ServiceTemplateType) {
+function CardService({ title, icon, description, link, slug }: ServiceTemplateType) {
+  const { organizationId = '', projectId = '', environmentId = '' } = useParams()
+
   return (
     <NavLink
-      to={link ?? '.'}
+      to={
+        link ?? SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_LIFECYCLE_TEMPLATE_CREATION_URL(slug)
+      }
       className="flex gap-6 border border-neutral-200 hover:bg-neutral-100 transition rounded p-5 shadow-sm"
     >
       <div className="w-60">

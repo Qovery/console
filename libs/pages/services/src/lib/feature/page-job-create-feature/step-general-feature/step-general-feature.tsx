@@ -24,7 +24,7 @@ export function StepGeneralFeature() {
   }, [setCurrentStep])
 
   const methods = useForm<JobGeneralData>({
-    defaultValues: { auto_deploy: true, ...generalData },
+    defaultValues: { auto_deploy: true, dockerfile_mode: 'YES', ...generalData },
     mode: 'onChange',
   })
 

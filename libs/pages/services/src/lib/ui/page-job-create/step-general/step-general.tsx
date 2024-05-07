@@ -1,14 +1,25 @@
 import { BuildModeEnum, type Organization } from 'qovery-typescript-axios'
-import { type FormEventHandler } from 'react'
-import { useFormContext } from 'react-hook-form'
+import { type FormEventHandler, useEffect, useState } from 'react'
+import { Controller, useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { AnnotationSetting } from '@qovery/domains/organizations/feature'
 import { AutoDeploySetting, BuildSettings, GeneralSetting } from '@qovery/domains/services/feature'
-import { EntrypointCmdInputs, JobGeneralSettings } from '@qovery/shared/console-shared'
-import { type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
+import { EntrypointCmdInputs, GitRepositorySettings, JobGeneralSettings } from '@qovery/shared/console-shared'
+import { IconEnum, type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
 import { type JobGeneralData } from '@qovery/shared/interfaces'
 import { SERVICES_URL } from '@qovery/shared/routes'
-import { Button, Heading, Section } from '@qovery/shared/ui'
+import {
+  Button,
+  CodeEditor,
+  CopyToClipboardButtonIcon,
+  Heading,
+  Icon,
+  InputRadio,
+  InputSelect,
+  InputText,
+  Section,
+} from '@qovery/shared/ui'
+import { serviceTemplates } from '../../../feature/page-new-feature/service-templates'
 
 export interface StepGeneralProps {
   onSubmit: FormEventHandler<HTMLFormElement>
@@ -16,26 +27,61 @@ export interface StepGeneralProps {
   jobType: JobType
 }
 
+const fetchDockerfile = async (url: string) => {
+  const response = await fetch(url)
+  const text = await response.text()
+  return text
+}
+
 export function StepGeneral(props: StepGeneralProps) {
-  const { organizationId = '', environmentId = '', projectId = '' } = useParams()
+  const { organizationId = '', environmentId = '', projectId = '', slug } = useParams()
   const navigate = useNavigate()
-  const { formState, watch } = useFormContext<JobGeneralData>()
+  const { formState, watch, control } = useFormContext<JobGeneralData>()
   const watchServiceType = watch('serviceType')
   const watchBuildMode = watch('build_mode')
 
   // NOTE: Validation corner case where git settings can be in loading state
   const isGitSettingsValid = watchServiceType === 'APPLICATION' ? watch('branch') : true
 
+  const isTemplate = slug !== undefined
+  const dataTemplate = serviceTemplates.find((service) => service.slug === slug)
+
+  const [dockerFile, setDockerFile] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchDockerfileData = async () => {
+      if (dataTemplate?.dockerFile) {
+        const data = await fetchDockerfile(dataTemplate?.dockerFile)
+        setDockerFile(data)
+      }
+    }
+    if (isTemplate) fetchDockerfileData()
+  }, [dataTemplate?.dockerFile, isTemplate])
+
   return (
     <Section>
-      <Heading className="mb-2">
-        {props.jobType === ServiceTypeEnum.CRON_JOB ? 'Cron' : 'Lifecycle'} job information
-      </Heading>
+      {isTemplate ? (
+        <div className="flex items-center gap-6 mb-10">
+          <img src={dataTemplate?.icon as string} alt={slug} className="w-10 h-10" />
+          <div>
+            <Heading className="mb-2">{dataTemplate?.title} - Lifecycle job information</Heading>
+            <p className="text-neutral-350 text-sm">
+              General settings allow you to set up your lifecycle name with our git repository settings.
+            </p>
+          </div>
+        </div>
+      ) : (
+        <>
+          <Heading className="mb-2">
+            {props.jobType === ServiceTypeEnum.CRON_JOB ? 'Cron' : 'Lifecycle'} job information
+          </Heading>
+          <p className="text-neutral-350 text-sm mb-10">
+            General settings allow you to set up your application name, git repository or container settings.
+          </p>
+        </>
+      )}
 
       <form className="space-y-10" onSubmit={props.onSubmit}>
-        <p className="text-neutral-350 text-sm">
-          General settings allow you to set up your application name, git repository or container settings.
-        </p>
         <Section className="gap-4">
           <Heading>General</Heading>
           <GeneralSetting label="Service name" />
@@ -43,13 +89,126 @@ export function StepGeneral(props: StepGeneralProps) {
 
         <Section className="gap-4">
           <Heading>Source</Heading>
-          <JobGeneralSettings jobType={props.jobType} organization={props.organization} isEdition={false} />
+          {isTemplate ? (
+            <>
+              <Controller
+                name="serviceType"
+                control={control}
+                defaultValue={ServiceTypeEnum.APPLICATION}
+                rules={{
+                  required: 'Please select a source.',
+                }}
+                render={({ field, fieldState: { error } }) => (
+                  <InputSelect
+                    dataTestId="input-select-source"
+                    onChange={field.onChange}
+                    value={field.value}
+                    disabled
+                    options={[
+                      {
+                        value: ServiceTypeEnum.APPLICATION,
+                        label: 'Git provider',
+                        icon: <Icon name={IconEnum.GIT} className="w-4" />,
+                      },
+                    ]}
+                    label="Application source"
+                    error={error?.message}
+                  />
+                )}
+              />
+              <GitRepositorySettings gitDisabled={false} />
+            </>
+          ) : (
+            <JobGeneralSettings jobType={props.jobType} organization={props.organization} isEdition={false} />
+          )}
         </Section>
 
         {watchServiceType && (
           <Section className="gap-4">
             <Heading>{watchServiceType === ServiceTypeEnum.APPLICATION ? 'Build and deploy' : 'Deploy'}</Heading>
-            {watchServiceType === ServiceTypeEnum.APPLICATION && <BuildSettings buildModeDisabled />}
+            {isTemplate && (
+              <div className="flex flex-col gap-4">
+                <div className="border border-neutral-250 bg-neutral-100 rounded overflow-hidden pt-4">
+                  <p className="text-neutral-400 text-ssm font-medium px-5 mb-3">Have you an Dockerfile configured?</p>
+                  <div className="flex gap-4 px-5 pb-5">
+                    <Controller
+                      name="dockerfile_mode"
+                      control={control}
+                      render={({ field }) => (
+                        <InputRadio
+                          label="Yes"
+                          description="I have already Dockerfile in my git repository."
+                          value="YES"
+                          formValue={field.value}
+                          name={field.name}
+                          onChange={field.onChange}
+                        />
+                      )}
+                    />
+                    <Controller
+                      name="dockerfile_mode"
+                      control={control}
+                      render={({ field }) => (
+                        <InputRadio
+                          label="No, I need an example"
+                          description="I don't have Dockerfile in my git repository."
+                          value="NO"
+                          formValue={field.value}
+                          name={field.name}
+                          onChange={field.onChange}
+                        />
+                      )}
+                    />
+                  </div>
+                  {watch('dockerfile_mode') === 'NO' && (
+                    <div className="relative overflow-hidden border-t border-neutral-250">
+                      <CodeEditor
+                        readOnly
+                        height="280px"
+                        defaultValue={dockerFile ?? ''}
+                        loading={!dockerFile}
+                        language="dockerfile"
+                      />
+                      <Button type="button" className="absolute right-4 top-2" color="neutral" variant="surface">
+                        <CopyToClipboardButtonIcon
+                          className="flex items-center justify-center w-full h-full"
+                          content={dockerFile ?? ''}
+                        />
+                      </Button>
+                    </div>
+                  )}
+                </div>
+                <Controller
+                  data-testid="input-text-dockerfile-path"
+                  name="dockerfile_path"
+                  defaultValue="Dockerfile"
+                  control={control}
+                  rules={{
+                    required: 'Value required',
+                  }}
+                  render={({ field, fieldState: { error } }) => (
+                    <InputText
+                      dataTestId="input-text-dockerfile"
+                      name={field.name}
+                      onChange={field.onChange}
+                      value={field.value ?? ''}
+                      label="Dockerfile path"
+                      error={error?.message}
+                    />
+                  )}
+                />
+                {watch('repository') && (
+                  <div className="bg-neutral-150 rounded border border-neutral-200 px-3 py-2">
+                    <p className="text-xs text-neutral-350 mb-1">The full path of your Dockerfile</p>
+                    <p className="text-sm text-neutral-500">
+                      {watch('root_path')}
+                      {watch('dockerfile_path')}
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+            {!isTemplate && watchServiceType === ServiceTypeEnum.APPLICATION && <BuildSettings buildModeDisabled />}
             {props.jobType === ServiceTypeEnum.CRON_JOB && watchBuildMode === BuildModeEnum.DOCKER && (
               <EntrypointCmdInputs />
             )}

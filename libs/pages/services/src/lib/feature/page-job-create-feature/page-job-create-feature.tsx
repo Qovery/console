@@ -12,6 +12,7 @@ import {
   SERVICES_CRONJOB_CREATION_URL,
   SERVICES_JOB_CREATION_GENERAL_URL,
   SERVICES_LIFECYCLE_CREATION_URL,
+  SERVICES_LIFECYCLE_TEMPLATE_CREATION_URL,
   SERVICES_URL,
 } from '@qovery/shared/routes'
 import { FunnelFlow } from '@qovery/shared/ui'
@@ -56,7 +57,7 @@ export const steps: { title: string }[] = [
 ]
 
 export function PageJobCreateFeature() {
-  const { organizationId = '', projectId = '', environmentId = '' } = useParams()
+  const { organizationId = '', projectId = '', environmentId = '', slug } = useParams()
   const location = useLocation()
 
   // values and setters for context initialization
@@ -84,9 +85,9 @@ export function PageJobCreateFeature() {
       setJobType(ServiceTypeEnum.CRON_JOB)
     } else {
       setJobType(ServiceTypeEnum.LIFECYCLE_JOB)
-      setJobURL(SERVICES_LIFECYCLE_CREATION_URL)
+      setJobURL(slug ? SERVICES_LIFECYCLE_TEMPLATE_CREATION_URL(slug) : SERVICES_LIFECYCLE_CREATION_URL)
     }
-  }, [setJobURL, setJobType, location.pathname])
+  }, [setJobURL, setJobType, location.pathname, slug])
 
   const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${jobURL}`
 

@@ -32,6 +32,9 @@ export interface JobGeneralData {
   root_path?: string
   buildpack_language?: keyof typeof BuildPackLanguageEnum
   dockerfile_path?: string
+
+  // template
+  dockerfile_mode: 'YES' | 'NO'
 }
 
 export interface JobConfigureData {
