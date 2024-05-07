@@ -142,7 +142,7 @@ describe('CreateEditCredentialsModalFeature', () => {
       ...handleSubmit(
         {
           name: 'test',
-          gcp_credentials: value,
+          gcp_credentials: btoa(value),
         },
         CloudProviderEnum.GCP
       ),
