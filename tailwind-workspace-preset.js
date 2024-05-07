@@ -88,7 +88,7 @@ const easingFunctions = {
 
 // tailwind-workspace-preset.js
 module.exports = {
-  darkMode: 'class',
+  darkMode: ['class', '[data-mode="dark"]'],
   theme: {
     extend: {
       transitionProperty: {
