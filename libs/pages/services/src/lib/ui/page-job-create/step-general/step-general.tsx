@@ -154,7 +154,7 @@ export function StepGeneral(props: StepGeneralProps) {
                         render={({ field }) => (
                           <InputRadio
                             label="No, I need an example"
-                            description="I don't have Dockerfile in my git repository and I want copy/paste an example."
+                            description="I don't have Dockerfile in my git repository."
                             value="NO"
                             formValue={field.value}
                             name={field.name}
