@@ -128,54 +128,63 @@ export function StepGeneral(props: StepGeneralProps) {
             <Heading>{watchServiceType === ServiceTypeEnum.APPLICATION ? 'Build and deploy' : 'Deploy'}</Heading>
             {isTemplate && (
               <div className="flex flex-col gap-4">
-                <div className="border border-neutral-250 bg-neutral-100 rounded overflow-hidden pt-4">
-                  <p className="text-neutral-400 text-ssm font-medium px-5 mb-3">Have you an Dockerfile configured?</p>
-                  <div className="flex gap-4 px-5 pb-5">
-                    <Controller
-                      name="dockerfile_mode"
-                      control={control}
-                      render={({ field }) => (
-                        <InputRadio
-                          label="Yes"
-                          description="I have already Dockerfile in my git repository."
-                          value="YES"
-                          formValue={field.value}
-                          name={field.name}
-                          onChange={field.onChange}
+                <div>
+                  <div className="border border-neutral-250 bg-neutral-100 rounded overflow-hidden pt-4">
+                    <p className="text-neutral-400 text-ssm font-medium px-5 mb-3">
+                      Have you an Dockerfile configured?
+                    </p>
+                    <div className="flex gap-4 px-5 pb-5">
+                      <Controller
+                        name="dockerfile_mode"
+                        control={control}
+                        render={({ field }) => (
+                          <InputRadio
+                            label="Yes"
+                            description="I have already Dockerfile in my git repository."
+                            value="YES"
+                            formValue={field.value}
+                            name={field.name}
+                            onChange={field.onChange}
+                          />
+                        )}
+                      />
+                      <Controller
+                        name="dockerfile_mode"
+                        control={control}
+                        render={({ field }) => (
+                          <InputRadio
+                            label="No, I need an example"
+                            description="I don't have Dockerfile in my git repository and I want copy/paste an example."
+                            value="NO"
+                            formValue={field.value}
+                            name={field.name}
+                            onChange={field.onChange}
+                          />
+                        )}
+                      />
+                    </div>
+                    {watch('dockerfile_mode') === 'NO' && (
+                      <div className="relative overflow-hidden border-t border-neutral-250">
+                        <CodeEditor
+                          readOnly
+                          height="280px"
+                          defaultValue={dockerFile ?? ''}
+                          loading={!dockerFile}
+                          language="dockerfile"
                         />
-                      )}
-                    />
-                    <Controller
-                      name="dockerfile_mode"
-                      control={control}
-                      render={({ field }) => (
-                        <InputRadio
-                          label="No, I need an example"
-                          description="I don't have Dockerfile in my git repository."
-                          value="NO"
-                          formValue={field.value}
-                          name={field.name}
-                          onChange={field.onChange}
-                        />
-                      )}
-                    />
+                        <Button type="button" className="absolute right-4 top-2" color="neutral" variant="surface">
+                          <CopyToClipboardButtonIcon
+                            className="flex items-center justify-center w-full h-full"
+                            content={dockerFile ?? ''}
+                          />
+                        </Button>
+                      </div>
+                    )}
                   </div>
                   {watch('dockerfile_mode') === 'NO' && (
-                    <div className="relative overflow-hidden border-t border-neutral-250">
-                      <CodeEditor
-                        readOnly
-                        height="280px"
-                        defaultValue={dockerFile ?? ''}
-                        loading={!dockerFile}
-                        language="dockerfile"
-                      />
-                      <Button type="button" className="absolute right-4 top-2" color="neutral" variant="surface">
-                        <CopyToClipboardButtonIcon
-                          className="flex items-center justify-center w-full h-full"
-                          content={dockerFile ?? ''}
-                        />
-                      </Button>
-                    </div>
+                    <p className="px-5 mt-0.5 font-normal text-xs text-neutral-350">
+                      This example should be adapted to your needs. It must be push in your git repository by yourself.
+                    </p>
                   )}
                 </div>
                 <Controller
@@ -199,7 +208,7 @@ export function StepGeneral(props: StepGeneralProps) {
                 />
                 {watch('repository') && (
                   <div className="bg-neutral-150 rounded border border-neutral-200 px-3 py-2">
-                    <p className="text-xs text-neutral-350 mb-1">The full path of your Dockerfile</p>
+                    <p className="text-xs text-neutral-350 mb-1">Full path of your Dockerfile</p>
                     <p className="text-sm text-neutral-500">
                       {watch('root_path')}
                       {watch('dockerfile_path')}
