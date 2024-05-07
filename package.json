@@ -45,7 +45,7 @@
     "algoliasearch": "^4.23.3",
     "ansi-to-react": "^6.1.6",
     "autoprefixer": "10.4.13",
-    "axios": "^0.27.2",
+    "axios": "^1.6.8",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "cmdk": "^0.2.1",
@@ -79,7 +79,7 @@
     "tslib": "^2.3.0"
   },
   "resolutions": {
-    "axios": "0.27.2"
+    "axios": "1.6.8"
   },
   "devDependencies": {
     "@babel/core": "^7.18.13",
