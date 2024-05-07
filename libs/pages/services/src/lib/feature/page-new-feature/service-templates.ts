@@ -8,62 +8,93 @@ import React from 'devicon/icons/react/react-original.svg'
 import Redis from 'devicon/icons/redis/redis-original.svg'
 import Terraform from 'devicon/icons/terraform/terraform-original.svg'
 import Vue from 'devicon/icons/vuejs/vuejs-original.svg'
+import { type ReactElement } from 'react'
 
-export const serviceTemplates = [
+export type ServiceTemplateType = {
+  title: string
+  description?: string
+  icon?: string | ReactElement
+  dockerFile?: string
+  link?: string
+}
+
+export const serviceTemplates: ServiceTemplateType[] = [
   {
     title: 'PostgreSQL',
     description: 'PostgreSQL is a powerful, open-source object-relational database system.',
-    iconUrl: PostgreSQL,
+    icon: PostgreSQL,
+    dockerFile:
+      'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
     title: 'Lambda — Pulumi',
     description: 'AWS Lambda lets you run code without provisioning or managing servers.',
-    iconUrl: AWSLambda,
+    icon: AWSLambda,
+    dockerFile:
+      'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
     title: 'Redis',
     description: 'Redis is an open-source in-memory data structure store.',
-    iconUrl: Redis,
+    icon: Redis,
+    dockerFile:
+      'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
     title: 'Terraform',
     description: 'Terraform is an open-source infrastructure as code software tool.',
-    iconUrl: Terraform,
+    icon: Terraform,
+    dockerFile:
+      'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
     title: 'React',
     description: 'React is a JavaScript library for building user interfaces.',
-    iconUrl: React,
+    icon: React,
+    dockerFile:
+      'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
     title: 'Vue',
     description: 'Vue.js is a progressive framework for building user interfaces.',
-    iconUrl: Vue,
+    icon: Vue,
+    dockerFile:
+      'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
     title: 'Angular',
     description:
       'Angular is a platform and framework for building single-page client applications using HTML and TypeScript.',
-    iconUrl: Angular,
+    icon: Angular,
+    dockerFile:
+      'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
     title: 'Node.js',
     description: 'Node.js is an open-source, cross-platform, back-end JavaScript runtime environment.',
-    iconUrl: Node,
+    icon: Node,
+    dockerFile:
+      'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
     title: 'Lambda — Serverless',
     description: 'AWS Lambda lets you run code without provisioning or managing servers.',
-    iconUrl: AWSLambda,
+    icon: AWSLambda,
+    dockerFile:
+      'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
     title: 'MySQL',
     description: 'MySQL is an open-source relational database management system.',
-    iconUrl: MySQL,
+    icon: MySQL,
+    dockerFile:
+      'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
     title: 'Algolia',
     description: 'Algolia is a hosted search engine capable of delivering real-time results.',
-    iconUrl: Algolia,
+    icon: Algolia,
+    dockerFile:
+      'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
 ]

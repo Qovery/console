@@ -1,4 +1,4 @@
-import { type ReactNode, useState } from 'react'
+import { type ReactElement, cloneElement, useState } from 'react'
 import { NavLink, useParams } from 'react-router-dom'
 import {
   SERVICES_APPLICATION_CREATION_URL,
@@ -10,12 +10,12 @@ import {
 } from '@qovery/shared/routes'
 import { ExternalLink, Heading, Icon, InputSearch, Link, Section } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { serviceTemplates } from './service-templates'
+import { type ServiceTemplateType, serviceTemplates } from './service-templates'
 
-function Card({ title, icon, link }: { title: string; icon: ReactNode; link: string }) {
+function Card({ title, icon, link }: ServiceTemplateType) {
   return (
     <NavLink
-      to={link}
+      to={link ?? '.'}
       className="flex items-center gap-3 border border-neutral-200 hover:bg-neutral-100 transition rounded p-3 shadow-sm"
     >
       {icon}
@@ -24,17 +24,21 @@ function Card({ title, icon, link }: { title: string; icon: ReactNode; link: str
   )
 }
 
-function CardService({ title, description, iconUrl }: { title: string; description: string; iconUrl: string }) {
+function CardService({ title, icon, description, link }: ServiceTemplateType) {
   return (
     <NavLink
-      to="."
+      to={link ?? '.'}
       className="flex gap-6 border border-neutral-200 hover:bg-neutral-100 transition rounded p-5 shadow-sm"
     >
       <div className="w-60">
         <h3 className="text-ssm font-medium mb-1">{title}</h3>
         <p className="text-xs text-neutral-350">{description}</p>
       </div>
-      <img className="select-none" width={40} height={40} src={iconUrl} alt={title} />
+      {typeof icon === 'string' ? (
+        <img className="select-none" width={40} height={40} src={icon} alt={title} />
+      ) : (
+        cloneElement(icon as ReactElement, { className: 'w-10' })
+      )}
     </NavLink>
   )
 }
@@ -46,26 +50,31 @@ export function PageNewFeature() {
   const serviceEmpty = [
     {
       title: 'Application',
+      description: 'Create from empty application git or container based.',
       icon: <Icon name="APPLICATION" />,
       link: SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_APPLICATION_CREATION_URL,
     },
     {
       title: 'Database',
+      description: 'Create from empty database managed or container.',
       icon: <Icon name="DATABASE" />,
       link: SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_DATABASE_CREATION_URL,
     },
     {
       title: 'Lifecycle Job',
+      description: 'Create an empty lifecycle job.',
       icon: <Icon name="LIFECYCLE_JOB" />,
       link: SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_LIFECYCLE_CREATION_URL,
     },
     {
       title: 'Cron Job',
+      description: 'Create an empty cron job.',
       icon: <Icon name="CRON_JOB" />,
       link: SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_CRONJOB_CREATION_URL,
     },
     {
       title: 'Helm',
+      description: 'Create an empty Helm chart.',
       icon: <Icon name="HELM" />,
       link: SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_HELM_CREATION_URL,
     },
@@ -110,37 +119,44 @@ export function PageNewFeature() {
         </ExternalLink>
       </div>
       <div className="flex flex-col gap-8 w-[1024px] mx-auto">
-        <Section>
-          <Heading className="mb-1">Select an empty service</Heading>
-          <p className="text-neutral-350 text-xs mb-5">Services without pre-configuration for technical stack.</p>
-          {serviceEmpty.filter(filterService).length > 0 ? (
-            <div className="grid grid-cols-5 gap-3">
-              {serviceEmpty.filter(filterService).map((service) => (
-                <Card key={service.title} {...service} />
+        {searchInput.length === 0 ? (
+          <>
+            <Section>
+              <Heading className="mb-1">Select an empty service</Heading>
+              <p className="text-neutral-350 text-xs mb-5">Services without pre-configuration for technical stack.</p>
+              <div className="grid grid-cols-5 gap-3">
+                {serviceEmpty.map((service) => (
+                  <Card key={service.title} {...service} />
+                ))}
+              </div>
+            </Section>
+            <Section>
+              <Heading className="mb-1">Select your service</Heading>
+              <p className="text-neutral-350 text-xs mb-5">
+                Jumpstart your app development process with pre-built solutions from Qovery.
+              </p>
+              <div className="grid grid-cols-3 gap-4">
+                {serviceTemplates
+                  .sort((a, b) => a.title.localeCompare(b.title))
+                  .map((service) => (
+                    <CardService key={service.title} {...service} />
+                  ))}
+              </div>
+            </Section>
+          </>
+        ) : [...serviceEmpty, ...serviceTemplates].filter(filterService).length > 0 ? (
+          <Section>
+            <Heading className="mb-1">Search results</Heading>
+            <p className="text-neutral-350 text-xs mb-5">Find the service you need to kickstart your next project.</p>
+            <div className="grid grid-cols-3 gap-4">
+              {[...serviceEmpty, ...serviceTemplates].filter(filterService).map((service) => (
+                <CardService key={service.title} {...service} />
               ))}
             </div>
-          ) : (
-            emptyState
-          )}
-        </Section>
-        <Section>
-          <Heading className="mb-1">Select your service</Heading>
-          <p className="text-neutral-350 text-xs mb-5">
-            Jumpstart your app development process with pre-built solutions from Qovery.
-          </p>
-          {serviceTemplates.filter(filterService).length > 0 ? (
-            <div className="grid grid-cols-3 gap-4">
-              {serviceTemplates
-                .filter(filterService)
-                .sort((a, b) => a.title.localeCompare(b.title))
-                .map((service) => (
-                  <CardService key={service.title} {...service} />
-                ))}
-            </div>
-          ) : (
-            emptyState
-          )}
-        </Section>
+          </Section>
+        ) : (
+          emptyState
+        )}
       </div>
     </Section>
   )
