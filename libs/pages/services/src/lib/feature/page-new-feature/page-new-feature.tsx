@@ -1,4 +1,3 @@
-import { useDocumentTitle } from '@uidotdev/usehooks'
 import { type ReactNode, useState } from 'react'
 import { NavLink, useParams } from 'react-router-dom'
 import {
@@ -9,7 +8,8 @@ import {
   SERVICES_LIFECYCLE_CREATION_URL,
   SERVICES_URL,
 } from '@qovery/shared/routes'
-import { EmptyState, ExternalLink, Heading, Icon, InputSearch, Link, Section } from '@qovery/shared/ui'
+import { ExternalLink, Heading, Icon, InputSearch, Link, Section } from '@qovery/shared/ui'
+import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { serviceTemplates } from './service-templates'
 
 function Card({ title, icon, link }: { title: string; icon: ReactNode; link: string }) {
