@@ -1,5 +1,6 @@
 import { type ClusterRoutingTableResultsInner } from 'qovery-typescript-axios'
-import { BlockContent, Button, EmptyState, Heading, Icon, LoaderSpinner, Section, Tooltip } from '@qovery/shared/ui'
+import { SettingsHeading } from '@qovery/shared/console-shared'
+import { BlockContent, Button, EmptyState, Icon, LoaderSpinner, Section, Tooltip } from '@qovery/shared/ui'
 
 export interface PageSettingsNetworkProps {
   routes?: ClusterRoutingTableResultsInner[]
@@ -13,20 +14,15 @@ export function PageSettingsNetwork(props: PageSettingsNetworkProps) {
   return (
     <div className="flex flex-col justify-between w-full">
       <Section className="p-8 max-w-content-with-navigation-left">
-        <div className="flex justify-between mb-8">
-          <div>
-            <Heading className="mb-2">Network</Heading>
-            <p className="text-sm text-neutral-400 max-w-lg">
-              The Network tab in your cluster settings allows you to update your Qovery VPC route table so that you can
-              perform VPC peering.
-            </p>
-          </div>
-
+        <SettingsHeading
+          title="Network"
+          description="The Network tab in your cluster settings allows you to update your Qovery VPC route table so that you can perform VPC peering."
+        >
           <Button data-testid="add-button" size="lg" variant="solid" color="brand" onClick={() => props.onAddRoute()}>
             Add Network
             <Icon iconName="circle-plus" className="ml-2" />
           </Button>
-        </div>
+        </SettingsHeading>
 
         {(props.loading && props.routes?.length === 0) || !props.routes ? (
           <div className="flex justify-center">

@@ -1,4 +1,5 @@
 import { type Healthcheck, type ServicePort } from 'qovery-typescript-axios'
+import { NeedHelp } from '@qovery/shared/assistant/feature'
 import { type PortData } from '@qovery/shared/interfaces'
 import { BlockContent, Button, EmptyState, Heading, Icon, IconAwesomeEnum, Section, Tooltip } from '@qovery/shared/ui'
 import { isMatchingHealthCheck } from '../../utils/port-healthcheck'
@@ -33,11 +34,12 @@ export function FlowCreatePort({
         <div>
           <Heading className="mb-2">Ports</Heading>
 
-          <p className={isSetting ? 'text-sm text-neutral-400 max-w-lg' : 'text-xs text-neutral-400'}>
+          <p className={isSetting ? 'text-sm text-neutral-400 max-w-lg mb-3' : 'text-xs text-neutral-400'}>
             Declare TCP/UDP ports used by your application. Declared ports are accessible from other applications within
             the same environment. You can also expose them on the internet by making them public. Declared ports are
             also used to check the liveness/readiness of your application
           </p>
+          {isSetting && <NeedHelp />}
         </div>
 
         {isSetting && (

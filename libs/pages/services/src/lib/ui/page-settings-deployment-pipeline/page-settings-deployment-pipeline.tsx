@@ -6,10 +6,10 @@ import {
 import { type Dispatch, Fragment, type SetStateAction } from 'react'
 import { DragDropContext, Draggable, type DropResult, Droppable } from 'react-beautiful-dnd'
 import { type AnyService } from '@qovery/domains/services/data-access'
+import { SettingsHeading } from '@qovery/shared/console-shared'
 import {
   BadgeDeploymentOrder,
   Button,
-  Heading,
   Icon,
   IconAwesomeEnum,
   LoaderSpinner,
@@ -79,11 +79,11 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
 
   return (
     <div className="w-[calc(100vw-368px)]">
-      <Section className="flex flex-col w-full rounded-tr-sm">
-        <div className="flex justify-between items-center px-5 my-5">
-          <div>
-            <Heading className="mb-2">Pipeline</Heading>
-            <p className="text-xs text-neutral-400">
+      <Section className="p-8 flex flex-col w-full rounded-tr-sm">
+        <SettingsHeading
+          title="Pipeline"
+          description={
+            <>
               Stages allow to define deployment order within the deployment pipeline of your environment. Default stages
               are available based on the service type, you can edit/remove them based on your need.
               <span className="block text-2xs mt-1">
@@ -92,8 +92,9 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
                 </span>{' '}
                 Tips: You can drag & drop
               </span>
-            </p>
-          </div>
+            </>
+          }
+        >
           <Button
             data-testid="btn-add-stage"
             className="gap-2 shrink-0 ml-5"
@@ -103,14 +104,14 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
           >
             Add stage <Icon iconName="circle-plus" />
           </Button>
-        </div>
+        </SettingsHeading>
         <div className="h-full overflow-x-auto">
           {!stages && !services ? (
             <div data-testid="stages-loader" className="flex justify-center max-w-4xl">
               <LoaderSpinner className="w-4 mt-5" />
             </div>
           ) : (
-            <div className="flex px-5 pb-5">
+            <div className="flex pb-5">
               <DragDropContext onDragEnd={onDragEnd}>
                 {stages?.map((stage, index) => (
                   <Fragment key={stage.id}>

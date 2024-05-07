@@ -1,6 +1,7 @@
 import { Controller, useFormContext } from 'react-hook-form'
+import { SettingsHeading } from '@qovery/shared/console-shared'
 import { timezoneValues, weekdaysValues } from '@qovery/shared/enums'
-import { BlockContent, Button, Heading, InputSelect, InputText, InputToggle, Section } from '@qovery/shared/ui'
+import { BlockContent, Button, InputSelect, InputText, InputToggle, Section } from '@qovery/shared/ui'
 
 export interface PageSettingsDeploymentRulesProps {
   onSubmit: () => void
@@ -15,9 +16,7 @@ export function PageSettingsDeploymentRules(props: PageSettingsDeploymentRulesPr
   return (
     <div className="flex flex-col justify-between w-full">
       <Section className="p-8  max-w-content-with-navigation-left">
-        <div className="flex justify-between mb-8">
-          <Heading className="mb-2">Deployment rules</Heading>
-        </div>
+        <SettingsHeading title="Deployment rules" />
         <form onSubmit={onSubmit}>
           <BlockContent title="Start & stop">
             <div className="flex items-center gap-3">

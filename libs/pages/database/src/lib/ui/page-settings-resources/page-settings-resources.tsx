@@ -3,6 +3,7 @@ import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { type Database } from '@qovery/domains/services/data-access'
 import { DatabaseSettingsResources } from '@qovery/shared/console-shared'
+import { SettingsHeading } from '@qovery/shared/console-shared'
 import { Button, Callout, Heading, Icon, Section } from '@qovery/shared/ui'
 
 export interface PageSettingsResourcesProps {
@@ -26,10 +27,7 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
   return (
     <div className="flex flex-col justify-between w-full">
       <Section className="p-8 max-w-content-with-navigation-left">
-        <Heading className="mb-2">Resources</Heading>
-        <p className="text-sm text-neutral-400 max-w-content-with-navigation-left mb-8">
-          Manage the database's resources
-        </p>
+        <SettingsHeading title="Resources" description="Manage the database's resources" />
         <form className="space-y-10" onSubmit={onSubmit}>
           {database.mode === DatabaseModeEnum.MANAGED && (
             <Callout.Root color="yellow">

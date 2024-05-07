@@ -1,8 +1,8 @@
 import { type CloudProviderEnum } from 'qovery-typescript-axios'
 import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { ClusterResourcesSettingsFeature } from '@qovery/shared/console-shared'
-import { Button, Heading, Section } from '@qovery/shared/ui'
+import { ClusterResourcesSettingsFeature, SettingsHeading } from '@qovery/shared/console-shared'
+import { Button, Section } from '@qovery/shared/ui'
 
 export interface PageSettingsResourcesProps {
   loading?: boolean
@@ -17,7 +17,7 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
   return (
     <div className="flex flex-col justify-between w-full">
       <Section className="p-8 max-w-content-with-navigation-left">
-        <Heading className="mb-8">Resources settings</Heading>
+        <SettingsHeading title="Resources settings" />
         <form onSubmit={onSubmit}>
           <ClusterResourcesSettingsFeature
             cloudProvider={props.cloudProvider}

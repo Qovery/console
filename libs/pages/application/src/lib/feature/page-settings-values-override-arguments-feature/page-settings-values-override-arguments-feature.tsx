@@ -80,6 +80,7 @@ export function PageSettingsValuesOverrideArgumentsFeature() {
           onSubmit={onSubmit}
           methods={methods}
           source={buildEditServicePayload({ service: service! }).source}
+          isSetting
         >
           <div className="flex justify-end mt-10">
             <Button type="submit" size="lg" loading={isLoadingEditService} disabled={!methods.formState.isValid}>

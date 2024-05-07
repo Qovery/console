@@ -11,6 +11,7 @@ import {
   EntrypointCmdInputs,
   GeneralContainerSettings,
   JobGeneralSettings,
+  SettingsHeading,
 } from '@qovery/shared/console-shared'
 import { ServiceTypeEnum, isJobGitSource } from '@qovery/shared/enums'
 import { Button, Callout, Heading, Icon, InputSelect, InputText, Section } from '@qovery/shared/ui'
@@ -104,10 +105,10 @@ export function PageSettingsGeneral({
   return (
     <div className="flex flex-col justify-between w-full">
       <Section className="p-8 max-w-content-with-navigation-left">
-        <Heading className="mb-2">General settings</Heading>
-        <p className="text-sm text-neutral-400 mb-8">
-          These general settings allow you to set up the service name, its source and deployment parameters.
-        </p>
+        <SettingsHeading
+          title="General settings"
+          description="These general settings allow you to set up the service name, its source and deployment parameters."
+        />
         <form onSubmit={onSubmit} className="space-y-10">
           <Section className="gap-4">
             <Heading>General</Heading>

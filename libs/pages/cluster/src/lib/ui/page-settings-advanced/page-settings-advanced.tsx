@@ -2,9 +2,9 @@ import equal from 'fast-deep-equal'
 import { type ClusterAdvancedSettings } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
+import { SettingsHeading } from '@qovery/shared/console-shared'
 import {
   CopyToClipboardButtonIcon,
-  Heading,
   InputTextSmall,
   InputToggle,
   LoaderSpinner,
@@ -139,14 +139,10 @@ export function PageSettingsAdvanced(props: PageSettingsAdvancedProps) {
   return (
     <div className="flex flex-col justify-between w-full">
       <Section className="p-8">
-        <div className="flex justify-between mb-4">
-          <div>
-            <Heading className="mb-2">Advanced Settings</Heading>
-            <p className="text-sm text-neutral-400 max-w-content-with-navigation-left">
-              Any change to this section will be applied after triggering a cluster update.
-            </p>
-          </div>
-        </div>
+        <SettingsHeading
+          title="Advanced Settings"
+          description="Any change to this section will be applied after triggering a cluster update."
+        />
 
         <InputToggle
           small

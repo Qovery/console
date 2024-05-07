@@ -1,6 +1,5 @@
 import { useContext } from 'react'
-import { useState } from 'react'
-import { Button, Icon } from '@qovery/shared/ui'
+import { Icon } from '@qovery/shared/ui'
 import { AssistantContext } from '../assistant-context/assistant-context'
 import { AssistantPanel } from '../assistant-panel/assistant-panel'
 

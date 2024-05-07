@@ -3,6 +3,7 @@ import { type FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { AnnotationSetting } from '@qovery/domains/organizations/feature'
 import { GeneralSetting } from '@qovery/domains/services/feature'
+import { SettingsHeading } from '@qovery/shared/console-shared'
 import { type Value } from '@qovery/shared/interfaces'
 import { Button, Callout, ExternalLink, Heading, Icon, InputSelect, LoaderSpinner, Section } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
@@ -49,10 +50,10 @@ export function PageSettingsGeneral({
   return (
     <div className="flex flex-col justify-between w-full">
       <Section className="p-8 max-w-content-with-navigation-left">
-        <Heading className="mb-2">General settings</Heading>
-        <p className="text-sm text-neutral-400 mb-5">
-          These general settings allow you to set up the database name, type and version.
-        </p>
+        <SettingsHeading
+          title="General settings"
+          description="These general settings allow you to set up the database name, type and version."
+        />
         <form onSubmit={onSubmit}>
           {databaseMode === DatabaseModeEnum.MANAGED && (
             <Callout.Root className="mb-5" color="yellow">

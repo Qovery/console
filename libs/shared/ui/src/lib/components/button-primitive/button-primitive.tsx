@@ -67,6 +67,18 @@ const _buttonVariants = cva(
         ],
       },
       {
+        // Incomplete, waiting for other occurences to standardize
+        variant: 'surface',
+        color: 'brand',
+        className: [
+          'bg-brand-50',
+          'border',
+          'border-brand-500',
+          'text-brand-500',
+          'hover:[&:not(:active):not(:disabled)]:bg-transparent',
+        ],
+      },
+      {
         variant: 'outline',
         color: 'neutral',
         className: ['bg-transparent'],

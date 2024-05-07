@@ -1,7 +1,7 @@
 import { EnvironmentModeEnum, type ServicePort } from 'qovery-typescript-axios'
 import { useFormContext } from 'react-hook-form'
-import { ApplicationSettingsHealthchecks } from '@qovery/shared/console-shared'
-import { Button, Callout, Heading, Icon, Link, Section } from '@qovery/shared/ui'
+import { ApplicationSettingsHealthchecks, SettingsHeading } from '@qovery/shared/console-shared'
+import { Button, Callout, Icon, Link, Section } from '@qovery/shared/ui'
 
 export interface PageSettingsHealthchecksProps {
   loading: boolean
@@ -44,14 +44,10 @@ export function PageSettingsHealthchecks({
             </Callout.Text>
           </Callout.Root>
         )}
-        <Heading className="mb-2">Health checks</Heading>
-        <p className="text-xs text-neutral-400 mb-8">
-          Health checks are automatic ways for Kubernetes to check the status of your application and decide if it can
-          receive traffic or needs to be restarted (during the deployment and run phases). These checks are managed by
-          two probes: Liveness and Readiness. If your application has special processing requirements (long start-up
-          phase, re-load operations during the run), you can customize the liveness and readiness probes to match your
-          needs (have a look at the documentation)
-        </p>
+        <SettingsHeading
+          title="Health checks"
+          description="Health checks are automatic ways for Kubernetes to check the status of your application and decide if it can receive traffic or needs to be restarted (during the deployment and run phases). These checks are managed by two probes: Liveness and Readiness. If your application has special processing requirements (long start-up phase, re-load operations during the run), you can customize the liveness and readiness probes to match your needs (have a look at the documentation)"
+        />
         <form onSubmit={onSubmit}>
           <div className="relative">
             <ApplicationSettingsHealthchecks
