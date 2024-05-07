@@ -1,4 +1,5 @@
 import {
+  type RowSelectionState,
   type SortingState,
   createColumnHelper,
   flexRender,
@@ -17,6 +18,7 @@ import { ExternalServiceEnum, IconEnum } from '@qovery/shared/enums'
 import { APPLICATION_GENERAL_URL, APPLICATION_URL, DATABASE_GENERAL_URL, DATABASE_URL } from '@qovery/shared/routes'
 import {
   Button,
+  Checkbox,
   DropdownMenu,
   EmptyState,
   Icon,
@@ -40,6 +42,7 @@ import { CreateUpdateVariableModal } from '../create-update-variable-modal/creat
 import { useDeleteVariable } from '../hooks/use-delete-variable/use-delete-variable'
 import { useVariables } from '../hooks/use-variables/use-variables'
 import { VariablesContext } from '../variables-context/variables-context'
+import { VariableListActionBar } from './variable-list-action-bar'
 import { VariableListSkeleton } from './variable-list-skeleton'
 
 const { Table } = TablePrimitives
@@ -89,6 +92,7 @@ export function VariableList({
   })
   const { showAllVariablesValues } = useContext(VariablesContext)
   const [sorting, setSorting] = useState<SortingState>([])
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
 
   const { mutateAsync: deleteVariable } = useDeleteVariable()
 
@@ -142,6 +146,45 @@ export function VariableList({
   const columnHelper = createColumnHelper<(typeof variables)[number]>()
   const columns = useMemo(
     () => [
+      columnHelper.display({
+        id: 'select',
+        enableColumnFilter: false,
+        enableSorting: false,
+        header: ({ table }) => (
+          <div className="h-5">
+            {/** XXX: fix css weird 1px vertical shift when checked/unchecked **/}
+            <Checkbox
+              checked={
+                table.getIsSomeRowsSelected()
+                  ? table.getIsAllRowsSelected()
+                    ? true
+                    : 'indeterminate'
+                  : table.getIsAllRowsSelected()
+              }
+              onCheckedChange={(checked) => {
+                if (checked === 'indeterminate') {
+                  return
+                }
+                table.toggleAllRowsSelected(checked)
+              }}
+            />
+          </div>
+        ),
+        cell: ({ row }) =>
+          row.getCanSelect() ? (
+            <label className="absolute flex items-center inset-y-0 left-0 p-4" onClick={(e) => e.stopPropagation()}>
+              <Checkbox
+                checked={row.getIsSelected()}
+                onCheckedChange={(checked) => {
+                  if (checked === 'indeterminate') {
+                    return
+                  }
+                  row.toggleSelected(checked)
+                }}
+              />
+            </label>
+          ) : null,
+      }),
       columnHelper.accessor('key', {
         id: 'key',
         header: `${variables.length} ${pluralize(variables.length, 'variable')}`,
@@ -402,8 +445,11 @@ export function VariableList({
     columns,
     state: {
       sorting,
+      rowSelection,
     },
     onSortingChange: setSorting,
+    onRowSelectionChange: setRowSelection,
+    enableRowSelection: (row) => row.original.scope !== 'BUILT_IN',
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -431,57 +477,66 @@ export function VariableList({
     )
   }
 
+  const selectedRows = table.getSelectedRowModel().rows.map(({ original }) => original)
+
   return (
-    <Table.Root className={twMerge('table-fixed w-full text-xs min-w-[800px]', className)}>
-      <Table.Header>
-        {table.getHeaderGroups().map((headerGroup) => (
-          <Table.Row key={headerGroup.id}>
-            {headerGroup.headers.map((header, i) => (
-              <Table.ColumnHeaderCell
-                className={`${i === 1 ? 'border-r pl-0' : ''} font-medium`}
-                key={header.id}
-                style={{ width: i === 1 ? '50px' : `${header.getSize()}%` }}
-              >
-                {header.column.getCanFilter() ? (
-                  <TableFilter column={header.column} />
-                ) : header.column.getCanSort() ? (
-                  <button
-                    type="button"
-                    className={twMerge(
-                      'flex items-center gap-1',
-                      header.column.getCanSort() ? 'cursor-pointer select-none' : ''
-                    )}
-                    onClick={header.column.getToggleSortingHandler()}
-                  >
-                    {flexRender(header.column.columnDef.header, header.getContext())}
-                    {match(header.column.getIsSorted())
-                      .with('asc', () => <Icon className="text-xs" iconName="arrow-down" />)
-                      .with('desc', () => <Icon className="text-xs" iconName="arrow-up" />)
-                      .with(false, () => null)
-                      .exhaustive()}
-                  </button>
-                ) : (
-                  flexRender(header.column.columnDef.header, header.getContext())
-                )}
-              </Table.ColumnHeaderCell>
-            ))}
-          </Table.Row>
-        ))}
-      </Table.Header>
-      <Table.Body>
-        {table.getRowModel().rows.map((row) => (
-          <Fragment key={row.id}>
-            <Table.Row className="hover:bg-neutral-100 h-16 cursor-pointer">
-              {row.getVisibleCells().map((cell, i) => (
-                <Table.Cell key={cell.id} className={`${i === 1 ? 'border-r pl-0' : ''} first:relative`}>
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </Table.Cell>
+    <div className="flex flex-col grow justify-between">
+      <Table.Root className={twMerge('table-fixed w-full text-xs min-w-[800px]', className)}>
+        <Table.Header>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <Table.Row key={headerGroup.id}>
+              {headerGroup.headers.map((header, i) => (
+                <Table.ColumnHeaderCell
+                  className={`${i === 2 ? 'border-r pl-0' : ''} font-medium`}
+                  key={header.id}
+                  style={{ width: i === 0 ? '20px' : i === 2 ? '50px' : `${header.getSize()}%` }}
+                >
+                  {header.column.getCanFilter() ? (
+                    <TableFilter column={header.column} />
+                  ) : header.column.getCanSort() ? (
+                    <button
+                      type="button"
+                      className={twMerge(
+                        'flex items-center gap-1',
+                        header.column.getCanSort() ? 'cursor-pointer select-none' : ''
+                      )}
+                      onClick={header.column.getToggleSortingHandler()}
+                    >
+                      {flexRender(header.column.columnDef.header, header.getContext())}
+                      {match(header.column.getIsSorted())
+                        .with('asc', () => <Icon className="text-xs" iconName="arrow-down" />)
+                        .with('desc', () => <Icon className="text-xs" iconName="arrow-up" />)
+                        .with(false, () => null)
+                        .exhaustive()}
+                    </button>
+                  ) : (
+                    flexRender(header.column.columnDef.header, header.getContext())
+                  )}
+                </Table.ColumnHeaderCell>
               ))}
             </Table.Row>
-          </Fragment>
-        ))}
-      </Table.Body>
-    </Table.Root>
+          ))}
+        </Table.Header>
+        <Table.Body>
+          {table.getRowModel().rows.map((row) => (
+            <Fragment key={row.id}>
+              <Table.Row className="hover:bg-neutral-100 h-16 cursor-pointer">
+                {row.getVisibleCells().map((cell, i) => (
+                  <Table.Cell
+                    key={cell.id}
+                    className={`${i === 2 ? 'border-r pl-0' : ''} first:relative`}
+                    style={{ width: i === 0 ? '20px' : `${cell.column.getSize()}%` }}
+                  >
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </Table.Cell>
+                ))}
+              </Table.Row>
+            </Fragment>
+          ))}
+        </Table.Body>
+      </Table.Root>
+      <VariableListActionBar selectedRows={selectedRows} resetRowSelection={() => table.resetRowSelection()} />
+    </div>
   )
 }
 
