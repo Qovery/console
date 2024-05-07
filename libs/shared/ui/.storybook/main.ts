@@ -11,6 +11,12 @@ const config: StorybookConfig = {
     '../src/lib',
     { from: '../../../../node_modules/@awesome.me/kit-c4457d1be4/icons/webfonts', to: '/assets/fonts/font-awesome' },
   ],
+  typescript: {
+    // https://storybook.js.org/blog/storybook-8/#improved-react-and-vue-control-autogeneration
+    // https://storybook.js.org/docs/api/main-config-typescript#reactdocgen
+    // https://github.com/storybookjs/storybook/issues/26496
+    reactDocgen: 'react-docgen-typescript',
+  },
 }
 
 export default config
