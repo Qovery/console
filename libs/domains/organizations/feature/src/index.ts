@@ -1,5 +1,6 @@
 export * from './lib/annotation-setting/annotation-setting'
 export * from './lib/annotation-create-edit-modal/annotation-create-edit-modal'
+export * from './lib/annotation-items-list-modal/annotation-items-list-modal'
 export * from './lib/git-branch-settings/git-branch-settings'
 export * from './lib/git-provider-setting/git-provider-setting'
 export * from './lib/git-repository-setting/git-repository-setting'
