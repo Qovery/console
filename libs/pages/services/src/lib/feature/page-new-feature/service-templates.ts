@@ -1,11 +1,14 @@
-import Algolia from 'devicon/icons/algolia/algolia-original.svg'
 import AWSLambda from 'devicon/icons/amazonwebservices/amazonwebservices-original-wordmark.svg'
 import Angular from 'devicon/icons/angularjs/angularjs-original.svg'
+import Helm from 'devicon/icons/helm/helm-original.svg'
+import MongoDB from 'devicon/icons/mongodb/mongodb-original.svg'
 import MySQL from 'devicon/icons/mysql/mysql-original.svg'
+import NextJS from 'devicon/icons/nextjs/nextjs-original.svg'
 import Node from 'devicon/icons/nodejs/nodejs-original.svg'
 import PostgreSQL from 'devicon/icons/postgresql/postgresql-original.svg'
 import React from 'devicon/icons/react/react-original.svg'
 import Redis from 'devicon/icons/redis/redis-original.svg'
+import Spring from 'devicon/icons/spring/spring-original.svg'
 import Terraform from 'devicon/icons/terraform/terraform-original.svg'
 import Vue from 'devicon/icons/vuejs/vuejs-original.svg'
 import { type ReactElement } from 'react'
@@ -29,7 +32,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
-    slug: 'aws-lambda-pulimi',
+    slug: 'aws-lambda-pulumi',
     title: 'Lambda Pulumi',
     description: 'AWS Lambda lets you run code without provisioning or managing servers.',
     icon: AWSLambda,
@@ -102,10 +105,42 @@ export const serviceTemplates: ServiceTemplateType[] = [
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
-    slug: 'algolia',
-    title: 'Algolia',
-    description: 'Algolia is a hosted search engine capable of delivering real-time results.',
-    icon: Algolia,
+    slug: 'mongodb',
+    title: 'MongoDB',
+    description: 'MongoDB is a open-source document-oriented NoSQL database.',
+    icon: MongoDB,
+    dockerFile:
+      'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+  },
+  {
+    slug: 'kubecost',
+    title: 'Kubecost',
+    description: 'Kubecost is an open-source cost monitoring tool for Kubernetes.',
+    icon: Helm,
+    dockerFile:
+      'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+  },
+  {
+    slug: 'datadog',
+    title: 'Datadog',
+    description: 'Datadog is an observability platform for cloud-scale applications.',
+    icon: Helm,
+    dockerFile:
+      'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+  },
+  {
+    slug: 'spring',
+    title: 'Spring',
+    description: 'Spring is an open-source application framework for Java.',
+    icon: Spring,
+    dockerFile:
+      'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+  },
+  {
+    slug: 'nextjs',
+    title: 'NextJS',
+    description: 'NextJS is a React framework with hybrid static & server rendering.',
+    icon: NextJS,
     dockerFile:
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
