@@ -50,13 +50,13 @@ export function StepGeneral(props: StepGeneralProps) {
 
   useEffect(() => {
     const fetchDockerfileData = async () => {
-      if (dataTemplate?.dockerFile) {
-        const data = await fetchDockerfile(dataTemplate?.dockerFile)
+      if (dataTemplate?.dockerfile) {
+        const data = await fetchDockerfile(dataTemplate?.dockerfile)
         setDockerFile(data)
       }
     }
     if (isTemplate) fetchDockerfileData()
-  }, [dataTemplate?.dockerFile, isTemplate])
+  }, [dataTemplate?.dockerfile, isTemplate])
 
   return (
     <Section>

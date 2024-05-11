@@ -2,6 +2,8 @@ import AWS from 'devicon/icons/amazonwebservices/amazonwebservices-original-word
 import Angular from 'devicon/icons/angularjs/angularjs-original.svg'
 import Cloudflare from 'devicon/icons/cloudflare/cloudflare-original.svg'
 import Couchbase from 'devicon/icons/couchbase/couchbase-original.svg'
+import Docker from 'devicon/icons/docker/docker-original.svg'
+import Elasticsearch from 'devicon/icons/elasticsearch/elasticsearch-original.svg'
 import FastAPI from 'devicon/icons/fastapi/fastapi-original.svg'
 import Flask from 'devicon/icons/flask/flask-original.svg'
 import Golang from 'devicon/icons/go/go-original.svg'
@@ -27,12 +29,31 @@ import Vue from 'devicon/icons/vuejs/vuejs-original.svg'
 import { type ReactElement } from 'react'
 
 export type ServiceTemplateType = {
-  title: string
   slug?: string
+  title: string
   description?: string
   icon?: string | ReactElement
-  dockerFile?: string
+  dockerfile?: string
   link?: string
+  type?: ServiceTypeEnum
+  options?: ServiceTemplateOptionType[]
+}
+
+export type ServiceTemplateOptionType = {
+  slug: string
+  title: string
+  description: string
+  icon: string | ReactElement
+  type: ServiceTypeEnum
+  dockerfile?: string
+}
+
+export enum ServiceTypeEnum {
+  APPLICATION = 'CONTAINER',
+  LIFECYCLE_JOB = 'LIFECYCLE_JOB',
+  CRON_JOB = 'CRON_JOB',
+  DATABASE = 'DATABASE',
+  HELM = 'HELM',
 }
 
 export const serviceTemplates: ServiceTemplateType[] = [
@@ -41,23 +62,101 @@ export const serviceTemplates: ServiceTemplateType[] = [
     title: 'PostgreSQL',
     description: 'PostgreSQL is a powerful, open-source object-relational database system.',
     icon: PostgreSQL,
-    dockerFile:
+    dockerfile:
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+    options: [
+      {
+        slug: 'container',
+        title: 'Container',
+        description: 'Create a PostgreSQL database using a container.',
+        icon: Docker,
+        type: ServiceTypeEnum.DATABASE,
+      },
+      {
+        slug: 'managed',
+        title: 'Managed',
+        description: 'Create a PostgreSQL database using a managed service.',
+        icon: AWS,
+        type: ServiceTypeEnum.DATABASE,
+      },
+      {
+        slug: 'managed-aws-terraform',
+        title: 'AWS RDS via Terraform',
+        description: 'Create a PostgreSQL database using AWS RDS via Terraform.',
+        icon: Terraform,
+        type: ServiceTypeEnum.LIFECYCLE_JOB,
+        dockerfile:
+          'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+      },
+      {
+        slug: 'managed-aws-cloudformation',
+        title: 'AWS RDS via Cloudformation',
+        description: 'Create a PostgreSQL database using AWS RDS via Cloudformation.',
+        icon: AWS,
+        type: ServiceTypeEnum.LIFECYCLE_JOB,
+        dockerfile:
+          'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+      },
+      {
+        slug: 'managed-gcp-terraform',
+        title: 'Managed via Terraform',
+        description: 'Create a PostgreSQL database using Google Cloud SQL via Terraform.',
+        icon: Terraform,
+        type: ServiceTypeEnum.LIFECYCLE_JOB,
+        dockerfile:
+          'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+      },
+    ],
   },
   {
     slug: 'redis',
     title: 'Redis',
     description: 'Redis is an open-source in-memory data structure store.',
     icon: Redis,
-    dockerFile:
+    dockerfile:
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+    options: [
+      {
+        slug: 'container',
+        title: 'Container',
+        description: 'Create a Redis database using a container.',
+        icon: Docker,
+        type: ServiceTypeEnum.DATABASE,
+      },
+      {
+        slug: 'managed',
+        title: 'Managed',
+        description: 'Create a Redis database using a managed service.',
+        icon: AWS,
+        type: ServiceTypeEnum.DATABASE,
+      },
+      {
+        slug: 'managed-aws-terraform',
+        title: 'AWS ElastiCache via Terraform',
+        description: 'Create a Redis database using AWS ElastiCache via Terraform.',
+        icon: Terraform,
+        type: ServiceTypeEnum.LIFECYCLE_JOB,
+        dockerfile:
+          'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+      },
+      {
+        slug: 'managed-gcp-terraform',
+        title: 'Managed via Terraform',
+        description: 'Create a Redis database using Google Cloud Memorystore via Terraform.',
+        icon: Terraform,
+        type: ServiceTypeEnum.LIFECYCLE_JOB,
+        dockerfile:
+          'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+      },
+    ],
   },
   {
     slug: 'terraform',
     title: 'Terraform',
     description: 'Terraform is an open-source infrastructure as code software tool.',
     icon: Terraform,
-    dockerFile:
+    type: ServiceTypeEnum.LIFECYCLE_JOB,
+    dockerfile:
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
@@ -65,16 +164,52 @@ export const serviceTemplates: ServiceTemplateType[] = [
     title: 'React',
     description: 'React is a JavaScript library for building user interfaces.',
     icon: React,
-    dockerFile:
+    dockerfile:
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+    options: [
+      {
+        slug: 'container',
+        title: 'Container',
+        description: 'Expose a React application using a container with Nginx.',
+        icon: Docker,
+        type: ServiceTypeEnum.APPLICATION,
+      },
+      {
+        slug: 'aws-cloudfront-s3',
+        title: 'AWS Cloudfront and S3',
+        description: 'Expose a React application through AWS CloudFront and S3.',
+        icon: AWS,
+        type: ServiceTypeEnum.LIFECYCLE_JOB,
+        dockerfile:
+          'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+      },
+    ],
   },
   {
     slug: 'vue',
     title: 'Vue',
     description: 'Vue.js is a progressive framework for building user interfaces.',
     icon: Vue,
-    dockerFile:
+    dockerfile:
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+    options: [
+      {
+        slug: 'container',
+        title: 'Container',
+        description: 'Expose a Vue application using a container with Nginx.',
+        icon: Docker,
+        type: ServiceTypeEnum.APPLICATION,
+      },
+      {
+        slug: 'aws-cloudfront-s3',
+        title: 'AWS Cloudfront and S3',
+        description: 'Expose a Vue application through AWS CloudFront and S3.',
+        icon: AWS,
+        type: ServiceTypeEnum.LIFECYCLE_JOB,
+        dockerfile:
+          'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+      },
+    ],
   },
   {
     slug: 'angular',
@@ -82,15 +217,34 @@ export const serviceTemplates: ServiceTemplateType[] = [
     description:
       'Angular is a platform and framework for building single-page client applications using HTML and TypeScript.',
     icon: Angular,
-    dockerFile:
+    dockerfile:
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+    options: [
+      {
+        slug: 'container',
+        title: 'Container',
+        description: 'Expose an Angular application using a container with Nginx.',
+        icon: Docker,
+        type: ServiceTypeEnum.APPLICATION,
+      },
+      {
+        slug: 'aws-cloudfront-s3',
+        title: 'AWS Cloudfront and S3',
+        description: 'Expose an Angular application through AWS CloudFront and S3.',
+        icon: AWS,
+        type: ServiceTypeEnum.LIFECYCLE_JOB,
+        dockerfile:
+          'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+      },
+    ],
   },
   {
     slug: 'nodejs',
     title: 'Node.js',
     description: 'Node.js is an open-source, cross-platform, back-end JavaScript runtime environment.',
     icon: Node,
-    dockerFile:
+    type: ServiceTypeEnum.APPLICATION,
+    dockerfile:
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
@@ -98,31 +252,129 @@ export const serviceTemplates: ServiceTemplateType[] = [
     title: 'AWS Lambda',
     description: 'AWS Lambda lets you run code without provisioning or managing servers.',
     icon: AWS,
-    dockerFile:
+    dockerfile:
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+    options: [
+      {
+        slug: 'cloudformation',
+        title: 'Cloudformation',
+        description: 'Deploy an AWS Lambda function using CloudFormation.',
+        icon: AWS,
+        type: ServiceTypeEnum.LIFECYCLE_JOB,
+        dockerfile:
+          'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+      },
+      {
+        slug: 'terraform',
+        title: 'Terraform',
+        description: 'Deploy an AWS Lambda function using Terraform.',
+        icon: Terraform,
+        type: ServiceTypeEnum.LIFECYCLE_JOB,
+        dockerfile:
+          'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+      },
+    ],
   },
   {
     slug: 'mysql',
     title: 'MySQL',
     description: 'MySQL is an open-source relational database management system.',
     icon: MySQL,
-    dockerFile:
+    dockerfile:
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+    options: [
+      {
+        slug: 'container',
+        title: 'Container',
+        description: 'Create a MySQL database using a container.',
+        icon: Docker,
+        type: ServiceTypeEnum.DATABASE,
+      },
+      {
+        slug: 'managed',
+        title: 'Managed',
+        description: 'Create a MySQL database using a managed service.',
+        icon: AWS,
+        type: ServiceTypeEnum.DATABASE,
+      },
+      {
+        slug: 'managed-aws-terraform',
+        title: 'AWS RDS via Terraform',
+        description: 'Create a MySQL database using AWS RDS via Terraform.',
+        icon: Terraform,
+        type: ServiceTypeEnum.LIFECYCLE_JOB,
+        dockerfile:
+          'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+      },
+      {
+        slug: 'managed-aws-cloudformation',
+        title: 'AWS RDS via Cloudformation',
+        description: 'Create a MySQL database using AWS RDS via Cloudformation.',
+        icon: AWS,
+        type: ServiceTypeEnum.LIFECYCLE_JOB,
+        dockerfile:
+          'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+      },
+      {
+        slug: 'managed-gcp-terraform',
+        title: 'Managed via Terraform',
+        description: 'Create a MySQL database using Google Cloud SQL via Terraform.',
+        icon: Terraform,
+        type: ServiceTypeEnum.LIFECYCLE_JOB,
+        dockerfile:
+          'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+      },
+    ],
   },
   {
     slug: 'mongodb',
     title: 'MongoDB',
     description: 'MongoDB is a open-source document-oriented NoSQL database.',
     icon: MongoDB,
-    dockerFile:
+    dockerfile:
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+    options: [
+      {
+        slug: 'container',
+        title: 'Container',
+        description: 'Create a MongoDB database using a container.',
+        icon: Docker,
+        type: ServiceTypeEnum.DATABASE,
+      },
+      {
+        slug: 'managed',
+        title: 'Managed',
+        description: 'Create a MongoDB database using a managed service.',
+        icon: AWS,
+        type: ServiceTypeEnum.DATABASE,
+      },
+      {
+        slug: 'managed-aws-terraform',
+        title: 'AWS DocumentDB via Terraform',
+        description: 'Create a MongoDB database using AWS DocumentDB via Terraform.',
+        icon: Terraform,
+        type: ServiceTypeEnum.LIFECYCLE_JOB,
+        dockerfile:
+          'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+      },
+      {
+        slug: 'managed-gcp-terraform',
+        title: 'Managed via Terraform',
+        description: 'Create a MongoDB database using Google Cloud Firestore via Terraform.',
+        icon: Terraform,
+        type: ServiceTypeEnum.LIFECYCLE_JOB,
+        dockerfile:
+          'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+      },
+    ],
   },
   {
     slug: 'kubecost',
     title: 'Kubecost',
     description: 'Kubecost is an open-source cost monitoring tool for Kubernetes.',
     icon: Helm,
-    dockerFile:
+    type: ServiceTypeEnum.HELM,
+    dockerfile:
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
@@ -130,7 +382,8 @@ export const serviceTemplates: ServiceTemplateType[] = [
     title: 'Datadog',
     description: 'Datadog is an observability platform for cloud-scale applications.',
     icon: Helm,
-    dockerFile:
+    type: ServiceTypeEnum.HELM,
+    dockerfile:
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
@@ -138,7 +391,8 @@ export const serviceTemplates: ServiceTemplateType[] = [
     title: 'Spring',
     description: 'Spring is an open-source application framework for Java.',
     icon: Spring,
-    dockerFile:
+    type: ServiceTypeEnum.APPLICATION,
+    dockerfile:
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
@@ -146,15 +400,34 @@ export const serviceTemplates: ServiceTemplateType[] = [
     title: 'NextJS',
     description: 'NextJS is a React framework with hybrid static & server rendering.',
     icon: NextJS,
-    dockerFile:
+    dockerfile:
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+    options: [
+      {
+        slug: 'container',
+        title: 'Container',
+        description: 'Expose a NextJS application using a container with Nginx.',
+        icon: Docker,
+        type: ServiceTypeEnum.APPLICATION,
+      },
+      {
+        slug: 'aws-cloudfront-s3',
+        title: 'AWS Cloudfront and S3',
+        description: 'Expose a NextJS application through AWS CloudFront and S3.',
+        icon: AWS,
+        type: ServiceTypeEnum.LIFECYCLE_JOB,
+        dockerfile:
+          'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+      },
+    ],
   },
   {
     slug: 'couchbase',
     title: 'Couchbase',
     description: 'Couchbase is an open-source, distributed, NoSQL document-oriented database.',
     icon: Couchbase,
-    dockerFile:
+    type: ServiceTypeEnum.LIFECYCLE_JOB,
+    dockerfile:
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
@@ -162,7 +435,8 @@ export const serviceTemplates: ServiceTemplateType[] = [
     title: 'Rust',
     description: 'Rust is a multi-paradigm system programming language focused on safety and performance.',
     icon: Rust,
-    dockerFile:
+    type: ServiceTypeEnum.APPLICATION,
+    dockerfile:
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
@@ -171,7 +445,8 @@ export const serviceTemplates: ServiceTemplateType[] = [
     description:
       'Go is an open-source programming language that makes it easy to build simple, reliable, and efficient software.',
     icon: Golang,
-    dockerFile:
+    type: ServiceTypeEnum.APPLICATION,
+    dockerfile:
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
@@ -180,7 +455,8 @@ export const serviceTemplates: ServiceTemplateType[] = [
     description:
       'NGINX is a web server that can also be used as a reverse proxy, load balancer, mail proxy, and HTTP cache.',
     icon: Nginx,
-    dockerFile:
+    type: ServiceTypeEnum.APPLICATION,
+    dockerfile:
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
@@ -188,7 +464,8 @@ export const serviceTemplates: ServiceTemplateType[] = [
     title: 'Caddy',
     description: 'Caddy is a powerful, enterprise-ready, open source web server with automatic HTTPS written in Go.',
     icon: Golang,
-    dockerFile:
+    type: ServiceTypeEnum.APPLICATION,
+    dockerfile:
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
@@ -196,7 +473,8 @@ export const serviceTemplates: ServiceTemplateType[] = [
     title: 'Rails',
     description: 'Rails is a web application framework written in Ruby.',
     icon: Rails,
-    dockerFile:
+    type: ServiceTypeEnum.APPLICATION,
+    dockerfile:
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
@@ -204,7 +482,8 @@ export const serviceTemplates: ServiceTemplateType[] = [
     title: 'Ruby',
     description: 'Ruby is a dynamic, open source programming language with a focus on simplicity and productivity.',
     icon: Ruby,
-    dockerFile:
+    type: ServiceTypeEnum.APPLICATION,
+    dockerfile:
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
@@ -213,7 +492,8 @@ export const serviceTemplates: ServiceTemplateType[] = [
     description:
       'NestJS is a progressive Node.js framework for building efficient, reliable and scalable server-side applications.',
     icon: NestJS,
-    dockerFile:
+    type: ServiceTypeEnum.APPLICATION,
+    dockerfile:
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
@@ -221,7 +501,8 @@ export const serviceTemplates: ServiceTemplateType[] = [
     title: 'Python',
     description: 'Python is a programming language that lets you work quickly and integrate systems more effectively.',
     icon: Python,
-    dockerFile:
+    type: ServiceTypeEnum.APPLICATION,
+    dockerfile:
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
@@ -229,7 +510,8 @@ export const serviceTemplates: ServiceTemplateType[] = [
     title: 'Flask',
     description: 'Flask is a lightweight WSGI web application framework.',
     icon: Flask,
-    dockerFile:
+    type: ServiceTypeEnum.APPLICATION,
+    dockerfile:
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
@@ -237,7 +519,8 @@ export const serviceTemplates: ServiceTemplateType[] = [
     title: 'FastAPI',
     description: 'FastAPI is a modern, fast , web framework for building APIs based on standard Python type hints.',
     icon: FastAPI,
-    dockerFile:
+    type: ServiceTypeEnum.APPLICATION,
+    dockerfile:
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
@@ -246,7 +529,8 @@ export const serviceTemplates: ServiceTemplateType[] = [
     description:
       'Replibyte is a tool written in Rust by the Qovery team to seed databases with production data without sensitive data.',
     icon: Rust,
-    dockerFile:
+    type: ServiceTypeEnum.LIFECYCLE_JOB,
+    dockerfile:
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
@@ -255,7 +539,8 @@ export const serviceTemplates: ServiceTemplateType[] = [
     description:
       'Cloudflare Worker is a serverless platform that enables you to write and deploy code on Cloudflare’s edge.',
     icon: Cloudflare,
-    dockerFile:
+    type: ServiceTypeEnum.LIFECYCLE_JOB,
+    dockerfile:
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
@@ -263,7 +548,8 @@ export const serviceTemplates: ServiceTemplateType[] = [
     title: 'Java',
     description: 'Java is a high-level, class-based, object-oriented programming language.',
     icon: Java,
-    dockerFile:
+    type: ServiceTypeEnum.APPLICATION,
+    dockerfile:
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
@@ -271,33 +557,86 @@ export const serviceTemplates: ServiceTemplateType[] = [
     title: 'AWS Assume Roles',
     description: 'AWS Assume Roles is a tool to assume roles for your services on your Kubernetes cluster.',
     icon: AWS,
-    dockerFile:
+    type: ServiceTypeEnum.HELM,
+    dockerfile:
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
     slug: 'aws-s3',
     title: 'AWS S3',
     description:
-      'AWS S3 is an object storage service that offers industry-leading scalability, data availability, security, and performance.',
+      'AWS S3 is an object storage service that offers industry-leading scalability, ' +
+      'data availability, security, and performance.',
     icon: AWS,
-    dockerFile:
+    dockerfile:
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+    options: [
+      {
+        slug: 's3-cli',
+        title: 'S3 CLI',
+        description: 'Do operations on AWS S3 using the AWS CLI.',
+        icon: AWS,
+        type: ServiceTypeEnum.LIFECYCLE_JOB,
+        dockerfile:
+          'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+      },
+      {
+        slug: 's3-terraform',
+        title: 'S3 via Terraform',
+        description: 'Do operations on S3 using Terraform.',
+        icon: Terraform,
+        type: ServiceTypeEnum.LIFECYCLE_JOB,
+        dockerfile:
+          'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+      },
+      {
+        slug: 's3-cloudformation',
+        title: 'S3 via Cloudformation',
+        description: 'Do operations on S3 using Cloudformation.',
+        icon: AWS,
+        type: ServiceTypeEnum.LIFECYCLE_JOB,
+        dockerfile:
+          'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+      },
+    ],
   },
   {
     slug: 'gcp-bigquery',
     title: 'GCP BigQuery',
     description:
-      'GCP BigQuery is a serverless, highly scalable, and cost-effective multi-cloud data warehouse designed for business agility.',
+      'GCP BigQuery is a serverless, highly scalable, and cost-effective multi-cloud data warehouse ' +
+      'designed for business agility.',
     icon: GCP,
-    dockerFile:
+    dockerfile:
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+    options: [
+      {
+        slug: 'bigquery-cli',
+        title: 'BigQuery CLI',
+        description: 'Do operations on GCP BigQuery using the GCP CLI.',
+        icon: GCP,
+        type: ServiceTypeEnum.LIFECYCLE_JOB,
+        dockerfile:
+          'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+      },
+      {
+        slug: 'bigquery-terraform',
+        title: 'BigQuery via Terraform',
+        description: 'Do operations on BigQuery using Terraform.',
+        icon: Terraform,
+        type: ServiceTypeEnum.LIFECYCLE_JOB,
+        dockerfile:
+          'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+      },
+    ],
   },
   {
     slug: 'windmill',
     title: 'Windmill',
     description: 'Windmill is an open-source workflow orchestration engine written in Rust.',
     icon: Rust,
-    dockerFile:
+    type: ServiceTypeEnum.HELM,
+    dockerfile:
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
@@ -305,7 +644,8 @@ export const serviceTemplates: ServiceTemplateType[] = [
     title: 'Temporal',
     description: 'Temporal is an open-source, stateful, and scalable workflow orchestration engine.',
     icon: Java,
-    dockerFile:
+    type: ServiceTypeEnum.HELM,
+    dockerfile:
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
@@ -314,7 +654,51 @@ export const serviceTemplates: ServiceTemplateType[] = [
     description:
       'Crossplane is an open-source Kubernetes add-on that extends your cluster with the ability to provision services and infrastructure.',
     icon: Helm,
-    dockerFile:
+    type: ServiceTypeEnum.HELM,
+    dockerfile:
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+  },
+  {
+    slug: 'elasticsearch',
+    title: 'Elasticsearch',
+    description:
+      'Elasticsearch is a distributed, RESTful search and analytics engine capable of solving a growing number of use cases.',
+    icon: Elasticsearch,
+    dockerfile:
+      'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+    options: [
+      {
+        slug: 'container',
+        title: 'Container',
+        description: 'Create an Elasticsearch database using a container.',
+        icon: Docker,
+        type: ServiceTypeEnum.DATABASE,
+      },
+      {
+        slug: 'managed',
+        title: 'Managed',
+        description: 'Create an Elasticsearch database using a managed service.',
+        icon: AWS,
+        type: ServiceTypeEnum.DATABASE,
+      },
+      {
+        slug: 'managed-aws-terraform',
+        title: 'AWS Elasticsearch via Terraform',
+        description: 'Create an Elasticsearch database using AWS Elasticsearch via Terraform.',
+        icon: Terraform,
+        type: ServiceTypeEnum.LIFECYCLE_JOB,
+        dockerfile:
+          'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+      },
+      {
+        slug: 'managed-gcp-terraform',
+        title: 'Managed via Terraform',
+        description: 'Create an Elasticsearch database using Google Cloud Elasticsearch via Terraform.',
+        icon: Terraform,
+        type: ServiceTypeEnum.LIFECYCLE_JOB,
+        dockerfile:
+          'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+      },
+    ],
   },
 ]
