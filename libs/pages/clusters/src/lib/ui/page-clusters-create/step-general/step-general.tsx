@@ -152,7 +152,7 @@ export function StepGeneral(props: StepGeneralProps) {
           />
         </div>
 
-        {watch('installation_type') !== 'LOCAL_DEMO' && (
+        {watch('installation_type') === 'MANAGED' && (
           <>
             <div className="mb-10">
               <h4 className="mb-4 text-neutral-400 text-sm">General</h4>
@@ -250,9 +250,22 @@ export function StepGeneral(props: StepGeneralProps) {
           </>
         )}
 
-        {watch('installation_type') === 'LOCAL_DEMO' && (
+        {watch('installation_type') !== 'MANAGED' && (
           <div className="mb-10">
-            <h4 className="mb-4 text-neutral-400 text-sm">Installation instruction</h4>
+            <h4 className="text-neutral-400 text-sm">Installation instruction</h4>
+            {watch('installation_type') === 'LOCAL_DEMO' ? (
+              <ExternalLink className="mb-4" href="https://hub.qovery.com/docs/getting-started/install-qovery/local/">
+                See documentation
+              </ExternalLink>
+            ) : (
+              <ExternalLink
+                className="mb-4"
+                href="https://hub.qovery.com/docs/getting-started/install-qovery/kubernetes/quickstart/"
+              >
+                See documentation
+              </ExternalLink>
+            )}
+
             <ul className="flex flex-col gap-4 text-neutral-400 text-sm font-medium">
               <li className="border border-neutral-200 p-3 rounded">
                 <h5 className="text-sm font-medium mb-1">1. Download/Update Qovery CLI</h5>
@@ -269,7 +282,15 @@ export function StepGeneral(props: StepGeneralProps) {
                   Run the following command from your terminal and follow the instructions.
                 </p>
                 <pre className="flex items-center justify-between bg-neutral-150 text-neutral-400 p-3 rounded-sm font-mono">
-                  $ qovery cluster install <CopyButton content="qovery cluster install" />
+                  {watch('installation_type') === 'LOCAL_DEMO' ? (
+                    <>
+                      $ qovery demo up <CopyButton content="qovery cluster install" />
+                    </>
+                  ) : (
+                    <>
+                      $ qovery cluster install <CopyButton content="qovery cluster install" />
+                    </>
+                  )}
                 </pre>
               </li>
               <li className="border border-neutral-200 p-3 rounded">
@@ -293,7 +314,7 @@ export function StepGeneral(props: StepGeneralProps) {
           >
             Cancel
           </Button>
-          {watch('installation_type') !== 'LOCAL_DEMO' ? (
+          {watch('installation_type') === 'MANAGED' ? (
             <Button size="lg" data-testid="button-submit" type="submit" disabled={!formState.isValid}>
               Continue
             </Button>
