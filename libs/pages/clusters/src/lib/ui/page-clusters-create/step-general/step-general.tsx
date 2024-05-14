@@ -296,8 +296,8 @@ export function StepGeneral(props: StepGeneralProps) {
               <li className="border border-neutral-200 p-3 rounded">
                 <h5 className="text-sm font-medium mb-1">3. Deploy your first environment!</h5>
                 <p className="font-normal text-neutral-350">
-                  Once the installtion is completed, get back to the Qovery console and deploy your first environment on
-                  your brand new cluster.
+                  Once the installation is completed, get back to the Qovery console and deploy your first environment
+                  on your brand new cluster.
                 </p>
               </li>
             </ul>
