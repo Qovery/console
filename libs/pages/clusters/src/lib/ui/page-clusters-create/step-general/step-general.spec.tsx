@@ -53,6 +53,7 @@ describe('StepGeneral', () => {
           cloud_provider: CloudProviderEnum.AWS,
           region: 'paris',
           credentials: '111-111-111',
+          installation_type: 'MANAGED',
         },
       })
     )
