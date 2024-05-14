@@ -81,7 +81,7 @@ describe('StepGeneral', () => {
     screen.getByText('3. Deploy your first environment!')
   })
 
-  it('should render local demo cluster', async () => {
+  it('should render self managed cluster', async () => {
     renderWithProviders(
       wrapWithReactHookForm(<StepGeneral {...props} />, {
         defaultValues: {
