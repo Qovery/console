@@ -67,7 +67,7 @@ describe('StepGeneral', () => {
     expect(props.onSubmit).toHaveBeenCalled()
   })
 
-  it('should render local form', async () => {
+  it('should render local demo cluster', async () => {
     renderWithProviders(
       wrapWithReactHookForm(<StepGeneral {...props} />, {
         defaultValues: {
