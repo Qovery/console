@@ -36,7 +36,7 @@ function CardService({ title, icon, description, link, slug, options }: ServiceT
         onClick={() => setExpanded(true)}
         className={clsx({
           'flex gap-6 border border-neutral-200 hover:bg-neutral-100 transition rounded p-5 shadow-sm': true,
-          'col-span-3 min-h-60 p-6 bg-neutral-100': expanded,
+          'col-span-3 p-6 bg-neutral-100': expanded,
         })}
       >
         {expanded ? (
