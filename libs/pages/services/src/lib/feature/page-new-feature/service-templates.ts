@@ -34,6 +34,7 @@ export type ServiceTemplateType = {
   description?: string
   icon?: string | ReactElement
   dockerfile?: string
+  additional_dockerfile_files?: string[]
   link?: string
   type?: ServiceTypeEnum
   options?: ServiceTemplateOptionType[]
@@ -46,6 +47,14 @@ export type ServiceTemplateOptionType = {
   icon: string | ReactElement
   type: ServiceTypeEnum
   dockerfile?: string
+  additional_dockerfile_files?: string[]
+  lifecycle_job_options?: LifecycleJobOptionsType
+}
+
+export type LifecycleJobOptionsType = {
+  start_command?: string
+  stop_command?: string
+  delete_command?: string
 }
 
 export enum ServiceTypeEnum {
@@ -62,8 +71,6 @@ export const serviceTemplates: ServiceTemplateType[] = [
     title: 'PostgreSQL',
     description: 'PostgreSQL is a powerful, open-source object-relational database system.',
     icon: PostgreSQL,
-    dockerfile:
-      'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
     options: [
       {
         slug: 'container',
@@ -86,7 +93,18 @@ export const serviceTemplates: ServiceTemplateType[] = [
         icon: Terraform,
         type: ServiceTypeEnum.LIFECYCLE_JOB,
         dockerfile:
-          'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+          'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-rds-with-terraform/Dockerfile',
+        additional_dockerfile_files: [
+          'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-rds-with-terraform/main.tf',
+          'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-rds-with-terraform/variables.tf',
+          'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-rds-with-terraform/output.tf',
+        ],
+        lifecycle_job_options: {
+          start_command:
+            '["-c", "terraform plan && terraform apply -auto-approve && terraform output -json > /qovery-output/qovery-output.json"]',
+          stop_command: '',
+          delete_command: '["-c", "terraform plan && terraform destroy -auto-approve"]',
+        },
       },
       {
         slug: 'managed-aws-cloudformation',
@@ -95,7 +113,17 @@ export const serviceTemplates: ServiceTemplateType[] = [
         icon: AWS,
         type: ServiceTypeEnum.LIFECYCLE_JOB,
         dockerfile:
-          'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+          'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-rds-with-cloudformation/Dockerfile',
+        additional_dockerfile_files: [
+          'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-rds-with-cloudformation/rds.yml',
+          'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-rds-with-cloudformation/entrypoint.sh',
+        ],
+        lifecycle_job_options: {
+          start_command:
+            '["aws cloudformation deploy --template-file rds.yml --stack-name $STACK_NAME --parameter-overrides QoveryEnvironmentId=$QOVERY_ENVIRONMENT_ID --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM && aws cloudformation describe-stacks --stack-name $STACK_NAME --query \'Stacks[0].Outputs\' --output json > /qovery-output/qovery-output.json"]',
+          stop_command: '',
+          delete_command: '["aws cloudformation delete-stack --stack-name $STACK_NAME"]',
+        },
       },
       {
         slug: 'managed-gcp-terraform',
