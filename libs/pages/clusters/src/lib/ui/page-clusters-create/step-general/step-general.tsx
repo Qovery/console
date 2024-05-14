@@ -284,7 +284,7 @@ export function StepGeneral(props: StepGeneralProps) {
                 <pre className="flex items-center justify-between bg-neutral-150 text-neutral-400 p-3 rounded-sm font-mono">
                   {watch('installation_type') === 'LOCAL_DEMO' ? (
                     <>
-                      $ qovery demo up <CopyButton content="qovery cluster install" />
+                      $ qovery demo up <CopyButton content="qovery demo up" />
                     </>
                   ) : (
                     <>
