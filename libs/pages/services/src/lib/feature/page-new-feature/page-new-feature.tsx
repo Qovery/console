@@ -10,7 +10,7 @@ import {
   SERVICES_LIFECYCLE_TEMPLATE_CREATION_URL,
   SERVICES_URL,
 } from '@qovery/shared/routes'
-import { ExternalLink, Heading, Icon, InputSearch, Link, RadioGroup, Section } from '@qovery/shared/ui'
+import { Button, ExternalLink, Heading, Icon, InputSearch, Link, Section } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { type ServiceTemplateType, serviceTemplates } from './service-templates'
 
@@ -41,12 +41,23 @@ function CardService({ title, icon, description, link, slug, options }: ServiceT
       >
         {expanded ? (
           <div className="flex flex-col gap-8 w-full">
-            <div className="flex gap-6">
+            <div className="relative flex gap-6">
               <img className="select-none" width={52} height={52} src={icon as string} alt={title} />
               <div>
                 <h3 className="text-base font-medium mb-1">{title}</h3>
                 <p className="text-ssm text-neutral-350 max-w-96">{description}</p>
               </div>
+              <Button
+                className="absolute top-0 right-0"
+                color="neutral"
+                variant="surface"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setExpanded(false)
+                }}
+              >
+                <Icon iconName="xmark" />
+              </Button>
             </div>
             <div className="grid grid-cols-3 gap-2">
               {options
@@ -78,11 +89,17 @@ function CardService({ title, icon, description, link, slug, options }: ServiceT
               <h3 className="text-ssm font-medium mb-1">{title}</h3>
               <p className="text-xs text-neutral-350">{description}</p>
             </div>
-            {typeof icon === 'string' ? (
-              <img className="select-none" width={40} height={40} src={icon} alt={title} />
-            ) : (
-              cloneElement(icon as ReactElement, { className: 'w-10' })
-            )}
+            <span className="relative">
+              {typeof icon === 'string' ? (
+                <img className="select-none" width={40} height={40} src={icon} alt={title} />
+              ) : (
+                cloneElement(icon as ReactElement, { className: 'w-10' })
+              )}
+              {/* <Icon
+                iconName="chevron-circle-down"
+                className="text-brand-500 bg-white rounded-full absolute top-6 -right-1"
+              /> */}
+            </span>
           </>
         )}
       </div>
