@@ -66,4 +66,18 @@ describe('StepGeneral', () => {
     expect(button).not.toBeDisabled()
     expect(props.onSubmit).toHaveBeenCalled()
   })
+
+  it('should render local form', async () => {
+    renderWithProviders(
+      wrapWithReactHookForm(<StepGeneral {...props} />, {
+        defaultValues: {
+          installation_type: 'LOCAL_DEMO',
+        },
+      })
+    )
+
+    screen.getByText('1. Download/Update Qovery CLI')
+    screen.getByText('2. Install your cluster')
+    screen.getByText('3. Deploy your first environment!')
+  })
 })
