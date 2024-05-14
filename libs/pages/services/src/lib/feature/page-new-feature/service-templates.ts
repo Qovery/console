@@ -44,7 +44,7 @@ export type ServiceTemplateOptionType = {
   slug: string
   title: string
   description: string
-  icon: string | ReactElement
+  icon: string
   type: ServiceTypeEnum
   dockerfile?: string
   additional_dockerfile_files?: string[]

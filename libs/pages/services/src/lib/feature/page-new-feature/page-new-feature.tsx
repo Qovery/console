@@ -1,3 +1,4 @@
+import clsx from 'clsx'
 import { type ReactElement, cloneElement, useState } from 'react'
 import { NavLink, useParams } from 'react-router-dom'
 import {
@@ -9,7 +10,7 @@ import {
   SERVICES_LIFECYCLE_TEMPLATE_CREATION_URL,
   SERVICES_URL,
 } from '@qovery/shared/routes'
-import { ExternalLink, Heading, Icon, InputSearch, Link, Section } from '@qovery/shared/ui'
+import { ExternalLink, Heading, Icon, InputSearch, Link, RadioGroup, Section } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { type ServiceTemplateType, serviceTemplates } from './service-templates'
 
@@ -25,8 +26,68 @@ function Card({ title, icon, link }: ServiceTemplateType) {
   )
 }
 
-function CardService({ title, icon, description, link, slug }: ServiceTemplateType) {
+function CardService({ title, icon, description, link, slug, options }: ServiceTemplateType) {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
+  const [expanded, setExpanded] = useState(false)
+
+  if (options) {
+    return (
+      <div
+        onClick={() => setExpanded(true)}
+        className={clsx({
+          'flex gap-6 border border-neutral-200 hover:bg-neutral-100 transition rounded p-5 shadow-sm': true,
+          'col-span-3 min-h-60 p-6 bg-neutral-100': expanded,
+        })}
+      >
+        {expanded ? (
+          <div className="flex flex-col gap-8 w-full">
+            <div className="flex gap-6">
+              <img className="select-none" width={52} height={52} src={icon as string} alt={title} />
+              <div>
+                <h3 className="text-base font-medium mb-1">{title}</h3>
+                <p className="text-ssm text-neutral-350 max-w-96">{description}</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-3 gap-2">
+              {options
+                .sort((a, b) => a.title.localeCompare(b.title))
+                .map(({ slug: slugItem, title, description, icon }) => (
+                  <NavLink
+                    key={slugItem}
+                    to={
+                      SERVICES_URL(organizationId, projectId, environmentId) +
+                      SERVICES_LIFECYCLE_TEMPLATE_CREATION_URL(slug)
+                    }
+                    className="flex items-start gap-3 border border-neutral-200 p-3 rounded-sm hover:bg-white transition"
+                  >
+                    <img className="select-none mt-1" width={24} height={24} src={icon} alt={title} />
+                    <span>
+                      <span className="inline-block text-ssm text-neutral-400 font-medium">{title}</span>
+                      <span className="inline-block text-xs text-neutral-350">{description}</span>
+                    </span>
+                    <span className="flex items-center h-full pr-1">
+                      <Icon iconName="chevron-right" className="text-xs text-neutral-400" />
+                    </span>
+                  </NavLink>
+                ))}
+            </div>
+          </div>
+        ) : (
+          <>
+            <div className="w-60">
+              <h3 className="text-ssm font-medium mb-1">{title}</h3>
+              <p className="text-xs text-neutral-350">{description}</p>
+            </div>
+            {typeof icon === 'string' ? (
+              <img className="select-none" width={40} height={40} src={icon} alt={title} />
+            ) : (
+              cloneElement(icon as ReactElement, { className: 'w-10' })
+            )}
+          </>
+        )}
+      </div>
+    )
+  }
 
   return (
     <NavLink
