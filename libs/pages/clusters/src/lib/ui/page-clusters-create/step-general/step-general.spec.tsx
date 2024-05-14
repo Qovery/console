@@ -80,4 +80,18 @@ describe('StepGeneral', () => {
     screen.getByText('2. Install your cluster')
     screen.getByText('3. Deploy your first environment!')
   })
+
+  it('should render local demo cluster', async () => {
+    renderWithProviders(
+      wrapWithReactHookForm(<StepGeneral {...props} />, {
+        defaultValues: {
+          installation_type: 'SELF_MANAGED',
+        },
+      })
+    )
+
+    screen.getByText('1. Download/Update Qovery CLI')
+    screen.getByText('2. Install your cluster')
+    screen.getByText('3. Deploy your first environment!')
+  })
 })
