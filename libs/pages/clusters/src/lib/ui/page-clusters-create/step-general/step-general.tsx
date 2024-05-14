@@ -21,6 +21,7 @@ import {
 } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { defaultResourcesData } from '../../../feature/page-clusters-create-feature/page-clusters-create-feature'
+import CopyButton from './copy-button/copy-button'
 
 export interface StepGeneralProps {
   onSubmit: FormEventHandler<HTMLFormElement>
@@ -67,10 +68,6 @@ export function StepGeneral(props: StepGeneralProps) {
       </div>
 
       <form onSubmit={onSubmit}>
-        <div className="mb-10">
-          <h4 className="mb-4 text-neutral-400 text-sm">General</h4>
-          <ClusterGeneralSettings />
-        </div>
         <div className="text-sm mb-10">
           <Controller
             name="installation_type"
@@ -99,6 +96,7 @@ export function StepGeneral(props: StepGeneralProps) {
                           Choose Self-Managed otherwise. Note that you will have to manage any upgrade on your
                           Kubernetes cluster and the Helm charts deployed within it (including the Qovery applications).{' '}
                         </li>
+                        <li>Choose Local Demo if you want to install Qovery on your local machine for demo/testing.</li>
                       </ul>
                     </p>
                     <Popover.Close className="absolute top-4 right-4">
@@ -130,10 +128,21 @@ export function StepGeneral(props: StepGeneralProps) {
                       <RadioGroup.Item value="SELF_MANAGED" />
                     </span>
                     <span>
-                      <span className="text-neutral-400 font-medium">Self-Managed (BETA)</span>
+                      <span className="text-neutral-400 font-medium">Self-Managed</span>
                       <p className="text-neutral-350">
-                        You will manage the infrastructure, including any update/ upgrade. Advanced Kubernetes knowledge
-                        required.
+                        You will manage the infrastructure, including any update/ upgrade. <br /> Advanced Kubernetes
+                        knowledge required.
+                      </p>
+                    </span>
+                  </label>
+                  <label className="flex gap-3">
+                    <span>
+                      <RadioGroup.Item value="LOCAL_DEMO" />
+                    </span>
+                    <span>
+                      <span className="text-neutral-400 font-medium">Local Demo</span>
+                      <p className="text-neutral-350">
+                        You will install Qovery on your local machine. Only for demo/testing purposes.
                       </p>
                     </span>
                   </label>
@@ -142,93 +151,158 @@ export function StepGeneral(props: StepGeneralProps) {
             )}
           />
         </div>
-        <div className="mb-10">
-          <h4 className="mb-3 text-neutral-400 text-sm">Provider credentials</h4>
-          {cloudProviders.length > 0 ? (
-            <>
-              {watch('cloud_provider') === CloudProviderEnum.GCP && (
-                <Callout.Root color="yellow" className="mb-2">
-                  <Callout.Icon>
-                    <Icon iconName="triangle-exclamation" />
-                  </Callout.Icon>
-                  <Callout.Text className="text-xs">
-                    GCP integration is beta, keep an eye on your cluster costs and report any bugs and/or weird
-                    behavior.
-                    <ExternalLink
-                      className="flex mt-1"
-                      href="https://cloud.google.com/billing/docs/how-to/budgets"
-                      size="xs"
-                    >
-                      Setup budget alerts
-                    </ExternalLink>
-                    <ExternalLink
-                      className="flex mt-1"
-                      href="https://discuss.qovery.com/t/new-feature-google-cloud-platform-gcp-beta-support/2307"
-                      size="xs"
-                    >
-                      More details
-                    </ExternalLink>
-                  </Callout.Text>
-                </Callout.Root>
-              )}
-              <Controller
-                name="cloud_provider"
-                control={control}
-                rules={{
-                  required: 'Please select a cloud provider.',
-                }}
-                render={({ field, fieldState: { error } }) => (
-                  <InputSelect
-                    dataTestId="input-cloud-provider"
-                    label="Cloud provider"
-                    className="mb-3"
-                    options={buildCloudProviders}
-                    onChange={(value) => {
-                      const currentProvider = cloudProviders?.filter(
-                        (cloud) => cloud.short_name === value && cloud.regions
-                      )[0]
-                      setCurrentProvider(currentProvider as CloudProvider)
-                      field.onChange(value)
-                      setResourcesData && setResourcesData(defaultResourcesData)
-                    }}
-                    value={field.value}
-                    error={error?.message}
-                    portal
-                  />
-                )}
-              />
-              {currentProvider && (
+
+        {watch('installation_type') === 'MANAGED' && (
+          <>
+            <div className="mb-10">
+              <h4 className="mb-4 text-neutral-400 text-sm">General</h4>
+              <ClusterGeneralSettings />
+            </div>
+            <div className="mb-10">
+              <h4 className="mb-3 text-neutral-400 text-sm">Provider credentials</h4>
+              {cloudProviders.length > 0 ? (
                 <>
+                  {watch('cloud_provider') === CloudProviderEnum.GCP && (
+                    <Callout.Root color="yellow" className="mb-2">
+                      <Callout.Icon>
+                        <Icon iconName="triangle-exclamation" />
+                      </Callout.Icon>
+                      <Callout.Text className="text-xs">
+                        GCP integration is beta, keep an eye on your cluster costs and report any bugs and/or weird
+                        behavior.
+                        <ExternalLink
+                          className="flex mt-1"
+                          href="https://cloud.google.com/billing/docs/how-to/budgets"
+                          size="xs"
+                        >
+                          Setup budget alerts
+                        </ExternalLink>
+                        <ExternalLink
+                          className="flex mt-1"
+                          href="https://discuss.qovery.com/t/new-feature-google-cloud-platform-gcp-beta-support/2307"
+                          size="xs"
+                        >
+                          More details
+                        </ExternalLink>
+                      </Callout.Text>
+                    </Callout.Root>
+                  )}
                   <Controller
-                    name="region"
+                    name="cloud_provider"
                     control={control}
                     rules={{
-                      required: 'Please select a region.',
+                      required: 'Please select a cloud provider.',
                     }}
                     render={({ field, fieldState: { error } }) => (
                       <InputSelect
-                        dataTestId="input-region"
-                        label="Region"
+                        dataTestId="input-cloud-provider"
+                        label="Cloud provider"
                         className="mb-3"
-                        options={buildRegions}
-                        onChange={field.onChange}
+                        options={buildCloudProviders}
+                        onChange={(value) => {
+                          const currentProvider = cloudProviders?.filter(
+                            (cloud) => cloud.short_name === value && cloud.regions
+                          )[0]
+                          setCurrentProvider(currentProvider as CloudProvider)
+                          field.onChange(value)
+                          setResourcesData && setResourcesData(defaultResourcesData)
+                        }}
                         value={field.value}
                         error={error?.message}
-                        isSearchable
                         portal
                       />
                     )}
                   />
-                  <ClusterCredentialsSettingsFeature cloudProvider={currentProvider.short_name as CloudProviderEnum} />
+                  {currentProvider && (
+                    <>
+                      <Controller
+                        name="region"
+                        control={control}
+                        rules={{
+                          required: 'Please select a region.',
+                        }}
+                        render={({ field, fieldState: { error } }) => (
+                          <InputSelect
+                            dataTestId="input-region"
+                            label="Region"
+                            className="mb-3"
+                            options={buildRegions}
+                            onChange={field.onChange}
+                            value={field.value}
+                            error={error?.message}
+                            isSearchable
+                            portal
+                          />
+                        )}
+                      />
+                      <ClusterCredentialsSettingsFeature
+                        cloudProvider={currentProvider.short_name as CloudProviderEnum}
+                      />
+                    </>
+                  )}
                 </>
+              ) : (
+                <div className="flex justify-center mt-2">
+                  <LoaderSpinner className="w-4" />
+                </div>
               )}
-            </>
-          ) : (
-            <div className="flex justify-center mt-2">
-              <LoaderSpinner className="w-4" />
             </div>
-          )}
-        </div>
+          </>
+        )}
+
+        {watch('installation_type') !== 'MANAGED' && (
+          <div className="mb-10">
+            <h4 className="text-neutral-400 text-sm">Installation instruction</h4>
+            {watch('installation_type') === 'LOCAL_DEMO' ? (
+              <ExternalLink className="mb-4" href="https://hub.qovery.com/docs/getting-started/install-qovery/local/">
+                See documentation
+              </ExternalLink>
+            ) : (
+              <ExternalLink
+                className="mb-4"
+                href="https://hub.qovery.com/docs/getting-started/install-qovery/kubernetes/quickstart/"
+              >
+                See documentation
+              </ExternalLink>
+            )}
+
+            <ul className="flex flex-col gap-4 text-neutral-400 text-sm font-medium">
+              <li className="border border-neutral-200 p-3 rounded">
+                <h5 className="text-sm font-medium mb-1">1. Download/Update Qovery CLI</h5>
+                <p className="font-normal text-neutral-350 mb-2">
+                  Download and install the Qovery CLI (or update its version to the latest version).
+                </p>
+                <ExternalLink href="https://hub.qovery.com/docs/using-qovery/interface/cli/#install">
+                  https://hub.qovery.com/docs/using-qovery/interface/cli/#install
+                </ExternalLink>
+              </li>
+              <li className="border border-neutral-200 p-3 rounded">
+                <h5 className="text-sm font-medium mb-1">2. Install your cluster</h5>
+                <p className="font-normal  text-neutral-350 mb-2">
+                  Run the following command from your terminal and follow the instructions.
+                </p>
+                <pre className="flex items-center justify-between bg-neutral-150 text-neutral-400 p-3 rounded-sm font-mono">
+                  {watch('installation_type') === 'LOCAL_DEMO' ? (
+                    <>
+                      $ qovery demo up <CopyButton content="qovery demo up" />
+                    </>
+                  ) : (
+                    <>
+                      $ qovery cluster install <CopyButton content="qovery cluster install" />
+                    </>
+                  )}
+                </pre>
+              </li>
+              <li className="border border-neutral-200 p-3 rounded">
+                <h5 className="text-sm font-medium mb-1">3. Deploy your first environment!</h5>
+                <p className="font-normal text-neutral-350">
+                  Once the installation is completed, get back to the Qovery console and deploy your first environment
+                  on your brand new cluster.
+                </p>
+              </li>
+            </ul>
+          </div>
+        )}
 
         <div className="flex justify-between">
           <Button
@@ -240,9 +314,15 @@ export function StepGeneral(props: StepGeneralProps) {
           >
             Cancel
           </Button>
-          <Button size="lg" data-testid="button-submit" type="submit" disabled={!formState.isValid}>
-            Continue
-          </Button>
+          {watch('installation_type') === 'MANAGED' ? (
+            <Button size="lg" data-testid="button-submit" type="submit" disabled={!formState.isValid}>
+              Continue
+            </Button>
+          ) : (
+            <Button size="lg" type="button" onClick={() => navigate(CLUSTERS_URL(organizationId))}>
+              Close
+            </Button>
+          )}
         </div>
       </form>
     </Section>

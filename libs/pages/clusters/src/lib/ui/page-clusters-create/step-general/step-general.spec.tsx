@@ -33,6 +33,7 @@ describe('StepGeneral', () => {
           name: 'my-cluster',
           description: 'test',
           production: false,
+          installation_type: 'MANAGED',
         },
       })
     )
@@ -53,6 +54,7 @@ describe('StepGeneral', () => {
           cloud_provider: CloudProviderEnum.AWS,
           region: 'paris',
           credentials: '111-111-111',
+          installation_type: 'MANAGED',
         },
       })
     )
@@ -65,5 +67,33 @@ describe('StepGeneral', () => {
 
     expect(button).not.toBeDisabled()
     expect(props.onSubmit).toHaveBeenCalled()
+  })
+
+  it('should render local demo cluster', async () => {
+    renderWithProviders(
+      wrapWithReactHookForm(<StepGeneral {...props} />, {
+        defaultValues: {
+          installation_type: 'LOCAL_DEMO',
+        },
+      })
+    )
+
+    screen.getByText('1. Download/Update Qovery CLI')
+    screen.getByText('2. Install your cluster')
+    screen.getByText('3. Deploy your first environment!')
+  })
+
+  it('should render self managed cluster', async () => {
+    renderWithProviders(
+      wrapWithReactHookForm(<StepGeneral {...props} />, {
+        defaultValues: {
+          installation_type: 'SELF_MANAGED',
+        },
+      })
+    )
+
+    screen.getByText('1. Download/Update Qovery CLI')
+    screen.getByText('2. Install your cluster')
+    screen.getByText('3. Deploy your first environment!')
   })
 })
