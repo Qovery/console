@@ -33,6 +33,7 @@ describe('StepGeneral', () => {
           name: 'my-cluster',
           description: 'test',
           production: false,
+          installation_type: 'MANAGED',
         },
       })
     )
