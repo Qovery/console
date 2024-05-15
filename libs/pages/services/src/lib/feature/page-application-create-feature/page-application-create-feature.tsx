@@ -6,7 +6,12 @@ import {
   type ApplicationResourcesData,
   type FlowPortData,
 } from '@qovery/shared/interfaces'
-import { SERVICES_APPLICATION_CREATION_URL, SERVICES_CREATION_GENERAL_URL, SERVICES_URL } from '@qovery/shared/routes'
+import {
+  SERVICES_APPLICATION_CREATION_URL,
+  SERVICES_CREATION_GENERAL_URL,
+  SERVICES_NEW_URL,
+  SERVICES_URL,
+} from '@qovery/shared/routes'
 import { FunnelFlow } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { ROUTER_SERVICE_CREATION } from '../../router/router'
@@ -43,7 +48,7 @@ export const steps: { title: string }[] = [
 ]
 
 export function PageApplicationCreateFeature() {
-  const { organizationId = '', projectId = '', environmentId = '' } = useParams()
+  const { organizationId = '', projectId = '', environmentId = '', slug, option } = useParams()
 
   // values and setters for context initialization
   const [currentStep, setCurrentStep] = useState<number>(1)
@@ -64,7 +69,10 @@ export function PageApplicationCreateFeature() {
 
   useDocumentTitle('Creation - Service')
 
-  const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_APPLICATION_CREATION_URL}`
+  const pathCreate =
+    SERVICES_URL(organizationId, projectId, environmentId) +
+    SERVICES_APPLICATION_CREATION_URL +
+    `${slug && option ? `/${slug}/${option}` : ''}`
 
   return (
     <ApplicationContainerCreateContext.Provider
@@ -81,7 +89,7 @@ export function PageApplicationCreateFeature() {
     >
       <FunnelFlow
         onExit={() => {
-          navigate(SERVICES_URL(organizationId, projectId, environmentId))
+          navigate(SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_NEW_URL)
         }}
         totalSteps={steps.length}
         currentStep={currentStep}

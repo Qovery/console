@@ -22,14 +22,14 @@ exports[`StepGeneralFeature should submit a form with a git repository 1`] = `
             >
               General information
             </h1>
+            <p
+              class="text-neutral-350 text-sm mb-10"
+            >
+              These general settings allow you to set up the service name, its source and deployment parameters.
+            </p>
             <form
               class="space-y-10"
             >
-              <p
-                class="text-sm text-neutral-350"
-              >
-                These general settings allow you to set up the service name, its source and deployment parameters.
-              </p>
               <section
                 class="flex flex-col gap-4"
               >
@@ -540,14 +540,14 @@ exports[`StepGeneralFeature should submit a form with a git repository 2`] = `
             >
               General information
             </h1>
+            <p
+              class="text-neutral-350 text-sm mb-10"
+            >
+              These general settings allow you to set up the service name, its source and deployment parameters.
+            </p>
             <form
               class="space-y-10"
             >
-              <p
-                class="text-sm text-neutral-350"
-              >
-                These general settings allow you to set up the service name, its source and deployment parameters.
-              </p>
               <section
                 class="flex flex-col gap-4"
               >
@@ -1172,14 +1172,14 @@ exports[`StepGeneralFeature should submit a form with a helm repository and matc
             >
               General information
             </h1>
+            <p
+              class="text-neutral-350 text-sm mb-10"
+            >
+              These general settings allow you to set up the service name, its source and deployment parameters.
+            </p>
             <form
               class="space-y-10"
             >
-              <p
-                class="text-sm text-neutral-350"
-              >
-                These general settings allow you to set up the service name, its source and deployment parameters.
-              </p>
               <section
                 class="flex flex-col gap-4"
               >

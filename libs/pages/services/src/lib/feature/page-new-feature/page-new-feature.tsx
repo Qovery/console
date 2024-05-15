@@ -5,6 +5,7 @@ import { match } from 'ts-pattern'
 import { type ServiceType } from '@qovery/domains/services/data-access'
 import {
   SERVICES_APPLICATION_CREATION_URL,
+  SERVICES_APPLICATION_TEMPLATE_CREATION_URL,
   SERVICES_CRONJOB_CREATION_URL,
   SERVICES_DATABASE_CREATION_URL,
   SERVICES_DATABASE_TEMPLATE_CREATION_URL,
@@ -32,7 +33,7 @@ function Card({ title, icon, link }: { title: string; icon: ReactElement; link: 
 
 const servicePath = (type: ServiceType, parentSlug: string, slug: string) =>
   match(type)
-    .with('APPLICATION', 'CONTAINER', () => SERVICES_APPLICATION_CREATION_URL)
+    .with('APPLICATION', 'CONTAINER', () => SERVICES_APPLICATION_TEMPLATE_CREATION_URL(parentSlug, slug))
     .with('DATABASE', () => SERVICES_DATABASE_TEMPLATE_CREATION_URL(parentSlug, slug))
     .with('LIFECYCLE_JOB', () => SERVICES_LIFECYCLE_TEMPLATE_CREATION_URL(parentSlug, slug))
     .with('CRON_JOB', () => SERVICES_CRONJOB_CREATION_URL)

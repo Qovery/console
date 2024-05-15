@@ -35,6 +35,7 @@ import {
   ORGANIZATION_URL,
   OVERVIEW_URL,
   SERVICES_APPLICATION_CREATION_URL,
+  SERVICES_APPLICATION_TEMPLATE_CREATION_URL,
   SERVICES_CRONJOB_CREATION_URL,
   SERVICES_DATABASE_CREATION_URL,
   SERVICES_DATABASE_TEMPLATE_CREATION_URL,
@@ -154,6 +155,12 @@ export const ROUTER: RouterProps[] = [
   },
   {
     path: `${SERVICES_URL()}${SERVICES_APPLICATION_CREATION_URL}/*`,
+    component: <PageApplicationCreateFeature />,
+    protected: true,
+    layout: false,
+  },
+  {
+    path: `${SERVICES_URL()}${SERVICES_APPLICATION_TEMPLATE_CREATION_URL()}/*`,
     component: <PageApplicationCreateFeature />,
     protected: true,
     layout: false,
