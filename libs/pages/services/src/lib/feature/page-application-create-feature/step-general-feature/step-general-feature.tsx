@@ -30,7 +30,7 @@ export function StepGeneralFeature() {
     defaultValues: {
       auto_deploy: true,
       name: dataTemplate?.slug ?? '',
-      serviceType: (dataTemplate?.type as ServiceTypeEnum) ?? (dataOptionTemplate?.type as ServiceTypeEnum),
+      serviceType: (dataOptionTemplate?.type as ServiceTypeEnum) ?? (dataTemplate?.type as ServiceTypeEnum),
       ...generalData,
     },
     mode: 'onChange',

@@ -34,6 +34,7 @@ export type ServiceTemplateType = {
   description: string
   icon: string | ReactElement
   slug?: string
+  link?: string
   dockerfile?: string
   additional_dockerfile_files?: string[]
   type?: keyof typeof ServiceTypeEnum

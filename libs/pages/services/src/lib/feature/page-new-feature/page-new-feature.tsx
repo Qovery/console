@@ -36,9 +36,8 @@ const servicePath = (type: ServiceType, parentSlug: string, slug: string) =>
     .with('APPLICATION', 'CONTAINER', () => SERVICES_APPLICATION_TEMPLATE_CREATION_URL(parentSlug, slug))
     .with('DATABASE', () => SERVICES_DATABASE_TEMPLATE_CREATION_URL(parentSlug, slug))
     .with('LIFECYCLE_JOB', () => SERVICES_LIFECYCLE_TEMPLATE_CREATION_URL(parentSlug, slug))
-    .with('CRON_JOB', () => SERVICES_CRONJOB_CREATION_URL)
     .with('HELM', () => SERVICES_HELM_TEMPLATE_CREATION_URL(parentSlug, slug))
-    .with('JOB', () => undefined)
+    .with('JOB', 'CRON_JOB', () => undefined)
     .exhaustive()
 
 interface CardOptionProps extends ServiceTemplateOptionType {
@@ -65,7 +64,7 @@ function CardOption({ parentSlug, slug, icon, title, description, type }: CardOp
   )
 }
 
-function CardService({ title, icon, description, slug, options, type }: ServiceTemplateType) {
+function CardService({ title, icon, description, slug, options, type, link }: ServiceTemplateType) {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const [expanded, setExpanded] = useState(false)
 
@@ -133,7 +132,7 @@ function CardService({ title, icon, description, slug, options, type }: ServiceT
 
   return (
     <NavLink
-      to={SERVICES_URL(organizationId, projectId, environmentId) + servicePath(type!, slug!, 'current')}
+      to={link ?? SERVICES_URL(organizationId, projectId, environmentId) + servicePath(type!, slug!, 'current')}
       className="flex gap-6 border border-neutral-200 hover:bg-neutral-100 transition rounded p-5 shadow-sm"
     >
       <div className="w-60">
