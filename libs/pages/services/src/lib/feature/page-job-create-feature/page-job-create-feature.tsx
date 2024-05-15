@@ -18,6 +18,7 @@ import {
 import { FunnelFlow } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { ROUTER_SERVICE_JOB_CREATION } from '../../router/router'
+import { serviceTemplates } from '../page-new-feature/service-templates'
 
 export interface JobContainerCreateContextInterface {
   currentStep: number
@@ -56,9 +57,26 @@ export const steps: { title: string }[] = [
   { title: 'Ready to install' },
 ]
 
+export const findTemplateData = (slug?: string, option?: string) => {
+  return serviceTemplates.flatMap((template) => {
+    if (template.slug === slug && !template.options) {
+      return template
+    }
+
+    if (template.slug === slug && template.options?.length) {
+      return template.options.find((o) => o.slug === option)
+    }
+
+    return []
+  })[0]
+}
+
 export function PageJobCreateFeature() {
-  const { organizationId = '', projectId = '', environmentId = '', slug } = useParams()
+  const { organizationId = '', projectId = '', environmentId = '', slug, option } = useParams()
   const location = useLocation()
+
+  console.log(findTemplateData(slug, option))
+  // const templateData = findTemplateData(slug, option) ?? undefined
 
   // values and setters for context initialization
   const [currentStep, setCurrentStep] = useState<number>(1)
@@ -85,9 +103,11 @@ export function PageJobCreateFeature() {
       setJobType(ServiceTypeEnum.CRON_JOB)
     } else {
       setJobType(ServiceTypeEnum.LIFECYCLE_JOB)
-      setJobURL(slug ? SERVICES_LIFECYCLE_TEMPLATE_CREATION_URL(slug) : SERVICES_LIFECYCLE_CREATION_URL)
+      setJobURL(
+        slug && option ? SERVICES_LIFECYCLE_TEMPLATE_CREATION_URL(slug, option) : SERVICES_LIFECYCLE_CREATION_URL
+      )
     }
-  }, [setJobURL, setJobType, location.pathname, slug])
+  }, [setJobURL, setJobType, location.pathname, slug, option])
 
   const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${jobURL}`
 

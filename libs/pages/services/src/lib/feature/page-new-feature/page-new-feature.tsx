@@ -1,6 +1,7 @@
 import clsx from 'clsx'
 import { type ReactElement, cloneElement, useState } from 'react'
 import { NavLink, useParams } from 'react-router-dom'
+import { match } from 'ts-pattern'
 import {
   SERVICES_APPLICATION_CREATION_URL,
   SERVICES_CRONJOB_CREATION_URL,
@@ -12,7 +13,7 @@ import {
 } from '@qovery/shared/routes'
 import { Button, ExternalLink, Heading, Icon, InputSearch, Link, Section } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { type ServiceTemplateType, serviceTemplates } from './service-templates'
+import { type ServiceTemplateOptionType, type ServiceTemplateType, serviceTemplates } from './service-templates'
 
 function Card({ title, icon, link }: ServiceTemplateType) {
   return (
@@ -26,6 +27,39 @@ function Card({ title, icon, link }: ServiceTemplateType) {
   )
 }
 
+interface CardOptionProps extends ServiceTemplateOptionType {
+  parentSlug: string
+}
+
+function CardOption({ parentSlug, slug, icon, title, description, type }: CardOptionProps) {
+  const { organizationId = '', projectId = '', environmentId = '' } = useParams()
+
+  const servicePath = match(type)
+    .with('APPLICATION', 'CONTAINER', () => SERVICES_APPLICATION_CREATION_URL)
+    .with('DATABASE', () => SERVICES_DATABASE_CREATION_URL)
+    .with('LIFECYCLE_JOB', () => `${SERVICES_LIFECYCLE_TEMPLATE_CREATION_URL(parentSlug, slug)}`)
+    .with('CRON_JOB', () => SERVICES_CRONJOB_CREATION_URL)
+    .with('HELM', () => SERVICES_HELM_CREATION_URL)
+    .with('JOB', () => undefined)
+    .exhaustive()
+
+  return (
+    <NavLink
+      to={SERVICES_URL(organizationId, projectId, environmentId) + servicePath}
+      className="flex items-start gap-3 border border-neutral-200 p-3 rounded-sm hover:bg-white transition"
+    >
+      <img className="select-none mt-1" width={24} height={24} src={icon} alt={title} />
+      <span>
+        <span className="inline-block text-ssm text-neutral-400 font-medium">{title}</span>
+        <span className="inline-block text-xs text-neutral-350">{description}</span>
+      </span>
+      <span className="flex items-center h-full pr-1">
+        <Icon iconName="chevron-right" className="text-xs text-neutral-400" />
+      </span>
+    </NavLink>
+  )
+}
+
 function CardService({ title, icon, description, link, slug, options }: ServiceTemplateType) {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const [expanded, setExpanded] = useState(false)
@@ -35,7 +69,7 @@ function CardService({ title, icon, description, link, slug, options }: ServiceT
       <div
         onClick={() => setExpanded(true)}
         className={clsx({
-          'flex gap-6 border border-neutral-200 hover:bg-neutral-100 transition rounded p-5 shadow-sm cursor-pointer':
+          'flex items-center  gap-6 border border-neutral-200 hover:bg-neutral-100 transition rounded p-5 shadow-sm cursor-pointer':
             true,
           'col-span-3 p-6 bg-neutral-100': expanded,
         })}
@@ -63,32 +97,18 @@ function CardService({ title, icon, description, link, slug, options }: ServiceT
             <div className="grid grid-cols-3 gap-2">
               {options
                 .sort((a, b) => a.title.localeCompare(b.title))
-                .map(({ slug: slugItem, title, description, icon }) => (
-                  <NavLink
-                    key={slugItem}
-                    to={
-                      SERVICES_URL(organizationId, projectId, environmentId) +
-                      SERVICES_LIFECYCLE_TEMPLATE_CREATION_URL(slug)
-                    }
-                    className="flex items-start gap-3 border border-neutral-200 p-3 rounded-sm hover:bg-white transition"
-                  >
-                    <img className="select-none mt-1" width={24} height={24} src={icon} alt={title} />
-                    <span>
-                      <span className="inline-block text-ssm text-neutral-400 font-medium">{title}</span>
-                      <span className="inline-block text-xs text-neutral-350">{description}</span>
-                    </span>
-                    <span className="flex items-center h-full pr-1">
-                      <Icon iconName="chevron-right" className="text-xs text-neutral-400" />
-                    </span>
-                  </NavLink>
+                .map((props) => (
+                  <CardOption key={props.slug} parentSlug={slug!} {...props} />
                 ))}
             </div>
           </div>
         ) : (
           <>
-            <div className="w-60">
-              <h3 className="text-ssm font-medium mb-1">{title}</h3>
-              <p className="text-xs text-neutral-350 mb-3">{description}</p>
+            <div className="flex flex-col gap-2 h-full justify-between w-60">
+              <div>
+                <h3 className="text-ssm font-medium mb-1">{title}</h3>
+                <p className="text-xs text-neutral-350">{description}</p>
+              </div>
               <p className="text-xs text-neutral-400 font-medium">
                 Click to select an option <Icon iconName="chevron-right" className="ml-1 text-2xs" />
               </p>
@@ -109,7 +129,9 @@ function CardService({ title, icon, description, link, slug, options }: ServiceT
   return (
     <NavLink
       to={
-        link ?? SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_LIFECYCLE_TEMPLATE_CREATION_URL(slug)
+        link ??
+        SERVICES_URL(organizationId, projectId, environmentId) +
+          SERVICES_LIFECYCLE_TEMPLATE_CREATION_URL(slug, 'current')
       }
       className="flex gap-6 border border-neutral-200 hover:bg-neutral-100 transition rounded p-5 shadow-sm"
     >
