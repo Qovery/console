@@ -113,6 +113,22 @@ export function StepGeneral(props: StepGeneralProps) {
                 >
                   <label className="flex gap-3">
                     <span>
+                      <RadioGroup.Item value="LOCAL_DEMO" />
+                    </span>
+                    <span>
+                      <span className="text-neutral-400 font-medium">
+                        Local Demo{' '}
+                        <span className="ml-0.5 inline-block bg-brand-500 text-neutral-50 px-1 rounded text-xs font-normal">
+                          3min to setup
+                        </span>
+                      </span>
+                      <p className="text-neutral-350">
+                        You will install Qovery on your local machine. Only for demo/testing purposes.
+                      </p>
+                    </span>
+                  </label>
+                  <label className="flex gap-3">
+                    <span>
                       <RadioGroup.Item value="MANAGED" />
                     </span>
                     <span>
@@ -132,17 +148,6 @@ export function StepGeneral(props: StepGeneralProps) {
                       <p className="text-neutral-350">
                         You will manage the infrastructure, including any update/ upgrade. <br /> Advanced Kubernetes
                         knowledge required.
-                      </p>
-                    </span>
-                  </label>
-                  <label className="flex gap-3">
-                    <span>
-                      <RadioGroup.Item value="LOCAL_DEMO" />
-                    </span>
-                    <span>
-                      <span className="text-neutral-400 font-medium">Local Demo</span>
-                      <p className="text-neutral-350">
-                        You will install Qovery on your local machine. Only for demo/testing purposes.
                       </p>
                     </span>
                   </label>

@@ -22,7 +22,7 @@ export function StepGeneralFeature() {
   const navigate = useNavigate()
   const { organizationId = '' } = useParams()
   const methods = useForm<ClusterGeneralData>({
-    defaultValues: { installation_type: 'MANAGED', production: false, ...generalData },
+    defaultValues: { installation_type: 'LOCAL_DEMO', production: false, ...generalData },
     mode: 'onChange',
   })
 
