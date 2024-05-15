@@ -7,6 +7,8 @@ import { AssistantTrigger } from '@qovery/shared/assistant/feature'
 import { SERVICES_HELM_CREATION_GENERAL_URL, SERVICES_HELM_CREATION_URL, SERVICES_URL } from '@qovery/shared/routes'
 import { FunnelFlow } from '@qovery/shared/ui'
 import { ROUTER_SERVICE_HELM_CREATION } from '../../router/router'
+import { findTemplateData } from '../page-job-create-feature/page-job-create-feature'
+import { serviceTemplates } from '../page-new-feature/service-templates'
 
 export const steps: { title: string }[] = [
   { title: 'General data' },
@@ -48,11 +50,16 @@ export const useHelmCreateContext = () => {
 
 export function PageHelmCreateFeature() {
   const navigate = useNavigate()
-  const { organizationId = '', projectId = '', environmentId = '' } = useParams()
+  const { organizationId = '', projectId = '', environmentId = '', slug, option } = useParams()
   const [currentStep, setCurrentStep] = useState<number>(1)
+
+  const dataTemplate = serviceTemplates.find((service) => service.slug === slug)
 
   const generalForm = useForm<HelmGeneralData>({
     mode: 'onChange',
+    defaultValues: {
+      name: dataTemplate?.slug ?? '',
+    },
   })
 
   const valuesOverrideFileForm = useForm<HelmValuesFileData>({
@@ -66,7 +73,10 @@ export function PageHelmCreateFeature() {
     mode: 'onChange',
   })
 
-  const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_HELM_CREATION_URL}`
+  const pathCreate =
+    SERVICES_URL(organizationId, projectId, environmentId) +
+    SERVICES_HELM_CREATION_URL +
+    `${slug && option ? `/${slug}/${option}` : ''}`
 
   return (
     <HelmCreateContext.Provider

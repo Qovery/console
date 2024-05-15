@@ -2,12 +2,14 @@ import clsx from 'clsx'
 import { type ReactElement, cloneElement, useState } from 'react'
 import { NavLink, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
+import { type ServiceType } from '@qovery/domains/services/data-access'
 import {
   SERVICES_APPLICATION_CREATION_URL,
   SERVICES_CRONJOB_CREATION_URL,
   SERVICES_DATABASE_CREATION_URL,
   SERVICES_DATABASE_TEMPLATE_CREATION_URL,
   SERVICES_HELM_CREATION_URL,
+  SERVICES_HELM_TEMPLATE_CREATION_URL,
   SERVICES_LIFECYCLE_CREATION_URL,
   SERVICES_LIFECYCLE_TEMPLATE_CREATION_URL,
   SERVICES_URL,
@@ -16,10 +18,10 @@ import { Button, ExternalLink, Heading, Icon, InputSearch, Link, Section } from 
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { type ServiceTemplateOptionType, type ServiceTemplateType, serviceTemplates } from './service-templates'
 
-function Card({ title, icon, link }: ServiceTemplateType) {
+function Card({ title, icon, link }: { title: string; icon: ReactElement; link: string }) {
   return (
     <NavLink
-      to={link ?? '.'}
+      to={link}
       className="flex items-center gap-3 border border-neutral-200 hover:bg-neutral-100 transition rounded p-3 shadow-sm"
     >
       {icon}
@@ -28,6 +30,16 @@ function Card({ title, icon, link }: ServiceTemplateType) {
   )
 }
 
+const servicePath = (type: ServiceType, parentSlug: string, slug: string) =>
+  match(type)
+    .with('APPLICATION', 'CONTAINER', () => SERVICES_APPLICATION_CREATION_URL)
+    .with('DATABASE', () => SERVICES_DATABASE_TEMPLATE_CREATION_URL(parentSlug, slug))
+    .with('LIFECYCLE_JOB', () => SERVICES_LIFECYCLE_TEMPLATE_CREATION_URL(parentSlug, slug))
+    .with('CRON_JOB', () => SERVICES_CRONJOB_CREATION_URL)
+    .with('HELM', () => SERVICES_HELM_TEMPLATE_CREATION_URL(parentSlug, slug))
+    .with('JOB', () => undefined)
+    .exhaustive()
+
 interface CardOptionProps extends ServiceTemplateOptionType {
   parentSlug: string
 }
@@ -35,18 +47,9 @@ interface CardOptionProps extends ServiceTemplateOptionType {
 function CardOption({ parentSlug, slug, icon, title, description, type }: CardOptionProps) {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
 
-  const servicePath = match(type)
-    .with('APPLICATION', 'CONTAINER', () => SERVICES_APPLICATION_CREATION_URL)
-    .with('DATABASE', () => SERVICES_DATABASE_TEMPLATE_CREATION_URL(parentSlug, slug))
-    .with('LIFECYCLE_JOB', () => SERVICES_LIFECYCLE_TEMPLATE_CREATION_URL(parentSlug, slug))
-    .with('CRON_JOB', () => SERVICES_CRONJOB_CREATION_URL)
-    .with('HELM', () => SERVICES_HELM_CREATION_URL)
-    .with('JOB', () => undefined)
-    .exhaustive()
-
   return (
     <NavLink
-      to={SERVICES_URL(organizationId, projectId, environmentId) + servicePath}
+      to={SERVICES_URL(organizationId, projectId, environmentId) + servicePath(type, parentSlug, slug)}
       className="flex items-start gap-3 border border-neutral-200 p-3 rounded-sm hover:bg-white transition"
     >
       <img className="select-none mt-1" width={24} height={24} src={icon} alt={title} />
@@ -61,7 +64,7 @@ function CardOption({ parentSlug, slug, icon, title, description, type }: CardOp
   )
 }
 
-function CardService({ title, icon, description, link, slug, options }: ServiceTemplateType) {
+function CardService({ title, icon, description, slug, options, type }: ServiceTemplateType) {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const [expanded, setExpanded] = useState(false)
 
@@ -129,11 +132,7 @@ function CardService({ title, icon, description, link, slug, options }: ServiceT
 
   return (
     <NavLink
-      to={
-        link ??
-        SERVICES_URL(organizationId, projectId, environmentId) +
-          SERVICES_LIFECYCLE_TEMPLATE_CREATION_URL(slug, 'current')
-      }
+      to={SERVICES_URL(organizationId, projectId, environmentId) + servicePath(type!, slug!, 'current')}
       className="flex gap-6 border border-neutral-200 hover:bg-neutral-100 transition rounded p-5 shadow-sm"
     >
       <div className="w-60">

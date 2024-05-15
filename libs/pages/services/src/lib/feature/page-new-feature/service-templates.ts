@@ -36,7 +36,6 @@ export type ServiceTemplateType = {
   slug?: string
   dockerfile?: string
   additional_dockerfile_files?: string[]
-  link?: string
   type?: keyof typeof ServiceTypeEnum
   options?: ServiceTemplateOptionType[]
 }

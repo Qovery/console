@@ -39,6 +39,7 @@ import {
   SERVICES_DATABASE_CREATION_URL,
   SERVICES_DATABASE_TEMPLATE_CREATION_URL,
   SERVICES_HELM_CREATION_URL,
+  SERVICES_HELM_TEMPLATE_CREATION_URL,
   SERVICES_LIFECYCLE_CREATION_URL,
   SERVICES_LIFECYCLE_TEMPLATE_CREATION_URL,
   SERVICES_URL,
@@ -159,6 +160,12 @@ export const ROUTER: RouterProps[] = [
   },
   {
     path: `${SERVICES_URL()}${SERVICES_HELM_CREATION_URL}/*`,
+    component: <PageHelmCreateFeature />,
+    protected: true,
+    layout: false,
+  },
+  {
+    path: `${SERVICES_URL()}${SERVICES_HELM_TEMPLATE_CREATION_URL()}/*`,
     component: <PageHelmCreateFeature />,
     protected: true,
     layout: false,
