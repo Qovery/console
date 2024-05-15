@@ -132,7 +132,7 @@ export function StepGeneral(props: StepGeneralProps) {
                       <RadioGroup.Item value="MANAGED" />
                     </span>
                     <span>
-                      <span className="text-neutral-400 font-medium">Qovery Managed (recommended)</span>
+                      <span className="text-neutral-400 font-medium">Qovery Managed</span>
                       <p className="text-neutral-350">
                         Qovery will install and manage the Kubernetes cluster and the underlying infrastructure on your
                         cloud provider account.
