@@ -35,7 +35,8 @@ function CardService({ title, icon, description, link, slug, options }: ServiceT
       <div
         onClick={() => setExpanded(true)}
         className={clsx({
-          'flex gap-6 border border-neutral-200 hover:bg-neutral-100 transition rounded p-5 shadow-sm': true,
+          'flex gap-6 border border-neutral-200 hover:bg-neutral-100 transition rounded p-5 shadow-sm cursor-pointer':
+            true,
           'col-span-3 p-6 bg-neutral-100': expanded,
         })}
       >
@@ -87,7 +88,10 @@ function CardService({ title, icon, description, link, slug, options }: ServiceT
           <>
             <div className="w-60">
               <h3 className="text-ssm font-medium mb-1">{title}</h3>
-              <p className="text-xs text-neutral-350">{description}</p>
+              <p className="text-xs text-neutral-350 mb-3">{description}</p>
+              <p className="text-xs text-neutral-400 font-medium">
+                Click to select an option <Icon iconName="chevron-right" className="ml-1 text-2xs" />
+              </p>
             </div>
             <span className="relative">
               {typeof icon === 'string' ? (
@@ -95,10 +99,6 @@ function CardService({ title, icon, description, link, slug, options }: ServiceT
               ) : (
                 cloneElement(icon as ReactElement, { className: 'w-10' })
               )}
-              {/* <Icon
-                iconName="chevron-circle-down"
-                className="text-brand-500 bg-white rounded-full absolute top-6 -right-1"
-              /> */}
             </span>
           </>
         )}
