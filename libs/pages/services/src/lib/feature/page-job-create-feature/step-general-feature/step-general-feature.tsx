@@ -27,7 +27,7 @@ export function StepGeneralFeature() {
 
   const methods = useForm<JobGeneralData>({
     defaultValues: {
-      name: templateData ? `My ${templateData.title}` : '',
+      name: templateData ? templateData.slug : '',
       serviceType: templateData?.slug === 'container' ? 'CONTAINER' : 'APPLICATION',
       auto_deploy: true,
       ...generalData,

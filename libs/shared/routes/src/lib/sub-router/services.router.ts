@@ -19,6 +19,8 @@ export const SERVICES_SETTINGS_PREVIEW_ENV_URL = prefix + '/preview-environments
 export const SERVICES_SETTINGS_DANGER_ZONE_URL = prefix + '/danger-zone'
 export const SERVICES_APPLICATION_CREATION_URL = prefix + '/create'
 export const SERVICES_DATABASE_CREATION_URL = prefix + '/create/database'
+export const SERVICES_DATABASE_TEMPLATE_CREATION_URL = (slug = ':slug', option = ':option') =>
+  prefix + `/create/database/${slug}/${option}`
 
 // subrouter for app/container steps /create/general /create/settings etc...
 export const SERVICES_CREATION_GENERAL_URL = '/general'

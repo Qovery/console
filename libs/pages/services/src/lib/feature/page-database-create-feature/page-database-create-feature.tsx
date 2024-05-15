@@ -4,6 +4,7 @@ import { AssistantTrigger } from '@qovery/shared/assistant/feature'
 import {
   SERVICES_DATABASE_CREATION_GENERAL_URL,
   SERVICES_DATABASE_CREATION_URL,
+  SERVICES_NEW_URL,
   SERVICES_URL,
 } from '@qovery/shared/routes'
 import { FunnelFlow } from '@qovery/shared/ui'
@@ -36,7 +37,7 @@ export const steps: { title: string }[] = [
 ]
 
 export function PageDatabaseCreateFeature() {
-  const { organizationId = '', projectId = '', environmentId = '' } = useParams()
+  const { organizationId = '', projectId = '', environmentId = '', slug, option } = useParams()
   // values and setters for context initialization
   const [currentStep, setCurrentStep] = useState<number>(1)
   const [generalData, setGeneralData] = useState<GeneralData>()
@@ -50,7 +51,10 @@ export function PageDatabaseCreateFeature() {
 
   useDocumentTitle('Creation - Service')
 
-  const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_DATABASE_CREATION_URL}`
+  const pathCreate =
+    SERVICES_URL(organizationId, projectId, environmentId) +
+    SERVICES_DATABASE_CREATION_URL +
+    `${slug && option ? `/${slug}/${option}` : ''}`
 
   return (
     <DatabaseCreateContext.Provider
@@ -65,7 +69,7 @@ export function PageDatabaseCreateFeature() {
     >
       <FunnelFlow
         onExit={() => {
-          navigate(SERVICES_URL(organizationId, projectId, environmentId))
+          navigate(SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_NEW_URL)
         }}
         totalSteps={3}
         currentStep={currentStep}
