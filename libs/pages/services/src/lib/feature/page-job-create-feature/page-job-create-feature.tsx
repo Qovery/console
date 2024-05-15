@@ -13,6 +13,7 @@ import {
   SERVICES_JOB_CREATION_GENERAL_URL,
   SERVICES_LIFECYCLE_CREATION_URL,
   SERVICES_LIFECYCLE_TEMPLATE_CREATION_URL,
+  SERVICES_NEW_URL,
   SERVICES_URL,
 } from '@qovery/shared/routes'
 import { FunnelFlow } from '@qovery/shared/ui'
@@ -75,9 +76,6 @@ export function PageJobCreateFeature() {
   const { organizationId = '', projectId = '', environmentId = '', slug, option } = useParams()
   const location = useLocation()
 
-  console.log(findTemplateData(slug, option))
-  // const templateData = findTemplateData(slug, option) ?? undefined
-
   // values and setters for context initialization
   const [currentStep, setCurrentStep] = useState<number>(1)
   const [generalData, setGeneralData] = useState<JobGeneralData | undefined>()
@@ -130,7 +128,7 @@ export function PageJobCreateFeature() {
     >
       <FunnelFlow
         onExit={() => {
-          navigate(SERVICES_URL(organizationId, projectId, environmentId))
+          navigate(SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_NEW_URL)
         }}
         totalSteps={5}
         currentStep={currentStep}

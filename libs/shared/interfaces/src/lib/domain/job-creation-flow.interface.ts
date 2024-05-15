@@ -10,7 +10,7 @@ import { type ServiceTypeEnum } from '@qovery/shared/enums'
 export interface JobGeneralData {
   name: string
   description: string
-  serviceType: ServiceTypeEnum
+  serviceType: keyof typeof ServiceTypeEnum
   auto_deploy: boolean
   annotations_groups?: string[]
 
@@ -34,7 +34,7 @@ export interface JobGeneralData {
   dockerfile_path?: string
 
   // template
-  dockerfile_mode: 'YES' | 'NO'
+  // dockerfile_mode: 'YES' | 'NO'
 }
 
 export interface JobConfigureData {

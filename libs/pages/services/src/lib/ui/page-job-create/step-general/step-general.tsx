@@ -1,24 +1,15 @@
 import { BuildModeEnum, type Organization } from 'qovery-typescript-axios'
-import { type FormEventHandler, useEffect, useState } from 'react'
-import { Controller, useFormContext } from 'react-hook-form'
+import { type FormEventHandler } from 'react'
+import { useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { AnnotationSetting } from '@qovery/domains/organizations/feature'
 import { AutoDeploySetting, BuildSettings, GeneralSetting } from '@qovery/domains/services/feature'
-import { EntrypointCmdInputs, GitRepositorySettings, JobGeneralSettings } from '@qovery/shared/console-shared'
-import { IconEnum, type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
+import { EntrypointCmdInputs, JobGeneralSettings } from '@qovery/shared/console-shared'
+import { type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
 import { type JobGeneralData } from '@qovery/shared/interfaces'
-import { SERVICES_URL } from '@qovery/shared/routes'
-import {
-  Button,
-  CodeEditor,
-  CopyToClipboardButtonIcon,
-  Heading,
-  Icon,
-  InputRadio,
-  InputSelect,
-  InputText,
-  Section,
-} from '@qovery/shared/ui'
+import { SERVICES_NEW_URL, SERVICES_URL } from '@qovery/shared/routes'
+import { Button, Heading, Section } from '@qovery/shared/ui'
+import { findTemplateData } from '../../../feature/page-job-create-feature/page-job-create-feature'
 import { serviceTemplates } from '../../../feature/page-new-feature/service-templates'
 
 export interface StepGeneralProps {
@@ -27,16 +18,16 @@ export interface StepGeneralProps {
   jobType: JobType
 }
 
-const fetchDockerfile = async (url: string) => {
-  const response = await fetch(url)
-  const text = await response.text()
-  return text
-}
+// const fetchDockerfile = async (url: string) => {
+//   const response = await fetch(url)
+//   const text = await response.text()
+//   return text
+// }
 
 export function StepGeneral(props: StepGeneralProps) {
-  const { organizationId = '', environmentId = '', projectId = '', slug } = useParams()
+  const { organizationId = '', environmentId = '', projectId = '', slug, option } = useParams()
   const navigate = useNavigate()
-  const { formState, watch, control } = useFormContext<JobGeneralData>()
+  const { formState, watch } = useFormContext<JobGeneralData>()
   const watchServiceType = watch('serviceType')
   const watchBuildMode = watch('build_mode')
 
@@ -44,19 +35,21 @@ export function StepGeneral(props: StepGeneralProps) {
   const isGitSettingsValid = watchServiceType === 'APPLICATION' ? watch('branch') : true
 
   const isTemplate = slug !== undefined
+
   const dataTemplate = serviceTemplates.find((service) => service.slug === slug)
+  const dataOptionTemplate = option !== 'current' ? findTemplateData(slug, option) : null
 
-  const [dockerFile, setDockerFile] = useState<string | null>(null)
+  // const [dockerFile, setDockerFile] = useState<string | null>(null)
 
-  useEffect(() => {
-    const fetchDockerfileData = async () => {
-      if (dataTemplate?.dockerfile) {
-        const data = await fetchDockerfile(dataTemplate?.dockerfile)
-        setDockerFile(data)
-      }
-    }
-    if (isTemplate) fetchDockerfileData()
-  }, [dataTemplate?.dockerfile, isTemplate])
+  // useEffect(() => {
+  //   const fetchDockerfileData = async () => {
+  //     if (dataTemplate?.dockerfile) {
+  //       const data = await fetchDockerfile(dataTemplate?.dockerfile)
+  //       setDockerFile(data)
+  //     }
+  //   }
+  //   if (isTemplate) fetchDockerfileData()
+  // }, [dataTemplate?.dockerfile, isTemplate])
 
   return (
     <Section>
@@ -64,7 +57,9 @@ export function StepGeneral(props: StepGeneralProps) {
         <div className="flex items-center gap-6 mb-10">
           <img src={dataTemplate?.icon as string} alt={slug} className="w-10 h-10" />
           <div>
-            <Heading className="mb-2">{dataTemplate?.title} - Lifecycle job information</Heading>
+            <Heading className="mb-2">
+              {dataTemplate?.title} {dataOptionTemplate?.title ? `- ${dataOptionTemplate?.title}` : ''}
+            </Heading>
             <p className="text-neutral-350 text-sm">
               General settings allow you to set up your lifecycle name with our git repository settings.
             </p>
@@ -89,44 +84,13 @@ export function StepGeneral(props: StepGeneralProps) {
 
         <Section className="gap-4">
           <Heading>Source</Heading>
-          {isTemplate ? (
-            <>
-              <Controller
-                name="serviceType"
-                control={control}
-                defaultValue={ServiceTypeEnum.APPLICATION}
-                rules={{
-                  required: 'Please select a source.',
-                }}
-                render={({ field, fieldState: { error } }) => (
-                  <InputSelect
-                    dataTestId="input-select-source"
-                    onChange={field.onChange}
-                    value={field.value}
-                    disabled
-                    options={[
-                      {
-                        value: ServiceTypeEnum.APPLICATION,
-                        label: 'Git provider',
-                        icon: <Icon name={IconEnum.GIT} className="w-4" />,
-                      },
-                    ]}
-                    label="Application source"
-                    error={error?.message}
-                  />
-                )}
-              />
-              <GitRepositorySettings gitDisabled={false} />
-            </>
-          ) : (
-            <JobGeneralSettings jobType={props.jobType} organization={props.organization} isEdition={false} />
-          )}
+          <JobGeneralSettings jobType={props.jobType} organization={props.organization} isEdition={false} />
         </Section>
 
         {watchServiceType && (
           <Section className="gap-4">
             <Heading>{watchServiceType === ServiceTypeEnum.APPLICATION ? 'Build and deploy' : 'Deploy'}</Heading>
-            {isTemplate && (
+            {/* {isTemplate && (
               <div className="flex flex-col gap-4">
                 <div>
                   <div className="border border-neutral-250 bg-neutral-100 rounded overflow-hidden pt-4">
@@ -216,8 +180,8 @@ export function StepGeneral(props: StepGeneralProps) {
                   </div>
                 )}
               </div>
-            )}
-            {!isTemplate && watchServiceType === ServiceTypeEnum.APPLICATION && <BuildSettings buildModeDisabled />}
+            )} */}
+            {watchServiceType === ServiceTypeEnum.APPLICATION && <BuildSettings buildModeDisabled />}
             {props.jobType === ServiceTypeEnum.CRON_JOB && watchBuildMode === BuildModeEnum.DOCKER && (
               <EntrypointCmdInputs />
             )}
@@ -232,7 +196,9 @@ export function StepGeneral(props: StepGeneralProps) {
 
         <div className="flex justify-between">
           <Button
-            onClick={() => navigate(SERVICES_URL(organizationId, projectId, environmentId))}
+            onClick={() =>
+              navigate(SERVICES_URL(organizationId, projectId, environmentId) + isTemplate ? SERVICES_NEW_URL : '')
+            }
             type="button"
             size="lg"
             variant="plain"
