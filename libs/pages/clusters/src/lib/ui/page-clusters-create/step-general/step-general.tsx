@@ -113,13 +113,17 @@ export function StepGeneral(props: StepGeneralProps) {
                 >
                   <label className="flex gap-3">
                     <span>
-                      <RadioGroup.Item value="MANAGED" />
+                      <RadioGroup.Item value="LOCAL_DEMO" />
                     </span>
                     <span>
-                      <span className="text-neutral-400 font-medium">Qovery Managed</span>
+                      <span className="text-neutral-400 font-medium">
+                        Local Demo{' '}
+                        <span className="ml-0.5 inline-block bg-brand-500 text-neutral-50 px-1 rounded text-xs font-normal">
+                          ≈ 3min
+                        </span>
+                      </span>
                       <p className="text-neutral-350">
-                        Qovery will install and manage the Kubernetes cluster and the underlying infrastructure on your
-                        cloud provider account.
+                        You will install Qovery on your local machine. Only for demo/testing purposes.
                       </p>
                     </span>
                   </label>
@@ -137,12 +141,13 @@ export function StepGeneral(props: StepGeneralProps) {
                   </label>
                   <label className="flex gap-3">
                     <span>
-                      <RadioGroup.Item value="LOCAL_DEMO" />
+                      <RadioGroup.Item value="MANAGED" />
                     </span>
                     <span>
-                      <span className="text-neutral-400 font-medium">Local Demo</span>
+                      <span className="text-neutral-400 font-medium">Qovery Managed</span>
                       <p className="text-neutral-350">
-                        You will install Qovery on your local machine. Only for demo/testing purposes.
+                        Qovery will install and manage the Kubernetes cluster and the underlying infrastructure on your
+                        cloud provider account.
                       </p>
                     </span>
                   </label>
