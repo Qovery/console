@@ -1,10 +1,15 @@
 import { DatabaseModeEnum, type Environment } from 'qovery-typescript-axios'
-import { type PropsWithChildren } from 'react'
+import { type PropsWithChildren, useContext } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
 import { useCluster } from '@qovery/domains/clusters/feature'
 import { EnvironmentMode } from '@qovery/domains/environments/feature'
-import { type AnyService } from '@qovery/domains/services/data-access'
-import { NeedRedeployFlag, ServiceActionToolbar, ServiceStateChip } from '@qovery/domains/services/feature'
+import { type AnyService, type Database } from '@qovery/domains/services/data-access'
+import {
+  NeedRedeployFlag,
+  ServiceActionToolbar,
+  ServiceStateChip,
+  ServiceTerminalContext,
+} from '@qovery/domains/services/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import {
   CLUSTER_URL,
@@ -22,6 +27,7 @@ export interface ContainerProps {
 
 export function Container({ service, environment, children }: PropsWithChildren<ContainerProps>) {
   const { organizationId = '', projectId = '', environmentId = '', databaseId = '' } = useParams()
+  const { setOpen } = useContext(ServiceTerminalContext)
   const location = useLocation()
 
   const { data: cluster } = useCluster({ organizationId, clusterId: environment?.cluster_id || '' })
@@ -30,7 +36,13 @@ export function Container({ service, environment, children }: PropsWithChildren<
     <div className="flex flex-row items-center gap-4">
       <Skeleton width={150} height={36} show={!service}>
         <div className="flex">
-          {environment && service && <ServiceActionToolbar serviceId={service.id} environment={environment} />}
+          {environment && service && (
+            <ServiceActionToolbar
+              serviceId={service.id}
+              environment={environment}
+              shellAction={(service as Database).mode === 'CONTAINER' ? () => setOpen(true) : undefined}
+            />
+          )}
         </div>
       </Skeleton>
       <div className="w-px h-4 bg-neutral-250" />

@@ -157,20 +157,33 @@ function ServiceNameCell({ service, environment }: { service: AnyService; enviro
           <ServiceActionToolbar
             serviceId={service.id}
             environment={environment}
-            shellAction={
-              service.serviceType !== 'DATABASE'
-                ? () =>
-                    navigate(
-                      APPLICATION_URL(environment.organization.id, environment.project.id, environment.id, service.id) +
-                        APPLICATION_GENERAL_URL,
-                      {
-                        state: {
-                          hasShell: true,
-                        },
-                      }
-                    )
-                : undefined
-            }
+            shellAction={match(service)
+              .with({ serviceType: 'DATABASE', mode: 'MANAGED' }, () => undefined)
+              .with(
+                { serviceType: 'DATABASE', mode: 'CONTAINER' },
+                () => () =>
+                  navigate(
+                    DATABASE_URL(environment.organization.id, environment.project.id, environment.id, service.id) +
+                      DATABASE_GENERAL_URL,
+                    {
+                      state: {
+                        hasShell: true,
+                      },
+                    }
+                  )
+              )
+              .otherwise(
+                () => () =>
+                  navigate(
+                    APPLICATION_URL(environment.organization.id, environment.project.id, environment.id, service.id) +
+                      APPLICATION_GENERAL_URL,
+                    {
+                      state: {
+                        hasShell: true,
+                      },
+                    }
+                  )
+              )}
           />
         </div>
       </div>
