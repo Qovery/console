@@ -215,8 +215,8 @@ export function StepSummaryFeature() {
 
         if (slug && option) {
           posthog.capture('create-service', {
-            type: slug,
-            option: option,
+            selectedServiceType: slug,
+            selectedServiceSubType: option,
           })
         }
 

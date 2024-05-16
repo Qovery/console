@@ -54,9 +54,9 @@ function CardOption({ parentSlug, slug, icon, title, description, type }: CardOp
       className="flex items-start gap-3 border border-neutral-200 p-3 rounded-sm hover:bg-white transition"
       onClick={() =>
         posthog.capture('select-service', {
-          serviceType: type,
-          type: parentSlug,
-          option: slug,
+          qoveryServiceType: type,
+          selectedServiceType: parentSlug,
+          selectedServiceSubType: slug,
         })
       }
     >
@@ -144,8 +144,8 @@ function CardService({ title, icon, description, slug, options, type, link }: Se
       className="flex gap-6 border border-neutral-200 hover:bg-neutral-100 transition rounded p-5 shadow-sm"
       onClick={() =>
         posthog.capture('select-service', {
-          serviceType: type,
-          type: slug,
+          qoveryServiceType: type,
+          selectedServiceSubType: slug,
         })
       }
     >
