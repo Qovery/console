@@ -5,7 +5,7 @@ export function useAvailableContainerRegistries() {
   return useQuery({
     ...queries.organizations.availableContainerRegistries,
     select(registries) {
-      return registries?.filter(({ kind }) => kind !== 'GCP_ARTIFACT_REGISTRY')
+      return registries
     },
   })
 }
