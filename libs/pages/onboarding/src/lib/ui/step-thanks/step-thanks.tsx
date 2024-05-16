@@ -61,10 +61,15 @@ export function StepThanks(props: StepThanksProps) {
               Continue
             </Link>
           ) : (
-            <ExternalLink as="button" size="lg" className="gap-2" href="https://www.youtube.com/watch?v=eX2qFMC8cFo">
-              Go to Youtube
-              <span role="img" aria-label="cat">
-                🐈
+            <ExternalLink
+              as="button"
+              size="lg"
+              className="gap-2"
+              href="https://www.loom.com/share/338f4e1600de48eda3fd8b4a32c4765b"
+            >
+              What's next?
+              <span role="img" aria-label="star">
+                ✨
               </span>
             </ExternalLink>
           )}
