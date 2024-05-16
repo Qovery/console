@@ -1,4 +1,5 @@
 import clsx from 'clsx'
+import posthog from 'posthog-js'
 import { type ReactElement, cloneElement, useState } from 'react'
 import { NavLink, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
@@ -46,6 +47,12 @@ interface CardOptionProps extends ServiceTemplateOptionType {
 
 function CardOption({ parentSlug, slug, icon, title, description, type }: CardOptionProps) {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
+
+  posthog.capture('select-service', {
+    serviceType: type,
+    type: parentSlug,
+    option: slug,
+  })
 
   return (
     <NavLink
@@ -129,6 +136,11 @@ function CardService({ title, icon, description, slug, options, type, link }: Se
       </div>
     )
   }
+
+  posthog.capture('select-service', {
+    serviceType: type,
+    type: slug,
+  })
 
   return (
     <NavLink

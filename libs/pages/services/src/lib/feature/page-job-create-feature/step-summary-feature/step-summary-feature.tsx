@@ -1,3 +1,4 @@
+import posthog from 'posthog-js'
 import {
   APIVariableScopeEnum,
   type JobRequest,
@@ -137,7 +138,7 @@ export function StepSummaryFeature() {
   const { generalData, resourcesData, configureData, setCurrentStep, jobURL, variableData, jobType } =
     useJobContainerCreateContext()
   const navigate = useNavigate()
-  const { organizationId = '', projectId = '', environmentId = '' } = useParams()
+  const { organizationId = '', projectId = '', environmentId = '', slug, option } = useParams()
   const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${jobURL}`
   const [loadingCreate, setLoadingCreate] = useState(false)
   const [loadingCreateAndDeploy, setLoadingCreateAndDeploy] = useState(false)
@@ -211,6 +212,14 @@ export function StepSummaryFeature() {
           })
           setLoadingCreateAndDeploy(false)
         }
+
+        if (slug && option) {
+          posthog.capture('create-service', {
+            type: slug,
+            option: option,
+          })
+        }
+
         setLoadingCreate(false)
         navigate(SERVICES_URL(organizationId, projectId, environmentId))
       } catch (error) {
