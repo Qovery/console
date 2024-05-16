@@ -111,9 +111,7 @@ export function App() {
 
   useEffect(() => {
     if (user && user.sub) {
-      if (NODE_ENV === 'production') {
-        initMonitorings(user)
-      }
+      initMonitorings(user)
     }
   }, [user, initMonitorings])
 

@@ -7,7 +7,7 @@ import { AutoDeploySetting, BuildSettings, GeneralSetting } from '@qovery/domain
 import { EntrypointCmdInputs, JobGeneralSettings } from '@qovery/shared/console-shared'
 import { type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
 import { type JobGeneralData } from '@qovery/shared/interfaces'
-import { SERVICES_NEW_URL, SERVICES_URL } from '@qovery/shared/routes'
+import { SERVICES_URL } from '@qovery/shared/routes'
 import { Button, Heading, Section } from '@qovery/shared/ui'
 import { findTemplateData } from '../../../feature/page-job-create-feature/page-job-create-feature'
 import { serviceTemplates } from '../../../feature/page-new-feature/service-templates'
@@ -196,9 +196,7 @@ export function StepGeneral(props: StepGeneralProps) {
 
         <div className="flex justify-between">
           <Button
-            onClick={() =>
-              navigate(SERVICES_URL(organizationId, projectId, environmentId) + isTemplate ? SERVICES_NEW_URL : '')
-            }
+            onClick={() => navigate(SERVICES_URL(organizationId, projectId, environmentId))}
             type="button"
             size="lg"
             variant="plain"

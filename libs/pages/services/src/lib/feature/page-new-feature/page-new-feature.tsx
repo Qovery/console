@@ -48,16 +48,17 @@ interface CardOptionProps extends ServiceTemplateOptionType {
 function CardOption({ parentSlug, slug, icon, title, description, type }: CardOptionProps) {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
 
-  posthog.capture('select-service', {
-    serviceType: type,
-    type: parentSlug,
-    option: slug,
-  })
-
   return (
     <NavLink
       to={SERVICES_URL(organizationId, projectId, environmentId) + servicePath(type, parentSlug, slug)}
       className="flex items-start gap-3 border border-neutral-200 p-3 rounded-sm hover:bg-white transition"
+      onClick={() =>
+        posthog.capture('select-service', {
+          serviceType: type,
+          type: parentSlug,
+          option: slug,
+        })
+      }
     >
       <img className="select-none mt-1" width={24} height={24} src={icon} alt={title} />
       <span>
@@ -137,15 +138,16 @@ function CardService({ title, icon, description, slug, options, type, link }: Se
     )
   }
 
-  posthog.capture('select-service', {
-    serviceType: type,
-    type: slug,
-  })
-
   return (
     <NavLink
       to={link ?? SERVICES_URL(organizationId, projectId, environmentId) + servicePath(type!, slug!, 'current')}
       className="flex gap-6 border border-neutral-200 hover:bg-neutral-100 transition rounded p-5 shadow-sm"
+      onClick={() =>
+        posthog.capture('select-service', {
+          serviceType: type,
+          type: slug,
+        })
+      }
     >
       <div className="w-60">
         <h3 className="text-ssm font-medium mb-1">{title}</h3>

@@ -1,3 +1,4 @@
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { createContext, useContext, useEffect, useState } from 'react'
 import { Navigate, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { AssistantTrigger } from '@qovery/shared/assistant/feature'
@@ -10,6 +11,7 @@ import {
 } from '@qovery/shared/interfaces'
 import {
   SERVICES_CRONJOB_CREATION_URL,
+  SERVICES_GENERAL_URL,
   SERVICES_JOB_CREATION_GENERAL_URL,
   SERVICES_LIFECYCLE_CREATION_URL,
   SERVICES_LIFECYCLE_TEMPLATE_CREATION_URL,
@@ -109,6 +111,8 @@ export function PageJobCreateFeature() {
 
   const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${jobURL}`
 
+  const flagEnabled = useFeatureFlagEnabled('service-template')
+
   return (
     <JobContainerCreateContext.Provider
       value={{
@@ -128,7 +132,10 @@ export function PageJobCreateFeature() {
     >
       <FunnelFlow
         onExit={() => {
-          navigate(SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_NEW_URL)
+          const link = `${SERVICES_URL(organizationId, projectId, environmentId)}${
+            flagEnabled ? SERVICES_NEW_URL : SERVICES_GENERAL_URL
+          }`
+          navigate(link)
         }}
         totalSteps={5}
         currentStep={currentStep}

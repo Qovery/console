@@ -1,9 +1,11 @@
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { createContext, useContext, useState } from 'react'
 import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
 import { AssistantTrigger } from '@qovery/shared/assistant/feature'
 import {
   SERVICES_DATABASE_CREATION_GENERAL_URL,
   SERVICES_DATABASE_CREATION_URL,
+  SERVICES_GENERAL_URL,
   SERVICES_NEW_URL,
   SERVICES_URL,
 } from '@qovery/shared/routes'
@@ -56,6 +58,8 @@ export function PageDatabaseCreateFeature() {
     SERVICES_DATABASE_CREATION_URL +
     `${slug && option ? `/${slug}/${option}` : ''}`
 
+  const flagEnabled = useFeatureFlagEnabled('service-template')
+
   return (
     <DatabaseCreateContext.Provider
       value={{
@@ -69,7 +73,10 @@ export function PageDatabaseCreateFeature() {
     >
       <FunnelFlow
         onExit={() => {
-          navigate(SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_NEW_URL)
+          const link = `${SERVICES_URL(organizationId, projectId, environmentId)}${
+            flagEnabled ? SERVICES_NEW_URL : SERVICES_GENERAL_URL
+          }`
+          navigate(link)
         }}
         totalSteps={3}
         currentStep={currentStep}
