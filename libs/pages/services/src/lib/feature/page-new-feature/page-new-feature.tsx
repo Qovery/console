@@ -45,7 +45,7 @@ interface CardOptionProps extends ServiceTemplateOptionType {
   parentSlug: string
 }
 
-function CardOption({ parentSlug, slug, icon, title, description, type }: CardOptionProps) {
+function CardOption({ parentSlug, slug, icon, title, description, type, recommended }: CardOptionProps) {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
 
   return (
@@ -62,7 +62,14 @@ function CardOption({ parentSlug, slug, icon, title, description, type }: CardOp
     >
       <img className="select-none mt-1" width={24} height={24} src={icon} alt={title} />
       <span>
-        <span className="inline-block text-ssm text-neutral-400 font-medium">{title}</span>
+        <span className="inline-block text-ssm text-neutral-400 font-medium">
+          {title}
+          {recommended && (
+            <span className="relative -top-0.5 ml-1 inline-block bg-brand-500 text-neutral-50 px-1 rounded text-2xs">
+              Fastest
+            </span>
+          )}
+        </span>
         <span className="inline-block text-xs text-neutral-350">{description}</span>
       </span>
       <span className="flex items-center h-full pr-1">
@@ -108,7 +115,11 @@ function CardService({ title, icon, description, slug, options, type, link }: Se
             </div>
             <div className="grid grid-cols-3 gap-2">
               {options
-                .sort((a, b) => a.title.localeCompare(b.title))
+                .sort((a, b) => {
+                  if (a.recommended && !b.recommended) return -1
+                  if (!a.recommended && b.recommended) return 1
+                  return a.title.localeCompare(b.title)
+                })
                 .map((props) => (
                   <CardOption key={props.slug} parentSlug={slug!} {...props} />
                 ))}

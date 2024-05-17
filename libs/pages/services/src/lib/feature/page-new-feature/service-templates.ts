@@ -56,6 +56,7 @@ export type ServiceTemplateOptionType = {
   dockerfile?: string
   additional_dockerfile_files?: string[]
   lifecycle_job_options?: LifecycleJobOptionsType
+  recommended?: boolean
 }
 
 export type LifecycleJobOptionsType = {
@@ -253,6 +254,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
         description: 'Expose an Angular application using a container with Nginx.',
         icon: Docker,
         type: 'APPLICATION',
+        recommended: true,
       },
       {
         slug: 'aws-cloudfront-s3',
