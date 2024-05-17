@@ -1,3 +1,4 @@
+import posthog from 'posthog-js'
 import {
   type ApplicationRequest,
   BuildModeEnum,
@@ -26,7 +27,7 @@ export function StepSummaryFeature() {
   useDocumentTitle('Summary - Create Application')
   const { generalData, portData, resourcesData, setCurrentStep } = useApplicationContainerCreateContext()
   const navigate = useNavigate()
-  const { organizationId = '', projectId = '', environmentId = '' } = useParams()
+  const { organizationId = '', projectId = '', environmentId = '', slug, option } = useParams()
   const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_APPLICATION_CREATION_URL}`
   const [loadingCreate, setLoadingCreate] = useState(false)
   const [loadingCreateAndDeploy, setLoadingCreateAndDeploy] = useState(false)
@@ -127,6 +128,14 @@ export function StepSummaryFeature() {
             })
             setLoadingCreateAndDeploy(false)
           }
+
+          if (slug && option) {
+            posthog.capture('create-service', {
+              selectedServiceType: slug,
+              selectedServiceSubType: option,
+            })
+          }
+
           setLoadingCreate(false)
           navigate(SERVICES_URL(organizationId, projectId, environmentId))
         } catch (error) {

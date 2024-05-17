@@ -1,3 +1,4 @@
+import posthog from 'posthog-js'
 import { DatabaseModeEnum, type DatabaseRequest } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -18,7 +19,7 @@ export function StepSummaryFeature() {
   useDocumentTitle('Summary - Create Database')
   const { generalData, resourcesData, setCurrentStep } = useDatabaseCreateContext()
   const navigate = useNavigate()
-  const { organizationId = '', projectId = '', environmentId = '' } = useParams()
+  const { organizationId = '', projectId = '', environmentId = '', slug, option } = useParams()
   const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_DATABASE_CREATION_URL}`
   const [loadingCreate, setLoadingCreate] = useState(false)
   const [loadingCreateAndDeploy, setLoadingCreateAndDeploy] = useState(false)
@@ -82,6 +83,14 @@ export function StepSummaryFeature() {
           })
           setLoadingCreateAndDeploy(false)
         }
+
+        if (slug && option) {
+          posthog.capture('create-service', {
+            selectedServiceType: slug,
+            selectedServiceSubType: option,
+          })
+        }
+
         setLoadingCreate(false)
         navigate(SERVICES_URL(organizationId, projectId, environmentId))
       } catch (error) {

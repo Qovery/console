@@ -1,4 +1,4 @@
-import { type Environment } from 'qovery-typescript-axios'
+import { PostHogFeature } from 'posthog-js/react'
 import { type PropsWithChildren } from 'react'
 import { matchPath, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useCluster } from '@qovery/domains/clusters/feature'
@@ -8,6 +8,7 @@ import {
   EnvironmentStateChip,
   useDeployEnvironment,
   useDeploymentStatus,
+  useEnvironment,
 } from '@qovery/domains/environments/feature'
 import { ShowAllVariablesToggle, VariablesActionToolbar, VariablesProvider } from '@qovery/domains/variables/feature'
 import { IconEnum } from '@qovery/shared/enums'
@@ -21,6 +22,7 @@ import {
   SERVICES_GENERAL_URL,
   SERVICES_HELM_CREATION_URL,
   SERVICES_LIFECYCLE_CREATION_URL,
+  SERVICES_NEW_URL,
   SERVICES_SETTINGS_URL,
   SERVICES_URL,
   SERVICES_VARIABLES_URL,
@@ -41,13 +43,10 @@ import {
   toast,
 } from '@qovery/shared/ui'
 
-export interface ContainerProps {
-  environment?: Environment
-}
-
-export function Container(props: PropsWithChildren<ContainerProps>) {
-  const { environment, children } = props
+export function Container({ children }: PropsWithChildren) {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
+  const { data: environment } = useEnvironment({ environmentId })
+
   const location = useLocation()
   const navigate = useNavigate()
 
@@ -210,16 +209,32 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
         </>
       ) : (
         <Skeleton width={154} height={40} show={isLoadingDeploymentStatus}>
-          <Menu
-            trigger={
-              <Button size="lg" className="gap-2">
-                New service
-                <Icon iconName="circle-plus" />
-              </Button>
+          <PostHogFeature
+            flag="service-template"
+            match={true}
+            fallback={
+              <Menu
+                trigger={
+                  <Button size="lg" className="gap-2">
+                    New service
+                    <Icon iconName="circle-plus" />
+                  </Button>
+                }
+                menus={newServicesMenu}
+                arrowAlign={MenuAlign.START}
+              />
             }
-            menus={newServicesMenu}
-            arrowAlign={MenuAlign.START}
-          />
+          >
+            <Link
+              as="button"
+              size="lg"
+              className="gap-2"
+              to={`${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_NEW_URL}`}
+            >
+              New service
+              <Icon iconName="circle-plus" />
+            </Link>
+          </PostHogFeature>
         </Skeleton>
       )}
     </div>

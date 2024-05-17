@@ -1,3 +1,4 @@
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { createContext, useContext, useEffect, useState } from 'react'
 import { Navigate, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { AssistantTrigger } from '@qovery/shared/assistant/feature'
@@ -10,13 +11,17 @@ import {
 } from '@qovery/shared/interfaces'
 import {
   SERVICES_CRONJOB_CREATION_URL,
+  SERVICES_GENERAL_URL,
   SERVICES_JOB_CREATION_GENERAL_URL,
   SERVICES_LIFECYCLE_CREATION_URL,
+  SERVICES_LIFECYCLE_TEMPLATE_CREATION_URL,
+  SERVICES_NEW_URL,
   SERVICES_URL,
 } from '@qovery/shared/routes'
 import { FunnelFlow } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { ROUTER_SERVICE_JOB_CREATION } from '../../router/router'
+import { serviceTemplates } from '../page-new-feature/service-templates'
 
 export interface JobContainerCreateContextInterface {
   currentStep: number
@@ -55,8 +60,22 @@ export const steps: { title: string }[] = [
   { title: 'Ready to install' },
 ]
 
+export const findTemplateData = (slug?: string, option?: string) => {
+  return serviceTemplates.flatMap((template) => {
+    if (template.slug === slug && !template.options) {
+      return template
+    }
+
+    if (template.slug === slug && template.options?.length) {
+      return template.options.find((o) => o.slug === option)
+    }
+
+    return []
+  })[0]
+}
+
 export function PageJobCreateFeature() {
-  const { organizationId = '', projectId = '', environmentId = '' } = useParams()
+  const { organizationId = '', projectId = '', environmentId = '', slug, option } = useParams()
   const location = useLocation()
 
   // values and setters for context initialization
@@ -84,11 +103,15 @@ export function PageJobCreateFeature() {
       setJobType(ServiceTypeEnum.CRON_JOB)
     } else {
       setJobType(ServiceTypeEnum.LIFECYCLE_JOB)
-      setJobURL(SERVICES_LIFECYCLE_CREATION_URL)
+      setJobURL(
+        slug && option ? SERVICES_LIFECYCLE_TEMPLATE_CREATION_URL(slug, option) : SERVICES_LIFECYCLE_CREATION_URL
+      )
     }
-  }, [setJobURL, setJobType, location.pathname])
+  }, [setJobURL, setJobType, location.pathname, slug, option])
 
   const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${jobURL}`
+
+  const flagEnabled = useFeatureFlagEnabled('service-template')
 
   return (
     <JobContainerCreateContext.Provider
@@ -109,7 +132,10 @@ export function PageJobCreateFeature() {
     >
       <FunnelFlow
         onExit={() => {
-          navigate(SERVICES_URL(organizationId, projectId, environmentId))
+          const link = `${SERVICES_URL(organizationId, projectId, environmentId)}${
+            flagEnabled ? SERVICES_NEW_URL : SERVICES_GENERAL_URL
+          }`
+          navigate(link)
         }}
         totalSteps={5}
         currentStep={currentStep}

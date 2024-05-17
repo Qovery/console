@@ -24,6 +24,8 @@ import {
   Section,
 } from '@qovery/shared/ui'
 import { type GeneralData } from '../../../feature/page-database-create-feature/database-creation-flow.interface'
+import { findTemplateData } from '../../../feature/page-job-create-feature/page-job-create-feature'
+import { serviceTemplates } from '../../../feature/page-new-feature/service-templates'
 
 export interface StepGeneralProps {
   onSubmit: FormEventHandler<HTMLFormElement>
@@ -47,7 +49,7 @@ export function StepGeneral({
   showManagedWithVpcOptions,
 }: StepGeneralProps) {
   const { control, formState, watch } = useFormContext<GeneralData>()
-  const { organizationId = '', environmentId = '', projectId = '' } = useParams()
+  const { organizationId = '', environmentId = '', projectId = '', slug, option } = useParams()
   const navigate = useNavigate()
 
   const watchType = watch('type')
@@ -67,15 +69,34 @@ export function StepGeneral({
     })
   }
 
+  const isTemplate = slug !== undefined
+  const dataTemplate = serviceTemplates.find((service) => service.slug === slug)
+  const dataOptionTemplate = option !== 'current' ? findTemplateData(slug, option) : null
+
   return (
     <Section>
-      <Heading className="mb-2">General information</Heading>
+      {isTemplate ? (
+        <div className="flex items-center gap-6 mb-10">
+          <img src={dataTemplate?.icon as string} alt={slug} className="w-10 h-10" />
+          <div>
+            <Heading className="mb-2">
+              {dataTemplate?.title} {dataOptionTemplate?.title ? `- ${dataOptionTemplate?.title}` : ''}
+            </Heading>
+            <p className="text-neutral-350 text-sm">
+              These general settings allow you to set up the database name, type and version.
+            </p>
+          </div>
+        </div>
+      ) : (
+        <>
+          <Heading className="mb-2">General information</Heading>
+          <p className="text-neutral-350 text-sm mb-10">
+            These general settings allow you to set up the database name, type and version.
+          </p>
+        </>
+      )}
 
       <form className="space-y-10" onSubmit={onSubmit}>
-        <p className="text-neutral-350 text-sm">
-          These general settings allow you to set up the database name, type and version.
-        </p>
-
         <Section className="gap-4">
           <Heading>General</Heading>
           <GeneralSetting label="Service name" />

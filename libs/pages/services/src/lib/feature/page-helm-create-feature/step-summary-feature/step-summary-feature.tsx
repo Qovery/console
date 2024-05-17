@@ -1,3 +1,4 @@
+import posthog from 'posthog-js'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
@@ -19,7 +20,7 @@ import { useHelmCreateContext } from '../page-helm-create-feature'
 export function StepSummaryFeature() {
   useDocumentTitle('Summary - Create Helm')
 
-  const { organizationId = '', projectId = '', environmentId = '' } = useParams()
+  const { organizationId = '', projectId = '', environmentId = '', slug, option } = useParams()
   const navigate = useNavigate()
 
   const { generalForm, valuesOverrideFileForm, valuesOverrideArgumentsForm, setCurrentStep } = useHelmCreateContext()
@@ -118,6 +119,13 @@ export function StepSummaryFeature() {
       if (withDeploy) {
         await deployService({ serviceId: response.id, serviceType: 'HELM' })
         setIsLoadingCreateAndDeploy(false)
+      }
+
+      if (slug && option) {
+        posthog.capture('create-service', {
+          selectedServiceType: slug,
+          selectedServiceSubType: option,
+        })
       }
 
       setIsLoadingCreate(false)

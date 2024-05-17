@@ -10,6 +10,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+import { PostHogFeature } from 'posthog-js/react'
 import type {
   ApplicationGitRepository,
   ContainerResponse,
@@ -36,7 +37,14 @@ import {
   DATABASE_URL,
   DEPLOYMENT_LOGS_URL,
   ENVIRONMENT_LOGS_URL,
+  SERVICES_APPLICATION_CREATION_URL,
+  SERVICES_CRONJOB_CREATION_URL,
+  SERVICES_DATABASE_CREATION_URL,
   SERVICES_GENERAL_URL,
+  SERVICES_HELM_CREATION_URL,
+  SERVICES_LIFECYCLE_CREATION_URL,
+  SERVICES_NEW_URL,
+  SERVICES_URL,
 } from '@qovery/shared/routes'
 import {
   Badge,
@@ -46,6 +54,9 @@ import {
   ExternalLink,
   Icon,
   Link,
+  Menu,
+  MenuAlign,
+  type MenuData,
   StatusChip,
   TableFilter,
   TablePrimitives,
@@ -525,6 +536,52 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
     },
   })
 
+  const newServicesMenu: MenuData = [
+    {
+      items: [
+        {
+          name: 'Create application',
+          contentLeft: <Icon iconName="layer-group" className="text-brand-500 text-sm" />,
+          onClick: () => {
+            navigate(`${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_APPLICATION_CREATION_URL}`)
+          },
+        },
+        {
+          name: 'Create database',
+          contentLeft: <Icon iconName="database" className="text-brand-500 text-sm" />,
+          onClick: () => {
+            navigate(`${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_DATABASE_CREATION_URL}`)
+          },
+        },
+        {
+          name: 'Create lifecycle job',
+          contentLeft: (
+            <Icon name={IconEnum.LIFECYCLE_JOB_STROKE} width="14" height="16" className="text-brand-500 text-sm" />
+          ),
+          onClick: () => {
+            navigate(`${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_LIFECYCLE_CREATION_URL}`)
+          },
+        },
+        {
+          name: 'Create cronjob',
+          contentLeft: (
+            <Icon name={IconEnum.CRON_JOB_STROKE} width="14" height="16" className="text-brand-500 text-sm" />
+          ),
+          onClick: () => {
+            navigate(`${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_CRONJOB_CREATION_URL}`)
+          },
+        },
+        {
+          name: 'Create helm',
+          contentLeft: <Icon name={IconEnum.HELM_OFFICIAL} width="14" height="16" className="text-brand-500 text-sm" />,
+          onClick: () => {
+            navigate(`${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_HELM_CREATION_URL}`)
+          },
+        },
+      ],
+    },
+  ]
+
   if (services.length === 0 && isServicesLoading) {
     return <ServiceListSkeleton />
   }
@@ -535,7 +592,34 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
         title="No service found"
         description="You can create a service from the button on the top"
         className="bg-white rounded-t-sm mt-2 pt-10"
-      />
+      >
+        <PostHogFeature
+          flag="service-template"
+          match={true}
+          fallback={
+            <Menu
+              trigger={
+                <Button size="lg" className="gap-2 mt-5">
+                  New service
+                  <Icon iconName="circle-plus" />
+                </Button>
+              }
+              menus={newServicesMenu}
+              arrowAlign={MenuAlign.CENTER}
+            />
+          }
+        >
+          <Link
+            as="button"
+            size="lg"
+            className="gap-2 mt-5"
+            to={`${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_NEW_URL}`}
+          >
+            New service
+            <Icon iconName="circle-plus" />
+          </Link>
+        </PostHogFeature>
+      </EmptyState>
     )
   }
 

@@ -21,14 +21,14 @@ exports[`SelectCommitModal should match snapshot 1`] = `
       For X service
     </div>
     <div
-      class="relative w-full "
+      class="relative w-full"
     >
       <span
         class="icon-solid-magnifying-glass shrink-0 absolute left-3 top-1/2 -translate-y-1/2 block text-base text-neutral-400 dark:text-white leading-none"
         role="img"
       />
       <input
-        class="w-full rounded border border-neutral-250 dark:border-neutral-350 dark:bg-transparent text-neutral-400 dark:text-white placeholder:text-neutral-350 dark:placeholder:text-neutral-250 pl-10 pr-6 leading-none focus:outline-none focus:border-brand-400 focus:transition-[border-color] h-9 text-xs"
+        class="w-full rounded border border-neutral-250 dark:border-neutral-350 dark:bg-transparent text-neutral-400 dark:text-white placeholder:text-neutral-350 dark:placeholder:text-neutral-250 pl-10 pr-6 focus:outline-none focus:border-brand-400 focus:transition-[border-color] h-9 text-xs"
         data-testid="input-search"
         name="search"
         placeholder="Search by commit message or commit id"
@@ -73,7 +73,7 @@ exports[`SelectCommitModal should match snapshot 1`] = `
               <div>
                 <button
                   aria-checked="false"
-                  class="group transition bg-neutral-100 border border-neutral-300 w-[20px] h-[20px] rounded-full hover:border-2 hover:border-brand-500 data-[state=checked]:bg-brand-500 data-[state=checked]:border-brand-500 disabled:hover:border disabled:bg-neutral-150 disabled:border-neutral-250 disabled:data-[state=checked]:hover:border-2 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300"
+                  class="group transition bg-neutral-100 border border-neutral-300 w-[20px] h-[20px] rounded-full hover:border-2 hover:border-brand-500 data-[state=checked]:bg-brand-500 data-[state=checked]:border-2 data-[state=checked]:border-brand-500 disabled:hover:border disabled:bg-neutral-150 disabled:border-neutral-250 disabled:data-[state=checked]:hover:border-2 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300"
                   data-radix-collection-item=""
                   data-state="unchecked"
                   role="radio"
@@ -175,7 +175,7 @@ exports[`SelectCommitModal should match snapshot 1`] = `
               <div>
                 <button
                   aria-checked="true"
-                  class="group transition bg-neutral-100 border border-neutral-300 w-[20px] h-[20px] rounded-full hover:border-2 hover:border-brand-500 data-[state=checked]:bg-brand-500 data-[state=checked]:border-brand-500 disabled:hover:border disabled:bg-neutral-150 disabled:border-neutral-250 disabled:data-[state=checked]:hover:border-2 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300"
+                  class="group transition bg-neutral-100 border border-neutral-300 w-[20px] h-[20px] rounded-full hover:border-2 hover:border-brand-500 data-[state=checked]:bg-brand-500 data-[state=checked]:border-2 data-[state=checked]:border-brand-500 disabled:hover:border disabled:bg-neutral-150 disabled:border-neutral-250 disabled:data-[state=checked]:hover:border-2 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300"
                   data-disabled=""
                   data-radix-collection-item=""
                   data-state="checked"

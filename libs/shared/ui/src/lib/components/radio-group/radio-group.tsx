@@ -17,6 +17,7 @@ const itemVariants = cva(
     'hover:border-2',
     'hover:border-brand-500',
     'data-[state=checked]:bg-brand-500',
+    'data-[state=checked]:border-2',
     'data-[state=checked]:border-brand-500',
     'disabled:hover:border',
     'disabled:bg-neutral-150',

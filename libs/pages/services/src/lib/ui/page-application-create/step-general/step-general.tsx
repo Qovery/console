@@ -9,6 +9,8 @@ import { IconEnum, ServiceTypeEnum } from '@qovery/shared/enums'
 import { type ApplicationGeneralData } from '@qovery/shared/interfaces'
 import { SERVICES_URL } from '@qovery/shared/routes'
 import { Button, Heading, Icon, InputSelect, Section } from '@qovery/shared/ui'
+import { findTemplateData } from '../../../feature/page-job-create-feature/page-job-create-feature'
+import { serviceTemplates } from '../../../feature/page-new-feature/service-templates'
 
 export interface StepGeneralProps {
   onSubmit: FormEventHandler<HTMLFormElement>
@@ -17,7 +19,7 @@ export interface StepGeneralProps {
 
 export function StepGeneral(props: StepGeneralProps) {
   const { control, watch, formState } = useFormContext<ApplicationGeneralData>()
-  const { organizationId = '', environmentId = '', projectId = '' } = useParams()
+  const { organizationId = '', environmentId = '', projectId = '', slug, option } = useParams()
   const navigate = useNavigate()
 
   const watchServiceType = watch('serviceType')
@@ -26,15 +28,34 @@ export function StepGeneral(props: StepGeneralProps) {
   // NOTE: Validation corner case where git settings can be in loading state
   const isGitSettingsValid = watchServiceType === 'APPLICATION' ? watch('branch') : true
 
+  const isTemplate = slug !== undefined
+  const dataTemplate = serviceTemplates.find((service) => service.slug === slug)
+  const dataOptionTemplate = option !== 'current' ? findTemplateData(slug, option) : null
+
   return (
     <Section>
-      <Heading className="mb-2">General information</Heading>
+      {isTemplate ? (
+        <div className="flex items-center gap-6 mb-10">
+          <img src={dataTemplate?.icon as string} alt={slug} className="w-10 h-10" />
+          <div>
+            <Heading className="mb-2">
+              {dataTemplate?.title} {dataOptionTemplate?.title ? `- ${dataOptionTemplate?.title}` : ''}
+            </Heading>
+            <p className="text-neutral-350 text-sm">
+              These general settings allow you to set up the service name, its source and deployment parameters.
+            </p>
+          </div>
+        </div>
+      ) : (
+        <>
+          <Heading className="mb-2">General information</Heading>
+          <p className="text-neutral-350 text-sm mb-10">
+            These general settings allow you to set up the service name, its source and deployment parameters.
+          </p>
+        </>
+      )}
 
       <form className="space-y-10" onSubmit={props.onSubmit}>
-        <p className="text-neutral-350 text-sm">
-          These general settings allow you to set up the service name, its source and deployment parameters.
-        </p>
-
         <Section className="gap-4">
           <Heading>General</Heading>
           <GeneralSetting label="Service name" />

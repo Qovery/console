@@ -9,12 +9,12 @@ import { SERVICES_JOB_CREATION_CONFIGURE_URL, SERVICES_URL } from '@qovery/share
 import { FunnelFlowBody, toastError } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import StepGeneral from '../../../ui/page-job-create/step-general/step-general'
-import { useJobContainerCreateContext } from '../page-job-create-feature'
+import { findTemplateData, useJobContainerCreateContext } from '../page-job-create-feature'
 
 export function StepGeneralFeature() {
   useDocumentTitle('General - Create Job')
   const { setGeneralData, generalData, setCurrentStep, jobURL, jobType } = useJobContainerCreateContext()
-  const { organizationId = '', projectId = '', environmentId = '' } = useParams()
+  const { organizationId = '', projectId = '', environmentId = '', slug, option } = useParams()
   const navigate = useNavigate()
 
   const { data: organization } = useOrganization({ organizationId })
@@ -23,8 +23,15 @@ export function StepGeneralFeature() {
     setCurrentStep(1)
   }, [setCurrentStep])
 
+  const templateData = findTemplateData(slug, option)
+
   const methods = useForm<JobGeneralData>({
-    defaultValues: { auto_deploy: true, ...generalData },
+    defaultValues: {
+      name: templateData ? templateData.slug : '',
+      serviceType: templateData?.slug === 'container' ? 'CONTAINER' : 'APPLICATION',
+      auto_deploy: true,
+      ...generalData,
+    },
     mode: 'onChange',
   })
 
