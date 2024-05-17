@@ -79,10 +79,11 @@ export function PageHelmCreateFeature() {
     mode: 'onChange',
   })
 
+  // TODO: need to fix this hard redirect because conflict between /create/helm and /create/helm-template
   const pathCreate =
     SERVICES_URL(organizationId, projectId, environmentId) +
     SERVICES_HELM_CREATION_URL +
-    `${slug && option ? `/${slug}/${option}` : ''}`
+    `${slug !== 'values-override' && option ? `-template/${slug}/${option}` : ''}`
 
   const flagEnabled = useFeatureFlagEnabled('service-template')
 
