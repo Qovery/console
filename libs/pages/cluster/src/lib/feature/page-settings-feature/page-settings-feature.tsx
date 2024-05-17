@@ -1,5 +1,5 @@
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
-import { match } from 'ts-pattern'
+import { P, match } from 'ts-pattern'
 import { useCluster } from '@qovery/domains/clusters/feature'
 import {
   CLUSTER_SETTINGS_ADVANCED_SETTINGS_URL,
@@ -83,10 +83,15 @@ export function PageSettingsFeature() {
   }
 
   const links = match(cluster)
-    .with({ kubernetes: 'SELF_MANAGED' }, () => [
+    .with({ cloud_provider: P.not('ON_PREMISE'), kubernetes: 'SELF_MANAGED' }, () => [
       generalLink,
       credentialsLink,
       kubeconfigLink,
+      advancedSettingsLink,
+      dangerZoneLink,
+    ])
+    .with({ cloud_provider: 'ON_PREMISE', kubernetes: 'SELF_MANAGED' }, () => [
+      generalLink,
       advancedSettingsLink,
       dangerZoneLink,
     ])

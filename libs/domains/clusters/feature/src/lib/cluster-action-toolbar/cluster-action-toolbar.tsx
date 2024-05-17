@@ -6,6 +6,7 @@ import {
 } from 'qovery-typescript-axios'
 import { type ReactNode, useEffect } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { P, match } from 'ts-pattern'
 import { AUDIT_LOGS_PARAMS_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL, INFRA_LOGS_URL } from '@qovery/shared/routes'
 import { ActionToolbar, DropdownMenu, Icon, Tooltip, useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
@@ -174,12 +175,14 @@ function MenuOtherActions({ cluster, clusterStatus }: { cluster: Cluster; cluste
         <DropdownMenu.Item icon={<Icon iconName="copy" />} onSelect={() => copyToClipboard(cluster.id)}>
           Copy identifier
         </DropdownMenu.Item>
-        <DropdownMenu.Item
-          icon={<Icon iconName="download" />}
-          onSelect={() => downloadKubeconfig({ organizationId: cluster.organization.id, clusterId: cluster.id })}
-        >
-          Get Kubeconfig
-        </DropdownMenu.Item>
+        {cluster.cloud_provider !== 'ON_PREMISE' && (
+          <DropdownMenu.Item
+            icon={<Icon iconName="download" />}
+            onSelect={() => downloadKubeconfig({ organizationId: cluster.organization.id, clusterId: cluster.id })}
+          >
+            Get Kubeconfig
+          </DropdownMenu.Item>
+        )}
         {canDelete && (
           <>
             <DropdownMenu.Separator />
@@ -231,32 +234,41 @@ export function ClusterActionToolbar({ cluster, clusterStatus, noSettings }: Clu
     return () => (bool ? closeModal() : undefined)
   }, [searchParams, setSearchParams, cluster.kubernetes, closeModal])
 
+  const actionToolbarButtons = match(cluster)
+    .with({ cloud_provider: P.not('ON_PREMISE'), kubernetes: 'SELF_MANAGED' }, () => (
+      <Tooltip content="Installation guide">
+        <ActionToolbar.Button onClick={() => openInstallationGuideModal()}>
+          <Icon iconName="circle-info" />
+        </ActionToolbar.Button>
+      </Tooltip>
+    ))
+    .with({ cloud_provider: 'ON_PREMISE', kubernetes: 'SELF_MANAGED' }, () => (
+      <Tooltip content="Installation guide">
+        <ActionToolbar.Button onClick={() => openInstallationGuideModal()}>
+          <Icon iconName="circle-info" />
+        </ActionToolbar.Button>
+      </Tooltip>
+    ))
+    .otherwise(() => (
+      <>
+        <MenuManageDeployment cluster={cluster} clusterStatus={clusterStatus} />
+        <Tooltip content="Logs">
+          <ActionToolbar.Button
+            onClick={() =>
+              navigate(INFRA_LOGS_URL(cluster.organization.id, cluster.id), {
+                state: { prevUrl: pathname },
+              })
+            }
+          >
+            <Icon iconName="scroll" />
+          </ActionToolbar.Button>
+        </Tooltip>
+      </>
+    ))
+
   return (
     <ActionToolbar.Root>
-      {cluster.kubernetes === 'SELF_MANAGED' ? (
-        <>
-          <Tooltip content="Installation guide">
-            <ActionToolbar.Button onClick={() => openInstallationGuideModal()}>
-              <Icon iconName="circle-info" />
-            </ActionToolbar.Button>
-          </Tooltip>
-        </>
-      ) : (
-        <>
-          <MenuManageDeployment cluster={cluster} clusterStatus={clusterStatus} />
-          <Tooltip content="Logs">
-            <ActionToolbar.Button
-              onClick={() =>
-                navigate(INFRA_LOGS_URL(cluster.organization.id, cluster.id), {
-                  state: { prevUrl: pathname },
-                })
-              }
-            >
-              <Icon iconName="scroll" />
-            </ActionToolbar.Button>
-          </Tooltip>
-        </>
-      )}
+      {actionToolbarButtons}
       {!noSettings && (
         <Tooltip content="Settings">
           <ActionToolbar.Button

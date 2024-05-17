@@ -40,11 +40,15 @@ export function CardCluster({ organizationId, cluster }: CardClusterProps) {
     refetchInterval: 3000,
   })
 
+  const cardIcon = match(cluster.cloud_provider)
+    .with('ON_PREMISE', () => IconEnum.KUBERNETES)
+    .otherwise(() => cluster.cloud_provider)
+
   return (
     <div data-testid={`cluster-list-${cluster.id}`} className="border border-neutral-200 rounded p-5">
       <div className="flex justify-between gap-4 mb-5">
         <div className="flex items-center">
-          <Icon className="mr-3" name={cluster.cloud_provider} />
+          <Icon className="mr-3" name={cardIcon} />
           <div className="flex flex-col">
             <div className="flex">
               <h2 className="inline-flex basis-40 items-center text-xs text-neutral-400 font-medium">
