@@ -82,7 +82,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
         slug: 'managed',
         title: 'Managed',
         description: 'Create a PostgreSQL database using a managed service.',
-        icon: AWS,
+        icon: Qovery,
         type: 'DATABASE',
       },
       {
