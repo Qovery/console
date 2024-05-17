@@ -1,6 +1,6 @@
 export const SERVICES_HELM_CREATION_URL = '/create/helm'
 export const SERVICES_HELM_TEMPLATE_CREATION_URL = (slug = ':slug', option = ':option') =>
-  `/create/helm/${slug}/${option}`
+  `/create/helm-template/${slug}/${option}`
 
 // subrouter for helm steps /create/general /create/settings etc...
 export const SERVICES_HELM_CREATION_GENERAL_URL = '/general'
