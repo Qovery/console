@@ -127,7 +127,7 @@ function CardService({ title, icon, description, slug, options, type, link }: Se
             </div>
             <span className="relative">
               {typeof icon === 'string' ? (
-                <img className="select-none" width={40} height={40} src={icon} alt={title} />
+                <img className="select-none w-14 max-h-10" src={icon} alt={title} />
               ) : (
                 cloneElement(icon as ReactElement, { className: 'w-10' })
               )}
@@ -153,11 +153,13 @@ function CardService({ title, icon, description, slug, options, type, link }: Se
         <h3 className="text-ssm font-medium mb-1">{title}</h3>
         <p className="text-xs text-neutral-350">{description}</p>
       </div>
-      {typeof icon === 'string' ? (
-        <img className="select-none" width={40} height={40} src={icon} alt={title} />
-      ) : (
-        cloneElement(icon as ReactElement, { className: 'w-10' })
-      )}
+      <div className="flex items-center">
+        {typeof icon === 'string' ? (
+          <img className="select-none w-14 max-h-10" src={icon} alt={title} />
+        ) : (
+          cloneElement(icon as ReactElement, { className: 'w-10' })
+        )}
+      </div>
     </NavLink>
   )
 }

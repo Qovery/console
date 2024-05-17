@@ -8,7 +8,6 @@ import FastAPI from 'devicon/icons/fastapi/fastapi-original.svg'
 import Flask from 'devicon/icons/flask/flask-original.svg'
 import Golang from 'devicon/icons/go/go-original.svg'
 import GCP from 'devicon/icons/googlecloud/googlecloud-original.svg'
-import Helm from 'devicon/icons/helm/helm-original.svg'
 import Java from 'devicon/icons/java/java-original.svg'
 import MongoDB from 'devicon/icons/mongodb/mongodb-original.svg'
 import MySQL from 'devicon/icons/mysql/mysql-original.svg'
@@ -28,6 +27,13 @@ import Terraform from 'devicon/icons/terraform/terraform-original.svg'
 import Vue from 'devicon/icons/vuejs/vuejs-original.svg'
 import { type ReactElement } from 'react'
 import { type ServiceTypeEnum } from '@qovery/shared/enums'
+
+const Qovery = '/assets/logos/logo-icon.svg'
+const Datadog = '/assets/devicon/datadog.svg'
+const Crossplane = '/assets/devicon/crossplane.svg'
+const Kubecost = '/assets/devicon/kubecost.svg'
+const Windmill = '/assets/devicon/windmill.svg'
+const Temporal = '/assets/devicon/temporal.svg'
 
 export type ServiceTemplateType = {
   title: string
@@ -122,7 +128,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
         slug: 'managed-gcp-terraform',
         title: 'Managed via Terraform',
         description: 'Create a PostgreSQL database using Google Cloud SQL via Terraform.',
-        icon: Terraform,
+        icon: GCP,
         type: 'LIFECYCLE_JOB',
         dockerfile:
           'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
@@ -393,7 +399,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
     slug: 'kubecost',
     title: 'Kubecost',
     description: 'Kubecost is an open-source cost monitoring tool for Kubernetes.',
-    icon: Helm,
+    icon: Kubecost,
     type: 'HELM',
     dockerfile:
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
@@ -402,7 +408,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
     slug: 'datadog',
     title: 'Datadog',
     description: 'Datadog is an observability platform for cloud-scale applications.',
-    icon: Helm,
+    icon: Datadog,
     type: 'HELM',
     dockerfile:
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
@@ -655,7 +661,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
     slug: 'windmill',
     title: 'Windmill',
     description: 'Windmill is an open-source workflow orchestration engine written in Rust.',
-    icon: Rust,
+    icon: Windmill,
     type: 'HELM',
     dockerfile:
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
@@ -664,7 +670,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
     slug: 'temporal',
     title: 'Temporal',
     description: 'Temporal is an open-source, stateful, and scalable workflow orchestration engine.',
-    icon: Java,
+    icon: Temporal,
     type: 'HELM',
     dockerfile:
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
@@ -674,7 +680,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
     title: 'Crossplane',
     description:
       'Crossplane is an open-source Kubernetes add-on that extends your cluster with the ability to provision services and infrastructure.',
-    icon: Helm,
+    icon: Crossplane,
     type: 'HELM',
     dockerfile:
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
