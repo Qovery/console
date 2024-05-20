@@ -28,7 +28,7 @@ export interface ApplicationContainerCreateContextInterface {
   setResourcesData: (data: ApplicationResourcesData) => void
   portData: FlowPortData | undefined
   setPortData: (data: FlowPortData) => void
-  serviceURL: string | undefined
+  serviceURL?: string
 }
 
 export const ApplicationContainerCreateContext = createContext<ApplicationContainerCreateContextInterface | undefined>(
