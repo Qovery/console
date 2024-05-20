@@ -209,10 +209,14 @@ export function ClusterActionToolbar({ cluster, clusterStatus, noSettings }: Clu
   const [searchParams, setSearchParams] = useSearchParams()
   const { openModal, closeModal } = useModal()
 
-  const openInstallationGuideModal = () =>
+  const openInstallationGuideModal = ({ type = 'MANAGED' }: { type?: 'MANAGED' | 'ON_PREMISE' } = {}) =>
     openModal({
+      options: {
+        width: type === 'MANAGED' ? 488 : 500,
+      },
       content: (
         <ClusterInstallationGuideModal
+          type={type}
           organizationId={cluster.organization.id}
           clusterId={cluster.id}
           onClose={() => {
@@ -244,7 +248,7 @@ export function ClusterActionToolbar({ cluster, clusterStatus, noSettings }: Clu
     ))
     .with({ cloud_provider: 'ON_PREMISE', kubernetes: 'SELF_MANAGED' }, () => (
       <Tooltip content="Installation guide">
-        <ActionToolbar.Button onClick={() => openInstallationGuideModal()}>
+        <ActionToolbar.Button onClick={() => openInstallationGuideModal({ type: 'ON_PREMISE' })}>
           <Icon iconName="circle-info" />
         </ActionToolbar.Button>
       </Tooltip>

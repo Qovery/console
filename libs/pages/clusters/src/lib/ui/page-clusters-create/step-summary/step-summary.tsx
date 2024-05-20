@@ -111,7 +111,7 @@ export function StepSummary(props: StepSummaryProps) {
                   {match(props.generalData.installation_type)
                     .with('MANAGED', () => 'Managed')
                     .with('SELF_MANAGED', () => 'Self-Managed')
-                    .with('LOCAL_DEMO', () => undefined)
+                    .with('ON_PREMISE', () => undefined)
                     .exhaustive()}
                 </strong>
               </li>
