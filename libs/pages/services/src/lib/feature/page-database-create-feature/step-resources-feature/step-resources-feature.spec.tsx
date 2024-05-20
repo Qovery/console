@@ -43,6 +43,7 @@ const ContextWrapper = (props: { children: ReactNode }) => {
           memory: 100,
         },
         setResourcesData: mockSetResourcesData,
+        databaseURL: '/organization/1/project/2/environment/3/services/create/database',
       }}
     >
       {props.children}
@@ -99,6 +100,7 @@ describe('PageDatabaseCreateResourcesFeature', () => {
             instance_type: 'db.t3.medium',
           },
           setResourcesData: mockSetResourcesData,
+          databaseURL: '/organization/1/project/2/environment/3/services/create/database',
         }}
       >
         <StepResourcesFeature />
