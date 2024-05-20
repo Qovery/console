@@ -72,7 +72,7 @@ export function ClusterInstallationGuideModal({
           </ol>
         )}
 
-        {type === 'ON_PREMISE' && <ClusterSetup type="ON_PREMISE" />}
+        {type === 'ON_PREMISE' && <ClusterSetup type="SELF_MANAGED" />}
       </div>
 
       {type === 'MANAGED' && (

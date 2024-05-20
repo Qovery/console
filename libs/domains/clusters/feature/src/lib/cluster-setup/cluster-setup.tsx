@@ -1,7 +1,7 @@
 import { ExternalLink } from '@qovery/shared/ui'
 import CopyButton from './copy-button/copy-button'
 
-export function ClusterSetup({ type }: { type: 'ON_PREMISE' | 'SELF_MANAGED' }) {
+export function ClusterSetup({ type }: { type: 'LOCAL_DEMO' | 'SELF_MANAGED' }) {
   return (
     <ul className="flex flex-col gap-4 text-neutral-400 text-sm font-medium">
       <li className="border border-neutral-200 p-3 rounded">
@@ -19,7 +19,7 @@ export function ClusterSetup({ type }: { type: 'ON_PREMISE' | 'SELF_MANAGED' }) 
           Run the following command from your terminal and follow the instructions.
         </p>
         <pre className="flex items-center justify-between bg-neutral-150 text-neutral-400 p-3 rounded-sm font-mono">
-          {type === 'ON_PREMISE' ? (
+          {type === 'LOCAL_DEMO' ? (
             <>
               $ qovery demo up <CopyButton content="qovery demo up" />
             </>

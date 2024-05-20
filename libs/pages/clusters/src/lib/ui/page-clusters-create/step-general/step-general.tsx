@@ -114,7 +114,7 @@ export function StepGeneral(props: StepGeneralProps) {
                 >
                   <label className="flex gap-3">
                     <span>
-                      <RadioGroup.Item value="ON_PREMISE" />
+                      <RadioGroup.Item value="LOCAL_DEMO" />
                     </span>
                     <span>
                       <span className="text-neutral-400 font-medium">
@@ -259,7 +259,7 @@ export function StepGeneral(props: StepGeneralProps) {
         {watch('installation_type') !== 'MANAGED' && (
           <div className="mb-10">
             <h4 className="text-neutral-400 text-sm">Installation instruction</h4>
-            {watch('installation_type') === 'ON_PREMISE' ? (
+            {watch('installation_type') === 'LOCAL_DEMO' ? (
               <ExternalLink className="mb-4" href="https://hub.qovery.com/docs/getting-started/install-qovery/local/">
                 See documentation
               </ExternalLink>
@@ -273,7 +273,7 @@ export function StepGeneral(props: StepGeneralProps) {
             )}
 
             {match(watch('installation_type'))
-              .with('ON_PREMISE', 'SELF_MANAGED', (type) => <ClusterSetup type={type} />)
+              .with('LOCAL_DEMO', 'SELF_MANAGED', (type) => <ClusterSetup type={type} />)
               .otherwise(() => null)}
           </div>
         )}
