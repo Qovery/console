@@ -4,7 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { useOrganization } from '@qovery/domains/organizations/feature'
 import { type ServiceTypeEnum } from '@qovery/shared/enums'
 import { type ApplicationGeneralData } from '@qovery/shared/interfaces'
-import { SERVICES_APPLICATION_CREATION_URL, SERVICES_CREATION_RESOURCES_URL, SERVICES_URL } from '@qovery/shared/routes'
+import { SERVICES_CREATION_RESOURCES_URL } from '@qovery/shared/routes'
 import { FunnelFlowBody, toastError } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import StepGeneral from '../../../ui/page-application-create/step-general/step-general'
@@ -14,8 +14,8 @@ import { useApplicationContainerCreateContext } from '../page-application-create
 
 export function StepGeneralFeature() {
   useDocumentTitle('General - Create Application')
-  const { setGeneralData, generalData, setCurrentStep } = useApplicationContainerCreateContext()
-  const { organizationId = '', projectId = '', environmentId = '', slug, option } = useParams()
+  const { setGeneralData, generalData, setCurrentStep, serviceURL } = useApplicationContainerCreateContext()
+  const { organizationId = '', slug, option } = useParams()
   const navigate = useNavigate()
   const { data: organization } = useOrganization({ organizationId })
 
@@ -49,10 +49,8 @@ export function StepGeneralFeature() {
         return
       }
     }
-
     setGeneralData(cloneData)
-    const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_APPLICATION_CREATION_URL}`
-    navigate(pathCreate + SERVICES_CREATION_RESOURCES_URL)
+    navigate(serviceURL + SERVICES_CREATION_RESOURCES_URL)
   })
 
   return (

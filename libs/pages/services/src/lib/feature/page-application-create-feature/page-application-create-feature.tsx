@@ -1,5 +1,5 @@
 import { useFeatureFlagEnabled } from 'posthog-js/react'
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
 import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
 import { AssistantTrigger } from '@qovery/shared/assistant/feature'
 import {
@@ -9,6 +9,7 @@ import {
 } from '@qovery/shared/interfaces'
 import {
   SERVICES_APPLICATION_CREATION_URL,
+  SERVICES_APPLICATION_TEMPLATE_CREATION_URL,
   SERVICES_CREATION_GENERAL_URL,
   SERVICES_GENERAL_URL,
   SERVICES_NEW_URL,
@@ -27,6 +28,7 @@ export interface ApplicationContainerCreateContextInterface {
   setResourcesData: (data: ApplicationResourcesData) => void
   portData: FlowPortData | undefined
   setPortData: (data: FlowPortData) => void
+  serviceURL: string | undefined
 }
 
 export const ApplicationContainerCreateContext = createContext<ApplicationContainerCreateContextInterface | undefined>(
@@ -53,6 +55,7 @@ export function PageApplicationCreateFeature() {
   const { organizationId = '', projectId = '', environmentId = '', slug, option } = useParams()
 
   // values and setters for context initialization
+  const [serviceURL, setServiceURL] = useState<string | undefined>()
   const [currentStep, setCurrentStep] = useState<number>(1)
   const [generalData, setGeneralData] = useState<ApplicationGeneralData | undefined>()
   const [resourcesData, setResourcesData] = useState<ApplicationResourcesData | undefined>({
@@ -71,10 +74,13 @@ export function PageApplicationCreateFeature() {
 
   useDocumentTitle('Creation - Service')
 
-  const pathCreate =
-    SERVICES_URL(organizationId, projectId, environmentId) +
-    SERVICES_APPLICATION_CREATION_URL +
-    `${slug && option ? `/${slug}/${option}` : ''}`
+  useEffect(() => {
+    const servicesUrl = SERVICES_URL(organizationId, projectId, environmentId)
+    const path =
+      slug && option ? SERVICES_APPLICATION_TEMPLATE_CREATION_URL(slug, option) : SERVICES_APPLICATION_CREATION_URL
+
+    setServiceURL(servicesUrl + path)
+  }, [slug, option, environmentId, projectId, organizationId])
 
   const flagEnabled = useFeatureFlagEnabled('service-template')
 
@@ -89,6 +95,7 @@ export function PageApplicationCreateFeature() {
         setResourcesData,
         portData,
         setPortData,
+        serviceURL,
       }}
     >
       <FunnelFlow
@@ -106,7 +113,9 @@ export function PageApplicationCreateFeature() {
           {ROUTER_SERVICE_CREATION.map((route) => (
             <Route key={route.path} path={route.path} element={route.component} />
           ))}
-          <Route path="*" element={<Navigate replace to={pathCreate + SERVICES_CREATION_GENERAL_URL} />} />
+          {serviceURL && (
+            <Route path="*" element={<Navigate replace to={serviceURL + SERVICES_CREATION_GENERAL_URL} />} />
+          )}
         </Routes>
         <AssistantTrigger defaultOpen />
       </FunnelFlow>

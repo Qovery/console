@@ -5,12 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { useCluster } from '@qovery/domains/clusters/feature'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { type ApplicationResourcesData } from '@qovery/shared/interfaces'
-import {
-  SERVICES_APPLICATION_CREATION_URL,
-  SERVICES_CREATION_GENERAL_URL,
-  SERVICES_CREATION_PORTS_URL,
-  SERVICES_URL,
-} from '@qovery/shared/routes'
+import { SERVICES_CREATION_GENERAL_URL, SERVICES_CREATION_PORTS_URL } from '@qovery/shared/routes'
 import { FunnelFlowBody } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import StepResources from '../../../ui/page-application-create/step-resources/step-resources'
@@ -18,8 +13,9 @@ import { useApplicationContainerCreateContext } from '../page-application-create
 
 export function StepResourcesFeature() {
   useDocumentTitle('Resources - Create Application')
-  const { setCurrentStep, resourcesData, setResourcesData, generalData } = useApplicationContainerCreateContext()
-  const { organizationId = '', projectId = '', environmentId = '' } = useParams()
+  const { setCurrentStep, resourcesData, setResourcesData, generalData, serviceURL } =
+    useApplicationContainerCreateContext()
+  const { organizationId = '', environmentId = '' } = useParams()
   const navigate = useNavigate()
   const [maxInstances, setMaxInstance] = useState(1000)
 
@@ -28,12 +24,8 @@ export function StepResourcesFeature() {
   const { data: cluster } = useCluster({ organizationId, clusterId: environment?.cluster_id ?? '' })
 
   useEffect(() => {
-    !generalData?.name &&
-      navigate(
-        `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_APPLICATION_CREATION_URL}` +
-          SERVICES_CREATION_GENERAL_URL
-      )
-  }, [generalData, navigate, environmentId, organizationId, projectId])
+    !generalData?.name && navigate(serviceURL + SERVICES_CREATION_GENERAL_URL)
+  }, [generalData, navigate, serviceURL])
 
   useEffect(() => {
     setCurrentStep(2)
@@ -54,13 +46,11 @@ export function StepResourcesFeature() {
 
   const onSubmit = methods.handleSubmit((data) => {
     setResourcesData(data)
-    const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_APPLICATION_CREATION_URL}`
-    navigate(pathCreate + SERVICES_CREATION_PORTS_URL)
+    navigate(serviceURL + SERVICES_CREATION_PORTS_URL)
   })
 
   const onBack = () => {
-    const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_APPLICATION_CREATION_URL}`
-    navigate(pathCreate + SERVICES_CREATION_GENERAL_URL)
+    navigate(serviceURL + SERVICES_CREATION_GENERAL_URL)
   }
 
   return (
