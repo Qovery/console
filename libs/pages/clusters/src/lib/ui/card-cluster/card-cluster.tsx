@@ -82,10 +82,15 @@ export function CardCluster({ organizationId, cluster }: CardClusterProps) {
           </Badge>
         )}
         {cluster.kubernetes === 'SELF_MANAGED' ? (
-          <Badge size="xs" color="neutral">
-            <Icon name={IconEnum.KUBERNETES} height={16} width={16} className="mr-1" />
-            Self managed
-          </Badge>
+          <>
+            <Badge size="xs" color="neutral">
+              <Icon name={IconEnum.KUBERNETES} height={16} width={16} className="mr-1" />
+              Self managed
+            </Badge>
+            <Badge size="xs" color="neutral" data-testid="tag-region">
+              {cluster.region}
+            </Badge>
+          </>
         ) : (
           <>
             <Badge size="xs" color="neutral">
@@ -93,20 +98,20 @@ export function CardCluster({ organizationId, cluster }: CardClusterProps) {
               Qovery managed
             </Badge>
             <ClusterType size="xs" cloudProvider={cluster.cloud_provider} kubernetes={cluster.kubernetes} />
+            <Badge size="xs" color="neutral" data-testid="tag-region">
+              {cluster.region}
+            </Badge>
+            {cluster.version && (
+              <Badge size="xs" color="neutral" data-testid="tag-version">
+                {cluster.version}
+              </Badge>
+            )}
+            {cluster.instance_type && (
+              <Badge size="xs" color="neutral" data-testid="tag-instance">
+                {cluster.instance_type.replace('_', '.').toLowerCase()}
+              </Badge>
+            )}
           </>
-        )}
-        <Badge size="xs" color="neutral" data-testid="tag-region">
-          {cluster.region}
-        </Badge>
-        {cluster.version && (
-          <Badge size="xs" color="neutral" data-testid="tag-version">
-            {cluster.version}
-          </Badge>
-        )}
-        {cluster.instance_type && (
-          <Badge size="xs" color="neutral" data-testid="tag-instance">
-            {cluster.instance_type.replace('_', '.').toLowerCase()}
-          </Badge>
         )}
       </div>
     </div>
