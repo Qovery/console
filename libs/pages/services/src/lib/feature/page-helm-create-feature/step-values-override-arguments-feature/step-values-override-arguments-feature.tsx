@@ -1,10 +1,10 @@
 import { type HelmRequestAllOfSourceOneOf, type HelmRequestAllOfSourceOneOf1 } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { FormProvider } from 'react-hook-form'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { ValuesOverrideArgumentsSetting } from '@qovery/domains/service-helm/feature'
-import { SERVICES_HELM_CREATION_SUMMARY_URL, SERVICES_HELM_CREATION_URL, SERVICES_URL } from '@qovery/shared/routes'
+import { SERVICES_HELM_CREATION_SUMMARY_URL, SERVICES_HELM_CREATION_VALUES_STEP_1_URL } from '@qovery/shared/routes'
 import { Button, FunnelFlowBody } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
@@ -13,8 +13,7 @@ import { useHelmCreateContext } from '../page-helm-create-feature'
 export function StepValuesOverrideArgumentsFeature() {
   useDocumentTitle('General - Values override as arguments')
 
-  const { organizationId = '', projectId = '', environmentId = '' } = useParams()
-  const { generalForm, setCurrentStep, valuesOverrideArgumentsForm } = useHelmCreateContext()
+  const { generalForm, setCurrentStep, valuesOverrideArgumentsForm, helmURL } = useHelmCreateContext()
 
   const generalData = generalForm.getValues()
 
@@ -47,9 +46,8 @@ export function StepValuesOverrideArgumentsFeature() {
     setCurrentStep(3)
   }, [setCurrentStep])
 
-  const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_HELM_CREATION_URL}`
-  const onSubmit = valuesOverrideArgumentsForm.handleSubmit((data) => {
-    navigate(pathCreate + SERVICES_HELM_CREATION_SUMMARY_URL)
+  const onSubmit = valuesOverrideArgumentsForm.handleSubmit(() => {
+    navigate(helmURL + SERVICES_HELM_CREATION_SUMMARY_URL)
   })
 
   return (
@@ -57,7 +55,13 @@ export function StepValuesOverrideArgumentsFeature() {
       <FormProvider {...valuesOverrideArgumentsForm}>
         <ValuesOverrideArgumentsSetting methods={valuesOverrideArgumentsForm} onSubmit={onSubmit} source={source}>
           <div className="flex justify-between mt-10">
-            <Button type="button" size="lg" variant="plain" color="neutral" onClick={() => navigate(-1)}>
+            <Button
+              type="button"
+              size="lg"
+              variant="plain"
+              color="neutral"
+              onClick={() => navigate(helmURL + SERVICES_HELM_CREATION_VALUES_STEP_1_URL)}
+            >
               Back
             </Button>
             <div className="flex gap-3">

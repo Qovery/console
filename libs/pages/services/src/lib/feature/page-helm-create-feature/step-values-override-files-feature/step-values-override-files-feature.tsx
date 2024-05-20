@@ -1,15 +1,11 @@
 import { useEffect } from 'react'
 import { Controller, FormProvider } from 'react-hook-form'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { GitBranchSettings, GitProviderSetting, GitRepositorySetting } from '@qovery/domains/organizations/feature'
 import { ValuesOverrideFilesSetting } from '@qovery/domains/service-helm/feature'
 import { AutoDeploySetting } from '@qovery/domains/services/feature'
-import {
-  SERVICES_HELM_CREATION_URL,
-  SERVICES_HELM_CREATION_VALUES_STEP_2_URL,
-  SERVICES_URL,
-} from '@qovery/shared/routes'
+import { SERVICES_HELM_CREATION_GENERAL_URL, SERVICES_HELM_CREATION_VALUES_STEP_2_URL } from '@qovery/shared/routes'
 import { Button, Callout, FunnelFlowBody, Icon, InputText } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
@@ -18,8 +14,7 @@ import { useHelmCreateContext } from '../page-helm-create-feature'
 export function StepValuesOverrideFilesFeature() {
   useDocumentTitle('General - Values override as file')
 
-  const { organizationId = '', projectId = '', environmentId = '' } = useParams()
-  const { generalForm, valuesOverrideFileForm, setCurrentStep } = useHelmCreateContext()
+  const { generalForm, valuesOverrideFileForm, setCurrentStep, helmURL } = useHelmCreateContext()
 
   const generalData = generalForm.getValues()
 
@@ -49,10 +44,8 @@ export function StepValuesOverrideFilesFeature() {
     setCurrentStep(2)
   }, [setCurrentStep])
 
-  const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_HELM_CREATION_URL}`
-
   const onSubmit = valuesOverrideFileForm.handleSubmit(() => {
-    navigate(pathCreate + SERVICES_HELM_CREATION_VALUES_STEP_2_URL)
+    navigate(helmURL + SERVICES_HELM_CREATION_VALUES_STEP_2_URL)
   })
 
   const watchFieldType = valuesOverrideFileForm.watch('type')
@@ -141,7 +134,13 @@ export function StepValuesOverrideFilesFeature() {
           onSubmit={onSubmit}
         >
           <div className="flex justify-between">
-            <Button type="button" size="lg" variant="plain" color="neutral" onClick={() => navigate(-1)}>
+            <Button
+              type="button"
+              size="lg"
+              variant="plain"
+              color="neutral"
+              onClick={() => navigate(helmURL + SERVICES_HELM_CREATION_GENERAL_URL)}
+            >
               Back
             </Button>
             <div className="flex gap-3">

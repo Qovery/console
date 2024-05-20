@@ -9,11 +9,7 @@ import {
 } from '@qovery/domains/organizations/feature'
 import { DeploymentSetting, SourceSetting } from '@qovery/domains/service-helm/feature'
 import { AutoDeploySetting, GeneralSetting } from '@qovery/domains/services/feature'
-import {
-  SERVICES_HELM_CREATION_URL,
-  SERVICES_HELM_CREATION_VALUES_STEP_1_URL,
-  SERVICES_URL,
-} from '@qovery/shared/routes'
+import { SERVICES_HELM_CREATION_VALUES_STEP_1_URL, SERVICES_URL } from '@qovery/shared/routes'
 import { Button, Callout, FunnelFlowBody, Heading, Icon, Section, toastError } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { findTemplateData } from '../../page-job-create-feature/page-job-create-feature'
@@ -24,7 +20,7 @@ export function StepGeneralFeature() {
   useDocumentTitle('General - Create Helm')
 
   const { organizationId = '', projectId = '', environmentId = '', slug, option } = useParams()
-  const { generalForm, setCurrentStep } = useHelmCreateContext()
+  const { generalForm, setCurrentStep, helmURL } = useHelmCreateContext()
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -41,8 +37,7 @@ export function StepGeneralFeature() {
       }
     }
 
-    const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_HELM_CREATION_URL}`
-    navigate(pathCreate + SERVICES_HELM_CREATION_VALUES_STEP_1_URL)
+    navigate(helmURL + SERVICES_HELM_CREATION_VALUES_STEP_1_URL)
   })
 
   const watchFieldProvider = generalForm.watch('source_provider')

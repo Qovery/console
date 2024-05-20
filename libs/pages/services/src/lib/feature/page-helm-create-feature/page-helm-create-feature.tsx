@@ -1,6 +1,6 @@
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type GitProviderEnum, type GitTokenResponse, type HelmRequest } from 'qovery-typescript-axios'
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
 import { type UseFormReturn, useForm } from 'react-hook-form'
 import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
 import { type HelmValuesArgumentsData, type HelmValuesFileData } from '@qovery/domains/service-helm/feature'
@@ -9,6 +9,7 @@ import {
   SERVICES_GENERAL_URL,
   SERVICES_HELM_CREATION_GENERAL_URL,
   SERVICES_HELM_CREATION_URL,
+  SERVICES_HELM_TEMPLATE_CREATION_URL,
   SERVICES_NEW_URL,
   SERVICES_URL,
 } from '@qovery/shared/routes'
@@ -43,6 +44,7 @@ interface HelmCreateContextInterface {
   generalForm: UseFormReturn<HelmGeneralData>
   valuesOverrideFileForm: UseFormReturn<HelmValuesFileData>
   valuesOverrideArgumentsForm: UseFormReturn<HelmValuesArgumentsData>
+  helmURL?: string
 }
 
 export const HelmCreateContext = createContext<HelmCreateContextInterface | undefined>(undefined)
@@ -58,6 +60,7 @@ export function PageHelmCreateFeature() {
   const navigate = useNavigate()
   const { organizationId = '', projectId = '', environmentId = '', slug, option } = useParams()
   const [currentStep, setCurrentStep] = useState<number>(1)
+  const [helmURL, setHelmURL] = useState<string | undefined>()
 
   const dataTemplate = serviceTemplates.find((service) => service.slug === slug)
 
@@ -79,11 +82,12 @@ export function PageHelmCreateFeature() {
     mode: 'onChange',
   })
 
-  // TODO: need to fix this hard redirect because conflict between /create/helm and /create/helm-template
-  const pathCreate =
-    SERVICES_URL(organizationId, projectId, environmentId) +
-    SERVICES_HELM_CREATION_URL +
-    `${slug !== 'values-override' && option ? `-template/${slug}/${option}` : ''}`
+  useEffect(() => {
+    const servicesUrl = SERVICES_URL(organizationId, projectId, environmentId)
+    const path = slug && option ? SERVICES_HELM_TEMPLATE_CREATION_URL(slug, option) : SERVICES_HELM_CREATION_URL
+
+    setHelmURL(servicesUrl + path)
+  }, [slug, option, environmentId, projectId, organizationId])
 
   const flagEnabled = useFeatureFlagEnabled('service-template')
 
@@ -95,6 +99,7 @@ export function PageHelmCreateFeature() {
         generalForm,
         valuesOverrideFileForm,
         valuesOverrideArgumentsForm,
+        helmURL,
       }}
     >
       <FunnelFlow
@@ -112,7 +117,9 @@ export function PageHelmCreateFeature() {
           {ROUTER_SERVICE_HELM_CREATION.map((route) => (
             <Route key={route.path} path={route.path} element={route.component} />
           ))}
-          <Route path="*" element={<Navigate replace to={pathCreate + SERVICES_HELM_CREATION_GENERAL_URL} />} />
+          {helmURL && (
+            <Route path="*" element={<Navigate replace to={helmURL + SERVICES_HELM_CREATION_GENERAL_URL} />} />
+          )}
         </Routes>
         <AssistantTrigger defaultOpen />
       </FunnelFlow>

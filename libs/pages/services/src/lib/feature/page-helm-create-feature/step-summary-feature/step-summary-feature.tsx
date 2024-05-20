@@ -8,8 +8,8 @@ import { useDeployService } from '@qovery/domains/services/feature'
 import {
   SERVICES_CREATION_GENERAL_URL,
   SERVICES_GENERAL_URL,
-  SERVICES_HELM_CREATION_URL,
   SERVICES_HELM_CREATION_VALUES_STEP_1_URL,
+  SERVICES_HELM_CREATION_VALUES_STEP_2_URL,
   SERVICES_URL,
 } from '@qovery/shared/routes'
 import { Button, FunnelFlowBody, Heading, Icon, Section, truncateText } from '@qovery/shared/ui'
@@ -23,11 +23,11 @@ export function StepSummaryFeature() {
   const { organizationId = '', projectId = '', environmentId = '', slug, option } = useParams()
   const navigate = useNavigate()
 
-  const { generalForm, valuesOverrideFileForm, valuesOverrideArgumentsForm, setCurrentStep } = useHelmCreateContext()
+  const { generalForm, valuesOverrideFileForm, valuesOverrideArgumentsForm, setCurrentStep, helmURL } =
+    useHelmCreateContext()
   const generalData = generalForm.getValues()
   const valuesOverrideFileData = valuesOverrideFileForm.getValues()
   const valuesOverrideArgumentData = valuesOverrideArgumentsForm.getValues()
-  const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_HELM_CREATION_URL}`
 
   useEffect(() => {
     setCurrentStep(4)
@@ -155,7 +155,7 @@ export function StepSummaryFeature() {
                   type="button"
                   variant="plain"
                   size="md"
-                  onClick={() => navigate(pathCreate + SERVICES_CREATION_GENERAL_URL)}
+                  onClick={() => navigate(helmURL + SERVICES_CREATION_GENERAL_URL)}
                 >
                   <Icon className="text-base" iconName="gear-complex" />
                 </Button>
@@ -244,7 +244,7 @@ export function StepSummaryFeature() {
                     type="button"
                     variant="plain"
                     size="md"
-                    onClick={() => navigate(pathCreate + SERVICES_HELM_CREATION_VALUES_STEP_1_URL)}
+                    onClick={() => navigate(helmURL + SERVICES_HELM_CREATION_VALUES_STEP_1_URL)}
                   >
                     <Icon className="text-base" iconName="gear-complex" />
                   </Button>
@@ -289,7 +289,12 @@ export function StepSummaryFeature() {
           </div>
 
           <div className="flex justify-between mt-10">
-            <Button type="button" size="lg" variant="plain" onClick={() => navigate(-1)}>
+            <Button
+              type="button"
+              size="lg"
+              variant="plain"
+              onClick={() => navigate(helmURL + SERVICES_HELM_CREATION_VALUES_STEP_2_URL)}
+            >
               Back
             </Button>
             <div className="flex gap-2">
