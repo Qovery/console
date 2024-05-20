@@ -73,7 +73,7 @@ describe('StepGeneral', () => {
     renderWithProviders(
       wrapWithReactHookForm(<StepGeneral {...props} />, {
         defaultValues: {
-          installation_type: 'ON_PREMISE',
+          installation_type: 'LOCAL_DEMO',
         },
       })
     )
