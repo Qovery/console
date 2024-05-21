@@ -1,7 +1,7 @@
-import { act, render } from '__tests__/utils/setup-jest'
 import { StateEnum } from 'qovery-typescript-axios'
 import { clusterFactoryMock } from '@qovery/shared/factories'
 import { getStatusClusterMessage } from '@qovery/shared/util-js'
+import { renderWithProviders } from '@qovery/shared/util-tests'
 import CardCluster, { type CardClusterProps, getColorForStatus } from './card-cluster'
 
 jest.mock('@qovery/domains/clusters/feature', () => ({
@@ -25,7 +25,7 @@ describe('CardCluster', () => {
   })
 
   it('should render successfully', () => {
-    const { baseElement } = render(<CardCluster {...props} />)
+    const { baseElement } = renderWithProviders(<CardCluster {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
@@ -33,7 +33,7 @@ describe('CardCluster', () => {
     props.cluster.is_default = true
     props.cluster.production = true
 
-    const { getByTestId } = render(<CardCluster {...props} />)
+    const { getByTestId } = renderWithProviders(<CardCluster {...props} />)
 
     expect(getByTestId('tag-prod')).toBeInTheDocument()
     expect(getByTestId('tag-default')).toBeInTheDocument()
@@ -43,17 +43,14 @@ describe('CardCluster', () => {
   })
 
   it('should have a name', () => {
-    const { baseElement } = render(<CardCluster {...props} />)
+    const { baseElement } = renderWithProviders(<CardCluster {...props} />)
 
     expect(baseElement.querySelector('h2')?.textContent).toBe(props.cluster.name)
   })
 
   it('should have a status message', async () => {
-    const { getByTestId } = render(<CardCluster {...props} />)
-
-    await act(() => {
-      expect(getByTestId('status-message').textContent).toContain(getStatusClusterMessage(StateEnum.READY))
-    })
+    const { getByTestId } = renderWithProviders(<CardCluster {...props} />)
+    expect(getByTestId('status-message').textContent).toContain(getStatusClusterMessage(StateEnum.READY))
   })
 
   it('should have a function to display color by status', () => {

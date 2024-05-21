@@ -1,6 +1,7 @@
 import { type Cluster, ClusterDeploymentStatusEnum } from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
+import { match } from 'ts-pattern'
 import { ClusterActionToolbar, ClusterType, useClusterStatus } from '@qovery/domains/clusters/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import { CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
@@ -89,9 +90,13 @@ export function Container({ children, cluster, deployCluster }: PropsWithChildre
     },
   ]
 
+  const icon = match(cluster?.cloud_provider)
+    .with('ON_PREMISE', () => IconEnum.KUBERNETES)
+    .otherwise(() => cluster?.cloud_provider)
+
   return (
     <Section className="flex-1">
-      <Header title={cluster?.name} icon={cluster?.cloud_provider} actions={headerActions} />
+      <Header title={cluster?.name} icon={icon} actions={headerActions} />
       <Tabs items={tabsItems} />
       {cluster && cluster.deployment_status !== ClusterDeploymentStatusEnum.UP_TO_DATE && (
         <NeedRedeployFlag deploymentStatus={cluster?.deployment_status} onClickButton={deployCluster} />
