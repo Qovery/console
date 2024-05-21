@@ -14,7 +14,7 @@ import { useApplicationContainerCreateContext } from '../page-application-create
 
 export function StepGeneralFeature() {
   useDocumentTitle('General - Create Application')
-  const { setGeneralData, generalData, setCurrentStep, serviceURL } = useApplicationContainerCreateContext()
+  const { setGeneralData, generalData, setCurrentStep, creationFlowUrl } = useApplicationContainerCreateContext()
   const { organizationId = '', slug, option } = useParams()
   const navigate = useNavigate()
   const { data: organization } = useOrganization({ organizationId })
@@ -50,7 +50,7 @@ export function StepGeneralFeature() {
       }
     }
     setGeneralData(cloneData)
-    navigate(serviceURL + SERVICES_CREATION_RESOURCES_URL)
+    navigate(creationFlowUrl + SERVICES_CREATION_RESOURCES_URL)
   })
 
   return (

@@ -16,12 +16,12 @@ import { useApplicationContainerCreateContext } from '../page-application-create
 
 export function StepHealthchecksFeature() {
   useDocumentTitle('Health checks - Create Application')
-  const { setCurrentStep, portData, setPortData, generalData, serviceURL } = useApplicationContainerCreateContext()
+  const { setCurrentStep, portData, setPortData, generalData, creationFlowUrl } = useApplicationContainerCreateContext()
   const navigate = useNavigate()
 
   useEffect(() => {
-    !generalData?.name && navigate(serviceURL + SERVICES_CREATION_GENERAL_URL)
-  }, [generalData, navigate, serviceURL])
+    !generalData?.name && navigate(creationFlowUrl + SERVICES_CREATION_GENERAL_URL)
+  }, [generalData, navigate, creationFlowUrl])
 
   useEffect(() => {
     setCurrentStep(4)
@@ -85,11 +85,11 @@ export function StepHealthchecksFeature() {
       },
     })
 
-    navigate(serviceURL + SERVICES_CREATION_POST_URL)
+    navigate(creationFlowUrl + SERVICES_CREATION_POST_URL)
   })
 
   const onBack = () => {
-    navigate(serviceURL + SERVICES_CREATION_PORTS_URL)
+    navigate(creationFlowUrl + SERVICES_CREATION_PORTS_URL)
   }
 
   return (

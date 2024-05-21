@@ -17,7 +17,7 @@ import { useDatabaseCreateContext } from '../page-database-create-feature'
 
 export function StepSummaryFeature() {
   useDocumentTitle('Summary - Create Database')
-  const { generalData, resourcesData, setCurrentStep, databaseURL } = useDatabaseCreateContext()
+  const { generalData, resourcesData, setCurrentStep, creationFlowUrl } = useDatabaseCreateContext()
   const navigate = useNavigate()
   const { organizationId = '', projectId = '', environmentId = '', slug, option } = useParams()
   const [loadingCreate, setLoadingCreate] = useState(false)
@@ -28,11 +28,11 @@ export function StepSummaryFeature() {
   const { mutate: deployDatabase } = useDeployService({ environmentId })
 
   const gotoGlobalInformations = () => {
-    navigate(databaseURL + SERVICES_DATABASE_CREATION_GENERAL_URL)
+    navigate(creationFlowUrl + SERVICES_DATABASE_CREATION_GENERAL_URL)
   }
 
   const gotoResources = () => {
-    navigate(databaseURL + SERVICES_DATABASE_CREATION_RESOURCES_URL)
+    navigate(creationFlowUrl + SERVICES_DATABASE_CREATION_RESOURCES_URL)
   }
 
   useEffect(() => {

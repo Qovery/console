@@ -13,7 +13,7 @@ import { useApplicationContainerCreateContext } from '../page-application-create
 
 export function StepResourcesFeature() {
   useDocumentTitle('Resources - Create Application')
-  const { setCurrentStep, resourcesData, setResourcesData, generalData, serviceURL } =
+  const { setCurrentStep, resourcesData, setResourcesData, generalData, creationFlowUrl } =
     useApplicationContainerCreateContext()
   const { organizationId = '', environmentId = '' } = useParams()
   const navigate = useNavigate()
@@ -24,8 +24,8 @@ export function StepResourcesFeature() {
   const { data: cluster } = useCluster({ organizationId, clusterId: environment?.cluster_id ?? '' })
 
   useEffect(() => {
-    !generalData?.name && navigate(serviceURL + SERVICES_CREATION_GENERAL_URL)
-  }, [generalData, navigate, serviceURL])
+    !generalData?.name && navigate(creationFlowUrl + SERVICES_CREATION_GENERAL_URL)
+  }, [generalData, navigate, creationFlowUrl])
 
   useEffect(() => {
     setCurrentStep(2)
@@ -46,11 +46,11 @@ export function StepResourcesFeature() {
 
   const onSubmit = methods.handleSubmit((data) => {
     setResourcesData(data)
-    navigate(serviceURL + SERVICES_CREATION_PORTS_URL)
+    navigate(creationFlowUrl + SERVICES_CREATION_PORTS_URL)
   })
 
   const onBack = () => {
-    navigate(serviceURL + SERVICES_CREATION_GENERAL_URL)
+    navigate(creationFlowUrl + SERVICES_CREATION_GENERAL_URL)
   }
 
   return (

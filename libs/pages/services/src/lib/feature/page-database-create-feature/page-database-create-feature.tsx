@@ -22,7 +22,7 @@ export interface DatabaseCreateContextInterface {
   setGeneralData: (data: GeneralData) => void
   resourcesData: ResourcesData | undefined
   setResourcesData: (data: ResourcesData) => void
-  databaseURL?: string
+  creationFlowUrl?: string
 }
 
 export const DatabaseCreateContext = createContext<DatabaseCreateContextInterface | undefined>(undefined)
@@ -43,7 +43,7 @@ export const steps: { title: string }[] = [
 export function PageDatabaseCreateFeature() {
   const { organizationId = '', projectId = '', environmentId = '', slug, option } = useParams()
   // values and setters for context initialization
-  const [databaseURL, setDatabaseURL] = useState<string | undefined>()
+  const [creationFlowUrl, setCreationFlowUrl] = useState<string | undefined>()
   const [currentStep, setCurrentStep] = useState<number>(1)
   const [generalData, setGeneralData] = useState<GeneralData>()
   const [resourcesData, setResourcesData] = useState<ResourcesData | undefined>({
@@ -60,7 +60,7 @@ export function PageDatabaseCreateFeature() {
     const servicesUrl = SERVICES_URL(organizationId, projectId, environmentId)
     const path = slug && option ? SERVICES_DATABASE_TEMPLATE_CREATION_URL(slug, option) : SERVICES_DATABASE_CREATION_URL
 
-    setDatabaseURL(servicesUrl + path)
+    setCreationFlowUrl(servicesUrl + path)
   }, [slug, option, environmentId, projectId, organizationId])
 
   const flagEnabled = useFeatureFlagEnabled('service-template')
@@ -74,7 +74,7 @@ export function PageDatabaseCreateFeature() {
         setGeneralData,
         resourcesData,
         setResourcesData,
-        databaseURL,
+        creationFlowUrl,
       }}
     >
       <FunnelFlow
@@ -92,8 +92,11 @@ export function PageDatabaseCreateFeature() {
           {ROUTER_SERVICE_DATABASE_CREATION.map((route) => (
             <Route key={route.path} path={route.path} element={route.component} />
           ))}
-          {databaseURL && (
-            <Route path="*" element={<Navigate replace to={databaseURL + SERVICES_DATABASE_CREATION_GENERAL_URL} />} />
+          {creationFlowUrl && (
+            <Route
+              path="*"
+              element={<Navigate replace to={creationFlowUrl + SERVICES_DATABASE_CREATION_GENERAL_URL} />}
+            />
           )}
         </Routes>
         <AssistantTrigger defaultOpen />

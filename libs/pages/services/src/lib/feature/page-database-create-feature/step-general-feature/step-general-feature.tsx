@@ -109,7 +109,7 @@ export const generateDatabasesTypesAndVersionOptions = (
 
 export function StepGeneralFeature() {
   useDocumentTitle('General - Create Database')
-  const { setGeneralData, generalData, setCurrentStep, databaseURL } = useDatabaseCreateContext()
+  const { setGeneralData, generalData, setCurrentStep, creationFlowUrl } = useDatabaseCreateContext()
   const { organizationId = '', environmentId = '', slug, option } = useParams()
   const navigate = useNavigate()
 
@@ -171,7 +171,7 @@ export function StepGeneralFeature() {
     }
 
     setGeneralData(cloneData)
-    navigate(databaseURL + SERVICES_DATABASE_CREATION_RESOURCES_URL)
+    navigate(creationFlowUrl + SERVICES_DATABASE_CREATION_RESOURCES_URL)
   })
 
   return (

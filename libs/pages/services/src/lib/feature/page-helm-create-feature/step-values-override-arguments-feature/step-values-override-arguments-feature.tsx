@@ -13,7 +13,7 @@ import { useHelmCreateContext } from '../page-helm-create-feature'
 export function StepValuesOverrideArgumentsFeature() {
   useDocumentTitle('General - Values override as arguments')
 
-  const { generalForm, setCurrentStep, valuesOverrideArgumentsForm, helmURL } = useHelmCreateContext()
+  const { generalForm, setCurrentStep, valuesOverrideArgumentsForm, creationFlowUrl } = useHelmCreateContext()
 
   const generalData = generalForm.getValues()
 
@@ -47,7 +47,7 @@ export function StepValuesOverrideArgumentsFeature() {
   }, [setCurrentStep])
 
   const onSubmit = valuesOverrideArgumentsForm.handleSubmit(() => {
-    navigate(helmURL + SERVICES_HELM_CREATION_SUMMARY_URL)
+    navigate(creationFlowUrl + SERVICES_HELM_CREATION_SUMMARY_URL)
   })
 
   return (
@@ -60,7 +60,7 @@ export function StepValuesOverrideArgumentsFeature() {
               size="lg"
               variant="plain"
               color="neutral"
-              onClick={() => navigate(helmURL + SERVICES_HELM_CREATION_VALUES_STEP_1_URL)}
+              onClick={() => navigate(creationFlowUrl + SERVICES_HELM_CREATION_VALUES_STEP_1_URL)}
             >
               Back
             </Button>

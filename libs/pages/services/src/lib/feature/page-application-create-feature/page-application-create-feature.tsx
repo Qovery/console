@@ -28,7 +28,7 @@ export interface ApplicationContainerCreateContextInterface {
   setResourcesData: (data: ApplicationResourcesData) => void
   portData: FlowPortData | undefined
   setPortData: (data: FlowPortData) => void
-  serviceURL?: string
+  creationFlowUrl?: string
 }
 
 export const ApplicationContainerCreateContext = createContext<ApplicationContainerCreateContextInterface | undefined>(
@@ -55,7 +55,7 @@ export function PageApplicationCreateFeature() {
   const { organizationId = '', projectId = '', environmentId = '', slug, option } = useParams()
 
   // values and setters for context initialization
-  const [serviceURL, setServiceURL] = useState<string | undefined>()
+  const [creationFlowUrl, setCreationFlowUrl] = useState<string | undefined>()
   const [currentStep, setCurrentStep] = useState<number>(1)
   const [generalData, setGeneralData] = useState<ApplicationGeneralData | undefined>()
   const [resourcesData, setResourcesData] = useState<ApplicationResourcesData | undefined>({
@@ -79,7 +79,7 @@ export function PageApplicationCreateFeature() {
     const path =
       slug && option ? SERVICES_APPLICATION_TEMPLATE_CREATION_URL(slug, option) : SERVICES_APPLICATION_CREATION_URL
 
-    setServiceURL(servicesUrl + path)
+    setCreationFlowUrl(servicesUrl + path)
   }, [slug, option, environmentId, projectId, organizationId])
 
   const flagEnabled = useFeatureFlagEnabled('service-template')
@@ -95,7 +95,7 @@ export function PageApplicationCreateFeature() {
         setResourcesData,
         portData,
         setPortData,
-        serviceURL,
+        creationFlowUrl,
       }}
     >
       <FunnelFlow
@@ -113,8 +113,8 @@ export function PageApplicationCreateFeature() {
           {ROUTER_SERVICE_CREATION.map((route) => (
             <Route key={route.path} path={route.path} element={route.component} />
           ))}
-          {serviceURL && (
-            <Route path="*" element={<Navigate replace to={serviceURL + SERVICES_CREATION_GENERAL_URL} />} />
+          {creationFlowUrl && (
+            <Route path="*" element={<Navigate replace to={creationFlowUrl + SERVICES_CREATION_GENERAL_URL} />} />
           )}
         </Routes>
         <AssistantTrigger defaultOpen />

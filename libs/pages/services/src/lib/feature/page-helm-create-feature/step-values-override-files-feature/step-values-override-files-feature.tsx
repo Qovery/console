@@ -14,7 +14,7 @@ import { useHelmCreateContext } from '../page-helm-create-feature'
 export function StepValuesOverrideFilesFeature() {
   useDocumentTitle('General - Values override as file')
 
-  const { generalForm, valuesOverrideFileForm, setCurrentStep, helmURL } = useHelmCreateContext()
+  const { generalForm, valuesOverrideFileForm, setCurrentStep, creationFlowUrl } = useHelmCreateContext()
 
   const generalData = generalForm.getValues()
 
@@ -45,7 +45,7 @@ export function StepValuesOverrideFilesFeature() {
   }, [setCurrentStep])
 
   const onSubmit = valuesOverrideFileForm.handleSubmit(() => {
-    navigate(helmURL + SERVICES_HELM_CREATION_VALUES_STEP_2_URL)
+    navigate(creationFlowUrl + SERVICES_HELM_CREATION_VALUES_STEP_2_URL)
   })
 
   const watchFieldType = valuesOverrideFileForm.watch('type')
@@ -139,7 +139,7 @@ export function StepValuesOverrideFilesFeature() {
               size="lg"
               variant="plain"
               color="neutral"
-              onClick={() => navigate(helmURL + SERVICES_HELM_CREATION_GENERAL_URL)}
+              onClick={() => navigate(creationFlowUrl + SERVICES_HELM_CREATION_GENERAL_URL)}
             >
               Back
             </Button>

@@ -24,7 +24,8 @@ import { steps, useApplicationContainerCreateContext } from '../page-application
 
 export function StepSummaryFeature() {
   useDocumentTitle('Summary - Create Application')
-  const { generalData, portData, resourcesData, setCurrentStep, serviceURL } = useApplicationContainerCreateContext()
+  const { generalData, portData, resourcesData, setCurrentStep, creationFlowUrl } =
+    useApplicationContainerCreateContext()
   const navigate = useNavigate()
   const { organizationId = '', projectId = '', environmentId = '', slug, option } = useParams()
   const [loadingCreate, setLoadingCreate] = useState(false)
@@ -39,24 +40,24 @@ export function StepSummaryFeature() {
   const { mutate: deployService } = useDeployService({ environmentId })
 
   const gotoGlobalInformations = () => {
-    navigate(serviceURL + SERVICES_CREATION_GENERAL_URL)
+    navigate(creationFlowUrl + SERVICES_CREATION_GENERAL_URL)
   }
 
   const gotoResources = () => {
-    navigate(serviceURL + SERVICES_CREATION_RESOURCES_URL)
+    navigate(creationFlowUrl + SERVICES_CREATION_RESOURCES_URL)
   }
 
   const gotoPorts = () => {
-    navigate(serviceURL + SERVICES_CREATION_PORTS_URL)
+    navigate(creationFlowUrl + SERVICES_CREATION_PORTS_URL)
   }
 
   const gotoHealthchecks = () => {
-    navigate(serviceURL + SERVICES_CREATION_HEALTHCHECKS_URL)
+    navigate(creationFlowUrl + SERVICES_CREATION_HEALTHCHECKS_URL)
   }
 
   const onPrevious = () => {
     if (portData?.ports && portData?.ports.length > 0) {
-      navigate(serviceURL + SERVICES_CREATION_HEALTHCHECKS_URL)
+      navigate(creationFlowUrl + SERVICES_CREATION_HEALTHCHECKS_URL)
     } else {
       gotoPorts()
     }

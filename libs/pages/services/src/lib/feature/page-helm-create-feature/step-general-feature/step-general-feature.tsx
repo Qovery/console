@@ -20,7 +20,7 @@ export function StepGeneralFeature() {
   useDocumentTitle('General - Create Helm')
 
   const { organizationId = '', projectId = '', environmentId = '', slug, option } = useParams()
-  const { generalForm, setCurrentStep, helmURL } = useHelmCreateContext()
+  const { generalForm, setCurrentStep, creationFlowUrl } = useHelmCreateContext()
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -37,7 +37,7 @@ export function StepGeneralFeature() {
       }
     }
 
-    navigate(helmURL + SERVICES_HELM_CREATION_VALUES_STEP_1_URL)
+    navigate(creationFlowUrl + SERVICES_HELM_CREATION_VALUES_STEP_1_URL)
   })
 
   const watchFieldProvider = generalForm.watch('source_provider')

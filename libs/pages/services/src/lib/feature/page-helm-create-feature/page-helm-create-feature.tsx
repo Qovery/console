@@ -44,7 +44,7 @@ interface HelmCreateContextInterface {
   generalForm: UseFormReturn<HelmGeneralData>
   valuesOverrideFileForm: UseFormReturn<HelmValuesFileData>
   valuesOverrideArgumentsForm: UseFormReturn<HelmValuesArgumentsData>
-  helmURL?: string
+  creationFlowUrl?: string
 }
 
 export const HelmCreateContext = createContext<HelmCreateContextInterface | undefined>(undefined)
@@ -60,7 +60,7 @@ export function PageHelmCreateFeature() {
   const navigate = useNavigate()
   const { organizationId = '', projectId = '', environmentId = '', slug, option } = useParams()
   const [currentStep, setCurrentStep] = useState<number>(1)
-  const [helmURL, setHelmURL] = useState<string | undefined>()
+  const [creationFlowUrl, setCreationFlowUrl] = useState<string | undefined>()
 
   const dataTemplate = serviceTemplates.find((service) => service.slug === slug)
 
@@ -86,7 +86,7 @@ export function PageHelmCreateFeature() {
     const servicesUrl = SERVICES_URL(organizationId, projectId, environmentId)
     const path = slug && option ? SERVICES_HELM_TEMPLATE_CREATION_URL(slug, option) : SERVICES_HELM_CREATION_URL
 
-    setHelmURL(servicesUrl + path)
+    setCreationFlowUrl(servicesUrl + path)
   }, [slug, option, environmentId, projectId, organizationId])
 
   const flagEnabled = useFeatureFlagEnabled('service-template')
@@ -99,7 +99,7 @@ export function PageHelmCreateFeature() {
         generalForm,
         valuesOverrideFileForm,
         valuesOverrideArgumentsForm,
-        helmURL,
+        creationFlowUrl,
       }}
     >
       <FunnelFlow
@@ -117,8 +117,8 @@ export function PageHelmCreateFeature() {
           {ROUTER_SERVICE_HELM_CREATION.map((route) => (
             <Route key={route.path} path={route.path} element={route.component} />
           ))}
-          {helmURL && (
-            <Route path="*" element={<Navigate replace to={helmURL + SERVICES_HELM_CREATION_GENERAL_URL} />} />
+          {creationFlowUrl && (
+            <Route path="*" element={<Navigate replace to={creationFlowUrl + SERVICES_HELM_CREATION_GENERAL_URL} />} />
           )}
         </Routes>
         <AssistantTrigger defaultOpen />

@@ -16,15 +16,15 @@ import CrudModalFeature from './crud-modal-feature/crud-modal-feature'
 
 export function StepPortFeature() {
   useDocumentTitle('Ports - Create Application')
-  const { setCurrentStep, portData, setPortData, generalData, serviceURL } = useApplicationContainerCreateContext()
+  const { setCurrentStep, portData, setPortData, generalData, creationFlowUrl } = useApplicationContainerCreateContext()
   const { openModal, closeModal } = useModal()
 
   const { environmentId = '' } = useParams()
   const navigate = useNavigate()
 
   useEffect(() => {
-    !generalData?.name && navigate(serviceURL + SERVICES_CREATION_GENERAL_URL)
-  }, [generalData, navigate, serviceURL])
+    !generalData?.name && navigate(creationFlowUrl + SERVICES_CREATION_GENERAL_URL)
+  }, [generalData, navigate, creationFlowUrl])
 
   useEffect(() => {
     setCurrentStep(3)
@@ -32,14 +32,14 @@ export function StepPortFeature() {
 
   const onSubmit = () => {
     if (portData?.ports && portData.ports.length > 0) {
-      navigate(serviceURL + SERVICES_CREATION_HEALTHCHECKS_URL)
+      navigate(creationFlowUrl + SERVICES_CREATION_HEALTHCHECKS_URL)
     } else {
-      navigate(serviceURL + SERVICES_CREATION_POST_URL)
+      navigate(creationFlowUrl + SERVICES_CREATION_POST_URL)
     }
   }
 
   const onBack = () => {
-    navigate(serviceURL + SERVICES_CREATION_RESOURCES_URL)
+    navigate(creationFlowUrl + SERVICES_CREATION_RESOURCES_URL)
   }
 
   const removePort = (data: PortData | ServicePort) => {

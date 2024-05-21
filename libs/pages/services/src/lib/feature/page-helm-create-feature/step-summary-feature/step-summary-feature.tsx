@@ -23,7 +23,7 @@ export function StepSummaryFeature() {
   const { organizationId = '', projectId = '', environmentId = '', slug, option } = useParams()
   const navigate = useNavigate()
 
-  const { generalForm, valuesOverrideFileForm, valuesOverrideArgumentsForm, setCurrentStep, helmURL } =
+  const { generalForm, valuesOverrideFileForm, valuesOverrideArgumentsForm, setCurrentStep, creationFlowUrl } =
     useHelmCreateContext()
   const generalData = generalForm.getValues()
   const valuesOverrideFileData = valuesOverrideFileForm.getValues()
@@ -155,7 +155,7 @@ export function StepSummaryFeature() {
                   type="button"
                   variant="plain"
                   size="md"
-                  onClick={() => navigate(helmURL + SERVICES_CREATION_GENERAL_URL)}
+                  onClick={() => navigate(creationFlowUrl + SERVICES_CREATION_GENERAL_URL)}
                 >
                   <Icon className="text-base" iconName="gear-complex" />
                 </Button>
@@ -244,7 +244,7 @@ export function StepSummaryFeature() {
                     type="button"
                     variant="plain"
                     size="md"
-                    onClick={() => navigate(helmURL + SERVICES_HELM_CREATION_VALUES_STEP_1_URL)}
+                    onClick={() => navigate(creationFlowUrl + SERVICES_HELM_CREATION_VALUES_STEP_1_URL)}
                   >
                     <Icon className="text-base" iconName="gear-complex" />
                   </Button>
@@ -293,7 +293,7 @@ export function StepSummaryFeature() {
               type="button"
               size="lg"
               variant="plain"
-              onClick={() => navigate(helmURL + SERVICES_HELM_CREATION_VALUES_STEP_2_URL)}
+              onClick={() => navigate(creationFlowUrl + SERVICES_HELM_CREATION_VALUES_STEP_2_URL)}
             >
               Back
             </Button>
