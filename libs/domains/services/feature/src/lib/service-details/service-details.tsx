@@ -209,7 +209,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
             .exhaustive()}
           <ResourceUnit value={max_nb_restart} description="Restart (max)" />
           <ResourceUnit value={max_duration_seconds && `${max_duration_seconds} s`} description="Duration (max)" />
-          <ResourceUnit value={cpu && formatMetric({ current: cpu, unit: 'MiB' })} description="vCPU (max)" />
+          <ResourceUnit value={cpu && formatMetric({ current: cpu, unit: 'mCPU' })} description="vCPU (max)" />
           <ResourceUnit value={memory && formatMetric({ current: memory, unit: 'MiB' })} description="Memory (max)" />
           <ResourceUnit value={port} description="Port" />
         </>
@@ -356,7 +356,9 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
             <Dt>Image name:</Dt>
             <Dd>{containerImage.image_name}</Dd>
             <Dt>Tag:</Dt>
-            <Dd>{containerImage.tag}</Dd>
+            <Dd>
+              <Truncate text={containerImage.tag} truncateLimit={18} />
+            </Dd>
           </Dl>
         )}
         {helmRepository && (
