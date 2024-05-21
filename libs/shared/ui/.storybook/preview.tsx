@@ -1,5 +1,5 @@
 import { TooltipProvider } from '@radix-ui/react-tooltip'
-import { withThemeByDataAttribute } from '@storybook/addon-themes'
+import { withThemeByClassName } from '@storybook/addon-themes'
 import { type Preview } from '@storybook/react'
 import { MemoryRouter } from 'react-router-dom'
 import '../src/lib/styles/main.scss'
@@ -11,13 +11,12 @@ const preview: Preview = {
     },
   },
   decorators: [
-    withThemeByDataAttribute({
+    withThemeByClassName({
       themes: {
         light: 'light',
         dark: 'dark',
       },
       defaultTheme: 'light',
-      attributeName: 'data-mode',
     }),
     (Story) => (
       <MemoryRouter initialEntries={['/']}>
