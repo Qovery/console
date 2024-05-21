@@ -1,6 +1,6 @@
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type GitProviderEnum, type GitTokenResponse, type HelmRequest } from 'qovery-typescript-axios'
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useState } from 'react'
 import { type UseFormReturn, useForm } from 'react-hook-form'
 import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
 import { type HelmValuesArgumentsData, type HelmValuesFileData } from '@qovery/domains/service-helm/feature'
@@ -60,7 +60,6 @@ export function PageHelmCreateFeature() {
   const navigate = useNavigate()
   const { organizationId = '', projectId = '', environmentId = '', slug, option } = useParams()
   const [currentStep, setCurrentStep] = useState<number>(1)
-  const [creationFlowUrl, setCreationFlowUrl] = useState<string | undefined>()
 
   const dataTemplate = serviceTemplates.find((service) => service.slug === slug)
 
@@ -82,12 +81,8 @@ export function PageHelmCreateFeature() {
     mode: 'onChange',
   })
 
-  useEffect(() => {
-    const servicesUrl = SERVICES_URL(organizationId, projectId, environmentId)
-    const path = slug && option ? SERVICES_HELM_TEMPLATE_CREATION_URL(slug, option) : SERVICES_HELM_CREATION_URL
-
-    setCreationFlowUrl(servicesUrl + path)
-  }, [slug, option, environmentId, projectId, organizationId])
+  const path = slug && option ? SERVICES_HELM_TEMPLATE_CREATION_URL(slug, option) : SERVICES_HELM_CREATION_URL
+  const creationFlowUrl = SERVICES_URL(organizationId, projectId, environmentId) + path
 
   const flagEnabled = useFeatureFlagEnabled('service-template')
 

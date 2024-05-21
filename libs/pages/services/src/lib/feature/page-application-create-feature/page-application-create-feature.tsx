@@ -1,5 +1,5 @@
 import { useFeatureFlagEnabled } from 'posthog-js/react'
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useState } from 'react'
 import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
 import { AssistantTrigger } from '@qovery/shared/assistant/feature'
 import {
@@ -55,7 +55,6 @@ export function PageApplicationCreateFeature() {
   const { organizationId = '', projectId = '', environmentId = '', slug, option } = useParams()
 
   // values and setters for context initialization
-  const [creationFlowUrl, setCreationFlowUrl] = useState<string | undefined>()
   const [currentStep, setCurrentStep] = useState<number>(1)
   const [generalData, setGeneralData] = useState<ApplicationGeneralData | undefined>()
   const [resourcesData, setResourcesData] = useState<ApplicationResourcesData | undefined>({
@@ -74,13 +73,9 @@ export function PageApplicationCreateFeature() {
 
   useDocumentTitle('Creation - Service')
 
-  useEffect(() => {
-    const servicesUrl = SERVICES_URL(organizationId, projectId, environmentId)
-    const path =
-      slug && option ? SERVICES_APPLICATION_TEMPLATE_CREATION_URL(slug, option) : SERVICES_APPLICATION_CREATION_URL
-
-    setCreationFlowUrl(servicesUrl + path)
-  }, [slug, option, environmentId, projectId, organizationId])
+  const path =
+    slug && option ? SERVICES_APPLICATION_TEMPLATE_CREATION_URL(slug, option) : SERVICES_APPLICATION_CREATION_URL
+  const creationFlowUrl = SERVICES_URL(organizationId, projectId, environmentId) + path
 
   const flagEnabled = useFeatureFlagEnabled('service-template')
 
