@@ -35,10 +35,19 @@ const Kubecost = '/assets/devicon/kubecost.svg'
 const Windmill = '/assets/devicon/windmill.svg'
 const Temporal = '/assets/devicon/temporal.svg'
 
+export enum TagsEnum {
+  FRONT_END = 'FRONT_END',
+  BACK_END = 'BACK_END',
+  DATABASE = 'DATABASE',
+  OTHER = 'OTHER',
+  INFRA = 'INFRA',
+}
+
 export type ServiceTemplateType = {
   title: string
   description: string
   icon: string | ReactElement
+  tag?: keyof typeof TagsEnum
   slug?: string
   link?: string
   dockerfile?: string
@@ -67,6 +76,7 @@ export type LifecycleJobOptionsType = {
 
 export const serviceTemplates: ServiceTemplateType[] = [
   {
+    tag: 'DATABASE',
     slug: 'postgresql',
     title: 'PostgreSQL',
     description: 'PostgreSQL is a powerful, open-source object-relational database system.',
@@ -137,6 +147,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
     ],
   },
   {
+    tag: 'DATABASE',
     slug: 'redis',
     title: 'Redis',
     description: 'Redis is an open-source in-memory data structure store.',
@@ -179,6 +190,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
     ],
   },
   {
+    tag: 'OTHER',
     slug: 'terraform',
     title: 'Terraform',
     description: 'Terraform is an open-source infrastructure as code software tool.',
@@ -188,6 +200,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
+    tag: 'FRONT_END',
     slug: 'react',
     title: 'React',
     description: 'React is a JavaScript library for building user interfaces.',
@@ -214,6 +227,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
     ],
   },
   {
+    tag: 'FRONT_END',
     slug: 'vue',
     title: 'Vue',
     description: 'Vue.js is a progressive framework for building user interfaces.',
@@ -240,6 +254,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
     ],
   },
   {
+    tag: 'FRONT_END',
     slug: 'angular',
     title: 'Angular',
     description:
@@ -268,6 +283,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
     ],
   },
   {
+    tag: 'BACK_END',
     slug: 'nodejs',
     title: 'Node.js',
     description: 'Node.js is an open-source, cross-platform, back-end JavaScript runtime environment.',
@@ -277,6 +293,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
+    tag: 'OTHER',
     slug: 'aws-lambda',
     title: 'AWS Lambda',
     description: 'AWS Lambda lets you run code without provisioning or managing servers.',
@@ -305,6 +322,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
     ],
   },
   {
+    tag: 'DATABASE',
     slug: 'mysql',
     title: 'MySQL',
     description: 'MySQL is an open-source relational database management system.',
@@ -356,6 +374,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
     ],
   },
   {
+    tag: 'DATABASE',
     slug: 'mongodb',
     title: 'MongoDB',
     description: 'MongoDB is a open-source document-oriented NoSQL database.',
@@ -398,6 +417,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
     ],
   },
   {
+    tag: 'OTHER',
     slug: 'kubecost',
     title: 'Kubecost',
     description: 'Kubecost is an open-source cost monitoring tool for Kubernetes.',
@@ -407,6 +427,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
+    tag: 'OTHER',
     slug: 'datadog',
     title: 'Datadog',
     description: 'Datadog is an observability platform for cloud-scale applications.',
@@ -416,6 +437,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
+    tag: 'BACK_END',
     slug: 'spring',
     title: 'Spring',
     description: 'Spring is an open-source application framework for Java.',
@@ -425,6 +447,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
+    tag: 'FRONT_END',
     slug: 'nextjs',
     title: 'NextJS',
     description: 'NextJS is a React framework with hybrid static & server rendering.',
@@ -451,6 +474,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
     ],
   },
   {
+    tag: 'DATABASE',
     slug: 'couchbase',
     title: 'Couchbase',
     description: 'Couchbase is an open-source, distributed, NoSQL document-oriented database.',
@@ -460,6 +484,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
+    tag: 'BACK_END',
     slug: 'rust',
     title: 'Rust',
     description: 'Rust is a multi-paradigm system programming language focused on safety and performance.',
@@ -469,6 +494,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
+    tag: 'BACK_END',
     slug: 'golang',
     title: 'Go',
     description:
@@ -479,6 +505,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
+    tag: 'OTHER',
     slug: 'nginx',
     title: 'NGINX',
     description:
@@ -489,6 +516,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
+    tag: 'OTHER',
     slug: 'caddy',
     title: 'Caddy',
     description: 'Caddy is a powerful, enterprise-ready, open source web server with automatic HTTPS written in Go.',
@@ -498,6 +526,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
+    tag: 'BACK_END',
     slug: 'rails',
     title: 'Rails',
     description: 'Rails is a web application framework written in Ruby.',
@@ -507,6 +536,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
+    tag: 'BACK_END',
     slug: 'ruby',
     title: 'Ruby',
     description: 'Ruby is a dynamic, open source programming language with a focus on simplicity and productivity.',
@@ -516,6 +546,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
+    tag: 'BACK_END',
     slug: 'nestjs',
     title: 'NestJS',
     description:
@@ -526,6 +557,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
+    tag: 'BACK_END',
     slug: 'python',
     title: 'Python',
     description: 'Python is a programming language that lets you work quickly and integrate systems more effectively.',
@@ -535,6 +567,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
+    tag: 'BACK_END',
     slug: 'flask',
     title: 'Flask',
     description: 'Flask is a lightweight WSGI web application framework.',
@@ -544,6 +577,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
+    tag: 'BACK_END',
     slug: 'fastapi',
     title: 'FastAPI',
     description: 'FastAPI is a modern, fast , web framework for building APIs based on standard Python type hints.',
@@ -553,6 +587,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
+    tag: 'OTHER',
     slug: 'replibyte',
     title: 'Replibyte',
     description:
@@ -563,6 +598,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
+    tag: 'OTHER',
     slug: 'cloudflare-worker',
     title: 'Cloudflare Worker',
     description:
@@ -573,6 +609,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
+    tag: 'BACK_END',
     slug: 'java',
     title: 'Java',
     description: 'Java is a high-level, class-based, object-oriented programming language.',
@@ -582,6 +619,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
+    tag: 'OTHER',
     slug: 'aws-assume-roles',
     title: 'AWS Assume Roles',
     description: 'AWS Assume Roles is a tool to assume roles for your services on your Kubernetes cluster.',
@@ -591,6 +629,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
+    tag: 'OTHER',
     slug: 'aws-s3',
     title: 'AWS S3',
     description:
@@ -630,6 +669,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
     ],
   },
   {
+    tag: 'OTHER',
     slug: 'gcp-bigquery',
     title: 'GCP BigQuery',
     description:
@@ -660,6 +700,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
     ],
   },
   {
+    tag: 'OTHER',
     slug: 'windmill',
     title: 'Windmill',
     description: 'Windmill is an open-source workflow orchestration engine written in Rust.',
@@ -669,6 +710,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
+    tag: 'OTHER',
     slug: 'temporal',
     title: 'Temporal',
     description: 'Temporal is an open-source, stateful, and scalable workflow orchestration engine.',
@@ -678,6 +720,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
+    tag: 'OTHER',
     slug: 'crossplane',
     title: 'Crossplane',
     description:
@@ -688,6 +731,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
+    tag: 'DATABASE',
     slug: 'elasticsearch',
     title: 'Elasticsearch',
     description:
