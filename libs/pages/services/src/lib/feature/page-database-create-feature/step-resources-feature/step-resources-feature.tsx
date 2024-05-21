@@ -16,7 +16,7 @@ import { useDatabaseCreateContext } from '../page-database-create-feature'
 
 export function StepResourcesFeature() {
   useDocumentTitle('Resources - Create Database')
-  const { setCurrentStep, resourcesData, setResourcesData, generalData } = useDatabaseCreateContext()
+  const { setCurrentStep, resourcesData, setResourcesData, generalData, creationFlowUrl } = useDatabaseCreateContext()
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const navigate = useNavigate()
   const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_DATABASE_CREATION_URL}`
@@ -40,11 +40,11 @@ export function StepResourcesFeature() {
 
   const onSubmit = methods.handleSubmit((data) => {
     setResourcesData(data)
-    navigate(pathCreate + SERVICES_DATABASE_CREATION_POST_URL)
+    navigate(creationFlowUrl + SERVICES_DATABASE_CREATION_POST_URL)
   })
 
   const onBack = () => {
-    navigate(pathCreate + SERVICES_DATABASE_CREATION_GENERAL_URL)
+    navigate(creationFlowUrl + SERVICES_DATABASE_CREATION_GENERAL_URL)
   }
 
   return (

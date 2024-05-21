@@ -1,15 +1,13 @@
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { defaultLivenessProbe, defaultReadinessProbe, probeFormatted } from '@qovery/shared/console-shared'
 import { ProbeTypeEnum } from '@qovery/shared/enums'
 import { type HealthcheckData, type ProbeExtended } from '@qovery/shared/interfaces'
 import {
-  SERVICES_APPLICATION_CREATION_URL,
   SERVICES_CREATION_GENERAL_URL,
   SERVICES_CREATION_PORTS_URL,
   SERVICES_CREATION_POST_URL,
-  SERVICES_URL,
 } from '@qovery/shared/routes'
 import { FunnelFlowBody } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
@@ -18,18 +16,12 @@ import { useApplicationContainerCreateContext } from '../page-application-create
 
 export function StepHealthchecksFeature() {
   useDocumentTitle('Health checks - Create Application')
-  const { setCurrentStep, portData, setPortData, generalData } = useApplicationContainerCreateContext()
-  const { organizationId = '', projectId = '', environmentId = '' } = useParams()
+  const { setCurrentStep, portData, setPortData, generalData, creationFlowUrl } = useApplicationContainerCreateContext()
   const navigate = useNavigate()
-  const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_APPLICATION_CREATION_URL}`
 
   useEffect(() => {
-    !generalData?.name &&
-      navigate(
-        `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_APPLICATION_CREATION_URL}` +
-          SERVICES_CREATION_GENERAL_URL
-      )
-  }, [generalData, navigate, environmentId, organizationId, projectId])
+    !generalData?.name && navigate(creationFlowUrl + SERVICES_CREATION_GENERAL_URL)
+  }, [generalData, navigate, creationFlowUrl])
 
   useEffect(() => {
     setCurrentStep(4)
@@ -93,11 +85,11 @@ export function StepHealthchecksFeature() {
       },
     })
 
-    navigate(pathCreate + SERVICES_CREATION_POST_URL)
+    navigate(creationFlowUrl + SERVICES_CREATION_POST_URL)
   })
 
   const onBack = () => {
-    navigate(pathCreate + SERVICES_CREATION_PORTS_URL)
+    navigate(creationFlowUrl + SERVICES_CREATION_PORTS_URL)
   }
 
   return (

@@ -9,6 +9,7 @@ import {
   SERVICES_GENERAL_URL,
   SERVICES_HELM_CREATION_GENERAL_URL,
   SERVICES_HELM_CREATION_URL,
+  SERVICES_HELM_TEMPLATE_CREATION_URL,
   SERVICES_NEW_URL,
   SERVICES_URL,
 } from '@qovery/shared/routes'
@@ -43,6 +44,7 @@ interface HelmCreateContextInterface {
   generalForm: UseFormReturn<HelmGeneralData>
   valuesOverrideFileForm: UseFormReturn<HelmValuesFileData>
   valuesOverrideArgumentsForm: UseFormReturn<HelmValuesArgumentsData>
+  creationFlowUrl?: string
 }
 
 export const HelmCreateContext = createContext<HelmCreateContextInterface | undefined>(undefined)
@@ -79,11 +81,8 @@ export function PageHelmCreateFeature() {
     mode: 'onChange',
   })
 
-  // TODO: need to fix this hard redirect because conflict between /create/helm and /create/helm-template
-  const pathCreate =
-    SERVICES_URL(organizationId, projectId, environmentId) +
-    SERVICES_HELM_CREATION_URL +
-    `${slug !== 'values-override' && option ? `-template/${slug}/${option}` : ''}`
+  const path = slug && option ? SERVICES_HELM_TEMPLATE_CREATION_URL(slug, option) : SERVICES_HELM_CREATION_URL
+  const creationFlowUrl = SERVICES_URL(organizationId, projectId, environmentId) + path
 
   const flagEnabled = useFeatureFlagEnabled('service-template')
 
@@ -95,6 +94,7 @@ export function PageHelmCreateFeature() {
         generalForm,
         valuesOverrideFileForm,
         valuesOverrideArgumentsForm,
+        creationFlowUrl,
       }}
     >
       <FunnelFlow
@@ -112,7 +112,9 @@ export function PageHelmCreateFeature() {
           {ROUTER_SERVICE_HELM_CREATION.map((route) => (
             <Route key={route.path} path={route.path} element={route.component} />
           ))}
-          <Route path="*" element={<Navigate replace to={pathCreate + SERVICES_HELM_CREATION_GENERAL_URL} />} />
+          {creationFlowUrl && (
+            <Route path="*" element={<Navigate replace to={creationFlowUrl + SERVICES_HELM_CREATION_GENERAL_URL} />} />
+          )}
         </Routes>
         <AssistantTrigger defaultOpen />
       </FunnelFlow>

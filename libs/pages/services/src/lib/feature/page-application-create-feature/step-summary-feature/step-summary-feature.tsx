@@ -10,7 +10,6 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { useAnnotationsGroups, useContainerRegistry } from '@qovery/domains/organizations/feature'
 import { useCreateService, useDeployService } from '@qovery/domains/services/feature'
 import {
-  SERVICES_APPLICATION_CREATION_URL,
   SERVICES_CREATION_GENERAL_URL,
   SERVICES_CREATION_HEALTHCHECKS_URL,
   SERVICES_CREATION_PORTS_URL,
@@ -25,10 +24,10 @@ import { steps, useApplicationContainerCreateContext } from '../page-application
 
 export function StepSummaryFeature() {
   useDocumentTitle('Summary - Create Application')
-  const { generalData, portData, resourcesData, setCurrentStep } = useApplicationContainerCreateContext()
+  const { generalData, portData, resourcesData, setCurrentStep, creationFlowUrl } =
+    useApplicationContainerCreateContext()
   const navigate = useNavigate()
   const { organizationId = '', projectId = '', environmentId = '', slug, option } = useParams()
-  const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_APPLICATION_CREATION_URL}`
   const [loadingCreate, setLoadingCreate] = useState(false)
   const [loadingCreateAndDeploy, setLoadingCreateAndDeploy] = useState(false)
   const { data: containerRegistry } = useContainerRegistry({
@@ -41,24 +40,24 @@ export function StepSummaryFeature() {
   const { mutate: deployService } = useDeployService({ environmentId })
 
   const gotoGlobalInformations = () => {
-    navigate(pathCreate + SERVICES_CREATION_GENERAL_URL)
+    navigate(creationFlowUrl + SERVICES_CREATION_GENERAL_URL)
   }
 
   const gotoResources = () => {
-    navigate(pathCreate + SERVICES_CREATION_RESOURCES_URL)
+    navigate(creationFlowUrl + SERVICES_CREATION_RESOURCES_URL)
   }
 
   const gotoPorts = () => {
-    navigate(pathCreate + SERVICES_CREATION_PORTS_URL)
+    navigate(creationFlowUrl + SERVICES_CREATION_PORTS_URL)
   }
 
   const gotoHealthchecks = () => {
-    navigate(pathCreate + SERVICES_CREATION_HEALTHCHECKS_URL)
+    navigate(creationFlowUrl + SERVICES_CREATION_HEALTHCHECKS_URL)
   }
 
   const onPrevious = () => {
     if (portData?.ports && portData?.ports.length > 0) {
-      navigate(pathCreate + SERVICES_CREATION_HEALTHCHECKS_URL)
+      navigate(creationFlowUrl + SERVICES_CREATION_HEALTHCHECKS_URL)
     } else {
       gotoPorts()
     }

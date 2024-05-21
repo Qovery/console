@@ -36,6 +36,7 @@ const ContextWrapper = (props: { children: ReactNode }) => {
         setGeneralData: mockSetGeneralData,
         resourcesData: undefined,
         setResourcesData: jest.fn(),
+        creationFlowUrl: '/organization/1/project/2/environment/3/services/create/database',
       }}
     >
       {props.children}

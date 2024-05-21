@@ -9,6 +9,7 @@ import {
 } from '@qovery/shared/interfaces'
 import {
   SERVICES_APPLICATION_CREATION_URL,
+  SERVICES_APPLICATION_TEMPLATE_CREATION_URL,
   SERVICES_CREATION_GENERAL_URL,
   SERVICES_GENERAL_URL,
   SERVICES_NEW_URL,
@@ -27,6 +28,7 @@ export interface ApplicationContainerCreateContextInterface {
   setResourcesData: (data: ApplicationResourcesData) => void
   portData: FlowPortData | undefined
   setPortData: (data: FlowPortData) => void
+  creationFlowUrl?: string
 }
 
 export const ApplicationContainerCreateContext = createContext<ApplicationContainerCreateContextInterface | undefined>(
@@ -71,10 +73,9 @@ export function PageApplicationCreateFeature() {
 
   useDocumentTitle('Creation - Service')
 
-  const pathCreate =
-    SERVICES_URL(organizationId, projectId, environmentId) +
-    SERVICES_APPLICATION_CREATION_URL +
-    `${slug && option ? `/${slug}/${option}` : ''}`
+  const path =
+    slug && option ? SERVICES_APPLICATION_TEMPLATE_CREATION_URL(slug, option) : SERVICES_APPLICATION_CREATION_URL
+  const creationFlowUrl = SERVICES_URL(organizationId, projectId, environmentId) + path
 
   const flagEnabled = useFeatureFlagEnabled('service-template')
 
@@ -89,6 +90,7 @@ export function PageApplicationCreateFeature() {
         setResourcesData,
         portData,
         setPortData,
+        creationFlowUrl,
       }}
     >
       <FunnelFlow
@@ -106,7 +108,9 @@ export function PageApplicationCreateFeature() {
           {ROUTER_SERVICE_CREATION.map((route) => (
             <Route key={route.path} path={route.path} element={route.component} />
           ))}
-          <Route path="*" element={<Navigate replace to={pathCreate + SERVICES_CREATION_GENERAL_URL} />} />
+          {creationFlowUrl && (
+            <Route path="*" element={<Navigate replace to={creationFlowUrl + SERVICES_CREATION_GENERAL_URL} />} />
+          )}
         </Routes>
         <AssistantTrigger defaultOpen />
       </FunnelFlow>

@@ -5,6 +5,7 @@ import { AssistantTrigger } from '@qovery/shared/assistant/feature'
 import {
   SERVICES_DATABASE_CREATION_GENERAL_URL,
   SERVICES_DATABASE_CREATION_URL,
+  SERVICES_DATABASE_TEMPLATE_CREATION_URL,
   SERVICES_GENERAL_URL,
   SERVICES_NEW_URL,
   SERVICES_URL,
@@ -21,6 +22,7 @@ export interface DatabaseCreateContextInterface {
   setGeneralData: (data: GeneralData) => void
   resourcesData: ResourcesData | undefined
   setResourcesData: (data: ResourcesData) => void
+  creationFlowUrl?: string
 }
 
 export const DatabaseCreateContext = createContext<DatabaseCreateContextInterface | undefined>(undefined)
@@ -53,10 +55,8 @@ export function PageDatabaseCreateFeature() {
 
   useDocumentTitle('Creation - Service')
 
-  const pathCreate =
-    SERVICES_URL(organizationId, projectId, environmentId) +
-    SERVICES_DATABASE_CREATION_URL +
-    `${slug && option ? `/${slug}/${option}` : ''}`
+  const path = slug && option ? SERVICES_DATABASE_TEMPLATE_CREATION_URL(slug, option) : SERVICES_DATABASE_CREATION_URL
+  const creationFlowUrl = SERVICES_URL(organizationId, projectId, environmentId) + path
 
   const flagEnabled = useFeatureFlagEnabled('service-template')
 
@@ -69,6 +69,7 @@ export function PageDatabaseCreateFeature() {
         setGeneralData,
         resourcesData,
         setResourcesData,
+        creationFlowUrl,
       }}
     >
       <FunnelFlow
@@ -86,7 +87,12 @@ export function PageDatabaseCreateFeature() {
           {ROUTER_SERVICE_DATABASE_CREATION.map((route) => (
             <Route key={route.path} path={route.path} element={route.component} />
           ))}
-          <Route path="*" element={<Navigate replace to={pathCreate + SERVICES_DATABASE_CREATION_GENERAL_URL} />} />
+          {creationFlowUrl && (
+            <Route
+              path="*"
+              element={<Navigate replace to={creationFlowUrl + SERVICES_DATABASE_CREATION_GENERAL_URL} />}
+            />
+          )}
         </Routes>
         <AssistantTrigger defaultOpen />
       </FunnelFlow>
