@@ -13,6 +13,7 @@ import { type Environment, type Project } from 'qovery-typescript-axios'
 import { type ComponentProps, Fragment, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { match } from 'ts-pattern'
+import { IconEnum } from '@qovery/shared/enums'
 import {
   CLUSTERS_CREATION_GENERAL_URL,
   CLUSTERS_CREATION_URL,
@@ -218,7 +219,16 @@ export function EnvironmentList({ project, clusterAvailable, className, ...props
                 variant="surface"
                 size="xs"
               >
-                <Icon className="mr-2" name={environment.cloud_provider.provider} width={16} height={16} />
+                <Icon
+                  className="mr-2"
+                  name={
+                    environment.cloud_provider.provider === 'ON_PREMISE'
+                      ? IconEnum.KUBERNETES
+                      : environment.cloud_provider.provider
+                  }
+                  width={16}
+                  height={16}
+                />
                 <Truncate text={value} truncateLimit={30} />
               </Link>
             </Tooltip>

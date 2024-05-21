@@ -1,3 +1,4 @@
+import clsx from 'clsx'
 import equal from 'fast-deep-equal'
 import { type Cluster, type Environment, type Organization, type Project } from 'qovery-typescript-axios'
 import { memo, useCallback, useEffect, useState } from 'react'
@@ -123,7 +124,16 @@ export function Breadcrumb(props: BreadcrumbProps) {
               url: `${SERVICES_URL(organizationId, projectId, environment.id)}${SERVICES_GENERAL_URL}`,
             },
             contentLeft: environment.cloud_provider.provider && (
-              <Icon className="mt-0.5" name={`${environment.cloud_provider.provider}_GRAY`} />
+              <Icon
+                className={clsx('mt-0.5', {
+                  'w-4': environment.cloud_provider.provider === 'ON_PREMISE',
+                })}
+                name={
+                  environment.cloud_provider.provider === 'ON_PREMISE'
+                    ? IconEnum.KUBERNETES
+                    : `${environment.cloud_provider.provider}_GRAY`
+                }
+              />
             ),
             isActive: environmentId === environment.id,
           }))
