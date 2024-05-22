@@ -156,6 +156,9 @@ export function Icon(props: IconProps | FontAwesomeIconProps) {
       return <MicrosoftIcon {...formattedProps} />
     case IconEnum.EKS:
       return <EKSIcon {...formattedProps} />
+    case IconEnum.ON_PREMISE:
+    case IconEnum.ON_PREMISE_GRAY:
+      return <KubernetesIcon {...formattedProps} />
     default:
       return <IconFa {...formattedProps} />
   }
