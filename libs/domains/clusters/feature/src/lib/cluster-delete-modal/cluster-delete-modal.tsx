@@ -17,7 +17,7 @@ export function ClusterDeleteModal({ cluster }: ClusterDeleteModalProps) {
     kubernetes,
     id: clusterId,
   } = cluster
-  const { mutateAsync } = useDeleteCluster()
+  const { mutateAsync: deleteCluster } = useDeleteCluster()
   const [clusterDeleteMode, setClusterDeleteMode] = useState<ClusterDeleteMode>(ClusterDeleteMode.DEFAULT)
 
   const formattedClusterDeleteMode = (clusterDeleteMode: ClusterDeleteMode) =>
@@ -34,10 +34,10 @@ export function ClusterDeleteModal({ cluster }: ClusterDeleteModalProps) {
       name={name}
       callback={async () => {
         try {
-          await mutateAsync({
+          await deleteCluster({
             organizationId,
             clusterId,
-            clusterDeleteMode,
+            clusterDeleteMode: cluster.kubernetes === 'SELF_MANAGED' ? 'DELETE_QOVERY_CONFIG' : clusterDeleteMode,
           })
           navigate(CLUSTERS_URL(organizationId))
         } catch (error) {
@@ -47,37 +47,48 @@ export function ClusterDeleteModal({ cluster }: ClusterDeleteModalProps) {
       isDelete
     >
       <div className="border border-red-500 rounded bg-red-50 text-sm text-neutral-400 p-4 mb-6">
-        <InputSelect
-          className="mb-3"
-          label="Delete mode"
-          options={Object.values(ClusterDeleteMode)
-            .filter((e) => !(e === 'DELETE_CLUSTER_AND_QOVERY_CONFIG' && cluster.kubernetes === 'SELF_MANAGED'))
-            .map((mode) => ({
-              label: formattedClusterDeleteMode(mode),
-              value: mode,
-            }))}
-          onChange={(value) => setClusterDeleteMode(value as ClusterDeleteMode)}
-          value={clusterDeleteMode}
-        />
+        {cluster.kubernetes !== 'SELF_MANAGED' && (
+          <InputSelect
+            className="mb-3"
+            label="Delete mode"
+            options={Object.values(ClusterDeleteMode)
+              .filter((e) => !(e === 'DELETE_CLUSTER_AND_QOVERY_CONFIG' && cluster.kubernetes === 'SELF_MANAGED'))
+              .map((mode) => ({
+                label: formattedClusterDeleteMode(mode),
+                value: mode,
+              }))}
+            onChange={(value) => setClusterDeleteMode(value as ClusterDeleteMode)}
+            value={clusterDeleteMode}
+          />
+        )}
         <p>This operation will delete:</p>
 
         <ul className="list-disc pl-5">
-          {clusterDeleteMode === ClusterDeleteMode.DEFAULT && (
+          {cluster.kubernetes === 'SELF_MANAGED' ? (
             <li>
-              <b>Cloud provider</b>: any resource created by Qovery on your cloud provider account to run this cluster,
-              including any application running on it.
+              <b>Kubernetes</b>: nothing will be deleted on your cluster. You will have to manually delete any deployed
+              application and uninstall the Qovery helm chart from your cluster.{' '}
             </li>
-          )}
-          {clusterDeleteMode === ClusterDeleteMode.DELETE_CLUSTER_AND_QOVERY_CONFIG && (
+          ) : (
             <li>
-              <b>Cloud provider</b>: any resource created by Qovery on your cloud provider account to run this cluster,
-              including any application running on it. Managed databases deployed via Qovery will NOT be deleted.
-            </li>
-          )}
-          {clusterDeleteMode === ClusterDeleteMode.DELETE_QOVERY_CONFIG && (
-            <li>
-              <b>Cloud provider</b>: nothing will be deleted on your cloud provider account. You will have to manually
-              delete any resource created by Qovery directly from your cloud provider console.
+              <b>Cloud provider</b>:{' '}
+              {match(clusterDeleteMode)
+                .with(
+                  'DEFAULT',
+                  () =>
+                    'any resource created by Qovery on your cloud provider account to run this cluster, including any application running on it.'
+                )
+                .with(
+                  'DELETE_CLUSTER_AND_QOVERY_CONFIG',
+                  () =>
+                    'any resource created by Qovery on your cloud provider account to run this cluster, including any application running on it. Managed databases deployed via Qovery will NOT be deleted.'
+                )
+                .with(
+                  'DELETE_QOVERY_CONFIG',
+                  () =>
+                    'nothing will be deleted on your cloud provider account. You will have to manually delete any resource created by Qovery directly from your cloud provider console.'
+                )
+                .exhaustive()}
             </li>
           )}
           <li>

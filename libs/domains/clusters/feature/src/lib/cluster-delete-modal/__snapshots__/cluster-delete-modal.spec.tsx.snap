@@ -151,7 +151,9 @@ exports[`ClusterDeleteModal should match snapshot 1`] = `
               <b>
                 Cloud provider
               </b>
-              : any resource created by Qovery on your cloud provider account to run this cluster, including any application running on it.
+              :
+               
+              any resource created by Qovery on your cloud provider account to run this cluster, including any application running on it.
             </li>
             <li>
               <b>
