@@ -9,7 +9,6 @@ import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { P, match } from 'ts-pattern'
 import { useClusters } from '@qovery/domains/clusters/feature'
-import { IconEnum } from '@qovery/shared/enums'
 import { SERVICES_GENERAL_URL, SERVICES_URL } from '@qovery/shared/routes'
 import { Badge, ExternalLink, Icon, InputSelect, InputText, ModalCrud, useModal } from '@qovery/shared/ui'
 import { useCloneEnvironment } from '../hooks/use-clone-environment/use-clone-environment'
@@ -214,13 +213,7 @@ export function CreateCloneEnvironmentModal({
                   return {
                     value: c.id,
                     label: `${c.name} - ${clusterType}`,
-                    icon: (
-                      <Icon
-                        width={16}
-                        height={16}
-                        name={c.cloud_provider === 'ON_PREMISE' ? IconEnum.KUBERNETES : c.cloud_provider}
-                      />
-                    ),
+                    icon: <Icon width={16} height={16} name={c.cloud_provider} />,
                   }
                 }) ?? []
               }

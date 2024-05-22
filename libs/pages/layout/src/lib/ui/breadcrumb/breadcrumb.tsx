@@ -128,11 +128,7 @@ export function Breadcrumb(props: BreadcrumbProps) {
                 className={clsx('mt-0.5', {
                   'w-4': environment.cloud_provider.provider === 'ON_PREMISE',
                 })}
-                name={
-                  environment.cloud_provider.provider === 'ON_PREMISE'
-                    ? IconEnum.KUBERNETES
-                    : `${environment.cloud_provider.provider}_GRAY`
-                }
+                name={`${environment.cloud_provider.provider}_GRAY`}
               />
             ),
             isActive: environmentId === environment.id,
