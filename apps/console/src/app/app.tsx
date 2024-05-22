@@ -1,6 +1,6 @@
 import { type User, useAuth0 } from '@auth0/auth0-react'
 import { GTMProvider } from '@elgorditosalsero/react-gtm-hook'
-import { NotFoundRoute, Router, RouterProvider } from '@tanstack/react-router'
+import { RouterProvider, createRouter } from '@tanstack/react-router'
 import axios from 'axios'
 import LogRocket from 'logrocket'
 import posthog from 'posthog-js'
@@ -15,7 +15,7 @@ import { AssistantContext } from '@qovery/shared/assistant/feature'
 import { useAuth, useInviteMember } from '@qovery/shared/auth'
 import { ProtectedRoute } from '@qovery/shared/router'
 import { HELM_DEFAULT_VALUES, KUBECONFIG, LOGIN_URL, LOGOUT_URL, PREVIEW_CODE } from '@qovery/shared/routes'
-import { rootRoute, routeTree } from '@qovery/shared/routes'
+import { routeTree } from '@qovery/shared/routes'
 import { LoadingScreen } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { GTM, LOGROCKET, NODE_ENV, NX_GIT_SHA, QOVERY_API } from '@qovery/shared/util-node-env'
@@ -25,12 +25,11 @@ import PreviewCode from './components/preview-code'
 import ScrollToTop from './components/scroll-to-top'
 import { ROUTER } from './router/main.router'
 
-const notFoundRoute = new NotFoundRoute({
-  getParentRoute: () => rootRoute,
-  component: () => <Navigate replace to={LOGIN_URL} />,
+const router = createRouter({
+  routeTree,
+  context: { queryClient },
+  defaultNotFoundComponent: () => <Navigate replace to={LOGIN_URL} />,
 })
-
-const router = new Router({ routeTree, context: { queryClient }, notFoundRoute })
 
 // Register things for typesafety
 declare module '@tanstack/react-router' {
