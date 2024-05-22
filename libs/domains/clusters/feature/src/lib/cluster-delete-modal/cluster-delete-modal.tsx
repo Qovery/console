@@ -1,9 +1,9 @@
 import { type Cluster, ClusterDeleteMode } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { match } from 'ts-pattern'
 import { CLUSTERS_URL } from '@qovery/shared/routes'
 import { Callout, Icon, InputSelect, ModalConfirmation } from '@qovery/shared/ui'
-import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import useDeleteCluster from '../hooks/use-delete-cluster/use-delete-cluster'
 
 export interface ClusterDeleteModalProps {
@@ -20,11 +20,12 @@ export function ClusterDeleteModal({ cluster }: ClusterDeleteModalProps) {
   const { mutateAsync } = useDeleteCluster()
   const [clusterDeleteMode, setClusterDeleteMode] = useState<ClusterDeleteMode>(ClusterDeleteMode.DEFAULT)
 
-  const formattedClusterDeleteMode = (clusterDeleteMode: string) =>
-    clusterDeleteMode
-      .split('_')
-      .map((word) => upperCaseFirstLetter(word))
-      .join(' ')
+  const formattedClusterDeleteMode = (clusterDeleteMode: ClusterDeleteMode) =>
+    match(clusterDeleteMode)
+      .with('DEFAULT', () => 'Default')
+      .with('DELETE_CLUSTER_AND_QOVERY_CONFIG', () => 'Cluster and Qovery config')
+      .with('DELETE_QOVERY_CONFIG', () => 'Qovery Config only')
+      .exhaustive()
   const navigate = useNavigate()
 
   return (
@@ -63,21 +64,20 @@ export function ClusterDeleteModal({ cluster }: ClusterDeleteModalProps) {
         <ul className="list-disc pl-5">
           {clusterDeleteMode === ClusterDeleteMode.DEFAULT && (
             <li>
-              <b>Cloud provider</b>: any resource created by Qovery on your cloud provider account to run this cluster
-              will be deleted, including any application running on it.{' '}
+              <b>Cloud provider</b>: any resource created by Qovery on your cloud provider account to run this cluster,
+              including any application running on it.
             </li>
           )}
           {clusterDeleteMode === ClusterDeleteMode.DELETE_CLUSTER_AND_QOVERY_CONFIG && (
             <li>
-              <b>Cloud provider</b>: any resource created by Qovery on your cloud provider account to run this cluster
-              will be deleted, including any application running on it. Any cloud provider managed service deployed via
-              Qovery will NOT be deleted.{' '}
+              <b>Cloud provider</b>: any resource created by Qovery on your cloud provider account to run this cluster,
+              including any application running on it. Managed databases deployed via Qovery will NOT be deleted.
             </li>
           )}
           {clusterDeleteMode === ClusterDeleteMode.DELETE_QOVERY_CONFIG && (
             <li>
               <b>Cloud provider</b>: nothing will be deleted on your cloud provider account. You will have to manually
-              delete any resource created by Qovery directly from your cloud provider console.{' '}
+              delete any resource created by Qovery directly from your cloud provider console.
             </li>
           )}
           <li>
@@ -93,7 +93,7 @@ export function ClusterDeleteModal({ cluster }: ClusterDeleteModalProps) {
             <Callout.Text>
               <p>Please note that you will have to manually delete on your cloud account:</p>
               <ul className="list-disc pl-3">
-                <li>the S3 bucket created during the cluster installation</li>
+                <li>the S3 bucket created at cluster installation</li>
                 <li>the image registry linked to this cluster</li>
                 {clusterDeleteMode === ClusterDeleteMode.DELETE_CLUSTER_AND_QOVERY_CONFIG && (
                   <li>any managed database that was created via Qovery.</li>
