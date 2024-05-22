@@ -1,8 +1,9 @@
 import { type PropsWithChildren } from 'react'
-import { useLocation, useParams } from 'react-router-dom'
+import { matchPath, useLocation, useParams } from 'react-router-dom'
 import { useClusters } from '@qovery/domains/clusters/feature'
 import { CreateCloneEnvironmentModal } from '@qovery/domains/environments/feature'
 import { useProject } from '@qovery/domains/projects/feature'
+import { ShowAllVariablesToggle, VariablesActionToolbar, VariablesProvider } from '@qovery/domains/variables/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import {
   ENVIRONMENTS_DEPLOYMENT_RULES_CREATE_URL,

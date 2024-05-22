@@ -32,7 +32,11 @@ export const ROUTER_ENVIRONMENTS: Route[] = [
   },
   {
     path: ENVIRONMENTS_VARIABLES_URL,
-    component: <PageVariablesFeature />,
+    component: (
+      <Container>
+        <PageVariablesFeature />
+      </Container>
+    ),
   },
   {
     path: ENVIRONMENTS_DEPLOYMENT_RULES_CREATE_URL,
