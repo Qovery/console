@@ -293,9 +293,9 @@ export function PageNewFeature() {
               </div>
             </Section>
             <SectionByTag
-              title="Database"
-              description="Find your perfect Database template with presets."
-              tag="DATABASE"
+              title="Data & Storage"
+              description="Find your perfect data and storage template with presets."
+              tag="DATA_STORAGE"
             />
             <SectionByTag
               title="Back-end"
@@ -307,7 +307,7 @@ export function PageNewFeature() {
               description="Find your perfect Front-end template with presets."
               tag="FRONT_END"
             />
-            <SectionByTag title="More template" description="Look for other template presets." tag="OTHER" />
+            <SectionByTag title="Tooling" description="Find your perfect your perfect tooling presets." tag="TOOLING" />
           </>
         ) : [...serviceEmpty, ...serviceTemplates].filter(filterService).length > 0 ? (
           <Section>
