@@ -39,8 +39,7 @@ export enum TagsEnum {
   FRONT_END = 'FRONT_END',
   BACK_END = 'BACK_END',
   DATA_STORAGE = 'DATA_STORAGE',
-  TOOLING = 'TOOLING',
-  INFRA = 'INFRA',
+  OTHER = 'OTHER',
 }
 
 export type ServiceTemplateType = {
@@ -190,7 +189,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
     ],
   },
   {
-    tag: 'TOOLING',
+    tag: 'OTHER',
     slug: 'terraform',
     title: 'Terraform',
     description: 'Terraform is an open-source infrastructure as code software tool.',
@@ -293,7 +292,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
-    tag: 'TOOLING',
+    tag: 'BACK_END',
     slug: 'aws-lambda',
     title: 'AWS Lambda',
     description: 'AWS Lambda lets you run code without provisioning or managing servers.',
@@ -417,7 +416,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
     ],
   },
   {
-    tag: 'TOOLING',
+    tag: 'OTHER',
     slug: 'kubecost',
     title: 'Kubecost',
     description: 'Kubecost is an open-source cost monitoring tool for Kubernetes.',
@@ -427,7 +426,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
-    tag: 'TOOLING',
+    tag: 'OTHER',
     slug: 'datadog',
     title: 'Datadog',
     description: 'Datadog is an observability platform for cloud-scale applications.',
@@ -505,7 +504,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
-    tag: 'TOOLING',
+    tag: 'OTHER',
     slug: 'nginx',
     title: 'NGINX',
     description:
@@ -516,7 +515,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
-    tag: 'TOOLING',
+    tag: 'OTHER',
     slug: 'caddy',
     title: 'Caddy',
     description: 'Caddy is a powerful, enterprise-ready, open source web server with automatic HTTPS written in Go.',
@@ -598,7 +597,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
-    tag: 'TOOLING',
+    tag: 'OTHER',
     slug: 'cloudflare-worker',
     title: 'Cloudflare Worker',
     description:
@@ -619,7 +618,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
-    tag: 'TOOLING',
+    tag: 'OTHER',
     slug: 'aws-assume-roles',
     title: 'AWS Assume Roles',
     description: 'AWS Assume Roles is a tool to assume roles for your services on your Kubernetes cluster.',
@@ -700,7 +699,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
     ],
   },
   {
-    tag: 'TOOLING',
+    tag: 'OTHER',
     slug: 'windmill',
     title: 'Windmill',
     description: 'Windmill is an open-source workflow orchestration engine written in Rust.',
@@ -710,7 +709,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
-    tag: 'TOOLING',
+    tag: 'OTHER',
     slug: 'temporal',
     title: 'Temporal',
     description: 'Temporal is an open-source, stateful, and scalable workflow orchestration engine.',
@@ -720,7 +719,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
-    tag: 'TOOLING',
+    tag: 'OTHER',
     slug: 'crossplane',
     title: 'Crossplane',
     description:

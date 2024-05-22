@@ -307,7 +307,7 @@ export function PageNewFeature() {
               description="Find your perfect Front-end template with presets."
               tag="FRONT_END"
             />
-            <SectionByTag title="Tooling" description="Find your perfect your perfect tooling presets." tag="TOOLING" />
+            <SectionByTag title="More template" description="Look for other template presets." tag="OTHER" />
           </>
         ) : [...serviceEmpty, ...serviceTemplates].filter(filterService).length > 0 ? (
           <Section>
