@@ -9,10 +9,10 @@ import { Tooltip } from '../../tooltip/tooltip'
 
 export interface ModalConfirmationProps extends PropsWithChildren {
   title: string
-  description?: string | ReactNode
+  description?: ReactNode
   name?: string
   callback: () => void
-  warning?: string
+  warning?: ReactNode
   placeholder?: string
   ctaButton?: string
   isDelete?: boolean

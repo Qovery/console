@@ -2,7 +2,7 @@ import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useCustomDomains, useDeleteCustomDomain } from '@qovery/domains/custom-domains/feature'
 import { useService } from '@qovery/domains/services/feature'
-import { useModal, useModalConfirmation } from '@qovery/shared/ui'
+import { Callout, useModal, useModalConfirmation } from '@qovery/shared/ui'
 import PageSettingsDomains from '../../ui/page-settings-domains/page-settings-domains'
 import CrudModalFeature from './crud-modal-feature/crud-modal-feature'
 
@@ -39,6 +39,15 @@ export function PageSettingsDomainsFeature() {
             title: 'Delete custom domain',
             isDelete: true,
             name: customDomain.domain,
+            warning: (
+              <>
+                <Callout.TextHeading>Domain migration - read this!</Callout.TextHeading>
+                <Callout.TextDescription className="text-xs">
+                  If you are in a migration process and want to assign this domain to another application, make sure you
+                  deploy first this application to ensure that every configuration is cleaned up.
+                </Callout.TextDescription>
+              </>
+            ),
             action: () => {
               if (s) {
                 deleteCustomDomain({
