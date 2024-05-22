@@ -69,6 +69,8 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
       : mode === 'CREATE' && type === 'OVERRIDE'
       ? availableScopes[0]
       : variable?.scope
+      ? variable.scope
+      : availableScopes[availableScopes.length - 1]
   const mountPath = getEnvironmentVariableFileMountPath(variable)
 
   const methods = useForm<{
