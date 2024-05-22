@@ -5,7 +5,6 @@ import { type ITerminalAddon } from '@xterm/xterm'
 import {
   type KeyboardEvent,
   type MouseEvent as MouseDownEvent,
-  memo,
   useCallback,
   useContext,
   useEffect,
@@ -17,8 +16,6 @@ import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
 import { useRunningStatus } from '../..'
 import { InputSearch } from './input-search/input-search'
 import { ServiceTerminalContext } from './service-terminal-provider'
-
-const MemoizedXTerm = memo(XTerm)
 
 export interface ServiceTerminalProps {
   organizationId: string
@@ -180,7 +177,7 @@ export function ServiceTerminal({
             <LoaderSpinner />
           </div>
         ) : (
-          <MemoizedXTerm className="h-full" onKeyUp={onKeyUpHandler} addons={addons} />
+          <XTerm className="h-full" onKeyUp={onKeyUpHandler} addons={addons} />
         )}
       </div>
     </div>,
