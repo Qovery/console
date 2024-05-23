@@ -21,7 +21,7 @@ export function RedirectOverview() {
 
   if (isLoading) {
     return (
-      <div className="bg-neutral-50 flex items-center justify-center rounded-t min-h-page-container">
+      <div className="flex min-h-page-container items-center justify-center rounded-t bg-neutral-50">
         <LoaderSpinner />
       </div>
     )

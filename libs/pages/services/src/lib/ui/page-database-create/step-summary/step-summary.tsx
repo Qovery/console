@@ -24,7 +24,7 @@ export function StepSummary(props: StepSummaryProps) {
       <Heading className="mb-2">Ready to create your Database</Heading>
 
       <form className="space-y-10">
-        <p className="text-neutral-350 text-sm">
+        <p className="text-sm text-neutral-350">
           The basic database setup is done, you can now deploy your database or move forward with some advanced setup.
         </p>
         {props.generalData.mode === DatabaseModeEnum.MANAGED && (
@@ -44,14 +44,14 @@ export function StepSummary(props: StepSummaryProps) {
         )}
 
         <div className="flex flex-col gap-6">
-          <Section className="p-4 border rounded border-neutral-250 bg-neutral-100">
+          <Section className="rounded border border-neutral-250 bg-neutral-100 p-4">
             <div className="flex justify-between">
               <Heading>General information</Heading>
               <Button type="button" variant="plain" size="md" onClick={props.gotoGlobalInformation}>
                 <Icon className="text-base" iconName="gear-complex" />
               </Button>
             </div>
-            <ul className="space-y-2 text-neutral-400 text-sm list-none">
+            <ul className="list-none space-y-2 text-sm text-neutral-400">
               <li>
                 <strong className="font-medium">Name:</strong> {props.generalData.name}
               </li>
@@ -92,14 +92,14 @@ export function StepSummary(props: StepSummaryProps) {
             </ul>
           </Section>
 
-          <Section className="p-4 border rounded border-neutral-250 bg-neutral-100">
+          <Section className="rounded border border-neutral-250 bg-neutral-100 p-4">
             <div className="flex justify-between">
               <Heading>Resources</Heading>
               <Button type="button" variant="plain" size="md" onClick={props.gotoResources}>
                 <Icon className="text-base" iconName="gear-complex" />
               </Button>
             </div>
-            <ul className="space-y-2 text-neutral-400 text-sm list-none">
+            <ul className="list-none space-y-2 text-sm text-neutral-400">
               {props.generalData.mode !== DatabaseModeEnum.MANAGED ? (
                 <>
                   <li>

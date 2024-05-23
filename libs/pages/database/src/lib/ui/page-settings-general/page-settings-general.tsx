@@ -48,8 +48,8 @@ export function PageSettingsGeneral({
   }
 
   return (
-    <div className="flex flex-col justify-between w-full">
-      <Section className="p-8 max-w-content-with-navigation-left">
+    <div className="flex w-full flex-col justify-between">
+      <Section className="max-w-content-with-navigation-left p-8">
         <SettingsHeading
           title="General settings"
           description="These general settings allow you to set up the database name, type and version."
@@ -112,7 +112,7 @@ export function PageSettingsGeneral({
                 )}
               />
               {databaseVersionLoading ? (
-                <div className="flex justify-center mb-6">
+                <div className="mb-6 flex justify-center">
                   <LoaderSpinner className="w-4" />
                 </div>
               ) : (

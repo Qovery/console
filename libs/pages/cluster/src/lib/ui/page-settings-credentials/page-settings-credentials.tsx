@@ -15,8 +15,8 @@ export function PageSettingsCredentials(props: PageSettingsCredentialsProps) {
   const { formState } = useFormContext()
 
   return (
-    <div className="flex flex-col justify-between w-full">
-      <Section className="p-8 max-w-content-with-navigation-left">
+    <div className="flex w-full flex-col justify-between">
+      <Section className="max-w-content-with-navigation-left p-8">
         <SettingsHeading title="Credentials" />
         <form onSubmit={onSubmit}>
           <BlockContent title="Configured credentials">

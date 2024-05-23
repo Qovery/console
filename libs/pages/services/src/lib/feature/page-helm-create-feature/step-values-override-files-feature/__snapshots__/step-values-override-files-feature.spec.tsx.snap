@@ -9,10 +9,10 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
       class="flex w-full overflow-auto"
     >
       <section
-        class="bg-white pt-14 w-full overflow-auto"
+        class="w-full bg-white pt-14 overflow-auto"
       >
         <div
-          class="px-8 mx-auto relative pb-14 max-w-content-with-navigation-left"
+          class="relative mx-auto px-8 pb-14 max-w-content-with-navigation-left"
           data-testid="funnel-body-content"
         >
           <section
@@ -28,7 +28,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
             >
               <div>
                 <p
-                  class="text-neutral-350 text-sm"
+                  class="text-sm text-neutral-350"
                 >
                   Define the YAML file(s) to be applied as override to the default values.yaml delivered with the chart. It is highly recommended to store the override file(s) in a git repository.
                 </p>
@@ -36,7 +36,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
                   aria-controls="radix-:rd:"
                   aria-expanded="false"
                   aria-haspopup="dialog"
-                  class="text-sm cursor-pointer text-brand-500 hover:text-brand-600 transition font-medium"
+                  class="cursor-pointer text-sm font-medium text-brand-500 transition hover:text-brand-600"
                   data-state="closed"
                   type="button"
                 >
@@ -58,7 +58,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
                     data-testid="select"
                   >
                     <label
-                      class="!text-xs !translate-y-0"
+                      class="!translate-y-0 !text-xs"
                       for="File source"
                     >
                       File source
@@ -83,7 +83,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
                           class="input-select__value-container input-select__value-container--has-value css-1fdsijx-ValueContainer"
                         >
                           <span
-                            class="text-sm text-neutral-400 mr-1"
+                            class="mr-1 text-sm text-neutral-400"
                           >
                             Git repository
                           </span>
@@ -137,7 +137,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
                       value="GIT_REPOSITORY"
                     />
                     <div
-                      class="absolute top-1/2 -translate-y-1/2 right-4 pointer-events-none"
+                      class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2"
                     >
                       <span
                         class="icon-solid-angle-down shrink-0 text-sm text-neutral-400"
@@ -156,7 +156,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
                   Override from repository
                 </h2>
                 <p
-                  class="text-sm text-neutral-350 mb-6"
+                  class="mb-6 text-sm text-neutral-350"
                 >
                   Specify the repository and the path containing the override yaml file to be passed via the “-f” helm argument. More than one file can be used as override by adding them in the path field separated by a semi-colon. If you don’t have a repository, you can set the override manually or via a raw YAML file.
                 </p>
@@ -171,7 +171,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
                       data-testid="select"
                     >
                       <label
-                        class="text-sm translate-y-2 top-1.5"
+                        class="top-1.5 translate-y-2 text-sm"
                         for="Git repository"
                       >
                         Git repository
@@ -261,7 +261,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
                         value=""
                       />
                       <div
-                        class="absolute top-1/2 -translate-y-1/2 right-4 pointer-events-none"
+                        class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2"
                       >
                         <span
                           class="icon-solid-angle-down shrink-0 text-sm text-neutral-400"
@@ -302,7 +302,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
                             class=""
                           >
                             <label
-                              class="text-sm translate-y-2"
+                              class="translate-y-2 text-sm"
                               for="Overrides path"
                             >
                               Overrides path
@@ -320,7 +320,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
                       </div>
                     </div>
                     <p
-                      class="text-xs text-neutral-350 ml-4 mt-1"
+                      class="ml-4 mt-1 text-xs text-neutral-350"
                     >
                       Specify multiple paths by separating them with a semi-colon
                     </p>
@@ -387,10 +387,10 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a yaml 1`] = `
       class="flex w-full overflow-auto"
     >
       <section
-        class="bg-white pt-14 w-full overflow-auto"
+        class="w-full bg-white pt-14 overflow-auto"
       >
         <div
-          class="px-8 mx-auto relative pb-14 max-w-content-with-navigation-left"
+          class="relative mx-auto px-8 pb-14 max-w-content-with-navigation-left"
           data-testid="funnel-body-content"
         >
           <section
@@ -406,7 +406,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a yaml 1`] = `
             >
               <div>
                 <p
-                  class="text-neutral-350 text-sm"
+                  class="text-sm text-neutral-350"
                 >
                   Define the YAML file(s) to be applied as override to the default values.yaml delivered with the chart. It is highly recommended to store the override file(s) in a git repository.
                 </p>
@@ -414,7 +414,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a yaml 1`] = `
                   aria-controls="radix-:rk:"
                   aria-expanded="false"
                   aria-haspopup="dialog"
-                  class="text-sm cursor-pointer text-brand-500 hover:text-brand-600 transition font-medium"
+                  class="cursor-pointer text-sm font-medium text-brand-500 transition hover:text-brand-600"
                   data-state="closed"
                   type="button"
                 >
@@ -436,7 +436,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a yaml 1`] = `
                     data-testid="select"
                   >
                     <label
-                      class="!text-xs !translate-y-0"
+                      class="!translate-y-0 !text-xs"
                       for="File source"
                     >
                       File source
@@ -461,7 +461,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a yaml 1`] = `
                           class="input-select__value-container input-select__value-container--has-value css-1fdsijx-ValueContainer"
                         >
                           <span
-                            class="text-sm text-neutral-400 mr-1"
+                            class="mr-1 text-sm text-neutral-400"
                           >
                             Raw YAML
                           </span>
@@ -515,7 +515,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a yaml 1`] = `
                       value="YAML"
                     />
                     <div
-                      class="absolute top-1/2 -translate-y-1/2 right-4 pointer-events-none"
+                      class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2"
                     >
                       <span
                         class="icon-solid-angle-down shrink-0 text-sm text-neutral-400"
@@ -534,7 +534,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a yaml 1`] = `
                   Override with raw Yaml
                 </h2>
                 <p
-                  class="text-sm text-neutral-350 mb-6"
+                  class="mb-6 text-sm text-neutral-350"
                 >
                   You can define here the YAML containing the overrides you want to apply. The YAML will be stored by Qovery and can be updated later within the settings but no history will be retained.
                 </p>
@@ -542,14 +542,14 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a yaml 1`] = `
                   class="flex flex-col gap-3"
                 >
                   <div
-                    class="border border-neutral-250 bg-neutral-100 rounded mb-5 w-full"
+                    class="mb-5 rounded border border-neutral-250 bg-neutral-100 w-full"
                     data-testid="block-content"
                   >
                     <div
-                      class="flex items-center justify-between h-9 px-4 border-b border-neutral-250"
+                      class="flex h-9 items-center justify-between border-b border-neutral-250 px-4"
                     >
                       <h2
-                        class="font-medium text-neutral-400 text-ssm"
+                        class="text-ssm font-medium text-neutral-400"
                       >
                         Raw YAML
                       </h2>

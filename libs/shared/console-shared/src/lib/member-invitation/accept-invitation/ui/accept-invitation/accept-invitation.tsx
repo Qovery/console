@@ -7,15 +7,15 @@ export interface AcceptInvitationProps {
 
 export function AcceptInvitation(props: AcceptInvitationProps) {
   return (
-    <div className="fixed inset-0 pt-7 bg-neutral-600">
+    <div className="fixed inset-0 bg-neutral-600 pt-7">
       <img
-        className="w-[207px] shrink-0 block mx-auto mb-12"
+        className="mx-auto mb-12 block w-[207px] shrink-0"
         src="assets/logos/logo-white.svg"
         alt="Qovery logo white"
       />
-      <div className="text-center bg-white rounded-xl p-6 max-w-[568px] mx-auto">
+      <div className="mx-auto max-w-[568px] rounded-xl bg-white p-6 text-center">
         <InviteDetailsFeature />
-        <Button type="button" size="lg" className="w-full justify-center mt-2" onClick={() => props.onSubmit()}>
+        <Button type="button" size="lg" className="mt-2 w-full justify-center" onClick={() => props.onSubmit()}>
           Accept
         </Button>
       </div>

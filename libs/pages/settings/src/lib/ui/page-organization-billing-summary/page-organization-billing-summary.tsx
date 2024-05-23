@@ -38,9 +38,9 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
   const billingRecurrence = getBillingRecurrenceStr(props.currentCost?.renewal_at)
 
   return (
-    <div className="flex flex-col justify-between w-full max-w-[832px]">
+    <div className="flex w-full max-w-[832px] flex-col justify-between">
       <Section className="p-8">
-        <div className="flex justify-between mb-8">
+        <div className="mb-8 flex justify-between">
           <Heading className="mb-2">Plan details</Heading>
           <div className="flex gap-3">
             <Button variant="surface" color="neutral" size="lg" onClick={props.onShowUsageClick}>
@@ -56,10 +56,10 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
           </div>
         </div>
 
-        <div className="flex w-full gap-2 mb-3">
-          <div className="flex-1  h-[114px]  border  p-5 border-neutral-200 rounded">
-            <div className="text-neutral-350 text-xs mb-1 font-medium">Current plan</div>
-            <div className="text-neutral-400 font-bold text-sm mb-1">
+        <div className="mb-3 flex w-full gap-2">
+          <div className="h-[114px]  flex-1  rounded  border border-neutral-200 p-5">
+            <div className="mb-1 text-xs font-medium text-neutral-350">Current plan</div>
+            <div className="mb-1 text-sm font-bold text-neutral-400">
               <Skeleton height={20} width={100} show={!props.currentCost?.plan}>
                 <div className="h-5">
                   {props.currentCost?.plan ? upperCaseFirstLetter(props.currentCost?.plan) : 'N/A'} plan
@@ -70,20 +70,20 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
               See details
             </ExternalLink>
           </div>
-          <div className="flex-1  h-[114px]  border  p-5 border-neutral-200 rounded">
-            <div className="text-neutral-350 text-xs mb-1 font-medium">Current bill</div>
+          <div className="h-[114px]  flex-1  rounded  border border-neutral-200 p-5">
+            <div className="mb-1 text-xs font-medium text-neutral-350">Current bill</div>
             <div className="mb-2">
               <Skeleton height={20} width={100} show={!props.currentCost?.plan}>
                 <div className="h-5">
-                  <strong className="text-neutral-400 font-bold text-sm">
+                  <strong className="text-sm font-bold text-neutral-400">
                     {costToHuman(props.currentCost?.cost?.total || 0, props.currentCost?.cost?.currency_code || 'USD')}
                   </strong>{' '}
-                  <span className="text-neutral-350 text-xs">/ {billingRecurrence}</span>
+                  <span className="text-xs text-neutral-350">/ {billingRecurrence}</span>
                 </div>
               </Skeleton>
             </div>
             {props.currentCost?.plan !== PlanEnum.FREE && (
-              <p className="text-neutral-350 text-xs font-medium">
+              <p className="text-xs font-medium text-neutral-350">
                 Next invoice:{' '}
                 <strong className="text-neutral-400">
                   {props.currentCost?.renewal_at && dateToFormat(props.currentCost?.renewal_at, 'MMM dd, Y')}
@@ -93,20 +93,20 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
           </div>
 
           {props.currentCost?.plan !== PlanEnum.FREE && (
-            <div className="flex-1  h-[114px]  border  p-5 border-neutral-200 rounded">
-              <div className="text-neutral-350 text-xs mb-3 font-medium">Payment method</div>
+            <div className="h-[114px]  flex-1  rounded  border border-neutral-200 p-5">
+              <div className="mb-3 text-xs font-medium text-neutral-350">Payment method</div>
               <div className="mb-2">
                 <Skeleton height={20} width={100} show={props.creditCardLoading}>
                   <div className="flex gap-3">
                     {props.creditCard ? (
                       <>
                         <svg className="w-6" children={imagesCreditCart[props.creditCard.brand as keyof CardImages]} />
-                        <span className="neutral-400 font-bold text-xs flex-1">
+                        <span className="neutral-400 flex-1 text-xs font-bold">
                           **** {props.creditCard?.last_digit}
                         </span>
                       </>
                     ) : (
-                      <span className="text-xs text-neutral-400 font-bold">No credit card provided</span>
+                      <span className="text-xs font-bold text-neutral-400">No credit card provided</span>
                     )}
                   </div>
                 </Skeleton>

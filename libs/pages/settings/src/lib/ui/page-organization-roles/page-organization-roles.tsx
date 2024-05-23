@@ -47,12 +47,12 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
   const { organizationId = '' } = useParams()
 
   return (
-    <div className="flex flex-col justify-between w-full max-w-content-with-navigation-left">
+    <div className="flex w-full max-w-content-with-navigation-left flex-col justify-between">
       <Section className="p-8">
-        <div className="flex justify-between mb-8">
+        <div className="mb-8 flex justify-between">
           <div>
             <Heading className="mb-2">Manage your roles</Heading>
-            <p className="text-neutral-400 text-xs">Manage the existing custom roles or create a new one.</p>
+            <p className="text-xs text-neutral-400">Manage the existing custom roles or create a new one.</p>
           </div>
           <Button onClick={onAddRole} className="gap-2" size="lg">
             Add new role
@@ -60,7 +60,7 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
           </Button>
         </div>
         {(!roles || roles.length === 0) && loading ? (
-          <div data-testid="roles-loader" className="flex justify-center mt-5">
+          <div data-testid="roles-loader" className="mt-5 flex justify-center">
             <LoaderSpinner className="w-6" />
           </div>
         ) : (
@@ -72,7 +72,7 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
                   <div
                     data-testid={`role-${role.id}`}
                     key={role.id}
-                    className={`flex justify-between items-center px-5 py-4 border-b border-neutral-250 last:border-0 ${
+                    className={`flex items-center justify-between border-b border-neutral-250 px-5 py-4 last:border-0 ${
                       isDefaultRole(role.name) ? 'bg-neutral-150' : ''
                     }`}
                   >
@@ -84,10 +84,10 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
                         className="text-brand-500"
                       />
                       <div className="ml-4">
-                        <h2 className="flex text-xs text-neutral-400 font-medium">
+                        <h2 className="flex text-xs font-medium text-neutral-400">
                           {isDefaultRole(role.name) ? upperCaseFirstLetter(role.name) : role.name}
                         </h2>
-                        <p className="text-xs text-neutral-350 mt-1">
+                        <p className="mt-1 text-xs text-neutral-350">
                           {isDefaultRole(role.name) ? 'Basic Role' : 'Custom Role'}
                         </p>
                       </div>

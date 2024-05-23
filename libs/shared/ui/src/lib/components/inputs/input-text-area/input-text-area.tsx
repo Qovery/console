@@ -43,13 +43,13 @@ export function InputTextArea(props: InputTextAreaProps) {
         className={`input pb-0 pr-2 ${inputActions} ${hasError} ${isDisabled} ${hasLabelUp}`}
         ref={inputRef}
       >
-        <label htmlFor={label} className={`${hasFocus ? 'text-xs' : 'text-sm translate-y-2'}`}>
+        <label htmlFor={label} className={`${hasFocus ? 'text-xs' : 'translate-y-2 text-sm'}`}>
           {label}
         </label>
         <textarea
           name={name}
           id={label}
-          className="w-full min-h-[52px] mt-5 pr-3 bg-transparent appearance-none text-sm text-neutral-400 outline-0"
+          className="mt-5 min-h-[52px] w-full appearance-none bg-transparent pr-3 text-sm text-neutral-400 outline-0"
           value={currentValue}
           onChange={(e) => {
             if (onChange) onChange(e)
@@ -60,8 +60,8 @@ export function InputTextArea(props: InputTextAreaProps) {
           disabled={props.disabled}
         />
       </div>
-      {hint && <p className="px-4 mt-0.5 font-normal text-xs text-neutral-350">{hint}</p>}
-      {error && <p className="px-4 mt-1 font-medium text-xs text-red-500">{error}</p>}
+      {hint && <p className="mt-0.5 px-4 text-xs font-normal text-neutral-350">{hint}</p>}
+      {error && <p className="mt-1 px-4 text-xs font-medium text-red-500">{error}</p>}
     </div>
   )
 }

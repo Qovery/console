@@ -39,7 +39,7 @@ export function ApplicationSettingsHealthchecks({ ports, jobPort, isJob }: Appli
         },
         {
           content: (
-            <div className="flex justify-between w-full">
+            <div className="flex w-full justify-between">
               Liveness
               <Tooltip content="Verifies if the container is operating and it is not in a broken state. If the probe fails, the container is killed and restarted.">
                 <span>
@@ -51,7 +51,7 @@ export function ApplicationSettingsHealthchecks({ ports, jobPort, isJob }: Appli
         },
         {
           content: (
-            <div className="flex justify-between w-full">
+            <div className="flex w-full justify-between">
               Readiness
               <Tooltip content="Verifies if the application is ready to receive traffic. If the probe fails, no traffic is sent to the application.">
                 <span>
@@ -72,7 +72,7 @@ export function ApplicationSettingsHealthchecks({ ports, jobPort, isJob }: Appli
       cells: [
         {
           content: (
-            <div className="flex justify-between w-full">
+            <div className="flex w-full justify-between">
               Type
               <Tooltip content='Select the type of probe to use. "NONE" disables the probe, which we strongly advise against, as Kubernetes is then unable to check the state of your application.'>
                 <span>
@@ -90,7 +90,7 @@ export function ApplicationSettingsHealthchecks({ ports, jobPort, isJob }: Appli
               control={control}
               render={({ field }) => (
                 <InputSelectSmall
-                  className="shrink-0 grow flex-1"
+                  className="flex-1 shrink-0 grow"
                   inputClassName="!bg-white"
                   dataTestId="input-liveness-probe-current-type"
                   name={field.name}
@@ -113,7 +113,7 @@ export function ApplicationSettingsHealthchecks({ ports, jobPort, isJob }: Appli
               control={control}
               render={({ field }) => (
                 <InputSelectSmall
-                  className="shrink-0 grow flex-1"
+                  className="flex-1 shrink-0 grow"
                   inputClassName="!bg-white"
                   dataTestId="input-readiness-probe-current-type"
                   name={field.name}
@@ -137,7 +137,7 @@ export function ApplicationSettingsHealthchecks({ ports, jobPort, isJob }: Appli
       cells: [
         {
           content: (
-            <div className="flex justify-between w-full">
+            <div className="flex w-full justify-between">
               Port
               <Tooltip content="When configuring an HTTP probe, this advanced setting allows you to set the path to access on the HTTP/HTTPS server to perform the health check.">
                 <span>
@@ -157,7 +157,7 @@ export function ApplicationSettingsHealthchecks({ ports, jobPort, isJob }: Appli
               render={({ field }) =>
                 isJob ? (
                   <InputTextSmall
-                    className="shrink-0 grow flex-1"
+                    className="flex-1 shrink-0 grow"
                     dataTestId="input-job-liveness-probe-port"
                     name={field.name}
                     onChange={field.onChange}
@@ -167,7 +167,7 @@ export function ApplicationSettingsHealthchecks({ ports, jobPort, isJob }: Appli
                   />
                 ) : (
                   <InputSelectSmall
-                    className="shrink-0 grow flex-1"
+                    className="flex-1 shrink-0 grow"
                     inputClassName="!bg-white"
                     dataTestId="input-liveness-probe-port"
                     name={field.name}
@@ -197,7 +197,7 @@ export function ApplicationSettingsHealthchecks({ ports, jobPort, isJob }: Appli
               render={({ field }) =>
                 isJob ? (
                   <InputTextSmall
-                    className="shrink-0 grow flex-1"
+                    className="flex-1 shrink-0 grow"
                     dataTestId="input-job-readiness-probe-port"
                     name={field.name}
                     onChange={field.onChange}
@@ -207,7 +207,7 @@ export function ApplicationSettingsHealthchecks({ ports, jobPort, isJob }: Appli
                   />
                 ) : (
                   <InputSelectSmall
-                    className="shrink-0 grow flex-1"
+                    className="flex-1 shrink-0 grow"
                     inputClassName="!bg-white"
                     dataTestId="input-readiness-probe-port"
                     name={field.name}
@@ -236,7 +236,7 @@ export function ApplicationSettingsHealthchecks({ ports, jobPort, isJob }: Appli
       cells: [
         {
           content: (
-            <div className="flex justify-between w-full">
+            <div className="flex w-full justify-between">
               Path
               <Tooltip content="Allows to define the path to be used to run the probe check.">
                 <span>
@@ -255,7 +255,7 @@ export function ApplicationSettingsHealthchecks({ ports, jobPort, isJob }: Appli
               defaultValue="/"
               render={({ field, fieldState: { error } }) => (
                 <InputTextSmall
-                  className="shrink-0 grow flex-1"
+                  className="flex-1 shrink-0 grow"
                   dataTestId="input-liveness-probe-path"
                   name={field.name}
                   onChange={field.onChange}
@@ -277,7 +277,7 @@ export function ApplicationSettingsHealthchecks({ ports, jobPort, isJob }: Appli
               defaultValue="/"
               render={({ field, fieldState: { error } }) => (
                 <InputTextSmall
-                  className="shrink-0 grow flex-1"
+                  className="flex-1 shrink-0 grow"
                   dataTestId="input-readiness-probe-path"
                   name={field.name}
                   onChange={field.onChange}
@@ -299,7 +299,7 @@ export function ApplicationSettingsHealthchecks({ ports, jobPort, isJob }: Appli
       cells: [
         {
           content: (
-            <div className="flex justify-between w-full">
+            <div className="flex w-full justify-between">
               Command
               <Tooltip content='Allows you to specify the command to run within your container to verify the status of your application. Expected format: ["cat", "/tmp/healthy"].'>
                 <span>
@@ -317,7 +317,7 @@ export function ApplicationSettingsHealthchecks({ ports, jobPort, isJob }: Appli
               control={control}
               render={({ field, fieldState: { error } }) => (
                 <InputTextSmall
-                  className="shrink-0 grow flex-1"
+                  className="flex-1 shrink-0 grow"
                   dataTestId="input-liveness-probe-command"
                   name={field.name}
                   onChange={field.onChange}
@@ -338,7 +338,7 @@ export function ApplicationSettingsHealthchecks({ ports, jobPort, isJob }: Appli
               control={control}
               render={({ field, fieldState: { error } }) => (
                 <InputTextSmall
-                  className="shrink-0 grow flex-1"
+                  className="flex-1 shrink-0 grow"
                   dataTestId="input-readiness-probe-command"
                   name={field.name}
                   onChange={field.onChange}
@@ -360,7 +360,7 @@ export function ApplicationSettingsHealthchecks({ ports, jobPort, isJob }: Appli
       cells: [
         {
           content: (
-            <div className="flex justify-between w-full">
+            <div className="flex w-full justify-between">
               Service
               <Tooltip content="Allows you to specify a different service name to be used for the health check. This lets you use the same endpoint for different kinds of container health check.">
                 <span>
@@ -378,7 +378,7 @@ export function ApplicationSettingsHealthchecks({ ports, jobPort, isJob }: Appli
               control={control}
               render={({ field, fieldState: { error } }) => (
                 <InputTextSmall
-                  className="shrink-0 grow flex-1"
+                  className="flex-1 shrink-0 grow"
                   dataTestId="input-liveness-probe-service"
                   name={field.name}
                   onChange={field.onChange}
@@ -399,7 +399,7 @@ export function ApplicationSettingsHealthchecks({ ports, jobPort, isJob }: Appli
               control={control}
               render={({ field, fieldState: { error } }) => (
                 <InputTextSmall
-                  className="shrink-0 grow flex-1"
+                  className="flex-1 shrink-0 grow"
                   dataTestId="input-readiness-probe-service"
                   name={field.name}
                   onChange={field.onChange}
@@ -421,7 +421,7 @@ export function ApplicationSettingsHealthchecks({ ports, jobPort, isJob }: Appli
       cells: [
         {
           content: (
-            <div className="flex justify-between w-full">
+            <div className="flex w-full justify-between">
               Initial Delay (in seconds)
               <Tooltip content="Allows you to specify an interval, in seconds, between the application container start and the first check.">
                 <span>
@@ -440,7 +440,7 @@ export function ApplicationSettingsHealthchecks({ ports, jobPort, isJob }: Appli
               control={control}
               render={({ field, fieldState: { error } }) => (
                 <InputTextSmall
-                  className="shrink-0 grow flex-1"
+                  className="flex-1 shrink-0 grow"
                   dataTestId="input-liveness-probe-delay"
                   name={field.name}
                   onChange={field.onChange}
@@ -462,7 +462,7 @@ export function ApplicationSettingsHealthchecks({ ports, jobPort, isJob }: Appli
               control={control}
               render={({ field, fieldState: { error } }) => (
                 <InputTextSmall
-                  className="shrink-0 grow flex-1"
+                  className="flex-1 shrink-0 grow"
                   dataTestId="input-readiness-probe-delay"
                   name={field.name}
                   onChange={field.onChange}
@@ -481,7 +481,7 @@ export function ApplicationSettingsHealthchecks({ ports, jobPort, isJob }: Appli
       cells: [
         {
           content: (
-            <div className="flex justify-between w-full">
+            <div className="flex w-full justify-between">
               Period (in seconds)
               <Tooltip content="Allows you to specify an interval, in seconds, between each liveness probe.">
                 <span>
@@ -500,7 +500,7 @@ export function ApplicationSettingsHealthchecks({ ports, jobPort, isJob }: Appli
               control={control}
               render={({ field, fieldState: { error } }) => (
                 <InputTextSmall
-                  className="shrink-0 grow flex-1"
+                  className="flex-1 shrink-0 grow"
                   dataTestId="input-liveness-probe-period"
                   name={field.name}
                   onChange={field.onChange}
@@ -522,7 +522,7 @@ export function ApplicationSettingsHealthchecks({ ports, jobPort, isJob }: Appli
               rules={{ required: 'This field is required' }}
               render={({ field, fieldState: { error } }) => (
                 <InputTextSmall
-                  className="shrink-0 grow flex-1"
+                  className="flex-1 shrink-0 grow"
                   dataTestId="input-readiness-probe-period"
                   name={field.name}
                   onChange={field.onChange}
@@ -541,7 +541,7 @@ export function ApplicationSettingsHealthchecks({ ports, jobPort, isJob }: Appli
       cells: [
         {
           content: (
-            <div className="flex justify-between w-full">
+            <div className="flex w-full justify-between">
               Timeout (in seconds)
               <Tooltip content="Allows you to specify the interval, in seconds, after which the probe times out.">
                 <span>
@@ -560,7 +560,7 @@ export function ApplicationSettingsHealthchecks({ ports, jobPort, isJob }: Appli
               control={control}
               render={({ field, fieldState: { error } }) => (
                 <InputTextSmall
-                  className="shrink-0 grow flex-1"
+                  className="flex-1 shrink-0 grow"
                   dataTestId="input-liveness-probe-timeout"
                   name={field.name}
                   onChange={field.onChange}
@@ -582,7 +582,7 @@ export function ApplicationSettingsHealthchecks({ ports, jobPort, isJob }: Appli
               control={control}
               render={({ field, fieldState: { error } }) => (
                 <InputTextSmall
-                  className="shrink-0 grow flex-1"
+                  className="flex-1 shrink-0 grow"
                   dataTestId="input-readiness-probe-timeout"
                   name={field.name}
                   onChange={field.onChange}
@@ -601,7 +601,7 @@ export function ApplicationSettingsHealthchecks({ ports, jobPort, isJob }: Appli
       cells: [
         {
           content: (
-            <div className="flex justify-between w-full">
+            <div className="flex w-full justify-between">
               Success Threshold
               <Tooltip content="Allows you to specify how many consecutive successes are needed, as a minimum, for the probe to be considered successful after having failed previously. Kubernetes force this value to 1">
                 <span>
@@ -619,7 +619,7 @@ export function ApplicationSettingsHealthchecks({ ports, jobPort, isJob }: Appli
               control={control}
               render={({ field, fieldState: { error } }) => (
                 <InputTextSmall
-                  className="shrink-0 grow flex-1"
+                  className="flex-1 shrink-0 grow"
                   disabled
                   dataTestId="input-liveness-probe-threshold"
                   name={field.name}
@@ -641,7 +641,7 @@ export function ApplicationSettingsHealthchecks({ ports, jobPort, isJob }: Appli
               control={control}
               render={({ field, fieldState: { error } }) => (
                 <InputTextSmall
-                  className="shrink-0 grow flex-1"
+                  className="flex-1 shrink-0 grow"
                   disabled
                   dataTestId="input-readiness-probe-threshold"
                   name={field.name}
@@ -661,7 +661,7 @@ export function ApplicationSettingsHealthchecks({ ports, jobPort, isJob }: Appli
       cells: [
         {
           content: (
-            <div className="flex justify-between w-full">
+            <div className="flex w-full justify-between">
               Failure Threshold
               <Tooltip content="Allows you to specify how many consecutive failures are needed, as a minimum, for the probe to be considered failed after having succeeded previously.">
                 <span>
@@ -680,7 +680,7 @@ export function ApplicationSettingsHealthchecks({ ports, jobPort, isJob }: Appli
               control={control}
               render={({ field, fieldState: { error } }) => (
                 <InputTextSmall
-                  className="shrink-0 grow flex-1"
+                  className="flex-1 shrink-0 grow"
                   dataTestId="input-liveness-probe-fail-threshold"
                   name={field.name}
                   onChange={field.onChange}
@@ -702,7 +702,7 @@ export function ApplicationSettingsHealthchecks({ ports, jobPort, isJob }: Appli
               control={control}
               render={({ field, fieldState: { error } }) => (
                 <InputTextSmall
-                  className="shrink-0 grow flex-1"
+                  className="flex-1 shrink-0 grow"
                   dataTestId="input-readiness-probe-fail-threshold"
                   name={field.name}
                   onChange={field.onChange}
@@ -724,7 +724,7 @@ export function ApplicationSettingsHealthchecks({ ports, jobPort, isJob }: Appli
   return (
     <TableEdition
       key={`${typeLiveness}.${typeReadiness}`}
-      className="bg-neutral-100 font-medium text-ssm mb-5"
+      className="mb-5 bg-neutral-100 text-ssm font-medium"
       tableBody={table}
     />
   )

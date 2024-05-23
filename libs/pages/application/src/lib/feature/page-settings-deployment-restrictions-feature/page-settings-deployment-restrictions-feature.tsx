@@ -37,8 +37,8 @@ export function PageSettingsDeploymentRestrictionsFeature() {
   const isValidServiceType = serviceType === 'APPLICATION' || serviceType === 'JOB' || serviceType === 'HELM'
 
   return (
-    <div className="flex flex-col justify-between w-full">
-      <Section className="p-8 max-w-content-with-navigation-left">
+    <div className="flex w-full flex-col justify-between">
+      <Section className="max-w-content-with-navigation-left p-8">
         <SettingsHeading
           title="Deployment Restrictions"
           description="Specify which changes in your repository should trigger or not an auto-deploy of your application"
@@ -123,13 +123,13 @@ function PageSettingsDeploymentRestrictionsFeatureInner({
         {deploymentRestrictions.map((deploymentRestriction) => {
           const { id, type, mode, value } = deploymentRestriction
           return (
-            <div key={id} className="flex justify-between w-full items-center gap-3">
-              <InputText name={`mode_${id}`} className="shrink-0 grow flex-1" label="Mode" value={mode} disabled />
-              <InputText name={`type_${id}`} className="shrink-0 grow flex-1" label="Type" value={type} disabled />
-              <InputText name={`value_${id}`} className="shrink-0 grow flex-1" label="Value" value={value} disabled />
+            <div key={id} className="flex w-full items-center justify-between gap-3">
+              <InputText name={`mode_${id}`} className="flex-1 shrink-0 grow" label="Mode" value={mode} disabled />
+              <InputText name={`type_${id}`} className="flex-1 shrink-0 grow" label="Type" value={type} disabled />
+              <InputText name={`value_${id}`} className="flex-1 shrink-0 grow" label="Value" value={value} disabled />
               <Button
                 data-testid="edit"
-                className="w-[52px] h-[52px] justify-center"
+                className="h-[52px] w-[52px] justify-center"
                 variant="surface"
                 color="neutral"
                 onClick={() => handleEdit(deploymentRestriction)}
@@ -138,7 +138,7 @@ function PageSettingsDeploymentRestrictionsFeatureInner({
               </Button>
               <Button
                 data-testid="remove"
-                className="w-[52px] h-[52px] justify-center"
+                className="h-[52px] w-[52px] justify-center"
                 variant="surface"
                 color="neutral"
                 onClick={() => handleDelete(deploymentRestriction)}

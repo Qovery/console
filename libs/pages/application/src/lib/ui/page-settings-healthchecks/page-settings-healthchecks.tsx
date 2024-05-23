@@ -27,8 +27,8 @@ export function PageSettingsHealthchecks({
   const { formState } = useFormContext()
 
   return (
-    <div className="flex flex-col justify-between w-full text-ssm">
-      <Section className="p-8 max-w-content-with-navigation-left">
+    <div className="flex w-full flex-col justify-between text-ssm">
+      <Section className="max-w-content-with-navigation-left p-8">
         {environmentMode === EnvironmentModeEnum.PRODUCTION && minRunningInstances === 1 && (
           <Callout.Root color="yellow" className="mb-2">
             <Callout.Icon>

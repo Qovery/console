@@ -54,7 +54,7 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
   )
 
   const contentTabs = (
-    <div className="flex justify-center items-center px-5 h-14">
+    <div className="flex h-14 items-center justify-center px-5">
       {matchEnvVariableRoute ? (
         <>
           <ShowAllVariablesToggle className="mr-2" />
@@ -93,7 +93,7 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
       <Section className="flex-1">
         <Header title={project?.name} icon={IconEnum.ENVIRONMENT} iconClassName="w-16" />
         <Tabs items={tabsItems} contentRight={!isDeploymentRulesTab && contentTabs} />
-        <div className="flex-grow flex-col flex">{children}</div>
+        <div className="flex flex-grow flex-col">{children}</div>
       </Section>
     </VariablesProvider>
   )

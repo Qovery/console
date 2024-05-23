@@ -51,8 +51,8 @@ export function ClusterGeneralSettings(props: ClusterGeneralSettingsProps) {
           <div
             className={`${
               !fromDetail
-                ? 'rounded border border-neutral-200 p-4 mb-3'
-                : 'relative pt-5 before:content-[""] before:block before:w-[calc(100%+40px)] before:h-[1px] before:bg-neutral-250 before:absolute before:top-0 before:-left-5'
+                ? 'mb-3 rounded border border-neutral-200 p-4'
+                : 'relative pt-5 before:absolute before:-left-5 before:top-0 before:block before:h-[1px] before:w-[calc(100%+40px)] before:bg-neutral-250 before:content-[""]'
             }`}
           >
             <InputToggle

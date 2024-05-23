@@ -29,7 +29,7 @@ export function CrudModal({ onClose, onSubmit, isEdit, isLoading }: CrudModalPro
       howItWorks={
         <>
           <p>Two modes can be selected:</p>
-          <ul className="list-disc ml-4">
+          <ul className="ml-4 list-disc">
             <li>EXCLUDE: commits on the file or folder defined in the "Value" field will be ignored</li>
             <li>MATCH: only commits on the file or folder defined in the "Value" field will trigger a deployment</li>
           </ul>

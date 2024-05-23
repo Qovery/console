@@ -46,7 +46,7 @@ export function ClusterDeleteModal({ cluster }: ClusterDeleteModalProps) {
       }}
       isDelete
     >
-      <div className="border border-red-500 rounded bg-red-50 text-sm text-neutral-400 p-4 mb-6">
+      <div className="mb-6 rounded border border-red-500 bg-red-50 p-4 text-sm text-neutral-400">
         {cluster.kubernetes !== 'SELF_MANAGED' && (
           <InputSelect
             className="mb-3"

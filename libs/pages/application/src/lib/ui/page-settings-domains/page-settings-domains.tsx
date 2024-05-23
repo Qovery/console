@@ -12,8 +12,8 @@ export interface PageSettingsDomainsProps {
 
 export function PageSettingsDomains(props: PageSettingsDomainsProps) {
   return (
-    <div className="justify-between w-full">
-      <Section className="p-8  max-w-content-with-navigation-left">
+    <div className="w-full justify-between">
+      <Section className="max-w-content-with-navigation-left  p-8">
         <SettingsHeading title="Domain" description="Add custom domains to your service.">
           <Button size="lg" variant="solid" color="brand" onClick={() => props.onAddDomain()}>
             Add Domain
@@ -30,14 +30,14 @@ export function PageSettingsDomains(props: PageSettingsDomainsProps) {
               props.domains.map((customDomain, i) => (
                 <div
                   key={`domain-${customDomain.domain}-${customDomain.id}`}
-                  className={`flex justify-between w-full items-center gap-3 ${
+                  className={`flex w-full items-center justify-between gap-3 ${
                     props.domains && props.domains.length !== i + 1 ? 'mb-5' : ''
                   }`}
                   data-testid="form-row"
                 >
                   <InputText
                     name={`domain-${customDomain.domain}-${customDomain.id}`}
-                    className="shrink-0 grow flex-1"
+                    className="flex-1 shrink-0 grow"
                     value={customDomain.domain}
                     label="Default Domain"
                     disabled
@@ -47,7 +47,7 @@ export function PageSettingsDomains(props: PageSettingsDomainsProps) {
                     variant="outline"
                     color="neutral"
                     size="lg"
-                    className="justify-center w-[52px] h-[52px]"
+                    className="h-[52px] w-[52px] justify-center"
                     onClick={() => props.onEdit(customDomain)}
                   >
                     <Icon iconName="gear" />
@@ -57,7 +57,7 @@ export function PageSettingsDomains(props: PageSettingsDomainsProps) {
                     variant="outline"
                     color="neutral"
                     size="lg"
-                    className="justify-center w-[52px] h-[52px]"
+                    className="h-[52px] w-[52px] justify-center"
                     onClick={() => props.onDelete(customDomain)}
                   >
                     <Icon iconName="trash" />

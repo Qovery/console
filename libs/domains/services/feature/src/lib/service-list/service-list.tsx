@@ -89,16 +89,16 @@ function ServiceNameCell({ service, environment }: { service: AnyService; enviro
 
   return (
     <div className="flex items-center justify-between">
-      <span className="flex items-center gap-4 font-medium text-sm text-neutral-400 min-w-0">
+      <span className="flex min-w-0 items-center gap-4 text-sm font-medium text-neutral-400">
         <Icon name={getServiceIcon(service)} width="20" />
         {match(service)
           .with({ serviceType: 'DATABASE' }, (db) => {
             return (
-              <span className="flex flex-col shrink truncate min-w-0 pr-2">
+              <span className="flex min-w-0 shrink flex-col truncate pr-2">
                 <span className="truncate">
                   <Truncate text={service.name} truncateLimit={90} />
                 </span>
-                <span className="text-xs text-neutral-350 font-normal">
+                <span className="text-xs font-normal text-neutral-350">
                   {match(db.mode)
                     .with('CONTAINER', () => 'Container DB')
                     .with('MANAGED', () => 'Cloud Managed DB')
@@ -108,11 +108,11 @@ function ServiceNameCell({ service, environment }: { service: AnyService; enviro
             )
           })
           .with({ serviceType: 'JOB' }, (job) => (
-            <span className="flex flex-col shrink truncate min-w-0 pr-2">
+            <span className="flex min-w-0 shrink flex-col truncate pr-2">
               <span className="truncate">
                 <Truncate text={service.name} truncateLimit={90} />
               </span>
-              <span className="text-xs text-neutral-350 font-normal">
+              <span className="text-xs font-normal text-neutral-350">
                 {match(job)
                   .with(
                     { job_type: 'CRON' },
@@ -131,7 +131,7 @@ function ServiceNameCell({ service, environment }: { service: AnyService; enviro
             </span>
           ))
           .otherwise(() => (
-            <span className="flex flex-col shrink truncate min-w-0 pr-2">
+            <span className="flex min-w-0 shrink flex-col truncate pr-2">
               <span className="truncate">
                 <Truncate text={service.name} truncateLimit={90} />
               </span>
@@ -156,7 +156,7 @@ function ServiceNameCell({ service, environment }: { service: AnyService; enviro
           </ServiceLinksPopover>
         </div>
       </span>
-      <div className="flex items-center gap-4 shrink-0">
+      <div className="flex shrink-0 items-center gap-4">
         {'auto_deploy' in service && service.auto_deploy && (
           <Tooltip content="Auto-deploy">
             <span>
@@ -245,7 +245,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
           </div>
         ),
         cell: ({ row }) => (
-          <label className="absolute flex items-center inset-y-0 left-0 p-4" onClick={(e) => e.stopPropagation()}>
+          <label className="absolute inset-y-0 left-0 flex items-center p-4" onClick={(e) => e.stopPropagation()}>
             <Checkbox
               checked={row.getIsSelected()}
               disabled={!row.getCanSelect()}
@@ -306,7 +306,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
                 as="button"
                 to={link}
                 onClick={(e) => e.stopPropagation()}
-                className="text-sm gap-2 whitespace-nowrap"
+                className="gap-2 whitespace-nowrap text-sm"
                 size="md"
                 color="neutral"
                 variant="outline"
@@ -335,7 +335,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
                 as="button"
                 to={ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(service.id)}
                 onClick={(e) => e.stopPropagation()}
-                className="text-sm gap-2 whitespace-nowrap"
+                className="gap-2 whitespace-nowrap text-sm"
                 size="md"
                 color="neutral"
                 variant="outline"
@@ -387,7 +387,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
             )
           const containerInfo = (containerImage?: Pick<ContainerResponse, 'image_name' | 'tag' | 'registry'>) =>
             containerImage && (
-              <div className="flex flex-col gap-1 ml-7" onClick={(e) => e.stopPropagation()}>
+              <div className="ml-7 flex flex-col gap-1" onClick={(e) => e.stopPropagation()}>
                 <span className="inline-block">
                   <ExternalLink
                     as="button"
@@ -396,7 +396,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
                     color="neutral"
                     variant="surface"
                     size="xs"
-                    className="items-center gap-1 capitalize whitespace-nowrap"
+                    className="items-center gap-1 whitespace-nowrap capitalize"
                   >
                     <Icon width={16} name={containerRegistryKindToIcon(containerImage.registry.kind)} />
                     <Truncate text={containerImage.registry.name.toLowerCase()} truncateLimit={18} />
@@ -413,15 +413,15 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
 
           const datasourceInfo = (datasource?: Pick<Database, 'accessibility' | 'mode' | 'type' | 'version'>) =>
             datasource && (
-              <Badge size="xs" variant="surface" className="items-center gap-1 ml-7 whitespace-nowrap">
-                <Icon name={datasource.type} className="max-w-[12px] max-h-[12px]" height={12} width={12} />
+              <Badge size="xs" variant="surface" className="ml-7 items-center gap-1 whitespace-nowrap">
+                <Icon name={datasource.type} className="max-h-[12px] max-w-[12px]" height={12} width={12} />
                 {datasource.version}
               </Badge>
             )
 
           const helmInfo = (helmRepository?: HelmResponseAllOfSourceOneOf1Repository) =>
             helmRepository && (
-              <div className="flex flex-col gap-1 ml-7" onClick={(e) => e.stopPropagation()}>
+              <div className="ml-7 flex flex-col gap-1" onClick={(e) => e.stopPropagation()}>
                 <span className="inline-block">
                   <ExternalLink
                     as="button"
@@ -541,14 +541,14 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
       items: [
         {
           name: 'Create application',
-          contentLeft: <Icon iconName="layer-group" className="text-brand-500 text-sm" />,
+          contentLeft: <Icon iconName="layer-group" className="text-sm text-brand-500" />,
           onClick: () => {
             navigate(`${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_APPLICATION_CREATION_URL}`)
           },
         },
         {
           name: 'Create database',
-          contentLeft: <Icon iconName="database" className="text-brand-500 text-sm" />,
+          contentLeft: <Icon iconName="database" className="text-sm text-brand-500" />,
           onClick: () => {
             navigate(`${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_DATABASE_CREATION_URL}`)
           },
@@ -556,7 +556,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
         {
           name: 'Create lifecycle job',
           contentLeft: (
-            <Icon name={IconEnum.LIFECYCLE_JOB_STROKE} width="14" height="16" className="text-brand-500 text-sm" />
+            <Icon name={IconEnum.LIFECYCLE_JOB_STROKE} width="14" height="16" className="text-sm text-brand-500" />
           ),
           onClick: () => {
             navigate(`${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_LIFECYCLE_CREATION_URL}`)
@@ -565,7 +565,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
         {
           name: 'Create cronjob',
           contentLeft: (
-            <Icon name={IconEnum.CRON_JOB_STROKE} width="14" height="16" className="text-brand-500 text-sm" />
+            <Icon name={IconEnum.CRON_JOB_STROKE} width="14" height="16" className="text-sm text-brand-500" />
           ),
           onClick: () => {
             navigate(`${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_CRONJOB_CREATION_URL}`)
@@ -573,7 +573,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
         },
         {
           name: 'Create helm',
-          contentLeft: <Icon name={IconEnum.HELM_OFFICIAL} width="14" height="16" className="text-brand-500 text-sm" />,
+          contentLeft: <Icon name={IconEnum.HELM_OFFICIAL} width="14" height="16" className="text-sm text-brand-500" />,
           onClick: () => {
             navigate(`${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_HELM_CREATION_URL}`)
           },
@@ -591,7 +591,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
       <EmptyState
         title="No service found"
         description="You can create a service from the button on the top"
-        className="bg-white rounded-t-sm mt-2 pt-10"
+        className="mt-2 rounded-t-sm bg-white pt-10"
       >
         <PostHogFeature
           flag="service-dropdown-list"
@@ -600,7 +600,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
             <Link
               as="button"
               size="lg"
-              className="gap-2 mt-5"
+              className="mt-5 gap-2"
               to={`${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_NEW_URL}`}
             >
               New service
@@ -610,7 +610,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
         >
           <Menu
             trigger={
-              <Button size="lg" className="gap-2 mt-5">
+              <Button size="lg" className="mt-5 gap-2">
                 New service
                 <Icon iconName="circle-plus" />
               </Button>
@@ -626,8 +626,8 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
   const selectedRows = table.getSelectedRowModel().rows.map(({ original }) => original)
 
   return (
-    <div className="flex flex-col grow justify-between">
-      <Table.Root className={twMerge('w-full text-xs min-w-[800px]', className)} {...props}>
+    <div className="flex grow flex-col justify-between">
+      <Table.Root className={twMerge('w-full min-w-[800px] text-xs', className)} {...props}>
         <Table.Header>
           {table.getHeaderGroups().map((headerGroup) => (
             <Table.Row key={headerGroup.id}>
@@ -668,7 +668,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
             <Fragment key={row.id}>
               <Table.Row
                 className={twMerge(
-                  'hover:bg-neutral-100 h-16 cursor-pointer',
+                  'h-16 cursor-pointer hover:bg-neutral-100',
                   row.getIsSelected() ? 'bg-neutral-100' : ''
                 )}
                 onClick={() => {

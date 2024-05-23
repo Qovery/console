@@ -13,7 +13,7 @@ export function Hit({ hit: item }: any) {
     <ExternalLink href={item.url} withIcon={false}>
       {item.hierarchy[item.type] && item.type === 'lvl1' && (
         <Wrapper>
-          <Snippet className="font-medium text-sm [&>mark]:text-sky-500" hit={item} attribute="hierarchy.lvl1" />
+          <Snippet className="text-sm font-medium [&>mark]:text-sky-500" hit={item} attribute="hierarchy.lvl1" />
           {item.content && (
             <Snippet className="text-xs text-sky-400 [&>mark]:text-sky-400" hit={item} attribute="content" />
           )}
@@ -28,7 +28,7 @@ export function Hit({ hit: item }: any) {
           item.type === 'lvl6') && (
           <Wrapper>
             <Snippet
-              className="font-medium text-sm [&>mark]:text-sky-500"
+              className="text-sm font-medium [&>mark]:text-sky-500"
               hit={item}
               attribute={`hierarchy.${item.type}`}
             />
@@ -38,7 +38,7 @@ export function Hit({ hit: item }: any) {
 
       {item.type === 'content' && (
         <Wrapper>
-          <Snippet className="font-medium text-sm [&>mark]:text-sky-500" hit={item} attribute="content" />
+          <Snippet className="text-sm font-medium [&>mark]:text-sky-500" hit={item} attribute="content" />
           <Snippet className="text-xs text-sky-400 [&>mark]:text-sky-400" hit={item} attribute="hierarchy.lvl1" />
         </Wrapper>
       )}

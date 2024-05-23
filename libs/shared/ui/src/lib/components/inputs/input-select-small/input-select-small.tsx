@@ -48,14 +48,14 @@ export function InputSelectSmall(props: InputSelectSmallProps) {
   }, [defaultValue])
 
   return (
-    <div className={`${className} relative flex gap-4 items-center`}>
-      {label && <label className="text-sm shrink-0">{label}</label>}
+    <div className={`${className} relative flex items-center gap-4`}>
+      {label && <label className="shrink-0 text-sm">{label}</label>}
       <select
         data-testid={dataTestId || 'input-select-small'}
         name={name}
         value={value}
         className={twMerge(
-          'h-9 px-4 py-2 cursor-pointer pl-2 pr-6 pt-2 pb-2 bg-neutral-100 border border-neutral-250 text-neutral-400 rounded text-sm appearance-none w-full',
+          'h-9 w-full cursor-pointer appearance-none rounded border border-neutral-250 bg-neutral-100 px-4 py-2 pb-2 pl-2 pr-6 pt-2 text-sm text-neutral-400',
           inputClassName
         )}
         onChange={(e) => onClickItem(e.target.value)}
@@ -68,7 +68,7 @@ export function InputSelectSmall(props: InputSelectSmallProps) {
       </select>
       <Icon
         name={IconAwesomeEnum.CHEVRON_DOWN}
-        className="absolute top-2.5 right-4 text-xs text-neutral-400 leading-3 translate-y-0.5 pointer-events-none"
+        className="pointer-events-none absolute right-4 top-2.5 translate-y-0.5 text-xs leading-3 text-neutral-400"
       />
     </div>
   )

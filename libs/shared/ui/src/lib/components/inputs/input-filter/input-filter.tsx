@@ -53,7 +53,7 @@ export function InputFilter({ name, nameKey, options, onChange, defaultValue, is
           ) : (
             <Button type="button" variant="surface" color="neutral">
               {isLoading ? (
-                <div className="flex justify-center w-12">
+                <div className="flex w-12 justify-center">
                   <LoaderSpinner theme="dark" />
                 </div>
               ) : (
@@ -61,7 +61,7 @@ export function InputFilter({ name, nameKey, options, onChange, defaultValue, is
                   {options.find((option: Value) => option.value === currentValue)?.label}
                   <span
                     data-testid="clear-btn"
-                    className="px-1 py-1 relative left-1"
+                    className="relative left-1 px-1 py-1"
                     role="button"
                     onClick={(event) => {
                       event.stopPropagation()

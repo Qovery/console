@@ -11,8 +11,8 @@ export interface PageSettingsStorageProps {
 
 export function PageSettingsStorage(props: PageSettingsStorageProps) {
   return (
-    <div className="flex flex-col justify-between w-full">
-      <Section className="p-8 max-w-content-with-navigation-left">
+    <div className="flex w-full flex-col justify-between">
+      <Section className="max-w-content-with-navigation-left p-8">
         <SettingsHeading title="Storage" description="Add persistent local storage for your application.">
           <Button className="gap-2" size="lg" onClick={() => props.onAddStorage()}>
             Add Storage
@@ -25,14 +25,14 @@ export function PageSettingsStorage(props: PageSettingsStorageProps) {
             {props.storages.map((storage, i) => (
               <div
                 key={storage.id}
-                className={`flex justify-between w-full items-center gap-3 ${
+                className={`flex w-full items-center justify-between gap-3 ${
                   props.storages.length !== i + 1 ? 'mb-5' : ''
                 }`}
                 data-testid="form-row"
               >
                 <InputText
                   name={'size_' + storage.id}
-                  className="shrink-0 grow flex-1"
+                  className="flex-1 shrink-0 grow"
                   value={storage.size.toString()}
                   label="Size in GiB"
                   disabled
@@ -40,21 +40,21 @@ export function PageSettingsStorage(props: PageSettingsStorageProps) {
 
                 <InputText
                   name={'path_' + storage.id}
-                  className="shrink-0 grow flex-1"
+                  className="flex-1 shrink-0 grow"
                   value={storage.mount_point}
                   label="Path"
                   disabled
                 />
                 <InputText
                   name={'type_' + storage.id}
-                  className="shrink-0 grow flex-1"
+                  className="flex-1 shrink-0 grow"
                   value={storage.type}
                   label="Type"
                   disabled
                 />
                 <Button
                   data-testid="edit"
-                  className="w-[52px] h-[52px] justify-center"
+                  className="h-[52px] w-[52px] justify-center"
                   variant="surface"
                   color="neutral"
                   onClick={() => props.onEdit(storage)}
@@ -63,7 +63,7 @@ export function PageSettingsStorage(props: PageSettingsStorageProps) {
                 </Button>
                 <Button
                   data-testid="remove"
-                  className="w-[52px] h-[52px] justify-center"
+                  className="h-[52px] w-[52px] justify-center"
                   variant="surface"
                   color="neutral"
                   onClick={() => props.onRemove(storage)}

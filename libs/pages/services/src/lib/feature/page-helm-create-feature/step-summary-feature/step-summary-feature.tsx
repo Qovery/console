@@ -142,13 +142,13 @@ export function StepSummaryFeature() {
         <Heading className="mb-2">Ready to create your Helm chart</Heading>
 
         <form className="space-y-10">
-          <p className="text-neutral-350 text-sm">
+          <p className="text-sm text-neutral-350">
             The basic application setup is done, you can now deploy your application or move forward with some advanced
             setup.
           </p>
 
           <div className="flex flex-col gap-6">
-            <Section className="p-4 border rounded border-neutral-250 bg-neutral-100">
+            <Section className="rounded border border-neutral-250 bg-neutral-100 p-4">
               <div className="flex justify-between">
                 <Heading>General information</Heading>
                 <Button
@@ -160,7 +160,7 @@ export function StepSummaryFeature() {
                   <Icon className="text-base" iconName="gear-complex" />
                 </Button>
               </div>
-              <ul className="space-y-2 text-neutral-400 text-sm list-none">
+              <ul className="list-none space-y-2 text-sm text-neutral-400">
                 <li>
                   <strong className="font-medium">Name:</strong> {generalData.name}
                 </li>
@@ -174,7 +174,7 @@ export function StepSummaryFeature() {
               </ul>
               <hr className="my-4 border-t border-dashed border-neutral-250" />
               {generalData.source_provider === 'GIT' && (
-                <ul className="space-y-2 text-neutral-400 text-sm list-none">
+                <ul className="list-none space-y-2 text-sm text-neutral-400">
                   <li>
                     <strong className="font-medium">Repository:</strong> {generalData.repository}
                   </li>
@@ -188,7 +188,7 @@ export function StepSummaryFeature() {
               )}
 
               {generalData.source_provider === 'HELM_REPOSITORY' && (
-                <ul className="space-y-2 text-neutral-400 text-sm list-none">
+                <ul className="list-none space-y-2 text-sm text-neutral-400">
                   <li>
                     <strong className="font-medium">Repository:</strong>{' '}
                     {helmRepositories.find(({ id }) => id === generalData.repository)?.name}
@@ -202,7 +202,7 @@ export function StepSummaryFeature() {
                 </ul>
               )}
               <hr className="my-4 border-t border-dashed border-neutral-250" />
-              <ul className="space-y-2 text-neutral-400 text-sm list-none">
+              <ul className="list-none space-y-2 text-sm text-neutral-400">
                 <li>
                   <span className="font-medium">Helm parameters:</span> {generalData.arguments?.toString()}
                 </li>
@@ -237,7 +237,7 @@ export function StepSummaryFeature() {
             </Section>
 
             {(valuesOverrideFileData.type !== 'NONE' || valuesOverrideArgumentData.arguments.length > 0) && (
-              <Section className="p-4 border rounded border-neutral-250 bg-neutral-100">
+              <Section className="rounded border border-neutral-250 bg-neutral-100 p-4">
                 <div className="flex justify-between">
                   <Heading>Values</Heading>
                   <Button
@@ -250,7 +250,7 @@ export function StepSummaryFeature() {
                   </Button>
                 </div>
                 {valuesOverrideFileData.type === 'GIT_REPOSITORY' && (
-                  <ul className="space-y-2 text-neutral-400 text-sm list-none">
+                  <ul className="list-none space-y-2 text-sm text-neutral-400">
                     <li>
                       <strong className="font-medium">From Git Provider:</strong> {valuesOverrideFileData.provider}
                     </li>
@@ -267,7 +267,7 @@ export function StepSummaryFeature() {
                 )}
 
                 {valuesOverrideFileData.type === 'YAML' && (
-                  <ul className="space-y-2 text-neutral-400 text-sm list-none">
+                  <ul className="list-none space-y-2 text-sm text-neutral-400">
                     <li>
                       <strong className="font-medium">From YAML:</strong>{' '}
                       {truncateText(valuesOverrideFileData.content!, 50)}
@@ -277,7 +277,7 @@ export function StepSummaryFeature() {
                 )}
 
                 {valuesOverrideArgumentData.arguments.length > 0 && (
-                  <ul className="space-y-2 text-neutral-400 text-sm list-none">
+                  <ul className="list-none space-y-2 text-sm text-neutral-400">
                     <li>
                       <strong className="font-medium">Manual:</strong> {valuesOverrideArgumentData.arguments.length}{' '}
                       variables added
@@ -288,7 +288,7 @@ export function StepSummaryFeature() {
             )}
           </div>
 
-          <div className="flex justify-between mt-10">
+          <div className="mt-10 flex justify-between">
             <Button
               type="button"
               size="lg"

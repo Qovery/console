@@ -26,7 +26,7 @@ export function StepConfigure(props: StepConfigureProps) {
       <Heading className="mb-2">Job configuration</Heading>
 
       <form className="space-y-10" onSubmit={props.onSubmit}>
-        <p className="text-neutral-350 text-sm">Job configuration allows you to control the behaviour of your job</p>
+        <p className="text-sm text-neutral-350">Job configuration allows you to control the behaviour of your job</p>
 
         <JobConfigureSettings jobType={props.jobType} />
 

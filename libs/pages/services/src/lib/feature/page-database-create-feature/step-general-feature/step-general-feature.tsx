@@ -130,16 +130,16 @@ export function StepGeneralFeature() {
     defaultValues: generalData
       ? generalData
       : cloudProvider === 'AWS' && cluster?.kubernetes !== 'SELF_MANAGED'
-      ? {
-          name: dataTemplate?.slug ?? '',
-          mode: dataOptionTemplate?.slug === 'container' ? DatabaseModeEnum.CONTAINER : DatabaseModeEnum.MANAGED,
-          type: dataTemplate?.slug?.toUpperCase() as DatabaseTypeEnum,
-        }
-      : {
-          name: dataTemplate?.slug ?? '',
-          mode: dataOptionTemplate?.slug === 'managed' ? DatabaseModeEnum.MANAGED : DatabaseModeEnum.CONTAINER,
-          type: dataTemplate?.slug?.toUpperCase() as DatabaseTypeEnum,
-        },
+        ? {
+            name: dataTemplate?.slug ?? '',
+            mode: dataOptionTemplate?.slug === 'container' ? DatabaseModeEnum.CONTAINER : DatabaseModeEnum.MANAGED,
+            type: dataTemplate?.slug?.toUpperCase() as DatabaseTypeEnum,
+          }
+        : {
+            name: dataTemplate?.slug ?? '',
+            mode: dataOptionTemplate?.slug === 'managed' ? DatabaseModeEnum.MANAGED : DatabaseModeEnum.CONTAINER,
+            type: dataTemplate?.slug?.toUpperCase() as DatabaseTypeEnum,
+          },
     mode: 'onChange',
   })
 

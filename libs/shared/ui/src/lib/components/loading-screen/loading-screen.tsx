@@ -2,7 +2,7 @@ import LoaderSpinner from '../loader-spinner/loader-spinner'
 
 export function LoadingScreen() {
   return (
-    <div className="bg-neutral-200 h-screen flex items-center justify-center">
+    <div className="flex h-screen items-center justify-center bg-neutral-200">
       <LoaderSpinner />
     </div>
   )

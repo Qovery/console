@@ -33,24 +33,24 @@ export function TagCommit(props: TagCommitProps) {
   const contentTag = (
     <Tag
       data-testid="tag-commit"
-      className={`border font-medium flex items-center justify-center ${withBackground ? 'bg-white' : ''} ${
+      className={`flex items-center justify-center border font-medium ${withBackground ? 'bg-white' : ''} ${
         commitDeltaCount
           ? 'border-orange-500 text-orange-500'
-          : 'border-neutral-250 text-neutral-350 hover:bg-neutral-200 w-[90px]'
+          : 'w-[90px] border-neutral-250 text-neutral-350 hover:bg-neutral-200'
       }`}
     >
       {!hover ? (
-        <div className="w-4 mr-1">
+        <div className="mr-1 w-4">
           <Icon name="icon-solid-code-commit" className="mr-1" />
         </div>
       ) : (
-        <div className="w-4 mr-1">
+        <div className="mr-1 w-4">
           <Icon name="icon-solid-copy" className="mr-1" />
         </div>
       )}
       {commitId.substring(0, 7)}
       {commitDeltaCount ? (
-        <span className="bg-orange-500 text-white px-1 h-4 rounded-[34px] ml-1 inline-block">{commitDeltaCount}</span>
+        <span className="ml-1 inline-block h-4 rounded-[34px] bg-orange-500 px-1 text-white">{commitDeltaCount}</span>
       ) : null}
     </Tag>
   )
@@ -58,7 +58,7 @@ export function TagCommit(props: TagCommitProps) {
   const copyTag = (
     <Tag
       data-testid="tag-commit"
-      className="bg-green-500 text-white font-medium h-7 w-[70px] flex items-center justify-center"
+      className="flex h-7 w-[70px] items-center justify-center bg-green-500 font-medium text-white"
     >
       <Icon name="icon-solid-check" className="mr-1 w-4" />
       Copied

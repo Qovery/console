@@ -4,7 +4,7 @@ exports[`Banner should render in brand color 1`] = `
 <body>
   <div>
     <div
-      class="flex h-10 items-center justify-center font-medium text-sm bg-brand-500 text-white"
+      class="flex h-10 items-center justify-center text-sm font-medium bg-brand-500 text-white"
     >
       Hello
     </div>
@@ -16,7 +16,7 @@ exports[`Banner should render in yellow 1`] = `
 <body>
   <div>
     <div
-      class="flex h-10 items-center justify-center font-medium text-sm bg-yellow-500 text-yellow-900"
+      class="flex h-10 items-center justify-center text-sm font-medium bg-yellow-500 text-yellow-900"
     >
       Hello
     </div>

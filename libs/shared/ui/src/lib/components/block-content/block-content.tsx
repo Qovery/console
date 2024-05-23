@@ -22,10 +22,10 @@ export function BlockContent({
   return (
     <div
       data-testid={dataTestId}
-      className={twMerge('border border-neutral-250 bg-neutral-100 rounded mb-5', customWidth, className)}
+      className={twMerge('mb-5 rounded border border-neutral-250 bg-neutral-100', customWidth, className)}
     >
-      <div className="flex items-center justify-between h-9 px-4 border-b border-neutral-250">
-        <h2 className="font-medium text-neutral-400 text-ssm">{title}</h2>
+      <div className="flex h-9 items-center justify-between border-b border-neutral-250 px-4">
+        <h2 className="text-ssm font-medium text-neutral-400">{title}</h2>
         {headRight}
       </div>
       <div className={twMerge('p-5', classNameContent)}>{children}</div>

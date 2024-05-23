@@ -79,7 +79,7 @@ export function PageGeneral({
   return (
     <>
       <Section className="grow p-8">
-        <div className="flex items-center mb-4 h-9">
+        <div className="mb-4 flex h-9 items-center">
           <CustomFilterFeature handleClearFilter={handleClearFilter} />
         </div>
 
@@ -88,7 +88,7 @@ export function PageGeneral({
           data={events}
           filter={filter}
           setFilter={setFilter}
-          className="border border-neutral-200 rounded"
+          className="rounded border border-neutral-200"
           classNameHead="rounded-t"
           columnsWidth={columnsWidth}
         >
@@ -98,10 +98,10 @@ export function PageGeneral({
                 <RowEventFeature key={event.timestamp} event={event} columnsWidth={columnsWidth} isPlaceholder />
               ))
             ) : events && events.length === 0 ? (
-              <div className="flex items-center justify-center text-center py-4 px-5 h-[30vh]">
+              <div className="flex h-[30vh] items-center justify-center px-5 py-4 text-center">
                 <div>
                   <Icon iconName="wave-pulse" className="text-neutral-350" />
-                  <p className="text-neutral-350 font-medium text-xs mt-1" data-testid="empty-result">
+                  <p className="mt-1 text-xs font-medium text-neutral-350" data-testid="empty-result">
                     No events found, we retain logs for a maximum of 30 days <br /> Try to change your filters.
                   </p>
                 </div>
@@ -114,7 +114,7 @@ export function PageGeneral({
           </div>
         </Table>
         <Pagination
-          className="pt-4 pb-7"
+          className="pb-7 pt-4"
           onPrevious={onPrevious}
           onNext={onNext}
           nextDisabled={nextDisabled}

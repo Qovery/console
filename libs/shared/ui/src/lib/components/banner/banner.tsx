@@ -6,7 +6,7 @@ import { twMerge } from '@qovery/shared/util-js'
 import Button from '../button/button'
 import Icon from '../icon/icon'
 
-const bannerVariants = cva('flex h-10 items-center justify-center font-medium text-sm', {
+const bannerVariants = cva('flex h-10 items-center justify-center text-sm font-medium', {
   variants: {
     color: {
       brand: ['bg-brand-500', 'text-white'],

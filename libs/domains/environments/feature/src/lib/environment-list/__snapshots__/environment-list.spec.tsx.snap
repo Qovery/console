@@ -3,22 +3,22 @@
 exports[`EnvironmentList should match snapshot 1`] = `
 <div>
   <table
-    class="divide-y divide-neutral-200 text-neutral-400 w-full text-xs min-w-[800px]"
+    class="divide-y divide-neutral-200 text-neutral-400 w-full min-w-[800px] text-xs"
   >
     <thead>
       <tr>
         <th
-          class="h-11 px-4 text-left first:border-r font-medium"
+          class="h-11 px-4 text-left font-medium first:border-r"
           style="width: 40%;"
         >
           <div
-            class="inline-block relative"
+            class="relative inline-block"
           >
             <button
               aria-controls="radix-:r1m:"
               aria-expanded="false"
               aria-haspopup="dialog"
-              class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent text-xs gap-1 whitespace-nowrap"
+              class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent gap-1 whitespace-nowrap text-xs"
               data-state="closed"
               type="button"
             >
@@ -31,17 +31,17 @@ exports[`EnvironmentList should match snapshot 1`] = `
           </div>
         </th>
         <th
-          class="h-11 px-4 text-left first:border-r font-medium"
+          class="h-11 px-4 text-left font-medium first:border-r"
           style="width: 15%;"
         >
           <div
-            class="inline-block relative"
+            class="relative inline-block"
           >
             <button
               aria-controls="radix-:r1p:"
               aria-expanded="false"
               aria-haspopup="dialog"
-              class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent text-xs gap-1 whitespace-nowrap"
+              class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent gap-1 whitespace-nowrap text-xs"
               data-state="closed"
               type="button"
             >
@@ -54,17 +54,17 @@ exports[`EnvironmentList should match snapshot 1`] = `
           </div>
         </th>
         <th
-          class="h-11 px-4 text-left first:border-r font-medium"
+          class="h-11 px-4 text-left font-medium first:border-r"
           style="width: 15%;"
         >
           <div
-            class="inline-block relative"
+            class="relative inline-block"
           >
             <button
               aria-controls="radix-:r1s:"
               aria-expanded="false"
               aria-haspopup="dialog"
-              class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent text-xs gap-1 whitespace-nowrap"
+              class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent gap-1 whitespace-nowrap text-xs"
               data-state="closed"
               type="button"
             >
@@ -77,17 +77,17 @@ exports[`EnvironmentList should match snapshot 1`] = `
           </div>
         </th>
         <th
-          class="h-11 px-4 text-left first:border-r font-medium"
+          class="h-11 px-4 text-left font-medium first:border-r"
           style="width: 20%;"
         >
           <div
-            class="inline-block relative"
+            class="relative inline-block"
           >
             <button
               aria-controls="radix-:r1v:"
               aria-expanded="false"
               aria-haspopup="dialog"
-              class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent text-xs gap-1 whitespace-nowrap"
+              class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent gap-1 whitespace-nowrap text-xs"
               data-state="closed"
               type="button"
             >
@@ -100,7 +100,7 @@ exports[`EnvironmentList should match snapshot 1`] = `
           </div>
         </th>
         <th
-          class="h-11 px-4 text-left first:border-r font-medium"
+          class="h-11 px-4 text-left font-medium first:border-r"
           style="width: 10%;"
         >
           <button
@@ -116,7 +116,7 @@ exports[`EnvironmentList should match snapshot 1`] = `
       class="divide-y divide-neutral-200"
     >
       <tr
-        class="hover:bg-neutral-100 h-16 cursor-pointer"
+        class="h-16 cursor-pointer hover:bg-neutral-100"
       >
         <td
           class="h-14 px-4 py-0 first:border-r"
@@ -126,17 +126,17 @@ exports[`EnvironmentList should match snapshot 1`] = `
             class="flex items-center justify-between"
           >
             <span
-              class="flex items-center gap-4 font-medium text-sm text-neutral-400 min-w-0"
+              class="flex min-w-0 items-center gap-4 text-sm font-medium text-neutral-400"
             >
               <span
-                class="items-center shrink-0 border text-xs rounded border-neutral-250 text-neutral-350 dark:border-neutral-350 flex w-4 h-4 justify-center p-0 font-semibold"
+                class="items-center shrink-0 border text-xs rounded border-neutral-250 text-neutral-350 dark:border-neutral-350 flex h-4 w-4 justify-center p-0 font-semibold"
                 data-accent-color="neutral"
                 data-state="closed"
               >
                 D
               </span>
               <span
-                class="flex flex-col shrink truncate min-w-0 pr-2"
+                class="flex min-w-0 shrink flex-col truncate pr-2"
               >
                 <span
                   class="truncate"
@@ -144,14 +144,14 @@ exports[`EnvironmentList should match snapshot 1`] = `
                   gcp
                 </span>
                 <span
-                  class="text-xs text-neutral-350 font-normal"
+                  class="text-xs font-normal text-neutral-350"
                 >
                   Development
                 </span>
               </span>
             </span>
             <div
-              class="flex items-center gap-4 shrink-0"
+              class="flex shrink-0 items-center gap-4"
             >
               <div>
                 <div
@@ -168,7 +168,7 @@ exports[`EnvironmentList should match snapshot 1`] = `
           style="width: 15%;"
         >
           <a
-            class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-transparent text-sm gap-2 whitespace-nowrap"
+            class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-transparent gap-2 whitespace-nowrap text-sm"
             data-state="closed"
             href="/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/a021261e-4318-4f2f-b480-169ab62efc28/environment/893c68cb-d1f7-498b-9e00-be841c8d38c3/services/general"
           >
@@ -212,7 +212,7 @@ exports[`EnvironmentList should match snapshot 1`] = `
           style="width: 15%;"
         >
           <a
-            class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-transparent text-sm gap-2 whitespace-nowrap"
+            class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-transparent gap-2 whitespace-nowrap text-sm"
             data-state="closed"
             href="/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/a021261e-4318-4f2f-b480-169ab62efc28/environment/893c68cb-d1f7-498b-9e00-be841c8d38c3/logs"
           >
@@ -293,7 +293,7 @@ exports[`EnvironmentList should match snapshot 1`] = `
           style="width: 10%;"
         >
           <span
-            class="text-xs text-neutral-350 whitespace-nowrap"
+            class="whitespace-nowrap text-xs text-neutral-350"
             data-state="closed"
           >
             2 months
@@ -301,7 +301,7 @@ exports[`EnvironmentList should match snapshot 1`] = `
         </td>
       </tr>
       <tr
-        class="hover:bg-neutral-100 h-16 cursor-pointer"
+        class="h-16 cursor-pointer hover:bg-neutral-100"
       >
         <td
           class="h-14 px-4 py-0 first:border-r"
@@ -311,17 +311,17 @@ exports[`EnvironmentList should match snapshot 1`] = `
             class="flex items-center justify-between"
           >
             <span
-              class="flex items-center gap-4 font-medium text-sm text-neutral-400 min-w-0"
+              class="flex min-w-0 items-center gap-4 text-sm font-medium text-neutral-400"
             >
               <span
-                class="items-center shrink-0 text-red-500 border text-xs rounded bg-red-50 border-red-500 flex w-4 h-4 justify-center p-0 font-semibold"
+                class="items-center shrink-0 text-red-500 border text-xs rounded bg-red-50 border-red-500 flex h-4 w-4 justify-center p-0 font-semibold"
                 data-accent-color="red"
                 data-state="closed"
               >
                 P
               </span>
               <span
-                class="flex flex-col shrink truncate min-w-0 pr-2"
+                class="flex min-w-0 shrink flex-col truncate pr-2"
               >
                 <span
                   class="truncate"
@@ -329,14 +329,14 @@ exports[`EnvironmentList should match snapshot 1`] = `
                   my-prod-env
                 </span>
                 <span
-                  class="text-xs text-neutral-350 font-normal"
+                  class="text-xs font-normal text-neutral-350"
                 >
                   Production
                 </span>
               </span>
             </span>
             <div
-              class="flex items-center gap-4 shrink-0"
+              class="flex shrink-0 items-center gap-4"
             >
               <div>
                 <div
@@ -353,7 +353,7 @@ exports[`EnvironmentList should match snapshot 1`] = `
           style="width: 15%;"
         >
           <a
-            class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-transparent text-sm gap-2 whitespace-nowrap"
+            class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-transparent gap-2 whitespace-nowrap text-sm"
             data-state="closed"
             href="/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/a021261e-4318-4f2f-b480-169ab62efc28/environment/2fe51760-af0b-4f2f-b752-88a813e1375d/services/general"
           >
@@ -397,7 +397,7 @@ exports[`EnvironmentList should match snapshot 1`] = `
           style="width: 15%;"
         >
           <a
-            class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-transparent text-sm gap-2 whitespace-nowrap"
+            class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-transparent gap-2 whitespace-nowrap text-sm"
             data-state="closed"
             href="/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/a021261e-4318-4f2f-b480-169ab62efc28/environment/2fe51760-af0b-4f2f-b752-88a813e1375d/logs"
           >
@@ -457,7 +457,7 @@ exports[`EnvironmentList should match snapshot 1`] = `
           style="width: 10%;"
         >
           <span
-            class="text-xs text-neutral-350 whitespace-nowrap"
+            class="whitespace-nowrap text-xs text-neutral-350"
             data-state="closed"
           >
             4 months
@@ -465,7 +465,7 @@ exports[`EnvironmentList should match snapshot 1`] = `
         </td>
       </tr>
       <tr
-        class="hover:bg-neutral-100 h-16 cursor-pointer"
+        class="h-16 cursor-pointer hover:bg-neutral-100"
       >
         <td
           class="h-14 px-4 py-0 first:border-r"
@@ -475,17 +475,17 @@ exports[`EnvironmentList should match snapshot 1`] = `
             class="flex items-center justify-between"
           >
             <span
-              class="flex items-center gap-4 font-medium text-sm text-neutral-400 min-w-0"
+              class="flex min-w-0 items-center gap-4 text-sm font-medium text-neutral-400"
             >
               <span
-                class="items-center shrink-0 border text-xs rounded border-neutral-250 text-neutral-350 dark:border-neutral-350 flex w-4 h-4 justify-center p-0 font-semibold"
+                class="items-center shrink-0 border text-xs rounded border-neutral-250 text-neutral-350 dark:border-neutral-350 flex h-4 w-4 justify-center p-0 font-semibold"
                 data-accent-color="neutral"
                 data-state="closed"
               >
                 D
               </span>
               <span
-                class="flex flex-col shrink truncate min-w-0 pr-2"
+                class="flex min-w-0 shrink flex-col truncate pr-2"
               >
                 <span
                   class="truncate"
@@ -493,14 +493,14 @@ exports[`EnvironmentList should match snapshot 1`] = `
                   my-dev-env
                 </span>
                 <span
-                  class="text-xs text-neutral-350 font-normal"
+                  class="text-xs font-normal text-neutral-350"
                 >
                   Development
                 </span>
               </span>
             </span>
             <div
-              class="flex items-center gap-4 shrink-0"
+              class="flex shrink-0 items-center gap-4"
             >
               <div>
                 <div
@@ -517,7 +517,7 @@ exports[`EnvironmentList should match snapshot 1`] = `
           style="width: 15%;"
         >
           <a
-            class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-transparent text-sm gap-2 whitespace-nowrap"
+            class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-transparent gap-2 whitespace-nowrap text-sm"
             data-state="closed"
             href="/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/a021261e-4318-4f2f-b480-169ab62efc28/environment/0cd5d05e-0839-48ff-be67-ca3f4fcf8250/services/general"
           >
@@ -561,7 +561,7 @@ exports[`EnvironmentList should match snapshot 1`] = `
           style="width: 15%;"
         >
           <a
-            class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-transparent text-sm gap-2 whitespace-nowrap"
+            class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-transparent gap-2 whitespace-nowrap text-sm"
             data-state="closed"
             href="/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/a021261e-4318-4f2f-b480-169ab62efc28/environment/0cd5d05e-0839-48ff-be67-ca3f4fcf8250/logs"
           >
@@ -621,7 +621,7 @@ exports[`EnvironmentList should match snapshot 1`] = `
           style="width: 10%;"
         >
           <span
-            class="text-xs text-neutral-350 whitespace-nowrap"
+            class="whitespace-nowrap text-xs text-neutral-350"
             data-state="closed"
           >
             4 months
@@ -629,7 +629,7 @@ exports[`EnvironmentList should match snapshot 1`] = `
         </td>
       </tr>
       <tr
-        class="hover:bg-neutral-100 h-16 cursor-pointer"
+        class="h-16 cursor-pointer hover:bg-neutral-100"
       >
         <td
           class="h-14 px-4 py-0 first:border-r"
@@ -639,17 +639,17 @@ exports[`EnvironmentList should match snapshot 1`] = `
             class="flex items-center justify-between"
           >
             <span
-              class="flex items-center gap-4 font-medium text-sm text-neutral-400 min-w-0"
+              class="flex min-w-0 items-center gap-4 text-sm font-medium text-neutral-400"
             >
               <span
-                class="items-center shrink-0 border text-xs rounded border-neutral-250 text-neutral-350 dark:border-neutral-350 flex w-4 h-4 justify-center p-0 font-semibold"
+                class="items-center shrink-0 border text-xs rounded border-neutral-250 text-neutral-350 dark:border-neutral-350 flex h-4 w-4 justify-center p-0 font-semibold"
                 data-accent-color="neutral"
                 data-state="closed"
               >
                 D
               </span>
               <span
-                class="flex flex-col shrink truncate min-w-0 pr-2"
+                class="flex min-w-0 shrink flex-col truncate pr-2"
               >
                 <span
                   class="truncate"
@@ -657,14 +657,14 @@ exports[`EnvironmentList should match snapshot 1`] = `
                   fgsdfg-sdfg-sdfg
                 </span>
                 <span
-                  class="text-xs text-neutral-350 font-normal"
+                  class="text-xs font-normal text-neutral-350"
                 >
                   Development
                 </span>
               </span>
             </span>
             <div
-              class="flex items-center gap-4 shrink-0"
+              class="flex shrink-0 items-center gap-4"
             >
               <div>
                 <div
@@ -681,7 +681,7 @@ exports[`EnvironmentList should match snapshot 1`] = `
           style="width: 15%;"
         >
           <a
-            class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-transparent text-sm gap-2 whitespace-nowrap"
+            class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-transparent gap-2 whitespace-nowrap text-sm"
             data-state="closed"
             href="/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/a021261e-4318-4f2f-b480-169ab62efc28/environment/c1567d73-b9cd-4664-8aa0-5c71e2bfd74a/services/general"
           >
@@ -725,7 +725,7 @@ exports[`EnvironmentList should match snapshot 1`] = `
           style="width: 15%;"
         >
           <a
-            class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-transparent text-sm gap-2 whitespace-nowrap"
+            class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-transparent gap-2 whitespace-nowrap text-sm"
             data-state="closed"
             href="/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/a021261e-4318-4f2f-b480-169ab62efc28/environment/c1567d73-b9cd-4664-8aa0-5c71e2bfd74a/logs"
           >
@@ -799,7 +799,7 @@ exports[`EnvironmentList should match snapshot 1`] = `
           style="width: 10%;"
         >
           <span
-            class="text-xs text-neutral-350 whitespace-nowrap"
+            class="whitespace-nowrap text-xs text-neutral-350"
             data-state="closed"
           >
             1 month

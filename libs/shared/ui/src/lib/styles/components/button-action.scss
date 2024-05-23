@@ -1,6 +1,6 @@
 //btn menu action
 .btn-action {
-  @apply overflow-hidden rounded text-xs inline-flex;
+  @apply inline-flex overflow-hidden rounded text-xs;
 
   .menu__trigger {
     @apply h-full;
@@ -8,12 +8,12 @@
 }
 
 .btn-action__trigger {
-  @apply h-full flex justify-center items-center px-4 bg-brand-500 hover:bg-brand-600 border-r border-brand-400 text-white cursor-pointer;
+  @apply flex h-full cursor-pointer items-center justify-center border-r border-brand-400 bg-brand-500 px-4 text-white hover:bg-brand-600;
   transition: 0.25s all $timing-cubic;
 }
 
 .btn-action__content {
-  @apply h-full flex justify-center items-center px-4 gap-2 bg-brand-500 hover:bg-brand-600 transition ease-in-out duration-150 text-white font-medium whitespace-nowrap;
+  @apply flex h-full items-center justify-center gap-2 whitespace-nowrap bg-brand-500 px-4 font-medium text-white transition duration-150 ease-in-out hover:bg-brand-600;
 }
 
 .btn-action__trigger--open {
@@ -40,7 +40,7 @@
 
   .btn-action__trigger,
   .btn-action__content {
-    @apply bg-neutral-150 hover:bg-neutral-200 text-neutral-400;
+    @apply bg-neutral-150 text-neutral-400 hover:bg-neutral-200;
   }
 
   .btn-action__trigger {
@@ -69,11 +69,11 @@
 
 // btn icon actions
 .btn-icon-action {
-  @apply inline-flex h-7 border border-neutral-250 rounded overflow-hidden;
+  @apply inline-flex h-7 overflow-hidden rounded border border-neutral-250;
 }
 
 .btn-icon-action__element {
-  @apply flex items-center justify-center gap-2.5 px-2 cursor-pointer bg-neutral-50 border-r border-r-neutral-250 last:border-r-0 h-full min-w-[28px] text-2xs text-neutral-350 transition ease-in-out duration-150;
+  @apply flex h-full min-w-[28px] cursor-pointer items-center justify-center gap-2.5 border-r border-r-neutral-250 bg-neutral-50 px-2 text-2xs text-neutral-350 transition duration-150 ease-in-out last:border-r-0;
 
   &.is-active,
   &:hover {

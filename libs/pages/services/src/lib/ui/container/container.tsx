@@ -69,7 +69,7 @@ export function Container({ children }: PropsWithChildren) {
       <Skeleton width={150} height={32} show={!environment}>
         {environment ? <EnvironmentActionToolbar environment={environment} /> : <div />}
       </Skeleton>
-      <div className="w-px h-4 bg-neutral-250" />
+      <div className="h-4 w-px bg-neutral-250" />
       <div className="flex flex-row items-center gap-2">
         {environment && (
           <Skeleton width={80} height={22} show={!environment?.mode}>
@@ -136,14 +136,14 @@ export function Container({ children }: PropsWithChildren) {
       items: [
         {
           name: 'Create application',
-          contentLeft: <Icon iconName="layer-group" className="text-brand-500 text-sm" />,
+          contentLeft: <Icon iconName="layer-group" className="text-sm text-brand-500" />,
           onClick: () => {
             navigate(`${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_APPLICATION_CREATION_URL}`)
           },
         },
         {
           name: 'Create database',
-          contentLeft: <Icon iconName="database" className="text-brand-500 text-sm" />,
+          contentLeft: <Icon iconName="database" className="text-sm text-brand-500" />,
           onClick: () => {
             navigate(`${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_DATABASE_CREATION_URL}`)
           },
@@ -151,7 +151,7 @@ export function Container({ children }: PropsWithChildren) {
         {
           name: 'Create lifecycle job',
           contentLeft: (
-            <Icon name={IconEnum.LIFECYCLE_JOB_STROKE} width="14" height="16" className="text-brand-500 text-sm" />
+            <Icon name={IconEnum.LIFECYCLE_JOB_STROKE} width="14" height="16" className="text-sm text-brand-500" />
           ),
           onClick: () => {
             navigate(`${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_LIFECYCLE_CREATION_URL}`)
@@ -160,7 +160,7 @@ export function Container({ children }: PropsWithChildren) {
         {
           name: 'Create cronjob',
           contentLeft: (
-            <Icon name={IconEnum.CRON_JOB_STROKE} width="14" height="16" className="text-brand-500 text-sm" />
+            <Icon name={IconEnum.CRON_JOB_STROKE} width="14" height="16" className="text-sm text-brand-500" />
           ),
           onClick: () => {
             navigate(`${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_CRONJOB_CREATION_URL}`)
@@ -168,7 +168,7 @@ export function Container({ children }: PropsWithChildren) {
         },
         {
           name: 'Create helm',
-          contentLeft: <Icon name={IconEnum.HELM_OFFICIAL} width="14" height="16" className="text-brand-500 text-sm" />,
+          contentLeft: <Icon name={IconEnum.HELM_OFFICIAL} width="14" height="16" className="text-sm text-brand-500" />,
           onClick: () => {
             navigate(`${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_HELM_CREATION_URL}`)
           },
@@ -187,7 +187,7 @@ export function Container({ children }: PropsWithChildren) {
   }
 
   const contentTabs = !matchSettingsRoute && (
-    <div className="flex justify-center items-center px-5 h-14">
+    <div className="flex h-14 items-center justify-center px-5">
       {matchEnvVariableRoute ? (
         <>
           <ShowAllVariablesToggle className="mr-2" />

@@ -21,7 +21,7 @@ export function SidebarHistory({ data, serviceId, versionId, pathLogs, environme
           name: item.id,
           itemContentCustom: (
             <div
-              className={`flex justify-between w-full py-2 text-xs ${
+              className={`flex w-full justify-between py-2 text-xs ${
                 item.id === versionId || (!versionId && index === 0) ? 'text-brand-400' : 'text-neutral-300'
               }`}
             >
@@ -74,7 +74,7 @@ export function SidebarHistory({ data, serviceId, versionId, pathLogs, environme
           type="button"
           color="neutral"
           variant="surface"
-          className="!border-r-0 !rounded-r-none"
+          className="!rounded-r-none !border-r-0"
           to={pathLogs}
         >
           <Icon iconName="house" />
@@ -85,7 +85,7 @@ export function SidebarHistory({ data, serviceId, versionId, pathLogs, environme
           arrowAlign={MenuAlign.CENTER}
           trigger={
             <Button
-              className="!rounded-l-none w-[200px] mr-1.5 justify-center gap-2"
+              className="mr-1.5 w-[200px] justify-center gap-2 !rounded-l-none"
               type="button"
               color="neutral"
               variant="surface"
@@ -100,7 +100,7 @@ export function SidebarHistory({ data, serviceId, versionId, pathLogs, environme
             <div>
               <Link
                 as="button"
-                className="!text-orange-500 !border-orange-500 bg-neutral-500 w-[50px]"
+                className="w-[50px] !border-orange-500 bg-neutral-500 !text-orange-500"
                 type="button"
                 color="neutral"
                 variant="surface"
@@ -108,7 +108,7 @@ export function SidebarHistory({ data, serviceId, versionId, pathLogs, environme
               >
                 <span className="inline-flex items-center">
                   New
-                  <i className="relative top-[1px] block ml-1 w-2 h-2 before:block before:absolute before:top-0.5 before:left-0.5 before:bg-orange-500 before:w-1 before:h-1 before:rounded-full after:motion-safe:animate-pulse after:block after:bg-orange-500/30 after:w-2 after:h-2 after:rounded-full" />
+                  <i className="relative top-[1px] ml-1 block h-2 w-2 before:absolute before:left-0.5 before:top-0.5 before:block before:h-1 before:w-1 before:rounded-full before:bg-orange-500 after:block after:h-2 after:w-2 after:rounded-full after:bg-orange-500/30 after:motion-safe:animate-pulse" />
                 </span>
               </Link>
             </div>

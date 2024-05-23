@@ -3,10 +3,10 @@
 exports[`VariableList should match snapshot 1`] = `
 <div>
   <div
-    class="flex flex-col grow justify-between"
+    class="flex grow flex-col justify-between"
   >
     <table
-      class="divide-y divide-neutral-200 text-neutral-400 table-fixed w-full text-xs min-w-[800px]"
+      class="divide-y divide-neutral-200 text-neutral-400 w-full min-w-[800px] table-fixed text-xs"
     >
       <thead>
         <tr>
@@ -47,13 +47,13 @@ exports[`VariableList should match snapshot 1`] = `
             style="width: 20%;"
           >
             <div
-              class="inline-block relative"
+              class="relative inline-block"
             >
               <button
                 aria-controls="radix-:r1r:"
                 aria-expanded="false"
                 aria-haspopup="dialog"
-                class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent text-xs gap-1 whitespace-nowrap"
+                class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent gap-1 whitespace-nowrap text-xs"
                 data-state="closed"
                 type="button"
               >
@@ -70,13 +70,13 @@ exports[`VariableList should match snapshot 1`] = `
             style="width: 15%;"
           >
             <div
-              class="inline-block relative"
+              class="relative inline-block"
             >
               <button
                 aria-controls="radix-:r1u:"
                 aria-expanded="false"
                 aria-haspopup="dialog"
-                class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent text-xs gap-1 whitespace-nowrap"
+                class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent gap-1 whitespace-nowrap text-xs"
                 data-state="closed"
                 type="button"
               >
@@ -93,13 +93,13 @@ exports[`VariableList should match snapshot 1`] = `
             style="width: 10%;"
           >
             <div
-              class="inline-block relative"
+              class="relative inline-block"
             >
               <button
                 aria-controls="radix-:r21:"
                 aria-expanded="false"
                 aria-haspopup="dialog"
-                class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent text-xs gap-1 whitespace-nowrap"
+                class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent gap-1 whitespace-nowrap text-xs"
                 data-state="closed"
                 type="button"
               >
@@ -128,7 +128,7 @@ exports[`VariableList should match snapshot 1`] = `
         class="divide-y divide-neutral-200"
       >
         <tr
-          class="hover:bg-neutral-100 h-16 cursor-pointer"
+          class="h-16 cursor-pointer hover:bg-neutral-100"
         >
           <td
             class="h-14 px-4 py-0 first:relative"
@@ -188,7 +188,7 @@ exports[`VariableList should match snapshot 1`] = `
                 />
               </button>
               <span
-                class="text-neutral-350 text-xl tracking-widest font-medium pt-1.5"
+                class="pt-1.5 text-xl font-medium tracking-widest text-neutral-350"
                 data-state="closed"
                 data-testid="hide_value"
               >
@@ -201,7 +201,7 @@ exports[`VariableList should match snapshot 1`] = `
             style="width: 15%;"
           >
             <a
-              class="flex gap-2 items-center text-sm font-medium"
+              class="flex items-center gap-2 text-sm font-medium"
               href="/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/application/33962e52-7883-42fd-8613-85e04229a9b6/general"
             >
               rds_terraform
@@ -212,7 +212,7 @@ exports[`VariableList should match snapshot 1`] = `
             style="width: 10%;"
           >
             <span
-              class="capitalize text-sm font-medium"
+              class="text-sm font-medium capitalize"
             >
               built_in
             </span>
@@ -231,14 +231,14 @@ exports[`VariableList should match snapshot 1`] = `
           </td>
         </tr>
         <tr
-          class="hover:bg-neutral-100 h-16 cursor-pointer"
+          class="h-16 cursor-pointer hover:bg-neutral-100"
         >
           <td
             class="h-14 px-4 py-0 first:relative"
             style="width: 20px;"
           >
             <label
-              class="absolute flex items-center inset-y-0 left-0 p-4"
+              class="absolute inset-y-0 left-0 flex items-center p-4"
             >
               <button
                 aria-checked="false"
@@ -260,10 +260,10 @@ exports[`VariableList should match snapshot 1`] = `
                
               <i
                 aria-hidden="true"
-                class="fa-regular fa-arrow-turn-down-right mr-2 ml-1 text-2xs text-neutral-300"
+                class="fa-regular fa-arrow-turn-down-right ml-1 mr-2 text-2xs text-neutral-300"
               />
               <span
-                class="bg-teal-500 font-bold rounded-sm text-2xs text-neutral-50 px-1 inline-flex items-center h-4 mr-2"
+                class="mr-2 inline-flex h-4 items-center rounded-sm bg-teal-500 px-1 text-2xs font-bold text-neutral-50"
               >
                 ALIAS
               </span>
@@ -307,7 +307,7 @@ exports[`VariableList should match snapshot 1`] = `
             style="width: 10%;"
           >
             <span
-              class="capitalize text-sm font-medium"
+              class="text-sm font-medium capitalize"
             >
               environment
             </span>
@@ -326,14 +326,14 @@ exports[`VariableList should match snapshot 1`] = `
           </td>
         </tr>
         <tr
-          class="hover:bg-neutral-100 h-16 cursor-pointer"
+          class="h-16 cursor-pointer hover:bg-neutral-100"
         >
           <td
             class="h-14 px-4 py-0 first:relative"
             style="width: 20px;"
           >
             <label
-              class="absolute flex items-center inset-y-0 left-0 p-4"
+              class="absolute inset-y-0 left-0 flex items-center p-4"
             >
               <button
                 aria-checked="false"
@@ -355,10 +355,10 @@ exports[`VariableList should match snapshot 1`] = `
                
               <i
                 aria-hidden="true"
-                class="fa-regular fa-arrow-turn-down-right mr-2 ml-1 text-2xs text-neutral-300"
+                class="fa-regular fa-arrow-turn-down-right ml-1 mr-2 text-2xs text-neutral-300"
               />
               <span
-                class="bg-teal-500 font-bold rounded-sm text-2xs text-neutral-50 px-1 inline-flex items-center h-4 mr-2"
+                class="mr-2 inline-flex h-4 items-center rounded-sm bg-teal-500 px-1 text-2xs font-bold text-neutral-50"
               >
                 ALIAS
               </span>
@@ -402,7 +402,7 @@ exports[`VariableList should match snapshot 1`] = `
             style="width: 10%;"
           >
             <span
-              class="capitalize text-sm font-medium"
+              class="text-sm font-medium capitalize"
             >
               environment
             </span>
@@ -421,14 +421,14 @@ exports[`VariableList should match snapshot 1`] = `
           </td>
         </tr>
         <tr
-          class="hover:bg-neutral-100 h-16 cursor-pointer"
+          class="h-16 cursor-pointer hover:bg-neutral-100"
         >
           <td
             class="h-14 px-4 py-0 first:relative"
             style="width: 20px;"
           >
             <label
-              class="absolute flex items-center inset-y-0 left-0 p-4"
+              class="absolute inset-y-0 left-0 flex items-center p-4"
             >
               <button
                 aria-checked="false"
@@ -449,7 +449,7 @@ exports[`VariableList should match snapshot 1`] = `
             >
                
               <span
-                class="bg-purple-500 font-bold rounded-sm text-2xs text-neutral-50 px-1 inline-flex items-center h-4 mr-2"
+                class="mr-2 inline-flex h-4 items-center rounded-sm bg-purple-500 px-1 text-2xs font-bold text-neutral-50"
               >
                 FILE
               </span>
@@ -492,7 +492,7 @@ exports[`VariableList should match snapshot 1`] = `
                 class="fa-solid fa-file-lines ml-0.5 text-neutral-400"
               />
               <span
-                class="text-sky-500 hover:underline cursor-pointer"
+                class="cursor-pointer text-sky-500 hover:underline"
               >
                 /tmp/config
               </span>
@@ -503,7 +503,7 @@ exports[`VariableList should match snapshot 1`] = `
             style="width: 15%;"
           >
             <a
-              class="flex gap-2 items-center text-sm font-medium"
+              class="flex items-center gap-2 text-sm font-medium"
               href="/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/application/037c9e87-e098-4970-8b1f-9a5ffe9e4b89/general"
             >
               <svg
@@ -601,7 +601,7 @@ exports[`VariableList should match snapshot 1`] = `
             style="width: 10%;"
           >
             <span
-              class="capitalize text-sm font-medium"
+              class="text-sm font-medium capitalize"
             >
               application
             </span>
@@ -620,14 +620,14 @@ exports[`VariableList should match snapshot 1`] = `
           </td>
         </tr>
         <tr
-          class="hover:bg-neutral-100 h-16 cursor-pointer"
+          class="h-16 cursor-pointer hover:bg-neutral-100"
         >
           <td
             class="h-14 px-4 py-0 first:relative"
             style="width: 20px;"
           >
             <label
-              class="absolute flex items-center inset-y-0 left-0 p-4"
+              class="absolute inset-y-0 left-0 flex items-center p-4"
             >
               <button
                 aria-checked="false"
@@ -693,7 +693,7 @@ exports[`VariableList should match snapshot 1`] = `
                 />
               </button>
               <span
-                class="text-neutral-350 text-xl tracking-widest font-medium pt-1.5"
+                class="pt-1.5 text-xl font-medium tracking-widest text-neutral-350"
                 data-state="closed"
                 data-testid="hide_value"
               >
@@ -710,7 +710,7 @@ exports[`VariableList should match snapshot 1`] = `
             style="width: 10%;"
           >
             <span
-              class="capitalize text-sm font-medium"
+              class="text-sm font-medium capitalize"
             >
               project
             </span>
@@ -729,14 +729,14 @@ exports[`VariableList should match snapshot 1`] = `
           </td>
         </tr>
         <tr
-          class="hover:bg-neutral-100 h-16 cursor-pointer"
+          class="h-16 cursor-pointer hover:bg-neutral-100"
         >
           <td
             class="h-14 px-4 py-0 first:relative"
             style="width: 20px;"
           >
             <label
-              class="absolute flex items-center inset-y-0 left-0 p-4"
+              class="absolute inset-y-0 left-0 flex items-center p-4"
             >
               <button
                 aria-checked="false"
@@ -800,7 +800,7 @@ exports[`VariableList should match snapshot 1`] = `
                 />
               </span>
               <span
-                class="text-xl tracking-widest font-medium pt-1.5"
+                class="pt-1.5 text-xl font-medium tracking-widest"
                 data-testid="hide_value_secret"
               >
                 *************
@@ -812,7 +812,7 @@ exports[`VariableList should match snapshot 1`] = `
             style="width: 15%;"
           >
             <a
-              class="flex gap-2 items-center text-sm font-medium"
+              class="flex items-center gap-2 text-sm font-medium"
               href="/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/application/037c9e87-e098-4970-8b1f-9a5ffe9e4b89/general"
             >
               <svg
@@ -910,7 +910,7 @@ exports[`VariableList should match snapshot 1`] = `
             style="width: 10%;"
           >
             <span
-              class="capitalize text-sm font-medium"
+              class="text-sm font-medium capitalize"
             >
               application
             </span>
@@ -929,14 +929,14 @@ exports[`VariableList should match snapshot 1`] = `
           </td>
         </tr>
         <tr
-          class="hover:bg-neutral-100 h-16 cursor-pointer"
+          class="h-16 cursor-pointer hover:bg-neutral-100"
         >
           <td
             class="h-14 px-4 py-0 first:relative"
             style="width: 20px;"
           >
             <label
-              class="absolute flex items-center inset-y-0 left-0 p-4"
+              class="absolute inset-y-0 left-0 flex items-center p-4"
             >
               <button
                 aria-checked="false"
@@ -956,7 +956,7 @@ exports[`VariableList should match snapshot 1`] = `
               class="flex items-center"
             >
               <span
-                class="bg-[#3391FB] font-bold rounded-sm text-2xs text-neutral-50 px-1 inline-flex items-center h-4 mr-2"
+                class="mr-2 inline-flex h-4 items-center rounded-sm bg-[#3391FB] px-1 text-2xs font-bold text-neutral-50"
                 data-testid="doppler-tag"
               >
                 DOPPLER
@@ -1050,7 +1050,7 @@ exports[`VariableList should match snapshot 1`] = `
                 />
               </span>
               <span
-                class="text-xl tracking-widest font-medium pt-1.5"
+                class="pt-1.5 text-xl font-medium tracking-widest"
                 data-testid="hide_value_secret"
               >
                 *************
@@ -1062,7 +1062,7 @@ exports[`VariableList should match snapshot 1`] = `
             style="width: 15%;"
           >
             <a
-              class="flex gap-2 items-center text-sm font-medium"
+              class="flex items-center gap-2 text-sm font-medium"
               href="/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/application/ff84535f-49cc-450b-a878-f654c98c0a25/general"
             >
               <svg
@@ -1160,7 +1160,7 @@ exports[`VariableList should match snapshot 1`] = `
             style="width: 10%;"
           >
             <span
-              class="capitalize text-sm font-medium"
+              class="text-sm font-medium capitalize"
             >
               application
             </span>
@@ -1187,10 +1187,10 @@ exports[`VariableList should match snapshot 1`] = `
         class="relative"
       >
         <div
-          class="absolute w-[448px] bottom-4 left-1/2 -translate-x-1/2 overflow-hidden h-0"
+          class="absolute bottom-4 left-1/2 w-[448px] -translate-x-1/2 h-0 overflow-hidden"
         >
           <div
-            class="flex items-center justify-between h-[52px] bg-neutral-500 shadow-xl text-white text-xs font-medium pl-5 pr-2 rounded animate-action-bar-fade-out"
+            class="flex h-[52px] items-center justify-between rounded bg-neutral-500 pl-5 pr-2 text-xs font-medium text-white shadow-xl animate-action-bar-fade-out"
           >
             <span>
               0

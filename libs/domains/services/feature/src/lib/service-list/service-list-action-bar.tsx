@@ -34,8 +34,8 @@ function ConfirmationModal({
 
   return (
     <div className="p-6">
-      <h2 className="h4 text-neutral-400 max-w-sm truncate">Confirm</h2>
-      <p className="my-2 text-neutral-350 text-sm">
+      <h2 className="h4 max-w-sm truncate text-neutral-400">Confirm</h2>
+      <p className="my-2 text-sm text-neutral-350">
         You are going to {verb} {count} {pluralize(count, 'service')}. Are you sure?
       </p>
       {selectedRowsCount !== count && (
@@ -57,7 +57,7 @@ function ConfirmationModal({
           </Callout.Text>
         </Callout.Root>
       )}
-      <div className="flex gap-3 justify-end mt-6">
+      <div className="mt-6 flex justify-end gap-3">
         <Button size="lg" variant="surface" color="neutral" onClick={onCancel}>
           Cancel
         </Button>
@@ -245,13 +245,13 @@ export function ServiceListActionBar({ environment, selectedRows, resetRowSelect
       <div className="relative">
         <div
           className={twMerge(
-            'absolute w-[448px] bottom-4 left-1/2 -translate-x-1/2',
-            hasSelection ? '' : 'overflow-hidden h-0'
+            'absolute bottom-4 left-1/2 w-[448px] -translate-x-1/2',
+            hasSelection ? '' : 'h-0 overflow-hidden'
           )}
         >
           <div
             className={twMerge(
-              'flex items-center justify-between h-[52px] bg-neutral-500 shadow-xl text-white text-xs font-medium pl-5 pr-2 rounded',
+              'flex h-[52px] items-center justify-between rounded bg-neutral-500 pl-5 pr-2 text-xs font-medium text-white shadow-xl',
               hasSelection ? 'animate-action-bar-fade-in' : 'animate-action-bar-fade-out'
             )}
           >

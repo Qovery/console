@@ -16,12 +16,12 @@ export function PageOrganizationContainerRegistries(props: PageOrganizationConta
   const { containerRegistries, isFetched, onAddRegistry, onEdit, onDelete } = props
 
   return (
-    <div className="flex flex-col justify-between w-full">
-      <Section className="p-8 max-w-content-with-navigation-left">
-        <div className="flex justify-between mb-8">
+    <div className="flex w-full flex-col justify-between">
+      <Section className="max-w-content-with-navigation-left p-8">
+        <div className="mb-8 flex justify-between">
           <div>
-            <Heading className="h5 text-neutral-400 mb-2">Container registries</Heading>
-            <p className="text-neutral-400 text-xs">
+            <Heading className="h5 mb-2 text-neutral-400">Container registries</Heading>
+            <p className="text-xs text-neutral-400">
               Define and manage the container registry to be used within your organization to deploy applications.
             </p>
           </div>
@@ -41,7 +41,7 @@ export function PageOrganizationContainerRegistries(props: PageOrganizationConta
                 <li
                   data-testid={`registries-list-${registry.id}`}
                   key={registry.id}
-                  className="flex justify-between items-center px-5 py-4 border-b border-neutral-250 last:border-0"
+                  className="flex items-center justify-between border-b border-neutral-250 px-5 py-4 last:border-0"
                 >
                   <div className="flex">
                     <Icon
@@ -50,7 +50,7 @@ export function PageOrganizationContainerRegistries(props: PageOrganizationConta
                       height="20"
                     />
                     <div className="ml-4">
-                      <h2 className="flex text-xs text-neutral-400 font-medium mb-1">
+                      <h2 className="mb-1 flex text-xs font-medium text-neutral-400">
                         <Truncate truncateLimit={60} text={registry.name || ''} />
                         {registry.description && (
                           <Tooltip content={registry.description}>
@@ -63,12 +63,12 @@ export function PageOrganizationContainerRegistries(props: PageOrganizationConta
                       <p className="text-xs text-neutral-350">
                         {registry.kind}{' '}
                         {registry.updated_at && (
-                          <span className="inline-block ml-3" title={dateUTCString(registry.updated_at)}>
+                          <span className="ml-3 inline-block" title={dateUTCString(registry.updated_at)}>
                             Last updated {timeAgo(new Date(registry.updated_at))}
                           </span>
                         )}{' '}
                         {registry.created_at && (
-                          <span className="inline-block ml-3" title={dateUTCString(registry.created_at)}>
+                          <span className="ml-3 inline-block" title={dateUTCString(registry.created_at)}>
                             Created since {dateMediumLocalFormat(registry.created_at)}
                           </span>
                         )}
@@ -87,9 +87,9 @@ export function PageOrganizationContainerRegistries(props: PageOrganizationConta
               ))}
             </ul>
           ) : (
-            <div className="text-center my-4 px-5">
+            <div className="my-4 px-5 text-center">
               <Icon iconName="wave-pulse" className="text-neutral-350" />
-              <p className="text-neutral-350 font-medium text-xs mt-1">
+              <p className="mt-1 text-xs font-medium text-neutral-350">
                 No container registry found. <br /> Please add one.
               </p>
             </div>

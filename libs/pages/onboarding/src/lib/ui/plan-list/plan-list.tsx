@@ -13,12 +13,12 @@ export function PlanList(props: PlanListProps) {
 
   return (
     <div className="mt-60">
-      <h3 className="text-neutral-400 mb-3">{title}</h3>
-      <p className="text-sm text-neutral-400 w-96 mb-5">{description}</p>
+      <h3 className="mb-3 text-neutral-400">{title}</h3>
+      <p className="mb-5 w-96 text-sm text-neutral-400">{description}</p>
       <ul className="mb-10">
         {lists.map((list, index) => (
-          <li className="flex text-sm text-neutral-400 mb-2" key={index}>
-            <IconFa name="icon-solid-check" className="text-green-500 mr-4" />
+          <li className="mb-2 flex text-sm text-neutral-400" key={index}>
+            <IconFa name="icon-solid-check" className="mr-4 text-green-500" />
             {list}
           </li>
         ))}

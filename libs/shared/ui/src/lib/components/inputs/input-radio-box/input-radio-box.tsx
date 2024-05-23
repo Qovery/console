@@ -17,12 +17,12 @@ export function InputRadioBox(props: InputRadioBoxProps) {
     <div
       data-testid="input-radio-box"
       onClick={() => onChange(value)}
-      className={`p-4 rounded border mb-2 transition-all ${
-        fieldValue === value ? 'bg-brand-50 border-brand-500' : 'bg-neutral-100 border-neutral-250'
+      className={`mb-2 rounded border p-4 transition-all ${
+        fieldValue === value ? 'border-brand-500 bg-brand-50' : 'border-neutral-250 bg-neutral-100'
       }`}
     >
       <InputRadio big name={name} value={value} label={label} onChange={onChange} formValue={fieldValue} />
-      {description && <div className="ml-[31px] text-neutral-400 text-sm mt-1">{description}</div>}
+      {description && <div className="ml-[31px] mt-1 text-sm text-neutral-400">{description}</div>}
     </div>
   )
 }

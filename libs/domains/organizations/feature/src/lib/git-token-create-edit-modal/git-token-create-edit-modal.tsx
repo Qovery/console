@@ -68,7 +68,7 @@ export function GitTokenCreateEditModal({ isEdit, gitToken, organizationId, onCl
               create dedicated git tokens.
             </p>
             <p>How to configure it:</p>
-            <ol className="list-disc ml-3 mb-2">
+            <ol className="mb-2 ml-3 list-disc">
               <li>
                 Create a token within your git account (procedures depends on the git provider, see linked
                 documentation)

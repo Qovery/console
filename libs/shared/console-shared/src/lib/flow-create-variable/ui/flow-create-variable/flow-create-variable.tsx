@@ -29,14 +29,14 @@ export function FlowCreateVariable(props: FlowCreateVariableProps) {
       </div>
 
       <form className="space-y-10" onSubmit={props.onSubmit}>
-        <p className="text-neutral-350 text-sm">Define here the variables required by your service.</p>
+        <p className="text-sm text-neutral-350">Define here the variables required by your service.</p>
         <div>
           {props.variables?.length > 0 && (
-            <div className="grid mb-3" style={{ gridTemplateColumns }}>
-              <span className="text-sm text-neutral-400 font-medium">Variable</span>
-              <span className="text-sm text-neutral-400 font-medium">Value</span>
-              <span className="text-sm text-neutral-400 font-medium">Scope</span>
-              <span className="text-sm text-neutral-400 font-medium pl-1.5">Secret</span>
+            <div className="mb-3 grid" style={{ gridTemplateColumns }}>
+              <span className="text-sm font-medium text-neutral-400">Variable</span>
+              <span className="text-sm font-medium text-neutral-400">Value</span>
+              <span className="text-sm font-medium text-neutral-400">Scope</span>
+              <span className="pl-1.5 text-sm font-medium text-neutral-400">Secret</span>
               <span></span>
             </div>
           )}

@@ -90,9 +90,9 @@ export function GitTokenServicesListModal({
 
   return (
     <Section className="p-6">
-      <Heading className="text-neutral-400 mb-6 text-2xl">Associated services ({associatedServicesCount})</Heading>
+      <Heading className="mb-6 text-2xl text-neutral-400">Associated services ({associatedServicesCount})</Heading>
       {isLoading ? (
-        <div className="flex items-start justify-center p-5 h-40">
+        <div className="flex h-40 items-start justify-center p-5">
           <LoaderSpinner className="w-5" />
         </div>
       ) : (
@@ -106,7 +106,7 @@ export function GitTokenServicesListModal({
             <Accordion.Root
               type="single"
               collapsible
-              className="border border-neutral-250 bg-neutral-100 py-2 px-4 rounded"
+              className="rounded border border-neutral-250 bg-neutral-100 px-4 py-2"
             >
               {data.map((project) => (
                 <Accordion.Item key={project.project_id} value={project.project_name}>
@@ -131,7 +131,7 @@ export function GitTokenServicesListModal({
                           <Accordion.Content>
                             <ul>
                               {environment.services.map((service) => (
-                                <li key={service.service_id} className=" border-l border-neutral">
+                                <li key={service.service_id} className=" border-neutral border-l">
                                   <Link
                                     color="brand"
                                     onClick={() => onClose()}
@@ -164,9 +164,9 @@ export function GitTokenServicesListModal({
               ))}
             </Accordion.Root>
           ) : (
-            <div className="text-center py-4 px-5">
+            <div className="px-5 py-4 text-center">
               <Icon iconName="wave-pulse" className="text-neutral-350" />
-              <p className="text-neutral-350 font-medium text-xs mt-1">No value found</p>
+              <p className="mt-1 text-xs font-medium text-neutral-350">No value found</p>
             </div>
           )}
         </>

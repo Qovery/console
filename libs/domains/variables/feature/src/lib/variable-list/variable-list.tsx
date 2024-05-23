@@ -172,7 +172,7 @@ export function VariableList({
         ),
         cell: ({ row }) =>
           row.getCanSelect() ? (
-            <label className="absolute flex items-center inset-y-0 left-0 p-4" onClick={(e) => e.stopPropagation()}>
+            <label className="absolute inset-y-0 left-0 flex items-center p-4" onClick={(e) => e.stopPropagation()}>
               <Checkbox
                 checked={row.getIsSelected()}
                 onCheckedChange={(checked) => {
@@ -197,7 +197,7 @@ export function VariableList({
               {variable.owned_by === ExternalServiceEnum.DOPPLER && (
                 <span
                   data-testid="doppler-tag"
-                  className="bg-[#3391FB] font-bold rounded-sm text-2xs text-neutral-50 px-1 inline-flex items-center h-4 mr-2"
+                  className="mr-2 inline-flex h-4 items-center rounded-sm bg-[#3391FB] px-1 text-2xs font-bold text-neutral-50"
                 >
                   {variable.owned_by}
                 </span>
@@ -207,9 +207,9 @@ export function VariableList({
                   <Icon
                     iconName="arrow-turn-down-right"
                     iconStyle="regular"
-                    className="mr-2 ml-1 text-2xs text-neutral-300"
+                    className="ml-1 mr-2 text-2xs text-neutral-300"
                   />
-                  <span className="bg-teal-500 font-bold rounded-sm text-2xs text-neutral-50 px-1 inline-flex items-center h-4 mr-2">
+                  <span className="mr-2 inline-flex h-4 items-center rounded-sm bg-teal-500 px-1 text-2xs font-bold text-neutral-50">
                     ALIAS
                   </span>
                 </>
@@ -218,9 +218,9 @@ export function VariableList({
                   <Icon
                     iconName="arrow-turn-down-right"
                     iconStyle="regular"
-                    className="mr-2 ml-1 text-2xs text-neutral-300"
+                    className="ml-1 mr-2 text-2xs text-neutral-300"
                   />
-                  <span className="bg-brand-500 font-bold rounded-sm text-2xs text-neutral-50 px-1 inline-flex items-center h-4 mr-2">
+                  <span className="mr-2 inline-flex h-4 items-center rounded-sm bg-brand-500 px-1 text-2xs font-bold text-neutral-50">
                     OVERRIDE
                   </span>
                 </>
@@ -228,7 +228,7 @@ export function VariableList({
                 ''
               )}
               {variable.mount_path ? (
-                <span className="bg-purple-500 font-bold rounded-sm text-2xs text-neutral-50 px-1 inline-flex items-center h-4 mr-2">
+                <span className="mr-2 inline-flex h-4 items-center rounded-sm bg-purple-500 px-1 text-2xs font-bold text-neutral-50">
                   FILE
                 </span>
               ) : (
@@ -336,7 +336,7 @@ export function VariableList({
                 ) : (
                   <Icon className="ml-0.5 text-neutral-400" iconName="file-lock" />
                 )}
-                <span className="text-sky-500 hover:underline cursor-pointer">
+                <span className="cursor-pointer text-sky-500 hover:underline">
                   {getEnvironmentVariableFileMountPath(variable)}
                 </span>
               </div>
@@ -379,7 +379,7 @@ export function VariableList({
               const variable = info.row.original
               return variable.service_name && variable.service_type && variable.service_id ? (
                 <NavLink
-                  className="flex gap-2 items-center text-sm font-medium"
+                  className="flex items-center gap-2 text-sm font-medium"
                   to={
                     variable.service_type !== 'DATABASE'
                       ? APPLICATION_URL(organizationId, projectId, environmentId, variable.service_id) +
@@ -416,7 +416,7 @@ export function VariableList({
           },
         },
         cell: (info) => {
-          return <span className="capitalize text-sm font-medium">{info.getValue().toLowerCase()}</span>
+          return <span className="text-sm font-medium capitalize">{info.getValue().toLowerCase()}</span>
         },
       }),
       columnHelper.accessor('updated_at', {
@@ -472,7 +472,7 @@ export function VariableList({
       <EmptyState
         title="No variable found"
         description="You can create a variable from the button on the top"
-        className="bg-white rounded-t-sm mt-2 pt-10"
+        className="mt-2 rounded-t-sm bg-white pt-10"
       />
     )
   }
@@ -480,8 +480,8 @@ export function VariableList({
   const selectedRows = table.getSelectedRowModel().rows.map(({ original }) => original)
 
   return (
-    <div className="flex flex-col grow justify-between">
-      <Table.Root className={twMerge('table-fixed w-full text-xs min-w-[800px]', className)}>
+    <div className="flex grow flex-col justify-between">
+      <Table.Root className={twMerge('w-full min-w-[800px] table-fixed text-xs', className)}>
         <Table.Header>
           {table.getHeaderGroups().map((headerGroup) => (
             <Table.Row key={headerGroup.id}>
@@ -520,7 +520,7 @@ export function VariableList({
         <Table.Body>
           {table.getRowModel().rows.map((row) => (
             <Fragment key={row.id}>
-              <Table.Row className="hover:bg-neutral-100 h-16 cursor-pointer">
+              <Table.Row className="h-16 cursor-pointer hover:bg-neutral-100">
                 {row.getVisibleCells().map((cell, i) => (
                   <Table.Cell
                     key={cell.id}

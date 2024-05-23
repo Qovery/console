@@ -105,7 +105,7 @@ export function ServiceCloneModal({ onClose, organizationId, projectId, serviceI
               <br />
               All the configurations will be copied into the new service with a few exceptions:
             </p>
-            <ul className="list-disc list-outside ml-4">
+            <ul className="ml-4 list-outside list-disc">
               <li>target environment is the current environment: custom domains</li>
               <li>
                 target environment is NOT the current environment: custom domains, pipeline deployment stages,

@@ -40,8 +40,8 @@ function copyName(name: string) {
 export const ManyItems: Story = {
   render: (args) => (
     <div className="text-center">
-      <div className="max-w-[550px] w-full p-3 rounded bg-neutral-150 border-solid border-x border-y border-neutral-250 flex flex-wrap gap-x-2 justify-center mb-6 mx-auto">
-        <h2 className="w-full mb-2">SVG Icons</h2>
+      <div className="mx-auto mb-6 flex w-full max-w-[550px] flex-wrap justify-center gap-x-2 rounded border-x border-y border-solid border-neutral-250 bg-neutral-150 p-3">
+        <h2 className="mb-2 w-full">SVG Icons</h2>
         <button onClick={() => copyName(IconEnum.GITHUB)}>
           <Icon name={IconEnum.GITHUB} />
         </button>
@@ -124,16 +124,16 @@ export const ManyItems: Story = {
           <Icon name={IconEnum.HELM_OFFICIAL} />
         </button>
       </div>
-      <div className="max-w-[550px] w-full p-3 rounded bg-neutral-150 border-solid border-x border-y border-neutral-250 flex flex-wrap gap-x-2 justify-center mb-6 mx-auto">
-        <h2 className="w-full mb-2">FontAwesome Icons</h2>
+      <div className="mx-auto mb-6 flex w-full max-w-[550px] flex-wrap justify-center gap-x-2 rounded border-x border-y border-solid border-neutral-250 bg-neutral-150 p-3">
+        <h2 className="mb-2 w-full">FontAwesome Icons</h2>
         {awesomeIconEnumNames.map((item) => (
           <button key={item.enumName} onClick={() => copyName(item.enumName)}>
             <Icon {...args} name={item.value} />
           </button>
         ))}
       </div>
-      <div className="max-w-[550px] w-full p-3 rounded bg-neutral-150 border-solid border-x border-y border-neutral-250 flex flex-wrap gap-x-2 justify-center mb-6 mx-auto">
-        <h2 className="w-full mb-2">Status Icons</h2>
+      <div className="mx-auto mb-6 flex w-full max-w-[550px] flex-wrap justify-center gap-x-2 rounded border-x border-y border-solid border-neutral-250 bg-neutral-150 p-3">
+        <h2 className="mb-2 w-full">Status Icons</h2>
         <DeployedIcon />
         <RestartedIcon />
         <BuildingIcon />

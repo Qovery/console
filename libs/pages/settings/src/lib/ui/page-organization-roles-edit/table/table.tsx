@@ -16,22 +16,22 @@ export function Table(props: TableProps) {
 
   return (
     <div
-      className={`flex flex-col-reverse border border-neutral-200 border-b-0 rounded text-xs text-neutral-400 ${className}`}
+      className={`flex flex-col-reverse rounded border border-b-0 border-neutral-200 text-xs text-neutral-400 ${className}`}
     >
       {children}
-      <div className="flex h-10 sticky bg-white top-16 rounded border-neutral-200 border-b">
-        <div className="flex items-center w-1/4 h-full flex-auto px-4 font-medium border-r border-neutral-200">
+      <div className="sticky top-16 flex h-10 rounded border-b border-neutral-200 bg-white">
+        <div className="flex h-full w-1/4 flex-auto items-center border-r border-neutral-200 px-4 font-medium">
           {title}
         </div>
         {headArray.map((head) => (
           <div
             key={head.label}
-            className="flex items-center justify-center h-full flex-1 px-4 font-medium border-r border-neutral-200 last:border-0"
+            className="flex h-full flex-1 items-center justify-center border-r border-neutral-200 px-4 font-medium last:border-0"
           >
             {head.label}
             <Tooltip align="center" content={head.tooltip}>
               <div className="flex items-center">
-                <Icon className="cursor-pointer text-xs ml-1 text-neutral-350" name="icon-solid-circle-info" />
+                <Icon className="ml-1 cursor-pointer text-xs text-neutral-350" name="icon-solid-circle-info" />
               </div>
             </Tooltip>
           </div>

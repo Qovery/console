@@ -7,7 +7,7 @@ export function BadgeDeploymentOrder(props: BadgeDeploymentOrderProps) {
   const { order = 0, className = '' } = props
 
   return (
-    <div data-testid="badge" className={`relative drop-shadow-sm flex mr-2 ${className}`}>
+    <div data-testid="badge" className={`relative mr-2 flex drop-shadow-sm ${className}`}>
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path
           data-testid="badge-svg"
@@ -17,7 +17,7 @@ export function BadgeDeploymentOrder(props: BadgeDeploymentOrderProps) {
           strokeWidth="0.5"
         />
       </svg>
-      <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-neutral-50 text-2xs">
+      <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform text-2xs text-neutral-50">
         {order}
       </span>
     </div>

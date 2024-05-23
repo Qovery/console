@@ -49,7 +49,7 @@ export function DatePicker({
 
   const renderContainer = ({ children }: CalendarContainerProps) => {
     return (
-      <CalendarContainer className="bg-white inline-flex rounded relative mt-2 -ml-2 shadow-[0_0_32px_rgba(0,0,0,0.08)]">
+      <CalendarContainer className="relative -ml-2 mt-2 inline-flex rounded bg-white shadow-[0_0_32px_rgba(0,0,0,0.08)]">
         <svg
           className="absolute -top-[6px] left-3 shadow-lg"
           xmlns="http://www.w3.org/2000/svg"
@@ -60,15 +60,15 @@ export function DatePicker({
         >
           <path fill="#fff" d="M18 6H0L8.445.37a1 1 0 011.11 0L18 6z"></path>
         </svg>
-        <div className="flex flex-col relative p-5">
+        <div className="relative flex flex-col p-5">
           {children}
           {showTimeInput && (
-            <div className="flex mt-3">
+            <div className="mt-3 flex">
               <InputText
                 label="Start time"
                 name="start-time"
                 type="time"
-                className="flex-grow mr-2"
+                className="mr-2 flex-grow"
                 customRef={inputStartTime}
                 value="00:00"
               />
@@ -84,7 +84,7 @@ export function DatePicker({
           )}
           <Button
             type="button"
-            className="justify-center mt-5"
+            className="mt-5 justify-center"
             size="md"
             onClick={() =>
               onChange(

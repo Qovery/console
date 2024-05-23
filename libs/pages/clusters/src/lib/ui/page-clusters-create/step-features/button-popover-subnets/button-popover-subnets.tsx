@@ -16,7 +16,7 @@ function Row({ index, remove, name }: { index: number; remove: UseFieldArrayRemo
   const { control } = useFormContext()
 
   return (
-    <li className="grid grid-cols-[6fr_6fr_6fr_1fr] gap-x-2 items-center">
+    <li className="grid grid-cols-[6fr_6fr_6fr_1fr] items-center gap-x-2">
       <Controller
         name={`${name}.${index}.A`}
         control={control}
@@ -104,8 +104,8 @@ export function ButtonPopoverSubnets({ name, children, title, callout, required 
           variant="outline"
           className={clsx(
             'self-start',
-            watchSubnets && watchSubnets.length > 0 && isValid && 'bg-white border-green-500',
-            !isValid && 'bg-white border-red-500'
+            watchSubnets && watchSubnets.length > 0 && isValid && 'border-green-500 bg-white',
+            !isValid && 'border-red-500 bg-white'
           )}
           onClick={() =>
             fields.length === 0 &&
@@ -119,15 +119,15 @@ export function ButtonPopoverSubnets({ name, children, title, callout, required 
           {children}
         </Button>
       </Popover.Trigger>
-      <Popover.Content side="bottom" className="text-neutral-350 text-sm relative" style={{ width: 648 }}>
-        <h6 className="text-neutral-400 font-medium mb-4">{title}</h6>
+      <Popover.Content side="bottom" className="relative text-sm text-neutral-350" style={{ width: 648 }}>
+        <h6 className="mb-4 font-medium text-neutral-400">{title}</h6>
         {callout && <div className="mb-4">{callout}</div>}
         {fields.length > 0 && (
-          <ul className="flex flex-col gap-3 mb-3">
-            <li className="grid grid-cols-[6fr_6fr_6fr_1fr] gap-x-2 items-center">
-              <span className="text-sm text-neutral-350 font-medium">IDs zone A</span>
-              <span className="text-sm text-neutral-350 font-medium">IDs zone B</span>
-              <span className="text-sm text-neutral-350 font-medium">IDs zone C</span>
+          <ul className="mb-3 flex flex-col gap-3">
+            <li className="grid grid-cols-[6fr_6fr_6fr_1fr] items-center gap-x-2">
+              <span className="text-sm font-medium text-neutral-350">IDs zone A</span>
+              <span className="text-sm font-medium text-neutral-350">IDs zone B</span>
+              <span className="text-sm font-medium text-neutral-350">IDs zone C</span>
               <span></span>
             </li>
             {fields.map((field, index) => (

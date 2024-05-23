@@ -9,7 +9,7 @@ exports[`SelectVersionModal should match snapshot 1`] = `
       class="flex flex-col gap-2 text-sm text-neutral-350"
     >
       <h2
-        class="h4 text-neutral-400 max-w-sm truncate"
+        class="h4 max-w-sm truncate text-neutral-400"
       >
         Deploy other version
       </h2>
@@ -35,7 +35,7 @@ exports[`SelectVersionModal should match snapshot 1`] = `
             class=""
           >
             <label
-              class="text-sm translate-y-2"
+              class="translate-y-2 text-sm"
               for="Version"
             >
               Version
@@ -53,7 +53,7 @@ exports[`SelectVersionModal should match snapshot 1`] = `
       </div>
     </div>
     <div
-      class="flex gap-3 justify-end"
+      class="flex justify-end gap-3"
     >
       <button
         class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-sm h-11 px-5 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-transparent"

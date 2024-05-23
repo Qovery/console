@@ -23,7 +23,7 @@ export function ClusterInstallationGuideModal({
   }
 
   return (
-    <div className="p-6 flex flex-col gap-6">
+    <div className="flex flex-col gap-6 p-6">
       <h2 className="h4 text-neutral-400">Installation guide</h2>
 
       <div className="flex flex-col gap-4">
@@ -45,7 +45,7 @@ export function ClusterInstallationGuideModal({
             <li className="mb-6 text-sm font-medium">
               <span>Save the following yaml, it contains the Qovery configuration assigned to your cluster.</span>
               <br />
-              <span className="inline-block mt-2">
+              <span className="mt-2 inline-block">
                 <Button
                   size="xs"
                   variant="solid"

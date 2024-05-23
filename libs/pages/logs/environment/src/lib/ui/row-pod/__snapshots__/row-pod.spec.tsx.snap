@@ -3,22 +3,22 @@
 exports[`RowPod should match snapshot 1`] = `
 <div>
   <div
-    class="group flex justify-between font-code text-xs hover:bg-neutral-650 w-full mb-[2px] select-none"
+    class="group mb-[2px] flex w-full select-none justify-between font-code text-xs hover:bg-neutral-650"
     data-testid="pod-log-row"
   >
     <div
-      class="bg-neutral-700 text-neutral-400 group-hover:bg-neutral-550 px-2 pt-0.5 font-code min-w-[40px] max-w-[40px] text-right box-border"
+      class="box-border min-w-[40px] max-w-[40px] bg-neutral-700 px-2 pt-0.5 text-right font-code text-neutral-400 group-hover:bg-neutral-550"
       data-testid="index"
     >
       2
     </div>
     <div
-      class="px-4 text-neutral-350 whitespace-nowrap min-w-[225px]"
+      class="min-w-[225px] whitespace-nowrap px-4 text-neutral-350"
       data-testid="cell-pod-name"
       style="color: rgb(153, 128, 250);"
     >
       <span
-        class="h-5 flex justify-center items-center px-2 bg-neutral-500 rounded-[40px] gap-1"
+        class="flex h-5 items-center justify-center gap-1 rounded-[40px] bg-neutral-500 px-2"
       >
         app-z9d11e...77b6-k9sl7
         <span
@@ -34,7 +34,7 @@ exports[`RowPod should match snapshot 1`] = `
       </span>
     </div>
     <div
-      class="pt-0.5 flex whitespace-nowrap text-neutral-50 min-w-[85px]"
+      class="flex min-w-[85px] whitespace-nowrap pt-0.5 text-neutral-50"
       data-testid="cell-version"
     >
       <span
@@ -51,7 +51,7 @@ exports[`RowPod should match snapshot 1`] = `
           53deb16
         </span>
         <span
-          class="bigger-click-zone cursor-pointer opacity-0 ml-1 group-hover/version:opacity-80"
+          class="bigger-click-zone cursor-pointer ml-1 opacity-0 group-hover/version:opacity-80"
           data-state="closed"
           data-testid="copy-container"
         >
@@ -63,12 +63,12 @@ exports[`RowPod should match snapshot 1`] = `
       </span>
     </div>
     <div
-      class="px-4 pt-0.5 text-neutral-350 whitespace-nowrap"
+      class="whitespace-nowrap px-4 pt-0.5 text-neutral-350"
       data-testid="cell-date"
       title="Mon, 07 Nov 2022 15:18:36 GMT"
     />
     <code
-      class="code-ansi select-text pr-6 pt-0.5 text-neutral-50 relative w-full whitespace-pre-wrap break-all"
+      class="code-ansi relative w-full select-text whitespace-pre-wrap break-all pr-6 pt-0.5 text-neutral-50"
     >
       <span>
         message

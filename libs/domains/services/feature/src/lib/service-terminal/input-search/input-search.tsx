@@ -47,15 +47,15 @@ export function InputSearch({ data, value, onChange, placeholder, trimLabel }: I
         </span>
       </Button>
       <div className={selectedItem ? 'hidden' : ''}>
-        <Icon iconName="magnifying-glass" className="text-neutral-50 absolute left-2.5 top-1.5 text-xs" />
+        <Icon iconName="magnifying-glass" className="absolute left-2.5 top-1.5 text-xs text-neutral-50" />
         <input
           placeholder={placeholder}
-          className="w-56 h-7 bg-transparent text-xs text-neutral-250 rounded pl-7 pr-2 border border-neutral-350 focus:outline-none focus:border-brand-400"
+          className="h-7 w-56 rounded border border-neutral-350 bg-transparent pl-7 pr-2 text-xs text-neutral-250 focus:border-brand-400 focus:outline-none"
           {...getInputProps({ ref: inputRef })}
         />
       </div>
       <div
-        className={clsx('mt-1 bg-neutral-600 p-2 rounded w-full max-h-40 overflow-y-auto min-w-56', {
+        className={clsx('mt-1 max-h-40 w-full min-w-56 overflow-y-auto rounded bg-neutral-600 p-2', {
           hidden: !isOpen,
         })}
       >
@@ -65,7 +65,7 @@ export function InputSearch({ data, value, onChange, placeholder, trimLabel }: I
               <li
                 key={v}
                 className={clsx(
-                  'flex w-full h-9 items-center justify-between px-2 text-neutral-50 text-xs text-medium hover:bg-neutral-550 rounded-sm transition',
+                  'text-medium flex h-9 w-full items-center justify-between rounded-sm px-2 text-xs text-neutral-50 transition hover:bg-neutral-550',
                   {
                     'bg-neutral-550': highlightedIndex === index,
                   }
@@ -77,8 +77,8 @@ export function InputSearch({ data, value, onChange, placeholder, trimLabel }: I
               </li>
             ))
           ) : (
-            <p className="flex flex-col w-full text-center text-neutral-50 text-xs text-medium py-2">
-              <Icon iconName="wave-pulse" className="block mb-1" />
+            <p className="text-medium flex w-full flex-col py-2 text-center text-xs text-neutral-50">
+              <Icon iconName="wave-pulse" className="mb-1 block" />
               No results found
             </p>
           )}

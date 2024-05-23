@@ -96,15 +96,15 @@ export function PodLogs({
             const currentPod = serviceRunningStatus?.pods.filter((pod) => pod.name === data.pod_name)[0]
             return (
               <div
-                className={`group flex items-center w-[calc(100%+24px)] rounded-sm px-3 -mx-3 h-full ${
+                className={`group -mx-3 flex h-full w-[calc(100%+24px)] items-center rounded-sm px-3 ${
                   isActive ? 'bg-neutral-800' : ''
                 }`}
               >
-                <div className="w-4 mr-2.5">
+                <div className="mr-2.5 w-4">
                   <StatusChip status={currentPod?.state} />
                 </div>
-                <p className="text-xs font-medium text-neutral-100 mr-5 truncate">{data.pod_name}</p>
-                <span className="block text-2xs text-neutral-350 mr-2">
+                <p className="mr-5 truncate text-xs font-medium text-neutral-100">{data.pod_name}</p>
+                <span className="mr-2 block text-2xs text-neutral-350">
                   {data.version && (
                     <>
                       <Icon iconName="code-commit" className="mr-2 text-neutral-50" />
@@ -114,7 +114,7 @@ export function PodLogs({
                 </span>
                 <Icon
                   name={IconAwesomeEnum.FILTER}
-                  className={`text-ssm group-hover:text-neutral-50 ml-auto ${
+                  className={`ml-auto text-ssm group-hover:text-neutral-50 ${
                     isActive ? 'text-yellow-500' : 'text-transparent'
                   }`}
                 />
@@ -190,14 +190,14 @@ export function PodLogs({
         {showPreviousLogs === false && (
           <button
             type="button"
-            className="block py-1.5 bg-neutral-500 hover:bg-neutral-600 transition text-neutral-250 text-center text-sm font-medium w-full"
+            className="block w-full bg-neutral-500 py-1.5 text-center text-sm font-medium text-neutral-250 transition hover:bg-neutral-600"
             onClick={() => setShowPreviousLogs?.(true)}
           >
             Load previous logs
             <Icon iconName="arrow-up" className="ml-1.5" />
           </button>
         )}
-        <div className="pt-1 pb-8">{memoRow}</div>
+        <div className="pb-8 pt-1">{memoRow}</div>
       </Table>
     </LayoutLogs>
   )

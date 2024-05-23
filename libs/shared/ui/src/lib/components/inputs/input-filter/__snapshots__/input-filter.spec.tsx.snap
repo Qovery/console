@@ -8,7 +8,7 @@ exports[`InputFilter should match input filter with loading 1`] = `
       type="button"
     >
       <div
-        class="flex justify-center w-12"
+        class="flex w-12 justify-center"
       >
         <div
           class="aspect-square border-2  rounded-full border-solid border-neutral-350 border-r-neutral-50 animate-spin w-4 "
@@ -29,7 +29,7 @@ exports[`InputFilter should match input filter with value 1`] = `
     >
       Option 1
       <span
-        class="px-1 py-1 relative left-1"
+        class="relative left-1 px-1 py-1"
         data-testid="clear-btn"
         role="button"
       >

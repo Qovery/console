@@ -18,21 +18,21 @@ export function Login({ onClickAuthLogin, loading }: ILoginProps) {
 
   return (
     <div className="relative bg-white">
-      <img className="w-[135px] absolute top-6 left-8" src="/assets/logos/logo-black.svg" alt="Qovery logo black" />
-      <div className="flex h-screen ml-auto mr-auto">
-        <div className="w-full lg:w-1/2 px-4 lg:px-20 motion-safe:opacity-0 motion-safe:animate-[fadein_0.5s_ease-in-out_forwards]">
-          <div className="max-w-lg mt-[30%] mx-auto">
+      <img className="absolute left-8 top-6 w-[135px]" src="/assets/logos/logo-black.svg" alt="Qovery logo black" />
+      <div className="ml-auto mr-auto flex h-screen">
+        <div className="w-full px-4 motion-safe:animate-[fadein_0.5s_ease-in-out_forwards] motion-safe:opacity-0 lg:w-1/2 lg:px-20">
+          <div className="mx-auto mt-[30%] max-w-lg">
             {!displayInvitation ? (
-              <h1 className="text-[28px] text-neutral-400 mb-4">Connect to Qovery</h1>
+              <h1 className="mb-4 text-[28px] text-neutral-400">Connect to Qovery</h1>
             ) : (
               <div className="mb-2">
                 <InviteDetailsFeature />
               </div>
             )}
-            <p className="text-sm mb-10 text-neutral-400">
+            <p className="mb-10 text-sm text-neutral-400">
               By registering and using Qovery, you agree to the processing of your personal data by Qovery as described
               in the
-              <a href="https://www.qovery.com/terms" className="link text-sky-500 ml-1">
+              <a href="https://www.qovery.com/terms" className="link ml-1 text-sky-500">
                 Privacy Policy
               </a>
               .
@@ -100,22 +100,22 @@ export function Login({ onClickAuthLogin, loading }: ILoginProps) {
             </div>
           </div>
         </div>
-        <div className="overflow-hidden relative hidden lg:block w-1/2 px-20 bg-neutral-650 before:absolute before:top-0 before:left-0 before:h-screen before:w-full motion-safe:before:animate-[pulse_5s_ease-in-out_infinite] before:bg-[radial-gradient(73.24%_73.24%_at_50%_0%,rgba(81,55,184,0.82)_0%,rgba(124,131,229,0)_100%)]">
-          <div className="relative text-center motion-safe:opacity-0 motion-safe:animate-[fadein_1s_ease-in-out_forwards]">
-            <h2 className="text-white font-bold leading-[48px] mt-[30%] mb-1">
+        <div className="relative hidden w-1/2 overflow-hidden bg-neutral-650 px-20 before:absolute before:left-0 before:top-0 before:h-screen before:w-full before:bg-[radial-gradient(73.24%_73.24%_at_50%_0%,rgba(81,55,184,0.82)_0%,rgba(124,131,229,0)_100%)] motion-safe:before:animate-[pulse_5s_ease-in-out_infinite] lg:block">
+          <div className="relative text-center motion-safe:animate-[fadein_1s_ease-in-out_forwards] motion-safe:opacity-0">
+            <h2 className="mb-1 mt-[30%] font-bold leading-[48px] text-white">
               <span className="text-4xl">
                 The Leading <br />
               </span>
               <span className="text-[32px]">Internal Developer Platform</span>
             </h2>
-            <p className="text-white mb-12">
+            <p className="mb-12 text-white">
               Trusted by 50.000 developers and platform engineers <br /> from the best companies
             </p>
-            <ul className="grid grid-cols-2 gap-12 mx-auto max-w-sm">
+            <ul className="mx-auto grid max-w-sm grid-cols-2 gap-12">
               <li className="flex items-center justify-center">
                 <a
                   href="https://www.talkspace.com/"
-                  className="hover:opacity-80 transition-opacity"
+                  className="transition-opacity hover:opacity-80"
                   target="_blank"
                   rel="noreferrer"
                 >
@@ -156,7 +156,7 @@ export function Login({ onClickAuthLogin, loading }: ILoginProps) {
               <li className="flex items-center justify-center">
                 <a
                   href="https://redbull.com/"
-                  className="hover:opacity-80 transition-opacity"
+                  className="transition-opacity hover:opacity-80"
                   target="_blank"
                   rel="noreferrer"
                 >
@@ -182,7 +182,7 @@ export function Login({ onClickAuthLogin, loading }: ILoginProps) {
               <li className="flex items-center justify-center">
                 <a
                   href="https://alan.com/"
-                  className="hover:opacity-80 transition-opacity"
+                  className="transition-opacity hover:opacity-80"
                   target="_blank"
                   rel="noreferrer"
                 >
@@ -210,7 +210,7 @@ export function Login({ onClickAuthLogin, loading }: ILoginProps) {
               <li className="flex items-center justify-center">
                 <a
                   href="https://www.hellogetsafe.com"
-                  className="hover:opacity-80 transition-opacity"
+                  className="transition-opacity hover:opacity-80"
                   target="_blank"
                   rel="noreferrer"
                 >
@@ -233,7 +233,7 @@ export function Login({ onClickAuthLogin, loading }: ILoginProps) {
               <li className="flex items-center justify-center">
                 <a
                   href="https://www.tint.ai"
-                  className="hover:opacity-80 transition-opacity"
+                  className="transition-opacity hover:opacity-80"
                   target="_blank"
                   rel="noreferrer"
                 >
@@ -269,7 +269,7 @@ export function Login({ onClickAuthLogin, loading }: ILoginProps) {
               <li className="flex items-center justify-center">
                 <a
                   href="https://findigs.com"
-                  className="hover:opacity-80 transition-opacity"
+                  className="transition-opacity hover:opacity-80"
                   target="_blank"
                   rel="noreferrer"
                 >
@@ -291,7 +291,7 @@ export function Login({ onClickAuthLogin, loading }: ILoginProps) {
             </ul>
           </div>
           <svg
-            className="w-[80%] absolute right-0 -bottom-[14%] select-none pointer-events-none motion-safe:opacity-0 motion-safe:animate-[fadein_1.5s_ease-in-out_forwards_200ms]"
+            className="pointer-events-none absolute -bottom-[14%] right-0 w-[80%] select-none motion-safe:animate-[fadein_1.5s_ease-in-out_forwards_200ms] motion-safe:opacity-0"
             xmlns="http://www.w3.org/2000/svg"
             width="100%"
             height="100%"

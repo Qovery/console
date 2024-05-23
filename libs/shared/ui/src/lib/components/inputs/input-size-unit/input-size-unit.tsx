@@ -55,19 +55,19 @@ export function InputSizeUnit(props: InputSizeUnitProps) {
             error?.type === 'required'
               ? 'Please enter a size.'
               : error?.type === 'max'
-              ? `Maximum allowed ${name} is: ${maxSize} ${memorySize}.`
-              : undefined
+                ? `Maximum allowed ${name} is: ${maxSize} ${memorySize}.`
+                : undefined
           }
         />
         {showConsumption && (
-          <p data-testid="current-consumption" className="text-neutral-350 text-xs mt-1 ml-4">
+          <p data-testid="current-consumption" className="ml-4 mt-1 text-xs text-neutral-350">
             Current consumption:{' '}
             {currentSize < 1024 ? currentSize + ` ${MemorySizeEnum.MB}` : currentSize / 1024 + ` ${MemorySizeEnum.GB}`}
           </p>
         )}
       </div>
       <InputSelect
-        className="w-full h-full"
+        className="h-full w-full"
         onChange={(e) => {
           handleChangeMemoryUnit(e as string)
         }}

@@ -164,10 +164,10 @@ export function ApplicationSettingsResources({
                 error?.type === 'required'
                   ? 'Please enter a size.'
                   : error?.type === 'max'
-                  ? `Maximum allowed ${field.name} is: ${maxMemoryBySize} MiB.`
-                  : error?.type === 'min'
-                  ? `Minimum allowed ${field.name} is: ${minMemory} MiB.`
-                  : undefined
+                    ? `Maximum allowed ${field.name} is: ${maxMemoryBySize} MiB.`
+                    : error?.type === 'min'
+                      ? `Minimum allowed ${field.name} is: ${minMemory} MiB.`
+                      : undefined
               }
             />
           )}
@@ -202,10 +202,10 @@ export function ApplicationSettingsResources({
                     error?.type === 'required'
                       ? 'Please enter a size.'
                       : error?.type === 'max'
-                      ? `Maximum allowed is: ${maxInstances}.`
-                      : error?.type === 'min'
-                      ? `Minimum allowed is: ${minInstances}.`
-                      : undefined
+                        ? `Maximum allowed is: ${maxInstances}.`
+                        : error?.type === 'min'
+                          ? `Minimum allowed is: ${minInstances}.`
+                          : undefined
                   }
                 />
               )}
@@ -234,18 +234,18 @@ export function ApplicationSettingsResources({
                     error?.type === 'required'
                       ? 'Please enter a size.'
                       : error?.type === 'max'
-                      ? `Maximum allowed is: ${maxInstances}.`
-                      : error?.type === 'min'
-                      ? `Minimum allowed is: ${minRunningInstances}.`
-                      : undefined
+                        ? `Maximum allowed is: ${maxInstances}.`
+                        : error?.type === 'min'
+                          ? `Minimum allowed is: ${minRunningInstances}.`
+                          : undefined
                   }
                 />
               )}
             />
           </div>
-          <p className="text-neutral-350 text-xs">
+          <p className="text-xs text-neutral-350">
             {runningStatuses?.pods && (
-              <span className="flex mb-1">
+              <span className="mb-1 flex">
                 Current consumption: {runningStatuses.pods.length} instance
                 {runningStatuses.pods.length > 1 ? 's' : ''}
               </span>

@@ -64,7 +64,7 @@ export function MenuGroup(props: MenuGroupProps) {
   return (
     <div style={style}>
       {!isFilter && menu?.title && (
-        <div className="flex justify-between items-center" style={headPaddingStyle}>
+        <div className="flex items-center justify-between" style={headPaddingStyle}>
           {menu?.title && (
             <p data-testid="title" className="text-sm text-neutral-350">
               {menu?.title}
@@ -72,7 +72,7 @@ export function MenuGroup(props: MenuGroupProps) {
           )}
           {menu?.button && (
             <span
-              className="link text-sm text-brand-500 cursor-pointer font-medium inline-block"
+              className="link inline-block cursor-pointer text-sm font-medium text-brand-500"
               onClick={menu?.button.onClick}
             >
               {menu?.button.label}
@@ -93,12 +93,12 @@ export function MenuGroup(props: MenuGroupProps) {
         </div>
       )}
       {isFilter && menu?.title && filteredItems.length !== 0 && (
-        <p className="text-sm text-neutral-350 ml-2" style={headPaddingStyle}>
+        <p className="ml-2 text-sm text-neutral-350" style={headPaddingStyle}>
           {menu?.title}
         </p>
       )}
       {filteredItems.length > 0 && (
-        <div style={paddingStyle} className="overflow-y-auto max-h-80">
+        <div style={paddingStyle} className="max-h-80 overflow-y-auto">
           {filteredItems.map((item, index) => {
             // if object empty not return item
             if (Object.keys(item).length === 0) {
@@ -110,7 +110,7 @@ export function MenuGroup(props: MenuGroupProps) {
         </div>
       )}
       {!isFilter && !isLast && filteredItems.length > 0 && (
-        <MenuDivider className="bg-neutral-200 dark:bg-neutral-600 m-0 mx-3" />
+        <MenuDivider className="m-0 mx-3 bg-neutral-200 dark:bg-neutral-600" />
       )}
     </div>
   )

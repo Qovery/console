@@ -65,16 +65,16 @@ export function PageOrganizationLabelsAnnotationsFeature() {
   }
 
   return (
-    <div className="flex flex-col justify-between w-full">
-      <Section className="p-8 max-w-content-with-navigation-left">
-        <div className="flex justify-between mb-8 gap-3">
+    <div className="flex w-full flex-col justify-between">
+      <Section className="max-w-content-with-navigation-left p-8">
+        <div className="mb-8 flex justify-between gap-3">
           <div>
             <Heading className="mb-2">Annotations</Heading>
-            <p className="text-neutral-400 text-xs">
+            <p className="text-xs text-neutral-400">
               Define and manage the annotations to be used within your organization.
             </p>
           </div>
-          <Button size="lg" className="gap-2 shrink-0" onClick={openAddModal}>
+          <Button size="lg" className="shrink-0 gap-2" onClick={openAddModal}>
             Add annotation
             <Icon iconName="circle-plus" />
           </Button>
@@ -89,10 +89,10 @@ export function PageOrganizationLabelsAnnotationsFeature() {
               {annotationsGroups.map((annotationsGroup) => (
                 <li
                   key={annotationsGroup.id}
-                  className="flex justify-between items-center px-5 py-4 border-b border-neutral-250 last:border-0"
+                  className="flex items-center justify-between border-b border-neutral-250 px-5 py-4 last:border-0"
                 >
                   <div className="flex flex-col">
-                    <h2 className="flex text-xs text-neutral-400 font-medium mb-1">
+                    <h2 className="mb-1 flex text-xs font-medium text-neutral-400">
                       <Truncate truncateLimit={60} text={annotationsGroup.name} />
                     </h2>
                     <div className="flex text-xs text-neutral-350">
@@ -128,7 +128,7 @@ export function PageOrganizationLabelsAnnotationsFeature() {
                         })
                       }}
                     >
-                      <span className="flex items-center justify-center bg-brand-500 w-3 h-3 rounded-full font-bold text-3xs text-white leading-[0] absolute -top-1 -right-1">
+                      <span className="absolute -right-1 -top-1 flex h-3 w-3 items-center justify-center rounded-full bg-brand-500 text-3xs font-bold leading-[0] text-white">
                         {annotationsGroup.associated_items_count}
                       </span>
                       <Icon iconName="layer-group" />
@@ -155,9 +155,9 @@ export function PageOrganizationLabelsAnnotationsFeature() {
               ))}
             </ul>
           ) : (
-            <div className="text-center my-4 px-5">
+            <div className="my-4 px-5 text-center">
               <Icon iconName="wave-pulse" className="text-neutral-350" />
-              <p className="text-neutral-350 font-medium text-xs mt-1">
+              <p className="mt-1 text-xs font-medium text-neutral-350">
                 No annotation found. <br /> Please add one.
               </p>
             </div>

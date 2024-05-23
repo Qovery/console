@@ -35,7 +35,7 @@ export function PageVariablesFeature() {
   }
 
   return (
-    <div className="mt-2 bg-white rounded-sm flex flex-1">
+    <div className="mt-2 flex flex-1 rounded-sm bg-white">
       {scope && (
         <VariableList
           className="border-b border-b-neutral-200"

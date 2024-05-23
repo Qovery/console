@@ -25,8 +25,8 @@ export function PageSettingsPreviewEnvironments(props: PageSettingsPreviewEnviro
       .otherwise(() => IconEnum.APPLICATION)
 
   return (
-    <div className="flex flex-col justify-between w-full">
-      <Section className="p-8 max-w-content-with-navigation-left">
+    <div className="flex w-full flex-col justify-between">
+      <Section className="max-w-content-with-navigation-left p-8">
         <SettingsHeading title="Preview environments" />
         <form onSubmit={onSubmit}>
           <BlockContent title="Global settings">
@@ -67,14 +67,14 @@ export function PageSettingsPreviewEnvironments(props: PageSettingsPreviewEnviro
             />
             <div data-testid="toggles" className={services.length > 0 ? 'mt-5' : ''}>
               {services.length > 0 && (
-                <h2 data-testid="services-title" className="font-medium text-neutral-400 text-ssm mb-5">
+                <h2 data-testid="services-title" className="mb-5 text-ssm font-medium text-neutral-400">
                   Create Preview for PR opened on those services
                 </h2>
               )}
               {services.map(
                 (service: AnyService) =>
                   service.serviceType !== 'DATABASE' && (
-                    <div key={service.id} className="h-9 flex items-center">
+                    <div key={service.id} className="flex h-9 items-center">
                       <Controller
                         name={service.id}
                         control={control}
@@ -87,7 +87,7 @@ export function PageSettingsPreviewEnvironments(props: PageSettingsPreviewEnviro
                               field.onChange(value)
                             }}
                             title={
-                              <span className="flex items-center -top-1 relative">
+                              <span className="relative -top-1 flex items-center">
                                 <Icon name={getIconName(service)} className="mr-3" />
                                 {service.name}
                               </span>

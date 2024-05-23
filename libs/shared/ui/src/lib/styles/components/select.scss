@@ -18,7 +18,7 @@
   display: flex !important;
   flex-wrap: nowrap !important;
   white-space: nowrap;
-  @apply mt-2 top-1;
+  @apply top-1 mt-2;
 }
 
 .input--has-icon .input-select__control {
@@ -37,12 +37,12 @@
 
 .input-select--focused {
   & > label {
-    @apply text-xs translate-y-0;
+    @apply translate-y-0 text-xs;
   }
 }
 
 .input-select--disabled {
-  @apply bg-neutral-100 border-neutral-250 pointer-events-none;
+  @apply pointer-events-none border-neutral-250 bg-neutral-100;
 
   & > label {
     @apply text-neutral-350;
@@ -77,11 +77,11 @@
   @apply items-center gap-2 rounded-sm;
 
   label {
-    @apply static translate-y-0 font-medium text-ssm text-neutral-400;
+    @apply static translate-y-0 text-ssm font-medium text-neutral-400;
   }
 
   .input-select__checkbox {
-    @apply bg-white border-2 border-neutral-350 rounded-sm w-4 h-4 flex items-center justify-center shrink-0;
+    @apply flex h-4 w-4 shrink-0 items-center justify-center rounded-sm border-2 border-neutral-350 bg-white;
   }
 
   &:hover {
@@ -97,7 +97,7 @@
   }
 
   .input-select__checkbox {
-    @apply bg-brand-500 border-0;
+    @apply border-0 bg-brand-500;
   }
 }
 

@@ -26,8 +26,8 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
     : []
 
   return (
-    <div className="flex flex-col justify-between w-full">
-      <Section className="p-8 max-w-content-with-navigation-left">
+    <div className="flex w-full flex-col justify-between">
+      <Section className="max-w-content-with-navigation-left p-8">
         <SettingsHeading title="General" />
         <form onSubmit={onSubmit}>
           <BlockContent title="General information">
@@ -77,7 +77,7 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
                 />
               )}
             />
-            <p className="text-xs text-neutral-350 ml-4">
+            <p className="ml-4 text-xs text-neutral-350">
               Cluster cannot be changed. Clone the environment to deploy the same applications on another cluster.
             </p>
           </BlockContent>

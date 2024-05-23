@@ -7,12 +7,12 @@ exports[`TerraformExportModal should match with snapshots 1`] = `
       class="p-5"
     >
       <h2
-        class="h4 text-neutral-400 max-w-sm truncate"
+        class="h4 max-w-sm truncate text-neutral-400"
       >
         Export as Terraform
       </h2>
       <p
-        class="mt-2 text-neutral-350 text-sm"
+        class="mt-2 text-sm text-neutral-350"
       >
         Export full environment & resources into Terraform manifests (only for Admin).
       </p>
@@ -25,7 +25,7 @@ exports[`TerraformExportModal should match with snapshots 1`] = `
         >
           <div
             aria-label="toggle-btn"
-            class="inline-flex justify-between items-center cursor-pointer"
+            class="inline-flex items-center justify-between cursor-pointer"
             data-testid="input-toggle-button"
           >
             <input
@@ -39,7 +39,7 @@ exports[`TerraformExportModal should match with snapshots 1`] = `
             >
               <div
                 aria-label="circle"
-                class="w-3.5 h-3.5 bg-white rounded-full shadow-lg transform  "
+                class="w-3.5 h-3.5 transform rounded-full bg-white shadow-lg  "
               />
             </div>
           </div>
@@ -47,7 +47,7 @@ exports[`TerraformExportModal should match with snapshots 1`] = `
             class="relative -top-1 ml-3 cursor-pointer"
           >
             <p
-              class="text-neutral-400 text-ssm font-medium"
+              class="text-ssm font-medium text-neutral-400"
             >
               Export secrets
             </p>
@@ -59,7 +59,7 @@ exports[`TerraformExportModal should match with snapshots 1`] = `
           </div>
         </div>
         <div
-          class="flex gap-3 justify-end mt-6"
+          class="mt-6 flex justify-end gap-3"
         >
           <button
             class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 hover:[&:not(:focus-visible):not(:disabled)]:shadow-sm active:[&:not(:focus-visible)]:shadow-none outline-brand-500 text-sm h-11 px-5 rounded border border-transparent text-neutral-350 hover:[&:not(:active):not(:focus-visible)]:border-neutral-300 hover:[&:not(:disabled)]:text-neutral-400 focus-visible:text-neutral-400 active:bg-neutral-150 active:text-neutral-400 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none"

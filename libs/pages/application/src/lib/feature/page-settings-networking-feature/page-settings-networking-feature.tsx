@@ -33,7 +33,7 @@ export function PageSettingsNetworkingFeature() {
   })
 
   return (
-    <div className="flex flex-col justify-between w-full p-8 max-w-content-with-navigation-left">
+    <div className="flex w-full max-w-content-with-navigation-left flex-col justify-between p-8">
       <FormProvider {...methods}>
         <NetworkingSetting
           ports={ports}

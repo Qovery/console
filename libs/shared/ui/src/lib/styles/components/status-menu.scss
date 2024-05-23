@@ -6,7 +6,7 @@
 
 // status
 .status-menu--available {
-  @apply bg-green-50 border-green-500 text-green-500;
+  @apply border-green-500 bg-green-50 text-green-500;
 
   .status-menu__trigger {
     @apply border-green-500;
@@ -20,7 +20,7 @@
 }
 
 .status-menu--stop {
-  @apply bg-neutral-150 border-neutral-350 text-neutral-350;
+  @apply border-neutral-350 bg-neutral-150 text-neutral-350;
 
   .status-menu__trigger {
     @apply border-neutral-350;
@@ -34,7 +34,7 @@
 }
 
 .status-menu--warning {
-  @apply bg-red-50 border-red-500 text-red-500;
+  @apply border-red-500 bg-red-50 text-red-500;
 
   .status-menu__trigger {
     @apply border-red-500;
@@ -48,7 +48,7 @@
 }
 
 .status-menu--running {
-  @apply bg-orange-50 border-orange-400 text-orange-500;
+  @apply border-orange-400 bg-orange-50 text-orange-500;
 
   .status-menu__trigger {
     @apply border-orange-400;
@@ -62,7 +62,7 @@
 }
 
 .status-menu--starting {
-  @apply bg-orange-50 border-orange-400 text-orange-500;
+  @apply border-orange-400 bg-orange-50 text-orange-500;
 
   .status-menu__trigger {
     @apply border-orange-400;

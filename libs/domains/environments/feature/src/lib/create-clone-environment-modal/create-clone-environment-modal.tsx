@@ -73,7 +73,7 @@ export function CreateCloneEnvironmentModal({
       value: EnvironmentModeEnum.DEVELOPMENT,
       label: 'Development',
       icon: (
-        <Badge variant="outline" color="neutral" size="xs" className="flex w-4 h-4 justify-center p-0 font-semibold">
+        <Badge variant="outline" color="neutral" size="xs" className="flex h-4 w-4 justify-center p-0 font-semibold">
           D
         </Badge>
       ),
@@ -82,7 +82,7 @@ export function CreateCloneEnvironmentModal({
       value: EnvironmentModeEnum.STAGING,
       label: 'Staging',
       icon: (
-        <Badge variant="surface" color="green" size="xs" className="flex w-4 h-4 justify-center p-0 font-semibold">
+        <Badge variant="surface" color="green" size="xs" className="flex h-4 w-4 justify-center p-0 font-semibold">
           S
         </Badge>
       ),
@@ -91,7 +91,7 @@ export function CreateCloneEnvironmentModal({
       value: EnvironmentModeEnum.PRODUCTION,
       label: 'Production',
       icon: (
-        <Badge variant="surface" color="red" size="xs" className="flex w-4 h-4 justify-center p-0 font-semibold">
+        <Badge variant="surface" color="red" size="xs" className="flex h-4 w-4 justify-center p-0 font-semibold">
           P
         </Badge>
       ),
@@ -132,7 +132,7 @@ export function CreateCloneEnvironmentModal({
               <div>
                 Create a new environment to deploy your applications. You can create a new environment by defining:
               </div>
-              <ol className="list-disc ml-3">
+              <ol className="ml-3 list-disc">
                 <li className="mb-2 mt-2">its name</li>
                 <li className="mb-2">
                   the cluster: you can select one of the existing clusters. Cluster can’t be changed after the

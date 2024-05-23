@@ -30,11 +30,11 @@ export function FlowCreatePort({
 
   return (
     <Section>
-      <div className="flex justify-between mb-10">
+      <div className="mb-10 flex justify-between">
         <div>
           <Heading className="mb-2">Ports</Heading>
 
-          <p className={isSetting ? 'text-sm text-neutral-400 max-w-lg mb-3' : 'text-xs text-neutral-400'}>
+          <p className={isSetting ? 'mb-3 max-w-lg text-sm text-neutral-400' : 'text-xs text-neutral-400'}>
             Declare TCP/UDP ports used by your application. Declared ports are accessible from other applications within
             the same environment. You can also expose them on the internet by making them public. Declared ports are
             also used to check the liveness/readiness of your application
@@ -57,7 +57,7 @@ export function FlowCreatePort({
               ports.map((customPort, i) => (
                 <div
                   key={i}
-                  className="flex justify-between w-full items-center gap-3 px-5 py-4 border-b border-neutral-250 last:border-0"
+                  className="flex w-full items-center justify-between gap-3 border-b border-neutral-250 px-5 py-4 last:border-0"
                   data-testid="form-row"
                 >
                   <div className="flex flex-row">
@@ -68,7 +68,7 @@ export function FlowCreatePort({
                           <div className="mr-4 inline-flex items-center">
                             <Icon
                               name={IconAwesomeEnum.SHIELD_CHECK}
-                              className="flex justify-center w-5 text-green-500 hover:text-green-700"
+                              className="flex w-5 justify-center text-green-500 hover:text-green-700"
                             />
                           </div>
                         </Tooltip>
@@ -76,11 +76,11 @@ export function FlowCreatePort({
                         <div className="w-9"></div>
                       ))}
                     <div className="text-xs">
-                      <span className="text-neutral-400 font-medium">
+                      <span className="font-medium text-neutral-400">
                         Application Port:{' '}
                         {(customPort as PortData).application_port || (customPort as ServicePort).internal_port}
                       </span>
-                      <p className="flex gap-3 text-neutral-350 mt-1">
+                      <p className="mt-1 flex gap-3 text-neutral-350">
                         <span>
                           Public:{' '}
                           {(customPort as PortData).is_public || (customPort as ServicePort).publicly_accessible
@@ -107,7 +107,7 @@ export function FlowCreatePort({
                         variant="outline"
                         color="neutral"
                         size="md"
-                        className="justify-center w-9 h-9 mr-2"
+                        className="mr-2 h-9 w-9 justify-center"
                         onClick={() => onEdit(customPort)}
                       >
                         <Icon iconName="gear" />
@@ -119,7 +119,7 @@ export function FlowCreatePort({
                         variant="outline"
                         color="neutral"
                         size="md"
-                        className="justify-center w-9 h-9"
+                        className="h-9 w-9 justify-center"
                         onClick={() =>
                           onRemovePort(
                             customPort,
@@ -137,7 +137,7 @@ export function FlowCreatePort({
                 </div>
               ))}
             {!isSetting && (
-              <div className="flex justify-end items-center py-3 px-4">
+              <div className="flex items-center justify-end px-4 py-3">
                 <Button onClick={onAddPort}>
                   Add port
                   <Icon iconName="circle-plus" className="ml-2" />

@@ -9,10 +9,10 @@ export interface PageGeneralProps {
 export function PageGeneral({ clusterAvailable, project }: PageGeneralProps) {
   return (
     <>
-      <div className="mt-2 bg-white rounded-t-sm rounded-b-none flex-grow overflow-y-auto min-h-0">
+      <div className="mt-2 min-h-0 flex-grow overflow-y-auto rounded-b-none rounded-t-sm bg-white">
         {project && (
           <EnvironmentList
-            className="border-b-neutral-200 border-b"
+            className="border-b border-b-neutral-200"
             project={project}
             clusterAvailable={clusterAvailable ?? false}
           />

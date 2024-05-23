@@ -18,7 +18,7 @@ exports[`GitPublicRepositorySettings should match snapshot 1`] = `
             class=""
           >
             <label
-              class="text-sm translate-y-2"
+              class="translate-y-2 text-sm"
               for="Public repository URL (.git)"
             >
               Public repository URL (.git)
@@ -50,7 +50,7 @@ exports[`GitPublicRepositorySettings should match snapshot 1`] = `
             class=""
           >
             <label
-              class="text-sm translate-y-2"
+              class="translate-y-2 text-sm"
               for="Branch"
             >
               Branch
@@ -83,7 +83,7 @@ exports[`GitPublicRepositorySettings should match snapshot 1`] = `
               class=""
             >
               <label
-                class="text-sm translate-y-2"
+                class="translate-y-2 text-sm"
                 for="Root service path"
               >
                 Root service path
@@ -101,13 +101,13 @@ exports[`GitPublicRepositorySettings should match snapshot 1`] = `
         </div>
       </div>
       <p
-        class="text-xs ml-4 mt-1 text-neutral-350"
+        class="ml-4 mt-1 text-xs text-neutral-350"
       >
         Provide the path in the repository where the service is located
       </p>
     </div>
     <div
-      class="flex flex-row gap-x-3 p-3 border rounded border-sky-500 bg-sky-50 text-sky-500 text-xs items-center"
+      class="flex flex-row gap-x-3 p-3 border rounded border-sky-500 bg-sky-50 text-sky-500 items-center text-xs"
       data-accent-color="sky"
     >
       <div

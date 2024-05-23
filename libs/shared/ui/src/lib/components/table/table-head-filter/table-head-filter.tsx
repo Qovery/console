@@ -107,49 +107,52 @@ export function groupBy<T>(
 
     return result as MenuItemProps[]
   } else {
-    const dataByKeys: Record<string, T[]> = data.reduce((acc, obj) => {
-      const defaultKey = defaultValue as string
+    const dataByKeys: Record<string, T[]> = data.reduce(
+      (acc, obj) => {
+        const defaultKey = defaultValue as string
 
-      if (!acc[defaultKey]) {
-        acc[defaultKey] = []
-      }
-      acc[defaultKey].push(obj)
+        if (!acc[defaultKey]) {
+          acc[defaultKey] = []
+        }
+        acc[defaultKey].push(obj)
 
-      if (property.includes('.')) {
-        const splitProperty = property.split('.')
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        let nestedObj: any = obj
-        let key: string | undefined
+        if (property.includes('.')) {
+          const splitProperty = property.split('.')
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          let nestedObj: any = obj
+          let key: string | undefined
 
-        for (const prop of splitProperty) {
-          // TODO: `in` looks fishy because that's not the way to use this keyword in js
-          nestedObj = nestedObj && prop in nestedObj ? nestedObj[prop] : null
-          if (nestedObj === null || nestedObj === undefined) {
-            break
+          for (const prop of splitProperty) {
+            // TODO: `in` looks fishy because that's not the way to use this keyword in js
+            nestedObj = nestedObj && prop in nestedObj ? nestedObj[prop] : null
+            if (nestedObj === null || nestedObj === undefined) {
+              break
+            }
           }
-        }
 
-        if (nestedObj !== null && nestedObj !== undefined) {
-          key = nestedObj as string
-        }
+          if (nestedObj !== null && nestedObj !== undefined) {
+            key = nestedObj as string
+          }
 
-        if (key) {
+          if (key) {
+            if (!acc[key]) {
+              acc[key] = []
+            }
+            acc[key].push(obj)
+          }
+        } else {
+          const key: string = obj[property as keyof T] as string
+
           if (!acc[key]) {
             acc[key] = []
           }
           acc[key].push(obj)
         }
-      } else {
-        const key: string = obj[property as keyof T] as string
 
-        if (!acc[key]) {
-          acc[key] = []
-        }
-        acc[key].push(obj)
-      }
-
-      return acc
-    }, {} as Record<string, T[]>)
+        return acc
+      },
+      {} as Record<string, T[]>
+    )
 
     if (dataHeadFilter?.itemContentCustom) {
       delete dataByKeys[defaultValue]
@@ -166,7 +169,7 @@ export function groupBy<T>(
         />
       ),
       contentRight: (
-        <span className="px-1 bg-neutral-200 text-neutral-350 text-xs font-bold rounded-sm">
+        <span className="rounded-sm bg-neutral-200 px-1 text-xs font-bold text-neutral-350">
           {dataByKeys[key].length}
         </span>
       ),
@@ -257,7 +260,7 @@ export function TableHeadFilter<T>({ title, dataHead, defaultData, filter, setFi
         trigger={
           <div className="flex">
             {hasFilter ? (
-              <ButtonLegacy className="whitespace-nowrap flex btn--active !h-6 !pr-[26px]" size={ButtonLegacySize.TINY}>
+              <ButtonLegacy className="btn--active flex !h-6 whitespace-nowrap !pr-[26px]" size={ButtonLegacySize.TINY}>
                 {title} {!hideFilterNumber ? `(${dataFilterNumber})` : ''}
               </ButtonLegacy>
             ) : (
@@ -276,7 +279,7 @@ export function TableHeadFilter<T>({ title, dataHead, defaultData, filter, setFi
       {hasFilter && (
         <span
           role="button"
-          className="flex items-center h-6 px-2 relative -left-6 text-neutral-50 text-xs cursor-pointer"
+          className="relative -left-6 flex h-6 cursor-pointer items-center px-2 text-xs text-neutral-50"
           onClick={(event) => cleanFilter(event)}
         >
           <Icon iconName="xmark" />

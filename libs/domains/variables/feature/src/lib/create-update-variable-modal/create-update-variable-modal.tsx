@@ -67,10 +67,10 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
     variable?.scope === 'BUILT_IN'
       ? undefined
       : mode === 'CREATE' && type === 'OVERRIDE'
-      ? availableScopes[0]
-      : variable?.scope
-      ? variable.scope
-      : availableScopes[availableScopes.length - 1]
+        ? availableScopes[0]
+        : variable?.scope
+          ? variable.scope
+          : availableScopes[availableScopes.length - 1]
   const mountPath = getEnvironmentVariableFileMountPath(variable)
 
   const methods = useForm<{
@@ -272,13 +272,13 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
 
         {type === 'ALIAS' && (
           <div>
-            <div className="flex items-center mb-3">
+            <div className="mb-3 flex items-center">
               <Icon
                 iconName="arrow-turn-down-right"
                 iconStyle="regular"
-                className="mr-2 ml-1 text-2xs text-neutral-300"
+                className="ml-1 mr-2 text-2xs text-neutral-300"
               />
-              <span className="bg-teal-500 font-bold rounded-sm text-2xs text-neutral-50 px-1 inline-flex items-center h-4 mr-3">
+              <span className="mr-3 inline-flex h-4 items-center rounded-sm bg-teal-500 px-1 text-2xs font-bold text-neutral-50">
                 ALIAS
               </span>
             </div>
@@ -304,13 +304,13 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
         )}
 
         {type === 'OVERRIDE' && (
-          <div className="flex items-center mb-3">
+          <div className="mb-3 flex items-center">
             <Icon
               iconName="arrow-turn-down-right"
               iconStyle="regular"
-              className="mr-2 ml-1 text-2xs text-neutral-300"
+              className="ml-1 mr-2 text-2xs text-neutral-300"
             />
-            <span className="bg-brand-500 font-bold rounded-sm text-2xs text-neutral-50 px-1 inline-flex items-center h-4 mr-3">
+            <span className="mr-3 inline-flex h-4 items-center rounded-sm bg-brand-500 px-1 text-2xs font-bold text-neutral-50">
               OVERRIDE
             </span>
           </div>
@@ -349,7 +349,7 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
                 rightElement={
                   <Tooltip content="Scope can’t be changed. Re-create the var with the right scope." side="left">
                     <div>
-                      <Icon iconName="circle-info" className="text-neutral-350 text-sm" />
+                      <Icon iconName="circle-info" className="text-sm text-neutral-350" />
                     </div>
                   </Tooltip>
                 }
@@ -369,7 +369,7 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
         />
 
         {mode === 'CREATE' && type === 'VALUE' && (
-          <div className="flex items-center gap-3 mb-8">
+          <div className="mb-8 flex items-center gap-3">
             <Controller
               name="isSecret"
               control={methods.control}

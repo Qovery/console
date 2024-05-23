@@ -7,7 +7,7 @@ export function InviteDetails(props: InviteDetailsProps) {
   const { user_name = '', organization_name = '' } = props
 
   return (
-    <p className="text-neutral-400 font-bold text-xl">
+    <p className="text-xl font-bold text-neutral-400">
       {user_name} has invited you to join
       <br />
       <strong className="text-2xl">{organization_name}</strong>

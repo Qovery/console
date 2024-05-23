@@ -90,8 +90,8 @@ export function OutputVariables({ serviceId, className, ...props }: JobOutputVar
   }
 
   return (
-    <div className="border rounded overflow-hidden">
-      <Table.Root className={twMerge('w-full text-xs min-w-[800px]', className)} {...props}>
+    <div className="overflow-hidden rounded border">
+      <Table.Root className={twMerge('w-full min-w-[800px] text-xs', className)} {...props}>
         <Table.Header>
           {table.getHeaderGroups().map((headerGroup) => (
             <Table.Row key={headerGroup.id}>

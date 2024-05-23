@@ -103,7 +103,7 @@ export function LayoutLogs({
     return (
       <Link
         data-testid="nav"
-        className={`flex items-center h-full px-6 text-sm font-medium text-neutral-50 transition-colors transition-timing duration-250 hover:bg-neutral-700 rounded-t ${
+        className={`transition-timing duration-250 flex h-full items-center rounded-t px-6 text-sm font-medium text-neutral-50 transition-colors hover:bg-neutral-700 ${
           isActive ? 'bg-neutral-650' : ''
         }`}
         to={link}
@@ -119,12 +119,12 @@ export function LayoutLogs({
 
   return (
     <div
-      className={`overflow-hidden flex relative w-full p-1 ${
+      className={`relative flex w-full overflow-hidden p-1 ${
         clusterBanner ? 'h-[calc(100vh-8rem)]' : 'h-[calc(100vh-4rem)]'
       }`}
     >
       {withLogsNavigation && (
-        <div className="absolute overflow-y-auto left-1 flex items-center w-[calc(100%-8px)] h-11 bg-neutral-900">
+        <div className="absolute left-1 flex h-11 w-[calc(100%-8px)] items-center overflow-y-auto bg-neutral-900">
           {LinkNavigation(
             'Deployment logs',
             ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(serviceId),
@@ -156,25 +156,25 @@ export function LayoutLogs({
       ) : (
         <>
           <div
-            className={`absolute left-1 flex justify-end items-center h-11 bg-neutral-650 px-5 border-y border-neutral-550  ${
+            className={`absolute left-1 flex h-11 items-center justify-end border-y border-neutral-550 bg-neutral-650 px-5  ${
               tabInformation ? 'w-[calc(100%-360px)]' : 'w-[calc(100%-8px)]'
             } ${withLogsNavigation ? 'top-12' : ''}`}
           >
-            <div className="flex mr-auto">
+            <div className="mr-auto flex">
               {errors && errors.length > 0 && (
                 <p
                   data-testid="error-layout-line"
                   onClick={() => scrollToError()}
-                  className="flex items-center w-full ml-1 text-xs font-bold transition-colors text-neutral-100 hover:text-neutral-300 cursor-pointer mr-5"
+                  className="ml-1 mr-5 flex w-full cursor-pointer items-center text-xs font-bold text-neutral-100 transition-colors hover:text-neutral-300"
                 >
-                  <Icon name="icon-solid-circle-exclamation" className="text-red-500 mr-3" />
+                  <Icon name="icon-solid-circle-exclamation" className="mr-3 text-red-500" />
                   An error occured line {errors[errors.length - 1]?.index}
                   <Icon name="icon-solid-arrow-circle-right" className="relative top-px ml-1.5" />
                 </p>
               )}
               {setEnabledNginx && (
                 <Tooltip open={pauseLogs} content="To activate the nginx logs button, unpause the logs" side="right">
-                  <div key={serviceId} className="flex items-center shrink-0 text-neutral-300 text-xs font-medium">
+                  <div key={serviceId} className="flex shrink-0 items-center text-xs font-medium text-neutral-300">
                     <InputCheckbox
                       dataTestId="checkbox-debug"
                       name="checkbox-debug"
@@ -184,7 +184,7 @@ export function LayoutLogs({
                       className="-ml-1"
                       disabled={pauseLogs}
                     />
-                    {enabledNginx && countNginx !== undefined ? <span className="block ml-1">({countNginx})</span> : ''}
+                    {enabledNginx && countNginx !== undefined ? <span className="ml-1 block">({countNginx})</span> : ''}
                     <Tooltip content="Display the logs of the Kubernetes ingress controller (NGINX). Click here to know the log format.">
                       <a
                         className="relative top-[1px] ml-2 hover:text-neutral-100"
@@ -226,9 +226,9 @@ export function LayoutLogs({
               event.deltaY < 0 &&
               setPauseLogs(true)
             }
-            className={`overflow-y-auto w-full h-[calc(100%-20px)] bg-neutral-700 pb-16 mb-5 ${
+            className={`mb-5 h-[calc(100%-20px)] w-full overflow-y-auto bg-neutral-700 pb-16 ${
               lineNumbers
-                ? 'before:bg-neutral-700 before:absolute before:left-1 before:top-9 before:w-10 before:h-full before:-z-[1]'
+                ? 'before:absolute before:left-1 before:top-9 before:-z-[1] before:h-full before:w-10 before:bg-neutral-700'
                 : ''
             } ${withLogsNavigation ? 'mt-[88px]' : 'mt-11'}`}
           >
@@ -243,12 +243,12 @@ export function LayoutLogs({
                 {isProgressing && (
                   <div
                     role="progressbar"
-                    className="relative -top-8 pl-3 flex items-center text-sm text-neutral-350 border-b border-neutral-500 h-8"
+                    className="relative -top-8 flex h-8 items-center border-b border-neutral-500 pl-3 text-sm text-neutral-350"
                   >
                     <span className="mr-1.5">{progressingMsg}</span>
-                    <span className="animate-[pulse_1s_cubic-bezier(0.4,0,0.6,1)_100ms_infinite] w-[3px] h-[3px] bg-neutral-350 mr-[2px] rounded-[0.5px]" />
-                    <span className="animate-[pulse_1s_cubic-bezier(0.4,0,0.6,1)_300ms_infinite] w-[3px] h-[3px] bg-neutral-350  mr-[2px] rounded-[0.5px]" />
-                    <span className="animate-[pulse_1s_cubic-bezier(0.4,0,0.6,1)_600ms_infinite] w-[3px] h-[3px] bg-neutral-350 rounded-[0.5px]" />
+                    <span className="mr-[2px] h-[3px] w-[3px] animate-[pulse_1s_cubic-bezier(0.4,0,0.6,1)_100ms_infinite] rounded-[0.5px] bg-neutral-350" />
+                    <span className="mr-[2px] h-[3px] w-[3px] animate-[pulse_1s_cubic-bezier(0.4,0,0.6,1)_300ms_infinite]  rounded-[0.5px] bg-neutral-350" />
+                    <span className="h-[3px] w-[3px] animate-[pulse_1s_cubic-bezier(0.4,0,0.6,1)_600ms_infinite] rounded-[0.5px] bg-neutral-350" />
                   </div>
                 )}
               </div>

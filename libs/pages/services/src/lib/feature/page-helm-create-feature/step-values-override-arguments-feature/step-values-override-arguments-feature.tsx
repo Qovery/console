@@ -54,7 +54,7 @@ export function StepValuesOverrideArgumentsFeature() {
     <FunnelFlowBody>
       <FormProvider {...valuesOverrideArgumentsForm}>
         <ValuesOverrideArgumentsSetting methods={valuesOverrideArgumentsForm} onSubmit={onSubmit} source={source}>
-          <div className="flex justify-between mt-10">
+          <div className="mt-10 flex justify-between">
             <Button
               type="button"
               size="lg"

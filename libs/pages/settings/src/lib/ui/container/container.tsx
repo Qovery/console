@@ -15,8 +15,8 @@ export function Container(props: ContainerProps) {
   const { openModal, closeModal } = useModal()
 
   return (
-    <div className="bg-white flex flex-1 rounded-t">
-      <div className="w-72 border-r border-neutral-200 relative shrink-0 pb-10">
+    <div className="flex flex-1 rounded-t bg-white">
+      <div className="relative w-72 shrink-0 border-r border-neutral-200 pb-10">
         <div className="sticky top-12">
           <NavigationLeft title="Organization" links={organizationLinks} className="py-6" />
           <NavigationLeft
@@ -30,7 +30,7 @@ export function Container(props: ContainerProps) {
                 })
               },
             }}
-            className="py-6 border-t border-neutral-200"
+            className="border-t border-neutral-200 py-6"
           />
         </div>
       </div>

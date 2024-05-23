@@ -51,11 +51,11 @@ export function ServiceLinksPopover({
       <Popover.Trigger className={filteredLinks.length === 0 ? 'hidden' : ''}>{children}</Popover.Trigger>
       <Popover.Content
         side={side}
-        className="p-2 text-neutral-350 text-sm border-transparent max-w-[280px]"
+        className="max-w-[280px] border-transparent p-2 text-sm text-neutral-350"
         align={align}
       >
-        <div className="p-2 flex justify-between items-center">
-          <p className="text-neutral-350 font-medium">
+        <div className="flex items-center justify-between p-2">
+          <p className="font-medium text-neutral-350">
             {filteredLinks?.length ?? 0} {pluralize(filteredLinks?.length ?? 0, 'link')} attached
           </p>
           {serviceType !== 'HELM' && (
@@ -71,16 +71,16 @@ export function ServiceLinksPopover({
           {filteredLinks.map((link: LinkProps) => (
             <li key={link.url} className="flex p-2">
               <CopyToClipboardButtonIcon
-                className="text-brand-500 hover:text-brand-600 mr-2"
+                className="mr-2 text-brand-500 hover:text-brand-600"
                 content={link.url ?? ''}
               />
               <a
-                className="transition flex items-center justify-between w-full text-neutral-400 hover:text-brand-500"
+                className="flex w-full items-center justify-between text-neutral-400 transition hover:text-brand-500"
                 href={link.url}
                 target="_blank"
                 rel="noreferrer"
               >
-                <div className="text-ssm font-medium mr-2">
+                <div className="mr-2 text-ssm font-medium">
                   <Truncate text={link.url ?? ''} truncateLimit={26} />
                 </div>
                 <div className="text-xs text-neutral-350">{link.internal_port}</div>

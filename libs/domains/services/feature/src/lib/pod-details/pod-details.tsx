@@ -49,7 +49,7 @@ export function PodDetails({ pod, serviceId, serviceType }: PodDetailsProps) {
   const { containers = [] } = pod
 
   return (
-    <div className="pl-4 pb-4 pt-3 pr-20 relative">
+    <div className="relative pb-4 pl-4 pr-20 pt-3">
       <Link
         to={
           ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
@@ -62,7 +62,7 @@ export function PodDetails({ pod, serviceId, serviceType }: PodDetailsProps) {
               .otherwise(() => pod.name)
           )
         }
-        className="absolute top-2 right-2"
+        className="absolute right-2 top-2"
       >
         <Button type="button" size="sm" color="neutral" variant="surface" className="gap-2">
           Logs
@@ -77,7 +77,7 @@ export function PodDetails({ pod, serviceId, serviceType }: PodDetailsProps) {
               .map(({ name, current_state }) => (
                 <Tabs.Trigger key={name} value={name} size="xs" radius="full">
                   <div
-                    className={`w-1.5 h-1.5 rounded-full mr-1 ${getServiceStateColor(
+                    className={`mr-1 h-1.5 w-1.5 rounded-full ${getServiceStateColor(
                       current_state?.state,
                       'background'
                     )}`}
@@ -91,18 +91,18 @@ export function PodDetails({ pod, serviceId, serviceType }: PodDetailsProps) {
               .filter(({ name }) => name !== QOVERY_SIDECAR_NAME)
               .map(({ current_state, last_terminated_state, restart_count, name, image }) => (
                 <Tabs.Content key={name} value={name}>
-                  <Dl className="grid-cols-[20px_100px_minmax(0,_1fr)] gap-y-0 gap-x-2">
+                  <Dl className="grid-cols-[20px_100px_minmax(0,_1fr)] gap-x-2 gap-y-0">
                     {serviceType === 'HELM' && (
                       <>
                         <Dt className="col-span-2 mb-2">Container image:</Dt>
-                        <Dd className="flex gap-1 mb-2">{image}</Dd>
+                        <Dd className="mb-2 flex gap-1">{image}</Dd>
                       </>
                     )}
                     <div className="relative flex flex-col items-center">
                       {last_terminated_state && (
-                        <div className="absolute min-h-full border-l border-neutral-350 left-1/2 -translate-x-1/2"></div>
+                        <div className="absolute left-1/2 min-h-full -translate-x-1/2 border-l border-neutral-350"></div>
                       )}
-                      <div className="grid gap-2 items-center">
+                      <div className="grid items-center gap-2">
                         <TimelineCircle />
                       </div>
                     </div>
@@ -128,7 +128,7 @@ export function PodDetails({ pod, serviceId, serviceType }: PodDetailsProps) {
                     {last_terminated_state && (
                       <>
                         <div className="relative flex flex-col items-center">
-                          <div className="absolute min-h-full border-l border-neutral-350 left-1/2 -translate-x-1/2"></div>
+                          <div className="absolute left-1/2 min-h-full -translate-x-1/2 border-l border-neutral-350"></div>
                           <div className="grid gap-2">
                             <TimelineCircle />
                           </div>
@@ -156,9 +156,9 @@ export function PodDetails({ pod, serviceId, serviceType }: PodDetailsProps) {
           </div>
         </Tabs.Root>
       ) : (
-        <Dl className="grid-cols-[20px_100px_minmax(0,_1fr)] gap-y-0 gap-x-2">
+        <Dl className="grid-cols-[20px_100px_minmax(0,_1fr)] gap-x-2 gap-y-0">
           <div className="relative flex flex-col items-center">
-            <div className="grid gap-2 items-center">
+            <div className="grid items-center gap-2">
               <TimelineCircle />
             </div>
           </div>

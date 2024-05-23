@@ -47,10 +47,10 @@ export function PageCreateEditDeploymentRule(props: PageCreateEditDeploymentRule
     : []
 
   return (
-    <div className="mt-2 bg-white rounded">
+    <div className="mt-2 rounded bg-white">
       <div className="flex">
         <div className="flex-grow overflow-y-auto">
-          <Section className="py-7 px-10">
+          <Section className="px-10 py-7">
             <div className="max-w-[620px]">
               <Link
                 color="brand"
@@ -65,7 +65,7 @@ export function PageCreateEditDeploymentRule(props: PageCreateEditDeploymentRule
               <Heading className="mb-2">{title}</Heading>
 
               <div className="mb-10">
-                <p className="text-neutral-400 text-xs leading-5">
+                <p className="text-xs leading-5 text-neutral-400">
                   Declaring deployment rules at the project level allows you to apply defaults rule to all newly created
                   environments.
                 </p>

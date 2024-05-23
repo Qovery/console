@@ -206,20 +206,20 @@ export function RowMember(props: RowMemberProps) {
     <Skeleton className="shrink-0" show={loading} width={176} height={30}>
       <div
         data-testid="input"
-        className={`flex relative px-3 py-2 border rounded select-none w-44 ${
+        className={`relative flex w-44 select-none rounded border px-3 py-2 ${
           role?.toUpperCase() === MemberRoleEnum.OWNER || !(member as Member).last_activity_at
-            ? 'bg-neutral-100 border-neutral-250 text-neutral-350'
-            : 'border-neutral-300 text-neutral-400 cursor-pointer'
+            ? 'border-neutral-250 bg-neutral-100 text-neutral-350'
+            : 'cursor-pointer border-neutral-300 text-neutral-400'
         }`}
       >
-        <span className="text-sm block max-w-[130px] truncate">{upperCaseFirstLetter(role)}</span>
+        <span className="block max-w-[130px] truncate text-sm">{upperCaseFirstLetter(role)}</span>
         {!loadingUpdateRole && role?.toUpperCase() !== MemberRoleEnum.OWNER && (member as Member).last_activity_at && (
           <Icon
             name={IconAwesomeEnum.ANGLE_DOWN}
-            className="absolute top-2.5 right-4 text-sm text-neutral-400 leading-3 translate-y-0.5 pointer-events-none"
+            className="pointer-events-none absolute right-4 top-2.5 translate-y-0.5 text-sm leading-3 text-neutral-400"
           />
         )}
-        {loadingUpdateRole && <LoaderSpinner className="w-4 h-4 absolute top-2.5 right-4" />}
+        {loadingUpdateRole && <LoaderSpinner className="absolute right-4 top-2.5 h-4 w-4" />}
       </div>
     </Skeleton>
   )
@@ -230,19 +230,19 @@ export function RowMember(props: RowMemberProps) {
         className="grid grid-cols-4 border-b border-neutral-200 last:border-0"
         style={{ gridTemplateColumns: columnsWidth }}
       >
-        <div className="flex items-center justify-between pr-4 border-r border-neutral-200 h-full">
+        <div className="flex h-full items-center justify-between border-r border-neutral-200 pr-4">
           <div className="flex items-center px-4 py-3">
             {name && (
               <Skeleton className="shrink-0" show={loading} width={32} height={32} rounded>
                 <Avatar firstName={name[0]} lastName={name[1]} url={(member as Member).profile_picture_url} />
               </Skeleton>
             )}
-            <div className="ml-3 text-xs truncate">
+            <div className="ml-3 truncate text-xs">
               <Skeleton className="mb-1" show={loading} width={120} height={16}>
-                <p className="text-neutral-400 font-medium truncate">{(member as Member).name}</p>
+                <p className="truncate font-medium text-neutral-400">{(member as Member).name}</p>
               </Skeleton>
               <Skeleton show={loading} width={100} height={16}>
-                <span className="text-neutral-400 truncate">{member.email}</span>
+                <span className="truncate text-neutral-400">{member.email}</span>
               </Skeleton>
             </div>
           </div>
@@ -256,14 +256,14 @@ export function RowMember(props: RowMemberProps) {
             </Skeleton>
           )}
         </div>
-        <div data-testid="row-member-menu" className="flex items-center px-4 w-[500px]">
+        <div data-testid="row-member-menu" className="flex w-[500px] items-center px-4">
           {!isOwner && (member as Member).last_activity_at ? (
             <Menu menus={menus} trigger={input(member.role_name)} />
           ) : (
             input(member.role_name)
           )}
         </div>
-        <div className="flex items-center px-4 text-neutral-400 text-xs font-medium">
+        <div className="flex items-center px-4 text-xs font-medium text-neutral-400">
           <Skeleton className="shrink-0" show={loading} width={64} height={16}>
             {(member as Member).last_activity_at ? (
               <Tooltip content={dateUTCString((member as Member).last_activity_at!)}>
@@ -276,7 +276,7 @@ export function RowMember(props: RowMemberProps) {
             )}
           </Skeleton>
         </div>
-        <div className="flex items-center px-4 text-neutral-400 text-xs font-medium">
+        <div className="flex items-center px-4 text-xs font-medium text-neutral-400">
           <Skeleton className="shrink-0" show={loading} width={64} height={16}>
             <Tooltip content={dateUTCString(member.created_at)}>
               <span data-testid="created-at">{dateMediumLocalFormat(member.created_at)}</span>

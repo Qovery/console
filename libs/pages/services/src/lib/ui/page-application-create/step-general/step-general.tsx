@@ -35,13 +35,13 @@ export function StepGeneral(props: StepGeneralProps) {
   return (
     <Section>
       {isTemplate ? (
-        <div className="flex items-center gap-6 mb-10">
-          <img src={dataTemplate?.icon as string} alt={slug} className="w-10 h-10" />
+        <div className="mb-10 flex items-center gap-6">
+          <img src={dataTemplate?.icon as string} alt={slug} className="h-10 w-10" />
           <div>
             <Heading className="mb-2">
               {dataTemplate?.title} {dataOptionTemplate?.title ? `- ${dataOptionTemplate?.title}` : ''}
             </Heading>
-            <p className="text-neutral-350 text-sm">
+            <p className="text-sm text-neutral-350">
               These general settings allow you to set up the service name, its source and deployment parameters.
             </p>
           </div>
@@ -49,7 +49,7 @@ export function StepGeneral(props: StepGeneralProps) {
       ) : (
         <>
           <Heading className="mb-2">General information</Heading>
-          <p className="text-neutral-350 text-sm mb-10">
+          <p className="mb-10 text-sm text-neutral-350">
             These general settings allow you to set up the service name, its source and deployment parameters.
           </p>
         </>

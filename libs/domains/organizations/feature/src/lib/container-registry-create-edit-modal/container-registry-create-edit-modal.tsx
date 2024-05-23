@@ -259,7 +259,7 @@ export function ContainerRegistryCreateEditModal({
                     error={error?.message}
                   />
                   {watchKind === ContainerRegistryKindEnum.DOCKER_HUB && (
-                    <p className="text-xs text-neutral-350 my-1">
+                    <p className="my-1 text-xs text-neutral-350">
                       We encourage you to set credentials for Docker Hub due to the limits on the pull rate.
                       <ExternalLink href="https://www.docker.com/increase-rate-limits" className="ml-1" size="xs">
                         See here

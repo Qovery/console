@@ -20,9 +20,9 @@ export interface PageOrganizationBillingProps {
 
 export function PageOrganizationBilling(props: PageOrganizationBillingProps) {
   return (
-    <div className="flex flex-col justify-between w-full max-w-content-with-navigation-left">
+    <div className="flex w-full max-w-content-with-navigation-left flex-col justify-between">
       <Section className="p-8">
-        <div className="flex justify-between mb-8">
+        <div className="mb-8 flex justify-between">
           <Heading className="mb-2">Payment method</Heading>
           <Button onClick={props.openNewCreditCardModal} size="lg" className="gap-2" data-testid="add-new-card-button">
             Add new card
@@ -37,14 +37,14 @@ export function PageOrganizationBilling(props: PageOrganizationBillingProps) {
             </div>
           ) : props.creditCards.length > 0 ? (
             <div className="flex flex-col">
-              <p className="text-xs text-neutral-400 mb-5">
+              <p className="mb-5 text-xs text-neutral-400">
                 You will be charged in USD / EUR - contact us for more details.
               </p>
               {props.creditCards.map((creditCard) => (
                 <div
                   data-testid="credit-card-row"
                   key={creditCard.id}
-                  className="flex items-center justify-between mb-3 gap-3"
+                  className="mb-3 flex items-center justify-between gap-3"
                 >
                   <InputCreditCard
                     type="number"
@@ -64,7 +64,7 @@ export function PageOrganizationBilling(props: PageOrganizationBillingProps) {
                   />
                   <Button
                     data-testid="delete-credit-card"
-                    className="w-[52px] h-[52px] justify-center"
+                    className="h-[52px] w-[52px] justify-center"
                     variant="surface"
                     color="neutral"
                     onClick={() => props.onDeleteCard(creditCard)}
@@ -75,9 +75,9 @@ export function PageOrganizationBilling(props: PageOrganizationBillingProps) {
               ))}
             </div>
           ) : (
-            <div data-testid="placeholder-credit-card" className="text-center px-3 py-6">
+            <div data-testid="placeholder-credit-card" className="px-3 py-6 text-center">
               <Icon iconName="wave-pulse" className="text-neutral-350" />
-              <p className="text-neutral-350 font-medium text-xs mt-1" data-testid="empty-credit-card">
+              <p className="mt-1 text-xs font-medium text-neutral-350" data-testid="empty-credit-card">
                 No credit cards found. <br /> Please add one.
               </p>
             </div>

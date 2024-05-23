@@ -24,7 +24,7 @@ export function SelectVersionModal({
   return (
     <div className="flex flex-col gap-6 p-5">
       <div className="flex flex-col gap-2 text-sm text-neutral-350">
-        <h2 className="h4 text-neutral-400 max-w-sm truncate">{title}</h2>
+        <h2 className="h4 max-w-sm truncate text-neutral-400">{title}</h2>
         <p className="text-neutral-350">{description}</p>
         {children}
       </div>
@@ -35,7 +35,7 @@ export function SelectVersionModal({
         label="Version"
         type="text"
       />
-      <div className="flex gap-3 justify-end">
+      <div className="flex justify-end gap-3">
         <Button variant="outline" color="neutral" size="lg" onClick={() => onCancel()}>
           Cancel
         </Button>

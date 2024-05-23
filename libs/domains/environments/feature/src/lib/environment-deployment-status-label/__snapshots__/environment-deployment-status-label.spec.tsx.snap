@@ -3,10 +3,10 @@
 exports[`EnvironmentDeploymentStatusLabel should match snapshot 1`] = `
 <div>
   <div
-    class="flex items-center gap-3 leading-7 text-neutral-350 text-sm"
+    class="flex items-center gap-3 text-sm leading-7 text-neutral-350"
   >
     <span
-      class="shrink-0 flex items-center px-3 h-8 border border-neutral-250 rounded-full text-neutral-400 text-xs font-medium truncate"
+      class="flex h-8 shrink-0 items-center truncate rounded-full border border-neutral-250 px-3 text-xs font-medium text-neutral-400"
       data-testid="status-label"
     >
       <div
@@ -14,10 +14,10 @@ exports[`EnvironmentDeploymentStatusLabel should match snapshot 1`] = `
         data-state="closed"
       >
         <div
-          class="relative flex items-center justify-center w-4 h-4 text-brand-500 dark:text-brand-300"
+          class="relative flex h-4 w-4 items-center justify-center text-brand-500 dark:text-brand-300"
         >
           <div
-            class="animate-spin absolute top-0 left-0 w-full h-full rounded-full border-[1.5px] border-current border-r-transparent"
+            class="absolute left-0 top-0 h-full w-full animate-spin rounded-full border-[1.5px] border-current border-r-transparent"
           />
           <div
             class="p-1"

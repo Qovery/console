@@ -7,10 +7,10 @@ exports[`EnvironmentStatusChip should match snapshot with deployment status 1`] 
     data-state="closed"
   >
     <div
-      class="relative flex items-center justify-center w-4 h-4 text-brand-500 dark:text-brand-300"
+      class="relative flex h-4 w-4 items-center justify-center text-brand-500 dark:text-brand-300"
     >
       <div
-        class="animate-spin absolute top-0 left-0 w-full h-full rounded-full border-[1.5px] border-current border-r-transparent"
+        class="absolute left-0 top-0 h-full w-full animate-spin rounded-full border-[1.5px] border-current border-r-transparent"
       />
       <div
         class="p-1"
@@ -40,10 +40,10 @@ exports[`EnvironmentStatusChip should match snapshot with running status 1`] = `
     data-state="closed"
   >
     <div
-      class="relative flex items-center justify-center w-4 h-4 text-brand-500 dark:text-brand-300"
+      class="relative flex h-4 w-4 items-center justify-center text-brand-500 dark:text-brand-300"
     >
       <div
-        class="animate-spin absolute top-0 left-0 w-full h-full rounded-full border-[1.5px] border-current border-r-transparent"
+        class="absolute left-0 top-0 h-full w-full animate-spin rounded-full border-[1.5px] border-current border-r-transparent"
       />
       <div
         class="p-1"

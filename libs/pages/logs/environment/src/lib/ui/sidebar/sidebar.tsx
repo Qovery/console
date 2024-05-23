@@ -26,11 +26,11 @@ export function Sidebar({ services, statusStages, environmentStatus, versionId, 
 
   return (
     <div
-      className={`flex shrink-0 border-x border-neutral-500 bg-neutral-650 h-[calc(100vh-4rem)] ${
+      className={`flex h-[calc(100vh-4rem)] shrink-0 border-x border-neutral-500 bg-neutral-650 ${
         openSidebar ? 'w-[340px]' : 'w-5'
       }`}
     >
-      <div data-testid="sidebar" className={`w-full h-full overflow-x-scroll ${!openSidebar ? 'hidden' : ''}`}>
+      <div data-testid="sidebar" className={`h-full w-full overflow-x-scroll ${!openSidebar ? 'hidden' : ''}`}>
         <SidebarHistoryFeature serviceId={serviceId} versionId={versionId} />
         <SidebarStatus environmentStatus={environmentStatus} />
         <SidebarPipeline services={services} versionId={versionId} serviceId={serviceId} statusStages={statusStages} />
@@ -38,7 +38,7 @@ export function Sidebar({ services, statusStages, environmentStatus, versionId, 
       <div
         data-testid="sidebar-resize-button"
         onClick={() => setOpenSidebar(!openSidebar)}
-        className={`border-neutral-500 flex justify-center items-center w-5 text-neutral-350 hover:bg-neutral-600 cursor-pointer transition-all ease-in-out duration-150 ${
+        className={`flex w-5 cursor-pointer items-center justify-center border-neutral-500 text-neutral-350 transition-all duration-150 ease-in-out hover:bg-neutral-600 ${
           openSidebar ? 'border-l' : ''
         } `}
       >

@@ -18,7 +18,7 @@ export function StepResources({ maximumInstances, onSubmit, onBack }: StepResour
       <Heading className="mb-2">Resources</Heading>
 
       <form className="space-y-10" onSubmit={onSubmit}>
-        <p className="text-neutral-350 text-sm">Customize the resources assigned to the service.</p>
+        <p className="text-sm text-neutral-350">Customize the resources assigned to the service.</p>
         <ApplicationSettingsResources maxInstances={maximumInstances} displayWarningCpu={false} />
 
         <div className="flex justify-between">

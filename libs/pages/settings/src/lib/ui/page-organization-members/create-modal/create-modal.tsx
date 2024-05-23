@@ -55,7 +55,7 @@ export function CreateModal(props: CreateModalProps) {
           render={({ field, fieldState: { error } }) => (
             <InputSelect
               dataTestId="input-role"
-              className="w-full ml-3"
+              className="ml-3 w-full"
               label="Role"
               options={availableRoles.map((availableRole: OrganizationAvailableRole) => ({
                 label: upperCaseFirstLetter(availableRole.name),

@@ -3,15 +3,15 @@
 exports[`PodsMetrics should match snapshot with data 1`] = `
 <div>
   <div
-    class="border rounded overflow-hidden"
+    class="overflow-hidden rounded border"
   >
     <table
-      class="divide-y divide-neutral-200 text-neutral-400 w-full text-xs min-w-[800px]"
+      class="divide-y divide-neutral-200 text-neutral-400 w-full min-w-[800px] text-xs"
     >
       <thead>
         <tr>
           <th
-            class="h-11 px-4 text-left first:w-1/4 first:pl-[52px] font-medium"
+            class="h-11 px-4 text-left font-medium first:w-1/4 first:pl-[52px]"
           >
             <button
               class="flex items-center gap-1 cursor-pointer select-none"
@@ -25,7 +25,7 @@ exports[`PodsMetrics should match snapshot with data 1`] = `
             </button>
           </th>
           <th
-            class="h-11 px-4 text-left first:w-1/4 first:pl-[52px] font-medium"
+            class="h-11 px-4 text-left font-medium first:w-1/4 first:pl-[52px]"
           >
             <button
               class="flex items-center gap-1 cursor-pointer select-none"
@@ -35,7 +35,7 @@ exports[`PodsMetrics should match snapshot with data 1`] = `
             </button>
           </th>
           <th
-            class="h-11 px-4 text-left first:w-1/4 first:pl-[52px] font-medium"
+            class="h-11 px-4 text-left font-medium first:w-1/4 first:pl-[52px]"
           >
             <button
               class="flex items-center gap-1 cursor-pointer select-none"
@@ -45,7 +45,7 @@ exports[`PodsMetrics should match snapshot with data 1`] = `
             </button>
           </th>
           <th
-            class="h-11 px-4 text-left first:w-1/4 first:pl-[52px] font-medium"
+            class="h-11 px-4 text-left font-medium first:w-1/4 first:pl-[52px]"
           >
             <button
               class="flex items-center gap-1 cursor-pointer select-none"
@@ -55,7 +55,7 @@ exports[`PodsMetrics should match snapshot with data 1`] = `
             </button>
           </th>
           <th
-            class="h-11 px-4 text-left first:w-1/4 first:pl-[52px] font-medium"
+            class="h-11 px-4 text-left font-medium first:w-1/4 first:pl-[52px]"
           >
             <button
               class="flex items-center gap-1 cursor-pointer select-none"
@@ -65,7 +65,7 @@ exports[`PodsMetrics should match snapshot with data 1`] = `
             </button>
           </th>
           <th
-            class="h-11 px-4 text-left first:w-1/4 first:pl-[52px] font-medium"
+            class="h-11 px-4 text-left font-medium first:w-1/4 first:pl-[52px]"
           >
             <button
               class="flex items-center gap-1 cursor-pointer select-none"
@@ -75,7 +75,7 @@ exports[`PodsMetrics should match snapshot with data 1`] = `
             </button>
           </th>
           <th
-            class="h-11 px-4 text-left first:w-1/4 first:pl-[52px] font-medium"
+            class="h-11 px-4 text-left font-medium first:w-1/4 first:pl-[52px]"
           >
             <button
               class="flex items-center gap-1 cursor-pointer select-none"
@@ -96,7 +96,7 @@ exports[`PodsMetrics should match snapshot with data 1`] = `
             class="h-14 px-4 py-0 text-nowrap"
           >
             <button
-              class="inline-flex items-center justify-start h-14 text-md w-9 pointer text-neutral-350"
+              class="text-md pointer inline-flex h-14 w-9 items-center justify-start text-neutral-350"
               type="button"
             >
               <span
@@ -191,7 +191,7 @@ exports[`PodsMetrics should match snapshot with data 1`] = `
 exports[`PodsMetrics should match snapshot with empty data 1`] = `
 <div>
   <div
-    class="flex flex-col items-center gap-1 py-10 bg-neutral-100 text-sm text-neutral-350 border border-neutral-200"
+    class="flex flex-col items-center gap-1 border border-neutral-200 bg-neutral-100 py-10 text-sm text-neutral-350"
   >
     <span
       class="icon-solid-play shrink-0 text-md text-neutral-300"
@@ -212,7 +212,7 @@ exports[`PodsMetrics should match snapshot with empty data 1`] = `
 exports[`PodsMetrics should match snapshot with null data 1`] = `
 <div>
   <div
-    class="flex flex-col items-center gap-1 py-10 bg-neutral-100 text-sm text-neutral-350 border border-neutral-200"
+    class="flex flex-col items-center gap-1 border border-neutral-200 bg-neutral-100 py-10 text-sm text-neutral-350"
   >
     <span
       class="icon-solid-play shrink-0 text-md text-neutral-300"

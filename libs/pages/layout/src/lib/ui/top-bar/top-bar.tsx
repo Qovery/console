@@ -3,8 +3,8 @@ import { BreadcrumbFeature } from '../../feature/breadcrumb/breadcrumb'
 
 export function TopBar({ children }: { children?: ReactNode }) {
   return (
-    <div className="sticky top-0 left-16 border-l border-b w-full h-navbar-height dark:border-neutral-500 dark:bg-neutral-650 border-neutral-200 bg-white">
-      <div className="flex px-5 justify-between items-center h-full">
+    <div className="sticky left-16 top-0 h-navbar-height w-full border-b border-l border-neutral-200 bg-white dark:border-neutral-500 dark:bg-neutral-650">
+      <div className="flex h-full items-center justify-between px-5">
         <BreadcrumbFeature />
         {children}
       </div>

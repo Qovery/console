@@ -9,7 +9,7 @@ exports[`SelectCommitModal should match snapshot 1`] = `
       class="flex flex-col gap-2 text-sm text-neutral-350"
     >
       <h2
-        class="h4 text-neutral-400 max-w-sm truncate"
+        class="h4 max-w-sm truncate text-neutral-400"
       >
         Deploy other version
       </h2>
@@ -24,11 +24,11 @@ exports[`SelectCommitModal should match snapshot 1`] = `
       class="relative w-full"
     >
       <span
-        class="icon-solid-magnifying-glass shrink-0 absolute left-3 top-1/2 -translate-y-1/2 block text-base text-neutral-400 dark:text-white leading-none"
+        class="icon-solid-magnifying-glass shrink-0 absolute left-3 top-1/2 block -translate-y-1/2 text-base leading-none text-neutral-400 dark:text-white"
         role="img"
       />
       <input
-        class="w-full rounded border border-neutral-250 dark:border-neutral-350 dark:bg-transparent text-neutral-400 dark:text-white placeholder:text-neutral-350 dark:placeholder:text-neutral-250 pl-10 pr-6 focus:outline-none focus:border-brand-400 focus:transition-[border-color] h-9 text-xs"
+        class="w-full rounded border border-neutral-250 pl-10 pr-6 text-neutral-400 placeholder:text-neutral-350 focus:border-brand-400 focus:outline-none focus:transition-[border-color] dark:border-neutral-350 dark:bg-transparent dark:text-white dark:placeholder:text-neutral-250 h-9 text-xs"
         data-testid="input-search"
         name="search"
         placeholder="Search by commit message or commit id"
@@ -47,17 +47,17 @@ exports[`SelectCommitModal should match snapshot 1`] = `
         data-testid="scroll-shadow-wrapper"
       >
         <div
-          class="sticky top-0 bg-scroll-shadow-up w-full h-4 -mb-4 pointer-events-none transition-opacity duration-300 opacity-0"
+          class="pointer-events-none sticky top-0 -mb-4 h-4 w-full bg-scroll-shadow-up transition-opacity duration-300 opacity-0"
           data-testid="scroll-shadow-top"
         />
         <div
           class="pl-2"
         >
           <div
-            class="text-sm pl-5 text-neutral-350 font-medium relative"
+            class="relative pl-5 text-sm font-medium text-neutral-350"
           >
             <span
-              class="icon-solid-code-commit shrink-0 absolute left-0 text-neutral-300 -translate-x-1/2"
+              class="icon-solid-code-commit shrink-0 absolute left-0 -translate-x-1/2 text-neutral-300"
               role="img"
             />
             Commit
@@ -65,10 +65,10 @@ exports[`SelectCommitModal should match snapshot 1`] = `
             Jan 01, 0123
           </div>
           <div
-            class="border-l border-neutral-250 pt-3 pl-5 pb-5"
+            class="border-l border-neutral-250 pb-5 pl-5 pt-3"
           >
             <label
-              class="flex flex-row gap-3 w-full p-3 border border-neutral-250 -mt-px first:rounded-t-md last:rounded-b-md cursor-pointer"
+              class="-mt-px flex w-full flex-row gap-3 border border-neutral-250 p-3 first:rounded-t-md last:rounded-b-md cursor-pointer"
             >
               <div>
                 <button
@@ -83,10 +83,10 @@ exports[`SelectCommitModal should match snapshot 1`] = `
                 />
               </div>
               <div
-                class="flex flex-col items-start flex-1 min-w-0 text-sm gap-1"
+                class="flex min-w-0 flex-1 flex-col items-start gap-1 text-sm"
               >
                 <a
-                  class="font-medium text-neutral-400 hover:text-brand-500 truncate max-w-full"
+                  class="max-w-full truncate font-medium text-neutral-400 hover:text-brand-500"
                   rel="noreferrer"
                   target="_blank"
                 >
@@ -107,16 +107,16 @@ exports[`SelectCommitModal should match snapshot 1`] = `
                   class="flex items-center gap-1.5"
                 >
                   <div
-                    class="block rounded-full relative border border-neutral-200  "
+                    class="relative block rounded-full border border-neutral-200  "
                     data-state="closed"
                     data-testid="avatar"
                     style="width: 28px; height: 28px;"
                   >
                     <div
-                      class="w-full h-full rounded-full bg-neutral-200 text-center flex justify-center items-center"
+                      class="flex h-full w-full items-center justify-center rounded-full bg-neutral-200 text-center"
                     >
                       <span
-                        class="text-xs text-neutral-400 font-medium relative"
+                        class="relative text-xs font-medium text-neutral-400"
                       >
                         F
                       </span>
@@ -128,11 +128,11 @@ exports[`SelectCommitModal should match snapshot 1`] = `
                     data-testid="tag-commit"
                   >
                     <span
-                      class="rounded text-xs items-center inline-flex font-bold h-7 px-2   border font-medium flex items-center justify-center  border-neutral-250 text-neutral-350 hover:bg-neutral-200 w-[90px]"
+                      class="inline-flex items-center rounded text-xs font-bold h-7 px-2   flex items-center justify-center border font-medium  w-[90px] border-neutral-250 text-neutral-350 hover:bg-neutral-200"
                       data-testid="tag"
                     >
                       <div
-                        class="w-4 mr-1"
+                        class="mr-1 w-4"
                       >
                         <span
                           class="icon-solid-code-commit shrink-0 mr-1"
@@ -156,10 +156,10 @@ exports[`SelectCommitModal should match snapshot 1`] = `
           class="pl-2"
         >
           <div
-            class="text-sm pl-5 text-neutral-350 font-medium relative"
+            class="relative pl-5 text-sm font-medium text-neutral-350"
           >
             <span
-              class="icon-solid-code-commit shrink-0 absolute left-0 text-neutral-300 -translate-x-1/2"
+              class="icon-solid-code-commit shrink-0 absolute left-0 -translate-x-1/2 text-neutral-300"
               role="img"
             />
             Commit
@@ -167,10 +167,10 @@ exports[`SelectCommitModal should match snapshot 1`] = `
             Jan 01, 0456
           </div>
           <div
-            class="border-l border-neutral-250 pt-3 pl-5 pb-5"
+            class="border-l border-neutral-250 pb-5 pl-5 pt-3"
           >
             <label
-              class="flex flex-row gap-3 w-full p-3 border border-neutral-250 -mt-px first:rounded-t-md last:rounded-b-md bg-neutral-100"
+              class="-mt-px flex w-full flex-row gap-3 border border-neutral-250 p-3 first:rounded-t-md last:rounded-b-md bg-neutral-100"
             >
               <div>
                 <button
@@ -198,10 +198,10 @@ exports[`SelectCommitModal should match snapshot 1`] = `
                 </button>
               </div>
               <div
-                class="flex flex-col items-start flex-1 min-w-0 text-sm gap-1"
+                class="flex min-w-0 flex-1 flex-col items-start gap-1 text-sm"
               >
                 <a
-                  class="font-medium hover:text-brand-500 truncate max-w-full text-neutral-350"
+                  class="max-w-full truncate font-medium hover:text-brand-500 text-neutral-350"
                   rel="noreferrer"
                   target="_blank"
                 >
@@ -222,16 +222,16 @@ exports[`SelectCommitModal should match snapshot 1`] = `
                   class="flex items-center gap-1.5"
                 >
                   <div
-                    class="block rounded-full relative border border-neutral-200  "
+                    class="relative block rounded-full border border-neutral-200  "
                     data-state="closed"
                     data-testid="avatar"
                     style="width: 28px; height: 28px;"
                   >
                     <div
-                      class="w-full h-full rounded-full bg-neutral-200 text-center flex justify-center items-center"
+                      class="flex h-full w-full items-center justify-center rounded-full bg-neutral-200 text-center"
                     >
                       <span
-                        class="text-xs text-neutral-400 font-medium relative"
+                        class="relative text-xs font-medium text-neutral-400"
                       >
                         F
                       </span>
@@ -243,11 +243,11 @@ exports[`SelectCommitModal should match snapshot 1`] = `
                     data-testid="tag-commit"
                   >
                     <span
-                      class="rounded text-xs items-center inline-flex font-bold h-7 px-2   border font-medium flex items-center justify-center  border-neutral-250 text-neutral-350 hover:bg-neutral-200 w-[90px]"
+                      class="inline-flex items-center rounded text-xs font-bold h-7 px-2   flex items-center justify-center border font-medium  w-[90px] border-neutral-250 text-neutral-350 hover:bg-neutral-200"
                       data-testid="tag"
                     >
                       <div
-                        class="w-4 mr-1"
+                        class="mr-1 w-4"
                       >
                         <span
                           class="icon-solid-code-commit shrink-0 mr-1"
@@ -268,13 +268,13 @@ exports[`SelectCommitModal should match snapshot 1`] = `
           </div>
         </div>
         <div
-          class="sticky bottom-0 bg-scroll-shadow-bottom w-full h-4 -mt-4 pointer-events-none rotate-180 transition-opacity duration-300 opacity-0"
+          class="pointer-events-none sticky bottom-0 -mt-4 h-4 w-full rotate-180 bg-scroll-shadow-bottom transition-opacity duration-300 opacity-0"
           data-testid="scroll-shadow-bottom"
         />
       </div>
     </div>
     <div
-      class="flex gap-3 justify-end"
+      class="flex justify-end gap-3"
     >
       <button
         class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-sm h-11 px-5 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-transparent"

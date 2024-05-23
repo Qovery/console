@@ -12,17 +12,17 @@ export function ModalAlert(props: ModalAlertProps) {
   return (
     <Dialog.Root open={props.isOpen} onOpenChange={() => setModalAlertOpen(!props.isOpen)}>
       <Dialog.Portal>
-        <Dialog.Overlay className="modal__overlay flex fixed top-0 left-0 bg-neutral-700/40 w-full h-screen z-40" />
+        <Dialog.Overlay className="modal__overlay fixed left-0 top-0 z-40 flex h-screen w-full bg-neutral-700/40" />
         <Dialog.Content
           data-testid="modal-alert"
           style={{ width: `470px`, top: '200px' }}
-          className="modal__content fixed top-[84px] left-1/2 bg-white rounded-md shadow-[0_0_32px_rgba(0,0,0,0.08)] z-40"
+          className="modal__content fixed left-1/2 top-[84px] z-40 rounded-md bg-white shadow-[0_0_32px_rgba(0,0,0,0.08)]"
         >
           <div className="max-h-[80vh] overflow-auto p-6">
-            <h2 className="h4 text-neutral-400 mb-2">Discard changes?</h2>
-            <p className="mb-6 text-neutral-350 text-sm">Are you sure you want to discard your changes?</p>
+            <h2 className="h4 mb-2 text-neutral-400">Discard changes?</h2>
+            <p className="mb-6 text-sm text-neutral-350">Are you sure you want to discard your changes?</p>
 
-            <div className="flex gap-4 justify-end">
+            <div className="flex justify-end gap-4">
               <Button
                 type="button"
                 size="lg"

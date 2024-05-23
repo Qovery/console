@@ -146,10 +146,10 @@ export function CrudModal({
               field.onChange(!field.value)
               field.value && setValue('external_port', null)
             }}
-            className="flex items-center mr-4 mb-5"
+            className="mb-5 mr-4 flex items-center"
           >
             <InputToggle onChange={field.onChange} value={field.value} title={field.value} small />
-            <span className="text-neutral-400 text-ssm font-medium cursor-pointer">Publicly exposed</span>
+            <span className="cursor-pointer text-ssm font-medium text-neutral-400">Publicly exposed</span>
           </div>
         )}
       />
@@ -205,7 +205,7 @@ export function CrudModal({
                 />
               )}
             />
-            <p className="text-neutral-350 text-xs ml-4 mb-5">{`Port Name allows to customize the subdomain assigned to reach the application port from the internet. Default value is p<port_number>`}</p>
+            <p className="mb-5 ml-4 text-xs text-neutral-350">{`Port Name allows to customize the subdomain assigned to reach the application port from the internet. Default value is p<port_number>`}</p>
           </>
         </>
       )}

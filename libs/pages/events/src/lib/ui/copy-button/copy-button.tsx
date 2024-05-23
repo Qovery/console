@@ -26,7 +26,7 @@ export function CopyButton({ content, className = '' }: CopyButtonProps) {
       type="button"
       color="neutral"
       onClick={() => onClickCopyToClipboard(content)}
-      className={twMerge('cursor-pointer font-medium gap-2', className)}
+      className={twMerge('cursor-pointer gap-2 font-medium', className)}
     >
       Copy
       <Icon iconName={icon} className="text-xs" />

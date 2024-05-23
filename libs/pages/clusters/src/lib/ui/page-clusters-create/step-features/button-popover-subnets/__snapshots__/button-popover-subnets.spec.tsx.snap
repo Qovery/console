@@ -11,7 +11,7 @@ exports[`ButtonPopoverSubnets should match snapshot 1`] = `
     aria-controls="radix-:rd:"
     aria-expanded="true"
     aria-haspopup="dialog"
-    class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded-full border dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none self-start bg-white border-green-500"
+    class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded-full border dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none self-start border-green-500 bg-white"
     data-state="open"
     type="button"
   >
@@ -22,7 +22,7 @@ exports[`ButtonPopoverSubnets should match snapshot 1`] = `
     style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 8px); min-width: max-content; --radix-popper-available-width: -20px; --radix-popper-available-height: -18px; --radix-popper-anchor-width: 0px; --radix-popper-anchor-height: 0px; --radix-popper-transform-origin: 0% 0px;"
   >
     <div
-      class="bg-white p-4 shadow-xl rounded border border-neutral-200 outline-none data-[state=open]:data-[side=top]:animate-slidein-down-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-sm-faded data-[state=open]:data-[side=bottom]:animate-slidein-up-sm-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded text-neutral-350 text-sm relative"
+      class="rounded border border-neutral-200 bg-white p-4 shadow-xl outline-none data-[state=open]:data-[side=bottom]:animate-slidein-up-sm-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-sm-faded data-[state=open]:data-[side=top]:animate-slidein-down-sm-faded relative text-sm text-neutral-350"
       data-align="start"
       data-side="bottom"
       data-state="open"
@@ -32,35 +32,35 @@ exports[`ButtonPopoverSubnets should match snapshot 1`] = `
       tabindex="-1"
     >
       <h6
-        class="text-neutral-400 font-medium mb-4"
+        class="mb-4 font-medium text-neutral-400"
       >
         EKS subnets
       </h6>
       <ul
-        class="flex flex-col gap-3 mb-3"
+        class="mb-3 flex flex-col gap-3"
       >
         <li
-          class="grid grid-cols-[6fr_6fr_6fr_1fr] gap-x-2 items-center"
+          class="grid grid-cols-[6fr_6fr_6fr_1fr] items-center gap-x-2"
         >
           <span
-            class="text-sm text-neutral-350 font-medium"
+            class="text-sm font-medium text-neutral-350"
           >
             IDs zone A
           </span>
           <span
-            class="text-sm text-neutral-350 font-medium"
+            class="text-sm font-medium text-neutral-350"
           >
             IDs zone B
           </span>
           <span
-            class="text-sm text-neutral-350 font-medium"
+            class="text-sm font-medium text-neutral-350"
           >
             IDs zone C
           </span>
           <span />
         </li>
         <li
-          class="grid grid-cols-[6fr_6fr_6fr_1fr] gap-x-2 items-center"
+          class="grid grid-cols-[6fr_6fr_6fr_1fr] items-center gap-x-2"
         >
           <div
             class="w-full "
@@ -74,7 +74,7 @@ exports[`ButtonPopoverSubnets should match snapshot 1`] = `
                 class="hidden"
               />
               <input
-                class="absolute text-sm top-0 left-0 h-full w-full text-neutral-400 placeholder:text-neutral-350 rounded px-2 "
+                class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 "
                 data-testid="input-value"
                 name="eks_subnets.0.A"
                 type="text"
@@ -94,7 +94,7 @@ exports[`ButtonPopoverSubnets should match snapshot 1`] = `
                 class="hidden"
               />
               <input
-                class="absolute text-sm top-0 left-0 h-full w-full text-neutral-400 placeholder:text-neutral-350 rounded px-2 "
+                class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 "
                 data-testid="input-value"
                 name="eks_subnets.0.B"
                 type="text"
@@ -114,7 +114,7 @@ exports[`ButtonPopoverSubnets should match snapshot 1`] = `
                 class="hidden"
               />
               <input
-                class="absolute text-sm top-0 left-0 h-full w-full text-neutral-400 placeholder:text-neutral-350 rounded px-2 "
+                class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 "
                 data-testid="input-value"
                 name="eks_subnets.0.C"
                 type="text"
@@ -182,7 +182,7 @@ exports[`ButtonPopoverSubnets should match snapshot with invalid state 1`] = `
     aria-controls="radix-:rk:"
     aria-expanded="true"
     aria-haspopup="dialog"
-    class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded-full border dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none self-start bg-white border-red-500"
+    class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded-full border dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none self-start border-red-500 bg-white"
     data-state="open"
     type="button"
   >
@@ -193,7 +193,7 @@ exports[`ButtonPopoverSubnets should match snapshot with invalid state 1`] = `
     style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 8px); min-width: max-content; --radix-popper-available-width: -20px; --radix-popper-available-height: -18px; --radix-popper-anchor-width: 0px; --radix-popper-anchor-height: 0px; --radix-popper-transform-origin: 0% 0px;"
   >
     <div
-      class="bg-white p-4 shadow-xl rounded border border-neutral-200 outline-none data-[state=open]:data-[side=top]:animate-slidein-down-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-sm-faded data-[state=open]:data-[side=bottom]:animate-slidein-up-sm-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded text-neutral-350 text-sm relative"
+      class="rounded border border-neutral-200 bg-white p-4 shadow-xl outline-none data-[state=open]:data-[side=bottom]:animate-slidein-up-sm-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-sm-faded data-[state=open]:data-[side=top]:animate-slidein-down-sm-faded relative text-sm text-neutral-350"
       data-align="start"
       data-side="bottom"
       data-state="open"
@@ -203,35 +203,35 @@ exports[`ButtonPopoverSubnets should match snapshot with invalid state 1`] = `
       tabindex="-1"
     >
       <h6
-        class="text-neutral-400 font-medium mb-4"
+        class="mb-4 font-medium text-neutral-400"
       >
         EKS subnets
       </h6>
       <ul
-        class="flex flex-col gap-3 mb-3"
+        class="mb-3 flex flex-col gap-3"
       >
         <li
-          class="grid grid-cols-[6fr_6fr_6fr_1fr] gap-x-2 items-center"
+          class="grid grid-cols-[6fr_6fr_6fr_1fr] items-center gap-x-2"
         >
           <span
-            class="text-sm text-neutral-350 font-medium"
+            class="text-sm font-medium text-neutral-350"
           >
             IDs zone A
           </span>
           <span
-            class="text-sm text-neutral-350 font-medium"
+            class="text-sm font-medium text-neutral-350"
           >
             IDs zone B
           </span>
           <span
-            class="text-sm text-neutral-350 font-medium"
+            class="text-sm font-medium text-neutral-350"
           >
             IDs zone C
           </span>
           <span />
         </li>
         <li
-          class="grid grid-cols-[6fr_6fr_6fr_1fr] gap-x-2 items-center"
+          class="grid grid-cols-[6fr_6fr_6fr_1fr] items-center gap-x-2"
         >
           <div
             class="w-full "
@@ -245,7 +245,7 @@ exports[`ButtonPopoverSubnets should match snapshot with invalid state 1`] = `
                 class="hidden"
               />
               <input
-                class="absolute text-sm top-0 left-0 h-full w-full text-neutral-400 placeholder:text-neutral-350 rounded px-2 "
+                class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 "
                 data-testid="input-value"
                 name="eks_subnets.0.A"
                 type="text"
@@ -265,7 +265,7 @@ exports[`ButtonPopoverSubnets should match snapshot with invalid state 1`] = `
                 class="hidden"
               />
               <input
-                class="absolute text-sm top-0 left-0 h-full w-full text-neutral-400 placeholder:text-neutral-350 rounded px-2 "
+                class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 "
                 data-testid="input-value"
                 name="eks_subnets.0.B"
                 type="text"
@@ -285,7 +285,7 @@ exports[`ButtonPopoverSubnets should match snapshot with invalid state 1`] = `
                 class="hidden"
               />
               <input
-                class="absolute text-sm top-0 left-0 h-full w-full text-neutral-400 placeholder:text-neutral-350 rounded px-2 "
+                class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 "
                 data-testid="input-value"
                 name="eks_subnets.0.C"
                 type="text"

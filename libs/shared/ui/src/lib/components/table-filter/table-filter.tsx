@@ -35,10 +35,10 @@ export function TableFilter({ column }: { column: Column<any, unknown> }) {
   return (
     <DropdownMenu.Root open={open} onOpenChange={(open) => setOpen(open)}>
       <Popover.Root open={open} onOpenChange={(open) => setOpen(open)}>
-        <div className="inline-block relative">
+        <div className="relative inline-block">
           <Popover.Trigger>
             <Button
-              className={twMerge('text-xs gap-1 whitespace-nowrap', column.getIsFiltered() ? 'pr-6' : '')}
+              className={twMerge('gap-1 whitespace-nowrap text-xs', column.getIsFiltered() ? 'pr-6' : '')}
               color={column.getIsFiltered() ? 'brand' : 'neutral'}
               variant={column.getIsFiltered() ? 'solid' : 'surface'}
             >
@@ -59,7 +59,7 @@ export function TableFilter({ column }: { column: Column<any, unknown> }) {
           {column.getIsFiltered() ? (
             <button
               type="button"
-              className="absolute right-0 px-2 text-white cursor-pointer h-7 text-center leading-7"
+              className="absolute right-0 h-7 cursor-pointer px-2 text-center leading-7 text-white"
               onClick={() => column.setFilterValue(undefined)}
             >
               <Icon iconName="xmark" />
@@ -67,14 +67,14 @@ export function TableFilter({ column }: { column: Column<any, unknown> }) {
           ) : null}
         </div>
         <DropdownMenu.Content asChild>
-          <Popover.Content className="p-2 w-60 overflow-y-auto max-h-80">
+          <Popover.Content className="max-h-80 w-60 overflow-y-auto p-2">
             {sortedUniqueValues.map(
               ([value, count]) =>
                 value != null && (
                   <Fragment key={value}>
                     <Popover.Close>
                       <DropdownMenu.Item
-                        className="flex items-center justify-between text-neutral-400 hover:text-brand-500 hover:bg-neutral-100 p-2 rounded gap-2 cursor-pointer"
+                        className="flex cursor-pointer items-center justify-between gap-2 rounded p-2 text-neutral-400 hover:bg-neutral-100 hover:text-brand-500"
                         onSelect={() => column.setFilterValue((arr: [] = []) => [...new Set([...arr, value])])}
                       >
                         {column.columnDef.meta?.customFacetEntry ? (

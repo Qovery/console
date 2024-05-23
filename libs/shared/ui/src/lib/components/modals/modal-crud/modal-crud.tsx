@@ -43,13 +43,13 @@ export function ModalCrud(props: ModalCrudProps) {
 
   return (
     <div className="p-5">
-      <h2 className="h4 text-neutral-400 max-w-sm truncate">{title}</h2>
-      {description && <p className="mt-2 text-neutral-350 text-sm">{description}</p>}
+      <h2 className="h4 max-w-sm truncate text-neutral-400">{title}</h2>
+      {description && <p className="mt-2 text-sm text-neutral-350">{description}</p>}
       {forServiceName && (
-        <div className="text-neutral-400 text-sm flex justify-between items-center mt-4">
+        <div className="mt-4 flex items-center justify-between text-sm text-neutral-400">
           <p>
             For{' '}
-            <strong className="text-neutral-400 font-medium">
+            <strong className="font-medium text-neutral-400">
               <Truncate truncateLimit={60} text={forServiceName} />
             </strong>
           </p>
@@ -58,14 +58,14 @@ export function ModalCrud(props: ModalCrudProps) {
       {howItWorks && (
         <Popover.Root>
           <Popover.Trigger>
-            <span className="text-sm cursor-pointer text-brand-500 hover:text-brand-600 transition font-medium mt-2">
+            <span className="mt-2 cursor-pointer text-sm font-medium text-brand-500 transition hover:text-brand-600">
               Show how it works <Icon className="text-xs" iconStyle="regular" iconName="circle-question" />
             </span>
           </Popover.Trigger>
-          <Popover.Content side="left" className="text-neutral-350 text-sm relative" style={{ width: 440 }}>
-            <h6 className="text-neutral-400 font-medium mb-2">How it works</h6>
+          <Popover.Content side="left" className="relative text-sm text-neutral-350" style={{ width: 440 }}>
+            <h6 className="mb-2 font-medium text-neutral-400">How it works</h6>
             {howItWorks}
-            <Popover.Close className="absolute top-4 right-4">
+            <Popover.Close className="absolute right-4 top-4">
               <button type="button">
                 <Icon name="icon-solid-xmark text-lg leading-4 font-thin text-neutral-400" />
               </button>
@@ -75,7 +75,7 @@ export function ModalCrud(props: ModalCrudProps) {
       )}
       <form className="mt-6" onSubmit={onSubmit}>
         {children}
-        <div className="flex gap-3 justify-end mt-6">
+        <div className="mt-6 flex justify-end gap-3">
           {isEdit && onDelete ? (
             <Button data-testid="delete-button" color="red" size="lg" onClick={() => onDelete()}>
               {deleteButtonLabel || 'Delete'}

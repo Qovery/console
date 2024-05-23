@@ -47,7 +47,7 @@ export function Tabs(props: TabsProps) {
         <span
           key={index}
           onClick={item.onClick}
-          className={`cursor-pointer flex ${btnClassName} ${btnClassNameActive(item)}`}
+          className={`flex cursor-pointer ${btnClassName} ${btnClassNameActive(item)}`}
         >
           {content(item)}
         </span>
@@ -74,8 +74,8 @@ export function Tabs(props: TabsProps) {
   }
 
   return (
-    <div className={`w-full h-14 flex shrink-0 justify-between items-center rounded-b ${className}`}>
-      <div className={`flex gap-1 h-14 ${fullWidth ? 'flex-grow' : ''}`}>
+    <div className={`flex h-14 w-full shrink-0 items-center justify-between rounded-b ${className}`}>
+      <div className={`flex h-14 gap-1 ${fullWidth ? 'flex-grow' : ''}`}>
         {items.map((item: TabsItem, index: number) => contentTab(item, index))}
       </div>
       {contentRight && <div className="flex items-center">{contentRight}</div>}

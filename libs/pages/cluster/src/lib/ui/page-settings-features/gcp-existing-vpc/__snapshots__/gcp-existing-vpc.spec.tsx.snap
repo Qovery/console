@@ -4,11 +4,11 @@ exports[`GcpExistingVPC should match snapshots 1`] = `
 <body>
   <div>
     <div
-      class="flex flex-col gap-4 justify-between p-4 rounded border bg-neutral-100 border-neutral-250"
+      class="flex flex-col justify-between gap-4 rounded border border-neutral-250 bg-neutral-100 p-4"
     >
       <div>
         <h4
-          class="text-neutral-400 text-sm font-medium"
+          class="text-sm font-medium text-neutral-400"
         >
           Deploy on an existing VPC
         </h4>
@@ -40,7 +40,7 @@ exports[`GcpExistingVPC should match snapshots 1`] = `
               class="pointer-events-none"
             >
               <label
-                class="text-sm translate-y-2"
+                class="translate-y-2 text-sm"
                 for="VPC Name"
               >
                 VPC Name
@@ -73,7 +73,7 @@ exports[`GcpExistingVPC should match snapshots 1`] = `
               class="pointer-events-none"
             >
               <label
-                class="text-sm translate-y-2"
+                class="translate-y-2 text-sm"
                 for="External project id"
               >
                 External project id
@@ -106,7 +106,7 @@ exports[`GcpExistingVPC should match snapshots 1`] = `
               class="pointer-events-none"
             >
               <label
-                class="text-sm translate-y-2"
+                class="translate-y-2 text-sm"
                 for="Subnetwork range name"
               >
                 Subnetwork range name
@@ -139,7 +139,7 @@ exports[`GcpExistingVPC should match snapshots 1`] = `
               class="pointer-events-none"
             >
               <label
-                class="text-sm translate-y-2"
+                class="translate-y-2 text-sm"
                 for="Pod IPv4 address range name"
               >
                 Pod IPv4 address range name
@@ -172,7 +172,7 @@ exports[`GcpExistingVPC should match snapshots 1`] = `
               class="pointer-events-none"
             >
               <label
-                class="text-sm translate-y-2"
+                class="translate-y-2 text-sm"
                 for="Additional cluster Pod IPv4 ranges names"
               >
                 Additional cluster Pod IPv4 ranges names
@@ -205,7 +205,7 @@ exports[`GcpExistingVPC should match snapshots 1`] = `
               class="pointer-events-none"
             >
               <label
-                class="text-sm translate-y-2"
+                class="translate-y-2 text-sm"
                 for="IPv4 service range name"
               >
                 IPv4 service range name

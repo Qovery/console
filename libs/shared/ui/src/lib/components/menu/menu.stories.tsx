@@ -23,7 +23,7 @@ const menus: MenuData = [
       {
         name: 'Test 2',
         link: { url: '/', external: false },
-        contentRight: <Icon name="icon-solid-star" className="text-yellow-400 text-sm" />,
+        contentRight: <Icon name="icon-solid-star" className="text-sm text-yellow-400" />,
         copy: 'Whatever you want',
         copyTooltip: 'Copy the name',
       },

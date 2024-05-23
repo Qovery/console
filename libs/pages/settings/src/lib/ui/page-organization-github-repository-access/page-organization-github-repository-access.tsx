@@ -30,13 +30,13 @@ export function PageOrganizationGithubRepositoryAccess(props: PageOrganizationGi
   const { organizationId = '' } = useParams()
 
   return (
-    <div className="justify-between w-full">
-      <div className="p-8 max-w-content-with-navigation-left">
+    <div className="w-full justify-between">
+      <div className="max-w-content-with-navigation-left p-8">
         <Section>
-          <div className="flex justify-between mb-8">
+          <div className="mb-8 flex justify-between">
             <div className="mr-5">
               <Heading className="mb-2">Git Repository Access</Heading>
-              <p className="text-neutral-400 text-xs">
+              <p className="text-xs text-neutral-400">
                 By default Qovery has access to all the repositories linked to your git account. If you want to give
                 Qovery access to additional repositories and manage the access from one place, you can configure a git
                 token.
@@ -59,7 +59,7 @@ export function PageOrganizationGithubRepositoryAccess(props: PageOrganizationGi
 
         <Section>
           <Heading className="mb-2">Qovery GitHub App</Heading>
-          <p className="text-neutral-400 text-xs mb-8">
+          <p className="mb-8 text-xs text-neutral-400">
             By default Qovery has access to all your repositories. If you are using Github, you can restrict the Qovery
             accesses by installing the Qovery Github App on your GitHub organization.
           </p>
@@ -82,9 +82,9 @@ export function PageOrganizationGithubRepositoryAccess(props: PageOrganizationGi
                 <div className="flex gap-5">
                   <Icon name={IconEnum.GITHUB} className="text-neutral-400" />
                   {props.githubAuthProvider?.use_bot ? (
-                    <span className="text-neutral-400 text-sm font-medium">Github App Installed</span>
+                    <span className="text-sm font-medium text-neutral-400">Github App Installed</span>
                   ) : (
-                    <span className="text-neutral-400 text-sm font-medium">Not installed</span>
+                    <span className="text-sm font-medium text-neutral-400">Not installed</span>
                   )}
                 </div>
                 {!props.githubAuthProvider?.use_bot ? (
@@ -133,7 +133,7 @@ export function PageOrganizationGithubRepositoryAccess(props: PageOrganizationGi
                     {props.repositories.map((repository) => (
                       <li key={repository.id} className="flex items-center justify-between">
                         <div className="flex gap-3">
-                          <Icon name={IconEnum.GITHUB} className="text-neutral-400 w-4" />
+                          <Icon name={IconEnum.GITHUB} className="w-4 text-neutral-400" />
                           <ExternalLink href={repository.url}>{repository.name}</ExternalLink>
                         </div>
                       </li>

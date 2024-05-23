@@ -18,7 +18,7 @@ export interface TableEditionProps {
 export function TableEdition(props: TableEditionProps) {
   return (
     <div
-      className={`border border-solid border-neutral-200 rounded text-sm text-neutral-400  ${props.className || ''}`}
+      className={`rounded border border-solid border-neutral-200 text-sm text-neutral-400  ${props.className || ''}`}
     >
       {props.tableBody?.map((row, index) => (
         <div
@@ -32,7 +32,7 @@ export function TableEdition(props: TableEditionProps) {
             <div
               data-testid="edition-table-cell"
               key={indexCell}
-              className={`flex-1 min-w-0 border-neutral-200 border-solid items-center flex px-4 py-2 ${
+              className={`flex min-w-0 flex-1 items-center border-solid border-neutral-200 px-4 py-2 ${
                 cell.className || ''
               } ${row.cells && row.cells.length - 1 !== indexCell ? 'border-r' : ''}`}
             >

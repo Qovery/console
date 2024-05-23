@@ -33,17 +33,17 @@ export function GitTokenList() {
           {gitTokens?.map((gitToken) => (
             <li
               key={gitToken.id}
-              className="flex justify-between items-center px-5 py-4 border-b border-neutral-250 last:border-0"
+              className="flex items-center justify-between border-b border-neutral-250 px-5 py-4 last:border-0"
             >
               <div className="flex">
                 <Icon name={gitToken.type} width="20px" height="20px" />
                 <div className="ml-4">
-                  <p className="flex text-xs text-neutral-400 font-medium mb-1">
+                  <p className="mb-1 flex text-xs font-medium text-neutral-400">
                     <Truncate truncateLimit={60} text={gitToken.name ?? ''} />
                     {gitToken.description && (
                       <Tooltip content={gitToken.description}>
                         <span className="ml-1 cursor-pointer">
-                          <Icon iconName="circle-info" className="text-neutral-350 ml-1 cursor-pointer" />
+                          <Icon iconName="circle-info" className="ml-1 cursor-pointer text-neutral-350" />
                         </span>
                       </Tooltip>
                     )}
@@ -56,12 +56,12 @@ export function GitTokenList() {
                     )}
 
                     {gitToken.created_at && (
-                      <span className="inline-block ml-3" title={dateUTCString(gitToken.created_at)}>
+                      <span className="ml-3 inline-block" title={dateUTCString(gitToken.created_at)}>
                         Created since {dateMediumLocalFormat(gitToken.created_at)}
                       </span>
                     )}
                     {gitToken.expired_at && (
-                      <span className="inline-block ml-3" title={dateUTCString(gitToken.expired_at)}>
+                      <span className="ml-3 inline-block" title={dateUTCString(gitToken.expired_at)}>
                         Expiration: {dateMediumLocalFormat(gitToken.expired_at)}
                       </span>
                     )}
@@ -88,7 +88,7 @@ export function GitTokenList() {
                     })
                   }}
                 >
-                  <span className="flex items-center justify-center bg-brand-500 w-3 h-3 rounded-full font-bold text-3xs text-white leading-[0] absolute -top-1 -right-1">
+                  <span className="absolute -right-1 -top-1 flex h-3 w-3 items-center justify-center rounded-full bg-brand-500 text-3xs font-bold leading-[0] text-white">
                     {gitToken.associated_services_count}
                   </span>
                   <Icon iconName="layer-group" />
@@ -139,9 +139,9 @@ export function GitTokenList() {
           ))}
         </ul>
       ) : (
-        <div className="text-center py-4 px-5">
+        <div className="px-5 py-4 text-center">
           <Icon iconName="wave-pulse" className="text-neutral-350" />
-          <p className="text-neutral-350 font-medium text-xs mt-1">
+          <p className="mt-1 text-xs font-medium text-neutral-350">
             No Git Tokens found. <br /> Please add one.
           </p>
         </div>

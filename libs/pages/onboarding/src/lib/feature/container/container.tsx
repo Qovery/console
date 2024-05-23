@@ -58,8 +58,8 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
           firstStep
             ? 'Just a few questions'
             : `/${step}` === ONBOARDING_PROJECT_URL
-            ? 'Organization and Project Creation'
-            : 'Select your plan'
+              ? 'Organization and Project Creation'
+              : 'Select your plan'
         }
         portal
       >

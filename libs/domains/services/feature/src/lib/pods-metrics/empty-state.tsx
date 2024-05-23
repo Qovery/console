@@ -14,7 +14,7 @@ function Box({
   icon?: IconAwesomeEnum
 }) {
   return (
-    <div className="flex flex-col items-center gap-1 py-10 bg-neutral-100 text-sm text-neutral-350 border border-neutral-200">
+    <div className="flex flex-col items-center gap-1 border border-neutral-200 bg-neutral-100 py-10 text-sm text-neutral-350">
       <Icon className="text-md text-neutral-300" name={icon} />
       <span className="font-medium">{title}</span>
       <span>{description}</span>

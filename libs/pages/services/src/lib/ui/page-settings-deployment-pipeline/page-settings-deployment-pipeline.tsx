@@ -79,14 +79,14 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
 
   return (
     <div className="w-[calc(100vw-368px)]">
-      <Section className="p-8 flex flex-col w-full rounded-tr-sm">
+      <Section className="flex w-full flex-col rounded-tr-sm p-8">
         <SettingsHeading
           title="Pipeline"
           description={
             <>
               Stages allow to define deployment order within the deployment pipeline of your environment. Default stages
               are available based on the service type, you can edit/remove them based on your need.
-              <span className="block text-2xs mt-1">
+              <span className="mt-1 block text-2xs">
                 <span role="img" aria-label="light">
                   💡
                 </span>{' '}
@@ -97,7 +97,7 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
         >
           <Button
             data-testid="btn-add-stage"
-            className="gap-2 shrink-0 ml-5"
+            className="ml-5 shrink-0 gap-2"
             size="lg"
             variant="solid"
             onClick={() => onAddStage()}
@@ -107,8 +107,8 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
         </SettingsHeading>
         <div className="h-full overflow-x-auto">
           {!stages && !services ? (
-            <div data-testid="stages-loader" className="flex justify-center max-w-4xl">
-              <LoaderSpinner className="w-4 mt-5" />
+            <div data-testid="stages-loader" className="flex max-w-4xl justify-center">
+              <LoaderSpinner className="mt-5 w-4" />
             </div>
           ) : (
             <div className="flex pb-5">
@@ -129,10 +129,10 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
                       </svg>
                     )}
                     <div className="w-60 shrink-0 rounded">
-                      <div className="h-11 flex justify-between items-center bg-neutral-100 px-3 py-2 border border-neutral-250 rounded-t">
+                      <div className="flex h-11 items-center justify-between rounded-t border border-neutral-250 bg-neutral-100 px-3 py-2">
                         <div className="flex items-center">
                           <BadgeDeploymentOrder order={stage.deployment_order} />
-                          <span className="block truncate text-neutral-400 text-2xs font-bold">
+                          <span className="block truncate text-2xs font-bold text-neutral-400">
                             <Truncate truncateLimit={28} text={stage.name || ''} />
                           </span>
                           {stage.description && (
@@ -140,7 +140,7 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
                               <div>
                                 <Icon
                                   name={IconAwesomeEnum.CIRCLE_INFO}
-                                  className="text-neutral-350 text-xs ml-1 relative -top-[2px]"
+                                  className="relative -top-[2px] ml-1 text-xs text-neutral-350"
                                 />
                               </div>
                             </Tooltip>
@@ -184,9 +184,9 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
                             ))}
                             {provided.placeholder}
                             {stage.services?.length === 0 && !snapshot.isDraggingOver && (
-                              <div data-testid="placeholder-stage" className="text-center px-3 py-6">
+                              <div data-testid="placeholder-stage" className="px-3 py-6 text-center">
                                 <Icon iconName="wave-pulse" className="text-neutral-350" />
-                                <p className="text-neutral-350 font-medium text-xs mt-1">
+                                <p className="mt-1 text-xs font-medium text-neutral-350">
                                   No service for this stage. <br /> Please drag and drop a service.
                                 </p>
                               </div>

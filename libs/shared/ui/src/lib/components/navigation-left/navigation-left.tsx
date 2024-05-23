@@ -52,7 +52,7 @@ export function NavigationLeft(props: NavigationLeftProps) {
   const linkContent = (link: NavigationLeftLinkProps) => (
     <>
       {(link.icon || link.iconName) && (
-        <div className="flex items-center mr-4">
+        <div className="mr-4 flex items-center">
           {link.iconName ? (
             // Prepared for migration to use iconName instead of name
             <Icon iconName={link.iconName as IconName} className="inline-block w-3" />
@@ -67,10 +67,10 @@ export function NavigationLeft(props: NavigationLeftProps) {
 
   return (
     <div className={`flex flex-col px-5 ${className}`}>
-      <div className="flex justify-between items-center mb-4">
-        {title && <span className="text-neutral-350 uppercase text-2xs font-bold pl-3">{title}</span>}
+      <div className="mb-4 flex items-center justify-between">
+        {title && <span className="pl-3 text-2xs font-bold uppercase text-neutral-350">{title}</span>}
         {link && (
-          <span className="link cursor-pointer text-sm text-brand-500 font-medium" onClick={() => link.onClick()}>
+          <span className="link cursor-pointer text-sm font-medium text-brand-500" onClick={() => link.onClick()}>
             {link.title}
             <Icon iconName="circle-plus" className="ml-1" />
           </span>

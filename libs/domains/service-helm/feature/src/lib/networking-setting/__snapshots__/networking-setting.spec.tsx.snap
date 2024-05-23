@@ -7,7 +7,7 @@ exports[`NetworkingSetting should match snapshot in empty state 1`] = `
       class="flex flex-col items-start"
     >
       <div
-        class="flex flex-row w-full justify-between"
+        class="flex w-full flex-row justify-between"
       >
         <div>
           <h1
@@ -16,7 +16,7 @@ exports[`NetworkingSetting should match snapshot in empty state 1`] = `
             Networking
           </h1>
           <p
-            class="text-sm text-neutral-350 mb-2"
+            class="mb-2 text-sm text-neutral-350"
           >
             You can expose publicly over HTTP/gRPC the Kubernetes services deployed.
           </p>
@@ -24,7 +24,7 @@ exports[`NetworkingSetting should match snapshot in empty state 1`] = `
             aria-controls="radix-:r6:"
             aria-expanded="false"
             aria-haspopup="dialog"
-            class="text-sm cursor-pointer text-brand-500 hover:text-brand-600 transition font-medium mb-5"
+            class="mb-5 cursor-pointer text-sm font-medium text-brand-500 transition hover:text-brand-600"
             data-state="closed"
             type="button"
           >
@@ -49,14 +49,14 @@ exports[`NetworkingSetting should match snapshot in empty state 1`] = `
         class="w-full"
       >
         <div
-          class="border border-neutral-250 bg-neutral-100 rounded mb-5 w-full"
+          class="mb-5 rounded border border-neutral-250 bg-neutral-100 w-full"
           data-testid="block-content"
         >
           <div
-            class="flex items-center justify-between h-9 px-4 border-b border-neutral-250"
+            class="flex h-9 items-center justify-between border-b border-neutral-250 px-4"
           >
             <h2
-              class="font-medium text-neutral-400 text-ssm"
+              class="text-ssm font-medium text-neutral-400"
             >
               Services exposed publicly
             </h2>
@@ -65,14 +65,14 @@ exports[`NetworkingSetting should match snapshot in empty state 1`] = `
             class="p-0"
           >
             <div
-              class="text-center my-4 py-5 px-10"
+              class="my-4 px-10 py-5 text-center"
             >
               <i
                 aria-hidden="true"
                 class="fa-solid fa-wave-pulse text-neutral-300"
               />
               <p
-                class="text-neutral-350 font-medium text-xs mt-1 mb-3"
+                class="mb-3 mt-1 text-xs font-medium text-neutral-350"
               >
                 No port are set.
               </p>
@@ -92,7 +92,7 @@ exports[`NetworkingSetting should match snapshot with ports 1`] = `
       class="flex flex-col items-start"
     >
       <div
-        class="flex flex-row w-full justify-between"
+        class="flex w-full flex-row justify-between"
       >
         <div>
           <h1
@@ -101,7 +101,7 @@ exports[`NetworkingSetting should match snapshot with ports 1`] = `
             Networking
           </h1>
           <p
-            class="text-sm text-neutral-350 mb-2"
+            class="mb-2 text-sm text-neutral-350"
           >
             You can expose publicly over HTTP/gRPC the Kubernetes services deployed.
           </p>
@@ -109,7 +109,7 @@ exports[`NetworkingSetting should match snapshot with ports 1`] = `
             aria-controls="radix-:rd:"
             aria-expanded="false"
             aria-haspopup="dialog"
-            class="text-sm cursor-pointer text-brand-500 hover:text-brand-600 transition font-medium mb-5"
+            class="mb-5 cursor-pointer text-sm font-medium text-brand-500 transition hover:text-brand-600"
             data-state="closed"
             type="button"
           >
@@ -134,14 +134,14 @@ exports[`NetworkingSetting should match snapshot with ports 1`] = `
         class="w-full"
       >
         <div
-          class="border border-neutral-250 bg-neutral-100 rounded mb-5 w-full"
+          class="mb-5 rounded border border-neutral-250 bg-neutral-100 w-full"
           data-testid="block-content"
         >
           <div
-            class="flex items-center justify-between h-9 px-4 border-b border-neutral-250"
+            class="flex h-9 items-center justify-between border-b border-neutral-250 px-4"
           >
             <h2
-              class="font-medium text-neutral-400 text-ssm"
+              class="text-ssm font-medium text-neutral-400"
             >
               Services exposed publicly
             </h2>
@@ -150,18 +150,18 @@ exports[`NetworkingSetting should match snapshot with ports 1`] = `
             class="p-0"
           >
             <div
-              class="flex justify-between w-full items-center gap-3 px-5 py-4 border-b border-neutral-250 last:border-0"
+              class="flex w-full items-center justify-between gap-3 border-b border-neutral-250 px-5 py-4 last:border-0"
             >
               <div
                 class="flex flex-col"
               >
                 <span
-                  class="text-sm text-neutral-400 font-medium"
+                  class="text-sm font-medium text-neutral-400"
                 >
                   My service
                 </span>
                 <div
-                  class="flex flex-row text-xs gap-2 text-neutral-350"
+                  class="flex flex-row gap-2 text-xs text-neutral-350"
                 >
                   <span>
                     Service port: 
@@ -203,18 +203,18 @@ exports[`NetworkingSetting should match snapshot with ports 1`] = `
               </div>
             </div>
             <div
-              class="flex justify-between w-full items-center gap-3 px-5 py-4 border-b border-neutral-250 last:border-0"
+              class="flex w-full items-center justify-between gap-3 border-b border-neutral-250 px-5 py-4 last:border-0"
             >
               <div
                 class="flex flex-col"
               >
                 <span
-                  class="text-sm text-neutral-400 font-medium"
+                  class="text-sm font-medium text-neutral-400"
                 >
                   My service 2
                 </span>
                 <div
-                  class="flex flex-row text-xs gap-2 text-neutral-350"
+                  class="flex flex-row gap-2 text-xs text-neutral-350"
                 >
                   <span>
                     Service port: 

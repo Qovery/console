@@ -30,7 +30,7 @@ export function Tag({
   return (
     <span
       data-testid={dataTestId}
-      className={`rounded text-xs items-center inline-flex ${fontWeight} ${normalClassName} ${bigClassName} ${smallClassName} ${className}`}
+      className={`inline-flex items-center rounded text-xs ${fontWeight} ${normalClassName} ${bigClassName} ${smallClassName} ${className}`}
     >
       {children}
     </span>

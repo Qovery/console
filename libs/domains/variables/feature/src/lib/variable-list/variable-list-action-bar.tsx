@@ -37,13 +37,13 @@ export function VariableListActionBar({ selectedRows = [], resetRowSelection }: 
       <div className="relative">
         <div
           className={twMerge(
-            'absolute w-[448px] bottom-4 left-1/2 -translate-x-1/2',
-            hasSelection ? '' : 'overflow-hidden h-0'
+            'absolute bottom-4 left-1/2 w-[448px] -translate-x-1/2',
+            hasSelection ? '' : 'h-0 overflow-hidden'
           )}
         >
           <div
             className={twMerge(
-              'flex items-center justify-between h-[52px] bg-neutral-500 shadow-xl text-white text-xs font-medium pl-5 pr-2 rounded',
+              'flex h-[52px] items-center justify-between rounded bg-neutral-500 pl-5 pr-2 text-xs font-medium text-white shadow-xl',
               hasSelection ? 'animate-action-bar-fade-in' : 'animate-action-bar-fade-out'
             )}
           >

@@ -65,11 +65,11 @@ export function StepGeneral(props: StepGeneralProps) {
     <Section>
       <div className="mb-10">
         <Heading className="mb-2">General information</Heading>
-        <p className="text-neutral-400 text-sm mb-2">Provide here some general information for your cluster.</p>
+        <p className="mb-2 text-sm text-neutral-400">Provide here some general information for your cluster.</p>
       </div>
 
       <form onSubmit={onSubmit}>
-        <div className="text-sm mb-10">
+        <div className="mb-10 text-sm">
           <Controller
             name="installation_type"
             control={control}
@@ -80,12 +80,12 @@ export function StepGeneral(props: StepGeneralProps) {
               <BlockContent title="Installation type">
                 <Popover.Root>
                   <Popover.Trigger>
-                    <span className="text-sm cursor-pointer text-brand-500 hover:text-brand-600 transition font-medium">
+                    <span className="cursor-pointer text-sm font-medium text-brand-500 transition hover:text-brand-600">
                       Which should I choose? <Icon className="text-xs" name="circle-question" />
                     </span>
                   </Popover.Trigger>
-                  <Popover.Content side="left" className="text-neutral-350 text-sm relative" style={{ width: 440 }}>
-                    <span className="text-neutral-400 font-medium mb-2">How to choose the installation type</span>
+                  <Popover.Content side="left" className="relative text-sm text-neutral-350" style={{ width: 440 }}>
+                    <span className="mb-2 font-medium text-neutral-400">How to choose the installation type</span>
                     <p>
                       <ul className="list-disc pl-4">
                         <li>
@@ -100,7 +100,7 @@ export function StepGeneral(props: StepGeneralProps) {
                         <li>Choose Local Demo if you want to install Qovery on your local machine for demo/testing.</li>
                       </ul>
                     </p>
-                    <Popover.Close className="absolute top-4 right-4">
+                    <Popover.Close className="absolute right-4 top-4">
                       <button type="button">
                         <Icon name="icon-solid-xmark text-lg leading-4 font-thin text-neutral-400" />
                       </button>
@@ -108,7 +108,7 @@ export function StepGeneral(props: StepGeneralProps) {
                   </Popover.Content>
                 </Popover.Root>
                 <RadioGroup.Root
-                  className="flex flex-col gap-4 mt-3"
+                  className="mt-3 flex flex-col gap-4"
                   defaultValue={field.value}
                   onValueChange={field.onChange}
                 >
@@ -117,9 +117,9 @@ export function StepGeneral(props: StepGeneralProps) {
                       <RadioGroup.Item value="LOCAL_DEMO" />
                     </span>
                     <span>
-                      <span className="text-neutral-400 font-medium">
+                      <span className="font-medium text-neutral-400">
                         Local Demo{' '}
-                        <span className="ml-0.5 inline-block bg-brand-500 text-neutral-50 px-1 rounded text-xs font-normal">
+                        <span className="ml-0.5 inline-block rounded bg-brand-500 px-1 text-xs font-normal text-neutral-50">
                           3min to setup
                         </span>
                       </span>
@@ -133,7 +133,7 @@ export function StepGeneral(props: StepGeneralProps) {
                       <RadioGroup.Item value="MANAGED" />
                     </span>
                     <span>
-                      <span className="text-neutral-400 font-medium">Qovery Managed</span>
+                      <span className="font-medium text-neutral-400">Qovery Managed</span>
                       <p className="text-neutral-350">
                         Qovery will install and manage the Kubernetes cluster and the underlying infrastructure on your
                         cloud provider account.
@@ -145,7 +145,7 @@ export function StepGeneral(props: StepGeneralProps) {
                       <RadioGroup.Item value="SELF_MANAGED" />
                     </span>
                     <span>
-                      <span className="text-neutral-400 font-medium">Self-Managed</span>
+                      <span className="font-medium text-neutral-400">Self-Managed</span>
                       <p className="text-neutral-350">
                         You will manage the infrastructure, including any update/ upgrade. <br /> Advanced Kubernetes
                         knowledge required.
@@ -161,11 +161,11 @@ export function StepGeneral(props: StepGeneralProps) {
         {watch('installation_type') === 'MANAGED' && (
           <>
             <div className="mb-10">
-              <h4 className="mb-4 text-neutral-400 text-sm">General</h4>
+              <h4 className="mb-4 text-sm text-neutral-400">General</h4>
               <ClusterGeneralSettings />
             </div>
             <div className="mb-10">
-              <h4 className="mb-3 text-neutral-400 text-sm">Provider credentials</h4>
+              <h4 className="mb-3 text-sm text-neutral-400">Provider credentials</h4>
               {cloudProviders.length > 0 ? (
                 <>
                   {watch('cloud_provider') === CloudProviderEnum.GCP && (
@@ -177,14 +177,14 @@ export function StepGeneral(props: StepGeneralProps) {
                         GCP integration is beta, keep an eye on your cluster costs and report any bugs and/or weird
                         behavior.
                         <ExternalLink
-                          className="flex mt-1"
+                          className="mt-1 flex"
                           href="https://cloud.google.com/billing/docs/how-to/budgets"
                           size="xs"
                         >
                           Setup budget alerts
                         </ExternalLink>
                         <ExternalLink
-                          className="flex mt-1"
+                          className="mt-1 flex"
                           href="https://discuss.qovery.com/t/new-feature-google-cloud-platform-gcp-beta-support/2307"
                           size="xs"
                         >
@@ -248,7 +248,7 @@ export function StepGeneral(props: StepGeneralProps) {
                   )}
                 </>
               ) : (
-                <div className="flex justify-center mt-2">
+                <div className="mt-2 flex justify-center">
                   <LoaderSpinner className="w-4" />
                 </div>
               )}
@@ -258,7 +258,7 @@ export function StepGeneral(props: StepGeneralProps) {
 
         {watch('installation_type') !== 'MANAGED' && (
           <div className="mb-10">
-            <h4 className="text-neutral-400 text-sm">Installation instruction</h4>
+            <h4 className="text-sm text-neutral-400">Installation instruction</h4>
             {watch('installation_type') === 'LOCAL_DEMO' ? (
               <ExternalLink className="mb-4" href="https://hub.qovery.com/docs/getting-started/install-qovery/local/">
                 See documentation

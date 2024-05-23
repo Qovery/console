@@ -1,5 +1,5 @@
-import { toastError } from './toast-error'
 import toast, { ToastEnum } from '../toast'
+import { toastError } from './toast-error'
 
 jest.mock('../toast')
 

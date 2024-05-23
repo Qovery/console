@@ -7,12 +7,12 @@ exports[`ClusterDeleteModal should match snapshot 1`] = `
       class="p-6"
     >
       <h2
-        class="h4 text-neutral-400 mb-2 max-w-sm"
+        class="h4 mb-2 max-w-sm text-neutral-400"
       >
         Confirm deletion cluster
       </h2>
       <div
-        class="text-neutral-350 text-sm mb-6"
+        class="mb-6 text-sm text-neutral-350"
       >
         To confirm the deletion of 
         <strong>
@@ -33,7 +33,7 @@ exports[`ClusterDeleteModal should match snapshot 1`] = `
               class="hidden"
             />
             <input
-              class="absolute text-sm top-0 left-0 h-full w-full text-neutral-400 placeholder:text-neutral-350 rounded px-2 "
+              class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 "
               data-testid="input-value"
               name="name"
               placeholder="Enter "delete""
@@ -43,7 +43,7 @@ exports[`ClusterDeleteModal should match snapshot 1`] = `
           </div>
         </div>
         <div
-          class="border border-red-500 rounded bg-red-50 text-sm text-neutral-400 p-4 mb-6"
+          class="mb-6 rounded border border-red-500 bg-red-50 p-4 text-sm text-neutral-400"
         >
           <div
             class="mb-3"
@@ -53,7 +53,7 @@ exports[`ClusterDeleteModal should match snapshot 1`] = `
               data-testid="select"
             >
               <label
-                class="!text-xs !translate-y-0"
+                class="!translate-y-0 !text-xs"
                 for="Delete mode"
               >
                 Delete mode
@@ -78,7 +78,7 @@ exports[`ClusterDeleteModal should match snapshot 1`] = `
                     class="input-select__value-container input-select__value-container--has-value css-1fdsijx-ValueContainer"
                   >
                     <span
-                      class="text-sm text-neutral-400 mr-1"
+                      class="mr-1 text-sm text-neutral-400"
                     >
                       Default
                     </span>
@@ -132,7 +132,7 @@ exports[`ClusterDeleteModal should match snapshot 1`] = `
                 value="DEFAULT"
               />
               <div
-                class="absolute top-1/2 -translate-y-1/2 right-4 pointer-events-none"
+                class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2"
               >
                 <span
                   class="icon-solid-angle-down shrink-0 text-sm text-neutral-400"
@@ -200,7 +200,7 @@ exports[`ClusterDeleteModal should match snapshot 1`] = `
           </div>
         </div>
         <div
-          class="flex gap-3 justify-end"
+          class="flex justify-end gap-3"
         >
           <button
             class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 hover:[&:not(:focus-visible):not(:disabled)]:shadow-sm active:[&:not(:focus-visible)]:shadow-none outline-brand-500 text-sm h-11 px-5 rounded border border-transparent text-neutral-350 hover:[&:not(:active):not(:focus-visible)]:border-neutral-300 hover:[&:not(:disabled)]:text-neutral-400 focus-visible:text-neutral-400 active:bg-neutral-150 active:text-neutral-400 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none"

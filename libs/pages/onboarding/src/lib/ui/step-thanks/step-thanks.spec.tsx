@@ -1,5 +1,4 @@
 import { render } from '__tests__/utils/setup-jest'
-
 import StepThanks from './step-thanks'
 
 describe('StepThanks', () => {

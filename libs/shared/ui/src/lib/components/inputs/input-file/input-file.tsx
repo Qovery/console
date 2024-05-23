@@ -48,7 +48,7 @@ export function InputFile(props: InputFileProps) {
     <label
       data-testid={dataTestId}
       htmlFor="dropzone-file"
-      className={`relative flex items-center justify-center w-[72px] h-[72px] rounded bg-neutral-50 border border-neutral-300 ease-out duration-150 border-dashed cursor-pointer ${
+      className={`relative flex h-[72px] w-[72px] cursor-pointer items-center justify-center rounded border border-dashed border-neutral-300 bg-neutral-50 duration-150 ease-out ${
         !selectedImage ? 'hover:bg-neutral-150' : 'bg-neutral-50'
       } ${className}`}
     >
@@ -65,7 +65,7 @@ export function InputFile(props: InputFileProps) {
         <>
           <img
             data-testid="input-file-image"
-            className="absolute top-0 left-0 w-full h-full object-contain p-2 hover:opacity-75 ease-out duration-150"
+            className="absolute left-0 top-0 h-full w-full object-contain p-2 duration-150 ease-out hover:opacity-75"
             src={selectedImage as string}
             alt="file"
           />
@@ -75,7 +75,7 @@ export function InputFile(props: InputFileProps) {
               setSelectedImage(undefined)
               onChange && onChange(undefined)
             }}
-            className="w-5 h-5 flex justify-center items-center absolute -top-2 -right-2 bg-brand-50 hover:bg-brand-100 text-neutral-350 hover:text-brand-500 ease-out duration-150 rounded-full"
+            className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-brand-50 text-neutral-350 duration-150 ease-out hover:bg-brand-100 hover:text-brand-500"
           >
             <Icon iconName="xmark" className="text-xs" />
           </span>

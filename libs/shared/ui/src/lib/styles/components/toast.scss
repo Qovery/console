@@ -1,5 +1,5 @@
 .toast {
-  @apply relative bg-neutral-900 rounded cursor-pointer;
+  @apply relative cursor-pointer rounded bg-neutral-900;
   box-shadow: 0 16px 24px rgba(0, 0, 0, 0.12);
 
   &:hover {
@@ -10,7 +10,7 @@
 }
 
 .toast__icon {
-  @apply mt-[1px] pl-4 pt-2 h-full flex justify-center;
+  @apply mt-[1px] flex h-full justify-center pl-4 pt-2;
 }
 
 .toast__wrapper {
@@ -18,9 +18,9 @@
 }
 
 .toast__content {
-  @apply pl-3 pr-4 py-2 break-words max-w-[256px];
+  @apply max-w-[256px] break-words py-2 pl-3 pr-4;
 }
 
 .toast__close {
-  @apply opacity-0 w-6 h-6 flex justify-center items-center absolute top-[-8px] left-[-8px] hover:bg-neutral-700 text-white ease-out duration-150 bg-neutral-600 border border-neutral-400 rounded-full;
+  @apply absolute left-[-8px] top-[-8px] flex h-6 w-6 items-center justify-center rounded-full border border-neutral-400 bg-neutral-600 text-white opacity-0 duration-150 ease-out hover:bg-neutral-700;
 }

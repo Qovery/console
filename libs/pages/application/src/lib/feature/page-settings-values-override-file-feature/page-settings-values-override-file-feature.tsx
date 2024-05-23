@@ -20,8 +20,8 @@ export function PageSettingsValuesOverrideFileFeature() {
   const currentType = valuesOverrideFile?.raw?.values?.[0]?.content
     ? 'YAML'
     : valuesOverrideFile?.git
-    ? 'GIT_REPOSITORY'
-    : 'NONE'
+      ? 'GIT_REPOSITORY'
+      : 'NONE'
 
   const methods = useForm<HelmValuesFileData>({
     mode: 'onChange',
@@ -128,7 +128,7 @@ export function PageSettingsValuesOverrideFileFeature() {
                 />
               )}
             />
-            <p className="text-xs text-neutral-350 ml-4 mt-1">
+            <p className="ml-4 mt-1 text-xs text-neutral-350">
               Specify multiple paths by separating them with a semi-colon
             </p>
           </div>
@@ -161,7 +161,7 @@ export function PageSettingsValuesOverrideFileFeature() {
   )
 
   return (
-    <div className="flex flex-col justify-between w-full p-8 max-w-content-with-navigation-left">
+    <div className="flex w-full max-w-content-with-navigation-left flex-col justify-between p-8">
       <FormProvider {...methods}>
         <ValuesOverrideFilesSetting
           methods={methods}
@@ -172,7 +172,7 @@ export function PageSettingsValuesOverrideFileFeature() {
           isSetting
         >
           {methods.watch('type') !== 'YAML' && (
-            <div className="flex justify-end mt-10">
+            <div className="mt-10 flex justify-end">
               <Button type="submit" size="lg" loading={isLoadingEditService} disabled={disabledContinueButton}>
                 Save
               </Button>

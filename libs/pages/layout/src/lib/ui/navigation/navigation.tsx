@@ -33,15 +33,15 @@ export function Navigation({ defaultOrganizationId, clusterNotification }: Navig
     pathname.includes(CLUSTER_URL(organizationId, clusterId))
 
   return (
-    <div className="w-16 h-screen dark:bg-neutral-650 bg-white flex flex-col">
+    <div className="flex h-screen w-16 flex-col bg-white dark:bg-neutral-650">
       <RouterLink
         to={matchLogInfraRoute ? INFRA_LOGS_URL(organizationId, clusterId) : ORGANIZATION_URL(organizationId)}
-        className="flex w-16 h-16 items-center justify-center border-b z-10 dark:border-neutral-500 border-neutral-200"
+        className="z-10 flex h-16 w-16 items-center justify-center border-b border-neutral-200 dark:border-neutral-500"
       >
         <img className="w-[28px]" src="/assets/logos/logo-icon.svg" alt="Qovery logo" />
       </RouterLink>
 
-      <div className="flex flex-col justify-between px-2.5 py-4 flex-grow">
+      <div className="flex flex-grow flex-col justify-between px-2.5 py-4">
         <div className="flex flex-col gap-2">
           <Tooltip content="Environments" side="right">
             <div>
@@ -50,7 +50,7 @@ export function Navigation({ defaultOrganizationId, clusterNotification }: Navig
                 color="neutral"
                 variant="plain"
                 className={clsx(
-                  'w-11 h-11 justify-center hover:!bg-neutral-100 hover:!text-brand-500 hover:!border-transparent dark:hover:!bg-brand-500 dark:hover:!text-neutral-100',
+                  'h-11 w-11 justify-center hover:!border-transparent hover:!bg-neutral-100 hover:!text-brand-500 dark:hover:!bg-brand-500 dark:hover:!text-neutral-100',
                   {
                     'bg-neutral-100 text-brand-500 dark:bg-brand-500 dark:text-neutral-100': matchOrganizationRoute,
                   }
@@ -68,7 +68,7 @@ export function Navigation({ defaultOrganizationId, clusterNotification }: Navig
                 color="neutral"
                 variant="plain"
                 className={clsx(
-                  'w-11 h-11 justify-center hover:!bg-neutral-100 hover:!text-brand-500 hover:!border-transparent dark:hover:!bg-brand-500 dark:hover:!text-neutral-100',
+                  'h-11 w-11 justify-center hover:!border-transparent hover:!bg-neutral-100 hover:!text-brand-500 dark:hover:!bg-brand-500 dark:hover:!text-neutral-100',
                   {
                     'bg-neutral-100 text-brand-500 dark:bg-brand-500 dark:text-neutral-100': matchClusterRoute,
                   }
@@ -78,7 +78,7 @@ export function Navigation({ defaultOrganizationId, clusterNotification }: Navig
                 <Icon iconName="cloud-word" className="text-[18px]" />
               </Link>
               {clusterNotification && (
-                <span className="w-2 h-2 rounded-lg bg-red-500 absolute top-1.5 right-1.5"></span>
+                <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-lg bg-red-500"></span>
               )}
             </div>
           </Tooltip>
@@ -89,7 +89,7 @@ export function Navigation({ defaultOrganizationId, clusterNotification }: Navig
                 color="neutral"
                 variant="plain"
                 className={clsx(
-                  'w-11 h-11 justify-center hover:!bg-neutral-100 hover:!text-brand-500 hover:!border-transparent dark:hover:!bg-brand-500 dark:hover:!text-neutral-100',
+                  'h-11 w-11 justify-center hover:!border-transparent hover:!bg-neutral-100 hover:!text-brand-500 dark:hover:!bg-brand-500 dark:hover:!text-neutral-100',
                   {
                     'bg-neutral-100 text-brand-500 dark:bg-brand-500 dark:text-neutral-100': matchEventsRoute,
                   }
@@ -110,7 +110,7 @@ export function Navigation({ defaultOrganizationId, clusterNotification }: Navig
                   color="neutral"
                   variant="plain"
                   className={clsx(
-                    'w-11 h-11 justify-center hover:!bg-neutral-100 hover:!text-brand-500 hover:!border-transparent dark:hover:!bg-brand-500 dark:hover:!text-neutral-100',
+                    'h-11 w-11 justify-center hover:!border-transparent hover:!bg-neutral-100 hover:!text-brand-500 dark:hover:!bg-brand-500 dark:hover:!text-neutral-100',
                     {
                       'bg-neutral-100 text-brand-500 dark:bg-brand-500 dark:text-neutral-100': matchSettingsRoute,
                     }
@@ -125,7 +125,7 @@ export function Navigation({ defaultOrganizationId, clusterNotification }: Navig
         </div>
       </div>
 
-      <div className="flex w-16 h-16 mb-5 items-center justify-center border-t dark:border-neutral-500 border-neutral-200">
+      <div className="mb-5 flex h-16 w-16 items-center justify-center border-t border-neutral-200 dark:border-neutral-500">
         <MenuAccountFeature />
       </div>
     </div>

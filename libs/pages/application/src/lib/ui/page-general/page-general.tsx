@@ -11,14 +11,14 @@ export interface PageGeneralProps {
 
 export function PageGeneral({ serviceId, environmentId, isCronJob, isLifecycleJob }: PageGeneralProps) {
   return (
-    <div className="mt-2 bg-white rounded flex flex-grow min-h-0">
-      <div className="flex flex-col grow">
-        <div className="flex flex-row grow">
-          <div className="py-7 px-10 flex flex-col grow overflow-y-auto min-h-0 gap-6">
+    <div className="mt-2 flex min-h-0 flex-grow rounded bg-white">
+      <div className="flex grow flex-col">
+        <div className="flex grow flex-row">
+          <div className="flex min-h-0 grow flex-col gap-6 overflow-y-auto px-10 py-7">
             <PodStatusesCallout environmentId={environmentId} serviceId={serviceId} />
             <PodsMetrics environmentId={environmentId} serviceId={serviceId}>
               {isCronJob && (
-                <div className="grid grid-cols-[min-content_1fr] gap-x-3 gap-y-1 p-3 border rounded border-neutral-250 text-xs text-neutral-350 bg-neutral-100">
+                <div className="grid grid-cols-[min-content_1fr] gap-x-3 gap-y-1 rounded border border-neutral-250 bg-neutral-100 p-3 text-xs text-neutral-350">
                   <Icon className="row-span-2" iconName="circle-info" />
                   <p>
                     The number of past Completed or Failed job execution retained in the history and their TTL can be

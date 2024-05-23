@@ -23,7 +23,7 @@ export function StepFeatures(props: StepFeaturesProps) {
     <Section>
       <div className="mb-10">
         <Heading className="mb-2">Features</Heading>
-        <p className="text-neutral-400 text-sm mb-2">Additional features available on your cluster.</p>
+        <p className="mb-2 text-sm text-neutral-400">Additional features available on your cluster.</p>
       </div>
 
       <form onSubmit={onSubmit}>
@@ -102,7 +102,7 @@ export function StepFeatures(props: StepFeaturesProps) {
                       </CardClusterFeature>
                     ))
                   ) : (
-                    <div className="flex justify-center mt-2">
+                    <div className="mt-2 flex justify-center">
                       <LoaderSpinner className="w-4" />
                     </div>
                   )}
@@ -127,7 +127,7 @@ export function StepFeatures(props: StepFeaturesProps) {
                     />
                   ))
                 ) : (
-                  <div className="flex justify-center mt-2">
+                  <div className="mt-2 flex justify-center">
                     <LoaderSpinner className="w-4" />
                   </div>
                 )

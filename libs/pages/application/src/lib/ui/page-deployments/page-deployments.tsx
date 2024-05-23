@@ -55,9 +55,9 @@ export function Deployments(props: PageDeploymentsProps) {
 
   if (!isLoading && deployments.length === 0)
     return (
-      <div className="bg-neutral-50 mt-2 h-full rounded-t-sm">
+      <div className="mt-2 h-full rounded-t-sm bg-neutral-50">
         <EmptyState
-          className="w-[420px] m-auto mt-12"
+          className="m-auto mt-12 w-[420px]"
           title="No deployment yet"
           description="You need to deploy your service to see this tab."
         />
@@ -72,7 +72,7 @@ export function Deployments(props: PageDeploymentsProps) {
         setFilter={setFilter}
         filter={filter}
         setDataSort={setData}
-        className="mt-2 rounded-sm flex-grow overflow-y-auto min-h-0"
+        className="mt-2 min-h-0 flex-grow overflow-y-auto rounded-sm"
       >
         <div>
           {data?.map((currentData, index) => (

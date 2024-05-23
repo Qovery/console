@@ -167,7 +167,7 @@ export function Breadcrumb(props: BreadcrumbProps) {
 
   const squareContent = (text: string | undefined, margin = 'mr-2 mt-0.5') => (
     <div
-      className={`w-4 h-4.5 flex items-center justify-center text-xs text-neutral-350 text-center bg-neutral-200 rounded-sm font-bold uppercase ${margin}`}
+      className={`h-4.5 flex w-4 items-center justify-center rounded-sm bg-neutral-200 text-center text-xs font-bold uppercase text-neutral-350 ${margin}`}
     >
       {text}
     </div>
@@ -206,7 +206,7 @@ export function Breadcrumb(props: BreadcrumbProps) {
   if (organizations?.length === 0) return <div />
 
   return (
-    <div className="flex justify-between w-full items-center">
+    <div className="flex w-full items-center justify-between">
       <div className="flex h-full items-center">
         {organizationId && (projectId || clusterId || matchAuditLogs || matchClusters || matchSettings) && (
           <Tooltip content={currentOrganization?.name || ''}>
@@ -245,7 +245,7 @@ export function Breadcrumb(props: BreadcrumbProps) {
         )}
         {environmentId && (
           <>
-            <div className="w-4 h-auto text-neutral-300 text-center mx-3 mt-3">/</div>
+            <div className="mx-3 mt-3 h-auto w-4 text-center text-neutral-300">/</div>
             <div className="flex items-center">
               {environmentId && (
                 <>
@@ -259,7 +259,7 @@ export function Breadcrumb(props: BreadcrumbProps) {
                   />
                   {(applicationId || databaseId) && (
                     <>
-                      <div className="w-4 h-auto text-neutral-300 text-center mx-3 mt-3">/</div>
+                      <div className="mx-3 mt-3 h-auto w-4 text-center text-neutral-300">/</div>
                       <div className="flex items-center">
                         <BreadcrumbItem
                           isLast={true}
@@ -285,7 +285,7 @@ export function Breadcrumb(props: BreadcrumbProps) {
         )}
         {matchLogsRoute && (
           <div className="flex">
-            <div className="flex items-center text-purple-300 bg-purple-800 font-medium text-ssm px-1.5 h-6 rounded-[3px] ml-3 mt-2">
+            <div className="ml-3 mt-2 flex h-6 items-center rounded-[3px] bg-purple-800 px-1.5 text-ssm font-medium text-purple-300">
               LOGS
             </div>
           </div>

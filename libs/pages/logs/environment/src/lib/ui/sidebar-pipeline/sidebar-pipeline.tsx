@@ -13,10 +13,10 @@ export interface SidebarPipelineProps {
 export function SidebarPipeline({ services, versionId, serviceId, statusStages }: SidebarPipelineProps) {
   return (
     <div className="p-5">
-      <p className="text-neutral-50 text-xs mb-4 font-medium">Pipeline</p>
+      <p className="mb-4 text-xs font-medium text-neutral-50">Pipeline</p>
       {!statusStages ? (
         <div className="flex justify-center">
-          <LoaderSpinner className="w-6 h-6" theme="dark" />
+          <LoaderSpinner className="h-6 w-6" theme="dark" />
         </div>
       ) : (
         statusStages.map((currentStage: DeploymentStageWithServicesStatuses, index: number) => (

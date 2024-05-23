@@ -25,8 +25,8 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
   const displayStorageWarning = watch('storage') !== database.storage && database.mode === DatabaseModeEnum.MANAGED
 
   return (
-    <div className="flex flex-col justify-between w-full">
-      <Section className="p-8 max-w-content-with-navigation-left">
+    <div className="flex w-full flex-col justify-between">
+      <Section className="max-w-content-with-navigation-left p-8">
         <SettingsHeading title="Resources" description="Manage the database's resources" />
         <form className="space-y-10" onSubmit={onSubmit}>
           {database.mode === DatabaseModeEnum.MANAGED && (

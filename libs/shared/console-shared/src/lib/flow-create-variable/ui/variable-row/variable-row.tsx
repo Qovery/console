@@ -27,8 +27,8 @@ export function VariableRow(props: VariableRowProps) {
   const pattern = /^[^\s]+$/
 
   return (
-    <div data-testid="variable-row" className="w-full items-center mb-3">
-      <div key={index} data-testid="form-row" className="grid mb-3" style={{ gridTemplateColumns }}>
+    <div data-testid="variable-row" className="mb-3 w-full items-center">
+      <div key={index} data-testid="form-row" className="mb-3 grid" style={{ gridTemplateColumns }}>
         <Controller
           name={`variables.${index}.variable`}
           control={control}
@@ -41,7 +41,7 @@ export function VariableRow(props: VariableRowProps) {
           }}
           render={({ field, fieldState: { error } }) => (
             <InputTextSmall
-              className="shrink-0 grow flex-1 mr-3"
+              className="mr-3 flex-1 shrink-0 grow"
               name={field.name}
               onChange={field.onChange}
               value={field.value}
@@ -60,7 +60,7 @@ export function VariableRow(props: VariableRowProps) {
           }}
           render={({ field, fieldState: { error } }) => (
             <InputTextSmall
-              className="shrink-0 grow flex-1 mr-3"
+              className="mr-3 flex-1 shrink-0 grow"
               data-testid="value"
               name={field.name}
               onChange={field.onChange}
@@ -91,7 +91,7 @@ export function VariableRow(props: VariableRowProps) {
           )}
         />
 
-        <div className="flex items-center justify-center w-14 ml-1">
+        <div className="ml-1 flex w-14 items-center justify-center">
           <Controller
             name={`variables.${index}.isSecret`}
             control={control}
@@ -99,13 +99,13 @@ export function VariableRow(props: VariableRowProps) {
           />
         </div>
 
-        <div className="flex items-center h-full w-full grow">
+        <div className="flex h-full w-full grow items-center">
           <ButtonIcon
             icon={IconAwesomeEnum.TRASH}
             style={ButtonIconStyle.STROKED}
             size={ButtonLegacySize.TINY}
             onClick={() => props.onDelete(index)}
-            className="text-neutral-350 hover:text-neutral-400 !w-8 !h-8"
+            className="!h-8 !w-8 text-neutral-350 hover:text-neutral-400"
             iconClassName="!text-xs"
           />
         </div>

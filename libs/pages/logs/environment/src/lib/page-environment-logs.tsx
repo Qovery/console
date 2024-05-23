@@ -102,10 +102,10 @@ export function PageEnvironmentLogs() {
       </ServiceStageIdsProvider>
       {(location.pathname === `${ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId)}/` ||
         location.pathname === ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId)) && (
-        <div className="flex justify-center w-[calc(100%-8px)] min-h-full bg-neutral-650 m-1 rounded">
-          <div className="flex flex-col items-center mt-12">
+        <div className="m-1 flex min-h-full w-[calc(100%-8px)] justify-center rounded bg-neutral-650">
+          <div className="mt-12 flex flex-col items-center">
             <Icon iconName="wrench" className="text-neutral-300" />
-            <div className="text-neutral-300 font-medium">
+            <div className="font-medium text-neutral-300">
               Please select a service on the left menu to access its deployment logs or live logs.
               <p>
                 You can access the deployment logs only for the services recently deployed (

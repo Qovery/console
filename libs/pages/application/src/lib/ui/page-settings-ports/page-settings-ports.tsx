@@ -12,8 +12,8 @@ export interface PageSettingsPortsProps {
 
 export function PageSettingsPorts({ healthchecks, ports, onAddPort, onEdit, onDelete }: PageSettingsPortsProps) {
   return (
-    <div className="flex flex-col justify-between w-full">
-      <div className="p-8  max-w-content-with-navigation-left">
+    <div className="flex w-full flex-col justify-between">
+      <div className="max-w-content-with-navigation-left  p-8">
         <FlowCreatePort
           isSetting
           healthchecks={healthchecks}
