@@ -20,7 +20,7 @@ export function useEnvironments({ projectId }: UseEnvironmentsProps) {
       return environments
     },
     enabled: projectId !== '',
-    retry: false,
+    retry: 3,
   })
 
   const runningStatusResults = useQueries({

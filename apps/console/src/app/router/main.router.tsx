@@ -225,11 +225,4 @@ export const ROUTER: RouterProps[] = [
     darkMode: true,
     spotlight: false,
   },
-  {
-    path: '*',
-    component: <NotFoundPage />,
-    protected: true,
-    layout: true,
-    topBar: true,
-  },
 ]
