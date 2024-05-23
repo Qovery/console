@@ -62,7 +62,7 @@ export function TabsClusterLogs(props: TabsClusterLogsProps) {
     currentError && currentError.underlying_error?.message?.slice(0, !displayFullError ? 240 : Infinity)
 
   return (
-    <div data-testid="tabs-logs" className="w-[360px] h-[calc(100%+0.5rem)] shrink-0 bg-neutral-650 relative z-20">
+    <div data-testid="tabs-logs" className="w-[360px] h-[calc(100%+0.5rem)] shrink-0 bg-neutral-650 relative">
       <div className="py-2 px-5">
         <Tabs className="bg-transparent" classNameBtn="grow justify-center" items={items} fullWidth />
         <div data-testid="sections" className="mt-6">
