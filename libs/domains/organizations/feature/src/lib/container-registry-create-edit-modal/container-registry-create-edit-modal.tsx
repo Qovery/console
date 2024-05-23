@@ -7,7 +7,7 @@ import {
 import { useEffect } from 'react'
 import { useState } from 'react'
 import { useDropzone } from 'react-dropzone'
-import { Controller, FormProvider, useForm, useFormContext } from 'react-hook-form'
+import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { match } from 'ts-pattern'
 import { IconEnum } from '@qovery/shared/enums'
 import {
@@ -217,6 +217,7 @@ export function ContainerRegistryCreateEditModal({
                 label="Type"
                 error={error?.message}
                 options={getOptionsContainerRegistry(availableContainerRegistries)}
+                isSearchable
                 portal
               />
             </div>
@@ -410,46 +411,44 @@ export function ContainerRegistryCreateEditModal({
           </>
         )}
         {watchKind === ContainerRegistryKindEnum.GCP_ARTIFACT_REGISTRY && (
-          <>
-            <Controller
-              name="config.json_credentials"
-              control={methods.control}
-              rules={{
-                required: 'Please enter your credentials JSON',
-              }}
-              render={({ field }) => (
-                <div className="mb-5">
-                  {!field.value ? (
-                    <div {...getRootProps()}>
-                      <input data-testid="input-credentials-json" className="hidden" {...getInputProps()} />
-                      <Dropzone typeFile=".json" isDragActive={isDragActive} />
+          <Controller
+            name="config.json_credentials"
+            control={methods.control}
+            rules={{
+              required: 'Please enter your credentials JSON',
+            }}
+            render={({ field }) => (
+              <div className="mb-5">
+                {!field.value ? (
+                  <div {...getRootProps()}>
+                    <input data-testid="input-credentials-json" className="hidden" {...getInputProps()} />
+                    <Dropzone typeFile=".json" isDragActive={isDragActive} />
+                  </div>
+                ) : fileDetails ? (
+                  <div className="flex items-center justify-between border border-neutral-200 p-4 rounded mb-[90px]">
+                    <div className="flex items-center pl-2 text-neutral-400">
+                      <Icon iconName="file-arrow-down" className="mr-4" />
+                      <p className="flex flex-col gap-1">
+                        <span className="text-xs font-medium">{fileDetails.name}</span>
+                        <span className="text-xs text-neutral-350">{fileDetails.size} Ko</span>
+                      </p>
                     </div>
-                  ) : fileDetails ? (
-                    <div className="flex items-center justify-between border border-neutral-200 p-4 rounded mb-[90px]">
-                      <div className="flex items-center pl-2 text-neutral-400">
-                        <Icon iconName="file-arrow-down" className="mr-4" />
-                        <p className="flex flex-col gap-1">
-                          <span className="text-xs font-medium">{fileDetails.name}</span>
-                          <span className="text-xs text-neutral-350">{fileDetails.size} Ko</span>
-                        </p>
-                      </div>
-                      <Button
-                        variant="outline"
-                        color="neutral"
-                        size="md"
-                        className="justify-center w-7 h-7"
-                        onClick={() => field.onChange(undefined)}
-                      >
-                        <Icon iconName="trash" />
-                      </Button>
-                    </div>
-                  ) : (
-                    <div />
-                  )}
-                </div>
-              )}
-            />
-          </>
+                    <Button
+                      variant="outline"
+                      color="neutral"
+                      size="md"
+                      className="justify-center w-7 h-7"
+                      onClick={() => field.onChange(undefined)}
+                    >
+                      <Icon iconName="trash" />
+                    </Button>
+                  </div>
+                ) : (
+                  <div />
+                )}
+              </div>
+            )}
+          />
         )}
       </ModalCrud>
     </FormProvider>
