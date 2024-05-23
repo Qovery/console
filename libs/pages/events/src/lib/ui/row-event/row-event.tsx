@@ -63,7 +63,7 @@ export function RowEvent(props: RowEventProps) {
     const { event_type, target_name, project_id, environment_id, target_id } = event
 
     const customLink = (url: string, content = target_name) => (
-      <Link className="truncate cursor-pointer hover:text-neutral-350 transition" to={url}>
+      <Link className="cursor-pointer truncate transition hover:text-neutral-350" to={url}>
         {content}
       </Link>
     )
@@ -158,16 +158,16 @@ export function RowEvent(props: RowEventProps) {
     <>
       <div
         data-testid="row-event"
-        className="grid h-11 py-2.5 items-center text-xs text-neutral-400 font-medium border-b-neutral-200 border-b hover:bg-neutral-100 last:border-b-0"
+        className="grid h-11 items-center border-b border-b-neutral-200 py-2.5 text-xs font-medium text-neutral-400 last:border-b-0 hover:bg-neutral-100"
         style={{ gridTemplateColumns: columnsWidth }}
         onClick={() => setExpanded(!expanded)}
       >
-        <div className="px-4 flex gap-3">
+        <div className="flex gap-3 px-4">
           <Skeleton height={16} width={120} show={isPlaceholder}>
             <div className="flex gap-3">
               <Icon
                 name={IconAwesomeEnum.ANGLE_DOWN}
-                className={`text-xs cursor-pointer block ${expanded ? 'rotate-180' : ''}`}
+                className={`block cursor-pointer text-xs ${expanded ? 'rotate-180' : ''}`}
               />
               {event.timestamp && (
                 <Tooltip content={dateUTCString(event.timestamp)}>
@@ -225,7 +225,7 @@ export function RowEvent(props: RowEventProps) {
         <div className="px-4">
           <Skeleton height={16} width={80} show={isPlaceholder}>
             <div className="truncate">
-              <span className="inline-block text-neutral-400 mr-1.5">{getSourceIcon(event.origin)}</span>
+              <span className="mr-1.5 inline-block text-neutral-400">{getSourceIcon(event.origin)}</span>
               {upperCaseFirstLetter(event.origin)?.replace('_', ' ')}
             </div>
           </Skeleton>
@@ -233,7 +233,7 @@ export function RowEvent(props: RowEventProps) {
       </div>
       {expanded && (
         <div
-          className="relative flex flex-col-reverse bg-neutral-700 max-h-[388px] overflow-y-auto"
+          className="relative flex max-h-[388px] flex-col-reverse overflow-y-auto bg-neutral-700"
           data-testid="expanded-panel"
         >
           <SyntaxHighlighter
@@ -250,11 +250,11 @@ export function RowEvent(props: RowEventProps) {
           >
             {JSON.stringify(JSON.parse(event.change || ''), null, 2)}
           </SyntaxHighlighter>
-          <div className="flex justify-end absolute top-9 w-full">
+          <div className="absolute top-9 flex w-full justify-end">
             <CopyButton className="mr-7" content={event.change || ''} />
           </div>
           <div className="absolute top-0 w-full">
-            <div className="flex items-center h-7 px-4 bg-neutral-550 text-neutral-100 text-xs">
+            <div className="flex h-7 items-center bg-neutral-550 px-4 text-xs text-neutral-100">
               Object Status after request (here you can find the JSON returned by our API)
             </div>
           </div>

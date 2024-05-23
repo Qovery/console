@@ -16,7 +16,7 @@ export function OnboardingRightContent(props: OnboardingRightContentProps) {
         <BenefitsCard />
       ) : (
         <img
-          className="absolute top-[70px] w-full overflow-hidden pointer-events-none select-none"
+          className="pointer-events-none absolute top-[70px] w-full select-none overflow-hidden"
           src="/assets/onboarding.png"
           alt="Qovery onboarding screen"
         />

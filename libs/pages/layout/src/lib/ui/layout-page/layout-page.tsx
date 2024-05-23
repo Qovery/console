@@ -58,19 +58,19 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
   return (
     <>
       <WarningScreenMobile />
-      <main className="dark:bg-neutral-900 dark:h-full bg-neutral-200">
+      <main className="bg-neutral-200 dark:h-full dark:bg-neutral-900">
         <div className="flex">
-          <div className="h-full sticky top-0">
+          <div className="sticky top-0 h-full">
             <Navigation defaultOrganizationId={defaultOrganizationId} clusterNotification={clusterCredentialError} />
           </div>
-          <div className="w-full flex flex-col-reverse grow">
+          <div className="flex w-full grow flex-col-reverse">
             <div>
               <div
-                className={`flex relative ${
+                className={`relative flex ${
                   clusterCredentialError || clusterBanner ? 'min-h-page-container-wbanner' : 'min-h-page-container'
                 }`}
               >
-                <div className="flex flex-col grow pt-2 px-2 dark:pt-0 dark:px-0">{children}</div>
+                <div className="flex grow flex-col px-2 pt-2 dark:px-0 dark:pt-0">{children}</div>
                 <AssistantTrigger />
               </div>
             </div>
@@ -86,7 +86,7 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
                 }
                 buttonLabel="Check the credentials configuration"
               >
-                The credentials for the cluster <span className="block font-bold mx-1">{invalidCluster?.name}</span> are
+                The credentials for the cluster <span className="mx-1 block font-bold">{invalidCluster?.name}</span> are
                 invalid.
               </Banner>
             )}
@@ -96,7 +96,7 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
                 onClickButton={() => navigate(INFRA_LOGS_URL(organizationId, firstCluster?.id))}
                 buttonLabel="See logs"
               >
-                Installation of the cluster <span className="block font-bold mx-1">{firstCluster?.name}</span> is
+                Installation of the cluster <span className="mx-1 block font-bold">{firstCluster?.name}</span> is
                 ongoing, you can follow it from logs
               </Banner>
             )}

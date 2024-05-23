@@ -29,7 +29,7 @@ export function PasswordShowHide({
           <Icon className="block w-4" iconName="lock-keyhole" />
         </span>
       </Tooltip>
-      <span className="text-xl tracking-widest font-medium pt-1.5" data-testid="hide_value_secret">
+      <span className="pt-1.5 text-xl font-medium tracking-widest" data-testid="hide_value_secret">
         *************
       </span>
     </span>
@@ -47,14 +47,14 @@ export function PasswordShowHide({
       </Tooltip>
       {visible ? (
         <>
-          <span className="text-brand-500 truncate" data-testid="visible_value">
+          <span className="truncate text-brand-500" data-testid="visible_value">
             {value}
           </span>
           {canCopy && Boolean(value) && <CopyToClipboardButtonIcon content={value!} iconClassName="text-brand-500" />}
         </>
       ) : (
         <Tooltip content={value}>
-          <span className="text-neutral-350 text-xl tracking-widest font-medium pt-1.5" data-testid="hide_value">
+          <span className="pt-1.5 text-xl font-medium tracking-widest text-neutral-350" data-testid="hide_value">
             *************
           </span>
         </Tooltip>

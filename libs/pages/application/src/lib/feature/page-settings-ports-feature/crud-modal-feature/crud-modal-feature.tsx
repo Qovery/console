@@ -26,7 +26,7 @@ export interface CrudModalFeatureProps {
 
 export function handleSubmit<
   T extends Application | Container,
-  R = T extends Application ? ApplicationEditRequest : ContainerRequest
+  R = T extends Application ? ApplicationEditRequest : ContainerRequest,
 >(
   {
     internal_port,

@@ -30,7 +30,7 @@ export function Container({ service, environment, children }: PropsWithChildren<
           <ServiceActionToolbar serviceId={service.id} environment={environment} shellAction={() => setOpen(true)} />
         )}
       </Skeleton>
-      <div className="w-px h-4 bg-neutral-250" />
+      <div className="h-4 w-px bg-neutral-250" />
       <div className="flex flex-row items-center gap-2">
         {environment && (
           <Skeleton width={80} height={22} show={!environment?.mode}>

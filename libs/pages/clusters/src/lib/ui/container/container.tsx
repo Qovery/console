@@ -7,7 +7,7 @@ export interface ContainerProps {
 export function Container(props: ContainerProps) {
   const { children } = props
 
-  return <div className="bg-white flex flex-col flex-1 rounded-t w-full">{children}</div>
+  return <div className="flex w-full flex-1 flex-col rounded-t bg-white">{children}</div>
 }
 
 export default Container

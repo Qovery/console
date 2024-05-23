@@ -4,14 +4,14 @@ exports[`ValuesOverrideAsYamlSetting should match snapshot 1`] = `
 <body>
   <div>
     <div
-      class="border border-neutral-250 bg-neutral-100 rounded mb-5 w-full"
+      class="mb-5 rounded border border-neutral-250 bg-neutral-100 w-full"
       data-testid="block-content"
     >
       <div
-        class="flex items-center justify-between h-9 px-4 border-b border-neutral-250"
+        class="flex h-9 items-center justify-between border-b border-neutral-250 px-4"
       >
         <h2
-          class="font-medium text-neutral-400 text-ssm"
+          class="text-ssm font-medium text-neutral-400"
         >
           Raw YAML
         </h2>
@@ -20,14 +20,14 @@ exports[`ValuesOverrideAsYamlSetting should match snapshot 1`] = `
         class="p-0"
       >
         <div
-          class="text-center my-4 py-5 px-10"
+          class="my-4 px-10 py-5 text-center"
         >
           <i
             aria-hidden="true"
             class="fa-solid fa-wave-pulse text-neutral-350"
           />
           <p
-            class="text-neutral-350 font-medium text-xs mt-1 mb-3"
+            class="mb-3 mt-1 text-xs font-medium text-neutral-350"
           >
             No override defined.
           </p>

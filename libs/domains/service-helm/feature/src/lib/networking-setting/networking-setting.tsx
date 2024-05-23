@@ -71,20 +71,20 @@ export function NetworkingSetting({ ports, onUpdatePorts, isSetting = false, chi
           </Button>
         </SettingsHeading>
       ) : (
-        <div className="flex flex-row w-full justify-between">
+        <div className="flex w-full flex-row justify-between">
           <div>
             <Heading className="mb-2">Networking</Heading>
-            <p className="text-sm text-neutral-350 mb-2">
+            <p className="mb-2 text-sm text-neutral-350">
               You can expose publicly over HTTP/gRPC the Kubernetes services deployed.
             </p>
             <Popover.Root>
               <Popover.Trigger>
-                <span className="text-sm cursor-pointer text-brand-500 hover:text-brand-600 transition font-medium mb-5">
+                <span className="mb-5 cursor-pointer text-sm font-medium text-brand-500 transition hover:text-brand-600">
                   How it works <Icon className="text-xs" iconStyle="regular" iconName="circle-question" />
                 </span>
               </Popover.Trigger>
-              <Popover.Content side="left" className="text-neutral-350 text-sm relative" style={{ width: 440 }}>
-                <h6 className="text-neutral-400 font-medium mb-2">How it works</h6>
+              <Popover.Content side="left" className="relative text-sm text-neutral-350" style={{ width: 440 }}>
+                <h6 className="mb-2 font-medium text-neutral-400">How it works</h6>
                 <p>
                   You can expose publicly over HTTP/gRPC the Kubernetes services deployed with this helm chart by
                   providing the service name (as defined within the chart) and the port you want to expose. Qovery will
@@ -93,7 +93,7 @@ export function NetworkingSetting({ ports, onUpdatePorts, isSetting = false, chi
                 <ExternalLink href="https://hub.qovery.com/docs/using-qovery/configuration/helm/#ports">
                   Documentation
                 </ExternalLink>
-                <Popover.Close className="absolute top-4 right-4">
+                <Popover.Close className="absolute right-4 top-4">
                   <button type="button">
                     <Icon iconName="xmark" className="text-lg leading-4 text-neutral-400" />
                   </button>
@@ -114,12 +114,12 @@ export function NetworkingSetting({ ports, onUpdatePorts, isSetting = false, chi
               const { service_name, internal_port, protocol, namespace, name } = port
               return (
                 <div
-                  className="flex justify-between w-full items-center gap-3 px-5 py-4 border-b border-neutral-250 last:border-0"
+                  className="flex w-full items-center justify-between gap-3 border-b border-neutral-250 px-5 py-4 last:border-0"
                   key={name}
                 >
                   <div className="flex flex-col">
-                    <span className="text-sm text-neutral-400 font-medium">{service_name}</span>
-                    <div className="flex flex-row text-xs gap-2 text-neutral-350">
+                    <span className="text-sm font-medium text-neutral-400">{service_name}</span>
+                    <div className="flex flex-row gap-2 text-xs text-neutral-350">
                       <span>Service port: {internal_port}</span>
                       <span>Protocol: {protocol}</span>
                       <span>Namespace: {namespace}</span>
@@ -151,9 +151,9 @@ export function NetworkingSetting({ ports, onUpdatePorts, isSetting = false, chi
               )
             })
           ) : (
-            <div className="text-center my-4 py-5 px-10">
+            <div className="my-4 px-10 py-5 text-center">
               <Icon iconName="wave-pulse" className="text-neutral-300" />
-              <p className="text-neutral-350 font-medium text-xs mt-1 mb-3">No port are set.</p>
+              <p className="mb-3 mt-1 text-xs font-medium text-neutral-350">No port are set.</p>
             </div>
           )}
         </BlockContent>

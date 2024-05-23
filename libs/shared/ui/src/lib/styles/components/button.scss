@@ -1,5 +1,5 @@
 .btn {
-  @apply h-9 inline-flex items-center justify-center px-4 rounded cursor-pointer bg-brand-500 hover:bg-brand-600 text-white font-medium text-ssm gap-2;
+  @apply inline-flex h-9 cursor-pointer items-center justify-center gap-2 rounded bg-brand-500 px-4 text-ssm font-medium text-white hover:bg-brand-600;
   transition: 0.25s color $timing-cubic;
   transition-property: color, background;
 
@@ -8,7 +8,7 @@
   }
 
   svg {
-    @apply w-4 h-auto;
+    @apply h-auto w-4;
   }
 
   [class^='icon-'] {
@@ -22,7 +22,7 @@
 }
 
 .btn--stroked {
-  @apply bg-neutral-100 hover:bg-neutral-150 border-solid border-x border-y border-neutral-250 text-neutral-400;
+  @apply border-x border-y border-solid border-neutral-250 bg-neutral-100 text-neutral-400 hover:bg-neutral-150;
 
   &.btn--active {
     color: theme('colors.brand.500');
@@ -86,12 +86,12 @@
 
 // state
 .btn--disabled {
-  @apply cursor-default pointer-events-none bg-brand-100 text-brand-300 border-0;
+  @apply pointer-events-none cursor-default border-0 bg-brand-100 text-brand-300;
 }
 
 // login
 .btn-login {
-  @apply relative h-11 w-full font-medium flex items-center justify-center px-5 rounded-md cursor-pointer text-sm;
+  @apply relative flex h-11 w-full cursor-pointer items-center justify-center rounded-md px-5 text-sm font-medium;
   transition: 0.25s all $timing-cubic;
 }
 
@@ -100,12 +100,12 @@
 }
 
 .btn-login--default {
-  @apply bg-neutral-150 text-neutral-400 border border-neutral-250 hover:bg-neutral-200;
+  @apply border border-neutral-250 bg-neutral-150 text-neutral-400 hover:bg-neutral-200;
 }
 
 // icon
 .btn-icon {
-  @apply w-10 h-10 p-0 min-w-0 relative;
+  @apply relative h-10 w-10 min-w-0 p-0;
 
   [class^='icon-'] {
     @apply text-sm;
@@ -139,7 +139,7 @@
 }
 
 .btn-icon--stroked {
-  @apply bg-white hover:bg-neutral-200 border-solid border-x border-y border-neutral-250 text-neutral-400 dark:border-0 dark:bg-neutral-550 dark:hover:bg-neutral-650 dark:text-neutral-50;
+  @apply border-x border-y border-solid border-neutral-250 bg-white text-neutral-400 hover:bg-neutral-200 dark:border-0 dark:bg-neutral-550 dark:text-neutral-50 dark:hover:bg-neutral-650;
 
   &.bg-transparent {
     background-color: transparent;
@@ -166,7 +166,7 @@
 }
 
 .btn-icon--dark {
-  @apply bg-neutral-500 text-neutral-300 hover:text-neutral-50 hover:bg-neutral-550;
+  @apply bg-neutral-500 text-neutral-300 hover:bg-neutral-550 hover:text-neutral-50;
 }
 
 // size
@@ -197,9 +197,9 @@
 }
 
 .btn-icon--circle {
-  @apply w-6 h-6 rounded-full flex items-center justify-center text-neutral-400 hover:text-neutral-400 hover:bg-neutral-200 dark:hover:bg-neutral-500;
+  @apply flex h-6 w-6 items-center justify-center rounded-full text-neutral-400 hover:bg-neutral-200 hover:text-neutral-400 dark:hover:bg-neutral-500;
 
   &.btn.is-active {
-    @apply text-neutral-400 hover:text-neutral-400 hover:bg-neutral-200 dark:bg-neutral-500;
+    @apply text-neutral-400 hover:bg-neutral-200 hover:text-neutral-400 dark:bg-neutral-500;
   }
 }

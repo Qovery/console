@@ -49,7 +49,7 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
 
   return (
     <div className="p-6">
-      <h2 className="h4 text-neutral-400 mb-6 max-w-sm">Import variables from .env file</h2>
+      <h2 className="h4 mb-6 max-w-sm text-neutral-400">Import variables from .env file</h2>
 
       {props.showDropzone ? (
         <div {...props.dropzoneGetRootProps({ className: 'dropzone' })}>
@@ -70,15 +70,15 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
           </div>
 
           <form onSubmit={props.onSubmit}>
-            <div className="grid mb-3" style={{ gridTemplateColumns: '6fr 6fr 204px 2fr 1fr' }}>
-              <span className="text-sm text-neutral-400 font-medium">Variable</span>
-              <span className="text-sm text-neutral-400 font-medium">Value</span>
-              <span className="text-sm text-neutral-400 font-medium">Scope</span>
-              <span className="text-sm text-neutral-400 font-medium pl-1.5">Secret</span>
+            <div className="mb-3 grid" style={{ gridTemplateColumns: '6fr 6fr 204px 2fr 1fr' }}>
+              <span className="text-sm font-medium text-neutral-400">Variable</span>
+              <span className="text-sm font-medium text-neutral-400">Value</span>
+              <span className="text-sm font-medium text-neutral-400">Scope</span>
+              <span className="pl-1.5 text-sm font-medium text-neutral-400">Secret</span>
             </div>
 
-            <div className="flex items-center bg-neutral-200 rounded justify-between px-4 py-2 mb-3">
-              <p className="font-medium text-neutral-400 text-ssm">Apply for all</p>
+            <div className="mb-3 flex items-center justify-between rounded bg-neutral-200 px-4 py-2">
+              <p className="text-ssm font-medium text-neutral-400">Apply for all</p>
               <div className="flex gap-4">
                 <InputSelectSmall
                   className="w-32"
@@ -93,7 +93,7 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
                     trigger().then()
                   }}
                 />
-                <div className="flex items-center justify-center mr-6 w-14 ml-1">
+                <div className="ml-1 mr-6 flex w-14 items-center justify-center">
                   <InputToggle
                     dataTestId="toggle-for-all"
                     small
@@ -107,7 +107,7 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
               <div
                 key={key}
                 data-testid="form-row"
-                className="grid mb-3"
+                className="mb-3 grid"
                 style={{ gridTemplateColumns: '6fr 6fr 204px 2fr 1fr' }}
               >
                 <Controller
@@ -124,7 +124,7 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
                   }}
                   render={({ field, fieldState: { error } }) => (
                     <InputTextSmall
-                      className="shrink-0 grow flex-1 mr-3"
+                      className="mr-3 flex-1 shrink-0 grow"
                       name={field.name}
                       onChange={field.onChange}
                       value={field.value}
@@ -149,7 +149,7 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
                   }}
                   render={({ field, fieldState: { error } }) => (
                     <InputTextSmall
-                      className="shrink-0 grow flex-1 mr-3"
+                      className="mr-3 flex-1 shrink-0 grow"
                       data-testid="value"
                       name={field.name}
                       onChange={field.onChange}
@@ -180,7 +180,7 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
                   )}
                 />
 
-                <div className="flex items-center justify-center w-14 ml-1">
+                <div className="ml-1 flex w-14 items-center justify-center">
                   <Controller
                     name={key + '_secret'}
                     control={control}
@@ -188,20 +188,20 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
                   />
                 </div>
 
-                <div className="flex items-center h-full w-full grow">
+                <div className="flex h-full w-full grow items-center">
                   <ButtonIcon
                     icon={IconAwesomeEnum.XMARK}
                     style={ButtonIconStyle.STROKED}
                     size={ButtonLegacySize.TINY}
                     onClick={() => props.deleteKey(key)}
-                    className="text-neutral-350 hover:text-neutral-400 !w-8 !h-8"
+                    className="!h-8 !w-8 text-neutral-350 hover:text-neutral-400"
                     iconClassName="!text-xs"
                   />
                 </div>
               </div>
             ))}
 
-            <div className="flex gap-3 justify-end mt-6">
+            <div className="mt-6 flex justify-end gap-3">
               <ButtonLegacy
                 className="btn--no-min-w"
                 style={ButtonLegacyStyle.STROKED}

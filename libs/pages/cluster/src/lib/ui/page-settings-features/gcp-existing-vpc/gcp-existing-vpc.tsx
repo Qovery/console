@@ -7,9 +7,9 @@ export interface GcpExistingVPCProps {
 
 export function GcpExistingVPC({ feature }: GcpExistingVPCProps) {
   return (
-    <div className="flex flex-col gap-4 justify-between p-4 rounded border bg-neutral-100 border-neutral-250">
+    <div className="flex flex-col justify-between gap-4 rounded border border-neutral-250 bg-neutral-100 p-4">
       <div>
-        <h4 className="text-neutral-400 text-sm font-medium">Deploy on an existing VPC</h4>
+        <h4 className="text-sm font-medium text-neutral-400">Deploy on an existing VPC</h4>
         <ExternalLink
           size="xs"
           href="https://hub.qovery.com/docs/using-qovery/configuration/clusters/#use-existing-vpc"

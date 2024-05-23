@@ -167,7 +167,7 @@ export function AdvancedSettings({
                 <div>{defaultValue}</div>
               </Tooltip>
               <CopyToClipboardButtonIcon
-                className="ml-2 text-neutral-300 invisible group-hover:visible"
+                className="invisible ml-2 text-neutral-300 group-hover:visible"
                 content={defaultValue}
               />
             </div>
@@ -188,7 +188,7 @@ export function AdvancedSettings({
                 }}
                 render={({ field, fieldState: { error } }) => (
                   <InputTextSmall
-                    className="shrink-0 grow flex-1"
+                    className="flex-1 shrink-0 grow"
                     data-testid="value"
                     name={field.name}
                     onChange={field.onChange}
@@ -224,11 +224,11 @@ export function AdvancedSettings({
 
       <form onSubmit={onSubmit}>
         <div className="relative">
-          <div className="border rounded overflow-hidden">
-            <Table.Root className="w-full text-sm table-fixed">
+          <div className="overflow-hidden rounded border">
+            <Table.Root className="w-full table-fixed text-sm">
               <Table.Header>
                 {table.getHeaderGroups().map((headerGroup) => (
-                  <Table.Row key={headerGroup.id} className="divide-neutral-200 divide-x">
+                  <Table.Row key={headerGroup.id} className="divide-x divide-neutral-200">
                     {headerGroup.headers.map((header) => (
                       <Table.ColumnHeaderCell className="font-medium" key={header.id}>
                         {flexRender(header.column.columnDef.header, header.getContext())}
@@ -244,10 +244,10 @@ export function AdvancedSettings({
                   return (
                     <Table.Row
                       key={row.id}
-                      className={`divide-neutral-200 divide-x hover:bg-neutral-100 ${isHidden ? 'hidden' : ''}`}
+                      className={`divide-x divide-neutral-200 hover:bg-neutral-100 ${isHidden ? 'hidden' : ''}`}
                     >
                       {row.getVisibleCells().map((cell) => (
-                        <Table.Cell key={cell.id} className="h-10 px-0 group">
+                        <Table.Cell key={cell.id} className="group h-10 px-0">
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </Table.Cell>
                       ))}

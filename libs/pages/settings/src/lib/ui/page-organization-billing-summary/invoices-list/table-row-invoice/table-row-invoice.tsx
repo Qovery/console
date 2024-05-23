@@ -47,15 +47,15 @@ export function TableRowInvoice(props: TableRowInvoiceProps) {
       data={data}
       filter={filter}
       columnsWidth={columnsWidth}
-      className="border-b last-of-type:border-b-0 bg-white"
+      className="border-b bg-white last-of-type:border-b-0"
     >
       <>
-        <div className="px-4 text-xs text-neutral-400 font-medium">{dateMediumLocalFormat(data.created_at)}</div>
-        <div className="px-4 text-xs text-neutral-400 font-medium">{badge}</div>
-        <div className="px-4 text-xs text-neutral-400 font-medium">
+        <div className="px-4 text-xs font-medium text-neutral-400">{dateMediumLocalFormat(data.created_at)}</div>
+        <div className="px-4 text-xs font-medium text-neutral-400">{badge}</div>
+        <div className="px-4 text-xs font-medium text-neutral-400">
           {costToHuman(data.total_in_cents / 100, data.currency_code)}
         </div>
-        <div className="px-4 text-xs text-neutral-400 font-medium">
+        <div className="px-4 text-xs font-medium text-neutral-400">
           <Button
             data-testid="download-invoice-btn"
             type="button"

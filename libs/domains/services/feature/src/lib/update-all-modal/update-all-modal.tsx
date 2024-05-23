@@ -42,10 +42,13 @@ export function UpdateAllModal({ environment }: UpdateAllModalProps) {
       const appsToUpdate: DeployAllRequest['applications'] = []
       const jobsToUpdate: DeployAllRequest['jobs'] = []
 
-      const servicesDictionary = outdatedServices.reduce((acc, service) => {
-        acc[service.id] = service
-        return acc
-      }, {} as Record<string, OutdatedService>)
+      const servicesDictionary = outdatedServices.reduce(
+        (acc, service) => {
+          acc[service.id] = service
+          return acc
+        },
+        {} as Record<string, OutdatedService>
+      )
 
       selectedServiceIds.forEach((serviceId) => {
         const { serviceType, id, commits } = servicesDictionary[serviceId]
@@ -103,13 +106,13 @@ export function UpdateAllModal({ environment }: UpdateAllModalProps) {
 
   return (
     <div className="p-6">
-      <h2 className="h4 text-neutral-400 max-w-sm truncate mb-1">Deploy latest version for..</h2>
-      <p className="mb-4 text-neutral-350 text-sm">Select the services you want to update to the latest version</p>
+      <h2 className="h4 mb-1 max-w-sm truncate text-neutral-400">Deploy latest version for..</h2>
+      <p className="mb-4 text-sm text-neutral-350">Select the services you want to update to the latest version</p>
 
-      <div className="text-neutral-400 text-sm mb-4 flex justify-between items-center">
+      <div className="mb-4 flex items-center justify-between text-sm text-neutral-400">
         <p>
           For{' '}
-          <strong className="text-neutral-400 font-medium">
+          <strong className="font-medium text-neutral-400">
             <Truncate truncateLimit={60} text={environment?.name || ''} />
           </strong>
         </p>
@@ -146,11 +149,11 @@ export function UpdateAllModal({ environment }: UpdateAllModalProps) {
                   key={application.id}
                   className={`${index === 0 ? 'rounded-t' : ''} ${
                     outdatedServices.length - 1 === index ? 'rounded-b !border-b' : ''
-                  } border border-b-0  p-4 flex justify-between ${
-                    isChecked(application.id) ? `bg-brand-50 border border-brand-500` : 'border-neutral-250'
+                  } flex justify-between  border border-b-0 p-4 ${
+                    isChecked(application.id) ? `border border-brand-500 bg-brand-50` : 'border-neutral-250'
                   } ${outdatedServices && isChecked(outdatedServices[index - 1]?.id) && 'border-t-brand-500'}`}
                 >
-                  <div className="text-neutral-400 font-medium flex">
+                  <div className="flex font-medium text-neutral-400">
                     <InputCheckbox
                       name={application.id}
                       value={application.id}
@@ -159,7 +162,7 @@ export function UpdateAllModal({ environment }: UpdateAllModalProps) {
                     />
                     <Truncate truncateLimit={31} text={application.name} />
                   </div>
-                  <div className="flex ml-auto">
+                  <div className="ml-auto flex">
                     <div
                       data-testid="current-commit-block"
                       className={`flex items-center ${isChecked(application.id) ? 'opacity-50' : ''}`}
@@ -175,7 +178,7 @@ export function UpdateAllModal({ environment }: UpdateAllModalProps) {
                       />
                       <TagCommit withBackground commitId={gitRepository?.deployed_commit_id} />
                     </div>
-                    <Icon iconName="arrow-left" className="-scale-100 text-neutral-400 mx-2" />
+                    <Icon iconName="arrow-left" className="mx-2 -scale-100 text-neutral-400" />
                     {application.commits && Boolean(application.commits.length) && (
                       <div
                         data-testid="last-commit-block"
@@ -199,13 +202,13 @@ export function UpdateAllModal({ environment }: UpdateAllModalProps) {
           </ul>
         </ScrollShadowWrapper>
       ) : (
-        <div className="text-center px-3 py-6" data-testid="empty-state">
+        <div className="px-3 py-6 text-center" data-testid="empty-state">
           <Icon iconName="wave-pulse" className="text-neutral-350" />
-          <p className="text-neutral-350 font-medium text-xs mt-1">No outdated services found</p>
+          <p className="mt-1 text-xs font-medium text-neutral-350">No outdated services found</p>
         </div>
       )}
 
-      <div className="flex gap-3 justify-end -mb-6 py-6 bg-white sticky bottom-0">
+      <div className="sticky bottom-0 -mb-6 flex justify-end gap-3 bg-white py-6">
         <Button data-testid="cancel-button" variant="surface" color="neutral" size="lg" onClick={closeModal}>
           Cancel
         </Button>

@@ -117,7 +117,7 @@ function MenuManageDeployment({ cluster, clusterStatus }: { cluster: Cluster; cl
       <DropdownMenu.Trigger asChild>
         <ActionToolbar.Button aria-label="Manage Deployment" color={displayYellowColor ? 'yellow' : 'neutral'}>
           <Tooltip content="Manage Deployment">
-            <div className="flex items-center justify-center w-full h-full">
+            <div className="flex h-full w-full items-center justify-center">
               <Icon iconName="play" className="mr-4" />
               <Icon iconName="chevron-down" />
             </div>
@@ -149,7 +149,7 @@ function MenuOtherActions({ cluster, clusterStatus }: { cluster: Cluster; cluste
       <DropdownMenu.Trigger asChild>
         <ActionToolbar.Button aria-label="Other actions">
           <Tooltip content="Other actions">
-            <div className="flex items-center justify-center w-full h-full">
+            <div className="flex h-full w-full items-center justify-center">
               <Icon width={20} iconName="ellipsis-v" />
             </div>
           </Tooltip>

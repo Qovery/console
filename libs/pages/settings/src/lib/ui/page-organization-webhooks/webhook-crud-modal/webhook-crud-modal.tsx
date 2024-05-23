@@ -28,7 +28,7 @@ export function WebhookCrudModal(props: WebhookCrudModalProps) {
       submitLabel={isEdition ? 'Update' : 'Create'}
       loading={isLoading}
     >
-      <div className="text-neutral-400 font-bold mb-3">General</div>
+      <div className="mb-3 font-bold text-neutral-400">General</div>
 
       <Controller
         name="target_url"
@@ -62,12 +62,12 @@ export function WebhookCrudModal(props: WebhookCrudModalProps) {
               {
                 label: 'Slack',
                 value: OrganizationWebhookKindEnum.SLACK,
-                icon: <Icon name={IconEnum.SLACK} className="w-4 h-4" />,
+                icon: <Icon name={IconEnum.SLACK} className="h-4 w-4" />,
               },
               {
                 label: 'Standard',
                 value: OrganizationWebhookKindEnum.STANDARD,
-                icon: <Icon name={IconEnum.QOVERY} className="w-4 h-4" />,
+                icon: <Icon name={IconEnum.QOVERY} className="h-4 w-4" />,
               },
             ]}
             onChange={field.onChange}
@@ -107,7 +107,7 @@ export function WebhookCrudModal(props: WebhookCrudModalProps) {
         )}
       />
 
-      <div className="text-neutral-400 font-bold mb-3">Event & filters</div>
+      <div className="mb-3 font-bold text-neutral-400">Event & filters</div>
 
       <div className="mb-3">
         <Controller
@@ -145,7 +145,7 @@ export function WebhookCrudModal(props: WebhookCrudModalProps) {
             />
           )}
         />
-        <p className="text-neutral-350 text-xs ml-4 mt-0.5">List all the events you want to be notified about.</p>
+        <p className="ml-4 mt-0.5 text-xs text-neutral-350">List all the events you want to be notified about.</p>
       </div>
 
       <div className="mb-3">
@@ -162,7 +162,7 @@ export function WebhookCrudModal(props: WebhookCrudModalProps) {
             />
           )}
         />
-        <p className="text-neutral-350 text-xs ml-4 mt-0.5">
+        <p className="ml-4 mt-0.5 text-xs text-neutral-350">
           Webhook will be triggered only for projects whose names match or, if you're using a wildcard, start with one
           of the values from your list.
           <br />
@@ -203,7 +203,7 @@ export function WebhookCrudModal(props: WebhookCrudModalProps) {
             />
           )}
         />
-        <p className="text-neutral-350 text-xs ml-4 mt-0.5">
+        <p className="ml-4 mt-0.5 text-xs text-neutral-350">
           Webhook will be triggered only for events happening on the environment with the selected environment type.
         </p>
       </div>

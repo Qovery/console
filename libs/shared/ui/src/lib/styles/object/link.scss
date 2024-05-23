@@ -1,6 +1,6 @@
 .link {
   transition: 0.25s color $timing-cubic;
-  @apply align-bottom inline-block;
+  @apply inline-block align-bottom;
 
   &.text-sm {
     line-height: 1rem;

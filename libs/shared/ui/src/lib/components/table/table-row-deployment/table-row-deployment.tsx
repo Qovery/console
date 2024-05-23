@@ -78,17 +78,17 @@ export function TableRowDeployment({
       data={data}
       filter={filter}
       columnsWidth={columnsWidth}
-      className={`border-b last-of-type:border-b-0 bg-white ${startGroup ? 'mt-2' : ''}`}
+      className={`border-b bg-white last-of-type:border-b-0 ${startGroup ? 'mt-2' : ''}`}
     >
       <>
-        <div className="flex items-center px-4 gap-1">
+        <div className="flex items-center gap-1 px-4">
           <Skeleton show={isLoading} width={150} height={20}>
             <Tooltip content="Copy">
               <p
                 onClick={handleCopy}
                 onMouseEnter={() => setHoverId(true)}
                 onMouseLeave={() => !copy && setHoverId(false)}
-                className={`text-2xs font-bold text-neutral-400 py-0.5 w-16 px-1 inline-flex gap-1 text-center rounded-sm cursor-pointer ${
+                className={`inline-flex w-16 cursor-pointer gap-1 rounded-sm px-1 py-0.5 text-center text-2xs font-bold text-neutral-400 ${
                   copy ? 'bg-green-500 text-white' : 'bg-neutral-150'
                 }`}
               >
@@ -115,12 +115,12 @@ export function TableRowDeployment({
             </Tooltip>
           </Skeleton>
         </div>
-        <div className="flex justify-start items-center px-4 gap-2">
+        <div className="flex items-center justify-start gap-2 px-4">
           <Skeleton show={isLoading} width={20} height={20} rounded>
             <StatusChip status={data?.status} />
           </Skeleton>
           <Skeleton show={isLoading} width={80} height={20}>
-            <p className="text-xs text-neutral-350 font-medium">
+            <p className="text-xs font-medium text-neutral-350">
               {upperCaseFirstLetter(data?.status?.replace('_', ' ').toLowerCase())}
             </p>
           </Skeleton>
@@ -137,24 +137,24 @@ export function TableRowDeployment({
               >
                 <div className="flex items-center">
                   <div className="w-8 text-center">
-                    <Icon name={(data as DeploymentService)?.type || ServiceTypeEnum.APPLICATION} className="w-5 h-5" />
+                    <Icon name={(data as DeploymentService)?.type || ServiceTypeEnum.APPLICATION} className="h-5 w-5" />
                   </div>
-                  <p className="text-xs text-neutral-400 font-medium">{data?.name}</p>
+                  <p className="text-xs font-medium text-neutral-400">{data?.name}</p>
                 </div>
               </RouterLink>
             </Skeleton>
           </div>
         )}
-        <div className="flex justify-start items-center px-1 gap-2">
+        <div className="flex items-center justify-start gap-2 px-1">
           <Skeleton show={isLoading} width={80} height={20}>
             <>
-              <p className="flex items-center leading-7 text-neutral-350 text-sm">
+              <p className="flex items-center text-sm leading-7 text-neutral-350">
                 <Tooltip
                   content={
                     data?.updated_at ? dateUTCString(data.updated_at) : dateUTCString(data?.created_at ?? Date.now())
                   }
                 >
-                  <span className="text-xs text-neutral-300 mx-3 font-medium">
+                  <span className="mx-3 text-xs font-medium text-neutral-300">
                     {timeAgo(data?.updated_at ? new Date(data?.updated_at) : new Date(data?.created_at || ''))} ago
                   </span>
                 </Tooltip>
@@ -178,12 +178,12 @@ export function TableRowDeployment({
           </Skeleton>
         </div>
         {!noCommit && (
-          <div className="flex items-center px-4 gap-2 border-neutral-200 border-l h-full">
+          <div className="flex h-full items-center gap-2 border-l border-neutral-200 px-4">
             {(data as DeploymentService | DeploymentHistoryApplication)?.commit && (
               <TagCommit commitId={(data as DeploymentService | DeploymentHistoryApplication)?.commit?.git_commit_id} />
             )}
             {(data as Container).image_name && (
-              <Badge size="xs" className="truncate max-w-[200px]">
+              <Badge size="xs" className="max-w-[200px] truncate">
                 <span className="block truncate">
                   <Tooltip side="left" content={`${(data as Container).image_name}:${(data as Container).tag}`}>
                     <span>
@@ -194,7 +194,7 @@ export function TableRowDeployment({
               </Badge>
             )}
             {(data as DeploymentHistoryHelmResponse).repository && (
-              <Badge size="xs" className="truncate max-w-[200px]">
+              <Badge size="xs" className="max-w-[200px] truncate">
                 <span className="block truncate">
                   <Tooltip
                     side="left"

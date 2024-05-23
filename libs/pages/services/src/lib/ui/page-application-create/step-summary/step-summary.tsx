@@ -44,20 +44,20 @@ export function StepSummary({
       <Heading className="mb-2">Ready to create your Application</Heading>
 
       <form className="space-y-10">
-        <p className="text-neutral-350 text-sm">
+        <p className="text-sm text-neutral-350">
           The basic application setup is done, you can now deploy your application or move forward with some advanced
           setup.
         </p>
 
         <div className="flex flex-col gap-6">
-          <Section className="p-4 border rounded border-neutral-250 bg-neutral-100">
+          <Section className="rounded border border-neutral-250 bg-neutral-100 p-4">
             <div className="flex justify-between">
               <Heading>General information</Heading>
               <Button type="button" variant="plain" size="md" onClick={gotoGlobalInformation}>
                 <Icon className="text-base" iconName="gear-complex" />
               </Button>
             </div>
-            <ul className="space-y-2 text-neutral-400 text-sm list-none">
+            <ul className="list-none space-y-2 text-sm text-neutral-400">
               <li>
                 <strong className="font-medium">Name:</strong> {generalData.name}
               </li>
@@ -135,14 +135,14 @@ export function StepSummary({
             </ul>
           </Section>
 
-          <Section className="p-4 border rounded border-neutral-250 bg-neutral-100">
+          <Section className="rounded border border-neutral-250 bg-neutral-100 p-4">
             <div className="flex justify-between">
               <Heading>Resources</Heading>
               <Button type="button" variant="plain" size="md" onClick={gotoResources}>
                 <Icon className="text-base" iconName="gear-complex" />
               </Button>
             </div>
-            <ul className="space-y-2 text-neutral-400 text-sm list-none">
+            <ul className="list-none space-y-2 text-sm text-neutral-400">
               <li>
                 <strong className="font-medium">CPU:</strong> {resourcesData['cpu']}
               </li>
@@ -156,20 +156,20 @@ export function StepSummary({
             </ul>
           </Section>
 
-          <Section className="p-4 border rounded border-neutral-250 bg-neutral-100">
+          <Section className="rounded border border-neutral-250 bg-neutral-100 p-4">
             <div className="flex justify-between">
               <Heading>Ports</Heading>
               <Button type="button" variant="plain" size="md" onClick={gotoPorts}>
                 <Icon className="text-base" iconName="gear-complex" />
               </Button>
             </div>
-            <ul className="flex flex-col gap-2 text-neutral-400 text-sm list-none">
+            <ul className="flex list-none flex-col gap-2 text-sm text-neutral-400">
               {portsData.ports && portsData.ports.length > 0 ? (
                 <>
                   {portsData.ports?.map((port, index) => (
                     <>
                       {!!index && <hr className="border-t border-dashed border-neutral-250" />}
-                      <li key={index} className="grid grid-cols-2 grid-flow-col gap-2 my-2">
+                      <li key={index} className="my-2 grid grid-flow-col grid-cols-2 gap-2">
                         <div>
                           <strong className="font-medium">Application port:</strong> {port.application_port}
                         </div>
@@ -205,17 +205,17 @@ export function StepSummary({
             portsData.ports.length > 0 &&
             portsData.healthchecks?.item &&
             portsData.healthchecks?.item.readiness_probe && (
-              <Section className="p-4 border rounded border-neutral-250 bg-neutral-100">
+              <Section className="rounded border border-neutral-250 bg-neutral-100 p-4">
                 <div className="flex justify-between">
                   <Heading>Health checks</Heading>
                   <Button type="button" variant="plain" size="md" onClick={gotoHealthchecks}>
                     <Icon className="text-base" iconName="gear-complex" />
                   </Button>
                 </div>
-                <ul className="flex flex-col gap-2 text-neutral-400 text-sm list-none">
+                <ul className="flex list-none flex-col gap-2 text-sm text-neutral-400">
                   {portsData.healthchecks.item.liveness_probe &&
                     portsData.healthchecks.typeLiveness !== ProbeTypeEnum.NONE && (
-                      <li className="grid grid-cols-2 grid-flow-col gap-2 my-2">
+                      <li className="my-2 grid grid-flow-col grid-cols-2 gap-2">
                         <div>
                           <strong className="font-medium">Liveness</strong>
                         </div>
@@ -253,7 +253,7 @@ export function StepSummary({
                           portsData.healthchecks.typeLiveness !== ProbeTypeEnum.NONE && (
                             <hr className="border-t border-dashed border-neutral-250" />
                           )}
-                        <li className="grid grid-cols-2 grid-flow-col gap-2 my-2">
+                        <li className="my-2 grid grid-flow-col grid-cols-2 gap-2">
                           <div>
                             <strong className="font-medium">Readiness</strong>
                           </div>

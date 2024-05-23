@@ -18,12 +18,12 @@ export function PageOrganizationHelmRepositories({
   onDelete,
 }: PageOrganizationHelmRepositoriesProps) {
   return (
-    <div className="flex flex-col justify-between w-full">
-      <Section className="p-8 max-w-content-with-navigation-left">
-        <div className="flex justify-between mb-8">
+    <div className="flex w-full flex-col justify-between">
+      <Section className="max-w-content-with-navigation-left p-8">
+        <div className="mb-8 flex justify-between">
           <div>
             <Heading className="mb-2">Helm repositories</Heading>
-            <p className="text-neutral-400 text-xs">
+            <p className="text-xs text-neutral-400">
               Define and manage the helm repository to be used within your organization to deploy applications.
             </p>
           </div>
@@ -43,12 +43,12 @@ export function PageOrganizationHelmRepositories({
                 <li
                   data-testid={`repositories-list-${repository.id}`}
                   key={repository.id}
-                  className="flex justify-between items-center px-5 py-4 border-b border-neutral-250 last:border-0"
+                  className="flex items-center justify-between border-b border-neutral-250 px-5 py-4 last:border-0"
                 >
                   <div className="flex">
                     <Icon name={IconEnum.HELM_OFFICIAL} width="20" height="20" />
                     <div className="ml-4">
-                      <h2 className="flex text-xs text-neutral-400 font-medium mb-1">
+                      <h2 className="mb-1 flex text-xs font-medium text-neutral-400">
                         <Truncate truncateLimit={60} text={repository.name || ''} />
                         {repository.description && (
                           <Tooltip content={repository.description}>
@@ -73,9 +73,9 @@ export function PageOrganizationHelmRepositories({
               ))}
             </ul>
           ) : (
-            <div className="text-center my-4 px-5">
+            <div className="my-4 px-5 text-center">
               <Icon iconName="wave-pulse" className="text-neutral-350" />
-              <p className="text-neutral-350 font-medium text-xs mt-1">
+              <p className="mt-1 text-xs font-medium text-neutral-350">
                 No helm repository found. <br /> Please add one.
               </p>
             </div>

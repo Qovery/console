@@ -38,8 +38,8 @@ export function TableClusters(props: TableClustersProps) {
         },
       ]}
     >
-      <div className="flex items-center h-10 bg-neutral-150 border-neutral-200 border-b">
-        <div className="flex-auto flex items-center h-full px-4 w-1/4 border-r border-neutral-250 font-medium">
+      <div className="flex h-10 items-center border-b border-neutral-200 bg-neutral-150">
+        <div className="flex h-full w-1/4 flex-auto items-center border-r border-neutral-250 px-4 font-medium">
           Clusters
         </div>
         {Object.keys(OrganizationCustomRoleClusterPermission)
@@ -47,7 +47,7 @@ export function TableClusters(props: TableClustersProps) {
           .map((permission: string) => (
             <div
               key={permission}
-              className="flex-1 flex items-center justify-center h-full px-4 border-r border-neutral-250 last:border-0"
+              className="flex h-full flex-1 items-center justify-center border-r border-neutral-250 px-4 last:border-0"
             >
               <InputCheckbox
                 dataTestId={`checkbox-${permission}`}

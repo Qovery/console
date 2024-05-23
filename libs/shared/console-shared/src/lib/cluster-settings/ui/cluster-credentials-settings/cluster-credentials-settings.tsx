@@ -21,7 +21,7 @@ export function ClusterCredentialsSettings(props: ClusterCredentialsSettingsProp
   return (
     <div>
       {loading ? (
-        <div className="flex justify-center mt-2">
+        <div className="mt-2 flex justify-center">
           <LoaderSpinner className="w-4" />
         </div>
       ) : (

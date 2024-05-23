@@ -25,7 +25,7 @@ export function CopyButton({ content }: CopyButtonProps) {
       color="neutral"
       variant="surface"
       onClick={() => onClickCopyToClipboard(content)}
-      className="cursor-pointer font-medium gap-2 font-sans"
+      className="cursor-pointer gap-2 font-sans font-medium"
     >
       Copy
       <Icon iconName={icon} className="text-xs" />

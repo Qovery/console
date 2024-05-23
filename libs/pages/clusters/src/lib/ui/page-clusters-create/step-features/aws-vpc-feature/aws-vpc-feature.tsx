@@ -76,15 +76,15 @@ export function AWSVpcFeature() {
   }
 
   return (
-    <div className="flex flex-col justify-between p-4 rounded border bg-neutral-100 border-neutral-250">
+    <div className="flex flex-col justify-between rounded border border-neutral-250 bg-neutral-100 p-4">
       <div className="flex justify-between">
         <div>
-          <h4 className="text-neutral-400 text-sm font-medium mb-1">Deploy on an existing VPC</h4>
-          <p className="text-neutral-350 text-sm mb-4">In your VPC settings, you must enable the DNS hostnames.</p>
+          <h4 className="mb-1 text-sm font-medium text-neutral-400">Deploy on an existing VPC</h4>
+          <p className="mb-4 text-sm text-neutral-350">In your VPC settings, you must enable the DNS hostnames.</p>
         </div>
         {isTooltipAvailable() && (
           <Tooltip content={<TooltipContent values={getValues('aws_existing_vpc')} />}>
-            <span className="text-sm text-brand-500 font-medium">
+            <span className="text-sm font-medium text-brand-500">
               My VPC subnets summary <Icon iconName="eye" className="ml-1" />
             </span>
           </Tooltip>
@@ -100,14 +100,14 @@ export function AWSVpcFeature() {
             <ExternalLink
               size="xs"
               href="https://hub.qovery.com/docs/using-qovery/configuration/clusters/#use-existing-vpc"
-              className="mt-1 ml-4 mb-4"
+              className="mb-4 ml-4 mt-1"
             >
               How to configure your VPC
             </ExternalLink>
           </>
         )}
       />
-      <h4 className="text-neutral-400 text-sm font-medium mb-3">EKS subnet IDs</h4>
+      <h4 className="mb-3 text-sm font-medium text-neutral-400">EKS subnet IDs</h4>
       <ButtonPopoverSubnets
         title="EKS subnets IDs"
         name="aws_existing_vpc.eks_subnets"
@@ -129,7 +129,7 @@ export function AWSVpcFeature() {
         EKS
       </ButtonPopoverSubnets>
       <hr className="my-3" />
-      <h4 className="text-neutral-400 text-sm font-medium mb-3">Subnets IDs for managed databases (optional)</h4>
+      <h4 className="mb-3 text-sm font-medium text-neutral-400">Subnets IDs for managed databases (optional)</h4>
       <div className="flex gap-3">
         <ButtonPopoverSubnets title="MongoDB subnets IDs" name="aws_existing_vpc.mongodb_subnets">
           <Icon name={IconEnum.MONGODB} width="16" className="mr-2" />

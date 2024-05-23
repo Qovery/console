@@ -71,7 +71,7 @@ export function InputText(props: InputTextProps) {
           ref={inputRef}
         >
           <div className={`${disabled ? 'pointer-events-none' : ''}`}>
-            <label htmlFor={label} className={`${hasFocus ? 'text-xs' : 'text-sm translate-y-2'}`}>
+            <label htmlFor={label} className={`${hasFocus ? 'text-xs' : 'translate-y-2 text-sm'}`}>
               {label}
             </label>
             <input
@@ -91,13 +91,13 @@ export function InputText(props: InputTextProps) {
               onBlur={() => setFocused(false)}
             />
             {isInputDate && (
-              <div className="absolute top-1/2 -translate-y-1/2 right-4">
+              <div className="absolute right-4 top-1/2 -translate-y-1/2">
                 <Icon iconName="angle-down" className="text-sm text-neutral-400" />
               </div>
             )}
             {(currentValue as string)?.length > 0 && type === 'password' && (
               <div
-                className="absolute top-1/2 -translate-y-1/2 right-4 transition-colors text-neutral-400 hover:text-neutral-400"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-400 transition-colors hover:text-neutral-400"
                 onClick={() => (currentType === 'password' ? setCurrentType('text') : setCurrentType('password'))}
               >
                 {currentType === 'password' && <Icon iconName="eye" className="text-sm" />}
@@ -107,13 +107,13 @@ export function InputText(props: InputTextProps) {
           </div>
         </div>
         {!isInputDate && rightElement && (
-          <div data-testid="right-floating-component" className="absolute top-1/2 -translate-y-1/2 right-4">
+          <div data-testid="right-floating-component" className="absolute right-4 top-1/2 -translate-y-1/2">
             {rightElement}
           </div>
         )}
       </div>
-      {hint && <p className="px-4 mt-0.5 font-normal text-xs text-neutral-350">{hint}</p>}
-      {error && <p className="px-4 mt-0.5 font-medium text-xs text-red-500">{error}</p>}
+      {hint && <p className="mt-0.5 px-4 text-xs font-normal text-neutral-350">{hint}</p>}
+      {error && <p className="mt-0.5 px-4 text-xs font-medium text-red-500">{error}</p>}
     </div>
   )
 }

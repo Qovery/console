@@ -37,19 +37,19 @@ export function RowCluster(props: RowClusterProps) {
   const { control, getValues } = useFormContext()
 
   return (
-    <div className="flex h-10 border-neutral-250 border-b">
-      <div className="flex-auto flex items-center h-full px-4 w-1/4 border-r border-neutral-250 font-medium">
+    <div className="flex h-10 border-b border-neutral-250">
+      <div className="flex h-full w-1/4 flex-auto items-center border-r border-neutral-250 px-4 font-medium">
         <svg xmlns="http://www.w3.org/2000/svg" width="7" height="8" fill="none" viewBox="0 0 7 8">
           <path fill="#C6D3E7" fillRule="evenodd" d="M2 0H.5v8h6V6.5H2V0z" clipRule="evenodd" />
         </svg>
-        <span className="inline-block ml-3">{cluster.cluster_name}</span>
+        <span className="ml-3 inline-block">{cluster.cluster_name}</span>
       </div>
       {Object.keys(OrganizationCustomRoleClusterPermission)
         .reverse()
         .map((permission: string) => (
           <div
             key={`${cluster.cluster_id}.${permission}`}
-            className="flex-1 flex items-center justify-center h-full px-4 border-r border-neutral-250 last:border-0"
+            className="flex h-full flex-1 items-center justify-center border-r border-neutral-250 px-4 last:border-0"
           >
             <Controller
               name={`cluster_permissions.${cluster.cluster_id}`}

@@ -15,13 +15,13 @@ export function PlanCard(props: PlanCardProps) {
   const { name, title, text, price, loading, onClick, list } = props
 
   return (
-    <div className="bg-neutral-100 border border-neutral-250 px-5 py-4 rounded lg:w-80">
+    <div className="rounded border border-neutral-250 bg-neutral-100 px-5 py-4 lg:w-80">
       <h2 className="h5 mb-1">{title}</h2>
-      <p className="text-sm text-neutral-400 mb-2">{text}</p>
-      <p className="flex items-center text-neutral-400 text-xs mb-4">
+      <p className="mb-2 text-sm text-neutral-400">{text}</p>
+      <p className="mb-4 flex items-center text-xs text-neutral-400">
         {name !== PlanEnum.ENTERPRISE ? (
           <>
-            <span className="h5 block mr-2">${price}</span> per user/month
+            <span className="h5 mr-2 block">${price}</span> per user/month
           </>
         ) : (
           <span className="h5">Custom</span>
@@ -29,7 +29,7 @@ export function PlanCard(props: PlanCardProps) {
       </p>
       <Button
         type="button"
-        className="w-full justify-center mb-4"
+        className="mb-4 w-full justify-center"
         size="lg"
         onClick={() => onClick()}
         loading={loading === name}
@@ -38,8 +38,8 @@ export function PlanCard(props: PlanCardProps) {
       </Button>
       <ul>
         {list.map((line: string, index: number) => (
-          <li key={index} className="text-neutral-400 text-xs mb-2 last:mb-10">
-            <Icon iconName="check" className="text-green-500 mr-1.5" />
+          <li key={index} className="mb-2 text-xs text-neutral-400 last:mb-10">
+            <Icon iconName="check" className="mr-1.5 text-green-500" />
             {line}
           </li>
         ))}

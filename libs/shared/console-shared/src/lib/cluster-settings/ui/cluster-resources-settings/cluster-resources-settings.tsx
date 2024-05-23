@@ -86,7 +86,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
             )}
           />
         ) : (
-          <div className="border border-neutral-250 rounded p-4 text-neutral-400 text-sm">
+          <div className="rounded border border-neutral-250 p-4 text-sm text-neutral-400">
             {props.clusterTypeOptions &&
               props.clusterTypeOptions[0] &&
               `${props.clusterTypeOptions[0].label} - ${props.clusterTypeOptions[0].description}`}
@@ -115,7 +115,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                 error={error?.message}
                 options={props.instanceTypeOptions || []}
               />
-              <p className="text-neutral-350 text-xs ml-4 mt-1 mb-3">
+              <p className="mb-3 ml-4 mt-1 text-xs text-neutral-350">
                 Instance type to be used to run your Kubernetes nodes.
               </p>
               {warningInstance && (
@@ -156,7 +156,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
             />
           )}
         />
-        <p className="text-neutral-350 text-xs ml-4 mt-1 mb-3">
+        <p className="mb-3 ml-4 mt-1 text-xs text-neutral-350">
           Storage allocated to your Kubernetes nodes to store files, application images etc..
         </p>
         {warningClusterNodes && (
@@ -184,10 +184,10 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
             render={({ field }) => (
               <div>
                 {watchNodes && (
-                  <p className="text-neutral-400 mb-3 font-medium">{`min ${watchNodes[0]} - max ${watchNodes[1]}`}</p>
+                  <p className="mb-3 font-medium text-neutral-400">{`min ${watchNodes[0]} - max ${watchNodes[1]}`}</p>
                 )}
                 <Slider onChange={field.onChange} value={field.value} max={200} min={1} step={1} />
-                <p className="text-neutral-350 text-xs mt-3">
+                <p className="mt-3 text-xs text-neutral-350">
                   Cluster can scale up to “max” nodes depending on its usage
                 </p>
               </div>
@@ -197,8 +197,8 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
       )}
 
       {!props.fromDetail && props.cloudProvider === CloudProviderEnum.AWS && (
-        <Callout.Root className="items-center mb-10" color="sky" data-testid="aws-cost-banner">
-          <Callout.Icon className="flex items-center justify-center w-12 h-12 bg-white rounded-full">
+        <Callout.Root className="mb-10 items-center" color="sky" data-testid="aws-cost-banner">
+          <Callout.Icon className="flex h-12 w-12 items-center justify-center rounded-full bg-white">
             <Icon name={IconEnum.AWS} />
           </Callout.Icon>
           <Callout.Text>

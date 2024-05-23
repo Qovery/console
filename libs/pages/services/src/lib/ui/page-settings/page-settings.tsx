@@ -10,8 +10,8 @@ export function PageSettings(props: PageSettingsProps) {
   const { links, children } = props
 
   return (
-    <div className="bg-white flex flex-grow mt-2 rounded-sm">
-      <div className="w-72 border-r border-neutral-200 relative pb-10">
+    <div className="mt-2 flex flex-grow rounded-sm bg-white">
+      <div className="relative w-72 border-r border-neutral-200 pb-10">
         <NavigationLeft className="sticky top-14 pt-6" links={links} />
       </div>
       <div className="flex flex-grow">{children}</div>

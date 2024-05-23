@@ -11,7 +11,7 @@ exports[`GitRepositorySetting should match snapshot 1`] = `
         data-testid="select"
       >
         <label
-          class="text-sm translate-y-2 top-1.5"
+          class="top-1.5 translate-y-2 text-sm"
           for="Repository"
         >
           Repository
@@ -101,7 +101,7 @@ exports[`GitRepositorySetting should match snapshot 1`] = `
           value=""
         />
         <div
-          class="absolute top-1/2 -translate-y-1/2 right-4 pointer-events-none"
+          class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2"
         >
           <span
             class="icon-solid-angle-down shrink-0 text-sm text-neutral-400"

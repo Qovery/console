@@ -28,7 +28,7 @@ export function Container({ children, cluster, deployCluster }: PropsWithChildre
           <div />
         )}
       </Skeleton>
-      <div className="w-px h-4 bg-neutral-250" />
+      <div className="h-4 w-px bg-neutral-250" />
       <div className="flex flex-row items-center gap-2">
         {cluster?.production && (
           <Badge size="xs" color="neutral">
@@ -83,7 +83,7 @@ export function Container({ children, cluster, deployCluster }: PropsWithChildre
 
   const tabsItems = [
     {
-      icon: <Icon iconName="gear" className="w-4 mt-0.5" />,
+      icon: <Icon iconName="gear" className="mt-0.5 w-4" />,
       name: 'Settings',
       active: pathname.includes(CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL),
       link: `${CLUSTER_URL(organizationId, clusterId)}${CLUSTER_SETTINGS_URL}`,
@@ -101,7 +101,7 @@ export function Container({ children, cluster, deployCluster }: PropsWithChildre
       {cluster && cluster.deployment_status !== ClusterDeploymentStatusEnum.UP_TO_DATE && (
         <NeedRedeployFlag deploymentStatus={cluster?.deployment_status} onClickButton={deployCluster} />
       )}
-      <div className="flex-grow flex-col flex">{children}</div>
+      <div className="flex flex-grow flex-col">{children}</div>
     </Section>
   )
 }

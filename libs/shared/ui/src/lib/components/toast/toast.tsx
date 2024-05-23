@@ -46,14 +46,14 @@ export const ToastContent = (
         </div>
         <div className="toast__content">
           {title && (
-            <p data-testid="toast-title" className="text-white font-medium">
+            <p data-testid="toast-title" className="font-medium text-white">
               {title}
             </p>
           )}
           {description && (
             <span
               data-testid="toast-description"
-              className={`block text-sm text-neutral-300 font-medium ${!labelAction ? 'mb-1' : ''}`}
+              className={`block text-sm font-medium text-neutral-300 ${!labelAction ? 'mb-1' : ''}`}
             >
               {description}
             </span>
@@ -63,7 +63,7 @@ export const ToastContent = (
             <button
               data-testid="label-action"
               onClick={(e) => onLabelClick(e)}
-              className="cursor-pointer text-blue-400 font-medium text-sm -mt-1 mb-1"
+              className="-mt-1 mb-1 cursor-pointer text-sm font-medium text-blue-400"
             >
               {labelAction}
             </button>
@@ -71,16 +71,16 @@ export const ToastContent = (
         </div>
         {!labelAction && options && callback && (
           <div
-            className="flex justify-end items-center px-4 rounded-r border-l border-neutral-500 transition ease-in-out duration-150 hover:bg-neutral-700"
+            className="flex items-center justify-end rounded-r border-l border-neutral-500 px-4 transition duration-150 ease-in-out hover:bg-neutral-700"
             onClick={() => {
               toastAction.dismiss(options.id)
               callback()
             }}
           >
             {iconAction ? (
-              <Icon name={iconAction} className="text-white text-sm" />
+              <Icon name={iconAction} className="text-sm text-white" />
             ) : (
-              <Icon name="icon-solid-wheel" className="text-white text-sm" />
+              <Icon name="icon-solid-wheel" className="text-sm text-white" />
             )}
           </div>
         )}

@@ -18,7 +18,7 @@ exports[`GeneralSetting should match snapshot 1`] = `
             class=""
           >
             <label
-              class="text-sm translate-y-2"
+              class="translate-y-2 text-sm"
               for="Name"
             >
               Name
@@ -43,13 +43,13 @@ exports[`GeneralSetting should match snapshot 1`] = `
         class="input pb-0 pr-2    "
       >
         <label
-          class="text-sm translate-y-2"
+          class="translate-y-2 text-sm"
           for="Description (optional)"
         >
           Description (optional)
         </label>
         <textarea
-          class="w-full min-h-[52px] mt-5 pr-3 bg-transparent appearance-none text-sm text-neutral-400 outline-0"
+          class="mt-5 min-h-[52px] w-full appearance-none bg-transparent pr-3 text-sm text-neutral-400 outline-0"
           id="Description (optional)"
           name="description"
         />

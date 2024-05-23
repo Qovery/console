@@ -34,15 +34,15 @@ export function PageSettingsKubeconfig({ cluster, onSubmit }: PageSettingsKubeco
   })
 
   return (
-    <div className="flex flex-col justify-between w-full">
-      <Section className="p-8 max-w-content-with-navigation-left">
+    <div className="flex w-full flex-col justify-between">
+      <Section className="max-w-content-with-navigation-left p-8">
         <SettingsHeading title="Kubeconfig" description="Upload your Kubeconfig file here." />
-        <div className="flex border border-neutral-200 p-3 gap-2 rounded items-center">
+        <div className="flex items-center gap-2 rounded border border-neutral-200 p-3">
           <div className="p-2">
             <Icon iconName="file-lines" />
           </div>
-          <div className="flex flex-col text-xs grow">
-            <span className="text-neutral-400 font-medium">Kubeconfig</span>
+          <div className="flex grow flex-col text-xs">
+            <span className="font-medium text-neutral-400">Kubeconfig</span>
             <Link
               className="text-xs"
               to={{

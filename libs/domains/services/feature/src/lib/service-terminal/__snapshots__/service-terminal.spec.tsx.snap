@@ -4,10 +4,10 @@ exports[`ServiceTerminal should match snapshot 1`] = `
 <body>
   <div />
   <div
-    class="fixed bottom-0 left-0 w-full bg-neutral-650 animate-slidein-up-md-faded"
+    class="fixed bottom-0 left-0 w-full animate-slidein-up-md-faded bg-neutral-650"
   >
     <button
-      class="flex items-center justify-center h-4 w-full transition-colors bg-neutral-550 hover:bg-neutral-650 border-t border-neutral-500"
+      class="flex h-4 w-full items-center justify-center border-t border-neutral-500 bg-neutral-550 transition-colors hover:bg-neutral-650"
       type="button"
     >
       <i
@@ -16,7 +16,7 @@ exports[`ServiceTerminal should match snapshot 1`] = `
       />
     </button>
     <div
-      class="flex justify-between h-11 px-4 py-2 border-y border-neutral-500"
+      class="flex h-11 justify-between border-y border-neutral-500 px-4 py-2"
     >
       <div
         class="flex gap-2"
@@ -36,11 +36,11 @@ exports[`ServiceTerminal should match snapshot 1`] = `
       </div>
     </div>
     <div
-      class="bg-neutral-700 px-4 py-2 min-h-[248px]"
+      class="min-h-[248px] bg-neutral-700 px-4 py-2"
       style="height: 248px;"
     >
       <div
-        class="flex items-start justify-center p-5 h-40"
+        class="flex h-40 items-start justify-center p-5"
       >
         <div
           class="aspect-square border-2  rounded-full border-solid border-r-neutral-500 animate-spin w-4 "

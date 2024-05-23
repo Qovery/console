@@ -29,7 +29,7 @@ function Card({ title, icon, link }: { title: string; icon: ReactElement; link: 
   return (
     <NavLink
       to={link}
-      className="flex items-center gap-3 border border-neutral-200 hover:bg-neutral-100 transition rounded p-3 shadow-sm"
+      className="flex items-center gap-3 rounded border border-neutral-200 p-3 shadow-sm transition hover:bg-neutral-100"
     >
       {icon}
       <h3 className="text-ssm font-medium">{title}</h3>
@@ -56,7 +56,7 @@ function CardOption({ parentSlug, slug, icon, title, description, type, recommen
   return (
     <NavLink
       to={SERVICES_URL(organizationId, projectId, environmentId) + servicePath(type, parentSlug, slug)}
-      className="flex items-start gap-3 border border-neutral-200 p-3 rounded-sm hover:bg-white transition"
+      className="flex items-start gap-3 rounded-sm border border-neutral-200 p-3 transition hover:bg-white"
       onClick={() =>
         posthog.capture('select-service', {
           qoveryServiceType: type,
@@ -65,19 +65,19 @@ function CardOption({ parentSlug, slug, icon, title, description, type, recommen
         })
       }
     >
-      <img className="select-none mt-1" width={24} height={24} src={icon} alt={title} />
+      <img className="mt-1 select-none" width={24} height={24} src={icon} alt={title} />
       <span>
-        <span className="inline-block text-ssm text-neutral-400 font-medium">
+        <span className="inline-block text-ssm font-medium text-neutral-400">
           {title}
           {recommended && (
-            <span className="relative -top-0.5 ml-1 inline-block bg-brand-500 text-neutral-50 px-1 rounded text-2xs">
+            <span className="relative -top-0.5 ml-1 inline-block rounded bg-brand-500 px-1 text-2xs text-neutral-50">
               Fastest
             </span>
           )}
         </span>
         <span className="inline-block text-xs text-neutral-350">{description}</span>
       </span>
-      <span className="flex items-center h-full pr-1">
+      <span className="flex h-full items-center pr-1">
         <Icon iconName="chevron-right" className="text-xs text-neutral-400" />
       </span>
     </NavLink>
@@ -93,21 +93,21 @@ function CardService({ title, icon, description, slug, options, type, link }: Se
       <div
         onClick={() => setExpanded(true)}
         className={clsx({
-          'flex items-center  gap-6 border border-neutral-200 hover:bg-neutral-100 transition rounded p-5 shadow-sm cursor-pointer':
+          'flex cursor-pointer  items-center gap-6 rounded border border-neutral-200 p-5 shadow-sm transition hover:bg-neutral-100':
             true,
-          'col-span-3 p-6 bg-neutral-100': expanded,
+          'col-span-3 bg-neutral-100 p-6': expanded,
         })}
       >
         {expanded ? (
-          <div className="flex flex-col gap-8 w-full">
+          <div className="flex w-full flex-col gap-8">
             <div className="relative flex gap-6">
               <img className="select-none" width={52} height={52} src={icon as string} alt={title} />
               <div>
-                <h3 className="text-base font-medium mb-1">{title}</h3>
-                <p className="text-ssm text-neutral-350 max-w-96">{description}</p>
+                <h3 className="mb-1 text-base font-medium">{title}</h3>
+                <p className="max-w-96 text-ssm text-neutral-350">{description}</p>
               </div>
               <Button
-                className="absolute top-0 right-0"
+                className="absolute right-0 top-0"
                 color="neutral"
                 variant="surface"
                 onClick={(e) => {
@@ -132,18 +132,18 @@ function CardService({ title, icon, description, slug, options, type, link }: Se
           </div>
         ) : (
           <>
-            <div className="flex flex-col gap-2 h-full justify-between w-60">
+            <div className="flex h-full w-60 flex-col justify-between gap-2">
               <div>
-                <h3 className="text-ssm font-medium mb-1">{title}</h3>
+                <h3 className="mb-1 text-ssm font-medium">{title}</h3>
                 <p className="text-xs text-neutral-350">{description}</p>
               </div>
-              <p className="text-xs text-neutral-400 font-medium">
+              <p className="text-xs font-medium text-neutral-400">
                 Click to select an option <Icon iconName="chevron-right" className="ml-1 text-2xs" />
               </p>
             </div>
             <span className="relative">
               {typeof icon === 'string' ? (
-                <img className="select-none w-14 max-h-10" src={icon} alt={title} />
+                <img className="max-h-10 w-14 select-none" src={icon} alt={title} />
               ) : (
                 cloneElement(icon as ReactElement, { className: 'w-10' })
               )}
@@ -157,7 +157,7 @@ function CardService({ title, icon, description, slug, options, type, link }: Se
   return (
     <NavLink
       to={link ?? SERVICES_URL(organizationId, projectId, environmentId) + servicePath(type!, slug!, 'current')}
-      className="flex gap-6 border border-neutral-200 hover:bg-neutral-100 transition rounded p-5 shadow-sm"
+      className="flex gap-6 rounded border border-neutral-200 p-5 shadow-sm transition hover:bg-neutral-100"
       onClick={() =>
         posthog.capture('select-service', {
           qoveryServiceType: type,
@@ -166,12 +166,12 @@ function CardService({ title, icon, description, slug, options, type, link }: Se
       }
     >
       <div className="w-60">
-        <h3 className="text-ssm font-medium mb-1">{title}</h3>
+        <h3 className="mb-1 text-ssm font-medium">{title}</h3>
         <p className="text-xs text-neutral-350">{description}</p>
       </div>
       <div className="flex items-center">
         {typeof icon === 'string' ? (
-          <img className="select-none w-14 max-h-10" src={icon} alt={title} />
+          <img className="max-h-10 w-14 select-none" src={icon} alt={title} />
         ) : (
           cloneElement(icon as ReactElement, { className: 'w-10' })
         )}
@@ -192,8 +192,8 @@ function SectionByTag({
   return (
     <Section>
       <Heading className="mb-1">{title}</Heading>
-      {description && <p className="text-neutral-350 text-xs">{description}</p>}
-      <div className="grid grid-cols-3 gap-4 mt-5">
+      {description && <p className="text-xs text-neutral-350">{description}</p>}
+      <div className="mt-5 grid grid-cols-3 gap-4">
         {serviceTemplates
           .filter(({ tag: t }) => t === tag)
           .sort((a, b) => a.title.localeCompare(b.title))
@@ -248,27 +248,27 @@ export function PageNewFeature() {
   const filterService = ({ title }: { title: string }) => title.toLowerCase().includes(searchInput.toLowerCase())
 
   const emptyState = (
-    <div className="text-center w-full">
+    <div className="w-full text-center">
       <Icon iconName="wave-pulse" className="text-neutral-350" />
-      <p className="text-neutral-350 font-medium text-xs mt-1">No result for this search</p>
+      <p className="mt-1 text-xs font-medium text-neutral-350">No result for this search</p>
     </div>
   )
 
   return (
-    <Section className="bg-white flex flex-col gap-8 flex-1 rounded-t w-full p-8 pb-24">
+    <Section className="flex w-full flex-1 flex-col gap-8 rounded-t bg-white p-8 pb-24">
       <Link color="brand" to=".." className="text-sm">
         <Icon iconName="arrow-left" className="mr-1" />
         Back to services list
       </Link>
       <div className="flex flex-col text-center">
-        <Heading className="text-2xl mb-2">Create new service</Heading>
-        <p className="text-neutral-350 text-sm mb-4">
+        <Heading className="mb-2 text-2xl">Create new service</Heading>
+        <p className="mb-4 text-sm text-neutral-350">
           Step into the Qovery service and embrace the power of collaboration to kickstart your next project.
         </p>
         <InputSearch
           autofocus
           placeholder="Search..."
-          className="w-[360px] mx-auto mb-4"
+          className="mx-auto mb-4 w-[360px]"
           customSize="h-9 text-xs rounded-full"
           onChange={handleSearchInputChange}
         />
@@ -280,12 +280,12 @@ export function PageNewFeature() {
           See documentation
         </ExternalLink>
       </div>
-      <div className="flex flex-col gap-8 w-[1024px] mx-auto">
+      <div className="mx-auto flex w-[1024px] flex-col gap-8">
         {searchInput.length === 0 ? (
           <>
             <Section>
               <Heading className="mb-1">Select an empty service</Heading>
-              <p className="text-neutral-350 text-xs mb-5">Services without pre-configuration for technical stack.</p>
+              <p className="mb-5 text-xs text-neutral-350">Services without pre-configuration for technical stack.</p>
               <div className="grid grid-cols-5 gap-3">
                 {serviceEmpty.map((service) => (
                   <Card key={service.title} {...service} />
@@ -312,7 +312,7 @@ export function PageNewFeature() {
         ) : [...serviceEmpty, ...serviceTemplates].filter(filterService).length > 0 ? (
           <Section>
             <Heading className="mb-1">Search results</Heading>
-            <p className="text-neutral-350 text-xs mb-5">Find the service you need to kickstart your next project.</p>
+            <p className="mb-5 text-xs text-neutral-350">Find the service you need to kickstart your next project.</p>
             <div className="grid grid-cols-3 gap-4">
               {[...serviceEmpty, ...serviceTemplates].filter(filterService).map((service) => (
                 <CardService key={service.title} {...service} />

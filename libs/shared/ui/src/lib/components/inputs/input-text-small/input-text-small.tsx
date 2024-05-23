@@ -54,7 +54,7 @@ export function InputTextSmall(props: InputTextSmallProps) {
       {(error || warning) && errorMessagePosition === 'left' && (
         <Tooltip content={error || warning || ''} align="center" side="top">
           <div data-testid="warning-icon-left" className="flex items-center">
-            <Icon iconName="triangle-exclamation" className="block text-yellow-500 text-sm" />
+            <Icon iconName="triangle-exclamation" className="block text-sm text-yellow-500" />
           </div>
         </Tooltip>
       )}
@@ -63,7 +63,7 @@ export function InputTextSmall(props: InputTextSmallProps) {
           {label}
         </label>
         <input
-          className={`absolute text-sm top-0 left-0 h-full w-full text-neutral-400 placeholder:text-neutral-350 rounded px-2 ${
+          className={`absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 ${
             hasShowPasswordButton ? 'pr-8' : ''
           }`}
           name={name}
@@ -81,14 +81,14 @@ export function InputTextSmall(props: InputTextSmallProps) {
           <div
             data-testid="show-password-button"
             onClick={() => setCurrentType(currentType === 'password' ? 'text' : 'password')}
-            className="text-sm text-neutral-400 absolute right-2 transform -translate-y-0.5"
+            className="absolute right-2 -translate-y-0.5 transform text-sm text-neutral-400"
           >
             <Icon name={currentType === 'password' ? IconAwesomeEnum.EYE : IconAwesomeEnum.EYE_SLASH} />
           </div>
         )}
       </div>
       {error && errorMessagePosition === 'bottom' && (
-        <p className="px-4 mt-1 font-medium text-xs text-red-500">{error}</p>
+        <p className="mt-1 px-4 text-xs font-medium text-red-500">{error}</p>
       )}
     </div>
   )

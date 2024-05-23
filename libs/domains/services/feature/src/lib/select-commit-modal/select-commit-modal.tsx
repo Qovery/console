@@ -77,7 +77,7 @@ export function SelectCommitModal({
   return (
     <div className="flex flex-col gap-6 p-5">
       <div className="flex flex-col gap-2 text-sm text-neutral-350">
-        <h2 className="h4 text-neutral-400 max-w-sm truncate">{title}</h2>
+        <h2 className="h4 max-w-sm truncate text-neutral-400">{title}</h2>
         <p className="text-neutral-350">{description}</p>
         {children}
       </div>
@@ -89,14 +89,14 @@ export function SelectCommitModal({
           <ScrollShadowWrapper className="max-h-[440px]">
             {Object.entries(filterCommits).map(([date, commits]) => (
               <div key={date} className="pl-2">
-                <div className="text-sm pl-5 text-neutral-350 font-medium relative">
+                <div className="relative pl-5 text-sm font-medium text-neutral-350">
                   <Icon
                     name={IconAwesomeEnum.CODE_COMMIT}
-                    className="absolute left-0 text-neutral-300 -translate-x-1/2"
+                    className="absolute left-0 -translate-x-1/2 text-neutral-300"
                   />
                   {pluralize(commits.length, 'Commit')} on {dateToFormat(date, 'MMM dd, yyyy')}
                 </div>
-                <div className="border-l border-neutral-250 pt-3 pl-5 pb-5">
+                <div className="border-l border-neutral-250 pb-5 pl-5 pt-3">
                   {commits.map(
                     (
                       { author_name, author_avatar_url, commit_page_url, created_at, git_commit_id, message },
@@ -110,10 +110,10 @@ export function SelectCommitModal({
                         <label
                           key={git_commit_id}
                           className={twMerge(
-                            'flex flex-row gap-3 w-full p-3 border border-neutral-250 -mt-px first:rounded-t-md last:rounded-b-md',
+                            '-mt-px flex w-full flex-row gap-3 border border-neutral-250 p-3 first:rounded-t-md last:rounded-b-md',
                             isCurrentDeployedCommit ? 'bg-neutral-100' : 'cursor-pointer',
                             clsx({
-                              'bg-brand-50 border-brand-500': isSelected,
+                              'border-brand-500 bg-brand-50': isSelected,
                               'border-t-transparent': isSelectedSiblings,
                             })
                           )}
@@ -125,13 +125,13 @@ export function SelectCommitModal({
                               <RadioGroup.Item value={git_commit_id} disabled checked variant="check" />
                             )}
                           </div>
-                          <div className="flex flex-col items-start flex-1 min-w-0 text-sm gap-1">
+                          <div className="flex min-w-0 flex-1 flex-col items-start gap-1 text-sm">
                             <a
                               href={commit_page_url}
                               target="_blank"
                               rel="noreferrer"
                               className={twMerge(
-                                'font-medium text-neutral-400 hover:text-brand-500 truncate max-w-full',
+                                'max-w-full truncate font-medium text-neutral-400 hover:text-brand-500',
                                 clsx({
                                   'text-neutral-350': isCurrentDeployedCommit,
                                 })
@@ -178,12 +178,12 @@ export function SelectCommitModal({
           </ScrollShadowWrapper>
         </RadioGroup.Root>
       ) : (
-        <div className="text-center px-3 py-6">
+        <div className="px-3 py-6 text-center">
           <Icon iconName="wave-pulse" className="text-neutral-350" />
-          <p className="text-neutral-350 font-medium text-xs mt-1">No result for this search</p>
+          <p className="mt-1 text-xs font-medium text-neutral-350">No result for this search</p>
         </div>
       )}
-      <div className="flex gap-3 justify-end">
+      <div className="flex justify-end gap-3">
         <Button variant="outline" color="neutral" size="lg" onClick={() => onCancel()}>
           Cancel
         </Button>

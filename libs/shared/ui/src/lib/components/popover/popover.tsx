@@ -30,7 +30,7 @@ const PopoverContent = forwardRef<ElementRef<typeof PopoverPrimitive.Content>, P
           {...props}
           ref={forwardedRef}
           className={twMerge(
-            'bg-white p-4 shadow-xl rounded border border-neutral-200 outline-none data-[state=open]:data-[side=top]:animate-slidein-down-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-sm-faded data-[state=open]:data-[side=bottom]:animate-slidein-up-sm-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded',
+            'rounded border border-neutral-200 bg-white p-4 shadow-xl outline-none data-[state=open]:data-[side=bottom]:animate-slidein-up-sm-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-sm-faded data-[state=open]:data-[side=top]:animate-slidein-down-sm-faded',
             className
           )}
         />
@@ -40,12 +40,11 @@ const PopoverContent = forwardRef<ElementRef<typeof PopoverPrimitive.Content>, P
 )
 
 type PopoverCloseProps = Omit<ComponentPropsWithoutRef<typeof PopoverPrimitive.Close>, 'asChild'>
-const PopoverClose = forwardRef<ElementRef<typeof PopoverPrimitive.Close>, PopoverCloseProps>(function PopoverClose(
-  props,
-  forwardedRef
-) {
-  return <PopoverPrimitive.Close {...props} ref={forwardedRef} asChild />
-})
+const PopoverClose = forwardRef<ElementRef<typeof PopoverPrimitive.Close>, PopoverCloseProps>(
+  function PopoverClose(props, forwardedRef) {
+    return <PopoverPrimitive.Close {...props} ref={forwardedRef} asChild />
+  }
+)
 
 const Popover = Object.assign(
   {},

@@ -141,7 +141,7 @@ export function PodsMetrics({ environmentId, serviceId, children }: PodsMetricsP
         const value = info.getValue()
         return (
           value && (
-            <Badge variant="surface" size="xs" className="shrink max-w-full">
+            <Badge variant="surface" size="xs" className="max-w-full shrink">
               {containerImage ? (
                 <div className="truncate">
                   {containerImage.image_name}:{containerImage.tag}
@@ -281,7 +281,7 @@ export function PodsMetrics({ environmentId, serviceId, children }: PodsMetricsP
     isServiceError
   ) {
     return (
-      <div className="flex flex-col items-center gap-1 py-10 bg-neutral-100 text-sm text-neutral-350 border border-neutral-200">
+      <div className="flex flex-col items-center gap-1 border border-neutral-200 bg-neutral-100 py-10 text-sm text-neutral-350">
         <Icon className="text-md text-neutral-300" iconStyle="regular" iconName="circle-question" />
         <span className="font-medium">Metrics for pods are not available, try again</span>
         <span>There is a technical issue on retrieving the pod metrics.</span>
@@ -293,13 +293,13 @@ export function PodsMetrics({ environmentId, serviceId, children }: PodsMetricsP
 
   return (
     <>
-      <div className="border rounded overflow-hidden">
-        <Table.Root className="w-full text-xs min-w-[800px]">
+      <div className="overflow-hidden rounded border">
+        <Table.Root className="w-full min-w-[800px] text-xs">
           <Table.Header>
             {table.getHeaderGroups().map((headerGroup) => (
               <Table.Row key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <Table.ColumnHeaderCell className="first:w-1/4 first:pl-[52px] font-medium" key={header.id}>
+                  <Table.ColumnHeaderCell className="font-medium first:w-1/4 first:pl-[52px]" key={header.id}>
                     <button
                       type="button"
                       className={twMerge(
@@ -328,7 +328,7 @@ export function PodsMetrics({ environmentId, serviceId, children }: PodsMetricsP
                     <Table.Cell key={cell.id} className={index === 0 ? 'text-nowrap' : ''}>
                       {index === 0 && (
                         <button
-                          className="inline-flex items-center justify-start h-14 text-md w-9 pointer text-neutral-350"
+                          className="text-md pointer inline-flex h-14 w-9 items-center justify-start text-neutral-350"
                           type="button"
                           onClick={(e) => {
                             row.getToggleExpandedHandler()()

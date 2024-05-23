@@ -7,7 +7,7 @@ exports[`GitTokenServicesListModal should match snapshots 1`] = `
       class="flex flex-col p-6"
     >
       <h1
-        class="font-bold text-neutral-400 mb-6 text-2xl"
+        class="font-bold mb-6 text-2xl text-neutral-400"
       >
         Associated services (
         3
@@ -17,11 +17,11 @@ exports[`GitTokenServicesListModal should match snapshots 1`] = `
         class="relative w-full mb-3"
       >
         <span
-          class="icon-solid-magnifying-glass shrink-0 absolute left-3 top-1/2 -translate-y-1/2 block text-base text-neutral-400 dark:text-white leading-none"
+          class="icon-solid-magnifying-glass shrink-0 absolute left-3 top-1/2 block -translate-y-1/2 text-base leading-none text-neutral-400 dark:text-white"
           role="img"
         />
         <input
-          class="w-full rounded border border-neutral-250 dark:border-neutral-350 dark:bg-transparent text-neutral-400 dark:text-white placeholder:text-neutral-350 dark:placeholder:text-neutral-250 pl-10 pr-6 focus:outline-none focus:border-brand-400 focus:transition-[border-color] h-9 text-xs"
+          class="w-full rounded border border-neutral-250 pl-10 pr-6 text-neutral-400 placeholder:text-neutral-350 focus:border-brand-400 focus:outline-none focus:transition-[border-color] dark:border-neutral-350 dark:bg-transparent dark:text-white dark:placeholder:text-neutral-250 h-9 text-xs"
           data-testid="input-search"
           name="search"
           placeholder="Search by project, environment, service name"
@@ -29,7 +29,7 @@ exports[`GitTokenServicesListModal should match snapshots 1`] = `
         />
       </div>
       <div
-        class="border border-neutral-250 bg-neutral-100 py-2 px-4 rounded"
+        class="rounded border border-neutral-250 bg-neutral-100 px-4 py-2"
         data-orientation="vertical"
       >
         <div
@@ -38,12 +38,12 @@ exports[`GitTokenServicesListModal should match snapshots 1`] = `
           data-state="open"
         >
           <div
-            class="flex items-center w-full pr-5 py-2 text-sm outline-none text-neutral-400"
+            class="flex w-full items-center py-2 pr-5 text-sm text-neutral-400 outline-none"
           >
             <button
               aria-controls="radix-:rh:"
               aria-expanded="true"
-              class="cursor-pointer inline-flex items-center justify-center border border-neutral-250 text-3xs w-4 h-4 rounded mr-5"
+              class="mr-5 inline-flex h-4 w-4 cursor-pointer items-center justify-center rounded border border-neutral-250 text-3xs"
               data-orientation="vertical"
               data-radix-collection-item=""
               data-state="open"
@@ -59,7 +59,7 @@ exports[`GitTokenServicesListModal should match snapshots 1`] = `
           </div>
           <div
             aria-labelledby="radix-:rg:"
-            class="data-[state=open]:animate-slidein-down-sm-faded data-[state=closed]:slidein-up-sm-faded ml-2 pl-[26px] overflow-hidden border-l border-neutral-200"
+            class="data-[state=closed]:slidein-up-sm-faded ml-2 overflow-hidden border-l border-neutral-200 pl-[26px] data-[state=open]:animate-slidein-down-sm-faded"
             data-orientation="vertical"
             data-state="open"
             id="radix-:rh:"
@@ -75,12 +75,12 @@ exports[`GitTokenServicesListModal should match snapshots 1`] = `
                 data-state="closed"
               >
                 <div
-                  class="flex items-center w-full pr-5 py-2 text-sm outline-none text-neutral-400"
+                  class="flex w-full items-center py-2 pr-5 text-sm text-neutral-400 outline-none"
                 >
                   <button
                     aria-controls="radix-:rl:"
                     aria-expanded="false"
-                    class="cursor-pointer inline-flex items-center justify-center border border-neutral-250 text-3xs w-4 h-4 rounded mr-5"
+                    class="mr-5 inline-flex h-4 w-4 cursor-pointer items-center justify-center rounded border border-neutral-250 text-3xs"
                     data-orientation="vertical"
                     data-radix-collection-item=""
                     data-state="closed"
@@ -101,7 +101,7 @@ exports[`GitTokenServicesListModal should match snapshots 1`] = `
                 </div>
                 <div
                   aria-labelledby="radix-:rk:"
-                  class="data-[state=open]:animate-slidein-down-sm-faded data-[state=closed]:slidein-up-sm-faded ml-2 pl-[26px] overflow-hidden border-l border-neutral-200"
+                  class="data-[state=closed]:slidein-up-sm-faded ml-2 overflow-hidden border-l border-neutral-200 pl-[26px] data-[state=open]:animate-slidein-down-sm-faded"
                   data-orientation="vertical"
                   data-state="closed"
                   hidden=""
@@ -119,12 +119,12 @@ exports[`GitTokenServicesListModal should match snapshots 1`] = `
           data-state="closed"
         >
           <div
-            class="flex items-center w-full pr-5 py-2 text-sm outline-none text-neutral-400"
+            class="flex w-full items-center py-2 pr-5 text-sm text-neutral-400 outline-none"
           >
             <button
               aria-controls="radix-:rj:"
               aria-expanded="false"
-              class="cursor-pointer inline-flex items-center justify-center border border-neutral-250 text-3xs w-4 h-4 rounded mr-5"
+              class="mr-5 inline-flex h-4 w-4 cursor-pointer items-center justify-center rounded border border-neutral-250 text-3xs"
               data-orientation="vertical"
               data-radix-collection-item=""
               data-state="closed"
@@ -140,7 +140,7 @@ exports[`GitTokenServicesListModal should match snapshots 1`] = `
           </div>
           <div
             aria-labelledby="radix-:ri:"
-            class="data-[state=open]:animate-slidein-down-sm-faded data-[state=closed]:slidein-up-sm-faded ml-2 pl-[26px] overflow-hidden border-l border-neutral-200"
+            class="data-[state=closed]:slidein-up-sm-faded ml-2 overflow-hidden border-l border-neutral-200 pl-[26px] data-[state=open]:animate-slidein-down-sm-faded"
             data-orientation="vertical"
             data-state="closed"
             hidden=""

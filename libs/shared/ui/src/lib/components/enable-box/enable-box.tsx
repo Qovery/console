@@ -39,7 +39,7 @@ export function EnableBox(props: EnableBoxProps) {
   return (
     <div
       data-testid={dataTestId}
-      className={`p-4 border transition-all rounded ${checkedClasses} ${className}`}
+      className={`rounded border p-4 transition-all ${checkedClasses} ${className}`}
       onClick={() => {
         if (!currentChecked) setCurrentChecked(!currentChecked)
       }}
@@ -54,7 +54,7 @@ export function EnableBox(props: EnableBoxProps) {
           isChecked={currentChecked}
           big
         />
-        {description && <p className="ml-8 text-neutral-400 text-sm">{description}</p>}
+        {description && <p className="ml-8 text-sm text-neutral-400">{description}</p>}
       </div>
 
       {currentChecked && children}

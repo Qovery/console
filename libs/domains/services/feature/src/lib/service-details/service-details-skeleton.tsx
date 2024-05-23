@@ -6,7 +6,7 @@ interface ServiceDetailsSkeletonProps extends ComponentPropsWithoutRef<'div'> {}
 
 export function ServiceDetailsSkeleton({ className, ...props }: ServiceDetailsSkeletonProps) {
   return (
-    <div className={twMerge('flex flex-col justify-start content-start shrink-0 gap-5 py-8', className)} {...props}>
+    <div className={twMerge('flex shrink-0 flex-col content-start justify-start gap-5 py-8', className)} {...props}>
       <div className="flex flex-col gap-4 pl-8 pr-5">
         <Skeleton height={26} width={50} show />
         <Skeleton height={16} width={300} show />

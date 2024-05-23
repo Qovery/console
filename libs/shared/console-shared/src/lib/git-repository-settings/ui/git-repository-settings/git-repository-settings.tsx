@@ -81,7 +81,7 @@ export function GitRepositorySettings({
             }
           >
             Edit
-            <Icon iconName="triangle-exclamation" className="text-yellow-500 text-sm ml-2" />
+            <Icon iconName="triangle-exclamation" className="ml-2 text-sm text-yellow-500" />
           </Button>
         </div>
       )}

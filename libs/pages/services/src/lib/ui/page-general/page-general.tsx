@@ -8,8 +8,8 @@ export function PageGeneral() {
 
   return (
     <>
-      <div className="flex flex-col mt-2 bg-white rounded-t-sm rounded-b-none flex-grow min-h-0">
-        {environment && <ServiceList className="border-b-neutral-200 border-b" environment={environment} />}
+      <div className="mt-2 flex min-h-0 flex-grow flex-col rounded-b-none rounded-t-sm bg-white">
+        {environment && <ServiceList className="border-b border-b-neutral-200" environment={environment} />}
       </div>
     </>
   )

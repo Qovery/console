@@ -52,13 +52,13 @@ export function PageDeploymentRules({
   }, [deploymentRules, isLoading])
 
   return (
-    <div className="mt-2 bg-white rounded flex flex-col flex-grow">
+    <div className="mt-2 flex flex-grow flex-col rounded bg-white">
       {isLoading && <div className="h-full" />}
       {listRules.length === 0 && !isLoading && <PlaceholderNoRules linkNewRule={linkNewRule} />}
       {listRules.length >= 1 && !isLoading && (
-        <div className="py-7 px-10 flex-grow overflow-y-auto min-h-0">
-          <div className="flex justify-between items-center mb-8 w-[640px]">
-            <p className="text-neutral-400 text-xs">
+        <div className="min-h-0 flex-grow overflow-y-auto px-10 py-7">
+          <div className="mb-8 flex w-[640px] items-center justify-between">
+            <p className="text-xs text-neutral-400">
               Configure your default deployment rules. Drag & drop rules to prioritize them.
             </p>
             <Button size="lg" onClick={() => navigate(linkNewRule)}>
@@ -66,9 +66,9 @@ export function PageDeploymentRules({
             </Button>
           </div>
 
-          <div className={`w-[640px] bg-neutral-100 rounded ${listRules?.length === 0 ? 'hidden' : ''}`}>
-            <div className="border-t border-l border-r rounded-t border-neutral-250">
-              <h2 className="text-sm text-neutral-400 font-medium py-2 px-4 border-b border-neutral-250 bg-neutral-100 rounded-t">
+          <div className={`w-[640px] rounded bg-neutral-100 ${listRules?.length === 0 ? 'hidden' : ''}`}>
+            <div className="rounded-t border-l border-r border-t border-neutral-250">
+              <h2 className="rounded-t border-b border-neutral-250 bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-400">
                 Deployment Rules
               </h2>
             </div>

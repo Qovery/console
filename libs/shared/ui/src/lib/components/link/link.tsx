@@ -44,35 +44,34 @@ export type ExternalLinkProps =
   | ((Omit<ComponentPropsWithoutRef<'a'>, 'color'> & VariantProps<typeof linkVariants>) & { withIcon?: boolean })
   | (Omit<ComponentPropsWithoutRef<'a'>, 'color'> & VariantProps<typeof buttonVariants> & { as: 'button' })
 
-export const ExternalLink = forwardRef<HTMLAnchorElement, ExternalLinkProps>(function ExternalLink(
-  props,
-  forwardedRef
-) {
-  return match(props)
-    .with({ as: 'button' }, ({ className, children, color, radius, size, variant, as, ...rest }) => (
-      <a
-        ref={forwardedRef}
-        className={twMerge(buttonVariants({ color, radius, size, variant }), className)}
-        target="_blank"
-        rel="noopener noreferrer"
-        {...rest}
-      >
-        {children}
-      </a>
-    ))
-    .otherwise(({ children, color, size, className, withIcon = true, ...rest }) => (
-      <a
-        ref={forwardedRef}
-        className={twMerge(linkVariants({ color, size }), className)}
-        target="_blank"
-        rel="noopener noreferrer"
-        {...rest}
-      >
-        {children}
-        {withIcon && <Icon iconName="arrow-up-right-from-square" className={iconVariants({ size })} />}
-      </a>
-    ))
-})
+export const ExternalLink = forwardRef<HTMLAnchorElement, ExternalLinkProps>(
+  function ExternalLink(props, forwardedRef) {
+    return match(props)
+      .with({ as: 'button' }, ({ className, children, color, radius, size, variant, as, ...rest }) => (
+        <a
+          ref={forwardedRef}
+          className={twMerge(buttonVariants({ color, radius, size, variant }), className)}
+          target="_blank"
+          rel="noopener noreferrer"
+          {...rest}
+        >
+          {children}
+        </a>
+      ))
+      .otherwise(({ children, color, size, className, withIcon = true, ...rest }) => (
+        <a
+          ref={forwardedRef}
+          className={twMerge(linkVariants({ color, size }), className)}
+          target="_blank"
+          rel="noopener noreferrer"
+          {...rest}
+        >
+          {children}
+          {withIcon && <Icon iconName="arrow-up-right-from-square" className={iconVariants({ size })} />}
+        </a>
+      ))
+  }
+)
 
 export type LinkProps =
   | (Omit<ReactLinkProps, 'color'> & VariantProps<typeof linkVariants>)

@@ -4,18 +4,18 @@ exports[`ClusterSetup should match manage deployment snapshot 1`] = `
 <body>
   <div>
     <ul
-      class="flex flex-col gap-4 text-neutral-400 text-sm font-medium"
+      class="flex flex-col gap-4 text-sm font-medium text-neutral-400"
     >
       <li
-        class="border border-neutral-200 p-3 rounded"
+        class="rounded border border-neutral-200 p-3"
       >
         <h5
-          class="text-sm font-medium mb-1"
+          class="mb-1 text-sm font-medium"
         >
           1. Download/Update Qovery CLI
         </h5>
         <p
-          class="font-normal text-neutral-350 mb-2"
+          class="mb-2 font-normal text-neutral-350"
         >
           Download and install the Qovery CLI (or update its version to the latest version).
         </p>
@@ -33,24 +33,24 @@ exports[`ClusterSetup should match manage deployment snapshot 1`] = `
         </a>
       </li>
       <li
-        class="border border-neutral-200 p-3 rounded"
+        class="rounded border border-neutral-200 p-3"
       >
         <h5
-          class="text-sm font-medium mb-1"
+          class="mb-1 text-sm font-medium"
         >
           2. Install your cluster
         </h5>
         <p
-          class="font-normal  text-neutral-350 mb-2"
+          class="mb-2  font-normal text-neutral-350"
         >
           Run the following command from your terminal and follow the instructions.
         </p>
         <pre
-          class="flex items-center justify-between bg-neutral-150 text-neutral-400 p-3 rounded-sm font-mono"
+          class="flex items-center justify-between rounded-sm bg-neutral-150 p-3 font-mono text-neutral-400"
         >
           $ qovery cluster install 
           <button
-            class="inline-flex items-center shrink-0 transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent cursor-pointer font-medium gap-2 font-sans"
+            class="inline-flex items-center shrink-0 transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent cursor-pointer gap-2 font-sans font-medium"
             type="button"
           >
             Copy
@@ -62,10 +62,10 @@ exports[`ClusterSetup should match manage deployment snapshot 1`] = `
         </pre>
       </li>
       <li
-        class="border border-neutral-200 p-3 rounded"
+        class="rounded border border-neutral-200 p-3"
       >
         <h5
-          class="text-sm font-medium mb-1"
+          class="mb-1 text-sm font-medium"
         >
           3. Deploy your first environment!
         </h5>

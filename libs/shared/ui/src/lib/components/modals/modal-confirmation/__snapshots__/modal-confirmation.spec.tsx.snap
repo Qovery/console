@@ -6,16 +6,16 @@ exports[`ModalConfirmation should match confirm mode with description 1`] = `
     class="p-6"
   >
     <h2
-      class="h4 text-neutral-400 mb-2 max-w-sm"
+      class="h4 mb-2 max-w-sm text-neutral-400"
     >
       my title
     </h2>
     <div
-      class="text-neutral-350 text-sm mb-6"
+      class="mb-6 text-sm text-neutral-350"
     >
       my description
       <span
-        class="link inline cursor-pointer text-sky-500 text-sm ml-1 truncate max-w-[250px]"
+        class="link ml-1 inline max-w-[250px] cursor-pointer truncate text-sm text-sky-500"
         data-state="closed"
         data-testid="copy-cta"
       >
@@ -40,7 +40,7 @@ exports[`ModalConfirmation should match confirm mode with description 1`] = `
             class="hidden"
           />
           <input
-            class="absolute text-sm top-0 left-0 h-full w-full text-neutral-400 placeholder:text-neutral-350 rounded px-2 "
+            class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 "
             data-testid="input-value"
             name="name"
             placeholder="Enter the current name"
@@ -50,7 +50,7 @@ exports[`ModalConfirmation should match confirm mode with description 1`] = `
         </div>
       </div>
       <div
-        class="flex gap-3 justify-end"
+        class="flex justify-end gap-3"
       >
         <button
           class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 hover:[&:not(:focus-visible):not(:disabled)]:shadow-sm active:[&:not(:focus-visible)]:shadow-none outline-brand-500 text-sm h-11 px-5 rounded border border-transparent text-neutral-350 hover:[&:not(:active):not(:focus-visible)]:border-neutral-300 hover:[&:not(:disabled)]:text-neutral-400 focus-visible:text-neutral-400 active:bg-neutral-150 active:text-neutral-400 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none"
@@ -76,12 +76,12 @@ exports[`ModalConfirmation should match delete mode with description 1`] = `
     class="p-6"
   >
     <h2
-      class="h4 text-neutral-400 mb-2 max-w-sm"
+      class="h4 mb-2 max-w-sm text-neutral-400"
     >
       my title
     </h2>
     <div
-      class="text-neutral-350 text-sm mb-6"
+      class="mb-6 text-sm text-neutral-350"
     >
       my description
     </div>
@@ -98,7 +98,7 @@ exports[`ModalConfirmation should match delete mode with description 1`] = `
             class="hidden"
           />
           <input
-            class="absolute text-sm top-0 left-0 h-full w-full text-neutral-400 placeholder:text-neutral-350 rounded px-2 "
+            class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 "
             data-testid="input-value"
             name="name"
             placeholder="Enter "delete""
@@ -108,7 +108,7 @@ exports[`ModalConfirmation should match delete mode with description 1`] = `
         </div>
       </div>
       <div
-        class="flex gap-3 justify-end"
+        class="flex justify-end gap-3"
       >
         <button
           class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 hover:[&:not(:focus-visible):not(:disabled)]:shadow-sm active:[&:not(:focus-visible)]:shadow-none outline-brand-500 text-sm h-11 px-5 rounded border border-transparent text-neutral-350 hover:[&:not(:active):not(:focus-visible)]:border-neutral-300 hover:[&:not(:disabled)]:text-neutral-400 focus-visible:text-neutral-400 active:bg-neutral-150 active:text-neutral-400 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none"
@@ -134,12 +134,12 @@ exports[`ModalConfirmation should match delete mode without description 1`] = `
     class="p-6"
   >
     <h2
-      class="h4 text-neutral-400 mb-2 max-w-sm"
+      class="h4 mb-2 max-w-sm text-neutral-400"
     >
       my title
     </h2>
     <div
-      class="text-neutral-350 text-sm mb-6"
+      class="mb-6 text-sm text-neutral-350"
     >
       To confirm the deletion of 
       <strong>
@@ -160,7 +160,7 @@ exports[`ModalConfirmation should match delete mode without description 1`] = `
             class="hidden"
           />
           <input
-            class="absolute text-sm top-0 left-0 h-full w-full text-neutral-400 placeholder:text-neutral-350 rounded px-2 "
+            class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 "
             data-testid="input-value"
             name="name"
             placeholder="Enter "delete""
@@ -170,7 +170,7 @@ exports[`ModalConfirmation should match delete mode without description 1`] = `
         </div>
       </div>
       <div
-        class="flex gap-3 justify-end"
+        class="flex justify-end gap-3"
       >
         <button
           class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 hover:[&:not(:focus-visible):not(:disabled)]:shadow-sm active:[&:not(:focus-visible)]:shadow-none outline-brand-500 text-sm h-11 px-5 rounded border border-transparent text-neutral-350 hover:[&:not(:active):not(:focus-visible)]:border-neutral-300 hover:[&:not(:disabled)]:text-neutral-400 focus-visible:text-neutral-400 active:bg-neutral-150 active:text-neutral-400 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none"

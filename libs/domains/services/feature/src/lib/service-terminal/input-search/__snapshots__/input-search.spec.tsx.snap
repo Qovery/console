@@ -22,7 +22,7 @@ exports[`InputSearch should match snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-magnifying-glass text-neutral-50 absolute left-2.5 top-1.5 text-xs"
+          class="fa-solid fa-magnifying-glass absolute left-2.5 top-1.5 text-xs text-neutral-50"
         />
         <input
           aria-activedescendant=""
@@ -31,7 +31,7 @@ exports[`InputSearch should match snapshot 1`] = `
           aria-expanded="false"
           aria-labelledby="downshift-:r6:-label"
           autocomplete="off"
-          class="w-56 h-7 bg-transparent text-xs text-neutral-250 rounded pl-7 pr-2 border border-neutral-350 focus:outline-none focus:border-brand-400"
+          class="h-7 w-56 rounded border border-neutral-350 bg-transparent pl-7 pr-2 text-xs text-neutral-250 focus:border-brand-400 focus:outline-none"
           id="downshift-:r6:-input"
           placeholder="placeholder"
           role="combobox"
@@ -39,7 +39,7 @@ exports[`InputSearch should match snapshot 1`] = `
         />
       </div>
       <div
-        class="mt-1 bg-neutral-600 p-2 rounded w-full max-h-40 overflow-y-auto min-w-56 hidden"
+        class="mt-1 max-h-40 w-full min-w-56 overflow-y-auto rounded bg-neutral-600 p-2 hidden"
       >
         <ul
           aria-labelledby="downshift-:r6:-label"
@@ -47,11 +47,11 @@ exports[`InputSearch should match snapshot 1`] = `
           role="listbox"
         >
           <p
-            class="flex flex-col w-full text-center text-neutral-50 text-xs text-medium py-2"
+            class="text-medium flex w-full flex-col py-2 text-center text-xs text-neutral-50"
           >
             <i
               aria-hidden="true"
-              class="fa-solid fa-wave-pulse block mb-1"
+              class="fa-solid fa-wave-pulse mb-1 block"
             />
             No results found
           </p>
@@ -84,7 +84,7 @@ exports[`InputSearch should match with snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-magnifying-glass text-neutral-50 absolute left-2.5 top-1.5 text-xs"
+          class="fa-solid fa-magnifying-glass absolute left-2.5 top-1.5 text-xs text-neutral-50"
         />
         <input
           aria-activedescendant=""
@@ -93,7 +93,7 @@ exports[`InputSearch should match with snapshot 1`] = `
           aria-expanded="false"
           aria-labelledby="downshift-:rd:-label"
           autocomplete="off"
-          class="w-56 h-7 bg-transparent text-xs text-neutral-250 rounded pl-7 pr-2 border border-neutral-350 focus:outline-none focus:border-brand-400"
+          class="h-7 w-56 rounded border border-neutral-350 bg-transparent pl-7 pr-2 text-xs text-neutral-250 focus:border-brand-400 focus:outline-none"
           id="downshift-:rd:-input"
           placeholder="placeholder"
           role="combobox"
@@ -101,7 +101,7 @@ exports[`InputSearch should match with snapshot 1`] = `
         />
       </div>
       <div
-        class="mt-1 bg-neutral-600 p-2 rounded w-full max-h-40 overflow-y-auto min-w-56 hidden"
+        class="mt-1 max-h-40 w-full min-w-56 overflow-y-auto rounded bg-neutral-600 p-2 hidden"
       >
         <ul
           aria-labelledby="downshift-:rd:-label"
@@ -109,11 +109,11 @@ exports[`InputSearch should match with snapshot 1`] = `
           role="listbox"
         >
           <p
-            class="flex flex-col w-full text-center text-neutral-50 text-xs text-medium py-2"
+            class="text-medium flex w-full flex-col py-2 text-center text-xs text-neutral-50"
           >
             <i
               aria-hidden="true"
-              class="fa-solid fa-wave-pulse block mb-1"
+              class="fa-solid fa-wave-pulse mb-1 block"
             />
             No results found
           </p>

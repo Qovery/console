@@ -61,7 +61,7 @@ export function InputToggle(props: InputToggleProps) {
       <div
         data-testid={props.dataTestId || 'input-toggle-button'}
         aria-label="toggle-btn"
-        className={`inline-flex justify-between items-center ${!disabled ? 'cursor-pointer' : ''}`}
+        className={`inline-flex items-center justify-between ${!disabled ? 'cursor-pointer' : ''}`}
         onClick={changeToggle}
       >
         <input
@@ -82,7 +82,7 @@ export function InputToggle(props: InputToggleProps) {
         >
           <div
             aria-label="circle"
-            className={`${toggleSizeCircle} bg-white rounded-full shadow-lg transform ${
+            className={`${toggleSizeCircle} transform rounded-full bg-white shadow-lg ${
               animateEnabled ? 'duration-300 ease-in-out' : ''
             } ${toggleActive ? `${small ? 'translate-x-3.5' : 'translate-x-6'}` : ''}`}
           />
@@ -92,7 +92,7 @@ export function InputToggle(props: InputToggleProps) {
         onClick={changeToggle}
         className={`${description && forceAlignTop ? 'relative -top-1' : ''} ml-3 ${!disabled ? 'cursor-pointer' : ''}`}
       >
-        {title && <p className="text-neutral-400 text-ssm font-medium">{title}</p>}
+        {title && <p className="text-ssm font-medium text-neutral-400">{title}</p>}
         {description && <div className="text-xs text-neutral-350">{description}</div>}
       </div>
     </div>

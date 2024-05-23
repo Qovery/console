@@ -171,7 +171,7 @@ export function Menu(props: MenuProps) {
   return (
     <>
       <div
-        className={`w-max menu__trigger menu__trigger--${isOpen ? 'open' : 'closed'} ${className}`}
+        className={`menu__trigger w-max menu__trigger--${isOpen ? 'open' : 'closed'} ${className}`}
         ref={ref}
         onMouseDown={() => {
           skipOpen.v = isOpen

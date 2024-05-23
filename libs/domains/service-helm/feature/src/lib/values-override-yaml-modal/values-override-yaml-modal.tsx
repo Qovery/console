@@ -69,13 +69,13 @@ export function ValuesOverrideYamlModal({
             }
           >
             {isErrorHelmDefaultValues && (
-              <div className="text-center py-14 px-5">
+              <div className="px-5 py-14 text-center">
                 <Icon iconName="wave-pulse" className="text-neutral-350" />
-                <p className="text-neutral-350 font-medium text-xs mt-1 mb-3">No default values.yaml available</p>
+                <p className="mb-3 mt-1 text-xs font-medium text-neutral-350">No default values.yaml available</p>
               </div>
             )}
             {isLoadingHelmDefaultValues && (
-              <div className="flex justify-center py-14 px-5">
+              <div className="flex justify-center px-5 py-14">
                 <LoaderSpinner />
               </div>
             )}

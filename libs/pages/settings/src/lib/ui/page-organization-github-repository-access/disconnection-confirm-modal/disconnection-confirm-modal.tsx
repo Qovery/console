@@ -8,7 +8,7 @@ export interface DisconnectionConfirmModalProps {
 export function DisconnectionConfirmModal(props: DisconnectionConfirmModalProps) {
   return (
     <div className="p-6">
-      <h2 className="h4 text-neutral-400 max-w-sm truncate mb-6">Disconnect the Qovery Github App</h2>
+      <h2 className="h4 mb-6 max-w-sm truncate text-neutral-400">Disconnect the Qovery Github App</h2>
       <Callout.Root className="mb-5" color="yellow">
         <Callout.Icon>
           <Icon iconName="circle-info" />
@@ -22,7 +22,7 @@ export function DisconnectionConfirmModal(props: DisconnectionConfirmModalProps)
           </Callout.TextDescription>
         </Callout.Text>
       </Callout.Root>
-      <div className="flex gap-3 justify-end mt-6">
+      <div className="mt-6 flex justify-end gap-3">
         <Button
           data-testid="cancel-button"
           type="button"

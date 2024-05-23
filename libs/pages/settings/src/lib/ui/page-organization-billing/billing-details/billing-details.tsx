@@ -135,7 +135,7 @@ export function BillingDetails(props: BillingDetailsProps) {
               )}
             />
           </div>
-          <div className="flex gap-3 mb-3">
+          <div className="mb-3 flex gap-3">
             <Controller
               control={control}
               name="country_code"

@@ -11,11 +11,11 @@ export function SidebarStatus(props: SidebarStatusProps) {
 
   return (
     <div className="border-b border-neutral-500 p-5">
-      <div className="flex items-center justify-between text-neutral-300 text-xs mb-2">
+      <div className="mb-2 flex items-center justify-between text-xs text-neutral-300">
         Deployment status:
         <StatusChip status={environmentStatus?.last_deployment_state || environmentStatus?.state} />
       </div>
-      <div className="flex items-center justify-between text-neutral-300 text-xs mb-2">
+      <div className="mb-2 flex items-center justify-between text-xs text-neutral-300">
         Deployment Execution id:
         <Tooltip content={environmentStatus?.last_deployment_id || ''}>
           <span className="text-brand-400">
@@ -29,20 +29,20 @@ export function SidebarStatus(props: SidebarStatusProps) {
         </Tooltip>
       </div>
       {environmentStatus?.last_deployment_date && (
-        <p className="flex items-center justify-between text-neutral-300 text-xs">
+        <p className="flex items-center justify-between text-xs text-neutral-300">
           Deployment start time:
           <span className="text-neutral-50" title={dateUTCString(environmentStatus.last_deployment_date)}>
             {dateFullFormat(environmentStatus.last_deployment_date)}
           </span>
         </p>
       )}
-      <p className="flex items-center justify-between text-neutral-300 text-xs mt-2">
+      <p className="mt-2 flex items-center justify-between text-xs text-neutral-300">
         Parallel Deployment:
         <span className="flex text-neutral-50">
           7{' '}
           <Tooltip side="right" content="Number of services deployed in parallel on each pipeline stage">
             <span className="flex items-center">
-              <Icon className="cursor-pointer ml-1 text-xs text-neutral-300" name="icon-solid-circle-info" />
+              <Icon className="ml-1 cursor-pointer text-xs text-neutral-300" name="icon-solid-circle-info" />
             </span>
           </Tooltip>
         </span>

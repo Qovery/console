@@ -4,7 +4,7 @@ exports[`ServiceDetails should match application snapshot 1`] = `
 <body>
   <div>
     <div
-      class="flex flex-col shrink-0 gap-5 py-8 text-sm"
+      class="flex shrink-0 flex-col gap-5 py-8 text-sm"
     >
       <section
         class="flex flex-col text-neutral-350 gap-4 pl-8 pr-5"
@@ -13,7 +13,7 @@ exports[`ServiceDetails should match application snapshot 1`] = `
           class="flex flex-row justify-between"
         >
           <span
-            class="text-neutral-400 font-medium"
+            class="font-medium text-neutral-400"
           >
             About
           </span>
@@ -39,7 +39,7 @@ exports[`ServiceDetails should match application snapshot 1`] = `
             Last edit:
           </dt>
           <dd
-            class="text-neutral-400 font-medium dark:text-white dark:font-normal"
+            class="font-medium text-neutral-400 dark:font-normal dark:text-white"
           >
             <span
               class=""
@@ -54,7 +54,7 @@ exports[`ServiceDetails should match application snapshot 1`] = `
             Created:
           </dt>
           <dd
-            class="text-neutral-400 font-medium dark:text-white dark:font-normal"
+            class="font-medium text-neutral-400 dark:font-normal dark:text-white"
           >
             <span
               class=""
@@ -73,7 +73,7 @@ exports[`ServiceDetails should match application snapshot 1`] = `
           class="flex flex-row justify-between"
         >
           <span
-            class="text-neutral-400 font-medium"
+            class="font-medium text-neutral-400"
           >
             Source
           </span>
@@ -97,7 +97,7 @@ exports[`ServiceDetails should match database snapshot 1`] = `
 <body>
   <div>
     <div
-      class="flex flex-col shrink-0 gap-5 py-8 text-sm"
+      class="flex shrink-0 flex-col gap-5 py-8 text-sm"
     >
       <section
         class="flex flex-col text-neutral-350 gap-4 pl-8 pr-5"
@@ -106,7 +106,7 @@ exports[`ServiceDetails should match database snapshot 1`] = `
           class="flex flex-row justify-between"
         >
           <span
-            class="text-neutral-400 font-medium"
+            class="font-medium text-neutral-400"
           >
             About
           </span>
@@ -132,7 +132,7 @@ exports[`ServiceDetails should match database snapshot 1`] = `
             Last edit:
           </dt>
           <dd
-            class="text-neutral-400 font-medium dark:text-white dark:font-normal"
+            class="font-medium text-neutral-400 dark:font-normal dark:text-white"
           >
             <span
               class=""
@@ -147,7 +147,7 @@ exports[`ServiceDetails should match database snapshot 1`] = `
             Created:
           </dt>
           <dd
-            class="text-neutral-400 font-medium dark:text-white dark:font-normal"
+            class="font-medium text-neutral-400 dark:font-normal dark:text-white"
           >
             <span
               class=""
@@ -166,7 +166,7 @@ exports[`ServiceDetails should match database snapshot 1`] = `
           class="flex flex-row justify-between"
         >
           <span
-            class="text-neutral-400 font-medium"
+            class="font-medium text-neutral-400"
           >
             Source
           </span>
@@ -190,7 +190,7 @@ exports[`ServiceDetails should match job snapshot 1`] = `
 <body>
   <div>
     <div
-      class="flex flex-col shrink-0 gap-5 py-8 text-sm"
+      class="flex shrink-0 flex-col gap-5 py-8 text-sm"
     >
       <section
         class="flex flex-col text-neutral-350 gap-4 pl-8 pr-5"
@@ -199,7 +199,7 @@ exports[`ServiceDetails should match job snapshot 1`] = `
           class="flex flex-row justify-between"
         >
           <span
-            class="text-neutral-400 font-medium"
+            class="font-medium text-neutral-400"
           >
             About
           </span>
@@ -225,7 +225,7 @@ exports[`ServiceDetails should match job snapshot 1`] = `
             Last edit:
           </dt>
           <dd
-            class="text-neutral-400 font-medium dark:text-white dark:font-normal"
+            class="font-medium text-neutral-400 dark:font-normal dark:text-white"
           >
             <span
               class=""
@@ -240,7 +240,7 @@ exports[`ServiceDetails should match job snapshot 1`] = `
             Created:
           </dt>
           <dd
-            class="text-neutral-400 font-medium dark:text-white dark:font-normal"
+            class="font-medium text-neutral-400 dark:font-normal dark:text-white"
           >
             <span
               class=""
@@ -259,7 +259,7 @@ exports[`ServiceDetails should match job snapshot 1`] = `
           class="flex flex-row justify-between"
         >
           <span
-            class="text-neutral-400 font-medium"
+            class="font-medium text-neutral-400"
           >
             Source
           </span>

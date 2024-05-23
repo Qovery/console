@@ -14,7 +14,7 @@ const CommandDialog = forwardRef<ElementRef<typeof CmdK.Dialog>, CommandDialogPr
       contentClassName="modal__content fixed top-[84px] left-1/2"
       overlayClassName="modal__overlay fixed w-full h-screen top-0 left-0 bg-neutral-700/20"
       className={twMerge(
-        'rounded-lg w-[516px] mx-auto shadow-[0_16px_70px_rgba(0,0,0,0.2)] bg-white overflow-hidden transition-transform duration-100 border border-neutral-150',
+        'mx-auto w-[516px] overflow-hidden rounded-lg border border-neutral-150 bg-white shadow-[0_16px_70px_rgba(0,0,0,0.2)] transition-transform duration-100',
         className
       )}
       {...props}
@@ -44,7 +44,7 @@ const CommandList = forwardRef<ElementRef<typeof CmdK.List>, CommandListProps>(f
     <CmdK.List
       ref={ref}
       className={twMerge(
-        'mx-2 my-3 transition-all duration-100 max-h-[400px] overscroll-y-contain overflow-auto',
+        'mx-2 my-3 max-h-[400px] overflow-auto overscroll-y-contain transition-all duration-100',
         className
       )}
       style={{
@@ -61,7 +61,7 @@ const CommandEmpty = forwardRef<ElementRef<typeof CmdK.Empty>, CommandEmptyProps
   { className, ...props },
   ref
 ) {
-  return <CmdK.Empty ref={ref} className={twMerge('text-center text-xs text-neutral-350 pb-2', className)} {...props} />
+  return <CmdK.Empty ref={ref} className={twMerge('pb-2 text-center text-xs text-neutral-350', className)} {...props} />
 })
 
 interface CommandGroupProps extends ComponentPropsWithoutRef<typeof CmdK.Group> {}
@@ -92,7 +92,7 @@ const CommandItem = forwardRef<ElementRef<typeof CmdK.Item>, CommandItemProps>(f
     <CmdK.Item
       ref={ref}
       className={twMerge(
-        'flex items-center cursor-pointer text-sm rounded gap-2 px-2 h-9 data-[selected]:bg-brand-50 data-[selected]:text-brand-500 text-neutral-400 font-medium',
+        'flex h-9 cursor-pointer items-center gap-2 rounded px-2 text-sm font-medium text-neutral-400 data-[selected]:bg-brand-50 data-[selected]:text-brand-500',
         className
       )}
       {...props}

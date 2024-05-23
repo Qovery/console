@@ -24,7 +24,7 @@ export function DeploymentSetting() {
             />
           )}
         />
-        <p className="text-xs text-neutral-350 ml-4 mt-1">
+        <p className="ml-4 mt-1 text-xs text-neutral-350">
           Specify the helm arguments to be used during the helm install/upgrade. Expected format: ["-h", "0.0.0.0"]
           <br />
           <ExternalLink size="xs" href="https://helm.sh/docs/helm/helm_install/" className="mt-0.5">

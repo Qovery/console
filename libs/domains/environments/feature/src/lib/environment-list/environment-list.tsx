@@ -47,7 +47,7 @@ const { Table } = TablePrimitives
 function EnvironmentNameCell({ environment }: { environment: Environment }) {
   return (
     <div className="flex items-center justify-between">
-      <span className="flex items-center gap-4 font-medium text-sm text-neutral-400 min-w-0">
+      <span className="flex min-w-0 items-center gap-4 text-sm font-medium text-neutral-400">
         <Tooltip content={upperCaseFirstLetter(environment.mode)}>
           {match(environment.mode)
             .with('DEVELOPMENT', () => (
@@ -55,7 +55,7 @@ function EnvironmentNameCell({ environment }: { environment: Environment }) {
                 variant="outline"
                 color="neutral"
                 size="xs"
-                className="flex w-4 h-4 justify-center p-0 font-semibold"
+                className="flex h-4 w-4 justify-center p-0 font-semibold"
               >
                 D
               </Badge>
@@ -65,13 +65,13 @@ function EnvironmentNameCell({ environment }: { environment: Environment }) {
                 variant="surface"
                 color="purple"
                 size="xs"
-                className="flex w-4 h-4 justify-center p-0 font-semibold"
+                className="flex h-4 w-4 justify-center p-0 font-semibold"
               >
                 V
               </Badge>
             ))
             .with('PRODUCTION', () => (
-              <Badge variant="surface" color="red" size="xs" className="flex w-4 h-4 justify-center p-0 font-semibold">
+              <Badge variant="surface" color="red" size="xs" className="flex h-4 w-4 justify-center p-0 font-semibold">
                 P
               </Badge>
             ))
@@ -80,21 +80,21 @@ function EnvironmentNameCell({ environment }: { environment: Environment }) {
                 variant="surface"
                 color="green"
                 size="xs"
-                className="flex w-4 h-4 justify-center p-0 font-semibold"
+                className="flex h-4 w-4 justify-center p-0 font-semibold"
               >
                 S
               </Badge>
             ))
             .exhaustive()}
         </Tooltip>
-        <span className="flex flex-col shrink truncate min-w-0 pr-2">
+        <span className="flex min-w-0 shrink flex-col truncate pr-2">
           <span className="truncate">
             <Truncate text={environment.name} truncateLimit={90} />
           </span>
-          <span className="text-xs text-neutral-350 font-normal">{upperCaseFirstLetter(environment.mode)}</span>
+          <span className="text-xs font-normal text-neutral-350">{upperCaseFirstLetter(environment.mode)}</span>
         </span>
       </span>
-      <div className="flex items-center gap-4 shrink-0">
+      <div className="flex shrink-0 items-center gap-4">
         <div onClick={(e) => e.stopPropagation()}>
           <EnvironmentActionToolbar environment={environment} />
         </div>
@@ -156,7 +156,7 @@ export function EnvironmentList({ project, clusterAvailable, className, ...props
                   SERVICES_GENERAL_URL
                 }
                 onClick={(e) => e.stopPropagation()}
-                className="text-sm gap-2 whitespace-nowrap"
+                className="gap-2 whitespace-nowrap text-sm"
                 size="md"
                 color="neutral"
                 variant="outline"
@@ -185,7 +185,7 @@ export function EnvironmentList({ project, clusterAvailable, className, ...props
                 as="button"
                 to={ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id)}
                 onClick={(e) => e.stopPropagation()}
-                className="text-sm gap-2 whitespace-nowrap"
+                className="gap-2 whitespace-nowrap text-sm"
                 size="md"
                 color="neutral"
                 variant="outline"
@@ -234,7 +234,7 @@ export function EnvironmentList({ project, clusterAvailable, className, ...props
           const value = info.getValue()
           return value ? (
             <Tooltip content={dateUTCString(value)}>
-              <span className="text-xs text-neutral-350 whitespace-nowrap">{timeAgo(new Date(value))}</span>
+              <span className="whitespace-nowrap text-xs text-neutral-350">{timeAgo(new Date(value))}</span>
             </Tooltip>
           ) : (
             <Icon iconStyle="regular" iconName="circle-question" className="text-sm text-neutral-300" />
@@ -303,13 +303,13 @@ export function EnvironmentList({ project, clusterAvailable, className, ...props
   }
 
   return (
-    <Table.Root className={twMerge('w-full text-xs min-w-[800px]', className)} {...props}>
+    <Table.Root className={twMerge('w-full min-w-[800px] text-xs', className)} {...props}>
       <Table.Header>
         {table.getHeaderGroups().map((headerGroup) => (
           <Table.Row key={headerGroup.id}>
             {headerGroup.headers.map((header) => (
               <Table.ColumnHeaderCell
-                className="first:border-r font-medium"
+                className="font-medium first:border-r"
                 key={header.id}
                 style={{ width: `${header.getSize()}%` }}
               >
@@ -343,7 +343,7 @@ export function EnvironmentList({ project, clusterAvailable, className, ...props
         {table.getRowModel().rows.map((row) => (
           <Fragment key={row.id}>
             <Table.Row
-              className="hover:bg-neutral-100 h-16 cursor-pointer"
+              className="h-16 cursor-pointer hover:bg-neutral-100"
               onClick={() => {
                 navigate(
                   SERVICES_URL(row.original.organization.id, row.original.project.id, row.original.id) +

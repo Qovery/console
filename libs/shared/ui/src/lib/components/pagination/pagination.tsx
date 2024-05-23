@@ -15,10 +15,10 @@ export interface PaginationProps {
 export function Pagination(props: PaginationProps) {
   return (
     <div className={`flex justify-between ${props.className || ''}`}>
-      <div className="flex gap-0.5 items-center">
+      <div className="flex items-center gap-0.5">
         <Button
           data-testid="button-previous-page"
-          className="justify-center w-9"
+          className="w-9 justify-center"
           variant="surface"
           color="neutral"
           size="md"
@@ -30,7 +30,7 @@ export function Pagination(props: PaginationProps) {
         </Button>
         <Button
           data-testid="button-next-page"
-          className="justify-center w-9"
+          className="w-9 justify-center"
           variant="surface"
           color="neutral"
           size="md"
@@ -41,7 +41,7 @@ export function Pagination(props: PaginationProps) {
           <Icon iconName="chevron-right" />
         </Button>
       </div>
-      <div className="flex gap-3 items-center">
+      <div className="flex items-center gap-3">
         <InputSelectSmall
           dataTestId="select-page-size"
           name="pageSize"

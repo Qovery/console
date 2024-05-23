@@ -15,13 +15,13 @@ exports[`DeploymentSetting should match snapshot 1`] = `
             class="input pb-0 pr-2    input--label-up"
           >
             <label
-              class="text-sm translate-y-2"
+              class="translate-y-2 text-sm"
               for="Helm arguments"
             >
               Helm arguments
             </label>
             <textarea
-              class="w-full min-h-[52px] mt-5 pr-3 bg-transparent appearance-none text-sm text-neutral-400 outline-0"
+              class="mt-5 min-h-[52px] w-full appearance-none bg-transparent pr-3 text-sm text-neutral-400 outline-0"
               id="Helm arguments"
               name="arguments"
             >
@@ -30,7 +30,7 @@ exports[`DeploymentSetting should match snapshot 1`] = `
           </div>
         </div>
         <p
-          class="text-xs text-neutral-350 ml-4 mt-1"
+          class="ml-4 mt-1 text-xs text-neutral-350"
         >
           Specify the helm arguments to be used during the helm install/upgrade. Expected format: ["-h", "0.0.0.0"]
           <br />
@@ -63,7 +63,7 @@ exports[`DeploymentSetting should match snapshot 1`] = `
               class=""
             >
               <label
-                class="text-sm translate-y-2"
+                class="translate-y-2 text-sm"
                 for="Helm timeout"
               >
                 Helm timeout
@@ -86,7 +86,7 @@ exports[`DeploymentSetting should match snapshot 1`] = `
       >
         <div
           aria-label="toggle-btn"
-          class="inline-flex justify-between items-center cursor-pointer"
+          class="inline-flex items-center justify-between cursor-pointer"
           data-testid="input-toggle-button"
         >
           <input
@@ -100,7 +100,7 @@ exports[`DeploymentSetting should match snapshot 1`] = `
           >
             <div
               aria-label="circle"
-              class="w-3.5 h-3.5 bg-white rounded-full shadow-lg transform  "
+              class="w-3.5 h-3.5 transform rounded-full bg-white shadow-lg  "
             />
           </div>
         </div>
@@ -108,7 +108,7 @@ exports[`DeploymentSetting should match snapshot 1`] = `
           class="relative -top-1 ml-3 cursor-pointer"
         >
           <p
-            class="text-neutral-400 text-ssm font-medium"
+            class="text-ssm font-medium text-neutral-400"
           >
             Allow cluster-wide resources
           </p>

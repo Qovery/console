@@ -9,7 +9,7 @@ exports[`AutoDeploySetting should match snapshot 1`] = `
     >
       <div
         aria-label="toggle-btn"
-        class="inline-flex justify-between items-center cursor-pointer"
+        class="inline-flex items-center justify-between cursor-pointer"
         data-testid="input-toggle-button"
       >
         <input
@@ -23,7 +23,7 @@ exports[`AutoDeploySetting should match snapshot 1`] = `
         >
           <div
             aria-label="circle"
-            class="w-3.5 h-3.5 bg-white rounded-full shadow-lg transform  "
+            class="w-3.5 h-3.5 transform rounded-full bg-white shadow-lg  "
           />
         </div>
       </div>
@@ -31,7 +31,7 @@ exports[`AutoDeploySetting should match snapshot 1`] = `
         class="relative -top-1 ml-3 cursor-pointer"
       >
         <p
-          class="text-neutral-400 text-ssm font-medium"
+          class="text-ssm font-medium text-neutral-400"
         >
           Auto-deploy
         </p>

@@ -70,7 +70,7 @@ export function ButtonIcon(props: ButtonIconProps) {
             ) : (
               <>
                 {notification && (
-                  <span className="btn__notification w-2 h-2 rounded-lg bg-red-500 absolute top-1.5 right-1.5"></span>
+                  <span className="btn__notification absolute right-1.5 top-1.5 h-2 w-2 rounded-lg bg-red-500"></span>
                 )}
                 <Icon name={icon} className={iconClassName} />
               </>
@@ -81,7 +81,7 @@ export function ButtonIcon(props: ButtonIconProps) {
         {link && !external && (
           <Link data-testid={props.dataTestId} to={link} className={defineClass} onClick={onClick}>
             {notification && (
-              <span className="btn__notification w-2 h-2 rounded-lg bg-red-500 absolute top-1.5 right-1.5"></span>
+              <span className="btn__notification absolute right-1.5 top-1.5 h-2 w-2 rounded-lg bg-red-500"></span>
             )}
             <Icon name={icon} className={iconClassName} />
           </Link>
@@ -97,7 +97,7 @@ export function ButtonIcon(props: ButtonIconProps) {
             onClick={onClick}
           >
             {notification && (
-              <span className="btn__notification w-2 h-2 rounded-lg bg-red-500 absolute top-1.5 right-1.5"></span>
+              <span className="btn__notification absolute right-1.5 top-1.5 h-2 w-2 rounded-lg bg-red-500"></span>
             )}
             <Icon name={icon} className={iconClassName} />
           </a>

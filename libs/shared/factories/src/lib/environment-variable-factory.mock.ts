@@ -35,8 +35,8 @@ export const mockEnvironmentVariable = (isAlias = false, isOverride = false): Va
   variable_type: isOverride
     ? APIVariableTypeEnum.OVERRIDE
     : isAlias
-    ? APIVariableTypeEnum.ALIAS
-    : APIVariableTypeEnum.VALUE,
+      ? APIVariableTypeEnum.ALIAS
+      : APIVariableTypeEnum.VALUE,
   mount_path: null,
 })
 
@@ -73,8 +73,8 @@ export const mockSecretEnvironmentVariable = (
   variable_type: isOverride
     ? APIVariableTypeEnum.OVERRIDE
     : isAlias
-    ? APIVariableTypeEnum.ALIAS
-    : APIVariableTypeEnum.VALUE,
+      ? APIVariableTypeEnum.ALIAS
+      : APIVariableTypeEnum.VALUE,
   owned_by: ownedBy,
 })
 

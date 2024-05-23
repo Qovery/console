@@ -103,8 +103,8 @@ export function PageSettingsGeneral({
   )
 
   return (
-    <div className="flex flex-col justify-between w-full">
-      <Section className="p-8 max-w-content-with-navigation-left">
+    <div className="flex w-full flex-col justify-between">
+      <Section className="max-w-content-with-navigation-left p-8">
         <SettingsHeading
           title="General settings"
           description="These general settings allow you to set up the service name, its source and deployment parameters."
@@ -192,7 +192,7 @@ export function PageSettingsGeneral({
                   <DeploymentSetting />
                   {watchFieldProvider === 'GIT' && <AutoDeploySetting source="GIT" />}
                   {watchFieldProvider === 'HELM_REPOSITORY' && (
-                    <Callout.Root color="sky" className="mt-5 text-xs items-center">
+                    <Callout.Root color="sky" className="mt-5 items-center text-xs">
                       <Callout.Icon>
                         <Icon iconName="circle-info" iconStyle="regular" />
                       </Callout.Icon>
@@ -209,7 +209,7 @@ export function PageSettingsGeneral({
             ))
             .otherwise(() => null)}
 
-          <div className="flex justify-end mt-10">
+          <div className="mt-10 flex justify-end">
             <Button type="submit" size="lg" loading={isLoadingEditService} disabled={!formState.isValid}>
               Save
             </Button>

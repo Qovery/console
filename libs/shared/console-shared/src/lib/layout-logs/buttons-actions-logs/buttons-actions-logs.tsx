@@ -51,7 +51,7 @@ export function ButtonsActionsLogs(props: ButtonsActionsLogsProps) {
       )}
       <Button
         data-testid="scroll-up-button"
-        className="w-10 justify-center ml-2 mr-px !rounded-tr-none !rounded-br-none"
+        className="ml-2 mr-px w-10 justify-center !rounded-br-none !rounded-tr-none"
         type="button"
         color="neutral"
         onClick={() => forcedScroll()}
@@ -60,7 +60,7 @@ export function ButtonsActionsLogs(props: ButtonsActionsLogsProps) {
       </Button>
       <Button
         data-testid="scroll-down-button"
-        className="w-10 justify-center mr-2 !rounded-tl-none !rounded-bl-none"
+        className="mr-2 w-10 justify-center !rounded-bl-none !rounded-tl-none"
         type="button"
         color="neutral"
         onClick={() => forcedScroll(true)}

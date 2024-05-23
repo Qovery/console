@@ -10,8 +10,8 @@ export interface PageProjectDangerZoneProps {
 export function PageProjectDangerZone(props: PageProjectDangerZoneProps) {
   const { deleteProject, project, loading } = props
   return (
-    <div className="flex flex-col justify-between w-full">
-      <div className="p-8 max-w-content-with-navigation-left">
+    <div className="flex w-full flex-col justify-between">
+      <div className="max-w-content-with-navigation-left p-8">
         <BlockContentDelete
           title="Delete project"
           ctaLabel="Delete project"

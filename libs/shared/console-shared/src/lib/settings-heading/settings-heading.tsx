@@ -10,10 +10,10 @@ export interface SettingsHeadingProps {
 
 export function SettingsHeading({ title, description, children }: SettingsHeadingProps) {
   return (
-    <div className="flex w-full justify-between mb-8">
+    <div className="mb-8 flex w-full justify-between">
       <div>
         <Heading className={description ? 'mb-2' : 'mb-3'}>{title}</Heading>
-        {description && <p className="text-sm text-neutral-400 max-w-lg mb-3">{description}</p>}
+        {description && <p className="mb-3 max-w-lg text-sm text-neutral-400">{description}</p>}
         <NeedHelp />
       </div>
       {children}

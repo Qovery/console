@@ -41,14 +41,14 @@ export function StickyActionFormToaster(props: StickyActionFormToasterProps) {
     <div className={`sticky bottom-4 flex justify-center ${className} ${!visibleState ? 'mb-[52px]' : ''}`}>
       <div
         data-testid="sticky-action-form-toaster"
-        className={`rounded bg-neutral-500 shadow-xl text-white inline-flex items-center pl-4 p-2 gap-10 ${
+        className={`inline-flex items-center gap-10 rounded bg-neutral-500 p-2 pl-4 text-white shadow-xl ${
           visible ? 'animate-action-bar-fade-in' : 'animate-action-bar-fade-out'
         } ${visibleState ? 'visible' : 'hidden'}`}
       >
-        {description && <span className="font-medium text-white text-sm">{description}</span>}
+        {description && <span className="text-sm font-medium text-white">{description}</span>}
         <div className="flex gap-5">
           {resetLabel && onReset && (
-            <button type="button" className="text-ssm underline font-medium" onClick={() => onReset()}>
+            <button type="button" className="text-ssm font-medium underline" onClick={() => onReset()}>
               {resetLabel}
             </button>
           )}

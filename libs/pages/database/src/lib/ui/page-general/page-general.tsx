@@ -11,12 +11,12 @@ export function PageGeneral(props: PageGeneralProps) {
   const { environmentId = '', databaseId = '' } = useParams()
 
   return (
-    <div className="mt-2 bg-white rounded flex flex-grow min-h-0">
-      <div className="flex h-full flex-col grow">
-        <div className="flex flex-row grow">
-          <div className="py-7 px-10 flex flex-col grow overflow-auto gap-6">
+    <div className="mt-2 flex min-h-0 flex-grow rounded bg-white">
+      <div className="flex h-full grow flex-col">
+        <div className="flex grow flex-row">
+          <div className="flex grow flex-col gap-6 overflow-auto px-10 py-7">
             {databaseMode === DatabaseModeEnum.MANAGED ? (
-              <div className="flex flex-col items-center gap-1 py-10 bg-neutral-100 text-sm text-neutral-350 border border-neutral-200">
+              <div className="flex flex-col items-center gap-1 border border-neutral-200 bg-neutral-100 py-10 text-sm text-neutral-350">
                 <span className="font-medium">Metrics for managed databases are not available</span>
                 <span>Check your cloud provider console to get more information</span>
               </div>

@@ -7,12 +7,12 @@ exports[`RedeployModal should match snapshot 1`] = `
       class="p-5"
     >
       <h2
-        class="h4 text-neutral-400 max-w-sm truncate"
+        class="h4 max-w-sm truncate text-neutral-400"
       >
         Service redeploy
       </h2>
       <p
-        class="mt-2 text-neutral-350 text-sm"
+        class="mt-2 text-sm text-neutral-350"
       >
         We have detected no changes to be deployed for this service. Select the action you want to apply.
       </p>
@@ -23,44 +23,44 @@ exports[`RedeployModal should match snapshot 1`] = `
           class="flex flex-col gap-6"
         >
           <div
-            class="flex gap-3 items-start "
+            class="flex items-start gap-3 "
           >
             <input
-              class="relative font-icons mr-5 appearance-none  after:absolute after:bg-brand-500 after:rounded-full after:top-[5px] after:left-[5px] after:w-2.5 after:h-2.5 before:absolute before:flex before:justify-center before:items-center before:text-white before:w-[1.125rem] before:h-[1.125rem] before:top-[1px] before:left-[1px]  before:rounded-full before:bg-white before:border-neutral-350 before:border-2 hover:before:border-brand-500 before:font-black before:text-xs before:leading-none before:content-[''] after:content-[''] after:opacity-0 checked:after:opacity-100 checked:before:border-brand-500 before:transition-all after:transition-all"
+              class="relative mr-5 appearance-none font-icons  before:absolute before:left-[1px] before:top-[1px] before:flex before:h-[1.125rem] before:w-[1.125rem] before:items-center before:justify-center before:rounded-full before:border-2 before:border-neutral-350 before:bg-white before:text-xs before:font-black before:leading-none before:text-white  before:transition-all before:content-[''] after:absolute after:left-[5px] after:top-[5px] after:h-2.5 after:w-2.5 after:rounded-full after:bg-brand-500 after:opacity-0 after:transition-all after:content-[''] checked:before:border-brand-500 checked:after:opacity-100 hover:before:border-brand-500"
               id="redeploy"
               name="action"
               type="radio"
               value="redeploy"
             />
             <label
-              class="leading-5 text-neutral-400 font-medium text-ssm"
+              class="font-medium leading-5 text-neutral-400 text-ssm"
               for="redeploy"
             >
               Redeploy
               <p
-                class="text-neutral-350 mt-1 text-xs font-normal"
+                class="mt-1 text-xs font-normal text-neutral-350"
               >
                 This action will not restart your service but it will allow to align again your configuration with your cluster.
               </p>
             </label>
           </div>
           <div
-            class="flex gap-3 items-start "
+            class="flex items-start gap-3 "
           >
             <input
-              class="relative font-icons mr-5 appearance-none  after:absolute after:bg-brand-500 after:rounded-full after:top-[5px] after:left-[5px] after:w-2.5 after:h-2.5 before:absolute before:flex before:justify-center before:items-center before:text-white before:w-[1.125rem] before:h-[1.125rem] before:top-[1px] before:left-[1px]  before:rounded-full before:bg-white before:border-neutral-350 before:border-2 hover:before:border-brand-500 before:font-black before:text-xs before:leading-none before:content-[''] after:content-[''] after:opacity-0 checked:after:opacity-100 checked:before:border-brand-500 before:transition-all after:transition-all"
+              class="relative mr-5 appearance-none font-icons  before:absolute before:left-[1px] before:top-[1px] before:flex before:h-[1.125rem] before:w-[1.125rem] before:items-center before:justify-center before:rounded-full before:border-2 before:border-neutral-350 before:bg-white before:text-xs before:font-black before:leading-none before:text-white  before:transition-all before:content-[''] after:absolute after:left-[5px] after:top-[5px] after:h-2.5 after:w-2.5 after:rounded-full after:bg-brand-500 after:opacity-0 after:transition-all after:content-[''] checked:before:border-brand-500 checked:after:opacity-100 hover:before:border-brand-500"
               id="restart"
               name="action"
               type="radio"
               value="restart"
             />
             <label
-              class="leading-5 text-neutral-400 font-medium text-ssm"
+              class="font-medium leading-5 text-neutral-400 text-ssm"
               for="restart"
             >
               Restart service
               <p
-                class="text-neutral-350 mt-1 text-xs font-normal"
+                class="mt-1 text-xs font-normal text-neutral-350"
               >
                 To restart the pods of your service.
               </p>
@@ -68,7 +68,7 @@ exports[`RedeployModal should match snapshot 1`] = `
           </div>
         </div>
         <div
-          class="flex gap-3 justify-end mt-6"
+          class="mt-6 flex justify-end gap-3"
         >
           <button
             class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 hover:[&:not(:focus-visible):not(:disabled)]:shadow-sm active:[&:not(:focus-visible)]:shadow-none outline-brand-500 text-sm h-11 px-5 rounded border border-transparent text-neutral-350 hover:[&:not(:active):not(:focus-visible)]:border-neutral-300 hover:[&:not(:disabled)]:text-neutral-400 focus-visible:text-neutral-400 active:bg-neutral-150 active:text-neutral-400 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none"

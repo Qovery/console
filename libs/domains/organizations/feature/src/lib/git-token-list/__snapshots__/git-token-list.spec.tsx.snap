@@ -4,14 +4,14 @@ exports[`GitTokenList should match snapshot 1`] = `
 <body>
   <div>
     <div
-      class="border border-neutral-250 bg-neutral-100 rounded mb-5 w-full"
+      class="mb-5 rounded border border-neutral-250 bg-neutral-100 w-full"
       data-testid="block-content"
     >
       <div
-        class="flex items-center justify-between h-9 px-4 border-b border-neutral-250"
+        class="flex h-9 items-center justify-between border-b border-neutral-250 px-4"
       >
         <h2
-          class="font-medium text-neutral-400 text-ssm"
+          class="text-ssm font-medium text-neutral-400"
         >
           Git tokens
         </h2>
@@ -21,7 +21,7 @@ exports[`GitTokenList should match snapshot 1`] = `
       >
         <ul>
           <li
-            class="flex justify-between items-center px-5 py-4 border-b border-neutral-250 last:border-0"
+            class="flex items-center justify-between border-b border-neutral-250 px-5 py-4 last:border-0"
           >
             <div
               class="flex"
@@ -44,7 +44,7 @@ exports[`GitTokenList should match snapshot 1`] = `
                 class="ml-4"
               >
                 <p
-                  class="flex text-xs text-neutral-400 font-medium mb-1"
+                  class="mb-1 flex text-xs font-medium text-neutral-400"
                 >
                   token1
                 </p>
@@ -59,7 +59,7 @@ exports[`GitTokenList should match snapshot 1`] = `
                     1 month
                   </span>
                   <span
-                    class="inline-block ml-3"
+                    class="ml-3 inline-block"
                     title="Tue, 31 Oct 2023 10:48:26 GMT"
                   >
                     Created since 
@@ -74,7 +74,7 @@ exports[`GitTokenList should match snapshot 1`] = `
                 disabled=""
               >
                 <span
-                  class="flex items-center justify-center bg-brand-500 w-3 h-3 rounded-full font-bold text-3xs text-white leading-[0] absolute -top-1 -right-1"
+                  class="absolute -right-1 -top-1 flex h-3 w-3 items-center justify-center rounded-full bg-brand-500 text-3xs font-bold leading-[0] text-white"
                 >
                   0
                 </span>
@@ -102,7 +102,7 @@ exports[`GitTokenList should match snapshot 1`] = `
             </div>
           </li>
           <li
-            class="flex justify-between items-center px-5 py-4 border-b border-neutral-250 last:border-0"
+            class="flex items-center justify-between border-b border-neutral-250 px-5 py-4 last:border-0"
           >
             <div
               class="flex"
@@ -163,7 +163,7 @@ exports[`GitTokenList should match snapshot 1`] = `
                 class="ml-4"
               >
                 <p
-                  class="flex text-xs text-neutral-400 font-medium mb-1"
+                  class="mb-1 flex text-xs font-medium text-neutral-400"
                 >
                   token2
                 </p>
@@ -178,7 +178,7 @@ exports[`GitTokenList should match snapshot 1`] = `
                     1 month
                   </span>
                   <span
-                    class="inline-block ml-3"
+                    class="ml-3 inline-block"
                     title="Tue, 31 Oct 2023 10:48:26 GMT"
                   >
                     Created since 
@@ -193,7 +193,7 @@ exports[`GitTokenList should match snapshot 1`] = `
                 disabled=""
               >
                 <span
-                  class="flex items-center justify-center bg-brand-500 w-3 h-3 rounded-full font-bold text-3xs text-white leading-[0] absolute -top-1 -right-1"
+                  class="absolute -right-1 -top-1 flex h-3 w-3 items-center justify-center rounded-full bg-brand-500 text-3xs font-bold leading-[0] text-white"
                 >
                   0
                 </span>

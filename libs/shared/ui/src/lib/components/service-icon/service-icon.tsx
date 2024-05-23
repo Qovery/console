@@ -18,22 +18,22 @@ export const iconByService = (service: AnyService) => {
     .with({ serviceType: 'APPLICATION' }, (application) => (
       <Icon
         name={application.build_mode === BuildModeEnum.DOCKER ? IconEnum.DOCKER : IconEnum.BUILDPACKS}
-        className={`w-full h-full ${application.build_mode === BuildModeEnum.DOCKER ? 'relative left-[1px]' : ''}`}
+        className={`${application.build_mode === BuildModeEnum.DOCKER ? 'relative left-[1px] ' : ''}h-full w-full`}
       />
     ))
-    .with({ serviceType: 'CONTAINER' }, () => <Icon name={IconEnum.CONTAINER} className="w-full h-full" />)
-    .with({ job_type: 'CRON' }, () => <Icon name={IconEnum.CRON_JOB} className="w-full h-full" />)
-    .with({ job_type: 'LIFECYCLE' }, () => <Icon name={IconEnum.LIFECYCLE_JOB} className="w-full h-full" />)
-    .with({ serviceType: 'DATABASE' }, () => <Icon name={IconEnum.DATABASE} className="w-full h-full" />)
-    .with({ serviceType: 'HELM' }, () => <Icon name={IconEnum.HELM} className="w-full h-full" />)
+    .with({ serviceType: 'CONTAINER' }, () => <Icon name={IconEnum.CONTAINER} className="h-full w-full" />)
+    .with({ job_type: 'CRON' }, () => <Icon name={IconEnum.CRON_JOB} className="h-full w-full" />)
+    .with({ job_type: 'LIFECYCLE' }, () => <Icon name={IconEnum.LIFECYCLE_JOB} className="h-full w-full" />)
+    .with({ serviceType: 'DATABASE' }, () => <Icon name={IconEnum.DATABASE} className="h-full w-full" />)
+    .with({ serviceType: 'HELM' }, () => <Icon name={IconEnum.HELM} className="h-full w-full" />)
     .exhaustive()
 }
 
 export function ServiceIcon({ service, notRounded, size = '28', padding = '1', className = '' }: ServiceIconProps) {
   return (
     <div
-      className={`flex items-center justify-center shrink-0 
-      ${!notRounded ? 'border border-neutral-200 rounded-full' : ''} 
+      className={`flex shrink-0 items-center justify-center 
+      ${!notRounded ? 'rounded-full border border-neutral-200' : ''} 
       ${className} `}
       style={{
         width: `${size}px`,
@@ -41,7 +41,7 @@ export function ServiceIcon({ service, notRounded, size = '28', padding = '1', c
         padding: `${padding}px`,
       }}
     >
-      <span className={`w-full h-full ${!notRounded ? 'p-1' : ''}`}>{iconByService(service)}</span>
+      <span className={`h-full w-full ${!notRounded ? 'p-1' : ''}`}>{iconByService(service)}</span>
     </div>
   )
 }

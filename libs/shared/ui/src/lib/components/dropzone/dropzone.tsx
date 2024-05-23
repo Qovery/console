@@ -13,13 +13,13 @@ export function Dropzone({ isDragActive, typeFile = '.env', className }: Dropzon
   return (
     <div
       className={twMerge(
-        `flex w-full items-center justify-center min-h-[140px] rounded bg-neutral-100 border border-neutral-250 hover:border-neutral-300 transition-all ease-in-out duration-150 cursor-pointer text-neutral-350 text-xs`,
+        `flex min-h-[140px] w-full cursor-pointer items-center justify-center rounded border border-neutral-250 bg-neutral-100 text-xs text-neutral-350 transition-all duration-150 ease-in-out hover:border-neutral-300`,
         classNamesDragIsActive,
         className
       )}
     >
-      <div className="flex items-center h-full justify-center flex-col text-center">
-        <Icon iconName="file-arrow-down" className="text-xl mb-2" />
+      <div className="flex h-full flex-col items-center justify-center text-center">
+        <Icon iconName="file-arrow-down" className="mb-2 text-xl" />
         {!isDragActive ? (
           <p>
             Click to import your {typeFile} file or

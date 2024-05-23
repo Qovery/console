@@ -68,19 +68,19 @@ export function InputTags(props: InputTagsProps) {
       onFocus={() => setFocused(true)}
       onBlur={() => setFocused(false)}
     >
-      <label className={`${hasFocus ? 'text-xs' : 'text-sm translate-y-2'}`}>{label}</label>
+      <label className={`${hasFocus ? 'text-xs' : 'translate-y-2 text-sm'}`}>{label}</label>
       <div className={`${focused || currentTags?.length > 0 ? 'pt-3' : ''}`}>
         {currentTags.map((tag, index) => (
           <div
             data-testid={`input-tags-${index}`}
             key={index}
-            className="relative select-none inline-flex items-center rounded-[33px] bg-neutral-100 border border-neutral-300 pl-3 pr-7 h-7 mr-1 mt-1 text-sm text-neutral-400"
+            className="relative mr-1 mt-1 inline-flex h-7 select-none items-center rounded-[33px] border border-neutral-300 bg-neutral-100 pl-3 pr-7 text-sm text-neutral-400"
           >
             <span className="text">{tag}</span>
             <div
               data-testid={`input-tags-remove-${index}`}
               onClick={() => removeTag(index)}
-              className="flex items-center justify-center w-4 h-4 rounded-full absolute top-[6px] right-1 text-xs cursor-pointer hover:bg-neutral-200 transition-background ease-out duration-200 "
+              className="transition-background absolute right-1 top-[6px] flex h-4 w-4 cursor-pointer items-center justify-center rounded-full text-xs duration-200 ease-out hover:bg-neutral-200 "
             >
               <Icon iconName="xmark" />
             </div>
@@ -93,8 +93,8 @@ export function InputTags(props: InputTagsProps) {
           type="text"
           className={`${!focused ? 'text-transparent' : ''} ${
             focused || currentTags?.length > 0 || inputValue.length > 0
-              ? 'inline-flex text-neutral-400 text-ssm'
-              : 'absolute top-0 left-0 w-full h-full bg-transparent'
+              ? 'inline-flex text-ssm text-neutral-400'
+              : 'absolute left-0 top-0 h-full w-full bg-transparent'
           }`}
           placeholder={currentTags?.length > 0 ? placeholder : ''}
           onChange={(e) => setInputValue(e.currentTarget.value)}

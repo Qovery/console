@@ -31,7 +31,7 @@ export function DeploymentRuleItem(props: DeploymentRuleItemProps) {
       items: [
         {
           name: 'Edit rule',
-          contentLeft: <Icon name="icon-solid-pen" className="text-brand-400 text-sm" />,
+          contentLeft: <Icon name="icon-solid-pen" className="text-sm text-brand-400" />,
           link: {
             url: `${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_DEPLOYMENT_RULES_URL}/edit/${id}`,
           },
@@ -43,7 +43,7 @@ export function DeploymentRuleItem(props: DeploymentRuleItemProps) {
         {
           name: 'Delete rule',
           textClassName: '!text-red-500',
-          contentLeft: <Icon name="icon-solid-trash" className="text-red-500 text-sm" />,
+          contentLeft: <Icon name="icon-solid-trash" className="text-sm text-red-500" />,
           onClick: () => removeDeploymentRule(id),
         },
       ],
@@ -67,14 +67,14 @@ export function DeploymentRuleItem(props: DeploymentRuleItemProps) {
       data-testid="item"
       className={`${
         isLast ? 'rounded-b' : ''
-      } border bg-neutral-100 border-neutral-250 flex px-5 py-4 -mt-px justify-between`}
+      } -mt-px flex justify-between border border-neutral-250 bg-neutral-100 px-5 py-4`}
     >
       <div>
         <Skeleton show={isLoading} width={180} height={20} className="mb-1">
-          <h3 className="text-sm text-neutral-400 font-medium max-w-full truncate">{name}</h3>
+          <h3 className="max-w-full truncate text-sm font-medium text-neutral-400">{name}</h3>
         </Skeleton>
         <Skeleton show={isLoading} width={300} height={20}>
-          <p data-testid="time" className="text-xs text-neutral-400 max-w-full truncate">
+          <p data-testid="time" className="max-w-full truncate text-xs text-neutral-400">
             {dateToHours(startTime)} - {dateToHours(stopTime)}
             {isWeekdays() && weekDays.length < 7 ? ' - Running every weekday' : ''}
             {weekDays.length === 7 && ' - Running everyday'}
@@ -83,8 +83,8 @@ export function DeploymentRuleItem(props: DeploymentRuleItemProps) {
         </Skeleton>
       </div>
       <Skeleton show={isLoading} width={58} height={30}>
-        <div className="flex border border-neutral-250 rounded h-[34px] overflow-hidden">
-          <span className="w-8 h-8 flex items-center bg-white justify-center border-r border-neutral-250 text-neutral-350 text-xs cursor-pointer hover:bg-brand-50 hover:text-brand-500 transition">
+        <div className="flex h-[34px] overflow-hidden rounded border border-neutral-250">
+          <span className="flex h-8 w-8 cursor-pointer items-center justify-center border-r border-neutral-250 bg-white text-xs text-neutral-350 transition hover:bg-brand-50 hover:text-brand-500">
             <Icon name="icon-solid-grip-lines" />
           </span>
           <Menu
@@ -93,7 +93,7 @@ export function DeploymentRuleItem(props: DeploymentRuleItemProps) {
             onOpen={(isOpen: boolean) => setMenuOpen(isOpen)}
             trigger={
               <span
-                className={`w-8 h-8 flex items-center justify-center text-xs bg-white cursor-pointer hover:bg-brand-50 hover:text-brand-500 transition ${
+                className={`flex h-8 w-8 cursor-pointer items-center justify-center bg-white text-xs transition hover:bg-brand-50 hover:text-brand-500 ${
                   menuOpen ? 'bg-neutral-150 text-brand-500' : 'text-neutral-350'
                 }`}
               >

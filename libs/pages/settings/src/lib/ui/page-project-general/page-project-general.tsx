@@ -22,8 +22,8 @@ export function PageProjectGeneral(props: PageProjectGeneralProps) {
   const { control, formState, getValues } = useFormContext()
 
   return (
-    <div key={getValues().toString()} className="flex flex-col justify-between w-full">
-      <Section className="p-8 max-w-content-with-navigation-left">
+    <div key={getValues().toString()} className="flex w-full flex-col justify-between">
+      <Section className="max-w-content-with-navigation-left p-8">
         <Heading className="mb-10">General</Heading>
         <form onSubmit={onSubmit}>
           <BlockContent title="Project settings">

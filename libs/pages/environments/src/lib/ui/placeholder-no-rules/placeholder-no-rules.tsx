@@ -9,15 +9,15 @@ export function PlaceholderNoRules({ linkNewRule }: PlaceholderNoRulesProps) {
   const navigate = useNavigate()
 
   return (
-    <div className="flex-grow overflow-y-auto flex">
-      <div className="flex justify-center items-center flex-grow">
+    <div className="flex flex-grow overflow-y-auto">
+      <div className="flex flex-grow items-center justify-center">
         <div className="flex flex-col items-center">
           <img
-            className="pointer-events-none user-none mb-5"
+            className="user-none pointer-events-none mb-5"
             src="/assets/images/event-placeholder-light.svg"
             alt="Event placeholder"
           />
-          <h2 className="text-base text-neutral-400 font-medium mb-5">
+          <h2 className="mb-5 text-base font-medium text-neutral-400">
             Create your first Deployment Rules <span role="img">🕹</span>
           </h2>
           <Button size="lg" onClick={() => navigate(linkNewRule)}>

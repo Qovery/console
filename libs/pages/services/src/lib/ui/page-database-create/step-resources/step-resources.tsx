@@ -19,7 +19,7 @@ export function StepResources({ onSubmit, isManaged, onBack, databaseType }: Ste
     <Section>
       <Heading className="mb-2">General information</Heading>
       <form className="space-y-10" onSubmit={onSubmit}>
-        <p className="text-neutral-350 text-sm">Customize the resources assigned to the service.</p>
+        <p className="text-sm text-neutral-350">Customize the resources assigned to the service.</p>
 
         <Section className="gap-4">
           <Heading>Resources configuration</Heading>

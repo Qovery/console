@@ -45,7 +45,7 @@ export function ModalConfirmation({
 
   return (
     <div className="p-6">
-      <h2 className="h4 text-neutral-400 mb-2 max-w-sm">{title}</h2>
+      <h2 className="h4 mb-2 max-w-sm text-neutral-400">{title}</h2>
       {warning && (
         <Callout.Root className="mb-2" color="yellow">
           <Callout.Icon>
@@ -54,7 +54,7 @@ export function ModalConfirmation({
           <Callout.Text>{warning}</Callout.Text>
         </Callout.Root>
       )}
-      <div className="text-neutral-350 text-sm mb-6">
+      <div className="mb-6 text-sm text-neutral-350">
         {isDelete ? (
           description ? (
             description
@@ -70,7 +70,7 @@ export function ModalConfirmation({
               <span
                 data-testid="copy-cta"
                 onClick={copyToClipboard}
-                className="link inline cursor-pointer text-sky-500 text-sm ml-1 truncate max-w-[250px]"
+                className="link ml-1 inline max-w-[250px] cursor-pointer truncate text-sm text-sky-500"
               >
                 {name} <Icon name="icon-solid-copy" />
               </span>
@@ -101,7 +101,7 @@ export function ModalConfirmation({
           )}
         />
         {children}
-        <div className="flex gap-3 justify-end">
+        <div className="flex justify-end gap-3">
           <Button type="button" color="neutral" variant="plain" size="lg" onClick={() => closeModal()}>
             Cancel
           </Button>

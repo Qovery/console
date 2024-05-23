@@ -8,7 +8,7 @@ export interface AWSExistingVPCProps {
 
 function Subnets({ title, value }: { title: string; value?: string[] | null }) {
   return (
-    <li className="flex flex-col text-xs gap-1">
+    <li className="flex flex-col gap-1 text-xs">
       <span className="font-medium">{title}</span>
       {value && value.length > 0 ? (
         value.map((subnetId: string, index: number) => <span key={index}>{subnetId}</span>)
@@ -21,13 +21,13 @@ function Subnets({ title, value }: { title: string; value?: string[] | null }) {
 
 export function AWSExistingVPC({ feature }: AWSExistingVPCProps) {
   return (
-    <div className="flex flex-col justify-between p-4 rounded border bg-neutral-100 border-neutral-250 mb-5">
-      <h4 className="text-neutral-400 text-sm font-medium mb-1">Deploy on an existing VPC</h4>
-      <p className="text-neutral-350 text-sm mb-4">In your VPC settings, you have to enable DNS hostnames.</p>
+    <div className="mb-5 flex flex-col justify-between rounded border border-neutral-250 bg-neutral-100 p-4">
+      <h4 className="mb-1 text-sm font-medium text-neutral-400">Deploy on an existing VPC</h4>
+      <p className="mb-4 text-sm text-neutral-350">In your VPC settings, you have to enable DNS hostnames.</p>
       <InputText name="vpc_id" label="VPC ID" value={feature.aws_vpc_eks_id} className="mb-4" disabled />
       <ul className="grid gap-4">
         <li className="text-neutral-400">
-          <span className="flex items-center font-medium text-xs mb-1">
+          <span className="mb-1 flex items-center text-xs font-medium">
             <Icon name={IconEnum.EKS} width="16" className="mr-2" />
             EKS subnet IDs
           </span>
@@ -39,7 +39,7 @@ export function AWSExistingVPC({ feature }: AWSExistingVPCProps) {
         </li>
 
         <li className="text-neutral-400">
-          <span className="flex items-center font-medium text-xs mb-1">
+          <span className="mb-1 flex items-center text-xs font-medium">
             <Icon name={IconEnum.MONGODB} width="16" className="mr-2" />
             MongoDB subnet IDs
           </span>
@@ -51,7 +51,7 @@ export function AWSExistingVPC({ feature }: AWSExistingVPCProps) {
         </li>
 
         <li className="text-neutral-400">
-          <span className="flex items-center font-medium text-xs mb-1">
+          <span className="mb-1 flex items-center text-xs font-medium">
             <Icon name={IconEnum.REDIS} width="16" className="mr-2" />
             Redis subnet IDs
           </span>
@@ -63,7 +63,7 @@ export function AWSExistingVPC({ feature }: AWSExistingVPCProps) {
         </li>
 
         <li className="text-neutral-400">
-          <span className="flex items-center font-medium text-xs mb-1">MySQL/PostgreSQL subnet IDs</span>
+          <span className="mb-1 flex items-center text-xs font-medium">MySQL/PostgreSQL subnet IDs</span>
           <ul className="grid grid-cols-3 gap-4">
             <Subnets title="Zone A:" value={feature.rds_subnets_zone_a_ids} />
             <Subnets title="Zone B:" value={feature.rds_subnets_zone_b_ids} />

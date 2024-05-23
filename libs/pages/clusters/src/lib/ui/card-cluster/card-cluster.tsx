@@ -45,21 +45,21 @@ export function CardCluster({ organizationId, cluster }: CardClusterProps) {
     .otherwise(() => cluster.cloud_provider)
 
   return (
-    <div data-testid={`cluster-list-${cluster.id}`} className="border border-neutral-200 rounded p-5">
-      <div className="flex justify-between gap-4 mb-5">
+    <div data-testid={`cluster-list-${cluster.id}`} className="rounded border border-neutral-200 p-5">
+      <div className="mb-5 flex justify-between gap-4">
         <div className="flex items-center">
           <Icon className="mr-3" name={cardIcon} />
           <div className="flex flex-col">
             <div className="flex">
-              <h2 className="inline-flex basis-40 items-center text-xs text-neutral-400 font-medium">
-                <span className="block mr-2 line-clamp-2">{cluster.name}</span>
+              <h2 className="inline-flex basis-40 items-center text-xs font-medium text-neutral-400">
+                <span className="mr-2 line-clamp-2 block">{cluster.name}</span>
                 <StatusChip status={clusterStatus?.status} />
               </h2>
             </div>
             <Skeleton height={12} width={100} show={isClusterStatusLoading}>
               <p
                 data-testid="status-message"
-                className={`text-2xs mt-0.5 font-medium ${getColorForStatus(clusterStatus?.status)}`}
+                className={`mt-0.5 text-2xs font-medium ${getColorForStatus(clusterStatus?.status)}`}
               >
                 {getStatusClusterMessage(clusterStatus?.status, clusterStatus?.is_deployed)}
               </p>

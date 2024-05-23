@@ -26,8 +26,8 @@ export function PlaceholderLogs({
   hideLogs,
 }: PlaceholderLogsProps) {
   const defaultLoader = (
-    <div className="w-full flex justify-center text-center">
-      <LoaderSpinner className="w-6 h-6" theme="dark" />
+    <div className="flex w-full justify-center text-center">
+      <LoaderSpinner className="h-6 w-6" theme="dark" />
     </div>
   )
 
@@ -50,11 +50,11 @@ export function PlaceholderLogs({
             {!customPlaceholder && outOfDateOrUpToDate ? (
               <>
                 {/* Display message about no logs available */}
-                <p className="text-neutral-50 font-medium mb-1">
+                <p className="mb-1 font-medium text-neutral-50">
                   No logs on this execution for <span className="text-brand-400">{serviceName}</span>.
                 </p>
                 {serviceDeploymentStatus !== ServiceDeploymentStatusEnum.NEVER_DEPLOYED && (
-                  <p className="text-neutral-300 font-normal text-sm">
+                  <p className="text-sm font-normal text-neutral-300">
                     This service was deployed more than 30 days ago and thus no deployment logs are available.
                   </p>
                 )}
@@ -72,7 +72,7 @@ export function PlaceholderLogs({
   }
 
   return (
-    <div data-testid="placeholder-screen" className="w-full h-full pt-[88px] bg-neutral-650 text-center">
+    <div data-testid="placeholder-screen" className="h-full w-full bg-neutral-650 pt-[88px] text-center">
       {type === 'deployment' && deploymentPlaceholder()}
 
       {type === 'live' && (
@@ -81,12 +81,12 @@ export function PlaceholderLogs({
             defaultLoader
           ) : (
             <div className="text-center">
-              <p className="text-neutral-50 font-medium mb-1">
+              <p className="mb-1 font-medium text-neutral-50">
                 No logs are available for <span className="text-brand-400">{serviceName}</span>.
               </p>
 
               {databaseMode === DatabaseModeEnum.MANAGED && (
-                <p className="text-neutral-300 font-normal text-sm">
+                <p className="text-sm font-normal text-neutral-300">
                   Managed Databases are managed by your cloud providers. Logs can be found within your cloud provider
                   console.
                 </p>
@@ -101,7 +101,7 @@ export function PlaceholderLogs({
           {!loadingStatus || loadingStatus === 'not loaded' ? (
             defaultLoader
           ) : (
-            <p className="text-neutral-50 font-medium mb-1">No logs available (yet).</p>
+            <p className="mb-1 font-medium text-neutral-50">No logs available (yet).</p>
           )}
         </div>
       )}

@@ -50,7 +50,7 @@ export function LastCommit({ className, service, gitRepository }: LastCommitProp
           }}
         >
           <p>
-            For <strong className="text-neutral-400 font-medium">{service.name}</strong>
+            For <strong className="font-medium text-neutral-400">{service.name}</strong>
           </p>
         </SelectCommitModal>
       ),
@@ -78,15 +78,15 @@ export function LastCommit({ className, service, gitRepository }: LastCommitProp
             color="neutral"
             size="xs"
             className={twMerge(
-              `group justify-between relative ${delta > 0 ? 'w-[98px] pr-[26px]' : 'gap-1'}`,
+              `group relative justify-between ${delta > 0 ? 'w-[98px] pr-[26px]' : 'gap-1'}`,
               className
             )}
             onClick={deployCommitVersion}
           >
-            <Icon iconName="rotate-right" className="hidden group-hover:inline w-4" />
-            <Icon iconName="code-commit" className="group-hover:hidden w-4" />
+            <Icon iconName="rotate-right" className="hidden w-4 group-hover:inline" />
+            <Icon iconName="code-commit" className="w-4 group-hover:hidden" />
             {deployedCommit.git_commit_id.substring(0, 7)}
-            <span className="absolute -right-[1px] -top-[1px] bottom-0 min-w-[22px] h-[calc(100%+2px)] bg-brand-500 text-white px-1 rounded-tr rounded-br flex items-center justify-center">
+            <span className="absolute -right-[1px] -top-[1px] bottom-0 flex h-[calc(100%+2px)] min-w-[22px] items-center justify-center rounded-br rounded-tr bg-brand-500 px-1 text-white">
               {delta}
             </span>
           </Button>
@@ -99,8 +99,8 @@ export function LastCommit({ className, service, gitRepository }: LastCommitProp
               size="xs"
               className={twMerge('group justify-between', className)}
             >
-              <Icon iconName="copy" className="hidden group-hover:inline w-4" />
-              <Icon iconName="code-commit" className="group-hover:hidden w-4" />
+              <Icon iconName="copy" className="hidden w-4 group-hover:inline" />
+              <Icon iconName="code-commit" className="w-4 group-hover:hidden" />
               {deployedCommit.git_commit_id.substring(0, 7)}
             </Button>
           </CopyToClipboard>

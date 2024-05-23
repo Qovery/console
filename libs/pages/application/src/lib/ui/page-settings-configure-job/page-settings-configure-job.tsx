@@ -14,8 +14,8 @@ export function PageSettingsConfigureJob({ service, loading, onSubmit }: PageSet
   const { formState } = useFormContext()
 
   return (
-    <div className="flex flex-col justify-between w-full">
-      <div className="p-8 max-w-content-with-navigation-left">
+    <div className="flex w-full flex-col justify-between">
+      <div className="max-w-content-with-navigation-left p-8">
         <form onSubmit={onSubmit}>
           <BlockContent title="Configuration job" classNameContent="space-y-10">
             <JobConfigureSettings

@@ -114,7 +114,7 @@ const TabsContent = forwardRef<ElementRef<typeof TabsPrimitive.Content>, TabsCon
   { className, ...rest },
   ref
 ) {
-  return <TabsPrimitive.Content {...rest} ref={ref} className={twMerge('outline-0 relative', className)} />
+  return <TabsPrimitive.Content {...rest} ref={ref} className={twMerge('relative outline-0', className)} />
 })
 
 const Tabs = Object.assign(

@@ -4,10 +4,10 @@ exports[`OutputVariables should match snapshot 1`] = `
 <body>
   <div>
     <div
-      class="border rounded overflow-hidden"
+      class="overflow-hidden rounded border"
     >
       <table
-        class="divide-y divide-neutral-200 text-neutral-400 w-full text-xs min-w-[800px]"
+        class="divide-y divide-neutral-200 text-neutral-400 w-full min-w-[800px] text-xs"
       >
         <thead>
           <tr>
@@ -72,7 +72,7 @@ exports[`OutputVariables should match snapshot 1`] = `
                   />
                 </span>
                 <span
-                  class="text-xl tracking-widest font-medium pt-1.5"
+                  class="pt-1.5 text-xl font-medium tracking-widest"
                   data-testid="hide_value_secret"
                 >
                   *************
@@ -112,7 +112,7 @@ exports[`OutputVariables should match snapshot 1`] = `
                   />
                 </button>
                 <span
-                  class="text-neutral-350 text-xl tracking-widest font-medium pt-1.5"
+                  class="pt-1.5 text-xl font-medium tracking-widest text-neutral-350"
                   data-state="closed"
                   data-testid="hide_value"
                 >

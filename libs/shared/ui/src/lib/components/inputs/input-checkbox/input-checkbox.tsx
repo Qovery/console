@@ -52,7 +52,7 @@ export function InputCheckbox(props: InputCheckboxProps) {
   }
 
   return (
-    <div className={`relative flex gap-2 items-center ${className}`}>
+    <div className={`relative flex items-center gap-2 ${className}`}>
       <input
         data-testid={dataTestId}
         id={id}
@@ -62,23 +62,23 @@ export function InputCheckbox(props: InputCheckboxProps) {
         checked={check}
         disabled={disabled}
         onChange={(e) => inputChange(e.currentTarget.checked, e)}
-        className={`input-checkbox relative font-icons w-0 h-0 appearance-none before:absolute before:flex before:justify-center before:items-center before:text-white before:top-0 before:left-0 before:-translate-y-1/2 before:rounded-sm before:bg-white dark:before:bg-neutral-500 ${bigClasses} ${
+        className={`input-checkbox relative h-0 w-0 appearance-none font-icons before:absolute before:left-0 before:top-0 before:flex before:-translate-y-1/2 before:items-center before:justify-center before:rounded-sm before:bg-white before:text-white dark:before:bg-neutral-500 ${bigClasses} ${
           disabled
             ? 'before:border-neutral-250 dark:before:border-neutral-350'
-            : 'before:border-neutral-350 cursor-pointer'
-        } before:border-2 before:font-black before:text-xs before:leading-none before:content-[''] before:transition-all checked:before:bg-brand-500 checked:before:border-brand-500`}
+            : 'cursor-pointer before:border-neutral-350'
+        } before:border-2 before:text-xs before:font-black before:leading-none before:transition-all before:content-[''] checked:before:border-brand-500 checked:before:bg-brand-500`}
       />
       {label && (
         <label
           htmlFor={id}
-          className={`cursor-pointer leading-5 h-5 text-neutral-400 dark:text-neutral-300 text-sm ${
+          className={`h-5 cursor-pointer text-sm leading-5 text-neutral-400 dark:text-neutral-300 ${
             big ? 'font-medium' : ''
           } ${disabled ? '' : 'cursor-pointer'}`}
         >
           {label}
         </label>
       )}
-      {check && <Icon iconName="check" className={`text-white absolute text-2xs ${big ? 'left-1.5' : 'left-1'}`} />}
+      {check && <Icon iconName="check" className={`absolute text-2xs text-white ${big ? 'left-1.5' : 'left-1'}`} />}
     </div>
   )
 }

@@ -65,25 +65,25 @@ export function DeploymentLogs({
   )
 
   const placeholderDeploymentHistory = deploymentsByServiceId.length !== 0 && (
-    <div className="flex items-center flex-col text-center">
+    <div className="flex flex-col items-center text-center">
       <div>
-        <p className="mb-1 text-neutral-50 font-text-neutral-50 font-medium">
+        <p className="font-text-neutral-50 mb-1 font-medium text-neutral-50">
           <span className="text-brand-400">{service?.name}</span> service was not deployed within this deployment
           execution.
         </p>
-        <p className="text-neutral-300 font-normal text-sm mb-10">
+        <p className="mb-10 text-sm font-normal text-neutral-300">
           Below the list of executions where this service was deployed.
         </p>
       </div>
-      <div className="bg-neutral-700 border border-neutral-500 rounded-lg overflow-hidden w-[484px]">
-        <div className="py-3 text-neutral-50 bg-neutral-600 border-b border-neutral-500 font-medium">
+      <div className="w-[484px] overflow-hidden rounded-lg border border-neutral-500 bg-neutral-700">
+        <div className="border-b border-neutral-500 bg-neutral-600 py-3 font-medium text-neutral-50">
           Last deployment logs
         </div>
-        <div className="overflow-y-auto max-h-96 p-2">
+        <div className="max-h-96 overflow-y-auto p-2">
           {deploymentsByServiceId?.map((deploymentHistory: DeploymentService) => (
             <div key={deploymentHistory.execution_id} className="flex items-center pb-2 last:pb-0">
               <Link
-                className={`flex justify-between transition bg-neutral-550 hover:bg-neutral-600 w-full p-3 rounded ${
+                className={`flex w-full justify-between rounded bg-neutral-550 p-3 transition hover:bg-neutral-600 ${
                   versionId === deploymentHistory.execution_id ? 'bg-neutral-600' : ''
                 }`}
                 to={
@@ -92,16 +92,16 @@ export function DeploymentLogs({
                 }
               >
                 <span className="flex">
-                  <StatusChip className="mr-3 relative top-[2px]" status={deploymentHistory.status} />
-                  <span className="text-brand-300 text-ssm">{trimId(deploymentHistory.execution_id || '')}</span>
+                  <StatusChip className="relative top-[2px] mr-3" status={deploymentHistory.status} />
+                  <span className="text-ssm text-brand-300">{trimId(deploymentHistory.execution_id || '')}</span>
                 </span>
-                <span className="text-neutral-300 text-ssm">{dateFullFormat(deploymentHistory.created_at)}</span>
+                <span className="text-ssm text-neutral-300">{dateFullFormat(deploymentHistory.created_at)}</span>
               </Link>
             </div>
           ))}
         </div>
-        <div className="flex items-center justify-center bg-neutral-600 h-9 border-t border-neutral-500">
-          <p className="text-neutral-350 text-xs font-normal">
+        <div className="flex h-9 items-center justify-center border-t border-neutral-500 bg-neutral-600">
+          <p className="text-xs font-normal text-neutral-350">
             Only the last 20 deployments of the environment over the last 30 days are available.
           </p>
         </div>
@@ -131,7 +131,7 @@ export function DeploymentLogs({
       {logs.length >= 500 && showPreviousLogs === false && (
         <button
           type="button"
-          className="block py-1.5 bg-neutral-500 hover:bg-neutral-600 transition text-neutral-250 text-center text-sm font-medium w-full"
+          className="block w-full bg-neutral-500 py-1.5 text-center text-sm font-medium text-neutral-250 transition hover:bg-neutral-600"
           onClick={() => setShowPreviousLogs?.(true)}
         >
           Load previous logs

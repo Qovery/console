@@ -45,33 +45,33 @@ export function Avatar(props: AvatarProps) {
     <div
       data-testid="avatar"
       style={{ width: size, height: size }}
-      className={`block rounded-full relative ${defineClass} ${className}`}
+      className={`relative block rounded-full ${defineClass} ${className}`}
       onClick={() => onClick && onClick()}
     >
       {url ? (
-        <img src={url} alt={alt} className="w-full h-full rounded-full" />
+        <img src={url} alt={alt} className="h-full w-full rounded-full" />
       ) : (
-        <div className="w-full h-full rounded-full bg-neutral-200 text-center flex justify-center items-center">
-          <span className="text-xs text-neutral-400 font-medium relative">
+        <div className="flex h-full w-full items-center justify-center rounded-full bg-neutral-200 text-center">
+          <span className="relative text-xs font-medium text-neutral-400">
             {firstName && firstName.charAt(0).toUpperCase()}
             {lastName && lastName.charAt(0).toUpperCase()}
           </span>
         </div>
       )}
       {icon && (
-        <Icon data-testid="avatar-icon" name={icon} className="absolute -bottom-1 -right-1 w-4 h-4 drop-shadow-sm" />
+        <Icon data-testid="avatar-icon" name={icon} className="absolute -bottom-1 -right-1 h-4 w-4 drop-shadow-sm" />
       )}
       {(logoUrl || logoText) && (
         <div
           data-testid="avatar-logo"
-          className="flex items-center text-sm font-medium w-[18px] h-[18px] rounded-full absolute top-[24px] -right-[2px]"
+          className="absolute -right-[2px] top-[24px] flex h-[18px] w-[18px] items-center rounded-full text-sm font-medium"
         >
           {logoUrl ? (
-            <span className="flex items-center justify-center w-full h-full bg-neutral-50 rounded-full p-[2px]">
+            <span className="flex h-full w-full items-center justify-center rounded-full bg-neutral-50 p-[2px]">
               <img src={logoUrl} alt="Logo Organization" />
             </span>
           ) : (
-            <span className="w-full h-full text-2xs text-neutral-350 bg-neutral-150 border border-neutral-50 rounded-full flex items-center justify-center uppercase">
+            <span className="flex h-full w-full items-center justify-center rounded-full border border-neutral-50 bg-neutral-150 text-2xs uppercase text-neutral-350">
               {logoText}
             </span>
           )}

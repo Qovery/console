@@ -108,7 +108,7 @@ export function ShowUsageModal({ organizationId, renewalAt, onSubmit, onClose, l
       onClose={onClose}
       loading={loading}
     >
-      <Callout.Root className="text-xs mb-5" color="yellow">
+      <Callout.Root className="mb-5 text-xs" color="yellow">
         <Callout.Icon>
           <Icon iconName="triangle-exclamation" />
         </Callout.Icon>

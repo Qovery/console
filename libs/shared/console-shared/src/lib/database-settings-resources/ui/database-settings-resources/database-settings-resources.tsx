@@ -128,10 +128,10 @@ export function DatabaseSettingsResources({
                   error?.type === 'required'
                     ? 'Please enter a size.'
                     : error?.type === 'max'
-                    ? `Maximum allowed ${field.name} is: ${maxMemoryBySize} MiB.`
-                    : error?.type === 'min'
-                    ? `Minimum allowed ${field.name} is: ${minMemory} MiB.`
-                    : undefined
+                      ? `Maximum allowed ${field.name} is: ${maxMemoryBySize} MiB.`
+                      : error?.type === 'min'
+                        ? `Minimum allowed ${field.name} is: ${minMemory} MiB.`
+                        : undefined
                 }
               />
             )}

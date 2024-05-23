@@ -26,28 +26,28 @@ export function PageOrganizationRolesEdit(props: PageOrganizationRolesEditProps)
   const { organizationId = '' } = useParams()
 
   return (
-    <div className="flex flex-col justify-between w-full">
+    <div className="flex w-full flex-col justify-between">
       <div className="p-8">
         {loading ? (
-          <div data-testid="custom-roles-loader" className="flex justify-center mt-5">
+          <div data-testid="custom-roles-loader" className="mt-5 flex justify-center">
             <LoaderSpinner className="w-6" />
           </div>
         ) : (
           currentRole && (
             <>
-              <div className="flex justify-between mb-8">
+              <div className="mb-8 flex justify-between">
                 <div>
                   <Link
                     color="brand"
                     size="xs"
-                    className="gap-1 mb-1"
+                    className="mb-1 gap-1"
                     to={SETTINGS_URL(organizationId) + SETTINGS_ROLES_URL}
                   >
                     <Icon iconName="arrow-left" className="mr-1 text-xs" />
                     Back
                   </Link>
-                  <h1 className="h5 text-neutral-400 mb-2">Edit your custom role: {currentRole.name}</h1>
-                  <p className="text-neutral-400 text-xs">
+                  <h1 className="h5 mb-2 text-neutral-400">Edit your custom role: {currentRole.name}</h1>
+                  <p className="text-xs text-neutral-400">
                     Set permissions for your custom role. Cluster level permissions allow you to define access
                     permission to each cluster of your organization (default is "Read-only"). Project Level permissions
                     allow you to customize the access to each project and its environments based on its type (PROD,DEV
@@ -124,7 +124,7 @@ export function PageOrganizationRolesEdit(props: PageOrganizationRolesEditProps)
                     ))}
                   </Table>
                 )}
-                <div className="flex gap-3 justify-between mt-6 mb-24">
+                <div className="mb-24 mt-6 flex justify-between gap-3">
                   <Button
                     type="button"
                     data-testid="delete-button"

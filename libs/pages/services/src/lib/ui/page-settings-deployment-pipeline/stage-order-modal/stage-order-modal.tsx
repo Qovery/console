@@ -40,8 +40,8 @@ export function StageOrderModal(props: StageOrderModalProps) {
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <div className="p-6">
-        <h2 className="h4 text-neutral-400 max-w-sm truncate mb-1">Edit execution order</h2>
-        <p className="mb-6 text-neutral-350 text-sm">You can drag and drop stages to modify their order.</p>
+        <h2 className="h4 mb-1 max-w-sm truncate text-neutral-400">Edit execution order</h2>
+        <p className="mb-6 text-sm text-neutral-350">You can drag and drop stages to modify their order.</p>
         <ScrollShadowWrapper className="max-h-[500px]">
           <Droppable droppableId="0">
             {(provided) => (
@@ -53,10 +53,10 @@ export function StageOrderModal(props: StageOrderModalProps) {
                         ref={provided.innerRef}
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
-                        className="!top-[auto] !left-[auto] flex items-center mb-1"
+                        className="!left-[auto] !top-[auto] mb-1 flex items-center"
                       >
                         <div
-                          className={`text-center w-5 h-5 text-sm text-neutral-400 mr-3 ${
+                          className={`mr-3 h-5 w-5 text-center text-sm text-neutral-400 ${
                             snapshot.isDragging ? 'opacity-0' : ''
                           }`}
                         >
@@ -64,7 +64,7 @@ export function StageOrderModal(props: StageOrderModalProps) {
                         </div>
                         <div className={snapshot && classNameItem(snapshot.isDragging)}>
                           <BadgeDeploymentOrder order={stage.deployment_order} />
-                          <span className="block ml-1">{stage.name}</span>
+                          <span className="ml-1 block">{stage.name}</span>
                         </div>
                       </div>
                     )}
@@ -75,7 +75,7 @@ export function StageOrderModal(props: StageOrderModalProps) {
             )}
           </Droppable>
         </ScrollShadowWrapper>
-        <div className="flex gap-3 justify-end mt-6">
+        <div className="mt-6 flex justify-end gap-3">
           <Button data-testid="cancel-button" size="lg" color="neutral" variant="plain" onClick={() => props.onClose()}>
             Cancel
           </Button>

@@ -7,16 +7,16 @@ export function BenefitsCard() {
   ]
 
   return (
-    <div className="w-80 bg-white border border-neutral-250 rounded-md">
+    <div className="w-80 rounded-md border border-neutral-250 bg-white">
       <div className="p-8">
         <span className="text-4xl" role="img" aria-label="light">
           💡
         </span>
-        <h2 className="h5 text-neutral-400 mt-5 mb-5">What is an organization, what is a project?</h2>
-        <ul className="text-sm ml-2">
+        <h2 className="h5 mb-5 mt-5 text-neutral-400">What is an organization, what is a project?</h2>
+        <ul className="ml-2 text-sm">
           {LIST.map((l, index) => (
             <li
-              className="text-neutral-400 mb-2 flex gap-3 before:content-[''] before:w-1 before:h-1 before:rounded-full before:shrink-0 before:mt-2 before:bg-neutral-400"
+              className="mb-2 flex gap-3 text-neutral-400 before:mt-2 before:h-1 before:w-1 before:shrink-0 before:rounded-full before:bg-neutral-400 before:content-['']"
               key={index}
             >
               {l}
@@ -24,13 +24,13 @@ export function BenefitsCard() {
           ))}
         </ul>
       </div>
-      <div className="p-8 hidden">
-        <p className="text-sm text-neutral-400 mb-5">You may find these links useful</p>
+      <div className="hidden p-8">
+        <p className="mb-5 text-sm text-neutral-400">You may find these links useful</p>
         <a
           href="https://hub.qovery.com/docs/using-qovery/configuration/environment/"
           target="_blank"
           rel="noreferrer"
-          className="link text-sky-500 text-sm block mb-3"
+          className="link mb-3 block text-sm text-sky-500"
         >
           How to configure an environment <Icon name="icon-solid-arrow-up-right-from-square" />
         </a>
@@ -38,7 +38,7 @@ export function BenefitsCard() {
           href="https://hub.qovery.com/docs/using-qovery/configuration/environment/"
           target="_blank"
           rel="noreferrer"
-          className="link text-sky-500 text-sm block"
+          className="link block text-sm text-sky-500"
         >
           Set parameters on my environment <Icon name="icon-solid-arrow-up-right-from-square" />
         </a>

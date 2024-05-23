@@ -46,14 +46,14 @@ export function InputSearch(props: InputSearchProps) {
       <div className={twMerge('relative w-full', className)}>
         <Icon
           name="icon-solid-magnifying-glass"
-          className="absolute left-3 top-1/2 -translate-y-1/2 block text-base text-neutral-400 dark:text-white leading-none"
+          className="absolute left-3 top-1/2 block -translate-y-1/2 text-base leading-none text-neutral-400 dark:text-white"
         />
         <input
           data-testid="input-search"
           ref={ref}
           autoFocus={autofocus}
           className={twMerge(
-            'w-full rounded border border-neutral-250 dark:border-neutral-350 dark:bg-transparent text-neutral-400 dark:text-white placeholder:text-neutral-350 dark:placeholder:text-neutral-250 pl-10 pr-6 leading-none focus:outline-none focus:border-brand-400 focus:transition-[border-color]',
+            'w-full rounded border border-neutral-250 pl-10 pr-6 leading-none text-neutral-400 placeholder:text-neutral-350 focus:border-brand-400 focus:outline-none focus:transition-[border-color] dark:border-neutral-350 dark:bg-transparent dark:text-white dark:placeholder:text-neutral-250',
             customSize
           )}
           type="text"
@@ -64,7 +64,7 @@ export function InputSearch(props: InputSearchProps) {
         />
         {toggleDelete && (
           <button className="absolute right-3 top-1/2 -translate-y-1/2" onClick={deleteValue}>
-            <Icon className="text-neutral-400 dark:text-white text-sm" iconName="circle-xmark" />
+            <Icon className="text-sm text-neutral-400 dark:text-white" iconName="circle-xmark" />
           </button>
         )}
       </div>
@@ -73,9 +73,9 @@ export function InputSearch(props: InputSearchProps) {
           {emptyContent ? (
             emptyContent
           ) : (
-            <div className="text-center px-3 py-6">
+            <div className="px-3 py-6 text-center">
               <Icon iconName="wave-pulse" className="text-neutral-350" />
-              <p className="text-neutral-350 font-medium text-xs mt-1">No result for this search</p>
+              <p className="mt-1 text-xs font-medium text-neutral-350">No result for this search</p>
             </div>
           )}
         </div>

@@ -46,18 +46,18 @@ export function useService<
   R = T extends ApplicationType
     ? Application
     : T extends ContainerType
-    ? Container
-    : T extends DatabaseType
-    ? Database
-    : T extends JobType
-    ? Job
-    : T extends 'CRON_JOB'
-    ? Job
-    : T extends 'LIFECYCLE_JOB'
-    ? Job
-    : T extends HelmType
-    ? Helm
-    : never
+      ? Container
+      : T extends DatabaseType
+        ? Database
+        : T extends JobType
+          ? Job
+          : T extends 'CRON_JOB'
+            ? Job
+            : T extends 'LIFECYCLE_JOB'
+              ? Job
+              : T extends HelmType
+                ? Helm
+                : never,
 >(props: { serviceId: string; serviceType: T }): UseQueryResult<R>
 export function useService({ serviceId, ...props }: UseServiceProps) {
   const { data: serviceType } = useServiceType({

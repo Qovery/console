@@ -33,21 +33,21 @@ export function RowPod({ data, filter, index, podNameToColor }: RowPodProps) {
     <TableRowFilter data={data} filter={filter}>
       <div
         data-testid="pod-log-row"
-        className="group flex justify-between font-code text-xs hover:bg-neutral-650 w-full mb-[2px] select-none"
+        className="group mb-[2px] flex w-full select-none justify-between font-code text-xs hover:bg-neutral-650"
       >
         <div
           data-testid="index"
-          className="bg-neutral-700 text-neutral-400 group-hover:bg-neutral-550 px-2 pt-0.5 font-code min-w-[40px] max-w-[40px] text-right box-border"
+          className="box-border min-w-[40px] max-w-[40px] bg-neutral-700 px-2 pt-0.5 text-right font-code text-neutral-400 group-hover:bg-neutral-550"
         >
           {index + 1}
         </div>
         <div
           data-testid="cell-pod-name"
-          className="px-4 text-neutral-350 whitespace-nowrap min-w-[225px]"
+          className="min-w-[225px] whitespace-nowrap px-4 text-neutral-350"
           style={{ color: podNameToColor.get(data.pod_name) }}
         >
           {data.pod_name && data.pod_name && (
-            <span className="h-5 flex justify-center items-center px-2 bg-neutral-500 rounded-[40px] gap-1">
+            <span className="flex h-5 items-center justify-center gap-1 rounded-[40px] bg-neutral-500 px-2">
               {data.pod_name && data.pod_name.length > 23
                 ? `${data.pod_name?.substring(0, 10)}...${data.pod_name?.slice(-10)}`
                 : data.pod_name}
@@ -57,13 +57,13 @@ export function RowPod({ data, filter, index, podNameToColor }: RowPodProps) {
           {!data.pod_name && !data.message.includes('No pods found' || '') && <span className="block">NGINX</span>}
           {!data.pod_name && data.message.includes('No pods found' || '') && <span className="block">undefined</span>}
         </div>
-        <div data-testid="cell-version" className="pt-0.5 flex whitespace-nowrap text-neutral-50 min-w-[85px]">
+        <div data-testid="cell-version" className="flex min-w-[85px] whitespace-nowrap pt-0.5 text-neutral-50">
           {data.version && (
             <span className="group/version">
               <Icon iconName="code-commit" className="mr-1" />
               {formatVersion(data.version)}
               <CopyToClipboardButtonIcon
-                className="opacity-0 ml-1 group-hover/version:opacity-80"
+                className="ml-1 opacity-0 group-hover/version:opacity-80"
                 content={data.version}
               />
             </span>
@@ -71,14 +71,14 @@ export function RowPod({ data, filter, index, podNameToColor }: RowPodProps) {
         </div>
         <div
           data-testid="cell-date"
-          className="px-4 pt-0.5 text-neutral-350 whitespace-nowrap"
+          className="whitespace-nowrap px-4 pt-0.5 text-neutral-350"
           title={dateUTCString(data.created_at)}
         >
           {dateFullFormat(data.created_at, utc ? 'UTC' : timeZone, 'dd MMM, HH:mm:ss.SS')}
         </div>
         <Ansi
           data-testid="cell-msg"
-          className="select-text pr-6 pt-0.5 text-neutral-50 relative w-full whitespace-pre-wrap break-all"
+          className="relative w-full select-text whitespace-pre-wrap break-all pr-6 pt-0.5 text-neutral-50"
         >
           {data.message}
         </Ansi>

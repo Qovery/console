@@ -14,8 +14,8 @@ export function PageOrganizationGeneral(props: PageOrganizationGeneralProps) {
   const { control, formState, watch } = useFormContext()
 
   return (
-    <div className="flex flex-col justify-between w-full">
-      <div className="p-8 max-w-content-with-navigation-left">
+    <div className="flex w-full flex-col justify-between">
+      <div className="max-w-content-with-navigation-left p-8">
         <h1 className="h5 mb-10 text-neutral-400">General</h1>
         <form onSubmit={onSubmit}>
           <BlockContent title="Organization profile">
@@ -28,13 +28,13 @@ export function PageOrganizationGeneral(props: PageOrganizationGeneralProps) {
                 )}
               />
               <div className="ml-3">
-                <p className="text-neutral-400 font-medium mb-1">{watch('name')}</p>
+                <p className="mb-1 font-medium text-neutral-400">{watch('name')}</p>
                 <span className="block text-xs text-neutral-350">
                   Created since {dateMediumLocalFormat(created_at)}
                 </span>
               </div>
             </div>
-            <hr className="my-5 border-0 border-b border-neutral-250 relative -left-5 w-[calc(100%+41px)]" />
+            <hr className="relative -left-5 my-5 w-[calc(100%+41px)] border-0 border-b border-neutral-250" />
             <Controller
               name="name"
               control={control}
@@ -100,7 +100,7 @@ export function PageOrganizationGeneral(props: PageOrganizationGeneralProps) {
                 />
               )}
             />
-            <p className="text-neutral-350 text-xs ml-4 mt-1">
+            <p className="ml-4 mt-1 text-xs text-neutral-350">
               Indicate emails where you want to receive important communications from Qovery. (E.g. cluster upgrade,
               downtime...)
             </p>

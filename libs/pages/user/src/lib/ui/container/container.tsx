@@ -10,13 +10,13 @@ export function Container(props: ContainerProps) {
   const { userLinks, children } = props
 
   return (
-    <div className="bg-white flex rounded-t">
-      <div className="w-72 border-r border-neutral-200 relative shrink-0 min-h-[calc(100vh-10px)] pb-10">
+    <div className="flex rounded-t bg-white">
+      <div className="relative min-h-[calc(100vh-10px)] w-72 shrink-0 border-r border-neutral-200 pb-10">
         <div className="sticky top-7">
           <NavigationLeft title="Account" links={userLinks} className="py-6" />
         </div>
       </div>
-      <div className="flex flex-grow min-h-[calc(100vh-10px)]">{children}</div>
+      <div className="flex min-h-[calc(100vh-10px)] flex-grow">{children}</div>
     </div>
   )
 }

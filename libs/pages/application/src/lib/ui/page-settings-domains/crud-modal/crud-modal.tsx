@@ -27,7 +27,7 @@ export function CrudModal({ customDomain, onSubmit, onClose, loading, isEdit, li
       isEdit={isEdit}
       howItWorks={
         <>
-          <ol className="list-decimal ml-3">
+          <ol className="ml-3 list-decimal">
             <li className="mb-2">
               You need to configure within your DNS two CNAME records pointing to the domain provided by Qovery, as
               shown above. Qovery will handle TLS/SSL certificate creation and renewal. If “*” is not supported by your
@@ -67,17 +67,17 @@ export function CrudModal({ customDomain, onSubmit, onClose, loading, isEdit, li
         )}
       />
       {(customDomain?.validation_domain || link) && (
-        <div className="w-full rounded-[3px] overflow-hidden">
-          <div className="flex items-center h-7 text-xs text-neutral-100 bg-neutral-700 px-3">CNAME configuration</div>
-          <div className={`font-code bg-neutral-650 px-3 pt-1.5 ${hideDomain ? 'pb-3' : 'pb-1'}`}>
+        <div className="w-full overflow-hidden rounded-[3px]">
+          <div className="flex h-7 items-center bg-neutral-700 px-3 text-xs text-neutral-100">CNAME configuration</div>
+          <div className={`bg-neutral-650 px-3 pt-1.5 font-code ${hideDomain ? 'pb-3' : 'pb-1'}`}>
             <div className="mb-2">
-              <span className="block text-violet-400 text-xs">{watchDomain} CNAME</span>
-              <span className="block text-purple-300 text-xs">{customDomain?.validation_domain || link}</span>
+              <span className="block text-xs text-violet-400">{watchDomain} CNAME</span>
+              <span className="block text-xs text-purple-300">{customDomain?.validation_domain || link}</span>
             </div>
             {hideDomain && (
               <div>
-                <span className="block text-violet-400 text-xs">*.{watchDomain} CNAME</span>
-                <span className="block text-purple-300 text-xs">{customDomain?.validation_domain || link}</span>
+                <span className="block text-xs text-violet-400">*.{watchDomain} CNAME</span>
+                <span className="block text-xs text-purple-300">{customDomain?.validation_domain || link}</span>
               </div>
             )}
           </div>

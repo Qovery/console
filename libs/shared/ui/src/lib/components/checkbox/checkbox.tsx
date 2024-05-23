@@ -42,11 +42,11 @@ const Checkbox = forwardRef<ElementRef<typeof CheckboxPrimitive.Root>, CheckboxP
       className={twMerge(checkboxVariants(), className)}
     >
       <CheckboxPrimitive.Indicator asChild>
-        <span className="flex items-center justify-center w-full h-full">
+        <span className="flex h-full w-full items-center justify-center">
           {props.checked === 'indeterminate' ? (
-            <span className="w-[10px] h-[10px] bg-brand-500 group-disabled:bg-brand-300" />
+            <span className="h-[10px] w-[10px] bg-brand-500 group-disabled:bg-brand-300" />
           ) : (
-            <Icon iconName="check" className="text-xs text-white leading-[18px]" />
+            <Icon iconName="check" className="text-xs leading-[18px] text-white" />
           )}
         </span>
       </CheckboxPrimitive.Indicator>

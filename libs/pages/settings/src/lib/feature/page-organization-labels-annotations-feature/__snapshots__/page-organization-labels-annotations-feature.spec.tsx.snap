@@ -4,13 +4,13 @@ exports[`PageOrganizationLabelsAnnotationsFeature should match snapshot 1`] = `
 <body>
   <div>
     <div
-      class="flex flex-col justify-between w-full"
+      class="flex w-full flex-col justify-between"
     >
       <section
-        class="flex flex-col p-8 max-w-content-with-navigation-left"
+        class="flex flex-col max-w-content-with-navigation-left p-8"
       >
         <div
-          class="flex justify-between mb-8 gap-3"
+          class="mb-8 flex justify-between gap-3"
         >
           <div>
             <h1
@@ -19,13 +19,13 @@ exports[`PageOrganizationLabelsAnnotationsFeature should match snapshot 1`] = `
               Annotations
             </h1>
             <p
-              class="text-neutral-400 text-xs"
+              class="text-xs text-neutral-400"
             >
               Define and manage the annotations to be used within your organization.
             </p>
           </div>
           <button
-            class="inline-flex items-center font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-neutral-500 text-sm h-11 px-5 rounded bg-brand-500 active:bg-brand-600 hover:bg-brand-400 text-white disabled:text-brand-300 disabled:bg-brand-100 gap-2 shrink-0"
+            class="inline-flex items-center font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-neutral-500 text-sm h-11 px-5 rounded bg-brand-500 active:bg-brand-600 hover:bg-brand-400 text-white disabled:text-brand-300 disabled:bg-brand-100 shrink-0 gap-2"
           >
             Add annotation
             <i
@@ -35,14 +35,14 @@ exports[`PageOrganizationLabelsAnnotationsFeature should match snapshot 1`] = `
           </button>
         </div>
         <div
-          class="border border-neutral-250 bg-neutral-100 rounded mb-5 w-full"
+          class="mb-5 rounded border border-neutral-250 bg-neutral-100 w-full"
           data-testid="block-content"
         >
           <div
-            class="flex items-center justify-between h-9 px-4 border-b border-neutral-250"
+            class="flex h-9 items-center justify-between border-b border-neutral-250 px-4"
           >
             <h2
-              class="font-medium text-neutral-400 text-ssm"
+              class="text-ssm font-medium text-neutral-400"
             >
               Annotations groups
             </h2>
@@ -52,13 +52,13 @@ exports[`PageOrganizationLabelsAnnotationsFeature should match snapshot 1`] = `
           >
             <ul>
               <li
-                class="flex justify-between items-center px-5 py-4 border-b border-neutral-250 last:border-0"
+                class="flex items-center justify-between border-b border-neutral-250 px-5 py-4 last:border-0"
               >
                 <div
                   class="flex flex-col"
                 >
                   <h2
-                    class="flex text-xs text-neutral-400 font-medium mb-1"
+                    class="mb-1 flex text-xs font-medium text-neutral-400"
                   >
                     test
                   </h2>
@@ -94,7 +94,7 @@ exports[`PageOrganizationLabelsAnnotationsFeature should match snapshot 1`] = `
                     class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-9 px-3 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-transparent relative mr-2"
                   >
                     <span
-                      class="flex items-center justify-center bg-brand-500 w-3 h-3 rounded-full font-bold text-3xs text-white leading-[0] absolute -top-1 -right-1"
+                      class="absolute -right-1 -top-1 flex h-3 w-3 items-center justify-center rounded-full bg-brand-500 text-3xs font-bold leading-[0] text-white"
                     />
                     <i
                       aria-hidden="true"

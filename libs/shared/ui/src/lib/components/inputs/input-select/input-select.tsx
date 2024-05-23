@@ -111,14 +111,14 @@ export function InputSelect({
     <div role="listbox">
       <components.MenuList {...props}>
         {menuListButton && (
-          <div className={`flex items-start h-9 p-1 ${menuListButton.title ? 'justify-between' : 'justify-end'}`}>
+          <div className={`flex h-9 items-start p-1 ${menuListButton.title ? 'justify-between' : 'justify-end'}`}>
             {menuListButton.title && (
-              <span className="text-neutral-350 font-medium text-sm">{menuListButton.title}</span>
+              <span className="text-sm font-medium text-neutral-350">{menuListButton.title}</span>
             )}
             <button
               type="button"
               data-testid="input-menu-list-button"
-              className="text-brand-500 hover:text-brand-600 text-sm transition duration-100 font-medium inline-flex items-center gap-1"
+              className="inline-flex items-center gap-1 text-sm font-medium text-brand-500 transition duration-100 hover:text-brand-600"
               onClick={menuListButton.onClick}
             >
               {menuListButton.label}
@@ -143,7 +143,7 @@ export function InputSelect({
           ) : props.isSelected ? (
             <Icon iconName="check" className="text-green-500" />
           ) : props.data.icon ? (
-            <div className="w-4 h-full flex items-center justify-center">{props.data.icon}</div>
+            <div className="flex h-full w-4 items-center justify-center">{props.data.icon}</div>
           ) : (
             <Icon iconName="check" className="opacity-0" />
           )}
@@ -156,22 +156,22 @@ export function InputSelect({
   }
 
   const MultiValue = (props: MultiValueProps<Value, true, GroupBase<Value>>) => (
-    <span className="flex text-sm text-neutral-400 mr-1">
+    <span className="mr-1 flex text-sm text-neutral-400">
       {props.data.label}
       {props.index + 1 !== (selectedItems as MultiValue<Value>).length && ', '}
     </span>
   )
 
   const SingleValue = (props: SingleValueProps<Value>) => (
-    <span className="text-sm text-neutral-400 mr-1">{props.data.label}</span>
+    <span className="mr-1 text-sm text-neutral-400">{props.data.label}</span>
   )
 
   const NoOptionsMessage = (props: NoticeProps<Value>) => {
     return (
       <components.NoOptionsMessage {...props}>
-        <div className="text-center px-3 py-6">
+        <div className="px-3 py-6 text-center">
           <Icon iconName="wave-pulse" className="text-neutral-350" />
-          <p className="text-neutral-350 font-medium text-xs mt-1">No result for this search</p>
+          <p className="mt-1 text-xs font-medium text-neutral-350">No result for this search</p>
         </div>{' '}
       </components.NoOptionsMessage>
     )
@@ -184,10 +184,10 @@ export function InputSelect({
     hasFocus && !disabled
       ? '!border-brand-500 !shadow-[0_2px_2px_rgba(0, 0, 0, 0.05)] input--focused'
       : disabled
-      ? '!bg-neutral-100 !border-neutral-250 !pointer-events-none'
-      : hasError
-      ? 'input--error'
-      : ''
+        ? '!bg-neutral-100 !border-neutral-250 !pointer-events-none'
+        : hasError
+          ? 'input--error'
+          : ''
 
   const [hasLabelUp, setHasLabelUp] = useState(value?.length !== 0 ? 'input--label-up' : '')
 
@@ -199,14 +199,14 @@ export function InputSelect({
     <div className={className}>
       <div
         className={`input input--select ${hasIcon ? 'input--has-icon' : ''} ${inputActions} ${
-          disabled ? '!bg-neutral-100 !border-neutral-250' : ''
+          disabled ? '!border-neutral-250 !bg-neutral-100' : ''
         } ${isFilter ? 'input--filter' : ''}`}
         data-testid={dataTestId || 'select'}
       >
         {hasIcon && (
           <div
             data-testid="selected-icon"
-            className="w-12 h-full absolute left-0 top-0 flex items-center justify-center"
+            className="absolute left-0 top-0 flex h-full w-12 items-center justify-center"
           >
             {currentIcon.icon}
           </div>
@@ -216,8 +216,8 @@ export function InputSelect({
             htmlFor={label}
             className={
               hasIcon
-                ? `!text-xs !translate-y-0 ${selectedWithIconClassName}`
-                : `${hasLabelUp ? '!text-xs !translate-y-0' : 'text-sm translate-y-2 top-1.5'}`
+                ? `!translate-y-0 !text-xs ${selectedWithIconClassName}`
+                : `${hasLabelUp ? '!translate-y-0 !text-xs' : 'top-1.5 translate-y-2 text-sm'}`
             }
           >
             {label}
@@ -262,14 +262,14 @@ export function InputSelect({
         />
         <input type="hidden" name={label} value={selectedValue} />
         {!isFilter && (
-          <div className="absolute top-1/2 -translate-y-1/2 right-4 pointer-events-none">
+          <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2">
             <Icon name="icon-solid-angle-down" className="text-sm text-neutral-400" />
           </div>
         )}
         {currentIcon?.onClickEditable && (
           <div
             data-testid="selected-edit-icon"
-            className="cursor-pointer flex items-center justify-center text-sm text-neutral-400 hover:text-brand-500 w-8 h-8 absolute right-8 top-[10px]"
+            className="absolute right-8 top-[10px] flex h-8 w-8 cursor-pointer items-center justify-center text-sm text-neutral-400 hover:text-brand-500"
             onClick={(event) => {
               event.stopPropagation()
               currentIcon.onClickEditable && currentIcon.onClickEditable()
@@ -279,8 +279,8 @@ export function InputSelect({
           </div>
         )}
       </div>
-      {hint && <p className="px-4 mt-0.5 font-normal text-xs text-neutral-350">{hint}</p>}
-      {error && <p className="px-4 mt-0.5 font-medium text-xs text-red-500">{error}</p>}
+      {hint && <p className="mt-0.5 px-4 text-xs font-normal text-neutral-350">{hint}</p>}
+      {error && <p className="mt-0.5 px-4 text-xs font-medium text-red-500">{error}</p>}
     </div>
   )
 }

@@ -61,8 +61,8 @@ function GitRepository({
                     gitRepository.url.includes('//github')
                       ? IconEnum.GITHUB
                       : gitRepository.url.includes('//bitbucket')
-                      ? IconEnum.BITBUCKET
-                      : IconEnum.GITLAB
+                        ? IconEnum.BITBUCKET
+                        : IconEnum.GITLAB
                   }
                   height={14}
                   width={14}
@@ -151,8 +151,8 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
       return
     }
     return (
-      <div className="grid grid-row-2">
-        <span className="text-base text-neutral-400 font-semibold">{value}</span>
+      <div className="grid-row-2 grid">
+        <span className="text-base font-semibold text-neutral-400">{value}</span>
         <span className="text-xs">{description}</span>
       </div>
     )
@@ -260,11 +260,11 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
   }
 
   return (
-    <div className={twMerge('flex flex-col shrink-0 gap-5 py-8 text-sm', className)} {...props}>
+    <div className={twMerge('flex shrink-0 flex-col gap-5 py-8 text-sm', className)} {...props}>
       <Section className={sectionClassName}>
         <div className="flex flex-row justify-between">
           {/* XXX: Should be Heading, typography & design wanted */}
-          <span className="text-neutral-400 font-medium">About</span>
+          <span className="font-medium text-neutral-400">About</span>
           <Link color="current" to={`..${APPLICATION_SETTINGS_URL + APPLICATION_SETTINGS_GENERAL_URL}`} relative="path">
             <Icon iconName="gear" className="text-base text-neutral-300" />
           </Link>
@@ -303,7 +303,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
       <Section className={sectionClassName}>
         <div className="flex flex-row justify-between">
           {/* XXX: Should be Heading, typography & design wanted */}
-          <span className="text-neutral-400 font-medium">Source</span>
+          <span className="font-medium text-neutral-400">Source</span>
           <Link color="current" to={`..${APPLICATION_SETTINGS_URL + APPLICATION_SETTINGS_GENERAL_URL}`} relative="path">
             <Icon iconName="gear" className="text-base text-neutral-300" />
           </Link>
@@ -368,7 +368,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
                 <Dt>Repository:</Dt>
                 <Dd>
                   <a href={helmRepository.repository.url} target="_blank" rel="noopener noreferrer">
-                    <Badge variant="surface" size="xs" className="items-center gap-1 capitalize text-nowrap">
+                    <Badge variant="surface" size="xs" className="items-center gap-1 text-nowrap capitalize">
                       <Icon width={16} name={IconEnum.HELM_OFFICIAL} />
                       <Truncate text={helmRepository.repository.name ?? ''} truncateLimit={18} />
                     </Badge>
@@ -387,7 +387,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
             <Dt>Type:</Dt>
             <Dd>
               <Badge size="xs" variant="surface" className="items-center gap-1">
-                <Icon name={databaseSource.type} className="max-w-[12px] max-h-[12px]" height={12} width={12} />
+                <Icon name={databaseSource.type} className="max-h-[12px] max-w-[12px]" height={12} width={12} />
                 {databaseSource.version}
               </Badge>
             </Dd>
@@ -423,7 +423,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
           <Section className={sectionClassName}>
             <div className="flex flex-row justify-between">
               {/* XXX: Should be Heading, typography & design wanted */}
-              <span className="flex items-center gap-1 text-neutral-400 font-medium">
+              <span className="flex items-center gap-1 font-medium text-neutral-400">
                 Resources
                 <Tooltip content="This is based on the configuration of your service">
                   <span className="flex items-center">
@@ -449,7 +449,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
           <Section className={sectionClassName}>
             <div className="flex flex-row justify-between">
               {/* XXX: Should be Heading, typography & design wanted */}
-              <span className="flex items-center gap-1 text-neutral-400 font-medium">Values override</span>
+              <span className="flex items-center gap-1 font-medium text-neutral-400">Values override</span>
               <Link
                 color="current"
                 to={`..${APPLICATION_SETTINGS_URL + APPLICATION_SETTINGS_VALUES_OVERRIDE_FILE_URL}`}

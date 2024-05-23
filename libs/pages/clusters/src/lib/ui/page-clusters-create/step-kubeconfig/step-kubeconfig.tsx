@@ -63,12 +63,12 @@ export function StepKubeconfig({ onSubmit }: StepKubeconfigProps) {
       <form onSubmit={onSubmit}>
         <div className="mb-10">
           {fileName.value ? (
-            <div className="flex border border-neutral-200 p-3 gap-2 rounded items-center">
+            <div className="flex items-center gap-2 rounded border border-neutral-200 p-3">
               <div className="p-2">
                 <Icon iconName="file-lines" />
               </div>
-              <div className="flex flex-col text-xs grow">
-                <span className="text-neutral-400 font-medium">{fileName.value}</span>
+              <div className="flex grow flex-col text-xs">
+                <span className="font-medium text-neutral-400">{fileName.value}</span>
                 <span className="text-neutral-350">{fileSize.value} Ko</span>
               </div>
               <div>

@@ -30,7 +30,7 @@ export function DraggableItem(props: DraggableItemProps) {
 
   const content = (name = '', type = '', mode = '') => {
     return (
-      <div className={`text-neutral-400 font-medium ${contentWithParams ? 'text-xs' : 'text-ssm'}`}>
+      <div className={`font-medium text-neutral-400 ${contentWithParams ? 'text-xs' : 'text-ssm'}`}>
         <Truncate truncateLimit={contentWithParams ? 32 : 27} text={name || ''} />
         {contentWithParams && (
           <div data-testid="draggable-item-subtitle" className="text-2xs font-normal">

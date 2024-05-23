@@ -16,12 +16,12 @@ export function PageClustersGeneral(props: PageClustersGeneralProps) {
   const goToCreateCluster = CLUSTERS_URL(organizationId) + CLUSTERS_CREATION_URL + CLUSTERS_CREATION_GENERAL_URL
 
   return (
-    <div className="flex flex-col flex-1 justify-between w-full">
+    <div className="flex w-full flex-1 flex-col justify-between">
       <Section className="p-8">
-        <div className="flex justify-between mb-8">
+        <div className="mb-8 flex justify-between">
           <div>
             <Heading className="mb-2">Manage your clusters</Heading>
-            <p className="text-neutral-400 text-xs">Manage your infrastructure across different Cloud providers.</p>
+            <p className="text-xs text-neutral-400">Manage your infrastructure across different Cloud providers.</p>
           </div>
           <Link as="button" to={goToCreateCluster} className="gap-2" size="lg">
             Add Cluster
@@ -33,7 +33,7 @@ export function PageClustersGeneral(props: PageClustersGeneralProps) {
             <LoaderSpinner className="w-6" />
           </div>
         ) : clusters && clusters.length > 0 ? (
-          <div className="grid lg:grid-cols-2 xl:grid-cols-3 gap-5">
+          <div className="grid gap-5 lg:grid-cols-2 xl:grid-cols-3">
             {clusters.map((cluster) => (
               <CardCluster key={cluster.id} cluster={cluster} organizationId={organizationId} />
             ))}

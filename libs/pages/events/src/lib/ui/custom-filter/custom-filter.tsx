@@ -52,7 +52,7 @@ export function CustomFilter({
 
   return (
     <>
-      <p className="text-neutral-350 text-ssm font-medium mr-1.5">Select</p>
+      <p className="mr-1.5 text-ssm font-medium text-neutral-350">Select</p>
       <div className="mr-5">
         <DatePicker
           key={timestamps ? timestamps[0].toString() : 'timestamp'}
@@ -81,7 +81,7 @@ export function CustomFilter({
               {dateYearMonthDayHourMinuteSecond(timestamps[1], true, false)}
               <span
                 data-testid="clear-timestamp"
-                className="px-1 py-1 relative left-1"
+                className="relative left-1 px-1 py-1"
                 role="button"
                 onClick={(event) => {
                   event.stopPropagation()
@@ -94,7 +94,7 @@ export function CustomFilter({
           )}
         </DatePicker>
       </div>
-      <div className="flex items-center relative text-neutral-350 text-ssm font-medium">
+      <div className="relative flex items-center text-ssm font-medium text-neutral-350">
         <p className=" mr-1.5">Search</p>
         <div className="flex items-center gap-2">
           <InputFilter
@@ -146,7 +146,7 @@ export function CustomFilter({
           )}
         </div>
         {searchParams.toString()?.length > 0 && (
-          <span className="link text-brand-500 cursor-pointer ml-6" onClick={clearFilter}>
+          <span className="link ml-6 cursor-pointer text-brand-500" onClick={clearFilter}>
             Clear all
           </span>
         )}

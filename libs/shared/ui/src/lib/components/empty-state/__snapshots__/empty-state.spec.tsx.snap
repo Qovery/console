@@ -7,20 +7,20 @@ exports[`EmptyState should match snapshot 1`] = `
       class="flex flex-grow items-center justify-center"
     >
       <div
-        class="text-center flex flex-col items-center justify-center w-[420px] m-auto mt-12"
+        class="m-auto mt-12 flex w-[420px] flex-col items-center justify-center text-center"
       >
         <img
           alt="Event placeholder"
-          class="pointer-events-none user-none w-[170px]"
+          class="user-none pointer-events-none w-[170px]"
           src="/assets/images/event-placeholder-light.svg"
         />
         <p
-          class="text-neutral-400 font-medium"
+          class="font-medium text-neutral-400"
         >
           No Storage are set
         </p>
         <p
-          class="text-sm text-neutral-350 mt-1"
+          class="mt-1 text-sm text-neutral-350"
         >
           Need help? You may find these links useful
         </p>

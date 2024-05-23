@@ -19,46 +19,46 @@ export function CardCluster({ clusterId, organizationId }: CardClusterProps) {
   if (!cluster) return null
 
   return (
-    <div className="bg-neutral-600 p-4 rounded">
-      <div data-testid="status" className="flex items-center text-neutral-300 font-bold text-xs">
+    <div className="rounded bg-neutral-600 p-4">
+      <div data-testid="status" className="flex items-center text-xs font-bold text-neutral-300">
         <StatusChip status={clusterStatus?.status} className="mr-4" /> Cluster infra logs
       </div>
       <div className="mt-4">
-        <div className="flex mt-1">
+        <div className="mt-1 flex">
           <Icon data-testid="icon" name={`${cluster.cloud_provider}_GRAY`} className="mr-4 mt-0.5" />
           <div>
-            <p className="text-neutral-100 text-sm font-medium">
+            <p className="text-sm font-medium text-neutral-100">
               {cluster.name} ({cluster.region})
             </p>
-            <ul className="text-xs mt-5">
-              <li className="flex mb-2">
-                <span className="text-neutral-300 w-16 mr-3">Cluster ID</span>
+            <ul className="mt-5 text-xs">
+              <li className="mb-2 flex">
+                <span className="mr-3 w-16 text-neutral-300">Cluster ID</span>
                 <div className="flex">
                   <span className="text-sky-400">{splitId(cluster.id)}</span>
-                  <CopyToClipboardButtonIcon content={cluster.id} className="text-neutral-300 ml-1" />
+                  <CopyToClipboardButtonIcon content={cluster.id} className="ml-1 text-neutral-300" />
                 </div>
               </li>
               {clusterStatus?.last_execution_id && (
-                <li className="flex mb-2">
-                  <span className="text-neutral-300 w-16 mr-3">Exec. ID</span>
+                <li className="mb-2 flex">
+                  <span className="mr-3 w-16 text-neutral-300">Exec. ID</span>
                   <div className="flex">
                     <span className="text-sky-400">{splitId(clusterStatus?.last_execution_id)}</span>
                     <CopyToClipboardButtonIcon
                       content={clusterStatus?.last_execution_id}
-                      className="text-neutral-300 ml-1"
+                      className="ml-1 text-neutral-300"
                     />
                   </div>
                 </li>
               )}
-              <li className="flex mb-2">
-                <span className="text-neutral-300 w-16 mr-3">Version</span>
+              <li className="mb-2 flex">
+                <span className="mr-3 w-16 text-neutral-300">Version</span>
                 <span className="text-neutral-300">{cluster.version}</span>
               </li>
               <li className="flex">
-                <span className="text-neutral-300 w-16 mr-3">Org. ID</span>
+                <span className="mr-3 w-16 text-neutral-300">Org. ID</span>
                 <div className="flex">
                   <span className="text-sky-400">{splitId(organizationId)}</span>
-                  <CopyToClipboardButtonIcon content={organizationId} className="text-neutral-300 ml-1" />
+                  <CopyToClipboardButtonIcon content={organizationId} className="ml-1 text-neutral-300" />
                 </div>
               </li>
             </ul>

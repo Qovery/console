@@ -111,12 +111,12 @@ export function PageOrganizationMembers(props: PageOrganizationMembersProps) {
   const userIsOwner = dataMembers?.find((member) => member.id === userId)
 
   return (
-    <div className="flex flex-col justify-between w-full">
+    <div className="flex w-full flex-col justify-between">
       <Section className="p-8">
-        <div className="flex justify-between mb-8">
+        <div className="mb-8 flex justify-between">
           <div>
-            <Heading className="h5 text-neutral-400 mb-2">Manage your team</Heading>
-            <p className="text-neutral-400 text-xs max-w-content-with-navigation-left">
+            <Heading className="h5 mb-2 text-neutral-400">Manage your team</Heading>
+            <p className="max-w-content-with-navigation-left text-xs text-neutral-400">
               This section allows you to manage the members of your organization (add / remove) and as well assign a
               role to each of them. You can invite someone to join your organization via email.
             </p>
@@ -127,7 +127,7 @@ export function PageOrganizationMembers(props: PageOrganizationMembersProps) {
           </Button>
         </div>
         <Table
-          className="border border-neutral-200 rounded"
+          className="rounded border border-neutral-200"
           classNameHead="rounded-t"
           dataHead={membersHead}
           data={members}
@@ -156,7 +156,7 @@ export function PageOrganizationMembers(props: PageOrganizationMembersProps) {
         </Table>
         {isFetchedMembers && dataInviteMembers?.length > 0 && (
           <Table
-            className="border border-neutral-200 rounded mt-5"
+            className="mt-5 rounded border border-neutral-200"
             classNameHead="rounded-t"
             data={inviteMembers}
             dataHead={inviteMembersHead}

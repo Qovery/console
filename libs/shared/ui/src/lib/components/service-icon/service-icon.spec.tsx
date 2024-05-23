@@ -29,40 +29,40 @@ describe('ServiceIcon', () => {
         serviceType: 'APPLICATION',
         build_mode: BuildModeEnum.DOCKER,
       })
-    ).toEqual(<Icon name={IconEnum.DOCKER} className="w-full h-full relative left-[1px]" />)
+    ).toEqual(<Icon name={IconEnum.DOCKER} className="relative left-[1px] h-full w-full" />)
     expect(
       iconByService({
         serviceType: 'APPLICATION',
         build_mode: BuildModeEnum.BUILDPACKS,
       })
-    ).toEqual(<Icon name={IconEnum.BUILDPACKS} className="w-full h-full " />)
+    ).toEqual(<Icon name={IconEnum.BUILDPACKS} className="h-full w-full" />)
     expect(
       iconByService({
         serviceType: 'CONTAINER',
       })
-    ).toEqual(<Icon name={IconEnum.CONTAINER} className="w-full h-full" />)
+    ).toEqual(<Icon name={IconEnum.CONTAINER} className="h-full w-full" />)
     expect(
       iconByService({
         serviceType: 'JOB',
         job_type: 'CRON',
       })
-    ).toEqual(<Icon name={IconEnum.CRON_JOB} className="w-full h-full" />)
+    ).toEqual(<Icon name={IconEnum.CRON_JOB} className="h-full w-full" />)
     expect(
       iconByService({
         serviceType: 'JOB',
         job_type: 'LIFECYCLE',
       })
-    ).toEqual(<Icon name={IconEnum.LIFECYCLE_JOB} className="w-full h-full" />)
+    ).toEqual(<Icon name={IconEnum.LIFECYCLE_JOB} className="h-full w-full" />)
 
     expect(
       iconByService({
         serviceType: 'DATABASE',
       })
-    ).toEqual(<Icon name={IconEnum.DATABASE} className="w-full h-full" />)
+    ).toEqual(<Icon name={IconEnum.DATABASE} className="h-full w-full" />)
     expect(
       iconByService({
         serviceType: 'HELM',
       })
-    ).toEqual(<Icon name={IconEnum.HELM} className="w-full h-full" />)
+    ).toEqual(<Icon name={IconEnum.HELM} className="h-full w-full" />)
   })
 })

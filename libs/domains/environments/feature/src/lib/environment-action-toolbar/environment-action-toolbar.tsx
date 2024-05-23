@@ -76,7 +76,7 @@ function MenuManageDeployment({ environment, state }: { environment: Environment
       <DropdownMenu.Trigger asChild>
         <ActionToolbar.Button aria-label="Manage Deployment">
           <Tooltip content="Manage Deployment">
-            <div className="flex items-center justify-center w-full h-full">
+            <div className="flex h-full w-full items-center justify-center">
               <Icon iconName="play" className="mr-4" />
               <Icon iconName="chevron-down" />
             </div>
@@ -155,7 +155,7 @@ function MenuOtherActions({ state, environment }: { state: StateEnum; environmen
       <DropdownMenu.Trigger asChild>
         <ActionToolbar.Button aria-label="Other actions">
           <Tooltip content="Other actions">
-            <div className="flex items-center justify-center w-full h-full">
+            <div className="flex h-full w-full items-center justify-center">
               <Icon iconName="ellipsis-v" iconStyle="solid" />
             </div>
           </Tooltip>

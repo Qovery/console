@@ -17,7 +17,7 @@ export function NeedHelp({ className }: NeedHelpProps) {
       className={twMerge('w-fit items-center gap-1', className)}
       onClick={() => setAssistantOpen(!assistantOpen)}
     >
-      <Icon iconName="circle-question" iconStyle="regular" className="text-xs p-0.5" />
+      <Icon iconName="circle-question" iconStyle="regular" className="p-0.5 text-xs" />
       <span>Need help here?</span>
     </Button>
   )

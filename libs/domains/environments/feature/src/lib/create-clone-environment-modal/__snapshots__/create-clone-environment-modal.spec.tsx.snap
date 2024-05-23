@@ -7,12 +7,12 @@ exports[`CreateCloneEnvironmentModal should match snapshots 1`] = `
       class="p-5"
     >
       <h2
-        class="h4 text-neutral-400 max-w-sm truncate"
+        class="h4 max-w-sm truncate text-neutral-400"
       >
         Create Environment
       </h2>
       <p
-        class="mt-2 text-neutral-350 text-sm"
+        class="mt-2 text-sm text-neutral-350"
       >
         Create a new environment and deploy your applications.
       </p>
@@ -20,7 +20,7 @@ exports[`CreateCloneEnvironmentModal should match snapshots 1`] = `
         aria-controls="radix-:rd:"
         aria-expanded="false"
         aria-haspopup="dialog"
-        class="text-sm cursor-pointer text-brand-500 hover:text-brand-600 transition font-medium mt-2"
+        class="mt-2 cursor-pointer text-sm font-medium text-brand-500 transition hover:text-brand-600"
         data-state="closed"
         type="button"
       >
@@ -48,7 +48,7 @@ exports[`CreateCloneEnvironmentModal should match snapshots 1`] = `
                 class=""
               >
                 <label
-                  class="text-sm translate-y-2"
+                  class="translate-y-2 text-sm"
                   for="Environment name"
                 >
                   Environment name
@@ -73,7 +73,7 @@ exports[`CreateCloneEnvironmentModal should match snapshots 1`] = `
             data-testid="input-select-cluster"
           >
             <label
-              class="text-sm translate-y-2 top-1.5"
+              class="top-1.5 translate-y-2 text-sm"
               for="Cluster"
             >
               Cluster
@@ -154,7 +154,7 @@ exports[`CreateCloneEnvironmentModal should match snapshots 1`] = `
               value=""
             />
             <div
-              class="absolute top-1/2 -translate-y-1/2 right-4 pointer-events-none"
+              class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2"
             >
               <span
                 class="icon-solid-angle-down shrink-0 text-sm text-neutral-400"
@@ -171,18 +171,18 @@ exports[`CreateCloneEnvironmentModal should match snapshots 1`] = `
             data-testid="input-select-mode"
           >
             <div
-              class="w-12 h-full absolute left-0 top-0 flex items-center justify-center"
+              class="absolute left-0 top-0 flex h-full w-12 items-center justify-center"
               data-testid="selected-icon"
             >
               <span
-                class="items-center shrink-0 border text-xs rounded border-neutral-250 text-neutral-350 dark:border-neutral-350 flex w-4 h-4 justify-center p-0 font-semibold"
+                class="items-center shrink-0 border text-xs rounded border-neutral-250 text-neutral-350 dark:border-neutral-350 flex h-4 w-4 justify-center p-0 font-semibold"
                 data-accent-color="neutral"
               >
                 D
               </span>
             </div>
             <label
-              class="!text-xs !translate-y-0 ml-8"
+              class="!translate-y-0 !text-xs ml-8"
               for="Type"
             >
               Type
@@ -207,7 +207,7 @@ exports[`CreateCloneEnvironmentModal should match snapshots 1`] = `
                   class="input-select__value-container input-select__value-container--has-value css-1fdsijx-ValueContainer"
                 >
                   <span
-                    class="text-sm text-neutral-400 mr-1"
+                    class="mr-1 text-sm text-neutral-400"
                   >
                     Development
                   </span>
@@ -261,7 +261,7 @@ exports[`CreateCloneEnvironmentModal should match snapshots 1`] = `
               value="DEVELOPMENT"
             />
             <div
-              class="absolute top-1/2 -translate-y-1/2 right-4 pointer-events-none"
+              class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2"
             >
               <span
                 class="icon-solid-angle-down shrink-0 text-sm text-neutral-400"
@@ -271,7 +271,7 @@ exports[`CreateCloneEnvironmentModal should match snapshots 1`] = `
           </div>
         </div>
         <div
-          class="flex gap-3 justify-end mt-6"
+          class="mt-6 flex justify-end gap-3"
         >
           <button
             class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 hover:[&:not(:focus-visible):not(:disabled)]:shadow-sm active:[&:not(:focus-visible)]:shadow-none outline-brand-500 text-sm h-11 px-5 rounded border border-transparent text-neutral-350 hover:[&:not(:active):not(:focus-visible)]:border-neutral-300 hover:[&:not(:disabled)]:text-neutral-400 focus-visible:text-neutral-400 active:bg-neutral-150 active:text-neutral-400 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none"

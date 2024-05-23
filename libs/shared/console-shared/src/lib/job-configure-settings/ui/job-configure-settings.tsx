@@ -63,7 +63,7 @@ export function JobConfigureSettings(props: JobConfigureSettingsProps) {
       ) : (
         <Section className="gap-4">
           <Heading>Event</Heading>
-          <p className="text-neutral-350 text-sm">
+          <p className="text-sm text-neutral-350">
             Select one or more environment event where the job should be executed
           </p>
 

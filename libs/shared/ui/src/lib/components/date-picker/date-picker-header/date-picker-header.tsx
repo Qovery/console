@@ -37,14 +37,14 @@ export function DatePickerHeader({
   ]
 
   return (
-    <div className="flex justify-between mb-5">
-      <div className="text-neutral-400 text-sm font-medium">
+    <div className="mb-5 flex justify-between">
+      <div className="text-sm font-medium text-neutral-400">
         <span className="mr-1">{months[getMonth(date)]}</span>
         <span>{getYear(date)}</span>
       </div>
       <div className="flex">
         <button
-          className="inline-flex items-center justify-center text-sm w-5 h-5 mr-2 transition-colors text-neutral-400 hover:text-brand-500 disabled:text-neutral-100"
+          className="mr-2 inline-flex h-5 w-5 items-center justify-center text-sm text-neutral-400 transition-colors hover:text-brand-500 disabled:text-neutral-100"
           onClick={decreaseMonth}
           disabled={prevMonthButtonDisabled}
           data-testid="date-picker-header-previous-btn"
@@ -52,7 +52,7 @@ export function DatePickerHeader({
           <Icon iconName="chevron-left" />
         </button>
         <button
-          className="inline-flex items-center justify-center text-sm w-5 h-5 transition-colors text-neutral-400 hover:text-brand-500 disabled:text-neutral-100"
+          className="inline-flex h-5 w-5 items-center justify-center text-sm text-neutral-400 transition-colors hover:text-brand-500 disabled:text-neutral-100"
           onClick={increaseMonth}
           disabled={nextMonthButtonDisabled}
           data-testid="date-picker-header-next-btn"

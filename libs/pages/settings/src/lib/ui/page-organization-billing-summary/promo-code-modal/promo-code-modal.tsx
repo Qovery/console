@@ -13,7 +13,7 @@ export function PromoCodeModal(props: PromoCodeModalProps) {
 
   return (
     <div className="p-6">
-      <h2 className="h4 text-neutral-400 mb-4 max-w-sm">Promo code</h2>
+      <h2 className="h4 mb-4 max-w-sm text-neutral-400">Promo code</h2>
       <form onSubmit={props.onSubmit}>
         <Controller
           name="code"
@@ -33,7 +33,7 @@ export function PromoCodeModal(props: PromoCodeModalProps) {
             />
           )}
         />
-        <div className="flex gap-3 justify-end">
+        <div className="flex justify-end gap-3">
           <Button type="button" size="lg" color="neutral" variant="plain" onClick={props.onClose}>
             Cancel
           </Button>

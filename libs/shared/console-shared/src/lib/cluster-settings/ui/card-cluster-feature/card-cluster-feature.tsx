@@ -43,7 +43,7 @@ export function CardClusterFeature({
       data-testid="feature"
       className={`flex flex-col justify-between px-4 py-3 ${
         control ? 'rounded border bg-neutral-100' : 'border-b last:border-0'
-      } border-neutral-250 mb-4 last:mb-0`}
+      } mb-4 border-neutral-250 last:mb-0`}
       onClick={() => {
         if (feature.id && !disabled && setValue) {
           setValue(`features.${feature.id}.value`, !name)
@@ -69,13 +69,13 @@ export function CardClusterFeature({
           />
         )}
         <div className="basis-full">
-          <h4 className="flex justify-between text-ssm text-neutral-400 mb-1 font-medium">
+          <h4 className="mb-1 flex justify-between text-ssm font-medium text-neutral-400">
             <span>{feature.title}</span>
-            <span className="text-ssm text-neutral-400 font-medium">
+            <span className="text-ssm font-medium text-neutral-400">
               {feature.cost_per_month !== 0 ? `$${feature.cost_per_month}/month billed by ${cloudProvider}` : 'Free'}
             </span>
           </h4>
-          <p className="text-xs text-neutral-350 max-w-lg">{feature.description}</p>
+          <p className="max-w-lg text-xs text-neutral-350">{feature.description}</p>
           {typeof feature.value === 'string' && (
             <div onClick={(e) => e.stopPropagation()}>
               {control ? (

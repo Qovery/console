@@ -24,16 +24,16 @@ export function MenuAccount(props: MenuAccountProps) {
         name={IconAwesomeEnum.CHECK}
         className={`mr-4 ${currentOrganization?.id === organization.id ? 'text-green-500' : 'opacity-0'}`}
       />
-      <span className="w-8 h-8 rounded-sm flex items-center justify-center mr-3">
+      <span className="mr-3 flex h-8 w-8 items-center justify-center rounded-sm">
         {organization.logo_url ? (
           <img className="p-1" src={organization.logo_url} alt="Organization logo" />
         ) : (
-          <span className="w-full h-full font-medium text-xs text-neutral-350 bg-neutral-200 flex items-center justify-center uppercase rounded">
+          <span className="flex h-full w-full items-center justify-center rounded bg-neutral-200 text-xs font-medium uppercase text-neutral-350">
             {organization.name.charAt(0)}
           </span>
         )}
       </span>
-      <span className="text-neutral-400 dark:text-neutral-100 text-sm font-medium">{organization.name}</span>
+      <span className="text-sm font-medium text-neutral-400 dark:text-neutral-100">{organization.name}</span>
     </div>
   )
 
@@ -42,7 +42,7 @@ export function MenuAccount(props: MenuAccountProps) {
       title: 'Organizations',
       sortAlphabetically: true,
       button: {
-        label: <Icon iconName="circle-plus" className="text-brand-500 link !text-base mr-3" />,
+        label: <Icon iconName="circle-plus" className="link mr-3 !text-base text-brand-500" />,
         onClick: () => navigate(ONBOARDING_URL + ONBOARDING_PROJECT_URL),
       },
       items: organizations.map((organization: Organization) => ({
@@ -56,7 +56,7 @@ export function MenuAccount(props: MenuAccountProps) {
       items: [
         {
           itemContentCustom: (
-            <div className="w-full flex items-center justify-between">
+            <div className="flex w-full items-center justify-between">
               <div className="flex">
                 <Avatar
                   className="mr-3"
@@ -67,10 +67,10 @@ export function MenuAccount(props: MenuAccountProps) {
                   noTooltip
                 />
                 <div>
-                  <p className="text-neutral-400 dark:text-neutral-100 text-sm font-medium">
+                  <p className="text-sm font-medium text-neutral-400 dark:text-neutral-100">
                     {user?.firstName} {user?.lastName}
                   </p>
-                  <span className="text-neutral-350 text-xs">{user.email}</span>
+                  <span className="text-xs text-neutral-350">{user.email}</span>
                 </div>
               </div>
             </div>
@@ -84,8 +84,8 @@ export function MenuAccount(props: MenuAccountProps) {
       items: [
         {
           itemContentCustom: (
-            <div className="text-neutral-400 dark:text-neutral-100 text-ssm font-medium">
-              <Icon iconName="arrow-right-from-bracket" className="text-brand-500 mr-3" />
+            <div className="text-ssm font-medium text-neutral-400 dark:text-neutral-100">
+              <Icon iconName="arrow-right-from-bracket" className="mr-3 text-brand-500" />
               Logout
             </div>
           ),

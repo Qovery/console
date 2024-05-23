@@ -91,7 +91,7 @@ export function StepValuesOverrideFilesFeature() {
                 />
               )}
             />
-            <p className="text-xs text-neutral-350 ml-4 mt-1">
+            <p className="ml-4 mt-1 text-xs text-neutral-350">
               Specify multiple paths by separating them with a semi-colon
             </p>
           </div>

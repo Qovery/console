@@ -48,7 +48,7 @@ function Row({ key, index, remove }: { key: string; index: number; remove: UseFi
 
   return (
     <li key={key} className="mb-3 last:mb-0">
-      <div className="grid grid-cols-[6fr_6fr_6fr_1fr] gap-x-2 items-center">
+      <div className="grid grid-cols-[6fr_6fr_6fr_1fr] items-center gap-x-2">
         <Controller
           name={`arguments.${index}.type`}
           control={control}
@@ -95,7 +95,7 @@ function Row({ key, index, remove }: { key: string; index: number; remove: UseFi
             color="neutral"
             variant="surface"
             type="button"
-            className="justify-between h-[36px]"
+            className="h-[36px] justify-between"
             onClick={() => setOpenEditor(!openEditor)}
           >
             {openEditor ? 'Close json' : 'Open json'}
@@ -118,7 +118,7 @@ function Row({ key, index, remove }: { key: string; index: number; remove: UseFi
           color="neutral"
           variant="outline"
           type="button"
-          className="w-full h-[36px]"
+          className="h-[36px] w-full"
           onClick={() => remove(index)}
         >
           <Icon iconName="trash" className="text-neutral-400" />
@@ -135,7 +135,7 @@ function Row({ key, index, remove }: { key: string; index: number; remove: UseFi
             <CodeEditor
               language="json"
               height="496px"
-              className="border border-neutral-250 rounded overflow-hidden mt-3"
+              className="mt-3 overflow-hidden rounded border border-neutral-250"
               value={field.value}
               onChange={field.onChange}
             />
@@ -194,10 +194,10 @@ export function ValuesOverrideArgumentsSetting({
         </SettingsHeading>
       ) : (
         <>
-          <div className="flex justify-between w-full">
+          <div className="flex w-full justify-between">
             <div>
               <Heading className="mb-2">Value override as arguments</Heading>
-              <p className="text-sm text-neutral-350 mb-2">
+              <p className="mb-2 text-sm text-neutral-350">
                 Specify each override by declaring the variable name, value and its type.
               </p>
             </div>
@@ -218,12 +218,12 @@ export function ValuesOverrideArgumentsSetting({
           </div>
           <Popover.Root>
             <Popover.Trigger>
-              <span className="text-sm cursor-pointer text-brand-500 hover:text-brand-600 transition font-medium mb-6">
+              <span className="mb-6 cursor-pointer text-sm font-medium text-brand-500 transition hover:text-brand-600">
                 How it works <Icon className="text-xs" iconStyle="regular" iconName="circle-question" />
               </span>
             </Popover.Trigger>
-            <Popover.Content side="left" className="text-neutral-350 text-sm relative" style={{ width: 440 }}>
-              <h6 className="text-neutral-400 font-medium mb-2">How it works</h6>
+            <Popover.Content side="left" className="relative text-sm text-neutral-350" style={{ width: 440 }}>
+              <h6 className="mb-2 font-medium text-neutral-400">How it works</h6>
               <p>
                 <ul className="list-disc pl-4">
                   <li>
@@ -242,7 +242,7 @@ export function ValuesOverrideArgumentsSetting({
                   </li>
                 </ul>
               </p>
-              <Popover.Close className="absolute top-4 right-4">
+              <Popover.Close className="absolute right-4 top-4">
                 <button type="button">
                   <Icon iconName="xmark" className="text-lg leading-4 text-neutral-400" />
                 </button>
@@ -258,15 +258,15 @@ export function ValuesOverrideArgumentsSetting({
         className="mb-10"
         onClick={() => createHelmDefaultValuesMutation()}
       >
-        See default values.yaml <Icon className="text-xs ml-2" iconName="arrow-up-right-from-square" />
+        See default values.yaml <Icon className="ml-2 text-xs" iconName="arrow-up-right-from-square" />
       </Button>
       <form onSubmit={onSubmit} className="w-full">
         {fields.length > 0 ? (
           <ul>
-            <li className="grid grid-cols-[6fr_6fr_6fr_1fr] gap-x-2 mb-3">
-              <span className="text-sm text-neutral-400 font-medium">Override type</span>
-              <span className="text-sm text-neutral-400 font-medium">Variable</span>
-              <span className="text-sm text-neutral-400 font-medium">Value</span>
+            <li className="mb-3 grid grid-cols-[6fr_6fr_6fr_1fr] gap-x-2">
+              <span className="text-sm font-medium text-neutral-400">Override type</span>
+              <span className="text-sm font-medium text-neutral-400">Variable</span>
+              <span className="text-sm font-medium text-neutral-400">Value</span>
               <span></span>
             </li>
             {fields.map((field, index) => (

@@ -3,13 +3,13 @@
 exports[`PageSettingsResources should render warning box and icon for cpu 1`] = `
 <div>
   <div
-    class="flex flex-col justify-between w-full"
+    class="flex w-full flex-col justify-between"
   >
     <section
-      class="flex flex-col p-8 max-w-content-with-navigation-left"
+      class="flex flex-col max-w-content-with-navigation-left p-8"
     >
       <div
-        class="flex w-full justify-between mb-8"
+        class="mb-8 flex w-full justify-between"
       >
         <div>
           <h1
@@ -18,7 +18,7 @@ exports[`PageSettingsResources should render warning box and icon for cpu 1`] = 
             Resources
           </h1>
           <p
-            class="text-sm text-neutral-400 max-w-lg mb-3"
+            class="mb-3 max-w-lg text-sm text-neutral-400"
           >
             Manage the resources assigned to the service.
           </p>
@@ -27,7 +27,7 @@ exports[`PageSettingsResources should render warning box and icon for cpu 1`] = 
           >
             <i
               aria-hidden="true"
-              class="fa-regular fa-circle-question text-xs p-0.5"
+              class="fa-regular fa-circle-question p-0.5 text-xs"
             />
             <span>
               Need help here?
@@ -61,7 +61,7 @@ exports[`PageSettingsResources should render warning box and icon for cpu 1`] = 
                   class=""
                 >
                   <label
-                    class="text-sm translate-y-2"
+                    class="translate-y-2 text-sm"
                     for="vCPU (milli)"
                   >
                     vCPU (milli)
@@ -78,7 +78,7 @@ exports[`PageSettingsResources should render warning box and icon for cpu 1`] = 
               </div>
             </div>
             <p
-              class="px-4 mt-0.5 font-normal text-xs text-neutral-350"
+              class="mt-0.5 px-4 text-xs font-normal text-neutral-350"
             >
               Minimum value is 
               10
@@ -133,7 +133,7 @@ exports[`PageSettingsResources should render warning box and icon for cpu 1`] = 
                   class=""
                 >
                   <label
-                    class="text-sm translate-y-2"
+                    class="translate-y-2 text-sm"
                     for="Memory (MiB)"
                   >
                     Memory (MiB)
@@ -150,7 +150,7 @@ exports[`PageSettingsResources should render warning box and icon for cpu 1`] = 
               </div>
             </div>
             <p
-              class="px-4 mt-0.5 font-normal text-xs text-neutral-350"
+              class="mt-0.5 px-4 text-xs font-normal text-neutral-350"
             >
               Minimum value is 
               1
@@ -189,7 +189,7 @@ exports[`PageSettingsResources should render warning box and icon for cpu 1`] = 
                     class=""
                   >
                     <label
-                      class="text-sm translate-y-2"
+                      class="translate-y-2 text-sm"
                       for="Instances min"
                     >
                       Instances min
@@ -221,7 +221,7 @@ exports[`PageSettingsResources should render warning box and icon for cpu 1`] = 
                     class=""
                   >
                     <label
-                      class="text-sm translate-y-2"
+                      class="translate-y-2 text-sm"
                       for="Instances max"
                     >
                       Instances max
@@ -240,7 +240,7 @@ exports[`PageSettingsResources should render warning box and icon for cpu 1`] = 
             </div>
           </div>
           <p
-            class="text-neutral-350 text-xs"
+            class="text-xs text-neutral-350"
           >
             Application auto-scaling is based on real-time CPU consumption. When your app goes above 60% (default) of CPU consumption for 5 minutes, your app will be auto-scaled and more instances will be added.
           </p>

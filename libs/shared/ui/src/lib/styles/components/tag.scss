@@ -1,9 +1,9 @@
 .tag--normal {
-  @apply bg-brand-50 text-brand-500 font-bold;
+  @apply bg-brand-50 font-bold text-brand-500;
 }
 
 .tag--stroked {
-  @apply font-medium border border-neutral-200 bg-white;
+  @apply border border-neutral-200 bg-white font-medium;
 }
 
 .tag--flat {

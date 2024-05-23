@@ -12,10 +12,10 @@ export function GCPVpcFeature() {
   }
 
   return (
-    <div className="flex flex-col justify-between p-4 rounded border bg-neutral-100 border-neutral-250">
+    <div className="flex flex-col justify-between rounded border border-neutral-250 bg-neutral-100 p-4">
       <div className="flex justify-between">
         <div>
-          <h4 className="text-neutral-400 text-sm font-medium mb-1">Deploy on an existing VPC</h4>
+          <h4 className="mb-1 text-sm font-medium text-neutral-400">Deploy on an existing VPC</h4>
           <ExternalLink
             href="https://hub.qovery.com/docs/using-qovery/configuration/clusters/#use-existing-vpc"
             className="mb-4"
@@ -49,7 +49,7 @@ export function GCPVpcFeature() {
               value={field.value}
               onChange={field.onChange}
             />
-            <p className="text-neutral-350 text-xs ml-4 mt-1 mb-3">
+            <p className="mb-3 ml-4 mt-1 text-xs text-neutral-350">
               By default: the project id used is the one specified in the credentials file
             </p>
           </>
@@ -69,7 +69,7 @@ export function GCPVpcFeature() {
       {openOptions && (
         <>
           <hr className="my-4" />
-          <h4 className="text-neutral-400 text-sm font-medium mb-4">Additional ranges (optional)</h4>
+          <h4 className="mb-4 text-sm font-medium text-neutral-400">Additional ranges (optional)</h4>
           <Controller
             name="gcp_existing_vpc.subnetwork_name"
             rules={{

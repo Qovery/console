@@ -74,7 +74,7 @@ export function PageSettingsValuesOverrideArgumentsFeature() {
   })
 
   return (
-    <div className="flex flex-col justify-between w-full p-8 max-w-content-with-navigation-left">
+    <div className="flex w-full max-w-content-with-navigation-left flex-col justify-between p-8">
       <FormProvider {...methods}>
         <ValuesOverrideArgumentsSetting
           onSubmit={onSubmit}
@@ -82,7 +82,7 @@ export function PageSettingsValuesOverrideArgumentsFeature() {
           source={buildEditServicePayload({ service: service! }).source}
           isSetting
         >
-          <div className="flex justify-end mt-10">
+          <div className="mt-10 flex justify-end">
             <Button type="submit" size="lg" loading={isLoadingEditService} disabled={!methods.formState.isValid}>
               Save
             </Button>

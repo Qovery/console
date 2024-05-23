@@ -93,7 +93,7 @@ export function HelmRepositoryCreateEditModal({
               your helm charts.
             </p>
             <p>You can create a new repository by defining:</p>
-            <ul className="list-disc list-inside ml-3 mb-2">
+            <ul className="mb-2 ml-3 list-inside list-disc">
               <li>its name and description</li>
               <li>kind (HTTPS or OCI)</li>
               <li>the repository URL (Starting with https:// or oci://)</li>

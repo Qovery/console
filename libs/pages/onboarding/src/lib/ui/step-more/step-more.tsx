@@ -20,8 +20,8 @@ export function StepMore(props: StepMoreProps) {
 
   return (
     <div className="pb-10">
-      <h1 className="h3 text-neutral-400 mb-3">Tell us more</h1>
-      <p className="text-sm mb-10 text-neutral-400">We need more information to proceed with your account creation.</p>
+      <h1 className="h3 mb-3 text-neutral-400">Tell us more</h1>
+      <p className="mb-10 text-sm text-neutral-400">We need more information to proceed with your account creation.</p>
       <form onSubmit={onSubmit}>
         <Controller
           name="qovery_usage"
@@ -68,7 +68,7 @@ export function StepMore(props: StepMoreProps) {
             />
           )}
         />
-        <div className="mt-10 pt-5 flex justify-between border-t border-neutral-200">
+        <div className="mt-10 flex justify-between border-t border-neutral-200 pt-5">
           <Link
             as="button"
             to={`${ONBOARDING_URL}${ONBOARDING_PERSONALIZE_URL}`}

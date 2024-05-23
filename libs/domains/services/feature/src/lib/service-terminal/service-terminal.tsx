@@ -120,15 +120,15 @@ export function ServiceTerminal({
   }
 
   return createPortal(
-    <div className="fixed bottom-0 left-0 w-full bg-neutral-650 animate-slidein-up-md-faded">
+    <div className="fixed bottom-0 left-0 w-full animate-slidein-up-md-faded bg-neutral-650">
       <button
-        className="flex items-center justify-center h-4 w-full transition-colors bg-neutral-550 hover:bg-neutral-650 border-t border-neutral-500"
+        className="flex h-4 w-full items-center justify-center border-t border-neutral-500 bg-neutral-550 transition-colors hover:bg-neutral-650"
         type="button"
         onMouseDown={handleMouseDown}
       >
         <Icon iconName="grip-lines" iconStyle="regular" className="text-white" />
       </button>
-      <div className="flex justify-between h-11 px-4 py-2 border-y border-neutral-500">
+      <div className="flex h-11 justify-between border-y border-neutral-500 px-4 py-2">
         <div className="flex gap-2">
           {runningStatuses && runningStatuses.pods.length > 0 && (
             <InputSearch
@@ -174,9 +174,9 @@ export function ServiceTerminal({
           </Button>
         </div>
       </div>
-      <div className="bg-neutral-700 px-4 py-2 min-h-[248px]" style={{ height: terminalParentHeight }}>
+      <div className="min-h-[248px] bg-neutral-700 px-4 py-2" style={{ height: terminalParentHeight }}>
         {isTerminalLoading ? (
-          <div className="flex items-start justify-center p-5 h-40">
+          <div className="flex h-40 items-start justify-center p-5">
             <LoaderSpinner />
           </div>
         ) : (

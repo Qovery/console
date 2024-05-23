@@ -17,30 +17,30 @@ export function PageUserGeneral({ onSubmit, loading, picture, accountOptions }: 
   const { control, formState, watch } = useFormContext()
 
   return (
-    <div className="flex flex-col justify-between w-full">
-      <Section className="p-8 max-w-content-with-navigation-left">
+    <div className="flex w-full flex-col justify-between">
+      <Section className="max-w-content-with-navigation-left p-8">
         <Heading className="mb-10">General account settings</Heading>
         <form onSubmit={onSubmit}>
           <BlockContent title="User profile">
             <div className="flex items-center">
               <div>
-                <img className="rounded-full w-16 h-16 border border-neutral-50" src={picture} alt="User profile" />
+                <img className="h-16 w-16 rounded-full border border-neutral-50" src={picture} alt="User profile" />
               </div>
               <div className="ml-5">
-                <p className="text-neutral-400 font-medium ml-5">
+                <p className="ml-5 font-medium text-neutral-400">
                   {watch('firstName')} {watch('lastName')}
                 </p>
               </div>
             </div>
-            <hr className="my-5 border-0 border-b border-neutral-250 relative -left-5 w-[calc(100%+41px)]" />
-            <div className="flex mb-3">
+            <hr className="relative -left-5 my-5 w-[calc(100%+41px)] border-0 border-b border-neutral-250" />
+            <div className="mb-3 flex">
               <Controller
                 name="firstName"
                 control={control}
                 rules={{ required: 'Please enter a first name.' }}
                 render={({ field, fieldState: { error } }) => (
                   <InputText
-                    className="w-full mr-1.5"
+                    className="mr-1.5 w-full"
                     name={field.name}
                     onChange={field.onChange}
                     value={field.value}
@@ -56,7 +56,7 @@ export function PageUserGeneral({ onSubmit, loading, picture, accountOptions }: 
                 rules={{ required: 'Please enter a last name.' }}
                 render={({ field, fieldState: { error } }) => (
                   <InputText
-                    className="w-full ml-1.5"
+                    className="ml-1.5 w-full"
                     name={field.name}
                     onChange={field.onChange}
                     value={field.value}
@@ -109,7 +109,7 @@ export function PageUserGeneral({ onSubmit, loading, picture, accountOptions }: 
               label="Timezone (auto-detected by browser)"
               disabled
             />
-            <p className="text-neutral-350 text-xs mt-1 mb-3">
+            <p className="mb-3 mt-1 text-xs text-neutral-350">
               Timezone used to display timestamp within the interface
             </p>
           </BlockContent>

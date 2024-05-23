@@ -25,8 +25,8 @@ export function RowDeployment(props: RowDeploymentProps) {
     error
       ? 'text-red-500 bg-neutral-550 group-hover:bg-neutral-650'
       : success
-      ? 'text-green-500 bg-neutral-550 group-hover:bg-neutral-650'
-      : 'bg-neutral-700 text-neutral-400 group-hover:bg-neutral-550'
+        ? 'text-green-500 bg-neutral-550 group-hover:bg-neutral-650'
+        : 'bg-neutral-700 text-neutral-400 group-hover:bg-neutral-550'
   }`
 
   const colorsCellClassName = (date?: boolean) =>
@@ -34,25 +34,25 @@ export function RowDeployment(props: RowDeploymentProps) {
 
   return (
     <div
-      className={`group flex min-h-6 text-xs select-none ${
+      className={`group flex min-h-6 select-none text-xs ${
         error || success ? ' bg-neutral-550 hover:bg-neutral-600' : 'bg-neutral-700 hover:bg-neutral-650'
       } ${error ? 'row-error' : ''}`}
     >
       <div data-testid="index" className={indexClassName}>
-        <div className="text-right w-10 h-6 py-1 px-2 font-code">{index + 1}</div>
+        <div className="h-6 w-10 px-2 py-1 text-right font-code">{index + 1}</div>
       </div>
       <div
         data-testid="cell-date"
-        className={`py-1 pl-2 pr-3 font-code shrink-0 w-[158px] ${colorsCellClassName()}`}
+        className={`w-[158px] shrink-0 py-1 pl-2 pr-3 font-code ${colorsCellClassName()}`}
         title={dateUTCString(data.timestamp)}
       >
         {dateFullFormat(data.timestamp, utc ? 'UTC' : undefined, 'dd MMM, HH:mm:ss.SS')}
       </div>
       <div
         data-testid="cell-msg"
-        className={`select-text py-1 pr-6 font-code relative w-full overflow-hidden ${colorsCellClassName(true)}`}
+        className={`relative w-full select-text overflow-hidden py-1 pr-6 font-code ${colorsCellClassName(true)}`}
       >
-        <span className="whitespace-pre-wrap truncate break-all">
+        <span className="truncate whitespace-pre-wrap break-all">
           {type === LogsType.ERROR ? (
             <Ansi>{data.error?.user_log_message}</Ansi>
           ) : (
@@ -60,7 +60,7 @@ export function RowDeployment(props: RowDeploymentProps) {
           )}
         </span>
         <CopyToClipboardButtonIcon
-          className="opacity-0 group-hover:opacity-100 text-white !absolute right-2 top-1"
+          className="!absolute right-2 top-1 text-white opacity-0 group-hover:opacity-100"
           content={error ? (data.error?.user_log_message as string) : (data.message?.safe_message as string)}
         />
       </div>

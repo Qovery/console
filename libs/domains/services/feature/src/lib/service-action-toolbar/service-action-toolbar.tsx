@@ -156,7 +156,7 @@ function MenuManageDeployment({
           }}
         >
           <p>
-            For <strong className="text-neutral-400 font-medium">{service.name}</strong>
+            For <strong className="font-medium text-neutral-400">{service.name}</strong>
           </p>
         </SelectCommitModal>
       ),
@@ -185,7 +185,7 @@ function MenuManageDeployment({
           }}
         >
           <p>
-            For <strong className="text-neutral-400 font-medium">{service.name}</strong>
+            For <strong className="font-medium text-neutral-400">{service.name}</strong>
           </p>
         </SelectVersionModal>
       ),
@@ -212,7 +212,7 @@ function MenuManageDeployment({
           }}
         >
           <p>
-            For <strong className="text-neutral-400 font-medium">{service.name}</strong>
+            For <strong className="font-medium text-neutral-400">{service.name}</strong>
           </p>
         </SelectVersionModal>
       ),
@@ -242,7 +242,7 @@ function MenuManageDeployment({
           }}
         >
           <p>
-            For <strong className="text-neutral-400 font-medium">{service.name}</strong>
+            For <strong className="font-medium text-neutral-400">{service.name}</strong>
           </p>
         </SelectCommitModal>
       ),
@@ -255,7 +255,7 @@ function MenuManageDeployment({
       <DropdownMenu.Trigger asChild>
         <ActionToolbar.Button aria-label="Manage Deployment" color={displayYellowColor ? 'yellow' : 'neutral'}>
           <Tooltip content="Manage Deployment">
-            <div className="flex items-center justify-center w-full h-full">
+            <div className="flex h-full w-full items-center justify-center">
               <Icon iconName="play" className="mr-4" />
               <Icon iconName="chevron-down" />
             </div>
@@ -512,7 +512,7 @@ function MenuOtherActions({
       <DropdownMenu.Trigger asChild>
         <ActionToolbar.Button aria-label="Other actions">
           <Tooltip content="Other actions">
-            <div className="flex items-center justify-center w-full h-full">
+            <div className="flex h-full w-full items-center justify-center">
               <Icon iconName="ellipsis-v" />
             </div>
           </Tooltip>

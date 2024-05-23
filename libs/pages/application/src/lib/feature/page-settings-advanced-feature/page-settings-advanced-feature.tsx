@@ -23,7 +23,7 @@ function SettingsAdvancedFeature({ service }: SettingsAdvancedFeatureProps) {
   }
 
   return (
-    <div className="flex flex-col justify-between w-full">
+    <div className="flex w-full flex-col justify-between">
       <Section className="p-8">
         <SettingsHeading
           title="Advanced Settings"

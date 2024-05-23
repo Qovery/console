@@ -25,7 +25,7 @@ export function SpotlightTrigger() {
   return (
     <>
       <button
-        className="w-60 flex items-center gap-2 py-2 px-3 bg-white border border-neutral-300 rounded text-sm"
+        className="flex w-60 items-center gap-2 rounded border border-neutral-300 bg-white px-3 py-2 text-sm"
         onClick={() => setOpenSpotlight(!openSpotlight)}
       >
         <Icon iconName="magnifying-glass" className="text-neutral-400" />

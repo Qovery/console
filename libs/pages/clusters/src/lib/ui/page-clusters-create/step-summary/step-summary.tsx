@@ -69,7 +69,7 @@ export function StepSummary(props: StepSummaryProps) {
     <Section>
       <div className="mb-10">
         <Heading className="mb-2">Ready to install your cluster</Heading>
-        <p className="text-xs text-neutral-400 mb-2">
+        <p className="mb-2 text-xs text-neutral-400">
           Here is what we will deploy, this action can take up to 30 minutes.
         </p>
       </div>
@@ -99,12 +99,12 @@ export function StepSummary(props: StepSummaryProps) {
         )}
         <div
           data-testid="summary-general"
-          className="flex p-4 w-full border rounded border-neutral-250 bg-neutral-100 mb-2"
+          className="mb-2 flex w-full rounded border border-neutral-250 bg-neutral-100 p-4"
         >
-          <Icon iconName="check" className="text-green-500 mr-2" />
-          <div className="flex-grow mr-2">
-            <div className="text-sm text-neutral-400 font-bold mb-2">General information</div>
-            <ul className="text-neutral-350 text-sm list-none">
+          <Icon iconName="check" className="mr-2 text-green-500" />
+          <div className="mr-2 flex-grow">
+            <div className="mb-2 text-sm font-bold text-neutral-400">General information</div>
+            <ul className="list-none text-sm text-neutral-350">
               <li>
                 Installation type:{' '}
                 <strong className="font-medium">
@@ -125,7 +125,7 @@ export function StepSummary(props: StepSummaryProps) {
               )}
               <li>
                 Provider:{' '}
-                <strong className="font-medium inline-flex items-center">
+                <strong className="inline-flex items-center font-medium">
                   <Icon className="ml-1 w-4" name={props.generalData.cloud_provider} />
                 </strong>
               </li>
@@ -147,12 +147,12 @@ export function StepSummary(props: StepSummaryProps) {
             () => (
               <div
                 data-testid="summary-resources"
-                className="flex p-4 w-full border rounded border-neutral-250 bg-neutral-100 mb-2"
+                className="mb-2 flex w-full rounded border border-neutral-250 bg-neutral-100 p-4"
               >
-                <Icon iconName="check" className="text-green-500 mr-2" />
-                <div className="flex-grow mr-2">
-                  <div className="text-sm text-neutral-400 font-bold mb-2">Resources</div>
-                  <ul className="text-neutral-350 text-sm list-none">
+                <Icon iconName="check" className="mr-2 text-green-500" />
+                <div className="mr-2 flex-grow">
+                  <div className="mb-2 text-sm font-bold text-neutral-400">Resources</div>
+                  <ul className="list-none text-sm text-neutral-350">
                     <li>
                       Cluster type: <strong className="font-medium">{props.resourcesData.cluster_type}</strong>
                     </li>
@@ -183,12 +183,12 @@ export function StepSummary(props: StepSummaryProps) {
           .with({ installation_type: 'SELF_MANAGED' }, () => (
             <div
               data-testid="summary-kubeconfig"
-              className="flex p-4 w-full border rounded border-neutral-250 bg-neutral-100 mb-2"
+              className="mb-2 flex w-full rounded border border-neutral-250 bg-neutral-100 p-4"
             >
-              <Icon iconName="check" className="text-green-500 mr-2" />
-              <div className="flex-grow mr-2">
-                <div className="text-sm text-neutral-400 font-bold mb-2">Kubeconfig</div>
-                <ul className="text-neutral-350 text-sm list-none">
+              <Icon iconName="check" className="mr-2 text-green-500" />
+              <div className="mr-2 flex-grow">
+                <div className="mb-2 text-sm font-bold text-neutral-400">Kubeconfig</div>
+                <ul className="list-none text-sm text-neutral-350">
                   <li>
                     Kubeconfig: <strong className="font-medium">{props.kubeconfigData?.file_name}</strong>
                   </li>
@@ -204,12 +204,12 @@ export function StepSummary(props: StepSummaryProps) {
         {props.remoteData && props.remoteData.ssh_key.length > 0 && (
           <div
             data-testid="summary-remote"
-            className="flex p-4 w-full border rounded border-neutral-250 bg-neutral-100 mb-2"
+            className="mb-2 flex w-full rounded border border-neutral-250 bg-neutral-100 p-4"
           >
-            <Icon iconName="check" className="text-green-500 mr-2" />
-            <div className="flex-grow mr-2">
-              <div className="text-sm text-neutral-400 font-bold mb-2">Remote access</div>
-              <ul className="text-neutral-350 text-sm list-none">
+            <Icon iconName="check" className="mr-2 text-green-500" />
+            <div className="mr-2 flex-grow">
+              <div className="mb-2 text-sm font-bold text-neutral-400">Remote access</div>
+              <ul className="list-none text-sm text-neutral-350">
                 <li>
                   SSH key: <strong className="font-medium">{trimId(props.remoteData.ssh_key, 'both')}</strong>
                 </li>
@@ -224,12 +224,12 @@ export function StepSummary(props: StepSummaryProps) {
         {props.featuresData && showFeaturesSection && (
           <div
             data-testid="summary-features"
-            className="flex p-4 w-full border rounded border-neutral-250 bg-neutral-100 mb-2"
+            className="mb-2 flex w-full rounded border border-neutral-250 bg-neutral-100 p-4"
           >
-            <Icon iconName="check" className="text-green-500 mr-2" />
-            <div className="flex-grow mr-2">
-              <div className="text-sm text-neutral-400 font-bold mb-2">Features</div>
-              <ul className="text-neutral-350 text-sm list-none">
+            <Icon iconName="check" className="mr-2 text-green-500" />
+            <div className="mr-2 flex-grow">
+              <div className="mb-2 text-sm font-bold text-neutral-400">Features</div>
+              <ul className="list-none text-sm text-neutral-350">
                 {props.featuresData.aws_existing_vpc && (
                   <>
                     <li className="mb-2">
@@ -239,7 +239,7 @@ export function StepSummary(props: StepSummaryProps) {
                     {props.featuresData.aws_existing_vpc.eks_subnets?.length !== 0 && (
                       <li className="mb-2">
                         EKS subnets ids:{' '}
-                        <ul className="list-disc ml-4">
+                        <ul className="ml-4 list-disc">
                           <SubnetsList
                             title="zone A:"
                             index="A"
@@ -261,7 +261,7 @@ export function StepSummary(props: StepSummaryProps) {
                     {props.featuresData.aws_existing_vpc.mongodb_subnets?.length !== 0 && (
                       <li className="mb-2">
                         MongoDB subnets ids:
-                        <ul className="list-disc ml-4">
+                        <ul className="ml-4 list-disc">
                           <SubnetsList
                             title="zone A:"
                             index="A"
@@ -283,7 +283,7 @@ export function StepSummary(props: StepSummaryProps) {
                     {props.featuresData.aws_existing_vpc.redis_subnets?.length !== 0 && (
                       <li className="mb-2">
                         Redis subnets ids:
-                        <ul className="list-disc ml-4">
+                        <ul className="ml-4 list-disc">
                           <SubnetsList
                             title="zone A:"
                             index="A"
@@ -305,7 +305,7 @@ export function StepSummary(props: StepSummaryProps) {
                     {props.featuresData.aws_existing_vpc.rds_subnets?.length !== 0 && (
                       <li className="mb-2">
                         MySQL/PostgreSQL subnets ids:
-                        <ul className="list-disc ml-4">
+                        <ul className="ml-4 list-disc">
                           <SubnetsList
                             title="zone A:"
                             index="A"
@@ -391,7 +391,7 @@ export function StepSummary(props: StepSummaryProps) {
           </div>
         )}
 
-        <div className="flex justify-between mt-10">
+        <div className="mt-10 flex justify-between">
           <Button onClick={props.onPrevious} type="button" size="lg" color="neutral" variant="surface">
             Back
           </Button>

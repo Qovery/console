@@ -131,14 +131,14 @@ export function InputCreditCard(props: InputCreditCardProps) {
           {props.type === 'number' && (
             <svg
               data-testid="credit-card-image"
-              className="absolute -translate-x-full -ml-3 -translate-y-1/2 top-1/2 z-10 w-6 h-4"
+              className="absolute top-1/2 z-10 -ml-3 h-4 w-6 -translate-x-full -translate-y-1/2"
               {...(!props.brand
                 ? getCardImageProps({ images: imagesCreditCart })
                 : { children: imagesCreditCart[props.brand as keyof CardImages] })}
             ></svg>
           )}
           <div className={`${disabled ? 'pointer-events-none' : ''}`}>
-            <label htmlFor={label} className={`${hasFocus ? 'text-xs' : 'text-sm translate-y-2'}`}>
+            <label htmlFor={label} className={`${hasFocus ? 'text-xs' : 'translate-y-2 text-sm'}`}>
               {label}
             </label>
             {inputAttribute && (
@@ -156,7 +156,7 @@ export function InputCreditCard(props: InputCreditCardProps) {
           </div>
         </div>
       </div>
-      {error && <p className="px-4 mt-1 font-medium text-xs text-red-500">{error}</p>}
+      {error && <p className="mt-1 px-4 text-xs font-medium text-red-500">{error}</p>}
     </div>
   )
 }

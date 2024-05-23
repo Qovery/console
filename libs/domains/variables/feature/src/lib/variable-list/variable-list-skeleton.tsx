@@ -6,7 +6,7 @@ export function VariableListSkeleton() {
   const columnSizes = ['40%', '20%', '15%', '10%', '12%']
 
   return (
-    <div className="flex flex-col grow justify-between">
+    <div className="flex grow flex-col justify-between">
       <Table.Root className="w-full border-b bg-white">
         <Table.Header>
           <Table.Row>

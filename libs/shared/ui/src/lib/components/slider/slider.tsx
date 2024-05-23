@@ -22,14 +22,14 @@ export function Slider(props: SliderProps) {
   return (
     <div data-testid={dataTestId || 'input-slider'} className={`w-full ${className}`}>
       {label && (
-        <div className="flex justify-between items-center mb-2">
+        <div className="mb-2 flex items-center justify-between">
           {label && (
-            <p data-testid="label" className="text-neutral-400 text-sm">
+            <p data-testid="label" className="text-sm text-neutral-400">
               {label}
             </p>
           )}
           {valueLabel && value && (
-            <p className="text-brand-500 font-medium">
+            <p className="font-medium text-brand-500">
               {value.map((currentValue, index) => `${currentValue}${index < value.length - 1 ? ', ' : ''}`)}
               {valueLabel}
             </p>
@@ -38,19 +38,19 @@ export function Slider(props: SliderProps) {
       )}
       <Root
         onValueChange={(value) => handleChange(value)}
-        className="relative flex w-full h-1 bg-neutral-300 rounded cursor-pointer"
+        className="relative flex h-1 w-full cursor-pointer rounded bg-neutral-300"
         value={value}
         min={min}
         max={max}
         step={step}
       >
-        <Track className="relative flex flex-grow h-1 bg-neutral-300 rounded-full">
-          <Range className="absolute bg-brand-500 rounded-full h-full" />
+        <Track className="relative flex h-1 flex-grow rounded-full bg-neutral-300">
+          <Range className="absolute h-full rounded-full bg-brand-500" />
         </Track>
         {value?.map((v, index) => (
           <Thumb
             key={index}
-            className="block h-4 w-4 -mt-1.5 bg-brand-500 transition-all ease-in-out duration-600 hover:bg-brand-600 focus:shadow-2xl focus-visible:outline-none rounded-full cursor-grab focus-visible:cursor-grabbing"
+            className="duration-600 -mt-1.5 block h-4 w-4 cursor-grab rounded-full bg-brand-500 transition-all ease-in-out hover:bg-brand-600 focus:shadow-2xl focus-visible:cursor-grabbing focus-visible:outline-none"
           />
         ))}
       </Root>

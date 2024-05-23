@@ -3,10 +3,10 @@
 exports[`CardCluster should match snapshot 1`] = `
 <div>
   <div
-    class="bg-neutral-600 p-4 rounded"
+    class="rounded bg-neutral-600 p-4"
   >
     <div
-      class="flex items-center text-neutral-300 font-bold text-xs"
+      class="flex items-center text-xs font-bold text-neutral-300"
       data-testid="status"
     >
       <div
@@ -47,7 +47,7 @@ exports[`CardCluster should match snapshot 1`] = `
       class="mt-4"
     >
       <div
-        class="flex mt-1"
+        class="mt-1 flex"
       >
         <svg
           class="shrink-0 mr-4 mt-0.5"
@@ -80,19 +80,19 @@ exports[`CardCluster should match snapshot 1`] = `
         </svg>
         <div>
           <p
-            class="text-neutral-100 text-sm font-medium"
+            class="text-sm font-medium text-neutral-100"
           >
              (
             )
           </p>
           <ul
-            class="text-xs mt-5"
+            class="mt-5 text-xs"
           >
             <li
-              class="flex mb-2"
+              class="mb-2 flex"
             >
               <span
-                class="text-neutral-300 w-16 mr-3"
+                class="mr-3 w-16 text-neutral-300"
               >
                 Cluster ID
               </span>
@@ -105,7 +105,7 @@ exports[`CardCluster should match snapshot 1`] = `
                   fff[...]fff
                 </span>
                 <span
-                  class="bigger-click-zone cursor-pointer text-neutral-300 ml-1"
+                  class="bigger-click-zone cursor-pointer ml-1 text-neutral-300"
                   data-state="closed"
                   data-testid="copy-container"
                 >
@@ -117,10 +117,10 @@ exports[`CardCluster should match snapshot 1`] = `
               </div>
             </li>
             <li
-              class="flex mb-2"
+              class="mb-2 flex"
             >
               <span
-                class="text-neutral-300 w-16 mr-3"
+                class="mr-3 w-16 text-neutral-300"
               >
                 Version
               </span>
@@ -132,7 +132,7 @@ exports[`CardCluster should match snapshot 1`] = `
               class="flex"
             >
               <span
-                class="text-neutral-300 w-16 mr-3"
+                class="mr-3 w-16 text-neutral-300"
               >
                 Org. ID
               </span>
@@ -145,7 +145,7 @@ exports[`CardCluster should match snapshot 1`] = `
                   0[...]0
                 </span>
                 <span
-                  class="bigger-click-zone cursor-pointer text-neutral-300 ml-1"
+                  class="bigger-click-zone cursor-pointer ml-1 text-neutral-300"
                   data-state="closed"
                   data-testid="copy-container"
                 >

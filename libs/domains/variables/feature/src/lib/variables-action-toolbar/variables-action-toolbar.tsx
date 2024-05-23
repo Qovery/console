@@ -61,7 +61,7 @@ export function VariablesActionToolbar({ onCreateVariable, onImportEnvFile, ...p
               Import from Doppler
               <Tooltip content="Documentation">
                 <a
-                  className="text-sm ml-auto"
+                  className="ml-auto text-sm"
                   href="https://hub.qovery.com/docs/using-qovery/integration/secret-manager/doppler/"
                   target="_blank"
                   rel="noopener noreferrer"

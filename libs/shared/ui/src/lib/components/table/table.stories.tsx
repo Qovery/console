@@ -37,7 +37,7 @@ const Template: Story<TableProps> = (args) => {
                 <div className="px-2 text-sm text-neutral-400">
                   {currentData.name} - {currentData.status?.state}
                 </div>
-                <div className="px-2 text-xs text-neutral-400 truncate">{currentData.created_at}</div>
+                <div className="truncate px-2 text-xs text-neutral-400">{currentData.created_at}</div>
                 <div className="px-2 text-sm text-neutral-400">{currentData.mode}</div>
               </>
             </TableRow>
@@ -125,11 +125,11 @@ const TemplateExpand: Story<TableProps> = (args) => {
                 <div className="px-2 text-sm text-neutral-400">
                   {currentData.name} - {currentData.status?.state}
                 </div>
-                <div className="px-2 text-xs text-neutral-400 truncate">{currentData.created_at}</div>
+                <div className="truncate px-2 text-xs text-neutral-400">{currentData.created_at}</div>
                 <div className="px-2 text-sm text-neutral-400">{currentData.mode}</div>
 
                 <div
-                  className={`px-2 bg-brand-100 col-span-3 ${expandedRow === currentData.id ? 'visible' : 'hidden'}`}
+                  className={`col-span-3 bg-brand-100 px-2 ${expandedRow === currentData.id ? 'visible' : 'hidden'}`}
                 >
                   Expanded row
                 </div>

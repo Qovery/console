@@ -10,14 +10,14 @@ export interface EmptyStateProps extends PropsWithChildren {
 export function EmptyState({ title, description, className, children }: EmptyStateProps) {
   return (
     <div className={twMerge('flex flex-grow items-center justify-center', className)}>
-      <div className="text-center flex flex-col items-center justify-center w-[420px] m-auto mt-12">
+      <div className="m-auto mt-12 flex w-[420px] flex-col items-center justify-center text-center">
         <img
-          className="pointer-events-none user-none w-[170px]"
+          className="user-none pointer-events-none w-[170px]"
           src="/assets/images/event-placeholder-light.svg"
           alt="Event placeholder"
         />
-        <p className="text-neutral-400 font-medium">{title}</p>
-        {description && <p className="text-sm text-neutral-350 mt-1">{description}</p>}
+        <p className="font-medium text-neutral-400">{title}</p>
+        {description && <p className="mt-1 text-sm text-neutral-350">{description}</p>}
         {children}
       </div>
     </div>

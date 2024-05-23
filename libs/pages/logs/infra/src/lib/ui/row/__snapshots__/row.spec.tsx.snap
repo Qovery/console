@@ -3,7 +3,7 @@
 exports[`Row should have cell error message 1`] = `
 <div>
   <div
-    class="group flex justify-between min-h-6 font-code text-xs hover:bg-neutral-650 select-none bg-neutral-600 row-error"
+    class="group flex min-h-6 select-none justify-between font-code text-xs hover:bg-neutral-650 bg-neutral-600 row-error"
   >
     <div
       class="flex"
@@ -13,19 +13,19 @@ exports[`Row should have cell error message 1`] = `
         data-testid="index"
       >
         <div
-          class="text-right w-10 min-w-[40px] h-6 py-1 px-2"
+          class="h-6 w-10 min-w-[40px] px-2 py-1 text-right"
         >
           2
         </div>
       </div>
       <div
-        class="py-1 px-2 text-red-500"
+        class="px-2 py-1 text-red-500"
         data-testid="cell-date"
       >
         NaN:NaN:NaN
       </div>
       <div
-        class="py-1 w-11/12 select-text text-red-500"
+        class="w-11/12 select-text py-1 text-red-500"
         data-testid="cell-msg"
       >
         <span
@@ -42,10 +42,10 @@ exports[`Row should have cell error message 1`] = `
       </div>
     </div>
     <div
-      class="flex whitespace-nowrap py-1 px-2 text-red-500"
+      class="flex whitespace-nowrap px-2 py-1 text-red-500"
     >
       <span
-        class="bigger-click-zone cursor-pointer opacity-0 group-hover:opacity-100 mr-4 text-white"
+        class="bigger-click-zone cursor-pointer mr-4 text-white opacity-0 group-hover:opacity-100"
         data-state="closed"
         data-testid="copy-container"
       >
@@ -62,7 +62,7 @@ exports[`Row should have cell error message 1`] = `
 exports[`Row should have cell message 1`] = `
 <div>
   <div
-    class="group flex justify-between min-h-6 font-code text-xs hover:bg-neutral-650 select-none bg-neutral-600 "
+    class="group flex min-h-6 select-none justify-between font-code text-xs hover:bg-neutral-650 bg-neutral-600 "
   >
     <div
       class="flex"
@@ -72,19 +72,19 @@ exports[`Row should have cell message 1`] = `
         data-testid="index"
       >
         <div
-          class="text-right w-10 min-w-[40px] h-6 py-1 px-2"
+          class="h-6 w-10 min-w-[40px] px-2 py-1 text-right"
         >
           2
         </div>
       </div>
       <div
-        class="py-1 px-2 text-green-500"
+        class="px-2 py-1 text-green-500"
         data-testid="cell-date"
       >
         NaN:NaN:NaN
       </div>
       <div
-        class="py-1 w-11/12 select-text text-green-500"
+        class="w-11/12 select-text py-1 text-green-500"
         data-testid="cell-msg"
       >
         <span
@@ -101,10 +101,10 @@ exports[`Row should have cell message 1`] = `
       </div>
     </div>
     <div
-      class="flex whitespace-nowrap py-1 px-2 text-green-500"
+      class="flex whitespace-nowrap px-2 py-1 text-green-500"
     >
       <span
-        class="bigger-click-zone cursor-pointer opacity-0 group-hover:opacity-100 mr-4 text-white"
+        class="bigger-click-zone cursor-pointer mr-4 text-white opacity-0 group-hover:opacity-100"
         data-state="closed"
         data-testid="copy-container"
       >

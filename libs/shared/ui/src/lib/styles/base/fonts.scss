@@ -1,6 +1,7 @@
 @font-face {
   font-family: 'Roboto';
-  src: url('/assets/fonts/roboto/roboto-bold.woff2') format('woff2'),
+  src:
+    url('/assets/fonts/roboto/roboto-bold.woff2') format('woff2'),
     url('/assets/fonts/roboto/roboto-bold.woff') format('woff');
   font-weight: 700;
   font-style: normal;
@@ -9,7 +10,8 @@
 
 @font-face {
   font-family: 'Roboto';
-  src: url('/assets/fonts/roboto/roboto-medium.woff2') format('woff2'),
+  src:
+    url('/assets/fonts/roboto/roboto-medium.woff2') format('woff2'),
     url('/assets/fonts/roboto/roboto-medium.woff') format('woff');
   font-weight: 500;
   font-style: normal;
@@ -18,7 +20,8 @@
 
 @font-face {
   font-family: 'Roboto';
-  src: url('/assets/fonts/roboto/roboto-regular.woff2') format('woff2'),
+  src:
+    url('/assets/fonts/roboto/roboto-regular.woff2') format('woff2'),
     url('/assets/fonts/roboto/roboto-regular.woff') format('woff');
   font-weight: 400;
   font-style: normal;
@@ -27,7 +30,8 @@
 
 @font-face {
   font-family: 'Hack';
-  src: url('/assets/fonts/hack/hack-regular.woff2') format('woff2'),
+  src:
+    url('/assets/fonts/hack/hack-regular.woff2') format('woff2'),
     url('/assets/fonts/hack/hack-regular.woff') format('woff');
   font-weight: 400;
   font-style: normal;

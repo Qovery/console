@@ -39,26 +39,26 @@ export function AssistantPanel({ smaller = false, onClose }: AssistantPanelProps
   return (
     <div
       className={twMerge(
-        'flex flex-col bg-white dark:bg-neutral-600 border-l border-neutral-200 dark:border-neutral-500 w-[368px] fixed right-0 shadow-sm animate-slidein-right-md-faded',
-        smaller ? 'min-h-page-container-wprogressbar top-[70px]' : 'min-h-page-container top-[4rem]'
+        'fixed right-0 flex w-[368px] animate-slidein-right-md-faded flex-col border-l border-neutral-200 bg-white shadow-sm dark:border-neutral-500 dark:bg-neutral-600',
+        smaller ? 'top-[70px] min-h-page-container-wprogressbar' : 'top-[4rem] min-h-page-container'
       )}
     >
       <div className="flex justify-between px-5 pt-5">
         <div className="flex gap-3 font-bold">
-          <span className="flex justify-center items-center rounded bg-purple-500 w-6 h-6 text-sm text-white dark:text-neutral-700">
+          <span className="flex h-6 w-6 items-center justify-center rounded bg-purple-500 text-sm text-white dark:text-neutral-700">
             <Icon name="icon-solid-lightbulb" />
           </span>
           <span className="text-neutral-500 dark:text-white">Helper</span>
         </div>
         <button type="button" onClick={onClose}>
-          <span className="flex w-7 h-7 items-center justify-center bg-neutral-200 dark:bg-neutral-500 text-neutral-350 dark:text-neutral-250 hover:text-neutral-400 dark:hover:text-white hover:bg-neutral-250 dark:hover:bg-brand-500 ease-out duration-300 rounded-full">
+          <span className="flex h-7 w-7 items-center justify-center rounded-full bg-neutral-200 text-neutral-350 duration-300 ease-out hover:bg-neutral-250 hover:text-neutral-400 dark:bg-neutral-500 dark:text-neutral-250 dark:hover:bg-brand-500 dark:hover:text-white">
             <Icon name="icon-solid-xmark" />
           </span>
         </button>
       </div>
-      <div className="flex flex-col grow divide-y divide-neutral-200 dark:divide-neutral-500">
+      <div className="flex grow flex-col divide-y divide-neutral-200 dark:divide-neutral-500">
         {docLinks.length > 0 && (
-          <div className="text-neutral-400 space-y-5 p-5">
+          <div className="space-y-5 p-5 text-neutral-400">
             <span className="font-semibold">How does it works</span>
             <div className="flex flex-col space-y-3 text-sm">
               {docLinks.map(({ label, link }) => (
@@ -69,7 +69,7 @@ export function AssistantPanel({ smaller = false, onClose }: AssistantPanelProps
             </div>
           </div>
         )}
-        <div className="flex flex-col grow min-h-0 p-5">
+        <div className="flex min-h-0 grow flex-col p-5">
           <SearchBox className="hidden" />
           <InputSearch
             className="mb-5"
@@ -84,13 +84,13 @@ export function AssistantPanel({ smaller = false, onClose }: AssistantPanelProps
           {valueDoc.length > 0 && (
             <Hits
               classNames={{ list: 'space-y-5' }}
-              className="min-h-0 flex grow shrink-0 basis-0 overflow-y-auto"
+              className="flex min-h-0 shrink-0 grow basis-0 overflow-y-auto"
               hitComponent={Hit}
             />
           )}
         </div>
         <button
-          className="flex justify-center items-center gap-1.5 px-5 h-11 text-neutral-400 dark:text-white font-medium hover:bg-neutral-150 dark:hover:bg-neutral-550 transition"
+          className="flex h-11 items-center justify-center gap-1.5 px-5 font-medium text-neutral-400 transition hover:bg-neutral-150 dark:text-white dark:hover:bg-neutral-550"
           type="button"
           onClick={() => {
             showIntercomMessenger()
@@ -101,7 +101,7 @@ export function AssistantPanel({ smaller = false, onClose }: AssistantPanelProps
           <span className="text-sm">Contact support</span>
         </button>
         <a
-          className="flex justify-center items-center gap-1.5 px-5 h-11 text-neutral-400 dark:text-white font-medium hover:bg-neutral-150 dark:hover:bg-neutral-550 transition"
+          className="flex h-11 items-center justify-center gap-1.5 px-5 font-medium text-neutral-400 transition hover:bg-neutral-150 dark:text-white dark:hover:bg-neutral-550"
           href={QOVERY_FORUM_URL}
           target="_blank"
           rel="noopener noreferrer"
@@ -110,7 +110,7 @@ export function AssistantPanel({ smaller = false, onClose }: AssistantPanelProps
           <span className="text-sm">Community forum</span>
         </a>
         <a
-          className="flex justify-center items-center gap-1.5 px-5 h-11 text-neutral-400 dark:text-white font-medium hover:bg-neutral-150 dark:hover:bg-neutral-550 transition"
+          className="flex h-11 items-center justify-center gap-1.5 px-5 font-medium text-neutral-400 transition hover:bg-neutral-150 dark:text-white dark:hover:bg-neutral-550"
           href={QOVERY_FEEDBACK_URL}
           target="_blank"
           rel="noopener noreferrer"
@@ -120,7 +120,7 @@ export function AssistantPanel({ smaller = false, onClose }: AssistantPanelProps
         </a>
         {appStatus && appStatus.status ? (
           <a
-            className="flex items-center justify-center gap-2 px-5 h-10 text-xs text-neutral-350 dark:text-neutral-250 hover:bg-neutral-150 dark:hover:bg-neutral-550 transition"
+            className="flex h-10 items-center justify-center gap-2 px-5 text-xs text-neutral-350 transition hover:bg-neutral-150 dark:text-neutral-250 dark:hover:bg-neutral-550"
             href={QOVERY_STATUS_URL}
             target="_blank"
             rel="noopener noreferrer"

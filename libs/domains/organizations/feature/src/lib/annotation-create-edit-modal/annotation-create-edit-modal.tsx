@@ -11,10 +11,13 @@ type ScopeEnum = keyof typeof OrganizationAnnotationsGroupScopeEnum
 
 // Convert scope for default values
 export function convertScopeEnumToObject(scopes: OrganizationAnnotationsGroupScopeEnum[]): { [key: string]: boolean } {
-  return Object.keys(OrganizationAnnotationsGroupScopeEnum).reduce((acc, key) => {
-    acc[key] = scopes.includes(OrganizationAnnotationsGroupScopeEnum[key as ScopeEnum])
-    return acc
-  }, {} as { [key: string]: boolean })
+  return Object.keys(OrganizationAnnotationsGroupScopeEnum).reduce(
+    (acc, key) => {
+      acc[key] = scopes.includes(OrganizationAnnotationsGroupScopeEnum[key as ScopeEnum])
+      return acc
+    },
+    {} as { [key: string]: boolean }
+  )
 }
 
 export function convertScopeObjectToEnum(obj: { [key: string]: boolean }): OrganizationAnnotationsGroupScopeEnum[] {
@@ -116,17 +119,17 @@ export function AnnotationCreateEditModal({
             />
           )}
         />
-        <span className="block text-neutral-400 text-sm mb-2">Add annotation key value</span>
-        <div className="bg-neutral-100 border border-neutral-250 px-4 py-3 rounded">
+        <span className="mb-2 block text-sm text-neutral-400">Add annotation key value</span>
+        <div className="rounded border border-neutral-250 bg-neutral-100 px-4 py-3">
           <ul>
-            <li className="grid grid-cols-[6fr_6fr_1fr] gap-x-2 mb-3">
-              <span className="text-sm text-neutral-350 font-medium">Annotation keys</span>
-              <span className="text-sm text-neutral-350 font-medium">Value</span>
+            <li className="mb-3 grid grid-cols-[6fr_6fr_1fr] gap-x-2">
+              <span className="text-sm font-medium text-neutral-350">Annotation keys</span>
+              <span className="text-sm font-medium text-neutral-350">Value</span>
               <span></span>
             </li>
             {fields.map((field, index) => (
               <li key={field.id} className="mb-3 last:mb-0">
-                <div className="grid grid-cols-[6fr_6fr_1fr] gap-x-2 items-center">
+                <div className="grid grid-cols-[6fr_6fr_1fr] items-center gap-x-2">
                   <Controller
                     name={`annotations.${index}.key`}
                     control={methods.control}
@@ -181,8 +184,8 @@ export function AnnotationCreateEditModal({
             <Icon iconName="plus" className="ml-2" />
           </Button>
         </div>
-        <span className="block text-neutral-400 text-sm mb-2 mt-4">Select scope (Kubernetes objects)</span>
-        <div className="bg-neutral-100 border border-neutral-250 px-4 py-3 rounded h-[194px] overflow-y-auto">
+        <span className="mb-2 mt-4 block text-sm text-neutral-400">Select scope (Kubernetes objects)</span>
+        <div className="h-[194px] overflow-y-auto rounded border border-neutral-250 bg-neutral-100 px-4 py-3">
           {Object.keys(OrganizationAnnotationsGroupScopeEnum)
             .sort()
             .map((key) => (
@@ -191,15 +194,15 @@ export function AnnotationCreateEditModal({
                 name={`scopes.${key}`}
                 control={methods.control}
                 render={({ field }) => (
-                  <div className="flex items-center mb-2 last:mb-0">
+                  <div className="mb-2 flex items-center last:mb-0">
                     <Checkbox
                       id={key}
-                      className="mr-3 w-4 h-4"
+                      className="mr-3 h-4 w-4"
                       name={field.name}
                       checked={field.value}
                       onCheckedChange={field.onChange}
                     />
-                    <label className="text-neutral-400 font-medium text-sm" htmlFor={key}>
+                    <label className="text-sm font-medium text-neutral-400" htmlFor={key}>
                       {key}
                     </label>
                   </div>

@@ -36,8 +36,8 @@ export function InvoicesList(props: InvoicesListProps) {
 
   return (
     <div className="mb-3">
-      <div className="flex items-center justify-between mb-3 py-5 ">
-        <h1 className="h5 text-neutral-400 mb-2">Invoices</h1>
+      <div className="mb-3 flex items-center justify-between py-5 ">
+        <h1 className="h5 mb-2 text-neutral-400">Invoices</h1>
         <div className="flex gap-3">
           <InputSelectSmall
             dataTestId="year-select"
@@ -57,7 +57,7 @@ export function InvoicesList(props: InvoicesListProps) {
         columnsWidth={columnWidth}
         setFilter={setFilter}
         filter={filter}
-        className="border border-neutral-200 rounded overflow-hidden"
+        className="overflow-hidden rounded border border-neutral-200"
       >
         <div>
           {props.invoicesLoading && (

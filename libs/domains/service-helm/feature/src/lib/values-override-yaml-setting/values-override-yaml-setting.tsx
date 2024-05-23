@@ -51,9 +51,9 @@ export function ValuesOverrideYamlSetting({ onSubmit, content, source }: ValuesO
       {content ? (
         <CodeEditor value={content} readOnly height="300px" language="yaml" />
       ) : (
-        <div className="text-center my-4 py-5 px-10">
+        <div className="my-4 px-10 py-5 text-center">
           <Icon iconName="wave-pulse" className="text-neutral-350" />
-          <p className="text-neutral-350 font-medium text-xs mt-1 mb-3">No override defined.</p>
+          <p className="mb-3 mt-1 text-xs font-medium text-neutral-350">No override defined.</p>
           <Button type="button" size="md" onClick={openModalValuesOverrideYaml}>
             Create override <Icon iconName="pen" className="ml-2" />
           </Button>

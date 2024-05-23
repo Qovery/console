@@ -84,10 +84,10 @@ export function PageSettingsAdvanced(props: PageSettingsAdvancedProps) {
                         ''
                       }
                     >
-                      <div className="inline whitespace-nowrap overflow-hidden text-ellipsis">{displayValue}</div>
+                      <div className="inline overflow-hidden text-ellipsis whitespace-nowrap">{displayValue}</div>
                     </Tooltip>
                     <CopyToClipboardButtonIcon
-                      className="ml-2 text-neutral-300 invisible group-hover:visible"
+                      className="invisible ml-2 text-neutral-300 group-hover:visible"
                       content={
                         (props.defaultAdvancedSettings &&
                           props.defaultAdvancedSettings[key as keyof ClusterAdvancedSettings]?.toString()) ||
@@ -116,7 +116,7 @@ export function PageSettingsAdvanced(props: PageSettingsAdvancedProps) {
                   defaultValue=""
                   render={({ field, fieldState: { error } }) => (
                     <InputTextSmall
-                      className="shrink-0 grow flex-1"
+                      className="flex-1 shrink-0 grow"
                       data-testid="value"
                       name={field.name}
                       onChange={field.onChange}
@@ -137,7 +137,7 @@ export function PageSettingsAdvanced(props: PageSettingsAdvancedProps) {
   table = [...table, ...tableBody]
 
   return (
-    <div className="flex flex-col justify-between w-full">
+    <div className="flex w-full flex-col justify-between">
       <Section className="p-8">
         <SettingsHeading
           title="Advanced Settings"

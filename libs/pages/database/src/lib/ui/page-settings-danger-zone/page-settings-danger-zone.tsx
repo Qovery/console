@@ -10,8 +10,8 @@ export interface PageSettingsDangerZoneProps {
 export function PageSettingsDangerZone(props: PageSettingsDangerZoneProps) {
   const { deleteDatabase, databaseName, environmentMode } = props
   return (
-    <div className="flex flex-col justify-between w-full">
-      <div className="p-8 max-w-content-with-navigation-left">
+    <div className="flex w-full flex-col justify-between">
+      <div className="max-w-content-with-navigation-left p-8">
         <BlockContentDelete
           title="Delete database"
           ctaLabel="Delete database"

@@ -28,7 +28,7 @@ exports[`ServiceLinksPopover should match snapshot 1`] = `
     style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 8px); min-width: max-content; --radix-popper-available-width: -20px; --radix-popper-available-height: -18px; --radix-popper-anchor-width: 0px; --radix-popper-anchor-height: 0px; --radix-popper-transform-origin: 100% 0px;"
   >
     <div
-      class="bg-white shadow-xl rounded border outline-none data-[state=open]:data-[side=top]:animate-slidein-down-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-sm-faded data-[state=open]:data-[side=bottom]:animate-slidein-up-sm-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded p-2 text-neutral-350 text-sm border-transparent max-w-[280px]"
+      class="rounded border bg-white shadow-xl outline-none data-[state=open]:data-[side=bottom]:animate-slidein-up-sm-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-sm-faded data-[state=open]:data-[side=top]:animate-slidein-down-sm-faded max-w-[280px] border-transparent p-2 text-sm text-neutral-350"
       data-align="end"
       data-side="bottom"
       data-state="open"
@@ -38,10 +38,10 @@ exports[`ServiceLinksPopover should match snapshot 1`] = `
       tabindex="-1"
     >
       <div
-        class="p-2 flex justify-between items-center"
+        class="flex items-center justify-between p-2"
       >
         <p
-          class="text-neutral-350 font-medium"
+          class="font-medium text-neutral-350"
         >
           1
            
@@ -67,7 +67,7 @@ exports[`ServiceLinksPopover should match snapshot 1`] = `
           class="flex p-2"
         >
           <span
-            class="bigger-click-zone cursor-pointer text-brand-500 hover:text-brand-600 mr-2"
+            class="bigger-click-zone cursor-pointer mr-2 text-brand-500 hover:text-brand-600"
             data-state="closed"
             data-testid="copy-container"
           >
@@ -77,13 +77,13 @@ exports[`ServiceLinksPopover should match snapshot 1`] = `
             />
           </span>
           <a
-            class="transition flex items-center justify-between w-full text-neutral-400 hover:text-brand-500"
+            class="flex w-full items-center justify-between text-neutral-400 transition hover:text-brand-500"
             href="https://qovery.com"
             rel="noreferrer"
             target="_blank"
           >
             <div
-              class="text-ssm font-medium mr-2"
+              class="mr-2 text-ssm font-medium"
             >
               https://qovery.com
             </div>

@@ -92,7 +92,7 @@ export const Modal = (props: ModalProps) => {
               setExternalOpen ? setExternalOpen(false) : setOpen(false)
             }
           }}
-          className="modal__overlay flex fixed top-0 left-0 bg-neutral-700/20 w-full h-screen"
+          className="modal__overlay fixed left-0 top-0 flex h-screen w-full bg-neutral-700/20"
         />
         <Dialog.Content
           onPointerDownOutside={(event) => {
@@ -103,15 +103,15 @@ export const Modal = (props: ModalProps) => {
               ? { width: 'calc(100vw - 48px)', height: 'calc(100vh  - 48px)', top: 24 }
               : { width: `${width}px` }
           }
-          className={`modal__content fixed top-[84px] left-1/2 bg-white rounded-md shadow-[0_0_32px_rgba(0,0,0,0.08)] ${className}`}
+          className={`modal__content fixed left-1/2 top-[84px] rounded-md bg-white shadow-[0_0_32px_rgba(0,0,0,0.08)] ${className}`}
         >
           <div className={`overflow-auto ${fullScreen ? '' : 'max-h-[80vh]'}`}>
             {cloneElement(children, {
               setOpen: setExternalOpen ? setExternalOpen : setOpen,
             })}
             {buttonClose && (
-              <Dialog.Close className="absolute top-4 right-4">
-                <span className="flex w-7 h-7 items-center justify-center bg-neutral-200 text-neutral-350 hover:text-neutral-400 hover:bg-neutral-250 ease-out duration-300 rounded-full">
+              <Dialog.Close className="absolute right-4 top-4">
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-neutral-200 text-neutral-350 duration-300 ease-out hover:bg-neutral-250 hover:text-neutral-400">
                   <Icon name="icon-solid-xmark" />
                 </span>
               </Dialog.Close>

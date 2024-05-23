@@ -36,7 +36,7 @@ export function TableHeadSort<T>(props: TableHeadSortProps<T>) {
   return (
     <div
       data-testid="table-head-sort"
-      className={`text-xs font-medium select-none cursor-pointer transition-color transition-timing duration-100 hover:text-neutral-400 ${
+      className={`transition-color transition-timing cursor-pointer select-none text-xs font-medium duration-100 hover:text-neutral-400 ${
         isSort ? 'text-neutral-400' : 'text-neutral-400'
       }`}
       onClick={() => toggleSort()}
@@ -44,7 +44,7 @@ export function TableHeadSort<T>(props: TableHeadSortProps<T>) {
       {title}
       <Icon
         name="icon-solid-arrow-down"
-        className={`ml-1 text-2xs inline-block transition-transform ease-out duration-100 ${
+        className={`ml-1 inline-block text-2xs transition-transform duration-100 ease-out ${
           isSort ? 'rotate-180' : ''
         }`}
       />

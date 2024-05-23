@@ -25,9 +25,9 @@ const AccordionTrigger = forwardRef<ElementRef<typeof AccordionPrimitive.Trigger
     const iconName = isOpen ? 'minus' : 'plus'
 
     return (
-      <div className={twMerge('flex items-center w-full pr-5 py-2 text-sm outline-none text-neutral-400', className)}>
+      <div className={twMerge('flex w-full items-center py-2 pr-5 text-sm text-neutral-400 outline-none', className)}>
         <AccordionPrimitive.Trigger
-          className="cursor-pointer inline-flex items-center justify-center border border-neutral-250 text-3xs w-4 h-4 rounded mr-5"
+          className="mr-5 inline-flex h-4 w-4 cursor-pointer items-center justify-center rounded border border-neutral-250 text-3xs"
           onClick={() => setIsOpen(!isOpen)}
           {...props}
           ref={forwardedRef}
@@ -48,7 +48,7 @@ const AccordionContent = forwardRef<ElementRef<typeof AccordionPrimitive.Content
   ({ children, className, ...props }, forwardedRef) => (
     <AccordionPrimitive.Content
       className={twMerge(
-        'data-[state=open]:animate-slidein-down-sm-faded data-[state=closed]:slidein-up-sm-faded ml-2 pl-[26px] overflow-hidden border-l border-neutral-200',
+        'data-[state=closed]:slidein-up-sm-faded ml-2 overflow-hidden border-l border-neutral-200 pl-[26px] data-[state=open]:animate-slidein-down-sm-faded',
         className
       )}
       {...props}
