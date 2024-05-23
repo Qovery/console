@@ -594,30 +594,30 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
         className="bg-white rounded-t-sm mt-2 pt-10"
       >
         <PostHogFeature
-          flag="service-template"
+          flag="service-dropdown-list"
           match={true}
           fallback={
-            <Menu
-              trigger={
-                <Button size="lg" className="gap-2 mt-5">
-                  New service
-                  <Icon iconName="circle-plus" />
-                </Button>
-              }
-              menus={newServicesMenu}
-              arrowAlign={MenuAlign.CENTER}
-            />
+            <Link
+              as="button"
+              size="lg"
+              className="gap-2 mt-5"
+              to={`${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_NEW_URL}`}
+            >
+              New service
+              <Icon iconName="circle-plus" />
+            </Link>
           }
         >
-          <Link
-            as="button"
-            size="lg"
-            className="gap-2 mt-5"
-            to={`${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_NEW_URL}`}
-          >
-            New service
-            <Icon iconName="circle-plus" />
-          </Link>
+          <Menu
+            trigger={
+              <Button size="lg" className="gap-2 mt-5">
+                New service
+                <Icon iconName="circle-plus" />
+              </Button>
+            }
+            menus={newServicesMenu}
+            arrowAlign={MenuAlign.CENTER}
+          />
         </PostHogFeature>
       </EmptyState>
     )

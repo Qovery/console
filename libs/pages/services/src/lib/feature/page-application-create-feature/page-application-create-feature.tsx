@@ -77,7 +77,7 @@ export function PageApplicationCreateFeature() {
     slug && option ? SERVICES_APPLICATION_TEMPLATE_CREATION_URL(slug, option) : SERVICES_APPLICATION_CREATION_URL
   const creationFlowUrl = SERVICES_URL(organizationId, projectId, environmentId) + path
 
-  const flagEnabled = useFeatureFlagEnabled('service-template')
+  const flagEnabled = useFeatureFlagEnabled('service-dropdown-list')
 
   return (
     <ApplicationContainerCreateContext.Provider
@@ -96,7 +96,7 @@ export function PageApplicationCreateFeature() {
       <FunnelFlow
         onExit={() => {
           const link = `${SERVICES_URL(organizationId, projectId, environmentId)}${
-            flagEnabled ? SERVICES_NEW_URL : SERVICES_GENERAL_URL
+            flagEnabled ? SERVICES_GENERAL_URL : SERVICES_NEW_URL
           }`
           navigate(link)
         }}

@@ -210,31 +210,31 @@ export function Container({ children }: PropsWithChildren) {
       ) : (
         <Skeleton width={154} height={40} show={isLoadingDeploymentStatus}>
           <PostHogFeature
-            flag="service-template"
+            flag="service-dropdown-list"
             match={true}
             fallback={
-              <Menu
-                trigger={
-                  <Button id="service-dropdown" size="lg" className="gap-2">
-                    New service
-                    <Icon iconName="circle-plus" />
-                  </Button>
-                }
-                menus={newServicesMenu}
-                arrowAlign={MenuAlign.START}
-              />
+              <Link
+                as="button"
+                size="lg"
+                id="service-list"
+                className="gap-2"
+                to={`${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_NEW_URL}`}
+              >
+                New service
+                <Icon iconName="circle-plus" />
+              </Link>
             }
           >
-            <Link
-              as="button"
-              size="lg"
-              id="service-list"
-              className="gap-2"
-              to={`${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_NEW_URL}`}
-            >
-              New service
-              <Icon iconName="circle-plus" />
-            </Link>
+            <Menu
+              trigger={
+                <Button id="service-dropdown" size="lg" className="gap-2">
+                  New service
+                  <Icon iconName="circle-plus" />
+                </Button>
+              }
+              menus={newServicesMenu}
+              arrowAlign={MenuAlign.START}
+            />
           </PostHogFeature>
         </Skeleton>
       )}

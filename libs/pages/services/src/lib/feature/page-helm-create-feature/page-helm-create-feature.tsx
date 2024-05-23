@@ -84,7 +84,7 @@ export function PageHelmCreateFeature() {
   const path = slug && option ? SERVICES_HELM_TEMPLATE_CREATION_URL(slug, option) : SERVICES_HELM_CREATION_URL
   const creationFlowUrl = SERVICES_URL(organizationId, projectId, environmentId) + path
 
-  const flagEnabled = useFeatureFlagEnabled('service-template')
+  const flagEnabled = useFeatureFlagEnabled('service-dropdown-list')
 
   return (
     <HelmCreateContext.Provider
@@ -100,7 +100,7 @@ export function PageHelmCreateFeature() {
       <FunnelFlow
         onExit={() => {
           const link = `${SERVICES_URL(organizationId, projectId, environmentId)}${
-            flagEnabled ? SERVICES_NEW_URL : SERVICES_GENERAL_URL
+            flagEnabled ? SERVICES_GENERAL_URL : SERVICES_NEW_URL
           }`
           navigate(link)
         }}

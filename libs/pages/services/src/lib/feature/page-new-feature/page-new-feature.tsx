@@ -18,7 +18,12 @@ import {
 } from '@qovery/shared/routes'
 import { Button, ExternalLink, Heading, Icon, InputSearch, Link, Section } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { type ServiceTemplateOptionType, type ServiceTemplateType, serviceTemplates } from './service-templates'
+import {
+  type ServiceTemplateOptionType,
+  type ServiceTemplateType,
+  type TagsEnum,
+  serviceTemplates,
+} from './service-templates'
 
 function Card({ title, icon, link }: { title: string; icon: ReactElement; link: string }) {
   return (
@@ -175,6 +180,31 @@ function CardService({ title, icon, description, slug, options, type, link }: Se
   )
 }
 
+function SectionByTag({
+  title,
+  description,
+  tag,
+}: {
+  title: string
+  tag: keyof typeof TagsEnum
+  description?: string
+}) {
+  return (
+    <Section>
+      <Heading className="mb-1">{title}</Heading>
+      {description && <p className="text-neutral-350 text-xs">{description}</p>}
+      <div className="grid grid-cols-3 gap-4 mt-5">
+        {serviceTemplates
+          .filter(({ tag: t }) => t === tag)
+          .sort((a, b) => a.title.localeCompare(b.title))
+          .map((service) => (
+            <CardService key={service.title} {...service} />
+          ))}
+      </div>
+    </Section>
+  )
+}
+
 export function PageNewFeature() {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   useDocumentTitle('Create new service - Qovery')
@@ -262,19 +292,22 @@ export function PageNewFeature() {
                 ))}
               </div>
             </Section>
-            <Section>
-              <Heading className="mb-1">Select your service</Heading>
-              <p className="text-neutral-350 text-xs mb-5">
-                Jumpstart your app development process with pre-built solutions from Qovery.
-              </p>
-              <div className="grid grid-cols-3 gap-4">
-                {serviceTemplates
-                  .sort((a, b) => a.title.localeCompare(b.title))
-                  .map((service) => (
-                    <CardService key={service.title} {...service} />
-                  ))}
-              </div>
-            </Section>
+            <SectionByTag
+              title="Data & Storage"
+              description="Find your perfect data and storage template with presets."
+              tag="DATA_STORAGE"
+            />
+            <SectionByTag
+              title="Back-end"
+              description="Find your perfect Back-end template with presets."
+              tag="BACK_END"
+            />
+            <SectionByTag
+              title="Front-end"
+              description="Find your perfect Front-end template with presets."
+              tag="FRONT_END"
+            />
+            <SectionByTag title="More template" description="Look for other template presets." tag="OTHER" />
           </>
         ) : [...serviceEmpty, ...serviceTemplates].filter(filterService).length > 0 ? (
           <Section>
