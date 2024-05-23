@@ -425,7 +425,7 @@ export function ContainerRegistryCreateEditModal({
                     <Dropzone typeFile=".json" isDragActive={isDragActive} />
                   </div>
                 ) : fileDetails ? (
-                  <div className="flex items-center justify-between border border-neutral-200 p-4 rounded mb-[90px]">
+                  <div className="mb-[90px] flex items-center justify-between rounded border border-neutral-200 p-4">
                     <div className="flex items-center pl-2 text-neutral-400">
                       <Icon iconName="file-arrow-down" className="mr-4" />
                       <p className="flex flex-col gap-1">
@@ -437,7 +437,7 @@ export function ContainerRegistryCreateEditModal({
                       variant="outline"
                       color="neutral"
                       size="md"
-                      className="justify-center w-7 h-7"
+                      className="h-7 w-7 justify-center"
                       onClick={() => field.onChange(undefined)}
                     >
                       <Icon iconName="trash" />
