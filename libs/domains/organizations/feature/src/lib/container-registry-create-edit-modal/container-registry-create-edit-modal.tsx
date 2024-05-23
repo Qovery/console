@@ -5,10 +5,22 @@ import {
   type ContainerRegistryResponse,
 } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
+import { useState } from 'react'
+import { useDropzone } from 'react-dropzone'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { match } from 'ts-pattern'
 import { IconEnum } from '@qovery/shared/enums'
-import { ExternalLink, Icon, InputSelect, InputText, InputTextArea, ModalCrud, useModal } from '@qovery/shared/ui'
+import {
+  Button,
+  Dropzone,
+  ExternalLink,
+  Icon,
+  InputSelect,
+  InputText,
+  InputTextArea,
+  ModalCrud,
+  useModal,
+} from '@qovery/shared/ui'
 import { containerRegistryKindToIcon } from '@qovery/shared/util-js'
 import { useAvailableContainerRegistries } from '../hooks/use-available-container-registries/use-available-container-registries'
 import { useCreateContainerRegistry } from '../hooks/use-create-container-registry/use-create-container-registry'
@@ -58,7 +70,31 @@ export function ContainerRegistryCreateEditModal({
         secret_access_key: undefined,
         scaleway_access_key: undefined,
         scaleway_secret_key: undefined,
+        json_credentials: undefined,
       },
+    },
+  })
+
+  const [fileDetails, setFileDetails] = useState<{ name: string; size: number }>()
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    maxFiles: 1,
+    onDrop: (acceptedFiles) => {
+      const file = acceptedFiles?.[0]
+      if (!file || file.type !== 'application/json') return
+
+      setFileDetails({
+        name: file.name,
+        size: file.size / 1000,
+      })
+
+      const reader = new FileReader()
+      reader.readAsText(file)
+      reader.onload = async () => {
+        const binaryStr = reader.result
+        methods.setValue('config.json_credentials', binaryStr !== null ? btoa(binaryStr?.toString()) : undefined, {
+          shouldValidate: true,
+        })
+      }
     },
   })
 
@@ -102,6 +138,7 @@ export function ContainerRegistryCreateEditModal({
     [ContainerRegistryKindEnum.ECR]: '',
     [ContainerRegistryKindEnum.SCALEWAY_CR]: '',
     [ContainerRegistryKindEnum.PUBLIC_ECR]: '',
+    [ContainerRegistryKindEnum.GCP_ARTIFACT_REGISTRY]: '',
   }
 
   const watchKind = methods.watch('kind')
@@ -180,6 +217,7 @@ export function ContainerRegistryCreateEditModal({
                 label="Type"
                 error={error?.message}
                 options={getOptionsContainerRegistry(availableContainerRegistries)}
+                isSearchable
                 portal
               />
             </div>
@@ -271,7 +309,9 @@ export function ContainerRegistryCreateEditModal({
             />
           </>
         )}
-        {(watchKind === ContainerRegistryKindEnum.ECR || watchKind === ContainerRegistryKindEnum.SCALEWAY_CR) && (
+        {(watchKind === ContainerRegistryKindEnum.ECR ||
+          watchKind === ContainerRegistryKindEnum.SCALEWAY_CR ||
+          watchKind === ContainerRegistryKindEnum.GCP_ARTIFACT_REGISTRY) && (
           <Controller
             name="config.region"
             control={methods.control}
@@ -369,6 +409,46 @@ export function ContainerRegistryCreateEditModal({
               )}
             />
           </>
+        )}
+        {watchKind === ContainerRegistryKindEnum.GCP_ARTIFACT_REGISTRY && (
+          <Controller
+            name="config.json_credentials"
+            control={methods.control}
+            rules={{
+              required: 'Please enter your credentials JSON',
+            }}
+            render={({ field }) => (
+              <div className="mb-5">
+                {!field.value ? (
+                  <div {...getRootProps()}>
+                    <input data-testid="input-credentials-json" className="hidden" {...getInputProps()} />
+                    <Dropzone typeFile=".json" isDragActive={isDragActive} />
+                  </div>
+                ) : fileDetails ? (
+                  <div className="mb-[90px] flex items-center justify-between rounded border border-neutral-200 p-4">
+                    <div className="flex items-center pl-2 text-neutral-400">
+                      <Icon iconName="file-arrow-down" className="mr-4" />
+                      <p className="flex flex-col gap-1">
+                        <span className="text-xs font-medium">{fileDetails.name}</span>
+                        <span className="text-xs text-neutral-350">{fileDetails.size} Ko</span>
+                      </p>
+                    </div>
+                    <Button
+                      variant="outline"
+                      color="neutral"
+                      size="md"
+                      className="h-7 w-7 justify-center"
+                      onClick={() => field.onChange(undefined)}
+                    >
+                      <Icon iconName="trash" />
+                    </Button>
+                  </div>
+                ) : (
+                  <div />
+                )}
+              </div>
+            )}
+          />
         )}
       </ModalCrud>
     </FormProvider>
