@@ -264,7 +264,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
       <Section className={sectionClassName}>
         <div className="flex flex-row justify-between">
           {/* XXX: Should be Heading, typography & design wanted */}
-          <span className="text-neutral-400 font-medium">About</span>
+          <span className="font-medium text-neutral-400">About</span>
           <Link color="current" to={`..${APPLICATION_SETTINGS_URL + APPLICATION_SETTINGS_GENERAL_URL}`} relative="path">
             <Icon iconName="gear" className="text-base text-neutral-300" />
           </Link>
@@ -303,7 +303,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
       <Section className={sectionClassName}>
         <div className="flex flex-row justify-between">
           {/* XXX: Should be Heading, typography & design wanted */}
-          <span className="text-neutral-400 font-medium">Source</span>
+          <span className="font-medium text-neutral-400">Source</span>
           <Link color="current" to={`..${APPLICATION_SETTINGS_URL + APPLICATION_SETTINGS_GENERAL_URL}`} relative="path">
             <Icon iconName="gear" className="text-base text-neutral-300" />
           </Link>
