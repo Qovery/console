@@ -1,5 +1,5 @@
 import { type Environment } from 'qovery-typescript-axios'
-import { type PropsWithChildren, createContext, useContext } from 'react'
+import { type PropsWithChildren, useContext } from 'react'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useCluster } from '@qovery/domains/clusters/feature'
@@ -21,15 +21,6 @@ export interface ContainerProps extends PropsWithChildren {
   service?: Exclude<AnyService, Database>
   environment?: Environment
 }
-
-export const ApplicationContext = createContext<{
-  showHideAllEnvironmentVariablesValues: boolean
-  setShowHideAllEnvironmentVariablesValues: (b: boolean) => void
-}>({
-  showHideAllEnvironmentVariablesValues: false,
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  setShowHideAllEnvironmentVariablesValues: (b: boolean) => {},
-})
 
 export function Container({ children }: ContainerProps) {
   const { organizationId = '', environmentId = '', applicationId = '' } = useParams()

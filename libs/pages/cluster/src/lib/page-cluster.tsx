@@ -1,41 +1,29 @@
 import { Route, Routes, useParams } from 'react-router-dom'
-import { useCluster, useDeployCluster } from '@qovery/domains/clusters/feature'
+import { useCluster } from '@qovery/domains/clusters/feature'
 import { NotFoundPage } from '@qovery/pages/layout'
 import { ROUTER_CLUSTER } from './router/router'
-import Container from './ui/container/container'
 
 export function PagesCluster() {
   const { organizationId = '', clusterId = '' } = useParams()
 
-  const { data: cluster, isFetched } = useCluster({ organizationId, clusterId })
-  const { mutate: deployCluster } = useDeployCluster()
+  const { data: cluster, isSuccess } = useCluster({ organizationId, clusterId })
 
-  if (!cluster && isFetched) {
+  // cluster can be `undefined` if the `find` method in `select` return nothing. However the query itself is still success.
+  // Don't seems to have a better way for this case in react-query for now
+  // https://github.com/TanStack/query/issues/1540
+  // https://github.com/TanStack/query/issues/5878
+  if (!cluster && isSuccess) {
     return <NotFoundPage />
   }
 
-  if (cluster) {
-    return (
-      <Container
-        cluster={cluster}
-        deployCluster={() =>
-          deployCluster({
-            organizationId,
-            clusterId,
-          })
-        }
-      >
-        <Routes>
-          {ROUTER_CLUSTER.map((route) => (
-            <Route key={route.path} path={route.path} element={route.component} />
-          ))}
-          <Route path="*" element={<NotFoundPage />} />
-        </Routes>
-      </Container>
-    )
-  } else {
-    return null
-  }
+  return (
+    <Routes>
+      {ROUTER_CLUSTER.map((route) => (
+        <Route key={route.path} path={route.path} element={route.component} />
+      ))}
+      <Route path="*" element={<NotFoundPage />} />
+    </Routes>
+  )
 }
 
 export default PagesCluster

@@ -28,6 +28,10 @@ function PageApplicationWrapped() {
 
   useDocumentTitle(`${service?.name || 'Service'} - Qovery`)
 
+  // serviceType can be `undefined` if the `find` method in `select` return nothing. However the query itself is still success.
+  // Don't seems to have a better way for this case in react-query for now
+  // https://github.com/TanStack/query/issues/1540
+  // https://github.com/TanStack/query/issues/5878
   if (environmentError || (!serviceType && isSuccessServiceType)) {
     return <NotFoundPage error={environmentError} />
   }
