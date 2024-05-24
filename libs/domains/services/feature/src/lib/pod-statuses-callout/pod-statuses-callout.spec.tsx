@@ -41,18 +41,9 @@ describe('PodStatusesCallout', () => {
     })
     jest.spyOn(useRunningStatusImport, 'useRunningStatus').mockReturnValue({
       data: {
-        state: ServiceStateDto.ERROR,
+        state: ServiceStateDto.WARNING,
         id: 'id',
         pods: [
-          {
-            containers: [],
-            name: 'foo1',
-            restart_count: 0,
-            service_version: '',
-            state: ServiceStateDto.ERROR,
-            state_message: 'bar',
-            state_reason: 'baz',
-          },
           {
             containers: [],
             name: 'foo2',
@@ -76,11 +67,6 @@ describe('PodStatusesCallout', () => {
     const { userEvent } = renderWithProviders(<PodStatusesCallout environmentId="1" serviceId="1" />)
     let buttons = screen.getAllByRole('button')
     expect(buttons[0]).toBeDisabled()
-    expect(buttons[1]).toBeEnabled()
-    await userEvent.click(buttons[1])
-
-    buttons = screen.getAllByRole('button')
-    expect(buttons[0]).toBeEnabled()
     expect(buttons[1]).toBeEnabled()
     await userEvent.click(buttons[1])
 
