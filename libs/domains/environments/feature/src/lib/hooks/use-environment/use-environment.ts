@@ -10,7 +10,6 @@ export function useEnvironment({ environmentId }: UseEnvironmentProps) {
     // eslint-disable-next-line @typescript-eslint/no-extra-non-null-assertion
     ...queries.environments.details({ environmentId: environmentId!! }),
     enabled: Boolean(environmentId),
-    retry: 3,
   })
 }
 
