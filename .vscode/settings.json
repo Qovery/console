@@ -27,6 +27,5 @@
   },
   "files.associations": {
     "*.css": "postcss"
-  },
-  "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
 }
