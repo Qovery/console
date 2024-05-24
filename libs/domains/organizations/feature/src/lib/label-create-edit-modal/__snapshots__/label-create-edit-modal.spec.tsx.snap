@@ -1,0 +1,209 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`LabelCreateEditModal should match with snatpshot 1`] = `
+<body>
+  <div>
+    <div
+      class="p-5"
+    >
+      <h2
+        class="h4 max-w-sm truncate text-neutral-400"
+      >
+        Create label group
+      </h2>
+      <p
+        class="mt-2 text-sm text-neutral-350"
+      >
+        You will have the possibility to modify the parameters once created.
+      </p>
+      <form
+        class="mt-6"
+      >
+        <div
+          class="mb-5"
+          data-testid="input-text-wrapper"
+        >
+          <div
+            class="relative"
+          >
+            <div
+              aria-label="input-container"
+              class="input     "
+            >
+              <div
+                class=""
+              >
+                <label
+                  class="translate-y-2 text-sm"
+                  for="Group name"
+                >
+                  Group name
+                </label>
+                <input
+                  class="input__value "
+                  data-testid="input-text"
+                  id="Group name"
+                  name="name"
+                  type="text"
+                  value=""
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <span
+          class="mb-2 block text-sm text-neutral-400"
+        >
+          Add label key value
+        </span>
+        <div
+          class="rounded border border-neutral-250 bg-neutral-100 px-4 py-3"
+        >
+          <ul>
+            <li
+              class="mb-3 grid grid-cols-[6fr_6fr_1fr_1fr] gap-x-2"
+            >
+              <span
+                class="text-sm font-medium text-neutral-350"
+              >
+                Label keys
+              </span>
+              <span
+                class="text-sm font-medium text-neutral-350"
+              >
+                Value
+              </span>
+              <span
+                class="relative left-7 flex items-center gap-1 whitespace-nowrap text-sm font-medium text-neutral-350"
+              >
+                Propagate as tag
+                <span
+                  class=""
+                  data-state="closed"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="fa-solid fa-circle-info "
+                  />
+                </span>
+              </span>
+              <span />
+            </li>
+            <li
+              class="mb-3 last:mb-0"
+            >
+              <div
+                class="grid grid-cols-[6fr_6fr_1fr_1fr] items-center gap-x-2"
+              >
+                <div
+                  class=" "
+                  data-testid="input-small-wrapper"
+                >
+                  <div
+                    class="input input--small flex-grow   "
+                    data-testid="input"
+                  >
+                    <label
+                      class="hidden"
+                    />
+                    <input
+                      class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 "
+                      data-testid="labels.0.key"
+                      name="labels.0.key"
+                      type="text"
+                      value=""
+                    />
+                  </div>
+                </div>
+                <div
+                  class=" "
+                  data-testid="input-small-wrapper"
+                >
+                  <div
+                    class="input input--small flex-grow   "
+                    data-testid="input"
+                  >
+                    <label
+                      class="hidden"
+                    />
+                    <input
+                      class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 "
+                      data-testid="labels.0.value"
+                      name="labels.0.value"
+                      type="text"
+                      value=""
+                    />
+                  </div>
+                </div>
+                <div
+                  class="flex  items-start  "
+                  data-testid="input-toggle"
+                >
+                  <div
+                    aria-label="toggle-btn"
+                    class="inline-flex items-center justify-between cursor-pointer"
+                    data-testid="input-toggle-button"
+                  >
+                    <input
+                      class="hidden"
+                      type="checkbox"
+                      value="false"
+                    />
+                    <div
+                      aria-label="bg"
+                      class="w-8 h-4.5 flex items-center rounded-full p-0.5  bg-neutral-300"
+                    >
+                      <div
+                        aria-label="circle"
+                        class="w-3.5 h-3.5 transform rounded-full bg-white shadow-lg  "
+                      />
+                    </div>
+                  </div>
+                </div>
+                <button
+                  class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 hover:[&:not(:focus-visible):not(:disabled)]:shadow-sm active:[&:not(:focus-visible)]:shadow-none outline-brand-500 text-xs h-9 px-3 rounded border border-transparent text-neutral-350 hover:[&:not(:active):not(:focus-visible)]:border-neutral-300 hover:[&:not(:disabled)]:text-neutral-400 focus-visible:text-neutral-400 active:bg-neutral-150 active:text-neutral-400 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none"
+                  type="button"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="fa-solid fa-trash text-sm text-neutral-400"
+                  />
+                </button>
+              </div>
+            </li>
+          </ul>
+          <button
+            class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-neutral-500 text-xs h-7 px-2 rounded bg-brand-500 active:bg-brand-600 hover:bg-brand-400 text-white disabled:text-brand-300 disabled:bg-brand-100 mt-3"
+            type="button"
+          >
+            Add label
+            <i
+              aria-hidden="true"
+              class="fa-solid fa-plus ml-2"
+            />
+          </button>
+        </div>
+        <div
+          class="mt-6 flex justify-end gap-3"
+        >
+          <button
+            class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 hover:[&:not(:focus-visible):not(:disabled)]:shadow-sm active:[&:not(:focus-visible)]:shadow-none outline-brand-500 text-sm h-11 px-5 rounded border border-transparent text-neutral-350 hover:[&:not(:active):not(:focus-visible)]:border-neutral-300 hover:[&:not(:disabled)]:text-neutral-400 focus-visible:text-neutral-400 active:bg-neutral-150 active:text-neutral-400 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none"
+            data-testid="cancel-button"
+            type="button"
+          >
+            Cancel
+          </button>
+          <button
+            class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-neutral-500 text-sm h-11 px-5 rounded bg-brand-500 active:bg-brand-600 hover:bg-brand-400 text-white disabled:text-brand-300 disabled:bg-brand-100"
+            data-testid="submit-button"
+            disabled=""
+            type="submit"
+          >
+            Create
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+`;

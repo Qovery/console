@@ -1,14 +1,17 @@
-import { type OrganizationAnnotationsGroupResponse } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
 import {
   AnnotationCreateEditModal,
   AnnotationItemsListModal,
+  LabelCreateEditModal,
   useAnnotationsGroups,
   useDeleteAnnotationsGroup,
+  useDeleteLabelsGroup,
+  useLabelsGroups,
 } from '@qovery/domains/organizations/feature'
 import {
   BlockContent,
   Button,
+  DropdownMenu,
   Heading,
   Icon,
   LoaderSpinner,
@@ -25,44 +28,12 @@ export function PageOrganizationLabelsAnnotationsFeature() {
   useDocumentTitle('Annotations - Organization settings')
   const { organizationId = '' } = useParams()
   const { data: annotationsGroups = [], isFetched: isFetchedAnnotations } = useAnnotationsGroups({ organizationId })
+  const { data: labelsGroups = [], isFetched: isFetchedLabels } = useLabelsGroups({ organizationId })
   const { mutateAsync: deleteAnnotationsGroup } = useDeleteAnnotationsGroup()
+  const { mutateAsync: deleteLabelsGroup } = useDeleteLabelsGroup()
 
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
-
-  const openAddModal = () => {
-    openModal({
-      content: <AnnotationCreateEditModal organizationId={organizationId} onClose={closeModal} />,
-    })
-  }
-
-  const openEditModal = (annotationsGroup: OrganizationAnnotationsGroupResponse) => {
-    openModal({
-      content: (
-        <AnnotationCreateEditModal
-          isEdit
-          organizationId={organizationId}
-          annotationsGroup={annotationsGroup}
-          onClose={closeModal}
-        />
-      ),
-    })
-  }
-
-  const openDeleteModal = (annotationsGroup: OrganizationAnnotationsGroupResponse) => {
-    openModalConfirmation({
-      title: 'Delete webhook',
-      isDelete: true,
-      name: annotationsGroup.name,
-      action: () => {
-        try {
-          deleteAnnotationsGroup({ organizationId, annotationsGroupId: annotationsGroup.id })
-        } catch (error) {
-          console.error(error)
-        }
-      },
-    })
-  }
 
   return (
     <div className="flex w-full flex-col justify-between">
@@ -74,11 +45,137 @@ export function PageOrganizationLabelsAnnotationsFeature() {
               Define and manage the annotations to be used within your organization.
             </p>
           </div>
-          <Button size="lg" className="shrink-0 gap-2" onClick={openAddModal}>
-            Add annotation
-            <Icon iconName="circle-plus" />
-          </Button>
+          <DropdownMenu.Root>
+            <DropdownMenu.Trigger asChild>
+              <Button size="lg" className="shrink-0 gap-2">
+                Add new
+                <Icon iconName="circle-plus" />
+              </Button>
+            </DropdownMenu.Trigger>
+            <DropdownMenu.Content>
+              <DropdownMenu.Item
+                icon={<Icon iconName="plus" />}
+                onClick={() => {
+                  openModal({
+                    content: <LabelCreateEditModal organizationId={organizationId} onClose={closeModal} />,
+                  })
+                }}
+              >
+                Add labels group
+              </DropdownMenu.Item>
+              <DropdownMenu.Item
+                icon={<Icon iconName="plus" />}
+                onClick={() => {
+                  openModal({
+                    content: <AnnotationCreateEditModal organizationId={organizationId} onClose={closeModal} />,
+                  })
+                }}
+              >
+                Add annotations group
+              </DropdownMenu.Item>
+            </DropdownMenu.Content>
+          </DropdownMenu.Root>
         </div>
+        <BlockContent title="Labels groups" classNameContent="p-0">
+          {!isFetchedLabels ? (
+            <div className="flex justify-center p-5">
+              <LoaderSpinner className="w-6" />
+            </div>
+          ) : labelsGroups && labelsGroups.length > 0 ? (
+            <ul>
+              {labelsGroups.map((labelsGroup) => (
+                <li
+                  key={labelsGroup.id}
+                  className="flex items-center justify-between border-b border-neutral-250 px-5 py-4 last:border-0"
+                >
+                  <div className="flex flex-col">
+                    <h2 className="mb-1 flex text-xs font-medium text-neutral-400">
+                      <Truncate truncateLimit={60} text={labelsGroup.name} />
+                    </h2>
+                    <div className="flex text-xs text-neutral-350">
+                      <p>
+                        Created:{' '}
+                        <span className="text-neutral-400">{dateMediumLocalFormat(labelsGroup.created_at)}</span>
+                      </p>
+                      {labelsGroup.updated_at && (
+                        <p className="ml-3">
+                          Updated: <span className="text-neutral-400">{timeAgo(new Date(labelsGroup.updated_at))}</span>
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      color="neutral"
+                      size="md"
+                      className="relative mr-2"
+                      disabled={labelsGroup.associated_items_count === 0}
+                    >
+                      <span className="absolute -right-1 -top-1 flex h-3 w-3 items-center justify-center rounded-full bg-brand-500 text-3xs font-bold leading-[0] text-white">
+                        {labelsGroup.associated_items_count}
+                      </span>
+                      <Icon iconName="layer-group" />
+                    </Button>
+                    <Button
+                      size="md"
+                      variant="outline"
+                      color="neutral"
+                      onClick={() => {
+                        openModal({
+                          content: (
+                            <LabelCreateEditModal
+                              isEdit
+                              organizationId={organizationId}
+                              labelsGroup={labelsGroup}
+                              onClose={closeModal}
+                            />
+                          ),
+                        })
+                      }}
+                    >
+                      <Icon iconName="gear" />
+                    </Button>
+                    <Tooltip
+                      content="Annotations group still in used"
+                      disabled={labelsGroup.associated_items_count === 0}
+                    >
+                      <Button
+                        size="md"
+                        variant="outline"
+                        color="neutral"
+                        disabled={labelsGroup.associated_items_count !== 0}
+                        onClick={() => {
+                          openModalConfirmation({
+                            title: 'Delete labels group',
+                            isDelete: true,
+                            name: labelsGroup.name,
+                            action: () => {
+                              try {
+                                deleteLabelsGroup({ organizationId, labelsGroupId: labelsGroup.id })
+                              } catch (error) {
+                                console.error(error)
+                              }
+                            },
+                          })
+                        }}
+                      >
+                        <Icon iconName="trash" />
+                      </Button>
+                    </Tooltip>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <div className="my-4 px-5 text-center">
+              <Icon iconName="wave-pulse" className="text-neutral-350" />
+              <p className="mt-1 text-xs font-medium text-neutral-350">
+                No label found. <br /> Please add one.
+              </p>
+            </div>
+          )}
+        </BlockContent>
         <BlockContent title="Annotations groups" classNameContent="p-0">
           {!isFetchedAnnotations ? (
             <div className="flex justify-center p-5">
@@ -133,7 +230,23 @@ export function PageOrganizationLabelsAnnotationsFeature() {
                       </span>
                       <Icon iconName="layer-group" />
                     </Button>
-                    <Button size="md" variant="outline" color="neutral" onClick={() => openEditModal(annotationsGroup)}>
+                    <Button
+                      size="md"
+                      variant="outline"
+                      color="neutral"
+                      onClick={() => {
+                        openModal({
+                          content: (
+                            <AnnotationCreateEditModal
+                              isEdit
+                              organizationId={organizationId}
+                              annotationsGroup={annotationsGroup}
+                              onClose={closeModal}
+                            />
+                          ),
+                        })
+                      }}
+                    >
                       <Icon iconName="gear" />
                     </Button>
                     <Tooltip
@@ -145,7 +258,20 @@ export function PageOrganizationLabelsAnnotationsFeature() {
                         variant="outline"
                         color="neutral"
                         disabled={annotationsGroup.associated_items_count !== 0}
-                        onClick={() => openDeleteModal(annotationsGroup)}
+                        onClick={() => {
+                          openModalConfirmation({
+                            title: 'Delete annotations group',
+                            isDelete: true,
+                            name: annotationsGroup.name,
+                            action: () => {
+                              try {
+                                deleteAnnotationsGroup({ organizationId, annotationsGroupId: annotationsGroup.id })
+                              } catch (error) {
+                                console.error(error)
+                              }
+                            },
+                          })
+                        }}
                       >
                         <Icon iconName="trash" />
                       </Button>
