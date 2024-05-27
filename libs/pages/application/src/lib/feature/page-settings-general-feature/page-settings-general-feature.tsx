@@ -65,7 +65,7 @@ export const handleGitApplicationSubmit = (
     arguments: (data.cmd_arguments && data.cmd_arguments.length && eval(data.cmd_arguments)) || [],
     entrypoint: data.image_entry_point || '',
     annotations_groups: annotationsGroups.filter((group) => data.annotations_groups?.includes(group.id)),
-    // labels_groups: labelsGroups.filter((group) => data.labels_groups?.includes(group.id))
+    labels_groups: labelsGroups.filter((group) => data.labels_groups?.includes(group.id)),
   }
 
   return cloneApplication
@@ -88,7 +88,7 @@ export const handleContainerSubmit = (
     entrypoint: data.image_entry_point || '',
     registry_id: data.registry || '',
     annotations_groups: annotationsGroups.filter((group) => data.annotations_groups?.includes(group.id)),
-    // labels_groups: labelsGroups.filter((group) => data.labels_groups?.includes(group.id))
+    labels_groups: labelsGroups.filter((group) => data.labels_groups?.includes(group.id)),
   }
 }
 

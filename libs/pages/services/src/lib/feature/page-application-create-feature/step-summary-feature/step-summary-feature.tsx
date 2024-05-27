@@ -104,7 +104,7 @@ export function StepSummaryFeature() {
           healthchecks: portData.healthchecks?.item || {},
           auto_deploy: generalData.auto_deploy,
           annotations_groups: annotationsGroup.filter((group) => generalData.annotations_groups?.includes(group.id)),
-          // labels_groups: labelsGroups.filter((group) => generalData.labels_groups?.includes(group.id)),
+          labels_groups: labelsGroup.filter((group) => generalData.labels_groups?.includes(group.id)),
         }
 
         if (generalData.build_mode === BuildModeEnum.DOCKER) {
@@ -168,7 +168,7 @@ export function StepSummaryFeature() {
           healthchecks: portData.healthchecks?.item || {},
           auto_deploy: generalData.auto_deploy,
           annotations_groups: annotationsGroup.filter((group) => generalData.annotations_groups?.includes(group.id)),
-          // labels_groups: labelsGroups.filter((group) => generalData.labels_groups?.includes(group.id)),
+          labels_groups: labelsGroup.filter((group) => generalData.labels_groups?.includes(group.id)),
         }
 
         try {

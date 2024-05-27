@@ -43,7 +43,7 @@ export function PageSettingsGeneralFeature() {
       version: database?.version,
       accessibility: database?.accessibility,
       annotations_groups: database?.annotations_groups?.map((group) => group.id),
-      // labelsGroups: database?.labels_groups?.map((group) => group.id),
+      labelsGroups: database?.labels_groups?.map((group) => group.id),
     },
   })
 

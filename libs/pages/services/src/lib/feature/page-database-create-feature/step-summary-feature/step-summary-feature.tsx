@@ -57,7 +57,7 @@ export function StepSummaryFeature() {
         mode: generalData.mode,
         storage: storage,
         annotations_groups: annotationsGroup.filter((group) => generalData.annotations_groups?.includes(group.id)),
-        // labels_groups: labelsGroup.filter((group) => generalData.labels_groups?.includes(group.id)),
+        labels_groups: labelsGroup.filter((group) => generalData.labels_groups?.includes(group.id)),
       }
 
       if (databaseRequest.mode !== DatabaseModeEnum.MANAGED) {
