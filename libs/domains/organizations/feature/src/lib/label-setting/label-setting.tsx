@@ -1,23 +1,23 @@
 import { Controller, useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { Icon, InputSelect, Tooltip, useModal } from '@qovery/shared/ui'
-import { AnnotationCreateEditModal } from '../annotation-create-edit-modal/annotation-create-edit-modal'
-import { useAnnotationsGroups } from '../hooks/use-annotations-groups/use-annotations-groups'
+import { useLabelsGroups } from '../hooks/use-labels-groups/use-labels-groups'
+import { LabelCreateEditModal } from '../label-create-edit-modal/label-create-edit-modal'
 
-export function AnnotationSetting() {
+export function LabelSetting() {
   const { control } = useFormContext()
   const { organizationId = '' } = useParams()
-  const { data: annotationsGroups = [] } = useAnnotationsGroups({ organizationId })
+  const { data: labelsGroups = [] } = useLabelsGroups({ organizationId })
   const { openModal, closeModal } = useModal()
 
   return (
     <Controller
-      name="annotations_groups"
+      name="labels_groups"
       control={control}
       render={({ field, fieldState: { error } }) => (
         <InputSelect
-          label="Annotation Groups (optional)"
-          options={annotationsGroups.map((group) => ({
+          label="Label Groups (optional)"
+          options={labelsGroups.map((group) => ({
             label: (
               <span className="flex items-center gap-3">
                 <span>{group.name}</span>
@@ -25,7 +25,7 @@ export function AnnotationSetting() {
                   classNameContent="z-10"
                   content={
                     <ul>
-                      {group.annotations.map(({ key, value }) => (
+                      {group.labels.map(({ key, value }) => (
                         <li key={key}>
                           {key}: {value}
                         </li>
@@ -42,12 +42,12 @@ export function AnnotationSetting() {
             value: group.id,
           }))}
           menuListButton={{
-            title: 'Select annotation groups',
-            label: 'New annotation groups',
+            title: 'Select label groups',
+            label: 'New label groups',
             onClick: () => {
               openModal({
                 content: (
-                  <AnnotationCreateEditModal
+                  <LabelCreateEditModal
                     organizationId={organizationId}
                     onClose={(response) => {
                       response && field.onChange(response.id)
@@ -68,4 +68,4 @@ export function AnnotationSetting() {
   )
 }
 
-export default AnnotationSetting
+export default LabelSetting

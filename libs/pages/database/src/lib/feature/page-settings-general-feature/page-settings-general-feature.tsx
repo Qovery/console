@@ -3,7 +3,7 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { useCluster } from '@qovery/domains/clusters/feature'
 import { useEnvironment, useListDatabaseConfigurations } from '@qovery/domains/environments/feature'
-import { useAnnotationsGroups } from '@qovery/domains/organizations/feature'
+import { useAnnotationsGroups, useLabelsGroups } from '@qovery/domains/organizations/feature'
 import { useEditService, useService } from '@qovery/domains/services/feature'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
 import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-general'
@@ -18,6 +18,7 @@ export function PageSettingsGeneralFeature() {
   const { mutate: editService, isLoading: isLoadingService } = useEditService({ environmentId })
   const { data: databaseConfigurations, isLoading } = useListDatabaseConfigurations({ environmentId })
 
+  const { data: labelsGroups = [] } = useLabelsGroups({ organizationId })
   const { data: annotationsGroups = [] } = useAnnotationsGroups({ organizationId })
 
   const databaseVersionOptions = databaseConfigurations
@@ -42,6 +43,7 @@ export function PageSettingsGeneralFeature() {
       version: database?.version,
       accessibility: database?.accessibility,
       annotations_groups: database?.annotations_groups?.map((group) => group.id),
+      // labelsGroups: database?.labels_groups?.map((group) => group.id),
     },
   })
 

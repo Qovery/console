@@ -7,7 +7,7 @@ import {
 } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { useAnnotationsGroups, useContainerRegistry } from '@qovery/domains/organizations/feature'
+import { useAnnotationsGroups, useContainerRegistry, useLabelsGroups } from '@qovery/domains/organizations/feature'
 import { useCreateService, useDeployService } from '@qovery/domains/services/feature'
 import {
   SERVICES_CREATION_GENERAL_URL,
@@ -35,6 +35,7 @@ export function StepSummaryFeature() {
     containerRegistryId: generalData?.registry,
   })
   const { data: annotationsGroup = [] } = useAnnotationsGroups({ organizationId })
+  const { data: labelsGroup = [] } = useLabelsGroups({ organizationId })
 
   const { mutateAsync: createService } = useCreateService()
   const { mutate: deployService } = useDeployService({ environmentId })
@@ -103,6 +104,7 @@ export function StepSummaryFeature() {
           healthchecks: portData.healthchecks?.item || {},
           auto_deploy: generalData.auto_deploy,
           annotations_groups: annotationsGroup.filter((group) => generalData.annotations_groups?.includes(group.id)),
+          // labels_groups: labelsGroups.filter((group) => generalData.labels_groups?.includes(group.id)),
         }
 
         if (generalData.build_mode === BuildModeEnum.DOCKER) {
@@ -166,6 +168,7 @@ export function StepSummaryFeature() {
           healthchecks: portData.healthchecks?.item || {},
           auto_deploy: generalData.auto_deploy,
           annotations_groups: annotationsGroup.filter((group) => generalData.annotations_groups?.includes(group.id)),
+          // labels_groups: labelsGroups.filter((group) => generalData.labels_groups?.includes(group.id)),
         }
 
         try {
@@ -216,6 +219,7 @@ export function StepSummaryFeature() {
           gotoHealthchecks={gotoHealthchecks}
           selectedRegistryName={containerRegistry?.name}
           annotationsGroup={annotationsGroup}
+          labelsGroup={labelsGroup}
         />
       )}
     </FunnelFlowBody>

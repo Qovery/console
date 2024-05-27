@@ -2,7 +2,7 @@ import { BuildModeEnum, BuildPackLanguageEnum, type Organization } from 'qovery-
 import { type FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { match } from 'ts-pattern'
-import { AnnotationSetting } from '@qovery/domains/organizations/feature'
+import { AnnotationSetting, LabelSetting } from '@qovery/domains/organizations/feature'
 import { DeploymentSetting, SourceSetting } from '@qovery/domains/service-helm/feature'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { AutoDeploySetting, GeneralSetting } from '@qovery/domains/services/feature'
@@ -136,7 +136,8 @@ export function PageSettingsGeneral({
                   <AutoDeploySetting source={isJobGitSource(job.source) ? 'GIT' : 'CONTAINER_REGISTRY'} />
                 </Section>
                 <Section className="gap-4">
-                  <Heading>Extra annotations</Heading>
+                  <Heading>Extra labels/annotations</Heading>
+                  <LabelSetting />
                   <AnnotationSetting />
                 </Section>
               </>
@@ -154,7 +155,8 @@ export function PageSettingsGeneral({
                   <AutoDeploySetting source="GIT" />
                 </Section>
                 <Section className="gap-4">
-                  <Heading>Extra annotations</Heading>
+                  <Heading>Extra labels/annotations</Heading>
+                  <LabelSetting />
                   <AnnotationSetting />
                 </Section>
               </>
@@ -171,7 +173,8 @@ export function PageSettingsGeneral({
                   <AutoDeploySetting source="CONTAINER_REGISTRY" />
                 </Section>
                 <Section className="gap-4">
-                  <Heading>Extra annotations</Heading>
+                  <Heading>Extra labels/annotations</Heading>
+                  <LabelSetting />
                   <AnnotationSetting />
                 </Section>
               </>

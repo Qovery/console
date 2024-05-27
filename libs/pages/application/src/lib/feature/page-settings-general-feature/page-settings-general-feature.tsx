@@ -8,11 +8,12 @@ import {
   type HelmRequestAllOfSourceOneOf1,
   type JobRequest,
   type OrganizationAnnotationsGroupResponse,
+  type OrganizationLabelsGroupEnrichedResponse,
 } from 'qovery-typescript-axios'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { P, match } from 'ts-pattern'
-import { useAnnotationsGroups, useOrganization } from '@qovery/domains/organizations/feature'
+import { useAnnotationsGroups, useLabelsGroups, useOrganization } from '@qovery/domains/organizations/feature'
 import { type Application, type Container, type Helm, type Job } from '@qovery/domains/services/data-access'
 import { useEditService, useService } from '@qovery/domains/services/feature'
 import { type HelmGeneralData } from '@qovery/pages/services'
@@ -25,6 +26,7 @@ import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-ge
 export const handleGitApplicationSubmit = (
   data: ApplicationGeneralData,
   application: Application,
+  labelsGroups: OrganizationLabelsGroupEnrichedResponse[],
   annotationsGroups: OrganizationAnnotationsGroupResponse[]
 ): ApplicationEditRequest => {
   let cloneApplication: ApplicationEditRequest = {
@@ -63,6 +65,7 @@ export const handleGitApplicationSubmit = (
     arguments: (data.cmd_arguments && data.cmd_arguments.length && eval(data.cmd_arguments)) || [],
     entrypoint: data.image_entry_point || '',
     annotations_groups: annotationsGroups.filter((group) => data.annotations_groups?.includes(group.id)),
+    // labels_groups: labelsGroups.filter((group) => data.labels_groups?.includes(group.id))
   }
 
   return cloneApplication
@@ -71,6 +74,7 @@ export const handleGitApplicationSubmit = (
 export const handleContainerSubmit = (
   data: ApplicationGeneralData,
   container: Container,
+  labelsGroups: OrganizationLabelsGroupEnrichedResponse[],
   annotationsGroups: OrganizationAnnotationsGroupResponse[]
 ): ContainerRequest => {
   return {
@@ -84,12 +88,14 @@ export const handleContainerSubmit = (
     entrypoint: data.image_entry_point || '',
     registry_id: data.registry || '',
     annotations_groups: annotationsGroups.filter((group) => data.annotations_groups?.includes(group.id)),
+    // labels_groups: labelsGroups.filter((group) => data.labels_groups?.includes(group.id))
   }
 }
 
 export const handleJobSubmit = (
   data: JobGeneralData,
   job: Job,
+  labelsGroups: OrganizationLabelsGroupEnrichedResponse[],
   annotationsGroups: OrganizationAnnotationsGroupResponse[]
 ): JobRequest => {
   const schedule = match(job)
@@ -122,6 +128,7 @@ export const handleJobSubmit = (
       annotations_groups: annotationsGroups.filter((annotationsGroups) =>
         data.annotations_groups?.includes(annotationsGroups.id)
       ),
+      // labels_groups: labelsGroups.filter((labelsGroups) => data.labels_groups?.includes(labelsGroups.id)),
       source: {
         docker: {
           git_repository,
@@ -193,6 +200,7 @@ export function PageSettingsGeneralFeature() {
 
   const { data: organization } = useOrganization({ organizationId })
   const { data: service } = useService({ environmentId, serviceId: applicationId })
+  const { data: labelsGroups = [] } = useLabelsGroups({ organizationId })
   const { data: annotationsGroups = [] } = useAnnotationsGroups({ organizationId })
 
   const { mutate: editService, isLoading: isLoadingEditService } = useEditService({ environmentId })
@@ -276,7 +284,7 @@ export function PageSettingsGeneralFeature() {
       .with({ serviceType: 'APPLICATION' }, (s) => {
         try {
           return {
-            ...handleGitApplicationSubmit(data as ApplicationGeneralData, s, annotationsGroups),
+            ...handleGitApplicationSubmit(data as ApplicationGeneralData, s, labelsGroups, annotationsGroups),
             serviceType: s.serviceType,
           }
         } catch (e: unknown) {
@@ -287,7 +295,7 @@ export function PageSettingsGeneralFeature() {
       .with({ serviceType: 'JOB' }, (s) => {
         try {
           return {
-            ...handleJobSubmit(data as JobGeneralData, s, annotationsGroups),
+            ...handleJobSubmit(data as JobGeneralData, s, labelsGroups, annotationsGroups),
             serviceType: s.serviceType,
           }
         } catch (e: unknown) {
@@ -298,7 +306,7 @@ export function PageSettingsGeneralFeature() {
       .with({ serviceType: 'CONTAINER' }, (s) => {
         try {
           return {
-            ...handleContainerSubmit(data as ApplicationGeneralData, s, annotationsGroups),
+            ...handleContainerSubmit(data as ApplicationGeneralData, s, labelsGroups, annotationsGroups),
             serviceType: s.serviceType,
           }
         } catch (e: unknown) {

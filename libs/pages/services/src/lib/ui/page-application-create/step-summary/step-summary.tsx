@@ -1,4 +1,8 @@
-import { BuildModeEnum, type OrganizationAnnotationsGroupResponse } from 'qovery-typescript-axios'
+import {
+  BuildModeEnum,
+  type OrganizationAnnotationsGroupResponse,
+  type OrganizationLabelsGroupEnrichedResponse,
+} from 'qovery-typescript-axios'
 import { ProbeTypeEnum } from '@qovery/shared/enums'
 import {
   type ApplicationGeneralData,
@@ -22,6 +26,7 @@ export interface StepSummaryProps {
   isLoadingCreateAndDeploy: boolean
   selectedRegistryName?: string
   annotationsGroup: OrganizationAnnotationsGroupResponse[]
+  labelsGroup: OrganizationLabelsGroupEnrichedResponse[]
 }
 
 export function StepSummary({
@@ -38,6 +43,7 @@ export function StepSummary({
   isLoadingCreateAndDeploy,
   selectedRegistryName,
   annotationsGroup,
+  labelsGroup,
 }: StepSummaryProps) {
   return (
     <Section>
@@ -123,6 +129,15 @@ export function StepSummary({
               <li>
                 <strong className="font-medium">Auto-deploy:</strong> {generalData.auto_deploy.toString()}
               </li>
+              {labelsGroup && generalData.labels_groups && generalData.labels_groups.length > 0 && (
+                <li>
+                  <strong className="font-medium">Labels group:</strong>{' '}
+                  {labelsGroup
+                    .filter(({ id }) => generalData.labels_groups?.includes(id))
+                    .map(({ name }) => name)
+                    .join(', ')}
+                </li>
+              )}
               {annotationsGroup && generalData.annotations_groups && generalData.annotations_groups.length > 0 && (
                 <li>
                   <strong className="font-medium">Annotations group:</strong>{' '}
