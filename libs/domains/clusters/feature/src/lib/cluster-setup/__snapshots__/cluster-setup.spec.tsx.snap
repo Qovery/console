@@ -38,7 +38,8 @@ exports[`ClusterSetup should match manage deployment snapshot 1`] = `
         <h5
           class="mb-1 text-sm font-medium"
         >
-          2. Install your cluster
+          2. 
+          Install Qovery on your cluster
         </h5>
         <p
           class="mb-2  font-normal text-neutral-350"

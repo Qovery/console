@@ -14,7 +14,9 @@ export function ClusterSetup({ type }: { type: 'LOCAL_DEMO' | 'SELF_MANAGED' }) 
         </ExternalLink>
       </li>
       <li className="rounded border border-neutral-200 p-3">
-        <h5 className="mb-1 text-sm font-medium">2. Install your cluster</h5>
+        <h5 className="mb-1 text-sm font-medium">
+          2. {type === 'LOCAL_DEMO' ? 'Install your cluster' : 'Install Qovery on your cluster'}
+        </h5>
         <p className="mb-2  font-normal text-neutral-350">
           Run the following command from your terminal and follow the instructions.
         </p>
