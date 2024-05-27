@@ -30,7 +30,7 @@ export function PodStatusesCallout({ environmentId, serviceId }: PodStatusesCall
     content?: ReactNode
   }[] = []
 
-  if (runningStatuses.pods.some(({ state }) => state === 'ERROR')) {
+  if (runningStatuses.state === 'ERROR') {
     callouts.push({
       id: 1,
       icon: IconAwesomeEnum.CIRCLE_EXCLAMATION,
@@ -43,7 +43,7 @@ export function PodStatusesCallout({ environmentId, serviceId }: PodStatusesCall
     })
   }
 
-  if (runningStatuses.pods.some(({ state }) => state === 'WARNING')) {
+  if (runningStatuses.state === 'WARNING') {
     callouts.push({
       id: 2,
       icon: IconAwesomeEnum.CIRCLE_EXCLAMATION,
