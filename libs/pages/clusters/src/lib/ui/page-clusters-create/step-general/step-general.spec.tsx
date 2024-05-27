@@ -93,7 +93,7 @@ describe('StepGeneral', () => {
     )
 
     screen.getByText('1. Download/Update Qovery CLI')
-    screen.getByText('2. Install your cluster')
+    screen.getByText('2. Install Qovery on your cluster')
     screen.getByText('3. Deploy your first environment!')
   })
 })
