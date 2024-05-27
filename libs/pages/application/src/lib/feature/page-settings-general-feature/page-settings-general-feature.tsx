@@ -219,6 +219,7 @@ export function PageSettingsGeneralFeature() {
       build_mode: service.build_mode,
       image_entry_point: service.entrypoint,
       cmd_arguments: (service.arguments && service.arguments.length && JSON.stringify(service.arguments)) || '',
+      labels_groups: service.labels_groups?.map((group) => group.id),
       annotations_groups: service.annotations_groups?.map((group) => group.id),
     }))
     .with({ serviceType: 'CONTAINER' }, (service) => ({
@@ -228,6 +229,7 @@ export function PageSettingsGeneralFeature() {
       image_entry_point: service.entrypoint,
       auto_deploy: service.auto_deploy,
       cmd_arguments: (service.arguments && service.arguments.length && JSON.stringify(service.arguments)) || '',
+      labels_groups: service.labels_groups?.map((group) => group.id),
       annotations_groups: service.annotations_groups?.map((group) => group.id),
     }))
     .with({ serviceType: 'JOB' }, (service) => {
@@ -251,6 +253,7 @@ export function PageSettingsGeneralFeature() {
         registry: jobContainerSource?.registry_id,
         image_name: jobContainerSource?.image_name,
         image_tag: jobContainerSource?.tag,
+        // labels_groups: service.labels_groups?.map((group) => group.id),
         annotations_groups: service.annotations_groups?.map((group) => group.id),
         ...schedule,
       }

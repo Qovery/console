@@ -43,20 +43,21 @@ export function PageSettingsGeneralFeature() {
       version: database?.version,
       accessibility: database?.accessibility,
       annotations_groups: database?.annotations_groups?.map((group) => group.id),
-      labelsGroups: database?.labels_groups?.map((group) => group.id),
+      labels_groups: database?.labels_groups?.map((group) => group.id),
     },
   })
 
   const onSubmit = methods.handleSubmit((data) => {
     if (data && database) {
-      const { annotations_groups, ...dataWithoutAnnotationsGroups } = data
+      const { annotations_groups, labels_groups, ...dataWithoutAnnotationsLabelsGroups } = data
 
       editService({
         serviceId: databaseId,
         payload: buildEditServicePayload({
           service: database,
           request: {
-            ...dataWithoutAnnotationsGroups,
+            ...dataWithoutAnnotationsLabelsGroups,
+            labels_groups: labelsGroups.filter((group) => data.labels_groups?.includes(group.id)),
             annotations_groups: annotationsGroups.filter((group) => data.annotations_groups?.includes(group.id)),
           },
         }),
