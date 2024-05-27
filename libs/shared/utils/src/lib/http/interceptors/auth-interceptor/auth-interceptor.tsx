@@ -1,5 +1,5 @@
 import { useAuth0 } from '@auth0/auth0-react'
-import { type AxiosInstance, type AxiosRequestConfig, type AxiosResponse } from 'axios'
+import { type AxiosInstance } from 'axios'
 import { useEffect } from 'react'
 import { NODE_ENV } from '@qovery/shared/util-node-env'
 
@@ -14,7 +14,7 @@ export function useAuthInterceptor(axiosInstance: AxiosInstance, apiUrl: string)
   const { getAccessTokenSilently } = useAuth0()
 
   useEffect(() => {
-    const requestInterceptor = axiosInstance.interceptors.request.use(async (config: AxiosRequestConfig) => {
+    const requestInterceptor = axiosInstance.interceptors.request.use(async (config) => {
       // The auto generated api adds a base url by default
       // we override here to have a better control over it
       const urlWithoutBase = removeBaseUrl(config.url)
@@ -28,16 +28,13 @@ export function useAuthInterceptor(axiosInstance: AxiosInstance, apiUrl: string)
       }
 
       if (token) {
-        config.headers = {
-          ...config.headers,
-          Authorization: `Bearer ${token}`,
-        }
+        config.headers.set('Authorization', `Bearer ${token}`)
       }
 
       return config
     })
     const responseInterceptor = axiosInstance.interceptors.response.use(
-      async (response: AxiosResponse) => {
+      async (response) => {
         return response
       },
       (error) => {
