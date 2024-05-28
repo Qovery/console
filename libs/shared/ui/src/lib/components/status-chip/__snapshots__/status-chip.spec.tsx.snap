@@ -43,19 +43,26 @@ exports[`StatusChip should match snapshot for ERROR status 1`] = `
     class=""
     data-state="closed"
   >
-    <svg
-      class="text-red-500"
-      fill="none"
-      height="16"
-      viewBox="0 0 24 24"
-      width="16"
-      xmlns="http://www.w3.org/2000/svg"
+    <span
+      class="relative"
     >
-      <path
-        d="M12 24a12 12 0 100-24 12 12 0 000 24zm1.125-18v7.5h-2.25V6h2.25zm-2.25 11.25V15h2.25v2.25h-2.25z"
-        fill="currentColor"
+      <span
+        class="absolute inline-flex h-full w-full animate-ping-small rounded-full border-2 border-red-500 bg-transparent opacity-75"
       />
-    </svg>
+      <svg
+        class="text-red-500 relative"
+        fill="none"
+        height="16"
+        viewBox="0 0 24 24"
+        width="16"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M12 24a12 12 0 100-24 12 12 0 000 24zm1.125-18v7.5h-2.25V6h2.25zm-2.25 11.25V15h2.25v2.25h-2.25z"
+          fill="currentColor"
+        />
+      </svg>
+    </span>
   </div>
 </div>
 `;
