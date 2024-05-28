@@ -74,7 +74,6 @@ export function StepGeneralFeature() {
         })
         onSubmitForm()
       } catch (e: unknown) {
-        console.log(e)
         methods.setError('dockerfile_path', {
           type: 'custom',
           message: (e as Error).message ?? 'Dockerfile not found, please check the path and try again.',
