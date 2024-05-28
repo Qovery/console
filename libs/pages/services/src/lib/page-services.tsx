@@ -1,12 +1,15 @@
 import { useEffect } from 'react'
-import { Navigate, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom'
-import { APPLICATION_GENERAL_URL, SERVICES_GENERAL_URL, SERVICES_URL } from '@qovery/shared/routes'
+import { Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom'
+import { useEnvironment } from '@qovery/domains/environments/feature'
+import { NotFoundPage } from '@qovery/pages/layout'
+import { APPLICATION_GENERAL_URL, SERVICES_URL } from '@qovery/shared/routes'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { ROUTER_SERVICES } from './router/router'
 
 export function PageServices() {
   useDocumentTitle('Services - Qovery')
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
+  const { error } = useEnvironment({ environmentId })
   const location = useLocation()
   const navigate = useNavigate()
 
@@ -16,17 +19,16 @@ export function PageServices() {
     }
   }, [location, navigate, projectId, organizationId, environmentId])
 
+  if (error) {
+    return <NotFoundPage error={error} />
+  }
+
   return (
     <Routes>
       {ROUTER_SERVICES.map((route) => (
         <Route key={route.path} path={route.path} element={route.component} />
       ))}
-      <Route
-        path="*"
-        element={
-          <Navigate replace to={SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_GENERAL_URL} />
-        }
-      />
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   )
 }

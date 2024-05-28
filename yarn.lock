@@ -3895,7 +3895,7 @@ __metadata:
     react-instantsearch: ^7.7.1
     react-payment-inputs: ^1.1.9
     react-refresh: ^0.14.0
-    react-router-dom: 6.11.2
+    react-router-dom: ^6.4.0
     react-select: ^5.3.2
     react-select-event: ^5.5.1
     react-syntax-highlighter: ^15.5.0
@@ -5170,10 +5170,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@remix-run/router@npm:1.6.2":
-  version: 1.6.2
-  resolution: "@remix-run/router@npm:1.6.2"
-  checksum: 5969d313bff6ba5c75917910090cebafda84b9d3b4b453fae6b3d60fea9f938078578ffca769c532ab7ce252cd4a207b78d1024d7c727ab80dd572e62fd3b3f2
+"@remix-run/router@npm:1.16.0":
+  version: 1.16.0
+  resolution: "@remix-run/router@npm:1.16.0"
+  checksum: c8afdf90b19a5a9dfb14425d57de029cadf4bbb51d668885b10df5ea2f82279d7552a9939274b519de0da40550f48e5a6c07e5d4049dbd3838fcaa29819bd641
   languageName: node
   linkType: hard
 
@@ -19570,27 +19570,27 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-router-dom@npm:6.11.2":
-  version: 6.11.2
-  resolution: "react-router-dom@npm:6.11.2"
+"react-router-dom@npm:^6.4.0":
+  version: 6.23.0
+  resolution: "react-router-dom@npm:6.23.0"
   dependencies:
-    "@remix-run/router": 1.6.2
-    react-router: 6.11.2
+    "@remix-run/router": 1.16.0
+    react-router: 6.23.0
   peerDependencies:
     react: ">=16.8"
     react-dom: ">=16.8"
-  checksum: ba44ff37f2956bc18991f2eedb32a3fa46d35832f61ded6c5d167e853ca289868fca6635467866280c73bc3da00dce8437dbbec57da100c0a3e3e3850af00b83
+  checksum: 071b4859fa97d501e4de68fdcf46bd7c88138e65149dadd9557559e4acc7ca31d091af24844c7f305625969cc20a1970450a7cde229642c4e654ca14346a982b
   languageName: node
   linkType: hard
 
-"react-router@npm:6.11.2":
-  version: 6.11.2
-  resolution: "react-router@npm:6.11.2"
+"react-router@npm:6.23.0":
+  version: 6.23.0
+  resolution: "react-router@npm:6.23.0"
   dependencies:
-    "@remix-run/router": 1.6.2
+    "@remix-run/router": 1.16.0
   peerDependencies:
     react: ">=16.8"
-  checksum: e47f875dca70033a3b42704cb5ec076b60f9629a5cdc3be613707f3d5a5706123fb80301037455c285c6d5a1011b443e1784e0103969ebfac7071648d360c413
+  checksum: 224838bc099637c586eaaf62b9607f6b72577ad760bf2d7a51c316e56eb8697d875e88878ec8e12fe949ef9b866655c74d82f913c6acb501bc8868f25e2b0897
   languageName: node
   linkType: hard
 

@@ -21,11 +21,16 @@ import { PageSettingsKubeconfigFeature } from '../feature/page-settings-kubeconf
 import PageSettingsNetworkFeature from '../feature/page-settings-network-feature/page-settings-network-feature'
 import PageSettingsRemoteFeature from '../feature/page-settings-remote-feature/page-settings-remote-feature'
 import PageSettingsResourcesFeature from '../feature/page-settings-resources-feature/page-settings-resources-feature'
+import Container from '../ui/container/container'
 
 export const ROUTER_CLUSTER: Route[] = [
   {
     path: `${CLUSTER_SETTINGS_URL}/*`,
-    component: <PageSettingsFeature />,
+    component: (
+      <Container>
+        <PageSettingsFeature />
+      </Container>
+    ),
   },
 ]
 

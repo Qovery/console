@@ -1,22 +1,25 @@
-import { type Cluster, ClusterDeploymentStatusEnum } from 'qovery-typescript-axios'
+import { ClusterDeploymentStatusEnum } from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { ClusterActionToolbar, ClusterType, useClusterStatus } from '@qovery/domains/clusters/feature'
+import {
+  ClusterActionToolbar,
+  ClusterType,
+  useCluster,
+  useClusterStatus,
+  useDeployCluster,
+} from '@qovery/domains/clusters/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import { CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
 import { Badge, Header, Icon, Section, Skeleton, Tabs } from '@qovery/shared/ui'
 import NeedRedeployFlag from '../need-redeploy-flag/need-redeploy-flag'
 
-export interface ContainerProps {
-  cluster?: Cluster
-  deployCluster: () => void
-}
-
-export function Container({ children, cluster, deployCluster }: PropsWithChildren<ContainerProps>) {
+export function Container({ children }: PropsWithChildren) {
   const { organizationId = '', clusterId = '' } = useParams()
   const { pathname } = useLocation()
 
+  const { data: cluster } = useCluster({ organizationId, clusterId })
+  const { mutate: deployCluster } = useDeployCluster()
   const { data: clusterStatus, isLoading } = useClusterStatus({ organizationId, clusterId })
 
   const headerActions = (
@@ -99,7 +102,15 @@ export function Container({ children, cluster, deployCluster }: PropsWithChildre
       <Header title={cluster?.name} icon={icon} actions={headerActions} />
       <Tabs items={tabsItems} />
       {cluster && cluster.deployment_status !== ClusterDeploymentStatusEnum.UP_TO_DATE && (
-        <NeedRedeployFlag deploymentStatus={cluster?.deployment_status} onClickButton={deployCluster} />
+        <NeedRedeployFlag
+          deploymentStatus={cluster?.deployment_status}
+          onClickButton={() =>
+            deployCluster({
+              organizationId,
+              clusterId,
+            })
+          }
+        />
       )}
       <div className="flex flex-grow flex-col">{children}</div>
     </Section>

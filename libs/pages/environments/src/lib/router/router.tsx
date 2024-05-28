@@ -11,26 +11,47 @@ import PageDeploymentRulesFeature from '../feature/page-deployment-rules-feature
 import PageEditDeploymentRuleFeature from '../feature/page-edit-deployment-rule-feature/page-edit-deployment-rule-feature'
 import PageGeneralFeature from '../feature/page-general-feature/page-general-feature'
 import { PageVariablesFeature } from '../feature/page-variables-feature/page-variables-feature'
+import Container from '../ui/container/container'
 
 export const ROUTER_ENVIRONMENTS: Route[] = [
   {
     path: ENVIRONMENTS_GENERAL_URL,
-    component: <PageGeneralFeature />,
+    component: (
+      <Container>
+        <PageGeneralFeature />
+      </Container>
+    ),
   },
   {
     path: ENVIRONMENTS_DEPLOYMENT_RULES_URL,
-    component: <PageDeploymentRulesFeature />,
+    component: (
+      <Container>
+        <PageDeploymentRulesFeature />
+      </Container>
+    ),
   },
   {
     path: ENVIRONMENTS_VARIABLES_URL,
-    component: <PageVariablesFeature />,
+    component: (
+      <Container>
+        <PageVariablesFeature />
+      </Container>
+    ),
   },
   {
     path: ENVIRONMENTS_DEPLOYMENT_RULES_CREATE_URL,
-    component: <PageCreateDeploymentRuleFeature />,
+    component: (
+      <Container>
+        <PageCreateDeploymentRuleFeature />
+      </Container>
+    ),
   },
   {
     path: ENVIRONMENTS_DEPLOYMENT_RULES_EDIT_URL(),
-    component: <PageEditDeploymentRuleFeature />,
+    component: (
+      <Container>
+        <PageEditDeploymentRuleFeature />
+      </Container>
+    ),
   },
 ]
