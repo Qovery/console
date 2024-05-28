@@ -1,12 +1,14 @@
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
+import { useCheckDockerfile } from '@qovery/domains/environments/feature'
 import { useOrganization } from '@qovery/domains/organizations/feature'
-import { type ServiceTypeEnum } from '@qovery/shared/enums'
+import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { type ApplicationGeneralData } from '@qovery/shared/interfaces'
 import { SERVICES_CREATION_RESOURCES_URL } from '@qovery/shared/routes'
 import { FunnelFlowBody, toastError } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { buildGitRepoUrl } from '@qovery/shared/util-js'
 import StepGeneral from '../../../ui/page-application-create/step-general/step-general'
 import { findTemplateData } from '../../page-job-create-feature/page-job-create-feature'
 import { serviceTemplates } from '../../page-new-feature/service-templates'
@@ -17,7 +19,9 @@ export function StepGeneralFeature() {
   const { setGeneralData, generalData, setCurrentStep, creationFlowUrl } = useApplicationContainerCreateContext()
   const { organizationId = '', slug, option } = useParams()
   const navigate = useNavigate()
+  const { mutateAsync: mutateCheckDockerfile, isLoading: isLoadingCheckDockerfile } = useCheckDockerfile()
   const { data: organization } = useOrganization({ organizationId })
+  const { environmentId = '' } = useParams()
 
   useEffect(() => {
     setCurrentStep(1)
@@ -36,27 +40,59 @@ export function StepGeneralFeature() {
     mode: 'onChange',
   })
 
-  const onSubmit = methods.handleSubmit((data) => {
-    const cloneData = {
-      ...data,
+  const onSubmit = methods.handleSubmit(async (data) => {
+    function onSubmitForm() {
+      const cloneData = {
+        ...data,
+      }
+
+      if (data.cmd_arguments) {
+        try {
+          cloneData.cmd = eval(data.cmd_arguments)
+        } catch (e: unknown) {
+          toastError(e as Error, 'Invalid CMD array')
+          return
+        }
+      }
+      setGeneralData(cloneData)
+      navigate(creationFlowUrl + SERVICES_CREATION_RESOURCES_URL)
     }
 
-    if (data.cmd_arguments) {
+    if (data.serviceType !== ServiceTypeEnum.CONTAINER && data.build_mode === 'DOCKER') {
       try {
-        cloneData.cmd = eval(data.cmd_arguments)
+        await mutateCheckDockerfile({
+          environmentId,
+          dockerfileCheckRequest: {
+            git_repository: {
+              url: buildGitRepoUrl(data.provider ?? '', data.repository || ''),
+              root_path: data.root_path,
+              branch: data.branch,
+              git_token_id: data.git_token_id,
+            },
+            dockerfile_path: data.dockerfile_path ?? '',
+          },
+        })
+        onSubmitForm()
       } catch (e: unknown) {
-        toastError(e as Error, 'Invalid CMD array')
-        return
+        console.log(e)
+        methods.setError('dockerfile_path', {
+          type: 'custom',
+          message: (e as Error).message ?? 'Dockerfile not found, please check the path and try again.',
+        })
       }
+    } else {
+      onSubmitForm()
     }
-    setGeneralData(cloneData)
-    navigate(creationFlowUrl + SERVICES_CREATION_RESOURCES_URL)
   })
 
   return (
     <FunnelFlowBody>
       <FormProvider {...methods}>
-        <StepGeneral organization={organization} onSubmit={onSubmit} />
+        <StepGeneral
+          organization={organization}
+          onSubmit={onSubmit}
+          loadingCheckDockerfile={isLoadingCheckDockerfile}
+        />
       </FormProvider>
     </FunnelFlowBody>
   )
