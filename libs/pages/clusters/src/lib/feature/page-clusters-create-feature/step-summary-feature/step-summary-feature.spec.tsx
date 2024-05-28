@@ -209,7 +209,6 @@ describe('StepSummaryFeature', () => {
           region: 'region',
         },
         region: 'region',
-        kubeconfig: 'file_content',
         kubernetes: 'SELF_MANAGED',
         ssh_keys: [],
         features: [],
