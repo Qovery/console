@@ -35,40 +35,23 @@ import PageSettingsStorageFeature from '../feature/page-settings-storage-feature
 import PageSettingsValuesOverrideArgumentsFeature from '../feature/page-settings-values-override-arguments-feature/page-settings-values-override-arguments-feature'
 import PageSettingsValuesOverrideFileFeature from '../feature/page-settings-values-override-file-feature/page-settings-values-override-file-feature'
 import PageVariablesFeature from '../feature/page-variables-feature/page-variables-feature'
-import Container from '../ui/container/container'
 
 export const ROUTER_APPLICATION: Route[] = [
   {
     path: APPLICATION_GENERAL_URL,
-    component: (
-      <Container>
-        <PageGeneralFeature />
-      </Container>
-    ),
+    component: <PageGeneralFeature />,
   },
   {
     path: APPLICATION_DEPLOYMENTS_URL,
-    component: (
-      <Container>
-        <PageDeploymentsFeature />
-      </Container>
-    ),
+    component: <PageDeploymentsFeature />,
   },
   {
     path: APPLICATION_VARIABLES_URL,
-    component: (
-      <Container>
-        <PageVariablesFeature />
-      </Container>
-    ),
+    component: <PageVariablesFeature />,
   },
   {
     path: `${APPLICATION_SETTINGS_URL}/*`,
-    component: (
-      <Container>
-        <PageSettingsFeature />
-      </Container>
-    ),
+    component: <PageSettingsFeature />,
   },
 ]
 
