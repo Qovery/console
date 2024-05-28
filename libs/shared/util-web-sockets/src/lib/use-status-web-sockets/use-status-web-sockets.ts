@@ -74,6 +74,7 @@ export function useStatusWebSockets({
     },
     // NOTE: projectId is not required by the API but it limits WS messages when cluster handles my environments / services
     enabled: Boolean(organizationId) && Boolean(clusterId) && Boolean(projectId),
+    shouldReconnect: true,
     onMessage(queryClient, message: ServiceStatusDto) {
       for (const env of message.environments) {
         queryClient.setQueryData(queries.environments.runningStatus(env.id).queryKey, () => ({
