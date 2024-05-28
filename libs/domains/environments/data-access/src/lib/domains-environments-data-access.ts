@@ -5,7 +5,9 @@ import {
   DatabasesApi,
   DeploymentStageMainCallsApi,
   type DeploymentStageRequest,
+  type DockerfileCheckRequest,
   EnvironmentActionsApi,
+  EnvironmentApi,
   EnvironmentDeploymentHistoryApi,
   EnvironmentDeploymentRuleApi,
   type EnvironmentDeploymentRuleEditRequest,
@@ -17,6 +19,7 @@ import {
 import { type RunningState } from '@qovery/shared/enums'
 
 const environmentsApi = new EnvironmentsApi()
+const environmentApi = new EnvironmentApi()
 const environmentMainCallsApi = new EnvironmentMainCallsApi()
 const environmentDeploymentsApi = new EnvironmentDeploymentHistoryApi()
 const environmentActionApi = new EnvironmentActionsApi()
@@ -186,6 +189,16 @@ export const mutations = {
       deploymentRuleId,
       payload
     )
+    return result.data
+  },
+  async checkDockerfile({
+    environmentId,
+    dockerfileCheckRequest,
+  }: {
+    environmentId: string
+    dockerfileCheckRequest: DockerfileCheckRequest
+  }) {
+    const result = await environmentApi.checkDockerfile(environmentId, dockerfileCheckRequest)
     return result.data
   },
 }
