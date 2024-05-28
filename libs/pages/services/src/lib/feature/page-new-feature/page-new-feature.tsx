@@ -10,6 +10,7 @@ import {
   SERVICES_CRONJOB_CREATION_URL,
   SERVICES_DATABASE_CREATION_URL,
   SERVICES_DATABASE_TEMPLATE_CREATION_URL,
+  SERVICES_GENERAL_URL,
   SERVICES_HELM_CREATION_URL,
   SERVICES_HELM_TEMPLATE_CREATION_URL,
   SERVICES_LIFECYCLE_CREATION_URL,
@@ -256,7 +257,11 @@ export function PageNewFeature() {
 
   return (
     <Section className="flex w-full flex-1 flex-col gap-8 rounded-t bg-white p-8 pb-24">
-      <Link color="brand" to=".." className="text-sm">
+      <Link
+        color="brand"
+        to={SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_GENERAL_URL}
+        className="text-sm"
+      >
         <Icon iconName="arrow-left" className="mr-1" />
         Back to services list
       </Link>
