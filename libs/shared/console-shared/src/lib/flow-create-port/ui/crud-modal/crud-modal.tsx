@@ -10,6 +10,7 @@ export interface CrudModalProps {
   isEdit?: boolean
   isMatchingHealthCheck?: boolean
   loading?: boolean
+  isCreationFlow?: boolean
   onClose: () => void
   onSubmit: () => void
 }
@@ -22,6 +23,7 @@ export function CrudModal({
   loading,
   onClose,
   onSubmit,
+  isCreationFlow,
 }: CrudModalProps) {
   const { control, watch, setValue } = useFormContext()
 
@@ -186,7 +188,8 @@ export function CrudModal({
               />
             )}
           />
-          <>
+          {/* Hide with CSS because we need to keep a default value on the creation payload */}
+          <div className={isCreationFlow ? 'hidden' : ''}>
             <Controller
               name="name"
               defaultValue={watchInternalPort ? `p${watchInternalPort}` : ''}
@@ -206,7 +209,7 @@ export function CrudModal({
               )}
             />
             <p className="mb-5 ml-4 text-xs text-neutral-350">{`Port Name allows to customize the subdomain assigned to reach the application port from the internet. Default value is p<port_number>`}</p>
-          </>
+          </div>
         </>
       )}
       {(watchProtocol === PortProtocolEnum.TCP || watchProtocol === PortProtocolEnum.UDP) && watchPublicly && (
