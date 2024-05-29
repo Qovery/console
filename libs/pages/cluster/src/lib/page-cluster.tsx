@@ -1,6 +1,7 @@
-import { Route, Routes, useParams } from 'react-router-dom'
+import { Navigate, Route, Routes, useParams } from 'react-router-dom'
 import { useCluster } from '@qovery/domains/clusters/feature'
 import { NotFoundPage } from '@qovery/pages/layout'
+import { CLUSTER_SETTINGS_GENERAL_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
 import { ROUTER_CLUSTER } from './router/router'
 
 export function PagesCluster() {
@@ -21,7 +22,15 @@ export function PagesCluster() {
       {ROUTER_CLUSTER.map((route) => (
         <Route key={route.path} path={route.path} element={route.component} />
       ))}
-      <Route path="*" element={<NotFoundPage />} />
+      <Route
+        path="*"
+        element={
+          <Navigate
+            replace
+            to={CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_GENERAL_URL}
+          />
+        }
+      />
     </Routes>
   )
 }
