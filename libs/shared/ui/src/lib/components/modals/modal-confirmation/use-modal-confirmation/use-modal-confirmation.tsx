@@ -5,11 +5,11 @@ import { ModalConfirmation } from '../modal-confirmation'
 
 export interface UseModalConfirmationProps {
   title: string
-  description?: string | ReactNode
+  description?: ReactNode
   action: () => void
   name?: string
   mode?: EnvironmentModeEnum | string | undefined
-  warning?: string
+  warning?: ReactNode
   isDelete?: boolean
   placeholder?: string
 }
