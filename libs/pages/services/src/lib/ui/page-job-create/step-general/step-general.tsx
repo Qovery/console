@@ -13,9 +13,10 @@ import { findTemplateData } from '../../../feature/page-job-create-feature/page-
 import { serviceTemplates } from '../../../feature/page-new-feature/service-templates'
 
 export interface StepGeneralProps {
+  jobType: JobType
   onSubmit: FormEventHandler<HTMLFormElement>
   organization?: Organization
-  jobType: JobType
+  loadingCheckDockerfile?: boolean
 }
 
 // const fetchDockerfile = async (url: string) => {
@@ -207,6 +208,7 @@ export function StepGeneral(props: StepGeneralProps) {
             data-testid="button-submit"
             type="submit"
             disabled={!(formState.isValid && isGitSettingsValid)}
+            loading={props.loadingCheckDockerfile}
             size="lg"
           >
             Continue
