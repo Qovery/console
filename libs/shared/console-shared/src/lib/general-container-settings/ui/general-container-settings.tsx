@@ -52,6 +52,9 @@ export function GeneralContainerSettings({ organization }: GeneralContainerSetti
                         }}
                       />
                     ),
+                    options: {
+                      fakeModal: true,
+                    },
                   })
                 },
               }}
