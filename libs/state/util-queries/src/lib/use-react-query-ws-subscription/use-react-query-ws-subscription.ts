@@ -1,6 +1,6 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import { type QueryClient, useQueryClient } from '@tanstack/react-query'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 
 // Inspired by:
 // https://tkdodo.eu/blog/using-web-sockets-with-react-query
@@ -17,6 +17,7 @@ export interface UseReactQueryWsSubscriptionProps {
   onError?: (queryClient: QueryClient, event: Event) => void
   onClose?: (QueryClient: QueryClient, event: CloseEvent) => void
   enabled?: boolean
+  shouldReconnect?: boolean
 }
 
 interface InvalidateOperation {
@@ -38,6 +39,7 @@ export function useReactQueryWsSubscription({
   onError,
   onClose,
   enabled = true,
+  shouldReconnect = false,
 }: UseReactQueryWsSubscriptionProps) {
   const queryClient = useQueryClient()
   const { getAccessTokenSilently } = useAuth0()
@@ -57,14 +59,16 @@ export function useReactQueryWsSubscription({
   }
 
   const searchParams = new URLSearchParams(_urlSearchParams)
+  const reconnectCount = useRef<number>(0)
 
   useEffect(() => {
     if (!enabled) {
       return
     }
     let websocket: WebSocket | undefined
+    let timeout: ReturnType<typeof setTimeout> | undefined
 
-    async function initWebsocket() {
+    async function connect() {
       const token = await getAccessTokenSilently()
       websocket = new WebSocket(`${url}?${searchParams.toString()}`, ['v1', 'auth.bearer.' + token])
 
@@ -86,15 +90,31 @@ export function useReactQueryWsSubscription({
         onError?.(queryClient, event)
       }
       websocket.onclose = async (event) => {
-        onClose?.(queryClient, event)
+        if (shouldReconnect) {
+          timeout = setTimeout(
+            function () {
+              reconnectCount.current++
+              connect()
+            },
+            // Exponential Backoff
+            // attemptNumber will be 0 the first time it attempts to reconnect, so this equation results in a reconnect pattern of 5 second, 10 seconds, 20 seconds, 40 seconds, 80 seconds, and then caps at 100 seconds until the maximum number of attempts is reached
+            Math.min(Math.pow(2, reconnectCount.current) * 5000, 100_000)
+          )
+        } else {
+          onClose?.(queryClient, event)
+        }
       }
     }
 
-    initWebsocket()
+    connect()
 
     return () => {
       if (websocket) {
+        shouldReconnect = false
         websocket.close()
+        if (timeout) {
+          clearTimeout(timeout)
+        }
       }
     }
   }, [queryClient, getAccessTokenSilently, onOpen, onMessage, onClose, url, searchParams.toString(), enabled])
