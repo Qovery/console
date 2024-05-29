@@ -14,7 +14,7 @@ import {
 import { VariablesProvider } from '@qovery/domains/variables/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import { CLUSTER_URL } from '@qovery/shared/routes'
-import { Header, Icon, Link, Section, Skeleton, Tooltip } from '@qovery/shared/ui'
+import { Badge, Header, Icon, Link, Section, Skeleton, Tooltip } from '@qovery/shared/ui'
 import TabsFeature from '../../feature/tabs-feature/tabs-feature'
 
 export interface ContainerProps extends PropsWithChildren {
@@ -65,6 +65,15 @@ export function Container({ children }: ContainerProps) {
               <p className="ml-1.5 max-w-[200px] truncate">{cluster?.name}</p>
             </Link>
           </Tooltip>
+        </Skeleton>
+        <Skeleton width={22} height={22} show={!service}>
+          {service && 'auto_deploy' in service && service.auto_deploy && (
+            <Tooltip content="Auto-deploy">
+              <Badge variant="outline" size="xs">
+                <Icon className="text-neutral-350" iconName="arrows-rotate" />
+              </Badge>
+            </Tooltip>
+          )}
         </Skeleton>
       </div>
     </div>
