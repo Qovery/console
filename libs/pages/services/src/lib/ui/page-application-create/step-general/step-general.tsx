@@ -14,6 +14,7 @@ import { serviceTemplates } from '../../../feature/page-new-feature/service-temp
 
 export interface StepGeneralProps {
   onSubmit: FormEventHandler<HTMLFormElement>
+  loadingCheckDockerfile?: boolean
   organization?: Organization
 }
 
@@ -124,6 +125,7 @@ export function StepGeneral(props: StepGeneralProps) {
             type="submit"
             disabled={!(formState.isValid && isGitSettingsValid)}
             size="lg"
+            loading={props.loadingCheckDockerfile}
           >
             Continue
           </Button>
