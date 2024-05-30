@@ -13,6 +13,7 @@ export interface FlowCreatePortProps {
   onEdit?: (port: PortData | ServicePort) => void
   isSetting?: boolean
   onSubmit?: () => void
+  hidePortName?: boolean
 }
 
 export function FlowCreatePort({
@@ -24,6 +25,7 @@ export function FlowCreatePort({
   onSubmit,
   onBack,
   onEdit,
+  hidePortName,
 }: FlowCreatePortProps) {
   const livenessType = healthchecks?.liveness_probe?.type
   const readinessType = healthchecks?.readiness_probe?.type
@@ -88,9 +90,10 @@ export function FlowCreatePort({
                             : 'No'}
                         </span>
                         <span>Protocol: {(customPort as ServicePort).protocol}</span>
-                        {((customPort as ServicePort).publicly_accessible || (customPort as PortData).is_public) && (
-                          <span>Port Name: {(customPort as ServicePort).name}</span>
-                        )}
+                        {!hidePortName &&
+                          ((customPort as ServicePort).publicly_accessible || (customPort as PortData).is_public) && (
+                            <span>Port Name: {(customPort as ServicePort).name}</span>
+                          )}
                         {((customPort as ServicePort).publicly_accessible || (customPort as PortData).is_public) && (
                           <span>
                             External Port:{' '}

@@ -8,13 +8,21 @@ import { ToastEnum, toast, useModal } from '@qovery/shared/ui'
 
 export interface CrudModalFeatureProps {
   environmentId: string
+  onClose: () => void
   port?: PortData | ServicePort
   portData?: FlowPortData
   setPortData?: (portData: FlowPortData) => void
-  onClose: () => void
+  hidePortName?: boolean
 }
 
-export function CrudModalFeature({ port, portData, setPortData, onClose, environmentId }: CrudModalFeatureProps) {
+export function CrudModalFeature({
+  port,
+  portData,
+  setPortData,
+  onClose,
+  environmentId,
+  hidePortName,
+}: CrudModalFeatureProps) {
   const [loading, setLoading] = useState(false)
   const { enableAlertClickOutside } = useModal()
   const { data: environment } = useEnvironment({ environmentId })
@@ -101,6 +109,7 @@ export function CrudModalFeature({ port, portData, setPortData, onClose, environ
         loading={loading}
         isEdit={!!port}
         cloudProvider={environment?.cloud_provider.provider as CloudProviderEnum}
+        hidePortName={hidePortName}
       />
     </FormProvider>
   )

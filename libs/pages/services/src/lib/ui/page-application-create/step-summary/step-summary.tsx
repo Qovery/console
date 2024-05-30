@@ -182,11 +182,6 @@ export function StepSummary({
                               <strong className="font-medium">Public port:</strong> {port.external_port}
                             </p>
                           )}{' '}
-                          {port.is_public && (
-                            <p>
-                              <strong className="font-medium">Port name:</strong> {port.name}
-                            </p>
-                          )}{' '}
                           <p>
                             <strong className="font-medium">Public:</strong> {port.is_public ? 'Yes' : 'No'}
                           </p>
