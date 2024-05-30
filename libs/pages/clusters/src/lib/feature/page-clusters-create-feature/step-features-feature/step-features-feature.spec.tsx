@@ -14,7 +14,10 @@ const mockFeatures = [
     id: 'FEATURE',
     title: 'feature-1',
     cost_per_month: 23,
-    value: 'my-value',
+    value_object: {
+      type: 'STRING',
+      value: 'test',
+    },
     accepted_values: ['test', 'my-value'],
   },
 ]
