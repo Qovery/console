@@ -252,9 +252,10 @@ export function VariableList({
         id: 'actions',
         cell: (info) => {
           const variable = info.row.original
+          const alreadyOverridden = variables.some(({ overridden_variable }) => variable.id === overridden_variable?.id)
           const disableOverride = match(variable.scope)
             .with('APPLICATION', 'CONTAINER', 'JOB', 'HELM', () => true)
-            .otherwise(() => false)
+            .otherwise(() => alreadyOverridden)
 
           return (
             <DropdownMenu.Root>
@@ -294,7 +295,11 @@ export function VariableList({
                           >
                             <Tooltip
                               disabled={!disableOverride}
-                              content="You can’t override variables on the application scope"
+                              content={
+                                alreadyOverridden
+                                  ? 'Variable already overridden'
+                                  : 'You can’t override variables on the application scope'
+                              }
                             >
                               <span>Create override</span>
                             </Tooltip>
