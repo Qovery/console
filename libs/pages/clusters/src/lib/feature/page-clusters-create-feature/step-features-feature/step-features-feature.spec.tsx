@@ -1,4 +1,4 @@
-import { CloudProviderEnum } from 'qovery-typescript-axios'
+import { CloudProviderEnum, type ClusterFeatureResponse } from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
 import selectEvent from 'react-select-event'
 import * as cloudProvidersDomain from '@qovery/domains/cloud-providers/feature'
@@ -9,7 +9,7 @@ import StepFeaturesFeature from './step-features-feature'
 const mockSetFeaturesData = jest.fn()
 const mockNavigate = jest.fn()
 
-const mockFeatures = [
+const mockFeatures: ClusterFeatureResponse[] = [
   {
     id: 'FEATURE',
     title: 'feature-1',
