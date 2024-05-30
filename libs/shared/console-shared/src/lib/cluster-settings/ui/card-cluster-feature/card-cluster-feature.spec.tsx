@@ -11,7 +11,10 @@ const props: CardClusterFeatureProps = {
     id: STATIC_IP,
     title: 'feature-1',
     cost_per_month: 23,
-    value: 'my-value',
+    value_object: {
+      type: 'STRING',
+      value: 'my-value',
+    },
     accepted_values: ['test', 'my-value'],
   },
 }
