@@ -131,7 +131,7 @@ export function StepFeaturesFeature() {
     // https://qovery.atlassian.net/browse/FRT-1002
     if (features && Object.keys(featuresData?.features ?? {}).length === 0) {
       const staticIp = features.find(({ id }) => id === 'STATIC_IP')
-      if (staticIp && staticIp.value === false) {
+      if (staticIp && staticIp.value_object?.value === false) {
         methods.setValue('features.STATIC_IP.value', true)
       }
     }

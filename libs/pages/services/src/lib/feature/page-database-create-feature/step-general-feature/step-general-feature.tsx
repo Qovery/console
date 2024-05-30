@@ -11,11 +11,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { useCluster } from '@qovery/domains/clusters/feature'
 import { useEnvironment, useListDatabaseConfigurations } from '@qovery/domains/environments/feature'
 import { type Value } from '@qovery/shared/interfaces'
-import {
-  SERVICES_DATABASE_CREATION_RESOURCES_URL,
-  SERVICES_DATABASE_CREATION_URL,
-  SERVICES_URL,
-} from '@qovery/shared/routes'
+import { SERVICES_DATABASE_CREATION_RESOURCES_URL } from '@qovery/shared/routes'
 import { FunnelFlowBody, Icon } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { type ValueOf } from '@qovery/shared/util-types'
@@ -119,7 +115,8 @@ export function StepGeneralFeature() {
   const { data: databaseConfigurations } = useListDatabaseConfigurations({ environmentId })
 
   const cloudProvider = environment?.cloud_provider.provider
-  const clusterVpc = cluster?.features?.find(({ id }) => id === 'EXISTING_VPC')?.value as ClusterFeatureAwsExistingVpc
+  const clusterVpc = cluster?.features?.find(({ id }) => id === 'EXISTING_VPC')?.value_object
+    ?.value as ClusterFeatureAwsExistingVpc
   const showManagedWithVpcOptions =
     generateDatabasesTypesAndVersionOptions(databaseConfigurations, clusterVpc).databaseTypeOptions.length > 0
 

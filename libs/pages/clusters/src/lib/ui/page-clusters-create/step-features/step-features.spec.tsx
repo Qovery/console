@@ -1,16 +1,19 @@
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import { CloudProviderEnum } from 'qovery-typescript-axios'
+import { CloudProviderEnum, type ClusterFeatureResponse } from 'qovery-typescript-axios'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import StepFeatures, { type StepFeaturesProps } from './step-features'
 
 const STATIC_IP = 'STATIC_IP'
 
-const mockFeatures = [
+const mockFeatures: ClusterFeatureResponse[] = [
   {
     id: STATIC_IP,
     title: 'feature-1',
     cost_per_month: 23,
-    value: 'my-value',
+    value_object: {
+      type: 'STRING',
+      value: 'test',
+    },
     accepted_values: ['test', 'my-value'],
   },
 ]
@@ -34,7 +37,10 @@ describe('StepFeatures', () => {
           vpc_mode: 'DEFAULT',
           feature: {
             [STATIC_IP]: {
-              value: false,
+              value_object: {
+                type: 'BOOLEAN',
+                value: false,
+              },
               extendedValue: 'my-value',
             },
           },
@@ -46,7 +52,7 @@ describe('StepFeatures', () => {
     await userEvent.click(input)
 
     // all because we have two inputs on the inputs select with search
-    screen.getAllByDisplayValue('my-value')
+    screen.getByDisplayValue('true')
   })
 
   it('should submit the form on click', async () => {
