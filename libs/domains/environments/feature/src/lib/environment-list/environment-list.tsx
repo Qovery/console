@@ -23,7 +23,6 @@ import {
   SERVICES_URL,
 } from '@qovery/shared/routes'
 import {
-  Badge,
   Button,
   EmptyState,
   Icon,
@@ -39,6 +38,7 @@ import { dateUTCString, timeAgo } from '@qovery/shared/util-dates'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { CreateCloneEnvironmentModal } from '../create-clone-environment-modal/create-clone-environment-modal'
 import { EnvironmentActionToolbar } from '../environment-action-toolbar/environment-action-toolbar'
+import { EnvironmentMode } from '../environment-mode/environment-mode'
 import { useEnvironments } from '../hooks/use-environments/use-environments'
 import { EnvironmentListSkeleton } from './environment-list-skeleton'
 
@@ -49,43 +49,7 @@ function EnvironmentNameCell({ environment }: { environment: Environment }) {
     <div className="flex items-center justify-between">
       <span className="flex min-w-0 items-center gap-4 text-sm font-medium text-neutral-400">
         <Tooltip content={upperCaseFirstLetter(environment.mode)}>
-          {match(environment.mode)
-            .with('DEVELOPMENT', () => (
-              <Badge
-                variant="outline"
-                color="neutral"
-                size="xs"
-                className="flex h-4 w-4 justify-center p-0 font-semibold"
-              >
-                D
-              </Badge>
-            ))
-            .with('PREVIEW', () => (
-              <Badge
-                variant="surface"
-                color="purple"
-                size="xs"
-                className="flex h-4 w-4 justify-center p-0 font-semibold"
-              >
-                V
-              </Badge>
-            ))
-            .with('PRODUCTION', () => (
-              <Badge variant="surface" color="red" size="xs" className="flex h-4 w-4 justify-center p-0 font-semibold">
-                P
-              </Badge>
-            ))
-            .with('STAGING', () => (
-              <Badge
-                variant="surface"
-                color="green"
-                size="xs"
-                className="flex h-4 w-4 justify-center p-0 font-semibold"
-              >
-                S
-              </Badge>
-            ))
-            .exhaustive()}
+          <EnvironmentMode mode={environment.mode} variant="shrink" />
         </Tooltip>
         <span className="flex min-w-0 shrink flex-col truncate pr-2">
           <span className="truncate">

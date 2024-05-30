@@ -1,8 +1,8 @@
-import clsx from 'clsx'
 import equal from 'fast-deep-equal'
 import { type Cluster, type Environment, type Organization, type Project } from 'qovery-typescript-axios'
 import { memo, useCallback, useEffect, useState } from 'react'
 import { useLocation, useMatch, useNavigate, useParams } from 'react-router-dom'
+import { EnvironmentMode } from '@qovery/domains/environments/feature'
 import { ServiceStateChip, useServices } from '@qovery/domains/services/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import {
@@ -124,12 +124,10 @@ export function Breadcrumb(props: BreadcrumbProps) {
               url: `${SERVICES_URL(organizationId, projectId, environment.id)}${SERVICES_GENERAL_URL}`,
             },
             contentLeft: environment.cloud_provider.provider && (
-              <Icon
-                className={clsx('mt-0.5', {
-                  'w-4': environment.cloud_provider.provider === 'ON_PREMISE',
-                })}
-                name={`${environment.cloud_provider.provider}_GRAY`}
-              />
+              <span className="flex items-center gap-3">
+                <EnvironmentMode mode={environment.mode} variant="shrink" />
+                <Icon className="mt-0.5 w-4" name={environment.cloud_provider.provider} />
+              </span>
             ),
             isActive: environmentId === environment.id,
           }))

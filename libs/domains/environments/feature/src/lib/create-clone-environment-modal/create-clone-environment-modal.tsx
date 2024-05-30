@@ -10,7 +10,8 @@ import { useNavigate } from 'react-router-dom'
 import { P, match } from 'ts-pattern'
 import { useClusters } from '@qovery/domains/clusters/feature'
 import { SERVICES_GENERAL_URL, SERVICES_URL } from '@qovery/shared/routes'
-import { Badge, ExternalLink, Icon, InputSelect, InputText, ModalCrud, useModal } from '@qovery/shared/ui'
+import { ExternalLink, Icon, InputSelect, InputText, ModalCrud, useModal } from '@qovery/shared/ui'
+import { EnvironmentMode } from '../environment-mode/environment-mode'
 import { useCloneEnvironment } from '../hooks/use-clone-environment/use-clone-environment'
 import { useCreateEnvironment } from '../hooks/use-create-environment/use-create-environment'
 
@@ -72,29 +73,17 @@ export function CreateCloneEnvironmentModal({
     {
       value: EnvironmentModeEnum.DEVELOPMENT,
       label: 'Development',
-      icon: (
-        <Badge variant="outline" color="neutral" size="xs" className="flex h-4 w-4 justify-center p-0 font-semibold">
-          D
-        </Badge>
-      ),
+      icon: <EnvironmentMode mode="DEVELOPMENT" variant="shrink" />,
     },
     {
       value: EnvironmentModeEnum.STAGING,
       label: 'Staging',
-      icon: (
-        <Badge variant="surface" color="green" size="xs" className="flex h-4 w-4 justify-center p-0 font-semibold">
-          S
-        </Badge>
-      ),
+      icon: <EnvironmentMode mode="STAGING" variant="shrink" />,
     },
     {
       value: EnvironmentModeEnum.PRODUCTION,
       label: 'Production',
-      icon: (
-        <Badge variant="surface" color="red" size="xs" className="flex h-4 w-4 justify-center p-0 font-semibold">
-          P
-        </Badge>
-      ),
+      icon: <EnvironmentMode mode="PRODUCTION" variant="shrink" />,
     },
   ]
 
