@@ -1,9 +1,4 @@
-import {
-  type CloudProviderEnum,
-  type ClusterFeatureAwsExistingVpc,
-  type ClusterFeatureGcpExistingVpc,
-  type ClusterFeatureResponse,
-} from 'qovery-typescript-axios'
+import { type CloudProviderEnum, type ClusterFeatureResponse } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
 import { CardClusterFeature, SettingsHeading } from '@qovery/shared/console-shared'
 import { BlockContent, LoaderSpinner, Section } from '@qovery/shared/ui'
@@ -22,17 +17,9 @@ export function PageSettingsFeatures(props: PageSettingsFeaturesProps) {
   const featureExistingVpc = features?.find(({ id }) => id === 'EXISTING_VPC')
   const featureExistingVpcValue = featureExistingVpc?.value_object
 
-  const featureExistingVpcContent = match(cloudProvider)
-    .with('AWS', () =>
-      featureExistingVpcValue?.type === 'AWS_USER_PROVIDED_NETWORK' ? (
-        <AWSExistingVPC feature={featureExistingVpcValue.value} />
-      ) : null
-    )
-    .with('GCP', () =>
-      featureExistingVpcValue?.type === 'GCP_USER_PROVIDED_NETWORK' ? (
-        <GcpExistingVPC feature={featureExistingVpcValue.value} />
-      ) : null
-    )
+  const featureExistingVpcContent = match(featureExistingVpcValue)
+    .with({ type: 'AWS_USER_PROVIDED_NETWORK' }, (f) => <AWSExistingVPC feature={f.value} />)
+    .with({ type: 'GCP_USER_PROVIDED_NETWORK' }, (f) => <GcpExistingVPC feature={f.value} />)
     .otherwise(() => null)
 
   return (
