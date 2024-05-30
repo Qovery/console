@@ -10,7 +10,7 @@ export interface CrudModalProps {
   isEdit?: boolean
   isMatchingHealthCheck?: boolean
   loading?: boolean
-  isCreationFlow?: boolean
+  hidePortName?: boolean
   onClose: () => void
   onSubmit: () => void
 }
@@ -23,7 +23,7 @@ export function CrudModal({
   loading,
   onClose,
   onSubmit,
-  isCreationFlow,
+  hidePortName,
 }: CrudModalProps) {
   const { control, watch, setValue } = useFormContext()
 
@@ -189,7 +189,7 @@ export function CrudModal({
             )}
           />
           {/* Hide with CSS because we need to keep a default value on the creation payload */}
-          <div className={isCreationFlow ? 'hidden' : ''}>
+          <div className={hidePortName ? 'hidden' : ''}>
             <Controller
               name="name"
               defaultValue={watchInternalPort ? `p${watchInternalPort}` : ''}

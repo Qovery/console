@@ -53,7 +53,7 @@ export function StepPortFeature() {
     <FunnelFlowBody>
       <FlowCreatePort
         onBack={onBack}
-        isCreationFlow
+        hidePortName
         onEdit={(port: PortData | ServicePort) => {
           openModal({
             content: (
@@ -63,7 +63,7 @@ export function StepPortFeature() {
                 portData={portData}
                 setPortData={setPortData}
                 environmentId={environmentId}
-                isCreationFlow
+                hidePortName
               />
             ),
           })
@@ -76,7 +76,7 @@ export function StepPortFeature() {
                 portData={portData}
                 setPortData={setPortData}
                 environmentId={environmentId}
-                isCreationFlow
+                hidePortName
               />
             ),
           })

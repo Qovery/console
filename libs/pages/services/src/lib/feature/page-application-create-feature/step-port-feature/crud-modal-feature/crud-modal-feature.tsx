@@ -12,7 +12,7 @@ export interface CrudModalFeatureProps {
   port?: PortData | ServicePort
   portData?: FlowPortData
   setPortData?: (portData: FlowPortData) => void
-  isCreationFlow?: boolean
+  hidePortName?: boolean
 }
 
 export function CrudModalFeature({
@@ -21,7 +21,7 @@ export function CrudModalFeature({
   setPortData,
   onClose,
   environmentId,
-  isCreationFlow,
+  hidePortName,
 }: CrudModalFeatureProps) {
   const [loading, setLoading] = useState(false)
   const { enableAlertClickOutside } = useModal()
@@ -109,7 +109,7 @@ export function CrudModalFeature({
         loading={loading}
         isEdit={!!port}
         cloudProvider={environment?.cloud_provider.provider as CloudProviderEnum}
-        isCreationFlow={isCreationFlow}
+        hidePortName={hidePortName}
       />
     </FormProvider>
   )
