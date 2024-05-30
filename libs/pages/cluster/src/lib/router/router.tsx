@@ -4,6 +4,7 @@ import {
   CLUSTER_SETTINGS_DANGER_ZONE_URL,
   CLUSTER_SETTINGS_FEATURES_URL,
   CLUSTER_SETTINGS_GENERAL_URL,
+  CLUSTER_SETTINGS_IMAGE_REGISTRY_URL,
   CLUSTER_SETTINGS_KUBECONFIG_URL,
   CLUSTER_SETTINGS_NETWORK_URL,
   CLUSTER_SETTINGS_REMOTE_ACCESS_URL,
@@ -17,6 +18,7 @@ import { PageSettingsDangerZoneFeature } from '../feature/page-settings-danger-z
 import { PageSettingsFeature } from '../feature/page-settings-feature/page-settings-feature'
 import PageSettingsFeaturesFeature from '../feature/page-settings-features-feature/page-settings-features-feature'
 import PageSettingsGeneralFeature from '../feature/page-settings-general-feature/page-settings-general-feature'
+import PageSettingsImageRegistryFeature from '../feature/page-settings-image-registry-feature/page-settings-image-registry-feature'
 import { PageSettingsKubeconfigFeature } from '../feature/page-settings-kubeconfig-feature/page-settings-kubeconfig-feature'
 import PageSettingsNetworkFeature from '../feature/page-settings-network-feature/page-settings-network-feature'
 import PageSettingsRemoteFeature from '../feature/page-settings-remote-feature/page-settings-remote-feature'
@@ -46,6 +48,10 @@ export const ROUTER_CLUSTER_SETTINGS: Route[] = [
   {
     path: CLUSTER_SETTINGS_RESOURCES_URL,
     component: <PageSettingsResourcesFeature />,
+  },
+  {
+    path: CLUSTER_SETTINGS_IMAGE_REGISTRY_URL,
+    component: <PageSettingsImageRegistryFeature />,
   },
   {
     path: CLUSTER_SETTINGS_FEATURES_URL,
