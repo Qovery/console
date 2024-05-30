@@ -108,7 +108,19 @@ export const Modal = (props: ModalProps) => {
           }}
           className="modal__overlay fixed left-0 top-0 flex h-screen w-full bg-neutral-700/20"
         />
-        {fakeModal && <div className="modal__overlay fixed left-0 top-0 flex h-screen w-full bg-neutral-700/20" />}
+        {fakeModal && (
+          <div
+            className="modal__overlay fixed left-0 top-0 flex h-screen w-full bg-neutral-700/20"
+            onClick={(event) => {
+              if (alertClickOutside) {
+                event.preventDefault()
+                setModalAlertOpen(true)
+              } else {
+                setExternalOpen ? setExternalOpen(false) : setOpen(false)
+              }
+            }}
+          />
+        )}
         <Dialog.Content
           onPointerDownOutside={(event) => {
             event.preventDefault()
