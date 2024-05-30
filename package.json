@@ -58,7 +58,7 @@
     "logrocket": "^8.1.0",
     "monaco-editor": "^0.44.0",
     "posthog-js": "^1.131.4",
-    "qovery-typescript-axios": "^1.1.416",
+    "qovery-typescript-axios": "^1.1.417",
     "react": "18.2.0",
     "react-beautiful-dnd": "^13.1.0",
     "react-country-flag": "^3.0.2",

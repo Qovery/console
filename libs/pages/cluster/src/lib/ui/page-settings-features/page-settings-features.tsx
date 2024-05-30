@@ -1,8 +1,8 @@
 import {
   type CloudProviderEnum,
-  type ClusterFeature,
   type ClusterFeatureAwsExistingVpc,
   type ClusterFeatureGcpExistingVpc,
+  type ClusterFeatureResponse,
 } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
 import { CardClusterFeature, SettingsHeading } from '@qovery/shared/console-shared'
@@ -12,7 +12,7 @@ import GcpExistingVPC from './gcp-existing-vpc/gcp-existing-vpc'
 
 export interface PageSettingsFeaturesProps {
   loading: boolean
-  features?: ClusterFeature[]
+  features?: ClusterFeatureResponse[]
   cloudProvider?: CloudProviderEnum
 }
 
@@ -20,11 +20,19 @@ export function PageSettingsFeatures(props: PageSettingsFeaturesProps) {
   const { loading, features, cloudProvider } = props
 
   const featureExistingVpc = features?.find(({ id }) => id === 'EXISTING_VPC')
-  const featureExistingVpcValue = featureExistingVpc?.value
+  const featureExistingVpcValue = featureExistingVpc?.value_object
 
   const featureExistingVpcContent = match(cloudProvider)
-    .with('AWS', () => <AWSExistingVPC feature={featureExistingVpcValue as ClusterFeatureAwsExistingVpc} />)
-    .with('GCP', () => <GcpExistingVPC feature={featureExistingVpcValue as ClusterFeatureGcpExistingVpc} />)
+    .with('AWS', () =>
+      featureExistingVpcValue?.type === 'AWS_USER_PROVIDED_NETWORK' ? (
+        <AWSExistingVPC feature={featureExistingVpcValue.value} />
+      ) : null
+    )
+    .with('GCP', () =>
+      featureExistingVpcValue?.type === 'GCP_USER_PROVIDED_NETWORK' ? (
+        <GcpExistingVPC feature={featureExistingVpcValue.value} />
+      ) : null
+    )
     .otherwise(() => null)
 
   return (
@@ -43,7 +51,7 @@ export function PageSettingsFeatures(props: PageSettingsFeaturesProps) {
             )}
             {features
               ?.filter(({ id }) => id !== 'EXISTING_VPC')
-              .map((feature: ClusterFeature) => (
+              .map((feature) => (
                 <CardClusterFeature key={feature.id} feature={feature} cloudProvider={cloudProvider} disabled />
               ))}
           </BlockContent>

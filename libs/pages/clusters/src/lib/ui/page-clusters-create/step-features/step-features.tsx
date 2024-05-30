@@ -1,4 +1,4 @@
-import { type CloudProviderEnum, type ClusterFeature } from 'qovery-typescript-axios'
+import { type CloudProviderEnum, type ClusterFeatureResponse } from 'qovery-typescript-axios'
 import { type FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { CardClusterFeature } from '@qovery/shared/console-shared'
@@ -9,7 +9,7 @@ import GCPVpcFeature from './gcp-vpc-feature/gcp-vpc-feature'
 export interface StepFeaturesProps {
   onSubmit: FormEventHandler<HTMLFormElement>
   cloudProvider?: CloudProviderEnum
-  features?: ClusterFeature[]
+  features?: ClusterFeatureResponse[]
   goToBack?: () => void
 }
 

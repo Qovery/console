@@ -1,10 +1,10 @@
-import { type CloudProviderEnum, type ClusterFeature } from 'qovery-typescript-axios'
+import { type CloudProviderEnum, type ClusterFeatureResponse } from 'qovery-typescript-axios'
 import { type PropsWithChildren, useEffect, useState } from 'react'
 import { type Control, Controller, type FieldValues, type UseFormSetValue, type UseFormWatch } from 'react-hook-form'
 import { ExternalLink, Icon, InputSelect, InputToggle, Tooltip } from '@qovery/shared/ui'
 
 export interface CardClusterFeatureProps extends PropsWithChildren {
-  feature: ClusterFeature
+  feature: ClusterFeatureResponse
   cloudProvider?: CloudProviderEnum
   disabled?: boolean
   setValue?: UseFormSetValue<FieldValues>
@@ -65,7 +65,7 @@ export function CardClusterFeature({
             disabled
             small
             className="relative top-[2px]"
-            value={getValue(Boolean(feature?.value) || false)}
+            value={getValue(Boolean(feature?.value_object?.value) || false)}
           />
         )}
         <div className="basis-full">
@@ -89,13 +89,13 @@ export function CardClusterFeature({
             )}
           </h4>
           <p className="max-w-lg text-xs text-neutral-350">{feature.description}</p>
-          {typeof feature.value === 'string' && (
+          {typeof feature.value_object?.value === 'string' && (
             <div onClick={(e) => e.stopPropagation()}>
               {control ? (
                 <Controller
                   name={`features.${feature.id}.extendedValue`}
                   control={control}
-                  defaultValue={feature.value}
+                  defaultValue={feature.value_object?.value}
                   render={({ field }) => (
                     <InputSelect
                       className="mt-2"
@@ -123,7 +123,7 @@ export function CardClusterFeature({
                       value: value,
                     })) || []
                   }
-                  value={feature.value}
+                  value={feature.value_object.value}
                   label="VPC Subnet address"
                   disabled
                 />
