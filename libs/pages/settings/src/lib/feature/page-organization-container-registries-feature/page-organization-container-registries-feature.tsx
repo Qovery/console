@@ -29,6 +29,9 @@ export function PageOrganizationContainerRegistriesFeature() {
       onAddRegistry={() => {
         openModal({
           content: <ContainerRegistryCreateEditModal organizationId={organizationId} onClose={closeModal} />,
+          options: {
+            fakeModal: true,
+          },
         })
       }}
       onEdit={(registry: ContainerRegistryResponse) => {
@@ -41,6 +44,9 @@ export function PageOrganizationContainerRegistriesFeature() {
               isEdit
             />
           ),
+          options: {
+            fakeModal: true,
+          },
         })
       }}
       onDelete={(registry: ContainerRegistryResponse) => {
