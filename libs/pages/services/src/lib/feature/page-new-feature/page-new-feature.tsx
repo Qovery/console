@@ -1,8 +1,10 @@
 import clsx from 'clsx'
 import posthog from 'posthog-js'
+import { type CloudProviderEnum } from 'qovery-typescript-axios'
 import { type ReactElement, cloneElement, useState } from 'react'
 import { NavLink, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
+import { useEnvironment } from '@qovery/domains/environments/feature'
 import { type ServiceType } from '@qovery/domains/services/data-access'
 import {
   SERVICES_APPLICATION_CREATION_URL,
@@ -88,6 +90,8 @@ function CardOption({ parentSlug, slug, icon, title, description, type, recommen
 function CardService({ title, icon, description, slug, options, type, link }: ServiceTemplateType) {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const [expanded, setExpanded] = useState(false)
+  const { data: environment } = useEnvironment({ environmentId })
+  const cloudProvider = environment?.cloud_provider.provider as CloudProviderEnum
 
   if (options) {
     return (
@@ -121,6 +125,7 @@ function CardService({ title, icon, description, slug, options, type, link }: Se
             </div>
             <div className="grid grid-cols-3 gap-2">
               {options
+                .filter((c) => c.cloud_provider === cloudProvider || !c.cloud_provider)
                 .sort((a, b) => {
                   if (a.recommended && !b.recommended) return -1
                   if (!a.recommended && b.recommended) return 1
@@ -185,9 +190,11 @@ function SectionByTag({
   title,
   description,
   tag,
+  cloudProvider,
 }: {
   title: string
   tag: keyof typeof TagsEnum
+  cloudProvider?: CloudProviderEnum
   description?: string
 }) {
   return (
@@ -196,6 +203,7 @@ function SectionByTag({
       {description && <p className="text-xs text-neutral-350">{description}</p>}
       <div className="mt-5 grid grid-cols-3 gap-4">
         {serviceTemplates
+          .filter((c) => c.cloud_provider === cloudProvider || !c.cloud_provider)
           .filter(({ tag: t }) => t === tag)
           .sort((a, b) => a.title.localeCompare(b.title))
           .map((service) => (
@@ -210,36 +218,44 @@ export function PageNewFeature() {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   useDocumentTitle('Create new service - Qovery')
 
+  const { data: environment } = useEnvironment({ environmentId })
+  const cloudProvider = environment?.cloud_provider.provider as CloudProviderEnum
+
   const serviceEmpty = [
     {
       title: 'Application',
       description: 'Create from empty application git or container based.',
       icon: <Icon name="APPLICATION" />,
       link: SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_APPLICATION_CREATION_URL,
+      cloud_provider: cloudProvider,
     },
     {
       title: 'Database',
       description: 'Create from empty database managed or container.',
       icon: <Icon name="DATABASE" />,
       link: SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_DATABASE_CREATION_URL,
+      cloud_provider: cloudProvider,
     },
     {
       title: 'Lifecycle Job',
       description: 'Create an empty lifecycle job.',
       icon: <Icon name="LIFECYCLE_JOB" />,
       link: SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_LIFECYCLE_CREATION_URL,
+      cloud_provider: cloudProvider,
     },
     {
       title: 'Cron Job',
       description: 'Create an empty cron job.',
       icon: <Icon name="CRON_JOB" />,
       link: SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_CRONJOB_CREATION_URL,
+      cloud_provider: cloudProvider,
     },
     {
       title: 'Helm',
       description: 'Create an empty Helm chart.',
       icon: <Icon name="HELM" />,
       link: SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_HELM_CREATION_URL,
+      cloud_provider: cloudProvider,
     },
   ]
 
@@ -301,27 +317,38 @@ export function PageNewFeature() {
               title="Data & Storage"
               description="Find your perfect data and storage template with presets."
               tag="DATA_STORAGE"
+              cloudProvider={cloudProvider}
             />
             <SectionByTag
               title="Back-end"
               description="Find your perfect Back-end template with presets."
               tag="BACK_END"
+              cloudProvider={cloudProvider}
             />
             <SectionByTag
               title="Front-end"
               description="Find your perfect Front-end template with presets."
               tag="FRONT_END"
+              cloudProvider={cloudProvider}
             />
-            <SectionByTag title="More template" description="Look for other template presets." tag="OTHER" />
+            <SectionByTag
+              title="More template"
+              description="Look for other template presets."
+              tag="OTHER"
+              cloudProvider={cloudProvider}
+            />
           </>
         ) : [...serviceEmpty, ...serviceTemplates].filter(filterService).length > 0 ? (
           <Section>
             <Heading className="mb-1">Search results</Heading>
             <p className="mb-5 text-xs text-neutral-350">Find the service you need to kickstart your next project.</p>
             <div className="grid grid-cols-3 gap-4">
-              {[...serviceEmpty, ...serviceTemplates].filter(filterService).map((service) => (
-                <CardService key={service.title} {...service} />
-              ))}
+              {[...serviceEmpty, ...serviceTemplates]
+                .filter((c) => c.cloud_provider === cloudProvider || !c.cloud_provider)
+                .filter(filterService)
+                .map((service) => (
+                  <CardService key={service.title} {...service} />
+                ))}
             </div>
           </Section>
         ) : (
