@@ -338,7 +338,9 @@ export function PageNewFeature() {
               cloudProvider={cloudProvider}
             />
           </>
-        ) : [...serviceEmpty, ...serviceTemplates].filter(filterService).length > 0 ? (
+        ) : [...serviceEmpty, ...serviceTemplates]
+            .filter((c) => c.cloud_provider === cloudProvider || !c.cloud_provider)
+            .filter(filterService).length > 0 ? (
           <Section>
             <Heading className="mb-1">Search results</Heading>
             <p className="mb-5 text-xs text-neutral-350">Find the service you need to kickstart your next project.</p>
