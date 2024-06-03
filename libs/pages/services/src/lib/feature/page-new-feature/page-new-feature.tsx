@@ -280,7 +280,7 @@ export function PageNewFeature() {
   const emptyState = (
     <Section className="w-full">
       <Heading className="mb-1">You didn't find what you want?</Heading>
-      <p className="mb-5 text-xs text-neutral-350">Use one of those Qovery options below.</p>
+      <p className="mb-5 text-xs text-neutral-350">Use one of those options below.</p>
 
       <div className="grid grid-cols-3 gap-4">
         {serviceEmpty.map((service) => (
