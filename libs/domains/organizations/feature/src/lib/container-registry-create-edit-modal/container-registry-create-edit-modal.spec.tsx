@@ -6,7 +6,6 @@ import * as useCreateContainerRegistry from '../hooks/use-create-container-regis
 import * as useEditContainerRegistry from '../hooks/use-edit-container-registry/use-edit-container-registry'
 import ContainerRegistryCreateEditModal, {
   type ContainerRegistryCreateEditModalProps,
-  getOptionsContainerRegistry,
 } from './container-registry-create-edit-modal'
 
 const useCreateContainerRegistryMockSpy = jest.spyOn(
@@ -240,19 +239,6 @@ describe('ContainerRegistryCreateEditModal', () => {
 
     screen.getByLabelText('Username (optional)')
     screen.getByLabelText('Password (optional)')
-  })
-
-  it('should have an array of container registry', async () => {
-    const options = getOptionsContainerRegistry([
-      {
-        kind: ContainerRegistryKindEnum.DOCKER_HUB,
-      },
-      {
-        kind: ContainerRegistryKindEnum.ECR,
-      },
-    ])
-
-    expect(options[0].value).toBe(ContainerRegistryKindEnum.DOCKER_HUB)
   })
 
   it('should submit the form to create a registry', async () => {

@@ -1,23 +1,19 @@
-import { type ContainerRegistryKindEnum, type ContainerRegistryResponse } from 'qovery-typescript-axios'
-import { Controller, FormProvider, useForm } from 'react-hook-form'
+import { type ContainerRegistryRequest, type ContainerRegistryResponse } from 'qovery-typescript-axios'
+import { FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
-import { useContainerRegistries, useEditContainerRegistry } from '@qovery/domains/organizations/feature'
+import {
+  ContainerRegistryForm,
+  useContainerRegistries,
+  useEditContainerRegistry,
+} from '@qovery/domains/organizations/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { Button, InputText, InputTextArea, Section } from '@qovery/shared/ui'
+import { Button, Section } from '@qovery/shared/ui'
 
 export function SettingsImageRegistryFeature({ containerRegistry }: { containerRegistry: ContainerRegistryResponse }) {
   const { organizationId = '' } = useParams()
   const { mutate: editContainerRegistry, isLoading: isLoadingEditContainerRegistry } = useEditContainerRegistry()
 
-  const methods = useForm<{
-    name: string
-    kind: ContainerRegistryKindEnum
-    description: string
-    config?: {
-      username: string
-      password: string
-    }
-  }>({
+  const methods = useForm<ContainerRegistryRequest>({
     mode: 'onChange',
     defaultValues: {
       ...containerRegistry,
@@ -28,15 +24,7 @@ export function SettingsImageRegistryFeature({ containerRegistry }: { containerR
     editContainerRegistry({
       organizationId: organizationId,
       containerRegistryId: containerRegistry.id,
-      containerRegistryRequest: {
-        name: containerRegistryRequest.name,
-        kind: containerRegistryRequest.kind,
-        description: containerRegistryRequest.description,
-        config: {
-          username: containerRegistryRequest.config?.username,
-          password: containerRegistryRequest.config?.password,
-        },
-      },
+      containerRegistryRequest,
     })
   })
 
@@ -48,50 +36,8 @@ export function SettingsImageRegistryFeature({ containerRegistry }: { containerR
           description="This image registry is used to store the built images or mirror the container images deployed on this cluster."
         />
         <FormProvider {...methods}>
-          <form className="flex flex-col gap-4" onSubmit={onSubmit}>
-            <Controller
-              name="name"
-              control={methods.control}
-              render={({ field }) => (
-                <InputText label="Name" name={field.name} onChange={field.onChange} value={field.value} disabled />
-              )}
-            />
-            <Controller
-              name="kind"
-              control={methods.control}
-              render={({ field }) => (
-                <InputText label="Type" name={field.name} onChange={field.onChange} value={field.value} disabled />
-              )}
-            />
-            <Controller
-              name="description"
-              control={methods.control}
-              render={({ field }) => (
-                <InputTextArea
-                  label="Description"
-                  name={field.name}
-                  onChange={field.onChange}
-                  value={field.value}
-                  disabled
-                />
-              )}
-            />
-            <Controller
-              name="config.username"
-              control={methods.control}
-              rules={{ required: true }}
-              render={({ field }) => (
-                <InputText label="Username" name={field.name} onChange={field.onChange} value={field.value} />
-              )}
-            />
-            <Controller
-              name="config.password"
-              control={methods.control}
-              rules={{ required: true }}
-              render={({ field }) => (
-                <InputText label="Password" name={field.name} onChange={field.onChange} value={field.value} />
-              )}
-            />
+          <form className="flex flex-col" onSubmit={onSubmit}>
+            <ContainerRegistryForm disabledFieldsExceptConfig />
             <div className="mt-2 flex justify-end">
               <Button
                 type="submit"

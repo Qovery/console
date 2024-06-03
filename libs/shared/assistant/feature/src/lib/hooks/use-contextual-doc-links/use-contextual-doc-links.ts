@@ -34,6 +34,7 @@ import {
   CLUSTER_SETTINGS_DANGER_ZONE_URL,
   CLUSTER_SETTINGS_FEATURES_URL,
   CLUSTER_SETTINGS_GENERAL_URL,
+  CLUSTER_SETTINGS_IMAGE_REGISTRY_URL,
   CLUSTER_SETTINGS_NETWORK_URL,
   CLUSTER_SETTINGS_RESOURCES_URL,
   CLUSTER_SETTINGS_URL,
@@ -724,9 +725,15 @@ const mapping = {
       label: 'How to configure the resources allocated to your cluster?',
     },
   ],
-  '/organization/:organizationId/cluster/:clusterId/settings/features': [
+  '/organization/:organizationId/cluster/:clusterId/settings/image-registry': [
     {
       link: 'https://hub.qovery.com/docs/using-qovery/configuration/clusters/#features',
+      label: 'How does the mirroring work?',
+    },
+  ],
+  '/organization/:organizationId/cluster/:clusterId/settings/features': [
+    {
+      link: 'https://hub.qovery.com/docs/using-qovery/deployment/image-mirroring/',
       label: 'How to custom my cluster network (static ip, custom VPC, …)?',
     },
   ],
@@ -987,6 +994,9 @@ export function useContextualDocLinks() {
     CLUSTER_URL() + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_CREDENTIALS_URL
   )
   const clusterSettingsResourcesURL = useMatch(CLUSTER_URL() + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_RESOURCES_URL)
+  const clusterSettingsImageRegistryURL = useMatch(
+    CLUSTER_URL() + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_IMAGE_REGISTRY_URL
+  )
   const clusterSettingsFeaturesURL = useMatch(CLUSTER_URL() + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_FEATURES_URL)
   const clusterSettingsNetworkURL = useMatch(CLUSTER_URL() + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_NETWORK_URL)
   const clusterSettingsAdvancedSettingsURL = useMatch(
@@ -1075,6 +1085,7 @@ export function useContextualDocLinks() {
     clusterSettingsGeneralURL ??
     clusterSettingsCredentialsURL ??
     clusterSettingsResourcesURL ??
+    clusterSettingsImageRegistryURL ??
     clusterSettingsFeaturesURL ??
     clusterSettingsNetworkURL ??
     clusterSettingsAdvancedSettingsURL ??

@@ -1,50 +1,36 @@
-import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
+import { ContainerRegistryKindEnum } from 'qovery-typescript-axios'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import PageSettingsImageRegistryFeature, {
-  type PageSettingsImageRegistryFeatureProps,
-} from './page-settings-image-registry-feature'
+import { SettingsImageRegistryFeature } from './page-settings-image-registry-feature'
 
-describe('PageSettingsImageRegistryFeature', () => {
-  const props: PageSettingsImageRegistryFeatureProps = {
-    onSubmit: jest.fn((e) => e.preventDefault()),
-    loading: false,
-  }
-
-  const defaultValues = {
-    name: 'hello-world',
-    description: 'desc',
-    production: true,
+describe('SettingsImageRegistryFeature', () => {
+  const props = {
+    containerRegistry: {
+      id: '1',
+      created_at: '',
+      updated_at: '',
+      name: 'registry',
+      description: 'description',
+      kind: ContainerRegistryKindEnum.ECR,
+    },
   }
 
   it('should render successfully', async () => {
-    const { baseElement } = renderWithProviders(wrapWithReactHookForm(<PageSettingsImageRegistryFeature {...props} />))
+    const { baseElement } = renderWithProviders(<SettingsImageRegistryFeature {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
-  it('should render the form with fields', async () => {
-    renderWithProviders(
-      wrapWithReactHookForm(<PageSettingsImageRegistryFeature {...props} />, {
-        defaultValues: defaultValues,
-      })
-    )
+  it('should render fields with disabled attribute', async () => {
+    renderWithProviders(<SettingsImageRegistryFeature {...props} />)
 
-    screen.getByDisplayValue('hello-world')
-    screen.getByDisplayValue('desc')
-    screen.getByDisplayValue('true')
-  })
+    const name = screen.getByLabelText('Registry name')
+    screen.getByDisplayValue('registry')
+    expect(name).toHaveAttribute('disabled')
 
-  it('should submit the form', async () => {
-    const { userEvent } = renderWithProviders(
-      wrapWithReactHookForm(<PageSettingsImageRegistryFeature {...props} />, {
-        defaultValues: defaultValues,
-      })
-    )
+    const description = screen.getByLabelText('Description')
+    expect(description).toHaveAttribute('disabled')
+    screen.getByDisplayValue('description')
 
-    const button = await screen.findByTestId('submit-button')
-    // https://react-hook-form.com/advanced-usage#TransformandParse
-    expect(button).toBeInTheDocument()
-    expect(button).not.toBeDisabled()
-    await userEvent.click(button)
-    expect(props.onSubmit).toHaveBeenCalled()
+    const type = screen.getByLabelText('Type')
+    expect(type).toHaveAttribute('disabled')
   })
 })
