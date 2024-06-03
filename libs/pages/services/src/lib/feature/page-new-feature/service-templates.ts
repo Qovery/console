@@ -97,6 +97,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
         description: 'Create a PostgreSQL database using a managed service.',
         icon: Qovery,
         type: 'DATABASE',
+        cloud_provider: 'AWS',
       },
       {
         slug: 'managed-aws-terraform',
@@ -413,6 +414,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
         description: 'Create a MongoDB database using a managed service.',
         icon: AWS,
         type: 'DATABASE',
+        cloud_provider: 'AWS',
       },
       {
         slug: 'managed-aws-terraform',
