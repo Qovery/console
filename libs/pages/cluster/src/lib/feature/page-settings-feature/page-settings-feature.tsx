@@ -100,6 +100,7 @@ export function PageSettingsFeature() {
     ])
     .with({ cloud_provider: 'ON_PREMISE', kubernetes: 'SELF_MANAGED' }, () => [
       generalLink,
+      imageRegistryLink,
       advancedSettingsLink,
       dangerZoneLink,
     ])
