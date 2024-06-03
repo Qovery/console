@@ -28,14 +28,27 @@ import {
   serviceTemplates,
 } from './service-templates'
 
-function Card({ title, icon, link }: { title: string; icon: ReactElement; link: string }) {
+function Card({
+  title,
+  description,
+  icon,
+  link,
+}: {
+  title: string
+  description: string
+  icon: ReactElement
+  link: string
+}) {
   return (
     <NavLink
       to={link}
-      className="flex items-center gap-3 rounded border border-neutral-200 p-3 shadow-sm transition hover:bg-neutral-100"
+      className="flex items-center gap-5 rounded border border-neutral-200 p-5 shadow-sm transition hover:bg-neutral-100"
     >
+      <div>
+        <h3 className="mb-1 text-ssm font-medium">{title}</h3>
+        <p className="max-w-96 text-xs text-neutral-350">{description}</p>
+      </div>
       {icon}
-      <h3 className="text-ssm font-medium">{title}</h3>
     </NavLink>
   )
 }
@@ -224,36 +237,36 @@ export function PageNewFeature() {
   const serviceEmpty = [
     {
       title: 'Application',
-      description: 'Create from empty application git or container based.',
-      icon: <Icon name="APPLICATION" />,
+      description: 'Deploy a long running service running from Git or a Container Registry.',
+      icon: <Icon name="APPLICATION" width={32} height={32} />,
       link: SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_APPLICATION_CREATION_URL,
       cloud_provider: cloudProvider,
     },
     {
       title: 'Database',
-      description: 'Create from empty database managed or container.',
-      icon: <Icon name="DATABASE" />,
+      description: 'Easy and fastest way to deploy the most popular databases.',
+      icon: <Icon name="DATABASE" width={32} height={32} />,
       link: SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_DATABASE_CREATION_URL,
       cloud_provider: cloudProvider,
     },
     {
       title: 'Lifecycle Job',
-      description: 'Create an empty lifecycle job.',
-      icon: <Icon name="LIFECYCLE_JOB" />,
+      description: 'Execute any type of script coming from Git or a Container Registry.',
+      icon: <Icon name="LIFECYCLE_JOB" width={32} height={32} />,
       link: SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_LIFECYCLE_CREATION_URL,
       cloud_provider: cloudProvider,
     },
     {
       title: 'Cron Job',
-      description: 'Create an empty cron job.',
-      icon: <Icon name="CRON_JOB" />,
+      description: 'Execute any type of script at a regular basis.',
+      icon: <Icon name="CRON_JOB" width={32} height={32} />,
       link: SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_CRONJOB_CREATION_URL,
       cloud_provider: cloudProvider,
     },
     {
       title: 'Helm',
-      description: 'Create an empty Helm chart.',
-      icon: <Icon name="HELM" />,
+      description: 'Deploy a Helm Chart on your Kubernetes cluster.',
+      icon: <Icon name="HELM" width={32} height={32} />,
       link: SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_HELM_CREATION_URL,
       cloud_provider: cloudProvider,
     },
@@ -265,10 +278,16 @@ export function PageNewFeature() {
   const filterService = ({ title }: { title: string }) => title.toLowerCase().includes(searchInput.toLowerCase())
 
   const emptyState = (
-    <div className="w-full text-center">
-      <Icon iconName="wave-pulse" className="text-neutral-350" />
-      <p className="mt-1 text-xs font-medium text-neutral-350">No result for this search</p>
-    </div>
+    <Section className="w-full">
+      <Heading className="mb-1">You didn't find what you want?</Heading>
+      <p className="mb-5 text-xs text-neutral-350">Use one of those Qovery options below.</p>
+
+      <div className="grid grid-cols-3 gap-4">
+        {serviceEmpty.map((service) => (
+          <Card key={service.title} {...service} />
+        ))}
+      </div>
+    </Section>
   )
 
   return (
@@ -307,7 +326,7 @@ export function PageNewFeature() {
             <Section>
               <Heading className="mb-1">Select an empty service</Heading>
               <p className="mb-5 text-xs text-neutral-350">Services without pre-configuration for technical stack.</p>
-              <div className="grid grid-cols-5 gap-3">
+              <div className="grid grid-cols-3 gap-4">
                 {serviceEmpty.map((service) => (
                   <Card key={service.title} {...service} />
                 ))}
