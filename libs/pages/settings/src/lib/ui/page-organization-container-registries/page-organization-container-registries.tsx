@@ -38,7 +38,7 @@ export function PageOrganizationContainerRegistries(props: PageOrganizationConta
           ) : containerRegistries && containerRegistries.length > 0 ? (
             <ul>
               {containerRegistries
-                ?.filter((registry) => registry.cluster === null)
+                ?.filter((registry) => !registry.cluster)
                 .map((registry: ContainerRegistryResponse) => (
                   <li
                     data-testid={`registries-list-${registry.id}`}

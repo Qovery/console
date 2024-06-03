@@ -101,6 +101,7 @@ export const containerRegistriesMock = (howMany: number): ContainerRegistryRespo
     kind: chance.pickone(Object.values([ContainerRegistryKindEnum.DOCKER_HUB])),
     description: chance.word({ length: 10 }),
     url: chance.url(),
+    cluster: undefined,
   }))
 
 export const containerRegistriesByOrganizationIdMock = containerRegistriesMock(2)
