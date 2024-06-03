@@ -37,54 +37,56 @@ export function PageOrganizationContainerRegistries(props: PageOrganizationConta
             </div>
           ) : containerRegistries && containerRegistries.length > 0 ? (
             <ul>
-              {containerRegistries?.map((registry: ContainerRegistryResponse) => (
-                <li
-                  data-testid={`registries-list-${registry.id}`}
-                  key={registry.id}
-                  className="flex items-center justify-between border-b border-neutral-250 px-5 py-4 last:border-0"
-                >
-                  <div className="flex">
-                    <Icon
-                      name={registry.kind ? containerRegistryKindToIcon(registry.kind) : IconEnum.AWS}
-                      width="20"
-                      height="20"
-                    />
-                    <div className="ml-4">
-                      <h2 className="mb-1 flex text-xs font-medium text-neutral-400">
-                        <Truncate truncateLimit={60} text={registry.name || ''} />
-                        {registry.description && (
-                          <Tooltip content={registry.description}>
-                            <div className="ml-1 cursor-pointer">
-                              <Icon iconName="circle-info" className="text-neutral-350" />
-                            </div>
-                          </Tooltip>
-                        )}
-                      </h2>
-                      <p className="text-xs text-neutral-350">
-                        {registry.kind}{' '}
-                        {registry.updated_at && (
-                          <span className="ml-3 inline-block" title={dateUTCString(registry.updated_at)}>
-                            Last updated {timeAgo(new Date(registry.updated_at))}
-                          </span>
-                        )}{' '}
-                        {registry.created_at && (
-                          <span className="ml-3 inline-block" title={dateUTCString(registry.created_at)}>
-                            Created since {dateMediumLocalFormat(registry.created_at)}
-                          </span>
-                        )}
-                      </p>
+              {containerRegistries
+                ?.filter((registry) => registry.cluster === null)
+                .map((registry: ContainerRegistryResponse) => (
+                  <li
+                    data-testid={`registries-list-${registry.id}`}
+                    key={registry.id}
+                    className="flex items-center justify-between border-b border-neutral-250 px-5 py-4 last:border-0"
+                  >
+                    <div className="flex">
+                      <Icon
+                        name={registry.kind ? containerRegistryKindToIcon(registry.kind) : IconEnum.AWS}
+                        width="20"
+                        height="20"
+                      />
+                      <div className="ml-4">
+                        <h2 className="mb-1 flex text-xs font-medium text-neutral-400">
+                          <Truncate truncateLimit={60} text={registry.name || ''} />
+                          {registry.description && (
+                            <Tooltip content={registry.description}>
+                              <div className="ml-1 cursor-pointer">
+                                <Icon iconName="circle-info" className="text-neutral-350" />
+                              </div>
+                            </Tooltip>
+                          )}
+                        </h2>
+                        <p className="text-xs text-neutral-350">
+                          {registry.kind}{' '}
+                          {registry.updated_at && (
+                            <span className="ml-3 inline-block" title={dateUTCString(registry.updated_at)}>
+                              Last updated {timeAgo(new Date(registry.updated_at))}
+                            </span>
+                          )}{' '}
+                          {registry.created_at && (
+                            <span className="ml-3 inline-block" title={dateUTCString(registry.created_at)}>
+                              Created since {dateMediumLocalFormat(registry.created_at)}
+                            </span>
+                          )}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button size="md" variant="outline" color="neutral" onClick={() => onEdit(registry)}>
-                      <Icon iconName="gear" />
-                    </Button>
-                    <Button size="md" variant="outline" color="neutral" onClick={() => onDelete(registry)}>
-                      <Icon iconName="trash" />
-                    </Button>
-                  </div>
-                </li>
-              ))}
+                    <div className="flex gap-2">
+                      <Button size="md" variant="outline" color="neutral" onClick={() => onEdit(registry)}>
+                        <Icon iconName="gear" />
+                      </Button>
+                      <Button size="md" variant="outline" color="neutral" onClick={() => onDelete(registry)}>
+                        <Icon iconName="trash" />
+                      </Button>
+                    </div>
+                  </li>
+                ))}
             </ul>
           ) : (
             <div className="my-4 px-5 text-center">
