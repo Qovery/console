@@ -283,7 +283,12 @@ function MenuManageDeployment({
           <DropdownMenu.Item
             icon={<Icon iconName="rotate-right" />}
             onSelect={
-              serviceNeedUpdate
+              // Display the modal only if:
+              // - Service needs to be updated
+              // - Service don't have a runningState RUNNING or ERROR
+              serviceNeedUpdate ||
+              !runningState ||
+              !(runningState.state === 'RUNNING' || runningState.state === 'ERROR')
                 ? mutationRedeploy
                 : () =>
                     openModal({
