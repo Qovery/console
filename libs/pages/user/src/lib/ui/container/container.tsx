@@ -1,5 +1,5 @@
 import { type ReactNode } from 'react'
-import { NavigationLeft, type NavigationLeftLinkProps } from '@qovery/shared/ui'
+import { ErrorBoundary, NavigationLeft, type NavigationLeftLinkProps } from '@qovery/shared/ui'
 
 export interface ContainerProps {
   userLinks: NavigationLeftLinkProps[]
@@ -16,7 +16,9 @@ export function Container(props: ContainerProps) {
           <NavigationLeft title="Account" links={userLinks} className="py-6" />
         </div>
       </div>
-      <div className="flex min-h-[calc(100vh-10px)] flex-grow">{children}</div>
+      <ErrorBoundary>
+        <div className="flex min-h-[calc(100vh-10px)] flex-grow">{children}</div>
+      </ErrorBoundary>
     </div>
   )
 }

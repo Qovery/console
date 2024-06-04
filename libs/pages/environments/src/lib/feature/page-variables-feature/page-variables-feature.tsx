@@ -6,7 +6,7 @@ export function PageVariablesFeature() {
   const { projectId = '' } = useParams()
 
   return (
-    <div className="mt-2 flex flex-1 rounded-sm bg-white">
+    <>
       <VariableList
         className="border-b border-b-neutral-200"
         scope="PROJECT"
@@ -21,7 +21,7 @@ export function PageVariablesFeature() {
           toast('SUCCESS', 'Deletion success')
         }}
       />
-    </div>
+    </>
   )
 }
 

@@ -30,6 +30,7 @@ import {
 import {
   Banner,
   Button,
+  ErrorBoundary,
   Header,
   Icon,
   Link,
@@ -245,12 +246,14 @@ export function Container({ children }: PropsWithChildren) {
 
   return (
     <VariablesProvider>
-      <Section className="flex-1">
-        <Header title={environment?.name} icon={IconEnum.SERVICES} actions={headerActions} />
-        <Tabs items={tabsItems} contentRight={contentTabs} />
-        {cancelOnGoing && <Banner color="yellow">Deployment cancel ongoing...</Banner>}
-        {children}
-      </Section>
+      <ErrorBoundary>
+        <Section className="flex-1">
+          <Header title={environment?.name} icon={IconEnum.SERVICES} actions={headerActions} />
+          <Tabs items={tabsItems} contentRight={contentTabs} />
+          {cancelOnGoing && <Banner color="yellow">Deployment cancel ongoing...</Banner>}
+          {children}
+        </Section>
+      </ErrorBoundary>
     </VariablesProvider>
   )
 }

@@ -11,7 +11,7 @@ import {
   ENVIRONMENTS_URL,
   ENVIRONMENTS_VARIABLES_URL,
 } from '@qovery/shared/routes'
-import { Button, Header, Icon, Section, Tabs, toast, useModal } from '@qovery/shared/ui'
+import { Button, ErrorBoundary, Header, Icon, Section, Tabs, toast, useModal } from '@qovery/shared/ui'
 
 export function Container({ children }: PropsWithChildren) {
   const { organizationId = '', projectId = '' } = useParams()
@@ -89,11 +89,15 @@ export function Container({ children }: PropsWithChildren) {
 
   return (
     <VariablesProvider>
-      <Section className="flex-1">
-        <Header title={project?.name} icon={IconEnum.ENVIRONMENT} iconClassName="w-16" />
-        <Tabs items={tabsItems} contentRight={!isDeploymentRulesTab && contentTabs} />
-        <div className="flex flex-grow flex-col">{children}</div>
-      </Section>
+      <ErrorBoundary>
+        <Section className="flex-1">
+          <Header title={project?.name} icon={IconEnum.ENVIRONMENT} iconClassName="w-16" />
+          <Tabs items={tabsItems} contentRight={!isDeploymentRulesTab && contentTabs} />
+          <div className="mt-2 flex flex-grow flex-col items-center overflow-y-auto rounded-b-none rounded-t-sm bg-white">
+            <ErrorBoundary>{children}</ErrorBoundary>
+          </div>
+        </Section>
+      </ErrorBoundary>
     </VariablesProvider>
   )
 }

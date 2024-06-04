@@ -9,15 +9,13 @@ export interface PageGeneralProps {
 export function PageGeneral({ clusterAvailable, project }: PageGeneralProps) {
   return (
     <>
-      <div className="mt-2 min-h-0 flex-grow overflow-y-auto rounded-b-none rounded-t-sm bg-white">
-        {project && (
-          <EnvironmentList
-            className="border-b border-b-neutral-200"
-            project={project}
-            clusterAvailable={clusterAvailable ?? false}
-          />
-        )}
-      </div>
+      {project && (
+        <EnvironmentList
+          className="border-b border-b-neutral-200"
+          project={project}
+          clusterAvailable={clusterAvailable ?? false}
+        />
+      )}
     </>
   )
 }

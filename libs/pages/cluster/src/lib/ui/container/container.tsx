@@ -11,7 +11,7 @@ import {
 } from '@qovery/domains/clusters/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import { CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
-import { Badge, Header, Icon, Section, Skeleton, Tabs } from '@qovery/shared/ui'
+import { Badge, ErrorBoundary, Header, Icon, Section, Skeleton, Tabs } from '@qovery/shared/ui'
 import NeedRedeployFlag from '../need-redeploy-flag/need-redeploy-flag'
 
 export function Container({ children }: PropsWithChildren) {
@@ -98,22 +98,24 @@ export function Container({ children }: PropsWithChildren) {
     .otherwise(() => cluster?.cloud_provider)
 
   return (
-    <Section className="flex-1">
-      <Header title={cluster?.name} icon={icon} actions={headerActions} />
-      <Tabs items={tabsItems} />
-      {cluster && cluster.deployment_status !== ClusterDeploymentStatusEnum.UP_TO_DATE && (
-        <NeedRedeployFlag
-          deploymentStatus={cluster?.deployment_status}
-          onClickButton={() =>
-            deployCluster({
-              organizationId,
-              clusterId,
-            })
-          }
-        />
-      )}
-      <div className="flex flex-grow flex-col">{children}</div>
-    </Section>
+    <ErrorBoundary>
+      <Section className="flex-1">
+        <Header title={cluster?.name} icon={icon} actions={headerActions} />
+        <Tabs items={tabsItems} />
+        {cluster && cluster.deployment_status !== ClusterDeploymentStatusEnum.UP_TO_DATE && (
+          <NeedRedeployFlag
+            deploymentStatus={cluster?.deployment_status}
+            onClickButton={() =>
+              deployCluster({
+                organizationId,
+                clusterId,
+              })
+            }
+          />
+        )}
+        <div className="flex flex-grow flex-col">{children}</div>
+      </Section>
+    </ErrorBoundary>
   )
 }
 

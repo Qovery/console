@@ -14,7 +14,7 @@ import {
 import { VariablesProvider } from '@qovery/domains/variables/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import { CLUSTER_URL } from '@qovery/shared/routes'
-import { Badge, Header, Icon, Link, Section, Skeleton, Tooltip } from '@qovery/shared/ui'
+import { Badge, ErrorBoundary, Header, Icon, Link, Section, Skeleton, Tooltip } from '@qovery/shared/ui'
 import TabsFeature from '../../feature/tabs-feature/tabs-feature'
 
 export interface ContainerProps extends PropsWithChildren {
@@ -86,12 +86,14 @@ export function Container({ children }: ContainerProps) {
 
   return (
     <VariablesProvider>
-      <Section className="flex-1">
-        <Header title={service?.name} icon={headerIcon} actions={headerActions} />
-        <TabsFeature />
-        <NeedRedeployFlag />
-        {children}
-      </Section>
+      <ErrorBoundary>
+        <Section className="flex-1">
+          <Header title={service?.name} icon={headerIcon} actions={headerActions} />
+          <TabsFeature />
+          <NeedRedeployFlag />
+          {children}
+        </Section>
+      </ErrorBoundary>
     </VariablesProvider>
   )
 }
