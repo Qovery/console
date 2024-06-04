@@ -25,6 +25,7 @@ import Rust from 'devicon/icons/rust/rust-original.svg'
 import Spring from 'devicon/icons/spring/spring-original.svg'
 import Terraform from 'devicon/icons/terraform/terraform-original.svg'
 import Vue from 'devicon/icons/vuejs/vuejs-original.svg'
+import { type CloudProviderEnum } from 'qovery-typescript-axios'
 import { type ReactElement } from 'react'
 import { type ServiceTypeEnum } from '@qovery/shared/enums'
 
@@ -53,6 +54,7 @@ export type ServiceTemplateType = {
   additional_dockerfile_files?: string[]
   type?: keyof typeof ServiceTypeEnum
   options?: ServiceTemplateOptionType[]
+  cloud_provider?: keyof typeof CloudProviderEnum
 }
 
 export type ServiceTemplateOptionType = {
@@ -65,6 +67,7 @@ export type ServiceTemplateOptionType = {
   additional_dockerfile_files?: string[]
   lifecycle_job_options?: LifecycleJobOptionsType
   recommended?: boolean
+  cloud_provider?: keyof typeof CloudProviderEnum
 }
 
 export type LifecycleJobOptionsType = {
@@ -94,6 +97,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
         description: 'Create a PostgreSQL database using a managed service.',
         icon: Qovery,
         type: 'DATABASE',
+        cloud_provider: 'AWS',
       },
       {
         slug: 'managed-aws-terraform',
@@ -101,6 +105,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
         description: 'Create a PostgreSQL database using AWS RDS via Terraform.',
         icon: Terraform,
         type: 'LIFECYCLE_JOB',
+        cloud_provider: 'AWS',
         dockerfile:
           'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-rds-with-terraform/Dockerfile',
         additional_dockerfile_files: [
@@ -121,6 +126,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
         description: 'Create a PostgreSQL database using AWS RDS via Cloudformation.',
         icon: AWS,
         type: 'LIFECYCLE_JOB',
+        cloud_provider: 'AWS',
         dockerfile:
           'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-rds-with-cloudformation/Dockerfile',
         additional_dockerfile_files: [
@@ -140,6 +146,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
         description: 'Create a PostgreSQL database using Google Cloud SQL via Terraform.',
         icon: GCP,
         type: 'LIFECYCLE_JOB',
+        cloud_provider: 'GCP',
         dockerfile:
           'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
       },
@@ -166,6 +173,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
         title: 'Managed',
         description: 'Create a Redis database using a managed service.',
         icon: AWS,
+        cloud_provider: 'AWS',
         type: 'DATABASE',
       },
       {
@@ -174,6 +182,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
         description: 'Create a Redis database using AWS ElastiCache via Terraform.',
         icon: Terraform,
         type: 'LIFECYCLE_JOB',
+        cloud_provider: 'AWS',
         dockerfile:
           'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
       },
@@ -183,6 +192,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
         description: 'Create a Redis database using Google Cloud Memorystore via Terraform.',
         icon: Terraform,
         type: 'LIFECYCLE_JOB',
+        cloud_provider: 'GCP',
         dockerfile:
           'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
       },
@@ -220,6 +230,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
         description: 'Expose a React application through AWS CloudFront and S3.',
         icon: AWS,
         type: 'LIFECYCLE_JOB',
+        cloud_provider: 'AWS',
         dockerfile:
           'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
       },
@@ -247,6 +258,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
         description: 'Expose a Vue application through AWS CloudFront and S3.',
         icon: AWS,
         type: 'LIFECYCLE_JOB',
+        cloud_provider: 'AWS',
         dockerfile:
           'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
       },
@@ -276,6 +288,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
         description: 'Expose an Angular application through AWS CloudFront and S3.',
         icon: AWS,
         type: 'LIFECYCLE_JOB',
+        cloud_provider: 'AWS',
         dockerfile:
           'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
       },
@@ -297,6 +310,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
     title: 'AWS Lambda',
     description: 'AWS Lambda lets you run code without provisioning or managing servers.',
     icon: AWS,
+    cloud_provider: 'AWS',
     dockerfile:
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
     options: [
@@ -306,6 +320,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
         description: 'Deploy an AWS Lambda function using CloudFormation.',
         icon: AWS,
         type: 'LIFECYCLE_JOB',
+        cloud_provider: 'AWS',
         dockerfile:
           'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
       },
@@ -315,6 +330,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
         description: 'Deploy an AWS Lambda function using Terraform.',
         icon: Terraform,
         type: 'LIFECYCLE_JOB',
+        cloud_provider: 'AWS',
         dockerfile:
           'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
       },
@@ -341,6 +357,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
         title: 'Managed',
         description: 'Create a MySQL database using a managed service.',
         icon: AWS,
+        cloud_provider: 'AWS',
         type: 'DATABASE',
       },
       {
@@ -349,6 +366,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
         description: 'Create a MySQL database using AWS RDS via Terraform.',
         icon: Terraform,
         type: 'LIFECYCLE_JOB',
+        cloud_provider: 'AWS',
         dockerfile:
           'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
       },
@@ -358,6 +376,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
         description: 'Create a MySQL database using AWS RDS via Cloudformation.',
         icon: AWS,
         type: 'LIFECYCLE_JOB',
+        cloud_provider: 'AWS',
         dockerfile:
           'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
       },
@@ -367,6 +386,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
         description: 'Create a MySQL database using Google Cloud SQL via Terraform.',
         icon: Terraform,
         type: 'LIFECYCLE_JOB',
+        cloud_provider: 'GCP',
         dockerfile:
           'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
       },
@@ -394,6 +414,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
         description: 'Create a MongoDB database using a managed service.',
         icon: AWS,
         type: 'DATABASE',
+        cloud_provider: 'AWS',
       },
       {
         slug: 'managed-aws-terraform',
@@ -401,6 +422,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
         description: 'Create a MongoDB database using AWS DocumentDB via Terraform.',
         icon: Terraform,
         type: 'LIFECYCLE_JOB',
+        cloud_provider: 'AWS',
         dockerfile:
           'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
       },
@@ -410,6 +432,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
         description: 'Create a MongoDB database using Google Cloud Firestore via Terraform.',
         icon: Terraform,
         type: 'LIFECYCLE_JOB',
+        cloud_provider: 'GCP',
         dockerfile:
           'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
       },
@@ -467,6 +490,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
         description: 'Expose a NextJS application through AWS CloudFront and S3.',
         icon: AWS,
         type: 'LIFECYCLE_JOB',
+        cloud_provider: 'AWS',
         dockerfile:
           'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
       },
@@ -624,6 +648,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
     description: 'AWS Assume Roles is a tool to assume roles for your services on your Kubernetes cluster.',
     icon: AWS,
     type: 'HELM',
+    cloud_provider: 'AWS',
     dockerfile:
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
@@ -635,6 +660,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
       'AWS S3 is an object storage service that offers industry-leading scalability, ' +
       'data availability, security, and performance.',
     icon: AWS,
+    cloud_provider: 'AWS',
     dockerfile:
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
     options: [
@@ -644,6 +670,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
         description: 'Do operations on AWS S3 using the AWS CLI.',
         icon: AWS,
         type: 'LIFECYCLE_JOB',
+        cloud_provider: 'AWS',
         dockerfile:
           'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
       },
@@ -653,6 +680,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
         description: 'Do operations on S3 using Terraform.',
         icon: Terraform,
         type: 'LIFECYCLE_JOB',
+        cloud_provider: 'AWS',
         dockerfile:
           'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
       },
@@ -662,6 +690,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
         description: 'Do operations on S3 using Cloudformation.',
         icon: AWS,
         type: 'LIFECYCLE_JOB',
+        cloud_provider: 'AWS',
         dockerfile:
           'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
       },
@@ -675,6 +704,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
       'GCP BigQuery is a serverless, highly scalable, and cost-effective multi-cloud data warehouse ' +
       'designed for business agility.',
     icon: GCP,
+    cloud_provider: 'GCP',
     dockerfile:
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
     options: [
@@ -684,6 +714,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
         description: 'Do operations on GCP BigQuery using the GCP CLI.',
         icon: GCP,
         type: 'LIFECYCLE_JOB',
+        cloud_provider: 'GCP',
         dockerfile:
           'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
       },
@@ -693,6 +724,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
         description: 'Do operations on BigQuery using Terraform.',
         icon: Terraform,
         type: 'LIFECYCLE_JOB',
+        cloud_provider: 'GCP',
         dockerfile:
           'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
       },
@@ -751,6 +783,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
         title: 'Managed',
         description: 'Create an Elasticsearch database using a managed service.',
         icon: AWS,
+        cloud_provider: 'AWS',
         type: 'DATABASE',
       },
       {
@@ -759,6 +792,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
         description: 'Create an Elasticsearch database using AWS Elasticsearch via Terraform.',
         icon: Terraform,
         type: 'LIFECYCLE_JOB',
+        cloud_provider: 'AWS',
         dockerfile:
           'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
       },
@@ -768,6 +802,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
         description: 'Create an Elasticsearch database using Google Cloud Elasticsearch via Terraform.',
         icon: Terraform,
         type: 'LIFECYCLE_JOB',
+        cloud_provider: 'GCP',
         dockerfile:
           'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
       },

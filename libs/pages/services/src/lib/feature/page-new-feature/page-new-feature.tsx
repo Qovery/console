@@ -1,8 +1,10 @@
 import clsx from 'clsx'
 import posthog from 'posthog-js'
+import { type CloudProviderEnum } from 'qovery-typescript-axios'
 import { type ReactElement, cloneElement, useState } from 'react'
 import { NavLink, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
+import { useEnvironment } from '@qovery/domains/environments/feature'
 import { type ServiceType } from '@qovery/domains/services/data-access'
 import {
   SERVICES_APPLICATION_CREATION_URL,
@@ -26,14 +28,27 @@ import {
   serviceTemplates,
 } from './service-templates'
 
-function Card({ title, icon, link }: { title: string; icon: ReactElement; link: string }) {
+function Card({
+  title,
+  description,
+  icon,
+  link,
+}: {
+  title: string
+  description: string
+  icon: ReactElement
+  link: string
+}) {
   return (
     <NavLink
       to={link}
-      className="flex items-center gap-3 rounded border border-neutral-200 p-3 shadow-sm transition hover:bg-neutral-100"
+      className="flex items-center gap-5 rounded border border-neutral-200 p-5 shadow-sm transition hover:bg-neutral-100"
     >
+      <div>
+        <h3 className="mb-1 text-ssm font-medium">{title}</h3>
+        <p className="max-w-96 text-xs text-neutral-350">{description}</p>
+      </div>
       {icon}
-      <h3 className="text-ssm font-medium">{title}</h3>
     </NavLink>
   )
 }
@@ -88,6 +103,8 @@ function CardOption({ parentSlug, slug, icon, title, description, type, recommen
 function CardService({ title, icon, description, slug, options, type, link }: ServiceTemplateType) {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const [expanded, setExpanded] = useState(false)
+  const { data: environment } = useEnvironment({ environmentId })
+  const cloudProvider = environment?.cloud_provider.provider as CloudProviderEnum
 
   if (options) {
     return (
@@ -121,6 +138,7 @@ function CardService({ title, icon, description, slug, options, type, link }: Se
             </div>
             <div className="grid grid-cols-3 gap-2">
               {options
+                .filter((c) => c.cloud_provider === cloudProvider || !c.cloud_provider)
                 .sort((a, b) => {
                   if (a.recommended && !b.recommended) return -1
                   if (!a.recommended && b.recommended) return 1
@@ -185,9 +203,11 @@ function SectionByTag({
   title,
   description,
   tag,
+  cloudProvider,
 }: {
   title: string
   tag: keyof typeof TagsEnum
+  cloudProvider?: CloudProviderEnum
   description?: string
 }) {
   return (
@@ -196,6 +216,7 @@ function SectionByTag({
       {description && <p className="text-xs text-neutral-350">{description}</p>}
       <div className="mt-5 grid grid-cols-3 gap-4">
         {serviceTemplates
+          .filter((c) => c.cloud_provider === cloudProvider || !c.cloud_provider)
           .filter(({ tag: t }) => t === tag)
           .sort((a, b) => a.title.localeCompare(b.title))
           .map((service) => (
@@ -210,36 +231,44 @@ export function PageNewFeature() {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   useDocumentTitle('Create new service - Qovery')
 
+  const { data: environment } = useEnvironment({ environmentId })
+  const cloudProvider = environment?.cloud_provider.provider as CloudProviderEnum
+
   const serviceEmpty = [
     {
       title: 'Application',
-      description: 'Create from empty application git or container based.',
-      icon: <Icon name="APPLICATION" />,
+      description: 'Deploy a long running service running from Git or a Container Registry.',
+      icon: <Icon name="APPLICATION" width={32} height={32} />,
       link: SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_APPLICATION_CREATION_URL,
+      cloud_provider: cloudProvider,
     },
     {
       title: 'Database',
-      description: 'Create from empty database managed or container.',
-      icon: <Icon name="DATABASE" />,
+      description: 'Easy and fastest way to deploy the most popular databases.',
+      icon: <Icon name="DATABASE" width={32} height={32} />,
       link: SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_DATABASE_CREATION_URL,
+      cloud_provider: cloudProvider,
     },
     {
       title: 'Lifecycle Job',
-      description: 'Create an empty lifecycle job.',
-      icon: <Icon name="LIFECYCLE_JOB" />,
+      description: 'Execute any type of script coming from Git or a Container Registry.',
+      icon: <Icon name="LIFECYCLE_JOB" width={32} height={32} />,
       link: SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_LIFECYCLE_CREATION_URL,
+      cloud_provider: cloudProvider,
     },
     {
       title: 'Cron Job',
-      description: 'Create an empty cron job.',
-      icon: <Icon name="CRON_JOB" />,
+      description: 'Execute any type of script at a regular basis.',
+      icon: <Icon name="CRON_JOB" width={32} height={32} />,
       link: SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_CRONJOB_CREATION_URL,
+      cloud_provider: cloudProvider,
     },
     {
       title: 'Helm',
-      description: 'Create an empty Helm chart.',
-      icon: <Icon name="HELM" />,
+      description: 'Deploy a Helm Chart on your Kubernetes cluster.',
+      icon: <Icon name="HELM" width={32} height={32} />,
       link: SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_HELM_CREATION_URL,
+      cloud_provider: cloudProvider,
     },
   ]
 
@@ -249,10 +278,16 @@ export function PageNewFeature() {
   const filterService = ({ title }: { title: string }) => title.toLowerCase().includes(searchInput.toLowerCase())
 
   const emptyState = (
-    <div className="w-full text-center">
-      <Icon iconName="wave-pulse" className="text-neutral-350" />
-      <p className="mt-1 text-xs font-medium text-neutral-350">No result for this search</p>
-    </div>
+    <Section className="w-full">
+      <Heading className="mb-1">You didn't find what you want?</Heading>
+      <p className="mb-5 text-xs text-neutral-350">Use one of those options below.</p>
+
+      <div className="grid grid-cols-3 gap-4">
+        {serviceEmpty.map((service) => (
+          <Card key={service.title} {...service} />
+        ))}
+      </div>
+    </Section>
   )
 
   return (
@@ -291,7 +326,7 @@ export function PageNewFeature() {
             <Section>
               <Heading className="mb-1">Select an empty service</Heading>
               <p className="mb-5 text-xs text-neutral-350">Services without pre-configuration for technical stack.</p>
-              <div className="grid grid-cols-5 gap-3">
+              <div className="grid grid-cols-3 gap-4">
                 {serviceEmpty.map((service) => (
                   <Card key={service.title} {...service} />
                 ))}
@@ -301,27 +336,40 @@ export function PageNewFeature() {
               title="Data & Storage"
               description="Find your perfect data and storage template with presets."
               tag="DATA_STORAGE"
+              cloudProvider={cloudProvider}
             />
             <SectionByTag
               title="Back-end"
               description="Find your perfect Back-end template with presets."
               tag="BACK_END"
+              cloudProvider={cloudProvider}
             />
             <SectionByTag
               title="Front-end"
               description="Find your perfect Front-end template with presets."
               tag="FRONT_END"
+              cloudProvider={cloudProvider}
             />
-            <SectionByTag title="More template" description="Look for other template presets." tag="OTHER" />
+            <SectionByTag
+              title="More template"
+              description="Look for other template presets."
+              tag="OTHER"
+              cloudProvider={cloudProvider}
+            />
           </>
-        ) : [...serviceEmpty, ...serviceTemplates].filter(filterService).length > 0 ? (
+        ) : [...serviceEmpty, ...serviceTemplates]
+            .filter((c) => c.cloud_provider === cloudProvider || !c.cloud_provider)
+            .filter(filterService).length > 0 ? (
           <Section>
             <Heading className="mb-1">Search results</Heading>
             <p className="mb-5 text-xs text-neutral-350">Find the service you need to kickstart your next project.</p>
             <div className="grid grid-cols-3 gap-4">
-              {[...serviceEmpty, ...serviceTemplates].filter(filterService).map((service) => (
-                <CardService key={service.title} {...service} />
-              ))}
+              {[...serviceEmpty, ...serviceTemplates]
+                .filter((c) => c.cloud_provider === cloudProvider || !c.cloud_provider)
+                .filter(filterService)
+                .map((service) => (
+                  <CardService key={service.title} {...service} />
+                ))}
             </div>
           </Section>
         ) : (
