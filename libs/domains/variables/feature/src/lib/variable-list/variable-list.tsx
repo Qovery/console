@@ -24,6 +24,7 @@ import {
   Icon,
   PasswordShowHide,
   TableFilter,
+  TableFilterSearch,
   TablePrimitives,
   Tooltip,
   Truncate,
@@ -95,6 +96,7 @@ export function VariableList({
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
 
   const { mutateAsync: deleteVariable } = useDeleteVariable()
+  const [globalFilter, setGlobalFilter] = useState('')
 
   const _onCreateVariable: (
     variable: VariableResponse,
@@ -451,10 +453,18 @@ export function VariableList({
     state: {
       sorting,
       rowSelection,
+      globalFilter,
     },
     onSortingChange: setSorting,
     onRowSelectionChange: setRowSelection,
     enableRowSelection: (row) => row.original.scope !== 'BUILT_IN',
+    onGlobalFilterChange: setGlobalFilter,
+    globalFilterFn: (row, columnId, value) => {
+      // Search by variable by key
+      return (
+        columnId === 'key' && (row.getValue(columnId) as string)?.toLowerCase?.().includes?.(value?.toLowerCase?.())
+      )
+    },
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -492,7 +502,7 @@ export function VariableList({
             <Table.Row key={headerGroup.id}>
               {headerGroup.headers.map((header, i) => (
                 <Table.ColumnHeaderCell
-                  className={`${i === 2 ? 'border-r pl-0' : ''} font-medium`}
+                  className={`${i === 2 ? 'border-r pl-0' : ''} relative font-medium`}
                   key={header.id}
                   style={{ width: i === 0 ? '20px' : i === 2 ? '50px' : `${header.getSize()}%` }}
                 >
@@ -516,6 +526,14 @@ export function VariableList({
                     </button>
                   ) : (
                     flexRender(header.column.columnDef.header, header.getContext())
+                  )}
+                  {i === 1 && (
+                    <span className="absolute -right-9 top-[7px]">
+                      <TableFilterSearch
+                        value={globalFilter ?? ''}
+                        onChange={(event) => setGlobalFilter(event.target.value)}
+                      />
+                    </span>
                   )}
                 </Table.ColumnHeaderCell>
               ))}

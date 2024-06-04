@@ -11,7 +11,7 @@ exports[`VariableList should match snapshot 1`] = `
       <thead>
         <tr>
           <th
-            class="h-11 px-4 text-left font-medium"
+            class="h-11 px-4 text-left relative font-medium"
             style="width: 20px;"
           >
             <div
@@ -28,7 +28,7 @@ exports[`VariableList should match snapshot 1`] = `
             </div>
           </th>
           <th
-            class="h-11 px-4 text-left font-medium"
+            class="h-11 px-4 text-left relative font-medium"
             style="width: 40%;"
           >
             <button
@@ -37,13 +37,30 @@ exports[`VariableList should match snapshot 1`] = `
             >
               7 variables
             </button>
+            <span
+              class="absolute -right-9 top-[7px]"
+            >
+              <span
+                class="relative"
+              >
+                <i
+                  aria-hidden="true"
+                  class="fa-solid fa-magnifying-glass absolute left-2 top-1/2 block -translate-y-1/2 text-xs text-neutral-400"
+                />
+                <input
+                  class="w-36 rounded border border-neutral-300 py-1.5 pl-7 outline-0 placeholder:text-neutral-350"
+                  placeholder="Search"
+                  value=""
+                />
+              </span>
+            </span>
           </th>
           <th
-            class="h-11 px-4 text-left border-r pl-0 font-medium"
+            class="h-11 px-4 text-left border-r pl-0 relative font-medium"
             style="width: 50px;"
           />
           <th
-            class="h-11 px-4 text-left font-medium"
+            class="h-11 px-4 text-left relative font-medium"
             style="width: 20%;"
           >
             <div
@@ -66,7 +83,7 @@ exports[`VariableList should match snapshot 1`] = `
             </div>
           </th>
           <th
-            class="h-11 px-4 text-left font-medium"
+            class="h-11 px-4 text-left relative font-medium"
             style="width: 15%;"
           >
             <div
@@ -89,7 +106,7 @@ exports[`VariableList should match snapshot 1`] = `
             </div>
           </th>
           <th
-            class="h-11 px-4 text-left font-medium"
+            class="h-11 px-4 text-left relative font-medium"
             style="width: 10%;"
           >
             <div
@@ -112,7 +129,7 @@ exports[`VariableList should match snapshot 1`] = `
             </div>
           </th>
           <th
-            class="h-11 px-4 text-left font-medium"
+            class="h-11 px-4 text-left relative font-medium"
             style="width: 12%;"
           >
             <button
