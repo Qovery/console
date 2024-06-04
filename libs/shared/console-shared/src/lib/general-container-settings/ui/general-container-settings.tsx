@@ -15,6 +15,7 @@ export function GeneralContainerSettings({ organization }: GeneralContainerSetti
     image_tag?: string
   }>()
   const { openModal, closeModal } = useModal()
+
   const { data: containerRegistries = [] } = useContainerRegistries({ organizationId: organization?.id ?? '' })
 
   return (
@@ -32,10 +33,12 @@ export function GeneralContainerSettings({ organization }: GeneralContainerSetti
               className="mb-0.5"
               onChange={field.onChange}
               value={field.value}
-              options={containerRegistries?.map((registry) => ({
-                value: registry.id,
-                label: registry.name || '',
-              }))}
+              options={containerRegistries
+                ?.filter((c) => !c.cluster)
+                .map((registry) => ({
+                  value: registry.id,
+                  label: registry.name || '',
+                }))}
               label="Registry"
               error={error?.message}
               menuListButton={{
