@@ -119,7 +119,7 @@ export function LayoutLogs({
 
   return (
     <div
-      className={`relative flex w-full overflow-hidden p-1 ${
+      className={`relative flex w-full max-w-[calc(100vw-64px)] overflow-hidden p-1 ${
         clusterBanner ? 'h-[calc(100vh-8rem)]' : 'h-[calc(100vh-4rem)]'
       }`}
     >
