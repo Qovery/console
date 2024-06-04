@@ -727,13 +727,13 @@ const mapping = {
   ],
   '/organization/:organizationId/cluster/:clusterId/settings/image-registry': [
     {
-      link: 'https://hub.qovery.com/docs/using-qovery/configuration/clusters/#features',
+      link: 'https://hub.qovery.com/docs/using-qovery/deployment/image-mirroring/',
       label: 'How does the mirroring work?',
     },
   ],
   '/organization/:organizationId/cluster/:clusterId/settings/features': [
     {
-      link: 'https://hub.qovery.com/docs/using-qovery/deployment/image-mirroring/',
+      link: 'https://hub.qovery.com/docs/using-qovery/configuration/clusters/#features',
       label: 'How to custom my cluster network (static ip, custom VPC, …)?',
     },
   ],
