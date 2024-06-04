@@ -7,6 +7,7 @@ import {
   CLUSTER_SETTINGS_DANGER_ZONE_URL,
   CLUSTER_SETTINGS_FEATURES_URL,
   CLUSTER_SETTINGS_GENERAL_URL,
+  CLUSTER_SETTINGS_IMAGE_REGISTRY_URL,
   CLUSTER_SETTINGS_KUBECONFIG_URL,
   CLUSTER_SETTINGS_NETWORK_URL,
   CLUSTER_SETTINGS_REMOTE_ACCESS_URL,
@@ -44,6 +45,12 @@ export function PageSettingsFeature() {
     title: 'Resources',
     icon: IconAwesomeEnum.CHART_BULLET,
     url: pathSettings + CLUSTER_SETTINGS_RESOURCES_URL,
+  }
+
+  const imageRegistryLink = {
+    title: 'Image registry',
+    icon: IconAwesomeEnum.BOX,
+    url: pathSettings + CLUSTER_SETTINGS_IMAGE_REGISTRY_URL,
   }
 
   const featuresLink = {
@@ -86,12 +93,14 @@ export function PageSettingsFeature() {
     .with({ cloud_provider: P.not('ON_PREMISE'), kubernetes: 'SELF_MANAGED' }, () => [
       generalLink,
       credentialsLink,
+      imageRegistryLink,
       kubeconfigLink,
       advancedSettingsLink,
       dangerZoneLink,
     ])
     .with({ cloud_provider: 'ON_PREMISE', kubernetes: 'SELF_MANAGED' }, () => [
       generalLink,
+      imageRegistryLink,
       advancedSettingsLink,
       dangerZoneLink,
     ])
@@ -99,6 +108,7 @@ export function PageSettingsFeature() {
       generalLink,
       credentialsLink,
       resourcesLink,
+      imageRegistryLink,
       featuresLink,
       networkLink,
       advancedSettingsLink,
@@ -108,6 +118,7 @@ export function PageSettingsFeature() {
       generalLink,
       credentialsLink,
       resourcesLink,
+      imageRegistryLink,
       remoteAccessLink,
       networkLink,
       advancedSettingsLink,
@@ -117,12 +128,14 @@ export function PageSettingsFeature() {
       generalLink,
       credentialsLink,
       resourcesLink,
+      imageRegistryLink,
       advancedSettingsLink,
       dangerZoneLink,
     ])
     .with({ cloud_provider: 'GCP' }, () => [
       generalLink,
       credentialsLink,
+      imageRegistryLink,
       featuresLink,
       advancedSettingsLink,
       dangerZoneLink,
