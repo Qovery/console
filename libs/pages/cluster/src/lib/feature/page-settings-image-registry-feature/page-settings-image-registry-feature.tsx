@@ -1,6 +1,7 @@
 import { type ContainerRegistryRequest, type ContainerRegistryResponse } from 'qovery-typescript-axios'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
+import { useCluster } from '@qovery/domains/clusters/feature'
 import {
   ContainerRegistryForm,
   useContainerRegistries,
@@ -10,8 +11,9 @@ import { SettingsHeading } from '@qovery/shared/console-shared'
 import { Button, Section } from '@qovery/shared/ui'
 
 export function SettingsImageRegistryFeature({ containerRegistry }: { containerRegistry: ContainerRegistryResponse }) {
-  const { organizationId = '' } = useParams()
+  const { organizationId = '', clusterId = '' } = useParams()
   const { mutate: editContainerRegistry, isLoading: isLoadingEditContainerRegistry } = useEditContainerRegistry()
+  const { data: cluster } = useCluster({ organizationId, clusterId })
 
   const methods = useForm<ContainerRegistryRequest>({
     mode: 'onChange',
@@ -37,7 +39,7 @@ export function SettingsImageRegistryFeature({ containerRegistry }: { containerR
         />
         <FormProvider {...methods}>
           <form className="flex flex-col" onSubmit={onSubmit}>
-            <ContainerRegistryForm disabledFieldsExceptConfig />
+            <ContainerRegistryForm disabledFieldsExceptConfig isClusterManaged={cluster?.kubernetes === 'MANAGED'} />
             <div className="mt-2 flex justify-end">
               <Button
                 type="submit"

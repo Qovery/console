@@ -10,6 +10,7 @@ import { useAvailableContainerRegistries } from '../hooks/use-available-containe
 
 export interface ContainerRegistryFormProps {
   disabledFieldsExceptConfig?: boolean
+  isClusterManaged?: boolean
 }
 
 export const getOptionsContainerRegistry = (containerRegistry: AvailableContainerRegistryResponse[]) =>
@@ -27,7 +28,10 @@ export const getOptionsContainerRegistry = (containerRegistry: AvailableContaine
     }))
     .filter(Boolean)
 
-export function ContainerRegistryForm({ disabledFieldsExceptConfig = false }: ContainerRegistryFormProps) {
+export function ContainerRegistryForm({
+  disabledFieldsExceptConfig = false,
+  isClusterManaged = false,
+}: ContainerRegistryFormProps) {
   const methods = useFormContext()
 
   const [fileDetails, setFileDetails] = useState<{ name: string; size: number }>()
@@ -149,14 +153,17 @@ export function ContainerRegistryForm({ disabledFieldsExceptConfig = false }: Co
               value={field.value}
               label="Registry url"
               error={error?.message}
-              disabled={match(watchKind)
-                .with(
-                  ContainerRegistryKindEnum.DOCKER_HUB,
-                  ContainerRegistryKindEnum.GITHUB_CR,
-                  ContainerRegistryKindEnum.GITLAB_CR,
-                  () => true
-                )
-                .otherwise(() => false)}
+              disabled={
+                isClusterManaged ||
+                match(watchKind)
+                  .with(
+                    ContainerRegistryKindEnum.DOCKER_HUB,
+                    ContainerRegistryKindEnum.GITHUB_CR,
+                    ContainerRegistryKindEnum.GITLAB_CR,
+                    () => true
+                  )
+                  .otherwise(() => false)
+              }
             />
           )}
         />
@@ -232,6 +239,7 @@ export function ContainerRegistryForm({ disabledFieldsExceptConfig = false }: Co
               value={field.value}
               label="Region"
               error={error?.message}
+              disabled={isClusterManaged}
             />
           )}
         />
