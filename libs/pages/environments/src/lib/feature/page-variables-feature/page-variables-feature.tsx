@@ -6,22 +6,20 @@ export function PageVariablesFeature() {
   const { projectId = '' } = useParams()
 
   return (
-    <>
-      <VariableList
-        className="border-b border-b-neutral-200"
-        scope="PROJECT"
-        projectId={projectId}
-        onCreateVariable={() => {
-          toast('SUCCESS', 'Creation success')
-        }}
-        onEditVariable={() => {
-          toast('SUCCESS', 'Edition success')
-        }}
-        onDeleteVariable={() => {
-          toast('SUCCESS', 'Deletion success')
-        }}
-      />
-    </>
+    <VariableList
+      className="border-b border-b-neutral-200"
+      scope="PROJECT"
+      projectId={projectId}
+      onCreateVariable={() => {
+        toast('SUCCESS', 'Creation success')
+      }}
+      onEditVariable={() => {
+        toast('SUCCESS', 'Edition success')
+      }}
+      onDeleteVariable={() => {
+        toast('SUCCESS', 'Deletion success')
+      }}
+    />
   )
 }
 

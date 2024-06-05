@@ -65,22 +65,20 @@ export function Deployments(props: PageDeploymentsProps) {
     )
 
   return (
-    <>
-      <Table dataHead={tableHead} data={deployments} setFilter={setFilter} filter={filter} setDataSort={setData}>
-        <div>
-          {data?.map((currentData, index) => (
-            <TableRowDeployment
-              key={index}
-              data={currentData as DeploymentHistoryApplication}
-              filter={filter}
-              dataHead={tableHead}
-              isLoading={isLoading}
-              fromService
-            />
-          ))}
-        </div>
-      </Table>
-    </>
+    <Table dataHead={tableHead} data={deployments} setFilter={setFilter} filter={filter} setDataSort={setData}>
+      <div>
+        {data?.map((currentData, index) => (
+          <TableRowDeployment
+            key={index}
+            data={currentData as DeploymentHistoryApplication}
+            filter={filter}
+            dataHead={tableHead}
+            isLoading={isLoading}
+            fromService
+          />
+        ))}
+      </div>
+    </Table>
   )
 }
 

@@ -83,22 +83,20 @@ export function PageDeploymentsMemo(props: PageDeploymentsProps) {
     )
 
   return (
-    <>
-      <Table dataHead={tableHead} data={deployments} setFilter={setFilter} filter={filter} setDataSort={setData}>
-        <div className="bg-neutral-200">
-          {data?.map((currentData, index) => (
-            <TableRowDeployment
-              key={index}
-              data={currentData as DeploymentService}
-              filter={filter}
-              dataHead={tableHead}
-              isLoading={loading}
-              startGroup={currentData?.execution_id !== data[index - 1]?.execution_id && index !== 0 ? true : false}
-            />
-          ))}
-        </div>
-      </Table>
-    </>
+    <Table dataHead={tableHead} data={deployments} setFilter={setFilter} filter={filter} setDataSort={setData}>
+      <div className="bg-neutral-200">
+        {data?.map((currentData, index) => (
+          <TableRowDeployment
+            key={index}
+            data={currentData as DeploymentService}
+            filter={filter}
+            dataHead={tableHead}
+            isLoading={loading}
+            startGroup={currentData?.execution_id !== data[index - 1]?.execution_id && index !== 0 ? true : false}
+          />
+        ))}
+      </div>
+    </Table>
   )
 }
 

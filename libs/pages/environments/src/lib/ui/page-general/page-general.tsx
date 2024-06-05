@@ -8,15 +8,13 @@ export interface PageGeneralProps {
 
 export function PageGeneral({ clusterAvailable, project }: PageGeneralProps) {
   return (
-    <>
-      {project && (
-        <EnvironmentList
-          className="border-b border-b-neutral-200"
-          project={project}
-          clusterAvailable={clusterAvailable ?? false}
-        />
-      )}
-    </>
+    project && (
+      <EnvironmentList
+        className="border-b border-b-neutral-200"
+        project={project}
+        clusterAvailable={clusterAvailable ?? false}
+      />
+    )
   )
 }
 
