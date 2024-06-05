@@ -113,7 +113,9 @@ export function Container({ children }: PropsWithChildren) {
             }
           />
         )}
-        <div className="flex flex-grow flex-col">{children}</div>
+        <div className="mt-2 flex min-h-0 flex-grow flex-col items-stretch rounded-b-none rounded-t-sm bg-white">
+          {children}
+        </div>
       </Section>
     </ErrorBoundary>
   )
