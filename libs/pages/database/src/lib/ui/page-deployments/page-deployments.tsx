@@ -51,14 +51,7 @@ export function Deployments(props: PageDeploymentsProps) {
 
   return (
     <>
-      <Table
-        dataHead={tableHead}
-        data={deployments}
-        setFilter={setFilter}
-        filter={filter}
-        setDataSort={setData}
-        className="mt-2 rounded-sm"
-      >
+      <Table dataHead={tableHead} data={deployments} setFilter={setFilter} filter={filter} setDataSort={setData}>
         <div>
           {data?.map((currentData, index) => (
             <TableRowDeployment

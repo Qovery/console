@@ -92,7 +92,7 @@ export function Container({ children }: ContainerProps) {
           <TabsFeature />
           <NeedRedeployFlag />
           <div className="mt-2 flex min-h-0 flex-grow flex-col items-stretch rounded-b-none rounded-t-sm bg-white">
-            {children}
+            <ErrorBoundary>{children}</ErrorBoundary>
           </div>
         </Section>
       </ErrorBoundary>

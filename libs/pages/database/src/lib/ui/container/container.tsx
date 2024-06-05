@@ -116,7 +116,9 @@ export function Container({ service, environment, children }: PropsWithChildren<
         <Header title={service?.name} icon={IconEnum.DATABASE} actions={headerActions} />
         <Tabs items={tabsItems} />
         <NeedRedeployFlag />
-        {children}
+        <div className="mt-2 flex min-h-0 flex-grow flex-col items-stretch rounded-b-none rounded-t-sm bg-white">
+          <ErrorBoundary>{children}</ErrorBoundary>
+        </div>
       </Section>
     </ErrorBoundary>
   )
