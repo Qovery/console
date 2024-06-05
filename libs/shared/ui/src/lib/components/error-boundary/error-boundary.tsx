@@ -8,7 +8,7 @@ import { Section } from '../section/section'
 
 function ErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
   return (
-    <Section className="flex-grow items-center justify-center rounded-sm bg-white">
+    <Section className="max-h-screen flex-grow items-center justify-center rounded-sm bg-white">
       <div className="-mt-[100px] flex w-[500px] flex-col items-center justify-center gap-3 text-center">
         <Icon iconName="cloud-exclamation" className="text-8xl text-neutral-200" />
         <div>
