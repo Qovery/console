@@ -93,7 +93,7 @@ export function LabelCreateEditModal({ isEdit, labelsGroup, organizationId, onCl
           <ul>
             <li className="mb-3 grid grid-cols-[6fr_6fr_1fr_1fr] gap-x-2">
               <span className="text-sm font-medium text-neutral-350">Label keys</span>
-              <span className="text-sm font-medium text-neutral-350">Value</span>
+              <span className="pl-10 text-sm font-medium text-neutral-350">Value</span>
               <span className="relative left-7 flex items-center gap-1 whitespace-nowrap text-sm font-medium text-neutral-350">
                 Propagate as tag
                 <Tooltip content="Allows you to propagate the label as a tag in your cloud provider side if the format is compliant.">

@@ -40,9 +40,9 @@ export function PageOrganizationLabelsAnnotationsFeature() {
       <Section className="max-w-content-with-navigation-left p-8">
         <div className="mb-8 flex justify-between gap-3">
           <div>
-            <Heading className="mb-2">Annotations</Heading>
+            <Heading className="mb-2">Labels & Annotations</Heading>
             <p className="text-xs text-neutral-400">
-              Define and manage the annotations to be used within your organization.
+              Define and manage the labels & annotations to be used within your organization.
             </p>
           </div>
           <DropdownMenu.Root>
@@ -171,7 +171,7 @@ export function PageOrganizationLabelsAnnotationsFeature() {
             <div className="my-4 px-5 text-center">
               <Icon iconName="wave-pulse" className="text-neutral-350" />
               <p className="mt-1 text-xs font-medium text-neutral-350">
-                No label found. <br /> Please add one.
+                No labels group found. <br /> Please add one.
               </p>
             </div>
           )}
@@ -284,7 +284,7 @@ export function PageOrganizationLabelsAnnotationsFeature() {
             <div className="my-4 px-5 text-center">
               <Icon iconName="wave-pulse" className="text-neutral-350" />
               <p className="mt-1 text-xs font-medium text-neutral-350">
-                No annotation found. <br /> Please add one.
+                No annotations group found. <br /> Please add one.
               </p>
             </div>
           )}

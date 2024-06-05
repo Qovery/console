@@ -16,12 +16,12 @@ exports[`PageOrganizationLabelsAnnotationsFeature should match snapshot 1`] = `
             <h1
               class="text-neutral-400 text-xl font-bold mb-2"
             >
-              Annotations
+              Labels & Annotations
             </h1>
             <p
               class="text-xs text-neutral-400"
             >
-              Define and manage the annotations to be used within your organization.
+              Define and manage the labels & annotations to be used within your organization.
             </p>
           </div>
           <button
