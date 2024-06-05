@@ -42,7 +42,7 @@ function Card({
   return (
     <NavLink
       to={link}
-      className="flex items-center gap-5 rounded border border-neutral-200 p-5 shadow-sm transition hover:bg-neutral-100"
+      className="flex items-center gap-5 rounded border border-neutral-200 px-5 py-4 shadow-sm transition hover:bg-neutral-100"
     >
       <div>
         <h3 className="mb-1 text-ssm font-medium">{title}</h3>
