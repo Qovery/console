@@ -91,7 +91,9 @@ export function Container({ children }: ContainerProps) {
           <Header title={service?.name} icon={headerIcon} actions={headerActions} />
           <TabsFeature />
           <NeedRedeployFlag />
-          {children}
+          <div className="mt-2 flex min-h-0 flex-grow flex-col items-stretch rounded-b-none rounded-t-sm bg-white">
+            {children}
+          </div>
         </Section>
       </ErrorBoundary>
     </VariablesProvider>

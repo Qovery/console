@@ -35,52 +35,50 @@ export function PageVariablesFeature() {
   }
 
   return (
-    <div className="mt-2 flex flex-1 rounded-sm bg-white">
-      {scope && (
-        <VariableList
-          className="border-b border-b-neutral-200"
-          scope={scope}
-          serviceId={applicationId}
-          organizationId={organizationId}
-          projectId={projectId}
-          environmentId={environmentId}
-          onCreateVariable={() => {
-            toast(
-              'SUCCESS',
-              'Creation success',
-              'You need to redeploy your service for your changes to be applied.',
-              toasterCallback,
-              undefined,
-              'Redeploy'
-            )
-          }}
-          onEditVariable={() => {
-            toast(
-              'SUCCESS',
-              'Edition success',
-              'You need to redeploy your service for your changes to be applied.',
-              toasterCallback,
-              undefined,
-              'Redeploy'
-            )
-          }}
-          onDeleteVariable={(variable) => {
-            let name = variable.key
-            if (name && name.length > 30) {
-              name = name.substring(0, 30) + '...'
-            }
-            toast(
-              'SUCCESS',
-              'Deletion success',
-              `${name} has been deleted. You need to redeploy your service for your changes to be applied.`,
-              toasterCallback,
-              undefined,
-              'Redeploy'
-            )
-          }}
-        />
-      )}
-    </div>
+    scope && (
+      <VariableList
+        className="border-b border-b-neutral-200"
+        scope={scope}
+        serviceId={applicationId}
+        organizationId={organizationId}
+        projectId={projectId}
+        environmentId={environmentId}
+        onCreateVariable={() => {
+          toast(
+            'SUCCESS',
+            'Creation success',
+            'You need to redeploy your service for your changes to be applied.',
+            toasterCallback,
+            undefined,
+            'Redeploy'
+          )
+        }}
+        onEditVariable={() => {
+          toast(
+            'SUCCESS',
+            'Edition success',
+            'You need to redeploy your service for your changes to be applied.',
+            toasterCallback,
+            undefined,
+            'Redeploy'
+          )
+        }}
+        onDeleteVariable={(variable) => {
+          let name = variable.key
+          if (name && name.length > 30) {
+            name = name.substring(0, 30) + '...'
+          }
+          toast(
+            'SUCCESS',
+            'Deletion success',
+            `${name} has been deleted. You need to redeploy your service for your changes to be applied.`,
+            toasterCallback,
+            undefined,
+            'Redeploy'
+          )
+        }}
+      />
+    )
   )
 }
 

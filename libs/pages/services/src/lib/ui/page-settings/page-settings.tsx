@@ -10,11 +10,9 @@ export function PageSettings(props: PageSettingsProps) {
   const { links, children } = props
 
   return (
-    <div className="flex flex-grow rounded-sm bg-white">
-      <div className="border-r border-neutral-200 pb-10">
-        <div className="relative w-72">
-          <NavigationLeft className="sticky top-14 pt-6" links={links} />
-        </div>
+    <div className="flex flex-grow">
+      <div className="relative w-72 shrink-0 border-r border-neutral-200 pb-10">
+        <NavigationLeft className="sticky top-14 pt-6" links={links} />
       </div>
       <div className="flex flex-grow">{children}</div>
     </div>
