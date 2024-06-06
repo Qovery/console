@@ -1,1 +1,1 @@
-export * from './lib/protected-route/protected-route'
+export { routeTree } from './lib/route-tree.gen'

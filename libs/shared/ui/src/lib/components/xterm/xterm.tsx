@@ -1,6 +1,6 @@
 import { type ITerminalAddon, type ITerminalInitOnlyOptions, type ITerminalOptions, Terminal } from '@xterm/xterm'
 import '@xterm/xterm/css/xterm.css'
-import { type ComponentPropsWithoutRef, useEffect, useRef, useState } from 'react'
+import { type ComponentPropsWithoutRef, memo, useEffect, useRef, useState } from 'react'
 
 export interface UseXTermProps {
   addons?: ITerminalAddon[]
@@ -100,7 +100,7 @@ export function useXTerm({ options, addons, listeners }: UseXTermProps = {}) {
 
 export interface XTermProps extends Omit<ComponentPropsWithoutRef<'div'>, 'onResize' | 'onScroll'>, UseXTermProps {}
 
-export function XTerm({ className = '', options, addons, listeners, ...props }: XTermProps) {
+export const XTerm = memo(function XTerm({ className = '', options, addons, listeners, ...props }: XTermProps) {
   const { ref } = useXTerm({
     options,
     addons,
@@ -108,6 +108,6 @@ export function XTerm({ className = '', options, addons, listeners, ...props }: 
   })
 
   return <div className={className} ref={ref} {...props} />
-}
+})
 
 export default XTerm

@@ -1,5 +1,6 @@
 import { type User, useAuth0 } from '@auth0/auth0-react'
 import { GTMProvider } from '@elgorditosalsero/react-gtm-hook'
+import { RouterProvider, createRouter } from '@tanstack/react-router'
 import axios from 'axios'
 import LogRocket from 'logrocket'
 import posthog from 'posthog-js'
@@ -12,15 +13,30 @@ import { DarkModeEnabler, Layout } from '@qovery/pages/layout'
 import { PageLogin, PageLogoutFeature } from '@qovery/pages/login'
 import { AssistantContext } from '@qovery/shared/assistant/feature'
 import { useAuth, useInviteMember } from '@qovery/shared/auth'
-import { ProtectedRoute } from '@qovery/shared/router'
+import { routeTree } from '@qovery/shared/router'
 import { HELM_DEFAULT_VALUES, KUBECONFIG, LOGIN_URL, LOGOUT_URL, PREVIEW_CODE } from '@qovery/shared/routes'
 import { LoadingScreen } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { GTM, LOGROCKET, NODE_ENV, NX_GIT_SHA, QOVERY_API } from '@qovery/shared/util-node-env'
 import { useAuthInterceptor } from '@qovery/shared/utils'
+import { queryClient } from '../query-client'
 import PreviewCode from './components/preview-code'
+import { ProtectedRoute } from './components/protected-route'
 import ScrollToTop from './components/scroll-to-top'
 import { ROUTER } from './router/main.router'
+
+const router = createRouter({
+  routeTree,
+  context: { queryClient },
+  defaultNotFoundComponent: () => <Navigate replace to={LOGIN_URL} />,
+})
+
+// Register things for typesafety
+declare module '@tanstack/react-router' {
+  interface Register {
+    router: typeof router
+  }
+}
 
 export function App() {
   useDocumentTitle('Loading...')
@@ -158,7 +174,8 @@ export function App() {
               />
             )
           )}
-          <Route path="*" element={<Navigate replace to={LOGIN_URL} />} />
+          {/** NOTE: Delegate remaining routing to @tanstack/router **/}
+          <Route path="*" element={<RouterProvider router={router} />} />
         </Routes>
       </AssistantContext.Provider>
     </GTMProvider>
