@@ -1,14 +1,15 @@
 import { type PropsWithChildren } from 'react'
 import { ErrorBoundary as ErrorBoundaryRaw, type FallbackProps } from 'react-error-boundary'
 import { useLocation } from 'react-router-dom'
+import { twMerge } from '@qovery/shared/util-js'
 import { Button } from '../button/button'
 import { Heading } from '../heading/heading'
 import { Icon } from '../icon/icon'
 import { Section } from '../section/section'
 
-function ErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
+export function ErrorFallback({ className, error, resetErrorBoundary }: FallbackProps & { className?: string }) {
   return (
-    <Section className="max-h-screen flex-grow items-center justify-center rounded-sm bg-white">
+    <Section className={twMerge('max-h-screen flex-grow items-center justify-center rounded-sm bg-white', className)}>
       <div className="-mt-[100px] flex w-[500px] flex-col items-center justify-center gap-3 text-center">
         <Icon iconName="cloud-exclamation" className="text-8xl text-neutral-200" />
         <div>
