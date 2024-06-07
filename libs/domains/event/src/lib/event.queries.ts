@@ -15,22 +15,29 @@ import { toastError } from '@qovery/shared/ui'
 const eventsApi = new OrganizationEventApi()
 
 export interface EventQueryParams {
-  pageSize?: number
-  fromTimestamp?: string
-  toTimestamp?: string
-  eventType?: OrganizationEventType
-  targetType?: OrganizationEventTargetType
-  targetId?: string
-  subTargetType?: OrganizationEventSubTargetType
-  triggeredBy?: string
-  origin?: OrganizationEventOrigin
-  continueToken?: string
-  stepBackToken?: string
-  projectId?: string
-  environmentId?: string
+  pageSize?: number | null
+  fromTimestamp?: string | null
+  toTimestamp?: string | null
+  eventType?: OrganizationEventType | null
+  targetType?: OrganizationEventTargetType | null
+  targetId?: string | null
+  subTargetType?: OrganizationEventSubTargetType | null
+  triggeredBy?: string | null
+  origin?: OrganizationEventOrigin | null
+  continueToken?: string | null
+  stepBackToken?: string | null
+  projectId?: string | null
+  environmentId?: string | null
 }
 
 export const useFetchEvents = (organizationId: string, queryParams: EventQueryParams) => {
+  queryParams.continueToken ??= undefined
+  queryParams.stepBackToken ??= undefined
+  queryParams.eventType ??= undefined
+  queryParams.targetType ??= undefined
+  queryParams.subTargetType ??= undefined
+  queryParams.triggeredBy ??= undefined
+  queryParams.origin ??= undefined
   const {
     pageSize,
     eventType,
@@ -70,6 +77,12 @@ export const useFetchEvents = (organizationId: string, queryParams: EventQueryPa
 }
 
 export const useFetchEventTargets = (organizationId: string, queryParams: EventQueryParams, enabled?: boolean) => {
+  queryParams.eventType ??= undefined
+  queryParams.targetType ??= undefined
+  queryParams.triggeredBy ??= undefined
+  queryParams.origin ??= undefined
+  queryParams.projectId ??= undefined
+  queryParams.environmentId ??= undefined
   const { eventType, targetType, origin, triggeredBy, toTimestamp, fromTimestamp, projectId, environmentId } =
     queryParams
 

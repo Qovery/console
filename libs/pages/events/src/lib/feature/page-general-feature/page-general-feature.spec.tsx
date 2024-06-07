@@ -1,8 +1,8 @@
 import { mockUseQueryResult } from '__tests__/utils/mock-use-query-result'
-import { act, fireEvent, getByTestId, render, waitFor } from '__tests__/utils/setup-jest'
 import { type OrganizationEventResponseList } from 'qovery-typescript-axios'
 import { type EventQueryParams } from '@qovery/domains/event'
 import { eventsFactoryMock } from '@qovery/shared/factories'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import PageGeneralFeature from './page-general-feature'
 
 jest.mock('react-router-dom', () => ({
@@ -31,59 +31,49 @@ describe('PageGeneralFeature', () => {
   })
 
   it('should render successfully', () => {
-    const { baseElement } = render(<PageGeneralFeature />)
+    const { baseElement } = renderWithProviders(<PageGeneralFeature />)
     expect(baseElement).toBeTruthy()
   })
 
   it('should fetch the event with correct payload', () => {
-    render(<PageGeneralFeature />)
-    expect(mockUseFetchEvents).toHaveBeenCalledWith('0', {})
+    renderWithProviders(<PageGeneralFeature />)
+    expect(mockUseFetchEvents).toHaveBeenCalledWith('0', { pageSize: 30 })
   })
 
   it('should change query params on click on next', async () => {
-    const { baseElement } = render(<PageGeneralFeature />)
+    const { userEvent } = renderWithProviders(<PageGeneralFeature />)
 
-    const button = getByTestId(baseElement, 'button-next-page')
+    const button = screen.getByTestId('button-next-page')
 
-    await act(() => {
-      button.click()
-    })
+    await userEvent.click(button)
 
-    await waitFor(() => {
-      expect(mockUseFetchEvents).toHaveBeenCalledWith('0', {
-        continueToken: '1683211879216566000',
-      })
+    expect(mockUseFetchEvents).toHaveBeenCalledWith('0', {
+      pageSize: 30,
+      continueToken: '1683211879216566000',
     })
   })
 
   it('should change query params on click on previous', async () => {
-    const { baseElement } = render(<PageGeneralFeature />)
-    const button = getByTestId(baseElement, 'button-previous-page')
+    const { userEvent } = renderWithProviders(<PageGeneralFeature />)
+    const button = screen.getByTestId('button-previous-page')
 
-    await act(() => {
-      button.click()
-    })
+    await userEvent.click(button)
 
-    await waitFor(() => {
-      expect(mockUseFetchEvents).toHaveBeenCalledWith('0', {
-        stepBackToken: '1683211879216566001',
-      })
+    expect(mockUseFetchEvents).toHaveBeenCalledWith('0', {
+      pageSize: 30,
+      stepBackToken: '1683211879216566001',
     })
   })
 
   it('should change query params on click on pageSize', async () => {
-    const { baseElement } = render(<PageGeneralFeature />)
+    const { userEvent } = renderWithProviders(<PageGeneralFeature />)
 
-    const select = getByTestId(baseElement, 'select-page-size')
+    const select = screen.getByTestId('select-page-size')
 
-    await act(() => {
-      fireEvent.change(select, { target: { value: '50' } })
-    })
+    await userEvent.selectOptions(select, '50')
 
-    await waitFor(() => {
-      expect(mockUseFetchEvents).toHaveBeenCalledWith('0', {
-        pageSize: 50,
-      })
+    expect(mockUseFetchEvents).toHaveBeenCalledWith('0', {
+      pageSize: 50,
     })
   })
 })

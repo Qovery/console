@@ -1,11 +1,13 @@
 import {
-  type OrganizationEventOrigin,
-  type OrganizationEventSubTargetType,
+  OrganizationEventOrigin,
+  OrganizationEventSubTargetType,
   OrganizationEventTargetType,
-  type OrganizationEventType,
+  OrganizationEventType,
 } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
-import { useLocation, useParams, useSearchParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
+import { createEnumParam } from 'serialize-query-params'
+import { NumberParam, StringParam, useQueryParams, withDefault } from 'use-query-params'
 import { type EventQueryParams, useFetchEvents } from '@qovery/domains/event'
 import { eventsFactoryMock } from '@qovery/shared/factories'
 import { ALL, type TableFilterProps } from '@qovery/shared/ui'
@@ -40,6 +42,21 @@ export const extractEventQueryParams = (urlString: string): EventQueryParams => 
   )
   return queryParams
 }
+export const queryParamsValues = {
+  pageSize: withDefault(NumberParam, 30),
+  origin: createEnumParam(Object.values(OrganizationEventOrigin)),
+  subTargetType: createEnumParam(Object.values(OrganizationEventSubTargetType)),
+  triggeredBy: StringParam,
+  targetId: StringParam,
+  targetType: createEnumParam(Object.values(OrganizationEventTargetType)),
+  eventType: createEnumParam(Object.values(OrganizationEventType)),
+  toTimestamp: StringParam,
+  fromTimestamp: StringParam,
+  continueToken: StringParam,
+  stepBackToken: StringParam,
+  projectId: StringParam,
+  environmentId: StringParam,
+}
 
 export const hasEnvironment = (targetType?: string) =>
   targetType === OrganizationEventTargetType.APPLICATION ||
@@ -54,44 +71,34 @@ export const hasProject = (targetType?: string) =>
 export function PageGeneralFeature() {
   useDocumentTitle('Audit Logs - Qovery')
   const { organizationId = '' } = useParams()
-  const location = useLocation()
-  const [, setSearchParams] = useSearchParams()
-  const [queryParams, setQueryParams] = useState<EventQueryParams>({})
-  const [pageSize, setPageSize] = useState<string>('30')
+  const [queryParams, setQueryParams] = useQueryParams(queryParamsValues)
   const [filter, setFilter] = useState<TableFilterProps[]>([])
   const { data: eventsData, isLoading } = useFetchEvents(organizationId, queryParams)
 
+  // Sync queryParams -> table filters
   useEffect(() => {
-    const newQueryParams: EventQueryParams = extractEventQueryParams(location.pathname + location.search)
-
-    if (newQueryParams.pageSize) setPageSize(newQueryParams.pageSize.toString())
-
-    if (newQueryParams.origin)
+    if (queryParams.origin)
       setFilter((prev) => {
-        const isAlreadyPresent = prev.some((item) => item.key === 'origin' && item.value === newQueryParams.origin)
+        const isAlreadyPresent = prev.some((item) => item.key === 'origin' && item.value === queryParams.origin)
         if (!isAlreadyPresent) {
-          const updatedFilters = [...prev, { key: 'origin', value: newQueryParams.origin }]
+          const updatedFilters = [...prev, { key: 'origin', value: queryParams.origin || '' }]
           return updatedFilters
         }
         return prev
       })
 
-    if (newQueryParams.eventType)
+    if (queryParams.eventType)
       setFilter((prev) => {
-        const isAlreadyPresent = prev.some(
-          (item) => item.key === 'event_type' && item.value === newQueryParams.eventType
-        )
+        const isAlreadyPresent = prev.some((item) => item.key === 'event_type' && item.value === queryParams.eventType)
         if (!isAlreadyPresent) {
-          const updatedFilters = [...prev, { key: 'event_type', value: newQueryParams.eventType }]
+          const updatedFilters = [...prev, { key: 'event_type', value: queryParams.eventType || '' }]
           return updatedFilters
         }
         return prev
       })
+  }, [queryParams])
 
-    setQueryParams(newQueryParams)
-  }, [location])
-
-  // set filter if is a query params change
+  // Sync table filters -> queryParams
   useEffect(() => {
     for (let i = 0; i < filter.length; i++) {
       const currentFilter: TableFilterProps = filter[i]
@@ -101,54 +108,43 @@ export function PageGeneralFeature() {
         .toLowerCase()
         .replace(/([-_][a-z])/g, (group) => group.toUpperCase().replace('-', '').replace('_', ''))
 
-      setSearchParams((prev) => {
-        if (currentFilter.value === ALL) {
-          prev.delete(currentKey)
-        } else {
-          prev.delete(currentKey)
-          prev.set(currentKey, currentFilter.value || '')
-        }
-        return prev
-      })
+      if (currentFilter.value === ALL) {
+        setQueryParams({
+          [currentKey]: undefined,
+        })
+      } else {
+        setQueryParams({
+          [currentKey]: currentFilter.value,
+        })
+      }
     }
   }, [filter])
 
   const onPrevious = () => {
     if (eventsData?.links?.previous) {
-      setSearchParams(JSON.parse(JSON.stringify(extractEventQueryParams(eventsData.links.previous))))
+      setQueryParams({
+        stepBackToken: new URLSearchParams(eventsData.links.previous.split('?')[1]).get('stepBackToken'),
+        continueToken: undefined,
+      })
     }
   }
 
   const onNext = () => {
     if (eventsData?.links?.next) {
-      setSearchParams(JSON.parse(JSON.stringify(extractEventQueryParams(eventsData.links.next))))
+      setQueryParams({
+        continueToken: new URLSearchParams(eventsData.links.next.split('?')[1]).get('continueToken'),
+        stepBackToken: undefined,
+      })
     }
   }
 
   const onPageSizeChange = (pageSize: string) => {
-    setPageSize(pageSize)
-    setSearchParams((prev) => {
-      prev.set('pageSize', pageSize)
-      return prev
-    })
+    setQueryParams({ pageSize: parseInt(pageSize, 10) })
   }
 
   const handleClearFilter = () => {
-    setSearchParams((prev) => {
-      prev.delete('origin')
-      prev.delete('eventType')
-      prev.delete('targetType')
-      prev.delete('continueToken')
-      prev.delete('stepBackToken')
-      prev.delete('projectId')
-      prev.delete('environmentId')
-      prev.delete('targetId')
-      prev.delete('fromTimestamp')
-      prev.delete('toTimestamp')
-      return prev
-    })
+    setQueryParams({}, 'push')
     setFilter([])
-    setQueryParams({})
   }
 
   return (
@@ -160,7 +156,7 @@ export function PageGeneralFeature() {
       previousDisabled={!eventsData?.links?.previous}
       nextDisabled={!eventsData?.links?.next}
       onPageSizeChange={onPageSizeChange}
-      pageSize={pageSize}
+      pageSize={queryParams.pageSize.toString()}
       placeholderEvents={eventsFactoryMock(30)}
       handleClearFilter={handleClearFilter}
       filter={filter}

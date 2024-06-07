@@ -16,6 +16,8 @@ import { FlatProviders, makeProvider } from 'react-flat-providers'
 // import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { BrowserRouter } from 'react-router-dom'
 import { IntercomProvider } from 'react-use-intercom'
+import { QueryParamProvider } from 'use-query-params'
+import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6'
 import { InstantSearchProvider } from '@qovery/shared/assistant/feature'
 import { LOGIN_AUTH_REDIRECT_URL, LOGIN_URL } from '@qovery/shared/routes'
 import { ErrorFallback, ModalProvider, ToastBehavior, toastError } from '@qovery/shared/ui'
@@ -167,14 +169,16 @@ root.render(
       ]}
     >
       <BrowserRouter>
-        <ErrorBoundary fallbackRender={fallbackRender}>
-          <TooltipProvider>
-            <ModalProvider>
-              <App />
-              <ToastBehavior />
-            </ModalProvider>
-          </TooltipProvider>
-        </ErrorBoundary>
+        <QueryParamProvider adapter={ReactRouter6Adapter}>
+          <ErrorBoundary fallbackRender={fallbackRender}>
+            <TooltipProvider>
+              <ModalProvider>
+                <App />
+                <ToastBehavior />
+              </ModalProvider>
+            </TooltipProvider>
+          </ErrorBoundary>
+        </QueryParamProvider>
       </BrowserRouter>
       {/* <ReactQueryDevtools initialIsOpen={false} /> */}
     </FlatProviders>
