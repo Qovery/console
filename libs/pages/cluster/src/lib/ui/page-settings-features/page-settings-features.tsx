@@ -37,7 +37,7 @@ export function PageSettingsFeatures(props: PageSettingsFeaturesProps) {
               </div>
             )}
             {features
-              ?.filter(({ id }) => id !== 'EXISTING_VPC')
+              ?.filter(({ id }) => id !== 'EXISTING_VPC' && id !== 'KARPENTER')
               .map((feature) => (
                 <CardClusterFeature key={feature.id} feature={feature} cloudProvider={cloudProvider} disabled />
               ))}
