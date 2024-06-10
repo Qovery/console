@@ -14,34 +14,6 @@ import { ALL, type TableFilterProps } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import PageGeneral from '../../ui/page-general/page-general'
 
-export const extractEventQueryParams = (urlString: string): EventQueryParams => {
-  const url = new URL(urlString, window.location.origin) // add the base URL to properly parse the relative URL
-  const searchParams = new URLSearchParams(url.search)
-
-  const queryParams: EventQueryParams = {
-    // parse other query parameters as needed
-    pageSize: searchParams.get('pageSize') ? parseInt(searchParams.get('pageSize') as string, 10) : undefined,
-    origin: (searchParams.get('origin') as OrganizationEventOrigin) || undefined,
-    subTargetType: (searchParams.get('subTargetType') as OrganizationEventSubTargetType) || undefined,
-    triggeredBy: searchParams.get('triggeredBy') || undefined,
-    targetId: searchParams.get('targetId') || undefined,
-    targetType: (searchParams.get('targetType') as OrganizationEventTargetType) || undefined,
-    eventType: (searchParams.get('eventType') as OrganizationEventType) || undefined,
-    toTimestamp: searchParams.get('toTimestamp') || undefined,
-    fromTimestamp: searchParams.get('fromTimestamp') || undefined,
-    continueToken: searchParams.get('continueToken') || undefined,
-    stepBackToken: searchParams.get('stepBackToken') || undefined,
-    projectId: searchParams.get('projectId') || undefined,
-    environmentId: searchParams.get('environmentId') || undefined,
-  }
-
-  // remove undefined values with typescript typing
-  Object.keys(queryParams).forEach(
-    (key) =>
-      queryParams[key as keyof EventQueryParams] === undefined && delete queryParams[key as keyof EventQueryParams]
-  )
-  return queryParams
-}
 export const queryParamsValues = {
   pageSize: withDefault(NumberParam, 30),
   origin: createEnumParam(Object.values(OrganizationEventOrigin)),
