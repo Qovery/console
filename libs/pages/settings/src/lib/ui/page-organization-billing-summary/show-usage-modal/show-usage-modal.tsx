@@ -13,7 +13,7 @@ export interface ShowUsageModalProps {
   loading?: boolean
 }
 
-function getReportPeriods({
+export function getReportPeriods({
   organization,
   orgRenewalAt,
 }: {
