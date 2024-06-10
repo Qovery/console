@@ -35,7 +35,7 @@ exports[`VariableList should match snapshot 1`] = `
               class="flex items-center gap-1 cursor-pointer select-none"
               type="button"
             >
-              7 variables
+              9 variables
             </button>
             <span
               class="absolute -right-9 top-[7px]"
@@ -67,7 +67,7 @@ exports[`VariableList should match snapshot 1`] = `
               class="relative inline-block"
             >
               <button
-                aria-controls="radix-:r1r:"
+                aria-controls="radix-:r25:"
                 aria-expanded="false"
                 aria-haspopup="dialog"
                 class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent gap-1 whitespace-nowrap text-xs"
@@ -90,7 +90,7 @@ exports[`VariableList should match snapshot 1`] = `
               class="relative inline-block"
             >
               <button
-                aria-controls="radix-:r1u:"
+                aria-controls="radix-:r28:"
                 aria-expanded="false"
                 aria-haspopup="dialog"
                 class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent gap-1 whitespace-nowrap text-xs"
@@ -113,7 +113,7 @@ exports[`VariableList should match snapshot 1`] = `
               class="relative inline-block"
             >
               <button
-                aria-controls="radix-:r21:"
+                aria-controls="radix-:r2b:"
                 aria-expanded="false"
                 aria-haspopup="dialog"
                 class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent gap-1 whitespace-nowrap text-xs"
@@ -177,7 +177,7 @@ exports[`VariableList should match snapshot 1`] = `
               aria-label="actions"
               class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-9 px-3 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-transparent"
               data-state="closed"
-              id="radix-:r23:"
+              id="radix-:r2d:"
               type="button"
             >
               <i
@@ -302,7 +302,7 @@ exports[`VariableList should match snapshot 1`] = `
               aria-label="actions"
               class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-9 px-3 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-transparent"
               data-state="closed"
-              id="radix-:r29:"
+              id="radix-:r2j:"
               type="button"
             >
               <i
@@ -397,7 +397,7 @@ exports[`VariableList should match snapshot 1`] = `
               aria-label="actions"
               class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-9 px-3 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-transparent"
               data-state="closed"
-              id="radix-:r2d:"
+              id="radix-:r2n:"
               type="button"
             >
               <i
@@ -488,7 +488,7 @@ exports[`VariableList should match snapshot 1`] = `
               aria-label="actions"
               class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-9 px-3 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-transparent"
               data-state="closed"
-              id="radix-:r2h:"
+              id="radix-:r2r:"
               type="button"
             >
               <i
@@ -682,7 +682,7 @@ exports[`VariableList should match snapshot 1`] = `
               aria-label="actions"
               class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-9 px-3 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-transparent"
               data-state="closed"
-              id="radix-:r2l:"
+              id="radix-:r2v:"
               type="button"
             >
               <i
@@ -791,7 +791,7 @@ exports[`VariableList should match snapshot 1`] = `
               aria-label="actions"
               class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-9 px-3 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-transparent"
               data-state="closed"
-              id="radix-:r2r:"
+              id="radix-:r35:"
               type="button"
             >
               <i
@@ -1041,7 +1041,7 @@ exports[`VariableList should match snapshot 1`] = `
               aria-label="actions"
               class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-9 px-3 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-transparent"
               data-state="closed"
-              id="radix-:r31:"
+              id="radix-:r3b:"
               type="button"
             >
               <i
@@ -1191,6 +1191,210 @@ exports[`VariableList should match snapshot 1`] = `
               data-state="closed"
             >
               2 days
+               ago
+            </span>
+          </td>
+        </tr>
+        <tr
+          class="h-16 cursor-pointer hover:bg-neutral-100"
+        >
+          <td
+            class="h-14 px-4 py-0 first:relative"
+            style="width: 20px;"
+          >
+            <label
+              class="absolute inset-y-0 left-0 flex items-center p-4"
+            >
+              <button
+                aria-checked="false"
+                class="group transition bg-neutral-100 border border-neutral-300 rounded-sm w-[18px] h-[18px] hover:border-2 hover:border-brand-500 data-[state=checked]:bg-brand-500 data-[state=checked]:border data-[state=checked]:border-brand-500 data-[state=indeterminate]:border-2 data-[state=indeterminate]:border-brand-500 disabled:border disabled:border-neutral-250 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300 disabled:data-[state=indeterminate]:border-brand-300"
+                data-state="unchecked"
+                role="checkbox"
+                type="button"
+                value="on"
+              />
+            </label>
+          </td>
+          <td
+            class="h-14 px-4 py-0 first:relative"
+            style="width: 40%;"
+          >
+            <div
+              class="flex items-center"
+            >
+               
+              <span
+                class="truncate text-sm font-medium"
+                data-state="closed"
+              >
+                FOO
+              </span>
+            </div>
+          </td>
+          <td
+            class="h-14 px-4 py-0 border-r pl-0 first:relative"
+            style="width: 9007199254740991%;"
+          >
+            <button
+              aria-expanded="false"
+              aria-haspopup="menu"
+              aria-label="actions"
+              class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-9 px-3 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-transparent"
+              data-state="closed"
+              id="radix-:r3g:"
+              type="button"
+            >
+              <i
+                aria-hidden="true"
+                class="fa-regular fa-ellipsis-vertical mx-1"
+              />
+            </button>
+          </td>
+          <td
+            class="h-14 px-4 py-0 first:relative"
+            style="width: 20%;"
+          >
+            <span
+              class="flex items-center gap-2 text-sm"
+            >
+              <button
+                class="w-4 text-brand-500"
+                data-state="closed"
+                data-testid="toggle-button"
+                type="button"
+              >
+                <i
+                  aria-hidden="true"
+                  class="fa-solid fa-eye "
+                />
+              </button>
+              <span
+                class="pt-1.5 text-xl font-medium tracking-widest text-neutral-350"
+                data-state="closed"
+                data-testid="hide_value"
+              >
+                *************
+              </span>
+            </span>
+          </td>
+          <td
+            class="h-14 px-4 py-0 first:relative"
+            style="width: 15%;"
+          />
+          <td
+            class="h-14 px-4 py-0 first:relative"
+            style="width: 10%;"
+          >
+            <span
+              class="text-sm font-medium capitalize"
+            >
+              project
+            </span>
+          </td>
+          <td
+            class="h-14 px-4 py-0 first:relative"
+            style="width: 12%;"
+          >
+            <span
+              class="text-xs text-neutral-300"
+              data-state="closed"
+            >
+              5 months
+               ago
+            </span>
+          </td>
+        </tr>
+        <tr
+          class="h-16 cursor-pointer hover:bg-neutral-100"
+        >
+          <td
+            class="h-14 px-4 py-0 first:relative"
+            style="width: 20px;"
+          >
+            <label
+              class="absolute inset-y-0 left-0 flex items-center p-4"
+            >
+              <button
+                aria-checked="false"
+                class="group transition bg-neutral-100 border border-neutral-300 rounded-sm w-[18px] h-[18px] hover:border-2 hover:border-brand-500 data-[state=checked]:bg-brand-500 data-[state=checked]:border data-[state=checked]:border-brand-500 data-[state=indeterminate]:border-2 data-[state=indeterminate]:border-brand-500 disabled:border disabled:border-neutral-250 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300 disabled:data-[state=indeterminate]:border-brand-300"
+                data-state="unchecked"
+                role="checkbox"
+                type="button"
+                value="on"
+              />
+            </label>
+          </td>
+          <td
+            class="h-14 px-4 py-0 first:relative"
+            style="width: 40%;"
+          >
+            <div
+              class="flex items-center"
+            >
+               
+              <i
+                aria-hidden="true"
+                class="fa-regular fa-arrow-turn-down-right ml-1 mr-2 text-2xs text-neutral-300"
+              />
+              <span
+                class="mr-2 inline-flex h-4 items-center rounded-sm bg-teal-500 px-1 text-2xs font-bold text-neutral-50"
+              >
+                ALIAS
+              </span>
+              <span
+                class="truncate text-sm font-medium"
+                data-state="closed"
+              >
+                BAR
+              </span>
+            </div>
+          </td>
+          <td
+            class="h-14 px-4 py-0 border-r pl-0 first:relative"
+            style="width: 9007199254740991%;"
+          >
+            <button
+              aria-expanded="false"
+              aria-haspopup="menu"
+              aria-label="actions"
+              class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-9 px-3 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-transparent"
+              data-state="closed"
+              id="radix-:r3m:"
+              type="button"
+            >
+              <i
+                aria-hidden="true"
+                class="fa-regular fa-ellipsis-vertical mx-1"
+              />
+            </button>
+          </td>
+          <td
+            class="h-14 px-4 py-0 first:relative"
+            style="width: 20%;"
+          />
+          <td
+            class="h-14 px-4 py-0 first:relative"
+            style="width: 15%;"
+          />
+          <td
+            class="h-14 px-4 py-0 first:relative"
+            style="width: 10%;"
+          >
+            <span
+              class="text-sm font-medium capitalize"
+            >
+              project
+            </span>
+          </td>
+          <td
+            class="h-14 px-4 py-0 first:relative"
+            style="width: 12%;"
+          >
+            <span
+              class="text-xs text-neutral-300"
+              data-state="closed"
+            >
+              2 months
                ago
             </span>
           </td>
