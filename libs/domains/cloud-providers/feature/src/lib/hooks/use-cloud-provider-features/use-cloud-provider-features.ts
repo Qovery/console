@@ -11,7 +11,7 @@ export function useCloudProviderFeatures({ cloudProvider }: UseCloudProviderFeat
     ...queries.cloudProviders.features({ cloudProvider }),
     select(features) {
       // TODO: hide existing VPC feature for now
-      return features?.filter(({ id }) => id !== 'EXISTING_VPC')
+      return features?.filter(({ id }) => id !== 'EXISTING_VPC' && id !== 'KARPENTER')
     },
   })
 }
