@@ -41,7 +41,6 @@ export function PageSettingsGeneral({
   organization,
 }: PageSettingsGeneralProps) {
   const { control, formState, watch } = useFormContext()
-  const watchServiceType = watch('serviceType')
   const watchBuildMode = watch('build_mode')
   const watchFieldProvider = watch('source_provider')
 
@@ -81,23 +80,20 @@ export function PageSettingsGeneral({
           )}
         />
       ) : (
-        <>
-          <Controller
-            name="dockerfile_path"
-            control={control}
-            render={({ field, fieldState: { error } }) => (
-              <InputText
-                dataTestId="input-text-dockerfile"
-                name={field.name}
-                onChange={field.onChange}
-                value={field.value}
-                label="Dockerfile path"
-                error={error?.message}
-              />
-            )}
-          />
-          {service?.serviceType === 'JOB' && service.job_type === 'CRON' && <EntrypointCmdInputs />}
-        </>
+        <Controller
+          name="dockerfile_path"
+          control={control}
+          render={({ field, fieldState: { error } }) => (
+            <InputText
+              dataTestId="input-text-dockerfile"
+              name={field.name}
+              onChange={field.onChange}
+              value={field.value}
+              label="Dockerfile path"
+              error={error?.message}
+            />
+          )}
+        />
       )}
     </>
   )
@@ -131,9 +127,13 @@ export function PageSettingsGeneral({
                   )}
                 </Section>
                 <Section className="gap-4">
-                  <Heading>Build and deploy</Heading>
-                  {blockContentBuildDeploy}
-                  <AutoDeploySetting source={watchServiceType === 'CONTAINER' ? 'CONTAINER_REGISTRY' : 'GIT'} />
+                  <Heading>{isJobGitSource(job.source) ? 'Build and deploy' : 'Deploy'}</Heading>
+                  {isJobGitSource(job.source) ? (
+                    blockContentBuildDeploy
+                  ) : job.job_type === 'CRON' ? (
+                    <EntrypointCmdInputs />
+                  ) : null}
+                  <AutoDeploySetting source={isJobGitSource(job.source) ? 'GIT' : 'CONTAINER_REGISTRY'} />
                 </Section>
                 <Section className="gap-4">
                   <Heading>Extra annotations</Heading>
