@@ -1,4 +1,4 @@
-import { render } from '__tests__/utils/setup-jest'
+import { renderWithProviders } from '@qovery/shared/util-tests'
 import CustomFilterFeature, { type CustomFilterFeatureProps } from './custom-filter-feature'
 
 describe('CustomFilterFeature', () => {
@@ -7,6 +7,6 @@ describe('CustomFilterFeature', () => {
   }
 
   it('should render successfully', () => {
-    render(<CustomFilterFeature {...props} />)
+    renderWithProviders(<CustomFilterFeature {...props} />)
   })
 })

@@ -15,6 +15,8 @@ import { type PropsWithChildren, type ReactElement } from 'react'
 import { useChainProviders } from 'react-flat-providers'
 import { InstantSearch } from 'react-instantsearch'
 import { MemoryRouter } from 'react-router-dom'
+import { QueryParamProvider } from 'use-query-params'
+import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6'
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { ModalProvider } from '@qovery/shared/ui'
 
@@ -42,6 +44,9 @@ function renderWithProviders(
       .add(TooltipProvider)
       .add(ModalProvider)
       .add(MemoryRouter)
+      .add(QueryParamProvider, {
+        adapter: ReactRouter6Adapter,
+      })
       .add(InstantSearch, {
         // Mock InstantSearch client
         // Inspired from https://github.com/algolia/react-instantsearch/issues/3609#issuecomment-1239027418

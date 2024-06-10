@@ -1,29 +1,31 @@
 import { OrganizationEventTargetType } from 'qovery-typescript-axios'
-import { memo, useEffect, useState } from 'react'
-import { useLocation, useParams, useSearchParams } from 'react-router-dom'
+import { memo, useState } from 'react'
+import { useParams } from 'react-router-dom'
+import { useQueryParams } from 'use-query-params'
 import { useEnvironments } from '@qovery/domains/environments/feature'
-import { type EventQueryParams, useFetchEventTargets } from '@qovery/domains/event'
+import { useFetchEventTargets } from '@qovery/domains/event'
 import { useProjects } from '@qovery/domains/projects/feature'
 import { convertDatetoTimestamp } from '@qovery/shared/util-dates'
 import CustomFilter from '../../ui/custom-filter/custom-filter'
-import { extractEventQueryParams, hasEnvironment } from '../page-general-feature/page-general-feature'
+import { hasEnvironment, queryParamsValues } from '../page-general-feature/page-general-feature'
 
 export interface CustomFilterFeatureProps {
   handleClearFilter: () => void
 }
 
 export function CustomFilterFeature({ handleClearFilter }: CustomFilterFeatureProps) {
-  const location = useLocation()
   const { organizationId = '' } = useParams()
-  const [, setSearchParams] = useSearchParams()
-  const [timestamps, setTimestamps] = useState<[Date, Date] | undefined>()
   const [isOpenTimestamp, setIsOpenTimestamp] = useState(false)
 
-  const queryParams: EventQueryParams = extractEventQueryParams(location.pathname + location.search)
-  const { environmentId, projectId = '', targetType, targetId } = queryParams
+  const [queryParams, setQueryParams] = useQueryParams(queryParamsValues)
+  const { environmentId, projectId, targetType, targetId } = queryParams
+
+  const fromTimestamp = queryParams.fromTimestamp && new Date(parseInt(queryParams.fromTimestamp, 10) * 1000)
+  const toTimestamp = queryParams.toTimestamp && new Date(parseInt(queryParams.toTimestamp, 10) * 1000)
+  const timestamps = fromTimestamp && toTimestamp ? ([fromTimestamp, toTimestamp] as [Date, Date]) : undefined
 
   const { data: projects = [] } = useProjects({ organizationId })
-  const { data: environments } = useEnvironments({ projectId })
+  const { data: environments } = useEnvironments({ projectId: projectId ?? '' })
 
   // NOTE: - ENVIRONMENT: we don't display target input if no project selected
   const displayEventTargets = Boolean(
@@ -39,75 +41,46 @@ export function CustomFilterFeature({ handleClearFilter }: CustomFilterFeaturePr
     displayEventTargets
   )
 
-  useEffect(() => {
-    const newQueryParams: EventQueryParams = extractEventQueryParams(location.pathname + location.search)
-
-    if (newQueryParams.fromTimestamp && newQueryParams.toTimestamp)
-      setTimestamps([
-        new Date(parseInt(newQueryParams.fromTimestamp, 10) * 1000),
-        new Date(parseInt(newQueryParams.toTimestamp, 10) * 1000),
-      ])
-  }, [location])
-
   const onChangeTimestamp = (startDate: Date, endDate: Date) => {
-    setSearchParams((prev) => {
-      prev.delete('continueToken')
-      prev.delete('stepBackToken')
-      prev.set('fromTimestamp', convertDatetoTimestamp(startDate.toString()).toString())
-      prev.set('toTimestamp', endDate ? convertDatetoTimestamp(endDate.toString()).toString() : '')
-      return prev
+    setQueryParams({
+      continueToken: undefined,
+      stepBackToken: undefined,
+      fromTimestamp: convertDatetoTimestamp(startDate.toString()).toString(),
+      toTimestamp: endDate ? convertDatetoTimestamp(endDate.toString()).toString() : undefined,
     })
-    setTimestamps([startDate, endDate])
     setIsOpenTimestamp(!isOpenTimestamp)
   }
 
   const onChangeClearTimestamp = () => {
-    setTimestamps(undefined)
+    setQueryParams({
+      fromTimestamp: undefined,
+      toTimestamp: undefined,
+    })
     setIsOpenTimestamp(false)
   }
 
   const onChangeType = (name: string, value?: string | string[]) => {
     if (name === 'targetType') {
-      setSearchParams((prev) => {
-        if (value) {
-          prev.set('targetType', value as string)
-        } else {
-          prev.delete('targetType')
-          prev.delete('projectId')
-          prev.delete('environmentId')
-          prev.delete('targetId')
-        }
-        return prev
+      setQueryParams({
+        targetType: value as OrganizationEventTargetType | undefined,
+        projectId: undefined,
+        environmentId: undefined,
+        targetId: undefined,
       })
     } else if (name === 'projectId') {
-      setSearchParams((prev) => {
-        if (value) {
-          prev.set('projectId', value as string)
-        } else {
-          prev.delete('projectId')
-          prev.delete('environmentId')
-          prev.delete('targetId')
-        }
-        return prev
+      setQueryParams({
+        projectId: value as string | undefined,
+        environmentId: undefined,
+        targetId: undefined,
       })
     } else if (name === 'environmentId') {
-      setSearchParams((prev) => {
-        if (value) {
-          prev.set('environmentId', value as string)
-        } else {
-          prev.delete('environmentId')
-          prev.delete('targetId')
-        }
-        return prev
+      setQueryParams({
+        environmentId: value as string | undefined,
+        targetId: undefined,
       })
     } else if (name === 'targetId') {
-      setSearchParams((prev) => {
-        if (value) {
-          prev.set('targetId', value as string)
-        } else {
-          prev.delete('targetId')
-        }
-        return prev
+      setQueryParams({
+        targetId: value as string | undefined,
       })
     }
   }

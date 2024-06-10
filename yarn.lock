@@ -3915,6 +3915,7 @@ __metadata:
     tslib: ^2.3.0
     typescript: 5.4.5
     url-loader: ^4.1.1
+    use-query-params: ^2.2.1
     webpack: 5.89.0
     webpack-merge: ^5.8.0
   languageName: unknown
@@ -20558,6 +20559,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"serialize-query-params@npm:^2.0.2":
+  version: 2.0.2
+  resolution: "serialize-query-params@npm:2.0.2"
+  checksum: 6dccdbd68cbec44c99599c4f77968e8685a74cc597f473ed93b15a8d03c3a67f50c958af9af3d186e64aabd7f98b59d674a05aa4e69d997ed86a5478cf133b27
+  languageName: node
+  linkType: hard
+
 "serve-index@npm:^1.9.1":
   version: 1.9.1
   resolution: "serve-index@npm:1.9.1"
@@ -22529,6 +22537,25 @@ __metadata:
   peerDependencies:
     react: ^16.8.0 || ^17.0.0 || ^18.0.0
   checksum: 8f08eba26d69406b61bb4b8dacdd5a92bd6aef5b53d346dfe87954f7330ee10ecabc937cc7854635155d46053828e85c10b5a5aff7a04720e6a97b9f42999bac
+  languageName: node
+  linkType: hard
+
+"use-query-params@npm:^2.2.1":
+  version: 2.2.1
+  resolution: "use-query-params@npm:2.2.1"
+  dependencies:
+    serialize-query-params: ^2.0.2
+  peerDependencies:
+    "@reach/router": ^1.2.1
+    react: ">=16.8.0"
+    react-dom: ">=16.8.0"
+    react-router-dom: ">=5"
+  peerDependenciesMeta:
+    "@reach/router":
+      optional: true
+    react-router-dom:
+      optional: true
+  checksum: 5bf16511a561cf09902c3526950c6c88999767a1990619a322685448abbd09f5d71a17289d0f727bb3e68d5baced36b3fc0bbf855664b3dd5046d5d553204d28
   languageName: node
   linkType: hard
 
