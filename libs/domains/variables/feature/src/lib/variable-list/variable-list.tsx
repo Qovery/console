@@ -189,7 +189,12 @@ export function VariableList({
       }),
       columnHelper.accessor('key', {
         id: 'key',
-        header: `${variables.length} ${pluralize(variables.length, 'variable')}`,
+        header: ({ table }) => {
+          const isSearching = table.getRowCount() !== variables.length
+          return isSearching
+            ? `${table.getRowCount()}/${variables.length} ${pluralize(table.getRowCount(), 'variable')}`
+            : `${variables.length} ${pluralize(variables.length, 'variable')}`
+        },
         enableColumnFilter: false,
         size: isServiceScope ? 40 : 45,
         cell: (info) => {
