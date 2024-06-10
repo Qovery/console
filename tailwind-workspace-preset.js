@@ -271,6 +271,8 @@ module.exports = {
 
         fadein: `0.35s ${easingFunctions['ease-in-quad']} 0s fadein both`,
         fadeout: `0.2s ${easingFunctions['ease-out-quad']} 0s fadeout both`,
+
+        'ping-small': 'pingSmall 1s linear infinite',
       },
       keyframes: {
         actionBarFadeIn: {
@@ -297,6 +299,12 @@ module.exports = {
         shineAssistantTrigger: {
           from: { transform: 'translate(-200px,-50px) rotate(60deg)' },
           to: { transform: 'translate(200px,-50px) rotate(60deg)' },
+        },
+        pingSmall: {
+          '75%, 100%': {
+            transform: 'scale(1.75)',
+            opacity: '0',
+          },
         },
         shake: {
           '0%': { transform: 'rotate(0deg)' },
