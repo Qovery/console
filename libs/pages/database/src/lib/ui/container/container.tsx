@@ -18,7 +18,7 @@ import {
   DATABASE_SETTINGS_URL,
   DATABASE_URL,
 } from '@qovery/shared/routes'
-import { Header, Icon, Link, Section, Skeleton, Tabs, Tooltip } from '@qovery/shared/ui'
+import { ErrorBoundary, Header, Icon, Link, Section, Skeleton, Tabs, Tooltip } from '@qovery/shared/ui'
 
 export interface ContainerProps {
   service?: AnyService
@@ -111,12 +111,16 @@ export function Container({ service, environment, children }: PropsWithChildren<
   ]
 
   return (
-    <Section className="flex-1">
-      <Header title={service?.name} icon={IconEnum.DATABASE} actions={headerActions} />
-      <Tabs items={tabsItems} />
-      <NeedRedeployFlag />
-      {children}
-    </Section>
+    <ErrorBoundary>
+      <Section className="flex-1">
+        <Header title={service?.name} icon={IconEnum.DATABASE} actions={headerActions} />
+        <Tabs items={tabsItems} />
+        <NeedRedeployFlag />
+        <div className="mt-2 flex min-h-0 flex-grow flex-col items-stretch rounded-b-none rounded-t-sm bg-white">
+          <ErrorBoundary>{children}</ErrorBoundary>
+        </div>
+      </Section>
+    </ErrorBoundary>
   )
 }
 

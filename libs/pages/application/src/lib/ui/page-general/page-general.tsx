@@ -11,33 +11,29 @@ export interface PageGeneralProps {
 
 export function PageGeneral({ serviceId, environmentId, isCronJob, isLifecycleJob }: PageGeneralProps) {
   return (
-    <div className="mt-2 flex min-h-0 flex-grow rounded bg-white">
-      <div className="flex grow flex-col">
-        <div className="flex grow flex-row">
-          <div className="flex min-h-0 grow flex-col gap-6 overflow-y-auto px-10 py-7">
-            <PodStatusesCallout environmentId={environmentId} serviceId={serviceId} />
-            <PodsMetrics environmentId={environmentId} serviceId={serviceId}>
-              {isCronJob && (
-                <div className="grid grid-cols-[min-content_1fr] gap-x-3 gap-y-1 rounded border border-neutral-250 bg-neutral-100 p-3 text-xs text-neutral-350">
-                  <Icon className="row-span-2" iconName="circle-info" />
-                  <p>
-                    The number of past Completed or Failed job execution retained in the history and their TTL can be
-                    customized in the advanced settings.
-                  </p>
-                  <ExternalLink
-                    className="text-xs"
-                    href="https://hub.qovery.com/docs/using-qovery/configuration/advanced-settings/#cronjobfailed_job_history_limit"
-                  >
-                    See documentation
-                  </ExternalLink>
-                </div>
-              )}
-            </PodsMetrics>
-            {isLifecycleJob && <OutputVariables serviceId={serviceId} />}
-          </div>
-          <ServiceDetails className="w-[360px] border-l" environmentId={environmentId} serviceId={serviceId} />
-        </div>
+    <div className="flex grow flex-row">
+      <div className="flex min-h-0 grow flex-col gap-6 overflow-y-auto px-10 py-7">
+        <PodStatusesCallout environmentId={environmentId} serviceId={serviceId} />
+        <PodsMetrics environmentId={environmentId} serviceId={serviceId}>
+          {isCronJob && (
+            <div className="grid grid-cols-[min-content_1fr] gap-x-3 gap-y-1 rounded border border-neutral-250 bg-neutral-100 p-3 text-xs text-neutral-350">
+              <Icon className="row-span-2" iconName="circle-info" />
+              <p>
+                The number of past Completed or Failed job execution retained in the history and their TTL can be
+                customized in the advanced settings.
+              </p>
+              <ExternalLink
+                className="text-xs"
+                href="https://hub.qovery.com/docs/using-qovery/configuration/advanced-settings/#cronjobfailed_job_history_limit"
+              >
+                See documentation
+              </ExternalLink>
+            </div>
+          )}
+        </PodsMetrics>
+        {isLifecycleJob && <OutputVariables serviceId={serviceId} />}
       </div>
+      <ServiceDetails className="w-[360px] border-l" environmentId={environmentId} serviceId={serviceId} />
     </div>
   )
 }

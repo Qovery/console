@@ -1,5 +1,5 @@
 import { type ReactNode } from 'react'
-import { NavigationLeft, type NavigationLeftLinkProps } from '@qovery/shared/ui'
+import { ErrorBoundary, NavigationLeft, type NavigationLeftLinkProps } from '@qovery/shared/ui'
 
 export interface PageSettingsProps {
   links: NavigationLeftLinkProps[]
@@ -10,11 +10,13 @@ export function PageSettings(props: PageSettingsProps) {
   const { links, children } = props
 
   return (
-    <div className="mt-2 flex flex-grow rounded-sm bg-white">
-      <div className="relative w-72 border-r border-neutral-200 pb-10">
+    <div className="flex flex-grow">
+      <div className="relative w-72 shrink-0 border-r border-neutral-200 pb-10">
         <NavigationLeft className="sticky top-14 pt-6" links={links} />
       </div>
-      <div className="flex flex-grow">{children}</div>
+      <div className="flex flex-grow">
+        <ErrorBoundary>{children}</ErrorBoundary>
+      </div>
     </div>
   )
 }

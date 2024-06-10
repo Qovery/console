@@ -11,13 +11,14 @@ import {
 import posthog from 'posthog-js'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { ErrorBoundary, type FallbackProps } from 'react-error-boundary'
 import { FlatProviders, makeProvider } from 'react-flat-providers'
 // import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { BrowserRouter } from 'react-router-dom'
 import { IntercomProvider } from 'react-use-intercom'
 import { InstantSearchProvider } from '@qovery/shared/assistant/feature'
 import { LOGIN_AUTH_REDIRECT_URL, LOGIN_URL } from '@qovery/shared/routes'
-import { ModalProvider, ToastBehavior, toastError } from '@qovery/shared/ui'
+import { ErrorFallback, ModalProvider, ToastBehavior, toastError } from '@qovery/shared/ui'
 import { ToastEnum, toast } from '@qovery/shared/ui'
 import {
   INTERCOM,
@@ -140,6 +141,10 @@ const queryClient = new QueryClient({
   }),
 })
 
+function fallbackRender({ error, resetErrorBoundary }: FallbackProps) {
+  return <ErrorFallback className="h-screen" error={error} resetErrorBoundary={resetErrorBoundary} />
+}
+
 root.render(
   <StrictMode>
     <FlatProviders
@@ -162,12 +167,14 @@ root.render(
       ]}
     >
       <BrowserRouter>
-        <TooltipProvider>
-          <ModalProvider>
-            <App />
-            <ToastBehavior />
-          </ModalProvider>
-        </TooltipProvider>
+        <ErrorBoundary fallbackRender={fallbackRender}>
+          <TooltipProvider>
+            <ModalProvider>
+              <App />
+              <ToastBehavior />
+            </ModalProvider>
+          </TooltipProvider>
+        </ErrorBoundary>
       </BrowserRouter>
       {/* <ReactQueryDevtools initialIsOpen={false} /> */}
     </FlatProviders>

@@ -52,7 +52,7 @@ export function PageDeploymentRules({
   }, [deploymentRules, isLoading])
 
   return (
-    <div className="mt-2 flex flex-grow flex-col rounded bg-white">
+    <>
       {isLoading && <div className="h-full" />}
       {listRules.length === 0 && !isLoading && <PlaceholderNoRules linkNewRule={linkNewRule} />}
       {listRules.length >= 1 && !isLoading && (
@@ -106,7 +106,7 @@ export function PageDeploymentRules({
           </div>
         </div>
       )}
-    </div>
+    </>
   )
 }
 
