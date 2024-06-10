@@ -47,10 +47,10 @@ exports[`StatusChip should match snapshot for ERROR status 1`] = `
       class="relative"
     >
       <span
-        class="absolute inline-flex h-full w-full animate-ping-small rounded-full border-2 border-red-500 bg-transparent opacity-75"
+        class="absolute inline-flex h-full w-full animate-ping-small rounded-full bg-red-500 opacity-75"
       />
       <svg
-        class="text-red-500 relative"
+        class="text-red-500 relative rounded-full bg-white"
         fill="none"
         height="16"
         viewBox="0 0 24 24"
