@@ -1,5 +1,5 @@
 import { Chance } from 'chance'
-import { GitProviderEnum, StorageTypeEnum } from 'qovery-typescript-axios'
+import { ContainerRegistryKindEnum, GitProviderEnum, StorageTypeEnum } from 'qovery-typescript-axios'
 import { type Job } from '@qovery/domains/services/data-access'
 
 const chance = new Chance('123')
@@ -32,6 +32,13 @@ export const cronjobFactoryMock = (howMany: number, withContainer = false): Job[
           name: 'nginx',
           image_name: 'nginx/nginx',
           registry_id: chance.guid(),
+          tag: '1.0.0',
+          registry: {
+            id: '0',
+            name: 'registry',
+            url: 'http://registry.qovery.io',
+            kind: ContainerRegistryKindEnum.DOCKER_HUB,
+          },
         },
       }
     }
@@ -107,6 +114,13 @@ export const lifecycleJobFactoryMock = (howMany: number, withContainer = false):
           name: 'nginx',
           image_name: 'nginx/nginx',
           registry_id: chance.guid(),
+          tag: '1.0.0',
+          registry: {
+            id: '0',
+            name: 'registry',
+            url: 'http://registry.qovery.io',
+            kind: ContainerRegistryKindEnum.DOCKER_HUB,
+          },
         },
       }
     }
