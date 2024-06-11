@@ -447,6 +447,9 @@ export function VariableList({
     ],
     [variables.length, _onCreateVariable, _onEditVariable, props.scope]
   )
+
+  const aliases = useMemo(() => variables.filter((sorted) => sorted.aliased_variable), [variables])
+
   const table = useReactTable({
     data: variables,
     columns,
@@ -459,11 +462,18 @@ export function VariableList({
     onRowSelectionChange: setRowSelection,
     enableRowSelection: (row) => row.original.scope !== 'BUILT_IN',
     onGlobalFilterChange: setGlobalFilter,
-    globalFilterFn: (row, columnId, value) => {
+    globalFilterFn: (row, _, value) => {
       // Search by variable by key
-      return (
-        columnId === 'key' && (row.getValue(columnId) as string)?.toLowerCase?.().includes?.(value?.toLowerCase?.())
-      )
+      // row.original.overridden_variable?.key
+      const pattern = value?.toLowerCase?.()
+
+      const aliasedVariable = aliases.find(({ aliased_variable }) => row.original.key === aliased_variable?.key)
+
+      if (aliasedVariable && aliasedVariable.key.toLocaleLowerCase().includes(pattern)) {
+        return true
+      }
+
+      return row.original.key?.toLowerCase?.().includes?.(pattern)
     },
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),

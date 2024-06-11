@@ -143,6 +143,47 @@ jest.mock('../hooks/use-variables/use-variables', () => ({
         owned_by: 'DOPPLER',
         is_secret: true,
       },
+      {
+        id: '3486e37c-5cdc-4e50-bcf7-75b1c818eb5f',
+        created_at: '2023-11-20T14:02:45.128221Z',
+        updated_at: '2023-11-20T14:02:45.128223Z',
+        key: 'FOO',
+        value: 'fdgsdfg',
+        mount_path: null,
+        scope: 'PROJECT',
+        overridden_variable: null,
+        aliased_variable: null,
+        variable_type: 'VALUE',
+        service_id: null,
+        service_name: null,
+        service_type: null,
+        owned_by: 'QOVERY',
+        is_secret: false,
+      },
+      {
+        id: '7d1b18cf-9ea1-4b00-b82a-4b5d152aa6eb',
+        created_at: '2024-06-10T12:53:23.97647Z',
+        updated_at: '2024-06-10T12:53:23.976472Z',
+        key: 'BAR',
+        value: 'bar',
+        mount_path: null,
+        scope: 'PROJECT',
+        overridden_variable: null,
+        aliased_variable: {
+          id: '3486e37c-5cdc-4e50-bcf7-75b1c818eb5f',
+          key: 'FOO',
+          value: 'fdgsdfg',
+          scope: 'PROJECT',
+          variable_type: 'VALUE',
+          mount_path: null,
+        },
+        variable_type: 'ALIAS',
+        service_id: null,
+        service_name: null,
+        service_type: null,
+        owned_by: 'QOVERY',
+        is_secret: false,
+      },
     ],
   }),
 }))
@@ -174,7 +215,7 @@ describe('VariableList', () => {
   it('should display all variables', () => {
     renderWithProviders(<VariableList {...variableListProps} />)
     const rows = screen.getAllByRole('row')
-    expect(rows).toHaveLength(8)
+    expect(rows).toHaveLength(10)
     expect(screen.getAllByTestId('doppler-tag')).toHaveLength(1)
   })
   it('should filter variables by name', async () => {
@@ -213,5 +254,17 @@ describe('VariableList', () => {
     expect(menuItems3[2]).toHaveAttribute('aria-disabled')
     expect(menuItems3[3]).toHaveTextContent(/delete/i)
     userEvent.keyboard('{Escape}')
+  })
+  it('should search variables by name', async () => {
+    const { userEvent } = renderWithProviders(<VariableList {...variableListProps} />)
+    await userEvent.type(screen.getByRole('textbox'), 'FOO')
+    const rows = screen.getAllByRole('row')
+    expect(rows).toHaveLength(2)
+  })
+  it('should search variables by name with aliases', async () => {
+    const { userEvent } = renderWithProviders(<VariableList {...variableListProps} />)
+    await userEvent.type(screen.getByRole('textbox'), 'BAR')
+    const rows = screen.getAllByRole('row')
+    expect(rows).toHaveLength(3)
   })
 })
