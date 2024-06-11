@@ -100,7 +100,7 @@ describe('StepResourcesFeature', () => {
 
     await waitFor(() => {
       expect(button).not.toBeDisabled()
-      expect(mockSetResourceData).toBeCalledWith({
+      expect(mockSetResourceData).toHaveBeenCalledWith({
         instance_type: 't2.small',
         disk_size: '22',
         cluster_type: 'MANAGED',

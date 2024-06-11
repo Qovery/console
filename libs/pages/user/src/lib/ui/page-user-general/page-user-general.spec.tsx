@@ -55,6 +55,6 @@ describe('PageUserGeneral', () => {
     expect(submitButton).not.toBeDisabled()
 
     await userEvent.click(submitButton)
-    expect(mockSubmit).toBeCalled()
+    expect(mockSubmit).toHaveBeenCalled()
   })
 })

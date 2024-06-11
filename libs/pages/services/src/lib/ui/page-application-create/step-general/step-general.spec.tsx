@@ -41,7 +41,7 @@ describe('StepGeneral', () => {
     expect(props.onSubmit).toHaveBeenCalled()
   })
 
-  it('should display git application inputs', async () => {
+  it('should display git application inputs for APPLICATION', async () => {
     renderWithProviders(
       wrapWithReactHookForm(<StepGeneral {...props} />, {
         defaultValues: {
@@ -58,7 +58,7 @@ describe('StepGeneral', () => {
     expect(registryInput).toBeNull()
   })
 
-  it('should display git application inputs', async () => {
+  it('should display git application inputs for CONTAINER', async () => {
     renderWithProviders(
       wrapWithReactHookForm(<StepGeneral {...props} />, {
         defaultValues: {

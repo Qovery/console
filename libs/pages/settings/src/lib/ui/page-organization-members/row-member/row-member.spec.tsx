@@ -84,7 +84,7 @@ describe('RowMember', () => {
 
     await userEvent.click(items[0])
 
-    expect(spy).toBeCalled()
+    expect(spy).toHaveBeenCalled()
   })
 
   it('should have menu with transfer member role action', async () => {
@@ -100,23 +100,7 @@ describe('RowMember', () => {
 
     await userEvent.click(items[0])
 
-    expect(spy).toBeCalled()
-  })
-
-  it('should have menu with transfer member role action', async () => {
-    const spy = jest.fn()
-    props.transferOwnership = spy
-    props.userIsOwner = true
-    props.member = membersMock(1)[0]
-
-    const { userEvent } = renderWithProviders(<RowMember {...props} />)
-    await userEvent.click(screen.getByTestId('element'))
-
-    const items = screen.getAllByTestId('menuItem')
-
-    await userEvent.click(items[0])
-
-    expect(spy).toBeCalled()
+    expect(spy).toHaveBeenCalled()
   })
 
   it('should have menu with resend invite action', async () => {
@@ -131,6 +115,6 @@ describe('RowMember', () => {
 
     await userEvent.click(items[0])
 
-    expect(spy).toBeCalled()
+    expect(spy).toHaveBeenCalled()
   })
 })

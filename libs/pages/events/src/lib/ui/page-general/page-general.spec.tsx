@@ -35,11 +35,6 @@ describe('PageGeneral', () => {
     screen.getByTestId('empty-result')
   })
 
-  it('should render empty result if not loading and no result', () => {
-    renderWithProviders(<PageGeneral {...props} isLoading={false} events={[]} />)
-    screen.getByTestId('empty-result')
-  })
-
   it('should render 10 events if not loading and 10 events', () => {
     renderWithProviders(<PageGeneral {...props} isLoading={false} />)
     expect(screen.getAllByTestId('row-event')).toHaveLength(10)

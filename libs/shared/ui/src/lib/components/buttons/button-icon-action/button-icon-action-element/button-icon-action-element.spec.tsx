@@ -16,9 +16,10 @@ describe('ButtonIconActionElement', () => {
   })
 
   it('should have an icon', () => {
+    render(<ButtonIconActionElement {...props} />)
     const element = screen.queryByTestId('element')
 
-    expect(element?.querySelector('svg')?.classList.contains('icon-solid-ellipsis-v'))
+    expect(element?.querySelector('span')?.classList).toContain('icon-solid-ellipsis-v')
   })
 
   it('should have a click emitted', () => {

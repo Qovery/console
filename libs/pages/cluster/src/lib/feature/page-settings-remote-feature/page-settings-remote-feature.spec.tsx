@@ -56,7 +56,7 @@ describe('PageSettingsRemoteFeature', () => {
 
     const cloneCluster = handleSubmit({ ssh_key: 'hello' }, mockCluster)
 
-    expect(editCluster).toBeCalledWith({
+    expect(editCluster).toHaveBeenCalledWith({
       organizationId: '0',
       clusterId: mockCluster.id,
       clusterRequest: cloneCluster,

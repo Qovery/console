@@ -78,6 +78,6 @@ describe('NeedRedeployFlag', () => {
 
     await userEvent.click(button)
 
-    expect(useDeployServiceSpy().mutate).toBeCalled()
+    expect(useDeployServiceSpy().mutate).toHaveBeenCalled()
   })
 })

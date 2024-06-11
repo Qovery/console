@@ -44,7 +44,7 @@ describe('Skeleton', () => {
 
     const skeleton = screen.queryByTestId('skeleton')
 
-    expect(skeleton?.classList.contains('truncate'))
+    expect(skeleton?.classList).toContain('truncate')
   })
 
   it('should have a rounded 100%', () => {

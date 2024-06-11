@@ -100,7 +100,7 @@ describe('PageSettingsCredentialsFeature', () => {
       cloudProviderInfo
     )
 
-    expect(editCloudProviderInfo).toBeCalledWith({
+    expect(editCloudProviderInfo).toHaveBeenCalledWith({
       organizationId: '0',
       clusterId: mockCluster.id,
       cloudProviderInfoRequest: cloneClusterProviderInfo,

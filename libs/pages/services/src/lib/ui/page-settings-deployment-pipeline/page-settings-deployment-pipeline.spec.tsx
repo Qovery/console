@@ -119,7 +119,7 @@ describe('PageSettingsDeploymentPipeline', () => {
 
     await userEvent.click(screen.getByTestId('btn-add-stage'))
 
-    expect(onAddStage).toBeCalled()
+    expect(onAddStage).toHaveBeenCalled()
   })
 
   it('should have button to delete and edit stage', async () => {
@@ -142,9 +142,9 @@ describe('PageSettingsDeploymentPipeline', () => {
     // delete stage
     await userEvent.click(items2[2])
 
-    expect(menuEditStage).toBeCalled()
-    expect(menuOrderStage).toBeCalled()
-    expect(menuDeleteStage).toBeCalled()
+    expect(menuEditStage).toHaveBeenCalled()
+    expect(menuOrderStage).toHaveBeenCalled()
+    expect(menuDeleteStage).toHaveBeenCalled()
   })
 
   it('should have placeholder for stage', () => {

@@ -52,7 +52,7 @@ describe('PageOrganizationGeneral', () => {
 
     const cloneOrganization = handleSubmit(organization, mockOrganization)
 
-    expect(useEditOrganizationSpy().mutateAsync).toBeCalledWith({
+    expect(useEditOrganizationSpy().mutateAsync).toHaveBeenCalledWith({
       organizationId: '0',
       organizationRequest: cloneOrganization,
     })

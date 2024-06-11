@@ -132,8 +132,7 @@ describe('LayoutLogs', () => {
 
     renderWithProviders(<LayoutLogs {...props} />)
 
-    const checkboxDebug = screen.getByTestId('checkbox-debug')
-    expect(checkboxDebug)
+    screen.getByTestId('checkbox-debug')
   })
 
   it('should have progressing bar', () => {

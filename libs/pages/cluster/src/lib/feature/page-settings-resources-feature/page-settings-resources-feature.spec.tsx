@@ -97,7 +97,7 @@ describe('PageSettingsResourcesFeature', () => {
 
     await userEvent.click(button)
 
-    expect(editCluster).toBeCalledWith({
+    expect(editCluster).toHaveBeenCalledWith({
       organizationId: '0',
       clusterId: mockCluster.id,
       clusterRequest: cloneCluster,

@@ -77,53 +77,49 @@ export function PageGeneral({
   const columnsWidth = '14% 14% 12% 15% 10% 22% 11%'
 
   return (
-    <>
-      <Section className="grow p-8">
-        <div className="mb-4 flex h-9 items-center">
-          <CustomFilterFeature handleClearFilter={handleClearFilter} />
-        </div>
+    <Section className="grow p-8">
+      <div className="mb-4 flex h-9 items-center">
+        <CustomFilterFeature handleClearFilter={handleClearFilter} />
+      </div>
 
-        <Table
-          dataHead={dataHead}
-          data={events}
-          filter={filter}
-          setFilter={setFilter}
-          className="rounded border border-neutral-200"
-          classNameHead="rounded-t"
-          columnsWidth={columnsWidth}
-        >
-          <div>
-            {isLoading ? (
-              placeholderEvents?.map((event) => (
-                <RowEventFeature key={event.timestamp} event={event} columnsWidth={columnsWidth} isPlaceholder />
-              ))
-            ) : events && events.length === 0 ? (
-              <div className="flex h-[30vh] items-center justify-center px-5 py-4 text-center">
-                <div>
-                  <Icon iconName="wave-pulse" className="text-neutral-350" />
-                  <p className="mt-1 text-xs font-medium text-neutral-350" data-testid="empty-result">
-                    No events found, we retain logs for a maximum of 30 days <br /> Try to change your filters.
-                  </p>
-                </div>
+      <Table
+        dataHead={dataHead}
+        data={events}
+        filter={filter}
+        setFilter={setFilter}
+        className="rounded border border-neutral-200"
+        classNameHead="rounded-t"
+        columnsWidth={columnsWidth}
+      >
+        <div>
+          {isLoading ? (
+            placeholderEvents?.map((event) => (
+              <RowEventFeature key={event.timestamp} event={event} columnsWidth={columnsWidth} isPlaceholder />
+            ))
+          ) : events && events.length === 0 ? (
+            <div className="flex h-[30vh] items-center justify-center px-5 py-4 text-center">
+              <div>
+                <Icon iconName="wave-pulse" className="text-neutral-350" />
+                <p className="mt-1 text-xs font-medium text-neutral-350" data-testid="empty-result">
+                  No events found, we retain logs for a maximum of 30 days <br /> Try to change your filters.
+                </p>
               </div>
-            ) : (
-              events?.map((event) => (
-                <RowEventFeature key={event.timestamp} event={event} columnsWidth={columnsWidth} />
-              ))
-            )}
-          </div>
-        </Table>
-        <Pagination
-          className="pb-7 pt-4"
-          onPrevious={onPrevious}
-          onNext={onNext}
-          nextDisabled={nextDisabled}
-          previousDisabled={previousDisabled}
-          pageSize={pageSize}
-          onPageSizeChange={onPageSizeChange}
-        />
-      </Section>
-    </>
+            </div>
+          ) : (
+            events?.map((event) => <RowEventFeature key={event.timestamp} event={event} columnsWidth={columnsWidth} />)
+          )}
+        </div>
+      </Table>
+      <Pagination
+        className="pb-7 pt-4"
+        onPrevious={onPrevious}
+        onNext={onNext}
+        nextDisabled={nextDisabled}
+        previousDisabled={previousDisabled}
+        pageSize={pageSize}
+        onPageSizeChange={onPageSizeChange}
+      />
+    </Section>
   )
 }
 

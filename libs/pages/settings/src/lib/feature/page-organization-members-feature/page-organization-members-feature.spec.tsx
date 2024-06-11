@@ -68,7 +68,7 @@ describe('PageOrganizationMembersFeature', () => {
     // menu for row members
     await userEvent.click(items[5])
 
-    expect(useEditMemberRoleSpy).toBeCalled()
+    expect(useEditMemberRoleSpy).toHaveBeenCalled()
   })
 
   it('should have dispatch to transfer ownership', async () => {
@@ -79,8 +79,8 @@ describe('PageOrganizationMembersFeature', () => {
     // menu for row members
     await userEvent.click(items[3])
 
-    expect(useTransferOwnershipMemberRoleSpy).toBeCalled()
-    expect(useMembersSpy).toBeCalled()
+    expect(useTransferOwnershipMemberRoleSpy).toHaveBeenCalled()
+    expect(useMembersSpy).toHaveBeenCalled()
   })
 
   it('should have dispatch resend invite', async () => {
@@ -91,7 +91,7 @@ describe('PageOrganizationMembersFeature', () => {
     // menu for resend invite
     await userEvent.click(items[8])
 
-    expect(useDeleteInviteMemberSpy).toBeCalled()
-    expect(useCreateInviteMemberSpy).toBeCalled()
+    expect(useDeleteInviteMemberSpy).toHaveBeenCalled()
+    expect(useCreateInviteMemberSpy).toHaveBeenCalled()
   })
 })

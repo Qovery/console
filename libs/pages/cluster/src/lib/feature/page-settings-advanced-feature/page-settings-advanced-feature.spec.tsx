@@ -96,7 +96,7 @@ describe('PageSettingsAdvancedFeature', () => {
       getByTestId('submit-button').click()
     })
 
-    expect(editClusterAdvancedSettingsSpy).toBeCalledWith({
+    expect(editClusterAdvancedSettingsSpy).toHaveBeenCalledWith({
       clusterId: mockCluster.id,
       organizationId: '1',
       clusterAdvancedSettings: {

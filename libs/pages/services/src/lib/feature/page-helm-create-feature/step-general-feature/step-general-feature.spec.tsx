@@ -138,7 +138,7 @@ describe('StepGeneralFeature', () => {
     expect(baseElement).toMatchSnapshot()
   })
 
-  it('should submit a form with a git repository', async () => {
+  it('should submit a form with a public git repository', async () => {
     const { result } = renderHook(() =>
       useForm<HelmGeneralData>({
         mode: 'onChange',

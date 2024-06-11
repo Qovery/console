@@ -68,7 +68,7 @@ describe('PlaceholderLogs', () => {
     screen.getByTestId('spinner')
   })
 
-  it('Infra - should render a placeholder with spinner if logs not loaded', () => {
+  it('Infra - should render a placeholder with empty state', () => {
     props.type = 'infra'
     props.loadingStatus = 'loaded'
     renderWithProviders(<PlaceholderLogs {...props} />)

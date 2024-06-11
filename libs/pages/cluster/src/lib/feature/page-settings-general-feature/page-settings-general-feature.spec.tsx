@@ -59,7 +59,7 @@ describe('PageSettingsGeneralFeature', () => {
       mockCluster
     )
 
-    expect(editCluster).toBeCalledWith({
+    expect(editCluster).toHaveBeenCalledWith({
       organizationId: '0',
       clusterId: mockCluster.id,
       clusterRequest: cloneCluster,

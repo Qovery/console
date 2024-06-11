@@ -87,7 +87,7 @@ describe('CrudModalFeature', () => {
       route
     )
 
-    expect(editRoutingTable).toBeCalledWith({
+    expect(editRoutingTable).toHaveBeenCalledWith({
       organizationId: '0',
       clusterId: '0',
       routingTableRequest: { routes },

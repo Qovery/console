@@ -12,7 +12,7 @@ describe('StepKubeconfig', () => {
     )
     expect(container).toMatchSnapshot()
   })
-  it('should match snapshot', () => {
+  it('should match snapshot with data', () => {
     const onSubmit = jest.fn()
     const { container } = renderWithProviders(
       wrapWithReactHookForm(<StepKubeconfig onSubmit={onSubmit} />, {
