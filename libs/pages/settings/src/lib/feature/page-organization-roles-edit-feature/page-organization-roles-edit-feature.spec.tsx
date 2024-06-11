@@ -149,7 +149,7 @@ describe('PageOrganizationRolesEdit', () => {
 
     const button = screen.getByTestId('submit-save-button')
     waitFor(() => {
-      expect(button).not.toBeDisabled()
+      expect(button).toBeEnabled()
     })
 
     await userEvent.click(button)

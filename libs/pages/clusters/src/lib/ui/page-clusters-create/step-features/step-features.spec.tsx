@@ -77,7 +77,7 @@ describe('StepFeatures', () => {
     await userEvent.click(input)
     await userEvent.click(button)
 
-    expect(button).not.toBeDisabled()
+    expect(button).toBeEnabled()
     expect(props.onSubmit).toHaveBeenCalled()
   })
 })

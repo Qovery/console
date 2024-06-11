@@ -73,7 +73,7 @@ describe('Menu', () => {
 
     const menu = screen.getByRole('menu')
 
-    expect(menu).toBeTruthy()
+    expect(menu).toBeInTheDocument()
   })
 
   it('should have an accurate direction', () => {
@@ -84,7 +84,7 @@ describe('Menu', () => {
 
     const menu = screen.getByRole('menu')
 
-    expect(menu.classList.contains('szh-menu--dir-right')).toBe(true)
+    expect(menu).toHaveClass('szh-menu--dir-right')
   })
 
   it('should have an item have an icon', () => {
@@ -107,7 +107,7 @@ describe('Menu', () => {
 
     const item = screen.getByTestId('menu-icon')
 
-    expect(item).toBeTruthy()
+    expect(item).toBeInTheDocument()
   })
 
   it('should have a search input on menu', () => {
@@ -131,7 +131,7 @@ describe('Menu', () => {
 
     const search = screen.getByTestId('menu-search')
 
-    expect(search).toBeTruthy()
+    expect(search).toBeInTheDocument()
   })
 
   it('should have a custom content on menu', () => {
@@ -151,6 +151,6 @@ describe('Menu', () => {
     render(<Menu {...props} />)
 
     const menu = screen.getByTestId('menuItem')
-    expect(menu.textContent).toBe('hello')
+    expect(menu).toHaveTextContent('hello')
   })
 })

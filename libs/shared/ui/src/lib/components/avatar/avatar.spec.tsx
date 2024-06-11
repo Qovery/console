@@ -38,7 +38,7 @@ describe('Avatar', () => {
 
     const icon = screen.getByTestId('avatar-icon')
 
-    expect(icon).toBeTruthy()
+    expect(icon).toBeInTheDocument()
   })
 
   it('should have an avatar logo with img', () => {
@@ -59,6 +59,6 @@ describe('Avatar', () => {
     const logo = screen.getByTestId('avatar-logo')
 
     expect(logo.querySelector('span')).toBeDefined()
-    expect(logo.textContent).toBe('Orga')
+    expect(logo).toHaveTextContent('Orga')
   })
 })

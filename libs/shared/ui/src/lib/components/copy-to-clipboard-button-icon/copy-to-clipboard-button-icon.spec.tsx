@@ -18,13 +18,13 @@ describe('CopyToClipboardButtonIcon', () => {
     props.className = 'class-name'
     render(<CopyToClipboardButtonIcon {...props} />)
     const icon = screen.getByTestId('copy-container')
-    expect(icon.classList.contains('class-name')).toBeTruthy()
+    expect(icon).toHaveClass('class-name')
   })
 
   it('should have the right className for icon', () => {
     props.iconClassName = 'class-name'
     render(<CopyToClipboardButtonIcon {...props} />)
     const icon = screen.getByRole('img')
-    expect(icon.classList.contains('class-name')).toBeTruthy()
+    expect(icon).toHaveClass('class-name')
   })
 })

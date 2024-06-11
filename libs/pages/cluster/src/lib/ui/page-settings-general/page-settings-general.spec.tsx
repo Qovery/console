@@ -41,7 +41,7 @@ describe('PageSettingsGeneral', () => {
     const button = await screen.findByTestId('submit-button')
     // https://react-hook-form.com/advanced-usage#TransformandParse
     expect(button).toBeInTheDocument()
-    expect(button).not.toBeDisabled()
+    expect(button).toBeEnabled()
     await userEvent.click(button)
     expect(props.onSubmit).toHaveBeenCalled()
   })

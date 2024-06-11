@@ -65,7 +65,7 @@ describe('StepGeneralFeature', () => {
     const submitButton = await screen.findByTestId('button-submit')
     // https://react-hook-form.com/advanced-usage#TransformandParse
     expect(submitButton).toBeInTheDocument()
-    expect(submitButton).not.toBeDisabled()
+    expect(submitButton).toBeEnabled()
 
     await userEvent.click(submitButton)
 

@@ -87,7 +87,7 @@ describe('StepGeneralFeature', () => {
 
     // wait for form to be valid because we have selects (necessary with react hook form)
     waitFor(async () => {
-      expect(button).not.toBeDisabled()
+      expect(button).toBeEnabled()
       await userEvent.click(button)
     })
 
@@ -131,7 +131,7 @@ describe('StepGeneralFeature', () => {
 
     // wait for form to be valid because we have selects (necessary with react hook form)
     waitFor(async () => {
-      expect(button).not.toBeDisabled()
+      expect(button).toBeEnabled()
       await userEvent.click(button)
     })
 
@@ -176,7 +176,7 @@ describe('StepGeneralFeature', () => {
 
     // wait for form to be valid because we have selects (necessary with react hook form)
     waitFor(async () => {
-      expect(button).not.toBeDisabled()
+      expect(button).toBeEnabled()
       await userEvent.click(button)
     })
 

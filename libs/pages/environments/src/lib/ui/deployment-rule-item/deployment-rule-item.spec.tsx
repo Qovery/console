@@ -28,7 +28,7 @@ describe('DeploymentRuleItem', () => {
 
     const item = screen.getByTestId('item')
 
-    expect(item.className).toContain('rounded-b')
+    expect(item).toHaveClass('rounded-b')
   })
 
   it('should have start time and stop time', () => {
@@ -39,7 +39,7 @@ describe('DeploymentRuleItem', () => {
 
     const time = screen.getByTestId('time')
 
-    expect(time.textContent).toContain('08:14 - 19:00')
+    expect(time).toHaveTextContent(/08:14 - 19:00/)
   })
 
   it('should display running everyday sentences', () => {
@@ -49,7 +49,7 @@ describe('DeploymentRuleItem', () => {
 
     const time = screen.getByTestId('time')
 
-    expect(time.textContent).toContain('Running everyday')
+    expect(time).toHaveTextContent(/Running everyday/)
   })
 
   it('should display running every weekday', () => {
@@ -59,7 +59,7 @@ describe('DeploymentRuleItem', () => {
 
     const time = screen.getByTestId('time')
 
-    expect(time.textContent).toContain('Running every weekday')
+    expect(time).toHaveTextContent(/Running every weekday/)
   })
 
   it('should display days formated', () => {
@@ -69,6 +69,6 @@ describe('DeploymentRuleItem', () => {
 
     const time = screen.getByTestId('time')
 
-    expect(time.textContent).toContain('Mon, Tue')
+    expect(time).toHaveTextContent(/Mon, Tue/)
   })
 })

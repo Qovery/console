@@ -26,7 +26,7 @@ describe('ModalCrud', () => {
 
     await waitFor(() => {
       button.click()
-      expect(button).not.toBeDisabled()
+      expect(button).toBeEnabled()
       expect(props.onSubmit).toHaveBeenCalled()
     })
   })
@@ -42,7 +42,7 @@ describe('ModalCrud', () => {
 
     await waitFor(() => {
       button.click()
-      expect(button.textContent).toBe(props.deleteButtonLabel)
+      expect(button).toHaveTextContent(props.deleteButtonLabel)
       expect(props.onDelete).toHaveBeenCalled()
     })
   })
@@ -68,7 +68,7 @@ describe('ModalCrud', () => {
 
     await waitFor(() => {
       button.click()
-      expect(button).not.toBeDisabled()
+      expect(button).toBeEnabled()
     })
   })
 })

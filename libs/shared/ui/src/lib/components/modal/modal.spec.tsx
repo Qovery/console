@@ -22,7 +22,7 @@ describe('Modal', () => {
     fireEvent.click(trigger)
 
     const modal = screen.getByRole('dialog')
-    expect(modal).toBeTruthy()
+    expect(modal).toBeInTheDocument()
   })
 
   it('should have accurate class name', () => {
@@ -36,7 +36,7 @@ describe('Modal', () => {
 
     const modal = screen.getByRole('dialog')
 
-    expect(modal.classList.contains('some-class-name')).toBeTruthy()
+    expect(modal).toHaveClass('some-class-name')
   })
 
   it('should be default open', () => {
@@ -46,6 +46,6 @@ describe('Modal', () => {
 
     const modal = screen.getByRole('dialog')
 
-    expect(modal).toBeTruthy()
+    expect(modal).toBeInTheDocument()
   })
 })

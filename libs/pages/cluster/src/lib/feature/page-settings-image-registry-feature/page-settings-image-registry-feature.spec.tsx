@@ -24,13 +24,13 @@ describe('SettingsImageRegistryFeature', () => {
 
     const name = screen.getByLabelText('Registry name')
     screen.getByDisplayValue('registry')
-    expect(name).toHaveAttribute('disabled')
+    expect(name).toBeDisabled()
 
     const description = screen.getByLabelText('Description')
-    expect(description).toHaveAttribute('disabled')
+    expect(description).toBeDisabled()
     screen.getByDisplayValue('description')
 
     const type = screen.getByLabelText('Type')
-    expect(type).toHaveAttribute('disabled')
+    expect(type).toBeDisabled()
   })
 })

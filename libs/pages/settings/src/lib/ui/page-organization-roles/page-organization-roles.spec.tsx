@@ -42,7 +42,7 @@ describe('PageOrganizationRoles', () => {
     const { getByTestId } = render(<PageOrganizationRoles {...props} />)
 
     getByTestId(`role-${customRoles[0].id}`)
-    expect(getByTestId(`role-${customRoles[0].id}`).textContent).toBe(`${customRoles[0].name}Custom Role`)
+    expect(getByTestId(`role-${customRoles[0].id}`)).toHaveTextContent(`${customRoles[0].name}Custom Role`)
     getByTestId(`role-actions-${customRoles[0].id}`)
   })
 
@@ -53,7 +53,7 @@ describe('PageOrganizationRoles', () => {
     const { getByTestId } = render(<PageOrganizationRoles {...props} />)
 
     getByTestId(`role-${availableRolesMock[0].id}`)
-    expect(getByTestId(`role-${availableRolesMock[0].id}`).textContent).toBe(`${availableRolesMock[0].name}Basic Role`)
+    expect(getByTestId(`role-${availableRolesMock[0].id}`)).toHaveTextContent(`${availableRolesMock[0].name}Basic Role`)
     getByTestId(`role-doc-${customRoles[0].id}`)
   })
 

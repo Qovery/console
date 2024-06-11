@@ -48,7 +48,7 @@ describe('PageSettingsRemoteFeature', () => {
       fireEvent.input(input, { target: { value: 'hello' } })
     })
 
-    expect(getByTestId('submit-button')).not.toBeDisabled()
+    expect(getByTestId('submit-button')).toBeEnabled()
 
     await act(() => {
       getByTestId('submit-button').click()

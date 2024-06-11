@@ -91,7 +91,7 @@ describe('StepValuesOverrideFilesFeature', () => {
 
     // wait for form to be valid because we have selects (necessary with react hook form)
     waitFor(async () => {
-      expect(button).not.toBeDisabled()
+      expect(button).toBeEnabled()
       await userEvent.click(button)
     })
 
@@ -139,7 +139,7 @@ describe('StepValuesOverrideFilesFeature', () => {
 
     const button = screen.getByRole('button', { name: 'Continue' })
 
-    expect(button).not.toBeDisabled()
+    expect(button).toBeEnabled()
     await userEvent.click(button)
 
     expect(baseElement).toMatchSnapshot()

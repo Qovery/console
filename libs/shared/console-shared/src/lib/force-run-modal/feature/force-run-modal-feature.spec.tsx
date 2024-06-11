@@ -36,7 +36,7 @@ describe('ForceRunModalFeature', () => {
 
     const submit = screen.getByRole('button', { name: 'Force Run' })
 
-    expect(submit).not.toBeDisabled()
+    expect(submit).toBeEnabled()
 
     await userEvent.click(submit)
 

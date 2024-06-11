@@ -98,7 +98,7 @@ describe('ClusterResourcesSettings', () => {
       })
     )
 
-    expect(screen.queryByTestId('aws-cost-banner')).toBeNull()
+    expect(screen.queryByTestId('aws-cost-banner')).not.toBeInTheDocument()
   })
 
   it('should display warning instance box', async () => {

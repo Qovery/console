@@ -25,10 +25,10 @@ describe('PlanCard', () => {
   it('should have text content', () => {
     const { baseElement } = render(<PlanCard {...props} />)
 
-    expect(baseElement.textContent).toContain(props.title)
-    expect(baseElement.textContent).toContain(props.text)
-    expect(baseElement.textContent).toContain(`$${props.price}`)
-    expect(baseElement.textContent).toContain(props.list[0])
+    expect(baseElement).toHaveTextContent(new RegExp(props.title))
+    expect(baseElement).toHaveTextContent(new RegExp(props.text))
+    expect(baseElement).toHaveTextContent(new RegExp(`\\$${props.price}`))
+    expect(baseElement).toHaveTextContent(new RegExp(props.list[0]))
   })
 
   it('should Custom text for Enterprise plan', () => {
@@ -36,6 +36,6 @@ describe('PlanCard', () => {
 
     const { baseElement } = render(<PlanCard {...props} />)
 
-    expect(baseElement.textContent).toContain('Custom')
+    expect(baseElement).toHaveTextContent(/Custom/)
   })
 })

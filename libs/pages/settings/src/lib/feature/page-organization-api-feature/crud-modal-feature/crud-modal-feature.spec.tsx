@@ -41,7 +41,7 @@ describe('CrudModalFeature', () => {
     await userEvent.type(inputDescription, 'description')
 
     const button = screen.getByTestId('submit-button')
-    expect(button).not.toBeDisabled()
+    expect(button).toBeEnabled()
 
     await userEvent.click(button)
 

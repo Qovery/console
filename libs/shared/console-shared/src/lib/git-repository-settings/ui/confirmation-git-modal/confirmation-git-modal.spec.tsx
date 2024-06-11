@@ -26,7 +26,7 @@ describe('ConfirmationGitModal', () => {
 
     await userEvent.click(button)
 
-    expect(button).not.toBeDisabled()
+    expect(button).toBeEnabled()
     expect(spySubmit).toHaveBeenCalled()
     expect(spyClose).toHaveBeenCalled()
   })
@@ -40,7 +40,7 @@ describe('ConfirmationGitModal', () => {
 
     await userEvent.click(button)
 
-    expect(button).not.toBeDisabled()
+    expect(button).toBeEnabled()
     expect(spyClose).toHaveBeenCalled()
   })
 

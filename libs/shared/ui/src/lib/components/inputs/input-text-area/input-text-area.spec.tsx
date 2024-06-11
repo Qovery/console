@@ -25,11 +25,11 @@ describe('InputTextAreaArea', () => {
 
     fireEvent.focus(input)
 
-    expect(inputContainer.className).toContain('input--focused')
+    expect(inputContainer).toHaveClass('input--focused')
 
     fireEvent.blur(input)
 
-    expect(inputContainer.className).not.toContain('input--focused')
+    expect(inputContainer).not.toHaveClass('input--focused')
   })
 
   it('should set the text value when the input event is emitted', async () => {
@@ -39,6 +39,6 @@ describe('InputTextAreaArea', () => {
 
     fireEvent.change(input, { target: { value: 'some new text value' } })
 
-    expect((input as HTMLInputElement).value).toBe('some new text value')
+    expect(input as HTMLInputElement).toHaveValue('some new text value')
   })
 })

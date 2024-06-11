@@ -75,7 +75,7 @@ describe('CrudModalFeature', () => {
       fireEvent.input(inputTarget, { target: { value: 'test' } })
     })
 
-    expect(getByTestId('submit-button')).not.toBeDisabled()
+    expect(getByTestId('submit-button')).toBeEnabled()
 
     await act(() => {
       getByTestId('submit-button').click()

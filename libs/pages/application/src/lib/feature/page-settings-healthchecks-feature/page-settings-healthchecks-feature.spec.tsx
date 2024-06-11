@@ -69,7 +69,7 @@ describe('PageSettingsHealthchecksFeature', () => {
     await userEvent.type(input, 'my-service')
 
     const btnSave = screen.getByRole('button', { name: /save/i })
-    expect(btnSave).not.toBeDisabled()
+    expect(btnSave).toBeEnabled()
 
     await userEvent.click(btnSave)
 

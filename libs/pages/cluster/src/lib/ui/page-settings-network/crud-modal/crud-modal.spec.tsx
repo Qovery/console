@@ -46,7 +46,7 @@ describe('CrudModal', () => {
 
     await waitFor(() => {
       button.click()
-      expect(button).not.toBeDisabled()
+      expect(button).toBeEnabled()
       expect(spy).toHaveBeenCalled()
     })
   })

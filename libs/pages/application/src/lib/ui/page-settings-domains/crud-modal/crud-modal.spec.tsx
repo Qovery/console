@@ -69,7 +69,7 @@ describe('CrudModal', () => {
     const btn = screen.getByRole('button', { name: /create/i })
     await userEvent.click(btn)
 
-    expect(btn).not.toBeDisabled()
+    expect(btn).toBeEnabled()
     expect(spy).toHaveBeenCalled()
   })
 })

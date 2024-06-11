@@ -56,6 +56,6 @@ describe('TableRowFilter', () => {
       </TableRowFilter>
     )
 
-    expect(queryByText('Filtered content')).toBeNull()
+    expect(queryByText('Filtered content')).not.toBeInTheDocument()
   })
 })

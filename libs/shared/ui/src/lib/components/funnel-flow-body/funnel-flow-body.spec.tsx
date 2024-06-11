@@ -32,6 +32,6 @@ describe('FunnelFlowBody', () => {
   it('should not render help section on the side', () => {
     const { baseElement } = render(<FunnelFlowBody>{children}</FunnelFlowBody>)
 
-    expect(queryByTestId(baseElement, 'funnel-body-help')).toBeNull()
+    expect(queryByTestId(baseElement, 'funnel-body-help')).not.toBeInTheDocument()
   })
 })

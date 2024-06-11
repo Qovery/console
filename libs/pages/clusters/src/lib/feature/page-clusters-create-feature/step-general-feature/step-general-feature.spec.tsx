@@ -85,7 +85,7 @@ describe('StepGeneralFeature', () => {
     await userEvent.type(input, 'my-cluster-name')
 
     const button = screen.getByTestId('button-submit')
-    expect(button).not.toBeDisabled()
+    expect(button).toBeEnabled()
 
     await userEvent.click(button)
 

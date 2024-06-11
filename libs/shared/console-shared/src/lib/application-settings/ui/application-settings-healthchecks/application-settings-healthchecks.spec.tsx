@@ -65,8 +65,8 @@ describe('ApplicationSettingsHealthchecks', () => {
     })
 
     // Port is not displayed for EXEC type
-    expect(queryByTestId('input-readiness-probe-port')).toBeNull()
-    expect(queryByTestId('input-liveness-probe-port')).toBeNull()
+    expect(queryByTestId('input-readiness-probe-port')).not.toBeInTheDocument()
+    expect(queryByTestId('input-liveness-probe-port')).not.toBeInTheDocument()
 
     // Render specific fields for EXEC type
     getByTestId('input-readiness-probe-command')

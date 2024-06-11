@@ -90,7 +90,7 @@ describe('PageSettingsResources', () => {
     expect(submitButton).toBeInTheDocument()
 
     await userEvent.click(submitButton)
-    expect(submitButton).not.toBeDisabled()
+    expect(submitButton).toBeEnabled()
     expect(spy).toHaveBeenCalled()
   })
 })

@@ -31,7 +31,7 @@ describe('DraggableItem', () => {
     const { getByText, getByTestId } = renderWithProviders(<DraggableItem {...props} />)
 
     expect(getByText(databases[0].name)).toBeInTheDocument()
-    expect(getByTestId('draggable-item-subtitle').textContent).toBe(
+    expect(getByTestId('draggable-item-subtitle')).toHaveTextContent(
       `${upperCaseFirstLetter(databases[0].type)} - ${upperCaseFirstLetter(databases[0].mode)}`
     )
   })

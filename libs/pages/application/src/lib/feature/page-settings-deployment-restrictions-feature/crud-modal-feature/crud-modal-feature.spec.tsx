@@ -45,7 +45,7 @@ describe('CrudModalFeature', () => {
     await userEvent.clear(screen.getByLabelText('Value'))
     await userEvent.type(screen.getByLabelText('Value'), 'baz')
 
-    expect(submitButton).not.toBeDisabled()
+    expect(submitButton).toBeEnabled()
 
     await userEvent.click(submitButton)
     expect(mutate).toHaveBeenCalledWith({
@@ -82,7 +82,7 @@ describe('CrudModalFeature', () => {
     await userEvent.clear(screen.getByLabelText('Value'))
     await userEvent.type(screen.getByLabelText('Value'), 'baz')
 
-    expect(submitButton).not.toBeDisabled()
+    expect(submitButton).toBeEnabled()
 
     await userEvent.click(submitButton)
     expect(mutate).toHaveBeenCalledWith({

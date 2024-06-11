@@ -37,7 +37,7 @@ describe('StepGeneral', () => {
     const button = screen.getByTestId('button-submit')
     await userEvent.click(button)
 
-    expect(button).not.toBeDisabled()
+    expect(button).toBeEnabled()
     expect(props.onSubmit).toHaveBeenCalled()
   })
 
@@ -55,7 +55,7 @@ describe('StepGeneral', () => {
     screen.getAllByText(/git provider/i)
     screen.getByText(/The service will be automatically updated on every new commit on the branch./i)
     const registryInput = screen.queryByTestId('input-select-registry')
-    expect(registryInput).toBeNull()
+    expect(registryInput).not.toBeInTheDocument()
   })
 
   it('should display git application inputs for CONTAINER', async () => {
@@ -74,7 +74,7 @@ describe('StepGeneral', () => {
       /The service will be automatically updated if Qovery is notified on the API that a new image tag is available./i
     )
     const providerInput = screen.queryByTestId('input-provider')
-    expect(providerInput).toBeNull()
+    expect(providerInput).not.toBeInTheDocument()
   })
 
   it('should display neighter git application nor container inputs', async () => {
@@ -90,7 +90,7 @@ describe('StepGeneral', () => {
 
     const registryInput = screen.queryByTestId('input-select-registry')
     const providerInput = screen.queryByTestId('input-provider')
-    expect(providerInput).toBeNull()
-    expect(registryInput).toBeNull()
+    expect(providerInput).not.toBeInTheDocument()
+    expect(registryInput).not.toBeInTheDocument()
   })
 })

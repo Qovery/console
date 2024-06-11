@@ -35,7 +35,7 @@ describe('RowProject', () => {
       fireEvent.click(input)
     })
 
-    expect(input.checked).toBeTruthy()
+    expect(input).toBeChecked()
   })
 
   it('should be admin by default and check global select', async () => {
@@ -44,22 +44,22 @@ describe('RowProject', () => {
     const { getByTestId, getAllByTestId } = render(wrapWithReactHookForm(<RowProject project={project} />))
 
     const input = getByTestId(`project.${OrganizationCustomRoleProjectPermissionAdmin.ADMIN}`) as HTMLInputElement
-    expect(input.checked).toBeTruthy()
+    expect(input).toBeChecked()
 
     for (let i = 0; i < getAllByTestId('admin-checkbox').length; i++) {
       const permission = getAllByTestId('admin-checkbox')[i] as HTMLInputElement
-      expect(permission.checked).toBeTruthy()
+      expect(permission).toBeChecked()
     }
 
     await act(() => {
       fireEvent.click(input)
     })
 
-    expect(input.checked).toBe(false)
+    expect(input).not.toBeChecked()
 
     for (let i = 0; i < getAllByTestId('admin-checkbox').length; i++) {
       const permission = getAllByTestId('admin-checkbox')[i] as HTMLInputElement
-      expect(permission.checked).toBe(false)
+      expect(permission).not.toBeChecked()
     }
   })
 })

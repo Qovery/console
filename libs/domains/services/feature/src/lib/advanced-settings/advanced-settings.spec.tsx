@@ -88,7 +88,7 @@ describe('AdvancedSettings', () => {
     await userEvent.type(input, '79')
     await userEvent.clear(input)
 
-    expect(screen.getByTestId('submit-button')).not.toBeDisabled()
+    expect(screen.getByTestId('submit-button')).toBeEnabled()
   })
 
   it('should display only overridden settings', async () => {

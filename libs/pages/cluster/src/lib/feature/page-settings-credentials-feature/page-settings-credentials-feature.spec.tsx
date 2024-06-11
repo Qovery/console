@@ -83,7 +83,7 @@ describe('PageSettingsCredentialsFeature', () => {
 
     await selectEvent.select(realSelect, 'my-credential')
 
-    expect(screen.getByTestId('submit-button')).not.toBeDisabled()
+    expect(screen.getByTestId('submit-button')).toBeEnabled()
 
     await userEvent.click(screen.getByTestId('submit-button'))
 

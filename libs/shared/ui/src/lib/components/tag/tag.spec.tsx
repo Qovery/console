@@ -19,6 +19,6 @@ describe('Tag', () => {
     props.size = TagSize.BIG
     render(<Tag {...props} />)
     const tag = screen.getByTestId('tag')
-    expect(tag.classList.contains('h-8')).toBeTruthy()
+    expect(tag).toHaveClass('h-8')
   })
 })

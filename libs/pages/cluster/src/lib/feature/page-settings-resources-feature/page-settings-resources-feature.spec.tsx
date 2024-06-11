@@ -84,7 +84,7 @@ describe('PageSettingsResourcesFeature', () => {
     await userEvent.clear(input)
     await userEvent.type(input, '24')
 
-    expect(button).not.toBeDisabled()
+    expect(button).toBeEnabled()
 
     const cloneCluster = handleSubmit(
       {

@@ -24,6 +24,6 @@ describe('PageSettingsStorageFeature', () => {
     renderWithProviders(<PageSettingsStorageFeature />)
 
     const row = await screen.findByTestId('form-row')
-    expect(row).toBeTruthy()
+    expect(row).toBeInTheDocument()
   })
 })

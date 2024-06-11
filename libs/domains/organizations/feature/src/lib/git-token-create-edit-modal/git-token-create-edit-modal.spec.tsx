@@ -44,7 +44,7 @@ describe('GitTokenCreateEditModal', () => {
     await userEvent.type(inputTokenValue, 'my-token-value')
 
     const btn = screen.getByRole('button', { name: 'Create' })
-    expect(btn).not.toBeDisabled()
+    expect(btn).toBeEnabled()
 
     await userEvent.click(btn)
 
@@ -89,7 +89,7 @@ describe('GitTokenCreateEditModal', () => {
     await userEvent.type(inputTokenValue, 'my-token-value')
 
     const btn = screen.getByRole('button', { name: 'Confirm' })
-    expect(btn).not.toBeDisabled()
+    expect(btn).toBeEnabled()
 
     await userEvent.click(btn)
 

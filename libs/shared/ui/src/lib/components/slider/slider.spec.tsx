@@ -41,7 +41,7 @@ describe('Slider', () => {
       input[1].setAttribute('aria-valuenow', '35')
     })
 
-    expect(input[0].getAttribute('aria-valuenow')).toBe('25')
-    expect(input[1].getAttribute('aria-valuenow')).toBe('35')
+    expect(input[0]).toHaveAttribute('aria-valuenow', '25')
+    expect(input[1]).toHaveAttribute('aria-valuenow', '35')
   })
 })

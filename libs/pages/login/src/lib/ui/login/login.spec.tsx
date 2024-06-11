@@ -17,6 +17,6 @@ describe('Login', () => {
     localStorage.setItem('inviteToken', 'token')
     renderWithProviders(<Login {...props} />)
 
-    expect(screen.queryByText('Connect to Qovery')).toBeNull()
+    expect(screen.queryByText('Connect to Qovery')).not.toBeInTheDocument()
   })
 })

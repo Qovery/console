@@ -62,9 +62,9 @@ describe('PageSettingsPreviewEnvironments', () => {
     renderWithProviders(wrapWithReactHookForm(<PageSettingsPreviewEnvironments {...props} />))
 
     const toggles = screen.getByTestId('toggles')
-    expect(toggles.classList.contains('mt-5')).toBe(true)
+    expect(toggles).toHaveClass('mt-5')
 
     const applicationTitle = screen.getByTestId('services-title')
-    expect(applicationTitle).toBeTruthy()
+    expect(applicationTitle).toBeInTheDocument()
   })
 })

@@ -97,7 +97,7 @@ describe('StepFeaturesFeature', () => {
     })
 
     const button = screen.getByTestId('button-submit')
-    expect(button).not.toBeDisabled()
+    expect(button).toBeEnabled()
     await userEvent.click(button)
 
     const FEATURE = 'FEATURE'

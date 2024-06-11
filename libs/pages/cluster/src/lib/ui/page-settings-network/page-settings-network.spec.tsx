@@ -61,8 +61,8 @@ describe('PageSettingsNetwork', () => {
   it('should have a row that initialize with good values', async () => {
     const { getByTestId } = render(<PageSettingsNetwork {...props} />)
 
-    expect(getByTestId('form-row-target').textContent).toBe(`Target: ${props.routes && props.routes[0].target}`)
-    expect(getByTestId('form-row-destination').textContent).toBe(
+    expect(getByTestId('form-row-target')).toHaveTextContent(`Target: ${props.routes && props.routes[0].target}`)
+    expect(getByTestId('form-row-destination')).toHaveTextContent(
       `Destination: ${props.routes && props.routes[0].destination}`
     )
   })

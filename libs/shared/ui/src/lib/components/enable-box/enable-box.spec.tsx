@@ -56,7 +56,7 @@ describe('EnableBox', () => {
 
     const children = queryByText(baseElement, 'children content')
 
-    expect(children).not.toBeTruthy()
+    expect(children).not.toBeInTheDocument()
 
     await act(() => {
       box.click()
