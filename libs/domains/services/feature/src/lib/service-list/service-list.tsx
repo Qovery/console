@@ -16,7 +16,7 @@ import type {
   ContainerResponse,
   Database,
   Environment,
-  HelmResponseAllOfSourceOneOf1Repository,
+  HelmSourceRepositoryResponse,
 } from 'qovery-typescript-axios'
 import { type ComponentProps, Fragment, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -419,7 +419,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
               </Badge>
             )
 
-          const helmInfo = (helmRepository?: HelmResponseAllOfSourceOneOf1Repository) =>
+          const helmInfo = (helmRepository?: HelmSourceRepositoryResponse) =>
             helmRepository && (
               <div className="ml-7 flex flex-col gap-1" onClick={(e) => e.stopPropagation()}>
                 <span className="inline-block">
