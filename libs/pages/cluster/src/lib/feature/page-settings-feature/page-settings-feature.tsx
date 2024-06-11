@@ -90,20 +90,7 @@ export function PageSettingsFeature() {
   }
 
   const links = match(cluster)
-    .with({ cloud_provider: P.not('ON_PREMISE'), kubernetes: 'SELF_MANAGED' }, () => [
-      generalLink,
-      credentialsLink,
-      imageRegistryLink,
-      kubeconfigLink,
-      advancedSettingsLink,
-      dangerZoneLink,
-    ])
-    .with({ cloud_provider: 'ON_PREMISE', kubernetes: 'SELF_MANAGED' }, () => [
-      generalLink,
-      imageRegistryLink,
-      advancedSettingsLink,
-      dangerZoneLink,
-    ])
+    .with({ kubernetes: 'SELF_MANAGED' }, () => [generalLink, imageRegistryLink, advancedSettingsLink, dangerZoneLink])
     .with({ cloud_provider: 'AWS', kubernetes: 'MANAGED' }, () => [
       generalLink,
       credentialsLink,
