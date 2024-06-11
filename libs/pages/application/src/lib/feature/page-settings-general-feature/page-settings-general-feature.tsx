@@ -128,7 +128,7 @@ export const handleJobSubmit = (
       annotations_groups: annotationsGroups.filter((annotationsGroups) =>
         data.annotations_groups?.includes(annotationsGroups.id)
       ),
-      // labels_groups: labelsGroups.filter((labelsGroups) => data.labels_groups?.includes(labelsGroups.id)),
+      labels_groups: labelsGroups.filter((labelsGroups) => data.labels_groups?.includes(labelsGroups.id)),
       source: {
         docker: {
           git_repository,
@@ -253,7 +253,7 @@ export function PageSettingsGeneralFeature() {
         registry: jobContainerSource?.registry_id,
         image_name: jobContainerSource?.image_name,
         image_tag: jobContainerSource?.tag,
-        // labels_groups: service.labels_groups?.map((group) => group.id),
+        labels_groups: service.labels_groups?.map((group) => group.id),
         annotations_groups: service.annotations_groups?.map((group) => group.id),
         ...schedule,
       }

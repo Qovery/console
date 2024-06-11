@@ -54,7 +54,7 @@ function prepareJobRequest(
     auto_deploy: generalData.auto_deploy,
     healthchecks: {},
     annotations_groups: annotationsGroup.filter((group) => generalData.annotations_groups?.includes(group.id)),
-    // labels_groups: labelsGroup.filter((group) => generalData.labels_groups?.includes(group.id)),
+    labels_groups: labelsGroup.filter((group) => generalData.labels_groups?.includes(group.id)),
   }
 
   if (jobType === ServiceTypeEnum.CRON_JOB) {
