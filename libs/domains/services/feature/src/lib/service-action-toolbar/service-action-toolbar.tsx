@@ -50,6 +50,7 @@ import {
   isStopAvailable,
   urlCodeEditor,
 } from '@qovery/shared/util-js'
+import { ConfirmationCancelLifecycleModal } from '../confirmation-cancel-lifecycle-modal/confirmation-cancel-lifecycle-modal'
 import { useCancelDeploymentService } from '../hooks/use-cancel-deployment-service/use-cancel-deployment-service'
 import { useDeleteService } from '../hooks/use-delete-service/use-delete-service'
 import { useDeployService } from '../hooks/use-deploy-service/use-deploy-service'
@@ -121,14 +122,38 @@ function MenuManageDeployment({
   }
 
   const mutationCancelBuild = () => {
-    openModalConfirmation({
-      mode: environment.mode,
-      title: 'Cancel deployment',
-      description:
-        'Stopping a deployment for your service will stop the deployment of the whole environment. It may take a while, as a safe point needs to be reached. Some operations cannot be stopped (i.e: terraform actions) and need to be completed before stopping the deployment. Any action performed before won’t be rolled back. To confirm the cancellation of your deployment, please type the name of the application:',
-      name: service.name,
-      action: () => cancelBuild({ environmentId: environment.id }),
-    })
+    match(service)
+      .with({ serviceType: 'APPLICATION', job_type: 'LIFECYCLE' }, (s) => {
+        openModal({
+          content: (
+            <ConfirmationCancelLifecycleModal
+              organizationId={environment.organization.id}
+              projectId={environment.project.id}
+              serviceId={s.id}
+              onClose={closeModal}
+            />
+          ),
+          options: { width: 596 },
+        })
+        openModalConfirmation({
+          mode: environment.mode,
+          title: 'Cancel deployment',
+          description:
+            'Stopping a deployment for your service will stop the deployment of the whole environment. It may take a while, as a safe point needs to be reached. Some operations cannot be stopped (i.e: terraform actions) and need to be completed before stopping the deployment. Any action performed before won’t be rolled back. To confirm the cancellation of your deployment, please type the name of the application:',
+          name: s.name,
+          action: () => cancelBuild({ environmentId: environment.id }),
+        })
+      })
+      .otherwise(() =>
+        openModalConfirmation({
+          mode: environment.mode,
+          title: 'Cancel deployment',
+          description:
+            'Stopping a deployment for your service will stop the deployment of the whole environment. It may take a while, as a safe point needs to be reached. Some operations cannot be stopped (i.e: terraform actions) and need to be completed before stopping the deployment. Any action performed before won’t be rolled back. To confirm the cancellation of your deployment, please type the name of the application:',
+          name: service.name,
+          action: () => cancelBuild({ environmentId: environment.id }),
+        })
+      )
   }
 
   const deployCommitVersion = (
