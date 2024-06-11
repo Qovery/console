@@ -11,7 +11,7 @@ import {
   ENVIRONMENTS_URL,
   ENVIRONMENTS_VARIABLES_URL,
 } from '@qovery/shared/routes'
-import { Button, ErrorBoundary, Header, Icon, Section, Tabs, toast, useModal } from '@qovery/shared/ui'
+import { Button, ErrorBoundary, Header, Icon, Section, Tabs, Tooltip, toast, useModal } from '@qovery/shared/ui'
 
 export function Container({ children }: PropsWithChildren) {
   const { organizationId = '', projectId = '' } = useParams()
@@ -64,25 +64,27 @@ export function Container({ children }: PropsWithChildren) {
           />
         </>
       ) : (
-        <Button
-          size="lg"
-          className="gap-2"
-          disabled={!clusterAvailable}
-          onClick={() => {
-            openModal({
-              content: (
-                <CreateCloneEnvironmentModal
-                  onClose={closeModal}
-                  projectId={projectId}
-                  organizationId={organizationId}
-                />
-              ),
-            })
-          }}
-        >
-          New environment
-          <Icon iconName="circle-plus" className="text-xs" />
-        </Button>
+        <Tooltip content="You need to create a cluster first" disabled={clusterAvailable}>
+          <Button
+            size="lg"
+            className="gap-2"
+            disabled={!clusterAvailable}
+            onClick={() => {
+              openModal({
+                content: (
+                  <CreateCloneEnvironmentModal
+                    onClose={closeModal}
+                    projectId={projectId}
+                    organizationId={organizationId}
+                  />
+                ),
+              })
+            }}
+          >
+            New environment
+            <Icon iconName="circle-plus" className="text-xs" />
+          </Button>
+        </Tooltip>
       )}
     </div>
   )
