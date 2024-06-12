@@ -44,6 +44,8 @@ export const applicationFactoryMock = (howMany: number): Application[] =>
     max_running_instances: 3,
     auto_preview: false,
     healthchecks: {},
+    annotations_groups: [],
+    labels_groups: [],
     git_repository: {
       id: chance.guid(),
       url: chance.url(),
