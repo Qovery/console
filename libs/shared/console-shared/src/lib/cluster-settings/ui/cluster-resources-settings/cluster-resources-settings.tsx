@@ -11,8 +11,10 @@ import {
   InputRadioBox,
   InputSelect,
   InputText,
+  InputToggle,
   Slider,
 } from '@qovery/shared/ui'
+import KarpenterImage from './karpenter-image'
 
 export interface ClusterResourcesSettingsProps {
   fromDetail?: boolean
@@ -93,6 +95,31 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
           </div>
         )}
       </BlockContent>
+      {!props.fromDetail && (
+        <Controller
+          name="karpenter"
+          control={control}
+          render={({ field }) => (
+            <div className="relative mb-3 flex h-[104px] flex-col gap-2 overflow-hidden rounded border border-neutral-200 bg-neutral-100 p-4">
+              <InputToggle
+                value={field.value}
+                onChange={field.onChange}
+                title="(Beta) Karpenter"
+                description="Try our new Kubernetes autoscaler"
+                forceAlignTop
+                small
+              />
+              <ExternalLink
+                className="ml-11"
+                href="https://hub.qovery.com/docs/using-qovery/configuration/clusters/#features"
+              >
+                Documentation link
+              </ExternalLink>
+              <KarpenterImage className="absolute right-0 top-0" />
+            </div>
+          )}
+        />
+      )}
       <BlockContent title="Cluster Nodes" className="mb-8">
         <Controller
           name="instance_type"

@@ -22,6 +22,7 @@ export interface ClusterResourcesData {
   instance_type: string
   nodes: [number, number]
   disk_size: number
+  karpenter?: boolean
 }
 
 export interface ClusterRemoteData {
