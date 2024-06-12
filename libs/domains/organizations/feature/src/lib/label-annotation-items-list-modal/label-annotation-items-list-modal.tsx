@@ -7,6 +7,7 @@ import { match } from 'ts-pattern'
 import { APPLICATION_URL, SERVICES_GENERAL_URL, SERVICES_URL } from '@qovery/shared/routes'
 import { Accordion, Heading, Icon, InputSearch, Link, LoaderSpinner, Section } from '@qovery/shared/ui'
 import { useAnnotationsGroupAssociatedItems } from '../hooks/use-annotations-group-associated-items/use-annotations-group-associated-items'
+import { useLabelsGroupAssociatedItems } from '../hooks/use-labels-group-associated-items/use-labels-group-associated-items'
 
 interface Service {
   service_id: string
@@ -77,31 +78,44 @@ export function groupByProjectEnvironmentsServices(
   return projects
 }
 
-export interface AnnotationItemsListModalProps {
+export interface LabelAnnotationItemsListModalProps {
+  type: 'label' | 'annotation'
   organizationId: string
-  annotationsGroupId: string
+  groupId: string
   associatedItemsCount: number
   onClose: () => void
 }
 
-export function AnnotationItemsListModal({
+export function LabelAnnotationItemsListModal({
+  type,
   organizationId,
-  annotationsGroupId,
+  groupId,
   associatedItemsCount,
   onClose,
-}: AnnotationItemsListModalProps) {
-  const { data: annotationsGroupAssociatedItems = [], isLoading } = useAnnotationsGroupAssociatedItems({
+}: LabelAnnotationItemsListModalProps) {
+  const { data: labelsGroupAssociatedItems = [], isLoading: labelsGroupIsLoading } = useLabelsGroupAssociatedItems({
     organizationId,
-    annotationsGroupId,
+    labelsGroupId: groupId,
+    enabled: type === 'label',
   })
+  const { data: annotationsGroupAssociatedItems = [], isLoading: annotationsGroupIsLoading } =
+    useAnnotationsGroupAssociatedItems({
+      organizationId,
+      annotationsGroupId: groupId,
+      enabled: type === 'annotation',
+    })
+
   const [searchValue, setSearchValue] = useState<string | undefined>()
 
-  const data = groupByProjectEnvironmentsServices(annotationsGroupAssociatedItems, searchValue)
+  const data = groupByProjectEnvironmentsServices(
+    annotationsGroupAssociatedItems || labelsGroupAssociatedItems,
+    searchValue
+  )
 
   return (
     <Section className="p-6">
       <Heading className="mb-6 text-2xl text-neutral-400">Associated services ({associatedItemsCount})</Heading>
-      {isLoading ? (
+      {annotationsGroupIsLoading ?? labelsGroupIsLoading ? (
         <div className="flex h-40 items-start justify-center p-5">
           <LoaderSpinner className="w-5" />
         </div>
@@ -186,4 +200,4 @@ export function AnnotationItemsListModal({
   )
 }
 
-export default AnnotationItemsListModal
+export default LabelAnnotationItemsListModal
