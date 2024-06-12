@@ -112,10 +112,12 @@ export function LabelAnnotationItemsListModal({
     searchValue
   )
 
+  const isLoading = type === 'label' ? labelsGroupIsLoading : annotationsGroupIsLoading
+
   return (
     <Section className="p-6">
       <Heading className="mb-6 text-2xl text-neutral-400">Associated services ({associatedItemsCount})</Heading>
-      {annotationsGroupIsLoading ?? labelsGroupIsLoading ? (
+      {isLoading ? (
         <div className="flex h-40 items-start justify-center p-5">
           <LoaderSpinner className="w-5" />
         </div>
