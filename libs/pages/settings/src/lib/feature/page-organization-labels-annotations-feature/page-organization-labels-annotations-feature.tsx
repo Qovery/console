@@ -1,7 +1,7 @@
 import { useParams } from 'react-router-dom'
 import {
   AnnotationCreateEditModal,
-  AnnotationItemsListModal,
+  LabelAnnotationItemsListModal,
   LabelCreateEditModal,
   useAnnotationsGroups,
   useDeleteAnnotationsGroup,
@@ -111,6 +111,19 @@ export function PageOrganizationLabelsAnnotationsFeature() {
                       size="md"
                       className="relative mr-2"
                       disabled={labelsGroup.associated_items_count === 0}
+                      onClick={() => {
+                        openModal({
+                          content: (
+                            <LabelAnnotationItemsListModal
+                              type="label"
+                              organizationId={organizationId}
+                              groupId={labelsGroup.id}
+                              onClose={closeModal}
+                              associatedItemsCount={labelsGroup.associated_items_count ?? 0}
+                            />
+                          ),
+                        })
+                      }}
                     >
                       <span className="absolute -right-1 -top-1 flex h-3 w-3 items-center justify-center rounded-full bg-brand-500 text-3xs font-bold leading-[0] text-white">
                         {labelsGroup.associated_items_count}
@@ -215,9 +228,10 @@ export function PageOrganizationLabelsAnnotationsFeature() {
                       onClick={() => {
                         openModal({
                           content: (
-                            <AnnotationItemsListModal
+                            <LabelAnnotationItemsListModal
+                              type="annotation"
                               organizationId={organizationId}
-                              annotationsGroupId={annotationsGroup.id}
+                              groupId={annotationsGroup.id}
                               onClose={closeModal}
                               associatedItemsCount={annotationsGroup.associated_items_count ?? 0}
                             />
