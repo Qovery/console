@@ -175,7 +175,7 @@ function MenuOtherActions({ cluster, clusterStatus }: { cluster: Cluster; cluste
         <DropdownMenu.Item icon={<Icon iconName="copy" />} onSelect={() => copyToClipboard(cluster.id)}>
           Copy identifier
         </DropdownMenu.Item>
-        {cluster.cloud_provider !== 'ON_PREMISE' && (
+        {cluster.kubernetes !== 'SELF_MANAGED' && (
           <DropdownMenu.Item
             icon={<Icon iconName="download" />}
             onSelect={() => downloadKubeconfig({ organizationId: cluster.organization.id, clusterId: cluster.id })}
