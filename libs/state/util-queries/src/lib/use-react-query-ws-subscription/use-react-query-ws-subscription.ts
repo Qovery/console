@@ -65,12 +65,16 @@ export function useReactQueryWsSubscription({
     if (!enabled) {
       return
     }
-    let websocket: WebSocket | undefined
     let timeout: ReturnType<typeof setTimeout> | undefined
+    const controller = new AbortController()
 
-    async function connect() {
+    async function connect({ signal }: { signal: AbortSignal }) {
       const token = await getAccessTokenSilently()
-      websocket = new WebSocket(`${url}?${searchParams.toString()}`, ['v1', 'auth.bearer.' + token])
+      if (signal.aborted) {
+        // signal already aborted do nothing
+        return
+      }
+      const websocket = new WebSocket(`${url}?${searchParams.toString()}`, ['v1', 'auth.bearer.' + token])
 
       websocket.onopen = async (event) => {
         onOpen?.(queryClient, event)
@@ -94,7 +98,7 @@ export function useReactQueryWsSubscription({
           timeout = setTimeout(
             function () {
               reconnectCount.current++
-              connect()
+              connect({ signal })
             },
             // Exponential Backoff
             // attemptNumber will be 0 the first time it attempts to reconnect, so this equation results in a reconnect pattern of 5 second, 10 seconds, 20 seconds, 40 seconds, 80 seconds, and then caps at 100 seconds until the maximum number of attempts is reached
@@ -104,18 +108,22 @@ export function useReactQueryWsSubscription({
           onClose?.(queryClient, event)
         }
       }
-    }
 
-    connect()
-
-    return () => {
-      if (websocket) {
+      const onAbort = () => {
         shouldReconnect = false
         websocket.close()
         if (timeout) {
           clearTimeout(timeout)
         }
+        signal.removeEventListener('abort', onAbort)
       }
+      signal.addEventListener('abort', onAbort)
+    }
+
+    connect({ signal: controller.signal })
+
+    return () => {
+      controller.abort()
     }
   }, [queryClient, getAccessTokenSilently, onOpen, onMessage, onClose, url, searchParams.toString(), enabled])
 }
