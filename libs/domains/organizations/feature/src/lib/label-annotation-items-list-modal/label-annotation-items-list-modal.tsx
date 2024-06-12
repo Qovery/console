@@ -171,8 +171,7 @@ export function LabelAnnotationItemsListModal({
                                   >
                                     <Icon
                                       name={match(service.service_type)
-                                        // TODO: waiting for API
-                                        //.with('CRON', 'LIFECYCLE', () => `${service.service_type}_JOB`)
+                                        .with('CRON', 'LIFECYCLE', () => `${service.service_type}_JOB`)
                                         .otherwise(() => service.service_type)}
                                       width={20}
                                       className="mr-2"
