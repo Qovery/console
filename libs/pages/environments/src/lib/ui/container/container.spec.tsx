@@ -1,4 +1,4 @@
-import { render } from '__tests__/utils/setup-jest'
+import { renderWithProviders } from '@qovery/shared/util-tests'
 import Container from './container'
 
 jest.mock('react-router-dom', () => ({
@@ -10,7 +10,7 @@ jest.mock('react-router-dom', () => ({
 
 describe('Container', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<Container>Content</Container>)
+    const { baseElement } = renderWithProviders(<Container>Content</Container>)
     expect(baseElement).toBeTruthy()
   })
 })
