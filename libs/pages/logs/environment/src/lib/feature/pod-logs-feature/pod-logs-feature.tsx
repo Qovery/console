@@ -103,6 +103,7 @@ export function PodLogsFeature({ clusterId }: PodLogsFeatureProps) {
       project: projectId,
       environment: environmentId,
       service: serviceId,
+      pod_name: searchParams.get(POD_NAME_KEY) ?? undefined,
     },
     enabled:
       Boolean(organizationId) &&
