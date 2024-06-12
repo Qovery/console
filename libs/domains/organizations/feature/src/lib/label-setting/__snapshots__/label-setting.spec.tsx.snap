@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`AnnotationSetting should match snapshot 1`] = `
+exports[`LabelSetting should match snapshot 1`] = `
 <body>
   <div>
     <div
@@ -12,9 +12,9 @@ exports[`AnnotationSetting should match snapshot 1`] = `
       >
         <label
           class="top-1.5 translate-y-2 text-sm"
-          for="Annotation Groups (optional)"
+          for="Label Groups (optional)"
         >
-          Annotation Groups (optional)
+          Label Groups (optional)
         </label>
         <div
           class=" css-b62m3t-container"
@@ -48,7 +48,7 @@ exports[`AnnotationSetting should match snapshot 1`] = `
                 aria-haspopup="true"
                 aria-readonly="true"
                 class="css-mohuvp-dummyInput-DummyInput"
-                id="Annotation Groups (optional)"
+                id="Label Groups (optional)"
                 inputmode="none"
                 role="combobox"
                 tabindex="0"
@@ -82,14 +82,14 @@ exports[`AnnotationSetting should match snapshot 1`] = `
           </div>
           <div>
             <input
-              name="Annotation Groups (optional)"
+              name="Label Groups (optional)"
               type="hidden"
               value=""
             />
           </div>
         </div>
         <input
-          name="Annotation Groups (optional)"
+          name="Label Groups (optional)"
           type="hidden"
           value=""
         />

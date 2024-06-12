@@ -1,20 +1,27 @@
 import { type OrganizationAnnotationsGroupAssociatedItemsResponseListResultsInner } from 'qovery-typescript-axios'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import * as useAnnotationsGroupAssociatedItems from '../hooks/use-annotations-group-associated-items/use-annotations-group-associated-items'
+import * as useLabelsGroupAssociatedItems from '../hooks/use-labels-group-associated-items/use-labels-group-associated-items'
 import {
-  AnnotationItemsListModal,
-  type AnnotationItemsListModalProps,
+  LabelAnnotationItemsListModal,
+  type LabelAnnotationItemsListModalProps,
   groupByProjectEnvironmentsServices,
-} from './annotation-items-list-modal'
+} from './label-annotation-items-list-modal'
 
 const useAnnotationsGroupAssociatedItemsSpy = jest.spyOn(
   useAnnotationsGroupAssociatedItems,
   'useAnnotationsGroupAssociatedItems'
 ) as jest.Mock
 
-const props: AnnotationItemsListModalProps = {
+const useLabelsGroupAssociatedItemsSpy = jest.spyOn(
+  useLabelsGroupAssociatedItems,
+  'useLabelsGroupAssociatedItems'
+) as jest.Mock
+
+const props: LabelAnnotationItemsListModalProps = {
+  type: 'annotation',
   organizationId: '0000-0000-0000',
-  annotationsGroupId: '0000-0000-0000',
+  groupId: '0000-0000-0000',
   onClose: jest.fn(),
   associatedItemsCount: 3,
 }
@@ -49,9 +56,12 @@ const data: OrganizationAnnotationsGroupAssociatedItemsResponseListResultsInner[
   },
 ]
 
-describe('AnnotationItemsListModal', () => {
+describe('LabelAnnotationItemsListModal', () => {
   beforeEach(() => {
     useAnnotationsGroupAssociatedItemsSpy.mockReturnValue({
+      data,
+    })
+    useLabelsGroupAssociatedItemsSpy.mockReturnValue({
       data,
     })
   })
@@ -76,8 +86,22 @@ describe('AnnotationItemsListModal', () => {
     expect(result[1].environments[0].services).toHaveLength(1)
   })
 
-  it('should match snapshots', async () => {
-    const { baseElement, userEvent } = renderWithProviders(<AnnotationItemsListModal {...props} />)
+  it('should match snapshots with annotation', async () => {
+    const { baseElement, userEvent } = renderWithProviders(<LabelAnnotationItemsListModal {...props} />)
+
+    const triggers = screen.getAllByRole('button')
+    screen.getByText(/project 1/i)
+    await userEvent.click(triggers[0])
+
+    const triggerEnvironment = screen.getByText(/development/i).parentElement
+    await userEvent.click(triggerEnvironment!)
+
+    expect(baseElement).toMatchSnapshot()
+  })
+
+  it('should match snapshots with label', async () => {
+    props.type = 'label'
+    const { baseElement, userEvent } = renderWithProviders(<LabelAnnotationItemsListModal {...props} />)
 
     const triggers = screen.getAllByRole('button')
     screen.getByText(/project 1/i)

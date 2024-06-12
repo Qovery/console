@@ -2,12 +2,11 @@ import posthog from 'posthog-js'
 import { DatabaseModeEnum, type DatabaseRequest } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { useAnnotationsGroups } from '@qovery/domains/organizations/feature'
+import { useAnnotationsGroups, useLabelsGroups } from '@qovery/domains/organizations/feature'
 import { useCreateService, useDeployService } from '@qovery/domains/services/feature'
 import {
   SERVICES_DATABASE_CREATION_GENERAL_URL,
   SERVICES_DATABASE_CREATION_RESOURCES_URL,
-  SERVICES_DATABASE_CREATION_URL,
   SERVICES_URL,
 } from '@qovery/shared/routes'
 import { FunnelFlowBody } from '@qovery/shared/ui'
@@ -22,6 +21,7 @@ export function StepSummaryFeature() {
   const { organizationId = '', projectId = '', environmentId = '', slug, option } = useParams()
   const [loadingCreate, setLoadingCreate] = useState(false)
   const [loadingCreateAndDeploy, setLoadingCreateAndDeploy] = useState(false)
+  const { data: labelsGroup = [] } = useLabelsGroups({ organizationId })
   const { data: annotationsGroup = [] } = useAnnotationsGroups({ organizationId })
 
   const { mutateAsync: createDatabase } = useCreateService()
@@ -57,6 +57,7 @@ export function StepSummaryFeature() {
         mode: generalData.mode,
         storage: storage,
         annotations_groups: annotationsGroup.filter((group) => generalData.annotations_groups?.includes(group.id)),
+        labels_groups: labelsGroup.filter((group) => generalData.labels_groups?.includes(group.id)),
       }
 
       if (databaseRequest.mode !== DatabaseModeEnum.MANAGED) {
@@ -116,6 +117,7 @@ export function StepSummaryFeature() {
           resourcesData={resourcesData}
           gotoResources={gotoResources}
           gotoGlobalInformation={gotoGlobalInformations}
+          labelsGroup={labelsGroup}
           annotationsGroup={annotationsGroup}
           isManaged={generalData.mode === DatabaseModeEnum.MANAGED}
         />

@@ -199,6 +199,19 @@ export const organizations = createQueryKeys('organizations', {
       return response.data.results
     },
   }),
+  labelsGroupAssociatedItems: ({
+    organizationId,
+    labelsGroupId,
+  }: {
+    organizationId: string
+    labelsGroupId: string
+  }) => ({
+    queryKey: [organizationId, labelsGroupId],
+    async queryFn() {
+      const response = await labelsGroupApi.getOrganizationLabelsGroupAssociatedItems(organizationId, labelsGroupId)
+      return response.data.results
+    },
+  }),
   annotationsGroups: ({ organizationId }: { organizationId: string }) => ({
     queryKey: [organizationId],
     async queryFn() {

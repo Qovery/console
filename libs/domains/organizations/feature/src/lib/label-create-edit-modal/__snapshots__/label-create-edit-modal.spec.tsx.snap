@@ -69,7 +69,7 @@ exports[`LabelCreateEditModal should match with snatpshot 1`] = `
                 Label keys
               </span>
               <span
-                class="text-sm font-medium text-neutral-350"
+                class="pl-10 text-sm font-medium text-neutral-350"
               >
                 Value
               </span>

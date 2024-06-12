@@ -12,6 +12,7 @@ export interface JobGeneralData {
   description: string
   serviceType: keyof typeof ServiceTypeEnum
   auto_deploy: boolean
+  labels_groups?: string[]
   annotations_groups?: string[]
 
   // container

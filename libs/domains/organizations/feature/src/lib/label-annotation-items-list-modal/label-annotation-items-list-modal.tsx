@@ -7,6 +7,7 @@ import { match } from 'ts-pattern'
 import { APPLICATION_URL, SERVICES_GENERAL_URL, SERVICES_URL } from '@qovery/shared/routes'
 import { Accordion, Heading, Icon, InputSearch, Link, LoaderSpinner, Section } from '@qovery/shared/ui'
 import { useAnnotationsGroupAssociatedItems } from '../hooks/use-annotations-group-associated-items/use-annotations-group-associated-items'
+import { useLabelsGroupAssociatedItems } from '../hooks/use-labels-group-associated-items/use-labels-group-associated-items'
 
 interface Service {
   service_id: string
@@ -77,26 +78,41 @@ export function groupByProjectEnvironmentsServices(
   return projects
 }
 
-export interface AnnotationItemsListModalProps {
+export interface LabelAnnotationItemsListModalProps {
+  type: 'label' | 'annotation'
   organizationId: string
-  annotationsGroupId: string
+  groupId: string
   associatedItemsCount: number
   onClose: () => void
 }
 
-export function AnnotationItemsListModal({
+export function LabelAnnotationItemsListModal({
+  type,
   organizationId,
-  annotationsGroupId,
+  groupId,
   associatedItemsCount,
   onClose,
-}: AnnotationItemsListModalProps) {
-  const { data: annotationsGroupAssociatedItems = [], isLoading } = useAnnotationsGroupAssociatedItems({
+}: LabelAnnotationItemsListModalProps) {
+  const { data: labelsGroupAssociatedItems = [], isLoading: labelsGroupIsLoading } = useLabelsGroupAssociatedItems({
     organizationId,
-    annotationsGroupId,
+    labelsGroupId: groupId,
+    enabled: type === 'label',
   })
+  const { data: annotationsGroupAssociatedItems = [], isLoading: annotationsGroupIsLoading } =
+    useAnnotationsGroupAssociatedItems({
+      organizationId,
+      annotationsGroupId: groupId,
+      enabled: type === 'annotation',
+    })
+
   const [searchValue, setSearchValue] = useState<string | undefined>()
 
-  const data = groupByProjectEnvironmentsServices(annotationsGroupAssociatedItems, searchValue)
+  const data = groupByProjectEnvironmentsServices(
+    type === 'label' ? labelsGroupAssociatedItems : annotationsGroupAssociatedItems,
+    searchValue
+  )
+
+  const isLoading = type === 'label' ? labelsGroupIsLoading : annotationsGroupIsLoading
 
   return (
     <Section className="p-6">
@@ -155,8 +171,7 @@ export function AnnotationItemsListModal({
                                   >
                                     <Icon
                                       name={match(service.service_type)
-                                        // TODO: waiting for API
-                                        //.with('CRON', 'LIFECYCLE', () => `${service.service_type}_JOB`)
+                                        .with('CRON', 'LIFECYCLE', () => `${service.service_type}_JOB`)
                                         .otherwise(() => service.service_type)}
                                       width={20}
                                       className="mr-2"
@@ -186,4 +201,4 @@ export function AnnotationItemsListModal({
   )
 }
 
-export default AnnotationItemsListModal
+export default LabelAnnotationItemsListModal

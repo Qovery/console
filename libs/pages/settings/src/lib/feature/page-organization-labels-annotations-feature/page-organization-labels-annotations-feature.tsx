@@ -1,7 +1,7 @@
 import { useParams } from 'react-router-dom'
 import {
   AnnotationCreateEditModal,
-  AnnotationItemsListModal,
+  LabelAnnotationItemsListModal,
   LabelCreateEditModal,
   useAnnotationsGroups,
   useDeleteAnnotationsGroup,
@@ -40,9 +40,9 @@ export function PageOrganizationLabelsAnnotationsFeature() {
       <Section className="max-w-content-with-navigation-left p-8">
         <div className="mb-8 flex justify-between gap-3">
           <div>
-            <Heading className="mb-2">Annotations</Heading>
+            <Heading className="mb-2">Labels & Annotations</Heading>
             <p className="text-xs text-neutral-400">
-              Define and manage the annotations to be used within your organization.
+              Define and manage the labels & annotations to be used within your organization.
             </p>
           </div>
           <DropdownMenu.Root>
@@ -111,6 +111,19 @@ export function PageOrganizationLabelsAnnotationsFeature() {
                       size="md"
                       className="relative mr-2"
                       disabled={labelsGroup.associated_items_count === 0}
+                      onClick={() => {
+                        openModal({
+                          content: (
+                            <LabelAnnotationItemsListModal
+                              type="label"
+                              organizationId={organizationId}
+                              groupId={labelsGroup.id}
+                              onClose={closeModal}
+                              associatedItemsCount={labelsGroup.associated_items_count ?? 0}
+                            />
+                          ),
+                        })
+                      }}
                     >
                       <span className="absolute -right-1 -top-1 flex h-3 w-3 items-center justify-center rounded-full bg-brand-500 text-3xs font-bold leading-[0] text-white">
                         {labelsGroup.associated_items_count}
@@ -171,7 +184,7 @@ export function PageOrganizationLabelsAnnotationsFeature() {
             <div className="my-4 px-5 text-center">
               <Icon iconName="wave-pulse" className="text-neutral-350" />
               <p className="mt-1 text-xs font-medium text-neutral-350">
-                No label found. <br /> Please add one.
+                No labels group found. <br /> Please add one.
               </p>
             </div>
           )}
@@ -215,9 +228,10 @@ export function PageOrganizationLabelsAnnotationsFeature() {
                       onClick={() => {
                         openModal({
                           content: (
-                            <AnnotationItemsListModal
+                            <LabelAnnotationItemsListModal
+                              type="annotation"
                               organizationId={organizationId}
-                              annotationsGroupId={annotationsGroup.id}
+                              groupId={annotationsGroup.id}
                               onClose={closeModal}
                               associatedItemsCount={annotationsGroup.associated_items_count ?? 0}
                             />
@@ -284,7 +298,7 @@ export function PageOrganizationLabelsAnnotationsFeature() {
             <div className="my-4 px-5 text-center">
               <Icon iconName="wave-pulse" className="text-neutral-350" />
               <p className="mt-1 text-xs font-medium text-neutral-350">
-                No annotation found. <br /> Please add one.
+                No annotations group found. <br /> Please add one.
               </p>
             </div>
           )}

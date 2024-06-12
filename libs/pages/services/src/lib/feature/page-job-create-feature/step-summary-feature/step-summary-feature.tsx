@@ -3,11 +3,12 @@ import {
   APIVariableScopeEnum,
   type JobRequest,
   type OrganizationAnnotationsGroupResponse,
+  type OrganizationLabelsGroupEnrichedResponse,
   type VariableImportRequest,
 } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { useAnnotationsGroups, useContainerRegistry } from '@qovery/domains/organizations/feature'
+import { useAnnotationsGroups, useContainerRegistry, useLabelsGroups } from '@qovery/domains/organizations/feature'
 import { useCreateService, useDeployService } from '@qovery/domains/services/feature'
 import { useImportVariables } from '@qovery/domains/variables/feature'
 import { type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
@@ -35,6 +36,7 @@ function prepareJobRequest(
   configureData: JobConfigureData,
   resourcesData: JobResourcesData,
   jobType: JobType,
+  labelsGroup: OrganizationLabelsGroupEnrichedResponse[],
   annotationsGroup: OrganizationAnnotationsGroupResponse[]
 ): JobRequest {
   const memory = Number(resourcesData['memory'])
@@ -52,6 +54,7 @@ function prepareJobRequest(
     auto_deploy: generalData.auto_deploy,
     healthchecks: {},
     annotations_groups: annotationsGroup.filter((group) => generalData.annotations_groups?.includes(group.id)),
+    labels_groups: labelsGroup.filter((group) => generalData.labels_groups?.includes(group.id)),
   }
 
   if (jobType === ServiceTypeEnum.CRON_JOB) {
@@ -146,6 +149,7 @@ export function StepSummaryFeature() {
     organizationId,
     containerRegistryId: generalData?.registry,
   })
+  const { data: labelsGroup = [] } = useLabelsGroups({ organizationId })
   const { data: annotationsGroup = [] } = useAnnotationsGroups({ organizationId })
 
   const { mutateAsync: createService } = useCreateService()
@@ -184,6 +188,7 @@ export function StepSummaryFeature() {
         configureData,
         resourcesData,
         jobType,
+        labelsGroup,
         annotationsGroup
       )
       const variableImportRequest = prepareVariableRequest(variableData)
@@ -257,6 +262,7 @@ export function StepSummaryFeature() {
           selectedRegistryName={containerRegistry?.name}
           jobType={jobType}
           gotoConfigureJob={gotoConfigureJob}
+          labelsGroup={labelsGroup}
           annotationsGroup={annotationsGroup}
         />
       )}
