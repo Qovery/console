@@ -41,7 +41,7 @@ describe('Configure', () => {
     expect(submitButton).toBeInTheDocument()
 
     await waitFor(() => {
-      expect(submitButton).not.toBeDisabled()
+      expect(submitButton).toBeEnabled()
     })
   })
 
@@ -61,7 +61,7 @@ describe('Configure', () => {
     checkbox.click()
 
     await waitFor(() => {
-      expect(submitButton).not.toBeDisabled()
+      expect(submitButton).toBeEnabled()
     })
   })
 })

@@ -34,8 +34,8 @@ describe('Pagination', () => {
     const { baseElement } = render(<Pagination {...props} previousDisabled nextDisabled />)
     const buttonNext = getByTestId(baseElement, 'button-previous-page')
     const buttonPrevious = getByTestId(baseElement, 'button-previous-page')
-    expect(buttonNext).toHaveAttribute('disabled')
-    expect(buttonPrevious).toHaveAttribute('disabled')
+    expect(buttonNext).toBeDisabled()
+    expect(buttonPrevious).toBeDisabled()
   })
 
   it('should call onPageSizeChange on change on select', async () => {

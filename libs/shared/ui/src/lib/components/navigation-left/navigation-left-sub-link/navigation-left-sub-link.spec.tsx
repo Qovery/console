@@ -41,7 +41,7 @@ describe('NavigationLeftSubLink', () => {
 
     const subLinks = screen.getByTestId('sub-links')
 
-    expect(subLinks).toBeTruthy()
+    expect(subLinks).toBeInTheDocument()
   })
 
   it('should have rotate the arrow', () => {
@@ -94,6 +94,6 @@ describe('NavigationLeftSubLink', () => {
 
     render(<NavigationLeftSubLink {...props} />)
 
-    expect(screen.getByTestId('sub-link-badge').textContent).toBe('beta')
+    expect(screen.getByTestId('sub-link-badge')).toHaveTextContent('beta')
   })
 })

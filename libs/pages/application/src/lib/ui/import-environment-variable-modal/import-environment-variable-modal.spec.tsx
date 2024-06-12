@@ -168,7 +168,7 @@ describe('ImportEnvironmentVariableModal', () => {
     it('should render dropzone', async () => {
       const defaultValues = {}
       render(wrapWithReactHookForm(<ImportEnvironmentVariableModal {...props} />, { defaultValues }))
-      expect(await screen.getByTestId('drop-input')).toBeTruthy()
+      expect(await screen.getByTestId('drop-input')).toBeInTheDocument()
     })
   })
 })

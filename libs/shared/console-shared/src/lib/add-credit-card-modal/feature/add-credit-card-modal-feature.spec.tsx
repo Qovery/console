@@ -34,7 +34,7 @@ describe('AddCreditCardModalFeature', () => {
     await userEvent.type(cardExpiryInput, '0320')
     await userEvent.type(cardCVCInput, '032')
 
-    expect(button).not.toBeDisabled()
+    expect(button).toBeEnabled()
 
     await userEvent.click(button)
 

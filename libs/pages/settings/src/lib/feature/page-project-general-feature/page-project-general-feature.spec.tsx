@@ -40,7 +40,7 @@ describe('PageProjectGeneral', () => {
     await userEvent.clear(inputName)
     await userEvent.type(inputName, 'hello-world')
 
-    expect(screen.getByTestId('submit-button')).not.toBeDisabled()
+    expect(screen.getByTestId('submit-button')).toBeEnabled()
 
     await userEvent.click(screen.getByTestId('submit-button'))
 

@@ -100,7 +100,7 @@ describe('CreateEditCredentialsModal', () => {
 
     await userEvent.click(button)
 
-    expect(button).not.toBeDisabled()
+    expect(button).toBeEnabled()
     expect(props.onSubmit).toHaveBeenCalled()
   })
 })

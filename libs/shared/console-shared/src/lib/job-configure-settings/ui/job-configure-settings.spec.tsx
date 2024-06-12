@@ -55,7 +55,7 @@ describe('JobConfigureSettings', () => {
       )
 
       expect(screen.getAllByTestId('input-text')).toHaveLength(4)
-      expect(screen.getByText('Timezone')).toBeTruthy()
+      expect(screen.getByText('Timezone')).toBeInTheDocument()
     })
 
     it('should display the cron value in a human readable way', async () => {

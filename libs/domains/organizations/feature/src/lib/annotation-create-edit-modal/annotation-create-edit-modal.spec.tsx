@@ -60,7 +60,7 @@ describe('AnnotationCreateEditModal', () => {
     await userEvent.click(checkboxScope)
 
     const btn = screen.getByRole('button', { name: 'Create' })
-    expect(btn).not.toBeDisabled()
+    expect(btn).toBeEnabled()
 
     await userEvent.click(btn)
 
@@ -109,7 +109,7 @@ describe('AnnotationCreateEditModal', () => {
     await userEvent.type(inputName, 'my-name')
 
     const btn = screen.getByRole('button', { name: 'Confirm' })
-    expect(btn).not.toBeDisabled()
+    expect(btn).toBeEnabled()
 
     await userEvent.click(btn)
 

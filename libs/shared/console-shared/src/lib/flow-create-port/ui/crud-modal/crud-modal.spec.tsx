@@ -42,7 +42,7 @@ describe('CrudModal', () => {
     })
     selectEvent.openMenu(protocolSelect)
 
-    expect(screen.queryByLabelText('UDP')).toBeNull()
+    expect(screen.queryByLabelText('UDP')).not.toBeInTheDocument()
     screen.getByLabelText('HTTP')
     screen.getByLabelText('TCP')
     screen.getByLabelText('GRPC')
@@ -83,7 +83,7 @@ describe('CrudModal', () => {
     const button = await screen.findByTestId('submit-button')
 
     await userEvent.click(button)
-    expect(button).not.toBeDisabled()
+    expect(button).toBeEnabled()
     expect(spy).toHaveBeenCalled()
   })
 

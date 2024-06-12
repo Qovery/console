@@ -84,7 +84,7 @@ describe('PageSettingsAdvanced', () => {
       fireEvent.input(input, { target: { value: '' } })
     })
 
-    expect(getByTestId(baseElement, 'submit-button')).not.toBeDisabled()
+    expect(getByTestId(baseElement, 'submit-button')).toBeEnabled()
   })
 
   it('should display only overridden settings', async () => {

@@ -72,6 +72,6 @@ describe('PageOrganizationBillingSummary', () => {
     renderWithProviders(<PageOrganizationBillingSummary {...props} />)
     screen.getByText('Current plan')
     screen.getByText('Current bill')
-    expect(screen.queryByText('Payment method')).toBeNull()
+    expect(screen.queryByText('Payment method')).not.toBeInTheDocument()
   })
 })

@@ -18,7 +18,7 @@ describe('ImportEnvironmentVariableModalFeature', () => {
 
     await waitFor(async () => {
       expect(baseElement).toBeTruthy()
-      expect(await screen.getByTestId('drop-input')).toBeTruthy()
+      expect(await screen.getByTestId('drop-input')).toBeInTheDocument()
     })
   })
 

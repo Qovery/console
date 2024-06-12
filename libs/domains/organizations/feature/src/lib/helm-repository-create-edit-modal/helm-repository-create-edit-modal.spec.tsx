@@ -131,7 +131,7 @@ describe('HelmRepositoryCreateEditModal', () => {
     const button = await screen.findByRole('button', { name: /Create/i })
     // https://react-hook-form.com/advanced-usage#TransformandParse
     expect(button).toBeInTheDocument()
-    expect(button).not.toBeDisabled()
+    expect(button).toBeEnabled()
 
     await userEvent.click(screen.getByTestId('submit-button'))
 
@@ -179,7 +179,7 @@ describe('HelmRepositoryCreateEditModal', () => {
     await userEvent.type(inputName, 'my-repository-name')
 
     const btn = screen.getByRole('button', { name: 'Confirm' })
-    expect(btn).not.toBeDisabled()
+    expect(btn).toBeEnabled()
 
     await userEvent.click(btn)
 

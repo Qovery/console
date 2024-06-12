@@ -18,6 +18,6 @@ describe('Icon', () => {
   it('should render a font awesome icon as default', () => {
     render(<Icon {...props} />)
 
-    expect(screen.getByRole('img')).toBeTruthy()
+    expect(screen.getByRole('img')).toBeInTheDocument()
   })
 })

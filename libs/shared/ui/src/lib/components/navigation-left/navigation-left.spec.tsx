@@ -67,7 +67,7 @@ describe('NavigationLeft', () => {
 
     const link = screen.getByTestId('link')
 
-    expect(link.textContent).toBe(props.links[0].title)
+    expect(link).toHaveTextContent(props.links[0].title)
   })
 
   it('should have a click emitted', () => {

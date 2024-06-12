@@ -34,7 +34,7 @@ describe('Layout', () => {
         <Layout {...props} />
       </IntercomProvider>
     )
-    expect(mockSetOrganizationId).toBeCalled()
+    expect(mockSetOrganizationId).toHaveBeenCalled()
   })
 
   it('should save the current project id on local storage', () => {
@@ -45,6 +45,6 @@ describe('Layout', () => {
         <Layout {...props} />
       </IntercomProvider>
     )
-    expect(mockSetProjectId).toBeCalled()
+    expect(mockSetProjectId).toHaveBeenCalled()
   })
 })

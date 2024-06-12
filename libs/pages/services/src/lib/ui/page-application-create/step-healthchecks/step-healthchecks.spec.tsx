@@ -95,7 +95,7 @@ describe('StepHealthchecks', () => {
       button.click()
     })
 
-    expect(button).not.toBeDisabled()
+    expect(button).toBeEnabled()
     expect(props.onSubmit).toHaveBeenCalled()
   })
 })

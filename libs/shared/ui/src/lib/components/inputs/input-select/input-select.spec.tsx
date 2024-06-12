@@ -32,7 +32,7 @@ describe('InputSelect', () => {
     props.error = 'Error'
     render(<InputSelect {...props} />)
     const select = screen.getByTestId('select')
-    expect(select.classList.contains('input--error')).toBeTruthy()
+    expect(select).toHaveClass('input--error')
   })
 
   it('should select second item in a single select', async () => {
@@ -59,7 +59,7 @@ describe('InputSelect', () => {
 
     await selectEvent.select(realSelect, 'Test 2')
 
-    expect(screen.queryByTestId('selected-icon')).not.toBeTruthy()
+    expect(screen.queryByTestId('selected-icon')).not.toBeInTheDocument()
   })
 
   it('should select second item and first item in a multiple select', async () => {
@@ -75,7 +75,7 @@ describe('InputSelect', () => {
     props.disabled = true
     render(<InputSelect {...props} />)
     const select = screen.getByTestId('select')
-    expect(select.classList.contains('!bg-neutral-100')).toBeTruthy()
+    expect(select).toHaveClass('!bg-neutral-100')
   })
 
   it('should have a edit button when option is selected', async () => {

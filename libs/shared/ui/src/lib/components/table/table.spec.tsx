@@ -55,7 +55,7 @@ describe('Table', () => {
     render(<Table {...props} />)
     const tableHeadTitle = screen.queryByTestId('table-head-title')
 
-    expect(tableHeadTitle).toBeNull()
+    expect(tableHeadTitle).not.toBeInTheDocument()
   })
 
   it('should sort by default key', async () => {

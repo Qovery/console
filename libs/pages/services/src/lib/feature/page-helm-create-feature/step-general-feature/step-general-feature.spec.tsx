@@ -87,7 +87,7 @@ describe('StepGeneralFeature', () => {
 
     // wait for form to be valid because we have selects (necessary with react hook form)
     waitFor(async () => {
-      expect(button).not.toBeDisabled()
+      expect(button).toBeEnabled()
       await userEvent.click(button)
     })
 
@@ -131,14 +131,14 @@ describe('StepGeneralFeature', () => {
 
     // wait for form to be valid because we have selects (necessary with react hook form)
     waitFor(async () => {
-      expect(button).not.toBeDisabled()
+      expect(button).toBeEnabled()
       await userEvent.click(button)
     })
 
     expect(baseElement).toMatchSnapshot()
   })
 
-  it('should submit a form with a git repository', async () => {
+  it('should submit a form with a public git repository', async () => {
     const { result } = renderHook(() =>
       useForm<HelmGeneralData>({
         mode: 'onChange',
@@ -176,7 +176,7 @@ describe('StepGeneralFeature', () => {
 
     // wait for form to be valid because we have selects (necessary with react hook form)
     waitFor(async () => {
-      expect(button).not.toBeDisabled()
+      expect(button).toBeEnabled()
       await userEvent.click(button)
     })
 

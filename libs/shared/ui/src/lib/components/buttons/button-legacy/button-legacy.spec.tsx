@@ -28,7 +28,7 @@ describe('Button', () => {
 
     const button = screen.getByRole('button')
 
-    expect(button.className).toBe('btn btn--small btn--basic some-class-name ')
+    expect(button).toHaveClass('btn btn--small btn--basic some-class-name ', { exact: true })
   })
 
   it('should apply the disabled class', () => {
@@ -38,7 +38,7 @@ describe('Button', () => {
 
     const button = screen.getByRole('button')
 
-    expect(button.className).toBe('btn btn--regular btn--basic btn--disabled ')
+    expect(button).toHaveClass('btn btn--regular btn--basic btn--disabled ', { exact: true })
   })
 
   it('should apply the loading class', () => {
@@ -48,7 +48,7 @@ describe('Button', () => {
 
     const button = screen.getByRole('button')
 
-    expect(button.className).toBe('btn btn--regular btn--basic pointer-events-none cursor-default')
+    expect(button).toHaveClass('btn btn--regular btn--basic pointer-events-none cursor-default', { exact: true })
   })
 
   it('should return a link instead of a button', () => {
@@ -58,6 +58,6 @@ describe('Button', () => {
 
     const link = screen.getByRole('link')
 
-    expect(link).toBeTruthy()
+    expect(link).toBeInTheDocument()
   })
 })

@@ -59,7 +59,7 @@ describe('RowMember', () => {
 
     screen.getByText(props.member.name || '')
     screen.getByText(props.member.email || '')
-    expect(avatar.textContent).toBe(`${name[0].charAt(0)}${name[1].charAt(0)}`)
+    expect(avatar).toHaveTextContent(`${name[0].charAt(0)}${name[1].charAt(0)}`)
   })
 
   it('should have last activity and created date', () => {
@@ -68,8 +68,8 @@ describe('RowMember', () => {
     const dateLastActivity = screen.getByTestId('last-activity')
     const dateCreatedAt = screen.getByTestId('created-at')
 
-    expect(dateLastActivity.textContent).toMatch(/[0|1] second[s]* ago/)
-    expect(dateCreatedAt.textContent).toBe(dateMediumLocalFormat(props.member.created_at))
+    expect(dateLastActivity).toHaveTextContent(/[0|1] second[s]* ago/)
+    expect(dateCreatedAt).toHaveTextContent(dateMediumLocalFormat(props.member.created_at))
   })
 
   it('should have menu with edit member role action', async () => {
@@ -84,7 +84,7 @@ describe('RowMember', () => {
 
     await userEvent.click(items[0])
 
-    expect(spy).toBeCalled()
+    expect(spy).toHaveBeenCalled()
   })
 
   it('should have menu with transfer member role action', async () => {
@@ -100,23 +100,7 @@ describe('RowMember', () => {
 
     await userEvent.click(items[0])
 
-    expect(spy).toBeCalled()
-  })
-
-  it('should have menu with transfer member role action', async () => {
-    const spy = jest.fn()
-    props.transferOwnership = spy
-    props.userIsOwner = true
-    props.member = membersMock(1)[0]
-
-    const { userEvent } = renderWithProviders(<RowMember {...props} />)
-    await userEvent.click(screen.getByTestId('element'))
-
-    const items = screen.getAllByTestId('menuItem')
-
-    await userEvent.click(items[0])
-
-    expect(spy).toBeCalled()
+    expect(spy).toHaveBeenCalled()
   })
 
   it('should have menu with resend invite action', async () => {
@@ -131,6 +115,6 @@ describe('RowMember', () => {
 
     await userEvent.click(items[0])
 
-    expect(spy).toBeCalled()
+    expect(spy).toHaveBeenCalled()
   })
 })

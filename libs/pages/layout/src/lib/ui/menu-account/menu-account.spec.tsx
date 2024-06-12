@@ -33,7 +33,7 @@ describe('MenuAccount', () => {
 
     const item = screen.getByTestId('content-0')
 
-    expect(item.textContent).toBe(props.currentOrganization.name)
+    expect(item).toHaveTextContent(props.currentOrganization.name)
   })
 
   it('should have navigate to organization', async () => {

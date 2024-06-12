@@ -73,7 +73,7 @@ describe('WebhookCrudModalFeature', () => {
     })
 
     const button = screen.getByTestId('submit-button')
-    expect(button).not.toBeDisabled()
+    expect(button).toBeEnabled()
 
     await userEvent.click(button)
 
@@ -119,7 +119,7 @@ describe('WebhookCrudModalFeature', () => {
     })
 
     const button = screen.getByTestId('submit-button')
-    expect(button).not.toBeDisabled()
+    expect(button).toBeEnabled()
 
     await userEvent.click(button)
 

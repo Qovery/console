@@ -48,7 +48,7 @@ describe('PageSettingsRemoteFeature', () => {
       fireEvent.input(input, { target: { value: 'hello' } })
     })
 
-    expect(getByTestId('submit-button')).not.toBeDisabled()
+    expect(getByTestId('submit-button')).toBeEnabled()
 
     await act(() => {
       getByTestId('submit-button').click()
@@ -56,7 +56,7 @@ describe('PageSettingsRemoteFeature', () => {
 
     const cloneCluster = handleSubmit({ ssh_key: 'hello' }, mockCluster)
 
-    expect(editCluster).toBeCalledWith({
+    expect(editCluster).toHaveBeenCalledWith({
       organizationId: '0',
       clusterId: mockCluster.id,
       clusterRequest: cloneCluster,

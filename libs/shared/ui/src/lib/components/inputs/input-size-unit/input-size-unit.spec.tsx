@@ -20,13 +20,13 @@ describe('InputSizeUnit', () => {
     props.currentSize = 1024
 
     const { getByTestId } = render(wrapWithReactHookForm(<InputSizeUnit {...props} />))
-    expect(getByTestId('current-consumption').textContent).toBe('Current consumption: 1 GB')
+    expect(getByTestId('current-consumption')).toHaveTextContent('Current consumption: 1 GB')
   })
 
   it('should render current consumption for memory with MB', () => {
     props.currentSize = 100
 
     const { getByTestId } = render(wrapWithReactHookForm(<InputSizeUnit {...props} />))
-    expect(getByTestId('current-consumption').textContent).toBe('Current consumption: 100 MB')
+    expect(getByTestId('current-consumption')).toHaveTextContent('Current consumption: 100 MB')
   })
 })

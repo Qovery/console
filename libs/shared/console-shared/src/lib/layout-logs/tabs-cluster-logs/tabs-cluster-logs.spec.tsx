@@ -47,7 +47,7 @@ describe('TabsClusterLogs', () => {
 
     const errorLine = screen.getByTestId('error-line')
 
-    expect(errorLine.textContent).toBe('Line 44 - After 10 minutes')
+    expect(errorLine).toHaveTextContent('Line 44 - After 10 minutes')
   })
 
   it('should have error message', () => {
@@ -76,7 +76,7 @@ describe('TabsClusterLogs', () => {
 
     const msg = `Transmitter: ${props.errors[0].error.event_details?.transmitter?.name} - ${props.errors[0].error?.underlying_error?.message}`
 
-    expect(errorMsg.textContent).toBe(msg)
+    expect(errorMsg).toHaveTextContent(msg)
   })
 
   it('should have solution message', () => {
@@ -96,7 +96,7 @@ describe('TabsClusterLogs', () => {
 
     const solutionMsg = screen.getByTestId('solution-msg')
 
-    expect(solutionMsg.textContent).toBe(props.errors[0].error.hint_message)
+    expect(solutionMsg).toHaveTextContent(props.errors[0].error.hint_message)
   })
 
   it('should have no error message screen', () => {
@@ -107,7 +107,7 @@ describe('TabsClusterLogs', () => {
 
     const noErrorScreen = screen.getByTestId('no-error-screen')
 
-    expect(noErrorScreen).toBeTruthy()
+    expect(noErrorScreen).toBeInTheDocument()
   })
 
   it('should have information section', () => {

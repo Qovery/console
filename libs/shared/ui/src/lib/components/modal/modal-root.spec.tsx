@@ -50,7 +50,7 @@ describe('ModalRoot', () => {
 
     await waitFor(jest.fn())
     overlay = queryByTestId(baseElement, 'overlay')
-    expect(overlay).toBeNull()
+    expect(overlay).not.toBeInTheDocument()
   })
 
   it('should NOT ask for confirmation before closing the modal', async () => {
@@ -70,6 +70,6 @@ describe('ModalRoot', () => {
 
     await waitFor(jest.fn())
     const alertModal = queryByTestId(baseElement, 'modal-alert')
-    expect(alertModal).toBeNull()
+    expect(alertModal).not.toBeInTheDocument()
   })
 })

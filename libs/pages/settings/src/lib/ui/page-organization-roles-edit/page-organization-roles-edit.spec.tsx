@@ -68,7 +68,7 @@ describe('PageOrganizationRolesEdit', () => {
       })
     )
 
-    expect(getByTestId('custom-roles-loader'))
+    getByTestId('custom-roles-loader')
   })
 
   it('should submit the form', async () => {

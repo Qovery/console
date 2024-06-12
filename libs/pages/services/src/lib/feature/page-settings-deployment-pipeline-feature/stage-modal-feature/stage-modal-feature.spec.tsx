@@ -50,7 +50,7 @@ describe('StageModalFeature', () => {
       fireEvent.change(inputDescription, { target: { value: 'New Stage Description' } })
     })
 
-    expect(submitButton).not.toBeDisabled()
+    expect(submitButton).toBeEnabled()
 
     await act(() => {
       submitButton.click()
@@ -79,7 +79,7 @@ describe('StageModalFeature', () => {
       fireEvent.change(inputDescription, { target: { value: 'Updated Stage Description' } })
     })
 
-    expect(submitButton).not.toBeDisabled()
+    expect(submitButton).toBeEnabled()
 
     await act(() => {
       submitButton.click()

@@ -46,6 +46,6 @@ describe('UpdateTimeContext', () => {
     const button = getByRole(baseElement, 'button')
     fireEvent.click(button)
 
-    expect(baseElement.textContent).toBe('Click false')
+    expect(baseElement).toHaveTextContent('Click false')
   })
 })

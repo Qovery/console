@@ -54,7 +54,7 @@ describe('PageSettingsGeneralFeature', () => {
 
     const button = screen.getByRole('button', { name: /save/i })
 
-    expect(button).not.toBeDisabled()
+    expect(button).toBeEnabled()
 
     await userEvent.click(button)
 

@@ -43,7 +43,7 @@ describe('PageSettingsPortsFeature with CRON JOB service', () => {
     await userEvent.type(inputPort, '123')
 
     const submitButton = screen.getByRole('button', { name: 'Save' })
-    expect(submitButton).not.toBeDisabled()
+    expect(submitButton).toBeEnabled()
 
     await userEvent.click(submitButton)
 

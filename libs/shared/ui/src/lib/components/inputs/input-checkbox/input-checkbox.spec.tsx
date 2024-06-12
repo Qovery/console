@@ -19,7 +19,7 @@ describe('InputCheckbox', () => {
 
     fireEvent.click(input)
 
-    expect(input.checked).toBe(true)
+    expect(input).toBeChecked()
   })
 
   it('should checked when the formValue and value is the same', async () => {
@@ -29,7 +29,7 @@ describe('InputCheckbox', () => {
 
     const input = screen.getByRole('checkbox') as HTMLInputElement
 
-    expect(input.checked).toBe(true)
+    expect(input).toBeChecked()
   })
 
   it('should call the onChange method when the input event is emitted', async () => {

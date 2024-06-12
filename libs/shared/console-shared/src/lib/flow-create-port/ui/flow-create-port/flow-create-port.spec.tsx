@@ -82,7 +82,7 @@ describe('PageApplicationCreatePort', () => {
     )
 
     const button = getAllByTestId('button-submit')[0]
-    expect(button).not.toBeDisabled()
+    expect(button).toBeEnabled()
 
     button.click()
 

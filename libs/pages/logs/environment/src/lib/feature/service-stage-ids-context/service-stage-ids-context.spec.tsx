@@ -30,7 +30,7 @@ describe('ServiceStageIdsContext', () => {
     })
 
     waitFor(() => {
-      expect(stage.textContent).toBe('id')
+      expect(stage).toHaveTextContent('id')
     })
   })
 })

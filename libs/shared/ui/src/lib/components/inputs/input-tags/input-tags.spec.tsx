@@ -22,7 +22,7 @@ describe('InputTags', () => {
       fireEvent.keyDown(input, { key: 'Enter', keyCode: 13 })
     })
 
-    expect(getByTestId('input-tags-2').textContent).toBe('test')
+    expect(getByTestId('input-tags-2')).toHaveTextContent('test')
   })
 
   it('should remove a tag', async () => {
@@ -32,7 +32,7 @@ describe('InputTags', () => {
       fireEvent.click(getByTestId('input-tags-remove-0'))
     })
 
-    expect(getByTestId('input-tags-0').textContent).toBe('world')
+    expect(getByTestId('input-tags-0')).toHaveTextContent('world')
   })
 
   it('should remove the last tag', async () => {
@@ -45,7 +45,7 @@ describe('InputTags', () => {
       fireEvent.keyDown(input, { key: 'Backspace' })
     })
 
-    expect(getByTestId('input-tags-0').textContent).toBe('hello')
-    expect(queryByTestId(/input-tags-1/i)).toBeNull()
+    expect(getByTestId('input-tags-0')).toHaveTextContent('hello')
+    expect(queryByTestId(/input-tags-1/i)).not.toBeInTheDocument()
   })
 })

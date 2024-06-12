@@ -64,7 +64,7 @@ describe('SidebarHistory', () => {
     renderWithProviders(<SidebarHistory {...props} />)
 
     const btn = screen.getByTestId('btn-back-logs')
-    expect(btn.getAttribute('href')).toBe('/organization/1/project/2/environment/3/logs')
+    expect(btn).toHaveAttribute('href', '/organization/1/project/2/environment/3/logs')
   })
 
   it('should open the menu and navigate to the logs page', async () => {

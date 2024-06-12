@@ -101,6 +101,6 @@ describe('PageSettingsDomains', () => {
     props.loading = false
 
     renderWithProviders(<PageSettingsDomains {...props} />)
-    expect(screen.queryByTestId('spinner')).toBeNull()
+    expect(screen.queryByTestId('spinner')).not.toBeInTheDocument()
   })
 })

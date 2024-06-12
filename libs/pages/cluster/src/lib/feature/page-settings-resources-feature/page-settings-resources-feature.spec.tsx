@@ -84,7 +84,7 @@ describe('PageSettingsResourcesFeature', () => {
     await userEvent.clear(input)
     await userEvent.type(input, '24')
 
-    expect(button).not.toBeDisabled()
+    expect(button).toBeEnabled()
 
     const cloneCluster = handleSubmit(
       {
@@ -97,7 +97,7 @@ describe('PageSettingsResourcesFeature', () => {
 
     await userEvent.click(button)
 
-    expect(editCluster).toBeCalledWith({
+    expect(editCluster).toHaveBeenCalledWith({
       organizationId: '0',
       clusterId: mockCluster.id,
       clusterRequest: cloneCluster,

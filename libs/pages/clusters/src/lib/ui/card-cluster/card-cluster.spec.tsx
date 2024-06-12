@@ -37,9 +37,9 @@ describe('CardCluster', () => {
 
     expect(getByTestId('tag-prod')).toBeInTheDocument()
     expect(getByTestId('tag-default')).toBeInTheDocument()
-    expect(getByTestId('tag-region').textContent).toBe(props.cluster.region)
-    expect(getByTestId('tag-version').textContent).toBe(props.cluster.version)
-    expect(getByTestId('tag-instance').textContent).toBe(props.cluster.instance_type?.toLowerCase().replace('_', '.'))
+    expect(getByTestId('tag-region')).toHaveTextContent(props.cluster.region)
+    expect(getByTestId('tag-version')).toHaveTextContent(props.cluster.version)
+    expect(getByTestId('tag-instance')).toHaveTextContent(props.cluster.instance_type?.toLowerCase().replace('_', '.'))
   })
 
   it('should have a name', () => {
@@ -50,7 +50,7 @@ describe('CardCluster', () => {
 
   it('should have a status message', async () => {
     const { getByTestId } = renderWithProviders(<CardCluster {...props} />)
-    expect(getByTestId('status-message').textContent).toContain(getStatusClusterMessage(StateEnum.READY))
+    expect(getByTestId('status-message')).toHaveTextContent(new RegExp(getStatusClusterMessage(StateEnum.READY)))
   })
 
   it('should have a function to display color by status', () => {

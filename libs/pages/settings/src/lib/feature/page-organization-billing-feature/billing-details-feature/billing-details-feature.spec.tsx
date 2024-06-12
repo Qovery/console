@@ -50,7 +50,7 @@ describe('BillingDetailsFeature', () => {
 
     const button = screen.getByTestId('submit-button')
 
-    expect(button).not.toBeDisabled()
+    expect(button).toBeEnabled()
     await userEvent.click(button)
 
     expect(useEditBillingInfoMockSpy().mutateAsync).toHaveBeenCalledWith({

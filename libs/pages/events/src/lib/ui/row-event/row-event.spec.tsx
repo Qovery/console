@@ -46,7 +46,7 @@ describe('RowEvent', () => {
   it('should show expanded panel on click', async () => {
     const { baseElement } = render(<RowEvent {...props} />)
 
-    expect(queryByTestId(baseElement, 'expanded-panel')).toBeNull()
+    expect(queryByTestId(baseElement, 'expanded-panel')).not.toBeInTheDocument()
     const button = getByTestId(baseElement, 'row-event')
 
     await act(() => {

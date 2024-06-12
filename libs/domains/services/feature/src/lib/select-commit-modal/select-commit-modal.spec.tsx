@@ -55,7 +55,7 @@ describe('SelectCommitModal', () => {
       </SelectCommitModal>
     )
     await userEvent.click(screen.getByRole('button', { name: /cancel/i }))
-    expect(onCancel).toBeCalled()
+    expect(onCancel).toHaveBeenCalled()
   })
   it('should call submit properly', async () => {
     const onCancel = jest.fn()
@@ -76,6 +76,6 @@ describe('SelectCommitModal', () => {
     )
     await userEvent.click(screen.getByRole('radio', { name: /123/i }))
     await userEvent.click(screen.getByRole('button', { name: /Deploy/i }))
-    expect(onSubmit).toBeCalledWith('123')
+    expect(onSubmit).toHaveBeenCalledWith('123')
   })
 })

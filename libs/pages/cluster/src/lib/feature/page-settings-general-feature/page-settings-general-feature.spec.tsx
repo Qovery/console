@@ -50,7 +50,7 @@ describe('PageSettingsGeneralFeature', () => {
     await userEvent.clear(screen.getByTestId('input-name'))
     await userEvent.type(screen.getByTestId('input-name'), 'hello')
 
-    expect(screen.getByTestId('submit-button')).not.toBeDisabled()
+    expect(screen.getByTestId('submit-button')).toBeEnabled()
 
     await userEvent.click(screen.getByTestId('submit-button'))
 
@@ -59,7 +59,7 @@ describe('PageSettingsGeneralFeature', () => {
       mockCluster
     )
 
-    expect(editCluster).toBeCalledWith({
+    expect(editCluster).toHaveBeenCalledWith({
       organizationId: '0',
       clusterId: mockCluster.id,
       clusterRequest: cloneCluster,

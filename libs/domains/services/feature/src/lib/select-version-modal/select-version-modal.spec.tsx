@@ -33,7 +33,7 @@ describe('SelectVersionModal', () => {
       </SelectVersionModal>
     )
     await userEvent.click(screen.getByRole('button', { name: /cancel/i }))
-    expect(onCancel).toBeCalled()
+    expect(onCancel).toHaveBeenCalled()
   })
   it('should call submit properly', async () => {
     const onCancel = jest.fn()
@@ -51,6 +51,6 @@ describe('SelectVersionModal', () => {
     )
     await userEvent.type(screen.getByRole('textbox'), '1.2.3')
     await userEvent.click(screen.getByRole('button', { name: /deploy/i }))
-    expect(onSubmit).toBeCalledWith('1.2.3')
+    expect(onSubmit).toHaveBeenCalledWith('1.2.3')
   })
 })

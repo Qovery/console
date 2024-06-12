@@ -56,7 +56,7 @@ describe('StepRemoteFeature', () => {
     })
 
     const button = getByTestId(baseElement, 'button-submit')
-    expect(button).not.toBeDisabled()
+    expect(button).toBeEnabled()
 
     await act(() => {
       button.click()

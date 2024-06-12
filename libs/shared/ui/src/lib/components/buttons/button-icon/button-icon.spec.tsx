@@ -24,9 +24,9 @@ describe('ButtonIcon', () => {
 
     const button = screen.getByRole('button')
 
-    expect(button.classList.contains('btn--regular')).toBe(true)
-    expect(button.classList.contains('btn-icon--basic')).toBe(true)
-    expect(button.classList.contains('some-class-name')).toBe(true)
+    expect(button).toHaveClass('btn--regular')
+    expect(button).toHaveClass('btn-icon--basic')
+    expect(button).toHaveClass('some-class-name')
   })
 
   it('should apply the disabled class', () => {
@@ -36,7 +36,7 @@ describe('ButtonIcon', () => {
 
     const button = screen.getByRole('button')
 
-    expect(button.classList.contains('btn--disabled')).toBe(true)
+    expect(button).toHaveClass('btn--disabled')
   })
 
   it('should have a notification', () => {
@@ -56,6 +56,6 @@ describe('ButtonIcon', () => {
 
     const link = screen.getByRole('link')
 
-    expect(link).toBeTruthy()
+    expect(link).toBeInTheDocument()
   })
 })

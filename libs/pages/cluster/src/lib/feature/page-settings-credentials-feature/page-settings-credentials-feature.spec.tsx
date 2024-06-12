@@ -83,7 +83,7 @@ describe('PageSettingsCredentialsFeature', () => {
 
     await selectEvent.select(realSelect, 'my-credential')
 
-    expect(screen.getByTestId('submit-button')).not.toBeDisabled()
+    expect(screen.getByTestId('submit-button')).toBeEnabled()
 
     await userEvent.click(screen.getByTestId('submit-button'))
 
@@ -100,7 +100,7 @@ describe('PageSettingsCredentialsFeature', () => {
       cloudProviderInfo
     )
 
-    expect(editCloudProviderInfo).toBeCalledWith({
+    expect(editCloudProviderInfo).toHaveBeenCalledWith({
       organizationId: '0',
       clusterId: mockCluster.id,
       cloudProviderInfoRequest: cloneClusterProviderInfo,

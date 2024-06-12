@@ -70,7 +70,7 @@ describe('Toast', () => {
 
     const labelActionButton = screen.queryByTestId('label-action') as HTMLElement
 
-    expect(labelActionButton.textContent).toBe('my-label')
+    expect(labelActionButton).toHaveTextContent('my-label')
 
     act(() => {
       labelActionButton.click()

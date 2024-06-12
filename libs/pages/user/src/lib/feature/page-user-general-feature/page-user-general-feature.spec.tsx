@@ -32,7 +32,7 @@ describe('PageUserGeneral', () => {
     await userEvent.type(inputEmail, 'test2@test.com')
 
     const submitButton = screen.getByRole('button', { name: 'Save' })
-    expect(submitButton).not.toBeDisabled()
+    expect(submitButton).toBeEnabled()
 
     await userEvent.click(submitButton)
 

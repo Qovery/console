@@ -69,7 +69,7 @@ describe('PageSettingsResourcesFeature', () => {
     await userEvent.clear(screen.getByTestId('input-memory-storage'))
     await userEvent.type(screen.getByTestId('input-memory-storage'), '512')
 
-    expect(submitButton).not.toBeDisabled()
+    expect(submitButton).toBeEnabled()
 
     await userEvent.click(submitButton)
 
@@ -103,7 +103,7 @@ describe('PageSettingsResourcesFeature', () => {
     await userEvent.clear(screen.getByTestId('input-memory-storage'))
     await userEvent.type(screen.getByTestId('input-memory-storage'), '510')
 
-    expect(submitButton).not.toBeDisabled()
+    expect(submitButton).toBeEnabled()
 
     await userEvent.click(submitButton)
 

@@ -38,7 +38,7 @@ describe('Avatar', () => {
 
     const icon = screen.getByTestId('avatar-icon')
 
-    expect(icon).toBeTruthy()
+    expect(icon).toBeInTheDocument()
   })
 
   it('should have an avatar logo with img', () => {
@@ -48,7 +48,7 @@ describe('Avatar', () => {
 
     const logo = screen.getByTestId('avatar-logo')
 
-    expect(logo.querySelector('img'))
+    expect(logo.querySelector('img')).toBeDefined()
   })
 
   it('should have an avatar logo with placeholder', () => {
@@ -58,7 +58,7 @@ describe('Avatar', () => {
 
     const logo = screen.getByTestId('avatar-logo')
 
-    expect(logo.querySelector('span'))
-    expect(logo.textContent).toBe('Orga')
+    expect(logo.querySelector('span')).toBeDefined()
+    expect(logo).toHaveTextContent('Orga')
   })
 })

@@ -38,7 +38,7 @@ describe('PageOrganizationGeneral', () => {
     await userEvent.clear(input)
     await userEvent.type(input, 'hello-world')
 
-    expect(screen.getByTestId('submit-button')).not.toBeDisabled()
+    expect(screen.getByTestId('submit-button')).toBeEnabled()
 
     await userEvent.click(screen.getByTestId('submit-button'))
 
@@ -52,7 +52,7 @@ describe('PageOrganizationGeneral', () => {
 
     const cloneOrganization = handleSubmit(organization, mockOrganization)
 
-    expect(useEditOrganizationSpy().mutateAsync).toBeCalledWith({
+    expect(useEditOrganizationSpy().mutateAsync).toHaveBeenCalledWith({
       organizationId: '0',
       organizationRequest: cloneOrganization,
     })

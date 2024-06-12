@@ -46,7 +46,7 @@ describe('CreateProjectModalFeature', () => {
     const inputDescription = screen.getByTestId('input-description')
     await userEvent.type(inputDescription, 'description')
 
-    expect(screen.getByTestId('submit-button')).not.toBeDisabled()
+    expect(screen.getByTestId('submit-button')).toBeEnabled()
 
     await userEvent.click(screen.getByTestId('submit-button'))
 
