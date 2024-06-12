@@ -2,7 +2,7 @@ import { BuildModeEnum, type Organization } from 'qovery-typescript-axios'
 import { type FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
-import { AnnotationSetting } from '@qovery/domains/organizations/feature'
+import { AnnotationSetting, LabelSetting } from '@qovery/domains/organizations/feature'
 import { AutoDeploySetting, BuildSettings, GeneralSetting } from '@qovery/domains/services/feature'
 import { EntrypointCmdInputs, GeneralContainerSettings, GitRepositorySettings } from '@qovery/shared/console-shared'
 import { IconEnum, ServiceTypeEnum } from '@qovery/shared/enums'
@@ -107,7 +107,8 @@ export function StepGeneral(props: StepGeneralProps) {
         )}
 
         <Section className="gap-4">
-          <Heading>Extra annotations</Heading>
+          <Heading>Extra labels/annotations</Heading>
+          <LabelSetting />
           <AnnotationSetting />
         </Section>
 

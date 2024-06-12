@@ -57,6 +57,7 @@ describe('CrudModalFeature', () => {
     expect(app.ports).toHaveLength(1)
     expect(app).toMatchInlineSnapshot(`
       {
+        "annotations_groups": [],
         "auto_preview": false,
         "build_mode": "DOCKER",
         "buildpack_language": "NODE_JS",
@@ -82,6 +83,7 @@ describe('CrudModalFeature', () => {
           "readiness_probe": undefined,
         },
         "id": "0",
+        "labels_groups": [],
         "max_running_instances": 3,
         "maximum_cpu": 10,
         "maximum_memory": 10,
@@ -136,6 +138,7 @@ describe('CrudModalFeature', () => {
     expect(app.ports).toHaveLength(1)
     expect(app).toMatchInlineSnapshot(`
       {
+        "annotations_groups": [],
         "auto_preview": false,
         "build_mode": "DOCKER",
         "buildpack_language": "NODE_JS",
@@ -167,6 +170,7 @@ describe('CrudModalFeature', () => {
           "readiness_probe": undefined,
         },
         "id": "0",
+        "labels_groups": [],
         "max_running_instances": 3,
         "maximum_cpu": 10,
         "maximum_memory": 10,
@@ -221,6 +225,7 @@ describe('CrudModalFeature', () => {
     expect(app.ports).toHaveLength(1)
     expect(app).toMatchInlineSnapshot(`
       {
+        "annotations_groups": [],
         "auto_preview": false,
         "build_mode": "DOCKER",
         "buildpack_language": "NODE_JS",
@@ -252,6 +257,7 @@ describe('CrudModalFeature', () => {
           },
         },
         "id": "0",
+        "labels_groups": [],
         "max_running_instances": 3,
         "maximum_cpu": 10,
         "maximum_memory": 10,

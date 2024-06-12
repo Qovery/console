@@ -87,6 +87,7 @@ describe('StepSummaryFeature', () => {
         version: '1',
         description: '',
         annotations_groups: [],
+        labels_groups: [],
       },
     })
     expect(mockNavigate).toHaveBeenCalledWith('/organization/1/project/2/environment/3')

@@ -152,8 +152,6 @@ export function StepSummaryFeature() {
 
       if (generalData.cloud_provider === 'AWS' || generalData.cloud_provider === 'GCP') {
         if (featuresData && featuresData.vpc_mode === 'DEFAULT') {
-          console.log(featuresData && featuresData.features)
-
           formatFeatures = Object.keys(featuresData.features)
             .map(
               (id: string) =>

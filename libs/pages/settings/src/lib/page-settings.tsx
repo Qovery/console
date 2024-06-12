@@ -64,7 +64,7 @@ export function PageSettings() {
       ],
     },
     {
-      title: 'Annotations',
+      title: 'Labels & annotations',
       iconName: 'tags',
       url: pathSettings + SETTINGS_LABELS_ANNOTATIONS_URL,
     },

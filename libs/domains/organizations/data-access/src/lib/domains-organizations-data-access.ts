@@ -25,6 +25,8 @@ import {
   type OrganizationCustomRoleUpdateRequest,
   type OrganizationEditRequest,
   type OrganizationGithubAppConnectRequest,
+  OrganizationLabelsGroupApi,
+  type OrganizationLabelsGroupCreateRequest,
   OrganizationMainCallsApi,
   type OrganizationRequest,
   OrganizationWebhookApi,
@@ -34,6 +36,7 @@ import { match } from 'ts-pattern'
 import { refactoOrganizationCustomRolePayload, refactoOrganizationPayload } from '@qovery/shared/util-js'
 
 const annotationsGroupApi = new OrganizationAnnotationsGroupApi()
+const labelsGroupApi = new OrganizationLabelsGroupApi()
 const containerRegistriesApi = new ContainerRegistriesApi()
 const helmRepositoriesApi = new HelmRepositoriesApi()
 const organizationApi = new OrganizationMainCallsApi()
@@ -189,6 +192,26 @@ export const organizations = createQueryKeys('organizations', {
       return branches
     },
   }),
+  labelsGroups: ({ organizationId }: { organizationId: string }) => ({
+    queryKey: [organizationId],
+    async queryFn() {
+      const response = await labelsGroupApi.listOrganizationLabelsGroup(organizationId)
+      return response.data.results
+    },
+  }),
+  labelsGroupAssociatedItems: ({
+    organizationId,
+    labelsGroupId,
+  }: {
+    organizationId: string
+    labelsGroupId: string
+  }) => ({
+    queryKey: [organizationId, labelsGroupId],
+    async queryFn() {
+      const response = await labelsGroupApi.getOrganizationLabelsGroupAssociatedItems(organizationId, labelsGroupId)
+      return response.data.results
+    },
+  }),
   annotationsGroups: ({ organizationId }: { organizationId: string }) => ({
     queryKey: [organizationId],
     async queryFn() {
@@ -302,6 +325,20 @@ export const mutations = {
     const response = await annotationsGroupApi.deleteOrganizationAnnotationsGroup(organizationId, annotationsGroupId)
     return response.data
   },
+  async deleteLabelsGroup({ organizationId, labelsGroupId }: { organizationId: string; labelsGroupId: string }) {
+    const response = await labelsGroupApi.deleteOrganizationLabelsGroup(organizationId, labelsGroupId)
+    return response.data
+  },
+  async createLabelsGroup({
+    organizationId,
+    labelsGroupRequest,
+  }: {
+    organizationId: string
+    labelsGroupRequest: OrganizationLabelsGroupCreateRequest
+  }) {
+    const response = await labelsGroupApi.createOrganizationLabelsGroup(organizationId, labelsGroupRequest)
+    return response.data
+  },
   async createAnnotationsGroup({
     organizationId,
     annotationsGroupRequest,
@@ -313,6 +350,18 @@ export const mutations = {
       organizationId,
       annotationsGroupRequest
     )
+    return response.data
+  },
+  async editLabelsGroup({
+    organizationId,
+    labelsGroupId,
+    labelsGroupRequest,
+  }: {
+    organizationId: string
+    labelsGroupId: string
+    labelsGroupRequest: OrganizationLabelsGroupCreateRequest
+  }) {
+    const response = await labelsGroupApi.editOrganizationLabelsGroup(organizationId, labelsGroupId, labelsGroupRequest)
     return response.data
   },
   async editAnnotationsGroup({

@@ -34,6 +34,7 @@ describe('PageSettingsGeneralFeature', () => {
         root_path: '/',
       },
       application,
+      [],
       []
     )
     expect(app.name).toBe('hello')
@@ -57,6 +58,7 @@ describe('PageSettingsGeneralFeature', () => {
         root_path: '/',
       },
       application,
+      [],
       []
     )
     expect(app.name).toBe('hello')
@@ -78,6 +80,7 @@ describe('PageSettingsGeneralFeature', () => {
         root_path: '/',
       },
       application,
+      [],
       []
     )
 
@@ -99,6 +102,7 @@ describe('PageSettingsGeneralFeature', () => {
         root_path: '/',
       },
       job,
+      [],
       []
     )
 
@@ -118,6 +122,7 @@ describe('PageSettingsGeneralFeature', () => {
         registry: 'docker.io',
       },
       job,
+      [],
       []
     )
 

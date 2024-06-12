@@ -1,7 +1,7 @@
 import { DatabaseAccessibilityEnum, DatabaseModeEnum, DatabaseTypeEnum } from 'qovery-typescript-axios'
 import { type FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { AnnotationSetting } from '@qovery/domains/organizations/feature'
+import { AnnotationSetting, LabelSetting } from '@qovery/domains/organizations/feature'
 import { GeneralSetting } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { type Value } from '@qovery/shared/interfaces'
@@ -182,7 +182,8 @@ export function PageSettingsGeneral({
               />
             </Section>
             <Section className="gap-4">
-              <Heading>Extra annotations</Heading>
+              <Heading>Extra labels/annotations</Heading>
+              <LabelSetting />
               <AnnotationSetting />
             </Section>
             <div className="flex justify-end">

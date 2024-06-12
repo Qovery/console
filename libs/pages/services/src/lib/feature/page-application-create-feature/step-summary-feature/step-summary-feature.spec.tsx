@@ -75,6 +75,7 @@ describe('PageApplicationPostFeature', () => {
             root_path: '/',
             buildpack_language: 'JAVA',
             annotations_groups: [],
+            labels_groups: [],
           },
         }}
       >
@@ -109,6 +110,7 @@ describe('PageApplicationPostFeature', () => {
         healthchecks: {},
         auto_deploy: true,
         annotations_groups: [],
+        labels_groups: [],
       },
     })
   })
@@ -130,6 +132,7 @@ describe('PageApplicationPostFeature', () => {
             image_tag: '789',
             image_entry_point: '/',
             annotations_groups: [],
+            labels_groups: [],
           },
         }}
       >
@@ -159,6 +162,7 @@ describe('PageApplicationPostFeature', () => {
         entrypoint: '/',
         auto_deploy: true,
         annotations_groups: [],
+        labels_groups: [],
       },
     })
   })
