@@ -129,7 +129,7 @@ export function StepGeneralFeature() {
       : cloudProvider === 'AWS' && cluster?.kubernetes !== 'SELF_MANAGED'
         ? {
             name: dataTemplate?.slug ?? '',
-            mode: dataOptionTemplate?.slug === 'container' ? DatabaseModeEnum.CONTAINER : DatabaseModeEnum.MANAGED,
+            mode: DatabaseModeEnum.CONTAINER,
             type: dataTemplate?.slug?.toUpperCase() as DatabaseTypeEnum,
           }
         : {

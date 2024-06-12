@@ -114,6 +114,15 @@ export function StepGeneral({
                 control={control}
                 render={({ field }) => (
                   <>
+                    <InputRadio
+                      value={DatabaseModeEnum.CONTAINER}
+                      className="mb-3"
+                      name={field.name}
+                      description="Deployed on your Kubernetes cluster. Not for production purposes, no back-ups nor snapshots."
+                      onChange={field.onChange}
+                      formValue={field.value}
+                      label="Container mode"
+                    />
                     {showManagedWithVpcOptions &&
                       cloudProvider === CloudProviderEnum.AWS &&
                       cluster.kubernetes !== 'SELF_MANAGED' && (
@@ -127,15 +136,6 @@ export function StepGeneral({
                           label="Managed mode"
                         />
                       )}
-                    <InputRadio
-                      value={DatabaseModeEnum.CONTAINER}
-                      className="mb-3"
-                      name={field.name}
-                      description="Deployed on your Kubernetes cluster. Not for production purposes, no back-ups nor snapshots."
-                      onChange={field.onChange}
-                      formValue={field.value}
-                      label="Container mode"
-                    />
                   </>
                 )}
               />
