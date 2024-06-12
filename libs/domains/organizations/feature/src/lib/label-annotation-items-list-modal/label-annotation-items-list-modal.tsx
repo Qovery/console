@@ -108,7 +108,7 @@ export function LabelAnnotationItemsListModal({
   const [searchValue, setSearchValue] = useState<string | undefined>()
 
   const data = groupByProjectEnvironmentsServices(
-    annotationsGroupAssociatedItems || labelsGroupAssociatedItems,
+    type === 'label' ? labelsGroupAssociatedItems : annotationsGroupAssociatedItems,
     searchValue
   )
 
