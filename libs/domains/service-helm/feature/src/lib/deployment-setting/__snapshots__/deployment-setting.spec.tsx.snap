@@ -81,7 +81,7 @@ exports[`DeploymentSetting should match snapshot 1`] = `
         </div>
       </div>
       <div
-        class="flex  items-start mt-2 "
+        class="flex text-sm  items-start mt-2 "
         data-testid="input-toggle"
       >
         <div
@@ -108,12 +108,12 @@ exports[`DeploymentSetting should match snapshot 1`] = `
           class="relative -top-1 ml-3 cursor-pointer"
         >
           <p
-            class="text-ssm font-medium text-neutral-400"
+            class="mb-1 font-medium text-neutral-400"
           >
             Allow cluster-wide resources
           </p>
           <div
-            class="text-xs text-neutral-350"
+            class="text-neutral-350"
           >
             Allow this chart to deploy resources outside of this environment namespace (including CRDs or non-namespaced resources).
           </div>
