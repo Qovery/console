@@ -274,8 +274,18 @@ export function PageNewFeature() {
 
   const [searchInput, setSearchInput] = useState('')
 
-  const handleSearchInputChange = (value: string) => setSearchInput(value)
   const filterService = ({ title }: { title: string }) => title.toLowerCase().includes(searchInput.toLowerCase())
+
+  const handleSearchInputChange = (value: string) => {
+    if ([...serviceEmpty, ...serviceTemplates].filter(filterService).length === 0) {
+      posthog.capture('search-service', {
+        qoveryServiceType: 'INPUT_SEARCH',
+        searchValue: value,
+      })
+    }
+
+    setSearchInput(value)
+  }
 
   const emptyState = (
     <Section className="w-full">
