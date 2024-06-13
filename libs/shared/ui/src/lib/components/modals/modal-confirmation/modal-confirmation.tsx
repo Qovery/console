@@ -94,7 +94,7 @@ export function ModalConfirmation({
         />
         {children}
         {warning && (
-          <Callout.Root className="mb-2" color="yellow">
+          <Callout.Root className="mb-5" color="yellow">
             <Callout.Icon>
               <Icon iconName="triangle-exclamation" />
             </Callout.Icon>
