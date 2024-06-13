@@ -1,8 +1,8 @@
-import { BuildModeEnum, type Organization } from 'qovery-typescript-axios'
+import { type Organization } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { IconEnum, type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
 import { type JobGeneralData } from '@qovery/shared/interfaces'
-import { BlockContent, Icon, InputSelect, InputText } from '@qovery/shared/ui'
+import { BlockContent, Icon, InputSelect } from '@qovery/shared/ui'
 import GeneralContainerSettings from '../../general-container-settings/ui/general-container-settings'
 import EditGitRepositorySettingsFeature from '../../git-repository-settings/feature/edit-git-repository-settings-feature/edit-git-repository-settings-feature'
 import GitRepositorySettings from '../../git-repository-settings/ui/git-repository-settings/git-repository-settings'
@@ -57,45 +57,12 @@ export function JobGeneralSettings(props: JobGeneralSettingProps) {
               <div data-testid="git-fields">
                 <EditGitRepositorySettingsFeature />
                 <BlockContent title="Build & deploy">
-                  <Controller
-                    name="build_mode"
-                    control={control}
-                    rules={{
-                      required: 'Please select a mode.',
-                    }}
-                    defaultValue="DOCKER"
-                    render={({ field, fieldState: { error } }) => (
-                      <InputSelect
-                        dataTestId="input-select-mode"
-                        label="Mode"
-                        disabled={true}
-                        options={[{ label: 'Docker', value: BuildModeEnum.DOCKER }]}
-                        onChange={field.onChange}
-                        value={field.value}
-                        error={error?.message}
-                      />
-                    )}
-                  />
-
-                  <Controller
-                    data-testid="input-text-dockerfile-path"
-                    key="dockerfile_path"
-                    name="dockerfile_path"
-                    defaultValue="Dockerfile"
-                    control={control}
-                    rules={{
-                      required: 'Value required',
-                    }}
-                    render={({ field, fieldState: { error } }) => (
-                      <InputText
-                        dataTestId="input-text-dockerfile"
-                        name={field.name}
-                        onChange={field.onChange}
-                        value={field.value}
-                        label="Dockerfile path"
-                        error={error?.message}
-                      />
-                    )}
+                  <InputSelect
+                    dataTestId="input-select-mode"
+                    label="Mode"
+                    options={[{ label: 'Docker', value: 'DOCKER' }]}
+                    value="DOCKER"
+                    disabled
                   />
                 </BlockContent>
               </div>

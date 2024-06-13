@@ -1,9 +1,4 @@
-import {
-  type BuildModeEnum,
-  type BuildPackLanguageEnum,
-  type GitProviderEnum,
-  type GitTokenResponse,
-} from 'qovery-typescript-axios'
+import { type GitProviderEnum, type GitTokenResponse } from 'qovery-typescript-axios'
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { type ServiceTypeEnum } from '@qovery/shared/enums'
 
@@ -15,7 +10,7 @@ export interface JobGeneralData {
   labels_groups?: string[]
   annotations_groups?: string[]
 
-  // container
+  // container - docker registry source
   registry?: string
   image_name?: string
   image_tag?: string
@@ -23,15 +18,14 @@ export interface JobGeneralData {
   cmd_arguments?: string
   cmd?: string[]
 
-  // application
-  build_mode?: keyof typeof BuildModeEnum
+  // application - git source
   branch?: string
   repository?: string
   is_public_repository?: boolean
   provider?: keyof typeof GitProviderEnum
   git_token_id?: GitTokenResponse['id']
   root_path?: string
-  buildpack_language?: keyof typeof BuildPackLanguageEnum
+  // only for cron job, lifecycle job dockerfile info are in DockerfileSettingsData
   dockerfile_path?: string
 
   // template

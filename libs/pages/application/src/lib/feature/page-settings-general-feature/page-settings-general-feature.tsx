@@ -132,7 +132,12 @@ export const handleJobSubmit = (
       source: {
         docker: {
           git_repository,
-          dockerfile_path: data.dockerfile_path,
+          // Discrepancy between cron and lifecycle job
+          // cron job has dockerfile_path in general data
+          // whereas lifecycle job info are in DockerfileSettingsData
+          // so we need to keep existing data
+          dockerfile_path: data.dockerfile_path ?? job.source.docker.dockerfile_path,
+          dockerfile_raw: job.source.docker.dockerfile_raw,
         },
       },
       schedule,

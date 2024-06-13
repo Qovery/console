@@ -1,12 +1,13 @@
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useService } from '@qovery/domains/services/feature'
-import { isHelmGitSource } from '@qovery/shared/enums'
+import { isHelmGitSource, isJobGitSource } from '@qovery/shared/enums'
 import {
   APPLICATION_SETTINGS_ADVANCED_SETTINGS_URL,
   APPLICATION_SETTINGS_CONFIGURE_URL,
   APPLICATION_SETTINGS_DANGER_ZONE_URL,
   APPLICATION_SETTINGS_DEPLOYMENT_RESTRICTIONS,
+  APPLICATION_SETTINGS_DOCKERFILE_URL,
   APPLICATION_SETTINGS_DOMAIN_URL,
   APPLICATION_SETTINGS_GENERAL_URL,
   APPLICATION_SETTINGS_HEALTHCHECKS_URL,
@@ -19,7 +20,7 @@ import {
   APPLICATION_SETTINGS_VALUES_OVERRIDE_FILE_URL,
   APPLICATION_URL,
 } from '@qovery/shared/routes'
-import { IconAwesomeEnum } from '@qovery/shared/ui'
+import { IconAwesomeEnum, type NavigationLeftLinkProps } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { ROUTER_APPLICATION_SETTINGS } from '../../router/router'
 import PageSettings from '../../ui/page-settings/page-settings'
@@ -63,6 +64,12 @@ export function PageSettingsFeature() {
     title: 'Networking',
     icon: IconAwesomeEnum.PLUG,
     url: pathSettings + APPLICATION_SETTINGS_NETWORKING_URL,
+  }
+
+  const dockerfileSetting = {
+    title: 'Dockerfile',
+    iconName: 'box' as const,
+    url: pathSettings + APPLICATION_SETTINGS_DOCKERFILE_URL,
   }
 
   const configureJobSetting = {
@@ -120,6 +127,7 @@ export function PageSettingsFeature() {
   }
 
   const links = match(service)
+    .returnType<NavigationLeftLinkProps[]>()
     .with({ serviceType: 'APPLICATION' }, () => [
       generalSettings,
       resourcesSettings,
@@ -150,8 +158,9 @@ export function PageSettingsFeature() {
       advancedSettings,
       dangerzoneSettings,
     ])
-    .with({ serviceType: 'JOB' }, () => [
+    .with({ serviceType: 'JOB' }, (s) => [
       generalSettings,
+      ...(s.job_type === 'LIFECYCLE' && isJobGitSource(s.source) ? [dockerfileSetting] : []),
       configureJobSetting,
       resourcesSettings,
       deploymentRestrictionsSettings,

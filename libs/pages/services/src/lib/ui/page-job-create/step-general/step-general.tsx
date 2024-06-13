@@ -1,4 +1,4 @@
-import { BuildModeEnum, type Organization } from 'qovery-typescript-axios'
+import { type Organization } from 'qovery-typescript-axios'
 import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -16,7 +16,6 @@ export interface StepGeneralProps {
   jobType: JobType
   onSubmit: FormEventHandler<HTMLFormElement>
   organization?: Organization
-  loadingCheckDockerfile?: boolean
 }
 
 export function StepGeneral(props: StepGeneralProps) {
@@ -24,7 +23,6 @@ export function StepGeneral(props: StepGeneralProps) {
   const navigate = useNavigate()
   const { formState, watch } = useFormContext<JobGeneralData>()
   const watchServiceType = watch('serviceType')
-  const watchBuildMode = watch('build_mode')
 
   // NOTE: Validation corner case where git settings can be in loading state
   const isGitSettingsValid = watchServiceType === 'APPLICATION' ? watch('branch') : true
@@ -73,10 +71,10 @@ export function StepGeneral(props: StepGeneralProps) {
         {watchServiceType && (
           <Section className="gap-4">
             <Heading>{watchServiceType === ServiceTypeEnum.APPLICATION ? 'Build and deploy' : 'Deploy'}</Heading>
-            {watchServiceType === ServiceTypeEnum.APPLICATION && <BuildSettings buildModeDisabled />}
-            {props.jobType === ServiceTypeEnum.CRON_JOB && watchBuildMode === BuildModeEnum.DOCKER && (
-              <EntrypointCmdInputs />
+            {watchServiceType === ServiceTypeEnum.APPLICATION && props.jobType === ServiceTypeEnum.CRON_JOB && (
+              <BuildSettings buildModeDisabled />
             )}
+            {props.jobType === ServiceTypeEnum.CRON_JOB && <EntrypointCmdInputs />}
             <AutoDeploySetting source={watchServiceType === ServiceTypeEnum.CONTAINER ? 'CONTAINER_REGISTRY' : 'GIT'} />
           </Section>
         )}
@@ -100,7 +98,6 @@ export function StepGeneral(props: StepGeneralProps) {
             data-testid="button-submit"
             type="submit"
             disabled={!(formState.isValid && isGitSettingsValid)}
-            loading={props.loadingCheckDockerfile}
             size="lg"
           >
             Continue
