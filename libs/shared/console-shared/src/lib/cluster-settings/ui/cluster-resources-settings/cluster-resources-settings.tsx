@@ -146,6 +146,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                   error={error?.message}
                   onChange={field.onChange}
                   value={field.value}
+                  disabled={props.fromDetail}
                 />
               )}
             />
@@ -164,6 +165,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                     value={field.value}
                     label="Default node architecture"
                     error={error?.message}
+                    disabled={props.fromDetail}
                     options={Object.values(CpuArchitectureEnum).map((value) => ({
                       label: value,
                       value,

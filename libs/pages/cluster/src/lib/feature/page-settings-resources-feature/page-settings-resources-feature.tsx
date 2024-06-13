@@ -1,5 +1,4 @@
 import { type Cluster, type ClusterFeatureKarpenterParametersResponse } from 'qovery-typescript-axios'
-import { useEffect } from 'react'
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { useCluster, useEditCluster } from '@qovery/domains/clusters/feature'
@@ -16,13 +15,34 @@ export const handleSubmit = (data: FieldValues, cluster: Cluster): Cluster => {
   }
 }
 
-export function PageSettingsResourcesFeature() {
-  const { organizationId = '', clusterId = '' } = useParams()
+export interface SettingsResourcesFeatureProps {
+  cluster: Cluster
+}
+
+function SettingsResourcesFeature({ cluster }: SettingsResourcesFeatureProps) {
+  const karpenterFeature = cluster?.features?.find(
+    (feature) => feature.id === 'KARPENTER'
+  ) as ClusterFeatureKarpenterParametersResponse
 
   const methods = useForm<ClusterResourcesData>({
     mode: 'onChange',
+    defaultValues: {
+      cluster_type: cluster.kubernetes,
+      instance_type: cluster.instance_type,
+      nodes: [cluster.min_running_nodes || 1, cluster.max_running_nodes || 1],
+      disk_size: cluster.disk_size || 0,
+      karpenter: karpenterFeature
+        ? {
+            enabled: true,
+            spot_enabled: karpenterFeature.value.spot_enabled,
+            disk_size_in_gib: karpenterFeature.value.disk_size_in_gib.toString(),
+            default_service_architecture: karpenterFeature.value.default_service_architecture,
+          }
+        : {
+            enabled: false,
+          },
+    },
   })
-  const { data: cluster } = useCluster({ organizationId, clusterId })
   const { mutate: editCluster, isLoading: isEditClusterLoading } = useEditCluster()
 
   const onSubmit = methods.handleSubmit((data) => {
@@ -30,35 +50,12 @@ export function PageSettingsResourcesFeature() {
       const cloneCluster = handleSubmit(data, cluster)
 
       editCluster({
-        organizationId,
-        clusterId,
+        clusterId: cluster.id,
+        organizationId: cluster.organization.id,
         clusterRequest: cloneCluster,
       })
     }
   })
-
-  useEffect(() => {
-    methods.setValue('cluster_type', cluster?.kubernetes || '')
-    methods.setValue('instance_type', cluster?.instance_type || '')
-    methods.setValue('nodes', [cluster?.min_running_nodes || 1, cluster?.max_running_nodes || 1])
-    methods.setValue('disk_size', cluster?.disk_size || 0)
-    if (cluster?.instance_type === 'KARPENTER') {
-      const karpenterFeature = cluster?.features?.find(
-        (feature) => feature.id === 'KARPENTER'
-      ) as ClusterFeatureKarpenterParametersResponse
-      methods.setValue('karpenter.enabled', true)
-      methods.setValue('karpenter.disk_size_in_gib', karpenterFeature.value.disk_size_in_gib.toString())
-      methods.setValue('karpenter.default_service_architecture', karpenterFeature.value.default_service_architecture)
-      methods.setValue('karpenter.spot_enabled', karpenterFeature.value.spot_enabled)
-    }
-  }, [
-    methods,
-    cluster?.kubernetes,
-    cluster?.instance_type,
-    cluster?.min_running_nodes,
-    cluster?.max_running_nodes,
-    cluster?.disk_size,
-  ])
 
   return (
     <FormProvider {...methods}>
@@ -68,10 +65,21 @@ export function PageSettingsResourcesFeature() {
           clusterRegion={cluster.region}
           onSubmit={onSubmit}
           loading={isEditClusterLoading}
+          karpenter={cluster.instance_type === 'KARPENTER'}
         />
       )}
     </FormProvider>
   )
+}
+
+export function PageSettingsResourcesFeature() {
+  const { organizationId = '', clusterId = '' } = useParams()
+
+  const { data: cluster } = useCluster({ organizationId, clusterId })
+
+  if (!cluster) return null
+
+  return <SettingsResourcesFeature cluster={cluster} />
 }
 
 export default PageSettingsResourcesFeature
