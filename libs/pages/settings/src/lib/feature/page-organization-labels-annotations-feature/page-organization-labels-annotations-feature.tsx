@@ -149,10 +149,7 @@ export function PageOrganizationLabelsAnnotationsFeature() {
                     >
                       <Icon iconName="gear" />
                     </Button>
-                    <Tooltip
-                      content="Annotations group still in used"
-                      disabled={labelsGroup.associated_items_count === 0}
-                    >
+                    <Tooltip content="Labels group still in used" disabled={labelsGroup.associated_items_count === 0}>
                       <Button
                         size="md"
                         variant="outline"
