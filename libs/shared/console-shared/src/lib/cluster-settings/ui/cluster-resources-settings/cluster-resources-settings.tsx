@@ -103,6 +103,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
         <Controller
           name="karpenter.enabled"
           control={control}
+          defaultValue={false}
           render={({ field }) => (
             <div className="relative flex flex-col gap-2 overflow-hidden rounded border border-neutral-250 bg-neutral-100 p-4">
               <InputToggle

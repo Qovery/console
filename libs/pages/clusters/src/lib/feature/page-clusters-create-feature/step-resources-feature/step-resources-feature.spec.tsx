@@ -61,10 +61,7 @@ const ContextWrapper = (props: { children: ReactNode }) => {
           cluster_type: 'MANAGED',
           nodes: [1, 3],
           karpenter: {
-            enabled: true,
-            spot_enabled: true,
-            disk_size_in_gib: 10,
-            default_service_architecture: 'AMD64',
+            enabled: false,
           },
         },
         remoteData: undefined,
@@ -112,10 +109,7 @@ describe('StepResourcesFeature', () => {
         cluster_type: 'MANAGED',
         nodes: [1, 3],
         karpenter: {
-          default_service_architecture: 'AMD64',
-          disk_size_in_gib: 10,
-          enabled: true,
-          spot_enabled: true,
+          enabled: false,
         },
       })
     })
