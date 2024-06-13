@@ -1,4 +1,4 @@
-import { type Cluster, ClusterFeatureKarpenterParametersResponse } from 'qovery-typescript-axios'
+import { type Cluster, type ClusterFeatureKarpenterParametersResponse } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
