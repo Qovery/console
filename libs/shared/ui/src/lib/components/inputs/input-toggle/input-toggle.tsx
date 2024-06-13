@@ -54,7 +54,7 @@ export function InputToggle(props: InputToggleProps) {
   return (
     <div
       data-testid="input-toggle"
-      className={`flex  ${description && !forceAlignTop ? 'items-center' : 'items-start'} ${className} ${
+      className={`flex text-sm  ${description && !forceAlignTop ? 'items-center' : 'items-start'} ${className} ${
         disabled ? 'opacity-50' : ''
       }`}
     >
@@ -93,8 +93,8 @@ export function InputToggle(props: InputToggleProps) {
           onClick={changeToggle}
           className={`${description && forceAlignTop ? 'relative -top-1' : ''} ml-3 ${!disabled ? 'cursor-pointer' : ''}`}
         >
-          {title && <p className="text-ssm font-medium text-neutral-400">{title}</p>}
-          {description && <div className="text-xs text-neutral-350">{description}</div>}
+          {title && <p className="mb-1 font-medium text-neutral-400">{title}</p>}
+          {description && <div className="text-neutral-350">{description}</div>}
         </div>
       )}
     </div>

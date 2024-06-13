@@ -1,4 +1,4 @@
-import { type CloudProviderEnum } from 'qovery-typescript-axios'
+import { type CloudProviderEnum, type CpuArchitectureEnum } from 'qovery-typescript-axios'
 
 export interface ClusterGeneralData {
   name: string
@@ -22,7 +22,12 @@ export interface ClusterResourcesData {
   instance_type: string
   nodes: [number, number]
   disk_size: number
-  karpenter?: boolean
+  karpenter?: {
+    enabled: boolean
+    spot_enabled: boolean
+    disk_size_in_gib: number
+    default_service_architecture: CpuArchitectureEnum
+  }
 }
 
 export interface ClusterRemoteData {

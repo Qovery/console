@@ -1,4 +1,4 @@
-import { CloudProviderEnum, KubernetesEnum } from 'qovery-typescript-axios'
+import { CloudProviderEnum, CpuArchitectureEnum, KubernetesEnum } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { IconEnum } from '@qovery/shared/enums'
@@ -7,11 +7,13 @@ import {
   BlockContent,
   Callout,
   ExternalLink,
+  Heading,
   Icon,
   InputRadioBox,
   InputSelect,
   InputText,
   InputToggle,
+  Section,
   Slider,
 } from '@qovery/shared/ui'
 import KarpenterImage from './karpenter-image'
@@ -22,6 +24,7 @@ export interface ClusterResourcesSettingsProps {
   instanceTypeOptions?: Value[]
   cloudProvider?: CloudProviderEnum
   showWarningInstance?: boolean
+  isProduction?: boolean
 }
 
 export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
@@ -31,6 +34,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
   const [warningClusterNodes, setWarningClusterNodes] = useState(false)
   const watchClusterType = watch('cluster_type')
   const watchInstanceType = watch('instance_type')
+  const watchKarpenter = watch('karpenter.enabled')
 
   useEffect(() => {
     const instanceType: Value | undefined = props.instanceTypeOptions?.find(
@@ -42,8 +46,8 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
   }, [watchInstanceType, props.instanceTypeOptions])
 
   return (
-    <div>
-      <Callout.Root className="mb-5" color="yellow">
+    <div className="flex flex-col gap-10">
+      <Callout.Root color="yellow">
         <Callout.Icon>
           <Icon iconName="triangle-exclamation" />
         </Callout.Icon>
@@ -63,7 +67,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
           </Callout.TextDescription>
         </Callout.Text>
       </Callout.Root>
-      <BlockContent title="Cluster" className="mb-5">
+      <BlockContent title="Cluster" className="mb-0">
         {!props.fromDetail ? (
           <Controller
             name="cluster_type"
@@ -95,18 +99,19 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
           </div>
         )}
       </BlockContent>
-      {!props.fromDetail && (
+      {!props.isProduction && props.cloudProvider === 'AWS' && (
         <Controller
-          name="karpenter"
+          name="karpenter.enabled"
           control={control}
           render={({ field }) => (
-            <div className="relative mb-3 flex h-[104px] flex-col gap-2 overflow-hidden rounded border border-neutral-200 bg-neutral-100 p-4">
+            <div className="relative flex flex-col gap-2 overflow-hidden rounded border border-neutral-250 bg-neutral-100 p-4">
               <InputToggle
                 value={field.value}
                 onChange={field.onChange}
                 title="(Beta) Karpenter"
                 description="Try our new Kubernetes autoscaler"
                 forceAlignTop
+                disabled={props.fromDetail}
                 small
               />
               <ExternalLink
@@ -120,7 +125,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
           )}
         />
       )}
-      <BlockContent title="Cluster Nodes" className="mb-8">
+      <BlockContent title="Cluster Nodes" className="mb-0">
         <Controller
           name="instance_type"
           control={control}
@@ -200,8 +205,13 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
         )}
       </BlockContent>
 
-      {watchClusterType === KubernetesEnum.MANAGED && (
-        <BlockContent title="Nodes auto-scaling" className="mb-10">
+      {watchClusterType === KubernetesEnum.MANAGED && !watchKarpenter && (
+        <BlockContent
+          title="Nodes auto-scaling"
+          className={
+            (!props.fromDetail && props.cloudProvider === CloudProviderEnum.AWS) || watchKarpenter ? 'mb-0' : 'mb-10'
+          }
+        >
           <Controller
             name="nodes"
             control={control}
@@ -221,6 +231,71 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
             )}
           />
         </BlockContent>
+      )}
+
+      {watchKarpenter && (
+        <Section className="gap-4">
+          <Heading>Resources configuration</Heading>
+          <Controller
+            name="karpenter.disk_size_in_gib"
+            control={control}
+            rules={{
+              required: 'Please select a disk size',
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <InputText
+                label="Storage (GB)"
+                type="number"
+                name={field.name}
+                error={error?.message}
+                onChange={field.onChange}
+                value={field.value}
+              />
+            )}
+          />
+
+          <Controller
+            name="karpenter.default_service_architecture"
+            control={control}
+            defaultValue={CpuArchitectureEnum.AMD64}
+            rules={{
+              required: 'Please select a node architecture',
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <div>
+                <InputSelect
+                  onChange={field.onChange}
+                  value={field.value}
+                  label="Default node architecture"
+                  error={error?.message}
+                  options={Object.values(CpuArchitectureEnum).map((value) => ({
+                    label: value,
+                    value,
+                  }))}
+                />
+                <p className="mb-3 ml-4 mt-1 text-xs text-neutral-350">
+                  All your applications will be built and deployed on this architecture.
+                </p>
+              </div>
+            )}
+          />
+
+          <Controller
+            name="karpenter.spot_enabled"
+            control={control}
+            render={({ field }) => (
+              <InputToggle
+                value={field.value}
+                onChange={field.onChange}
+                title="Spot instances"
+                description="Enable spot instances on your cluster"
+                forceAlignTop
+                disabled={props.fromDetail}
+                small
+              />
+            )}
+          />
+        </Section>
       )}
 
       {!props.fromDetail && props.cloudProvider === CloudProviderEnum.AWS && (

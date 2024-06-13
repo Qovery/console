@@ -205,6 +205,17 @@ export function StepSummaryFeature() {
               },
             ]
           }
+
+          if (generalData.cloud_provider === 'AWS' && resourcesData.karpenter?.enabled) {
+            formatFeatures?.push({
+              id: 'KARPENTER',
+              value: {
+                spot_enabled: resourcesData.karpenter.spot_enabled,
+                disk_size_in_gib: resourcesData.karpenter.disk_size_in_gib,
+                default_service_architecture: resourcesData.karpenter.default_service_architecture,
+              },
+            })
+          }
         }
       }
 

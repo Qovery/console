@@ -67,6 +67,7 @@ export function StepResourcesFeature() {
           onSubmit={onSubmit}
           cloudProvider={generalData?.cloud_provider}
           clusterRegion={generalData?.region}
+          isProduction={generalData?.production}
         />
       </FormProvider>
     </FunnelFlowBody>
