@@ -2,6 +2,7 @@ import equal from 'fast-deep-equal'
 import { type Cluster, type Environment, type Organization, type Project } from 'qovery-typescript-axios'
 import { memo, useCallback, useEffect, useState } from 'react'
 import { useLocation, useMatch, useNavigate, useParams } from 'react-router-dom'
+import { match } from 'ts-pattern'
 import { EnvironmentMode } from '@qovery/domains/environments/feature'
 import { ServiceStateChip, useServices } from '@qovery/domains/services/feature'
 import { IconEnum } from '@qovery/shared/enums'
@@ -154,7 +155,16 @@ export function Breadcrumb(props: BreadcrumbProps) {
           <div className="flex items-center">
             <ServiceStateChip mode="deployment" environmentId={service.environment?.id} serviceId={service.id} />
             <div className="ml-3 mt-[1px]">
-              <Icon name={service.serviceType === 'DATABASE' ? IconEnum.DATABASE : IconEnum.APPLICATION} width="16" />
+              <Icon
+                name={match(service)
+                  .with({ serviceType: 'HELM' }, () => IconEnum.HELM)
+                  .with({ serviceType: 'DATABASE' }, () => IconEnum.DATABASE)
+                  .with({ serviceType: 'JOB' }, (s) =>
+                    s.job_type === 'LIFECYCLE' ? IconEnum.LIFECYCLE_JOB : IconEnum.CRON_JOB
+                  )
+                  .otherwise(() => IconEnum.APPLICATION)}
+                width="16"
+              />
             </div>
           </div>
         ),
