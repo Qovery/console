@@ -1,4 +1,4 @@
-import { type Cluster } from 'qovery-typescript-axios'
+import { type Cluster, ClusterFeatureKarpenterParametersResponse } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
@@ -25,8 +25,6 @@ export function PageSettingsResourcesFeature() {
   const { data: cluster } = useCluster({ organizationId, clusterId })
   const { mutate: editCluster, isLoading: isEditClusterLoading } = useEditCluster()
 
-  console.log(cluster)
-
   const onSubmit = methods.handleSubmit((data) => {
     if (data && cluster) {
       const cloneCluster = handleSubmit(data, cluster)
@@ -44,7 +42,15 @@ export function PageSettingsResourcesFeature() {
     methods.setValue('instance_type', cluster?.instance_type || '')
     methods.setValue('nodes', [cluster?.min_running_nodes || 1, cluster?.max_running_nodes || 1])
     methods.setValue('disk_size', cluster?.disk_size || 0)
-    // methods.setValue('karpenter')
+    if (cluster?.instance_type === 'KARPENTER') {
+      const karpenterFeature = cluster?.features?.find(
+        (feature) => feature.id === 'KARPENTER'
+      ) as ClusterFeatureKarpenterParametersResponse
+      methods.setValue('karpenter.enabled', true)
+      methods.setValue('karpenter.disk_size_in_gib', karpenterFeature.value.disk_size_in_gib.toString())
+      methods.setValue('karpenter.default_service_architecture', karpenterFeature.value.default_service_architecture)
+      methods.setValue('karpenter.spot_enabled', karpenterFeature.value.spot_enabled)
+    }
   }, [
     methods,
     cluster?.kubernetes,

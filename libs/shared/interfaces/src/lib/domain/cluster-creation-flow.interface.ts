@@ -25,7 +25,7 @@ export interface ClusterResourcesData {
   karpenter?: {
     enabled: boolean
     spot_enabled: boolean
-    disk_size_in_gib: number
+    disk_size_in_gib: string
     default_service_architecture: CpuArchitectureEnum
   }
 }
