@@ -69,7 +69,7 @@ export function DatePicker({
                 name="start-time"
                 type="time"
                 className="mr-2 flex-grow"
-                customRef={inputStartTime}
+                ref={inputStartTime}
                 value="00:00"
               />
               <InputText
@@ -77,7 +77,7 @@ export function DatePicker({
                 name="end-time"
                 type="time"
                 className="flex-grow"
-                customRef={inputEndTime}
+                ref={inputEndTime}
                 value="23:59"
               />
             </div>

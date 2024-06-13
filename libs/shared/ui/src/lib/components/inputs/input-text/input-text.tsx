@@ -1,4 +1,5 @@
-import { type ChangeEventHandler, type ReactNode, type RefObject, useEffect, useRef, useState } from 'react'
+import { type ChangeEventHandler, type ReactNode, useEffect, useRef, useState } from 'react'
+import { forwardRef } from 'react'
 import Icon from '../../icon/icon'
 
 export interface InputTextProps {
@@ -13,10 +14,9 @@ export interface InputTextProps {
   disabled?: boolean
   dataTestId?: string
   rightElement?: ReactNode
-  customRef?: RefObject<HTMLInputElement>
 }
 
-export function InputText(props: InputTextProps) {
+export const InputText = forwardRef<HTMLInputElement, InputTextProps>(function InputText(props, ref) {
   const {
     name,
     label,
@@ -29,7 +29,6 @@ export function InputText(props: InputTextProps) {
     disabled,
     rightElement,
     dataTestId,
-    customRef,
   } = props
 
   const [focused, setFocused] = useState(false)
@@ -76,7 +75,7 @@ export function InputText(props: InputTextProps) {
             </label>
             <input
               data-testid={dataTestId || 'input-text'}
-              ref={customRef}
+              ref={ref}
               name={name}
               id={label}
               className={`input__value ${rightElement ? '!pr-9' : ''}`}
@@ -116,6 +115,6 @@ export function InputText(props: InputTextProps) {
       {error && <p className="mt-0.5 px-4 text-xs font-medium text-red-500">{error}</p>}
     </div>
   )
-}
+})
 
 export default InputText
