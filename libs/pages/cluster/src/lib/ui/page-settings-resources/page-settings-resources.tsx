@@ -21,8 +21,8 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
         <form onSubmit={onSubmit}>
           <ClusterResourcesSettingsFeature
             cloudProvider={props.cloudProvider}
-            fromDetail={true}
             clusterRegion={props.clusterRegion}
+            fromDetail
           />
           <div className="flex justify-end">
             <Button data-testid="submit-button" type="submit" size="lg" loading={loading} disabled={!formState.isValid}>

@@ -99,7 +99,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
           </div>
         )}
       </BlockContent>
-      {!props.isProduction && props.cloudProvider === 'AWS' && (
+      {!props.isProduction && props.cloudProvider === 'AWS' && watchClusterType === KubernetesEnum.MANAGED && (
         <Controller
           name="karpenter.enabled"
           control={control}
@@ -125,178 +125,179 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
           )}
         />
       )}
-      <BlockContent title="Cluster Nodes" className="mb-0">
-        <Controller
-          name="instance_type"
-          control={control}
-          rules={{
-            required: 'Please select an instance type',
-          }}
-          render={({ field, fieldState: { error } }) => (
-            <div>
-              <InputSelect
-                isSearchable
-                onChange={(event) => {
-                  field.onChange(event)
-                  if (props.fromDetail) {
-                    setWarningClusterNodes(true)
-                  }
-                }}
-                value={field.value}
-                label="Instance type"
-                error={error?.message}
-                options={props.instanceTypeOptions || []}
-              />
-              <p className="mb-3 ml-4 mt-1 text-xs text-neutral-350">
-                Instance type to be used to run your Kubernetes nodes.
-              </p>
-              {warningInstance && (
-                <Callout.Root className="mb-3" color="yellow" data-testid="warning-instance">
-                  <Callout.Icon>
-                    <Icon iconName="triangle-exclamation" />
-                  </Callout.Icon>
-                  <Callout.Text>
-                    <Callout.TextHeading>Be careful</Callout.TextHeading>
-                    <Callout.TextDescription className="text-xs">
-                      You selected an instance with ARM64/AARCH64 Cpu architecture. To deploy your services, be sure all
-                      containers and dockerfile you are using are compatible with this CPU architecture
-                    </Callout.TextDescription>
-                  </Callout.Text>
-                </Callout.Root>
-              )}
-            </div>
-          )}
-        />
-        <Controller
-          name="disk_size"
-          control={control}
-          rules={{
-            required: 'Please select a disk size',
-          }}
-          render={({ field }) => (
-            <InputText
-              type="number"
-              name={field.name}
-              onChange={(event) => {
-                field.onChange(event)
-                if (props.fromDetail) {
-                  setWarningClusterNodes(true)
-                }
+
+      <Section className="gap-4">
+        <Heading>Resources configuration</Heading>
+
+        {watchKarpenter ? (
+          <>
+            <Controller
+              name="karpenter.disk_size_in_gib"
+              control={control}
+              rules={{
+                required: 'Please select a disk size',
               }}
-              value={field.value}
-              label="Disk size (GB)"
-            />
-          )}
-        />
-        <p className="mb-3 ml-4 mt-1 text-xs text-neutral-350">
-          Storage allocated to your Kubernetes nodes to store files, application images etc..
-        </p>
-        {warningClusterNodes && (
-          <Callout.Root color="yellow">
-            <Callout.Icon className="text-xs">
-              <Icon iconName="circle-exclamation" />
-            </Callout.Icon>
-            <Callout.Text className="text-xs">
-              <Callout.TextHeading>
-                Changing these parameters might cause a downtime on your service.
-              </Callout.TextHeading>
-            </Callout.Text>
-          </Callout.Root>
-        )}
-      </BlockContent>
-
-      {watchClusterType === KubernetesEnum.MANAGED && !watchKarpenter && (
-        <BlockContent
-          title="Nodes auto-scaling"
-          className={
-            (!props.fromDetail && props.cloudProvider === CloudProviderEnum.AWS) || watchKarpenter ? 'mb-0' : 'mb-10'
-          }
-        >
-          <Controller
-            name="nodes"
-            control={control}
-            rules={{
-              required: 'Please number of nodes',
-            }}
-            render={({ field }) => (
-              <div>
-                {watchNodes && (
-                  <p className="mb-3 font-medium text-neutral-400">{`min ${watchNodes[0]} - max ${watchNodes[1]}`}</p>
-                )}
-                <Slider onChange={field.onChange} value={field.value} max={200} min={1} step={1} />
-                <p className="mt-3 text-xs text-neutral-350">
-                  Cluster can scale up to “max” nodes depending on its usage
-                </p>
-              </div>
-            )}
-          />
-        </BlockContent>
-      )}
-
-      {watchKarpenter && (
-        <Section className="gap-4">
-          <Heading>Resources configuration</Heading>
-          <Controller
-            name="karpenter.disk_size_in_gib"
-            control={control}
-            rules={{
-              required: 'Please select a disk size',
-            }}
-            render={({ field, fieldState: { error } }) => (
-              <InputText
-                label="Storage (GB)"
-                type="number"
-                name={field.name}
-                error={error?.message}
-                onChange={field.onChange}
-                value={field.value}
-              />
-            )}
-          />
-
-          <Controller
-            name="karpenter.default_service_architecture"
-            control={control}
-            defaultValue={CpuArchitectureEnum.AMD64}
-            rules={{
-              required: 'Please select a node architecture',
-            }}
-            render={({ field, fieldState: { error } }) => (
-              <div>
-                <InputSelect
+              render={({ field, fieldState: { error } }) => (
+                <InputText
+                  label="Storage (GB)"
+                  type="number"
+                  name={field.name}
+                  error={error?.message}
                   onChange={field.onChange}
                   value={field.value}
-                  label="Default node architecture"
-                  error={error?.message}
-                  options={Object.values(CpuArchitectureEnum).map((value) => ({
-                    label: value,
-                    value,
-                  }))}
                 />
-                <p className="mb-3 ml-4 mt-1 text-xs text-neutral-350">
-                  All your applications will be built and deployed on this architecture.
-                </p>
-              </div>
-            )}
-          />
+              )}
+            />
 
-          <Controller
-            name="karpenter.spot_enabled"
-            control={control}
-            render={({ field }) => (
-              <InputToggle
-                value={field.value}
-                onChange={field.onChange}
-                title="Spot instances"
-                description="Enable spot instances on your cluster"
-                forceAlignTop
-                disabled={props.fromDetail}
-                small
-              />
+            <Controller
+              name="karpenter.default_service_architecture"
+              control={control}
+              defaultValue={CpuArchitectureEnum.AMD64}
+              rules={{
+                required: 'Please select a node architecture',
+              }}
+              render={({ field, fieldState: { error } }) => (
+                <div>
+                  <InputSelect
+                    onChange={field.onChange}
+                    value={field.value}
+                    label="Default node architecture"
+                    error={error?.message}
+                    options={Object.values(CpuArchitectureEnum).map((value) => ({
+                      label: value,
+                      value,
+                    }))}
+                  />
+                  <p className="ml-4 mt-1 text-xs text-neutral-350">
+                    All your applications will be built and deployed on this architecture.
+                  </p>
+                </div>
+              )}
+            />
+
+            <Controller
+              name="karpenter.spot_enabled"
+              control={control}
+              render={({ field }) => (
+                <InputToggle
+                  value={field.value}
+                  onChange={field.onChange}
+                  title="Spot instances"
+                  description="Enable spot instances on your cluster"
+                  forceAlignTop
+                  disabled={props.fromDetail}
+                  small
+                />
+              )}
+            />
+          </>
+        ) : (
+          <>
+            <Controller
+              name="instance_type"
+              control={control}
+              rules={{
+                required: 'Please select an instance type',
+              }}
+              render={({ field, fieldState: { error } }) => (
+                <div className="flex flex-col gap-1">
+                  <InputSelect
+                    isSearchable
+                    onChange={(event) => {
+                      field.onChange(event)
+                      if (props.fromDetail) {
+                        setWarningClusterNodes(true)
+                      }
+                    }}
+                    value={field.value}
+                    label="Instance type"
+                    error={error?.message}
+                    options={props.instanceTypeOptions || []}
+                  />
+                  <p className="ml-4 text-xs text-neutral-350">
+                    Instance type to be used to run your Kubernetes nodes.
+                  </p>
+                  {warningInstance && (
+                    <Callout.Root className="mb-3 mt-1" color="yellow" data-testid="warning-instance">
+                      <Callout.Icon>
+                        <Icon iconName="triangle-exclamation" />
+                      </Callout.Icon>
+                      <Callout.Text>
+                        <Callout.TextHeading>Be careful</Callout.TextHeading>
+                        <Callout.TextDescription className="text-xs">
+                          You selected an instance with ARM64/AARCH64 Cpu architecture. To deploy your services, be sure
+                          all containers and dockerfile you are using are compatible with this CPU architecture
+                        </Callout.TextDescription>
+                      </Callout.Text>
+                    </Callout.Root>
+                  )}
+                </div>
+              )}
+            />
+            <Controller
+              name="disk_size"
+              control={control}
+              rules={{
+                required: 'Please select a disk size',
+              }}
+              render={({ field }) => (
+                <div className="flex flex-col gap-1">
+                  <InputText
+                    type="number"
+                    name={field.name}
+                    onChange={(event) => {
+                      field.onChange(event)
+                      if (props.fromDetail) {
+                        setWarningClusterNodes(true)
+                      }
+                    }}
+                    value={field.value}
+                    label="Disk size (GB)"
+                  />
+                  <p className="ml-4 text-xs text-neutral-350">
+                    Storage allocated to your Kubernetes nodes to store files, application images etc..
+                  </p>
+                </div>
+              )}
+            />
+            {warningClusterNodes && (
+              <Callout.Root color="yellow">
+                <Callout.Icon className="text-xs">
+                  <Icon iconName="circle-exclamation" />
+                </Callout.Icon>
+                <Callout.Text className="text-xs">
+                  <Callout.TextHeading>
+                    Changing these parameters might cause a downtime on your service.
+                  </Callout.TextHeading>
+                </Callout.Text>
+              </Callout.Root>
             )}
-          />
-        </Section>
-      )}
+            {watchClusterType === KubernetesEnum.MANAGED && (
+              <>
+                <Heading>Nodes auto-scaling</Heading>
+                <Controller
+                  name="nodes"
+                  control={control}
+                  rules={{
+                    required: 'Please number of nodes',
+                  }}
+                  render={({ field }) => (
+                    <div>
+                      {watchNodes && (
+                        <p className="mb-3 font-medium text-neutral-400">{`min ${watchNodes[0]} - max ${watchNodes[1]}`}</p>
+                      )}
+                      <Slider onChange={field.onChange} value={field.value} max={200} min={1} step={1} />
+                      <p className="mt-3 text-xs text-neutral-350">
+                        Cluster can scale up to “max” nodes depending on its usage
+                      </p>
+                    </div>
+                  )}
+                />
+              </>
+            )}
+          </>
+        )}
+      </Section>
 
       {!props.fromDetail && props.cloudProvider === CloudProviderEnum.AWS && (
         <Callout.Root className="mb-10 items-center" color="sky" data-testid="aws-cost-banner">

@@ -51,7 +51,7 @@ export function CardClusterFeature({
         }
       }}
     >
-      <div className="flex w-full">
+      <div className="flex w-full gap-3">
         {control ? (
           <Controller
             name={`features.${feature.id}.value`}

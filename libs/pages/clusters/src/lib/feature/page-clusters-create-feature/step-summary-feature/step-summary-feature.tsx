@@ -261,20 +261,33 @@ export function StepSummaryFeature() {
               cloud_provider_credentials,
             }
           } else {
-            return {
-              name: generalData.name,
-              description: generalData.description || '',
-              production: generalData.production,
-              cloud_provider: generalData.cloud_provider,
-              region: generalData.region,
-              min_running_nodes: resourcesData.nodes[0],
-              max_running_nodes: resourcesData.nodes[1],
-              disk_size: resourcesData.disk_size,
-              instance_type: resourcesData.instance_type,
-              kubernetes: resourcesData.cluster_type as KubernetesEnum,
-              features: formatFeatures as ClusterRequestFeaturesInner[],
-              ssh_keys: remoteData?.ssh_key ? [remoteData?.ssh_key] : undefined,
-              cloud_provider_credentials,
+            if (resourcesData.karpenter?.enabled) {
+              return {
+                name: generalData.name,
+                description: generalData.description || '',
+                production: generalData.production,
+                cloud_provider: generalData.cloud_provider,
+                region: generalData.region,
+                kubernetes: resourcesData.cluster_type as KubernetesEnum,
+                features: formatFeatures as ClusterRequestFeaturesInner[],
+                cloud_provider_credentials,
+              }
+            } else {
+              return {
+                name: generalData.name,
+                description: generalData.description || '',
+                production: generalData.production,
+                cloud_provider: generalData.cloud_provider,
+                region: generalData.region,
+                min_running_nodes: resourcesData.nodes[0],
+                max_running_nodes: resourcesData.nodes[1],
+                disk_size: resourcesData.disk_size,
+                instance_type: resourcesData.instance_type,
+                kubernetes: resourcesData.cluster_type as KubernetesEnum,
+                features: formatFeatures as ClusterRequestFeaturesInner[],
+                ssh_keys: remoteData?.ssh_key ? [remoteData?.ssh_key] : undefined,
+                cloud_provider_credentials,
+              }
             }
           }
         })

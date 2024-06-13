@@ -25,6 +25,8 @@ export function PageSettingsResourcesFeature() {
   const { data: cluster } = useCluster({ organizationId, clusterId })
   const { mutate: editCluster, isLoading: isEditClusterLoading } = useEditCluster()
 
+  console.log(cluster)
+
   const onSubmit = methods.handleSubmit((data) => {
     if (data && cluster) {
       const cloneCluster = handleSubmit(data, cluster)
@@ -42,6 +44,7 @@ export function PageSettingsResourcesFeature() {
     methods.setValue('instance_type', cluster?.instance_type || '')
     methods.setValue('nodes', [cluster?.min_running_nodes || 1, cluster?.max_running_nodes || 1])
     methods.setValue('disk_size', cluster?.disk_size || 0)
+    // methods.setValue('karpenter')
   }, [
     methods,
     cluster?.kubernetes,
