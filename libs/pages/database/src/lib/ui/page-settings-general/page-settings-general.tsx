@@ -181,11 +181,21 @@ export function PageSettingsGeneral({
                 )}
               />
             </Section>
-            <Section className="gap-4">
-              <Heading>Extra labels/annotations</Heading>
-              <LabelSetting />
-              <AnnotationSetting />
-            </Section>
+
+            {databaseMode === DatabaseModeEnum.CONTAINER && (
+              <Section className="gap-4">
+                <Heading>Extra labels/annotations</Heading>
+                <LabelSetting />
+                <AnnotationSetting />
+              </Section>
+            )}
+
+            {databaseMode === DatabaseModeEnum.MANAGED && (
+              <Section className="gap-4">
+                <Heading>Extra labels</Heading>
+                <LabelSetting />
+              </Section>
+            )}
             <div className="flex justify-end">
               <Button type="submit" size="lg" loading={loading} disabled={!formState.isValid}>
                 Save

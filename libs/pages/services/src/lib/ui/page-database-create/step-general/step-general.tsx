@@ -213,6 +213,13 @@ export function StepGeneral({
           </Section>
         )}
 
+        {watchMode === DatabaseModeEnum.MANAGED && (
+          <Section className="gap-4">
+            <Heading>Extra labels</Heading>
+            <LabelSetting />
+          </Section>
+        )}
+
         <div className="flex justify-between">
           <Button
             onClick={() => navigate(SERVICES_URL(organizationId, projectId, environmentId))}
