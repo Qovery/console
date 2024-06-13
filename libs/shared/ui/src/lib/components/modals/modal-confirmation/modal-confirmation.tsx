@@ -46,14 +46,6 @@ export function ModalConfirmation({
   return (
     <div className="p-6">
       <h2 className="h4 mb-2 max-w-sm text-neutral-400">{title}</h2>
-      {warning && (
-        <Callout.Root className="mb-2" color="yellow">
-          <Callout.Icon>
-            <Icon iconName="triangle-exclamation" />
-          </Callout.Icon>
-          <Callout.Text>{warning}</Callout.Text>
-        </Callout.Root>
-      )}
       <div className="mb-6 text-sm text-neutral-350">
         {isDelete ? (
           description ? (
@@ -101,6 +93,14 @@ export function ModalConfirmation({
           )}
         />
         {children}
+        {warning && (
+          <Callout.Root className="mb-5" color="yellow">
+            <Callout.Icon>
+              <Icon iconName="triangle-exclamation" />
+            </Callout.Icon>
+            <Callout.Text>{warning}</Callout.Text>
+          </Callout.Root>
+        )}
         <div className="flex justify-end gap-3">
           <Button type="button" color="neutral" variant="plain" size="lg" onClick={() => closeModal()}>
             Cancel
