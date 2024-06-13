@@ -279,7 +279,7 @@ export function PageNewFeature() {
   const handleSearchInputChange = (value: string) => {
     if ([...serviceEmpty, ...serviceTemplates].filter(filterService).length === 0) {
       posthog.capture('search-service', {
-        qoveryServiceType: 'SEARCH',
+        qoveryServiceType: 'INPUT_SEARCH',
         searchValue: value,
       })
     }
