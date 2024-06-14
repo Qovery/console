@@ -20,7 +20,7 @@ export interface SettingsResourcesFeatureProps {
 }
 
 function SettingsResourcesFeature({ cluster }: SettingsResourcesFeatureProps) {
-  const karpenterFeature = cluster?.features?.find(
+  const karpenterFeature = cluster.features?.find(
     (feature) => feature.id === 'KARPENTER'
   ) as ClusterFeatureKarpenterParametersResponse
 
