@@ -52,9 +52,9 @@ function EnvironmentNameCell({ environment }: { environment: Environment }) {
           <EnvironmentMode mode={environment.mode} variant="shrink" />
         </Tooltip>
         <span className="flex min-w-0 shrink flex-col truncate pr-2">
-          <span className="truncate">
-            <Truncate text={environment.name} truncateLimit={90} />
-          </span>
+          <Tooltip content={environment.name}>
+            <span className="truncate">{environment.name}</span>
+          </Tooltip>
           <span className="text-xs font-normal text-neutral-350">{upperCaseFirstLetter(environment.mode)}</span>
         </span>
       </span>

@@ -15,7 +15,7 @@ exports[`EnvironmentList should match snapshot 1`] = `
             class="relative inline-block"
           >
             <button
-              aria-controls="radix-:r1m:"
+              aria-controls="radix-:r1q:"
               aria-expanded="false"
               aria-haspopup="dialog"
               class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent gap-1 whitespace-nowrap text-xs"
@@ -38,7 +38,7 @@ exports[`EnvironmentList should match snapshot 1`] = `
             class="relative inline-block"
           >
             <button
-              aria-controls="radix-:r1p:"
+              aria-controls="radix-:r1t:"
               aria-expanded="false"
               aria-haspopup="dialog"
               class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent gap-1 whitespace-nowrap text-xs"
@@ -61,7 +61,7 @@ exports[`EnvironmentList should match snapshot 1`] = `
             class="relative inline-block"
           >
             <button
-              aria-controls="radix-:r1s:"
+              aria-controls="radix-:r20:"
               aria-expanded="false"
               aria-haspopup="dialog"
               class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent gap-1 whitespace-nowrap text-xs"
@@ -84,7 +84,7 @@ exports[`EnvironmentList should match snapshot 1`] = `
             class="relative inline-block"
           >
             <button
-              aria-controls="radix-:r1v:"
+              aria-controls="radix-:r23:"
               aria-expanded="false"
               aria-haspopup="dialog"
               class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent gap-1 whitespace-nowrap text-xs"
@@ -140,6 +140,7 @@ exports[`EnvironmentList should match snapshot 1`] = `
               >
                 <span
                   class="truncate"
+                  data-state="closed"
                 >
                   gcp
                 </span>
@@ -325,6 +326,7 @@ exports[`EnvironmentList should match snapshot 1`] = `
               >
                 <span
                   class="truncate"
+                  data-state="closed"
                 >
                   my-prod-env
                 </span>
@@ -489,6 +491,7 @@ exports[`EnvironmentList should match snapshot 1`] = `
               >
                 <span
                   class="truncate"
+                  data-state="closed"
                 >
                   my-dev-env
                 </span>
@@ -653,6 +656,7 @@ exports[`EnvironmentList should match snapshot 1`] = `
               >
                 <span
                   class="truncate"
+                  data-state="closed"
                 >
                   fgsdfg-sdfg-sdfg
                 </span>

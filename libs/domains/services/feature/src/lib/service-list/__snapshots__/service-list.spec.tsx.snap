@@ -35,7 +35,7 @@ exports[`ServiceList should match snapshot 1`] = `
               class="relative inline-block"
             >
               <button
-                aria-controls="radix-:r1v:"
+                aria-controls="radix-:r23:"
                 aria-expanded="false"
                 aria-haspopup="dialog"
                 class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent gap-1 whitespace-nowrap text-xs"
@@ -58,7 +58,7 @@ exports[`ServiceList should match snapshot 1`] = `
               class="relative inline-block"
             >
               <button
-                aria-controls="radix-:r22:"
+                aria-controls="radix-:r26:"
                 aria-expanded="false"
                 aria-haspopup="dialog"
                 class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent gap-1 whitespace-nowrap text-xs"
@@ -81,7 +81,7 @@ exports[`ServiceList should match snapshot 1`] = `
               class="relative inline-block"
             >
               <button
-                aria-controls="radix-:r25:"
+                aria-controls="radix-:r29:"
                 aria-expanded="false"
                 aria-haspopup="dialog"
                 class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent gap-1 whitespace-nowrap text-xs"
@@ -239,14 +239,15 @@ exports[`ServiceList should match snapshot 1`] = `
                   class="flex min-w-0 shrink flex-col truncate pr-2"
                 >
                   <span
-                    class="truncate"
+                    class="max-w-max truncate"
+                    data-state="closed"
                   >
                     FRONT-END
                   </span>
                 </span>
                 <div>
                   <button
-                    aria-controls="radix-:r26:"
+                    aria-controls="radix-:r2b:"
                     aria-expanded="false"
                     aria-haspopup="dialog"
                     class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-5 px-1 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent"
@@ -569,14 +570,15 @@ exports[`ServiceList should match snapshot 1`] = `
                   class="flex min-w-0 shrink flex-col truncate pr-2"
                 >
                   <span
-                    class="truncate"
+                    class="max-w-max truncate"
+                    data-state="closed"
                   >
                     back-end-A
                   </span>
                 </span>
                 <div>
                   <button
-                    aria-controls="radix-:r2f:"
+                    aria-controls="radix-:r2l:"
                     aria-expanded="false"
                     aria-haspopup="dialog"
                     class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-5 px-1 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent"
@@ -1187,7 +1189,8 @@ exports[`ServiceList should match snapshot 1`] = `
                   class="flex min-w-0 shrink flex-col truncate pr-2"
                 >
                   <span
-                    class="truncate"
+                    class="max-w-max truncate"
+                    data-state="closed"
                   >
                     CRONJOB
                   </span>
@@ -1199,7 +1202,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 </span>
                 <div>
                   <button
-                    aria-controls="radix-:r2n:"
+                    aria-controls="radix-:r2u:"
                     aria-expanded="false"
                     aria-haspopup="dialog"
                     class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-5 px-1 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent"
@@ -1613,7 +1616,8 @@ exports[`ServiceList should match snapshot 1`] = `
                   class="flex min-w-0 shrink flex-col truncate pr-2"
                 >
                   <span
-                    class="truncate"
+                    class="max-w-max truncate"
+                    data-state="closed"
                   >
                     seed_script
                   </span>
@@ -1625,7 +1629,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 </span>
                 <div>
                   <button
-                    aria-controls="radix-:r31:"
+                    aria-controls="radix-:r39:"
                     aria-expanded="false"
                     aria-haspopup="dialog"
                     class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-5 px-1 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent"
@@ -1880,7 +1884,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 aria-haspopup="menu"
                 class="inline-flex shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-9 px-3 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent items-center gap-2"
                 data-state="closed"
-                id="radix-:r3c:"
+                id="radix-:r3k:"
                 type="button"
               >
                 More 
