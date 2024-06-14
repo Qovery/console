@@ -28,7 +28,7 @@ export interface ClusterResourcesSettingsProps {
 }
 
 export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
-  const { control, watch } = useFormContext<ClusterResourcesData>()
+  const { control, watch, setValue, reset, getValues } = useFormContext<ClusterResourcesData>()
   const watchNodes = watch('nodes')
   const [warningInstance, setWarningInstance] = useState(false)
   const [warningClusterNodes, setWarningClusterNodes] = useState(false)
@@ -102,15 +102,17 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
       {!props.isProduction && props.cloudProvider === 'AWS' && watchClusterType === KubernetesEnum.MANAGED && (
         <Controller
           name="karpenter.enabled"
-          control={control}
           defaultValue={false}
+          control={control}
           render={({ field }) => (
             <div className="relative flex flex-col gap-2 overflow-hidden rounded border border-neutral-250 bg-neutral-100 p-4">
               <InputToggle
+                className="max-w-[60%]"
+                name={field.name}
                 value={field.value}
                 onChange={field.onChange}
-                title="(Beta) Karpenter"
-                description="Try our new Kubernetes autoscaler"
+                title="Reduce your costs by enabling Karpenter (Beta)"
+                description="Karpenter simplifies Kubernetes infrastructure with the right nodes at the right time."
                 forceAlignTop
                 disabled={props.fromDetail}
                 small
@@ -127,6 +129,24 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
         />
       )}
 
+      {watchKarpenter && (
+        <Callout.Root color="yellow">
+          <Callout.Icon>
+            <Icon iconName="triangle-exclamation" />
+          </Callout.Icon>
+          <Callout.Text>
+            <Callout.TextHeading>Warning</Callout.TextHeading>
+            <Callout.TextDescription className="text-xs">
+              Before deploying your cluster, update the IAM permissions of the Qovery user, make sure to use the{' '}
+              <ExternalLink size="xs" href="https://hub.qovery.com/files/qovery-iam-aws.json">
+                latest version here
+              </ExternalLink>{' '}
+              (adding the permission on SQS)
+            </Callout.TextDescription>
+          </Callout.Text>
+        </Callout.Root>
+      )}
+
       <Section className="gap-4">
         <Heading>Resources configuration</Heading>
 
@@ -134,6 +154,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
           <>
             <Controller
               name="karpenter.disk_size_in_gib"
+              defaultValue="50"
               control={control}
               rules={{
                 required: 'Please select a disk size',
@@ -154,7 +175,6 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
             <Controller
               name="karpenter.default_service_architecture"
               control={control}
-              defaultValue={CpuArchitectureEnum.AMD64}
               rules={{
                 required: 'Please select a node architecture',
               }}
