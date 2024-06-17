@@ -65,7 +65,6 @@ function SettingsResourcesFeature({ cluster }: SettingsResourcesFeatureProps) {
           clusterRegion={cluster.region}
           onSubmit={onSubmit}
           loading={isEditClusterLoading}
-          karpenter={cluster.instance_type === 'KARPENTER'}
         />
       )}
     </FormProvider>

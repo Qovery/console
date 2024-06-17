@@ -28,7 +28,7 @@ export interface ClusterResourcesSettingsProps {
 }
 
 export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
-  const { control, watch } = useFormContext<ClusterResourcesData>()
+  const { control, watch, setValue } = useFormContext<ClusterResourcesData>()
   const watchNodes = watch('nodes')
   const [warningInstance, setWarningInstance] = useState(false)
   const [warningClusterNodes, setWarningClusterNodes] = useState(false)
@@ -81,7 +81,10 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                   <InputRadioBox
                     key={option.value}
                     fieldValue={field.value}
-                    onChange={field.onChange}
+                    onChange={(event) => {
+                      setValue('karpenter.enabled', false)
+                      field.onChange(event)
+                    }}
                     name={field.name}
                     label={option.label}
                     value={option.value}
@@ -166,7 +169,6 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                   error={error?.message}
                   onChange={field.onChange}
                   value={field.value}
-                  disabled={props.fromDetail}
                 />
               )}
             />
@@ -184,7 +186,6 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                     value={field.value}
                     label="Default node architecture"
                     error={error?.message}
-                    disabled={props.fromDetail}
                     options={Object.values(CpuArchitectureEnum).map((value) => ({
                       label: value,
                       value,
@@ -207,7 +208,6 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                   title="Spot instances"
                   description="Enable spot instances on your cluster"
                   forceAlignTop
-                  disabled={props.fromDetail}
                   small
                 />
               )}

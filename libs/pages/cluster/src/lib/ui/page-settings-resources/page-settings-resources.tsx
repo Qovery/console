@@ -9,35 +9,26 @@ export interface PageSettingsResourcesProps {
   onSubmit: FormEventHandler<HTMLFormElement>
   cloudProvider?: CloudProviderEnum
   clusterRegion?: string
-  karpenter?: boolean
 }
 
 export function PageSettingsResources(props: PageSettingsResourcesProps) {
-  const { onSubmit, loading, karpenter } = props
+  const { onSubmit, loading } = props
   const { formState } = useFormContext()
   return (
     <div className="flex w-full flex-col justify-between">
       <Section className="max-w-content-with-navigation-left p-8">
         <SettingsHeading title="Resources settings" />
-        <form onSubmit={onSubmit} className={karpenter ? 'mb-10' : ''}>
+        <form onSubmit={onSubmit}>
           <ClusterResourcesSettingsFeature
             cloudProvider={props.cloudProvider}
             clusterRegion={props.clusterRegion}
             fromDetail
           />
-          {!karpenter && (
-            <div className="flex justify-end">
-              <Button
-                data-testid="submit-button"
-                type="submit"
-                size="lg"
-                loading={loading}
-                disabled={!formState.isValid}
-              >
-                Save
-              </Button>
-            </div>
-          )}
+          <div className="flex justify-end">
+            <Button data-testid="submit-button" type="submit" size="lg" loading={loading} disabled={!formState.isValid}>
+              Save
+            </Button>
+          </div>
         </form>
       </Section>
     </div>
