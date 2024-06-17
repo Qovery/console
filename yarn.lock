@@ -3894,7 +3894,7 @@ __metadata:
     react-dropzone: ^14.2.2
     react-error-boundary: ^4.0.13
     react-flat-providers: ^2.2.0
-    react-hook-form: ^7.43.2
+    react-hook-form: ^7.52.0
     react-hot-toast: ^2.4.0
     react-instantsearch: ^7.7.1
     react-payment-inputs: ^1.1.9
@@ -19478,12 +19478,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-hook-form@npm:^7.43.2":
-  version: 7.43.2
-  resolution: "react-hook-form@npm:7.43.2"
+"react-hook-form@npm:^7.52.0":
+  version: 7.52.0
+  resolution: "react-hook-form@npm:7.52.0"
   peerDependencies:
-    react: ^16.8.0 || ^17 || ^18
-  checksum: 68d4fb73fec052801d5e7840c3d0afba887676acfdefa33aef342ead0db419cb1a14a0891ed567cea58a78d544d9245445c593e25bc0564a797201cb32c91a01
+    react: ^16.8.0 || ^17 || ^18 || ^19
+  checksum: f6c710dbac4462bf0d5aa25dd7d494815395819fbdf594f9bd736c99f77d63e699b4a41663a32486f7b05a75526d6cceae5eeb502189ffd93d12081c84603a38
   languageName: node
   linkType: hard
 
