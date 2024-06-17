@@ -41,7 +41,7 @@ on:
         required: false
       nx-cloud-access-token:
         required: true
-      codecov_token:
+      codecov-token:
         required: true
 
       # Qovery secrets
