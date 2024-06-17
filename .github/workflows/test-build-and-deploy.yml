@@ -131,7 +131,7 @@ jobs:
         run: ls -R
       - uses: codecov/codecov-action@v4
         env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+          CODECOV_TOKEN: ${{ secrets.codecov-token }}
         with:
           directory: ./coverage/coverage
           flags: unittests # optional
