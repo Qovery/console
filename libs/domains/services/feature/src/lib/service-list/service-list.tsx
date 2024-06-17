@@ -95,9 +95,9 @@ function ServiceNameCell({ service, environment }: { service: AnyService; enviro
           .with({ serviceType: 'DATABASE' }, (db) => {
             return (
               <span className="flex min-w-0 shrink flex-col truncate pr-2">
-                <span className="truncate">
-                  <Truncate text={service.name} truncateLimit={90} />
-                </span>
+                <Tooltip content={service.name}>
+                  <span className="max-w-max truncate">{service.name}</span>
+                </Tooltip>
                 <span className="text-xs font-normal text-neutral-350">
                   {match(db.mode)
                     .with('CONTAINER', () => 'Container DB')
@@ -109,9 +109,9 @@ function ServiceNameCell({ service, environment }: { service: AnyService; enviro
           })
           .with({ serviceType: 'JOB' }, (job) => (
             <span className="flex min-w-0 shrink flex-col truncate pr-2">
-              <span className="truncate">
-                <Truncate text={service.name} truncateLimit={90} />
-              </span>
+              <Tooltip content={service.name}>
+                <span className="max-w-max truncate">{service.name}</span>
+              </Tooltip>
               <span className="text-xs font-normal text-neutral-350">
                 {match(job)
                   .with(
@@ -132,9 +132,9 @@ function ServiceNameCell({ service, environment }: { service: AnyService; enviro
           ))
           .otherwise(() => (
             <span className="flex min-w-0 shrink flex-col truncate pr-2">
-              <span className="truncate">
-                <Truncate text={service.name} truncateLimit={90} />
-              </span>
+              <Tooltip content={service.name}>
+                <span className="max-w-max truncate">{service.name}</span>
+              </Tooltip>
             </span>
           ))}
         <div onClick={(e) => e.stopPropagation()}>
