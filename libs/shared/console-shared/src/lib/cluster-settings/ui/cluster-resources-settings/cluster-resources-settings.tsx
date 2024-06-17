@@ -1,5 +1,5 @@
 import { CloudProviderEnum, CpuArchitectureEnum, KubernetesEnum } from 'qovery-typescript-axios'
-import { useEffect, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { IconEnum } from '@qovery/shared/enums'
 import { type ClusterResourcesData, type Value } from '@qovery/shared/interfaces'
@@ -151,7 +151,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
         <Heading>Resources configuration</Heading>
 
         {watchKarpenter ? (
-          <div key={`karpenter-${watchKarpenter}`}>
+          <Fragment key={`karpenter-${watchKarpenter}`}>
             <Controller
               name="karpenter.disk_size_in_gib"
               control={control}
@@ -212,7 +212,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                 />
               )}
             />
-          </div>
+          </Fragment>
         ) : (
           <>
             <Controller
