@@ -131,7 +131,7 @@ jobs:
         run: ls -R
       - uses: codecov/codecov-action@v4
         with:
-          token: ${{ secrets.codecov_token }}
+          token: ${{ secrets.codecov-token }}
           directory: ./coverage/coverage
           flags: unittests # optional
           fail_ci_if_error: false # optional (default = false)
