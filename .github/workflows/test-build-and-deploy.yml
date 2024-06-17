@@ -41,8 +41,6 @@ on:
         required: false
       nx-cloud-access-token:
         required: true
-      codecov-token:
-        required: true
 
       # Qovery secrets
       organization-id:
