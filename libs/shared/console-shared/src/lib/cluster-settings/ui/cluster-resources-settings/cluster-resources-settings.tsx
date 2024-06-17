@@ -1,5 +1,5 @@
 import { CloudProviderEnum, CpuArchitectureEnum, KubernetesEnum } from 'qovery-typescript-axios'
-import { useEffect, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { IconEnum } from '@qovery/shared/enums'
 import { type ClusterResourcesData, type Value } from '@qovery/shared/interfaces'
@@ -28,7 +28,7 @@ export interface ClusterResourcesSettingsProps {
 }
 
 export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
-  const { control, watch } = useFormContext<ClusterResourcesData>()
+  const { control, watch, setValue } = useFormContext<ClusterResourcesData>()
   const watchNodes = watch('nodes')
   const [warningInstance, setWarningInstance] = useState(false)
   const [warningClusterNodes, setWarningClusterNodes] = useState(false)
@@ -81,7 +81,10 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                   <InputRadioBox
                     key={option.value}
                     fieldValue={field.value}
-                    onChange={field.onChange}
+                    onChange={(event) => {
+                      setValue('karpenter.enabled', false)
+                      field.onChange(event)
+                    }}
                     name={field.name}
                     label={option.label}
                     value={option.value}
@@ -102,15 +105,17 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
       {!props.isProduction && props.cloudProvider === 'AWS' && watchClusterType === KubernetesEnum.MANAGED && (
         <Controller
           name="karpenter.enabled"
-          control={control}
           defaultValue={false}
+          control={control}
           render={({ field }) => (
             <div className="relative flex flex-col gap-2 overflow-hidden rounded border border-neutral-250 bg-neutral-100 p-4">
               <InputToggle
+                className="max-w-[70%]"
+                name={field.name}
                 value={field.value}
                 onChange={field.onChange}
-                title="(Beta) Karpenter"
-                description="Try our new Kubernetes autoscaler"
+                title="Reduce your costs by enabling Karpenter (Beta)"
+                description="Karpenter simplifies Kubernetes infrastructure with the right nodes at the right time."
                 forceAlignTop
                 disabled={props.fromDetail}
                 small
@@ -127,11 +132,29 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
         />
       )}
 
+      {watchKarpenter && (
+        <Callout.Root color="yellow">
+          <Callout.Icon>
+            <Icon iconName="triangle-exclamation" />
+          </Callout.Icon>
+          <Callout.Text>
+            <Callout.TextHeading>Warning</Callout.TextHeading>
+            <Callout.TextDescription className="text-xs">
+              Before deploying your cluster, update the IAM permissions of the Qovery user, make sure to use the{' '}
+              <ExternalLink size="xs" href="https://hub.qovery.com/files/qovery-iam-aws.json">
+                latest version here
+              </ExternalLink>{' '}
+              (adding the permission on SQS)
+            </Callout.TextDescription>
+          </Callout.Text>
+        </Callout.Root>
+      )}
+
       <Section className="gap-4">
         <Heading>Resources configuration</Heading>
 
         {watchKarpenter ? (
-          <>
+          <Fragment key={`karpenter-${watchKarpenter}`}>
             <Controller
               name="karpenter.disk_size_in_gib"
               control={control}
@@ -146,7 +169,6 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                   error={error?.message}
                   onChange={field.onChange}
                   value={field.value}
-                  disabled={props.fromDetail}
                 />
               )}
             />
@@ -154,7 +176,6 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
             <Controller
               name="karpenter.default_service_architecture"
               control={control}
-              defaultValue={CpuArchitectureEnum.AMD64}
               rules={{
                 required: 'Please select a node architecture',
               }}
@@ -165,7 +186,6 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                     value={field.value}
                     label="Default node architecture"
                     error={error?.message}
-                    disabled={props.fromDetail}
                     options={Object.values(CpuArchitectureEnum).map((value) => ({
                       label: value,
                       value,
@@ -188,12 +208,11 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                   title="Spot instances"
                   description="Enable spot instances on your cluster"
                   forceAlignTop
-                  disabled={props.fromDetail}
                   small
                 />
               )}
             />
-          </>
+          </Fragment>
         ) : (
           <>
             <Controller
