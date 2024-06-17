@@ -95,6 +95,7 @@ export function DockerfileSettings({ children, methods, onSubmit }: DockerfileSe
               headRight={
                 watchDockerfileRaw && (
                   <Button
+                    aria-label="Edit"
                     type="button"
                     size="xs"
                     variant="outline"

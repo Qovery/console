@@ -1,0 +1,218 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DockerfileSettings should match snapshot 1`] = `
+<body>
+  <div />
+  <div>
+    <div
+      class="flex w-full overflow-auto"
+    >
+      <section
+        class="w-full bg-white pt-14 overflow-auto"
+      >
+        <div
+          class="relative mx-auto px-8 pb-14 max-w-content-with-navigation-left"
+          data-testid="funnel-body-content"
+        >
+          <section
+            class="flex flex-col items-start"
+          >
+            <h1
+              class="text-neutral-400 text-xl font-bold mb-2"
+            >
+              Dockerfile
+            </h1>
+            <p
+              class="mb-10 text-sm text-neutral-350"
+            >
+              The Dockerfile allows to package your application with the right CLIs/Libraries and as well define the command to run during its execution. The Dockerfile can be stored in your git repository or on the Qovery control plane (Raw).
+            </p>
+            <form
+              class="w-full space-y-10"
+            >
+              <div
+                class=""
+              >
+                <div
+                  class="input input--select    "
+                  data-testid="select"
+                >
+                  <label
+                    class="!translate-y-0 !text-xs"
+                    for="File source"
+                  >
+                    File source
+                  </label>
+                  <div
+                    class=" css-b62m3t-container"
+                  >
+                    <span
+                      class="css-1f43avz-a11yText-A11yText"
+                      id="react-select-2-live-region"
+                    />
+                    <span
+                      aria-atomic="false"
+                      aria-live="polite"
+                      aria-relevant="additions text"
+                      class="css-1f43avz-a11yText-A11yText"
+                    />
+                    <div
+                      class="input-select__control css-13cymwt-control"
+                    >
+                      <div
+                        class="input-select__value-container input-select__value-container--has-value css-1fdsijx-ValueContainer"
+                      >
+                        <span
+                          class="mr-1 text-sm text-neutral-400"
+                        >
+                          Raw Dockerfile
+                        </span>
+                        <input
+                          aria-autocomplete="list"
+                          aria-expanded="false"
+                          aria-haspopup="true"
+                          aria-readonly="true"
+                          class="css-mohuvp-dummyInput-DummyInput"
+                          id="File source"
+                          inputmode="none"
+                          role="combobox"
+                          tabindex="0"
+                          value=""
+                        />
+                      </div>
+                      <div
+                        class="input-select__indicators css-1hb7zxy-IndicatorsContainer"
+                      >
+                        <span
+                          class="input-select__indicator-separator css-1u9des2-indicatorSeparator"
+                        />
+                        <div
+                          aria-hidden="true"
+                          class="input-select__indicator input-select__dropdown-indicator css-1xc3v61-indicatorContainer"
+                        >
+                          <svg
+                            aria-hidden="true"
+                            class="css-tj5bde-Svg"
+                            focusable="false"
+                            height="20"
+                            viewBox="0 0 20 20"
+                            width="20"
+                          >
+                            <path
+                              d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                            />
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                    <input
+                      name="File source"
+                      type="hidden"
+                      value="DOCKERFILE_RAW"
+                    />
+                  </div>
+                  <input
+                    name="File source"
+                    type="hidden"
+                    value="DOCKERFILE_RAW"
+                  />
+                  <div
+                    class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2"
+                  >
+                    <span
+                      class="icon-solid-angle-down shrink-0 text-sm text-neutral-400"
+                      role="img"
+                    />
+                  </div>
+                </div>
+              </div>
+              <section
+                class="flex flex-col gap-6"
+              >
+                <div>
+                  <h2
+                    class="text-neutral-400 text-base font-bold mb-2"
+                  >
+                    Dockerfile as raw file
+                  </h2>
+                  <p
+                    class="text-sm text-neutral-350"
+                  >
+                    You can customize here the dockerfile to be used for this service and it will be stored on the Qovery control plane.
+                  </p>
+                </div>
+                <div
+                  class="mb-5 rounded border border-neutral-250 bg-neutral-100 w-full"
+                  data-testid="block-content"
+                >
+                  <div
+                    class="flex h-9 items-center justify-between border-b border-neutral-250 px-4"
+                  >
+                    <h2
+                      class="text-ssm font-medium text-neutral-400"
+                    >
+                      Raw Dockerfile
+                    </h2>
+                    <button
+                      aria-label="Edit"
+                      class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-5 px-1 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-transparent hover:text-neutral-400"
+                      type="button"
+                    >
+                      <i
+                        aria-hidden="true"
+                        class="fa-solid fa-pen "
+                      />
+                    </button>
+                  </div>
+                  <div
+                    class="p-0"
+                  >
+                    <section
+                      style="display: flex; position: relative; text-align: initial; width: 100%; height: 300px;"
+                    >
+                      <div
+                        style="display: flex; height: 100%; width: 100%; justify-content: center; align-items: center;"
+                      >
+                        <div
+                          class="aspect-square border-2  rounded-full border-solid border-r-neutral-500 animate-spin w-4 "
+                          data-testid="spinner"
+                        />
+                      </div>
+                      <div
+                        style="width: 100%; display: none;"
+                      />
+                    </section>
+                  </div>
+                </div>
+              </section>
+              <div
+                class="flex justify-between"
+              >
+                <button
+                  class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 hover:[&:not(:focus-visible):not(:disabled)]:shadow-sm active:[&:not(:focus-visible)]:shadow-none outline-brand-500 text-sm h-11 px-5 rounded border border-transparent text-neutral-350 hover:[&:not(:active):not(:focus-visible)]:border-neutral-300 hover:[&:not(:disabled)]:text-neutral-400 focus-visible:text-neutral-400 active:bg-neutral-150 active:text-neutral-400 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none"
+                  type="button"
+                >
+                  Back
+                </button>
+                <div
+                  class="flex gap-3"
+                >
+                  <button
+                    class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-neutral-500 text-sm h-11 px-5 rounded bg-brand-500 active:bg-brand-600 hover:bg-brand-400 text-white disabled:text-brand-300 disabled:bg-brand-100"
+                    type="submit"
+                  >
+                    Continue
+                  </button>
+                </div>
+              </div>
+            </form>
+          </section>
+        </div>
+      </section>
+    </div>
+  </div>
+  <script
+    src="https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/vs/loader.js"
+  />
+</body>
+`;
