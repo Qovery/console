@@ -154,7 +154,6 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
           <div key={`karpenter-${watchKarpenter}`}>
             <Controller
               name="karpenter.disk_size_in_gib"
-              defaultValue="50"
               control={control}
               rules={{
                 required: 'Please select a disk size',
