@@ -48,6 +48,10 @@ on:
       api-token:
         required: true
 
+      #Codecov
+      codecov_token:
+        required: true
+
 # Define a concurrency group at the branch level for the current workflows..
 # Trigerred workflow will be queued and cancel the previous ones.
 concurrency:
@@ -134,9 +138,8 @@ jobs:
           directory: ./coverage/coverage
           flags: unittests # optional
           fail_ci_if_error: true # optional (default = false)
+          token: ${{ secrets.codecov_token }}
           verbose: true # optional (default = false)
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   deploy:
     name: Deploy to S3
