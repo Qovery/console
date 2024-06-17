@@ -28,7 +28,7 @@ export interface ClusterResourcesSettingsProps {
 }
 
 export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
-  const { control, watch, setValue, reset, getValues } = useFormContext<ClusterResourcesData>()
+  const { control, watch } = useFormContext<ClusterResourcesData>()
   const watchNodes = watch('nodes')
   const [warningInstance, setWarningInstance] = useState(false)
   const [warningClusterNodes, setWarningClusterNodes] = useState(false)
@@ -151,7 +151,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
         <Heading>Resources configuration</Heading>
 
         {watchKarpenter ? (
-          <>
+          <div key={`karpenter-${watchKarpenter}`}>
             <Controller
               name="karpenter.disk_size_in_gib"
               defaultValue="50"
@@ -213,7 +213,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                 />
               )}
             />
-          </>
+          </div>
         ) : (
           <>
             <Controller
