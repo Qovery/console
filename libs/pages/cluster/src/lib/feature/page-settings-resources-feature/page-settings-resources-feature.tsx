@@ -14,22 +14,20 @@ export const handleSubmit = (data: FieldValues, cluster: Cluster): Cluster => {
     instance_type: data['instance_type'],
   }
 
-  if (cluster.instance_type === 'KARPENTER') {
-    payload.features = cluster.features?.map((feature) => {
-      if (feature.id === 'KARPENTER') {
-        return {
-          ...feature,
-          value: {
-            spot_enabled: data['karpenter'].spot_enabled,
-            disk_size_in_gib: parseInt(data['karpenter'].disk_size_in_gib),
-            default_service_architecture: data['karpenter'].default_service_architecture,
-          },
-        }
+  payload.features = cluster.features?.map((feature) => {
+    if (feature.id === 'KARPENTER') {
+      return {
+        ...feature,
+        value: {
+          spot_enabled: data['karpenter'].spot_enabled,
+          disk_size_in_gib: parseInt(data['karpenter'].disk_size_in_gib),
+          default_service_architecture: data['karpenter'].default_service_architecture,
+        },
       }
+    }
 
-      return feature
-    })
-  }
+    return feature
+  })
 
   return payload
 }
