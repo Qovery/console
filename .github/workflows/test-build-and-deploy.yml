@@ -129,14 +129,14 @@ jobs:
           path: coverage
       - name: Display structure of downloaded files
         run: ls -R
-      - uses: codecov/codecov-action@v4
-        env:
-          CODECOV_TOKEN: ${{ secrets.codecov-token }}
+      - uses: codecov/codecov-action@v4.0.1
         with:
           directory: ./coverage/coverage
           flags: unittests # optional
-          fail_ci_if_error: false # optional (default = false)
+          fail_ci_if_error: true # optional (default = false)
           verbose: true # optional (default = false)
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   deploy:
     name: Deploy to S3
