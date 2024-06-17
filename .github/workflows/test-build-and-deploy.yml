@@ -129,9 +129,9 @@ jobs:
           path: coverage
       - name: Display structure of downloaded files
         run: ls -R
-      - uses: codecov/codecov-action@v3
+      - uses: codecov/codecov-action@v4
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+          token: ${{ secrets.codecov_token }}
           directory: ./coverage/coverage
           flags: unittests # optional
           fail_ci_if_error: false # optional (default = false)
