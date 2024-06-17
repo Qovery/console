@@ -11,6 +11,7 @@ export interface ClusterResourcesSettingsFeatureProps {
   fromDetail?: boolean
   cloudProvider?: CloudProviderEnum
   clusterRegion?: string
+  isProduction?: boolean
 }
 
 export function ClusterResourcesSettingsFeature(props: ClusterResourcesSettingsFeatureProps) {
@@ -85,6 +86,7 @@ export function ClusterResourcesSettingsFeature(props: ClusterResourcesSettingsF
       clusterTypeOptions={clusterTypeOptions}
       instanceTypeOptions={instanceTypeOptions}
       cloudProvider={props.cloudProvider}
+      isProduction={props.isProduction}
     />
   )
 }

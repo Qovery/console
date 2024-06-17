@@ -60,6 +60,9 @@ const ContextWrapper = (props: { children: ReactNode }) => {
           disk_size: 50,
           cluster_type: 'MANAGED',
           nodes: [1, 3],
+          karpenter: {
+            enabled: false,
+          },
         },
         remoteData: undefined,
         featuresData: undefined,
@@ -105,6 +108,9 @@ describe('StepResourcesFeature', () => {
         disk_size: '22',
         cluster_type: 'MANAGED',
         nodes: [1, 3],
+        karpenter: {
+          enabled: false,
+        },
       })
     })
   })

@@ -84,6 +84,12 @@ export const defaultResourcesData: ClusterResourcesData = {
   disk_size: 50,
   instance_type: '',
   nodes: [3, 10],
+  karpenter: {
+    enabled: false,
+    default_service_architecture: 'AMD64',
+    disk_size_in_gib: '50',
+    spot_enabled: false,
+  },
 }
 
 export function PageClusterCreateFeature() {

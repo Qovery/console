@@ -20,7 +20,7 @@ exports[`TerraformExportModal should match with snapshots 1`] = `
         class="mt-6"
       >
         <div
-          class="flex  items-start  "
+          class="flex text-sm  items-start  "
           data-testid="input-toggle"
         >
           <div
@@ -47,12 +47,12 @@ exports[`TerraformExportModal should match with snapshots 1`] = `
             class="relative -top-1 ml-3 cursor-pointer"
           >
             <p
-              class="text-ssm font-medium text-neutral-400"
+              class="mb-1 font-medium text-neutral-400"
             >
               Export secrets
             </p>
             <div
-              class="text-xs text-neutral-350"
+              class="text-neutral-350"
             >
               An optional toggle for secure secrets.
             </div>

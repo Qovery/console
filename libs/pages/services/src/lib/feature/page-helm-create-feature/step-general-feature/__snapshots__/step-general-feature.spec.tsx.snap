@@ -413,7 +413,7 @@ exports[`StepGeneralFeature should submit a form with a git repository 1`] = `
                     </div>
                   </div>
                   <div
-                    class="flex  items-start mt-2 "
+                    class="flex text-sm  items-start mt-2 "
                     data-testid="input-toggle"
                   >
                     <div
@@ -440,12 +440,12 @@ exports[`StepGeneralFeature should submit a form with a git repository 1`] = `
                       class="relative -top-1 ml-3 cursor-pointer"
                     >
                       <p
-                        class="text-ssm font-medium text-neutral-400"
+                        class="mb-1 font-medium text-neutral-400"
                       >
                         Allow cluster-wide resources
                       </p>
                       <div
-                        class="text-xs text-neutral-350"
+                        class="text-neutral-350"
                       >
                         Allow this chart to deploy resources outside of this environment namespace (including CRDs or non-namespaced resources).
                       </div>
@@ -453,7 +453,7 @@ exports[`StepGeneralFeature should submit a form with a git repository 1`] = `
                   </div>
                 </div>
                 <div
-                  class="flex  items-start  "
+                  class="flex text-sm  items-start  "
                   data-testid="input-toggle"
                 >
                   <div
@@ -480,12 +480,12 @@ exports[`StepGeneralFeature should submit a form with a git repository 1`] = `
                     class="relative -top-1 ml-3 cursor-pointer"
                   >
                     <p
-                      class="text-ssm font-medium text-neutral-400"
+                      class="mb-1 font-medium text-neutral-400"
                     >
                       Auto-deploy
                     </p>
                     <div
-                      class="text-xs text-neutral-350"
+                      class="text-neutral-350"
                     >
                       The service will be automatically updated on every new commit on the branch.
                     </div>
@@ -818,7 +818,7 @@ exports[`StepGeneralFeature should submit a form with a helm repository and matc
                     </div>
                   </div>
                   <div
-                    class="flex  items-start mt-2 "
+                    class="flex text-sm  items-start mt-2 "
                     data-testid="input-toggle"
                   >
                     <div
@@ -846,12 +846,12 @@ exports[`StepGeneralFeature should submit a form with a helm repository and matc
                       class="relative -top-1 ml-3 cursor-pointer"
                     >
                       <p
-                        class="text-ssm font-medium text-neutral-400"
+                        class="mb-1 font-medium text-neutral-400"
                       >
                         Allow cluster-wide resources
                       </p>
                       <div
-                        class="text-xs text-neutral-350"
+                        class="text-neutral-350"
                       >
                         Allow this chart to deploy resources outside of this environment namespace (including CRDs or non-namespaced resources).
                       </div>
@@ -1434,7 +1434,7 @@ exports[`StepGeneralFeature should submit a form with a public git repository 1`
                     </div>
                   </div>
                   <div
-                    class="flex  items-start mt-2 "
+                    class="flex text-sm  items-start mt-2 "
                     data-testid="input-toggle"
                   >
                     <div
@@ -1461,12 +1461,12 @@ exports[`StepGeneralFeature should submit a form with a public git repository 1`
                       class="relative -top-1 ml-3 cursor-pointer"
                     >
                       <p
-                        class="text-ssm font-medium text-neutral-400"
+                        class="mb-1 font-medium text-neutral-400"
                       >
                         Allow cluster-wide resources
                       </p>
                       <div
-                        class="text-xs text-neutral-350"
+                        class="text-neutral-350"
                       >
                         Allow this chart to deploy resources outside of this environment namespace (including CRDs or non-namespaced resources).
                       </div>
@@ -1474,7 +1474,7 @@ exports[`StepGeneralFeature should submit a form with a public git repository 1`
                   </div>
                 </div>
                 <div
-                  class="flex  items-start  "
+                  class="flex text-sm  items-start  "
                   data-testid="input-toggle"
                 >
                   <div
@@ -1501,12 +1501,12 @@ exports[`StepGeneralFeature should submit a form with a public git repository 1`
                     class="relative -top-1 ml-3 cursor-pointer"
                   >
                     <p
-                      class="text-ssm font-medium text-neutral-400"
+                      class="mb-1 font-medium text-neutral-400"
                     >
                       Auto-deploy
                     </p>
                     <div
-                      class="text-xs text-neutral-350"
+                      class="text-neutral-350"
                     >
                       The service will be automatically updated on every new commit on the branch.
                     </div>

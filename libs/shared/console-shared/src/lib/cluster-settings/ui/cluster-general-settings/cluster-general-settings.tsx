@@ -51,7 +51,7 @@ export function ClusterGeneralSettings(props: ClusterGeneralSettingsProps) {
           <div
             className={`${
               !fromDetail
-                ? 'mb-3 rounded border border-neutral-200 p-4'
+                ? 'mb-3 rounded border border-neutral-250 bg-neutral-100 p-4'
                 : 'relative pt-5 before:absolute before:-left-5 before:top-0 before:block before:h-[1px] before:w-[calc(100%+40px)] before:bg-neutral-250 before:content-[""]'
             }`}
           >
@@ -61,6 +61,7 @@ export function ClusterGeneralSettings(props: ClusterGeneralSettingsProps) {
               onChange={field.onChange}
               title="Production cluster"
               description="Actions on productions clusters will be more restricted"
+              forceAlignTop
               small
             />
           </div>

@@ -11,6 +11,7 @@ export interface StepResourcesProps {
   onSubmit: FormEventHandler<HTMLFormElement>
   cloudProvider?: CloudProviderEnum
   clusterRegion?: string
+  isProduction?: boolean
 }
 
 export function StepResources(props: StepResourcesProps) {
@@ -29,6 +30,7 @@ export function StepResources(props: StepResourcesProps) {
           cloudProvider={props.cloudProvider}
           clusterRegion={props.clusterRegion}
           fromDetail={false}
+          isProduction={props.isProduction}
         />
 
         <div className="flex justify-between">

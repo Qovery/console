@@ -136,7 +136,7 @@ exports[`LabelCreateEditModal should match with snatpshot 1`] = `
                   </div>
                 </div>
                 <div
-                  class="flex  items-start  "
+                  class="flex text-sm  items-start  "
                   data-testid="input-toggle"
                 >
                   <div

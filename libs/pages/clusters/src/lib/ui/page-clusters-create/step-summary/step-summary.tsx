@@ -156,22 +156,48 @@ export function StepSummary(props: StepSummaryProps) {
                     <li>
                       Cluster type: <strong className="font-medium">{props.resourcesData.cluster_type}</strong>
                     </li>
-                    <li>
-                      Instance type:{' '}
-                      <strong className="font-medium">
-                        {props.detailInstanceType?.name} ({props.detailInstanceType?.cpu}CPU -{' '}
-                        {props.detailInstanceType?.ram_in_gb}GB RAM - {props.detailInstanceType?.architecture})
-                      </strong>
-                    </li>
-                    <li>
-                      Disk size: <strong className="font-medium">{props.resourcesData.disk_size} GB</strong>
-                    </li>
-                    <li>
-                      Nodes:{' '}
-                      <strong className="font-medium">
-                        {props.resourcesData.nodes[0]} min - {props.resourcesData.nodes[1]} max
-                      </strong>
-                    </li>
+                    {!props.resourcesData.karpenter?.enabled ? (
+                      <>
+                        <li>
+                          Instance type:{' '}
+                          <strong className="font-medium">
+                            {props.detailInstanceType?.name} ({props.detailInstanceType?.cpu}CPU -{' '}
+                            {props.detailInstanceType?.ram_in_gb}GB RAM - {props.detailInstanceType?.architecture})
+                          </strong>
+                        </li>
+                        <li>
+                          Disk size: <strong className="font-medium">{props.resourcesData.disk_size} GB</strong>
+                        </li>
+                        <li>
+                          Nodes:{' '}
+                          <strong className="font-medium">
+                            {props.resourcesData.nodes[0]} min - {props.resourcesData.nodes[1]} max
+                          </strong>
+                        </li>
+                      </>
+                    ) : (
+                      <>
+                        <li>
+                          Karpenter: <strong className="font-medium">true</strong>
+                        </li>
+                        <li>
+                          Storage:{' '}
+                          <strong className="font-medium">{props.resourcesData.karpenter?.disk_size_in_gib} GB</strong>
+                        </li>
+                        <li>
+                          Default node architecture:{' '}
+                          <strong className="font-medium">
+                            {props.resourcesData.karpenter?.default_service_architecture}
+                          </strong>
+                        </li>
+                        <li>
+                          Spot instances:{' '}
+                          <strong className="font-medium">
+                            {(props.resourcesData.karpenter?.spot_enabled ?? false).toString()}
+                          </strong>
+                        </li>
+                      </>
+                    )}
                   </ul>
                 </div>
                 <Button type="button" variant="plain" size="md" onClick={props.goToResources}>
