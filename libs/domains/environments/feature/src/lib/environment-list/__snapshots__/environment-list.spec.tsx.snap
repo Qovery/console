@@ -136,10 +136,10 @@ exports[`EnvironmentList should match snapshot 1`] = `
                 D
               </span>
               <span
-                class="flex min-w-0 shrink flex-col truncate pr-2"
+                class="flex min-w-0 shrink flex-col pr-2"
               >
                 <span
-                  class="truncate"
+                  class="max-w-max truncate"
                   data-state="closed"
                 >
                   gcp
@@ -322,10 +322,10 @@ exports[`EnvironmentList should match snapshot 1`] = `
                 P
               </span>
               <span
-                class="flex min-w-0 shrink flex-col truncate pr-2"
+                class="flex min-w-0 shrink flex-col pr-2"
               >
                 <span
-                  class="truncate"
+                  class="max-w-max truncate"
                   data-state="closed"
                 >
                   my-prod-env
@@ -487,10 +487,10 @@ exports[`EnvironmentList should match snapshot 1`] = `
                 D
               </span>
               <span
-                class="flex min-w-0 shrink flex-col truncate pr-2"
+                class="flex min-w-0 shrink flex-col pr-2"
               >
                 <span
-                  class="truncate"
+                  class="max-w-max truncate"
                   data-state="closed"
                 >
                   my-dev-env
@@ -652,10 +652,10 @@ exports[`EnvironmentList should match snapshot 1`] = `
                 D
               </span>
               <span
-                class="flex min-w-0 shrink flex-col truncate pr-2"
+                class="flex min-w-0 shrink flex-col pr-2"
               >
                 <span
-                  class="truncate"
+                  class="max-w-max truncate"
                   data-state="closed"
                 >
                   fgsdfg-sdfg-sdfg
