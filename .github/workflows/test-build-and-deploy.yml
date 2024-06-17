@@ -41,15 +41,13 @@ on:
         required: false
       nx-cloud-access-token:
         required: true
+      codecov_token:
+        required: true
 
       # Qovery secrets
       organization-id:
         required: true
       api-token:
-        required: true
-
-      #Codecov
-      codecov_token:
         required: true
 
 # Define a concurrency group at the branch level for the current workflows..
