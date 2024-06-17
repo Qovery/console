@@ -26,6 +26,7 @@ jobs:
       cloudflare-zone: ${{ secrets.CLOUDFLARE_ZONE }}
       cloudflare-token: ${{ secrets.CLOUDFLARE_TOKEN }}
       nx-cloud-access-token: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+      codecov-token: ${{ secrets.CODECOV_TOKEN }}
 
       # Qovery secrets
       organization-id: ${{ secrets.QOVERY_ORGANIZATION_ID }}

@@ -42,7 +42,7 @@ on:
       nx-cloud-access-token:
         required: true
       codecov-token:
-        required: false
+        required: true
 
       # Qovery secrets
       organization-id:
@@ -136,7 +136,7 @@ jobs:
           directory: ./coverage/coverage
           flags: unittests # optional
           fail_ci_if_error: false # optional (default = false)
-          token: ${{ secrets.codecov_token }}
+          token: ${{ secrets.codecov-token }}
           verbose: true # optional (default = false)
 
   deploy:
