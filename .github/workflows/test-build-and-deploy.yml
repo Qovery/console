@@ -41,6 +41,8 @@ on:
         required: false
       nx-cloud-access-token:
         required: true
+      codecov-token:
+        required: true
 
       # Qovery secrets
       organization-id:
@@ -129,11 +131,12 @@ jobs:
           path: coverage
       - name: Display structure of downloaded files
         run: ls -R
-      - uses: codecov/codecov-action@v3
+      - uses: codecov/codecov-action@v4
         with:
           directory: ./coverage/coverage
           flags: unittests # optional
           fail_ci_if_error: false # optional (default = false)
+          token: ${{ secrets.codecov-token }}
           verbose: true # optional (default = false)
 
   deploy:
