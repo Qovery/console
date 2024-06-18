@@ -14,6 +14,20 @@ function HelmChartsSetting({ organizationId, helmRepositoryId }: { organizationI
   } = useHelmCharts({ organizationId, helmRepositoryId })
   const watchChartName = watch('chart_name')
 
+  const helmsChartsOptions =
+    helmCharts?.map((helmChart) => ({
+      label: helmChart.chart_name ?? '',
+      value: helmChart.chart_name ?? '',
+    })) ?? []
+
+  const helmsChartsVersionsOptions =
+    helmCharts
+      ?.find((helmChart) => helmChart.chart_name === watchChartName)
+      ?.versions?.map((version) => ({
+        label: version,
+        value: version,
+      })) ?? []
+
   return (
     <>
       {!isFetchedHelmCharts || isLoadingHelmCharts ? (
@@ -28,18 +42,17 @@ function HelmChartsSetting({ organizationId, helmRepositoryId }: { organizationI
             rules={{
               required: 'Please enter a chart name.',
             }}
-            render={({ field, fieldState: { error } }) => (
+            render={({ field }) => (
               <InputSelect
                 label="Chart name"
-                options={
-                  helmCharts?.map((helmChart) => ({
-                    label: helmChart.chart_name ?? '',
-                    value: helmChart.chart_name ?? '',
-                  })) ?? []
-                }
+                options={helmsChartsOptions}
                 onChange={field.onChange}
                 value={field.value}
-                error={error?.message}
+                error={
+                  helmsChartsOptions.length === 0
+                    ? 'No chart name found. Please verify that the helm repository is correct.'
+                    : undefined
+                }
                 isSearchable
               />
             )}
@@ -51,20 +64,17 @@ function HelmChartsSetting({ organizationId, helmRepositoryId }: { organizationI
               rules={{
                 required: 'Please enter a version.',
               }}
-              render={({ field, fieldState: { error } }) => (
+              render={({ field }) => (
                 <InputSelect
                   label="Version"
-                  options={
-                    helmCharts
-                      ?.find((helmChart) => helmChart.chart_name === watchChartName)
-                      ?.versions?.map((version) => ({
-                        label: version,
-                        value: version,
-                      })) ?? []
-                  }
+                  options={helmsChartsVersionsOptions}
                   onChange={field.onChange}
                   value={field.value}
-                  error={error?.message}
+                  error={
+                    helmsChartsVersionsOptions.length === 0
+                      ? 'No version found. Please verify that the chart name or helm repository is correct.'
+                      : undefined
+                  }
                   isSearchable
                 />
               )}
