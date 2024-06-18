@@ -26,7 +26,7 @@ export function SelectVersionModal({
   onSubmit,
 }: SelectVersionModalProps) {
   const [targetVersion, setTargetVersion] = useState<string | undefined>(currentVersion)
-  const { data: versions } = useHelmChartsVersions({
+  const { data: chartsVersions } = useHelmChartsVersions({
     organizationId,
     helmRepositoryId: repository?.repository.id,
     chartName: repository?.chart_name,
@@ -39,11 +39,11 @@ export function SelectVersionModal({
         <p className="text-neutral-350">{description}</p>
         {children}
       </div>
-      {versions && versions.length > 0 ? (
+      {chartsVersions && chartsVersions.length > 0 ? (
         <InputSelect
           label="Version"
           options={
-            versions?.[0].versions?.map((v) => ({
+            chartsVersions?.[0].versions?.map((v) => ({
               label: v,
               value: v,
             })) ?? []
