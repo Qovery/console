@@ -1,7 +1,7 @@
 import { type HelmSourceRepositoryResponse } from 'qovery-typescript-axios'
 import { type ComponentPropsWithoutRef, useState } from 'react'
 import { Button, InputSelect, InputText } from '@qovery/shared/ui'
-import useHelmChartsVersions from '../hooks/use-helm-charts-versions/use-helm-charts-versions'
+import { useHelmChartsVersions } from '../hooks/use-helm-charts-versions/use-helm-charts-versions'
 
 export interface SelectVersionModalProps extends Omit<ComponentPropsWithoutRef<'div'>, 'onSubmit'> {
   title?: string
