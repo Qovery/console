@@ -10,6 +10,7 @@ describe('SelectVersionModal', () => {
         title="Deploy other version"
         description="Type a version to deploy"
         submitLabel="Deploy"
+        organizationId="1"
         onCancel={onCancel}
         onSubmit={onSubmit}
       >
@@ -26,6 +27,7 @@ describe('SelectVersionModal', () => {
         title="Deploy other version"
         description="Type a version to deploy"
         submitLabel="Deploy"
+        organizationId="1"
         onCancel={onCancel}
         onSubmit={onSubmit}
       >
@@ -42,6 +44,7 @@ describe('SelectVersionModal', () => {
       <SelectVersionModal
         title="Deploy other version"
         description="Type a version to deploy"
+        organizationId="1"
         submitLabel="Deploy"
         onCancel={onCancel}
         onSubmit={onSubmit}

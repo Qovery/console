@@ -1,13 +1,15 @@
-import { HelmRepositoryKindEnum } from 'qovery-typescript-axios'
+import { type HelmSourceRepositoryResponse } from 'qovery-typescript-axios'
 import { type ComponentPropsWithoutRef, useState } from 'react'
 import { Button, InputSelect, InputText } from '@qovery/shared/ui'
+import useHelmChartsVersions from '../hooks/use-helm-charts-versions/use-helm-charts-versions'
 
 export interface SelectVersionModalProps extends Omit<ComponentPropsWithoutRef<'div'>, 'onSubmit'> {
   title?: string
   description?: string
   submitLabel: string
   currentVersion?: string
-  kind?: HelmRepositoryKindEnum
+  repository?: HelmSourceRepositoryResponse
+  organizationId: string
   onCancel: () => void
   onSubmit: (targetVersion: string) => void
 }
@@ -18,11 +20,17 @@ export function SelectVersionModal({
   submitLabel,
   children,
   currentVersion,
-  kind,
+  repository,
+  organizationId,
   onCancel,
   onSubmit,
 }: SelectVersionModalProps) {
-  const [targetVersion, setTargetVersion] = useState<string | undefined>()
+  const [targetVersion, setTargetVersion] = useState<string | undefined>(currentVersion)
+  const { data: versions } = useHelmChartsVersions({
+    organizationId,
+    helmRepositoryId: repository?.repository.id,
+    chartName: repository?.chart_name,
+  })
 
   return (
     <div className="flex flex-col gap-6 p-5">
@@ -31,44 +39,30 @@ export function SelectVersionModal({
         <p className="text-neutral-350">{description}</p>
         {children}
       </div>
-      {kind &&
-      ![
-        'OCI_ECR',
-        'OCI_SCALEWAY_CR',
-        'OCI_DOCKER_HUB',
-        'OCI_PUBLIC_ECR',
-        'OCI_GENERIC_CR',
-        'OCI_GITHUB_CR',
-        'OCI_GITLAB_CR',
-      ].includes(kind) ? (
+      {versions && versions.length > 0 ? (
         <InputSelect
-          label="Chart name"
-          options={helmsChartsOptions}
-          onChange={field.onChange}
-          value={field.value}
-          error={
-            helmsChartsOptions.length === 0
-              ? 'No chart name found. Please verify that the helm repository is correct.'
-              : undefined
+          label="Version"
+          options={
+            versions?.[0].versions?.map((v) => ({
+              label: v,
+              value: v,
+            })) ?? []
           }
+          onChange={(value) => setTargetVersion(value as string)}
+          value={targetVersion}
           isSearchable
+          portal
         />
       ) : (
         <InputText
-          label="Chart name"
-          name={field.name}
-          onChange={field.onChange}
-          value={field.value}
-          error={error?.message}
+          name="version"
+          onChange={(e) => setTargetVersion(e.target.value)}
+          value={targetVersion}
+          label="Version"
+          type="text"
         />
       )}
-      <InputText
-        name="version"
-        onChange={(e) => setTargetVersion(e.target.value)}
-        value={currentVersion}
-        label="Version"
-        type="text"
-      />
+
       <div className="flex justify-end gap-3">
         <Button variant="outline" color="neutral" size="lg" onClick={() => onCancel()}>
           Cancel
