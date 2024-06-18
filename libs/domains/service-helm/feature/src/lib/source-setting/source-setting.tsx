@@ -1,4 +1,4 @@
-import { HelmRepositoryKindEnum } from 'qovery-typescript-axios'
+import { type HelmRepositoryKindEnum } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { HelmRepositoryCreateEditModal } from '@qovery/domains/organizations/feature'
@@ -13,19 +13,21 @@ export function HelmChartsSetting({
 }: {
   organizationId: string
   helmRepositoryId: string
-  kind: HelmRepositoryKindEnum
+  kind?: HelmRepositoryKindEnum
 }) {
   const { control, watch } = useFormContext()
 
-  const isOci = [
-    'OCI_ECR',
-    'OCI_SCALEWAY_CR',
-    'OCI_DOCKER_HUB',
-    'OCI_PUBLIC_ECR',
-    'OCI_GENERIC_CR',
-    'OCI_GITHUB_CR',
-    'OCI_GITLAB_CR',
-  ].includes(kind)
+  const isOci =
+    kind &&
+    [
+      'OCI_ECR',
+      'OCI_SCALEWAY_CR',
+      'OCI_DOCKER_HUB',
+      'OCI_PUBLIC_ECR',
+      'OCI_GENERIC_CR',
+      'OCI_GITHUB_CR',
+      'OCI_GITLAB_CR',
+    ].includes(kind)
 
   const {
     data: helmCharts,
@@ -220,7 +222,7 @@ export function SourceSetting({ disabled = false }: { disabled?: boolean }) {
                 <HelmChartsSetting
                   organizationId={organizationId}
                   helmRepositoryId={watchRepository}
-                  kind={helmRepositories.find((r) => r.id === watchRepository)?.kind!}
+                  kind={helmRepositories.find((r) => r.id === watchRepository)?.kind}
                 />
               )}
             </>
