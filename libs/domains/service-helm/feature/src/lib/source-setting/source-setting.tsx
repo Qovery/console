@@ -1,23 +1,37 @@
+import { HelmRepositoryKindEnum } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { HelmRepositoryCreateEditModal } from '@qovery/domains/organizations/feature'
-import { Icon, InputSelect, LoaderSpinner, useModal } from '@qovery/shared/ui'
+import { Icon, InputSelect, InputText, LoaderSpinner, useModal } from '@qovery/shared/ui'
 import { useHelmCharts } from '../hooks/use-helm-charts/use-helm-charts'
 import { useHelmRepositories } from '../hooks/use-helm-repositories/use-helm-repositories'
 
 export function HelmChartsSetting({
   organizationId,
   helmRepositoryId,
+  kind,
 }: {
   organizationId: string
   helmRepositoryId: string
+  kind: HelmRepositoryKindEnum
 }) {
   const { control, watch } = useFormContext()
+
+  const isOci = [
+    'OCI_ECR',
+    'OCI_SCALEWAY_CR',
+    'OCI_DOCKER_HUB',
+    'OCI_PUBLIC_ECR',
+    'OCI_GENERIC_CR',
+    'OCI_GITHUB_CR',
+    'OCI_GITLAB_CR',
+  ].includes(kind)
+
   const {
     data: helmCharts,
     isLoading: isLoadingHelmCharts,
     isFetched: isFetchedHelmCharts,
-  } = useHelmCharts({ organizationId, helmRepositoryId })
+  } = useHelmCharts({ organizationId, helmRepositoryId, enabled: !isOci })
   const watchChartName = watch('chart_name')
 
   const helmsChartsOptions =
@@ -36,7 +50,7 @@ export function HelmChartsSetting({
 
   return (
     <>
-      {!isFetchedHelmCharts || isLoadingHelmCharts ? (
+      {!isOci && (!isFetchedHelmCharts || isLoadingHelmCharts) ? (
         <div className="flex justify-center">
           <LoaderSpinner />
         </div>
@@ -48,20 +62,30 @@ export function HelmChartsSetting({
             rules={{
               required: 'Please enter a chart name.',
             }}
-            render={({ field }) => (
-              <InputSelect
-                label="Chart name"
-                options={helmsChartsOptions}
-                onChange={field.onChange}
-                value={field.value}
-                error={
-                  helmsChartsOptions.length === 0
-                    ? 'No chart name found. Please verify that the helm repository is correct.'
-                    : undefined
-                }
-                isSearchable
-              />
-            )}
+            render={({ field, fieldState: { error } }) =>
+              !isOci ? (
+                <InputSelect
+                  label="Chart name"
+                  options={helmsChartsOptions}
+                  onChange={field.onChange}
+                  value={field.value}
+                  error={
+                    helmsChartsOptions.length === 0
+                      ? 'No chart name found. Please verify that the helm repository is correct.'
+                      : undefined
+                  }
+                  isSearchable
+                />
+              ) : (
+                <InputText
+                  label="Chart name"
+                  name={field.name}
+                  onChange={field.onChange}
+                  value={field.value}
+                  error={error?.message}
+                />
+              )
+            }
           />
           {watchChartName && (
             <Controller
@@ -70,20 +94,30 @@ export function HelmChartsSetting({
               rules={{
                 required: 'Please enter a version.',
               }}
-              render={({ field }) => (
-                <InputSelect
-                  label="Version"
-                  options={helmsChartsVersionsOptions}
-                  onChange={field.onChange}
-                  value={field.value}
-                  error={
-                    helmsChartsVersionsOptions.length === 0
-                      ? 'No version found. Please verify that the chart name or helm repository is correct.'
-                      : undefined
-                  }
-                  isSearchable
-                />
-              )}
+              render={({ field, fieldState: { error } }) =>
+                !isOci ? (
+                  <InputSelect
+                    label="Version"
+                    options={helmsChartsVersionsOptions}
+                    onChange={field.onChange}
+                    value={field.value}
+                    error={
+                      helmsChartsVersionsOptions.length === 0
+                        ? 'No version found. Please verify that the chart name or helm repository is correct.'
+                        : undefined
+                    }
+                    isSearchable
+                  />
+                ) : (
+                  <InputText
+                    label="Version"
+                    name={field.name}
+                    onChange={field.onChange}
+                    value={field.value}
+                    error={error?.message}
+                  />
+                )
+              }
             />
           )}
         </>
@@ -183,7 +217,11 @@ export function SourceSetting({ disabled = false }: { disabled?: boolean }) {
                 )}
               />
               {watchRepository && (
-                <HelmChartsSetting organizationId={organizationId} helmRepositoryId={watchRepository} />
+                <HelmChartsSetting
+                  organizationId={organizationId}
+                  helmRepositoryId={watchRepository}
+                  kind={helmRepositories.find((r) => r.id === watchRepository)?.kind!}
+                />
               )}
             </>
           )}

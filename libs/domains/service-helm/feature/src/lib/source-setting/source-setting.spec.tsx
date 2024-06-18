@@ -53,9 +53,22 @@ describe('SourceSetting', () => {
     expect(baseElement).toMatchSnapshot()
   })
 
-  it('should match snapshot helm chart settings', async () => {
+  it('should match snapshot helm chart settings with HTTPS kind', async () => {
     const { baseElement } = renderWithProviders(
-      wrapWithReactHookForm(<HelmChartsSetting organizationId="0" helmRepositoryId="000" />, {
+      wrapWithReactHookForm(<HelmChartsSetting organizationId="0" helmRepositoryId="000" kind="HTTPS" />, {
+        defaultValues: {
+          chart_name: 'datadog',
+          chart_version: '3.66.0',
+        },
+      })
+    )
+
+    expect(baseElement).toMatchSnapshot()
+  })
+
+  it('should match snapshot helm chart settings with OCI kind', async () => {
+    const { baseElement } = renderWithProviders(
+      wrapWithReactHookForm(<HelmChartsSetting organizationId="0" helmRepositoryId="000" kind="OCI_DOCKER_HUB" />, {
         defaultValues: {
           chart_name: 'datadog',
           chart_version: '3.66.0',

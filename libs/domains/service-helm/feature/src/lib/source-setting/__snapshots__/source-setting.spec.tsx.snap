@@ -119,7 +119,7 @@ exports[`SourceSetting should match snapshot 1`] = `
 </body>
 `;
 
-exports[`SourceSetting should match snapshot helm chart settings 1`] = `
+exports[`SourceSetting should match snapshot helm chart settings with HTTPS kind 1`] = `
 <body>
   <div>
     <div
@@ -329,6 +329,77 @@ exports[`SourceSetting should match snapshot helm chart settings 1`] = `
             class="icon-solid-angle-down shrink-0 text-sm text-neutral-400"
             role="img"
           />
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+`;
+
+exports[`SourceSetting should match snapshot helm chart settings with OCI kind 1`] = `
+<body>
+  <div>
+    <div
+      class=""
+      data-testid="input-text-wrapper"
+    >
+      <div
+        class="relative"
+      >
+        <div
+          aria-label="input-container"
+          class="input    input--label-up "
+        >
+          <div
+            class=""
+          >
+            <label
+              class="translate-y-2 text-sm"
+              for="Chart name"
+            >
+              Chart name
+            </label>
+            <input
+              class="input__value "
+              data-testid="input-text"
+              id="Chart name"
+              name="chart_name"
+              type="text"
+              value="datadog"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class=""
+      data-testid="input-text-wrapper"
+    >
+      <div
+        class="relative"
+      >
+        <div
+          aria-label="input-container"
+          class="input    input--label-up "
+        >
+          <div
+            class=""
+          >
+            <label
+              class="translate-y-2 text-sm"
+              for="Version"
+            >
+              Version
+            </label>
+            <input
+              class="input__value "
+              data-testid="input-text"
+              id="Version"
+              name="chart_version"
+              type="text"
+              value="3.66.0"
+            />
+          </div>
         </div>
       </div>
     </div>

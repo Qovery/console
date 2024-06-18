@@ -1,11 +1,13 @@
+import { HelmRepositoryKindEnum } from 'qovery-typescript-axios'
 import { type ComponentPropsWithoutRef, useState } from 'react'
-import { Button, InputText } from '@qovery/shared/ui'
+import { Button, InputSelect, InputText } from '@qovery/shared/ui'
 
 export interface SelectVersionModalProps extends Omit<ComponentPropsWithoutRef<'div'>, 'onSubmit'> {
   title?: string
   description?: string
   submitLabel: string
   currentVersion?: string
+  kind?: HelmRepositoryKindEnum
   onCancel: () => void
   onSubmit: (targetVersion: string) => void
 }
@@ -16,6 +18,7 @@ export function SelectVersionModal({
   submitLabel,
   children,
   currentVersion,
+  kind,
   onCancel,
   onSubmit,
 }: SelectVersionModalProps) {
@@ -28,6 +31,37 @@ export function SelectVersionModal({
         <p className="text-neutral-350">{description}</p>
         {children}
       </div>
+      {kind &&
+      ![
+        'OCI_ECR',
+        'OCI_SCALEWAY_CR',
+        'OCI_DOCKER_HUB',
+        'OCI_PUBLIC_ECR',
+        'OCI_GENERIC_CR',
+        'OCI_GITHUB_CR',
+        'OCI_GITLAB_CR',
+      ].includes(kind) ? (
+        <InputSelect
+          label="Chart name"
+          options={helmsChartsOptions}
+          onChange={field.onChange}
+          value={field.value}
+          error={
+            helmsChartsOptions.length === 0
+              ? 'No chart name found. Please verify that the helm repository is correct.'
+              : undefined
+          }
+          isSearchable
+        />
+      ) : (
+        <InputText
+          label="Chart name"
+          name={field.name}
+          onChange={field.onChange}
+          value={field.value}
+          error={error?.message}
+        />
+      )}
       <InputText
         name="version"
         onChange={(e) => setTargetVersion(e.target.value)}
