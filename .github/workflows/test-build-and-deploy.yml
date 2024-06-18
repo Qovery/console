@@ -131,7 +131,7 @@ jobs:
           path: coverage
       - name: Display structure of downloaded files
         run: ls -R
-      - uses: codecov/codecov-action@v4.0.1
+      - uses: codecov/codecov-action@v4
         with:
           directory: ./coverage/coverage
           flags: unittests # optional
