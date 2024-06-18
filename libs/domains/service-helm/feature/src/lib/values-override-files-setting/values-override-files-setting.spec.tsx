@@ -30,7 +30,7 @@ describe('ValuesOverrideFilesSetting', () => {
       },
     },
     watchFieldType: 'NONE',
-    gitRepositorySettings: <div>git respository dom</div>,
+    gitRepositorySettings: <div>git repository dom</div>,
   }
 
   it('should match snapshot with NONE type', () => {

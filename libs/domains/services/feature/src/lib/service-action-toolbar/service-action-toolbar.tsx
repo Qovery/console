@@ -400,15 +400,15 @@ function MenuManageDeployment({
           .with(
             { service: P.intersection({ serviceType: 'HELM' }, { source: P.when(isHelmRepositorySource) }) },
             ({ service }) => {
-              const respository = service.source.repository
-              const version = respository?.chart_version
+              const repository = service.source.repository
+              const version = repository?.chart_version
               return (
                 version && (
                   <>
                     <DropdownMenu.Separator />
                     <DropdownMenu.Item
                       icon={<Icon iconName="clock-rotate-left" />}
-                      onSelect={() => deployHelmChartVersion(service, respository, version)}
+                      onSelect={() => deployHelmChartVersion(service, repository, version)}
                     >
                       Deploy another chart version
                     </DropdownMenu.Item>

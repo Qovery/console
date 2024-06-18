@@ -152,7 +152,7 @@ exports[`ValuesOverrideFilesSetting should match snapshot with GIT_REPOSITORY ty
             class="flex flex-col gap-3"
           >
             <div>
-              git respository dom
+              git repository dom
             </div>
           </div>
         </section>
