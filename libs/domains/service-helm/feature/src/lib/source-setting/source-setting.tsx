@@ -5,7 +5,13 @@ import { Icon, InputSelect, LoaderSpinner, useModal } from '@qovery/shared/ui'
 import { useHelmCharts } from '../hooks/use-helm-charts/use-helm-charts'
 import { useHelmRepositories } from '../hooks/use-helm-repositories/use-helm-repositories'
 
-function HelmChartsSetting({ organizationId, helmRepositoryId }: { organizationId: string; helmRepositoryId: string }) {
+export function HelmChartsSetting({
+  organizationId,
+  helmRepositoryId,
+}: {
+  organizationId: string
+  helmRepositoryId: string
+}) {
   const { control, watch } = useFormContext()
   const {
     data: helmCharts,
