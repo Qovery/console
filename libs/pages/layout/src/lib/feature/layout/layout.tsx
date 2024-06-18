@@ -1,4 +1,5 @@
 import { useAuth0 } from '@auth0/auth0-react'
+import posthog from 'posthog-js'
 import { type PropsWithChildren, memo, useEffect } from 'react'
 import { redirect, useParams } from 'react-router-dom'
 import { useClusters } from '@qovery/domains/clusters/feature'
@@ -48,6 +49,7 @@ export function Layout(props: PropsWithChildren<LayoutProps>) {
   }, [organizationId, organizations, fetchOrganization])
 
   useEffect(() => {
+    posthog.group('organization_id', organizationId)
     setCurrentOrganizationIdOnStorage(organizationId)
     setCurrentProjectIdOnStorage(projectId)
     setCurrentProvider(user?.sub ?? '')
