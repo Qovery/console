@@ -1,6 +1,6 @@
-import { act, fireEvent, getByTestId, render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import PageSettingsAdvanced, { type PageSettingsAdvancedProps } from './page-settings-advanced'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { PageSettingsAdvanced, type PageSettingsAdvancedProps } from './page-settings-advanced'
 
 const keys = [
   'load_balancer.size',
@@ -33,58 +33,50 @@ const props: PageSettingsAdvancedProps = {
 
 describe('PageSettingsAdvanced', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(
+    const { baseElement } = renderWithProviders(
       wrapWithReactHookForm(<PageSettingsAdvanced {...props} />, { defaultValues: defaultValues })
     )
     expect(baseElement).toBeTruthy()
   })
 
   it('should have three inputs', () => {
-    const { getAllByTestId } = render(
-      wrapWithReactHookForm(<PageSettingsAdvanced {...props} />, { defaultValues: defaultValues })
-    )
-    expect(getAllByTestId('input').length).toBe(4)
+    renderWithProviders(wrapWithReactHookForm(<PageSettingsAdvanced {...props} />, { defaultValues: defaultValues }))
+    expect(screen.getAllByTestId('input').length).toBe(4)
   })
 
   it('should show the sticky action bar if form dirty', async () => {
-    const { getByTestId, getByLabelText } = render(
+    const { userEvent } = renderWithProviders(
       wrapWithReactHookForm(<PageSettingsAdvanced {...props} />, { defaultValues: defaultValues })
     )
 
-    await act(() => {
-      const input = getByLabelText('load_balancer.size')
-      fireEvent.input(input, { target: { value: 'hello' } })
-    })
+    const input = screen.getByLabelText('load_balancer.size')
+    await userEvent.type(input, 'hello')
 
-    expect(getByTestId('sticky-action-form-toaster')).toHaveClass('visible')
+    expect(screen.getByTestId('sticky-action-form-toaster')).toHaveClass('visible')
   })
 
   it('should disabled the form submit', async () => {
-    const { getByTestId, getByLabelText } = render(
+    const { userEvent } = renderWithProviders(
       wrapWithReactHookForm(<PageSettingsAdvanced {...props} />, { defaultValues: defaultValues })
     )
 
-    await act(() => {
-      const input = getByLabelText('load_balancer.size')
-      fireEvent.input(input, { target: { value: '79' } })
-      fireEvent.input(input, { target: { value: '' } })
-    })
+    const input = screen.getByLabelText('load_balancer.size')
+    await userEvent.type(input, '79')
+    await userEvent.clear(input)
 
-    expect(getByTestId('submit-button')).toBeDisabled()
+    expect(screen.getByTestId('submit-button')).toBeDisabled()
   })
 
   it('field with empty defaultValue should not be required', async () => {
-    const { getByLabelText, baseElement } = render(
+    const { userEvent } = renderWithProviders(
       wrapWithReactHookForm(<PageSettingsAdvanced {...props} />, { defaultValues: defaultValues })
     )
 
-    await act(() => {
-      const input = getByLabelText('test_empty')
-      fireEvent.input(input, { target: { value: '79' } })
-      fireEvent.input(input, { target: { value: '' } })
-    })
+    const input = screen.getByLabelText('test_empty')
+    await userEvent.type(input, '79')
+    await userEvent.clear(input)
 
-    expect(getByTestId(baseElement, 'submit-button')).toBeEnabled()
+    expect(screen.getByTestId('submit-button')).toBeEnabled()
   })
 
   it('should display only overridden settings', async () => {
@@ -93,16 +85,14 @@ describe('PageSettingsAdvanced', () => {
       'deployment.custom_domain_check_enabled': true,
       'load_balancer.size': '/',
     }
-    const { getByTestId, getAllByTestId } = render(
+    const { userEvent } = renderWithProviders(
       wrapWithReactHookForm(<PageSettingsAdvanced {...props} />, { defaultValues: defaultValues })
     )
 
-    await act(() => {
-      getByTestId('show-overriden-only-toggle').click()
-    })
+    await userEvent.click(screen.getByTestId('show-overriden-only-toggle'))
 
     let count = 0
-    getAllByTestId('edition-table-row').forEach((row) => {
+    screen.getAllByTestId('edition-table-row').forEach((row) => {
       if (row.classList.contains('hidden')) {
         count++
       }
